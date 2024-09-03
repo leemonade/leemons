@@ -8,6 +8,7 @@ import {
   Stack,
   Anchor,
   Avatar,
+  Button,
   LoadingOverlay,
   ContextContainer,
   ImageProfilePicker,
@@ -16,6 +17,9 @@ import useUserDetails from '@users/hooks/useUserDetails';
 import { LocaleDate } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
+import { getSessionUserAgent } from '@users/session';
+import { CommentIcon } from '@bubbles-ui/icons/solid';
+import { useComunica } from '@comunica/context';
 import { UserAgentsTags } from './components/UserAgentsTags';
 
 export const USER_DETAIL_VIEWS = {
@@ -26,13 +30,13 @@ export const USER_DETAIL_VIEWS = {
 
 function UserDetail({
   userId,
-  center,
   hideTags,
   viewMode = USER_DETAIL_VIEWS.ADMIN,
   sysProfileFilter,
   onLoadUser = noop,
   onLoadUserAgents = noop,
   onChangeAvatar = noop,
+  onChat = noop,
   canEdit,
 }) {
   const enableUserDetails = !!userId;
@@ -43,6 +47,8 @@ function UserDetail({
   const [t] = useTranslateLoader(prefixPN('user_detail'));
   const [tForm] = useTranslateLoader(prefixPN('userForm'));
   const [avatar, setAvatar] = React.useState(userDetails?.user?.avatar);
+  const userAgentId = getSessionUserAgent();
+  const { openUserRoom } = useComunica();
 
   React.useEffect(() => {
     if (userDetails?.user) {
@@ -74,6 +80,14 @@ function UserDetail({
       .map(({ profile }) => profile)
       .filter((profile) => (sysProfileFilter ? sysProfileFilter === profile.sysName : true))
   );
+
+  const isSelfView = userAgents.some((ua) => ua.id === userAgentId);
+
+  const handleOpenChat = () => {
+    const [userAgent] = userAgents;
+    openUserRoom(userAgent.id);
+    onChat();
+  };
 
   return (
     <ContextContainer>
@@ -112,20 +126,31 @@ function UserDetail({
       {!hideTags && [USER_DETAIL_VIEWS.ADMIN, USER_DETAIL_VIEWS.TEACHER].includes(viewMode) && (
         <UserAgentsTags title={t('tagsTitle')} userAgentIds={userAgents.map(({ id }) => id)} />
       )}
+      {!isSelfView && (
+        <Stack justifyContent="center">
+          <Button
+            variant="link"
+            onClick={handleOpenChat}
+            rightIcon={<CommentIcon width={18} height={18} />}
+          >
+            {t('chatButton')}
+          </Button>
+        </Stack>
+      )}
     </ContextContainer>
   );
 }
 
 UserDetail.propTypes = {
   userId: PropTypes.string.isRequired,
-  center: PropTypes.object,
   hideTags: PropTypes.bool,
   sysProfileFilter: PropTypes.string,
   viewMode: PropTypes.oneOf(Object.values(USER_DETAIL_VIEWS)),
+  canEdit: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
   onLoadUser: PropTypes.func,
   onLoadUserAgents: PropTypes.func,
   onChangeAvatar: PropTypes.func,
-  canEdit: PropTypes.oneOfType([PropTypes.bool, PropTypes.object]),
+  onChat: PropTypes.func,
 };
 
 export { UserDetail };

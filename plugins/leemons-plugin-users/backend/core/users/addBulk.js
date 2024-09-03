@@ -20,6 +20,7 @@ const {
   addCenterProfilePermissionToUserAgents,
 } = require('../user-agents/addCenterProfilePermissionToUserAgents');
 const { sendActivationEmailsByProfileToUser } = require('./sendActivationEmailsByProfileToUser');
+const addUserInProvider = require('../providers/users/addUser');
 
 /**
  * Function to handle the creation or update of a user.
@@ -184,6 +185,9 @@ async function addUser({
   if (userAgent && calendarPluginExists) {
     await addCalendarToUserAgentsIfNeedByUser({ user: user.id, ctx });
   }
+
+  await addUserInProvider({ user: { id: user.id, email: userData.email, password }, ctx });
+
   return user;
 }
 

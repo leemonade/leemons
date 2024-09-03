@@ -1,12 +1,13 @@
-const { env, generateEnv } = require('./env');
+const { checkSuperAdmin } = require('./checkSuperAdmin');
 const { diffHours } = require('./diffHours');
-const { sqlDatetime } = require('./sqlDatetime');
-const { randomString } = require('./randomString');
-const { timeoutPromise } = require('./timeoutPromise');
+const { env, generateEnv } = require('./env');
 const { getObjectArrayKeys } = require('./getObjectArrayKeys');
-const { numberToEncodedLetter } = require('./numberToEncodedLetter');
-const { settledResponseToManyResponse } = require('./settledResponseToManyResponse');
 const { generateMoleculerConfig } = require('./moleculer');
+const { numberToEncodedLetter } = require('./numberToEncodedLetter');
+const { randomString } = require('./randomString');
+const { settledResponseToManyResponse } = require('./settledResponseToManyResponse');
+const { sqlDatetime } = require('./sqlDatetime');
+const { timeoutPromise } = require('./timeoutPromise');
 
 module.exports = {
   env,
@@ -15,6 +16,7 @@ module.exports = {
   sqlDatetime,
   randomString,
   timeoutPromise,
+  checkSuperAdmin,
   getObjectArrayKeys,
   numberToEncodedLetter,
   settledResponseToManyResponse,

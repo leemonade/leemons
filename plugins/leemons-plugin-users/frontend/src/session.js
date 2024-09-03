@@ -7,7 +7,7 @@ import { keyBy } from 'lodash';
 import { useContext, useEffect, useMemo } from 'react';
 import { useHistory } from 'react-router-dom';
 import useSWR from 'swr';
-import { apiSessionMiddleware } from '../globalContext';
+import { apiSessionMiddleware } from './helpers/apiSessionMiddleware';
 
 function getJWTToken() {
   const params = new URLSearchParams(window.location.search);
@@ -111,7 +111,7 @@ export function getCookieToken(onlyCookie) {
 
 export function currentProfileIsSuperAdmin() {
   const data = getCookieToken(true);
-  if (data.profile) {
+  if (data?.profile) {
     const profile = _.find(data.profiles, { id: data.profile });
     return profile?.sysName === 'super';
   }
@@ -120,7 +120,7 @@ export function currentProfileIsSuperAdmin() {
 
 export function currentProfileIsAdmin() {
   const data = getCookieToken(true);
-  if (data.profile) {
+  if (data?.profile) {
     const profile = _.find(data.profiles, {
       id: _.isString(data.profile) ? data.profile : data.profile?.id,
     });
@@ -134,16 +134,28 @@ export function getSessionCenter() {
   if (_.isString(token)) {
     return null;
   }
-  if (!token.profile && token.centers?.length === 1) {
-    return token.centers[0];
+  if (!token?.profile && token?.centers?.length === 1) {
+    return token?.centers[0];
   }
-  return token.centers?.find((c) => c.profiles?.map(({ id }) => id).includes(token.profile));
+  return (
+    token?.centers?.find((c) => c.profiles?.map(({ id }) => id).includes(token?.profile)) ??
+    token?.centers?.[0]
+  );
 }
 
 export function getSessionProfile() {
   const token = getCookieToken(true);
   const center = getSessionCenter();
-  return center?.profiles?.find((p) => p.id === token.profile) ?? center?.profiles[0];
+  return (
+    center?.profiles?.find((p) => p.id === token?.profile) ??
+    center?.profiles?.[0] ??
+    token?.profile
+  );
+}
+
+export function getSessionUserAgent() {
+  const token = getCookieToken(true);
+  return token?.centers?.[0]?.userAgentId;
 }
 
 export function getCentersWithToken() {
@@ -158,11 +170,13 @@ export function getSessionConfig() {
 
 export async function updateSessionConfig(config) {
   const { data } = await updateSessionConfigRequest(config);
-  const cookieToken = getCookieToken(true);
+  const cookieToken = getCookieToken(true) ?? {};
   const dataByOld = keyBy(data, 'old');
-  if (!_.isObject(cookieToken.sessionConfig)) cookieToken.sessionConfig = {};
+  if (!_.isObject(cookieToken?.sessionConfig)) {
+    cookieToken.sessionConfig = {};
+  }
   cookieToken.sessionConfig = { ...cookieToken.sessionConfig, ...config };
-  if (cookieToken.centers) {
+  if (Array.isArray(cookieToken?.centers)) {
     _.forEach(cookieToken.centers, ({ token }, i) => {
       if (dataByOld[token]) {
         cookieToken.centers[i].token = dataByOld[token].new;

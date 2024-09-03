@@ -2,6 +2,7 @@
 
 [![GitHub contributors](https://img.shields.io/github/contributors/leemonade/leemons)](https://github.com/leemonade/leemons/graphs/contributors)
 [![CircleCI build](https://img.shields.io/circleci/build/github/leemonade/leemons/main)](https://app.circleci.com/pipelines/github/leemonade/leemons)
+[![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg)](http://standardjs.com)
 
 The powerful flexible friendly Learning Experience Platform you’re waiting for.
 

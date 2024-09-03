@@ -76,26 +76,20 @@ function File({ assignation, preview }) {
     if (!submission) {
       return null;
     }
-    if (submission.type === 'File') {
-      const extractExtensions = Object.keys(submission?.data?.extensions).map((key) =>
-        key.replace(/[ .]/g, '')
-      );
-      extractExtensions.forEach((extension) => {
-        if (extension === 'rtf') {
-          newExtensions[extension] = '.rtf';
-        } else {
-          newExtensions[extension] = mime.getType(extension);
-        }
-      });
-      return {
-        ...submission,
-        data: {
-          ...submission.data,
-          extensions: newExtensions,
-        },
-      };
-    }
-    return submission;
+    const extractExtensions = Object.keys(submission?.extensions).map((key) =>
+      key.replace(/[ .]/g, '')
+    );
+    extractExtensions.forEach((extension) => {
+      if (extension.includes('rtf')) {
+        newExtensions[extension] = '.rtf';
+      } else {
+        newExtensions[extension] = mime.getType(extension);
+      }
+    });
+    return {
+      ...submission,
+      extensions: newExtensions,
+    };
   };
 
   const submissionDataSanitized = useMemo(
@@ -103,15 +97,22 @@ function File({ assignation, preview }) {
     [submissionData]
   );
 
-  const { names: extensionNames, format: extensionFormat } = useMemo(
-    () => ({
-      names: Object.keys(submissionDataSanitized.extensions).map((key) =>
-        key.replace(/^([^.])/, '.$1')
-      ),
-      format: Object.values(submissionDataSanitized.extensions),
-    }),
-    [submissionDataSanitized?.extensions]
-  );
+  const { names: extensionNames, format: extensionFormat } = useMemo(() => {
+    const extensions = Object.keys(submissionDataSanitized.extensions);
+    const formats = Object.values(submissionDataSanitized.extensions);
+    const additionalFormats = [];
+
+    formats.forEach((format) => {
+      if (format === '.rtf') {
+        additionalFormats.push('application/rtf', 'text/rtf');
+      }
+    });
+
+    return {
+      names: extensions.map((key) => key.replace(/^([^.])/, '.$1')),
+      format: [...formats, ...additionalFormats],
+    };
+  }, [submissionDataSanitized, submissionData]);
 
   return (
     <Box>

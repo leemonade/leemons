@@ -5,6 +5,7 @@ const SYS_PROFILE_NAMES = {
   ADMIN: 'admin',
 };
 const PLUGIN_NAME = 'users';
+const PLUGIN_VERSION = 1;
 const PUBLIC_ROUTE = `public/${PLUGIN_NAME}`;
 const PRIVATE_ROUTE = `private/${PLUGIN_NAME}`;
 const USERS_PERMISSION_NAME = `${PLUGIN_NAME}.users`;
@@ -187,7 +188,7 @@ module.exports = {
       ],
     },
   ],
-  VERSION: 1,
+  VERSION: PLUGIN_VERSION,
   PLUGIN_NAME,
   SYS_PROFILE_NAMES,
 };

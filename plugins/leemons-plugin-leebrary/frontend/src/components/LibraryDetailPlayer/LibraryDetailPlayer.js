@@ -21,6 +21,7 @@ const LibraryDetailPlayer = ({
   providerData,
   isEmbedded,
   id,
+  original,
   ...props
 }) => {
   const asset = {
@@ -34,6 +35,7 @@ const LibraryDetailPlayer = ({
     providerData,
     color,
     id,
+    original,
   };
   return <AssetPlayerLibraryWrapper asset={asset} />;
 };

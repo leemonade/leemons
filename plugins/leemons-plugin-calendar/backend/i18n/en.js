@@ -62,6 +62,11 @@ module.exports = {
     subjectTeacher: 'Professor',
     subjectClassroom: 'Classroom',
     subjectSchedule: 'Schedule',
+    currentWeekButtonLabel: 'Current week',
+    weekendSelectorNexus: 'a',
+    calendarLegend: 'Legend',
+    calendarLegendNonSchoolDay: 'Non-school day',
+    taskLabel: 'Task',
   },
   event_modal: {
     name: 'Name',
@@ -215,6 +220,8 @@ module.exports = {
     description: 'Outstanding tasks completed in less than 5 days',
     showAllKanban: 'View full kanban',
     new: 'New',
+    newTask: 'New task',
+    addNewTask: 'Add new task',
   },
   tabKanban: {
     label: 'Kanban',

@@ -1,5 +1,94 @@
 # Changelog
 
+## [1.4.0](https://github.com/leemonade/leemons/compare/1.3.0...1.4.0) (2024-07-02)
+
+
+### Features
+
+* Added `Go to dashboard` button on module's sub-activities previews ([37bec82](https://github.com/leemonade/leemons/commit/37bec821f28fa855014a8285dfa97e918f557ca6)), closes [#477](https://github.com/leemonade/leemons/issues/477)
+* **assignables:** Added status handling for teacher instances ([6b78f74](https://github.com/leemonade/leemons/commit/6b78f7443cac63a3e645db46cd46017e54d385e0)), closes [#472](https://github.com/leemonade/leemons/issues/472)
+* **calendar:** Add new task creation functionality to Kanban ([048d848](https://github.com/leemonade/leemons/commit/048d848ae91cbac719c5fdabe1f9f0f59989aab2)), closes [#501](https://github.com/leemonade/leemons/issues/501)
+* **leebrary:** Allow asset sharing on every asset type ([27275d4](https://github.com/leemonade/leemons/commit/27275d4f7563787612c4c3af6b601163b7850d7b)), closes [#458](https://github.com/leemonade/leemons/issues/458)
+* **transversal:** Implement logic for assignment page redirection ([3857bce](https://github.com/leemonade/leemons/commit/3857bce953f81e509bcc179e97683f145c4db7bc)), closes [#493](https://github.com/leemonade/leemons/issues/493)
+* **utils:** Add moleculer config generator ([23eec52](https://github.com/leemonade/leemons/commit/23eec52551334d5721a86c8e2a2e7602c1367f39)), closes [#460](https://github.com/leemonade/leemons/issues/460)
+
+
+### Bug Fixes
+
+* **academic-portfolio:** On `EnrollUserSummary` use "enrollments" copy ([e475f2b](https://github.com/leemonade/leemons/commit/e475f2b9b096a827770dc0415548e5592852a798)), closes [#457](https://github.com/leemonade/leemons/issues/457)
+* **assignables:** Add button to go to assignment in `ActivityHeader` ([4dbbec3](https://github.com/leemonade/leemons/commit/4dbbec3ba02e6896509505ea5e1959503dbbafa9)), closes [#452](https://github.com/leemonade/leemons/issues/452)
+* **assignables:** Remove total module activities from teacher's NYA card ([2841854](https://github.com/leemonade/leemons/commit/2841854d1fb8780b2b642977d53764611d7cd6ec)), closes [#466](https://github.com/leemonade/leemons/issues/466)
+* **assignables:** Set non gradable activities to evaluated when finished ([8b1ed9e](https://github.com/leemonade/leemons/commit/8b1ed9ec03fcac54441da4a6aa2c637ac48891cb)), closes [#473](https://github.com/leemonade/leemons/issues/473)
+* **assignables:** Sort instances after grouping in modules ([a7ad168](https://github.com/leemonade/leemons/commit/a7ad168f8c7293b6220c718f8a3f5a606eada7b7)), closes [#489](https://github.com/leemonade/leemons/issues/489)
+* **cCreator:** Move `goBackToDashboard` button to `rightZone` prop ([c7928a3](https://github.com/leemonade/leemons/commit/c7928a3d2239d3d3ea13679d09811dea44ab50ba)), closes [#485](https://github.com/leemonade/leemons/issues/485)
+* **dashboard:** Refactor subjects carousel and review all Swipers ([59c52f8](https://github.com/leemonade/leemons/commit/59c52f8ea4835bd04069b2f302a93edcd62c4f67)), closes [#500](https://github.com/leemonade/leemons/issues/500)
+* **feedback:** Remove "More info about NPS" from Alert component ([7b6994c](https://github.com/leemonade/leemons/commit/7b6994cfabbca5161662728a6c7849be4ea1ddd8)), closes [#470](https://github.com/leemonade/leemons/issues/470)
+* **feedback:** User can navigate between questions on preview mode ([a05b3e3](https://github.com/leemonade/leemons/commit/a05b3e3c065c4141b05843ef9ff8c53c96388af9)), closes [#478](https://github.com/leemonade/leemons/issues/478)
+* **leebrary:** Accept any file type in AssetPickerDrawer ([352f153](https://github.com/leemonade/leemons/commit/352f153053b1c49ea6e527a6dbd602d6371a7401)), closes [#459](https://github.com/leemonade/leemons/issues/459)
+* **leebrary:** Added `TextClamp` to `LibraryDetail` ([c2de8cf](https://github.com/leemonade/leemons/commit/c2de8cfed3d2473a231057b6566ff53cc2894cdf)), closes [#463](https://github.com/leemonade/leemons/issues/463)
+* **leebrary:** Refactor to handle share assets in leebrary not users ([1003ce5](https://github.com/leemonade/leemons/commit/1003ce503dcce36fc61a523ec1f0cde0994e2331)), closes [#498](https://github.com/leemonade/leemons/issues/498)
+* **leebrary:** Remove subititle on AssetForm ([f48bb0b](https://github.com/leemonade/leemons/commit/f48bb0bd13040519ea2e7af767fb2ce8c2930706)), closes [#488](https://github.com/leemonade/leemons/issues/488)
+* **leebrary:** Stop uploading `zip`s as `directories` by default ([242491a](https://github.com/leemonade/leemons/commit/242491adda75aee0d04362c9d6672c91a1eeed84)), closes [#455](https://github.com/leemonade/leemons/issues/455)
+* **LPaths:** Added localizations for delete and duplication in leebrary ([155cad7](https://github.com/leemonade/leemons/commit/155cad771dbc5235dbeb43f68881aac637c5abdf)), closes [#487](https://github.com/leemonade/leemons/issues/487)
+* **menu-builder:** Change text variable value ([08ed171](https://github.com/leemonade/leemons/commit/08ed171687b51596d8df362477fc35c3db5fcd92)), closes [#484](https://github.com/leemonade/leemons/issues/484)
+* **scores:** Add subject name to `WeightConfigDrawer` ([e9a5a4c](https://github.com/leemonade/leemons/commit/e9a5a4c2d22cba13d19b3eb64a8c31d26a15dde9)), closes [#492](https://github.com/leemonade/leemons/issues/492)
+* **scores:** Always get the maximum number of ActivitiesCount ([c048023](https://github.com/leemonade/leemons/commit/c04802315b8e497c9c73fa9b14cca00c36a03015)), closes [#475](https://github.com/leemonade/leemons/issues/475)
+* **scores:** Use standard class name helper ([cf6a29e](https://github.com/leemonade/leemons/commit/cf6a29ec90382963bfede88ec54c4961fa9c7299)), closes [#474](https://github.com/leemonade/leemons/issues/474)
+* **task:** If file is rft, add all accept cases ([4423684](https://github.com/leemonade/leemons/commit/44236849c48f756135459ad257b41c4bf6f8141f)), closes [#486](https://github.com/leemonade/leemons/issues/486)
+* **tasks:** Clean tags on onChange to keep extensions correctly typed ([30d08f9](https://github.com/leemonade/leemons/commit/30d08f94ea9a52396e12ed19193a98549c7f039d)), closes [#476](https://github.com/leemonade/leemons/issues/476)
+* **tasks:** Handled `.rtf` file extension individually ([042fb65](https://github.com/leemonade/leemons/commit/042fb652096cac6de2fdedf6a999827cb795c7ba)), closes [#462](https://github.com/leemonade/leemons/issues/462)
+* **tasks:** On module preview, change "go back to dashboard" button ([3c50454](https://github.com/leemonade/leemons/commit/3c50454818ad4295aa11eb51ce42e1e792911ce7)), closes [#483](https://github.com/leemonade/leemons/issues/483)
+* **tasks:** Recover SubmissionLink component ([c906b6b](https://github.com/leemonade/leemons/commit/c906b6b8399565f00f90e0b89638db8b19e9d10c)), closes [#491](https://github.com/leemonade/leemons/issues/491)
+* **tests:** Disable footer buttons if no question selected in the test ([19d326e](https://github.com/leemonade/leemons/commit/19d326efda054332b91ac85c1b56737cc52ee4b1)), closes [#469](https://github.com/leemonade/leemons/issues/469)
+* **tests:** Modified query size to 100 temporarily ([40513d0](https://github.com/leemonade/leemons/commit/40513d0d4e907eaaa80bd90a75a6f55f07b02856)), closes [#482](https://github.com/leemonade/leemons/issues/482)
+* **tests:** TextClamp (2 lines) in table result. Question description ([ea8b815](https://github.com/leemonade/leemons/commit/ea8b815da3ee158ef5b34150f4423efa0c0981a0)), closes [#454](https://github.com/leemonade/leemons/issues/454)
+* **tests:** Wait until all the responses are saved prior go to results ([0ff3667](https://github.com/leemonade/leemons/commit/0ff3667168fffe5935671bba2a1e60f1bae88a6a)), closes [#494](https://github.com/leemonade/leemons/issues/494)
+* Use EmptyStates and Welcome links based on user locale ([d770d19](https://github.com/leemonade/leemons/commit/d770d19f636cb061ded95ef53906330f900eea01)), closes [#447](https://github.com/leemonade/leemons/issues/447)
+* **user:** Add user activation handling ([8201289](https://github.com/leemonade/leemons/commit/8201289bd27a0efd1756a8dc83c7dd52f6cb8338)), closes [#499](https://github.com/leemonade/leemons/issues/499)
+* **users:** Remove onlyForTeachers flag from SelectUserAgent component ([330386b](https://github.com/leemonade/leemons/commit/330386bc0c2e466f5496f521fd374ef0f24a5166)), closes [#496](https://github.com/leemonade/leemons/issues/496)
+
+## [1.3.0](https://github.com/leemonade/leemons/compare/1.2.0...1.3.0) (2024-06-20)
+
+
+### Features
+
+* **bulk-data:** Added export and import for content creator ([2eca077](https://github.com/leemonade/leemons/commit/2eca07719b312bc1f4d9a0cacf44246c48967cc1)), closes [#461](https://github.com/leemonade/leemons/issues/461)
+* **bulk-data:** Enhance bulk import with caching and progress tracking ([94486c7](https://github.com/leemonade/leemons/commit/94486c763e4afd20e47923e166203bdc8cd2d069)), closes [#465](https://github.com/leemonade/leemons/issues/465)
+* **calendar:** Add edit and delete actions to CalendarEventModal ([0a0cfc1](https://github.com/leemonade/leemons/commit/0a0cfc1d5c1eec9f2f896bf67006f70d1a7143f3)), closes [#468](https://github.com/leemonade/leemons/issues/468)
+* **calendar:** Add support for showing hidden columns in calendar views ([ad4c843](https://github.com/leemonade/leemons/commit/ad4c84350b943429453bdca7b0b758373914f96e)), closes [#467](https://github.com/leemonade/leemons/issues/467)
+
+
+### Bug Fixes
+
+* **assignables:** Do not limit date in PeriodPicker with InvalidDate ([479a6e1](https://github.com/leemonade/leemons/commit/479a6e1b5a0d948561425af7e05d2d0c5a3af84d)), closes [#456](https://github.com/leemonade/leemons/issues/456)
+* **assignables:** Do not set `gradesViewed` in module sub-activities ([7ef9993](https://github.com/leemonade/leemons/commit/7ef999397cc0222382105f6716da0d4aace61cd5)), closes [#464](https://github.com/leemonade/leemons/issues/464)
+* **bulk-data:** Avoid sharing task resources as they are public ([bc42f0b](https://github.com/leemonade/leemons/commit/bc42f0b71e93043f9f4319522af5456d56b15a13)), closes [#448](https://github.com/leemonade/leemons/issues/448)
+* **calendar:** Format subject name like Avatar in bubbles ([678139f](https://github.com/leemonade/leemons/commit/678139f091c79a0e858f19beaa7064490eefed45)), closes [#435](https://github.com/leemonade/leemons/issues/435)
+* **CCreator:** Can download rar file from document ([5ece95c](https://github.com/leemonade/leemons/commit/5ece95cb79d1a33a0f1495c86235c70cdb298615)), closes [#434](https://github.com/leemonade/leemons/issues/434)
+* **feedback:** Add hover and selected styles in all questions ([08b430c](https://github.com/leemonade/leemons/commit/08b430c93f76b9eec9a6fe36f6c00b312f39f738)), closes [#436](https://github.com/leemonade/leemons/issues/436)
+* Group alias control on Assignment form and Evaluation Notebook ([13d1f7f](https://github.com/leemonade/leemons/commit/13d1f7f496e9c66b3d117510798b0395d82c7ec8)), closes [#432](https://github.com/leemonade/leemons/issues/432)
+* **leebrary:** Recover share button in Cards and DetailDrawer ([7749998](https://github.com/leemonade/leemons/commit/7749998089d4b053e27bdc16924254a4c5bcecc1)), closes [#440](https://github.com/leemonade/leemons/issues/440)
+* **LModules:** Do not set gradesViewed if no data is received ([cc0b83e](https://github.com/leemonade/leemons/commit/cc0b83e63e7cd98c17830e1282839443991ec43b))
+* **tests:** Fix button problems and add onKeyDown to save question in QB ([2031692](https://github.com/leemonade/leemons/commit/2031692ae5018ca4038ed6eb58e9a2012966c87a)), closes [#437](https://github.com/leemonade/leemons/issues/437)
+
+## [1.2.0](https://github.com/leemonade/leemons/compare/1.1.0...1.2.0) (2024-06-12)
+
+
+### Features
+
+* Add ErrorBoundaries to PrivateLayout and to WidgetZone ([bffecd2](https://github.com/leemonade/leemons/commit/bffecd2ba95893dd23cd38d52a16f9f6098d6e24)), closes [#441](https://github.com/leemonade/leemons/issues/441)
+* Add ErrorBoundaries to PrivateLayout and to WidgetZone ([f017e51](https://github.com/leemonade/leemons/commit/f017e5122fffb8a0d2900431501e0bd52497e016)), closes [#441](https://github.com/leemonade/leemons/issues/441)
+
+
+### Bug Fixes
+
+* **feedback:** Added missing optional chaining ([bcd4c72](https://github.com/leemonade/leemons/commit/bcd4c72fb36dfe32b9fa543cf65c9bd9bbd1649d)), closes [#443](https://github.com/leemonade/leemons/issues/443)
+
+
+### Miscellaneous Chores
+
+* Release 1.2.0 ([d534286](https://github.com/leemonade/leemons/commit/d53428637e13f694ebed6a687edf821df29138ec))
+
 ## [1.1.0](https://github.com/leemonade/leemons/compare/1.0.1...1.1.0) (2024-06-06)
 
 

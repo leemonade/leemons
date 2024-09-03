@@ -5,10 +5,11 @@ import { Drawer, Button } from '@bubbles-ui/components';
 import usePermissions from '@users/hooks/usePermissions';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@users/helpers/prefixPN';
-import { getCookieToken, getSessionCenter } from '@users/session';
+import { getSessionCenter, getSessionUserAgent } from '@users/session';
 import { EnrollUserSummary } from '@academic-portfolio/components/EnrollUserSummary';
 import { UserDetail, USER_DETAIL_VIEWS } from './UserDetail';
 import { UserAdminDrawer } from './UserAdminDrawer';
+import { UserDatasetSummary } from './UserDataset/UserDatasetSummary';
 
 function UserDetailDrawer({
   userId,
@@ -23,10 +24,10 @@ function UserDetailDrawer({
   const [openedAdminDrawer, setOpenedAdminDrawer] = React.useState(false);
   const [selfOpen, setSelfOpen] = React.useState(opened);
   const [user, setUser] = React.useState(null);
+  const [userAgents, setUserAgents] = React.useState([]);
   const [t] = useTranslateLoader(prefixPN('user_detail'));
   const center = centerProp ?? getSessionCenter();
-  const token = getCookieToken(true);
-  const { userAgentId } = token.centers[0];
+  const userAgentId = getSessionUserAgent();
 
   const {
     data: permissions,
@@ -91,17 +92,30 @@ function UserDetailDrawer({
     setUser(data);
   }
 
+  function handleOnLoadUserAgents(data) {
+    setUserAgents(data);
+  }
+
   // ····················································
   // RENDER
 
   const contactUserAgentId = React.useMemo(() => {
-    // If the view mode is STUDENT, we assume that the user is a student and is a contact of the userId
+    // If view mode is STUDENT, assume the student is either a contact of the user itself
     if (viewMode === USER_DETAIL_VIEWS.STUDENT) {
       return userAgentId;
     }
 
     return null;
   }, [userAgentId, viewMode]);
+
+  const canEditDataset = React.useMemo(() => {
+    // Allow edit dataset if the user is a student and is viewing its own dataset
+    if (viewMode === USER_DETAIL_VIEWS.STUDENT) {
+      return userAgents.some((userAgent) => userAgent.id === userAgentId);
+    }
+
+    return true;
+  }, [viewMode, userAgents, userAgentId]);
 
   return (
     <>
@@ -113,7 +127,9 @@ function UserDetailDrawer({
             center={center}
             sysProfileFilter={sysProfileFilter}
             onLoadUser={handleOnLoadUser}
+            onLoadUserAgents={handleOnLoadUserAgents}
             viewMode={viewMode}
+            onChat={handleOnClose}
           />
           <EnrollUserSummary
             userId={userId}
@@ -121,6 +137,10 @@ function UserDetailDrawer({
             contactUserAgentId={contactUserAgentId}
             sysProfileFilter={sysProfileFilter}
             viewMode={viewMode}
+          />
+          <UserDatasetSummary
+            userAgentIds={userAgents.map((userAgent) => userAgent.id)}
+            canHandleEdit={canEditDataset}
           />
         </Drawer.Content>
         {canEdit && (

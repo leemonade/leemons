@@ -1,25 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useStore } from '@common';
-import { Button, Stack } from '@bubbles-ui/components';
-import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
+import { Box } from '@bubbles-ui/components';
 import Question from './Question';
 
 export default function QuestionList(props) {
   const [store, render] = useStore({
     questionNumber: 0,
   });
-
   const isLast = store.questionNumber === props.store.questions.length - 1;
   const question = props.store.questions[store.questionNumber];
 
   return (
-    <Stack fullWidth spacing={4} direction="column">
-      <Stack justifyContent="end" sx={() => ({ marginTop: 16, marginRight: 12 })}>
-        <Button onClick={props.onReturn} leftIcon={<ChevLeftIcon />}>
-          {props.t('returnToTable')}
-        </Button>
-      </Stack>
+    <Box>
       <Question
         {...props}
         prevStep={() => {
@@ -30,9 +23,9 @@ export default function QuestionList(props) {
             props.prevStep();
           }
         }}
-        nextStep={(e) => {
+        nextStep={async (e) => {
           if (isLast) {
-            props.finishStep(e);
+            await props.finishStep(e);
           } else {
             store.questionNumber += 1;
             render();
@@ -44,7 +37,7 @@ export default function QuestionList(props) {
         isLast={isLast}
         saveQuestion={() => props.saveQuestion(question.id)}
       />
-    </Stack>
+    </Box>
   );
 }
 

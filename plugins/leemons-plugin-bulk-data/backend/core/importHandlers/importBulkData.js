@@ -21,6 +21,7 @@ const { getCurrentPhaseKey, getLastPhaseOnErrorKey } = require('../../helpers/ca
 const { LOAD_PHASES, LOAD_ERROR } = require('./getLoadStatus');
 const { getLoadStatus } = require('.');
 const { initContentCreator } = require('../contentCreator');
+const initModules = require('../modules');
 
 let currentPhaseLocal = null;
 let lastPhaseOnErrorLocal = null;
@@ -33,7 +34,7 @@ async function getStatusWhenLocal() {
   });
 }
 
-async function shareAssetsWithProfile({ profileId, assets, ctx }) {
+async function shareAssetsWithProfile({ profileId, assets, forcedIsPublicValue, ctx }) {
   if (!profileId) {
     console.error('Could not share asset, no profile id found');
     return;
@@ -53,7 +54,7 @@ async function shareAssetsWithProfile({ profileId, assets, ctx }) {
           assigner: [],
         },
         assetId,
-        isPublic: !!asset.public,
+        isPublic: forcedIsPublicValue ?? !!asset.public,
       })
     );
   });
@@ -152,7 +153,13 @@ async function importBulkData({
       // MEDIA LIBRARY
 
       ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Leebrary plugin ...}`);
-      const { assets, nonIndexableAssets } = await initLibrary({ file: docPath, config, useCache, phaseKey: currentPhaseKey, ctx });
+      const { assets, nonIndexableAssets } = await initLibrary({
+        file: docPath,
+        config,
+        useCache,
+        phaseKey: currentPhaseKey,
+        ctx,
+      });
       config.assets = assets;
       config.nonIndexableAssets = nonIndexableAssets;
 
@@ -213,14 +220,12 @@ async function importBulkData({
         shareLibraryAssetsWithTeacherProfile &&
         Object.keys(config.contentCreatorDocs || {})?.length
       ) {
-        const { document: documents } = await ctx.call('content-creator.document.getDocumentRest', {
-          id: Object.values(config.contentCreatorDocs).map((doc) => doc.assignable),
-        });
+        const documents = Object.values(config.contentCreatorDocs);
 
         await shareAssetsWithProfile({
           profileId: config.profiles.teacher?.id,
           profileSysName: config.profiles.teacher?.sysName,
-          assets: (documents || []).map((doc) => doc.asset),
+          assets: documents.map((doc) => doc.asset),
           ctx,
         });
       }
@@ -244,12 +249,13 @@ async function importBulkData({
       config.qbanks = qbanks;
 
       if (shareLibraryAssetsWithTeacherProfile) {
-        const testsAssets = Object.values(config.tests).map((item) => item.asset);
-        const qbanksAssets = Object.values(config.qbanks).map((item) => item.asset);
+        const testAssets = Object.values(config.tests).map((item) => item.asset);
+        const qbankAssets = Object.values(config.qbanks).map((item) => item.asset);
         await shareAssetsWithProfile({
           profileId: config.profiles.teacher?.id,
           profileSysName: config.profiles.teacher?.sysName,
-          assets: [...testsAssets, ...qbanksAssets],
+          assets: [...testAssets, ...qbankAssets],
+          forcedIsPublicValue: true, // Test & qbank assets are public by creation; we don't have access to the asset object here
           ctx,
         });
       }
@@ -275,11 +281,11 @@ async function importBulkData({
           id: Object.values(config.tasks).map((task) => task.fullId),
         });
 
-        const tasksAssets = tasks.map((item) => item.asset);
+        const taskAssets = tasks.map((item) => item.asset);
         await shareAssetsWithProfile({
           profileId: config.profiles.teacher?.id,
           profileSysName: config.profiles.teacher?.sysName,
-          assets: [...tasksAssets], // If resources and/or statementImage change to be not-public add them here
+          assets: [...taskAssets], // If resources and/or statementImage change to be not-public add them here
           ctx,
         });
       }
@@ -289,6 +295,31 @@ async function importBulkData({
       if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.TASKS, 60 * 60);
 
       // ·······························································
+      // MODULES
+      // TO IMPLEMENT: Finish modules import making sure duplication -> assignation -> execution works correctly
+      // TO IMPLEMENT:: Finish modules import making sure ccreator documents can be correctly used as module resources
+      // TO IMPLEMENT:: Add correspoinding load phase and update possible translations needed in Client Manager
+
+      /*
+      config.modules = await initModules({ file: docPath, config, ctx });
+
+      if (shareLibraryAssetsWithTeacherProfile) {
+        const moduleAssets = Object.values(config.modules).map((item) => item.asset);
+
+        await shareAssetsWithProfile({
+          profileId: config.profiles.teacher?.id,
+          profileSysName: config.profiles.teacher?.sysName,
+          assets: moduleAssets,
+          ctx,
+        });
+      }
+
+      ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Modules plugin`);
+      currentPhaseLocal = LOAD_PHASES.MODULES;
+      if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.MODULES, 60 * 60);
+      */
+
+      // ······························································
       // WIDGETS
 
       await initWidgets({ ctx });

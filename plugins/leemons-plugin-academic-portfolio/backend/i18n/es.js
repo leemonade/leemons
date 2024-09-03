@@ -1008,6 +1008,7 @@ module.exports = {
   common: {
     defaultGroupName: 'Grupo por defecto',
     enrollments: 'Matriculaciones',
+    classes: 'Clases',
     sharedEnrollments: 'Contigo en clase en',
   },
   classroomPicker: {

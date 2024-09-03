@@ -12,6 +12,7 @@ import { newAssetRequest } from '@leebrary/request';
 import compressImage from '@leebrary/helpers/compressImage';
 import { addErrorAlert } from '@layout/alert';
 import { LIBRARY_FORM_TYPES } from '@leebrary/components/LibraryForm/LibraryForm.constants';
+import imageUrlToFile from '@leebrary/helpers/imageUrlToFile';
 import { usePickerCategories } from '../hooks/usePickerCategories';
 
 export const useNewResourceStyles = createStyles((theme) => {
@@ -31,6 +32,8 @@ export function NewResource({
   onSelect,
   isPickingACover,
   dataOverride,
+  externalFile,
+  onRemoveExternalFile,
 }) {
   const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
   const categories = usePickerCategories();
@@ -63,18 +66,36 @@ export function NewResource({
   const handleOnSubmit = async (data) => {
     try {
       const body = { ...data };
+
       if (
-        body.file.type.startsWith('image') &&
-        body.file.type.indexOf('/gif') < 0 &&
-        body.file.type.indexOf('/svg') < 0
+        body.file?.type?.startsWith('image') &&
+        body.file?.type?.indexOf('/gif') < 0 &&
+        body.file?.type?.indexOf('/svg') < 0
       ) {
         const compressedImage = await compressImage({ file: body.file });
         body.file = compressedImage;
       }
 
+      let originalExternalResource = null;
+      if (body.externalFile && body.externalFile.type === 'image') {
+        originalExternalResource = body.externalFile;
+
+        setUploadingFileInfo({ state: 'processingImage' });
+        const fileFromUrl = await imageUrlToFile(originalExternalResource.url);
+        const compressedImage = await compressImage({ file: fileFromUrl });
+        body.file = compressedImage;
+        body.url = originalExternalResource.url;
+        body.cover = null;
+        delete body.externalFile;
+      }
+
       const uploadedFile = await uploadFileAsMultipart(body.file, {
         onProgress: (info) => {
           setUploadingFileInfo(info);
+        },
+        externalFileInfo: {
+          copyright: originalExternalResource?.copyright,
+          externalUrl: originalExternalResource?.url,
         },
       });
       setUploadingFileInfo({ state: 'finalize' });
@@ -84,6 +105,7 @@ export function NewResource({
           null,
           LIBRARY_FORM_TYPES.MEDIA_FILES
         );
+
         setUploadingFileInfo(null);
         onSelect(asset);
       } catch (err) {
@@ -113,6 +135,8 @@ export function NewResource({
         onSubmit={handleOnSubmit}
         drawerLayout
         hideCover
+        externalFileFromDrawer={externalFile}
+        onRemoveExternalFile={onRemoveExternalFile}
       />
       <UploadingFileModal opened={uploadingFileInfo !== null} info={uploadingFileInfo} />
     </Box>
@@ -126,10 +150,14 @@ NewResource.propTypes = {
   acceptedFileTypes: PropTypes.arrayOf(PropTypes.string),
   isPickingACover: PropTypes.bool,
   dataOverride: PropTypes.object,
+  externalFile: PropTypes.object,
+  onRemoveExternalFile: PropTypes.func,
 };
 
 NewResource.defaultProps = {
   localizations: null,
   categories: [LIBRARY_FORM_TYPES.MEDIA_FILES],
   dataOverride: {},
+  externalFile: null,
+  onRemoveExternalFile: () => {},
 };

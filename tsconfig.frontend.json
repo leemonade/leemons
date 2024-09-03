@@ -9,15 +9,8 @@
     ],
     "module": "ESNext",
     "jsx": "react",
-    "skipLibCheck": true,
-    "esModuleInterop": false,
-    "useDefineForClassFields": true,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": false,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noImplicitAny": false,
-    "noEmit": false,
     "paths": {
       "@academic-calendar/*": [
         "./plugins/leemons-plugin-academic-calendar/frontend/src/*"
@@ -27,9 +20,6 @@
       ],
       "@admin/*": [
         "./plugins/leemons-plugin-admin/frontend/src/*"
-      ],
-      "@ai-assistant/*": [
-        "./private-plugins/leemons-plugin-ai-assistant/frontend/src/*"
       ],
       "@assignables/*": [
         "./plugins/leemons-plugin-assignables/frontend/src/*"
@@ -45,9 +35,6 @@
       ],
       "@client-manager/*": [
         "./private-plugins/leemons-plugin-client-manager/frontend/src/*"
-      ],
-      "@common": [
-        "./plugins/leemons-plugin-common/frontend/src/index"
       ],
       "@common/*": [
         "./plugins/leemons-plugin-common/frontend/src/*"
@@ -106,6 +93,9 @@
       "@leebrary-aws-s3/*": [
         "./plugins/leemons-plugin-leebrary-aws-s3/frontend/src/*"
       ],
+      "@leebrary-unsplash/*": [
+        "./private-plugins/leemons-plugin-leebrary-unsplash/frontend/src/*"
+      ],
       "@menu-builder/*": [
         "./plugins/leemons-plugin-menu-builder/frontend/src/*"
       ],
@@ -127,6 +117,9 @@
       "@scorm/*": [
         "./plugins/leemons-plugin-scorm/frontend/src/*"
       ],
+      "@sessions/*": [
+        "./private-plugins/leemons-plugin-sessions/frontend/src/*"
+      ],
       "@tasks/*": [
         "./plugins/leemons-plugin-tasks/frontend/src/*"
       ],
@@ -139,6 +132,9 @@
       "@users/*": [
         "./plugins/leemons-plugin-users/frontend/src/*"
       ],
+      "@users-cognito/*": [
+        "./private-plugins/leemons-plugin-users-cognito/frontend/src/*"
+      ],
       "@widgets/*": [
         "./plugins/leemons-plugin-widgets/frontend/src/*"
       ],
@@ -146,5 +142,13 @@
         "./plugins/leemons-plugin-xapi/frontend/src/*"
       ]
     }
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "**/node_modules/*"
+  ],
+  "include": [
+    "./plugins/*/frontend/**/*",
+    "./private-plugins/*/frontend/**/*"
+  ]
 }

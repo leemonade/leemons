@@ -286,6 +286,32 @@ module.exports = {
       // ctx.set('Content-Type', 'image/svg+xml');
     },
   },
+  getFileCopyright: {
+    rest: {
+      path: '/copyright/:id',
+      method: 'GET',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const data = await ctx.tx.db.Files.findOne({
+        id: ctx.params.id,
+      })
+        .select(['copyright', 'externalUrl'])
+        .lean();
+
+      if (!data) {
+        throw new LeemonsError(ctx, {
+          message: 'File not found',
+          httpStatusCode: 404,
+        });
+      }
+
+      return {
+        status: 200,
+        data: { copyright: data.copyright, externalUrl: data.externalUrl },
+      };
+    },
+  },
   /*
       folderRest: {
         rest: {

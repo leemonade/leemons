@@ -18,7 +18,6 @@ import { useHistory } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
 import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
 import { listSessionClassesRequest } from '../../request';
-import { getClassImage } from '../../helpers/getClassImage';
 import { getClassIcon } from '../../helpers/getClassIcon';
 
 const Styles = createStyles((theme) => ({
@@ -29,59 +28,21 @@ const Styles = createStyles((theme) => ({
   cardContainer: {
     backgroundColor: theme.colors.ui02,
   },
-  imageContainer: {
-    position: 'relative',
-    paddingRight: theme.spacing[2],
-  },
-  image: {
-    height: '48px',
-    width: '48px',
-    borderRadius: '50%',
-    backgroundPosition: '50% 50%',
-    backgroundSize: 'cover',
-    backgroundColor: theme.colors.ui02,
-    fontSize: '24px',
-    fontWeight: 600,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    color: '#FFFFFF',
-  },
   cardWrapper: {
     padding: 2,
     paddingRight: 0,
   },
   card: {
-    padding: theme.spacing[6],
-    paddingLeft: theme.spacing[4],
-    paddingRight: theme.spacing[4],
+    padding: theme.spacing[4],
     cursor: 'pointer',
     textAlign: 'center',
     transitionDuration: '100ms',
   },
-  colorIcon: {
-    position: 'absolute',
-    width: '25px',
-    height: '25px',
-    borderRadius: '50%',
-    right: '0px',
-    bottom: '-2px',
-    backgroundColor: theme.colors.uiBackground02,
-    border: '2px solid',
-    borderColor: theme.colors.uiBackground01,
-    color: theme.colors.text07,
-    img: {
-      filter: 'brightness(0) invert(1)',
-    },
+  cardText: {
+    maxWidth: 200,
+    textAlign: 'left',
   },
-  icon: {
-    position: 'absolute',
-    left: '50%',
-    top: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '16px',
-    height: '16px',
-    color: theme.colors.text07,
+  colorIcon: {
     img: {
       filter: 'brightness(0) invert(1)',
     },
@@ -122,32 +83,9 @@ function UserClassesSwiperWidget({ program }) {
 
   return (
     <Box className={styles.root}>
-      <Box
-        sx={(theme) => ({
-          fontSize: '20px',
-          fontWeight: 600,
-          lineHeight: '28px',
-          marginBottom: theme.spacing[4],
-        })}
-      >
-        {t('subjects')}
-      </Box>
-      <Swiper
-        breakAt={{
-          1800: { slidesPerView: 8, spaceBetween: 2 },
-          1600: { slidesPerView: 7, spaceBetween: 2 },
-          1200: { slidesPerView: 6, spaceBetween: 2 },
-          940: { slidesPerView: 5, spaceBetween: 2 },
-          520: { slidesPerView: 4, spaceBetween: 2 },
-          360: { slidesPerView: 3, spaceBetween: 2 },
-        }}
-      >
+      <Swiper slidesPerView={'auto'}>
         {store.classes.map((classe, index) => {
           const dataLabels = getSubjectGroupCourseNamesFromClassData(classe);
-
-          const imageStyle = getClassImage(classe)
-            ? { backgroundImage: `url(${getClassImage(classe)})` }
-            : {};
 
           let nameFirstLetters = null;
           const nameArray = classe.subject.name.split(' ');
@@ -165,42 +103,35 @@ function UserClassesSwiperWidget({ program }) {
               <Stack
                 className={styles.card}
                 alignItems="center"
-                direction="column"
                 spacing={4}
                 fullWidth
                 onClick={() => goClassDashboard(classe)}
               >
-                <Box className={styles.imageContainer}>
-                  <Box
-                    style={
-                      classe.color ? { backgroundColor: classe.color, ...imageStyle } : imageStyle
-                    }
-                    className={styles.image}
-                  >
-                    {!imageStyle && nameFirstLetters}
+                {classe.color || classe.icon ? (
+                  <Box className={styles.colorIcon}>
+                    <AvatarSubject
+                      name={classe.subject.name}
+                      color={classe.color}
+                      icon={getClassIcon(classe)}
+                      size="xxlg"
+                    />
                   </Box>
-
-                  {classe.color || classe.icon ? (
-                    <Box className={styles.colorIcon}>
-                      <AvatarSubject color={classe.color} icon={getClassIcon(classe)} size="md" />
-                    </Box>
-                  ) : null}
-                </Box>
-                <Stack direction="column" spacing={2}>
-                  <Box>
-                    <TextClamp lines={2} showTooltip>
-                      <Text color="primary" strong>
-                        {dataLabels?.subject}
-                      </Text>
-                    </TextClamp>
-                  </Box>
-                  <Box>
-                    <TextClamp lines={1} showTooltip>
-                      <Text size="sm" strong>
-                        {dataLabels?.courseAndGroupParsed}
-                      </Text>
-                    </TextClamp>
-                  </Box>
+                ) : null}
+                <Stack
+                  direction="column"
+                  spacing={0}
+                  justifyContent="start"
+                  alignItems="start"
+                  className={styles.cardText}
+                >
+                  <TextClamp lines={1} showTooltip>
+                    <Text color="primary" strong>
+                      {dataLabels?.subject}
+                    </Text>
+                  </TextClamp>
+                  <TextClamp lines={1} showTooltip>
+                    <Text size="sm">{dataLabels?.courseAndGroupParsed}</Text>
+                  </TextClamp>
                 </Stack>
               </Stack>
             </Box>

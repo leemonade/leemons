@@ -3,14 +3,13 @@ const { styleCell, booleanToYesNoAnswer } = require('./helpers');
 
 const getCreator = (taskAsset, users) => users.find((u) => u.id === taskAsset.fromUser)?.bulkId;
 
-async function createTestsQBanksSheet({
+function createTestsQBanksSheet({
   workbook,
-  qBanks,
+  qBankDetails,
   users,
   programs,
   adminShouldOwnAllAssets,
   subjects,
-  ctx,
 }) {
   const worksheet = workbook.addWorksheet('te_qbanks');
 
@@ -26,6 +25,7 @@ async function createTestsQBanksSheet({
     { header: 'program', key: 'program', width: 20 },
     { header: 'subjects', key: 'subjects', width: 20 },
     { header: 'published', key: 'published', width: 20 },
+    { header: 'hideInLibrary', key: 'hideInLibrary', width: 10 },
   ];
 
   // Headers row
@@ -41,6 +41,7 @@ async function createTestsQBanksSheet({
     program: 'Program',
     subjects: 'Subjects',
     published: 'Published',
+    hideInLibrary: 'Hide in library',
   });
   worksheet.getRow(2).eachCell((cell, colNumber) => {
     if (colNumber === 1) {
@@ -50,21 +51,9 @@ async function createTestsQBanksSheet({
     }
   });
 
-  const versionControlledQbanks = await ctx.call('leebrary.assets.filterByVersionOfType', {
-    assetIds: qBanks.map((a) => a.id),
-    categoryId: qBanks?.[0]?.category?.id,
-  });
-
-  const qBankDetails = await ctx.call('leebrary.assets.getByIds', {
-    ids: versionControlledQbanks,
-    shouldPrepareAssets: true,
-    signedURLExpirationTime: 7 * 24 * 60 * 60, // 7 days
-    withFiles: true,
-  });
-
   return qBankDetails.map((qBank, i) => {
-    let firstSubjectId = qBank.subjects?.[0]?.subject ?? '';
-    if (!firstSubjectId) firstSubjectId = qBank.providerData.subjects?.[0];
+    let subjectId = qBank.subjects?.[0]?.subject ?? '';
+    if (!subjectId) subjectId = qBank.providerData.subjects?.[0];
 
     let _program = qBank.program;
     if (!_program) _program = qBank.providerData.program;
@@ -80,15 +69,18 @@ async function createTestsQBanksSheet({
       cover: qBank.cover,
       tags: qBank.tags?.join(', '),
       creator,
-      program: programs.find((item) => item.id === _program)?.bulkId,
-      subjects: subjects.find((item) => item.id === firstSubjectId)?.bulkId,
+      program: programs.find((item) => item.id === _program)?.bulkId ?? '',
+      subjects: subjects.find((item) => item.id === subjectId)?.bulkId ?? '',
       published: booleanToYesNoAnswer(qBank.providerData.published),
+      hideInLibrary: booleanToYesNoAnswer(!!qBank.hideInLibrary),
     };
     worksheet.addRow(_.omitBy(qBankObject, _.isNil));
 
     return {
       ...qBank,
       bulkId,
+      qBankObject,
+      worksheet,
     };
   });
 }

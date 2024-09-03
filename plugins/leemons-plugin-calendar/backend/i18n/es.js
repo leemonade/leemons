@@ -62,6 +62,11 @@ module.exports = {
     subjectTeacher: 'Profesor',
     subjectClassroom: 'Clase',
     subjectSchedule: 'Horario',
+    currentWeekButtonLabel: 'Semana actual',
+    weekendSelectorNexus: 'a',
+    calendarLegend: 'Leyenda',
+    calendarLegendNonSchoolDay: 'Día no lectivo',
+    taskLabel: 'Tarea',
   },
   event_modal: {
     name: 'Nombre',
@@ -215,6 +220,8 @@ module.exports = {
     description: 'Tareas destacadas que finalizan en menos de 5 días',
     showAllKanban: 'Ver kanban completo',
     new: 'Nuevo',
+    newTask: 'Nueva tarea',
+    addNewTask: 'Crear nueva tarea',
   },
   tabKanban: {
     label: 'Kanban',

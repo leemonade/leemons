@@ -14,7 +14,7 @@ import {
   TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
 import ImagePicker from '@leebrary/components/ImagePicker';
-import { TextEditorInput } from '@bubbles-ui/editors';
+import { TextEditorInput, TEXT_EDITOR_TEXTAREA_TOOLBARS } from '@bubbles-ui/editors';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { ViewOffIcon } from '@bubbles-ui/icons/solid';
@@ -281,6 +281,7 @@ export default function DetailQuestionForm({
                   render={({ field }) => (
                     <TextEditorInput
                       required
+                      toolbars={TEXT_EDITOR_TEXTAREA_TOOLBARS}
                       error={form.formState.errors.question}
                       label={t('questionLabel')}
                       editorStyles={{ minHeight: '96px' }}

@@ -190,6 +190,7 @@ module.exports = {
     passed: 'Aprobado',
     close: 'Cerrar',
     archive: 'Archivar',
+    chatButton: 'Chat',
     closeAction: {
       verbs: {
         opening: 'Empezando',
@@ -508,6 +509,7 @@ module.exports = {
       title: 'Actividad finalizada',
     },
     assignationHeaderButton: 'Ver asignación',
+    goToModuleDashboard: 'Volver al dashboard',
   },
 
   evaluationFeedbackComponent: {

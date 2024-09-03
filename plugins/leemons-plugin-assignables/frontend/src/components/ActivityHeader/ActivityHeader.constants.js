@@ -19,4 +19,5 @@ export const ACTIVITY_HEADER_PROP_TYPES = {
   onTimeout: propTypes.func,
   showStatusBadge: propTypes.bool,
   showAssignmentDetailButton: propTypes.bool,
+  goToModuleDashboard: propTypes.bool,
 };

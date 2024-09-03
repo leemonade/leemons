@@ -1,12 +1,21 @@
-const { keyBy, uniq } = require('lodash');
+const { uniq } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 
-const { getStatusForStudent } = require('./getStatusForStudent');
+const {
+  getStatusForStudent,
+  INSTANCE_STATUS: STUDENT_INSTANCE_STATUS,
+} = require('./getStatusForStudent');
 const {
   getUserPermissionMultiple,
 } = require('../../permissions/instances/users/getUserPermissionMultiple');
-const { getAssignations } = require('../../assignations/getAssignations');
-const { getStatusForTeacher, INSTANCE_STATUS } = require('./getStatusForTeacher');
+const {
+  getStatusForTeacher,
+  INSTANCE_STATUS: TEACHER_INSTANCE_STATUS,
+} = require('./getStatusForTeacher');
+const getInstances = require('./helpers/getInstances');
+const getAssignations = require('./helpers/getAssignations');
+const getClasses = require('./helpers/getClasses');
+const getInstancesById = require('./helpers/getInstancesById');
 
 async function getActivitiesPermissions({ instancesIds, ctx }) {
   const permissions = await getUserPermissionMultiple({
@@ -54,197 +63,15 @@ function handleErrors({ canViewAllActivities, canEditSomeActivities, canEditAllA
 }
 
 async function getTeacherStatus({ instancesIds, ctx }) {
-  const pipeline = (ids) => [
-    {
-      $match: {
-        id: {
-          $in: ids,
-        },
-        deploymentID: ctx.meta.deploymentID,
-        isDeleted: false,
-      },
-    },
-    {
-      $lookup: {
-        from: 'v1::assignables_dates',
-        localField: 'id',
-        foreignField: 'instance',
-        as: 'dates',
-        pipeline: [
-          {
-            $match: {
-              type: 'assignableInstance',
-            },
-          },
-        ],
-      },
-    },
-    {
-      $addFields: {
-        dates: {
-          $arrayToObject: {
-            $map: {
-              input: '$dates',
-              as: 'date',
-              in: {
-                k: '$$date.name',
-                v: '$$date.date',
-              },
-            },
-          },
-        },
-      },
-    },
-    {
-      $lookup: {
-        from: 'v1::assignables_classes',
-        localField: 'id',
-        foreignField: 'assignableInstance',
-        as: 'classes',
-      },
-    },
-    {
-      $addFields: {
-        classes: {
-          $map: {
-            input: '$classes',
-            as: 'class',
-            in: '$$class.class',
-          },
-        },
-      },
-    },
-    {
-      $project: {
-        _id: 0,
-        instance: '$id',
-        dates: '$dates',
-        classes: '$classes',
-        alwaysAvailable: '$alwaysAvailable',
-        requiresScoring: '$requiresScoring',
-        moduleActivities: '$metadata.module.activities',
-      },
-    },
-  ];
+  const { instances, instancesIds: allInstancesIds } = await getInstances({ instancesIds, ctx });
+  const assignations = await getAssignations({ instancesIds: allInstancesIds, ctx });
+  const classes = await getClasses({ instances, ctx });
 
-  const instances = await ctx.tx.db.Instances.aggregate(pipeline(instancesIds));
-
-  const moduleActivitiesIds =
-    instances.flatMap(
-      (instance) => instance.moduleActivities?.map((activity) => activity.id) ?? []
-    ) ?? [];
-
-  const allInstancesIds = [...instancesIds, ...moduleActivitiesIds];
-
-  const moduleActivities = await ctx.tx.db.Instances.aggregate(pipeline(allInstancesIds));
-  instances.push(...moduleActivities);
-
-  const studentsDataPipeline = [
-    {
-      $match: {
-        isDeleted: false,
-        instance: { $in: allInstancesIds },
-      },
-    },
-    {
-      $lookup: {
-        from: 'v1::assignables_dates',
-        localField: 'id',
-        foreignField: 'instance',
-        as: 'dates',
-        pipeline: [
-          {
-            $match: {
-              type: 'assignation',
-            },
-          },
-        ],
-      },
-    },
-    {
-      $addFields: {
-        dates: {
-          $arrayToObject: {
-            $map: {
-              input: '$dates',
-              as: 'date',
-              in: {
-                k: '$$date.name',
-                v: '$$date.date',
-              },
-            },
-          },
-        },
-      },
-    },
-    {
-      $lookup: {
-        from: 'v1::assignables_grades',
-        localField: 'id',
-        foreignField: 'assignation',
-        as: 'grades',
-        pipeline: [
-          {
-            $match: {
-              type: 'main',
-            },
-          },
-        ],
-      },
-    },
-    {
-      $project: {
-        _id: 0,
-        instance: 1,
-        id: 1,
-        user: 1,
-        timestamps: '$dates',
-        grades: {
-          $map: {
-            input: '$grades',
-            as: 'grade',
-            in: '$$grade.subject',
-          },
-        },
-      },
-    },
-    {
-      $group: {
-        _id: '$instance',
-        assignations: { $push: '$$ROOT' },
-      },
-    },
-  ];
-
-  const classesIds = instances.flatMap((instance) => instance.classes);
-  const classesData = await ctx.tx.call('academic-portfolio.classes.classByIds', {
-    ids: classesIds,
-  });
-  const classesById = keyBy(classesData, 'id');
-
-  const assignations = await ctx.tx.db.Assignations.aggregate(studentsDataPipeline);
-
-  const assignationsByInstanceId = keyBy(assignations, '_id', 'assignations');
-  const instancesById = {};
-
-  instances.forEach((instance) => {
-    const instanceData = {
-      id: instance.instance,
-      instance: instance.instance,
-      dates: instance.dates,
-      alwaysAvailable: instance.alwaysAvailable,
-      moduleActivities: instance.moduleActivities,
-      requiresScoring: instance.requiresScoring,
-      assignations: assignationsByInstanceId[instance.instance]?.assignations ?? [],
-    };
-
-    const subjects = instance.classes.map((classroom) => classesById[classroom]?.subject?.id);
-    const requiredGradesCount = uniq(subjects).length;
-
-    instancesById[instance.instance] = {
-      ...instanceData,
-      status: getStatusForTeacher(instanceData, { requiredGradesCount }),
-    };
+  const instancesById = await getInstancesById({
+    instances,
+    assignations,
+    classes,
+    getStatusFn: getStatusForTeacher,
   });
 
   return instancesIds.map((id) => {
@@ -265,16 +92,16 @@ async function getTeacherStatus({ instancesIds, ctx }) {
       const activityStatus = instancesById[activity.id]?.status;
 
       switch (activityStatus) {
-        case INSTANCE_STATUS.EVALUATED:
+        case TEACHER_INSTANCE_STATUS.EVALUATED:
           evaluatedCount++;
           break;
-        case INSTANCE_STATUS.EVALUATING:
+        case TEACHER_INSTANCE_STATUS.EVALUATING:
           evaluatingCount++;
           break;
-        case INSTANCE_STATUS.NEEDS_EVALUATION:
+        case TEACHER_INSTANCE_STATUS.NEEDS_EVALUATION:
           needsEvaluationCount++;
           break;
-        case INSTANCE_STATUS.DID_NOT_FINISH:
+        case TEACHER_INSTANCE_STATUS.DID_NOT_FINISH:
           didNotFinishCount++;
           break;
         default:
@@ -285,13 +112,13 @@ async function getTeacherStatus({ instancesIds, ctx }) {
     let status;
 
     if (moduleActivitiesCount === evaluatedCount) {
-      status = INSTANCE_STATUS.EVALUATED;
+      status = TEACHER_INSTANCE_STATUS.EVALUATED;
     } else if (evaluatingCount || evaluatedCount) {
-      status = INSTANCE_STATUS.EVALUATING;
+      status = TEACHER_INSTANCE_STATUS.EVALUATING;
     } else if (needsEvaluationCount) {
-      status = INSTANCE_STATUS.NEEDS_EVALUATION;
+      status = TEACHER_INSTANCE_STATUS.NEEDS_EVALUATION;
     } else if (didNotFinishCount) {
-      status = INSTANCE_STATUS.DID_NOT_FINISH;
+      status = TEACHER_INSTANCE_STATUS.DID_NOT_FINISH;
     }
 
     return {
@@ -304,29 +131,102 @@ async function getTeacherStatus({ instancesIds, ctx }) {
 }
 
 async function getStudentStatus({ instancesIds, ctx }) {
-  const { userSession } = ctx.meta;
-  const userAgentId = userSession.userAgents[0].id;
-
-  const ids = instancesIds.map((id) => ({
-    instance: id,
-    user: userAgentId,
-  }));
-
+  const { instances, instancesIds: allInstancesIds } = await getInstances({ instancesIds, ctx });
   const assignations = await getAssignations({
-    assignationsIds: ids,
-    fetchInstance: true,
+    instancesIds: allInstancesIds,
+    isStudent: true,
     ctx,
   });
+  const classes = await getClasses({ instances, ctx });
+  const instancesById = await getInstancesById({
+    instances,
+    assignations,
+    classes,
+    getStatusFn: getStatusForStudent,
+  });
 
-  return assignations.map((assignation) => ({
-    instance: assignation.instance.id,
-    assignation: assignation.id,
-    status: getStatusForStudent(assignation, assignation.instance),
-    dates: assignation.instance.dates,
-    alwaysAvailable: assignation.instance.alwaysAvailable,
-    timestamps: assignation.timestamps,
-    _assignation: assignation,
-  }));
+  return instancesIds.map((id) => {
+    const instance = instancesById[id];
+
+    if (!instance?.moduleActivities?.length) {
+      return { ...instance, assignation: instance.assignations[0] };
+    }
+
+    let someLate = false;
+
+    let evaluatedCount = 0;
+    let submittedCount = 0;
+    let closedCount = 0;
+    let startedCount = 0;
+    let openedCount = 0;
+
+    const moduleActivitiesCount = instance.moduleActivities.length;
+
+    instance.moduleActivities.forEach((activity) => {
+      const activityStatus = instancesById[activity.id]?.status;
+
+      switch (activityStatus) {
+        case STUDENT_INSTANCE_STATUS.EVALUATED:
+          evaluatedCount++;
+          submittedCount++;
+          startedCount++;
+          openedCount++;
+          break;
+        case STUDENT_INSTANCE_STATUS.LATE:
+          someLate = true;
+          submittedCount++;
+          startedCount++;
+          openedCount++;
+          break;
+        case STUDENT_INSTANCE_STATUS.SUBMITTED:
+          submittedCount++;
+          startedCount++;
+          openedCount++;
+          break;
+        case STUDENT_INSTANCE_STATUS.CLOSED:
+          closedCount++;
+          startedCount++;
+          openedCount++;
+          break;
+        case STUDENT_INSTANCE_STATUS.STARTED:
+          startedCount++;
+          openedCount++;
+          break;
+        case STUDENT_INSTANCE_STATUS.OPENED:
+          openedCount++;
+          break;
+        default:
+          break;
+      }
+    });
+
+    let status;
+
+    if (moduleActivitiesCount === evaluatedCount) {
+      if (someLate) {
+        status = STUDENT_INSTANCE_STATUS.LATE;
+      } else {
+        status = STUDENT_INSTANCE_STATUS.EVALUATED;
+      }
+    } else if (submittedCount === moduleActivitiesCount) {
+      status = STUDENT_INSTANCE_STATUS.SUBMITTED;
+    } else if (closedCount === moduleActivitiesCount) {
+      status = STUDENT_INSTANCE_STATUS.CLOSED;
+    } else if (startedCount) {
+      status = STUDENT_INSTANCE_STATUS.STARTED;
+    } else if (openedCount) {
+      status = STUDENT_INSTANCE_STATUS.OPENED;
+    } else {
+      status = STUDENT_INSTANCE_STATUS.ASSIGNED;
+    }
+
+    return {
+      ...instance,
+      assignation: instance.assignations[0],
+      timestamps: {},
+      status,
+    };
+  });
 }
 
 /**

@@ -1,24 +1,32 @@
-const existValues = require('./existValues');
 const addValues = require('./addValues');
+const existValues = require('./existValues');
 const updateValues = require('./updateValues');
 
 async function setValues({ locationName, pluginName, values, userAgent, target, ctx }) {
-  const func = {
-    addValues,
-    updateValues,
-  };
-  let functionName = 'addValues';
-  if (await existValues({ locationName, pluginName, target, ctx })) {
-    functionName = 'updateValues';
+  if (!values) {
+    return {};
   }
-  return func[functionName]({
+
+  const payload = {
     locationName,
     pluginName,
     formData: values,
     userAgent,
     target,
     ctx,
-  });
+  };
+
+  let result = {};
+
+  const exist = await existValues({ locationName, pluginName, target, ctx });
+
+  if (exist) {
+    result = await updateValues(payload);
+  } else {
+    result = await addValues(payload);
+  }
+
+  return result;
 }
 
 module.exports = setValues;

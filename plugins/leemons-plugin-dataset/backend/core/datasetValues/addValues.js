@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { LeemonsError } = require('@leemons/error');
 const getSchema = require('../datasetSchema/getSchema');
 const getKeysCanAction = require('./getKeysCanAction');
 const { validateExistValues } = require('../../validations/exists');
@@ -43,7 +44,7 @@ async function addValues({
 
   // ES: Cogemos solos los campos a los que el usuario tiene permiso de edicion
   // EN: We take only the fields to which the user has permission to edit.
-  const goodKeys = await getKeysCanAction({
+  const { goodKeys, optionalKeys } = await getKeysCanAction({
     locationName,
     pluginName,
     userAgent,
@@ -58,12 +59,18 @@ async function addValues({
 
   // EN: Remove id ajv not support name if for a field
   _.forIn(jsonSchema.properties, (p) => {
+    // eslint-disable-next-line no-param-reassign
     delete p.id;
   });
 
   // ES: Comprobamos que los datos cumplen con la validacion
   // EN: We check that the data complies with validation
-  validateDataForJsonSchema({ jsonSchema, data: formData });
+  try {
+    const allowedRequiredKeys = goodKeys.filter((key) => !optionalKeys.includes(key));
+    validateDataForJsonSchema({ jsonSchema, data: formData, allowedRequiredKeys });
+  } catch (error) {
+    throw new LeemonsError(ctx, { message: 'Data does not comply with the schema' });
+  }
 
   const toSave = [];
   _.forIn(formData, (value, key) => {
@@ -76,7 +83,12 @@ async function addValues({
 
   await ctx.tx.db.DatasetValues.insertMany(toSave);
 
-  return formData;
+  const allRequiredCompleted = _.every(
+    jsonSchema.required,
+    (requiredKey) => formData[requiredKey]?.value
+  );
+
+  return { formData, completed: allRequiredCompleted };
 }
 
 module.exports = addValues;

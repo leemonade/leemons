@@ -50,7 +50,7 @@ const s3 = new aws.S3({
 });
 
 // DB CONFIG ·························································································································||
-const localDB = 'leemons'; //! TEMPLAT B ESTÁ EN OTRA BASE DE DATOS dev === 'test', produ === 'leemons'
+const localDB = 'leemons-production-templates'; //! Template B comes from a dev enviroment DB. dev === 'leemons-development-templates', produ === 'leemons-production-templates'
 
 const dbUri =
   process.env.MONGODB_URI || process.env.MONGO_URI || `mongodb://localhost:27017/${localDB}`; // defaults to local db
@@ -260,9 +260,6 @@ const processLoginAndBulkData = async () => {
 
 (async () => {
   try {
-    console.log(
-      'TEMPLATE B SE HIZO EN ENTORNO DEV!!! ASEGURAR QUE DB Y .ENV ESTA APUNTANDO A DONDE TIENE QUE. LAS DEMS EN APP'
-    );
     const templateInfo = TEMPLATES_INFO[templateKey];
 
     if (!templateInfo) {

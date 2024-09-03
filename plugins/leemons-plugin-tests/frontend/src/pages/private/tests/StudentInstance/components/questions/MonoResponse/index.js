@@ -9,7 +9,7 @@ import Responses from './Responses';
 import QuestionNotResponsedWarning from '../../QuestionNotResponsedWarning';
 
 export default function Index(props) {
-  const { styles, saveQuestion, store, question, t, isLast } = props;
+  const { styles, saveQuestion, store, question, t, isLast, isPreviewMode } = props;
 
   function nextStep() {
     if (!store.viewMode) saveQuestion();

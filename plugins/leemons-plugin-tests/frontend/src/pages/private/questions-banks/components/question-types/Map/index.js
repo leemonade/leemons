@@ -11,9 +11,8 @@ import {
   Textarea,
   TextInput,
 } from '@bubbles-ui/components';
-
 import { Controller, useFormContext } from 'react-hook-form';
-import { TextEditorInput } from '@bubbles-ui/editors';
+import { TextEditorInput, TEXT_EDITOR_TEXTAREA_TOOLBARS } from '@bubbles-ui/editors';
 import { useStore } from '@common';
 import { forEach, map } from 'lodash';
 import ImagePicker from '@leebrary/components/ImagePicker';
@@ -101,6 +100,7 @@ export function QuestionMap({ form: _form, t }) {
           render={({ field }) => (
             <TextEditorInput
               {...field}
+              toolbars={TEXT_EDITOR_TEXTAREA_TOOLBARS}
               editorStyles={{ minHeight: '96px' }}
               placeholder={t('explanationPlaceHolder')}
             />

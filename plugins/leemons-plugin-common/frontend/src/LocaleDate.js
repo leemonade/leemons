@@ -18,14 +18,36 @@ function getFormatterKey(locale, options) {
 
 export function LocaleDate({
   date,
-  options = { year: 'numeric', month: '2-digit', day: '2-digit' },
+  options = { year: 'numeric', month: '2-digit', day: '2-digit', type: '' },
 }) {
   const session = useSession();
   const locale = getLocale(session);
-  const key = getFormatterKey(locale, options);
+  let formatOptions = options;
+
+  const capitalize = (str) => str.replace(/(^\w{1})|(\s+\w{1})/g, (letter) => letter.toUpperCase());
+
+  if (options.type === 'agenda') {
+    formatOptions = {
+      ...options,
+      year: undefined,
+      month: 'short',
+      day: 'numeric',
+      weekday: 'short',
+    };
+  }
+
+  const key = getFormatterKey(locale, formatOptions);
 
   if (!formatters[key]) {
     formatters[key] = new Intl.DateTimeFormat([locale, 'default'], options);
+  }
+  const dateParts = formatters[key].formatToParts(new Date(date));
+
+  if (options.type === 'agenda') {
+    const dayPart = dateParts.find((part) => part.type === 'day').value;
+    const monthPart = dateParts.find((part) => part.type === 'month').value;
+    const weekdayPart = dateParts.find((part) => part.type === 'weekday').value;
+    return capitalize(`${dayPart} ${monthPart}, ${weekdayPart}`);
   }
 
   return formatters[key].format(new Date(date));

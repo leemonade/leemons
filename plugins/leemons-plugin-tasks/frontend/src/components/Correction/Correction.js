@@ -5,17 +5,17 @@ import { useHistory } from 'react-router-dom';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 import {
   Box,
+  Tabs,
+  Text,
+  Stack,
+  Button,
+  Select,
+  TabPanel,
+  NumberInput,
+  ContextContainer,
+  VerticalContainer,
   TotalLayoutContainer,
   TotalLayoutStepContainer,
-  Stack,
-  ContextContainer,
-  NumberInput,
-  VerticalContainer,
-  Text,
-  Select,
-  Tabs,
-  TabPanel,
-  Button,
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { PluginComunicaIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
@@ -28,13 +28,11 @@ import { useClassesSubjects } from '@academic-portfolio/hooks';
 import { SubjectItemDisplay } from '@academic-portfolio/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@tasks/helpers';
-import hooks from 'leemons-hooks';
 import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
 import { addSuccessAlert } from '@layout/alert';
-import { ChatDrawer } from '@comunica/components';
 import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
-import RoomService from '@comunica/RoomService';
 import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
+import { useComunica } from '@comunica/context';
 import ConditionalInput from '../Inputs/ConditionalInput';
 import LinkSubmission from './components/LinkSubmission/LinkSubmission';
 
@@ -71,13 +69,13 @@ function useOnEvaluationChange({ form, instance, assignation, subject, evaluatio
     === Save new score ===
   */
   const onSave = ({ visibleToStudent }) => {
-    const { score, feedback, showFeedback } = form.getValues();
+    const formValues = form.getValues();
 
-    if (subject && (!isNil(score) || !requiresScoring)) {
+    if (subject && (!isNil(formValues.score) || !requiresScoring)) {
       const gradeObj = {
         subject,
-        grade: isNil(score) ? null : Number(score),
-        feedback: showFeedback ? feedback : null,
+        grade: isNil(formValues.score) ? null : Number(formValues.score),
+        feedback: formValues.showFeedback ? formValues.feedback : null,
         type: 'main',
         visibleToStudent: !!visibleToStudent,
       };
@@ -88,6 +86,8 @@ function useOnEvaluationChange({ form, instance, assignation, subject, evaluatio
         grades: [gradeObj],
       });
     }
+
+    return null;
   };
 
   /*
@@ -120,9 +120,9 @@ function useOnEvaluationChange({ form, instance, assignation, subject, evaluatio
 function CorrectionSubjectTab({ assignation, instance, subject }) {
   const [t] = useTranslateLoader(prefixPN('task_correction.teacher'));
   const form = useForm();
+  const { openRoom } = useComunica();
 
   const [loading, setLoading] = useState(false);
-  const [chatOpened, setChatOpened] = useState(false);
 
   const room = useAssignationComunicaRoom({ assignation, subject });
 
@@ -136,8 +136,7 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
       <EvaluationFeedback
         assignation={assignation}
         onChatClick={() => {
-          hooks.fireEvent('chat:onRoomOpened', room);
-          setChatOpened(true);
+          openRoom(room);
         }}
         hideChat={!room}
         subject={subject}
@@ -217,8 +216,7 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
           <Button
             variant="link"
             onClick={() => {
-              hooks.fireEvent('chat:onRoomOpened', room);
-              setChatOpened(true);
+              openRoom(room);
             }}
             rightIcon={<PluginComunicaIcon />}
           >
@@ -243,19 +241,6 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
           {t('publish')}
         </Button>
       </Stack>
-
-      {!loading ? (
-        <>
-          <ChatDrawer
-            onClose={() => {
-              hooks.fireEvent('chat:closeDrawer');
-              setChatOpened(false);
-            }}
-            opened={chatOpened}
-            room={room}
-          />
-        </>
-      ) : null}
     </ContextContainer>
   );
 }

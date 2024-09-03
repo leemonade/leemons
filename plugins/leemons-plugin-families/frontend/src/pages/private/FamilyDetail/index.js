@@ -1,8 +1,7 @@
-import * as _ from 'lodash';
-import { useForm } from 'react-hook-form';
 import React, { useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router-dom';
-import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
+
 import {
   Alert,
   Box,
@@ -20,13 +19,19 @@ import {
   TextInput,
   UserDisplayItem,
 } from '@bubbles-ui/components';
+
 // TODO: fix this import from @common plugin
-import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { FamilyChildIcon, SingleActionsGraduateMaleIcon } from '@bubbles-ui/icons/outline';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import prefixPN from '@families/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { useFormWithTheme } from '@common/hooks/useFormWithTheme';
+import { useAsync } from '@common/useAsync';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { PackageManagerService } from '@package-manager/services';
+import RelationSelect from '@families/components/relationSelect';
+import loadable from '@loadable/component';
+import { SearchUserDrawer, UserListBox } from '@families/components/';
+import { constants } from '@families/constants';
+import prefixPN from '@families/helpers/prefixPN';
 import {
   addFamilyRequest,
   detailFamilyRequest,
@@ -35,26 +40,23 @@ import {
   searchUsersRequest,
   updateFamilyRequest,
 } from '@families/request';
-import { constants } from '@families/constants';
-import moment from 'moment';
-import { useAsync } from '@common/useAsync';
-import formWithTheme from '@common/formWithTheme';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
 import hooks from 'leemons-hooks';
-import { PackageManagerService } from '@package-manager/services';
-import RelationSelect from '@families/components/relationSelect';
-import loadable from '@loadable/component';
-import { SearchUserDrawer, UserListBox } from '@families/components/';
+import * as _ from 'lodash';
+import moment from 'moment';
 
 function dynamicImport(component) {
   return loadable(() =>
     import(
-      /* webpackInclude: /(families-emergency-numbers.+)\.js/ */ `@leemons/plugins${component}.js`
+      /* webpackInclude: /(families-emergency-numbers.+)\.js/ */ `@app/plugins${component}.js`
     )
   );
 }
 
-function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = () => {} }) {
+function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = _.noop }) {
   const { t: tCommonForm } = useCommonTranslate('forms');
   const [selectedFilter, setSelectedFilter] = useState('name');
   const [loading, setLoading] = useState(false);
@@ -280,7 +282,7 @@ function Detail() {
   }, [datasetConfig, isEditMode]);
   const datasetProps = useMemo(() => ({ formData: datasetData }), [datasetData]);
 
-  const [form, formActions] = formWithTheme(
+  const [form, formActions] = useFormWithTheme(
     goodDatasetConfig?.jsonSchema,
     goodDatasetConfig?.jsonUI,
     undefined,

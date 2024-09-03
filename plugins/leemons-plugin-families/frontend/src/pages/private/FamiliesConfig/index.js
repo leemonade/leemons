@@ -1,4 +1,6 @@
 import React, { useMemo, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+
 import {
   Button,
   PageContainer,
@@ -13,27 +15,27 @@ import {
   Paper,
   ActionButton,
 } from '@bubbles-ui/components';
+
 // TODO: fix this import from @common plugin
-import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { CheckIcon, AddIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useDatasetItemDrawer } from '@dataset/components/DatasetItemDrawer';
-import { getDatasetSchemaRequest, removeDatasetFieldRequest } from '@dataset/request';
-import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
-import { useHistory } from 'react-router-dom';
-import prefixPN from '@families/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { useAsync } from '@common/useAsync';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
+import { useDatasetItemDrawer } from '@dataset/hooks/useDatasetItemDrawer';
+import { getDatasetSchemaRequest, removeDatasetFieldRequest } from '@dataset/request';
+import prefixPN from '@families/helpers/prefixPN';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { PackageManagerService } from '@package-manager/services';
 import loadable from '@loadable/component';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { PackageManagerService } from '@package-manager/services';
 
 function dynamicImport(component) {
   return loadable(() =>
     import(
-      /* webpackInclude: /(families-emergency-numbers.+)\.js/ */ `@leemons/plugins${component}.js`
+      /* webpackInclude: /(families-emergency-numbers.+)\.js/ */ `@app/plugins${component}.js`
     )
   );
 }

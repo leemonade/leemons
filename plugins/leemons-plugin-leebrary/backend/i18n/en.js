@@ -49,6 +49,7 @@ module.exports = {
       labels: {
         content: 'Content',
         presentation: 'Presentation',
+        findResourcesInExternalProvider: 'Or find images in:',
         other: 'Other',
         title: 'Upload file',
         featuredImage: 'Featured image',
@@ -461,6 +462,7 @@ module.exports = {
     tabs: {
       library: 'Library',
       new: 'New resource',
+      unsplash: 'Unsplash',
     },
     filters: {
       search: {
@@ -528,5 +530,15 @@ module.exports = {
     resources: 'Resources',
     nextActivity: 'Next activity',
     goToModule: 'Module dashboard',
+  },
+  copyright: {
+    by: 'by',
+    on: 'on',
+    types: {
+      photo: 'Photo',
+      image: 'Image',
+    },
+    fullPhotoLink:
+      '<p>Photo by <a href="{authorProfileUrl}">{author}</a> on <a href="{providerUrl}">{provider}</a></p>',
   },
 };

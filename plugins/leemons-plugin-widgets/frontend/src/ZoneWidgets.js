@@ -1,13 +1,19 @@
+import React, { cloneElement, useEffect, useMemo } from 'react';
+
 import { Box } from '@bubbles-ui/components';
 import loadable from '@loadable/component';
 import { isFunction, noop } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { cloneElement, useEffect, useMemo } from 'react';
+
 import ZoneWidgetsBoundary from './ZoneWidgetsBoundary';
 import useZone from './requests/hooks/queries/useZone';
 
-function dynamicImport(pluginName, component) {
-  return loadable(() => import(`@leemons/plugins/${pluginName}/src/widgets/${component}.js`));
+function dynamicImport(pluginName, component, path = 'src/widgets') {
+  return loadable(() =>
+    import(
+      /* webpackInclude: /(src|dist)\/widgets\/.+\.js/ */ `@app/plugins/${pluginName}/${path}/${component}.js`
+    )
+  );
 }
 
 export function useWidgetItemsRenderer({ renderer, widgetItems = [], ErrorBoundary }) {
@@ -15,7 +21,7 @@ export function useWidgetItemsRenderer({ renderer, widgetItems = [], ErrorBounda
     () =>
       new Map(
         widgetItems.map((item) => {
-          const Component = dynamicImport(item.pluginName, item.url);
+          const Component = dynamicImport(item.pluginName, item.url, item.path);
           return [item.id, Component];
         })
       ),

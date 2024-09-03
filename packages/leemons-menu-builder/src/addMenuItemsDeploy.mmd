@@ -1,0 +1,28 @@
+sequenceDiagram
+    participant Plugin as Plugin Service
+    participant MenuBuilder as Menu Builder Service
+    participant DeploymentManager as Deployment Manager
+    participant KeyValue as Key-Value Storage
+    participant MenuItemService as Menu Item Service
+
+    Plugin->>MenuBuilder: Call addMenuItemsDeploy
+    MenuBuilder->>DeploymentManager: Get config (getConfigRest)
+    DeploymentManager-->>MenuBuilder: Return config
+    MenuBuilder->>MenuBuilder: Process items (single or array)
+    loop For each item
+        MenuBuilder->>KeyValue: Check if item exists (hasKey)
+        alt Item doesn't exist or forced reload
+            MenuBuilder->>MenuItemService: Check if menu item exists (exist)
+            MenuItemService-->>MenuBuilder: Return existence status
+            alt Item doesn't exist and not marked for removal
+                MenuBuilder->>MenuItemService: Add menu item (add)
+                MenuItemService-->>MenuBuilder: Confirm addition
+            else Item exists and marked for removal
+                MenuBuilder->>MenuItemService: Remove menu item (remove)
+                MenuItemService-->>MenuBuilder: Confirm removal
+            end
+            MenuBuilder->>KeyValue: Set key for menu item
+        end
+        MenuBuilder->>Plugin: Emit init event for menu item
+    end
+    MenuBuilder-->>Plugin: Return results

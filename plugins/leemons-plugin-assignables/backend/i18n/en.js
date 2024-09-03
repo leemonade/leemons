@@ -191,6 +191,7 @@ module.exports = {
     passed: 'Pass',
     close: 'Close',
     archive: 'Archive',
+    chatButton: 'Chat',
     closeAction: {
       verbs: {
         opening: 'opening',
@@ -510,6 +511,7 @@ module.exports = {
     finished_alert: {
       title: 'Activity finished',
     },
+    goToModuleDashboard: 'Go back to dashboard',
   },
   evaluationFeedbackComponent: {
     contactTeacher: 'Chat with my teacher',

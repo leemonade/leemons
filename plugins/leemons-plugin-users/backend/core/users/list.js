@@ -68,9 +68,13 @@ async function queryUserAgents({ roles, disabled, ctx }) {
   }));
 }
 
-async function list({ page, size, profiles, centers, disabled, ctx, ...queries }) {
+async function list({ page, size, profiles, centers, disabled, ctx, sort, ...queries }) {
   const query = { ...queries };
-  let roles = await queryCenterRoles({ centers, ctx });
+  let roles = null;
+
+  if (centers) {
+    roles = await queryCenterRoles({ centers, ctx });
+  }
 
   if (profiles) {
     const profileRoles = await queryProfileRoles({ profiles, excludeProfiles: [], ctx });
@@ -91,6 +95,7 @@ async function list({ page, size, profiles, centers, disabled, ctx, ...queries }
     model: ctx.tx.db.Users,
     page,
     size,
+    sort,
     query,
   });
 

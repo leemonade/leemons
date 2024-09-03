@@ -1,5 +1,4 @@
 /* eslint-disable no-unreachable */
-import PropTypes from 'prop-types';
 import React, { forwardRef, useEffect, useMemo, useState } from 'react';
 
 import { ActionButton, Box, MultiSelect, Stack, UserDisplayItem } from '@bubbles-ui/components';
@@ -18,6 +17,8 @@ import {
   map,
   uniq,
 } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { getUserAgentsInfoRequest, searchUserAgentsRequest } from '../request';
 
 // EN: The Component for MultiSelect selected values component
@@ -55,7 +56,7 @@ const SelectUserAgent = forwardRef(
       value: inputValue = [],
       onChange = () => {},
       clearable = true,
-      onlyForTeachers = false,
+      omitUsers = [],
       ...props
     },
     ref
@@ -64,6 +65,7 @@ const SelectUserAgent = forwardRef(
     const [store, render] = useStore({
       data: [],
     });
+
     const [, , , getErrorMessage] = useRequestErrorMessage();
 
     // EN: Function triggered on user input for searching users
@@ -78,7 +80,7 @@ const SelectUserAgent = forwardRef(
             email: value,
           },
         };
-        if (profiles && onlyForTeachers) {
+        if (profiles) {
           filters.profile = profiles;
         }
 
@@ -223,7 +225,6 @@ const SelectUserAgent = forwardRef(
               withProfile: true,
             });
 
-
             data = data.userAgents.map((item) => ({
               ...item.user,
               variant: 'rol',
@@ -297,6 +298,10 @@ const SelectUserAgent = forwardRef(
       toData = filter(toData, ({ value }) => !selectedUserAgents.includes(value));
     }
 
+    if (omitUsers) {
+      toData = filter(toData, ({ value }) => !omitUsers.includes(value));
+    }
+
     return (
       <MultiSelect
         {...props}
@@ -337,7 +342,7 @@ SelectUserAgent.propTypes = {
   selectedUsers: PropTypes.any,
   selectedUserAgents: PropTypes.any,
   clearable: PropTypes.bool,
-  onlyForTeachers: PropTypes.bool,
+  omitUsers: PropTypes.array,
 };
 
 SelectUserAgentValueComponent.propTypes = {

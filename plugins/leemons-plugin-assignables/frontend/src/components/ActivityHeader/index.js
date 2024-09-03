@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Box, ImageLoader, TotalLayoutHeader, Stack, Button } from '@bubbles-ui/components';
 
 import { FormProvider, useForm } from 'react-hook-form';
-import { useHistory } from 'react-router-dom';
+import { useHistory, Link } from 'react-router-dom';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import { noop } from 'lodash';
@@ -22,6 +22,7 @@ import {
   ACTIVITY_HEADER_PROP_TYPES,
   ACTIVITY_HEADER_DEFAULT_PROPS,
 } from './ActivityHeader.constants';
+import { ChatDisplay } from './components/ChatDisplay/ChatDisplay';
 
 export default function ActivityHeader({
   assignation,
@@ -39,7 +40,7 @@ export default function ActivityHeader({
   showCloseButtons,
   showAssignmentDetailButton,
   allowEditDeadline,
-
+  goToModuleDashboard = false,
   onTimeout = noop,
 }) {
   const form = useForm();
@@ -52,6 +53,8 @@ export default function ActivityHeader({
 
   const isModule = !!instance?.metadata?.module;
   const isModuleActivity = !!isModule && instance?.metadata?.module?.type !== 'module';
+  const isModulePreview = window?.location?.href?.includes('moduleId');
+  const modulePreviewId = window?.location?.href?.split('moduleId=')[1];
 
   const { data } = useInstances({ id: instance?.metadata?.module?.id, enabled: isModuleActivity });
 
@@ -102,7 +105,9 @@ export default function ActivityHeader({
     return response;
   }, [title, assignable?.asset?.name, instance, showStatusBadge]);
 
-  const { classes } = useTotalLayoutStyles();
+  const hasChat = instance?.metadata?.createComunicaRooms;
+
+  const { classes } = useTotalLayoutStyles({}, { name: 'ActivityHeader' });
 
   const goToAssignmentDetail = () => {
     const url = (
@@ -139,10 +144,16 @@ export default function ActivityHeader({
         cancelable={false}
       >
         <Box className={classes.root}>
+          {goToModuleDashboard && isModulePreview && (
+            <Link to={`/private/learning-paths/modules/${modulePreviewId}/view`}>
+              <Button variant="outline">{t('goToModuleDashboard')}</Button>
+            </Link>
+          )}
           <ClassroomDisplay instance={instance} hidden={!showClass} />
           <Box className={classes.activityMetadata}>
             <ActivityTypeDisplay assignable={assignable} hidden={!showRole} />
             <CalificationTypeDisplay instance={instance} hidden={!showEvaluationType} />
+            {hasChat && <ChatDisplay instance={instance} />}
             <Timer
               assignation={assignation}
               instance={instance}

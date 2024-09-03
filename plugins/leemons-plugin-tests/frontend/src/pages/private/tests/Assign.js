@@ -28,7 +28,6 @@ export default function Assign() {
       metadata: {},
     },
   });
-
   const history = useHistory();
   const params = useParams();
   async function send() {
@@ -158,7 +157,7 @@ export default function Assign() {
       />
       <RulesConfig
         stepName={t('rules')}
-        defaultValues={store.data.metadata}
+        defaultValues={store.data?.metadata?.filters}
         onDeleteConfig={handleDeleteAssignmentConfig}
         onUpdateConfig={handleUpdateAssignmentConfig}
         test={store.test}

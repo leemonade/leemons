@@ -102,7 +102,6 @@ export default function Form({
   onNextStep,
   hasPrevStep,
   hasNextStep,
-
   assignable,
   loading,
   localizations,
@@ -120,9 +119,7 @@ export default function Form({
   showReport,
   showResponses,
   hideShowInCalendar,
-
   scrollRef,
-
   defaultValues,
 }) {
   const form = useForm({
@@ -297,3 +294,32 @@ export default function Form({
     </form>
   );
 }
+
+Form.propTypes = {
+  onPrevStep: PropTypes.func,
+  onNextStep: PropTypes.func,
+  hasPrevStep: PropTypes.bool,
+  hasNextStep: PropTypes.bool,
+  assignable: PropTypes.object,
+  loading: PropTypes.bool,
+  localizations: PropTypes.object,
+  evaluationType: PropTypes.string,
+  evaluationTypes: PropTypes.array,
+  hideMaxTime: PropTypes.bool,
+  hideSectionHeaders: PropTypes.bool,
+  onlyOneSubject: PropTypes.bool,
+  onSubmit: PropTypes.func,
+  showTitle: PropTypes.bool,
+  showThumbnail: PropTypes.bool,
+  showEvaluation: PropTypes.bool,
+  showInstructions: PropTypes.bool,
+  showMessageForStudents: PropTypes.bool,
+  showReport: PropTypes.bool,
+  showResponses: PropTypes.bool,
+  hideShowInCalendar: PropTypes.bool,
+  scrollRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.instanceOf(Element) }),
+  ]),
+  defaultValues: PropTypes.object,
+};
