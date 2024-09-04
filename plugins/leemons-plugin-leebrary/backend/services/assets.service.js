@@ -22,6 +22,7 @@ const { remove } = require('../core/assets/files/remove');
 const { duplicate } = require('../core/assets/duplicate');
 const { prepareAsset } = require('../core/assets/prepareAsset');
 const { filterByVersionOfType } = require('../core/assets/filterByVersion');
+const { list } = require('../core/search');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -111,6 +112,20 @@ module.exports = {
       async handler(ctx) {
         const filters = ctx.params ?? {};
         return ctx.tx.db.Assets.find({ ...filters }).lean();
+      },
+    },
+    list: {
+      async handler(ctx) {
+        const assets = await list({
+          ...ctx.params,
+
+          ctx,
+        });
+
+        return {
+          status: 200,
+          assets,
+        };
       },
     },
   },

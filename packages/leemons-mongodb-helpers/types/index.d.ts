@@ -25,9 +25,11 @@ export function mongoDBPaginate<R = any, M = Model<any>>({
 export function mongoDBPaginateAggregationPipeline({
   page,
   size,
+  path = '$$ROOT',
 }: {
   page: number;
   size: number;
+  path?: string;
 }): Parameters<Model<unknown>['aggregate']>[0];
 
 export const EMPTY_PAGINATED_RESULT: PaginatedQueryResult<any>;
