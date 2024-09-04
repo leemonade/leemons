@@ -17,6 +17,7 @@ import {
   updateClassMany,
   userEnrollments,
   classPublicData,
+  classPublicDataMany,
 } from './classes';
 import { getStudentsByTags } from './common';
 import { updateCycle } from './cycles';
@@ -114,6 +115,7 @@ export const removeStudentFromClassRequest = removeStudentFromClass;
 export const classByIdsRequest = classByIds;
 export const userEnrollmentsRequest = userEnrollments;
 export const classPublicDataRequest = classPublicData;
+export const classPublicDataManyRequest = classPublicDataMany;
 export const createKnowledgeRequest = createKnowledgeArea;
 export const listKnowledgesRequest = listKnowledgeAreas;
 export const updateKnowledgeRequest = updateKnowledgeArea;

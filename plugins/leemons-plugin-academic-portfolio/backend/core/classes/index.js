@@ -7,6 +7,7 @@ const { addInstanceClass } = require('./addInstanceClass');
 const { classByIds } = require('./classByIds');
 const { classDetailForDashboard } = require('./classDetailForDashboard');
 const { getBasicClassesByProgram } = require('./getBasicClassesByProgram');
+const { getClassPublicData } = require('./getClassPublicData');
 const { getClassesUnderProgram } = require('./getClassesUnderProgram');
 const { getClassesUnderProgramCourse } = require('./getClassesUnderProgramCourse');
 const { getTeachersByClass } = require('./getTeachersByClass');
@@ -48,4 +49,5 @@ module.exports = {
   changeClassSubstageBySubject,
   getUserEnrollments,
   setInvitedTeachers,
+  getClassPublicData,
 };

@@ -208,6 +208,14 @@ async function classPublicData(classId) {
   });
 }
 
+async function classPublicDataMany(classIds) {
+  return leemons.api(`v1/academic-portfolio/classes/public-data`, {
+    allAgents: true,
+    method: 'POST',
+    body: { ids: classIds },
+  });
+}
+
 export {
   haveClasses,
   listClasses,
@@ -227,4 +235,5 @@ export {
   classByIds,
   userEnrollments,
   classPublicData,
+  classPublicDataMany,
 };

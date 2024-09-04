@@ -11,7 +11,7 @@ const {
 const { LeemonsValidator } = require('@leemons/validator');
 const { pick } = require('lodash');
 
-const { getUserEnrollments } = require('../../core/classes');
+const { getUserEnrollments, getClassPublicData } = require('../../core/classes');
 const { addClass } = require('../../core/classes/addClass');
 const { addClassStudentsMany } = require('../../core/classes/addClassStudentsMany');
 const { addClassTeachersMany } = require('../../core/classes/addClassTeachersMany');
@@ -495,20 +495,19 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const classData = await classByIds({ ids: ctx.params.id, withProgram: true, ctx });
-      const publicData = {
-        id: classData[0].id,
-        alias: classData[0].alias,
-        classroomId: classData[0].classroomId,
-        classWithoutGroupId: classData[0].classWithoutGroupId,
-        groupAbreviation: classData[0].groups?.abbreviation ?? null,
-        courses: Array.isArray(classData[0].courses)
-          ? classData[0].courses.map(({ id, index }) => ({ id, index }))
-          : [pick(classData[0].courses, ['id', 'index'])],
-        program: { name: classData[0].program.name, id: classData[0].program.id },
-        subject: { name: classData[0].subject.name, id: classData[0].subject.id },
-      };
+      const publicData = await getClassPublicData({ ids: ctx.params.id, ctx });
       return { status: 200, class: publicData };
+    },
+  },
+  classPublicDataManyRest: {
+    rest: {
+      path: '/public-data',
+      method: 'POST',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const publicData = await getClassPublicData({ ids: ctx.params.ids, ctx });
+      return { status: 200, classes: publicData };
     },
   },
 };
