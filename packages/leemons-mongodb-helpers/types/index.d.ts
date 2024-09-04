@@ -1,5 +1,4 @@
 import { FilterQuery, Model, PaginatedQueryResult } from '@leemons/mongodb';
-import { namespace } from '../../../private-plugins/leemons-plugin-communities/backend/src/moleculer.config';
 
 type Params<M = Model<any>, R = object> = {
   model: M;
@@ -21,4 +20,21 @@ export function mongoDBPaginate<R = any, M = Model<any>>({
   options = {},
 }: Params<M, R>): Promise<PaginatedQueryResult<R>> {}
 
+export function mongoDBPaginateAggregationPipeline({
+  page,
+  size,
+}: {
+  page: number;
+  size: number;
+}): Parameters<Model<unknown>['aggregate']>[0];
+
 export const EMPTY_PAGINATED_RESULT: PaginatedQueryResult<any>;
+
+type KeyValueSchema = {
+  id: string;
+  deploymentID: string;
+  key: string;
+  value: any;
+};
+
+export function getKeyValueModel({ modelName }: { modelName: string }): Model<KeyValueSchema>;
