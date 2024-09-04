@@ -22,6 +22,14 @@ export function mongoDBPaginate<R = any, M = Model<any>>({
   options = {},
 }: Params<M, R>): Promise<PaginatedQueryResult<R>>;
 
+export function mongoDBPaginateAggregationPipeline({
+  page,
+  size,
+}: {
+  page: number;
+  size: number;
+}): Parameters<Model<unknown>['aggregate']>[0];
+
 export const EMPTY_PAGINATED_RESULT: PaginatedQueryResult<any>;
 
 export type GetKeyQueryResult<T> = T | undefined;
