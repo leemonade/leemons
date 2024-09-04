@@ -145,6 +145,12 @@ const SelectClass = forwardRef(
       }
     }, [userValue, data]);
 
+    useEffect(() => {
+      if (firstSelected && data?.length > 0 && !userValue) {
+        handleChange(data[0].value);
+      }
+    }, [data, firstSelected, userValue, data]);
+
     const debouncedLoadClasses = useCallback(() => {
       const debouncedFunc = debounce(() => {
         loadClasses();
@@ -167,12 +173,6 @@ const SelectClass = forwardRef(
       mergeSubjectNameWithClass,
       teacherTypeFilter,
     ]);
-
-    useEffect(() => {
-      if (firstSelected && data?.length > 0 && !userValue) {
-        handleChange(data[0].value);
-      }
-    }, [data, firstSelected, userValue, data]);
 
     return (
       <Select

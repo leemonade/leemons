@@ -7,7 +7,16 @@ import { listSubjectsRequest } from '../../request';
 
 const SelectSubject = forwardRef(
   (
-    { program, course, value: userValue, onChange, teacherTypeFilter, firstSelected, ...props },
+    {
+      program,
+      course,
+      value: userValue,
+      onChange,
+      teacherTypeFilter,
+      firstSelected,
+      allowNullValue,
+      ...props
+    },
     ref
   ) => {
     const [data, setData] = useState([]);
@@ -55,6 +64,8 @@ const SelectSubject = forwardRef(
     useEffect(() => {
       if (data.length && userValue) {
         setValue(userValue);
+      } else if (allowNullValue && !userValue) {
+        setValue(null);
       }
     }, [userValue, data]);
 
@@ -91,6 +102,7 @@ SelectSubject.propTypes = {
   onChange: PropTypes.func,
   teacherTypeFilter: PropTypes.string,
   firstSelected: PropTypes.bool,
+  allowNullValue: PropTypes.bool,
 };
 
 export { SelectSubject };
