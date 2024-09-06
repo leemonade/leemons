@@ -31,7 +31,7 @@ async function reloadAllDeployments({ broker, ids = [], reloadRelations, include
       const pluginNames = installedPluginsByDeployment[deployment.id].map((p) => p.pluginName);
       pluginsAndRelations = {
         pluginNames,
-        relationships: allPluginsAndRelations.relationship.filter(
+        relationship: allPluginsAndRelations.relationship.filter(
           (r) => pluginNames.includes(r.fromPluginName) || pluginNames.includes(r.toPluginName)
         ),
       };
