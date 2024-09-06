@@ -1,9 +1,11 @@
 import _ from 'lodash';
 import PropTypes from 'prop-types';
 import React, { createContext, useCallback, useEffect, useState } from 'react';
+import { addErrorAlert } from '@layout/alert';
 import { apiUrl as API_URL, allOriginsUrl as ALL_ORIGINS_URL } from './apiURL';
 
 const context = createContext();
+const CONTENT_TYPE = 'content-type';
 
 export default context;
 export const { Consumer: GlobalConsumer } = context;
@@ -147,7 +149,18 @@ class LeemonsApi {
         this.apiWaitToFinish[waitKey].response = responseCtx.response;
         this.removeWhenNoWaits(waitKey);
       }
-      throw responseCtx.response;
+
+      // Crear un error personalizado que extiende el error original
+      const customError = new Error(responseCtx.response.message || 'LeemonsApiError');
+      Object.assign(customError, responseCtx.response);
+      customError.isLeemonsApiError = true;
+      customError.leemonsApiErrorDetails = {
+        url,
+        options,
+        originalError: responseCtx.response,
+      };
+
+      throw customError;
     }
   };
 
@@ -184,17 +197,17 @@ export function Provider({ children }) {
   const apiContentTypeMiddleware = useCallback((ctx) => {
     if (!ctx.options) ctx.options = {};
     if (ctx.options && !ctx.options.headers) ctx.options.headers = {};
-    if (ctx.options && !ctx.options.headers['content-type'] && !ctx.options.headers['Content-Type'])
-      ctx.options.headers['content-type'] = 'application/json';
+    if (ctx.options && !ctx.options.headers[CONTENT_TYPE] && !ctx.options.headers['Content-Type'])
+      ctx.options.headers[CONTENT_TYPE] = 'application/json';
     if (
       ctx.options &&
       _.isObject(ctx.options.body) &&
-      ctx.options.headers['content-type'] === 'application/json'
+      ctx.options.headers[CONTENT_TYPE] === 'application/json'
     ) {
       ctx.options.body = JSON.stringify(ctx.options.body);
     }
-    if (ctx.options.headers['content-type'] === 'none') {
-      delete ctx.options.headers['content-type'];
+    if (ctx.options.headers[CONTENT_TYPE] === 'none') {
+      delete ctx.options.headers[CONTENT_TYPE];
     }
   }, []);
 
@@ -223,6 +236,23 @@ export function Provider({ children }) {
     api.useReq(apiContentTypeMiddleware);
     api.useReq(apiUrlParserMiddleware);
     api.useRes(apiResponseParserMiddleware);
+
+    const handleUnhandledRejection = (event) => {
+      if (event.reason && event.reason.isLeemonsApiError) {
+        event.preventDefault();
+        if (window.customEnv?.isDev) {
+          addErrorAlert(`[ApiError] ${event.reason.pluginName}`, event.reason.message ?? event.reason.error);
+
+          console.warn('Unhandled Leemons API error:', event.reason);
+        }
+      }
+    };
+
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+
+    return () => {
+      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+    };
   }, []);
 
   let apiUrl = API_URL;

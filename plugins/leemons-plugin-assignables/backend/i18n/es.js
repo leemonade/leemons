@@ -190,6 +190,7 @@ module.exports = {
     passed: 'Aprobado',
     close: 'Cerrar',
     archive: 'Archivar',
+    chatButton: 'Chat',
     closeAction: {
       verbs: {
         opening: 'Empezando',

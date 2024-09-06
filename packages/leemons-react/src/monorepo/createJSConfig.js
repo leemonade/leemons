@@ -54,10 +54,6 @@ module.exports = async function createJsConfig({
         // srcPath = `./${relativePath}/dist/*`;
       }
 
-      if (plugin.name === 'common') {
-        paths[`@${plugin.name}`] = [`./${relativePath}/src/index`];
-      }
-
       paths[pluginName] = [srcPath];
     });
 

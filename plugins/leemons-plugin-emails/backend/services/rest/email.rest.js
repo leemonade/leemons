@@ -10,7 +10,7 @@ const {
 } = require('@leemons/middlewares');
 
 const { LeemonsValidator } = require('@leemons/validator');
-const emailService = require('../../core/email');
+const EmailService = require('../../core/email');
 
 const validateProviderConfigObj = {
   type: 'object',
@@ -51,7 +51,7 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const _providers = await emailService.providers({ ctx });
+      const _providers = await EmailService.providers({ ctx });
       return { providers: _providers };
     },
   },
@@ -121,7 +121,7 @@ module.exports = {
     async handler(ctx) {
       const validator = new LeemonsValidator(validateProviderConfigObj);
       if (validator.validate(ctx.params)) {
-        const provider = await emailService.saveProvider({ ...ctx.params, ctx });
+        const provider = await EmailService.saveProvider({ ...ctx.params, ctx });
         return { status: 200, provider };
       }
       throw validator.error;
@@ -145,11 +145,21 @@ module.exports = {
     async handler(ctx) {
       const validator = new LeemonsValidator(validateRemoveProviderConfigObj);
       if (validator.validate(ctx.params)) {
-        await emailService.removeProvider({ ...ctx.params, ctx });
+        await EmailService.removeProvider({ ...ctx.params, ctx });
 
         return { status: 200 };
       }
       throw validator.error;
+    },
+  },
+  getEmailRest: {
+    rest: {
+      method: 'POST',
+      path: '/get-email',
+    },
+    async handler(ctx) {
+      const email = await EmailService.get({ ...ctx.params, ctx });
+      return { status: 200, email };
     },
   },
 };

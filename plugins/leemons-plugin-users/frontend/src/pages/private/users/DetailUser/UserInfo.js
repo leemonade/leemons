@@ -90,7 +90,12 @@ function UserInfo({ session }) {
                     userAgentIds={userAgents.map(({ id }) => id)}
                   />
                 )}
-                <EnrollUserSummary userId={userId} center={center} viewMode={viewMode} />
+                <EnrollUserSummary
+                  userId={userId}
+                  center={center}
+                  viewMode={viewMode}
+                  isMyProfile
+                />
                 <UserDatasetSummary
                   userAgentIds={userAgents.map(({ id }) => id)}
                   openEditDrawer={!!params.editDataset}

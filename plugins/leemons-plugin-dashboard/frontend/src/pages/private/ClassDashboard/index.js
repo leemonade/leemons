@@ -1,17 +1,12 @@
-/* eslint-disable no-nested-ternary */
+import React, { useContext } from 'react';
+import PropTypes from 'prop-types';
+import { find, map, sortBy } from 'lodash';
+import { useHistory, useParams } from 'react-router-dom';
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
 import { useIsStudent } from '@academic-portfolio/hooks';
 import { classDetailForDashboardRequest } from '@academic-portfolio/request';
-import {
-  Box,
-  createStyles,
-  LoadingOverlay,
-  TabPanel,
-  Tabs,
-  TotalLayoutContainer,
-} from '@bubbles-ui/components';
-// TODO: ClassroomHeaderBar, HeaderBackground, HeaderDropdown comes from '@bubbles-ui/leemons/common';
+import { Box, LoadingOverlay, TabPanel, Tabs, TotalLayoutContainer } from '@bubbles-ui/components';
 import { ClassroomHeaderBar, HeaderDropdown } from '@bubbles-ui/leemons';
 import { getShare, useLocale, useStore } from '@common';
 import prefixPN from '@dashboard/helpers/prefixPN';
@@ -19,95 +14,13 @@ import { LayoutContext } from '@layout/context/layout';
 import { getLocalizations } from '@multilanguage/useTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { ZoneWidgets } from '@widgets';
-import { find, map, sortBy } from 'lodash';
-import PropTypes from 'prop-types';
-import React, { useContext } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
-import { ChatDrawer } from '@comunica/components';
-import hooks from 'leemons-hooks';
 import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
-
-const rightZoneWidth = '320px';
-
-const Styles = createStyles((theme, { hideRightSide, hideStudents, haveScrollBar }) => ({
-  root: {},
-  leftSide: {
-    backgroundColor: '#F8F9FB',
-    width: hideRightSide || hideStudents ? '100%' : `calc(100% - ${rightZoneWidth})`,
-    transition: '300ms',
-    minHeight: '100vh',
-  },
-  rightSide: {
-    width: rightZoneWidth,
-    height: '100vh',
-    position: 'fixed',
-    right: hideRightSide || hideStudents ? `-${rightZoneWidth}` : haveScrollBar ? '14px' : 0,
-    top: 0,
-    backgroundColor: theme.colors.uiBackground02,
-    padding: theme.spacing[4],
-    transition: '300ms',
-    zIndex: 3,
-  },
-  rightSidewidgetsContainer: {
-    paddingTop: theme.spacing[4],
-  },
-  header: {
-    position: 'relative',
-    height: 224 - 56,
-  },
-  dropdown: {
-    position: 'relative',
-    display: 'flex',
-    height: '100%',
-    zIndex: 5,
-    alignItems: 'center',
-    width: 'fit-content',
-    maxWidth: 700,
-    marginLeft: 30,
-  },
-  classBar: {},
-  image: {
-    position: 'relative',
-    backgroundColor: theme.colors.uiBackground02,
-    borderRadius: '50%',
-    height: '80px',
-    width: '80px',
-  },
-  imageColorIcon: {
-    position: 'absolute',
-    top: '50%',
-    right: '0px',
-    transform: 'translate(50%, -50%)',
-    backgroundColor: theme.colors.uiBackground02,
-    height: '32px',
-    width: '32px',
-    borderRadius: '50%',
-  },
-  imageIcon: {
-    position: 'absolute',
-    left: '50%',
-    top: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '12px',
-    height: '12px',
-    color: theme.colors.text07,
-  },
-  headerName: {
-    marginLeft: theme.spacing[5],
-    width: '300px',
-  },
-  widgets: {
-    height: 'calc(100% - 80px)',
-  },
-  widgetTab: {
-    '& > div > div > div:empty': {
-      display: 'none',
-    },
-  },
-}));
+import { useComunica } from '@comunica/context';
+import { ClassDashboardStyles } from './ClassDashboard.styles';
 
 export default function ClassDashboard({ session }) {
   const { layoutState } = useContext(LayoutContext);
+  const { openRoom } = useComunica();
 
   const locale = useLocale();
   const [store, render] = useStore({
@@ -120,7 +33,7 @@ export default function ClassDashboard({ session }) {
   });
   const [classesData, setClassesData] = React.useState([]);
 
-  const { classes: styles } = Styles(
+  const { classes: styles } = ClassDashboardStyles(
     {
       hideRightSide: true, // store.hideRightSide,
       haveScrollBar: store.haveScrollBar,
@@ -197,20 +110,6 @@ export default function ClassDashboard({ session }) {
     render();
   }
 
-  async function onGetRightZone(zone) {
-    store.rightZone = zone;
-    if (zone.widgetItems && zone.widgetItems.length) {
-      const { items } = await getLocalizations({ keys: map(zone.widgetItems, 'properties.label') });
-      store.selectedRightTab = zone.widgetItems[0].id;
-      store.rightWidgetSelect = map(zone.widgetItems, (item) => ({
-        value: item.id,
-        label: items[item.properties.label],
-        icon: <></>,
-      }));
-      render();
-    }
-  }
-
   React.useEffect(() => {
     if (id && (!store.idLoaded || id !== store.idLoaded) && isStudent !== null) init();
   }, [id, isStudent]);
@@ -263,21 +162,7 @@ export default function ClassDashboard({ session }) {
     ({ Component, key, properties }) => (
       <Component {...properties} key={key} classe={store.class} session={session} />
     ),
-    [store.selectedRightTab, store.class, session]
-  );
-
-  const classRightTabs = React.useCallback(
-    ({ Component, key, properties }) =>
-      store.selectedRightTab === key ? (
-        <Component
-          {...properties}
-          widgetsLength={store.rightZone.widgetItems.length}
-          key={key}
-          classe={store.class}
-          session={session}
-        />
-      ) : null,
-    [store.selectedRightTab, store.class, session]
+    [store.class, session]
   );
 
   function onVirtualClassroomOpen() {
@@ -325,9 +210,7 @@ export default function ClassDashboard({ session }) {
               }}
               showChat
               onChat={() => {
-                hooks.fireEvent('chat:onRoomOpened', store.room);
-                store.chatOpened = true;
-                render();
+                openRoom(`academic-portfolio.room.class.${store.idLoaded}`);
               }}
               locale={locale}
               leftSide={
@@ -366,21 +249,6 @@ export default function ClassDashboard({ session }) {
           </Box>
         ) : null}
       </TotalLayoutContainer>
-      {!store.loading ? (
-        <ChatDrawer
-          onClose={() => {
-            hooks.fireEvent('chat:closeDrawer');
-            store.chatOpened = false;
-            render();
-          }}
-          opened={store.chatOpened}
-          onRoomLoad={(room) => {
-            store.room = room;
-            render();
-          }}
-          room={`academic-portfolio.room.class.${store.idLoaded}`}
-        />
-      ) : null}
     </>
   );
 }

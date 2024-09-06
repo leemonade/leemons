@@ -10,7 +10,7 @@ import { Alert, Box, Button, ContextContainer, TextInput } from '@bubbles-ui/com
 import useTranslate from '@multilanguage/useTranslate';
 import prefixPN from '@users/helpers/prefixPN';
 import tLoader from '@multilanguage/helpers/tLoader';
-import { useStore } from '@common';
+import { useSearchParams, useStore } from '@common';
 import { AuthLayout } from '@users/layout/AuthLayout';
 import { AuthContainer } from '@users/components/AuthContainer';
 
@@ -23,6 +23,7 @@ export default function Recover() {
   const t = tLoader(prefixPN('recover'), translations);
 
   const history = useHistory();
+  const paramsEmail = useSearchParams().get('email')?.replace(' ', '+');
 
   const {
     watch,
@@ -30,7 +31,11 @@ export default function Recover() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      email: paramsEmail,
+    },
+  });
 
   register('email', { required: true });
   const email = watch('email');

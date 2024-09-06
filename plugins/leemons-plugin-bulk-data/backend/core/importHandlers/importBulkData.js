@@ -34,7 +34,7 @@ async function getStatusWhenLocal() {
   });
 }
 
-async function shareAssetsWithProfile({ profileId, assets, ctx }) {
+async function shareAssetsWithProfile({ profileId, assets, forcedIsPublicValue, ctx }) {
   if (!profileId) {
     console.error('Could not share asset, no profile id found');
     return;
@@ -54,7 +54,7 @@ async function shareAssetsWithProfile({ profileId, assets, ctx }) {
           assigner: [],
         },
         assetId,
-        isPublic: !!asset.public,
+        isPublic: forcedIsPublicValue ?? !!asset.public,
       })
     );
   });
@@ -249,12 +249,13 @@ async function importBulkData({
       config.qbanks = qbanks;
 
       if (shareLibraryAssetsWithTeacherProfile) {
-        const testsAssets = Object.values(config.tests).map((item) => item.asset);
-        const qbanksAssets = Object.values(config.qbanks).map((item) => item.asset);
+        const testAssets = Object.values(config.tests).map((item) => item.asset);
+        const qbankAssets = Object.values(config.qbanks).map((item) => item.asset);
         await shareAssetsWithProfile({
           profileId: config.profiles.teacher?.id,
           profileSysName: config.profiles.teacher?.sysName,
-          assets: [...testsAssets, ...qbanksAssets],
+          assets: [...testAssets, ...qbankAssets],
+          forcedIsPublicValue: true, // Test & qbank assets are public by creation; we don't have access to the asset object here
           ctx,
         });
       }
@@ -280,11 +281,11 @@ async function importBulkData({
           id: Object.values(config.tasks).map((task) => task.fullId),
         });
 
-        const tasksAssets = tasks.map((item) => item.asset);
+        const taskAssets = tasks.map((item) => item.asset);
         await shareAssetsWithProfile({
           profileId: config.profiles.teacher?.id,
           profileSysName: config.profiles.teacher?.sysName,
-          assets: [...tasksAssets], // If resources and/or statementImage change to be not-public add them here
+          assets: [...taskAssets], // If resources and/or statementImage change to be not-public add them here
           ctx,
         });
       }

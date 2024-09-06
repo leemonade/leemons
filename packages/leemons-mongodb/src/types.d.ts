@@ -1,4 +1,5 @@
-import { CreateOptions, QueryOptions, FilterQuery } from 'mongoose';
+import type { ServiceSchema } from '@leemons/deployment-manager';
+import { CreateOptions,  Connection, Model as MongooseModel, Schema } from 'mongoose';
 
 export { FilterQuery } from 'mongoose';
 
@@ -43,24 +44,30 @@ export type Model<T> = {
   aggregate: AggregateQuery<T>;
 };
 
-export function newModel<T>(
-  connection: Connection,
-  modelName: string,
-  schema: Schema<T, any, any> | Schema<T & Document, any, any>
-): MongooseModel<T>;
-
-export function LeemonsMongoDBMixin(options: any): any;
-
-import { Schema, Connection, Model as MongooseModel } from 'mongoose';
 
 export type NewModelFunction = (
   connection: Connection,
   modelName: string,
   schema: Schema
-) => MongooseModel<any>;
+) => MongooseModel<unknown>;
 
 export const mongoose: typeof import('mongoose');
 export const newModel: NewModelFunction;
+
+type MixinOptions = {
+  waitToRollbackFinishOnError?: boolean;
+  autoDeploymentID?: boolean;
+  autoTransaction?: boolean;
+  autoRollback?: boolean;
+  autoLRN?: boolean;
+  debugTransaction?: boolean;
+  forceLeemonsDeploymentManagerMixinNeedToBeImported?: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  models: Record<string, Model<any>>;
+};
+
+
+export function LeemonsMongoDBMixin(options?: MixinOptions): Partial<ServiceSchema>;
 
 export type LeemonsSchema = {
   id: string;

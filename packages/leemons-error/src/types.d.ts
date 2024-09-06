@@ -6,7 +6,7 @@ interface LeemonsErrorOptions {
   customCode?: string;
   allowedPermissions?: string[];
   ignoreStack?: boolean;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 declare class LeemonsError extends Errors.MoleculerError {

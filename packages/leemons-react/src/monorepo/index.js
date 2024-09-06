@@ -10,7 +10,6 @@ const { saveLockFile } = require('../lockFile');
 const installDeps = require('./installDeps');
 const linkSourceCode = require('./linkSourceCode');
 const createJSConfig = require('./createJSConfig');
-const createEslint = require('./createEsLint');
 
 module.exports = async function generateMonorepo({ plugins, app, outputDir, basePath }) {
   const templateDir = path.resolve(__dirname, '../templates');
@@ -63,12 +62,6 @@ module.exports = async function generateMonorepo({ plugins, app, outputDir, base
   if (basePath) {
     // Re-generate "jsconfig.json" file
     await createJSConfig({
-      plugins,
-      basePath,
-    });
-
-    // Re-generate ".eslintrc.json" file
-    await createEslint({
       plugins,
       basePath,
     });

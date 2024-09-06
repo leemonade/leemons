@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const existValues = require('./existValues');
 const getKeysCanAction = require('./getKeysCanAction');
 const { getValuesForReturn } = require('./getValuesForReturn');
@@ -21,7 +22,10 @@ const { getValuesForReturn } = require('./getValuesForReturn');
  *  @return {Promise<any>} Passed formData
  *  */
 async function getValues({ locationName, pluginName, userAgent, target, keys, ctx }) {
-  if (!(await existValues({ locationName, pluginName, target, ctx }))) return null;
+  const exist = await existValues({ locationName, pluginName, target, ctx });
+  if (!exist) {
+    return null;
+  }
 
   let _keys = keys;
 

@@ -1,9 +1,10 @@
-import loadable from '@loadable/component';
 import React from 'react';
+
+import loadable from '@loadable/component';
 
 function dynamicImport(component) {
   return loadable(() =>
-    import(/* webpackInclude: /(emails-aws-ses.+)\.js/ */ `@leemons/plugins${component}.js`)
+    import(/* webpackInclude: /(emails-aws-ses.+)\.js/ */ `@app/plugins${component}.js`)
   );
 }
 

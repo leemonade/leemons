@@ -1,0 +1,119 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true,
+    "jest": true
+  },
+  "globals": {
+    "leemons": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "standard",
+    "plugin:import/recommended",
+
+    "plugin:react/recommended",
+    // If using the new JSX transform from React 17
+    // https://legacy.reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html#removing-unused-react-imports
+    // "plugin:react/jsx-runtime",
+    "plugin:react-hooks/recommended",
+
+    "plugin:sonarjs/recommended-legacy",
+
+    // Should be the last one: https://github.com/prettier/eslint-config-prettier?tab=readme-ov-file#installation
+    "prettier"
+  ],
+  "settings": {
+    "react": {
+      "version": "detect"
+    },
+    "import/resolver": {
+      "jsconfig": {
+        "config": "jsconfig.json"
+      }
+    }
+  },
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "requireConfigFile": false,
+    "babelOptions": {
+      "babelrc": false,
+      "configFile": false,
+      "presets": ["@babel/preset-env"],
+      "plugins": ["@babel/plugin-syntax-jsx", "@babel/plugin-proposal-export-default-from"]
+    },
+    "ecmaVersion": 2020,
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "plugins": ["sonarjs", "import", "unused-imports"],
+  "rules": {
+    "radix": "off",
+    "no-plusplus": "off",
+    "no-unused-vars": "warn",
+    "no-underscore-dangle": "off",
+    "react/react-in-jsx-scope": "off",
+    "import/no-deprecated": "warn",
+    "import/no-extraneous-dependencies": "off",
+    "import/no-mutable-exports": "error",
+    "import/no-named-as-default": "off",
+    "import/no-dynamic-require": "off",
+    "import/prefer-default-export": "warn",
+    "import/newline-after-import": ["error", { "count": 1, "considerComments": true }],
+    "import/order": [
+      "error",
+      {
+        "newlines-between": "always",
+        "alphabetize": { "order": "asc", "orderImportKind": "asc", "caseInsensitive": false },
+        "pathGroups": [{ "pattern": "react*", "group": "builtin", "position": "before" }],
+        "pathGroupsExcludedImportTypes": []
+      }
+    ],
+    "unused-imports/no-unused-imports": "error"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.ts", "**/*.tsx"],
+      "parser": "@typescript-eslint/parser",
+      "settings": {
+        "import/parsers": {
+          "@typescript-eslint/parser": [".ts", ".tsx"]
+        },
+        "import/resolver": {
+          "typescript": {
+            "project": [
+              "packages/*/tsconfig.json",
+              "plugins/*/*/tsconfig.json",
+              "private-plugins/*/*/tsconfig.json"
+            ]
+          }
+        }
+      },
+      "extends": [
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended"
+      ],
+      "plugins": ["@typescript-eslint"]
+    },
+    {
+      "files": ["**/*.test.js", "**/*.test.ts"],
+      "settings": {
+        "import/parsers": {
+          "@typescript-eslint/parser": [".ts", ".tsx"]
+        },
+        "import/resolver": {
+          "typescript": {
+            "alwaysTryTypes": true,
+            "project": ["private-plugins/*/tsconfig.spec.json"]
+          }
+        }
+      },
+      "rules": {
+        "no-unused-vars": "off",
+        "sonarjs/no-duplicate-string": "off"
+      }
+    }
+  ]
+}

@@ -1,10 +1,14 @@
 {
   "name": "@leemons/error",
   "version": "0.0.41",
-  "description": "",
+  "description": "Leemons Errors handler SDK",
+  "license": "MIT",
   "main": "src/index.js",
   "types": "src/types.d.ts",
-  "keywords": [],
+  "keywords": [
+    "leemons",
+    "sdk"
+  ],
   "author": {
     "email": "hi@leemons.io",
     "name": "Leemons Edtech Solutions",
@@ -21,7 +25,6 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "license": "MIT",
   "devDependencies": {},
   "dependencies": {
     "@leemons/service-name-parser": "0.0.41",
