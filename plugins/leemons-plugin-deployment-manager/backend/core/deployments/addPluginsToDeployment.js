@@ -23,10 +23,11 @@ async function addPluginsToDeployment({ ctx, broker, id, plugins: newPlugins }) 
 
   const { pluginNames, relationship } = await getAllPluginsAndRelations(broker);
   const pluginNamesSet = new Set(pluginNames);
+  const installedPluginsSet = new Set(installedPlugins);
 
-  const pluginsToAdd = installedPlugins
-    .concat(newPlugins)
-    .filter((plugin) => !pluginNamesSet.has(plugin));
+  const pluginsToAdd = newPlugins.filter(
+    (plugin) => !installedPluginsSet.has(plugin) && pluginNamesSet.has(plugin)
+  );
 
   if (pluginsToAdd.length === 0) {
     throw new LeemonsError(ctx, { message: 'Plugins not found' });
