@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { isEmpty } from 'lodash';
+
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import {
   Box,
   Text,
@@ -10,16 +11,18 @@ import {
   HtmlText,
   ContextContainer,
 } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
-import { useIsTeacher } from '@academic-portfolio/hooks';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN as tasksPrefixPN } from '@tasks/helpers/prefixPN';
-import { LibraryDetailContentStyles } from './LibraryDetailContent.styles';
+import { isEmpty } from 'lodash';
+
+import prefixPN from '../../helpers/prefixPN';
+
 import {
   LIBRARY_DETAIL_CONTENT_DEFAULT_PROPS,
   LIBRARY_DETAIL_CONTENT_PROP_TYPES,
 } from './LibraryDetailContent.constants';
-import prefixPN from '../../helpers/prefixPN';
+import { LibraryDetailContentStyles } from './LibraryDetailContent.styles';
 import { DetailContent } from './components/DetailContent/DetailContent';
 
 const LibraryDetailContent = ({
@@ -91,6 +94,7 @@ const LibraryDetailContent = ({
 
   const DetailContentComponent = (
     <DetailContent
+      asset={asset}
       name={name}
       description={description}
       subjectsIds={subjectsIds}

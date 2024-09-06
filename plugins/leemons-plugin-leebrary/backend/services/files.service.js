@@ -4,15 +4,18 @@
  */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+
 const { pluginName } = require('../config/constants');
-const { getServiceModels } = require('../models');
-const restActions = require('./rest/files.rest');
-const { uploadFromSource } = require('../core/files/helpers/uploadFromSource');
+const { duplicate } = require('../core/files/duplicate');
 const { getByIds } = require('../core/files/getByIds');
+const { uploadFromSource } = require('../core/files/helpers/uploadFromSource');
+const { getServiceModels } = require('../models');
+
+const restActions = require('./rest/files.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -37,6 +40,22 @@ module.exports = {
     getByIds: {
       handler(ctx) {
         return getByIds({ ...ctx.params, ctx });
+      },
+    },
+    duplicate: {
+      params: {
+        fileId: { type: 'string' },
+        toFolder: { type: 'string', optional: true },
+      },
+      async handler(ctx) {
+        const { fileId, toFolder } = ctx.params;
+        const files = await getByIds({ fileIds: fileId, ctx });
+
+        if (!files.length) {
+          return null;
+        }
+
+        return duplicate({ file: files[0], toFolder, ctx });
       },
     },
   },

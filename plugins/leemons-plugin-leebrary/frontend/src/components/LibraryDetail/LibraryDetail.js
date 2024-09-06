@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { isFunction } from 'lodash';
+
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import { Box, FileIcon, Stack, Button, TotalLayoutContainer } from '@bubbles-ui/components';
 import {
   AssetBookmarkIcon,
@@ -7,18 +8,19 @@ import {
   AssetTaskIcon,
   PluginCurriculumIcon,
 } from '@bubbles-ui/icons/solid';
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { categoryChecker } from '@leebrary/helpers/categoryChecker';
 import prefixPN from '@leebrary/helpers/prefixPN';
 import useCategories from '@leebrary/request/hooks/queries/useCategories';
-import { categoryChecker } from '@leebrary/helpers/categoryChecker';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { isFunction } from 'lodash';
+
 import { LibraryDetailContent } from '../LibraryDetailContent';
-import { LibraryDetailToolbar } from '../LibraryDetailToolbar';
 import { LibraryDetailPlayer } from '../LibraryDetailPlayer';
-import { LibraryDetailStyles } from './LibraryDetail.styles';
+import { LibraryDetailToolbar } from '../LibraryDetailToolbar';
 import { EditIcon } from '../LibraryDetailToolbar/icons/EditIcon';
 
 import { LIBRARY_DETAIL_DEFAULT_PROPS, LIBRARY_DETAIL_PROP_TYPES } from './LibraryDetail.constants';
+import { LibraryDetailStyles } from './LibraryDetail.styles';
 
 const LibraryDetail = ({
   asset,

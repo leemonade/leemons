@@ -8,5 +8,6 @@
   "sonarlint.connectedMode.project": {
     "connectionId": "leemons",
     "projectKey": "leemonade_leemons"
-  }
+  },
+  "typescript.tsdk": "node_modules/typescript/lib"
 }
