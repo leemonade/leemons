@@ -4,13 +4,22 @@
  */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+
+const {
+  setProfiles,
+  getProfiles,
+  setActiveProvider,
+  getActiveProvider,
+} = require('../core/settings');
 const { getServiceModels } = require('../models');
+
 const restActions = require('./rest/settings.rest');
-const { setProfiles, getProfiles } = require('../core/settings');
+
+const menuBuilderEnableMenuItem = 'menu-builder.menuItem.enable';
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -40,15 +49,22 @@ module.exports = {
     enableAllMenuItems: {
       handler(ctx) {
         return Promise.all([
-          ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('programs') }),
-          ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('profiles') }),
-          ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('subjects') }),
-          ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('tree') }),
+          ctx.tx.call(menuBuilderEnableMenuItem, { key: ctx.prefixPN('programs') }),
+          ctx.tx.call(menuBuilderEnableMenuItem, { key: ctx.prefixPN('profiles') }),
+          ctx.tx.call(menuBuilderEnableMenuItem, { key: ctx.prefixPN('subjects') }),
+          ctx.tx.call(menuBuilderEnableMenuItem, { key: ctx.prefixPN('tree') }),
         ]);
       },
     },
-  },
-  async created() {
-    // mongoose.connect(process.env.MONGO_URI);
+    setActiveProvider: {
+      handler(ctx) {
+        return setActiveProvider({ ...ctx.params, ctx });
+      },
+    },
+    getActiveProvider: {
+      handler(ctx) {
+        return getActiveProvider({ ...ctx.params, ctx });
+      },
+    },
   },
 };

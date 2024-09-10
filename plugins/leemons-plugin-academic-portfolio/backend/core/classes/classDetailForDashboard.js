@@ -1,5 +1,8 @@
-const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
+const _ = require('lodash');
+
+const { getActiveProvider } = require('../settings');
+
 const { classByIds } = require('./classByIds');
 const { listSessionClasses } = require('./listSessionClasses');
 
@@ -31,9 +34,26 @@ async function classDetailForDashboard({ classId, ctx }) {
 
   const teachersById = _.keyBy(teachers, 'id');
 
+  // Meeting URL from provider
+  let providerMeetingUrl = null;
+  const provider = await getActiveProvider({
+    type: 'meeting',
+    ctx,
+  });
+
+  if (provider?.supportedMethods?.getMeetingUrl) {
+    providerMeetingUrl = await ctx.tx.call(
+      `${provider.pluginName}.session.getCurrentMeetingUrlByClass`,
+      {
+        classId,
+      }
+    );
+  }
+
   return {
     classe: {
       ...classe,
+      virtualUrl: providerMeetingUrl ?? classe.virtualUrl,
       students,
       parentStudents,
       hideStudentsToStudents: program.hideStudentsToStudents,

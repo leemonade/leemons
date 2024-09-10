@@ -20,6 +20,7 @@ async function getClassPublicData({ ctx, ids }) {
       maxNumberOfCourses: cls.program?.maxNumberOfCourses,
     },
     subject: { name: cls.subject?.name, id: cls.subject?.id },
+    teachers: cls.teachers,
   }));
 
   return Array.isArray(ids) ? results : results[0];

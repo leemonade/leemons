@@ -1,9 +1,9 @@
+const { getProfiles } = require('../../settings/getProfiles');
 const {
   addPermissionsBetweenStudentsAndTeachers,
 } = require('../addPermissionsBetweenStudentsAndTeachers');
-const { getClassProgram } = require('../getClassProgram');
-const { getProfiles } = require('../../settings/getProfiles');
 const { addPermissionsBetweenTeachers } = require('../addPermissionsBetweenTeachers');
+const { getClassProgram } = require('../getClassProgram');
 
 const ADD_CUSTOM_PERMISSION_USER_AGENT = 'users.permissions.addCustomPermissionToUserAgent';
 
@@ -35,6 +35,17 @@ async function add({ class: _class, teacher, type, ctx }) {
       actionNames: ['view', 'edit'],
     },
   });
+
+  // Permissions for the class main teacher
+  if (type === 'main-teacher') {
+    await ctx.tx.call(ADD_CUSTOM_PERMISSION_USER_AGENT, {
+      userAgentId: teacher,
+      data: {
+        permissionName: `academic-portfolio.class.${_class}.mainTeacher`,
+        actionNames: ['view', 'edit'],
+      },
+    });
+  }
 
   await ctx.tx.call(ADD_CUSTOM_PERMISSION_USER_AGENT, {
     userAgentId: teacher,
