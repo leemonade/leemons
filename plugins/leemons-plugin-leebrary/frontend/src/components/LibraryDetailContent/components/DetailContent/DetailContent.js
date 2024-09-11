@@ -50,9 +50,14 @@ const DetailContent = ({
         </TextClamp>
       )}
 
-      <Box sx={{ display: widgetsLoading ? 'none' : 'block' }}>
+      <Box sx={{
+          marginBlock: 24,
+          '&:empty': { marginBlock: 0 },
+          display: widgetsLoading || !showWidgets ? 'none' : 'block'
+        }}>
         <ZoneWidgets
           zone="leebrary.asset.drawer"
+          container={<React.Fragment />}
           onGetZone={(value) => {
             setShowWidgets(value.widgetItems?.length > 0);
             setWidgetsLoading(false);
@@ -62,15 +67,15 @@ const DetailContent = ({
         </ZoneWidgets>
       </Box>
 
-      <Box style={{ marginTop: 24, marginBottom: 24 }}>
-        {Array.isArray(subjectsIds) &&
-          subjectsIds.length > 0 &&
-          subjectsIds?.map((subject) => (
+      {Array.isArray(subjectsIds) && subjectsIds.length > 0 && (
+        <Box sx={{ marginBlock: 24 }}>
+          {subjectsIds?.map((subject) => (
             <Box key={subject?.subject} className={classes.subjectItem}>
               <SubjectItemDisplay subjectsIds={[subject?.subject]} programId={program} />
             </Box>
           ))}
-      </Box>
+        </Box>
+      )}
       <Stack
         direction="column"
         className={classes.lowerContent}

@@ -53,6 +53,8 @@ export type Asset = {
   program?: string;
   url?: string;
   file?: FileID | File;
+  fileType?: string;
+  fileExtension?: string;
 }
 
 export type PinID = LRN<'leebrary', 'Pin'>;

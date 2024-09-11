@@ -4,26 +4,28 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { LeemonsError } = require('@leemons/error');
-const _ = require('lodash');
+const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const got = require('got');
-const { metascraper } = require('../../core/shared');
+const _ = require('lodash');
+
 
 const { duplicate } = require('../../core/assets/duplicate');
-const { remove } = require('../../core/assets/remove');
-const { getByUser } = require('../../core/assets/getByUser');
+const { getByFile } = require('../../core/assets/files/getByFile');
 const { getByIds } = require('../../core/assets/getByIds');
+const { getByUser } = require('../../core/assets/getByUser');
+const { prepareAsset } = require('../../core/assets/prepareAsset');
+const { remove } = require('../../core/assets/remove');
+const { setAsset } = require('../../core/assets/set');
 const { getByAsset: getPermissions } = require('../../core/permissions/getByAsset');
+const { getByCategory } = require('../../core/permissions/getByCategory');
 const { getUsersByAsset } = require('../../core/permissions/getUsersByAsset');
 const canAssignRole = require('../../core/permissions/helpers/canAssignRole');
-const { getByCategory } = require('../../core/permissions/getByCategory');
-const { search: getByCriteria } = require('../../core/search');
 const { add: addPin } = require('../../core/pins/add');
-const { removeByAsset: removePin } = require('../../core/pins/removeByAsset');
 const { getByUser: getPinsByUser } = require('../../core/pins/getByUser');
-const { setAsset } = require('../../core/assets/set');
-const { prepareAsset } = require('../../core/assets/prepareAsset');
+const { removeByAsset: removePin } = require('../../core/pins/removeByAsset');
+const { search: getByCriteria } = require('../../core/search');
+const { metascraper } = require('../../core/shared');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -397,6 +399,35 @@ module.exports = {
       return {
         status: 200,
         hasPins: pins.length > 0,
+      };
+    },
+  },
+  getByFileRest: {
+    rest: {
+      path: '/by-file/:fileId',
+      method: 'GET',
+    },
+    params: {
+      fileId: { type: 'string' },
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const { fileId } = ctx.params;
+      const assetId = await getByFile({ fileId, ctx });
+      if (!assetId) {
+        throw new LeemonsError(ctx, { message: 'Asset not found', httpStatusCode: 404 });
+      }
+      const [asset] = await getByIds({
+        ids: assetId,
+        ctx,
+        withTags: true,
+        withFiles: true,
+        withCategory: true,
+        checkPermissions: true,
+      });
+      return {
+        status: 200,
+        data: asset,
       };
     },
   },
