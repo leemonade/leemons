@@ -63,7 +63,7 @@ export interface ActionSchema<C = Context> extends Omit<MoleculerActionSchema, '
 
 // Extend the ServiceActionsSchema to use CustomActionSchema
 export type ServiceActionsSchema<S = ServiceSettingSchema> = {
-  [key: string]: ActionSchema | ActionHandler | boolean;
+  [key: string]: ActionSchema<S> | ActionHandler<S> | boolean;
 } & ThisType<Service<S>>;
 
 // Extend the ServiceSchema to use CustomServiceActionsSchema

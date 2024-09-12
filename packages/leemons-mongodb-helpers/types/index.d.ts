@@ -12,7 +12,7 @@ type Params<M extends Model<any> = Model<any>, R = object> = {
   options?: Parameters<M['find']>[2];
 };
 
-export function mongoDBPaginate<R = any, M = Model<any>>({
+export function mongoDBPaginate<R = unknown, M = Model<unknown>>({
   model,
   page,
   size,
@@ -32,7 +32,7 @@ export function mongoDBPaginateAggregationPipeline({
   path?: string;
 }): Parameters<Model<unknown>['aggregate']>[0];
 
-export const EMPTY_PAGINATED_RESULT: PaginatedQueryResult<any>;
+export const EMPTY_PAGINATED_RESULT: PaginatedQueryResult<never>;
 
 export type GetKeyQueryResult<T> = T | undefined;
 export type SetKeyQueryResult = {
