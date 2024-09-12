@@ -10,6 +10,7 @@ async function initWidgets({ ctx }) {
       'dashboard.dashboard.welcome',
       'assignables.dashboard.progress',
       'assignables.dashboard.need-your-attention',
+      'communities.dashboard.communities',
       'calendar.user.program.calendar',
       'calendar.user.program.kanban',
     ],
