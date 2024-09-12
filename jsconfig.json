@@ -104,6 +104,9 @@
       "@mqtt-socket-io/*": [
         "./plugins/leemons-plugin-mqtt-socket-io/frontend/src/*"
       ],
+      "@ms-graph/*": [
+        "./private-plugins/leemons-plugin-ms-graph/frontend/src/*"
+      ],
       "@multilanguage/*": [
         "./plugins/leemons-plugin-multilanguage/frontend/src/*"
       ],
