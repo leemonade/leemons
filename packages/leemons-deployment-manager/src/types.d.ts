@@ -15,10 +15,23 @@ type DB<Models extends Record<string, Model<any>>> = {
 
 interface UserAgent {
   id: string;
+  disabled: boolean;
+  reloadPermissions: boolean;
+  role: string;
+  user: string;
 }
 interface UserSession {
   id: string;
   userAgents: UserAgent[];
+  active: boolean;
+  name: string;
+  surnames: string;
+  email: string;
+  avatar: string;
+  avatarAsset: string;
+  locale: string;
+  gender: string;
+  bithdate: Date;
 }
 
 export type GenericObject = { [name: string]: any };
