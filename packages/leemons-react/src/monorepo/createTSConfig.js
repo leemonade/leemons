@@ -1,18 +1,18 @@
 const fs = require('fs-extra');
 const path = require('path');
 
-const jsConfigFilename = 'jsconfig.json';
-const jsConfigPath = (basePath) => path.resolve(basePath, jsConfigFilename);
+const tsConfigFilename = 'tsconfig.frontend.json';
+const tsConfigPath = (basePath) => path.resolve(basePath, tsConfigFilename);
 
-async function getJsConfig(basePath) {
+async function getTsConfig(basePath) {
   try {
-    const jsConfig = await fs.readJSON(jsConfigPath(basePath));
+    const jsConfig = await fs.readJSON(tsConfigPath(basePath));
 
     if (jsConfig) {
       return jsConfig;
     }
 
-    throw new Error(`${jsConfigFilename} not found`);
+    throw new Error(`${tsConfigFilename} not found`);
   } catch (e) {
     return {
       extends: './tsconfig.base.json',
@@ -21,7 +21,6 @@ async function getJsConfig(basePath) {
         lib: ['DOM', 'DOM.Iterable', 'ESNext'],
         module: 'ESNext',
         jsx: 'react',
-        allowJs: true,
       },
       exclude: ['node_modules'],
       include: ['./plugins/*/frontend/**/*', './private-plugins/*/frontend/**/*'],
@@ -29,15 +28,15 @@ async function getJsConfig(basePath) {
   }
 }
 
-module.exports = async function createJsConfig({
+module.exports = async function createTsConfig({
   plugins,
   basePath = path.resolve(__dirname, '../../../../'),
 }) {
   if (!basePath) {
-    throw new Error(`basePath is required to create ${jsConfigFilename}`);
+    throw new Error(`basePath is required to create ${tsConfigFilename}`);
   }
 
-  const config = await getJsConfig(basePath);
+  const config = await getTsConfig(basePath);
 
   const paths = {};
 
@@ -63,7 +62,7 @@ module.exports = async function createJsConfig({
 
   config.compilerOptions.paths = paths;
 
-  await fs.writeJSON(jsConfigPath(basePath), config, {
+  await fs.writeJSON(tsConfigPath(basePath), config, {
     encoding: 'utf8',
     spaces: 2,
   });
