@@ -15,7 +15,7 @@ async function mongoDBPaginate({ model, page, size, query, columns, sort, option
     queryItems.lean().exec(),
   ]);
 
-  const canGoNextPage = (page || 1) * size < count;
+  const canGoNextPage = (page + 1) * size < count;
 
   return {
     items,
