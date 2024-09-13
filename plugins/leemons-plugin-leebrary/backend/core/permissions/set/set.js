@@ -36,6 +36,7 @@ async function set({
   canAccess,
   deleteMissing,
   removeAllPermissionsFromPreviousOwner = false,
+  ownerUserAgentIds,
   ctx,
 }) {
   try {
@@ -47,7 +48,7 @@ async function set({
 
     // ES: Sacamos que rol (viewer|editor|owner) tiene el usuario actual para el asset que quiere actualizar
     const [assetsRole, assetsData] = await Promise.all([
-      getByAssets({ assetIds, ctx }),
+      getByAssets({ assetIds, ownerUserAgentIds, ctx }),
       getByIds({ ids: assetIds, ctx }),
     ]);
     const assetsDataById = _.keyBy(assetsData, 'id');

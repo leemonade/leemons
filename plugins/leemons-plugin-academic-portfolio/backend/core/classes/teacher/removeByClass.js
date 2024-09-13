@@ -7,19 +7,30 @@ const { removeCustomPermissions } = require('./removeCustomPermissions');
 
 const REMOVE_CUSTOM_PERMISSION_USER_AGENT = 'users.permissions.removeCustomUserAgentPermission';
 
-async function removeByClass({ classIds, soft, removeInvitedTeachers = false, ctx }) {
+async function removeByClass({
+  classIds,
+  soft,
+  removeInvitedTeachers = false,
+  teachersFilter,
+  ctx,
+}) {
   const classeIds = _.isArray(classIds) ? classIds : [classIds];
 
   const programs = await Promise.all(
     _.map(classeIds, (classId) => getClassProgram({ id: classId, ctx }))
   );
 
+  const teacherQuery = {
+    ...(removeInvitedTeachers ? {} : { type: { $ne: 'invited-teacher' } }), // Default behavior
+    ...(teachersFilter ?? {}), // Target specific teachers by UserAgent or/and override default behavior
+  };
+
   const classStudents = await ctx.tx.db.ClassStudent.find({
     class: classeIds,
   }).lean();
   const classTeachers = await ctx.tx.db.ClassTeacher.find({
     class: classeIds,
-    ...(removeInvitedTeachers ? {} : { type: { $ne: 'invited-teacher' } }),
+    ...teacherQuery,
   }).lean();
   if (!classTeachers?.length) return;
 

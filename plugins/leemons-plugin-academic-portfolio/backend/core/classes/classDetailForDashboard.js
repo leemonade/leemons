@@ -6,7 +6,7 @@ const { getActiveProvider } = require('../settings');
 const { classByIds } = require('./classByIds');
 const { listSessionClasses } = require('./listSessionClasses');
 
-async function classDetailForDashboard({ classId, ctx }) {
+async function classDetailForDashboard({ classId, teacherType, ctx }) {
   const { userSession } = ctx.meta;
 
   const hasPermission = await ctx.tx.call('users.permissions.userAgentHasCustomPermission', {
@@ -19,7 +19,7 @@ async function classDetailForDashboard({ classId, ctx }) {
 
   const [classe] = await classByIds({ ids: classId, ctx });
   const [programClasses, students, parentStudents, teachers, program] = await Promise.all([
-    listSessionClasses({ program: classe.program, ctx }),
+    listSessionClasses({ program: classe.program, type: teacherType, ctx }),
     ctx.tx.call('users.users.getUserAgentsInfo', {
       userAgentIds: classe.students,
     }),

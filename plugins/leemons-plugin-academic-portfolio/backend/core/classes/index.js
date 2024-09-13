@@ -20,7 +20,6 @@ const { listSubjectClasses } = require('./listSubjectClasses');
 const { listTeacherClasses } = require('./listTeacherClasses');
 const { removeClassesByIds } = require('./removeClassesByIds');
 const { changeClassSubstageBySubject } = require('./substage/changeClassSubstageBySubject');
-const { setInvitedTeachers } = require('./teacher/setInvitedTeachers');
 const { updateClass } = require('./updateClass');
 const { updateClassMany } = require('./updateClassMany');
 
@@ -48,6 +47,5 @@ module.exports = {
   getClassesUnderProgramCourse,
   changeClassSubstageBySubject,
   getUserEnrollments,
-  setInvitedTeachers,
   getClassPublicData,
 };

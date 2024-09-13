@@ -432,7 +432,11 @@ module.exports = {
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const data = await classDetailForDashboard({ classId: ctx.params.id, ctx });
+      const data = await classDetailForDashboard({
+        classId: ctx.params.id,
+        teacherType: ctx.params.teacherType ? JSON.parse(ctx.params.teacherType) : undefined,
+        ctx,
+      });
       return { status: 200, ...data };
     },
   },

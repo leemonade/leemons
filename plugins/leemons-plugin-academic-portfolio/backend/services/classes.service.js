@@ -19,7 +19,6 @@ const {
   getClassesUnderProgram,
   getClassesUnderProgramCourse,
   getTeachersByClass,
-  setInvitedTeachers,
 } = require('../core/classes');
 const { getByClass } = require('../core/classes/student/getByClass');
 const { getByClassAndUserAgent } = require('../core/classes/student/getByClassAndUserAgent');
@@ -107,11 +106,6 @@ module.exports = {
     teacherGetByClass: {
       handler(ctx) {
         return getTeachersByClass({ ...ctx.params, ctx });
-      },
-    },
-    setInvitedTeachers: {
-      handler(ctx) {
-        return setInvitedTeachers({ ...ctx.params, ctx });
       },
     },
   },

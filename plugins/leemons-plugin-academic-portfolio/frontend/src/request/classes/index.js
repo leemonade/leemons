@@ -162,11 +162,19 @@ async function removeStudentFromClass({ classId, studentId }) {
   });
 }
 
-async function classDetailForDashboard(classId) {
-  return leemons.api(`v1/academic-portfolio/classes/dashboard/${classId}`, {
-    allAgents: true,
-    method: 'GET',
-  });
+async function classDetailForDashboard(classId, teacherType) {
+  const queryParams = new URLSearchParams();
+  if (teacherType !== undefined) {
+    queryParams.append('teacherType', teacherType);
+  }
+
+  return leemons.api(
+    `v1/academic-portfolio/classes/dashboard/${classId}?${queryParams.toString()}`,
+    {
+      allAgents: true,
+      method: 'GET',
+    }
+  );
 }
 
 async function classByIds(classIds) {
