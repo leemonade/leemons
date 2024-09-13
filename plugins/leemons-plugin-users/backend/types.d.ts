@@ -21,5 +21,5 @@ export type UserAgentInfo = {
 export type GetUserAgentInfoParams = {
   userAgentIds: UserAgentID[];
   userColumns: (keyof UserAgentInfo['user'])[];
-  ctx: Context;
+  ctx?: Context;
 };
