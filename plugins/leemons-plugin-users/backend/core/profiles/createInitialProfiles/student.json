@@ -103,10 +103,6 @@
     {
       "permissionName": "academic-calendar.config",
       "actionNames": ["view"]
-    },
-    {
-      "permissionName": "communities.community",
-      "actionNames": ["view", "update", "create", "delete"]
     }
   ],
   "name": "Estudiante",

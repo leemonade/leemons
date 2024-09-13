@@ -127,10 +127,6 @@
     {
       "permissionName": "learning-paths.modules",
       "actionNames": ["view", "update", "create", "delete", "admin"]
-    },
-    {
-      "permissionName": "communities.community",
-      "actionNames": ["view", "update", "create", "delete"]
     }
   ],
   "name": "Docente",
