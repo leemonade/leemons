@@ -64,6 +64,8 @@ export type Context<
   logger: LoggerInstance;
 };
 
+export type AnyContext = Context<unknown, unknown, unknown, unknown>;
+
 export function LeemonsDeploymentManagerMixin(): any;
 
 // Define the custom ActionHandler type
