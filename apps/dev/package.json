@@ -85,6 +85,8 @@
     "leemons-plugin-mqtt-aws-iot": "1.0.35",
     "leemons-plugin-mqtt-aws-iot-frontend-react": "1.0.0",
     "leemons-plugin-mqtt-socket-io-frontend-react": "1.0.0",
+    "leemons-plugin-ms-graph": "0.0.1",
+    "leemons-plugin-ms-graph-frontend-react-private": "1.0.0",
     "leemons-plugin-multilanguage": "1.0.35",
     "leemons-plugin-multilanguage-frontend-react": "1.0.0",
     "leemons-plugin-package-manager-frontend-react": "1.0.0",

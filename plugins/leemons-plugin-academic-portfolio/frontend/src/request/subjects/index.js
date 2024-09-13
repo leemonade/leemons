@@ -1,18 +1,22 @@
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
 import { isString } from 'lodash';
 
-async function listSubjects({ page, size, program, course, onlyArchived }) {
+async function listSubjects({ page, size, program, course, onlyArchived, teacherTypeFilter }) {
   const params = new URLSearchParams({
     page,
     size,
     program,
   });
 
-  if (course !== undefined) {
-    params.append('course', course);
+  if (course?.length) {
+    const normalizedCourse = Array.isArray(course) ? course : [course];
+    params.append('course', JSON.stringify(normalizedCourse));
   }
   if (onlyArchived !== undefined) {
     params.append('onlyArchived', onlyArchived);
+  }
+  if (teacherTypeFilter !== undefined) {
+    params.append('teacherTypeFilter', teacherTypeFilter);
   }
 
   return leemons.api(`v1/academic-portfolio/subjects/subject?${params.toString()}`, {

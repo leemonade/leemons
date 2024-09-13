@@ -1,7 +1,13 @@
-const { LeemonsValidator } = require('@leemons/validator');
 const { LeemonsError } = require('@leemons/error');
+const { LeemonsValidator } = require('@leemons/validator');
 const _ = require('lodash');
 const { isArray } = require('lodash');
+
+const { getCourseIndex } = require('../core/courses/getCourseIndex');
+const { getProgramSubjectDigits } = require('../core/programs/getProgramSubjectDigits');
+const { programHaveMultiCourses } = require('../core/programs/programHaveMultiCourses');
+const { subjectNeedCourseForAdd } = require('../core/subjects/subjectNeedCourseForAdd');
+
 const {
   stringSchema,
   booleanSchema,
@@ -11,13 +17,10 @@ const {
   stringSchemaNullable,
   numberSchema,
 } = require('./types');
-const { programsByIds } = require('../core/programs/programsByIds');
-const { subjectNeedCourseForAdd } = require('../core/subjects/subjectNeedCourseForAdd');
-const { getCourseIndex } = require('../core/courses/getCourseIndex');
-const { getProgramSubjectDigits } = require('../core/programs/getProgramSubjectDigits');
-const { programHaveMultiCourses } = require('../core/programs/programHaveMultiCourses');
 
-const teacherTypes = ['main-teacher', 'associate-teacher'];
+const MAIN_TEACHER_TYPE = 'main-teacher';
+const ASSOCIATE_TEACHER_TYPE = 'associate-teacher';
+const teacherTypes = [MAIN_TEACHER_TYPE, ASSOCIATE_TEACHER_TYPE];
 
 const addProgramSchema = {
   type: 'object',
@@ -387,7 +390,7 @@ const updateSubjectTypeSchema = {
   properties: {
     id: stringSchema,
     name: stringSchema,
-    description: stringSchema,
+    description: stringSchemaNullable,
     groupVisibility: booleanSchema,
     credits_course: integerSchemaNullable,
     credits_program: integerSchemaNullable,
@@ -1044,10 +1047,10 @@ async function validateAddClass({ data, ctx }) {
     });
   }
 
-  // Currently not use case for this
+  // Currently no use case for this
   // if (data.teachers) {
   //   const teachersByType = _.groupBy(data.teachers, 'type');
-  //   if (teachersByType['main-teacher'] && teachersByType['main-teacher'].length > 1) {
+  //   if (teachersByType[MAIN_TEACHER_TYPE] && teachersByType[MAIN_TEACHER_TYPE].length > 1) {
   //     throw new LeemonsError(ctx, { message: 'There can only be one main teacher' });
   //   }
   // }
@@ -1279,8 +1282,8 @@ const updateClassSchema = {
         additionalProperties: true,
       },
     },
-    classroomId: stringSchemaNullable,
-    alias: stringSchemaNullable,
+    classroomId: { type: 'string', nullable: true },
+    alias: { type: 'string', nullable: true },
   },
   required: ['id'],
   additionalProperties: false,
@@ -1296,15 +1299,13 @@ async function validateUpdateClass({ data, ctx }) {
   const classe = await ctx.tx.db.Class.findOne({ id: data.id }).select(['program']).lean();
   const haveMultiCourses = await programHaveMultiCourses({ id: classe.program, ctx });
 
-  if (!haveMultiCourses) {
-    if (isArray(data.course) && data.course.length > 1) {
-      throw new LeemonsError(ctx, { message: 'Class does not have multi courses' });
-    }
+  if (!haveMultiCourses && isArray(data.course) && data.course.length > 1) {
+    throw new LeemonsError(ctx, { message: 'Class does not have multi courses' });
   }
 
   if (data.teachers) {
     const teachersByType = _.groupBy(data.teachers, 'type');
-    if (teachersByType['main-teacher'] && teachersByType['main-teacher'].length > 1) {
+    if (teachersByType[MAIN_TEACHER_TYPE] && teachersByType[MAIN_TEACHER_TYPE].length > 1) {
       throw new LeemonsError(ctx, { message: 'There can only be one main teacher' });
     }
   }

@@ -1,5 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { groupBy, isEmpty, cloneDeep, noop, capitalize } from 'lodash';
+
+import { SubjectItemDisplay } from '@academic-portfolio/components';
+import { getProgramsPublicInfoRequest } from '@academic-portfolio/request';
 import {
   Box,
   Button,
@@ -12,13 +14,13 @@ import {
   Stack,
   Text,
 } from '@bubbles-ui/components';
-import { getProgramsPublicInfoRequest } from '@academic-portfolio/request';
-import { SubjectItemDisplay } from '@academic-portfolio/components';
 import { DownloadIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
+import { SESSIONS_CATEGORY_KEYS } from '@leemons/sessions';
+import { groupBy, isEmpty, cloneDeep, noop, capitalize } from 'lodash';
 
-import { LibraryNavbarItem as NavbarItem } from './LibraryNavbarItem';
-import { LibraryNavbarStyles } from './LibraryNavbar.styles';
 import { LIBRARY_NAVBAR_DEFAULT_PROPS, LIBRARY_NAVBAR_PROP_TYPES } from './LibraryNavbar.constants';
+import { LibraryNavbarStyles } from './LibraryNavbar.styles';
+import { LibraryNavbarItem as NavbarItem } from './LibraryNavbarItem';
 
 const LibraryNavbar = ({
   labels,
@@ -89,6 +91,7 @@ const LibraryNavbar = ({
     'media-files',
     'assignables.scorm',
     'assignables.content-creator',
+    SESSIONS_CATEGORY_KEYS.RECORDING,
   ];
 
   const getSubjectsDropdown = useCallback(() => {

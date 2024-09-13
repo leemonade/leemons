@@ -104,6 +104,7 @@ module.exports = {
   },
   event_mode_event_type: {
     video_link: 'Enlace a videollamada',
+    video_link_view: 'Videollamada',
     add_place: 'Ubicación física',
     add_description: 'Descripción',
   },

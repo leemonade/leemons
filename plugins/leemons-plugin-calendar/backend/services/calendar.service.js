@@ -3,19 +3,23 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const _ = require('lodash');
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsError } = require('@leemons/error');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getServiceModels } = require('../models');
+const _ = require('lodash');
+
 const calendar = require('../core/calendar');
-const events = require('../core/events');
 const eventTypes = require('../core/event-types');
+const events = require('../core/events');
+const { getServiceModels } = require('../models');
 const { validateKeyPrefix } = require('../validations/exists');
+
 const restActions = require('./rest/calendar.rest');
+
+const FORBIDDEN_MESSAGE = 'Access denied from this plugin';
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -50,6 +54,11 @@ module.exports = {
     exist: {
       handler(ctx) {
         return calendar.exist({ ...ctx.params, ctx });
+      },
+    },
+    detailByKey: {
+      handler(ctx) {
+        return calendar.detailByKey({ ...ctx.params, ctx });
       },
     },
     existByKey: {
@@ -88,14 +97,58 @@ module.exports = {
       },
     },
     addEventFromUser: {
-      handler(ctx) {
-        return events.addFromUser({ ...ctx.params, ctx });
+      params: {
+        event: { type: 'object' },
+        ownerUserAgentId: { type: 'string', optional: true },
+      },
+      async handler(ctx) {
+        const { ownerUserAgentId, event } = ctx.params;
+
+        return events.addFromUser({ data: event, ownerUserAgentId, ctx });
+      },
+    },
+    updateEventFromUser: {
+      params: {
+        id: { type: 'string' },
+        event: { type: 'object' },
+        ownerUserAgentId: { type: 'string', optional: true },
+      },
+      async handler(ctx) {
+        const { id, ownerUserAgentId, event } = ctx.params;
+        const {
+          calendarName,
+          userAgents,
+          owners,
+          image,
+          disableDrag,
+          isDeleted,
+          createdAt,
+          updatedAt,
+          deploymentID,
+          deletedAt,
+          _id,
+          __v,
+          ...body
+        } = event;
+
+        return events.updateFromUser({ id, data: body, ownerUserAgentId, ctx });
+      },
+    },
+    removeEventFromUser: {
+      params: {
+        id: { type: 'string' },
+        ownerUserAgentId: { type: 'string', optional: true },
+      },
+      async handler(ctx) {
+        const { id, ownerUserAgentId } = ctx.params;
+
+        return events.removeFromUser({ id, ownerUserAgentId, ctx });
       },
     },
     removeEvent: {
       handler(ctx) {
         if (!ctx.callerPlugin.startsWith('assignables')) {
-          throw new LeemonsError(ctx, { message: 'You can not have access' });
+          throw new LeemonsError(ctx, { message: FORBIDDEN_MESSAGE });
         }
         return events.remove({ ...ctx.params, ctx });
       },
@@ -103,7 +156,7 @@ module.exports = {
     updateEvent: {
       handler(ctx) {
         if (!ctx.callerPlugin.startsWith('assignables')) {
-          throw new LeemonsError(ctx, { message: 'You can not have access' });
+          throw new LeemonsError(ctx, { message: FORBIDDEN_MESSAGE });
         }
         return events.update({ ...ctx.params, ctx });
       },
@@ -118,7 +171,7 @@ module.exports = {
     grantAccessUserAgentToEvent: {
       handler(ctx) {
         if (!ctx.callerPlugin.startsWith('assignables')) {
-          throw new LeemonsError(ctx, { message: 'You can not have access' });
+          throw new LeemonsError(ctx, { message: FORBIDDEN_MESSAGE });
         }
         return events.grantAccessUserAgentToEvent({ ...ctx.params, ctx });
       },
@@ -126,7 +179,7 @@ module.exports = {
     unGrantAccessUserAgentToEvent: {
       handler(ctx) {
         if (!ctx.callerPlugin.startsWith('assignables')) {
-          throw new LeemonsError(ctx, { message: 'You can not have access' });
+          throw new LeemonsError(ctx, { message: FORBIDDEN_MESSAGE });
         }
         return events.unGrantAccessUserAgentToEvent({ ...ctx.params, ctx });
       },

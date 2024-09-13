@@ -5,4 +5,5 @@ export { useUpdateUserProfile } from './useUpdateUserProfile';
 export { useActiveUserAgentsCount } from './useActiveUserAgentsCount';
 export { default as useProfiles } from './useProfiles';
 export { useUserDatasets } from './queries/useUserDatasets';
+export { default as useUserDetails } from './useUserDetails';
 export { default as useUserAgents } from './useUserAgents';

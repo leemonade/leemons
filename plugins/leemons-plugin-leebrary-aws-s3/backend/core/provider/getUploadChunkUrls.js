@@ -1,6 +1,6 @@
 const { getS3AndConfig } = require('./getS3AndConfig');
 
-async function getUploadChunkUrls({ file, nChunks, path, ctx } = {}) {
+async function getUploadChunkUrls({ file, nChunks, partNumber, path, ctx } = {}) {
   let Key = file.uri;
   const query = { fileId: file.id };
 
@@ -16,6 +16,18 @@ async function getUploadChunkUrls({ file, nChunks, path, ctx } = {}) {
 
   const { s3, config } = await getS3AndConfig({ ctx });
 
+  if (partNumber) {
+    const url = await s3.getSignedUrlPromise('uploadPart', {
+      Bucket: config.bucket,
+      Key,
+      PartNumber: partNumber,
+      UploadId: multipartConfig.uploadId,
+      Expires: 60 * 60,
+    });
+
+    return [url];
+  }
+
   const partNumbers = [...Array(nChunks).keys()];
 
   return Promise.all(
@@ -29,21 +41,6 @@ async function getUploadChunkUrls({ file, nChunks, path, ctx } = {}) {
       })
     )
   );
-
-  /*
-const eQuery = { fileId: file.id, partNumber };
-const eSave = { fileId: file.id, partNumber, etag: res.ETag };
-
-if (file.isFolder) {
-  eQuery.path = path;
-  eSave.path = path;
-}
-
-await ctx.tx.db.MultipartEtag.updateOne(eQuery, eSave, { upsert: true });
-
-   */
-
-  return true;
 }
 
 module.exports = { getUploadChunkUrls };

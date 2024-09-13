@@ -1,9 +1,11 @@
 const { LeemonsError } = require('@leemons/error');
 const https = require('https');
-const { finishProviderMultipart: handleProviderMultipart } = require('./handleProviderMultipart');
-const { getMetadataObject } = require('../upload/getMetadataObject');
+
 const { dataForReturnFile } = require('../dataForReturnFile');
 const { createTemp } = require('../upload/createTemp');
+const { getMetadataObject } = require('../upload/getMetadataObject');
+
+const { finishProviderMultipart: handleProviderMultipart } = require('./handleProviderMultipart');
 
 function getStream(url) {
   return new Promise((resolve) => {
@@ -20,10 +22,12 @@ function getStream(url) {
  * @param {Object} params - The parameters object.
  * @param {string} params.fileId - The ID of the file.
  * @param {string} params.path - The path of the file.
+ * @param {string} params.etags - The etags of the parts.
+ * @param {boolean} params.skipMetadata - Whether to skip metadata or not.
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<boolean>} Returns true when finished.
  */
-async function finishMultipart({ fileId, path, etags, ctx }) {
+async function finishMultipart({ fileId, path, etags, skipMetadata, ctx }) {
   const file = await ctx.tx.db.Files.findOne({ id: fileId }).lean();
   if (!file) throw new LeemonsError(ctx, { message: 'No file found' });
 
@@ -33,7 +37,7 @@ async function finishMultipart({ fileId, path, etags, ctx }) {
   }
 
   // Get metadata for the file and update it in DB
-  if (!file.isFolder) {
+  if (!file.isFolder && !skipMetadata) {
     const { contentType, readStream } = await dataForReturnFile({
       id: fileId,
       ctx,
@@ -47,6 +51,7 @@ async function finishMultipart({ fileId, path, etags, ctx }) {
       extension: file.extension,
       ctx,
     });
+
     await ctx.tx.db.Files.findOneAndUpdate({ id: fileId }, { metadata: JSON.stringify(metadata) });
   }
 

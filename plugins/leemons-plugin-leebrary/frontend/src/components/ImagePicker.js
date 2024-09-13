@@ -1,13 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { isEmpty, isString, noop } from 'lodash';
+
 import { Box, Button, ImagePreviewInput, Stack } from '@bubbles-ui/components';
+import { PluginLeebraryIcon } from '@bubbles-ui/icons/outline';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { PluginLeebraryIcon } from '@bubbles-ui/icons/outline';
+import { isEmpty, isString, noop } from 'lodash';
+import PropTypes from 'prop-types';
+
 import prefixPN from '../helpers/prefixPN';
-import { AssetPickerDrawer } from './AssetPickerDrawer';
 import { getFileUrl, prepareAsset } from '../helpers/prepareAsset';
+
+import { AssetPickerDrawer } from './AssetPickerDrawer';
 
 const ImagePicker = ({
   labels,
@@ -21,6 +24,7 @@ const ImagePicker = ({
   returnAsset,
   acceptedFileTypes,
   objectFit,
+  hideChangeButton,
   ...props
 }) => {
   const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
@@ -101,6 +105,7 @@ const ImagePicker = ({
           onShowDrawer={setShowAssetDrawer}
           noPicker
           objectFit={objectFit}
+          hideChangeButton={hideChangeButton}
         />
       </Stack>
 
@@ -131,6 +136,7 @@ ImagePicker.defaultProps = {
   returnAsset: false,
   isPickingACover: false,
   acceptedFileTypes: ['image/*'],
+  hideChangeButton: false,
 };
 ImagePicker.propTypes = {
   labels: PropTypes.shape({
@@ -151,6 +157,7 @@ ImagePicker.propTypes = {
   isPickingACover: PropTypes.bool,
   acceptedFileTypes: PropTypes.array,
   objectFit: PropTypes.string,
+  hideChangeButton: PropTypes.bool,
 };
 
 export { ImagePicker };
