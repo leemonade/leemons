@@ -174,6 +174,7 @@ module.exports = {
     resources: 'Resources',
     students: 'Students',
     progress: 'Progress',
+    allStudentsEvaluated: 'All students evaluated',
     studentProgressTitle: 'Module grades',
     teacherProgressTitle: 'Module average grades',
   },
