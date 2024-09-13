@@ -1,11 +1,13 @@
 const { uniqBy, keyBy } = require('lodash');
-const { getInstance } = require('../../instances/getInstance');
+
 const { validateAssignation } = require('../../helpers/validators/assignation');
-const { sendEmail } = require('../../instances/sendEmail');
+const { getInstance } = require('../../instances/getInstance');
+const scheduleEmail = require('../../instances/sendEmail/scheduleEmail');
+
+const { createComunicaRooms } = require('./helpers/createComunicaRooms');
 const {
   throwIfAnyUserIsAlreadyAssignedToInstance,
 } = require('./helpers/throwIfAnyUserIsAlreadyAssignedToInstance');
-const { createComunicaRooms } = require('./helpers/createComunicaRooms');
 
 async function createAssignation({ assignableInstanceId, users, options, ctx }) {
   validateAssignation(
@@ -73,14 +75,12 @@ async function createAssignation({ assignableInstanceId, users, options, ctx }) 
       'id'
     );
 
-    users.map((user) =>
-      sendEmail({
-        instance,
-        userAgent: userAgentByIds[user],
-        classes: uniqBy(classesData, 'subject.id'),
-        ctx,
-      })
-    );
+    scheduleEmail({
+      instance,
+      userAgents: users.map((user) => userAgentByIds[user]),
+      classes: uniqBy(classesData, 'subject.id'),
+      ctx,
+    });
   }
 }
 

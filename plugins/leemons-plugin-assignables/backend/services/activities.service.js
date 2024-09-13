@@ -1,12 +1,13 @@
 /** @type {import('moleculer').ServiceSchema} */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 
 const { getServiceModels } = require('../models');
+
 const restActions = require('./rest/activities.rest');
 
 module.exports = {
@@ -23,9 +24,5 @@ module.exports = {
   ],
   actions: {
     ...restActions,
-  },
-  // Esto debe eliminarse una vez hecho el merge a microservices/dev
-  async created() {
-    mongoose.connect(process.env.MONGO_URI);
   },
 };
