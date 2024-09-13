@@ -59,7 +59,7 @@ const getOngoingState = ({ students, subjects }) => {
   }
 
   if (evaluatedCount.totalStudentsEvaluated >= evaluatedCount.totalStudents) {
-    return { state: 'allEvaluated' };
+    return { state: 'allEvaluated', ...evaluatedCount };
   }
 
   if (evaluatedCount.totalStudentsEvaluated > 0) {
@@ -68,6 +68,10 @@ const getOngoingState = ({ students, subjects }) => {
 
   if (allStatuses.some((status) => status === 2)) {
     return { state: 'openedButNotStarted' };
+  }
+
+  if (evaluatedCount.totalStudentsFinished === evaluatedCount.totalStudents) {
+    return { state: 'allFinished', ...evaluatedCount };
   }
 
   return null;
