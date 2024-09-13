@@ -1,17 +1,19 @@
 /* eslint-disable no-inner-declarations */
 /* eslint-disable no-await-in-loop */
-const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
+const _ = require('lodash');
 const { map } = require('lodash');
-const { validateSetPermissions } = require('../../validations/forms');
+const { omit } = require('lodash');
+
 const { getByIds } = require('../../assets/getByIds');
 const { update: updateAsset } = require('../../assets/update');
+const { validateSetPermissions } = require('../../validations/forms');
 const { getByAssets } = require('../getByAssets');
+
 const { checkIfRolesExist } = require('./checkIfRolesExist');
-const { handleAddPermissionsToUserAgent } = require('./handleAddPermissionsToUserAgent');
 const { handleAddPermissionsToAsset } = require('./handleAddPermissionsToAsset');
+const { handleAddPermissionsToUserAgent } = require('./handleAddPermissionsToUserAgent');
 const { handleRemoveMissingPermissions } = require('./handleRemoveMissingPermissions');
-const { omit } = require('lodash');
 
 /**
  * Set permissions/roles for userAgents to access a specified assetID
@@ -23,10 +25,20 @@ const { omit } = require('lodash');
  * @param {Object} params.permissions - Permissions object
  * @param {Array} params.canAccess - Array of objects with userAgent and role properties
  * @param {boolean} [params.deleteMissing] - Flag that indicates if missing permissions or user agent permissions should be deleted
+ * @param {boolean} [params.removeAllPermissionsFromPreviousOwner] - Flag that indicates if when changing ownership, owner should not be given editor permissions (which is the default behavior)
  * @param {Object} params.ctx - The moleculer context
  * @returns {Promise<boolean>} - Returns a promise that resolves to a boolean
  */
-async function set({ assetId, isPublic, permissions, canAccess, deleteMissing, ctx }) {
+async function set({
+  assetId,
+  isPublic,
+  permissions,
+  canAccess,
+  deleteMissing,
+  removeAllPermissionsFromPreviousOwner = false,
+  ownerUserAgentIds,
+  ctx,
+}) {
   try {
     const assetIds = _.isArray(assetId) ? assetId : [assetId];
     await validateSetPermissions({ assets: assetIds, permissions, canAccess, isPublic });
@@ -36,7 +48,7 @@ async function set({ assetId, isPublic, permissions, canAccess, deleteMissing, c
 
     // ES: Sacamos que rol (viewer|editor|owner) tiene el usuario actual para el asset que quiere actualizar
     const [assetsRole, assetsData] = await Promise.all([
-      getByAssets({ assetIds, ctx }),
+      getByAssets({ assetIds, ownerUserAgentIds, ctx }),
       getByIds({ ids: assetIds, ctx }),
     ]);
     const assetsDataById = _.keyBy(assetsData, 'id');
@@ -80,6 +92,7 @@ async function set({ assetId, isPublic, permissions, canAccess, deleteMissing, c
         assetIds,
         assetsDataById,
         assetsRoleById,
+        removeAllPermissionsFromPreviousOwner,
         ctx,
       });
     }

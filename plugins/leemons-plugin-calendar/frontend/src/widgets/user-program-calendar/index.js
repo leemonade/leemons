@@ -1,25 +1,31 @@
 /* eslint-disable no-nested-ternary */
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import dayjs from 'dayjs';
+
+import { listSessionClassesRequest } from '@academic-portfolio/request';
 import { Title, Box, Button, createStyles, Stack } from '@bubbles-ui/components';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { useStore } from '@common';
-import prefixPN from '@calendar/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
-import { getCentersWithToken } from '@users/session';
-import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { getCentersWithToken } from '@users/session';
+import dayjs from 'dayjs';
+import PropTypes from 'prop-types';
+
+import getProjectedEvents from '../../helpers/getProjectedEvents';
+import { getCalendarsToFrontendRequest, getScheduleToFrontendRequest } from '../../request';
+
+import { Calendar } from './components/Calendar';
+import { EmptyState } from './components/EmptyState/EmptyState';
+import { WeekEventList } from './components/WeekEventList';
+
+import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import { getCalendarDaysOffToEvents } from '@calendar/helpers/getCalendarDaysOffToEvents';
 import { getEventColor } from '@calendar/helpers/getEventColor';
-import { listSessionClassesRequest } from '@academic-portfolio/request';
 import { getEventsByProgram } from '@calendar/helpers/getEventsByProgram';
-import { getCalendarsToFrontendRequest, getScheduleToFrontendRequest } from '../../request';
-import { EmptyState } from './components/EmptyState/EmptyState';
-import { Calendar } from './components/Calendar';
-import getProjectedEvents from '../../helpers/getProjectedEvents';
-import { WeekEventList } from './components/WeekEventList';
+import prefixPN from '@calendar/helpers/prefixPN';
+import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
+
+
 
 const Styles = createStyles((theme, { inTab }) => ({
   root: {
@@ -125,6 +131,11 @@ function UserProgramCalendar({ inTab, program, classe }) {
     openEventModal();
   };
 
+  const handleOnEventClick = (event) => {
+    store.selectedEvent = event;
+    openEventModal();
+  };
+
   if (!welcomeCompleted && !parsedEvents?.length) {
     return null;
   }
@@ -174,6 +185,7 @@ function UserProgramCalendar({ inTab, program, classe }) {
               calendarConfig={calendarConfig}
               endDate={endDate}
               t={tc}
+              onEventClick={handleOnEventClick}
             />
           </Stack>
         </Box>

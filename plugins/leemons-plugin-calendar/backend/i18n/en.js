@@ -103,7 +103,8 @@ module.exports = {
     },
   },
   event_mode_event_type: {
-    video_link: 'Include a video call link',
+    video_link: 'Include a video call Url',
+    video_link_view: 'Video call',
     add_place: 'Place',
     add_description: 'Description',
   },

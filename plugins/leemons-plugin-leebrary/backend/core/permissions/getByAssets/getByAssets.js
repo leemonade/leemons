@@ -1,11 +1,12 @@
-const { uniqBy, flattenDeep, forEach, findIndex, escapeRegExp } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
+const { uniqBy, flattenDeep, forEach, findIndex, escapeRegExp } = require('lodash');
 
-const getRolePermissions = require('../helpers/getRolePermissions');
-const getAssetPermissionName = require('../helpers/getAssetPermissionName');
 const getAssetIdFromPermissionName = require('../helpers/getAssetIdFromPermissionName');
-const { handleOnlyShared } = require('./handleOnlyShared');
+const getAssetPermissionName = require('../helpers/getAssetPermissionName');
+const getRolePermissions = require('../helpers/getRolePermissions');
+
 const { handleItemPermissions } = require('./handleItemPermissions');
+const { handleOnlyShared } = require('./handleOnlyShared');
 
 /**
  * Retrieves permissions by assets.
@@ -14,23 +15,33 @@ const { handleItemPermissions } = require('./handleItemPermissions');
  * @param {Array<string>} params.assetIds - The IDs of the assets which permissions we want to retrieve.
  * @param {boolean} params.showPublic - Whether to show public assets.
  * @param {boolean} params.onlyShared - Whether to only show shared assets.
+ * @param {Array<string>} params.ownerUserAgentIds - The IDs of the userAgents that are the owners of the assets.
  * @param {MoleculerContext} params.ctx - The moleculer context.
  * @returns {Promise} A promise that resolves with the permissions.
  */
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
-async function getByAssets({ assetIds, showPublic, onlyShared, ctx }) {
+async function getByAssets({ assetIds, showPublic, onlyShared, ownerUserAgentIds, ctx }) {
   const { userSession } = ctx.meta;
   let assetsIds = flattenDeep([assetIds]);
+
+  let ownerUserAgents = [];
+  if (ownerUserAgentIds) {
+    ownerUserAgents = await ctx.tx.call('users.users.getUserAgentsInfo', {
+      userAgentIds: ownerUserAgentIds,
+    });
+  }
+
+  const userAgents = [...ownerUserAgents, ...userSession.userAgents];
 
   try {
     let permissions = [];
     let viewItems = [];
     let editItems = [];
     let assignItems = [];
-    if (userSession?.userAgents) {
+    if (userAgents) {
       permissions = await ctx.tx.call('users.permissions.getUserAgentPermissions', {
-        userAgent: userSession.userAgents,
+        userAgent: userAgents,
         query: {
           $or: assetsIds.map((id) => {
             const rx = escapeRegExp(getAssetPermissionName({ assetId: id, ctx }));
@@ -44,10 +55,10 @@ async function getByAssets({ assetIds, showPublic, onlyShared, ctx }) {
       [permissions, assetsIds] = handleOnlyShared({ permissions, assetsIds });
     }
 
-    if (userSession?.userAgents) {
+    if (userAgents) {
       [viewItems, editItems, assignItems] = await handleItemPermissions({
         assetsIds,
-        userAgents: userSession.userAgents,
+        userAgents,
         ctx,
       });
     }

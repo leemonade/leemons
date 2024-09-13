@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { AvatarSubject, Badge, Box, Divider, Stack, Text, TextClamp } from '@bubbles-ui/components';
+
+import { Button, AvatarSubject, Badge, Box, Divider, Stack, Text, TextClamp } from '@bubbles-ui/components';
 import { LocaleDate, useLocale } from '@common';
 import PropTypes from 'prop-types';
+
 import { DayRowStyles } from './DayRow.styles';
 
 const parseColumnByEvents = (events, date, locale) => {
@@ -26,6 +28,7 @@ const parseColumnByEvents = (events, date, locale) => {
 
       const eventInfo = {
         allDay: event.allDay,
+        originalEvent: event.originalEvent,
       };
 
       if (!event.allDay) {
@@ -52,6 +55,7 @@ const parseColumnByEvents = (events, date, locale) => {
         bgColor: event.color,
         isTask: event.originalEvent?.type === 'calendar.task',
         title: event.title,
+        originalEvent: event.originalEvent,
       };
 
       if (!event.isEndEvent) {
@@ -61,7 +65,7 @@ const parseColumnByEvents = (events, date, locale) => {
   return result;
 };
 
-const DayRow = ({ date, events, calendarWeekdays, t }) => {
+const DayRow = ({ date, events, calendarWeekdays, t, onEventClick }) => {
   const isSchoolDay = !calendarWeekdays?.includes(date.getDay());
   const locale = useLocale();
   const dateWithDayoff = events.filter((event) => event.isDayOff);
@@ -70,10 +74,17 @@ const DayRow = ({ date, events, calendarWeekdays, t }) => {
     { name: 'DayRow' }
   );
   const [preparedEvents, setPreparedEvents] = useState([]);
+
   useEffect(() => {
-    const parsedEvents = parseColumnByEvents(events, date, locale);
-    setPreparedEvents(parsedEvents);
-  }, []);
+    if (events?.length > 0) {
+      console.log('events:', events);
+      const parsedEvents = parseColumnByEvents(events, date, locale);
+      console.log('parsedEvents:', parsedEvents);
+      setPreparedEvents(parsedEvents);
+    } else {
+      setPreparedEvents([]);
+    }
+  }, [events]);
 
   return (
     <Box>
@@ -137,9 +148,11 @@ const DayRow = ({ date, events, calendarWeekdays, t }) => {
               return (
                 <Stack key={index} spacing={2} alignItems="center">
                   <AvatarSubject color={event.bgColor} size="xs" />
-                  <TextClamp lines={1}>
-                    <Text key={index}>{`${isTask} ${event.title}`}</Text>
-                  </TextClamp>
+                  <Button variant="linkInline" onClick={() => onEventClick(event.originalEvent)}>
+                    <TextClamp lines={1}>
+                      <Text key={index}>{`${isTask} ${event.title}`}</Text>
+                    </TextClamp>
+                  </Button>
                 </Stack>
               );
             })}
@@ -155,6 +168,7 @@ DayRow.propTypes = {
   events: PropTypes.array,
   calendarWeekdays: PropTypes.array,
   t: PropTypes.func,
+  onEventClick: PropTypes.func,
 };
 
 export { DayRow };

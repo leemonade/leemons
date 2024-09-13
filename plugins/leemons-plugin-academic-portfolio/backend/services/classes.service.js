@@ -4,12 +4,11 @@
  */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getServiceModels } = require('../models');
-const restActions = require('./rest/class.rest');
+
 const {
   classByIds,
   getBasicClassesByProgram,
@@ -21,10 +20,13 @@ const {
   getClassesUnderProgramCourse,
   getTeachersByClass,
 } = require('../core/classes');
-const { getByClassAndUserAgent } = require('../core/classes/student/getByClassAndUserAgent');
 const { getByClass } = require('../core/classes/student/getByClass');
+const { getByClassAndUserAgent } = require('../core/classes/student/getByClassAndUserAgent');
 const { add: addTeacher } = require('../core/classes/teacher/add');
 const { removeByClass: removeTeachersByClass } = require('../core/classes/teacher/removeByClass');
+const { getServiceModels } = require('../models');
+
+const restActions = require('./rest/class.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {

@@ -1,7 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { get, isArray, isFunction, isNil, keyBy, map } from 'lodash';
+import React, { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+
 import {
   Box,
   Text,
@@ -14,8 +13,11 @@ import {
   ContextContainer,
 } from '@bubbles-ui/components';
 import { EditWriteIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import { Dates } from './components/Dates';
+import { get, isArray, isFunction, isNil, keyBy, map } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { CalendarEventModalStyles } from './CalendarEventModal.styles';
+import { Dates } from './components/Dates';
 
 const REQUIRED_FIELD = 'Field is required';
 const CALENDAR_TYPES = {
@@ -66,6 +68,7 @@ export const CALENDAR_EVENT_MODAL_DEFAULT_PROPS = {
   },
 };
 export const CALENDAR_EVENT_MODAL_PROP_TYPES = {
+  event: PropTypes.object,
   opened: PropTypes.bool,
   onClose: PropTypes.func,
   onRemove: PropTypes.func,
@@ -112,6 +115,7 @@ function CalendarEventModal(props) {
     locale,
     UsersComponent,
     form: formProp,
+    event,
   } = props;
 
   const [canEdit, setCanEdit] = React.useState(false);
@@ -138,9 +142,10 @@ function CalendarEventModal(props) {
   const calendar = watch('calendar');
   const hideInCalendar = watch('data.hideInCalendar');
   const hideCalendarField = watch('data.hideCalendarField');
+  const hideGuests = watch('data.hideGuests');
   const type = watch('type');
   const eventTypesByValue = keyBy(selectData.eventTypes, 'value');
-  const config = eventTypesByValue[type]?.config;
+  const config = { ...(eventTypesByValue[type]?.config || {}), ...(event?.data?.config || {}) };
 
   React.useEffect(() => {
     const subscription = watch((value, { name }) => {
@@ -182,6 +187,8 @@ function CalendarEventModal(props) {
     return isNew ? messages.newEvent : messages.detailEvent;
   };
 
+  const hasCard = useMemo(() => !!components?.card, [components]);
+
   return (
     <Drawer size={'sm'} className={classes.root} onClose={onClose} opened={opened}>
       <Drawer.Header title={titleDrawer()}>
@@ -191,7 +198,7 @@ function CalendarEventModal(props) {
               <ActionButton icon={<EditWriteIcon width={18} height={18} />} onClick={onEdit} />
             ) : null}
 
-            {!isNew && (!fromCalendar || isOwner) ? (
+            {!isNew && isOwner ? (
               <ActionButton icon={<DeleteBinIcon width={18} height={18} />} onClick={onRemove} />
             ) : null}
           </Box>
@@ -199,9 +206,16 @@ function CalendarEventModal(props) {
       </Drawer.Header>
       <Drawer.Content>
         <form autoComplete="off">
-          <ContextContainer spacing={8}>
-            <ContextContainer spacing={4}>
-              <Controller
+          {hasCard && (
+            <Box>
+              <components.card {...event.data} />
+            </Box>
+          )}
+
+          <ContextContainer>
+            {!hasCard && (
+              <ContextContainer>
+                <Controller
                 name="title"
                 control={control}
                 rules={{
@@ -233,7 +247,7 @@ function CalendarEventModal(props) {
               />
 
               {!forceType ? (
-                <ContextContainer spacing={4}>
+                <ContextContainer>
                   <Controller
                     name="type"
                     control={control}
@@ -259,9 +273,10 @@ function CalendarEventModal(props) {
                   />
                 </ContextContainer>
               ) : null}
-            </ContextContainer>
+              </ContextContainer>
+            )}
 
-            <ContextContainer spacing={4}>
+            <ContextContainer>
               <Dates
                 {...props}
                 form={form}
@@ -274,7 +289,7 @@ function CalendarEventModal(props) {
               />
             </ContextContainer>
 
-            <ContextContainer spacing={4}>
+            <ContextContainer>
               <Component
                 isEditing={true}
                 allFormData={watch()}
@@ -384,7 +399,7 @@ function CalendarEventModal(props) {
                 />
               </ContextContainer>
             ) : null}
-            {disabled && form.getValues('users')?.length ? (
+            {disabled && !hideGuests && form.getValues('users')?.length ? (
               <ContextContainer spacing={2}>
                 <Text size="lg" strong>
                   {messages.usersDisabled}

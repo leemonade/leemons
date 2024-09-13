@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+
 import {
   LIBRARY_CARD_DEADLINE_PROP_TYPES,
   LIBRARY_CARD_MENU_ITEM,
@@ -82,6 +83,7 @@ export const LIBRARY_CARD_PROP_TYPES = {
   variantIcon: PropTypes.any,
   variantTitle: PropTypes.string,
   fullHeight: PropTypes.bool,
+  autoHeight: PropTypes.bool,
   excludeMetadatas: PropTypes.arrayOf(PropTypes.string),
   providerData: PropTypes.shape({
     published: PropTypes.bool,

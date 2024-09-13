@@ -1,7 +1,155 @@
 {
-  "extends": "./tsconfig.frontend.json",
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "allowJs": true
+    "target": "ESNext",
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "module": "ESNext",
+    "jsx": "react",
+    "allowJs": true,
+    "paths": {
+      "@academic-calendar/*": [
+        "./plugins/leemons-plugin-academic-calendar/frontend/src/*"
+      ],
+      "@academic-portfolio/*": [
+        "./plugins/leemons-plugin-academic-portfolio/frontend/src/*"
+      ],
+      "@admin/*": [
+        "./plugins/leemons-plugin-admin/frontend/src/*"
+      ],
+      "@assignables/*": [
+        "./plugins/leemons-plugin-assignables/frontend/src/*"
+      ],
+      "@attendance-control/*": [
+        "./plugins/leemons-plugin-attendance-control/frontend/src/*"
+      ],
+      "@board-messages/*": [
+        "./plugins/leemons-plugin-board-messages/frontend/src/*"
+      ],
+      "@calendar/*": [
+        "./plugins/leemons-plugin-calendar/frontend/src/*"
+      ],
+      "@client-manager/*": [
+        "./private-plugins/leemons-plugin-client-manager/frontend/src/*"
+      ],
+      "@common/*": [
+        "./plugins/leemons-plugin-common/frontend/src/*"
+      ],
+      "@comunica/*": [
+        "./private-plugins/leemons-plugin-comunica/frontend/src/*"
+      ],
+      "@content-creator/*": [
+        "./plugins/leemons-plugin-content-creator/frontend/src/*"
+      ],
+      "@curriculum/*": [
+        "./plugins/leemons-plugin-curriculum/frontend/src/*"
+      ],
+      "@dashboard/*": [
+        "./plugins/leemons-plugin-dashboard/frontend/src/*"
+      ],
+      "@dataset/*": [
+        "./plugins/leemons-plugin-dataset/frontend/src/*"
+      ],
+      "@deployment-manager/*": [
+        "./plugins/leemons-plugin-deployment-manager/frontend/src/*"
+      ],
+      "@emails/*": [
+        "./plugins/leemons-plugin-emails/frontend/src/*"
+      ],
+      "@emails-aws-ses/*": [
+        "./plugins/leemons-plugin-emails-aws-ses/frontend/src/*"
+      ],
+      "@emails-smtp/*": [
+        "./plugins/leemons-plugin-emails-smtp/frontend/src/*"
+      ],
+      "@families/*": [
+        "./plugins/leemons-plugin-families/frontend/src/*"
+      ],
+      "@families-emergency-numbers/*": [
+        "./plugins/leemons-plugin-families-emergency-numbers/frontend/src/*"
+      ],
+      "@feedback/*": [
+        "./plugins/leemons-plugin-feedback/frontend/src/*"
+      ],
+      "@fundae/*": [
+        "./plugins/leemons-plugin-fundae/frontend/src/*"
+      ],
+      "@grades/*": [
+        "./plugins/leemons-plugin-grades/frontend/src/*"
+      ],
+      "@layout/*": [
+        "./plugins/leemons-plugin-layout/frontend/src/*"
+      ],
+      "@learning-paths/*": [
+        "./plugins/leemons-plugin-learning-paths/frontend/src/*"
+      ],
+      "@leebrary/*": [
+        "./plugins/leemons-plugin-leebrary/frontend/src/*"
+      ],
+      "@leebrary-aws-s3/*": [
+        "./plugins/leemons-plugin-leebrary-aws-s3/frontend/src/*"
+      ],
+      "@leebrary-unsplash/*": [
+        "./private-plugins/leemons-plugin-leebrary-unsplash/frontend/src/*"
+      ],
+      "@menu-builder/*": [
+        "./plugins/leemons-plugin-menu-builder/frontend/src/*"
+      ],
+      "@mqtt-aws-iot/*": [
+        "./plugins/leemons-plugin-mqtt-aws-iot/frontend/src/*"
+      ],
+      "@mqtt-socket-io/*": [
+        "./plugins/leemons-plugin-mqtt-socket-io/frontend/src/*"
+      ],
+      "@ms-graph/*": [
+        "./private-plugins/leemons-plugin-ms-graph/frontend/src/*"
+      ],
+      "@multilanguage/*": [
+        "./plugins/leemons-plugin-multilanguage/frontend/src/*"
+      ],
+      "@package-manager/*": [
+        "./plugins/leemons-plugin-package-manager/frontend/src/*"
+      ],
+      "@scores/*": [
+        "./plugins/leemons-plugin-scores/frontend/src/*"
+      ],
+      "@scorm/*": [
+        "./plugins/leemons-plugin-scorm/frontend/src/*"
+      ],
+      "@sessions/*": [
+        "./private-plugins/leemons-plugin-sessions/frontend/src/*"
+      ],
+      "@tasks/*": [
+        "./plugins/leemons-plugin-tasks/frontend/src/*"
+      ],
+      "@tests/*": [
+        "./plugins/leemons-plugin-tests/frontend/src/*"
+      ],
+      "@timetable/*": [
+        "./plugins/leemons-plugin-timetable/frontend/src/*"
+      ],
+      "@users/*": [
+        "./plugins/leemons-plugin-users/frontend/src/*"
+      ],
+      "@users-cognito/*": [
+        "./private-plugins/leemons-plugin-users-cognito/frontend/src/*"
+      ],
+      "@widgets/*": [
+        "./plugins/leemons-plugin-widgets/frontend/src/*"
+      ],
+      "@xapi/*": [
+        "./plugins/leemons-plugin-xapi/frontend/src/*"
+      ]
+    }
   },
-  "include": ["./plugins/*/frontend/**/*", "./private-plugins/*/frontend/**/*"]
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "./plugins/*/frontend/**/*",
+    "./private-plugins/*/frontend/**/*"
+  ]
 }

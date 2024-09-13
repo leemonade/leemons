@@ -162,11 +162,19 @@ async function removeStudentFromClass({ classId, studentId }) {
   });
 }
 
-async function classDetailForDashboard(classId) {
-  return leemons.api(`v1/academic-portfolio/classes/dashboard/${classId}`, {
-    allAgents: true,
-    method: 'GET',
-  });
+async function classDetailForDashboard(classId, teacherType) {
+  const queryParams = new URLSearchParams();
+  if (teacherType !== undefined) {
+    queryParams.append('teacherType', teacherType);
+  }
+
+  return leemons.api(
+    `v1/academic-portfolio/classes/dashboard/${classId}?${queryParams.toString()}`,
+    {
+      allAgents: true,
+      method: 'GET',
+    }
+  );
 }
 
 async function classByIds(classIds) {
@@ -201,6 +209,21 @@ async function userEnrollments({ centerId, userAgentIds, contactUserAgentId }) {
   });
 }
 
+async function classPublicData(classId) {
+  return leemons.api(`v1/academic-portfolio/classes/${classId}/public-data`, {
+    allAgents: true,
+    method: 'GET',
+  });
+}
+
+async function classPublicDataMany(classIds) {
+  return leemons.api(`v1/academic-portfolio/classes/public-data`, {
+    allAgents: true,
+    method: 'POST',
+    body: { ids: classIds },
+  });
+}
+
 export {
   haveClasses,
   listClasses,
@@ -219,4 +242,6 @@ export {
   classDetailForDashboard,
   classByIds,
   userEnrollments,
+  classPublicData,
+  classPublicDataMany,
 };

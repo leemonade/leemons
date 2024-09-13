@@ -1,6 +1,6 @@
 import React from 'react';
-import { get } from 'lodash';
 import { Controller } from 'react-hook-form';
+
 import {
   Box,
   Col,
@@ -12,8 +12,8 @@ import {
   Switch,
   Text,
   TimeInput,
-  TimeClockCircleIcon,
 } from '@bubbles-ui/components';
+import { get } from 'lodash';
 
 const Dates = ({
   form,
@@ -58,7 +58,7 @@ const Dates = ({
                 {messages.dates}
               </Text>
             }
-            spacing={2}
+            spacing={1}
           >
             {/* FROM */}
             {!disabled || (disabled && startDate) ? (

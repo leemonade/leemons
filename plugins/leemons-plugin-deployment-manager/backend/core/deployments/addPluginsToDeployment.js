@@ -23,6 +23,7 @@ async function addPluginsToDeployment({ ctx, broker, id, plugins: newPlugins }) 
 
   const { pluginNames, relationship } = await getAllPluginsAndRelations(broker);
   const pluginNamesSet = new Set(pluginNames);
+
   const installedPluginsSet = new Set(installedPlugins);
 
   const pluginsToAdd = newPlugins.filter(

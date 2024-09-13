@@ -1,16 +1,7 @@
-// /** @type {import('jest').Config} */
-
 const mockCSSRoute = '<rootDir>/___mocks___/css-mock.js';
 
+/** @type {import('jest').Config} */
 module.exports = {
-  // 'ts-jest': {
-  //   useESM: true,
-  // },
-  rootDir: __dirname,
-  verbose: true,
-  collectCoverage: false,
-  collectCoverageFrom: ['src/**/*.{js,jsx}'],
-  coverageDirectory: 'coverage',
   testEnvironment: 'jsdom',
   transform: {
     '\\.(css|less|scss|sass)$': mockCSSRoute,

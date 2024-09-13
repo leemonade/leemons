@@ -19,7 +19,7 @@ const schema = new mongoose.Schema(
       type: String,
       // ref: 'plugins_users::user-agent',
     },
-    // main-teacher | associate-teacher
+    // main-teacher | associate-teacher | invited-teacher
     type: {
       type: String,
       default: 'associate-teacher',
