@@ -16,6 +16,7 @@ import {
 import { EditWriteIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { Dates } from './components/Dates';
 import { CalendarEventModalStyles } from './CalendarEventModal.styles';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 
 const REQUIRED_FIELD = 'Field is required';
 const CALENDAR_TYPES = {
@@ -116,8 +117,10 @@ function CalendarEventModal(props) {
 
   const [canEdit, setCanEdit] = React.useState(false);
   const { classes, cx } = CalendarEventModalStyles({});
+  const isTask = defaultValues?.type === CALENDAR_TYPES.TASK;
+  const isTeacher = useIsTeacher();
 
-  if (defaultValues?.type === CALENDAR_TYPES.TASK && isNil(defaultValues?.data?.hideInCalendar)) {
+  if (isTask && isNil(defaultValues?.data?.hideInCalendar)) {
     if (isNil(defaultValues.data)) defaultValues.data = {};
     defaultValues.data.hideInCalendar = true;
   }
@@ -141,7 +144,6 @@ function CalendarEventModal(props) {
   const type = watch('type');
   const eventTypesByValue = keyBy(selectData.eventTypes, 'value');
   const config = eventTypesByValue[type]?.config;
-
   React.useEffect(() => {
     const subscription = watch((value, { name }) => {
       if (value.type === CALENDAR_TYPES.TASK) {
@@ -187,11 +189,11 @@ function CalendarEventModal(props) {
       <Drawer.Header title={titleDrawer()}>
         <Drawer.Header.RightActions>
           <Box>
-            {isOwner && disabled ? (
+            {isOwner ? (
               <ActionButton icon={<EditWriteIcon width={18} height={18} />} onClick={onEdit} />
             ) : null}
 
-            {!isNew && (!fromCalendar || isOwner) ? (
+            {(isTeacher && isTask) || isOwner ? (
               <ActionButton icon={<DeleteBinIcon width={18} height={18} />} onClick={onRemove} />
             ) : null}
           </Box>
