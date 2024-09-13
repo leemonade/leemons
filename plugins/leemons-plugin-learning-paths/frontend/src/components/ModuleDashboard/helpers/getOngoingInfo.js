@@ -51,8 +51,6 @@ const getOngoingState = ({ students, subjects }) => {
 
   const evaluatedCount = getEvaluatedCounter({ students, subjects, allStatuses });
 
-  console.log(evaluatedCount);
-
   if (
     evaluatedCount.totalStudentsFinished > 0 &&
     evaluatedCount.totalStudentsFinished < evaluatedCount.totalStudents
