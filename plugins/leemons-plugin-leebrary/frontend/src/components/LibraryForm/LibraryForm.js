@@ -421,7 +421,6 @@ const LibraryForm = ({
                   <ColorInput
                     label={labels.color}
                     placeholder={placeholders.color}
-                    useHsl
                     compact={false}
                     manual={false}
                     {...field}
