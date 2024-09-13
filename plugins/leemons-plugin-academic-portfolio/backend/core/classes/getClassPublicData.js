@@ -21,6 +21,7 @@ async function getClassPublicData({ ctx, ids }) {
     },
     subject: { name: cls.subject?.name, id: cls.subject?.id },
     teachers: cls.teachers,
+    studentsCount: cls.students?.length,
   }));
 
   return Array.isArray(ids) ? results : results[0];

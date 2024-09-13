@@ -12,3 +12,11 @@ export const getClassPublicDataManyKey = (ids) => [
     ids,
   },
 ];
+
+export const getClassDashboardDataKey = (classId) => [
+  {
+    ...allClassPublicDataManyKeys[0],
+    scope: 'class-dashboard-data',
+    classId,
+  },
+];
