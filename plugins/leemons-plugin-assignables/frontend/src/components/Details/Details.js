@@ -6,6 +6,7 @@ import {
   LoadingOverlay,
   TotalLayoutContainer,
   TotalLayoutStepContainer,
+  Box,
 } from '@bubbles-ui/components';
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -53,9 +54,19 @@ export default function Details() {
           ref={scrollRef}
         >
           <TotalLayoutStepContainer>
-            <Stack spacing={8} fullWidth fullHeight direction="column">
-              <TaskOngoingList instance={instance} />
-              <UsersList instance={instance} />
+            <Stack fullWidth fullHeight direction="column">
+              <Box
+                noFlex
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'flex-start',
+                  gap: 30,
+                }}
+              >
+                <TaskOngoingList instance={instance} />
+                <UsersList instance={instance} />
+              </Box>
             </Stack>
           </TotalLayoutStepContainer>
         </Stack>
