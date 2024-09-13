@@ -4,8 +4,9 @@ import {
   Context as MoleculerContext,
   ActionSchema as MoleculerActionSchema,
   ServiceSchema as MoleculerServiceSchema,
+  LoggerInstance,
   ServiceSettingSchema,
-  Service
+  Service,
 } from 'moleculer';
 
 type DB<Models extends Record<string, Model<any>>> = {
@@ -14,10 +15,23 @@ type DB<Models extends Record<string, Model<any>>> = {
 
 interface UserAgent {
   id: string;
+  disabled: boolean;
+  reloadPermissions: boolean;
+  role: string;
+  user: string;
 }
 interface UserSession {
   id: string;
   userAgents: UserAgent[];
+  active: boolean;
+  name: string;
+  surnames: string;
+  email: string;
+  avatar: string;
+  avatarAsset: string;
+  locale: string;
+  gender: string;
+  bithdate: Date;
 }
 
 export type GenericObject = { [name: string]: any };
@@ -47,7 +61,10 @@ export type Context<
   };
   callerPlugin: string;
   socket: any;
+  logger: LoggerInstance;
 };
+
+export type AnyContext = Context<unknown, unknown, unknown, unknown>;
 
 export function LeemonsDeploymentManagerMixin(): any;
 
@@ -61,7 +78,7 @@ export interface ActionSchema<C = Context> extends Omit<MoleculerActionSchema, '
 
 // Extend the ServiceActionsSchema to use CustomActionSchema
 export type ServiceActionsSchema<S = ServiceSettingSchema> = {
-  [key: string]: ActionSchema | ActionHandler | boolean;
+  [key: string]: ActionSchema<S> | ActionHandler<S> | boolean;
 } & ThisType<Service<S>>;
 
 // Extend the ServiceSchema to use CustomServiceActionsSchema

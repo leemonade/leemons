@@ -41,6 +41,8 @@
     "leemons-plugin-common-frontend-react": "1.0.0",
     "leemons-plugin-comunica-frontend-react-private": "1.0.0",
     "leemons-plugin-comunica-private": "1.0.8",
+    "leemons-plugin-communities": "1.0.0",
+    "leemons-plugin-communities-frontend-react-private": "1.0.0",
     "leemons-plugin-content-creator": "1.0.35",
     "leemons-plugin-content-creator-frontend-react": "1.0.0",
     "leemons-plugin-curriculum": "1.0.35",

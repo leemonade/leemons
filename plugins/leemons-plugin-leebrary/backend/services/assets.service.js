@@ -4,24 +4,25 @@
  */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { LeemonsError } = require('@leemons/error');
+const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 
-const { getServiceModels } = require('../models');
 const { pluginName } = require('../config/constants');
-const restActions = require('./rest/assets.rest');
-
-const { getByIds } = require('../core/assets/getByIds');
 const { add } = require('../core/assets/add');
-const { update } = require('../core/assets/update');
-const { exists } = require('../core/assets/exists');
-const { remove } = require('../core/assets/files/remove');
 const { duplicate } = require('../core/assets/duplicate');
-const { prepareAsset } = require('../core/assets/prepareAsset');
+const { exists } = require('../core/assets/exists');
 const { filterByVersionOfType } = require('../core/assets/filterByVersion');
+const { getByIds } = require('../core/assets/getByIds');
+const { prepareAsset } = require('../core/assets/prepareAsset');
+const { remove } = require('../core/assets/remove');
+const { update } = require('../core/assets/update');
+const { list } = require('../core/search');
+const { getServiceModels } = require('../models');
+
+const restActions = require('./rest/assets.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -111,6 +112,20 @@ module.exports = {
       async handler(ctx) {
         const filters = ctx.params ?? {};
         return ctx.tx.db.Assets.find({ ...filters }).lean();
+      },
+    },
+    list: {
+      async handler(ctx) {
+        const assets = await list({
+          ...ctx.params,
+
+          ctx,
+        });
+
+        return {
+          status: 200,
+          assets,
+        };
       },
     },
   },

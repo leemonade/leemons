@@ -144,6 +144,8 @@ dist
 !.vscode/*.code-snippets
 .idea/
 
+# Turbo
+.turbo
 
 
 # Leemons

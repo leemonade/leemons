@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Context, Errors } from 'moleculer';
 
 interface LeemonsErrorOptions {
@@ -7,7 +6,7 @@ interface LeemonsErrorOptions {
   customCode?: string;
   allowedPermissions?: string[];
   ignoreStack?: boolean;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 declare class LeemonsError extends Errors.MoleculerError {
