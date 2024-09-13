@@ -1,6 +1,6 @@
 import { Context, ServiceSchema } from '@leemons/deployment-manager';
 
-type Action = 'create' | 'read' | 'update' | 'delete' | 'admin';
+type Action = 'create' | 'view' | 'update' | 'delete' | 'admin';
 
 type PermissionsForMiddleware = {
   [key: string]: { actions: Action[] };

@@ -35,3 +35,6 @@ export type ValidateSchema = {
   string: StringSchema;
   arrayStringRequired: ArrayStringRequiredSchema;
 };
+
+export declare const localeRegexString: string;
+export declare const localeRegex: RegExp;

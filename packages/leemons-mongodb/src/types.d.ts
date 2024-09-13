@@ -59,7 +59,7 @@ type MixinOptions = {
   autoLRN?: boolean;
   debugTransaction?: boolean;
   forceLeemonsDeploymentManagerMixinNeedToBeImported?: boolean;
-  models: Record<string, Model>;
+  models: Record<string, Model<unknown>>;
 };
 
 export function LeemonsMongoDBMixin(options?: MixinOptions): Partial<ServiceSchema>;

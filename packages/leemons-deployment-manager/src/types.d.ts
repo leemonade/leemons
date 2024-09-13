@@ -64,7 +64,7 @@ export type Context<
   logger: LoggerInstance;
 };
 
-export type AnyContext = Context<unknown, unknown, unknown, unknown>;
+export type AnyContext = Context<any, any, any, any>;
 
 export function LeemonsDeploymentManagerMixin(): any;
 
@@ -82,6 +82,7 @@ export type ServiceActionsSchema<S = ServiceSettingSchema> = {
 } & ThisType<Service<S>>;
 
 // Extend the ServiceSchema to use CustomServiceActionsSchema
-export interface ServiceSchema<S = ServiceSettingSchema> extends MoleculerServiceSchema<S> {
+export interface ServiceSchema<S = ServiceSettingSchema>
+  extends Omit<MoleculerServiceSchema<S>, 'actions'> {
   actions?: ServiceActionsSchema<S>;
 }
