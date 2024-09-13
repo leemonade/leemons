@@ -145,7 +145,7 @@ function CalendarEventModal(props) {
   const hideGuests = watch('data.hideGuests');
   const type = watch('type');
   const eventTypesByValue = keyBy(selectData.eventTypes, 'value');
-  const config = eventTypesByValue[type]?.config;
+  const config = { ...(eventTypesByValue[type]?.config || {}), ...(event?.data?.config || {}) };
 
   React.useEffect(() => {
     const subscription = watch((value, { name }) => {

@@ -241,7 +241,14 @@ export function Provider({ children }) {
       if (event.reason && event.reason.isLeemonsApiError) {
         event.preventDefault();
         if (window.customEnv?.isDev) {
-          addErrorAlert(`[ApiError] ${event.reason.pluginName}`, event.reason.message ?? event.reason.error);
+          const message = event.reason.message ?? event.reason.error;
+
+          if (
+            typeof message === 'string' &&
+            message.toLowerCase().indexOf('no authorization header') < 0
+          ) {
+            addErrorAlert(`[ApiError] ${event.reason.pluginName}`, event.reason.message ?? event.reason.error);
+          }
 
           console.warn('Unhandled Leemons API error:', event.reason);
         }
