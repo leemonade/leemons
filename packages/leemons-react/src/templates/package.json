@@ -4,7 +4,9 @@
   "license": "MIT",
   "private": true,
   "workspaces": [
-    "./plugins/*"
+    "./plugins/*",
+    "../../../plugins/*/sdk",
+    "../../../private-plugins/*/sdk"
   ],
   "dependencies": {
     "@bubbles-ui/components": "dev",
