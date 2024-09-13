@@ -40,6 +40,8 @@ const DashboardCardCover = ({
     'allFinished',
   ].includes(evaluationInfo?.state);
 
+  const isAllEvaluated = evaluationInfo?.state === 'allEvaluated';
+  
   const MemoizedEmptyCoverIntroduction = useMemo(
     () => (
       <CardEmptyCover
@@ -107,14 +109,20 @@ const DashboardCardCover = ({
         <Box className={classes.color} />
         <ProgressRing
           rootColor={'#DDE1E6'}
-          sections={[{ value: percentage, color: '#307AE8' }]}
+          sections={[{ value: isAllEvaluated ? 100 : percentage, color: '#307AE8' }]}
           label={
             <Box className={classes.labelPercentage}>
-              <Text className={classes.textPercentage}>{`${percentage}%`}</Text>
+              <Text className={classes.textPercentage}>{`${
+                isAllEvaluated ? 100 : percentage
+              }%`}</Text>
             </Box>
           }
         />
-        <Text>{`(${totalStudentsFinished}/${totalStudents} ${t('students')})`}</Text>
+        <Text>
+          {isAllEvaluated
+            ? t('allStudentsEvaluated')
+            : `(${totalStudentsFinished}/${totalStudents} ${t('students')})`}
+        </Text>
         <Box className={classes.orderLabel}>{assetNumber}</Box>
       </Box>
     );
