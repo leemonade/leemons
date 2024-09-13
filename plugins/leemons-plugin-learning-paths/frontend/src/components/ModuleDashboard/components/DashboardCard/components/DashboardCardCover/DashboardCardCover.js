@@ -1,15 +1,18 @@
 import React, { useMemo } from 'react';
+
 import { Box, ImageLoader, CardEmptyCover, ProgressRing, Text } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@learning-paths/helpers/prefixPN';
 import Cover from '@leebrary/components/Cover';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { isNil } from 'lodash';
+
+import { ScoreFeedback } from '../ScoreFeedback';
+
 import {
   DASHBOARD_CARD_COVER_DEFAULT_PROPS,
   DASHBOARD_CARD_COVER_PROP_TYPES,
 } from './DashboardCardCover.constants';
 import { DashboardCardCoverStyles } from './DashboardCardCover.styles';
-import { ScoreFeedback } from '../ScoreFeedback';
 
 const DashboardCardCover = ({
   asset,
@@ -30,10 +33,15 @@ const DashboardCardCover = ({
   const subjectColor = isMultiSubject ? 'rgb(135, 141, 150)' : subjects?.[0]?.color;
   const { classes } = DashboardCardCoverStyles({ subjectColor });
   const [t] = useTranslateLoader(prefixPN('dashboard'));
-  const isSomethingEvaluable = ['someEvaluated', 'someDeliveredButNotAll', 'allEvaluated'].includes(
-    evaluationInfo?.state
-  );
+  const deliveredBySomeone = [
+    'someDeliveredButNotAll',
+    'allEvaluated',
+    'someEvaluated',
+    'allFinished',
+  ].includes(evaluationInfo?.state);
+
   const isAllEvaluated = evaluationInfo?.state === 'allEvaluated';
+  
   const MemoizedEmptyCoverIntroduction = useMemo(
     () => (
       <CardEmptyCover
@@ -92,7 +100,7 @@ const DashboardCardCover = ({
       </Box>
     );
   }
-  if (isSomethingEvaluable) {
+  if (deliveredBySomeone) {
     const totalStudents = evaluationInfo?.totalStudents;
     const totalStudentsFinished = evaluationInfo?.totalStudentsFinished;
     const percentage = Math.round((totalStudentsFinished / totalStudents) * 100);
