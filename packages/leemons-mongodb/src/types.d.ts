@@ -57,7 +57,7 @@ type MixinOptions = {
   debugTransaction?: boolean;
   forceLeemonsDeploymentManagerMixinNeedToBeImported?: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  models: Record<string, Model<any>>;
+  models?: Record<string, Model<any>>;
 };
 
 export const mongoose: typeof import('mongoose');

@@ -1,6 +1,7 @@
+const { LeemonsDeploymentManagerMixin, ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK } = require('@leemons/deployment-manager');
 const ApiGateway = require('moleculer-web');
 const { parse } = require('url');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+
 const restActions = require('./rest/api.rest');
 
 /**
@@ -18,15 +19,7 @@ module.exports = {
     LeemonsDeploymentManagerMixin({
       checkIfCanCallMe: false,
       getDeploymentIdInCall: true,
-      dontGetDeploymentIDOnActionCall: [
-        'deployment-manager.reloadAllDeploymentsRest',
-        'deployment-manager.addManualDeploymentRest',
-        'gateway.dropDBRest',
-        'gateway.statusRest',
-        'v1.client-manager.protected.newDeployment',
-        'v1.client-manager.protected.isSubdomainInUse',
-        'v1.users-cognito.emails.getEmail',
-      ],
+      dontGetDeploymentIDOnActionCall: ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK,
     }),
   ],
 
