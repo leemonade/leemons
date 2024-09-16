@@ -297,6 +297,26 @@ const menuItems = [
       },
     ],
   },
+  // Blocks
+  {
+    item: {
+      key: 'blocks',
+      order: 4,
+      parentKey: `${permissionsPrefix}.portfolio`,
+      url: '/private/academic-portfolio/blocks',
+      label: {
+        en: 'Blocks',
+        es: 'Bloques',
+      },
+      disabled: true,
+    },
+    permissions: [
+      {
+        permissionName: permissionNames.subjects,
+        actionNames: ['admin'],
+      },
+    ],
+  },
 ];
 
 const widgets = {
