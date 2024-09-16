@@ -9,6 +9,7 @@
     ],
     "module": "ESNext",
     "jsx": "react",
+    "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "paths": {

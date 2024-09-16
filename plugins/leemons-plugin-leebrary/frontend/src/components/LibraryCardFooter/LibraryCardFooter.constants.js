@@ -13,4 +13,5 @@ export const LIBRARY_CARD_FOOTER_PROP_TYPES = {
   variant: PropTypes.string,
   variantTitle: PropTypes.string,
   variantIcon: PropTypes.any,
+  hideCanAccess: PropTypes.bool,
 };

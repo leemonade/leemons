@@ -3,6 +3,7 @@ const { diffHours } = require('./diffHours');
 const { env, generateEnv } = require('./env');
 const { getObjectArrayKeys } = require('./getObjectArrayKeys');
 const { generateMoleculerConfig } = require('./moleculer');
+const { normalizeDate } = require('./normalizeDates');
 const { numberToEncodedLetter } = require('./numberToEncodedLetter');
 const { randomString } = require('./randomString');
 const { settledResponseToManyResponse } = require('./settledResponseToManyResponse');
@@ -21,4 +22,5 @@ module.exports = {
   numberToEncodedLetter,
   settledResponseToManyResponse,
   generateMoleculerConfig,
+  normalizeDate,
 };

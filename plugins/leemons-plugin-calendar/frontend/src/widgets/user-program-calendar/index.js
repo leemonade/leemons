@@ -25,8 +25,6 @@ import { getEventsByProgram } from '@calendar/helpers/getEventsByProgram';
 import prefixPN from '@calendar/helpers/prefixPN';
 import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
 
-
-
 const Styles = createStyles((theme, { inTab }) => ({
   root: {
     width: '100%',
@@ -95,6 +93,8 @@ function UserProgramCalendar({ inTab, program, classe }) {
 
     setCalendarConfig(schedule?.calendarConfig);
 
+    console.log(schedule);
+
     const getCalendarEvents = getCalendarDaysOffToEvents(schedule);
 
     const eventsByProgram = getEventsByProgram(
@@ -152,11 +152,11 @@ function UserProgramCalendar({ inTab, program, classe }) {
           <Title order={3}>{t('agenda')}</Title>
         </Box>
         {!inTab ? (
-        <Box>
-          <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onNewEvent}>
-            {tc('new')}
-          </Button>
-        </Box>
+          <Box>
+            <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onNewEvent}>
+              {tc('new')}
+            </Button>
+          </Box>
         ) : null}
       </Stack>
       {!parsedEvents && <EmptyState onNewEvent={onNewEvent} />}

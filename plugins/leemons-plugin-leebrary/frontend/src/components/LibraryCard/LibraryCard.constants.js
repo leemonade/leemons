@@ -89,4 +89,5 @@ export const LIBRARY_CARD_PROP_TYPES = {
     published: PropTypes.bool,
   }),
   isLoading: PropTypes.bool,
+  hideCanAccess: PropTypes.bool,
 };
