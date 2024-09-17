@@ -89,7 +89,7 @@ function UserProgramCalendar({ inTab, program, classe }) {
     const [{ calendars, events }, schedule, programData] = await Promise.all([
       getCalendarsToFrontendRequest(center.token, { showHiddenColumns: true }),
       getScheduleToFrontendRequest(center.token),
-      listSessionClassesRequest({ program: program?.id }),
+      listSessionClassesRequest({ program: program?.id, type: null }),
     ]);
 
     setCalendarConfig(schedule?.calendarConfig);
@@ -104,7 +104,8 @@ function UserProgramCalendar({ inTab, program, classe }) {
       classe,
       inTab
     );
-    const parsedEventsNotProjected = await transformDBEventsToFullCalendarEvents(
+
+    const parsedEventsNotProjected = transformDBEventsToFullCalendarEvents(
       eventsByProgram,
       calendars,
       calendarConfig
