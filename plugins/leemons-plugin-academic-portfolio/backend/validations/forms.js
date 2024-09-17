@@ -813,6 +813,7 @@ const updateSubjectSchema = {
       nullable: true,
     },
     substage: stringSchemaNullable,
+    useBlocks: booleanSchema,
   },
   required: ['id'],
   additionalProperties: false,
@@ -1371,6 +1372,103 @@ function validateUpdateCycle(data) {
   }
 }
 
+// ····························································································
+// BLOCKS
+
+async function validateSaveBlockRequirements({
+  ctx,
+  isEditing,
+  subjectId: _subjectId,
+  abbreviation,
+  id,
+}) {
+  let subjectId = _subjectId;
+
+  if (!isEditing) {
+    // Subject exists and is configured to use blocks
+    const subject = await ctx.tx.db.Subjects.findOne({ id: subjectId }).lean();
+    if (!subject) {
+      throw new LeemonsError(ctx, { message: 'The specified subject does not exist' });
+    }
+    if (!subject.useBlocks) {
+      throw new LeemonsError(ctx, {
+        message: 'This subject is not configured to use blocks.',
+      });
+    }
+  } else {
+    const block = await ctx.tx.db.Blocks.findOne({ id }).lean();
+    subjectId = block.subject;
+  }
+
+  // Uniqueness of block abbreviation
+  let repeatedAbbreviation = false;
+  const blocksWithSameAbreviation = await ctx.tx.db.Blocks.find({
+    abbreviation,
+    subject: subjectId,
+  });
+
+  if (!isEditing && blocksWithSameAbreviation?.length) repeatedAbbreviation = true;
+  if (isEditing && blocksWithSameAbreviation?.length && blocksWithSameAbreviation[0].id !== id)
+    repeatedAbbreviation = true;
+
+  if (repeatedAbbreviation)
+    throw new LeemonsError(ctx, { message: 'A block with this abbreviation already exists.' });
+}
+
+const addBlockSchema = {
+  type: 'object',
+  properties: {
+    name: stringSchema,
+    abbreviation: stringSchema,
+    subject: stringSchema,
+    index: integerSchema,
+  },
+  required: ['name', 'abbreviation', 'subject', 'index'],
+  additionalProperties: false,
+};
+
+async function validateAddBlock({ data, ctx }) {
+  const validator = new LeemonsValidator(addBlockSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+
+  await validateSaveBlockRequirements({
+    ctx,
+    isEditing: false,
+    subjectId: data.subject,
+    abbreviation: data.abbreviation,
+  });
+}
+
+const updateBlockSchema = {
+  type: 'object',
+  properties: {
+    id: stringSchema,
+    name: stringSchema,
+    abbreviation: stringSchema,
+    index: integerSchemaNullable,
+  },
+  required: ['id'],
+  additionalProperties: false,
+};
+
+async function validateUpdateBlock({ data, ctx }) {
+  const validator = new LeemonsValidator(updateBlockSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+
+  await validateSaveBlockRequirements({
+    ctx,
+    isEditing: true,
+    abbreviation: data.abbreviation,
+    id: data.id,
+  });
+}
+
 module.exports = {
   validateAddCycle,
   validateAddClass,
@@ -1400,5 +1498,7 @@ module.exports = {
   validateAddClassStudentsMany,
   validateAddClassTeachersMany,
   validateGetSubjectCreditsProgram,
+  validateAddBlock,
+  validateUpdateBlock,
   validateProgramNotUsingInternalId: validateUniquenessOfInternalId,
 };

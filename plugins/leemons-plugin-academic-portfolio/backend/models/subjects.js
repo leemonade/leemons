@@ -32,6 +32,10 @@ const schema = new mongoose.Schema(
     color: {
       type: String,
     },
+    useBlocks: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

@@ -1027,4 +1027,48 @@ module.exports = {
     subject: 'Subject',
     course: 'Course',
   },
+  blocksPage: {
+    header: {
+      title: 'Blocks',
+      centerSelectPlaceholder: 'Select a center',
+      programSelectPlaceholder: 'Select a program',
+      courseSelectPlaceholder: 'Select a course',
+      subjectSelectPlaceholder: 'Select a subject',
+    },
+    labels: {
+      configureBlocks: 'Blocks configuration',
+      activateBlocks: 'Activate blocks',
+      add: 'Add',
+      remove: 'Remove',
+      edit: 'Edit',
+      accept: 'Accept',
+      cancel: 'Cancel',
+      name: 'Name',
+      abbreviation: 'Abbreviation',
+      actions: 'Actions',
+    },
+    placeholders: {
+      addText: 'Add text...',
+    },
+    alerts: {
+      success: {
+        add: 'Block created successfully.',
+        update: 'Block updated successfully.',
+        delete: 'Block deleted successfully.',
+      },
+      failure: {
+        add: 'Could not create the Block. ',
+        update: 'Could not update the Block. ',
+        delete: 'Could not delete the Block. ',
+      },
+    },
+    errors: {
+      requiredField: 'Required field',
+    },
+    emptyState: {
+      text: 'Create a block. Just enter the name and abbreviation and press add on the form above.',
+      altText: 'Add your first block.',
+    },
+    emptyFilters: 'Select a subject to start',
+  },
 };

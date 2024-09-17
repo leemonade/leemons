@@ -85,6 +85,13 @@ export {
   removeGroupFromClasses as removeGroupFromClassesRequest,
 } from './groups';
 
+export {
+  listBlocksBySubjectRequest,
+  createBlockRequest,
+  updateBlockRequest,
+  removeBlockRequest,
+} from './blocks';
+
 export const updateCycleRequest = updateCycle;
 export const listSubjectsRequest = listSubjects;
 export const createSubjectRequest = createSubject;
