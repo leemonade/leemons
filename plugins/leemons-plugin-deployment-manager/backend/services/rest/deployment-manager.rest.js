@@ -184,6 +184,8 @@ module.exports = {
       validateInternalPrivateKey({ ctx });
       const { id, plugins } = ctx.params;
 
+      ctx.meta.deploymentID = id;
+
       return addPluginsToDeployment({ ctx, broker: this.broker, id, plugins });
     },
   },
