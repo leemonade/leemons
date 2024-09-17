@@ -58,6 +58,7 @@ function UserProgramCalendar({ inTab, program, classe }) {
   const [isLoading, setIsLoading] = useState(true);
   const [centerToken, setCenterToken] = useState(null);
   const [calendarConfig, setCalendarConfig] = useState(null);
+  const [currentProgram, setCurrentProgram] = useState(null);
   const { classes: styles } = Styles({ inTab });
   const [store] = useStore({
     loading: true,
@@ -92,8 +93,7 @@ function UserProgramCalendar({ inTab, program, classe }) {
     ]);
 
     setCalendarConfig(schedule?.calendarConfig);
-
-    console.log(schedule);
+    setCurrentProgram(programData);
 
     const getCalendarEvents = getCalendarDaysOffToEvents(schedule);
 
@@ -121,10 +121,10 @@ function UserProgramCalendar({ inTab, program, classe }) {
   }
 
   useEffect(() => {
-    if (currentMonthRange.start && currentMonthRange.end) {
+    if (currentMonthRange.start && currentMonthRange.end && program !== currentProgram?.id) {
       getCalendarsForCenter();
     }
-  }, [currentMonthRange, startDate, endDate]);
+  }, [currentMonthRange, startDate, endDate, program]);
 
   const onNewEvent = () => {
     store.selectedEvent = null;
