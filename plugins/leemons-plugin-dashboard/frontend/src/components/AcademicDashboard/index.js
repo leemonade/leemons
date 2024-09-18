@@ -1,13 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import _, { find, isNil, map } from 'lodash';
 import { useHistory } from 'react-router-dom';
+
+import ProgramBarSelector from '@academic-portfolio/components/ProgramBarSelector/ProgramBarSelector';
 import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
-import { Box, createStyles, TotalLayoutContainer } from '@bubbles-ui/components';
+import { Alert, Box, createStyles, TotalLayoutContainer } from '@bubbles-ui/components';
 import { useStore } from '@common';
+import { prefixPN } from '@dashboard/helpers';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getSessionConfig, updateSessionConfig } from '@users/session';
 import { ZoneWidgets } from '@widgets';
-import ProgramBarSelector from '@academic-portfolio/components/ProgramBarSelector/ProgramBarSelector';
+import _, { find, isNil, map } from 'lodash';
+import PropTypes from 'prop-types';
 
 const Styles = createStyles(() => ({
   header: {
@@ -47,6 +50,7 @@ function AcademicDashboard({ session }) {
   const [store, render] = useStore({
     loading: true,
   });
+  const [t] = useTranslateLoader(prefixPN('dashboardNotEnrolled'));
   const history = useHistory();
   const { classes: styles } = Styles({}, { name: 'AcademicDashboard' });
   const scrollRef = React.useRef();
@@ -111,6 +115,14 @@ function AcademicDashboard({ session }) {
   );
 
   if (store.loading) return null;
+  if (!store.programs?.length)
+    return (
+      <Box sx={(theme) => ({ padding: theme.other.global.spacing.padding.lg })}>
+        <Alert severity="warning" closeable={false} title={t('title')}>
+          {t('description')}
+        </Alert>
+      </Box>
+    );
 
   const programImage = !isNil(store.selectedProgram?.image?.cover)
     ? store.selectedProgram?.imageUrl
