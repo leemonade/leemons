@@ -43,6 +43,6 @@ module.exports = {
   },
   dashboardNotEnrolled: {
     title: 'No has sido matriculado en ningún programa',
-    description: 'por favor, contacta con tu administrador',
+    description: 'por favor, contacta con tu administrador/a',
   },
 };
