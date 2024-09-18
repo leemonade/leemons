@@ -24,7 +24,7 @@ import { ListEmptyState } from '@common/components/ListEmptyState';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import _, { isBoolean, isFunction } from 'lodash';
+import _, { isBoolean, isFunction, escapeRegExp } from 'lodash';
 
 import {
   listUsersRequest,
@@ -36,14 +36,14 @@ import { BulkActionModal } from './components/BulkActionModal';
 
 import DisableUsersModal from '@users/components/DisableUsersModal';
 import EnableUsersModal from '@users/components/EnableUsersModal';
-import prefixPN from '@users/helpers/prefixPN';
+import { SelectCenter } from '@users/components/SelectCenter';
+import { SelectProfile } from '@users/components/SelectProfile';
+import { SetPasswordModal } from '@users/components/SetPasswordModal';
+import { UserAdminDrawer } from '@users/components/UserAdminDrawer';
 import UserDetailDrawer from '@users/components/UserDetailDrawer';
+import prefixPN from '@users/helpers/prefixPN';
 import activeUserAgent from '@users/request/activeUserAgent';
 import disableUserAgent from '@users/request/disableUserAgent';
-import { UserAdminDrawer } from '@users/components/UserAdminDrawer';
-import { SelectProfile } from '@users/components/SelectProfile';
-import { SelectCenter } from '@users/components/SelectCenter';
-import { SetPasswordModal } from '@users/components/SetPasswordModal';
 
 function ListUsers() {
   const [t] = useTranslateLoader(prefixPN('list_users'));
@@ -62,13 +62,15 @@ function ListUsers() {
 
   async function listUsers(searchQuery) {
     const query = {};
+
     if (searchQuery ?? store.search) {
+      const search = searchQuery ?? store.search;
       query.$or = [
-        { name: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        { surnames: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        { secondSurname: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        { email: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        { phone: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
+        { name: { $regex: escapeRegExp(search.toLowerCase()), $options: 'i' } },
+        { surnames: { $regex: escapeRegExp(search.toLowerCase()), $options: 'i' } },
+        { secondSurname: { $regex: escapeRegExp(search.toLowerCase()), $options: 'i' } },
+        { email: { $regex: escapeRegExp(search.toLowerCase()), $options: 'i' } },
+        { phone: { $regex: escapeRegExp(search.toLowerCase()), $options: 'i' } },
       ];
     }
     if (store.profile) {
