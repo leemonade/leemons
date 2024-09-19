@@ -10,7 +10,6 @@ const WeekEventList = ({ events, startDate, endDate, calendarConfig, t, onEventC
   const { classes } = WeekEventListStyles({}, { name: 'WeekEventList' });
   const [eventsInCurrentWeek, setEventsInCurrentWeek] = useState([]);
   const [weekData, setWeekData] = useState([]);
-
   const generateDateArray = (start, end) => {
     const dates = [];
     const currentStartDate = new Date(start);

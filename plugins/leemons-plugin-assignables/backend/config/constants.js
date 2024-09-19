@@ -1,4 +1,7 @@
-const permissionsPrefix = 'assignables';
+const PLUGIN_NAME = 'assignables';
+const VERSION = 1;
+
+const permissionsPrefix = PLUGIN_NAME;
 
 const permissionsNames = {
   activities: `${permissionsPrefix}.activities`,
@@ -154,6 +157,9 @@ const assignableInstanceRolesObject = {
 };
 
 module.exports = {
+  PLUGIN_NAME,
+  VERSION,
+
   permissions,
   menuItems,
   widgets,

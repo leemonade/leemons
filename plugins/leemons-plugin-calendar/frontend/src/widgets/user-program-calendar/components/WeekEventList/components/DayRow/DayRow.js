@@ -62,6 +62,7 @@ const parseColumnByEvents = (events, date, locale) => {
         result.description.push(descriptionInfo);
       }
     });
+
   return result;
 };
 
@@ -70,7 +71,7 @@ const DayRow = ({ date, events, calendarWeekdays, t, onEventClick }) => {
   const locale = useLocale();
   const dateWithDayoff = events.filter((event) => event.isDayOff);
   const { classes } = DayRowStyles(
-    { dateWithDayoff: !!dateWithDayoff.length || isSchoolDay },
+    { dateWithDayoff: !!dateWithDayoff.length || isSchoolDay, hasEvents: !!events.length },
     { name: 'DayRow' }
   );
   const [preparedEvents, setPreparedEvents] = useState([]);
@@ -111,6 +112,7 @@ const DayRow = ({ date, events, calendarWeekdays, t, onEventClick }) => {
                         radius="default"
                         className={classes.badge}
                         color="stroke"
+                        disableHover
                       >
                         <Text>{t('init')}</Text>
                       </Badge>
@@ -129,6 +131,7 @@ const DayRow = ({ date, events, calendarWeekdays, t, onEventClick }) => {
                         radius="default"
                         className={classes.badge}
                         color="stroke"
+                        disableHover
                       >
                         <Text>{t('end')}</Text>
                       </Badge>
@@ -142,7 +145,7 @@ const DayRow = ({ date, events, calendarWeekdays, t, onEventClick }) => {
         <Box className={classes.eventDescription}>
           {preparedEvents.description &&
             preparedEvents.description.map((event, index) => {
-              const isTask = event.isTask ? `${t('taskLabel')}. ` : '';
+              const isTask = event.isTask ? `${t('taskLabel').toUpperCase()}. ` : '';
               return (
                 <Stack key={index} spacing={2} alignItems="center">
                   <AvatarSubject color={event.bgColor} size="xs" />

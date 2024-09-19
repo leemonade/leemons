@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import {
   Box,
   Text,
@@ -120,8 +121,10 @@ function CalendarEventModal(props) {
 
   const [canEdit, setCanEdit] = React.useState(false);
   const { classes, cx } = CalendarEventModalStyles({});
+  const isTask = defaultValues?.type === CALENDAR_TYPES.TASK;
+  const isTeacher = useIsTeacher();
 
-  if (defaultValues?.type === CALENDAR_TYPES.TASK && isNil(defaultValues?.data?.hideInCalendar)) {
+  if (isTask && isNil(defaultValues?.data?.hideInCalendar)) {
     if (isNil(defaultValues.data)) defaultValues.data = {};
     defaultValues.data.hideInCalendar = true;
   }
@@ -194,7 +197,7 @@ function CalendarEventModal(props) {
       <Drawer.Header title={titleDrawer()}>
         <Drawer.Header.RightActions>
           <Box>
-            {isOwner && disabled ? (
+            {isOwner ? (
               <ActionButton icon={<EditWriteIcon width={18} height={18} />} onClick={onEdit} />
             ) : null}
 
@@ -216,63 +219,63 @@ function CalendarEventModal(props) {
             {!hasCard && (
               <ContextContainer>
                 <Controller
-                name="title"
-                control={control}
-                rules={{
-                  required: errorMessages.titleRequired,
-                }}
-                render={({ field }) => {
-                  if (disabled) {
-                    return (
-                      <>
-                        <Text size="lg" strong>
-                          {messages.title}
-                        </Text>
-                        <Text>{field.value}</Text>
-                      </>
-                    );
-                  }
-                  return (
-                    <TextInput
-                      readOnly={disabled}
-                      disabled={disabled}
-                      label={config?.titleLabel || messages.name}
-                      placeholder={config?.titlePlaceholder || messages.titlePlaceholder}
-                      error={get(errors, 'title')}
-                      required={!disabled}
-                      {...field}
-                    />
-                  );
-                }}
-              />
-
-              {!forceType ? (
-                <ContextContainer>
-                  <Controller
-                    name="type"
-                    control={control}
-                    rules={{
-                      required: errorMessages.typeRequired,
-                    }}
-                    render={({ field }) => {
-                      if (disabled) {
-                        return null;
-                      }
+                  name="title"
+                  control={control}
+                  rules={{
+                    required: errorMessages.titleRequired,
+                  }}
+                  render={({ field }) => {
+                    if (disabled) {
                       return (
-                        <RadioGroup
-                          {...field}
-                          disabled={disabled}
-                          variant="default"
-                          direction={selectData.eventTypes.length < 3 ? 'row' : 'column'}
-                          error={get(errors, 'type')}
-                          data={selectData.eventTypes}
-                          noRootPadding
-                        />
+                        <>
+                          <Text size="lg" strong>
+                            {messages.title}
+                          </Text>
+                          <Text>{field.value}</Text>
+                        </>
                       );
-                    }}
-                  />
-                </ContextContainer>
-              ) : null}
+                    }
+                    return (
+                      <TextInput
+                        readOnly={disabled}
+                        disabled={disabled}
+                        label={config?.titleLabel || messages.name}
+                        placeholder={config?.titlePlaceholder || messages.titlePlaceholder}
+                        error={get(errors, 'title')}
+                        required={!disabled}
+                        {...field}
+                      />
+                    );
+                  }}
+                />
+
+                {!forceType ? (
+                  <ContextContainer>
+                    <Controller
+                      name="type"
+                      control={control}
+                      rules={{
+                        required: errorMessages.typeRequired,
+                      }}
+                      render={({ field }) => {
+                        if (disabled) {
+                          return null;
+                        }
+                        return (
+                          <RadioGroup
+                            {...field}
+                            disabled={disabled}
+                            variant="default"
+                            direction={selectData.eventTypes.length < 3 ? 'row' : 'column'}
+                            error={get(errors, 'type')}
+                            data={selectData.eventTypes}
+                            noRootPadding
+                          />
+                        );
+                      }}
+                    />
+                  </ContextContainer>
+                ) : null}
               </ContextContainer>
             )}
 

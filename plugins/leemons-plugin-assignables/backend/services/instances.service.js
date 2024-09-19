@@ -1,21 +1,25 @@
 /** @type {import('moleculer').ServiceSchema} */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsCronJobsMixin } = require('@leemons/cronjobs');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getServiceModels } = require('../models');
-const { getUserPermission, getUserPermissions } = require('../core/permissions/instances/users');
+
+const { adminDashboard } = require('../core/instances/adminDashboard');
 const { createInstance } = require('../core/instances/createInstance');
 const { getInstance } = require('../core/instances/getInstance');
 const { getInstances } = require('../core/instances/getInstances');
-const { removeInstance } = require('../core/instances/removeInstance');
-const { updateInstance } = require('../core/instances/updateInstance');
-const { searchInstances } = require('../core/instances/searchInstances');
-const { adminDashboard } = require('../core/instances/adminDashboard');
-const { sendReminder } = require('../core/instances/sendReminder');
 const { getInstancesStatus } = require('../core/instances/getInstancesStatus');
+const { removeInstance } = require('../core/instances/removeInstance');
+const { searchInstances } = require('../core/instances/searchInstances');
+const { sendReminder } = require('../core/instances/sendReminder');
+const { updateInstance } = require('../core/instances/updateInstance');
+const { getUserPermission, getUserPermissions } = require('../core/permissions/instances/users');
+const { getServiceModels } = require('../models');
+
+const { jobs } = require('./jobs/instances.job');
 const restActions = require('./rest/instance.rest');
 
 module.exports = {
@@ -29,6 +33,7 @@ module.exports = {
     }),
     LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
+    LeemonsCronJobsMixin({ jobs }),
   ],
   actions: {
     ...restActions,
@@ -87,8 +92,5 @@ module.exports = {
         return getInstancesStatus({ ...ctx.params, ctx });
       },
     },
-  },
-  async created() {
-    // mongoose.connect(process.env.MONGO_URI);
   },
 };
