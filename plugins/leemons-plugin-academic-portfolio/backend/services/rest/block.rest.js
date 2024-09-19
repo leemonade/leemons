@@ -12,6 +12,7 @@ const { LeemonsValidator } = require('@leemons/validator');
 
 const { permissions } = require('../../config/constants');
 const { addBlock, updateBlock, listSubjectBlocks, removeBlock } = require('../../core/blocks');
+const { getProgramCustomNomenclature } = require('../../core/programs');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -83,12 +84,14 @@ module.exports = {
       });
       if (validator.validate(ctx.params)) {
         const { page, size, subjectId } = ctx.params;
+
         const data = await listSubjectBlocks({
           page: parseInt(page, 10),
           size: parseInt(size, 10),
           subjectId,
           ctx,
         });
+
         return { status: 200, data };
       }
       throw validator.error;

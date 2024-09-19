@@ -1,9 +1,15 @@
 const { pick } = require('lodash');
 
+const { getProgramCustomNomenclature } = require('../programs');
+
 const { classByIds } = require('./classByIds');
 
 async function getClassPublicData({ ctx, ids }) {
   const classesData = await classByIds({ ids, withProgram: true, ctx });
+  const nomenclature = await getProgramCustomNomenclature({
+    ids: classesData.map((cls) => cls.program?.id),
+    ctx,
+  });
 
   const results = classesData.map((cls) => ({
     id: cls.id,
@@ -18,8 +24,9 @@ async function getClassPublicData({ ctx, ids }) {
       name: cls.program?.name,
       id: cls.program?.id,
       maxNumberOfCourses: cls.program?.maxNumberOfCourses,
+      nomenclature: nomenclature[cls.program?.id], // Returns nomenclature in the user locale
     },
-    subject: { name: cls.subject?.name, id: cls.subject?.id },
+    subject: { name: cls.subject?.name, id: cls.subject?.id, useBlocks: cls.subject?.useBlocks },
     teachers: cls.teachers,
     studentsCount: cls.students?.length,
   }));

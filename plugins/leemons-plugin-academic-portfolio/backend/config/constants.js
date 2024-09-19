@@ -358,6 +358,11 @@ const widgets = {
   ],
 };
 
+const CUSTOMIZABLE_TRANSLATION_KEYS = {
+  BLOCK: 'block',
+  SUBJECT: 'subject',
+};
+
 module.exports = {
   pluginName: permissionsPrefix,
   permissions: {
@@ -367,4 +372,5 @@ module.exports = {
   },
   menuItems,
   widgets,
+  CUSTOMIZABLE_TRANSLATION_KEYS,
 };

@@ -29,6 +29,7 @@ const {
   getProgramEvaluationSystem,
   updateProgramConfiguration,
   getAcademicTree,
+  getProgramCustomNomenclature,
 } = require('../../core/programs');
 
 /** @type {ServiceSchema} */
@@ -488,6 +489,22 @@ module.exports = {
     async handler(ctx) {
       const tree = await getAcademicTree({ programId: ctx.params.id, ctx });
       return { status: 200, tree };
+    },
+  },
+  getProgramNomenclature: {
+    rest: {
+      path: '/:id/nomenclature',
+      method: 'GET',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const allLocales = ctx.params.allLocales === 'true' || ctx.params.allLocales === '1';
+      const nomenclature = await getProgramCustomNomenclature({
+        ids: [ctx.params.id],
+        allLocales,
+        ctx,
+      });
+      return { status: 200, nomenclature };
     },
   },
 };

@@ -44,6 +44,8 @@ import {
   programHasSubjectHistory,
   duplicateProgram,
   getProgramAcademicTree,
+  setProgramCustomTranslationKeys,
+  getProgramNomenclature,
 } from './programs';
 import {
   enableMenuItem,
@@ -152,6 +154,8 @@ export const getUserProgramsRequest = getUserPrograms;
 export const getProgramsPublicInfoRequest = getProgramsPublicInfo;
 export const removeProgramRequest = removeProgram;
 
+export const setProgramCustomTranslationKeysRequest = setProgramCustomTranslationKeys;
+export const getProgramNomenclatureRequest = getProgramNomenclature;
 export const getSettingsRequest = getSettings;
 export const updateSettingsRequest = updateSettings;
 export const enableMenuItemRequest = enableMenuItem;

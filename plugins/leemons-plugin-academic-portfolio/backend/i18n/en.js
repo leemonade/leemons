@@ -280,6 +280,15 @@ module.exports = {
           numberOfSeats: 'Nº of seats',
           course: 'Course',
         },
+        nomenclature: {
+          title: 'Nomenclature',
+          blockInputLabel: '"Block" element name',
+          subjectInputLabel: '"Subject" element name',
+          errors: {
+            duplicatedKey: 'Duplicated name',
+          },
+          success: { set: 'Program nomenclature updated successfully.' },
+        },
         classConfiguration: 'Class Configuration',
         referenceGroups: 'Reference Groups',
         referenceGroupsInfo:

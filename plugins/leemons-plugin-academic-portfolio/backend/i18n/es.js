@@ -262,6 +262,15 @@ module.exports = {
           numberOfSeats: 'Nº de plazas',
           course: 'Curso',
         },
+        nomenclature: {
+          title: 'Nomenclatura',
+          blockInputLabel: 'Nombre del elemento "bloque"',
+          subjectInputLabel: 'Nombre del elemento "asignatura"',
+          errors: {
+            duplicatedKey: 'Nombre duplicado',
+          },
+          success: { set: 'Nomenclatura del programa actualizada correctamente.' },
+        },
         classConfiguration: 'Configuración de Aulas',
         referenceGroups: 'Grupos de Referencia',
         referenceGroupsInfo:

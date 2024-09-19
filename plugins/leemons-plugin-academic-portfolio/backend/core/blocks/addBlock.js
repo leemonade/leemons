@@ -1,7 +1,6 @@
 const { validateAddBlock } = require('../../validations/forms');
 const { subjectByIds } = require('../subjects/index');
 
-// TODO PAOLA: En el modelo de session el block id y el valor del blockName: name.
 async function addBlock({ data, ctx }) {
   await validateAddBlock({ data, ctx });
 

@@ -173,6 +173,28 @@ async function duplicateProgram({ programId }) {
   });
 }
 
+async function setProgramCustomTranslationKeys(body) {
+  return leemons.api(`v1/academic-portfolio/programs/custom-keys`, {
+    method: 'POST',
+    body,
+  });
+}
+
+async function getProgramNomenclature({ programId, allLocales }) {
+  const queryParams = new URLSearchParams();
+
+  if (typeof allLocales === 'boolean') {
+    queryParams.append('allLocales', allLocales);
+  }
+
+  return leemons.api(
+    `v1/academic-portfolio/programs/${programId}/nomenclature?${queryParams.toString()}`,
+    {
+      method: 'GET',
+    }
+  );
+}
+
 export {
   listPrograms,
   detailProgram,
@@ -188,5 +210,7 @@ export {
   updateProgramConfiguration,
   programHasSubjectHistory,
   duplicateProgram,
+  setProgramCustomTranslationKeys,
   getProgramAcademicTree,
+  getProgramNomenclature,
 };
