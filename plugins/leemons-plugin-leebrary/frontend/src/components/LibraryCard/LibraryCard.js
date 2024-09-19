@@ -42,6 +42,7 @@ const LibraryCard = ({
   onPin,
   onUnpin,
   onShowMenu,
+  hideCanAccess,
   ...props
 }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -107,6 +108,7 @@ const LibraryCard = ({
         onAction={onAction}
         locale={locale}
         autoHeight={autoHeight}
+        hideCanAccess={hideCanAccess}
       />
     </Box>
   );

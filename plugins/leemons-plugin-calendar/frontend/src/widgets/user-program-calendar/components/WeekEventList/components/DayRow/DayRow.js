@@ -77,9 +77,7 @@ const DayRow = ({ date, events, calendarWeekdays, t, onEventClick }) => {
 
   useEffect(() => {
     if (events?.length > 0) {
-      console.log('events:', events);
       const parsedEvents = parseColumnByEvents(events, date, locale);
-      console.log('parsedEvents:', parsedEvents);
       setPreparedEvents(parsedEvents);
     } else {
       setPreparedEvents([]);

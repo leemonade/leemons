@@ -18,6 +18,7 @@ const LibraryCardFooter = ({
   variantTitle,
   variantIcon,
   autoHeight,
+  hideCanAccess,
 }) => {
   const { classes, cx } = LibraryCardFooterStyles(
     { action, size: 12, autoHeight },
@@ -51,16 +52,18 @@ const LibraryCardFooter = ({
       )}
 
       <Box className={classes.avatars}>
-        <AvatarsGroup
-          size="sm"
-          data={canAccess}
-          moreThanUsersAsMulti={2}
-          classesData={classesCanAccess}
-          numberFromClassesAndData
-          customAvatarMargin={14}
-          limit={2}
-          zIndexInverted={true}
-        />
+        {!hideCanAccess && (
+          <AvatarsGroup
+            size="sm"
+            data={canAccess}
+            moreThanUsersAsMulti={2}
+            classesData={classesCanAccess}
+            numberFromClassesAndData
+            customAvatarMargin={14}
+            limit={2}
+            zIndexInverted={true}
+          />
+        )}
       </Box>
     </Box>
   );

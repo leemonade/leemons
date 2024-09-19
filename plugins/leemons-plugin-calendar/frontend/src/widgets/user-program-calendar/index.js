@@ -25,8 +25,6 @@ import { getEventsByProgram } from '@calendar/helpers/getEventsByProgram';
 import prefixPN from '@calendar/helpers/prefixPN';
 import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
 
-
-
 const Styles = createStyles((theme, { inTab }) => ({
   root: {
     width: '100%',
@@ -60,6 +58,7 @@ function UserProgramCalendar({ inTab, program, classe }) {
   const [isLoading, setIsLoading] = useState(true);
   const [centerToken, setCenterToken] = useState(null);
   const [calendarConfig, setCalendarConfig] = useState(null);
+  const [currentProgram, setCurrentProgram] = useState(null);
   const { classes: styles } = Styles({ inTab });
   const [store] = useStore({
     loading: true,
@@ -90,10 +89,11 @@ function UserProgramCalendar({ inTab, program, classe }) {
     const [{ calendars, events }, schedule, programData] = await Promise.all([
       getCalendarsToFrontendRequest(center.token, { showHiddenColumns: true }),
       getScheduleToFrontendRequest(center.token),
-      listSessionClassesRequest({ program: program?.id }),
+      listSessionClassesRequest({ program: program?.id, type: null }),
     ]);
 
     setCalendarConfig(schedule?.calendarConfig);
+    setCurrentProgram(programData);
 
     const getCalendarEvents = getCalendarDaysOffToEvents(schedule);
 
@@ -104,7 +104,8 @@ function UserProgramCalendar({ inTab, program, classe }) {
       classe,
       inTab
     );
-    const parsedEventsNotProjected = await transformDBEventsToFullCalendarEvents(
+
+    const parsedEventsNotProjected = transformDBEventsToFullCalendarEvents(
       eventsByProgram,
       calendars,
       calendarConfig
@@ -121,10 +122,10 @@ function UserProgramCalendar({ inTab, program, classe }) {
   }
 
   useEffect(() => {
-    if (currentMonthRange.start && currentMonthRange.end) {
+    if (currentMonthRange.start && currentMonthRange.end && program !== currentProgram?.id) {
       getCalendarsForCenter();
     }
-  }, [currentMonthRange, startDate, endDate]);
+  }, [currentMonthRange, startDate, endDate, program]);
 
   const onNewEvent = () => {
     store.selectedEvent = null;
@@ -152,11 +153,11 @@ function UserProgramCalendar({ inTab, program, classe }) {
           <Title order={3}>{t('agenda')}</Title>
         </Box>
         {!inTab ? (
-        <Box>
-          <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onNewEvent}>
-            {tc('new')}
-          </Button>
-        </Box>
+          <Box>
+            <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onNewEvent}>
+              {tc('new')}
+            </Button>
+          </Box>
         ) : null}
       </Stack>
       {!parsedEvents && <EmptyState onNewEvent={onNewEvent} />}

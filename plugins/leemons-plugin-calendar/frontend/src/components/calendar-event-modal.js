@@ -238,8 +238,6 @@ function NewCalendarEventModal({
         });
       }
 
-      console.log('event:', event);
-
       if (event?.data?.cardComponent && event?.data?.pluginName) {
         ref.current.components = {
           ...(ref.current.components || {}),

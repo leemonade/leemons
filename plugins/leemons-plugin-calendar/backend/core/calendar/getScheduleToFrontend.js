@@ -36,6 +36,7 @@ async function getScheduleToFrontend({ ctx }) {
         program: userSession.sessionConfig.program,
         withProgram: true,
         withTeachers: true,
+        type: null,
       }),
       ctx.tx.call('academic-portfolio.programs.programsByIds', {
         ids: [userSession.sessionConfig.program],

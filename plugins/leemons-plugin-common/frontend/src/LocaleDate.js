@@ -169,3 +169,32 @@ export function LocaleWeekDay({ day }) {
   targetDate.setUTCDate(referenceDate.getUTCDate() + day - 1);
   return formatters[key].format(targetDate);
 }
+
+/**
+ * Get the locale format for a date
+ * @param {string} locale - The locale to use
+ * @returns {string} - The locale format
+ */
+export function getLocaleFormat(locale) {
+  const testDate = new Date(2000, 0, 2); // January 2, 2000
+  const formattedDate = new Intl.DateTimeFormat([locale, 'default']).format(testDate);
+
+  const parts = formattedDate.split(/[/.-]/);
+
+  if (parts.length !== 3) {
+    return 'DD/MM/YYYY'; // Default format if parsing fails
+  }
+
+  const formatParts = [];
+  parts.forEach((part) => {
+    if (part.length === 4) {
+      formatParts.push('YYYY');
+    } else if (part === '01' || part === '1') {
+      formatParts.push('MM');
+    } else if (part === '02' || part === '2') {
+      formatParts.push('DD');
+    }
+  });
+
+  return formatParts.join('/');
+}
