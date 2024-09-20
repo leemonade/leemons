@@ -205,7 +205,7 @@ const DatasetForm = forwardRef(
         readOnlyKeys,
       });
 
-      return errors.length && !areOptional;
+      return errors.length === 0 || (!errors.length && areOptional);
     }
 
     async function checkFormAndSave(forceTargetId) {
