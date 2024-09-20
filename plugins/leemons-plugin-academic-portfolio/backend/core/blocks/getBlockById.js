@@ -11,7 +11,7 @@ async function getBlockById({ id, ctx }) {
   const normalizedId = multipleIds ? id : [id];
   const results = await ctx.tx.db.Blocks.find({ id: { $in: normalizedId } }).lean();
 
-  if (multipleIds) {
+  if (!multipleIds) {
     return results[0] ?? null;
   }
 
