@@ -262,6 +262,15 @@ module.exports = {
           numberOfSeats: 'Nº de plazas',
           course: 'Curso',
         },
+        nomenclature: {
+          title: 'Nomenclatura',
+          blockInputLabel: 'Nombre del elemento "bloque"',
+          subjectInputLabel: 'Nombre del elemento "asignatura"',
+          errors: {
+            duplicatedKey: 'Nombre duplicado',
+          },
+          success: { set: 'Nomenclatura del programa actualizada correctamente.' },
+        },
         classConfiguration: 'Configuración de Aulas',
         referenceGroups: 'Grupos de Referencia',
         referenceGroupsInfo:
@@ -1029,5 +1038,49 @@ module.exports = {
   selectSubjectAndCourse: {
     subject: 'Asignatura',
     course: 'Curso',
+  },
+  blocksPage: {
+    header: {
+      title: 'Bloques',
+      centerSelectPlaceholder: 'Selecciona un centro',
+      programSelectPlaceholder: 'Selecciona un programa',
+      courseSelectPlaceholder: 'Selecciona un curso',
+      subjectSelectPlaceholder: 'Selecciona una asignatura',
+    },
+    labels: {
+      configureBlocks: 'Configuración de Bloques',
+      activateBlocks: 'Activar bloques',
+      add: 'Añadir',
+      remove: 'Eliminar',
+      edit: 'Editar',
+      accept: 'Aceptar',
+      cancel: 'Cancelar',
+      name: 'Nombre',
+      abbreviation: 'Abreviatura',
+      actions: 'Acciones',
+    },
+    placeholders: {
+      addText: 'Añadir texto...',
+    },
+    alerts: {
+      success: {
+        add: 'Bloque creado correctamente.',
+        update: 'Bloque actualizado correctamente.',
+        delete: 'Bloque eliminado correctamente.',
+      },
+      failure: {
+        add: 'No se ha podido crear el bloque.',
+        update: 'No se ha podido actualizar el bloque.',
+        delete: 'No se ha podido eliminar el bloque.',
+      },
+    },
+    errors: {
+      requiredField: 'Campo requerido',
+    },
+    emptyState: {
+      text: 'Crea un bloque. Solo tienes que introducir su nombre y abreviatura y pulsar añadir en el formulario de arriba.',
+      altText: 'Añade tu primer bloque',
+    },
+    emptyFilters: 'Selecciona una asignatura para empezar',
   },
 };

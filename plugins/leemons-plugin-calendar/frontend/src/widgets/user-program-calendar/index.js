@@ -1,24 +1,35 @@
 /* eslint-disable no-nested-ternary */
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import dayjs from 'dayjs';
+
+import { listSessionClassesRequest } from '@academic-portfolio/request';
 import { Title, Box, Button, createStyles, Stack } from '@bubbles-ui/components';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
+
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
 import { getCentersWithToken } from '@users/session';
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
+
 import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { getCentersWithToken } from '@users/session';
+import dayjs from 'dayjs';
+import PropTypes from 'prop-types';
+
+import getProjectedEvents from '../../helpers/getProjectedEvents';
+import { getCalendarsToFrontendRequest, getScheduleToFrontendRequest } from '../../request';
+
+import { Calendar } from './components/Calendar';
+import { EmptyState } from './components/EmptyState/EmptyState';
+import { WeekEventList } from './components/WeekEventList';
+
+import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import { getCalendarDaysOffToEvents } from '@calendar/helpers/getCalendarDaysOffToEvents';
 import { getEventColor } from '@calendar/helpers/getEventColor';
-import { listSessionClassesRequest } from '@academic-portfolio/request';
 import { getEventsByProgram } from '@calendar/helpers/getEventsByProgram';
-import { getCalendarsToFrontendRequest, getScheduleToFrontendRequest } from '../../request';
-import { EmptyState } from './components/EmptyState/EmptyState';
-import { Calendar } from './components/Calendar';
-import getProjectedEvents from '../../helpers/getProjectedEvents';
-import { WeekEventList } from './components/WeekEventList';
+import prefixPN from '@calendar/helpers/prefixPN';
+import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
 
 const Styles = createStyles((theme, { inTab }) => ({
   root: {
@@ -54,8 +65,12 @@ function UserProgramCalendar({ inTab, program, classe }) {
   const [isLoading, setIsLoading] = useState(true);
   const [centerToken, setCenterToken] = useState(null);
   const [calendarConfig, setCalendarConfig] = useState(null);
+
+  const [currentProgram, setCurrentProgram] = useState(null);
+
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [allCalendars, setAllCalendars] = useState([]);
+
   const { classes: styles } = Styles({ inTab });
 
   const [t] = useTranslateLoader(prefixPN('userProgramCalendar'));
@@ -84,11 +99,12 @@ function UserProgramCalendar({ inTab, program, classe }) {
     const [{ calendars, events }, schedule, programData] = await Promise.all([
       getCalendarsToFrontendRequest(center.token, { showHiddenColumns: true }),
       getScheduleToFrontendRequest(center.token),
-      listSessionClassesRequest({ program: program?.id }),
+      listSessionClassesRequest({ program: program?.id, type: null }),
     ]);
     setAllCalendars([...allCalendars, ...calendars]);
 
     setCalendarConfig(schedule?.calendarConfig);
+    setCurrentProgram(programData);
 
     const getCalendarEvents = getCalendarDaysOffToEvents(schedule);
 
@@ -99,7 +115,8 @@ function UserProgramCalendar({ inTab, program, classe }) {
       classe,
       inTab
     );
-    const parsedEventsNotProjected = await transformDBEventsToFullCalendarEvents(
+
+    const parsedEventsNotProjected = transformDBEventsToFullCalendarEvents(
       eventsByProgram,
       calendars,
       calendarConfig
@@ -116,10 +133,10 @@ function UserProgramCalendar({ inTab, program, classe }) {
   }
 
   useEffect(() => {
-    if (currentMonthRange.start && currentMonthRange.end) {
+    if (currentMonthRange.start && currentMonthRange.end && program !== currentProgram?.id) {
       getCalendarsForCenter();
     }
-  }, [currentMonthRange, startDate, endDate]);
+  }, [currentMonthRange, startDate, endDate, program]);
 
   const onNewEvent = () => {
     setSelectedEvent(null);
@@ -149,11 +166,13 @@ function UserProgramCalendar({ inTab, program, classe }) {
         <Box>
           <Title order={3}>{t('agenda')}</Title>
         </Box>
+
         <Box>
           <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onNewEvent}>
             {tc('new')}
           </Button>
         </Box>
+
       </Stack>
       {!parsedEvents && <EmptyState onNewEvent={onNewEvent} />}
       <EventModal

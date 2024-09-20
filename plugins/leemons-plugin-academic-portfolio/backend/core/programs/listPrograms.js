@@ -1,9 +1,18 @@
-const _ = require('lodash');
-const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 const { LeemonsError } = require('@leemons/error');
+const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
+const _ = require('lodash');
+
 const { getUserProgramIds } = require('./getUserProgramIds');
 
-async function listPrograms({ page, size, center, filters = {}, onlyArchived, ctx }) {
+async function listPrograms({
+  page,
+  size,
+  center,
+  filters = {},
+  teacherTypeFilter,
+  onlyArchived,
+  ctx,
+}) {
   const queriesOptions = onlyArchived ? { excludeDeleted: false } : {};
   const [profile, programCenter] = await Promise.all([
     ctx.tx.call('users.profiles.getProfileSysName'),
@@ -19,7 +28,7 @@ async function listPrograms({ page, size, center, filters = {}, onlyArchived, ct
   let programIds = _.map(programCenter, 'program');
 
   if (profile === 'teacher' || profile === 'student') {
-    const _programIds = await getUserProgramIds({ ctx });
+    const _programIds = await getUserProgramIds({ ctx, teacherTypeFilter });
     programIds = _.intersection(_programIds, programIds);
   }
 

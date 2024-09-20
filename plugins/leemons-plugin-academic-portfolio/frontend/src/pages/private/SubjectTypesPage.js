@@ -1,7 +1,14 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { Controller, useForm } from 'react-hook-form';
-import { useQueryClient } from '@tanstack/react-query';
+
+import SubjectTypesEmptyState from '@academic-portfolio/components/SubjectTypesEmptyState';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import {
+  useCreateSubjectType,
+  useDeleteSubjectType,
+  useUpdateSubjectType,
+} from '@academic-portfolio/hooks/mutations/useMutateSubjectType';
+import useSubjectTypes from '@academic-portfolio/hooks/useSubjectTypes';
 import {
   Select,
   TableInput,
@@ -18,16 +25,10 @@ import {
 } from '@bubbles-ui/components';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useUserCenters } from '@users/hooks';
-import {
-  useCreateSubjectType,
-  useDeleteSubjectType,
-  useUpdateSubjectType,
-} from '@academic-portfolio/hooks/mutations/useMutateSubjectType';
-import useSubjectTypes from '@academic-portfolio/hooks/useSubjectTypes';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import SubjectTypesEmptyState from '@academic-portfolio/components/SubjectTypesEmptyState';
+import { useQueryClient } from '@tanstack/react-query';
+import { useUserCenters } from '@users/hooks';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 const SubjectTypesPage = () => {
   const [t, , , tLoading] = useTranslateLoader(prefixPN('subjectTypes_page'));
@@ -154,7 +155,7 @@ const SubjectTypesPage = () => {
       id,
       center,
       name: newItem.name,
-      description: newItem.description,
+      description: newItem.description?.length ? newItem.description : null,
     };
     updateSubjectType(mutationObject, {
       onSuccess: () => {

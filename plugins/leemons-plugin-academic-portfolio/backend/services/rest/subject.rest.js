@@ -4,19 +4,15 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const _ = require('lodash');
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsError } = require('@leemons/error');
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
+const { LeemonsValidator } = require('@leemons/validator');
+const _ = require('lodash');
 
-const {
-  validatePutSubjectCredits,
-  validateGetSubjectCredits,
-  validateGetSubjectCreditsProgram,
-  validateGetSubjectsCredits,
-} = require('../../validations/forms');
+const { duplicateClassesByIds } = require('../../core/classes/duplicateClassesByIds');
 const {
   addSubject,
   updateSubject,
@@ -30,7 +26,12 @@ const {
   isMainTeacherInSubject,
 } = require('../../core/subjects');
 const { duplicateSubjectByIds } = require('../../core/subjects/duplicateSubjectByIds');
-const { duplicateClassesByIds } = require('../../core/classes/duplicateClassesByIds');
+const {
+  validatePutSubjectCredits,
+  validateGetSubjectCredits,
+  validateGetSubjectCreditsProgram,
+  validateGetSubjectsCredits,
+} = require('../../validations/forms');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -185,21 +186,33 @@ module.exports = {
           program: { type: 'string' },
           course: { type: 'string' }, // Stringified array, even for one
           onlyArchived: { type: 'string' },
+          teacherTypeFilter: { type: 'string' },
         },
         required: ['page', 'size'],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
-        const { page, size, program, course, onlyArchived } = ctx.params;
+        const { page, size, program, course, onlyArchived, teacherTypeFilter } = ctx.params;
         const truthyValues = ['true', true, '1'];
         const _onlyArchived = truthyValues.includes(onlyArchived);
+
+        let _course;
+        try {
+          _course = JSON.parse(course || 'null');
+        } catch (error) {
+          throw new LeemonsError(ctx, {
+            message: 'Course must be a valid JSON array',
+            statusCode: 400,
+          });
+        }
 
         const data = await listSubjects({
           page: parseInt(page, 10),
           size: parseInt(size, 10),
           program,
-          course,
+          course: _course,
           onlyArchived: _onlyArchived,
+          teacherTypeFilter,
           ctx,
         });
         return { status: 200, data };

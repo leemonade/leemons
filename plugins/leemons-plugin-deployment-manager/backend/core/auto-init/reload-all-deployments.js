@@ -32,7 +32,7 @@ async function reloadAllDeployments({ broker, ids = [], reloadRelations, include
       pluginsAndRelations = {
         pluginNames,
         relationship: allPluginsAndRelations.relationship.filter(
-          (r) => pluginNames.includes(r.fromPluginName) || pluginNames.includes(r.toPluginName)
+          (r) => pluginNames.includes(r.fromPluginName) && pluginNames.includes(r.toPluginName)
         ),
       };
     }

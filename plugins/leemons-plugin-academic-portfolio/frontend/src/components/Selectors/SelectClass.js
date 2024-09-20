@@ -1,19 +1,42 @@
-import React, { forwardRef, useEffect, useState } from 'react';
+import React, { forwardRef, useCallback, useEffect, useState } from 'react';
 
 import { Select } from '@bubbles-ui/components';
+import { debounce } from 'lodash';
 import PropTypes from 'prop-types';
 
 import { listClassesRequest, listSessionClassesRequest } from '../../request';
+
+const isThereMoreThanOneClassPerSubject = (classesData) => {
+  let result = false;
+
+  const subjectClassCount = new Map();
+
+  classesData.forEach((classItem) => {
+    const subjectId = classItem.subject?.id;
+    if (subjectId) {
+      subjectClassCount.set(subjectId, (subjectClassCount.get(subjectId) || 0) + 1);
+    }
+  });
+
+  result = Array.from(subjectClassCount.values()).some((count) => count > 1);
+
+  return result;
+};
 
 const SelectClass = forwardRef(
   (
     {
       program,
-      course,
+      course: courseFilter,
       onlyClassesWhichIBelong,
+      teacherTypeFilter,
       value: userValue,
+      allowNullValue,
       customOptions = [],
       onChange,
+      mergeSubjectNameWithClass = true,
+      subjectFilter,
+      firstSelected,
       ...props
     },
     ref
@@ -37,12 +60,13 @@ const SelectClass = forwardRef(
       }
     };
 
-    async function loadClasses() {
+    const loadClasses = useCallback(async () => {
       if (program) {
         let _classes = [];
-        if (onlyClassesWhichIBelong) {
+        if (onlyClassesWhichIBelong || teacherTypeFilter) {
           const { classes } = await listSessionClassesRequest({
             program,
+            type: teacherTypeFilter,
           });
           _classes = classes;
         } else {
@@ -52,35 +76,103 @@ const SelectClass = forwardRef(
           _classes = items;
         }
 
-        if (course) {
-          _classes = _classes.filter(({ courses }) => courses.id === course);
+        if (courseFilter) {
+          _classes = _classes.filter(({ courses }) => {
+            return courses.id === courseFilter;
+          });
+        }
+
+        if (subjectFilter) {
+          _classes = _classes.filter(({ subject }) => {
+            return subject.id === subjectFilter;
+          });
         }
 
         setData(
-          _classes.map(({ id, courses, subject }) => {
-            const suffix = course ? '' : ` - ${courses?.name || courses?.index}`;
-            return {
-              value: id,
-              label: `${subject?.name}${suffix}`,
-            };
-          })
+          _classes
+            .map(({ id, courses, subject, groups, ...classData }) => {
+              const classIdentifier =
+                groups?.abbreviation ||
+                classData.alias ||
+                classData.classroomId ||
+                classData.classWithoutGroupId;
+
+              let mergedName = '';
+              if (mergeSubjectNameWithClass) {
+                let suffix = '';
+                const separator = ' - ';
+                const classIdentifierForMergedName = isThereMoreThanOneClassPerSubject(_classes)
+                  ? classIdentifier
+                  : '';
+
+                // We only add the course for classes that belong to programs with sequential courses: with max one course per class.
+                // It arrives as an object -or as an array one more than one course- and when not filtering by course
+                if (!courseFilter && courses?.index) {
+                  suffix += `${separator}${courses?.index}º`;
+                }
+
+                if (classIdentifierForMergedName) {
+                  suffix += `${separator}${classIdentifierForMergedName}`;
+                }
+
+                mergedName = `${subject?.name}${suffix}`;
+              }
+
+              return {
+                value: id,
+                label: mergedName || classIdentifier,
+              };
+            })
+            .sort((a, b) => a.label.localeCompare(b.label))
         );
       }
-    }
+    }, [
+      program,
+      courseFilter,
+      onlyClassesWhichIBelong,
+      subjectFilter,
+      mergeSubjectNameWithClass,
+      teacherTypeFilter,
+    ]);
 
     // EN: Update the value when controlled value changes
     // ES: Actualizar el valor cuando el valor controlado cambia
     useEffect(() => {
       if (data.length && userValue) {
         setValue(userValue);
+      } else if (allowNullValue && !userValue) {
+        setValue(null);
       }
-    }, [userValue]);
+    }, [userValue, data]);
+
+    useEffect(() => {
+      if (firstSelected && data?.length > 0 && !userValue) {
+        handleChange(data[0].value);
+      }
+    }, [data, firstSelected, userValue, data]);
+
+    const debouncedLoadClasses = useCallback(() => {
+      const debouncedFunc = debounce(() => {
+        loadClasses();
+      }, 300);
+
+      debouncedFunc();
+
+      return () => debouncedFunc.cancel();
+    }, [loadClasses]);
 
     // EN: Get programs from API on center change
     // ES: Obtener programas desde API en cambio de centro
     useEffect(() => {
-      loadClasses();
-    }, [program, course]);
+      return debouncedLoadClasses();
+    }, [
+      program,
+      courseFilter,
+      debouncedLoadClasses,
+      subjectFilter,
+      mergeSubjectNameWithClass,
+      teacherTypeFilter,
+    ]);
 
     return (
       <Select
@@ -103,6 +195,11 @@ SelectClass.propTypes = {
   course: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func,
+  allowNullValue: PropTypes.bool,
+  teacherTypeFilter: PropTypes.string,
+  mergeSubjectNameWithClass: PropTypes.bool,
+  subjectFilter: PropTypes.string,
+  firstSelected: PropTypes.bool,
 };
 
 export { SelectClass };

@@ -4,31 +4,28 @@
  */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const {
+  LeemonsMiddlewaresMixin,
+  LeemonsMiddlewareAuthenticated,
+  LeemonsMiddlewareNecessaryPermits,
+} = require('@leemons/middlewares');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getServiceModels } = require('../models');
-const restActions = require('./rest/programs.rest');
+const { getAddCustomTranslationKeysAction } = require('@leemons/multilanguage');
 
-// addProgram,
 const { addProgram } = require('../core/programs/addProgram');
-// listPrograms,
-const { listPrograms } = require('../core/programs/listPrograms');
-// programsByIds,
-const { programsByIds } = require('../core/programs/programsByIds');
-// getUserPrograms,
-const { getUserPrograms } = require('../core/programs/getUserPrograms');
-// getProgramCenters,
 const { getProgramCenters } = require('../core/programs/getProgramCenters');
-// programsByCenters,
-const { programsByCenters } = require('../core/programs/programsByCenters');
-// getUsersInProgram,
-const { getUsersInProgram } = require('../core/programs/getUsersInProgram');
-// isUserInsideProgram,
-const { isUserInsideProgram } = require('../core/programs/isUserInsideProgram');
-// getProgramEvaluationSystem,
 const { getProgramEvaluationSystem } = require('../core/programs/getProgramEvaluationSystem');
+const { getUserPrograms } = require('../core/programs/getUserPrograms');
+const { getUsersInProgram } = require('../core/programs/getUsersInProgram');
+const { isUserInsideProgram } = require('../core/programs/isUserInsideProgram');
+const { listPrograms } = require('../core/programs/listPrograms');
+const { programsByCenters } = require('../core/programs/programsByCenters');
+const { programsByIds } = require('../core/programs/programsByIds');
+const { getServiceModels } = require('../models');
+
+const restActions = require('./rest/programs.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -45,6 +42,18 @@ module.exports = {
   ],
   actions: {
     ...restActions,
+    ...getAddCustomTranslationKeysAction({
+      middlewares: [
+        LeemonsMiddlewareAuthenticated(),
+        LeemonsMiddlewareNecessaryPermits({
+          allowedPermissions: {
+            'academic-portfolio.programs': {
+              actions: ['admin', 'create', 'update'],
+            },
+          },
+        }),
+      ],
+    }),
     addProgram: {
       handler(ctx) {
         return addProgram({ ...ctx.params, ctx });

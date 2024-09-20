@@ -8,9 +8,13 @@ import { isNil } from 'lodash';
 import PropTypes from 'prop-types';
 
 function dynamicImport(pluginName, component) {
-  return loadable(() =>
-    import(`@app/plugins/${pluginName}/src/widgets/leebrary/${component}.js`)
-  );
+  return loadable(async () => {
+    try {
+      return await import(`@app/plugins/${pluginName}/src/widgets/leebrary/${component}.js`);
+    } catch (error) {
+      return await import(`@app/plugins/${pluginName}/dist/widgets/leebrary/${component}.js`);
+    }
+  });
 }
 
 const CardDetailWrapper = ({ category, ...props }) => {

@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
-import { isEmpty, noop, omit } from 'lodash';
+
 import {
   ContextContainer,
   Title,
@@ -19,16 +18,24 @@ import {
   TotalLayoutContainer,
 } from '@bubbles-ui/components';
 import { InfoIcon } from '@bubbles-ui/icons/solid';
+import { useLocale } from '@common/LocaleDate';
 import { Header } from '@leebrary/components/AssetPickerDrawer/components/Header';
 import ImagePicker from '@leebrary/components/ImagePicker';
-import FooterContainer from './FooterContainer';
-import SubstagesSetup from './SubstagesSetup';
+import { cloneDeep, isEmpty, noop, omit } from 'lodash';
+import PropTypes from 'prop-types';
+
 import CoursesSetup from './CoursesSetup';
 import CyclesSetup from './CyclesSetup';
+import EvaluationSystemsSelect from './EvaluationSystemSelect';
+import FooterContainer from './FooterContainer';
+import LoadingFormState from './LoadingFormState';
+import Nomenclature from './Nomenclature';
 import ReferenceGroupsSetup from './ReferenceGroupsSetup';
 import SeatsPerCourseSetup from './SeatsPerCourseSetup';
-import EvaluationSystemsSelect from './EvaluationSystemSelect';
-import LoadingFormState from './LoadingFormState';
+import SubstagesSetup from './SubstagesSetup';
+
+import getTranslationKeyPrefixes from '@academic-portfolio/helpers/getTranslationKeyPrefixes';
+import useSetProgramCustomTranslationKeys from '@academic-portfolio/hooks/mutations/useSetProgramCustomTranslationKeys';
 
 function updateProgressWithLoadingCheck(setProgress, isLoading, onLoadingComplete) {
   const minDisplayTime = 2700; // Minimum display time
@@ -87,15 +94,21 @@ const AddProgramForm = ({
   centerId,
   drawerIsLoading,
   localizations,
-  programUnderEdit,
+  programBeingEdited,
   onUpdate = noop,
+  setNomenclature = noop,
 }) => {
   const { classes } = useAddProgramFormStyles();
-  const isEditing = useMemo(() => !isEmpty(programUnderEdit), [programUnderEdit]);
+  const isEditing = useMemo(() => !isEmpty(programBeingEdited), [programBeingEdited]);
   const form = useForm();
   const [loadingEvaluationSystems, setLoadingEvaluationSystems] = useState(false);
   const [showLoadingComponent, setShowLoadingComponent] = useState(!isEditing);
   const [progress, setProgress] = useState(0);
+  const { mutate: setProgramCustomTranslationKeys } = useSetProgramCustomTranslationKeys({
+    successMessage:
+      localizations?.programDrawer?.addProgramForm?.formLabels?.nomenclature?.success?.set,
+  });
+  const userLocale = useLocale();
 
   const { control, formState, setValue, watch } = form;
   const { hoursPerCredit, credits, courses } = watch();
@@ -111,20 +124,20 @@ const AddProgramForm = ({
   }, [localizations]);
 
   const getSeats = useCallback(() => {
-    if (programUnderEdit.seatsForAllCourses) {
-      return { all: programUnderEdit.seatsForAllCourses };
+    if (programBeingEdited.seatsForAllCourses) {
+      return { all: programBeingEdited.seatsForAllCourses };
     }
     const result = {};
-    programUnderEdit.courses?.forEach((course) => {
+    programBeingEdited.courses?.forEach((course) => {
       result[course.index] = course.metadata.seats;
     });
     return result;
-  }, [programUnderEdit]);
+  }, [programBeingEdited]);
 
   // EFFECTS ··························································································||ﬂG
 
   useEffect(() => {
-    if (isEmpty(programUnderEdit)) {
+    if (isEmpty(programBeingEdited)) {
       const handleLoadingComplete = () => {
         setShowLoadingComponent(false);
       };
@@ -136,35 +149,35 @@ const AddProgramForm = ({
       );
     }
     return () => {};
-  }, [loadingEvaluationSystems, programUnderEdit]);
+  }, [loadingEvaluationSystems, programBeingEdited]);
 
   useEffect(() => {
-    if (!isEmpty(programUnderEdit) && !isEmpty(setupData)) {
-      setValue('name', programUnderEdit.name);
-      setValue('abbreviation', programUnderEdit.abbreviation);
-      setValue('color', programUnderEdit.color);
-      setValue('image', programUnderEdit.image);
-      setValue('evaluationSystem', programUnderEdit.evaluationSystem);
-      setValue('hideStudentsFromEachOther', programUnderEdit.hideStudentsToStudents);
-      setValue('autoAssignment', programUnderEdit.useAutoAssignment);
+    if (!isEmpty(programBeingEdited) && !isEmpty(setupData)) {
+      setValue('name', programBeingEdited.name);
+      setValue('abbreviation', programBeingEdited.abbreviation);
+      setValue('color', programBeingEdited.color);
+      setValue('image', programBeingEdited.image);
+      setValue('evaluationSystem', programBeingEdited.evaluationSystem);
+      setValue('hideStudentsFromEachOther', programBeingEdited.hideStudentsToStudents);
+      setValue('autoAssignment', programBeingEdited.useAutoAssignment);
 
       setValue('seatsPerCourse', getSeats());
 
       if (setupData.creditsSystem) {
-        setValue('credits', programUnderEdit.credits);
-        setValue('hoursPerCredit', programUnderEdit.hoursPerCredit);
+        setValue('credits', programBeingEdited.credits);
+        setValue('hoursPerCredit', programBeingEdited.hoursPerCredit);
       }
       if (setupData.durationInHours) {
-        setValue('totalHours', programUnderEdit.totalHours);
+        setValue('totalHours', programBeingEdited.totalHours);
       }
       if (setupData.hasSubstages) {
-        setValue('substages', programUnderEdit.substages);
+        setValue('substages', programBeingEdited.substages);
       }
       if (setupData.hasCycles) {
-        const formattedCycles = programUnderEdit.cycles?.map(
+        const formattedCycles = programBeingEdited.cycles?.map(
           ({ courses: _courses, name, index }) => {
             const coursesIndex = _courses?.map(
-              (courseId) => programUnderEdit.courses.find((c) => c.id === courseId)?.index
+              (courseId) => programBeingEdited.courses.find((c) => c.id === courseId)?.index
             );
             return { name, courses: coursesIndex, index };
           }
@@ -173,24 +186,52 @@ const AddProgramForm = ({
       }
 
       if (setupData.referenceGroups) {
-        const { groupsForAllCourses } = programUnderEdit.groupsMetadata;
+        const { groupsForAllCourses } = programBeingEdited.groupsMetadata;
         if (groupsForAllCourses) {
           setValue('referenceGroups', {
-            ...omit(programUnderEdit.groupsMetadata, 'groupsForAllCourses'),
+            ...omit(programBeingEdited.groupsMetadata, 'groupsForAllCourses'),
             groupsForCourse1: groupsForAllCourses,
           });
         } else {
-          setValue('referenceGroups', programUnderEdit.groupsMetadata);
+          setValue('referenceGroups', programBeingEdited.groupsMetadata);
         }
       }
 
-      const formattedCourses = programUnderEdit.courses?.map(({ index, metadata }) => ({
+      const formattedCourses = programBeingEdited.courses?.map(({ index, metadata }) => ({
         ...metadata,
         index,
       }));
       setValue('courses', formattedCourses);
+
+      setValue('nomenclature', programBeingEdited.nomenclature);
     }
-  }, [programUnderEdit, getSeats]);
+  }, [programBeingEdited, getSeats]);
+
+  // HANDLERS ··························································································||ﬂG
+
+  const handleOnSubmit = (data) => {
+    const nomenclature = form.getValues('nomenclature');
+    const cleanNomenclature = {};
+    if (nomenclature.block) cleanNomenclature.block = nomenclature.block;
+    if (nomenclature.subject) cleanNomenclature.subject = nomenclature.subject;
+
+    const localeCustomKeys = {
+      [userLocale]: cleanNomenclature,
+    };
+
+    if (isEditing) {
+      if (!isEmpty(cleanNomenclature)) {
+        setProgramCustomTranslationKeys({
+          programId: programBeingEdited.id,
+          prefix: getTranslationKeyPrefixes().PROGRAM,
+          localizations: localeCustomKeys,
+        });
+      }
+      onUpdate(data);
+    } else {
+      onSubmit(data);
+    }
+  };
 
   return (
     <TotalLayoutContainer
@@ -225,7 +266,7 @@ const AddProgramForm = ({
               progress={progress}
             />
           ) : (
-            <form onSubmit={form.handleSubmit(isEditing ? onUpdate : onSubmit)}>
+            <form onSubmit={form.handleSubmit(handleOnSubmit)}>
               <ContextContainer sx={{ marginBottom: 100 }} direction="column" spacing={8}>
                 {/* SECTION: BASIC DATA */}
                 <ContextContainer direction="column" spacing={4}>
@@ -515,6 +556,14 @@ const AddProgramForm = ({
                   </ContextContainer>
                 )}
 
+                {/* SECTION: NOMENCLATURE */}
+                <Nomenclature
+                  labels={formLabels?.nomenclature}
+                  onSaveTranslations={(payload) => setNomenclature(cloneDeep(payload))}
+                  programId={programBeingEdited?.id || null}
+                  form={form}
+                />
+
                 {/* SECTION: OTHERS */}
                 <ContextContainer sx={{ marginDown: 100 }} direction="column" spacing={4}>
                   <Title className={classes.title}>{localizations?.programDrawer?.others}</Title>
@@ -558,7 +607,7 @@ const AddProgramForm = ({
                     {formLabels?.cancel}
                   </Button>
                   <Button type="submit" loading={drawerIsLoading}>
-                    {isEmpty(programUnderEdit)
+                    {isEmpty(programBeingEdited)
                       ? formLabels?.createProgram
                       : formLabels?.saveChanges}
                   </Button>
@@ -581,8 +630,9 @@ AddProgramForm.propTypes = {
   centerId: PropTypes.string,
   drawerIsLoading: PropTypes.bool,
   localizations: PropTypes.object.isRequired,
-  programUnderEdit: PropTypes.object,
+  programBeingEdited: PropTypes.object,
   onLoadingStateChange: PropTypes.func,
+  setNomenclature: PropTypes.func,
 };
 
 export default AddProgramForm;

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+
 import { Box } from '@bubbles-ui/components';
-import { DayRow } from './components/DayRow';
+import PropTypes from 'prop-types';
 
 import { WeekEventListStyles } from './WeekEventList.styles';
+import { DayRow } from './components/DayRow';
 
 const WeekEventList = ({ events, startDate, endDate, calendarConfig, t, onEventClick }) => {
   const { classes } = WeekEventListStyles({}, { name: 'WeekEventList' });

@@ -1,12 +1,15 @@
 const _ = require('lodash');
-const { getProgramSubjects } = require('./getProgramSubjects');
-const { getProgramGroups } = require('./getProgramGroups');
-const { getProgramCourses } = require('./getProgramCourses');
-const { getProgramSubstages } = require('./getProgramSubstages');
-const { getProgramTreeTypes } = require('./getProgramTreeTypes');
-const { getProgramCycles } = require('./getProgramCycles');
+
 const { listClasses } = require('../classes/listClasses');
 const { getClassesProgramInfo } = require('../classes/listSessionClasses');
+
+const { getProgramCourses } = require('./getProgramCourses');
+const { getProgramCustomNomenclature } = require('./getProgramCustomNomenclature');
+const { getProgramCycles } = require('./getProgramCycles');
+const { getProgramGroups } = require('./getProgramGroups');
+const { getProgramSubjects } = require('./getProgramSubjects');
+const { getProgramSubstages } = require('./getProgramSubstages');
+const { getProgramTreeTypes } = require('./getProgramTreeTypes');
 
 // In order to know hwat knowledge areas or subject types are being used by the program subjects,
 // we cannot check the program anymore. We search for this information in the class
@@ -60,8 +63,8 @@ async function programsByIds({
     return ctx.tx.db.Programs.find({ id: _.isArray(ids) ? ids : [ids] }, '', dbQueryOptions).lean();
   }
 
-  const [programs, programCenter, substages, courses, groups, subjects, cycles] = await Promise.all(
-    [
+  const [programs, programCenter, substages, courses, groups, subjects, cycles, nomenclature] =
+    await Promise.all([
       ctx.tx.db.Programs.find({ id: _.isArray(ids) ? ids : [ids] }, '', dbQueryOptions).lean(),
       ctx.tx.db.ProgramCenter.find(
         { program: _.isArray(ids) ? ids : [ids] },
@@ -72,8 +75,8 @@ async function programsByIds({
       getProgramGroups({ ids, options: dbQueryOptions, ctx }),
       getProgramSubjects({ ids, options: dbQueryOptions, ctx }),
       getProgramCycles({ ids, ctx }),
-    ]
-  );
+      getProgramCustomNomenclature({ ids, ctx }),
+    ]);
 
   // We need the program classes to get extra info: knowledge areas, subject types, students
   let classes;
@@ -134,6 +137,7 @@ async function programsByIds({
       ? _.filter(substageByProgram[program.id], ({ number }) => !_.isNil(number))
       : [],
     cycles: cyclesByProgram[program.id] ? cyclesByProgram[program.id] : [],
+    nomenclature: nomenclature[program.id] ? nomenclature[program.id] : {},
   }));
 
   if (withStudentsAndTeachers) {

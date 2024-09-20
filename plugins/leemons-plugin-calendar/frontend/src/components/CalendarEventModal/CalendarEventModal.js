@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { get, isArray, isFunction, isNil, keyBy, map } from 'lodash';
+import React, { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import {
   Box,
   Text,
@@ -14,9 +14,11 @@ import {
   ContextContainer,
 } from '@bubbles-ui/components';
 import { EditWriteIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import { Dates } from './components/Dates';
+import { get, isArray, isFunction, isNil, keyBy, map } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { CalendarEventModalStyles } from './CalendarEventModal.styles';
-import { useIsTeacher } from '@academic-portfolio/hooks';
+import { Dates } from './components/Dates';
 
 const REQUIRED_FIELD = 'Field is required';
 const CALENDAR_TYPES = {
@@ -67,6 +69,7 @@ export const CALENDAR_EVENT_MODAL_DEFAULT_PROPS = {
   },
 };
 export const CALENDAR_EVENT_MODAL_PROP_TYPES = {
+  event: PropTypes.object,
   opened: PropTypes.bool,
   onClose: PropTypes.func,
   onRemove: PropTypes.func,
@@ -113,6 +116,7 @@ function CalendarEventModal(props) {
     locale,
     UsersComponent,
     form: formProp,
+    event,
   } = props;
 
   const [canEdit, setCanEdit] = React.useState(false);
@@ -141,9 +145,11 @@ function CalendarEventModal(props) {
   const calendar = watch('calendar');
   const hideInCalendar = watch('data.hideInCalendar');
   const hideCalendarField = watch('data.hideCalendarField');
+  const hideGuests = watch('data.hideGuests');
   const type = watch('type');
   const eventTypesByValue = keyBy(selectData.eventTypes, 'value');
-  const config = eventTypesByValue[type]?.config;
+  const config = { ...(eventTypesByValue[type]?.config || {}), ...(event?.data?.config || {}) };
+
   React.useEffect(() => {
     const subscription = watch((value, { name }) => {
       if (value.type === CALENDAR_TYPES.TASK) {
@@ -184,6 +190,8 @@ function CalendarEventModal(props) {
     return isNew ? messages.newEvent : messages.detailEvent;
   };
 
+  const hasCard = useMemo(() => !!components?.card, [components]);
+
   return (
     <Drawer size={'sm'} className={classes.root} onClose={onClose} opened={opened}>
       <Drawer.Header title={titleDrawer()}>
@@ -193,7 +201,7 @@ function CalendarEventModal(props) {
               <ActionButton icon={<EditWriteIcon width={18} height={18} />} onClick={onEdit} />
             ) : null}
 
-            {(isTeacher && isTask) || isOwner ? (
+            {!isNew && isOwner ? (
               <ActionButton icon={<DeleteBinIcon width={18} height={18} />} onClick={onRemove} />
             ) : null}
           </Box>
@@ -201,69 +209,77 @@ function CalendarEventModal(props) {
       </Drawer.Header>
       <Drawer.Content>
         <form autoComplete="off">
-          <ContextContainer spacing={8}>
-            <ContextContainer spacing={4}>
-              <Controller
-                name="title"
-                control={control}
-                rules={{
-                  required: errorMessages.titleRequired,
-                }}
-                render={({ field }) => {
-                  if (disabled) {
-                    return (
-                      <>
-                        <Text size="lg" strong>
-                          {messages.title}
-                        </Text>
-                        <Text>{field.value}</Text>
-                      </>
-                    );
-                  }
-                  return (
-                    <TextInput
-                      readOnly={disabled}
-                      disabled={disabled}
-                      label={config?.titleLabel || messages.name}
-                      placeholder={config?.titlePlaceholder || messages.titlePlaceholder}
-                      error={get(errors, 'title')}
-                      required={!disabled}
-                      {...field}
-                    />
-                  );
-                }}
-              />
+          {hasCard && (
+            <Box>
+              <components.card {...event.data} />
+            </Box>
+          )}
 
-              {!forceType ? (
-                <ContextContainer spacing={4}>
-                  <Controller
-                    name="type"
-                    control={control}
-                    rules={{
-                      required: errorMessages.typeRequired,
-                    }}
-                    render={({ field }) => {
-                      if (disabled) {
-                        return null;
-                      }
+          <ContextContainer>
+            {!hasCard && (
+              <ContextContainer>
+                <Controller
+                  name="title"
+                  control={control}
+                  rules={{
+                    required: errorMessages.titleRequired,
+                  }}
+                  render={({ field }) => {
+                    if (disabled) {
                       return (
-                        <RadioGroup
-                          {...field}
-                          disabled={disabled}
-                          variant="default"
-                          direction={selectData.eventTypes.length < 3 ? 'row' : 'column'}
-                          error={get(errors, 'type')}
-                          data={selectData.eventTypes}
-                          noRootPadding
-                        />
+                        <>
+                          <Text size="lg" strong>
+                            {messages.title}
+                          </Text>
+                          <Text>{field.value}</Text>
+                        </>
                       );
-                    }}
-                  />
-                </ContextContainer>
-              ) : null}
-            </ContextContainer>
+                    }
+                    return (
+                      <TextInput
+                        readOnly={disabled}
+                        disabled={disabled}
+                        label={config?.titleLabel || messages.name}
+                        placeholder={config?.titlePlaceholder || messages.titlePlaceholder}
+                        error={get(errors, 'title')}
+                        required={!disabled}
+                        {...field}
+                      />
+                    );
+                  }}
+                />
 
-            <ContextContainer spacing={4}>
+                {!forceType ? (
+                  <ContextContainer>
+                    <Controller
+                      name="type"
+                      control={control}
+                      rules={{
+                        required: errorMessages.typeRequired,
+                      }}
+                      render={({ field }) => {
+                        if (disabled) {
+                          return null;
+                        }
+                        return (
+                          <RadioGroup
+                            {...field}
+                            disabled={disabled}
+                            variant="default"
+                            direction={selectData.eventTypes.length < 3 ? 'row' : 'column'}
+                            error={get(errors, 'type')}
+                            data={selectData.eventTypes}
+                            noRootPadding
+                          />
+                        );
+                      }}
+                    />
+                  </ContextContainer>
+                ) : null}
+              </ContextContainer>
+            )}
+
+            <ContextContainer>
               <Dates
                 {...props}
                 form={form}
@@ -276,7 +292,7 @@ function CalendarEventModal(props) {
               />
             </ContextContainer>
 
-            <ContextContainer spacing={4}>
+            <ContextContainer>
               <Component
                 isEditing={true}
                 allFormData={watch()}
@@ -386,7 +402,7 @@ function CalendarEventModal(props) {
                 />
               </ContextContainer>
             ) : null}
-            {disabled && form.getValues('users')?.length ? (
+            {disabled && !hideGuests && form.getValues('users')?.length ? (
               <ContextContainer spacing={2}>
                 <Text size="lg" strong>
                   {messages.usersDisabled}

@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { AvatarSubject, Badge, Box, Divider, Stack, Text, TextClamp } from '@bubbles-ui/components';
+
+import { Button, AvatarSubject, Badge, Box, Divider, Stack, Text, TextClamp } from '@bubbles-ui/components';
 import { LocaleDate, useLocale } from '@common';
 import PropTypes from 'prop-types';
+
 import { DayRowStyles } from './DayRow.styles';
 
 const parseColumnByEvents = (events, date, locale) => {
@@ -26,6 +28,7 @@ const parseColumnByEvents = (events, date, locale) => {
 
       const eventInfo = {
         allDay: event.allDay,
+        originalEvent: event.originalEvent,
       };
 
       if (!event.allDay) {
@@ -72,10 +75,15 @@ const DayRow = ({ date, events, calendarWeekdays, t, onEventClick }) => {
     { name: 'DayRow' }
   );
   const [preparedEvents, setPreparedEvents] = useState([]);
+
   useEffect(() => {
-    const parsedEvents = parseColumnByEvents(events, date, locale);
-    setPreparedEvents(parsedEvents);
-  }, []);
+    if (events?.length > 0) {
+      const parsedEvents = parseColumnByEvents(events, date, locale);
+      setPreparedEvents(parsedEvents);
+    } else {
+      setPreparedEvents([]);
+    }
+  }, [events]);
 
   return (
     <Box>
@@ -139,20 +147,13 @@ const DayRow = ({ date, events, calendarWeekdays, t, onEventClick }) => {
             preparedEvents.description.map((event, index) => {
               const isTask = event.isTask ? `${t('taskLabel').toUpperCase()}. ` : '';
               return (
-                <Stack
-                  key={index}
-                  spacing={2}
-                  alignItems="center"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => onEventClick(event.originalEvent)}
-                >
+                <Stack key={index} spacing={2} alignItems="center">
                   <AvatarSubject color={event.bgColor} size="xs" />
-                  <TextClamp lines={1}>
-                    <Text
-                      key={index}
-                      className={classes.eventItem}
-                    >{`${isTask} ${event.title}`}</Text>
-                  </TextClamp>
+                  <Button variant="linkInline" onClick={() => onEventClick(event.originalEvent)}>
+                    <TextClamp lines={1}>
+                      <Text key={index}>{`${isTask} ${event.title}`}</Text>
+                    </TextClamp>
+                  </Button>
                 </Stack>
               );
             })}

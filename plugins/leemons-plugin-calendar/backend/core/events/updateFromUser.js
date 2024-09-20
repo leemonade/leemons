@@ -1,15 +1,17 @@
-const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
+const _ = require('lodash');
+
+const { detailByKey } = require('../calendar/detailByKey');
 const {
   getPermissionConfig: getPermissionConfigCalendar,
 } = require('../calendar/getPermissionConfig');
-const { getPermissionConfig: getPermissionConfigEvent } = require('./getPermissionConfig');
+
 const { detail: detailEvent } = require('./detail');
-const { update } = require('./update');
 const { getEventCalendars } = require('./getEventCalendars');
-const { detailByKey } = require('../calendar/detailByKey');
+const { getPermissionConfig: getPermissionConfigEvent } = require('./getPermissionConfig');
 const { grantAccessUserAgentToEvent } = require('./grantAccessUserAgentToEvent');
 const { unGrantAccessEventUsers } = require('./unGrantAccessEventUsers');
+const { update } = require('./update');
 
 /**
  * Add event to calendar if the user have access
@@ -18,11 +20,21 @@ const { unGrantAccessEventUsers } = require('./unGrantAccessEventUsers');
  * @param {string} userSession - User session
  * @param {string} id - Event id
  * @param {any} data - Event data
+ * @param {string} ownerUserAgentId - Owner user agent Id
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function updateFromUser({ id, data, ctx }) {
+async function updateFromUser({ id, data, ownerUserAgentId, ctx }) {
   const { userSession } = ctx.meta;
+
+  let ownerUserAgent;
+  if (ownerUserAgentId) {
+    [ownerUserAgent] = await ctx.tx.call('users.users.getUserAgentsInfo', {
+      userAgentIds: [ownerUserAgentId],
+    });
+  }
+
+  const userAgents = [ownerUserAgent ?? userSession.userAgents].flat();
   const [event, calendars] = await Promise.all([
     detailEvent({ id, ctx }),
     getEventCalendars({ eventId: id, ctx }),
@@ -37,7 +49,7 @@ async function updateFromUser({ id, data, ctx }) {
     await Promise.all(
       _.map(permissionConfigCalendars, (permissionConfigCalendar) =>
         ctx.tx.call('users.permissions.getUserAgentPermissions', {
-          userAgent: userSession.userAgents,
+          userAgent: userAgents,
           query: {
             permissionName: permissionConfigCalendar.permissionName,
           },
@@ -45,7 +57,7 @@ async function updateFromUser({ id, data, ctx }) {
       )
     ),
     ctx.tx.call('users.permissions.getUserAgentPermissions', {
-      userAgent: userSession.userAgents,
+      userAgent: userAgents,
       query: {
         permissionName: permissionConfigEvent.permissionName,
       },

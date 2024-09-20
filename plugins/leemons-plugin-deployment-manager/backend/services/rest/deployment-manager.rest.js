@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+/* eslint-disable no-console */
 /**
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
@@ -182,6 +183,8 @@ module.exports = {
     async handler(ctx) {
       validateInternalPrivateKey({ ctx });
       const { id, plugins } = ctx.params;
+
+      ctx.meta.deploymentID = id;
 
       return addPluginsToDeployment({ ctx, broker: this.broker, id, plugins });
     },

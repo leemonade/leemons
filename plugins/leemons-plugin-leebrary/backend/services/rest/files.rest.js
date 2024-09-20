@@ -4,20 +4,20 @@
  */
 /** @type {ServiceSchema} */
 
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { LeemonsError } = require('@leemons/error');
+const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const fs = require('fs/promises');
 const _ = require('lodash');
 
-const { newMultipart } = require('../../core/files/newMultipart');
+const { getByFile } = require('../../core/assets/files/getByFile');
+const { getByIds } = require('../../core/assets/getByIds');
+const { dataForReturnFile } = require('../../core/files');
 const { abortMultipart } = require('../../core/files/abortMultipart');
 const { finishMultipart } = require('../../core/files/finishMultipart');
-const { getByFile } = require('../../core/assets/files/getByFile');
-const { dataForReturnFile } = require('../../core/files');
-const { uploadMultipartChunk } = require('../../core/files/uploadMultipartChunk');
-const { createTemp } = require('../../core/files/upload/createTemp');
-const { getByIds } = require('../../core/assets/getByIds');
 const { getUploadChunkUrls } = require('../../core/files/getUploadChunkUrls/getUploadChunkUrls');
+const { newMultipart } = require('../../core/files/newMultipart');
+const { createTemp } = require('../../core/files/upload/createTemp');
+const { uploadMultipartChunk } = require('../../core/files/uploadMultipartChunk');
 
 const getFileRest = async ({ ctx, payload }) => {
   const { id, download, onlyPublic } = payload;
