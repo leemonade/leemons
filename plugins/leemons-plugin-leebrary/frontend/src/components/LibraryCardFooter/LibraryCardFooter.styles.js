@@ -1,6 +1,6 @@
 import { createStyles, pxToRem, getFontExpressive } from '@bubbles-ui/components';
 
-const LibraryCardFooterStyles = createStyles((theme) => ({
+const LibraryCardFooterStyles = createStyles((theme, { autoHeight }) => ({
   root: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -10,7 +10,7 @@ const LibraryCardFooterStyles = createStyles((theme) => ({
     bottom: 0,
     padding: `${pxToRem(16)}`,
     paddingTop: '0px',
-    position: 'absolute',
+    position: autoHeight ? 'relative' : 'absolute',
     backgroundColor: theme.colors.mainWhite,
   },
   date: {

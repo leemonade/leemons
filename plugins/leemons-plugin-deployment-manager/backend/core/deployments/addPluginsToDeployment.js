@@ -23,6 +23,7 @@ async function addPluginsToDeployment({ ctx, broker, id, plugins: newPlugins }) 
 
   const { pluginNames, relationship } = await getAllPluginsAndRelations(broker);
   const pluginNamesSet = new Set(pluginNames);
+
   const installedPluginsSet = new Set(installedPlugins);
 
   const pluginsToAdd = newPlugins.filter(
@@ -33,11 +34,16 @@ async function addPluginsToDeployment({ ctx, broker, id, plugins: newPlugins }) 
     throw new LeemonsError(ctx, { message: 'Plugins not found' });
   }
 
+  // Add pluginsToAdd to the installedPluginsSet
+  pluginsToAdd.forEach((plugin) => installedPluginsSet.add(plugin));
+
   /** @type PluginRelationship[] */
-  const relationshipToAdd = relationship.filter(
+  let relationshipToAdd = relationship.filter(
     (relation) =>
-      pluginsToAdd.includes(relation.fromPluginName) && pluginsToAdd.includes(relation.toPluginName)
+      pluginsToAdd.includes(relation.fromPluginName) || pluginsToAdd.includes(relation.toPluginName)
   );
+
+  relationshipToAdd = relationshipToAdd.filter((relation) => installedPluginsSet.has(relation.fromPluginName) && installedPluginsSet.has(relation.toPluginName));
 
   ctx.meta.deploymentID = id;
   ctx.meta.transactionID = await newTransaction(ctx);

@@ -1,13 +1,15 @@
 const _ = require('lodash');
 const { map } = require('lodash');
-const { getByClass: getKnowledgeByClass } = require('./knowledge/getByClass');
-const { getByClass: getSubstageByClass } = require('./substage/getByClass');
-const { getByClass: getStudentByClass } = require('./student/getByClass');
-const { getByClass: getTeacherByClass } = require('./teacher/getByClass');
-const { getByClass: getCourseByClass } = require('./course/getByClass');
-const { getByClass: getGroupByClass } = require('./group/getByClass');
+
 const { programHasSequentialCourses } = require('../programs/programHasSequentialCourses');
 const { subjectByIds } = require('../subjects/subjectByIds');
+
+const { getByClass: getCourseByClass } = require('./course/getByClass');
+const { getByClass: getGroupByClass } = require('./group/getByClass');
+const { getByClass: getKnowledgeByClass } = require('./knowledge/getByClass');
+const { getByClass: getStudentByClass } = require('./student/getByClass');
+const { getByClass: getSubstageByClass } = require('./substage/getByClass');
+const { getByClass: getTeacherByClass } = require('./teacher/getByClass');
 
 function manageClassCourses(
   id,

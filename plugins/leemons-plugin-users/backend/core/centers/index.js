@@ -1,9 +1,10 @@
 const add = require('./add');
-const list = require('./list');
 const detail = require('./detail');
-const remove = require('./remove');
 const existName = require('./existName');
 const existsById = require('./existsById');
+const { getByIds } = require('./getByIds');
+const list = require('./list');
+const remove = require('./remove');
 
 module.exports = {
   add,
@@ -12,4 +13,5 @@ module.exports = {
   remove,
   existName,
   existsById,
+  getByIds,
 };

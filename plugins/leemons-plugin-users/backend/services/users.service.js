@@ -3,17 +3,51 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const _ = require('lodash');
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
+const { LeemonsCronJobsMixin } = require('@leemons/cronjobs');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { LeemonsCronJobsMixin } = require('@leemons/cronjobs');
+const _ = require('lodash');
 
-const { getServiceModels } = require('../models');
-const restActions = require('./rest/users.rest');
-
+const { PLUGIN_NAME, VERSION } = require('../config/constants');
+const {
+  getUserAgentPermissions,
+  userAgentHasCustomPermission,
+  addCustomPermissionToUserAgent,
+} = require('../core/permissions');
+const { getProvider } = require('../core/providers/getProvider');
+const {
+  getUserAgentsInfo,
+  searchUserAgents,
+  filterUserAgentsByProfileAndCenter,
+  getUserAgentByCenterProfile,
+  getUserAgentCenter,
+} = require('../core/user-agents');
+const { addUserAgentContacts } = require('../core/user-agents/contacts/addUserAgentContacts');
+const { getUserAgentContactIds } = require('../core/user-agents/contacts/getUserAgentContactIds');
+const { getUserAgentContacts } = require('../core/user-agents/contacts/getUserAgentContacts');
+const { removeUserAgentContacts } = require('../core/user-agents/contacts/removeUserAgentContacts');
+const { userAgentsAreContacts } = require('../core/user-agents/contacts/userAgentsAreContacts');
+const {
+  getAllItemsForTheUserAgentHasPermissions,
+} = require('../core/user-agents/item-permissions/getAllItemsForTheUserAgentHasPermissions');
+const {
+  getAllItemsForTheUserAgentHasPermissionsByType,
+} = require('../core/user-agents/item-permissions/getAllItemsForTheUserAgentHasPermissionsByType');
+const {
+  userAgentHasPermissionToItem,
+} = require('../core/user-agents/item-permissions/userAgentHasPermissionToItem');
+const {
+  removeCustomUserAgentPermission,
+} = require('../core/user-agents/permissions/removeCustomUserAgentPermission');
+const {
+  updateUserAgentPermissions,
+} = require('../core/user-agents/permissions/updateUserAgentPermissions');
+const {
+  userAgentHasPermission,
+} = require('../core/user-agents/permissions/userAgentHasPermission');
 const {
   add,
   detail,
@@ -24,47 +58,14 @@ const {
   updatePassword,
   list: listUsers,
   userSessionCheckUserAgentDatasets,
+  getSuperAdminUserIds,
 } = require('../core/users');
-const {
-  getUserAgentsInfo,
-  searchUserAgents,
-  filterUserAgentsByProfileAndCenter,
-  getUserAgentByCenterProfile,
-  getUserAgentCenter,
-} = require('../core/user-agents');
-const { userAgentsAreContacts } = require('../core/user-agents/contacts/userAgentsAreContacts');
-const { getUserAgentContacts } = require('../core/user-agents/contacts/getUserAgentContacts');
-const { addUserAgentContacts } = require('../core/user-agents/contacts/addUserAgentContacts');
-const { removeUserAgentContacts } = require('../core/user-agents/contacts/removeUserAgentContacts');
-const {
-  getUserAgentPermissions,
-  userAgentHasCustomPermission,
-  addCustomPermissionToUserAgent,
-} = require('../core/permissions');
-const {
-  userAgentHasPermission,
-} = require('../core/user-agents/permissions/userAgentHasPermission');
-const {
-  updateUserAgentPermissions,
-} = require('../core/user-agents/permissions/updateUserAgentPermissions');
-const {
-  removeCustomUserAgentPermission,
-} = require('../core/user-agents/permissions/removeCustomUserAgentPermission');
-const {
-  userAgentHasPermissionToItem,
-} = require('../core/user-agents/item-permissions/userAgentHasPermissionToItem');
-const {
-  getAllItemsForTheUserAgentHasPermissions,
-} = require('../core/user-agents/item-permissions/getAllItemsForTheUserAgentHasPermissions');
-const {
-  getAllItemsForTheUserAgentHasPermissionsByType,
-} = require('../core/user-agents/item-permissions/getAllItemsForTheUserAgentHasPermissionsByType');
-const { getUserAgentContactIds } = require('../core/user-agents/contacts/getUserAgentContactIds');
-const { PLUGIN_NAME, VERSION } = require('../config/constants');
-const { jobs } = require('./jobs/users.jobs');
-const { loginWithProvider } = require('../core/users/loginWithProvider');
-const { getProvider } = require('../core/providers/getProvider');
 const getUserLocale = require('../core/users/getUserLocale');
+const { loginWithProvider } = require('../core/users/loginWithProvider');
+const { getServiceModels } = require('../models');
+
+const { jobs } = require('./jobs/users.jobs');
+const restActions = require('./rest/users.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -254,6 +255,12 @@ module.exports = {
         }
 
         return getUserLocale({ email, ctx });
+      },
+    },
+    getSuperAdminUserIds: {
+      async handler(ctx) {
+        // TODO Bring all plugin names from my deployment and make sure ctx.callerPlugin is in the list
+        return getSuperAdminUserIds({ ...ctx.params, ctx });
       },
     },
   },

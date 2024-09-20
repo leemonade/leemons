@@ -1,7 +1,13 @@
-const { LeemonsValidator } = require('@leemons/validator');
 const { LeemonsError } = require('@leemons/error');
+const { LeemonsValidator } = require('@leemons/validator');
 const _ = require('lodash');
 const { isArray } = require('lodash');
+
+const { getCourseIndex } = require('../core/courses/getCourseIndex');
+const { getProgramSubjectDigits } = require('../core/programs/getProgramSubjectDigits');
+const { programHaveMultiCourses } = require('../core/programs/programHaveMultiCourses');
+const { subjectNeedCourseForAdd } = require('../core/subjects/subjectNeedCourseForAdd');
+
 const {
   stringSchema,
   booleanSchema,
@@ -11,13 +17,10 @@ const {
   stringSchemaNullable,
   numberSchema,
 } = require('./types');
-const { programsByIds } = require('../core/programs/programsByIds');
-const { subjectNeedCourseForAdd } = require('../core/subjects/subjectNeedCourseForAdd');
-const { getCourseIndex } = require('../core/courses/getCourseIndex');
-const { getProgramSubjectDigits } = require('../core/programs/getProgramSubjectDigits');
-const { programHaveMultiCourses } = require('../core/programs/programHaveMultiCourses');
 
-const teacherTypes = ['main-teacher', 'associate-teacher'];
+const MAIN_TEACHER_TYPE = 'main-teacher';
+const ASSOCIATE_TEACHER_TYPE = 'associate-teacher';
+const teacherTypes = [MAIN_TEACHER_TYPE, ASSOCIATE_TEACHER_TYPE];
 
 const addProgramSchema = {
   type: 'object',
@@ -387,7 +390,7 @@ const updateSubjectTypeSchema = {
   properties: {
     id: stringSchema,
     name: stringSchema,
-    description: stringSchema,
+    description: stringSchemaNullable,
     groupVisibility: booleanSchema,
     credits_course: integerSchemaNullable,
     credits_program: integerSchemaNullable,
@@ -810,6 +813,7 @@ const updateSubjectSchema = {
       nullable: true,
     },
     substage: stringSchemaNullable,
+    useBlocks: booleanSchema,
   },
   required: ['id'],
   additionalProperties: false,
@@ -1044,10 +1048,10 @@ async function validateAddClass({ data, ctx }) {
     });
   }
 
-  // Currently not use case for this
+  // Currently no use case for this
   // if (data.teachers) {
   //   const teachersByType = _.groupBy(data.teachers, 'type');
-  //   if (teachersByType['main-teacher'] && teachersByType['main-teacher'].length > 1) {
+  //   if (teachersByType[MAIN_TEACHER_TYPE] && teachersByType[MAIN_TEACHER_TYPE].length > 1) {
   //     throw new LeemonsError(ctx, { message: 'There can only be one main teacher' });
   //   }
   // }
@@ -1279,8 +1283,8 @@ const updateClassSchema = {
         additionalProperties: true,
       },
     },
-    classroomId: stringSchemaNullable,
-    alias: stringSchemaNullable,
+    classroomId: { type: 'string', nullable: true },
+    alias: { type: 'string', nullable: true },
   },
   required: ['id'],
   additionalProperties: false,
@@ -1296,15 +1300,13 @@ async function validateUpdateClass({ data, ctx }) {
   const classe = await ctx.tx.db.Class.findOne({ id: data.id }).select(['program']).lean();
   const haveMultiCourses = await programHaveMultiCourses({ id: classe.program, ctx });
 
-  if (!haveMultiCourses) {
-    if (isArray(data.course) && data.course.length > 1) {
-      throw new LeemonsError(ctx, { message: 'Class does not have multi courses' });
-    }
+  if (!haveMultiCourses && isArray(data.course) && data.course.length > 1) {
+    throw new LeemonsError(ctx, { message: 'Class does not have multi courses' });
   }
 
   if (data.teachers) {
     const teachersByType = _.groupBy(data.teachers, 'type');
-    if (teachersByType['main-teacher'] && teachersByType['main-teacher'].length > 1) {
+    if (teachersByType[MAIN_TEACHER_TYPE] && teachersByType[MAIN_TEACHER_TYPE].length > 1) {
       throw new LeemonsError(ctx, { message: 'There can only be one main teacher' });
     }
   }
@@ -1370,6 +1372,103 @@ function validateUpdateCycle(data) {
   }
 }
 
+// ····························································································
+// BLOCKS
+
+async function validateSaveBlockRequirements({
+  ctx,
+  isEditing,
+  subjectId: _subjectId,
+  abbreviation,
+  id,
+}) {
+  let subjectId = _subjectId;
+
+  if (!isEditing) {
+    // Subject exists and is configured to use blocks
+    const subject = await ctx.tx.db.Subjects.findOne({ id: subjectId }).lean();
+    if (!subject) {
+      throw new LeemonsError(ctx, { message: 'The specified subject does not exist' });
+    }
+    if (!subject.useBlocks) {
+      throw new LeemonsError(ctx, {
+        message: 'This subject is not configured to use blocks.',
+      });
+    }
+  } else {
+    const block = await ctx.tx.db.Blocks.findOne({ id }).lean();
+    subjectId = block.subject;
+  }
+
+  // Uniqueness of block abbreviation
+  let repeatedAbbreviation = false;
+  const blocksWithSameAbreviation = await ctx.tx.db.Blocks.find({
+    abbreviation,
+    subject: subjectId,
+  });
+
+  if (!isEditing && blocksWithSameAbreviation?.length) repeatedAbbreviation = true;
+  if (isEditing && blocksWithSameAbreviation?.length && blocksWithSameAbreviation[0].id !== id)
+    repeatedAbbreviation = true;
+
+  if (repeatedAbbreviation)
+    throw new LeemonsError(ctx, { message: 'A block with this abbreviation already exists.' });
+}
+
+const addBlockSchema = {
+  type: 'object',
+  properties: {
+    name: stringSchema,
+    abbreviation: stringSchema,
+    subject: stringSchema,
+    index: integerSchema,
+  },
+  required: ['name', 'abbreviation', 'subject', 'index'],
+  additionalProperties: false,
+};
+
+async function validateAddBlock({ data, ctx }) {
+  const validator = new LeemonsValidator(addBlockSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+
+  await validateSaveBlockRequirements({
+    ctx,
+    isEditing: false,
+    subjectId: data.subject,
+    abbreviation: data.abbreviation,
+  });
+}
+
+const updateBlockSchema = {
+  type: 'object',
+  properties: {
+    id: stringSchema,
+    name: stringSchema,
+    abbreviation: stringSchema,
+    index: integerSchemaNullable,
+  },
+  required: ['id'],
+  additionalProperties: false,
+};
+
+async function validateUpdateBlock({ data, ctx }) {
+  const validator = new LeemonsValidator(updateBlockSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+
+  await validateSaveBlockRequirements({
+    ctx,
+    isEditing: true,
+    abbreviation: data.abbreviation,
+    id: data.id,
+  });
+}
+
 module.exports = {
   validateAddCycle,
   validateAddClass,
@@ -1399,5 +1498,7 @@ module.exports = {
   validateAddClassStudentsMany,
   validateAddClassTeachersMany,
   validateGetSubjectCreditsProgram,
+  validateAddBlock,
+  validateUpdateBlock,
   validateProgramNotUsingInternalId: validateUniquenessOfInternalId,
 };

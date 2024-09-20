@@ -1,17 +1,37 @@
 const _ = require('lodash');
-const { getClassProgram } = require('../getClassProgram');
-const { removeCustomPermissions } = require('./removeCustomPermissions');
-const { getProfiles } = require('../../settings/getProfiles');
 
-async function removeByClass({ classIds, soft, ctx }) {
+const { getProfiles } = require('../../settings/getProfiles');
+const { getClassProgram } = require('../getClassProgram');
+
+const { removeCustomPermissions } = require('./removeCustomPermissions');
+
+const REMOVE_CUSTOM_PERMISSION_USER_AGENT = 'users.permissions.removeCustomUserAgentPermission';
+
+async function removeByClass({
+  classIds,
+  soft,
+  removeInvitedTeachers = false,
+  teachersFilter,
+  ctx,
+}) {
   const classeIds = _.isArray(classIds) ? classIds : [classIds];
 
   const programs = await Promise.all(
     _.map(classeIds, (classId) => getClassProgram({ id: classId, ctx }))
   );
 
-  const classStudents = await ctx.tx.db.ClassStudent.find({ class: classeIds }).lean();
-  const classTeachers = await ctx.tx.db.ClassTeacher.find({ class: classeIds }).lean();
+  const teacherQuery = {
+    ...(removeInvitedTeachers ? {} : { type: { $ne: 'invited-teacher' } }), // Default behavior
+    ...(teachersFilter ?? {}), // Target specific teachers by UserAgent or/and override default behavior
+  };
+
+  const classStudents = await ctx.tx.db.ClassStudent.find({
+    class: classeIds,
+  }).lean();
+  const classTeachers = await ctx.tx.db.ClassTeacher.find({
+    class: classeIds,
+    ...teacherQuery,
+  }).lean();
   if (!classTeachers?.length) return;
 
   const promisesRemoveUserAgentsFromRooms = [];
@@ -74,7 +94,7 @@ async function removeByClass({ classIds, soft, ctx }) {
 
   await Promise.all(
     _.map(classTeachers, (classTeacher) =>
-      ctx.tx.call('users.permissions.removeCustomUserAgentPermission', {
+      ctx.tx.call(REMOVE_CUSTOM_PERMISSION_USER_AGENT, {
         userAgentId: classTeacher.teacher,
         data: {
           permissionName: `academic-portfolio.class.${classTeacher.class}`,
@@ -83,9 +103,25 @@ async function removeByClass({ classIds, soft, ctx }) {
     )
   );
 
+  // Permissions for the class main teacher (we don't check teacher type here, so they might not exist)
+  try {
+    await Promise.all(
+      _.map(classTeachers, (classTeacher) =>
+        ctx.tx.call(REMOVE_CUSTOM_PERMISSION_USER_AGENT, {
+          userAgentId: classTeacher.teacher,
+          data: {
+            permissionName: `academic-portfolio.class.${classTeacher.class}.mainTeacher`,
+          },
+        })
+      )
+    );
+  } catch (error) {
+    console.warn(`Could not remove class main-teacher permissions: ${error}`);
+  }
+
   await Promise.all(
     _.map(classTeachers, (classTeacher) =>
-      ctx.tx.call('users.permissions.removeCustomUserAgentPermission', {
+      ctx.tx.call(REMOVE_CUSTOM_PERMISSION_USER_AGENT, {
         userAgentId: classTeacher.teacher,
         data: {
           permissionName: `academic-portfolio.class-profile.${classTeacher.class}.${teacherProfileId}`,

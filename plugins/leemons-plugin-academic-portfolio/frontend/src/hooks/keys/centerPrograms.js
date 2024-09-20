@@ -5,10 +5,11 @@ export const allCenterPrograms = [
   },
 ];
 
-export const getCenterProgramsKey = (center, filters) => [
+export const getCenterProgramsKey = (center, filters, teacherTypeFilter) => [
   {
     ...allCenterPrograms[0],
     center,
     ...filters,
+    teacherTypeFilter,
   },
 ];

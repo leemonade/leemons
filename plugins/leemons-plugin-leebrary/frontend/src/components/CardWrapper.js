@@ -20,9 +20,13 @@ import { EditIcon } from './LibraryDetailToolbar/icons/EditIcon';
 import { ShareIcon } from './LibraryDetailToolbar/icons/ShareIcon';
 
 function dynamicImport(pluginName, component) {
-  return loadable(() =>
-    import(`@app/plugins/${pluginName}/src/widgets/leebrary/${component}.js`)
-  );
+  return loadable(async () => {
+    try {
+      return await import(`@app/plugins/${pluginName}/src/widgets/leebrary/${component}.js`);
+    } catch (error) {
+      return await import(`@app/plugins/${pluginName}/dist/widgets/leebrary/${component}.js`);
+    }
+  });
 }
 
 const CardWrapperStyles = createStyles((theme, { selected, isCreationPreview }) => ({
@@ -61,6 +65,7 @@ const CardWrapper = ({
   ...props
 }) => {
   const asset = !isEmpty(item?.original) ? prepareAsset(item.original) : {};
+
   const [t] = useTranslateLoader(prefixPN('list'));
   const history = useHistory();
   const { classes } = CardWrapperStyles({ selected, isCreationPreview });
@@ -143,7 +148,7 @@ const CardWrapper = ({
       try {
         componentToRender = dynamicImport(componentOwner, category.listCardComponent);
       } catch (e) {
-        //
+        console.log('error', e);
       }
     }
 

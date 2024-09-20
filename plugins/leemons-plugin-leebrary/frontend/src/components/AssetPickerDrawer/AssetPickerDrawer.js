@@ -1,11 +1,13 @@
 import React, { useMemo } from 'react';
-import { get } from 'lodash';
-import PropTypes from 'prop-types';
+
 import { Box, TabPanel, Tabs, createStyles, Drawer } from '@bubbles-ui/components';
 import { unflatten } from '@common';
 import prefixPN from '@leebrary/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { ZoneWidgets } from '@widgets';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { AssetList } from './components/AssetList';
 
 export function useAssetPickerDrawerLocalizations() {
@@ -67,6 +69,7 @@ export function AssetPickerDrawer({
   onlyImages,
   isPickingACover,
   newDataOverride,
+  size = 'xl',
 }) {
   const localizations = useAssetPickerDrawerLocalizations();
   const { classes } = useAssetPickerDrawerStyles({}, { name: 'AssetPickerDrawer' });
@@ -103,7 +106,7 @@ export function AssetPickerDrawer({
     ]
   );
   return (
-    <Drawer opened={!!opened} size={'xl'} onClose={onClose}>
+    <Drawer opened={!!opened} size={size} onClose={onClose}>
       <Drawer.Header title={localizations?.header?.title} />
       <Drawer.Content>
         <Box className={classes.root}>
@@ -150,4 +153,5 @@ AssetPickerDrawer.propTypes = {
   acceptedFileTypes: PropTypes.arrayOf(PropTypes.string),
   isPickingACover: PropTypes.bool,
   newDataOverride: PropTypes.object,
+  size: PropTypes.oneOf(['xs', 'sm', 'md', 'xl', 'full']),
 };

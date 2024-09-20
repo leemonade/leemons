@@ -1,7 +1,8 @@
-const { map } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
-const canAssignRole = require('../helpers/canAssignRole');
+const { map } = require('lodash');
+
 const { getByAsset } = require('../getByAsset');
+const canAssignRole = require('../helpers/canAssignRole');
 
 /**
  * This function gives a user agent permission for an asset.
@@ -23,6 +24,7 @@ async function addPermissionsToUserAgent({
   categoryId,
   assignerRole,
   permissionName,
+  removeAllPermissionsFromPreviousOwner = false,
   ctx,
 }) {
   const result = [];
@@ -59,12 +61,14 @@ async function addPermissionsToUserAgent({
     });
 
     // Then, add editor permission to the asset
-    result.push(
-      await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
-        userAgentId: map(ctx.meta.userSession.userAgents, 'id'),
-        data: { permissionName, actionNames: ['editor'], target: categoryId },
-      })
-    );
+    if (!removeAllPermissionsFromPreviousOwner) {
+      result.push(
+        await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
+          userAgentId: map(ctx.meta.userSession.userAgents, 'id'),
+          data: { permissionName, actionNames: ['editor'], target: categoryId },
+        })
+      );
+    }
   }
 
   // First, remove all permissions to the asset

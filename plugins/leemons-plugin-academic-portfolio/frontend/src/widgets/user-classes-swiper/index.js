@@ -1,6 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import PropTypes from 'prop-types';
+import { useHistory } from 'react-router-dom';
+
 import {
   Box,
   createStyles,
@@ -12,13 +13,15 @@ import {
 } from '@bubbles-ui/components';
 import { Swiper } from '@bubbles-ui/extras';
 import { useStore } from '@common';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useHistory } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
-import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
-import { listSessionClassesRequest } from '../../request';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import PropTypes from 'prop-types';
+
 import { getClassIcon } from '../../helpers/getClassIcon';
+import { listSessionClassesRequest } from '../../request';
+
+import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
 
 const Styles = createStyles((theme) => ({
   root: {
@@ -60,7 +63,7 @@ function UserClassesSwiperWidget({ program }) {
 
   async function load() {
     try {
-      const { classes } = await listSessionClassesRequest({ program: program.id });
+      const { classes } = await listSessionClassesRequest({ program: program.id, type: null });
       store.classes = classes;
     } catch (error) {
       addErrorAlert(error);

@@ -1,8 +1,9 @@
+import React, { forwardRef, useEffect, useState } from 'react';
+
+import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
 import { MultiSelect, Select } from '@bubbles-ui/components';
 import { noop, sortBy } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { forwardRef, useEffect, useState } from 'react';
-import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
 
 const SelectProgram = forwardRef(
   (
@@ -12,6 +13,7 @@ const SelectProgram = forwardRef(
       value: userValue,
       onChange,
       ensureIntegrity,
+      teacherTypeFilter,
       multiple,
       autoSelectOneOption = true,
       onLoadedPrograms = noop,
@@ -24,6 +26,7 @@ const SelectProgram = forwardRef(
 
     const { data, isLoading: loading } = useProgramsByCenter({
       center,
+      teacherTypeFilter,
       options: {
         select: (programs) => {
           const sortedPrograms = sortBy(programs, 'createdAt');
@@ -119,6 +122,7 @@ SelectProgram.propTypes = {
   multiple: PropTypes.bool,
   autoSelectOneOption: PropTypes.bool,
   hideIfOnlyOne: PropTypes.bool,
+  teacherTypeFilter: PropTypes.string,
 };
 
 export { SelectProgram };

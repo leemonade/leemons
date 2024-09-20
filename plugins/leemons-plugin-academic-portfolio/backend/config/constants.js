@@ -297,6 +297,26 @@ const menuItems = [
       },
     ],
   },
+  // Blocks
+  {
+    item: {
+      key: 'blocks',
+      order: 4,
+      parentKey: `${permissionsPrefix}.portfolio`,
+      url: '/private/academic-portfolio/blocks',
+      label: {
+        en: 'Blocks',
+        es: 'Bloques',
+      },
+      disabled: true,
+    },
+    permissions: [
+      {
+        permissionName: permissionNames.subjects,
+        actionNames: ['admin'],
+      },
+    ],
+  },
 ];
 
 const widgets = {
@@ -338,6 +358,11 @@ const widgets = {
   ],
 };
 
+const CUSTOMIZABLE_TRANSLATION_KEYS = {
+  BLOCK: 'block',
+  SUBJECT: 'subject',
+};
+
 module.exports = {
   pluginName: permissionsPrefix,
   permissions: {
@@ -347,4 +372,5 @@ module.exports = {
   },
   menuItems,
   widgets,
+  CUSTOMIZABLE_TRANSLATION_KEYS,
 };
