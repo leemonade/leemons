@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import dayjs from 'dayjs';
+
 import { Box, Text, DatePicker, InputWrapper, createStyles } from '@bubbles-ui/components';
+import dayjs from 'dayjs';
+import PropTypes from 'prop-types';
 
 export const usePeriodPickerStyles = createStyles((theme) => ({
   root: {

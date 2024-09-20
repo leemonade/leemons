@@ -1,2 +1,2 @@
 export * from './ActivityDatesPicker';
-export * from './PeriodPicker';
+export * from './components/PeriodPicker/PeriodPicker';
