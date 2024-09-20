@@ -120,7 +120,7 @@ const AddCustomTranslationDrawer = ({
               ))}
             </Tabs>
           ) : (
-            <Text>{'No tienes otros idiomas configurados en tu plataforma.'}</Text>
+            <Text>{t('noLanguages')}</Text>
           )}
         </Drawer.Content>
         <Drawer.Footer>
