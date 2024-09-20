@@ -35,3 +35,5 @@ export type ValidateSchema = {
   string: StringSchema;
   arrayStringRequired: ArrayStringRequiredSchema;
 };
+
+export const localeRegexString = `^([a-z]{2,3})(-[a-z]{4}){0,1}(-([a-z]{2}|[0-9]{3})){0,1}$`;
