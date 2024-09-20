@@ -136,11 +136,6 @@ function UserProgramCalendar({ inTab, program, classe }) {
     openEventModal();
   };
 
-  const handleOnEventClick = (event) => {
-    store.selectedEvent = event;
-    openEventModal();
-  };
-
   if (!welcomeCompleted && !parsedEvents?.length) {
     return null;
   }
