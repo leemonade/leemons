@@ -1,7 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { forEach } from 'lodash';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
+
 import {
   Avatar,
   Box,
@@ -13,12 +11,16 @@ import {
 } from '@bubbles-ui/components';
 import { ViewOnIcon, PluginComunicaIcon } from '@bubbles-ui/icons/outline';
 import { LocaleDate } from '@common';
+import { useComunica } from '@comunica/context';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { USER_DETAIL_VIEWS } from '@users/components/UserDetail';
 import { UserDetailDrawer } from '@users/components/UserDetailDrawer';
 import getUserFullName from '@users/helpers/getUserFullName';
 import { getSessionCenter, getSessionProfile } from '@users/session';
-import { useComunica } from '@comunica/context';
+import { forEach } from 'lodash';
+import PropTypes from 'prop-types';
+
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
 
 function getViewMode(profile) {
   if (profile?.sysName === 'teacher') return USER_DETAIL_VIEWS.TEACHER;
@@ -67,11 +69,13 @@ function ClassDetailWidget({ classe }) {
       accessor: 'name',
       className: 'text-left',
     },
+    /*
     {
       Header: t('birthdayHeader'),
       accessor: 'birthdate',
       className: 'text-left',
     },
+    */
     {
       Header: t('emailHeader'),
       accessor: 'email',
