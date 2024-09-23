@@ -31,6 +31,7 @@ async function getClassPublicData({ ctx, ids }) {
       id: cls.subject?.id,
       useBlocks: cls.subject?.useBlocks,
       color: cls.subject?.color,
+      icon: cls.subject?.icon,
     },
     teachers: cls.teachers,
     studentsCount: cls.students?.length,
