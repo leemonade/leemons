@@ -1,11 +1,16 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React, { useMemo } from 'react';
 import { useForm, Controller, useWatch } from 'react-hook-form';
-import { Box, RadioGroup, Checkbox, createStyles, Radio } from '@bubbles-ui/components';
-import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
-import TimeUnitsInput from '@common/components/TimeUnitsInput';
+
+import { Box, RadioGroup, createStyles, LoadingOverlay  } from '@bubbles-ui/components';
+import PropTypes from 'prop-types';
+
 import { Container } from '../Container';
-import { PeriodPicker } from './PeriodPicker';
+
+import {ActivityDatesPickerProvider} from './context/ActivityDatesPickerProvider';
+import useDatesPickerOptions from './hooks/useDatesPickerOptions';
+
+
+
 
 export const useActivityDatesPickerStyles = createStyles((theme) => ({
   root: {
@@ -27,7 +32,10 @@ export const useActivityDatesPickerStyles = createStyles((theme) => ({
 }));
 
 function useOnChange({ control, onChange }) {
-  const { type, dates, hideFromCalendar, maxTimeToggle, maxTime } = useWatch({ control });
+  const { type, dates, hideFromCalendar, maxTimeToggle, maxTime, ...others } = useWatch({ control });
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const memoizedOthers = useMemo(() => others, [JSON.stringify(others)]);
 
   React.useEffect(() => {
     if (typeof onChange !== 'function') {
@@ -42,9 +50,10 @@ function useOnChange({ control, onChange }) {
         : { ...dates, visualization: hideFromCalendar ? undefined : new Date() },
       hideFromCalendar: !!hideFromCalendar,
       maxTime: maxTimeToggle ? maxTime : null,
-      raw: { type, dates, hideFromCalendar, maxTimeToggle, maxTime },
+      others: memoizedOthers,
+      raw: { type, dates, hideFromCalendar, maxTimeToggle, maxTime, ...memoizedOthers },
     });
-  }, [type, dates, hideFromCalendar, maxTimeToggle, maxTime, onChange]);
+  }, [type, dates, hideFromCalendar, maxTimeToggle, maxTime, onChange, memoizedOthers]);
 }
 
 export function ActivityDatesPicker({
@@ -56,111 +65,58 @@ export function ActivityDatesPicker({
   hideMaxTime,
   hideShowInCalendar,
 }) {
-  const options = React.useMemo(
-    () => [
-      {
-        value: 'alwaysAvailable',
-        label: localizations?.optionsInput?.options?.alwaysAvailable,
-      },
-      {
-        value: 'fixed',
-        label: localizations?.optionsInput?.options?.fixed,
-      },
-      // {
-      //   value: 'session',
-      //   label: localizations?.optionsInput?.options?.session,
-      // },
-    ],
-    [localizations?.optionsInput?.options]
-  );
+  const {options, components, isLoading} = useDatesPickerOptions();
 
-  const { control } = useForm({
+  const form = useForm({
     defaultValues: {
       type: 'alwaysAvailable',
       maxTime: '1 hours',
       ...value?.raw,
     },
   });
+  const control = form.control;
+
   const type = useWatch({ control, name: 'type' });
   useOnChange({ onChange, control });
 
   const { classes } = useActivityDatesPickerStyles();
+
+  if (isLoading) {
+    return <LoadingOverlay visible />;
+  }
+
+  const TypeComponent = components[type];
+
   return (
-    <Container
+    <ActivityDatesPickerProvider values={{
+      form,
+
+      localizations,
+
+      hideSectionHeaders,
+      hideMaxTime,
+      hideShowInCalendar,
+      error
+    }}
+    >
+      <Container
       title={localizations?.title}
       required
       hideSectionHeaders={hideSectionHeaders}
       spacingBottom={16}
     >
       <Box className={classes.root}>
-        <Controller
+      <Controller
           name="type"
           control={control}
           render={({ field }) => <RadioGroup {...field} minWidth data={options} />}
         />
-        <Box className={classes.content}>
-          {(type === 'fixed' || type === 'session') && (
-            <Controller
-              name="dates"
-              control={control}
-              shouldUnregister
-              render={({ field }) => (
-                <PeriodPicker
-                  {...field}
-                  localizations={localizations?.fixedType}
-                  sameDay={type === 'session'}
-                  error={error}
-                />
-              )}
-            />
-          )}
-          <Box className={classes.switchContainer}>
-            {type !== 'alwaysAvailable' && !hideShowInCalendar && (
-              <Controller
-                name="hideFromCalendar"
-                control={control}
-                shouldUnregister
-                render={({ field }) => (
-                  <Checkbox
-                    {...field}
-                    checked={!!field.value}
-                    label={localizations?.hideFromCalendar}
-                  />
-                )}
-              />
-            )}
-            {!hideMaxTime && (
-              <Controller
-                name="maxTimeToggle"
-                control={control}
-                render={({ field: maxTimeToggleField }) => (
-                  <ConditionalInput
-                    {...maxTimeToggleField}
-                    checked={!!maxTimeToggleField.value}
-                    label={localizations?.maxTime}
-                    display="checkbox"
-                    showOnTrue
-                    render={() => (
-                      <Controller
-                        name="maxTime"
-                        control={control}
-                        render={({ field }) => (
-                          <TimeUnitsInput
-                            {...field}
-                            label={localizations?.maxTimeInput?.label}
-                            min={1}
-                          />
-                        )}
-                      />
-                    )}
-                  />
-                )}
-              />
-            )}
-          </Box>
-        </Box>
+        {
+          type && components[type] ? <TypeComponent form={form} /> : null
+        }
       </Box>
-    </Container>
+      </Container>
+    </ActivityDatesPickerProvider>
   );
 }
 

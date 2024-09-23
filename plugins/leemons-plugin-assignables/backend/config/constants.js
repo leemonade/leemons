@@ -67,6 +67,11 @@ const widgets = {
       name: 'Activities progress',
       description: 'Zone for activities progress',
     },
+    {
+      key: `${permissionsPrefix}.assignmentForm.datePicker`,
+      name: 'AssignmentForm Date picker',
+      description: 'Date picker zone for the assignment form',
+    },
   ],
   items: [
     // --- Class (Ongoing tab) ---
