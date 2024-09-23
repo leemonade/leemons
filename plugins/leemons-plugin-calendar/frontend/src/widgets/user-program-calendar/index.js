@@ -4,13 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { listSessionClassesRequest } from '@academic-portfolio/request';
 import { Title, Box, Button, createStyles, Stack } from '@bubbles-ui/components';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-
-import prefixPN from '@calendar/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
-import { getCentersWithToken } from '@users/session';
-import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
-
 import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getCentersWithToken } from '@users/session';
@@ -172,7 +165,6 @@ function UserProgramCalendar({ inTab, program, classe }) {
             {tc('new')}
           </Button>
         </Box>
-
       </Stack>
       {!parsedEvents && <EmptyState onNewEvent={onNewEvent} />}
       <EventModal
