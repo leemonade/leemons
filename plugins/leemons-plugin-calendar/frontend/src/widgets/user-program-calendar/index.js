@@ -8,11 +8,9 @@ import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import prefixPN from '@calendar/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
-import { getCentersWithToken } from '@users/session';
-import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 
 import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+
 import { getCentersWithToken } from '@users/session';
 import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
@@ -28,8 +26,7 @@ import { useCalendarEventModal } from '@calendar/components/calendar-event-modal
 import { getCalendarDaysOffToEvents } from '@calendar/helpers/getCalendarDaysOffToEvents';
 import { getEventColor } from '@calendar/helpers/getEventColor';
 import { getEventsByProgram } from '@calendar/helpers/getEventsByProgram';
-import prefixPN from '@calendar/helpers/prefixPN';
-import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
+
 
 const Styles = createStyles((theme, { inTab }) => ({
   root: {

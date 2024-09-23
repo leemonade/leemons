@@ -26,7 +26,12 @@ async function getClassPublicData({ ctx, ids }) {
       maxNumberOfCourses: cls.program?.maxNumberOfCourses,
       nomenclature: nomenclature[cls.program?.id], // Returns nomenclature in the user locale
     },
-    subject: { name: cls.subject?.name, id: cls.subject?.id, useBlocks: cls.subject?.useBlocks },
+    subject: {
+      name: cls.subject?.name,
+      id: cls.subject?.id,
+      useBlocks: cls.subject?.useBlocks,
+      color: cls.subject?.color,
+    },
     teachers: cls.teachers,
     studentsCount: cls.students?.length,
   }));
