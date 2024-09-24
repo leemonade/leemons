@@ -1,17 +1,21 @@
 import React, { useMemo } from 'react';
+
+import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import { Box, Stack, Text, TextClamp, CardEmptyCover, Badge } from '@bubbles-ui/components';
 import { SearchPlusIcon, DownloadIcon, OpenIcon, CursorPlayerIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@leebrary/helpers/prefixPN';
-import { capitalize } from 'lodash';
-import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
-import { LibraryCardEmbedStyles } from './LibraryCardEmbed.styles';
+import { capitalize, isObject } from 'lodash';
+
+import Cover from '../Cover';
+
+import { LibraryCardEmbedSkeleton } from './LibraryCardEmbdedSkeleton';
 import {
   LIBRARY_CARD_EMBED_DEFAULT_PROPS,
   LIBRARY_CARD_EMBED_PROP_TYPES,
 } from './LibraryCardEmbed.constants';
-import { LibraryCardEmbedSkeleton } from './LibraryCardEmbdedSkeleton';
-import Cover from '../Cover';
+import { LibraryCardEmbedStyles } from './LibraryCardEmbed.styles';
+
+import prefixPN from '@leebrary/helpers/prefixPN';
 
 const LibraryCardEmbed = ({
   asset,
@@ -43,9 +47,13 @@ const LibraryCardEmbed = ({
     const playableMedia = ['video', 'audio'];
     return (
       playableFileExtensions.includes(asset.fileExtension) ||
+      (isObject(asset.file) && playableFileExtensions.includes(asset.file?.extension)) ||
       playableMedia.includes(asset.mediaType)
     );
   }, [asset]);
+
+  console.log('asset:', asset);
+  console.log('isPlayable:', isPlayable);
 
   const roleLocalizations = useRolesLocalizations([asset?.original?.providerData?.role]);
 
