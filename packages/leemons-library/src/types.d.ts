@@ -85,3 +85,14 @@ export type Provider = {
     clone: boolean;
   };
 }
+
+export function addCategoryDeploy<C = Context>(params: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  keyValueModel: any;
+  category: {
+    key: string;
+    [key: string]: unknown;
+  };
+  ctx: C;
+}): Promise<void>;
+
