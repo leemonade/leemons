@@ -301,7 +301,7 @@ const menuItems = [
   {
     item: {
       key: 'blocks',
-      order: 4,
+      order: 8,
       parentKey: `${permissionsPrefix}.portfolio`,
       url: '/private/academic-portfolio/blocks',
       label: {
