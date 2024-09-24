@@ -1,9 +1,11 @@
 /* eslint-disable import/prefer-default-export */
 import { mergeAttributes, Node, ReactNodeViewRenderer } from '@bubbles-ui/editors';
-import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import _, { isEmpty, isString, keys } from 'lodash';
+
 import { LibraryPlayer } from './LibraryPlayer';
 import { AUDIO_ASSET, IMAGE_ASSET, URL_ASSET, VIDEO_ASSET } from './mock/data';
+
+import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 
 const ASSET_KEYS = keys({
   ...VIDEO_ASSET,

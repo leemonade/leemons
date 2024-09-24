@@ -1,17 +1,20 @@
 import React, { useEffect } from 'react';
-import { keys, isEmpty } from 'lodash';
+
 import { Box } from '@bubbles-ui/components';
-import { useTextEditor } from '@common/context';
-import { useEditorLabels } from '@common/hooks/useEditorLabels';
 import { MathTool } from '@content-creator/components';
+import { keys, isEmpty } from 'lodash';
+
 import {
   CONTENT_EDITOR_INPUT_DEFAULT_PROPS,
   CONTENT_EDITOR_INPUT_PROP_TYPES,
 } from './ContentEditorInput.constants';
+import { ContentEditorInputStyles } from './ContentEditorInput.styles';
 import { Schema } from './components/Schema/Schema';
 import { TextEditorContent } from './components/TextEditorContent/TextEditorContent';
 import { useContentEditorStore } from './context/ContentEditorInput.context';
-import { ContentEditorInputStyles } from './ContentEditorInput.styles';
+
+import { useTextEditor } from '@common/context';
+import { useEditorLabels } from '@common/hooks/useEditorLabels';
 
 const ContentEditorInput = ({
   toolbars,

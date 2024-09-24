@@ -1,7 +1,8 @@
 /* eslint-disable import/prefer-default-export */
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
+
 import { Box, createStyles, getBoxShadowFromToken, ActionButton } from '@bubbles-ui/components';
+import { LayoutAgendaIcon, LayoutTwoColumsIcon, FloatImageIcon } from '@bubbles-ui/icons/outline';
 import {
   DeleteBinIcon,
   // EditorJustifiedAlignIcon,
@@ -9,7 +10,8 @@ import {
   EditorRightAlignIcon,
   EditorCenterAlignIcon,
 } from '@bubbles-ui/icons/solid';
-import { LayoutAgendaIcon, LayoutTwoColumsIcon, FloatImageIcon } from '@bubbles-ui/icons/outline';
+import PropTypes from 'prop-types';
+
 import { LibraryIcon } from './LibraryIcon';
 
 const LibraryBubbleMenuStyles = createStyles((theme) => {
