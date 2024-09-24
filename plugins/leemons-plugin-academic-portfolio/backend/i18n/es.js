@@ -1067,6 +1067,7 @@ module.exports = {
         add: 'Bloque creado correctamente.',
         update: 'Bloque actualizado correctamente.',
         delete: 'Bloque eliminado correctamente.',
+        save: 'Bloques guardados correctamente.',
       },
       failure: {
         add: 'No se ha podido crear el bloque.',

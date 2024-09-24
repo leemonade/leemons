@@ -1064,6 +1064,7 @@ module.exports = {
         add: 'Block created successfully.',
         update: 'Block updated successfully.',
         delete: 'Block deleted successfully.',
+        save: 'Blocks saved successfully.',
       },
       failure: {
         add: 'Could not create the Block. ',
