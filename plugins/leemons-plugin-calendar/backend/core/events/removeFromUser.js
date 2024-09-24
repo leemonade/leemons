@@ -1,5 +1,5 @@
-const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
+const _ = require('lodash');
 
 const { getPermissionConfig: getPermissionConfigEvent } = require('./getPermissionConfig');
 const { removeOrCancel } = require('./removeOrCancel');
@@ -11,11 +11,21 @@ const { unGrantAccessUserAgentToEvent } = require('./unGrantAccessUserAgentToEve
  * @static
  * @param {string} id - id
  * @param {string} userSession - User session
+ * @param {string} ownerUserAgentId - Owner user agent Id
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function removeFromUser({ id, ctx }) {
+async function removeFromUser({ id, ownerUserAgentId, ctx }) {
   const { userSession } = ctx.meta;
+
+  let ownerUserAgent;
+  if (ownerUserAgentId) {
+    [ownerUserAgent] = await ctx.tx.call('users.users.getUserAgentsInfo', {
+      userAgentIds: [ownerUserAgentId],
+    });
+  }
+
+  const userAgents = [ownerUserAgent ?? userSession.userAgents].flat();
 
   /*
   const event = await detailEvent(id);
@@ -26,7 +36,7 @@ async function removeFromUser({ id, ctx }) {
 
   const [[eventPermission], [calendarPermission]] = await Promise.all([
     ctx.tx.call('users.permissions.getUserAgentPermissions', {
-      userAgent: userSession.userAgents,
+      userAgent: userAgents,
       query: {
         permissionName: permissionConfigEvent.permissionName,
       },
@@ -55,7 +65,7 @@ async function removeFromUser({ id, ctx }) {
   if (eventPermission && eventPermission.actionNames.indexOf('view') >= 0) {
     return unGrantAccessUserAgentToEvent({
       id,
-      userAgentId: _.map(userSession.userAgents, 'id'),
+      userAgentId: _.map(userAgents, 'id'),
       ctx,
     });
   }

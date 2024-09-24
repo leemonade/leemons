@@ -4,14 +4,13 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
-const { LeemonsValidator } = require('@leemons/validator');
-
 const {
   LeemonsMiddlewareNecessaryPermits,
   LeemonsMiddlewareAuthenticated,
 } = require('@leemons/middlewares');
+const { LeemonsValidator } = require('@leemons/validator');
+const _ = require('lodash');
 
 const {
   getProgramTree,
@@ -30,6 +29,7 @@ const {
   getProgramEvaluationSystem,
   updateProgramConfiguration,
   getAcademicTree,
+  getProgramCustomNomenclature,
 } = require('../../core/programs');
 
 /** @type {ServiceSchema} */
@@ -157,7 +157,7 @@ module.exports = {
       });
 
       if (validator.validate(ctx.params)) {
-        const { page, size, center } = ctx.params;
+        const { page, size, center, teacherTypeFilter } = ctx.params;
         let _onlyArchived = false;
 
         if ('archived' in ctx.params) {
@@ -168,6 +168,7 @@ module.exports = {
           page: parseInt(page, 10),
           size: parseInt(size, 10),
           center,
+          teacherTypeFilter,
           onlyArchived: _onlyArchived,
           ctx,
         });
@@ -217,7 +218,8 @@ module.exports = {
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const programsInfo = await programsByIds({
-        ids: JSON.parse(ctx.params.ids),
+        ids: ctx.params.ids,
+        withClasses: ctx.params.withClasses ?? false,
         ctx,
       });
 
@@ -487,6 +489,22 @@ module.exports = {
     async handler(ctx) {
       const tree = await getAcademicTree({ programId: ctx.params.id, ctx });
       return { status: 200, tree };
+    },
+  },
+  getProgramNomenclature: {
+    rest: {
+      path: '/:id/nomenclature',
+      method: 'GET',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const allLocales = ctx.params.allLocales === 'true' || ctx.params.allLocales === '1';
+      const nomenclature = await getProgramCustomNomenclature({
+        ids: [ctx.params.id],
+        allLocales,
+        ctx,
+      });
+      return { status: 200, nomenclature };
     },
   },
 };

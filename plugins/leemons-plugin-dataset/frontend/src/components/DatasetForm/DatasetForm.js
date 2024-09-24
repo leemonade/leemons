@@ -1,8 +1,8 @@
 import React, { useMemo, forwardRef, useImperativeHandle } from 'react';
 
-import { Title, Box, LoadingOverlay } from '@bubbles-ui/components';
+import { ContextContainer, LoadingOverlay } from '@bubbles-ui/components';
 import { getValidateSchema } from '@bubbles-ui/leemons';
-import { useLocale } from '@common';
+import { useLocale } from '@common/LocaleDate';
 import { useFormWithTheme } from '@common/hooks/useFormWithTheme';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert } from '@layout/alert';
@@ -228,14 +228,9 @@ const DatasetForm = forwardRef(
     }
 
     return (
-      <>
-        {!!title && showTitle && (
-          <Box mb={6}>
-            <Title order={4}>{title}</Title>
-          </Box>
-        )}
+      <ContextContainer title={!!title && showTitle ? title : undefined} level={1}>
         {formUI}
-      </>
+      </ContextContainer>
     );
   }
 );

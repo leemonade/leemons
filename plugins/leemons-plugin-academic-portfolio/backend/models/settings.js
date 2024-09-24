@@ -17,6 +17,7 @@ const schema = new mongoose.Schema(
     configured: {
       type: Boolean,
     },
+    activeProviders: { type: mongoose.Schema.Types.Mixed },
   },
   {
     timestamps: true,

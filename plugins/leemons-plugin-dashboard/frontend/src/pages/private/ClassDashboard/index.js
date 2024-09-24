@@ -1,22 +1,25 @@
 import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
-import { find, map, sortBy } from 'lodash';
 import { useHistory, useParams } from 'react-router-dom';
+
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
+import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
 import { useIsStudent } from '@academic-portfolio/hooks';
 import { classDetailForDashboardRequest } from '@academic-portfolio/request';
 import { Box, LoadingOverlay, TabPanel, Tabs, TotalLayoutContainer } from '@bubbles-ui/components';
 import { ClassroomHeaderBar, HeaderDropdown } from '@bubbles-ui/leemons';
 import { getShare, useLocale, useStore } from '@common';
-import prefixPN from '@dashboard/helpers/prefixPN';
+import { useComunica } from '@comunica/context';
 import { LayoutContext } from '@layout/context/layout';
 import { getLocalizations } from '@multilanguage/useTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { ZoneWidgets } from '@widgets';
-import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
-import { useComunica } from '@comunica/context';
+import { find, map, sortBy } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { ClassDashboardStyles } from './ClassDashboard.styles';
+
+import prefixPN from '@dashboard/helpers/prefixPN';
 
 export default function ClassDashboard({ session }) {
   const { layoutState } = useContext(LayoutContext);
@@ -71,12 +74,13 @@ export default function ClassDashboard({ session }) {
     store.loading = true;
     render();
     store.idLoaded = id;
-    const { classe, programClasses } = await classDetailForDashboardRequest(id);
+    const { classe, programClasses } = await classDetailForDashboardRequest(id, null);
 
     store.hideStudents = false;
     if (isStudent && classe.hideStudentsToStudents) {
       store.hideStudents = true;
     }
+
     store.class = classe;
     store.programClasses = programClasses;
     store.classesSelect = map(store.programClasses, (programClass) => {
@@ -91,6 +95,7 @@ export default function ClassDashboard({ session }) {
         createdAt: programClass.createdAt,
       };
     });
+
     setClassesData(sortBy(store.classesSelect, 'createdAt'));
 
     store.loading = false;

@@ -1,3 +1,5 @@
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
 import { Box, Select, Stack, Table, createStyles, useDebouncedValue } from '@bubbles-ui/components';
 import { CheckCircleIcon } from '@bubbles-ui/icons/outline';
 import { useAsync } from '@common/useAsync';
@@ -18,7 +20,6 @@ import {
   uniqBy,
 } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const PermissionsTabStyles = createStyles((theme) => ({
   icon: {
@@ -87,8 +88,8 @@ export const PermissionsTab = ({
               checked: cPermission
                 ? cPermission[actionName].checked
                 : profile && profile.permissions[permission.permissionName]
-                ? profile.permissions[permission.permissionName].indexOf(actionName) >= 0
-                : false,
+                  ? profile.permissions[permission.permissionName].indexOf(actionName) >= 0
+                  : false,
             };
           } else {
             response[actionName] = () => {
@@ -96,8 +97,8 @@ export const PermissionsTab = ({
               const checked = cPermission
                 ? cPermission[actionName].checked
                 : profile && profile.permissions[permission.permissionName]
-                ? profile.permissions[permission.permissionName].indexOf(actionName) >= 0
-                : false;
+                  ? profile.permissions[permission.permissionName].indexOf(actionName) >= 0
+                  : false;
               if (checked)
                 return (
                   <Box style={{ textAlign: 'center' }}>
@@ -239,6 +240,7 @@ export const PermissionsTab = ({
           orientation="horizontal"
           data={permissionOptions}
           value={selectedPermission}
+          searchable
           onChange={(val) => {
             setSelectedPermission(val);
           }}

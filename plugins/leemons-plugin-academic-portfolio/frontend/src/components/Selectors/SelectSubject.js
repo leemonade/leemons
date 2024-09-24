@@ -6,7 +6,19 @@ import PropTypes from 'prop-types';
 import { listSubjectsRequest } from '../../request';
 
 const SelectSubject = forwardRef(
-  ({ program, course, value: userValue, onChange, ...props }, ref) => {
+  (
+    {
+      program,
+      course,
+      value: userValue,
+      onChange,
+      teacherTypeFilter,
+      firstSelected,
+      allowNullValue,
+      ...props
+    },
+    ref
+  ) => {
     const [data, setData] = useState([]);
     const [value, setValue] = useState(userValue);
 
@@ -30,7 +42,13 @@ const SelectSubject = forwardRef(
       if (program) {
         const {
           data: { items },
-        } = await listSubjectsRequest({ page: 0, size: 9999, program, course });
+        } = await listSubjectsRequest({
+          page: 0,
+          size: 9999,
+          program,
+          course: [course],
+          teacherTypeFilter,
+        });
 
         setData(
           items.map(({ id, name }) => ({
@@ -46,8 +64,16 @@ const SelectSubject = forwardRef(
     useEffect(() => {
       if (data.length && userValue) {
         setValue(userValue);
+      } else if (allowNullValue && !userValue) {
+        setValue(null);
       }
-    }, [userValue]);
+    }, [userValue, data]);
+
+    useEffect(() => {
+      if (firstSelected && data?.length > 0 && !userValue) {
+        handleChange(data[0].value);
+      }
+    }, [data, firstSelected, userValue, data]);
 
     // EN: Get programs from API on center change
     // ES: Obtener programas desde API en cambio de centro
@@ -74,6 +100,9 @@ SelectSubject.propTypes = {
   course: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func,
+  teacherTypeFilter: PropTypes.string,
+  firstSelected: PropTypes.bool,
+  allowNullValue: PropTypes.bool,
 };
 
 export { SelectSubject };

@@ -1,5 +1,7 @@
 const _ = require('lodash');
+
 const getAssetPermissionName = require('../helpers/getAssetPermissionName');
+
 const { addPermissionsToUserAgent } = require('./addPermissionsToUserAgent');
 
 /**
@@ -18,6 +20,7 @@ async function handleAddPermissionsToUserAgent({
   assetIds,
   assetsDataById,
   assetsRoleById,
+  removeAllPermissionsFromPreviousOwner,
   ctx,
 }) {
   const currentUserAgentIds = _.map(ctx.meta.userSession.userAgents, 'id');
@@ -37,6 +40,7 @@ async function handleAddPermissionsToUserAgent({
             categoryId,
             assignerRole,
             permissionName,
+            removeAllPermissionsFromPreviousOwner,
             ctx,
           })
         );

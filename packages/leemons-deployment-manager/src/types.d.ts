@@ -68,3 +68,7 @@ export type ServiceActionsSchema<S = ServiceSettingSchema> = {
 export interface ServiceSchema<S = ServiceSettingSchema> extends MoleculerServiceSchema<S> {
   actions?: ServiceActionsSchema<S>;
 }
+
+export function validateInternalPrivateKey<C = Context>({ ctx }: { ctx: C }): void;
+
+declare const ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK: string[];

@@ -1,4 +1,5 @@
 const path = require('path');
+
 const {
   createFolderIfMissing,
   createMissingPackageJSON,
@@ -7,9 +8,11 @@ const {
   removeFiles,
 } = require('../fs');
 const { saveLockFile } = require('../lockFile');
+
+const createJSConfig = require('./createJSConfig');
+const createTSConfig = require('./createTSConfig');
 const installDeps = require('./installDeps');
 const linkSourceCode = require('./linkSourceCode');
-const createJSConfig = require('./createJSConfig');
 
 module.exports = async function generateMonorepo({ plugins, app, outputDir, basePath }) {
   const templateDir = path.resolve(__dirname, '../templates');
@@ -62,6 +65,11 @@ module.exports = async function generateMonorepo({ plugins, app, outputDir, base
   if (basePath) {
     // Re-generate "jsconfig.json" file
     await createJSConfig({
+      plugins,
+      basePath,
+    });
+    // Re-generate "tsconfig.json" file
+    await createTSConfig({
       plugins,
       basePath,
     });

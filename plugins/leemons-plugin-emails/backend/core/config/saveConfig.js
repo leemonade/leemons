@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const { getConfig } = require('./getConfig');
 
 async function saveConfig({ ctx, userAgent, ...values } = {}) {
@@ -11,12 +12,15 @@ async function saveConfig({ ctx, userAgent, ...values } = {}) {
           userAgent,
           key,
           value: JSON.stringify(value),
+        },
+        {
+          upsert: true,
         }
       )
     );
   });
   await Promise.all(promises);
-  return getConfig({ ctx });
+  return getConfig({ userAgent, ctx });
 }
 
 module.exports = { saveConfig };

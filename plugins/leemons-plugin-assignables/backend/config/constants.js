@@ -1,4 +1,7 @@
-const permissionsPrefix = 'assignables';
+const PLUGIN_NAME = 'assignables';
+const VERSION = 1;
+
+const permissionsPrefix = PLUGIN_NAME;
 
 const permissionsNames = {
   activities: `${permissionsPrefix}.activities`,
@@ -63,6 +66,11 @@ const widgets = {
       key: `${permissionsPrefix}.class.progress`,
       name: 'Activities progress',
       description: 'Zone for activities progress',
+    },
+    {
+      key: `${permissionsPrefix}.assignmentForm.datePicker`,
+      name: 'AssignmentForm Date picker',
+      description: 'Date picker zone for the assignment form',
     },
   ],
   items: [
@@ -154,6 +162,9 @@ const assignableInstanceRolesObject = {
 };
 
 module.exports = {
+  PLUGIN_NAME,
+  VERSION,
+
   permissions,
   menuItems,
   widgets,

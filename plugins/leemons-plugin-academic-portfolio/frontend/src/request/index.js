@@ -1,55 +1,4 @@
 import {
-  createSubject,
-  getSubjectCredits,
-  listSubjectCreditsForProgram,
-  listSubjects,
-  removeSubject,
-  updateSubject,
-  duplicateSubject,
-  updateSubjectCredits,
-  isMainTeacherInSubject,
-} from './subjects';
-import {
-  addStudentsToClassesUnderNodeTree,
-  createProgram,
-  detailProgram,
-  getProgramEvaluationSystem,
-  getProgramTree,
-  getUserPrograms,
-  havePrograms,
-  listPrograms,
-  updateProgram,
-  getProgramsPublicInfo,
-  removeProgram,
-  updateProgramConfiguration,
-  programHasSubjectHistory,
-  duplicateProgram,
-  getProgramAcademicTree,
-} from './programs';
-import { updateCycle } from './cycles';
-import {
-  enableMenuItem,
-  getProfiles,
-  getSettings,
-  isConfigProfiles,
-  setProfiles,
-  updateSettings,
-} from './settings';
-import {
-  createKnowledgeArea,
-  listKnowledgeAreas,
-  updateKnowledgeArea,
-  deleteKnowledgeArea,
-  getKnowledgeArea,
-} from './knowledges';
-import {
-  createSubjectType,
-  listSubjectTypes,
-  updateSubjectType,
-  deleteSubjectType,
-} from './subjectTypes';
-
-import {
   addStudentsToClass,
   addTeachersToClass,
   classByIds,
@@ -67,8 +16,62 @@ import {
   updateClass,
   updateClassMany,
   userEnrollments,
+  classPublicData,
+  classPublicDataMany,
 } from './classes';
 import { getStudentsByTags } from './common';
+import { updateCycle } from './cycles';
+import {
+  createKnowledgeArea,
+  listKnowledgeAreas,
+  updateKnowledgeArea,
+  deleteKnowledgeArea,
+  getKnowledgeArea,
+} from './knowledges';
+import {
+  addStudentsToClassesUnderNodeTree,
+  createProgram,
+  detailProgram,
+  getProgramEvaluationSystem,
+  getProgramTree,
+  getUserPrograms,
+  havePrograms,
+  listPrograms,
+  updateProgram,
+  getProgramsPublicInfo,
+  removeProgram,
+  updateProgramConfiguration,
+  programHasSubjectHistory,
+  duplicateProgram,
+  getProgramAcademicTree,
+  setProgramCustomTranslationKeys,
+  getProgramNomenclature,
+} from './programs';
+import {
+  enableMenuItem,
+  getProfiles,
+  getSettings,
+  isConfigProfiles,
+  setProfiles,
+  updateSettings,
+} from './settings';
+import {
+  createSubjectType,
+  listSubjectTypes,
+  updateSubjectType,
+  deleteSubjectType,
+} from './subjectTypes';
+import {
+  createSubject,
+  getSubjectCredits,
+  listSubjectCreditsForProgram,
+  listSubjects,
+  removeSubject,
+  updateSubject,
+  duplicateSubject,
+  updateSubjectCredits,
+  isMainTeacherInSubject,
+} from './subjects';
 
 export {
   listCourses as listCoursesRequest,
@@ -83,6 +86,13 @@ export {
   getGroupById as getGroupByIdRequest,
   removeGroupFromClasses as removeGroupFromClassesRequest,
 } from './groups';
+
+export {
+  listBlocksBySubjectRequest,
+  createBlockRequest,
+  updateBlockRequest,
+  removeBlockRequest,
+} from './blocks';
 
 export const updateCycleRequest = updateCycle;
 export const listSubjectsRequest = listSubjects;
@@ -113,7 +123,8 @@ export const classDetailForDashboardRequest = classDetailForDashboard;
 export const removeStudentFromClassRequest = removeStudentFromClass;
 export const classByIdsRequest = classByIds;
 export const userEnrollmentsRequest = userEnrollments;
-
+export const classPublicDataRequest = classPublicData;
+export const classPublicDataManyRequest = classPublicDataMany;
 export const createKnowledgeRequest = createKnowledgeArea;
 export const listKnowledgesRequest = listKnowledgeAreas;
 export const updateKnowledgeRequest = updateKnowledgeArea;
@@ -143,6 +154,8 @@ export const getUserProgramsRequest = getUserPrograms;
 export const getProgramsPublicInfoRequest = getProgramsPublicInfo;
 export const removeProgramRequest = removeProgram;
 
+export const setProgramCustomTranslationKeysRequest = setProgramCustomTranslationKeys;
+export const getProgramNomenclatureRequest = getProgramNomenclature;
 export const getSettingsRequest = getSettings;
 export const updateSettingsRequest = updateSettings;
 export const enableMenuItemRequest = enableMenuItem;

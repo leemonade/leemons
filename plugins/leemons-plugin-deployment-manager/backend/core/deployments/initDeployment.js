@@ -42,7 +42,7 @@ async function initDeployment({ pluginNames, relationship, ctx }) {
 
   if (pluginNames) {
     ctx.logger.info('- Init Deployment - SavePlugins');
-    await ctx.call(
+    await ctx.tx.call(
       'deployment-manager.savePlugins',
       _.uniq(pluginNames).map((pluginName) => ({
         pluginName,
@@ -53,7 +53,7 @@ async function initDeployment({ pluginNames, relationship, ctx }) {
 
   if (relationship) {
     ctx.logger.info('- Init Deployment - SavePluginsRelationships');
-    await ctx.call('deployment-manager.savePluginsRelationships', relationship);
+    await ctx.tx.call('deployment-manager.savePluginsRelationships', relationship);
   }
 
   await ctx.call('deployment-manager.emit', {

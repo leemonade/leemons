@@ -1,6 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { compact, noop } from 'lodash';
+
 import {
   Box,
   Table,
@@ -10,12 +9,17 @@ import {
   ActionButton,
   ContextContainer,
 } from '@bubbles-ui/components';
-import { useProfiles } from '@users/hooks';
-import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { UserWarningIcon, ViewOffIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
+import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { compact, noop } from 'lodash';
+import PropTypes from 'prop-types';
+
 import prefixPN from '@users/helpers/prefixPN';
+import { useProfiles, useUserAgentsInfo } from '@users/hooks';
+import useUserDetails from '@users/hooks/useUserDetails';
+import { getSessionUserAgent } from '@users/session';
 
 function ProfileTableInput({
   userAgents = [],
@@ -24,10 +28,33 @@ function ProfileTableInput({
   onChange = noop,
 }) {
   const [profileSelected, setProfileSelected] = React.useState(null);
-  const { data: profiles } = useProfiles({ forceAll: false });
   const { t: tCommon } = useCommonTranslate('formWithTheme');
   const [tEnableUser] = useTranslateLoader(prefixPN('enableUserModal'));
   const [tDisableUser] = useTranslateLoader(prefixPN('disableUserModal'));
+
+  const userAgentId = getSessionUserAgent();
+
+  const { data: userAgentInfo } = useUserAgentsInfo([userAgentId], {
+    enabled: !!userAgentId,
+  });
+
+  const [userAgent] = userAgentInfo ?? [];
+  const enableUserDetails = !!userAgent?.user?.id;
+
+  const { data: userDetails } = useUserDetails({
+    userId: userAgent?.user?.id,
+    enabled: enableUserDetails,
+  });
+
+  const isSuperAdmin = React.useMemo(() => {
+    const superAdmin = userDetails?.userAgents?.find((ua) => ua.profile?.sysName === 'super');
+    return !!superAdmin;
+  }, [userDetails]);
+
+  const { data: profiles } = useProfiles({
+    forceAll: isSuperAdmin,
+    enabled: enableUserDetails,
+  });
 
   function handleOnAdd() {
     if (profileSelected) {
@@ -107,24 +134,30 @@ function ProfileTableInput({
 
   const tableData = React.useMemo(
     () =>
-      userAgents?.map((userAgent) => {
-        const profileData = profilesData.find((p) => p.value === userAgent?.profile?.id);
-        return {
-          name: (
-            <Stack
-              spacing={1}
-              sx={(theme) => ({
-                color: userAgent.disabled && theme.other.global.content.color.text.muted,
-              })}
-            >
-              {userAgent.disabled && <UserWarningIcon />}
-              {profileData?.label}
-            </Stack>
-          ),
-          action: getActionButton(userAgent),
-        };
-      }) ?? [],
-    [userAgents, profilesData]
+      userAgents
+        ?.map((userAgent) => {
+          if (userAgent.profile?.sysName === 'admin' && !isSuperAdmin) {
+            return null;
+          }
+
+          const profileData = profilesData.find((p) => p.value === userAgent?.profile?.id);
+          return {
+            name: (
+              <Stack
+                spacing={1}
+                sx={(theme) => ({
+                  color: userAgent.disabled && theme.other.global.content.color.text.muted,
+                })}
+              >
+                {userAgent.disabled && <UserWarningIcon />}
+                {profileData?.label}
+              </Stack>
+            ),
+            action: getActionButton(userAgent),
+          };
+        })
+        .filter(Boolean) ?? [],
+    [userAgents, profilesData, isSuperAdmin]
   );
 
   return (
