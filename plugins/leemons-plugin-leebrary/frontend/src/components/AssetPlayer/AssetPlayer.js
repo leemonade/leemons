@@ -1,7 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
-import ReactPlayer from 'react-player/lazy';
-import { isFunction } from 'lodash';
 import {
   Box,
   ImageLoader,
@@ -11,14 +9,18 @@ import {
   CardEmptyCover,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { isFunction } from 'lodash';
+import ReactPlayer from 'react-player/lazy';
+
 import prefixPN from '../../helpers/prefixPN';
-import { AudioCardPlayer } from './components/AudioCardPlayer';
-import { PDFPlayer } from './components/PDFPlayer';
-import { ButtonIcon } from './components/ButtonIcon';
-import { ProgressBar } from './components/ProgressBar';
+import Cover from '../Cover';
+
 import { ASSET_PLAYER_DEFAULT_PROPS, ASSET_PLAYER_PROP_TYPES } from './AssetPlayer.constants';
 import { AssetPlayerStyles } from './AssetPlayer.styles';
-import Cover from '../Cover';
+import { AudioCardPlayer } from './components/AudioCardPlayer';
+import { ButtonIcon } from './components/ButtonIcon';
+import { PDFPlayer } from './components/PDFPlayer';
+import { ProgressBar } from './components/ProgressBar';
 
 const format = (seconds) => {
   const date = new Date(seconds * 1000);

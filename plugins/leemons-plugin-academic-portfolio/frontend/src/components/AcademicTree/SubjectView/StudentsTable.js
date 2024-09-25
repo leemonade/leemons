@@ -1,10 +1,9 @@
 import React, { useMemo, useState } from 'react';
+
+import { Table, Avatar, Stack, SearchInput, Loader } from '@bubbles-ui/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import { Table, Avatar, Stack, SearchInput, Loader } from '@bubbles-ui/components';
-
-import { LocaleDate } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 
@@ -71,12 +70,14 @@ const StudentsTable = ({ data, showSearchBar, checkBoxColumn, isLoading }) => {
         Header: t('email'),
         accessor: 'email',
       },
+      /*
       {
         Header: t('birthdate'),
         accessor: 'birthdate',
 
         valueRender: (birthdate) => <LocaleDate date={birthdate} />,
       },
+      */
       {
         Header: ' ',
         accessor: 'actions',

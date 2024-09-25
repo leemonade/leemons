@@ -1,8 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { compact, noop } from 'lodash';
+
 import {
-  Box,
   Badge,
   Title,
   Stack,
@@ -13,14 +11,17 @@ import {
   ContextContainer,
   ImageProfilePicker,
 } from '@bubbles-ui/components';
-import useUserDetails from '@users/hooks/useUserDetails';
-import { LocaleDate } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@users/helpers/prefixPN';
-import { getSessionUserAgent } from '@users/session';
 import { CommentIcon } from '@bubbles-ui/icons/solid';
 import { useComunica } from '@comunica/context';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { compact, noop } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { UserAgentsTags } from './components/UserAgentsTags';
+
+import prefixPN from '@users/helpers/prefixPN';
+import useUserDetails from '@users/hooks/useUserDetails';
+import { getSessionUserAgent } from '@users/session';
 
 export const USER_DETAIL_VIEWS = {
   ADMIN: 'admin',
@@ -119,9 +120,11 @@ function UserDetail({
         </Stack>
         <Title order={3}>{fullName}</Title>
         <Anchor href={`mailto:${user.email}`}>{user.email}</Anchor>
+        {/*
         <Box>
           <LocaleDate date={user.birthdate} options={{ dateStyle: 'medium' }} /> 🎂
         </Box>
+        */}
       </Stack>
       {!hideTags && [USER_DETAIL_VIEWS.ADMIN, USER_DETAIL_VIEWS.TEACHER].includes(viewMode) && (
         <UserAgentsTags title={t('tagsTitle')} userAgentIds={userAgents.map(({ id }) => id)} />
