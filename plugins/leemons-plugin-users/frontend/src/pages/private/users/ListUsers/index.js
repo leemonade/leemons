@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
-import _, { isBoolean, isFunction } from 'lodash';
+import { useHistory } from 'react-router-dom';
+
 import {
   Badge,
   Box,
@@ -19,24 +20,30 @@ import {
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import { CloudUploadIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { LocaleDate, useStore } from '@common';
+import { ListEmptyState } from '@common/components/ListEmptyState';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@users/helpers/prefixPN';
-import { activateUserRequest, getPermissionsWithActionsIfIHaveRequest } from '@users/request';
-import { useHistory } from 'react-router-dom';
+import _, { isBoolean, isFunction } from 'lodash';
+
+import {
+  listUsersRequest,
+  activateUserRequest,
+  getPermissionsWithActionsIfIHaveRequest,
+} from '../../../../request';
+
+import { BulkActionModal } from './components/BulkActionModal';
+
 import DisableUsersModal from '@users/components/DisableUsersModal';
 import EnableUsersModal from '@users/components/EnableUsersModal';
+import prefixPN from '@users/helpers/prefixPN';
 import UserDetailDrawer from '@users/components/UserDetailDrawer';
 import activeUserAgent from '@users/request/activeUserAgent';
 import disableUserAgent from '@users/request/disableUserAgent';
 import { UserAdminDrawer } from '@users/components/UserAdminDrawer';
-import { ListEmptyState } from '@common/components/ListEmptyState';
 import { SelectProfile } from '@users/components/SelectProfile';
 import { SelectCenter } from '@users/components/SelectCenter';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { SetPasswordModal } from '@users/components/SetPasswordModal';
-import { listUsersRequest } from '../../../../request';
-import { BulkActionModal } from './components/BulkActionModal';
 
 function ListUsers() {
   const [t] = useTranslateLoader(prefixPN('list_users'));
@@ -353,11 +360,13 @@ function ListUsers() {
         accessor: 'email',
         className: 'text-left',
       },
+      /*
       {
         Header: t('birthdayHeader'),
         accessor: 'birthdate',
         className: 'text-left',
       },
+      */
       {
         Header: t('stateHeader'),
         accessor: 'state',
