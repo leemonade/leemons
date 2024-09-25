@@ -12,7 +12,6 @@ import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { isEmpty, set, uniq } from 'lodash';
 import PropTypes from 'prop-types';
 
-
 import useFormComponentStyles from './FormComponent.styles';
 import { ActivityDatesPicker } from './components/ActivityDatesPicker';
 import { EvaluationType } from './components/EvaluationType';
@@ -209,6 +208,7 @@ export default function Form({
                   render={({ field, fieldState: { error } }) => (
                     <SubjectPicker
                       {...field}
+                      teacherType={null}
                       error={error}
                       assignable={assignable}
                       localizations={localizations?.subjects}

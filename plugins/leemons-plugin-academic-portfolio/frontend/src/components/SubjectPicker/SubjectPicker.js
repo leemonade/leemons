@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { findIndex, isString, noop, sortBy, uniq } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
+
 import {
   ActionButton,
   Box,
@@ -15,8 +14,11 @@ import {
 import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
 import { useLayout } from '@layout/context';
 import { updateSessionConfig } from '@users/session';
-import { useDataForSubjectPicker } from './hooks/useDataForSubjectPicker';
+import { findIndex, isString, noop, sortBy, uniq } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { useSubjectPickerStyles } from './SubjectPicker.styles';
+import { useDataForSubjectPicker } from './hooks/useDataForSubjectPicker';
 
 function useSelectInitialSubjects({ selectInitialSubjects, assignable, form, onChange }) {
   const subjects = assignable?.subjects;
@@ -49,6 +51,7 @@ export function SubjectPicker({
   error,
   onlyOneSubject,
   selectInitialSubjects,
+  teacherType = 'main-teacher',
 }) {
   const { openConfirmationModal } = useLayout();
 
@@ -64,6 +67,7 @@ export function SubjectPicker({
   const { programs, courses, subjects, selectedSubjects } = useDataForSubjectPicker({
     subjects: assignable?.subjects,
     control: form.control,
+    teacherType,
   });
 
   const sortedPrograms = sortBy(programs, 'createdAt');
@@ -273,6 +277,7 @@ SubjectPicker.propTypes = {
   error: PropTypes.any,
   onlyOneSubject: PropTypes.bool,
   selectInitialSubjects: PropTypes.bool,
+  teacherType: PropTypes.string,
 };
 
 export default SubjectPicker;
