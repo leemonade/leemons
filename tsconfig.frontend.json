@@ -10,14 +10,8 @@
     "module": "ESNext",
     "jsx": "react",
     "skipLibCheck": true,
-    "esModuleInterop": false,
-    "useDefineForClassFields": true,
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": false,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noImplicitAny": false,
-    "noEmit": false,
     "paths": {
       "@academic-calendar/*": [
         "./plugins/leemons-plugin-academic-calendar/frontend/src/*"
@@ -42,9 +36,6 @@
       ],
       "@client-manager/*": [
         "./private-plugins/leemons-plugin-client-manager/frontend/src/*"
-      ],
-      "@common": [
-        "./plugins/leemons-plugin-common/frontend/src/index"
       ],
       "@common/*": [
         "./plugins/leemons-plugin-common/frontend/src/*"
@@ -115,6 +106,9 @@
       "@mqtt-socket-io/*": [
         "./plugins/leemons-plugin-mqtt-socket-io/frontend/src/*"
       ],
+      "@ms-graph/*": [
+        "./private-plugins/leemons-plugin-ms-graph/frontend/src/*"
+      ],
       "@multilanguage/*": [
         "./plugins/leemons-plugin-multilanguage/frontend/src/*"
       ],
@@ -126,6 +120,9 @@
       ],
       "@scorm/*": [
         "./plugins/leemons-plugin-scorm/frontend/src/*"
+      ],
+      "@sessions/*": [
+        "./private-plugins/leemons-plugin-sessions/frontend/src/*"
       ],
       "@tasks/*": [
         "./plugins/leemons-plugin-tasks/frontend/src/*"
@@ -139,6 +136,9 @@
       "@users/*": [
         "./plugins/leemons-plugin-users/frontend/src/*"
       ],
+      "@users-cognito/*": [
+        "./private-plugins/leemons-plugin-users-cognito/frontend/src/*"
+      ],
       "@widgets/*": [
         "./plugins/leemons-plugin-widgets/frontend/src/*"
       ],
@@ -146,5 +146,13 @@
         "./plugins/leemons-plugin-xapi/frontend/src/*"
       ]
     }
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "**/node_modules/*"
+  ],
+  "include": [
+    "./plugins/*/frontend/**/*",
+    "./private-plugins/*/frontend/**/*"
+  ]
 }

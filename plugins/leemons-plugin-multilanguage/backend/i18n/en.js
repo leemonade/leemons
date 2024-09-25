@@ -106,4 +106,13 @@ module.exports = {
     and: 'and',
     more: 'more',
   },
+  customTranslationsDrawer: {
+    title: 'Translations',
+    text: 'Text',
+    translation: 'Translation',
+    translationPlaceholder: 'Enter translation',
+    save: 'Save',
+    cancel: 'Cancel',
+    noLanguages: 'There are no other languages configured in the platform.',
+  },
 };

@@ -1,4 +1,6 @@
 /* eslint-disable no-nested-ternary */
+import React from 'react';
+
 import prefixPN from '@admin/helpers/prefixPN';
 import {
   getMailProvidersRequest,
@@ -25,7 +27,6 @@ import loadable from '@loadable/component';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { flatten, map } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 
 const Styles = createStyles((theme) => ({
   providerButton: {
@@ -63,7 +64,7 @@ const Styles = createStyles((theme) => ({
 }));
 
 function dynamicImport(pluginName) {
-  return loadable(() => import(`@leemons/plugins/${pluginName}/src/widgets/add-email-provider.js`));
+  return loadable(() => import(`@app/plugins/${pluginName}/src/widgets/add-email-provider.js`));
 }
 
 const MailProviders = ({ onNextLabel, onNext = () => {} }) => {

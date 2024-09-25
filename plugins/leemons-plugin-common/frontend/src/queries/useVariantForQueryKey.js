@@ -1,7 +1,9 @@
 import React from 'react';
+
 import { useCache } from '@common/useCache';
 import { useQueryClient } from '@tanstack/react-query';
 import { isEqual } from 'lodash';
+
 import { cachingStrategy, modificationTrend, refetchFrequency } from './variants';
 
 /**
@@ -13,9 +15,9 @@ import { cachingStrategy, modificationTrend, refetchFrequency } from './variants
  *
  * @param {QueryKey} queryKey
  * @param {{
- *  cachingStrategy: CachingStrategies,
  *  modificationTrend: ModificationTrends,
- *  refetchFrequency: RefetchFrequencies
+ *  cachingStrategy?: CachingStrategies,
+ *  refetchFrequency?: RefetchFrequencies
  * } | QueryOptions} variants
  */
 export function useVariantForQueryKey(queryKey, variants) {

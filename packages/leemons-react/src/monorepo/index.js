@@ -1,4 +1,5 @@
 const path = require('path');
+
 const {
   createFolderIfMissing,
   createMissingPackageJSON,
@@ -7,10 +8,11 @@ const {
   removeFiles,
 } = require('../fs');
 const { saveLockFile } = require('../lockFile');
+
+const createJSConfig = require('./createJSConfig');
+const createTSConfig = require('./createTSConfig');
 const installDeps = require('./installDeps');
 const linkSourceCode = require('./linkSourceCode');
-const createJSConfig = require('./createJSConfig');
-const createEslint = require('./createEsLint');
 
 module.exports = async function generateMonorepo({ plugins, app, outputDir, basePath }) {
   const templateDir = path.resolve(__dirname, '../templates');
@@ -66,9 +68,8 @@ module.exports = async function generateMonorepo({ plugins, app, outputDir, base
       plugins,
       basePath,
     });
-
-    // Re-generate ".eslintrc.json" file
-    await createEslint({
+    // Re-generate "tsconfig.json" file
+    await createTSConfig({
       plugins,
       basePath,
     });

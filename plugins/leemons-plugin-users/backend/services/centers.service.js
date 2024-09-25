@@ -4,17 +4,19 @@
  */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
 const {
   LeemonsDeploymentManagerMixin,
   validateInternalPrivateKey,
 } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getServiceModels } = require('../models');
-const { add, list, detail, existName, existsById } = require('../core/centers');
-const restActions = require('./rest/centers.rest');
+
+const { add, list, detail, existName, existsById, getByIds } = require('../core/centers');
 const { setLimits } = require('../core/centers/setLimits');
+const { getServiceModels } = require('../models');
+
+const restActions = require('./rest/centers.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -61,6 +63,11 @@ module.exports = {
       async handler(ctx) {
         validateInternalPrivateKey({ ctx });
         return setLimits({ ...ctx.params, ctx });
+      },
+    },
+    getByIds: {
+      async handler(ctx) {
+        return getByIds({ ...ctx.params, ctx });
       },
     },
   },

@@ -1,10 +1,14 @@
 {
   "name": "@leemons/deployment-manager",
   "version": "0.0.71",
-  "description": "",
+  "description": "Leemons Deployment Manager SDK",
+  "license": "MIT",
   "main": "src/index.js",
   "types": "src/types.d.ts",
-  "keywords": [],
+  "keywords": [
+    "leemons",
+    "sdk"
+  ],
   "author": {
     "email": "hi@leemons.io",
     "name": "Leemons Edtech Solutions",
@@ -21,12 +25,11 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "license": "MIT",
   "devDependencies": {},
   "dependencies": {
     "@leemons/error": "0.0.41",
+    "@leemons/mongodb": "0.0.71",
     "@leemons/service-name-parser": "0.0.41",
-    "lodash": "^4.17.21",
-    "@leemons/mongodb": "0.0.71"
+    "lodash": "^4.17.21"
   }
 }

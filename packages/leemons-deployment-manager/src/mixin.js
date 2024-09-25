@@ -1,12 +1,14 @@
-const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 const {
   getPluginNameFromServiceName,
   getPluginNameWithVersionIfHaveFromServiceName,
 } = require('@leemons/service-name-parser');
-const { isCoreService } = require('./isCoreService');
-const { getDeploymentID } = require('./getDeploymentID');
+const _ = require('lodash');
+
+const { ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK } = require('./contants');
 const { ctxCall } = require('./ctxCall');
+const { getDeploymentID } = require('./getDeploymentID');
+const { isCoreService } = require('./isCoreService');
 
 const actionCanCache = {};
 
@@ -16,10 +18,7 @@ async function modifyCTX(
   ctx,
   {
     getDeploymentIdInCall = false,
-    dontGetDeploymentIDOnActionCall = [
-      'deployment-manager.addManualDeploymentRest',
-      'deployment-manager.reloadAllDeploymentsRest',
-    ],
+    dontGetDeploymentIDOnActionCall = ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK,
   } = {}
 ) {
   // ES: Cuando un usuario llama a gateway no existe caller y el siguiente codigo peta, por eso hacemos esta comprobación
@@ -80,14 +79,7 @@ async function modifyCTX(
 module.exports = function ({
   checkIfCanCallMe = true,
   getDeploymentIdInCall = false,
-  dontGetDeploymentIDOnActionCall = [
-    'deployment-manager.reloadAllDeploymentsRest',
-    'deployment-manager.addManualDeploymentRest',
-    'gateway.dropDBRest',
-    'v1.client-manager.protected.newDeployment',
-    'v1.client-manager.protected.isSubdomainInUse',
-    'v1.users-cognito.emails.getEmail',
-  ],
+  dontGetDeploymentIDOnActionCall = ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK,
 } = {}) {
   return {
     name: '',

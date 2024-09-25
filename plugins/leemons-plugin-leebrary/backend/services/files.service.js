@@ -4,15 +4,21 @@
  */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+
 const { pluginName } = require('../config/constants');
-const { getServiceModels } = require('../models');
-const restActions = require('./rest/files.rest');
-const { uploadFromSource } = require('../core/files/helpers/uploadFromSource');
+const { abortMultipart } = require('../core/files/abortMultipart');
+const { finishMultipart } = require('../core/files/finishMultipart');
 const { getByIds } = require('../core/files/getByIds');
+const { getUploadChunkUrls } = require('../core/files/getUploadChunkUrls/getUploadChunkUrls');
+const { uploadFromSource } = require('../core/files/helpers/uploadFromSource');
+const { newMultipart } = require('../core/files/newMultipart');
+const { getServiceModels } = require('../models');
+
+const restActions = require('./rest/files.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -37,6 +43,32 @@ module.exports = {
     getByIds: {
       handler(ctx) {
         return getByIds({ ...ctx.params, ctx });
+      },
+    },
+
+    // Multipart actions
+    newMultipart: {
+      handler(ctx) {
+        const payload = { ...ctx.params, ctx };
+        return newMultipart(payload);
+      },
+    },
+    getUploadChunkUrls: {
+      handler(ctx) {
+        const payload = { ...ctx.params, ctx };
+        return getUploadChunkUrls(payload);
+      },
+    },
+    abortMultipart: {
+      handler(ctx) {
+        const payload = { ...ctx.params, ctx };
+        return abortMultipart(payload);
+      },
+    },
+    finishMultipart: {
+      handler(ctx) {
+        const payload = { ...ctx.params, ctx };
+        return finishMultipart(payload);
       },
     },
   },

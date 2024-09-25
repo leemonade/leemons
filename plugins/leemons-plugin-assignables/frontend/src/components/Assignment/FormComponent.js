@@ -1,27 +1,26 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 
-import { set, uniq } from 'lodash';
-
+import { SubjectPicker } from '@academic-portfolio/components/SubjectPicker';
 import {
   Box,
   Button,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
-
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { SubjectPicker } from '@academic-portfolio/components/SubjectPicker';
+import { isEmpty, set, uniq } from 'lodash';
+import PropTypes from 'prop-types';
+
+
+import useFormComponentStyles from './FormComponent.styles';
 import { ActivityDatesPicker } from './components/ActivityDatesPicker';
 import { EvaluationType } from './components/EvaluationType';
 import { GroupPicker } from './components/GroupPicker';
 import { Instructions } from './components/Instructions';
 import { OtherOptions } from './components/OtherOptions';
-import useFormComponentStyles from './FormComponent.styles';
 import Presentation from './components/Presentation/Presentation';
 import Preview from './components/Preview/Preview';
-import { Container } from './components/Container';
 
 function onSubmitFunc(onSubmit, evaluationType, values) {
   const allowedTypes = ['auto', 'manual', 'none'];
@@ -67,6 +66,10 @@ function onSubmitFunc(onSubmit, evaluationType, values) {
       evaluationType: finalEvaluationType,
     },
   };
+
+  if (!isEmpty(values.dates.others)) {
+    set(submissionValues, 'metadata.assignmentType', values.dates.others);
+  }
 
   if (values.instructions) {
     set(submissionValues, 'metadata.statement', values.instructions);

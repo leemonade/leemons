@@ -1,10 +1,11 @@
 import React, { useMemo } from 'react';
-import { isEmpty } from 'lodash';
-import PropTypes from 'prop-types';
+
 import { Table, Stack, ActionButton, LoadingOverlay } from '@bubbles-ui/components';
 import { ArchiveIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
-
 import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
+import { isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { useProgramDetail } from '@academic-portfolio/hooks';
 
 const ProgramsDetailTable = ({

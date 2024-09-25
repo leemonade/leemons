@@ -1,17 +1,21 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
-import { cloneDeep, isBoolean, isEmpty, omit } from 'lodash';
-import { BaseDrawer } from '@bubbles-ui/components';
 
+import { BaseDrawer } from '@bubbles-ui/components';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { cloneDeep, isBoolean, isEmpty, omit } from 'lodash';
+import PropTypes from 'prop-types';
+
+import FormSetup from './AddFormSetup';
+import AddProgramForm from './AddProgramForm';
+import UpdateProgramForm from './UpdateProgramForm';
+
+import getTranslationKeyPrefixes from '@academic-portfolio/helpers/getTranslationKeyPrefixes';
 import {
   useCreateProgram,
   useUpdateProgram,
   useUpdateProgramConfiguration,
 } from '@academic-portfolio/hooks/mutations/useMutateProgram';
-import AddProgramForm from './AddProgramForm';
-import FormSetup from './AddFormSetup';
-import UpdateProgramForm from './UpdateProgramForm';
+import useSetProgramCustomTranslationKeys from '@academic-portfolio/hooks/mutations/useSetProgramCustomTranslationKeys';
 
 const ProgramSetupDrawer = ({
   isOpen,
@@ -24,15 +28,21 @@ const ProgramSetupDrawer = ({
 }) => {
   const [activeComponent, setActiveComponent] = useState(0);
   const [setupData, setSetupData] = useState(null);
+  const [nomenclature, setNomenclature] = useState(null);
   const { mutate: createProgram, isLoading: isCreateProgramLoading } = useCreateProgram();
   const { mutate: updateProgram, isLoading: isUpdateProgramLoading } = useUpdateProgram();
   const { mutate: updateProgramConfiguration, isLoading: isUpdateProgramConfigurationLoading } =
     useUpdateProgramConfiguration();
+  const { mutate: setProgramCustomTranslationKeys } = useSetProgramCustomTranslationKeys({
+    successMessage:
+      localizations?.programDrawer?.addProgramForm?.formLabels?.nomenclature?.success?.set,
+  });
   const scrollRef = useRef();
 
   // HANDLERS & FUNCTIONS ······································································||
   const handleOnCancel = useCallback(() => {
     setActiveComponent(0);
+    setNomenclature(null);
     setIsEditing(false);
     setIsOpen(false);
   }, [setActiveComponent, setIsEditing, setIsOpen]);
@@ -147,8 +157,15 @@ const ProgramSetupDrawer = ({
     (formData) => {
       const body = constructRequestBody({ formData, isEditingConfig: false });
       createProgram(body, {
-        onSuccess: () => {
+        onSuccess: (data) => {
           addSuccessAlert(localizations?.alerts.success.add);
+          if (!isEmpty(nomenclature)) {
+            setProgramCustomTranslationKeys({
+              programId: data.program.id,
+              prefix: getTranslationKeyPrefixes().PROGRAM,
+              localizations: nomenclature,
+            });
+          }
           handleOnCancel();
         },
         onError: (e) => {
@@ -157,28 +174,38 @@ const ProgramSetupDrawer = ({
         },
       });
     },
-    [createProgram, constructRequestBody, localizations?.alerts]
+    [
+      createProgram,
+      constructRequestBody,
+      localizations?.alerts,
+      nomenclature,
+      setProgramCustomTranslationKeys,
+      handleOnCancel,
+    ]
   );
 
-  const handleOnSimpleEdit = (formData) => {
-    let body = {
-      ...omit(formData, 'autoAssignment'),
-      id: program.id,
-      useAutoAssignment: formData.autoAssignment,
-    };
-    body = handleCredits(formData, body, program);
+  const handleOnSimpleEdit = useCallback(
+    (formData) => {
+      let body = {
+        ...omit(formData, 'autoAssignment', 'nomenclature'),
+        id: program.id,
+        useAutoAssignment: formData.autoAssignment,
+      };
+      body = handleCredits(formData, body, program);
 
-    updateProgram(body, {
-      onSuccess: () => {
-        addSuccessAlert(localizations?.alerts.success.update);
-        handleOnCancel();
-      },
-      onError: (e) => {
-        console.error(e);
-        addErrorAlert(localizations?.alerts.failure.update);
-      },
-    });
-  };
+      updateProgram(body, {
+        onSuccess: () => {
+          addSuccessAlert(localizations?.alerts.success.update);
+          handleOnCancel();
+        },
+        onError: (e) => {
+          console.error(e);
+          addErrorAlert(localizations?.alerts.failure.update);
+        },
+      });
+    },
+    [updateProgram, handleCredits, localizations?.alerts, handleOnCancel, program]
+  );
 
   const handleOnEditConfiguration = useCallback(
     (formData) => {
@@ -232,8 +259,11 @@ const ProgramSetupDrawer = ({
         onSubmit={handleOnAdd}
         drawerIsLoading={isCreateProgramLoading || isUpdateProgramConfigurationLoading}
         localizations={localizations}
-        programUnderEdit={isEditing ? program : null}
+        programBeingEdited={isEditing ? program : null}
         onUpdate={handleOnEditConfiguration}
+        setNomenclature={
+          (nomenclature) => setNomenclature(cloneDeep(nomenclature)) // Ensures a re-render of the callback functions depending on nomenclature
+        }
       />,
     ],
     [
@@ -278,6 +308,7 @@ const ProgramSetupDrawer = ({
           drawerIsLoading={isUpdateProgramLoading}
           localizations={localizations}
           onCancel={handleOnCancel}
+          setNomenclature={(nomenclature) => setNomenclature(cloneDeep(nomenclature))}
         />
       )}
     </BaseDrawer>

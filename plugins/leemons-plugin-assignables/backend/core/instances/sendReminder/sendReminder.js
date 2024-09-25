@@ -1,6 +1,8 @@
 const _ = require('lodash');
-const { sendEmail } = require('../sendEmail');
+
 const { getInstance } = require('../getInstance');
+const { prepareEmailPerStudent } = require('../sendEmail/helpers/prepareEmailPerStudent');
+const { sendEmail } = require('../sendEmail/helpers/sendMail');
 
 /**
  * Sends a reminder to users.
@@ -13,14 +15,14 @@ const { getInstance } = require('../getInstance');
  * @returns {Promise<void[]>} A promise that resolves when the reminders have been sent.
  */
 async function sendReminder({ assignableInstanceId, users, type, ctx }) {
-  const [instance, hostname, hostnameApi] = await Promise.all([
+  const [instance, hostname, hostnameAPI] = await Promise.all([
     getInstance({
       id: assignableInstanceId,
       details: true,
       ctx,
     }),
     ctx.tx.call('users.platform.getHostname'),
-    ctx.tx.call('user.platform.getHostnameApi'),
+    ctx.tx.call('users.platform.getHostnameApi'),
   ]);
 
   const userAgentIds = _.map(instance.students, 'user');
@@ -59,23 +61,23 @@ async function sendReminder({ assignableInstanceId, users, type, ctx }) {
 
   const _classes = _.uniqBy(classesData, 'subject.id');
 
-  const promises = [];
-  _.forEach(userAgents, (userAgent) => {
-    promises.push(
-      sendEmail({
+  const contexts = await Promise.all(
+    userAgents.map(async (userAgent) => {
+      return prepareEmailPerStudent({
         instance,
         userAgent,
         classes: _classes,
         hostname,
-        hostnameApi,
-        ignoreUserConfig: true,
-        isReminder: true,
-        ctx,
-      })
-    );
-  });
+        hostnameAPI,
 
-  return Promise.all(promises);
+        isReminder: true,
+        ignoreUserConfig: true,
+        ctx,
+      });
+    })
+  ).filter((context) => context !== null);
+
+  return Promise.all(contexts.map((context) => sendEmail({ ...context, ctx })));
 }
 
 module.exports = { sendReminder };

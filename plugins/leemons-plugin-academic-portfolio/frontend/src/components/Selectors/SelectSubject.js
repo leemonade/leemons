@@ -1,10 +1,24 @@
 import React, { useState, useEffect, forwardRef } from 'react';
-import PropTypes from 'prop-types';
+
 import { Select } from '@bubbles-ui/components';
+import PropTypes from 'prop-types';
+
 import { listSubjectsRequest } from '../../request';
 
 const SelectSubject = forwardRef(
-  ({ program, course, value: userValue, onChange, ...props }, ref) => {
+  (
+    {
+      program,
+      course,
+      value: userValue,
+      onChange,
+      teacherTypeFilter,
+      firstSelected,
+      allowNullValue,
+      ...props
+    },
+    ref
+  ) => {
     const [data, setData] = useState([]);
     const [value, setValue] = useState(userValue);
 
@@ -24,31 +38,47 @@ const SelectSubject = forwardRef(
       }
     };
 
+    async function getSubjects() {
+      if (program) {
+        const {
+          data: { items },
+        } = await listSubjectsRequest({
+          page: 0,
+          size: 9999,
+          program,
+          course: [course],
+          teacherTypeFilter,
+        });
+
+        setData(
+          items.map(({ id, name }) => ({
+            value: id,
+            label: name,
+          }))
+        );
+      }
+    }
+
     // EN: Update the value when controlled value changes
     // ES: Actualizar el valor cuando el valor controlado cambia
     useEffect(() => {
       if (data.length && userValue) {
         setValue(userValue);
+      } else if (allowNullValue && !userValue) {
+        setValue(null);
       }
-    }, [userValue]);
+    }, [userValue, data]);
+
+    useEffect(() => {
+      if (firstSelected && data?.length > 0 && !userValue) {
+        handleChange(data[0].value);
+      }
+    }, [data, firstSelected, userValue, data]);
 
     // EN: Get programs from API on center change
     // ES: Obtener programas desde API en cambio de centro
     useEffect(() => {
-      (async () => {
-        if (program) {
-          const {
-            data: { items },
-          } = await listSubjectsRequest({ page: 0, size: 9999, program, course });
-
-          setData(
-            items.map(({ id, name }) => ({
-              value: id,
-              label: name,
-            }))
-          );
-        }
-      })();
+      getSubjects();
     }, [program, course]);
 
     return (
@@ -70,6 +100,9 @@ SelectSubject.propTypes = {
   course: PropTypes.string,
   value: PropTypes.string,
   onChange: PropTypes.func,
+  teacherTypeFilter: PropTypes.string,
+  firstSelected: PropTypes.bool,
+  allowNullValue: PropTypes.bool,
 };
 
 export { SelectSubject };

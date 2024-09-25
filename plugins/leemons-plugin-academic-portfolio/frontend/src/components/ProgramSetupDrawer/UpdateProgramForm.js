@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
-import { isEmpty } from 'lodash';
-import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
+
 import {
   ContextContainer,
   Title,
@@ -19,11 +18,20 @@ import {
   TotalLayoutContainer,
   Loader,
 } from '@bubbles-ui/components';
-import ImagePicker from '@leebrary/components/ImagePicker';
-import { Header } from '@leebrary/components/AssetPickerDrawer/components/Header';
+import { useLocale } from '@common/LocaleDate';
 import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
-import FooterContainer from './FooterContainer';
+import { Header } from '@leebrary/components/AssetPickerDrawer/components/Header';
+import ImagePicker from '@leebrary/components/ImagePicker';
+import { isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+
 import ReadOnlyField from '../common/ReadOnlyField';
+
+import FooterContainer from './FooterContainer';
+import Nomenclature from './Nomenclature';
+
+import getTranslationKeyPrefixes from '@academic-portfolio/helpers/getTranslationKeyPrefixes';
+import useSetProgramCustomTranslationKeys from '@academic-portfolio/hooks/mutations/useSetProgramCustomTranslationKeys';
 
 const useAddProgramFormStyles = createStyles((theme) => ({
   title: {
@@ -49,6 +57,11 @@ const UpdateProgramForm = ({
   const form = useForm();
   const { control, formState, setValue, watch } = form;
   const { hoursPerCredit, credits } = watch();
+  const userLocale = useLocale();
+  const { mutate: setProgramCustomTranslationKeys } = useSetProgramCustomTranslationKeys({
+    successMessage:
+      localizations?.programDrawer?.addProgramForm?.formLabels?.nomenclature?.success?.set,
+  });
 
   const totalHours = useMemo(() => {
     if (!credits || !hoursPerCredit) return null;
@@ -73,6 +86,7 @@ const UpdateProgramForm = ({
       setValue('image', program.image);
       setValue('useAutoAssignment', program.useAutoAssignment);
       setValue('totalHours', program.totalHours);
+      setValue('nomenclature', program.nomenclature ?? { block: '', subject: '' });
     }
   }, [program, setValue]);
 
@@ -128,6 +142,28 @@ const UpdateProgramForm = ({
     },
   ];
 
+  // HANDLERS ··························································································||ﬂG
+
+  const handleOnSubmit = (data) => {
+    const nomenclature = form.getValues('nomenclature');
+    const cleanNomenclature = {};
+    if (nomenclature.block) cleanNomenclature.block = nomenclature.block;
+    if (nomenclature.subject) cleanNomenclature.subject = nomenclature.subject;
+
+    const localeCustomKeys = {
+      [userLocale]: cleanNomenclature,
+    };
+
+    if (!isEmpty(nomenclature)) {
+      setProgramCustomTranslationKeys({
+        programId: program.id,
+        prefix: getTranslationKeyPrefixes().PROGRAM,
+        localizations: localeCustomKeys,
+      });
+    }
+    onSubmit(data);
+  };
+
   if (isLoading) {
     return (
       <Stack fullHeight>
@@ -159,7 +195,7 @@ const UpdateProgramForm = ({
         }}
       >
         <TotalLayoutStepContainer clean>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form onSubmit={form.handleSubmit(handleOnSubmit)}>
             <ContextContainer sx={{ marginBottom: 100 }} direction="column" spacing={6}>
               {/* SECTION: BASIC DATA */}
               <ContextContainer direction="column" spacing={4}>
@@ -214,7 +250,6 @@ const UpdateProgramForm = ({
                           {...field}
                           label={formLabels?.basicData?.color}
                           placeholder={'#000000'}
-                          useHsl
                           compact={false}
                           manual={false}
                           contentStyle={{ width: 216 }}
@@ -391,6 +426,15 @@ const UpdateProgramForm = ({
                   </ContextContainer>
                 </ContextContainer>
               )}
+
+              {/* SECTION: NOMENCLATURE */}
+              <ContextContainer direction="column" spacing={4}>
+                <Nomenclature
+                  labels={formLabels?.nomenclature}
+                  programId={program?.id}
+                  form={form}
+                />
+              </ContextContainer>
 
               <ContextContainer noFlex spacing={4}>
                 <Title className={classes.title}>{localizations?.programDrawer?.others}</Title>

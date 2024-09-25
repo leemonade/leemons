@@ -4,29 +4,24 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import PropTypes from 'prop-types';
-import _, { find, forEach, isString, map, set } from 'lodash';
+
 import { Box, ImageLoader, LoadingOverlay, UserDisplayItemList } from '@bubbles-ui/components';
-import {
-  CALENDAR_EVENT_MODAL_DEFAULT_PROPS,
-  CalendarEventModal,
-} from '@calendar/components/CalendarEventModal';
-import { getCalendarsToFrontendRequest } from '@calendar/request';
+import { getLocale, useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useLayout } from '@layout/context';
 import loadable from '@loadable/component';
 import tKeys from '@multilanguage/helpers/tKeys';
-import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
-import { goLoginPage } from '@users/navigate';
-import { getCentersWithToken, useSession } from '@users/session';
-
-import prefixPN from '@calendar/helpers/prefixPN';
-import { getLocale, useStore } from '@common';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import SelectUserAgent from '@users/components/SelectUserAgent';
+import { goLoginPage } from '@users/navigate';
+import { getCentersWithToken, useSession } from '@users/session';
 import hooks from 'leemons-hooks';
-import { useLayout } from '@layout/context';
+import _, { find, forEach, isString, map, set } from 'lodash';
+import PropTypes from 'prop-types';
+
 import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
 import getUTCString from '../helpers/getUTCString';
 import {
@@ -34,12 +29,22 @@ import {
   getEventTypesRequest,
   removeEventRequest,
   updateEventRequest,
-} from '../request';
+ getCalendarsToFrontendRequest } from '../request';
+
+import {
+  CALENDAR_EVENT_MODAL_DEFAULT_PROPS,
+  CalendarEventModal,
+} from '@calendar/components/CalendarEventModal';
+import prefixPN from '@calendar/helpers/prefixPN';
 
 function dynamicImport(pluginName, component) {
-  return loadable(() =>
-    import(`@leemons/plugins/${pluginName}/src/widgets/calendar/${component}.js`)
-  );
+  return loadable(async () => {
+    try {
+      return await import(`@app/plugins/${pluginName}/src/widgets/calendar/${component}.js`);
+    } catch (error) {
+      return await import(`@app/plugins/${pluginName}/dist/widgets/calendar/${component}.js`);
+    }
+  });
 }
 
 function ClassIcon({ class: klass, dropdown = false }) {
@@ -231,6 +236,16 @@ function NewCalendarEventModal({
             eventType.url
           );
         });
+      }
+
+      if (event?.data?.cardComponent && event?.data?.pluginName) {
+        ref.current.components = {
+          ...(ref.current.components || {}),
+          card: dynamicImport(
+            `${event.data.pluginName}`,
+            event.data.cardComponent
+          ),
+        };
       }
 
       ref.current.calendarData = await getCalendarsForCenter();
@@ -428,6 +443,7 @@ function NewCalendarEventModal({
     <>
       {ref.current.saving ? <LoadingOverlay visible /> : null}
       <CalendarEventModal
+        event={event}
         form={form}
         opened={opened}
         locale={getLocale(session)}

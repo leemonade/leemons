@@ -1,9 +1,10 @@
+const chalk = require('chalk');
+const ora = require('ora');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
-const ora = require('ora');
-const chalk = require('chalk');
-const webpackConfig = require('./webpack.config');
+
 const { parseWebpackMessage } = require('./parseWebpackMessage');
+const webpackConfig = require('./webpack.config');
 
 module.exports = async function startDevServer({ app, build, alias, publicFiles }) {
   const config = webpackConfig({ app, build, alias, publicFiles, isDev: true, lazy: true });
@@ -12,6 +13,19 @@ module.exports = async function startDevServer({ app, build, alias, publicFiles 
   let compiler;
   try {
     compiler = webpack(config);
+    if(process.env.DEBUG === 'true') {
+      compiler.hooks.done.tap('done', (stats) => {
+        console.log(
+          stats.toString({
+            colors: true,
+            modules: false,
+            children: false,
+            chunks: false,
+            chunkModules: false,
+          })
+        );
+      });
+    }
   } catch (e) {
     console.log(chalk`{red[ERROR]} {gray Failed to compile}`);
     console.log(e.message || e);

@@ -1,11 +1,11 @@
-const path = require('path');
 const fs = require('fs');
+const path = require('path');
 
 /* Global aliases */
 
 // Generate alias object for webpack
 module.exports = function generateAliases(dir, plugins) {
-  const globalAliases = { '@leemons': dir };
+  const globalAliases = { '@app': dir };
   return plugins.reduce(
     (obj, plugin) => {
       const pluginPath = path.resolve(dir, 'plugins', plugin.name);

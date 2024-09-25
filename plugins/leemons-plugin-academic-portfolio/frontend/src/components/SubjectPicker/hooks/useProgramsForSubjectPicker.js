@@ -1,15 +1,17 @@
 import { useMemo } from 'react';
-import { map, sortBy, uniq } from 'lodash';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useProgramsPublicInfo } from '@academic-portfolio/hooks';
+
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import { useProgramsPublicInfo } from '@academic-portfolio/hooks';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { map, sortBy, uniq } from 'lodash';
 
 export function useProgramsForSubjectPicker({ subjects }) {
   const programIds = uniq(map(subjects, 'program'));
   const [t] = useTranslateLoader(prefixPN('newSubjectsPage.labels'));
 
-  const { data, isLoading } = useProgramsPublicInfo(programIds, {
-    enabled: !!programIds,
+  const { data, isLoading } = useProgramsPublicInfo({
+    programIds,
+    options: { enabled: !!programIds },
   });
 
   return useMemo(() => {

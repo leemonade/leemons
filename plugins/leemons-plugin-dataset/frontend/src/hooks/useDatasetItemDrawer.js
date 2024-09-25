@@ -1,18 +1,20 @@
 /* eslint-disable no-param-reassign */
-import * as _ from 'lodash';
 import React, { useEffect, useRef, useState } from 'react';
+
+import { useFormWithTheme } from '@common/hooks/useFormWithTheme';
+import { DATASET_ITEM_DRAWER_DEFAULT_PROPS, DatasetItemDrawer } from '@dataset/components';
+import transformItemToSchemaAndUi from '@dataset/components/help/transformItemToSchemaAndUi';
+import { addSuccessAlert } from '@layout/alert';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import {
   getDefaultPlatformLocaleRequest,
   getPlatformLocalesRequest,
   listCentersRequest,
   listProfilesRequest,
 } from '@users/request';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { addSuccessAlert } from '@layout/alert';
+import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { DATASET_ITEM_DRAWER_DEFAULT_PROPS, DatasetItemDrawer } from '@dataset/components';
-import { useFormWithTheme } from '@common/hooks/useFormWithTheme';
-import transformItemToSchemaAndUi from '@dataset/components/help/transformItemToSchemaAndUi';
+
 import prefixPN from '../helpers/prefixPN';
 import { getDatasetSchemaFieldLocaleRequest, saveDatasetFieldRequest } from '../request';
 

@@ -290,7 +290,6 @@ const SubjectForm = ({
                     {...field}
                     label={formLabels?.basicData?.color}
                     placeholder={'#000000'}
-                    useHsl
                     compact={false}
                     manual={false}
                     contentStyle={{ width: 200 }}

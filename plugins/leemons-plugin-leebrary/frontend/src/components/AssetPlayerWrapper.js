@@ -1,13 +1,13 @@
 import React, { useMemo } from 'react';
+
 import { Box } from '@bubbles-ui/components';
-import propTypes from 'prop-types';
 import loadable from '@loadable/component';
+import propTypes from 'prop-types';
+
 import { AssetPlayer } from './AssetPlayer/AssetPlayer';
 
 function dynamicImport(pluginName, component) {
-  return loadable(() =>
-    import(`@leemons/plugins/${pluginName}/src/widgets/leebrary/${component}.js`)
-  );
+  return loadable(() => import(`@app/plugins/${pluginName}/src/widgets/leebrary/${component}.js`));
 }
 const AssetPlayerWrapper = ({ asset, category }) => {
   const getMultimediaProps = () => {
@@ -18,7 +18,7 @@ const AssetPlayerWrapper = ({ asset, category }) => {
     }
     if (asset?.fileType === 'video') {
       return {
-        width: 500,
+        width: 720,
         height: 'auto',
       };
     }
@@ -61,7 +61,7 @@ const AssetPlayerWrapper = ({ asset, category }) => {
         minHeight: '100vh',
       }}
     >
-      <Component asset={asset} {...getMultimediaProps()} />
+      <Component asset={asset} {...getMultimediaProps()} execMode />
     </Box>
   );
 };

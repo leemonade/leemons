@@ -100,4 +100,23 @@ module.exports = {
       },
     },
   },
+  datasetTable: {
+    add_field: 'Add new field',
+    no_data_in_table: 'No data available yet',
+    deleted_done: 'Field deleted successfully',
+    columns: {
+      name: 'Name',
+      description: 'Description',
+      type: 'Type',
+      actions: 'Actions',
+      edit: 'Edit',
+      delete: 'Delete',
+    },
+    remove_modal: {
+      title: 'Do you want to delete the field?',
+      message: 'This action cannot be undone',
+      cancel: 'No',
+      action: 'Delete',
+    },
+  },
 };

@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
-const { setTimeout } = require('timers/promises');
 const { LeemonsError } = require('@leemons/error');
 const { setKey, hasKeys, hasKey, getKey } = require('@leemons/mongodb-helpers');
 const { randomString } = require('@leemons/utils');
+const _ = require('lodash');
+const { setTimeout } = require('timers/promises');
 
 function getEventKey(str) {
   return `multi-events-${str}`;
@@ -93,6 +93,7 @@ module.exports = ({ ctxKeyValueModelName = 'KeyValue' } = {}) => ({
       LeemonsMultiEventsMixin: true,
     },
   },
+  events: {},
   merged(schema) {
     _.forIn(schema.multiEvents, ({ events, type = 'on', handler }) => {
       _.forEach(events, (event) => {

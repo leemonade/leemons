@@ -1,8 +1,6 @@
-import PropTypes from 'prop-types';
-import { get } from 'lodash';
-import React from 'react';
+import React, { useMemo } from 'react';
+
 import {
-  Box,
   ActionButton,
   ContextContainer,
   Text,
@@ -11,16 +9,22 @@ import {
   TextInput,
   TextClamp,
 } from '@bubbles-ui/components';
-import prefixPN from '@calendar/helpers/prefixPN';
 import { OpenIcon } from '@bubbles-ui/icons/outline';
-
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { linkify } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
+import { get } from 'lodash';
+import PropTypes from 'prop-types';
+
+import prefixPN from '@calendar/helpers/prefixPN';
+
+dayjs.extend(isBetween);
+
+const PREVENT_MINUTES_BEFORE_START = 15;
 
 export default function Event({ isEditing, event, form, data, allFormData, classes, disabled }) {
   const [t] = useTranslateLoader(prefixPN('event_mode_event_type'));
-  const { t: tCommon } = useCommonTranslate('forms');
 
   const {
     Controller,
@@ -30,10 +34,21 @@ export default function Event({ isEditing, event, form, data, allFormData, class
 
   const onClickCallLink = () => window.open(form.getValues('videoLink'), '_blank');
 
+  const showVideoLink = useMemo(() => {
+    const currentTime = dayjs();
+    const startTime = dayjs(event.startDate).subtract(PREVENT_MINUTES_BEFORE_START, 'minutes');
+    const endTime = dayjs(event.endDate);
+    return (
+      disabled &&
+      form.getValues('videoLink') &&
+      currentTime.isBetween(startTime, endTime, null, '[]')
+    );
+  }, [form, event, disabled]);
+
   return (
     <>
-      <ContextContainer spacing={2}>
-        {!disabled ? (
+      {!disabled && (
+        <ContextContainer spacing={2}>
           <Controller
             name="videoLink"
             control={control}
@@ -56,8 +71,7 @@ export default function Event({ isEditing, event, form, data, allFormData, class
               );
             }}
           />
-        ) : null}
-        {!disabled ? (
+
           <Controller
             name="place"
             control={control}
@@ -81,8 +95,7 @@ export default function Event({ isEditing, event, form, data, allFormData, class
               );
             }}
           />
-        ) : null}
-        {!disabled ? (
+
           <Controller
             name="description"
             control={control}
@@ -105,15 +118,14 @@ export default function Event({ isEditing, event, form, data, allFormData, class
               );
             }}
           />
-        ) : null}
-      </ContextContainer>
-
-      {disabled ? (
-        <ContextContainer spacing={6}>
-          {disabled && form.getValues('videoLink') ? (
+        </ContextContainer>
+      )}
+      {disabled && (
+        <ContextContainer>
+          {showVideoLink && (
             <ContextContainer spacing={2}>
               <Text size="lg" strong>
-                {t('video_link')}
+                {t('video_link_view')}
               </Text>
               <ContextContainer direction="row" justifyContent="space-between" alignItems="center">
                 <TextClamp lines={1} withTooltip>
@@ -128,7 +140,7 @@ export default function Event({ isEditing, event, form, data, allFormData, class
                 </ActionButton>
               </ContextContainer>
             </ContextContainer>
-          ) : null}
+          )}
 
           {form.getValues('place') ? (
             <ContextContainer spacing={2}>
@@ -148,7 +160,7 @@ export default function Event({ isEditing, event, form, data, allFormData, class
             </ContextContainer>
           ) : null}
         </ContextContainer>
-      ) : null}
+      )}
     </>
   );
 }
@@ -159,5 +171,6 @@ Event.propTypes = {
   form: PropTypes.object,
   data: PropTypes.object,
   allFormData: PropTypes.object,
-  tCommon: PropTypes.func,
+  classes: PropTypes.object,
+  disabled: PropTypes.bool,
 };

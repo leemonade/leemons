@@ -1,0 +1,30 @@
+graph TD
+    A[Start getAllPluginsAndRelations] --> B[Initialize pluginNames and relationship arrays]
+    B --> C[Iterate through broker services]
+    C --> D{Is core service?}
+    D -- No --> E[Extract fromPluginName]
+    D -- Yes --> C
+    E --> F[Add to pluginNames]
+    F --> G[Iterate through other services]
+    G --> H{Is core service?}
+    H -- No --> I[Extract toPluginName]
+    H -- Yes --> G
+    I --> J[Collect actions and events]
+    J --> K{Relationship exists?}
+    K -- No --> L[Create new relationship]
+    K -- Yes --> M[Update existing relationship]
+    L --> N[Add actions and events]
+    M --> N
+    N --> G
+    G -- Done --> O[Remove duplicates]
+    O --> P[Return result]
+    P --> Q[End]
+
+    subgraph "Result Structure"
+        R[pluginNames array]
+        S[relationship array]
+        S --> T[fromPluginName]
+        S --> U[toPluginName]
+        S --> V[actions array]
+        S --> W[events array]
+    end

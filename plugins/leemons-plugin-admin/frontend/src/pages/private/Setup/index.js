@@ -1,3 +1,6 @@
+import React from 'react';
+import { useHistory } from 'react-router-dom';
+
 import prefixPN from '@admin/helpers/prefixPN';
 import Admins from '@admin/pages/private/Setup/components/Admins';
 import Centers from '@admin/pages/private/Setup/components/Centers';
@@ -10,21 +13,21 @@ import { Box, LoadingOverlay, Stack, VerticalStepperContainer } from '@bubbles-u
 import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
 import { AdminPageHeader } from '@bubbles-ui/leemons';
 import { useStore } from '@common';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
 import loadable from '@loadable/component';
 import { getLocalizations } from '@multilanguage/useTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getZoneRequest } from '@widgets';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
 
-import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
-import { useHistory } from 'react-router-dom';
+
+
 import { Locales } from './components/Locales';
 import { Start } from './components/Start';
 
 function dynamicImport(pluginName, component) {
-  return loadable(() => import(`@leemons/plugins/${pluginName}/src/widgets/${component}.js`));
+  return loadable(() => import(`@app/plugins/${pluginName}/src/widgets/${component}.js`));
 }
 
 // Pagina a la que solo tendra acceso el super admin

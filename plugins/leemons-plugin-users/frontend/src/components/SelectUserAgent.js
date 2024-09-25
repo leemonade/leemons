@@ -1,5 +1,4 @@
 /* eslint-disable no-unreachable */
-import PropTypes from 'prop-types';
 import React, { forwardRef, useEffect, useMemo, useState } from 'react';
 
 import { ActionButton, Box, MultiSelect, Stack, UserDisplayItem } from '@bubbles-ui/components';
@@ -18,6 +17,8 @@ import {
   map,
   uniq,
 } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { getUserAgentsInfoRequest, searchUserAgentsRequest } from '../request';
 
 // EN: The Component for MultiSelect selected values component
@@ -55,6 +56,7 @@ const SelectUserAgent = forwardRef(
       value: inputValue = [],
       onChange = () => {},
       clearable = true,
+      omitUsers = [],
       ...props
     },
     ref
@@ -296,6 +298,10 @@ const SelectUserAgent = forwardRef(
       toData = filter(toData, ({ value }) => !selectedUserAgents.includes(value));
     }
 
+    if (omitUsers) {
+      toData = filter(toData, ({ value }) => !omitUsers.includes(value));
+    }
+
     return (
       <MultiSelect
         {...props}
@@ -336,6 +342,7 @@ SelectUserAgent.propTypes = {
   selectedUsers: PropTypes.any,
   selectedUserAgents: PropTypes.any,
   clearable: PropTypes.bool,
+  omitUsers: PropTypes.array,
 };
 
 SelectUserAgentValueComponent.propTypes = {

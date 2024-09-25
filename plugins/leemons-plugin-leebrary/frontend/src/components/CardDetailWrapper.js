@@ -1,16 +1,20 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { isNil } from 'lodash';
-import { LibraryDetail } from '@leebrary/components/LibraryDetail';
-import loadable from '@loadable/component';
 
 import { getShare, useBeforeUnload, useStore } from '@common';
+import { LibraryDetail } from '@leebrary/components/LibraryDetail';
+import loadable from '@loadable/component';
 import { getSessionConfig } from '@users/session';
+import { isNil } from 'lodash';
+import PropTypes from 'prop-types';
 
 function dynamicImport(pluginName, component) {
-  return loadable(() =>
-    import(`@leemons/plugins/${pluginName}/src/widgets/leebrary/${component}.js`)
-  );
+  return loadable(async () => {
+    try {
+      return await import(`@app/plugins/${pluginName}/src/widgets/leebrary/${component}.js`);
+    } catch (error) {
+      return await import(`@app/plugins/${pluginName}/dist/widgets/leebrary/${component}.js`);
+    }
+  });
 }
 
 const CardDetailWrapper = ({ category, ...props }) => {
