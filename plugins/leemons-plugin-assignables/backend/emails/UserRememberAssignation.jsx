@@ -1,6 +1,8 @@
 import React from 'react';
-import { Section, Row, Column, Button, Container, Img, Text } from '@react-email/components';
+
 import EmailLayout from '@leemons/emails/src/emails/EmailLayout.jsx';
+import { Section, Row, Column, Button, Container, Img, Text } from '@react-email/components';
+
 import ActivityCard from './ActivityCard.jsx';
 import { DEV_PROPS, PROD_PROPS, PROP_TYPES } from './UserNewAssignation.jsx';
 
@@ -35,7 +37,7 @@ const UserRememberAssignation = ({
   avatarUrl,
   messageToAssignees,
 } = {}) => {
-  const previewText = `[Leemons] ${messages[locale].title}`;
+  const previewText = `${messages[locale].title}`;
 
   return (
     <EmailLayout previewText={previewText} title={messages[locale].title} locale={locale}>

@@ -1,7 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Section, Row, Column, Button, Container, Img, Text } from '@react-email/components';
+
 import EmailLayout from '@leemons/emails/src/emails/EmailLayout.jsx';
+import { Section, Row, Column, Button, Container, Img, Text } from '@react-email/components';
+import PropTypes from 'prop-types';
+
 import ActivityCard from './ActivityCard.jsx';
 
 const IS_DEV_MODE = String(process?.env?.EMAIL_DEV) === 'true';
@@ -35,7 +37,7 @@ const UserNewAssignation = ({
   avatarUrl = '{{it.userSession.avatarUrl}}',
   messageToAssignees = '{{* it.instance.messageToAssignees}}',
 } = {}) => {
-  const previewText = `[Leemons] ${messages[locale].title}`;
+  const previewText = `${messages[locale].title}`;
 
   return (
     <EmailLayout previewText={previewText} title={messages[locale].title} locale={locale}>
