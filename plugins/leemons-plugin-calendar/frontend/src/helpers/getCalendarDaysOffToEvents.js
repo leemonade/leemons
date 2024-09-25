@@ -9,8 +9,12 @@ const getCalendarDaysOffToEvents = (schedule) => {
   const courses = schedule?.courses.map((course) => course.id);
 
   courses?.forEach((courseId) => {
-    const courseEvents = schedule.config.courseEvents[courseId];
-    const { daysOffEvents, localEvents, regionalEvents } = schedule.config.regionalConfig;
+    const courseEvents = schedule?.config?.courseEvents[courseId];
+    const { daysOffEvents, localEvents, regionalEvents } = schedule?.config?.regionalConfig ?? {
+      daysOffEvents: [],
+      localEvents: [],
+      regionalEvents: [],
+    };
 
     if (courseEvents) {
       events.push(...courseEvents);
