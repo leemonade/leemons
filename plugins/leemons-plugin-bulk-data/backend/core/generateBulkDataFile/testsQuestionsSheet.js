@@ -158,6 +158,7 @@ async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
     }
   });
 
+  // TODO Paola: Adapt to new questions format
   const allImageAssets = qBanks.reduce((acc, qBank) => {
     qBank.providerData.questions.forEach((question) => {
       if (question.questionImage?.id) {
