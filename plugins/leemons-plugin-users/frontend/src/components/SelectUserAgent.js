@@ -108,7 +108,7 @@ const SelectUserAgent = forwardRef(
           rol: item.profile?.name,
           center: item.center?.name,
           value: item.id,
-          label: `${item.user.name}${item.user.surnames ? ` ${item.user.surnames}` : ''}`,
+          label: `${item.user?.name}${item.user?.surnames ? ` ${item.user?.surnames}` : ''}`,
         }));
 
         store.data = data;
@@ -185,11 +185,11 @@ const SelectUserAgent = forwardRef(
                 return {
                   ...userAgents[0].user,
                   variant: 'rol',
-                  rol: userAgents[0].profile.name,
-                  center: userAgents[0].center.name,
+                  rol: userAgents[0].profile?.name,
+                  center: userAgents[0].center?.name,
                   value: userAgents[0].id,
-                  label: `${userAgents[0].user.name}${
-                    userAgents[0].user.surnames ? ` ${userAgents[0].user.surnames}` : ''
+                  label: `${userAgents[0].user?.name}${
+                    userAgents[0].user?.surnames ? ` ${userAgents[0].user?.surnames}` : ''
                   }`,
                 };
               }
@@ -228,10 +228,10 @@ const SelectUserAgent = forwardRef(
             data = data.userAgents.map((item) => ({
               ...item.user,
               variant: 'rol',
-              rol: item.profile.name,
-              center: item.center.name,
+              rol: item.profile?.name,
+              center: item.center?.name,
               value: item.id,
-              label: `${item.user.name}${item.user.surnames ? ` ${item.user.surnames}` : ''}`,
+              label: `${item.user?.name}${item.user?.surnames ? ` ${item.user?.surnames}` : ''}`,
             }));
 
             setUsersData(data);

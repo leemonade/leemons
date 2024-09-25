@@ -100,7 +100,7 @@ function RoleDetail() {
         rol: item.profile?.name,
         center: item.center?.name,
         value: item.id,
-        label: `${item.user.name}${item.user.surnames ? ` ${item.user.surnames}` : ''}`,
+        label: `${item.user?.name}${item.user?.surnames ? ` ${item.user?.surnames}` : ''}`,
       }));
       setUsers(_users);
       setPermissions(perms);
