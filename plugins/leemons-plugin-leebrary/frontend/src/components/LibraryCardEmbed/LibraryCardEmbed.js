@@ -52,9 +52,6 @@ const LibraryCardEmbed = ({
     );
   }, [asset]);
 
-  console.log('asset:', asset);
-  console.log('isPlayable:', isPlayable);
-
   const roleLocalizations = useRolesLocalizations([asset?.original?.providerData?.role]);
 
   // Lógica de iconos parte derecha
