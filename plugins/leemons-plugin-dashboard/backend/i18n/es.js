@@ -42,7 +42,7 @@ module.exports = {
     programs: 'Programas dados de alta',
   },
   dashboardNotEnrolled: {
-    title: 'No has sido matriculado en ningún programa',
-    description: 'por favor, contacta con tu administrador/a',
+    title: 'Aún no se te ha matriculado en ningún programa.',
+    description: 'Por favor, contacta con la administración de tu centro.',
   },
 };

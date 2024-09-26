@@ -42,7 +42,7 @@ module.exports = {
     programs: 'Registered programs',
   },
   dashboardNotEnrolled: {
-    title: 'You are not enrolled in any program',
-    description: 'please contact your administrator',
+    title: 'You are not enrolled in any program yet.',
+    description: 'Please contact your center administration.',
   },
 };
