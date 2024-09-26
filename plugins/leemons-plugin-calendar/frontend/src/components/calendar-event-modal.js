@@ -29,7 +29,8 @@ import {
   getEventTypesRequest,
   removeEventRequest,
   updateEventRequest,
- getCalendarsToFrontendRequest } from '../request';
+  getCalendarsToFrontendRequest,
+} from '../request';
 
 import {
   CALENDAR_EVENT_MODAL_DEFAULT_PROPS,
@@ -241,10 +242,7 @@ function NewCalendarEventModal({
       if (event?.data?.cardComponent && event?.data?.pluginName) {
         ref.current.components = {
           ...(ref.current.components || {}),
-          card: dynamicImport(
-            `${event.data.pluginName}`,
-            event.data.cardComponent
-          ),
+          card: dynamicImport(`${event.data.pluginName}`, event.data.cardComponent),
         };
       }
 

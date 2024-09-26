@@ -3,12 +3,12 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const _ = require('lodash');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-
 const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
+const _ = require('lodash');
+
 const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */

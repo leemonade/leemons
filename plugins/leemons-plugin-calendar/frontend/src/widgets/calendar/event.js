@@ -55,9 +55,13 @@ export default function Event({ isEditing, event, form, data, allFormData, class
             render={({ field }) => {
               if (disabled) {
                 return (
-                  <InputWrapper label={t('video_link')}>
-                    <Paragraph clean dangerouslySetInnerHTML={{ __html: linkify(field.value) }} />
-                  </InputWrapper>
+                  <TextInput
+                    size="xs"
+                    disabled={disabled}
+                    label={t('video_link')}
+                    error={get(errors, 'videoLink')}
+                    {...field}
+                  />
                 );
               }
               return (

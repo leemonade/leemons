@@ -17,11 +17,13 @@ const { handleEditorRole } = require('./handleEditorRole');
 const { handleIndexable } = require('./handleIndexable');
 const { handlePreferCurrent } = require('./handlePreferCurrent');
 const { handleAssignerRole } = require('./handleAssignerRole');
+const { getCategoryId } = require('../../search/byCriteria/getCategoryId');
 
 /**
  * This function retrieves permissions by category.
  *
  * @param {Object} params - An object containing various parameters.
+ * @param {string} params.category - The category.
  * @param {string} params.categoryId - The ID of the category.
  * @param {string} params.sortBy - The field to sort by.
  * @param {string} params.sortDirection - The direction to sort in. Defaults to 'asc'.
@@ -40,7 +42,8 @@ const { handleAssignerRole } = require('./handleAssignerRole');
  */
 // eslint-disable-next-line sonarjs/cognitive-complexity
 async function getByCategory({
-  categoryId,
+  category,
+  categoryId: _categoryId,
   sortBy: sortingBy,
   sortDirection = 'asc',
   published = true,
@@ -61,6 +64,8 @@ async function getByCategory({
       subjects: _subjects,
       providerQuery: _providerQuery,
     });
+
+    const categoryId = _categoryId ?? (await getCategoryId({ category, ctx }));
 
     const [permissions, viewItems, editItems, assignItems] = await handlePermissions({
       userSession,

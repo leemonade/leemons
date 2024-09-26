@@ -1,8 +1,7 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 
 import ProgramBarSelector from '@academic-portfolio/components/ProgramBarSelector/ProgramBarSelector';
-import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
+import { getUserProgramsRequest } from '@academic-portfolio/request';
 import { Box, createStyles, TotalLayoutContainer } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import { getSessionConfig, updateSessionConfig } from '@users/session';
@@ -50,8 +49,6 @@ function AcademicDashboard({ session }) {
   const [store, render] = useStore({
     loading: true,
   });
-
-  const history = useHistory();
   const { classes: styles } = Styles({}, { name: 'AcademicDashboard' });
   const scrollRef = React.useRef();
 
@@ -61,13 +58,6 @@ function AcademicDashboard({ session }) {
       [store.selectedProgram] = store.programs;
     }
     updateSessionConfig({ program: store.selectedProgram.id });
-    if (store.programs.length === 1) {
-      const { classes } = await listSessionClassesRequest({ program: program.id });
-
-      if (classes.length === 1) {
-        history.replace(`/private/dashboard/class/${classes[0].id}`);
-      }
-    }
     render();
   }
 

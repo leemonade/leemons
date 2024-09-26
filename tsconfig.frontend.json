@@ -40,6 +40,9 @@
       "@common/*": [
         "./plugins/leemons-plugin-common/frontend/src/*"
       ],
+      "@communities/*": [
+        "./private-plugins/leemons-plugin-communities/frontend/src/*"
+      ],
       "@comunica/*": [
         "./private-plugins/leemons-plugin-comunica/frontend/src/*"
       ],
