@@ -1,9 +1,15 @@
 {
+  "devDependencies": {},
+  "dependencies": {
+    "@leemons/deployment-manager": "0.0.71",
+    "@leemons/error": "0.0.41",
+    "lodash": "^4.17.21"
+  },
   "name": "@leemons/mqtt",
   "version": "0.0.41",
   "description": "",
   "main": "src/index.js",
-  "types": "src/types.d.ts",
+  "types": "types/index.d.ts",
   "keywords": [],
   "author": {
     "email": "hi@leemons.io",
@@ -21,10 +27,5 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "license": "MIT",
-  "devDependencies": {},
-  "dependencies": {
-    "@leemons/error": "0.0.41",
-    "lodash": "^4.17.21"
-  }
+  "license": "MIT"
 }

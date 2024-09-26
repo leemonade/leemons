@@ -9,7 +9,6 @@ const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const got = require('got');
 const _ = require('lodash');
 
-
 const { duplicate } = require('../../core/assets/duplicate');
 const { getByFile } = require('../../core/assets/files/getByFile');
 const { getByIds } = require('../../core/assets/getByIds');
@@ -18,13 +17,12 @@ const { prepareAsset } = require('../../core/assets/prepareAsset');
 const { remove } = require('../../core/assets/remove');
 const { setAsset } = require('../../core/assets/set');
 const { getByAsset: getPermissions } = require('../../core/permissions/getByAsset');
-const { getByCategory } = require('../../core/permissions/getByCategory');
 const { getUsersByAsset } = require('../../core/permissions/getUsersByAsset');
 const canAssignRole = require('../../core/permissions/helpers/canAssignRole');
 const { add: addPin } = require('../../core/pins/add');
 const { getByUser: getPinsByUser } = require('../../core/pins/getByUser');
 const { removeByAsset: removePin } = require('../../core/pins/removeByAsset');
-const { search: getByCriteria } = require('../../core/search');
+const { search: getByCriteria, list } = require('../../core/search');
 const { metascraper } = require('../../core/shared');
 
 /** @type {ServiceSchema} */
@@ -172,69 +170,27 @@ module.exports = {
         hideCoverAssets,
       } = ctx.params;
 
-      const trueValues = ['true', true, '1', 1];
+      const assets = await list({
+        category,
+        criteria,
+        type,
+        published,
+        preferCurrent,
+        showPublic,
+        searchInProvider,
+        roles,
+        providerQuery,
+        programs,
+        subjects,
+        onlyShared,
+        categoryFilter,
+        categoriesFilter,
+        hideCoverAssets,
 
-      let assets;
-      const publishedStatus =
-        published === 'all' ? published : [...trueValues, 'published'].includes(published);
-      const displayPublic = trueValues.includes(showPublic);
-      const searchProvider = trueValues.includes(searchInProvider);
-      const preferCurrentValue = trueValues.includes(preferCurrent);
-      const _hideCoverAssets = trueValues.includes(hideCoverAssets);
-      const _onlyShared = trueValues.includes(onlyShared);
-      const parsedRoles = JSON.parse(roles || null) || [];
-      const _providerQuery = JSON.parse(providerQuery || null);
-      const _programs = JSON.parse(programs || null);
-      const _subjects = JSON.parse(subjects || null);
-      const _categoriesFilter = JSON.parse(categoriesFilter || null); // added to filter by multiple categories
+        indexable: true,
 
-      const shouldSerachByCriteria =
-        !_.isEmpty(criteria) || !_.isEmpty(type) || _.isEmpty(category);
-
-      if (shouldSerachByCriteria) {
-        assets = await getByCriteria({
-          category: category || categoryFilter,
-          criteria,
-          type,
-          indexable: true,
-          published: publishedStatus,
-          showPublic: displayPublic,
-          preferCurrent: preferCurrentValue,
-          roles: parsedRoles,
-          searchInProvider: searchProvider,
-          providerQuery: _providerQuery,
-          programs: _programs,
-          subjects: _subjects,
-          onlyShared: _onlyShared,
-          sortBy: 'updated_at',
-          sortDirection: 'desc',
-          categoriesFilter: _categoriesFilter,
-          hideCoverAssets: _hideCoverAssets,
-          ctx,
-        });
-      } else {
-        assets = await getByCategory({
-          categoryId: category,
-          published: publishedStatus,
-          indexable: true,
-          preferCurrent: preferCurrentValue,
-          showPublic: displayPublic,
-          roles: parsedRoles,
-          searchInProvider: searchProvider,
-          providerQuery: _providerQuery,
-          programs: _programs,
-          subjects: _subjects,
-          onlyShared: _onlyShared, // not used within getByCategory()
-          sortBy: 'updated_at',
-          sortDirection: 'desc',
-          ctx,
-        });
-      }
-
-      // TODO: Temporary solution
-      if (parsedRoles?.length === 1 && parsedRoles[0] === 'owner') {
-        assets = assets.filter((asset) => asset.role === 'owner');
-      }
+        ctx,
+      });
 
       return {
         status: 200,

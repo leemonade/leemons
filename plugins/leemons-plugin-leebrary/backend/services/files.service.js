@@ -10,9 +10,13 @@ const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 
 const { pluginName } = require('../config/constants');
+const { abortMultipart } = require('../core/files/abortMultipart');
 const { duplicate } = require('../core/files/duplicate');
+const { finishMultipart } = require('../core/files/finishMultipart');
 const { getByIds } = require('../core/files/getByIds');
+const { getUploadChunkUrls } = require('../core/files/getUploadChunkUrls/getUploadChunkUrls');
 const { uploadFromSource } = require('../core/files/helpers/uploadFromSource');
+const { newMultipart } = require('../core/files/newMultipart');
 const { getServiceModels } = require('../models');
 
 const restActions = require('./rest/files.rest');
@@ -56,6 +60,31 @@ module.exports = {
         }
 
         return duplicate({ file: files[0], toFolder, ctx });
+      },
+    },
+    // Multipart actions
+    newMultipart: {
+      handler(ctx) {
+        const payload = { ...ctx.params, ctx };
+        return newMultipart(payload);
+      },
+    },
+    getUploadChunkUrls: {
+      handler(ctx) {
+        const payload = { ...ctx.params, ctx };
+        return getUploadChunkUrls(payload);
+      },
+    },
+    abortMultipart: {
+      handler(ctx) {
+        const payload = { ...ctx.params, ctx };
+        return abortMultipart(payload);
+      },
+    },
+    finishMultipart: {
+      handler(ctx) {
+        const payload = { ...ctx.params, ctx };
+        return finishMultipart(payload);
       },
     },
   },

@@ -36,7 +36,7 @@ export default function useWidgets() {
     [zones?.widgetItems]
   );
 
-  const data = defaultWidgets.concat(widgets);
+  const data = defaultWidgets.concat(widgets ?? []);
 
   return { data, isLoading };
 }

@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from 'react';
 
-import { Button, AvatarSubject, Badge, Box, Divider, Stack, Text, TextClamp } from '@bubbles-ui/components';
+import {
+  Button,
+  AvatarSubject,
+  Badge,
+  Box,
+  Divider,
+  Stack,
+  Text,
+  TextClamp,
+} from '@bubbles-ui/components';
 import { LocaleDate, useLocale } from '@common';
 import PropTypes from 'prop-types';
 

@@ -1,3 +1,6 @@
+import React, { useEffect, useMemo, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
+
 import {
   ActionButton,
   Avatar,
@@ -9,26 +12,27 @@ import {
   Tabs,
 } from '@bubbles-ui/components';
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
+
 // TODO: import from @common plugin
 
 import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { LocaleDate } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import tLoader from '@multilanguage/helpers/tLoader';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useTranslate from '@multilanguage/useTranslate';
-import prefixPN from '@users/helpers/prefixPN';
-import { addRoleRequest, getRoleRequest, updateRoleRequest } from '@users/request';
 import hooks from 'leemons-hooks';
 import _, { forIn } from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
 
 // import MainMenuDropItem from '@menu-builder/components/mainMenu/mainMenuDropItem';
-import { LocaleDate } from '@common';
+
+import { PermissionsTab } from '../../profiles/DetailProfile/PermissionsTab';
+
 import { SelectUserAgent } from '@users/components';
 import getUserFullName from '@users/helpers/getUserFullName';
-import { useHistory, useParams } from 'react-router-dom';
-import { PermissionsTab } from '../../profiles/DetailProfile/PermissionsTab';
+import prefixPN from '@users/helpers/prefixPN';
+import { addRoleRequest, getRoleRequest, updateRoleRequest } from '@users/request';
 
 function RoleDetail() {
   const [translations] = useTranslate({ keysStartsWith: prefixPN('detail_roles') });
@@ -96,7 +100,7 @@ function RoleDetail() {
         rol: item.profile?.name,
         center: item.center?.name,
         value: item.id,
-        label: `${item.user.name}${item.user.surnames ? ` ${item.user.surnames}` : ''}`,
+        label: `${item.user?.name}${item.user?.surnames ? ` ${item.user?.surnames}` : ''}`,
       }));
       setUsers(_users);
       setPermissions(perms);
@@ -207,11 +211,13 @@ function RoleDetail() {
         accessor: 'center',
         className: 'text-left',
       },
+      /*
       {
         Header: t('birthdayHeader'),
         accessor: 'birthdate',
         className: 'text-left',
       },
+      */
       {
         Header: ' ',
         accessor: 'actions',

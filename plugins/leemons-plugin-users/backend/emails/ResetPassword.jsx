@@ -1,7 +1,8 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Button, Container, Text } from '@react-email/components';
+
 import EmailLayout from '@leemons/emails/src/emails/EmailLayout.jsx';
+import { Button, Container, Text } from '@react-email/components';
+import PropTypes from 'prop-types';
 
 const messages = {
   en: {
@@ -21,7 +22,7 @@ const messages = {
 };
 
 const ResetPasword = ({ locale = 'en' } = {}) => {
-  const previewText = `[Leemons] ${messages[locale].title}`;
+  const previewText = `${messages[locale].title}`;
 
   return (
     <EmailLayout previewText={previewText} title={messages[locale].title} locale={locale}>

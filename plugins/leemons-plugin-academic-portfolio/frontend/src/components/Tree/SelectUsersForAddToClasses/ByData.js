@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+
 import {
   ActionButton,
   Alert,
@@ -12,17 +12,19 @@ import {
   Table,
   UserDisplayItem,
 } from '@bubbles-ui/components';
-import getUserFullName from '@users/helpers/getUserFullName';
 import {
   AlertWarningTriangleIcon,
   BlockIcon,
   DeleteBinIcon,
   AddCircleIcon,
 } from '@bubbles-ui/icons/solid';
-import { addErrorAlert } from '@layout/alert';
 import { LocaleDate, useStore } from '@common';
-import { cloneDeep, filter, findIndex, forEach, isNil, map } from 'lodash';
+import { addErrorAlert } from '@layout/alert';
 import SelectUserAgent, { SelectUserAgentValueComponent } from '@users/components/SelectUserAgent';
+import getUserFullName from '@users/helpers/getUserFullName';
+import { cloneDeep, filter, findIndex, forEach, isNil, map } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { getProfilesRequest } from '../../../request';
 
 function getSeverity(classes, value) {
@@ -177,11 +179,13 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
       accessor: 'email',
       className: 'text-left',
     },
+    /*
     {
       Header: messages.birthdayHeader,
       accessor: 'birthdate',
       className: 'text-left',
     },
+    */
     {
       Header: ' ',
       accessor: 'actions',

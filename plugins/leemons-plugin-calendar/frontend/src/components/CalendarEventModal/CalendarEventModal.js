@@ -301,6 +301,7 @@ function CalendarEventModal(props) {
                 readOnly={disabled}
                 disabled={disabled}
                 allProps={{ ...props, form }}
+                event={event}
                 form={{
                   Controller: MyController,
                   control,

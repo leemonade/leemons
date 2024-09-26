@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import {
   ActionButton,
@@ -11,16 +11,20 @@ import {
 } from '@bubbles-ui/components';
 import { OpenIcon } from '@bubbles-ui/icons/outline';
 import { linkify } from '@common';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 
 import prefixPN from '@calendar/helpers/prefixPN';
 
+dayjs.extend(isBetween);
+
+const PREVENT_MINUTES_BEFORE_START = 15;
+
 export default function Event({ isEditing, event, form, data, allFormData, classes, disabled }) {
   const [t] = useTranslateLoader(prefixPN('event_mode_event_type'));
-  const { t: tCommon } = useCommonTranslate('forms');
 
   const {
     Controller,
@@ -30,21 +34,26 @@ export default function Event({ isEditing, event, form, data, allFormData, class
 
   const onClickCallLink = () => window.open(form.getValues('videoLink'), '_blank');
 
+  const showVideoLink = useMemo(() => {
+    const currentTime = dayjs();
+    const startTime = dayjs(event.startDate).subtract(PREVENT_MINUTES_BEFORE_START, 'minutes');
+    const endTime = dayjs(event.endDate);
+    return (
+      disabled &&
+      form.getValues('videoLink') &&
+      currentTime.isBetween(startTime, endTime, null, '[]')
+    );
+  }, [form, event, disabled]);
+
   return (
     <>
       {!disabled && (
         <ContextContainer spacing={2}>
-        <Controller
-              name="videoLink"
-              control={control}
-              render={({ field }) => {
-                if (disabled) {
-                  return (
-                    <InputWrapper label={t('video_link')}>
-                      <Paragraph clean dangerouslySetInnerHTML={{ __html: linkify(field.value) }} />
-                    </InputWrapper>
-                  );
-                }
+          <Controller
+            name="videoLink"
+            control={control}
+            render={({ field }) => {
+              if (disabled) {
                 return (
                   <TextInput
                     size="xs"
@@ -54,60 +63,70 @@ export default function Event({ isEditing, event, form, data, allFormData, class
                     {...field}
                   />
                 );
-              }}
-            />
+              }
+              return (
+                <TextInput
+                  size="xs"
+                  disabled={disabled}
+                  label={t('video_link')}
+                  error={get(errors, 'videoLink')}
+                  {...field}
+                />
+              );
+            }}
+          />
 
-            <Controller
-              name="place"
-              control={control}
-              render={({ field }) => {
-                if (disabled) {
-                  return (
-                    <InputWrapper label={t('add_place')}>
-                      <Paragraph clean dangerouslySetInnerHTML={{ __html: linkify(field.value) }} />
-                    </InputWrapper>
-                  );
-                }
+          <Controller
+            name="place"
+            control={control}
+            render={({ field }) => {
+              if (disabled) {
                 return (
-                  <TextInput
-                    size="xs"
-                    readOnly={disabled}
-                    disabled={disabled}
-                    label={t('add_place')}
-                    error={get(errors, 'place')}
-                    {...field}
-                  />
+                  <InputWrapper label={t('add_place')}>
+                    <Paragraph clean dangerouslySetInnerHTML={{ __html: linkify(field.value) }} />
+                  </InputWrapper>
                 );
-              }}
-            />
+              }
+              return (
+                <TextInput
+                  size="xs"
+                  readOnly={disabled}
+                  disabled={disabled}
+                  label={t('add_place')}
+                  error={get(errors, 'place')}
+                  {...field}
+                />
+              );
+            }}
+          />
 
-            <Controller
-              name="description"
-              control={control}
-              render={({ field }) => {
-                if (disabled) {
-                  return (
-                    <InputWrapper label={t('add_description')}>
-                      <Paragraph clean dangerouslySetInnerHTML={{ __html: linkify(field.value) }} />
-                    </InputWrapper>
-                  );
-                }
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => {
+              if (disabled) {
                 return (
-                  <TextInput
-                    size="xs"
-                    disabled={disabled}
-                    label={t('add_description')}
-                    error={get(errors, 'description')}
-                    {...field}
-                  />
+                  <InputWrapper label={t('add_description')}>
+                    <Paragraph clean dangerouslySetInnerHTML={{ __html: linkify(field.value) }} />
+                  </InputWrapper>
                 );
-              }}
-            />
+              }
+              return (
+                <TextInput
+                  size="xs"
+                  disabled={disabled}
+                  label={t('add_description')}
+                  error={get(errors, 'description')}
+                  {...field}
+                />
+              );
+            }}
+          />
         </ContextContainer>
       )}
       {disabled && (
         <ContextContainer>
-          {disabled && form.getValues('videoLink') ? (
+          {showVideoLink && (
             <ContextContainer spacing={2}>
               <Text size="lg" strong>
                 {t('video_link_view')}
@@ -125,7 +144,7 @@ export default function Event({ isEditing, event, form, data, allFormData, class
                 </ActionButton>
               </ContextContainer>
             </ContextContainer>
-          ) : null}
+          )}
 
           {form.getValues('place') ? (
             <ContextContainer spacing={2}>
@@ -156,5 +175,6 @@ Event.propTypes = {
   form: PropTypes.object,
   data: PropTypes.object,
   allFormData: PropTypes.object,
-  tCommon: PropTypes.func,
+  classes: PropTypes.object,
+  disabled: PropTypes.bool,
 };
