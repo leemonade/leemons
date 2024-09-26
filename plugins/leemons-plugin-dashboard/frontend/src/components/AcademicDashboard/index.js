@@ -9,6 +9,8 @@ import { ZoneWidgets } from '@widgets';
 import _, { find, isNil, map } from 'lodash';
 import PropTypes from 'prop-types';
 
+import EmptyState from './EmptyState';
+
 const Styles = createStyles(() => ({
   header: {
     position: 'relative',
@@ -103,7 +105,9 @@ function AcademicDashboard({ session }) {
   );
 
   if (store.loading) return null;
-
+  if (!store.programs?.length) {
+    return <EmptyState />;
+  }
   const programImage = !isNil(store.selectedProgram?.image?.cover)
     ? store.selectedProgram?.imageUrl
     : undefined;
