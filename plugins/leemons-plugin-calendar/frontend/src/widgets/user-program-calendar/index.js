@@ -1,10 +1,13 @@
 /* eslint-disable no-nested-ternary */
 import React, { useEffect, useState } from 'react';
 
+import prefixPN from '@academic-calendar/helpers/prefixPN';
 import { listSessionClassesRequest } from '@academic-portfolio/request';
 import { Title, Box, Button, createStyles, Stack } from '@bubbles-ui/components';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { getCentersWithToken } from '@users/session';
 import dayjs from 'dayjs';
 import PropTypes from 'prop-types';
 
@@ -15,9 +18,11 @@ import { Calendar } from './components/Calendar';
 import { EmptyState } from './components/EmptyState/EmptyState';
 import { WeekEventList } from './components/WeekEventList';
 
+import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
 import { getCalendarDaysOffToEvents } from '@calendar/helpers/getCalendarDaysOffToEvents';
 import { getEventColor } from '@calendar/helpers/getEventColor';
 import { getEventsByProgram } from '@calendar/helpers/getEventsByProgram';
+import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
 
 const Styles = createStyles((theme, { inTab }) => ({
   root: {
