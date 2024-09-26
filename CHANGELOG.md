@@ -1,5 +1,40 @@
 # Changelog
 
+## [2.0.0](https://github.com/leemonade/leemons/compare/1.5.0...2.0.0) (2024-09-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* **emails:** The logo URL in EmailLayout.jsx has been hardcoded, and the previewText format has been changed.
+
+### Features
+
+* **@leemons/react:** Added plugins SDKs to workspace ([5a17e0d](https://github.com/leemonade/leemons/commit/5a17e0d43432cc7141f2f0b4d209a40fc5f9102d)), closes [#536](https://github.com/leemonade/leemons/issues/536)
+* **assignables:** Added widget system to assignmente datepicking option ([3a3ab0c](https://github.com/leemonade/leemons/commit/3a3ab0c8c51a51aae6bdea590048ea67bf027d5f)), closes [#547](https://github.com/leemonade/leemons/issues/547)
+* **assignables:** Do not send new assignation emails until start date ([fdc3647](https://github.com/leemonade/leemons/commit/fdc3647aaea410796fac440a09601b5c39fbce47)), closes [#535](https://github.com/leemonade/leemons/issues/535)
+* **blocks:** Update block order and add save alert ([d8790f6](https://github.com/leemonade/leemons/commit/d8790f65df3bc07adfb8b76892e11b5d4382ee8c)), closes [#550](https://github.com/leemonade/leemons/issues/550)
+* **dataset:** Enhance dataset handling, validation, and UI components ([cd59296](https://github.com/leemonade/leemons/commit/cd592960dc89533f341f7204e901cf00d546f00e)), closes [#531](https://github.com/leemonade/leemons/issues/531)
+* **lModules:** If activity has all evaluated, show a new card cover inside a module ([daeac1f](https://github.com/leemonade/leemons/commit/daeac1f963cfd8151951f2828d69a1ba7d41f5c9)), closes [#527](https://github.com/leemonade/leemons/issues/527)
+* **sessions:** Added `Microsoft Teams` integration ([89b849e](https://github.com/leemonade/leemons/commit/89b849e20b53a03ce00b5fc5e89daaeac9445e76))
+* **sessions:** Added `Sessions` functionality ([89b849e](https://github.com/leemonade/leemons/commit/89b849e20b53a03ce00b5fc5e89daaeac9445e76)), closes [#546](https://github.com/leemonade/leemons/issues/546)
+* **users:** Added `searchable` to profile's permissions table ([91d6512](https://github.com/leemonade/leemons/commit/91d6512f388007297b42066af076197f6200bbcd)), closes [#544](https://github.com/leemonade/leemons/issues/544)
+* **users:** Enable "Admin" profile to `ProfileTableInput` when the user is also SuperAdmin ([7746947](https://github.com/leemonade/leemons/commit/7746947202836598636646aed12030ea784c61c3))
+
+
+### Bug Fixes
+
+* (deployment-manager): Only create relations between desired plugins ([f4bf502](https://github.com/leemonade/leemons/commit/f4bf50295c50ab59b425723b0f1bc2b66c600a30)), closes [#532](https://github.com/leemonade/leemons/issues/532)
+* **@leemons/multi-events:** Added default events to empty object ([85a13c8](https://github.com/leemonade/leemons/commit/85a13c870408c0a08cf0565db2cc15ed70f8f29f)), closes [#541](https://github.com/leemonade/leemons/issues/541)
+* **assignables:** Do not assume widgets exists as an empty array ([65108e7](https://github.com/leemonade/leemons/commit/65108e709e5560de2a33c1190c970b737784892b)), closes [#552](https://github.com/leemonade/leemons/issues/552)
+* **assignables:** Reduce gap between graph and table ([5cf9bed](https://github.com/leemonade/leemons/commit/5cf9bed7e107bdfddb3e9f4c0cb66c568f471881)), closes [#530](https://github.com/leemonade/leemons/issues/530)
+* **calendar:** General bugfix ([732385d](https://github.com/leemonade/leemons/commit/732385d1f1b68a2762d8e361e66d1073770f5108)), closes [#528](https://github.com/leemonade/leemons/issues/528)
+* **deployment-manager:** `AddPluginsToDeployment` and `ReloadAllDeployment` logic ([05006b5](https://github.com/leemonade/leemons/commit/05006b532ebc6c81a737fc1ae7b3e49ca83a676e))
+* **emails:** Update email components and layout ([5e6e310](https://github.com/leemonade/leemons/commit/5e6e310f15dda58ec24541e4d975605e632dbcc0)), closes [#556](https://github.com/leemonade/leemons/issues/556)
+* **lModules:** Show the DashboardCard progress whenever someone has submited the activity ([127b0cd](https://github.com/leemonade/leemons/commit/127b0cdd83b87cd56897bacb7a6ab6d846eb176b)), closes [#537](https://github.com/leemonade/leemons/issues/537)
+* Remove useHsl prop in all color pickers in plugins ([d0e6c5c](https://github.com/leemonade/leemons/commit/d0e6c5cddc6ec0368e4579dfb0fbaa943612edbd)), closes [#529](https://github.com/leemonade/leemons/issues/529)
+* **sessions:** Show Videocall link only between session duration. Set Students permissions when session created ([4d9a54e](https://github.com/leemonade/leemons/commit/4d9a54e19123cfc7b5830bbabe8e34328383659e))
+* **users:** Add optional chaining to user properties ([#555](https://github.com/leemonade/leemons/issues/555)) ([3ca25c1](https://github.com/leemonade/leemons/commit/3ca25c1efe92dc5be0c6386a87a6a3c930a6213f))
+
 ## [1.5.0](https://github.com/leemonade/leemons/compare/1.4.0...1.5.0) (2024-08-19)
 
 
