@@ -178,7 +178,7 @@ const DatasetForm = forwardRef(
       }
     }
 
-    async function checkFormAndSave(forceTargetId) {
+    async function checkForm() {
       if (!canEdit || !dataset) {
         return true;
       }
@@ -205,14 +205,23 @@ const DatasetForm = forwardRef(
         readOnlyKeys,
       });
 
-      if (errors.length && !areOptional) {
-        return false; // Invalid form
+      const hasErrors = errors.length > 0;
+
+      return !hasErrors || areOptional;
+    }
+
+    async function checkFormAndSave(forceTargetId) {
+      const isValid = await checkForm();
+
+      if (!isValid) {
+        return false;
       }
 
       return handleSave(form.getValues(), forceTargetId);
     }
 
     useImperativeHandle(ref, () => ({
+      checkForm,
       checkFormAndSave,
     }));
 

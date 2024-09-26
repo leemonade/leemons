@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Model, PaginatedQueryResult } from '@leemons/mongodb';
-import { SortOrder } from 'mongoose';
+import { FilterQuery, SortOrder } from 'mongoose';
 
-type Params<M = Model<any>, R = object> = {
+type Params<M extends Model<any> = Model<any>, R = object> = {
   model: M;
   page: number;
   size: number;
@@ -12,7 +12,7 @@ type Params<M = Model<any>, R = object> = {
   options?: Parameters<M['find']>[2];
 };
 
-export function mongoDBPaginate<R = any, M = Model<any>>({
+export function mongoDBPaginate<R = unknown, M = Model<unknown>>({
   model,
   page,
   size,
@@ -22,7 +22,17 @@ export function mongoDBPaginate<R = any, M = Model<any>>({
   options = {},
 }: Params<M, R>): Promise<PaginatedQueryResult<R>>;
 
-export const EMPTY_PAGINATED_RESULT: PaginatedQueryResult<any>;
+export function mongoDBPaginateAggregationPipeline({
+  page,
+  size,
+  path = '$$ROOT',
+}: {
+  page: number;
+  size: number;
+  path?: string;
+}): Parameters<Model<unknown>['aggregate']>[0];
+
+export const EMPTY_PAGINATED_RESULT: PaginatedQueryResult<never>;
 
 export type GetKeyQueryResult<T> = T | undefined;
 export type SetKeyQueryResult = {
