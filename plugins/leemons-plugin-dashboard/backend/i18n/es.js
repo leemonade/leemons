@@ -41,4 +41,8 @@ module.exports = {
     speed: 'Velocidad:',
     programs: 'Programas dados de alta',
   },
+  dashboardNotEnrolled: {
+    title: 'Aún no se te ha matriculado en ningún programa.',
+    description: 'Por favor, contacta con la administración de tu centro.',
+  },
 };
