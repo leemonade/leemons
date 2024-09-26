@@ -1,4 +1,5 @@
 const { LeemonsError } = require('@leemons/error');
+const { escapeRegExp } = require('lodash');
 
 const { getProvider } = require('../providers/getProvider');
 
@@ -33,7 +34,9 @@ async function verifyIsCallingFromProvider({ ctx }) {
 async function loginWithProvider({ email, ctx }) {
   await verifyIsCallingFromProvider({ ctx });
 
-  const user = await ctx.tx.db.Users.findOne({ email: new RegExp(`^${email}$`, 'i') }).lean();
+  const user = await ctx.tx.db.Users.findOne({
+    email: new RegExp(`^${escapeRegExp(email)}$`, 'i'),
+  }).lean();
 
   const [token, userAgents] = await Promise.all([
     generateJWTToken({
