@@ -14,7 +14,6 @@ import {
   ImageLoader,
   SearchInput,
   ActionButton,
-  LoadingOverlay,
   ContextContainer,
 } from '@bubbles-ui/components';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
@@ -42,6 +41,7 @@ import { SetPasswordModal } from '@users/components/SetPasswordModal';
 import { UserAdminDrawer } from '@users/components/UserAdminDrawer';
 import UserDetailDrawer from '@users/components/UserDetailDrawer';
 import prefixPN from '@users/helpers/prefixPN';
+import { useIsSuperAdmin } from '@users/hooks';
 import activeUserAgent from '@users/request/activeUserAgent';
 import disableUserAgent from '@users/request/disableUserAgent';
 
@@ -56,6 +56,8 @@ function ListUsers() {
   const [bulkActionInfo, setBulkActionInfo] = React.useState(null);
   const history = useHistory();
   const [, , , getErrorMessage] = useRequestErrorMessage();
+
+  const isSuperAdmin = useIsSuperAdmin();
 
   // ····················································
   // INIT DATA LOADING
@@ -443,9 +445,8 @@ function ListUsers() {
             </Box>
           }
         />
-        <TLayout.Content fullWidth>
+        <TLayout.Content fullWidth loading={store.loading}>
           <Box>
-            {store.loading ? <LoadingOverlay visible /> : null}
             <ContextContainer title={t('searchTitle')}>
               <ContextContainer direction="row">
                 <SelectCenter
@@ -464,7 +465,7 @@ function ListUsers() {
                   label={t('profileLabel')}
                   value={store.profile}
                   onChange={handleProfileChange}
-                  showAll={false}
+                  showAll={isSuperAdmin}
                 />
                 <Select
                   clearable={t('clearFilter')}
