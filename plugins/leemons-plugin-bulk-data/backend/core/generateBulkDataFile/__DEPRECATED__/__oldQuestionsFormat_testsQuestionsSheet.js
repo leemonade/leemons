@@ -8,73 +8,75 @@ const turndown = new TurndownService();
 
 // HELPER FUNCTIONS ············
 const getAnswersFieldsForMonoResponse = (question, assetDetails) => {
-  const imageAnswers = [];
+  const answersImages = [];
   const answers = [];
   const answersFeedback = [];
   const answersFeedbackImage = ''; // Currently not used in bulk data load from file function.
   let correctAnswer = 0;
 
-  const answersArray = question.choices;
+  const answersArray = question.properties?.responses;
 
-  answersArray.forEach(({ feedback, text, image, imageDescription, isCorrect, hideOnHelp }, i) => {
-    const index = i + 1;
+  answersArray.forEach(
+    (
+      { value: { explanation, response, image, imageDescription, isCorrectResponse, hideOnHelp } },
+      i
+    ) => {
+      const index = i + 1;
 
-    // Answer string
-    let string;
-    if (question.hasImageAnswers && image) {
-      const imageUrl = assetDetails.find((asset) => asset.id === image.id).cover;
-      string = imageDescription ? `${imageUrl}|${imageDescription}` : `${imageUrl}`;
-      if (hideOnHelp) string += '@';
-      imageAnswers.push(string);
-    } else {
-      if (text.format === 'html') {
-        string = turndown.turndown(text.text);
-      } else if (text.format === 'plain') {
-        string = text.text;
+      // Answer string
+      let string;
+      if (image) {
+        const imageUrl = assetDetails.find((asset) => asset.id === image.id).cover;
+        string = imageDescription ? `${imageUrl}|${imageDescription}` : `${imageUrl}`;
+      } else {
+        string = response;
       }
+
       if (hideOnHelp) string += '@';
-      answers.push(string);
-    }
 
-    // Correct response
-    if (isCorrect) correctAnswer = index;
-
-    // Feedback on each answer
-    if (question.hasAnswerFeedback) {
-      if (feedback) {
-        if (feedback.format === 'html') {
-          answersFeedback.push(`${index}@${turndown.turndown(feedback.text)}`);
-        } else if (feedback.format === 'plain') {
-          answersFeedback.push(`${index}@${feedback.text}`);
-        }
+      if (question.withImages) {
+        answersImages.push(string);
+      } else {
+        answers.push(string);
       }
-    } else {
-      const { globalFeedback } = question;
-      if (globalFeedback?.format === 'html') {
-        answersFeedback.push(turndown.turndown(globalFeedback?.text ?? ''));
-      } else if (globalFeedback?.format === 'plain') {
-        answersFeedback.push(globalFeedback?.text ?? '');
+
+      // Correct response
+      if (isCorrectResponse) correctAnswer = index;
+
+      // Answer feedback
+      if (question.properties?.explanationInResponses) {
+        if (!_.isEmpty(explanation))
+          answersFeedback.push(`${index}@${turndown.turndown(explanation)}`);
+      } else {
+        answersFeedback.push(turndown.turndown(question.properties.explanation ?? ''));
       }
     }
-  });
+  );
 
   return {
     answers: answers.join('|'),
     answer_correct: correctAnswer,
     answers_feedback: [...new Set(answersFeedback)].join('|'),
     answers_feedback_image: answersFeedbackImage,
-    answers_images: imageAnswers.join(', '),
+    answers_images: answersImages.join(', '),
   };
 };
 
 const getAnswersFieldsForMaps = (question) => {
-  const { markers, caption } = question.mapProperties;
-  const { globalFeedback } = question;
+  const { markers, caption, explanation } = question.properties;
   const { type, position, list, backgroundColor } = markers;
 
   const answersString = list.map((markerObject) => {
-    const { left, top, response, hideOnHelp } = markerObject;
-    const answerString = `${left}:${top}:${response}`;
+    let hideOnHelp = false;
+    const answerString = Object.keys(markerObject)
+      .map((key) => {
+        if (key === 'hideOnHelp') {
+          hideOnHelp = markerObject[key];
+          return '';
+        }
+        return markerObject[key];
+      })
+      .join(':');
     return hideOnHelp ? `${answerString}@` : answerString;
   });
 
@@ -85,7 +87,7 @@ const getAnswersFieldsForMaps = (question) => {
   return {
     answers: answersString.join('|'),
     map_info: mapInfoString,
-    answers_feedback: turndown.turndown(globalFeedback?.text ?? ''), // No feeedback by answer allowed on map questions
+    answers_feedback: explanation,
   };
 };
 
@@ -102,7 +104,7 @@ const getAnswerFields = (question, allImageAssetDetails) => {
 
 const findQuestionImage = (imageAssets, question) => {
   if (question.type === 'map') {
-    return imageAssets.find((asset) => asset.id === question.mapProperties.image.id).cover;
+    return imageAssets.find((asset) => asset.id === question.properties.image.id).cover;
   }
   return imageAssets.find((asset) => asset.id === question.questionImage?.id)?.cover;
 };
@@ -161,15 +163,15 @@ async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
       if (question.questionImage?.id) {
         acc.push(question.questionImage.id);
       }
-      if (question.hasImageAnswers) {
-        question.choices.forEach((choice) => {
-          if (choice.image?.id) {
-            acc.push(choice.image.id);
+      if (question.withImages) {
+        question.properties.responses.forEach((response) => {
+          if (response.value.image?.id) {
+            acc.push(response.value.image.id);
           }
         });
       }
-      if (question.mapProperties?.image?.id) {
-        acc.push(question.mapProperties.image.id);
+      if (question.properties.image?.id) {
+        acc.push(question.properties.image.id);
       }
     });
     return acc;
@@ -198,10 +200,10 @@ async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
         type: question.type,
         category: qBankCategories.find((c) => c.id === question.category)?.value,
         level: question.level,
-        withImages: booleanToYesNoAnswer(!!question.hasImageAnswers),
+        withImages: booleanToYesNoAnswer(!!question.withImages),
         tags: question.tags?.join(', '),
         question: turndown.turndown(question.question ?? ''),
-        clues: question.clues?.join('|'),
+        clues: question.clues?.map((item) => item.value)?.join('|'),
         questionImage,
       };
 
