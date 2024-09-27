@@ -14,6 +14,9 @@ type DB<Models extends Record<string, Model<any>>> = {
 
 interface UserAgent {
   id: string;
+  user: {
+    email: string;
+  };
 }
 interface UserSession {
   id: string;
