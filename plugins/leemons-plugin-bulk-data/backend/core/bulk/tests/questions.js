@@ -1,5 +1,6 @@
 const { keys, trim, isNil, isEmpty, isString, isArray } = require('lodash');
 const showdown = require('showdown');
+
 const itemsImport = require('../helpers/simpleListImport');
 
 const converter = new showdown.Converter();
@@ -13,7 +14,10 @@ async function importQuestions(filePath) {
     .forEach((key) => {
       const question = items[key];
 
-      question.question = converter.makeHtml(question.question || '');
+      question.stem = {
+        format: 'html',
+        text: converter.makeHtml(question.question || ''),
+      };
 
       question.tags = (question.tags || '')
         .split(',')
@@ -26,7 +30,7 @@ async function importQuestions(filePath) {
         .split('|')
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val))
-        .map((value) => ({ value }));
+        .map((value) => value);
 
       // ·····················································
       // FEEDBACK
@@ -43,17 +47,15 @@ async function importQuestions(filePath) {
           };
         });
 
-      // ·····················································
-      // PROPERTIES
-
-      const properties = {};
-
-      const eachAnswerHasItsExplanation = answerFeedback?.length > 1;
-      if (eachAnswerHasItsExplanation) {
-        properties.explanationInResponses = true;
-        properties.explanation = '<p></p>';
+      if (answerFeedback?.length > 1) {
+        question.hasAnswerFeedback = true;
+        question.globalFeedback = null;
       } else {
-        properties.explanation = converter.makeHtml(question.answers_feedback) || '';
+        question.hasAnswerFeedback = false;
+        question.globalFeedback = {
+          format: 'html',
+          text: converter.makeHtml(question.answers_feedback),
+        };
       }
 
       // ·····················································
@@ -72,53 +74,55 @@ async function importQuestions(filePath) {
           .join('');
       }
 
-      try {
-        properties.responses = String(
-          (imageResponses ? question.answers_images : question.answers) || question.answers || ''
-        )
-          .split(responseBreak)
-          .map((val) => trim(val))
-          .filter((val) => !isEmpty(val))
-          .map((answer, index) => {
-            const { feedback } = answerFeedback.find((item) => item.answer === index + 1) || {};
-            const hideOnHelp = answer.slice(-1) === '@';
-            let response = answer;
+      if (question.type === 'mono-response') {
+        try {
+          question.choices = String(
+            (imageResponses ? question.answers_images : question.answers) || ''
+          )
+            .split(responseBreak)
+            .map((val) => trim(val))
+            .filter((val) => !isEmpty(val))
+            .map((answer, index) => {
+              const { feedback } = answerFeedback.find((item) => item.answer === index + 1) || {};
+              const hideOnHelp = answer.slice(-1) === '@';
+              let response = answer;
 
-            if (hideOnHelp) {
-              response = answer.slice(0, -1);
-            }
+              if (hideOnHelp) {
+                response = answer.slice(0, -1);
+              }
 
-            const value = {
-              explanation: feedback || null,
-              isCorrectResponse: Number(question.answer_correct) === index + 1,
-              hideOnHelp,
-            };
+              const value = {
+                feedback: feedback ? { format: 'plain', text: feedback } : null,
+                isCorrect: Number(question.answer_correct) === index + 1,
+                hideOnHelp,
+              };
 
-            if (imageResponses) {
-              const [url, caption] = response.split('|');
-              value.image = url;
-              value.imageDescription = caption;
-            } else {
-              value.response = response;
-            }
+              if (imageResponses) {
+                const [url, caption] = response.split('|');
+                value.image = url;
+                value.imageDescription = caption;
+              } else {
+                value.text = { text: response, format: 'plain' };
+              }
 
-            return { value };
-          });
-      } catch (e) {
-        console.log('-- QUESTIONS IMPORT ERROR --');
-        console.log(e);
-        console.log('imageResponses:', imageResponses);
-        console.log('question.answers_images:', question.answers_images);
-        console.log('question.answers:', question.answers);
-        console.log('---------------------------------');
-        properties.responses = [];
+              return { value };
+            });
+        } catch (e) {
+          console.log('-- QUESTIONS IMPORT ERROR --');
+          console.log(e);
+          console.log('imageResponses:', imageResponses);
+          console.log('question.answers_images:', question.answers_images);
+          console.log('question.answers:', question.answers);
+          console.log('---------------------------------');
+          question.choices = [];
+        }
       }
       // ·····················································
       // QUESTION MAP
 
       if (question.type === 'map') {
         if (!isEmpty(question.questionImage)) {
-          properties.image = question.questionImage;
+          question.mapProperties.image = question.questionImage;
           delete question.questionImage;
         }
 
@@ -128,23 +132,25 @@ async function importQuestions(filePath) {
         const [positionLeft, positionTop] = positionString.split('|');
 
         if (mapImageCaption?.length) {
-          properties.caption = mapImageCaption;
+          question.mapProperties.caption = mapImageCaption;
         }
-        properties.markers = {
+        question.mapProperties.markers = {
           backgroundColor,
-          list: properties.responses.map(({ value }) => {
-            const [left, top, response] = value.response.split(':');
-            return { left, top, response, hideOnHelp: value?.hideOnHelp || undefined };
-          }),
+          list: question.answers
+            .split(responseBreak)
+            .map((val) => trim(val))
+            .filter((val) => !isEmpty(val))
+            .map((answer) => {
+              const hideOnHelp = answer.slice(-1) === '@';
+              const responseValue = hideOnHelp ? answer.slice(0, -1) : answer;
+              const [left, top, response] = responseValue.split(':');
+
+              return { left, top, response, hideOnHelp: hideOnHelp || undefined };
+            }),
           position: { left: positionLeft, top: positionTop },
           type,
         };
-
-        delete properties.responses;
-        delete question.answers_feedback_image;
       }
-
-      question.properties = properties;
 
       // ·····················································
       // CLEAN
