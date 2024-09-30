@@ -538,6 +538,7 @@ module.exports = {
       classroomsSetup: {
         title: 'Configuración de aulas',
         numberOfClassrooms: 'Nº de aulas',
+        numberOfClassroomsToAdd: 'Nº de aulas a añadir',
         classroom: 'Aula',
         classroomId: 'ID de Aula',
         alias: 'Alias',

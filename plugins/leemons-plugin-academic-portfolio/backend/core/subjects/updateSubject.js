@@ -1,17 +1,19 @@
 /* eslint-disable prefer-const */
 const _ = require('lodash');
 const { isArray } = require('lodash');
+
 const { validateUpdateSubject } = require('../../validations/forms');
-const { setSubjectCredits } = require('./setSubjectCredits');
-const { setSubjectInternalId } = require('./setSubjectInternalId');
-const { changeBySubject: changeClassesBySubject } = require('../classes/knowledge/changeBySubject');
-const { setToAllClassesWithSubject } = require('../classes/course/setToAllClassesWithSubject');
 const { classByIds } = require('../classes/classByIds');
-const { getProgramCourses } = require('../programs/getProgramCourses');
+const { setToAllClassesWithSubject } = require('../classes/course/setToAllClassesWithSubject');
+const { changeBySubject: changeClassesBySubject } = require('../classes/knowledge/changeBySubject');
 const {
   changeClassSubstageBySubject,
 } = require('../classes/substage/changeClassSubstageBySubject');
 const { removeByClass } = require('../classes/substage/removeByClass');
+const { getProgramCourses } = require('../programs/getProgramCourses');
+
+const { setSubjectCredits } = require('./setSubjectCredits');
+const { setSubjectInternalId } = require('./setSubjectInternalId');
 
 async function processRoom({ subject, color, assetImage, classe, assetIcon, ctx }) {
   const roomKey = ctx.prefixPN(`room.class.${classe.id}`);
@@ -102,7 +104,7 @@ async function updateSubject({ data, ctx }) {
   // ES: Añadimos el asset de la imagen
   const imageData = {
     indexable: false,
-    public: true, // TODO Cambiar a false despues de hacer la demo
+    public: true,
     name: subject.name,
   };
   const iconData = _.clone(imageData);

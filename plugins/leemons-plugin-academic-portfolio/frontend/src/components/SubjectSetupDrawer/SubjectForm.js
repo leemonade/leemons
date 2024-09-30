@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { cloneDeep, isArray, isEmpty } from 'lodash';
-import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
+
 import {
   ContextContainer,
   Title,
@@ -19,12 +18,17 @@ import {
   Table,
 } from '@bubbles-ui/components';
 import ImagePicker from '@leebrary/components/ImagePicker';
-import useKnowledgeAreas from '@academic-portfolio/hooks/useKnowledgeAreas';
-import useSubjectTypes from '@academic-portfolio/hooks/useSubjectTypes';
+import { cloneDeep, isArray, isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+
 import FooterContainer from '../ProgramSetupDrawer/FooterContainer';
+import ReadOnlyField from '../common/ReadOnlyField';
+
 import ClassroomsSetup from './ClassroomsSetup';
 import ReferenceGroupsClassroomsSetup from './ReferenceGroupsClassroomsSetup';
-import ReadOnlyField from '../common/ReadOnlyField';
+
+import useKnowledgeAreas from '@academic-portfolio/hooks/useKnowledgeAreas';
+import useSubjectTypes from '@academic-portfolio/hooks/useSubjectTypes';
 
 const useSubjectFormStyles = createStyles((theme) => ({
   title: {
@@ -535,10 +539,46 @@ const SubjectForm = ({
                 )}
               />
             ) : (
-              <Table
-                columns={classroomsDataForReadOnlyTable?.columns}
-                data={classroomsDataForReadOnlyTable?.data}
-              />
+              <>
+                <Table
+                  columns={classroomsDataForReadOnlyTable?.columns}
+                  data={classroomsDataForReadOnlyTable?.data}
+                />
+                <Controller
+                  name="extraClassrooms"
+                  control={control}
+                  render={({ field, fieldState }) => (
+                    <InputWrapper error={fieldState.error?.message}>
+                      {disableReferenceGroups ? (
+                        <ClassroomsSetup
+                          {...field}
+                          extraClassroomsStartIndex={subject?.classes?.length}
+                          formLabels={{
+                            ...formLabels?.classroomsSetup,
+                            validation: { ...formLabels?.validation },
+                            labels: { ...localizations?.labels },
+                            textPlaceholder: formLabels.textPlaceholder,
+                          }}
+                        />
+                      ) : (
+                        <ReferenceGroupsClassroomsSetup
+                          {...field}
+                          groups={programReferenceGroups}
+                          selectedCourses={selectedCourses}
+                          isMultiCourse={!program?.sequentialCourses}
+                          refGroupdisabled={!coursesFormValue?.length}
+                          formLabels={{
+                            ...formLabels?.classroomsSetup,
+                            validation: { ...formLabels?.validation },
+                            labels: { ...localizations?.labels },
+                            textPlaceholder: formLabels.textPlaceholder,
+                          }}
+                        />
+                      )}
+                    </InputWrapper>
+                  )}
+                />
+              </>
             )}
           </ContextContainer>
         </ContextContainer>

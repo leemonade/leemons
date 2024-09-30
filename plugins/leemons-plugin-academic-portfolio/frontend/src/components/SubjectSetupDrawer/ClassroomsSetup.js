@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { Controller, useForm } from 'react-hook-form';
+
 import {
   ContextContainer,
   createStyles,
@@ -7,7 +8,7 @@ import {
   NumberInput,
   Text,
 } from '@bubbles-ui/components';
-import { Controller, useForm } from 'react-hook-form';
+import PropTypes from 'prop-types';
 
 const useStyles = createStyles(() => ({
   table: {
@@ -30,7 +31,7 @@ const useStyles = createStyles(() => ({
   },
 }));
 
-const ClassroomsSetup = ({ onChange, value, formLabels }) => {
+const ClassroomsSetup = ({ onChange, value, formLabels, extraClassroomsStartIndex = 0 }) => {
   const { classes } = useStyles();
   const form = useForm({
     defaultValues: { classroomsAmount: 0 },
@@ -74,7 +75,8 @@ const ClassroomsSetup = ({ onChange, value, formLabels }) => {
     if (validClassroom) {
       const formClassrooms = form.getValues('classrooms');
       if (formClassrooms[index]) {
-        formClassrooms[index].classWithoutGroupId = `${(index + 1).toString().padStart(3, '0')}`;
+        formClassrooms[index].classWithoutGroupId =
+          `${(index + 1 + extraClassroomsStartIndex).toString().padStart(3, '0')}`;
       }
       onChange([...formClassrooms]);
     }
@@ -89,7 +91,11 @@ const ClassroomsSetup = ({ onChange, value, formLabels }) => {
           <NumberInput
             {...field}
             min={0}
-            label={formLabels?.numberOfClassrooms}
+            label={
+              extraClassroomsStartIndex
+                ? formLabels?.numberOfClassroomsToAdd
+                : formLabels?.numberOfClassrooms
+            }
             customDesign
             sx={{ width: 120 }}
             onChange={(val) => {
@@ -138,7 +144,7 @@ const ClassroomsSetup = ({ onChange, value, formLabels }) => {
                 <td className={classes.td}>
                   <Text>
                     {form.getValues(`classrooms.${index}.classWithoutGroupId`) ||
-                      `${(index + 1).toString().padStart(3, '0')}`}
+                      `${(index + 1 + extraClassroomsStartIndex).toString().padStart(3, '0')}`}
                   </Text>
                 </td>
                 <Controller
@@ -208,6 +214,7 @@ ClassroomsSetup.propTypes = {
   onChange: PropTypes.func.isRequired,
   value: PropTypes.array,
   formLabels: PropTypes.object,
+  extraClassroomsStartIndex: PropTypes.number,
 };
 
 export default ClassroomsSetup;
