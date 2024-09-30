@@ -31,7 +31,7 @@ const useStyles = createStyles(() => ({
   },
 }));
 
-const ClassroomsSetup = ({ onChange, value, formLabels, extraClassroomsStartIndex = 0 }) => {
+const ClassroomsSetup = ({ onChange, value, formLabels, existentClassroomsAmount }) => {
   const { classes } = useStyles();
   const form = useForm({
     defaultValues: { classroomsAmount: 0 },
@@ -75,8 +75,7 @@ const ClassroomsSetup = ({ onChange, value, formLabels, extraClassroomsStartInde
     if (validClassroom) {
       const formClassrooms = form.getValues('classrooms');
       if (formClassrooms[index]) {
-        formClassrooms[index].classWithoutGroupId =
-          `${(index + 1 + extraClassroomsStartIndex).toString().padStart(3, '0')}`;
+        formClassrooms[index].classWithoutGroupId = `${(index + 1).toString().padStart(3, '0')}`;
       }
       onChange([...formClassrooms]);
     }
@@ -90,12 +89,8 @@ const ClassroomsSetup = ({ onChange, value, formLabels, extraClassroomsStartInde
         render={({ field }) => (
           <NumberInput
             {...field}
-            min={0}
-            label={
-              extraClassroomsStartIndex
-                ? formLabels?.numberOfClassroomsToAdd
-                : formLabels?.numberOfClassrooms
-            }
+            min={existentClassroomsAmount ?? 0}
+            label={formLabels?.numberOfClassrooms}
             customDesign
             sx={{ width: 120 }}
             onChange={(val) => {
@@ -144,7 +139,7 @@ const ClassroomsSetup = ({ onChange, value, formLabels, extraClassroomsStartInde
                 <td className={classes.td}>
                   <Text>
                     {form.getValues(`classrooms.${index}.classWithoutGroupId`) ||
-                      `${(index + 1 + extraClassroomsStartIndex).toString().padStart(3, '0')}`}
+                      `${(index + 1).toString().padStart(3, '0')}`}
                   </Text>
                 </td>
                 <Controller
@@ -214,7 +209,7 @@ ClassroomsSetup.propTypes = {
   onChange: PropTypes.func.isRequired,
   value: PropTypes.array,
   formLabels: PropTypes.object,
-  extraClassroomsStartIndex: PropTypes.number,
+  existentClassroomsAmount: PropTypes.number,
 };
 
 export default ClassroomsSetup;

@@ -537,7 +537,6 @@ module.exports = {
       classroomsSetup: {
         title: 'Classrooms Setup',
         numberOfClassrooms: 'Number of classrooms',
-        numberOfClassroomsToAdd: 'Number of classrooms to add',
         classroom: 'Classroom',
         classroomId: 'Classroom ID',
         alias: 'Alias',

@@ -15,7 +15,6 @@ import {
   Select,
   Switch,
   LoadingOverlay,
-  Table,
 } from '@bubbles-ui/components';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import { cloneDeep, isArray, isEmpty } from 'lodash';
@@ -539,46 +538,41 @@ const SubjectForm = ({
                 )}
               />
             ) : (
-              <>
-                <Table
-                  columns={classroomsDataForReadOnlyTable?.columns}
-                  data={classroomsDataForReadOnlyTable?.data}
-                />
-                <Controller
-                  name="extraClassrooms"
-                  control={control}
-                  render={({ field, fieldState }) => (
-                    <InputWrapper error={fieldState.error?.message}>
-                      {disableReferenceGroups ? (
-                        <ClassroomsSetup
-                          {...field}
-                          extraClassroomsStartIndex={subject?.classes?.length}
-                          formLabels={{
-                            ...formLabels?.classroomsSetup,
-                            validation: { ...formLabels?.validation },
-                            labels: { ...localizations?.labels },
-                            textPlaceholder: formLabels.textPlaceholder,
-                          }}
-                        />
-                      ) : (
-                        <ReferenceGroupsClassroomsSetup
-                          {...field}
-                          groups={programReferenceGroups}
-                          selectedCourses={selectedCourses}
-                          isMultiCourse={!program?.sequentialCourses}
-                          refGroupdisabled={!coursesFormValue?.length}
-                          formLabels={{
-                            ...formLabels?.classroomsSetup,
-                            validation: { ...formLabels?.validation },
-                            labels: { ...localizations?.labels },
-                            textPlaceholder: formLabels.textPlaceholder,
-                          }}
-                        />
-                      )}
-                    </InputWrapper>
-                  )}
-                />
-              </>
+              <Controller
+                name="classrooms"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <InputWrapper error={fieldState.error?.message}>
+                    {disableReferenceGroups ? (
+                      <ClassroomsSetup
+                        {...field}
+                        existentClassroomsAmount={subject?.classes?.length}
+                        formLabels={{
+                          ...formLabels?.classroomsSetup,
+                          validation: { ...formLabels?.validation },
+                          labels: { ...localizations?.labels },
+                          textPlaceholder: formLabels.textPlaceholder,
+                        }}
+                      />
+                    ) : (
+                      <ReferenceGroupsClassroomsSetup
+                        {...field}
+                        groups={programReferenceGroups}
+                        usedGroups={subject?.classes?.map((cls) => cls.groups?.id)}
+                        selectedCourses={selectedCourses}
+                        isMultiCourse={!program?.sequentialCourses}
+                        refGroupdisabled={!coursesFormValue?.length}
+                        formLabels={{
+                          ...formLabels?.classroomsSetup,
+                          validation: { ...formLabels?.validation },
+                          labels: { ...localizations?.labels },
+                          textPlaceholder: formLabels.textPlaceholder,
+                        }}
+                      />
+                    )}
+                  </InputWrapper>
+                )}
+              />
             )}
           </ContextContainer>
         </ContextContainer>

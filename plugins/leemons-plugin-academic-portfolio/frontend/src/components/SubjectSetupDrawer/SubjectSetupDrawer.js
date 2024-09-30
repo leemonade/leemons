@@ -209,7 +209,6 @@ const SubjectSetupDrawer = ({
       classrooms,
       subjectType,
       knowledgeArea,
-      extraClassrooms,
     } = formData;
     const courseArray = isArray(courses) ? courses : [courses];
     let subjectsBody = {
@@ -245,11 +244,7 @@ const SubjectSetupDrawer = ({
         await handleClassesUpdate(classesChanges.classesToUpdate);
       }
 
-      const classesToAddWhileEditing = classesChanges.classesToCreate?.length
-        ? classesChanges.classesToCreate
-        : (extraClassrooms ?? []);
-
-      const classesToCreate = isEditing ? classesToAddWhileEditing : classrooms;
+      const classesToCreate = isEditing ? classesChanges.classesToCreate : classrooms;
 
       if (classesToCreate?.length && subjectResponse?.subject?.id) {
         await handleClassesCreation({
