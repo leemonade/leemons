@@ -684,24 +684,26 @@ async function validateUniquenessOfInternalId({ program, compiledInternalId, sub
   }
 }
 
-async function validateInternalIdHasGoodFormat({ program, internalId, ctx }) {
-  const subjectDigits = await getProgramSubjectDigits({ program, ctx });
-  // ES: Comprobamos si el numero de digitos no es el mismo
-  if (internalId.length !== subjectDigits)
-    throw new LeemonsError(ctx, {
-      message: 'internalId does not have the required number of digits',
-    });
-  // ES: Comprobamos si son numeros
-  // if (!/^[0-9]+$/.test(internalId)) throw new Error('The internalId must be a number');
-}
+// *Old: Not used in Academic Portfolio 2.0
+// async function validateInternalIdHasGoodFormat({ program, internalId, ctx }) {
+//   const subjectDigits = await getProgramSubjectDigits({ program, ctx });
+//   // ES: Comprobamos si el numero de digitos no es el mismo
+//   if (internalId.length !== subjectDigits)
+//     throw new LeemonsError(ctx, {
+//       message: 'internalId does not have the required number of digits',
+//     });
+//   // ES: Comprobamos si son numeros
+//   // if (!/^[0-9]+$/.test(internalId)) throw new Error('The internalId must be a number');
+// }
 
-async function getCompiledInternalId(course, internalId, ctx) {
-  let courseIndex = '';
-  if (course) {
-    courseIndex = await getCourseIndex({ course, getMultiple: true, ctx });
-  }
-  return courseIndex + internalId;
-}
+// *Old: Not used in Academic Portfolio 2.0
+// async function getCompiledInternalId(course, internalId, ctx) {
+//   let courseIndex = '';
+//   if (course) {
+//     courseIndex = await getCourseIndex({ course, getMultiple: true, ctx });
+//   }
+//   return courseIndex + internalId;
+// }
 
 const addSubjectSchema = {
   type: 'object',
@@ -764,13 +766,6 @@ async function validateAddSubject({ data, ctx }) {
   // });
 
   if (data.internalId?.length) {
-    const maxInternalIdLength = 3;
-    if (data.internalId.length > maxInternalIdLength) {
-      throw new LeemonsError(ctx, {
-        message: 'The Internal ID should have a maximum of 3 digits.',
-      });
-    }
-
     const isInternalIdUsed = await ctx.tx.db.ProgramSubjectsCredits.findOne({
       program: data.program,
       internalId: data.internalId,
@@ -778,7 +773,7 @@ async function validateAddSubject({ data, ctx }) {
 
     if (isInternalIdUsed) {
       throw new LeemonsError(ctx, {
-        message: 'The Internal ID is already in use within this program.',
+        message: 'This Internal ID is already in use within this program.',
         customCode: 'INTERNAL_ID_IN_USE',
       });
     }
@@ -852,13 +847,6 @@ async function validateUpdateSubject({ data, ctx }) {
     // });
 
     if (data.internalId?.length) {
-      const maxInternalIdLength = 3;
-      if (data.internalId.length > maxInternalIdLength) {
-        throw new LeemonsError(ctx, {
-          message: 'The Internal ID should have a maximum of 3 digits.',
-        });
-      }
-
       const subjectProgram = await ctx.tx.db.Subjects.findOne({ id: data.id })
         .select(['program'])
         .lean();
@@ -870,7 +858,7 @@ async function validateUpdateSubject({ data, ctx }) {
 
       if (isInternalIdUsed) {
         throw new LeemonsError(ctx, {
-          message: 'The Internal ID is already in use within this program.',
+          message: 'This Internal ID is already in use within this program.',
           customCode: 'INTERNAL_ID_IN_USE',
         });
       }
@@ -1118,20 +1106,20 @@ async function validateAddInstanceClass({ data, ctx }) {
       throw new LeemonsError(ctx, { message: 'The course is not required' });
     }
 
-    await validateInternalIdHasGoodFormat({
-      program: data.program,
-      internalId: data.internalId,
-      ctx,
-    });
+    // await validateInternalIdHasGoodFormat({
+    //   program: data.program,
+    //   internalId: data.internalId,
+    //   ctx,
+    // });
 
-    await validateUniquenessOfInternalId({
-      program: data.program,
-      compiledInternalId:
-        (data.internalIdCourse
-          ? await getCourseIndex({ course: data.internalIdCourse, ctx })
-          : '') + data.internalId,
-      ctx,
-    });
+    // await validateUniquenessOfInternalId({
+    //   program: data.program,
+    //   compiledInternalId:
+    //     (data.internalIdCourse
+    //       ? await getCourseIndex({ course: data.internalIdCourse, ctx })
+    //       : '') + data.internalId,
+    //   ctx,
+    // });
   }
 }
 
@@ -1500,5 +1488,5 @@ module.exports = {
   validateGetSubjectCreditsProgram,
   validateAddBlock,
   validateUpdateBlock,
-  validateProgramNotUsingInternalId: validateUniquenessOfInternalId,
+  validateProgramNotUsingInternalId: validateUniquenessOfInternalId, // Not used anywhere
 };

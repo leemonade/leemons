@@ -513,7 +513,7 @@ module.exports = {
         title: 'Basic Data',
         presentation: 'Presentation',
         name: 'Name',
-        internalId: 'Unique ID (numeric, 3 digits)',
+        internalId: 'Unique ID (alphanumeric)',
         color: 'Color',
         featuredImage: 'Image',
         icon: 'Icon',
@@ -547,7 +547,7 @@ module.exports = {
       },
       validation: {
         internalIdMaxLength: 'ID must be a maximum of 3 digits',
-        internalIdFormat: 'ID must be numeric ',
+        internalIdFormat: 'ID must be alphanumeric (only letters and numbers)',
         atLeastOneClassroom: 'At least one classroom is needed',
         atLeastOneSeat: 'Value cannot be less than 1',
         requiredField: 'Required field',
