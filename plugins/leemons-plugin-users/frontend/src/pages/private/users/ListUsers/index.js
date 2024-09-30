@@ -531,11 +531,11 @@ function ListUsers() {
               {!store.loading && store.pagination?.totalPages > 1 && (
                 <Stack fullWidth justifyContent="center">
                   <Pager
-                    page={store.pagination?.page || 0}
+                    page={(store.pagination?.page || 0) + 1}
                     totalPages={store.pagination?.totalPages || 0}
                     size={store.size}
                     withSize={true}
-                    onChange={(val) => handleOnPageChange(val)}
+                    onChange={(val) => handleOnPageChange(val - 1)}
                     onSizeChange={handleOnPageSizeChange}
                     labels={{
                       show: t('show'),
