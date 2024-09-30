@@ -187,6 +187,19 @@ const DatasetForm = forwardRef(
         return false;
       }
 
+      let toSave = form.getValues();
+
+      const requiredOnlyForMe = getRequiredKeysOnlyForMe({ dataset, profileId });
+
+      if (requiredOnlyForMe.length === 0) {
+        toSave = _.pickBy(toSave, (value) => !!value.value);
+        return handleSave(toSave, forceTargetId);
+      }
+
+      const readOnlyKeys = dataset.compileJsonSchema?.required.filter(
+        (key) => !requiredOnlyForMe.includes(key)
+      );
+
       await form.submit();
 
       // Process form results
@@ -195,10 +208,6 @@ const DatasetForm = forwardRef(
       if (errors.length && !skipOptional) {
         return null;
       }
-
-      const readOnlyKeys = dataset.compileJsonSchema?.required.filter(
-        (key) => !getRequiredKeysOnlyForMe({ dataset, profileId }).includes(key)
-      );
 
       const areOptional = areOptionalKeys({
         errors,
@@ -217,7 +226,7 @@ const DatasetForm = forwardRef(
         return false;
       }
 
-      return handleSave(form.getValues(), forceTargetId);
+      return handleSave(toSave, forceTargetId);
     }
 
     useImperativeHandle(ref, () => ({
