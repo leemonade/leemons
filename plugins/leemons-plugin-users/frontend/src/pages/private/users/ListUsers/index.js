@@ -24,7 +24,7 @@ import { ListEmptyState } from '@common/components/ListEmptyState';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import _, { isBoolean, isFunction } from 'lodash';
+import _, { isBoolean, isFunction, escapeRegExp } from 'lodash';
 
 import {
   listUsersRequest,
@@ -62,13 +62,15 @@ function ListUsers() {
 
   async function listUsers(searchQuery) {
     const query = {};
+
     if (searchQuery ?? store.search) {
+      const search = searchQuery ?? store.search;
       query.$or = [
-        { name: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        { surnames: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        { secondSurname: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        { email: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        { phone: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
+        { name: { $regex: escapeRegExp(search.toLowerCase()), $options: 'i' } },
+        { surnames: { $regex: escapeRegExp(search.toLowerCase()), $options: 'i' } },
+        { secondSurname: { $regex: escapeRegExp(search.toLowerCase()), $options: 'i' } },
+        { email: { $regex: escapeRegExp(search.toLowerCase()), $options: 'i' } },
+        { phone: { $regex: escapeRegExp(search.toLowerCase()), $options: 'i' } },
       ];
     }
     if (store.profile) {
