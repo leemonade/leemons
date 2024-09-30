@@ -36,14 +36,14 @@ import { BulkActionModal } from './components/BulkActionModal';
 
 import DisableUsersModal from '@users/components/DisableUsersModal';
 import EnableUsersModal from '@users/components/EnableUsersModal';
-import prefixPN from '@users/helpers/prefixPN';
+import { SelectCenter } from '@users/components/SelectCenter';
+import { SelectProfile } from '@users/components/SelectProfile';
+import { SetPasswordModal } from '@users/components/SetPasswordModal';
+import { UserAdminDrawer } from '@users/components/UserAdminDrawer';
 import UserDetailDrawer from '@users/components/UserDetailDrawer';
+import prefixPN from '@users/helpers/prefixPN';
 import activeUserAgent from '@users/request/activeUserAgent';
 import disableUserAgent from '@users/request/disableUserAgent';
-import { UserAdminDrawer } from '@users/components/UserAdminDrawer';
-import { SelectProfile } from '@users/components/SelectProfile';
-import { SelectCenter } from '@users/components/SelectCenter';
-import { SetPasswordModal } from '@users/components/SetPasswordModal';
 
 function ListUsers() {
   const [t] = useTranslateLoader(prefixPN('list_users'));
@@ -531,7 +531,7 @@ function ListUsers() {
               {!store.loading && store.pagination?.totalPages > 1 && (
                 <Stack fullWidth justifyContent="center">
                   <Pager
-                    page={store.pagination?.page || 0}
+                    page={(store.pagination?.page || 0) + 1}
                     totalPages={store.pagination?.totalPages || 0}
                     size={store.size}
                     withSize={true}
