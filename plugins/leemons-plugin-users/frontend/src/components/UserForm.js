@@ -1,6 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { noop, trim } from 'lodash';
+import { Controller, useFormContext } from 'react-hook-form';
+
 import {
   Box,
   Stack,
@@ -13,15 +13,18 @@ import {
   ContextContainer,
   ImageProfilePicker,
 } from '@bubbles-ui/components';
-import { Controller, useFormContext } from 'react-hook-form';
-import { EMAIL_REGEX } from '@users/components/LoginForm';
-import { activateUserRequest, sendWelcomeEmailToUserRequest } from '@users/request';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useUserDetails from '@users/hooks/useUserDetails';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useLocale } from '@common';
-import prefixPN from '@users/helpers/prefixPN';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { noop, trim } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { SetPasswordModal } from './SetPasswordModal';
+
+import { EMAIL_REGEX } from '@users/components/LoginForm';
+import prefixPN from '@users/helpers/prefixPN';
+import useUserDetails from '@users/hooks/useUserDetails';
+import { activateUserRequest, sendWelcomeEmailToUserRequest } from '@users/request';
 
 const USER_FIELDS = ['email', 'name', 'surnames', 'secondSurname', 'gender', 'birthdate', 'avatar'];
 
@@ -165,7 +168,7 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
                     error={errors.email}
                     disabled={!!userDetails?.user?.id}
                     onBlur={() => onCheckEmail(email)}
-                    onChange={(e) => field.onChange(e.toLowerCase())}
+                    onChange={(e) => field.onChange(e?.toLowerCase()?.trim())}
                   />
                 )}
               />
@@ -192,7 +195,7 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
                       label={t('repeatEmail')}
                       error={errors.repeatEmail}
                       onPaste={(e) => e.preventDefault()}
-                      onChange={(e) => field.onChange(e.toLowerCase())}
+                      onChange={(e) => field.onChange(e?.toLowerCase()?.trim())}
                     />
                   )}
                 />
