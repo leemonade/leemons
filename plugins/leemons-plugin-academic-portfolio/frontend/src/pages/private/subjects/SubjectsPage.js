@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import { cloneDeep, sortBy } from 'lodash';
+
 import {
   Select,
   TotalLayoutContainer,
@@ -14,25 +13,26 @@ import {
   ImageLoader,
 } from '@bubbles-ui/components';
 import { AddCircleIcon, RedirectIcon } from '@bubbles-ui/icons/solid';
-
-import { useUserCenters } from '@users/hooks';
 import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useLayout } from '@layout/context';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useLayout } from '@layout/context';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useQueryClient } from '@tanstack/react-query';
+import { useUserCenters } from '@users/hooks';
+import { cloneDeep, sortBy } from 'lodash';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
+import { EmptyState } from '@academic-portfolio/components/EmptyState';
 import SubjectSetupDrawer from '@academic-portfolio/components/SubjectSetupDrawer/SubjectSetupDrawer';
 import SubjectsDetailTable from '@academic-portfolio/components/SubjectsDetailTable';
-import useProgramSubjects from '@academic-portfolio/hooks/queries/useProgramSubjects';
-import { EmptyState } from '@academic-portfolio/components/EmptyState';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import { getProgramSubjectsKey } from '@academic-portfolio/hooks/keys/programSubjects';
 import {
   useDeleteSubject,
   useDuplicateSubject,
 } from '@academic-portfolio/hooks/mutations/useMutateSubject';
-import { getProgramSubjectsKey } from '@academic-portfolio/hooks/keys/programSubjects';
-import { useQueryClient } from '@tanstack/react-query';
+import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
+import useProgramSubjects from '@academic-portfolio/hooks/queries/useProgramSubjects';
 
 const SubjectPage = () => {
   const [t, translations, , tLoading] = useTranslateLoader(prefixPN('newSubjectsPage'));

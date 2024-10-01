@@ -1,4 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+
 import {
   Box,
   ImageLoader,
@@ -8,9 +10,11 @@ import {
   TextClamp,
   useHover,
 } from '@bubbles-ui/components';
-import { find, isArray, isEmpty } from 'lodash';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useLocation } from 'react-router-dom';
+import { find, isArray, isEmpty } from 'lodash';
+
+import { getActiveItem } from '../../helpers/getActiveItem';
+
 import {
   MAIN_NAV_BAR_DEFAULT_PROPS,
   MAIN_NAV_BAR_PROP_TYPES,
@@ -19,13 +23,11 @@ import {
   mainNavVariants,
   navTitleVariants,
 } from './MainNavBar.constants';
-import { Logo } from './components/Logo';
 import { MainNavBarStyles } from './MainNavBar.styles';
-import { SpotLightButton } from './components/SpotLightButton';
+import { Logo } from './components/Logo';
 import { NavItem } from './components/NavItem';
+import { SpotLightButton } from './components/SpotLightButton';
 import { UserButton } from './components/UserButton';
-import { getUserFullName } from '../../helpers/getUserFullName';
-import { getActiveItem } from '../../helpers/getActiveItem';
 
 const MainNavBar = ({
   logoUrl,
@@ -38,7 +40,6 @@ const MainNavBar = ({
   spotlightLabel,
   useSpotlight,
 }) => {
-  // const [isCollapsed, setIsCollapsed] = useState(true);
   const [expandedItem, setExpandedItem] = useState(null);
   const [activeItem, setActiveItem] = useState(null);
   const [activeSubItem, setActiveSubItem] = useState(null);
@@ -131,7 +132,6 @@ const MainNavBar = ({
       }),
     [hovered, activeItem, activeSubItem, menuData]
   );
-
   return (
     <AnimatePresence>
       <motion.div
@@ -195,7 +195,8 @@ const MainNavBar = ({
                 <Box className={classes.linksInner}>{navBarItems}</Box>
                 <Box>
                   <UserButton
-                    name={getUserFullName(session)}
+                    name={session?.name}
+                    surnames={session?.surnames}
                     isCollapsed={!hovered}
                     session={session}
                     sessionMenu={sessionMenu}

@@ -3,16 +3,17 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Box, Stack, Table, Text, ActionButton } from '@bubbles-ui/components';
 import { AddCircleIcon, DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
-import prefixPN from '@dataset/helpers/prefixPN';
-import { useDatasetSchema } from '@dataset/hooks/queries';
-import { useDatasetItemDrawer } from '@dataset/hooks/useDatasetItemDrawer';
-import { removeDatasetFieldRequest } from '@dataset/request';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PropTypes from 'prop-types';
+
+import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
+import prefixPN from '@dataset/helpers/prefixPN';
+import { useDatasetSchema } from '@dataset/hooks/queries';
+import { useDatasetItemDrawer } from '@dataset/hooks/useDatasetItemDrawer';
+import { removeDatasetFieldRequest } from '@dataset/request';
 
 function NameCell({ cell }) {
   const field = cell.row.original;
@@ -52,7 +53,6 @@ ActionsCell.propTypes = {
 const DatasetTable = ({ locationName, pluginName, description, isEditMode }) => {
   const [tableItems, setTableItems] = useState([]);
   const [item, setItem] = useState(null);
-  const [itemToRemove, setItemToRemove] = useState(null);
   const [toggle, DatasetItemDrawer] = useDatasetItemDrawer();
   const [t] = useTranslateLoader(prefixPN('datasetTable'));
   const { t: tCommonTypes } = useCommonTranslate('form_field_types');
@@ -106,27 +106,28 @@ const DatasetTable = ({ locationName, pluginName, description, isEditMode }) => 
     reload();
   }
 
-  const toggleModal = openDeleteConfirmationModal({
-    title: t('remove_modal.title'),
-    description: t('remove_modal.message'),
-    labels: {
-      confirm: t('remove_modal.action'),
-      cancel: t('remove_modal.cancel'),
-    },
-    onConfirm: async () => {
-      try {
-        await removeDatasetFieldRequest(locationName, pluginName, itemToRemove.id);
-        addSuccessAlert(t('deleted_done'));
-        reload();
-      } catch (e) {
-        addErrorAlert(getErrorMessage(e));
-      }
-    },
-  });
+  const toggleModal = (item) =>
+    openDeleteConfirmationModal({
+      title: t('remove_modal.title'),
+      description: t('remove_modal.message'),
+      labels: {
+        confirm: t('remove_modal.action'),
+        cancel: t('remove_modal.cancel'),
+      },
+      onConfirm: async () => {
+        try {
+          await removeDatasetFieldRequest(locationName, pluginName, item.id);
+          addSuccessAlert(t('deleted_done'));
+          reload();
+        } catch (e) {
+          console.log('ERROR: itemToRemove:', item);
+          addErrorAlert(getErrorMessage(e));
+        }
+      },
+    })();
 
   function removeItem(_item) {
-    setItemToRemove(_item);
-    toggleModal();
+    toggleModal(_item);
   }
 
   const tableHeaders = useMemo(() => {

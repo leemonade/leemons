@@ -7,3 +7,4 @@ export { default as useProfiles } from './useProfiles';
 export { useUserDatasets } from './queries/useUserDatasets';
 export { default as useUserDetails } from './useUserDetails';
 export { default as useUserAgents } from './useUserAgents';
+export { useIsSuperAdmin } from './useIsSuperAdmin';

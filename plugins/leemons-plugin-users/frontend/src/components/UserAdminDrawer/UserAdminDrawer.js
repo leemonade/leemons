@@ -1,8 +1,24 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Button, Drawer, ContextContainer, InputWrapper } from '@bubbles-ui/components';
 import { FormProvider, useForm, Controller } from 'react-hook-form';
+
+import { Button, Drawer, ContextContainer, InputWrapper } from '@bubbles-ui/components';
+import { TagsAutocomplete, getRequestErrorMessage, randomString } from '@common';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useLayout } from '@layout/context';
+import { UploadingFileModal } from '@leebrary/components';
+import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useQueryClient } from '@tanstack/react-query';
+import { compact, groupBy, noop, pick, uniq } from 'lodash';
+import PropTypes from 'prop-types';
+
+import { UserDatasets } from '../UserDataset/UserDatasets';
+import { UserForm, USER_FIELDS } from '../UserForm';
+
+import { ProfileTableInput } from './components/ProfileTableInput';
+
+import prefixPN from '@users/helpers/prefixPN';
 import {
   searchUserAgentsRequest,
   addUsersBulkRequest,
@@ -10,20 +26,8 @@ import {
   updateUserAgentRequest,
   getUserAgentDetailForPageRequest,
 } from '@users/request';
-import { compact, groupBy, noop, pick, uniq } from 'lodash';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
-import { UploadingFileModal } from '@leebrary/components';
-import { TagsAutocomplete, getRequestErrorMessage, randomString } from '@common';
-import prefixPN from '@users/helpers/prefixPN';
 import activeUserAgentRequest from '@users/request/activeUserAgent';
 import disableUserAgentRequest from '@users/request/disableUserAgent';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import { UserForm, USER_FIELDS } from '../UserForm';
-import { ProfileTableInput } from './components/ProfileTableInput';
-import { UserDatasets } from '../UserDataset/UserDatasets';
 
 function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave = noop }) {
   const [user, setUser] = React.useState(value);
