@@ -675,36 +675,6 @@ async function validateUpdateGroup({ data, ctx }) {
   // if (groupCount) throw new LeemonsError(ctx, { message: 'The group already exists' });
 }
 
-async function validateUniquenessOfInternalId({ program, compiledInternalId, subject, ctx }) {
-  const query = { program, compiledInternalId };
-  if (subject) query.subject = { $ne: subject };
-  const count = await ctx.tx.db.ProgramSubjectsCredits.countDocuments(query);
-  if (count) {
-    throw new LeemonsError(ctx, { message: 'The internalId is already in use' });
-  }
-}
-
-// *Old: Not used in Academic Portfolio 2.0
-// async function validateInternalIdHasGoodFormat({ program, internalId, ctx }) {
-//   const subjectDigits = await getProgramSubjectDigits({ program, ctx });
-//   // ES: Comprobamos si el numero de digitos no es el mismo
-//   if (internalId.length !== subjectDigits)
-//     throw new LeemonsError(ctx, {
-//       message: 'internalId does not have the required number of digits',
-//     });
-//   // ES: Comprobamos si son numeros
-//   // if (!/^[0-9]+$/.test(internalId)) throw new Error('The internalId must be a number');
-// }
-
-// *Old: Not used in Academic Portfolio 2.0
-// async function getCompiledInternalId(course, internalId, ctx) {
-//   let courseIndex = '';
-//   if (course) {
-//     courseIndex = await getCourseIndex({ course, getMultiple: true, ctx });
-//   }
-//   return courseIndex + internalId;
-// }
-
 const addSubjectSchema = {
   type: 'object',
   properties: {
@@ -733,38 +703,6 @@ async function validateAddSubject({ data, ctx }) {
     throw validator.error;
   }
 
-  /*
-  Currently All Subjects are created with one or many courses asociated to it. Also, subjects don't need to restrict their names to any valies set on program creation
-  // ES: Comprobamos si el programa tiene o puede tener cursos asignados
-  // EN: Check if the program has or can have courses assigned
-  const [needsCourse, hasMultiCourses] = await Promise.all([
-    subjectNeedCourseForAdd({ program: data.program, ctx }),
-    programHaveMultiCourses({ id: data.program, ctx }),
-  ]);
-
-  // ES: Si tiene/puede comprobamos si dentro de los datos nos llega a que curso va dirigida la nueva asignatura
-  // EN: If it has/can we check if inside the data we get that the new subject is directed to which course
-  if (!hasMultiCourses) {
-    if (needsCourse) {
-      if (!data.course) throw new LeemonsError(ctx, { message: 'The course is required' });
-      const course = await ctx.tx.db.Groups.findOne({ id: data.course, type: 'course' }).lean();
-      if (!course) throw new LeemonsError(ctx, { message: 'The course does not exist' });
-    }
-    // ES: Si no tiene/puede comprobamos que no nos llega a que curso va dirigida la nueva asignatura
-    // EN: If it not has/can we check if inside the data we get that the new subject is not directed to which course
-    else if (data.course) {
-      throw new LeemonsError(ctx, { message: 'The course is not required' });
-    }
-  } */
-
-  // *Old: All programs' subjects have the same format in Academic Portfolio 2.0.
-  // All internal id have an unique format for all subjects in all programs
-  // await validateInternalIdHasGoodFormat({
-  //   program: data.program,
-  //   internalId: data.internalId,
-  //   ctx,
-  // });
-
   if (data.internalId?.length) {
     const isInternalIdUsed = await ctx.tx.db.ProgramSubjectsCredits.findOne({
       program: data.program,
@@ -777,14 +715,6 @@ async function validateAddSubject({ data, ctx }) {
         customCode: 'INTERNAL_ID_IN_USE',
       });
     }
-
-    // *Old. Behaviour of compiledInternalId not specified for Academic Portfolio 2.0.
-    // const compiledInternalId = await getCompiledInternalId(parsedCourses, data.internalId, ctx);
-    // await validateUniquenessOfInternalId({
-    //   program: data.program,
-    //   compiledInternalId,
-    //   ctx,
-    // });
   }
 }
 
@@ -837,15 +767,6 @@ async function validateUpdateSubject({ data, ctx }) {
       throw validator2.error;
     }
 
-    // *Old: All programs' subjects have the same format in Academic Portfolio 2.0.
-    // All internal id have an unique format for all subjects in all programs
-    // const subject = await ctx.tx.db.Subjects.findOne({ id: data.id }).select(['program']).lean();
-    // await validateInternalIdHasGoodFormat({
-    //   program: subject.program,
-    //   internalId: data.internalId,
-    //   ctx,
-    // });
-
     if (data.internalId?.length) {
       const subjectProgram = await ctx.tx.db.Subjects.findOne({ id: data.id })
         .select(['program'])
@@ -862,14 +783,6 @@ async function validateUpdateSubject({ data, ctx }) {
           customCode: 'INTERNAL_ID_IN_USE',
         });
       }
-
-      // *Old. Behaviour of compiledInternalId not specified for Academic Portfolio 2.0.
-      // const compiledInternalId = await getCompiledInternalId(parsedCourses, data.internalId, ctx);
-      // await validateUniquenessOfInternalId({
-      //   program: data.program,
-      //   compiledInternalId,
-      //   ctx,
-      // });
     }
   }
 }
@@ -1105,21 +1018,6 @@ async function validateAddInstanceClass({ data, ctx }) {
     else if (data.internalIdCourse) {
       throw new LeemonsError(ctx, { message: 'The course is not required' });
     }
-
-    // await validateInternalIdHasGoodFormat({
-    //   program: data.program,
-    //   internalId: data.internalId,
-    //   ctx,
-    // });
-
-    // await validateUniquenessOfInternalId({
-    //   program: data.program,
-    //   compiledInternalId:
-    //     (data.internalIdCourse
-    //       ? await getCourseIndex({ course: data.internalIdCourse, ctx })
-    //       : '') + data.internalId,
-    //   ctx,
-    // });
   }
 }
 
@@ -1488,5 +1386,4 @@ module.exports = {
   validateGetSubjectCreditsProgram,
   validateAddBlock,
   validateUpdateBlock,
-  validateProgramNotUsingInternalId: validateUniquenessOfInternalId, // Not used anywhere
 };
