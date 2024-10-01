@@ -1,3 +1,6 @@
+import React, { useMemo, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+
 import {
   Box,
   Stack,
@@ -10,23 +13,19 @@ import {
   TotalLayoutHeader,
   TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
-import { useForm } from 'react-hook-form';
-import { useStore } from '@common/useStore';
-import prefixPN from '@grades/helpers/prefixPN';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { SelectCenter } from '@users/components/SelectCenter';
-import { cloneDeep, find, groupBy, map } from 'lodash';
-import React, { useMemo, useRef, useState } from 'react';
 import {
   AddCircleIcon,
   DeleteBinIcon,
   EditIcon,
   PluginScoresBasicIcon,
 } from '@bubbles-ui/icons/outline';
-import { EmptyState } from '@grades/components/EvaluationDetail/components/EmptyState';
+import { useStore } from '@common/useStore';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { SelectCenter } from '@users/components/SelectCenter';
+import { cloneDeep, find, groupBy, map } from 'lodash';
+
 import { EvaluationDetail } from '../../../components/EvaluationDetail';
-import { TreeItem } from '../../../components/TreeItem/TreeItem';
 import { activeMenuItemPromotions } from '../../../helpers/activeMenuItemPromotions';
 import {
   addGradeRequest,
@@ -42,11 +41,15 @@ import {
   updateGradeTagRequest,
 } from '../../../request';
 
+import { EmptyState } from '@grades/components/EvaluationDetail/components/EmptyState';
+import prefixPN from '@grades/helpers/prefixPN';
+
 export default function EvaluationList() {
   const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
   const [isDrawerOpened, setIsDrawerOpened] = useState(false);
   const scrollRef = useRef();
   const [store, render] = useStore();
+
   const form = useForm({ defaultValues: store.selectedGrade });
 
   const headerValues = useMemo(
@@ -96,6 +99,9 @@ export default function EvaluationList() {
       ...tag,
       scale: tag.scale.number,
     }));
+    if (store.selectedGrade.type === 'numeric') {
+      store.selectedGrade.scales = store.selectedGrade.scales.sort((a, b) => a.number - b.number);
+    }
     setIsDrawerOpened(true);
     render();
   }
