@@ -8,6 +8,11 @@ const WeekEventListStyles = createStyles((theme) => ({
     overflowY: 'auto',
     overflowX: 'hidden',
     height: 380,
+    '&::-webkit-scrollbar': {
+      display: 'none',
+    },
+    '-ms-overflow-style': 'none',
+    'scrollbar-width': 'none',
   },
 }));
 
