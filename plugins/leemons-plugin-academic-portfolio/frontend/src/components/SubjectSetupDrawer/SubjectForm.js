@@ -262,12 +262,8 @@ const SubjectForm = ({
                   control={control}
                   rules={{
                     required: formLabels?.requiredField,
-                    maxLength: {
-                      value: 3,
-                      message: formLabels?.validation?.internalIdMaxLength,
-                    },
                     pattern: {
-                      value: /^[0-9]+$/,
+                      value: /^[0-9a-zA-Z]+$/,
                       message: formLabels?.validation?.internalIdFormat,
                     },
                   }}
