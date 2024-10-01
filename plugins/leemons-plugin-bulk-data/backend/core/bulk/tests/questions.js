@@ -50,12 +50,15 @@ async function importQuestions(filePath) {
       if (answerFeedback?.length > 1) {
         question.hasAnswerFeedback = true;
         question.globalFeedback = null;
-      } else {
+      } else if (question.answers_feedback?.length) {
         question.hasAnswerFeedback = false;
         question.globalFeedback = {
           format: 'html',
           text: converter.makeHtml(question.answers_feedback),
         };
+      } else {
+        question.hasAnswerFeedback = false;
+        question.globalFeedback = null;
       }
 
       // ·····················································
@@ -105,7 +108,7 @@ async function importQuestions(filePath) {
                 value.text = { text: response, format: 'plain' };
               }
 
-              return { value };
+              return value;
             });
         } catch (e) {
           console.log('-- QUESTIONS IMPORT ERROR --');
@@ -161,6 +164,9 @@ async function importQuestions(filePath) {
       delete question.answers_images;
       delete question.answers_feedback_image;
       delete question.map_info;
+      delete question.question;
+      question.hasImageAnswers = question.withImages;
+      delete question.withImages;
 
       items[key] = question;
       questions.push(question);

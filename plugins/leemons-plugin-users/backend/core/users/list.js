@@ -1,5 +1,5 @@
-const _ = require('lodash');
 const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
+const _ = require('lodash');
 
 async function queryCenterRoles({ centers, ctx }) {
   const query = {};
@@ -70,11 +70,7 @@ async function queryUserAgents({ roles, disabled, ctx }) {
 
 async function list({ page, size, profiles, centers, disabled, ctx, sort, ...queries }) {
   const query = { ...queries };
-  let roles = null;
-
-  if (centers) {
-    roles = await queryCenterRoles({ centers, ctx });
-  }
+  let roles = await queryCenterRoles({ centers, ctx });
 
   if (profiles) {
     const profileRoles = await queryProfileRoles({ profiles, excludeProfiles: [], ctx });
