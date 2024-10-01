@@ -178,13 +178,9 @@ const DatasetForm = forwardRef(
       }
     }
 
-    async function checkForm() {
-      if (!canEdit || !dataset) {
-        return true;
-      }
-
-      if (!form.isLoaded()) {
-        return false;
+    async function getFormData() {
+      if (!canEdit || !dataset || !form.isLoaded()) {
+        return null;
       }
 
       let toSave = form.getValues();
@@ -193,7 +189,7 @@ const DatasetForm = forwardRef(
 
       if (requiredOnlyForMe.length === 0) {
         toSave = _.pickBy(toSave, (value) => !!value.value);
-        return handleSave(toSave, forceTargetId);
+        return toSave;
       }
 
       const readOnlyKeys = dataset.compileJsonSchema?.required.filter(
@@ -216,17 +212,35 @@ const DatasetForm = forwardRef(
 
       const hasErrors = errors.length > 0;
 
-      return !hasErrors || areOptional;
+      if (!hasErrors || areOptional) {
+        return toSave;
+      }
+
+      return null;
     }
 
-    async function checkFormAndSave(forceTargetId) {
-      const isValid = await checkForm();
+    async function checkForm() {
+      if (!canEdit || !dataset) {
+        return true;
+      }
 
-      if (!isValid) {
+      if (!form.isLoaded()) {
         return false;
       }
 
-      return handleSave(toSave, forceTargetId);
+      const formData = await getFormData();
+
+      return formData !== null;
+    }
+
+    async function checkFormAndSave(forceTargetId) {
+      const formData = await getFormData();
+
+      if (!formData) {
+        return false;
+      }
+
+      return handleSave(formData, forceTargetId);
     }
 
     useImperativeHandle(ref, () => ({
