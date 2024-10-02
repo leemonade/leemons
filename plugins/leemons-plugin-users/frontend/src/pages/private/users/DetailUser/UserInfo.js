@@ -1,17 +1,19 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { TLayout, Box, Stack, ImageLoader, ContextContainer } from '@bubbles-ui/components';
-import { USER_DETAIL_VIEWS, UserDetail as UserDetailSummary } from '@users/components/UserDetail';
+
 import { EnrollUserSummary } from '@academic-portfolio/components/EnrollUserSummary';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@users/helpers/prefixPN';
-import { getSessionCenter, getSessionProfile } from '@users/session';
-import { UserAgentsTags } from '@users/components/UserDetail/components/UserAgentsTags';
+import { TLayout, Box, Stack, ImageLoader, ContextContainer } from '@bubbles-ui/components';
 import { useRequestErrorMessage, useQuery as useQueryParams } from '@common';
 import { addErrorAlert } from '@layout/alert';
-import { updateUserImageRequest } from '@users/request';
 import compressImage from '@leebrary/helpers/compressImage';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import PropTypes from 'prop-types';
+
 import { UserDatasetSummary } from '@users/components/UserDataset/UserDatasetSummary';
+import { USER_DETAIL_VIEWS, UserDetail as UserDetailSummary } from '@users/components/UserDetail';
+import { UserAgentsTags } from '@users/components/UserDetail/components/UserAgentsTags';
+import prefixPN from '@users/helpers/prefixPN';
+import { updateUserImageRequest } from '@users/request';
+import { getSessionCenter, getSessionProfile, getSessionUserAgent } from '@users/session';
 
 function getViewMode(profile) {
   if (profile?.sysName === 'teacher') return USER_DETAIL_VIEWS.TEACHER;
@@ -29,6 +31,7 @@ function UserInfo({ session }) {
   const viewMode = getViewMode(profile);
   const userId = session?.id;
   const params = useQueryParams();
+  const userAgentId = getSessionUserAgent();
 
   // ····················································
   // HANDLERS
@@ -97,7 +100,7 @@ function UserInfo({ session }) {
                   isMyProfile
                 />
                 <UserDatasetSummary
-                  userAgentIds={userAgents.map(({ id }) => id)}
+                  userAgentIds={[userAgentId]}
                   openEditDrawer={!!params.editDataset}
                 />
               </ContextContainer>

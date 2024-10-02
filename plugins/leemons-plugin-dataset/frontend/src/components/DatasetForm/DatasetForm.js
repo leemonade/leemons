@@ -192,10 +192,6 @@ const DatasetForm = forwardRef(
         return toSave;
       }
 
-      const readOnlyKeys = dataset.compileJsonSchema?.required.filter(
-        (key) => !requiredOnlyForMe.includes(key)
-      );
-
       await form.submit();
 
       // Process form results
@@ -204,6 +200,10 @@ const DatasetForm = forwardRef(
       if (errors.length && !skipOptional) {
         return null;
       }
+
+      const readOnlyKeys = dataset.compileJsonSchema?.required.filter(
+        (key) => !requiredOnlyForMe.includes(key)
+      );
 
       const areOptional = areOptionalKeys({
         errors,
