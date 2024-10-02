@@ -200,7 +200,7 @@ async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
         level: question.level,
         withImages: booleanToYesNoAnswer(!!question.hasImageAnswers),
         tags: question.tags?.join(', '),
-        question: turndown.turndown(question.question ?? ''),
+        question: turndown.turndown(question.stem.text),
         clues: question.clues?.join('|'),
         questionImage,
       };

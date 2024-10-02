@@ -1,15 +1,18 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import PropTypes from 'prop-types';
-import { find, forEach, isNumber } from 'lodash';
+
 import { Alert, Box, HtmlText, Text } from '@bubbles-ui/components';
-import QuestionTitle from '../../QuestionTitle';
-import QuestionNoteClues from '../../QuestionNoteClues';
+import { find, forEach, isNumber } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { QuestionImage } from '../../../../../../../components/QuestionImage';
-import Responses from './Responses';
 import { getQuestionClues } from '../../../helpers/getQuestionClues';
-import UnansweredQuestionWarning from '../../UnansweredQuestionWarning';
 import { htmlToText } from '../../../helpers/htmlToText';
+import QuestionNoteClues from '../../QuestionNoteClues';
+import QuestionTitle from '../../QuestionTitle';
+import UnansweredQuestionWarning from '../../UnansweredQuestionWarning';
+
+import Responses from './Responses';
 
 export default function Index(props) {
   const { styles, saveQuestion, store, question, t, isLast, cx } = props;
@@ -43,8 +46,10 @@ export default function Index(props) {
   let explanation = null;
   if (store.viewMode) {
     showNotResponsedWarning = !allWithValues;
-    const text = htmlToText(question.globalFeedback?.text);
-    if (text) explanation = question.globalFeedback.text;
+    // Currently global feedback is mandatory for map questions, but some bulk tamplates map questions have no global feedback as they were created before this update.
+    if (question.globalFeedback?.text) {
+      explanation = htmlToText(question.globalFeedback.text);
+    }
   }
   return (
     <>

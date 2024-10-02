@@ -10,7 +10,7 @@
 
 const { MongoClient } = require('mongodb');
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/dev-db-test';
+const MONGO_URI = process.env.MONGO_URI;
 
 const client = new MongoClient(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -162,7 +162,7 @@ async function normalizeToNewFormat() {
       filter: { id: question.id },
       update: {
         $set: normalizeOldQuestions(question),
-        $unset: { properties: '', withImages: '' },
+        $unset: { properties: '', withImages: '', question: '' },
       },
     },
   }));
