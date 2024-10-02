@@ -1,24 +1,27 @@
 import React, { useRef } from 'react';
-import PropTypes from 'prop-types';
-import { cloneDeep, isArray } from 'lodash';
-import { useQueryClient } from '@tanstack/react-query';
+
 import {
   BaseDrawer,
   Stack,
   TotalLayoutStepContainer,
   TotalLayoutContainer,
 } from '@bubbles-ui/components';
-import { Header } from '@leebrary/components/AssetPickerDrawer/components/Header';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { Header } from '@leebrary/components/AssetPickerDrawer/components/Header';
+import { useQueryClient } from '@tanstack/react-query';
+import { cloneDeep, isArray } from 'lodash';
+import PropTypes from 'prop-types';
+
+import SubjectForm from './SubjectForm';
+
 import { useProgramDetail } from '@academic-portfolio/hooks';
+import { getProgramSubjectsKey } from '@academic-portfolio/hooks/keys/programSubjects';
 import {
   useCreateClass,
   useDeleteClass,
   useUpdateClass,
 } from '@academic-portfolio/hooks/mutations/useMutateClass';
-import { getProgramSubjectsKey } from '@academic-portfolio/hooks/keys/programSubjects';
 import { createSubjectRequest, updateSubjectRequest } from '@academic-portfolio/request';
-import SubjectForm from './SubjectForm';
 
 const INTERNAL_ID_IN_USE = 'INTERNAL_ID_IN_USE';
 
@@ -242,6 +245,7 @@ const SubjectSetupDrawer = ({
       }
 
       const classesToCreate = isEditing ? classesChanges.classesToCreate : classrooms;
+
       if (classesToCreate?.length && subjectResponse?.subject?.id) {
         await handleClassesCreation({
           classrooms: classesToCreate,

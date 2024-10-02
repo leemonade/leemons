@@ -14,7 +14,6 @@ import {
   ImageLoader,
   SearchInput,
   ActionButton,
-  LoadingOverlay,
   ContextContainer,
 } from '@bubbles-ui/components';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
@@ -36,14 +35,15 @@ import { BulkActionModal } from './components/BulkActionModal';
 
 import DisableUsersModal from '@users/components/DisableUsersModal';
 import EnableUsersModal from '@users/components/EnableUsersModal';
-import prefixPN from '@users/helpers/prefixPN';
+import { SelectCenter } from '@users/components/SelectCenter';
+import { SelectProfile } from '@users/components/SelectProfile';
+import { SetPasswordModal } from '@users/components/SetPasswordModal';
+import { UserAdminDrawer } from '@users/components/UserAdminDrawer';
 import UserDetailDrawer from '@users/components/UserDetailDrawer';
+import prefixPN from '@users/helpers/prefixPN';
+import { useIsSuperAdmin } from '@users/hooks';
 import activeUserAgent from '@users/request/activeUserAgent';
 import disableUserAgent from '@users/request/disableUserAgent';
-import { UserAdminDrawer } from '@users/components/UserAdminDrawer';
-import { SelectProfile } from '@users/components/SelectProfile';
-import { SelectCenter } from '@users/components/SelectCenter';
-import { SetPasswordModal } from '@users/components/SetPasswordModal';
 
 function ListUsers() {
   const [t] = useTranslateLoader(prefixPN('list_users'));
@@ -57,12 +57,14 @@ function ListUsers() {
   const history = useHistory();
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
+  const isSuperAdmin = useIsSuperAdmin();
+
   // ····················································
   // INIT DATA LOADING
 
   async function listUsers(searchQuery) {
     const query = {};
-    if (searchQuery ?? store.search) {
+    if (typeof searchQuery === 'string') {
       query.$or = [
         { name: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
         { surnames: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
@@ -443,9 +445,8 @@ function ListUsers() {
             </Box>
           }
         />
-        <TLayout.Content fullWidth>
+        <TLayout.Content fullWidth loading={store.loading}>
           <Box>
-            {store.loading ? <LoadingOverlay visible /> : null}
             <ContextContainer title={t('searchTitle')}>
               <ContextContainer direction="row">
                 <SelectCenter
@@ -464,7 +465,7 @@ function ListUsers() {
                   label={t('profileLabel')}
                   value={store.profile}
                   onChange={handleProfileChange}
-                  showAll={false}
+                  showAll={isSuperAdmin}
                 />
                 <Select
                   clearable={t('clearFilter')}
@@ -531,7 +532,7 @@ function ListUsers() {
               {!store.loading && store.pagination?.totalPages > 1 && (
                 <Stack fullWidth justifyContent="center">
                   <Pager
-                    page={store.pagination?.page || 0}
+                    page={(store.pagination?.page || 0) + 1}
                     totalPages={store.pagination?.totalPages || 0}
                     size={store.size}
                     withSize={true}

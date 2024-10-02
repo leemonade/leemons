@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { Controller, useForm } from 'react-hook-form';
+
 import {
   ContextContainer,
   createStyles,
@@ -7,7 +8,7 @@ import {
   NumberInput,
   Text,
 } from '@bubbles-ui/components';
-import { Controller, useForm } from 'react-hook-form';
+import PropTypes from 'prop-types';
 
 const useStyles = createStyles(() => ({
   table: {
@@ -30,7 +31,7 @@ const useStyles = createStyles(() => ({
   },
 }));
 
-const ClassroomsSetup = ({ onChange, value, formLabels }) => {
+const ClassroomsSetup = ({ onChange, value, formLabels, existentClassroomsAmount }) => {
   const { classes } = useStyles();
   const form = useForm({
     defaultValues: { classroomsAmount: 0 },
@@ -88,7 +89,7 @@ const ClassroomsSetup = ({ onChange, value, formLabels }) => {
         render={({ field }) => (
           <NumberInput
             {...field}
-            min={0}
+            min={existentClassroomsAmount ?? 0}
             label={formLabels?.numberOfClassrooms}
             customDesign
             sx={{ width: 120 }}
@@ -208,6 +209,7 @@ ClassroomsSetup.propTypes = {
   onChange: PropTypes.func.isRequired,
   value: PropTypes.array,
   formLabels: PropTypes.object,
+  existentClassroomsAmount: PropTypes.number,
 };
 
 export default ClassroomsSetup;

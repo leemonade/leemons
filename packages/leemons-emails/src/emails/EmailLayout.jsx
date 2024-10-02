@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+
 import {
   Body,
   Column,
@@ -16,6 +16,7 @@ import {
   Tailwind,
   Text,
 } from '@react-email/components';
+import PropTypes from 'prop-types';
 
 const IS_DEV_MODE = String(process?.env?.EMAIL_DEV) === 'true';
 const PLATFORM_NAME = '{{it.__platformName}}';
@@ -109,9 +110,20 @@ function EmailLayout({ locale, previewText, title, logoUrl, logoWidth, platformN
             </Container>
             <Hr className="border border-solid border-[#eaeaea] mt-[20px] mb-[30px] mx-0 w-full" />
             <Section>
+              <Row>
+                <Column>
+                  <Text className="text-[12px] mt-0 leading-4">Powered by:</Text>
+                </Column>
+              </Row>
               <Row className="mb-2 w-full">
                 <Column>
-                  <Img src={logoUrl} width="150" alt={platformName} />
+                  <Img
+                    src={
+                      'https://s3.eu-west-1.amazonaws.com/global-assets.leemons.io/logo_leemons_407d9548b9.png'
+                    }
+                    width="150"
+                    alt={'Leemons'}
+                  />
                 </Column>
                 <Column style={{ width: socialButtonsWidth }}>
                   <Section>

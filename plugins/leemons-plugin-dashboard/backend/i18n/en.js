@@ -41,4 +41,8 @@ module.exports = {
     speed: 'Speed:',
     programs: 'Registered programs',
   },
+  dashboardNotEnrolled: {
+    title: 'You are not enrolled in any program yet.',
+    description: 'Please contact your center administration.',
+  },
 };

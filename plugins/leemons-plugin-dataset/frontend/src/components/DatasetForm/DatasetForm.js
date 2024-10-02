@@ -178,14 +178,23 @@ const DatasetForm = forwardRef(
       }
     }
 
-    async function checkFormAndSave(forceTargetId) {
-      if (!canEdit || !dataset) {
-        return true;
+    async function getFormData() {
+      if (!canEdit || !dataset || !form.isLoaded()) {
+        return null;
       }
 
-      if (!form.isLoaded()) {
-        return false;
+      let toSave = form.getValues();
+
+      const requiredOnlyForMe = getRequiredKeysOnlyForMe({ dataset, profileId });
+
+      if (requiredOnlyForMe.length === 0) {
+        toSave = _.pickBy(toSave, (value) => !!value.value);
+        return toSave;
       }
+
+      const readOnlyKeys = dataset.compileJsonSchema?.required.filter(
+        (key) => !requiredOnlyForMe.includes(key)
+      );
 
       await form.submit();
 
@@ -196,23 +205,46 @@ const DatasetForm = forwardRef(
         return null;
       }
 
-      const readOnlyKeys = dataset.compileJsonSchema?.required.filter(
-        (key) => !getRequiredKeysOnlyForMe({ dataset, profileId }).includes(key)
-      );
-
       const areOptional = areOptionalKeys({
         errors,
         readOnlyKeys,
       });
 
-      if (errors.length && !areOptional) {
-        return false; // Invalid form
+      const hasErrors = errors.length > 0;
+
+      if (!hasErrors || areOptional) {
+        return toSave;
       }
 
-      return handleSave(form.getValues(), forceTargetId);
+      return null;
+    }
+
+    async function checkForm() {
+      if (!canEdit || !dataset) {
+        return true;
+      }
+
+      if (!form.isLoaded()) {
+        return false;
+      }
+
+      const formData = await getFormData();
+
+      return formData !== null;
+    }
+
+    async function checkFormAndSave(forceTargetId) {
+      const formData = await getFormData();
+
+      if (!formData) {
+        return false;
+      }
+
+      return handleSave(formData, forceTargetId);
     }
 
     useImperativeHandle(ref, () => ({
+      checkForm,
       checkFormAndSave,
     }));
 

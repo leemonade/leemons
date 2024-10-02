@@ -13,7 +13,7 @@ async function queryCenterRoles({ centers, ctx }) {
 
   // Remove the admin profile from the list if the deployment is not advanced or enterprise
   const deployment = await ctx.tx.call('deployment-manager.getDeployment');
-  if (!['advanced', 'enterprise'].includes(deployment.type)) {
+  if (!['basic', 'advanced', 'enterprise'].includes(deployment.type)) {
     const adminProfiles = await ctx.tx.db.Profiles.find({ sysName: ['admin', 'super'] })
       .select(['id'])
       .lean();

@@ -1,15 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Button, Container, Link, Text } from '@react-email/components';
+
 import EmailLayout from '@leemons/emails/src/emails/EmailLayout.jsx';
+import { Button, Container, Link, Text } from '@react-email/components';
+import PropTypes from 'prop-types';
 
 const IS_DEV_MODE = String(process?.env?.EMAIL_DEV) === 'true';
 const PLATFORM_NAME = '{{it.__platformName}}';
 
 const messages = {
   en: {
-    title: `Welcome to ${IS_DEV_MODE ? 'Leemons' : PLATFORM_NAME}!`,
-    actionText: 'Click on the following link to activate your account and start using Leemons:',
+    title: `Welcome to our virtual campus`,
+    actionText: 'Click on the following link to activate your account:',
     buttonText: 'Confirm Account',
     infoText: 'This link will expire in {{it.expDays}} days and can only be used once.',
     alternativeActionText:
@@ -20,9 +21,8 @@ const messages = {
     supportButtonText: 'Support Center',
   },
   es: {
-    title: `Te damos la bienvenida a ${IS_DEV_MODE ? 'Leemons' : PLATFORM_NAME}!`,
-    actionText:
-      'Haz click en el siguiente enlace para activar tu cuenta y comenzar a usar Leemons:',
+    title: `Te damos la bienvenida a nuestro campus virtual`,
+    actionText: 'Haz click en el siguiente enlace para activar tu cuenta:',
     buttonText: 'Confirmar cuenta',
     infoText: 'Este enlace caducará en {{it.expDays}} días y sólo puede utilizarse una vez.',
     alternativeActionText:
@@ -35,7 +35,7 @@ const messages = {
 };
 
 const Welcome = ({ locale = 'en', url = '{{it.url}}' } = {}) => {
-  const previewText = `[Leemons] ${messages[locale].title}`;
+  const previewText = `${messages[locale].title}`;
 
   return (
     <EmailLayout previewText={previewText} title={messages[locale].title} locale={locale}>

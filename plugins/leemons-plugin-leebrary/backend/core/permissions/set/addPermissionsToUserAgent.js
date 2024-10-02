@@ -46,7 +46,9 @@ async function addPermissionsToUserAgent({
     })
   ) {
     throw new LeemonsError(ctx, {
-      message: "You don't have permission to assign this role",
+      message: `You don't have permission to assign this role (assignerRole: ${JSON.stringify(
+        assignerRole
+      )}, assigneeRole: ${JSON.stringify(assigneeRole)}, newRole: ${JSON.stringify(role)})`,
       httpStatusCode: 401,
     });
   }

@@ -30,6 +30,7 @@ const schema = new mongoose.Schema(
     internalId: {
       type: String,
     },
+    // Not used in Academic Portfolio v2.0
     compiledInternalId: {
       type: String,
     },
