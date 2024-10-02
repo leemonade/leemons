@@ -34,13 +34,14 @@ async function getClassesPermissions({ assetsIds, withInfo, ctx }) {
       });
 
       classesInfo.forEach((klass) => {
+        const className =  !klass.groups || klass.groups?.isAlone
+        ? klass.subject.name
+        : `${klass.subject.name} - ${klass.groups.name}`;
         classesData[klass.id] = {
           id: klass.id,
           subject: klass.subject.id,
-          fullName:
-            !klass.groups || klass.groups?.isAlone
-              ? klass.subject.name
-              : `${klass.subject.name} - ${klass.groups.name}`,
+          name: className,
+          fullName: className,
           icon: klass.subject.icon,
           color: klass.color,
         };
