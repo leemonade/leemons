@@ -1,9 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+
 import { Box, HtmlText, ImageLoader, Radio, Stack, Text } from '@bubbles-ui/components';
-import { LeebraryImage } from '@leebrary/components';
 import { numberToEncodedLetter } from '@common';
+import { LeebraryImage } from '@leebrary/components';
 import { find } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { getQuestionClues } from '../../../helpers/getQuestionClues';
 import { htmlToText } from '../../../helpers/htmlToText';
 
@@ -68,7 +70,7 @@ export default function Responses(props) {
         if (text) explanation = choice.feedback.text;
       } else if (choice.isCorrect) {
         const text = question.globalFeedback?.text
-          ? htmlToText(question.globalFeedback?.text)
+          ? htmlToText(question.globalFeedback.text)
           : null;
         if (text) explanation = question.globalFeedback.text;
       }

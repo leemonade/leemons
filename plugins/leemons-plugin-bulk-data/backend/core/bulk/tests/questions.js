@@ -125,7 +125,7 @@ async function importQuestions(filePath) {
 
       if (question.type === 'map') {
         if (!isEmpty(question.questionImage)) {
-          question.mapProperties.image = question.questionImage;
+          question.mapProperties = { image: question.questionImage };
           delete question.questionImage;
         }
 
