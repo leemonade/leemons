@@ -104,15 +104,57 @@ async function list({ page, size, profiles, centers, disabled, ctx, sort, ...que
   if (userAgents) {
     const userAgentsByUser = _.keyBy(userAgents, 'user');
     const userAgentIds = _.map(result.items, (user) => userAgentsByUser[user.id].id);
-    const tags = await ctx.tx.call('common.tags.getValuesTags', {
-      type: 'users.user-agent',
-      values: userAgentIds,
-    });
+    let connections = [];
+
+    const [tags, hasAdminPermission] = await Promise.all([
+      ctx.tx.call('common.tags.getValuesTags', {
+        type: 'users.user-agent',
+        values: userAgentIds,
+      }),
+      // Check if the user has the "admin" permission and if so, add the "last connection" field
+      ctx.tx.call('users.auth.hasPermissionCTX', {
+        allowedPermissions: {
+          'users.users': {
+            actions: ['admin'],
+          },
+        },
+      }),
+    ]);
+
+    if (hasAdminPermission) {
+      connections = await ctx.tx.call('xapi.xapi.aggregate', {
+        pipeline: [
+          {
+            $match: {
+              type: 'log',
+              'statement.actor.account.name': { $in: userAgentIds },
+              'statement.object.id': { $regex: /^.*\/api\/view\/program$/ },
+            },
+          },
+          { $sort: { createdAt: -1 } },
+          {
+            $group: {
+              _id: '$statement.actor.account.name',
+              latestLog: { $first: '$$ROOT' },
+            },
+          },
+          { $replaceRoot: { newRoot: '$latestLog' } },
+        ],
+      });
+    }
+
     result.items = _.map(result.items, (user) => {
       const index = userAgentIds.indexOf(userAgentsByUser[user.id].id);
+      const lastConnection = connections.find((c) => {
+        const userAgent = userAgentsByUser[user.id];
+        console.log(c?.statement?.actor?.account?.name, userAgent.id);
+        return c?.statement?.actor?.account?.name === userAgent.id;
+      });
+      console.log(lastConnection);
       return {
         ...user,
         tags: tags[index],
+        lastConnection: lastConnection?.statement?.timestamp,
       };
     });
   }

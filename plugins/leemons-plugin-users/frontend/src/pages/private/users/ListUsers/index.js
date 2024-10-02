@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import {
   Badge,
   Box,
+  Text,
   Pager,
   Stack,
   Table,
@@ -362,16 +363,9 @@ function ListUsers() {
         accessor: 'email',
         className: 'text-left',
       },
-      /*
       {
-        Header: t('birthdayHeader'),
-        accessor: 'birthdate',
-        className: 'text-left',
-      },
-      */
-      {
-        Header: t('stateHeader'),
-        accessor: 'state',
+        Header: t('lastConnectionHeader'),
+        accessor: 'lastConnection',
         className: 'text-left',
       },
       {
@@ -408,6 +402,14 @@ function ListUsers() {
             />
           </Box>
         ),
+        lastConnection: item.lastConnection ? (
+          <LocaleDate
+            date={item.lastConnection}
+            options={{ dateStyle: 'medium', timeStyle: 'short' }}
+          />
+        ) : (
+          <Text>-</Text>
+        ),
         tags: (
           <Stack spacing={1}>
             {item.tags.map((tag) => (
@@ -415,8 +417,6 @@ function ListUsers() {
             ))}
           </Stack>
         ),
-        birthdate: <LocaleDate date={item.birthdate} />,
-        state: t(getUserStateKey(item.status)),
         actions: (
           <Box style={{ textAlign: 'right', width: '100%' }}>
             <ActionButton
