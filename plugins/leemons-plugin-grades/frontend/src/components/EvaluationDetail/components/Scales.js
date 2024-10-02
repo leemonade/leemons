@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { Controller } from 'react-hook-form';
+
 import { NumberInput, TableInput, TextInput, Stack, Box, Button } from '@bubbles-ui/components';
-import { find, forEach, isNil } from 'lodash';
 import { AddCircleIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@grades/helpers/prefixPN';
+import { find, forEach, isNil } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { EvaluationDetailStyles } from '../styles';
+
+import prefixPN from '@grades/helpers/prefixPN';
 
 const Scales = ({ selectData, form, onBeforeRemove, inUse }) => {
   const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
@@ -41,7 +44,6 @@ const Scales = ({ selectData, form, onBeforeRemove, inUse }) => {
       tableConfig.addLetterColumn = true;
     }
   }
-
   const tableInputConfig = {
     columns: [],
     labels: {
@@ -98,6 +100,9 @@ const Scales = ({ selectData, form, onBeforeRemove, inUse }) => {
       node: <TextInput />,
       rules: { required: t('errorTypeRequired') },
     },
+    cellStyle: {
+      paddingLeft: getPaddingLeft(type.value, inUse, isPercentage),
+    },
   });
 
   function _onBeforeRemove(e) {
@@ -127,7 +132,6 @@ const Scales = ({ selectData, form, onBeforeRemove, inUse }) => {
     (!newScale.letter || isNil(newScale.number) || !newScale.description);
   const tableButtonNumericDisabled =
     type.value === 'numeric' && (isNil(newScale.number) || !newScale.description);
-
   return (
     <Stack>
       <Stack direction="column" fullWidth>
@@ -201,6 +205,20 @@ const Scales = ({ selectData, form, onBeforeRemove, inUse }) => {
     </Stack>
   );
 };
+
+function getPaddingLeft(typeValue, inUse, isPercentage) {
+  if (typeValue === 'numeric') {
+    if (isPercentage) {
+      return inUse ? '24px' : '44px';
+    } else {
+      return inUse ? '64px' : '104px';
+    }
+  } else if (typeValue === 'letter') {
+    return inUse ? '0px' : '60px';
+  } else {
+    return '64px';
+  }
+}
 
 Scales.propTypes = {
   form: PropTypes.object.isRequired,
