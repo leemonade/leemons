@@ -1,3 +1,11 @@
+/**
+ * Script Name: Fix Tests Plugin Cover Images
+ * Description: This script updates the visibility of Test and Question Bank cover images in the 'v1::leebrary_assets' collection.
+ *              It sets assets related to tests and question banks to be public if they are not already.
+ *              This resolves an issue where cover images were not visible for these type of assets.
+ * Usage: Execute this script to ensure all relevant assets are publicly accessible in the database.
+ */
+
 const { MongoClient } = require('mongodb');
 
 const { MONGO_URI } = process.env;

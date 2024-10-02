@@ -91,14 +91,13 @@ export default function DetailQuestions({
       if (!formValues?.config?.randomQuestions?.selectedQuestions) {
         form.setValue('questions', []);
       }
-    } else if (formValues.config.customChoice === 'filteredQuestions') {
-      if (
-        formValues.config.filteredQuestions?.level ||
-        formValues.config.filteredQuestions?.categories
-      ) {
-        form.setValue('filters.level', formValues.config.filteredQuestions.level);
-        form.setValue('filters.categories', formValues.config.filteredQuestions.categories);
-      }
+    } else if (
+      (formValues.config.customChoice === 'filteredQuestions' &&
+        formValues.config.filteredQuestions?.level) ||
+      formValues.config.filteredQuestions?.categories
+    ) {
+      form.setValue('filters.level', formValues.config.filteredQuestions.level);
+      form.setValue('filters.categories', formValues.config.filteredQuestions.categories);
     }
   }, [questionBank, radioSelection]);
 
@@ -154,18 +153,19 @@ export default function DetailQuestions({
   const getNextButtonLabel = () => 'next';
 
   const generateQuestions = () => {
-    const totalQuestions = questionBank.questions;
+    const totalQuestions = questionBank?.questions;
     const questionsToSelect = nQuestionsSelector ?? nQuestions;
     const selectedQuestions = [];
 
     while (selectedQuestions.length < questionsToSelect) {
-      const randomIndex = Math.floor(Math.random() * totalQuestions?.length);
+      const randomIndex = Math.floor(Math.random() * (totalQuestions?.length ?? 0));
       const question = totalQuestions[randomIndex];
-      if (!selectedQuestions.map((q) => q.id).includes(question.id)) {
+      if (!selectedQuestions.some((q) => q.id === question.id)) {
         selectedQuestions.push(question);
       }
     }
-    const selectedQuestionIds = selectedQuestions.map((question) => question.id);
+
+    const selectedQuestionIds = selectedQuestions.map((q) => q.id);
     form.setValue('questions', selectedQuestionIds);
     setQuestionsFiltered(selectedQuestions);
     setRandomQuestions(selectedQuestions);

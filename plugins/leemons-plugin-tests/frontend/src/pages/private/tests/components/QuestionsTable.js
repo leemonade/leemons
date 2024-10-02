@@ -166,7 +166,7 @@ export default function QuestionsTable({
             ),
           }))
         : [],
-    [t, questions, value]
+    [t, questions, value, t2]
   );
 
   let tableComponent = <Table columns={tableHeaders} data={tableItems} />;

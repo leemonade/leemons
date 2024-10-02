@@ -10,6 +10,7 @@ import {
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { forEach, isNumber } from 'lodash';
 import { useLocation } from 'react-router-dom';
+import { QUESTION_TYPES } from '@tests/pages/private/questions-banks/questionConstants';
 import MonoResponse from './questions/MonoResponse';
 import Map from './questions/Map';
 import QuestionValue from './QuestionValue';
@@ -51,16 +52,16 @@ export default function Question(props) {
   }
 
   let child = null;
-  if (props.question.type === 'mono-response') {
+  if (props.question.type === QUESTION_TYPES.MONO_RESPONSE) {
     child = <MonoResponse {...props} isPreviewMode={previewMode} />;
   }
-  if (props.question.type === 'map') {
+  if (props.question.type === QUESTION_TYPES.MAP) {
     child = <Map {...props} isPreviewMode={previewMode} />;
 
     const currentResponses = store.questionResponses[props.question.id].properties?.responses || [];
 
     allSelectsUsed = true;
-    forEach(props.question.properties.markers.list, (response, i) => {
+    forEach(props.question.mapProperties.markers.list, (response, i) => {
       if (!currentResponses.includes(i)) {
         allSelectsUsed = false;
       }

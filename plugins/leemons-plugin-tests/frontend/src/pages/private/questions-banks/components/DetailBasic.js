@@ -12,12 +12,12 @@ import AssetFormInput from '@leebrary/components/AssetFormInput';
 export default function DetailBasic({
   form,
   t,
-  store,
+  savingAs,
   stepName,
   advancedConfig,
   scrollRef,
   onNext,
-  onSave,
+  onSaveDraft,
 }) {
   const formValues = form.watch();
 
@@ -31,7 +31,7 @@ export default function DetailBasic({
 
   const handleOnSave = async () => {
     if (await validate()) {
-      onSave();
+      onSaveDraft();
     }
   };
 
@@ -48,8 +48,8 @@ export default function DetailBasic({
                 <Button
                   variant="link"
                   onClick={handleOnSave}
-                  disabled={store.saving}
-                  loading={store.saving === 'draft'}
+                  disabled={savingAs}
+                  loading={savingAs === 'draft'}
                 >
                   {t('saveDraft')}
                 </Button>
@@ -58,8 +58,8 @@ export default function DetailBasic({
               <Button
                 rightIcon={<ChevRightIcon height={20} width={20} />}
                 onClick={handleOnNext}
-                disabled={store.saving}
-                loading={store.saving === 'publish'}
+                disabled={savingAs}
+                loading={savingAs === 'published'}
               >
                 {t('next')}
               </Button>
@@ -86,8 +86,8 @@ DetailBasic.propTypes = {
   form: PropTypes.object.isRequired,
   t: PropTypes.func.isRequired,
   onNext: PropTypes.func,
-  onSave: PropTypes.func,
-  store: PropTypes.object,
+  onSaveDraft: PropTypes.func,
+  savingAs: PropTypes.string,
   stepName: PropTypes.string,
   scrollRef: PropTypes.any,
 };

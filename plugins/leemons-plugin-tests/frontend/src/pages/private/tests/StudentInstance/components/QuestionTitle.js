@@ -21,7 +21,7 @@ export default function QuestionTitle(props) {
     <Box className={classNameQuestionTitle}>
       <Box className={styles.questionTitleText}>
         <Text size={store.viewMode ? 'sm' : 'lg'} role="productive" color="primary" strong>
-          {props.index + 1}. {htmlToText(question.question)}
+          {props.index + 1}. {htmlToText(question.stem.text)}
         </Text>
       </Box>
       {store.embedded && store.viewMode ? (
