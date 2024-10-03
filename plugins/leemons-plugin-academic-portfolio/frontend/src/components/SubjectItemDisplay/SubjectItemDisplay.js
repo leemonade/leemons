@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
+
 import { AvatarSubject, Box, Text, TextClamp } from '@bubbles-ui/components';
-import { isArray } from 'lodash';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { SubjectItemDisplayStyles } from './SubjectItemDisplay.styles';
+import { isArray } from 'lodash';
+
+import { getMultiSubjectData } from '../../helpers/getMultiSubjectData';
 import { useProgramDetail, useSubjects } from '../../hooks';
+
 import {
   SUBJECTITEMSDISPLAY_DEFAULT_PROPS,
   SUBJECTITEMSDISPLAY_PROP_TYPES,
 } from './SubjectItemDisplay.constants';
-import { getMultiSubjectData } from '../../helpers/getMultiSubjectData';
+import { SubjectItemDisplayStyles } from './SubjectItemDisplay.styles';
+
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
 
 const SubjectItemDisplay = ({ subjectsIds, programId, avatarCustomSize }) => {
   const [t] = useTranslateLoader(prefixPN('userClassesSwiperWidget'));
@@ -68,6 +72,7 @@ const SubjectItemDisplay = ({ subjectsIds, programId, avatarCustomSize }) => {
           isMultiSubject={isMultiSubjectCase}
           icon={subjectData?.icon}
           customSize={avatarCustomSize}
+          name={subjectData?.name}
         />
       )}
       <Box className={classes.textWrapper}>
