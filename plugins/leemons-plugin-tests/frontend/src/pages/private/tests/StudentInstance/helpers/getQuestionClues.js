@@ -10,8 +10,9 @@
  * `ln ../../../../frontend/src/pages/private/tests/StudentInstance/helpers/getQuestionClues.js`
  */
 
-const { QUESTION_TYPES } = require('@tests/pages/private/questions-banks/questionConstants');
 const { forEach, isNumber, isString, filter, isArray } = require('lodash');
+
+const { QUESTION_TYPES } = require('@tests/pages/private/questions-banks/questionConstants');
 
 function getQuestionClues(question, types, config) {
   let clues = [];
@@ -19,31 +20,31 @@ function getQuestionClues(question, types, config) {
   const notes = [];
 
   if (question.type === QUESTION_TYPES.MAP) {
-    const responsesIndexsToHide = [];
+    const responsesIndicesToHide = [];
     forEach(question.mapProperties.markers.list, (response, index) => {
       if (response.hideOnHelp) {
-        responsesIndexsToHide.push(index);
+        responsesIndicesToHide.push(index);
       }
     });
-    if (responsesIndexsToHide.length) {
+    if (responsesIndicesToHide.length) {
       hideResponses.push({
         type: 'hide-response',
-        indexs: responsesIndexsToHide,
+        indexs: responsesIndicesToHide, // TODO update map responses to use the correct word here, it can be very misleading
       });
     }
   }
 
   if (question.type === QUESTION_TYPES.MONO_RESPONSE) {
-    const responsesIndexsToHide = [];
+    const responsesIndicesToHide = [];
     forEach(question.choices, (choice, index) => {
       if (choice.hideOnHelp) {
-        responsesIndexsToHide.push(index);
+        responsesIndicesToHide.push(index);
       }
     });
-    if (responsesIndexsToHide.length) {
+    if (responsesIndicesToHide.length) {
       hideResponses.push({
         type: 'hide-response',
-        indexs: responsesIndexsToHide,
+        indices: responsesIndicesToHide,
       });
     }
   }

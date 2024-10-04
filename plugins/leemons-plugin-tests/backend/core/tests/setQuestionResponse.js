@@ -1,10 +1,11 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
+const { LeemonsError } = require('@leemons/error');
 const dayjs = require('dayjs');
 const duration = require('dayjs/plugin/duration');
-const { LeemonsError } = require('@leemons/error');
-const { findQuestionResponses } = require('./findQuestionResponses');
+const _ = require('lodash');
+
 const { calculateUserAgentInstanceNote } = require('./calculateUserAgentInstanceNote');
+const { findQuestionResponses } = require('./findQuestionResponses');
 
 dayjs.extend(duration);
 
@@ -116,7 +117,7 @@ async function setQuestionResponse({ data, ctx }) {
     },
   });
 
-  return result;
+  return finished ? result : _.omit(result, ['status', 'points']);
 }
 
 module.exports = { setQuestionResponse };

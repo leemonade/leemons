@@ -1,7 +1,9 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { filter } from 'lodash';
+
 import { Alert, Box } from '@bubbles-ui/components';
+import { filter } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { getQuestionClues } from '../helpers/getQuestionClues';
 
 export default function QuestionNoteClues(props) {

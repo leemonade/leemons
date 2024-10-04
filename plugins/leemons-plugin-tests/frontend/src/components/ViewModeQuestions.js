@@ -1,11 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@tests/helpers/prefixPN';
+
 import { useStore } from '@common';
-import { TestStyles } from '../pages/private/tests/StudentInstance/TestStyles.style';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import PropTypes from 'prop-types';
+
 import { StudentInstanceStyles } from '../pages/private/tests/StudentInstance/StudentInstance.style';
+import { TestStyles } from '../pages/private/tests/StudentInstance/TestStyles.style';
 import QuestionList from '../pages/private/tests/StudentInstance/components/QuestionList';
+
+import prefixPN from '@tests/helpers/prefixPN';
 
 export default function ViewModeQuestions({ viewMode = true, store: cStore, onReturn }) {
   const [t, translations] = useTranslateLoader(prefixPN('studentInstance'));
@@ -66,4 +69,5 @@ export default function ViewModeQuestions({ viewMode = true, store: cStore, onRe
 ViewModeQuestions.propTypes = {
   store: PropTypes.any,
   onReturn: PropTypes.func,
+  viewMode: PropTypes.bool,
 };

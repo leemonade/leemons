@@ -68,6 +68,7 @@ module.exports = {
     needImages: 'Answers must have images',
     needExplanationAndResponse: 'All answers require a text and an explanation',
     needResponse: 'Answers must have a text',
+    needsResponse: 'Response is required',
     needExplanation: 'All answers require an explanation',
     responsesDescription:
       'First, add the answers, then select the correct one by clicking on the circle.',
@@ -86,7 +87,8 @@ module.exports = {
     cluesDescription:
       'You can give hints to students providing information that facilitates the memory retrieval task.',
     cluesRequired: 'Field required',
-    hasCluesLabel: 'Has clues (3 answers min.)',
+    hasCluesLabelWithMinResponses: 'With clues (minimum 3 responses)',
+    hasCluesLabel: 'With clues',
     imageLabel: 'Image',
     saveImage: 'Save image',
     addImage: 'Add image',
@@ -94,6 +96,7 @@ module.exports = {
     captionAltPlaceholder: 'Add the image text or alt text here',
     saveResponse: 'Save response',
     monoResponse: 'Mono response',
+    trueFalse: 'T/F',
     map: 'Map',
     mapLabel: 'Map',
     addMap: 'Add map',
@@ -117,6 +120,16 @@ module.exports = {
     hasCoverLabel: 'Feature image',
     hideOptionNoRightAnswer: 'You must select the right answer first',
     headerTitlePlaceholder: 'Questions bank title',
+    cluesCopy:
+      'You can give hints to students providing information that facilitates the memory retrieval task.',
+    questionLabels: {
+      trueFalse: {
+        true: 'True',
+        false: 'False',
+        type: 'T/F',
+        needsResponse: 'Response is required',
+      },
+    },
   },
   questionImageModal: {
     createNumbering: 'Create numbering',
@@ -295,6 +308,7 @@ module.exports = {
     duplicated: 'Duplicated',
     simpleQuestion: 'Simple question',
     map: 'Map',
+    trueFalse: 'T/F',
     hints: 'Hints',
     yes: 'Yes',
     no: 'No',

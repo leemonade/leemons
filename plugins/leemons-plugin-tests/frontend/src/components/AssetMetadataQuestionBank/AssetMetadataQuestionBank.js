@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from 'react';
+
 import { Box, Text } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@tests/helpers/prefixPN';
 import { capitalize } from 'lodash';
-import { AssetMetadataQuestionBankStyles } from './AssetMetadataQuestionBank.styles';
+
+import { QuestionBankIcon } from '../Icons/QuestionBankIcon';
+
 import {
   ASSET_METADATA_QUESTION_BANK_DEFAULT_PROPS,
   ASSET_METADATA_QUESTION_BANK_PROP_TYPES,
 } from './AssetMetadataQuestionBank.constants';
-import { QuestionBankIcon } from '../Icons/QuestionBankIcon';
+import { AssetMetadataQuestionBankStyles } from './AssetMetadataQuestionBank.styles';
+
+import prefixPN from '@tests/helpers/prefixPN';
 
 const AssetMetadataQuestionBank = ({ metadata }) => {
   const [t] = useTranslateLoader(prefixPN('testsCard'));
@@ -21,12 +25,14 @@ const AssetMetadataQuestionBank = ({ metadata }) => {
     const cuestionsNumber = Array.isArray(questionsTest) ? questionsTest.length : 0;
     let singleAnsWers = 0;
     let mapAnswers = 0;
+    let trueFalseAnswers = 0;
     let hasHints = false;
     let categoriesStrigified = '';
     if (Array.isArray(questionsTest) && questionsTest.length >= 1) {
       questionsTest.forEach((question) => {
         if (question.type === 'mono-response') singleAnsWers += 1;
         if (question.type === 'map') mapAnswers += 1;
+        if (question.type === 'true-false') trueFalseAnswers += 1;
         if (question.clues && question.clues.length) hasHints = true;
       });
     }
@@ -40,6 +46,7 @@ const AssetMetadataQuestionBank = ({ metadata }) => {
       cuestionsNumber,
       singleAnsWers,
       mapAnswers,
+      trueFalseAnswers,
       hasHints,
       categoriesStrigified,
     };
@@ -71,6 +78,10 @@ const AssetMetadataQuestionBank = ({ metadata }) => {
         <Box>
           <Text className={classes.title}>{`${t('map')}: `}</Text>
           <Text className={classes.value}>{fields.mapAnswers}</Text>
+        </Box>
+        <Box>
+          <Text className={classes.title}>{`${t('trueFalse')}: `}</Text>
+          <Text className={classes.value}>{fields.trueFalseAnswers}</Text>
         </Box>
         <Box>
           <Text className={classes.title}>{`${t('hints')}: `}</Text>
