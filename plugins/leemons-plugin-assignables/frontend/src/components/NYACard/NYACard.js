@@ -1,25 +1,28 @@
 import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
-import dayjs from 'dayjs';
-import { Box, ImageLoader } from '@bubbles-ui/components';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
-import { LocaleRelativeTime, unflatten, useApi, useLocale } from '@common';
-import _, { get } from 'lodash';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { Link } from 'react-router-dom';
+
 import { useIsTeacher } from '@academic-portfolio/hooks';
+import { Box, ImageLoader } from '@bubbles-ui/components';
+import { LocaleRelativeTime, unflatten, useApi, useLocale } from '@common';
 import { useComunica } from '@comunica/context';
+import prepareAsset from '@leebrary/helpers/prepareAsset';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import dayjs from 'dayjs';
+import _, { get } from 'lodash';
+import PropTypes from 'prop-types';
+
 import getClassData from '../../helpers/getClassData';
 import prefixPN from '../../helpers/prefixPN';
 import getStatus from '../Details/components/UsersList/helpers/getStatus';
-import { NYACardCover } from './NYACardCover';
-import { NYACardStyles } from './NYACard.styles';
-import { NYACardBody } from './NYCardBody';
-import { NYACardFooter } from './NYACardFooter';
-import { NYACardSkeleton } from './NYACardSkeleton';
-import { NYACARD_PROP_TYPES, NYACARD_DEFAULT_PROPS } from './NYACard.constants';
 import { EvaluationCard } from '../EvaluationCard';
 import { EvaluationCardSkeleton } from '../EvaluationCard/EvaluationCardSkeleton/EvaluationCardSkeleton';
+
+import { NYACARD_PROP_TYPES, NYACARD_DEFAULT_PROPS } from './NYACard.constants';
+import { NYACardStyles } from './NYACard.styles';
+import { NYACardCover } from './NYACardCover';
+import { NYACardFooter } from './NYACardFooter';
+import { NYACardSkeleton } from './NYACardSkeleton';
+import { NYACardBody } from './NYCardBody';
 
 function capitalizeFirstLetter(str) {
   return `${str[0].toUpperCase()}${str.substring(1)}`;
@@ -471,7 +474,6 @@ const NYACard = ({
         </Box>
       </Link>
     );
-
   return (
     <>
       <LinkContainer disabled={!clickable} to={preparedInstance?.url}>
@@ -518,12 +520,12 @@ const NYACard = ({
                 >
                   <ImageLoader
                     style={{
-                      width: 24,
-                      height: 24,
+                      width: 16,
+                      height: 16,
                       position: 'relative',
                     }}
-                    width={24}
-                    height={24}
+                    width={16}
+                    height={16}
                     src={preparedInstance?.assignable?.roleDetails?.icon}
                   />
                 </Box>
