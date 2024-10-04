@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
+
 import { Box, Text, ImageLoader } from '@bubbles-ui/components';
-import { Link } from 'react-router-dom';
-import { OpenIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@tests/helpers/prefixPN';
 import { capitalize } from 'lodash';
-import { AssetMetadataTestStyles } from './AssetMetadataTest.styles';
+
+import { getQuestionBankRequest } from '../../request';
+
 import {
   ASSET_METADATA_TEST_DEFAULT_PROPS,
   ASSET_METADATA_TEST_PROP_TYPES,
 } from './AssetMetadataTest.constants';
-import { getQuestionBankRequest } from '../../request';
+import { AssetMetadataTestStyles } from './AssetMetadataTest.styles';
+
+import prefixPN from '@tests/helpers/prefixPN';
+import { QUESTION_TYPES } from '@tests/pages/private/questions-banks/questionConstants';
 
 const AssetMetadataTest = ({ metadata, canEdit }) => {
   const [t] = useTranslateLoader(prefixPN('testsCard'));
@@ -38,12 +41,14 @@ const AssetMetadataTest = ({ metadata, canEdit }) => {
     const cuestionsNumber = Array.isArray(questionsTest) ? questionsTest.length : 0;
     let singleAnsWers = 0;
     let mapAnswers = 0;
+    let trueFalseAnswers = 0;
     let hasHints = false;
     let categoriesStrigified = '';
     if (Array.isArray(questionsTest) && questionsTest.length >= 1) {
       questionsTest.forEach((question) => {
-        if (question.type === 'mono-response') singleAnsWers += 1;
-        if (question.type === 'map') mapAnswers += 1;
+        if (question.type === QUESTION_TYPES.MONO_RESPONSE) singleAnsWers += 1;
+        if (question.type === QUESTION_TYPES.MAP) mapAnswers += 1;
+        if (question.type === QUESTION_TYPES.TRUE_FALSE) trueFalseAnswers += 1;
         if (question.clues && question.clues.length) hasHints = true;
       });
     }
@@ -58,6 +63,7 @@ const AssetMetadataTest = ({ metadata, canEdit }) => {
       cuestionsNumber,
       singleAnsWers,
       mapAnswers,
+      trueFalseAnswers,
       hasHints,
       categoriesStrigified,
     };
@@ -104,6 +110,10 @@ const AssetMetadataTest = ({ metadata, canEdit }) => {
         <Box>
           <Text className={classes.title}>{`${t('map')}: `}</Text>
           <Text className={classes.value}>{fields.mapAnswers}</Text>
+        </Box>
+        <Box>
+          <Text className={classes.title}>{`${t('trueFalse')}: `}</Text>
+          <Text className={classes.value}>{fields.trueFalseAnswers}</Text>
         </Box>
         <Box>
           <Text className={classes.title}>{`${t('hints')}: `}</Text>
