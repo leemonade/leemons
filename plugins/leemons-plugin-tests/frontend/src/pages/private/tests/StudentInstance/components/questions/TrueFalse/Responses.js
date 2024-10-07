@@ -22,19 +22,43 @@ function Responses(props) {
     render();
   }
 
-  // TODO Paola: Integrate viewMode or however it is called
+  const getAnswerStyles = (theme, choiceValue) => {
+    const chosenValue = store.questionResponses[question.id].properties.response;
+    const isSelected = chosenValue === choiceValue;
+
+    if (store.viewMode) {
+      if (isSelected) {
+        return {
+          border: `2px solid ${theme.other.global.content.color.tertiary.default}`,
+        };
+      } else {
+        return {
+          border: `1px solid${theme.other.global.border.color.line.subtle}`,
+        };
+      }
+    }
+
+    if (isSelected) {
+      return {
+        border: `2px solid ${theme.other.global.content.color.tertiary.default}`,
+      };
+    }
+
+    return {
+      border: `1px solid${theme.other.global.border.color.line.subtle}`,
+    };
+  };
 
   return (
     <Stack fullWidth justifyContent="space-between" alignItems="center" gap={6}>
       <Box
         className={classes.button}
         sx={(theme) => ({
-          border:
-            store.questionResponses?.[question.id]?.properties?.response === true
-              ? `2px solid ${theme.other.global.content.color.tertiary.default}`
-              : `1px solid${theme.other.global.border.color.line.subtle}`,
+          ...getAnswerStyles(theme, true),
         })}
-        onClick={() => markResponse(true)}
+        onClick={() => {
+          if (!store.viewMode) markResponse(true);
+        }}
       >
         <Box>🌎 VERDADERO</Box>
       </Box>
@@ -42,12 +66,11 @@ function Responses(props) {
       <Box
         className={classes.button}
         sx={(theme) => ({
-          border:
-            store.questionResponses?.[question.id]?.properties?.response === false
-              ? `2px solid ${theme.other.global.content.color.tertiary.default}`
-              : `1px solid${theme.other.global.border.color.line.subtle}`,
+          ...getAnswerStyles(theme, false),
         })}
-        onClick={() => markResponse(false)}
+        onClick={() => {
+          if (!store.viewMode) markResponse(false);
+        }}
       >
         <Box>🌎 FALSO</Box>
       </Box>
@@ -66,6 +89,7 @@ Responses.propTypes = {
   nextStep: PropTypes.func,
   isFirstStep: PropTypes.bool,
   render: PropTypes.func,
+  isPreviewMode: PropTypes.bool,
 };
 
 export default Responses;
