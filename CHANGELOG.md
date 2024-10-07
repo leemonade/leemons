@@ -1,5 +1,34 @@
 # Changelog
 
+## [1.7.0](https://github.com/leemonade/leemons/compare/1.6.0...1.7.0) (2024-10-04)
+
+
+### Features
+
+* **academic-portfolio:** Allow subject internal ids to be alphanumeric ([bcf7367](https://github.com/leemonade/leemons/commit/bcf7367c2e6285655dc4e36523a16d205f997b24)), closes [#567](https://github.com/leemonade/leemons/issues/567)
+* **communities:** Added `Communities` functionality ([636706e](https://github.com/leemonade/leemons/commit/636706e0c0172bfac3d5878f5b7bb223c270c814)), closes [#548](https://github.com/leemonade/leemons/issues/548)
+* **dashboard:** Removed redirect from MainDashboard to ClassDashboard ([856a517](https://github.com/leemonade/leemons/commit/856a51730103b55abdc4b9c38db6d8cd9a7c4f27)), closes [#553](https://github.com/leemonade/leemons/issues/553)
+* **users:** Add super admin check and search userAgents by emails functionality ([09d0d75](https://github.com/leemonade/leemons/commit/09d0d75d393c9f01bfce612c4bef0653a93444ae)), closes [#562](https://github.com/leemonade/leemons/issues/562)
+
+
+### Bug Fixes
+
+* **assignables:** Added missing parenthesis in sendReminder ([998498d](https://github.com/leemonade/leemons/commit/998498dde41c090efb69654e21549549a13407b8)), closes [#571](https://github.com/leemonade/leemons/issues/571)
+* **calendar:** Error was thrown on deployments without regional calendar ([a9df3ba](https://github.com/leemonade/leemons/commit/a9df3ba05cf2c82b8a071557bf4a11efed6893ab)), closes [#554](https://github.com/leemonade/leemons/issues/554)
+* **calendar:** Prevent throwing when event permissions already exist ([feb706e](https://github.com/leemonade/leemons/commit/feb706e3a7fe54f1f436e0e83870bf4d72ede103)), closes [#581](https://github.com/leemonade/leemons/issues/581)
+* **calendar:** Sort events by start date ([211913d](https://github.com/leemonade/leemons/commit/211913ddf2a3da30f0425fdc7b9ed87b0561bc95)), closes [#579](https://github.com/leemonade/leemons/issues/579)
+* **calendar:** Use AvatarSubject as event icon fallback for class events ([3d6872c](https://github.com/leemonade/leemons/commit/3d6872cc24875baf68047526129f9ea1a0738003)), closes [#578](https://github.com/leemonade/leemons/issues/578)
+* **cognito:** Search users email ignoring casing ([ab4c4b0](https://github.com/leemonade/leemons/commit/ab4c4b0fd15c1662dfd6cbcaf3fcd9a5c8d99b49)), closes [#559](https://github.com/leemonade/leemons/issues/559)
+* **dashboard:** Added empty state when user is not enrolled in a program ([cef03af](https://github.com/leemonade/leemons/commit/cef03affd74af74c2050f77d7e8dd2a1b3674dca)), closes [#545](https://github.com/leemonade/leemons/issues/545)
+* **dataset-form:** Handle required fields specific to profile ([8d9ccb4](https://github.com/leemonade/leemons/commit/8d9ccb4566ce265cc8d82ddc5c8e47eb1dd64e43)), closes [#564](https://github.com/leemonade/leemons/issues/564)
+* **dataset:** Created a new getFormData function and update checkForm ([316c60e](https://github.com/leemonade/leemons/commit/316c60ec65a9558d332abf6210bf4084b7fc2cfd))
+* **dataset:** Resolve issue with item removal in DatasetTable ([5a9dea5](https://github.com/leemonade/leemons/commit/5a9dea5f063c4e31c26fb0f006548bff0ff56382)), closes [#563](https://github.com/leemonade/leemons/issues/563)
+* **users:** Adjust Pager to avoid ending in the wrong or blank page ([76b4197](https://github.com/leemonade/leemons/commit/76b419725d893927e242646f7dd82c68a55b0790)), closes [#565](https://github.com/leemonade/leemons/issues/565)
+* **users:** Allow show `admins` profiles on users list ([fb76b11](https://github.com/leemonade/leemons/commit/fb76b1159d856c5d52eb13c0fce5aa9d7bf7c08c))
+* **users:** Escape email inside the regex validating provider's email ([5baf35e](https://github.com/leemonade/leemons/commit/5baf35e15c7874da0e89afdf29d2412339ef96b0)), closes [#561](https://github.com/leemonade/leemons/issues/561)
+* **users:** Improve email handling and search functionality ([ede9f20](https://github.com/leemonade/leemons/commit/ede9f2056704f68f36d4d31e1fd2e71edc0b0085)), closes [#568](https://github.com/leemonade/leemons/issues/568)
+* Wrong behavior on SubjectAvatar ([58e3af4](https://github.com/leemonade/leemons/commit/58e3af4e82810d4fa65b115d72e52a508e6436dd)), closes [#558](https://github.com/leemonade/leemons/issues/558)
+
 ## [1.6.0](https://github.com/leemonade/leemons/compare/1.5.0...1.6.0) (2024-09-26)
 
 ### ⚠ BREAKING CHANGES
