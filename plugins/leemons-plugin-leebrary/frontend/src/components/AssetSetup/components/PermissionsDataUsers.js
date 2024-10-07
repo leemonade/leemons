@@ -1,8 +1,9 @@
+import React, { useMemo } from 'react';
+
 import { ContextContainer, Select, TableInput, UserDisplayItem } from '@bubbles-ui/components';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import _, { find, isEmpty, isNil } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useMemo } from 'react';
 
 const SelectAgents = ({ usersData, onlyForTeachers, userProfiles, ...props }) => {
   const profilesHandler = useMemo(() => {
@@ -106,9 +107,12 @@ const PermissionsDataUsers = ({
 
   // ··············································································
   // RENDER
-
   return (
-    <ContextContainer padded={false} spacing={0}>
+    <ContextContainer
+      padded={false}
+      spacing={0}
+      style={!editMode ? 'thead::after' : { display: 'block' }}
+    >
       {!isEmpty(USERS_COLUMNS) && !isEmpty(USER_LABELS) && (
         <TableInput
           data={value}
