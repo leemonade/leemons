@@ -254,8 +254,6 @@ export default function Result() {
     [t]
   );
 
-  console.log('store.questionResponses', store.questionResponses);
-
   const tableData = React.useMemo(
     () =>
       store.questions

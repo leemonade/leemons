@@ -181,4 +181,6 @@ Question.propTypes = {
   question: PropTypes.any,
   render: PropTypes.func,
   index: PropTypes.number,
+  isLast: PropTypes.bool,
+  scrollRef: PropTypes.any,
 };
