@@ -181,6 +181,9 @@ module.exports = {
         url: {
           required: 'URL is required',
         },
+        urlMetadata: {
+          warning: 'Unable to retrieve the URL data. You will have to enter it manually.',
+        },
         file: {
           required: 'File is required',
           rejected: 'File was rejected',
