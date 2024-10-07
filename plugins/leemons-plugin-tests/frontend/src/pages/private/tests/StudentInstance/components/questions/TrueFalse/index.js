@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import React from 'react';
 
 import { Box } from '@bubbles-ui/components';
@@ -10,6 +9,7 @@ import QuestionTitle from '../../QuestionTitle';
 import UnansweredQuestionWarning from '../../UnansweredQuestionWarning';
 
 import Responses from './Responses';
+import ViewModeResponses from './ViewModeResponses';
 
 export default function Index(props) {
   const { styles, store, question } = props;
@@ -28,7 +28,7 @@ export default function Index(props) {
         <QuestionNoteClues {...props} />
 
         <QuestionImage {...props} style={2} />
-        <Responses {...props} />
+        {!store.viewMode ? <Responses {...props} /> : <ViewModeResponses {...props} />}
       </Box>
     </>
   );

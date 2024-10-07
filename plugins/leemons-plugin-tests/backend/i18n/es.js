@@ -521,5 +521,9 @@ module.exports = {
     returnToTable: 'Volver al listado',
     nextActivity: 'Siguiente actividad',
     goToModule: 'Dashboard del modulo',
+    responseDetail: {
+      correct: 'Correcto',
+      incorrect: 'Incorrecto',
+    },
   },
 };
