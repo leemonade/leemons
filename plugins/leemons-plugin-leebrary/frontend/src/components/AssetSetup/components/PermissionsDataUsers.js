@@ -111,7 +111,11 @@ const PermissionsDataUsers = ({
     <ContextContainer
       padded={false}
       spacing={0}
-      style={!editMode ? 'thead::after' : { display: 'block' }}
+      sx={() => ({
+        thead: {
+          display: editMode ? 'none' : 'block',
+        },
+      })}
     >
       {!isEmpty(USERS_COLUMNS) && !isEmpty(USER_LABELS) && (
         <TableInput

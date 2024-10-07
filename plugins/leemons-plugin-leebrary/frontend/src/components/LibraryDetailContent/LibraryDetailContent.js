@@ -119,7 +119,7 @@ const LibraryDetailContent = ({
   if (variant === 'embedded' || isEmbedded) {
     return DetailContentComponent;
   }
-  console.log('canAccessData', canAccessData);
+
   return (
     <Tabs
       fullHeight

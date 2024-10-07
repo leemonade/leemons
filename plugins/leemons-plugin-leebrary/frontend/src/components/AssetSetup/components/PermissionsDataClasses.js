@@ -216,7 +216,11 @@ const PermissionsDataClasses = ({
   return (
     <ContextContainer
       spacing={editMode ? 0 : 5}
-      style={!editMode ? 'thead::after' : { display: 'block' }}
+      sx={() => ({
+        thead: {
+          display: editMode ? 'none' : 'block',
+        },
+      })}
     >
       {!editMode ? (
         <>
