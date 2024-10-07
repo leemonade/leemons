@@ -9,7 +9,12 @@ module.exports = function generateAliases(dir, plugins) {
   return plugins.reduce(
     (obj, plugin) => {
       const pluginPath = path.resolve(dir, 'plugins', plugin.name);
-      const targetDir = fs.existsSync(path.join(pluginPath, 'dist')) ? 'dist' : 'src';
+      let targetDir = 'src';
+
+      // If the plugin is a backend plugin, we need to point to the dist folder
+      if (!plugin.name.includes('frontend') && fs.existsSync(path.join(pluginPath, 'dist'))) {
+        targetDir = 'dist';
+      }
 
       return {
         ...obj,
