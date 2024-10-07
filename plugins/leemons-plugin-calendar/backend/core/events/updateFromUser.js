@@ -93,10 +93,26 @@ async function updateFromUser({ id, data, ownerUserAgentId, ctx }) {
       _.forEach(userSession.userAgents, ({ id: uId }) => {
         if (data.users.includes(uId)) {
           data.users.splice(data.users.indexOf(uId), 1);
+          }
+          });
+          */
+      try {
+        await grantAccessUserAgentToEvent({
+          id,
+          userAgentId: data.users,
+          actionName: ['view'],
+          ctx,
+        });
+      } catch (error) {
+        if (
+          error?.type === 'LEEMONS_ERROR' &&
+          error?.message.includes('You have already been assigned this custom permit')
+        ) {
+          console.error('Attempt to duplicate custom permission while updating event', error);
+        } else {
+          throw error;
         }
-      });
-       */
-      await grantAccessUserAgentToEvent({ id, userAgentId: data.users, actionName: ['view'], ctx });
+      }
     }
 
     if (data.data?.instanceId) {
