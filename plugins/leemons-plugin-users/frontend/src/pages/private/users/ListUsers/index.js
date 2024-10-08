@@ -45,6 +45,7 @@ import prefixPN from '@users/helpers/prefixPN';
 import { useIsSuperAdmin } from '@users/hooks';
 import activeUserAgent from '@users/request/activeUserAgent';
 import disableUserAgent from '@users/request/disableUserAgent';
+import useProvider from '@users/request/hooks/queries/useProvider';
 
 function ListUsers() {
   const [t] = useTranslateLoader(prefixPN('list_users'));
@@ -59,6 +60,8 @@ function ListUsers() {
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const isSuperAdmin = useIsSuperAdmin();
+
+  const { data: provider } = useProvider();
 
   // ····················································
   // INIT DATA LOADING
@@ -507,8 +510,11 @@ function ListUsers() {
                           data={[
                             { label: t('activateUsers'), value: 'active' },
                             { label: t('disableUsers'), value: 'disable' },
-                            { label: t('activateUserManually'), value: 'activate-manually' },
-                          ]}
+                            (!provider || provider?.supportedMethods?.recoverPassword) && {
+                              label: t('activateUserManually'),
+                              value: 'activate-manually',
+                            },
+                          ].filter((action) => !!action)}
                           value={null}
                           onChange={makeAction}
                         />
