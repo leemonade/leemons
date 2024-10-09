@@ -1,26 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import ActivityHeader from '@assignables/components/ActivityHeader';
+import getNextActivityUrl from '@assignables/helpers/getNextActivityUrl';
+import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
+import getAssignation from '@assignables/requests/assignations/getAssignation';
 import {
   LoadingOverlay,
   VerticalStepperContainer,
   TotalLayoutContainer,
 } from '@bubbles-ui/components';
-
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { addErrorAlert } from '@layout/alert';
 import { useStore } from '@common';
-import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
-import getAssignation from '@assignables/requests/assignations/getAssignation';
+import { addErrorAlert } from '@layout/alert';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getCentersWithToken } from '@users/session';
-import { getFeedbackRequest, getUserAssignableResponsesRequest } from '@feedback/request';
-import getNextActivityUrl from '@assignables/helpers/getNextActivityUrl';
-import ActivityHeader from '@assignables/components/ActivityHeader';
 
-import { setInstanceTimestamp } from '@feedback/request/feedback';
-import prefixPN from '@feedback/helpers/prefixPN';
 import IntroductionStep from './components/IntroductionStep';
 import QuestionsStep from './components/QuestionsStep';
+
+import prefixPN from '@feedback/helpers/prefixPN';
+import { getFeedbackRequest, getUserAssignableResponsesRequest } from '@feedback/request';
+import { setInstanceTimestamp } from '@feedback/request/feedback';
 
 const StudentInstance = () => {
   const [t] = useTranslateLoader(prefixPN('studentInstance'));
@@ -126,6 +126,7 @@ const StudentInstance = () => {
         {showIntroduction ? (
           <IntroductionStep
             feedback={store.feedback}
+            instance={store.instance}
             t={t}
             onNext={advanceToQuestions}
             scrollRef={scrollRef}
