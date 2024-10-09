@@ -175,6 +175,10 @@ module.exports = {
         url: {
           required: 'URL es necesaria',
         },
+        urlMetadata: {
+          warning:
+            'No se han podido recuperar los datos de la URL. Deberás introducirlos manualmente.',
+        },
         program: {
           required: 'Programa es necesario',
         },
