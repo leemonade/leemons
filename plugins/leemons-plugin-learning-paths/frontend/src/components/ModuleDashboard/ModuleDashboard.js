@@ -1,6 +1,11 @@
 import React, { useEffect, useMemo } from 'react';
-import PropTypes from 'prop-types';
 
+import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
+import ActivityHeader from '@assignables/components/ActivityHeader';
+import { ProgressChart } from '@assignables/components/ProgressChart';
+import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
+import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
+import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import {
   Box,
   createStyles,
@@ -11,24 +16,20 @@ import {
   ContextContainer,
   Paper,
 } from '@bubbles-ui/components';
-import { get, head, map, sortBy, tail } from 'lodash';
-
-import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
-import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import { unflatten } from '@common';
 import { addErrorAlert } from '@layout/alert';
-import { prefixPN } from '@learning-paths/helpers';
-import assignablePrefixPN from '@assignables/helpers/prefixPN';
+import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
+import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
-import ActivityHeader from '@assignables/components/ActivityHeader';
-import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
-import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import { ProgressChart } from '@assignables/components/ProgressChart';
+import { get, head, map, sortBy, tail } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { DashboardCard } from './components/DashboardCard';
 import { useModuleDataForPreview } from './helpers/previewHooks';
+
+import { prefixPN } from '@learning-paths/helpers';
 
 export function useModuleDashboardLocalizations() {
   // key is string
@@ -42,7 +43,7 @@ export function useModuleDashboardLocalizations() {
     }
 
     return {};
-  });
+  }, [translations, key]);
 }
 
 export const useModuleDashboardStyles = createStyles((theme) => {
@@ -163,7 +164,6 @@ export function useModuleData(id) {
     activitiesById,
     assignationsById,
     activities: module?.metadata?.module?.activities ?? [],
-
     isLoading: isLoadingActivities || isLoadingModule,
     isError: isModuleError || isActivitiesError,
     errors,
@@ -203,16 +203,17 @@ export function ModuleDashboardBody({
   assignationsById,
   module,
   preview,
-  subjectsData,
 }) {
   const [t] = useTranslateLoader(prefixPN('moduleJourney'));
   const blockedActivities = useBlockedActivities({ activities, activitiesById, assignationsById });
   const introductionLink = `/private/learning-paths/modules/journey/${module?.id}`;
+  const preparedAsset = prepareAsset(module?.assignable?.asset);
   return (
     <Box className={classes.activitiesList}>
       {!!(module?.metadata?.statement || module?.assignable?.resources?.length) && (
         <DashboardCard
           introductionCard
+          asset={preparedAsset}
           assetNumber={t('introduction')}
           statement={module?.metadata?.statement}
           cover={module?.assignable?.asset?.cover}
@@ -388,8 +389,8 @@ export function ModuleDashboard({ id, preview }) {
                 <ContextContainer
                   title={
                     isStudent
-                      ? localizations?.studentProgressTitle ?? 'Notas del módulo'
-                      : localizations?.teacherProgressTitle ?? 'Notas medias del módulo'
+                      ? (localizations?.studentProgressTitle ?? 'Notas del módulo')
+                      : (localizations?.teacherProgressTitle ?? 'Notas medias del módulo')
                   }
                 >
                   <Box pt={10}>

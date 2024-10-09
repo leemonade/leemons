@@ -1,28 +1,29 @@
 import React, { useMemo } from 'react';
-import { Box, ImageLoader, TotalLayoutHeader, Stack, Button } from '@bubbles-ui/components';
-
 import { FormProvider, useForm } from 'react-hook-form';
 import { useHistory, Link } from 'react-router-dom';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
-import { noop } from 'lodash';
+
+import { Box, ImageLoader, TotalLayoutHeader, Stack, Button } from '@bubbles-ui/components';
 import { OpenIcon } from '@bubbles-ui/icons/outline';
+import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PrefixPN from '@assignables/helpers/prefixPN';
-import ActivityTypeDisplay from './components/ActivityTypeDisplay/ActivityTypeDisplay';
-import CalificationTypeDisplay from './components/CalificationTypeDisplay/CalificationTypeDisplay';
-import DateComponent from './components/Date/Date';
-import Timer from './components/Timer/Timer';
-import ClassroomDisplay from './components/ClassroomDisplay/ClassroomDisplay';
-import useTotalLayoutStyles from './index.style';
-import CloseButtons from './components/CloseButtons/CloseButtons';
-import StatusBadge from './components/StatusBadge/StatusBadge';
+import { noop } from 'lodash';
 
 import {
   ACTIVITY_HEADER_PROP_TYPES,
   ACTIVITY_HEADER_DEFAULT_PROPS,
 } from './ActivityHeader.constants';
+import ActivityTypeDisplay from './components/ActivityTypeDisplay/ActivityTypeDisplay';
+import CalificationTypeDisplay from './components/CalificationTypeDisplay/CalificationTypeDisplay';
 import { ChatDisplay } from './components/ChatDisplay/ChatDisplay';
+import ClassroomDisplay from './components/ClassroomDisplay/ClassroomDisplay';
+import CloseButtons from './components/CloseButtons/CloseButtons';
+import DateComponent from './components/Date/Date';
+import StatusBadge from './components/StatusBadge/StatusBadge';
+import Timer from './components/Timer/Timer';
+import useTotalLayoutStyles from './index.style';
+
+import PrefixPN from '@assignables/helpers/prefixPN';
+import useInstances from '@assignables/requests/hooks/queries/useInstances';
 
 export default function ActivityHeader({
   assignation,
@@ -63,7 +64,6 @@ export default function ActivityHeader({
   */
   const preparedAsset = prepareAsset(assignable?.asset ?? {});
   const coverUrl = preparedAsset?.cover;
-
   /*
     === Presentation ===
   */

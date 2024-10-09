@@ -1,14 +1,17 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { Box } from '@bubbles-ui/components';
-import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
-import prepareAsset, { getFileUrl } from '@leebrary/helpers/prepareAsset';
+
 import { useIsTeacher, useClassesSubjects } from '@academic-portfolio/hooks';
-import { useDashboardCardStyles } from './DashboardCard.styles';
-import { DashboardCardCover } from './components/DashboardCardCover';
-import { DashboardCardBody } from './components/DashboardCardBody';
-import { DashboardCardFooter } from './components/DashboardCardFooter';
+import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
+import { Box } from '@bubbles-ui/components';
+import prepareAsset from '@leebrary/helpers/prepareAsset';
+import PropTypes from 'prop-types';
+
 import { getOngoingInfo } from '../../helpers/getOngoingInfo';
+
+import { useDashboardCardStyles } from './DashboardCard.styles';
+import { DashboardCardBody } from './components/DashboardCardBody';
+import { DashboardCardCover } from './components/DashboardCardCover';
+import { DashboardCardFooter } from './components/DashboardCardFooter';
 
 const DashboardCard = ({
   activity,
@@ -23,6 +26,7 @@ const DashboardCard = ({
   introductionLink,
   emptyIcon,
   fileType,
+  asset: assignmentAsset,
 }) => {
   const isTeacher = useIsTeacher();
   const { classes } = useDashboardCardStyles();
@@ -31,7 +35,8 @@ const DashboardCard = ({
       !!statement && (
         <Box className={classes.root}>
           <DashboardCardCover
-            cover={getFileUrl(cover)}
+            cover={cover}
+            asset={assignmentAsset}
             assetNumber={assetNumber}
             statement={statement}
             emptyIcon={emptyIcon}

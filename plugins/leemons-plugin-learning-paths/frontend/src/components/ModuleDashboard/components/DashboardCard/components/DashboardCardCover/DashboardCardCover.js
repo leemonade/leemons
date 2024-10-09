@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 
 import { Box, ImageLoader, CardEmptyCover, ProgressRing, Text } from '@bubbles-ui/components';
-import prefixPN from '@learning-paths/helpers/prefixPN';
 import Cover from '@leebrary/components/Cover';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { isNil } from 'lodash';
@@ -13,6 +12,8 @@ import {
   DASHBOARD_CARD_COVER_PROP_TYPES,
 } from './DashboardCardCover.constants';
 import { DashboardCardCoverStyles } from './DashboardCardCover.styles';
+
+import prefixPN from '@learning-paths/helpers/prefixPN';
 
 const DashboardCardCover = ({
   asset,
@@ -41,7 +42,7 @@ const DashboardCardCover = ({
   ].includes(evaluationInfo?.state);
 
   const isAllEvaluated = evaluationInfo?.state === 'allEvaluated';
-  
+
   const MemoizedEmptyCoverIntroduction = useMemo(
     () => (
       <CardEmptyCover
@@ -91,7 +92,6 @@ const DashboardCardCover = ({
     ),
     [fileType]
   );
-
   if (cover) {
     return (
       <Box className={classes.root}>
