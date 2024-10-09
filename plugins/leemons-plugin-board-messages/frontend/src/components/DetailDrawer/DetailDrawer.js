@@ -1,6 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { omit, isArray } from 'lodash';
 import { Controller, useForm } from 'react-hook-form';
+
+import { useIsTeacher } from '@academic-portfolio/hooks';
+import { listProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
+import { getUserPrograms } from '@academic-portfolio/request/programs';
 import {
   Box,
   Alert,
@@ -18,24 +21,23 @@ import {
   ContextContainer,
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import ImagePicker from '@leebrary/components/ImagePicker';
 import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
 import { DatePicker } from '@common';
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import { listProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { saveRequest } from '@board-messages/request';
-import { getUserPrograms } from '@academic-portfolio/request/programs';
+import ImagePicker from '@leebrary/components/ImagePicker';
+import { omit, isArray } from 'lodash';
+
+import dashboard from '../../../public/dashboard.svg';
+import modal from '../../../public/modal.svg';
+import { getOverlapsRequest, saveRequest } from '../../request';
+
 import {
   DETAIL_DRAWER_DEFAULT_PROPS,
   DETAIL_DRAWER_PROP_TYPES,
   MESSAGE_ZONES,
 } from './DetailDrawer.constants';
 import { DetailDrawerStyles } from './DetailDrawer.styles';
-import modal from '../../../public/modal.svg';
-import dashboard from '../../../public/dashboard.svg';
 import { SelectItem } from './components/SelectItem';
-import { getOverlapsRequest } from '../../request';
 
 const HALF_WIDTH = 'calc(50% - 10px)';
 
@@ -424,6 +426,20 @@ const DetailDrawer = ({
             <ContextContainer direction="row">
               <Controller
                 control={control}
+                name="textUrl"
+                rules={{ required: urlValue && labels?.form?.textUrlError }}
+                render={({ field }) => (
+                  <TextInput
+                    label={labels.textOfLink}
+                    placeholder={labels.textOfLinkPlaceholder}
+                    {...field}
+                    style={{ flex: 1 }}
+                    error={errors.textUrl}
+                  />
+                )}
+              />
+              <Controller
+                control={control}
                 name="url"
                 rules={{
                   required: textUrlValue && labels?.form?.urlError,
@@ -435,20 +451,6 @@ const DetailDrawer = ({
                     {...field}
                     style={{ flex: 1 }}
                     error={errors.url}
-                  />
-                )}
-              />
-              <Controller
-                control={control}
-                name="textUrl"
-                rules={{ required: urlValue && labels?.form?.textUrlError }}
-                render={({ field }) => (
-                  <TextInput
-                    label={labels.textOfLink}
-                    placeholder={labels.textOfLinkPlaceholder}
-                    {...field}
-                    style={{ flex: 1 }}
-                    error={errors.textUrl}
                   />
                 )}
               />
