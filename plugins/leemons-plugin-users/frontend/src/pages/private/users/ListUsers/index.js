@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import {
   Badge,
   Box,
+  Text,
   Pager,
   Stack,
   Table,
@@ -44,6 +45,7 @@ import prefixPN from '@users/helpers/prefixPN';
 import { useIsSuperAdmin } from '@users/hooks';
 import activeUserAgent from '@users/request/activeUserAgent';
 import disableUserAgent from '@users/request/disableUserAgent';
+import useProvider from '@users/request/hooks/queries/useProvider';
 
 function ListUsers() {
   const [t] = useTranslateLoader(prefixPN('list_users'));
@@ -58,6 +60,8 @@ function ListUsers() {
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const isSuperAdmin = useIsSuperAdmin();
+
+  const { data: provider } = useProvider();
 
   // ····················································
   // INIT DATA LOADING
@@ -362,16 +366,9 @@ function ListUsers() {
         accessor: 'email',
         className: 'text-left',
       },
-      /*
       {
-        Header: t('birthdayHeader'),
-        accessor: 'birthdate',
-        className: 'text-left',
-      },
-      */
-      {
-        Header: t('stateHeader'),
-        accessor: 'state',
+        Header: t('lastConnectionHeader'),
+        accessor: 'lastConnection',
         className: 'text-left',
       },
       {
@@ -408,6 +405,14 @@ function ListUsers() {
             />
           </Box>
         ),
+        lastConnection: item.lastConnection ? (
+          <LocaleDate
+            date={item.lastConnection}
+            options={{ dateStyle: 'medium', timeStyle: 'short' }}
+          />
+        ) : (
+          <Text>-</Text>
+        ),
         tags: (
           <Stack spacing={1}>
             {item.tags.map((tag) => (
@@ -415,8 +420,6 @@ function ListUsers() {
             ))}
           </Stack>
         ),
-        birthdate: <LocaleDate date={item.birthdate} />,
-        state: t(getUserStateKey(item.status)),
         actions: (
           <Box style={{ textAlign: 'right', width: '100%' }}>
             <ActionButton
@@ -507,8 +510,11 @@ function ListUsers() {
                           data={[
                             { label: t('activateUsers'), value: 'active' },
                             { label: t('disableUsers'), value: 'disable' },
-                            { label: t('activateUserManually'), value: 'activate-manually' },
-                          ]}
+                            (!provider || provider?.supportedMethods?.recoverPassword) && {
+                              label: t('activateUserManually'),
+                              value: 'activate-manually',
+                            },
+                          ].filter((action) => !!action)}
                           value={null}
                           onChange={makeAction}
                         />

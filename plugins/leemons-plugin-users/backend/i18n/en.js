@@ -246,6 +246,7 @@ module.exports = {
     active: 'Active',
     disable: 'Disable',
     tagsHeader: 'Tags',
+    lastConnectionHeader: 'Last connection',
     emptyState: 'You have not created any user for this center.',
     noResults: 'No results found for your search.',
     enableUserSuccess: '{n} users enabled successfully',
