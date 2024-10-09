@@ -21,7 +21,9 @@ const AudioCardPlayerStyles = createStyles((theme) => {
       width: 132,
       height: 132,
       marginBlock: 2,
-      borderRadius: 4,
+      '& img': {
+        borderRadius: 4,
+      },
     },
     reactPlayer: {
       position: 'absolute',

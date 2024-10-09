@@ -1,13 +1,17 @@
 import React from 'react';
 import ReactPlayer from 'react-player';
+
 import { Box, CardEmptyCover } from '@bubbles-ui/components';
-import Cover from '@leebrary/components/Cover';
+
+import { AudioProgressBar } from '../AudioProgressBar';
+
 import {
   AUDIO_CARD_PLAYER_DEFAULT_PROPS,
   AUDIO_CARD_PLAYER_PROP_TYPES,
 } from './AudioCardPlayer.constants';
 import { AudioCardPlayerStyles } from './AudioCardPlayer.styles';
-import { AudioProgressBar } from '../AudioProgressBar';
+
+import Cover from '@leebrary/components/Cover';
 
 const AudioCardPlayer = ({
   url,
@@ -48,7 +52,7 @@ const AudioCardPlayer = ({
       <Box className={classes.audioCardCover}>
         {cover ? (
           <Cover
-            height="100%"
+            height={132}
             alt={title}
             asset={{ cover }}
             inlineStyles={{ borderRadius: '4px' }}
