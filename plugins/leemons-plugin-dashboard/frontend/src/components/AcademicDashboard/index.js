@@ -140,7 +140,7 @@ function AcademicDashboard({ session }) {
       scrollRef={scrollRef}
       Header={
         <Box className={styles.header}>
-          <ProgramBarSelector onChange={selectProgram} itemSelectedFontSize={14} />
+          <ProgramBarSelector onChange={selectProgram} />
         </Box>
       }
     >

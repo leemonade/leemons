@@ -1,4 +1,4 @@
-import { noop } from 'lodash';
+import { noop, pickBy } from 'lodash';
 
 export function getReadOnlyKeys(jsonUI) {
   return Object.keys(jsonUI).filter((key) => jsonUI[key]['ui:readonly']);
@@ -38,38 +38,47 @@ export async function checkForms({
   handleSave = noop,
   skipOptional,
 }) {
-  const submitPromises = formActions.filter((form) => form.isLoaded()).map((form) => form.submit());
+  const newForms = await Promise.all(
+    datasets.map(async (dataset, i) => {
+      const form = formActions[i];
+      if (!form.isLoaded()) {
+        return null;
+      }
 
-  if (submitPromises.length !== formActions.length) {
-    return false;
-  }
+      let toSave = form.getValues();
 
-  await Promise.all(submitPromises);
+      // Get the required keys for the user's profile
+      const requiredOnlyForMe = getRequiredKeysOnlyForMe({ dataset: dataset.data, profileId });
+      const requiredKeys = dataset.data.jsonSchema.required;
 
-  // Process form results
-  const newForms = datasets.map((dataset, i) => {
-    const form = formActions[i];
-    const errors = form.getErrors();
+      // If there are no required keys, skip submission and error validation
+      if (requiredOnlyForMe.length === 0 || requiredKeys.length === 0) {
+        toSave = pickBy(toSave, (value) => !!value.value);
+        return { ...dataset, newValues: toSave };
+      }
 
-    if (errors.length && !skipOptional) {
-      return null;
-    }
+      // Only submit the form if there are required keys
+      await form.submit();
+      const errors = form.getErrors();
 
-    const readOnlyKeys = dataset.data.jsonSchema.required.filter(
-      (key) => !getRequiredKeysOnlyForMe({ dataset: dataset.data, profileId }).includes(key)
-    );
+      if (errors.length && !skipOptional) {
+        return null;
+      }
 
-    const areOptional = areOptionalKeys({
-      errors,
-      readOnlyKeys,
-    });
+      const readOnlyKeys = requiredKeys.filter((key) => !requiredOnlyForMe.includes(key));
 
-    if (errors.length && !areOptional) {
-      return null; // Invalid form
-    }
+      const areOptional = areOptionalKeys({
+        errors,
+        readOnlyKeys,
+      });
 
-    return { ...dataset, newValues: form.getValues() };
-  });
+      if (errors.length && !areOptional) {
+        return null; // Invalid form
+      }
+
+      return { ...dataset, newValues: toSave };
+    })
+  );
 
   if (newForms.some((form) => form === null)) {
     return false;

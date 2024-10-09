@@ -1,28 +1,26 @@
+import React, { useMemo } from 'react';
+
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import { useSessionClasses } from '@academic-portfolio/hooks';
 import {
   Box,
   ContextContainer,
-  ImageLoader,
-  Paragraph,
   Select,
   Stack,
   Switch,
   TableInput,
   Text,
-  Title,
+  AvatarSubject,
 } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import { SelectProfile } from '@users/components';
 import _, { find, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useMemo } from 'react';
 
 function ClassItem({ class: klass, ...props }) {
   if (!klass) {
     return null;
   }
-
   return (
     <Box {...props}>
       <Box
@@ -43,22 +41,17 @@ function ClassItem({ class: klass, ...props }) {
             maxWidth: 26,
             maxHeight: 26,
             borderRadius: '50%',
-            backgroundColor: klass?.color,
           })}
         >
-          <ImageLoader
-            sx={() => ({
-              borderRadius: 0,
-              filter: 'brightness(0) invert(1)',
-            })}
-            forceImage
-            width={16}
-            height={16}
-            src={getClassIcon(klass)}
+          <AvatarSubject
+            color={klass?.color}
+            size="md"
+            icon={getClassIcon(klass)}
+            name={klass?.subject?.name ?? klass?.subject?.fullName}
           />
         </Box>
         <Text>{`${klass.subject.name}${
-          klass?.groups?.name ? ` - ${klass.groups.name}` : ''
+          klass?.groups?.name ? ` - ${klass.groups.name ?? klass.groups.fullName}` : ''
         }`}</Text>
       </Box>
     </Box>
@@ -70,10 +63,12 @@ ClassItem.propTypes = {
     id: PropTypes.number,
     subject: PropTypes.shape({
       name: PropTypes.string,
+      fullName: PropTypes.string,
     }),
     groups: PropTypes.shape({
       name: PropTypes.string,
       isAlone: PropTypes.bool,
+      fullName: PropTypes.string,
     }),
     color: PropTypes.string,
   }),
@@ -219,7 +214,14 @@ const PermissionsDataClasses = ({
   if (editMode && !value?.length) return null;
 
   return (
-    <ContextContainer spacing={editMode ? 0 : 5}>
+    <ContextContainer
+      spacing={editMode ? 0 : 5}
+      sx={() => ({
+        thead: {
+          display: editMode ? 'none' : 'block',
+        },
+      })}
+    >
       {!editMode ? (
         <>
           {/* <Box>
