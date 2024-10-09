@@ -147,10 +147,8 @@ async function list({ page, size, profiles, centers, disabled, ctx, sort, ...que
       const index = userAgentIds.indexOf(userAgentsByUser[user.id].id);
       const lastConnection = connections.find((c) => {
         const userAgent = userAgentsByUser[user.id];
-        console.log(c?.statement?.actor?.account?.name, userAgent.id);
         return c?.statement?.actor?.account?.name === userAgent.id;
       });
-      console.log(lastConnection);
       return {
         ...user,
         tags: tags[index],

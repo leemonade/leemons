@@ -68,12 +68,7 @@ module.exports = {
           pipeline.unshift({ $match: { deploymentID } });
         }
 
-        const mongoClient = mongoose.connection.getClient();
-        return mongoClient
-          .db()
-          .collection(`v${VERSION}::${PLUGIN_NAME}_statements`)
-          .aggregate(pipeline)
-          .toArray();
+        return ctx.tx.db.Statement.aggregate(pipeline).toArray();
       },
     },
   },
