@@ -24,7 +24,7 @@ export default function Index(props) {
       {showNotAnsweredWarning ? <UnansweredQuestionWarning {...props} /> : null}
 
       <Box className={styles.questionCard}>
-        <QuestionTitle {...props} />
+        <QuestionTitle {...props} tableViewMode={store.viewMode} />
         <QuestionNoteClues {...props} />
         {!question.hasImageAnswer && question.questionImage?.cover ? (
           <>

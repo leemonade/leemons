@@ -1,34 +1,48 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PropTypes from 'prop-types';
 
-import useViewModeResponsesStyles from './ViewModeResponses.styles';
-
+import prefixPN from '@tests/helpers/prefixPN';
 import ResponseDetail from '@tests/pages/private/tests/components/ResponseDetail';
 
 function ViewModeResponses(props) {
-  const { classes } = useViewModeResponsesStyles();
+  const [t] = useTranslateLoader(prefixPN('questionsBanksDetail.questionLabels.trueFalse'));
   const { question, store } = props;
 
-  const response = store.questionResponses[question.id].properties.response;
+  const userAnswer = store.questionResponses[question.id].properties.response;
+  const correctAnswer = {
+    value: question.trueFalseProperties?.isTrue,
+    label: question.trueFalseProperties?.isTrue ? t('true') : t('false'),
+  };
 
-  const isCorrect = useMemo(
-    () => response === question.trueFalseProperties?.isTrue,
-    [question, response]
-  );
+  const userAnswerIsCorrect = store?.questionResponses[question.id]?.status === 'ok';
+  const userSkippedQuestion = !store?.questionResponses[question.id]?.status;
 
   const responses = [
     {
-      label: 'True',
-      value: true,
+      choice: t('true'),
+      isUserAnswer: userAnswer === true,
+      isCorrect: question.trueFalseProperties?.isTrue,
     },
     {
-      label: 'False',
-      value: false,
+      choice: t('false'),
+      isUserAnswer: userAnswer === false,
+      isCorrect: !question.trueFalseProperties?.isTrue,
     },
   ];
 
-  return <ResponseDetail isCorrect={isCorrect} responses={responses} />;
+  const feedback = question.globalFeedback?.text || null;
+
+  return (
+    <ResponseDetail
+      isCorrect={userAnswerIsCorrect}
+      solutionLabel={correctAnswer.label}
+      userSkipped={userSkippedQuestion}
+      responses={responses}
+      globalFeedback={question?.hasAnswerFeedback ? null : feedback}
+    />
+  );
 }
 
 ViewModeResponses.propTypes = {

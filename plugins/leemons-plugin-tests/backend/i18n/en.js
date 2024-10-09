@@ -389,6 +389,7 @@ module.exports = {
     questionNumber: 'QUESTION: {number}',
     theQuestionValueIs: 'The question value is',
     pointsInTotal: 'Points',
+    pointsOutOf: 'points of {questionPoints}',
     askForAHint: 'Ask for a hint',
     hint: 'Hint',
     skipButton: 'Skip',
@@ -523,8 +524,12 @@ module.exports = {
     nextActivity: 'Next activity',
     goToModule: 'Module dashboard',
     responseDetail: {
+      choices: 'Choices',
+      result: 'Result',
+      solution: 'Solution',
       correct: 'Correct',
       incorrect: 'Incorrect',
+      feedback: 'Feedback',
     },
   },
 };
