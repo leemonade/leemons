@@ -387,6 +387,7 @@ module.exports = {
     questionNumber: 'PREGUNTA: {number}',
     theQuestionValueIs: 'La pregunta vale',
     pointsInTotal: 'Puntos',
+    pointsOutOf: 'puntos de {questionPoints}',
     askForAHint: 'Pedir una pista',
     hint: 'Pista',
     skipButton: 'Omitir',
@@ -508,6 +509,7 @@ module.exports = {
     sendFeedback: 'Enviar comentario',
     feedbackRequired: 'Comentario obligatorio',
     feedbackDone: 'Comentario enviado con éxito',
+
     ok: 'Acertada',
     ko: 'Errónea',
     nsnc: 'NS/NC',
@@ -522,8 +524,12 @@ module.exports = {
     nextActivity: 'Siguiente actividad',
     goToModule: 'Dashboard del modulo',
     responseDetail: {
+      choices: 'Opciones',
+      result: 'Resultado',
+      solution: 'Solución',
       correct: 'Correcto',
       incorrect: 'Incorrecto',
+      feedback: 'Explicación',
     },
   },
 };

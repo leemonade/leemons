@@ -1,47 +1,93 @@
-import React from 'react';
+import React, { useCallback, useMemo } from 'react';
 
-import { Stack, Text } from '@bubbles-ui/components';
+import { Stack, Text, Table, ContextContainer, HtmlText, Box } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PropTypes from 'prop-types';
 
 import AnswerFeed from './AnswerFeed';
+import ResponseStatusIcon from './ResponseStatusIcon';
 
 import prefixPN from '@tests/helpers/prefixPN';
 
-function ResponseDetail({ isCorrect, responses }) {
+function ResponseDetail({ isCorrect, userSkipped, solutionLabel, responses, globalFeedback }) {
   const [t] = useTranslateLoader(prefixPN('testResult.responseDetail'));
 
   const columns = [
     {
-      label: 'OPCIONES 🌎',
-      value: 'label',
+      Header: t('choices'),
+      accessor: 'choice',
+      style: { width: '70%' },
     },
     {
-      label: 'RESULTADO 🌎',
-      value: 'value',
+      Header: t('result'),
+      accessor: 'userAnswer',
+      style: { width: '15%', textAlign: 'center' },
+      cellStyle: { justifyContent: 'center' },
     },
     {
-      label: 'SOLUCIÓN 🌎',
-      value: 'value',
+      Header: t('solution'),
+      accessor: 'solution',
+      style: { width: '15%', padding: 8 },
     },
   ];
 
-  return (
-    <Stack direction="column" gap={2}>
-      <AnswerFeed isCorrect={isCorrect} t={t} />
-      {/* <Table data={responses} columns={columns} /> */}
+  const getUserAnswer = useCallback(
+    (isUserAnswer, isCorrect) => {
+      if (userSkipped) return '-';
+      if (!isUserAnswer) return '';
+      return isCorrect ? (
+        <ResponseStatusIcon isCorrect />
+      ) : (
+        <ResponseStatusIcon isCorrect={false} />
+      );
+    },
+    [userSkipped]
+  );
 
-      <Stack direction="column" gap={2}>
-        <Text strong>Explicación</Text>
-        <Text>text</Text>
-      </Stack>
-    </Stack>
+  const getSolution = useCallback(
+    (isUserAnswer, isCorrect) => {
+      if (isUserAnswer && !isCorrect) return solutionLabel;
+      if (userSkipped) return solutionLabel;
+      return '';
+    },
+    [solutionLabel, userSkipped]
+  );
+
+  const tableData = useMemo(() => {
+    if (!responses?.length) return [];
+
+    return responses?.map(({ choice, isUserAnswer, isCorrect }) => ({
+      choice,
+      userAnswer: getUserAnswer(isUserAnswer, isCorrect),
+      solution: getSolution(isUserAnswer, isCorrect),
+    }));
+  }, [responses, getUserAnswer, getSolution]);
+
+  return (
+    <ContextContainer spacing={4} sx={{ marginBottom: 32 }}>
+      <AnswerFeed isCorrect={isCorrect} t={t} />
+      <Box sx={{ paddingInline: 16 }}>
+        <Table fullWidth data={tableData} columns={columns} />
+      </Box>
+
+      {globalFeedback && (
+        <Stack direction="column" spacing={2}>
+          <Text color="primary" strong>
+            {t('feedback')}
+          </Text>
+          <HtmlText>{globalFeedback}</HtmlText>
+        </Stack>
+      )}
+    </ContextContainer>
   );
 }
 
 ResponseDetail.propTypes = {
-  isCorrect: PropTypes.object,
+  isCorrect: PropTypes.bool,
+  userSkipped: PropTypes.bool,
   responses: PropTypes.array,
+  globalFeedback: PropTypes.string,
+  solutionLabel: PropTypes.string,
 };
 
 export default ResponseDetail;

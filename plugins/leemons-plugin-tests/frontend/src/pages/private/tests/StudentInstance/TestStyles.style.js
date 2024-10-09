@@ -192,6 +192,11 @@ export const TestStyles = createStyles((theme) => ({
     marginBottom: theme.spacing[4],
     justifyContent: 'space-between',
   },
+  tableViewModeTitle: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   questionTitleIcon: {
     display: 'inline-block',
     position: 'relative',

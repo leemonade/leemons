@@ -1,11 +1,15 @@
 import React from 'react';
 
 import { Box, Stack } from '@bubbles-ui/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PropTypes from 'prop-types';
 
 import useResponsesStyles from './Responses.styles';
 
+import prefixPN from '@tests/helpers/prefixPN';
+
 function Responses(props) {
+  const [t] = useTranslateLoader(prefixPN('questionsBanksDetail.questionLabels.trueFalse'));
   const { classes } = useResponsesStyles();
   const { question, store, render } = props;
 
@@ -22,57 +26,36 @@ function Responses(props) {
     render();
   }
 
-  const getAnswerStyles = (theme, choiceValue) => {
-    const chosenValue = store.questionResponses[question.id].properties.response;
-    const isSelected = chosenValue === choiceValue;
-
-    if (store.viewMode) {
-      if (isSelected) {
-        return {
-          border: `2px solid ${theme.other.global.content.color.tertiary.default}`,
-        };
-      } else {
-        return {
-          border: `1px solid${theme.other.global.border.color.line.subtle}`,
-        };
-      }
-    }
-
-    if (isSelected) {
-      return {
-        border: `2px solid ${theme.other.global.content.color.tertiary.default}`,
-      };
-    }
-
-    return {
-      border: `1px solid${theme.other.global.border.color.line.subtle}`,
-    };
-  };
-
   return (
     <Stack fullWidth justifyContent="space-between" alignItems="center" gap={6}>
       <Box
         className={classes.button}
         sx={(theme) => ({
-          ...getAnswerStyles(theme, true),
+          border:
+            store.questionResponses?.[question.id]?.properties?.response === true
+              ? `2px solid ${theme.other.global.content.color.tertiary.default}`
+              : `1px solid${theme.other.global.border.color.line.subtle}`,
         })}
         onClick={() => {
           if (!store.viewMode) markResponse(true);
         }}
       >
-        <Box>🌎 VERDADERO</Box>
+        <Box>{t('true')}</Box>
       </Box>
 
       <Box
         className={classes.button}
         sx={(theme) => ({
-          ...getAnswerStyles(theme, false),
+          border:
+            store.questionResponses?.[question.id]?.properties?.response === false
+              ? `2px solid ${theme.other.global.content.color.tertiary.default}`
+              : `1px solid${theme.other.global.border.color.line.subtle}`,
         })}
         onClick={() => {
           if (!store.viewMode) markResponse(false);
         }}
       >
-        <Box>🌎 FALSO</Box>
+        <Box>{t('false')}</Box>
       </Box>
     </Stack>
   );
