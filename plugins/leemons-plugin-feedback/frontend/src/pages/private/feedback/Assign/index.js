@@ -1,10 +1,12 @@
 import React from 'react';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@feedback/helpers/prefixPN';
-import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+
 import Form from '@assignables/components/Assignment/Form';
+import { useStore } from '@common';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+
+import prefixPN from '@feedback/helpers/prefixPN';
 import { assignFeedbackRequest, getFeedbackRequest } from '@feedback/request';
 
 export default function Assign() {
@@ -59,6 +61,7 @@ export default function Assign() {
       assignable={store.feedback}
       evaluationType="none"
       evaluationTypes={['nonEvaluable']}
+      showInstructions
       loading={store.loading}
     />
   );

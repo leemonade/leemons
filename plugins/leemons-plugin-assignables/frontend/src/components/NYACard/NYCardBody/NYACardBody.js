@@ -1,14 +1,18 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable import/prefer-default-export */
 import React, { useState, useEffect } from 'react';
-import { Box, Badge, Text, TextClamp, ProgressColorBar } from '@bubbles-ui/components';
-import getActivityType from '@assignables/helpers/getActivityType';
+
 import { ClassroomItemDisplay } from '@academic-portfolio/components';
-import getColorByDateRange from '@assignables/helpers/getColorByDateRange';
+import { Box, Badge, Text, TextClamp, ProgressColorBar } from '@bubbles-ui/components';
 import { htmlToText } from '@common';
+
+import { getDeadlineData } from '../../../helpers/getDeadlineData';
+
 import { NYACARD_BODY_PROP_TYPES, NYACARD_BODY_DEFAULT_PROPS } from './NYACardBody.constants';
 import { NYACardBodyStyles } from './NYACardBody.styles';
-import { getDeadlineData } from '../../../helpers/getDeadlineData';
+
+import getActivityType from '@assignables/helpers/getActivityType';
+import getColorByDateRange from '@assignables/helpers/getColorByDateRange';
 
 const NYACardBody = ({
   description,
@@ -37,9 +41,13 @@ const NYACardBody = ({
   const activitiesPercentage = hasProgressBar && (submitedActivities / totalActivities) * 100;
   const getDescription = () => {
     if (instance?.assignable?.role === 'feedback') {
+      if (instance?.metadata?.statement) {
+        return htmlToText(instance?.metadata?.statement);
+      }
+
       return instance?.assignable?.instructionsForStudents
         ? htmlToText(instance?.assignable?.instructionsForStudents)
-        : description;
+        : description ?? htmlToText(instance?.assignable?.statement);
     }
     if (instance?.assignable?.role === 'task' || instance?.assignable?.role === 'test') {
       return instance?.assignable?.statement
@@ -104,7 +112,7 @@ const NYACardBody = ({
         )}
       </Box>
       <Box>
-        {description && (
+        {!!cardDescription && (
           <TextClamp lines={2}>
             <Text size="xs" className={classes.description}>
               {cardDescription}
