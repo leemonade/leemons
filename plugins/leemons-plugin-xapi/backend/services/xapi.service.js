@@ -68,7 +68,7 @@ module.exports = {
           pipeline.unshift({ $match: { deploymentID } });
         }
 
-        return ctx.tx.db.Statement.aggregate(pipeline).toArray();
+        return ctx.tx.db.Statement.aggregate(pipeline);
       },
     },
   },
