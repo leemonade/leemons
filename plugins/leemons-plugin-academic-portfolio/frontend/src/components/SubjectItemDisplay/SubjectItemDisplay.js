@@ -72,13 +72,13 @@ const SubjectItemDisplay = ({ subjectsIds, programId, avatarCustomSize }) => {
           isMultiSubject={isMultiSubjectCase}
           icon={subjectData?.icon}
           customSize={avatarCustomSize}
-          name={subjectData?.name}
+          name={subjectData?.name ?? subjectData?.fullName}
         />
       )}
       <Box className={classes.textWrapper}>
         <TextClamp lines={1}>
           <Text color="muted" role="productive" size="xs">
-            {subjectData?.name}
+            {subjectData?.name ?? subjectData?.fullName}
           </Text>
         </TextClamp>
         <TextClamp lines={1}>
