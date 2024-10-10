@@ -1,9 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { useLocation } from 'react-router-dom';
+
 import { Loader } from '@bubbles-ui/components';
 import { Swiper } from '@bubbles-ui/extras';
-import { useLocation } from 'react-router-dom';
+import PropTypes from 'prop-types';
+
 import NYACard from '../../../../components/NYACard';
+
 import EmptyState from './EmptyState';
 
 export default function ActivityCarousel({

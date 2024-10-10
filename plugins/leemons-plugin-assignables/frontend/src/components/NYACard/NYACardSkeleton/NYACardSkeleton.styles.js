@@ -5,8 +5,8 @@ const spaceBetween = 'space-between';
 export const NYACardSkeletonStyles = createStyles((theme) => ({
   root: {
     minWidth: pxToRem(264),
-    maxWidth: pxToRem(330),
-    minHeight: pxToRem(480),
+    maxWidth: pxToRem(264),
+    minHeight: pxToRem(380),
     width: '100%',
     borderRadius: '2px',
     backgroundColor: theme.colors.mainWhite,
@@ -49,7 +49,7 @@ export const NYACardSkeletonStyles = createStyles((theme) => ({
     display: 'flex',
     justifyContent: spaceBetween,
     alignItems: 'center',
-    marginTop: 36,
+    marginTop: 24,
     gap: 12,
   },
 }));
