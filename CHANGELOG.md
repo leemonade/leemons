@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.8.0](https://github.com/leemonade/leemons/compare/1.7.0...1.8.0) (2024-10-10)
+
+
+### Features
+
+* **feedback:** Add instructions to feedbacks ([dede17c](https://github.com/leemonade/leemons/commit/dede17ccc73c667e89a0bbd9d47ea3830aef529b)), closes [#588](https://github.com/leemonade/leemons/issues/588)
+* **users:** Add `lastConnection` column to users list ([6d43b23](https://github.com/leemonade/leemons/commit/6d43b23535d7ebcf2e17cd37c9a43245b4670d43)), closes [#574](https://github.com/leemonade/leemons/issues/574)
+* **users:** Remove users lists buttons that don't work with  active users provider ([6d43b23](https://github.com/leemonade/leemons/commit/6d43b23535d7ebcf2e17cd37c9a43245b4670d43))
+
+
+### Bug Fixes
+
+* Add name to avatars which were missing it ([a8b1c26](https://github.com/leemonade/leemons/commit/a8b1c26e60e3777bb8985c7828dba7a0a984eebb)), closes [#584](https://github.com/leemonade/leemons/issues/584)
+* **calendar:** Sort same day events by hour on events list ([3d6398e](https://github.com/leemonade/leemons/commit/3d6398e28d9e9184eed387c307a122c1d9689be0)), closes [#589](https://github.com/leemonade/leemons/issues/589)
+* **dashboards:** Restore fontSize on `ProgramBarSelector` component. ([f0f6f4f](https://github.com/leemonade/leemons/commit/f0f6f4f3dae27afbf608eed2602635e7058c5e0a)), closes [#577](https://github.com/leemonade/leemons/issues/577)
+* **leebrary:** Show warning on bookmark metadata failures ([4f290a5](https://github.com/leemonade/leemons/commit/4f290a5cb3f9d53401af60dd3a63914c1a980fcf)), closes [#585](https://github.com/leemonade/leemons/issues/585)
+* **lPaths:** Add properties to DashboardCard introduction to show cover ([a2b7fec](https://github.com/leemonade/leemons/commit/a2b7fec793855d2315070846f9554cf974eec1f0)), closes [#576](https://github.com/leemonade/leemons/issues/576)
+* **noticeBoard:** Align buttons on modal view and modify variants ([ddf5fed](https://github.com/leemonade/leemons/commit/ddf5fed7532c06eb460755f61f8037b9b40448c4)), closes [#587](https://github.com/leemonade/leemons/issues/587)
+* **xapi:** Remove toArray from aggregation ([d2a697f](https://github.com/leemonade/leemons/commit/d2a697f25aaafe87b3b6bc8bed66b6e512d41ef1))
+
 ## [1.7.0](https://github.com/leemonade/leemons/compare/1.6.0...1.7.0) (2024-10-04)
 
 
