@@ -1,11 +1,12 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
+
 const getQuestionsByFeedbackIds = require('../feedback-questions/getQuestionsByFeedbackIds');
 
 async function duplicateFeedback({ id, published, ctx }) {
   const newAssignable = await ctx.tx.call('assignables.assignables.duplicateAssignable', {
     assignableId: id,
-    published,
+    published: false, // forced to false to avoid the creation of different versions of the assignable when updating later in this function
   });
 
   const questions = await getQuestionsByFeedbackIds({ id, ctx });
@@ -59,6 +60,7 @@ async function duplicateFeedback({ id, published, ctx }) {
     newAssignable.metadata.featuredImage = newFeaturedImage.id;
     await ctx.tx.call('assignables.assignables.updateAssignable', {
       assignable: newAssignable,
+      published,
     });
   }
 
