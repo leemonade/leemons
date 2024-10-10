@@ -85,3 +85,5 @@ export type PaginatedQueryResult<T> = {
   canGoPrevPage: boolean;
   canGoNextPage: boolean;
 };
+
+export type PipelineStage = import('mongoose').PipelineStage;

@@ -20,6 +20,9 @@
       "@admin/*": [
         "./plugins/leemons-plugin-admin/frontend/src/*"
       ],
+      "@analytics/*": [
+        "./private-plugins/leemons-plugin-analytics/frontend/src/*"
+      ],
       "@assignables/*": [
         "./plugins/leemons-plugin-assignables/frontend/src/*"
       ],

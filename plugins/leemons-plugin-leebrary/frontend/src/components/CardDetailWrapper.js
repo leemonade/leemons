@@ -1,18 +1,19 @@
 import React from 'react';
 
 import { getShare, useBeforeUnload, useStore } from '@common';
-import { LibraryDetail } from '@leebrary/components/LibraryDetail';
 import loadable from '@loadable/component';
 import { getSessionConfig } from '@users/session';
 import { isNil } from 'lodash';
 import PropTypes from 'prop-types';
+
+import { LibraryDetail } from '@leebrary/components/LibraryDetail';
 
 function dynamicImport(pluginName, component) {
   return loadable(async () => {
     try {
       return await import(`@app/plugins/${pluginName}/src/widgets/leebrary/${component}.js`);
     } catch (error) {
-      return await import(`@app/plugins/${pluginName}/dist/widgets/leebrary/${component}.js`);
+      return await import(`@app/plugins/${pluginName}/src/widgets/leebrary/${component}.tsx`);
     }
   });
 }
