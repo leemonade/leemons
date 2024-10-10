@@ -7,7 +7,7 @@ async function getUsersInProgram({ program, course, onlyStudents, onlyTeachers, 
   const classes = await ctx.tx.db.Class.find({ program: programs }).select(['id']).lean();
   let classIds = _.map(classes, 'id');
   if (courses) {
-    const classCourses = await ctx.tx.ClassCourse.find({
+    const classCourses = await ctx.tx.db.ClassCourse.find({
       class: classIds,
       course: courses,
     })
