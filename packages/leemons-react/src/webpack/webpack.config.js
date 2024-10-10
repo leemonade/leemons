@@ -189,11 +189,7 @@ module.exports = function webpackConfig({
                 {
                   loader: 'babel-loader',
                   options: {
-                    presets: [
-                      '@babel/preset-env',
-                      '@babel/preset-react',
-                      '@babel/preset-typescript',
-                    ],
+                    presets: ['@babel/preset-react'],
                     plugins: [isDev && require.resolve('react-refresh/babel')].filter(Boolean),
                     cacheDirectory: true,
                     cacheCompression: false,
