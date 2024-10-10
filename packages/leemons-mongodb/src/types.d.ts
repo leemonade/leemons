@@ -6,7 +6,16 @@ type LeemonsOptions = {
   disableAutoLRN?: boolean;
 };
 
-export type CreateQuery<T> = (items: T, options: CreateOptions & LeemonsOptions) => Promise<T>;
+export type LeemonsSchema = {
+  id: string;
+  deploymentID: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  isDeleted?: boolean;
+  deletedAt?: Date;
+};
+
+export type CreateQuery<T> = (items: Partial<T> & Pick<T, Exclude<keyof T, keyof LeemonsSchema>>, options?: CreateOptions & LeemonsOptions) => Promise<T>;
 export type FindQuery<T> = MongooseModel<T>['find'];
 export type FindByIdQuery<T> = MongooseModel<T>['findById'];
 export type FindOneQuery<T> = MongooseModel<T>['findOne'];
@@ -46,7 +55,7 @@ export function newModel<T>(
   connection: Connection,
   modelName: string,
   schema: Schema<T, any, any> | Schema<T & Document, any, any>
-): MongooseModel<T>;
+): Model<T>;
 
 type MixinOptions = {
   waitToRollbackFinishOnError?: boolean;
@@ -63,15 +72,6 @@ type MixinOptions = {
 export const mongoose: typeof import('mongoose');
 
 export function LeemonsMongoDBMixin(options?: MixinOptions): Partial<ServiceSchema>;
-
-export type LeemonsSchema = {
-  id: string;
-  deploymentID: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  isDeleted?: boolean;
-  deletedAt?: Date;
-};
 
 export type PaginatedQueryResult<T> = {
   items: T[];
