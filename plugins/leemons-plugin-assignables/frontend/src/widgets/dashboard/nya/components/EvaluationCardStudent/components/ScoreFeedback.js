@@ -1,15 +1,18 @@
 import React, { useMemo, useState, useEffect } from 'react';
+
 import { Box, Text, Badge, TextClamp } from '@bubbles-ui/components';
-import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import _, { cloneDeep, sortBy, isNil } from 'lodash';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
-import { GotFeedbackIcon } from './GotFeedbackIcon';
-import { useScoreFeedbackStyles } from './ScoreFeedback.styles';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import _, { cloneDeep, sortBy, isNil } from 'lodash';
+
 import { getActivityType } from '../../../../../../helpers/getActivityType';
 import prefixPN from '../../../../../../helpers/prefixPN';
-import { ArrowComponent } from './ArrowComponent/ArrowComponent';
+
+import { GotFeedbackIcon } from './GotFeedbackIcon';
 import { SCOREFEEDBACK_DEFAULT_PROPS, SCOREFEEDBACK_PROP_TYPES } from './ScoreFeedback.constants';
+import { useScoreFeedbackStyles } from './ScoreFeedback.styles';
+
+import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 
 export function findNearestFloorScore(score, scales) {
   const sortedScales = sortBy(cloneDeep(scales), 'number');
@@ -53,7 +56,6 @@ export default function ScoreFeedback({
   } else if (/([2,5,8]|[c,f])$/.test(instance.id)) {
     arrowPosition = 'bad';
   }
-
   const evaluationSystem = useProgramEvaluationSystem(program);
   const { minScaleToPromote, scales, type } = evaluationSystem || {};
   const [, translations] = useTranslateLoader([prefixPN('assignmentForm'), prefixPN('ongoing')]);
@@ -87,7 +89,6 @@ export default function ScoreFeedback({
     return 'success';
   });
   const isLetterType = type === 'letter';
-
   const grade = React.useMemo(() => {
     if (isLetterType) {
       return {
@@ -96,8 +97,8 @@ export default function ScoreFeedback({
       };
     }
     const isInteger = score % 1 === 0;
-    const integerPart = !isInteger && score.toFixed(2).split('.')[0];
-    const decimalsPart = !isInteger && score.toFixed(2).split('.')[1];
+    const integerPart = !isInteger && !isNil(score) && score.toFixed(2).split('.')[0];
+    const decimalsPart = !isInteger && !isNil(score) && score.toFixed(2).split('.')[1];
     if (isInteger) {
       return {
         integer: score,
@@ -115,13 +116,11 @@ export default function ScoreFeedback({
   useEffect(() => {
     getInstanceTypeLocale(instance);
   }, [instance, calificationType, setCalificationType]);
-
   const { classes } = useScoreFeedbackStyles({ color, fullSize });
-
   return (
     <Box className={classes.root}>
-      {!!calificationType && !hideBadge && (
-        <Badge closable={false} size="xs" className={classes.calificationBadge}>
+      {!!calificationType && !hideBadge && !isNil(score) && (
+        <Badge closable={false} size="xs" className={classes.calificationBadge} disableHover>
           <Text className={classes.badgeText}>{calificationType?.toUpperCase()}</Text>
         </Badge>
       )}
@@ -144,13 +143,25 @@ export default function ScoreFeedback({
         </Box>
       ) : (
         <>
-          <Badge closable={false} size="xs" className={classes.calificationBadge}>
-            <Text className={classes.badgeText}>{localizationType?.feedback?.toUpperCase()}</Text>
-          </Badge>
+          {!isNil(score) && (
+            <Badge disableHover closable={false} size="xs" className={classes.calificationBadge}>
+              <Text className={classes.badgeText}>{localizationType?.feedback?.toUpperCase()}</Text>
+            </Badge>
+          )}
           <Box className={classes.containerGrade} style={{ marginTop: 0 }}>
             <Box className={classes.containerFeedback}>
-              <GotFeedbackIcon />
-              <Text className={classes.textFeedback}>{localizationType?.feedbackAvailable}</Text>
+              {!isNil(score) ? (
+                <>
+                  <GotFeedbackIcon />
+                  <Text className={classes.textFeedback}>
+                    {localizationType?.feedbackAvailable}
+                  </Text>
+                </>
+              ) : (
+                <Text strong size="xl">
+                  {'-'}
+                </Text>
+              )}
             </Box>
           </Box>
         </>
