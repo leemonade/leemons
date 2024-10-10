@@ -25,6 +25,7 @@ import { EMAIL_REGEX } from '@users/components/LoginForm';
 import prefixPN from '@users/helpers/prefixPN';
 import useUserDetails from '@users/hooks/useUserDetails';
 import { activateUserRequest, sendWelcomeEmailToUserRequest } from '@users/request';
+import useProvider from '@users/request/hooks/queries/useProvider';
 
 const USER_FIELDS = ['email', 'name', 'surnames', 'secondSurname', 'gender', 'birthdate', 'avatar'];
 
@@ -33,6 +34,8 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
   const [activeModalOpened, setActiveModalOpened] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const locale = useLocale();
+
+  const { data: provider } = useProvider();
 
   const enableUserDetails = !!user?.id;
   const {
@@ -202,7 +205,7 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
               </Box>
             )}
           </Stack>
-          {userNeedsActivation && (
+          {(!provider || provider?.supportedMethods?.recoverPassword) && userNeedsActivation && (
             <Stack fullWidth direction="row">
               <Button variant="link" onClick={sendActivationEmail}>
                 {t('sendActivationEmail')}
