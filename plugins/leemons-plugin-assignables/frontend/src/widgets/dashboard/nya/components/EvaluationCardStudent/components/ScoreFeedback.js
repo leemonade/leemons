@@ -51,6 +51,7 @@ export default function ScoreFeedback({
 
   if (/([0,3,6]|[a,d])$/.test(instance.id)) {
     arrowPosition = 'equal';
+    conso;
   } else if (/([1,4,7,9]|[b,e])$/.test(instance.id)) {
     arrowPosition = 'better';
   } else if (/([2,5,8]|[c,f])$/.test(instance.id)) {
@@ -116,7 +117,7 @@ export default function ScoreFeedback({
   useEffect(() => {
     getInstanceTypeLocale(instance);
   }, [instance, calificationType, setCalificationType]);
-  console.log('score', score);
+
   const { classes } = useScoreFeedbackStyles({ color, fullSize });
   return (
     <Box className={classes.root}>
