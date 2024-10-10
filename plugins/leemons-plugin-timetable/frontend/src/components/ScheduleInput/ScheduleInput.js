@@ -1,9 +1,11 @@
-import React, { forwardRef, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { isArray, isNil, isString, map } from 'lodash';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import React, { forwardRef, useEffect, useState, useMemo } from 'react';
+
 import { SchedulePicker } from '@bubbles-ui/leemons';
 import { unflatten } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { isArray, isNil, isString } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { prefixPN } from '../../helpers';
 
 const ScheduleInput = forwardRef(({ label, ...props }, ref) => {
@@ -26,14 +28,26 @@ const ScheduleInput = forwardRef(({ label, ...props }, ref) => {
     handleTranslations();
   }, [translations, label]);
 
-  let value;
-  if (props.value && isArray(props.value.days)) {
-    value = { ...props.value };
-    value.days = map(value.days, (day) => ({ ...day }));
-  }
+  const sortedDays = useMemo(() => {
+    if (props.value && isArray(props.value.days)) {
+      return [...props.value.days].sort((a, b) => {
+        const adjustedDayWeekA = a.dayWeek === 0 ? 7 : a.dayWeek;
+        const adjustedDayWeekB = b.dayWeek === 0 ? 7 : b.dayWeek;
+        return adjustedDayWeekA - adjustedDayWeekB;
+      });
+    }
+    return [];
+  }, [props.value?.days]);
+
+  const internalValue = useMemo(() => {
+    if (props.value && isArray(props.value.days)) {
+      return { ...props.value, days: sortedDays };
+    }
+    return props.value;
+  }, [props.value, sortedDays]);
 
   return !isNil(pickerProps) ? (
-    <SchedulePicker {...pickerProps} {...props} ref={ref} value={value} />
+    <SchedulePicker {...pickerProps} {...props} ref={ref} value={internalValue} />
   ) : null;
 });
 
