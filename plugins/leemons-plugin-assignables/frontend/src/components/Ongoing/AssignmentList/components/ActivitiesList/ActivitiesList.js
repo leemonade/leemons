@@ -1,6 +1,8 @@
+import React, { useMemo, useState } from 'react';
+
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
-import useSearchOngoingActivities from '@assignables/requests/hooks/queries/useSearchOngoingActivities';
-import { Box, ImageLoader, Loader, PaginatedList, Text } from '@bubbles-ui/components';
+import { Box, ImageLoader, Loader, PaginatedList, Stack, Text } from '@bubbles-ui/components';
+import { PluginComunicaIcon } from '@bubbles-ui/icons/outline';
 import { unflatten } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
@@ -8,12 +10,13 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getSessionConfig } from '@users/session';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useMemo, useState } from 'react';
-import { PluginComunicaIcon } from '@bubbles-ui/icons/outline';
+
 import EmptyState from '../../../../../assets/EmptyState.png';
 import prefixPN from '../../../../../helpers/prefixPN';
 import useAssignationsByProfile from '../../../../../hooks/assignations/useAssignationsByProfile';
 import useParseAssignations from '../../hooks/useParseAssignations';
+
+import useSearchOngoingActivities from '@assignables/requests/hooks/queries/useSearchOngoingActivities';
 
 function useAssignmentsColumns({ archived }) {
   const isTeacher = useIsTeacher();
@@ -64,10 +67,20 @@ function useAssignmentsColumns({ archived }) {
         {
           Header: labels?.evaluated || '',
           accessor: 'evaluated',
+          cellStyle: {
+            justifyContent: 'center',
+          },
         },
         !archived && {
-          Header: <PluginComunicaIcon />,
-          accessor: 'unreadMessages',
+          Header: (
+            <Stack justifyContent="center" fullWidth>
+              <PluginComunicaIcon />
+            </Stack>
+          ),
+          accessor: 'messages',
+          cellStyle: {
+            justifyContent: 'center',
+          },
         },
       ].filter(Boolean),
     [labels]

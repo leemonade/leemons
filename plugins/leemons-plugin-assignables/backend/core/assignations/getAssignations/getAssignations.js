@@ -2,15 +2,15 @@ const { LeemonsError } = require('@leemons/error');
 const { map, uniq, keyBy, defaultsDeep } = require('lodash');
 
 const { checkPermissions } = require('./checkPermissions');
-const { getClassesWithSubject } = require('./getClassesWithSubject');
-const { getRelatedAssignationsTimestamps } = require('./getRelatedAssignationsTimestamps');
 const { findAssignationDates } = require('./findAssignationDates');
 const { findInstanceDates } = require('./findInstanceDates');
-const { getGrades } = require('./getGrades');
 const { getAssignationStatus } = require('./getAssignationStatus');
+const { getClassesWithSubject } = require('./getClassesWithSubject');
+const { getGrades } = require('./getGrades');
 const {
   getModuleActivitiesTimestampsAndGrades,
 } = require('./getModuleActivitesTimestampsAndGrades');
+const { getRelatedAssignationsTimestamps } = require('./getRelatedAssignationsTimestamps');
 
 async function getAssignations({
   assignationsIds,
@@ -110,9 +110,8 @@ async function getAssignations({
   ] = await Promise.all(promises);
 
   const result = assignationsData.map(async (assignation) => {
-    const chatKeys = classes[assignation.instance].subjectsIds.map(
-      (subject) =>
-        `assignables.subject|${subject}.assignation|${assignation.id}.userAgent|${assignation.user}`
+    const chatKeys = classes[assignation.instance].subjectsIds.map((subject) =>
+      ctx.prefixPN(`subject|${subject}.assignation|${assignation.id}.userAgent|${assignation.user}`)
     );
 
     // Add module child activities timestamps to the assignation timestamps
