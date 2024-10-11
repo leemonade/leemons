@@ -63,8 +63,8 @@ function ListUsers() {
   async function listUsers(searchQuery) {
     const query = {};
 
-    if (searchQuery ?? store.search) {
-      const search = searchQuery ?? store.search;
+		const search = searchQuery ?? store.search;
+    if (search) {
       query.$or = [
         { name: { $regex: escapeRegExp(search.toLowerCase()), $options: 'i' } },
         { surnames: { $regex: escapeRegExp(search.toLowerCase()), $options: 'i' } },
