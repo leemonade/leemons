@@ -1,5 +1,7 @@
-import { Box, Skeleton } from '@bubbles-ui/components';
 import React from 'react';
+
+import { Box, Skeleton } from '@bubbles-ui/components';
+
 import { NYACardSkeletonStyles } from './NYACardSkeleton.styles';
 
 const NYACardSkeleton = () => {
@@ -24,23 +26,13 @@ const NYACardSkeleton = () => {
             <Skeleton height={8} width={58} radius={100} mt={6} />
           </Box>
         </Box>
-        <Box className={classes.deadlineContainer}>
-          <Skeleton height={12} width={72} radius={100} />
-          <Skeleton height={12} width={72} radius={100} />
-        </Box>
-        <Box className={classes.progressBar}>
-          <Skeleton height={8} width={54} radius={4} />
-          <Skeleton height={8} width={54} radius={4} />
-        </Box>
-        <Skeleton height={12} width={'100%'} radius={100} mt={6} />
         <Box className={classes.footer}>
           <Box className={classes.footerContainer}>
             <Skeleton height={18} width={18} radius={0} />
             <Skeleton height={8} width={53} radius={100} />
           </Box>
           <Box className={classes.footerContainer}>
-            <Skeleton height={18} width={18} radius={4} />
-            <Skeleton height={12} width={12} radius={8} />
+            <Skeleton height={24} width={24} radius={100} />
           </Box>
         </Box>
       </Box>

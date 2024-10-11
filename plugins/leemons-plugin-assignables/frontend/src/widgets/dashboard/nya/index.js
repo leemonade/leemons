@@ -1,21 +1,12 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
-import {
-  Box,
-  Button,
-  ContextContainer,
-  ImageLoader,
-  Loader,
-  Stack,
-  Text,
-} from '@bubbles-ui/components';
-import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { Link } from 'react-router-dom';
 
-import useClassData from '@assignables/hooks/useClassDataQuery';
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
+import { Box, Button, ContextContainer, Loader, Stack, Text } from '@bubbles-ui/components';
+import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
+import PropTypes from 'prop-types';
+
 import { ActivityCarousel, EvaluationsCarousel, Header } from './components';
 import {
   useEvaluatedActivities,
@@ -23,6 +14,8 @@ import {
   useNyaLocalizations,
   useNyaStyles,
 } from './hooks';
+
+import useClassData from '@assignables/hooks/useClassDataQuery';
 
 export function EmptyState() {
   const localizations = useNyaLocalizations()?.nya;
@@ -118,7 +111,6 @@ export default function NYA({ classe, program }) {
           showSubjects={!classe}
         />
       </Box>
-
       {isStudent && (
         <Box className={classes.section}>
           <Header
