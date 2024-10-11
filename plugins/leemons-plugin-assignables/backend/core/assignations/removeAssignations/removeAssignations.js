@@ -58,6 +58,4 @@ module.exports = async function removeAssignations({ assignations, instance, ctx
   });
 
   return ctx.tx.db.Assignations.deleteMany({ id: { $in: assignationIds } });
-
-  // TODO: Delete comunica rooms
 };
