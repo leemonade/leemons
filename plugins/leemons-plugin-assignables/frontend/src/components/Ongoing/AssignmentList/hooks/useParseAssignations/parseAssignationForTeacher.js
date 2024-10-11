@@ -1,15 +1,15 @@
 import React from 'react';
 
-import { Badge, Text } from '@bubbles-ui/components';
-
-import { forEach, get, uniq } from 'lodash';
-
+import { useClassesSubjects } from '@academic-portfolio/hooks';
+import { Text } from '@bubbles-ui/components';
+import { unflatten } from '@common';
 import UnreadMessages from '@comunica/components/UnreadMessages';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@assignables/helpers/prefixPN';
-import { unflatten } from '@common';
-import { useClassesSubjects } from '@academic-portfolio/hooks';
+import { forEach, get, uniq } from 'lodash';
+
 import { parseAssignationForCommonView } from './parseAssignationForCommon';
+
+import prefixPN from '@assignables/helpers/prefixPN';
 
 function Completion({ instance }) {
   const { requiresScoring } = instance;
@@ -130,7 +130,7 @@ export async function parseAssignationForTeacherView(instance, labels, options) 
     ? `/private/learning-paths/modules/dashboard/${instance.metadata?.module?.id}`
     : (role.dashboardUrl || '/private/assignables/details/:id').replace(':id', instance.id);
 
-  let rooms = [];
+  let rooms = [prefixPN(`instance:${instance.id}:group`)];
   forEach(instance.students, ({ chatKeys }) => {
     rooms = rooms.concat(chatKeys);
   });
@@ -142,7 +142,11 @@ export async function parseAssignationForTeacherView(instance, labels, options) 
     dashboardURL,
     students: studentsCount,
     evaluated: <Evaluated instance={instance} />,
-    messages: !commonData?.parentModule && <UnreadMessages rooms={rooms} />,
+    messages: !commonData?.parentModule && (
+      <UnreadMessages
+        rooms={instance?.metadata?.createComunicaRooms && !commonData?.parentModule ? rooms : []}
+      />
+    ),
   };
 }
 

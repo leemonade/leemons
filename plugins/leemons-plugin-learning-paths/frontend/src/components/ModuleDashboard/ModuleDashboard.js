@@ -355,7 +355,15 @@ export function ModuleDashboard({ id, preview }) {
 
   return (
     <TotalLayoutContainer
-      Header={<ActivityHeader instance={module} showStartDate showDeadline showDateTime />}
+      Header={
+        <ActivityHeader
+          instance={module}
+          showStartDate
+          showDeadline
+          showDateTime
+          showDeleteButton
+        />
+      }
     >
       <Box sx={{ overflow: 'auto' }}>
         <Tabs fullHeight fullWidth usePaddedLayout>
@@ -389,8 +397,8 @@ export function ModuleDashboard({ id, preview }) {
                 <ContextContainer
                   title={
                     isStudent
-                      ? (localizations?.studentProgressTitle ?? 'Notas del módulo')
-                      : (localizations?.teacherProgressTitle ?? 'Notas medias del módulo')
+                      ? localizations?.studentProgressTitle ?? 'Notas del módulo'
+                      : localizations?.teacherProgressTitle ?? 'Notas medias del módulo'
                   }
                 >
                   <Box pt={10}>
