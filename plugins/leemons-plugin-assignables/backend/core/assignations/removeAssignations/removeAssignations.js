@@ -6,6 +6,7 @@ const { getUserPermission } = require('../../permissions/instances/users');
 const {
   removePermissionFromUser,
 } = require('../../permissions/instances/users/removePermissionFromUser');
+const { deleteCommunicaRooms } = require('../createAssignation/helpers/deleteComunicaRooms');
 
 /**
  *
@@ -25,6 +26,20 @@ module.exports = async function removeAssignations({ assignations, instance, ctx
 
   const assignationIds = assignations.map((assignation) => assignation.id);
   const students = uniq(assignations.map((assignation) => assignation.user));
+
+  if (instance.metadata.createComunicaRooms) {
+    const classes = await ctx.tx.call('academic-portfolio.classes.classByIds', {
+      ids: instance.classes,
+      withTeachers: true,
+    });
+
+    await deleteCommunicaRooms({
+      instance,
+      assignations,
+      classes,
+      ctx,
+    });
+  }
 
   await removePermissionFromUser({
     assignableInstance: instance.id,
