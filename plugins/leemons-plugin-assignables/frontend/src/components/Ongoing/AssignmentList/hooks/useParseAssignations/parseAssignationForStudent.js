@@ -1,15 +1,16 @@
 import React from 'react';
 
+import { useClassesSubjects } from '@academic-portfolio/hooks';
 import { Text } from '@bubbles-ui/components';
 import { unflatten } from '@common';
-import { get } from 'lodash';
-import dayjs from 'dayjs';
-
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@assignables/helpers/prefixPN';
 import UnreadMessages from '@comunica/components/UnreadMessages';
-import { useClassesSubjects } from '@academic-portfolio/hooks';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import dayjs from 'dayjs';
+import { get } from 'lodash';
+
 import { parseAssignationForCommonView } from './parseAssignationForCommon';
+
+import prefixPN from '@assignables/helpers/prefixPN';
 
 function getStatus(assignation) {
   const { instance } = assignation;
@@ -189,13 +190,18 @@ export async function parseAssignationForStudentView(assignation, labels, option
   // const blockingActivitiesById = options.blockingActivities;
   // const blockingActivities = instance.relatedAssignableInstances?.blocking ?? [];
 
+  const rooms = [prefixPN(`instance:${instance.id}:group`)].concat(assignation.chatKeys);
   const isBlocked = false; // blockingActivities.some((id) => !blockingActivitiesById?.[id]?.finished);
 
   return {
     ...commonData,
     isBlocked,
     progress: <Progress assignation={assignation} isBlocked={isBlocked} />,
-    messages: !commonData?.parentModule && <UnreadMessages rooms={assignation.chatKeys} />,
+    messages: (
+      <UnreadMessages
+        rooms={instance?.metadata?.createComunicaRooms && !commonData?.parentModule ? rooms : []}
+      />
+    ),
     dashboardURL: () => getDashboardURL(assignation),
   };
 }

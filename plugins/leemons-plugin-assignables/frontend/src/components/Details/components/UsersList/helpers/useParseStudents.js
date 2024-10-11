@@ -1,5 +1,6 @@
+import React, { useMemo } from 'react';
+
 import { useClassesSubjects } from '@academic-portfolio/hooks';
-import sendReminder from '@assignables/requests/assignableInstances/sendReminder';
 import { UserDisplayItem } from '@bubbles-ui/components';
 import { LocaleDuration, unflatten } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
@@ -7,16 +8,19 @@ import UnreadMessages from '@comunica/components/UnreadMessages';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import getNearestScale from '@scorm/helpers/getNearestScale';
 import { useQuery } from '@tanstack/react-query';
 import { getUserAgentsInfoRequest } from '@users/request';
 import dayjs from 'dayjs';
 import _, { isNil } from 'lodash';
-import React, { useMemo } from 'react';
+
+import prefixPN from '../../../../../helpers/prefixPN';
+
+import getActions from './getActions';
+
 import { Progress } from '@assignables/components/Ongoing/AssignmentList/hooks/useParseAssignations/parseAssignationForStudent';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import getNearestScale from '@scorm/helpers/getNearestScale';
-import prefixPN from '../../../../../helpers/prefixPN';
-import getActions from './getActions';
+import sendReminder from '@assignables/requests/assignableInstances/sendReminder';
 
 function useUserAgentsInfo(students) {
   const users = students.map((student) => student.user);
@@ -125,7 +129,9 @@ export default function useParseStudents(instance) {
         id: student.user,
         userAgentIsDisabled: student.userAgentIsDisabled,
         student: <UserDisplayItem {...student.userInfo} />,
-        unreadMessages: <UnreadMessages rooms={student.chatKeys} />,
+        unreadMessages: (
+          <UnreadMessages rooms={instance?.metadata?.createComunicaRooms ? student.chatKeys : []} />
+        ),
         progress: <Progress assignation={{ ...student, instance }} />,
         avgTime:
           student?.timestamps?.start && student?.timestamps?.end ? (
