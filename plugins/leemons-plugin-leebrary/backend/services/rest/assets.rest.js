@@ -4,25 +4,25 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const { LeemonsError } = require('@leemons/error');
-const _ = require('lodash');
+const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 const got = require('got');
-const { metascraper } = require('../../core/shared');
+const _ = require('lodash');
 
 const { duplicate } = require('../../core/assets/duplicate');
-const { remove } = require('../../core/assets/remove');
-const { getByUser } = require('../../core/assets/getByUser');
 const { getByIds } = require('../../core/assets/getByIds');
+const { getByUser } = require('../../core/assets/getByUser');
+const { prepareAsset } = require('../../core/assets/prepareAsset');
+const { remove } = require('../../core/assets/remove');
+const { setAsset } = require('../../core/assets/set');
 const { getByAsset: getPermissions } = require('../../core/permissions/getByAsset');
 const { getUsersByAsset } = require('../../core/permissions/getUsersByAsset');
 const canAssignRole = require('../../core/permissions/helpers/canAssignRole');
-const { search: getByCriteria, list } = require('../../core/search');
 const { add: addPin } = require('../../core/pins/add');
-const { removeByAsset: removePin } = require('../../core/pins/removeByAsset');
 const { getByUser: getPinsByUser } = require('../../core/pins/getByUser');
-const { setAsset } = require('../../core/assets/set');
-const { prepareAsset } = require('../../core/assets/prepareAsset');
+const { removeByAsset: removePin } = require('../../core/pins/removeByAsset');
+const { search: getByCriteria, list } = require('../../core/search');
+const { metascraper } = require('../../core/shared');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -266,7 +266,10 @@ module.exports = {
         metas = await metascraper({ html, url });
       } catch (e) {
         ctx.logger.error(e);
-        throw new LeemonsError(ctx, { message: `Error getting URL metadata: ${url}` });
+        throw new LeemonsError(ctx, {
+          message: `Error getting URL metadata: ${url}`,
+          customCode: 'URL_METADATA_ERROR',
+        });
       }
 
       return { status: 200, metas };

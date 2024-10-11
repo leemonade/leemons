@@ -1,16 +1,19 @@
 import React from 'react';
-import { Box, Text, TextClamp } from '@bubbles-ui/components';
 import { Link } from 'react-router-dom';
+
 import { ClassroomItemDisplay } from '@academic-portfolio/components';
+import { Box, Text, TextClamp } from '@bubbles-ui/components';
 import { RoomItemDisplay } from '@comunica/components';
-import { EvaluationCardSkeleton } from '@assignables/components/EvaluationCard/EvaluationCardSkeleton';
+
+import { useEvaluationCardStyles } from './EvaluationCardStudent.styles';
+import { RoleName } from './components/RoleName';
+import ScoreFeedback from './components/ScoreFeedback';
+
 import {
   EVALUATIONCARDRIGHTELEMENT_DEFAULT_PROPS,
   EVALUATIONCARDRIGHTELEMENT_PROP_TYPES,
 } from '@assignables/components/EvaluationCard/EvaluationCardRightElement/EvaluationCardRightElement.constants';
-import { useEvaluationCardStyles } from './EvaluationCardStudent.styles';
-import ScoreFeedback from './components/ScoreFeedback';
-import { RoleName } from './components/RoleName';
+import { EvaluationCardSkeleton } from '@assignables/components/EvaluationCard/EvaluationCardSkeleton';
 
 export default function EvaluationCardStudent({ assignation }) {
   const { instance } = assignation;
@@ -22,6 +25,9 @@ export default function EvaluationCardStudent({ assignation }) {
     }
 
     const grades = assignation.grades.filter((grade) => grade.type === 'main');
+    if (grades.length === 0) {
+      return null;
+    }
     const sum = grades.reduce((s, grade) => grade.grade + s, 0);
     return sum / grades.length;
   }, [assignation.grades, instance.requiresScoring]);
@@ -63,6 +69,7 @@ export default function EvaluationCardStudent({ assignation }) {
             isCalificable={instance.requiresScoring}
             score={instance.requiresScoring && score}
             instance={instance}
+            isFeedback={instance.allowFeedback && !instance.requiresScoring}
           />
         </Box>
       </Box>

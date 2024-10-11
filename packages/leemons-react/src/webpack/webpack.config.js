@@ -1,14 +1,14 @@
 // @ts-check
-const path = require('path');
-const webpack = require('webpack');
-
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-const TerserPlugin = require('terser-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
+const path = require('path');
+const TerserPlugin = require('terser-webpack-plugin');
+const webpack = require('webpack');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 module.exports = function webpackConfig({
   app,
@@ -94,6 +94,7 @@ module.exports = function webpackConfig({
       },
     },
     resolve: {
+      extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       /*
       fallback: {
         fs: false,
@@ -169,21 +170,33 @@ module.exports = function webpackConfig({
               },
             },
             {
+              test: /\.(ts|tsx)$/,
+              use: [
+                {
+                  loader: 'ts-loader',
+                  options: {
+                    transpileOnly: true, // This option is important for performance
+                    experimentalWatchApi: true,
+                    configFile: path.resolve('../..', 'tsconfig.frontend.json'),
+                  },
+                },
+              ],
+            },
+            {
               test: /\.(js|mjs|jsx)$/,
-              // exclude: /node_modules/,
               exclude: /node_modules\/(?!(@bubbles-ui\/*)\/).*/,
-              loader: 'babel-loader',
-              options: {
-                // plugins: [isDev && require.resolve('react-hot-loader/babel')],
-                plugins: [isDev && require.resolve('react-refresh/babel')].filter(Boolean),
-                presets: ['@babel/preset-react'],
-                // This is a feature of `babel-loader` for webpack (not Babel itself).
-                // It enables caching results in ./node_modules/.cache/babel-loader/
-                // directory for faster rebuilds.
-                cacheDirectory: true,
-                cacheCompression: false,
-                compact: isProduction,
-              },
+              use: [
+                {
+                  loader: 'babel-loader',
+                  options: {
+                    presets: ['@babel/preset-react'],
+                    plugins: [isDev && require.resolve('react-refresh/babel')].filter(Boolean),
+                    cacheDirectory: true,
+                    cacheCompression: false,
+                    compact: isProduction,
+                  },
+                },
+              ],
             },
             {
               test: /\.css$/,
@@ -248,6 +261,12 @@ module.exports = function webpackConfig({
         new CopyPlugin({
           patterns: [...publicFiles],
         }),
+      new ForkTsCheckerWebpackPlugin({
+        async: isDev,
+        typescript: {
+          configFile: path.resolve('../..', 'tsconfig.frontend.json'),
+        },
+      }),
     ].filter(Boolean),
     // Turn off performance processing because we utilize
     // our own hints via the FileSizeReporter

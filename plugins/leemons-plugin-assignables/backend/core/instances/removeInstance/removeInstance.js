@@ -1,68 +1,76 @@
+const { LeemonsError } = require('@leemons/error');
+
+const removeAssignations = require('../../assignations/removeAssignations/removeAssignations');
 const { unregisterClass } = require('../../classes');
 const { unregisterDates } = require('../../dates/unregisterDates');
-const { getInstance } = require('../getInstance');
 const { removePermission } = require('../../permissions/instances/removePermission');
+const { getUserPermission } = require('../../permissions/instances/users');
+const getTeachersFromAssignableInstance = require('../../teachers/getTeachersFromAssignableInstance');
+const {
+  removeTeachersFromAssignableInstance,
+} = require('../../teachers/removeTeachersFromAssignableInstance');
+const { getInstance } = require('../getInstance');
 
 /**
  * Removes an instance.
  *
  * @param {Object} params - The parameters for removing the instance.
- * @param {string} params.assignableInstanceId - The ID of the assignable instance to remove.
+ * @param {string} params.id - The ID of the assignable instance to remove.
  * @param {MoleculerContext} params.ctx - The Moleculer context object.
  * @returns {Promise} A promise that resolves when the instance is removed.
  */
-async function removeInstance({ assignableInstanceId, ctx }) {
-  // EN: Get the assignable instance
-  // ES: Obtiene el asignable instance
-  const { relatedAssignableInstances, dates, classes, assignable, event } = await getInstance({
-    id: assignableInstanceId,
+async function removeInstance({ id, ctx }) {
+  const instance = await getInstance({
+    id,
     details: true,
     ctx,
   });
 
-  // ES: Si hay evento lo eliminamos
+  const { metadata, dates, classes, assignable, event, students } = instance;
+
+  const { actions } = await getUserPermission({ assignableInstance: id, ctx });
+
+  if (!actions.includes('edit')) {
+    throw new LeemonsError(ctx, {
+      message: 'You do not have permission to delete this assignable instance',
+    });
+  }
+
+  const isModule = metadata?.module?.type === 'module';
+  if (isModule) {
+    await Promise.all(metadata.module.activities.map(({ id }) => removeInstance({ id, ctx })));
+  }
+
+  await removeAssignations({ assignations: students, instance, ctx });
+
   if (event) {
     await ctx.tx.call('calendar.calendar.removeEvent', { id: event });
   }
 
-  // EN: Remove each relatedAssignableInstance
-  // ES: Elimina cada relatedAssignableInstance
-  if (relatedAssignableInstances?.length) {
-    await Promise.all(
-      relatedAssignableInstances.map((instance) =>
-        removeInstance({ assignableInstanceId: instance, ctx })
-      )
-    );
-  }
-
-  // EN: Unregister dates
-  // ES: Desregistra las fechas
   await unregisterDates({
     type: 'assignableInstance',
-    instance: assignableInstanceId,
+    instance: id,
     name: Object.keys(dates),
     ctx,
   });
 
-  // EN: Remove the user permissions
-  // ES: Elimina los permisos del usuario
-  // TODO: Remove the user permissions
-
-  // EN: Unregister the classes
-  // ES: Desregistra las clases
-  await unregisterClass({ instance: assignableInstanceId, id: classes, ctx });
-
-  // EN: Remove the assignable instance permission item
-  // ES: Elimina el item de permiso del asignable instance
-  await removePermission({
-    assignableInstance: assignableInstanceId,
+  const teachers = await getTeachersFromAssignableInstance({ assignableInstanceId: id, ctx });
+  await removeTeachersFromAssignableInstance({
+    teachers: teachers.map((teacher) => teacher.teacher),
+    id,
     assignable: assignable.id,
     ctx,
   });
 
-  // EN: Remove the assignable instance
-  // ES: Elimina el asignable instance
-  return ctx.tx.db.Instances.deleteOne({ id: assignableInstanceId });
+  await unregisterClass({ instance: id, id: classes, ctx });
+
+  await removePermission({
+    assignableInstance: id,
+    assignable: assignable.id,
+    ctx,
+  });
+
+  return ctx.tx.db.Instances.deleteOne({ id });
 }
 
 module.exports = { removeInstance };

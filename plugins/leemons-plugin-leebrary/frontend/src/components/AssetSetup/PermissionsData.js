@@ -1,4 +1,7 @@
 /* eslint-disable no-param-reassign */
+import React, { useEffect, useState, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
+
 import {
   classByIdsRequest,
   detailProgramRequest,
@@ -19,6 +22,7 @@ import {
   ActionButton,
   ContextContainer,
 } from '@bubbles-ui/components';
+import { RemoveIcon } from '@bubbles-ui/icons/outline';
 import { unflatten, useRequestErrorMessage, useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
@@ -28,19 +32,18 @@ import { listCentersRequest, listProfilesRequest } from '@users/request';
 import { getCentersWithToken } from '@users/session';
 import _, { isArray, isEmpty, isFunction, isNil } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useEffect, useState, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
+
 import prefixPN from '../../helpers/prefixPN';
 import { prepareAsset } from '../../helpers/prepareAsset';
 import { getAssetRequest, setPermissionsRequest } from '../../request';
+import { LibraryCardEmbed } from '../LibraryCardEmbed';
+
+import { PermissionsDataStyles } from './PermissionsData.styles';
 import { PermissionsDataCenterProgramsProfiles } from './components/PermissionsDataCenterProgramsProfiles';
 import { PermissionsDataClasses } from './components/PermissionsDataClasses';
 import { PermissionsDataProfiles } from './components/PermissionsDataProfiles';
 import { PermissionsDataPrograms } from './components/PermissionsDataPrograms';
 import { PermissionsDataUsers } from './components/PermissionsDataUsers';
-import { PermissionsDataStyles } from './PermissionsData.styles';
-import { LibraryCardEmbed } from '../LibraryCardEmbed';
 
 const ROLES_BY_ROLE = {
   viewer: [
@@ -507,6 +510,17 @@ const PermissionsData = ({
                   })}
                 >
                   <Table columns={USER_TABLE_HEADERS} />
+                  {shareTypesValues.includes('users') ? (
+                    <PermissionsDataUsers
+                      roles={roles}
+                      value={editUsersData}
+                      alreadySelectedUsers={[]}
+                      onChange={setEditUsersData}
+                      userProfiles={userProfiles}
+                      t={t}
+                      editMode
+                    />
+                  ) : null}
 
                   {shareTypesValues.includes('centers') ? (
                     <PermissionsDataCenterProgramsProfiles
@@ -551,17 +565,6 @@ const PermissionsData = ({
                       onChange={setEditPermission}
                       profiles={store.profiles}
                       centers={store.centers}
-                      t={t}
-                      editMode
-                    />
-                  ) : null}
-                  {shareTypesValues.includes('users') ? (
-                    <PermissionsDataUsers
-                      roles={roles}
-                      value={editUsersData}
-                      alreadySelectedUsers={[]}
-                      onChange={setEditUsersData}
-                      userProfiles={userProfiles}
                       t={t}
                       editMode
                     />

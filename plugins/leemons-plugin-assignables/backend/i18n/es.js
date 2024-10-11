@@ -190,6 +190,7 @@ module.exports = {
     passed: 'Aprobado',
     close: 'Cerrar',
     archive: 'Archivar',
+    delete: 'Eliminar',
     chatButton: 'Chat',
     closeAction: {
       verbs: {
@@ -246,6 +247,17 @@ module.exports = {
       message2:
         'Una vez archivada esta actividad, podrás incluir nuevas notas a través del Cuaderno de Evaluación',
       confirm: 'Archivar de todas formas',
+      cancel: 'Cancelar',
+    },
+    deleteAction: {
+      success: 'Actividad eliminada',
+      error: 'Error al eliminar la actividad: {{error}}',
+    },
+    deleteModal: {
+      title: '¿Estás seguro de querer eliminar esta actividad?',
+      message1: 'Esta acción no se puede deshacer.',
+      message2: 'Se eliminará toda la información relacionada con esta actividad.',
+      confirm: 'Aceptar y eliminar',
       cancel: 'Cancelar',
     },
   },

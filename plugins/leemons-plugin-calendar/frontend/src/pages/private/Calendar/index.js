@@ -1,8 +1,14 @@
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+import ReactToPrint from 'react-to-print';
+
 import CalendarKey from '@academic-calendar/components/CalendarKey';
 import PrintCalendar from '@academic-calendar/components/PrintCalendar';
+import ProgramBarSelector from '@academic-portfolio/components/ProgramBarSelector/ProgramBarSelector';
 import getCourseName from '@academic-portfolio/helpers/getCourseName';
 import { BigCalendar } from '@bubbles-ui/calendars';
 import {
+  AvatarSubject,
   Box,
   IconButton,
   LoadingOverlay,
@@ -13,15 +19,9 @@ import {
 } from '@bubbles-ui/components';
 import { DownloadIcon } from '@bubbles-ui/icons/outline';
 import { CalendarSubNavFilters, EventDetailPanel } from '@bubbles-ui/leemons';
-import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
-import getClassScheduleAsEvents from '@calendar/helpers/getClassScheduleAsEvents';
-import prefixPN from '@calendar/helpers/prefixPN';
-import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
-import { getCalendarsToFrontendRequest, getScheduleToFrontendRequest } from '@calendar/request';
 import { useLocale, useStore } from '@common';
 import prepareAsset, { getAssetUrl } from '@leebrary/helpers/prepareAsset';
 import loadable from '@loadable/component';
-import ProgramBarSelector from '@academic-portfolio/components/ProgramBarSelector/ProgramBarSelector';
 import tKeys from '@multilanguage/helpers/tKeys';
 import tLoader from '@multilanguage/helpers/tLoader';
 import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
@@ -32,16 +32,20 @@ import hooks from 'leemons-hooks';
 import * as _ from 'lodash';
 import { find, flatten, forEach, keyBy, map, uniq } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import ReactToPrint from 'react-to-print';
-import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
+
 import getCalendarNameWithConfigAndSession from '../../../helpers/getCalendarNameWithConfigAndSession';
 import useTransformEvent from '../../../helpers/useTransformEvent';
 
+import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
+import getClassScheduleAsEvents from '@calendar/helpers/getClassScheduleAsEvents';
+import prefixPN from '@calendar/helpers/prefixPN';
+import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
+import { getCalendarsToFrontendRequest, getScheduleToFrontendRequest } from '@calendar/request';
+
 function academicCalendarImport(component) {
-  return loadable(() =>
-    import(/* webpackInclude: /(academic-calendar.+)\.js/ */ `@academic-calendar/${component}.js`)
+  return loadable(
+    () =>
+      import(/* webpackInclude: /(academic-calendar.+)\.js/ */ `@academic-calendar/${component}.js`)
   );
 }
 
@@ -208,9 +212,23 @@ function Calendar({ session }) {
           };
           const classIcon = matchingClass?.subject?.icon?.cover?.uri || '';
           const subjectIcon = prepareAsset(matchingClass?.subject?.icon)?.cover;
+          const subjectData = {
+            color: matchingClass?.subject?.color,
+            icon: matchingClass?.subject?.icon?.cover?.uri,
+            name: matchingClass?.subject?.name,
+          };
           if (!calendar.isUserCalendar && calendar.isClass) {
             // eslint-disable-next-line no-param-reassign
-            calendar.icon = classIcon ? subjectIcon : <Text>{subjectName()}</Text>;
+            calendar.icon = classIcon ? (
+              subjectIcon
+            ) : (
+              <AvatarSubject
+                color={subjectData?.color || 'aquamarine'}
+                size={'md'}
+                icon={subjectData?.icon}
+                name={subjectData?.name}
+              />
+            );
           }
           // eslint-disable-next-line no-param-reassign
           calendar.name = getCalendarName(
@@ -454,8 +472,8 @@ function Calendar({ session }) {
             store.activePage === 'program'
               ? []
               : store.activePage === 'schedule'
-              ? store.schedule.sections
-              : store.centersDataById[store.center.id].sections
+                ? store.schedule.sections
+                : store.centersDataById[store.center.id].sections
           }
           onChange={(event) => {
             if (store.activePage === 'schedule') {

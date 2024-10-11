@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { isEmpty } from 'lodash';
+
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import {
   Box,
   Text,
@@ -9,18 +10,23 @@ import {
   UserDisplayItem,
   HtmlText,
   ContextContainer,
+  AvatarSubject,
 } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
-import { useIsTeacher } from '@academic-portfolio/hooks';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN as tasksPrefixPN } from '@tasks/helpers/prefixPN';
-import { LibraryDetailContentStyles } from './LibraryDetailContent.styles';
+import { isEmpty } from 'lodash';
+
+import prefixPN from '../../helpers/prefixPN';
+
 import {
   LIBRARY_DETAIL_CONTENT_DEFAULT_PROPS,
   LIBRARY_DETAIL_CONTENT_PROP_TYPES,
 } from './LibraryDetailContent.constants';
-import prefixPN from '../../helpers/prefixPN';
+import { LibraryDetailContentStyles } from './LibraryDetailContent.styles';
 import { DetailContent } from './components/DetailContent/DetailContent';
+
+import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 
 const LibraryDetailContent = ({
   description,
@@ -113,6 +119,7 @@ const LibraryDetailContent = ({
   if (variant === 'embedded' || isEmbedded) {
     return DetailContentComponent;
   }
+
   return (
     <Tabs
       fullHeight
@@ -134,18 +141,43 @@ const LibraryDetailContent = ({
             <Box styles={{ paddingBottom: 1000 }}>
               {canAccessData?.length > 0 && (
                 <Box className={classes.canAccessContainer}>
-                  {canAccessData.map((user, index) => (
-                    <Box key={index} className={classes.canAccessItem}>
-                      <Box className={classes.avatarWrapper}>
-                        <UserDisplayItem variant="inline" size="md" {...user} />
-                      </Box>
-                      <Box className={classes.canAccessTextContainer}>
-                        <Text className={classes.canAccessText}>
-                          {Array.isArray(user.permissions) && t(`${user?.permissions[0]}`)}
-                        </Text>
-                      </Box>
-                    </Box>
-                  ))}
+                  {canAccessData.map((item) => {
+                    if (item?.class) {
+                      return (
+                        <Box key={item.id} className={classes.canAccessItem}>
+                          <Box className={classes.avatarWrapper}>
+                            <AvatarSubject
+                              key={item.id}
+                              icon={getFileUrl(item?.icon?.cover?.id)}
+                              color={item?.color}
+                              name={item?.fullName}
+                            />
+                            <Box>
+                              <Text strong>{item?.fullName}</Text>
+                            </Box>
+                          </Box>
+                          <Box className={classes.canAccessTextContainer}>
+                            <Text className={classes.canAccessText}>
+                              {item?.role ? t(`${item?.role}`) : ''}
+                            </Text>
+                          </Box>
+                        </Box>
+                      );
+                    } else {
+                      return (
+                        <Box key={item.id} className={classes.canAccessItem}>
+                          <Box className={classes.avatarWrapper}>
+                            <UserDisplayItem variant="inline" size="md" {...item} />
+                          </Box>
+                          <Box className={classes.canAccessTextContainer}>
+                            <Text className={classes.canAccessText}>
+                              {Array.isArray(item.permissions) && t(`${item?.permissions[0]}`)}
+                            </Text>
+                          </Box>
+                        </Box>
+                      );
+                    }
+                  })}
                 </Box>
               )}
             </Box>

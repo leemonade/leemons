@@ -123,6 +123,7 @@ module.exports = {
   },
   studentInstance: {
     feedbackIntroductoryText: 'Introducción',
+    instructions: 'Instrucciones',
     next: 'Siguiente',
     questions: 'Preguntas',
   },
