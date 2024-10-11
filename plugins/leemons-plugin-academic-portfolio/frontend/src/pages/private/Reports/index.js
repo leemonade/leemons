@@ -29,7 +29,7 @@ export default function Reports() {
   const history = useHistory();
   const { openConfirmationModal } = useLayout();
   const { data: columnsData } = useReportColumns({});
-  const { data: reportData } = useReportData({
+  const { data: reportData, isLoading: isReportDataLoading } = useReportData({
     options: {
       enabled: canGenerate,
     },
@@ -139,6 +139,7 @@ export default function Reports() {
           columns={columns}
           onGenerateReport={handleOnGenerateReport}
           onNewReport={handleOnNewReport}
+          loading={canGenerate && isReportDataLoading}
         />
 
         <TLayout.Footer fullWidth>
