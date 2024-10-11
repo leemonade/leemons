@@ -18,6 +18,7 @@ import { ChatDisplay } from './components/ChatDisplay/ChatDisplay';
 import ClassroomDisplay from './components/ClassroomDisplay/ClassroomDisplay';
 import CloseButtons from './components/CloseButtons/CloseButtons';
 import DateComponent from './components/Date/Date';
+import DeleteButton from './components/DeleteButton/DeleteButton';
 import StatusBadge from './components/StatusBadge/StatusBadge';
 import Timer from './components/Timer/Timer';
 import useTotalLayoutStyles from './index.style';
@@ -39,6 +40,7 @@ export default function ActivityHeader({
   showCountdown,
   showStatusBadge,
   showCloseButtons,
+  showDeleteButton,
   showAssignmentDetailButton,
   allowEditDeadline,
   goToModuleDashboard = false,
@@ -175,6 +177,7 @@ export default function ActivityHeader({
                 </Button>
               </Box>
             )}
+            <DeleteButton instance={instance} hidden={!showDeleteButton || isModuleActivity} />
           </Box>
           <CloseButtons instance={instance} hidden={!showCloseButtons} />
         </Box>

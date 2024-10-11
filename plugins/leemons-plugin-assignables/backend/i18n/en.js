@@ -191,6 +191,7 @@ module.exports = {
     passed: 'Pass',
     close: 'Close',
     archive: 'Archive',
+    delete: 'Delete',
     chatButton: 'Chat',
     closeAction: {
       verbs: {
@@ -248,6 +249,17 @@ module.exports = {
       message1: 'The are some students who have not been evaluated yet.',
       message2: 'After archiving this activity, you can add the scores in the notebook.',
       confirm: 'Accept and archive',
+      cancel: 'Cancel',
+    },
+    deleteAction: {
+      success: 'Activity deleted',
+      error: 'Error deleting activity: {{error}}',
+    },
+    deleteModal: {
+      title: 'Are you sure you want to delete this activity?',
+      message1: 'This action cannot be undone.',
+      message2: 'All the information related to this activity will be deleted.',
+      confirm: 'Accept and delete',
       cancel: 'Cancel',
     },
   },
