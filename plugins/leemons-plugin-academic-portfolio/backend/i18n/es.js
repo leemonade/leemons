@@ -467,6 +467,7 @@ module.exports = {
         none: 'Ninguno',
       },
     },
+    reports: 'Reportes'
   },
   newSubjectsPage: {
     title: 'Listado de asignaturas',
@@ -1083,5 +1084,30 @@ module.exports = {
       altText: 'Añade tu primer bloque',
     },
     emptyFilters: 'Selecciona una asignatura para empezar',
+  },
+  reportsPage: {
+    title: 'Programas de Aprendizaje',
+    reports: 'Reportes',
+    downloadReport: 'Descargar reporte',
+    back: 'Volver a la configuración de Programas',
+    backConfirmationModal: {
+      title: '¿Estás seguro de que quieres volver?',
+      description: 'Si vuelves, perderás el reporte.',
+    },
+    columns: {
+      center: 'Centro',
+      program: 'Programa',
+      course: 'Curso',
+      subject: 'Asignatura',
+      classroom: 'Clase',
+      teacher: 'Profesor',
+      teacherEmail: 'Profesor - Email',
+      student: 'Estudiante',
+      studentEmail: 'Estudiante - Email',
+      studentEnrollmentDate: 'Estudiante - Fecha de matriculación',
+      teacherEnrollmentDate: 'Profesor - Fecha de matriculación',
+      teacherLastConnection: 'Profesor - Última conexión',
+      studentLastConnection: 'Estudiante - Última conexión',
+    },
   },
 };

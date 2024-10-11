@@ -467,6 +467,7 @@ module.exports = {
         none: 'None',
       },
     },
+    reports: 'Reports'
   },
   newSubjectsPage: {
     title: 'Subject Listing',
@@ -1080,5 +1081,30 @@ module.exports = {
       altText: 'Add your first block.',
     },
     emptyFilters: 'Select a subject to start',
+  },
+  reportsPage: {
+    title: 'Learning Programs',
+    reports: 'Reports',
+    downloadReport: 'Download report',
+    back: 'Back to Learning Programs setup',
+    backConfirmationModal: {
+      title: 'Are you sure you want to go back?',
+      description: 'If you go back, you will lose the report.',
+    },
+    columns: {
+      center: 'Center',
+      program: 'Program',
+      course: 'Course',
+      subject: 'Subject',
+      classroom: 'Classroom',
+      teacher: 'Teacher',
+      teacherEmail: 'Teacher - Email',
+      student: 'Student',
+      studentEmail: 'Student - Email',
+      studentEnrollmentDate: 'Student - Enrollment date',
+      teacherEnrollmentDate: 'Teacher - Enrollment date',
+      teacherLastConnection: 'Teacher - Last connection',
+      studentLastConnection: 'Student - Last connection',
+    },
   },
 };
