@@ -9,7 +9,6 @@ import pMinDelay from 'p-min-delay';
 
 const Welcome = loadable(() => pMinDelay(import('./src/pages/private/WelcomePage'), 500));
 const Profiles = loadable(() => pMinDelay(import('./src/pages/private/ProfilesPage'), 500));
-const Tree = loadable(() => pMinDelay(import('./src/pages/private/TreePage'), 500));
 const AcademicTree = loadable(() => pMinDelay(import('./src/pages/private/AcademicTreePage'), 500));
 const SubjectTypes = loadable(() => pMinDelay(import('./src/pages/private/SubjectTypesPage')));
 const KnowledgeAreas = loadable(() => pMinDelay(import('./src/pages/private/KnowledgeAreasPage')));
@@ -20,6 +19,7 @@ const SubjectsPage = loadable(() =>
   pMinDelay(import('./src/pages/private/subjects/SubjectsPage'), 500)
 );
 const BlocksPage = loadable(() => pMinDelay(import('./src/pages/private/Blocks'), 500));
+const ReportsPage = loadable(() => pMinDelay(import('./src/pages/private/Reports'), 500));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -51,6 +51,9 @@ export default function Private() {
       </Route>
       <Route path={`${path}/blocks`}>
         <BlocksPage session={session} fallback={<LoadingOverlay visible />} />
+      </Route>
+      <Route path={`${path}/reports`}>
+        <ReportsPage session={session} fallback={<LoadingOverlay visible />} />
       </Route>
     </Switch>
   );
