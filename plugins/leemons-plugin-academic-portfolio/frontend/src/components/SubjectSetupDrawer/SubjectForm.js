@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { cloneDeep, isArray, isEmpty } from 'lodash';
-import PropTypes from 'prop-types';
 import { Controller, useForm } from 'react-hook-form';
+
 import {
   ContextContainer,
   Title,
@@ -16,15 +15,19 @@ import {
   Select,
   Switch,
   LoadingOverlay,
-  Table,
 } from '@bubbles-ui/components';
 import ImagePicker from '@leebrary/components/ImagePicker';
-import useKnowledgeAreas from '@academic-portfolio/hooks/useKnowledgeAreas';
-import useSubjectTypes from '@academic-portfolio/hooks/useSubjectTypes';
+import { cloneDeep, isArray, isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+
 import FooterContainer from '../ProgramSetupDrawer/FooterContainer';
+import ReadOnlyField from '../common/ReadOnlyField';
+
 import ClassroomsSetup from './ClassroomsSetup';
 import ReferenceGroupsClassroomsSetup from './ReferenceGroupsClassroomsSetup';
-import ReadOnlyField from '../common/ReadOnlyField';
+
+import useKnowledgeAreas from '@academic-portfolio/hooks/useKnowledgeAreas';
+import useSubjectTypes from '@academic-portfolio/hooks/useSubjectTypes';
 
 const useSubjectFormStyles = createStyles((theme) => ({
   title: {
@@ -259,12 +262,8 @@ const SubjectForm = ({
                   control={control}
                   rules={{
                     required: formLabels?.requiredField,
-                    maxLength: {
-                      value: 3,
-                      message: formLabels?.validation?.internalIdMaxLength,
-                    },
                     pattern: {
-                      value: /^[0-9]+$/,
+                      value: /^[0-9a-zA-Z]+$/,
                       message: formLabels?.validation?.internalIdFormat,
                     },
                   }}
@@ -535,9 +534,40 @@ const SubjectForm = ({
                 )}
               />
             ) : (
-              <Table
-                columns={classroomsDataForReadOnlyTable?.columns}
-                data={classroomsDataForReadOnlyTable?.data}
+              <Controller
+                name="classrooms"
+                control={control}
+                render={({ field, fieldState }) => (
+                  <InputWrapper error={fieldState.error?.message}>
+                    {disableReferenceGroups ? (
+                      <ClassroomsSetup
+                        {...field}
+                        existentClassroomsAmount={subject?.classes?.length}
+                        formLabels={{
+                          ...formLabels?.classroomsSetup,
+                          validation: { ...formLabels?.validation },
+                          labels: { ...localizations?.labels },
+                          textPlaceholder: formLabels.textPlaceholder,
+                        }}
+                      />
+                    ) : (
+                      <ReferenceGroupsClassroomsSetup
+                        {...field}
+                        groups={programReferenceGroups}
+                        usedGroups={subject?.classes?.map((cls) => cls.groups?.id)}
+                        selectedCourses={selectedCourses}
+                        isMultiCourse={!program?.sequentialCourses}
+                        refGroupdisabled={!coursesFormValue?.length}
+                        formLabels={{
+                          ...formLabels?.classroomsSetup,
+                          validation: { ...formLabels?.validation },
+                          labels: { ...localizations?.labels },
+                          textPlaceholder: formLabels.textPlaceholder,
+                        }}
+                      />
+                    )}
+                  </InputWrapper>
+                )}
               />
             )}
           </ContextContainer>

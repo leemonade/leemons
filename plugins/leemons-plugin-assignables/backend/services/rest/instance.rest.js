@@ -4,11 +4,13 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const _ = require('lodash');
 const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
-const { searchInstances } = require('../../core/instances/searchInstances');
+const _ = require('lodash');
+
 const { getInstance } = require('../../core/instances/getInstance');
 const { getInstances } = require('../../core/instances/getInstances');
+const { removeInstance } = require('../../core/instances/removeInstance/removeInstance');
+const { searchInstances } = require('../../core/instances/searchInstances');
 const { sendReminder } = require('../../core/instances/sendReminder');
 const { updateInstance } = require('../../core/instances/updateInstance');
 
@@ -138,6 +140,24 @@ module.exports = {
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       return get(ctx);
+    },
+  },
+  deleteRest: {
+    rest: {
+      method: 'DELETE',
+      path: '/:id',
+    },
+    params: {
+      id: 'string',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const removed = await removeInstance({ id: ctx.params.id, ctx });
+
+      return {
+        status: 200,
+        removed,
+      };
     },
   },
 };

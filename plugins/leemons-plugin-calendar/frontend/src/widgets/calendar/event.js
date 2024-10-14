@@ -36,8 +36,8 @@ export default function Event({ isEditing, event, form, data, allFormData, class
 
   const showVideoLink = useMemo(() => {
     const currentTime = dayjs();
-    const startTime = dayjs(event.startDate).subtract(PREVENT_MINUTES_BEFORE_START, 'minutes');
-    const endTime = dayjs(event.endDate);
+    const startTime = dayjs(event?.startDate).subtract(PREVENT_MINUTES_BEFORE_START, 'minutes');
+    const endTime = dayjs(event?.endDate);
     return (
       disabled &&
       form.getValues('videoLink') &&

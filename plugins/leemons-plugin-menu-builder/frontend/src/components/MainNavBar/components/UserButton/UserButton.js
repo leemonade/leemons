@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+
 import {
   UnstyledButton,
   Group,
@@ -9,16 +10,18 @@ import {
   TextClamp,
 } from '@bubbles-ui/components';
 import { ChevUpIcon, OpenIcon } from '@bubbles-ui/icons/outline';
-import { AnimatePresence, motion } from 'framer-motion';
 import SocketIoService from '@mqtt-socket-io/service';
-import { getUserFullName } from '../../../../helpers/getUserFullName';
-import { UserButttonStyles } from './UserButton.styles';
+import { AnimatePresence, motion } from 'framer-motion';
+
 import { navTitleVariants } from '../../MainNavBar.constants';
-import { USER_BUTTON_PROP_TYPES, USER_BUTTON_DEFAULT_PROPS } from './UserButton.constants';
 import { LinkWrapper } from '../LinkWrapper';
+
+import { USER_BUTTON_PROP_TYPES, USER_BUTTON_DEFAULT_PROPS } from './UserButton.constants';
+import { UserButttonStyles } from './UserButton.styles';
 
 function UserButton({
   name,
+  surnames,
   isCollapsed,
   session,
   sessionMenu,
@@ -85,8 +88,8 @@ function UserButton({
               radius="xl"
               size="sm"
               image={avatar}
-              fullName={session ? getUserFullName(session) : undefined}
-              alt={session ? getUserFullName(session) : 'user avatar'}
+              fullName={session ? `${surnames}, ${name}` : null}
+              alt={session ? `${surnames}, ${name}` : 'user avatar'}
             />
             <motion.div
               initial={{ opacity: '0' }}
@@ -94,7 +97,7 @@ function UserButton({
               variants={navTitleVariants}
             >
               <TextClamp lines={1}>
-                <Text className={classes.nameContainer}>{name}</Text>
+                <Text className={classes.nameContainer}>{`${surnames}, ${name}`}</Text>
               </TextClamp>
             </motion.div>
           </Group>

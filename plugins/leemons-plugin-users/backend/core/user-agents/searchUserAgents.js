@@ -1,27 +1,33 @@
-const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
+const _ = require('lodash');
+
 const { getUserAgentsInfo } = require('./getUserAgentsInfo');
 
 /**
- * Returns all agents that meet the specified parameters.
+ * Searches for user agents based on various criteria.
  * @public
  * @static
- * @param {
- * {
- *    profile: string | undefined,
- *    program: string | undefined,
- *    course: string | undefined,
- *    user: {
- *      name: string | undefined,
- *      surnames: string | undefined,
- *      secondSurname: string | undefined,
- *      email: string | undefined
- *    } | undefined}
- * } filters - To search
- * @param {any=} transacting - DB Transaction
- * @return {Promise<boolean>}
- * */
-
+ * @param {Object} params - The search parameters.
+ * @param {string|string[]} [params.profile] - The profile(s) to search for.
+ * @param {string|string[]} [params.center] - The center(s) to search for.
+ * @param {Object} [params.user] - User details to search for.
+ * @param {string} [params.user.name] - The user's name.
+ * @param {string} [params.user.surnames] - The user's surnames.
+ * @param {string} [params.user.secondSurname] - The user's second surname.
+ * @param {string} [params.user.email] - The user's email.
+ * @param {string|string[]} [params.program] - The program(s) to search for.
+ * @param {string|string[]} [params.course] - The course(s) to search for.
+ * @param {string|string[]} [params.classes] - The class(es) to search for.
+ * @param {string[]} [params.ignoreUserIds] - User IDs to exclude from the search.
+ * @param {boolean} [params.withProfile] - Include profile information in the result.
+ * @param {boolean} [params.withCenter] - Include center information in the result.
+ * @param {string[]} [params.userColumns] - Specific user columns to include in the result.
+ * @param {boolean} [params.onlyContacts] - Search only within the user's contacts.
+ * @param {boolean} [params.queryWithContains=true] - Use partial matching for user fields.
+ * @param {string[]} [params.emails] - Array of emails to limit the search to.
+ * @param {Object} params.ctx - The context object.
+ * @returns {Promise<Array>} A promise that resolves to an array of user agents matching the criteria.
+ */
 async function searchUserAgents({
   profile,
   center,
@@ -35,27 +41,18 @@ async function searchUserAgents({
   userColumns,
   onlyContacts,
   queryWithContains = true,
+  emails,
   ctx,
 }) {
   const { userSession } = ctx.meta;
   const finalQuery = {};
-  // ES: Como es posible que se quiera filtrar desde multiples sitios por usuarios añadimos un array
-  // de ids de usuarios para luego filtrar los agentes
-  // Ejemplo: Queremos sacar los usuarios que tengan un email que contenga gmail.com y en los que su
-  // campo de dataset la edad sea 22, todas esas ids de usuarios que coincidan deben ir eneste array
-  // EN: As it is possible that you may want to filter from multiple sites by users, we add an array
-  // of user ids to filter the agents.
-  // Example: We want to get the users that have an email containing gmail.com and where their
-  // dataset field age is 22, all those matching user ids should go in this array
   let userIds = [];
   let addUserIdsToQuery = false;
 
   let centerRoles = [];
   let profileRoles = [];
 
-  // ES: Si nos viene center sacamos todos los roles del centro y se los pasamos como query para
-  // solo sacar los agentes que esten en dicho centro
-  // EN: If we get a center, we extract all the roles of the center and pass them as a query to
+  // If we get a center, we extract all the roles of the center and pass them as a query to
   // extract only the agents that are in that center.
   if (center) {
     centerRoles = await ctx.tx.db.RoleCenter.find({
@@ -66,9 +63,7 @@ async function searchUserAgents({
     centerRoles = _.map(centerRoles, 'role');
   }
 
-  // ES: Si nos viene perfil sacamos todos los roles del perfil y se los pasamos como query para
-  // solo sacar los agentes que esten en dicho perfil
-  // EN: If we get a profile, we extract all the roles of the profile and pass them as a query to
+  // If we get a profile, we extract all the roles of the profile and pass them as a query to
   // extract only the agents that are in that profile.
   if (profile) {
     profileRoles = await ctx.tx.db.ProfileRole.find({
@@ -95,10 +90,7 @@ async function searchUserAgents({
     finalQuery.id = userAgentContacts; // _.map(userAgentContacts, 'toUserAgent');
   }
 
-  // ES: Si solo viene perfil o solo viene centro se pasan sus respectivos roles para solo sacar
-  // los agentes con dichos roles, pero si vienen ambos (perfil y centro) solo tenemos que sacar
-  // aquellos agentes donde el rol exista tanto en el centro como en el perfil
-  // EN: If only profile or only center comes, their respective roles are passed to only get the
+  // If only profile or only center comes, their respective roles are passed to only get the
   // agents with those roles, but if both come (profile and center) we only have to get those agents
   // where the role exists both in the center and in the profile.
   let queryRoles = [];
@@ -109,9 +101,7 @@ async function searchUserAgents({
     finalQuery.role = queryRoles;
   }
 
-  // ES: Si nos viene el user nos montamos la consulta para sacar todos los usuarios que cumplan con
-  // las condiciones y asi luego filtrar los agentes para que solo saque los de dichos usuarios
-  // EN: If we get the user we set up the query to get all the users that meet the conditions and
+  // If we get the user we set up the query to get all the users that meet the conditions and
   // then filter the agents to get only those of those users.
   if (user && (user.name || user.surnames || user.email)) {
     const query = { $or: [] };
@@ -136,15 +126,23 @@ async function searchUserAgents({
     addUserIdsToQuery = true;
   }
 
-  // ES: Si alfinal hay ids de usuarios las añadimos a los filtros finales
-  // EN: If there are user ids, we add them to the final filters.
+  // If emails array is provided, limit the search to those emails
+  if (emails && emails.length > 0) {
+    const emailRegexes = emails.map((email) => new RegExp(`^${_.escapeRegExp(email)}$`, 'i'));
+    const emailUsers = await ctx.tx.db.Users.find({ email: { $in: emailRegexes } })
+      .select(['id'])
+      .lean();
+    const emailUserIds = _.map(emailUsers, 'id');
+    userIds = userIds.length > 0 ? _.intersection(userIds, emailUserIds) : emailUserIds;
+    addUserIdsToQuery = true;
+  }
+
+  // If there are user ids, we add them to the final filters.
   if (addUserIdsToQuery) {
     finalQuery.user = { $in: userIds };
   }
 
-  // ES: Nos saltamos las ids de usuarios especificadas awui, comunmente se usara por que ya hemos
-  // seleccionado dicho usuario y no queremos que vuelva a salir en el listado
-  // EN: We skip the user ids specified awui, commonly used because we have already selected that
+  // We skip the user ids specified awui, commonly used because we have already selected that
   // user and we do not want it to appear again in the list.
   if (_.isArray(ignoreUserIds)) {
     if (_.isObject(finalQuery.user)) {
@@ -154,8 +152,7 @@ async function searchUserAgents({
     }
   }
 
-  // ES: Finalmente sacamos los agentes con sus correspondientes usuarios según los filtros
-  // EN: Finally, the agents and their corresponding users according to the filters
+  // Finally, the agents and their corresponding users according to the filters
   let userAgents = await ctx.tx.db.UserAgent.find(finalQuery).select(['id']).lean();
 
   if (program) {

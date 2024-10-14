@@ -18,8 +18,11 @@ interface UserAgent {
   disabled: boolean;
   reloadPermissions: boolean;
   role: string;
-  user: string;
+  user: {
+    email: string;
+  };
 }
+
 interface UserSession {
   id: string;
   userAgents: UserAgent[];

@@ -1,9 +1,14 @@
 import React, { useRef } from 'react';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@feedback/helpers/prefixPN';
-import { prefixPN as tasksPrefixPN } from '@tasks/helpers';
-import { htmlToText, useSearchParams, useStore } from '@common';
 import { useHistory, useParams, Link } from 'react-router-dom';
+
+import { addErrorAlert } from '@layout/alert';
+import { createDatasheet } from '@feedback/helpers/createDatasheet';
+import ActivityHeader from '@assignables/components/ActivityHeader/index';
+import useInstances from '@assignables/requests/hooks/queries/useInstances';
+
+import { useIsTeacher } from '@academic-portfolio/hooks';
+import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
+import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import {
   Badge,
   Box,
@@ -17,20 +22,18 @@ import {
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
-import { getFeedbackRequest, getFeedbackResultsRequest } from '@feedback/request';
-import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import { ChevRightIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
-import { NPSStatistics } from '@feedback/pages/private/feedback/Result/components/NPSStatistics';
-import { LikertStatistics } from '@feedback/pages/private/feedback/Result/components/LikertStatistics';
-import { addErrorAlert } from '@layout/alert';
-import { createDatasheet } from '@feedback/helpers/createDatasheet';
-import ActivityHeader from '@assignables/components/ActivityHeader/index';
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
+import { htmlToText, useSearchParams, useStore } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { prefixPN as tasksPrefixPN } from '@tasks/helpers';
 
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import ResultStyles from './Result.styles';
 import { OpenResponse, SelectResponse } from './components';
+
+import prefixPN from '@feedback/helpers/prefixPN';
+import { LikertStatistics } from '@feedback/pages/private/feedback/Result/components/LikertStatistics';
+import { NPSStatistics } from '@feedback/pages/private/feedback/Result/components/NPSStatistics';
+import { getFeedbackRequest, getFeedbackResultsRequest } from '@feedback/request';
 
 const questionsByType = {
   likertScale: <LikertStatistics />,
@@ -174,6 +177,7 @@ export default function Result() {
           showDeadline
           action={t('evaluation')}
           showCloseButtons={isTeacher}
+          showDeleteButton={isTeacher}
           allowEditDeadline={isTeacher}
         />
       }

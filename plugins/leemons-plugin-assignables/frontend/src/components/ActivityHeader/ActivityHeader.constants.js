@@ -15,6 +15,7 @@ export const ACTIVITY_HEADER_PROP_TYPES = {
   showCountdown: propTypes.bool,
   showDeadline: propTypes.bool,
   showCloseButtons: propTypes.bool,
+  showDeleteButton: propTypes.bool,
   allowEditDeadline: propTypes.bool,
   onTimeout: propTypes.func,
   showStatusBadge: propTypes.bool,

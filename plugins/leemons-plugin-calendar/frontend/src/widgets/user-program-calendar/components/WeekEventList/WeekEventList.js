@@ -25,20 +25,23 @@ const WeekEventList = ({ events, startDate, endDate, calendarConfig, t, onEventC
 
   const getEventsForDate = (cleanWeekData) =>
     cleanWeekData.map((dayObj) => {
-      const dayEvents = events.filter((event) => {
-        const eventStart = new Date(event.start);
-        const eventEnd = new Date(event.end);
-        const dayDate = dayObj.dateColumn;
+      const dayEvents = events
+        .filter((event) => {
+          const eventStart = new Date(event.start);
+          const eventEnd = new Date(event.end);
+          const dayDate = dayObj.dateColumn;
 
-        return (
-          (eventStart.getFullYear() === dayDate.getFullYear() &&
-            eventStart.getMonth() === dayDate.getMonth() &&
-            eventStart.getDate() === dayDate.getDate()) ||
-          (eventEnd.getFullYear() === dayDate.getFullYear() &&
-            eventEnd.getMonth() === dayDate.getMonth() &&
-            eventEnd.getDate() === dayDate.getDate())
-        );
-      });
+          return (
+            (eventStart.getFullYear() === dayDate.getFullYear() &&
+              eventStart.getMonth() === dayDate.getMonth() &&
+              eventStart.getDate() === dayDate.getDate()) ||
+            (eventEnd.getFullYear() === dayDate.getFullYear() &&
+              eventEnd.getMonth() === dayDate.getMonth() &&
+              eventEnd.getDate() === dayDate.getDate())
+          );
+        })
+        .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+
       return {
         ...dayObj,
         events: dayEvents.length > 0 ? dayEvents : [],

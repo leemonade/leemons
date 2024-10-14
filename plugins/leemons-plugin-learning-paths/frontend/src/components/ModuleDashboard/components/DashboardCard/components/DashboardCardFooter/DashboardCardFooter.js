@@ -1,19 +1,22 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+
+import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import { Box, Text, ImageLoader, Button } from '@bubbles-ui/components';
+import { LockIcon } from '@bubbles-ui/icons/solid';
 import dayjs from 'dayjs';
 import durationPlugin from 'dayjs/plugin/duration';
-import { Link } from 'react-router-dom';
-import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import { capitalize } from 'lodash';
-import { LockIcon } from '@bubbles-ui/icons/solid';
-import { useDashboardCardFooterStyles } from './DashboardCardFooter.styles';
+import PropTypes from 'prop-types';
+
 import { EvaluationStateDisplay } from '../EvaluationStateDisplay';
+
 import {
   DASHBOARD_CARD_FOOTER_DEFAULT_PROPS,
   DASHBOARD_CARD_FOOTER_PROP_TYPES,
 } from './DashboardCardFooter.constants';
+import { useDashboardCardFooterStyles } from './DashboardCardFooter.styles';
 
 dayjs.extend(durationPlugin);
 
@@ -56,7 +59,8 @@ function PreviewActions({ activity, localizations }) {
   const moduleIdMatch = currentUrl.match(/modules\/(.*?)\/view/);
   const moduleId = moduleIdMatch ? moduleIdMatch[1] : '';
   const url =
-    roleDetails.previewUrl && `${roleDetails.previewUrl?.replace(':id', id)}?moduleId=${moduleId}`;
+    roleDetails?.previewUrl &&
+    `${roleDetails?.previewUrl?.replace(':id', id)}?moduleId=${moduleId}`;
   if (!url) {
     return null;
   }
@@ -79,10 +83,10 @@ PreviewActions.propTypes = {
 
 function TeacherActions({ activity, localizations, evaluationInfo }) {
   const { assignable, id } = activity;
-  const { roleDetails } = assignable;
+  const { roleDetails } = assignable ?? {};
   const { classes } = useDashboardCardFooterStyles();
   const isNoEvaluable = !activity.requiresScoring;
-  const assignablesURL = (roleDetails.dashboardURL || '/private/assignables/details/:id').replace(
+  const assignablesURL = (roleDetails?.dashboardURL || '/private/assignables/details/:id').replace(
     ':id',
     id
   );
@@ -144,7 +148,7 @@ TeacherActions.propTypes = {
 function StudentActions({ isBlocked, activity, assignation, localizations }) {
   const { classes } = useDashboardCardFooterStyles();
   const { assignable, id, requiresScoring, allowFeedback } = activity;
-  const { roleDetails } = assignable;
+  const { roleDetails } = assignable ?? {};
 
   const { isFinished, isStartedByStudent, isFinishedButNotGraded, isFinishedAndGraded } =
     useStudentState({

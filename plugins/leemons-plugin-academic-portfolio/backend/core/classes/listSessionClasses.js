@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const { classByIds } = require('./classByIds');
 
 async function getClassesProgramInfo({ programs: _programs, classes, ctx }) {
@@ -57,7 +58,7 @@ async function listSessionClasses({ program, type, withProgram, withTeachers, ct
     ctx,
   });
 
-  return _.orderBy(classes, ['subject.compiledInternalId', 'subject.internalId'], ['asc', 'asc']);
+  return classes;
 }
 
 module.exports = { listSessionClasses, getClassesProgramInfo };

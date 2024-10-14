@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import PropTypes from 'prop-types';
-import { cloneDeep } from 'lodash';
+
 import {
   Select,
   TableInput,
@@ -12,6 +11,8 @@ import {
   Button,
 } from '@bubbles-ui/components';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
+import { cloneDeep } from 'lodash';
+import PropTypes from 'prop-types';
 
 const ReferenceGroupsClassroomsSetup = ({
   onChange,
@@ -21,6 +22,7 @@ const ReferenceGroupsClassroomsSetup = ({
   selectedCourses,
   isMultiCourse,
   refGroupdisabled,
+  usedGroups = [],
 }) => {
   const [classroomsData, setClassroomsData] = useState([]);
   const form = useForm();
@@ -42,6 +44,7 @@ const ReferenceGroupsClassroomsSetup = ({
         accessor: 'referenceGroup',
         style: { width: 196 },
         valueRender: (val) => val?.split('::')[0],
+        editable: false,
       },
       {
         Header: formLabels?.classroomId,
@@ -49,7 +52,7 @@ const ReferenceGroupsClassroomsSetup = ({
         style: { width: 240 },
       },
     ],
-    []
+    [formLabels]
   );
 
   const groupsSelectData = useMemo(() => {
@@ -177,8 +180,11 @@ const ReferenceGroupsClassroomsSetup = ({
               accept: formLabels?.labels?.accept,
               cancel: formLabels?.labels?.cancel,
             }}
-            data={classroomsData}
-            removable
+            data={classroomsData.map((item) => ({
+              ...item,
+              editable: usedGroups?.length ? !item?.id : true, // We don't allow the removal of reference groups once a subject is initialized, currently the component only counts removal and edition as the same thing
+            }))}
+            removable={true}
             onRemove={handleOnRemove}
             editable={false}
             sortable={false}
@@ -198,6 +204,7 @@ ReferenceGroupsClassroomsSetup.propTypes = {
   formLabels: PropTypes.object,
   isMultiCourse: PropTypes.bool,
   refGroupdisabled: PropTypes.bool,
+  usedGroups: PropTypes.array,
 };
 
 export default ReferenceGroupsClassroomsSetup;

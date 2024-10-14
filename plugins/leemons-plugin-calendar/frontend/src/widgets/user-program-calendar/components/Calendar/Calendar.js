@@ -1,13 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Calendar as ReactCalendar } from 'react-calendar';
-import { Box, Stack, Button, IconButton, ActionButton, Text } from '@bubbles-ui/components';
-import { ChevronLeftIcon, ChevronRightIcon } from '@bubbles-ui/icons/outline';
 
-import dayjs from 'dayjs';
+import { Box, Stack, Button, ActionButton, Text } from '@bubbles-ui/components';
+import { ChevronLeftIcon, ChevronRightIcon } from '@bubbles-ui/icons/outline';
 import { LocaleDate } from '@common';
-import { ColorBall } from './components/ColorBall';
+import dayjs from 'dayjs';
+import PropTypes from 'prop-types';
+
 import { CalendarStyles } from './Calendar.styles';
+import { ColorBall } from './components/ColorBall';
 
 const Calendar = ({ events, startDate, setStartDate, endDate, setEndDate, calendarConfig, t }) => {
   const { classes } = CalendarStyles({}, { name: 'Calendar' });

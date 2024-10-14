@@ -3,7 +3,6 @@ import { useHistory } from 'react-router-dom';
 
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import { Box, createStyles } from '@bubbles-ui/components';
-import { LibraryCard } from '@leebrary/components/LibraryCard';
 import loadable from '@loadable/component';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { isEmpty, isNil } from 'lodash';
@@ -19,12 +18,14 @@ import { DuplicateIcon } from './LibraryDetailToolbar/icons/DuplicateIcon';
 import { EditIcon } from './LibraryDetailToolbar/icons/EditIcon';
 import { ShareIcon } from './LibraryDetailToolbar/icons/ShareIcon';
 
+import { LibraryCard } from '@leebrary/components/LibraryCard';
+
 function dynamicImport(pluginName, component) {
   return loadable(async () => {
     try {
       return await import(`@app/plugins/${pluginName}/src/widgets/leebrary/${component}.js`);
     } catch (error) {
-      return await import(`@app/plugins/${pluginName}/dist/widgets/leebrary/${component}.js`);
+      return await import(`@app/plugins/${pluginName}/src/widgets/leebrary/${component}.tsx`);
     }
   });
 }

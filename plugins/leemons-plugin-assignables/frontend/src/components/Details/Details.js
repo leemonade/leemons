@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { useParams } from 'react-router-dom';
+
 import {
   Text,
   Stack,
@@ -8,12 +9,15 @@ import {
   TotalLayoutStepContainer,
   Box,
 } from '@bubbles-ui/components';
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@assignables/helpers/prefixPN';
+
+import ActivityHeader from '../ActivityHeader';
+
 import { TaskOngoingList } from './components/TaskOngoingList';
 import UsersList from './components/UsersList';
-import ActivityHeader from '../ActivityHeader';
+
+import prefixPN from '@assignables/helpers/prefixPN';
+import useInstances from '@assignables/requests/hooks/queries/useInstances';
 
 export default function Details() {
   const { id } = useParams();
@@ -38,6 +42,7 @@ export default function Details() {
             showTime
             //
             showCloseButtons
+            showDeleteButton
             allowEditDeadline
           />
         }

@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
+
 import { AvatarSubject, Box, Text, TextClamp } from '@bubbles-ui/components';
 import { isArray } from 'lodash';
-import { useClassroomsData } from '@academic-portfolio/hooks/useClassroomsData';
-import { ClassroomItemDisplayStyles } from './ClassroomItemDisplay.styles';
+
 import {
   CLASSROOMTITEMSDISPLAY_DEFAULT_PROPS,
   CLASSROOMTITEMSDISPLAY_PROP_TYPES,
 } from './ClassroomItemDisplay.constants';
+import { ClassroomItemDisplayStyles } from './ClassroomItemDisplay.styles';
 import { ClassroomItemDisplaySkeleton } from './ClassroomItemDisplaySkeleton';
+
+import { useClassroomsData } from '@academic-portfolio/hooks/useClassroomsData';
 
 const ClassroomItemDisplay = ({ classroomIds, compact, showSubject }) => {
   const [programNames, setProgramNames] = useState(null);
@@ -51,6 +54,7 @@ const ClassroomItemDisplay = ({ classroomIds, compact, showSubject }) => {
         size={'md'}
         isMultiSubject={isMultiSubjectCase}
         icon={classData?.icon ?? undefined}
+        name={classData?.subjectName}
       />
       <Box className={classes.textWrapper}>
         <TextClamp lines={1}>

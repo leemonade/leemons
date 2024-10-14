@@ -9,6 +9,7 @@ const CalendarStyles = createStyles((theme) => {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'space-between',
+      gap: 16,
       '.react-calendar__tile': {
         maxWidth: '100%',
         paddingBottom: '16px !important',

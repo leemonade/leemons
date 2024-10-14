@@ -4,18 +4,21 @@
  */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getServiceModels } = require('../models');
-const restActions = require('./rest/xapi.rest');
+
+const { PLUGIN_NAME, VERSION } = require('../config/constants');
 const { add } = require('../core/xapi/statement');
+const { getServiceModels } = require('../models');
+
+const restActions = require('./rest/xapi.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'xapi.xapi',
-  version: 1,
+  name: `${PLUGIN_NAME}.xapi`,
+  version: VERSION,
   mixins: [
     LeemonsMiddlewaresMixin(),
     LeemonsCacheMixin(),
@@ -52,9 +55,21 @@ module.exports = {
         return add({ ...ctx.params.statement, ...ctx.params.config, type: 'log', ctx });
       },
     },
-  },
+    aggregate: {
+      async handler(ctx) {
+        const { deploymentID } = ctx.meta;
+        const { pipeline } = ctx.params;
 
-  created() {
-    // mongoose.connect(process.env.MONGO_URI);
+        // Find the $match stage and replace the deploymentID
+        const matchStage = pipeline.find((stage) => stage.$match);
+        if (matchStage) {
+          matchStage.$match.deploymentID = deploymentID;
+        } else {
+          pipeline.unshift({ $match: { deploymentID } });
+        }
+
+        return ctx.tx.db.Statement.aggregate(pipeline);
+      },
+    },
   },
 };

@@ -61,20 +61,22 @@ async function sendReminder({ assignableInstanceId, users, type, ctx }) {
 
   const _classes = _.uniqBy(classesData, 'subject.id');
 
-  const contexts = await Promise.all(
-    userAgents.map(async (userAgent) => {
-      return prepareEmailPerStudent({
-        instance,
-        userAgent,
-        classes: _classes,
-        hostname,
-        hostnameAPI,
+  const contexts = (
+    await Promise.all(
+      userAgents.map(async (userAgent) => {
+        return prepareEmailPerStudent({
+          instance,
+          userAgent,
+          classes: _classes,
+          hostname,
+          hostnameAPI,
 
-        isReminder: true,
-        ignoreUserConfig: true,
-        ctx,
-      });
-    })
+          isReminder: true,
+          ignoreUserConfig: true,
+          ctx,
+        });
+      })
+    )
   ).filter((context) => context !== null);
 
   return Promise.all(contexts.map((context) => sendEmail({ ...context, ctx })));

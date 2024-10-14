@@ -467,6 +467,7 @@ module.exports = {
         none: 'Ninguno',
       },
     },
+    reports: 'Reportes'
   },
   newSubjectsPage: {
     title: 'Listado de asignaturas',
@@ -514,7 +515,7 @@ module.exports = {
         title: 'Datos Básicos',
         presentation: 'Presentación',
         name: 'Nombre',
-        internalId: 'ID único (numérico, 3 digitos)',
+        internalId: 'ID único (alfanumérico)',
         color: 'Color',
         featuredImage: 'Imagen',
         icon: 'Icono',
@@ -548,12 +549,12 @@ module.exports = {
       },
       validation: {
         internalIdMaxLength: 'El ID debe tener un máximo de 3 dígitos',
-        internalIdFormat: 'El ID debe ser numérico ',
+        internalIdFormat: 'ID debe ser alfanumérico (sólo letras y números)',
         atLeastOneClassroom: 'Se necesita al menos un aula',
         atLeastOneSeat: 'El valor no puede ser menor que 1',
         requiredField: 'Campo requerido',
         referenceGroupAlreadyInUse:
-          'This reference group is already being used. Please select another one.',
+          'Este grupo de referencia ya está siendo utilizado. Por favor, selecciona otro.',
       },
     },
     deleteModal: {
@@ -576,7 +577,7 @@ module.exports = {
       },
       failure: {
         add: 'No se ha podido crear la Asignatura',
-        internalIdInUse: 'The entered unique ID is already in use.',
+        internalIdInUse: 'El ID único introducido ya está en uso.',
         update: 'No se ha podido actualizar la Asignatura',
         delete: 'No se ha podido eliminar la Asignatura. ',
         duplicate: 'No se ha podido duplicar la Asignatura. ',
@@ -1083,5 +1084,30 @@ module.exports = {
       altText: 'Añade tu primer bloque',
     },
     emptyFilters: 'Selecciona una asignatura para empezar',
+  },
+  reportsPage: {
+    title: 'Programas de Aprendizaje',
+    reports: 'Reportes',
+    downloadReport: 'Descargar reporte',
+    back: 'Volver a la configuración de Programas',
+    backConfirmationModal: {
+      title: '¿Estás seguro de que quieres volver?',
+      description: 'Si vuelves, perderás el reporte.',
+    },
+    columns: {
+      center: 'Centro',
+      program: 'Programa',
+      course: 'Curso',
+      subject: 'Asignatura',
+      classroom: 'Clase',
+      teacher: 'Profesor',
+      teacherEmail: 'Profesor - Email',
+      student: 'Estudiante',
+      studentEmail: 'Estudiante - Email',
+      studentEnrollmentDate: 'Estudiante - Fecha de matriculación',
+      teacherEnrollmentDate: 'Profesor - Fecha de matriculación',
+      teacherLastConnection: 'Profesor - Última conexión',
+      studentLastConnection: 'Estudiante - Última conexión',
+    },
   },
 };

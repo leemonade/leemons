@@ -28,6 +28,8 @@
     "leemons-plugin-academic-portfolio-frontend-react": "1.0.0",
     "leemons-plugin-admin": "1.0.35",
     "leemons-plugin-admin-frontend-react": "1.0.0",
+    "leemons-plugin-analytics": "1.0.0",
+    "leemons-plugin-analytics-frontend-react": "1.0.0",
     "leemons-plugin-assignables": "1.0.35",
     "leemons-plugin-assignables-frontend-react": "1.0.0",
     "leemons-plugin-attendance-control": "1.0.35",

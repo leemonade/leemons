@@ -9,11 +9,19 @@ import ZoneWidgetsBoundary from './ZoneWidgetsBoundary';
 import useZone from './requests/hooks/queries/useZone';
 
 function dynamicImport(pluginName, component, path = 'src/widgets') {
-  return loadable(() =>
-    import(
-      /* webpackInclude: /(src|dist)\/widgets\/.+\.js/ */ `@app/plugins/${pluginName}/${path}/${component}.js`
-    )
-  );
+  const normalizedPath = path.replace(/^dist\//, 'src/');
+
+  return loadable(async () => {
+    try {
+      return await import(
+        /* webpackInclude: /src\/widgets\/.+\.js/ */ `@app/plugins/${pluginName}/${normalizedPath}/${component}.js`
+      );
+    } catch (error) {
+      return await import(
+        /* webpackInclude: /src\/widgets\/.+\.tsx/ */ `@app/plugins/${pluginName}/${normalizedPath}/${component}.tsx`
+      );
+    }
+  });
 }
 
 export function useWidgetItemsRenderer({ renderer, widgetItems = [], ErrorBoundary }) {

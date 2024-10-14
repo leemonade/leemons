@@ -1,9 +1,12 @@
 import React from 'react';
-import propTypes from 'prop-types';
 import { useFormContext, useWatch } from 'react-hook-form';
+
 import { uniq } from 'lodash';
-import NYACard from '@assignables/components/NYACard';
+import propTypes from 'prop-types';
+
 import { Container } from '../Container';
+
+import NYACard from '@assignables/components/NYACard';
 
 export default function Preview({ assignable, localizations }) {
   const { control } = useFormContext();
@@ -27,6 +30,7 @@ export default function Preview({ assignable, localizations }) {
         total: assignable?.submission?.activities?.length,
         completed: Math.ceil(Math.max((assignable?.submission?.activities?.length ?? 0) / 4, 1)),
       },
+      statement: values?.instructions,
     },
   };
 

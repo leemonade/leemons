@@ -152,7 +152,7 @@ async function classByIds({
     return stu;
   };
 
-  const response = _.map(classes, ({ id, subject, subjectType, ...rest }) => {
+  return _.map(classes, ({ id, subject, subjectType, ...rest }) => {
     let _students = studentsByClass[id] ? _.map(studentsByClass[id], 'student') : [];
     if (childClassesByClass[id]) {
       _.forEach(childClassesByClass[id], (childClass) => {
@@ -193,8 +193,6 @@ async function classByIds({
         : [],
     };
   });
-
-  return _.orderBy(response, ['subject.compiledInternalId', 'subject.internalId'], ['asc', 'asc']);
 }
 
 module.exports = { classByIds };

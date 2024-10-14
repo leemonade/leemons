@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import { useIsTeacher } from '@academic-portfolio/hooks';
 import {
   Box,
   Text,
@@ -120,9 +119,9 @@ function CalendarEventModal(props) {
   } = props;
 
   const [canEdit, setCanEdit] = React.useState(false);
-  const { classes, cx } = CalendarEventModalStyles({});
+  const { classes } = CalendarEventModalStyles({});
   const isTask = defaultValues?.type === CALENDAR_TYPES.TASK;
-  const isTeacher = useIsTeacher();
+  const isSessionsEvent = event?.data?.pluginName === 'sessions';
 
   if (isTask && isNil(defaultValues?.data?.hideInCalendar)) {
     if (isNil(defaultValues.data)) defaultValues.data = {};
@@ -197,11 +196,11 @@ function CalendarEventModal(props) {
       <Drawer.Header title={titleDrawer()}>
         <Drawer.Header.RightActions>
           <Box>
-            {isOwner ? (
+            {isOwner && !isSessionsEvent ? (
               <ActionButton icon={<EditWriteIcon width={18} height={18} />} onClick={onEdit} />
             ) : null}
 
-            {!isNew && isOwner ? (
+            {!isNew && isOwner && !isSessionsEvent ? (
               <ActionButton icon={<DeleteBinIcon width={18} height={18} />} onClick={onRemove} />
             ) : null}
           </Box>

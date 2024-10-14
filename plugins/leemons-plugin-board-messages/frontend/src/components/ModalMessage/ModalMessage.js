@@ -1,10 +1,13 @@
-import { addClickRequest } from '@board-messages/request';
-import { Box, Button, ImageLoader } from '@bubbles-ui/components';
+import React from 'react';
+
+import { Box, Button, ImageLoader, Stack } from '@bubbles-ui/components';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import PropTypes from 'prop-types';
-import React from 'react';
+
 import { ModalMessageStyles } from './ModalMessage.styles';
+
+import { addClickRequest } from '@board-messages/request';
 
 const ModalMessage = ({ message, onClose }) => {
   const preparedAsset = prepareAsset(message.asset || {});
@@ -27,16 +30,18 @@ const ModalMessage = ({ message, onClose }) => {
       )}
       <Box className={classes.title}>{message.internalName}</Box>
       <Box className={classes.message} dangerouslySetInnerHTML={stringToHTML(message.message)} />
-      {message.url && (
-        <Box className={classes.link}>
-          <Button variant="link" onClick={openLink}>
-            {message.textUrl}
+      <Stack justifyContent="space-between" mt={16}>
+        <Box className={classes.buttonRow}>
+          <Button variant="outline" onClick={onClose}>
+            {tCommon('close')}
           </Button>
         </Box>
-      )}
-      <Box className={classes.buttonRow}>
-        <Button onClick={onClose}>{tCommon('close')}</Button>
-      </Box>
+        {message.url && (
+          <Box className={classes.link}>
+            <Button onClick={openLink}>{message.textUrl}</Button>
+          </Box>
+        )}
+      </Stack>
     </Box>
   );
 };

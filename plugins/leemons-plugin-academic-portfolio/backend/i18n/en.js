@@ -467,6 +467,7 @@ module.exports = {
         none: 'None',
       },
     },
+    reports: 'Reports'
   },
   newSubjectsPage: {
     title: 'Subject Listing',
@@ -513,7 +514,7 @@ module.exports = {
         title: 'Basic Data',
         presentation: 'Presentation',
         name: 'Name',
-        internalId: 'Unique ID (numeric, 3 digits)',
+        internalId: 'Unique ID (alphanumeric)',
         color: 'Color',
         featuredImage: 'Image',
         icon: 'Icon',
@@ -547,7 +548,7 @@ module.exports = {
       },
       validation: {
         internalIdMaxLength: 'ID must be a maximum of 3 digits',
-        internalIdFormat: 'ID must be numeric ',
+        internalIdFormat: 'ID must be alphanumeric (only letters and numbers)',
         atLeastOneClassroom: 'At least one classroom is needed',
         atLeastOneSeat: 'Value cannot be less than 1',
         requiredField: 'Required field',
@@ -1080,5 +1081,30 @@ module.exports = {
       altText: 'Add your first block.',
     },
     emptyFilters: 'Select a subject to start',
+  },
+  reportsPage: {
+    title: 'Learning Programs',
+    reports: 'Reports',
+    downloadReport: 'Download report',
+    back: 'Back to Learning Programs setup',
+    backConfirmationModal: {
+      title: 'Are you sure you want to go back?',
+      description: 'If you go back, you will lose the report.',
+    },
+    columns: {
+      center: 'Center',
+      program: 'Program',
+      course: 'Course',
+      subject: 'Subject',
+      classroom: 'Classroom',
+      teacher: 'Teacher',
+      teacherEmail: 'Teacher - Email',
+      student: 'Student',
+      studentEmail: 'Student - Email',
+      studentEnrollmentDate: 'Student - Enrollment date',
+      teacherEnrollmentDate: 'Teacher - Enrollment date',
+      teacherLastConnection: 'Teacher - Last connection',
+      studentLastConnection: 'Student - Last connection',
+    },
   },
 };

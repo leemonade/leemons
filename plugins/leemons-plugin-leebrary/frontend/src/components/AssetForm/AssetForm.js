@@ -16,6 +16,7 @@ import {
   LoadingOverlay,
   TextInput,
   TotalLayoutFooterContainer,
+  Alert,
   useResizeObserver,
 } from '@bubbles-ui/components';
 import { CommonFileSearchIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
@@ -93,6 +94,7 @@ const AssetForm = ({
   );
   const [checking, setChecking] = useState(false);
   const [urlMetadata, setUrlMetadata] = useState({});
+  const [urlMetadataError, setUrlMetadataError] = useState(false);
   const [coverAsset, setCoverAsset] = useState(null);
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [boxRef] = useResizeObserver();
@@ -295,6 +297,7 @@ const AssetForm = ({
 
   const handleCheckUrl = async () => {
     if (await validateUrl()) {
+      setUrlMetadataError(false);
       try {
         setChecking(true);
         const url = bookmarkUrl;
@@ -324,7 +327,11 @@ const AssetForm = ({
         setChecking(false);
       } catch (err) {
         setChecking(false);
-        addErrorAlert(getErrorMessage(err));
+        if (err.data?.code === 'URL_METADATA_ERROR') {
+          setUrlMetadataError(true);
+        } else {
+          addErrorAlert(getErrorMessage(err));
+        }
       }
     }
   };
@@ -491,41 +498,48 @@ const AssetForm = ({
                 )}
 
                 {type === LIBRARY_FORM_TYPES.BOOKMARKS && (
-                  <Controller
-                    control={control}
-                    name="url"
-                    shouldUnregister
-                    rules={{
-                      required: errorMessages.url?.required ?? REQUIRED_FIELD,
-                      validate: isValidURL,
-                    }}
-                    render={({ field }) => (
-                      <Stack fullWidth alignItems="end" spacing={4}>
-                        <Box style={{ flex: 1 }}>
-                          <TextInput
-                            {...field}
-                            label={labels.url}
-                            placeholder={placeholders.url}
-                            error={errors.url}
-                            required
-                            onBlur={validateUrl}
-                            disabled={editing}
-                          />
-                        </Box>
-                        <Box skipFlex style={{ marginBottom: errors.url ? 18 : 0 }}>
-                          <Button
-                            variant="outline"
-                            leftIcon={<CommonFileSearchIcon />}
-                            onClick={handleCheckUrl}
-                            loading={checking}
-                            disabled={editing}
-                          >
-                            {labels.checkUrl}
-                          </Button>
-                        </Box>
-                      </Stack>
+                  <>
+                    <Controller
+                      control={control}
+                      name="url"
+                      shouldUnregister
+                      rules={{
+                        required: errorMessages.url?.required ?? REQUIRED_FIELD,
+                        validate: isValidURL,
+                      }}
+                      render={({ field }) => (
+                        <Stack fullWidth alignItems="end" spacing={4}>
+                          <Box style={{ flex: 1 }}>
+                            <TextInput
+                              {...field}
+                              label={labels.url}
+                              placeholder={placeholders.url}
+                              error={errors.url}
+                              required
+                              onBlur={validateUrl}
+                              disabled={editing}
+                            />
+                          </Box>
+                          <Box skipFlex style={{ marginBottom: errors.url ? 18 : 0 }}>
+                            <Button
+                              variant="outline"
+                              leftIcon={<CommonFileSearchIcon />}
+                              onClick={handleCheckUrl}
+                              loading={checking}
+                              disabled={editing}
+                            >
+                              {labels.checkUrl}
+                            </Button>
+                          </Box>
+                        </Stack>
+                      )}
+                    />
+                    {urlMetadataError && (
+                      <Alert severity="warning" closeable={false}>
+                        {errorMessages.urlMetadata?.warning}
+                      </Alert>
                     )}
-                  />
+                  </>
                 )}
 
                 {type === 'assignables.scorm' && (

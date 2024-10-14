@@ -43,7 +43,7 @@ function dynamicImport(pluginName, component) {
     try {
       return await import(`@app/plugins/${pluginName}/src/widgets/calendar/${component}.js`);
     } catch (error) {
-      return await import(`@app/plugins/${pluginName}/dist/widgets/calendar/${component}.js`);
+      return await import(`@app/plugins/${pluginName}/src/widgets/calendar/${component}.tsx`);
     }
   });
 }

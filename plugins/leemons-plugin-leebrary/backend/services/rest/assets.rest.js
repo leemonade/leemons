@@ -267,7 +267,10 @@ module.exports = {
         metas = await metascraper({ html, url });
       } catch (e) {
         ctx.logger.error(e);
-        throw new LeemonsError(ctx, { message: `Error getting URL metadata: ${url}` });
+        throw new LeemonsError(ctx, {
+          message: `Error getting URL metadata: ${url}`,
+          customCode: 'URL_METADATA_ERROR',
+        });
       }
 
       return { status: 200, metas };

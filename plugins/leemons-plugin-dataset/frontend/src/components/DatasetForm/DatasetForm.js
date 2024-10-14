@@ -178,13 +178,18 @@ const DatasetForm = forwardRef(
       }
     }
 
-    async function checkForm() {
-      if (!canEdit || !dataset) {
-        return true;
+    async function getFormData() {
+      if (!canEdit || !dataset || !form.isLoaded()) {
+        return null;
       }
 
-      if (!form.isLoaded()) {
-        return false;
+      let toSave = form.getValues();
+
+      const requiredOnlyForMe = getRequiredKeysOnlyForMe({ dataset, profileId });
+
+      if (requiredOnlyForMe.length === 0) {
+        toSave = _.pickBy(toSave, (value) => !!value.value);
+        return toSave;
       }
 
       await form.submit();
@@ -197,7 +202,7 @@ const DatasetForm = forwardRef(
       }
 
       const readOnlyKeys = dataset.compileJsonSchema?.required.filter(
-        (key) => !getRequiredKeysOnlyForMe({ dataset, profileId }).includes(key)
+        (key) => !requiredOnlyForMe.includes(key)
       );
 
       const areOptional = areOptionalKeys({
@@ -207,17 +212,35 @@ const DatasetForm = forwardRef(
 
       const hasErrors = errors.length > 0;
 
-      return !hasErrors || areOptional;
+      if (!hasErrors || areOptional) {
+        return toSave;
+      }
+
+      return null;
     }
 
-    async function checkFormAndSave(forceTargetId) {
-      const isValid = await checkForm();
+    async function checkForm() {
+      if (!canEdit || !dataset) {
+        return true;
+      }
 
-      if (!isValid) {
+      if (!form.isLoaded()) {
         return false;
       }
 
-      return handleSave(form.getValues(), forceTargetId);
+      const formData = await getFormData();
+
+      return formData !== null;
+    }
+
+    async function checkFormAndSave(forceTargetId) {
+      const formData = await getFormData();
+
+      if (!formData) {
+        return false;
+      }
+
+      return handleSave(formData, forceTargetId);
     }
 
     useImperativeHandle(ref, () => ({

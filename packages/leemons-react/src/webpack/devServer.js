@@ -13,7 +13,7 @@ module.exports = async function startDevServer({ app, build, alias, publicFiles 
   let compiler;
   try {
     compiler = webpack(config);
-    if(process.env.DEBUG === 'true') {
+    if (process.env.DEBUG === 'true') {
       compiler.hooks.done.tap('done', (stats) => {
         console.log(
           stats.toString({
@@ -27,7 +27,7 @@ module.exports = async function startDevServer({ app, build, alias, publicFiles 
       });
     }
   } catch (e) {
-    console.log(chalk`{red[ERROR]} {gray Failed to compile}`);
+    console.log(chalk`{redBright [ERROR]} {gray Failed to compile}`);
     console.log(e.message || e);
   }
 
