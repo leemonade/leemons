@@ -2,13 +2,14 @@ import React, { useMemo } from 'react';
 
 import { Box, TabPanel, Tabs, createStyles, Drawer } from '@bubbles-ui/components';
 import { unflatten } from '@common';
-import prefixPN from '@leebrary/helpers/prefixPN';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { ZoneWidgets } from '@widgets';
 import { get } from 'lodash';
 import PropTypes from 'prop-types';
 
 import { AssetList } from './components/AssetList';
+
+import prefixPN from '@leebrary/helpers/prefixPN';
 
 export function useAssetPickerDrawerLocalizations() {
   const key = prefixPN('pickerDrawer');
@@ -125,7 +126,6 @@ export function AssetPickerDrawer({
                 categories={categories}
                 filters={filters}
                 onSelect={onSelect}
-                onlyImages={onlyImages}
               />
             </Box>
           )}
