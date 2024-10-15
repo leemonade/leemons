@@ -55,10 +55,15 @@ async function handleUserCreationOrUpdate({ id, userData, birthdate, password, c
     secondSurname: secondSurname ? secondSurname.trim() : undefined,
   };
 
+  // Remove undefined fields from personalData
+  const cleanPersonalData = Object.fromEntries(
+    Object.entries(personalData).filter(([_, value]) => value !== undefined)
+  );
+
   if (!user) {
     user = await ctx.tx.db.Users.create({
       ...userData,
-      ...personalData,
+      ...cleanPersonalData,
       email,
       birthdate,
       password: password ? await encryptPassword(password) : undefined,
@@ -71,7 +76,7 @@ async function handleUserCreationOrUpdate({ id, userData, birthdate, password, c
       { id },
       {
         ...userDataToUpdate,
-        ...personalData,
+        ...cleanPersonalData,
         email,
         birthdate,
       }
