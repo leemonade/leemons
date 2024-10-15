@@ -1,5 +1,11 @@
 import type { ServiceSchema } from '@leemons/deployment-manager';
-import { Connection, CreateOptions, Model as MongooseModel, Schema } from 'mongoose';
+import {
+  Connection,
+  CreateOptions,
+  HydratedDocument,
+  Model as MongooseModel,
+  Schema,
+} from 'mongoose';
 
 type LeemonsOptions = {
   disableAutoDeploy?: boolean;
@@ -15,7 +21,10 @@ export type LeemonsSchema = {
   deletedAt?: Date;
 };
 
-export type CreateQuery<T> = (items: Partial<T> & Pick<T, Exclude<keyof T, keyof LeemonsSchema>>, options?: CreateOptions & LeemonsOptions) => Promise<T>;
+export type CreateQuery<T> = (
+  items: Partial<T> & Pick<T, Exclude<keyof T, keyof LeemonsSchema>>,
+  options?: CreateOptions & LeemonsOptions
+) => Promise<HydratedDocument<T>>;
 export type FindQuery<T> = MongooseModel<T>['find'];
 export type FindByIdQuery<T> = MongooseModel<T>['findById'];
 export type FindOneQuery<T> = MongooseModel<T>['findOne'];
@@ -31,7 +40,7 @@ export type CountDocumentsQuery<T> = MongooseModel<T>['countDocuments'];
 export type InsertManyQuery<T> = MongooseModel<T>['insertMany'];
 export type AggregateQuery<T> = MongooseModel<T>['aggregate'];
 
-export type Model<T> = {
+export interface Model<T> {
   create: CreateQuery<T>;
   find: FindQuery<T>;
   findById: FindByIdQuery<T>;
@@ -49,7 +58,7 @@ export type Model<T> = {
   countDocuments: CountDocumentsQuery<T>;
   insertMany: InsertManyQuery<T>;
   aggregate: AggregateQuery<T>;
-};
+}
 
 export function newModel<T>(
   connection: Connection,
