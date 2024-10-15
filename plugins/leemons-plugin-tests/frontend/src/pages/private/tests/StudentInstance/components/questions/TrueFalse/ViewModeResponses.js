@@ -10,7 +10,8 @@ function ViewModeResponses(props) {
   const [t] = useTranslateLoader(prefixPN('questionsBanksDetail.questionLabels.trueFalse'));
   const { question, store } = props;
 
-  const userAnswer = store.questionResponses[question.id].properties.response;
+  const userAnswer = store?.questionResponses?.[question.id]?.properties?.response;
+
   const correctAnswer = {
     value: question.trueFalseProperties?.isTrue,
     label: question.trueFalseProperties?.isTrue ? t('true') : t('false'),

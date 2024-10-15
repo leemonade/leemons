@@ -1,15 +1,15 @@
 import React, { useMemo } from 'react';
 
-import { Box, COLORS, Text } from '@bubbles-ui/components';
+import { Box, COLORS, Text, Stack } from '@bubbles-ui/components';
 import { htmlToText } from '@common';
 import PropTypes from 'prop-types';
 
 export default function QuestionTitle(props) {
   const { styles, question, store, cx, t, tableViewMode } = props;
 
-  let classNameQuestionTitle = cx(styles.questionTitle);
+  let questionTitleClassName = cx(styles.questionTitle);
   if (store.embedded) {
-    classNameQuestionTitle = cx(classNameQuestionTitle, styles.questionTitleEmbedded);
+    questionTitleClassName = cx(questionTitleClassName, styles.questionTitleEmbedded);
   }
 
   const colorsByStatus = useMemo(
@@ -21,21 +21,24 @@ export default function QuestionTitle(props) {
     []
   );
 
-  // TODO PAOLA: Modificar mono responses y map para que usen ese question title de la forma correcta. Pueden tener también su propio ViewModeResponses.js file
-
-  // TODO PAOLA, preguntar si se cambia el detalle de las preguntas existentes de una vez, se ven diferentes
   const TableViewModePoints = useMemo(() => {
     if (!store.questionResponses || !t) return null;
 
-    const questionPoints = store.questionsInfo?.perQuestionNumber?.toFixed(2);
-    const status = store.questionResponses?.[question.id].status;
+    const questionResponse = store.questionResponses?.[question.id];
+    const { status, cluesTypes: clueTypesArray, points } = questionResponse ?? {};
 
     let responsePoints = '';
-    const okPoints = store.questionsInfo?.perQuestion;
+    const okPoints = store.questionsInfo?.perQuestionNumber?.toFixed(2);
     const koPoints =
-      store.questionsInfo?.perErrorQuestionNumber < 0 ? store.questionsInfo?.perErrorQuestion : '0';
+      store.questionsInfo?.perErrorQuestionNumber < 0
+        ? store.questionsInfo?.perErrorQuestionNumber?.toFixed(2)
+        : '0';
     const omitPoints =
-      store.questionsInfo?.perOmitQuestionNumber < 0 ? store.questionsInfo?.perOmitQuestion : '0';
+      store.questionsInfo?.perOmitQuestionNumber < 0
+        ? store.questionsInfo?.perOmitQuestionNumber?.toFixed(2)
+        : '0';
+
+    const cluesConfig = store?.config?.clues;
 
     if (status === 'ok') {
       responsePoints = okPoints;
@@ -45,27 +48,65 @@ export default function QuestionTitle(props) {
       responsePoints = omitPoints ?? '';
     }
 
-    console.log(store.questionResponses?.[question.id]);
-    console.log(store.questionsInfo);
+    const finalPoints = points.toFixed(2);
 
     return (
-      <Box>
-        <Text style={{ whiteSpace: 'nowrap' }}>
+      <Stack spacing={3}>
+        {clueTypesArray?.length > 0 && (
+          <Stack spacing={3}>
+            <Text style={{ whiteSpace: 'nowrap' }} size="xs">
+              <span
+                style={{
+                  color: colorsByStatus[status],
+                  paddingRight: 4,
+                }}
+              >
+                {responsePoints}
+              </span>{' '}
+              {t('pointsInTotal')}
+            </Text>
+
+            {clueTypesArray.map((usedClueType, index) => (
+              <>
+                <Box style={{ borderLeft: '1px solid gray' }} />
+                <Text style={{ whiteSpace: 'nowrap' }} size="xs" key={index}>
+                  <span
+                    style={{
+                      color: colorsByStatus.ko,
+                      paddingRight: 4,
+                    }}
+                  >
+                    {`-${cluesConfig?.find((clue) => clue.type === usedClueType)?.value}%`}
+                  </span>
+                  {t(`clueN`, { number: index + 1 })}
+                </Text>
+              </>
+            ))}
+          </Stack>
+        )}
+        <Text style={{ whiteSpace: 'nowrap' }} size="xs">
           <span
             style={{
               color: colorsByStatus[status],
             }}
           >
-            {responsePoints}
+            {finalPoints}
           </span>{' '}
-          {t('pointsOutOf', { questionPoints })}
+          {t('pointsOutOf', { questionPoints: okPoints })}
         </Text>
-      </Box>
+      </Stack>
     );
-  }, [store.questionResponses, store.questionsInfo, colorsByStatus, t, question.id]);
+  }, [
+    store?.questionResponses,
+    store?.questionsInfo,
+    colorsByStatus,
+    t,
+    question.id,
+    store?.config?.clues,
+  ]);
 
   return (
-    <Box className={tableViewMode ? styles.tableViewModeTitle : classNameQuestionTitle}>
+    <Box className={tableViewMode ? styles.tableViewModeTitle : questionTitleClassName}>
       <Box className={styles.questionTitleText}>
         <Text size={store.viewMode ? 'sm' : 'lg'} role="productive" color="primary" strong>
           {props.index + 1}. {htmlToText(question.stem.text)}
@@ -73,7 +114,7 @@ export default function QuestionTitle(props) {
       </Box>
 
       {tableViewMode && (
-        <Box className={cx(styles.questionValueCard, styles.questionValueCardEmbedded)}>
+        <Box>
           {TableViewModePoints}
           <Text size="xs" color="primary"></Text>
         </Box>
