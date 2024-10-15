@@ -19,7 +19,6 @@ import { EmptyState } from './components/EmptyState/EmptyState';
 import { WeekEventList } from './components/WeekEventList';
 
 import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
-import { prefixPN } from '@calendar/helpers';
 import { getCalendarDaysOffToEvents } from '@calendar/helpers/getCalendarDaysOffToEvents';
 import { getEventColor } from '@calendar/helpers/getEventColor';
 import { getEventsByProgram } from '@calendar/helpers/getEventsByProgram';
