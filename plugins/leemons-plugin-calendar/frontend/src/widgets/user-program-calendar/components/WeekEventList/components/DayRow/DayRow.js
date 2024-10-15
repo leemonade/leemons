@@ -72,6 +72,33 @@ const parseColumnByEvents = (events, date, locale) => {
       }
     });
 
+  // Función auxiliar para obtener la hora de un evento
+  const getEventTime = (event) => {
+    if (event.rangeTime) {
+      return event.rangeTime.split('-')[0].trim();
+    }
+    return event.startTime || event.endTime || '00:00';
+  };
+
+  // Ordenar hoursAndDuration
+  result.hoursAndDuration.sort((a, b) => {
+    const timeA = getEventTime(a);
+    const timeB = getEventTime(b);
+    return timeA.localeCompare(timeB);
+  });
+
+  // Crear un mapa de originalEvent a índice ordenado
+  const eventOrder = new Map(
+    result.hoursAndDuration.map((event, index) => [event.originalEvent, index])
+  );
+
+  // Ordenar description basándose en el orden de hoursAndDuration
+  result.description.sort((a, b) => {
+    const indexA = eventOrder.get(a.originalEvent) ?? Infinity;
+    const indexB = eventOrder.get(b.originalEvent) ?? Infinity;
+    return indexA - indexB;
+  });
+
   return result;
 };
 

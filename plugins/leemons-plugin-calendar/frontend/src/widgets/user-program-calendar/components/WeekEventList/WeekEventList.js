@@ -29,7 +29,7 @@ const WeekEventList = ({ events, startDate, endDate, calendarConfig, t, onEventC
         .filter((event) => {
           const eventStart = new Date(event.start);
           const eventEnd = new Date(event.end);
-          const dayDate = dayObj.dateColumn;
+          const dayDate = new Date(dayObj.dateColumn);
 
           return (
             (eventStart.getFullYear() === dayDate.getFullYear() &&
@@ -40,7 +40,11 @@ const WeekEventList = ({ events, startDate, endDate, calendarConfig, t, onEventC
               eventEnd.getDate() === dayDate.getDate())
           );
         })
-        .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+        .sort((a, b) => {
+          const timeA = a.isEndEvent ? new Date(a.end).getTime() : new Date(a.start).getTime();
+          const timeB = b.isEndEvent ? new Date(b.end).getTime() : new Date(b.start).getTime();
+          return timeA - timeB;
+        });
 
       return {
         ...dayObj,
