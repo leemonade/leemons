@@ -120,7 +120,7 @@ async function calculateUserAgentInstanceNote({ instanceId, userAgent, ctx }) {
       }
     } else if (question.type === QUESTION_TYPES.TRUE_FALSE) {
       const questionIsTrue = question.trueFalseProperties.isTrue;
-      const response = questionResponses[question.id].properties.response;
+      const response = questionResponses[question.id]?.properties?.response;
 
       if (typeof response !== 'boolean') {
         note += perUndefined;
