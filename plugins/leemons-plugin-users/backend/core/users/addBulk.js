@@ -1,26 +1,28 @@
 const _ = require('lodash');
+
+const { validateAddUsersBulkForm } = require('../../validations/forms');
+const getDefaultLocale = require('../platform/getDefaultLocale');
 const {
   getRoleForRelationshipProfileCenter,
 } = require('../profiles/getRoleForRelationshipProfileCenter');
-const { encryptPassword } = require('./bcrypt/encryptPassword');
-const getDefaultLocale = require('../platform/getDefaultLocale');
-const {
-  addCalendarToUserAgentsIfNeedByUser,
-} = require('../user-agents/calendar/addCalendarToUserAgentsIfNeedByUser');
-const { validateAddUsersBulkForm } = require('../../validations/forms');
-const { sendWelcomeEmailToUser } = require('./sendWelcomeEmailToUser');
-const { setUserForRegisterPassword } = require('./setUserForRegisterPassword');
-const { sendNewProfileAddedEmailToUser } = require('./sendNewProfileAddedEmailToUser');
-const { addUserAvatar } = require('./addUserAvatar');
-const { setUserDatasetInfo } = require('../user-agents/setUserDatasetInfo');
-const {
-  checkIfCanCreateNUserAgentsInRoleProfiles,
-} = require('./checkIfCanCreateNUserAgentsInRoleProfiles');
+const addUserInProvider = require('../providers/users/addUser');
 const {
   addCenterProfilePermissionToUserAgents,
 } = require('../user-agents/addCenterProfilePermissionToUserAgents');
+const {
+  addCalendarToUserAgentsIfNeedByUser,
+} = require('../user-agents/calendar/addCalendarToUserAgentsIfNeedByUser');
+const { setUserDatasetInfo } = require('../user-agents/setUserDatasetInfo');
+
+const { addUserAvatar } = require('./addUserAvatar');
+const { encryptPassword } = require('./bcrypt/encryptPassword');
+const {
+  checkIfCanCreateNUserAgentsInRoleProfiles,
+} = require('./checkIfCanCreateNUserAgentsInRoleProfiles');
 const { sendActivationEmailsByProfileToUser } = require('./sendActivationEmailsByProfileToUser');
-const addUserInProvider = require('../providers/users/addUser');
+const { sendNewProfileAddedEmailToUser } = require('./sendNewProfileAddedEmailToUser');
+const { sendWelcomeEmailToUser } = require('./sendWelcomeEmailToUser');
+const { setUserForRegisterPassword } = require('./setUserForRegisterPassword');
 
 /**
  * Function to handle the creation or update of a user.
@@ -46,9 +48,22 @@ async function handleUserCreationOrUpdate({ id, userData, birthdate, password, c
   }
   let isNewUser = false;
 
+  const { name, surnames, secondSurname } = userData;
+  const personalData = {
+    name: name ? String(name).trim() : undefined,
+    surnames: surnames ? String(surnames).trim() : undefined,
+    secondSurname: secondSurname ? String(secondSurname).trim() : undefined,
+  };
+
+  // Remove undefined fields from personalData
+  const cleanPersonalData = Object.fromEntries(
+    Object.entries(personalData).filter(([_, value]) => value !== undefined)
+  );
+
   if (!user) {
     user = await ctx.tx.db.Users.create({
       ...userData,
+      ...cleanPersonalData,
       email,
       birthdate,
       password: password ? await encryptPassword(password) : undefined,
@@ -61,6 +76,7 @@ async function handleUserCreationOrUpdate({ id, userData, birthdate, password, c
       { id },
       {
         ...userDataToUpdate,
+        ...cleanPersonalData,
         email,
         birthdate,
       }
