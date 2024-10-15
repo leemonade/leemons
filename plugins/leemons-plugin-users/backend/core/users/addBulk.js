@@ -50,9 +50,9 @@ async function handleUserCreationOrUpdate({ id, userData, birthdate, password, c
 
   const { name, surnames, secondSurname } = userData;
   const personalData = {
-    name: name ? name.trim() : undefined,
-    surnames: surnames ? surnames.trim() : undefined,
-    secondSurname: secondSurname ? secondSurname.trim() : undefined,
+    name: name ? String(name).trim() : undefined,
+    surnames: surnames ? String(surnames).trim() : undefined,
+    secondSurname: secondSurname ? String(secondSurname).trim() : undefined,
   };
 
   // Remove undefined fields from personalData
