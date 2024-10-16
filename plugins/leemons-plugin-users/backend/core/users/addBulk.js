@@ -202,7 +202,7 @@ async function addUser({
     await addCalendarToUserAgentsIfNeedByUser({ user: user.id, ctx });
   }
 
-  await addUserInProvider({ user: { id: user.id, email: userData.email, password }, ctx });
+  await addUserInProvider({ user: { id: user.id, email: user.email, password }, ctx });
 
   return user;
 }
