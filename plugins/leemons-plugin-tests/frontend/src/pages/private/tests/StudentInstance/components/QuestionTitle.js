@@ -27,6 +27,14 @@ export default function QuestionTitle(props) {
     const questionResponse = store.questionResponses?.[question.id];
     const { status, cluesTypes: clueTypesArray, points } = questionResponse ?? {};
 
+    const getPointsToSubstractFromClue = (clueType, totalPoints) => {
+      const clue = store?.config?.clues?.find((clue) => clue.type === clueType);
+      if (clue && totalPoints) {
+        return ((clue.value / 100) * totalPoints).toFixed(2);
+      }
+      return 0;
+    };
+
     let responsePoints = '';
     const okPoints = store.questionsInfo?.perQuestionNumber?.toFixed(2);
     const koPoints =
@@ -38,8 +46,6 @@ export default function QuestionTitle(props) {
         ? store.questionsInfo?.perOmitQuestionNumber?.toFixed(2)
         : '0';
 
-    const cluesConfig = store?.config?.clues;
-
     if (status === 'ok') {
       responsePoints = okPoints;
     } else if (status === 'ko') {
@@ -48,7 +54,7 @@ export default function QuestionTitle(props) {
       responsePoints = omitPoints ?? '';
     }
 
-    const finalPoints = points.toFixed(2);
+    const finalPoints = points?.toFixed(2);
 
     return (
       <Stack spacing={3}>
@@ -69,14 +75,14 @@ export default function QuestionTitle(props) {
             {clueTypesArray.map((usedClueType, index) => (
               <>
                 <Box style={{ borderLeft: '1px solid gray' }} />
-                <Text style={{ whiteSpace: 'nowrap' }} size="xs" key={index}>
+                <Text style={{ whiteSpace: 'nowrap' }} size="xs" key={`${index}-${usedClueType}`}>
                   <span
                     style={{
                       color: colorsByStatus.ko,
                       paddingRight: 4,
                     }}
                   >
-                    {`-${cluesConfig?.find((clue) => clue.type === usedClueType)?.value}%`}
+                    {`-${getPointsToSubstractFromClue(usedClueType, okPoints)}%`}
                   </span>
                   {t(`clueN`, { number: index + 1 })}
                 </Text>
