@@ -19,7 +19,7 @@ function getQuestionClues(question, limit, config) {
 
   if (question.type === 'map') {
     const responsesIndexsToHide = [];
-    forEach(question.properties.markers.list, (response, index) => {
+    forEach(question.mapProperties.markers.list, (response, index) => {
       if (response.hideOnHelp) {
         responsesIndexsToHide.push(index);
       }
@@ -34,8 +34,8 @@ function getQuestionClues(question, limit, config) {
 
   if (question.type === 'mono-response') {
     const responsesIndexsToHide = [];
-    forEach(question.properties.responses, (response, index) => {
-      if (response.value.hideOnHelp) {
+    forEach(question.choices, (choice, index) => {
+      if (choice.hideOnHelp) {
         responsesIndexsToHide.push(index);
       }
     });
@@ -51,7 +51,7 @@ function getQuestionClues(question, limit, config) {
     forEach(isString(question.clues) ? JSON.parse(question.clues) : question.clues, (clue) => {
       notes.push({
         type: 'note',
-        text: clue.value,
+        text: clue,
       });
     });
   }

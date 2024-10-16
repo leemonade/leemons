@@ -6,8 +6,144 @@ const {
   booleanSchema,
   stringSchemaNullable,
   textSchemaNullable,
-  textSchema,
 } = require('./types');
+
+const formattedTextSchema = {
+  type: 'object',
+  properties: {
+    text: stringSchema,
+    format: stringSchema,
+  },
+};
+
+const choiceSchema = {
+  type: 'object',
+  properties: {
+    isCorrect: booleanSchema,
+    text: {
+      ...formattedTextSchema,
+      nullable: true,
+    },
+    feedback: {
+      ...formattedTextSchema,
+      nullable: true,
+    },
+    hideOnHelp: booleanSchema,
+    image: {
+      type: ['object', 'string'],
+      nullable: true,
+    },
+    imageDescription: stringSchemaNullable,
+  },
+  required: ['isCorrect'],
+};
+
+const mapMarkerSchema = {
+  type: 'object',
+  properties: {
+    response: stringSchema,
+    hideOnHelp: booleanSchema,
+    left: stringSchema,
+    top: stringSchema,
+  },
+  required: ['response', 'left', 'top'],
+};
+
+const markersSchema = {
+  type: 'object',
+  properties: {
+    backgroundColor: stringSchema,
+    type: {
+      type: 'string',
+      enum: ['numbering', 'letter'],
+    },
+    list: {
+      type: 'array',
+      items: mapMarkerSchema,
+    },
+    position: {
+      type: 'object',
+      properties: {
+        left: stringSchema,
+        top: stringSchema,
+      },
+      required: ['left', 'top'],
+    },
+  },
+  required: ['backgroundColor', 'type', 'list', 'position'],
+};
+
+const mapPropertiesSchema = {
+  type: 'object',
+  properties: {
+    image: {
+      type: ['object', 'string'],
+    },
+    caption: stringSchemaNullable,
+    markers: markersSchema,
+  },
+  required: ['image', 'markers'],
+  nullable: true,
+};
+
+const questionTypes = ['mono-response', 'map'];
+const questionTypeSchema = {
+  type: 'string',
+  enum: questionTypes,
+};
+
+const questionSchema = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['type'],
+  properties: {
+    id: stringSchema,
+    type: questionTypeSchema,
+    level: stringSchemaNullable,
+    category: {
+      type: ['string', 'number'],
+      minLength: 1,
+      maxLength: 255,
+      nullable: true,
+    },
+    hasImageAnswers: booleanSchema,
+    hasEmbeddedAnswers: booleanSchema, // fill the blank questions
+    tags: {
+      type: 'array',
+      items: stringSchema,
+      nullable: true,
+    },
+    stem: {
+      ...formattedTextSchema,
+    },
+    globalFeedback: {
+      ...formattedTextSchema,
+      nullable: true,
+    },
+    hasAnswerFeedback: booleanSchema,
+
+    questionImage: {
+      type: ['object', 'string'],
+      nullable: true,
+    },
+    hasHelp: booleanSchema,
+    clues: {
+      type: 'array',
+      items: {
+        type: ['string'],
+      },
+      nullable: true,
+    },
+
+    // Validation by question type
+    choices: {
+      type: 'array',
+      items: choiceSchema,
+      nullable: true,
+    },
+    mapProperties: mapPropertiesSchema,
+  },
+};
 
 const saveQuestionBankSchema = {
   type: 'object',
@@ -28,11 +164,11 @@ const saveQuestionBankSchema = {
       items: {
         type: 'object',
         additionalProperties: false,
-        required: ['value'],
         properties: {
           id: stringSchema,
           value: stringSchema,
         },
+        required: ['value'],
       },
     },
     subjects: {
@@ -46,51 +182,7 @@ const saveQuestionBankSchema = {
     published: booleanSchema,
     questions: {
       type: 'array',
-      items: {
-        type: 'object',
-        additionalProperties: false,
-        required: [],
-        properties: {
-          id: stringSchema,
-          type: stringSchema,
-          level: stringSchemaNullable,
-          category: {
-            type: ['string', 'number'],
-            minLength: 1,
-            maxLength: 255,
-            nullable: true,
-          },
-          withImages: {
-            type: ['boolean', 'number'],
-            nullable: true,
-          },
-          tags: {
-            type: 'array',
-            items: stringSchema,
-            nullable: true,
-          },
-          question: textSchema,
-          questionImage: {
-            type: ['object', 'string'],
-            nullable: true,
-          },
-          questionImageDescription: stringSchemaNullable,
-          properties: {
-            type: 'object',
-            additionalProperties: true,
-          },
-          clues: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                value: textSchema,
-              },
-            },
-            nullable: true,
-          },
-        },
-      },
+      items: questionSchema,
     },
   },
   required: ['name'],
@@ -101,7 +193,7 @@ function validateSaveQuestionBank(data) {
   const schema = _.cloneDeep(saveQuestionBankSchema);
   if (data.published) {
     schema.required = ['name', 'questions']; // 'program', 'subjects'
-    schema.properties.questions.items.required = ['type', 'question'];
+    schema.properties.questions.items.required = ['type', 'stem'];
   }
   const validator = new LeemonsValidator(schema);
 

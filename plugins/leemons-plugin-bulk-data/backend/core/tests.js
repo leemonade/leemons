@@ -2,19 +2,20 @@
 /* eslint-disable no-await-in-loop */
 const chalk = require('chalk');
 const { keys, isEmpty, findIndex, uniqBy, isNil } = require('lodash');
+
+const _delay = require('./bulk/helpers/delay');
 const importQbanks = require('./bulk/tests/qbanks');
 const importQuestions = require('./bulk/tests/questions');
 const importTests = require('./bulk/tests/tests');
-const _delay = require('./bulk/helpers/delay');
-const { LOAD_PHASES } = require('./importHandlers/getLoadStatus');
 const { makeAssetNotIndexable } = require('./helpers/makeAssetNotIndexable');
+const { LOAD_PHASES } = require('./importHandlers/getLoadStatus');
 
 async function initTests({ file, config: { users, programs }, ctx, useCache, phaseKey }) {
   try {
     // ·····················································
     // QUESTIONS
 
-    const { items: questionsItems, questions } = await importQuestions(file);
+    const { items: questionItems, questions } = await importQuestions(file);
 
     const categories = uniqBy(
       questions
@@ -89,14 +90,13 @@ async function initTests({ file, config: { users, programs }, ctx, useCache, pha
       )[0];
 
       if (qbanksDetail && !isEmpty(qbanksDetail.questions)) {
-        keys(questionsItems).forEach((qKey) => {
-          const question = questionsItems[qKey];
+        keys(questionItems).forEach((qKey) => {
+          const question = questionItems[qKey];
           if (question.qbank === key) {
-            const qbankQuestion = qbanksDetail.questions.find(
-              (q) => q.question === question.question
+            const questionFromDataBase = qbanksDetail.questions.find(
+              (q) => q.stem.text === question.stem.text
             );
-            question.id = qbankQuestion.id;
-            questionsItems[qKey] = question;
+            question.id = questionFromDataBase.id;
           }
         });
       }
@@ -107,7 +107,7 @@ async function initTests({ file, config: { users, programs }, ctx, useCache, pha
     // ·····················································
     // TESTS
 
-    const tests = await importTests(file, { qbanks, programs, questions: questionsItems });
+    const tests = await importTests(file, { qbanks, programs, questions: questionItems });
     const testsKeys = keys(tests);
 
     for (let i = 0, len = testsKeys.length; i < len; i++) {

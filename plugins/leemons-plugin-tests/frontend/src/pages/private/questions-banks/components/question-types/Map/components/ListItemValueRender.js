@@ -18,7 +18,7 @@ export function ListItemValueRender({ item, markers, showEye, index }) {
             {markers.type === 'letter' ? numberToEncodedLetter(index + 1) : index + 1}
           </Title>
         </Box>
-        {showEye && item.hideOnHelp ? (
+        {showEye && markers?.list?.[index]?.hideOnHelp ? (
           <Box
             sx={(theme) => ({
               marginRight: theme.spacing[5],

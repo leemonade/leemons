@@ -1,9 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+
 import { Box, HtmlText, ImageLoader, Radio, Stack, Text } from '@bubbles-ui/components';
-import { LeebraryImage } from '@leebrary/components';
 import { numberToEncodedLetter } from '@common';
+import { LeebraryImage } from '@leebrary/components';
 import { find } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { getQuestionClues } from '../../../helpers/getQuestionClues';
 import { htmlToText } from '../../../helpers/htmlToText';
 
@@ -41,14 +43,14 @@ export default function Responses(props) {
     render();
   }
 
-  const components = question.properties.responses.map(({ value: response }, index) => {
+  const components = question.choices.map((choice, index) => {
     let classContainer = styles.questionResponseImageContainer;
     if (index === currentResponseIndex) {
       classContainer = cx(classContainer, styles.questionResponseImageContainerSelected);
     }
     let classDisableBg = styles.disableResponseBg;
     let classDisableIcon = styles.disableResponseIcon;
-    if (!question.withImages) {
+    if (!question.hasImageAnswers) {
       classDisableBg = cx(classDisableBg, styles.disableResponseBgWithOutImage);
       classDisableIcon = cx(classDisableIcon, styles.disableResponseIconWithOutImage);
     }
@@ -63,22 +65,24 @@ export default function Responses(props) {
     if (store.viewMode) {
       classContainer = cx(classContainer, styles.questionResponseImageContainerViewMode);
 
-      if (question.properties.explanationInResponses) {
-        const text = htmlToText(response.explanation);
-        if (text) explanation = response.explanation;
-      } else if (response.isCorrectResponse) {
-        const text = htmlToText(question.properties.explanation);
-        if (text) explanation = question.properties.explanation;
+      if (question.hasAnswerFeedback) {
+        const text = choice.feedback?.text ? htmlToText(choice.feedback.text) : null;
+        if (text) explanation = choice.feedback.text;
+      } else if (choice.isCorrect) {
+        const text = question.globalFeedback?.text
+          ? htmlToText(question.globalFeedback.text)
+          : null;
+        if (text) explanation = question.globalFeedback.text;
       }
 
-      if (question.withImages) {
+      if (question.hasImageAnswers) {
         classContainer = cx(
           classContainer,
           styles.questionResponseImageContainerViewModeWithImages
         );
         classExplanation = cx(classExplanation, styles.textExplanationViewMode);
       }
-      if (response.isCorrectResponse) {
+      if (choice.isCorrect) {
         iconToShow = '/public/tests/question-done.svg';
         classContainer = cx(classContainer, styles.questionResponseImageContainerDone);
         classExplanation = cx(classExplanation, styles.textExplanationWhite);
@@ -124,7 +128,7 @@ export default function Responses(props) {
           </>
         ) : null}
 
-        {question.withImages ? (
+        {question.hasImageAnswers ? (
           <>
             <Box
               className={
@@ -133,7 +137,10 @@ export default function Responses(props) {
                   : styles.questionResponseImageContent
               }
             >
-              <LeebraryImage className={styles.questionResponseImage} src={response.image} />
+              <LeebraryImage
+                className={styles.questionResponseImage}
+                src={choice.image?.id ?? choice.image}
+              />
               {store.viewMode ? null : (
                 <Box className={styles.questionResponseNumberImage}>
                   {numberToEncodedLetter(index + 1)}
@@ -147,10 +154,10 @@ export default function Responses(props) {
                   : styles.questionResponseImageTextContent
               }
             >
-              {response.imageDescription || store.viewMode ? (
+              {choice.imageDescription || store.viewMode ? (
                 <Text color="primary" role="productive" size="md">
                   {store.viewMode ? `${numberToEncodedLetter(index + 1)}. ` : null}
-                  {response.imageDescription}
+                  {choice.imageDescription}
                 </Text>
               ) : null}
               {explanation ? (
@@ -165,9 +172,7 @@ export default function Responses(props) {
             <Stack fullWidth alignItems="center">
               {!store.viewMode ? (
                 <Radio
-                  checked={
-                    index === currentResponseIndex || (store.viewMode && response.isCorrectResponse)
-                  }
+                  checked={index === currentResponseIndex || (store.viewMode && choice.isCorrect)}
                   noRootPadding
                 />
               ) : null}
@@ -188,7 +193,7 @@ export default function Responses(props) {
                 })}
               >
                 {store.viewMode ? `${numberToEncodedLetter(index + 1)}. ` : null}
-                {response.response}
+                {choice.text?.text}
               </Box>
             </Stack>
             {explanation ? (
@@ -202,7 +207,7 @@ export default function Responses(props) {
     );
   });
 
-  let className = question.withImages
+  let className = question.hasImageAnswers
     ? styles.questionResponsesContainerImages
     : styles.questionResponsesContainer;
 

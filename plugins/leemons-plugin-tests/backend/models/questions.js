@@ -1,5 +1,25 @@
 const { mongoose, newModel } = require('@leemons/mongodb');
 
+const formattedTextShape = new mongoose.Schema(
+  {
+    format: String,
+    text: String,
+  },
+  { _id: false }
+);
+
+const choicesShape = new mongoose.Schema(
+  {
+    text: formattedTextShape,
+    feedback: formattedTextShape,
+    image: String,
+    imageDescription: String,
+    isCorrect: Boolean,
+    hideOnHelp: Boolean,
+  },
+  { _id: false }
+);
+
 const schema = new mongoose.Schema(
   {
     id: {
@@ -20,30 +40,60 @@ const schema = new mongoose.Schema(
     },
     type: {
       type: String,
+      enum: [
+        'mono-response',
+        'multi-response',
+        'missing-word',
+        'map',
+        'true-false',
+        'short',
+        'matching',
+        'numerical',
+        'open',
+        'description',
+      ],
+      required: true,
     },
-    withImages: {
+    stem: {
+      type: formattedTextShape,
+      required: true,
+    },
+    hasEmbeddedAnswers: {
+      type: Boolean,
+    },
+    hasImageAnswers: {
       type: Boolean,
     },
     level: {
       type: String,
     },
-    question: {
-      type: String,
-      required: true,
+    globalFeedback: {
+      type: formattedTextShape,
     },
-    questionImage: {
-      type: String,
+    hasAnswerFeedback: {
+      type: Boolean,
     },
     clues: {
-      type: String,
+      type: [String],
+    },
+    hasHelp: {
+      type: Boolean,
     },
     category: {
       // ref : 'plugins_tests::question-bank-categories',
       type: String,
     },
-    // ES: Aqui se almacena toda la configuración adicional segun el tipo de pregunta
-    properties: {
+    questionImage: {
       type: String,
+    },
+
+    // Type-specific properties
+    choices: {
+      type: [choicesShape],
+    },
+
+    mapProperties: {
+      type: mongoose.Schema.Types.Mixed,
     },
   },
   {

@@ -1,15 +1,18 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import PropTypes from 'prop-types';
-import { find, forEach, isNumber } from 'lodash';
+
 import { Alert, Box, HtmlText, Text } from '@bubbles-ui/components';
-import QuestionTitle from '../../QuestionTitle';
-import QuestionNoteClues from '../../QuestionNoteClues';
+import { find, forEach, isNumber } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { QuestionImage } from '../../../../../../../components/QuestionImage';
-import Responses from './Responses';
 import { getQuestionClues } from '../../../helpers/getQuestionClues';
-import QuestionNotResponsedWarning from '../../QuestionNotResponsedWarning';
 import { htmlToText } from '../../../helpers/htmlToText';
+import QuestionNoteClues from '../../QuestionNoteClues';
+import QuestionTitle from '../../QuestionTitle';
+import UnansweredQuestionWarning from '../../UnansweredQuestionWarning';
+
+import Responses from './Responses';
 
 export default function Index(props) {
   const { styles, saveQuestion, store, question, t, isLast, cx } = props;
@@ -32,7 +35,7 @@ export default function Index(props) {
   if (store.questionResponses[question.id]?.properties?.responses) {
     allWithValues = true;
     used = true;
-    forEach(question.properties.markers.list, (r, index) => {
+    forEach(question.mapProperties.markers.list, (r, index) => {
       if (!isNumber(store.questionResponses[question.id].properties.responses[index])) {
         allWithValues = false;
       }
@@ -43,20 +46,22 @@ export default function Index(props) {
   let explanation = null;
   if (store.viewMode) {
     showNotResponsedWarning = !allWithValues;
-    const text = htmlToText(question.properties.explanation);
-    if (text) explanation = question.properties.explanation;
+    // Currently global feedback is mandatory for map questions, but some bulk tamplates map questions have no global feedback as they were created before this update.
+    if (question.globalFeedback?.text) {
+      explanation = htmlToText(question.globalFeedback.text);
+    }
   }
   return (
     <>
-      {showNotResponsedWarning ? <QuestionNotResponsedWarning {...props} /> : null}
+      {showNotResponsedWarning ? <UnansweredQuestionWarning {...props} /> : null}
 
       <Box className={styles.questionCard}>
         <QuestionTitle {...props} />
         <QuestionNoteClues {...props} />
         <Box className={styles.mapImageContainer}>
           <QuestionImage
-            src={question.properties.image}
-            markers={question.properties.markers}
+            src={question.mapProperties.image}
+            markers={question.mapProperties.markers}
             values={
               store.viewMode ? store.questionResponses[question.id].properties?.responses : null
             }
