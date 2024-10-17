@@ -19,7 +19,7 @@ const SubjectItemDisplay = ({ subjectsIds, programId, avatarCustomSize }) => {
   const [t] = useTranslateLoader(prefixPN('userClassesSwiperWidget'));
   const [subjectData, setSubjectData] = useState(null);
   const [programName, setProgramName] = useState(null);
-  const { classes } = SubjectItemDisplayStyles();
+  const { classes } = SubjectItemDisplayStyles({}, { name: 'SubjectItemDisplay' });
   const labelsMultiSubject = {
     subjectName: t('multiSubject'),
     groupName: t('multiSubject'),

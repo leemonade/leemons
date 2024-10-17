@@ -1,4 +1,4 @@
-import { LRN } from "@leemons/lrn";
+import { LRN } from '@leemons/lrn';
 
 export type UserAgentID = LRN<'users', 'UserAgent'>;
 export type UserID = LRN<'users', 'User'>;
@@ -14,7 +14,7 @@ export type File = {
   size: number;
   uri: string;
   metadata: string;
-}
+};
 
 export type CategoryID = LRN<'leebrary', 'Category'>;
 export type Category = {
@@ -32,7 +32,7 @@ export type Category = {
   detailComponent: string;
   canUse: string;
   order: number;
-}
+};
 
 export type AssetID = LRN<'leebrary', 'Asset'>;
 export type Asset = {
@@ -55,7 +55,12 @@ export type Asset = {
   file?: FileID | File;
   fileType?: string;
   fileExtension?: string;
-}
+  original?: Asset;
+  providerData?: {
+    role?: string;
+  };
+  mediaType?: string;
+};
 
 export type PinID = LRN<'leebrary', 'Pin'>;
 export type Pin = {
@@ -63,7 +68,7 @@ export type Pin = {
   deploymentID: string;
   asset: AssetID | Asset;
   userAgent: UserAgentID;
-}
+};
 
 export type ProviderID = LRN<'leebrary', 'Provider'>;
 export type Provider = {
@@ -84,7 +89,7 @@ export type Provider = {
     remove: boolean;
     clone: boolean;
   };
-}
+};
 
 export function addCategoryDeploy<C = Context>(params: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -95,4 +100,3 @@ export function addCategoryDeploy<C = Context>(params: {
   };
   ctx: C;
 }): Promise<void>;
-
