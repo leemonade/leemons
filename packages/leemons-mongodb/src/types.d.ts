@@ -1,11 +1,5 @@
 import type { ServiceSchema } from '@leemons/deployment-manager';
-import {
-  Connection,
-  CreateOptions,
-  HydratedDocument,
-  Model as MongooseModel,
-  Schema,
-} from 'mongoose';
+import { Connection, HydratedDocumentFromSchema, Model as MongooseModel, Schema } from 'mongoose';
 
 type LeemonsOptions = {
   disableAutoDeploy?: boolean;
@@ -24,7 +18,7 @@ export type LeemonsSchema = {
 export type CreateQuery<T> = (
   items: Partial<T> & Pick<T, Exclude<keyof T, keyof LeemonsSchema>>,
   options?: CreateOptions & LeemonsOptions
-) => Promise<HydratedDocument<T>>;
+) => HydratedDocumentFromSchema<T> & T;
 export type FindQuery<T> = MongooseModel<T>['find'];
 export type FindByIdQuery<T> = MongooseModel<T>['findById'];
 export type FindOneQuery<T> = MongooseModel<T>['findOne'];

@@ -81,7 +81,7 @@
         "./plugins/leemons-plugin-feedback/frontend/src/*"
       ],
       "@fundae/*": [
-        "./plugins/leemons-plugin-fundae/frontend/src/*"
+        "./private-plugins/leemons-plugin-fundae/frontend/src/*"
       ],
       "@grades/*": [
         "./plugins/leemons-plugin-grades/frontend/src/*"
@@ -124,9 +124,6 @@
       ],
       "@scorm/*": [
         "./plugins/leemons-plugin-scorm/frontend/src/*"
-      ],
-      "@sessions/*": [
-        "./private-plugins/leemons-plugin-sessions/frontend/src/*"
       ],
       "@tasks/*": [
         "./plugins/leemons-plugin-tasks/frontend/src/*"
