@@ -1,5 +1,53 @@
 # Changelog
 
+## [1.9.0](https://github.com/leemonade/leemons/compare/1.8.0...1.9.0) (2024-10-16)
+
+
+### Features
+
+* **academic-portfolio:** Add reports functionality ([a0de86a](https://github.com/leemonade/leemons/commit/a0de86a45553bc8e7142305e2c53792846c9ee14)), closes [#595](https://github.com/leemonade/leemons/issues/595)
+* **analytics:** Added "loading" on `PivotTable` ([ff0c03b](https://github.com/leemonade/leemons/commit/ff0c03b39f84bae8853e00b9d3cbebf0a98cdc09))
+* **assignables:** Added delete activity functionality ([5c32670](https://github.com/leemonade/leemons/commit/5c3267004c85cff27797fdedbb7c8badac1ac701)), closes [#594](https://github.com/leemonade/leemons/issues/594)
+* **build:** Add TypeScript support and optimize build process ([7acf88c](https://github.com/leemonade/leemons/commit/7acf88cf0f56437fead2a9e451cc29e19f0ed3cc)), closes [#592](https://github.com/leemonade/leemons/issues/592)
+* **calendar:** Hide action buttons from EventModal in session events ([caa6a26](https://github.com/leemonade/leemons/commit/caa6a265603a0f6107548c8467f91eb6da2bfa08)), closes [#569](https://github.com/leemonade/leemons/issues/569) [#569](https://github.com/leemonade/leemons/issues/569) [#569](https://github.com/leemonade/leemons/issues/569)
+
+
+### Bug Fixes
+
+* **assignables:** Change NYACard icon size and skeleton to match it ([1fb482e](https://github.com/leemonade/leemons/commit/1fb482ec1a3c4a3f1b5b764ccefa5c7de8b417e5)), closes [#582](https://github.com/leemonade/leemons/issues/582)
+* **assignables:** Prevent showing NaN on EvaluationCard ([12de3ad](https://github.com/leemonade/leemons/commit/12de3ad07b3c0ac9e7907ffa2cacfe83d5a25e0a)), closes [#593](https://github.com/leemonade/leemons/issues/593)
+* **assignables:** Recover UnreadMessages column in ongoing ([5c32670](https://github.com/leemonade/leemons/commit/5c3267004c85cff27797fdedbb7c8badac1ac701))
+* **calendar:** Add gap between calendar & legend in UserProgramCalendar ([6dee4bd](https://github.com/leemonade/leemons/commit/6dee4bd0b0b7630e2afcc749966565f1ef4b211d)), closes [#580](https://github.com/leemonade/leemons/issues/580)
+* **calendar:** Add optional chaining to avoid errors in missing properties ([caa6a26](https://github.com/leemonade/leemons/commit/caa6a265603a0f6107548c8467f91eb6da2bfa08))
+* **calendar:** Handle when do not exists user or permissions at all for `ownerUserAgent` ([4a6388d](https://github.com/leemonade/leemons/commit/4a6388ddf8b72f76cc940780385a9fd8c862a3b3))
+* **calendar:** Hide `scrollbarY` in WeekEventList if content overflows vertically ([caa6a26](https://github.com/leemonade/leemons/commit/caa6a265603a0f6107548c8467f91eb6da2bfa08))
+* **feedback:** Survey questions were not duplicated with the feedback ([80f2cf3](https://github.com/leemonade/leemons/commit/80f2cf3c3e74a49f9f46092c42711fef8bd78b0f)), closes [#591](https://github.com/leemonade/leemons/issues/591)
+* **leebrary:** Added `name` property to classes permissions ([45078fe](https://github.com/leemonade/leemons/commit/45078fe9ab456351af975c20fe10fa4c56c40d0c)), closes [#572](https://github.com/leemonade/leemons/issues/572)
+* Remove sonarlint from `vscode` settings ([1323f8d](https://github.com/leemonade/leemons/commit/1323f8d8ce14f49587b4737dda672d3859c19f00))
+* **timetable:** Sort ScheduleInput values from monday to sunday ([b315ddd](https://github.com/leemonade/leemons/commit/b315ddd673f64132fb187b1a47593553397bff35)), closes [#586](https://github.com/leemonade/leemons/issues/586)
+* **users:** Trim all the personal fields before save the user ([422de21](https://github.com/leemonade/leemons/commit/422de21b7ad0ec6a54227144f5bec8b8769c2703)), closes [#597](https://github.com/leemonade/leemons/issues/597)
+* **users:** Use `email` from recently saved user instead of raw data ([4269734](https://github.com/leemonade/leemons/commit/426973424cc3be285edb984a52d63eff3b441b26))
+
+## [1.8.0](https://github.com/leemonade/leemons/compare/1.7.0...1.8.0) (2024-10-10)
+
+
+### Features
+
+* **feedback:** Add instructions to feedbacks ([dede17c](https://github.com/leemonade/leemons/commit/dede17ccc73c667e89a0bbd9d47ea3830aef529b)), closes [#588](https://github.com/leemonade/leemons/issues/588)
+* **users:** Add `lastConnection` column to users list ([6d43b23](https://github.com/leemonade/leemons/commit/6d43b23535d7ebcf2e17cd37c9a43245b4670d43)), closes [#574](https://github.com/leemonade/leemons/issues/574)
+* **users:** Remove users lists buttons that don't work with  active users provider ([6d43b23](https://github.com/leemonade/leemons/commit/6d43b23535d7ebcf2e17cd37c9a43245b4670d43))
+
+
+### Bug Fixes
+
+* Add name to avatars which were missing it ([a8b1c26](https://github.com/leemonade/leemons/commit/a8b1c26e60e3777bb8985c7828dba7a0a984eebb)), closes [#584](https://github.com/leemonade/leemons/issues/584)
+* **calendar:** Sort same day events by hour on events list ([3d6398e](https://github.com/leemonade/leemons/commit/3d6398e28d9e9184eed387c307a122c1d9689be0)), closes [#589](https://github.com/leemonade/leemons/issues/589)
+* **dashboards:** Restore fontSize on `ProgramBarSelector` component. ([f0f6f4f](https://github.com/leemonade/leemons/commit/f0f6f4f3dae27afbf608eed2602635e7058c5e0a)), closes [#577](https://github.com/leemonade/leemons/issues/577)
+* **leebrary:** Show warning on bookmark metadata failures ([4f290a5](https://github.com/leemonade/leemons/commit/4f290a5cb3f9d53401af60dd3a63914c1a980fcf)), closes [#585](https://github.com/leemonade/leemons/issues/585)
+* **lPaths:** Add properties to DashboardCard introduction to show cover ([a2b7fec](https://github.com/leemonade/leemons/commit/a2b7fec793855d2315070846f9554cf974eec1f0)), closes [#576](https://github.com/leemonade/leemons/issues/576)
+* **noticeBoard:** Align buttons on modal view and modify variants ([ddf5fed](https://github.com/leemonade/leemons/commit/ddf5fed7532c06eb460755f61f8037b9b40448c4)), closes [#587](https://github.com/leemonade/leemons/issues/587)
+* **xapi:** Remove toArray from aggregation ([d2a697f](https://github.com/leemonade/leemons/commit/d2a697f25aaafe87b3b6bc8bed66b6e512d41ef1))
+
 ## [1.7.0](https://github.com/leemonade/leemons/compare/1.6.0...1.7.0) (2024-10-04)
 
 
