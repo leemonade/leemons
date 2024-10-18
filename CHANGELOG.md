@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.10.0](https://github.com/leemonade/leemons/compare/1.9.0...1.10.0) (2024-10-18)
+
+
+### Features
+
+* **leebrary:** Added hideMediaFilter prop to AssetList ([c13de2a](https://github.com/leemonade/leemons/commit/c13de2ae972342ef85cabb8fdd4a298670f63152)), closes [#596](https://github.com/leemonade/leemons/issues/596)
+
+
+### Bug Fixes
+
+* **feedback:** Ignore missing responses when generating report ([79e9c01](https://github.com/leemonade/leemons/commit/79e9c01e4b41c56253b73990f957e0fd3d020095)), closes [#600](https://github.com/leemonade/leemons/issues/600)
+
 ## [1.9.0](https://github.com/leemonade/leemons/compare/1.8.0...1.9.0) (2024-10-16)
 
 
