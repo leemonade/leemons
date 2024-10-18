@@ -56,10 +56,6 @@ const StudentsTable = ({ data, showSearchBar, checkBoxColumn, isLoading }) => {
       {
         Header: ' ',
         accessor: 'avatar',
-        // valueRender: ({ value, row }) => {
-        //   console.log('row', row);
-        //   return <Avatar image={value} />;
-        // },
         Cell: ({ value, row }) => {
           const fullName = `${row.original.surnames} ${row.original.name}`.trim();
           return <Avatar image={value} fullName={fullName} />;
