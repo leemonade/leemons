@@ -3,9 +3,7 @@
   "version": "0.0.71",
   "private": false,
   "main": "src/index.js",
-  "scripts": {
-    "build": "turbo build"
-  },
+  "scripts": {},
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
