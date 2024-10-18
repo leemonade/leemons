@@ -1,8 +1,9 @@
+const { sqlDatetime } = require('@leemons/utils');
 const { map, difference, compact, uniq } = require('lodash');
 
-const { sqlDatetime } = require('@leemons/utils');
-
 const { searchInstancesByClass } = require('../../classes');
+const { addPermissionToUser } = require('../../permissions/instances/users');
+const { createAssignation } = require('../createAssignation');
 
 // TODO: Only add to assignable if student is on all the subjects of the assignableInstance
 
@@ -16,36 +17,33 @@ async function filterByOpenInstances({ instances, ctx }) {
 
   const autoAssignableInstancesIds = map(autoAssignableInstances, 'id');
 
-  const InstanceDates = await ctx.tx.db.Dates.find(
-    {
-      type: 'assignableInstance',
-      instance: autoAssignableInstancesIds,
-      $or: [
-        {
-          name: 'closed',
+  const InstanceDates = await ctx.tx.db.Dates.find({
+    type: 'assignableInstance',
+    instance: autoAssignableInstancesIds,
+    $or: [
+      {
+        name: 'closed',
+      },
+      {
+        name: 'deadline',
+        date: {
+          $lte: new Date(),
         },
-        {
-          name: 'deadline',
-          date: {
-            $lte: sqlDatetime(new Date().getTime() + 24 * 60 * 60 * 1000),
-          },
-        },
-        {
-          name: 'archived',
-        },
-      ],
+      },
+      {
+        name: 'archived',
+      },
+    ],
+    date: {
+      $ne: null,
     },
-    { column: ['instance'] }
-  );
+  })
+    .select(['instance'])
+    .lean();
 
   const expiredInstancesIds = map(InstanceDates, 'instance');
 
-  const openInstances = difference(
-    autoAssignableInstancesIds,
-    expiredInstancesIds
-  );
-
-  return openInstances;
+  return difference(autoAssignableInstancesIds, expiredInstancesIds);
 }
 
 async function getAlreadyAssignedInstances({ student, instances, ctx }) {
@@ -59,38 +57,11 @@ async function getAlreadyAssignedInstances({ student, instances, ctx }) {
   return assignationsFound.map((assignation) => assignation.instance);
 }
 
-async function getInstancesClasses({ instances, ctx }) {
-  const instancesClasses = await ctx.tx.db.Classes.find({
-    assignableInstance: instances,
-  })
-    .select(['assignableInstance', 'class'])
-    .lean();
-
-  const instancesClassesObj = {};
-
-  const classes = map(instancesClasses, 'class');
-  const classesData = await ctx.tx.call(
-    'academic-portfolio.classes.classByIds',
-    {
-      ids: classes,
-      withTeachers: true,
-    }
-  );
-  const classesById = {};
-  classesData.forEach((classData) => {
-    classesById[classData.id] = classData;
-  });
-
-  instancesClasses.forEach((instance) => {
-    instancesClassesObj[instance.assignableInstance] =
-      classesById[instance.class];
-  });
-
-  return instancesClassesObj;
-}
-
 async function grantUserAccessToEvens({ student, instances, ctx }) {
-  const instancesWithEvents = await ctx.tx.db.Instances.find({ id: instances })
+  const instancesWithEvents = await ctx.tx.db.Instances.find({
+    id: instances,
+    event: { $ne: null },
+  })
     .select(['event'])
     .lean();
 
@@ -105,6 +76,36 @@ async function grantUserAccessToEvens({ student, instances, ctx }) {
   );
 }
 
+async function getInstancesAssignables({ instances, ctx }) {
+  const instancesResults = await ctx.tx.db.Instances.find({
+    id: instances,
+  })
+    .select({ id: 1, assignable: 1 })
+    .lean();
+
+  return instancesResults.reduce((acc, instance) => {
+    acc[instance.id] = instance.assignable;
+    return acc;
+  }, {});
+}
+
+async function addStudentToInstance({ student, instance, assignable, ctx }) {
+  await addPermissionToUser({
+    assignableInstance: instance,
+    assignable: assignable.id,
+    userAgents: [student],
+    role: 'student',
+    ctx,
+  });
+
+  await createAssignation({
+    assignableInstanceId: instance,
+    users: [student],
+    options: { indexable: false },
+    ctx,
+  });
+}
+
 async function addStudentToInstances({ student, instances, ctx }) {
   // EN: Check if user is on the instances
   // ES: Comprobar si el usuario ya ha sido asignado
@@ -115,36 +116,20 @@ async function addStudentToInstances({ student, instances, ctx }) {
   });
   const instancesToAssign = difference(instances, alreadyAssignedInstances);
 
+  const assignablesByInstance = await getInstancesAssignables({
+    instances: instancesToAssign,
+    ctx,
+  });
+
   // EN: Add the student to all the instances
   // ES: Añadir los estudiantes a las instancias
-  let assignations = await ctx.tx.db.Assignations.insertMany(
-    instancesToAssign.map((instance) => ({
-      instance,
-      indexable: true,
-      user: student,
-      // TODO: Add user classes compatible to assignation
-      classes: JSON.stringify([]),
-    })),
-    { lean: true }
-  );
-
-  // EN: Create the communica chats
-  // ES: Crear los chats de comunica
-  const classesByInstance = await getInstancesClasses({ instances, ctx });
-
   await Promise.all(
-    assignations.map((assignation) => {
-      const { instance } = assignation;
-      const subjectId = classesByInstance[instance].subject.id;
-      const teachers = classesByInstance[instance].teachers
-        .filter((teacher) => teacher.type === 'main-teacher')
-        .map((teacher) => teacher?.teacher?.id ?? teacher?.teacher);
-
-      return ctx.tx.call('comunica.room.add', {
-        key: ctx.prefixPN(
-          `subject|${subjectId}.assignation|${assignation.id}.userAgent|${student}`
-        ),
-        userAgents: compact(uniq(teachers).concat(student)),
+    instancesToAssign.map(async (instance) => {
+      await addStudentToInstance({
+        student,
+        instance,
+        assignable: assignablesByInstance[instance],
+        ctx,
       });
     })
   );
@@ -155,18 +140,22 @@ async function addStudentToInstances({ student, instances, ctx }) {
 }
 
 async function getMainTeacherUserSession({ klass, ctx }) {
-  const teachers = await ctx.tx.call(
-    'academic-portfolio.classes.teacherGetByClass',
-    {
-      classe: { id: klass },
-      type: 'main-teacher',
-      returnIds: true,
-    }
-  );
+  const teachers = await ctx.tx.call('academic-portfolio.classes.teacherGetByClass', {
+    classe: { id: klass },
+    type: 'main-teacher',
+    returnIds: true,
+  });
 
   const mainTeacher = teachers[0];
 
+  const [{ user }] = await ctx.tx.call('users.users.getUserAgentsInfo', {
+    userAgentIds: [mainTeacher],
+    withProfile: true,
+    withCenter: true,
+  });
+
   return {
+    ...user,
     userAgents: [
       {
         id: mainTeacher,
@@ -175,17 +164,17 @@ async function getMainTeacherUserSession({ klass, ctx }) {
   };
 }
 
-async function addStudentsToOpenInstancesWithClass({
-  student,
-  class: klass,
-  ctx,
-}) {
+async function addStudentsToOpenInstancesWithClass({ student, class: klass, ctx }) {
   const assignableInstances = await searchInstancesByClass({ id: klass, ctx });
 
   const openInstances = await filterByOpenInstances({
     instances: assignableInstances,
     ctx,
   });
+
+  if (!openInstances.length) {
+    return;
+  }
 
   const userSession = await getMainTeacherUserSession({ klass, ctx });
 
