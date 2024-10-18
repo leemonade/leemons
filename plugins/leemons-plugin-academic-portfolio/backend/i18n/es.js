@@ -793,6 +793,9 @@ module.exports = {
       enrollStudents: 'Matricular estudiantes',
       searchUsersByTag: 'Buscar por etiquetas',
       searchUsersByData: 'Buscar por datos del usuario.',
+      noTagsSelected: 'Introduce etiquetas para buscar estudiantes.',
+      noStudentsFoundPlural: 'No se han encontrado estudiantes con estas etiquetas.',
+      noStudentsFoundSingular: 'No se han encontrado estudiantes con esta etiqueta.',
       enrollmentSuccess: 'Matriculación realizada con éxito.',
       enrollmentError: 'Error de matriculación.',
       enrollmentSeatsError:
