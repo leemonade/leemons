@@ -1,3 +1,10 @@
+import { useCallback } from 'react';
+import { useHistory } from 'react-router-dom';
+
+import Cookies from 'js-cookie';
+import hooks from 'leemons-hooks';
+import { isString } from 'lodash';
+
 import {
   getRememberLoginRequest,
   getUserCenterProfileTokenRequest,
@@ -5,21 +12,22 @@ import {
   getUserProfilesRequest,
   getUserProfileTokenRequest,
 } from '@users/request';
-import { useCallback } from 'react';
-import hooks from 'leemons-hooks';
-import Cookies from 'js-cookie';
-import { useHistory } from 'react-router-dom';
-import { isString } from 'lodash';
 
 const handleProfileAndCenter = async (profile, center, jwtToken) => {
-  if (profile.sysName === 'admin') {
+  console.log('handleProfileAndCenter', { center, profile });
+
+  if (profile.sysName === 'admin' || profile.sysName === 'super') {
+    console.log('profile.sysName === admin');
     const response = await getUserProfileTokenRequest(profile.id, jwtToken);
+    await hooks.fireEvent('user:change:profile', profile);
     return { ...response.jwtToken, profile };
   }
 
-  const response = await getUserCenterProfileTokenRequest(center.id, profile.id, jwtToken);
-  await hooks.fireEvent('user:change:profile', profile);
-  return response.jwtToken;
+  if (center) {
+    const response = await getUserCenterProfileTokenRequest(center.id, profile.id, jwtToken);
+    await hooks.fireEvent('user:change:profile', profile);
+    return response.jwtToken;
+  }
 };
 
 const handleNoProfileAndCenter = async (jwtToken) => {
@@ -51,7 +59,7 @@ async function getAdvancedToken(token) {
   let jwtToken;
   const { profile, center } = await getRememberLoginRequest(token);
 
-  if (profile && center) {
+  if (profile && (center || profile.sysName === 'super')) {
     jwtToken = await handleProfileAndCenter(profile, center, token);
   } else {
     jwtToken = await handleNoProfileAndCenter(token);
@@ -60,7 +68,7 @@ async function getAdvancedToken(token) {
   Cookies.set('token', jwtToken);
   hooks.fireEvent('user:cookie:session:change');
 
-  return jwtToken;
+  return { jwtToken, profile };
 }
 
 export default function useOnLoginSuccess() {
@@ -68,13 +76,18 @@ export default function useOnLoginSuccess() {
 
   return useCallback(
     async (token) => {
-      const jwtToken = await getAdvancedToken(token);
+      const { profile, jwtToken } = await getAdvancedToken(token);
+
+      window.sessionStorage.setItem('boardMessagesModalId', null);
+
+      if (profile?.sysName === 'super') {
+        return history.push('/private/admin/setup');
+      }
 
       const redirectUrl = isString(jwtToken)
         ? '/protected/users/select-profile'
         : '/private/dashboard';
 
-      window.sessionStorage.setItem('boardMessagesModalId', null);
       history.push(redirectUrl);
     },
     [history]
