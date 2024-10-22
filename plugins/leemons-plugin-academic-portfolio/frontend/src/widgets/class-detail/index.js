@@ -36,7 +36,7 @@ function ClassDetailWidget({ classe }) {
   const [openedUser, setOpenedUser] = React.useState();
   const [openedUserType, setOpenedUserType] = React.useState();
 
-  const { openUserRoom } = useComunica();
+  const { openUserRoom, isChatEnabled } = useComunica();
 
   function handleOnClickRow(userId, sysName) {
     setOpenedUser(userId);
@@ -132,20 +132,21 @@ function ClassDetailWidget({ classe }) {
                 handleOnClickRow(student.user.id, 'student');
               }}
             />
-
-            <ActionButton
-              icon={<PluginComunicaIcon width={18} height={18} />}
-              onClick={() => {
-                openUserRoom(student.id);
-              }}
-            />
+            {isChatEnabled && (
+              <ActionButton
+                icon={<PluginComunicaIcon width={18} height={18} />}
+                onClick={() => {
+                  openUserRoom(student.id);
+                }}
+              />
+            )}
           </Stack>
         ),
       });
     });
 
     return { teachers, students };
-  }, [classe]);
+  }, [classe, isChatEnabled, openUserRoom]);
 
   return (
     <>
