@@ -264,6 +264,8 @@ module.exports = {
     usersAddedSuccessfully: 'Usuario guardado con éxito',
     enableProfileSuccess: 'Perfil {profile} activado correctamente',
     disableProfileSuccess: 'Perfil {profile} desactivado correctamente',
+    impersonate: 'Impersonar usuario',
+    failedImpersonate: 'Error al impersonar usuario',
   },
   needDatasetDataModal: {
     title: 'Información requerida',

@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormProvider, useForm, Controller } from 'react-hook-form';
 
-import { Button, Drawer, ContextContainer, InputWrapper } from '@bubbles-ui/components';
+import { Box, Button, Drawer, ContextContainer, InputWrapper } from '@bubbles-ui/components';
 import { TagsAutocomplete, getRequestErrorMessage, randomString } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
@@ -28,6 +28,7 @@ import {
 } from '@users/request';
 import activeUserAgentRequest from '@users/request/activeUserAgent';
 import disableUserAgentRequest from '@users/request/disableUserAgent';
+import useImpersonateUser from '@users/request/hooks/mutations/useImpersonateUser';
 
 function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave = noop }) {
   const [user, setUser] = React.useState(value);
@@ -44,6 +45,8 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
   const [tDisableUser] = useTranslateLoader(prefixPN('disableUserModal'));
   const queryClient = useQueryClient();
   const userDatasetsRef = React.useRef();
+
+  const { mutateAsync: impersonateUser } = useImpersonateUser();
 
   const form = useForm();
   const { handleSubmit } = form;
@@ -304,6 +307,11 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
       <Drawer.Header title={tList(user?.id ? 'edit' : 'new')} />
       <Drawer.Content>
         <FormProvider {...form}>
+          <Box>
+            <Button variant="outline" onClick={() => impersonateUser(user.id)}>
+              {t('impersonate')}
+            </Button>
+          </Box>
           <ContextContainer title={t('profileLabel')}>
             <Controller
               name="profiles"
