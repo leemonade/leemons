@@ -27,7 +27,6 @@
   "settings": {
     "react": {
       "version": "detect"
-      // "runtime": "automatic"
     },
     "import/resolver": {
       "jsconfig": {
