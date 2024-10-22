@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.11.0](https://github.com/leemonade/leemons/compare/1.10.0...1.11.0) (2024-10-22)
+
+
+### Features
+
+* **academic-calendar:** Add empty states when there's no tags selected and when there's tags selected but no results found. ([4b5bac8](https://github.com/leemonade/leemons/commit/4b5bac81430f949de5a742171b1d716542f5ad58))
+* **assignables:** Assign new class students to open activities ([7ce7f95](https://github.com/leemonade/leemons/commit/7ce7f95681c11e139cb3c7f86c9a0764afa86dfb)), closes [#602](https://github.com/leemonade/leemons/issues/602)
+
+
+### Bug Fixes
+
+* **academic-portfolio:** Add fullName trimmed in Avatar to show users initials on StudentsTable. ([4b5bac8](https://github.com/leemonade/leemons/commit/4b5bac81430f949de5a742171b1d716542f5ad58))
+* **academic-portfolio:** Clear existing results in `StudentsSelectedByTags` when tags are cleared ([4b5bac8](https://github.com/leemonade/leemons/commit/4b5bac81430f949de5a742171b1d716542f5ad58))
+* **grades:** Sort evaluation system table by numbers ([a7911ce](https://github.com/leemonade/leemons/commit/a7911cefac2fc0afa2d33413c274762b03ce5c7d)), closes [#570](https://github.com/leemonade/leemons/issues/570)
+
 ## [1.10.0](https://github.com/leemonade/leemons/compare/1.9.0...1.10.0) (2024-10-18)
 
 
