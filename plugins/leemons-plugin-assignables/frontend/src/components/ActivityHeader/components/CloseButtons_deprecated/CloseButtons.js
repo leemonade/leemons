@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+
 import { Stack, Switch, Box, Text } from '@bubbles-ui/components';
-import dayjs from 'dayjs';
-import useMutateAssignableInstance from '@assignables/hooks/assignableInstance/useMutateAssignableInstance';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@assignables/helpers/prefixPN';
 import { useLayout } from '@layout/context';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import dayjs from 'dayjs';
+import PropTypes from 'prop-types';
+
+import prefixPN from '@assignables/helpers/prefixPN';
+import useMutateAssignableInstance from '@assignables/hooks/assignableInstance/useMutateAssignableInstance';
 
 function onCloseTask({ instance, t, mutateAsync }) {
   return async (closed) => {
@@ -119,6 +121,7 @@ function onArchiveTask({
 }
 
 export default function CloseButtons({ instance, hidden }) {
+  console.log('instance', instance);
   const [t] = useTranslateLoader(prefixPN('activity_dashboard'));
   const { mutateAsync } = useMutateAssignableInstance();
   const { openConfirmationModal } = useLayout();

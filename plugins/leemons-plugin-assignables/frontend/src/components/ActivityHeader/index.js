@@ -16,9 +16,8 @@ import ActivityTypeDisplay from './components/ActivityTypeDisplay/ActivityTypeDi
 import CalificationTypeDisplay from './components/CalificationTypeDisplay/CalificationTypeDisplay';
 import { ChatDisplay } from './components/ChatDisplay/ChatDisplay';
 import ClassroomDisplay from './components/ClassroomDisplay/ClassroomDisplay';
-import CloseButtons from './components/CloseButtons/CloseButtons';
 import DateComponent from './components/Date/Date';
-import DeleteButton from './components/DeleteButton/DeleteButton';
+import { MenuItems } from './components/MenuItems';
 import StatusBadge from './components/StatusBadge/StatusBadge';
 import Timer from './components/Timer/Timer';
 import useTotalLayoutStyles from './index.style';
@@ -177,9 +176,12 @@ export default function ActivityHeader({
                 </Button>
               </Box>
             )}
-            <DeleteButton instance={instance} hidden={!showDeleteButton || isModuleActivity} />
+            <MenuItems
+              instance={instance}
+              hideDeleteButton={!showDeleteButton || isModuleActivity}
+              hideCloseButtons={!showCloseButtons}
+            />
           </Box>
-          <CloseButtons instance={instance} hidden={!showCloseButtons} />
         </Box>
       </TotalLayoutHeader>
     </FormProvider>
