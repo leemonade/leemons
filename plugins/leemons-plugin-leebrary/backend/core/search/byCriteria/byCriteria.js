@@ -22,15 +22,14 @@
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<Array>} - Returns the search results.
  */
+const { LeemonsError } = require('@leemons/error');
 const { isObject } = require('lodash');
 
-const { LeemonsError } = require('@leemons/error');
-
+const { getAssets } = require('./getAssets');
+const { getAssetsWithPermissions } = require('./getAssetsWithPermissions');
 const { getCategoryId } = require('./getCategoryId');
 const { getPinnedAssets } = require('./getPinnedAssets');
 const { getProviderAssets } = require('./getProviderAssets');
-const { getAssets } = require('./getAssets');
-const { getAssetsWithPermissions } = require('./getAssetsWithPermissions');
 const { sortAssets } = require('./sortAssets');
 
 async function byCriteria({

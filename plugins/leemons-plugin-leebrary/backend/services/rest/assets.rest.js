@@ -168,6 +168,7 @@ module.exports = {
         categoryFilter,
         categoriesFilter,
         hideCoverAssets,
+        useCache,
       } = ctx.params;
 
       const assets = await list({
@@ -190,6 +191,7 @@ module.exports = {
         indexable: true,
 
         ctx,
+        useCache,
       });
 
       return {
