@@ -34,6 +34,11 @@ export function useFormLocalizations() {
   }, [translations, key]);
 }
 
+
+/**
+ *
+ * @param {import('./Form.d.ts').FormWithLayoutProps} props
+ */
 export default function FormWithLayout({ assignable, children, ...props }) {
   const roleIcon = assignable?.roleDetails?.icon;
 
