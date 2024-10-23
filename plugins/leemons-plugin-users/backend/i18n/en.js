@@ -265,7 +265,19 @@ module.exports = {
     enableProfileSuccess: 'Profile {profile} enabled successfully',
     disableProfileSuccess: 'Profile {profile} disabled successfully',
     impersonate: 'Impersonate user',
+  },
+  impersonate: {
     failedImpersonate: 'Failed to impersonate user',
+    title: 'Impersonate user',
+    alert: {
+      title: 'Important',
+      description:
+        'This action allows you to navigate the platform on behalf of the user. You should exercise SPECIAL CARE in the actions you perform (as they cannot be undone).',
+    },
+    message:
+      'If you click "Impersonate", we will close the administrator session and open a new session as user {name}',
+    cancel: 'Cancel',
+    confirm: 'Impersonate',
   },
   needDatasetDataModal: {
     title: 'Required Information',

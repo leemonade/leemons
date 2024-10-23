@@ -308,7 +308,7 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
       <Drawer.Content>
         <FormProvider {...form}>
           <Box>
-            <Button variant="outline" onClick={() => impersonateUser(user.id)}>
+            <Button variant="outline" onClick={() => impersonateUser(user)}>
               {t('impersonate')}
             </Button>
           </Box>
