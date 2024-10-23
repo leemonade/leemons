@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { isArray, keyBy, map, pick, sortBy } from 'lodash';
+
 import { Box, SearchInput, Select, createStyles } from '@bubbles-ui/components';
+import { isArray, keyBy, map, pick, sortBy } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { usePickerCategories } from '@leebrary/components/AssetPickerDrawer/hooks/usePickerCategories';
 import loadMediaTypes from '@leebrary/helpers/loadMediaTypes';
 
@@ -22,7 +24,13 @@ export const useHeaderStyles = createStyles((theme) => {
   };
 });
 
-export function Header({ localizations, categories: categoriesToUse, onChange, onlyImages }) {
+export function Header({
+  localizations,
+  categories: categoriesToUse,
+  onChange,
+  onlyImages,
+  hideMediaFilter,
+}) {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState(null);
   const [mediaTypes, setMediaTypes] = useState([]);
@@ -74,7 +82,7 @@ export function Header({ localizations, categories: categoriesToUse, onChange, o
   useEffect(() => {
     const categoryIsMediaFiles = categoriesByKey?.['media-files']?.id === category;
 
-    if (categoryIsMediaFiles && !onlyImages) {
+    if (categoryIsMediaFiles && !hideMediaFilter && !onlyImages) {
       loadMediaTypes(categoriesByKey?.['media-files']?.id).then((types) => {
         setMediaTypes([...types]);
       });
@@ -129,4 +137,5 @@ Header.propTypes = {
   categories: PropTypes.arrayOf(PropTypes.string),
   onChange: PropTypes.func,
   onlyImages: PropTypes.bool,
+  hideMediaFilter: PropTypes.bool,
 };

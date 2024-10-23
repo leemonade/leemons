@@ -1,6 +1,8 @@
+import React, { useState } from 'react';
+
 import { Box, createStyles } from '@bubbles-ui/components';
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+
 import { Header } from './components/Header';
 import { List } from './components/List';
 
@@ -33,7 +35,7 @@ export function AssetList({ variant, localizations, categories, filters, onSelec
         localizations={localizations?.filters}
         categories={categories}
         onChange={setQuery}
-        onlyImages={filters?.type === 'image'}
+        hideMediaFilter={filters?.type?.length > 0}
       />
       <Box className={classes.list}>
         <List variant={variant} query={query} filters={filters} onSelect={onSelect} />

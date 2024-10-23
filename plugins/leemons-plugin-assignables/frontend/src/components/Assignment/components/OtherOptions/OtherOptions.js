@@ -1,9 +1,11 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { useForm, Controller, useWatch, useFormContext } from 'react-hook-form';
+
 import { Switch, Box, createStyles, Checkbox } from '@bubbles-ui/components';
 import { TextEditorInput, HEADINGS_TOOL_DEFAULT_PROPS } from '@bubbles-ui/editors';
 import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
-import { useForm, Controller, useWatch, useFormContext } from 'react-hook-form';
+import PropTypes from 'prop-types';
+
 import { Container } from '../Container';
 
 function useOnChange({ control, onChange }) {
@@ -196,6 +198,7 @@ export function OtherOptions({
           <Controller
             name="hideReport"
             control={control}
+            defaultValue={true}
             shouldUnregister
             render={({ field }) => (
               <Switch {...field} checked={field.value} label={localizations?.hideReport} />

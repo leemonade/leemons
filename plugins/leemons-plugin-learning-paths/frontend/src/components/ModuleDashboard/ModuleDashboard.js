@@ -319,6 +319,8 @@ export function ModuleDashboard({ id, preview }) {
   });
 
   const isStudent = useIsStudent();
+  const isTeacher = useIsTeacher();
+
   const { mutateAsync } = useStudentAssignationMutation();
   const updateTimestamps = useUpdateTimestamps(mutateAsync, moduleAssignation);
 
@@ -361,7 +363,7 @@ export function ModuleDashboard({ id, preview }) {
           showStartDate
           showDeadline
           showDateTime
-          showDeleteButton
+          showDeleteButton={isTeacher}
         />
       }
     >

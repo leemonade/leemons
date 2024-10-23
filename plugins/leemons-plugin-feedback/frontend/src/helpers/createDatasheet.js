@@ -1,8 +1,9 @@
 /* eslint-disable import/prefer-default-export */
 import { htmlToText } from '@common';
-import { getFeedbackResultsWithTime } from '@feedback/request/feedback';
 import { Workbook } from 'exceljs';
 import { groupBy, forEach } from 'lodash';
+
+import { getFeedbackResultsWithTime } from '@feedback/request/feedback';
 
 function downloadURL(url, name) {
   const link = document.createElement('a');
@@ -30,7 +31,9 @@ export const createDatasheet = async (title, questions, instanceId, format, labe
   forEach(questions, (question) => {
     forEach(Object.values(feedbackResponsesWithTime), (value) => {
       // eslint-disable-next-line no-param-reassign
-      value.responses[question.id].order = question.order;
+      if (value.responses && value.responses[question.id]) {
+        value.responses[question.id].order = question.order;
+      }
     });
   });
 
@@ -63,8 +66,9 @@ export const createDatasheet = async (title, questions, instanceId, format, labe
       const date = new Date(key);
       const timeMark = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
       const contentArray = [timeMark];
+
       const valueResponses = Object.entries(value.responses).sort(
-        ([, aValue], [, bValue]) => aValue.order - bValue.order
+        ([, aValue], [, bValue]) => (aValue?.order || 0) - (bValue?.order || 0)
       );
       valueResponses.forEach(([questionKey, { value: questionValue }]) => {
         const {
@@ -72,20 +76,23 @@ export const createDatasheet = async (title, questions, instanceId, format, labe
           properties: { responses, withImages },
         } = questionsById[questionKey][0];
         const property = withImages ? 'imageDescription' : 'response';
+
         if (type === 'openResponse' || type === 'netPromoterScore')
-          contentArray.push(questionValue.toString());
-        else if (type === 'likertScale') contentArray.push(`${questionValue + 1}`);
-        else if (type === 'singleResponse') {
+          contentArray.push(questionValue?.toString() || '');
+        else if (type === 'likertScale') {
+          const numericValue = Number(questionValue);
+          contentArray.push(Number.isNaN(numericValue) ? '' : `${numericValue + 1}`);
+        } else if (type === 'singleResponse') {
           const responseValue =
-            responses[questionValue].value[property] || `${labels.option} ${index + 1}`;
+            responses[questionValue]?.value[property] || `${labels.option} ${index + 1}`; // it might be better to specify no response with the label
           contentArray.push(responseValue);
         } else if (type === 'multiResponse') {
-          const sortedValues = questionValue.sort((a, b) => a - b);
+          const sortedValues = (questionValue || []).sort((a, b) => a - b);
           contentArray.push(
             sortedValues
               .map(
                 (selectedValue, i) =>
-                  responses[selectedValue].value[property] || `${labels.option} ${i + 1}`
+                  responses[selectedValue]?.value[property] || `${labels.option} ${i + 1}` // it might be better to specify no response with the label
               )
               .join(', ')
           );
