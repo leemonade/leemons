@@ -15,7 +15,7 @@ async function addXapiStatement({ user, ctx }) {
         },
       },
       object: {
-        objectType: 'User',
+        objectType: 'Agent',
         name: getUserFullName({ userSession: user }),
         mbox: `mailto:${user.email}`,
         openid: `${ctx.meta.hostname}/api/users/users/${user.id}/detail/page`,
