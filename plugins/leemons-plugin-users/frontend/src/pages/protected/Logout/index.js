@@ -1,10 +1,12 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import constants from '@users/constants';
-import hooks from 'leemons-hooks';
-import Cookies from 'js-cookie';
-import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
+
 import { LoadingOverlay } from '@bubbles-ui/components';
+import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
+import Cookies from 'js-cookie';
+import hooks from 'leemons-hooks';
+
+import constants from '@users/constants';
 import useProvider from '@users/request/hooks/queries/useProvider';
 
 export default function Logout({ session }) {
@@ -17,6 +19,7 @@ export default function Logout({ session }) {
 
     if (deploymentConfig !== undefined && session) {
       Cookies.remove('token');
+      Cookies.remove('impersonated');
       const domain = /:\/\/([^/]+)/.exec(window.location.href)[1];
       const subdomain = domain.split('.')[0];
       if (Cookies.get(`token_${subdomain}`)) {

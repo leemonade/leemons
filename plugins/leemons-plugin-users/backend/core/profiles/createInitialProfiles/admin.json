@@ -25,6 +25,10 @@
       "actionNames": ["admin"]
     },
     {
+      "permissionName": "users.impersonate",
+      "actionNames": ["admin"]
+    },
+    {
       "permissionName": "dataset.dataset",
       "actionNames": ["admin"]
     },

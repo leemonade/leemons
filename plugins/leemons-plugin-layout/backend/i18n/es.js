@@ -15,4 +15,12 @@ module.exports = {
       accept: 'Aceptar',
     },
   },
+  impersonation: {
+    alert: {
+      title: 'Impersonado',
+      description: 'Has tomado el control de {user}, para salir, cierra la sesión',
+      descriptionMultiProfile:
+        'Has tomado el control de {user} como {profile}, para salir, cierra la sesión',
+    },
+  },
 };

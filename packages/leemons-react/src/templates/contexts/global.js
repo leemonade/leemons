@@ -19,10 +19,10 @@ class LeemonsApi {
 
   #resErrorMiddlewares;
 
-  constructor() {
-    this.#reqMiddlewares = [];
-    this.#resMiddlewares = [];
-    this.#resErrorMiddlewares = [];
+  constructor({ reqMiddlewares, resMiddlewares, resErrorMiddlewares } = {}) {
+    this.#reqMiddlewares = Array.isArray(reqMiddlewares) ? reqMiddlewares : [];
+    this.#resMiddlewares = Array.isArray(resMiddlewares) ? resMiddlewares : [];
+    this.#resErrorMiddlewares = Array.isArray(resErrorMiddlewares) ? resErrorMiddlewares : [];
     this.api.useReq = this.#use('req');
     this.api.useRes = this.#use('res');
     this.api.useResError = this.#use('resError');
@@ -191,51 +191,53 @@ class LeemonsApi {
   };
 }
 
+
+function apiContentTypeMiddleware(ctx) {
+  if (!ctx.options) ctx.options = {};
+  if (ctx.options && !ctx.options.headers) ctx.options.headers = {};
+  if (ctx.options && !ctx.options.headers[CONTENT_TYPE] && !ctx.options.headers['Content-Type'])
+    ctx.options.headers[CONTENT_TYPE] = 'application/json';
+  if (
+    ctx.options &&
+    _.isObject(ctx.options.body) &&
+    ctx.options.headers[CONTENT_TYPE] === 'application/json'
+  ) {
+    ctx.options.body = JSON.stringify(ctx.options.body);
+  }
+  if (ctx.options.headers[CONTENT_TYPE] === 'none') {
+    delete ctx.options.headers[CONTENT_TYPE];
+  }
+}
+
+function apiUrlParserMiddleware(ctx) {
+  if (ctx.options && _.isObject(ctx.options.params)) {
+    let goodUrl = ctx.url;
+    _.forIn(ctx.options.params, (value, key) => {
+      goodUrl = _.replace(goodUrl, `:${key}`, value);
+    });
+    ctx.url = goodUrl;
+  }
+}
+
+async function apiResponseParserMiddleware(ctx) {
+  if (ctx.response.status >= 500) {
+    // eslint-disable-next-line no-throw-literal
+    throw { status: ctx.response.status, message: ctx.response.statusText };
+  }
+  if (ctx.response.status >= 400) {
+    throw await ctx.response.json();
+  }
+  ctx.response = await ctx.response.json();
+};
+
 export function Provider({ children }) {
-  const { api } = new LeemonsApi();
+  const { api } = new LeemonsApi({
+    reqMiddlewares: [apiContentTypeMiddleware, apiUrlParserMiddleware],
+    resMiddlewares: [apiResponseParserMiddleware],
+  });
 
-  const apiContentTypeMiddleware = useCallback((ctx) => {
-    if (!ctx.options) ctx.options = {};
-    if (ctx.options && !ctx.options.headers) ctx.options.headers = {};
-    if (ctx.options && !ctx.options.headers[CONTENT_TYPE] && !ctx.options.headers['Content-Type'])
-      ctx.options.headers[CONTENT_TYPE] = 'application/json';
-    if (
-      ctx.options &&
-      _.isObject(ctx.options.body) &&
-      ctx.options.headers[CONTENT_TYPE] === 'application/json'
-    ) {
-      ctx.options.body = JSON.stringify(ctx.options.body);
-    }
-    if (ctx.options.headers[CONTENT_TYPE] === 'none') {
-      delete ctx.options.headers[CONTENT_TYPE];
-    }
-  }, []);
-
-  const apiUrlParserMiddleware = useCallback((ctx) => {
-    if (ctx.options && _.isObject(ctx.options.params)) {
-      let goodUrl = ctx.url;
-      _.forIn(ctx.options.params, (value, key) => {
-        goodUrl = _.replace(goodUrl, `:${key}`, value);
-      });
-      ctx.url = goodUrl;
-    }
-  }, []);
-
-  const apiResponseParserMiddleware = useCallback(async (ctx) => {
-    if (ctx.response.status >= 500) {
-      // eslint-disable-next-line no-throw-literal
-      throw { status: ctx.response.status, message: ctx.response.statusText };
-    }
-    if (ctx.response.status >= 400) {
-      throw await ctx.response.json();
-    }
-    ctx.response = await ctx.response.json();
-  }, []);
 
   useEffect(() => {
-    api.useReq(apiContentTypeMiddleware);
-    api.useReq(apiUrlParserMiddleware);
-    api.useRes(apiResponseParserMiddleware);
 
     const handleUnhandledRejection = (event) => {
       if (event.reason && event.reason.isLeemonsApiError) {

@@ -264,6 +264,20 @@ module.exports = {
     usersAddedSuccessfully: 'Usuario guardado con éxito',
     enableProfileSuccess: 'Perfil {profile} activado correctamente',
     disableProfileSuccess: 'Perfil {profile} desactivado correctamente',
+    impersonate: 'Impersonar usuario',
+  },
+  impersonate: {
+    failedImpersonate: 'Error al impersonar usuario',
+    title: 'Impersonar usuario',
+    alert: {
+      title: 'Importante',
+      description:
+        'Esta acción permite navegar por la plataforma en nombre del usuario. Debes tener ESPECIAL CUIDADO en las acciones que realizas (ya que no podrán deshacerse).',
+    },
+    message:
+      'Si pulsas "Impersonar", cerraremos tu sesión de administrador y abriremos una nueva sesión como usuario {name}',
+    cancel: 'Cancelar',
+    confirm: 'Impersonar',
   },
   needDatasetDataModal: {
     title: 'Información requerida',

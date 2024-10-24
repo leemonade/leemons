@@ -55,6 +55,11 @@ module.exports = {
       actions: ['create', 'delete', 'admin'],
       localizationName: { es: 'Activar/Desactivar', en: 'Enable/Disable' },
     },
+    {
+      permissionName: `${PLUGIN_NAME}.impersonate`,
+      actions: ['admin'],
+      localizationName: { es: 'Impersonación', en: 'Impersonation' },
+    },
   ],
   defaultActions: [
     { order: 1, actionName: 'view', localizationName: { es: 'Ver', en: 'View' } },
