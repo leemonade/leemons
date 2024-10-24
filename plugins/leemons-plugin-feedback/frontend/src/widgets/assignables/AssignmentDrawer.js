@@ -1,9 +1,10 @@
-import React, { useEffect, useCallback } from 'react';
-import PropTypes from 'prop-types';
+import { useEffect, useCallback } from 'react';
+import { useForm, FormProvider, Controller } from 'react-hook-form';
+
 import { useFormLocalizations } from '@assignables/components/Assignment/Form';
 import { OtherOptions } from '@assignables/components/Assignment/components/OtherOptions';
-import { useForm, FormProvider, Controller } from 'react-hook-form';
 import { Box, Button, TotalLayoutFooterContainer, ContextContainer } from '@bubbles-ui/components';
+import PropTypes from 'prop-types';
 
 export default function AssignmentDrawer({ assignable, value, onSave, onClose, scrollRef }) {
   const form = useForm({ defaultValues: value });
@@ -61,7 +62,7 @@ export default function AssignmentDrawer({ assignable, value, onSave, onClose, s
   );
 }
 
-AssignmentDrawer.defaultValues = () => ({ showResults: true });
+AssignmentDrawer.defaultValues = () => ({ showResults: false });
 
 AssignmentDrawer.propTypes = {
   assignable: PropTypes.object,
