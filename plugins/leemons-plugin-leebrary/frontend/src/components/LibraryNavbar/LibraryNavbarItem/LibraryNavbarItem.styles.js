@@ -1,9 +1,9 @@
-import { createStyles, getFontExpressive, pxToRem } from '@bubbles-ui/components';
+import { createStyles, pxToRem } from '@bubbles-ui/components';
 
-const LibraryNavbarItemStyles = createStyles((theme, { selected, disabled, loading, opened }) => ({
+const LibraryNavbarItemStyles = createStyles((theme, { selected, disabled, loading, opened, canOpen }) => ({
   root: {
     display: 'flex',
-    alignItems: 'center',
+    alignItems: !canOpen ? 'center' : 'flex-start',
     height: 48,
     cursor: 'pointer',
     justifyContent: 'space-between',
@@ -11,6 +11,7 @@ const LibraryNavbarItemStyles = createStyles((theme, { selected, disabled, loadi
     color: theme.other.core.color.secondary['100'],
     fontWeight: selected ? 500 : 400,
     padding: 12,
+    paddingTop: canOpen ? 8 : 12,
     marginInline: 8,
     width: 'calc(100% - 16px)',
     borderRadius: 8,
@@ -21,20 +22,24 @@ const LibraryNavbarItemStyles = createStyles((theme, { selected, disabled, loadi
   },
   item: {
     display: 'flex',
+    alignItems: 'center',
     gap: 12,
   },
   chev: {
     transition: '150ms',
     transform: opened ? 'rotate(0deg)' : 'rotate(180deg)',
+    lineHeight: 0,
   },
   label: {
     color: theme.other.core.color.secondary['100'],
   },
   iconWrapper: {
     position: 'relative',
-    width: pxToRem(16),
-    height: pxToRem(16),
+    minWidth: 16,
+    width: 16,
+    height: 16,
     color: theme.other.core.color.secondary['100'],
+    top: 0,
   },
   icon: {
     width: pxToRem(16),
