@@ -189,7 +189,9 @@ module.exports = {
     califications: 'Puntuaciones',
     passed: 'Aprobado',
     close: 'Cerrar',
+    opened: 'Abrir',
     archive: 'Archivar',
+    unarchive: 'Desarchivar',
     delete: 'Eliminar',
     chatButton: 'Chat',
     closeAction: {
