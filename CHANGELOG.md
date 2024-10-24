@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.12.0](https://github.com/leemonade/leemons/compare/1.11.0...1.12.0) (2024-10-24)
+
+
+### Features
+
+* **academic-portfolio:** Conditionally render chat button based on isChatEnabled ([538c5fa](https://github.com/leemonade/leemons/commit/538c5fae1749cf65d0785b43d75b268bdefea367)), closes [#606](https://github.com/leemonade/leemons/issues/606)
+
+
+### Bug Fixes
+
+* **academic-portfolio:** Do not remove not existing comunica rooms ([b351da1](https://github.com/leemonade/leemons/commit/b351da1af3a3105dc1520f2a723e42453df1dba6)), closes [#616](https://github.com/leemonade/leemons/issues/616)
+* **feedback:** Show `hideReport` option when assigning ([9260f7c](https://github.com/leemonade/leemons/commit/9260f7ce4a1af28a9c70a6d9dbaa43fb3c5d9a5d)), closes [#605](https://github.com/leemonade/leemons/issues/605)
+
 ## [1.11.0](https://github.com/leemonade/leemons/compare/1.10.0...1.11.0) (2024-10-22)
 
 
