@@ -1,11 +1,13 @@
 import { useMemo } from 'react';
-import { filter, find, map } from 'lodash';
 import { useWatch } from 'react-hook-form';
+
+import { filter, find, map } from 'lodash';
+
 import { useProgramsForSubjectPicker } from './useProgramsForSubjectPicker';
 import { useSubjectsForSubjectPicker } from './useSubjectsForSubjectPicker';
 
-export function useDataForSubjectPicker({ subjects, control }) {
-  const subjectsData = useSubjectsForSubjectPicker({ subjects });
+export function useDataForSubjectPicker({ subjects, control, teacherType = 'main-teacher' }) {
+  const subjectsData = useSubjectsForSubjectPicker({ subjects, type: teacherType });
   const programsData = useProgramsForSubjectPicker({ subjects: subjectsData });
   /*
     --- Selected data ---

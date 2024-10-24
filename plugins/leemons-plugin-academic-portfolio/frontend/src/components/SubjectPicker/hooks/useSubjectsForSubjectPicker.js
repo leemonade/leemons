@@ -1,11 +1,13 @@
 import React from 'react';
-import { useSessionClasses, useSubjectDetails } from '@academic-portfolio/hooks';
+
 import { isString, map, pick, uniqBy } from 'lodash';
 
-export function useSubjectsForSubjectPicker({ subjects }) {
+import { useSessionClasses, useSubjectDetails } from '@academic-portfolio/hooks';
+
+export function useSubjectsForSubjectPicker({ subjects, type = 'main-teacher' }) {
   // EN: If no subject is provides on the assignable, fetch all the users subjects
   // ES: Si no hay asignaturas en el asignable, pedimos todas las asignaturas del usuario
-  const { data: classes } = useSessionClasses({}, { enabled: !subjects?.length });
+  const { data: classes } = useSessionClasses({ type }, { enabled: !subjects?.length });
 
   const subjectsIds = React.useMemo(() => {
     if (subjects?.length) {

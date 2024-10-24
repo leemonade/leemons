@@ -1,9 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 import useUserAgents from '@users/hooks/useUserAgents';
+
 import { listSessionClassesRequest } from '../request';
 
+/**
+ *
+ * @param {*} param0
+ * @param {any} param0.type This parameter is set to main-teacher as default in the backend. Use `null` to get all the classes independent of the teacher type.
+ * @returns
+ */
 export default function useSessionClasses(
-  { program, type, showType, withProgram } = {},
+  { program, type = 'main-teacher', showType, withProgram } = {},
   queryOptions = { cacheTime: Infinity }
 ) {
   const userAgents = useUserAgents();
