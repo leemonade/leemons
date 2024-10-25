@@ -68,6 +68,7 @@ module.exports = {
     needImages: 'Answers must have images',
     needExplanationAndResponse: 'All answers require a text and an explanation',
     needResponse: 'Answers must have a text',
+    needExplanation: 'All answers require an explanation',
     responsesDescription:
       'First, add the answers, then select the correct one by clicking on the circle.',
     addResponse: 'Add answer',

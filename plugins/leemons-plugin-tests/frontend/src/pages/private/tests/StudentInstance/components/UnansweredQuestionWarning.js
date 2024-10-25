@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Alert, Box } from '@bubbles-ui/components';
 
-export default function QuestionNotResponsedWarning({ t }) {
+export default function UnansweredQuestionWarning({ t }) {
   return (
     <Box sx={(theme) => ({ marginBottom: theme.spacing[2] })}>
       <Alert title={t('warnNoResponseTitle')} severity="warning" closeable={false}>
@@ -13,6 +13,6 @@ export default function QuestionNotResponsedWarning({ t }) {
   );
 }
 
-QuestionNotResponsedWarning.propTypes = {
+UnansweredQuestionWarning.propTypes = {
   t: PropTypes.any,
 };

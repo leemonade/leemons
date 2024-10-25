@@ -68,7 +68,17 @@ async function queryUserAgents({ roles, disabled, ctx }) {
   }));
 }
 
-async function list({ page, size, profiles, centers, disabled, ctx, sort, ...queries }) {
+async function list({
+  page,
+  size,
+  profiles,
+  centers,
+  disabled,
+  ctx,
+  sort,
+  listUserAgents,
+  ...queries
+}) {
   const query = { ...queries };
   let roles = null;
 
@@ -86,7 +96,7 @@ async function list({ page, size, profiles, centers, disabled, ctx, sort, ...que
   }
 
   let userAgents = null;
-  if (_.isArray(roles) || _.isBoolean(disabled)) {
+  if (_.isArray(roles) || _.isBoolean(disabled) || listUserAgents) {
     userAgents = await queryUserAgents({ roles, disabled, ctx });
     query.id = _.map(userAgents, 'user');
   }

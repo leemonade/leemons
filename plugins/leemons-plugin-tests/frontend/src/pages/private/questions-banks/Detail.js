@@ -1,16 +1,16 @@
 /* eslint-disable camelcase */
-import React from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router-dom';
-import { isEmpty, omit } from 'lodash';
+import { cloneDeep, isEmpty, omit } from 'lodash';
+
 import {
   LoadingOverlay,
   TotalLayoutContainer,
   TotalLayoutHeader,
   VerticalStepperContainer,
 } from '@bubbles-ui/components';
-// TODO: import from @common plugin
-import { useStore } from '@common';
+
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
@@ -20,146 +20,28 @@ import { getQuestionBankRequest, saveQuestionBankRequest } from '../../../reques
 import DetailBasic from './components/DetailBasic';
 import DetailQuestions from './components/DetailQuestions';
 
-export default function Detail(p) {
+export default function Detail() {
   const [t] = useTranslateLoader(prefixPN('questionsBanksDetail'));
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [savingAs, setSavingAs] = useState(null);
+
   const { layoutState, setLayoutState } = useLayout();
 
-  React.useEffect(() => {
+  useEffect(() => {
     setLayoutState({
       ...layoutState,
       hasFooter: true,
     });
   }, []);
 
-  // ----------------------------------------------------------------------
-  // SETTINGS
-
-  const [store, render] = useStore({
-    loading: true,
-    isNew: false,
-    currentStep: 0,
-    headerHeight: null,
-  });
-
+  const scrollRef = useRef();
   const history = useHistory();
   const params = useParams();
-  const scrollRef = React.useRef();
+  const isNew = useMemo(() => !params.id, [params.id]);
+
   const form = useForm();
-  const formValues = form.watch();
-
-  const prepareDataToSave = () => {
-    const qbank = omit(formValues, 'subjectsRaw');
-    // Clear questions clues
-    qbank.questions = qbank.questions?.map((question) => {
-      const newQuestion = { ...question };
-      if (isEmpty(newQuestion.clues)) {
-        newQuestion.clues = [];
-      } else {
-        newQuestion.clues = [{ value: newQuestion.clues[0].value ?? newQuestion.clues[0] }];
-      }
-      return newQuestion;
-    });
-    return qbank;
-  };
-
-  // ························································
-  // DATA STORE HANDLERS
-
-  async function saveAsDraft() {
-    try {
-      store.saving = 'draft';
-      render();
-      const body = prepareDataToSave();
-      const { questionBank } = await saveQuestionBankRequest({ ...body, published: false });
-      addSuccessAlert(t('savedAsDraft'));
-      if (store.isNew) {
-        history.replace(`/private/tests/questions-banks/${questionBank.id}`);
-      }
-    } catch (error) {
-      addErrorAlert(error);
-    }
-    store.saving = null;
-    render();
-  }
-
-  async function saveAsPublish() {
-    try {
-      store.saving = 'publish';
-      render();
-      const body = prepareDataToSave();
-      await saveQuestionBankRequest({ ...body, published: true });
-      addSuccessAlert(t('published'));
-      history.push('/private/tests/questions-banks');
-    } catch (error) {
-      console.log(error);
-      addErrorAlert(error);
-    }
-    store.saving = null;
-    render();
-  }
-
-  // ························································
-  // INITIAL DATA LOADING
-
-  async function init() {
-    try {
-      store.loading = true;
-      store.isNew = params.id === 'new';
-      render();
-      if (!store.isNew) {
-        const {
-          // eslint-disable-next-line camelcase
-          questionBank: {
-            deleted,
-            deleted_at,
-            created_at,
-            updated_at,
-            deletedAt,
-            createdAt,
-            updatedAt,
-            ...qbank
-          },
-        } = await getQuestionBankRequest(params.id);
-
-        if (qbank.questions.length > 0) {
-          store.currentStep = 1;
-
-          // Clear questions clues
-          qbank.questions = qbank.questions.map((question) => {
-            const newQuestion = { ...question };
-            if (isEmpty(newQuestion.clues)) {
-              newQuestion.clues = [];
-            } else if (Object.keys(newQuestion.clues[0]).length === 0) {
-              newQuestion.clues = [];
-            } else {
-              newQuestion.clues = [newQuestion.clues[0].value];
-            }
-            return newQuestion;
-          });
-        }
-        form.reset(qbank);
-      }
-      store.idLoaded = params.id;
-      store.loading = false;
-      render();
-    } catch (error) {
-      addErrorAlert(error);
-    }
-  }
-
-  function setStep(step) {
-    store.currentStep = step;
-    render();
-  }
-
-  const getTitle = () => {
-    if (store.isNew) return t('pageTitleNew');
-    return t('pageTitle');
-  };
-
-  React.useEffect(() => {
-    if (params?.id && store.idLoaded !== params?.id) init();
-  }, [params]);
+  const qBankName = form.watch('name');
 
   form.register('questions', {
     required: t('questionRequired'),
@@ -171,7 +53,82 @@ export default function Detail(p) {
     },
   });
 
-  if (store.loading) return <LoadingOverlay visible />;
+  // FUNCTIONS ········································································ |
+
+  const getRequestBody = () => {
+    const formValues = form.getValues();
+    return omit(formValues, 'subjectsRaw');
+  };
+
+  async function saveAsDraft() {
+    setSavingAs('draft');
+    const body = getRequestBody();
+    try {
+      const { questionBank } = await saveQuestionBankRequest({ ...body, published: false });
+      addSuccessAlert(t('savedAsDraft'));
+      if (isNew) {
+        history.replace(`/private/tests/questions-banks/${questionBank.id}`);
+      }
+    } catch (error) {
+      addErrorAlert(error);
+    } finally {
+      setSavingAs(null);
+    }
+  }
+
+  async function saveAsPublished() {
+    setSavingAs('published');
+    const body = getRequestBody();
+
+    try {
+      await saveQuestionBankRequest({ ...body, published: true });
+      addSuccessAlert(t('published'));
+      history.push('/private/tests/questions-banks');
+    } catch (error) {
+      addErrorAlert(error);
+    } finally {
+      setSavingAs(null);
+    }
+  }
+
+  // EFFECTS ········································································ |
+
+  useEffect(() => {
+    setIsLoading(true);
+    if (params.id !== 'new') {
+      getQuestionBankRequest(params.id)
+        .then(
+          ({
+            // eslint-disable-next-line camelcase
+            questionBank: {
+              deleted,
+              deleted_at,
+              created_at,
+              updated_at,
+              deletedAt,
+              createdAt,
+              updatedAt,
+              ...qBank
+            },
+          }) => {
+            if (qBank.questions?.length > 0) {
+              setCurrentStep(1);
+            }
+
+            form.reset(qBank);
+            setIsLoading(false);
+          }
+        )
+        .catch((error) => {
+          addErrorAlert(error);
+          setIsLoading(false);
+        });
+    } else {
+      setIsLoading(false);
+    }
+  }, [params, form]);
+
+  if (isLoading) return <LoadingOverlay visible />;
 
   return (
     <TotalLayoutContainer
@@ -179,8 +136,8 @@ export default function Detail(p) {
       Header={
         <TotalLayoutHeader
           icon={<QuestionBankIcon width={23} height={23} />}
-          title={getTitle()}
-          formTitlePlaceholder={formValues.name ? formValues.name : t('headerTitlePlaceholder')}
+          title={isNew ? t('pageTitleNew') : t('pageTitle')}
+          formTitlePlaceholder={qBankName || t('headerTitlePlaceholder')}
           onCancel={() => history.goBack()}
           mainActionLabel={t('cancel')}
         />
@@ -188,18 +145,18 @@ export default function Detail(p) {
     >
       <VerticalStepperContainer
         scrollRef={scrollRef}
-        currentStep={store.currentStep}
+        currentStep={currentStep}
         data={[
           { label: t('basic'), status: 'OK' },
           { label: t('questions'), status: 'OK' },
         ]}
-        onChangeActiveIndex={setStep}
+        onChangeActiveIndex={setCurrentStep}
       >
-        {store.currentStep === 0 && (
+        {currentStep === 0 && (
           <DetailBasic
             t={t}
             form={form}
-            store={store}
+            savingAs={savingAs}
             stepName={t('basic')}
             scrollRef={scrollRef}
             advancedConfig={{
@@ -207,20 +164,20 @@ export default function Detail(p) {
               program: { show: true, required: false },
               subjects: { show: true, required: true, showLevel: false, maxOne: true },
             }}
-            onNext={() => setStep(1)}
-            onSave={saveAsDraft}
+            onNext={() => setCurrentStep(1)}
+            onSaveDraft={saveAsDraft}
           />
         )}
-        {store.currentStep === 1 || store.currentStep === 2 ? (
+        {currentStep === 1 || currentStep === 2 ? (
           <DetailQuestions
             t={t}
             form={form}
-            store={store}
+            savingAs={savingAs}
             scrollRef={scrollRef}
             stepName={t('questions')}
-            onPrev={() => setStep(0)}
-            onPublish={saveAsPublish}
-            onSave={saveAsDraft}
+            onPrev={() => setCurrentStep(0)}
+            onPublish={saveAsPublished}
+            onSaveDraft={saveAsDraft}
           />
         ) : null}
       </VerticalStepperContainer>

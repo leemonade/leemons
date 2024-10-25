@@ -11,20 +11,16 @@ import {
   Stack,
   Text,
   TotalLayoutContainer,
-  VerticalStepper,
   VerticalStepperContainer,
 } from '@bubbles-ui/components';
-import { forEach, intersectionBy, isString } from 'lodash';
+import { forEach, intersectionBy } from 'lodash';
 import { ChevronRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 // TODO: import from @feedback plugin maybe?
-import { ActivityContainer } from '@assignables/components/ActivityContainer';
-import { useLocale, useStore } from '@common';
+import { useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
-import { getFileUrl } from '@leebrary/helpers/prepareAsset';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
 import { getCentersWithToken } from '@users/session';
-import dayjs from 'dayjs';
 import React from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import ActivityHeader from '@assignables/components/ActivityHeader';
@@ -55,7 +51,6 @@ const setInstanceTimestamp = (queryClient) => async (instance, key, user) => {
 };
 
 function StudentInstance() {
-  const locale = useLocale();
   const scrollRef = React.useRef();
   const [t, translations] = useTranslateLoader(prefixPN('studentInstance'));
   const [store, render] = useStore({

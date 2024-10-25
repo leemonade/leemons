@@ -1,4 +1,5 @@
 const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
+
 const { generateBulkDataFile } = require('../../core/generateBulkDataFile');
 const {
   loadFromFile,
@@ -65,6 +66,7 @@ module.exports = {
       path: '/generate-bulk-data',
       method: 'POST',
     },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
 
     async handler(ctx) {
       const { admin, superAdmin, noUsers, isClientManagerTemplate, writeFileLocally } = ctx.params;
