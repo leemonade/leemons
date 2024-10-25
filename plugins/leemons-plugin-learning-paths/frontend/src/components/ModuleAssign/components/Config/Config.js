@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
-import { Box, createStyles, Stack, Table, TimeInput } from '@bubbles-ui/components';
-import { PluginSettingsIcon, TimeClockCircleIcon } from '@bubbles-ui/icons/outline';
+import { Box, createStyles, Stack, Table } from '@bubbles-ui/components';
 import { unflatten } from '@common';
 import loadable from '@loadable/component';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -12,7 +11,9 @@ import PropTypes from 'prop-types';
 import { ResourceRenderer } from '../../../ModuleSetup/components/StructureData/components/ModuleComposer/components/ResourceRenderer';
 import { ConfigModal } from '../ConfigModal';
 
+import { ConfigAction } from './components/ConfigAction';
 import { DeleteAction } from './components/DeleteAction';
+import { Duration } from './components/Duration';
 
 import { TypeRenderer } from '@learning-paths/components/ModuleAssign/components/Config/components/TypeRenderer';
 import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
@@ -93,9 +94,11 @@ function useParsedActivities({ activities, components, localizations, onConfig }
   return useMemo(
     () =>
       activities?.map(({ activity, id }) => ({
+        id,
         resource: (
           <ResourceRenderer
             activity={activity}
+            id={id}
             key={`${id}-resource`}
             localizations={localizations}
           />
@@ -107,23 +110,11 @@ function useParsedActivities({ activities, components, localizations, onConfig }
             defaultValue={'mandatory'}
           />
         ),
-        time: (
-          <TimeInput
-            sx={{ minWidth: 123 }}
-            icon={<TimeClockCircleIcon />}
-            clearable
-            value={timeState?.[id]}
-            onChange={(newValue) => setValue(`state.time.${id}`, newValue)}
-          />
-        ),
+        time: <Duration id={id} setValue={setValue} timeState={timeState} />,
         actions:
           components[activity.role] && !components[activity.role].disabled?.(activity) ? (
-            <Stack sx={{ cursor: 'pointer' }} spacing={2}>
-              <PluginSettingsIcon
-                onClick={() => onConfig({ activity, id })}
-                width={18}
-                height={18}
-              />
+            <Stack sx={{ cursor: 'pointer' }} spacing={2} justifyContent="flex-end" fullWidth>
+              <ConfigAction onConfig={onConfig} activity={activity} id={id} />
               <DeleteAction id={id} />
             </Stack>
           ) : (
