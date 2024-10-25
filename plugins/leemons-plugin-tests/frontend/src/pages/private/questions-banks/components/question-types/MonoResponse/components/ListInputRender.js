@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
+import { useEffect, useMemo, useRef, useState } from 'react';
+
 import {
   InputWrapper,
   Box,
@@ -9,10 +9,9 @@ import {
   Textarea,
   TextInput,
 } from '@bubbles-ui/components';
-import { useStore } from '@common';
 import ImagePicker from '@leebrary/components/ImagePicker';
 import { capitalize } from 'lodash';
-import { Controller, useForm } from 'react-hook-form';
+import PropTypes from 'prop-types';
 
 // eslint-disable-next-line import/prefer-default-export
 export function ListInputRender({
@@ -26,7 +25,7 @@ export function ListInputRender({
   responsesSaved,
   ...props
 }) {
-  const choice = useMemo(() => value, [value]);
+  const choice = useMemo(() => ({ ...value, isCorrect: value?.isCorrect ?? false }), [value]);
 
   const [answerText, setAnswerText] = useState(choice.text?.text || '');
   const [explanation, setExplanation] = useState(choice.feedback?.text || '');
