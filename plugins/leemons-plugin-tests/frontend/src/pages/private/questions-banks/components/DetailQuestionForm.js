@@ -300,7 +300,7 @@ export default function DetailQuestionForm({
                     <TextEditorInput
                       required
                       toolbars={TEXT_EDITOR_TEXTAREA_TOOLBARS}
-                      error={form.formState.errors.question}
+                      error={form.formState.errors.stem?.text}
                       label={t('questionLabel')}
                       editorStyles={{ minHeight: '96px' }}
                       placeholder={t('statementPlaceHolder')}
