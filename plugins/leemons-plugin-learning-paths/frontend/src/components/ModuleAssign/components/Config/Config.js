@@ -90,39 +90,42 @@ function useActivities(assignable) {
 function useParsedActivities({ activities, components, localizations, onConfig }) {
   const { useWatch, setValue } = useModuleAssignContext();
   const timeState = useWatch({ name: 'state.time' });
+  const order = useWatch({ name: 'state.order' });
 
-  return useMemo(
-    () =>
-      activities?.map(({ activity, id }) => ({
-        id,
-        resource: (
-          <ResourceRenderer
-            activity={activity}
-            id={id}
-            key={`${id}-resource`}
-            localizations={localizations}
-          />
+  return useMemo(() => {
+    const sortedActivities = order
+      ? activities?.sort((a, b) => order?.[a.id] - order?.[b.id])
+      : activities;
+
+    return sortedActivities?.map(({ activity, id }) => ({
+      id,
+      resource: (
+        <ResourceRenderer
+          activity={activity}
+          id={id}
+          key={`${id}-resource`}
+          localizations={localizations}
+        />
+      ),
+      type: (
+        <TypeRenderer
+          id={id}
+          localizations={localizations?.structureData?.types}
+          defaultValue={'mandatory'}
+        />
+      ),
+      time: <Duration id={id} setValue={setValue} timeState={timeState} />,
+      actions:
+        components[activity.role] && !components[activity.role].disabled?.(activity) ? (
+          <Stack sx={{ cursor: 'pointer' }} spacing={2} justifyContent="flex-end" fullWidth>
+            <ConfigAction onConfig={onConfig} activity={activity} id={id} />
+            <DeleteAction id={id} />
+          </Stack>
+        ) : (
+          <></>
         ),
-        type: (
-          <TypeRenderer
-            id={id}
-            localizations={localizations?.structureData?.types}
-            defaultValue={'mandatory'}
-          />
-        ),
-        time: <Duration id={id} setValue={setValue} timeState={timeState} />,
-        actions:
-          components[activity.role] && !components[activity.role].disabled?.(activity) ? (
-            <Stack sx={{ cursor: 'pointer' }} spacing={2} justifyContent="flex-end" fullWidth>
-              <ConfigAction onConfig={onConfig} activity={activity} id={id} />
-              <DeleteAction id={id} />
-            </Stack>
-          ) : (
-            <></>
-          ),
-      })),
-    [activities, components, localizations, onConfig, setValue, timeState]
-  );
+    }));
+  }, [activities, components, localizations, onConfig, setValue, timeState, order]);
 }
 
 function useColumns({ localizations }) {
@@ -225,6 +228,7 @@ export function Config({ assignable, localizations: parentLocalizations }) {
   const localizations = useConfigLocalizations(parentLocalizations);
   const columns = useColumns({ localizations: localizations?.columns });
   const { data: activities } = useActivities(assignable);
+  const { setValue } = useModuleAssignContext();
 
   const [configuratedAssignable, setConfiguratedAssignable] = useState(null);
 
@@ -252,7 +256,20 @@ export function Config({ assignable, localizations: parentLocalizations }) {
         />
       )}
 
-      <Table columns={columns} data={parsedActivities} isAssetList />
+      <Table
+        columns={columns}
+        data={parsedActivities}
+        isAssetList
+        sortable
+        onChangeData={({ newData }) => {
+          const order = {};
+          newData.forEach(({ id }, index) => {
+            order[id] = index;
+          });
+
+          setValue('state.order', order);
+        }}
+      />
     </Box>
   );
 }
