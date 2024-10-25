@@ -1,5 +1,7 @@
 const _ = require('lodash');
+
 const { validateNotExistEvent } = require('../../validations/exists');
+
 const { getPermissionConfig } = require('./getPermissionConfig');
 
 /**
@@ -21,6 +23,7 @@ async function grantAccessUserAgentToEvent({ id, userAgentId, actionName, ctx })
 
   const { warnings } = await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
     userAgentId: userAgentIds,
+    throwIfExists: false,
     data: {
       permissionName: permissionConfig.permissionName,
       actionNames,

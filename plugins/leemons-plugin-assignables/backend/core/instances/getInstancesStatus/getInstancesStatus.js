@@ -1,20 +1,21 @@
-const { uniq } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
+const { uniq } = require('lodash');
+
+const {
+  getUserPermissionMultiple,
+} = require('../../permissions/instances/users/getUserPermissionMultiple');
 
 const {
   getStatusForStudent,
   INSTANCE_STATUS: STUDENT_INSTANCE_STATUS,
 } = require('./getStatusForStudent');
 const {
-  getUserPermissionMultiple,
-} = require('../../permissions/instances/users/getUserPermissionMultiple');
-const {
   getStatusForTeacher,
   INSTANCE_STATUS: TEACHER_INSTANCE_STATUS,
 } = require('./getStatusForTeacher');
-const getInstances = require('./helpers/getInstances');
 const getAssignations = require('./helpers/getAssignations');
 const getClasses = require('./helpers/getClasses');
+const getInstances = require('./helpers/getInstances');
 const getInstancesById = require('./helpers/getInstancesById');
 
 async function getActivitiesPermissions({ instancesIds, ctx }) {
@@ -101,7 +102,7 @@ async function getTeacherStatus({ instancesIds, ctx }) {
         case TEACHER_INSTANCE_STATUS.NEEDS_EVALUATION:
           needsEvaluationCount++;
           break;
-        case TEACHER_INSTANCE_STATUS.DID_NOT_FINISH:
+        case TEACHER_INSTANCE_STATUS.NOT_FINISHED_BY_STUDENTS:
           didNotFinishCount++;
           break;
         default:
@@ -118,7 +119,7 @@ async function getTeacherStatus({ instancesIds, ctx }) {
     } else if (needsEvaluationCount) {
       status = TEACHER_INSTANCE_STATUS.NEEDS_EVALUATION;
     } else if (didNotFinishCount) {
-      status = TEACHER_INSTANCE_STATUS.DID_NOT_FINISH;
+      status = TEACHER_INSTANCE_STATUS.NOT_FINISHED_BY_STUDENTS;
     }
 
     return {
