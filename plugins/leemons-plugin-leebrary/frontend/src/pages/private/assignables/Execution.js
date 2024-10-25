@@ -1,5 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 
+import ActivityHeader from '@assignables/components/ActivityHeader';
+import TotalLayoutStepContainerWithAccordion from '@assignables/components/TotalLayoutStepContainerWithAccordion/TotalLayoutStepContainerWithAccordion';
+import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
 import {
   Button,
   HtmlText,
@@ -9,18 +13,15 @@ import {
   TotalLayoutFooterContainer,
   useTheme,
 } from '@bubbles-ui/components';
+import { DownloadIcon } from '@bubbles-ui/icons/outline';
 import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
-import { useHistory, useParams } from 'react-router-dom';
-
-import ActivityHeader from '@assignables/components/ActivityHeader';
-import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
-import useAssets from '@leebrary/request/hooks/queries/useAssets';
-import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
-import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
-import TotalLayoutStepContainerWithAccordion from '@assignables/components/TotalLayoutStepContainerWithAccordion/TotalLayoutStepContainerWithAccordion';
-import prefixPN from '@leebrary/helpers/prefixPN';
-import { AssetPlayerWrapperExecution } from '@leebrary/components/LibraryTool/AssetPlayerWrapperExecution';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
+import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
+
+import { AssetPlayerWrapperExecution } from '@leebrary/components/LibraryTool/AssetPlayerWrapperExecution';
+import prefixPN from '@leebrary/helpers/prefixPN';
+import useAssets from '@leebrary/request/hooks/queries/useAssets';
 
 export default function Execution() {
   const [t] = useTranslateLoader(prefixPN('assignableExecution'));
@@ -58,6 +59,8 @@ export default function Execution() {
     select: (assets) => assets?.[0] ?? null,
   });
 
+  const isPdf = asset?.fileExtension === 'pdf';
+
   if (isLoading) {
     return <LoadingOverlay />;
   }
@@ -92,7 +95,18 @@ export default function Execution() {
           scrollRef={scrollRef}
           Footer={
             <TotalLayoutFooterContainer scrollRef={scrollRef} fixed>
-              <Stack justifyContent="end" fullWidth>
+              <Stack justifyContent="end" fullWidth spacing={4}>
+                {
+                  isPdf && (
+                    <Button
+                      leftIcon={<DownloadIcon />}
+                      variant="outline"
+                      onClick={() => window.open(asset.url, '_blank', 'noopener')}
+                    >
+                      {t('download')}
+                    </Button>
+                  )
+                }
                 <Button
                   loading={isSubmitting}
                   disabled={isFinished}
