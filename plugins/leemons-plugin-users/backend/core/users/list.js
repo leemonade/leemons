@@ -68,9 +68,23 @@ async function queryUserAgents({ roles, disabled, ctx }) {
   }));
 }
 
-async function list({ page, size, profiles, centers, disabled, ctx, sort, ...queries }) {
+async function list({
+  page,
+  size,
+  profiles,
+  centers,
+  disabled,
+  ctx,
+  sort,
+  listUserAgents,
+  ...queries
+}) {
   const query = { ...queries };
-  let roles = await queryCenterRoles({ centers, ctx });
+  let roles = null;
+
+  if (centers) {
+    roles = await queryCenterRoles({ centers, ctx });
+  }
 
   if (profiles) {
     const profileRoles = await queryProfileRoles({ profiles, excludeProfiles: [], ctx });
@@ -82,7 +96,7 @@ async function list({ page, size, profiles, centers, disabled, ctx, sort, ...que
   }
 
   let userAgents = null;
-  if (_.isArray(roles) || _.isBoolean(disabled)) {
+  if (_.isArray(roles) || _.isBoolean(disabled) || listUserAgents) {
     userAgents = await queryUserAgents({ roles, disabled, ctx });
     query.id = _.map(userAgents, 'user');
   }

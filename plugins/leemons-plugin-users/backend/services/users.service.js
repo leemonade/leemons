@@ -134,7 +134,11 @@ module.exports = {
     listUsers: {
       async handler(ctx) {
         const provider = (await getProvider({ ctx }))?.pluginName;
-        if (ctx.callerPlugin && ctx.callerPlugin === provider) {
+
+        if (
+          ctx.callerPlugin &&
+          [provider, 'bulk-data'].filter(Boolean).includes(ctx.callerPlugin)
+        ) {
           return listUsers({ ...ctx.params, ctx });
         }
         return [];
