@@ -15,7 +15,7 @@ import { Config } from './components/Config';
 import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
 import assignModuleRequest from '@learning-paths/requests/assignModule';
 
-function onAssign(id, { assignationForm, state: { activities, time, type, deleted } }) {
+function onAssign(id, { assignationForm, state: { activities, time, type, deleted, order } }) {
   const activitiesWithState = {};
   Object.keys(type).forEach((key) => {
     const activity = activities[key];
@@ -38,6 +38,7 @@ function onAssign(id, { assignationForm, state: { activities, time, type, delete
   const assignationObject = {
     assignationForm: assignationForm?.value,
     activities: activitiesWithState,
+    order,
   };
 
   return assignModuleRequest(id, assignationObject);
@@ -69,7 +70,7 @@ function SetupStep({ onPrevStep, scrollRef, id, localizations, assignable }) {
             <Button
               disabled={
                 activitiesLength !== activitiesLoadedCount ||
-                activitiesLength - Object.values(deleted).filter(Boolean).length < 2
+                (deleted && activitiesLength - Object.values(deleted).filter(Boolean).length < 2)
               }
               loading={assignButtonIsLoading}
               onClick={() => {

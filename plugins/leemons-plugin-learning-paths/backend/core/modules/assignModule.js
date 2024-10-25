@@ -5,9 +5,13 @@ module.exports = async function assignModule({ moduleId, config, ctx }) {
     id: moduleId,
   });
 
-  const activities = moduleAssignable.submission.activities?.filter(
+  const unsortedActivities = moduleAssignable.submission.activities?.filter(
     (activity) => !config.activities[activity.id]?.state?.deleted
   );
+
+  const activities = config.order
+    ? unsortedActivities?.sort((a, b) => config.order[a.id] - config.order[b.id])
+    : unsortedActivities;
 
   const activitiesInstanceIds = [];
   const blockingActivities = [];
