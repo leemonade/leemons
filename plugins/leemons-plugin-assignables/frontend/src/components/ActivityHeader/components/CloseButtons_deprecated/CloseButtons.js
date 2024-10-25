@@ -121,7 +121,6 @@ function onArchiveTask({
 }
 
 export default function CloseButtons({ instance, hidden }) {
-  console.log('instance', instance);
   const [t] = useTranslateLoader(prefixPN('activity_dashboard'));
   const { mutateAsync } = useMutateAssignableInstance();
   const { openConfirmationModal } = useLayout();
