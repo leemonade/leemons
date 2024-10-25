@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useHistory, Link } from 'react-router-dom';
 
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import { Box, ImageLoader, TotalLayoutHeader, Stack, Button } from '@bubbles-ui/components';
 import { OpenIcon } from '@bubbles-ui/icons/outline';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
@@ -48,6 +49,7 @@ export default function ActivityHeader({
   const form = useForm();
   const history = useHistory();
   const [t] = useTranslateLoader(PrefixPN('evaluation'));
+  const isTeacher = useIsTeacher();
   /*
     === Activity data ===
   */
@@ -176,11 +178,13 @@ export default function ActivityHeader({
                 </Button>
               </Box>
             )}
-            <MenuItems
-              instance={instance}
-              hideDeleteButton={!showDeleteButton || isModuleActivity}
-              hideCloseButtons={!showCloseButtons}
-            />
+            {isTeacher && (
+              <MenuItems
+                instance={instance}
+                hideDeleteButton={!showDeleteButton || isModuleActivity}
+                hideCloseButtons={!showCloseButtons}
+              />
+            )}
           </Box>
         </Box>
       </TotalLayoutHeader>
