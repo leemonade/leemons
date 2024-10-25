@@ -1,5 +1,5 @@
-const { getPermissionName } = require('../../../instances/helpers/getPermissionName');
 const constants = require('../../../../../config/constants');
+const { getPermissionName } = require('../../../instances/helpers/getPermissionName');
 
 /**
  * Add a permission to a user.
@@ -15,6 +15,7 @@ const constants = require('../../../../../config/constants');
 async function addPermissionToUser({ assignableInstance, assignable, userAgents, role, ctx }) {
   await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
     userAgentId: userAgents,
+    throwIfExists: false,
     data: {
       permissionName: getPermissionName({ assignableInstance, assignable, prefix: true, ctx }),
       actionNames: constants.assignableInstanceRolesObject[role].actions,

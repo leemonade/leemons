@@ -1,18 +1,10 @@
 const Excel = require('exceljs');
-const { uniqBy, get } = require('lodash');
-const { createLocalesSheet } = require('./localesSheet');
-const { createPlatformSheet } = require('./platformSheet');
-const { createProvidersSheet } = require('./providersSheet');
-const { createCentersSheet } = require('./centersSheet');
-const { createUsersSheet } = require('./usersSheet');
-const { createEvaluationsSheet } = require('./evaluationsSheet');
-const { createSubjectTypesSheet } = require('./subjectTypesSheet');
-const { createProgramsSheet } = require('./programsSheet');
-const { createKnowledgeAreasSheet } = require('./knowledgeAreasSheet');
-const { createSubjectsSheet } = require('./subjectsSheet');
-const { createLibraryResourcesSheet } = require('./librarySheet');
-const { createProfilesSheet } = require('./profilesSheet');
+const { uniqBy } = require('lodash');
+
+const { createAcademicPortfolioProfilesSheet } = require('./academicPortfolioProfilesSheet');
 const { createAppearanceSheet } = require('./appearanceSheet');
+const { createCalendarSheet } = require('./calendarSheet');
+const { createCentersSheet } = require('./centersSheet');
 const {
   ASSET_CATEGORIES: {
     LIBRARY_CATEGORIES,
@@ -23,21 +15,30 @@ const {
     LEARNING_PATHS_MODULE,
   },
 } = require('./config/constants');
-const { createAcademicPortfolioProfilesSheet } = require('./academicPortfolioProfilesSheet');
-const { createTasksSheet, createTaskSubjectSheet } = require('./tasksSheets');
-const { createTestsQBanksSheet } = require('./testsQBanksSheet');
-const { createTestsQuestionsSheet } = require('./testsQuestionsSheet');
-const { createTestsSheet } = require('./testsSheet');
-const { createCalendarSheet } = require('./calendarSheet');
-const { createRegionalCalendarsSheet } = require('./regionalCalendarsSheet');
-const { createRegionalCalendarEventsSheet } = require('./regionalCalendarEventsSheets');
+const { createContentCreatorSheet } = require('./contentCreatorSheet');
+const { createEvaluationsSheet } = require('./evaluationsSheet');
+const { createKnowledgeAreasSheet } = require('./knowledgeAreasSheet');
+const { createLibraryResourcesSheet } = require('./librarySheet');
+const { createLocalesSheet } = require('./localesSheet');
+const { createModulesSheet } = require('./modulesSheet');
+const { createNonIndexableLibraryAssetsSheet } = require('./nonIndexableLibraryAssetsSheet');
+const { createPlatformSheet } = require('./platformSheet');
+const { createProfilesSheet } = require('./profilesSheet');
 const {
   createProgramCalendarsSheet,
   createProgramCalendarEventsSheet,
 } = require('./programCalendarSheets');
-const { createContentCreatorSheet } = require('./contentCreatorSheet');
-const { createNonIndexableLibraryAssetsSheet } = require('./nonIndexableLibraryAssetsSheet');
-const { createModulesSheet } = require('./modulesSheet');
+const { createProgramsSheet } = require('./programsSheet');
+const { createProvidersSheet } = require('./providersSheet');
+const { createRegionalCalendarEventsSheet } = require('./regionalCalendarEventsSheets');
+const { createRegionalCalendarsSheet } = require('./regionalCalendarsSheet');
+const { createSubjectTypesSheet } = require('./subjectTypesSheet');
+const { createSubjectsSheet } = require('./subjectsSheet');
+const { createTasksSheet, createTaskSubjectSheet } = require('./tasksSheets');
+const { createTestsQBanksSheet } = require('./testsQBanksSheet');
+const { createTestsQuestionsSheet } = require('./testsQuestionsSheet');
+const { createTestsSheet } = require('./testsSheet');
+const { createUsersSheet } = require('./usersSheet');
 
 async function filterQbanksByRequiredByTestAndVersion({ detailedTests, qBanks, ctx }) {
   const versionControlledQbankIds = await ctx.call('leebrary.assets.filterByVersionOfType', {

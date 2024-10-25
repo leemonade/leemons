@@ -1,12 +1,15 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
 
+const { addTeachersToAssignableInstance } = require('../teachers/addTeachersToAssignableInstance');
+
 async function afterAddClassTeacher({ class: classe, teacher, type, ctx }) {
   if (type === 'main-teacher') {
     // Sacamos todas las instancias existentes para las clases afectadas
     const assignClasses = await ctx.tx.db.Classes.find({ class: classe }).lean();
     const instanceIds = _.uniq(_.map(assignClasses, 'assignableInstance'));
     // De todas las instancias, sacamos todas las asignaciones
+    const instances = await ctx.tx.db.Instances.find({ id: instanceIds }).lean();
     const assignations = await ctx.tx.db.Assignations.find({ instance: instanceIds })
       .select(['id', 'classes', 'user'])
       .lean();
@@ -24,6 +27,27 @@ async function afterAddClassTeacher({ class: classe, teacher, type, ctx }) {
     );
 
     const promises = [];
+
+    await Promise.all(
+      instances.map(async (instance) => {
+        const teachers = [{id: teacher, type}];
+
+        await addTeachersToAssignableInstance({
+          teachers,
+          id: instance.id,
+          assignable: instance.assignable,
+          ctx,
+        });
+
+        if (instance.event) {
+          await ctx.tx.call('calendar.calendar.grantAccessUserAgentToEvent', {
+            id: instance.event,
+            userAgentId: [teacher],
+            actionName: 'view',
+          });
+        }
+      })
+    );
 
     // Nos recorremos todas las asignaciones
     _.forEach(assignations, (assignation) => {

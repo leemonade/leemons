@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useHistory, Link } from 'react-router-dom';
 
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import { Box, ImageLoader, TotalLayoutHeader, Stack, Button } from '@bubbles-ui/components';
 import { OpenIcon } from '@bubbles-ui/icons/outline';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
@@ -16,9 +17,8 @@ import ActivityTypeDisplay from './components/ActivityTypeDisplay/ActivityTypeDi
 import CalificationTypeDisplay from './components/CalificationTypeDisplay/CalificationTypeDisplay';
 import { ChatDisplay } from './components/ChatDisplay/ChatDisplay';
 import ClassroomDisplay from './components/ClassroomDisplay/ClassroomDisplay';
-import CloseButtons from './components/CloseButtons/CloseButtons';
 import DateComponent from './components/Date/Date';
-import DeleteButton from './components/DeleteButton/DeleteButton';
+import { MenuItems } from './components/MenuItems';
 import StatusBadge from './components/StatusBadge/StatusBadge';
 import Timer from './components/Timer/Timer';
 import useTotalLayoutStyles from './index.style';
@@ -49,6 +49,7 @@ export default function ActivityHeader({
   const form = useForm();
   const history = useHistory();
   const [t] = useTranslateLoader(PrefixPN('evaluation'));
+  const isTeacher = useIsTeacher();
   /*
     === Activity data ===
   */
@@ -177,9 +178,14 @@ export default function ActivityHeader({
                 </Button>
               </Box>
             )}
-            <DeleteButton instance={instance} hidden={!showDeleteButton || isModuleActivity} />
+            {isTeacher && (
+              <MenuItems
+                instance={instance}
+                hideDeleteButton={!showDeleteButton || isModuleActivity}
+                hideCloseButtons={!showCloseButtons}
+              />
+            )}
           </Box>
-          <CloseButtons instance={instance} hidden={!showCloseButtons} />
         </Box>
       </TotalLayoutHeader>
     </FormProvider>

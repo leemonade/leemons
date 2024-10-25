@@ -1,5 +1,45 @@
 # Changelog
 
+## [1.12.0](https://github.com/leemonade/leemons/compare/1.11.0...1.12.0) (2024-10-24)
+
+
+### Features
+
+* **academic-portfolio:** Conditionally render chat button based on isChatEnabled ([538c5fa](https://github.com/leemonade/leemons/commit/538c5fae1749cf65d0785b43d75b268bdefea367)), closes [#606](https://github.com/leemonade/leemons/issues/606)
+
+
+### Bug Fixes
+
+* **academic-portfolio:** Do not remove not existing comunica rooms ([b351da1](https://github.com/leemonade/leemons/commit/b351da1af3a3105dc1520f2a723e42453df1dba6)), closes [#616](https://github.com/leemonade/leemons/issues/616)
+* **feedback:** Show `hideReport` option when assigning ([9260f7c](https://github.com/leemonade/leemons/commit/9260f7ce4a1af28a9c70a6d9dbaa43fb3c5d9a5d)), closes [#605](https://github.com/leemonade/leemons/issues/605)
+
+## [1.11.0](https://github.com/leemonade/leemons/compare/1.10.0...1.11.0) (2024-10-22)
+
+
+### Features
+
+* **academic-calendar:** Add empty states when there's no tags selected and when there's tags selected but no results found. ([4b5bac8](https://github.com/leemonade/leemons/commit/4b5bac81430f949de5a742171b1d716542f5ad58))
+* **assignables:** Assign new class students to open activities ([7ce7f95](https://github.com/leemonade/leemons/commit/7ce7f95681c11e139cb3c7f86c9a0764afa86dfb)), closes [#602](https://github.com/leemonade/leemons/issues/602)
+
+
+### Bug Fixes
+
+* **academic-portfolio:** Add fullName trimmed in Avatar to show users initials on StudentsTable. ([4b5bac8](https://github.com/leemonade/leemons/commit/4b5bac81430f949de5a742171b1d716542f5ad58))
+* **academic-portfolio:** Clear existing results in `StudentsSelectedByTags` when tags are cleared ([4b5bac8](https://github.com/leemonade/leemons/commit/4b5bac81430f949de5a742171b1d716542f5ad58))
+* **grades:** Sort evaluation system table by numbers ([a7911ce](https://github.com/leemonade/leemons/commit/a7911cefac2fc0afa2d33413c274762b03ce5c7d)), closes [#570](https://github.com/leemonade/leemons/issues/570)
+
+## [1.10.0](https://github.com/leemonade/leemons/compare/1.9.0...1.10.0) (2024-10-18)
+
+
+### Features
+
+* **leebrary:** Added hideMediaFilter prop to AssetList ([c13de2a](https://github.com/leemonade/leemons/commit/c13de2ae972342ef85cabb8fdd4a298670f63152)), closes [#596](https://github.com/leemonade/leemons/issues/596)
+
+
+### Bug Fixes
+
+* **feedback:** Ignore missing responses when generating report ([79e9c01](https://github.com/leemonade/leemons/commit/79e9c01e4b41c56253b73990f957e0fd3d020095)), closes [#600](https://github.com/leemonade/leemons/issues/600)
+
 ## [1.9.0](https://github.com/leemonade/leemons/compare/1.8.0...1.9.0) (2024-10-16)
 
 

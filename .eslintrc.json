@@ -16,7 +16,7 @@
     "plugin:react/recommended",
     // If using the new JSX transform from React 17
     // https://legacy.reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html#removing-unused-react-imports
-    // "plugin:react/jsx-runtime",
+    "plugin:react/jsx-runtime",
     "plugin:react-hooks/recommended",
 
     "plugin:sonarjs/recommended-legacy",
@@ -54,7 +54,6 @@
     "no-plusplus": "off",
     "no-unused-vars": "warn",
     "no-underscore-dangle": "off",
-    "react/react-in-jsx-scope": "off",
     "import/no-deprecated": "warn",
     "import/no-extraneous-dependencies": "off",
     "import/no-mutable-exports": "error",

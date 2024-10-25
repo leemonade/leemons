@@ -1,15 +1,10 @@
-import PropTypes from 'prop-types';
 import React, { useMemo } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 
 import {
   Box,
   Button,
   createStyles,
-  Modal,
-  Paragraph,
-  Stack,
-  DropdownButton,
   ContextContainer,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
@@ -17,20 +12,20 @@ import {
 import {
   ChevRightIcon,
   ChevLeftIcon,
-  ChevronRightIcon,
-  ExpandDiagonalIcon,
 } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
-import prefixPN from '@feedback/helpers/prefixPN';
-import SelectResponseQuestion from '@feedback/pages/private/feedback/StudentInstance/components/questions/SelectResponseQuestion';
-import { setQuestionResponseRequest } from '@feedback/request';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-
-import { setInstanceTimestamp } from '@feedback/request/feedback';
 import { isNil } from 'lodash';
+import PropTypes from 'prop-types';
+
 import LikertResponse from './LikertResponse';
 import NetPromoterScoreResponse from './NetPromoterScoreResponse';
 import OpenResponse from './OpenResponse';
+
+import prefixPN from '@feedback/helpers/prefixPN';
+import SelectResponseQuestion from '@feedback/pages/private/feedback/StudentInstance/components/questions/SelectResponseQuestion';
+import { setQuestionResponseRequest } from '@feedback/request';
+import { setInstanceTimestamp } from '@feedback/request/feedback';
 
 export const Styles = createStyles((theme, { viewMode }) => ({
   container: {
@@ -132,7 +127,13 @@ function QuestionsStep({
     } else {
       if (!viewMode) setInstanceTimestamp(instanceId, 'end', userId);
 
-      goToResults();
+      if (instance.showResults) {
+        goToResults();
+      } else if (isModule) {
+        gotToModuleDashboard();
+      } else {
+        goToOnGoing();
+      }
     }
 
     render();

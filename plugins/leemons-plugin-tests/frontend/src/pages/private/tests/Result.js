@@ -26,7 +26,6 @@ import { useSearchParams, useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import prefixPN from '@tests/helpers/prefixPN';
-import hooks from 'leemons-hooks';
 import { find, forEach, map, orderBy } from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
@@ -34,7 +33,6 @@ import { Link, useHistory, useParams } from 'react-router-dom';
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
 import { CheckBoldIcon, RemoveBoldIcon, SlashIcon, StatisticsIcon } from '@bubbles-ui/icons/solid';
-import ChatDrawer from '@comunica/components/ChatDrawer/ChatDrawer';
 import ActivityHeader from '@assignables/components/ActivityHeader';
 import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
 import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
@@ -291,7 +289,7 @@ export default function Result() {
                 <Box className={styles.tableCell}>
                   <TextClamp lines={2} withToolTip>
                     <Text>
-                      {i + 1}. {htmlToText(question.question)}
+                      {i + 1}. {htmlToText(question.stem.text)}
                     </Text>
                   </TextClamp>
                 </Box>

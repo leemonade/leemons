@@ -4,15 +4,14 @@
  */
 /** @type {ServiceSchema} */
 
-const _ = require('lodash');
-const { LeemonsValidator } = require('@leemons/validator');
 const { LeemonsError } = require('@leemons/error');
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
-const usersService = require('../../core/users');
-const { userAgentsAreContacts } = require('../../core/user-agents/contacts/userAgentsAreContacts');
+const { LeemonsValidator } = require('@leemons/validator');
+const _ = require('lodash');
+
 const {
   update,
   active,
@@ -26,6 +25,9 @@ const {
   getActiveUserAgentsCountByProfileSysName,
 } = require('../../core/user-agents');
 const { getUserAgentContacts } = require('../../core/user-agents/contacts/getUserAgentContacts');
+const { userAgentsAreContacts } = require('../../core/user-agents/contacts/userAgentsAreContacts');
+const usersService = require('../../core/users');
+const { impersonateUser } = require('../../core/users/impersonateUser');
 
 module.exports = {
   canResetRest: {
@@ -333,6 +335,27 @@ module.exports = {
         profileId: ctx.params.profileId,
         ctx,
       });
+      return { status: 200, jwtToken };
+    },
+  },
+  impersonateRest: {
+    rest: {
+      path: '/impersonate/:userId',
+      method: 'POST',
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'users.impersonate': {
+            actions: ['admin'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      const jwtToken = await impersonateUser({ id: ctx.params.userId, ctx });
+
       return { status: 200, jwtToken };
     },
   },

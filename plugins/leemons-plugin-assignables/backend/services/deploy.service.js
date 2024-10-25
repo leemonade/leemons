@@ -1,24 +1,23 @@
-const path = require('path');
-const _ = require('lodash');
 const { Agenda } = require('@hokify/agenda');
-
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMultilanguageMixin } = require('@leemons/multilanguage');
-const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
+const { LeemonsEmailsMixin } = require('@leemons/emails');
 const { addMenuItemsDeploy } = require('@leemons/menu-builder');
-const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('@leemons/widgets');
-const { addPermissionsDeploy } = require('@leemons/permissions');
 const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { LeemonsEmailsMixin } = require('@leemons/emails');
+const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
+const { LeemonsMultilanguageMixin } = require('@leemons/multilanguage');
+const { addPermissionsDeploy } = require('@leemons/permissions');
+const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('@leemons/widgets');
+const _ = require('lodash');
+const path = require('path');
 
 const { menuItems, widgets, permissions } = require('../config/constants');
-const { getServiceModels } = require('../models');
+const { renderEmailTemplates } = require('../core/deploy/renderEmailTemplates');
 const { afterAddClassTeacher } = require('../core/events/afterAddClassTeacher');
 const { afterRemoveClassesTeachers } = require('../core/events/afterRemoveClassesTeachers');
 const { sendRememberEmails } = require('../core/events/sendRememberEmail');
 const { sendWeeklyEmails } = require('../core/events/sendWeeklyEmail');
-const { renderEmailTemplates } = require('../core/deploy/renderEmailTemplates');
+const { getServiceModels } = require('../models');
 
 const SERVICE_NAME = 'assignables.deploy';
 
@@ -94,11 +93,10 @@ module.exports = {
       await afterRemoveClassesTeachers({ ...ctx.params, ctx });
     },
     'academic-portfolio.after-add-class-student': async (ctx) => {
-      const {
-        addStudentsToOpenInstancesWithClass,
-        // eslint-disable-next-line global-require
-      } = require('../core/assignations/addStudentToOpenInstancesWithClass');
-      await addStudentsToOpenInstancesWithClass({ ...ctx.params, ctx });
+      await ctx.call(
+        'assignables.assignableInstances.addStudentToOpenInstancesWithClass',
+        ctx.params
+      );
     },
 
     // Permissions

@@ -1,6 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { forIn, get, isEmpty, map } from 'lodash';
+import { cloneElement, useMemo, useState } from 'react';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
+
+import SelectLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/SelectLevelsOfDifficulty';
 import {
   Box,
   Button,
@@ -13,18 +14,26 @@ import {
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
-import ImagePicker from '@leebrary/components/ImagePicker';
 import { TextEditorInput, TEXT_EDITOR_TEXTAREA_TOOLBARS } from '@bubbles-ui/editors';
-import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { ViewOffIcon } from '@bubbles-ui/icons/solid';
-import SelectLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/SelectLevelsOfDifficulty';
-import { questionComponents, questionTypeT } from './QuestionForm';
+import ImagePicker from '@leebrary/components/ImagePicker';
+import { isEmpty, map } from 'lodash';
+import PropTypes from 'prop-types';
+
+import {
+  QUESTION_TYPES,
+  SOLUTION_KEY_BY_TYPE,
+  getQuestionTypesForSelect,
+} from '../questionConstants';
+
+import { MapQuestion } from './question-types/Map';
+import { MonoResponse } from './question-types/MonoResponse';
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-const RESPONSES_KEYS = {
-  'mono-response': 'responses',
-  map: 'markers.list',
+const questionComponents = {
+  [QUESTION_TYPES.MONO_RESPONSE]: <MonoResponse />,
+  [QUESTION_TYPES.MAP]: <MapQuestion />,
 };
 
 export default function DetailQuestionForm({
@@ -32,7 +41,7 @@ export default function DetailQuestionForm({
   stepName,
   scrollRef,
   isPublished,
-  store,
+  savingAs,
   onSave,
   onSaveQuestion,
   defaultValues,
@@ -40,37 +49,31 @@ export default function DetailQuestionForm({
   onAddCategory,
   onCancel,
 }) {
-  const questionTypes = [];
-  forIn(questionTypeT, (value, key) => {
-    questionTypes.push({ value: key, label: t(value) });
-  });
+  const [withQuestionImage, setWithQuestionImage] = useState(() => !!defaultValues?.questionImage);
 
-  const form = useForm({ defaultValues });
-  const properties = form.watch('properties');
+  const form = useForm({ defaultValues: { ...defaultValues, clues: defaultValues.clues || [] } });
+  const choices = form.watch('choices');
+  const mapProperties = form.watch('mapProperties');
   const type = form.watch('type');
-  const responseKey = RESPONSES_KEYS[type];
+  const variation = form.watch('variation');
+  const hasHelp = form.watch('hasHelp');
 
-  const rightAnswerSelected = React.useMemo(() => {
-    if (type === 'map') return true;
-    return properties?.responses?.some((item) => item?.value?.isCorrectResponse);
-  }, [type, properties?.responses]);
+  const questionTypesSelectData = useMemo(() => getQuestionTypesForSelect(t), [t]);
 
-  const answerChoices = React.useMemo(() => {
-    const answers = get(properties, responseKey, []);
-    if (isEmpty(answers)) return [];
-
-    let useLetters = true;
-    if (type === 'map' && properties?.markers?.type === 'numbering') {
-      useLetters = false;
+  const rightAnswerSelected = useMemo(() => {
+    if (type === QUESTION_TYPES.MAP) return true;
+    if (type === QUESTION_TYPES.MONO_RESPONSE) {
+      return choices?.some((item) => item?.isCorrect);
     }
-    return map(answers, (item, index) => ({
-      value: index,
-      label: useLetters ? LETTERS[index] : `${index + 1}`,
-      disabled: type === 'map' ? item?.value?.hideOnHelp : item?.value?.isCorrectResponse,
-    }));
-  }, [JSON.stringify(properties), type]);
+    return false;
+  }, [type, choices]);
 
-  function handleOnSaveQuestion() {
+  const answers = useMemo(() => {
+    if (!type) return [];
+    return form.getValues(SOLUTION_KEY_BY_TYPE[type]) ?? [];
+  }, [form.getValues(SOLUTION_KEY_BY_TYPE[type]), form, type]);
+
+  async function handleOnSaveQuestion() {
     form.handleSubmit((data) => {
       onSaveQuestion(data);
     })();
@@ -83,18 +86,14 @@ export default function DetailQuestionForm({
   }
 
   function handleHideOnHelp(index) {
-    const data = get(properties, responseKey, []);
+    const data = [...answers];
 
     if (index && !isEmpty(data)) {
       // loop through responses and set hideOnHelp to true only on index
       for (let i = 0; i < data.length; i++) {
-        if (type === 'map') {
-          data[i].hideOnHelp = i === Number(index);
-        } else {
-          data[i].value.hideOnHelp = i === Number(index);
-        }
+        data[i].hideOnHelp = i === Number(index);
       }
-      form.setValue(`properties.${responseKey}`, data);
+      form.setValue(SOLUTION_KEY_BY_TYPE[type], data);
     }
   }
 
@@ -103,17 +102,42 @@ export default function DetailQuestionForm({
     label: category.value,
   }));
 
-  const QuestionComponent = React.useMemo(() => {
+  const QuestionComponent = useMemo(() => {
     if (!type) return null;
 
-    return React.cloneElement(questionComponents[type], {
+    return cloneElement(questionComponents[type], {
       form,
       t,
       scrollRef,
     });
-  }, [type, form, t, scrollRef]);
+  }, [type, variation, form, t, scrollRef]);
 
-  const hideOptionsHelp = React.useMemo(() => {
+  // HIDE ON HELP CONFIG ·················································································|
+
+  const hideAnswersSelectData = useMemo(() => {
+    if (isEmpty(answers)) return [];
+
+    let useLetters = true;
+    if (type === QUESTION_TYPES.MAP && mapProperties?.markers.type === 'numbering') {
+      useLetters = false;
+    }
+
+    return map(answers, (item, index) => ({
+      value: index,
+      label: useLetters ? LETTERS[index] : `${index + 1}`,
+      disabled: type === QUESTION_TYPES.MAP ? item?.hideOnHelp : item?.isCorrect,
+    }));
+  }, [
+    JSON.stringify(choices),
+    JSON.stringify(mapProperties),
+    type,
+    answers,
+    mapProperties?.markers.type,
+  ]);
+
+  const hasEnoughAnswersToAddClues = form.getValues(SOLUTION_KEY_BY_TYPE[type])?.length >= 3;
+
+  const hideOptionsHelp = useMemo(() => {
     if (!rightAnswerSelected) return t('hideOptionNoRightAnswer');
 
     const parts = t('hideOptionsHelp').split('{{icon}}');
@@ -133,20 +157,11 @@ export default function DetailQuestionForm({
     ];
   }, [t, rightAnswerSelected]);
 
-  const answersHidden = React.useMemo(() => {
-    const answers = get(properties, responseKey, []);
-    if (type === 'map') {
-      return answers
-        .map((item, index) => (item?.hideOnHelp ? index : -1))
-        .filter((item) => item >= 0)[0];
-    }
-
-    return answers
-      .map((item, index) => (item?.value?.hideOnHelp ? index : -1))
-      .filter((item) => item >= 0)[0];
-  }, [get(properties, responseKey), type]);
-
-  const hasEnoughAnswers = get(properties, responseKey, []).length >= 3;
+  const hiddenAnswer = useMemo(
+    () =>
+      answers.map((item, index) => (item?.hideOnHelp ? index : -1)).filter((item) => item >= 0)[0],
+    [answers]
+  );
 
   return (
     <FormProvider {...form}>
@@ -171,8 +186,8 @@ export default function DetailQuestionForm({
                   <Button
                     variant="link"
                     onClick={handleOnSave}
-                    disabled={store.saving || !type}
-                    loading={store.saving === 'draft'}
+                    disabled={savingAs || !type}
+                    loading={savingAs === 'draft'}
                   >
                     {t('saveDraft')}
                   </Button>
@@ -197,7 +212,7 @@ export default function DetailQuestionForm({
                     <Select
                       required
                       placeholder={t('typePlaceholder')}
-                      data={questionTypes}
+                      data={questionTypesSelectData}
                       error={form.formState.errors.type}
                       label={t('typeLabel')}
                       {...field}
@@ -230,6 +245,7 @@ export default function DetailQuestionForm({
                       <Box style={{ width: '230px' }}>
                         <Select
                           {...field}
+                          value={field.value}
                           data={categoryData}
                           placeholder={t('categoryPlaceholder')}
                           searchable
@@ -276,30 +292,39 @@ export default function DetailQuestionForm({
 
                 <Controller
                   control={form.control}
-                  name="question"
-                  rules={{ required: t('questionRequired') }}
+                  name="stem"
+                  rules={{
+                    required: t('questionRequired'),
+                  }}
                   render={({ field }) => (
                     <TextEditorInput
                       required
                       toolbars={TEXT_EDITOR_TEXTAREA_TOOLBARS}
-                      error={form.formState.errors.question}
+                      error={form.formState.errors.stem?.text}
                       label={t('questionLabel')}
                       editorStyles={{ minHeight: '96px' }}
                       placeholder={t('statementPlaceHolder')}
                       {...field}
+                      value={field.value?.text}
+                      onChange={(value) => {
+                        field.onChange({ text: value, format: 'html' });
+                      }}
                     />
                   )}
                 />
-                {type !== 'map' ? (
+                {type !== QUESTION_TYPES.MAP ? (
                   <>
-                    <Controller
-                      control={form.control}
-                      name="properties.hasCover"
-                      render={({ field }) => (
-                        <Switch {...field} checked={field.value} label={t('hasCoverLabel')} />
-                      )}
+                    <Switch
+                      checked={withQuestionImage}
+                      onChange={(value) => {
+                        if (!value) {
+                          form.setValue('questionImage', null);
+                        }
+                        setWithQuestionImage(value);
+                      }}
+                      label={t('hasCoverLabel')}
                     />
-                    {properties?.hasCover ? (
+                    {withQuestionImage ? (
                       <Controller
                         control={form.control}
                         name="questionImage"
@@ -312,7 +337,7 @@ export default function DetailQuestionForm({
                 {QuestionComponent}
 
                 {/* CLUES ---------------------------------------- */}
-                {properties?.hasClues ? (
+                {hasHelp ? (
                   <ContextContainer title={t('cluesLabel')} description={t('cluesDescription')}>
                     <Controller
                       control={form.control}
@@ -320,8 +345,7 @@ export default function DetailQuestionForm({
                       render={({ field }) => (
                         <Textarea
                           {...field}
-                          value={field.value?.value ? field.value.value : field.value}
-                          disabled={!rightAnswerSelected || !hasEnoughAnswers}
+                          disabled={!rightAnswerSelected || !hasEnoughAnswersToAddClues}
                           minRows={3}
                           placeholder={t('cluesPlaceholder')}
                         />
@@ -331,9 +355,9 @@ export default function DetailQuestionForm({
                       <Box style={{ width: 200 }}>
                         <Select
                           label={t('hideOptionsLabel')}
-                          value={answersHidden}
-                          data={answerChoices}
-                          disabled={!rightAnswerSelected || !hasEnoughAnswers}
+                          value={hiddenAnswer}
+                          data={hideAnswersSelectData}
+                          disabled={!rightAnswerSelected || !hasEnoughAnswersToAddClues}
                           onChange={handleHideOnHelp}
                           placeholder={t('hideOptionsPlaceholder')}
                         />
@@ -357,7 +381,7 @@ DetailQuestionForm.propTypes = {
   t: PropTypes.func.isRequired,
   onCancel: PropTypes.func,
   categories: PropTypes.array,
-  store: PropTypes.object,
+  savingAs: PropTypes.string,
   onSaveQuestion: PropTypes.func,
   stepName: PropTypes.string,
   scrollRef: PropTypes.object,

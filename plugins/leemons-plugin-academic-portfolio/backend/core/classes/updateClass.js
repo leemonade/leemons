@@ -1,26 +1,29 @@
-const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
+const _ = require('lodash');
 const { isArray, map } = require('lodash');
+
 const { validateUpdateClass } = require('../../validations/forms');
-const { existSubstageInProgram } = require('../substages/existSubstageInProgram');
-const { add: addSubstage } = require('./substage/add');
-const { removeByClass: removeSubstageByClass } = require('./substage/removeByClass');
 const { existCourseInProgram } = require('../courses/existCourseInProgram');
-const { removeByClass: removeCourseByClass } = require('./course/removeByClass');
 const { existGroupInProgram } = require('../groups/existGroupInProgram');
-const { add: addGroup } = require('./group/add');
-const { removeByClass: removeGroupByClass } = require('./group/removeByClass');
-const { add: addTeacher } = require('./teacher/add');
-const { removeByClass: removeTeachersByClass } = require('./teacher/removeByClass');
-const { classByIds } = require('./classByIds');
-const { processScheduleForClass } = require('./processScheduleForClass');
-const { setToAllClassesWithSubject } = require('./course/setToAllClassesWithSubject');
-const { isUsedInSubject } = require('./group/isUsedInSubject');
-const { getClassesProgramInfo } = require('./listSessionClasses');
-const { add: addCourse } = require('./course/add');
+const { existSubstageInProgram } = require('../substages/existSubstageInProgram');
+
 const {
   addComunicaRoomsBetweenStudentsAndTeachers,
 } = require('./addComunicaRoomsBetweenStudentsAndTeachers');
+const { classByIds } = require('./classByIds');
+const { add: addCourse } = require('./course/add');
+const { removeByClass: removeCourseByClass } = require('./course/removeByClass');
+const { setToAllClassesWithSubject } = require('./course/setToAllClassesWithSubject');
+const { add: addGroup } = require('./group/add');
+const { isUsedInSubject } = require('./group/isUsedInSubject');
+const { removeByClass: removeGroupByClass } = require('./group/removeByClass');
+const { add: addSubstage } = require('./substage/add');
+const { removeByClass: removeSubstageByClass } = require('./substage/removeByClass');
+
+const { add: addTeacher } = require('./teacher/add');
+const { removeByClass: removeTeachersByClass } = require('./teacher/removeByClass');
+const { processScheduleForClass } = require('./processScheduleForClass');
+const { getClassesProgramInfo } = require('./listSessionClasses');
 
 async function updateClass({ data, ctx }) {
   await validateUpdateClass({ data, ctx });
@@ -148,9 +151,9 @@ async function updateClass({ data, ctx }) {
 
   await ctx.tx.emit('after-update-class', { class: classe });
 
-  await addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx });
-
   try {
+    await addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx });
+
     let subName = program.name;
     if (classe.groups?.abbreviation) {
       subName += ` - ${classe.groups?.abbreviation}`;

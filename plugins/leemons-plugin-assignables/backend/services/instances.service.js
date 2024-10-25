@@ -7,6 +7,9 @@ const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
 const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 
+const {
+  addStudentsToOpenInstancesWithClass,
+} = require('../core/assignations/addStudentToOpenInstancesWithClass');
 const { adminDashboard } = require('../core/instances/adminDashboard');
 const { createInstance } = require('../core/instances/createInstance');
 const { getInstance } = require('../core/instances/getInstance');
@@ -90,6 +93,12 @@ module.exports = {
     getAssignableInstancesStatus: {
       handler(ctx) {
         return getInstancesStatus({ ...ctx.params, ctx });
+      },
+    },
+
+    addStudentToOpenInstancesWithClass: {
+      handler(ctx) {
+        return addStudentsToOpenInstancesWithClass({ ...ctx.params, ctx });
       },
     },
   },

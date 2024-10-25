@@ -7,6 +7,13 @@ const { removeCustomPermissions } = require('./removeCustomPermissions');
 
 const REMOVE_CUSTOM_PERMISSION_USER_AGENT = 'users.permissions.removeCustomUserAgentPermission';
 
+async function runIfComunicaRoomExists(key, callback, ctx) {
+  const exists = await ctx.tx.call('comunica.room.exists', { key });
+  if (exists) {
+    return callback();
+  }
+}
+
 async function removeByClass({
   classIds,
   soft,
@@ -35,24 +42,35 @@ async function removeByClass({
   if (!classTeachers?.length) return;
 
   const promisesRemoveUserAgentsFromRooms = [];
+
   // Remove users from class room
   _.forEach(classeIds, (classId) => {
     const userIds = _.map(_.filter(classTeachers, { class: classId }), 'teacher');
-    promisesRemoveUserAgentsFromRooms.push(
-      ctx.tx.call('comunica.room.removeUserAgents', {
-        key: ctx.prefixPN(`room.class.${classId}`),
-        userAgents: userIds, // TODO ask: Convención para parametros que empiezan con underscore, userAgents: _userAgents
-      })
-    );
-  });
+    const classRoomKey = ctx.prefixPN(`room.class.${classId}`);
+    const classGroupRoomKey = ctx.prefixPN(`room.class.group.${classId}`);
 
-  _.forEach(classeIds, (classId) => {
-    const userIds = _.map(_.filter(classTeachers, { class: classId }), 'teacher');
     promisesRemoveUserAgentsFromRooms.push(
-      ctx.tx.call('comunica.room.removeUserAgents', {
-        key: ctx.prefixPN(`room.class.group.${classId}`),
-        userAgents: userIds, // TODO ask: Convención para parametros que empiezan con underscore, userAgents: _userAgents
-      })
+      runIfComunicaRoomExists(
+        classRoomKey,
+        () =>
+          ctx.tx.call('comunica.room.removeUserAgents', {
+            key: classRoomKey,
+            userAgents: userIds,
+          }),
+        ctx
+      )
+    );
+
+    promisesRemoveUserAgentsFromRooms.push(
+      runIfComunicaRoomExists(
+        classGroupRoomKey,
+        () =>
+          ctx.tx.call('comunica.room.removeUserAgents', {
+            key: classGroupRoomKey,
+            userAgents: userIds,
+          }),
+        ctx
+      )
     );
   });
 
@@ -61,16 +79,30 @@ async function removeByClass({
       const studentIds = _.map(_.filter(classStudents, { class: classId }), 'student');
 
       _.forEach(studentIds, (studentId) => {
+        const studentTeacherRoomKey = ctx.prefixPN(`room.class.${classId}.student.${studentId}.teachers`);
         promisesRemoveUserAgentsFromRooms.push(
-          ctx.tx.call('comunica.room.removeAllUserAgents', {
-            key: ctx.prefixPN(`room.class.${classId}.student.${studentId}.teachers`),
-          })
+          runIfComunicaRoomExists(
+            studentTeacherRoomKey,
+            () =>
+              ctx.tx.call('comunica.room.removeAllUserAgents', {
+                key: studentTeacherRoomKey,
+              }),
+            ctx
+          )
         );
       });
     });
   }
 
-  await Promise.all(promisesRemoveUserAgentsFromRooms);
+  try {
+    await Promise.all(promisesRemoveUserAgentsFromRooms);
+  } catch (error) {
+    if (error.message.includes('not exists')) {
+      console.warn(`Could not remove user agents from rooms: ${error}`);
+    } else {
+      throw error;
+    }
+  }
 
   const programIds = _.uniq(_.map(programs, 'id'));
 

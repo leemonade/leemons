@@ -6,6 +6,7 @@ const {
   booleanToYesNoAnswer,
   getDuplicatedAssetsReferenceAsString,
 } = require('../helpers');
+
 const { TASK_COLUMN_DEFINITIONS } = require('./columnDefinitions');
 
 const turndown = new TurndownService();
@@ -120,7 +121,7 @@ async function createTasksSheet({
     const development = getDevelopmentString(task);
 
     // HANDLE HTML TO MARKDOWN
-    const statementMarkdown = turndown.turndown(task.providerData.statement);
+    const statementMarkdown = turndown.turndown(task.providerData.statement ?? '');
     const instructionsForStudentsMarkdown = turndown.turndown(
       task.providerData.instructionsForStudents ?? ''
     );

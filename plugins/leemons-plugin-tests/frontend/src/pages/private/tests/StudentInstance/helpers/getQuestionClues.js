@@ -10,6 +10,7 @@
  * `ln ../../../../frontend/src/pages/private/tests/StudentInstance/helpers/getQuestionClues.js`
  */
 
+const { QUESTION_TYPES } = require('@tests/pages/private/questions-banks/questionConstants');
 const { forEach, isNumber, isString, filter, isArray } = require('lodash');
 
 function getQuestionClues(question, types, config) {
@@ -17,9 +18,9 @@ function getQuestionClues(question, types, config) {
   const hideResponses = [];
   const notes = [];
 
-  if (question.type === 'map') {
+  if (question.type === QUESTION_TYPES.MAP) {
     const responsesIndexsToHide = [];
-    forEach(question.properties.markers.list, (response, index) => {
+    forEach(question.mapProperties.markers.list, (response, index) => {
       if (response.hideOnHelp) {
         responsesIndexsToHide.push(index);
       }
@@ -32,10 +33,10 @@ function getQuestionClues(question, types, config) {
     }
   }
 
-  if (question.type === 'mono-response') {
+  if (question.type === QUESTION_TYPES.MONO_RESPONSE) {
     const responsesIndexsToHide = [];
-    forEach(question.properties.responses, (response, index) => {
-      if (response.value.hideOnHelp) {
+    forEach(question.choices, (choice, index) => {
+      if (choice.hideOnHelp) {
         responsesIndexsToHide.push(index);
       }
     });
@@ -51,7 +52,7 @@ function getQuestionClues(question, types, config) {
     forEach(isString(question.clues) ? JSON.parse(question.clues) : question.clues, (clue) => {
       notes.push({
         type: 'note',
-        text: clue.value,
+        text: clue,
       });
     });
   }

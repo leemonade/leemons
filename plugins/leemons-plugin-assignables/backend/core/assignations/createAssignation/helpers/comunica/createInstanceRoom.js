@@ -38,16 +38,19 @@ async function createInstanceRoom({
   if (userAgents.length)
     await ctx.tx.call('comunica.room.addUserAgents', {
       key: roomKey,
-      userAgent: userAgents,
+      userAgents,
     });
   if (teachersUserAgents.length) {
     await ctx.tx.call('comunica.room.addUserAgents', {
       key: roomKey,
-      userAgent: teachersUserAgents,
+      userAgents: teachersUserAgents,
       isAdmin: true,
     });
   }
-  return ctx.tx.call('comunica.room.get', { key: roomKey });
+  return ctx.tx.call('comunica.room.get', {
+    key: roomKey,
+    userAgent: ctx.meta.userSession?.userAgents?.[0]?.id,
+  });
 }
 
 module.exports = { createInstanceRoom };

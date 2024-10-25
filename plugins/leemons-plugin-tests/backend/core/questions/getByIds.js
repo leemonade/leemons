@@ -1,40 +1,76 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
+const { QUESTION_TYPES } = require('../../config/constants');
 
 /**
- * @typedef {Object} QuestionAsset
- * @property {string} id - The unique identifier of the asset.
- * @property {string} [description] - The description of the asset, if any.
- * @property {Object} [file] - The file details of the asset, if `withFiles` is true.
+ * Represents a formatted text shape.
+ *
+ * @typedef {Object} formattedTextShape
+ * @property {string} format - The format of the text.
+ * @property {string} text - The text content.
  */
 
 /**
- * @typedef {Object} QuestionResponse
- * @property {Object} value - The response value.
- * @property {QuestionAsset} [value.image] - The image asset associated with the response, if any.
+ * Represents a choice for a mono-responsequestion.
+ *
+ * @typedef {Object} Choice
+ * @property {formattedTextShape} text - The 'response' of the choice. Specifies format (html in Leemons).
+ * @property {boolean} isCorrect - Indicates if the choice is correct.
+ * @property {formattedTextShape} feedback - The feedback for the choice. Specifies format (html in Leemons).
+ * @property {string} image - The image 'response' of the choice, only present in questions that use images as answers.
+ * @property {string} imageDescription - The description of the image answer ,only present in questions that use images as answers.
+ * @property {boolean} hideOnHelp - Indicates if the choice should be hidden on help.
  */
 
 /**
- * @typedef {Object} QuestionProperties
- * @property {string} [image] - The unique identifier of the question image asset, if any.
- * @property {QuestionResponse[]} [responses] - The responses associated with the question, if any.
+ * Represents the properties for map questions.
+ *
+ * @typedef {Object} MapProperties
+ * @property {string} image - The map image.
+ * @property {string} caption - The caption for the map image.
+ * @property {Markers} markers - The markers on the map.
  */
 
 /**
+ * Represents the markers on a map.
+ *
+ * @typedef {Object} Markers
+ * @property {string} backgroundColor - The background color of the markers.
+ * @property {string} type - The type of the markers: 'numerical' or 'letter' (alphabetical).
+ * @property {Array<MapMarker>} list - The list of map markers.
+ * @property {{left: string, top: string}} position - The position of the markers.
+ */
+
+/**
+ * Represents a marker on a map.
+ *
+ * @typedef {Object} MapMarker
+ * @property {string} response - The response associated with the marker.
+ * @property {boolean} hideOnHelp - Indicates if the marker should be hidden on help.
+ * @property {string} left - The left position of the marker.
+ * @property {string} top - The top position of the marker.
+ */
+
+/**
+ * Represents the data for a question.
+ *
  * @typedef {Object} Question
- * @property {string} id - The unique identifier of the question.
- * @property {string} deploymentID - The deployment ID associated with the question.
- * @property {string} [questionBank] - The question bank ID, if any.
+ * @property {string} id - The unique identifier for the question.
+ * @property {string} deploymentID - The deployment identifier for the question.
+ * @property {string} questionBank - The question bank identifier the question belongs to.
  * @property {string} type - The type of the question.
- * @property {boolean} withImages - Indicates if the question includes images.
- * @property {string} level - The difficulty level of the question.
- * @property {string} question - The question text.
- * @property {QuestionAsset} [questionImage] - The question image asset, if any.
- * @property {string[]} clues - The clues associated with the question.
- * @property {string} [category] - The category ID of the question, if any.
- * @property {QuestionProperties} properties - The additional configuration of the question according to its type.
- * @property {Object[]} tags - The tags associated with the question.
- * @property {string} [questionImageDescription] - The description of the question image, if any.
+ * @property {formattedTextShape} stem - The stem of the question. Specifies format (html in Leemons).
+ * @property {boolean} hasEmbeddedAnswers - Indicates if the question has embedded answers.
+ * @property {boolean} hasImageAnswers - Indicates if the question has image answers.
+ * @property {string} level - The level of the question.
+ * @property {formattedTextShape} globalFeedback - The global feedback for the question.
+ * @property {boolean} hasAnswerFeedback - Indicates if the question has feedback per answer (be it one or many answers).
+ * @property {Array<string>} clues - The text hints for the question.
+ * @property {boolean} hasHelp - Indicates if the question has text hints or if it is configure to hide answer options.
+ * @property {string} category - The category of the question.
+ * @property {string} questionImage - An image cover for the question.
+ * @property {Array<Choice>} choices - The solution property for mono-response and multi-choice questions. Only present in multi-choice questions.
+ * @property {Object} mapProperties - The solution property for map questions. Only present in map questions.
  */
 
 /**
@@ -49,18 +85,24 @@ const _ = require('lodash');
 async function getByIds({ id, options, ctx }) {
   const questions = await ctx.tx.db.Questions.find({ id: _.isArray(id) ? id : [id] }).lean();
   const assetIds = [];
+
   _.forEach(questions, (question) => {
-    question.properties = JSON.parse(question.properties || null);
+    if (question.type === QUESTION_TYPES.MONO_RESPONSE) {
+      question.choices = question.choices || [];
+
+      if (question.hasImageAnswers) {
+        _.forEach(question.choices, (choice) => {
+          assetIds.push(choice.image);
+        });
+      }
+    }
+
     if (question.questionImage) {
       assetIds.push(question.questionImage);
     }
-    if (question.properties?.image) {
-      assetIds.push(question.properties.image);
-    }
-    if (question.withImages && question.type === 'mono-response') {
-      _.forEach(question.properties.responses, (response) => {
-        assetIds.push(response.value.image);
-      });
+
+    if (question.mapProperties?.image) {
+      assetIds.push(question.mapProperties.image);
     }
   });
 
@@ -76,22 +118,22 @@ async function getByIds({ id, options, ctx }) {
   ]);
 
   const questionAssetsById = _.keyBy(questionAssets, 'id');
+
   _.forEach(questions, (question, i) => {
     question.tags = questionsTags[i];
-    // question.clues = JSON.parse(question.clues);
-    question.clues = JSON.parse(question.clues || '[]');
-    if (question.properties?.image) {
-      question.properties.image = questionAssetsById[question.properties.image];
+    question.clues = question.clues || [];
+
+    if (question.mapProperties?.image) {
+      question.mapProperties.image = questionAssetsById[question.mapProperties.image];
     }
     if (question.questionImage) {
       question.questionImage = questionAssetsById[question.questionImage];
-      if (question.questionImage)
-        question.questionImageDescription = question.questionImage.description;
     }
-    if (question.properties.responses) {
-      _.forEach(question.properties.responses, (response) => {
-        if (response.value.image) {
-          response.value.image = questionAssetsById[response.value.image];
+
+    if (question.choices?.length) {
+      _.forEach(question.choices, (choice) => {
+        if (choice.image) {
+          choice.image = questionAssetsById[choice.image];
         }
       });
     }
