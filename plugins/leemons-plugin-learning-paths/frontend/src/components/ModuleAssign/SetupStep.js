@@ -48,6 +48,7 @@ function SetupStep({ onPrevStep, scrollRef, id, localizations, assignable }) {
   const { getValues, setValue, useWatch } = useModuleAssignContext();
   const assignButtonIsLoading = useWatch({ name: 'assignButtonIsLoading' });
   const activitiesLoaded = useWatch({ name: 'state.activities.loaded' });
+  const deleted = useWatch({ name: 'state.deleted' });
   const activitiesLoadedCount = useMemo(
     () => Object.values(activitiesLoaded ?? {}).filter(Boolean).length,
     [activitiesLoaded]
@@ -66,7 +67,10 @@ function SetupStep({ onPrevStep, scrollRef, id, localizations, assignable }) {
           }
           rightZone={
             <Button
-              disabled={activitiesLength !== activitiesLoadedCount}
+              disabled={
+                activitiesLength !== activitiesLoadedCount ||
+                activitiesLength - Object.values(deleted).filter(Boolean).length < 2
+              }
               loading={assignButtonIsLoading}
               onClick={() => {
                 setValue('assignButtonIsLoading', true);
