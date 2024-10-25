@@ -1,8 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import { cloneDeep } from 'lodash';
-import { useQueryClient } from '@tanstack/react-query';
-import { useUserCenters } from '@users/hooks';
+
 import {
   Select,
   TotalLayoutContainer,
@@ -17,23 +14,27 @@ import {
   Button,
   ImageLoader,
 } from '@bubbles-ui/components';
-import { AddCircleIcon, RedirectIcon } from '@bubbles-ui/icons/solid';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
+import { AddCircleIcon, RedirectIcon, ReportPageIcon } from '@bubbles-ui/icons/solid';
 import { unflatten } from '@common';
 import useCenterEvaluationSystems from '@grades/hooks/queries/useCenterEvaluationSystems';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useLayout } from '@layout/context';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useQueryClient } from '@tanstack/react-query';
+import { useUserCenters } from '@users/hooks';
+import { cloneDeep } from 'lodash';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import ProgramsDetailTable from '@academic-portfolio/components/ProgramsDetailTable';
-import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
+import { EmptyState } from '@academic-portfolio/components/EmptyState';
 import ProgramSetupDrawer from '@academic-portfolio/components/ProgramSetupDrawer/ProgramSetupDrawer';
+import ProgramsDetailTable from '@academic-portfolio/components/ProgramsDetailTable';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import { getCenterProgramsKey } from '@academic-portfolio/hooks/keys/centerPrograms';
 import {
   useArchiveProgram,
   useDuplicateProgram,
 } from '@academic-portfolio/hooks/mutations/useMutateProgram';
-import { getCenterProgramsKey } from '@academic-portfolio/hooks/keys/centerPrograms';
-import { EmptyState } from '@academic-portfolio/components/EmptyState';
+import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
 
 const ProgramsPage = () => {
   const [t, translations, , tLoading] = useTranslateLoader(prefixPN('programs_page'));
@@ -143,11 +144,11 @@ const ProgramsPage = () => {
   }, [centersData]);
 
   // HANDLERS ------------------------------------------------------------------------------------------------ ||
-  const handleOnAdd = () => {
+  const handleOnAdd = useCallback(() => {
     setSelectedProgram(null);
     if (isEditing) setIsEditing(false);
     setAddDrawerIsOpen(true);
-  };
+  }, [isEditing]);
 
   const handleOnEdit = useCallback(
     (program) => {
@@ -219,6 +220,10 @@ const ProgramsPage = () => {
     [duplicateProgram, t, openConfirmationModal, localizations]
   );
 
+  function handleOnReports() {
+    history.push(`/private/academic-portfolio/reports`);
+  }
+
   const ProgramsDetailTableToRender = useMemo(() => {
     const key = activeTab === '0' ? 'active' : 'archived';
     return (
@@ -268,7 +273,7 @@ const ProgramsPage = () => {
         Header={
           <TotalLayoutHeader
             title={t('page_title')}
-            onCancel={() => history.goBack()}
+            cancelable={false}
             mainActionLabel={t('labels.cancel')}
             compact
             icon={
@@ -282,6 +287,7 @@ const ProgramsPage = () => {
               </Stack>
             }
           >
+            <Stack fullWidth justifyContent="space-between">
             <Select
               data={centersData}
               placeholder={t('common.select_center')}
@@ -291,6 +297,14 @@ const ProgramsPage = () => {
               value={selectedCenter}
               sx={{ width: 262 }}
             />
+            <Button
+            variant="link"
+            leftIcon={<ReportPageIcon />}
+            onClick={handleOnReports}
+          >
+            {t('reports')}
+          </Button>
+            </Stack>
           </TotalLayoutHeader>
         }
       >

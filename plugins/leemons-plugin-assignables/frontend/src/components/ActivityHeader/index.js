@@ -1,7 +1,9 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useHistory, Link } from 'react-router-dom';
 
+import PrefixPN from '@assignables/helpers/prefixPN';
+import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import { Box, ImageLoader, TotalLayoutHeader, Stack, Button } from '@bubbles-ui/components';
 import { OpenIcon } from '@bubbles-ui/icons/outline';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
@@ -16,15 +18,11 @@ import ActivityTypeDisplay from './components/ActivityTypeDisplay/ActivityTypeDi
 import CalificationTypeDisplay from './components/CalificationTypeDisplay/CalificationTypeDisplay';
 import { ChatDisplay } from './components/ChatDisplay/ChatDisplay';
 import ClassroomDisplay from './components/ClassroomDisplay/ClassroomDisplay';
-import CloseButtons from './components/CloseButtons/CloseButtons';
 import DateComponent from './components/Date/Date';
-import DeleteButton from './components/DeleteButton/DeleteButton';
+import { MenuItems } from './components/MenuItems';
 import StatusBadge from './components/StatusBadge/StatusBadge';
 import Timer from './components/Timer/Timer';
 import useTotalLayoutStyles from './index.style';
-
-import PrefixPN from '@assignables/helpers/prefixPN';
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
 
 export default function ActivityHeader({
   assignation,
@@ -177,9 +175,12 @@ export default function ActivityHeader({
                 </Button>
               </Box>
             )}
-            <DeleteButton instance={instance} hidden={!showDeleteButton || isModuleActivity} />
+            <MenuItems
+              instance={instance}
+              hideDeleteButton={!showDeleteButton || isModuleActivity}
+              hideCloseButtons={!showCloseButtons}
+            />
           </Box>
-          <CloseButtons instance={instance} hidden={!showCloseButtons} />
         </Box>
       </TotalLayoutHeader>
     </FormProvider>

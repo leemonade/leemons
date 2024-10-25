@@ -23,7 +23,7 @@ import prefixPN from '@dashboard/helpers/prefixPN';
 
 export default function ClassDashboard({ session }) {
   const { layoutState } = useContext(LayoutContext);
-  const { openRoom } = useComunica();
+  const { openRoom, isChatEnabled } = useComunica();
 
   const locale = useLocale();
   const [store, render] = useStore({
@@ -213,7 +213,7 @@ export default function ClassDashboard({ session }) {
                 virtual_classroom: store.class?.virtualUrl,
                 teacher: mainTeacher?.user,
               }}
-              showChat
+              showChat={isChatEnabled}
               onChat={() => {
                 openRoom(`academic-portfolio.room.class.${store.idLoaded}`);
               }}

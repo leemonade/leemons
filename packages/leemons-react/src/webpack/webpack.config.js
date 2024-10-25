@@ -1,11 +1,12 @@
 // @ts-check
+const path = require('path');
+
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
-const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 const webpack = require('webpack');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
@@ -189,7 +190,14 @@ module.exports = function webpackConfig({
                 {
                   loader: 'babel-loader',
                   options: {
-                    presets: ['@babel/preset-react'],
+                    presets: [
+                      [
+                        '@babel/preset-react',
+                        {
+                          runtime: 'automatic',
+                        },
+                      ],
+                    ],
                     plugins: [isDev && require.resolve('react-refresh/babel')].filter(Boolean),
                     cacheDirectory: true,
                     cacheCompression: false,

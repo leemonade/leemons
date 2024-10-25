@@ -62,6 +62,7 @@ export default function Assign() {
       evaluationType="none"
       evaluationTypes={['nonEvaluable']}
       showInstructions
+      showReport
       loading={store.loading}
     />
   );

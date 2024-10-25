@@ -373,4 +373,6 @@ module.exports = {
   menuItems,
   widgets,
   CUSTOMIZABLE_TRANSLATION_KEYS,
+  PLUGIN_NAME: permissionsPrefix,
+  VERSION: 1
 };

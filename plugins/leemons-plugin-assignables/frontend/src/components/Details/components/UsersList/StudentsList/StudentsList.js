@@ -1,4 +1,5 @@
-import sendReminder from '@assignables/requests/assignableInstances/sendReminder';
+import React, { useEffect, useMemo, useState } from 'react';
+
 import { Stack, Box, Button, PaginatedList, RadioGroup } from '@bubbles-ui/components';
 import { PluginComunicaIcon, SendEmailEnvelopeIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
@@ -6,7 +7,8 @@ import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useState } from 'react';
+
+import sendReminder from '@assignables/requests/assignableInstances/sendReminder';
 
 export default function StudentsList({ labels, instance, students }) {
   const { openConfirmationModal } = useLayout();
@@ -94,13 +96,6 @@ export default function StudentsList({ labels, instance, students }) {
     return cols.filter(Boolean);
   }, [labels, instance?.requiresScoring]);
 
-  const headerStyles = {
-    position: 'sticky',
-    top: '224px',
-    backgroundColor: 'white',
-    zIndex: 10,
-  };
-
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
 
@@ -127,7 +122,6 @@ export default function StudentsList({ labels, instance, students }) {
         }
       }}
       labels={labels?.pagination}
-      headerStyles={headerStyles}
     />
   );
 }

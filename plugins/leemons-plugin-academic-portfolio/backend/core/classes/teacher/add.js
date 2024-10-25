@@ -30,6 +30,7 @@ async function add({ class: _class, teacher, type, ctx }) {
 
   await ctx.tx.call(ADD_CUSTOM_PERMISSION_USER_AGENT, {
     userAgentId: teacher,
+    throwIfExists: false,
     data: {
       permissionName: `academic-portfolio.class.${_class}`,
       actionNames: ['view', 'edit'],
@@ -40,6 +41,7 @@ async function add({ class: _class, teacher, type, ctx }) {
   if (type === 'main-teacher') {
     await ctx.tx.call(ADD_CUSTOM_PERMISSION_USER_AGENT, {
       userAgentId: teacher,
+      throwIfExists: false,
       data: {
         permissionName: `academic-portfolio.class.${_class}.mainTeacher`,
         actionNames: ['view', 'edit'],
@@ -49,6 +51,7 @@ async function add({ class: _class, teacher, type, ctx }) {
 
   await ctx.tx.call(ADD_CUSTOM_PERMISSION_USER_AGENT, {
     userAgentId: teacher,
+    throwIfExists: false,
     data: {
       permissionName: `academic-portfolio.class-profile.${_class}.${teacherProfileId}`,
       actionNames: ['view', 'edit'],
@@ -58,6 +61,7 @@ async function add({ class: _class, teacher, type, ctx }) {
   try {
     await ctx.call(ADD_CUSTOM_PERMISSION_USER_AGENT, {
       userAgentId: teacher,
+      throwIfExists: false,
       data: {
         permissionName: `academic-portfolio.program.inside.${program.id}`,
         actionNames: ['view'],

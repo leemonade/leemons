@@ -1,19 +1,18 @@
+const { getAssignable } = require('../../assignables/getAssignable');
+const { createAssignation } = require('../../assignations/createAssignation');
+const { registerClass } = require('../../classes');
 const { registerDates } = require('../../dates');
 const { validateInstance } = require('../../helpers/validators/instance');
-const { getAssignable } = require('../../assignables/getAssignable');
-const { registerClass } = require('../../classes');
 const { registerPermission } = require('../../permissions/instances/registerPermission');
 const { addPermissionToUser } = require('../../permissions/instances/users/addPermissionToUser');
-const { createAssignation } = require('../../assignations/createAssignation');
 const {
   addTeachersToAssignableInstance,
 } = require('../../teachers/addTeachersToAssignableInstance');
-
 const { updateInstance } = require('../updateInstance');
 
-const { getTeachersOfGivenClasses } = require('./getTeachersOfGivenClasses');
 const { createEventAndAddToUsers } = require('./createEventAndAddToUsers');
 const { emitLeemonsEvent } = require('./emitLeemonsEvent');
+const { getTeachersOfGivenClasses } = require('./getTeachersOfGivenClasses');
 
 async function createInstance({ assignableInstance, createEvent = true, ctx }) {
   // EN: Validate the assignable instance properties
@@ -104,6 +103,7 @@ async function createInstance({ assignableInstance, createEvent = true, ctx }) {
     });
   }
 
+  // !Important: Take into account that changes in here are also needed in addStudentToOpenInstancesWithClass
   if (students.length) {
     // EN: Register the students permissions
     // ES: Registra los permisos de los estudiantes

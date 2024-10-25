@@ -1,14 +1,11 @@
 import React, { useRef } from 'react';
 import { useHistory, useParams, Link } from 'react-router-dom';
 
-import { addErrorAlert } from '@layout/alert';
-import { createDatasheet } from '@feedback/helpers/createDatasheet';
-import ActivityHeader from '@assignables/components/ActivityHeader/index';
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
-
 import { useIsTeacher } from '@academic-portfolio/hooks';
+import ActivityHeader from '@assignables/components/ActivityHeader/index';
 import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
+import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import {
   Badge,
   Box,
@@ -24,12 +21,15 @@ import {
 } from '@bubbles-ui/components';
 import { ChevRightIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
 import { htmlToText, useSearchParams, useStore } from '@common';
+import { addErrorAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN as tasksPrefixPN } from '@tasks/helpers';
+import { useUserAgents } from '@users/hooks';
 
 import ResultStyles from './Result.styles';
 import { OpenResponse, SelectResponse } from './components';
 
+import { createDatasheet } from '@feedback/helpers/createDatasheet';
 import prefixPN from '@feedback/helpers/prefixPN';
 import { LikertStatistics } from '@feedback/pages/private/feedback/Result/components/LikertStatistics';
 import { NPSStatistics } from '@feedback/pages/private/feedback/Result/components/NPSStatistics';
@@ -63,7 +63,8 @@ export default function Result() {
   const params = useParams();
   const scrollRef = useRef();
 
-  const nextActivityUrl = useNextActivityUrl(store.assignation);
+  const user = useUserAgents();
+  const nextActivityUrl = useNextActivityUrl({ instance: store.instance, user: user[0] });
 
   const { data: dynamicInstance } = useInstances({ id: params.id });
   const { classes } = ResultStyles({}, { name: 'Result' });

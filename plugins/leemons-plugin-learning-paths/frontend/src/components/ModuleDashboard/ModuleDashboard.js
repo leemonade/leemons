@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import ActivityHeader from '@assignables/components/ActivityHeader';
@@ -18,6 +18,7 @@ import {
 } from '@bubbles-ui/components';
 import { unflatten } from '@common';
 import { addErrorAlert } from '@layout/alert';
+import { prefixPN } from '@learning-paths/helpers';
 import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -28,8 +29,6 @@ import PropTypes from 'prop-types';
 
 import { DashboardCard } from './components/DashboardCard';
 import { useModuleDataForPreview } from './helpers/previewHooks';
-
-import { prefixPN } from '@learning-paths/helpers';
 
 export function useModuleDashboardLocalizations() {
   // key is string
@@ -319,6 +318,8 @@ export function ModuleDashboard({ id, preview }) {
   });
 
   const isStudent = useIsStudent();
+  const isTeacher = useIsTeacher();
+
   const { mutateAsync } = useStudentAssignationMutation();
   const updateTimestamps = useUpdateTimestamps(mutateAsync, moduleAssignation);
 
@@ -361,7 +362,7 @@ export function ModuleDashboard({ id, preview }) {
           showStartDate
           showDeadline
           showDateTime
-          showDeleteButton
+          showDeleteButton={isTeacher}
         />
       }
     >
