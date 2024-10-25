@@ -5,7 +5,10 @@ module.exports = async function assignModule({ moduleId, config, ctx }) {
     id: moduleId,
   });
 
-  const { activities } = moduleAssignable.submission;
+  const activities = moduleAssignable.submission.activities?.filter(
+    (activity) => !config.activities[activity.id]?.state?.deleted
+  );
+
   const activitiesInstanceIds = [];
   const blockingActivities = [];
 

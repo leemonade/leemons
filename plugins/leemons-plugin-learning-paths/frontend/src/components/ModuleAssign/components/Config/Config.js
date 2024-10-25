@@ -1,13 +1,9 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
-import { Box, createStyles, Table, TimeInput } from '@bubbles-ui/components';
+import { Box, createStyles, Stack, Table, TimeInput } from '@bubbles-ui/components';
 import { PluginSettingsIcon, TimeClockCircleIcon } from '@bubbles-ui/icons/outline';
 import { unflatten } from '@common';
-import { TypeRenderer } from '@learning-paths/components/ModuleAssign/components/Config/components/TypeRenderer';
-import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
-import { prefixPN } from '@learning-paths/helpers';
 import loadable from '@loadable/component';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { get, isFunction, map, uniqBy } from 'lodash';
@@ -15,6 +11,12 @@ import PropTypes from 'prop-types';
 
 import { ResourceRenderer } from '../../../ModuleSetup/components/StructureData/components/ModuleComposer/components/ResourceRenderer';
 import { ConfigModal } from '../ConfigModal';
+
+import { DeleteAction } from './components/DeleteAction';
+
+import { TypeRenderer } from '@learning-paths/components/ModuleAssign/components/Config/components/TypeRenderer';
+import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
+import { prefixPN } from '@learning-paths/helpers';
 
 export function useConfigLocalizations(parentLocalizations) {
   // key is string
@@ -116,9 +118,14 @@ function useParsedActivities({ activities, components, localizations, onConfig }
         ),
         actions:
           components[activity.role] && !components[activity.role].disabled?.(activity) ? (
-            <Box sx={{ cursor: 'pointer' }}>
-              <PluginSettingsIcon onClick={() => onConfig({ activity, id })} />
-            </Box>
+            <Stack sx={{ cursor: 'pointer' }} spacing={2}>
+              <PluginSettingsIcon
+                onClick={() => onConfig({ activity, id })}
+                width={18}
+                height={18}
+              />
+              <DeleteAction id={id} />
+            </Stack>
           ) : (
             <></>
           ),
@@ -171,10 +178,11 @@ function useLoadRolesComponents(activities) {
         const assignmentDrawerComponent = `AssignmentDrawer`;
 
         if (!store.current.imports[name]) {
-          store.current.imports[name] = loadable(() =>
-            import(
-              `@app/plugins/${pluginName}/src/widgets/assignables/${assignmentDrawerComponent}.js`
-            )
+          store.current.imports[name] = loadable(
+            () =>
+              import(
+                `@app/plugins/${pluginName}/src/widgets/assignables/${assignmentDrawerComponent}.js`
+              )
           );
 
           // EN: Preload each role components, so we can do things with them

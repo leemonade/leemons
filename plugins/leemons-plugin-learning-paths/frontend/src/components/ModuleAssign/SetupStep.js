@@ -1,22 +1,26 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
+import { useMemo } from 'react';
+import { useHistory } from 'react-router-dom';
+
 import {
   Button,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
-import assignModuleRequest from '@learning-paths/requests/assignModule';
-import { useHistory } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
+import PropTypes from 'prop-types';
+
 import { Config } from './components/Config';
 
-function onAssign(id, { assignationForm, state: { activities, time, type } }) {
+import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
+import assignModuleRequest from '@learning-paths/requests/assignModule';
+
+function onAssign(id, { assignationForm, state: { activities, time, type, deleted } }) {
   const activitiesWithState = {};
   Object.keys(type).forEach((key) => {
     const activity = activities[key];
     let duration = null;
+    const isDeleted = deleted?.[key];
 
     if (time?.[key] instanceof Date) {
       const hours = time?.[key].getHours();
@@ -27,7 +31,7 @@ function onAssign(id, { assignationForm, state: { activities, time, type } }) {
 
     activitiesWithState[key] = {
       config: activity?.config || activity?.defaultConfig || null,
-      state: { duration, requirement: type?.[key] },
+      state: { duration, requirement: type?.[key], deleted: isDeleted },
     };
   });
 
