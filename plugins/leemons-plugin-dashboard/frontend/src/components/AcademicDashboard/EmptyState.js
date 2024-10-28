@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Box, Stack, Text } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 
@@ -18,15 +16,15 @@ export default function EmptyState() {
         justifyContent="center"
         alignItems="center"
         fullWidth
+        direction="column"
         sx={(theme) => ({
           padding: theme.spacing[8],
           backgroundColor: theme.other.global.background.color.surface.muted,
         })}
       >
-        <Stack spacing={3} alignItems="flex-start">
-          🏫
+        <Stack spacing={3} alignItems="flex-start" direction="column">
           <Text color="primary" strong>
-            {t('title')}
+            👌🏽 {t('title')}
           </Text>
           <Text color="primary">{t('description')}</Text>
         </Stack>
