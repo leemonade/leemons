@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { BaseDrawer } from '@bubbles-ui/components';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -72,6 +72,29 @@ const ProgramSetupDrawer = ({
     [setupData]
   );
 
+  const handleStaff = useCallback(
+    (formData, _body) => {
+      const cleanObject = Object.entries(formData.staff).reduce((acc, [key, value]) => {
+        const valueHasChangedOnEdition = isEditing && program?.staff?.[key] !== value;
+        const valueIsNotEmptyOnCreation = !isEditing && value?.length;
+
+        if (valueHasChangedOnEdition || valueIsNotEmptyOnCreation) {
+          acc[key] = value;
+        }
+        return acc;
+      }, {});
+
+      if (!isEmpty(cleanObject)) {
+        const body = cloneDeep(_body);
+        body.staff = cleanObject;
+        return body;
+      }
+
+      return _body;
+    },
+    [isEditing, program?.staff]
+  );
+
   const handleCredits = (formData, _body, _program) => {
     const body = cloneDeep(_body);
     if (formData.credits || _program?.credits) {
@@ -131,6 +154,7 @@ const ProgramSetupDrawer = ({
       body = handleCredits(formData, body);
       body = handleCourses(formData, body);
       body = handleReferenceGroups(formData, body);
+      body = handleStaff(formData, body);
       body.cycles = formData.cycles?.length
         ? formData.cycles.map(({ name, courses, index }) => ({ name, courses, index }))
         : [];
@@ -150,7 +174,7 @@ const ProgramSetupDrawer = ({
 
       return body;
     },
-    [setupData, centerId, localizations?.labels?.course, handleCourses, handleReferenceGroups]
+    [setupData, centerId, handleCourses, handleReferenceGroups, handleStaff]
   );
 
   const handleOnAdd = useCallback(
@@ -187,11 +211,12 @@ const ProgramSetupDrawer = ({
   const handleOnSimpleEdit = useCallback(
     (formData) => {
       let body = {
-        ...omit(formData, 'autoAssignment', 'nomenclature'),
+        ...omit(formData, 'autoAssignment', 'nomenclature', 'staff'),
         id: program.id,
         useAutoAssignment: formData.autoAssignment,
       };
       body = handleCredits(formData, body, program);
+      body = handleStaff(formData, body);
 
       updateProgram(body, {
         onSuccess: () => {
@@ -204,10 +229,10 @@ const ProgramSetupDrawer = ({
         },
       });
     },
-    [updateProgram, handleCredits, localizations?.alerts, handleOnCancel, program]
+    [updateProgram, handleCredits, handleStaff, localizations?.alerts, handleOnCancel, program]
   );
 
-  const handleOnEditConfiguration = useCallback(
+  const handleOnConfigurationEdit = useCallback(
     (formData) => {
       const getSubstagesToRemove = (substages) =>
         program.substages?.filter(
@@ -260,7 +285,7 @@ const ProgramSetupDrawer = ({
         drawerIsLoading={isCreateProgramLoading || isUpdateProgramConfigurationLoading}
         localizations={localizations}
         programBeingEdited={isEditing ? program : null}
-        onUpdate={handleOnEditConfiguration}
+        onUpdate={handleOnConfigurationEdit}
         setNomenclature={
           (nomenclature) => setNomenclature(cloneDeep(nomenclature)) // Ensures a re-render of the callback functions depending on nomenclature
         }
@@ -275,7 +300,7 @@ const ProgramSetupDrawer = ({
       isUpdateProgramConfigurationLoading,
       centerId,
       handleOnAdd,
-      handleOnEditConfiguration,
+      handleOnConfigurationEdit,
       handleOnCancel,
     ]
   );

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import {
@@ -29,6 +29,7 @@ import ReadOnlyField from '../common/ReadOnlyField';
 
 import FooterContainer from './FooterContainer';
 import Nomenclature from './Nomenclature';
+import ProgramStaff from './ProgramStaff';
 
 import getTranslationKeyPrefixes from '@academic-portfolio/helpers/getTranslationKeyPrefixes';
 import useSetProgramCustomTranslationKeys from '@academic-portfolio/hooks/mutations/useSetProgramCustomTranslationKeys';
@@ -87,6 +88,11 @@ const UpdateProgramForm = ({
       setValue('useAutoAssignment', program.useAutoAssignment);
       setValue('totalHours', program.totalHours);
       setValue('nomenclature', program.nomenclature ?? { block: '', subject: '' });
+      if (program.staff) {
+        Object.entries(program.staff).forEach(([role, staffData]) => {
+          setValue(`staff.${role}`, staffData);
+        });
+      }
     }
   }, [program, setValue]);
 
@@ -268,6 +274,13 @@ const UpdateProgramForm = ({
                     )}
                   />
                 </ContextContainer>
+
+                {/* STAFF */}
+                <ProgramStaff
+                  control={control}
+                  localizations={formLabels?.staff}
+                  isEditing={true}
+                />
 
                 {/* REGLAS ACADÉMICAS */}
                 <ContextContainer noFlex spacing={4}>

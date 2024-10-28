@@ -1,13 +1,16 @@
-const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
-const { programsByIds } = require('./programsByIds');
+const _ = require('lodash');
+
 const { validateAddProgram, validateSubstagesFormat } = require('../../validations/forms');
-const { addSubstage } = require('../substages/addSubstage');
 const { addCourse } = require('../courses/addCourse');
 const { addNextCourseIndex } = require('../courses/addNextCourseIndex');
 const { addCycle } = require('../cycle/addCycle');
-const { addGroup } = require('../groups/addGroup');
 const { addNextGroupIndex } = require('../groups');
+const { addGroup } = require('../groups/addGroup');
+const { addSubstage } = require('../substages/addSubstage');
+
+const { programsByIds } = require('./programsByIds');
+const { setProgramStaff } = require('./setProgramStaff');
 
 function getReferenceGroupsNames(
   format,
@@ -129,7 +132,7 @@ async function addProgram({ data, userSession, ctx }) {
     // eslint-disable-next-line no-param-reassign
     data.maxNumberOfCourses = 1;
   }
-  validateAddProgram(data);
+  validateAddProgram(data, ctx);
   const {
     centers,
     image,
@@ -143,7 +146,7 @@ async function addProgram({ data, userSession, ctx }) {
 
   let substages = _substages;
 
-  // *Funcionalidad legacy para setear substages individualmente por curso pudiendo usar nomenclatura por defecto o custom
+  // *Legacy functionality to set substages individually per course, allowing use of default or custom nomenclature
   if (programData.hasSubstagesPerCourse) {
     if (programData.useDefaultSubstagesName) {
       substages = [];
@@ -171,7 +174,7 @@ async function addProgram({ data, userSession, ctx }) {
   // ES: Añadimos el asset de la imagen
   const imageData = {
     indexable: false,
-    public: true, // TODO Cambiar a false despues de hacer la demo
+    public: true,
     name: program.id,
   };
   if (image) imageData.cover = image;
@@ -211,52 +214,6 @@ async function addProgram({ data, userSession, ctx }) {
 
   const coursesAndGroupsPromises = [];
 
-  // *OLD IMPLEMENTATION: Add Program Courses
-  /*
-  const coursesNames = names || [];
-  const offset = coursesOffset || 0;
-
-  if (data.maxNumberOfCourses >= 2) {
-    for (let i = 0, l = data.maxNumberOfCourses; i < l; i++) {
-      const courseIndex = i + 1 + offset;
-
-      promises.push(
-        addCourse({
-          data: {
-            program: program.id,
-            number: data.courseCredits ? data.courseCredits : 0,
-            name: coursesNames[i] || `${courseIndex}`,
-          },
-          index: courseIndex,
-          ctx,
-        })
-      );
-    }
-  } else {
-    promises.push(
-      addCourse({
-        data: {
-          program: program.id,
-          number: data.courseCredits ? data.courseCredits : 0,
-          name: coursesNames[0] || `${1 + offset}`,
-          isAlone: true,
-        },
-        index: 1 + offset,
-        ctx,
-      })
-    );
-  }
-
-  promises.push(
-    addNextCourseIndex({
-      program: program.id,
-      index: data.maxNumberOfCourses + offset,
-      ctx,
-    })
-  );
-*/
-
-  // *NEW IMPLEMENTATION: Add Program Courses
   const offset = coursesOffset || 0;
   if (programData.courses?.length) {
     programData.courses?.forEach(({ index, minCredits, maxCredits, seats }) => {
@@ -276,7 +233,7 @@ async function addProgram({ data, userSession, ctx }) {
       );
     });
   } else {
-    // Para programas creados en free: Un sólo curso, sin créditos
+    // For programs created in free tier: One course, no credits
     coursesAndGroupsPromises.push(
       addCourse({
         data: {
@@ -300,20 +257,6 @@ async function addProgram({ data, userSession, ctx }) {
     })
   );
 
-  //* OLD default group creation (no groups were being created when using more than one group of students)
-  // if (program.useOneStudentGroup) {
-  //   await addGroup({
-  //     data: {
-  //       name: '-auto-',
-  //       abbreviation: '-auto-',
-  //       program: program.id,
-  //       isAlone: true,
-  //     },
-  //     ctx,
-  //   });
-  // }
-
-  // *NEW IMPLEMENTATION: Add Program Groups. If there are any Reference groups they're added now
   if (!_.isEmpty(programData.referenceGroups)) {
     await handleReferenceGroups(programData, program, ctx);
     // Store the groups setup and inital data in case of need later while updating (not the case currently)
@@ -325,20 +268,6 @@ async function addProgram({ data, userSession, ctx }) {
       { new: true, lean: true }
     );
   }
-
-  //* OLD: En la nueva implementación se dan casos nuevos donde a partir de una misma asignatura se crean dos clases que usarían el grupo "-auto-"
-  //* Eso genera errores. Parece no afectar el hecho de que no haya un grupo auto
-  // coursesAndGroupsPromises.push(
-  //   addGroup({
-  //     data: {
-  //       name: '-auto-',
-  //       abbreviation: '-auto-',
-  //       program: program.id,
-  //       isAlone: true,
-  //     },
-  //     ctx,
-  //   })
-  // );
 
   await Promise.all(coursesAndGroupsPromises);
 
@@ -368,6 +297,14 @@ async function addProgram({ data, userSession, ctx }) {
     });
 
     await Promise.all(cyclePromises);
+  }
+
+  if (programData.staff) {
+    await setProgramStaff({
+      programId: _program.id,
+      staff: programData.staff,
+      ctx,
+    });
   }
 
   await ctx.tx.emit('after-add-program', {

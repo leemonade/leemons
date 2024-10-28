@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import {
@@ -30,6 +30,7 @@ import EvaluationSystemsSelect from './EvaluationSystemSelect';
 import FooterContainer from './FooterContainer';
 import LoadingFormState from './LoadingFormState';
 import Nomenclature from './Nomenclature';
+import ProgramStaff from './ProgramStaff';
 import ReferenceGroupsSetup from './ReferenceGroupsSetup';
 import SeatsPerCourseSetup from './SeatsPerCourseSetup';
 import SubstagesSetup from './SubstagesSetup';
@@ -204,6 +205,12 @@ const AddProgramForm = ({
       setValue('courses', formattedCourses);
 
       setValue('nomenclature', programBeingEdited.nomenclature);
+
+      if (programBeingEdited.staff) {
+        Object.entries(programBeingEdited.staff).forEach(([role, staffData]) => {
+          setValue(`staff.${role}`, staffData);
+        });
+      }
     }
   }, [programBeingEdited, getSeats]);
 
@@ -339,6 +346,13 @@ const AddProgramForm = ({
                       )}
                     />
                   </ContextContainer>
+
+                  {/* STAFF */}
+                  <ProgramStaff
+                    control={control}
+                    localizations={formLabels?.staff}
+                    isEditing={isEditing}
+                  />
 
                   {/* REGLAS ACADÉMICAS */}
                   <ContextContainer noFlex spacing={4}>

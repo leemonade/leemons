@@ -197,6 +197,16 @@ module.exports = {
           color: 'Color',
           featuredImage: 'Imagen destacada',
         },
+        staff: {
+          title: 'Staff',
+          roles: {
+            'program-director': 'Director de Programa',
+            'program-coordinator': 'Coordinador de Programa',
+            'lead-instructor': 'Instructor Principal',
+            'academic-advisor': 'Asesor Académico',
+            'external-evaluator': 'Evaluador Externo',
+          },
+        },
         academicRules: {
           title: 'Reglas Académicas',
           selectSystem: 'Selecciona un sistema',
@@ -467,7 +477,7 @@ module.exports = {
         none: 'Ninguno',
       },
     },
-    reports: 'Reportes'
+    reports: 'Reportes',
   },
   newSubjectsPage: {
     title: 'Listado de asignaturas',

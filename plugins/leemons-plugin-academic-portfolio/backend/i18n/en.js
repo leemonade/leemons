@@ -215,6 +215,16 @@ module.exports = {
           color: 'Color',
           featuredImage: 'Featured Image',
         },
+        staff: {
+          title: 'Staff',
+          roles: {
+            'program-director': 'Program Director',
+            'program-coordinator': 'Program Coordinator',
+            'lead-instructor': 'Lead Instructor',
+            'academic-advisor': 'Academic Advisor',
+            'external-evaluator': 'External Evaluator',
+          },
+        },
         academicRules: {
           title: 'Academic Rules',
           selectSystem: 'Select a system',
@@ -467,7 +477,7 @@ module.exports = {
         none: 'None',
       },
     },
-    reports: 'Reports'
+    reports: 'Reports',
   },
   newSubjectsPage: {
     title: 'Subject Listing',
