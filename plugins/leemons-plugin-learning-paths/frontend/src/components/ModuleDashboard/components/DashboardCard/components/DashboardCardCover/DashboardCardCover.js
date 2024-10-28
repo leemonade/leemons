@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { Box, ImageLoader, CardEmptyCover, ProgressRing, Text } from '@bubbles-ui/components';
 import Cover from '@leebrary/components/Cover';
@@ -121,7 +121,7 @@ const DashboardCardCover = ({
         <Text>
           {isAllEvaluated
             ? t('allStudentsEvaluated')
-            : `(${totalStudentsFinished}/${totalStudents} ${t('students')})`}
+            : `(${totalStudentsFinished}/${totalStudents} ${t('students')?.toLowerCase()})`}
         </Text>
         <Box className={classes.orderLabel}>{assetNumber}</Box>
       </Box>
