@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 
 import { Box, Button, Stack, ActionButton } from '@bubbles-ui/components';
 import { PluginLeebraryIcon } from '@bubbles-ui/icons/outline';

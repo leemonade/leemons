@@ -1,23 +1,23 @@
 /* eslint-disable no-param-reassign */
-const { isEmpty, uniqBy, isBoolean } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
+const { isEmpty, uniqBy, isBoolean } = require('lodash');
 
-const { getPublic } = require('../getPublic/getPublic');
-const { byProvider: getByProvider } = require('../../search/byProvider');
 const { getAssetsByProgram } = require('../../assets/getAssetsByProgram');
 const { getAssetsBySubject } = require('../../assets/getAssetsBySubject');
+const { getCategoryId } = require('../../search/byCriteria/getCategoryId');
+const { byProvider: getByProvider } = require('../../search/byProvider');
+const { getPublic } = require('../getPublic/getPublic');
 
-const { handleParams } = require('./handleParams');
-const { handlePermissions } = require('./handlePermissions');
 const { handleAssetIds } = require('./handleAssetIds');
-const { handleSorting } = require('./handleSorting');
-const { handlePermissionsRoles } = require('./handlePermissionsRoles');
-const { handleViewerRole } = require('./handleViewerRole');
+const { handleAssignerRole } = require('./handleAssignerRole');
 const { handleEditorRole } = require('./handleEditorRole');
 const { handleIndexable } = require('./handleIndexable');
+const { handleParams } = require('./handleParams');
+const { handlePermissions } = require('./handlePermissions');
+const { handlePermissionsRoles } = require('./handlePermissionsRoles');
 const { handlePreferCurrent } = require('./handlePreferCurrent');
-const { handleAssignerRole } = require('./handleAssignerRole');
-const { getCategoryId } = require('../../search/byCriteria/getCategoryId');
+const { handleSorting } = require('./handleSorting');
+const { handleViewerRole } = require('./handleViewerRole');
 
 /**
  * This function retrieves permissions by category.
@@ -37,6 +37,7 @@ const { getCategoryId } = require('../../search/byCriteria/getCategoryId');
  * @param {Array} params.programs - An array of programs.
  * @param {Array} params.subjects - An array of subjects.
  * @param {MoleculerContext} params.ctx - The context object containing transaction details.
+ * @param {Array} params.assets - An array of assetIds to filter by.
  * @returns {Promise<Array>} - Returns a promise that resolves to an array of assets.
  * @throws {LeemonsError} - Throws an error if the retrieval of permissions by category fails.
  */
@@ -56,6 +57,7 @@ async function getByCategory({
   programs: _programs,
   subjects: _subjects,
   ctx,
+  assets = [], // AssetIds
 }) {
   try {
     const { userSession } = ctx.meta;
@@ -73,18 +75,24 @@ async function getByCategory({
       ctx,
     });
 
-    const publicAssets = showPublic ? await getPublic({ categoryId, indexable, ctx }) : [];
-    let assetIds = await handleAssetIds({
-      permissions,
-      publicAssets,
-      viewItems,
-      editItems,
-      assignItems,
-      categoryId,
-      published,
-      preferCurrent,
-      ctx,
-    });
+    let assetIds = assets ?? [];
+    let publicAssets = [];
+
+    // If no assetIds, we get the public assets as start point
+    if (!assetIds.length) {
+      publicAssets = showPublic ? await getPublic({ categoryId, indexable, ctx }) : [];
+      assetIds = await handleAssetIds({
+        permissions,
+        publicAssets,
+        viewItems,
+        editItems,
+        assignItems,
+        categoryId,
+        published,
+        preferCurrent,
+        ctx,
+      });
+    }
 
     // ES: Buscamos en el provider si se ha indicado
     // EN: Search in the provider if indicated so

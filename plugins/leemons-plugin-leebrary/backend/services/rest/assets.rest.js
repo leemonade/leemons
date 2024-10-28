@@ -169,6 +169,7 @@ module.exports = {
         categoriesFilter,
         hideCoverAssets,
         useCache,
+        addons,
       } = ctx.params;
 
       const assets = await list({
@@ -192,6 +193,7 @@ module.exports = {
 
         ctx,
         useCache,
+        addons,
       });
 
       return {

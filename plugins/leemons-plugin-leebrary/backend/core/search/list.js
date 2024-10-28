@@ -2,6 +2,7 @@ const _ = require('lodash');
 
 const { getByCategory } = require('../permissions/getByCategory');
 
+const { byAddons: getByAddons } = require('./byAddons');
 const { byCriteria: getByCriteria } = require('./byCriteria');
 const { searchAssetsCacheKey } = require('./helpers/cacheKeys');
 
@@ -26,10 +27,11 @@ async function list({
 
   ctx,
   useCache,
+  addons,
 }) {
   const trueValues = ['true', true, '1', 1];
 
-  let assets;
+  let assets = [];
   const publishedStatus =
     published === 'all' ? published : [...trueValues, 'published'].includes(published);
   const displayPublic = trueValues.includes(showPublic);
@@ -44,12 +46,12 @@ async function list({
   const _subjects = JSON.parse(subjects || null);
   const _categoriesFilter = JSON.parse(categoriesFilter || null); // added to filter by multiple categories
 
-  const shouldSerachByCriteria = !_.isEmpty(criteria) || !_.isEmpty(type) || _.isEmpty(category);
+  const shouldSearchByCriteria = !_.isEmpty(criteria) || !_.isEmpty(type) || _.isEmpty(category);
 
   let query = null;
   let searchFunction = null;
 
-  if (shouldSerachByCriteria) {
+  if (shouldSearchByCriteria) {
     searchFunction = getByCriteria;
     query = {
       category: category || categoryFilter,
@@ -69,6 +71,7 @@ async function list({
       hideCoverAssets: _hideCoverAssets,
       sortBy: 'updated_at',
       sortDirection: 'desc',
+      addons,
     };
   } else {
     searchFunction = getByCategory;
@@ -86,6 +89,7 @@ async function list({
       onlyShared: _onlyShared, // not used within getByCategory()
       sortBy: 'updated_at',
       sortDirection: 'desc',
+      addons,
     };
   }
 
@@ -102,12 +106,17 @@ async function list({
   if (cache) {
     assets = cache;
   } else {
+    if (addons?.length) {
+      assets = await getByAddons({ pluginNames: addons, ctx, query });
+    }
+
     assets = await searchFunction({
       ...query,
+      assets,
       ctx,
     });
 
-    await ctx.cache.set(cacheKey, assets, 60 * 30); // 30 minutos
+    await ctx.cache.set(cacheKey, assets, 60); // 1 minute
   }
 
   // TODO: Temporary solution
