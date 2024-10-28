@@ -11,12 +11,15 @@ const useTotalLayoutStyles = createStyles((theme) => {
       alignItems: 'center',
     },
     activityMetadata: {
-      height: 24,
+      height: 34,
       display: 'flex',
       alignItems: 'center',
       flexDirection: 'row',
       textWrap: 'nowrap',
       '> *': {
+        height: '100%',
+        display: 'flex',
+        alignItems: 'center',
         '&:not(:last-child)': {
           borderRight: '1px solid #DDE1E6',
         },
