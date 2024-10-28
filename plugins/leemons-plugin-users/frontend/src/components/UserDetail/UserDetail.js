@@ -49,7 +49,7 @@ function UserDetail({
   const [tForm] = useTranslateLoader(prefixPN('userForm'));
   const [avatar, setAvatar] = React.useState(userDetails?.user?.avatar);
   const userAgentId = getSessionUserAgent();
-  const { openUserRoom } = useComunica();
+  const { openUserRoom, isChatEnabled } = useComunica();
 
   React.useEffect(() => {
     if (userDetails?.user) {
@@ -129,7 +129,7 @@ function UserDetail({
       {!hideTags && [USER_DETAIL_VIEWS.ADMIN, USER_DETAIL_VIEWS.TEACHER].includes(viewMode) && (
         <UserAgentsTags title={t('tagsTitle')} userAgentIds={userAgents.map(({ id }) => id)} />
       )}
-      {!isSelfView && (
+      {!isSelfView && isChatEnabled && (
         <Stack justifyContent="center">
           <Button
             variant="link"
