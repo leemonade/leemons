@@ -224,7 +224,7 @@ module.exports = {
             'academic-advisor': 'Academic Advisor',
             'external-evaluator': 'External Evaluator',
           },
-          staffChangeDenied: 'Staff change denied. Changes not applied',
+          staffChangeDenied: 'Staff change denied',
           closeAlert: 'Close',
           staffChangeModal: {
             'program-coordinator': {

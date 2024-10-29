@@ -206,7 +206,7 @@ module.exports = {
             'academic-advisor': 'Asesor Académico',
             'external-evaluator': 'Evaluador Externo',
           },
-          staffChangeDenied: 'Actualización de personal denegado. Cambios no aplicados.',
+          staffChangeDenied: 'Actualización de personal denegada',
           closeAlert: 'Cerrar',
           staffChangeModal: {
             'program-coordinator': {
