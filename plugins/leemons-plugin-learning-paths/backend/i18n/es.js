@@ -172,6 +172,7 @@ module.exports = {
       viewReport: 'Ver informe',
     },
     resources: 'Recursos',
+    students: 'Estudiantes',
     progress: 'Progreso',
     allStudentsEvaluated: 'Todos los alumnos evaluados',
     studentProgressTitle: 'Notas del módulo',
