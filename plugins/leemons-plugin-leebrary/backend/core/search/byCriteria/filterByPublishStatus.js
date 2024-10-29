@@ -28,6 +28,7 @@ async function filterByPublishStatus({
   if (!nothingFound) {
     assets = await ctx.tx.call('common.versionControl.getVersion', {
       id: map(assets, 'asset'),
+      getCurrentInfo: true,
     });
 
     if (published !== 'all') {
@@ -42,12 +43,17 @@ async function filterByPublishStatus({
       // EN: Get the latest versions of each uuid
       // ES: Obtener la última versión de cada uuid
       assets = map(groupedAssets, (values) => {
-        const versions = map(values, (id) => id.version);
+        // EN: Get the latest published and unpublished versions of each uuid if already matched in the search
+        // ES: Obtener la última versión publicada y no publicada de cada uuid si ya están en la búsqueda
+        const latestVersions = values
+          .filter((version) => version.isCurrentVersionOfPublishedState)
+          .map((version) => version.version);
 
-        const latest = semver.maxSatisfying(versions, '*');
-
-        return find(values, (id) => id.version === latest).fullId;
-      });
+        // EN: Always return the latest version of each uuid (either published or unpublished, which was created last)
+        // ES: Siempre devolver la última versión de cada uuid (ya sea publicada o no publicada, que fue creada más tarde)
+        const latest = semver.maxSatisfying(latestVersions, '*');
+        return find(values, (id) => id.version === latest)?.fullId;
+      }).filter(Boolean);
     } else {
       assets = assets.map(({ fullId }) => fullId);
     }
