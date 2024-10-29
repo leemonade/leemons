@@ -72,6 +72,7 @@ const ProgramStaff = ({ control, localizations, isEditing, programId, loading, s
                     handleOnChange(role, value, field.onChange);
                   }}
                   sx={{ width: 216 }}
+                  disabled={loading}
                 />
               )}
             />

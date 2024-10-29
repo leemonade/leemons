@@ -3,21 +3,24 @@ const { flatten } = require('lodash');
 
 const { validateValidateStaffChange } = require('../../validations/forms');
 
+/**
+ * Validates if a staff change is allowed by emitting a validation event and checking responses
+ *
+ * @param {Object} params - The parameters object
+ * @param {Object} params.data - The staff change data to validate
+ * @param {Object} params.ctx - The moleculer context object
+ * @returns {Promise<boolean>} Returns true if validation passes, throws error if denied
+ * @throws {LeemonsError} Throws error if any validator denies the staff change
+ */
+
 async function validateStaffChange({ data, ctx }) {
   validateValidateStaffChange(data);
-
   let allResults = [];
-  try {
-    // Expected response: { status: 'ko' || 'ok', error: { message: 'Error message', code: 'CODE' } };
-    allResults = await ctx.tx.emit('validate-staff-change', {
-      data,
-    });
-  } catch (error) {
-    throw new LeemonsError(ctx, {
-      message: 'Error validating staff change: ' + error.message,
-      customCode: 'VALIDATE_STAFF_CHANGE_DENIED',
-    });
-  }
+
+  //! Expected response: { status: 'ko' || 'ok', error: { message: 'Error message in user locale' } };
+  allResults = await ctx.tx.emit('validate-staff-change', {
+    data,
+  });
 
   const responses = flatten(allResults).filter((response) => response);
 

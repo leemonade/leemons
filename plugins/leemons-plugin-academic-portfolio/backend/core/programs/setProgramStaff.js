@@ -1,3 +1,13 @@
+/**
+ * Updates the staff assignments for a program
+ *
+ * @param {Object} params - The parameters object
+ * @param {string} params.programId - The ID of the program to update staff for
+ * @param {Object} params.staff - Object mapping role names to userAgent IDs
+ * @param {Object} params.ctx - The moleculer context object
+ * @returns {Promise<Object>} Object mapping role names to assigned userAgent IDs
+ */
+
 async function setProgramStaff({ programId, staff, ctx }) {
   const deletePromises = Object.entries(staff)
     .filter(([, value]) => value === null)

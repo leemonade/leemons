@@ -241,8 +241,6 @@ const AddProgramForm = ({
     }
   };
 
-  console.log('staffValidationLoading', staffValidationLoading);
-
   return (
     <TotalLayoutContainer
       clean
