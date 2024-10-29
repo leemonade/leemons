@@ -1,19 +1,16 @@
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import prefixPN from '@assignables/helpers/prefixPN';
 import { Stack } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 
-import { useEmptyStateStyles } from './EmptyState.styles';
 import { WelcomeCard } from './WelcomeCard';
 
 export function EmptyState() {
-  // const isTeacher = useIsTeacher();
-  const isTeacher = false;
+  const isTeacher = useIsTeacher();
   const [t] = useTranslateLoader(
     prefixPN(`need_your_attention.welcome.${isTeacher ? 'teacher' : 'student'}`)
   );
   const [linksT] = useTranslateLoader(prefixPN('need_your_attention.links'));
-
-  const { classes, cx } = useEmptyStateStyles();
 
   if (isTeacher) {
     return (
