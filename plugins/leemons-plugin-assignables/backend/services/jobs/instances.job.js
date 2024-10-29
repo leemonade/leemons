@@ -3,7 +3,7 @@ const { sendEmail } = require('../../core/instances/sendEmail/helpers/sendMail')
 
 const JOBS = {
   FREE: {
-    SEND_ACTIVITY_START_EMAIL: `v${VERSION}.${PLUGIN_NAME}:FREE:send-activity-start-email`,
+    SEND_ACTIVITY_START_EMAIL: `v${VERSION}.${PLUGIN_NAME}:send-activity-start-email`,
   },
 };
 

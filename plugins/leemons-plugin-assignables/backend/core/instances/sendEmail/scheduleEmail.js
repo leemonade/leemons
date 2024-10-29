@@ -38,6 +38,10 @@ module.exports = async function scheduleEmail({ instance, userAgents, classes, c
   if (hasStarted) {
     await Promise.all(contexts.map((context) => sendEmail({ ...context, ctx })));
   } else {
-    await ctx.cronJob.schedule(dates.start, JOBS.FREE.SEND_ACTIVITY_START_EMAIL, { contexts });
+    await ctx.cronJob.schedule(dates.start, JOBS.FREE.SEND_ACTIVITY_START_EMAIL, {
+      contexts,
+      instanceId: instance.id,
+      deploymentID: ctx.meta.deploymentID,
+    });
   }
 };

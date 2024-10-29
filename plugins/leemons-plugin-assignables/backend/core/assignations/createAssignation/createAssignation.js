@@ -66,18 +66,15 @@ async function createAssignation({ assignableInstanceId, users, options, ctx }) 
 
   // Emails
   if (shouldSendMail) {
-    const userAgentByIds = keyBy(
-      await ctx.tx.call('users.users.getUserAgentsInfo', {
-        userAgentIds: users,
-        userColumns: ['id', 'email', 'avatar', 'locale'],
-        withCenter: true,
-      }),
-      'id'
-    );
+    const userAgents = await ctx.tx.call('users.users.getUserAgentsInfo', {
+      userAgentIds: users,
+      userColumns: ['id', 'email', 'avatar', 'locale'],
+      withCenter: true,
+    });
 
     scheduleEmail({
       instance,
-      userAgents: users.map((user) => userAgentByIds[user]),
+      userAgents,
       classes: uniqBy(classesData, 'subject.id'),
       ctx,
     });

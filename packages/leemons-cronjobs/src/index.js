@@ -28,6 +28,16 @@ function LeemonsCronJobsMixin({ jobs = {} }) {
 
         this.metadata.CronJob.every(interval, jobName, params);
       },
+      cancelJob(jobName, params = {}) {
+        if (!jobName || !params?.['data.deploymentID']) {
+          this.logger.error(
+            `Missing jobName: ${jobName} or deploymentID: ${params?.['data.deploymentID']}`
+          );
+          return;
+        }
+
+        this.metadata.CronJob.cancel({ $and: [{ name: jobName }, params] });
+      },
     },
     actions: {
       LeemonsCronJobExecute: async (ctx) => {
@@ -48,6 +58,7 @@ function LeemonsCronJobsMixin({ jobs = {} }) {
             ctx.cronJob = {
               schedule: (when, jobName, params = {}) => {
                 if (!jobName || !when) {
+                  this.logger.error(`Missing jobName: ${jobName} or when: ${when}`);
                   return;
                 }
 
@@ -58,6 +69,7 @@ function LeemonsCronJobsMixin({ jobs = {} }) {
               },
               every: (interval, jobName, params = {}) => {
                 if (!jobName || !interval) {
+                  this.logger.error(`Missing jobName: ${jobName} or interval: ${interval}`);
                   return;
                 }
 
@@ -65,6 +77,16 @@ function LeemonsCronJobsMixin({ jobs = {} }) {
                   ...params,
                   deploymentID: deploymentID ?? params.deploymentID,
                 });
+              },
+              cancel: (jobName, params = {}) => {
+                if (!jobName || !params?.['data.deploymentID']) {
+                  this.logger.error(
+                    `Missing jobName: ${jobName} or deploymentID: ${params?.['data.deploymentID']}`
+                  );
+                  return;
+                }
+
+                return CronJob.cancel({ $and: [{ name: jobName }, params] });
               },
             };
           },
