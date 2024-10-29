@@ -224,6 +224,15 @@ module.exports = {
             'academic-advisor': 'Academic Advisor',
             'external-evaluator': 'External Evaluator',
           },
+          staffChangeDenied: 'Staff change denied. Changes not applied',
+          closeAlert: 'Close',
+          staffChangeModal: {
+            'program-coordinator': {
+              title: 'Program Coordinator change',
+              description:
+                'Changing the program coordinator may affect the functioning of the modules that depend on it. Do you want to continue?',
+            },
+          },
         },
         academicRules: {
           title: 'Academic Rules',

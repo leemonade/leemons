@@ -198,13 +198,22 @@ module.exports = {
           featuredImage: 'Imagen destacada',
         },
         staff: {
-          title: 'Staff',
+          title: 'Personal',
           roles: {
             'program-director': 'Director de Programa',
             'program-coordinator': 'Coordinador de Programa',
             'lead-instructor': 'Instructor Principal',
             'academic-advisor': 'Asesor Académico',
             'external-evaluator': 'Evaluador Externo',
+          },
+          staffChangeDenied: 'Actualización de personal denegado. Cambios no aplicados.',
+          closeAlert: 'Cerrar',
+          staffChangeModal: {
+            'program-coordinator': {
+              title: 'Cambio de Coordinador de Programa',
+              description:
+                'Cambiar el coordinador de programa puede afectar el funcionamiento de los módulos que dependen de él. ¿Quieres continuar?',
+            },
           },
         },
         academicRules: {

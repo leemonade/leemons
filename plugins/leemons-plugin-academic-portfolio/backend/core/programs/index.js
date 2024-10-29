@@ -22,6 +22,7 @@ const { programsByIds } = require('./programsByIds');
 const { removeProgramByIds } = require('./removeProgramByIds');
 const { updateProgram } = require('./updateProgram');
 const { updateProgramConfiguration } = require('./updateProgramConfiguration');
+const { validateStaffChange } = require('./validateStaffChange');
 
 module.exports = {
   addProgram,
@@ -48,4 +49,5 @@ module.exports = {
   getAcademicTree,
   filterProgramsByCenter,
   getProgramCustomNomenclature,
+  validateStaffChange,
 };

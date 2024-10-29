@@ -352,6 +352,7 @@ const AddProgramForm = ({
                     control={control}
                     localizations={formLabels?.staff}
                     isEditing={isEditing}
+                    programId={programBeingEdited?.id}
                   />
 
                   {/* REGLAS ACADÉMICAS */}

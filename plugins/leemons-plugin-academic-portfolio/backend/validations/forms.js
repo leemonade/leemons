@@ -1388,6 +1388,24 @@ async function validateUpdateBlock({ data, ctx }) {
   });
 }
 
+const validateStaffChangeSchema = {
+  type: 'object',
+  properties: {
+    program: stringSchema,
+    staff: staffSchema,
+  },
+  required: ['program', 'staff'],
+  additionalProperties: false,
+};
+
+function validateValidateStaffChange(data) {
+  const validator = new LeemonsValidator(validateStaffChangeSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 module.exports = {
   validateAddCycle,
   validateAddClass,
@@ -1420,4 +1438,5 @@ module.exports = {
   validateGetSubjectCreditsProgram,
   validateAddBlock,
   validateUpdateBlock,
+  validateValidateStaffChange,
 };

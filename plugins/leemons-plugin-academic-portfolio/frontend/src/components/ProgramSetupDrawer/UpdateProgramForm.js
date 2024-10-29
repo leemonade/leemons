@@ -280,6 +280,7 @@ const UpdateProgramForm = ({
                   control={control}
                   localizations={formLabels?.staff}
                   isEditing={true}
+                  programId={program?.id}
                 />
 
                 {/* REGLAS ACADÉMICAS */}
