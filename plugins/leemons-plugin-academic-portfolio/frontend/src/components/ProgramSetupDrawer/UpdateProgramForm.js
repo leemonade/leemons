@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import {
@@ -54,6 +54,7 @@ const UpdateProgramForm = ({
   drawerIsLoading,
   localizations,
 }) => {
+  const [staffValidationLoading, setStaffValidationLoading] = useState(false);
   const { classes } = useAddProgramFormStyles();
   const form = useForm();
   const { control, formState, setValue, watch } = form;
@@ -281,6 +282,8 @@ const UpdateProgramForm = ({
                   localizations={formLabels?.staff}
                   isEditing={true}
                   programId={program?.id}
+                  loading={staffValidationLoading}
+                  setLoading={setStaffValidationLoading}
                 />
 
                 {/* REGLAS ACADÉMICAS */}
@@ -481,7 +484,7 @@ const UpdateProgramForm = ({
                 <Button variant="outline" type="button" onClick={onCancel}>
                   {formLabels?.cancel}
                 </Button>
-                <Button type="submit" loading={drawerIsLoading}>
+                <Button type="submit" loading={drawerIsLoading || staffValidationLoading}>
                   {formLabels?.saveChanges}
                 </Button>
               </Stack>

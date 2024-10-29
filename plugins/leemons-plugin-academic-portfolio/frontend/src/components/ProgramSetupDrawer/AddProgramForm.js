@@ -105,6 +105,7 @@ const AddProgramForm = ({
   const [loadingEvaluationSystems, setLoadingEvaluationSystems] = useState(false);
   const [showLoadingComponent, setShowLoadingComponent] = useState(!isEditing);
   const [progress, setProgress] = useState(0);
+  const [staffValidationLoading, setStaffValidationLoading] = useState(false);
   const { mutate: setProgramCustomTranslationKeys } = useSetProgramCustomTranslationKeys({
     successMessage:
       localizations?.programDrawer?.addProgramForm?.formLabels?.nomenclature?.success?.set,
@@ -240,6 +241,8 @@ const AddProgramForm = ({
     }
   };
 
+  console.log('staffValidationLoading', staffValidationLoading);
+
   return (
     <TotalLayoutContainer
       clean
@@ -353,6 +356,8 @@ const AddProgramForm = ({
                     localizations={formLabels?.staff}
                     isEditing={isEditing}
                     programId={programBeingEdited?.id}
+                    loading={staffValidationLoading}
+                    setLoading={setStaffValidationLoading}
                   />
 
                   {/* REGLAS ACADÉMICAS */}
@@ -621,7 +626,7 @@ const AddProgramForm = ({
                   <Button variant="outline" type="button" onClick={onCancel}>
                     {formLabels?.cancel}
                   </Button>
-                  <Button type="submit" loading={drawerIsLoading}>
+                  <Button type="submit" loading={drawerIsLoading || staffValidationLoading}>
                     {isEmpty(programBeingEdited)
                       ? formLabels?.createProgram
                       : formLabels?.saveChanges}

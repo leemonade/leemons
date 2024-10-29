@@ -13,7 +13,7 @@ import { validateStaffChangeRequest } from '@academic-portfolio/request';
 
 const activeRoles = [PROGRAM_STAFF_ROLES.PROGRAM_COORDINATOR];
 
-const ProgramStaff = ({ control, localizations, isEditing, programId }) => {
+const ProgramStaff = ({ control, localizations, isEditing, programId, loading, setLoading }) => {
   const profiles = useAcademicProfiles();
   const [staffValidationError, setStaffValidationError] = useState(null);
   const { openConfirmationModal } = useLayout();
@@ -23,7 +23,7 @@ const ProgramStaff = ({ control, localizations, isEditing, programId }) => {
       await validateStaffChangeRequest({ program: programId, staff: { [role]: value } });
     } catch (error) {
       if (error.code === 'VALIDATE_STAFF_CHANGE_DENIED') {
-        setStaffValidationError(localizations?.staffChangeDenied);
+        setStaffValidationError(error.message);
         return false;
       }
       addErrorAlert(error.message);
@@ -42,10 +42,12 @@ const ProgramStaff = ({ control, localizations, isEditing, programId }) => {
       title: localizations?.staffChangeModal?.[role]?.title,
       description: localizations?.staffChangeModal?.[role]?.description,
       onConfirm: async () => {
+        setLoading(true);
         const result = await handleStaffChangeValidation(role, value);
         if (result) {
           onChange(value);
         }
+        setLoading(false);
       },
     })();
   }
@@ -80,6 +82,8 @@ const ProgramStaff = ({ control, localizations, isEditing, programId }) => {
             severity="error"
             closable={localizations?.closeAlert ?? 'close'}
             onClose={() => setStaffValidationError(null)}
+            title={localizations?.staffChangeDenied}
+            variant="block"
           >
             {staffValidationError}
           </Alert>
