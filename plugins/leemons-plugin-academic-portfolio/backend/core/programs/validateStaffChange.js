@@ -18,6 +18,7 @@ async function validateStaffChange({ data, ctx }) {
   let allResults = [];
 
   //! Expected response: { status: 'ko' || 'ok', error: { message: 'Error message in user locale' } };
+  //! This event cannot be handled by a multi-event listener
   allResults = await ctx.tx.emit('validate-staff-change', {
     data,
   });
