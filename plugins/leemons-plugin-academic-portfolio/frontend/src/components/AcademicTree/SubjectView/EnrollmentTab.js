@@ -49,6 +49,8 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
     }
   );
 
+  const aliasOrClassroomId = classData?.alias ?? classData?.classroomId;
+
   useEffect(() => {
     const getTeacherProfile = async () => {
       const response = await getProfilesRequest();
@@ -167,6 +169,7 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
   return (
     <ContextContainer sx={{ padding: 24 }}>
       <ContextContainer>
+        <Title order={1}>{aliasOrClassroomId}</Title>
         <Title order={2}>{t('teachers')}</Title>
         {teacherProfile && center?.length > 0 && (
           <Box className={classes.mainTeacher}>{TeacherSelect}</Box>
