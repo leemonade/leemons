@@ -19,7 +19,7 @@ const WelcomeCard = ({ cover, title, description, linkTo, imageStyles }) => {
   return (
     <Box className={classes.root} onClick={handleLinkTo}>
       <Box className={classes.cover} style={imageStyles}>
-        <ImageLoader src={cover} width={304} height={221} objectFit="contain" />
+        <ImageLoader src={cover} height={221} width={376} />
       </Box>
       <Box className={classes.content}>
         <Title order={4}>{title}</Title>

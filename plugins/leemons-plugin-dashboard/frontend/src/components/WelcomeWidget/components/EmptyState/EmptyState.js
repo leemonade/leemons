@@ -7,6 +7,7 @@ import { WelcomeCard } from './WelcomeCard';
 
 export function EmptyState() {
   const isTeacher = useIsTeacher();
+  // const isTeacher = false;
   const [t] = useTranslateLoader(
     prefixPN(`need_your_attention.welcome.${isTeacher ? 'teacher' : 'student'}`)
   );
@@ -14,7 +15,7 @@ export function EmptyState() {
 
   if (isTeacher) {
     return (
-      <Stack direction="row" justifyContent="center" fullWidth spacing={6}>
+      <Stack justifyContent="center" fullWidth spacing={6}>
         <WelcomeCard
           title={t('helpCenter.title')}
           description={t('helpCenter.description')}
@@ -37,13 +38,12 @@ export function EmptyState() {
   }
 
   return (
-    <Stack direction="row" justifyContent="center" fullWidth spacing={6}>
+    <Stack justifyContent="center" fullWidth spacing={6}>
       <WelcomeCard
         title={t('helpCenter.title')}
         description={t('helpCenter.description')}
         linkTo={'/private/users/detail'}
         cover={'/public/dashboard/complete_profile.png'}
-        imageStyles={{ paddingTop: 20 }}
       />
       <WelcomeCard
         title={t('comunica.title')}

@@ -21,10 +21,8 @@ const WelcomeCardStyles = createStyles((theme, { linkTo }) => {
       display: 'flex',
       justifyContent: 'center',
       zIndex: 1,
-      // alignItems: 'center',
       width: '100%',
       height: 221,
-      padding: 16,
     },
     content: {
       padding: 24,
