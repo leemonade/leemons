@@ -109,6 +109,8 @@ ProgramStaff.propTypes = {
     }),
   }),
   programId: PropTypes.string,
+  loading: PropTypes.bool,
+  setLoading: PropTypes.func,
 };
 
 export default ProgramStaff;
