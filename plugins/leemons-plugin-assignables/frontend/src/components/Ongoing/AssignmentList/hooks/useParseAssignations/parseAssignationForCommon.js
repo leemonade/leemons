@@ -1,18 +1,18 @@
 import React, { useMemo } from 'react';
 
+import { ClassroomItemDisplay } from '@academic-portfolio/components';
 import { Box, createStyles, ImageLoader, Text, TextClamp } from '@bubbles-ui/components';
 import { ChevronDownIcon, ChevronUpIcon } from '@bubbles-ui/icons/outline';
 import { LocaleDate, unflatten } from '@common';
-
-import dayjs from 'dayjs';
-import { get, mapValues, pick, noop } from 'lodash';
 import prepareAsset from '@leebrary/helpers/prepareAsset';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import dayjs from 'dayjs';
+import { get, mapValues, pick, noop } from 'lodash';
+
 import prefixPN from '@assignables/helpers/prefixPN';
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
-import { ClassroomItemDisplay } from '@academic-portfolio/components';
 
-const useActivityItemStyles = createStyles((theme, { isModuleActivity }) => ({
+const useActivityItemStyles = createStyles((theme, { isModuleActivity, hasCover }) => ({
   root: {
     display: 'flex',
     flexDirection: 'row',
@@ -36,13 +36,13 @@ const useActivityItemStyles = createStyles((theme, { isModuleActivity }) => ({
     color: theme.other.global.content.color.icon.default,
   },
   cover: {
-    border: `1px solid ${theme.other.global.border.color.line.muted}`,
+    border: hasCover ? `1px solid ${theme.other.global.border.color.line.muted}` : 'none',
     borderRadius: theme.other.global.border.radius.sm,
   },
   coverFallback: {
     width: 40,
     height: 40,
-    background: theme.other.global.background.color.surface.subtle,
+    background: 'transparent',
   },
   role: {
     fontSize: 10,
@@ -68,6 +68,7 @@ export function ActivityItem({ instance, onModuleClick = noop, modulesOpened = [
   const { classes, theme } = useActivityItemStyles({
     activityColor,
     isModuleActivity: !flattened && instance?.metadata?.module?.type === 'activity',
+    hasCover: preparedAsset?.cover,
   });
 
   return (
