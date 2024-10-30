@@ -1,4 +1,4 @@
-import React, { useState, useEffect, forwardRef } from 'react';
+import { useState, useEffect, forwardRef } from 'react';
 
 import { Select } from '@bubbles-ui/components';
 import PropTypes from 'prop-types';
@@ -15,6 +15,7 @@ const SelectSubject = forwardRef(
       teacherTypeFilter,
       firstSelected,
       allowNullValue,
+      disabled,
       ...props
     },
     ref
@@ -23,6 +24,7 @@ const SelectSubject = forwardRef(
     const [value, setValue] = useState(userValue);
 
     const handleChange = (newValue) => {
+      console.log('newValue', newValue);
       if (newValue !== value) {
         // EN: Do not update value if it is a controlled input
         // ES: No actualizar el valor si es un input controlado
@@ -86,7 +88,7 @@ const SelectSubject = forwardRef(
         {...props}
         ref={ref}
         data={data}
-        disabled={!data.length}
+        disabled={!data.length || disabled}
         onChange={handleChange}
         value={value}
       />
@@ -103,6 +105,7 @@ SelectSubject.propTypes = {
   teacherTypeFilter: PropTypes.string,
   firstSelected: PropTypes.bool,
   allowNullValue: PropTypes.bool,
+  disabled: PropTypes.bool,
 };
 
 export { SelectSubject };
