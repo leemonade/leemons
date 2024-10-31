@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { useEffect, useState } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
+
 import {
   Box,
   Button,
@@ -10,46 +11,33 @@ import {
   Stack,
   Textarea,
   TextInput,
+  InputWrapper,
 } from '@bubbles-ui/components';
-import { Controller, useFormContext } from 'react-hook-form';
 import { TextEditorInput, TEXT_EDITOR_TEXTAREA_TOOLBARS } from '@bubbles-ui/editors';
-import { useStore } from '@common';
-import { forEach, map } from 'lodash';
 import ImagePicker from '@leebrary/components/ImagePicker';
+import { forEach, map } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { QuestionImageMarkersModal } from '../../../../../../components/QuestionImageMarkersModal';
+
 import { ListItemValueRender } from './components/ListItemValueRender';
 import { NumberedListIcon } from './components/NumberedListIcon';
 
 // eslint-disable-next-line import/prefer-default-export
-export function QuestionMap({ form: _form, t }) {
-  const [store, render] = useStore();
-  const form = useFormContext() ?? _form;
-  const properties = form.watch('properties');
+export function MapQuestion({ form: _form, t }) {
+  const [showMarkersModal, setShowMarkersModal] = useState(false);
 
-  function showMarkersModal() {
-    store.showMarkersModal = true;
-    render();
-  }
-
-  function closeMarkersModal() {
-    store.showMarkersModal = false;
-    render();
-  }
+  const form = useFormContext() || _form;
+  const mapProperties = form.watch('mapProperties');
+  const hasHelp = form.watch('hasHelp');
 
   useEffect(() => {
-    if (!properties?.image) {
-      form.setValue('properties.markers', {
-        ...(properties?.markers || {}),
-        list: [],
-      });
+    if (!mapProperties?.image) {
+      form.setValue('mapProperties.markers.list', []);
     }
-  }, [properties?.image]);
+  }, [mapProperties?.image]);
 
-  useEffect(() => {
-    render();
-  }, [JSON.stringify(properties)]);
-
-  const getListValues = (value) => map(value ?? [], (item) => ({ value: item }));
+  const getListValues = (list) => map(list ?? [], (item) => ({ value: item }));
 
   return (
     <ContextContainer>
@@ -57,31 +45,35 @@ export function QuestionMap({ form: _form, t }) {
         <ContextContainer title={`${t('mapLabel')} *`}>
           <Controller
             control={form.control}
-            name="properties.image"
+            name="mapProperties.image"
             render={({ field }) => <ImagePicker {...field} label={t('mapLabel')} />}
           />
         </ContextContainer>
       </Box>
 
-      {properties?.image ? (
+      {mapProperties?.image ? (
         <ContextContainer>
           <Box>
-            <Button variant="outline" leftIcon={<NumberedListIcon />} onClick={showMarkersModal}>
-              {t(properties?.markers?.list?.length ? 'editNumbering' : 'createNumbering')}
+            <Button
+              variant="outline"
+              leftIcon={<NumberedListIcon />}
+              onClick={() => setShowMarkersModal(true)}
+            >
+              {t(mapProperties?.markers?.list?.length ? 'editNumbering' : 'createNumbering')}
             </Button>
           </Box>
 
           <QuestionImageMarkersModal
-            value={properties?.markers}
-            onChange={(value) => form.setValue('properties.markers', value)}
-            src={properties?.image}
-            opened={store.showMarkersModal}
-            onClose={closeMarkersModal}
+            value={mapProperties?.markers}
+            onChange={(value) => form.setValue('mapProperties.markers', value)}
+            src={mapProperties?.image}
+            opened={showMarkersModal}
+            onClose={() => setShowMarkersModal(false)}
           />
 
           <Controller
             control={form.control}
-            name="properties.caption"
+            name="mapProperties.caption"
             render={({ field }) => (
               <Textarea
                 label={t('captionAltLabel')}
@@ -96,11 +88,17 @@ export function QuestionMap({ form: _form, t }) {
       <ContextContainer title={`${t('explanationLabel')} *`}>
         <Controller
           control={form.control}
-          name="properties.explanation"
+          name="globalFeedback"
+          rules={{ required: t('explanationRequired') }}
           render={({ field }) => (
             <TextEditorInput
               {...field}
               toolbars={TEXT_EDITOR_TEXTAREA_TOOLBARS}
+              value={field.value?.text}
+              onChange={(value) => {
+                field.onChange({ text: value, format: 'html' });
+              }}
+              error={form?.formState?.errors?.globalFeedback?.text}
               editorStyles={{ minHeight: '96px' }}
               placeholder={t('explanationPlaceHolder')}
             />
@@ -110,83 +108,88 @@ export function QuestionMap({ form: _form, t }) {
 
       <ContextContainer
         title={`${t('itemsLabel')} *`}
-        description={properties?.markers?.list?.length ? '' : t('itemsDescriptionBeforeMap')}
+        description={mapProperties?.markers?.list?.length ? '' : t('itemsDescriptionBeforeMap')}
       >
         <Controller
           control={form.control}
-          name="properties.hasClues"
+          name="hasHelp"
           render={({ field }) => (
             <Switch {...field} checked={field.value} label={t('hasCluesLabel')} />
           )}
         />
-        {properties?.markers?.list?.length ? (
-          <Controller
-            control={form.control}
-            name="properties.markers"
-            rules={{
-              required: t('markersRequired'),
-              validate: (value) => {
-                if (!value?.list?.length) {
-                  return t('markersRequired');
+
+        <Controller
+          control={form.control}
+          name="mapProperties.markers"
+          rules={{
+            required: t('markersRequired'),
+            validate: (value) => {
+              if (!value?.list?.length) {
+                return t('markersRequired');
+              }
+              let allHasResponse = true;
+              forEach(value?.list, (e) => {
+                if (!e.response) {
+                  allHasResponse = false;
                 }
-                let allHasResponse = true;
-                forEach(value?.list, (e) => {
-                  if (!e.response) {
-                    allHasResponse = false;
-                  }
-                });
-                return allHasResponse ? undefined : t('markersNeedResponseInAllItems');
-              },
-            }}
-            render={({ field }) => (
-              <ListInput
-                {...field}
-                withItemBorder
-                withInputBorder
-                value={getListValues(field.value?.list)}
-                onChange={(value) => {
-                  field.onChange({
-                    ...properties.markers,
-                    list: map(value, (item) => item.value),
-                  });
-                }}
-                error={form.formState.errors.properties?.markers}
-                inputRender={(itemProps) => (
-                  <TextInput
-                    {...itemProps}
-                    value={itemProps?.value.response}
-                    placeholder={t('responsePlaceholder')}
-                    onChange={(e) => itemProps?.onChange({ ...itemProps.value, response: e })}
-                  />
-                )}
-                listRender={
-                  <ListItem
-                    labels={{ cancel: t('cancel'), saveChanges: t('saveChanges') }}
-                    itemContainerRender={({ children }) => (
-                      <Stack alignItems="center" fullWidth>
-                        {children}
-                      </Stack>
+              });
+              return allHasResponse ? undefined : t('markersNeedResponseInAllItems');
+            },
+          }}
+          render={({ field }) => (
+            <>
+              <InputWrapper error={form.formState.errors.mapProperties?.markers}>
+                {mapProperties?.markers?.list?.length ? (
+                  <ListInput
+                    {...field}
+                    withItemBorder
+                    withInputBorder
+                    value={getListValues(field.value?.list)}
+                    onChange={(value) => {
+                      field.onChange({
+                        ...mapProperties.markers,
+                        list: map(value, (item) => item.value),
+                      });
+                    }}
+                    error={form.formState.errors.properties?.markers}
+                    inputRender={(itemProps) => (
+                      <TextInput
+                        {...itemProps}
+                        value={itemProps?.value.response}
+                        placeholder={t('responsePlaceholder')}
+                        onChange={(e) => itemProps?.onChange({ ...itemProps.value, response: e })}
+                      />
                     )}
-                    itemValueRender={
-                      <ListItemValueRender
-                        markers={properties?.markers}
-                        t={t}
-                        canSetHelp
-                        showEye={field?.value?.list?.length > 2}
+                    listRender={
+                      <ListItem
+                        labels={{ cancel: t('cancel'), saveChanges: t('saveChanges') }}
+                        itemContainerRender={({ children }) => (
+                          <Stack alignItems="center" fullWidth>
+                            {children}
+                          </Stack>
+                        )}
+                        itemValueRender={
+                          <ListItemValueRender
+                            markers={mapProperties?.markers}
+                            t={t}
+                            canSetHelp
+                            showEye={field?.value?.list?.length > 2 && hasHelp}
+                          />
+                        }
                       />
                     }
                   />
-                }
-              />
-            )}
-          />
-        ) : null}
+                ) : null}
+              </InputWrapper>
+            </>
+          )}
+        />
       </ContextContainer>
     </ContextContainer>
   );
 }
 
-QuestionMap.propTypes = {
+MapQuestion.propTypes = {
   form: PropTypes.object,
   t: PropTypes.func,
 };

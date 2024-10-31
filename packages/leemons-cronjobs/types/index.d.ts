@@ -32,6 +32,10 @@ export interface LeemonsCronJobsService extends Partial<ServiceSchema> {
   methods: {
     runScheduled<T extends Record<string, unknown>>(when: string, jobName: string, params: T): void;
     runEvery<T extends Record<string, unknown>>(interval: string, jobName: string, params: T): void;
+    cancel<T extends Record<string, unknown>>(
+      jobName: string,
+      params: T & { 'data.deploymentID': string }
+    ): Promise<number>;
   };
   actions: {
     LeemonsCronJobExecute: (ctx: CronJobContext) => Promise<unknown>;

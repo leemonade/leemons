@@ -1,5 +1,4 @@
 /* eslint-disable import/prefer-default-export */
-import { difference } from 'lodash';
 import { useMemo } from 'react';
 
 function usePendingEvaluationsCount({ instance }) {
@@ -17,24 +16,30 @@ function usePendingEvaluationsCount({ instance }) {
   }, [instance.students]);
 
   const pendingEvaluationActivitiesCount = useMemo(() => {
-    const activitiesCompleted = [];
-    const activitiesFullyEvaluated = [];
+    const activitiesCompleted = {};
+    const activitiesFullyEvaluated = {};
 
     instance?.students?.forEach((student) => {
       const activities = student?.metadata?.moduleStatus;
 
       activities?.forEach((activityStatus) => {
-        if (activityStatus.completed) {
-          activitiesCompleted.push(activityStatus.instance);
+        if (activityStatus.completed || activityStatus.activityClosed) {
+          activitiesCompleted[activityStatus.instance] =
+            (activitiesCompleted[activityStatus.instance] || 0) + 1;
         }
 
+        activitiesFullyEvaluated[activityStatus.instance] ??= 0;
         if (activityStatus.fullyEvaluated) {
-          activitiesFullyEvaluated.push(activityStatus.instance);
+          activitiesFullyEvaluated[activityStatus.instance] += 1;
         }
       });
     });
 
-    return difference(activitiesCompleted, activitiesFullyEvaluated).length ?? 0;
+    const activitiestoEvaluateIds = Object.keys(activitiesFullyEvaluated).filter(
+      (id) => activitiesCompleted[id] > activitiesFullyEvaluated[id]
+    );
+
+    return activitiestoEvaluateIds.length ?? 0;
   }, [instance?.students]);
 
   return { moduleTotal, pendingEvaluationActivitiesCount };

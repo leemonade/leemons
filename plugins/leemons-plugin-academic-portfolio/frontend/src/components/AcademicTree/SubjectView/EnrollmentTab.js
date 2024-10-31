@@ -1,6 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-import PropTypes from 'prop-types';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
   ContextContainer,
@@ -13,20 +11,22 @@ import {
   Loader,
 } from '@bubbles-ui/components';
 import { DeleteBinIcon, AddCircleIcon } from '@bubbles-ui/icons/solid';
-
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useUserAgentsInfo } from '@users/hooks';
-import { SelectUserAgent } from '@users/components';
-import { ScheduleInput } from '@timetable/components';
-
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useRemoveStudentFromClass } from '@academic-portfolio/hooks/mutations/useMutateClass';
-import { getProfilesRequest } from '@academic-portfolio/request';
-import useClassStudents from '@academic-portfolio/hooks/queries/useClassStudents';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { getClassStudentsKey } from '@academic-portfolio/hooks/keys/classStudents';
+import { useQueryClient } from '@tanstack/react-query';
+import { ScheduleInput } from '@timetable/components';
+import { SelectUserAgent } from '@users/components';
+import { useUserAgentsInfo } from '@users/hooks';
+import PropTypes from 'prop-types';
+
 import { EnrollmentTabStyles } from './EnrollmentTab.styles';
 import StudentsTable from './StudentsTable';
+
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import { getClassStudentsKey } from '@academic-portfolio/hooks/keys/classStudents';
+import { useRemoveStudentFromClass } from '@academic-portfolio/hooks/mutations/useMutateClass';
+import useClassStudents from '@academic-portfolio/hooks/queries/useClassStudents';
+import { getProfilesRequest } from '@academic-portfolio/request';
 
 const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, setDirtyForm }) => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
@@ -48,6 +48,8 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
       enabled: classStudents?.length > 0,
     }
   );
+
+  const aliasOrClassroomId = classData?.alias ?? classData?.classroomId;
 
   useEffect(() => {
     const getTeacherProfile = async () => {
@@ -167,13 +169,14 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
   return (
     <ContextContainer sx={{ padding: 24 }}>
       <ContextContainer>
-        <Title>{t('teachers')}</Title>
+        <Title order={1}>{aliasOrClassroomId}</Title>
+        <Title order={2}>{t('teachers')}</Title>
         {teacherProfile && center?.length > 0 && (
           <Box className={classes.mainTeacher}>{TeacherSelect}</Box>
         )}
       </ContextContainer>
       <ContextContainer>
-        <Title>{t('scheduleAndPlace')}</Title>
+        <Title order={2}>{t('scheduleAndPlace')}</Title>
         <Stack spacing={4} fullWidth>
           <Box className={classes.inlineInputs}>
             <TextInput
@@ -209,7 +212,7 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
         />
       </ContextContainer>
       <ContextContainer>
-        <Title>{`${t('actualEnrollment')} (${classData?.students?.length} / ${
+        <Title order={2}>{`${t('actualEnrollment')} (${classData?.students?.length} / ${
           classData?.seats
         })`}</Title>
         <Box>

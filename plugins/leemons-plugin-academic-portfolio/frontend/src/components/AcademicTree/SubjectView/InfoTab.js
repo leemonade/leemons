@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
+
 import {
   ContextContainer,
   Title,
@@ -10,10 +10,12 @@ import {
   ImageLoader,
   Loader,
 } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { isArray } from 'lodash';
+import PropTypes from 'prop-types';
+
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
 
 const InfoTab = ({ subjectDetails, onlyClassToShow }) => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
@@ -56,7 +58,7 @@ const InfoTab = ({ subjectDetails, onlyClassToShow }) => {
   return (
     <ContextContainer sx={{ padding: 24 }}>
       <ContextContainer>
-        <Title>{t('basicDataTitle')}</Title>
+        <Title order={2}>{t('basicDataTitle')}</Title>
         <Stack spacing={4}>
           {subjectDetails?.internalId && (
             <Box>

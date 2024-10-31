@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { forEach, isEmpty, isNil, isString } from 'lodash';
-import PropTypes from 'prop-types';
+import { useLocation } from 'react-router-dom';
+
 import {
   BUBBLES_THEME,
   colord,
@@ -14,19 +14,32 @@ import SocketIoService from '@mqtt-socket-io/service';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getPlatformThemeRequest } from '@users/request';
 import hooks from 'leemons-hooks';
-import { useLocation } from 'react-router-dom';
-import AlertStack from '@layout/components/AlertStack';
+import { forEach, isEmpty, isNil, isString } from 'lodash';
+import PropTypes from 'prop-types';
+
 import PrivateLayout from './src/components/PrivateLayout';
 import { LayoutContext, LayoutProvider } from './src/context/layout';
 import prefixPN from './src/helpers/prefixPN';
+
+import AlertStack from '@layout/components/AlertStack';
+import ImpersonationLayout from '@layout/components/ImpersonationLayout';
 
 const CONFIRM_DESCRIPTION = 'Do you want to continue?';
 
 function LayoutWrapper({ isPrivate, children }) {
   if (isPrivate) {
-    return <PrivateLayout>{children}</PrivateLayout>;
+    return (
+      <ImpersonationLayout>
+        <PrivateLayout>{children}</PrivateLayout>
+      </ImpersonationLayout>
+    );
   }
-  return <><AlertStack />{children}</>;
+  return (
+    <ImpersonationLayout>
+      <AlertStack />
+      {children}
+    </ImpersonationLayout>
+  );
 }
 
 LayoutWrapper.propTypes = {

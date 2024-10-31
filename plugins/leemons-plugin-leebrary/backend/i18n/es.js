@@ -511,6 +511,7 @@ module.exports = {
   assignableExecution: {
     information: 'Información',
     instructions: 'Instrucciones',
+    download: 'Descargar',
     finish: 'Finalizar',
   },
   assignableCorrection: {

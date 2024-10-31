@@ -52,6 +52,7 @@ export function useAssetList(query, options) {
       getAssetsRequest({
         ...options,
         ...verifiedQuery,
+        preferCurrent: true,
       }),
     select: (data) => data.assets,
   });

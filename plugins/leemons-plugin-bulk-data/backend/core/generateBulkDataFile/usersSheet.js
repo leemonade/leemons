@@ -1,5 +1,5 @@
 const { cloneDeep } = require('lodash');
-const { styleCell } = require('./helpers');
+
 const {
   ADMIN_BULK_ID,
   SUPER_ADMIN_BULK_ID,
@@ -7,11 +7,14 @@ const {
   ADMIN_EMAIL,
   SUPER_ADMIN_EMAIL,
 } = require('./config/constants');
+const { styleCell } = require('./helpers');
 
 async function addAllExistentUsers({ worksheet, centers, ctx }) {
-  const { data: usersData } = await ctx.call('users.users.listRest', {
+  const centerIds = centers.map((center) => center.id);
+  const usersData = await ctx.call('users.users.listUsers', {
     page: 0,
     size: 9999,
+    centers: centerIds,
   });
 
   const userAgents = await ctx.call('users.users.getUserAgentsInfo', {

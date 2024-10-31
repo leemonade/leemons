@@ -4,6 +4,7 @@ const { isEmpty, uniqBy, isBoolean } = require('lodash');
 
 const { getAssetsByProgram } = require('../../assets/getAssetsByProgram');
 const { getAssetsBySubject } = require('../../assets/getAssetsBySubject');
+const { filterByPublishStatus } = require('../../search/byCriteria/filterByPublishStatus');
 const { getCategoryId } = require('../../search/byCriteria/getCategoryId');
 const { byProvider: getByProvider } = require('../../search/byProvider');
 const { getPublic } = require('../getPublic/getPublic');
@@ -124,6 +125,16 @@ async function getByCategory({
 
     if (subjects) {
       assetIds = await getAssetsBySubject({ subject: subjects, assets: assetIds, ctx });
+    }
+
+    if (published !== undefined && preferCurrent) {
+      assetIds = await filterByPublishStatus({
+        assets: assetIds,
+        nothingFound: assetIds.length === 0,
+        preferCurrent,
+        published,
+        ctx,
+      });
     }
 
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta

@@ -30,6 +30,8 @@ export const questionTypeT = {
   map: 'map',
 };
 
+// TODO REMOVE FILE - NOT USED
+
 export default function QuestionForm({ t, onSave, defaultValues, categories, onCancel }) {
   const questionTypes = [];
   forIn(questionTypeT, (value, key) => {

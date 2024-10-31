@@ -6,7 +6,7 @@ import QuestionTitle from '../../QuestionTitle';
 import QuestionNoteClues from '../../QuestionNoteClues';
 import QuestionImage from '../../QuestionImage';
 import Responses from './Responses';
-import QuestionNotResponsedWarning from '../../QuestionNotResponsedWarning';
+import UnansweredQuestionWarning from '../../UnansweredQuestionWarning';
 
 export default function Index(props) {
   const { styles, saveQuestion, store, question, t, isLast, isPreviewMode } = props;
@@ -23,12 +23,12 @@ export default function Index(props) {
 
   return (
     <>
-      {showNotResponsedWarning ? <QuestionNotResponsedWarning {...props} /> : null}
+      {showNotResponsedWarning ? <UnansweredQuestionWarning {...props} /> : null}
 
       <Box className={styles.questionCard}>
         <QuestionTitle {...props} />
         <QuestionNoteClues {...props} />
-        {!question.withImages && question.questionImage?.cover ? (
+        {!question.hasImageAnswer && question.questionImage?.cover ? (
           <>
             <Stack fullWidth spacing={4}>
               <Box>

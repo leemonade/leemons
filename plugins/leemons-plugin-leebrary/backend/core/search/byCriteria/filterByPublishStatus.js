@@ -1,5 +1,4 @@
-const { uniqBy, find, groupBy, map } = require('lodash');
-const semver = require('semver');
+const { uniqBy, find, groupBy, map, isString, uniq } = require('lodash');
 
 /**
  * Filters assets by publish status.
@@ -16,18 +15,26 @@ const semver = require('semver');
  */
 async function filterByPublishStatus({
   assets: _assets,
-  assetsWithPermissions,
   nothingFound,
   preferCurrent,
   published,
-  roles,
   ctx,
 }) {
   let assets = _assets;
+  let assetsAreStrings = false;
+
+  const assetsIds = assets.map((asset) => {
+    if (isString(asset)) {
+      assetsAreStrings = true;
+      return asset;
+    }
+    return asset.asset;
+  });
 
   if (!nothingFound) {
     assets = await ctx.tx.call('common.versionControl.getVersion', {
-      id: map(assets, 'asset'),
+      id: assetsIds,
+      getLatestInfo: true,
     });
 
     if (published !== 'all') {
@@ -42,31 +49,18 @@ async function filterByPublishStatus({
       // EN: Get the latest versions of each uuid
       // ES: Obtener la última versión de cada uuid
       assets = map(groupedAssets, (values) => {
-        const versions = map(values, (id) => id.version);
+        // EN: Get the latest published and unpublished versions of each uuid if already matched in the search
+        // ES: Obtener la última versión publicada y no publicada de cada uuid si ya están en la búsqueda
+        const latestVersion = values.find((version) => version.isLatestVersion);
 
-        const latest = semver.maxSatisfying(versions, '*');
-
-        return find(values, (id) => id.version === latest).fullId;
-      });
+        return find(values, (id) => id.version === latestVersion?.version)?.fullId;
+      }).filter(Boolean);
     } else {
       assets = assets.map(({ fullId }) => fullId);
     }
-
-    assets = assetsWithPermissions.filter(
-      ({
-        asset,
-        role,
-        // ...others
-      }) => {
-        if (roles?.length && !roles.includes(role)) {
-          return false;
-        }
-        return assets.includes(asset);
-      }
-    );
   }
 
-  return uniqBy(assets, 'asset') || [];
+  return assetsAreStrings ? uniq(assets) : uniqBy(assets, 'asset');
 }
 
 module.exports = {
