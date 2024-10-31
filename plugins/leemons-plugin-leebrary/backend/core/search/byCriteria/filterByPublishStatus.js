@@ -1,5 +1,4 @@
-const { uniqBy, find, groupBy, map } = require('lodash');
-const semver = require('semver');
+const { uniqBy, find, groupBy, map, isString, uniq } = require('lodash');
 
 /**
  * Filters assets by publish status.
@@ -16,19 +15,26 @@ const semver = require('semver');
  */
 async function filterByPublishStatus({
   assets: _assets,
-  assetsWithPermissions,
   nothingFound,
   preferCurrent,
   published,
-  roles,
   ctx,
 }) {
   let assets = _assets;
+  let assetsAreStrings = false;
+
+  const assetsIds = assets.map((asset) => {
+    if (isString(asset)) {
+      assetsAreStrings = true;
+      return asset;
+    }
+    return asset.asset;
+  });
 
   if (!nothingFound) {
     assets = await ctx.tx.call('common.versionControl.getVersion', {
-      id: map(assets, 'asset'),
-      getCurrentInfo: true,
+      id: assetsIds,
+      getLatestInfo: true,
     });
 
     if (published !== 'all') {
@@ -45,34 +51,16 @@ async function filterByPublishStatus({
       assets = map(groupedAssets, (values) => {
         // EN: Get the latest published and unpublished versions of each uuid if already matched in the search
         // ES: Obtener la última versión publicada y no publicada de cada uuid si ya están en la búsqueda
-        const latestVersions = values
-          .filter((version) => version.isCurrentVersionOfPublishedState)
-          .map((version) => version.version);
+        const latestVersion = values.find((version) => version.isLatestVersion);
 
-        // EN: Always return the latest version of each uuid (either published or unpublished, which was created last)
-        // ES: Siempre devolver la última versión de cada uuid (ya sea publicada o no publicada, que fue creada más tarde)
-        const latest = semver.maxSatisfying(latestVersions, '*');
-        return find(values, (id) => id.version === latest)?.fullId;
+        return find(values, (id) => id.version === latestVersion?.version)?.fullId;
       }).filter(Boolean);
     } else {
       assets = assets.map(({ fullId }) => fullId);
     }
-
-    assets = assetsWithPermissions.filter(
-      ({
-        asset,
-        role,
-        // ...others
-      }) => {
-        if (roles?.length && !roles.includes(role)) {
-          return false;
-        }
-        return assets.includes(asset);
-      }
-    );
   }
 
-  return uniqBy(assets, 'asset') || [];
+  return assetsAreStrings ? uniq(assets) : uniqBy(assets, 'asset');
 }
 
 module.exports = {

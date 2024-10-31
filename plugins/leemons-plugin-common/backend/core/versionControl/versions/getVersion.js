@@ -59,14 +59,13 @@ async function getVersionsInfo({ ids, published, ignoreMissing, uuidsInfo, ctx }
   return versionsFound;
 }
 
-async function getLatestVersion({ versions, published, ctx }) {
+async function getLatestVersion({ versions, ctx }) {
   const pipeline = [
     {
       $match: {
         uuid: { $in: versions },
         deploymentID: ctx.meta.deploymentID,
         isDeleted: false,
-        published,
       },
     },
     {
@@ -82,62 +81,31 @@ async function getLatestVersion({ versions, published, ctx }) {
     },
   ];
 
-  const latestUnpublishedVersions = await ctx.tx.db.Versions.aggregate(pipeline);
+  const latestVersions = await ctx.tx.db.Versions.aggregate(pipeline);
 
-  return keyBy(latestUnpublishedVersions, '_id');
+  return keyBy(latestVersions, '_id');
 }
 
 async function getCurrentInfo({ versions, uuidsInfo, ctx }) {
   const uuidsInfoByUuid = keyBy(uuidsInfo, 'uuid');
+  const uuids = Object.keys(uuidsInfoByUuid);
 
-  const unpublishedVersions = [];
-  const publishedVersions = [];
-
-  versions.forEach(({ uuid, published }) => {
-    if (published) {
-      if (!uuidsInfoByUuid[uuid].current) {
-        publishedVersions.push(uuid);
-      }
-    } else {
-      unpublishedVersions.push(uuid);
-    }
+  const latestVersions = await getLatestVersion({
+    versions: uuids,
+    ctx,
   });
 
-  const [latestUnpublishedVersions, latestPublishedVersions] = await Promise.all([
-    getLatestVersion({
-      versions: unpublishedVersions,
-      published: false,
-      ctx,
-    }),
-    getLatestVersion({
-      versions: publishedVersions,
-      published: true,
-      ctx,
-    }),
-  ]);
-
   return versions.map((version) => {
-    const latestUnpublishedVersion = latestUnpublishedVersions[version.uuid]
+    const latestVersion = latestVersions[version.uuid]
       ? stringifyVersion({
-          ...latestUnpublishedVersions[version.uuid],
+          ...latestVersions[version.uuid],
           ctx,
         })
       : null;
 
-    const latestPublishedVersion =
-      uuidsInfoByUuid[version.uuid]?.current ??
-      (latestPublishedVersions[version.uuid]
-        ? stringifyVersion({
-            ...latestPublishedVersions[version.uuid],
-            ctx,
-          })
-        : null);
-
     return {
       ...version,
-      isCurrentVersionOfPublishedState: version.published
-        ? latestPublishedVersion === version.version
-        : latestUnpublishedVersion === version.version,
+      isLatestVersion: latestVersion === version.version,
     };
   });
 }
@@ -146,7 +114,7 @@ async function getVersionMany({
   ids,
   published,
   ignoreMissing = false,
-  getCurrentInfo: shouldGetCurrentInfo = false,
+  getLatestInfo = false,
   ctx,
 }) {
   if (!ids.length) return [];
@@ -166,7 +134,7 @@ async function getVersionMany({
     ctx,
   });
 
-  if (shouldGetCurrentInfo) {
+  if (getLatestInfo) {
     versionsFound = await getCurrentInfo({ versions: versionsFound, uuidsInfo, ctx });
   }
 
@@ -194,15 +162,15 @@ async function getVersionMany({
       published: Boolean(versionFound.published),
     };
 
-    if (shouldGetCurrentInfo) {
-      response.isCurrentVersionOfPublishedState = versionFound.isCurrentVersionOfPublishedState;
+    if (getLatestInfo) {
+      response.isLatestVersion = versionFound.isLatestVersion;
     }
 
     return response;
   });
 }
 
-module.exports = async function getVersion({ id, published, ignoreMissing, getCurrentInfo, ctx }) {
+module.exports = async function getVersion({ id, published, ignoreMissing, getLatestInfo, ctx }) {
   const isArray = Array.isArray(id);
   const ids = isArray ? id : [id];
 
@@ -210,7 +178,7 @@ module.exports = async function getVersion({ id, published, ignoreMissing, getCu
     ids,
     published,
     ignoreMissing,
-    getCurrentInfo,
+    getLatestInfo,
     ctx,
   });
 

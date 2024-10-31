@@ -1,23 +1,24 @@
 /* eslint-disable no-param-reassign */
-const { isEmpty, uniqBy, isBoolean } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
+const { isEmpty, uniqBy, isBoolean } = require('lodash');
 
-const { getPublic } = require('../getPublic/getPublic');
-const { byProvider: getByProvider } = require('../../search/byProvider');
 const { getAssetsByProgram } = require('../../assets/getAssetsByProgram');
 const { getAssetsBySubject } = require('../../assets/getAssetsBySubject');
+const { filterByPublishStatus } = require('../../search/byCriteria/filterByPublishStatus');
+const { getCategoryId } = require('../../search/byCriteria/getCategoryId');
+const { byProvider: getByProvider } = require('../../search/byProvider');
+const { getPublic } = require('../getPublic/getPublic');
 
-const { handleParams } = require('./handleParams');
-const { handlePermissions } = require('./handlePermissions');
 const { handleAssetIds } = require('./handleAssetIds');
-const { handleSorting } = require('./handleSorting');
-const { handlePermissionsRoles } = require('./handlePermissionsRoles');
-const { handleViewerRole } = require('./handleViewerRole');
+const { handleAssignerRole } = require('./handleAssignerRole');
 const { handleEditorRole } = require('./handleEditorRole');
 const { handleIndexable } = require('./handleIndexable');
+const { handleParams } = require('./handleParams');
+const { handlePermissions } = require('./handlePermissions');
+const { handlePermissionsRoles } = require('./handlePermissionsRoles');
 const { handlePreferCurrent } = require('./handlePreferCurrent');
-const { handleAssignerRole } = require('./handleAssignerRole');
-const { getCategoryId } = require('../../search/byCriteria/getCategoryId');
+const { handleSorting } = require('./handleSorting');
+const { handleViewerRole } = require('./handleViewerRole');
 
 /**
  * This function retrieves permissions by category.
@@ -116,6 +117,16 @@ async function getByCategory({
 
     if (subjects) {
       assetIds = await getAssetsBySubject({ subject: subjects, assets: assetIds, ctx });
+    }
+
+    if (published !== undefined && preferCurrent) {
+      assetIds = await filterByPublishStatus({
+        assets: assetIds,
+        nothingFound: assetIds.length === 0,
+        preferCurrent,
+        published,
+        ctx,
+      });
     }
 
     // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta

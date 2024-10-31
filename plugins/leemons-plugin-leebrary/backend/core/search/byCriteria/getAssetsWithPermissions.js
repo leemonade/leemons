@@ -1,7 +1,8 @@
 const { uniq } = require('lodash');
 
-const { filterByPublishStatus } = require('./filterByPublishStatus');
 const { getByAssets: getPermissions } = require('../../permissions/getByAssets');
+
+const { filterByPublishStatus } = require('./filterByPublishStatus');
 /**
  * Retrieves assets with permissions based on the provided parameters.
  *
@@ -42,7 +43,7 @@ async function getAssetsWithPermissions({
     nothingFound = assets.length === 0;
   }
 
-  return filterByPublishStatus({
+  assets = await filterByPublishStatus({
     assets,
     assetsWithPermissions,
     nothingFound,
@@ -51,6 +52,21 @@ async function getAssetsWithPermissions({
     roles,
     ctx,
   });
+
+  assets = assetsWithPermissions.filter(
+    ({
+      asset,
+      role,
+      // ...others
+    }) => {
+      if (roles?.length && !roles.includes(role)) {
+        return false;
+      }
+      return assets.includes(asset);
+    }
+  );
+
+  return assets;
 }
 
 module.exports = { getAssetsWithPermissions };
