@@ -23,7 +23,7 @@ function usePendingEvaluationsCount({ instance }) {
       const activities = student?.metadata?.moduleStatus;
 
       activities?.forEach((activityStatus) => {
-        if (activityStatus.completed) {
+        if (activityStatus.completed || activityStatus.activityClosed) {
           activitiesCompleted[activityStatus.instance] =
             (activitiesCompleted[activityStatus.instance] || 0) + 1;
         }
