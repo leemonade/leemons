@@ -1,5 +1,36 @@
 # Changelog
 
+## [1.13.0](https://github.com/leemonade/leemons/compare/1.12.0...1.13.0) (2024-11-04)
+
+
+### Features
+
+* **assignables:** Add a Kebab menu to the ActivityHeader ([fa4447b](https://github.com/leemonade/leemons/commit/fa4447b1ee061d3b98c20e5b74cb05443e49da36)), closes [#609](https://github.com/leemonade/leemons/issues/609)
+* **assignables:** List the classes of all types of teachers ([dc5d02f](https://github.com/leemonade/leemons/commit/dc5d02fb83f71636d42b3ed18dc47815e7b315a5)), closes [#620](https://github.com/leemonade/leemons/issues/620)
+* **assignables:** Reschedule emails when activity start changes ([5a9ec52](https://github.com/leemonade/leemons/commit/5a9ec528a426d9edc77a8047a41e9793904b4a09)), closes [#627](https://github.com/leemonade/leemons/issues/627)
+* **leebrary:** Add download button on pdfs assigned as activity ([c5b7c10](https://github.com/leemonade/leemons/commit/c5b7c107f2ecbdb507227832ed91ebaa6906cc8f)), closes [#621](https://github.com/leemonade/leemons/issues/621)
+* **lModules:** Add activities sorting and removal in module assignment ([1f359c8](https://github.com/leemonade/leemons/commit/1f359c8a7236fa0fd82c0f76a563de4f7fd20cfa)), closes [#624](https://github.com/leemonade/leemons/issues/624)
+* **menu-builder:** Added communities to trusted plugins ([2d44fc5](https://github.com/leemonade/leemons/commit/2d44fc543cf0c979f686cdec90b2e91e1e4c8512)), closes [#628](https://github.com/leemonade/leemons/issues/628)
+* **users:** Allow admins to impersonate users ([38c833e](https://github.com/leemonade/leemons/commit/38c833ecf76afbc9685d8480a4dd0eaa04ee5814)), closes [#611](https://github.com/leemonade/leemons/issues/611)
+
+
+### Bug Fixes
+
+* **academic-portfolio:** Adjust Title sizes in `EnrollmentTab` ([32b1e9b](https://github.com/leemonade/leemons/commit/32b1e9b860a27eb084039097699e26c9c1b32478)), closes [#615](https://github.com/leemonade/leemons/issues/615)
+* **academic-portfolio:** Show class alias in the TabPanel when enrolling ([83fe910](https://github.com/leemonade/leemons/commit/83fe910fd7a9bbdf733d3c4fe6a866213f9ee64a)), closes [#625](https://github.com/leemonade/leemons/issues/625)
+* **assignables:** Add teachers to activity event when added to class ([56620d4](https://github.com/leemonade/leemons/commit/56620d44d860f75f012144f403ecb6fe1413a1b6)), closes [#618](https://github.com/leemonade/leemons/issues/618)
+* **assignables:** Count all assignations as submited when closed ([e275016](https://github.com/leemonade/leemons/commit/e275016dc266ed80ba60455189dda3ae1f0fd9a9)), closes [#629](https://github.com/leemonade/leemons/issues/629)
+* **assignables:** Count as submitted module activities which have ended ([fdc9842](https://github.com/leemonade/leemons/commit/fdc98423ebf8589ae8a4d17aa24ea32a3d3a74cf)), closes [#636](https://github.com/leemonade/leemons/issues/636)
+* **assignables:** Hide menu items to students in ActivityHeader ([b817bc5](https://github.com/leemonade/leemons/commit/b817bc50b9d2e44970ecac18922dfb8cf6cada5c)), closes [#622](https://github.com/leemonade/leemons/issues/622)
+* **assignables:** The modules NYA card does not track pending evaluation ([4861c50](https://github.com/leemonade/leemons/commit/4861c500bea243e41cb8975ae00af692fe2e0449)), closes [#619](https://github.com/leemonade/leemons/issues/619)
+* **calendar:** Stop rendering the `AvatarSubject` in all events ([c269d00](https://github.com/leemonade/leemons/commit/c269d00b86c3712191573991366c23643292f86b)), closes [#617](https://github.com/leemonade/leemons/issues/617)
+* **feedback:** Module assignments hide results by default ([179c6ee](https://github.com/leemonade/leemons/commit/179c6eefe09f3d145bcff00646bfbb5aaafda94e))
+* **feedback:** Redirect student to the expected page ([179c6ee](https://github.com/leemonade/leemons/commit/179c6eefe09f3d145bcff00646bfbb5aaafda94e)), closes [#612](https://github.com/leemonade/leemons/issues/612) [#612](https://github.com/leemonade/leemons/issues/612) [#612](https://github.com/leemonade/leemons/issues/612)
+* **feedback:** Show next activity url in the results page ([179c6ee](https://github.com/leemonade/leemons/commit/179c6eefe09f3d145bcff00646bfbb5aaafda94e))
+* **leebrary:** Only show latest resource version ([0d8cb81](https://github.com/leemonade/leemons/commit/0d8cb81d7df07f1b0b97db389a50f4b6ea66b0a9)), closes [#635](https://github.com/leemonade/leemons/issues/635)
+* **leebrary:** Only show the latest resource version when searching ([dae2631](https://github.com/leemonade/leemons/commit/dae263108f6f8221e6c0fb10a12f382e22902878)), closes [#633](https://github.com/leemonade/leemons/issues/633)
+* **users:** Show `chatButton` when `isChatEnabled` in `UserDetail.js` ([9a3e16b](https://github.com/leemonade/leemons/commit/9a3e16b8aa4976acbe4da14014c428bbff3a8251)), closes [#626](https://github.com/leemonade/leemons/issues/626)
+
 ## [1.12.0](https://github.com/leemonade/leemons/compare/1.11.0...1.12.0) (2024-10-24)
 
 
