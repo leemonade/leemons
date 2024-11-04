@@ -304,6 +304,7 @@ module.exports = {
     editor: 'Editor',
     assigner: 'Asignador',
     genericNew: 'Crear {label}',
+    uploadBulk: 'Cargar en bloque',
     tableLabels: {
       name: 'Nombre',
       owner: 'Propietario/a',

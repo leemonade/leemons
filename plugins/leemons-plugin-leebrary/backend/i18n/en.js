@@ -316,6 +316,7 @@ module.exports = {
     editor: 'Editor',
     assigner: 'Assigner',
     genericNew: 'New {label}',
+    uploadBulk: 'Upload in bulk',
     tableLabels: {
       name: 'Name',
       owner: 'Owner',
