@@ -195,6 +195,13 @@ async function getProgramNomenclature({ programId, allLocales }) {
   );
 }
 
+async function validateStaffChange(body) {
+  return leemons.api(`v1/academic-portfolio/programs/validate-staff-change`, {
+    method: 'POST',
+    body,
+  });
+}
+
 export {
   listPrograms,
   detailProgram,
@@ -213,4 +220,5 @@ export {
   setProgramCustomTranslationKeys,
   getProgramAcademicTree,
   getProgramNomenclature,
+  validateStaffChange,
 };
