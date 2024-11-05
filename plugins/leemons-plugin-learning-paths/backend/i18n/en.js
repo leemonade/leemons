@@ -24,7 +24,7 @@ module.exports = {
     },
     tabs: {
       basicData: 'Basic data',
-      structure: 'Learning path',
+      structure: 'Content',
       resources: 'Resources',
     },
     buttons: {
@@ -56,11 +56,11 @@ module.exports = {
           new: 'New resource',
         },
         emptyState: {
-          title: 'Additional learning resources',
+          title: 'Content',
           description: 'You can select additional resources to deepen the subject (optional)',
         },
         moduleComposer: {
-          title: 'Resource list',
+          title: 'Content',
           columns: {
             resource: 'Resource',
             actions: 'Actions',
