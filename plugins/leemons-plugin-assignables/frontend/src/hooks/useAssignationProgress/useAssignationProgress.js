@@ -7,6 +7,7 @@ import getNearestScale from '@scorm/helpers/getNearestScale';
 import useProgramEvaluationSystem from '../useProgramEvaluationSystem';
 
 import { COLORS, STATUS, STATUS_NAMES } from './constants';
+import getSeverity from './helpers/getSeverity';
 import getStatusName from './helpers/getStatusName';
 
 import prefixPN from '@assignables/helpers/prefixPN';
@@ -61,10 +62,12 @@ export default function useAssignationProgress({ assignation = {}, isBlocked }) 
     : null;
   const nearestScaleDisplay = nearestScale?.letter ?? nearestScale?.number ?? null;
 
+  const color = status.color ?? getSeverity(instance);
+
   return {
     statusName,
     label: isEvaluated ? `${t(status.labelKey)} (${nearestScaleDisplay})` : t(status.labelKey),
-    color: status.color,
-    hexColor: COLORS(theme)[status.color],
+    color,
+    hexColor: COLORS(theme)[color],
   };
 }
