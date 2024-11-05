@@ -533,4 +533,29 @@ module.exports = {
     fullPhotoLink:
       '<p>Foto de <a href="{authorProfileUrl}">{author}</a> en <a href="{providerUrl}">{provider}</a></p>',
   },
+  bulkUpload: {
+    title: 'Nuevo recurso',
+    fileSelected: 'Archivo',
+    filesSelected: 'Archivos',
+    contentLabel: 'Contenido',
+    bulkLoadLabel: 'Carga en bloque',
+    saveButton: 'Guardar',
+    requiredLabel: 'Campo necesario',
+    fileUploadTitle: 'Click para buscar varios archivos',
+    fileUploadSubtitle: 'o arrastrar aquí desde el ordenador',
+    fileUploadErrorTitle: 'Error',
+    fileUploadErrorMessage: 'Archivo rechazado',
+    table: {
+      headers: {
+        type: 'Tipo',
+        name: 'Nombre',
+        file: 'Archivo',
+        load: 'Carga',
+        size: 'Tamaño',
+      },
+      queue: 'En cola...',
+      completed: 'Cargado!',
+      error: 'Error',
+    },
+  },
 };
