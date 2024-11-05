@@ -60,8 +60,14 @@ async function classByIds({
 
   let programByIds = {};
   if (withProgram) {
+    const { programsByIds: getProgramsByIds } = require('../programs/programsByIds');
+
     const programIds = _.uniq(_.map(classes, 'program'));
-    const programs = await ctx.tx.db.Programs.find({ id: programIds }).lean();
+    const programs = (await getProgramsByIds({ ids: programIds, ctx })).map((p) => ({
+      ...p,
+      // Return only the id of the image due to legacy behavior
+      image: p.image ? p.image.id : null,
+    }));
     programByIds = _.keyBy(programs, 'id');
   }
 
