@@ -1,8 +1,7 @@
 /* eslint-disable camelcase */
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router-dom';
-import { cloneDeep, isEmpty, omit } from 'lodash';
 
 import {
   LoadingOverlay,
@@ -10,15 +9,18 @@ import {
   TotalLayoutHeader,
   VerticalStepperContainer,
 } from '@bubbles-ui/components';
-
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@tests/helpers/prefixPN';
 import { useLayout } from '@layout/context';
-import { QuestionBankIcon } from '@tests/components/Icons/QuestionBankIcon';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { omit } from 'lodash';
+
 import { getQuestionBankRequest, saveQuestionBankRequest } from '../../../request';
+
 import DetailBasic from './components/DetailBasic';
 import DetailQuestions from './components/DetailQuestions';
+
+import { QuestionBankIcon } from '@tests/components/Icons/QuestionBankIcon';
+import prefixPN from '@tests/helpers/prefixPN';
 
 export default function Detail() {
   const [t] = useTranslateLoader(prefixPN('questionsBanksDetail'));
@@ -85,7 +87,7 @@ export default function Detail() {
       addSuccessAlert(t('published'));
       history.push('/private/tests/questions-banks');
     } catch (error) {
-      addErrorAlert(error);
+      addErrorAlert(t('errors.save'), error.message);
     } finally {
       setSavingAs(null);
     }

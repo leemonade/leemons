@@ -1,18 +1,19 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
+const _ = require('lodash');
+
 const { validateSaveQuestionBank } = require('../../validations/forms');
-const { updateQuestion } = require('../questions/updateQuestion');
-const { createQuestion } = require('../questions/createQuestion');
-const {
-  removeSubjectsFromQuestionBanks,
-} = require('../question-bank-subjects/removeSubjectsFromQuestionBanks');
+const { createCategory } = require('../question-bank-categories/createCategory');
+const { updateCategory } = require('../question-bank-categories/updateCategory');
 const {
   addSubjectsToQuestionBanks,
 } = require('../question-bank-subjects/addSubjectsToQuestionBanks');
-const { updateCategory } = require('../question-bank-categories/updateCategory');
-const { createCategory } = require('../question-bank-categories/createCategory');
+const {
+  removeSubjectsFromQuestionBanks,
+} = require('../question-bank-subjects/removeSubjectsFromQuestionBanks');
+const { createQuestion } = require('../questions/createQuestion');
 const { deleteQuestions } = require('../questions/deleteQuestions');
+const { updateQuestion } = require('../questions/updateQuestion');
 
 const removeUnusedFields = (data, otherFields = []) =>
   _.omit(data, ['_id', '__v', 'deploymentID', 'isDeleted', ...otherFields]);
@@ -107,7 +108,7 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
     throw new LeemonsError(ctx, { message: 'User session is required (saveQuestionsBanks)' });
   }
 
-  validateSaveQuestionBank(data);
+  validateSaveQuestionBank(data, ctx);
 
   const { id, questions, categories, tags, published, subjects, ...props } = data;
   let questionBank;

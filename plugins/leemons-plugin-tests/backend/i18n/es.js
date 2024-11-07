@@ -116,6 +116,9 @@ module.exports = {
     hasCoverLabel: 'Imagen destacada',
     hideOptionNoRightAnswer: 'Primero selecciona la respuesta correcta',
     headerTitlePlaceholder: 'Título del banco de preguntas',
+    errors: {
+      save: 'No se han podido guardar los cambios.',
+    },
   },
   questionImageModal: {
     createNumbering: 'Crear numeración',

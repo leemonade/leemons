@@ -117,6 +117,9 @@ module.exports = {
     hasCoverLabel: 'Feature image',
     hideOptionNoRightAnswer: 'You must select the right answer first',
     headerTitlePlaceholder: 'Questions bank title',
+    errors: {
+      save: 'The changes could not be saved.',
+    },
   },
   questionImageModal: {
     createNumbering: 'Create numbering',
