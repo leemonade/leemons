@@ -49,6 +49,7 @@ import useProvider from '@users/request/hooks/queries/useProvider';
 
 function ListUsers() {
   const [t] = useTranslateLoader(prefixPN('list_users'));
+  const lang = (navigator.language || navigator.userLanguage).split('-')[0];
   const [store, render] = useStore({
     page: 0,
     size: 10,
@@ -93,6 +94,8 @@ function ListUsers() {
     const { data } = await listUsersRequest({
       page: store.page,
       size: store.size,
+      sort: { surnames: 1, name: 1 },
+      collation: { locale: lang },
       query,
     });
 
