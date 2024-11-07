@@ -99,11 +99,11 @@ function ListUsers() {
     return data;
   }
 
-  async function load(searchQuery) {
+  async function load() {
     try {
       store.loading = true;
       render();
-      store.pagination = await listUsers(searchQuery);
+      store.pagination = await listUsers(store.search);
       store.loading = false;
       render();
     } catch (err) {
@@ -259,7 +259,7 @@ function ListUsers() {
   async function handleSearchUsers(value) {
     store.search = value;
     store.isSearching = true;
-    load(value);
+    load();
   }
 
   async function handleClearFilters() {
