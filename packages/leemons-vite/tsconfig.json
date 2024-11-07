@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.backend.json",
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "outDir": "./dist",
+    "rootDir": "./"
+  },
+  "include": ["./src/**/*", "./bin/**/*"]
+}

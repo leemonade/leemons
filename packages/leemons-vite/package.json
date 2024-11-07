@@ -1,0 +1,37 @@
+{
+  "name": "@leemons/vite",
+  "version": "0.0.1",
+  "bin": {
+    "leemonsFront": "./dist/bin/leemonsFront.js"
+  },
+  "author": {
+    "email": "hi@leemons.io",
+    "name": "Leemons Edtech Solutions",
+    "url": "https://www.leemons.io"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "maintainers": [
+    {
+      "email": "hi@leemons.io",
+      "name": "Leemons Edutech Solutions",
+      "url": "https://www.leemons.io"
+    }
+  ],
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc && chmod +x ./dist/bin/leemonsFront.js",
+    "dev": "yarn build && tsc -w",
+    "leemonsFront": "leemonsFront"
+  },
+  "dependencies": {
+    "chalk": "^4",
+    "commander": "^12.1.0",
+    "fs-extra": "^11.2.0"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4"
+  }
+}
