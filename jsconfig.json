@@ -81,7 +81,7 @@
         "./plugins/leemons-plugin-feedback/frontend/src/*"
       ],
       "@fundae/*": [
-        "./plugins/leemons-plugin-fundae/frontend/src/*"
+        "./private-plugins/leemons-plugin-fundae/frontend/src/*"
       ],
       "@grades/*": [
         "./plugins/leemons-plugin-grades/frontend/src/*"

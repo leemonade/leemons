@@ -12,6 +12,7 @@ const {
 const { LeemonsValidator } = require('@leemons/validator');
 const _ = require('lodash');
 
+const { detailBySysName } = require('../../core/profiles');
 const {
   update,
   active,
@@ -368,22 +369,27 @@ module.exports = {
     async handler(ctx) {
       const centers = await usersService.centers({ user: ctx.meta.userSession.id, ctx });
       const centerI = _.findIndex(centers, { id: ctx.params.center });
-      if (centerI >= 0) {
-        const profileI = _.findIndex(centers[centerI].profiles, { id: ctx.params.profile });
-        if (profileI >= 0) {
+      const isSuperAdminProfile =
+        centerI < 0 && (await detailBySysName({ sysName: 'super', ctx })).id === ctx.params.profile;
+
+      if (centerI >= 0 || isSuperAdminProfile) {
+        const profileI = _.findIndex(centers[centerI]?.profiles, { id: ctx.params.profile });
+        if (profileI >= 0 || isSuperAdminProfile) {
           await ctx.tx.db.UserRememberLogin.updateOne(
             { user: ctx.meta.userSession.id },
             {
               user: ctx.meta.userSession.id,
               profile: ctx.params.profile,
-              center: ctx.params.center,
+              center: ctx.params.center ?? null,
             },
             { upsert: true }
           );
           return {
             status: 200,
-            profile: centers[centerI].profiles[profileI],
-            center: centers[centerI],
+            profile: isSuperAdminProfile
+              ? ctx.params.profile
+              : centers[centerI]?.profiles[profileI],
+            center: isSuperAdminProfile ? null : centers[centerI],
           };
         }
         throw new LeemonsError(ctx, { message: 'You do not have access to the specified profile' });
@@ -422,14 +428,21 @@ module.exports = {
       if (remember) {
         const centers = await usersService.centers({ user: ctx.meta.userSession.id, ctx });
         const centerI = _.findIndex(centers, { id: remember.center });
-        if (centerI >= 0) {
-          const profileI = _.findIndex(centers[centerI].profiles, { id: remember.profile });
+
+        const superAdminProfile = centerI < 0 && (await detailBySysName({ sysName: 'super', ctx }));
+        const isSuperAdminProfile = centerI < 0 && superAdminProfile.id === remember.profile;
+
+        if (centerI >= 0 || isSuperAdminProfile) {
+          const profileI = _.findIndex(centers[centerI]?.profiles, { id: remember.profile });
           if (profileI >= 0) {
             return {
               status: 200,
               profile: centers[centerI].profiles[profileI],
               center: centers[centerI],
             };
+          }
+          if (isSuperAdminProfile) {
+            return { status: 200, profile: superAdminProfile, center: null };
           }
           return { status: 200, profile: null, center: null };
         }
