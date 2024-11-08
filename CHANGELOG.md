@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.15.0](https://github.com/leemonade/leemons/compare/1.14.0...1.15.0) (2024-11-08)
+
+
+### Features
+
+* **academic-portfolio:** Retrieve complete program on getClassByIds ([4bfe479](https://github.com/leemonade/leemons/commit/4bfe4797ccbe1ba06b85212f9442bc9551d5e1da)), closes [#644](https://github.com/leemonade/leemons/issues/644)
+
 ## [1.14.0](https://github.com/leemonade/leemons/compare/1.13.0...1.14.0) (2024-11-08)
 
 
