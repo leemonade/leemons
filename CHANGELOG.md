@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.14.0](https://github.com/leemonade/leemons/compare/1.13.0...1.14.0) (2024-11-08)
+
+
+### Features
+
+* **academic-portfolio:** Add program staff functionality ([16919eb](https://github.com/leemonade/leemons/commit/16919eb98a21d6c1d9d861537d34533284fe6117)), closes [#630](https://github.com/leemonade/leemons/issues/630)
+* **academic-portfolio:** Hide chat button for self-messaging ([91fbe20](https://github.com/leemonade/leemons/commit/91fbe20efe61d33d66d2c7108017206874e03a12)), closes [#640](https://github.com/leemonade/leemons/issues/640)
+* **assignables:** Abstract useAssignationProgress ([c5284c2](https://github.com/leemonade/leemons/commit/c5284c2bf348c66b962e91c0bbb3d4be801214a2)), closes [#642](https://github.com/leemonade/leemons/issues/642)
+
+
+### Bug Fixes
+
+* : improvements in Dashboard ([7f4d051](https://github.com/leemonade/leemons/commit/7f4d051623f363366177b62caadb3d911b4bb809)), closes [#637](https://github.com/leemonade/leemons/issues/637)
+* **leebrary:** Add image and video as player by default in LibraryTool ([87236d8](https://github.com/leemonade/leemons/commit/87236d864f4e5dd43bf98f11d87909e5b50771e7)), closes [#634](https://github.com/leemonade/leemons/issues/634)
+* **leebrary:** Return unique assets from filterByPublishStatus ([8e06ef9](https://github.com/leemonade/leemons/commit/8e06ef9739d4517b8ea8fbbcdc9ef31a0227e102)), closes [#638](https://github.com/leemonade/leemons/issues/638)
+* **tests:** Remove character restrictions for question banks ([0f93c15](https://github.com/leemonade/leemons/commit/0f93c15ee4dbb0d10c85042b8f2adb3137ded38d)), closes [#646](https://github.com/leemonade/leemons/issues/646)
+
 ## [1.13.0](https://github.com/leemonade/leemons/compare/1.12.0...1.13.0) (2024-11-04)
 
 
