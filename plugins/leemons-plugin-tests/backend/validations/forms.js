@@ -88,7 +88,16 @@ const mapPropertiesSchema = {
   nullable: true,
 };
 
-const questionTypes = ['mono-response', 'map'];
+const trueFalsePropertiesSchema = {
+  type: 'object',
+  properties: {
+    isTrue: booleanSchema,
+  },
+  required: ['isTrue'],
+  nullable: true,
+};
+
+const questionTypes = ['mono-response', 'map', 'true-false'];
 const questionTypeSchema = {
   type: 'string',
   enum: questionTypes,
@@ -97,7 +106,7 @@ const questionTypeSchema = {
 const questionSchema = {
   type: 'object',
   additionalProperties: false,
-  required: ['type'],
+  required: ['type', 'stem'],
   properties: {
     id: stringSchema,
     type: questionTypeSchema,
@@ -144,6 +153,7 @@ const questionSchema = {
       nullable: true,
     },
     mapProperties: mapPropertiesSchema,
+    trueFalseProperties: trueFalsePropertiesSchema,
   },
 };
 
