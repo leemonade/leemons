@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 
 import {
@@ -7,23 +7,21 @@ import {
   TotalLayoutHeader,
   TLayout,
   Text,
-  ContextContainer,
-  FileUpload,
-  Box,
   Button,
   Stack,
+  LoadingOverlay,
 } from '@bubbles-ui/components';
-import { DownloadIcon } from '@bubbles-ui/icons/outline';
 import { addErrorAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { ScormCardIcon } from '@scorm/components/icons';
 
-import BulkUploadTable from '@leebrary/components/BulkUploadTable/BulkUploadTable';
+import AddBulkResources from '@leebrary/components/AddBulkResources/AddBulkResources';
 import { LIBRARY_FORM_TYPES } from '@leebrary/components/LibraryForm/LibraryForm.constants';
+import { ManageBulkAssets } from '@leebrary/components/ManageBulkAssets/ManageBulkAssets';
 import compressImage from '@leebrary/helpers/compressImage';
 import prefixPN from '@leebrary/helpers/prefixPN';
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
-import { newAssetRequest } from '@leebrary/request';
+import { newAssetRequest, getAssetsByIdsRequest } from '@leebrary/request';
 
 const BulkAssetPage = () => {
   const [t] = useTranslateLoader(prefixPN('bulkUpload'));
@@ -35,21 +33,67 @@ const BulkAssetPage = () => {
     },
   });
 
-  const {
-    control,
-    handleSubmit,
-    watch,
-    trigger,
-    setValue,
-    getValues,
-    formState: { errors },
-  } = formForAssets;
+  const { control, watch } = formForAssets;
 
   const assetFiles = watch('file');
   const hasFilesSelected = assetFiles?.length > 0;
   const filesSelectedCount = assetFiles?.length;
 
   const [uploadStatus, setUploadStatus] = useState({});
+  const [uploadedFiles, setUploadedFiles] = useState({});
+  const [createdAssets, setCreatedAssets] = useState([]);
+  const [step, setStep] = useState(1);
+  const [isCreatingAssets, setIsCreatingAssets] = useState(false);
+  const [uploadQueue, setUploadQueue] = useState([]);
+  const [currentBatch, setCurrentBatch] = useState([]);
+
+  useEffect(() => {
+    if (assetFiles?.length) {
+      const newQueue = assetFiles.filter(
+        (file) => !uploadStatus[file.name] && !currentBatch.find((f) => f.name === file.name)
+      );
+      setUploadQueue(newQueue);
+    }
+  }, [assetFiles]);
+
+  useEffect(() => {
+    const processQueue = async () => {
+      if (currentBatch.length > 0) return;
+      if (uploadQueue.length === 0) return;
+
+      const batch = uploadQueue.slice(0, 2);
+      const remainingQueue = uploadQueue.slice(2);
+
+      setCurrentBatch(batch);
+      setUploadQueue(remainingQueue);
+
+      await Promise.all(batch.map((file) => uploadSingleFile(file)));
+
+      setCurrentBatch([]);
+    };
+
+    processQueue();
+  }, [uploadQueue, currentBatch]);
+
+  const removeFile = (fileName) => {
+    const newFiles = assetFiles?.filter((file) => file.name !== fileName);
+    formForAssets.setValue('file', newFiles);
+
+    setUploadStatus((prev) => {
+      const newStatus = { ...prev };
+      delete newStatus[fileName];
+      return newStatus;
+    });
+
+    setUploadedFiles((prev) => {
+      const newUploaded = { ...prev };
+      delete newUploaded[fileName];
+      return newUploaded;
+    });
+
+    setUploadQueue((prev) => prev.filter((file) => file.name !== fileName));
+    setCurrentBatch((prev) => prev.filter((file) => file.name !== fileName));
+  };
 
   const uploadSingleFile = async (file) => {
     try {
@@ -76,20 +120,14 @@ const BulkAssetPage = () => {
         },
       });
 
-      setUploadStatus((prev) => ({
+      setUploadedFiles((prev) => ({
         ...prev,
-        [file.name]: { state: 'finalize' },
+        [file.name]: { fileId: uploadedFile, name: file.name },
       }));
 
-      await newAssetRequest(
-        { file: uploadedFile, name: file.name },
-        null,
-        LIBRARY_FORM_TYPES.MEDIA_FILES
-      );
-
       setUploadStatus((prev) => ({
         ...prev,
-        [file.name]: { state: 'completed' },
+        [file.name]: { state: 'uploaded', fileId: uploadedFile },
       }));
     } catch (error) {
       setUploadStatus((prev) => ({
@@ -100,19 +138,42 @@ const BulkAssetPage = () => {
     }
   };
 
-  useEffect(() => {
-    const uploadFiles = async () => {
-      if (assetFiles?.length) {
-        for (const file of assetFiles) {
-          if (!uploadStatus[file.name]) {
-            await uploadSingleFile(file);
-          }
+  const handleSave = async () => {
+    setIsCreatingAssets(true);
+    try {
+      const uploadedFilesList = Object.values(uploadedFiles);
+
+      const assets = [];
+      for (const fileInfo of uploadedFilesList) {
+        try {
+          const createdAsset = await newAssetRequest(
+            { file: fileInfo.fileId, name: fileInfo.name },
+            null,
+            LIBRARY_FORM_TYPES.MEDIA_FILES
+          );
+          assets.push(createdAsset?.asset);
+
+          setUploadStatus((prev) => ({
+            ...prev,
+            [fileInfo.name]: { ...prev[fileInfo.name], state: 'completed' },
+          }));
+        } catch (error) {
+          setUploadStatus((prev) => ({
+            ...prev,
+            [fileInfo.name]: { state: 'error' },
+          }));
+          addErrorAlert(error.message);
         }
       }
-    };
 
-    uploadFiles();
-  }, [assetFiles]);
+      setCreatedAssets(assets);
+      if (assets.length > 0) {
+        setStep(2);
+      }
+    } finally {
+      setIsCreatingAssets(false);
+    }
+  };
 
   const handleTitle = () => {
     if (hasFilesSelected) {
@@ -124,9 +185,32 @@ const BulkAssetPage = () => {
     return `${t('contentLabel')}`;
   };
 
-  const areAllUploadsCompleted = () => {
-    if (!assetFiles?.length) return false;
-    return assetFiles.every((file) => uploadStatus[file.name]?.state === 'completed');
+  const areAllFilesUploaded = () => {
+    return (
+      assetFiles?.length > 0 &&
+      assetFiles.every(
+        (file) =>
+          uploadStatus[file.name]?.state === 'uploaded' ||
+          uploadStatus[file.name]?.state === 'completed'
+      )
+    );
+  };
+
+  const handleAssetsUpdate = async (updatedAssets) => {
+    try {
+      const updatedAssetIds = updatedAssets.map((asset) => asset.id);
+
+      const refreshedAssets = await getAssetsByIdsRequest(updatedAssetIds);
+
+      const mergedAssets = createdAssets.map((asset) => {
+        const updatedAsset = refreshedAssets?.assets?.find((updated) => updated.id === asset.id);
+        return updatedAsset || asset;
+      });
+
+      setCreatedAssets(mergedAssets);
+    } catch (error) {
+      addErrorAlert(error.message);
+    }
   };
 
   return (
@@ -146,41 +230,40 @@ const BulkAssetPage = () => {
         />
       }
       Footer={
-        <TLayout.Footer>
-          <Stack justifyContent="flex-end" fullWidth>
-            <Button disabled={!areAllUploadsCompleted()}>{t('saveButton')}</Button>
-          </Stack>
-        </TLayout.Footer>
+        step === 1 && (
+          <TLayout.Footer>
+            <Stack justifyContent="flex-end" fullWidth>
+              <Button
+                loading={isCreatingAssets}
+                disabled={!areAllFilesUploaded()}
+                onClick={handleSave}
+              >
+                {t('saveButton')}
+              </Button>
+            </Stack>
+          </TLayout.Footer>
+        )
       }
     >
-      <TLayout.Content>
-        <ContextContainer spacing={4} title={handleTitle()}>
-          <Box sx={{ display: hasFilesSelected ? 'none' : 'block' }}>
-            <Controller
-              control={control}
-              name="file"
-              rules={{ required: t('requiredLabel') }}
-              render={({ field: { ref, value, ...field } }) => (
-                <FileUpload
-                  {...field}
-                  icon={<DownloadIcon height={32} width={32} />}
-                  title={t('fileUploadTitle')}
-                  subtitle={t('fileUploadSubtitle')}
-                  errorMessage={{
-                    title: t('fileUploadErrorTitle'),
-                    message: t('fileUploadErrorMessage'),
-                  }}
-                  hideUploadButton
-                  showItemsToUpload={false}
-                />
-              )}
-            />
-          </Box>
-          {hasFilesSelected && (
-            <BulkUploadTable data={assetFiles} uploadStatus={uploadStatus} t={t} />
-          )}
-        </ContextContainer>
-      </TLayout.Content>
+      {isCreatingAssets && <LoadingOverlay />}
+      {step === 1 && (
+        <AddBulkResources
+          control={control}
+          t={t}
+          handleTitle={handleTitle}
+          hasFilesSelected={hasFilesSelected}
+          assetFiles={assetFiles}
+          uploadStatus={uploadStatus}
+          onRemoveFile={removeFile}
+        />
+      )}
+      {step === 2 && (
+        <ManageBulkAssets
+          initialData={createdAssets}
+          assets={createdAssets}
+          onAssetsUpdate={handleAssetsUpdate}
+        />
+      )}
     </TotalLayoutContainer>
   );
 };
