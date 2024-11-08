@@ -125,6 +125,9 @@
       "@scorm/*": [
         "./plugins/leemons-plugin-scorm/frontend/src/*"
       ],
+      "@sessions/*": [
+        "./private-plugins/leemons-plugin-sessions/frontend/src/*"
+      ],
       "@tasks/*": [
         "./plugins/leemons-plugin-tasks/frontend/src/*"
       ],
