@@ -129,6 +129,8 @@ module.exports = {
         type: 'T/F',
         needsResponse: 'Response is required',
       },
+    errors: {
+      save: 'The changes could not be saved.',
     },
   },
   questionImageModal: {

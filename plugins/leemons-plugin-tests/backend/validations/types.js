@@ -23,6 +23,11 @@ const stringSchema = {
   maxLength: 255,
 };
 
+const textSchemaNoLimit = {
+  type: 'string',
+  minLength: 1,
+};
+
 const stringSchemaNullable = {
   type: 'string',
   minLength: 0,
@@ -85,4 +90,5 @@ module.exports = {
   stringSchemaNullable,
   integerSchemaNullable,
   arrayStringRequiredSchema,
+  textSchemaNoLimit,
 };

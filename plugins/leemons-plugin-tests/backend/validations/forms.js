@@ -1,3 +1,4 @@
+const { LeemonsError } = require('@leemons/error');
 const { LeemonsValidator } = require('@leemons/validator');
 const _ = require('lodash');
 
@@ -6,12 +7,13 @@ const {
   booleanSchema,
   stringSchemaNullable,
   textSchemaNullable,
+  textSchemaNoLimit,
 } = require('./types');
 
 const formattedTextSchema = {
   type: 'object',
   properties: {
-    text: stringSchema,
+    text: textSchemaNoLimit,
     format: stringSchema,
   },
 };
@@ -41,7 +43,7 @@ const choiceSchema = {
 const mapMarkerSchema = {
   type: 'object',
   properties: {
-    response: stringSchema,
+    response: textSchemaNoLimit,
     hideOnHelp: booleanSchema,
     left: stringSchema,
     top: stringSchema,
@@ -199,7 +201,7 @@ const saveQuestionBankSchema = {
   additionalProperties: false,
 };
 
-function validateSaveQuestionBank(data) {
+function validateSaveQuestionBank(data, ctx) {
   const schema = _.cloneDeep(saveQuestionBankSchema);
   if (data.published) {
     schema.required = ['name', 'questions']; // 'program', 'subjects'
@@ -208,7 +210,7 @@ function validateSaveQuestionBank(data) {
   const validator = new LeemonsValidator(schema);
 
   if (!validator.validate(data)) {
-    throw validator.error;
+    throw new LeemonsError(ctx, { message: validator.errorMessage });
   }
 }
 

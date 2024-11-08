@@ -128,6 +128,9 @@ module.exports = {
         type: 'V/F',
       },
     },
+    errors: {
+      save: 'No se han podido guardar los cambios.',
+    },
   },
   questionImageModal: {
     createNumbering: 'Crear numeración',
