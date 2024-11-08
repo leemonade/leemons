@@ -14,10 +14,7 @@ import {
 } from '@users/request';
 
 const handleProfileAndCenter = async (profile, center, jwtToken) => {
-  console.log('handleProfileAndCenter', { center, profile });
-
   if (profile.sysName === 'admin' || profile.sysName === 'super') {
-    console.log('profile.sysName === admin');
     const response = await getUserProfileTokenRequest(profile.id, jwtToken);
     await hooks.fireEvent('user:change:profile', profile);
     return { ...response.jwtToken, profile };
