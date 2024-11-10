@@ -1,12 +1,13 @@
-import React from 'react';
-import { isUndefined } from 'lodash';
+import React, { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useHistory } from 'react-router-dom';
+
 import {
   Alert,
   Box,
   Button,
   Checkbox,
   ContextContainer,
-  createStyles,
   Select,
   Stack,
   Switch,
@@ -15,14 +16,15 @@ import {
   TotalLayoutHeader,
   TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@emails/helpers/prefixPN';
 import { useStore } from '@common';
-import { Controller, useForm } from 'react-hook-form';
-import { getConfigRequest, saveConfigRequest } from '@emails/request';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useHistory } from 'react-router-dom';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { isUndefined } from 'lodash';
+
+import prefixPN from '@emails/helpers/prefixPN';
+import { useConfig } from '@emails/hooks/queries/useConfig';
+import { saveConfigRequest } from '@emails/request';
 
 function HeaderIcon() {
   return (
@@ -45,6 +47,7 @@ export default function Preferences() {
 
   // ----------------------------------------------------------------------
   // SETTINGS
+
   const [store, render] = useStore({
     loading: true,
   });
@@ -54,14 +57,19 @@ export default function Preferences() {
   const disableEmail = watch('disable-all-activity-emails');
   const newAssignations = watch('new-assignation-email');
 
-  async function load() {
-    try {
-      const { configs } = await getConfigRequest();
+  const { data: configs, isError: isErrorConfigs } = useConfig({});
+
+  useEffect(() => {
+    if (configs) {
       reset(configs);
-    } catch (e) {
-      addErrorAlert(getErrorMessage(e));
     }
-  }
+  }, [configs]);
+
+  useEffect(() => {
+    if (isErrorConfigs) {
+      addErrorAlert(getErrorMessage(isErrorConfigs));
+    }
+  }, [isErrorConfigs]);
 
   async function save() {
     try {
