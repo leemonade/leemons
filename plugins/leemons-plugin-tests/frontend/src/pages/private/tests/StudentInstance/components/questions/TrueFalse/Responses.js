@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Box, Stack } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PropTypes from 'prop-types';

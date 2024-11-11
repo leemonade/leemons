@@ -31,6 +31,7 @@ import {
 
 import { MapQuestion } from './question-types/Map';
 import { MonoResponse } from './question-types/MonoResponse';
+import { ShortResponse } from './question-types/ShortResponse';
 import { TrueFalse } from './question-types/TrueFalse';
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -80,6 +81,7 @@ export default function DetailQuestionForm({
     return type === QUESTION_TYPES.SHORT_RESPONSE;
   }, [type, choices, trueFalseProperties?.isTrue]);
 
+  const solutionValues = form.watch(SOLUTION_KEY_BY_TYPE[type]);
   const answersArray = useMemo(() => {
     if (!type || type === QUESTION_TYPES.TRUE_FALSE) return [];
     return solutionValues ?? [];
@@ -153,8 +155,8 @@ export default function DetailQuestionForm({
     if (!QUESTION_TYPES_WITH_MIN_RESPONSES_TO_ADD_CLUES.includes(type)) {
       return true;
     }
-    return answers?.length >= 3;
-  }, [type, answers]);
+    return answersArray?.length >= 3;
+  }, [type, answersArray]);
 
   const hideOptionsHelp = useMemo(() => {
     if (!rightAnswerSelected) return t('hideOptionNoRightAnswer');

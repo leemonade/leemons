@@ -16,6 +16,7 @@ import QuestionValue from './QuestionValue';
 import Map from './questions/Map';
 import MonoResponse from './questions/MonoResponse';
 import ShortResponse from './questions/ShortResponse';
+import TrueFalse from './questions/TrueFalse';
 
 import { QUESTION_TYPES } from '@tests/pages/private/questions-banks/questionConstants';
 
@@ -106,6 +107,9 @@ export default function Question(props) {
     }
     if (props.question.type === QUESTION_TYPES.MAP) {
       return <Map {...props} isPreviewMode={previewMode} />;
+    }
+    if (props.question.type === QUESTION_TYPES.TRUE_FALSE) {
+      return <TrueFalse {...props} isPreviewMode={previewMode} />;
     }
     return null;
   }, [props, previewMode]);
