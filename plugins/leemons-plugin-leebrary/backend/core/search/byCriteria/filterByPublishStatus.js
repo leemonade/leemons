@@ -21,15 +21,8 @@ async function filterByPublishStatus({
   ctx,
 }) {
   let assets = _assets;
-  let assetsAreStrings = false;
 
-  const assetsIds = assets.map((asset) => {
-    if (isString(asset)) {
-      assetsAreStrings = true;
-      return asset;
-    }
-    return asset.asset;
-  });
+  const assetsIds = assets.map((asset) => asset?.asset ?? asset);
 
   if (!nothingFound) {
     assets = await ctx.tx.call('common.versionControl.getVersion', {
@@ -59,10 +52,12 @@ async function filterByPublishStatus({
       assets = assets.map(({ fullId }) => fullId);
     }
   }
-
-  return assetsAreStrings ? uniq(assets) : uniqBy(assets, 'asset');
+  const [assetChecker] = assets;
+  return isString(assetChecker) ? uniq(assets) : uniqBy(assets, 'asset');
 }
 
 module.exports = {
   filterByPublishStatus,
 };
+
+
