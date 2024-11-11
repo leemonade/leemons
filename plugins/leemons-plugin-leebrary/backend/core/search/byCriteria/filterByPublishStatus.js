@@ -52,6 +52,7 @@ async function filterByPublishStatus({
       assets = assets.map(({ fullId }) => fullId);
     }
   }
+
   const [assetChecker] = assets;
   return isString(assetChecker) ? uniq(assets) : uniqBy(assets, 'asset');
 }

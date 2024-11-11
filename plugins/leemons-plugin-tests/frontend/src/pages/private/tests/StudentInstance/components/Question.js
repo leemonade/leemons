@@ -1,5 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { useLocation } from 'react-router-dom';
+
 import {
   Box,
   Button,
@@ -9,11 +10,14 @@ import {
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { forEach, isNumber } from 'lodash';
-import { useLocation } from 'react-router-dom';
-import { QUESTION_TYPES } from '@tests/pages/private/questions-banks/questionConstants';
-import MonoResponse from './questions/MonoResponse';
-import Map from './questions/Map';
+import PropTypes from 'prop-types';
+
 import QuestionValue from './QuestionValue';
+import Map from './questions/Map';
+import MonoResponse from './questions/MonoResponse';
+import TrueFalse from './questions/TrueFalse';
+
+import { QUESTION_TYPES } from '@tests/pages/private/questions-banks/questionConstants';
 
 export default function Question(props) {
   const { classes, cx, t, store, render, index } = props;
@@ -71,8 +75,20 @@ export default function Question(props) {
     nextLabel = props.isLast
       ? t('finishButton')
       : allSelectsUsed
-      ? t('nextButton')
-      : t('skipButton');
+        ? t('nextButton')
+        : t('skipButton');
+  }
+
+  if (props.question.type === QUESTION_TYPES.TRUE_FALSE) {
+    child = <TrueFalse {...props} isPreviewMode={previewMode} />;
+    const response = store.questionResponses?.[props.question.id]?.properties?.response;
+    if (props.isLast) {
+      nextLabel = t('finishButton');
+    } else if (typeof response === 'boolean') {
+      nextLabel = t('nextButton');
+    } else {
+      nextLabel = t('skipButton');
+    }
   }
 
   let disableNext = !store.config.canOmitQuestions;
@@ -165,4 +181,6 @@ Question.propTypes = {
   question: PropTypes.any,
   render: PropTypes.func,
   index: PropTypes.number,
+  isLast: PropTypes.bool,
+  scrollRef: PropTypes.any,
 };

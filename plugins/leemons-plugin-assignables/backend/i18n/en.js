@@ -442,13 +442,13 @@ module.exports = {
         helpCenter: {
           title: 'Visit the help center',
           description:
-            'At {CTA}, you will find useful information to make the most of the platform.',
+            'At Leemons Academy, you will find useful information to make the most of the platform.',
           cta: 'Leemons Academy',
         },
         leebrary: {
           title: 'Upload resources',
           description:
-            'In the {CTA}, you can upload content and create materials and activities for your classes.',
+            'In the Leemons Library you can upload content and create materials and activities for your classes.',
           cta: 'Leemons Library',
         },
         comunica: {
@@ -463,10 +463,8 @@ module.exports = {
           'In this dashboard, you will soon find information about the activities and tasks assigned to you by your teachers, your delivery calendar, or your agile task manager.',
         description2: 'Meanwhile, to get started, we recommend the following actions:',
         helpCenter: {
-          title: 'Visit the help center',
-          description:
-            'At {CTA}, you will find useful information to make the most of the platform.',
-          cta: 'Leemons Academy',
+          title: 'Complete your profile',
+          description: 'Review your profile information and make sure everything is correct.',
         },
         comunica: {
           title: 'Say “Hello”',

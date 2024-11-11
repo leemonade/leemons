@@ -25,7 +25,7 @@ export default function Responses(props) {
     [question, store.questionResponses?.[question.id].clues]
   );
 
-  if (clue && clue.indexs.includes(currentResponseIndex)) {
+  if (clue && clue.indices.includes(currentResponseIndex)) {
     store.questionResponses[question.id].properties.response = null;
     render();
   }
@@ -54,7 +54,7 @@ export default function Responses(props) {
       classDisableBg = cx(classDisableBg, styles.disableResponseBgWithOutImage);
       classDisableIcon = cx(classDisableIcon, styles.disableResponseIconWithOutImage);
     }
-    const clued = clue && clue.indexs.includes(index);
+    const clued = clue && clue.indices.includes(index);
     if (clued) {
       classContainer = cx(classContainer, styles.questionResponseImageContainerClued);
     }

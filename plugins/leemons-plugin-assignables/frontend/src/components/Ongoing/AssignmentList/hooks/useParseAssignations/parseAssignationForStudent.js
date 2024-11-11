@@ -1,138 +1,23 @@
-import React from 'react';
-
-import { useClassesSubjects } from '@academic-portfolio/hooks';
 import { Text } from '@bubbles-ui/components';
-import { unflatten } from '@common';
 import UnreadMessages from '@comunica/components/UnreadMessages';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import dayjs from 'dayjs';
-import { get } from 'lodash';
+import PropTypes from 'prop-types';
 
 import { parseAssignationForCommonView } from './parseAssignationForCommon';
 
 import prefixPN from '@assignables/helpers/prefixPN';
-
-function getStatus(assignation) {
-  const { instance } = assignation;
-
-  const { alwaysAvailable: isAlwaysAvailable } = instance;
-
-  const now = dayjs();
-  const startDate = dayjs(instance.dates.start || null);
-  const deadline = dayjs(instance.dates.deadline || null);
-  const closeDate = dayjs(instance.dates.closed || null);
-
-  const startTime = dayjs(assignation.timestamps.start || null);
-  const endTime = dayjs(assignation.timestamps.end || null);
-
-  const activityHasStarted = isAlwaysAvailable || (startDate.isValid() && !now.isBefore(startDate));
-  const activityHasBeenClosed = isAlwaysAvailable
-    ? closeDate.isValid() && !now.isBefore(closeDate)
-    : deadline.isValid() && !now.isBefore(deadline);
-
-  const studentHasStarted = startTime.isValid();
-  const studentHasFinished = endTime.isValid();
-
-  return {
-    activityHasStarted,
-    activityHasBeenClosed,
-    studentHasStarted,
-    studentHasFinished,
-  };
-}
-
-function useProgressLocalizations() {
-  const [, translations] = useTranslateLoader(prefixPN('activity_status'));
-
-  return React.useMemo(() => {
-    if (translations && translations.items) {
-      const res = unflatten(translations.items);
-      return get(res, prefixPN('activity_status'));
-    }
-
-    return {};
-  }, [translations]);
-}
+import useAssignationProgress from '@assignables/hooks/useAssignationProgress';
 
 export function Progress({ assignation, isBlocked }) {
-  const { instance } = assignation;
-  const { classes } = instance;
-  const isModule = instance.metadata?.module?.type === 'module';
+  const { label, color } = useAssignationProgress({ assignation, isBlocked });
 
-  const labels = useProgressLocalizations();
-
-  const classesSubjects = useClassesSubjects(classes);
-  const subjectsCount = classesSubjects.length;
-
-  const { requiresScoring, allowFeedback } = instance;
-
-  const isEvaluable = !isModule && (requiresScoring || allowFeedback);
-
-  // TODO: Add if has any feedback when only allowFeedback
-  const hasAllGrades = React.useMemo(
-    () =>
-      assignation.grades.filter(({ type }) => type === 'main')?.length === subjectsCount &&
-      subjectsCount > 0,
-    [assignation.grades, subjectsCount]
-  );
-
-  const hasBeenEvaluated = isEvaluable && hasAllGrades;
-
-  const { activityHasBeenClosed, studentHasFinished, studentHasStarted } = React.useMemo(
-    () => getStatus(assignation),
-    [assignation]
-  );
-
-  const severity = React.useMemo(() => {
-    if (instance.alwaysAvailable || !instance.dates?.deadline || !instance.dates?.start) {
-      return 'primary';
-    }
-
-    const remainingDays = dayjs(instance.dates.deadline).diff(
-      dayjs(instance.dates.start),
-      'd',
-      true
-    );
-
-    if (remainingDays >= 6) {
-      return 'primary';
-    }
-
-    if (remainingDays >= 5) {
-      return 'warning';
-    }
-
-    return 'error';
-  }, []);
-
-  if (hasBeenEvaluated && studentHasFinished) {
-    return <Text color="success">{labels?.evaluated}</Text>;
-  }
-
-  if (activityHasBeenClosed && !studentHasFinished) {
-    return <Text color="error">{labels?.notSubmitted}</Text>;
-  }
-
-  if (studentHasFinished) {
-    if (isEvaluable) {
-      return <Text color="success">{labels?.submitted}</Text>;
-    }
-
-    return <Text color="success">{labels?.ended}</Text>;
-  }
-
-  if (isBlocked) {
-    return <Text color={severity}>{labels?.blocked}</Text>;
-  }
-
-  if (!studentHasStarted) {
-    return <Text color={severity}>{labels?.notStarted}</Text>;
-  }
-
-  if (studentHasStarted) {
-    return <Text color={severity}>{labels?.started}</Text>;
-  }
+  return <Text color={color}>{label}</Text>;
 }
+
+Progress.propTypes = {
+  assignation: PropTypes.object,
+  isBlocked: PropTypes.bool,
+};
 
 function isFinished(assignation) {
   const {

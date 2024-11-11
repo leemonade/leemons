@@ -54,6 +54,13 @@ const LIBRARY_ADD_ASSET = 'leebrary.assets.add';
  */
 
 /**
+ * Represents the properties for true-false questions.
+ *
+ * @typedef {Object} TrueFalseProperties
+ * @property {boolean} isTrue - Indicates if the answer to the question is true.
+ */
+
+/**
  * Represents the data for a question.
  *
  * @typedef {Object} QuestionData
@@ -73,6 +80,7 @@ const LIBRARY_ADD_ASSET = 'leebrary.assets.add';
  * @property {string} questionImage - An image cover for the question.
  * @property {Array<Choice>} choices - The solution property for mono-response and multi-choice questions. Only present in multi-choice questions.
  * @property {Object} mapProperties - The solution property for map questions. Only present in map questions.
+ * @property {Object} trueFalseProperties - The solution property for true-false questions. Only present in true-false questions.
  */
 
 /**
@@ -85,7 +93,7 @@ const LIBRARY_ADD_ASSET = 'leebrary.assets.add';
  * @returns {Promise<Object>} - The created question.
  */
 async function createQuestion({ data, published, ctx }) {
-  const { tags, choices, mapProperties, ...props } = _.cloneDeep(data);
+  const { tags, choices, mapProperties, trueFalseProperties, ...props } = _.cloneDeep(data);
 
   // For map questions, create the map image asset
   if (props.type === QUESTION_TYPES.MAP) {
@@ -125,14 +133,14 @@ async function createQuestion({ data, published, ctx }) {
     });
   }
 
-  // Question "cover" image
+  // Question featured image
   if (props.questionImage) {
     const asset = await ctx.tx.call(LIBRARY_ADD_ASSET, {
       asset: {
         name: 'Question image',
         cover: props.questionImage?.cover?.id ?? props.questionImage,
         indexable: false,
-        public: true, // TODO Cambiar a false despues de hacer la demo
+        public: true,
       },
       options: { published },
     });
@@ -142,10 +150,13 @@ async function createQuestion({ data, published, ctx }) {
 
   const questionToCreate = { ...props };
 
+  // Add answer properties according to the question type
   if (props.type === QUESTION_TYPES.MAP) {
     questionToCreate.mapProperties = mapProperties;
   } else if (props.type === QUESTION_TYPES.MONO_RESPONSE) {
     questionToCreate.choices = choices;
+  } else if (props.type === QUESTION_TYPES.TRUE_FALSE) {
+    questionToCreate.trueFalseProperties = trueFalseProperties;
   }
 
   let question = await ctx.tx.db.Questions.create(questionToCreate);

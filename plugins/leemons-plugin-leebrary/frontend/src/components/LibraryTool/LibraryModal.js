@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import { useState } from 'react';
+
 import { Box } from '@bubbles-ui/components';
 import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { prepareAsset } from '../../helpers/prepareAsset';
 import { AssetPickerDrawer } from '../AssetPickerDrawer';
 
@@ -78,7 +80,7 @@ const LibraryModal = ({
       onChange({
         width: '100%',
         align: 'left',
-        display: 'embed',
+        display: ['image', 'video'].includes(preparedAsset.fileType) ? 'player' : 'embed',
         asset: preparedAsset,
         readOnly,
       });

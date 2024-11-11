@@ -7,6 +7,7 @@ const { getProgramCourses } = require('./getProgramCourses');
 const { getProgramCustomNomenclature } = require('./getProgramCustomNomenclature');
 const { getProgramCycles } = require('./getProgramCycles');
 const { getProgramGroups } = require('./getProgramGroups');
+const { organizeProgramStaffByRoles, getProgramStaffMany } = require('./getProgramStaff');
 const { getProgramSubjects } = require('./getProgramSubjects');
 const { getProgramSubstages } = require('./getProgramSubstages');
 const { getProgramTreeTypes } = require('./getProgramTreeTypes');
@@ -47,7 +48,6 @@ const getProgramTeachers = (classes) => {
   return [...new Set(teacherIds)];
 };
 
-// There i
 async function programsByIds({
   ids,
   onlyProgram,
@@ -63,20 +63,27 @@ async function programsByIds({
     return ctx.tx.db.Programs.find({ id: _.isArray(ids) ? ids : [ids] }, '', dbQueryOptions).lean();
   }
 
-  const [programs, programCenter, substages, courses, groups, subjects, cycles, nomenclature] =
-    await Promise.all([
-      ctx.tx.db.Programs.find({ id: _.isArray(ids) ? ids : [ids] }, '', dbQueryOptions).lean(),
-      ctx.tx.db.ProgramCenter.find(
-        { program: _.isArray(ids) ? ids : [ids] },
-        dbQueryOptions
-      ).lean(),
-      getProgramSubstages({ ids, options: dbQueryOptions, ctx }),
-      getProgramCourses({ ids, options: dbQueryOptions, ctx }),
-      getProgramGroups({ ids, options: dbQueryOptions, ctx }),
-      getProgramSubjects({ ids, options: dbQueryOptions, ctx }),
-      getProgramCycles({ ids, ctx }),
-      getProgramCustomNomenclature({ ids, ctx }),
-    ]);
+  const [
+    programs,
+    programCenter,
+    substages,
+    courses,
+    groups,
+    subjects,
+    cycles,
+    nomenclature,
+    staff,
+  ] = await Promise.all([
+    ctx.tx.db.Programs.find({ id: _.isArray(ids) ? ids : [ids] }, '', dbQueryOptions).lean(),
+    ctx.tx.db.ProgramCenter.find({ program: _.isArray(ids) ? ids : [ids] }, dbQueryOptions).lean(),
+    getProgramSubstages({ ids, options: dbQueryOptions, ctx }),
+    getProgramCourses({ ids, options: dbQueryOptions, ctx }),
+    getProgramGroups({ ids, options: dbQueryOptions, ctx }),
+    getProgramSubjects({ ids, options: dbQueryOptions, ctx }),
+    getProgramCycles({ ids, ctx }),
+    getProgramCustomNomenclature({ ids, ctx }),
+    getProgramStaffMany({ ids, ctx }),
+  ]);
 
   // We need the program classes to get extra info: knowledge areas, subject types, students
   let classes;
@@ -114,6 +121,7 @@ async function programsByIds({
   const centersByProgram = _.groupBy(programCenter, 'program');
   const cyclesByProgram = _.groupBy(cycles, 'program');
   const classesByProgramId = _.groupBy(classes, 'program');
+  const staffByProgram = _.groupBy(staff, 'program');
 
   const treeTypes = await Promise.all(
     programs.map((program) => getProgramTreeTypes({ programId: program, ctx }))
@@ -138,6 +146,9 @@ async function programsByIds({
       : [],
     cycles: cyclesByProgram[program.id] ? cyclesByProgram[program.id] : [],
     nomenclature: nomenclature[program.id] ? nomenclature[program.id] : {},
+    staff: staffByProgram[program.id]
+      ? organizeProgramStaffByRoles(staffByProgram[program.id])
+      : {},
   }));
 
   if (withStudentsAndTeachers) {

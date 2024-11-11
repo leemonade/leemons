@@ -1,5 +1,4 @@
 /* eslint-disable react/prop-types */
-import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
@@ -174,7 +173,7 @@ function StudentActions({ isBlocked, activity, assignation, localizations }) {
     if (!allowFeedback && !requiresScoring) {
       return (
         <Box className={classes.buttonContainer}>
-          <EvaluationStateDisplay state={false} />
+          <EvaluationStateDisplay assignation={assignation} />
           <Link to={activityUrl}>
             <Button variant="outline" style={{ paddingLeft: '40px', paddingRight: '40px' }}>
               {localizations?.buttons?.review}
@@ -186,7 +185,7 @@ function StudentActions({ isBlocked, activity, assignation, localizations }) {
     if (isFinishedButNotGraded) {
       return (
         <Box className={classes.buttonContainer}>
-          <EvaluationStateDisplay state={false} />
+          <EvaluationStateDisplay assignation={assignation} />
           <Link to={activityUrl}>
             <Button variant="outline" style={{ paddingLeft: '40px', paddingRight: '40px' }}>
               {localizations?.buttons?.review}
@@ -198,7 +197,7 @@ function StudentActions({ isBlocked, activity, assignation, localizations }) {
     if (isFinishedAndGraded) {
       return (
         <Box className={classes.buttonContainer}>
-          <EvaluationStateDisplay state={true} />
+          <EvaluationStateDisplay assignation={assignation} />
           <Link to={evaluationUrl}>
             <Button size="sm" variant="outline">
               {localizations?.buttons?.viewEvaluation}

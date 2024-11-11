@@ -22,6 +22,7 @@ const models = {
   ...require('./subject-types'),
   ...require('./subjects'),
   ...require('./blocks'),
+  ...require('./program-staff'),
 };
 
 module.exports = {
@@ -47,6 +48,7 @@ module.exports = {
       SubjectTypes: models.subjectTypesModel,
       Subjects: models.subjectsModel,
       Blocks: models.blocksModel,
+      ProgramStaff: models.programStaffModel,
       KeyValue: getKeyValueModel({ modelName: 'v1::academic-portfolio_KeyValue' }),
     };
   },

@@ -1,3 +1,4 @@
+import { ActionButton } from '@bubbles-ui/components';
 import { DeleteBinIcon } from '@bubbles-ui/icons/outline';
 import { UndeleteIcon } from '@bubbles-ui/icons/solid';
 import PropTypes from 'prop-types';
@@ -11,10 +12,20 @@ export function DeleteAction({ id }) {
   const isDeleted = useWatch({ name: `state.deleted.${id}` });
 
   if (isDeleted) {
-    return <UndeleteIcon onClick={() => onToggleDelete(false)} width={18} height={18} />;
+    return (
+      <ActionButton
+        icon={<UndeleteIcon width={18} height={18} />}
+        onClick={() => onToggleDelete(false)}
+      />
+    );
   }
 
-  return <DeleteBinIcon onClick={() => onToggleDelete(true)} width={18} height={18} />;
+  return (
+    <ActionButton
+      icon={<DeleteBinIcon width={18} height={18} />}
+      onClick={() => onToggleDelete(true)}
+    />
+  );
 }
 
 DeleteAction.propTypes = {
