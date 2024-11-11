@@ -141,7 +141,7 @@ module.exports = {
         ) {
           return listUsers({ ...ctx.params, ctx });
         }
-        return [];
+        return {};
       },
     },
     // User agents
