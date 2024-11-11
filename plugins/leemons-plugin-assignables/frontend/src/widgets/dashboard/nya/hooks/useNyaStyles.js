@@ -4,23 +4,23 @@ const useNyaStyles = createStyles((theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    gap: theme.spacing[8],
+    gap: theme.spacing[4],
   },
   section: {
     display: 'flex',
     flexDirection: 'column',
-    gap: theme.spacing[7],
+    gap: theme.spacing[4],
   },
   sectionHeader: {
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'end',
   },
   sectionTitle: {
     fontSize: '20px',
-    fontWeight: 600,
+    fontWeight: 500,
     lineHeight: '28px',
-    marginBottom: theme.spacing[4],
   },
 }));
 

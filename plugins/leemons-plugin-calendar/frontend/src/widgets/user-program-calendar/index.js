@@ -155,11 +155,10 @@ function UserProgramCalendar({ inTab, program, classe }) {
 
   return (
     <Box className={styles.root}>
-      <Stack fullWidth alignItems="center" justifyContent="space-between">
+      <Stack fullWidth alignItems="end" justifyContent="space-between">
         <Box>
           <Title order={3}>{t('agenda')}</Title>
         </Box>
-
         <Box>
           <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onNewEvent}>
             {tc('new')}

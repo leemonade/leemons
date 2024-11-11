@@ -30,6 +30,7 @@ const {
   updateProgramConfiguration,
   getAcademicTree,
   getProgramCustomNomenclature,
+  validateStaffChange,
 } = require('../../core/programs');
 
 /** @type {ServiceSchema} */
@@ -505,6 +506,17 @@ module.exports = {
         ctx,
       });
       return { status: 200, nomenclature };
+    },
+  },
+  validateStaffChange: {
+    rest: {
+      path: '/validate-staff-change',
+      method: 'POST',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const data = await validateStaffChange({ data: ctx.params, ctx });
+      return { status: 200, data };
     },
   },
 };

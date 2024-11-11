@@ -27,6 +27,7 @@ const useDashboardCardFooterStyles = createStyles((theme) => {
       display: 'flex',
       width: '90%',
       justifyContent: 'space-between',
+      alignItems: 'center',
     },
     type: {
       color: cardModule.content.color.muted,

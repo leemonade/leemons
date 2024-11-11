@@ -1,3 +1,4 @@
+import { ActionButton } from '@bubbles-ui/components';
 import { PluginSettingsIcon } from '@bubbles-ui/icons/outline';
 import PropTypes from 'prop-types';
 
@@ -11,7 +12,12 @@ export function ConfigAction({ onConfig, activity, id }) {
     return null;
   }
 
-  return <PluginSettingsIcon onClick={() => onConfig({ activity, id })} width={18} height={18} />;
+  return (
+    <ActionButton
+      icon={<PluginSettingsIcon width={18} height={18} />}
+      onClick={() => onConfig({ activity, id })}
+    />
+  );
 }
 
 ConfigAction.propTypes = {

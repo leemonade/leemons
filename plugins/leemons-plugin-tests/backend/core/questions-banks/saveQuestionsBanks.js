@@ -108,7 +108,7 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
     throw new LeemonsError(ctx, { message: 'User session is required (saveQuestionsBanks)' });
   }
 
-  validateSaveQuestionBank(data);
+  validateSaveQuestionBank(data, ctx);
 
   const { id, questions, categories, tags, published, subjects, ...props } = data;
   let questionBank;

@@ -16,7 +16,8 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { USER_DETAIL_VIEWS } from '@users/components/UserDetail';
 import { UserDetailDrawer } from '@users/components/UserDetailDrawer';
 import getUserFullName from '@users/helpers/getUserFullName';
-import { getSessionCenter, getSessionProfile } from '@users/session';
+import { useUserAgentsInfo } from '@users/hooks';
+import { getSessionCenter, getSessionProfile, getSessionUserAgent } from '@users/session';
 import { forEach } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -32,11 +33,18 @@ function ClassDetailWidget({ classe }) {
   const [t] = useTranslateLoader(prefixPN('classDetailWidget'));
   const center = getSessionCenter();
   const profile = getSessionProfile();
+  const userAgentId = getSessionUserAgent();
 
   const [openedUser, setOpenedUser] = React.useState();
   const [openedUserType, setOpenedUserType] = React.useState();
 
   const { openUserRoom, isChatEnabled } = useComunica();
+
+  const { data: userInfo, isLoading: userInfoLoading } = useUserAgentsInfo([userAgentId], {
+    enabled: !!userAgentId,
+  });
+
+  const { user } = userInfo?.[0] ?? {};
 
   function handleOnClickRow(userId, sysName) {
     setOpenedUser(userId);
@@ -114,6 +122,14 @@ function ClassDetailWidget({ classe }) {
                 handleOnClickRow(teacher.teacher.user.id, 'teacher');
               }}
             />
+            {isChatEnabled && !userInfoLoading && user?.id !== teacher.teacher.user.id && (
+              <ActionButton
+                icon={<PluginComunicaIcon width={18} height={18} />}
+                onClick={() => {
+                  openUserRoom(teacher.teacher.id);
+                }}
+              />
+            )}
           </Stack>
         ),
       });
@@ -132,7 +148,7 @@ function ClassDetailWidget({ classe }) {
                 handleOnClickRow(student.user.id, 'student');
               }}
             />
-            {isChatEnabled && (
+            {isChatEnabled && !userInfoLoading && user?.id !== student.user.id && (
               <ActionButton
                 icon={<PluginComunicaIcon width={18} height={18} />}
                 onClick={() => {
@@ -146,7 +162,7 @@ function ClassDetailWidget({ classe }) {
     });
 
     return { teachers, students };
-  }, [classe, isChatEnabled, openUserRoom]);
+  }, [classe, isChatEnabled, openUserRoom, user, userInfoLoading]);
 
   return (
     <>

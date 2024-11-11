@@ -125,6 +125,8 @@ module.exports = {
       shortResponse: {
         answerPlaceholder: 'Write your answer here',
       },
+    errors: {
+      save: 'The changes could not be saved.',
     },
   },
   questionImageModal: {

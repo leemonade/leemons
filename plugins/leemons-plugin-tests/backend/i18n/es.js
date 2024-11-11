@@ -125,6 +125,9 @@ module.exports = {
         answerPlaceholder: 'Escribe aquí tu respuesta',
       },
     },
+    errors: {
+      save: 'No se han podido guardar los cambios.',
+    },
   },
   questionImageModal: {
     createNumbering: 'Crear numeración',

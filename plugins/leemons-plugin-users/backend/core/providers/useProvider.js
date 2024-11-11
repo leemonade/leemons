@@ -1,4 +1,6 @@
 const { LeemonsError } = require('@leemons/error');
+const { getPluginProvider } = require('@leemons/providers');
+
 const { isSuperAdmin } = require('../users');
 
 /**
@@ -17,7 +19,12 @@ async function useProvider({ provider, ctx }) {
       });
     }
 
-    if (!provider) {
+    const providerEntry = await getPluginProvider({
+      providerName: provider,
+      keyValueModel: ctx.tx.db.KeyValue,
+    });
+
+    if (!providerEntry) {
       throw new LeemonsError(ctx, {
         message: 'Provider is required',
         httpStatusCode: 400,
@@ -37,6 +44,10 @@ async function useProvider({ provider, ctx }) {
         new: true,
       }
     );
+
+    if (providerEntry.value.params.supportedMethods.initialization) {
+      await ctx.tx.call(providerEntry.value.params.supportedMethods.initialization.action);
+    }
 
     return true;
   } catch (error) {

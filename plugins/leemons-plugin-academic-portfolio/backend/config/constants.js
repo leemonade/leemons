@@ -363,6 +363,14 @@ const CUSTOMIZABLE_TRANSLATION_KEYS = {
   SUBJECT: 'subject',
 };
 
+const PROGRAM_STAFF_ROLES = {
+  PROGRAM_DIRECTOR: 'program-director',
+  PROGRAM_COORDINATOR: 'program-coordinator',
+  LEAD_INSTRUCTOR: 'lead-instructor',
+  ACADEMIC_ADVISOR: 'academic-advisor',
+  EXTERNAL_EVALUATOR: 'external-evaluator',
+};
+
 module.exports = {
   pluginName: permissionsPrefix,
   permissions: {
@@ -374,5 +382,6 @@ module.exports = {
   widgets,
   CUSTOMIZABLE_TRANSLATION_KEYS,
   PLUGIN_NAME: permissionsPrefix,
-  VERSION: 1
+  VERSION: 1,
+  PROGRAM_STAFF_ROLES,
 };
