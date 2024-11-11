@@ -9,31 +9,29 @@ const keysDefaults = {
 };
 
 async function getConfig({ keys, userAgent, ctx }) {
+  const isJustOneKey = _.isString(keys);
+
   const query = {
     userAgent,
   };
+
+  if (isJustOneKey) {
+    query.key = keys;
+  }
+
   const configs = await ctx.tx.db.Config.find(query).lean();
 
-  if (_.isString(keys)) {
-    //! NOTA: No entiendo esta lógica
-    //* Si es la key es un string (no piden más que una) y se recibe por lo menos una configuración
-    //* ¿Por qué se le da la primera que hay? Ni si quiera miramos si es de la key que queremos!!!!
+  if (isJustOneKey) {
     return configs.length ? JSON.parse(configs[0].value || null) : keysDefaults[keys];
   }
 
-  let finalKeys = _.cloneDeep(keys);
-  // Si no hay keys simulamos que nos han pedido todas las keys para no repetir el código
-  if (!keys) {
-    finalKeys = _.keys(keysDefaults);
-  }
-  // Si no hay alguna configuacion de las solicitadas en keys, se añade el valor por defecto en keysDefaults
-  const keysWithDefaults = finalKeys.map((key) => {
-    if (!_.find(configs, { key })) {
-      return { key, value: keysDefaults[key] };
-    }
-    return { key, value: JSON.parse(_.find(configs, { key }).value || null) };
+  const configKeys = configs.map((config) => config.key);
+  const keysWithDefaults = configKeys.map((key) => {
+    const config = _.find(configs, { key });
+    return { key, value: config ? JSON.parse(config?.value) : keysDefaults[key] };
   });
-  // Lo transformamos en un objeto
+
+  // Return an object with the keys and values
   return _.reduce(
     keysWithDefaults,
     (acc, { key, value }) => {

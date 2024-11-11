@@ -1,4 +1,4 @@
-const PLUGIN_NAME = 'emails';
+import { PLUGIN_NAME } from '@emails/config/constants';
 
 const allConfigKey = [
   {
