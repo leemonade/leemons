@@ -240,6 +240,7 @@ const libraryQuestionBankCategory = {
 const QUESTION_TYPES = {
   MAP: 'map',
   MONO_RESPONSE: 'mono-response',
+  TRUE_FALSE: 'true-false',
   SHORT_RESPONSE: 'short-response',
 };
 

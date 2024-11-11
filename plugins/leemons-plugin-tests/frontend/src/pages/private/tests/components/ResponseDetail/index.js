@@ -73,7 +73,7 @@ function ResponseDetail({
       if (userSkipped) return solutionLabel;
       return '';
     },
-    [solutionLabel, userSkipped]
+    [solutionLabel, userSkipped, isChoiceBased]
   );
 
   const tableData = useMemo(() => {

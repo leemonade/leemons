@@ -81,13 +81,14 @@ async function calculateUserAgentInstanceNote({ instanceId, userAgent, ctx }) {
         isCorrect: true,
       });
 
-      if (!_.isNumber(questionResponses[question.id]?.properties?.response)) {
+      const response = questionResponses[question.id]?.properties?.response;
+      if (!_.isNumber(response)) {
         note += perUndefined;
         questionsResponse[question.id] = {
           points: perUndefined,
           status: null,
         };
-      } else if (questionResponses[question.id].properties.response === correctIndex) {
+      } else if (response === correctIndex) {
         note += perDone - getClueLessPoints(question);
         questionsResponse[question.id] = {
           points: perDone - getClueLessPoints(question),
@@ -104,6 +105,7 @@ async function calculateUserAgentInstanceNote({ instanceId, userAgent, ctx }) {
       if (questionResponses[question.id]?.properties?.responses) {
         let allWithValues = true;
         let allValuesGood = true;
+
         _.forEach(question.mapProperties.markers.list, (r, index) => {
           if (!_.isNumber(questionResponses[question.id].properties.responses[index])) {
             allWithValues = false;
@@ -138,6 +140,29 @@ async function calculateUserAgentInstanceNote({ instanceId, userAgent, ctx }) {
           status: null,
         };
       }
+    } else if (question.type === QUESTION_TYPES.TRUE_FALSE) {
+      const questionIsTrue = question.trueFalseProperties.isTrue;
+      const response = questionResponses[question.id]?.properties?.response;
+
+      if (typeof response !== 'boolean') {
+        note += perUndefined;
+        questionsResponse[question.id] = {
+          points: perUndefined,
+          status: null,
+        };
+      } else if (response === questionIsTrue) {
+        note += perDone - getClueLessPoints(question);
+        questionsResponse[question.id] = {
+          points: perDone - getClueLessPoints(question),
+          status: 'ok',
+        };
+      } else {
+        note += perError;
+        questionsResponse[question.id] = {
+          points: perError,
+          status: 'ko',
+        };
+      }
     }
   });
 
@@ -145,3 +170,32 @@ async function calculateUserAgentInstanceNote({ instanceId, userAgent, ctx }) {
 }
 
 module.exports = { calculateUserAgentInstanceNote };
+
+/*
+
+else if (question.type === QUESTION_TYPES.TRUE_FALSE) {
+      const questionIsTrue = question.trueFalseProperties.isTrue;
+      const response = questionResponses[question.id].properties.response;
+
+      if (typeof response !== 'boolean') {
+        note += perUndefined;
+        questionsResponse[question.id] = {
+          points: perUndefined,
+          status: null,
+        };
+      } else if (response === questionIsTrue) {
+        note += perDone - getClueLessPoints(question);
+        questionsResponse[question.id] = {
+          points: perDone - getClueLessPoints(question),
+          status: 'ok',
+        };
+      } else {
+        note += perError;
+        questionsResponse[question.id] = {
+          points: perError,
+          status: 'ko',
+        };
+      }
+    }
+
+*/

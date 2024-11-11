@@ -85,8 +85,8 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
 
   const monoResponseAnwsersMargin = useMemo(() => {
     if (!hasHelp) {
-      if (hasImageAnswers) return { marginBottom: 120 };
-      return { marginBottom: 40 };
+      if (hasImageAnswers) return { marginBottom: 98 };
+      return { marginBottom: 18 };
     }
     return {};
   }, [hasHelp, hasImageAnswers]);

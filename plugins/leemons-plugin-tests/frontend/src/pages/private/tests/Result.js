@@ -1,18 +1,15 @@
-import { find, forEach, map, orderBy } from 'lodash';
 import React, { useEffect, useMemo } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 
-import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
-import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
-import { CheckBoldIcon, RemoveBoldIcon, SlashIcon, StatisticsIcon } from '@bubbles-ui/icons/solid';
-import ActivityHeader from '@assignables/components/ActivityHeader';
-import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
-import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
-import updateStudentRequest from '@tasks/request/instance/updateStudent';
 import { useIsTeacher } from '@academic-portfolio/hooks';
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
+import ActivityHeader from '@assignables/components/ActivityHeader';
+import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
 import TimeoutAlert from '@assignables/components/EvaluationFeedback/Alerts/TimeoutAlert';
+import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
+import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
 import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
+import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import getAssignation from '@assignables/requests/assignations/getAssignation';
 import {
@@ -36,12 +33,15 @@ import {
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevRightIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
+import { CheckBoldIcon, RemoveBoldIcon, SlashIcon, StatisticsIcon } from '@bubbles-ui/icons/solid';
 import { useSearchParams, useStore } from '@common';
-import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
 import { useComunica } from '@comunica/context';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
+import updateStudentRequest from '@tasks/request/instance/updateStudent';
+import { find, forEach, map, orderBy } from 'lodash';
 
 import ViewModeQuestions from '../../../components/ViewModeQuestions';
 import {
@@ -54,6 +54,7 @@ import { ResultStyles } from './Result.style';
 import { calculeInfoValues } from './StudentInstance/helpers/calculeInfoValues';
 import { getConfigByInstance } from './StudentInstance/helpers/getConfigByInstance';
 import { htmlToText } from './StudentInstance/helpers/htmlToText';
+
 import prefixPN from '@tests/helpers/prefixPN';
 
 export default function Result() {

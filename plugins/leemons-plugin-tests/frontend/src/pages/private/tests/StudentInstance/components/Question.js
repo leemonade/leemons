@@ -39,7 +39,7 @@ const getMapNextLabel = (_, t, allSelectsUsed) => {
 const getNextLabelByQuestionType = {
   [QUESTION_TYPES.MONO_RESPONSE]: getMonoResponseNextLabel,
   [QUESTION_TYPES.SHORT_RESPONSE]: getShortResponseNextLabel,
-  'true-false': getTrueFalseNextLabel, // TODO PAOLA
+  [QUESTION_TYPES.TRUE_FALSE]: getTrueFalseNextLabel,
   [QUESTION_TYPES.MAP]: getMapNextLabel,
 };
 
@@ -124,8 +124,7 @@ export default function Question(props) {
     if (props.question.type === QUESTION_TYPES.MAP) {
       return !allSelectsUsed;
     }
-    if (props.question.type === 'true-false') {
-      // TODO PAOLA
+    if (props.question.type === QUESTION_TYPES.TRUE_FALSE) {
       return typeof currentResponse !== 'boolean';
     }
     return false;

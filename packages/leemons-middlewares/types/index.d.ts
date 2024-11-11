@@ -20,3 +20,11 @@ export function LeemonsMiddlewareNecessaryPermits({
 }: {
   allowedPermissions: PermissionsForMiddleware;
 }): (ctx: Context) => void;
+
+export function checkRequiredPermissions({
+  allowedPermissions,
+  ctx,
+}: {
+  allowedPermissions: PermissionsForMiddleware;
+  ctx: Context;
+}): Promise<boolean>;

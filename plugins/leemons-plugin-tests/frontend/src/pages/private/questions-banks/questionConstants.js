@@ -4,12 +4,14 @@ const QUESTION_TYPES = {
   MONO_RESPONSE: 'mono-response',
   SHORT_RESPONSE: 'short-response',
   MAP: 'map',
+  TRUE_FALSE: 'true-false',
 };
 
 const SOLUTION_KEY_BY_TYPE = {
   [QUESTION_TYPES.MONO_RESPONSE]: 'choices',
   [QUESTION_TYPES.MAP]: 'mapProperties.markers.list',
   [QUESTION_TYPES.SHORT_RESPONSE]: 'choices',
+  [QUESTION_TYPES.TRUE_FALSE]: 'trueFalseProperties',
 };
 
 const QUESTION_TYPES_WITH_HIDDEN_ANSWERS = [QUESTION_TYPES.MAP, QUESTION_TYPES.MONO_RESPONSE];

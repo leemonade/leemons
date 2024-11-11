@@ -21,6 +21,13 @@ const choicesShape = new mongoose.Schema(
   { _id: false }
 );
 
+const trueFalsePropertiesSchema = new mongoose.Schema(
+  {
+    isTrue: Boolean,
+  },
+  { _id: false }
+);
+
 const schema = new mongoose.Schema(
   {
     id: {
@@ -91,9 +98,11 @@ const schema = new mongoose.Schema(
     choices: {
       type: [choicesShape],
     },
-
     mapProperties: {
-      type: mongoose.Schema.Types.Mixed,
+      type: mongoose.Schema.Types.Mixed, // {}
+    },
+    trueFalseProperties: {
+      type: trueFalsePropertiesSchema,
     },
   },
   {

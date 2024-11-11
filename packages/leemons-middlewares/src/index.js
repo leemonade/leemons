@@ -1,9 +1,14 @@
-const mixin = require('./mixin');
 const authenticated = require('./authenticated');
-const necessaryPermits = require('./necessary-permits');
+const mixin = require('./mixin');
+const {
+  LeemonsMiddlewareNecessaryPermits,
+  checkRequiredPermissions,
+} = require('./necessary-permits');
 
 module.exports = {
   LeemonsMiddlewaresMixin: mixin,
   LeemonsMiddlewareAuthenticated: authenticated,
-  LeemonsMiddlewareNecessaryPermits: necessaryPermits,
+  LeemonsMiddlewareNecessaryPermits,
+
+  checkRequiredPermissions,
 };
