@@ -133,7 +133,12 @@ const questionSchema = {
     },
     hasAnswerFeedback: booleanSchema,
 
+    // TODO PAOLA - Remove question image, it becomes question resource
     questionImage: {
+      type: ['object', 'string'],
+      nullable: true,
+    },
+    stemResource: {
       type: ['object', 'string'],
       nullable: true,
     },

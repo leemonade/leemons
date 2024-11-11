@@ -77,7 +77,7 @@ const LIBRARY_ADD_ASSET = 'leebrary.assets.add';
  * @property {Array<string>} clues - The text hints for the question.
  * @property {boolean} hasHelp - Indicates if the question has text hints or if it is configure to hide answer options.
  * @property {string} category - The category of the question.
- * @property {string} questionImage - An image cover for the question.
+ * @property {string} stemResource - A resource part of the question stem.
  * @property {Array<Choice>} choices - The solution property for mono-response and multi-choice questions. Only present in multi-choice questions.
  * @property {Object} mapProperties - The solution property for map questions. Only present in map questions.
  * @property {Object} trueFalseProperties - The solution property for true-false questions. Only present in true-false questions.
@@ -102,7 +102,7 @@ async function createQuestion({ data, published, ctx }) {
         name: `Map question image`,
         cover: mapProperties.image?.cover?.id ?? mapProperties.image,
         indexable: false,
-        public: true, // TODO Cambiar a false despues de hacer la demo
+        public: true,
       },
       options: { published },
     });
@@ -120,7 +120,7 @@ async function createQuestion({ data, published, ctx }) {
             cover: choice.image?.cover?.id ?? choice.image,
             description: choice.imageDescription,
             indexable: false,
-            public: true, // TODO Cambiar a false despues de hacer la demo
+            public: true,
           },
           options: { published },
         })
@@ -134,18 +134,31 @@ async function createQuestion({ data, published, ctx }) {
   }
 
   // Question featured image
-  if (props.questionImage) {
+  // if (props.questionImage) {
+  //   const asset = await ctx.tx.call(LIBRARY_ADD_ASSET, {
+  //     asset: {
+  //       name: 'Question image',
+  //       cover: props.questionImage?.cover?.id ?? props.questionImage,
+  //       indexable: false,
+  //       public: true,
+  //     },
+  //     options: { published },
+  //   });
+
+  //   props.questionImage = asset.id;
+  // }
+  if (props.stemResource) {
     const asset = await ctx.tx.call(LIBRARY_ADD_ASSET, {
       asset: {
-        name: 'Question image',
-        cover: props.questionImage?.cover?.id ?? props.questionImage,
+        name: 'Question stem resource',
         indexable: false,
         public: true,
+        file: props.stemResource?.file?.id ?? props.stemResource,
       },
       options: { published },
     });
 
-    props.questionImage = asset.id;
+    props.stemResource = asset.id;
   }
 
   const questionToCreate = { ...props };
