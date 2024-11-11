@@ -1,7 +1,6 @@
-import React from 'react';
+import { Box, HtmlText } from '@bubbles-ui/components';
 import { camelCase } from 'lodash';
 
-import { Box, HtmlText } from '@bubbles-ui/components';
 import { QUESTION_TYPES } from '@tests/pages/private/questions-banks/questionConstants';
 
 // eslint-disable-next-line import/prefer-default-export
@@ -13,6 +12,9 @@ export function getQuestionForTable(question, t, styles) {
   }
   if (question.type === QUESTION_TYPES.MAP) {
     responsesAmount = question?.mapProperties?.markers?.list?.length;
+  }
+  if (question.type === QUESTION_TYPES.SHORT_RESPONSE) {
+    responsesAmount = question?.choices?.length;
   }
 
   const typeTranslationKey = camelCase(question.type);

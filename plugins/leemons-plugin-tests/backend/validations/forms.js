@@ -1,6 +1,6 @@
+const { LeemonsValidator } = require('@leemons/validator');
 const _ = require('lodash');
 
-const { LeemonsValidator } = require('@leemons/validator');
 const {
   stringSchema,
   booleanSchema,
@@ -34,6 +34,7 @@ const choiceSchema = {
       nullable: true,
     },
     imageDescription: stringSchemaNullable,
+    isMainChoice: booleanSchema, // Only for short-response questions
   },
   required: ['isCorrect'],
 };
@@ -86,7 +87,7 @@ const mapPropertiesSchema = {
   nullable: true,
 };
 
-const questionTypes = ['mono-response', 'map'];
+const questionTypes = ['mono-response', 'map', 'short-response'];
 const questionTypeSchema = {
   type: 'string',
   enum: questionTypes,

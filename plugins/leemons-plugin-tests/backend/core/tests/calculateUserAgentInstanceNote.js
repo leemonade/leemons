@@ -1,13 +1,16 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
 const dayjs = require('dayjs');
 const duration = require('dayjs/plugin/duration');
+const _ = require('lodash');
 const { forEach } = require('lodash');
-const { getUserQuestionResponses } = require('./getUserQuestionResponses');
-const { getByIds } = require('../questions/getByIds');
-const { getQuestionClues } = require('./helpers/getQuestionClues');
-const { getConfigByInstance } = require('./helpers/getConfigByInstance');
+
 const { QUESTION_TYPES } = require('../../config/constants');
+const { getByIds } = require('../questions/getByIds');
+
+const { getUserQuestionResponses } = require('./getUserQuestionResponses');
+const { shortResponseIsCorrect } = require('./helpers/checkResponseByQuestionType');
+const { getConfigByInstance } = require('./helpers/getConfigByInstance');
+const { getQuestionClues } = require('./helpers/getQuestionClues');
 
 dayjs.extend(duration);
 
@@ -52,7 +55,28 @@ async function calculateUserAgentInstanceNote({ instanceId, userAgent, ctx }) {
   }
 
   _.forEach(questions, (question) => {
-    if (question.type === QUESTION_TYPES.MONO_RESPONSE) {
+    if (question.type === QUESTION_TYPES.SHORT_RESPONSE) {
+      const response = questionResponses[question.id]?.properties?.response;
+      if (!response?.length) {
+        note += perUndefined;
+        questionsResponse[question.id] = {
+          points: perUndefined,
+          status: null,
+        };
+      } else if (shortResponseIsCorrect(response, question, config)) {
+        note += perDone - getClueLessPoints(question);
+        questionsResponse[question.id] = {
+          points: perDone - getClueLessPoints(question),
+          status: 'ok',
+        };
+      } else {
+        note += perError;
+        questionsResponse[question.id] = {
+          points: perError,
+          status: 'ko',
+        };
+      }
+    } else if (question.type === QUESTION_TYPES.MONO_RESPONSE) {
       const correctIndex = _.findIndex(question.choices, {
         isCorrect: true,
       });

@@ -1,4 +1,18 @@
+import { find, forEach, map, orderBy } from 'lodash';
+import React, { useEffect, useMemo } from 'react';
+import { Link, useHistory, useParams } from 'react-router-dom';
+
+import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
+import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
+import { CheckBoldIcon, RemoveBoldIcon, SlashIcon, StatisticsIcon } from '@bubbles-ui/icons/solid';
+import ActivityHeader from '@assignables/components/ActivityHeader';
+import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
+import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
+import updateStudentRequest from '@tasks/request/instance/updateStudent';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
+import TimeoutAlert from '@assignables/components/EvaluationFeedback/Alerts/TimeoutAlert';
+import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import getAssignation from '@assignables/requests/assignations/getAssignation';
 import {
@@ -23,36 +37,24 @@ import {
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevRightIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
 import { useSearchParams, useStore } from '@common';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@tests/helpers/prefixPN';
-import { find, forEach, map, orderBy } from 'lodash';
-import React, { useEffect, useMemo } from 'react';
-import { Link, useHistory, useParams } from 'react-router-dom';
-
-import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
-import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
-import { CheckBoldIcon, RemoveBoldIcon, SlashIcon, StatisticsIcon } from '@bubbles-ui/icons/solid';
-import ActivityHeader from '@assignables/components/ActivityHeader';
-import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
-import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
-import updateStudentRequest from '@tasks/request/instance/updateStudent';
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import TimeoutAlert from '@assignables/components/EvaluationFeedback/Alerts/TimeoutAlert';
-import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
-import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
 import { useComunica } from '@comunica/context';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
+
 import ViewModeQuestions from '../../../components/ViewModeQuestions';
 import {
   getQuestionByIdsRequest,
   getUserQuestionResponsesRequest,
   setInstanceTimestampRequest,
 } from '../../../request';
+
 import { ResultStyles } from './Result.style';
 import { calculeInfoValues } from './StudentInstance/helpers/calculeInfoValues';
 import { getConfigByInstance } from './StudentInstance/helpers/getConfigByInstance';
 import { htmlToText } from './StudentInstance/helpers/htmlToText';
+import prefixPN from '@tests/helpers/prefixPN';
 
 export default function Result() {
   const [t] = useTranslateLoader(prefixPN('testResult'));

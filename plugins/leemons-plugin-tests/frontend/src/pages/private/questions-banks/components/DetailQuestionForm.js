@@ -1,4 +1,4 @@
-import { cloneElement, useMemo, useState } from 'react';
+import { cloneElement, useEffect, useMemo, useState } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 
 import SelectLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/SelectLevelsOfDifficulty';
@@ -24,16 +24,20 @@ import PropTypes from 'prop-types';
 import {
   QUESTION_TYPES,
   SOLUTION_KEY_BY_TYPE,
+  QUESTION_TYPES_WITH_HIDDEN_ANSWERS,
   getQuestionTypesForSelect,
+  QUESTION_TYPES_WITH_MIN_RESPONSES_TO_ADD_CLUES,
 } from '../questionConstants';
 
 import { MapQuestion } from './question-types/Map';
 import { MonoResponse } from './question-types/MonoResponse';
+import { ShortResponse } from './question-types/ShortResponse';
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const questionComponents = {
   [QUESTION_TYPES.MONO_RESPONSE]: <MonoResponse />,
   [QUESTION_TYPES.MAP]: <MapQuestion />,
+  [QUESTION_TYPES.SHORT_RESPONSE]: <ShortResponse />,
 };
 
 export default function DetailQuestionForm({
@@ -65,13 +69,16 @@ export default function DetailQuestionForm({
     if (type === QUESTION_TYPES.MONO_RESPONSE) {
       return choices?.some((item) => item?.isCorrect);
     }
-    return false;
+
+    return type === QUESTION_TYPES.SHORT_RESPONSE;
   }, [type, choices]);
 
   const answers = useMemo(() => {
     if (!type) return [];
     return form.getValues(SOLUTION_KEY_BY_TYPE[type]) ?? [];
   }, [form.getValues(SOLUTION_KEY_BY_TYPE[type]), form, type]);
+
+  // HANDLERS ·······························································································|
 
   async function handleOnSaveQuestion() {
     form.handleSubmit((data) => {
@@ -135,7 +142,12 @@ export default function DetailQuestionForm({
     mapProperties?.markers.type,
   ]);
 
-  const hasEnoughAnswersToAddClues = form.getValues(SOLUTION_KEY_BY_TYPE[type])?.length >= 3;
+  const hasEnoughAnswersToAddClues = useMemo(() => {
+    if (!QUESTION_TYPES_WITH_MIN_RESPONSES_TO_ADD_CLUES.includes(type)) {
+      return true;
+    }
+    return answers?.length >= 3;
+  }, [type, answers]);
 
   const hideOptionsHelp = useMemo(() => {
     if (!rightAnswerSelected) return t('hideOptionNoRightAnswer');
@@ -159,9 +171,17 @@ export default function DetailQuestionForm({
 
   const hiddenAnswer = useMemo(
     () =>
-      answers.map((item, index) => (item?.hideOnHelp ? index : -1)).filter((item) => item >= 0)[0],
+      answers?.map((item, index) => (item?.hideOnHelp ? index : -1)).filter((item) => item >= 0)[0],
     [answers]
   );
+
+  // EFFECTS ·······························································································|
+  useEffect(() => {
+    // Reset rules when type changes
+    return () => {
+      form.unregister(['globalFeedback']);
+    };
+  }, [type]);
 
   return (
     <FormProvider {...form}>
@@ -338,7 +358,14 @@ export default function DetailQuestionForm({
 
                 {/* CLUES ---------------------------------------- */}
                 {hasHelp ? (
-                  <ContextContainer title={t('cluesLabel')} description={t('cluesDescription')}>
+                  <ContextContainer
+                    title={
+                      QUESTION_TYPES_WITH_MIN_RESPONSES_TO_ADD_CLUES.includes(type)
+                        ? t('hasCluesLabelWithMinResponses')
+                        : t('hasCluesLabel')
+                    }
+                    description={t('cluesDescription')}
+                  >
                     <Controller
                       control={form.control}
                       name="clues[0]"
@@ -351,19 +378,21 @@ export default function DetailQuestionForm({
                         />
                       )}
                     />
-                    <Stack direction="column" spacing={2}>
-                      <Box style={{ width: 200 }}>
-                        <Select
-                          label={t('hideOptionsLabel')}
-                          value={hiddenAnswer}
-                          data={hideAnswersSelectData}
-                          disabled={!rightAnswerSelected || !hasEnoughAnswersToAddClues}
-                          onChange={handleHideOnHelp}
-                          placeholder={t('hideOptionsPlaceholder')}
-                        />
-                      </Box>
-                      <Text size="xs">{hideOptionsHelp}</Text>
-                    </Stack>
+                    {QUESTION_TYPES_WITH_HIDDEN_ANSWERS?.includes(type) && (
+                      <Stack direction="column" spacing={2}>
+                        <Box style={{ width: 200 }}>
+                          <Select
+                            label={t('hideOptionsLabel')}
+                            value={hiddenAnswer}
+                            data={hideAnswersSelectData}
+                            disabled={!rightAnswerSelected || !hasEnoughAnswersToAddClues}
+                            onChange={handleHideOnHelp}
+                            placeholder={t('hideOptionsPlaceholder')}
+                          />
+                        </Box>
+                        <Text size="xs">{hideOptionsHelp}</Text>
+                      </Stack>
+                    )}
                   </ContextContainer>
                 ) : null}
               </>

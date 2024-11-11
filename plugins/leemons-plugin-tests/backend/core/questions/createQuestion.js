@@ -132,7 +132,7 @@ async function createQuestion({ data, published, ctx }) {
         name: 'Question image',
         cover: props.questionImage?.cover?.id ?? props.questionImage,
         indexable: false,
-        public: true, // TODO Cambiar a false despues de hacer la demo
+        public: true,
       },
       options: { published },
     });
@@ -144,7 +144,10 @@ async function createQuestion({ data, published, ctx }) {
 
   if (props.type === QUESTION_TYPES.MAP) {
     questionToCreate.mapProperties = mapProperties;
-  } else if (props.type === QUESTION_TYPES.MONO_RESPONSE) {
+  } else if (
+    props.type === QUESTION_TYPES.MONO_RESPONSE ||
+    props.type === QUESTION_TYPES.SHORT_RESPONSE
+  ) {
     questionToCreate.choices = choices;
   }
 

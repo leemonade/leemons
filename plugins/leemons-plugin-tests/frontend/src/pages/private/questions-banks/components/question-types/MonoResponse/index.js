@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { find, findIndex, forEach, capitalize, omit } from 'lodash';
+import { useMemo, useState } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
+
 import {
   Box,
   Switch,
@@ -12,9 +12,11 @@ import {
   Text,
   InputWrapper,
 } from '@bubbles-ui/components';
-import { Controller, useFormContext } from 'react-hook-form';
 import { TextEditorInput, TEXT_EDITOR_TEXTAREA_TOOLBARS } from '@bubbles-ui/editors';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
+import { find, findIndex, forEach, capitalize, omit } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { ListInputRender } from './components/ListInputRender';
 import { ListItemRender } from './components/ListItemRender';
 
@@ -142,7 +144,7 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
                 if (!value) removeHideOnHelp();
               }}
               checked={field.value}
-              label={t('hasCluesLabel')}
+              label={t('hasCluesLabelWithMinResponses')}
             />
           )}
         />

@@ -64,6 +64,8 @@ module.exports = {
     responsesLabel: 'Respuestas',
     responseLabel: 'Respuesta',
     responsePlaceholder: 'Añadir aquí el texto de la respuesta',
+    alternativeResponseLabel: 'Alternativas',
+    tagsInputPlaceholder: 'Separar por comas y pulsar intro',
     needImages: 'Las respuestas deben tener imágenes',
     needExplanationAndResponse: 'Todas las respuestas necesitan un texto y una explicación',
     needExplanation: 'Todas las respuestas requieren una explicación',
@@ -85,7 +87,8 @@ module.exports = {
     addClue: 'Añadir pista',
     cluesDescription:
       'Es posible dar pistas a los alumnos proporcionando información que facilite la tarea de recuperación de la memoria.',
-    hasCluesLabel: 'Con pistas (mínimo 3 respuestas)',
+    hasCluesLabelWithMinResponses: 'Con pistas (mínimo 3 respuestas)',
+    hasCluesLabel: 'Con pistas',
     imageLabel: 'Imagen',
     saveImage: 'Guardar imagen',
     addImage: 'Añadir imagen',
@@ -94,6 +97,7 @@ module.exports = {
     saveResponse: 'Guardar respuesta',
     monoResponse: 'Respuesta única',
     map: 'Mapa',
+    shortResponse: 'Respuesta corta',
     mapLabel: 'Mapa',
     addMap: 'Añadir mapa',
     itemsLabel: 'Respuestas',
@@ -116,6 +120,11 @@ module.exports = {
     hasCoverLabel: 'Imagen destacada',
     hideOptionNoRightAnswer: 'Primero selecciona la respuesta correcta',
     headerTitlePlaceholder: 'Título del banco de preguntas',
+    questionLabels: {
+      shortResponse: {
+        answerPlaceholder: 'Escribe aquí tu respuesta',
+      },
+    },
   },
   questionImageModal: {
     createNumbering: 'Crear numeración',
@@ -478,6 +487,16 @@ module.exports = {
       errorQuestions: 'Las respuestas incorrectas NO restan puntuación.',
       canClue: 'Se ofrecerán todas las pistas disponibles sin penalización',
     },
+    rulesByQuestionType: {
+      title: 'Tipo de pregunta',
+      shortResponse: {
+        title: 'Respuesta corta',
+        activateTolerances: 'Activar tolerancias',
+        tolerateAccents: 'Tildes',
+        tolerateCase: 'Mayúsculas y minúsculas',
+        tolerateSpaces: 'Espacios',
+      },
+    },
   },
   testResult: {
     testResult: 'Estadísticas por tipo de pregunta',
@@ -508,5 +527,14 @@ module.exports = {
     returnToTable: 'Volver al listado',
     nextActivity: 'Siguiente actividad',
     goToModule: 'Dashboard del modulo',
+    responseDetail: {
+      answers: 'Respuestas',
+      answer: 'Respuesta',
+      result: 'Resultado',
+      solution: 'Solución',
+      correct: 'Correcto',
+      incorrect: 'Incorrecto',
+      feedback: 'Explicación',
+    },
   },
 };
