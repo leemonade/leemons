@@ -10,7 +10,11 @@ import ResponseStatusIcon from './ResponseStatusIcon';
 import prefixPN from '@tests/helpers/prefixPN';
 import { QUESTION_TYPES } from '@tests/pages/private/questions-banks/questionConstants';
 
-const CHOICE_BASED_QUESTION_TYPES = [QUESTION_TYPES.MONO_RESPONSE, QUESTION_TYPES.MAP];
+const CHOICE_BASED_QUESTION_TYPES = [
+  QUESTION_TYPES.MONO_RESPONSE,
+  QUESTION_TYPES.MAP,
+  QUESTION_TYPES.TRUE_FALSE,
+];
 
 const getResultCell = ({ value }) => {
   return (
@@ -66,6 +70,7 @@ function ResponseDetail({
     [userSkipped]
   );
 
+  console.log('isChoiceBased', isChoiceBased);
   const getSolution = useCallback(
     (isUserAnswer, isCorrect) => {
       if (!isChoiceBased) return solutionLabel;
