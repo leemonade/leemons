@@ -12,7 +12,13 @@ import PropTypes from 'prop-types';
 
 import prefixPN from '@tests/helpers/prefixPN';
 
-export const ResourcePicker = ({ value, onChange }) => {
+const QUESTION_RESOURCE_ALLOWED_FILE_TYPES = ['image/*', 'video/*', 'audio/*'];
+
+export const ResourcePicker = ({
+  value,
+  onChange,
+  allowedFileTypes = QUESTION_RESOURCE_ALLOWED_FILE_TYPES,
+}) => {
   const [showAssetDrawer, setShowAssetDrawer] = useState(false);
   const [t] = useTranslateLoader(prefixPN('common'));
 
@@ -30,7 +36,7 @@ export const ResourcePicker = ({ value, onChange }) => {
   };
 
   const ResourceCard = useMemo(() => {
-    const canPlay = !!assetObject?.file;
+    // const canPlay = !!assetObject?.file; // todo remove after copying for test execution
     const preparedResource = prepareAsset(assetObject);
     const finalFileType =
       preparedResource.fileType === 'document' ? 'file' : preparedResource.fileType;
@@ -42,9 +48,7 @@ export const ResourcePicker = ({ value, onChange }) => {
             ...preparedResource,
             fileType: finalFileType,
           }}
-          hasActionButton={canPlay}
           fullWidth={true}
-          canPlay={canPlay}
         />
 
         <Box sx={{ height: 24, width: 24 }}>
@@ -60,7 +64,7 @@ export const ResourcePicker = ({ value, onChange }) => {
 
   return (
     <>
-      {value?.id ? (
+      {assetObject?.id ? (
         ResourceCard
       ) : (
         <Button
@@ -82,6 +86,8 @@ export const ResourcePicker = ({ value, onChange }) => {
         opened={showAssetDrawer}
         shadow
         creatable
+        acceptedFileTypes={allowedFileTypes}
+        filters={{ type: ['audio', 'video', 'image'] }}
       />
     </>
   );
@@ -90,7 +96,7 @@ export const ResourcePicker = ({ value, onChange }) => {
 ResourcePicker.propTypes = {
   value: PropTypes.string,
   onChange: PropTypes.func,
-  t: PropTypes.func,
+  allowedFileTypes: PropTypes.arrayOf(PropTypes.string),
 };
 
 export default ResourcePicker;

@@ -88,6 +88,9 @@ export default function DetailQuestionForm({
 
   async function handleOnSaveQuestion() {
     form.handleSubmit((data) => {
+      if (defaultValues?.id) {
+        data = { ...defaultValues, ...data };
+      }
       onSaveQuestion(data);
     })();
   }

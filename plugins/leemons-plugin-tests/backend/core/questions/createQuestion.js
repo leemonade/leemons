@@ -2,6 +2,8 @@ const _ = require('lodash');
 
 const { QUESTION_TYPES } = require('../../config/constants');
 
+const { createStemResourceAsset } = require('./createStemResourceAsset');
+
 const LIBRARY_ADD_ASSET = 'leebrary.assets.add';
 
 /**
@@ -92,6 +94,7 @@ const LIBRARY_ADD_ASSET = 'leebrary.assets.add';
  * @param {MoleculerContext} params.ctx - The transaction context.
  * @returns {Promise<Object>} - The created question.
  */
+
 async function createQuestion({ data, published, ctx }) {
   const { tags, choices, mapProperties, trueFalseProperties, ...props } = _.cloneDeep(data);
 
@@ -133,32 +136,16 @@ async function createQuestion({ data, published, ctx }) {
     });
   }
 
-  // Question featured image
-  // if (props.questionImage) {
-  //   const asset = await ctx.tx.call(LIBRARY_ADD_ASSET, {
-  //     asset: {
-  //       name: 'Question image',
-  //       cover: props.questionImage?.cover?.id ?? props.questionImage,
-  //       indexable: false,
-  //       public: true,
-  //     },
-  //     options: { published },
-  //   });
-
-  //   props.questionImage = asset.id;
-  // }
   if (props.stemResource) {
-    const asset = await ctx.tx.call(LIBRARY_ADD_ASSET, {
-      asset: {
-        name: 'Question stem resource',
-        indexable: false,
-        public: true,
-        file: props.stemResource?.file?.id ?? props.stemResource,
-      },
-      options: { published },
-    });
+    let sourceAsset = props.stemResource;
+    if (typeof props.stemResource === 'string') {
+      [sourceAsset] = await ctx.tx.call('leebrary.assets.getByIds', {
+        ids: [props.stemResource],
+        withFiles: true,
+      });
+    }
 
-    props.stemResource = asset.id;
+    props.stemResource = await createStemResourceAsset({ ctx, sourceAsset, published });
   }
 
   const questionToCreate = { ...props };

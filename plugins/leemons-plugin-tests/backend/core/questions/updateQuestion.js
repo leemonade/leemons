@@ -2,9 +2,10 @@ const _ = require('lodash');
 
 const { QUESTION_TYPES } = require('../../config/constants');
 
+const { createStemResourceAsset, getStemResouceAssetName } = require('./createStemResourceAsset');
+
 const LIBRARY_ADD_ASSET = 'leebrary.assets.add';
 const LIBRARY_UPDATE_ASSET = 'leebrary.assets.update';
-
 /**
  * Manages the solution fields for a question based on its type.
  *
@@ -66,29 +67,24 @@ async function updateQuestion({ data, published, ctx }) {
   }
 
   // --- Stem resource
-  const newStemResource = data.stemResource?.file?.id ?? data.stemResource;
-  if (question.stemResource) {
+  const newStemResourceFile = props.stemResource?.file?.id;
+  if (question.stemResource && newStemResourceFile) {
     const asset = await ctx.tx.call(LIBRARY_UPDATE_ASSET, {
       data: {
         id: question.stemResource,
-        name: 'Question stem resource',
-        file: newStemResource,
+        file: newStemResourceFile,
+        name: getStemResouceAssetName(props.stemResource.name),
       },
       published,
     });
 
     props.stemResource = asset.id;
-  } else if (!question.stemResource && newStemResource) {
-    const asset = await ctx.tx.call(LIBRARY_ADD_ASSET, {
-      asset: {
-        name: `Question stem resource - ${question.id}`,
-        indexable: false,
-        public: true,
-        file: newStemResource,
-      },
-      options: { published },
+  } else if (!question.stemResource && newStemResourceFile) {
+    props.stemResource = await createStemResourceAsset({
+      sourceAsset: props.stemResource,
+      published,
+      ctx,
     });
-    props.stemResource = asset.id;
   }
 
   if (data.type === QUESTION_TYPES.MONO_RESPONSE) {
