@@ -29,7 +29,7 @@ export default function Index(props) {
           <>
             <Stack fullWidth spacing={4}>
               <Box>
-                <StemResource {...props} assetId={question.stemResource} />
+                <StemResource {...props} asset={question.stemResource} />
               </Box>
               <Box>
                 <Responses {...props} />
@@ -38,7 +38,7 @@ export default function Index(props) {
           </>
         ) : (
           <>
-            {question?.stemResource && <StemResource {...props} assetId={question.stemResource} />}
+            {question?.stemResource && <StemResource {...props} asset={question.stemResource} />}
             <Responses {...props} />
           </>
         )}

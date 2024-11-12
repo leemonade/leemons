@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
+
 const { QUESTION_TYPES } = require('../../config/constants');
 
 /**
@@ -97,8 +98,8 @@ async function getByIds({ id, options, ctx }) {
       }
     }
 
-    if (question.questionImage) {
-      assetIds.push(question.questionImage);
+    if (question.stemResource) {
+      assetIds.push(question.stemResource);
     }
 
     if (question.mapProperties?.image) {
@@ -126,8 +127,8 @@ async function getByIds({ id, options, ctx }) {
     if (question.mapProperties?.image) {
       question.mapProperties.image = questionAssetsById[question.mapProperties.image];
     }
-    if (question.questionImage) {
-      question.questionImage = questionAssetsById[question.questionImage];
+    if (question.stemResource) {
+      question.stemResource = questionAssetsById[question.stemResource];
     }
 
     if (question.choices?.length) {

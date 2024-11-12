@@ -6,18 +6,19 @@ import { prepareAsset } from '@leebrary/helpers/prepareAsset';
 import useAsset from '@leebrary/request/hooks/queries/useAsset';
 import PropTypes from 'prop-types';
 
-export default function StemResource({ assetId, ...props }) {
+export default function StemResource({ asset, ...props }) {
   const { data: resourceAsset } = useAsset({
-    id: assetId,
+    id: asset,
     showPublic: true,
-    enabled: !!assetId,
+    enabled: !!asset && typeof asset === 'string',
   });
 
   const preparedResource = useMemo(() => {
-    return resourceAsset ? prepareAsset(resourceAsset) : null;
-  }, [resourceAsset]);
+    if (typeof asset === 'string' && resourceAsset) return prepareAsset(resourceAsset);
+    if (asset?.id) return prepareAsset(asset);
+  }, [resourceAsset, asset]);
 
-  if (!resourceAsset) return null;
+  if (!preparedResource) return null;
   return (
     <Box className={props.styles.questionImageContainer}>
       <AssetPlayerWrapperCCreator
@@ -29,6 +30,7 @@ export default function StemResource({ assetId, ...props }) {
 }
 
 StemResource.propTypes = {
-  assetId: PropTypes.any,
+  assetId: PropTypes.string,
+  asset: PropTypes.any,
   styles: PropTypes.any,
 };

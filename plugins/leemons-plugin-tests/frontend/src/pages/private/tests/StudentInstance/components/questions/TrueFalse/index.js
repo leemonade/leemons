@@ -33,7 +33,7 @@ export default function Index(props) {
 
       <Box className={!store.viewMode ? styles.questionCard : classes.container}>
         <QuestionTitle {...props} tableViewMode={store.viewMode} />
-        {question?.stemResource && <StemResource {...props} assetId={question.stemResource} />}
+        {question?.stemResource && <StemResource {...props} asset={question.stemResource} />}
         {!store.viewMode ? <QuestionNoteClues {...props} /> : null}
         {!store.viewMode ? <Responses {...props} /> : <ViewModeResponses {...props} />}
       </Box>
