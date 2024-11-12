@@ -4,7 +4,7 @@ const { getByType } = require('../getByType/getByType');
  * Fetches the asset files by type.
  *
  * @param {Object} params - The params object.
- * @param {string} params.type - The type.
+ * @param {string|array} params.type - The file type or list of file types to filter by
  * @param {Array} params.fileIds - The file IDs.
  * @param {MoleculerContext} params.ctx - The Moleculer context object.
  * @returns {Promise<Array>} The asset files.
