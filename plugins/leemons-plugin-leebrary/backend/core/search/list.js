@@ -106,15 +106,20 @@ async function list({
   if (cache) {
     assets = cache;
   } else {
+    let addonAssetsFound = true;
+
     if (addons?.length) {
       assets = await getByAddons({ pluginNames: addons, ctx, query });
+      addonAssetsFound = assets.length > 0;
     }
 
-    assets = await searchFunction({
-      ...query,
-      assets,
-      ctx,
-    });
+    if (addonAssetsFound) {
+      assets = await searchFunction({
+        ...query,
+        assets,
+        ctx,
+      });
+    }
 
     await ctx.cache.set(cacheKey, assets, 60); // 1 minute
   }
