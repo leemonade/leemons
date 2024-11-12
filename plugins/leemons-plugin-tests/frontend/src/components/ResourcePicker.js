@@ -36,7 +36,6 @@ export const ResourcePicker = ({
   };
 
   const ResourceCard = useMemo(() => {
-    // const canPlay = !!assetObject?.file; // todo remove after copying for test execution
     const preparedResource = prepareAsset(assetObject);
     const finalFileType =
       preparedResource.fileType === 'document' ? 'file' : preparedResource.fileType;
