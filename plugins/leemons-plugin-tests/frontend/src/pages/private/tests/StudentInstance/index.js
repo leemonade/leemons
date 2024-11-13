@@ -1,8 +1,18 @@
+import React from 'react';
+import { Link, useHistory, useParams } from 'react-router-dom';
+
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
+import ActivityHeader from '@assignables/components/ActivityHeader';
+import {
+  ActivityUnavailable,
+  useActivityStates,
+} from '@assignables/components/ActivityUnavailable';
 import getClassData from '@assignables/helpers/getClassData';
 import getNextActivityUrl from '@assignables/helpers/getNextActivityUrl';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import getAssignation from '@assignables/requests/assignations/getAssignation';
+import { allAssignationsGetKey } from '@assignables/requests/hooks/keys/assignations';
+import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
 import {
   Box,
   Button,
@@ -13,26 +23,21 @@ import {
   TotalLayoutContainer,
   VerticalStepperContainer,
 } from '@bubbles-ui/components';
-import { forEach, intersectionBy } from 'lodash';
 import { ChevronRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
-// TODO: import from @feedback plugin maybe?
 import { useStore } from '@common';
 import { addErrorAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@tests/helpers/prefixPN';
-import { getCentersWithToken } from '@users/session';
-import React from 'react';
-import { Link, useHistory, useParams } from 'react-router-dom';
-import ActivityHeader from '@assignables/components/ActivityHeader';
-import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
 import { useQueryClient } from '@tanstack/react-query';
-import { allAssignationsGetKey } from '@assignables/requests/hooks/keys/assignations';
+import { getCentersWithToken } from '@users/session';
+import { forEach, intersectionBy } from 'lodash';
+
 import {
   getQuestionByIdsRequest,
   getUserQuestionResponsesRequest,
   setInstanceTimestampRequest,
   setQuestionResponseRequest,
 } from '../../../../request';
+
 import { StudentInstanceStyles } from './StudentInstance.style';
 import { TestStyles } from './TestStyles.style';
 import Development from './components/Development';
@@ -40,6 +45,8 @@ import QuestionList from './components/QuestionList';
 import { calculeInfoValues } from './helpers/calculeInfoValues';
 import { getConfigByInstance } from './helpers/getConfigByInstance';
 import { getIfCurriculumSubjectsHaveValues } from './helpers/getIfCurriculumSubjectsHaveValues';
+
+import prefixPN from '@tests/helpers/prefixPN';
 
 const setInstanceTimestamp = (queryClient) => async (instance, key, user) => {
   const result = await setInstanceTimestampRequest(instance, key, user);
@@ -219,6 +226,8 @@ function StudentInstance() {
     fetchInstance: true,
   });
 
+  const { isUnavailable } = useActivityStates({ instance: store.instance });
+
   React.useEffect(() => {
     if (params?.id && translations && store.idLoaded !== params?.id) init();
   }, [params, translations]);
@@ -346,7 +355,8 @@ function StudentInstance() {
           }}
           scrollRef={scrollRef}
         >
-          {verticalStepperProps.data[store.currentStep]
+          {isUnavailable ? <ActivityUnavailable instance={store.instance} /> : null}
+          {!isUnavailable && verticalStepperProps.data[store.currentStep]
             ? React.cloneElement(verticalStepperProps.data[store.currentStep].component, {
                 isFirstStep: !store.currentStep,
               })

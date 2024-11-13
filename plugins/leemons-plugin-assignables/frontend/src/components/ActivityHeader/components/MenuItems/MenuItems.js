@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { Menu, Box, Text } from '@bubbles-ui/components';
@@ -211,15 +211,13 @@ const MenuItems = ({ instance, hideDeleteButton, hiddenCloseButtons }) => {
     !hideDeleteButton && {
       icon: <DeleteBinIcon />,
       children: t('delete'),
-      onClick: () => {
-        onDeleteActivity({
-          instance,
-          t,
-          openConfirmationModal,
-          mutateAsync,
-          onSuccess: () => history.push('/private/assignables/ongoing'),
-        });
-      },
+      onClick: onDeleteActivity({
+        instance,
+        t,
+        openConfirmationModal,
+        mutateAsync,
+        onSuccess: () => history.push('/private/assignables/ongoing'),
+      }),
       className: classes.menuItem,
     },
   ];
