@@ -16,7 +16,7 @@ import { ChipsContainer } from '@common/components';
 import formatFileName from '@leebrary/helpers/formatFilename';
 import getResourceTypeDisplay from '@leebrary/helpers/getResourceTypeDisplay';
 
-function useBulkAssetsColumns({ selectedAssets, onSelectAll, onSelectRow, assets }) {
+function useBulkAssetsColumns({ selectedAssets, onSelectAll, onSelectRow, assets, t }) {
   return useMemo(() => {
     return [
       {
@@ -42,7 +42,7 @@ function useBulkAssetsColumns({ selectedAssets, onSelectAll, onSelectRow, assets
         style: { width: 24 },
       },
       {
-        Header: 'Tipo',
+        Header: t('table.headers.type'),
         accessor: 'type',
         Cell: ({ row }) => {
           const { original } = row;
@@ -71,7 +71,7 @@ function useBulkAssetsColumns({ selectedAssets, onSelectAll, onSelectRow, assets
         cellStyle: { alignItems: 'center', height: 'auto' },
       },
       {
-        Header: 'Archivo',
+        Header: t('table.headers.file'),
         accessor: 'name',
         align: 'center',
         Cell: ({ value }) => {
@@ -86,7 +86,7 @@ function useBulkAssetsColumns({ selectedAssets, onSelectAll, onSelectRow, assets
         },
       },
       {
-        Header: 'Nombre',
+        Header: t('table.headers.name'),
         accessor: 'isCover',
         Cell: ({ row }) => {
           const { original } = row;
@@ -102,7 +102,7 @@ function useBulkAssetsColumns({ selectedAssets, onSelectAll, onSelectRow, assets
         },
       },
       {
-        Header: 'Asignatura',
+        Header: t('table.headers.subjects'),
         accessor: 'subjects',
         Cell: ({ value }) => {
           if (value) {
@@ -112,7 +112,7 @@ function useBulkAssetsColumns({ selectedAssets, onSelectAll, onSelectRow, assets
         },
       },
       {
-        Header: 'Tags',
+        Header: t('table.headers.tags'),
         accessor: 'tags',
         Cell: ({ value }) => {
           return value.length > 0 ? (
@@ -123,18 +123,22 @@ function useBulkAssetsColumns({ selectedAssets, onSelectAll, onSelectRow, assets
         },
       },
       {
-        Header: 'Compartido con',
+        Header: t('table.headers.sharedWith'),
         accessor: 'canAccess',
-        Cell: ({ value }) => {
+        Cell: ({ value, row }) => {
           return (
-            <AvatarsGroup
-              size="sm"
-              data={value}
-              moreThanUsersAsMulti={2}
-              customAvatarMargin={14}
-              limit={2}
-              zIndexInverted
-            />
+            <Box>
+              <AvatarsGroup
+                size="sm"
+                data={value}
+                classesData={row.original.classesData}
+                moreThanUsersAsMulti={2}
+                customAvatarMargin={14}
+                limit={2}
+                zIndexInverted={true}
+                numberFromClassesAndData
+              />
+            </Box>
           );
         },
         align: 'right',

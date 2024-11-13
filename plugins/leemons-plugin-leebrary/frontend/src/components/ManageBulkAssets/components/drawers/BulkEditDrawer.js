@@ -24,6 +24,7 @@ const BulkEditDrawer = ({
   control,
   labels = {},
   placeholders = {},
+  t,
   setValue,
   areAllImagesSelected,
   selectedAssets = [],
@@ -118,6 +119,7 @@ const BulkEditDrawer = ({
   const setAssetColorToSubjectColor = (subjectsFromPicker) => {
     if (!subjectsFromPicker?.length) {
       setValue('color', null);
+      return;
     }
     if (subjectsFromPicker.length === 1) {
       setValue('color', subjectsFromPicker[0].color);
@@ -129,21 +131,21 @@ const BulkEditDrawer = ({
 
   return (
     <Drawer size="xl" opened={isOpen} onClose={onClose}>
-      <Drawer.Header title="Edición en bloque" />
+      <Drawer.Header title={t('bulkEditDrawer.title')} />
       <Drawer.Content>
         <Alert closeable={false}>
           <Text>
-            Ten en cuenta que
-            <Text strong> se editarán todos los recursos seleccionados en la tabla.</Text>
+            {t('bulkEditDrawer.alertEditPartOne')}
+            <Text strong>{t('bulkEditDrawer.alertEditPartTwo')}</Text>
           </Text>
         </Alert>
-        <ContextContainer title={'Presentación'}>
+        <ContextContainer title={t('bulkEditDrawer.presentation')}>
           {!areAllImagesSelected && (
             <>
               <Alert closeable={false}>
                 <Text>
-                  No se cambiará la imagen destacada
-                  <Text strong> a los recursos de tipo imagen.</Text>
+                  {t('bulkEditDrawer.alertCoverPartOne')}
+                  <Text strong>{t('bulkEditDrawer.alertCoverPartTwo')}</Text>
                 </Text>
               </Alert>
               <Controller
@@ -152,7 +154,7 @@ const BulkEditDrawer = ({
                 render={({ field }) => (
                   <ImagePicker
                     labels={labels}
-                    value={initialFormValues.cover?.id || initialFormValues.cover}
+                    value={initialFormValues.cover?.id || initialFormValues.cover || field.value}
                     onChange={field.onChange}
                     isPickingACover
                   />
@@ -166,11 +168,11 @@ const BulkEditDrawer = ({
             render={({ field }) => (
               <ColorInput
                 {...field}
-                label={'Color'}
-                value={initialFormValues.color}
-                placeholder={'Selecciona un color'}
+                label={t('bulkEditDrawer.colorLabel')}
+                value={field.value}
+                placeholder={t('bulkEditDrawer.colorPlaceholder')}
                 manual={false}
-                disabled={subjects?.length}
+                disabled={subjects?.length > 0}
                 contentStyle={{ width: 190 }}
                 clearable
               />
@@ -202,12 +204,12 @@ const BulkEditDrawer = ({
                   }
                 }}
                 localizations={{
-                  title: 'Programa y asignaturas',
-                  program: 'Programa',
-                  subject: 'Asignatura',
-                  add: 'Añadir asignatura',
-                  course: 'Curso',
-                  placeholder: 'Selecciona una asignatura',
+                  title: t('bulkEditDrawer.subjectsTitle'),
+                  program: t('bulkEditDrawer.programLabel'),
+                  subject: t('bulkEditDrawer.subjectLabel'),
+                  add: t('bulkEditDrawer.addSubjectLabel'),
+                  course: t('bulkEditDrawer.courseLabel'),
+                  placeholder: t('bulkEditDrawer.subjectsPlaceholder'),
                 }}
                 hideSectionHeaders={false}
               />
@@ -220,9 +222,9 @@ const BulkEditDrawer = ({
             name="tags"
             render={({ field }) => (
               <TagsAutocomplete
-                label={labels.tags}
-                labels={{ addButton: labels.addTag }}
-                placeholder={placeholders.tags}
+                label={t('bulkEditDrawer.tagsLabel')}
+                labels={{ addButton: t('bulkEditDrawer.addTagLabel') }}
+                placeholder={t('bulkEditDrawer.tagsPlaceholder')}
                 pluginName="leebrary"
                 {...field}
               />
@@ -234,9 +236,9 @@ const BulkEditDrawer = ({
       <Drawer.Footer>
         <Stack justifyContent="space-between" fullWidth>
           <Button variant="outline" onClick={onClose}>
-            Cancelar
+            {t('bulkEditDrawer.cancelButton')}
           </Button>
-          <Button onClick={onSave}>Guardar</Button>
+          <Button onClick={onSave}>{t('bulkEditDrawer.saveButton')}</Button>
         </Stack>
       </Drawer.Footer>
     </Drawer>
@@ -253,6 +255,7 @@ BulkEditDrawer.propTypes = {
   setValue: propTypes.func,
   areAllImagesSelected: propTypes.bool,
   selectedAssets: propTypes.array,
+  t: propTypes.func,
 };
 
 export { BulkEditDrawer };

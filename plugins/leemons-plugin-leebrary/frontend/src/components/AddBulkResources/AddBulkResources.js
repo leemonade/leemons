@@ -1,6 +1,6 @@
 import { Controller } from 'react-hook-form';
 
-import { Box, FileUpload, ContextContainer, TLayout } from '@bubbles-ui/components';
+import { FileUpload, ContextContainer, TLayout } from '@bubbles-ui/components';
 import { DownloadIcon } from '@bubbles-ui/icons/outline';
 import propTypes from 'prop-types';
 
@@ -20,51 +20,51 @@ const AddBulkResources = ({
   return (
     <TLayout.Content>
       <ContextContainer spacing={4} title={handleTitle()}>
-        <Box sx={{ display: hasFilesSelected ? 'none' : 'block' }}>
-          <Controller
-            control={control}
-            name="file"
-            rules={{ required: t('requiredLabel') }}
-            render={({ field: { ref, value, ...field } }) => (
-              <FileUpload
-                {...field}
-                maxSize={MAX_FILE_SIZE}
-                icon={<DownloadIcon height={32} width={32} />}
-                title={t('fileUploadTitle')}
-                subtitle={t('fileUploadSubtitle')}
-                errorMessage={{
-                  title: t('fileUploadErrorTitle') || 'Error',
-                  message: t('fileUploadErrorMessage'),
-                }}
-                hideUploadButton
-                showItemsToUpload={false}
-                accept={[
-                  // Imágenes
-                  'image/*',
-                  // Videos
-                  'video/*',
-                  // Audio
-                  'audio/*',
-                  // Documentos de texto
-                  '.txt',
-                  '.pdf',
-                  'application/pdf',
-                  // Microsoft Office
-                  '.doc',
-                  '.docx',
-                  '.xls',
-                  '.xlsx',
-                  '.ppt',
-                  '.pptx',
-                  // OpenDocument
-                  '.odt',
-                  '.ods',
-                  '.odp',
-                ]}
-              />
-            )}
-          />
-        </Box>
+        <Controller
+          control={control}
+          name="file"
+          rules={{ required: t('requiredLabel') }}
+          render={({ field: { ref, value, ...field } }) => (
+            <FileUpload
+              {...field}
+              value={assetFiles}
+              initialFiles={assetFiles}
+              maxSize={MAX_FILE_SIZE}
+              icon={<DownloadIcon height={32} width={32} />}
+              title={t('fileUploadTitle')}
+              subtitle={t('fileUploadSubtitle')}
+              errorMessage={{
+                title: t('fileUploadErrorTitle'),
+                message: t('fileUploadErrorMessage'),
+              }}
+              hideUploadButton
+              showItemsToUpload={false}
+              accept={[
+                // Imágenes
+                'image/*',
+                // Videos
+                'video/*',
+                // Audio
+                'audio/*',
+                // Documentos de texto
+                '.txt',
+                '.pdf',
+                'application/pdf',
+                // Microsoft Office
+                '.doc',
+                '.docx',
+                '.xls',
+                '.xlsx',
+                '.ppt',
+                '.pptx',
+                // OpenDocument
+                '.odt',
+                '.ods',
+                '.odp',
+              ]}
+            />
+          )}
+        />
         {hasFilesSelected && (
           <BulkUploadTable
             data={assetFiles}

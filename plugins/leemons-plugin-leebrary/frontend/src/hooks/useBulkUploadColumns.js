@@ -116,7 +116,7 @@ function useBulkUploadColumns({ t, uploadStatus, onRemoveFile, classes }) {
             );
           }
 
-          if (status.state === 'uploaded') {
+          if (status.state === 'uploaded' || status.state === 'finalize') {
             return (
               <Stack fullWidth justify="end">
                 <Text color="success" size="xs" strong>

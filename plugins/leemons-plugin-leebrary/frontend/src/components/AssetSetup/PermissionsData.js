@@ -78,6 +78,7 @@ const ROLES_BY_ROLE = {
 
 const PermissionsData = ({
   asset: assetProp,
+  assets,
   sharing,
   isDrawer,
   onSavePermissions,
@@ -276,9 +277,24 @@ const PermissionsData = ({
         };
 
         if (isFunction(onSavePermissions)) {
-          await onSavePermissions(asset.id, toSend);
+          if (assets?.length > 0) {
+            const prepareAssets = assets.map((assetItem) => prepareAsset(assetItem));
+            await Promise.all(
+              prepareAssets.map((assetItem) => {
+                return onSavePermissions(assetItem.id, toSend);
+              })
+            );
+          } else {
+            await onSavePermissions(asset.id, toSend);
+          }
         } else {
-          await setPermissionsRequest(asset.id, toSend);
+          if (assets?.length > 0) {
+            await Promise.all(
+              assets.map((assetItem) => setPermissionsRequest(assetItem.id, toSend))
+            );
+          } else {
+            await setPermissionsRequest(asset.id, toSend);
+          }
         }
 
         setLoading(false);
@@ -317,9 +333,17 @@ const PermissionsData = ({
       };
 
       if (isFunction(onSavePermissions)) {
-        await onSavePermissions(asset.id, toSend);
+        if (assets?.length > 0) {
+          await Promise.all(assets.map((assetItem) => onSavePermissions(assetItem.id, toSend)));
+        } else {
+          await onSavePermissions(asset.id, toSend);
+        }
       } else {
-        await setPermissionsRequest(asset.id, toSend);
+        if (assets?.length > 0) {
+          await Promise.all(assets.map((assetItem) => setPermissionsRequest(assetItem.id, toSend)));
+        } else {
+          await setPermissionsRequest(asset.id, toSend);
+        }
       }
 
       setLoading(false);
@@ -412,7 +436,7 @@ const PermissionsData = ({
       }
     }
     if (profileSysName === 'teacher') {
-      if (!asset.providerData || asset.providerData.role === 'content-creator') {
+      if (!asset?.providerData || asset?.providerData?.role === 'content-creator') {
         result.push({ label: t('permissionsData.labels.shareTypeClasses'), value: 'classes' });
       }
       result.push({ label: t('permissionsData.labels.shareTypeUsers'), value: 'users' });
@@ -466,6 +490,45 @@ const PermissionsData = ({
     [t]
   );
 
+  useEffect(() => {
+    if (assetProp) {
+      setAsset(prepareAsset(assetProp));
+      return;
+    }
+
+    if (assets?.length) {
+      if (assets.length === 1) {
+        setAsset(
+          prepareAsset({
+            ...assets[0],
+            permissions: assets[0].permissions || {},
+          })
+        );
+        return;
+      }
+
+      const allSameAccess = assets.every(
+        (a) => JSON.stringify(a.canAccess) === JSON.stringify(assets[0].canAccess)
+      );
+
+      if (allSameAccess) {
+        setAsset(
+          prepareAsset({
+            ...assets[0],
+            permissions: assets[0].permissions || {},
+          })
+        );
+      } else {
+        const firstAsset = { ...assets[0] };
+        firstAsset.canAccess = firstAsset.canAccess.filter((access) =>
+          access.permissions.includes('owner')
+        );
+        firstAsset.permissions = firstAsset.permissions || {};
+        setAsset(prepareAsset(firstAsset));
+      }
+    }
+  }, [assetProp, assets]);
+
   return (
     <Box>
       <Stack
@@ -485,10 +548,16 @@ const PermissionsData = ({
       </Stack>
       {!isEmpty(asset) && (
         <ContextContainer className={classesStyles.contentContainer}>
-          <Text className={classesStyles.titleItem}>{t('permissionsData.header.libraryItem')}</Text>
-          <Paper padding={1} shadow="none" className={classesStyles.libraryItem}>
-            <LibraryCardEmbed asset={asset} hideIcon />
-          </Paper>
+          {(!assets || assets?.length === 1) && asset && (
+            <>
+              <Text className={classesStyles.titleItem}>
+                {t('permissionsData.header.libraryItem')}
+              </Text>
+              <Paper padding={1} shadow="none" className={classesStyles.libraryItem}>
+                <LibraryCardEmbed asset={asset} hideIcon />
+              </Paper>
+            </>
+          )}
           <Text className={classesStyles.titleTabs}>
             {t('permissionsData.header.permissionsHeader')}
           </Text>
@@ -746,6 +815,7 @@ const PermissionsData = ({
 
 PermissionsData.propTypes = {
   asset: PropTypes.object,
+  assets: PropTypes.arrayOf(PropTypes.object),
   loading: PropTypes.bool,
   sharing: PropTypes.bool,
   onNext: PropTypes.func,

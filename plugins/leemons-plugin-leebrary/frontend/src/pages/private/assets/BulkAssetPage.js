@@ -198,16 +198,10 @@ const BulkAssetPage = () => {
 
   const handleAssetsUpdate = async (updatedAssets) => {
     try {
-      const updatedAssetIds = updatedAssets.map((asset) => asset.id);
-
-      const refreshedAssets = await getAssetsByIdsRequest(updatedAssetIds);
-
-      const mergedAssets = createdAssets.map((asset) => {
-        const updatedAsset = refreshedAssets?.assets?.find((updated) => updated.id === asset.id);
-        return updatedAsset || asset;
-      });
-
-      setCreatedAssets(mergedAssets);
+      const refreshedAssets = await getAssetsByIdsRequest(updatedAssets.map((asset) => asset.id));
+      if (refreshedAssets?.assets) {
+        setCreatedAssets(refreshedAssets.assets);
+      }
     } catch (error) {
       addErrorAlert(error.message);
     }
@@ -245,7 +239,7 @@ const BulkAssetPage = () => {
         )
       }
     >
-      {isCreatingAssets && <LoadingOverlay />}
+      {isCreatingAssets && <LoadingOverlay visible />}
       {step === 1 && (
         <AddBulkResources
           control={control}
