@@ -20,52 +20,53 @@ const AddBulkResources = ({
   return (
     <TLayout.Content>
       <ContextContainer spacing={4} title={handleTitle()}>
-        <Controller
-          control={control}
-          name="file"
-          rules={{ required: t('requiredLabel') }}
-          render={({ field: { ref, value, ...field } }) => (
-            <FileUpload
-              {...field}
-              value={assetFiles}
-              initialFiles={assetFiles}
-              maxSize={MAX_FILE_SIZE}
-              icon={<DownloadIcon height={32} width={32} />}
-              title={t('fileUploadTitle')}
-              subtitle={t('fileUploadSubtitle')}
-              errorMessage={{
-                title: t('fileUploadErrorTitle'),
-                message: t('fileUploadErrorMessage'),
-              }}
-              hideUploadButton
-              showItemsToUpload={false}
-              accept={[
-                // Imágenes
-                'image/*',
-                // Videos
-                'video/*',
-                // Audio
-                'audio/*',
-                // Documentos de texto
-                '.txt',
-                '.pdf',
-                'application/pdf',
-                // Microsoft Office
-                '.doc',
-                '.docx',
-                '.xls',
-                '.xlsx',
-                '.ppt',
-                '.pptx',
-                // OpenDocument
-                '.odt',
-                '.ods',
-                '.odp',
-              ]}
-            />
-          )}
-        />
-        {hasFilesSelected && (
+        {!hasFilesSelected ? (
+          <Controller
+            control={control}
+            name="file"
+            rules={{ required: t('requiredLabel') }}
+            render={({ field: { ref, value, ...field } }) => (
+              <FileUpload
+                {...field}
+                value={assetFiles}
+                initialFiles={assetFiles}
+                maxSize={MAX_FILE_SIZE}
+                icon={<DownloadIcon height={32} width={32} />}
+                title={t('fileUploadTitle')}
+                subtitle={t('fileUploadSubtitle')}
+                errorMessage={{
+                  title: t('fileUploadErrorTitle'),
+                  message: t('fileUploadErrorMessage'),
+                }}
+                hideUploadButton
+                showItemsToUpload={false}
+                accept={[
+                  // Imágenes
+                  'image/*',
+                  // Videos
+                  'video/*',
+                  // Audio
+                  'audio/*',
+                  // Documentos de texto
+                  '.txt',
+                  '.pdf',
+                  'application/pdf',
+                  // Microsoft Office
+                  '.doc',
+                  '.docx',
+                  '.xls',
+                  '.xlsx',
+                  '.ppt',
+                  '.pptx',
+                  // OpenDocument
+                  '.odt',
+                  '.ods',
+                  '.odp',
+                ]}
+              />
+            )}
+          />
+        ) : (
           <BulkUploadTable
             data={assetFiles}
             uploadStatus={uploadStatus}
