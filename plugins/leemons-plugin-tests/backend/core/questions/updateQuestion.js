@@ -67,7 +67,8 @@ async function updateQuestion({ data, published, ctx }) {
   }
 
   // --- Stem resource
-  const newStemResourceFile = props.stemResource?.file?.id;
+  // When edited, the stem resource should be an asset object, instead of an asset id
+  const newStemResourceFile = props.stemResource?.file?.id || props.stemResource?.cover?.id; // For retrocompatibility we use the cover id as a fallback, as old "question image" assets were created without a file
   if (question.stemResource && newStemResourceFile) {
     const asset = await ctx.tx.call(LIBRARY_UPDATE_ASSET, {
       data: {

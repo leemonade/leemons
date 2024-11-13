@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
+
 const { getQuestionsBanksDetails } = require('../questions-banks/getQuestionsBanksDetails');
 
 async function getTestsDetails({ id, withQuestionBank, ctx }) {
@@ -51,7 +52,6 @@ async function getTestsDetails({ id, withQuestionBank, ctx }) {
     filters: assignable.metadata.filters,
     questions: _.map(assignable?.metadata?.questions, (questionId) => ({
       ...questionsById[questionId],
-      properties: JSON.parse(questionsById[questionId].properties || null),
     })),
     type: assignable.metadata.type,
     levels: assignable.metadata.level,

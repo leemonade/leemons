@@ -28,12 +28,13 @@ const getStemResouceAssetName = (sourceAssetName = 'media file asset', maxLength
  */
 
 async function createStemResourceAsset({ sourceAsset, published, ctx }) {
+  const fileId = sourceAsset.file?.id || sourceAsset.cover?.id; // For retrocompatibility as old "question image" assets were created without a file
   const asset = await ctx.tx.call('leebrary.assets.add', {
     asset: {
       name: getStemResouceAssetName(sourceAsset.name),
       indexable: false,
       public: true,
-      file: sourceAsset.file.id,
+      file: fileId,
     },
     options: { published },
   });

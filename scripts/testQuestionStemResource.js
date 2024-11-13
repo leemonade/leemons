@@ -38,7 +38,7 @@ async function processQuestions() {
     return;
   }
 
-  console.log('🔄 Updating questions...');
+  console.log(` 🔄 Updating ${questionsWithQuestionImage.length} questions...`);
   const updates = questionsWithQuestionImage.map((question) => ({
     updateOne: {
       filter: { id: question.id },
