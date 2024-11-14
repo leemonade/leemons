@@ -136,7 +136,7 @@ const StudentInstance = () => {
         currentStep={STEPS_INDEX[step]}
         data={[
           { label: t('feedbackIntroductoryText'), status: 'OK' },
-          { label: t('questions'), status: 'OK' },
+          { label: t('questions'), status: 'OK', isBlocked: isUnavailable },
         ]}
       >
         {isUnavailable && <ActivityUnavailable instance={store.instance} scrollRef={scrollRef} />}

@@ -15,7 +15,7 @@ import SubmissionStep from '../SubmissionStep/SubmissionStep';
 import { prefixPN } from '@tasks/helpers';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 
-function useSteps({ instance }) {
+function useSteps({ instance, isUnavailable }) {
   const [t] = useTranslateLoader(prefixPN('task_realization.steps'));
   return useMemo(
     () =>
@@ -29,23 +29,25 @@ function useSteps({ instance }) {
           id: 'development',
           label: t('development'),
           component: DevelopmentStep,
+          isBlocked: isUnavailable,
         },
         !!instance?.assignable?.submission && {
           id: 'submission',
           label: t('submission'),
           component: SubmissionStep,
+          isBlocked: isUnavailable,
         },
       ].filter(Boolean),
-    [t, instance?.assignable?.submission]
+    [t, instance?.assignable?.submission, isUnavailable]
   );
 }
 
 export default function StepContainer({ preview, assignation, instance, scrollRef }) {
-  const steps = useSteps({ instance });
+  const { isUnavailable } = useActivityStates({ instance });
+
+  const steps = useSteps({ instance, isUnavailable });
   const [currentStep, setCurrentStep] = React.useState(0);
   const history = useHistory();
-
-  const { isUnavailable } = useActivityStates({ instance });
 
   /*
     === Handle student timestamps ===

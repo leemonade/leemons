@@ -288,6 +288,7 @@ function StudentInstance() {
           />
         ),
         isQuestion: true,
+        isBlocked: isUnavailable,
       });
 
       return {
