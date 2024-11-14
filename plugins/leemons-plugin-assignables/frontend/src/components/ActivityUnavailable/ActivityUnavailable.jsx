@@ -7,10 +7,10 @@ import { useActivityStates } from './hooks/useActivityStates';
 
 import prefixPN from '@assignables/helpers/prefixPN';
 
-export function ActivityUnavailable({ instance, clean, singlePage, scrollRef }) {
+export function ActivityUnavailable({ instance, user, clean, singlePage, scrollRef }) {
   const [t] = useTranslateLoader(prefixPN('activityNotStarted'));
 
-  const { isScheduled, isBlocked, sendMail, date, time } = useActivityStates({ instance });
+  const { isScheduled, isBlocked, sendMail, date, time } = useActivityStates({ instance, user });
 
   return (
     <TotalLayoutStepContainer
@@ -35,6 +35,7 @@ export function ActivityUnavailable({ instance, clean, singlePage, scrollRef }) 
 
 ActivityUnavailable.propTypes = {
   instance: PropTypes.object,
+  user: PropTypes.string,
   scrollRef: PropTypes.object,
   clean: PropTypes.bool,
   singlePage: PropTypes.bool,

@@ -43,7 +43,7 @@ function useSteps({ instance, isUnavailable }) {
 }
 
 export default function StepContainer({ preview, assignation, instance, scrollRef }) {
-  const { isUnavailable } = useActivityStates({ instance });
+  const { isUnavailable } = useActivityStates({ instance, user: assignation?.user });
 
   const steps = useSteps({ instance, isUnavailable });
   const [currentStep, setCurrentStep] = React.useState(0);
@@ -95,6 +95,7 @@ export default function StepContainer({ preview, assignation, instance, scrollRe
           stepName={steps[currentStep].label}
           preview={preview}
           assignation={assignation}
+          user={assignation?.user}
           instance={instance}
           onNextStep={onNextStep}
           onPrevStep={onPrevStep}
