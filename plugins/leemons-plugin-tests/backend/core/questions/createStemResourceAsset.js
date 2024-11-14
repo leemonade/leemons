@@ -1,3 +1,5 @@
+const { LeemonsError } = require('@leemons/error');
+
 const QUESTION_STEM_RESOURCE_SUFFIX = ' - Question stem resource';
 
 /**
@@ -28,7 +30,9 @@ const getStemResouceAssetName = (sourceAssetName = 'media file asset', maxLength
  */
 
 async function createStemResourceAsset({ sourceAsset, published, ctx }) {
-  const fileId = sourceAsset.file?.id || sourceAsset.cover?.id; // For retrocompatibility as old "question image" assets were created without a file
+  if (!sourceAsset) throw new LeemonsError(ctx, { message: 'Source asset is required' });
+
+  const fileId = sourceAsset.file?.id || sourceAsset.cover?.id || sourceAsset; // For compatibility with old "question image" assets and bulkdata
   const asset = await ctx.tx.call('leebrary.assets.add', {
     asset: {
       name: getStemResouceAssetName(sourceAsset.name),

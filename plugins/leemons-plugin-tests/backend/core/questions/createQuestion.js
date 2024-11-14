@@ -1,3 +1,4 @@
+const { isLRN } = require('@leemons/lrn');
 const _ = require('lodash');
 
 const { QUESTION_TYPES } = require('../../config/constants');
@@ -79,7 +80,7 @@ const LIBRARY_ADD_ASSET = 'leebrary.assets.add';
  * @property {Array<string>} clues - The text hints for the question.
  * @property {boolean} hasHelp - Indicates if the question has text hints or if it is configure to hide answer options.
  * @property {string} category - The category of the question.
- * @property {string} stemResource - A resource part of the question stem.
+ * @property {string} stemResource - An asset id used as a multimedia resource for the question stem. Alternatively, a url to an external resource, (only for bulkdata compatibility).
  * @property {Array<Choice>} choices - The solution property for mono-response and multi-choice questions. Only present in multi-choice questions.
  * @property {Object} mapProperties - The solution property for map questions. Only present in map questions.
  * @property {Object} trueFalseProperties - The solution property for true-false questions. Only present in true-false questions.
@@ -138,7 +139,7 @@ async function createQuestion({ data, published, ctx }) {
 
   if (props.stemResource) {
     let sourceAsset = props.stemResource;
-    if (typeof props.stemResource === 'string') {
+    if (typeof props.stemResource === 'string' && isLRN(props.stemResource)) {
       [sourceAsset] = await ctx.tx.call('leebrary.assets.getByIds', {
         ids: [props.stemResource],
         withFiles: true,

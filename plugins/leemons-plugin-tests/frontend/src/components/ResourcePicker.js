@@ -63,18 +63,20 @@ export const ResourcePicker = ({
 
   return (
     <>
-      {assetObject?.id ? (
-        ResourceCard
-      ) : (
-        <Button
-          variant={'link'}
-          leftIcon={<PluginLeebraryIcon height={18} width={18} />}
-          onClick={() => setShowAssetDrawer(true)}
-          textAlign="left"
-        >
-          {t('searchInLibrary')}
-        </Button>
-      )}
+      <Box sx={{ width: 440 }}>
+        {assetObject?.id ? (
+          ResourceCard
+        ) : (
+          <Button
+            variant={'link'}
+            leftIcon={<PluginLeebraryIcon height={18} width={18} />}
+            onClick={() => setShowAssetDrawer(true)}
+            textAlign="left"
+          >
+            {t('searchInLibrary')}
+          </Button>
+        )}
+      </Box>
 
       <AssetPickerDrawer
         layout="rows"

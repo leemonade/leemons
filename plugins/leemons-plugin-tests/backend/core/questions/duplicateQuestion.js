@@ -12,7 +12,7 @@ function prepareQuestionForDuplication({ id, mapProperties, choices, stemResourc
 
   if (question.type === QUESTION_TYPES.MAP) {
     transformedQuestion.mapProperties = _.cloneDeep(mapProperties);
-    transformedQuestion.mapProperties.image = mapProperties?.cover?.id;
+    transformedQuestion.mapProperties.image = mapProperties?.image?.cover?.id;
   }
 
   if (question.type === QUESTION_TYPES.MONO_RESPONSE) {

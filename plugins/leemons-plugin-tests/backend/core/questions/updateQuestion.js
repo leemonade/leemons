@@ -74,6 +74,7 @@ async function updateQuestion({ data, published, ctx }) {
       data: {
         id: question.stemResource,
         file: newStemResourceFile,
+        cover: props.stemResource?.cover?.id,
         name: getStemResouceAssetName(props.stemResource.name),
       },
       published,
