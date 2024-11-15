@@ -5,7 +5,9 @@
     "declaration": true,
     "esModuleInterop": true,
     "outDir": "./dist",
-    "rootDir": "./"
+    "rootDir": "./",
+    "jsx": "react-jsx"
   },
-  "include": ["./src/**/*", "./bin/**/*"]
+  "include": ["./src/**/*", "./bin/**/*"],
+  "exclude": ["./src/templates/**/*"]
 }

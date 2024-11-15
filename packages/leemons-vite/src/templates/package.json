@@ -1,0 +1,26 @@
+{
+  "name": "{{it.name}}",
+  "version": "{{it.version}}",
+  "license": "MIT",
+  "private": true,
+  "workspaces": [
+    "./plugins/*",
+    "../../../plugins/*/sdk",
+    "../../../private-plugins/*/sdk"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build --mode production"
+  },
+  "dependencies": {
+    "@bubbles-ui/components": "dev",
+    "@loadable/component": "^5.0.0",
+    "p-min-delay": "^4.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "@tanstack/react-query": "^4.16.1",
+    "@tanstack/react-query-devtools": "^4.16.1",
+    "vite": "^5.4.11",
+    "@vitejs/plugin-react": "^4.3.3"
+  }
+}

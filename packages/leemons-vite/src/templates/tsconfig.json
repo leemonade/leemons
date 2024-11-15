@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "paths": {}
+  },
+  "exclude": ["node_modules", "**/node_modules/*"],
+  "include": ["./plugins/*/frontend/**/*", "./private-plugins/*/frontend/**/*"]
+}
