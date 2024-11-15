@@ -65,6 +65,7 @@ export type Context<
   callerPlugin: string;
   socket: any;
   logger: LoggerInstance;
+  cache: any;
 };
 
 export type AnyContext = Context<unknown, unknown, unknown, unknown>;
