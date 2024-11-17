@@ -1,6 +1,5 @@
 import { isEqual } from 'lodash';
-
-const { create } = require('zustand');
+import { create } from 'zustand';
 
 const initialState = {
   filters: null,

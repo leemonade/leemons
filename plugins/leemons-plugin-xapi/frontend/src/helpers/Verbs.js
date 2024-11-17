@@ -1,4 +1,4 @@
-class Verbs {
+export class Verbs {
   constructor() {
     this.INITIALIZED = Verbs.INITIALIZED;
     this.TERMINATED = Verbs.TERMINATED;
@@ -106,5 +106,3 @@ class Verbs {
     },
   };
 }
-
-module.exports = { Verbs };

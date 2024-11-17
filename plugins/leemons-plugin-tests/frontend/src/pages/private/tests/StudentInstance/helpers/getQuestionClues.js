@@ -10,10 +10,10 @@
  * `ln ../../../../frontend/src/pages/private/tests/StudentInstance/helpers/getQuestionClues.js`
  */
 
-const { QUESTION_TYPES } = require('@tests/pages/private/questions-banks/questionConstants');
-const { forEach, isNumber, isString, filter, isArray } = require('lodash');
+import { QUESTION_TYPES } from '@tests/pages/private/questions-banks/questionConstants';
+import { forEach, isString, filter, isArray } from 'lodash';
 
-function getQuestionClues(question, types, config) {
+export function getQuestionClues(question, types, config) {
   let clues = [];
   const hideResponses = [];
   const notes = [];
@@ -78,5 +78,3 @@ function getQuestionClues(question, types, config) {
   }
   return clues;
 }
-
-module.exports = { getQuestionClues };

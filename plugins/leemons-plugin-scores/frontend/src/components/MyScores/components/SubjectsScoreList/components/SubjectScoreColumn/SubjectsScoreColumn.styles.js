@@ -1,4 +1,4 @@
-const { createStyles } = require('@bubbles-ui/components');
+import { createStyles } from '@bubbles-ui/components';
 
 const useSubjectScoreColumnStyles = createStyles((theme, { color }) => {
   const globalTheme = theme.other.global;

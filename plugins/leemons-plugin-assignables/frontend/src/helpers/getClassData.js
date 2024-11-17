@@ -1,7 +1,7 @@
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
+import { classByIdsRequest } from '@academic-portfolio/request';
 import { getSubjectCredits, getSubjectsCredits } from '@academic-portfolio/request/subjects';
 
-const { classByIdsRequest } = require('@academic-portfolio/request');
 
 export function getMultiClassData(labels) {
   return {

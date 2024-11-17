@@ -1,6 +1,6 @@
-const { useMemo } = require('react');
+import { useMemo } from 'react';
 
-const { useSessionClasses } = require('@academic-portfolio/hooks');
+import { useSessionClasses } from '@academic-portfolio/hooks';
 
 export default function useClassesMatchingFilters({ program, course, subject }) {
   const { data: classes, isLoading } = useSessionClasses({ program });

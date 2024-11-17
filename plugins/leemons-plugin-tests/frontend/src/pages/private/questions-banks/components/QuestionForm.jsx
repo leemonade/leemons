@@ -1,6 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { forIn, isEmpty, map } from 'lodash';
+import { Controller, useForm } from 'react-hook-form';
+
+import SelectLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/SelectLevelsOfDifficulty';
 import {
   Box,
   Button,
@@ -10,19 +11,20 @@ import {
   Select,
   Stack,
 } from '@bubbles-ui/components';
-import ImagePicker from '@leebrary/components/ImagePicker';
 import { TextEditorInput } from '@bubbles-ui/editors';
-import { Controller, useForm } from 'react-hook-form';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { TagsAutocomplete } from '@common';
-import SelectLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/SelectLevelsOfDifficulty';
+import ImagePicker from '@leebrary/components/ImagePicker';
+import { forIn, isEmpty, map } from 'lodash';
+import PropTypes from 'prop-types';
+
+import { MapQuestion } from './question-types/Map';
 import { MonoResponse } from './question-types/MonoResponse';
-import { QuestionMap } from './question-types/Map';
 
 export const typesWithImage = ['mono-response'];
 export const questionComponents = {
   'mono-response': <MonoResponse />,
-  map: <QuestionMap />,
+  map: <MapQuestion />,
 };
 
 export const questionTypeT = {

@@ -1,3 +1,6 @@
+import { useEffect, useMemo, useState } from 'react';
+
+import { classByIdsRequest } from '@academic-portfolio/request';
 import NYACard from '@assignables/components/NYACard';
 import getClassData from '@assignables/helpers/getClassData';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
@@ -17,12 +20,9 @@ import {
   Textarea,
   TextInput,
 } from '@bubbles-ui/components';
-import { PluginRedactorIcon, TagsIcon } from '@bubbles-ui/icons/outline';
 import {
   AddCircleIcon,
   DeleteBinIcon,
-  EditorListBulletsIcon,
-  PluginKanbanIcon,
 } from '@bubbles-ui/icons/solid';
 import prefixPN from '@calendar/helpers/prefixPN';
 import { listKanbanColumnsRequest } from '@calendar/request';
@@ -31,14 +31,13 @@ import tKeys from '@multilanguage/helpers/tKeys';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import useUserAgents from '@users/hooks/useUserAgents';
 import * as _ from 'lodash';
 import { get, map } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useState } from 'react';
-import useUserAgents from '@users/hooks/useUserAgents';
+
 import { updateEventSubTasksRequest } from '../../request';
 
-const { classByIdsRequest } = require('@academic-portfolio/request');
 
 export default function Task({ event, form, classes, disabled, allProps }) {
   const locale = useLocale();

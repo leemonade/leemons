@@ -1,6 +1,5 @@
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
-
-const { cloneDeep, isString } = require('lodash');
+import { cloneDeep, isString }  from 'lodash';
 
 async function saveDocument(_body) {
   const body = cloneDeep(_body);

@@ -1,7 +1,5 @@
-import React from 'react';
+import { Box, Title, Text, createStyles } from'@bubbles-ui/components';
 import PropTypes from 'prop-types';
-
-const { Box, Title, Text, Divider, createStyles } = require('@bubbles-ui/components');
 
 export const useContainerStyles = createStyles((theme, { hideDivider, spacingBottom }) => ({
   root: {

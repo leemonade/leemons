@@ -6,10 +6,8 @@
  * @param {string=} key - Another key like description or my-property-to-translate
  * @return {string}
  * */
-function getTranslationKey(actionName, key) {
+export function getTranslationKey(actionName, key) {
   const pluginName = 'users';
   if (key) return `${pluginName}.${actionName}.${key}`;
   return `${pluginName}.${actionName}`;
 }
-
-module.exports = { getTranslationKey };

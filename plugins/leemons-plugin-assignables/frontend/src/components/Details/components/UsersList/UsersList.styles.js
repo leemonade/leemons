@@ -1,4 +1,4 @@
-const { createStyles } = require('@bubbles-ui/components');
+import { createStyles } from '@bubbles-ui/components';
 
 const useUserListStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;

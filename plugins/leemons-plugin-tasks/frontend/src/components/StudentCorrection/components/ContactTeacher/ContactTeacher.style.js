@@ -1,4 +1,4 @@
-const { createStyles } = require('@bubbles-ui/components');
+import { createStyles } from '@bubbles-ui/components';
 
 export const ContactTeacherStyles = createStyles((theme) => ({
   container: {

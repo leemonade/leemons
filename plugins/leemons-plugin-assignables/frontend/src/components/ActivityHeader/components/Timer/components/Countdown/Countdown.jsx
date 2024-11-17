@@ -1,12 +1,14 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import PropTypes from 'prop-types';
+import { useEffect, useMemo, useRef } from 'react';
+
 
 import { Text } from '@bubbles-ui/components';
 
-import useCountdown from 'react-countdown-hook';
-import dayjs from 'dayjs';
-import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
+// import useCountdown from 'react-countdown-hook';
 import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
+import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
+import dayjs from 'dayjs';
+import PropTypes from 'prop-types';
+
 import { useTimerStyles } from '../../Timer.styles';
 import { millisecondsToTime } from '../../helpers/millisecondsToTime';
 
@@ -47,7 +49,7 @@ function useCountdownColor({ total, remaining }) {
 
 export default function Countdown({ assignation, duration, onTimeout }) {
   const remainingTime = useCountdownRemainingTime({ assignation, duration });
-  const [timeLeft, { start }] = useCountdown(remainingTime, 1000);
+  const [timeLeft, { start }] = [0, { start: () => {} }];
   const timeLeftString = millisecondsToTime(timeLeft);
   const isFirstRender = useRef(true);
 

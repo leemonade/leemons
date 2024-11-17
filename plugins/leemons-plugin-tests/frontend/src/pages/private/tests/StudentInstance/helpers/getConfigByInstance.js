@@ -10,9 +10,9 @@
  * `ln ../../../../frontend/src/pages/private/tests/StudentInstance/helpers/getConfigByInstance.js`
  */
 
-const { isBoolean } = require('lodash');
+import { isBoolean } from 'lodash';
 
-function getConfigByInstance(instance) {
+export function getConfigByInstance(instance) {
   const filters = instance?.metadata?.filters;
   return {
     omit: filters?.omit ? Number(filters.omit) : 0,
@@ -27,5 +27,3 @@ function getConfigByInstance(instance) {
     canOmitQuestions: isBoolean(filters?.canOmitQuestions) ? filters?.canOmitQuestions : true,
   };
 }
-
-module.exports = { getConfigByInstance };
