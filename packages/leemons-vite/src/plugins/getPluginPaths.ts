@@ -1,9 +1,11 @@
 import path from 'path';
 
-import fileExists from "../fs/fileExists";
+import fileExistsMultiextension from '../fs/fileExistsMultiextension';
 import folderExists from '../fs/folderExists';
 
-import { Plugin } from "./listPluginsFromPackageJson";
+import { Plugin } from './listPluginsFromPackageJson';
+
+const EXTENSIONS = ['js', 'ts', 'jsx', 'tsx'];
 
 export interface PluginPaths extends Plugin {
   routers: {
@@ -21,13 +23,19 @@ export default async function getPluginPaths(plugin: Plugin): Promise<PluginPath
   return {
     ...plugin,
     routers: {
-      public: await fileExists(path.join(plugin.path, 'Public.js')),
-      private: await fileExists(path.join(plugin.path, 'Private.js')),
-      protected: await fileExists(path.join(plugin.path, 'Protected.js')),
+      public: await fileExistsMultiextension(path.join(plugin.path, 'Public'), EXTENSIONS),
+      private: await fileExistsMultiextension(path.join(plugin.path, 'Private'), EXTENSIONS),
+      protected: await fileExistsMultiextension(path.join(plugin.path, 'Protected'), EXTENSIONS),
     },
     public: await folderExists(path.join(plugin.path, 'public')),
-    hooks: await fileExists(path.join(plugin.path, 'globalHooks.js')),
-    globalContext: await fileExists(path.join(plugin.path, 'globalContext.js')),
-    localContext: await fileExists(path.join(plugin.path, 'localContext.js')),
+    hooks: await fileExistsMultiextension(path.join(plugin.path, 'globalHooks'), EXTENSIONS),
+    globalContext: await fileExistsMultiextension(
+      path.join(plugin.path, 'globalContext'),
+      EXTENSIONS
+    ),
+    localContext: await fileExistsMultiextension(
+      path.join(plugin.path, 'localContext'),
+      EXTENSIONS
+    ),
   };
 }

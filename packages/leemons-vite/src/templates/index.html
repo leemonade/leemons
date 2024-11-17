@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leemons</title>
+</head>
+
+<body>
+  <style data-leemons="hot-loader-spinner">
+    #hot-loader {
+      position: fixed;
+      box-sizing: content-box;
+      bottom: 16px;
+      right: 14px;
+      width: 44px;
+      height: 44px;
+      border-radius: 4px;
+      background-color: #000;
+      z-index: 9999;
+      overflow: hidden;
+    }
+
+    #hot-loader>div.leemon {
+      position: absolute;
+      top: 6px;
+      left: 9px;
+      z-index: -1;
+    }
+
+    #hot-loader>div.cuts {
+      position: relative;
+      height: 44px;
+      width: 60px;
+      mask-image: url(#lemonMask);
+      mask-position: 10px 10px;
+      background-color: #fff;
+    }
+
+    #hot-loader div.cut,
+    #hot-loader div.cut-back {
+      position: absolute;
+      display: flex;
+      height: 44px;
+      width: 60px;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    #hot-loader div.cut {
+      z-index: 1;
+      animation: cut 0.5s linear infinite;
+    }
+
+    #hot-loader div.cut-back {
+      z-index: 2;
+      animation: cut-back 0.5s linear infinite;
+      mix-blend-mode: screen;
+    }
+
+    #hot-loader div.cut>span,
+    #hot-loader div.cut-back>span {
+      display: block;
+      background-color: #000;
+      height: 5px;
+    }
+
+    #hot-loader div.cut-back>span {
+      background-color: #999;
+    }
+
+    @keyframes cut {
+      0% {
+        transform: rotateZ(15deg) translate3d(-10px, 0, 0);
+      }
+
+      100% {
+        transform: rotateZ(15deg) translate3d(-10px, 13px, 0);
+      }
+    }
+
+    @keyframes cut-back {
+      0% {
+        transform: rotateZ(-5deg) translate3d(-10px, -3px, 0);
+      }
+
+      100% {
+        transform: rotateZ(-5deg) translate3d(-10px, 10px, 0);
+      }
+    }
+  </style>
+  <div id="root"></div>
+  <div id="hot-loader">
+    <div class="leemon">
+      <svg width="26px" height="32px" viewBox="0.492238 0.287974 25.0422 31.3908">
+        <defs>
+          <mask id="lemonMask">
+            <g transform="translate(9, 6)">
+              <path
+                d="M15.5 0.375C14.9905 0.497465 14.5511 0.74981 14.1875 1.09375C13.8018 1.45875 13.3113 1.6698 12.8125 1.71875C9.38664 2.05601 6.12618 3.96597 3.8125 6.96875C1.49882 9.97153 1.11274 12.3284 1 12.75C0.29363 15.4042 0.415811 18.2253 0.8125 20.4688C1.20919 22.7122 1.86211 23.6817 2.6875 24.9688C3.51289 26.2558 4.53986 27.3783 5.75 28.25C6.15767 28.5436 6.47225 28.9586 6.625 29.4688C6.91302 30.4306 7.73064 31.2623 8.84375 31.5625C9.95673 31.8628 11.0854 31.5628 11.8125 30.875C12.1981 30.5101 12.6574 30.2991 13.1562 30.25C16.5823 29.9129 19.8767 27.877 22.1562 24.9688C24.4358 22.0605 24.856 19.6403 24.9688 19.2188C25.675 16.5649 25.6995 13.9101 25.1562 11.5C25.1562 11.5 24.3701 8.74543 23.2812 6.96875C22.1924 5.19207 21.429 4.59053 20.2188 3.71875C19.8111 3.42526 19.4965 2.97894 19.3438 2.46875C19.0559 1.50704 18.238 0.706362 17.125 0.40625C16.5685 0.25609 16.0095 0.252535 15.5 0.375Z"
+                fill="#FFFFFF" stroke="white" stroke-width="2" />
+            </g>
+          </mask>
+        </defs>
+        <path
+          d="M15.5 0.375C14.9905 0.497465 14.5511 0.74981 14.1875 1.09375C13.8018 1.45875 13.3113 1.6698 12.8125 1.71875C9.38664 2.05601 6.12618 3.96597 3.8125 6.96875C1.49882 9.97153 1.11274 12.3284 1 12.75C0.29363 15.4042 0.415811 18.2253 0.8125 20.4688C1.20919 22.7122 1.86211 23.6817 2.6875 24.9688C3.51289 26.2558 4.53986 27.3783 5.75 28.25C6.15767 28.5436 6.47225 28.9586 6.625 29.4688C6.91302 30.4306 7.73064 31.2623 8.84375 31.5625C9.95673 31.8628 11.0854 31.5628 11.8125 30.875C12.1981 30.5101 12.6574 30.2991 13.1562 30.25C16.5823 29.9129 19.8767 27.877 22.1562 24.9688C24.4358 22.0605 24.856 19.6403 24.9688 19.2188C25.675 16.5649 25.6995 13.9101 25.1562 11.5C25.1562 11.5 24.3701 8.74543 23.2812 6.96875C22.1924 5.19207 21.429 4.59053 20.2188 3.71875C19.8111 3.42526 19.4965 2.97894 19.3438 2.46875C19.0559 1.50704 18.238 0.706362 17.125 0.40625C16.5685 0.25609 16.0095 0.252535 15.5 0.375Z"
+          fill="#FFFFFF" stroke="none" />
+      </svg>
+    </div>
+    <div class="cuts">
+      <div class="cut">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="cut-back">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>

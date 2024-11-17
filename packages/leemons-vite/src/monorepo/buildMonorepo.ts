@@ -23,6 +23,12 @@ export async function buildMonorepo({ outputDir, basePath, plugins }: BuildMonor
   await createFolderIfMissing(outputDir);
   await createMissingPackageJSON(outputDir);
 
+  // index.html
+  await copyFile(
+    path.resolve(__dirname, '../templates/index.html'),
+    path.resolve(outputDir, 'index.html')
+  );
+
   // index.js
   await copyFile(
     path.resolve(__dirname, '../templates/index.tsx'),

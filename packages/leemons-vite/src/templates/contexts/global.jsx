@@ -79,7 +79,7 @@ class LeemonsApi {
       if (ctx.options?.cache) {
         cache = ctx.options.cache;
         cacheKey = JSON.stringify({
-          url: `${global.leemons.apiUrl}/api/${ctx.url}`,
+          url: `${window.leemons.apiUrl}/api/${ctx.url}`,
           options: ctx.options,
         });
         delete ctx.options.cache;
@@ -101,7 +101,7 @@ class LeemonsApi {
         }
       }
       waitKey = JSON.stringify({
-        url: `${global.leemons.apiUrl}/api/${ctx.url}`,
+        url: `${window.leemons.apiUrl}/api/${ctx.url}`,
         options: ctx.options,
         formDataValues,
       });
@@ -118,7 +118,7 @@ class LeemonsApi {
 
       // }
 
-      const response = await fetch(`${global.leemons.apiUrl}/api/${ctx.url}`, ctx.options);
+      const response = await fetch(`${window.leemons.apiUrl}/api/${ctx.url}`, ctx.options);
 
       const responseCtx = { middlewares: [], response };
       await this.#callMiddleware(this.#resMiddlewares, 0, responseCtx);
@@ -193,7 +193,6 @@ class LeemonsApi {
   };
 }
 
-
 function apiContentTypeMiddleware(ctx) {
   if (!ctx.options) ctx.options = {};
   if (ctx.options && !ctx.options.headers) ctx.options.headers = {};
@@ -230,7 +229,7 @@ async function apiResponseParserMiddleware(ctx) {
     throw await ctx.response.json();
   }
   ctx.response = await ctx.response.json();
-};
+}
 
 export function Provider({ children }) {
   const { api } = new LeemonsApi({
@@ -238,9 +237,7 @@ export function Provider({ children }) {
     resMiddlewares: [apiResponseParserMiddleware],
   });
 
-
   useEffect(() => {
-
     const handleUnhandledRejection = (event) => {
       if (event.reason && event.reason.isLeemonsApiError) {
         event.preventDefault();
@@ -251,7 +248,10 @@ export function Provider({ children }) {
             typeof message === 'string' &&
             message.toLowerCase().indexOf('no authorization header') < 0
           ) {
-            addErrorAlert(`[ApiError] ${event.reason.pluginName}`, event.reason.message ?? event.reason.error);
+            addErrorAlert(
+              `[ApiError] ${event.reason.pluginName}`,
+              event.reason.message ?? event.reason.error
+            );
           }
 
           console.warn('Unhandled Leemons API error:', event.reason);
@@ -283,7 +283,7 @@ export function Provider({ children }) {
     },
   });
 
-  global.leemons = value.leemons;
+  window.leemons = value.leemons;
 
   const providerValue = { ...value, setValue };
   return <context.Provider value={providerValue}>{children}</context.Provider>;

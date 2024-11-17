@@ -11,7 +11,11 @@ squirrelly.filters.define('clear', (str) =>
     .join('')
 );
 
-export async function copyFileWithSquirrelly(src: string, dest: string, config: Record<string, unknown>) {
+export async function copyFileWithSquirrelly(
+  src: string,
+  dest: string,
+  config: Record<string, unknown>
+) {
   const file = await squirrelly.renderFile(src, config);
 
   await writeFile(dest, file);
