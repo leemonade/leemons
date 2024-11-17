@@ -7,6 +7,7 @@ import { removeFiles } from '../fs/removeFiles';
 import { PluginAliases } from '../plugins/getAliases';
 import { PluginPaths } from '../plugins/getPluginPaths';
 
+import { copyPublicFiles } from './copyPublicFiles';
 import { createMissingPackageJSON } from './createMissingPackageJSON';
 import { generateAliasesFile } from './generateAliasesFile';
 import { generateTSAndJSConfig } from './generateTSAndJSConfig';
@@ -41,6 +42,12 @@ export async function buildMonorepo({ outputDir, basePath, plugins }: BuildMonor
     path.resolve(outputDir, 'reset.css')
   );
 
+  // hotManagement.ts
+  await copyFile(
+    path.resolve(__dirname, '../templates/hotManagement.ts'),
+    path.resolve(outputDir, 'hotManagement.ts')
+  );
+
   // Contexts
   await createFolderIfMissing(path.resolve(outputDir, 'contexts'));
 
@@ -64,6 +71,8 @@ export async function buildMonorepo({ outputDir, basePath, plugins }: BuildMonor
 
   const filesToRemove = await linkSourceCode(path.resolve(outputDir, 'plugins'), plugins);
   await removeFiles(path.resolve(outputDir, 'plugins'), filesToRemove);
+
+  await copyPublicFiles(outputDir, plugins);
 
   await generateTSAndJSConfig(basePath, plugins);
 

@@ -7,6 +7,7 @@ import pluginAliases from './aliases.json';
 export default defineConfig({
   root: __dirname,
   plugins: [react()],
+  publicDir: false,
   resolve: {
     alias: pluginAliases,
     dedupe: [
