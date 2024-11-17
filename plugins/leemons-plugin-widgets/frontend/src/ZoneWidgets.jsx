@@ -1,4 +1,4 @@
-import React, { cloneElement, useEffect, useMemo } from 'react';
+import { cloneElement, useEffect, useMemo } from 'react';
 
 import { Box } from '@bubbles-ui/components';
 import loadable from '@loadable/component';
@@ -11,16 +11,18 @@ import useZone from './requests/hooks/queries/useZone';
 function dynamicImport(pluginName, component, path = 'src/widgets') {
   const normalizedPath = path.replace(/^dist\//, 'src/');
 
+
   return loadable(async () => {
-    try {
-      return await import(
-        /* webpackInclude: /src\/widgets\/.+\.js/ */ `@app/plugins/${pluginName}/${normalizedPath}/${component}.js`
-      );
-    } catch (error) {
-      return await import(
-        /* webpackInclude: /src\/widgets\/.+\.tsx/ */ `@app/plugins/${pluginName}/${normalizedPath}/${component}.tsx`
-      );
-    }
+    const widgets = await import.meta.glob('/plugins/*/src/widgets/**/*.jsx', {
+      eager: false,
+    });
+
+    const widgetPath = `/plugins/${pluginName}/${normalizedPath}/${component}`;
+
+    const widget = widgets[widgetPath + '.jsx'] ?? widgets[widgetPath + '.tsx'];
+
+
+    return widget();
   });
 }
 
