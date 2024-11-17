@@ -54,4 +54,8 @@ if (import.meta.hot) {
   import.meta.hot.on("vite:afterUpdate", () => {
     hideLoader();
   });
+
+  import.meta.hot.on("vite:error", () => {
+    hideLoader();
+  });
 }
