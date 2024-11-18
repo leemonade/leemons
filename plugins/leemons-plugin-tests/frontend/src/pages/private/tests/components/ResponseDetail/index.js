@@ -70,7 +70,6 @@ function ResponseDetail({
     [userSkipped]
   );
 
-  console.log('isChoiceBased', isChoiceBased);
   const getSolution = useCallback(
     (isUserAnswer, isCorrect) => {
       if (!isChoiceBased) return solutionLabel;
