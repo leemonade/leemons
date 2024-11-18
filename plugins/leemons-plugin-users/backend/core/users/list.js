@@ -76,6 +76,7 @@ async function list({
   disabled,
   ctx,
   sort,
+  collation,
   listUserAgents,
   ...queries
 }) {
@@ -128,6 +129,7 @@ async function list({
     page,
     size,
     sort,
+    collation,
     query,
   });
 
