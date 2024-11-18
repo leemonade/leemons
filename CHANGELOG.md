@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.16.0](https://github.com/leemonade/leemons/compare/1.15.0...1.16.0) (2024-11-18)
+
+
+### Features
+
+* **fundae:** Changes for fundae support ([1f021a6](https://github.com/leemonade/leemons/commit/1f021a6b67c5288c5a51abdf0d3c5610f7c002be)), closes [#645](https://github.com/leemonade/leemons/issues/645)
+* **tests:** Added True/False Questions ([a8852a4](https://github.com/leemonade/leemons/commit/a8852a45a9f152db5dba4adc4150c8dc22df4479)), closes [#631](https://github.com/leemonade/leemons/issues/631)
+
+
+### Bug Fixes
+
+* **tasks:** Add optional chaining to classes in `CurriculumRender` ([29ad0ff](https://github.com/leemonade/leemons/commit/29ad0ffb9308467e0618a9e2f4815349dc3577bc)), closes [#648](https://github.com/leemonade/leemons/issues/648)
+* **users:** Admin users table search errors  ([ee6d2aa](https://github.com/leemonade/leemons/commit/ee6d2aaf68d0f8df235e82c2fd43c500406be42a)), closes [#647](https://github.com/leemonade/leemons/issues/647)
+
 ## [1.15.0](https://github.com/leemonade/leemons/compare/1.14.0...1.15.0) (2024-11-08)
 
 
