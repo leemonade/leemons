@@ -24,7 +24,6 @@ const SelectSubject = forwardRef(
     const [value, setValue] = useState(userValue);
 
     const handleChange = (newValue) => {
-      console.log('newValue', newValue);
       if (newValue !== value) {
         // EN: Do not update value if it is a controlled input
         // ES: No actualizar el valor si es un input controlado
