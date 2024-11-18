@@ -1,22 +1,21 @@
-import React from 'react';
-import { isFunction } from 'lodash';
 import { ActionButton, Box, Stack, Divider } from '@bubbles-ui/components';
-
 import { RemoveIcon } from '@bubbles-ui/icons/outline';
-import { SettingMenuVerticalIcon } from '@bubbles-ui/icons/solid';
-import { AssignIcon } from './icons/AssignIcon';
-import { LibraryDetailToolbarStyles } from './LibraryDetailToolbar.styles';
+import { PrintContentButton } from '@content-creator/components';
+import { isFunction } from 'lodash';
+
 import {
   LIBRARY_DETAIL_TOOLBAR_DEFAULT_PROPS,
   LIBRARY_DETAIL_TOOLBAR_PROP_TYPES,
 } from './LibraryDetailToolbar.constants';
-import { EditIcon } from './icons/EditIcon';
-import { DuplicateIcon } from './icons/DuplicateIcon';
-import { DownloadIcon } from './icons/DownloadIcon';
+import { LibraryDetailToolbarStyles } from './LibraryDetailToolbar.styles';
+import { AssignIcon } from './icons/AssignIcon';
 import { DeleteIcon } from './icons/DeleteIcon';
-import { ShareIcon } from './icons/ShareIcon';
-import { LoveIcon } from './icons/LoveIcon';
+import { DownloadIcon } from './icons/DownloadIcon';
+import { DuplicateIcon } from './icons/DuplicateIcon';
+import { EditIcon } from './icons/EditIcon';
 import { LoveFullIcon } from './icons/LoveFullIcon';
+import { LoveIcon } from './icons/LoveIcon';
+import { ShareIcon } from './icons/ShareIcon';
 
 const LibraryDetailToolbar = ({
   item,
@@ -134,6 +133,13 @@ const LibraryDetailToolbar = ({
               className={classes.button}
             />
           )}
+          {toolbarItems.printPDF && (
+            <ActionButton
+              icon={<PrintContentButton variant="icon" assetId={item.id} />}
+              tooltip={toolbarItems.printPDF}
+              className={classes.button}
+            />
+          )}
           {toolbarItems.download && (
             <ActionButton
               data-cypress-id="library-detail-toolbar-download"
@@ -187,7 +193,7 @@ const LibraryDetailToolbar = ({
             />
           )}
         </Box>
-        {/* 
+        {/*
         <Box className={classes.rightContainer}>
           <ActionButton icon={<SettingMenuVerticalIcon height={16} width={16} />} />
         </Box>
