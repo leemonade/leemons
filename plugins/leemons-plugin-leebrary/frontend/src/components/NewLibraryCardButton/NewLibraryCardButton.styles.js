@@ -1,6 +1,6 @@
 import { createStyles, pxToRem } from '@bubbles-ui/components';
 
-const NewLibraryCardButtonStyles = createStyles((theme) => ({
+const NewLibraryCardButtonStyles = createStyles((theme, { isMultipleButton }) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -16,7 +16,7 @@ const NewLibraryCardButtonStyles = createStyles((theme) => ({
     width: '100%',
     minWidth: pxToRem(264),
     maxWidth: pxToRem(330),
-    minHeight: pxToRem(396),
+    minHeight: isMultipleButton ? pxToRem(184) : pxToRem(396),
     '&:hover': {
       backgroundColor: theme.other.dropzone.background.color.hover,
     },

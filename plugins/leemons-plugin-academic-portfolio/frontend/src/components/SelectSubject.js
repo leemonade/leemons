@@ -1,13 +1,14 @@
-import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
-import { Box, Select, Text, AvatarSubject, TextClamp } from '@bubbles-ui/components';
 import React from 'react';
+
+import { Box, Select, Text, AvatarSubject, TextClamp } from '@bubbles-ui/components';
 import propTypes from 'prop-types';
 
-export function SubjectItem({ subject, isValueComponent, ...props }) {
+import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
+
+export function SubjectItem({ subject, isValueComponent, label, ...props }) {
   if (!subject) {
     return null;
   }
-
   return (
     <Box {...props}>
       <Box
@@ -28,7 +29,7 @@ export function SubjectItem({ subject, isValueComponent, ...props }) {
         />
         <Box>
           <TextClamp lines={1} withTooltip={subject.label}>
-            <Text>{subject.label}</Text>
+            <Text>{subject.label ?? label}</Text>
           </TextClamp>
           <TextClamp lines={1} withTooltip={subject.subLabel}>
             <Text size="xs" color="soft">
@@ -74,6 +75,7 @@ export function SelectSubject({ data, value, onChange, ...props }) {
 SubjectItem.propTypes = {
   subject: propTypes.object,
   isValueComponent: propTypes.bool,
+  label: propTypes.string,
 };
 
 SelectSubject.propTypes = {
