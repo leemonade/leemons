@@ -69,13 +69,7 @@ function ListUsers() {
   async function listUsers(searchQuery) {
     const query = {};
     if (typeof searchQuery === 'string') {
-      query.$or = [
-        { name: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        { surnames: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        { secondSurname: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        { email: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        { phone: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-      ];
+      query.search = searchQuery;
     }
     if (store.profile) {
       query.profiles = store.profile;
