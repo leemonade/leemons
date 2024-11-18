@@ -1,16 +1,21 @@
-import { VerticalStepperContainer } from '@bubbles-ui/components';
 import React, { useEffect, useMemo } from 'react';
-import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@tasks/helpers';
 import { useHistory } from 'react-router-dom';
+
+import { ActivityUnavailable } from '@assignables/components/ActivityUnavailable';
+import { useActivityStates } from '@assignables/components/ActivityUnavailable/hooks/useActivityStates';
+import { VerticalStepperContainer } from '@bubbles-ui/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PropTypes from 'prop-types';
-import IntroductionStep from '../IntroductionStep/IntroductionStep';
-import DevelopmentStep from '../DevelopmentStep/DevelopmentStep';
+
 import { useUpdateTimestamps } from '../../__DEPRECATED__components/Steps/Steps';
+import DevelopmentStep from '../DevelopmentStep/DevelopmentStep';
+import IntroductionStep from '../IntroductionStep/IntroductionStep';
 import SubmissionStep from '../SubmissionStep/SubmissionStep';
 
-function useSteps({ instance }) {
+import { prefixPN } from '@tasks/helpers';
+import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
+
+function useSteps({ instance, isUnavailable }) {
   const [t] = useTranslateLoader(prefixPN('task_realization.steps'));
   return useMemo(
     () =>
@@ -24,19 +29,23 @@ function useSteps({ instance }) {
           id: 'development',
           label: t('development'),
           component: DevelopmentStep,
+          isBlocked: isUnavailable,
         },
         !!instance?.assignable?.submission && {
           id: 'submission',
           label: t('submission'),
           component: SubmissionStep,
+          isBlocked: isUnavailable,
         },
       ].filter(Boolean),
-    [t, instance?.assignable?.submission]
+    [t, instance?.assignable?.submission, isUnavailable]
   );
 }
 
 export default function StepContainer({ preview, assignation, instance, scrollRef }) {
-  const steps = useSteps({ instance });
+  const { isUnavailable } = useActivityStates({ instance });
+
+  const steps = useSteps({ instance, isUnavailable });
   const [currentStep, setCurrentStep] = React.useState(0);
   const history = useHistory();
 
@@ -71,7 +80,7 @@ export default function StepContainer({ preview, assignation, instance, scrollRe
     }
   };
 
-  const StepComponent = steps[currentStep].component;
+  const StepComponent = isUnavailable ? ActivityUnavailable : steps[currentStep].component;
 
   return (
     <VerticalStepperContainer
