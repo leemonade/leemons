@@ -1,6 +1,13 @@
 import React, { useEffect, useRef } from 'react';
+import { useParams, useHistory } from 'react-router-dom';
+
+import ActivityHeader from '@assignables/components/ActivityHeader/index';
+import TotalLayoutStepContainerWithAccordion from '@assignables/components/TotalLayoutStepContainerWithAccordion/TotalLayoutStepContainerWithAccordion';
+import useAssignations from '@assignables/hooks/assignations/useAssignationsQuery';
+import useClassData from '@assignables/hooks/useClassDataQuery';
+import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
+import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import {
-  Box,
   Stack,
   LoadingOverlay,
   Button,
@@ -9,22 +16,17 @@ import {
   TotalLayoutContainer,
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
-import ActivityHeader from '@assignables/components/ActivityHeader/index';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@content-creator/helpers/prefixPN';
+import { ChevRightIcon } from '@bubbles-ui/icons/outline';
+import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
 import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
-import { useParams, useHistory } from 'react-router-dom';
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
-import useAssignations from '@assignables/hooks/assignations/useAssignationsQuery';
-import useClassData from '@assignables/hooks/useClassDataQuery';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import useDocument from '@content-creator/request/hooks/queries/useDocument';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
-import { ChevRightIcon } from '@bubbles-ui/icons/outline';
-import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
-import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
-import TotalLayoutStepContainerWithAccordion from '@assignables/components/TotalLayoutStepContainerWithAccordion/TotalLayoutStepContainerWithAccordion';
+
+import { PrintContentButton } from '@content-creator/components';
+import prefixPN from '@content-creator/helpers/prefixPN';
+import useDocument from '@content-creator/request/hooks/queries/useDocument';
 
 function useDocumentData({ id, user }) {
   const { data: assignation, isLoading: assignationIsLoading } = useAssignations(
@@ -126,7 +128,8 @@ export default function DocumentView() {
             <TotalLayoutFooterContainer
               scrollRef={scrollRef}
               rightZone={
-                <Box>
+                <Stack spacing={4}>
+                  <PrintContentButton content={assignable?.content} />
                   {nextActivityUrl ? (
                     <Button
                       rightIcon={<ChevRightIcon />}
@@ -149,7 +152,7 @@ export default function DocumentView() {
                       {t('markRead')}
                     </Button>
                   )}
-                </Box>
+                </Stack>
               }
               fixed
             />

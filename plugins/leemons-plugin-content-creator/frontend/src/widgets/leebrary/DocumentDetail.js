@@ -1,17 +1,18 @@
 /* eslint-disable prettier/prettier */
+import { useHistory } from 'react-router-dom';
+
+import { useIsStudent } from '@academic-portfolio/hooks';
 import { ViewOnIcon } from '@bubbles-ui/icons/outline';
-import { LibraryDetail } from '@leebrary/components';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import prefixPN from '@content-creator/helpers/prefixPN';
-import { deleteDocumentRequest, duplicateDocumentRequest } from '@content-creator/request';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
+import { LibraryDetail } from '@leebrary/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PropTypes from 'prop-types';
-import React from 'react';
-import { useHistory } from 'react-router-dom';
+
 import { AssetMetadataContentCreator } from '@content-creator/components/AssetMetadataContentCreator';
-import { useIsStudent } from '@academic-portfolio/hooks';
+import prefixPN from '@content-creator/helpers/prefixPN';
+import { deleteDocumentRequest, duplicateDocumentRequest } from '@content-creator/request';
 
 const DocumentDetail = ({ asset, onRefresh, onPin, onUnpin, onShare, ...props }) => {
   const isStudent = useIsStudent();
@@ -51,6 +52,7 @@ const DocumentDetail = ({ asset, onRefresh, onPin, onUnpin, onShare, ...props })
         toolbarItems.unpin = t('unpin');
       }
     }
+    toolbarItems.printPDF = t('download');
   }
 
   function handleOnPin(item) {

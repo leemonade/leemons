@@ -69,6 +69,7 @@ module.exports = {
     edit: 'Editar',
     document: 'Documento',
     assign: 'Asignar',
+    download: 'Descargar',
     delete: 'Borrar',
     deleted: 'Borrado',
     questions: 'Preguntas:',
@@ -115,5 +116,8 @@ module.exports = {
     assign: 'Asignar como tarea',
     assignDone: 'Contenido asignado con éxito',
     assignNow: 'Asignar ahora',
+  },
+  printContentButton: {
+    printPDF: 'Descargar PDF',
   },
 };
