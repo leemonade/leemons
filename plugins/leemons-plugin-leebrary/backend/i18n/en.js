@@ -140,6 +140,7 @@ module.exports = {
             },
           },
         },
+        selectButton: 'Seleccionar de la biblioteca',
       },
       descriptions: {
         featuredImage: "Only to change the webpage's default featured image",

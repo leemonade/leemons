@@ -127,6 +127,7 @@ module.exports = {
             },
           },
         },
+        selectButton: 'Pick from library',
       },
       descriptions: {
         featuredImage: 'Cambiar la imagen por defecto de la página web',

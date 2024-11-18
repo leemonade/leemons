@@ -209,6 +209,7 @@ const widgets = {
   zones: [
     { key: `${permissionsPrefix}.admin.config-providers` },
     { key: `${permissionsPrefix}.asset.form` },
+    { key: `${permissionsPrefix}.asset.drawer` },
     { key: `${permissionsPrefix}.drawer.tabs` },
   ],
   items: [
