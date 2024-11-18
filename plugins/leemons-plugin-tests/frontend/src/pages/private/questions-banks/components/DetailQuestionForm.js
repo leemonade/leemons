@@ -29,6 +29,7 @@ import {
   QUESTION_TYPES_WITH_MIN_RESPONSES_TO_ADD_CLUES,
 } from '../questionConstants';
 
+import CategoryPicker from './CategoryPicker';
 import { MapQuestion } from './question-types/Map';
 import { MonoResponse } from './question-types/MonoResponse';
 import { TrueFalse } from './question-types/TrueFalse';
@@ -256,6 +257,12 @@ export default function DetailQuestionForm({
             </Box>
             {type && (
               <>
+                <CategoryPicker
+                  t={t}
+                  categoriesData={categories}
+                  control={form.control}
+                  form={form}
+                />
                 <ContextContainer fullWidth direction="row">
                   <Controller
                     control={form.control}
