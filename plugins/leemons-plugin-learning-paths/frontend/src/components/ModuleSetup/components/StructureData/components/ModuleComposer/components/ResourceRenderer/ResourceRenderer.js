@@ -1,10 +1,11 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-
+import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import { Box, createStyles, Text, TextClamp, Badge } from '@bubbles-ui/components';
 import { capitalize } from 'lodash';
-import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
+import PropTypes from 'prop-types';
+
 import { AvatarActivity } from '../../../AvatarActivity';
+
+import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
 
 export const useResourceRendererStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
@@ -28,7 +29,10 @@ export const useResourceRendererStyles = createStyles((theme) => {
   };
 });
 
-export function ResourceRenderer({ activity }) {
+export function ResourceRenderer({ activity, id }) {
+  const { useWatch } = useModuleAssignContext() ?? { useWatch: () => false };
+  const isDeleted = useWatch({ name: `state.deleted.${id}` });
+
   const { classes } = useResourceRendererStyles();
 
   const roleLocalizations = useRolesLocalizations([activity?.role ?? activity?.providerData?.role]);
@@ -58,7 +62,9 @@ export function ResourceRenderer({ activity }) {
       <AvatarActivity activity={activity} />
       <Box className={classes.textContainer}>
         <TextClamp lines={1}>
-          <Text className={classes.activityName}>{activity.asset.name}</Text>
+          <Text className={classes.activityName} strikethrough={isDeleted}>
+            {activity.asset.name}
+          </Text>
         </TextClamp>
         <Badge size="xs" label={badgeCategory} closable={false} radius={'default'} />
       </Box>
@@ -67,7 +73,7 @@ export function ResourceRenderer({ activity }) {
 }
 
 ResourceRenderer.propTypes = {
-  localizations: PropTypes.object,
+  id: PropTypes.string,
   activity: PropTypes.shape({
     providerData: PropTypes.shape({
       role: PropTypes.string,

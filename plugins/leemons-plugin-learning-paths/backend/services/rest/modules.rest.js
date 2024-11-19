@@ -4,12 +4,12 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const _ = require('lodash');
-
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
+const _ = require('lodash');
+
 const {
   createModule,
   updateModule,
@@ -152,10 +152,10 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const { id, activities, assignationForm } = ctx.params;
+      const { id, activities, assignationForm, order } = ctx.params;
       const assignation = await assignModule({
         moduleId: id,
-        config: { activities, assignationForm },
+        config: { activities, assignationForm, order },
         ctx,
       });
       return { status: 200, assignation };

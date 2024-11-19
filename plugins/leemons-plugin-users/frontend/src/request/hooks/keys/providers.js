@@ -5,4 +5,12 @@ export const getProviderKey = [
   },
 ];
 
+export const listProvidersKey = [
+  {
+    plugin: 'plugin.users',
+    scope: 'providers',
+    action: 'list',
+  },
+];
+
 export default getProviderKey;

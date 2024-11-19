@@ -2,6 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 
 import ActivityHeader from '@assignables/components/ActivityHeader';
+import {
+  ActivityUnavailable,
+  ActivityUnavailableFooter,
+  useActivityStates,
+} from '@assignables/components/ActivityUnavailable';
 import TotalLayoutStepContainerWithAccordion from '@assignables/components/TotalLayoutStepContainerWithAccordion/TotalLayoutStepContainerWithAccordion';
 import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
 import {
@@ -38,6 +43,8 @@ export default function Execution() {
   });
   const instance = assignation?.instance;
   const assignable = instance?.assignable;
+
+  const { isUnavailable } = useActivityStates({ instance });
 
   const isFinished = assignation?.timestamps?.end;
   const correctionUrl = `${assignable?.roleDetails?.evaluationDetailUrl
@@ -94,10 +101,12 @@ export default function Execution() {
           }
           scrollRef={scrollRef}
           Footer={
-            <TotalLayoutFooterContainer scrollRef={scrollRef} fixed>
-              <Stack justifyContent="end" fullWidth spacing={4}>
-                {
-                  isPdf && (
+            isUnavailable ? (
+              <ActivityUnavailableFooter scrollRef={scrollRef} singlePage />
+            ) : (
+              <TotalLayoutFooterContainer scrollRef={scrollRef} fixed>
+                <Stack justifyContent="end" fullWidth spacing={4}>
+                  {isPdf && (
                     <Button
                       leftIcon={<DownloadIcon />}
                       variant="outline"
@@ -105,27 +114,31 @@ export default function Execution() {
                     >
                       {t('download')}
                     </Button>
-                  )
-                }
-                <Button
-                  loading={isSubmitting}
-                  disabled={isFinished}
-                  onClick={async () => {
-                    setIsSubmitting(true);
-                    await updateTimestamps('end');
-                    setIsSubmitting(false);
-                    history.push(correctionUrl);
-                  }}
-                >
-                  {t('finish')}
-                </Button>
-              </Stack>
-            </TotalLayoutFooterContainer>
+                  )}
+                  <Button
+                    loading={isSubmitting}
+                    disabled={isFinished}
+                    onClick={async () => {
+                      setIsSubmitting(true);
+                      await updateTimestamps('end');
+                      setIsSubmitting(false);
+                      history.push(correctionUrl);
+                    }}
+                  >
+                    {t('finish')}
+                  </Button>
+                </Stack>
+              </TotalLayoutFooterContainer>
+            )
           }
         >
-          <Stack fullWidth fullHeight justifyContent="center" alignItems="center">
-            <AssetPlayerWrapperExecution asset={asset} />
-          </Stack>
+          {isUnavailable ? (
+            <ActivityUnavailable instance={instance} scrollRef={scrollRef} clean />
+          ) : (
+            <Stack fullWidth fullHeight justifyContent="center" alignItems="center">
+              <AssetPlayerWrapperExecution asset={asset} />
+            </Stack>
+          )}
         </TotalLayoutStepContainerWithAccordion>
       </Stack>
     </TotalLayoutContainer>

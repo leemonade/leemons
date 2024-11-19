@@ -1,7 +1,8 @@
-import { Agenda } from '@hokify/agenda';
-import { Context, ServiceSchema } from '@leemons/deployment-manager';
+import { Agenda, Job } from '@hokify/agenda';
+import { ServiceSchema } from '@leemons/deployment-manager';
 
-export interface CronJobContext extends Context {
+export interface CronJobContext {
+  params: { job: Job };
   cronJob: {
     schedule: <T extends Record<string, unknown>>(
       when: string,
@@ -12,7 +13,11 @@ export interface CronJobContext extends Context {
       interval: string,
       jobName: string,
       params?: T
-    ) => void;
+    ) => Promise<void>;
+    cancel<T extends Record<string, unknown>>(
+      jobName: string,
+      params: T & { 'data.deploymentID': string }
+    ): Promise<number>;
   };
 }
 
@@ -32,6 +37,10 @@ export interface LeemonsCronJobsService extends Partial<ServiceSchema> {
   methods: {
     runScheduled<T extends Record<string, unknown>>(when: string, jobName: string, params: T): void;
     runEvery<T extends Record<string, unknown>>(interval: string, jobName: string, params: T): void;
+    cancel<T extends Record<string, unknown>>(
+      jobName: string,
+      params: T & { 'data.deploymentID': string }
+    ): Promise<number>;
   };
   actions: {
     LeemonsCronJobExecute: (ctx: CronJobContext) => Promise<unknown>;

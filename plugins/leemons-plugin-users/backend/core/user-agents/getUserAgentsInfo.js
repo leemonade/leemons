@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+
 const _ = require('lodash');
 
 /**
@@ -54,13 +56,13 @@ function prepareUserAgents({
  *
  * @public
  * @static
- * @param {object} params - The parameters to get the user agents.
- * @param {string[]} params.userAgentIds - Array of user agent IDs to search for.
- * @param {boolean} [params.withProfile=false] - Whether to include profile information.
- * @param {boolean} [params.withCenter=false] - Whether to include center information.
- * @param {string[]} [params.userColumns=['id', 'email', 'name', 'surnames', 'secondSurname', 'birthdate', 'avatar', 'gender', 'createdAt']] - Columns to select for user information.
- * @param {Context} params.ctx - Context object containing the transaction.
- * @returns {Promise<UserAgent[]>} - A promise that resolves to an array of user agents.
+ * @param {Object} params - The parameters for searching user agents.
+ * @param {string[]} params.userAgentIds - An array of user agent IDs to search for.
+ * @param {boolean} [params.withProfile=false] - Indicates whether profile information should be included.
+ * @param {boolean} [params.withCenter=false] - Indicates whether center information should be included.
+ * @param {string[]} [params.userColumns=['id', 'email', 'name', 'surnames', 'secondSurname', 'birthdate', 'avatar', 'gender', 'createdAt']] - An array of user columns to select.
+ * @param {import('@leemons/deployment-manager').Context} params.ctx - The context including the database transaction.
+ * @returns {UserAgent[]} - An array of objects representing user agents with detailed information.
  * */
 async function getUserAgentsInfo({
   userAgentIds,

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import {
@@ -30,6 +30,7 @@ import EvaluationSystemsSelect from './EvaluationSystemSelect';
 import FooterContainer from './FooterContainer';
 import LoadingFormState from './LoadingFormState';
 import Nomenclature from './Nomenclature';
+import ProgramStaff from './ProgramStaff';
 import ReferenceGroupsSetup from './ReferenceGroupsSetup';
 import SeatsPerCourseSetup from './SeatsPerCourseSetup';
 import SubstagesSetup from './SubstagesSetup';
@@ -104,6 +105,7 @@ const AddProgramForm = ({
   const [loadingEvaluationSystems, setLoadingEvaluationSystems] = useState(false);
   const [showLoadingComponent, setShowLoadingComponent] = useState(!isEditing);
   const [progress, setProgress] = useState(0);
+  const [staffValidationLoading, setStaffValidationLoading] = useState(false);
   const { mutate: setProgramCustomTranslationKeys } = useSetProgramCustomTranslationKeys({
     successMessage:
       localizations?.programDrawer?.addProgramForm?.formLabels?.nomenclature?.success?.set,
@@ -204,6 +206,12 @@ const AddProgramForm = ({
       setValue('courses', formattedCourses);
 
       setValue('nomenclature', programBeingEdited.nomenclature);
+
+      if (programBeingEdited.staff) {
+        Object.entries(programBeingEdited.staff).forEach(([role, staffData]) => {
+          setValue(`staff.${role}`, staffData);
+        });
+      }
     }
   }, [programBeingEdited, getSeats]);
 
@@ -339,6 +347,16 @@ const AddProgramForm = ({
                       )}
                     />
                   </ContextContainer>
+
+                  {/* STAFF */}
+                  <ProgramStaff
+                    control={control}
+                    localizations={formLabels?.staff}
+                    isEditing={isEditing}
+                    programId={programBeingEdited?.id}
+                    loading={staffValidationLoading}
+                    setLoading={setStaffValidationLoading}
+                  />
 
                   {/* REGLAS ACADÉMICAS */}
                   <ContextContainer noFlex spacing={4}>
@@ -606,7 +624,7 @@ const AddProgramForm = ({
                   <Button variant="outline" type="button" onClick={onCancel}>
                     {formLabels?.cancel}
                   </Button>
-                  <Button type="submit" loading={drawerIsLoading}>
+                  <Button type="submit" loading={drawerIsLoading || staffValidationLoading}>
                     {isEmpty(programBeingEdited)
                       ? formLabels?.createProgram
                       : formLabels?.saveChanges}

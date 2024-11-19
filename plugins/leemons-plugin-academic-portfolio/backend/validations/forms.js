@@ -3,6 +3,7 @@ const { LeemonsValidator } = require('@leemons/validator');
 const _ = require('lodash');
 const { isArray } = require('lodash');
 
+const { PROGRAM_STAFF_ROLES } = require('../config/constants');
 const { getCourseIndex } = require('../core/courses/getCourseIndex');
 const { getProgramSubjectDigits } = require('../core/programs/getProgramSubjectDigits');
 const { programHaveMultiCourses } = require('../core/programs/programHaveMultiCourses');
@@ -21,6 +22,18 @@ const {
 const MAIN_TEACHER_TYPE = 'main-teacher';
 const ASSOCIATE_TEACHER_TYPE = 'associate-teacher';
 const teacherTypes = [MAIN_TEACHER_TYPE, ASSOCIATE_TEACHER_TYPE];
+
+const staffSchema = {
+  type: 'object',
+  properties: Object.values(PROGRAM_STAFF_ROLES).reduce(
+    (acc, role) => ({
+      ...acc,
+      [role]: stringSchemaNullable,
+    }),
+    {}
+  ),
+  additionalProperties: false,
+};
 
 const addProgramSchema = {
   type: 'object',
@@ -111,6 +124,7 @@ const addProgramSchema = {
       },
       additionalProperties: true,
     },
+    staff: staffSchema,
   },
   required: [
     'name',
@@ -220,6 +234,7 @@ const updateProgramSchema = {
     totalHours: integerSchemaNullable,
     hoursPerCredit: integerSchemaNullable,
     useAutoAssignment: booleanSchema,
+    staff: staffSchema,
   },
   required: ['id'],
   additionalProperties: false,
@@ -249,6 +264,24 @@ function validateSubstagesFormat({ programData, substages, ctx }) {
           'The substage abbreviation must be only numbers and the length must be the same as the specified length',
       });
   });
+}
+
+const updateProgramConfigurationSchema = {
+  type: 'object',
+  properties: {
+    id: stringSchema,
+    staff: staffSchema,
+  },
+  required: ['id'],
+  additionalProperties: true,
+};
+
+function validateUpdateProgramConfiguration(data) {
+  const validator = new LeemonsValidator(updateProgramConfigurationSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
 }
 
 const addKnowledgeAreaSchema = {
@@ -1355,6 +1388,24 @@ async function validateUpdateBlock({ data, ctx }) {
   });
 }
 
+const validateStaffChangeSchema = {
+  type: 'object',
+  properties: {
+    program: stringSchema,
+    staff: staffSchema,
+  },
+  required: ['program', 'staff'],
+  additionalProperties: false,
+};
+
+function validateValidateStaffChange(data) {
+  const validator = new LeemonsValidator(validateStaffChangeSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 module.exports = {
   validateAddCycle,
   validateAddClass,
@@ -1362,6 +1413,7 @@ module.exports = {
   validateAddCourse,
   validateAddSubject,
   validateAddProgram,
+  validateUpdateProgramConfiguration,
   validateUpdateClass,
   validateUpdateGroup,
   validateUpdateCycle,
@@ -1386,4 +1438,5 @@ module.exports = {
   validateGetSubjectCreditsProgram,
   validateAddBlock,
   validateUpdateBlock,
+  validateValidateStaffChange,
 };

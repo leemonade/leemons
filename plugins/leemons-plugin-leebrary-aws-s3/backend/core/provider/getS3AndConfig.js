@@ -1,4 +1,5 @@
 const aws = require('aws-sdk');
+
 const { getConfig } = require('./getConfig');
 
 /**

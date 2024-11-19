@@ -215,6 +215,25 @@ module.exports = {
           color: 'Color',
           featuredImage: 'Featured Image',
         },
+        staff: {
+          title: 'Staff',
+          roles: {
+            'program-director': 'Program Director',
+            'program-coordinator': 'Program Coordinator',
+            'lead-instructor': 'Lead Instructor',
+            'academic-advisor': 'Academic Advisor',
+            'external-evaluator': 'External Evaluator',
+          },
+          staffChangeDenied: 'Staff change denied',
+          closeAlert: 'Close',
+          staffChangeModal: {
+            'program-coordinator': {
+              title: 'Program Coordinator change',
+              description:
+                'Changing the program coordinator may affect the functioning of the modules that depend on it. Do you want to continue?',
+            },
+          },
+        },
         academicRules: {
           title: 'Academic Rules',
           selectSystem: 'Select a system',
@@ -467,7 +486,7 @@ module.exports = {
         none: 'None',
       },
     },
-    reports: 'Reports'
+    reports: 'Reports',
   },
   newSubjectsPage: {
     title: 'Subject Listing',

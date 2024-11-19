@@ -1,12 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+
 import { Box, Badge, Text, ProgressRing } from '@bubbles-ui/components';
-import { usePendingEvaluationsCount } from '@assignables/hooks/assignableInstance/usePendingEvaluationsCount';
-import { EvaluationCardRightElementStyles } from './EvaluationCardRightElement.styles';
+import dayjs from 'dayjs';
+
 import { getActivityType } from '../../../helpers/getActivityType';
+
 import {
   EVALUATIONCARDRIGHTELEMENT_DEFAULT_PROPS,
   EVALUATIONCARDRIGHTELEMENT_PROP_TYPES,
 } from './EvaluationCardRightElement.constants';
+import { EvaluationCardRightElementStyles } from './EvaluationCardRightElement.styles';
+
+import { usePendingEvaluationsCount } from '@assignables/hooks/assignableInstance/usePendingEvaluationsCount';
 
 const EvaluationCardRightElement = ({ instance, localizations }) => {
   const [calificationType, setCalificationType] = useState(null);
@@ -31,8 +36,19 @@ const EvaluationCardRightElement = ({ instance, localizations }) => {
   const getPercentageNotModule = () => {
     let counter = 0;
     const numberOfStudents = instance?.students?.length;
+
+    const activityReachedDeadline =
+      instance?.dates?.deadline && dayjs(instance?.dates?.deadline).isBefore(dayjs());
+    const activityIsClosed = instance?.dates?.closed || activityReachedDeadline;
+
+    const numberOfSubjects = instance?.subjects?.length;
+
     instance?.students?.forEach((student) => {
-      if (student?.timestamps?.end) {
+      const studentDidSubmit = student?.timestamps?.end;
+      const numberOfGrades = student?.grades?.filter((grade) => grade.type === 'main')?.length;
+      const isFullyGraded = numberOfGrades === numberOfSubjects;
+
+      if (!isFullyGraded && (studentDidSubmit || activityIsClosed)) {
         counter++;
       }
     });

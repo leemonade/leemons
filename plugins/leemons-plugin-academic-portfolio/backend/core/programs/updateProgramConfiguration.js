@@ -1,11 +1,15 @@
 const { keyBy, isEmpty } = require('lodash');
-const { programsByIds } = require('./programsByIds');
-const { saveManagers } = require('../managers/saveManagers');
-const { addSubstage } = require('../substages/addSubstage');
-const { addCycle } = require('../cycle/addCycle');
+
+const { validateUpdateProgramConfiguration } = require('../../validations/forms');
 const { addCourse } = require('../courses/addCourse');
 const { addNextCourseIndex } = require('../courses/addNextCourseIndex');
+const { addCycle } = require('../cycle/addCycle');
+const { saveManagers } = require('../managers/saveManagers');
+const { addSubstage } = require('../substages/addSubstage');
+
 const { handleReferenceGroups } = require('./addProgram');
+const { programsByIds } = require('./programsByIds');
+const { setProgramStaff } = require('./setProgramStaff');
 
 async function updateBasicData({ data, ctx }) {
   const { id, image, managers, ...programData } = data;
@@ -17,7 +21,7 @@ async function updateBasicData({ data, ctx }) {
 
   const imageData = {
     indexable: false,
-    public: true, // TODO Cambiar a false despues de hacer la demo
+    public: true,
     name: program.id,
   };
   if (image) imageData.cover = image;
@@ -43,12 +47,14 @@ async function updateBasicData({ data, ctx }) {
 }
 
 async function updateProgramConfiguration({ data, ctx }) {
+  validateUpdateProgramConfiguration(data);
   const {
     substages,
     substagesToRemove,
     cycles,
     courses,
     referenceGroups,
+    staff,
     ...basicDataAndManagers
   } = data;
 
@@ -109,6 +115,15 @@ async function updateProgramConfiguration({ data, ctx }) {
     await Promise.all(coursesPromises);
   }
 
+  // MANAGE STAFF ·············································································||
+  if (staff) {
+    await setProgramStaff({
+      programId: program.id,
+      staff,
+      ctx,
+    });
+  }
+
   const _program = (await programsByIds({ ids: [program.id], ctx }))[0];
 
   // MANAGE REFERENCE GROUPS ···································································||
@@ -153,8 +168,8 @@ async function updateProgramConfiguration({ data, ctx }) {
     await Promise.all(cyclePromises);
   }
 
-  await ctx.tx.emit('after-update-program', { program });
-  return program;
+  await ctx.tx.emit('after-update-program', { program: _program });
+  return _program;
 }
 
 module.exports = { updateProgramConfiguration };

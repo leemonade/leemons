@@ -1,8 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Button, Title } from '@bubbles-ui/components';
 import { Link } from 'react-router-dom';
+
+import { Box, Button, Title } from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
+import PropTypes from 'prop-types';
+
 import { useNyaStyles } from '../hooks';
 
 export default function Header({ titleLabel, linkLabel, count, linkTo }) {

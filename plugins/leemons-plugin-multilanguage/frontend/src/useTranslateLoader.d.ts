@@ -1,4 +1,4 @@
-type TranslateLoaderFunction = (
+export type TranslateLoaderFunction = (
   key?: string,
   replaces?: { [key: string]: string },
   returnFullKey?: boolean,

@@ -70,9 +70,6 @@ function getStatusForTeacher(instance, { requiredGradesCount }) {
       requiredGradesCount,
     });
 
-  if (assignationsCount === didNotFinished) {
-    return INSTANCE_STATUS.NOT_FINISHED_BY_STUDENTS;
-  }
   if (assignationsCount === needsEvaluation) {
     return INSTANCE_STATUS.NEEDS_EVALUATION;
   }
@@ -81,6 +78,9 @@ function getStatusForTeacher(instance, { requiredGradesCount }) {
   }
   if (assignationsCount === hasGradesCount) {
     return INSTANCE_STATUS.EVALUATING;
+  }
+  if (didNotFinished) {
+    return INSTANCE_STATUS.NOT_FINISHED_BY_STUDENTS;
   }
 
   return null;

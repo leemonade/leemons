@@ -2,6 +2,11 @@ import React, { useEffect, useRef } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 
 import ActivityHeader from '@assignables/components/ActivityHeader/index';
+import {
+  ActivityUnavailable,
+  ActivityUnavailableFooter,
+  useActivityStates,
+} from '@assignables/components/ActivityUnavailable';
 import TotalLayoutStepContainerWithAccordion from '@assignables/components/TotalLayoutStepContainerWithAccordion/TotalLayoutStepContainerWithAccordion';
 import useAssignations from '@assignables/hooks/assignations/useAssignationsQuery';
 import useClassData from '@assignables/hooks/useClassDataQuery';
@@ -15,6 +20,7 @@ import {
   HtmlText,
   TotalLayoutContainer,
   TotalLayoutFooterContainer,
+  ContextContainer,
 } from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
@@ -95,6 +101,7 @@ export default function DocumentView() {
     user,
   });
   const nextActivityUrl = useNextActivityUrl(assignation);
+  const { isUnavailable } = useActivityStates({ instance });
 
   const { mutateAsync } = useStudentAssignationMutation();
   const updateTimestamps = useUpdateTimestamps(mutateAsync, assignation);
@@ -125,37 +132,41 @@ export default function DocumentView() {
       <Stack justifyContent="center" ref={scrollRef} style={{ overflowY: 'auto' }}>
         <TotalLayoutStepContainerWithAccordion
           Footer={
-            <TotalLayoutFooterContainer
-              scrollRef={scrollRef}
-              rightZone={
-                <Stack spacing={4}>
-                  <PrintContentButton content={assignable?.content} />
-                  {nextActivityUrl ? (
-                    <Button
-                      rightIcon={<ChevRightIcon />}
-                      onClick={() =>
-                        updateTimestamps('end').then(() => {
-                          history.push(nextActivityUrl);
-                        })
-                      }
-                    >
-                      {t('nextActivity')}
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={() =>
-                        updateTimestamps('end').then(() => {
-                          history.push('/private/assignables/ongoing');
-                        })
-                      }
-                    >
-                      {t('markRead')}
-                    </Button>
-                  )}
-                </Stack>
-              }
-              fixed
-            />
+            isUnavailable ? (
+              <ActivityUnavailableFooter scrollRef={scrollRef} singlePage />
+            ) : (
+              <TotalLayoutFooterContainer
+                scrollRef={scrollRef}
+                rightZone={
+                  <Stack spacing={4}>
+                    <PrintContentButton content={assignable?.content} />
+                    {nextActivityUrl ? (
+                      <Button
+                        rightIcon={<ChevRightIcon />}
+                        onClick={() =>
+                          updateTimestamps('end').then(() => {
+                            history.push(nextActivityUrl);
+                          })
+                        }
+                      >
+                        {t('nextActivity')}
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() =>
+                          updateTimestamps('end').then(() => {
+                            history.push('/private/assignables/ongoing');
+                          })
+                        }
+                      >
+                        {t('markRead')}
+                      </Button>
+                    )}
+                  </Stack>
+                }
+                fixed
+              />
+            )
           }
           accordion={
             !!instance?.metadata?.statement && {
@@ -169,18 +180,24 @@ export default function DocumentView() {
           noHorizontalPadding
           noVerticalPadding
         >
-          <ContentEditorInput
-            useSchema
-            compact
-            fullWidth
-            schemaLabel={t('schemaLabel')}
-            labels={{
-              format: t('formatLabel'),
-            }}
-            value={assignable?.content}
-            openLibraryModal={false}
-            readOnly
-          />
+          {isUnavailable ? (
+            <ContextContainer padded>
+              <ActivityUnavailable instance={instance} clean />
+            </ContextContainer>
+          ) : (
+            <ContentEditorInput
+              useSchema
+              compact
+              fullWidth
+              schemaLabel={t('schemaLabel')}
+              labels={{
+                format: t('formatLabel'),
+              }}
+              value={assignable?.content}
+              openLibraryModal={false}
+              readOnly
+            />
+          )}
         </TotalLayoutStepContainerWithAccordion>
       </Stack>
     </TotalLayoutContainer>

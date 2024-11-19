@@ -68,6 +68,7 @@ module.exports = {
     needExplanationAndResponse: 'Todas las respuestas necesitan un texto y una explicación',
     needExplanation: 'Todas las respuestas requieren una explicación',
     needResponse: 'Las respuestas deben tener un texto',
+    needsResponse: 'Respuesta requerida',
     errorMarkGoodResponse: 'Es necesario marcar la respuesta correcta',
     responsesDescription:
       'Primero añade las respuestas y después selecciona la respuesta correcta pulsando el circulo.',
@@ -85,7 +86,8 @@ module.exports = {
     addClue: 'Añadir pista',
     cluesDescription:
       'Es posible dar pistas a los alumnos proporcionando información que facilite la tarea de recuperación de la memoria.',
-    hasCluesLabel: 'Con pistas (mínimo 3 respuestas)',
+    hasCluesLabelWithMinResponses: 'Con pistas (mínimo 3 respuestas)',
+    hasCluesLabel: 'Con pistas',
     imageLabel: 'Imagen',
     saveImage: 'Guardar imagen',
     addImage: 'Añadir imagen',
@@ -93,6 +95,7 @@ module.exports = {
     captionAltPlaceholder: 'Añadir aquí la leyenda /texto alt',
     saveResponse: 'Guardar respuesta',
     monoResponse: 'Respuesta única',
+    trueFalse: 'V/F',
     map: 'Mapa',
     mapLabel: 'Mapa',
     addMap: 'Añadir mapa',
@@ -116,6 +119,18 @@ module.exports = {
     hasCoverLabel: 'Imagen destacada',
     hideOptionNoRightAnswer: 'Primero selecciona la respuesta correcta',
     headerTitlePlaceholder: 'Título del banco de preguntas',
+    cluesCopy:
+      'Es posible dar pistas a los alumnos proporcionando información que facilite la tarea de recuperación de la memoria.',
+    questionLabels: {
+      trueFalse: {
+        true: 'Verdadero',
+        false: 'Falso',
+        type: 'V/F',
+      },
+    },
+    errors: {
+      save: 'No se han podido guardar los cambios.',
+    },
   },
   questionImageModal: {
     createNumbering: 'Crear numeración',
@@ -293,6 +308,7 @@ module.exports = {
     duplicated: 'Duplicado',
     simpleQuestion: 'Respuesta única',
     map: 'Mapa',
+    trueFalse: 'V/F',
     hints: 'Pistas',
     yes: 'Si',
     no: 'No',
@@ -374,6 +390,7 @@ module.exports = {
     questionNumber: 'PREGUNTA: {number}',
     theQuestionValueIs: 'La pregunta vale',
     pointsInTotal: 'Puntos',
+    pointsOutOf: 'puntos de {questionPoints}',
     askForAHint: 'Pedir una pista',
     hint: 'Pista',
     skipButton: 'Omitir',
@@ -495,6 +512,7 @@ module.exports = {
     sendFeedback: 'Enviar comentario',
     feedbackRequired: 'Comentario obligatorio',
     feedbackDone: 'Comentario enviado con éxito',
+
     ok: 'Acertada',
     ko: 'Errónea',
     nsnc: 'NS/NC',
@@ -508,5 +526,13 @@ module.exports = {
     returnToTable: 'Volver al listado',
     nextActivity: 'Siguiente actividad',
     goToModule: 'Dashboard del modulo',
+    responseDetail: {
+      choices: 'Opciones',
+      result: 'Resultado',
+      solution: 'Solución',
+      correct: 'Correcto',
+      incorrect: 'Incorrecto',
+      feedback: 'Explicación',
+    },
   },
 };

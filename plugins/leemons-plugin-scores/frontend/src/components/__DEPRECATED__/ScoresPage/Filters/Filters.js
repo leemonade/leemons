@@ -1,18 +1,16 @@
-import PropTypes from 'prop-types';
-import React, { useEffect } from 'react';
-
-import { Box, Title } from '@bubbles-ui/components';
-import { map, noop } from 'lodash';
+import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { SelectProgram } from '@academic-portfolio/components';
-import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
-import { getCentersWithToken } from '@users/session';
-
 import { SelectSubject } from '@academic-portfolio/components/SelectSubject';
 import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
+import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
+import { Box, Title } from '@bubbles-ui/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { getCentersWithToken } from '@users/session';
+import { map, noop } from 'lodash';
+import PropTypes from 'prop-types';
+
 import useFiltersStyles from './Filerts.styles';
 import PickDate from './components/PickDate';
 import SelectPeriod from './components/SelectPeriod';
@@ -22,7 +20,16 @@ import usePeriods from './hooks/usePeriods';
 import useSelectedClass from './hooks/useSelectedClass';
 import useSelectedPeriod from './hooks/useSelectedPeriod';
 
-export function Filters({ hideTitle, showProgramSelect, classID, onChange = noop, value }) {
+import { prefixPN } from '@scores/helpers';
+
+export function Filters({
+  hideTitle,
+  showProgramSelect,
+  classID,
+  onChange = noop,
+  value,
+  teacherTypeFilter,
+}) {
   const [t] = useTranslateLoader(prefixPN('scoresPage.filters'));
   const form = useForm();
   const { control, watch, setValue, getValues } = form;
@@ -32,6 +39,7 @@ export function Filters({ hideTitle, showProgramSelect, classID, onChange = noop
   const programId = watch('program');
   const { data: classesData, isLoading: dataIsLoading } = useSessionClasses({
     program: programId,
+    type: teacherTypeFilter,
   });
 
   const selectedClass = useSelectedClass({ classes: classesData, control, classID });
@@ -140,6 +148,7 @@ Filters.propTypes = {
   classID: PropTypes.string,
   onChange: PropTypes.func,
   value: PropTypes.object,
+  teacherTypeFilter: PropTypes.string,
 };
 
 export default Filters;

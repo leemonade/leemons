@@ -16,6 +16,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useQueryClient } from '@tanstack/react-query';
 import { ScheduleInput } from '@timetable/components';
 import { SelectUserAgent } from '@users/components';
+import { compareBySurnamesAndName } from '@users/helpers/compareUsers';
 import { useUserAgentsInfo } from '@users/hooks';
 import PropTypes from 'prop-types';
 
@@ -48,6 +49,8 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
       enabled: classStudents?.length > 0,
     }
   );
+
+  const aliasOrClassroomId = classData?.alias ?? classData?.classroomId;
 
   useEffect(() => {
     const getTeacherProfile = async () => {
@@ -132,7 +135,8 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
               icon={<DeleteBinIcon width={18} height={18} />}
             />
           ),
-        }));
+        }))
+        .sort(compareBySurnamesAndName);
     }
     return [];
   }, [userAgentsInfo]);
@@ -167,6 +171,7 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
   return (
     <ContextContainer sx={{ padding: 24 }}>
       <ContextContainer>
+        <Title order={1}>{aliasOrClassroomId}</Title>
         <Title order={2}>{t('teachers')}</Title>
         {teacherProfile && center?.length > 0 && (
           <Box className={classes.mainTeacher}>{TeacherSelect}</Box>

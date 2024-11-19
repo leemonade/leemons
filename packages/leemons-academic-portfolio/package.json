@@ -3,6 +3,7 @@
   "version": "0.0.71",
   "description": "",
   "main": "src/index.js",
+  "types": "src/types.d.ts",
   "keywords": [],
   "author": {
     "email": "hi@leemons.io",
@@ -24,6 +25,7 @@
   "devDependencies": {},
   "dependencies": {
     "@leemons/mongodb-helpers": "0.0.71",
+    "@leemons/users": "0.0.41",
     "lodash": "^4.17.21"
   }
 }

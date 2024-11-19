@@ -1,13 +1,8 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
-import { Box, createStyles, Table, TimeInput } from '@bubbles-ui/components';
-import { PluginSettingsIcon, TimeClockCircleIcon } from '@bubbles-ui/icons/outline';
+import { Box, createStyles, Stack, Table } from '@bubbles-ui/components';
 import { unflatten } from '@common';
-import { TypeRenderer } from '@learning-paths/components/ModuleAssign/components/Config/components/TypeRenderer';
-import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
-import { prefixPN } from '@learning-paths/helpers';
 import loadable from '@loadable/component';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { get, isFunction, map, uniqBy } from 'lodash';
@@ -15,6 +10,14 @@ import PropTypes from 'prop-types';
 
 import { ResourceRenderer } from '../../../ModuleSetup/components/StructureData/components/ModuleComposer/components/ResourceRenderer';
 import { ConfigModal } from '../ConfigModal';
+
+import { ConfigAction } from './components/ConfigAction';
+import { DeleteAction } from './components/DeleteAction';
+import { Duration } from './components/Duration';
+
+import { TypeRenderer } from '@learning-paths/components/ModuleAssign/components/Config/components/TypeRenderer';
+import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
+import { prefixPN } from '@learning-paths/helpers';
 
 export function useConfigLocalizations(parentLocalizations) {
   // key is string
@@ -87,44 +90,42 @@ function useActivities(assignable) {
 function useParsedActivities({ activities, components, localizations, onConfig }) {
   const { useWatch, setValue } = useModuleAssignContext();
   const timeState = useWatch({ name: 'state.time' });
+  const order = useWatch({ name: 'state.order' });
 
-  return useMemo(
-    () =>
-      activities?.map(({ activity, id }) => ({
-        resource: (
-          <ResourceRenderer
-            activity={activity}
-            key={`${id}-resource`}
-            localizations={localizations}
-          />
+  return useMemo(() => {
+    const sortedActivities = order
+      ? activities?.sort((a, b) => order?.[a.id] - order?.[b.id])
+      : activities;
+
+    return sortedActivities?.map(({ activity, id }) => ({
+      id,
+      resource: (
+        <ResourceRenderer
+          activity={activity}
+          id={id}
+          key={`${id}-resource`}
+          localizations={localizations}
+        />
+      ),
+      type: (
+        <TypeRenderer
+          id={id}
+          localizations={localizations?.structureData?.types}
+          defaultValue={'mandatory'}
+        />
+      ),
+      time: <Duration id={id} setValue={setValue} timeState={timeState} />,
+      actions:
+        components[activity.role] && !components[activity.role].disabled?.(activity) ? (
+          <Stack sx={{ cursor: 'pointer' }} spacing={2} justifyContent="flex-end" fullWidth>
+            <ConfigAction onConfig={onConfig} activity={activity} id={id} />
+            <DeleteAction id={id} />
+          </Stack>
+        ) : (
+          <></>
         ),
-        type: (
-          <TypeRenderer
-            id={id}
-            localizations={localizations?.structureData?.types}
-            defaultValue={'mandatory'}
-          />
-        ),
-        time: (
-          <TimeInput
-            sx={{ minWidth: 123 }}
-            icon={<TimeClockCircleIcon />}
-            clearable
-            value={timeState?.[id]}
-            onChange={(newValue) => setValue(`state.time.${id}`, newValue)}
-          />
-        ),
-        actions:
-          components[activity.role] && !components[activity.role].disabled?.(activity) ? (
-            <Box sx={{ cursor: 'pointer' }}>
-              <PluginSettingsIcon onClick={() => onConfig({ activity, id })} />
-            </Box>
-          ) : (
-            <></>
-          ),
-      })),
-    [activities, components, localizations, onConfig, setValue, timeState]
-  );
+    }));
+  }, [activities, components, localizations, onConfig, setValue, timeState, order]);
 }
 
 function useColumns({ localizations }) {
@@ -171,10 +172,11 @@ function useLoadRolesComponents(activities) {
         const assignmentDrawerComponent = `AssignmentDrawer`;
 
         if (!store.current.imports[name]) {
-          store.current.imports[name] = loadable(() =>
-            import(
-              `@app/plugins/${pluginName}/src/widgets/assignables/${assignmentDrawerComponent}.js`
-            )
+          store.current.imports[name] = loadable(
+            () =>
+              import(
+                `@app/plugins/${pluginName}/src/widgets/assignables/${assignmentDrawerComponent}.js`
+              )
           );
 
           // EN: Preload each role components, so we can do things with them
@@ -226,6 +228,7 @@ export function Config({ assignable, localizations: parentLocalizations }) {
   const localizations = useConfigLocalizations(parentLocalizations);
   const columns = useColumns({ localizations: localizations?.columns });
   const { data: activities } = useActivities(assignable);
+  const { setValue } = useModuleAssignContext();
 
   const [configuratedAssignable, setConfiguratedAssignable] = useState(null);
 
@@ -253,7 +256,20 @@ export function Config({ assignable, localizations: parentLocalizations }) {
         />
       )}
 
-      <Table columns={columns} data={parsedActivities} isAssetList />
+      <Table
+        columns={columns}
+        data={parsedActivities}
+        isAssetList
+        sortable
+        onChangeData={({ newData }) => {
+          const order = {};
+          newData.forEach(({ id }, index) => {
+            order[id] = index;
+          });
+
+          setValue('state.order', order);
+        }}
+      />
     </Box>
   );
 }

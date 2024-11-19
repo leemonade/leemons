@@ -46,6 +46,7 @@ import {
   getProgramAcademicTree,
   setProgramCustomTranslationKeys,
   getProgramNomenclature,
+  validateStaffChange,
 } from './programs';
 import {
   enableMenuItem,
@@ -156,6 +157,7 @@ export const removeProgramRequest = removeProgram;
 
 export const setProgramCustomTranslationKeysRequest = setProgramCustomTranslationKeys;
 export const getProgramNomenclatureRequest = getProgramNomenclature;
+export const validateStaffChangeRequest = validateStaffChange;
 export const getSettingsRequest = getSettings;
 export const updateSettingsRequest = updateSettings;
 export const enableMenuItemRequest = enableMenuItem;

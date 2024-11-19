@@ -4,7 +4,9 @@ const fs = require('fs');
 const path = require('path');
 
 // Obtener todos los workspaces
-const workspaces = JSON.parse(execSync('yarn workspaces info --json').toString());
+const workspaces = JSON.parse(
+  execSync('yarn workspaces info --json').toString()
+);
 
 // Sort SDKs first, then process other workspaces
 const sortedWorkspaces = Object.entries(workspaces).sort(([nameA], [nameB]) => {

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 const { ServiceBroker, Utils } = require('moleculer');
 
 const utils = Utils;
@@ -196,9 +197,10 @@ class LeemonsRunner {
               if (utils.isFunction(content)) return content.call(this);
               return content;
             })
-            .then(
-              (res) => (this.configFile = res.default != null && res.__esModule ? res.default : res)
-            );
+            .then((res) => {
+              this.configFile = res.default != null && res.__esModule ? res.default : res;
+              return this.configFile;
+            });
         }
         default:
           return Promise.reject(new Error(`Not supported file extension: ${ext}`));
@@ -268,7 +270,7 @@ class LeemonsRunner {
               level
                 .split('_')
                 .map((value, index) => {
-                  if (index == 0) {
+                  if (index === 0) {
                     return value;
                   }
                   return value[0].toUpperCase() + value.substring(1);
