@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { Menu, Box, Text } from '@bubbles-ui/components';
-import { CheckCircleIcon, DeleteBinIcon, RemoveCircleIcon } from '@bubbles-ui/icons/outline';
-import { SettingMenuVerticalIcon, UnarchiveIcon, ArchiveIcon } from '@bubbles-ui/icons/solid';
+import { DeleteBinIcon, RemoveCircleIcon } from '@bubbles-ui/icons/outline';
+import { SettingMenuVerticalIcon, ArchiveIcon } from '@bubbles-ui/icons/solid';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -16,59 +16,64 @@ import prefixPN from '@assignables/helpers/prefixPN';
 import useMutateAssignableInstance from '@assignables/hooks/assignableInstance/useMutateAssignableInstance';
 import useDeleteInstanceMutation from '@assignables/requests/hooks/mutations/useDeleteInstance';
 
-function onCloseTask({ instance, t, mutateAsyncAssignableInstance, closed }) {
+function onCloseTask({
+  instance,
+  t,
+  mutateAsyncAssignableInstance,
+  closed,
+  openConfirmationModal,
+}) {
   return async () => {
-    const newDates = {
-      closed: closed ? new Date() : null,
-    };
+    return openConfirmationModal({
+      title: t('closeModal.title'),
+      description: (
+        <Box
+          sx={(theme) => ({
+            display: 'flex',
+            flexDirection: 'column',
+            gap: theme.spacing[2],
+          })}
+        >
+          <Text>{t('closeModal.message1')}</Text>
+          <Text>{t('closeModal.message2')}</Text>
+        </Box>
+      ),
+      labels: {
+        confirm: t('closeModal.confirm'),
+        cancel: t('closeModal.cancel'),
+      },
+      onConfirm: async () => {
+        const newDates = {
+          closed: new Date(),
+        };
 
-    if (dayjs(instance.dates.close).isBefore(dayjs())) {
-      newDates.close = null;
-    }
+        if (dayjs(instance.dates.close).isBefore(dayjs())) {
+          newDates.close = null;
+        }
 
-    try {
-      await mutateAsyncAssignableInstance({ id: instance.id, dates: newDates });
-
-      let verb = t('closeAction.verbs.closed');
-      if (!closed) {
-        verb = t('closeAction.verbs.opened');
-      }
-      addSuccessAlert(t('closeAction.messages.success').replace('{{verb}}', verb));
-    } catch (e) {
-      let verb = t('closeAction.verbs.closing');
-      if (!closed) {
-        verb = t('closeAction.verbs.opening');
-      }
-      addErrorAlert(
-        t('closeAction.messages.error').replace('{{verb}}', verb).replace('{{error}}', e.message)
-      );
-    }
+        try {
+          await mutateAsyncAssignableInstance({ id: instance.id, dates: newDates });
+          addSuccessAlert(t('closeActionAlerts.success'));
+        } catch (e) {
+          addErrorAlert(t('closeActionAlerts.error').replace('{{error}}', e.message));
+        }
+      },
+    })();
   };
 }
 
 function archiveTask({ mutateAsyncAssignableInstance, instance, t }) {
-  return async (archivedValue) => {
+  return async () => {
     const newDates = {
-      archived: archivedValue ? new Date() : null,
-      closed: archivedValue && !instance.dates.deadline ? new Date() : undefined,
+      archived: new Date(),
+      closed: !instance.dates.deadline ? new Date() : undefined,
     };
 
     try {
       await mutateAsyncAssignableInstance({ id: instance.id, dates: newDates });
-
-      let verb = t('archiveAction.verbs.archived');
-      if (!archivedValue) {
-        verb = t('archiveAction.verbs.unarchived');
-      }
-      addSuccessAlert(t('archiveAction.messages.success').replace('{{verb}}', verb));
+      addSuccessAlert(t('archiveActionAlerts.success'));
     } catch (e) {
-      let verb = t('archiveAction.verbs.archiving');
-      if (!archivedValue) {
-        verb = t('archiveAction.verbs.unarchiving');
-      }
-      addErrorAlert(
-        t('archiveAction.messages.error').replace('{{verb}}', verb).replace('{{error}}', e.message)
-      );
+      addErrorAlert(t('archiveActionAlerts.error').replace('{{error}}', e.message));
     }
   };
 }
@@ -80,13 +85,8 @@ function onArchiveTask({
   t,
   openConfirmationModal,
   mutateAsyncAssignableInstance,
-  archivedValue,
 }) {
   return async () => {
-    if (!archivedValue) {
-      return archiveTask({ mutateAsyncAssignableInstance, instance, t })(archivedValue);
-    }
-
     if (instance.requiresScoring || instance.allowFeedback) {
       if (
         instance.students.some(
@@ -114,7 +114,7 @@ function onArchiveTask({
             cancel: t('archiveModal.cancel'),
           },
           onConfirm: () => {
-            archiveTask({ mutateAsyncAssignableInstance, instance, t })(archivedValue);
+            archiveTask({ mutateAsyncAssignableInstance, instance, t })();
           },
           onCancel: () => {
             setArchived(false);
@@ -122,7 +122,7 @@ function onArchiveTask({
         })();
       }
     }
-    return archiveTask({ mutateAsyncAssignableInstance, instance, t })(archivedValue);
+    return archiveTask({ mutateAsyncAssignableInstance, instance, t })();
   };
 }
 
@@ -185,18 +185,49 @@ const MenuItems = ({ instance, hideDeleteButton, hiddenCloseButtons }) => {
   };
 
   const menuItems = [
+    // !hiddenCloseButtons &&
+    //   (alwaysAvailable || !deadlinePassed) &&
+    //   !archived && {
+    //     icon: closed ? <CheckCircleIcon /> : <RemoveCircleIcon />,
+    //     children: closed ? t('opened') : t('close'),
+    //     onClick: onCloseTask({ instance, t, mutateAsyncAssignableInstance, closed: !closed }),
+    //     className: classes.menuItem,
+    //   },
     !hiddenCloseButtons &&
       (alwaysAvailable || !deadlinePassed) &&
-      !archived && {
-        icon: closed ? <CheckCircleIcon /> : <RemoveCircleIcon />,
-        children: closed ? t('opened') : t('close'),
-        onClick: onCloseTask({ instance, t, mutateAsyncAssignableInstance, closed: !closed }),
+      !archived &&
+      !closed && {
+        icon: <RemoveCircleIcon />,
+        children: t('close'),
+        onClick: onCloseTask({
+          instance,
+          t,
+          mutateAsyncAssignableInstance,
+          closed: false,
+          openConfirmationModal,
+        }),
         className: classes.menuItem,
       },
+    // !hiddenCloseButtons &&
+    //   (alwaysAvailable || deadlinePassed || closed) && {
+    //     icon: archived ? <UnarchiveIcon /> : <ArchiveIcon />,
+    //     children: archived ? t('unarchive') : t('archive'),
+    //     onClick: onArchiveTask({
+    //       instance,
+    //       subjects: instance?.subjects ?? [],
+    //       setArchived,
+    //       t,
+    //       openConfirmationModal,
+    //       mutateAsyncAssignableInstance,
+    //     }),
+    //     className: classes.menuItem,
+    //   },
     !hiddenCloseButtons &&
-      (alwaysAvailable || deadlinePassed || closed) && {
-        icon: archived ? <UnarchiveIcon /> : <ArchiveIcon />,
-        children: archived ? t('unarchive') : t('archive'),
+      !archived &&
+      closed &&
+      (alwaysAvailable || deadlinePassed) && {
+        icon: <ArchiveIcon />,
+        children: t('archive'),
         onClick: onArchiveTask({
           instance,
           subjects: instance?.subjects ?? [],
@@ -204,7 +235,6 @@ const MenuItems = ({ instance, hideDeleteButton, hiddenCloseButtons }) => {
           t,
           openConfirmationModal,
           mutateAsyncAssignableInstance,
-          archivedValue: !archived,
         }),
         className: classes.menuItem,
       },
@@ -218,7 +248,7 @@ const MenuItems = ({ instance, hideDeleteButton, hiddenCloseButtons }) => {
           openConfirmationModal,
           mutateAsync,
           onSuccess: () => history.push('/private/assignables/ongoing'),
-        });
+        })();
       },
       className: classes.menuItem,
     },

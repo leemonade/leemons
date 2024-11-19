@@ -264,6 +264,21 @@ module.exports = {
       confirm: 'Accept and delete',
       cancel: 'Cancel',
     },
+    closeModal: {
+      title: 'Close activity',
+      message1: 'Are you sure you want to close the activity?',
+      message2: 'Students will not be able to send new responses once the activity is closed.',
+      confirm: 'Close activity',
+      cancel: 'Cancel',
+    },
+    closeActionAlerts: {
+      success: 'Activity closed',
+      error: 'Error closing activity: {{error}}',
+    },
+    archiveActionAlerts: {
+      success: 'Activity archived successfully',
+      error: 'Error archiving activity: {{error}}',
+    },
   },
   studentsList: {
     labels: {
