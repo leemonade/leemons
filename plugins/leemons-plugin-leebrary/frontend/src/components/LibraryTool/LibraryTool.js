@@ -1,12 +1,15 @@
-import React, { useEffect, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
+import { useEffect, useMemo } from 'react';
+
 import { Popover } from '@bubbles-ui/components';
 import { Button, useTextEditor } from '@bubbles-ui/editors';
-import { LibraryExtension } from './LibraryExtension';
-import { LibraryModal } from './LibraryModal';
-import { LibraryIcon } from './LibraryIcon';
+import { isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { LibraryBubbleMenu } from './LibraryBubbleMenu';
+import { LibraryExtension } from './LibraryExtension';
+import { LibraryIcon } from './LibraryIcon';
+import { LibraryModal } from './LibraryModal';
+import { LibraryNonPrintableExtension } from './LibraryNonPrintableExtension';
 
 export const LIBRARY_TOOL_DEFAULT_PROPS = {
   label: 'Library',
@@ -158,6 +161,6 @@ const LibraryTool = ({
 
 LibraryTool.defaultProps = LIBRARY_TOOL_DEFAULT_PROPS;
 LibraryTool.propTypes = LIBRARY_TOOL_PROP_TYPES;
-LibraryTool.extensions = [LibraryExtension];
+LibraryTool.extensions = [LibraryExtension, LibraryNonPrintableExtension];
 
 export { LibraryTool };

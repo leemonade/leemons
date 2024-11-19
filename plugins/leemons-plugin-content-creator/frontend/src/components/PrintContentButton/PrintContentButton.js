@@ -26,7 +26,7 @@ const PrintContentButton = ({ content, title, assetId, variant = 'button', onTri
   );
 
   const contentToProcess = documentData?.content ?? content;
-  const processedContent = processContentForPDF(contentToProcess);
+  const processedContent = processContentForPDF(contentToProcess, t);
   const printRef = useRef();
   const printInstance = useRef();
 

@@ -119,5 +119,7 @@ module.exports = {
   },
   printContentButton: {
     printPDF: 'Descargar PDF',
+    contentTypeNotSupported: 'Contenido del tipo {type} no imprimible',
+    contentTypeNotSupportedWithLink: 'Contenido del tipo {type}. Versión no imprimible',
   },
 };
