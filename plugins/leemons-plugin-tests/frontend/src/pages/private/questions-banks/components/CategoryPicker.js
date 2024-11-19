@@ -5,7 +5,6 @@ import {
   InputWrapper,
   ContextContainer,
   Text,
-  ActionButton,
   Drawer,
   Box,
   Stack,
@@ -13,27 +12,120 @@ import {
   TagsInput,
   Button,
   TableInput,
+  TextInput,
 } from '@bubbles-ui/components';
+import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import PropTypes from 'prop-types';
+import { v4 as uuidv4 } from 'uuid';
 
-export function CategoryDrawer({ isOpen, onClose, t, categoriesData }) {
-  const handleOnSave = () => {
+export function CategoryDrawer({ isOpen, onClose, t, categoriesData, onCategoriesChange, form }) {
+  const { t: tCommon } = useCommonTranslate('formWithTheme');
+  const [initialCategories, setInitialCategories] = useState([]);
+  const [categories, setCategories] = useState(categoriesData || []);
+
+  const tableConfig = useMemo(
+    () => ({
+      columns: [
+        {
+          Header: t('questionCategories.addCategory'),
+          accessor: 'value',
+          editable: true,
+          removable: true,
+          input: {
+            node: <TextInput />,
+          },
+        },
+      ],
+      labels: {
+        add: tCommon('add'),
+        remove: tCommon('remove'),
+        edit: tCommon('edit'),
+        accept: tCommon('accept'),
+        cancel: tCommon('cancel'),
+      },
+    }),
+    [tCommon, t]
+  );
+
+  const disableSaveButton = useMemo(() => {
+    if (!categoriesData?.length) {
+      return initialCategories.length === 0;
+    }
+    return false;
+  }, [initialCategories, categoriesData]);
+
+  // HANDLERS ·····························································································|
+
+  const handleOnCancel = () => {
+    setCategories([]);
+    setInitialCategories([]);
     onClose();
   };
 
+  const handleOnSave = () => {
+    if (!categoriesData?.length) {
+      if (!categories.length) {
+        setCategories(initialCategories.map((category) => ({ value: category, id: uuidv4() })));
+      } else {
+        onCategoriesChange(categories);
+        handleOnCancel();
+      }
+      return;
+    }
+
+    onCategoriesChange(categories);
+    handleOnCancel();
+  };
+
+  const handleOnChange = (updatedData) => {
+    setCategories((prev) => {
+      const newEntrance = updatedData.find((item) => !item.id && item.value);
+
+      if (newEntrance) {
+        const temporaryId = uuidv4();
+        return [...prev, { ...newEntrance, id: temporaryId }];
+      }
+
+      return prev.filter((prevItem) =>
+        updatedData.some((currentItem) => currentItem.id === prevItem.id)
+      );
+    });
+  };
+
   return (
-    <Drawer size="xl" isOpen={isOpen} onClose={onClose}>
-      <Drawer.Header title={'🌎 Categorias'} />
+    <Drawer size="md" opened={isOpen} onClose={onClose}>
+      <Drawer.Header title={t('questionCategories.categoriesLabel')} />
       <Drawer.Content>
-        {categoriesData?.length === 0 ? <TagsInput /> : <TableInput data={[]} />}
+        {categories?.length > 0 ? (
+          <Stack direction="column">
+            <TableInput
+              data={categories}
+              {...tableConfig}
+              resetOnAdd
+              sortable={false}
+              removable={true}
+              editable
+              unique
+              onChange={handleOnChange}
+              canAdd={true}
+            />
+          </Stack>
+        ) : (
+          <TagsInput
+            label={t('questionCategories.addInitialCategories')}
+            onChange={setInitialCategories}
+          />
+        )}
       </Drawer.Content>
       <Drawer.Footer>
-        <Box>
-          <Button type="button" variant="link" compact onClick={() => onClose()}>
-            {t('cancel')}
+        <Stack fullWidth justifyContent="space-between">
+          <Button type="button" variant="link" onClick={handleOnCancel}>
+            {tCommon('cancel')}
           </Button>
-          <Button onClick={handleOnSave}>{t('save')}</Button>
-        </Box>
+          <Button onClick={handleOnSave} disabled={disableSaveButton}>
+            {tCommon('save')}
+          </Button>
+        </Stack>
       </Drawer.Footer>
     </Drawer>
   );
@@ -44,57 +136,81 @@ CategoryDrawer.propTypes = {
   onClose: PropTypes.func,
   t: PropTypes.func,
   categoriesData: PropTypes.array,
+  onCategoriesChange: PropTypes.func,
+  form: PropTypes.any,
 };
 
-export default function CategoryPicker({ t, categoriesData, control, form }) {
+export default function CategoryPicker({ t, categoriesData, control, form, onCategoriesChange }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const noCategories = useMemo(() => categoriesData?.length === 0, [categoriesData]);
+  const [renderKey, setRenderKey] = useState(0);
+  const noCategories = useMemo(() => !categoriesData?.length, [categoriesData]);
 
-  const categoriesForSelect = useMemo(() => {
-    return categoriesData.map((category, index) => ({
-      value: category.name ?? index,
-      label: category.value,
-    }));
-  }, [categoriesData]);
+  const categoriesForSelect = useMemo(
+    () =>
+      categoriesData?.map((category) => ({
+        value: category.id,
+        label: category.value,
+      })),
+    [categoriesData]
+  );
+
+  // HANDLERS ·····························································································|
 
   return (
     <>
       <ContextContainer fullWidth direction="row">
-        <InputWrapper label={t('categoryLabel')}>
-          <Stack direction={noCategories ? 'column' : 'row'}>
+        <InputWrapper label={t('questionCategories.categoryLabel')}>
+          <Stack
+            direction={noCategories ? 'column' : 'row'}
+            justifyContent="start"
+            alignItems={!noCategories && 'center'}
+            spacing={2}
+          >
             <Controller
               control={control}
               name="category"
               render={({ field }) =>
                 noCategories ? (
-                  <Text>🌎 Aun no hay categorías creadas</Text>
+                  <Text>{t('questionCategories.noCategories')}</Text>
                 ) : (
                   <Select
                     {...field}
-                    data={categoriesForSelect}
+                    data={[{ value: '$none$', label: 'None' }, ...categoriesForSelect]}
+                    cleanOnMissingValue
                     onChange={(e) => {
-                      const item = categoriesForSelect[e];
-                      if (item) {
-                        field.onChange(item.value);
-                      } else {
-                        field.onChange(e);
+                      if (e === '$none$') {
+                        field.onChange(null);
+                        return;
                       }
+                      field.onChange(e);
                     }}
                     error={form.formState.errors.category}
-                    searchable
-                    placeholder={t('categoryPlaceholder')}
+                    placeholder={t('questionCategories.selectPlaceholder')}
                   />
                 )
               }
             />
-            <ActionButton onClick={() => setIsDrawerOpen(true)}>
-              🌎 Gestionar categorias
-            </ActionButton>
+            <Box>
+              <Button variant="linkInline" onClick={() => setIsDrawerOpen(true)}>
+                {t('questionCategories.manageCategories')}
+              </Button>
+            </Box>
           </Stack>
         </InputWrapper>
       </ContextContainer>
 
-      <CategoryDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} t={t} />
+      <CategoryDrawer
+        key={renderKey}
+        isOpen={isDrawerOpen}
+        onClose={() => {
+          setIsDrawerOpen(false);
+          setRenderKey((prev) => prev + 1); // Force component remount
+        }}
+        t={t}
+        categoriesData={categoriesData}
+        onCategoriesChange={onCategoriesChange}
+        form={form}
+      />
     </>
   );
 }
@@ -104,4 +220,5 @@ CategoryPicker.propTypes = {
   categoriesData: PropTypes.array,
   control: PropTypes.any,
   form: PropTypes.any,
+  onCategoriesChange: PropTypes.func,
 };

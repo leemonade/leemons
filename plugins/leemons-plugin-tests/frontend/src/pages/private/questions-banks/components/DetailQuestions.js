@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import {
   ActionButton,
@@ -15,6 +15,7 @@ import {
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { AddCircleIcon, DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { useLayout } from '@layout/context';
+import { isLRN } from '@leebrary/helpers/isLRN';
 import { compact, get, isArray, map, noop, omit, set } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -53,6 +54,42 @@ export default function DetailQuestions({
     setQuestionToEdit(null);
     setQuestionIndex(null);
   }
+
+  const handleCategoriesChange = (newCategories) => {
+    const currentQuestions = form.getValues('questions') || [];
+
+    const updatedQuestions = currentQuestions.map((question) => {
+      if (!question.category) return question;
+
+      const categoryStillExists = newCategories.some((cat) => cat.id === question.category);
+
+      return {
+        ...question,
+        category: categoryStillExists ? question.category : null,
+      };
+    });
+
+    form.setValue('questions', updatedQuestions);
+    form.setValue('categories', [...newCategories]);
+  };
+
+  const processCategories = (categories) => {
+    if (!categories) return;
+    const categoriesOrderMap = {};
+    const processedCategories = categories.map((category, index) => {
+      categoriesOrderMap[category.id] = index;
+      if (isLRN(category.id)) return { ...category, order: index };
+      return { value: category.value, order: index };
+    });
+
+    const processedQuestions = form.getValues('questions').map((question) => {
+      if (!question.category) return question;
+      return { ...question, category: categoriesOrderMap[question.category] };
+    });
+
+    form.setValue('categories', processedCategories);
+    form.setValue('questions', processedQuestions);
+  };
 
   const processFeedback = (processedQuestion, solutionField) => {
     let solution = solutionField;
@@ -141,6 +178,7 @@ export default function DetailQuestions({
 
   function onSaveQBank(handler = noop) {
     setSaveAttempt(true);
+    processCategories(categories);
     if (questions?.length) {
       handler();
     }
@@ -182,12 +220,7 @@ export default function DetailQuestions({
         onCancel={onCancel}
         defaultValues={newQuestion ? {} : questionToEdit}
         categories={categories}
-        onAddCategory={(newCategory) => {
-          form.setValue('categories', [
-            ...(form.getValues('categories') || []),
-            { value: newCategory },
-          ]);
-        }}
+        onCategoriesChange={handleCategoriesChange}
         scrollRef={scrollRef}
       />
     );

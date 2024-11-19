@@ -18,12 +18,6 @@ const { updateQuestion } = require('../questions/updateQuestion');
 const removeUnusedFields = (data, otherFields = []) =>
   _.omit(data, ['_id', '__v', 'deploymentID', 'isDeleted', ...otherFields]);
 
-const getCategoryId = (category, orderedCategories) => {
-  if (_.isNumber(category) && category >= 0) return orderedCategories[category].id;
-  if (_.isString(category)) return category;
-  return null;
-};
-
 /**
  * @typedef {Object} QuestionBank
  * Represents a question bank object with associated details.
@@ -123,23 +117,18 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
         published,
         setAsCurrent: !!published,
       });
-      const [_questionBank, oldCategories] = await Promise.all([
-        ctx.tx.db.QuestionsBanks.create({ id: version.fullId, published, ...props }).then((r) =>
-          r.toObject()
-        ),
-        ctx.tx.db.QuestionBankCategories.find({ questionBank: id }).lean(),
-      ]);
-      questionBank = _questionBank;
-      const oldCategoriesById = _.keyBy(oldCategories, 'id');
+      const _questionBankDoc = await ctx.tx.db.QuestionsBanks.create({
+        id: version.fullId,
+        published,
+        ...props,
+      });
+      questionBank = _questionBankDoc.toObject();
 
       // ES - Borramos las id para que se creen nuevas
-      // EN - Delete the id to create new
+      // EN - Remove the id of each question for them to be created as new
       _.forEach(data.questions, (question) => {
         delete question.id;
         delete question._id;
-        if (oldCategoriesById[question.category]) {
-          question.category = oldCategoriesById[question.category].order;
-        }
       });
     } else {
       if (published) {
@@ -232,24 +221,26 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
     values: questionBank.id,
   });
 
-  // -- Categories --
   const [currentCategories, currentQuestions] = await Promise.all([
     ctx.tx.db.QuestionBankCategories.find({ questionBank: questionBank.id }).select(['id']).lean(),
     ctx.tx.db.Questions.find({ questionBank: questionBank.id }).select(['id']).lean(),
   ]);
+
+  // -- Categories --
+
   const currentCategoriesIds = _.map(currentCategories, 'id');
   const categoriesToCreate = [];
   const categoriesToUpdate = [];
   const categoriesToDelete = [];
-  _.forEach(categories, (category, order) => {
+  _.forEach(categories, (category) => {
     if (category.id) {
       if (currentCategoriesIds.includes(category.id)) {
-        categoriesToUpdate.push({ ...category, order });
+        categoriesToUpdate.push({ ...category });
       } else {
-        categoriesToCreate.push({ ...category, order });
+        categoriesToCreate.push({ ...category });
       }
     } else if (category.value) {
-      categoriesToCreate.push({ ...category, order });
+      categoriesToCreate.push({ ...category });
     }
   });
   _.forEach(currentCategoriesIds, (categoryId) => {
@@ -265,12 +256,12 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
   }
   if (categoriesToUpdate.length) {
     await Promise.all(
-      _.map(categoriesToUpdate, (question) =>
+      _.map(categoriesToUpdate, ({ id, value, order }) =>
         updateCategory({
           data: {
-            id: question.id,
-            category: question.value,
-            order: question.order,
+            id,
+            category: value,
+            order,
           },
           ctx,
         })
@@ -279,19 +270,18 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
   }
   if (categoriesToCreate.length) {
     await Promise.all(
-      _.map(categoriesToCreate, (question) =>
+      _.map(categoriesToCreate, ({ value, order }) =>
         createCategory({
-          data: { category: question.value, order: question.order, questionBank: questionBank.id },
+          data: { category: value, order, questionBank: questionBank.id },
           ctx,
         })
       )
     );
   }
 
-  let orderedCategories = await ctx.tx.db.QuestionBankCategories.find({
+  const questionBankCategories = await ctx.tx.db.QuestionBankCategories.find({
     questionBank: questionBank.id,
   }).lean();
-  orderedCategories = _.orderBy(orderedCategories, ['order']);
 
   // -- Questions --
   const currentQuestionsIds = _.map(currentQuestions, 'id');
@@ -326,7 +316,9 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
         updateQuestion({
           data: {
             ...question,
-            category: getCategoryId(question.category, orderedCategories),
+            category:
+              questionBankCategories.find((category) => category.order === question.category)?.id ||
+              null,
           },
           published,
           ctx,
@@ -342,7 +334,9 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
           data: {
             ...question,
             questionBank: questionBank.id,
-            category: getCategoryId(question.category, orderedCategories),
+            category:
+              questionBankCategories.find((category) => category.order === question.category)?.id ||
+              null,
           },
           published,
           ctx,
