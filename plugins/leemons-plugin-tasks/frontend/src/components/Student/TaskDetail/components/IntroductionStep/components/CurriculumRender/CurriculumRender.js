@@ -1,18 +1,21 @@
 import React, { useEffect, useMemo } from 'react';
-import PropTypes from 'prop-types';
+
 import { useClassesSubjects } from '@academic-portfolio/hooks';
+import assignablesPrefixPN from '@assignables/helpers/prefixPN';
 import { Box, ContextContainer, Select, List, HtmlText, Text, Stack } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@tasks/helpers/prefixPN';
-import assignablesPrefixPN from '@assignables/helpers/prefixPN';
 import { isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+
 import useCurriculumRenderStyles from './CurriculumRender.styles';
+
+import { prefixPN } from '@tasks/helpers/prefixPN';
 
 function CurriculumRender({ instance, showCurriculum, withoutTitle }) {
   const [t] = useTranslateLoader(prefixPN('task_realization.statement_step.curriculum'));
   const [multiSubjectT] = useTranslateLoader(assignablesPrefixPN('userNavigator'));
 
-  const subjects = useClassesSubjects(instance.classes);
+  const subjects = useClassesSubjects(instance?.classes);
   const subjectsData = useMemo(
     () => subjects.map((subject) => ({ label: subject.name, value: subject.id })),
     [subjects, multiSubjectT]

@@ -1,17 +1,16 @@
-const { keys, omit, pick, uniq, without } = require('lodash');
-
 const { LeemonsError } = require('@leemons/error');
+const { keys, omit, pick, uniq, without, uniqBy } = require('lodash');
 
-const { validateInstance } = require('../../helpers/validators/instance');
 const { updateClasses } = require('../../classes/updateClasses');
 const { updateDates } = require('../../dates/updateDates');
+const { getDiff } = require('../../helpers/getDiff');
+const { validateInstance } = require('../../helpers/validators/instance');
 const { getUserPermission } = require('../../permissions/instances/users/getUserPermission');
 const { getInstance } = require('../getInstance');
 
 const { createRelatedInstance } = require('./createRelatedInstance');
+const { updateEmailCron } = require('./helpers/updateEmailCron');
 const { updateEventAndAddToUsers } = require('./updateEventAndAddToUsers');
-
-const { getDiff } = require('../../helpers/getDiff');
 
 const updatableFields = [
   'alwaysAvailable',
@@ -87,6 +86,13 @@ async function updateInstance({ assignableInstance, propagateRelated, onlyAddDat
   // EN: Update dates
   // ES: Actualizar las fechas
   if (diff.includes('dates')) {
+    await updateEmailCron({
+      newInstance: assignableInstance,
+      savedInstance: currentAssignableInstance,
+      mergedInstance: object,
+      ctx,
+    });
+
     await updateDates({
       type: 'assignableInstance',
       instance: id,

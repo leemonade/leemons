@@ -1,6 +1,4 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { cloneDeep, isEmpty } from 'lodash';
-import PropTypes from 'prop-types';
 import { useForm } from 'react-hook-form';
 
 import {
@@ -11,19 +9,23 @@ import {
   Box,
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
-
-import { useSubjectDetails } from '@academic-portfolio/hooks';
-import { useUpdateClass } from '@academic-portfolio/hooks/mutations/useMutateClass';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import { cloneDeep, isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+
 import EnrollmentTab from './EnrollmentTab';
 import InfoTab from './InfoTab';
+
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import { useSubjectDetails } from '@academic-portfolio/hooks';
+import { useUpdateClass } from '@academic-portfolio/hooks/mutations/useMutateClass';
 
 const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer }) => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const [activeTab, setActiveTab] = useState('0');
   const [dirtyForm, setDirtyForm] = useState(false);
+  const [tabsKey, setTabsKey] = useState(0);
   const { data: subjectDetails } = useSubjectDetails(
     subjectTreeNode?.itemId ?? subjectTreeNode?.id,
     {
@@ -85,6 +87,10 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
     ));
   }, [subjectDetails, singleClassToShow, program, activeTab]);
 
+  useEffect(() => {
+    setTabsKey((prevKey) => prevKey + 1);
+  }, [EnrollmentTabs]);
+
   const handleUpdateClass = () => {
     const requestBody = updateForm.getValues();
     requestBody.id = activeTab;
@@ -143,8 +149,10 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
     >
       <Box ref={stackRef}>
         <Tabs
+          key={tabsKey}
           tabPanelListStyle={{ backgroundColor: 'white' }}
           fullHeight
+          forceRender
           onChange={(val) => {
             setActiveTab(val);
           }}

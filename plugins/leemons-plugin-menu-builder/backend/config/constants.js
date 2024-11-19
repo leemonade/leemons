@@ -20,6 +20,8 @@ module.exports = {
     'tests',
     'feedback',
 
+    'communities',
+
     'leebrary',
     'families',
   ],

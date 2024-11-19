@@ -1,25 +1,25 @@
 import { createStyles, pxToRem } from '@bubbles-ui/components';
 
 const useEvaluationStateDisplayStyles = createStyles((theme) => {
-  const { cardModule } = theme.other;
+  const font = theme.other.global.content.typo.body['xsm--semiBold'];
+
   return {
     root: {
       display: 'flex',
       flexDirection: 'row',
-      alignItems: 'center',
       gap: pxToRem(8),
+      height: font.lineHeight,
     },
     icon: {
-      color: cardModule.content.phatic.positive,
       marginTop: pxToRem(3),
     },
     container: {
       display: 'flex',
+      alignItems: 'center',
       gap: pxToRem(8),
     },
     text: {
-      color: cardModule.content.phatic.positive,
-      ...theme.other.global.content.typo.body['xsm--semiBold'],
+      ...font,
     },
   };
 });

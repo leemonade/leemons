@@ -1,4 +1,4 @@
-const { LeemonsError } = require('@leemons/error');
+const { checkRequiredPermissions } = require('@leemons/middlewares');
 const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
 const _ = require('lodash');
 
@@ -19,11 +19,14 @@ async function listPrograms({
     ctx.tx.db.ProgramCenter.find({ center }, '', queriesOptions).lean(),
   ]);
 
-  if (!['teacher', 'student', 'admin', 'super'].includes(profile)) {
-    throw new LeemonsError(ctx, {
-      message: 'Only teacher|student|admin|super users can list programs',
-    });
-  }
+  await checkRequiredPermissions({
+    allowedPermissions: {
+      'academic-portfolio.programs': {
+        actions: ['view', 'admin'],
+      },
+    },
+    ctx,
+  });
 
   let programIds = _.map(programCenter, 'program');
 

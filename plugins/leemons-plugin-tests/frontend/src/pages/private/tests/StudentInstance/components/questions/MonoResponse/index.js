@@ -1,32 +1,30 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import PropTypes from 'prop-types';
+
 import { Box, Stack } from '@bubbles-ui/components';
-import QuestionTitle from '../../QuestionTitle';
-import QuestionNoteClues from '../../QuestionNoteClues';
+import PropTypes from 'prop-types';
+
 import QuestionImage from '../../QuestionImage';
-import Responses from './Responses';
+import QuestionNoteClues from '../../QuestionNoteClues';
+import QuestionTitle from '../../QuestionTitle';
 import UnansweredQuestionWarning from '../../UnansweredQuestionWarning';
 
+import Responses from './Responses';
+
 export default function Index(props) {
-  const { styles, saveQuestion, store, question, t, isLast, isPreviewMode } = props;
+  const { styles, store, question } = props;
 
-  function nextStep() {
-    if (!store.viewMode) saveQuestion();
-    props.nextStep();
-  }
-
-  let showNotResponsedWarning = false;
+  let showNotAnsweredWarning = false;
   if (store.viewMode) {
-    showNotResponsedWarning = store.questionResponses[question.id].status === null;
+    showNotAnsweredWarning = store.questionResponses[question.id].status === null;
   }
 
   return (
     <>
-      {showNotResponsedWarning ? <UnansweredQuestionWarning {...props} /> : null}
+      {showNotAnsweredWarning ? <UnansweredQuestionWarning {...props} /> : null}
 
       <Box className={styles.questionCard}>
-        <QuestionTitle {...props} />
+        <QuestionTitle {...props} tableViewMode={store.viewMode} />
         <QuestionNoteClues {...props} />
         {!question.hasImageAnswer && question.questionImage?.cover ? (
           <>

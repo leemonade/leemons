@@ -22,6 +22,9 @@
       "@admin/*": [
         "./plugins/leemons-plugin-admin/frontend/src/*"
       ],
+      "@ai-assistant/*": [
+        "./private-plugins/leemons-plugin-ai-assistant/frontend/src/*"
+      ],
       "@analytics/*": [
         "./private-plugins/leemons-plugin-analytics/frontend/src/*"
       ],
@@ -83,7 +86,7 @@
         "./plugins/leemons-plugin-feedback/frontend/src/*"
       ],
       "@fundae/*": [
-        "./plugins/leemons-plugin-fundae/frontend/src/*"
+        "./private-plugins/leemons-plugin-fundae/frontend/src/*"
       ],
       "@grades/*": [
         "./plugins/leemons-plugin-grades/frontend/src/*"

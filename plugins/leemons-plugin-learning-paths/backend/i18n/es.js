@@ -23,7 +23,7 @@ module.exports = {
     },
     tabs: {
       basicData: 'Datos básicos',
-      structure: 'Itinerario de aprendizaje',
+      structure: 'Contenido',
       resources: 'Recursos',
     },
     buttons: {
@@ -78,12 +78,12 @@ module.exports = {
           new: 'Añadir actividad',
         },
         emptyState: {
-          title: 'Listado de actividades',
+          title: 'Listado',
           description:
             'Selecciona actividades de tu biblioteca para crear un itinerario personalizado.',
         },
         moduleComposer: {
-          title: 'Listado de actividades',
+          title: 'Listado',
           columns: {
             resource: 'Actividad',
             type: 'Tipo',
@@ -172,6 +172,7 @@ module.exports = {
       viewReport: 'Ver informe',
     },
     resources: 'Recursos',
+    students: 'Estudiantes',
     progress: 'Progreso',
     allStudentsEvaluated: 'Todos los alumnos evaluados',
     studentProgressTitle: 'Notas del módulo',

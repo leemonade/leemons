@@ -3,7 +3,6 @@
   "version": "0.0.71",
   "private": false,
   "main": "src/index.js",
-  "scripts": {},
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"

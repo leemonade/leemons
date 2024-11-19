@@ -1,7 +1,9 @@
 import { keys } from 'lodash';
 
 async function getAssets({ pinned, showPublic, ...filters } = {}) {
-  let params = keys(filters).map((key) => `${key}=${filters[key]}`);
+  let params = keys(filters)
+    .filter((key) => Boolean(filters[key]))
+    .map((key) => `${key}=${filters[key]}`);
 
   if (pinned) {
     params.push('showPublic=true');

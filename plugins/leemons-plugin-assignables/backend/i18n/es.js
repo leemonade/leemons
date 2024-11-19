@@ -467,13 +467,13 @@ module.exports = {
         helpCenter: {
           title: 'Visitar el centro de ayuda',
           description:
-            'En {CTA} encontrarás información de utilidad para sacar todo el partido a la plataforma.',
+            'En Leemons Academy encontrarás información de utilidad para sacar todo el partido a la plataforma.',
           cta: 'Leemons Academy',
         },
         leebrary: {
           title: 'Subir recursos',
           description:
-            'En la {CTA} podrás subir contenidos y crear materiales y actividades para tus clases.',
+            'En la Biblioteca de Leemons  podrás subir contenidos y crear materiales y actividades para tus clases.',
           cta: 'Biblioteca de Leemons',
         },
         comunica: {
@@ -488,10 +488,8 @@ module.exports = {
           'En este panel de control podrás encontrar muy pronto información sobre las actividades y tareas que te han asignado tus profesores, tu calendario de entregas o tu gestor ágil de tareas.',
         description2: 'Mientras tanto y para empezar, te recomendamos las siguientes acciones:',
         helpCenter: {
-          title: 'Visitar el centro de ayuda',
-          description:
-            'En {CTA} encontrarás información de utilidad para sacar todo el partido a la plataforma.',
-          cta: 'Leemons Academy',
+          title: 'Completar tu perfil',
+          description: 'Revisa la información de tu perfil y comprueba que todo está correcto.',
         },
         comunica: {
           title: 'Decir “Hola”',
@@ -581,5 +579,16 @@ module.exports = {
       evaluation: 'Evaluación',
       feedback: 'Feedback cualitativo',
     },
+  },
+  activityNotStarted: {
+    activityUnavailable: 'Actividad no disponible',
+    back: 'Volver',
+    next: 'Siguiente',
+    finish: 'Finalizar',
+    activityNotStarted:
+      'Esta actividad aún no está disponible. Podrás acceder a ella y realizarla a partir del {date} a las {time}.',
+    activityBlocked: 'Esta actividad está bloqueada por una actividad anterior del módulo.',
+    willSendMail: 'Recibirás un email cuando se abra el plazo de ejecución.',
+    checkBackLater: 'Por favor, vuelve más tarde para comenzar.',
   },
 };

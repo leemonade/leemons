@@ -1,18 +1,23 @@
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { Redirect, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+
 import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
 import { useIsStudent } from '@academic-portfolio/hooks';
 import { listSessionClasses } from '@academic-portfolio/request/classes';
 import { Box, LoadingOverlay, Stack } from '@bubbles-ui/components';
-import { LibraryNavbar } from '@leebrary/components/LibraryNavbar';
 import { unflatten, useStore } from '@common';
 import loadable from '@loadable/component';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import _, { find, isEmpty } from 'lodash';
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { Redirect, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+
 import LibraryContext, { LibraryProvider } from '../../../context/LibraryContext';
 import prefixPN from '../../../helpers/prefixPN';
 import { hasPinsRequest, listCategoriesRequest } from '../../../request';
+import BulkAssetPage from '../assets/BulkAssetPage';
+
 import { VIEWS } from './Library.constants';
+
+import { LibraryNavbar } from '@leebrary/components/LibraryNavbar';
 
 const AssetPage = loadable(() => import('../assets/AssetPage'));
 const ListAssetPage = loadable(() => import('../assets/ListAssetPage'));
@@ -76,7 +81,7 @@ const LibraryPageContent = () => {
     const editSegment = pathSegments[pathSegments.length - 2];
     const lastSegment = pathSegments[pathSegments.length - 1];
 
-    if (lastSegment === 'new' || editSegment === 'edit') {
+    if (lastSegment === 'new' || editSegment === 'edit' || lastSegment === 'bulk-upload') {
       setAsset(null);
       setHideNavBar(true);
     } else {
@@ -157,6 +162,11 @@ const LibraryPageContent = () => {
       )}
       <Box>
         <Switch>
+          {/* BULK UPLOAD ASSET ·························································· */}
+          <Route path={cleanPath(`${path}/:category/bulk-upload`)}>
+            <BulkAssetPage />
+          </Route>
+
           {/* NEW ASSET ·························································· */}
           <Route path={cleanPath(`${path}/:category/new`)}>
             <AssetPage />
@@ -218,6 +228,13 @@ const LibraryPage = () => {
     history.push(`${path}/${categoryItem.key}/new`.replace('//', '/'));
   };
 
+  const newBulkUpload = (data, categoryItem) => {
+    setFile(data);
+    setCategory(categoryItem);
+    setView(VIEWS.BULK_UPLOAD);
+    history.push(`${path}/${categoryItem.key}/bulk-upload`.replace('//', '/'));
+  };
+
   const selectCategory = useCallback(
     (key) => {
       if (
@@ -257,6 +274,7 @@ const LibraryPage = () => {
       view,
       setView,
       newAsset,
+      newBulkUpload,
       editAsset,
       selectCategory,
       loading,

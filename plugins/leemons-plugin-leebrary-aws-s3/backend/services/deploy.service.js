@@ -2,12 +2,13 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const path = require('path');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsMultilanguageMixin } = require('@leemons/multilanguage');
-const { getServiceModels } = require('../models');
+const path = require('path');
+
 const { pluginName } = require('../config/constants');
+const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
@@ -29,6 +30,7 @@ module.exports = () => ({
       await ctx.tx.call('leebrary.providers.register', {
         name: 'Amazon S3',
         image: 'https://cdn.worldvectorlogo.com/logos/aws-glacier.svg',
+        type: 'storage',
         supportedMethods: {
           uploadMultipartChunk: true,
           getUploadChunkUrls: true,

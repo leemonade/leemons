@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { compact, get, isArray, map, noop, omit, set } from 'lodash';
+
 import {
   ActionButton,
   Alert,
@@ -16,9 +15,17 @@ import {
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { AddCircleIcon, DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { useLayout } from '@layout/context';
+import { compact, get, isArray, map, noop, omit, set } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { getQuestionForTable } from '../../../../helpers/getQuestionForTable';
+import {
+  QUESTION_TYPES,
+  QUESTION_TYPES_WITH_HIDDEN_ANSWERS,
+  SOLUTION_KEY_BY_TYPE,
+} from '../questionConstants';
+
 import DetailQuestionForm from './DetailQuestionForm';
-import { QUESTION_TYPES, SOLUTION_KEY_BY_TYPE } from '../questionConstants';
 
 export default function DetailQuestions({
   form,
@@ -91,8 +98,10 @@ export default function DetailQuestions({
     // HELP: CLUES && HIDE ANSWER OPTIONS
     processedQuestion.clues = compact(processedQuestion.clues);
     if (!question.hasHelp) {
-      const solutionWithCleanHideOnHelp = removeHideOnHelp(get(processedQuestion, solutionKey));
-      set(processedQuestion, solutionKey, solutionWithCleanHideOnHelp);
+      if (QUESTION_TYPES_WITH_HIDDEN_ANSWERS.includes(question.type)) {
+        const solutionWithCleanHideOnHelp = removeHideOnHelp(get(processedQuestion, solutionKey));
+        set(processedQuestion, solutionKey, solutionWithCleanHideOnHelp);
+      }
       processedQuestion.clues = [];
     } else {
       processedQuestion.hasHelp = processHasHelp(processedQuestion, solutionKey);

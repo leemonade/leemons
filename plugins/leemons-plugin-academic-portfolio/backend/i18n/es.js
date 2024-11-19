@@ -197,6 +197,25 @@ module.exports = {
           color: 'Color',
           featuredImage: 'Imagen destacada',
         },
+        staff: {
+          title: 'Personal',
+          roles: {
+            'program-director': 'Director de Programa',
+            'program-coordinator': 'Coordinador de Programa',
+            'lead-instructor': 'Instructor Principal',
+            'academic-advisor': 'Asesor Académico',
+            'external-evaluator': 'Evaluador Externo',
+          },
+          staffChangeDenied: 'Actualización de personal denegada',
+          closeAlert: 'Cerrar',
+          staffChangeModal: {
+            'program-coordinator': {
+              title: 'Cambio de Coordinador de Programa',
+              description:
+                'Cambiar el coordinador de programa puede afectar el funcionamiento de los módulos que dependen de él. ¿Quieres continuar?',
+            },
+          },
+        },
         academicRules: {
           title: 'Reglas Académicas',
           selectSystem: 'Selecciona un sistema',
@@ -467,7 +486,7 @@ module.exports = {
         none: 'Ninguno',
       },
     },
-    reports: 'Reportes'
+    reports: 'Reportes',
   },
   newSubjectsPage: {
     title: 'Listado de asignaturas',

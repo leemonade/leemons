@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
 import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import _, { forEach, keyBy, map } from 'lodash';
+
+import { listSessionClassesRequest } from '@academic-portfolio/request';
 import {
   Box,
   Stack,
@@ -12,29 +12,36 @@ import {
   Kanban as BubblesKanban,
 } from '@bubbles-ui/components';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { saveKanbanEventOrdersRequest, updateEventRequest } from '@calendar/request';
-import { KanbanTaskCard } from '@calendar/components';
 import { useStore } from '@common';
-import prefixPN from '@calendar/helpers/prefixPN';
+import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
+import tKeys from '@multilanguage/helpers/tKeys';
+import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { getCentersWithToken } from '@users/session';
-import tKeys from '@multilanguage/helpers/tKeys';
-import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
-import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
-import getCalendarNameWithConfigAndSession from '@calendar/helpers/getCalendarNameWithConfigAndSession';
-import { listSessionClassesRequest } from '@academic-portfolio/request';
 import hooks from 'leemons-hooks';
-import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
+import _, { forEach, keyBy, map } from 'lodash';
+import PropTypes from 'prop-types';
+
+import useTransformEvent from '../../helpers/useTransformEvent';
 import {
   getCalendarsToFrontendRequest,
   listKanbanColumnsRequest,
   listKanbanEventOrdersRequest,
+  saveKanbanEventOrdersRequest,
+  updateEventRequest,
 } from '../../request';
-import useTransformEvent from '../../helpers/useTransformEvent';
+
+import { KanbanTaskCard } from '@calendar/components';
+import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
+import getCalendarNameWithConfigAndSession from '@calendar/helpers/getCalendarNameWithConfigAndSession';
+import prefixPN from '@calendar/helpers/prefixPN';
 
 const useStyles = createStyles((theme, { inTab }) => ({
   root: {
     width: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing[4],
   },
   calendarContainer: {
     overflowY: 'auto',
@@ -300,7 +307,7 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
 
   return (
     <Box className={classes.root}>
-      <Stack fullWidth alignItems="center" justifyContent="space-between">
+      <Stack fullWidth alignItems="end" justifyContent="space-between">
         <Box>
           <Title order={3}>{t(inTab ? 'kanban' : 'kanbanHighlight')}</Title>
         </Box>
@@ -324,6 +331,7 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
           />
           <BubblesKanban
             value={store.board}
+            clean
             onChange={onChange}
             disableCardDrag={false}
             showNewOnFirstColumn

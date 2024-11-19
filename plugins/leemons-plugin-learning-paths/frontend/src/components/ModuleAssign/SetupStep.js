@@ -1,22 +1,26 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
+import { useMemo } from 'react';
+import { useHistory } from 'react-router-dom';
+
 import {
   Button,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
-import assignModuleRequest from '@learning-paths/requests/assignModule';
-import { useHistory } from 'react-router-dom';
 import { addErrorAlert } from '@layout/alert';
+import PropTypes from 'prop-types';
+
 import { Config } from './components/Config';
 
-function onAssign(id, { assignationForm, state: { activities, time, type } }) {
+import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
+import assignModuleRequest from '@learning-paths/requests/assignModule';
+
+function onAssign(id, { assignationForm, state: { activities, time, type, deleted, order } }) {
   const activitiesWithState = {};
   Object.keys(type).forEach((key) => {
     const activity = activities[key];
     let duration = null;
+    const isDeleted = deleted?.[key];
 
     if (time?.[key] instanceof Date) {
       const hours = time?.[key].getHours();
@@ -27,13 +31,14 @@ function onAssign(id, { assignationForm, state: { activities, time, type } }) {
 
     activitiesWithState[key] = {
       config: activity?.config || activity?.defaultConfig || null,
-      state: { duration, requirement: type?.[key] },
+      state: { duration, requirement: type?.[key], deleted: isDeleted },
     };
   });
 
   const assignationObject = {
     assignationForm: assignationForm?.value,
     activities: activitiesWithState,
+    order,
   };
 
   return assignModuleRequest(id, assignationObject);
@@ -44,6 +49,7 @@ function SetupStep({ onPrevStep, scrollRef, id, localizations, assignable }) {
   const { getValues, setValue, useWatch } = useModuleAssignContext();
   const assignButtonIsLoading = useWatch({ name: 'assignButtonIsLoading' });
   const activitiesLoaded = useWatch({ name: 'state.activities.loaded' });
+  const deleted = useWatch({ name: 'state.deleted' });
   const activitiesLoadedCount = useMemo(
     () => Object.values(activitiesLoaded ?? {}).filter(Boolean).length,
     [activitiesLoaded]
@@ -62,7 +68,10 @@ function SetupStep({ onPrevStep, scrollRef, id, localizations, assignable }) {
           }
           rightZone={
             <Button
-              disabled={activitiesLength !== activitiesLoadedCount}
+              disabled={
+                activitiesLength !== activitiesLoadedCount ||
+                (deleted && activitiesLength - Object.values(deleted).filter(Boolean).length < 2)
+              }
               loading={assignButtonIsLoading}
               onClick={() => {
                 setValue('assignButtonIsLoading', true);
