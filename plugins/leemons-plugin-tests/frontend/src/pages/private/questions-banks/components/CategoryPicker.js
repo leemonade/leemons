@@ -9,25 +9,26 @@ import {
   Box,
   Stack,
   Select,
-  TagsInput,
   Button,
   TableInput,
   TextInput,
 } from '@bubbles-ui/components';
+import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import PropTypes from 'prop-types';
 import { v4 as uuidv4 } from 'uuid';
 
-export function CategoryDrawer({ isOpen, onClose, t, categoriesData, onCategoriesChange, form }) {
+import CommaSeparatedInput from '@tests/components/CommaSeparatedInput';
+
+export function CategoryDrawer({ isOpen, onClose, t, categoriesData, onCategoriesChange }) {
   const { t: tCommon } = useCommonTranslate('formWithTheme');
-  const [initialCategories, setInitialCategories] = useState([]);
   const [categories, setCategories] = useState(categoriesData || []);
+  const [isAdding, setIsAdding] = useState(false);
 
   const tableConfig = useMemo(
     () => ({
       columns: [
         {
-          Header: t('questionCategories.addCategory'),
           accessor: 'value',
           editable: true,
           removable: true,
@@ -44,28 +45,27 @@ export function CategoryDrawer({ isOpen, onClose, t, categoriesData, onCategorie
         cancel: tCommon('cancel'),
       },
     }),
-    [tCommon, t]
+    [tCommon]
   );
 
   const disableSaveButton = useMemo(() => {
     if (!categoriesData?.length) {
-      return initialCategories.length === 0;
+      return categories.length === 0;
     }
     return false;
-  }, [initialCategories, categoriesData]);
+  }, [categoriesData, categories]);
 
   // HANDLERS ·····························································································|
 
   const handleOnCancel = () => {
     setCategories([]);
-    setInitialCategories([]);
     onClose();
   };
 
-  const handleOnSave = () => {
+  const handleOnSave = (initialCats) => {
     if (!categoriesData?.length) {
       if (!categories.length) {
-        setCategories(initialCategories.map((category) => ({ value: category, id: uuidv4() })));
+        setCategories(initialCats.map((category) => ({ value: category, id: uuidv4() })));
       } else {
         onCategoriesChange(categories);
         handleOnCancel();
@@ -77,19 +77,11 @@ export function CategoryDrawer({ isOpen, onClose, t, categoriesData, onCategorie
     handleOnCancel();
   };
 
-  const handleOnChange = (updatedData) => {
+  const addNewCategoriesToList = (newCategories) => {
     setCategories((prev) => {
-      const newEntrance = updatedData.find((item) => !item.id && item.value);
-
-      if (newEntrance) {
-        const temporaryId = uuidv4();
-        return [...prev, { ...newEntrance, id: temporaryId }];
-      }
-
-      return prev.filter((prevItem) =>
-        updatedData.some((currentItem) => currentItem.id === prevItem.id)
-      );
+      return [...prev, ...newCategories.map((category) => ({ value: category, id: uuidv4() }))];
     });
+    setIsAdding(false);
   };
 
   return (
@@ -98,6 +90,23 @@ export function CategoryDrawer({ isOpen, onClose, t, categoriesData, onCategorie
       <Drawer.Content>
         {categories?.length > 0 ? (
           <Stack direction="column">
+            {isAdding ? (
+              <CommaSeparatedInput
+                label={t('questionCategories.newCategory')}
+                onAdd={addNewCategoriesToList}
+                placeholder={t('questionCategories.addCategoriesSeperatedByComma')}
+              />
+            ) : (
+              <Box>
+                <Button
+                  variant="link"
+                  onClick={() => setIsAdding(true)}
+                  leftIcon={<AddCircleIcon width={24} height={24} />}
+                >
+                  {t('questionCategories.addCategory')}
+                </Button>
+              </Box>
+            )}
             <TableInput
               data={categories}
               {...tableConfig}
@@ -106,14 +115,15 @@ export function CategoryDrawer({ isOpen, onClose, t, categoriesData, onCategorie
               removable={true}
               editable
               unique
-              onChange={handleOnChange}
-              canAdd={true}
+              onChange={setCategories}
+              showHeaders={false}
             />
           </Stack>
         ) : (
-          <TagsInput
-            label={t('questionCategories.addInitialCategories')}
-            onChange={setInitialCategories}
+          <CommaSeparatedInput
+            label={t('questionCategories.newCategory')}
+            onAdd={handleOnSave}
+            placeholder={t('questionCategories.addCategoriesSeperatedByComma')}
           />
         )}
       </Drawer.Content>
@@ -175,7 +185,10 @@ export default function CategoryPicker({ t, categoriesData, control, form, onCat
                 ) : (
                   <Select
                     {...field}
-                    data={[{ value: '$none$', label: 'None' }, ...categoriesForSelect]}
+                    data={[
+                      { value: '$none$', label: t('questionCategories.none') },
+                      ...categoriesForSelect,
+                    ]}
                     cleanOnMissingValue
                     onChange={(e) => {
                       if (e === '$none$') {
