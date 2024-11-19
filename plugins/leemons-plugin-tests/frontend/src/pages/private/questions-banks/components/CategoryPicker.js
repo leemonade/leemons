@@ -79,9 +79,29 @@ export function CategoryDrawer({ isOpen, onClose, t, categoriesData, onCategorie
 
   const addNewCategoriesToList = (newCategories) => {
     setCategories((prev) => {
-      return [...prev, ...newCategories.map((category) => ({ value: category, id: uuidv4() }))];
+      const uniqueNewCategories = newCategories.filter(
+        (newCat) => !prev.some((existingCat) => existingCat.value === newCat)
+      );
+      return [
+        ...prev,
+        ...uniqueNewCategories.map((category) => ({ value: category, id: uuidv4() })),
+      ];
     });
     setIsAdding(false);
+  };
+
+  const handleOnChange = (updatedCategories, event) => {
+    if (event.type === 'edit') {
+      setCategories((prev) => {
+        const usedValue = prev.find(({ value }) => value === event.newItem.value);
+        if (usedValue) return [...prev];
+
+        return updatedCategories;
+      });
+      return;
+    }
+
+    setCategories(updatedCategories);
   };
 
   return (
@@ -94,7 +114,7 @@ export function CategoryDrawer({ isOpen, onClose, t, categoriesData, onCategorie
               <CommaSeparatedInput
                 label={t('questionCategories.newCategory')}
                 onAdd={addNewCategoriesToList}
-                placeholder={t('questionCategories.addCategoriesSeperatedByComma')}
+                unique
               />
             ) : (
               <Box>
@@ -110,20 +130,19 @@ export function CategoryDrawer({ isOpen, onClose, t, categoriesData, onCategorie
             <TableInput
               data={categories}
               {...tableConfig}
-              resetOnAdd
               sortable={false}
               removable={true}
               editable
-              unique
-              onChange={setCategories}
+              onChange={handleOnChange}
               showHeaders={false}
             />
           </Stack>
         ) : (
           <CommaSeparatedInput
-            label={t('questionCategories.newCategory')}
+            label={t('questionCategories.addCategoriesSeperatedByComma')}
             onAdd={handleOnSave}
-            placeholder={t('questionCategories.addCategoriesSeperatedByComma')}
+            useTextArea
+            unique
           />
         )}
       </Drawer.Content>
