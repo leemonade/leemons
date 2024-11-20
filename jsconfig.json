@@ -93,7 +93,7 @@
         "./plugins/leemons-plugin-layout/frontend/src/*"
       ],
       "@learning-paths/*": [
-        "./plugins/leemons-plugin-learning-paths/frontend/src/*"
+        "./private-plugins/leemons-plugin-learning-paths/frontend/src/*"
       ],
       "@leebrary/*": [
         "./plugins/leemons-plugin-leebrary/frontend/src/*"

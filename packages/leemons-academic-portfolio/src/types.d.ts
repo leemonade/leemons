@@ -1,3 +1,4 @@
+import { AnyContext } from '@leemons/deployment-manager';
 import { Asset } from '@leemons/library';
 import { LRN } from '@leemons/lrn';
 import { LeemonsSchema } from '@leemons/mongodb';
@@ -109,3 +110,12 @@ export type BeforeRemoveStudentsFromClassEventParams = {
 };
 
 export function getCourseName(item: { name?: string; index: number }): string;
+export async function registerAssignableRolesDeploy({
+  keyValueModel,
+  assignableRoles,
+  ctx,
+}: {
+  keyValueModel: KeyValueModel;
+  assignableRoles: { role: string; options: Record<string, unknown> }[];
+  ctx: AnyContext;
+}): Promise<void>;

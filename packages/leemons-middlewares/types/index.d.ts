@@ -2,8 +2,8 @@ import { Context, ServiceSchema } from '@leemons/deployment-manager';
 
 type Action = 'create' | 'view' | 'update' | 'delete' | 'admin';
 
-type PermissionsForMiddleware = {
-  [key: string]: { actions: Action[] };
+export type PermissionsForMiddleware<A extends string = never> = {
+  [key: string]: { actions: (Action | A)[] };
 };
 
 export function LeemonsMiddlewaresMixin(): ServiceSchema;
@@ -15,16 +15,16 @@ export function LeemonsMiddlewareAuthenticated({
   continueEvenThoughYouAreNotLoggedIn: boolean;
 }): (ctx: Context) => void;
 
-export function LeemonsMiddlewareNecessaryPermits({
+export function LeemonsMiddlewareNecessaryPermits<A = never>({
   allowedPermissions,
 }: {
-  allowedPermissions: PermissionsForMiddleware;
+  allowedPermissions: PermissionsForMiddleware<A>;
 }): (ctx: Context) => void;
 
-export function checkRequiredPermissions({
+export function checkRequiredPermissions<A = never>({
   allowedPermissions,
   ctx,
 }: {
-  allowedPermissions: PermissionsForMiddleware;
+  allowedPermissions: PermissionsForMiddleware<A>;
   ctx: Context;
 }): Promise<boolean>;
