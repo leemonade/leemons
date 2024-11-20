@@ -1,19 +1,14 @@
-import React, { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { PivotTable } from '@analytics/components/PivotTable';
-import {
-  Box,
-  TLayout,
-  Stack,
-  ImageLoader,
-  Button,
-} from '@bubbles-ui/components';
+import { Box, TLayout, Stack, ImageLoader, Button } from '@bubbles-ui/components';
 import { ChevronLeftIcon } from '@bubbles-ui/icons/outline';
 import { LocaleDate } from '@common/LocaleDate';
 import { ChipsContainer } from '@common/components';
 import { useLayout } from '@layout/context';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { isEmpty } from 'lodash';
 
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { useReportColumns } from '@academic-portfolio/hooks/queries/useReportColumns';
@@ -44,13 +39,9 @@ export default function Reports() {
         cell: ({ getValue }) => {
           const value = getValue();
           if (column.toLowerCase().endsWith('date')) {
-            return <LocaleDate date={value} />;
+            return isEmpty(value) ? '-' : <LocaleDate date={value} />;
           } else if (column === 'dataset') {
-            return (
-              <ChipsContainer
-                items={value.map((item) => `${item.label}: ${item.value}`)}
-              />
-            );
+            return <ChipsContainer items={value.map((item) => `${item.label}: ${item.value}`)} />;
           }
           return value;
         },
@@ -144,10 +135,7 @@ export default function Reports() {
 
         <TLayout.Footer fullWidth>
           <TLayout.Footer.RightActions>
-            <Button
-              onClick={handleOnDownload}
-              disabled={!tableRef.current || data.length === 0}
-            >
+            <Button onClick={handleOnDownload} disabled={!tableRef.current || data.length === 0}>
               {t('downloadReport')}
             </Button>
           </TLayout.Footer.RightActions>
