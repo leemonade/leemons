@@ -93,7 +93,8 @@ const LIBRARY_ADD_ASSET = 'leebrary.assets.add';
  * @returns {Promise<Object>} - The created question.
  */
 async function createQuestion({ data, published, ctx }) {
-  const { tags, choices, mapProperties, trueFalseProperties, ...props } = _.cloneDeep(data);
+  const { tags, choices, mapProperties, trueFalseProperties, openResponseProperties, ...props } =
+    _.cloneDeep(data);
 
   // For map questions, create the map image asset
   if (props.type === QUESTION_TYPES.MAP) {
@@ -102,7 +103,7 @@ async function createQuestion({ data, published, ctx }) {
         name: `Map question image`,
         cover: mapProperties.image?.cover?.id ?? mapProperties.image,
         indexable: false,
-        public: true, // TODO Cambiar a false despues de hacer la demo
+        public: true,
       },
       options: { published },
     });
@@ -120,7 +121,7 @@ async function createQuestion({ data, published, ctx }) {
             cover: choice.image?.cover?.id ?? choice.image,
             description: choice.imageDescription,
             indexable: false,
-            public: true, // TODO Cambiar a false despues de hacer la demo
+            public: true,
           },
           options: { published },
         })
@@ -160,6 +161,8 @@ async function createQuestion({ data, published, ctx }) {
     questionToCreate.choices = choices;
   } else if (props.type === QUESTION_TYPES.TRUE_FALSE) {
     questionToCreate.trueFalseProperties = trueFalseProperties;
+  } else if (props.type === QUESTION_TYPES.OPEN_RESPONSE) {
+    questionToCreate.openResponseProperties = openResponseProperties;
   }
 
   let question = await ctx.tx.db.Questions.create(questionToCreate);

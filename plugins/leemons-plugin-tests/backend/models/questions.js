@@ -28,6 +28,14 @@ const trueFalsePropertiesSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const openResponsePropertiesSchema = new mongoose.Schema(
+  {
+    minCharacters: { type: Number, default: null },
+    maxCharacters: { type: Number, default: null },
+  },
+  { _id: false }
+);
+
 const schema = new mongoose.Schema(
   {
     id: {
@@ -49,15 +57,14 @@ const schema = new mongoose.Schema(
       type: String,
       enum: [
         'mono-response',
-        'multi-response',
-        'short-response',
-        'missing-word',
         'map',
+        'short-response',
         'true-false',
+        'open-response',
+        'multi-response',
+        'missing-word',
         'matching',
         'numerical',
-        'open',
-        'description',
       ],
       required: true,
     },
@@ -103,6 +110,9 @@ const schema = new mongoose.Schema(
     },
     trueFalseProperties: {
       type: trueFalsePropertiesSchema,
+    },
+    openResponseProperties: {
+      type: openResponsePropertiesSchema,
     },
   },
   {

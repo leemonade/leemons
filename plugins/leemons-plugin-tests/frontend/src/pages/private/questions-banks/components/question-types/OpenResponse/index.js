@@ -1,0 +1,146 @@
+import { useEffect, useState } from 'react';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
+
+import { Switch, ContextContainer, Stack, NumberInput, Box } from '@bubbles-ui/components';
+import { TextEditorInput, TEXT_EDITOR_TEXTAREA_TOOLBARS } from '@bubbles-ui/editors';
+import { capitalize } from 'lodash';
+import PropTypes from 'prop-types';
+
+import OpenResponseStyles from './OpenResponse.styles';
+
+export default function OpenResponse({ form: _form, t }) {
+  const { classes } = OpenResponseStyles();
+  const form = useFormContext() || _form;
+  const [limitCharachters, setLimitCharachters] = useState(false);
+
+  const [openResponseProperties] = useWatch({
+    control: form.control,
+    name: ['openResponseProperties'],
+  });
+
+  const isEditing = !!form?.getValues('id');
+
+  useEffect(() => {
+    if (
+      isEditing &&
+      (openResponseProperties?.minCharacteres || openResponseProperties?.maxCharacteres)
+    ) {
+      setLimitCharachters(true);
+    }
+  }, [openResponseProperties, isEditing]);
+
+  useEffect(() => {
+    if (!isEditing) {
+      form.setValue('openResponseProperties', {
+        minCharacteres: null,
+        maxCharacteres: null,
+      });
+    }
+  }, [isEditing]);
+
+  useEffect(() => {
+    form.setValue('openResponseProperties', {
+      minCharacteres: null,
+      maxCharacteres: null,
+    });
+  }, [limitCharachters]);
+
+  // RENDER ································································································|
+
+  return (
+    <ContextContainer>
+      <ContextContainer title={`${capitalize(t('explanationLabel'))}`}>
+        <Controller
+          control={form.control}
+          name="globalFeedback"
+          render={({ field }) => (
+            <TextEditorInput
+              {...field}
+              toolbars={TEXT_EDITOR_TEXTAREA_TOOLBARS}
+              value={field.value?.text}
+              editorStyles={{ minHeight: '96px' }}
+              placeholder={t('explanationPlaceHolder')}
+              error={form.formState.errors.globalFeedback?.message}
+              onChange={(value) => {
+                field.onChange({ format: 'html', text: value });
+              }}
+            />
+          )}
+        />
+      </ContextContainer>
+      <ContextContainer title={`${t('responseLabel')} *`} spacing={0}>
+        <Stack spacing={2} direction="column">
+          <Switch
+            checked={limitCharachters}
+            label={t('questionLabels.limitCharacteresLabel')}
+            onChange={(value) => {
+              setLimitCharachters(value);
+            }}
+          />
+          {limitCharachters && (
+            <Stack spacing={5} className={classes.inputBox}>
+              <Box className={classes.numberInput}>
+                <Controller
+                  control={form.control}
+                  name="openResponseProperties.minCharacteres"
+                  render={({ field }) => {
+                    return (
+                      <NumberInput
+                        {...field}
+                        min={1}
+                        placeholder={t('questionLabels.minCharacteresPlaceHolder')}
+                        onChange={(value) => {
+                          field.onChange(value ?? null);
+                        }}
+                        customDesign
+                      />
+                    );
+                  }}
+                />
+              </Box>
+
+              <Box className={classes.numberInput}>
+                <Controller
+                  control={form.control}
+                  name="openResponseProperties.maxCharacteres"
+                  render={({ field }) => {
+                    return (
+                      <NumberInput
+                        {...field}
+                        min={1}
+                        placeholder={t('questionLabels.maxCharacteresPlaceHolder')}
+                        onChange={(value) => {
+                          field.onChange(value ?? null);
+                        }}
+                        customDesign
+                      />
+                    );
+                  }}
+                />
+              </Box>
+            </Stack>
+          )}
+        </Stack>
+      </ContextContainer>
+      <Controller
+        control={form.control}
+        name="hasHelp"
+        render={({ field }) => (
+          <Switch
+            {...field}
+            checked={field.value}
+            label={t('hasCluesLabel')}
+            description={t('cluesSwitchDescription')}
+          />
+        )}
+      />
+    </ContextContainer>
+  );
+}
+
+OpenResponse.propTypes = {
+  form: PropTypes.object.isRequired,
+  t: PropTypes.func.isRequired,
+};
+
+export { OpenResponse };

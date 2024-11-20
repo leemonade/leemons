@@ -70,7 +70,7 @@ module.exports = {
     needImages: 'Answers must have images',
     needExplanationAndResponse: 'All answers require a text and an explanation',
     needResponse: 'Answers must have a text',
-    needsResponse: 'Response is required',
+    needsResponse: 'An answer is required',
     needExplanation: 'All answers require an explanation',
     responsesDescription:
       'First, add the answers, then select the correct one by clicking on the circle.',
@@ -79,15 +79,16 @@ module.exports = {
     explanationRequired: 'Field required',
     includeExplanationToEveryAnswerLabel:
       'Include an explanation to every answer (right and wrong ones)',
-    explanationLabel: 'Feedback',
+    explanationLabel: 'Explanation',
     explanationPlaceHolder: 'Add the explanation text here',
     captionPlaceholder: 'Add the image text here',
     caption: 'Caption/ Alt text',
     cluesLabel: 'Clues configuration',
     cluesPlaceholder: 'Add the clues text here',
     addClue: 'Add clue',
-    cluesDescription:
+    cluesSwitchDescription:
       'You can give hints to students providing information that facilitates the memory retrieval task.',
+    cluesDescription: 'Information shown to students',
     cluesRequired: 'Field required',
     hasCluesLabelWithMinResponses: 'With clues (minimum 3 responses)',
     hasCluesLabel: 'With clues',
@@ -101,6 +102,7 @@ module.exports = {
     trueFalse: 'T/F',
     map: 'Map',
     shortResponse: 'Short response',
+    openResponse: 'Open response',
     mapLabel: 'Map',
     addMap: 'Add map',
     itemsLabel: 'Answers',
@@ -130,11 +132,11 @@ module.exports = {
         true: 'True',
         false: 'False',
         type: 'T/F',
-        needsResponse: 'Response is required',
-        shortResponse: {
-          answerPlaceholder: 'Write your answer here',
-        },
       },
+      answerPlaceholder: 'Write your answer here',
+      limitCharacteresLabel: 'Limit characters',
+      minCharacteresPlaceHolder: 'Min.',
+      maxCharacteresPlaceHolder: 'Max.',
     },
     errors: {
       save: 'The changes could not be saved.',

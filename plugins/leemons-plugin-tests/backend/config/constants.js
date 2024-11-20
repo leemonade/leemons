@@ -242,6 +242,7 @@ const QUESTION_TYPES = {
   MONO_RESPONSE: 'mono-response',
   TRUE_FALSE: 'true-false',
   SHORT_RESPONSE: 'short-response',
+  OPEN_RESPONSE: 'open-response',
 };
 
 module.exports = {

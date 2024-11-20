@@ -1,3 +1,5 @@
+const EXPLANATION = 'Explicación';
+
 module.exports = {
   questionsBanksList: {
     pageTitle: 'Listado de bancos de preguntas',
@@ -79,15 +81,16 @@ module.exports = {
     explanationRequired: 'Campo necesario',
     includeExplanationToEveryAnswerLabel:
       'Incluir una explicación a cada respuesta (correctas e incorrectas)',
-    explanationLabel: 'Retroalimentación',
+    explanationLabel: EXPLANATION,
     explanationPlaceHolder: 'Añadir aquí el texto de la explicación',
     captionPlaceholder: 'Añadir aquí el texto de la imagen',
     caption: 'Pie de foto/texto alternativo',
     cluesLabel: 'Configuración de pistas',
     cluesPlaceholder: 'Añadir aquí el texto de las pistas',
     addClue: 'Añadir pista',
-    cluesDescription:
+    cluesSwitchDescription:
       'Es posible dar pistas a los alumnos proporcionando información que facilite la tarea de recuperación de la memoria.',
+    cluesDescription: 'Información para mostrar al alumno',
     hasCluesLabelWithMinResponses: 'Con pistas (mínimo 3 respuestas)',
     hasCluesLabel: 'Con pistas',
     imageLabel: 'Imagen',
@@ -100,6 +103,7 @@ module.exports = {
     trueFalse: 'V/F',
     map: 'Mapa',
     shortResponse: 'Respuesta corta',
+    openResponse: 'Respuesta abierta',
     mapLabel: 'Mapa',
     addMap: 'Añadir mapa',
     itemsLabel: 'Respuestas',
@@ -130,9 +134,10 @@ module.exports = {
         false: 'Falso',
         type: 'V/F',
       },
-      shortResponse: {
-        answerPlaceholder: 'Escribe aquí tu respuesta',
-      },
+      answerPlaceholder: 'Escribe aquí tu respuesta',
+      limitCharacteresLabel: 'Limitar caracteres',
+      minCharacteresPlaceHolder: 'Mín.',
+      maxCharacteresPlaceHolder: 'Máx.',
     },
     errors: {
       save: 'No se han podido guardar los cambios.',
@@ -431,7 +436,7 @@ module.exports = {
       'Esta pregunta requiere que respondas a todas las opciones presentadas para poder ser evaluada (en caso contrario contará como pregunta no respondida)',
     attention: 'Atención',
     correctResponse: 'Respuesta correcta',
-    explanation: 'Explicación',
+    explanation: EXPLANATION,
     returnToTable: 'Volver al listado',
     clueN: '{number}ª Pista',
     pendingActivities: 'Actividades pendientes',
@@ -549,7 +554,7 @@ module.exports = {
       solution: 'Solución',
       correct: 'Correcto',
       incorrect: 'Incorrecto',
-      feedback: 'Explicación',
+      feedback: EXPLANATION,
     },
   },
 };

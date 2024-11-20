@@ -2,13 +2,18 @@ const { LeemonsError } = require('@leemons/error');
 const { LeemonsValidator } = require('@leemons/validator');
 const _ = require('lodash');
 
+const { QUESTION_TYPES } = require('../config/constants');
+
 const {
   stringSchema,
   booleanSchema,
   stringSchemaNullable,
   textSchemaNullable,
   textSchemaNoLimit,
+  integerSchemaGreaterThanZeroNullable,
 } = require('./types');
+
+const questionTypes = Object.values(QUESTION_TYPES);
 
 const formattedTextSchema = {
   type: 'object',
@@ -89,7 +94,6 @@ const mapPropertiesSchema = {
   nullable: true,
 };
 
-const questionTypes = ['mono-response', 'map', 'true-false', 'short-response'];
 const trueFalsePropertiesSchema = {
   type: 'object',
   properties: {
@@ -97,6 +101,14 @@ const trueFalsePropertiesSchema = {
   },
   required: ['isTrue'],
   nullable: true,
+};
+
+const openResponsePropertiesSchema = {
+  type: 'object',
+  properties: {
+    minCharacters: integerSchemaGreaterThanZeroNullable,
+    maxCharacters: integerSchemaGreaterThanZeroNullable,
+  },
 };
 
 const questionTypeSchema = {
@@ -155,6 +167,7 @@ const questionSchema = {
     },
     mapProperties: mapPropertiesSchema,
     trueFalseProperties: trueFalsePropertiesSchema,
+    openResponseProperties: openResponsePropertiesSchema,
   },
 };
 
@@ -205,7 +218,7 @@ const saveQuestionBankSchema = {
 function validateSaveQuestionBank(data, ctx) {
   const schema = _.cloneDeep(saveQuestionBankSchema);
   if (data.published) {
-    schema.required = ['name', 'questions']; // 'program', 'subjects'
+    schema.required = ['name', 'questions'];
     schema.properties.questions.items.required = ['type', 'stem'];
   }
   const validator = new LeemonsValidator(schema);
