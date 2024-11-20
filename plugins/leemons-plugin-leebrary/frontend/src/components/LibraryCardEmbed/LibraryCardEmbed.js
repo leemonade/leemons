@@ -132,7 +132,7 @@ const LibraryCardEmbed = ({
 
   return (
     <Box className={classes.root} onClick={() => ccMode && canPlay && handleClickCCreator()}>
-      <Stack alignItems="center" fullWidth>
+      <Stack alignItems="center" fullWidth spacing={2}>
         <Box
           noFlex
           style={{
@@ -148,15 +148,15 @@ const LibraryCardEmbed = ({
           )}
         </Box>
 
-        <Stack direction="column" fullWidth alignContent="start" className={classes.textWrapper}>
-          <Box className={classes.bodyContainer}>
+        <Stack direction="column" fullWidth alignContent="start" className={classes.bodyContainer}>
+          <Stack>
             <TextClamp lines={1}>
               <Text size="md" className={classes.title}>
                 {title || name}
               </Text>
             </TextClamp>
-            <Badge size="xs" label={badgeCategory} closable={false} radius={'default'} />
-          </Box>
+          </Stack>
+          <Badge size="xs" label={badgeCategory} closable={false} radius={'default'} />
         </Stack>
         <Box noFlex className={classes.variantIcon}>
           {hasActionButton && renderVariantIcon()}

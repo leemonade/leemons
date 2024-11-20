@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useEffect, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useState } from 'react';
 
 import { Select } from '@bubbles-ui/components';
 import { debounce } from 'lodash';
@@ -37,6 +37,7 @@ const SelectClass = forwardRef(
       mergeSubjectNameWithClass = true,
       subjectFilter,
       firstSelected,
+      disabled,
       ...props
     },
     ref
@@ -179,7 +180,7 @@ const SelectClass = forwardRef(
         {...props}
         ref={ref}
         data={[...customOptions, ...data]}
-        disabled={!data.length}
+        disabled={!data.length || disabled}
         onChange={handleChange}
         value={value}
       />
@@ -200,6 +201,7 @@ SelectClass.propTypes = {
   mergeSubjectNameWithClass: PropTypes.bool,
   subjectFilter: PropTypes.string,
   firstSelected: PropTypes.bool,
+  disabled: PropTypes.bool,
 };
 
 export { SelectClass };

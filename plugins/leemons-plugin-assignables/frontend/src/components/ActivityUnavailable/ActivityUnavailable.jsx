@@ -1,35 +1,38 @@
-import { ContextContainer, Stack, Text, TotalLayoutStepContainer } from '@bubbles-ui/components';
+import { Stack, Text } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PropTypes from 'prop-types';
 
-import { ActivityUnavailableFooter } from './ActivityUnavailableFooter';
+import { ActivityUnavailableLayout } from './ActivityUnavailableLayout';
 import { useActivityStates } from './hooks/useActivityStates';
 
 import prefixPN from '@assignables/helpers/prefixPN';
 
-export function ActivityUnavailable({ instance, user, clean, singlePage, scrollRef }) {
+export function ActivityUnavailable({ instance, clean, singlePage, scrollRef }) {
   const [t] = useTranslateLoader(prefixPN('activityNotStarted'));
 
-  const { isScheduled, isBlocked, sendMail, date, time } = useActivityStates({ instance, user });
+  const { isScheduled, isBlocked, sendMail, date, time } = useActivityStates({ instance });
+
+  if (isScheduled) {
+    return (
+      <ActivityUnavailableLayout scrollRef={scrollRef} singlePage={singlePage} clean={clean} t={t}>
+        <Stack spacing={1} direction="column">
+          <Text>{t('activityNotStarted', { date, time })}</Text>
+          {sendMail && <Text>{t('willSendMail')}</Text>}
+        </Stack>
+      </ActivityUnavailableLayout>
+    );
+  }
+
+  if (isBlocked) {
+    return (
+      <ActivityUnavailableLayout scrollRef={scrollRef} singlePage={singlePage} clean={clean} t={t}>
+        <Text>{t('activityBlocked')}</Text>
+      </ActivityUnavailableLayout>
+    );
+  }
 
   return (
-    <TotalLayoutStepContainer
-      Footer={<ActivityUnavailableFooter scrollRef={scrollRef} singlePage={singlePage} />}
-      clean={clean}
-    >
-      <ContextContainer title={t('activityUnavailable')}>
-        <Stack spacing={5} direction="column">
-          {isScheduled && (
-            <Stack spacing={1} direction="column">
-              <Text>{t('activityNotStarted', { date, time })}</Text>
-              {sendMail && <Text>{t('willSendMail')}</Text>}
-            </Stack>
-          )}
-          {isBlocked && <Text>{t('activityBlocked')}</Text>}
-          <Text>{t('checkBackLater')}</Text>
-        </Stack>
-      </ContextContainer>
-    </TotalLayoutStepContainer>
+    <ActivityUnavailableLayout scrollRef={scrollRef} singlePage={singlePage} clean={clean} t={t} />
   );
 }
 

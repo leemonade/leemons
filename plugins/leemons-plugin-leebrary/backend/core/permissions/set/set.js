@@ -69,7 +69,7 @@ async function set({
     // ES: Actualizamos los permisos del asset para que sea publico si hace falta
     const updatePromises = [];
     _.forEach(assetIds, async (id) => {
-      if (isPublic || assetsDataById[id].public) {
+      if (isPublic || assetsDataById[id]?.public) {
         updatePromises.push(
           updateAsset({
             data: {

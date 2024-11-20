@@ -10,6 +10,7 @@ const got = require('got');
 const _ = require('lodash');
 
 const { duplicate } = require('../../core/assets/duplicate');
+const { getByFile } = require('../../core/assets/files/getByFile');
 const { getByIds } = require('../../core/assets/getByIds');
 const { getByUser } = require('../../core/assets/getByUser');
 const { prepareAsset } = require('../../core/assets/prepareAsset');
@@ -167,6 +168,8 @@ module.exports = {
         categoryFilter,
         categoriesFilter,
         hideCoverAssets,
+        useCache,
+        addons,
       } = ctx.params;
 
       const assets = await list({
@@ -189,6 +192,8 @@ module.exports = {
         indexable: true,
 
         ctx,
+        useCache,
+        addons,
       });
 
       return {
@@ -357,6 +362,35 @@ module.exports = {
       return {
         status: 200,
         hasPins: pins.length > 0,
+      };
+    },
+  },
+  getByFileRest: {
+    rest: {
+      path: '/by-file/:fileId',
+      method: 'GET',
+    },
+    params: {
+      fileId: { type: 'string' },
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const { fileId } = ctx.params;
+      const assetId = await getByFile({ fileId, ctx });
+      if (!assetId) {
+        throw new LeemonsError(ctx, { message: 'Asset not found', httpStatusCode: 404 });
+      }
+      const [asset] = await getByIds({
+        ids: assetId,
+        ctx,
+        withTags: true,
+        withFiles: true,
+        withCategory: true,
+        checkPermissions: true,
+      });
+      return {
+        status: 200,
+        data: asset,
       };
     },
   },

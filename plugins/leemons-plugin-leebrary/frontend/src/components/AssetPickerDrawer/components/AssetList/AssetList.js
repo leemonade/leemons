@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { Box, createStyles } from '@bubbles-ui/components';
 import PropTypes from 'prop-types';
@@ -36,6 +36,7 @@ export function AssetList({ variant, localizations, categories, filters, onSelec
         categories={categories}
         onChange={setQuery}
         hideMediaFilter={filters?.type?.length > 0}
+        hideAddonsFilter={filters?.addons?.length > 0}
       />
       <Box className={classes.list}>
         <List variant={variant} query={query} filters={filters} onSelect={onSelect} />

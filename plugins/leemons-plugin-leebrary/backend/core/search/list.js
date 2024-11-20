@@ -1,7 +1,10 @@
 const _ = require('lodash');
 
 const { getByCategory } = require('../permissions/getByCategory');
+
+const { byAddons: getByAddons } = require('./byAddons');
 const { byCriteria: getByCriteria } = require('./byCriteria');
+const { searchAssetsCacheKey } = require('./helpers/cacheKeys');
 
 async function list({
   category,
@@ -23,10 +26,12 @@ async function list({
   indexable = true, // !important: This param is not intended for API use, as it will expose hidden assets
 
   ctx,
+  useCache,
+  addons,
 }) {
   const trueValues = ['true', true, '1', 1];
 
-  let assets;
+  let assets = [];
   const publishedStatus =
     published === 'all' ? published : [...trueValues, 'published'].includes(published);
   const displayPublic = trueValues.includes(showPublic);
@@ -41,10 +46,14 @@ async function list({
   const _subjects = JSON.parse(subjects || null);
   const _categoriesFilter = JSON.parse(categoriesFilter || null); // added to filter by multiple categories
 
-  const shouldSerachByCriteria = !_.isEmpty(criteria) || !_.isEmpty(type) || _.isEmpty(category);
+  const shouldSearchByCriteria = !_.isEmpty(criteria) || !_.isEmpty(type) || _.isEmpty(category);
 
-  if (shouldSerachByCriteria) {
-    assets = await getByCriteria({
+  let query = null;
+  let searchFunction = null;
+
+  if (shouldSearchByCriteria) {
+    searchFunction = getByCriteria;
+    query = {
       category: category || categoryFilter,
       criteria,
       type,
@@ -58,14 +67,15 @@ async function list({
       programs: _programs,
       subjects: _subjects,
       onlyShared: _onlyShared,
-      sortBy: 'updated_at',
-      sortDirection: 'desc',
       categoriesFilter: _categoriesFilter,
       hideCoverAssets: _hideCoverAssets,
-      ctx,
-    });
+      sortBy: 'updated_at',
+      sortDirection: 'desc',
+      addons,
+    };
   } else {
-    assets = await getByCategory({
+    searchFunction = getByCategory;
+    query = {
       category,
       published: publishedStatus,
       indexable: _indexable,
@@ -79,8 +89,39 @@ async function list({
       onlyShared: _onlyShared, // not used within getByCategory()
       sortBy: 'updated_at',
       sortDirection: 'desc',
-      ctx,
-    });
+      addons,
+    };
+  }
+
+  // ···················
+  // Cache
+
+  const cacheKey = searchAssetsCacheKey({ ctx, query });
+  let cache = null;
+
+  if (useCache && cacheKey) {
+    cache = await ctx.cache.get(cacheKey);
+  }
+
+  if (cache) {
+    assets = cache;
+  } else {
+    let addonAssetsFound = true;
+
+    if (addons?.length) {
+      assets = await getByAddons({ pluginNames: addons, ctx, query });
+      addonAssetsFound = assets.length > 0;
+    }
+
+    if (addonAssetsFound) {
+      assets = await searchFunction({
+        ...query,
+        assets,
+        ctx,
+      });
+    }
+
+    await ctx.cache.set(cacheKey, assets, 60); // 1 minute
   }
 
   // TODO: Temporary solution

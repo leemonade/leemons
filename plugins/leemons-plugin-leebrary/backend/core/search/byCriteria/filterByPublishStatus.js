@@ -53,9 +53,12 @@ async function filterByPublishStatus({
     }
   }
 
-  return uniq(assets);
+  const [assetChecker] = assets;
+  return isString(assetChecker) ? uniq(assets) : uniqBy(assets, 'asset');
 }
 
 module.exports = {
   filterByPublishStatus,
 };
+
+

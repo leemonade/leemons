@@ -115,4 +115,9 @@ module.exports = {
     cancel: 'Cancel',
     noLanguages: 'There are no other languages configured in the platform.',
   },
+  separators: {
+    and: 'and',
+    of: 'of',
+    or: 'or',
+  }
 };

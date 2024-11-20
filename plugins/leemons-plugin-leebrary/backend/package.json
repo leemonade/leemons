@@ -59,6 +59,7 @@
     "metascraper-video": "^5.26.0",
     "mime-types": "^2.1.35",
     "moleculer": "^0.14.26",
+    "object-hash": "^3.0.0",
     "office-document-properties": "^1.1.0",
     "semver": "^7.5.4",
     "serialize-error": "^11.0.3",
