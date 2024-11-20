@@ -46,8 +46,6 @@ const StudentInstance = () => {
     modalMode: 0,
   });
 
-  const { isUnavailable } = useActivityStates({ instance: store.instance });
-
   const params = useParams();
   const scrollRef = useRef();
 
