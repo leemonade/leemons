@@ -38,6 +38,7 @@ export function ActivityUnavailable({ instance, clean, singlePage, scrollRef }) 
 
 ActivityUnavailable.propTypes = {
   instance: PropTypes.object,
+  user: PropTypes.string,
   scrollRef: PropTypes.object,
   clean: PropTypes.bool,
   singlePage: PropTypes.bool,

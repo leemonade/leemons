@@ -46,8 +46,6 @@ const StudentInstance = () => {
     modalMode: 0,
   });
 
-  const { isUnavailable } = useActivityStates({ instance: store.instance });
-
   const params = useParams();
   const scrollRef = useRef();
 
@@ -55,6 +53,11 @@ const StudentInstance = () => {
     if (params.user) return params.user;
     return getCentersWithToken()[0].userAgentId;
   };
+
+  const { isUnavailable } = useActivityStates({
+    instance: store.instance,
+    user: getUserId(),
+  });
 
   const advanceToQuestions = () => {
     setInstanceTimestamp(params.id, 'start', getUserId());
@@ -139,7 +142,9 @@ const StudentInstance = () => {
           { label: t('questions'), status: 'OK', isBlocked: isUnavailable },
         ]}
       >
-        {isUnavailable && <ActivityUnavailable instance={store.instance} scrollRef={scrollRef} />}
+        {isUnavailable && (
+          <ActivityUnavailable instance={store.instance} user={getUserId()} scrollRef={scrollRef} />
+        )}
         {!isUnavailable && step === STEPS.INTRODUCTION && (
           <IntroductionStep
             feedback={store.feedback}

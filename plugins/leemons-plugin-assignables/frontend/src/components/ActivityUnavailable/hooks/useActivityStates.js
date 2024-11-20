@@ -1,13 +1,16 @@
 import { getLocaleFormat, useLocale } from '@common/LocaleDate';
 import dayjs from 'dayjs';
 
-export function useActivityStates({ instance }) {
+import { useBlockingActivitiesStatus } from './useBlockingActivitiesStatus';
+
+export function useActivityStates({ instance, user }) {
   const { dates = {}, alwaysAvailable = false, sendMail = false } = instance ?? {};
   const { start, closed } = dates;
 
+  const { isBlocked } = useBlockingActivitiesStatus({ instance, user });
+
   const now = dayjs();
   const isClosed = closed && now.isAfter(closed);
-  const isBlocked = false;
   const isScheduled = !isClosed && !alwaysAvailable && start && now.isBefore(start);
 
   const locale = useLocale();

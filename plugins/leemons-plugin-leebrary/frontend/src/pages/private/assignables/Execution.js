@@ -44,7 +44,7 @@ export default function Execution() {
   const instance = assignation?.instance;
   const assignable = instance?.assignable;
 
-  const { isUnavailable } = useActivityStates({ instance });
+  const { isUnavailable } = useActivityStates({ instance, user });
 
   const isFinished = assignation?.timestamps?.end;
   const correctionUrl = `${assignable?.roleDetails?.evaluationDetailUrl
@@ -133,7 +133,7 @@ export default function Execution() {
           }
         >
           {isUnavailable ? (
-            <ActivityUnavailable instance={instance} scrollRef={scrollRef} clean />
+            <ActivityUnavailable instance={instance} user={user} scrollRef={scrollRef} clean />
           ) : (
             <Stack fullWidth fullHeight justifyContent="center" alignItems="center">
               <AssetPlayerWrapperExecution asset={asset} />

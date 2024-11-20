@@ -226,7 +226,7 @@ function StudentInstance() {
     fetchInstance: true,
   });
 
-  const { isUnavailable } = useActivityStates({ instance: store.instance });
+  const { isUnavailable } = useActivityStates({ instance: store.instance, user: getUserId() });
 
   React.useEffect(() => {
     if (params?.id && translations && store.idLoaded !== params?.id) init();
@@ -356,7 +356,9 @@ function StudentInstance() {
           }}
           scrollRef={scrollRef}
         >
-          {isUnavailable ? <ActivityUnavailable instance={store.instance} /> : null}
+          {isUnavailable ? (
+            <ActivityUnavailable instance={store.instance} user={getUserId()} />
+          ) : null}
           {!isUnavailable && verticalStepperProps.data[store.currentStep]
             ? React.cloneElement(verticalStepperProps.data[store.currentStep].component, {
                 isFirstStep: !store.currentStep,

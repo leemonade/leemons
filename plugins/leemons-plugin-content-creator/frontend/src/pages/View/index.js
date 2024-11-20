@@ -101,7 +101,7 @@ export default function DocumentView() {
     user,
   });
   const nextActivityUrl = useNextActivityUrl(assignation);
-  const { isUnavailable } = useActivityStates({ instance });
+  const { isUnavailable } = useActivityStates({ instance, user });
 
   const { mutateAsync } = useStudentAssignationMutation();
   const updateTimestamps = useUpdateTimestamps(mutateAsync, assignation);
@@ -181,7 +181,7 @@ export default function DocumentView() {
         >
           {isUnavailable ? (
             <ContextContainer padded>
-              <ActivityUnavailable instance={instance} clean />
+              <ActivityUnavailable instance={instance} user={user} clean />
             </ContextContainer>
           ) : (
             <ContentEditorInput
