@@ -191,7 +191,7 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
 
     if (id) {
       const q = await ctx.tx.db.QuestionsBanks.findOne({ id }).select(['asset']).lean();
-      // -- Asset update
+      // -- Asset update --
       assetsToSave.id = q.asset;
 
       const asset = await ctx.tx.call('leebrary.assets.update', {

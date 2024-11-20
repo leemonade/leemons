@@ -64,6 +64,8 @@ module.exports = {
     responsesLabel: 'Answers',
     responseLabel: 'Answer',
     responsePlaceholder: 'Add the response text here',
+    alternativeResponseLabel: 'Alternative answers',
+    tagsInputPlaceholder: 'Separate by commas and press enter',
     errorMarkGoodResponse: 'You must mark a correct response',
     needImages: 'Answers must have images',
     needExplanationAndResponse: 'All answers require a text and an explanation',
@@ -98,6 +100,7 @@ module.exports = {
     monoResponse: 'Mono response',
     trueFalse: 'T/F',
     map: 'Map',
+    shortResponse: 'Short response',
     mapLabel: 'Map',
     addMap: 'Add map',
     itemsLabel: 'Answers',
@@ -130,10 +133,13 @@ module.exports = {
         false: 'False',
         type: 'T/F',
         needsResponse: 'Response is required',
+        shortResponse: {
+          answerPlaceholder: 'Write your answer here',
+        },
       },
-      errors: {
-        save: 'The changes could not be saved.',
-      },
+    },
+    errors: {
+      save: 'The changes could not be saved.',
     },
   },
   questionImageModal: {
@@ -498,6 +504,16 @@ module.exports = {
       errorQuestions: 'Incorrect answers DO NOT reduce the score.',
       canClue: 'All available clues will be offered without penalty',
     },
+    rulesByQuestionType: {
+      title: 'Question Type',
+      shortResponse: {
+        title: 'Short response',
+        activateTolerances: 'Activate tolerances',
+        tolerateAccents: 'Accents',
+        tolerateCase: 'Case',
+        tolerateSpaces: 'Spaces',
+      },
+    },
   },
   testResult: {
     testResult: 'Statistics by type of question',
@@ -529,7 +545,8 @@ module.exports = {
     nextActivity: 'Next activity',
     goToModule: 'Module dashboard',
     responseDetail: {
-      choices: 'Choices',
+      answers: 'Answers',
+      answer: 'Answer',
       result: 'Result',
       solution: 'Solution',
       correct: 'Correct',

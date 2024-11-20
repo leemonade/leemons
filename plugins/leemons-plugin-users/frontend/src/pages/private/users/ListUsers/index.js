@@ -49,6 +49,7 @@ import useProvider from '@users/request/hooks/queries/useProvider';
 
 function ListUsers() {
   const [t] = useTranslateLoader(prefixPN('list_users'));
+  const lang = (navigator.language || navigator.userLanguage).split('-')[0];
   const [store, render] = useStore({
     page: 0,
     size: 10,
@@ -69,13 +70,7 @@ function ListUsers() {
   async function listUsers(searchQuery) {
     const query = {};
     if (typeof searchQuery === 'string') {
-      query.$or = [
-        { name: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        { surnames: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        { secondSurname: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        { email: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        { phone: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-      ];
+      query.search = searchQuery;
     }
     if (store.profile) {
       query.profiles = store.profile;
@@ -93,6 +88,8 @@ function ListUsers() {
     const { data } = await listUsersRequest({
       page: store.page,
       size: store.size,
+      sort: { surnames: 1, name: 1 },
+      collation: { locale: lang },
       query,
     });
 

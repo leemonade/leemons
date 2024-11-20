@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Stack, createStyles, Text, Box } from '@bubbles-ui/components';
 import PropTypes from 'prop-types';
 

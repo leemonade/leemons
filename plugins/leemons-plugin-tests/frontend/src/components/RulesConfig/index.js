@@ -1,3 +1,6 @@
+import React, { useEffect } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
+
 import {
   Alert,
   Box,
@@ -15,10 +18,10 @@ import {
   Button,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, DeleteBinIcon, SynchronizeArrowsIcon } from '@bubbles-ui/icons/outline';
-import { Controller, useForm, useWatch } from 'react-hook-form';
-import React, { useEffect } from 'react';
 import { map } from 'lodash';
 import propTypes from 'prop-types';
+
+import RulesByQuestionType from './RulesByQuestionType';
 
 const RulesConfigStyles = createStyles((theme, { isDrawer }) => ({
   root: {
@@ -76,10 +79,10 @@ const useOnChange = (form, onChangeRules) => {
   const values = useWatch({ control: form.control, disabled: !checkIfIsFunction });
 
   useEffect(() => {
-    const {questions, ...filters} = values;
+    const { questions, ...filters } = values;
 
     if (checkIfIsFunction) {
-      onChangeRules({filters});
+      onChangeRules({ filters });
     }
   }, [values]);
 };
@@ -110,7 +113,6 @@ const RulesConfig = ({
   };
   const form = useForm({ defaultValues: defaultValues ?? initialValues });
   useOnChange(form, onChangeRules);
-
 
   const settingsAsPreset = form.watch('settingsAsPreset');
   const settings = form.watch('settings');
@@ -391,31 +393,35 @@ const RulesConfig = ({
                         </Box>
                       </Box>
                     ) : null}
-                    <Box style={{ paddingTop: 12 }}>
-                      <Controller
-                        control={form.control}
-                        name="settingsAsPreset"
-                        shouldUnregister
-                        render={({ field }) => (
-                          <Switch checked={field.value} {...field} label={t('settingsAsPreset')} />
-                        )}
-                      />
-                      {settingsAsPreset ? (
-                        <Box className={classes.advancedInputsChildren} style={{ width: 366 }}>
-                          <Controller
-                            control={form.control}
-                            name="presetName"
-                            shouldUnregister
-                            render={({ field }) => (
-                              <TextInput checked={field.value} {...field} label={t('presetName')} />
-                            )}
-                          />
-                        </Box>
-                      ) : null}
-                    </Box>
                   </InputWrapper>
+
+                  <RulesByQuestionType control={form.control} t={t} />
+
+                  <Box style={{ paddingTop: 12 }}>
+                    <Controller
+                      control={form.control}
+                      name="settingsAsPreset"
+                      shouldUnregister
+                      render={({ field }) => (
+                        <Switch checked={field.value} {...field} label={t('settingsAsPreset')} />
+                      )}
+                    />
+                    {settingsAsPreset ? (
+                      <Box className={classes.advancedInputsChildren} style={{ width: 366 }}>
+                        <Controller
+                          control={form.control}
+                          name="presetName"
+                          shouldUnregister
+                          render={({ field }) => (
+                            <TextInput checked={field.value} {...field} label={t('presetName')} />
+                          )}
+                        />
+                      </Box>
+                    ) : null}
+                  </Box>
                 </>
               ) : null}
+
               {settings === 'existing' ? (
                 <ContextContainer>
                   <Box className={classes.advancedInputs}>
@@ -435,13 +441,15 @@ const RulesConfig = ({
                           label={t('configs')}
                           onChange={(e) => {
                             handleConfigChange(e);
-                          } } />
+                          }}
+                        />
                       )}
                     />
                   </Box>
                   {}
                 </ContextContainer>
               ) : null}
+
               {selectedConfig && (
                 <>
                   <Box className={classes.advancedInputs}>
@@ -584,6 +592,7 @@ const RulesConfig = ({
                         </Box>
                       </>
                     ) : null}
+
                     <Box className={classes.buttons}>
                       <Button
                         variant="link"

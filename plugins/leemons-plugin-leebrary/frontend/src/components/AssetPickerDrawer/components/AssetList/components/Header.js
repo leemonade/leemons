@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Box, SearchInput, Select, createStyles } from '@bubbles-ui/components';
 import { isArray, keyBy, map, pick, sortBy } from 'lodash';
@@ -30,6 +30,7 @@ export function Header({
   onChange,
   onlyImages,
   hideMediaFilter,
+  hideAddonsFilter,
 }) {
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState(null);
@@ -138,4 +139,5 @@ Header.propTypes = {
   onChange: PropTypes.func,
   onlyImages: PropTypes.bool,
   hideMediaFilter: PropTypes.bool,
+  hideAddonsFilter: PropTypes.bool,
 };

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PropTypes from 'prop-types';
 
@@ -42,22 +40,14 @@ function ViewModeResponses(props) {
       userSkipped={userSkippedQuestion}
       responses={responses}
       globalFeedback={question?.hasAnswerFeedback ? null : feedback}
+      questionType={question.type}
     />
   );
 }
 
 ViewModeResponses.propTypes = {
-  classes: PropTypes.any,
-  styles: PropTypes.any,
-  t: PropTypes.any,
-  cx: PropTypes.any,
   store: PropTypes.any,
   question: PropTypes.any,
-  prevStep: PropTypes.func,
-  nextStep: PropTypes.func,
-  isFirstStep: PropTypes.bool,
-  render: PropTypes.func,
-  isPreviewMode: PropTypes.bool,
 };
 
 export default ViewModeResponses;

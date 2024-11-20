@@ -154,7 +154,10 @@ async function createQuestion({ data, published, ctx }) {
   // Add answer properties according to the question type
   if (props.type === QUESTION_TYPES.MAP) {
     questionToCreate.mapProperties = mapProperties;
-  } else if (props.type === QUESTION_TYPES.MONO_RESPONSE) {
+  } else if (
+    props.type === QUESTION_TYPES.MONO_RESPONSE ||
+    props.type === QUESTION_TYPES.SHORT_RESPONSE
+  ) {
     questionToCreate.choices = choices;
   } else if (props.type === QUESTION_TYPES.TRUE_FALSE) {
     questionToCreate.trueFalseProperties = trueFalseProperties;

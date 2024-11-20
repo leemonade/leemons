@@ -38,6 +38,7 @@ const { handleViewerRole } = require('./handleViewerRole');
  * @param {Array} params.programs - An array of programs.
  * @param {Array} params.subjects - An array of subjects.
  * @param {MoleculerContext} params.ctx - The context object containing transaction details.
+ * @param {Array} params.assets - An array of assetIds to filter by.
  * @returns {Promise<Array>} - Returns a promise that resolves to an array of assets.
  * @throws {LeemonsError} - Throws an error if the retrieval of permissions by category fails.
  */
@@ -57,6 +58,7 @@ async function getByCategory({
   programs: _programs,
   subjects: _subjects,
   ctx,
+  assets = [], // AssetIds
 }) {
   try {
     const { userSession } = ctx.meta;
@@ -74,18 +76,24 @@ async function getByCategory({
       ctx,
     });
 
-    const publicAssets = showPublic ? await getPublic({ categoryId, indexable, ctx }) : [];
-    let assetIds = await handleAssetIds({
-      permissions,
-      publicAssets,
-      viewItems,
-      editItems,
-      assignItems,
-      categoryId,
-      published,
-      preferCurrent,
-      ctx,
-    });
+    let assetIds = assets ?? [];
+    let publicAssets = [];
+
+    // If no assetIds, we get the public assets as start point
+    if (!assetIds.length) {
+      publicAssets = showPublic ? await getPublic({ categoryId, indexable, ctx }) : [];
+      assetIds = await handleAssetIds({
+        permissions,
+        publicAssets,
+        viewItems,
+        editItems,
+        assignItems,
+        categoryId,
+        published,
+        preferCurrent,
+        ctx,
+      });
+    }
 
     // ES: Buscamos en el provider si se ha indicado
     // EN: Search in the provider if indicated so

@@ -64,6 +64,8 @@ module.exports = {
     responsesLabel: 'Respuestas',
     responseLabel: 'Respuesta',
     responsePlaceholder: 'Añadir aquí el texto de la respuesta',
+    alternativeResponseLabel: 'Alternativas',
+    tagsInputPlaceholder: 'Separar por comas y pulsar intro',
     needImages: 'Las respuestas deben tener imágenes',
     needExplanationAndResponse: 'Todas las respuestas necesitan un texto y una explicación',
     needExplanation: 'Todas las respuestas requieren una explicación',
@@ -97,6 +99,7 @@ module.exports = {
     monoResponse: 'Respuesta única',
     trueFalse: 'V/F',
     map: 'Mapa',
+    shortResponse: 'Respuesta corta',
     mapLabel: 'Mapa',
     addMap: 'Añadir mapa',
     itemsLabel: 'Respuestas',
@@ -129,6 +132,9 @@ module.exports = {
         true: 'Verdadero',
         false: 'Falso',
         type: 'V/F',
+      },
+      shortResponse: {
+        answerPlaceholder: 'Escribe aquí tu respuesta',
       },
     },
     errors: {
@@ -498,6 +504,16 @@ module.exports = {
       errorQuestions: 'Las respuestas incorrectas NO restan puntuación.',
       canClue: 'Se ofrecerán todas las pistas disponibles sin penalización',
     },
+    rulesByQuestionType: {
+      title: 'Tipo de pregunta',
+      shortResponse: {
+        title: 'Respuesta corta',
+        activateTolerances: 'Activar tolerancias',
+        tolerateAccents: 'Tildes',
+        tolerateCase: 'Mayúsculas y minúsculas',
+        tolerateSpaces: 'Espacios',
+      },
+    },
   },
   testResult: {
     testResult: 'Estadísticas por tipo de pregunta',
@@ -530,7 +546,8 @@ module.exports = {
     nextActivity: 'Siguiente actividad',
     goToModule: 'Dashboard del modulo',
     responseDetail: {
-      choices: 'Opciones',
+      answers: 'Respuestas',
+      answer: 'Respuesta',
       result: 'Resultado',
       solution: 'Solución',
       correct: 'Correcto',

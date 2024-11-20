@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { cloneDeep, find, forEach, isArray, isEmpty, noop } from 'lodash';
-import { useQueryClient } from '@tanstack/react-query';
-import PropTypes from 'prop-types';
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { useHistory } from 'react-router-dom';
+
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import {
   Select,
   Box,
@@ -16,14 +16,27 @@ import {
   PaginatedList,
   BaseDrawer,
 } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useSession } from '@users/session';
-import { useLayout } from '@layout/context';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { LocaleDate, unflatten, useRequestErrorMessage } from '@common';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useLayout } from '@layout/context';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useQueryClient } from '@tanstack/react-query';
+import { useSession } from '@users/session';
+import { cloneDeep, find, forEach, isArray, isEmpty, noop } from 'lodash';
+import PropTypes from 'prop-types';
+
+import prefixPN from '../helpers/prefixPN';
+import { prepareAsset } from '../helpers/prepareAsset';
+
+import { PermissionsDataDrawer } from './AssetSetup/PermissionsDataDrawer';
+import { CardDetailWrapper } from './CardDetailWrapper';
+import { CardWrapper } from './CardWrapper';
+import { ListEmpty } from './ListEmpty';
+import { NewLibraryCardButton } from './NewLibraryCardButton/NewLibraryCardButton';
+import { SearchEmpty } from './SearchEmpty';
+
 import { LibraryItem } from '@leebrary/components/LibraryItem';
-import useSimpleAssetList from '@leebrary/request/hooks/queries/useSimpleAssetList';
-import { useAssets as useAssetsDetails } from '@leebrary/request/hooks/queries/useAssets';
+import LibraryContext from '@leebrary/context/LibraryContext';
 import getPageItems from '@leebrary/helpers/getPageItems';
 import {
   deleteAssetRequest,
@@ -31,19 +44,10 @@ import {
   pinAssetRequest,
   unpinAssetRequest,
 } from '@leebrary/request';
-import { allGetSimpleAssetListKey } from '@leebrary/request/hooks/keys/simpleAssetList';
 import { allGetAssetsKey } from '@leebrary/request/hooks/keys/assets';
-import LibraryContext from '@leebrary/context/LibraryContext';
-import { useHistory } from 'react-router-dom';
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import prefixPN from '../helpers/prefixPN';
-import { CardDetailWrapper } from './CardDetailWrapper';
-import { CardWrapper } from './CardWrapper';
-import { ListEmpty } from './ListEmpty';
-import { SearchEmpty } from './SearchEmpty';
-import { prepareAsset } from '../helpers/prepareAsset';
-import { PermissionsDataDrawer } from './AssetSetup/PermissionsDataDrawer';
-import { NewLibraryCardButton } from './NewLibraryCardButton/NewLibraryCardButton';
+import { allGetSimpleAssetListKey } from '@leebrary/request/hooks/keys/simpleAssetList';
+import { useAssets as useAssetsDetails } from '@leebrary/request/hooks/queries/useAssets';
+import useSimpleAssetList from '@leebrary/request/hooks/queries/useSimpleAssetList';
 
 // -------------------------------------------------------------------------------------
 // HELPERS
@@ -174,7 +178,7 @@ const AssetList = ({
     setLoading: setAppLoading,
   } = useLayout();
 
-  const { newAsset } = useContext(LibraryContext);
+  const { newAsset, newBulkUpload } = useContext(LibraryContext);
   const history = useHistory();
 
   // -------------------------------------------------------------------------------------
@@ -466,6 +470,10 @@ const AssetList = ({
     }
   }
 
+  function handleOnBulkUpload() {
+    newBulkUpload(null, category);
+  }
+
   // -------------------------------------------------------------------------------------
   // EFFECTS
 
@@ -581,7 +589,12 @@ const AssetList = ({
       itemRender: (p) => (
         <Box>
           {p?.item?.original?.action === 'new' ? (
-            <NewLibraryCardButton categoryLabel={category?.singularName} onClick={handleOnNew} />
+            <NewLibraryCardButton
+              categoryKey={category?.key}
+              categoryLabel={category?.singularName}
+              onClickNew={handleOnNew}
+              onClickBulkUpload={handleOnBulkUpload}
+            />
           ) : (
             <CardWrapper
               {...p}

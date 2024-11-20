@@ -1,4 +1,4 @@
-import { cloneElement, useMemo, useState } from 'react';
+import { cloneElement, useEffect, useMemo, useState } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 
 import SelectLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/SelectLevelsOfDifficulty';
@@ -30,6 +30,7 @@ import {
 
 import { MapQuestion } from './question-types/Map';
 import { MonoResponse } from './question-types/MonoResponse';
+import { ShortResponse } from './question-types/ShortResponse';
 import { TrueFalse } from './question-types/TrueFalse';
 
 import ResourcePicker from '@tests/components/ResourcePicker';
@@ -39,6 +40,7 @@ const questionComponents = {
   [QUESTION_TYPES.MONO_RESPONSE]: <MonoResponse />,
   [QUESTION_TYPES.MAP]: <MapQuestion />,
   [QUESTION_TYPES.TRUE_FALSE]: <TrueFalse />,
+  [QUESTION_TYPES.SHORT_RESPONSE]: <ShortResponse />,
 };
 
 export default function DetailQuestionForm({
@@ -76,15 +78,17 @@ export default function DetailQuestionForm({
     if (type === QUESTION_TYPES.TRUE_FALSE) {
       return typeof trueFalseProperties?.isTrue === 'boolean';
     }
-    return false;
+
+    return type === QUESTION_TYPES.SHORT_RESPONSE;
   }, [type, choices, trueFalseProperties?.isTrue]);
 
   const solutionValues = form.watch(SOLUTION_KEY_BY_TYPE[type]);
-
   const answersArray = useMemo(() => {
     if (!type || type === QUESTION_TYPES.TRUE_FALSE) return [];
     return solutionValues ?? [];
   }, [type, solutionValues]);
+
+  // HANDLERS ·······························································································|
 
   async function handleOnSaveQuestion() {
     form.handleSubmit((data) => {
@@ -152,7 +156,7 @@ export default function DetailQuestionForm({
   ]);
 
   const hasEnoughAnswersToAddClues = useMemo(() => {
-    if (type === QUESTION_TYPES.TRUE_FALSE) {
+    if (!QUESTION_TYPES_WITH_MIN_RESPONSES_TO_ADD_CLUES.includes(type)) {
       return true;
     }
     return answersArray?.length >= 3;
@@ -185,6 +189,14 @@ export default function DetailQuestionForm({
         .filter((item) => item >= 0)[0],
     [answersArray]
   );
+
+  // EFFECTS ·······························································································|
+  useEffect(() => {
+    // Reset rules when type changes
+    return () => {
+      form.unregister(['globalFeedback']);
+    };
+  }, [type]);
 
   return (
     <FormProvider {...form}>
@@ -362,46 +374,44 @@ export default function DetailQuestionForm({
                 {QuestionComponent}
 
                 {/* CLUES ---------------------------------------- */}
-                {hasHelp && (
-                  <Box sx={{ marginTop: 2 }}>
-                    <ContextContainer
-                      title={
-                        QUESTION_TYPES_WITH_MIN_RESPONSES_TO_ADD_CLUES.includes(type)
-                          ? t('hasCluesLabelWithMinResponses')
-                          : t('hasCluesLabel')
-                      }
-                      description={t('cluesDescription')}
-                    >
-                      <Controller
-                        control={form.control}
-                        name="clues[0]"
-                        render={({ field }) => (
-                          <Textarea
-                            {...field}
-                            disabled={!rightAnswerSelected || !hasEnoughAnswersToAddClues}
-                            minRows={3}
-                            placeholder={t('cluesPlaceholder')}
-                          />
-                        )}
-                      />
-                      {QUESTION_TYPES_WITH_HIDDEN_ANSWERS?.includes(type) && (
-                        <Stack direction="column" spacing={2}>
-                          <Box style={{ width: 200 }}>
-                            <Select
-                              label={t('hideOptionsLabel')}
-                              value={hiddenAnswer}
-                              data={hideAnswersSelectData}
-                              disabled={!rightAnswerSelected || !hasEnoughAnswersToAddClues}
-                              onChange={handleHideOnHelp}
-                              placeholder={t('hideOptionsPlaceholder')}
-                            />
-                          </Box>
-                          <Text size="xs">{hideOptionsHelp}</Text>
-                        </Stack>
+                {hasHelp ? (
+                  <ContextContainer
+                    title={
+                      QUESTION_TYPES_WITH_MIN_RESPONSES_TO_ADD_CLUES.includes(type)
+                        ? t('hasCluesLabelWithMinResponses')
+                        : t('hasCluesLabel')
+                    }
+                    description={t('cluesDescription')}
+                  >
+                    <Controller
+                      control={form.control}
+                      name="clues[0]"
+                      render={({ field }) => (
+                        <Textarea
+                          {...field}
+                          disabled={!rightAnswerSelected || !hasEnoughAnswersToAddClues}
+                          minRows={3}
+                          placeholder={t('cluesPlaceholder')}
+                        />
                       )}
-                    </ContextContainer>
-                  </Box>
-                )}
+                    />
+                    {QUESTION_TYPES_WITH_HIDDEN_ANSWERS?.includes(type) && (
+                      <Stack direction="column" spacing={2}>
+                        <Box style={{ width: 200 }}>
+                          <Select
+                            label={t('hideOptionsLabel')}
+                            value={hiddenAnswer}
+                            data={hideAnswersSelectData}
+                            disabled={!rightAnswerSelected || !hasEnoughAnswersToAddClues}
+                            onChange={handleHideOnHelp}
+                            placeholder={t('hideOptionsPlaceholder')}
+                          />
+                        </Box>
+                        <Text size="xs">{hideOptionsHelp}</Text>
+                      </Stack>
+                    )}
+                  </ContextContainer>
+                ) : null}
               </>
             )}
           </ContextContainer>

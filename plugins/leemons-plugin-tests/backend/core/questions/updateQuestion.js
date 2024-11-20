@@ -26,7 +26,7 @@ function manageSolutionFields({ mapProperties, choices, type, typeHasChanged }) 
   if (type === QUESTION_TYPES.MAP) {
     solutionManagementFields.mapProperties = mapProperties;
     if (typeHasChanged) solutionManagementFields.$unset = { choices: 1 };
-  } else if (type === QUESTION_TYPES.MONO_RESPONSE) {
+  } else if (type === QUESTION_TYPES.MONO_RESPONSE || type === QUESTION_TYPES.SHORT_RESPONSE) {
     solutionManagementFields.choices = choices;
     if (typeHasChanged) solutionManagementFields.$unset = { mapProperties: 1 };
   }

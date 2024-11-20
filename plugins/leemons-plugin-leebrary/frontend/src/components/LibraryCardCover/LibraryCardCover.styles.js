@@ -15,6 +15,7 @@ export const LibraryCardCoverStyles = createStyles(
         height,
         width: '100%',
         borderRadius: '4px 2px 0 0',
+        overflow: height ? 'hidden' : 'visible',
       },
       titleWrapper: {
         padding: pxToRem(12),
@@ -62,6 +63,9 @@ export const LibraryCardCoverStyles = createStyles(
         backgroundColor: color || 'transparent',
         transition: 'all 0.2s ease-out',
         borderRadius: '2px 0 0 0',
+        position: 'absolute',
+        top: 0,
+        left: 0,
       },
       fileIcon: {
         height: '100%',
