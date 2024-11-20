@@ -97,6 +97,7 @@ const LibraryDetailContent = ({
 
   const DetailContentComponent = (
     <DetailContent
+      asset={asset}
       name={name}
       description={description}
       subjectsIds={subjectsIds}

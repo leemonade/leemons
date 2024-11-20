@@ -25,16 +25,9 @@ const LibraryCardEmbedStyles = createStyles((theme, { canPlay, fullWidth }) => (
     backgroundColor: theme.colors.interactive03h,
     overflow: 'hidden',
   },
-  textWrapper: {
-    width: '60%',
-  },
-  bodyContainer: {
-    marginLeft: 8,
-  },
   title: {
     ...theme.other.global.content.typo.body['md--bold'],
   },
-
   variantIcon: {
     padding: '12px 16px',
     height: '100%',

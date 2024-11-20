@@ -1,4 +1,13 @@
-async function mongoDBPaginate({ model, page, size, query, columns, sort, options = {} }) {
+async function mongoDBPaginate({
+  model,
+  page,
+  size,
+  query,
+  columns,
+  sort,
+  collation,
+  options = {},
+}) {
   const queryItems = model
     .find(query || {}, '', options)
     .limit(size)
@@ -6,6 +15,9 @@ async function mongoDBPaginate({ model, page, size, query, columns, sort, option
 
   if (sort) {
     queryItems.sort(sort);
+  }
+  if (collation) {
+    queryItems.collation(collation);
   }
   if (columns) {
     queryItems.select(columns);

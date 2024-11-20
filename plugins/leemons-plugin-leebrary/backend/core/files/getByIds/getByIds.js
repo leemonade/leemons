@@ -1,4 +1,5 @@
 const { isEmpty, escapeRegExp } = require('lodash');
+
 const { normalizeItemsArray } = require('../../shared');
 const { parseMetadata } = require('../helpers/parseMetadata');
 

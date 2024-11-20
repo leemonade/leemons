@@ -41,9 +41,9 @@ function LeemonsCronJobsMixin({ jobs = {} }) {
     },
     actions: {
       LeemonsCronJobExecute: async (ctx) => {
-        const { name } = ctx.params;
+        const { name, jobParams, job } = ctx.params;
 
-        ctx.params = ctx.params.jobParams;
+        ctx.params = { ...jobParams, job };
         return jobs[name]?.(ctx);
       },
     },
@@ -53,7 +53,9 @@ function LeemonsCronJobsMixin({ jobs = {} }) {
         '*': [
           function (ctx) {
             const { deploymentID } = ctx.meta;
-            const { CronJob } = this.metadata;
+
+            /** @type { Agenda } */
+            const CronJob = this.metadata.CronJob;
 
             ctx.cronJob = {
               schedule: (when, jobName, params = {}) => {
@@ -67,16 +69,18 @@ function LeemonsCronJobsMixin({ jobs = {} }) {
                   deploymentID: deploymentID ?? params.deploymentID,
                 });
               },
-              every: (interval, jobName, params = {}) => {
+              every: async (interval, jobName, params = {}) => {
                 if (!jobName || !interval) {
                   this.logger.error(`Missing jobName: ${jobName} or interval: ${interval}`);
                   return;
                 }
 
-                CronJob.every(interval, jobName, {
+                await CronJob.create(jobName, {
                   ...params,
                   deploymentID: deploymentID ?? params.deploymentID,
-                });
+                })
+                  .repeatEvery(interval)
+                  .save();
               },
               cancel: (jobName, params = {}) => {
                 if (!jobName || !params?.['data.deploymentID']) {
@@ -109,7 +113,7 @@ function LeemonsCronJobsMixin({ jobs = {} }) {
 
           broker.call(
             `${caller}.LeemonsCronJobExecute`,
-            { name, jobParams },
+            { name, jobParams, job },
             {
               caller,
               meta: { deploymentID, relationshipID: manager.relationshipID },

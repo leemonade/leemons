@@ -1,4 +1,5 @@
 /* eslint-disable no-unreachable */
+// eslint-disable-next-line unused-imports/no-unused-imports
 import React, { forwardRef, useEffect, useMemo, useState } from 'react';
 
 import { ActionButton, Box, MultiSelect, Stack, UserDisplayItem } from '@bubbles-ui/components';
@@ -19,6 +20,7 @@ import {
 } from 'lodash';
 import PropTypes from 'prop-types';
 
+import { compareBySurnamesAndName } from '../helpers/compareUsers';
 import { getUserAgentsInfoRequest, searchUserAgentsRequest } from '../request';
 
 // EN: The Component for MultiSelect selected values component
@@ -301,6 +303,7 @@ const SelectUserAgent = forwardRef(
     if (omitUsers) {
       toData = filter(toData, ({ value }) => !omitUsers.includes(value));
     }
+    toData = toData.sort(compareBySurnamesAndName);
 
     return (
       <MultiSelect

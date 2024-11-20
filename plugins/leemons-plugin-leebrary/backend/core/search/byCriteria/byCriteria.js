@@ -19,18 +19,20 @@
  * @param {boolean} params.onlyShared - Flag to include only shared assets in the search.
  * @param {Array} params.programs - The programs to be included in the search.
  * @param {Array} params.subjects - The subjects to be included in the search.
+ * @param {Array} params.categoriesFilter - The categories to be included in the search.
+ * @param {boolean} params.hideCoverAssets - Flag to hide cover assets in the search.
+ * @param {Array} params.assets - The assetIds to filter by.
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<Array>} - Returns the search results.
  */
+const { LeemonsError } = require('@leemons/error');
 const { isObject } = require('lodash');
 
-const { LeemonsError } = require('@leemons/error');
-
+const { getAssets } = require('./getAssets');
+const { getAssetsWithPermissions } = require('./getAssetsWithPermissions');
 const { getCategoryId } = require('./getCategoryId');
 const { getPinnedAssets } = require('./getPinnedAssets');
 const { getProviderAssets } = require('./getProviderAssets');
-const { getAssets } = require('./getAssets');
-const { getAssetsWithPermissions } = require('./getAssetsWithPermissions');
 const { sortAssets } = require('./sortAssets');
 
 async function byCriteria({
@@ -54,6 +56,7 @@ async function byCriteria({
   categoriesFilter,
   hideCoverAssets,
   ctx,
+  assets = [], // AssetIds
 }) {
   const published = _published;
   let preferCurrent = _preferCurrent;
@@ -79,7 +82,6 @@ async function byCriteria({
     providerQuery.subjects = subjects;
   }
 
-  let assets = [];
   let nothingFound = false;
 
   if (pinned) {
@@ -89,7 +91,10 @@ async function byCriteria({
   try {
     const categoryId = await getCategoryId({ category, ctx });
 
-    ({ assets, nothingFound } = await getPinnedAssets({ pinned, ctx }));
+    // If there are no assets, get the pinned assets to start the search
+    if (!assets?.length) {
+      ({ assets, nothingFound } = await getPinnedAssets({ pinned, ctx }));
+    }
 
     ({ assets, nothingFound } = await getProviderAssets({
       assets,

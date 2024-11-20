@@ -16,6 +16,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useQueryClient } from '@tanstack/react-query';
 import { ScheduleInput } from '@timetable/components';
 import { SelectUserAgent } from '@users/components';
+import { compareBySurnamesAndName } from '@users/helpers/compareUsers';
 import { useUserAgentsInfo } from '@users/hooks';
 import PropTypes from 'prop-types';
 
@@ -134,7 +135,8 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
               icon={<DeleteBinIcon width={18} height={18} />}
             />
           ),
-        }));
+        }))
+        .sort(compareBySurnamesAndName);
     }
     return [];
   }, [userAgentsInfo]);

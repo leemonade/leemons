@@ -519,6 +519,8 @@ module.exports = {
           page: { type: 'number' },
           size: { type: 'number' },
           query: { type: 'object', additionalProperties: true },
+          sort: { type: 'object', additionalProperties: true },
+          collation: { type: 'object', additionalProperties: true },
         },
         required: ['page', 'size'],
         additionalProperties: false,
@@ -527,6 +529,8 @@ module.exports = {
         const data = await usersService.list({
           page: ctx.params.page,
           size: ctx.params.size,
+          sort: ctx.params.sort,
+          collation: ctx.params.collation,
           ...ctx.params.query,
           ctx,
         });

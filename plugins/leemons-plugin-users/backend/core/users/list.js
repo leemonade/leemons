@@ -76,10 +76,33 @@ async function list({
   disabled,
   ctx,
   sort,
+  collation,
   listUserAgents,
   ...queries
 }) {
-  const query = { ...queries };
+  const query = Object.fromEntries(
+    Object.entries(queries)
+      .filter(([prop]) =>
+        ['id', 'name', 'surnames', 'secondSurname', 'email', 'phone', 'search'].includes(prop)
+      )
+      .map(([prop, value]) => {
+        if (prop === 'search') {
+          const searchValue = { $regex: _.escapeRegExp(value.toLowerCase()), $options: 'i' };
+          return [
+            '$or',
+            [
+              { name: searchValue },
+              { surnames: searchValue },
+              { secondSurname: searchValue },
+              { email: searchValue },
+              { phone: searchValue },
+            ],
+          ];
+        }
+        return [prop, { $regex: value, $options: 'i' }];
+      })
+  );
+
   let roles = null;
 
   if (centers) {
@@ -106,6 +129,7 @@ async function list({
     page,
     size,
     sort,
+    collation,
     query,
   });
 

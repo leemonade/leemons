@@ -3,6 +3,10 @@ import { Link, useHistory, useParams } from 'react-router-dom';
 
 import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
 import ActivityHeader from '@assignables/components/ActivityHeader';
+import {
+  ActivityUnavailable,
+  useActivityStates,
+} from '@assignables/components/ActivityUnavailable';
 import getClassData from '@assignables/helpers/getClassData';
 import getNextActivityUrl from '@assignables/helpers/getNextActivityUrl';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
@@ -222,6 +226,8 @@ function StudentInstance() {
     fetchInstance: true,
   });
 
+  const { isUnavailable } = useActivityStates({ instance: store.instance });
+
   React.useEffect(() => {
     if (params?.id && translations && store.idLoaded !== params?.id) init();
   }, [params, translations]);
@@ -282,6 +288,7 @@ function StudentInstance() {
           />
         ),
         isQuestion: true,
+        isBlocked: isUnavailable,
       });
 
       return {
@@ -349,7 +356,8 @@ function StudentInstance() {
           }}
           scrollRef={scrollRef}
         >
-          {verticalStepperProps.data[store.currentStep]
+          {isUnavailable ? <ActivityUnavailable instance={store.instance} /> : null}
+          {!isUnavailable && verticalStepperProps.data[store.currentStep]
             ? React.cloneElement(verticalStepperProps.data[store.currentStep].component, {
                 isFirstStep: !store.currentStep,
               })
