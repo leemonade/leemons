@@ -25,6 +25,7 @@ function getConfigByInstance(instance) {
         ],
     wrong: filters?.wrong ? Number(filters.wrong) : 0,
     canOmitQuestions: isBoolean(filters?.canOmitQuestions) ? filters?.canOmitQuestions : true,
+    questionFilters: filters?.questionFilters || {},
   };
 }
 

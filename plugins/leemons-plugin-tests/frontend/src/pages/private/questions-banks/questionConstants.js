@@ -2,6 +2,7 @@ import { camelCase, forIn, noop } from 'lodash';
 
 const QUESTION_TYPES = {
   MONO_RESPONSE: 'mono-response',
+  SHORT_RESPONSE: 'short-response',
   MAP: 'map',
   TRUE_FALSE: 'true-false',
 };
@@ -9,6 +10,7 @@ const QUESTION_TYPES = {
 const SOLUTION_KEY_BY_TYPE = {
   [QUESTION_TYPES.MONO_RESPONSE]: 'choices',
   [QUESTION_TYPES.MAP]: 'mapProperties.markers.list',
+  [QUESTION_TYPES.SHORT_RESPONSE]: 'choices',
   [QUESTION_TYPES.TRUE_FALSE]: 'trueFalseProperties',
 };
 

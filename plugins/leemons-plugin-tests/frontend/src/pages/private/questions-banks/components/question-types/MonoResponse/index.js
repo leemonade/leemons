@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import {
@@ -144,7 +144,7 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
                 if (!value) removeHideOnHelp();
               }}
               checked={field.value}
-              label={t('hasCluesLabel')}
+              label={t('hasCluesLabelWithMinResponses')}
             />
           )}
         />

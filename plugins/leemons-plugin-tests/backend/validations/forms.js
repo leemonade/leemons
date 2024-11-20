@@ -36,6 +36,7 @@ const choiceSchema = {
       nullable: true,
     },
     imageDescription: stringSchemaNullable,
+    isMainChoice: booleanSchema, // Only for short-response questions
   },
   required: ['isCorrect'],
 };
@@ -88,6 +89,7 @@ const mapPropertiesSchema = {
   nullable: true,
 };
 
+const questionTypes = ['mono-response', 'map', 'true-false', 'short-response'];
 const trueFalsePropertiesSchema = {
   type: 'object',
   properties: {
@@ -97,7 +99,6 @@ const trueFalsePropertiesSchema = {
   nullable: true,
 };
 
-const questionTypes = ['mono-response', 'map', 'true-false'];
 const questionTypeSchema = {
   type: 'string',
   enum: questionTypes,

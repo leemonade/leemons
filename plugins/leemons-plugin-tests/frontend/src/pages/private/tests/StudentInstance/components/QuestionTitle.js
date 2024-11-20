@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { Box, COLORS, Text, Stack } from '@bubbles-ui/components';
 import { htmlToText } from '@common';
@@ -153,15 +153,11 @@ export default function QuestionTitle(props) {
 }
 
 QuestionTitle.propTypes = {
-  classes: PropTypes.any,
   styles: PropTypes.any,
   t: PropTypes.any,
   cx: PropTypes.any,
   store: PropTypes.any,
   question: PropTypes.any,
-  prevStep: PropTypes.func,
-  nextStep: PropTypes.func,
-  isFirstStep: PropTypes.bool,
   index: PropTypes.number,
   tableViewMode: PropTypes.bool,
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import {
@@ -15,9 +15,34 @@ import PropTypes from 'prop-types';
 import QuestionValue from './QuestionValue';
 import Map from './questions/Map';
 import MonoResponse from './questions/MonoResponse';
+import ShortResponse from './questions/ShortResponse';
 import TrueFalse from './questions/TrueFalse';
 
 import { QUESTION_TYPES } from '@tests/pages/private/questions-banks/questionConstants';
+
+// HELPER FUNCTIONS ········································································|
+const getMonoResponseNextLabel = (currentResponse, t) => {
+  return isNumber(currentResponse) ? t('nextButton') : t('skipButton');
+};
+
+const getShortResponseNextLabel = (currentResponse, t) => {
+  return currentResponse ? t('nextButton') : t('skipButton');
+};
+
+const getTrueFalseNextLabel = (currentResponse, t) => {
+  return typeof currentResponse === 'boolean' ? t('nextButton') : t('skipButton');
+};
+
+const getMapNextLabel = (_, t, allSelectsUsed) => {
+  return allSelectsUsed ? t('nextButton') : t('skipButton');
+};
+
+const getNextLabelByQuestionType = {
+  [QUESTION_TYPES.MONO_RESPONSE]: getMonoResponseNextLabel,
+  [QUESTION_TYPES.SHORT_RESPONSE]: getShortResponseNextLabel,
+  [QUESTION_TYPES.TRUE_FALSE]: getTrueFalseNextLabel,
+  [QUESTION_TYPES.MAP]: getMapNextLabel,
+};
 
 export default function Question(props) {
   const { classes, cx, t, store, render, index } = props;
@@ -25,7 +50,7 @@ export default function Question(props) {
   const url = useLocation();
   const previewMode = url.pathname.includes('detail');
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!store.questionMax || store.questionMax < index) {
       store.questionMax = index;
       render();
@@ -38,63 +63,76 @@ export default function Question(props) {
   }
 
   const showFirstButton = !props.isFirstStep && (!store.embedded || (store.embedded && index > 0));
-
   const isLastButton = index === store.questions.length - 1;
   const showLastButton = !store.embedded || (store.embedded && !isLastButton);
 
-  const currentResponseIndex = store.questionResponses?.[props.question.id].properties?.response;
+  const currentResponse = store.questionResponses?.[props.question.id].properties?.response;
   let allSelectsUsed = false;
 
-  let nextLabel = null;
-  if (store.config.canOmitQuestions) {
-    nextLabel = isNumber(currentResponseIndex) ? t('nextButton') : t('skipButton');
-  } else {
-    nextLabel = t('nextButton');
-  }
-  if (props.isLast) {
-    nextLabel = t('finishButton');
-  }
-
-  let child = null;
-  if (props.question.type === QUESTION_TYPES.MONO_RESPONSE) {
-    child = <MonoResponse {...props} isPreviewMode={previewMode} />;
-  }
   if (props.question.type === QUESTION_TYPES.MAP) {
-    child = <Map {...props} isPreviewMode={previewMode} />;
-
     const currentResponses = store.questionResponses[props.question.id].properties?.responses || [];
-
     allSelectsUsed = true;
-    forEach(props.question.mapProperties.markers.list, (response, i) => {
+
+    forEach(props.question.mapProperties.markers.list, (_, i) => {
       if (!currentResponses.includes(i)) {
         allSelectsUsed = false;
       }
     });
-
-    // eslint-disable-next-line no-nested-ternary
-    nextLabel = props.isLast
-      ? t('finishButton')
-      : allSelectsUsed
-        ? t('nextButton')
-        : t('skipButton');
   }
 
-  if (props.question.type === QUESTION_TYPES.TRUE_FALSE) {
-    child = <TrueFalse {...props} isPreviewMode={previewMode} />;
-    const response = store.questionResponses?.[props.question.id]?.properties?.response;
-    if (props.isLast) {
-      nextLabel = t('finishButton');
-    } else if (typeof response === 'boolean') {
-      nextLabel = t('nextButton');
-    } else {
-      nextLabel = t('skipButton');
+  const nextLabel = useMemo(() => {
+    if (props.isLast) return t('finishButton');
+
+    if (store?.config?.canOmitQuestions) {
+      const questionType = props.question.type;
+      return getNextLabelByQuestionType[questionType](currentResponse, t, allSelectsUsed);
     }
-  }
 
-  let disableNext = !store.config.canOmitQuestions;
-  if (isNumber(currentResponseIndex) || allSelectsUsed) {
-    disableNext = false;
-  }
+    return t('nextButton');
+  }, [
+    store.config.canOmitQuestions,
+    currentResponse,
+    props.isLast,
+    props.question.type,
+    allSelectsUsed,
+    t,
+  ]);
+
+  const child = useMemo(() => {
+    if (props.question.type === QUESTION_TYPES.MONO_RESPONSE) {
+      return <MonoResponse {...props} isPreviewMode={previewMode} />;
+    }
+    if (props.question.type === QUESTION_TYPES.SHORT_RESPONSE) {
+      return <ShortResponse {...props} isPreviewMode={previewMode} />;
+    }
+    if (props.question.type === QUESTION_TYPES.MAP) {
+      return <Map {...props} isPreviewMode={previewMode} />;
+    }
+    if (props.question.type === QUESTION_TYPES.TRUE_FALSE) {
+      return <TrueFalse {...props} isPreviewMode={previewMode} />;
+    }
+    return null;
+  }, [props, previewMode]);
+
+  const disableNext = useMemo(() => {
+    if (store.config.canOmitQuestions) {
+      return false;
+    }
+
+    if (props.question.type === QUESTION_TYPES.SHORT_RESPONSE) {
+      return !currentResponse;
+    }
+    if (props.question.type === QUESTION_TYPES.MONO_RESPONSE) {
+      return !isNumber(currentResponse);
+    }
+    if (props.question.type === QUESTION_TYPES.MAP) {
+      return !allSelectsUsed;
+    }
+    if (props.question.type === QUESTION_TYPES.TRUE_FALSE) {
+      return typeof currentResponse !== 'boolean';
+    }
+    return false;
+  }, [store?.config?.canOmitQuestions, currentResponse, allSelectsUsed, props.question?.type]);
 
   return (
     <TotalLayoutStepContainer
@@ -111,7 +149,7 @@ export default function Question(props) {
           scrollRef={props.scrollRef}
           rightZone={
             <Box sx={{ minWidth: '120px' }}>
-              {showLastButton ? (
+              {showLastButton && (
                 <Box style={{ display: 'flex', justifyContent: 'flex-end' }}>
                   <Button
                     position="left"
@@ -135,16 +173,16 @@ export default function Question(props) {
                     {store.embedded ? t('nextButton') : nextLabel || t('next')}
                   </Button>
                 </Box>
-              ) : null}
+              )}
             </Box>
           }
           leftZone={
             <Box sx={{ minWidth: '120px' }}>
-              {showFirstButton ? (
+              {showFirstButton && (
                 <Button variant="outline" leftIcon={<ChevLeftIcon />} onClick={props.prevStep}>
                   {t('prev')}
                 </Button>
-              ) : null}
+              )}
             </Box>
           }
         >
@@ -181,6 +219,6 @@ Question.propTypes = {
   question: PropTypes.any,
   render: PropTypes.func,
   index: PropTypes.number,
-  isLast: PropTypes.bool,
+  isLast: PropTypes.number,
   scrollRef: PropTypes.any,
 };

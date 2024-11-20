@@ -114,7 +114,7 @@ export function MapQuestion({ form: _form, t }) {
           control={form.control}
           name="hasHelp"
           render={({ field }) => (
-            <Switch {...field} checked={field.value} label={t('hasCluesLabel')} />
+            <Switch {...field} checked={field.value} label={t('hasCluesLabelWithMinResponses')} />
           )}
         />
 
