@@ -5,5 +5,10 @@
     "source.fixAll": "explicit",
     "source.organizeImports": "never"
   },
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "files.exclude": {
+    "plugins/leemons-plugin-comunica": true,
+    "plugins/leemons-plugin-fundae": true,
+    "plugins/leemons-plugin-learning-paths": true
+  }
 }
