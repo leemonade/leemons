@@ -1,4 +1,3 @@
-/* eslint-disable no-nested-ternary */
 import React from 'react';
 
 import { Alert, Box, HtmlText, Text } from '@bubbles-ui/components';
@@ -15,12 +14,7 @@ import UnansweredQuestionWarning from '../../UnansweredQuestionWarning';
 import Responses from './Responses';
 
 export default function Index(props) {
-  const { styles, saveQuestion, store, question, t, isLast, cx } = props;
-
-  function nextStep() {
-    if (!store.viewMode) saveQuestion();
-    props.nextStep();
-  }
+  const { styles, store, question, t, cx } = props;
 
   const clue = React.useMemo(
     () =>
@@ -56,7 +50,7 @@ export default function Index(props) {
       {showNotResponsedWarning ? <UnansweredQuestionWarning {...props} /> : null}
 
       <Box className={styles.questionCard}>
-        <QuestionTitle {...props} />
+        <QuestionTitle {...props} tableViewMode={store.viewMode} />
         <QuestionNoteClues {...props} />
         <Box className={styles.mapImageContainer}>
           <QuestionImage
@@ -68,7 +62,7 @@ export default function Index(props) {
             clue={clue}
           />
         </Box>
-        {explanation ? (
+        {explanation && (
           <Box className={cx(styles.textExplanation, styles.textExplanationRemovePadding)}>
             <Box sx={(theme) => ({ paddingBottom: theme.spacing[3] })}>
               <Text role="productive" size="xs" color="primary">
@@ -77,7 +71,7 @@ export default function Index(props) {
             </Box>
             <HtmlText>{explanation}</HtmlText>
           </Box>
-        ) : null}
+        )}
         <Responses {...props} />
       </Box>
 

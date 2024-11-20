@@ -1,23 +1,16 @@
-import React, { useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import {
-  ContextContainer,
-  SearchInput,
-  Stack,
-  Title,
-  TextInput,
-  Box,
-  Select,
-  Text,
-} from '@bubbles-ui/components';
-import _ from 'lodash';
+import { useMemo, useState } from 'react';
+
+import { SearchInput, Box, Text } from '@bubbles-ui/components';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useProgress } from '@assignables/components/Ongoing/AssignmentList/components/Filters/components/Progress/Progress';
-import useParsedStudents from './helpers/useParseStudents';
-import StudentsList from './StudentsList';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+
 import prefixPN from '../../../../helpers/prefixPN';
+
+import StudentsList from './StudentsList';
 import useUserListStyles from './UsersList.styles';
+import useParsedStudents from './helpers/useParseStudents';
 
 function useUserListLocalizations() {
   const [, translations] = useTranslateLoader([
@@ -78,7 +71,8 @@ function useFilteredStudents({ students = [], filters }) {
     str
       .toLowerCase()
       .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
+      .replace(/[\u0300-\u036f,]/g, '')
+      .trim();
 
   const normalizedQuery = useMemo(() => normalize(filters?.query), [filters?.query]);
 
@@ -86,8 +80,8 @@ function useFilteredStudents({ students = [], filters }) {
     () =>
       students.filter(
         ({ userInfo }) =>
-          normalize(userInfo?.name)?.includes(normalizedQuery) ||
-          normalize(userInfo?.surnames)?.includes(normalizedQuery)
+          normalize(`${userInfo?.name} ${userInfo?.surnames}`)?.includes(normalizedQuery) ||
+          normalize(`${userInfo?.surnames} ${userInfo?.name}`)?.includes(normalizedQuery)
       ) ?? [],
     [students, normalizedQuery]
   );

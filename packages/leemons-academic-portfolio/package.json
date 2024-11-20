@@ -25,6 +25,7 @@
   "devDependencies": {},
   "dependencies": {
     "@leemons/mongodb-helpers": "0.0.71",
+    "@leemons/users": "0.0.41",
     "lodash": "^4.17.21"
   }
 }

@@ -64,10 +64,13 @@ module.exports = {
     responsesLabel: 'Answers',
     responseLabel: 'Answer',
     responsePlaceholder: 'Add the response text here',
+    alternativeResponseLabel: 'Alternative answers',
+    tagsInputPlaceholder: 'Separate by commas and press enter',
     errorMarkGoodResponse: 'You must mark a correct response',
     needImages: 'Answers must have images',
     needExplanationAndResponse: 'All answers require a text and an explanation',
     needResponse: 'Answers must have a text',
+    needsResponse: 'Response is required',
     needExplanation: 'All answers require an explanation',
     responsesDescription:
       'First, add the answers, then select the correct one by clicking on the circle.',
@@ -86,7 +89,8 @@ module.exports = {
     cluesDescription:
       'You can give hints to students providing information that facilitates the memory retrieval task.',
     cluesRequired: 'Field required',
-    hasCluesLabel: 'Has clues (3 answers min.)',
+    hasCluesLabelWithMinResponses: 'With clues (minimum 3 responses)',
+    hasCluesLabel: 'With clues',
     imageLabel: 'Image',
     saveImage: 'Save image',
     addImage: 'Add image',
@@ -94,7 +98,9 @@ module.exports = {
     captionAltPlaceholder: 'Add the image text or alt text here',
     saveResponse: 'Save response',
     monoResponse: 'Mono response',
+    trueFalse: 'T/F',
     map: 'Map',
+    shortResponse: 'Short response',
     mapLabel: 'Map',
     addMap: 'Add map',
     itemsLabel: 'Answers',
@@ -117,6 +123,22 @@ module.exports = {
     hasCoverLabel: 'Feature image',
     hideOptionNoRightAnswer: 'You must select the right answer first',
     headerTitlePlaceholder: 'Questions bank title',
+    cluesCopy:
+      'You can give hints to students providing information that facilitates the memory retrieval task.',
+    questionLabels: {
+      trueFalse: {
+        true: 'True',
+        false: 'False',
+        type: 'T/F',
+        needsResponse: 'Response is required',
+        shortResponse: {
+          answerPlaceholder: 'Write your answer here',
+        },
+      },
+    },
+    errors: {
+      save: 'The changes could not be saved.',
+    },
   },
   questionImageModal: {
     createNumbering: 'Create numbering',
@@ -295,6 +317,7 @@ module.exports = {
     duplicated: 'Duplicated',
     simpleQuestion: 'Simple question',
     map: 'Map',
+    trueFalse: 'T/F',
     hints: 'Hints',
     yes: 'Yes',
     no: 'No',
@@ -375,6 +398,7 @@ module.exports = {
     questionNumber: 'QUESTION: {number}',
     theQuestionValueIs: 'The question value is',
     pointsInTotal: 'Points',
+    pointsOutOf: 'points of {questionPoints}',
     askForAHint: 'Ask for a hint',
     hint: 'Hint',
     skipButton: 'Skip',
@@ -478,6 +502,16 @@ module.exports = {
       errorQuestions: 'Incorrect answers DO NOT reduce the score.',
       canClue: 'All available clues will be offered without penalty',
     },
+    rulesByQuestionType: {
+      title: 'Question Type',
+      shortResponse: {
+        title: 'Short response',
+        activateTolerances: 'Activate tolerances',
+        tolerateAccents: 'Accents',
+        tolerateCase: 'Case',
+        tolerateSpaces: 'Spaces',
+      },
+    },
   },
   testResult: {
     testResult: 'Statistics by type of question',
@@ -508,5 +542,14 @@ module.exports = {
     returnToTable: 'Return to list',
     nextActivity: 'Next activity',
     goToModule: 'Module dashboard',
+    responseDetail: {
+      answers: 'Answers',
+      answer: 'Answer',
+      result: 'Result',
+      solution: 'Solution',
+      correct: 'Correct',
+      incorrect: 'Incorrect',
+      feedback: 'Feedback',
+    },
   },
 };

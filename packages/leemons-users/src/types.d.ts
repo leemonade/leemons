@@ -50,3 +50,9 @@ export interface UserSession extends Omit<User, 'id'> {
   id: string;
   userAgents: UserAgent[];
 }
+
+export function getUserFullName({
+  userSession,
+}: {
+  userSession: Pick<User, 'name' | 'surnames' | 'secondSurname'>;
+}): string;

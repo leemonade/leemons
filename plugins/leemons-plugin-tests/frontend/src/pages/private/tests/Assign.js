@@ -1,14 +1,15 @@
 import React from 'react';
-import { map } from 'lodash';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@tests/helpers/prefixPN';
-import { useStore } from '@common';
 import { useHistory, useParams } from 'react-router-dom';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+
 import Form from '@assignables/components/Assignment/Form';
 import getAssignablesRequest from '@assignables/requests/assignables/getAssignables';
+import { useStore } from '@common';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import { RulesConfig } from '@tests/components/RulesConfig';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { map } from 'lodash';
+
+import AssignConfig from '../../../components/AssignConfig';
 import {
   assignTestRequest,
   getAssignConfigsRequest,
@@ -16,7 +17,9 @@ import {
   deleteAssignedConfigRequest,
   updateAssignedConfigRequest,
 } from '../../../request';
-import AssignConfig from '../../../components/AssignConfig';
+
+import { RulesConfig } from '@tests/components/RulesConfig';
+import prefixPN from '@tests/helpers/prefixPN';
 
 export default function Assign() {
   const [t] = useTranslateLoader(prefixPN('testAssign'));
@@ -30,6 +33,7 @@ export default function Assign() {
   });
   const history = useHistory();
   const params = useParams();
+
   async function send() {
     store.loading = true;
     render();
@@ -38,7 +42,6 @@ export default function Assign() {
 
     try {
       await assignTestRequest(store.test.id, instanceData);
-
       addSuccessAlert(t('assignDone'));
       history.push('/private/assignables/ongoing');
     } catch (e) {

@@ -1,7 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import ActivityHeader from '@assignables/components/ActivityHeader';
+import {
+  ActivityUnavailable,
+  useActivityStates,
+} from '@assignables/components/ActivityUnavailable';
 import getNextActivityUrl from '@assignables/helpers/getNextActivityUrl';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import getAssignation from '@assignables/requests/assignations/getAssignation';
@@ -22,9 +26,19 @@ import prefixPN from '@feedback/helpers/prefixPN';
 import { getFeedbackRequest, getUserAssignableResponsesRequest } from '@feedback/request';
 import { setInstanceTimestamp } from '@feedback/request/feedback';
 
+const STEPS = {
+  INTRODUCTION: 'introduction',
+  QUESTIONS: 'questions',
+};
+
+const STEPS_INDEX = {
+  [STEPS.INTRODUCTION]: 0,
+  [STEPS.QUESTIONS]: 1,
+};
+
 const StudentInstance = () => {
   const [t] = useTranslateLoader(prefixPN('studentInstance'));
-  const [showIntroduction, setShowIntroduction] = useState(true);
+  const [step, setStep] = useState(STEPS.INTRODUCTION);
   const [store, render] = useStore({
     loading: true,
     idLoaded: '',
@@ -40,9 +54,14 @@ const StudentInstance = () => {
     return getCentersWithToken()[0].userAgentId;
   };
 
+  const { isUnavailable } = useActivityStates({
+    instance: store.instance,
+    user: getUserId(),
+  });
+
   const advanceToQuestions = () => {
     setInstanceTimestamp(params.id, 'start', getUserId());
-    setShowIntroduction(false);
+    setStep(STEPS.QUESTIONS);
   };
 
   const getModalMode = (showResults, hasNextActivity) => {
@@ -117,13 +136,16 @@ const StudentInstance = () => {
     >
       <VerticalStepperContainer
         scrollRef={scrollRef}
-        currentStep={showIntroduction ? 0 : 1}
+        currentStep={STEPS_INDEX[step]}
         data={[
           { label: t('feedbackIntroductoryText'), status: 'OK' },
-          { label: t('questions'), status: 'OK' },
+          { label: t('questions'), status: 'OK', isBlocked: isUnavailable },
         ]}
       >
-        {showIntroduction ? (
+        {isUnavailable && (
+          <ActivityUnavailable instance={store.instance} user={getUserId()} scrollRef={scrollRef} />
+        )}
+        {!isUnavailable && step === STEPS.INTRODUCTION && (
           <IntroductionStep
             feedback={store.feedback}
             instance={store.instance}
@@ -131,9 +153,10 @@ const StudentInstance = () => {
             onNext={advanceToQuestions}
             scrollRef={scrollRef}
           />
-        ) : (
+        )}
+        {!isUnavailable && step === STEPS.QUESTIONS && (
           <QuestionsStep
-            setShowIntroduction={setShowIntroduction}
+            setShowIntroduction={() => setStep(STEPS.INTRODUCTION)}
             feedback={store.feedback}
             instance={store.instance}
             instanceId={store.idLoaded}

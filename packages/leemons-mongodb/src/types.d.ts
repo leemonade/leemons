@@ -1,12 +1,24 @@
 import type { ServiceSchema } from '@leemons/deployment-manager';
-import { Connection, CreateOptions, Model as MongooseModel, Schema } from 'mongoose';
+import { Connection, HydratedDocumentFromSchema, Model as MongooseModel, Schema } from 'mongoose';
 
 type LeemonsOptions = {
   disableAutoDeploy?: boolean;
   disableAutoLRN?: boolean;
 };
 
-export type CreateQuery<T> = (items: T, options: CreateOptions & LeemonsOptions) => Promise<T>;
+export type LeemonsSchema = {
+  id: string;
+  deploymentID: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  isDeleted?: boolean;
+  deletedAt?: Date;
+};
+
+export type CreateQuery<T> = (
+  items: Partial<T> & Pick<T, Exclude<keyof T, keyof LeemonsSchema>>,
+  options?: CreateOptions & LeemonsOptions
+) => HydratedDocumentFromSchema<T> & T;
 export type FindQuery<T> = MongooseModel<T>['find'];
 export type FindByIdQuery<T> = MongooseModel<T>['findById'];
 export type FindOneQuery<T> = MongooseModel<T>['findOne'];
@@ -22,7 +34,7 @@ export type CountDocumentsQuery<T> = MongooseModel<T>['countDocuments'];
 export type InsertManyQuery<T> = MongooseModel<T>['insertMany'];
 export type AggregateQuery<T> = MongooseModel<T>['aggregate'];
 
-export type Model<T> = {
+export interface Model<T> {
   create: CreateQuery<T>;
   find: FindQuery<T>;
   findById: FindByIdQuery<T>;
@@ -40,13 +52,13 @@ export type Model<T> = {
   countDocuments: CountDocumentsQuery<T>;
   insertMany: InsertManyQuery<T>;
   aggregate: AggregateQuery<T>;
-};
+}
 
 export function newModel<T>(
   connection: Connection,
   modelName: string,
   schema: Schema<T, any, any> | Schema<T & Document, any, any>
-): MongooseModel<T>;
+): Model<T>;
 
 type MixinOptions = {
   waitToRollbackFinishOnError?: boolean;
@@ -63,15 +75,6 @@ type MixinOptions = {
 export const mongoose: typeof import('mongoose');
 
 export function LeemonsMongoDBMixin(options?: MixinOptions): Partial<ServiceSchema>;
-
-export type LeemonsSchema = {
-  id: string;
-  deploymentID: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  isDeleted?: boolean;
-  deletedAt?: Date;
-};
 
 export type PaginatedQueryResult<T> = {
   items: T[];

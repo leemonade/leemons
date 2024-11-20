@@ -35,6 +35,7 @@ export type Category = {
 };
 
 export type AssetID = LRN<'common', 'CurrentVersions'>;
+
 export type Asset = {
   id: AssetID;
   deploymentID: string;

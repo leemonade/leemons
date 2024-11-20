@@ -20,7 +20,9 @@ function getLocalizationsObjects({ locales: _locales, i18nPath, logger }) {
   locales.forEach((locale) => {
     try {
       // eslint-disable-next-line import/no-dynamic-require, global-require
-      localizations[locale] = require(path.resolve(i18nPath, `${locale}.js`));
+      const importedFile = require(path.resolve(i18nPath, `${locale}.js`));
+
+      localizations[locale] = importedFile.__esModule ? importedFile.default : importedFile;
     } catch (e) {
       try {
         // eslint-disable-next-line import/no-dynamic-require, global-require

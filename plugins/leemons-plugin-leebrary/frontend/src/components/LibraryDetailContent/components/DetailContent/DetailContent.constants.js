@@ -1,6 +1,7 @@
 import propTypes from 'prop-types';
 
 export const DETAIL_CONTENT_PROP_TYPES = {
+  asset: propTypes.object,
   name: propTypes.string,
   description: propTypes.string,
   subjectsIds: propTypes.arrayOf(propTypes.string),

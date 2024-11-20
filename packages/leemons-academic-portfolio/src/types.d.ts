@@ -1,4 +1,4 @@
-import { Asset } from '@leemons/library';
+import { Asset, AssetID } from '@leemons/library';
 import { LRN } from '@leemons/lrn';
 import { LeemonsSchema } from '@leemons/mongodb';
 import { UserAgentID } from '@leemons/users';
@@ -35,7 +35,7 @@ export interface ClassStudent extends Omit<LeemonsSchema, 'id'> {
   class: ClassID;
   // ref: 'plugins_users::user-agent'
   student: UserAgentID;
-};
+}
 
 /**
  * TODO: Non exhaustive definition. Review and improve.
@@ -45,7 +45,7 @@ export interface Program extends Omit<LeemonsSchema, 'id'> {
   id: ProgramID;
   name: string;
   abbreviation: string;
-};
+}
 
 export interface Subject extends Omit<LeemonsSchema, 'id'> {
   id: SubjectID;
@@ -56,7 +56,7 @@ export interface Subject extends Omit<LeemonsSchema, 'id'> {
   icon: Asset | AssetID | null;
   color: string;
   useBlocks: boolean;
-};
+}
 
 /**
  * TODO: Non exhaustive definition. Review and improve.
@@ -65,7 +65,7 @@ export interface Subject extends Omit<LeemonsSchema, 'id'> {
 export interface Course extends Omit<LeemonsSchema, 'id'> {
   id: CourseID;
   name: string;
-};
+}
 
 /**
  * TODO: Non exhaustive definition. Review and improve.
@@ -107,3 +107,5 @@ export type BeforeRemoveStudentsFromClassEventParams = {
   studentId: UserAgentID;
   soft?: boolean;
 };
+
+export function getCourseName(item: { name?: string; index: number }): string;

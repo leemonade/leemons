@@ -15,6 +15,7 @@ import { useComunica } from '@comunica/context';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { USER_DETAIL_VIEWS } from '@users/components/UserDetail';
 import { UserDetailDrawer } from '@users/components/UserDetailDrawer';
+import { compareBySurnamesAndName } from '@users/helpers/compareUsers';
 import getUserFullName from '@users/helpers/getUserFullName';
 import { useUserAgentsInfo } from '@users/hooks';
 import { getSessionCenter, getSessionProfile, getSessionUserAgent } from '@users/session';
@@ -161,7 +162,10 @@ function ClassDetailWidget({ classe }) {
       });
     });
 
-    return { teachers, students };
+    return {
+      teachers: teachers.sort(compareBySurnamesAndName),
+      students: students.sort(compareBySurnamesAndName),
+    };
   }, [classe, isChatEnabled, openUserRoom, user, userInfoLoading]);
 
   return (

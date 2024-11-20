@@ -1,9 +1,10 @@
-import React, { forwardRef, useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 
-import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
 import { MultiSelect, Select } from '@bubbles-ui/components';
 import { noop, sortBy } from 'lodash';
 import PropTypes from 'prop-types';
+
+import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
 
 const SelectProgram = forwardRef(
   (
@@ -18,6 +19,7 @@ const SelectProgram = forwardRef(
       autoSelectOneOption = true,
       onLoadedPrograms = noop,
       hideIfOnlyOne,
+      disabled,
       ...props
     },
     ref
@@ -89,7 +91,7 @@ const SelectProgram = forwardRef(
           {...props}
           ref={ref}
           data={data || []}
-          disabled={!data?.length}
+          disabled={!data?.length || disabled}
           onChange={handleChange}
           value={value}
           autoSelectOneOption={autoSelectOneOption}
@@ -102,7 +104,7 @@ const SelectProgram = forwardRef(
         {...props}
         ref={ref}
         data={data}
-        disabled={!data?.length}
+        disabled={!data?.length || disabled}
         onChange={handleChange}
         value={value}
         autoSelectOneOption={autoSelectOneOption}
@@ -123,6 +125,7 @@ SelectProgram.propTypes = {
   autoSelectOneOption: PropTypes.bool,
   hideIfOnlyOne: PropTypes.bool,
   teacherTypeFilter: PropTypes.string,
+  disabled: PropTypes.bool,
 };
 
 export { SelectProgram };

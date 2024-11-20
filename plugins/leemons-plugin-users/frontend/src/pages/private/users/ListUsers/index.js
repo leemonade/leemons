@@ -49,6 +49,7 @@ import useProvider from '@users/request/hooks/queries/useProvider';
 
 function ListUsers() {
   const [t] = useTranslateLoader(prefixPN('list_users'));
+  const lang = (navigator.language || navigator.userLanguage).split('-')[0];
   const [store, render] = useStore({
     page: 0,
     size: 10,
@@ -69,13 +70,7 @@ function ListUsers() {
   async function listUsers(searchQuery) {
     const query = {};
     if (typeof searchQuery === 'string') {
-      query.$or = [
-        { name: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        { surnames: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        { secondSurname: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        { email: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-        { phone: { $regex: searchQuery.toLowerCase(), $options: 'i' } },
-      ];
+      query.search = searchQuery;
     }
     if (store.profile) {
       query.profiles = store.profile;
@@ -93,17 +88,19 @@ function ListUsers() {
     const { data } = await listUsersRequest({
       page: store.page,
       size: store.size,
+      sort: { surnames: 1, name: 1 },
+      collation: { locale: lang },
       query,
     });
 
     return data;
   }
 
-  async function load(searchQuery) {
+  async function load() {
     try {
       store.loading = true;
       render();
-      store.pagination = await listUsers(searchQuery);
+      store.pagination = await listUsers(store.search);
       store.loading = false;
       render();
     } catch (err) {
@@ -259,10 +256,11 @@ function ListUsers() {
   async function handleSearchUsers(value) {
     store.search = value;
     store.isSearching = true;
-    load(value);
+    load();
   }
 
   async function handleClearFilters() {
+    store.page = 0;
     store.search = null;
     store.profile = null;
     store.state = null;
@@ -273,22 +271,26 @@ function ListUsers() {
   }
 
   async function handleCenterChange(centerId) {
+    store.page = 0;
     store.centerId = centerId;
     store.center = store.centers?.find((c) => c.id === centerId);
     load();
   }
 
   async function handleProfileChange(profile) {
+    store.page = 0;
     store.profile = profile;
     handleSearchUsers();
   }
 
   async function handleStateChange(state) {
+    store.page = 0;
     store.state = state;
     handleSearchUsers();
   }
 
   async function handleSearchChange(value) {
+    store.page = 0;
     store.search = value;
     render();
   }

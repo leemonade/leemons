@@ -59,7 +59,6 @@
     "import/no-mutable-exports": "error",
     "import/no-named-as-default": "off",
     "import/no-dynamic-require": "off",
-    "import/prefer-default-export": "warn",
     "import/newline-after-import": ["error", { "count": 1, "considerComments": true }],
     "import/order": [
       "error",

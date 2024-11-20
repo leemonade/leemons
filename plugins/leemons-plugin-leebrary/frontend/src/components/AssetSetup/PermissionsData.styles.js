@@ -10,6 +10,7 @@ const PermissionsDataStyles = createStyles((theme) => ({
     fontWeight: 500,
     lineHeight: '24px',
     color: '#2F473F',
+    paddingTop: pxToRem(16),
   },
   titleTabs: {
     fontSize: pxToRem(20),

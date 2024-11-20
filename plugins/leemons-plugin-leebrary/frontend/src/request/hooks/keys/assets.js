@@ -12,6 +12,16 @@ export const allGetAssetsKey = [
   },
 ];
 
+export const getAssetByFileKey = (fileId) => [
+  {
+    ...allAssetsKey[0],
+    action: 'getAssetByFileKey',
+    params: {
+      fileId,
+    },
+  },
+];
+
 export const getAssetsKey = (ids, filters) => [
   {
     ...allGetAssetsKey[0],

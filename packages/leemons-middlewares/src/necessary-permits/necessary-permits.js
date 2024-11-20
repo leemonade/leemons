@@ -1,5 +1,6 @@
-const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
+
+const checkRequiredPermissions = require('./checkRequiredPermissions');
 
 module.exports =
   ({ allowedPermissions }) =>
@@ -13,20 +14,6 @@ module.exports =
           'No user session found for check permissions, check if endpoint have [authenticated: true] property',
       });
     }
-    const hasPermission = await ctx.tx.call('users.auth.hasPermissionCTX', {
-      allowedPermissions,
-    });
 
-    if (hasPermission) {
-      return;
-    }
-    const rAllowedPermissions = [];
-    _.forIn(allowedPermissions, ({ actions }, permissionName) => {
-      rAllowedPermissions.push({ permissionName, actions });
-    });
-    throw new LeemonsError(ctx, {
-      httpStatusCode: 401,
-      message: 'You do not have permissions',
-      allowedPermissions: rAllowedPermissions,
-    });
+    await checkRequiredPermissions({ allowedPermissions, ctx });
   };

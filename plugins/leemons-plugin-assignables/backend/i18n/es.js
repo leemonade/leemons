@@ -564,4 +564,15 @@ module.exports = {
       feedback: 'Feedback cualitativo',
     },
   },
+  activityNotStarted: {
+    activityUnavailable: 'Actividad no disponible',
+    back: 'Volver',
+    next: 'Siguiente',
+    finish: 'Finalizar',
+    activityNotStarted:
+      'Esta actividad aún no está disponible. Podrás acceder a ella y realizarla a partir del {date} a las {time}.',
+    activityBlocked: 'Esta actividad está bloqueada por una actividad anterior del módulo.',
+    willSendMail: 'Recibirás un email cuando se abra el plazo de ejecución.',
+    checkBackLater: 'Por favor, vuelve más tarde para comenzar.',
+  },
 };

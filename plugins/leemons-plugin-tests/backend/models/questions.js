@@ -16,6 +16,14 @@ const choicesShape = new mongoose.Schema(
     imageDescription: String,
     isCorrect: Boolean,
     hideOnHelp: Boolean,
+    isMainChoice: Boolean,
+  },
+  { _id: false }
+);
+
+const trueFalsePropertiesSchema = new mongoose.Schema(
+  {
+    isTrue: Boolean,
   },
   { _id: false }
 );
@@ -33,7 +41,6 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    //
     questionBank: {
       // ref: 'plugins_tests::questions-banks',
       type: String,
@@ -43,10 +50,10 @@ const schema = new mongoose.Schema(
       enum: [
         'mono-response',
         'multi-response',
+        'short-response',
         'missing-word',
         'map',
         'true-false',
-        'short',
         'matching',
         'numerical',
         'open',
@@ -91,9 +98,11 @@ const schema = new mongoose.Schema(
     choices: {
       type: [choicesShape],
     },
-
     mapProperties: {
-      type: mongoose.Schema.Types.Mixed,
+      type: mongoose.Schema.Types.Mixed, // {}
+    },
+    trueFalseProperties: {
+      type: trueFalsePropertiesSchema,
     },
   },
   {
