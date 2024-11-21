@@ -96,6 +96,8 @@
     "leemons-plugin-package-manager-frontend-react": "1.0.0",
     "leemons-plugin-scores": "1.0.31",
     "leemons-plugin-scores-frontend-react": "1.0.0",
+    "leemons-plugin-sesamehr-private": "0.0.1",
+    "leemons-plugin-sesamehr-frontend-react-private": "1.0.0",
     "leemons-plugin-sessions": "1.0.0",
     "leemons-plugin-sessions-frontend-react": "1.0.0",
     "leemons-plugin-scorm": "1.0.35",
