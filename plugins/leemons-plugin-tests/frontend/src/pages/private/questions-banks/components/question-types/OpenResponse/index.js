@@ -18,32 +18,11 @@ export default function OpenResponse({ form: _form, t }) {
     name: ['openResponseProperties'],
   });
 
-  const isEditing = !!form?.getValues('id');
-
   useEffect(() => {
-    if (
-      isEditing &&
-      (openResponseProperties?.minCharacteres || openResponseProperties?.maxCharacteres)
-    ) {
+    if (openResponseProperties?.minCharacters || openResponseProperties?.maxCharacters) {
       setLimitCharachters(true);
     }
-  }, [openResponseProperties, isEditing]);
-
-  useEffect(() => {
-    if (!isEditing) {
-      form.setValue('openResponseProperties', {
-        minCharacteres: null,
-        maxCharacteres: null,
-      });
-    }
-  }, [isEditing]);
-
-  useEffect(() => {
-    form.setValue('openResponseProperties', {
-      minCharacteres: null,
-      maxCharacteres: null,
-    });
-  }, [limitCharachters]);
+  }, [openResponseProperties]);
 
   // RENDER ································································································|
 
@@ -72,26 +51,21 @@ export default function OpenResponse({ form: _form, t }) {
         <Stack spacing={2} direction="column">
           <Switch
             checked={limitCharachters}
-            label={t('questionLabels.limitCharacteresLabel')}
-            onChange={(value) => {
-              setLimitCharachters(value);
-            }}
+            label={t('questionLabels.limitCharactersLabel')}
+            onChange={(value) => setLimitCharachters(value)}
           />
           {limitCharachters && (
             <Stack spacing={5} className={classes.inputBox}>
               <Box className={classes.numberInput}>
                 <Controller
                   control={form.control}
-                  name="openResponseProperties.minCharacteres"
+                  name="openResponseProperties.minCharacters"
                   render={({ field }) => {
                     return (
                       <NumberInput
                         {...field}
                         min={1}
-                        placeholder={t('questionLabels.minCharacteresPlaceHolder')}
-                        onChange={(value) => {
-                          field.onChange(value ?? null);
-                        }}
+                        placeholder={t('questionLabels.minCharactersPlaceHolder')}
                         customDesign
                       />
                     );
@@ -102,16 +76,13 @@ export default function OpenResponse({ form: _form, t }) {
               <Box className={classes.numberInput}>
                 <Controller
                   control={form.control}
-                  name="openResponseProperties.maxCharacteres"
+                  name="openResponseProperties.maxCharacters"
                   render={({ field }) => {
                     return (
                       <NumberInput
                         {...field}
                         min={1}
-                        placeholder={t('questionLabels.maxCharacteresPlaceHolder')}
-                        onChange={(value) => {
-                          field.onChange(value ?? null);
-                        }}
+                        placeholder={t('questionLabels.maxCharactersPlaceHolder')}
                         customDesign
                       />
                     );

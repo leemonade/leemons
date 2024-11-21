@@ -69,9 +69,6 @@ export default function DetailQuestionForm({
   const type = form.watch('type');
   const hasHelp = form.watch('hasHelp');
 
-  const formValues = form.watch();
-  console.log('formValues', formValues);
-
   const questionTypesSelectData = useMemo(() => getQuestionTypesForSelect(t), [t]);
 
   const rightAnswerSelected = useMemo(() => {

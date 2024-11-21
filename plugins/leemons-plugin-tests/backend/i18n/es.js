@@ -135,9 +135,9 @@ module.exports = {
         type: 'V/F',
       },
       answerPlaceholder: 'Escribe aquí tu respuesta',
-      limitCharacteresLabel: 'Limitar caracteres',
-      minCharacteresPlaceHolder: 'Mín.',
-      maxCharacteresPlaceHolder: 'Máx.',
+      limitCharactersLabel: 'Limitar caracteres',
+      minCharactersPlaceHolder: 'Mín.',
+      maxCharactersPlaceHolder: 'Máx.',
     },
     errors: {
       save: 'No se han podido guardar los cambios.',

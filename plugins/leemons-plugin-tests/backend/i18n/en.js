@@ -134,9 +134,9 @@ module.exports = {
         type: 'T/F',
       },
       answerPlaceholder: 'Write your answer here',
-      limitCharacteresLabel: 'Limit characters',
-      minCharacteresPlaceHolder: 'Min.',
-      maxCharacteresPlaceHolder: 'Max.',
+      limitCharactersLabel: 'Limit characters',
+      minCharactersPlaceHolder: 'Min.',
+      maxCharactersPlaceHolder: 'Max.',
     },
     errors: {
       save: 'The changes could not be saved.',

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import {
   ActionButton,
@@ -15,7 +15,7 @@ import {
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { AddCircleIcon, DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
 import { useLayout } from '@layout/context';
-import { compact, get, isArray, map, noop, omit, set } from 'lodash';
+import { cloneDeep, compact, get, isArray, map, noop, omit, set } from 'lodash';
 import PropTypes from 'prop-types';
 
 import { getQuestionForTable } from '../../../../helpers/getQuestionForTable';
@@ -73,6 +73,17 @@ export default function DetailQuestions({
 
   const removeHideOnHelp = (answers) => answers.map((item) => omit(item, 'hideOnHelp'));
 
+  const processOpenResponseQuestions = (question) => {
+    const _question = cloneDeep(question);
+
+    _question.openResponseProperties = {
+      minCharacters: question.openResponseProperties?.minCharacters || null,
+      maxCharacters: question.openResponseProperties?.maxCharacters || null,
+    };
+
+    return _question;
+  };
+
   function processHasHelp(question, solutionKey) {
     if (!question.hasHelp) return false;
     if (question.clues?.length) return true;
@@ -111,7 +122,11 @@ export default function DetailQuestions({
   };
 
   function onSaveQuestion(question) {
-    const processedQuestion = cleanQuestion(question);
+    let processedQuestion = cleanQuestion(question);
+
+    if (processedQuestion.type === QUESTION_TYPES.OPEN_RESPONSE) {
+      processedQuestion = processOpenResponseQuestions(processedQuestion);
+    }
 
     const currentQuestions = form.getValues('questions') ?? [];
     if (questionIndex !== null && questionIndex >= 0) {
