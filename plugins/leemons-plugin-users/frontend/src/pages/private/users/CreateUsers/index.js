@@ -1,4 +1,9 @@
 import React, { useMemo } from 'react';
+
+// TODO: import from @common plugin
+
+import { useForm } from 'react-hook-form';
+
 import {
   Alert,
   Avatar,
@@ -13,25 +18,24 @@ import {
   TextInput,
   useDebouncedCallback,
 } from '@bubbles-ui/components';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-// TODO: import from @common plugin
-
 import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { EMAIL_REGEX } from '@users/components/LoginForm';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import prefixPN from '@users/helpers/prefixPN';
 import { TagsMultiSelect, useStore } from '@common';
-import { useForm } from 'react-hook-form';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { forEach, map, uniq } from 'lodash';
+
+import { SelectCenter } from '../../../../components/SelectCenter';
+import { SelectProfile } from '../../../../components/SelectProfile';
+import getUserFullName from '../../../../helpers/getUserFullName';
 import {
   addUsersBulkRequest,
   getSystemDataFieldsConfigRequest,
   searchUserAgentsRequest,
 } from '../../../../request';
-import { SelectCenter } from '../../../../components/SelectCenter';
-import { SelectProfile } from '../../../../components/SelectProfile';
-import getUserFullName from '../../../../helpers/getUserFullName';
+
+import { EMAIL_REGEX } from '@users/components/LoginForm';
+import prefixPN from '@users/helpers/prefixPN';
 
 function CreateUsers() {
   const [t] = useTranslateLoader(prefixPN('create_users'));
@@ -216,7 +220,7 @@ function CreateUsers() {
           <>
             <Avatar
               image={row?.avatar}
-              fullName={getUserFullName(row)}
+              fullName={getUserFullName(row, { singleSurname: true })}
               mx="auto"
               mb={10}
               radius="xl"

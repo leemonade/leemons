@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+
 import { Avatar, Stack, Box, createStyles, ModalZoom } from '@bubbles-ui/components';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import SocketIoService from '@mqtt-socket-io/service';
-import { updateUserImageRequest } from '@users/request';
-
 import { UploadingFileModal } from '@leebrary/components';
+import SocketIoService from '@mqtt-socket-io/service';
 import PropTypes from 'prop-types';
+
 import getUserFullName from '../../../../helpers/getUserFullName';
+
+import { updateUserImageRequest } from '@users/request';
 
 const Styles = createStyles((theme) => ({
   imageOver: {
@@ -85,7 +87,12 @@ function UserImage({ t, user, session, form, isEditMode }) {
             </Box>
           ) : null}
           <ModalZoom>
-            <Avatar image={avatar} fullName={getUserFullName(user)} mx="auto" size="lg" />
+            <Avatar
+              image={avatar}
+              fullName={getUserFullName(user, { singleSurname: true })}
+              mx="auto"
+              size="lg"
+            />
           </ModalZoom>
         </Box>
       </Stack>
