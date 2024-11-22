@@ -241,15 +241,13 @@ const MenuItems = ({ instance, hideDeleteButton, hiddenCloseButtons }) => {
     !hideDeleteButton && {
       icon: <DeleteBinIcon />,
       children: t('delete'),
-      onClick: () => {
-        onDeleteActivity({
+      onClick: onDeleteActivity({
           instance,
           t,
           openConfirmationModal,
           mutateAsync,
           onSuccess: () => history.push('/private/assignables/ongoing'),
-        })();
-      },
+        }),
       className: classes.menuItem,
     },
   ];
