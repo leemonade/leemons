@@ -67,6 +67,7 @@ module.exports = {
     calendarLegend: 'Leyenda',
     calendarLegendNonSchoolDay: 'Día no lectivo',
     taskLabel: 'Tarea',
+    activityLabel: 'Actividad',
   },
   event_modal: {
     name: 'Nombre',
