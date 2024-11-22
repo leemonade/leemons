@@ -111,7 +111,7 @@ function ClassDetailWidget({ classe }) {
         avatar: (
           <Avatar
             image={teacher.teacher.user.avatar}
-            fullName={getUserFullName(teacher.teacher.user)}
+            fullName={getUserFullName(teacher.teacher.user, { singleSurname: true })}
           />
         ),
         birthdate: <LocaleDate date={teacher.teacher.user.birthdate} />,
@@ -139,7 +139,12 @@ function ClassDetailWidget({ classe }) {
       students.push({
         userAgentId: student.id,
         ...student.user,
-        avatar: <Avatar image={student.user.avatar} fullName={getUserFullName(student.user)} />,
+        avatar: (
+          <Avatar
+            image={student.user.avatar}
+            fullName={getUserFullName(student.user, { singleSurname: true })}
+          />
+        ),
         birthdate: <LocaleDate date={student.user.birthdate} />,
         actions: (
           <Stack>

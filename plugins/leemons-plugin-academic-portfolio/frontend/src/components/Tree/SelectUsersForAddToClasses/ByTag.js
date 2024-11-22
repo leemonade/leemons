@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+
 import {
   Alert,
   Avatar,
@@ -11,12 +11,14 @@ import {
   Table,
   Title,
 } from '@bubbles-ui/components';
-import { addErrorAlert } from '@layout/alert';
-import { LocaleDate, TagsAutocomplete, useStore } from '@common';
 import { AlertWarningTriangleIcon, BlockIcon } from '@bubbles-ui/icons/solid';
+import { LocaleDate, TagsAutocomplete, useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { cloneDeep, difference, forEach, isNil, map } from 'lodash';
+import { addErrorAlert } from '@layout/alert';
 import getUserFullName from '@users/helpers/getUserFullName';
+import { cloneDeep, difference, forEach, isNil, map } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { getStudentsByTagsRequest } from '../../../request';
 
 const ByTag = ({ classes, center, messages, onChange, disableSave }) => {
@@ -135,7 +137,12 @@ const ByTag = ({ classes, center, messages, onChange, disableSave }) => {
           return {
             ...student,
             classStatus,
-            avatar: <Avatar image={student.user.avatar} fullName={getUserFullName(student.user)} />,
+            avatar: (
+              <Avatar
+                image={student.user.avatar}
+                fullName={getUserFullName(student.user, { singleSurname: true })}
+              />
+            ),
             classStatusDom: (
               <Stack alignItems="center">
                 {classStatus === 'used' ? (
