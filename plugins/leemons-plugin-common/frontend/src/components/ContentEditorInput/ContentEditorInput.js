@@ -1,92 +1,101 @@
-import React, { useEffect } from 'react';
-import { keys, isEmpty } from 'lodash';
+import { useEffect, forwardRef } from 'react';
+
 import { Box } from '@bubbles-ui/components';
-import { useTextEditor } from '@common/context';
-import { useEditorLabels } from '@common/hooks/useEditorLabels';
 import { MathTool } from '@content-creator/components';
+import { keys, isEmpty } from 'lodash';
+
 import {
   CONTENT_EDITOR_INPUT_DEFAULT_PROPS,
   CONTENT_EDITOR_INPUT_PROP_TYPES,
 } from './ContentEditorInput.constants';
+import { ContentEditorInputStyles } from './ContentEditorInput.styles';
 import { Schema } from './components/Schema/Schema';
 import { TextEditorContent } from './components/TextEditorContent/TextEditorContent';
 import { useContentEditorStore } from './context/ContentEditorInput.context';
-import { ContentEditorInputStyles } from './ContentEditorInput.styles';
 
-const ContentEditorInput = ({
-  toolbars,
-  children,
-  schemaLabel,
-  openSchema,
-  useSchema,
-  editorStyles,
-  Footer,
-  toolbarPortal,
-  compact,
-  ...props
-}) => {
-  const editorLabels = useEditorLabels();
-  const setIsSchemaOpened = useContentEditorStore((state) => state.setIsSchemaOpened);
+import { useTextEditor } from '@common/context';
+import { useEditorLabels } from '@common/hooks/useEditorLabels';
 
-  const { setTextEditorTool, textEditorTools } = useTextEditor();
+const ContentEditorInput = forwardRef(
+  (
+    {
+      toolbars,
+      children,
+      schemaLabel,
+      openSchema,
+      useSchema,
+      editorStyles,
+      Footer,
+      toolbarPortal,
+      compact,
+      ...props
+    },
+    ref
+  ) => {
+    const editorLabels = useEditorLabels();
+    const setIsSchemaOpened = useContentEditorStore((state) => state.setIsSchemaOpened);
 
-  useEffect(() => {
-    setTextEditorTool([{ id: 'math', tool: <MathTool /> }]);
-  }, []);
+    const { setTextEditorTool, textEditorTools } = useTextEditor();
 
-  const leemonsTools = () => {
-    const tools = [];
-    if (textEditorTools) {
-      keys(textEditorTools).forEach((key) => {
-        if (textEditorTools[key].tool && toolbars[key]) {
-          tools.push({
-            id: key,
-            tool: textEditorTools[key].tool,
-            props: textEditorTools[key].props,
-          });
-        }
-      });
-    }
+    useEffect(() => {
+      setTextEditorTool([{ id: 'math', tool: <MathTool /> }]);
+    }, []);
 
-    return tools;
-  };
+    const leemonsTools = () => {
+      const tools = [];
+      if (textEditorTools) {
+        keys(textEditorTools).forEach((key) => {
+          if (textEditorTools[key].tool && toolbars[key]) {
+            tools.push({
+              id: key,
+              tool: textEditorTools[key].tool,
+              props: textEditorTools[key].props,
+            });
+          }
+        });
+      }
 
-  // ··································································
-  // STYLES
+      return tools;
+    };
 
-  const { classes } = ContentEditorInputStyles(
-    { hasFooter: !!Footer },
-    { name: 'ContentEditorInput' }
-  );
+    // ··································································
+    // STYLES
 
-  useEffect(() => {
-    setIsSchemaOpened(openSchema);
-  }, [openSchema]);
+    const { classes } = ContentEditorInputStyles(
+      { hasFooter: !!Footer },
+      { name: 'ContentEditorInput' }
+    );
 
-  if (isEmpty(editorLabels)) return null;
+    useEffect(() => {
+      setIsSchemaOpened(openSchema);
+    }, [openSchema]);
 
-  return (
-    <Box className={classes.root}>
-      {useSchema && <Schema schemaLabel={schemaLabel} compact={compact} />}
-      <Box className={classes.textEditorContainer}>
-        <TextEditorContent
-          {...props}
-          leemonsTools={leemonsTools()}
-          toolbars={toolbars}
-          useSchema={useSchema}
-          editorLabels={editorLabels}
-          toolbarPortal={toolbarPortal}
-          compact={compact}
-        >
-          {children}
-        </TextEditorContent>
-        {!!Footer && Footer}
+    if (isEmpty(editorLabels)) return null;
+
+    return (
+      <Box className={classes.root}>
+        {useSchema && <Schema schemaLabel={schemaLabel} compact={compact} />}
+        <Box className={classes.textEditorContainer} ref={ref}>
+          <TextEditorContent
+            {...props}
+            leemonsTools={leemonsTools()}
+            toolbars={toolbars}
+            useSchema={useSchema}
+            editorLabels={editorLabels}
+            toolbarPortal={toolbarPortal}
+            compact={compact}
+          >
+            {children}
+          </TextEditorContent>
+          {!!Footer && Footer}
+        </Box>
       </Box>
-    </Box>
-  );
-};
+    );
+  }
+);
 
 ContentEditorInput.defaultProps = CONTENT_EDITOR_INPUT_DEFAULT_PROPS;
 ContentEditorInput.propTypes = CONTENT_EDITOR_INPUT_PROP_TYPES;
+ContentEditorInput.displayName = 'ContentEditorInput';
 
 export default ContentEditorInput;

@@ -67,6 +67,7 @@ module.exports = {
     edit: 'Edit',
     feedback: 'Feedback',
     assign: 'Assign',
+    download: 'Download',
     delete: 'Delete',
     deleted: 'Deleted',
     questions: 'Questions:',
@@ -114,5 +115,10 @@ module.exports = {
     assign: 'Assign as task',
     assignDone: 'Content successfully assigned',
     assignNow: 'Assign now',
+  },
+  printContentButton: {
+    printPDF: 'Download PDF',
+    contentTypeNotSupported: 'Content of type {type} not printable',
+    contentTypeNotSupportedWithLink: 'Content of type {type}. Unprintable version',
   },
 };
