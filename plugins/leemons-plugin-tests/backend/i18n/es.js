@@ -1,3 +1,6 @@
+const CATEGORY = 'Categoría';
+const CATEGORIES = 'Categorías';
+
 module.exports = {
   questionsBanksList: {
     pageTitle: 'Listado de bancos de preguntas',
@@ -17,9 +20,6 @@ module.exports = {
     coverImage: 'Imagen de portada',
     coverImageAdd: 'Añadir imagen',
     coverImageRemove: 'Eliminar imagen',
-    categoriesLabel: 'Categorías',
-    addCategory: 'Añadir categoría',
-    categoryLabel: 'Categoría',
     programLabel: 'Programa',
     programRequired: 'Campo necesario',
     subjectLabel: 'Asignatura',
@@ -55,7 +55,6 @@ module.exports = {
     typePlaceholder: 'Escoger tipo',
     levelLabel: 'Nivel',
     levelPlaceholder: 'Escoger nivel',
-    categoryPlaceholder: 'Escoger categoría',
     withImagesLabel: 'Con imágenes',
     questionLabel: 'Enunciado',
     statementPlaceHolder: 'Añadir aquí el texto del enunciado',
@@ -136,6 +135,17 @@ module.exports = {
     },
     errors: {
       save: 'No se han podido guardar los cambios.',
+    },
+    questionCategories: {
+      categoriesLabel: CATEGORIES,
+      categoryLabel: CATEGORY,
+      addCategory: 'Añadir categoría',
+      newCategory: 'Nueva categoría',
+      none: 'Ninguna',
+      addCategoriesSeperatedByComma: 'Escribe las categorías separadas por comas y pulsa enter',
+      noCategories: 'Aun no hay categorías creadas',
+      selectPlaceholder: 'Escoger categoría',
+      manageCategories: 'Gestionar categorías',
     },
   },
   questionImageModal: {
@@ -235,7 +245,7 @@ module.exports = {
     levelLabel: 'Nivel',
     selectionCounter: 'La selección contiene {n} preguntas',
     all: 'Todos',
-    categoriesLabel: 'Categorías',
+    categoriesLabel: CATEGORIES,
     addLevel: 'Añadir nivel',
     selectByTag: 'Seleccionar por etiqueta',
     showQuestions: 'Continuar',
@@ -288,7 +298,7 @@ module.exports = {
     undefined: 'Indefinido',
     questionTypes: 'Tipos de preguntas',
     levels: 'Niveles',
-    categories: 'Categorías',
+    categories: CATEGORIES,
     questions: 'Preguntas',
     chartLabel: 'Composición de las preguntas',
     showInTests: 'Vista previa',
@@ -492,7 +502,7 @@ module.exports = {
     clueNoImpact: 'Sin impacto',
     newConfig: 'Nueva configuración',
     existingConfig: 'Configuración existente',
-    categoriesLabel: 'Categorías',
+    categoriesLabel: CATEGORIES,
     noRequiredQuestions: 'Las preguntas filtradas son menores que las solicitadas',
     defaultRules: {
       alert: 'IMPORTANTE:',
@@ -518,7 +528,7 @@ module.exports = {
     test: 'Test',
     notGradable: 'No calificable',
     gradable: 'Calificable',
-    category: 'Categoría',
+    category: CATEGORY,
     level: 'Nivel',
     undefined: 'No definido',
     question: 'Pregunta',

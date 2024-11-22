@@ -8,6 +8,7 @@ const {
   stringSchemaNullable,
   textSchemaNullable,
   textSchemaNoLimit,
+  numberSchema,
 } = require('./types');
 
 const formattedTextSchema = {
@@ -180,8 +181,9 @@ const saveQuestionBankSchema = {
         properties: {
           id: stringSchema,
           value: stringSchema,
+          order: numberSchema,
         },
-        required: ['value'],
+        required: ['value', 'order'],
       },
     },
     subjects: {

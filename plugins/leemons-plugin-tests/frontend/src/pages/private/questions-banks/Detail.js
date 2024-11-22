@@ -71,6 +71,7 @@ export default function Detail() {
       if (isNew) {
         history.replace(`/private/tests/questions-banks/${questionBank.id}`);
       }
+      history.push('/private/tests/questions-banks');
     } catch (error) {
       addErrorAlert(error);
     } finally {
