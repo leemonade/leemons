@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 
-// TODO: import from @common plugin
 
 import { useForm } from 'react-hook-form';
 
