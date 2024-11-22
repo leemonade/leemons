@@ -38,12 +38,16 @@ import {
 } from '@calendar/components/CalendarEventModal';
 import prefixPN from '@calendar/helpers/prefixPN';
 
-function dynamicImport(pluginName, component) {
+function dynamicImport(pluginName, component, fallback = null) {
   return loadable(async () => {
     try {
       return await import(`@app/plugins/${pluginName}/src/widgets/calendar/${component}.js`);
     } catch (error) {
-      return await import(`@app/plugins/${pluginName}/src/widgets/calendar/${component}.tsx`);
+      try {
+        return await import(`@app/plugins/${pluginName}/src/widgets/calendar/${component}.tsx`);
+      } catch (error) {
+        return fallback;
+      }
     }
   });
 }
@@ -560,7 +564,26 @@ export const useCalendarEventModal = () => {
         store.opened = false;
         return null;
       }
-      return React.cloneElement(element, data);
+
+      const fallback = React.cloneElement(element, data);
+
+      if (!data?.event?.data?.pluginName) {
+        return fallback;
+      }
+
+      const EventDrawer = dynamicImport(`${data.event.data.pluginName}`, 'EventDrawer', fallback);
+
+      return (
+        <EventDrawer
+          opened={store.opened}
+          onClose={() => {
+            store.opened = false;
+            render();
+          }}
+          event={data.event}
+          fallback={<LoadingOverlay visible />}
+        />
+      );
     },
     [store.opened]
   );

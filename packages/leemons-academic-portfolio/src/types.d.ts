@@ -1,4 +1,4 @@
-import { Asset } from '@leemons/library';
+import { Asset, AssetID } from '@leemons/library';
 import { LRN } from '@leemons/lrn';
 import { LeemonsSchema } from '@leemons/mongodb';
 import { UserAgentID } from '@leemons/users';

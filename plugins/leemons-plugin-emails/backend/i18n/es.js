@@ -2,6 +2,7 @@ module.exports = {
   preferences: {
     pageTitle: 'Preferencias de correo',
     basicConfig: 'Configuración básica',
+    assignments: 'Actividades',
     disableAllActivityEmails:
       'Desactivar el envío de todos los correos electrónicos sobre actividades',
     newAssignationEmail: 'Correo de nueva asignación',
