@@ -256,6 +256,7 @@ const BulkAssetPage = () => {
           initialData={createdAssets}
           assets={createdAssets}
           onAssetsUpdate={handleAssetsUpdate}
+          t={t}
         />
       )}
     </TotalLayoutContainer>
