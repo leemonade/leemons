@@ -1,7 +1,7 @@
 /* eslint-disable no-unreachable */
 /* eslint-disable no-await-in-loop */
 const chalk = require('chalk');
-const { keys, isEmpty, findIndex, uniqBy, isNil } = require('lodash');
+const { keys, isEmpty, uniqBy, isNil } = require('lodash');
 
 const _delay = require('./bulk/helpers/delay');
 const importQbanks = require('./bulk/tests/qbanks');
@@ -22,7 +22,7 @@ async function initTests({ file, config: { users, programs }, ctx, useCache, pha
         .filter((question) => question.category)
         .map((question) => ({ value: question.category })),
       'value'
-    );
+    ).map((category, index) => ({ ...category, order: index }));
 
     // ·····················································
     // QBANKS
@@ -37,7 +37,7 @@ async function initTests({ file, config: { users, programs }, ctx, useCache, pha
         .filter((question) => question.qbank === key)
         .map(({ qbank: qbankProp, category, ...question }) => ({
           ...question,
-          category: findIndex(categories, { value: category }),
+          category: categories.find((c) => c.value === category)?.order,
         }));
 
       let qbankData = null;

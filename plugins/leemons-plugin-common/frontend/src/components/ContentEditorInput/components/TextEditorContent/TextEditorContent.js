@@ -1,4 +1,6 @@
 import React from 'react';
+
+import { Box, IconButton } from '@bubbles-ui/components';
 import {
   TextEditor,
   ColorTool,
@@ -9,16 +11,16 @@ import {
   ScriptsTool,
   LinkTool,
   ButtonGroup,
-  CodeTool,
 } from '@bubbles-ui/editors';
 import { ExpandDiagonalIcon, ShrinkIcon } from '@bubbles-ui/icons/outline';
-import { Box, IconButton } from '@bubbles-ui/components';
+
+import { useContentEditorStore } from '../../context/ContentEditorInput.context';
+
 import {
   TEXTEDITOR_CONTENT_DEFAULT_PROPS,
   TEXTEDITOR_CONTENT_PROP_TYPES,
 } from './TextEditorContent.constants';
 import { TextEditorContentStyles } from './TextEditorContent.styles';
-import { useContentEditorStore } from '../../context/ContentEditorInput.context';
 
 const CONTENT_EDITOR_ACCEPTED_TAGS = [{ type: 'library', updateWithoutContent: true }];
 
@@ -38,6 +40,7 @@ const TextEditorContent = ({
   canExpand,
   compact,
   fullWidth: _fullWidth,
+  ref,
   ...props
 }) => {
   const setSchema = useContentEditorStore((state) => state.setSchema);
@@ -69,6 +72,7 @@ const TextEditorContent = ({
         acceptedTags={CONTENT_EDITOR_ACCEPTED_TAGS}
         useSchema={useSchema}
         toolbarPortal={toolbarPortal}
+        ref={ref}
       >
         {toolbars.heading && <HeadingsTool labels={editorLabels.headingsTool} />}
         {toolbars.color && <ColorTool label={editorLabels.colorTool} />}

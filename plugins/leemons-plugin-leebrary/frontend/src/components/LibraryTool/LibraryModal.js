@@ -80,7 +80,11 @@ const LibraryModal = ({
       onChange({
         width: '100%',
         align: 'left',
-        display: ['image', 'video'].includes(preparedAsset.fileType) ? 'player' : 'embed',
+        display:
+          ['image', 'video', 'audio'].includes(preparedAsset.fileType) ||
+          (preparedAsset.fileType === 'bookmark' && preparedAsset.mediaType === 'video')
+            ? 'player'
+            : 'embed',
         asset: preparedAsset,
         readOnly,
       });

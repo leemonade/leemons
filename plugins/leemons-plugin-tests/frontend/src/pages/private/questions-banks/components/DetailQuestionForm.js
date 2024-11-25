@@ -29,6 +29,7 @@ import {
   QUESTION_TYPES_WITH_MIN_RESPONSES_TO_ADD_CLUES,
 } from '../questionConstants';
 
+import CategoryPicker from './CategoryPicker';
 import { MapQuestion } from './question-types/Map';
 import { MonoResponse } from './question-types/MonoResponse';
 import { OpenResponse } from './question-types/OpenResponse';
@@ -54,7 +55,7 @@ export default function DetailQuestionForm({
   onSaveQuestion,
   defaultValues,
   categories,
-  onAddCategory,
+  onCategoriesChange,
   onCancel,
 }) {
   const [withQuestionImage, setWithQuestionImage] = useState(() => !!defaultValues?.questionImage);
@@ -115,11 +116,6 @@ export default function DetailQuestionForm({
       form.setValue(SOLUTION_KEY_BY_TYPE[type], data);
     }
   }
-
-  const categoryData = map(categories, (category, index) => ({
-    value: category.id ? category.id : index,
-    label: category.value,
-  }));
 
   const QuestionComponent = useMemo(() => {
     if (!type) return null;
@@ -271,41 +267,13 @@ export default function DetailQuestionForm({
             </Box>
             {type && (
               <>
-                <ContextContainer fullWidth direction="row">
-                  <Controller
-                    control={form.control}
-                    name="category"
-                    render={({ field }) => (
-                      <Box style={{ width: '230px' }}>
-                        <Select
-                          {...field}
-                          value={field.value}
-                          data={categoryData}
-                          placeholder={t('categoryPlaceholder')}
-                          searchable
-                          creatable
-                          getCreateLabel={(value) => `+ ${value}`}
-                          withinPortal={true}
-                          onCreate={(v) => {
-                            onAddCategory(v);
-                            field.onChange(categoryData.length);
-                          }}
-                          error={form.formState.errors.category}
-                          label={t('categoryLabel')}
-                          onChange={(e) => {
-                            const item = categoryData[e];
-                            if (item) {
-                              field.onChange(item.value);
-                            } else {
-                              field.onChange(e);
-                            }
-                          }}
-                        />
-                      </Box>
-                    )}
-                  />
-                </ContextContainer>
-
+                <CategoryPicker
+                  t={t}
+                  categoriesData={categories}
+                  control={form.control}
+                  form={form}
+                  onCategoriesChange={onCategoriesChange}
+                />
                 {/*
                 <Controller
                   control={form.control}
@@ -323,7 +291,6 @@ export default function DetailQuestionForm({
                   )}
                 />
                 */}
-
                 <Controller
                   control={form.control}
                   name="stem"
@@ -367,9 +334,7 @@ export default function DetailQuestionForm({
                     ) : null}
                   </>
                 ) : null}
-
                 {QuestionComponent}
-
                 {/* CLUES ---------------------------------------- */}
                 {hasHelp ? (
                   <ContextContainer
@@ -429,5 +394,5 @@ DetailQuestionForm.propTypes = {
   stepName: PropTypes.string,
   scrollRef: PropTypes.object,
   isPublished: PropTypes.bool,
-  onAddCategory: PropTypes.func,
+  onCategoriesChange: PropTypes.func,
 };

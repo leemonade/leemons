@@ -74,6 +74,7 @@ module.exports = {
     edit: 'Edit',
     cancel: 'Cancel',
     remove: 'Remove',
+    accept: 'Accept',
     save: 'Save',
     addNewElementToList: 'Add new list item',
     parentBlock: 'Parent block ({name})',

@@ -1,9 +1,11 @@
 /* eslint-disable react/display-name */
-import prefixPN from '@assignables/helpers/prefixPN';
+import React, { useMemo } from 'react';
+
 import { Select } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { mapKeys } from 'lodash';
-import React, { useMemo } from 'react';
+
+import prefixPN from '@assignables/helpers/prefixPN';
 
 function capitalize(str) {
   return str?.[0]?.toUpperCase() + str?.substring(1, str.length);
@@ -12,7 +14,7 @@ function capitalize(str) {
 export function useRoles() {
   const [, translations] = useTranslateLoader(prefixPN('roles'));
 
-  const roles = useMemo(() => {
+  return useMemo(() => {
     if (translations && translations.items) {
       const data = {};
       mapKeys(translations.items, (value, key) => {
@@ -31,17 +33,17 @@ export function useRoles() {
 
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
-      return Object.entries(data).map(([key, value]) => ({
-        label: capitalize(value.singular),
-        plural: capitalize(value.plural),
-        value: key,
-      }));
+      return Object.entries(data)
+        .map(([key, value]) => ({
+          label: capitalize(value.singular),
+          plural: capitalize(value.plural),
+          value: key,
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label));
     }
 
     return [];
   }, [translations]);
-
-  return roles;
 }
 
 const Type = React.forwardRef(({ labels, value, onChange }, ref) => {

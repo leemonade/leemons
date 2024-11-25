@@ -1,6 +1,14 @@
 /* eslint-disable sonarjs/cognitive-complexity */
 /* eslint-disable import/prefer-default-export */
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
+
+import ClassroomItemDisplay from '@academic-portfolio/components/ClassroomItemDisplay/ClassroomItemDisplay';
+import { useIsTeacher } from '@academic-portfolio/hooks';
+import { NYACardBodyStyles } from '@assignables/components/NYACard/NYCardBody/NYACardBody.styles';
+import getActivityType from '@assignables/helpers/getActivityType';
+import getColorByDateRange from '@assignables/helpers/getColorByDateRange';
+import getDeadlineData from '@assignables/helpers/getDeadlineData';
+import assignablePrefixPN from '@assignables/helpers/prefixPN';
 import {
   AvatarsGroup,
   Badge,
@@ -10,25 +18,19 @@ import {
   Text,
   TextClamp,
 } from '@bubbles-ui/components';
-import _, { filter, find, map } from 'lodash';
-import ClassroomItemDisplay from '@academic-portfolio/components/ClassroomItemDisplay/ClassroomItemDisplay';
-import assignablePrefixPN from '@assignables/helpers/prefixPN';
-import prefixPN from '@calendar/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { unflatten } from '@common';
-import getDeadlineData from '@assignables/helpers/getDeadlineData';
-import getColorByDateRange from '@assignables/helpers/getColorByDateRange';
-import { NYACardBodyStyles } from '@assignables/components/NYACard/NYCardBody/NYACardBody.styles';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useSession } from '@users/session';
-import getUserFullName from '@users/helpers/getUserFullName';
-import getActivityType from '@assignables/helpers/getActivityType';
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import { KanbanTaskCardStyles } from './KanbanTaskCard.styles';
+import _, { filter, find, map } from 'lodash';
+
 import {
   KANBAN_TASK_CARD_PROP_TYPES,
   KANBAN_TASK_CARD_DEFAULT_PROPS,
   emptyPixel,
 } from './KanbanTaskCard.constants';
+import { KanbanTaskCardStyles } from './KanbanTaskCard.styles';
+import prefixPN from '@calendar/helpers/prefixPN';
+import getUserFullName from '@users/helpers/getUserFullName';
 
 const getClassIds = (value, config) => {
   const classIds = [];
@@ -185,7 +187,7 @@ const KanbanTaskCard = ({ value, config, onClick, labels }) => {
               <AvatarsGroup
                 size="sm"
                 data={map([...map(value?.userAgents, 'user'), session], (e) => ({
-                  fullName: getUserFullName(e),
+                  fullName: getUserFullName(e, { singleSurname: true }),
                 }))}
                 moreThanUsersAsMulti={2}
                 numberFromClassesAndData

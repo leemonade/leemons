@@ -13,7 +13,6 @@ import useClassData from '@assignables/hooks/useClassDataQuery';
 import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import {
-  Box,
   Stack,
   LoadingOverlay,
   Button,
@@ -31,6 +30,7 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 
+import { PrintContentButton } from '@content-creator/components';
 import prefixPN from '@content-creator/helpers/prefixPN';
 import useDocument from '@content-creator/request/hooks/queries/useDocument';
 
@@ -138,7 +138,8 @@ export default function DocumentView() {
               <TotalLayoutFooterContainer
                 scrollRef={scrollRef}
                 rightZone={
-                  <Box>
+                  <Stack spacing={4}>
+                    <PrintContentButton content={assignable?.content} />
                     {nextActivityUrl ? (
                       <Button
                         rightIcon={<ChevRightIcon />}
@@ -161,7 +162,7 @@ export default function DocumentView() {
                         {t('markRead')}
                       </Button>
                     )}
-                  </Box>
+                  </Stack>
                 }
                 fixed
               />

@@ -10,6 +10,7 @@ const {
   stringSchemaNullable,
   textSchemaNullable,
   textSchemaNoLimit,
+  numberSchema,
   integerSchemaGreaterThanZeroNullable,
 } = require('./types');
 
@@ -193,8 +194,9 @@ const saveQuestionBankSchema = {
         properties: {
           id: stringSchema,
           value: stringSchema,
+          order: numberSchema,
         },
-        required: ['value'],
+        required: ['value', 'order'],
       },
     },
     subjects: {
