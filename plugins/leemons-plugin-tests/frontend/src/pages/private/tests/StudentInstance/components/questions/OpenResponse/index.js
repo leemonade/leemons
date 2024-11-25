@@ -1,7 +1,7 @@
+import { useIsStudent } from '@academic-portfolio/hooks';
 import { Box, createStyles } from '@bubbles-ui/components';
 import PropTypes from 'prop-types';
 
-import QuestionImage from '../../QuestionImage';
 import QuestionNoteClues from '../../QuestionNoteClues';
 import QuestionTitle from '../../QuestionTitle';
 import UnansweredQuestionWarning from '../../UnansweredQuestionWarning';
@@ -22,22 +22,24 @@ export default function Index(props) {
   const { styles, store, question } = props;
   const { classes } = useStyles();
 
+  const isStudent = useIsStudent();
   let showNotAnsweredWarning = false;
   if (store.viewMode) {
     showNotAnsweredWarning = store.questionResponses[question.id].status === null;
   }
 
   return (
-    <>
-      {showNotAnsweredWarning ? <UnansweredQuestionWarning {...props} /> : null}
+    <Box className={!store.viewMode ? styles.questionCard : classes.container}>
+      <QuestionTitle {...props} tableViewMode={store.viewMode} />
+      {showNotAnsweredWarning && <UnansweredQuestionWarning {...props} isStudent={isStudent} />}
 
-      <Box className={!store.viewMode ? styles.questionCard : classes.container}>
-        <QuestionTitle {...props} tableViewMode={store.viewMode} />
-        {question?.questionImage?.cover ? <QuestionImage {...props} /> : null}
-        {!store.viewMode ? <QuestionNoteClues {...props} /> : null}
-        {!store.viewMode ? <Responses {...props} /> : <ViewModeResponses {...props} />}
-      </Box>
-    </>
+      {!store.viewMode ? (
+        <Responses {...props} />
+      ) : (
+        <ViewModeResponses {...props} isStudent={isStudent} />
+      )}
+      {!store.viewMode && <QuestionNoteClues {...props} customStyles={{ marginTop: 16 }} />}
+    </Box>
   );
 }
 

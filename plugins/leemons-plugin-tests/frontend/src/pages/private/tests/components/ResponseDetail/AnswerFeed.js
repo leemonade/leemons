@@ -1,37 +1,66 @@
-import { Stack, createStyles, Text, Box } from '@bubbles-ui/components';
+import { createStyles, Box } from '@bubbles-ui/components';
+import { camelCase } from 'lodash';
 import PropTypes from 'prop-types';
 
 import ResponseStatusIcon from './ResponseStatusIcon';
 
-const useAnswerFeedStyles = createStyles((theme, { isCorrect }) => {
+import { QUESTION_RESPONSE_STATUS } from '@tests/constants';
+
+const useAnswerFeedStyles = createStyles((theme, { status = QUESTION_RESPONSE_STATUS.KO }) => {
+  const questionStatusColors = {
+    [QUESTION_RESPONSE_STATUS.OK]: theme.other.core.color.success['100'],
+    [QUESTION_RESPONSE_STATUS.KO]: theme.other.core.color.danger['100'],
+    [QUESTION_RESPONSE_STATUS.PARTIAL]: theme.other.core.color.attention['100'],
+    [QUESTION_RESPONSE_STATUS.NOT_GRADED]: theme.other.core.color.attention['100'],
+  };
+
   return {
-    container: {
-      backgroundColor: isCorrect
-        ? theme.other.core.color.success['100']
-        : theme.other.core.color.danger['100'],
+    wrapper: {
+      backgroundColor: questionStatusColors[status],
+      display: 'flex',
+      flex: 1,
+      alignItems: 'center',
+      minHeight: 48,
+      paddingInline: 16,
+    },
+    variant: {
+      alignItems: 'center',
+      flex: '1 1 100%',
+      display: 'flex',
       gap: 8,
-      padding: 8,
+    },
+    content: {
+      ...theme.other.global.content.typo.body.sm,
+      color: theme.other.global.content.color.text.default,
+      lineHeight: 1,
+      display: 'block',
+      paddingTop: 2,
+    },
+    contentIcon: {
+      display: 'flex',
+      alignItems: 'center',
     },
   };
 });
-function AnswerFeed({ isCorrect, t }) {
-  const { classes } = useAnswerFeedStyles({ isCorrect });
 
-  const label = isCorrect ? 'correct' : 'incorrect';
+function AnswerFeed({ questionStatus = QUESTION_RESPONSE_STATUS.KO, t }) {
+  const { classes } = useAnswerFeedStyles({ status: questionStatus });
 
   return (
-    <Stack className={classes.container} fullWidth alignItems="center">
-      <ResponseStatusIcon isCorrect={isCorrect} />
-      <Box>
-        <Text>{t(label)}</Text>
+    <Box className={classes.wrapper} fullWidth alignItems="center">
+      <Box className={classes.variant}>
+        <Box className={classes.contentIcon}>
+          <ResponseStatusIcon status={questionStatus} />
+        </Box>
+        <Box className={classes.content}>{t(`questionStatus.${camelCase(questionStatus)}`)}</Box>
       </Box>
-    </Stack>
+    </Box>
   );
 }
 
 AnswerFeed.propTypes = {
   t: PropTypes.func,
-  isCorrect: PropTypes.bool,
+  questionStatus: PropTypes.string,
 };
 
 export default AnswerFeed;

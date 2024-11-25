@@ -1,15 +1,29 @@
 import PropTypes from 'prop-types';
 
-function ResponseStatusIcon({ isCorrect }) {
-  const src = isCorrect
-    ? '/public/tests/responseDetail/correct.svg'
-    : '/public/tests/responseDetail/incorrect.svg';
+import { QUESTION_RESPONSE_STATUS } from '@tests/constants';
 
-  return <img src={src} alt={`${isCorrect ? 'correct' : 'incorrect'}-response-icon`} />;
+const questionStatusIcons = {
+  [QUESTION_RESPONSE_STATUS.OK]: '/public/tests/responseDetail/correct.svg',
+  [QUESTION_RESPONSE_STATUS.KO]: '/public/tests/responseDetail/incorrect.svg',
+  [QUESTION_RESPONSE_STATUS.PARTIAL]: '/public/tests/responseDetail/partial.svg',
+  [QUESTION_RESPONSE_STATUS.NOT_GRADED]: '/public/tests/responseDetail/not-graded.svg',
+};
+
+const questionStatusAltTextPrefix = {
+  [QUESTION_RESPONSE_STATUS.OK]: 'correct',
+  [QUESTION_RESPONSE_STATUS.KO]: 'incorrect',
+  [QUESTION_RESPONSE_STATUS.PARTIAL]: 'partial',
+  [QUESTION_RESPONSE_STATUS.NOT_GRADED]: 'not graded yet',
+};
+
+function ResponseStatusIcon({ status }) {
+  const src = questionStatusIcons[status];
+
+  return <img src={src} alt={`${questionStatusAltTextPrefix[status]} response Icon`} />;
 }
 
 ResponseStatusIcon.propTypes = {
-  isCorrect: PropTypes.bool,
+  status: PropTypes.string,
 };
 
 export default ResponseStatusIcon;

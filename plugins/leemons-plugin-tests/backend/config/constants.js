@@ -245,6 +245,14 @@ const QUESTION_TYPES = {
   OPEN_RESPONSE: 'open-response',
 };
 
+const QUESTION_RESPONSE_STATUS = {
+  OK: 'ok',
+  KO: 'ko',
+  UNDEFINED: null,
+  PARTIAL: 'partial',
+  NOT_GRADED: 'not-graded',
+};
+
 module.exports = {
   pluginName: permissionsPrefix,
   permissions: {
@@ -256,4 +264,5 @@ module.exports = {
   assignableRoles,
   libraryQuestionBankCategory,
   QUESTION_TYPES,
+  QUESTION_RESPONSE_STATUS,
 };

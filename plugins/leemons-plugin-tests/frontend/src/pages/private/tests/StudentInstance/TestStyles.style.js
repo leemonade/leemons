@@ -196,6 +196,7 @@ export const TestStyles = createStyles((theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: 24,
   },
   questionTitleIcon: {
     display: 'inline-block',

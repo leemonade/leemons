@@ -443,6 +443,14 @@ module.exports = {
     modulesDashboard: 'Dashboard del módulo',
     viewResults: 'Consultar resultados',
     nextActivity: 'Siguiente actividad',
+    questionLabels: {
+      answerPlaceholder: 'Escribe aqui tu respuesta',
+      openResponse: {
+        minLengthCharacters: 'Escribe aqui tu respuesta de mínimo {number} caracteres',
+        maxLengthCharacters: 'Escribe aqui tu respuesta de máximo {number} caracteres',
+        minAndMaxLengthCharacters: 'Escribe aqui tu respuesta entre {min} y {max} caracteres',
+      },
+    },
   },
   testAssign: {
     pageTitle: 'Asignar Test:',
@@ -554,7 +562,16 @@ module.exports = {
       solution: 'Solución',
       correct: 'Correcto',
       incorrect: 'Incorrecto',
-      feedback: EXPLANATION,
+      questionStatus: {
+        ok: 'Correcto',
+        ko: 'Incorrecto',
+        partial: 'Parciamente correcta',
+        notGraded: 'Esta pregunta aún no ha sido corregida',
+      },
+      explanation: EXPLANATION,
+      feedback: 'Feedback',
+      gradeAndFeedback: 'Corrección y feedback',
+      feedbackPlaceholder: 'Escribe aquí el texto de feedback',
     },
   },
 };

@@ -23,7 +23,7 @@ function ViewModeResponses(props) {
 
   return (
     <ResponseDetail
-      isCorrect={userAnswerIsCorrect}
+      questionStatus={store?.questionResponses[question.id]?.status}
       solutionLabel={solutionLabel}
       userSkipped={userSkippedQuestion}
       responses={responses}

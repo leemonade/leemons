@@ -441,6 +441,14 @@ module.exports = {
     modulesDashboard: 'Module dashboard',
     viewResults: 'Check results',
     nextActivity: 'Next activity',
+    questionLabels: {
+      answerPlaceholder: 'Write your answer here',
+      openResponse: {
+        minLengthCharacters: 'Write your answer here with at least {number} characters',
+        maxLengthCharacters: 'Write your answer here with at most {number} characters',
+        minAndMaxLengthCharacters: 'Write your answer here between {min} and {max} characters',
+      },
+    },
   },
   testAssign: {
     pageTitle: 'Assign Test:',
@@ -551,7 +559,16 @@ module.exports = {
       solution: 'Solution',
       correct: 'Correct',
       incorrect: 'Incorrect',
+      questionStatus: {
+        ok: 'Correct',
+        ko: 'Incorrect',
+        partial: 'Partially correct',
+        notGraded: 'This question has not been graded yet',
+      },
+      explanation: 'Explanation',
       feedback: 'Feedback',
+      gradeAndFeedback: 'Grade and feedback',
+      feedbackPlaceholder: 'Write your feedback here',
     },
   },
 };

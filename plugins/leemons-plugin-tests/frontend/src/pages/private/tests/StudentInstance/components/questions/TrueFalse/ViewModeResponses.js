@@ -15,7 +15,6 @@ function ViewModeResponses(props) {
     label: question.trueFalseProperties?.isTrue ? t('true') : t('false'),
   };
 
-  const userAnswerIsCorrect = store?.questionResponses[question.id]?.status === 'ok';
   const userSkippedQuestion = !store?.questionResponses[question.id]?.status;
 
   const responses = [
@@ -35,7 +34,7 @@ function ViewModeResponses(props) {
 
   return (
     <ResponseDetail
-      isCorrect={userAnswerIsCorrect}
+      questionStatus={store?.questionResponses[question.id]?.status}
       solutionLabel={correctAnswer.label}
       userSkipped={userSkippedQuestion}
       responses={responses}

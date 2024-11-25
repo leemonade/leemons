@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 import AnswerFeed from './AnswerFeed';
 import ResponseStatusIcon from './ResponseStatusIcon';
 
+import { QUESTION_RESPONSE_STATUS } from '@tests/constants';
 import prefixPN from '@tests/helpers/prefixPN';
 import { QUESTION_TYPES } from '@tests/pages/private/questions-banks/questionConstants';
 
@@ -28,13 +29,41 @@ const getResultCell = ({ value }) => {
   );
 };
 
+function OpenResponseDetail({ response, teacherFeedback, t }) {
+  return (
+    <Stack direction="column" spacing={5}>
+      <Stack direction="column" spacing={2}>
+        <Text role="productive" color="primary" strong>
+          {t('answer')}
+        </Text>
+        <Text>{response}</Text>
+      </Stack>
+      {teacherFeedback && (
+        <Stack direction="column" spacing={2}>
+          <Text role="productive" color="primary" strong>
+            {t('feedback')}
+          </Text>
+          <HtmlText>{teacherFeedback}</HtmlText>
+        </Stack>
+      )}
+    </Stack>
+  );
+}
+
+OpenResponseDetail.propTypes = {
+  response: PropTypes.string,
+  teacherFeedback: PropTypes.string,
+  t: PropTypes.func,
+};
+
 function ResponseDetail({
-  isCorrect,
+  questionStatus,
   userSkipped,
   solutionLabel,
   responses,
   globalFeedback,
   isChoiceBased,
+  isOpenResponse,
 }) {
   const [t] = useTranslateLoader(prefixPN('testResult.responseDetail'));
 
@@ -62,9 +91,9 @@ function ResponseDetail({
       if (userSkipped) return '-';
       if (!isUserAnswer) return '';
       return isCorrect ? (
-        <ResponseStatusIcon isCorrect />
+        <ResponseStatusIcon status={QUESTION_RESPONSE_STATUS.OK} />
       ) : (
-        <ResponseStatusIcon isCorrect={false} />
+        <ResponseStatusIcon status={QUESTION_RESPONSE_STATUS.KO} />
       );
     },
     [userSkipped]
@@ -92,15 +121,23 @@ function ResponseDetail({
 
   return (
     <ContextContainer spacing={4} sx={{ marginBottom: 32 }}>
-      <AnswerFeed isCorrect={isCorrect} t={t} />
+      {!userSkipped && <AnswerFeed questionStatus={questionStatus} t={t} />}
       <Box sx={{ paddingInline: 16 }}>
-        <Table fullWidth data={tableData} columns={columns} />
+        {isOpenResponse ? (
+          <OpenResponseDetail
+            response={responses[0].choice}
+            teacherFeedback={responses[0].teacherFeedback}
+            t={t}
+          />
+        ) : (
+          <Table fullWidth data={tableData} columns={columns} />
+        )}
       </Box>
 
       {globalFeedback && (
         <Stack direction="column" spacing={2}>
           <Text color="primary" strong>
-            {t('feedback')}
+            {t('explanation')}
           </Text>
           <HtmlText>{globalFeedback}</HtmlText>
         </Stack>
@@ -110,25 +147,31 @@ function ResponseDetail({
 }
 
 ResponseDetail.propTypes = {
-  isCorrect: PropTypes.bool,
+  questionStatus: PropTypes.string,
   userSkipped: PropTypes.bool,
   responses: PropTypes.arrayOf(
     PropTypes.shape({
-      response: PropTypes.string,
+      choice: PropTypes.string,
       isUserAnswer: PropTypes.bool,
       isCorrect: PropTypes.bool,
+      teacherFeedback: PropTypes.string,
     })
   ),
   globalFeedback: PropTypes.string,
   solutionLabel: PropTypes.string,
   isChoiceBased: PropTypes.bool,
+  isOpenResponse: PropTypes.bool,
 };
 
 function Index(props) {
   const { questionType } = props;
 
   return (
-    <ResponseDetail {...props} isChoiceBased={CHOICE_BASED_QUESTION_TYPES.includes(questionType)} />
+    <ResponseDetail
+      {...props}
+      isChoiceBased={CHOICE_BASED_QUESTION_TYPES.includes(questionType)}
+      isOpenResponse={questionType === QUESTION_TYPES.OPEN_RESPONSE}
+    />
   );
 }
 

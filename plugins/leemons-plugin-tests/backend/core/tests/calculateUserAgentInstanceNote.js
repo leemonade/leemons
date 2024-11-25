@@ -4,7 +4,7 @@ const duration = require('dayjs/plugin/duration');
 const _ = require('lodash');
 const { forEach } = require('lodash');
 
-const { QUESTION_TYPES } = require('../../config/constants');
+const { QUESTION_TYPES, QUESTION_RESPONSE_STATUS } = require('../../config/constants');
 const { getByIds } = require('../questions/getByIds');
 
 const { getUserQuestionResponses } = require('./getUserQuestionResponses');
@@ -39,7 +39,7 @@ async function calculateUserAgentInstanceNote({ instanceId, userAgent, ctx }) {
   const perUndefined = -(perQuestion * (config.omit / 100));
 
   let note = evaluationSystem.minScale.number;
-  const questionsResponse = {};
+  const questionsCorrected = {};
 
   function getClueLessPoints(question) {
     const usedClues = questionResponses[question.id].clues;
@@ -59,21 +59,21 @@ async function calculateUserAgentInstanceNote({ instanceId, userAgent, ctx }) {
       const response = questionResponses[question.id]?.properties?.response;
       if (!response?.length) {
         note += perUndefined;
-        questionsResponse[question.id] = {
+        questionsCorrected[question.id] = {
           points: perUndefined,
-          status: null,
+          status: QUESTION_RESPONSE_STATUS.UNDEFINED,
         };
       } else if (shortResponseIsCorrect(response, question, config)) {
         note += perDone - getClueLessPoints(question);
-        questionsResponse[question.id] = {
+        questionsCorrected[question.id] = {
           points: perDone - getClueLessPoints(question),
-          status: 'ok',
+          status: QUESTION_RESPONSE_STATUS.OK,
         };
       } else {
         note += perError;
-        questionsResponse[question.id] = {
+        questionsCorrected[question.id] = {
           points: perError,
-          status: 'ko',
+          status: QUESTION_RESPONSE_STATUS.KO,
         };
       }
     } else if (question.type === QUESTION_TYPES.MONO_RESPONSE) {
@@ -84,21 +84,21 @@ async function calculateUserAgentInstanceNote({ instanceId, userAgent, ctx }) {
       const response = questionResponses[question.id]?.properties?.response;
       if (!_.isNumber(response)) {
         note += perUndefined;
-        questionsResponse[question.id] = {
+        questionsCorrected[question.id] = {
           points: perUndefined,
-          status: null,
+          status: QUESTION_RESPONSE_STATUS.UNDEFINED,
         };
       } else if (response === correctIndex) {
         note += perDone - getClueLessPoints(question);
-        questionsResponse[question.id] = {
+        questionsCorrected[question.id] = {
           points: perDone - getClueLessPoints(question),
-          status: 'ok',
+          status: QUESTION_RESPONSE_STATUS.OK,
         };
       } else {
         note += perError;
-        questionsResponse[question.id] = {
+        questionsCorrected[question.id] = {
           points: perError,
-          status: 'ko',
+          status: QUESTION_RESPONSE_STATUS.KO,
         };
       }
     } else if (question.type === QUESTION_TYPES.MAP) {
@@ -116,28 +116,28 @@ async function calculateUserAgentInstanceNote({ instanceId, userAgent, ctx }) {
         });
         if (allWithValues && allValuesGood) {
           note += perDone - getClueLessPoints(question);
-          questionsResponse[question.id] = {
+          questionsCorrected[question.id] = {
             points: perDone - getClueLessPoints(question),
-            status: 'ok',
+            status: QUESTION_RESPONSE_STATUS.OK,
           };
         } else if (allWithValues) {
           note += perError;
-          questionsResponse[question.id] = {
+          questionsCorrected[question.id] = {
             points: perError,
-            status: 'ko',
+            status: QUESTION_RESPONSE_STATUS.KO,
           };
         } else {
           note += perUndefined;
-          questionsResponse[question.id] = {
+          questionsCorrected[question.id] = {
             points: perUndefined,
-            status: null,
+            status: QUESTION_RESPONSE_STATUS.UNDEFINED,
           };
         }
       } else {
         note += perUndefined;
-        questionsResponse[question.id] = {
+        questionsCorrected[question.id] = {
           points: perUndefined,
-          status: null,
+          status: QUESTION_RESPONSE_STATUS.UNDEFINED,
         };
       }
     } else if (question.type === QUESTION_TYPES.TRUE_FALSE) {
@@ -146,56 +146,33 @@ async function calculateUserAgentInstanceNote({ instanceId, userAgent, ctx }) {
 
       if (typeof response !== 'boolean') {
         note += perUndefined;
-        questionsResponse[question.id] = {
+        questionsCorrected[question.id] = {
           points: perUndefined,
-          status: null,
+          status: QUESTION_RESPONSE_STATUS.UNDEFINED,
         };
       } else if (response === questionIsTrue) {
         note += perDone - getClueLessPoints(question);
-        questionsResponse[question.id] = {
+        questionsCorrected[question.id] = {
           points: perDone - getClueLessPoints(question),
-          status: 'ok',
+          status: QUESTION_RESPONSE_STATUS.OK,
         };
       } else {
         note += perError;
-        questionsResponse[question.id] = {
+        questionsCorrected[question.id] = {
           points: perError,
-          status: 'ko',
+          status: QUESTION_RESPONSE_STATUS.KO,
         };
       }
+    } else if (question.type === QUESTION_TYPES.OPEN_RESPONSE) {
+      note += perUndefined;
+      questionsCorrected[question.id] = {
+        points: perUndefined,
+        status: QUESTION_RESPONSE_STATUS.NOT_GRADED,
+      };
     }
   });
 
-  return { note, questions: questionsResponse };
+  return { note, questions: questionsCorrected };
 }
 
 module.exports = { calculateUserAgentInstanceNote };
-
-/*
-
-else if (question.type === QUESTION_TYPES.TRUE_FALSE) {
-      const questionIsTrue = question.trueFalseProperties.isTrue;
-      const response = questionResponses[question.id].properties.response;
-
-      if (typeof response !== 'boolean') {
-        note += perUndefined;
-        questionsResponse[question.id] = {
-          points: perUndefined,
-          status: null,
-        };
-      } else if (response === questionIsTrue) {
-        note += perDone - getClueLessPoints(question);
-        questionsResponse[question.id] = {
-          points: perDone - getClueLessPoints(question),
-          status: 'ok',
-        };
-      } else {
-        note += perError;
-        questionsResponse[question.id] = {
-          points: perError,
-          status: 'ko',
-        };
-      }
-    }
-
-*/

@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import { getQuestionClues } from '../helpers/getQuestionClues';
 
 export default function QuestionNoteClues(props) {
-  const { styles, question, store, t } = props;
+  const { question, store, t, customStyles } = props;
   const clues = React.useMemo(
     () =>
       filter(
@@ -21,22 +21,13 @@ export default function QuestionNoteClues(props) {
 
   if (clues.length) {
     return clues.map((clue, index) => (
-      <Box key={index} sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
+      <Box
+        key={index}
+        sx={(theme) => ({ ...(customStyles ?? { marginBottom: theme.spacing[4] }) })}
+      >
         <Alert severity="info" title={t('hint')} closeable={false}>
           {clue.text}
         </Alert>
-        {/*
-      <Box key={index} className={styles.questionClueCard}>
-        <Box sx={(theme) => ({ marginBottom: theme.spacing[1] })}>
-          <Text size="md" color="primary">
-            {t('hint')}
-          </Text>
-        </Box>
-        <Text size="md" color="tertiary" role="productive">
-          {clue.text}
-        </Text>
-      </Box>
-  */}
       </Box>
     ));
   }
@@ -53,4 +44,5 @@ QuestionNoteClues.propTypes = {
   prevStep: PropTypes.func,
   nextStep: PropTypes.func,
   isFirstStep: PropTypes.bool,
+  customStyles: PropTypes.object,
 };
