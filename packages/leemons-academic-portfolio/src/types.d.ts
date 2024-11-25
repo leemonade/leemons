@@ -45,6 +45,9 @@ export interface Program extends Omit<LeemonsSchema, 'id'> {
   id: ProgramID;
   name: string;
   abbreviation: string;
+  nomenclature?: {
+    block?: string;
+  };
 }
 
 export interface Subject extends Omit<LeemonsSchema, 'id'> {
