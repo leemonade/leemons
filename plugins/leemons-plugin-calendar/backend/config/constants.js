@@ -213,4 +213,5 @@ module.exports = {
       },
     ],
   },
+  PLUGIN_NAME: permissionsPrefix,
 };

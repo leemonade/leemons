@@ -7,7 +7,7 @@ const { LeemonsCacheMixin } = require('@leemons/cache');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsError } = require('@leemons/error');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const _ = require('lodash');
 

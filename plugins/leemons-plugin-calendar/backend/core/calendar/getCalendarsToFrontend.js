@@ -1,12 +1,15 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
 const { getUserAgentCalendarKey, getUserFullName } = require('@leemons/users');
-const { getPermissionConfig: getPermissionConfigCalendar } = require('./getPermissionConfig');
-const { getPermissionConfig: getPermissionConfigEvent } = require('../events/getPermissionConfig');
+const _ = require('lodash');
+
 const { getByCenterId } = require('../calendar-configs');
 const { getCalendars } = require('../calendar-configs/getCalendars');
-const { getEventsMultipleCalendars } = require('./getEvents');
+const { getPermissionConfig: getPermissionConfigEvent } = require('../events/getPermissionConfig');
 const { list: listKanbanColumns } = require('../kanban-columns');
+
+const { getEventsMultipleCalendars } = require('./getEvents');
+const { getPermissionConfig: getPermissionConfigCalendar } = require('./getPermissionConfig');
+const { calendarsToFrontendCacheKey } = require('./helpers/cacheKeys');
 
 function hasGrades(studentData) {
   const grades = studentData?.grades;
@@ -32,6 +35,7 @@ function hasGrades(studentData) {
  */
 async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
   const { userSession } = ctx.meta;
+
   const permissionConfigCalendar = getPermissionConfigCalendar();
   const permissionConfigEvent = getPermissionConfigEvent();
 
@@ -99,8 +103,34 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
   if (center) promises.push(getByCenterId({ center: center.id, ctx }));
   const [items, ownerItems, [userAgent], calendarConfig] = await Promise.all(promises);
 
-  // ES: Separamos los calendarios de los eventos
-  // EN: We separate the calendars from the events
+  // ············································
+  // CACHE
+  // Handle cache after checking permissions
+
+  const chacheQuery = {
+    showHiddenColumns,
+    userAgent: userAgent.id,
+  };
+
+  if (userSession.sessionConfig?.program) {
+    chacheQuery.program = userSession.sessionConfig?.program;
+  }
+
+  const cacheKey = calendarsToFrontendCacheKey({
+    ctx,
+    query: chacheQuery,
+  });
+
+  if (cacheKey) {
+    const cached = await ctx.cache.get(cacheKey);
+
+    if (cached) {
+      return cached;
+    }
+  }
+
+  // ············································
+  // We separate the calendars from the events
   const calendarIds = [];
   const eventIds = [];
   _.forEach(items, ({ item, type }) => {
@@ -123,7 +153,10 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
     }),
   ];
 
-  if (calendarConfig) promises.push(getCalendars({ id: calendarConfig.id, withEvents: true, ctx }));
+  if (calendarConfig) {
+    promises.push(getCalendars({ id: calendarConfig.id, withEvents: true, ctx }));
+  }
+
   const [
     _calendars,
     eventsCalendars,
@@ -221,9 +254,6 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
   }
 
   const classCalendarsIds = _.map(classCalendars, 'calendar');
-
-  // console.log('EVENTS --------', events);
-  // console.log('EVENTS CALENDARS --------', eventsFromCalendars);
 
   const calendarFunc = (calendar) => ({
     ...calendar,
@@ -528,6 +558,12 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
     }),
     _.isNil
   );
+
+  // Cache the result
+  if (cacheKey) {
+    await ctx.cache.set(cacheKey, result, 60 * 60 * 2); // 2 hours
+  }
+
   return result;
 }
 

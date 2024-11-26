@@ -37,6 +37,7 @@
     "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26",
+    "object-hash": "^3.0.0",
     "randomcolor": "^0.6.2"
   },
   "engines": {

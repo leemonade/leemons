@@ -4,23 +4,23 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator } = require('@leemons/validator');
-
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
+const { LeemonsValidator } = require('@leemons/validator');
+
 const { getCalendarsToFrontend, getScheduleToFrontend } = require('../../core/calendar');
-const eventTypesService = require('../../core/event-types');
-const kanbanColumnsService = require('../../core/kanban-columns');
-const listKanbanEventOrders = require('../../core/kanban-event-orders');
 const calendarConfigsService = require('../../core/calendar-configs');
+const eventTypesService = require('../../core/event-types');
 const {
   addFromUser,
   updateFromUser,
   updateEventSubTasksFromUser,
   removeFromUser,
 } = require('../../core/events');
+const kanbanColumnsService = require('../../core/kanban-columns');
+const listKanbanEventOrders = require('../../core/kanban-event-orders');
 
 /** @type {ServiceSchema} */
 module.exports = {
