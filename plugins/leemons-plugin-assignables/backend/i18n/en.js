@@ -444,6 +444,7 @@ module.exports = {
     },
     emptyState: {
       title: 'You have everything on track!',
+      greetingWelcome: 'Welcome, {{name}}!',
       noEvaluations: 'No pending evaluations',
       noActivities: 'No pending activities',
     },
