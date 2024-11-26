@@ -489,7 +489,14 @@ export default function Result() {
                 </ContextContainer>
 
                 {(store.instance?.showCorrectAnswers || isTeacher) && (
-                  <StudentResultsTable {...store} t={t} styles={styles} cx={cx} />
+                  <StudentResultsTable
+                    {...store}
+                    t={t}
+                    styles={styles}
+                    cx={cx}
+                    scrollRef={scrollRef}
+                    studentUserAgentId={store.userLoaded}
+                  />
                 )}
               </Box>
             </Box>

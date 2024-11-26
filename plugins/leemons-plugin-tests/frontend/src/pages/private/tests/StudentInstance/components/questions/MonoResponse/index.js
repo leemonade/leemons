@@ -1,5 +1,4 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
 
 import { Box, Stack } from '@bubbles-ui/components';
 import PropTypes from 'prop-types';

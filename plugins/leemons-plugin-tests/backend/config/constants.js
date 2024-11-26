@@ -248,7 +248,7 @@ const QUESTION_TYPES = {
 const QUESTION_RESPONSE_STATUS = {
   OK: 'ok',
   KO: 'ko',
-  UNDEFINED: null,
+  OMITTED: null,
   PARTIAL: 'partial',
   NOT_GRADED: 'not-graded',
 };

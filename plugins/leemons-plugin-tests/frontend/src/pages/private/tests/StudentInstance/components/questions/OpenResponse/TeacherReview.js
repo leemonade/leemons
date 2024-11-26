@@ -1,11 +1,26 @@
 import { useMemo, useState } from 'react';
 
-import { Stack, Text, RadioGroup, createStyles } from '@bubbles-ui/components';
+import {
+  Stack,
+  Text,
+  RadioGroup,
+  createStyles,
+  Box,
+  Button,
+  TotalLayoutStepContainer,
+  TotalLayoutFooterContainer,
+} from '@bubbles-ui/components';
 import { TextEditorInput, TEXT_EDITOR_TEXTAREA_TOOLBARS } from '@bubbles-ui/editors';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PropTypes from 'prop-types';
 
+import { getConfigByInstance } from '../../../helpers/getConfigByInstance';
+import QuestionTitleComponent from '../../QuestionTitleComponent';
+
 import prefixPN from '@tests/helpers/prefixPN';
+import { setOpenQuestionGradeRequest } from '@tests/request';
 
 const useTeacherReviewStyles = createStyles((theme) => ({
   container: {
@@ -14,62 +29,162 @@ const useTeacherReviewStyles = createStyles((theme) => ({
   },
 }));
 
-export default function TeacherReview({ userAnswer, studentSkipped }) {
+export default function TeacherReview({
+  response,
+  questionIndex,
+  scrollRef,
+  question,
+  assignmentConfig,
+  questionsInfo,
+  studentUserAgentId,
+  instance,
+}) {
   const [t] = useTranslateLoader(prefixPN('testResult.responseDetail'));
+  const [, , , getErrorMessage] = useRequestErrorMessage();
   const [teacherFeedback, setTeacherFeedback] = useState('');
   const [questionStatus, setQuestionStatus] = useState(null);
   const { classes } = useTeacherReviewStyles();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const userAnswer = response?.properties?.response || '-';
+  const studentSkipped = !response?.status;
+  const { questionFilters } = getConfigByInstance(instance);
+
+  const showFeedbackSection = useMemo(
+    () => questionFilters?.openResponse?.enableTeacherReviewFeedback, // review /Users/paolapatino/Leemons/migration/leemons/plugins/leemons-plugin-tests/frontend/src/components/RulesConfig/index.js
+    [questionFilters]
+  );
+
+  // TODO Paola, feedback está condicionado por la configuración de la asignación. Pendiente respuesta de productio para saber si se muestra cuando el estudiante omite
 
   const radioData = useMemo(
     () => [
       {
         value: 'ok',
-        label: 'Correcta',
+        label: t('questionStatus.ok'),
       },
       {
         value: 'partial',
-        label: 'Parcialmente correcta',
+        label: t('questionStatus.partial'),
       },
       {
         value: 'ko',
-        label: 'Incorrecta',
+        label: t('questionStatus.ko'),
       },
     ],
-    []
+    [t]
   );
-  // TODO PAOLA: use hook to modify the questionResponses.status. Similar to a student answering but simpler
-  // Footer must have a save correction button. this has to change from above in Question
+  // TODO PAOLA: use hook to modify the intance and question response status, needs to refetch after. Fetch possibly
+  // TODO Paola within StudentResultsTable
+  // TODO Next: check this modifies correctly the response and user assignation. Do the stuff of the hook
+
+  // HANDLERS ····································································································
+
+  const onSaveCorrection = async (data) => {
+    try {
+      setIsLoading(true);
+      await setOpenQuestionGradeRequest({
+        instanceId: instance?.id,
+        studentUserAgentId,
+        questionId: question?.id,
+        ...data,
+      });
+      addSuccessAlert(t('correctionSaved'));
+    } catch (error) {
+      console.error(error);
+      addErrorAlert(getErrorMessage(error));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSaveCorrection = async () => {
+    const cleanTeacherFeedback = teacherFeedback || null;
+
+    await onSaveCorrection({
+      teacherReviewStatus: questionStatus,
+      teacherFeedback: cleanTeacherFeedback,
+    });
+  };
 
   return (
-    <Stack className={classes.container} direction="column">
-      <Stack spacing={2} direction="column">
-        <Text role="productive" color="primary" strong>
-          {t('answer')}
-        </Text>
-        <Text>{userAnswer}</Text>
-      </Stack>
+    <TotalLayoutStepContainer
+      fullWidth
+      noMargin
+      hasFooter
+      clean
+      footerPadding={0}
+      Footer={
+        <TotalLayoutFooterContainer
+          showFooterBorder
+          scrollRef={scrollRef}
+          rightZone={
+            <Box sx={{ minWidth: '120px' }}>
+              <Box style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button
+                  position="left"
+                  rounded
+                  loading={isLoading}
+                  compact
+                  onClick={handleSaveCorrection}
+                  disabled={!questionStatus}
+                >
+                  {t('saveCorrection')}
+                </Button>
+              </Box>
+            </Box>
+          }
+        />
+      }
+    >
+      <Stack direction="column">
+        <QuestionTitleComponent
+          question={question}
+          questionIndex={questionIndex}
+          questionResponse={response}
+          assignmentConfig={assignmentConfig}
+          questionsInfo={questionsInfo}
+          viewMode
+        />
+        <Stack className={classes.container} direction="column">
+          <Stack spacing={2} direction="column">
+            <Text role="productive" color="primary" strong>
+              {t('answer')}
+            </Text>
+            <Text>{userAnswer}</Text>
+          </Stack>
 
-      {!studentSkipped && (
-        <Stack direction="column" spacing={2}>
-          <Text role="productive" color="primary" strong>
-            {t('gradeAndFeedback')}
-          </Text>
-          <RadioGroup data={radioData} onChange={setQuestionStatus} />
+          {!studentSkipped && (
+            <Stack direction="column" spacing={2} sx={{ marginBottom: !showFeedbackSection && 16 }}>
+              <Text role="productive" color="primary" strong>
+                {t('gradeAndFeedback')}
+              </Text>
+              <RadioGroup data={radioData} onChange={setQuestionStatus} />
 
-          <TextEditorInput
-            required
-            toolbars={TEXT_EDITOR_TEXTAREA_TOOLBARS}
-            value={teacherFeedback}
-            onChange={setTeacherFeedback}
-            placeholder={t('feedbackPlaceholder')}
-            editorStyles={{ minHeight: 80 }}
-          />
+              {showFeedbackSection && (
+                <TextEditorInput
+                  toolbars={TEXT_EDITOR_TEXTAREA_TOOLBARS}
+                  value={teacherFeedback}
+                  onChange={setTeacherFeedback}
+                  placeholder={t('feedbackPlaceholder')}
+                  editorStyles={{ minHeight: 80 }}
+                />
+              )}
+            </Stack>
+          )}
         </Stack>
-      )}
-    </Stack>
+      </Stack>
+    </TotalLayoutStepContainer>
   );
 }
 
 TeacherReview.propTypes = {
-  userAnswer: PropTypes.string,
+  response: PropTypes.object,
+  questionIndex: PropTypes.number,
+  scrollRef: PropTypes.object,
+  question: PropTypes.object,
+  assignmentConfig: PropTypes.object,
+  questionsInfo: PropTypes.object,
+  studentUserAgentId: PropTypes.string,
+  instance: PropTypes.object,
 };
