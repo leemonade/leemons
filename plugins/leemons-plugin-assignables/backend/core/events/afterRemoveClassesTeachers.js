@@ -1,6 +1,8 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
 
+const teacherTypes = ['main-teacher', 'associate-teacher'];
+
 async function afterRemoveClassesTeachers({ classTeachers, ctx }) {
   if (classTeachers?.length) {
     const classIds = _.map(classTeachers, 'class');
@@ -62,7 +64,7 @@ async function afterRemoveClassesTeachers({ classTeachers, ctx }) {
         const currentTeachers = [];
         _.forEach(_classes, (data) => {
           _.forEach(data.teachers, (teacher) => {
-            if (teacher.type === 'main-teacher') currentTeachers.push(teacher.id);
+            if (teacherTypes.includes(teacher.type)) currentTeachers.push(teacher.id);
           });
         });
 
