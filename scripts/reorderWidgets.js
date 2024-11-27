@@ -19,6 +19,7 @@ const ZONE_ORDERS = {
     'calendar.user.program.kanban',
   ],
   'dashboard.class.tabs': [
+    'sessions.class.tabs.detail',
     'assignables.class.tab.ongoing',
     'calendar.class.tab.kanban',
     'calendar.class.tab.calendar',
