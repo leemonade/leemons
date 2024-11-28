@@ -109,7 +109,7 @@ const LibraryCardEmbed = ({
       document: asset?.fileExtension === 'pdf' ? 'PDF' : 'Document',
     };
 
-    return typeMappings[fileType] || 'Media';
+    return typeMappings[fileType] ?? capitalize(asset?.fileExtension ?? fileType ?? 'Media');
   };
 
   const renderVariantIcon = () => {
@@ -156,7 +156,7 @@ const LibraryCardEmbed = ({
               </Text>
             </TextClamp>
           </Stack>
-          <Badge size="xs" label={badgeCategory} closable={false} radius={'default'} />
+          <Badge size="xs" label={badgeCategory} closable={false} radius={'default'} disableHover />
         </Stack>
         <Box noFlex className={classes.variantIcon}>
           {hasActionButton && renderVariantIcon()}
