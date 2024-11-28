@@ -227,7 +227,7 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
       avatar: (
         <Avatar
           image={store.selectUserAgent.avatar}
-          fullName={getUserFullName(store.selectUserAgent)}
+          fullName={getUserFullName(store.selectUserAgent, { singleSurname: true })}
         />
       ),
       severity,

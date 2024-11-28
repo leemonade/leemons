@@ -1,17 +1,23 @@
 /* eslint-disable no-unsafe-optional-chaining */
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+
 import { Box, Text, TextClamp, FileIcon } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { DuplicateIcon } from '@bubbles-ui/icons/outline';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+
+import prefixPn from '../../../../helpers/prefixPN';
+
 import {
   METADATA_DISPLAY_PROP_TYPES,
   METADATA_DISPLAY_DEFAULT_PROPS,
 } from './MetadataDisplay.constants';
 import { MetadataDisplayStyles } from './MetadataDisplay.styles';
-import prefixPn from '../../../../helpers/prefixPN';
 
 const MetadataDisplay = ({ metadata, onCopy }) => {
   const [data, setData] = useState();
+
+  console.log('metadata', metadata);
+
   const fileSizeMB = metadata?.file?.size / 1024 / 1024;
   const fileSizeDocument = metadata?.fileType === 'document' && metadata?.metadata[0]?.value;
   const getImageDimensions = () => {
@@ -152,7 +158,7 @@ const MetadataDisplay = ({ metadata, onCopy }) => {
             </Box>
             <Box>
               <Text className={classes.title}>{`${t('size')}: `}</Text>
-              <Text className={classes.value}>{`${fileSizeDocument}`}</Text>
+              <Text className={classes.value}>{`${data?.size}`}</Text>
             </Box>
           </Box>
         )}
@@ -163,12 +169,12 @@ const MetadataDisplay = ({ metadata, onCopy }) => {
               <Text className={classes.value}>{`${data?.duration}`}</Text>
             </Box>
             <Box>
-              <Text className={classes.title}>{`${t('size')}: `}</Text>
-              <Text className={classes.value}>{`${data?.size}`}</Text>
-            </Box>
-            <Box>
               <Text className={classes.title}>{`${t('format')}: `}</Text>
               <Text className={classes.value}>{`${data?.format}`}</Text>
+            </Box>
+            <Box>
+              <Text className={classes.title}>{`${t('size')}: `}</Text>
+              <Text className={classes.value}>{`${data?.size}`}</Text>
             </Box>
           </Box>
         )}

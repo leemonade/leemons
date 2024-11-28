@@ -3,7 +3,6 @@ import { createStyles, pxToRem } from '@bubbles-ui/components';
 const MenuItemsStyles = createStyles((theme, { showMenu }) => {
   const focusDefaultBorder = theme.other.global.focus['default-border'];
   const buttonIconCardStyles = theme.other.buttonIconCard;
-  console.log(theme);
   return {
     root: {
       marginLeft: theme.other.global.spacing.gap.lg,

@@ -1,23 +1,25 @@
 import React, { useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { createStyles } from '@bubbles-ui/components';
-import { LibraryCard } from '@leebrary/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@content-creator/helpers/prefixPN';
 import { useHistory } from 'react-router-dom';
-import { useLayout } from '@layout/context';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { deleteDocumentRequest, duplicateDocumentRequest } from '@content-creator/request';
-import { DocumentIcon } from '@content-creator/components';
-import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/AssignIcon';
-import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
-import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
-import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
-import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
+
 import { useIsStudent } from '@academic-portfolio/hooks';
 import useIsMainTeacherInSubject from '@academic-portfolio/hooks/queries/useIsMainTeacherInSubject';
+import { createStyles } from '@bubbles-ui/components';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useLayout } from '@layout/context';
+import { LibraryCard } from '@leebrary/components';
+import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/AssignIcon';
+import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
+import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
+import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
+import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
 import { useIsOwner } from '@leebrary/hooks/useIsOwner';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import PropTypes from 'prop-types';
+
+import { DocumentIcon, PrintContentButton } from '@content-creator/components';
+import prefixPN from '@content-creator/helpers/prefixPN';
+import { deleteDocumentRequest, duplicateDocumentRequest } from '@content-creator/request';
 
 const DocumentCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -65,6 +67,7 @@ const DocumentListCard = ({ asset, selected, onRefresh, onShare, ...props }) => 
 
   const menuItems = React.useMemo(() => {
     const items = [];
+    let printTrigger = null;
 
     if (!asset?.id) {
       return items;
@@ -109,6 +112,24 @@ const DocumentListCard = ({ asset, selected, onRefresh, onShare, ...props }) => 
         onClick: assignAction,
       });
     }
+    items.push({
+      icon: (
+        <PrintContentButton
+          assetId={asset.id}
+          title={asset.name}
+          variant="icon"
+          onTrigger={(trigger) => {
+            printTrigger = trigger;
+          }}
+        />
+      ),
+      children: t('download'),
+      onClick: (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        printTrigger?.();
+      },
+    });
     if (asset.editable) {
       items.push({
         icon: <EditIcon />,

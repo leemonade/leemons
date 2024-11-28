@@ -13,11 +13,13 @@ const ZONE_ORDERS = {
     'dashboard.dashboard.welcome',
     'assignables.dashboard.progress',
     'assignables.dashboard.need-your-attention',
+    'sessions.dashboard.sessions',
     'communities.dashboard.communities',
     'calendar.user.program.calendar',
     'calendar.user.program.kanban',
   ],
   'dashboard.class.tabs': [
+    'sessions.class.tabs.detail',
     'assignables.class.tab.ongoing',
     'calendar.class.tab.kanban',
     'calendar.class.tab.calendar',

@@ -1,5 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { Link } from 'react-router-dom';
+
 import {
   Box,
   Title,
@@ -11,18 +13,20 @@ import {
   Loader,
   Button,
 } from '@bubbles-ui/components';
-import { Controller, useForm } from 'react-hook-form';
-
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { AddCircleIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
-import { useCourseDetail } from '@academic-portfolio/hooks';
-import { SelectUserAgent } from '@users/components';
-import { Link } from 'react-router-dom';
-import { getProfilesRequest } from '@academic-portfolio/request';
-import useUpdateCourse from '@academic-portfolio/hooks/mutations/useMutateCourse';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { SelectUserAgent } from '@users/components';
+import PropTypes from 'prop-types';
+
+
 import { CourseViewStyles } from './CourseView.styles';
+
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import { useCourseDetail } from '@academic-portfolio/hooks';
+import useUpdateCourse from '@academic-portfolio/hooks/mutations/useMutateCourse';
+import { getProfilesRequest } from '@academic-portfolio/request';
+
 
 const CourseView = ({
   program,

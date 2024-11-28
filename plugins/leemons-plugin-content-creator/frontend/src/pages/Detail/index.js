@@ -1,11 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { FormProvider, useForm, Controller, useWatch } from 'react-hook-form';
-import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useHistory, useParams, useLocation, Link } from 'react-router-dom';
-import { useLayout } from '@layout/context';
+
+import { useIsStudent } from '@academic-portfolio/hooks';
 import {
   LoadingOverlay,
   Button,
@@ -16,15 +13,21 @@ import {
   DropdownButton,
   AssetDocumentIcon,
 } from '@bubbles-ui/components';
-import prefixPN from '@content-creator/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { BasicData } from '@leebrary/components';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useDocument from '@content-creator/request/hooks/queries/useDocument';
-import useMutateDocument from '@content-creator/request/hooks/mutations/useMutateDocument';
-import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
 import { useProcessTextEditor } from '@common';
-import { useIsStudent } from '@academic-portfolio/hooks';
+import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useLayout } from '@layout/context';
+import { BasicData } from '@leebrary/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+import { z } from 'zod';
+
+import { PrintContentButton } from '@content-creator/components';
+import prefixPN from '@content-creator/helpers/prefixPN';
+import useMutateDocument from '@content-creator/request/hooks/mutations/useMutateDocument';
+import useDocument from '@content-creator/request/hooks/queries/useDocument';
 
 const validators = [
   z.object({
@@ -200,6 +203,7 @@ export default function Index({ isNew, readOnly }) {
     if (isNew) return t('titleNew');
     return t('titleEdit');
   }
+
   return (
     <FormProvider {...form}>
       <LoadingOverlay visible={tLoading || documentIsLoading} />
@@ -226,7 +230,6 @@ export default function Index({ isNew, readOnly }) {
               )
             }
           >
-
             {!readOnly && <div id="toolbar-div" style={{ width: '100%' }} ref={toolbarRef}></div>}
           </TotalLayoutHeader>
         }
@@ -251,12 +254,12 @@ export default function Index({ isNew, readOnly }) {
                   toolbarPortal={toolbarRef.current}
                   scrollRef={scrollRef}
                   Footer={
-                    !readOnly && (
-                      <TotalLayoutFooterContainer
-                        fixed
-                        scrollRef={scrollRef}
-                        width={928}
-                        rightZone={
+                    <TotalLayoutFooterContainer
+                      fixed
+                      scrollRef={scrollRef}
+                      width={928}
+                      rightZone={
+                        !readOnly ? (
                           <>
                             <Button
                               variant="link"
@@ -270,9 +273,16 @@ export default function Index({ isNew, readOnly }) {
                               {t('next')}
                             </Button>
                           </>
-                        }
-                      />
-                    )
+                        ) : (
+                          <>
+                            <PrintContentButton
+                              content={formValues.content}
+                              title={formValues.name ?? ''}
+                            />
+                          </>
+                        )
+                      }
+                    />
                   }
                 />
               )}

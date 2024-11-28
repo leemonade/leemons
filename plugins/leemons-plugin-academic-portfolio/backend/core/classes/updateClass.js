@@ -17,13 +17,12 @@ const { setToAllClassesWithSubject } = require('./course/setToAllClassesWithSubj
 const { add: addGroup } = require('./group/add');
 const { isUsedInSubject } = require('./group/isUsedInSubject');
 const { removeByClass: removeGroupByClass } = require('./group/removeByClass');
+const { getClassesProgramInfo } = require('./listSessionClasses');
+const { processScheduleForClass } = require('./processScheduleForClass');
 const { add: addSubstage } = require('./substage/add');
 const { removeByClass: removeSubstageByClass } = require('./substage/removeByClass');
-
 const { add: addTeacher } = require('./teacher/add');
 const { removeByClass: removeTeachersByClass } = require('./teacher/removeByClass');
-const { processScheduleForClass } = require('./processScheduleForClass');
-const { getClassesProgramInfo } = require('./listSessionClasses');
 
 async function updateClass({ data, ctx }) {
   await validateUpdateClass({ data, ctx });
@@ -149,7 +148,7 @@ async function updateClass({ data, ctx }) {
     ctx,
   });
 
-  await ctx.tx.emit('after-update-class', { class: classe });
+  await ctx.tx.emit('after-update-class', classe);
 
   try {
     await addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx });

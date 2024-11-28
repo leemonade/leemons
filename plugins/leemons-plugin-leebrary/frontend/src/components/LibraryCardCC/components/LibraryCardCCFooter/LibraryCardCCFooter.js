@@ -1,18 +1,15 @@
-import React from 'react';
 import { Box, FileIcon, Text } from '@bubbles-ui/components';
 import { DownloadIcon } from '@bubbles-ui/icons/outline';
-import { LibraryCardCCFooterStyles } from './LibraryCardCCFooter.styles';
+
 import {
   LIBRARY_CARD_CC_FOOTER_PROPTYPES,
   LIBRARY_CARD_CC_FOOTER_DEFAULTPROPS,
 } from './LibraryCardCCFooter.constants';
+import { LibraryCardCCFooterStyles } from './LibraryCardCCFooter.styles';
 
 const LibraryCardCCFooter = ({ fileType, fileExtension, variant }) => {
   const { classes } = LibraryCardCCFooterStyles();
   const variantIconLabel = fileType?.charAt(0)?.toUpperCase() + fileType?.slice(1);
-
-  console.log('fileType in LibraryCardCCFooter', fileType);
-  console.log('variantIconLabel in LibraryCardCCFooter', variantIconLabel);
 
   return (
     <Box className={classes.root}>

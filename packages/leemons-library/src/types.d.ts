@@ -34,7 +34,8 @@ export type Category = {
   order: number;
 };
 
-export type AssetID = LRN<'leebrary', 'Asset'>;
+export type AssetID = LRN<'common', 'CurrentVersions'>;
+
 export type Asset = {
   id: AssetID;
   deploymentID: string;

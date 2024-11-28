@@ -2,8 +2,9 @@ module.exports = {
   preferences: {
     pageTitle: 'Mail preferences',
     basicConfig: 'Basic Configuration',
+    assignments: 'Assignments',
     disableAllActivityEmails: 'Disable sending of all activity emails',
-    newAssignmentEmail: 'New AssignmentEmail',
+    newAssignationEmail: 'New assignment email',
     newAssignationEmailDescription: 'Receive an email every time I am assigned a new activity',
     weekResumeEmail: 'Weekly summary',
     weekResumeEmailDescription: 'Receive a weekly summary of ongoing and evaluated activities.',
@@ -11,9 +12,8 @@ module.exports = {
     alertTitle: 'Attention',
     alertDescription:
       'The advanced configuration will overwrite or modify the basic configuration on a case-by-case basis.',
-    newAssignmentDaysEmail: 'New assignment according to deadline',
+    newAssignationDaysEmail: 'New assignment according to deadline',
     newAssignationDaysEmailDescription: 'Only receive new assignment emails when less than:',
-    newAssignationDaysEmail: 'Only receive new assignment emails when less than:',
     emailLastHour: 'Last hour mail',
     emailLastHourDescription: 'Notify me whenever a delivery is less than:',
     savePreferences: 'Save preferences',

@@ -262,6 +262,22 @@ module.exports = {
       confirm: 'Aceptar y eliminar',
       cancel: 'Cancelar',
     },
+    closeModal: {
+      title: 'Cerrar actividad',
+      message1: '¿Estás seguro de querer cerrar la actividad?',
+      message2:
+        'Los estudiantes no podrán enviar nuevas respuestas una vez que la actividad esté cerrada.',
+      confirm: 'Cerrar actividad',
+      cancel: 'Cancelar',
+    },
+    closeActionAlerts: {
+      success: 'Actividad cerrada',
+      error: 'Error al cerrar la actividad: {{error}}',
+    },
+    archiveActionAlerts: {
+      success: 'Actividad archivada correctamente',
+      error: 'Error al archivar la actividad: {{error}}',
+    },
   },
   studentsList: {
     title: 'Actividad en curso',

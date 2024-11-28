@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+
 import {
   ActionButton,
   Avatar,
@@ -14,10 +14,12 @@ import {
 } from '@bubbles-ui/components';
 import { SearchIcon } from '@bubbles-ui/icons/outline';
 import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import getUserFullName from '@users/helpers/getUserFullName';
 import { LocaleDate, useStore } from '@common';
-import { filter, map, sortBy } from 'lodash';
+import getUserFullName from '@users/helpers/getUserFullName';
 import { getUserAgentsInfoRequest } from '@users/request';
+import { filter, map, sortBy } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
 
 const TreeClassroomUsersDetail = ({
@@ -71,7 +73,10 @@ const TreeClassroomUsersDetail = ({
         user: {
           ...userAgent.user,
           avatar: (
-            <Avatar image={userAgent.user.avatar} fullName={getUserFullName(userAgent.user)} />
+            <Avatar
+              image={userAgent.user.avatar}
+              fullName={getUserFullName(userAgent.user, { singleSurname: true })}
+            />
           ),
           birthdate: <LocaleDate date={userAgent.user.birthdate} />,
         },

@@ -1,4 +1,4 @@
-import { Asset } from '@leemons/library';
+import { Asset, AssetID } from '@leemons/library';
 import { LRN } from '@leemons/lrn';
 import { LeemonsSchema } from '@leemons/mongodb';
 import { UserAgentID } from '@leemons/users';
@@ -45,6 +45,9 @@ export interface Program extends Omit<LeemonsSchema, 'id'> {
   id: ProgramID;
   name: string;
   abbreviation: string;
+  nomenclature?: {
+    block?: string;
+  };
 }
 
 export interface Subject extends Omit<LeemonsSchema, 'id'> {

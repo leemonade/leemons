@@ -2,13 +2,13 @@
  * @typedef {import('@leemons/emails').EmailTemplate} EmailTemplate
  */
 
+const { getEmailTypes } = require('@leemons/emails');
+const { LeemonsError } = require('@leemons/error');
+const { getPluginProviders, getPluginProvider } = require('@leemons/providers');
 const _ = require('lodash');
+const nodemailer = require('nodemailer');
 const Sqrl = require('squirrelly');
 
-const { getPluginProviders, getPluginProvider } = require('@leemons/providers');
-const { LeemonsError } = require('@leemons/error');
-const { getEmailTypes } = require('@leemons/emails');
-const nodemailer = require('nodemailer');
 const testTemplate = require('../emails/test');
 
 /**
@@ -496,7 +496,7 @@ class Email {
       if (!locale) locale = pLocale;
     }
 
-    return Email.send({ email, to, templateName, language, locale, context, ctx });
+    return Email.send({ from: email, to, templateName, language, locale, context, ctx });
   }
 
   /**
