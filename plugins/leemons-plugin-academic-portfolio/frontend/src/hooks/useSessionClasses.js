@@ -10,7 +10,7 @@ import { listSessionClassesRequest } from '../request';
  * @returns
  */
 export default function useSessionClasses(
-  { program, type = 'main-teacher', showType, withProgram } = {},
+  { program, type = ['main-teacher', 'associate-teacher'], showType, withProgram } = {},
   queryOptions = { cacheTime: Infinity }
 ) {
   const userAgents = useUserAgents();

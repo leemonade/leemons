@@ -30,7 +30,7 @@ async function listSessionClasses({ program, type, withProgram, withTeachers, ct
     };
   } else if (type !== null) {
     typeQuery = {
-      type: 'main-teacher',
+      type: ['main-teacher', 'associate-teacher'],
     };
   }
   const [classStudent, classTeacher] = await Promise.all([
