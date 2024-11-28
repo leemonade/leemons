@@ -134,8 +134,7 @@ const questionSchema = {
       nullable: true,
     },
     hasAnswerFeedback: booleanSchema,
-
-    questionImage: {
+    stemResource: {
       type: ['object', 'string'],
       nullable: true,
     },

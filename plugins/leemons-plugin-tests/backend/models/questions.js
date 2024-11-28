@@ -90,7 +90,8 @@ const schema = new mongoose.Schema(
       // ref : 'plugins_tests::question-bank-categories',
       type: String,
     },
-    questionImage: {
+
+    stemResource: {
       type: String,
     },
 

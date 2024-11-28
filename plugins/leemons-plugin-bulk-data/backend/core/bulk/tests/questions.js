@@ -124,9 +124,9 @@ async function importQuestions(filePath) {
       // QUESTION MAP
 
       if (question.type === 'map') {
-        if (!isEmpty(question.questionImage)) {
-          question.mapProperties = { image: question.questionImage };
-          delete question.questionImage;
+        if (!isEmpty(question.stemResource)) {
+          question.mapProperties = { image: question.stemResource };
+          delete question.stemResource;
         }
 
         const mapInfo = question.map_info.split('::').map((val) => trim(val));

@@ -1,16 +1,18 @@
 const _ = require('lodash');
-const { getByIds: getQuestionById } = require('./getByIds');
-const { createQuestion } = require('./createQuestion');
+
 const { QUESTION_TYPES } = require('../../config/constants');
 
-function prepareQuestionForDuplication({ id, mapProperties, choices, questionImage, ...question }) {
+const { createQuestion } = require('./createQuestion');
+const { getByIds: getQuestionById } = require('./getByIds');
+
+function prepareQuestionForDuplication({ id, mapProperties, choices, stemResource, ...question }) {
   const transformedQuestion = {
     ...question,
   };
 
   if (question.type === QUESTION_TYPES.MAP) {
     transformedQuestion.mapProperties = _.cloneDeep(mapProperties);
-    transformedQuestion.mapProperties.image = mapProperties?.cover?.id;
+    transformedQuestion.mapProperties.image = mapProperties?.image?.cover?.id;
   }
 
   if (question.type === QUESTION_TYPES.MONO_RESPONSE) {
@@ -22,8 +24,8 @@ function prepareQuestionForDuplication({ id, mapProperties, choices, questionIma
     });
   }
 
-  if (questionImage) {
-    transformedQuestion.questionImage = questionImage.cover.id;
+  if (stemResource) {
+    transformedQuestion.stemResource = stemResource.id ?? stemResource;
   }
 
   return transformedQuestion;

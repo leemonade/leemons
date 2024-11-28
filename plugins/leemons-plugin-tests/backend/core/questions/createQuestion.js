@@ -1,6 +1,9 @@
+const { isLRN } = require('@leemons/lrn');
 const _ = require('lodash');
 
 const { QUESTION_TYPES } = require('../../config/constants');
+
+const { createStemResourceAsset } = require('./createStemResourceAsset');
 
 const LIBRARY_ADD_ASSET = 'leebrary.assets.add';
 
@@ -77,7 +80,7 @@ const LIBRARY_ADD_ASSET = 'leebrary.assets.add';
  * @property {Array<string>} clues - The text hints for the question.
  * @property {boolean} hasHelp - Indicates if the question has text hints or if it is configure to hide answer options.
  * @property {string} category - The category of the question.
- * @property {string} questionImage - An image cover for the question.
+ * @property {string} stemResource - An asset id used as a multimedia resource for the question stem. Alternatively, a url to an external resource, (only for bulkdata compatibility).
  * @property {Array<Choice>} choices - The solution property for mono-response and multi-choice questions. Only present in multi-choice questions.
  * @property {Object} mapProperties - The solution property for map questions. Only present in map questions.
  * @property {Object} trueFalseProperties - The solution property for true-false questions. Only present in true-false questions.
@@ -92,6 +95,7 @@ const LIBRARY_ADD_ASSET = 'leebrary.assets.add';
  * @param {MoleculerContext} params.ctx - The transaction context.
  * @returns {Promise<Object>} - The created question.
  */
+
 async function createQuestion({ data, published, ctx }) {
   const { tags, choices, mapProperties, trueFalseProperties, ...props } = _.cloneDeep(data);
 
@@ -102,7 +106,7 @@ async function createQuestion({ data, published, ctx }) {
         name: `Map question image`,
         cover: mapProperties.image?.cover?.id ?? mapProperties.image,
         indexable: false,
-        public: true, // TODO Cambiar a false despues de hacer la demo
+        public: true,
       },
       options: { published },
     });
@@ -120,7 +124,7 @@ async function createQuestion({ data, published, ctx }) {
             cover: choice.image?.cover?.id ?? choice.image,
             description: choice.imageDescription,
             indexable: false,
-            public: true, // TODO Cambiar a false despues de hacer la demo
+            public: true,
           },
           options: { published },
         })
@@ -133,19 +137,16 @@ async function createQuestion({ data, published, ctx }) {
     });
   }
 
-  // Question featured image
-  if (props.questionImage) {
-    const asset = await ctx.tx.call(LIBRARY_ADD_ASSET, {
-      asset: {
-        name: 'Question image',
-        cover: props.questionImage?.cover?.id ?? props.questionImage,
-        indexable: false,
-        public: true,
-      },
-      options: { published },
-    });
+  if (props.stemResource) {
+    let sourceAsset = props.stemResource;
+    if (typeof props.stemResource === 'string' && isLRN(props.stemResource)) {
+      [sourceAsset] = await ctx.tx.call('leebrary.assets.getByIds', {
+        ids: [props.stemResource],
+        withFiles: true,
+      });
+    }
 
-    props.questionImage = asset.id;
+    props.stemResource = await createStemResourceAsset({ ctx, sourceAsset, published });
   }
 
   const questionToCreate = { ...props };

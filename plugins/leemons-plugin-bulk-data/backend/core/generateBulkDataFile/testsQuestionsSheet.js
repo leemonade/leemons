@@ -100,11 +100,12 @@ const getAnswerFields = (question, allImageAssetDetails) => {
   return {};
 };
 
-const findQuestionImage = (imageAssets, question) => {
+const findMultimediaAsset = (multimediaAssets, question) => {
   if (question.type === 'map') {
-    return imageAssets.find((asset) => asset.id === question.mapProperties.image.id).cover;
+    return multimediaAssets.find((asset) => asset.id === question.mapProperties.image.id).cover;
   }
-  return imageAssets.find((asset) => asset.id === question.questionImage?.id)?.cover;
+  const assetFound = multimediaAssets.find((asset) => asset.id === question.stemResource?.id);
+  return assetFound?.url ?? assetFound?.cover;
 };
 
 async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
@@ -119,7 +120,7 @@ async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
     { header: 'withImages', key: 'withImages', width: 10 },
     { header: 'tags', key: 'tags', width: 20 },
     { header: 'question', key: 'question', width: 30 },
-    { header: 'questionImage', key: 'questionImage', width: 20 },
+    { header: 'stemResource', key: 'stemResource', width: 20 },
     { header: 'answers', key: 'answers', width: 30 },
     { header: 'answers_images', key: 'answers_images', width: 20 },
     { header: 'answer_correct', key: 'answer_correct', width: 15 },
@@ -139,7 +140,7 @@ async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
     withImages: 'With Images',
     tags: 'Tags',
     question: 'Question',
-    questionImage: 'Question Image',
+    stemResource: 'Stem Resource',
     answers: 'Answers',
     answers_images: 'Answers Images',
     answer_correct: 'Correct Answer',
@@ -158,8 +159,8 @@ async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
 
   const allImageAssets = qBanks.reduce((acc, qBank) => {
     qBank.providerData.questions.forEach((question) => {
-      if (question.questionImage?.id) {
-        acc.push(question.questionImage.id);
+      if (question.stemResource?.id) {
+        acc.push(question.stemResource.id);
       }
       if (question.hasImageAnswers) {
         question.choices.forEach((choice) => {
@@ -175,7 +176,7 @@ async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
     return acc;
   }, []);
 
-  const allImageAssetDetails = await ctx.call('leebrary.assets.getByIds', {
+  const allMultimediaAssetDetails = await ctx.call('leebrary.assets.getByIds', {
     ids: [...allImageAssets].flat(),
     shouldPrepareAssets: true,
     signedURLExpirationTime: 7 * 24 * 60 * 60, // 7 days
@@ -189,7 +190,7 @@ async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
     const { categories: qBankCategories } = providerData;
     questions?.forEach((question) => {
       questionCounter++;
-      const questionImage = findQuestionImage(allImageAssetDetails, question);
+      const stemResource = findMultimediaAsset(allMultimediaAssetDetails, question);
       const bulkId = `q${questionCounter.toString().padStart(2, '0')}`;
 
       const commonData = {
@@ -202,10 +203,10 @@ async function createTestsQuestionsSheet({ workbook, qBanks, ctx }) {
         tags: question.tags?.join(', '),
         question: turndown.turndown(question.stem.text),
         clues: question.clues?.join('|'),
-        questionImage,
+        stemResource,
       };
 
-      const answerFields = getAnswerFields(question, allImageAssetDetails);
+      const answerFields = getAnswerFields(question, allMultimediaAssetDetails);
       const questionObject = { ...commonData, ...answerFields };
 
       worksheet.addRow(_.omitBy(questionObject, _.isNil));

@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 const _ = require('lodash');
+
 const { QUESTION_TYPES } = require('../../config/constants');
 
 /**
@@ -68,7 +69,7 @@ const { QUESTION_TYPES } = require('../../config/constants');
  * @property {Array<string>} clues - The text hints for the question.
  * @property {boolean} hasHelp - Indicates if the question has text hints or if it is configure to hide answer options.
  * @property {string} category - The category of the question.
- * @property {string} questionImage - An image cover for the question.
+ * @property {string} stemResource - A multimedia resource asset for the question stem.
  * @property {Array<Choice>} choices - The solution property for mono-response and multi-choice questions. Only present in multi-choice questions.
  * @property {Object} mapProperties - The solution property for map questions. Only present in map questions.
  */
@@ -97,8 +98,8 @@ async function getByIds({ id, options, ctx }) {
       }
     }
 
-    if (question.questionImage) {
-      assetIds.push(question.questionImage);
+    if (question.stemResource) {
+      assetIds.push(question.stemResource);
     }
 
     if (question.mapProperties?.image) {
@@ -126,8 +127,8 @@ async function getByIds({ id, options, ctx }) {
     if (question.mapProperties?.image) {
       question.mapProperties.image = questionAssetsById[question.mapProperties.image];
     }
-    if (question.questionImage) {
-      question.questionImage = questionAssetsById[question.questionImage];
+    if (question.stemResource) {
+      question.stemResource = questionAssetsById[question.stemResource];
     }
 
     if (question.choices?.length) {
