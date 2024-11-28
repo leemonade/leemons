@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { Table, Avatar, Stack, SearchInput, Loader } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import getUserFullName from '@users/helpers/getUserFullName';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -57,7 +58,7 @@ const StudentsTable = ({ data, showSearchBar, checkBoxColumn, isLoading }) => {
         Header: ' ',
         accessor: 'avatar',
         Cell: ({ value, row }) => {
-          const fullName = `${row.original.surnames} ${row.original.name}`.trim();
+          const fullName = getUserFullName(row.original, { singleSurname: true });
           return <Avatar image={value} fullName={fullName} />;
         },
       },
