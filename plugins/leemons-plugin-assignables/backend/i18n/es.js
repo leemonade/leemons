@@ -454,6 +454,7 @@ module.exports = {
     },
     emptyState: {
       title: '¡Lo tienes todo al día!',
+      greetingWelcome: '¡Te damos la bienvenida, {{name}}!',
       noEvaluations: 'No hay evaluaciones pendientes',
       noActivities: 'No hay actividades pendientes',
     },
