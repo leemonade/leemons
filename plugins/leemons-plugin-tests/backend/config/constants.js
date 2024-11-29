@@ -244,6 +244,10 @@ const QUESTION_TYPES = {
   SHORT_RESPONSE: 'short-response',
 };
 
+const widgets = {
+  zones: [{ key: `${permissionsPrefix}.qbank.questions.create` }],
+};
+
 module.exports = {
   pluginName: permissionsPrefix,
   permissions: {
@@ -255,4 +259,5 @@ module.exports = {
   assignableRoles,
   libraryQuestionBankCategory,
   QUESTION_TYPES,
+  widgets,
 };
