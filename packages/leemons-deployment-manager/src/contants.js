@@ -9,6 +9,12 @@ const ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK = [
   'v1.users-cognito.emails.getEmail',
 ];
 
+const EVENT_TYPES = {
+  ONCE_PER_INSTALL: 'once-per-install',
+  ONCE: 'once',
+};
+
 module.exports = {
   ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK,
+  EVENT_TYPES,
 };

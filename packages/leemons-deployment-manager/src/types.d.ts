@@ -92,4 +92,8 @@ export interface ServiceSchema<S = ServiceSettingSchema> extends MoleculerServic
 
 export function validateInternalPrivateKey<C = Context>({ ctx }: { ctx: C }): void;
 
-declare const ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK: string[];
+export const ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK: string[];
+export enum EVENT_TYPES {
+  ONCE_PER_INSTALL = 'once-per-install',
+  ONCE = 'once',
+}
