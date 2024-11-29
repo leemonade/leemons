@@ -442,11 +442,15 @@ module.exports = {
       uploadSuccess: 'El archivo {fileName} se ha subido correctamente',
       removedError: 'Error al eliminar el archivo {fileName} de la biblioteca',
       removedSuccess: 'El archivo {fileName} se ha eliminado correctamente',
+      submissionsFinished:
+        'El plazo de entrega de esta actividad ha finalizado. Ya no puedes adjuntar tu archivo.',
     },
     submission_link: {
       title: 'Enlace',
       label: 'Enlace',
       placeholder: 'Añadir el enlace...',
+      submissionsFinished:
+        'El plazo de entrega de esta actividad ha finalizado. Ya no puedes añadir tu enlace.',
     },
 
     confirmation_modal: {
