@@ -116,7 +116,7 @@ function useBulkAssetsColumns({ selectedAssets, onSelectAll, onSelectRow, assets
         accessor: 'tags',
         Cell: ({ value }) => {
           return value.length > 0 ? (
-            <ChipsContainer items={value} chipsToShow={2} />
+            <ChipsContainer items={value} chipsToShow={2} truncate truncateLines={1} />
           ) : (
             <Text size="xs">-</Text>
           );
@@ -131,7 +131,7 @@ function useBulkAssetsColumns({ selectedAssets, onSelectAll, onSelectRow, assets
               <AvatarsGroup
                 size="sm"
                 data={value}
-                classesData={row.original.classesData}
+                classesData={row.original.classesCanAccess}
                 moreThanUsersAsMulti={2}
                 customAvatarMargin={14}
                 limit={2}

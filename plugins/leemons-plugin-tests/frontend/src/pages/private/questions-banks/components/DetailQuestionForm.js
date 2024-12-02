@@ -17,7 +17,6 @@ import {
 import { TextEditorInput, TEXT_EDITOR_TEXTAREA_TOOLBARS } from '@bubbles-ui/editors';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { ViewOffIcon } from '@bubbles-ui/icons/solid';
-import ImagePicker from '@leebrary/components/ImagePicker';
 import { isEmpty, map } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -35,6 +34,8 @@ import { MonoResponse } from './question-types/MonoResponse';
 import { OpenResponse } from './question-types/OpenResponse';
 import { ShortResponse } from './question-types/ShortResponse';
 import { TrueFalse } from './question-types/TrueFalse';
+
+import ResourcePicker from '@tests/components/ResourcePicker';
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const questionComponents = {
@@ -58,7 +59,7 @@ export default function DetailQuestionForm({
   onCategoriesChange,
   onCancel,
 }) {
-  const [withQuestionImage, setWithQuestionImage] = useState(() => !!defaultValues?.questionImage);
+  const [withStemResource, setWithStemResource] = useState(!!defaultValues?.stemResource);
 
   const form = useForm({
     defaultValues: { ...defaultValues, clues: defaultValues.clues || [] },
@@ -95,6 +96,9 @@ export default function DetailQuestionForm({
 
   async function handleOnSaveQuestion() {
     form.handleSubmit((data) => {
+      if (defaultValues?.id) {
+        data = { ...defaultValues, ...data };
+      }
       onSaveQuestion(data);
     })();
   }
@@ -313,27 +317,30 @@ export default function DetailQuestionForm({
                     />
                   )}
                 />
-                {type !== QUESTION_TYPES.MAP ? (
-                  <>
+
+                {type !== QUESTION_TYPES.MAP && (
+                  <ContextContainer spacing={4}>
                     <Switch
-                      checked={withQuestionImage}
+                      checked={withStemResource}
                       onChange={(value) => {
                         if (!value) {
-                          form.setValue('questionImage', null);
+                          form.setValue('stemResource', null);
                         }
-                        setWithQuestionImage(value);
+                        setWithStemResource(value);
                       }}
-                      label={t('hasCoverLabel')}
+                      label={t('stemResourceLabel')}
+                      description={t('stemResourceDescription')}
                     />
-                    {withQuestionImage ? (
+                    {withStemResource && (
                       <Controller
                         control={form.control}
-                        name="questionImage"
-                        render={({ field }) => <ImagePicker {...field} />}
+                        name="stemResource"
+                        render={({ field }) => <ResourcePicker {...field} />}
                       />
-                    ) : null}
-                  </>
-                ) : null}
+                    )}
+                  </ContextContainer>
+                )}
+
                 {QuestionComponent}
                 {/* CLUES ---------------------------------------- */}
                 {hasHelp ? (

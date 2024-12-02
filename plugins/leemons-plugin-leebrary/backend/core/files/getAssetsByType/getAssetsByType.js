@@ -4,7 +4,7 @@ const { fetchAssetFilesByType } = require('./fetchAssetFilesByType');
 /**
  * Fetches the assets by type.
  *
- * @param {string} type - The type.
+ * @param {string|array} type - The file type or list of file types to filter by
  * @param {Object} options - The options.
  * @param {Array} options.assets - The assets.
  * @param {MoleculerContext} options.ctx - The Moleculer context object.

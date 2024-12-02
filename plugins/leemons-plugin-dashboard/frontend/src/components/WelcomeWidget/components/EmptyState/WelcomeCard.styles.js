@@ -23,6 +23,7 @@ const WelcomeCardStyles = createStyles((theme, { linkTo }) => {
       zIndex: 1,
       width: '100%',
       height: 221,
+      overflow: 'hidden',
     },
     content: {
       padding: 24,
@@ -31,7 +32,10 @@ const WelcomeCardStyles = createStyles((theme, { linkTo }) => {
       gap: 16,
       backgroundColor: '#FFFFFF',
       height: 148,
+      borderBottomLeftRadius: 4,
+      borderBottomRightRadius: 4,
       zIndex: 2,
+      overflow: 'hidden',
     },
   };
 });

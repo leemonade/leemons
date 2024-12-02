@@ -1,9 +1,11 @@
 /* eslint-disable no-nested-ternary */
 import React from 'react';
-import PropTypes from 'prop-types';
+
 import { Box, ImageLoader, Select, Stack, Text } from '@bubbles-ui/components';
-import { cloneDeep, find, forEach, isArray, isNil, isNumber, isObject, shuffle } from 'lodash';
 import { numberToEncodedLetter } from '@common';
+import { cloneDeep, find, forEach, isArray, isNil, isNumber, isObject, shuffle } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { getQuestionClues } from '../../../helpers/getQuestionClues';
 
 export default function Responses(props) {
@@ -161,95 +163,6 @@ export default function Responses(props) {
   });
 
   return <Box className={styles.mapResponsesContainer}>{components}</Box>;
-
-  /*
-  if (clue && clue.indexs.includes(currentResponseIndex)) {
-    store.questionResponses[question.id].properties.response = null;
-    render();
-  }
-
-  async function markResponse(index) {
-    if (!store.questionResponses[question.id].properties) {
-      store.questionResponses[question.id].properties = {};
-    }
-    store.questionResponses[question.id].properties.response = index;
-    render();
-  }
-
-  const components = question.properties.responses.map(({ value: response }, index) => {
-    let classContainer = styles.questionResponseImageContainer;
-    if (index === currentResponseIndex) {
-      classContainer = cx(classContainer, styles.questionResponseImageContainerSelected);
-    }
-    let classDisableBg = styles.disableResponseBg;
-    let classDisableIcon = styles.disableResponseIcon;
-    if (!question.withImages) {
-      classDisableBg = cx(classDisableBg, styles.disableResponseBgWithOutImage);
-      classDisableIcon = cx(classDisableIcon, styles.disableResponseIconWithOutImage);
-    }
-    const clued = clue && clue.indexs.includes(index);
-    if (clued) {
-      classContainer = cx(classContainer, styles.questionResponseImageContainerClued);
-    }
-    return (
-      <Box
-        key={index}
-        className={classContainer}
-        onClick={() => {
-          if (!clued) {
-            markResponse(index);
-          }
-        }}
-      >
-        {clued ? (
-          <>
-            <Box className={classDisableBg} />
-            <Box className={classDisableIcon}>
-              <ImageLoader src={`/public/tests/clue-on.svg`} />
-            </Box>
-            {question.withImages ? (
-              <Box className={styles.disableResponseImage}>
-                <ImageLoader src={`/public/tests/hint-image.svg`} />
-              </Box>
-            ) : null}
-          </>
-        ) : null}
-
-        {question.withImages ? (
-          <>
-            <Box className={styles.questionResponseImageContent}>
-              <LeebraryImage className={styles.questionResponseImage} src={response.image} />
-            </Box>
-            <Box className={styles.questionResponseImageTextContent}>
-              {response.image?.description ? (
-                <Text color="primary" role="productive" size="md">
-                  {response.image.description}
-                </Text>
-              ) : null}
-            </Box>
-          </>
-        ) : (
-          <Box>
-            {numberToEncodedLetter(index + 1)}. {response.response}{' '}
-          </Box>
-        )}
-      </Box>
-    );
-  });
-
-  return (
-    <Box
-      className={
-        question.withImages
-          ? styles.questionResponsesContainerImages
-          : styles.questionResponsesContainer
-      }
-    >
-      {components}
-    </Box>
-  );
-
-   */
 }
 
 Responses.propTypes = {

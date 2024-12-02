@@ -2,6 +2,10 @@ const _ = require('lodash');
 
 const { QUESTION_TYPES } = require('../../config/constants');
 
+const { createStemResourceAsset, getStemResouceAssetName } = require('./createStemResourceAsset');
+
+const LIBRARY_ADD_ASSET = 'leebrary.assets.add';
+const LIBRARY_UPDATE_ASSET = 'leebrary.assets.update';
 /**
  * Manages the solution fields for a question based on its type.
  *
@@ -39,7 +43,7 @@ async function updateQuestion({ data, published, ctx }) {
   if (data.type === QUESTION_TYPES.MAP) {
     const mapImageFile = mapProperties.image?.cover?.id ?? mapProperties.image;
     if (question.mapProperties?.image) {
-      const asset = await ctx.tx.call('leebrary.assets.update', {
+      const asset = await ctx.tx.call(LIBRARY_UPDATE_ASSET, {
         data: {
           id: question.mapProperties.image,
           name: `Map question image`,
@@ -49,7 +53,7 @@ async function updateQuestion({ data, published, ctx }) {
       });
       mapProperties.image = asset.id;
     } else {
-      const asset = await ctx.tx.call('leebrary.assets.add', {
+      const asset = await ctx.tx.call(LIBRARY_ADD_ASSET, {
         asset: {
           name: `Map question image`,
           cover: mapImageFile,
@@ -62,30 +66,27 @@ async function updateQuestion({ data, published, ctx }) {
     }
   }
 
-  // --- Question image
-  const questionImage = data.questionImage?.cover?.id ?? data.questionImage;
-  if (question.questionImage) {
-    const asset = await ctx.tx.call('leebrary.assets.update', {
+  // --- Stem resource
+  // When edited, the stem resource should be an asset object, instead of an asset id
+  const newStemResourceFile = props.stemResource?.file?.id || props.stemResource?.cover?.id; // For retrocompatibility we use the cover id as a fallback, as old "question image" assets were created without a file
+  if (question.stemResource && newStemResourceFile) {
+    const asset = await ctx.tx.call(LIBRARY_UPDATE_ASSET, {
       data: {
-        id: question.questionImage,
-        name: 'Question image',
-        cover: questionImage,
+        id: question.stemResource,
+        file: newStemResourceFile,
+        cover: props.stemResource?.cover?.id,
+        name: getStemResouceAssetName(props.stemResource.name),
       },
       published,
     });
 
-    props.questionImage = asset.id;
-  } else if (!question.questionImage && questionImage) {
-    const asset = await ctx.tx.call('leebrary.assets.add', {
-      asset: {
-        name: `Image question - ${question.id}`,
-        cover: questionImage,
-        indexable: false,
-        public: true,
-      },
-      options: { published },
+    props.stemResource = asset.id;
+  } else if (!question.stemResource && newStemResourceFile) {
+    props.stemResource = await createStemResourceAsset({
+      sourceAsset: props.stemResource,
+      published,
+      ctx,
     });
-    props.questionImage = asset.id;
   }
 
   if (data.type === QUESTION_TYPES.MONO_RESPONSE) {
@@ -101,7 +102,7 @@ async function updateQuestion({ data, published, ctx }) {
       _.forEach(choices, (choice, index) => {
         const choiceImage = choice.image?.cover?.id ?? choice.image;
         promises.push(
-          ctx.tx.call('leebrary.assets.add', {
+          ctx.tx.call(LIBRARY_ADD_ASSET, {
             asset: {
               name: `Question Image Response ${index}`,
               cover: choiceImage,

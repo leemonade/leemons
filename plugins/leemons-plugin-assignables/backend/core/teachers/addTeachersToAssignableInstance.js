@@ -1,5 +1,3 @@
-//! Solo está el encabezamiento para poder hacer test
-
 const { addPermissionToUser } = require('../permissions/instances/users');
 
 async function addTeachersToAssignableInstance({
@@ -20,9 +18,9 @@ async function addTeachersToAssignableInstance({
   // EN: Save the teachers
   // ES: Guarda los profesores
   return ctx.tx.db.Teachers.insertMany(
-    teachers.map(({ teacher, type }) => ({
+    teachers.map(({ id, type }) => ({
       assignableInstance: assignableInstanceId,
-      teacher,
+      teacher: id,
       type,
     })),
     {

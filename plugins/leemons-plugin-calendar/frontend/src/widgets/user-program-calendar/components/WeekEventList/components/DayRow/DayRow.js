@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   Button,
@@ -177,7 +177,7 @@ const DayRow = ({ date, events, calendarWeekdays, t, onEventClick }) => {
         <Box className={classes.eventDescription}>
           {preparedEvents.description &&
             preparedEvents.description.map((event, index) => {
-              const isTask = event.isTask ? `${t('taskLabel').toUpperCase()}. ` : '';
+              const isTask = event.isTask ? `${t('activityLabel').toUpperCase()}. ` : '';
               return (
                 <Stack key={index} spacing={2} alignItems="center">
                   <AvatarSubject color={event.bgColor} size="xs" />

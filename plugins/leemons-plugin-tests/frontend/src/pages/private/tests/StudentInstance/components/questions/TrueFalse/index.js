@@ -1,9 +1,9 @@
 import { Box, createStyles } from '@bubbles-ui/components';
 import PropTypes from 'prop-types';
 
-import QuestionImage from '../../QuestionImage';
 import QuestionNoteClues from '../../QuestionNoteClues';
 import QuestionTitle from '../../QuestionTitle';
+import StemResource from '../../StemResource';
 import UnansweredQuestionWarning from '../../UnansweredQuestionWarning';
 
 import Responses from './Responses';
@@ -33,7 +33,7 @@ export default function Index(props) {
 
       <Box className={!store.viewMode ? styles.questionCard : classes.container}>
         <QuestionTitle {...props} tableViewMode={store.viewMode} />
-        {question?.questionImage?.cover ? <QuestionImage {...props} /> : null}
+        {question?.stemResource && <StemResource {...props} asset={question.stemResource} />}
         {!store.viewMode ? <QuestionNoteClues {...props} /> : null}
         {!store.viewMode ? <Responses {...props} /> : <ViewModeResponses {...props} />}
       </Box>

@@ -122,7 +122,10 @@ module.exports = {
     hideOptionsLabel: 'Ocultar opciones',
     hideOptionsPlaceholder: 'Selecciona una opción',
     hideOptionsHelp: 'Las opciones ocultas se identifican con el icono {{icon}}',
+    hasStemResourceLabel: 'Feature image',
     hasCoverLabel: 'Imagen destacada',
+    stemResourceLabel: 'Incluir recurso multimedia',
+    stemResourceDescription: 'Puedes añadir elementos de imagen, audio o video. ',
     hideOptionNoRightAnswer: 'Primero selecciona la respuesta correcta',
     headerTitlePlaceholder: 'Título del banco de preguntas',
     cluesCopy:
@@ -596,6 +599,12 @@ module.exports = {
       feedbackPlaceholder: 'Escribe aquí el texto de feedback',
       saveCorrection: 'Guardar corrección',
       correctionSaved: 'Corrección guardada correctamente',
+    },
+  },
+  common: {
+    searchInLibrary: 'Buscar en la biblioteca',
+    tooltips: {
+      remove: 'Quitar',
     },
   },
 };

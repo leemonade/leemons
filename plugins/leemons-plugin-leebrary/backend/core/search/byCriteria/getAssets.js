@@ -1,9 +1,9 @@
 const { difference, map } = require('lodash');
 
-const { getIndexables } = require('../../assets/getIndexables');
-const { getAssetsByType } = require('../../files/getAssetsByType');
 const { getAssetsByProgram } = require('../../assets/getAssetsByProgram');
 const { getAssetsBySubject } = require('../../assets/getAssetsBySubject');
+const { getIndexables } = require('../../assets/getIndexables');
+const { getAssetsByType } = require('../../files/getAssetsByType');
 
 /**
  * Retrieves assets based on the provided parameters.
@@ -15,7 +15,7 @@ const { getAssetsBySubject } = require('../../assets/getAssetsBySubject');
  * @param {boolean} params.onlyShared - Flag to indicate if only shared assets should be retrieved.
  * @param {Array} params.programs - The programs to be included in the retrieval.
  * @param {Array} params.subjects - The subjects to be included in the retrieval.
- * @param {string} params.type - The type of the asset to be retrieved.
+ * @param {string|array} params.type - The file type or list of file types to filter by
  * @param {Object} params.ctx - The Moleculer context.
  * @returns {Promise<Object>} - Returns an object containing the retrieved assets and a flag indicating if no assets were found.
  */
