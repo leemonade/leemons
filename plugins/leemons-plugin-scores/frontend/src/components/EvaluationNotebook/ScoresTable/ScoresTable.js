@@ -92,6 +92,7 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
         })}
         key={studentsData}
         leftBadge={<WeightTypeBadge class={klass} includePlaceholder />}
+        hideCustom={!!filters?.period?.isCustom}
       />
     </Stack>
   );

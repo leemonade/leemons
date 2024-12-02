@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from '@bubbles-ui/components';
 import { DownloadIcon } from '@bubbles-ui/icons/solid';
-
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
-import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
+import PropTypes from 'prop-types';
+
 import useCloseEvaluation from './hooks/useCloseEvaluation';
 import useDownloadScoreReport from './hooks/useDownloadScoreReport';
 
-export default function Footer() {
+import { prefixPN } from '@scores/helpers';
+import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
+
+export default function Footer({ isCustom }) {
   const [t] = useTranslateLoader(prefixPN('evaluationNotebook.footer'));
   const tableData = useEvaluationNotebookStore((state) => state.tableData);
 
@@ -28,16 +30,18 @@ export default function Footer() {
 
   return (
     <>
-      <Button
-        loading={isLoading}
-        disabled={isPeriodPublished}
-        onClick={() => {
-          setIsLoading(true);
-          onCloseEvaluation(tableData).finally(() => setIsLoading(false));
-        }}
-      >
-        {t('closeEvaluation')}
-      </Button>
+      {!isCustom && (
+        <Button
+          loading={isLoading}
+          disabled={isPeriodPublished}
+          onClick={() => {
+            setIsLoading(true);
+            onCloseEvaluation(tableData).finally(() => setIsLoading(false));
+          }}
+        >
+          {t('closeEvaluation')}
+        </Button>
+      )}
       <Button
         variant="outline"
         onClick={() => downloadScoreReport(tableData, 'xlsx')}
@@ -55,3 +59,7 @@ export default function Footer() {
     </>
   );
 }
+
+Footer.propTypes = {
+  isCustom: PropTypes.bool,
+};
