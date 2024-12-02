@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Model } from '@leemons/mongodb';
+import { UserAgent } from '@leemons/users';
 import {
   Context as MoleculerContext,
   ActionSchema as MoleculerActionSchema,
@@ -12,16 +13,6 @@ import {
 type DB<Models extends Record<string, Model<any>>> = {
   [modelName in keyof Models]: Models[modelName];
 };
-
-interface UserAgent {
-  id: string;
-  disabled: boolean;
-  reloadPermissions: boolean;
-  role: string;
-  user: {
-    email: string;
-  };
-}
 
 interface UserSession {
   id: string;
