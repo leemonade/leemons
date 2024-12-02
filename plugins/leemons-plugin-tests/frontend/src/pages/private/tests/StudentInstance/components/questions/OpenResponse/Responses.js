@@ -29,7 +29,7 @@ function Responses(props) {
   }, [question.openResponseProperties, t]);
 
   return (
-    <Stack fullWidth fullHeight>
+    <Stack fullWidth>
       <Box>
         <Textarea
           placeholder={t('questionLabels.answerPlaceholder')}

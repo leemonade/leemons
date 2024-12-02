@@ -3,8 +3,6 @@ const { calculateUserAgentInstanceNote } = require('./calculateUserAgentInstance
 async function setOpenQuestionGrade({ data, ctx }) {
   const { instanceId, studentUserAgentId, questionId, teacherReviewStatus, teacherFeedback } = data;
 
-  // TODO: Validate data
-
   const [assignation, instance] = await Promise.all([
     ctx.tx.call('assignables.assignations.getAssignation', {
       assignableInstanceId: instanceId,
@@ -49,7 +47,7 @@ async function setOpenQuestionGrade({ data, ctx }) {
   const updatedQuestionResponse =
     await ctx.tx.db.UserAgentAssignableInstanceResponses.findOneAndUpdate(
       {
-        instance: data.instance,
+        instance: instanceId,
         question: questionId,
         userAgent: studentUserAgentId,
       },

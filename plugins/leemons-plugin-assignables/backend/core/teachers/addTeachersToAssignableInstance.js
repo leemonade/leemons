@@ -6,7 +6,7 @@ async function addTeachersToAssignableInstance({
   assignable: assignableId,
   ctx,
 }) {
-  const teachersIds = teachers.map(({ id }) => id);
+  const teachersIds = teachers.map(({ teacher }) => teacher);
   await addPermissionToUser({
     assignableInstance: assignableInstanceId,
     assignable: assignableId,
@@ -18,9 +18,9 @@ async function addTeachersToAssignableInstance({
   // EN: Save the teachers
   // ES: Guarda los profesores
   return ctx.tx.db.Teachers.insertMany(
-    teachers.map(({ id, type }) => ({
+    teachers.map(({ teacher, type }) => ({
       assignableInstance: assignableInstanceId,
-      teacher: id,
+      teacher,
       type,
     })),
     {

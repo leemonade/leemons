@@ -7,22 +7,24 @@ import PropTypes from 'prop-types';
 import { htmlToText } from '../../StudentInstance/helpers/htmlToText';
 import ResponseStatusIcon from '../ResponseDetail/ResponseStatusIcon';
 
+import { QUESTION_RESPONSE_STATUS } from '@tests/constants';
+
 export default function QuestionResultsTable({
-  onlyOpenResponseQuestions,
   isTeacher,
   onReviewQuestion,
   questions,
   styles,
   t,
   questionResponses,
-  levels,
   cx,
 }) {
   const getScoreItem = useCallback(
-    (questionId, points) => {
+    (questionId) => {
+      const { points, status } = questionResponses?.[questionId] || {};
+
       return (
         <Stack justifyContent="center" fullWidth>
-          {isTeacher && onlyOpenResponseQuestions ? (
+          {isTeacher && status === QUESTION_RESPONSE_STATUS.NOT_GRADED ? (
             <ActionButton
               icon={<EditIcon width={20} height={20} />}
               onClick={() => onReviewQuestion(questionId)}
@@ -33,7 +35,7 @@ export default function QuestionResultsTable({
         </Stack>
       );
     },
-    [isTeacher, onlyOpenResponseQuestions, onReviewQuestion]
+    [isTeacher, onReviewQuestion, questionResponses]
   );
 
   const getResultItem = useCallback(
@@ -87,7 +89,7 @@ export default function QuestionResultsTable({
 
   const tableData = useMemo(() => {
     if (!questions) return [];
-    console.log('questions', questions);
+
     return questions.map((question, i) => ({
       question: (
         <Box className={styles.tableCell}>
@@ -113,10 +115,10 @@ export default function QuestionResultsTable({
           {question.level || '-'}
         </Box>
       ),
-      result: getResultItem(questionResponses[question.id].status),
-      score: getScoreItem(question.id, questionResponses[question.id].points),
+      result: getResultItem(questionResponses?.[question?.id]?.status),
+      score: getScoreItem(question.id),
     }));
-  }, [questions, questionResponses, levels, styles, getScoreItem, getResultItem]);
+  }, [questions, questionResponses, styles, getScoreItem, getResultItem]);
 
   return <Table columns={headers} data={tableData} />;
 }
