@@ -32,10 +32,8 @@ async function afterAddClassTeacher({ class: classe, teacher, type, ctx }) {
 
     await Promise.all(
       instances.map(async (instance) => {
-        const teachers = [{ id: teacher, type }];
-
         await addTeachersToAssignableInstance({
-          teachers,
+          teachers: [{ teacher, type }],
           id: instance.id,
           assignable: instance.assignable,
           ctx,

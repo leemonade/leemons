@@ -151,7 +151,7 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
       return (
         <SelectUserAgent
           value={mainTeacher}
-          label={t('mainTeacher')}
+          label={t('class.teacherLabel')}
           profiles={teacherProfile}
           centers={center}
           onChange={(onChangeValue) => {
@@ -170,7 +170,7 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
       return (
         <SelectUserAgent
           value={associateTeachers}
-          label={t('associateTeachersLabel')}
+          label={t('class.associateTeachersLabel')}
           profiles={teacherProfile}
           centers={center}
           maxSelectedValues={20}
@@ -198,13 +198,15 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
     <ContextContainer sx={{ padding: 24 }}>
       <ContextContainer>
         <Title order={1}>{aliasOrClassroomId}</Title>
-        <Title order={2}>{t('teachers')}</Title>
-        {teacherProfile && center?.length > 0 && (
-          <Box className={classes.mainTeacher}>{TeacherSelect}</Box>
-        )}
-        {SecondaryTeachersSelect && (
-          <Box className={classes.mainTeacher}>{SecondaryTeachersSelect}</Box>
-        )}
+        <Title order={2}>{t('class.teachersLabel')}</Title>
+        <Stack spacing={4}>
+          {teacherProfile && center?.length > 0 && (
+            <Box className={classes.mainTeacher}>{TeacherSelect}</Box>
+          )}
+          {SecondaryTeachersSelect && (
+            <Box className={classes.mainTeacher}>{SecondaryTeachersSelect}</Box>
+          )}
+        </Stack>
       </ContextContainer>
       <ContextContainer>
         <Title order={2}>{t('scheduleAndPlace')}</Title>
