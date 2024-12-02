@@ -36,13 +36,11 @@ export default function ShortResponse({ form: _form, t }) {
 
   // EFFECTS ·······························································································|
   useEffect(() => {
-    if (isEditing) {
-      setAltChoices(() => {
-        const choicesValue = form.getValues('choices');
-        return choicesValue.filter((item) => !item?.isMainChoice);
-      });
-    }
-  }, [isEditing]);
+    setAltChoices(() => {
+      const choicesValue = form.getValues('choices') ?? [];
+      return choicesValue.filter((item) => !item?.isMainChoice);
+    });
+  }, []);
 
   // RENDER ································································································|
 
@@ -120,18 +118,20 @@ export default function ShortResponse({ form: _form, t }) {
 
         <Box sx={{ width: '100%' }}>
           <TagsInput
-            label=<Tooltip
-              autoHeight
-              size="md"
-              multiline
-              position="right-start"
-              label={'Equaly valid alternative answers'}
-            >
-              <Stack spacing={1}>
-                <Text>{t('alternativeResponseLabel')}</Text>
-                <InfoIcon width={15} height={15} />
-              </Stack>
-            </Tooltip>
+            label={
+              <Tooltip
+                autoHeight
+                size="md"
+                multiline
+                position="right-start"
+                label={'Equaly valid alternative answers'}
+              >
+                <Stack spacing={1}>
+                  <Text>{t('alternativeResponseLabel')}</Text>
+                  <InfoIcon width={15} height={15} />
+                </Stack>
+              </Tooltip>
+            }
             styles={{ width: '100%' }}
             value={altChoices.map((item) => item?.text?.text)}
             placeholder={t('tagsInputPlaceholder')}

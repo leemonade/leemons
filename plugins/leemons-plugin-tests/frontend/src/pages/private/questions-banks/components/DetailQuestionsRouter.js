@@ -13,7 +13,6 @@ import {
 
 import DetailQuestionForm from './DetailQuestionForm';
 import DetailQuestions from './DetailQuestions';
-import { GiftImporter } from './gift-import/GiftImporter';
 
 function DetailQuestionsRouter({ t, form, savingAs, scrollRef, onPrev, onPublish, onSaveDraft }) {
   const searchParams = useSearchParams();
@@ -107,11 +106,6 @@ function DetailQuestionsRouter({ t, form, savingAs, scrollRef, onPrev, onPublish
   // ························································
   // HANDLERS
 
-  function onAbortCreate() {
-    searchParams.delete('createFrom');
-    history.push(`${window.location.pathname}?${searchParams.toString()}`);
-  }
-
   function onCancel() {
     searchParams.delete('createFrom');
     searchParams.delete('questionIndex');
@@ -162,21 +156,13 @@ function DetailQuestionsRouter({ t, form, savingAs, scrollRef, onPrev, onPublish
   // ························································
   // RENDER
 
-  if (createFrom === 'gift') {
-    return (
-      <GiftImporter onPrev={onAbortCreate} scrollRef={scrollRef} onAddQuestions={onAddQuestions} />
-    );
-  }
-
-  console.log('createFrom', createFrom);
-
   if (createFrom === 'new' || questionIndex) {
-    const questionToEdit = questions[questionIndex];
+    const questionToEdit = questions?.[questionIndex];
 
     return (
       <DetailQuestionForm
         t={t}
-        isPublished={formValues.published}
+        isPublished={formValues?.published}
         onSaveDraft={onSaveDraft}
         onSaveQuestion={onSaveQuestion}
         savingAs={savingAs}
@@ -199,6 +185,7 @@ function DetailQuestionsRouter({ t, form, savingAs, scrollRef, onPrev, onPublish
       onPrev={onPrev}
       onPublish={onPublish}
       onSaveDraft={onSaveDraft}
+      onAddQuestions={onAddQuestions}
       onEditQuestion={onEditQuestion}
       onDeleteQuestion={onDeleteQuestion}
     />

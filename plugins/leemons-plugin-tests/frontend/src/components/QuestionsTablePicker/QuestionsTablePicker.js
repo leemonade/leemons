@@ -8,7 +8,7 @@ import PropTypes from 'prop-types';
 import { getQuestionForTable } from '@tests/helpers/getQuestionForTable';
 import prefixPN from '@tests/helpers/prefixPN';
 
-function QuestionsList({ questions, onSelectQuestions }) {
+function QuestionsTablePicker({ questions, onSelectQuestions }) {
   const [t] = useTranslateLoader(prefixPN('questionsBanksDetail'));
   const [selectedQuestions, setSelectedQuestions] = useState([]);
 
@@ -88,9 +88,9 @@ function QuestionsList({ questions, onSelectQuestions }) {
   );
 }
 
-QuestionsList.propTypes = {
+QuestionsTablePicker.propTypes = {
   questions: PropTypes.array.isRequired,
   onSelectQuestions: PropTypes.func.isRequired,
 };
 
-export { QuestionsList };
+export { QuestionsTablePicker };

@@ -59,7 +59,7 @@ export default function DetailQuestionForm({
   const [withQuestionImage, setWithQuestionImage] = useState(() => !!defaultValues?.questionImage);
 
   const form = useForm({
-    defaultValues: { ...defaultValues, clues: defaultValues.clues || [] },
+    defaultValues: { ...defaultValues, clues: defaultValues?.clues || [] },
     shouldUnregister: true,
   });
   const choices = form.watch('choices');

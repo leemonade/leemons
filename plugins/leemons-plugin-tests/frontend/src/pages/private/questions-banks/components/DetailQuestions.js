@@ -10,14 +10,16 @@ import {
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
 } from '@bubbles-ui/components';
-import { ChevLeftIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
+import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import { AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { useSearchParams } from '@common/useSearchParams';
 import { isLRN } from '@leebrary/helpers/isLRN';
+import { ZoneWidgets } from '@widgets/ZoneWidgets';
 import { noop } from 'lodash';
 import PropTypes from 'prop-types';
 
 import { DetailQuestionsList } from './DetailQuestionsList';
+import { GiftImporter } from './gift-import/GiftImporter';
 
 export default function DetailQuestions({
   t,
@@ -28,6 +30,7 @@ export default function DetailQuestions({
   onPrev,
   onPublish,
   onSaveDraft,
+  onAddQuestions,
   onEditQuestion,
   onDeleteQuestion,
 }) {
@@ -74,11 +77,9 @@ export default function DetailQuestions({
     }
   }
 
-  function onImportQuestionsFromGift() {
-    searchParams.set('createFrom', 'gift');
-    searchParams.delete('questionIndex');
-    history.push(`${window.location.pathname}?${searchParams.toString()}`);
-  }
+  const widgets = ({ Component, key, properties }) => (
+    <Component {...properties} key={key} onAddQuestions={onAddQuestions} />
+  );
 
   return (
     <TotalLayoutStepContainer
@@ -129,13 +130,10 @@ export default function DetailQuestions({
               </Button>
             </Box>
             <Box>
-              <Button
-                variant="link"
-                leftIcon={<DownloadIcon />}
-                onClick={onImportQuestionsFromGift}
-              >
-                {t('giftImport.importFile')}
-              </Button>
+              <Stack spacing={2}>
+                <GiftImporter onAddQuestions={onAddQuestions} />
+                <ZoneWidgets zone="tests.qbank.questions.create">{widgets}</ZoneWidgets>
+              </Stack>
             </Box>
           </Stack>
 
@@ -165,6 +163,7 @@ DetailQuestions.propTypes = {
   stepName: PropTypes.string,
   scrollRef: PropTypes.object,
   savingAs: PropTypes.string,
+  onAddQuestions: PropTypes.func,
   onEditQuestion: PropTypes.func,
   onDeleteQuestion: PropTypes.func,
 };
