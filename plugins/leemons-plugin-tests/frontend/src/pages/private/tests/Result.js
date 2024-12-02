@@ -496,6 +496,7 @@ export default function Result() {
                     cx={cx}
                     scrollRef={scrollRef}
                     studentUserAgentId={store.userLoaded}
+                    afterSaveCorrection={init}
                   />
                 )}
               </Box>

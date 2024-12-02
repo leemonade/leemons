@@ -25,6 +25,7 @@ export default function StudentResultsTable({
   styles,
   t,
   cx,
+  afterSaveCorrection,
   ...props
 }) {
   const [viewMode, setViewMode] = useState(VIEW_MODES.TABLE);
@@ -102,6 +103,7 @@ export default function StudentResultsTable({
             questionsInfo={props.questionsInfo}
             instance={props.instance}
             studentUserAgentId={props.studentUserAgentId}
+            afterSaveCorrection={afterSaveCorrection}
           />
         );
       }
@@ -150,4 +152,5 @@ StudentResultsTable.propTypes = {
   questionsInfo: PropTypes.object,
   instance: PropTypes.object,
   studentUserAgentId: PropTypes.string,
+  afterSaveCorrection: PropTypes.func,
 };

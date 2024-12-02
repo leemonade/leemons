@@ -38,6 +38,7 @@ export default function TeacherReview({
   questionsInfo,
   studentUserAgentId,
   instance,
+  afterSaveCorrection,
 }) {
   const [t] = useTranslateLoader(prefixPN('testResult.responseDetail'));
   const [, , , getErrorMessage] = useRequestErrorMessage();
@@ -90,6 +91,7 @@ export default function TeacherReview({
         ...data,
       });
       addSuccessAlert(t('correctionSaved'));
+      await afterSaveCorrection();
     } catch (error) {
       console.error(error);
       addErrorAlert(getErrorMessage(error));
@@ -187,4 +189,5 @@ TeacherReview.propTypes = {
   questionsInfo: PropTypes.object,
   studentUserAgentId: PropTypes.string,
   instance: PropTypes.object,
+  afterSaveCorrection: PropTypes.func,
 };

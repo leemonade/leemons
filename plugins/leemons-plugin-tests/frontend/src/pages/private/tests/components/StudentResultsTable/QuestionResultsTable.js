@@ -2,7 +2,6 @@ import { useCallback, useMemo } from 'react';
 
 import { Table, ActionButton, Stack, Box, Text, TextClamp } from '@bubbles-ui/components';
 import { EditIcon, SlashIcon } from '@bubbles-ui/icons/solid';
-import { find } from 'lodash';
 import PropTypes from 'prop-types';
 
 import { htmlToText } from '../../StudentInstance/helpers/htmlToText';
@@ -29,7 +28,7 @@ export default function QuestionResultsTable({
               onClick={() => onReviewQuestion(questionId)}
             />
           ) : (
-            points || '-'
+            points?.toFixed(2) || '-'
           )}
         </Stack>
       );
@@ -88,6 +87,7 @@ export default function QuestionResultsTable({
 
   const tableData = useMemo(() => {
     if (!questions) return [];
+    console.log('questions', questions);
     return questions.map((question, i) => ({
       question: (
         <Box className={styles.tableCell}>
@@ -110,7 +110,7 @@ export default function QuestionResultsTable({
       ),
       level: (
         <Box style={{ minWidth: '130px' }} className={styles.tableCell}>
-          {question.level ? find(levels, { value: question.level }).label : '-'}
+          {question.level || '-'}
         </Box>
       ),
       result: getResultItem(questionResponses[question.id].status),
