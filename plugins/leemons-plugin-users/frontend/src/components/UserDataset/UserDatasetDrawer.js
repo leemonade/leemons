@@ -1,15 +1,18 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { noop } from 'lodash';
+
 import { Drawer, Stack, Button } from '@bubbles-ui/components';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@users/helpers/prefixPN';
-import { getSessionUserAgent } from '@users/session';
+import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { UserDatasets } from './UserDatasets';
 
-function UserDatasetDrawer({ userAgentIds, isOpen, onClose = noop }) {
+import prefixPN from '@users/helpers/prefixPN';
+import { getSessionUserAgent } from '@users/session';
+
+function UserDatasetDrawer({ userId, userAgentIds, isOpen, onClose = noop }) {
   const [t] = useTranslateLoader(prefixPN('userDataDatasetPage'));
   const [saving, setSaving] = React.useState(false);
   const [, , , getErrorMessage] = useRequestErrorMessage();
@@ -43,6 +46,7 @@ function UserDatasetDrawer({ userAgentIds, isOpen, onClose = noop }) {
       <Drawer.Content>
         <UserDatasets
           ref={userDatasetsRef}
+          userId={userId}
           userAgentIds={userAgentIds ?? [userAgentId]}
           showTitle={false}
           preferEditMode
@@ -66,6 +70,7 @@ UserDatasetDrawer.propTypes = {
   isOpen: PropTypes.bool,
   onClose: PropTypes.func,
   userAgentIds: PropTypes.array,
+  userId: PropTypes.string,
 };
 
 export { UserDatasetDrawer };

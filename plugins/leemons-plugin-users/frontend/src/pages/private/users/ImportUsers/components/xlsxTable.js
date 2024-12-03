@@ -1,6 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import _, { noop } from 'lodash';
+
 import {
   Box,
   Alert,
@@ -13,14 +12,18 @@ import {
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
 import { AlertWarningTriangleIcon } from '@bubbles-ui/icons/solid';
-import Ajv from 'ajv';
-import { EMAIL_REGEX } from '@users/components/LoginForm';
 import { LocaleDate, useLocale, useStore } from '@common';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { addUsersBulkRequest } from '@users/request';
+import Ajv from 'ajv';
+import _, { noop } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { transformErrorsFromAjv } from '../helpers/transformErrorsFromAjv';
+
+import { EMAIL_REGEX } from '@users/components/LoginForm';
+import { addUsersBulkRequest } from '@users/request';
 
 const datasetArraySplitKey = '|';
 
@@ -98,7 +101,7 @@ function getValueErrorMessage({ value, t, tForm, headerValue, generalDataset }) 
     }
   } else if (headerValue === 'gender') {
     if (value) {
-      if (!['male', 'female'].includes(value)) {
+      if (!['male', 'female', 'other'].includes(value)) {
         return t('genderInvalid');
       }
     } else {

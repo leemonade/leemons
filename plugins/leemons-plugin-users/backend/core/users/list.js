@@ -78,6 +78,8 @@ async function list({
   sort,
   collation,
   listUserAgents,
+  includeUserDataset,
+  includeUserAgentsDataset,
   ...queries
 }) {
   const query = Object.fromEntries(
@@ -187,6 +189,37 @@ async function list({
         ...user,
         tags: tags[index],
         lastConnection: lastConnection?.statement?.timestamp,
+      };
+    });
+  }
+
+  if (includeUserDataset) {
+    const userIds = result.items.map((user) => user.id);
+    const userAgents = ctx.meta.userSession?.userAgents;
+    const [userAgent] = userAgents ?? [];
+
+    // Get dataset values
+    const userDatasetsValues = await Promise.allSettled(
+      userIds.map((userId) =>
+        ctx.call('dataset.dataset.getValues', {
+          locationName: 'user-data',
+          pluginName: 'users',
+          target: userId,
+          userAgent,
+        })
+      )
+    );
+
+    result.items = result.items.map((user) => {
+      const index = userIds.indexOf(user.id);
+      let dataset = null;
+      if (userDatasetsValues[index].status === 'fulfilled') {
+        dataset = userDatasetsValues[index].value;
+      }
+
+      return {
+        ...user,
+        dataset,
       };
     });
   }

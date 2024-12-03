@@ -1,4 +1,6 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
+
 import {
   Box,
   Button,
@@ -7,16 +9,17 @@ import {
   ContextContainer,
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
-import { useStore } from '@common';
-import { useHistory } from 'react-router-dom';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@users/helpers/prefixPN';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import { SelectCenter } from '@users/components/SelectCenter';
-import { SelectProfile } from '@users/components/SelectProfile';
+import { useStore } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+
 import { UploadFile } from './components/uploadFile';
 
-function CreateUsers() {
+import { SelectCenter } from '@users/components/SelectCenter';
+import { SelectProfile } from '@users/components/SelectProfile';
+import prefixPN from '@users/helpers/prefixPN';
+
+function ImportUsers() {
   const [t] = useTranslateLoader(prefixPN('importUsers'));
   const [tList] = useTranslateLoader(prefixPN('list_users'));
   const [store, render] = useStore();
@@ -92,4 +95,4 @@ function CreateUsers() {
   );
 }
 
-export default CreateUsers;
+export default ImportUsers;
