@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.18.0](https://github.com/leemonade/leemons/compare/1.17.0...1.18.0) (2024-12-03)
+
+
+### Features
+
+* **academic-portfolio:** Restore associate teacher functionality ([b3784ae](https://github.com/leemonade/leemons/commit/b3784ae0d354f4ec36697e49e7cfb3bcf84b0c4e)), closes [#682](https://github.com/leemonade/leemons/issues/682)
+* **tests:** Transform Question Image into Stem Multimedia resource ([1241397](https://github.com/leemonade/leemons/commit/124139709b279ed33fe35e9de123fb733bc1bdc0)), closes [#657](https://github.com/leemonade/leemons/issues/657)
+
+
+### Bug Fixes
+
+* **academic-portfolio:** Fix student initials in StudentsTable ([e270b97](https://github.com/leemonade/leemons/commit/e270b97ba4d72222c8c76a9464862618c0d1e5af)), closes [#674](https://github.com/leemonade/leemons/issues/674)
+* **assignables:** Pass correct arguments to addTeachersToAssignableInstance ([60f4d75](https://github.com/leemonade/leemons/commit/60f4d75cb76f61c72444231bfc8b9dd9e3b93530)), closes [#685](https://github.com/leemonade/leemons/issues/685)
+* **calendar:** Update task label to activity in DayWeek panel ([7cc713d](https://github.com/leemonade/leemons/commit/7cc713d8a7b19ea2f2e4287c03dbf757c7b46d73)), closes [#673](https://github.com/leemonade/leemons/issues/673)
+* **dashboard:** Improve WelcomeCard and user personalization ([935c023](https://github.com/leemonade/leemons/commit/935c0238967f9b5734e1a5f0d619bcf5c8bb4539)), closes [#675](https://github.com/leemonade/leemons/issues/675)
+* **library:** Improve tag display and class data handling ([d3ea86c](https://github.com/leemonade/leemons/commit/d3ea86c966600419a7b9f0cb732bbfbf258378c0)), closes [#677](https://github.com/leemonade/leemons/issues/677)
+* **tests:** Extend execution layout content to footer ([33a6f53](https://github.com/leemonade/leemons/commit/33a6f53dbf24b1c2b58e46e4edbc17adaaac1fc5)), closes [#680](https://github.com/leemonade/leemons/issues/680)
+
 ## [1.17.0](https://github.com/leemonade/leemons/compare/1.16.0...1.17.0) (2024-11-28)
 
 
