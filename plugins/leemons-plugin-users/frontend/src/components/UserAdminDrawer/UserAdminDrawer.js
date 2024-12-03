@@ -355,6 +355,7 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
           <UserDatasets
             ref={userDatasetsRef}
             userAgentIds={userAgents?.map((item) => item.id)}
+            userId={user?.id}
             validateOnlyForMe
             preferEditMode
             skipOptional

@@ -1,9 +1,11 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router-dom';
+
 import {
   Box,
+  Stack,
   Button,
+  Checkbox,
   FileUpload,
   NumberInput,
   InputWrapper,
@@ -12,53 +14,80 @@ import {
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
 import { useStore } from '@common';
-import { useHistory } from 'react-router-dom';
-import { getDataForUserAgentDatasetsRequest } from '@users/request';
+import { useLocale } from '@common/LocaleDate';
+import { useDatasetSchema } from '@dataset/hooks/queries';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+
 import {
   downloadTemplate,
   getTemplateIndexs,
   getTemplateIndexsLabels,
 } from '../helpers/downloadTemplate';
 import { readExcel } from '../helpers/readExcel';
+
 import { XlsxTable } from './xlsxTable';
+
+import { useUserList } from '@users/hooks/queries/useUserList';
 
 export function UploadFile({ t, center, profile, scrollRef }) {
   const [store, render] = useStore();
+  const [includeData, setIncludeData] = useState(false);
   const history = useHistory();
+  const locale = useLocale();
 
-  async function load() {
-    try {
-      const { data } = await getDataForUserAgentDatasetsRequest();
+  const { data: userDatasetSchema } = useDatasetSchema({
+    locationName: 'user-data',
+    pluginName: 'users',
+    locale,
+  });
 
-      if (data?.length) {
-        const schema = data[0].data.jsonSchema;
-        const ui = data[0].data.jsonUI;
-        store.generalDataset = data[0].data;
-        store.generalDatasetEdit = [];
-        _.forIn(schema.properties, (value, key) => {
-          let add = true;
-          if (ui[key]?.['ui:readonly']) {
-            add = false;
-          }
-          if (add) {
-            store.generalDatasetEdit.push({
-              value: `dataset-common.${key}`,
-              label: value.title,
-            });
-          }
+  const { data: profileDataset } = useDatasetSchema({
+    locationName: `profile.${profile}`,
+    pluginName: 'users',
+    locale,
+    options: { enabled: !!profile },
+  });
+
+  const enabledUserList = !!profile && includeData;
+
+  const { data: userList, isLoading: isLoadingUserList } = useUserList({
+    params: {
+      page: 0,
+      size: 1000000,
+      sort: { surnames: 1, name: 1 },
+      collation: { locale },
+      query: { profiles: profile, includeUserDataset: true },
+    },
+    options: { enabled: enabledUserList },
+  });
+
+  function prepareDataset() {
+    const { compileJsonSchema, jsonUI } = userDatasetSchema ?? {};
+
+    store.generalDataset = userDatasetSchema;
+    store.generalDatasetEdit = [];
+    _.forIn(compileJsonSchema?.properties ?? {}, (value, key) => {
+      const ui = jsonUI[key];
+      if (!ui?.['ui:readonly']) {
+        store.generalDatasetEdit.push({
+          value: `dataset-common.${key}`,
+          label: value.title,
         });
-        render();
       }
-    } catch (e) {
-      // Nothing
-    }
+    });
+
+    render();
   }
 
   async function onSelectFile(e) {
     store.loading = true;
     render();
     if (e instanceof File) {
-      store.file = await readExcel(e);
+      const { users, dataset } = await readExcel(e);
+      store.file = users;
+      store.dataset = dataset;
+
       store.fileIsTemplate = false;
       store.initRow = 1;
       store.templateIndexs = getTemplateIndexs({ extraFields: store.generalDatasetEdit });
@@ -100,21 +129,38 @@ export function UploadFile({ t, center, profile, scrollRef }) {
   }
 
   React.useEffect(() => {
-    load();
-  }, []);
+    prepareDataset();
+  }, [userDatasetSchema]);
 
   return (
     <ContextContainer title={t('uploadLabel')}>
       {!store.file && (
-        <Box>
-          <Button
-            variant="outline"
-            onClick={() => downloadTemplate({ t, extraFields: store.generalDatasetEdit })}
-            leftIcon={<DownloadIcon />}
-          >
-            {t('downloadTemplate')}
-          </Button>
-        </Box>
+        <Stack direction="column" spacing={2}>
+          <Checkbox
+            label={'Actualizar usuarios existentes'}
+            checked={includeData}
+            onChange={(value) => setIncludeData(value)}
+          />
+          <Box>
+            <Button
+              variant="outline"
+              onClick={() =>
+                downloadTemplate({
+                  t,
+                  extraFields: store.generalDatasetEdit,
+                  profileDataset,
+                  skipProfileDataset: true, // TODO: Remove this when the import phase of datasets is implemented
+                  userList: enabledUserList ? userList?.items : null,
+                })
+              }
+              leftIcon={<DownloadIcon />}
+              disabled={enabledUserList && isLoadingUserList}
+              loading={enabledUserList && isLoadingUserList}
+            >
+              {t('downloadTemplate')}
+            </Button>
+          </Box>
+        </Stack>
       )}
       {!store.file ? (
         <>

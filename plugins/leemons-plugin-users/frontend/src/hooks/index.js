@@ -8,3 +8,5 @@ export { useUserDatasets } from './queries/useUserDatasets';
 export { default as useUserDetails } from './useUserDetails';
 export { default as useUserAgents } from './useUserAgents';
 export { useIsSuperAdmin } from './useIsSuperAdmin';
+export { useUserAgentsDatasets } from './queries/useUserAgentsDatasets';
+export { useSaveUserAgentsDatasets } from './mutations/useSaveUserAgentsDatasets';
