@@ -137,7 +137,7 @@ export function UploadFile({ t, center, profile, scrollRef }) {
       {!store.file && (
         <Stack direction="column" spacing={2}>
           <Checkbox
-            label={'Actualizar usuarios existentes'}
+            label={t('updateExistingUsers')}
             checked={includeData}
             onChange={(value) => setIncludeData(value)}
           />
