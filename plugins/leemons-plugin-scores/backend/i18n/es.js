@@ -23,6 +23,7 @@ module.exports = {
         placeholder: 'Periodo de evaluación...',
         custom: 'Periodo personalizado',
         final: 'Evaluación final',
+        fullCourse: 'Curso completo',
       },
       startDate: {
         label: 'Fecha inicio',

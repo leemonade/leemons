@@ -1,20 +1,24 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Box, Text, UserDisplayItem, useElementSize, Stack } from '@bubbles-ui/components';
+import { useEffect, useMemo, useState } from 'react';
 import { useTable, useFlexLayout } from 'react-table';
-import { isFunction, sortBy } from 'lodash';
-import { motion } from 'framer-motion';
 import { useSticky } from 'react-table-sticky';
-import { ScoreCell } from './ScoreCell';
+
+import { Box, Text, UserDisplayItem, useElementSize, Stack } from '@bubbles-ui/components';
+import { motion } from 'framer-motion';
+import { isFunction, sortBy } from 'lodash';
+
+import { CommonTableStyles } from '../CommonTable.styles';
+
 import { ActivityHeader } from './ActivityHeader';
-import { ScoresBasicTableStyles } from './ScoresBasicTable.styles';
+import { ScoreCell } from './ScoreCell';
 import {
   SCORES_BASIC_TABLE_DEFAULT_PROPS,
   SCORES_BASIC_TABLE_PROP_TYPES,
 } from './ScoresBasicTable.constants';
-import { CommonTableStyles } from '../CommonTable.styles';
+import { ScoresBasicTableStyles } from './ScoresBasicTable.styles';
 
 const ScoresBasicTable = ({
   grades,
+  usePercentage,
   activities,
   value: _value,
   labels,
@@ -29,6 +33,7 @@ const ScoresBasicTable = ({
   from,
   to,
   hideCustom,
+  viewOnly,
   leftBadge,
 }) => {
   const { ref: tableRef } = useElementSize(null);
@@ -142,14 +147,16 @@ const ScoresBasicTable = ({
           <Box className={classes.studentInfo}>
             <Text color="primary" role="productive">
               {avgScore}
+              {usePercentage ? '%' : ''}
             </Text>
           </Box>
           {!hideCustom && (
             <Box className={classes.studentInfo}>
               <ScoreCell
                 value={isNaN(customScore) ? avgScore : customScore}
-                allowChange={allowCustomChange}
+                allowChange={allowCustomChange && !viewOnly}
                 grades={grades}
+                usePercentage={usePercentage}
                 row={id}
                 column={'customScore'}
                 onDataChange={onDataChange}
@@ -219,10 +226,11 @@ const ScoresBasicTable = ({
             value={value.score}
             noActivity={labels.noActivity}
             submittedLabel={labels.submitted}
-            allowChange={activity.allowChange}
+            allowChange={activity.allowChange && !viewOnly}
             isSubmitted={value.isSubmitted}
             isClosed={isDeadlineFinished}
             grades={grades}
+            usePercentage={usePercentage}
             row={row}
             column={column}
             setValue={setValue}
@@ -238,8 +246,8 @@ const ScoresBasicTable = ({
               index === 0
                 ? 'first'
                 : index === expandedData.activities.length - 1
-                ? 'last'
-                : 'between';
+                  ? 'last'
+                  : 'between';
             const completionPercentage = getCompletionPercentage(expandedActivity.id, true);
             return {
               accessor: expandedActivity.id,
@@ -263,9 +271,10 @@ const ScoresBasicTable = ({
                   value={value.score}
                   noActivity={labels.noActivity}
                   submittedLabel={labels.submitted}
-                  allowChange={expandedActivity.allowChange}
+                  allowChange={expandedActivity.allowChange && !viewOnly}
                   isSubmitted={value.isSubmitted}
                   grades={grades}
+                  usePercentage={usePercentage}
                   row={row}
                   column={column}
                   isExpanded={true}
