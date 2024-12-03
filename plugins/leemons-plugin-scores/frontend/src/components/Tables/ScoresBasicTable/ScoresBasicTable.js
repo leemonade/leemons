@@ -33,6 +33,7 @@ const ScoresBasicTable = ({
   from,
   to,
   hideCustom,
+  viewOnly,
   leftBadge,
 }) => {
   const { ref: tableRef } = useElementSize(null);
@@ -153,7 +154,7 @@ const ScoresBasicTable = ({
             <Box className={classes.studentInfo}>
               <ScoreCell
                 value={isNaN(customScore) ? avgScore : customScore}
-                allowChange={allowCustomChange}
+                allowChange={allowCustomChange && !viewOnly}
                 grades={grades}
                 usePercentage={usePercentage}
                 row={id}
@@ -225,7 +226,7 @@ const ScoresBasicTable = ({
             value={value.score}
             noActivity={labels.noActivity}
             submittedLabel={labels.submitted}
-            allowChange={activity.allowChange}
+            allowChange={activity.allowChange && !viewOnly}
             isSubmitted={value.isSubmitted}
             isClosed={isDeadlineFinished}
             grades={grades}
@@ -270,7 +271,7 @@ const ScoresBasicTable = ({
                   value={value.score}
                   noActivity={labels.noActivity}
                   submittedLabel={labels.submitted}
-                  allowChange={expandedActivity.allowChange}
+                  allowChange={expandedActivity.allowChange && !viewOnly}
                   isSubmitted={value.isSubmitted}
                   grades={grades}
                   usePercentage={usePercentage}

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { Alert, LoadingOverlay, Stack } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -43,6 +43,11 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
     period,
     filters,
   });
+
+  const isPeriodClosed = useMemo(
+    () => studentsData?.every((student) => !student.allowCustomChange),
+    [studentsData]
+  );
 
   useEffect(() => {
     setTableData({
@@ -93,6 +98,7 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
         key={studentsData}
         leftBadge={<WeightTypeBadge class={klass} includePlaceholder />}
         hideCustom={!!filters?.period?.isCustom}
+        viewOnly={isPeriodClosed}
       />
     </Stack>
   );
