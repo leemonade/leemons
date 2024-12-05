@@ -1,9 +1,16 @@
+import { useMemo } from 'react';
+
 import { useCache } from '@common';
-import { usePeriods as usePeriodsRequest } from '@scores/requests/hooks/queries';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import _ from 'lodash';
-import React from 'react';
-import usePeriodTypes from './usePeriodTypes';
+
 import { useAcademicCalendarPeriods } from '../../useAcademicCalendarPeriods';
+
+import useAcademicCalendarDates from './useAcademicCalendarDates';
+import usePeriodTypes from './usePeriodTypes';
+
+import { prefixPN } from '@scores/helpers';
+import { usePeriods as usePeriodsRequest } from '@scores/requests/hooks/queries';
 
 export default function usePeriods({ selectedClass, classes }) {
   const periodTypes = usePeriodTypes();
@@ -14,7 +21,7 @@ export default function usePeriods({ selectedClass, classes }) {
     size: 9999,
   });
 
-  const adminPeriods = React.useMemo(
+  const adminPeriods = useMemo(
     () =>
       cache(
         'adminPeriods',
@@ -24,12 +31,12 @@ export default function usePeriods({ selectedClass, classes }) {
           courses: [period.course].filter(Boolean),
         })) || []
       ),
-    [periodsResponse]
+    [cache, periodsResponse]
   );
 
   const academicCalendarPeriods = useAcademicCalendarPeriods({ classes });
 
-  const periods = React.useMemo(() => {
+  const periods = useMemo(() => {
     const allPeriods = [
       ...(adminPeriods?.map((p) => ({ ...p, group: periodTypes?.custom })) || []),
       ...(academicCalendarPeriods?.map((p) => ({ ...p, group: periodTypes?.academicCalendar })) ||
@@ -76,8 +83,41 @@ export default function usePeriods({ selectedClass, classes }) {
       });
   }, [adminPeriods, academicCalendarPeriods, selectedClass, periodTypes]);
 
+  const { startDate, endDate } = useAcademicCalendarDates({ selectedClass });
+  const [t] = useTranslateLoader(prefixPN('scoresPage.filters.period'));
+
+  const finalPeriods = useMemo(() => {
+    if (!selectedClass || !startDate || !endDate) {
+      return periods;
+    }
+
+    const hasAcademicCalendarPeriods = periods.some(
+      (p) => p.group === periodTypes?.academicCalendar
+    );
+
+    if (hasAcademicCalendarPeriods) {
+      return periods;
+    }
+
+    const customPeriod = {
+      courses: [selectedClass.courses.id],
+      programs: [selectedClass.program],
+      periods: {
+        [selectedClass.program]: {
+          [selectedClass.courses.id]: 'fullCourse',
+        },
+      },
+      startDate,
+      endDate,
+      name: t('fullCourse'),
+      id: 'fullCourse',
+    };
+
+    return [customPeriod, ...periods];
+  }, [periods, periodTypes, selectedClass, startDate, endDate, t]);
+
   return {
-    periods,
+    periods: finalPeriods,
     isLoading,
   };
 }
