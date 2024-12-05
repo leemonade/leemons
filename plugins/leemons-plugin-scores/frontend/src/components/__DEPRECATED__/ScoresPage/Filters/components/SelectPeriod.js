@@ -27,13 +27,8 @@ function usePeriodsData({ periods, t }) {
       label: t('final'),
       group: periodTypes?.academicCalendar,
     });
-  } else {
-    data.push({
-      value: 'fullCourse',
-      label: t('fullCourse'),
-      group: periodTypes?.academicCalendar,
-    });
   }
+
   return data;
 }
 
