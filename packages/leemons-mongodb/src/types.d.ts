@@ -90,3 +90,17 @@ export type PaginatedQueryResult<T> = {
 };
 
 export type PipelineStage = import('mongoose').PipelineStage;
+
+export const leemonsSchemaFields = {
+  id: {
+    type: String,
+    required: true,
+    unique: true,
+    index: true,
+  },
+  deploymentID: {
+    type: String,
+    required: true,
+    index: true,
+  },
+} as const;
