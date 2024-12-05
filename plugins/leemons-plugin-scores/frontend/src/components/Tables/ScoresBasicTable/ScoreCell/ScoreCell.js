@@ -9,7 +9,7 @@ import {
   NumberInput,
 } from '@bubbles-ui/components';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
-import { isFunction, isNil } from 'lodash';
+import { isFunction } from 'lodash';
 import PropTypes from 'prop-types';
 
 import { SCORES_CELL_DEFAULT_PROPS } from './ScoreCell.constants';
@@ -86,17 +86,25 @@ const ScoreCell = ({
   ]);
 
   const renderValue = (_value) => {
-    if (!_value && !isSubmitted && isClosed)
-      return `${grades[0].letter ?? grades[0].number}${usePercentage ? '%' : ''} (${noActivityLabel})`;
+    const hasGrade = _value !== undefined && _value !== null;
 
-    if (!_value && isSubmitted)
+    // Use minimum grade if no grade and the activity is not submitted and is closed
+    if (!hasGrade && !isSubmitted && isClosed) {
+      return `${grades[0].letter ?? grades[0].number}${usePercentage ? '%' : ''} (${noActivityLabel})`;
+    }
+
+    // Use submitted label if the activity is submitted and not graded
+    if (!hasGrade && isSubmitted) {
       return (
         <Text color="success" role="productive" style={{ flex: 1 }}>
           {submittedLabel}
         </Text>
       );
+    }
 
-    if (isNil(_value)) return '-';
+    if (!hasGrade) {
+      return '-';
+    }
 
     let render = _value;
 
