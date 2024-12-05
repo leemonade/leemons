@@ -14,10 +14,10 @@ const {
   filterInstancesByStatusAndArchived,
   filterInstancesByNotModule,
 } = require('./helpers/filters');
-const { applyOffsetAndLimit, sortInstancesByDates } = require('./helpers/sorts');
 const { filterInstancesByIsModule } = require('./helpers/filters/filterInstancesByIsModule');
 const { groupInstancesInModules } = require('./helpers/filters/groupInstancesInModules');
 const { returnModulesData } = require('./helpers/filters/returnModulesData');
+const { applyOffsetAndLimit, sortInstancesByDates } = require('./helpers/sorts');
 
 /*
   === Main function ===

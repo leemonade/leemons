@@ -1,10 +1,11 @@
 import { filter, keyBy, groupBy } from 'lodash';
 
-import getApplySameValueWeightForUnlocked from '@scores/components/EvaluationNotebook/ScoresTable/helpers/getApplySameValueWeightForUnlocked';
 import useActivities from './useActivities';
 
+import getApplySameValueWeightForUnlocked from '@scores/components/EvaluationNotebook/ScoresTable/helpers/getApplySameValueWeightForUnlocked';
+
 function getActivitiesWeightsByModules({ weights, activities }) {
-  const evaluableActivities = filter(activities, 'instance.requiresScoring');
+  const evaluableActivities = filter(activities, 'instance.gradable');
 
   const { applySameValue } = weights;
   const weightsPerModuleId = keyBy(weights.weights, 'id');
@@ -15,7 +16,7 @@ function getActivitiesWeightsByModules({ weights, activities }) {
 
     let weightValue = weight?.weight;
 
-    if (!weight?.isLocked && applySameValue && activity?.instance?.requiresScoring) {
+    if (!weight?.isLocked && applySameValue && activity?.instance?.gradable) {
       weightValue = getApplySameValueWeightForUnlocked(weights, modulesCount);
     }
 
@@ -28,7 +29,7 @@ function getActivitiesWeightsByModules({ weights, activities }) {
 }
 
 function getActivitiesWeightsByRoles({ weights, activities }) {
-  const evaluableActivities = filter(activities, 'instance.requiresScoring');
+  const evaluableActivities = filter(activities, 'instance.gradable');
 
   const { applySameValue } = weights;
   const weightsPerType = keyBy(weights.weights, 'id');
@@ -41,7 +42,7 @@ function getActivitiesWeightsByRoles({ weights, activities }) {
     const roleWeight = weightsPerType[role];
     let weightValue = roleWeight?.weight;
 
-    if (!roleWeight?.isLocked && applySameValue && activity?.instance?.requiresScoring) {
+    if (!roleWeight?.isLocked && applySameValue && activity?.instance?.gradable) {
       weightValue = getApplySameValueWeightForUnlocked(weights, rolesCount);
     }
 
@@ -55,13 +56,13 @@ function getActivitiesWeightsByRoles({ weights, activities }) {
 }
 
 function getActivitiesWeightsWithSameValue({ activities }) {
-  const evaluableActivities = filter(activities, 'instance.requiresScoring');
+  const evaluableActivities = filter(activities, 'instance.gradable');
   const activitiesCount = evaluableActivities?.length;
   const weightPerActivity = Number((1 / activitiesCount).toFixed(4));
 
   return activities.map((activity) => ({
     ...activity,
-    weight: (activity?.instance?.requiresScoring ? weightPerActivity : 0) ?? 0,
+    weight: (activity?.instance?.gradable ? weightPerActivity : 0) ?? 0,
   }));
 }
 

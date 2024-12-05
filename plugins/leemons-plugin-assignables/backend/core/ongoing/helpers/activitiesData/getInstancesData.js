@@ -14,6 +14,7 @@ async function getInstancesData({ instances, relatedInstances = false, ctx }) {
         'id',
         'assignable',
         'alwaysAvailable',
+        'gradable',
         'requiresScoring',
         'allowFeedback',
         'metadata',
