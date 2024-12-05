@@ -1,13 +1,15 @@
 import React from 'react';
-import useSearchAssignableInstances from '@assignables/hooks/assignableInstance/useSearchAssignableInstancesQuery';
+
 import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
-import { map, uniq } from 'lodash';
-import { useUserAgentsInfo } from '@users/hooks';
+import useSearchAssignableInstances from '@assignables/hooks/assignableInstance/useSearchAssignableInstancesQuery';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import { useCache } from '@common';
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
-import { useParsedActivities } from './useParsedActivities';
+import { useCache } from '@common';
+import { useUserAgentsInfo } from '@users/hooks';
+import { map, uniq } from 'lodash';
+
 import useFinalData from './useFinalData';
+import { useParsedActivities } from './useParsedActivities';
 
 function useSelectedClasses(filters) {
   const { data: sessionClasses } = useSessionClasses(
@@ -81,7 +83,7 @@ function useFilteredAssignableInstances({ assignableInstances, filters }) {
           !assignableInstance.assignable.asset.name
             .toLowerCase()
             .includes(filters.search.toLowerCase())) ||
-        !assignableInstance.requiresScoring ||
+        !assignableInstance.gradable ||
         (!filters.showNonCalificables && !assignableInstance.gradable) ||
         assignableInstance?.metadata?.module?.type === 'module'
       )
