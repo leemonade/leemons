@@ -103,6 +103,9 @@ function ClassDetailWidget({ classe }) {
     const teachers = [];
     const students = [];
     forEach(classe.teachers, (teacher) => {
+      // Avoid duplicate teachers
+      if (teachers.find((t) => t.userAgentId === teacher.teacher.id)) return;
+
       teachers.push({
         userAgentId: teacher.teacher.id,
         ...teacher.teacher.user,

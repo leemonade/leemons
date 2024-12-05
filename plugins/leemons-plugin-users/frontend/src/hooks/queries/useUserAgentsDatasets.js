@@ -4,13 +4,13 @@ import { flatten, uniqBy } from 'lodash';
 
 import { getUserDatasetsKey } from '../keys/userDatasetsKeys';
 
-import { getDataForUserDatasetsRequest } from '@users/request';
+import { getDataForUserAgentDatasetsRequest } from '@users/request';
 
-function useUserDatasets({ userIds, ...options } = {}) {
-  const queryKey = getUserDatasetsKey(userIds);
+function useUserAgentsDatasets({ userAgentIds, ...options } = {}) {
+  const queryKey = getUserDatasetsKey(userAgentIds);
 
   const queryFn = async () => {
-    const result = await Promise.all(userIds.map(getDataForUserDatasetsRequest));
+    const result = await Promise.all(userAgentIds.map(getDataForUserAgentDatasetsRequest));
     return uniqBy(flatten(result?.map((item) => item.data) ?? []), 'locationName');
   };
 
@@ -25,4 +25,4 @@ function useUserDatasets({ userIds, ...options } = {}) {
   });
 }
 
-export { useUserDatasets };
+export { useUserAgentsDatasets };

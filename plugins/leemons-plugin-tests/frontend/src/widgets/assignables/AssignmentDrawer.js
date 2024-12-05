@@ -1,11 +1,11 @@
-import React, { useEffect, useCallback } from 'react';
-import PropTypes from 'prop-types';
+import { useEffect, useCallback } from 'react';
+import { useForm, FormProvider, Controller } from 'react-hook-form';
+
+import { useFormLocalizations } from '@assignables/components/Assignment/Form';
 import {
   EvaluationType,
   evaluationTypes,
 } from '@assignables/components/Assignment/components/EvaluationType';
-import { useFormLocalizations } from '@assignables/components/Assignment/Form';
-import { useForm, FormProvider, Controller } from 'react-hook-form';
 import {
   Box,
   ContextContainer,
@@ -14,9 +14,15 @@ import {
   createStyles,
   LoadingOverlay,
 } from '@bubbles-ui/components';
-import { map } from 'lodash';
-import AssignConfig from '@tests/components/AssignConfig';
 import { useStore } from '@common';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { map } from 'lodash';
+import PropTypes from 'prop-types';
+
+import AssignConfig from '@tests/components/AssignConfig';
+import { RulesConfig } from '@tests/components/RulesConfig';
+import prefixPN from '@tests/helpers/prefixPN';
 import {
   createAssignedConfigRequest,
   deleteAssignedConfigRequest,
@@ -24,10 +30,6 @@ import {
   getTestRequest,
   updateAssignedConfigRequest,
 } from '@tests/request';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@tests/helpers/prefixPN';
-import { RulesConfig } from '@tests/components/RulesConfig';
 
 export const useAssignmentDrawerStyles = createStyles(() => ({
   buttons: {
@@ -125,7 +127,7 @@ export default function AssignmentDrawer({ assignable, value, onSave, onClose, s
             (values.evaluation.curriculum || []).map((category) => [category, true])
           ),
           showCorrectAnswers: !values.others?.hideResponses,
-          metadata: { ...values?.assignConfig, ...values?.rules },
+          metadata: { ...values?.assignConfig, ...values?.rules, evaluationType: 'auto' },
         },
         raw: values,
       });
@@ -215,6 +217,7 @@ AssignmentDrawer.defaultValues = async (activity) => {
   return {
     showCorrectAnswers: true,
     metadata: {
+      evaluationType: 'auto',
       filters: {
         useAllQuestions: true,
       },

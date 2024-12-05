@@ -23,6 +23,7 @@ module.exports = {
         placeholder: 'Evaluation period...',
         custom: 'Custom period',
         final: 'Final evaluation',
+        fullCourse: 'Full course',
       },
       startDate: {
         label: 'Start date',

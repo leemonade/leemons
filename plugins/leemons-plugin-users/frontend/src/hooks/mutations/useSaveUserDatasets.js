@@ -1,13 +1,15 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { saveDataForUserAgentDatasetsRequest } from '@users/request';
+
 import { getUserDatasetsKey } from '../keys/userDatasetsKeys';
 
-function useSaveUserDatasets({ userAgentIds }) {
+import { saveDataForUserDatasetsRequest } from '@users/request';
+
+function useSaveUserDatasets({ userIds }) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: saveDataForUserAgentDatasetsRequest,
+    mutationFn: saveDataForUserDatasetsRequest,
     onSuccess: () => {
-      queryClient.invalidateQueries(getUserDatasetsKey(userAgentIds));
+      queryClient.invalidateQueries(getUserDatasetsKey(userIds));
     },
   });
 }

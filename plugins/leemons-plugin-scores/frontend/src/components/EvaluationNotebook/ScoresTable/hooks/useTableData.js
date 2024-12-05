@@ -1,4 +1,5 @@
 import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
+
 import useActivitiesWithWeights from './useActivitiesWithWeights';
 import useStudents from './useStudents';
 
@@ -22,6 +23,7 @@ export default function useTableData({ program, class: klass, period, filters })
 
   return {
     scales: programEvaluationSystem?.scales,
+    usePercentage: programEvaluationSystem?.isPercentage,
     activities,
     studentsData,
     isLoading: activitiesLoading || programEvaluationSystemLoading || studentsLoading,

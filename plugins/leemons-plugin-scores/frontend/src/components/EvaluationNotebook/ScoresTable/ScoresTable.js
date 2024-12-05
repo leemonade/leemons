@@ -1,19 +1,20 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { useEffect, useMemo } from 'react';
 
 import { Alert, LoadingOverlay, Stack } from '@bubbles-ui/components';
-
-import { ScoresBasicTable } from '@scores/components/Tables/ScoresBasicTable';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
-import { useScoresMutation } from '@scores/requests/hooks/mutations';
-import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
-import useTableData from './hooks/useTableData';
+import PropTypes from 'prop-types';
+
+import EmptyState from './components/EmptyState';
 import WeightTypeBadge from './components/WeightTypeBadge';
 import handleOpen from './helpers/handleOpen';
 import onDataChange from './helpers/onDataChange';
-import EmptyState from './components/EmptyState';
+import useTableData from './hooks/useTableData';
+
+import { ScoresBasicTable } from '@scores/components/Tables/ScoresBasicTable';
+import { prefixPN } from '@scores/helpers';
+import { useScoresMutation } from '@scores/requests/hooks/mutations';
+import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
 
 export default function ScoresTable({ program, class: klass, period, filters }) {
   const [t] = useTranslateLoader(prefixPN('evaluationNotebook'));
@@ -36,12 +37,17 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
   const { mutateAsync: assignationScoreMutate } = useStudentAssignationMutation();
   const { mutateAsync: customScoreMutate } = useScoresMutation();
 
-  const { scales, activities, studentsData, isLoading } = useTableData({
+  const { scales, usePercentage, activities, studentsData, isLoading } = useTableData({
     program,
     class: klass,
     period,
     filters,
   });
+
+  const isPeriodClosed = useMemo(
+    () => studentsData?.every((student) => !student.allowCustomChange),
+    [studentsData]
+  );
 
   useEffect(() => {
     setTableData({
@@ -71,6 +77,7 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
       )}
       <ScoresBasicTable
         grades={scales}
+        usePercentage={usePercentage}
         activities={activities}
         value={studentsData}
         periodName={period?.period?.name}
@@ -90,6 +97,8 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
         })}
         key={studentsData}
         leftBadge={<WeightTypeBadge class={klass} includePlaceholder />}
+        hideCustom={!!filters?.period?.isCustom}
+        viewOnly={isPeriodClosed}
       />
     </Stack>
   );

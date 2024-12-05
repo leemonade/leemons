@@ -27,6 +27,7 @@ const {
 } = require('../../core/user-agents');
 const { getUserAgentContacts } = require('../../core/user-agents/contacts/getUserAgentContacts');
 const { userAgentsAreContacts } = require('../../core/user-agents/contacts/userAgentsAreContacts');
+const { getDataForUserDatasets, saveDataForUserDatasets } = require('../../core/users');
 const usersService = require('../../core/users');
 const { impersonateUser } = require('../../core/users/impersonateUser');
 
@@ -639,6 +640,32 @@ module.exports = {
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const data = await saveDataForUserAgentDatasets({
+        data: ctx.params,
+        ctx,
+      });
+      return { status: 200, data };
+    },
+  },
+  getDataForUserDatasetsRest: {
+    rest: {
+      path: '/get-data-for-user-datasets',
+      method: 'GET',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const data = await getDataForUserDatasets({ userIds: [ctx.params?.userId], ctx });
+      return { status: 200, data };
+    },
+  },
+
+  saveDataForUserDatasetsRest: {
+    rest: {
+      path: '/save-data-for-user-datasets',
+      method: 'POST',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const data = await saveDataForUserDatasets({
         data: ctx.params,
         ctx,
       });

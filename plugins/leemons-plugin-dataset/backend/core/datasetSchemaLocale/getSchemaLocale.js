@@ -1,11 +1,12 @@
 const { getTranslationKey } = require('@leemons/multilanguage');
+
+const { validateLocationAndPluginAndLocale } = require('../../validations/datasetLocation');
 const {
   validateNotExistSchemaLocale,
   validateNotExistSchema,
   validateNotExistLocation,
   validatePluginName,
 } = require('../../validations/exists');
-const { validateLocationAndPluginAndLocale } = require('../../validations/datasetLocation');
 
 /** *
  *  ES:
@@ -25,6 +26,7 @@ const { validateLocationAndPluginAndLocale } = require('../../validations/datase
 async function getSchemaLocale({ locationName, pluginName, locale, ctx }) {
   validateLocationAndPluginAndLocale(locationName, pluginName, locale, true);
   validatePluginName({ pluginName, calledFrom: ctx.callerPlugin, ctx });
+
   await validateNotExistLocation({ locationName, pluginName, ctx });
   await validateNotExistSchema({ locationName, pluginName, ctx });
   await validateNotExistSchemaLocale({ locationName, pluginName, locale, ctx });

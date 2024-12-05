@@ -359,6 +359,7 @@ module.exports = {
     uploadFile: 'Cargar el archivo para importar',
     uploadLabel: 'Archivo para importar',
     downloadTemplate: 'Descargar plantilla',
+    updateExistingUsers: 'Actualizar usuarios existentes',
     workbook: {
       title: 'Plantilla de usuarios de Leemons',
       email: 'Email',

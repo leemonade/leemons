@@ -359,6 +359,7 @@ module.exports = {
     uploadFile: 'Upload file to import',
     uploadLabel: 'File to import',
     downloadTemplate: 'Download template',
+    updateExistingUsers: 'Update existing users',
     workbook: {
       title: 'Leemons users template',
       email: 'Email',
