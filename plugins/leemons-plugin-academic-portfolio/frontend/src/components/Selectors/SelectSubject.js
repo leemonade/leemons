@@ -16,12 +16,19 @@ const SelectSubject = forwardRef(
       firstSelected,
       allowNullValue,
       disabled,
+      onData,
       ...props
     },
     ref
   ) => {
     const [data, setData] = useState([]);
     const [value, setValue] = useState(userValue);
+
+    useEffect(() => {
+      if (typeof onData === 'function') {
+        onData(data);
+      }
+    }, [data]);
 
     const handleChange = (newValue) => {
       if (newValue !== value) {
@@ -105,6 +112,7 @@ SelectSubject.propTypes = {
   firstSelected: PropTypes.bool,
   allowNullValue: PropTypes.bool,
   disabled: PropTypes.bool,
+  onData: PropTypes.func,
 };
 
 export { SelectSubject };
