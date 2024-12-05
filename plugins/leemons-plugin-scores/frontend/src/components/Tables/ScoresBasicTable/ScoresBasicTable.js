@@ -146,7 +146,7 @@ const ScoresBasicTable = ({
           <Box className={classes.separator} />
           <Box className={classes.studentInfo}>
             <Text color="primary" role="productive">
-              {avgScore}
+              {isNaN(avgScore) ? '-' : avgScore}
               {usePercentage ? '%' : ''}
             </Text>
           </Box>
