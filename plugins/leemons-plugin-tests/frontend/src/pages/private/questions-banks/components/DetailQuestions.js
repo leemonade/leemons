@@ -78,7 +78,7 @@ export default function DetailQuestions({
   }
 
   const widgets = ({ Component, key, properties }) => (
-    <Component {...properties} key={key} onAddQuestions={onAddQuestions} />
+    <Component {...properties} key={key} form={form} onAddQuestions={onAddQuestions} />
   );
 
   return (

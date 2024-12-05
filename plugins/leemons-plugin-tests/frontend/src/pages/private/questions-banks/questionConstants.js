@@ -21,10 +21,12 @@ const QUESTION_TYPES_WITH_MIN_RESPONSES_TO_ADD_CLUES = [
   QUESTION_TYPES.MONO_RESPONSE,
 ];
 
-const getQuestionTypesForSelect = (t = noop) => {
+const getQuestionTypesForSelect = (t = noop, skip = []) => {
   const options = [];
 
   forIn(QUESTION_TYPES, (value) => {
+    if (skip.includes(value)) return;
+
     options.push({
       value,
       label: t(camelCase(value)),
