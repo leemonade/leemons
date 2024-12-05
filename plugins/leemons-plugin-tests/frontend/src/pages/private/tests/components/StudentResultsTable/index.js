@@ -11,6 +11,7 @@ import QuestionResultsForTeacher from './QuestionResultsForTeacher';
 import QuestionResultsTable from './QuestionResultsTable';
 
 import ViewModeQuestions from '@tests/components/ViewModeQuestions';
+import { QUESTION_RESPONSE_STATUS } from '@tests/constants';
 
 const VIEW_MODES = {
   TABLE: 'table',
@@ -110,8 +111,16 @@ export default function StudentResultsTable({
 
       return TableComponent;
     },
-    [props, questions, questionResponses, TableComponent]
+    [props, questions, questionResponses, TableComponent, afterSaveCorrection]
   );
+
+  const showNonGradedQuestionsAlert = useMemo(() => {
+    return (
+      questions.some(
+        (q) => questionResponses[q.id]?.status === QUESTION_RESPONSE_STATUS.NOT_GRADED
+      ) && isTeacher
+    );
+  }, [questions, questionResponses, isTeacher]);
 
   return (
     <ContextContainer
@@ -122,7 +131,7 @@ export default function StudentResultsTable({
       }
       title={`${t('questions')} (${questions?.length})`}
     >
-      {isTeacher && (
+      {showNonGradedQuestionsAlert && (
         <Alert
           title={t('questionResultsTable.nonGradedQuestionsAlert.title')}
           severity="warning"

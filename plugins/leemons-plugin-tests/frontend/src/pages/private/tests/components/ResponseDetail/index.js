@@ -1,8 +1,18 @@
 import { useCallback, useMemo } from 'react';
 
-import { Stack, Text, Table, ContextContainer, HtmlText, Box } from '@bubbles-ui/components';
+import {
+  Stack,
+  Text,
+  Table,
+  ContextContainer,
+  HtmlText,
+  Box,
+  Checkbox,
+} from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PropTypes from 'prop-types';
+
+import StemResource from '../../StudentInstance/components/StemResource';
 
 import AnswerFeed from './AnswerFeed';
 import ResponseStatusIcon from './ResponseStatusIcon';
@@ -57,16 +67,14 @@ OpenResponseDetail.propTypes = {
 };
 
 function ResponseDetail({
-  questionStatus,
   userSkipped,
   solutionLabel,
   responses,
-  globalFeedback,
   isChoiceBased,
   isOpenResponse,
+  showChoiceCheckbox,
+  t,
 }) {
-  const [t] = useTranslateLoader(prefixPN('testResult.responseDetail'));
-
   const columns = [
     {
       Header: isChoiceBased ? t('answers') : t('answer'),
@@ -109,28 +117,100 @@ function ResponseDetail({
     [solutionLabel, userSkipped, isChoiceBased]
   );
 
+  const getChoice = useCallback(
+    (choice, isUserAnswer) => {
+      if (!showChoiceCheckbox) return choice;
+
+      return (
+        <Stack alignItems="center">
+          <Checkbox checked={isUserAnswer} disabled />
+          {choice}
+        </Stack>
+      );
+    },
+    [showChoiceCheckbox]
+  );
+
   const tableData = useMemo(() => {
     if (!responses?.length) return [];
 
     return responses?.map(({ choice, isUserAnswer, isCorrect }) => ({
-      choice,
+      choice: getChoice(choice, isUserAnswer),
       result: getResult(isUserAnswer, isCorrect),
       solution: getSolution(isUserAnswer, isCorrect),
     }));
-  }, [responses, getResult, getSolution]);
+  }, [responses, getResult, getSolution, getChoice]);
+
+  return (
+    <>
+      {isOpenResponse ? (
+        <OpenResponseDetail
+          response={responses[0].choice}
+          teacherFeedback={responses[0].teacherFeedback}
+          t={t}
+        />
+      ) : (
+        <Table fullWidth data={tableData} columns={columns} />
+      )}
+    </>
+  );
+}
+
+ResponseDetail.propTypes = {
+  userSkipped: PropTypes.bool,
+  responses: PropTypes.arrayOf(
+    PropTypes.shape({
+      choice: PropTypes.string,
+      isUserAnswer: PropTypes.bool,
+      isCorrect: PropTypes.bool,
+      teacherFeedback: PropTypes.string,
+    })
+  ),
+  solutionLabel: PropTypes.string,
+  isChoiceBased: PropTypes.bool,
+  isOpenResponse: PropTypes.bool,
+  showChoiceCheckbox: PropTypes.bool,
+  t: PropTypes.func,
+};
+
+function Index(props) {
+  const [t] = useTranslateLoader(prefixPN('testResult.responseDetail'));
+  const {
+    questionType,
+    questionStatus,
+    globalFeedback,
+    stemResource,
+    displayStemMediaHorizontally,
+  } = props;
 
   return (
     <ContextContainer spacing={4} sx={{ marginBottom: 32 }}>
-      {!userSkipped && <AnswerFeed questionStatus={questionStatus} t={t} />}
+      <AnswerFeed questionStatus={questionStatus} t={t} />
       <Box sx={{ paddingInline: 16 }}>
-        {isOpenResponse ? (
-          <OpenResponseDetail
-            response={responses[0].choice}
-            teacherFeedback={responses[0].teacherFeedback}
-            t={t}
-          />
+        {stemResource && displayStemMediaHorizontally ? (
+          <Stack fullWidth spacing={1}>
+            <Box noFlex sx={{ width: '30%' }}>
+              <StemResource asset={stemResource} />
+            </Box>
+            <Box sx={{ width: '70%' }}>
+              <ResponseDetail
+                {...props}
+                isChoiceBased={CHOICE_BASED_QUESTION_TYPES.includes(questionType)}
+                isOpenResponse={questionType === QUESTION_TYPES.OPEN_RESPONSE}
+                t={t}
+              />
+            </Box>
+          </Stack>
         ) : (
-          <Table fullWidth data={tableData} columns={columns} />
+          <Stack fullWidth spacing={4} direction="column">
+            {stemResource && <StemResource asset={stemResource} />}
+            <ResponseDetail
+              {...props}
+              isChoiceBased={CHOICE_BASED_QUESTION_TYPES.includes(questionType)}
+              isOpenResponse={questionType === QUESTION_TYPES.OPEN_RESPONSE}
+              t={t}
+            />
+          </Stack>
         )}
       </Box>
 
@@ -146,37 +226,13 @@ function ResponseDetail({
   );
 }
 
-ResponseDetail.propTypes = {
-  questionStatus: PropTypes.string,
-  userSkipped: PropTypes.bool,
-  responses: PropTypes.arrayOf(
-    PropTypes.shape({
-      choice: PropTypes.string,
-      isUserAnswer: PropTypes.bool,
-      isCorrect: PropTypes.bool,
-      teacherFeedback: PropTypes.string,
-    })
-  ),
-  globalFeedback: PropTypes.string,
-  solutionLabel: PropTypes.string,
-  isChoiceBased: PropTypes.bool,
-  isOpenResponse: PropTypes.bool,
-};
-
-function Index(props) {
-  const { questionType } = props;
-
-  return (
-    <ResponseDetail
-      {...props}
-      isChoiceBased={CHOICE_BASED_QUESTION_TYPES.includes(questionType)}
-      isOpenResponse={questionType === QUESTION_TYPES.OPEN_RESPONSE}
-    />
-  );
-}
-
 Index.propTypes = {
   questionType: PropTypes.string,
+  questionStatus: PropTypes.string,
+  userSkipped: PropTypes.bool,
+  globalFeedback: PropTypes.string,
+  stemResource: PropTypes.object,
+  displayStemMediaHorizontally: PropTypes.bool,
 };
 
 export default Index;

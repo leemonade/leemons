@@ -10,7 +10,7 @@ import prefixPN from '@tests/helpers/prefixPN';
 const colorsByStatus = { ok: COLORS.fatic02, ko: COLORS.fatic01, null: null };
 
 function Score({ questionResponse, assignmentConfig, questionsInfo }) {
-  const [t] = useTranslateLoader(prefixPN('testResult'));
+  const [t] = useTranslateLoader(prefixPN('studentInstance'));
   if (!questionResponse || !t) return null;
 
   const { status, cluesTypes: clueTypesArray, points } = questionResponse ?? {};
@@ -109,7 +109,7 @@ export default function QuestionTitleComponent({
   const { classes } = TestStyles({}, { name: 'Tests' });
 
   return (
-    <Box className={classes.tableViewModeTitle}>
+    <Box className={viewMode ? classes.tableViewModeTitle : classes.questionTitle}>
       <Box className={classes.questionTitleText}>
         <Text size={viewMode ? 'md' : 'lg'} role="productive" color="primary" strong>
           {questionIndex + 1}. {htmlToText(question.stem.text)}

@@ -31,6 +31,7 @@ function ViewModeResponses(props) {
   ];
 
   const feedback = question.globalFeedback?.text || null;
+  const stemResourceIsImage = (question?.stemResource?.file?.type || '').startsWith('image');
 
   return (
     <ResponseDetail
@@ -40,6 +41,8 @@ function ViewModeResponses(props) {
       responses={responses}
       globalFeedback={question?.hasAnswerFeedback ? null : feedback}
       questionType={question.type}
+      stemResource={question.stemResource}
+      displayStemMediaHorizontally={stemResourceIsImage}
     />
   );
 }

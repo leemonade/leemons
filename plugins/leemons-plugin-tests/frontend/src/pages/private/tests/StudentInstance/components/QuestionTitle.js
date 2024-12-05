@@ -5,7 +5,7 @@ import { htmlToText } from '@common';
 import PropTypes from 'prop-types';
 
 export default function QuestionTitle(props) {
-  const { styles, question, store, cx, t, tableViewMode } = props;
+  const { styles, question, store, cx, t } = props;
 
   let questionTitleClassName = cx(styles.questionTitle);
   if (store.embedded) {
@@ -112,14 +112,14 @@ export default function QuestionTitle(props) {
   ]);
 
   return (
-    <Box className={tableViewMode ? styles.tableViewModeTitle : questionTitleClassName}>
+    <Box className={store.viewMode ? styles.tableViewModeTitle : questionTitleClassName}>
       <Box className={styles.questionTitleText}>
         <Text size={store.viewMode ? 'md' : 'lg'} role="productive" color="primary" strong>
           {props.index + 1}. {htmlToText(question.stem.text)}
         </Text>
       </Box>
 
-      {tableViewMode && (
+      {!store.viewMode && (
         <Box>
           {TableViewModePoints}
           <Text size="xs" color="primary"></Text>
@@ -127,7 +127,7 @@ export default function QuestionTitle(props) {
       )}
 
       {/* KEPT HERE UNTIL TEST PLUGIN FRONTEND CHANGES ARE FINALIZED - POSSIBLY DEPRECATED */}
-      {store.embedded && store.viewMode && !tableViewMode ? (
+      {store.embedded && store.viewMode ? (
         <Box className={cx(styles.questionValueCard, styles.questionValueCardEmbedded)}>
           <Box>
             <Text style={{ whiteSpace: 'nowrap' }}>

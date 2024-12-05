@@ -52,11 +52,9 @@ export default function TeacherReview({
   const { questionFilters } = getConfigByInstance(instance);
 
   const showFeedbackSection = useMemo(
-    () => questionFilters?.openResponse?.enableTeacherReviewFeedback, // review /Users/paolapatino/Leemons/migration/leemons/plugins/leemons-plugin-tests/frontend/src/components/RulesConfig/index.js
+    () => questionFilters?.openResponse?.enableTeacherReviewFeedback,
     [questionFilters]
   );
-
-  // TODO Paola, feedback está condicionado por la configuración de la asignación. Pendiente respuesta de productio para saber si se muestra cuando el estudiante omite
 
   const radioData = useMemo(
     () => [
@@ -75,9 +73,6 @@ export default function TeacherReview({
     ],
     [t]
   );
-  // TODO PAOLA: use hook to modify the intance and question response status, needs to refetch after. Fetch possibly
-  // TODO Paola within StudentResultsTable
-  // TODO Next: check this modifies correctly the response and user assignation. Do the stuff of the hook
 
   // HANDLERS ····································································································
 

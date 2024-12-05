@@ -530,6 +530,10 @@ module.exports = {
         tolerateCase: 'Case',
         tolerateSpaces: 'Spaces',
       },
+      openResponse: {
+        title: 'Open response',
+        enableTeacherReviewFeedback: 'Enable teacher review feedback',
+      },
     },
   },
   testResult: {
@@ -585,6 +589,7 @@ module.exports = {
         ko: 'Incorrect',
         partial: 'Partially correct',
         notGraded: 'This question has not been graded yet',
+        notAnswered: 'Not answered',
       },
       explanation: 'Explanation',
       feedback: 'Feedback',

@@ -25,6 +25,8 @@ export default function ViewModeResponses(props) {
       responses={responses}
       globalFeedback={question?.hasAnswerFeedback ? null : questionGlobalFeedback}
       questionType={question.type}
+      displayStemMediaHorizontally={false}
+      stemResource={question.stemResource}
     />
   );
 }

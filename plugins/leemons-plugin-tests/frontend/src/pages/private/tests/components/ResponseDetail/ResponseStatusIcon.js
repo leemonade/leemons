@@ -7,6 +7,7 @@ const questionStatusIcons = {
   [QUESTION_RESPONSE_STATUS.KO]: '/public/tests/responseDetail/incorrect.svg',
   [QUESTION_RESPONSE_STATUS.PARTIAL]: '/public/tests/responseDetail/partial.svg',
   [QUESTION_RESPONSE_STATUS.NOT_GRADED]: '/public/tests/responseDetail/not-graded.svg',
+  'not-answered': '/public/tests/responseDetail/not-answered.svg',
 };
 
 const questionStatusAltTextPrefix = {
@@ -14,10 +15,11 @@ const questionStatusAltTextPrefix = {
   [QUESTION_RESPONSE_STATUS.KO]: 'incorrect',
   [QUESTION_RESPONSE_STATUS.PARTIAL]: 'partial',
   [QUESTION_RESPONSE_STATUS.NOT_GRADED]: 'not graded yet',
+  'not-answered': 'not answered',
 };
 
 function ResponseStatusIcon({ status }) {
-  const src = questionStatusIcons[status];
+  const src = questionStatusIcons[status ?? 'not-answered'];
 
   return <img src={src} alt={`${questionStatusAltTextPrefix[status]} response Icon`} />;
 }

@@ -3,24 +3,22 @@ import PropTypes from 'prop-types';
 import ResponseDetail from '@tests/pages/private/tests/components/ResponseDetail';
 
 function ViewModeResponses(props) {
-  const { question, store, t } = props;
+  const { question, store } = props;
 
   const userAnswer = store?.questionResponses?.[question.id]?.properties?.response;
-  const userAnswerIsCorrect = store?.questionResponses[question.id]?.status === 'ok';
   const userSkippedQuestion = !store?.questionResponses[question.id]?.status;
 
-  const solutionLabel = question.choices.find((choice) => choice.isMainChoice).text.text;
+  const solutionLabel = question.choices.find((choice) => choice.isCorrect).text.text;
 
-  const responses = [
-    {
-      choice: userAnswer || '-',
-      isUserAnswer: true,
-      isCorrect: userAnswerIsCorrect,
-    },
-  ];
+  const responses = question.choices.map((choice, index) => ({
+    choice: choice.text.text,
+    isUserAnswer: index === userAnswer,
+    isCorrect: choice.isCorrect,
+  }));
 
   const feedback = question.globalFeedback?.text || null;
   const stemResourceIsImage = (question?.stemResource?.file?.type || '').startsWith('image');
+  const hasImageAnswers = question?.hasImageAnswers;
 
   return (
     <ResponseDetail
@@ -31,7 +29,7 @@ function ViewModeResponses(props) {
       globalFeedback={question?.hasAnswerFeedback ? null : feedback}
       questionType={question.type}
       stemResource={question.stemResource}
-      displayStemMediaHorizontally={stemResourceIsImage}
+      displayStemMediaHorizontally={stemResourceIsImage && !hasImageAnswers}
     />
   );
 }
@@ -39,7 +37,6 @@ function ViewModeResponses(props) {
 ViewModeResponses.propTypes = {
   store: PropTypes.any,
   question: PropTypes.any,
-  t: PropTypes.func,
 };
 
 export default ViewModeResponses;

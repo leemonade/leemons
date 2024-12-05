@@ -536,6 +536,10 @@ module.exports = {
         tolerateCase: 'Mayúsculas y minúsculas',
         tolerateSpaces: 'Espacios',
       },
+      openResponse: {
+        title: 'Respuesta abierta',
+        enableTeacherReviewFeedback: 'Habilitar feedback de revisión',
+      },
     },
   },
   testResult: {
@@ -588,10 +592,11 @@ module.exports = {
       correct: 'Correcto',
       incorrect: 'Incorrecto',
       questionStatus: {
-        ok: 'Correcto',
-        ko: 'Incorrecto',
+        ok: 'Correcta',
+        ko: 'Incorrecta',
         partial: 'Parciamente correcta',
         notGraded: 'Esta pregunta aún no ha sido corregida',
+        notAnswered: 'No respondida',
       },
       explanation: EXPLANATION,
       feedback: 'Feedback',

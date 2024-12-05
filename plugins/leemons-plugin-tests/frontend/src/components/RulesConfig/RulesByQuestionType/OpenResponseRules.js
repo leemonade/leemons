@@ -7,17 +7,14 @@ export default function OpenResponseRules({ control, classes, t }) {
   return (
     <ContextContainer className={classes.questionConfigContainer} spacing={2}>
       <Text className={classes.questionConfigTitle}>
-        {t('rulesByQuestionType.openResponse.title') || 'Respuesta abierta 🌎'}
+        {t('rulesByQuestionType.openResponse.title')}
       </Text>
       <Controller
         control={control}
         name="questionFilters.openResponse.enableTeacherReviewFeedback"
         render={({ field }) => (
           <Checkbox
-            label={
-              t('rulesByQuestionType.openResponse.enableTeacherReviewFeedback') ||
-              'Habilitar feedback de revisión 🌎'
-            }
+            label={t('rulesByQuestionType.openResponse.enableTeacherReviewFeedback')}
             {...field}
             checked={field.value}
           />

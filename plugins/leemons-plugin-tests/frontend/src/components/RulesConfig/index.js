@@ -630,6 +630,7 @@ RulesConfig.propTypes = {
   onUpdateConfig: propTypes.func,
   isDrawer: propTypes.bool,
   defaultValues: propTypes.object,
+  onChangeRules: propTypes.func,
 };
 
 export { RulesConfig };

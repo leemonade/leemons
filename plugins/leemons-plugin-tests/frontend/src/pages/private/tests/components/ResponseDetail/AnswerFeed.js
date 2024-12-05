@@ -6,17 +6,18 @@ import ResponseStatusIcon from './ResponseStatusIcon';
 
 import { QUESTION_RESPONSE_STATUS } from '@tests/constants';
 
-const useAnswerFeedStyles = createStyles((theme, { status = QUESTION_RESPONSE_STATUS.KO }) => {
+const useAnswerFeedStyles = createStyles((theme, { status }) => {
   const questionStatusColors = {
     [QUESTION_RESPONSE_STATUS.OK]: theme.other.core.color.success['100'],
     [QUESTION_RESPONSE_STATUS.KO]: theme.other.core.color.danger['100'],
     [QUESTION_RESPONSE_STATUS.PARTIAL]: theme.other.core.color.attention['100'],
     [QUESTION_RESPONSE_STATUS.NOT_GRADED]: theme.other.core.color.attention['100'],
+    'not-answered': theme.other.core.color.danger['100'],
   };
 
   return {
     wrapper: {
-      backgroundColor: questionStatusColors[status],
+      backgroundColor: questionStatusColors[status ?? 'not-answered'],
       display: 'flex',
       flex: 1,
       alignItems: 'center',
@@ -43,7 +44,7 @@ const useAnswerFeedStyles = createStyles((theme, { status = QUESTION_RESPONSE_ST
   };
 });
 
-function AnswerFeed({ questionStatus = QUESTION_RESPONSE_STATUS.KO, t }) {
+function AnswerFeed({ questionStatus, t }) {
   const { classes } = useAnswerFeedStyles({ status: questionStatus });
 
   return (
@@ -52,7 +53,9 @@ function AnswerFeed({ questionStatus = QUESTION_RESPONSE_STATUS.KO, t }) {
         <Box className={classes.contentIcon}>
           <ResponseStatusIcon status={questionStatus} />
         </Box>
-        <Box className={classes.content}>{t(`questionStatus.${camelCase(questionStatus)}`)}</Box>
+        <Box className={classes.content}>
+          {t(`questionStatus.${camelCase(questionStatus ?? 'not-answered')}`)}
+        </Box>
       </Box>
     </Box>
   );

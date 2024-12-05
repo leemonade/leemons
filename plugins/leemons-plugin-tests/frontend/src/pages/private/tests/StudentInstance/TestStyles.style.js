@@ -186,10 +186,21 @@ export const TestStyles = createStyles((theme) => ({
     marginBottom: theme.spacing[6],
     borderRadius: 4,
   },
+  viewModeQuestionContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 8,
+    marginBottom: 16,
+  },
+  executionModeQuestionContainer: {
+    gap: 24,
+    marginBottom: 16,
+    display: 'flex',
+    flexDirection: 'column',
+  },
   questionTitle: {
     display: 'flex',
     alignItems: 'center',
-    marginBottom: theme.spacing[4],
     justifyContent: 'space-between',
   },
   tableViewModeTitle: {

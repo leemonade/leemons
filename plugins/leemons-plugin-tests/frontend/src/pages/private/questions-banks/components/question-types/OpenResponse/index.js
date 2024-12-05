@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 
 import { Switch, ContextContainer, Stack, NumberInput, Box } from '@bubbles-ui/components';
-import { TextEditorInput, TEXT_EDITOR_TEXTAREA_TOOLBARS } from '@bubbles-ui/editors';
-import { capitalize } from 'lodash';
 import PropTypes from 'prop-types';
 
 import OpenResponseStyles from './OpenResponse.styles';
@@ -28,26 +26,7 @@ export default function OpenResponse({ form: _form, t }) {
 
   return (
     <ContextContainer>
-      <ContextContainer title={`${capitalize(t('explanationLabel'))}`}>
-        <Controller
-          control={form.control}
-          name="globalFeedback"
-          render={({ field }) => (
-            <TextEditorInput
-              {...field}
-              toolbars={TEXT_EDITOR_TEXTAREA_TOOLBARS}
-              value={field.value?.text}
-              editorStyles={{ minHeight: '96px' }}
-              placeholder={t('explanationPlaceHolder')}
-              error={form.formState.errors.globalFeedback?.message}
-              onChange={(value) => {
-                field.onChange({ format: 'html', text: value });
-              }}
-            />
-          )}
-        />
-      </ContextContainer>
-      <ContextContainer title={`${t('responseLabel')} *`} spacing={0}>
+      <ContextContainer title={`${t('responseLabel')}`} spacing={0}>
         <Stack spacing={2} direction="column">
           <Switch
             checked={limitCharachters}
