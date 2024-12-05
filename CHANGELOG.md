@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.19.0](https://github.com/leemonade/leemons/compare/1.18.0...1.19.0) (2024-12-05)
+
+
+### Features
+
+* **scores:** Add full course evaluation and improve scores management ([7b03b6d](https://github.com/leemonade/leemons/commit/7b03b6de4c2cf43f17a2656f72a8401ce6faba3e)), closes [#687](https://github.com/leemonade/leemons/issues/687)
+
 ## [1.18.0](https://github.com/leemonade/leemons/compare/1.17.0...1.18.0) (2024-12-03)
 
 
