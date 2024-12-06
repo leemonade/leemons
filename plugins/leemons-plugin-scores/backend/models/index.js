@@ -6,6 +6,7 @@ const models = {
   ...require('./periods'),
   ...require('./scores'),
   ...require('./weights'),
+  ...require('./manualActivities'),
 };
 
 module.exports = {
@@ -15,6 +16,7 @@ module.exports = {
       Periods: models.periodsModel,
       Scores: models.scoresModel,
       Weights: models.weightsModel,
+      ManualActivities: models.manualActivitiesModel,
       KeyValue: getKeyValueModel({ modelName: 'v1::scores_KeyValue' }),
     };
   },
