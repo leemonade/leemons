@@ -1,13 +1,14 @@
 const { generateEnv } = require('@leemons/utils');
-const getAppDir = require('../src/paths/getAppDir');
-const getPlugins = require('../src/plugins');
+
 const generateMonorepo = require('../src/monorepo');
+const getAppDir = require('../src/paths/getAppDir');
+const getBasePath = require('../src/paths/getBasePath');
+const getBuildDir = require('../src/paths/getBuildDir');
 const getOutputDir = require('../src/paths/getOutputDir');
+const getPlugins = require('../src/plugins');
 const generateAlias = require('../src/plugins/generateAlias');
 const generatePublicFolders = require('../src/plugins/generatePublicFolders');
-const devServer = require('../src/webpack/devServer');
-const getBuildDir = require('../src/paths/getBuildDir');
-const getBasePath = require('../src/paths/getBasePath');
+const devServer = require('../src/rspack/devServer');
 
 module.exports = async function dev({ app, build, output, base, port }) {
   process.env.NODE_ENV = 'development';
