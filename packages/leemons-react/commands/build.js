@@ -8,9 +8,10 @@ const getOutputDir = require('../src/paths/getOutputDir');
 const getPlugins = require('../src/plugins');
 const generateAlias = require('../src/plugins/generateAlias');
 const generatePublicFolders = require('../src/plugins/generatePublicFolders');
-const buildApp = require('../src/rspack/build');
+const rspackBuildApp = require('../src/rspack/build');
+const webpackBuildApp = require('../src/webpack/build');
 
-module.exports = async function buildFront({ app, build, output, base }) {
+module.exports = async function buildFront({ app, build, output, base, rspack }) {
   const env = await generateEnv('.env', false);
   Object.keys(env).forEach((key) => {
     process.env[key] = env[key];
@@ -32,5 +33,6 @@ module.exports = async function buildFront({ app, build, output, base }) {
 
   await generateMonorepo({ plugins, app: appDir, outputDir, basePath });
 
+  const buildApp = rspack ? rspackBuildApp : webpackBuildApp;
   await buildApp({ app: outputDir, alias, build: buildDir, publicFiles });
 };

@@ -155,7 +155,11 @@ module.exports = function rspackConfig({
       port: process.env.PORT || process.env.port,
       client: {
         overlay: false,
+        progress: true,
+        reconnect: true,
       },
+      hot: true,
+      liveReload: true,
       historyApiFallback: {
         disableDotRule: true,
         htmlAcceptHeaders: ['text/html', 'application/xhtml+xml'],
