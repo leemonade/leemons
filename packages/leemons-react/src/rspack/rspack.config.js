@@ -19,7 +19,9 @@ module.exports = function rspackConfig({
     output: {
       path: build,
       filename: 'static/js/[name].[contenthash].js',
+      chunkFilename: 'static/js/[name].[contenthash].chunk.js',
       assetModuleFilename: 'static/media/[name].[contenthash][ext]',
+      cssFilename: 'static/css/[name].[contenthash].css',
       publicPath: '/',
     },
     module: {
@@ -73,7 +75,7 @@ module.exports = function rspackConfig({
             {
               test: /\.svg$/,
               issuer: {
-                and: [/\.(ts|tsx|js|jsx|md|mdx|cjs|mjs|cjsx|mjsx)$/],
+                and: [/\.(ts|tsx|js|jsx|md|mdx|cjs|mjs|cjsx|mjsx|css)$/],
               },
               use: [
                 {
@@ -94,22 +96,7 @@ module.exports = function rspackConfig({
           ],
         },
         {
-          test: /\.css$/i,
-          use: [rspack.CssExtractRspackPlugin.loader, 'css-loader'],
-          type: 'javascript/auto',
-        },
-        {
-          test: /\.(sass|scss)$/,
-          use: [
-            {
-              loader: 'sass-loader',
-            },
-          ],
-          // set to 'css/auto' if you want to support '*.module.(scss|sass)' as CSS Modules, otherwise set type to 'css'
-          type: 'css/auto',
-        },
-        {
-          exclude: [/^$/, /\.(js|mjs|jsx|ts|tsx|cjs|mjs)$/, /\.html$/, /\.json$/],
+          exclude: [/^$/, /\.(js|mjs|jsx|ts|tsx|cjs|mjs|html|json|css)$/],
           parser: {
             dataUrlCondition: {
               maxSize: 10000,
@@ -144,7 +131,6 @@ module.exports = function rspackConfig({
       },
     },
     plugins: [
-      new rspack.CssExtractRspackPlugin(),
       new rspack.HtmlRspackPlugin({
         template: path.resolve(__dirname, '../templates', isDev ? 'dev.html' : 'prod.html'),
         filename: 'index.html',
@@ -178,6 +164,7 @@ module.exports = function rspackConfig({
     devtool: isDev ? 'eval-cheap-module-source-map' : 'source-map',
     experiments: {
       lazyCompilation: isDev && lazy,
+      css: true,
     },
 
     stats: false,
