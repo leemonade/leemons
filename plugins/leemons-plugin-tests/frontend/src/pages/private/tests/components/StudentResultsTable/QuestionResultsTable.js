@@ -1,5 +1,6 @@
 import { useCallback, useMemo } from 'react';
 
+import { useLevelsOfDifficulty } from '@assignables/components/LevelsOfDifficulty';
 import { Table, ActionButton, Stack, Box, Text, TextClamp } from '@bubbles-ui/components';
 import { EditIcon, SlashIcon } from '@bubbles-ui/icons/solid';
 import PropTypes from 'prop-types';
@@ -18,6 +19,7 @@ export default function QuestionResultsTable({
   questionResponses,
   cx,
 }) {
+  const levels = useLevelsOfDifficulty();
   const getScoreItem = useCallback(
     (questionId) => {
       const { points, status } = questionResponses?.[questionId] || {};
@@ -112,13 +114,13 @@ export default function QuestionResultsTable({
       ),
       level: (
         <Box style={{ minWidth: '130px' }} className={styles.tableCell}>
-          {question.level || '-'}
+          {levels.find((level) => level.value === question.level)?.label || question.level || '-'}
         </Box>
       ),
       result: getResultItem(question.id),
       score: getScoreItem(question.id),
     }));
-  }, [questions, styles, getScoreItem, getResultItem]);
+  }, [questions, styles, getScoreItem, getResultItem, levels]);
 
   return <Table columns={headers} data={tableData} />;
 }
