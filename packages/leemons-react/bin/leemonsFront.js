@@ -3,10 +3,10 @@
 const { Command } = require('commander');
 
 const program = new Command();
-const packageJSON = require('../package.json');
-const dev = require('../commands/dev');
 const build = require('../commands/build');
+const dev = require('../commands/dev');
 const preview = require('../commands/preview');
+const packageJSON = require('../package.json');
 
 // CLI setup
 program.allowUnknownOption(true);
@@ -19,6 +19,7 @@ program
   .option('-o, --output <dir>', 'output directory')
   .option('-b, --build <dir>', 'build directory')
   .option('-p, --port <port>', 'port to use for the dev server, defaults to 3000', 3000)
+  .option('-r, --rspack', 'use rspack instead of webpack')
   .option(
     '-m, --base <path>',
     "base path of the leemons monorepo, if you are not running on the leemons monorepo, you don't need to set this"
@@ -36,6 +37,7 @@ program
     '-m, --base <path>',
     "base path of the leemons monorepo, if you are not running on the leemons monorepo, you don't need to set this"
   )
+  .option('-r, --rspack', 'use rspack instead of webpack')
   .description('Builds leemons frontend in production mode')
   .action(build);
 

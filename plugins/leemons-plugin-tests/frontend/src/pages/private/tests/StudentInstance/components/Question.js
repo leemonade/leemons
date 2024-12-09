@@ -208,8 +208,8 @@ export default function Question(props) {
         </TotalLayoutFooterContainer>
       }
     >
-      <Stack fullWidth>
-        <Box className={className} style={{ width: 982 }}>
+      <Stack sx={{ width: !store.viewMode ? 878 : '100%' }}>
+        <Box className={className}>
           <QuestionValue {...props} isPreviewMode={previewMode} />
           {child}
         </Box>
