@@ -39,16 +39,16 @@ export default function QuestionResultsTable({
   );
 
   const getResultItem = useCallback(
-    (questionResponseStatus) => (
+    (questionId) => (
       <Stack justifyContent="center" fullWidth>
-        {questionResponseStatus ? (
-          <ResponseStatusIcon status={questionResponseStatus} />
+        {questionResponses?.[questionId]?.status ? (
+          <ResponseStatusIcon status={questionResponses?.[questionId]?.status} />
         ) : (
           <SlashIcon height={10} width={10} />
         )}
       </Stack>
     ),
-    []
+    [questionResponses]
   );
 
   const headers = useMemo(
@@ -115,22 +115,20 @@ export default function QuestionResultsTable({
           {question.level || '-'}
         </Box>
       ),
-      result: getResultItem(questionResponses?.[question?.id]?.status),
+      result: getResultItem(question.id),
       score: getScoreItem(question.id),
     }));
-  }, [questions, questionResponses, styles, getScoreItem, getResultItem]);
+  }, [questions, styles, getScoreItem, getResultItem]);
 
   return <Table columns={headers} data={tableData} />;
 }
 
 QuestionResultsTable.propTypes = {
-  onlyOpenResponseQuestions: PropTypes.bool,
   isTeacher: PropTypes.bool,
   onReviewQuestion: PropTypes.func,
   questions: PropTypes.array,
   styles: PropTypes.object,
   t: PropTypes.func,
   questionResponses: PropTypes.object,
-  levels: PropTypes.array,
   cx: PropTypes.func,
 };

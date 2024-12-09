@@ -67,7 +67,11 @@ export default function QuestionResultsForTeacher({
           </TabPanel>
         </Tabs>
       ) : (
-        <QuestionResultsTable {...props} questions={testQuestions} />
+        <QuestionResultsTable
+          {...props}
+          questions={testQuestions}
+          questionResponses={questionResponses}
+        />
       )}
     </ContextContainer>
   );
