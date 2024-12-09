@@ -594,7 +594,7 @@ module.exports = {
       questionStatus: {
         ok: 'Correcta',
         ko: 'Incorrecta',
-        partial: 'Parciamente correcta',
+        partial: 'Parcialmente correcta',
         notGraded: 'Esta pregunta aún no ha sido corregida',
         notAnswered: 'No respondida',
       },
