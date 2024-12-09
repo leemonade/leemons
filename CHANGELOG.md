@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.19.0](https://github.com/leemonade/leemons/compare/1.18.0...1.19.0) (2024-12-09)
+
+
+### Features
+
+* **leemons-react:** Integrate Rspack bundler ([8304c89](https://github.com/leemonade/leemons/commit/8304c89a48457fe42ae97659383ab49e3bc002f2)), closes [#691](https://github.com/leemonade/leemons/issues/691)
+* **scores:** Add full course evaluation and improve scores management ([7b03b6d](https://github.com/leemonade/leemons/commit/7b03b6de4c2cf43f17a2656f72a8401ce6faba3e)), closes [#687](https://github.com/leemonade/leemons/issues/687)
+* **tasks:** Add error alert for missing submission ([76bef87](https://github.com/leemonade/leemons/commit/76bef8708121e14c3d8fb6c96d4b5fa76b156cba)), closes [#683](https://github.com/leemonade/leemons/issues/683)
+
+
+### Bug Fixes
+
+* Remove localhost API_URL as it's reused by dev and prod builds ([c05e9be](https://github.com/leemonade/leemons/commit/c05e9be26f4b5d6b5e483c86967bae51cd3a97b4))
+* **tests:** Solve width issue on test execution ([214e2e0](https://github.com/leemonade/leemons/commit/214e2e0b9f334ddfc4a3394666c79ec79df756f4)), closes [#690](https://github.com/leemonade/leemons/issues/690)
+
 ## [1.18.0](https://github.com/leemonade/leemons/compare/1.17.0...1.18.0) (2024-12-03)
 
 
