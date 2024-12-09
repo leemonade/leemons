@@ -1,3 +1,7 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
 import {
   ActionButton,
   Box,
@@ -9,14 +13,13 @@ import {
 } from '@bubbles-ui/components';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@tests/helpers/prefixPN';
 import { keyBy, map } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
-import { Link } from 'react-router-dom';
-import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
+
 import { getQuestionForTable } from '../../../../helpers/getQuestionForTable';
 import { ResultStyles } from '../Result.style';
+
+import prefixPN from '@tests/helpers/prefixPN';
 
 export default function QuestionsTable({
   questions,
@@ -71,7 +74,6 @@ export default function QuestionsTable({
         Header: t('questionLabel'),
         accessor: 'question',
         className: cx(styles.tableHeader, styles.firstTableHeader, isDrawer && { minWidth: 200 }),
-        valueRender: (cellValue) => handleTextCell(cellValue),
       },
       {
         Header: t('responsesLabel'),

@@ -68,6 +68,12 @@ const integerSchemaNullable = {
   nullable: true,
 };
 
+const integerSchemaGreaterThanZeroNullable = {
+  type: 'integer',
+  minimum: 0,
+  nullable: true,
+};
+
 const localeObjectSchema = () => ({
   type: 'object',
   patternProperties: {
@@ -91,4 +97,5 @@ module.exports = {
   integerSchemaNullable,
   arrayStringRequiredSchema,
   textSchemaNoLimit,
+  integerSchemaGreaterThanZeroNullable,
 };

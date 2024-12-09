@@ -31,6 +31,7 @@ import {
 import CategoryPicker from './CategoryPicker';
 import { MapQuestion } from './question-types/Map';
 import { MonoResponse } from './question-types/MonoResponse';
+import { OpenResponse } from './question-types/OpenResponse';
 import { ShortResponse } from './question-types/ShortResponse';
 import { TrueFalse } from './question-types/TrueFalse';
 
@@ -42,6 +43,7 @@ const questionComponents = {
   [QUESTION_TYPES.MAP]: <MapQuestion />,
   [QUESTION_TYPES.TRUE_FALSE]: <TrueFalse />,
   [QUESTION_TYPES.SHORT_RESPONSE]: <ShortResponse />,
+  [QUESTION_TYPES.OPEN_RESPONSE]: <OpenResponse />,
 };
 
 export default function DetailQuestionForm({
@@ -80,12 +82,13 @@ export default function DetailQuestionForm({
       return typeof trueFalseProperties?.isTrue === 'boolean';
     }
 
-    return type === QUESTION_TYPES.SHORT_RESPONSE;
+    return type === QUESTION_TYPES.SHORT_RESPONSE || type === QUESTION_TYPES.OPEN_RESPONSE;
   }, [type, choices, trueFalseProperties?.isTrue]);
 
   const solutionValues = form.watch(SOLUTION_KEY_BY_TYPE[type]);
   const answersArray = useMemo(() => {
-    if (!type || type === QUESTION_TYPES.TRUE_FALSE) return [];
+    if (!type || type === QUESTION_TYPES.TRUE_FALSE || type === QUESTION_TYPES.OPEN_RESPONSE)
+      return [];
     return solutionValues ?? [];
   }, [type, solutionValues]);
 
@@ -232,7 +235,7 @@ export default function DetailQuestionForm({
         }
       >
         <Box style={{ marginBottom: 42 }}>
-          <ContextContainer title={t('questionDetail')} spacing={5}>
+          <ContextContainer title={t('questionDetail')} spacing={4}>
             <Box>
               <ContextContainer fullWidth direction="row">
                 <Controller

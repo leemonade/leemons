@@ -14,6 +14,7 @@ const { isBoolean } = require('lodash');
 
 function getConfigByInstance(instance) {
   const filters = instance?.metadata?.filters;
+  const questionFilters = instance?.metadata?.filters?.questionFilters;
   return {
     omit: filters?.omit ? Number(filters.omit) : 0,
     allowClues: isBoolean(filters?.allowClues) ? filters?.allowClues : true,
@@ -25,6 +26,7 @@ function getConfigByInstance(instance) {
         ],
     wrong: filters?.wrong ? Number(filters.wrong) : 0,
     canOmitQuestions: isBoolean(filters?.canOmitQuestions) ? filters?.canOmitQuestions : true,
+    questionFilters,
   };
 }
 

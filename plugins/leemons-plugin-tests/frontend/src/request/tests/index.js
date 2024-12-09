@@ -1,5 +1,4 @@
-import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
-import { cloneDeep, isString, merge } from 'lodash';
+import { cloneDeep, merge } from 'lodash';
 
 async function listTests({ page, size, published }) {
   return leemons.api(`v1/tests/tests?page=${page}&size=${size}&published=${published}`, {
@@ -152,6 +151,14 @@ async function duplicate({
   });
 }
 
+async function setOpenQuestionGrade(data) {
+  return leemons.api(`v1/tests/tests/instance/question/grade`, {
+    allAgents: true,
+    method: 'POST',
+    body: data,
+  });
+}
+
 export {
   listTests,
   saveTest,
@@ -168,4 +175,5 @@ export {
   setInstanceTimestamp,
   getUserQuestionResponses,
   setQuestionResponse,
+  setOpenQuestionGrade,
 };

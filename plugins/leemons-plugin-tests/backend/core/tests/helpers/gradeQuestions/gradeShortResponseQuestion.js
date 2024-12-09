@@ -1,3 +1,6 @@
+const { QUESTION_RESPONSE_STATUS } = require('../../../../config/constants');
+const { getQuestionTotalPoints } = require('../getQuestionTotalPoints');
+
 function shortResponseIsCorrect(userResponse, question, config = {}) {
   const hasActiveTolerances = config.questionFilters?.shortResponse?.activateTolerances;
 
@@ -32,4 +35,33 @@ function shortResponseIsCorrect(userResponse, question, config = {}) {
   return processedChoices.includes(userResponseProcessed);
 }
 
-module.exports = { shortResponseIsCorrect };
+function gradeShortResponseQuestion({
+  responseData,
+  question,
+  config,
+  pointsPerQuestion,
+  cluesConfigByType,
+}) {
+  const response = responseData?.properties?.response;
+
+  let status;
+  if (!response?.length) {
+    status = QUESTION_RESPONSE_STATUS.OMITTED;
+  } else if (shortResponseIsCorrect(response, question, config)) {
+    status = QUESTION_RESPONSE_STATUS.OK;
+  } else {
+    status = QUESTION_RESPONSE_STATUS.KO;
+  }
+
+  const points = getQuestionTotalPoints({
+    status,
+    question,
+    questionResponse: responseData,
+    config,
+    pointsPerQuestion,
+    cluesConfigByType,
+  });
+  return { points, status };
+}
+
+module.exports = { gradeShortResponseQuestion };

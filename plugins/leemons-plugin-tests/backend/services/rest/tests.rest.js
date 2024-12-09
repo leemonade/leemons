@@ -4,13 +4,13 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator } = require('@leemons/validator');
-const _ = require('lodash');
-
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
+const { LeemonsValidator } = require('@leemons/validator');
+const _ = require('lodash');
+
 const {
   list,
   details,
@@ -27,6 +27,7 @@ const {
   setQuestionResponse,
   getUserQuestionResponses,
   createAssignSavedConfig,
+  setOpenQuestionGrade,
 } = require('../../core/tests');
 
 /** @type {ServiceSchema} */
@@ -376,6 +377,20 @@ module.exports = {
         ctx,
       });
       return { status: 200, responses };
+    },
+  },
+  gradeOpenQuestionRest: {
+    rest: {
+      method: 'POST',
+      path: '/instance/question/grade',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const question = await setOpenQuestionGrade({
+        data: ctx.params,
+        ctx,
+      });
+      return { status: 200, question };
     },
   },
 };
