@@ -189,7 +189,7 @@ export const TestStyles = createStyles((theme) => ({
   viewModeQuestionContainer: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 8,
+    gap: 24,
     marginBottom: 16,
   },
   executionModeQuestionContainer: {
