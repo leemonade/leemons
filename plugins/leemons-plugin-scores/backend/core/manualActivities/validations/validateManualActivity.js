@@ -9,7 +9,7 @@ function validateManualActivity({ ctx, manualActivity }) {
   if (!validator.validate(manualActivity)) {
     throw new LeemonsError(ctx, {
       message: validator.errorMessage,
-      httpsStatusCode: 400,
+      httpStatusCode: 400,
       customCode: 'INVALID_MANUAL_ACTIVITY',
     });
   }

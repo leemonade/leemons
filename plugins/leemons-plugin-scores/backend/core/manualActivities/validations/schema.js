@@ -3,6 +3,7 @@ const manualActivitySchema = {
   properties: {
     name: {
       type: 'string',
+      minLength: 1,
     },
     description: {
       type: 'string',
@@ -13,6 +14,7 @@ const manualActivitySchema = {
     },
     type: {
       type: 'string',
+      minLength: 1,
       // enum: ['task', 'test'], // This comes from assignables, so we don't check it, once assignables exposes it, we can check it
     },
     classId: {
