@@ -37,7 +37,6 @@ const BulkShareDrawer = ({ isOpen, onClose, selectedAssets = [], onAssetsUpdate,
 
   const handleSavePermissions = async (assetId, onSend) => {
     await setPermissionsRequest(assetId, onSend);
-
     const updatedAssets = selectedAssets.map((asset) => {
       if (asset.id === assetId) {
         return {

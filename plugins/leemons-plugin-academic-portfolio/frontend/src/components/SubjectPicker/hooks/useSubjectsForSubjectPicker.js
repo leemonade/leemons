@@ -4,7 +4,10 @@ import { isString, map, pick, uniqBy } from 'lodash';
 
 import { useSessionClasses, useSubjectDetails } from '@academic-portfolio/hooks';
 
-export function useSubjectsForSubjectPicker({ subjects, type = 'main-teacher' }) {
+export function useSubjectsForSubjectPicker({
+  subjects,
+  type = ['main-teacher', 'associate-teacher'],
+}) {
   // EN: If no subject is provides on the assignable, fetch all the users subjects
   // ES: Si no hay asignaturas en el asignable, pedimos todas las asignaturas del usuario
   const { data: classes } = useSessionClasses({ type }, { enabled: !subjects?.length });

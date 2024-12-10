@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import {
@@ -98,12 +98,21 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
     if (!requestBody.address?.length) requestBody.address = null;
     if (!requestBody.virtualUrl?.length) requestBody.virtualUrl = null;
 
+    requestBody.teachers = [];
     if (requestBody.mainTeacher?.length) {
-      requestBody.teachers = [{ teacher: requestBody.mainTeacher, type: 'main-teacher' }];
-    } else {
-      requestBody.teachers = [];
+      requestBody.teachers.push({ teacher: requestBody.mainTeacher, type: 'main-teacher' });
     }
+    if (requestBody.associateTeachers?.length) {
+      requestBody.teachers.push(
+        ...requestBody.associateTeachers.map((teacher) => ({
+          teacher,
+          type: 'associate-teacher',
+        }))
+      );
+    }
+
     delete requestBody.mainTeacher;
+    delete requestBody.associateTeachers;
 
     if (!isEmpty(requestBody.schedule)) {
       requestBody.schedule = requestBody.schedule.days;
@@ -129,7 +138,9 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
   return (
     <TotalLayoutStepContainer
       stepName={
-        subjectTreeNode?.text ? `${program?.name} - ${subjectTreeNode?.text}` : program?.name ?? ''
+        subjectTreeNode?.text
+          ? `${program?.name} - ${subjectTreeNode?.text}`
+          : (program?.name ?? '')
       }
       clean
       fullWidth

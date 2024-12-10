@@ -1,14 +1,16 @@
-import { flatten, uniqBy } from 'lodash';
-import { useQuery } from '@tanstack/react-query';
 import { useVariantForQueryKey } from '@common/queries';
-import { getDataForUserAgentDatasetsRequest } from '@users/request';
+import { useQuery } from '@tanstack/react-query';
+import { flatten, uniqBy } from 'lodash';
+
 import { getUserDatasetsKey } from '../keys/userDatasetsKeys';
 
-function useUserDatasets({ userAgentIds, ...options } = {}) {
-  const queryKey = getUserDatasetsKey(userAgentIds);
+import { getDataForUserDatasetsRequest } from '@users/request';
+
+function useUserDatasets({ userIds, ...options } = {}) {
+  const queryKey = getUserDatasetsKey(userIds);
 
   const queryFn = async () => {
-    const result = await Promise.all(userAgentIds.map(getDataForUserAgentDatasetsRequest));
+    const result = await Promise.all(userIds.map(getDataForUserDatasetsRequest));
     return uniqBy(flatten(result?.map((item) => item.data) ?? []), 'locationName');
   };
 

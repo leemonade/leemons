@@ -5,14 +5,24 @@ const allUserDatasetsKey = [
   },
 ];
 
-const getUserDatasetsKey = (userAgentId) => [
+const getUserDatasetsKey = (userId) => [
   {
     ...allUserDatasetsKey[0],
-    action: 'get',
+    action: 'getUserDatasets',
+    params: {
+      userId,
+    },
+  },
+];
+
+const getUserAgentsDatasetsKey = (userAgentId) => [
+  {
+    ...allUserDatasetsKey[0],
+    action: 'getUserAgentsDatasets',
     params: {
       userAgentId,
     },
   },
 ];
 
-export { allUserDatasetsKey, getUserDatasetsKey };
+export { allUserDatasetsKey, getUserDatasetsKey, getUserAgentsDatasetsKey };

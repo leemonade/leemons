@@ -1,5 +1,3 @@
-//! Solo está el encabezamiento para poder hacer test
-
 const { addPermissionToUser } = require('../permissions/instances/users');
 
 async function addTeachersToAssignableInstance({
@@ -8,7 +6,7 @@ async function addTeachersToAssignableInstance({
   assignable: assignableId,
   ctx,
 }) {
-  const teachersIds = teachers.map(({ id }) => id);
+  const teachersIds = teachers.map(({ teacher }) => teacher);
   await addPermissionToUser({
     assignableInstance: assignableInstanceId,
     assignable: assignableId,

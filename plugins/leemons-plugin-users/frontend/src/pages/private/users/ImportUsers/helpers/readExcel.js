@@ -19,16 +19,31 @@ export async function readExcel(file) {
   await wb.xlsx.load(await fileToBuffer(file));
   if (wb.worksheets.length < 1) throw new Error('No work sheet detected');
   const ws = wb.worksheets[0];
-  const result = [];
+  const wsProfileDataset = wb.worksheets[1];
+
+  const users = [];
+  const dataset = [];
+
   for (let r = 0; r < ws.rowCount; r++) {
     const item = [];
     for (let c = 0; c < ws.columnCount; c++) {
       item.push(ws.getCell(r + 1, c + 1).value);
     }
     if (compact(item).length === 0) break;
-    result.push(item);
+    users.push(item);
   }
-  return result;
+
+  if (wsProfileDataset) {
+    for (let r = 0; r < wsProfileDataset.rowCount; r++) {
+      const item = [];
+      for (let c = 0; c < wsProfileDataset.columnCount; c++) {
+        item.push(wsProfileDataset.getCell(r + 1, c + 1).value);
+      }
+      dataset.push(item);
+    }
+  }
+
+  return { users, dataset };
 }
 
 export default readExcel;

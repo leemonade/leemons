@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import ReactToPrint from 'react-to-print';
 
@@ -200,7 +200,7 @@ function Calendar({ session }) {
         forEach(data.calendars, (calendar) => {
           const calendarClassId = calendar.key.replace('calendar.class.', '');
           const { allClasses } = store.scheduleCenter[store.center.id];
-          const matchingClass = allClasses.find((classe) => classe.id === calendarClassId);
+          const matchingClass = allClasses?.find((classe) => classe.id === calendarClassId);
 
           const classIcon = matchingClass?.subject?.icon?.cover?.uri || '';
           const subjectIcon = prepareAsset(matchingClass?.subject?.icon)?.cover;

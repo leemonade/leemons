@@ -7,6 +7,7 @@ import {
   ProgressBottomBar,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
+  Stack,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { forEach, isNumber } from 'lodash';
@@ -198,10 +199,12 @@ export default function Question(props) {
         </TotalLayoutFooterContainer>
       }
     >
-      <Box className={className}>
-        <QuestionValue {...props} isPreviewMode={previewMode} />
-        {child}
-      </Box>
+      <Stack sx={{ width: !store.viewMode ? 878 : '100%' }}>
+        <Box className={className}>
+          <QuestionValue {...props} isPreviewMode={previewMode} />
+          {child}
+        </Box>
+      </Stack>
     </TotalLayoutStepContainer>
   );
 }

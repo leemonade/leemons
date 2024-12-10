@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { Box, ContextContainer, Stack, Text, TLayout } from '@bubbles-ui/components';
-
 import { EvaluatedIcon } from '@learning-paths/components/ModuleDashboard/components/DashboardCard/components/EvaluationStateDisplay/icons/EvaluatedIcon';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PageFooter from '@scores/components/EvaluationNotebook/components/PageFooter/PageFooter';
+
 import EvaluationNotebook from '@scores/components/EvaluationNotebook/EvaluationNotebook';
+import PageFooter from '@scores/components/EvaluationNotebook/components/PageFooter/PageFooter';
 import FinalEvaluationNotebook from '@scores/components/FinalEvaluationNotebook/FinalEvaluationNotebook';
 import Filters from '@scores/components/__DEPRECATED__/ScoresPage/Filters/Filters';
 import { prefixPN } from '@scores/helpers';
@@ -42,7 +42,7 @@ export default function EvaluationNotebookPage() {
       >
         <Filters hideTitle showProgramSelect onChange={setFilters} value={filters} />
       </TLayout.Header>
-      <TLayout.Content>
+      <TLayout.Content fullWidth>
         {!filters && <EmptyState />}
         {filters && filters?.period?.selected !== 'final' && <EvaluationNotebook />}
         {filters && filters?.period?.selected === 'final' && (
@@ -50,9 +50,9 @@ export default function EvaluationNotebookPage() {
         )}
       </TLayout.Content>
       {filters?.period?.selected !== 'final' && (
-        <TLayout.Footer>
+        <TLayout.Footer fullWidth>
           <TLayout.Footer.RightActions>
-            <PageFooter />
+            <PageFooter isCustom={!!filters?.period?.isCustom} />
           </TLayout.Footer.RightActions>
         </TLayout.Footer>
       )}

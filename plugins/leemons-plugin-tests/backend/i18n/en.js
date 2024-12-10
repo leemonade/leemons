@@ -120,7 +120,9 @@ module.exports = {
     hideOptionsLabel: 'Hide options',
     hideOptionsPlaceholder: 'Choose an option',
     hideOptionsHelp: 'Hidden options are identified by the icon {{icon}}',
-    hasCoverLabel: 'Feature image',
+    hasCoverLabel: 'Featured image',
+    stemResourceLabel: 'Add multimedia resource',
+    stemResourceDescription: 'You can add image, audio or video elements.',
     hideOptionNoRightAnswer: 'You must select the right answer first',
     headerTitlePlaceholder: 'Questions bank title',
     cluesCopy:
@@ -570,6 +572,12 @@ module.exports = {
       correct: 'Correct',
       incorrect: 'Incorrect',
       feedback: 'Feedback',
+    },
+  },
+  common: {
+    searchInLibrary: 'Search in library',
+    tooltips: {
+      remove: 'Remove',
     },
   },
 };

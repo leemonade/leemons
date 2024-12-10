@@ -1,8 +1,13 @@
 import React from 'react';
+import { useWatch } from 'react-hook-form';
 
 import { useCache } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import _ from 'lodash';
-import { useWatch } from 'react-hook-form';
+
+import useAcademicCalendarDates from './useAcademicCalendarDates';
+
+import { prefixPN } from '@scores/helpers';
 
 export default function useSelectedPeriod({
   periods,
@@ -11,6 +16,8 @@ export default function useSelectedPeriod({
   finalLabel,
   setValue,
 }) {
+  const [t] = useTranslateLoader(prefixPN('scoresPage.filters.period'));
+
   const cache = useCache();
   const currentDate = new Date();
   const currentPeriod = periods.find((p) => {
@@ -21,6 +28,11 @@ export default function useSelectedPeriod({
   const [periodSelected, startDate, endDate] = useWatch({
     control,
     name: ['period', 'startDate', 'endDate'],
+  });
+
+  const { startDate: classStartDate, endDate: classEndDate } = useAcademicCalendarDates({
+    control,
+    selectedClass,
   });
 
   React.useEffect(() => {
@@ -39,6 +51,20 @@ export default function useSelectedPeriod({
       startDate,
       endDate,
       _id: 'custom',
+    });
+  }
+
+  if (period === 'fullCourse') {
+    return cache('response', {
+      period: {
+        id: 'fullCourse',
+        name: t('fullCourse'),
+      },
+      selected: period,
+      isComplete: true,
+      startDate: classStartDate,
+      endDate: classEndDate,
+      _id: 'fullCourse',
     });
   }
 

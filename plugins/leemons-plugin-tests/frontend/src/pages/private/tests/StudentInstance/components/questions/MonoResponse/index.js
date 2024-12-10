@@ -1,12 +1,11 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
 
 import { Box, Stack } from '@bubbles-ui/components';
 import PropTypes from 'prop-types';
 
-import QuestionImage from '../../QuestionImage';
 import QuestionNoteClues from '../../QuestionNoteClues';
 import QuestionTitle from '../../QuestionTitle';
+import StemResource from '../../StemResource';
 import UnansweredQuestionWarning from '../../UnansweredQuestionWarning';
 
 import Responses from './Responses';
@@ -26,11 +25,11 @@ export default function Index(props) {
       <Box className={styles.questionCard}>
         <QuestionTitle {...props} tableViewMode={store.viewMode} />
         <QuestionNoteClues {...props} />
-        {!question.hasImageAnswer && question.questionImage?.cover ? (
+        {!question.hasImageAnswer && question.stemResource ? (
           <>
             <Stack fullWidth spacing={4}>
               <Box>
-                <QuestionImage {...props} />
+                <StemResource {...props} asset={question.stemResource} />
               </Box>
               <Box>
                 <Responses {...props} />
@@ -39,7 +38,7 @@ export default function Index(props) {
           </>
         ) : (
           <>
-            <QuestionImage {...props} />
+            {question?.stemResource && <StemResource {...props} asset={question.stemResource} />}
             <Responses {...props} />
           </>
         )}

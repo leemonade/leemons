@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import { useState } from 'react';
+
 import {
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
@@ -11,11 +11,14 @@ import {
 } from '@bubbles-ui/components';
 import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@tasks/helpers';
-import { Link } from 'react-router-dom';
-import SubmissionLink from './components/Link/Link';
-import File from './components/File/File';
+import dayjs from 'dayjs';
+import PropTypes from 'prop-types';
+
 import useSubmissionStepStyles from './SubmissionStep.style';
+import File from './components/File/File';
+import SubmissionLink from './components/Link/Link';
+
+import { prefixPN } from '@tasks/helpers';
 
 function SubmissionStep({
   stepName,
@@ -32,8 +35,17 @@ function SubmissionStep({
   const [isLoading, setIsLoading] = useState(false);
 
   const { assignable } = instance ?? {};
+  const isLink = assignable?.submission?.type === 'Link';
+  const [submissionT] = useTranslateLoader(
+    prefixPN(isLink ? 'task_realization.submission_link' : 'task_realization.submission_file')
+  );
 
   const submission = assignation?.metadata?.submission;
+
+  const now = dayjs();
+  const deadline = assignation?.instance?.dates?.deadline;
+  const closed = assignation?.instance?.dates?.closed;
+  const isFinished = closed || (deadline && now.isAfter(deadline));
 
   const { classes } = useSubmissionStepStyles();
 
@@ -66,6 +78,11 @@ function SubmissionStep({
       }
     >
       <Box className={classes.root}>
+        {isFinished && !submission && (
+          <Alert severity="error" closeable={false}>
+            {submissionT('submissionsFinished')}
+          </Alert>
+        )}
         {!!assignable?.submission?.description && (
           <Box>
             <ContextContainer title={t('instructions')}>
@@ -74,11 +91,11 @@ function SubmissionStep({
           </Box>
         )}
 
-        {assignable?.submission?.type === 'Link' && (
+        {(!isFinished || !!submission) && assignable?.submission?.type === 'Link' && (
           <SubmissionLink assignation={assignation} preview={preview} />
         )}
 
-        {assignable?.submission?.type === 'File' && (
+        {(!isFinished || !!submission) && assignable?.submission?.type === 'File' && (
           <File assignation={assignation} preview={preview} />
         )}
 

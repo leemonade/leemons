@@ -1,44 +1,43 @@
+const { activateUser } = require('./activateUser');
 const { add } = require('./add');
-const { init } = require('./init');
-const { list } = require('./list');
-const { exist } = require('./exist');
-const { login } = require('./login');
-const { reset } = require('./reset');
-const { detail } = require('./detail');
-const { update } = require('./update');
 const { addBulk } = require('./addBulk');
-const { recover } = require('./recover');
-const { centers } = require('./centers');
-const { canReset } = require('./canReset');
-const { profiles } = require('./profiles');
-const { isSuperAdmin } = require('./isSuperAdmin');
-const { profileToken } = require('./profileToken');
-const { detailForPage } = require('./detailForPage');
-const { getResetConfig } = require('./getResetConfig');
-const { updateEmail } = require('./updateEmail');
-const { updatePassword } = require('./updatePassword');
-const { canRegisterPassword } = require('./canRegisterPassword');
+const { addFirstSuperAdminUser } = require('./addFirstSuperAdminUser');
 const { comparePassword } = require('./bcrypt/comparePassword');
 const { encryptPassword } = require('./bcrypt/encryptPassword');
-const { hasPermissionCTX } = require('./hasPermissionCTX');
-const { registerPassword } = require('./registerPassword');
+const { canRegisterPassword } = require('./canRegisterPassword');
+const { canReset } = require('./canReset');
 const { centerProfileToken } = require('./centerProfileToken');
-const { updateAvatar } = require('./updateAvatar');
-const { activateUser } = require('./activateUser');
-
-const { getSuperAdminUserIds } = require('./getSuperAdminUserIds');
-const { addFirstSuperAdminUser } = require('./addFirstSuperAdminUser');
-const { sendWelcomeEmailToUser } = require('./sendWelcomeEmailToUser');
+const { centers } = require('./centers');
+const { detail } = require('./detail');
+const { detailForPage } = require('./detailForPage');
+const { exist } = require('./exist');
+const { getDataForUserDatasets } = require('./getDataForUserDatasets');
 const { getRegisterPasswordConfig } = require('./getRegisterPasswordConfig');
-const { userSessionCheckUserAgentDatasets } = require('./userSessionCheckUserAgentDatasets');
-
-// JWT
+const { getResetConfig } = require('./getResetConfig');
+const { getSuperAdminUserIds } = require('./getSuperAdminUserIds');
+const { hasPermissionCTX } = require('./hasPermissionCTX');
+const { init } = require('./init');
+const { isSuperAdmin } = require('./isSuperAdmin');
 const { detailForJWT } = require('./jwt/detailForJWT');
-const { verifyJWTToken } = require('./jwt/verifyJWTToken');
+const { generateJWTPrivateKey } = require('./jwt/generateJWTPrivateKey');
 const { generateJWTToken } = require('./jwt/generateJWTToken');
 const { getJWTPrivateKey } = require('./jwt/getJWTPrivateKey');
-const { generateJWTPrivateKey } = require('./jwt/generateJWTPrivateKey');
+const { verifyJWTToken } = require('./jwt/verifyJWTToken');
+const { list } = require('./list');
+const { login } = require('./login');
+const { profileToken } = require('./profileToken');
+const { profiles } = require('./profiles');
+const { recover } = require('./recover');
+const { registerPassword } = require('./registerPassword');
+const { reset } = require('./reset');
+const { saveDataForUserDatasets } = require('./saveDataForUserDatasets');
+const { sendWelcomeEmailToUser } = require('./sendWelcomeEmailToUser');
+const { update } = require('./update');
+const { updateAvatar } = require('./updateAvatar');
+const { updateEmail } = require('./updateEmail');
+const { updatePassword } = require('./updatePassword');
 const { updateSessionConfig } = require('./updateSessionConfig');
+const { userSessionCheckUserAgentDatasets } = require('./userSessionCheckUserAgentDatasets');
 
 module.exports = {
   add,
@@ -71,7 +70,9 @@ module.exports = {
   updateSessionConfig,
   getSuperAdminUserIds,
   addFirstSuperAdminUser,
+  getDataForUserDatasets,
   sendWelcomeEmailToUser,
+  saveDataForUserDatasets,
   getRegisterPasswordConfig,
   userSessionCheckUserAgentDatasets,
   jwt: {

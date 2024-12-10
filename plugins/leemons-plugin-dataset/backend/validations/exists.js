@@ -1,8 +1,9 @@
 const { LeemonsError } = require('@leemons/error');
-const existLocation = require('../core/datesetLocation/existLocation');
+
 const existSchema = require('../core/datasetSchema/existSchema');
 const existSchemaLocale = require('../core/datasetSchemaLocale/existSchemaLocale');
 const existValues = require('../core/datasetValues/existValues');
+const existLocation = require('../core/datesetLocation/existLocation');
 
 async function validateExistLocation({ locationName, pluginName, ctx }) {
   if (await existLocation({ locationName, pluginName, ctx }))
@@ -68,6 +69,10 @@ async function validateNotExistValues({ locationName, pluginName, target, ctx })
 }
 
 function validatePluginName({ pluginName, calledFrom, ctx }) {
+  if (['users', 'sessions'].includes(calledFrom)) {
+    return;
+  }
+
   if (pluginName !== calledFrom)
     throw new LeemonsError(ctx, { message: `The plugin name must be ${calledFrom}` });
 }

@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
 
+import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
 import { map } from 'lodash';
 
-import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
 import { useAcademicCalendarPeriods } from '../../__DEPRECATED__/ScoresPage/useAcademicCalendarPeriods';
+
 import useStudents from './useStudents';
 
 export default function useTableData({ class: klass, program, filters }) {
@@ -36,6 +37,7 @@ export default function useTableData({ class: klass, program, filters }) {
 
   return {
     scales: programEvaluationSystem?.scales,
+    usePercentage: programEvaluationSystem?.isPercentage,
     students: studentsData,
     activities,
 

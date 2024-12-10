@@ -452,11 +452,15 @@ module.exports = {
       uploadSuccess: 'File {fileName} uploaded successfully',
       removedError: 'Error removing file {fileName} from library',
       removedSuccess: 'File {fileName} removed successfully',
+      submissionsFinished:
+        'The delivery deadline for this activity has expired. You can no longer attach your file.',
     },
     submission_link: {
       title: 'Link',
       label: 'Link',
       placeholder: 'Enter link...',
+      submissionsFinished:
+        'The delivery deadline for this activity has expired. You can no longer add your link.',
     },
 
     confirmation_modal: {

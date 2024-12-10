@@ -1,15 +1,18 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { noop } from 'lodash';
-import { Drawer, Button } from '@bubbles-ui/components';
-import usePermissions from '@users/hooks/usePermissions';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@users/helpers/prefixPN';
-import { getSessionCenter, getSessionUserAgent } from '@users/session';
+
 import { EnrollUserSummary } from '@academic-portfolio/components/EnrollUserSummary';
-import { UserDetail, USER_DETAIL_VIEWS } from './UserDetail';
+import { Drawer, Button } from '@bubbles-ui/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { UserAdminDrawer } from './UserAdminDrawer';
 import { UserDatasetSummary } from './UserDataset/UserDatasetSummary';
+import { UserDetail, USER_DETAIL_VIEWS } from './UserDetail';
+
+import prefixPN from '@users/helpers/prefixPN';
+import usePermissions from '@users/hooks/usePermissions';
+import { getSessionCenter, getSessionUserAgent } from '@users/session';
 
 function UserDetailDrawer({
   userId,
@@ -110,12 +113,16 @@ function UserDetailDrawer({
 
   const canEditDataset = React.useMemo(() => {
     // Allow edit dataset if the user is a student and is viewing its own dataset
-    if (viewMode === USER_DETAIL_VIEWS.STUDENT) {
+    // Or if the user is a teacher and is viewing its own dataset or the dataset of a student
+    if (
+      viewMode === USER_DETAIL_VIEWS.STUDENT ||
+      (viewMode === USER_DETAIL_VIEWS.TEACHER && sysProfileFilter === 'teacher')
+    ) {
       return userAgents.some((userAgent) => userAgent.id === userAgentId);
     }
 
     return true;
-  }, [viewMode, userAgents, userAgentId]);
+  }, [viewMode, userAgents, userAgentId, sysProfileFilter]);
 
   return (
     <>
@@ -139,6 +146,7 @@ function UserDetailDrawer({
             viewMode={viewMode}
           />
           <UserDatasetSummary
+            userId={userId}
             userAgentIds={userAgents.map((userAgent) => userAgent.id)}
             canHandleEdit={canEditDataset}
           />

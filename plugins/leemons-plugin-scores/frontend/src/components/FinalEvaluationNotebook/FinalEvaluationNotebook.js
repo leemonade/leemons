@@ -1,15 +1,15 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-
 import { ContextContainer, LoadingOverlay } from '@bubbles-ui/components';
-
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
-import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
+import PropTypes from 'prop-types';
+
 import useScoresTableTitle from '../EvaluationNotebook/hooks/useScoresTableTitle';
 import { ScoresBasicTable } from '../Tables/ScoresBasicTable';
+
 import Filters from './components/Filters';
 import useTableData from './hooks/useTableData';
+
+import { prefixPN } from '@scores/helpers';
+import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
 
 export default function FinalEvaluationNotebook() {
   const filters = useEvaluationNotebookStore((store) => store.filters);
@@ -33,7 +33,7 @@ export default function FinalEvaluationNotebook() {
 
   const title = useScoresTableTitle(filters);
 
-  const { activities, students, scales, isLoading } = useTableData({
+  const { activities, students, scales, usePercentage, isLoading } = useTableData({
     class: klass,
     program,
     filters,
@@ -48,6 +48,7 @@ export default function FinalEvaluationNotebook() {
       <Filters onChange={setFilters} value={filters} />
       <ScoresBasicTable
         grades={scales}
+        usePercentage={usePercentage}
         activities={activities}
         value={students}
         periodName={period?.period?.name}

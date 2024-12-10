@@ -34,7 +34,8 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
   const { classes } = EnrollmentTabStyles();
   const queryClient = useQueryClient();
   const [teacherProfile, setTeacherProfile] = useState();
-  const [selectedTeacher, setSelectedTeacher] = useState(null);
+  const [mainTeacher, setMainTeacher] = useState(null);
+  const [associateTeachers, setAssociateTeachers] = useState([]);
   const [virtualUrl, setVirtualUrl] = useState(null);
   const [address, setAddress] = useState(null);
   const [schedule, setSchedule] = useState(null);
@@ -67,12 +68,16 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
       const formerValues = {
         mainTeacher: classData.teachers?.find((teacher) => teacher.type === 'main-teacher')
           ?.teacher,
+        associateTeachers: classData.teachers
+          ?.filter((teacher) => teacher.type === 'associate-teacher')
+          ?.map((teacher) => teacher.teacher),
         virtualUrl: classData.virtualUrl,
         address: classData.address,
         schedule: { days: classData.schedule ?? [] },
       };
 
-      setSelectedTeacher(formerValues.mainTeacher ?? null);
+      setMainTeacher(formerValues.mainTeacher ?? null);
+      setAssociateTeachers(formerValues.associateTeachers ?? []);
       setAddress(formerValues.address ?? null);
       setVirtualUrl(formerValues.virtualUrl ?? null);
       setSchedule(formerValues.schedule ?? null);
@@ -102,7 +107,7 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
 
   const isFormDirty = (accessor, value) => {
     const currentFormValues = {
-      mainTeacher: selectedTeacher,
+      mainTeacher,
       virtualUrl: virtualUrl || null,
       address: address || null,
       schedule,
@@ -145,12 +150,12 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
     if (teacherProfile && center?.length > 0) {
       return (
         <SelectUserAgent
-          value={selectedTeacher}
+          value={mainTeacher}
           label={t('mainTeacher')}
           profiles={teacherProfile}
           centers={center}
           onChange={(onChangeValue) => {
-            setSelectedTeacher(onChangeValue);
+            setMainTeacher(onChangeValue);
             updateForm.setValue('mainTeacher', onChangeValue);
             isFormDirty('mainTeacher', onChangeValue);
           }}
@@ -158,7 +163,28 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
       );
     }
     return null;
-  }, [selectedTeacher, teacherProfile, center, t]);
+  }, [mainTeacher, teacherProfile, center, t]);
+
+  const SecondaryTeachersSelect = useMemo(() => {
+    if (teacherProfile && center?.length > 0) {
+      return (
+        <SelectUserAgent
+          value={associateTeachers}
+          label={t('associateTeachersLabel')}
+          profiles={teacherProfile}
+          centers={center}
+          maxSelectedValues={20}
+          onChange={(onChangeValue) => {
+            setAssociateTeachers(onChangeValue);
+            updateForm.setValue('associateTeachers', onChangeValue);
+            isFormDirty('associateTeachers', onChangeValue);
+          }}
+          omitUsers={mainTeacher}
+        />
+      );
+    }
+    return null;
+  }, [associateTeachers, mainTeacher, teacherProfile, center, t]);
 
   if (!TeacherSelect || !classData) {
     return (
@@ -175,6 +201,9 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
         <Title order={2}>{t('teachers')}</Title>
         {teacherProfile && center?.length > 0 && (
           <Box className={classes.mainTeacher}>{TeacherSelect}</Box>
+        )}
+        {SecondaryTeachersSelect && (
+          <Box className={classes.mainTeacher}>{SecondaryTeachersSelect}</Box>
         )}
       </ContextContainer>
       <ContextContainer>

@@ -100,6 +100,7 @@ function UserInfo({ session }) {
                   isMyProfile
                 />
                 <UserDatasetSummary
+                  userId={userId}
                   userAgentIds={[userAgentId]}
                   openEditDrawer={!!params.editDataset}
                 />

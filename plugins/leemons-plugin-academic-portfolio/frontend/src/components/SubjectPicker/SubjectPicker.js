@@ -51,7 +51,7 @@ export function SubjectPicker({
   error,
   onlyOneSubject,
   selectInitialSubjects,
-  teacherType = 'main-teacher',
+  teacherType = ['main-teacher', 'associate-teacher'],
 }) {
   const { openConfirmationModal } = useLayout();
 
@@ -277,7 +277,7 @@ SubjectPicker.propTypes = {
   error: PropTypes.any,
   onlyOneSubject: PropTypes.bool,
   selectInitialSubjects: PropTypes.bool,
-  teacherType: PropTypes.string,
+  teacherType: PropTypes.arrayOf(PropTypes.string),
 };
 
 export default SubjectPicker;

@@ -1,5 +1,73 @@
 # Changelog
 
+## [1.19.0](https://github.com/leemonade/leemons/compare/1.18.0...1.19.0) (2024-12-09)
+
+
+### Features
+
+* **leemons-react:** Integrate Rspack bundler ([8304c89](https://github.com/leemonade/leemons/commit/8304c89a48457fe42ae97659383ab49e3bc002f2)), closes [#691](https://github.com/leemonade/leemons/issues/691)
+* **scores:** Add full course evaluation and improve scores management ([7b03b6d](https://github.com/leemonade/leemons/commit/7b03b6de4c2cf43f17a2656f72a8401ce6faba3e)), closes [#687](https://github.com/leemonade/leemons/issues/687)
+* **tasks:** Add error alert for missing submission ([76bef87](https://github.com/leemonade/leemons/commit/76bef8708121e14c3d8fb6c96d4b5fa76b156cba)), closes [#683](https://github.com/leemonade/leemons/issues/683)
+
+
+### Bug Fixes
+
+* Remove localhost API_URL as it's reused by dev and prod builds ([c05e9be](https://github.com/leemonade/leemons/commit/c05e9be26f4b5d6b5e483c86967bae51cd3a97b4))
+* **tests:** Solve width issue on test execution ([214e2e0](https://github.com/leemonade/leemons/commit/214e2e0b9f334ddfc4a3394666c79ec79df756f4)), closes [#690](https://github.com/leemonade/leemons/issues/690)
+
+## [1.18.0](https://github.com/leemonade/leemons/compare/1.17.0...1.18.0) (2024-12-03)
+
+
+### Features
+
+* **academic-portfolio:** Restore associate teacher functionality ([b3784ae](https://github.com/leemonade/leemons/commit/b3784ae0d354f4ec36697e49e7cfb3bcf84b0c4e)), closes [#682](https://github.com/leemonade/leemons/issues/682)
+* **tests:** Transform Question Image into Stem Multimedia resource ([1241397](https://github.com/leemonade/leemons/commit/124139709b279ed33fe35e9de123fb733bc1bdc0)), closes [#657](https://github.com/leemonade/leemons/issues/657)
+
+
+### Bug Fixes
+
+* **academic-portfolio:** Fix student initials in StudentsTable ([e270b97](https://github.com/leemonade/leemons/commit/e270b97ba4d72222c8c76a9464862618c0d1e5af)), closes [#674](https://github.com/leemonade/leemons/issues/674)
+* **assignables:** Pass correct arguments to addTeachersToAssignableInstance ([60f4d75](https://github.com/leemonade/leemons/commit/60f4d75cb76f61c72444231bfc8b9dd9e3b93530)), closes [#685](https://github.com/leemonade/leemons/issues/685)
+* **calendar:** Update task label to activity in DayWeek panel ([7cc713d](https://github.com/leemonade/leemons/commit/7cc713d8a7b19ea2f2e4287c03dbf757c7b46d73)), closes [#673](https://github.com/leemonade/leemons/issues/673)
+* **dashboard:** Improve WelcomeCard and user personalization ([935c023](https://github.com/leemonade/leemons/commit/935c0238967f9b5734e1a5f0d619bcf5c8bb4539)), closes [#675](https://github.com/leemonade/leemons/issues/675)
+* **library:** Improve tag display and class data handling ([d3ea86c](https://github.com/leemonade/leemons/commit/d3ea86c966600419a7b9f0cb732bbfbf258378c0)), closes [#677](https://github.com/leemonade/leemons/issues/677)
+* **tests:** Extend execution layout content to footer ([33a6f53](https://github.com/leemonade/leemons/commit/33a6f53dbf24b1c2b58e46e4edbc17adaaac1fc5)), closes [#680](https://github.com/leemonade/leemons/issues/680)
+
+## [1.17.0](https://github.com/leemonade/leemons/compare/1.16.0...1.17.0) (2024-11-28)
+
+
+### Features
+
+* **academic-portoflio:** Added nomenclature to Program type ([fa7959a](https://github.com/leemonade/leemons/commit/fa7959a576b6958777597444744b1ef091b3f49a))
+* Added ActivityUnavailable page on unavailable activities ([053665a](https://github.com/leemonade/leemons/commit/053665a170c5ea49f2d04b8abc0abb5571670358)), closes [#656](https://github.com/leemonade/leemons/issues/656)
+* **assignables:** Allow modules' activities to be opened from ongoing ([d5d6ad2](https://github.com/leemonade/leemons/commit/d5d6ad2808a218b5f6a21630e43b60ba24e1a7c1)), closes [#666](https://github.com/leemonade/leemons/issues/666)
+* **content-creator:** Add PDF download functionality ([40a6e7b](https://github.com/leemonade/leemons/commit/40a6e7bf0e27230ee081d4f608b36eaeb796600b)), closes [#662](https://github.com/leemonade/leemons/issues/662)
+* **cronjobs:** Create job manually to allow 'every' method duplications ([0067d7c](https://github.com/leemonade/leemons/commit/0067d7c20bce163753130c9af96528062fc9e612)), closes [#660](https://github.com/leemonade/leemons/issues/660)
+* **emails:** Implement widget zones and enhance preferences system ([62e97f8](https://github.com/leemonade/leemons/commit/62e97f86b7ed289a759f7ddf2a239a73960131fc)), closes [#668](https://github.com/leemonade/leemons/issues/668)
+* **library:** Add bulk resource upload and management features ([a9af308](https://github.com/leemonade/leemons/commit/a9af308fb9c8ce40a2c672b6d637297841289299)), closes [#655](https://github.com/leemonade/leemons/issues/655)
+* Modifications for virtual tutor ([81550dc](https://github.com/leemonade/leemons/commit/81550dcdbbcea38449e6278861d5f684ab065b26)), closes [#653](https://github.com/leemonade/leemons/issues/653)
+* **scores:** Add teacher type filter for class listing ([752033f](https://github.com/leemonade/leemons/commit/752033fbf58f6b0501f9947715df80457ffe34fc)), closes [#659](https://github.com/leemonade/leemons/issues/659)
+* **tests:** Added short-response questions ([2655c5e](https://github.com/leemonade/leemons/commit/2655c5e927ca517cbe8dd9a25d2d426b5a863735)), closes [#651](https://github.com/leemonade/leemons/issues/651)
+* **tests:** Implement new question categories management system ([be0baee](https://github.com/leemonade/leemons/commit/be0baee8c61f31e8c6cf91922a5f7add59f200c5)), closes [#664](https://github.com/leemonade/leemons/issues/664)
+* **widgets:** Reorder widgets to bring the sessions tab to the beginning on Subject Dashboard ([548e0f5](https://github.com/leemonade/leemons/commit/548e0f5d66533f64d17eea3374facc31b3e5bdab)), closes [#679](https://github.com/leemonade/leemons/issues/679)
+
+
+### Bug Fixes
+
+* **academic-portfolio:** Handle empty dates in Reports/index ([f7762ca](https://github.com/leemonade/leemons/commit/f7762ca5bd0cb45c528ba0071be5a8f2cff3dee5)), closes [#667](https://github.com/leemonade/leemons/issues/667) [#667](https://github.com/leemonade/leemons/issues/667)
+* Added missing types to packages ([656584e](https://github.com/leemonade/leemons/commit/656584e55c1188b811b05044b5a91365d7034908))
+* **assignables:** Order Type Select elements alphabetically ([f7762ca](https://github.com/leemonade/leemons/commit/f7762ca5bd0cb45c528ba0071be5a8f2cff3dee5))
+* **assignables:** Return NOT_FINISHED_BY_STUDENTS state instead of null ([b312753](https://github.com/leemonade/leemons/commit/b3127530bd65ae577fa71560b6bb1ea29a693a37)), closes [#658](https://github.com/leemonade/leemons/issues/658)
+* **assignables:** Update activity status controls ([3ba71e3](https://github.com/leemonade/leemons/commit/3ba71e356388d3b16528e5fe2a231ffb762ff687)), closes [#665](https://github.com/leemonade/leemons/issues/665)
+* **email:** Use platform name as requested by Email.send ([3691bb0](https://github.com/leemonade/leemons/commit/3691bb04b912ecdeb690dd0a9dafa3dd483d5284)), closes [#663](https://github.com/leemonade/leemons/issues/663)
+* **leebrary:** Metadata display for video files ([#676](https://github.com/leemonade/leemons/issues/676)) ([977e717](https://github.com/leemonade/leemons/commit/977e717529dce4c8093c85ebcab2e9c5104e85b0))
+* **leebrary:** Pass translation prop to bulk assets components ([39f5aa9](https://github.com/leemonade/leemons/commit/39f5aa918d0b1d35c7985ad577c3b9e2198d7785)), closes [#672](https://github.com/leemonade/leemons/issues/672)
+* **leebrary:** Set default player display for media resources ([813b541](https://github.com/leemonade/leemons/commit/813b5410f18a9b1aa00d94e7a9181084eb071ee7)), closes [#671](https://github.com/leemonade/leemons/issues/671)
+* **library:** Update file type handling and badge properties on `LibraryCardEmbed` ([2327020](https://github.com/leemonade/leemons/commit/232702031b31a28849cb0b6d9f8325a4344b07ca))
+* Sort all the users list by names ([82d0d9c](https://github.com/leemonade/leemons/commit/82d0d9ce5792784ae49f8989b95a77ef2bbf4acc)), closes [#654](https://github.com/leemonade/leemons/issues/654)
+* **transversal:** Add param to getFullName and update components ([8fd3d1f](https://github.com/leemonade/leemons/commit/8fd3d1f9f284377edc14737992a6213dcefd20ec)), closes [#669](https://github.com/leemonade/leemons/issues/669)
+* **users:** Allow searching by string in backend ([eaa12b9](https://github.com/leemonade/leemons/commit/eaa12b944dc23f53aa8b2daac473834a2d5974da)), closes [#652](https://github.com/leemonade/leemons/issues/652)
+
 ## [1.16.0](https://github.com/leemonade/leemons/compare/1.15.0...1.16.0) (2024-11-18)
 
 

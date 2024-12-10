@@ -6,9 +6,14 @@ import { filter, find, map } from 'lodash';
 import { useProgramsForSubjectPicker } from './useProgramsForSubjectPicker';
 import { useSubjectsForSubjectPicker } from './useSubjectsForSubjectPicker';
 
-export function useDataForSubjectPicker({ subjects, control, teacherType = 'main-teacher' }) {
+export function useDataForSubjectPicker({
+  subjects,
+  control,
+  teacherType = ['main-teacher', 'associate-teacher'],
+}) {
   const subjectsData = useSubjectsForSubjectPicker({ subjects, type: teacherType });
   const programsData = useProgramsForSubjectPicker({ subjects: subjectsData });
+
   /*
     --- Selected data ---
   */

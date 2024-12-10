@@ -3,8 +3,10 @@ const _ = require('lodash');
 
 const { addTeachersToAssignableInstance } = require('../teachers/addTeachersToAssignableInstance');
 
+const canAssignTeacherRoles = ['main-teacher', 'associate-teacher'];
+
 async function afterAddClassTeacher({ class: classe, teacher, type, ctx }) {
-  if (type === 'main-teacher') {
+  if (canAssignTeacherRoles.includes(type)) {
     // Sacamos todas las instancias existentes para las clases afectadas
     const assignClasses = await ctx.tx.db.Classes.find({ class: classe }).lean();
     const instanceIds = _.uniq(_.map(assignClasses, 'assignableInstance'));
@@ -30,10 +32,8 @@ async function afterAddClassTeacher({ class: classe, teacher, type, ctx }) {
 
     await Promise.all(
       instances.map(async (instance) => {
-        const teachers = [{id: teacher, type}];
-
         await addTeachersToAssignableInstance({
-          teachers,
+          teachers: [{ teacher, type }],
           id: instance.id,
           assignable: instance.assignable,
           ctx,

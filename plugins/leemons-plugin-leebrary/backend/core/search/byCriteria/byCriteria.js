@@ -3,7 +3,7 @@
  *
  * @param {Object} params - The parameters object.
  * @param {string} params.criteria - The search criteria.
- * @param {string} params.type - The type of the asset to be searched.
+ * @param {string|array} params.type - The file type or list of file types to filter by
  * @param {string} params.category - The category of the asset to be searched.
  * @param {boolean} params.allVersions - Flag to include all versions of the asset in the search.
  * @param {string} params.sortBy - The field to sort the search results by.
