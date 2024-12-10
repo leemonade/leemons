@@ -138,7 +138,7 @@ module.exports = function rspackConfig({
       isDev &&
         new ReactRefreshPlugin({
           overlay: {
-            // module: path.resolve(__dirname, '../webpack/customErrorOverlay.js'),
+            module: path.resolve(__dirname, './customErrorOverlay.js'),
           },
         }),
       publicFiles?.length &&
