@@ -389,6 +389,10 @@ module.exports = {
       search: 'Search {type}...',
       showNonEvaluable: 'See non-evaluable',
       goToWeighting: 'Weights',
+      add: 'Add',
+      manualActivity: 'Graded activity',
+      manualActivityCreated: 'Graded activity created successfully',
+      manualActivityError: 'Error creating graded activity',
     },
     scoresTable: {
       students: 'Students',
@@ -446,5 +450,14 @@ module.exports = {
         description: 'We have not found results for your search.',
       },
     },
+  },
+  manualActivityDrawer: {
+    title: 'New graded activity',
+    config: 'Configuration',
+    date: { label: 'Date', error: 'The date is required' },
+    name: { label: 'Name', error: 'The name is required' },
+    description: { label: 'Description' },
+    cancel: 'Cancel',
+    save: 'Create activity',
   },
 };
