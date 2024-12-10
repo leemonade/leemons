@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
 
 import { useIsTeacher } from '@academic-portfolio/hooks';
@@ -6,36 +6,29 @@ import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
 import ActivityHeader from '@assignables/components/ActivityHeader';
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
 import TimeoutAlert from '@assignables/components/EvaluationFeedback/Alerts/TimeoutAlert';
-import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
 import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
-import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
 import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import getAssignation from '@assignables/requests/assignations/getAssignation';
 import {
   ActivityAccordion,
   ActivityAccordionPanel,
-  ActivityAnswersBar,
   Box,
   Button,
   ContextContainer,
-  HtmlText,
-  ImageLoader,
   Stack,
-  Switch,
   Table,
   Text,
+  Title,
   TotalLayoutContainer,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
   VerticalContainer,
   TextClamp,
 } from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
-import { ChevRightIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
-import { CheckBoldIcon, RemoveBoldIcon, SlashIcon, StatisticsIcon } from '@bubbles-ui/icons/solid';
+import { ChevRightIcon } from '@bubbles-ui/icons/outline';
+import { CheckBoldIcon, RemoveBoldIcon, SlashIcon } from '@bubbles-ui/icons/solid';
 import { useSearchParams, useStore } from '@common';
-import { useComunica } from '@comunica/context';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
@@ -54,31 +47,22 @@ import { ResultStyles } from './Result.style';
 import { calculeInfoValues } from './StudentInstance/helpers/calculeInfoValues';
 import { getConfigByInstance } from './StudentInstance/helpers/getConfigByInstance';
 import { htmlToText } from './StudentInstance/helpers/htmlToText';
+import EvaluationAndFeedback from './components/EvaluationAndFeedback';
 
 import prefixPN from '@tests/helpers/prefixPN';
 
 export default function Result() {
   const [t] = useTranslateLoader(prefixPN('testResult'));
-  const scrollRef = React.useRef();
-
+  const [accordionState, setAccordionState] = useState('evaluationAndFeedback');
   const { classes: styles, cx } = ResultStyles({}, { name: 'Result' });
+  const scrollRef = useRef();
+
   const [store, render] = useStore({
     loading: true,
     useQuestionMode: false,
   });
 
-  const room = useAssignationComunicaRoom({
-    assignation: store?.assignation,
-    subject: store?.instance?.subjects?.[0]?.subject,
-  });
-  const { openRoom } = useComunica();
-
-  const [canShowFeedback, setCanShowFeedback] = React.useState(false);
-  const [accordionState, setAccordionState] = React.useState([]);
-  const [accordionGraphState, setAccordionGraphState] = React.useState(['1']);
-
   const nextActivityUrl = useNextActivityUrl(store.assignation);
-
   const levels = useLevelsOfDifficulty();
   const history = useHistory();
   const params = useParams();
@@ -127,11 +111,6 @@ export default function Result() {
           setInstanceTimestampRequest(params.id, 'open', getUserId()),
         ]);
 
-      const score = store.assignation.grades?.[0] ?? {};
-      store.feedback = score.feedback ?? null;
-      if (store.feedback) {
-        setCanShowFeedback(true);
-      }
       if (store.assignation.finished) store.viewMode = true;
       store.questionResponses = responses;
       store.questionMax = Object.keys(responses).length - 1;
@@ -167,7 +146,7 @@ export default function Result() {
     }
   }
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (
       params?.id &&
       params?.user &&
@@ -177,58 +156,12 @@ export default function Result() {
     }
   }, [params]);
 
-  const graphData = React.useMemo(() => {
-    const selectables = [];
-    const data = [];
-
-    if (store.questions) {
-      let category = false;
-      let level = false;
-      forEach(store.questions, (question) => {
-        const d = {
-          id: question.id,
-          status: store.questionResponses[question.id].status
-            ? store.questionResponses[question.id].status.toUpperCase()
-            : null,
-        };
-        if (question.category) {
-          category = true;
-          d.category = question.category.category;
-        } else {
-          d.category = t('undefined');
-        }
-        if (levels) {
-          if (question.level) {
-            level = true;
-            d.level = find(levels, { value: question.level }).label;
-          } else {
-            d.level = t('undefined');
-          }
-        }
-        data.push(d);
-      });
-      if (category) {
-        selectables.push({
-          value: 'category',
-          label: t('category'),
-        });
-      }
-      if (level) {
-        selectables.push({
-          value: 'level',
-          label: t('level'),
-        });
-      }
-    }
-    return { selectables, data, labels: { OK: t('ok'), KO: t('ko'), null: t('nsnc') } };
-  }, [store.questions, levels, t]);
-
   function toggleQuestionMode() {
     store.useQuestionMode = !store.useQuestionMode;
     render();
   }
 
-  const tableHeaders = React.useMemo(
+  const tableHeaders = useMemo(
     () => [
       {
         Header: t('question'),
@@ -251,10 +184,10 @@ export default function Result() {
         className: styles.tableHeader,
       },
     ],
-    [t]
+    [t, styles, cx]
   );
 
-  const tableData = React.useMemo(
+  const tableData = useMemo(
     () =>
       store.questions
         ? map(store.questions, (question, i) => {
@@ -314,9 +247,7 @@ export default function Result() {
     [store.questions, store.questionResponses, levels]
   );
 
-  async function sendFeedback(fromSwitch, remove) {
-    store.feedbackError = false;
-
+  async function sendFeedback({ feedback, hideSuccessAlert }) {
     const originalGrade = store.assignation.grades[0];
     const currentGrade = originalGrade ?? {
       subject: store.instance.subjects[0].subject,
@@ -326,14 +257,11 @@ export default function Result() {
       visibleToStudent: true,
     };
 
-    if (remove || !htmlToText(store.feedback).trim()) {
-      currentGrade.feedback = null;
-    } else {
-      currentGrade.feedback = store.feedback;
-    }
+    const hasValidFeedback = htmlToText(feedback).trim();
+    currentGrade.feedback = hasValidFeedback ? feedback : null;
 
     try {
-      if ((currentGrade.feedback && !remove) || !!originalGrade) {
+      if (hasValidFeedback || !!originalGrade) {
         await updateStudentRequest({
           instance: store.instance.id,
           student: store.assignation.user,
@@ -343,98 +271,13 @@ export default function Result() {
 
       store.assignation.grades = [currentGrade];
 
-      if (!fromSwitch) {
+      if (!hideSuccessAlert) {
         addSuccessAlert(t('feedbackDone'));
       }
     } catch (e) {
       addErrorAlert(e);
     }
     render();
-  }
-
-  const accordion = [];
-  const accordionGraph = [];
-
-  if (graphData.data.length && graphData.selectables.length) {
-    accordionGraph.push(
-      <ActivityAccordionPanel
-        key={1}
-        itemValue={'1'}
-        hideIcon={true}
-        title={
-          <Text
-            sx={(theme) => ({
-              alignItems: 'center',
-              display: 'flex',
-              gap: theme.spacing[2],
-              width: '100%!important',
-            })}
-          >
-            <StatisticsIcon /> {t('testResult')}
-          </Text>
-        }
-      >
-        <Box p={20}>
-          <ActivityAnswersBar {...graphData} />
-        </Box>
-      </ActivityAccordionPanel>
-    );
-  }
-
-  if (isTeacher || store.feedback) {
-    accordion.push(
-      <ActivityAccordionPanel
-        key={3}
-        itemValue={'3'}
-        label={t('feedbackForStudent')}
-        icon={
-          <Box style={{ position: 'relative', width: '24px', height: '24px' }}>
-            <ImageLoader src={'/public/tests/feedback-for-student.svg'} />
-          </Box>
-        }
-      >
-        {isTeacher ? (
-          <Box sx={(theme) => ({ padding: theme.spacing[6] })}>
-            <TextEditorInput
-              value={store.feedback}
-              error={store.feedbackError ? t('feedbackRequired') : null}
-              editorStyles={{ minHeight: '96px' }}
-              onChange={(e) => {
-                store.feedback = e;
-                store.feedbackError = false;
-                render();
-              }}
-            />
-            <Box
-              sx={(theme) => ({
-                display: 'flex',
-                justifyContent: 'end',
-                marginTop: theme.spacing[4],
-              })}
-            >
-              <Button
-                onClick={() => {
-                  if (!accordionState.includes('2')) {
-                    setAccordionState([...accordionState, '2']);
-                  } else {
-                    sendFeedback();
-                  }
-                }}
-                rightIcon={<SendMessageIcon />}
-              >
-                {t('sendFeedback')}
-              </Button>
-            </Box>
-          </Box>
-        ) : (
-          <Box sx={(theme) => ({ padding: theme.spacing[4] })}>
-            <Box className={styles.feedbackUser}>
-              <HtmlText>{store.feedback}</HtmlText>
-            </Box>
-          </Box>
-        )}
-      </ActivityAccordionPanel>
-    );
   }
 
   const userNote = parseFloat(
@@ -528,77 +371,51 @@ export default function Result() {
                     }}
                   />
                 )}
-                <EvaluationFeedback
-                  onChatClick={() => {
-                    openRoom(room);
-                  }}
-                  assignation={store.assignation}
-                  subject={store?.instance?.subjects?.[0]?.subject}
-                  hideChat={!room}
-                />
-
-                {isTeacher && !store.instance.dates.evaluationClosed && (
-                  <>
-                    <Switch
-                      label={t('feedbackForStudent')}
-                      onChange={(e) => {
-                        setCanShowFeedback(e);
-                        sendFeedback(true, true);
-                      }}
-                      checked={canShowFeedback}
-                    />
-                    {canShowFeedback && (
-                      <Box sx={(theme) => ({ paddingLeft: theme.spacing[10] })}>
-                        <TextEditorInput
-                          value={store.feedback}
-                          error={store.feedbackError ? t('feedbackRequired') : null}
-                          editorStyles={{ minHeight: '96px' }}
-                          onChange={(e) => {
-                            store.feedback = e;
-                            store.feedbackError = false;
-                            render();
-                          }}
-                        />
-                      </Box>
-                    )}
-                  </>
-                )}
-
-                <Stack justifyContent="end" spacing={2}>
-                  {isTeacher && canShowFeedback && (
-                    <Button
-                      leftIcon={<SendMessageIcon />}
-                      onClick={() => setTimeout(() => sendFeedback(), 100)}
-                    >
-                      {t('saveAndSendFeedback')}
-                    </Button>
-                  )}
-                </Stack>
-
-                <ContextContainer title={t('responses')}>
-                  <ActivityAccordion value={accordionGraphState} onChange={setAccordionGraphState}>
-                    {accordionGraph}
-                  </ActivityAccordion>
-                </ContextContainer>
-
-                {(store.instance?.showCorrectAnswers || isTeacher) && (
-                  <ContextContainer
-                    titleRightZone={
-                      <Button variant="link" onClick={toggleQuestionMode}>
-                        {store.useQuestionMode ? t('returnToTable') : t('showInTests')}
-                      </Button>
-                    }
-                    title={`${t('questions')} (${store.questions?.length})`}
+                <ActivityAccordion value={accordionState} onChange={setAccordionState}>
+                  <ActivityAccordionPanel
+                    key={1}
+                    itemValue={'evaluationAndFeedback'}
+                    hideIcon={true}
+                    title={<Title order={3}>{t('evaluationAndFeedback')}</Title>}
                   >
-                    <Box>
-                      {store.useQuestionMode ? (
-                        <ViewModeQuestions store={store} onReturn={toggleQuestionMode} />
-                      ) : (
-                        <Table columns={tableHeaders} data={tableData} />
-                      )}
-                    </Box>
-                  </ContextContainer>
-                )}
+                    <EvaluationAndFeedback
+                      t={t}
+                      assignation={store.assignation}
+                      subject={store?.instance?.subjects?.[0]?.subject}
+                      questions={store.questions}
+                      questionResponses={store.questionResponses}
+                      isTeacher={isTeacher}
+                      onSaveFeedback={sendFeedback}
+                    />
+                  </ActivityAccordionPanel>
+
+                  {(store.instance?.showCorrectAnswers || isTeacher) && (
+                    <ActivityAccordionPanel
+                      key={2}
+                      itemValue={'responsesDetailTable'}
+                      hideIcon={true}
+                      title={<Title order={3}>{t('questions')}</Title>}
+                    >
+                      <ContextContainer sx={{ padding: 16 }}>
+                        <Stack justifyContent="space-between">
+                          <Title
+                            order={4}
+                          >{`${t('questions')} (${store.questions?.length})`}</Title>
+                          <Button variant="link" onClick={toggleQuestionMode}>
+                            {store.useQuestionMode ? t('returnToTable') : t('showInTests')}
+                          </Button>
+                        </Stack>
+                        <Box>
+                          {store.useQuestionMode ? (
+                            <ViewModeQuestions store={store} onReturn={toggleQuestionMode} />
+                          ) : (
+                            <Table columns={tableHeaders} data={tableData} />
+                          )}
+                        </Box>
+                      </ContextContainer>
+                    </ActivityAccordionPanel>
+                  )}
+                </ActivityAccordion>
               </Box>
             </Box>
           )}

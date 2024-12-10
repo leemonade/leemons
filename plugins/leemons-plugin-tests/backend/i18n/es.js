@@ -1,5 +1,12 @@
 const CATEGORY = 'Categoría';
 const CATEGORIES = 'Categorías';
+const QUESTION_TYPES = {
+  trueFalse: 'V/F',
+  monoResponse: 'Respuesta Única',
+  shortResponse: 'Respuesta Corta',
+  openResponse: 'Respuesta Abierta',
+  map: 'Mapa',
+};
 
 module.exports = {
   questionsBanksList: {
@@ -540,8 +547,8 @@ module.exports = {
     feedbackForStudent: 'Comentario para el estudiante',
     sendFeedback: 'Enviar comentario',
     feedbackRequired: 'Comentario obligatorio',
-    feedbackDone: 'Comentario enviado con éxito',
-
+    feedbackDone: 'Comentario actualizado con éxito',
+    evaluationAndFeedback: 'Evaluación y Feedback',
     ok: 'Acertada',
     ko: 'Errónea',
     nsnc: 'NS/NC',
@@ -555,6 +562,23 @@ module.exports = {
     returnToTable: 'Volver al listado',
     nextActivity: 'Siguiente actividad',
     goToModule: 'Dashboard del modulo',
+    resultsGraph: {
+      title: 'Detalle del test',
+      views: {
+        category: 'Categoría',
+        level: 'Nivel',
+        type: 'Tipo',
+      },
+      questionStatus: {
+        ok: 'Correcto',
+        ko: 'Incorrecto',
+        omitted: 'NS/NC',
+      },
+      questionTypes: {
+        ...QUESTION_TYPES,
+      },
+      undefined: 'Indefinido',
+    },
     responseDetail: {
       answers: 'Respuestas',
       answer: 'Respuesta',

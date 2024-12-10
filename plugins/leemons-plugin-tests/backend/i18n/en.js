@@ -1,3 +1,11 @@
+const questionTypes = {
+  trueFalse: 'T/F',
+  monoResponse: 'Mono Response',
+  shortResponse: 'Short',
+  openResponse: 'Open',
+  map: 'Map',
+};
+
 module.exports = {
   questionsBanksList: {
     pageTitle: 'Question Banks List',
@@ -537,10 +545,13 @@ module.exports = {
     feedbackForStudent: 'Feedback for student',
     sendFeedback: 'Send feedback',
     feedbackRequired: 'Feedback required',
-    feedbackDone: 'Feedback sent successfully',
+    feedbackDone: 'Feedback saved successfully',
+    evaluationAndFeedback: 'Evaluation and feedback',
+    contactStudent: 'Contact student',
+    contactTeacher: 'Contact teacher',
     ok: 'Successful',
     ko: 'Wrong',
-    nsnc: 'NS/NC',
+    nsnc: 'N/R',
     chatDescription: 'Do you have any questions about this evaluation?',
     chatTeacherDescription: 'Would you like to write a comment?',
     chatButtonStudent: 'Write to your student',
@@ -551,6 +562,23 @@ module.exports = {
     returnToTable: 'Return to list',
     nextActivity: 'Next activity',
     goToModule: 'Module dashboard',
+    resultsGraph: {
+      title: 'Test Detail',
+      views: {
+        category: 'Category',
+        level: 'Level',
+        type: 'Type',
+      },
+      questionStatus: {
+        ok: 'Correct',
+        ko: 'Incorrect',
+        omitted: 'N/R',
+      },
+      questionTypes: {
+        ...questionTypes,
+      },
+      undefined: 'Undefined',
+    },
     responseDetail: {
       answers: 'Answers',
       answer: 'Answer',
