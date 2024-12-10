@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { Alert, Box, HtmlText, Text } from '@bubbles-ui/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { find, forEach, isNumber } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -8,13 +9,16 @@ import { QuestionImage } from '../../../../../../../components/QuestionImage';
 import { getQuestionClues } from '../../../helpers/getQuestionClues';
 import { htmlToText } from '../../../helpers/htmlToText';
 import QuestionNoteClues from '../../QuestionNoteClues';
-import QuestionTitle from '../../QuestionTitle';
-import UnansweredQuestionWarning from '../../UnansweredQuestionWarning';
+import QuestionTitleComponent from '../../QuestionTitleComponent';
 
 import Responses from './Responses';
 
+import prefixPN from '@tests/helpers/prefixPN';
+import AnswerFeed from '@tests/pages/private/tests/components/ResponseDetail/AnswerFeed';
+
 export default function Index(props) {
   const { styles, store, question, t, cx } = props;
+  const [answerFeedT] = useTranslateLoader(prefixPN('testResult.responseDetail'));
 
   const clue = React.useMemo(
     () =>
@@ -36,32 +40,44 @@ export default function Index(props) {
     });
   }
 
-  let showNotResponsedWarning = false;
+  // Currently global feedback is mandatory for map questions, but some bulk tamplates map questions have no global feedback as they were created before this update.
   let explanation = null;
-  if (store.viewMode) {
-    showNotResponsedWarning = !allWithValues;
-    // Currently global feedback is mandatory for map questions, but some bulk tamplates map questions have no global feedback as they were created before this update.
-    if (question.globalFeedback?.text) {
-      explanation = htmlToText(question.globalFeedback.text);
-    }
+  if (store.viewMode && question.globalFeedback?.text) {
+    explanation = htmlToText(question.globalFeedback.text);
   }
+
+  const containerClassName = store.viewMode
+    ? styles.viewModeQuestionContainer
+    : styles.executionModeQuestionContainer;
+
   return (
     <>
-      {showNotResponsedWarning ? <UnansweredQuestionWarning {...props} /> : null}
+      <Box className={containerClassName}>
+        <QuestionTitleComponent
+          question={question}
+          questionIndex={store.questions?.findIndex((q) => q.id === question?.id)}
+          questionResponse={store.questionResponses?.[question.id]}
+          viewMode={store.viewMode}
+          assignmentConfig={store.config}
+          questionsInfo={store.questionsInfo}
+        />
 
-      <Box className={styles.questionCard}>
-        <QuestionTitle {...props} tableViewMode={store.viewMode} />
-        <QuestionNoteClues {...props} />
-        <Box className={styles.mapImageContainer}>
-          <QuestionImage
-            src={question.mapProperties.image}
-            markers={question.mapProperties.markers}
-            values={
-              store.viewMode ? store.questionResponses[question.id].properties?.responses : null
-            }
-            clue={clue}
+        {store.viewMode && (
+          <AnswerFeed
+            questionStatus={store.questionResponses?.[question.id]?.status}
+            t={answerFeedT}
           />
-        </Box>
+        )}
+
+        <QuestionImage
+          src={question.mapProperties.image}
+          markers={question.mapProperties.markers}
+          values={
+            store.viewMode ? store.questionResponses[question.id].properties?.responses : null
+          }
+          clue={clue}
+        />
+
         {explanation && (
           <Box className={cx(styles.textExplanation, styles.textExplanationRemovePadding)}>
             <Box sx={(theme) => ({ paddingBottom: theme.spacing[3] })}>
@@ -72,7 +88,10 @@ export default function Index(props) {
             <HtmlText>{explanation}</HtmlText>
           </Box>
         )}
+
         <Responses {...props} />
+
+        {!store.viewMode && <QuestionNoteClues {...props} />}
       </Box>
 
       {!store.viewMode && !allWithValues && used ? (

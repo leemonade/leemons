@@ -242,6 +242,15 @@ const QUESTION_TYPES = {
   MONO_RESPONSE: 'mono-response',
   TRUE_FALSE: 'true-false',
   SHORT_RESPONSE: 'short-response',
+  OPEN_RESPONSE: 'open-response',
+};
+
+const QUESTION_RESPONSE_STATUS = {
+  OK: 'ok',
+  KO: 'ko',
+  OMITTED: null,
+  PARTIAL: 'partial',
+  NOT_GRADED: 'not-graded',
 };
 
 module.exports = {
@@ -255,4 +264,5 @@ module.exports = {
   assignableRoles,
   libraryQuestionBankCategory,
   QUESTION_TYPES,
+  QUESTION_RESPONSE_STATUS,
 };

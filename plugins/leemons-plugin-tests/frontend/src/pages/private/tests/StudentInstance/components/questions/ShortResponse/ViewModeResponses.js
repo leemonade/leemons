@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import ResponseDetail from '@tests/pages/private/tests/components/ResponseDetail';
 
 function ViewModeResponses(props) {
-  const { question, store } = props;
+  const { question, store, t } = props;
 
   const userAnswer = store?.questionResponses?.[question.id]?.properties?.response;
   const userAnswerIsCorrect = store?.questionResponses[question.id]?.status === 'ok';
@@ -20,15 +20,18 @@ function ViewModeResponses(props) {
   ];
 
   const feedback = question.globalFeedback?.text || null;
+  const stemResourceIsImage = (question?.stemResource?.file?.type || '').startsWith('image');
 
   return (
     <ResponseDetail
-      isCorrect={userAnswerIsCorrect}
+      questionStatus={store?.questionResponses[question.id]?.status}
       solutionLabel={solutionLabel}
       userSkipped={userSkippedQuestion}
       responses={responses}
       globalFeedback={question?.hasAnswerFeedback ? null : feedback}
       questionType={question.type}
+      stemResource={question.stemResource}
+      displayStemMediaHorizontally={stemResourceIsImage}
     />
   );
 }
@@ -36,6 +39,7 @@ function ViewModeResponses(props) {
 ViewModeResponses.propTypes = {
   store: PropTypes.any,
   question: PropTypes.any,
+  t: PropTypes.func,
 };
 
 export default ViewModeResponses;

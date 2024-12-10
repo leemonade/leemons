@@ -1,13 +1,12 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
-import PropTypes from 'prop-types';
 import { Alert, Box } from '@bubbles-ui/components';
+import PropTypes from 'prop-types';
 
-export default function UnansweredQuestionWarning({ t }) {
+export default function UnansweredQuestionWarning({ t, isStudent }) {
   return (
-    <Box sx={(theme) => ({ marginBottom: theme.spacing[2] })}>
+    <Box sx={(theme) => ({ marginBottom: 8 })}>
       <Alert title={t('warnNoResponseTitle')} severity="warning" closeable={false}>
-        {t('warnNoResponseDescription')}
+        {isStudent && t('warnNoResponseDescription')}
       </Alert>
     </Box>
   );
@@ -15,4 +14,5 @@ export default function UnansweredQuestionWarning({ t }) {
 
 UnansweredQuestionWarning.propTypes = {
   t: PropTypes.any,
+  isStudent: PropTypes.bool,
 };

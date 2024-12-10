@@ -11,7 +11,7 @@ import QuestionList from '../pages/private/tests/StudentInstance/components/Ques
 import prefixPN from '@tests/helpers/prefixPN';
 
 export default function ViewModeQuestions({ viewMode = true, store: cStore, onReturn }) {
-  const [t, translations] = useTranslateLoader(prefixPN('studentInstance'));
+  const [t] = useTranslateLoader(prefixPN('studentInstance'));
   const [store, render] = useStore({
     loading: true,
     idLoaded: '',

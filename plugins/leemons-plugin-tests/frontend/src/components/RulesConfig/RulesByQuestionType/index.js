@@ -1,6 +1,7 @@
 import { Text, ContextContainer, createStyles } from '@bubbles-ui/components';
 import propTypes from 'prop-types';
 
+import OpenResponseRules from './OpenResponseRules';
 import ShortResponseRules from './ShortResponseRules';
 
 const useStyles = createStyles((theme) => ({
@@ -24,6 +25,7 @@ export const RulesByQuestionType = ({ control, t }) => {
     <ContextContainer spacing={4}>
       <Text strong>{t('rulesByQuestionType.title')}</Text>
       <ShortResponseRules control={control} classes={classes} t={t} />
+      <OpenResponseRules control={control} classes={classes} t={t} />
     </ContextContainer>
   );
 };

@@ -21,6 +21,7 @@ export {
   deleteAssignedConfig as deleteAssignedConfigRequest,
   updateAssignedConfig as updateAssignedConfigRequest,
   duplicate as duplicateRequest,
+  setOpenQuestionGrade as setOpenQuestionGradeRequest,
 } from './tests';
 
 export { getQuestionByIds as getQuestionByIdsRequest } from './questions';

@@ -97,7 +97,8 @@ const LIBRARY_ADD_ASSET = 'leebrary.assets.add';
  */
 
 async function createQuestion({ data, published, ctx }) {
-  const { tags, choices, mapProperties, trueFalseProperties, ...props } = _.cloneDeep(data);
+  const { tags, choices, mapProperties, trueFalseProperties, openResponseProperties, ...props } =
+    _.cloneDeep(data);
 
   // For map questions, create the map image asset
   if (props.type === QUESTION_TYPES.MAP) {
@@ -161,6 +162,8 @@ async function createQuestion({ data, published, ctx }) {
     questionToCreate.choices = choices;
   } else if (props.type === QUESTION_TYPES.TRUE_FALSE) {
     questionToCreate.trueFalseProperties = trueFalseProperties;
+  } else if (props.type === QUESTION_TYPES.OPEN_RESPONSE) {
+    questionToCreate.openResponseProperties = openResponseProperties;
   }
 
   let question = await ctx.tx.db.Questions.create(questionToCreate);

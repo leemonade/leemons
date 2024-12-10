@@ -1,43 +1,31 @@
-import { Box, createStyles } from '@bubbles-ui/components';
+import { Box } from '@bubbles-ui/components';
 import PropTypes from 'prop-types';
 
-import QuestionNoteClues from '../../QuestionNoteClues';
-import QuestionTitle from '../../QuestionTitle';
-import StemResource from '../../StemResource';
-import UnansweredQuestionWarning from '../../UnansweredQuestionWarning';
+import QuestionTitleComponent from '../../QuestionTitleComponent';
 
-import Responses from './Responses';
+import AnswerMode from './AnswerMode';
 import ViewModeResponses from './ViewModeResponses';
-
-const useStyles = createStyles((theme) => ({
-  container: {
-    gap: 8,
-    display: 'flex',
-    marginBottom: 16,
-    flexDirection: 'column',
-  },
-}));
 
 export default function Index(props) {
   const { styles, store, question } = props;
-  const { classes } = useStyles();
 
-  let showNotAnsweredWarning = false;
-  if (store.viewMode) {
-    showNotAnsweredWarning = store.questionResponses[question.id].status === null;
-  }
+  const containerClassName = store.viewMode
+    ? styles.viewModeQuestionContainer
+    : styles.executionModeQuestionContainer;
 
   return (
-    <>
-      {showNotAnsweredWarning ? <UnansweredQuestionWarning {...props} /> : null}
+    <Box className={containerClassName}>
+      <QuestionTitleComponent
+        question={question}
+        questionIndex={store.questions?.findIndex((q) => q.id === question?.id)}
+        questionResponse={store.questionResponses?.[question.id]}
+        viewMode={store.viewMode}
+        assignmentConfig={store.config}
+        questionsInfo={store.questionsInfo}
+      />
 
-      <Box className={!store.viewMode ? styles.questionCard : classes.container}>
-        <QuestionTitle {...props} tableViewMode={store.viewMode} />
-        {question?.stemResource && <StemResource {...props} asset={question.stemResource} />}
-        {!store.viewMode ? <QuestionNoteClues {...props} /> : null}
-        {!store.viewMode ? <Responses {...props} /> : <ViewModeResponses {...props} />}
-      </Box>
-    </>
+      {store.viewMode ? <ViewModeResponses {...props} /> : <AnswerMode {...props} />}
+    </Box>
   );
 }
 
