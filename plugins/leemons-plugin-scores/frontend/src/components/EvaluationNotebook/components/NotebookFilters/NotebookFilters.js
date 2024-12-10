@@ -24,6 +24,7 @@ import useSearchTypes from './hooks/useSearchTypes';
 import { WeightConfigDrawer } from '@scores/components/Weights/components/WeightConfigDrawer';
 import { prefixPN } from '@scores/helpers';
 import { useCreateManualActivityMutation } from '@scores/requests/hooks/mutations/useCreateManualActivityMutation';
+import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
 
 export default function NotebookFilters({ filters, onChange, value }) {
   const [t] = useTranslateLoader(prefixPN('evaluationNotebook.filters'));
@@ -32,6 +33,8 @@ export default function NotebookFilters({ filters, onChange, value }) {
   const deploymentConfig = useDeploymentConfig({ pluginName: 'scores', ignoreVersion: true });
   const hideWeighting = deploymentConfig?.deny?.menu?.includes('scores.weights');
   const { mutateAsync: createManualActivity } = useCreateManualActivityMutation();
+
+  const isPeriodPublished = useEvaluationNotebookStore((state) => state.isPeriodPublished);
 
   const form = useForm({
     defaultValues: {
@@ -135,6 +138,7 @@ export default function NotebookFilters({ filters, onChange, value }) {
               {
                 label: t('manualActivity'),
                 onClick: () => setManualActivityDrawerIsOpen(true),
+                disabled: isPeriodPublished,
               },
             ]}
           >

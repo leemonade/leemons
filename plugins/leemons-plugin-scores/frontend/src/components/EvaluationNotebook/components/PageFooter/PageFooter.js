@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@bubbles-ui/components';
 import { DownloadIcon } from '@bubbles-ui/icons/solid';
@@ -14,19 +14,27 @@ import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
 export default function Footer({ isCustom }) {
   const [t] = useTranslateLoader(prefixPN('evaluationNotebook.footer'));
   const tableData = useEvaluationNotebookStore((state) => state.tableData);
+  const isPeriodPublished = useEvaluationNotebookStore((state) => state.isPeriodPublished);
+  const setIsPeriodPublished = useEvaluationNotebookStore((state) => state.setIsPeriodPublished);
 
   const [isLoading, setIsLoading] = useState(false);
 
   const downloadScoreReport = useDownloadScoreReport();
   const onCloseEvaluation = useCloseEvaluation();
 
+  useEffect(() => {
+    const isPublished = tableData?.activitiesData?.value?.every(
+      (student) => !student.allowCustomChange
+    );
+
+    if (isPublished !== isPeriodPublished) {
+      setIsPeriodPublished(isPublished);
+    }
+  }, [tableData?.activitiesData?.value, isPeriodPublished, setIsPeriodPublished]);
+
   if (!tableData?.activitiesData?.activities?.length || !tableData?.activitiesData?.value?.length) {
     return null;
   }
-
-  const isPeriodPublished = tableData.activitiesData.value.every(
-    (student) => !student.allowCustomChange
-  );
 
   return (
     <>

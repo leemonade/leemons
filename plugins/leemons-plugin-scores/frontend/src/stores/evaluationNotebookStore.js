@@ -5,6 +5,7 @@ const { create } = require('zustand');
 const initialState = {
   filters: null,
   tableData: null,
+  isPeriodPublished: false,
 };
 
 const useEvaluationNotebookStore = create((set, get) => ({
@@ -20,6 +21,7 @@ const useEvaluationNotebookStore = create((set, get) => ({
   },
   setTableData: (tableData) => set({ tableData }),
   reset: () => set(initialState),
+  setIsPeriodPublished: (isPeriodPublished) => set({ isPeriodPublished }),
 }));
 
 export default useEvaluationNotebookStore;
