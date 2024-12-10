@@ -77,7 +77,7 @@ export default function NotebookFilters({ filters, onChange, value }) {
           try {
             await createManualActivity({
               ...data,
-              type: 'task',
+              role: 'task',
               classId: filters.class.id,
             });
             addSuccessAlert(t('manualActivityCreated'));

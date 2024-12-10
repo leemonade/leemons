@@ -15,7 +15,7 @@ const schema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  type: {
+  role: {
     type: String,
     required: true,
   },

@@ -1,7 +1,7 @@
 const { LeemonsError } = require('@leemons/error');
 const { LeemonsValidator } = require('@leemons/validator');
 
-const manualActivitySchema = require('./schema');
+const { manualActivitySchema } = require('./schema');
 
 function validateManualActivity({ ctx, manualActivity }) {
   const validator = new LeemonsValidator(manualActivitySchema);

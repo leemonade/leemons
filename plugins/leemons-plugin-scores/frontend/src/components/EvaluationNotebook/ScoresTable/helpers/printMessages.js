@@ -14,6 +14,7 @@ export function printErrorMessage({ labels, student, activity, score, error }) {
       ?.replace('{{student}}', `${student.name} ${student.surname}`)
       ?.replace('{{activity}}', activity)
       ?.replace('{{score}}', score.letter || score.number)
-      ?.replace('{{error}}', error.message || error.error)
+      ?.replace('{{error}}', error.message || error.error),
+    error.message
   );
 }

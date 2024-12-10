@@ -81,7 +81,7 @@ export function ManualActivityDrawer({ isOpen, onClose: _onClose, onSubmit, minD
             name="description"
             render={({ field }) => (
               <Box sx={{ width: '75%' }}>
-                <Textarea {...field} label={t('description')} />
+                <Textarea {...field} label={t('description.label')} />
               </Box>
             )}
           />

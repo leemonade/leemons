@@ -12,7 +12,7 @@ const manualActivitySchema = {
       type: 'string',
       format: 'date-time',
     },
-    type: {
+    role: {
       type: 'string',
       minLength: 1,
       // enum: ['task', 'test'], // This comes from assignables, so we don't check it, once assignables exposes it, we can check it
@@ -22,8 +22,31 @@ const manualActivitySchema = {
       format: 'lrn',
     },
   },
-  required: ['name', 'date', 'type', 'classId'],
+  required: ['name', 'date', 'role', 'classId'],
   additionalProperties: false,
 };
 
-module.exports = manualActivitySchema;
+const scoresSchema = {
+  type: 'object',
+  properties: {
+    user: {
+      type: 'string',
+      format: 'lrn',
+    },
+    activity: {
+      type: 'string',
+      format: 'lrn',
+    },
+    grade: {
+      type: 'number',
+    },
+    class: {
+      type: 'string',
+      format: 'lrn',
+    },
+  },
+  required: ['user', 'activity', 'grade', 'class'],
+  additionalProperties: false,
+};
+
+module.exports = { manualActivitySchema, scoresSchema };

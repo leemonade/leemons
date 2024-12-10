@@ -1,7 +1,7 @@
 export const allManualActivitiesKey = [
   {
     plugin: 'plugin.scores',
-    scope: 'scores',
+    scope: 'manualActivities',
   },
 ];
 
@@ -12,12 +12,26 @@ export const allManualActivitiesSearchKey = [
   },
 ];
 
-export const manualActivitiesSearchKey = ({ classId, startDate, endDate }) => [
+export const classManualActivitiesKey = ({ classId }) => [
   {
-    ...allManualActivitiesSearchKey[0],
-
+    ...allManualActivitiesKey[0],
     classId,
+  },
+];
+
+export const manualActivitiesSearchKey = ({ classId, startDate, endDate, search }) => [
+  {
+    ...classManualActivitiesKey({ classId })[0],
     startDate,
     endDate,
+    search,
+  },
+];
+
+export const manualActivityScoresKey = ({ classId }) => [
+  {
+    ...allManualActivitiesKey[0],
+    action: 'scores',
+    classId,
   },
 ];

@@ -5,9 +5,18 @@
  * @param {string} props.startDate - The start date of the activities in ISO format
  * @param {string} props.endDate - The end date of the activities in ISO format
  */
-export async function searchManualActivities({ classId, startDate, endDate }) {
+export async function searchManualActivities({ classId, startDate, endDate, search }) {
+  const searchParams = new URLSearchParams();
+
+  searchParams.set('startDate', startDate);
+  searchParams.set('endDate', endDate);
+
+  if (search) {
+    searchParams.set('search', search);
+  }
+
   const { data } = await leemons.api(
-    `v1/scores/manualActivities/class/${classId}?startDate=${startDate}&endDate=${endDate}`,
+    `v1/scores/manualActivities/class/${classId}?${searchParams.toString()}`,
     {
       method: 'GET',
     }

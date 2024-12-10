@@ -1,9 +1,9 @@
 import { useVariantForQueryKey } from '@common/queries';
 import { useQuery } from '@tanstack/react-query';
 
-import { manualActivitiesSearchKey } from '../keys/manualActivities';
+import { manualActivityScoresKey } from '../keys/manualActivities';
 
-import { searchManualActivities } from '@scores/requests/manualActivities/search';
+import { getManualActivityScores } from '@scores/requests/manualActivities/scores/get';
 
 /**
  * Hook to search for manual activities
@@ -13,9 +13,9 @@ import { searchManualActivities } from '@scores/requests/manualActivities/search
  * @param {string} props.endDate - The end date of the activities in ISO format
  * @param {import("@tanstack/react-query").UseQueryOptions} props.options - The options for the query
  */
-export function useManualActivities({ classId, startDate, endDate, search, ...options }) {
-  const queryKey = manualActivitiesSearchKey({ classId, startDate, endDate, search });
-  const queryFn = () => searchManualActivities({ classId, startDate, endDate, search });
+export function useManualActivitiesScores({ classId, ...options }) {
+  const queryKey = manualActivityScoresKey({ classId });
+  const queryFn = () => getManualActivityScores(classId);
 
   useVariantForQueryKey(queryKey, {
     modificationTrend: 'lazy',

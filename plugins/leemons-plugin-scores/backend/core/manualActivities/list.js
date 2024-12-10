@@ -1,18 +1,22 @@
-async function listManualActivitiesForClassAndPeriod({ classId, startDate, endDate, ctx }) {
-  return await ctx.tx.db.ManualActivities.find({
+const { escapeRegExp } = require('lodash');
+
+async function listManualActivitiesForClassAndPeriod({ classId, startDate, endDate, search, ctx }) {
+  const query = {
     classId,
     date: {
       $gte: startDate,
       $lte: endDate,
     },
-  }).select({
-    _id: 0,
-    id: 1,
-    name: 1,
-    description: 1,
-    date: 1,
-    classId: 1,
-  });
+  };
+
+  if (search) {
+    query.name = {
+      $regex: escapeRegExp(search.trim()),
+      $options: 'i',
+    };
+  }
+
+  return await ctx.tx.db.ManualActivities.find(query).lean();
 }
 
 module.exports = listManualActivitiesForClassAndPeriod;

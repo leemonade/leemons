@@ -1,6 +1,10 @@
+const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
+
 const addManualActivity = require('../../core/manualActivities/add');
 const listManualActivitiesForClassAndPeriod = require('../../core/manualActivities/list');
 const removeManualActivity = require('../../core/manualActivities/remove');
+const getScores = require('../../core/manualActivities/scores/get');
+const setScores = require('../../core/manualActivities/scores/set');
 const updateManualActivity = require('../../core/manualActivities/upate');
 
 const restActions = {
@@ -34,11 +38,12 @@ const restActions = {
       endDate: 'string',
     },
     async handler(ctx) {
-      const { classId, startDate, endDate } = ctx.params;
+      const { classId, startDate, endDate, search } = ctx.params;
       const manualActivities = await listManualActivitiesForClassAndPeriod({
         classId,
         startDate,
         endDate,
+        search,
         ctx,
       });
 
@@ -82,6 +87,44 @@ const restActions = {
 
       return {
         removed,
+        status: 200,
+      };
+    },
+  },
+
+  setScores: {
+    rest: {
+      method: 'PUT',
+      path: '/scores',
+    },
+    params: {
+      scores: 'array',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const { scores } = ctx.params;
+      const data = await setScores({ scores, ctx });
+
+      return {
+        data,
+        status: 200,
+      };
+    },
+  },
+  getScores: {
+    rest: {
+      method: 'GET',
+      path: '/scores/class/:classId',
+    },
+    params: {
+      classId: 'string',
+    },
+    async handler(ctx) {
+      const { classId } = ctx.params;
+      const data = await getScores({ classId, ctx });
+
+      return {
+        data,
         status: 200,
       };
     },

@@ -70,6 +70,8 @@ export default function useActivities({
         allowChange: instance.metadata.evaluationType !== 'auto',
         type: instance.gradable ? 'evaluable' : 'non-evaluable',
 
+        source: 'assignables',
+
         role: instance.assignable.role,
         roleIcon: instance.assignable.roleDetails.icon,
         isEvaluable: instance.gradable,

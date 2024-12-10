@@ -3,6 +3,7 @@ import { printErrorMessage, printSuccessMessage } from './printMessages';
 export default function onDataChange({
   assignationScoreMutate,
   customScoreMutate,
+  manualActivityScoreMutate,
   scales,
   students,
   activities,
@@ -61,20 +62,41 @@ export default function onDataChange({
         );
     }
 
-    return assignationScoreMutate({
-      instance: value.columnId,
-      student: value.rowId,
-      grades: [
-        {
-          type: 'main',
-          grade: grade.number,
-          subject: klass.subject.id,
-        },
-      ],
-    })
-      .then(() => printSuccessMessage({ labels, student, activity: activity.name, score: grade }))
-      .catch((e) =>
-        printErrorMessage({ labels, student, activity: activity.name, score: grade, error: e })
-      );
+    if (activity.source === 'manualActivities') {
+      return manualActivityScoreMutate({
+        scores: [
+          {
+            user: student.id,
+            activity: activity.id,
+            grade: grade.number,
+            class: klass.id,
+          },
+        ],
+      })
+        .then(() => printSuccessMessage({ labels, student, activity: activity.name, score: grade }))
+        .catch((e) =>
+          printErrorMessage({ labels, student, activity: activity.name, score: grade, error: e })
+        );
+    }
+
+    if (activity.source === 'assignables') {
+      return assignationScoreMutate({
+        instance: value.columnId,
+        student: value.rowId,
+        grades: [
+          {
+            type: 'main',
+            grade: grade.number,
+            subject: klass.subject.id,
+          },
+        ],
+      })
+        .then(() => printSuccessMessage({ labels, student, activity: activity.name, score: grade }))
+        .catch((e) =>
+          printErrorMessage({ labels, student, activity: activity.name, score: grade, error: e })
+        );
+    }
+
+    throw new Error('Invalid activity source');
   };
 }
