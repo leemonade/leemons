@@ -5,7 +5,7 @@ export function printSuccessMessage({ labels, student, activity, score }) {
     labels?.updatedSuccess
       ?.replace('{{student}}', `${student.name} ${student.surname}`)
       ?.replace('{{activity}}', activity)
-      ?.replace('{{score}}', score.letter || score.number)
+      ?.replace('{{score}}', score?.letter || score?.number)
   );
 }
 export function printErrorMessage({ labels, student, activity, score, error }) {
@@ -13,7 +13,7 @@ export function printErrorMessage({ labels, student, activity, score, error }) {
     labels?.updatedError
       ?.replace('{{student}}', `${student.name} ${student.surname}`)
       ?.replace('{{activity}}', activity)
-      ?.replace('{{score}}', score.letter || score.number)
+      ?.replace('{{score}}', score?.letter || score?.number)
       ?.replace('{{error}}', error.message || error.error),
     error.message
   );
