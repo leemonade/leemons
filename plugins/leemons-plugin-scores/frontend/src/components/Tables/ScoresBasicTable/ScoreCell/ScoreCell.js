@@ -63,6 +63,7 @@ const ScoreCell = ({
   isClosed,
   grades,
   usePercentage,
+  source,
   row,
   column,
   setValue,
@@ -72,6 +73,8 @@ const ScoreCell = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value ?? grades[0].number);
+
+  const isAssignable = source === 'assignables';
 
   useEffect(() => {
     if (value !== editValue) {
@@ -94,7 +97,7 @@ const ScoreCell = ({
     }
 
     // Use submitted label if the activity is submitted and not graded
-    if (!hasGrade && isSubmitted) {
+    if (!hasGrade && isSubmitted && isAssignable) {
       return (
         <Text color="success" role="productive" style={{ flex: 1 }}>
           {submittedLabel}
@@ -168,23 +171,25 @@ const ScoreCell = ({
 
     return (
       <Box className={classes.inputContainer} ref={setInputContainer} onClick={onClickHandler}>
-        {!!allowChange && !!isEditing && (
-          <SelectScore
-            value={editValue}
-            grades={grades}
-            onChange={setEditValue}
-            onClose={onCloseThenChangeHandler}
-            style={{ flex: 1 }}
-            ref={selectRef}
-            isCustom={isCustom}
-          />
-        )}
-        {(!isEditing || !allowChange) && (
-          <Text color={isSubmitted ? 'primary' : 'error'} role="productive" style={{ flex: 1 }}>
-            {renderValue(value)}
-          </Text>
-        )}
-        {isEditing && !isCustom && (
+        <Box className={classes.score}>
+          {!!allowChange && !!isEditing && (
+            <SelectScore
+              value={editValue}
+              grades={grades}
+              onChange={setEditValue}
+              onClose={onCloseThenChangeHandler}
+              style={{ flex: 1 }}
+              ref={selectRef}
+              isCustom={isCustom}
+            />
+          )}
+          {(!isEditing || !allowChange) && (
+            <Text color={isSubmitted ? 'primary' : 'error'} role="productive" style={{ flex: 1 }}>
+              {renderValue(value)}
+            </Text>
+          )}
+        </Box>
+        {isEditing && !isCustom && isAssignable && (
           <Box className={classes.expandIcon}>
             <IconButton
               variant="transparent"
