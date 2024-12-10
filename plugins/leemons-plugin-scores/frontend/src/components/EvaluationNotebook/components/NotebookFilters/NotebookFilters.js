@@ -73,6 +73,8 @@ export default function NotebookFilters({ filters, onChange, value }) {
       <ManualActivityDrawer
         isOpen={manualActivityDrawerIsOpen}
         onClose={() => setManualActivityDrawerIsOpen(false)}
+        minDate={new Date(filters?.period?.startDate)}
+        maxDate={new Date(filters?.period?.endDate)}
         onSubmit={async (data) => {
           try {
             await createManualActivity({
