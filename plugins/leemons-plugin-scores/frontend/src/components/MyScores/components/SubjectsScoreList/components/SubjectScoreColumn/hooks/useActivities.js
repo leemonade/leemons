@@ -1,14 +1,14 @@
 import { useMemo } from 'react';
 
+import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
+import useRolesList from '@assignables/requests/hooks/queries/useRolesList';
+import useSearchAssignableInstances from '@assignables/requests/hooks/queries/useSearchAssignableInstancesQuery';
 import { without } from 'lodash';
 
-import useSearchAssignableInstances from '@assignables/requests/hooks/queries/useSearchAssignableInstancesQuery';
 import {
   getNextDayFirstMillisecond,
   getPreviousDayLastMillisecond,
 } from '@scores/components/EvaluationNotebook/ScoresTable/hooks/useActivities';
-import useRolesList from '@assignables/requests/hooks/queries/useRolesList';
-import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
 
 export default function useActivities({ class: klass, period, showNonEvaluable, weights, search }) {
   const { data: roles } = useRolesList({
@@ -27,7 +27,8 @@ export default function useActivities({ class: klass, period, showNonEvaluable, 
       role: weights?.type === 'modules' ? 'learningpaths.module' : roles,
       classes: klass?.id,
 
-      isEvaluable: !showNonEvaluable,
+      isEvaluable: true,
+      calificableOnly: !showNonEvaluable,
     },
     select: (result) => result.items,
   });
