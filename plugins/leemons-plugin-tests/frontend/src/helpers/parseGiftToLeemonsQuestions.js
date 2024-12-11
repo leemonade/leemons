@@ -64,8 +64,13 @@ function parseGiftToLeemonsQuestions(giftQuestions) {
             correctFeedback,
             incorrectFeedback,
           };
-          question.hasAnswerFeedback = Boolean(incorrectFeedback || correctFeedback);
+
+          question.hasAnswerFeedback = !!incorrectFeedback || !!correctFeedback;
           question.trueFalseProperties = trueFalseProperties;
+
+          if (question.hasAnswerFeedback) {
+            question.globalFeedback = incorrectFeedback ?? correctFeedback;
+          }
 
           delete question.incorrectFeedback;
           delete question.correctFeedback;
@@ -79,6 +84,9 @@ function parseGiftToLeemonsQuestions(giftQuestions) {
             choice.text.format = 'plain';
             if (i === 0) {
               choice.isMainChoice = true;
+              if (choice.feedback) {
+                question.globalFeedback = choice.feedback;
+              }
             }
           });
           break;
@@ -93,6 +101,10 @@ function parseGiftToLeemonsQuestions(giftQuestions) {
       delete question.id;
       delete question.title;
 
+      if (question.globalFeedback) {
+        question.hasAnswerFeedback = false;
+      }
+
       return {
         ...question,
         stem: {
@@ -104,8 +116,8 @@ function parseGiftToLeemonsQuestions(giftQuestions) {
         clues: [],
         hasHelp: false,
         questionImage: undefined,
-        globalFeedback,
-        hasAnswerFeedback,
+        globalFeedback: question.globalFeedback ?? globalFeedback,
+        hasAnswerFeedback: question.hasAnswerFeedback ?? hasAnswerFeedback,
       };
     })
     .filter((q) => Boolean(q.type));

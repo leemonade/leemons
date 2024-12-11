@@ -27,6 +27,9 @@ export default function ShortResponse({ form: _form, t }) {
 
   const isEditing = !!form?.getValues('id');
 
+  const values = form.getValues();
+  console.log('values:', values);
+
   function validateChoices(choicesValue) {
     const mainResponseText = find(choicesValue, { isMainChoice: true })?.text?.text;
     if (!mainResponseText) return t('typeRequired');
