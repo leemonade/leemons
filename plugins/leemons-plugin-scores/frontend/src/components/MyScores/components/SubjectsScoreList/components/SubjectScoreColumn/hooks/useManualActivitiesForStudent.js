@@ -1,13 +1,11 @@
 import { useMemo } from 'react';
 
-import useRolesList from '@assignables/requests/hooks/queries/useRolesList';
 import { getCookieToken } from '@users/session';
-import { keyBy } from 'lodash';
 
 import { useManualActivities } from '@scores/requests/hooks/queries/useManualActivities';
 import { useMyManualActivitiesScores } from '@scores/requests/hooks/queries/useMyManualActivitiesScores';
 
-function parseActivity({ activity, user, roles, subject, scores }) {
+function parseActivity({ activity, user, subject, scores }) {
   return {
     id: `${activity.id}-${user}`,
     grades: scores
@@ -28,7 +26,7 @@ function parseActivity({ activity, user, roles, subject, scores }) {
       },
       assignable: {
         role: activity.role,
-        roleDetails: roles?.[activity.role] ?? {},
+        roleDetails: {},
         asset: {
           name: activity.name,
         },
@@ -57,8 +55,6 @@ export function useManualActivitiesForStudent({ klass, period, search }) {
     classId: klass?.id,
   });
 
-  const { data: roles } = useRolesList({ details: true, select: (data) => keyBy(data, 'name') });
-
   const parsedActivities = useMemo(
     () =>
       manualActivities
@@ -66,13 +62,12 @@ export function useManualActivitiesForStudent({ klass, period, search }) {
           parseActivity({
             activity,
             user,
-            roles,
             subject: klass?.subject?.id,
             scores: manualActivitiesScores?.[activity.id],
           })
         )
         .filter((activity) => activity.grades.length > 0),
-    [manualActivities, user, roles, manualActivitiesScores, klass?.subject?.id]
+    [manualActivities, user, manualActivitiesScores, klass?.subject?.id]
   );
 
   return {
