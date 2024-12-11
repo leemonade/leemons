@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Controller, useFormContext, useWatch } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { Controller, useFormContext } from 'react-hook-form';
 
 import {
   Switch,
@@ -20,15 +20,7 @@ export default function ShortResponse({ form: _form, t }) {
   const form = useFormContext() || _form;
   const [altChoices, setAltChoices] = useState([]);
 
-  const [hasHelp] = useWatch({
-    control: form.control,
-    name: ['hasHelp'],
-  });
-
   const isEditing = !!form?.getValues('id');
-
-  const values = form.getValues();
-  console.log('values:', values);
 
   function validateChoices(choicesValue) {
     const mainResponseText = find(choicesValue, { isMainChoice: true })?.text?.text;
@@ -39,20 +31,15 @@ export default function ShortResponse({ form: _form, t }) {
 
   // EFFECTS ·······························································································|
   useEffect(() => {
-    setAltChoices(() => {
-      const choicesValue = form.getValues('choices') ?? [];
-      return choicesValue.filter((item) => !item?.isMainChoice);
-    });
-  }, []);
+    if (isEditing) {
+      setAltChoices(() => {
+        const choicesValue = form.getValues('choices');
+        return choicesValue.filter((item) => !item?.isMainChoice);
+      });
+    }
+  }, [isEditing]);
 
   // RENDER ································································································|
-
-  const monoResponseAnwsersMargin = useMemo(() => {
-    if (!hasHelp) {
-      return { marginBottom: 40 };
-    }
-    return {};
-  }, [hasHelp]);
 
   return (
     <ContextContainer>
@@ -76,53 +63,44 @@ export default function ShortResponse({ form: _form, t }) {
         />
       </ContextContainer>
       <ContextContainer title={`${t('responsesLabel')} *`} spacing={0}>
-        <Controller
-          control={form.control}
-          name="hasHelp"
-          render={({ field }) => (
-            <Switch {...field} checked={field.value} label={t('hasCluesLabel')} />
-          )}
-        />
-      </ContextContainer>
-      <Stack spacing={4} sx={monoResponseAnwsersMargin}>
-        <Controller
-          control={form.control}
-          name="choices"
-          rules={{
-            required: t('typeRequired'),
-            validate: (choicesValue) => validateChoices(choicesValue),
-          }}
-          render={({ field }) => {
-            const currentMainChoice = (field.value || []).find((item) => item?.isMainChoice);
-            const currentAltChoices = (field.value || []).filter((item) => !item?.isMainChoice);
+        <Stack spacing={4}>
+          <Controller
+            control={form.control}
+            name="choices"
+            rules={{
+              required: t('typeRequired'),
+              validate: (choicesValue) => validateChoices(choicesValue),
+            }}
+            render={({ field }) => {
+              const currentMainChoice = (field.value || []).find((item) => item?.isMainChoice);
+              const currentAltChoices = (field.value || []).filter((item) => !item?.isMainChoice);
 
-            return (
-              <TextInput
-                label={t('responseLabel')}
-                sx={{ width: '100%' }}
-                placeholder={t('responsePlaceholder')}
-                required
-                value={currentMainChoice?.text?.text ?? ''}
-                error={form.formState.errors.choices?.message}
-                onChange={(mainChoiceTextValue) => {
-                  field.onChange([
-                    {
-                      text: { text: mainChoiceTextValue, format: 'plain' },
-                      isCorrect: true,
-                      isMainChoice: true,
-                    },
-                    ...(currentAltChoices || []),
-                  ]);
-                }}
-              />
-            );
-          }}
-        />
+              return (
+                <TextInput
+                  label={t('responseLabel')}
+                  sx={{ width: '100%' }}
+                  placeholder={t('responsePlaceholder')}
+                  required
+                  value={currentMainChoice?.text?.text ?? ''}
+                  error={form.formState.errors.choices?.message}
+                  onChange={(mainChoiceTextValue) => {
+                    field.onChange([
+                      {
+                        text: { text: mainChoiceTextValue, format: 'plain' },
+                        isCorrect: true,
+                        isMainChoice: true,
+                      },
+                      ...(currentAltChoices || []),
+                    ]);
+                  }}
+                />
+              );
+            }}
+          />
 
-        <Box sx={{ width: '100%' }}>
-          <TagsInput
-            label={
-              <Tooltip
+          <Box sx={{ width: '100%' }}>
+            <TagsInput
+              label=<Tooltip
                 autoHeight
                 size="md"
                 multiline
@@ -134,30 +112,44 @@ export default function ShortResponse({ form: _form, t }) {
                   <InfoIcon width={15} height={15} />
                 </Stack>
               </Tooltip>
-            }
-            styles={{ width: '100%' }}
-            value={altChoices.map((item) => item?.text?.text)}
-            placeholder={t('tagsInputPlaceholder')}
-            onChange={(values) => {
-              const finalAltChoices = [
-                ...values.map((item) => ({
-                  text: { text: item, format: 'plain' },
-                  isCorrect: true,
-                })),
-              ];
-              setAltChoices(finalAltChoices);
-              const currentMainChoice = form
-                .getValues('choices')
-                ?.find((item) => item?.isMainChoice);
-              if (currentMainChoice) {
-                form.setValue('choices', [currentMainChoice, ...finalAltChoices]);
-              } else {
-                form.setValue('choices', finalAltChoices);
-              }
-            }}
-          />
-        </Box>
-      </Stack>
+              styles={{ width: '100%' }}
+              value={altChoices.map((item) => item?.text?.text)}
+              placeholder={t('tagsInputPlaceholder')}
+              onChange={(values) => {
+                const finalAltChoices = [
+                  ...values.map((item) => ({
+                    text: { text: item, format: 'plain' },
+                    isCorrect: true,
+                  })),
+                ];
+                setAltChoices(finalAltChoices);
+                const currentMainChoice = form
+                  .getValues('choices')
+                  ?.find((item) => item?.isMainChoice);
+                if (currentMainChoice) {
+                  form.setValue('choices', [currentMainChoice, ...finalAltChoices]);
+                } else {
+                  form.setValue('choices', finalAltChoices);
+                }
+              }}
+            />
+          </Box>
+        </Stack>
+      </ContextContainer>
+      <ContextContainer>
+        <Controller
+          control={form.control}
+          name="hasHelp"
+          render={({ field }) => (
+            <Switch
+              {...field}
+              checked={field.value}
+              label={t('hasCluesLabel')}
+              description={t('cluesSwitchDescription')}
+            />
+          )}
+        />
+      </ContextContainer>
     </ContextContainer>
   );
 }

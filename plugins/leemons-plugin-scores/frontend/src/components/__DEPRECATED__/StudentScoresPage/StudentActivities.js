@@ -1,18 +1,21 @@
+import React, { useMemo } from 'react';
+
+import { SelectSubject } from '@academic-portfolio/components/SelectSubject';
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
+import { useRoles } from '@assignables/components/Ongoing/AssignmentList/components/Filters/components/Type/Type';
 import useSearchAssignableInstances from '@assignables/hooks/assignableInstance/useSearchAssignableInstancesQuery';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
 import { Box, Loader, ScoreFronstage, Select, Switch, createStyles } from '@bubbles-ui/components';
-import { useScores } from '@scores/requests/hooks/queries';
+import getNearestScale from '@scorm/helpers/getNearestScale';
+import useUserAgents from '@users/hooks/useUserAgents';
 import { map } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useMemo } from 'react';
-import getNearestScale from '@scorm/helpers/getNearestScale';
-import { SelectSubject } from '@academic-portfolio/components/SelectSubject';
-import { useRoles } from '@assignables/components/Ongoing/AssignmentList/components/Filters/components/Type/Type';
-import useUserAgents from '@users/hooks/useUserAgents';
+
 import { EmptyState } from '../Notebook/components/ActivitiesTab/EmptyState';
+
+import { useScores } from '@scores/requests/hooks/queries';
 
 function LoadingState() {
   return (
@@ -146,7 +149,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
     const classesIds = [];
     const filteredActivities = [];
     activities?.forEach((activity) => {
-      if (!activity.requiresScoring || activity?.metadata?.module?.type === 'module') return;
+      if (!activity.gradable || activity?.metadata?.module?.type === 'module') return;
 
       // Filters non-calificable activities except when the filter is set to TRUE
       // If type is selected, filters activities matching type

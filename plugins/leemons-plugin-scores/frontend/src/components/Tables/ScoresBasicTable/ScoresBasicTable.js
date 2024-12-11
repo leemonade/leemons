@@ -92,21 +92,23 @@ const ScoresBasicTable = ({
 
   const getActivities = (studentActivities, studentId) => {
     const activitiesObject = {};
-    activities.forEach(({ id }) => {
+    activities.forEach(({ id, source }) => {
       const activity = studentActivities.find((studentActivity) => studentActivity?.id === id);
       activitiesObject[id] = {
         score: useNumbers ? activity?.score : findGradeLetter(activity?.score),
         isSubmitted: activity?.isSubmitted,
+        source,
       };
     });
     const expandedActivities = expandedData?.value.find(
       (student) => student.id === studentId
     )?.activities;
-    expandedData?.activities?.forEach(({ id }) => {
+    expandedData?.activities?.forEach(({ id, source }) => {
       const activity = expandedActivities.find((expandedActivity) => expandedActivity?.id === id);
       activitiesObject[id] = {
         score: useNumbers ? activity?.score : findGradeLetter(activity?.score),
         isSubmitted: activity?.isSubmitted,
+        source,
       };
     });
     return activitiesObject;
@@ -146,7 +148,7 @@ const ScoresBasicTable = ({
           <Box className={classes.separator} />
           <Box className={classes.studentInfo}>
             <Text color="primary" role="productive">
-              {avgScore}
+              {isNaN(avgScore) ? '-' : avgScore}
               {usePercentage ? '%' : ''}
             </Text>
           </Box>
@@ -228,6 +230,7 @@ const ScoresBasicTable = ({
             submittedLabel={labels.submitted}
             allowChange={activity.allowChange && !viewOnly}
             isSubmitted={value.isSubmitted}
+            source={value.source}
             isClosed={isDeadlineFinished}
             grades={grades}
             usePercentage={usePercentage}
@@ -273,6 +276,7 @@ const ScoresBasicTable = ({
                   submittedLabel={labels.submitted}
                   allowChange={expandedActivity.allowChange && !viewOnly}
                   isSubmitted={value.isSubmitted}
+                  source={value.source}
                   grades={grades}
                   usePercentage={usePercentage}
                   row={row}

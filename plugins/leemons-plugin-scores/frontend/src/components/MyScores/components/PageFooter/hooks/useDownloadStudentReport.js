@@ -1,10 +1,10 @@
-import { isNil, keyBy } from 'lodash';
-
 import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
-import useDownloadScoreReport from '@scores/components/EvaluationNotebook/components/PageFooter/hooks/useDownloadScoreReport';
-import useMyScoresStore from '@scores/stores/myScoresStore';
 import { useUserAgentsInfo } from '@users/hooks';
 import useUserAgents from '@users/hooks/useUserAgents';
+import { isNil, keyBy } from 'lodash';
+
+import useDownloadScoreReport from '@scores/components/EvaluationNotebook/components/PageFooter/hooks/useDownloadScoreReport';
+import useMyScoresStore from '@scores/stores/myScoresStore';
 
 export default function useDownloadStudentReport() {
   const columns = useMyScoresStore((store) => store.columns);
@@ -43,7 +43,7 @@ export default function useDownloadStudentReport() {
               instance,
               name: instance.assignable.asset.name,
               role: instance.assignable.asset.role,
-              type: instance.requiresScoring ? 'evaluable' : 'non-evaluable',
+              type: instance.gradable ? 'evaluable' : 'non-evaluable',
               weight: activity.weight,
             };
           }),

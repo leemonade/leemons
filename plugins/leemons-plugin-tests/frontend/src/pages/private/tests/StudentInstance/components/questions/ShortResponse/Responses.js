@@ -7,7 +7,7 @@ import useResponsesStyles from './Responses.styles';
 import prefixPN from '@tests/helpers/prefixPN';
 
 function Responses(props) {
-  const [t] = useTranslateLoader(prefixPN('questionsBanksDetail.questionLabels.shortResponse'));
+  const [t] = useTranslateLoader(prefixPN('questionsBanksDetail.questionLabels'));
   const { classes } = useResponsesStyles();
 
   const { question, store, render } = props;

@@ -1,12 +1,13 @@
-const pluginName = 'scores';
+const PLUGIN_NAME = 'scores';
+const VERSION = 1;
 
 const permissionNames = {
-  periods: `${pluginName}.periods`,
-  noteBook: `${pluginName}.notebook`,
-  scores: `${pluginName}.scores`,
-  scoresMenu: `${pluginName}.scoresMenu`,
-  reviewer: `${pluginName}.reviewer`,
-  weights: `${pluginName}.weights`,
+  periods: `${PLUGIN_NAME}.periods`,
+  noteBook: `${PLUGIN_NAME}.notebook`,
+  scores: `${PLUGIN_NAME}.scores`,
+  scoresMenu: `${PLUGIN_NAME}.scoresMenu`,
+  reviewer: `${PLUGIN_NAME}.reviewer`,
+  weights: `${PLUGIN_NAME}.weights`,
 };
 
 const permissions = [
@@ -170,7 +171,8 @@ const menuItems = [
 ];
 
 module.exports = {
-  pluginName,
+  PLUGIN_NAME,
+  VERSION,
 
   permissionNames,
   permissions,

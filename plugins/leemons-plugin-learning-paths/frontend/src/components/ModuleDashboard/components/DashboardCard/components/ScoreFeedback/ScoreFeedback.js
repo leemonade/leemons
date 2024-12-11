@@ -1,17 +1,19 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import { Box, Text, Badge, TextClamp } from '@bubbles-ui/components';
+import React, { useMemo, useState } from 'react';
+
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import _, { cloneDeep, isNil, sortBy } from 'lodash';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { Box, Text, Badge, TextClamp } from '@bubbles-ui/components';
 import { unflatten } from '@common';
-import { GotFeedbackIcon } from './GotFeedbackIcon';
-import { useScoreFeedbackStyles } from './ScoreFeedback.styles';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import _, { isNil, sortBy } from 'lodash';
+
 import prefixPN from '../../../../../../helpers/prefixPN';
-import { ArrowComponent } from './ArrowComponent/ArrowComponent';
+
+import { GotFeedbackIcon } from './GotFeedbackIcon';
 import { SCOREFEEDBACK_DEFAULT_PROPS, SCOREFEEDBACK_PROP_TYPES } from './ScoreFeedback.constants';
+import { useScoreFeedbackStyles } from './ScoreFeedback.styles';
 
 export function findNearestFloorScore(score, scales) {
-  const sortedScales = sortBy(cloneDeep(scales), 'number');
+  const sortedScales = sortBy(scales, 'number');
   let nearestScore = null;
   let distance = Infinity;
   const { length } = sortedScales;
@@ -25,7 +27,7 @@ export function findNearestFloorScore(score, scales) {
 
     const currentDistance = Math.abs(scale.number - score);
 
-    if (currentDistance < distance) {
+    if (currentDistance <= distance) {
       nearestScore = scale;
       distance = currentDistance;
     } else {

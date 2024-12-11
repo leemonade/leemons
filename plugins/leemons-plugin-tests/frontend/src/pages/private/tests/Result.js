@@ -23,17 +23,15 @@ import {
   ImageLoader,
   Stack,
   Switch,
-  Table,
   Text,
   TotalLayoutContainer,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
   VerticalContainer,
-  TextClamp,
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { ChevRightIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
-import { CheckBoldIcon, RemoveBoldIcon, SlashIcon, StatisticsIcon } from '@bubbles-ui/icons/solid';
+import { StatisticsIcon } from '@bubbles-ui/icons/solid';
 import { useSearchParams, useStore } from '@common';
 import { useComunica } from '@comunica/context';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -41,9 +39,8 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import updateStudentRequest from '@tasks/request/instance/updateStudent';
-import { find, forEach, map, orderBy } from 'lodash';
+import { find, forEach, orderBy } from 'lodash';
 
-import ViewModeQuestions from '../../../components/ViewModeQuestions';
 import {
   getQuestionByIdsRequest,
   getUserQuestionResponsesRequest,
@@ -54,6 +51,7 @@ import { ResultStyles } from './Result.style';
 import { calculeInfoValues } from './StudentInstance/helpers/calculeInfoValues';
 import { getConfigByInstance } from './StudentInstance/helpers/getConfigByInstance';
 import { htmlToText } from './StudentInstance/helpers/htmlToText';
+import StudentResultsTable from './components/StudentResultsTable';
 
 import prefixPN from '@tests/helpers/prefixPN';
 
@@ -222,97 +220,6 @@ export default function Result() {
     }
     return { selectables, data, labels: { OK: t('ok'), KO: t('ko'), null: t('nsnc') } };
   }, [store.questions, levels, t]);
-
-  function toggleQuestionMode() {
-    store.useQuestionMode = !store.useQuestionMode;
-    render();
-  }
-
-  const tableHeaders = React.useMemo(
-    () => [
-      {
-        Header: t('question'),
-        accessor: 'question',
-        className: cx(styles.tableHeader, styles.firstTableHeader),
-      },
-      {
-        Header: t('result'),
-        accessor: 'result',
-        className: styles.tableHeaderResults,
-      },
-      {
-        Header: t('category'),
-        accessor: 'category',
-        className: styles.tableHeader,
-      },
-      {
-        Header: t('level'),
-        accessor: 'level',
-        className: styles.tableHeader,
-      },
-    ],
-    [t]
-  );
-
-  const tableData = React.useMemo(
-    () =>
-      store.questions
-        ? map(store.questions, (question, i) => {
-            let result = '';
-            if (store.questionResponses[question.id].status === 'ok') {
-              result = (
-                <Box
-                  style={{ minWidth: '100px', color: '#5CBC6A', textAlign: 'center' }}
-                  className={styles.tableCell}
-                >
-                  <CheckBoldIcon height={12} width={12} />
-                </Box>
-              );
-            } else if (store.questionResponses[question.id].status === 'ko') {
-              result = (
-                <Box
-                  style={{ minWidth: '100px', color: '#D13B3B', textAlign: 'center' }}
-                  className={styles.tableCell}
-                >
-                  <RemoveBoldIcon height={12} width={12} />
-                </Box>
-              );
-            } else {
-              result = (
-                <Box
-                  style={{ minWidth: '100px', color: '#4D5358', textAlign: 'center' }}
-                  className={styles.tableCell}
-                >
-                  <SlashIcon height={10} width={10} />
-                </Box>
-              );
-            }
-            return {
-              question: (
-                <Box className={styles.tableCell}>
-                  <TextClamp lines={2} withToolTip>
-                    <Text>
-                      {i + 1}. {htmlToText(question.stem.text)}
-                    </Text>
-                  </TextClamp>
-                </Box>
-              ),
-              category: (
-                <Box style={{ minWidth: '130px' }} className={styles.tableCell}>
-                  {question.category?.category || '-'}
-                </Box>
-              ),
-              level: (
-                <Box style={{ minWidth: '130px' }} className={styles.tableCell}>
-                  {question.level ? find(levels, { value: question.level }).label : '-'}
-                </Box>
-              ),
-              result,
-            };
-          })
-        : [],
-    [store.questions, store.questionResponses, levels]
-  );
 
   async function sendFeedback(fromSwitch, remove) {
     store.feedbackError = false;
@@ -582,22 +489,15 @@ export default function Result() {
                 </ContextContainer>
 
                 {(store.instance?.showCorrectAnswers || isTeacher) && (
-                  <ContextContainer
-                    titleRightZone={
-                      <Button variant="link" onClick={toggleQuestionMode}>
-                        {store.useQuestionMode ? t('returnToTable') : t('showInTests')}
-                      </Button>
-                    }
-                    title={`${t('questions')} (${store.questions?.length})`}
-                  >
-                    <Box>
-                      {store.useQuestionMode ? (
-                        <ViewModeQuestions store={store} onReturn={toggleQuestionMode} />
-                      ) : (
-                        <Table columns={tableHeaders} data={tableData} />
-                      )}
-                    </Box>
-                  </ContextContainer>
+                  <StudentResultsTable
+                    {...store}
+                    t={t}
+                    styles={styles}
+                    cx={cx}
+                    scrollRef={scrollRef}
+                    studentUserAgentId={store.userLoaded}
+                    afterSaveCorrection={init}
+                  />
                 )}
               </Box>
             </Box>

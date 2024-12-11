@@ -1,8 +1,13 @@
-import { filter, groupBy, keyBy } from 'lodash';
+import { useMemo } from 'react';
+
+import { filter, groupBy, keyBy, sortBy } from 'lodash';
+
+import getApplySameValueWeightForUnlocked from '../helpers/getApplySameValueWeightForUnlocked';
+
+import useActivities from './useActivities';
+import { useManualActivitesForNotebook } from './useManualActivitesForNotebook';
 
 import useWeights from '@scores/requests/hooks/queries/useWeights';
-import useActivities from './useActivities';
-import getApplySameValueWeightForUnlocked from '../helpers/getApplySameValueWeightForUnlocked';
 
 function getActivitiesWeightsByModules({ weights, activities }) {
   const evaluableActivities = filter(activities, 'isEvaluable');
@@ -69,13 +74,24 @@ function getActivitiesWeightsWithSameValue({ activities }) {
 export default function useActivitiesWithWeights({ program, class: klass, period, filters }) {
   const { data: weights, isLoading: weightsLoading } = useWeights({ classId: klass?.id });
 
-  const { activities, isLoading: activitiesLoading } = useActivities({
+  const { activities: assignablesActivities, isLoading: activitiesLoading } = useActivities({
     program,
     class: klass,
     period,
     filters,
     weights,
   });
+
+  const { manualActivities, isLoading: manualActivitiesLoading } = useManualActivitesForNotebook({
+    klass,
+    filters,
+    period,
+  });
+
+  const activities = useMemo(
+    () => sortBy([...assignablesActivities, ...manualActivities], 'deadline'),
+    [assignablesActivities, manualActivities]
+  );
 
   let activitiesWithWeights;
 
@@ -89,6 +105,6 @@ export default function useActivitiesWithWeights({ program, class: klass, period
 
   return {
     activities: activitiesWithWeights,
-    isLoading: activitiesLoading || weightsLoading,
+    isLoading: activitiesLoading || manualActivitiesLoading || weightsLoading,
   };
 }

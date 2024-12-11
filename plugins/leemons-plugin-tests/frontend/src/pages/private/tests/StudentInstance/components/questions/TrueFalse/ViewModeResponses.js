@@ -15,7 +15,6 @@ function ViewModeResponses(props) {
     label: question.trueFalseProperties?.isTrue ? t('true') : t('false'),
   };
 
-  const userAnswerIsCorrect = store?.questionResponses[question.id]?.status === 'ok';
   const userSkippedQuestion = !store?.questionResponses[question.id]?.status;
 
   const responses = [
@@ -32,15 +31,18 @@ function ViewModeResponses(props) {
   ];
 
   const feedback = question.globalFeedback?.text || null;
+  const stemResourceIsImage = (question?.stemResource?.file?.type || '').startsWith('image');
 
   return (
     <ResponseDetail
-      isCorrect={userAnswerIsCorrect}
+      questionStatus={store?.questionResponses[question.id]?.status}
       solutionLabel={correctAnswer.label}
       userSkipped={userSkippedQuestion}
       responses={responses}
       globalFeedback={question?.hasAnswerFeedback ? null : feedback}
       questionType={question.type}
+      stemResource={question.stemResource}
+      displayStemMediaHorizontally={stemResourceIsImage}
     />
   );
 }
