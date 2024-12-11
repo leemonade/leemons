@@ -533,6 +533,7 @@ module.exports = {
   testResult: {
     testResult: 'Statistics by type of question',
     questions: 'Questions',
+    questionList: 'Question List',
     test: 'Test',
     notGradable: 'Non-qualifiable',
     gradable: 'Qualifiable',

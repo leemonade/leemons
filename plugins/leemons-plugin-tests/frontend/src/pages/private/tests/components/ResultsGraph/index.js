@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { Box, ContextContainer, RadioGroup, Stack, Title } from '@bubbles-ui/components';
+import { Box, ContextContainer, RadioGroup, Stack, Loader, Title } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PropTypes from 'prop-types';
 
@@ -14,14 +14,19 @@ const GRAPH_TYPES = {
   category: 'category',
   type: 'type',
 };
-const DEFAULT_GRAPH_HEIGHT = 180;
+const DEFAULT_GRAPH_HEIGHT = 374;
 
 const Index = (props) => {
-  const [t] = useTranslateLoader(prefixPN('testResult.resultsGraph'));
+  const [t, , , tLoading] = useTranslateLoader(prefixPN('testResult.resultsGraph'));
   const [graphType, setGraphType] = useState(GRAPH_TYPES.level);
-  const { classes, cx } = useResultsGraphStyles({
-    graphHeight: props.graphHeight || DEFAULT_GRAPH_HEIGHT,
-  });
+  const { classes } = useResultsGraphStyles();
+
+  if (tLoading)
+    return (
+      <Stack fullWidth sx={{ height: props.graphHeight || DEFAULT_GRAPH_HEIGHT }}>
+        <Loader padded />
+      </Stack>
+    );
 
   return (
     <ContextContainer className={classes.container}>
@@ -42,7 +47,12 @@ const Index = (props) => {
         </Stack>
       </Box>
       <Box noFlex>
-        <GraphView {...props} graphType={graphType} t={t} classes={classes} cx={cx} />
+        <GraphView
+          {...props}
+          graphType={graphType}
+          t={t}
+          height={props.graphHeight || DEFAULT_GRAPH_HEIGHT}
+        />
       </Box>
     </ContextContainer>
   );

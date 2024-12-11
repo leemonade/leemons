@@ -535,6 +535,7 @@ module.exports = {
   testResult: {
     testResult: 'Estadísticas por tipo de pregunta',
     questions: 'Preguntas',
+    questionList: 'Listado de preguntas',
     test: 'Test',
     notGradable: 'No calificable',
     gradable: 'Calificable',

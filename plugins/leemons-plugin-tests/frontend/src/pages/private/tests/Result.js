@@ -6,7 +6,6 @@ import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
 import ActivityHeader from '@assignables/components/ActivityHeader';
 import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
 import TimeoutAlert from '@assignables/components/EvaluationFeedback/Alerts/TimeoutAlert';
-import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
 import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
 import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
 import getAssignation from '@assignables/requests/assignations/getAssignation';
@@ -15,28 +14,22 @@ import {
   ActivityAccordionPanel,
   Box,
   Button,
-  ContextContainer,
-  Stack,
-  Table,
   Text,
   Title,
   TotalLayoutContainer,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
   VerticalContainer,
-  TextClamp,
 } from '@bubbles-ui/components';
 import { ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { CheckBoldIcon, RemoveBoldIcon, SlashIcon } from '@bubbles-ui/icons/solid';
 import { useSearchParams, useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
 import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 import updateStudentRequest from '@tasks/request/instance/updateStudent';
-import { find, forEach, map, orderBy } from 'lodash';
+import { forEach, orderBy } from 'lodash';
 
-import ViewModeQuestions from '../../../components/ViewModeQuestions';
 import {
   getQuestionByIdsRequest,
   getUserQuestionResponsesRequest,
@@ -48,6 +41,7 @@ import { calculeInfoValues } from './StudentInstance/helpers/calculeInfoValues';
 import { getConfigByInstance } from './StudentInstance/helpers/getConfigByInstance';
 import { htmlToText } from './StudentInstance/helpers/htmlToText';
 import EvaluationAndFeedback from './components/EvaluationAndFeedback';
+import StudentResultsTable from './components/StudentResultsTable';
 
 import prefixPN from '@tests/helpers/prefixPN';
 
@@ -63,7 +57,6 @@ export default function Result() {
   });
 
   const nextActivityUrl = useNextActivityUrl(store.assignation);
-  const levels = useLevelsOfDifficulty();
   const history = useHistory();
   const params = useParams();
   const searchParams = useSearchParams();
@@ -155,97 +148,6 @@ export default function Result() {
       init();
     }
   }, [params]);
-
-  function toggleQuestionMode() {
-    store.useQuestionMode = !store.useQuestionMode;
-    render();
-  }
-
-  const tableHeaders = useMemo(
-    () => [
-      {
-        Header: t('question'),
-        accessor: 'question',
-        className: cx(styles.tableHeader, styles.firstTableHeader),
-      },
-      {
-        Header: t('result'),
-        accessor: 'result',
-        className: styles.tableHeaderResults,
-      },
-      {
-        Header: t('category'),
-        accessor: 'category',
-        className: styles.tableHeader,
-      },
-      {
-        Header: t('level'),
-        accessor: 'level',
-        className: styles.tableHeader,
-      },
-    ],
-    [t, styles, cx]
-  );
-
-  const tableData = useMemo(
-    () =>
-      store.questions
-        ? map(store.questions, (question, i) => {
-            let result = '';
-            if (store.questionResponses[question.id].status === 'ok') {
-              result = (
-                <Box
-                  style={{ minWidth: '100px', color: '#5CBC6A', textAlign: 'center' }}
-                  className={styles.tableCell}
-                >
-                  <CheckBoldIcon height={12} width={12} />
-                </Box>
-              );
-            } else if (store.questionResponses[question.id].status === 'ko') {
-              result = (
-                <Box
-                  style={{ minWidth: '100px', color: '#D13B3B', textAlign: 'center' }}
-                  className={styles.tableCell}
-                >
-                  <RemoveBoldIcon height={12} width={12} />
-                </Box>
-              );
-            } else {
-              result = (
-                <Box
-                  style={{ minWidth: '100px', color: '#4D5358', textAlign: 'center' }}
-                  className={styles.tableCell}
-                >
-                  <SlashIcon height={10} width={10} />
-                </Box>
-              );
-            }
-            return {
-              question: (
-                <Box className={styles.tableCell}>
-                  <TextClamp lines={2} withToolTip>
-                    <Text>
-                      {i + 1}. {htmlToText(question.stem.text)}
-                    </Text>
-                  </TextClamp>
-                </Box>
-              ),
-              category: (
-                <Box style={{ minWidth: '130px' }} className={styles.tableCell}>
-                  {question.category?.category || '-'}
-                </Box>
-              ),
-              level: (
-                <Box style={{ minWidth: '130px' }} className={styles.tableCell}>
-                  {question.level ? find(levels, { value: question.level }).label : '-'}
-                </Box>
-              ),
-              result,
-            };
-          })
-        : [],
-    [store.questions, store.questionResponses, levels]
-  );
 
   async function sendFeedback({ feedback, hideSuccessAlert }) {
     const originalGrade = store.assignation.grades[0];
@@ -371,7 +273,11 @@ export default function Result() {
                     }}
                   />
                 )}
-                <ActivityAccordion value={accordionState} onChange={setAccordionState}>
+                <ActivityAccordion
+                  value={accordionState}
+                  onChange={setAccordionState}
+                  withoutDivider
+                >
                   <ActivityAccordionPanel
                     key={1}
                     itemValue={'evaluationAndFeedback'}
@@ -394,25 +300,24 @@ export default function Result() {
                       key={2}
                       itemValue={'responsesDetailTable'}
                       hideIcon={true}
-                      title={<Title order={3}>{t('questions')}</Title>}
+                      title={
+                        <Title order={3}>{`${t('questions')} (${store.questions?.length})`}</Title>
+                      }
+                      compact
                     >
-                      <ContextContainer sx={{ padding: 16 }}>
-                        <Stack justifyContent="space-between">
-                          <Title
-                            order={4}
-                          >{`${t('questions')} (${store.questions?.length})`}</Title>
-                          <Button variant="link" onClick={toggleQuestionMode}>
-                            {store.useQuestionMode ? t('returnToTable') : t('showInTests')}
-                          </Button>
-                        </Stack>
-                        <Box>
-                          {store.useQuestionMode ? (
-                            <ViewModeQuestions store={store} onReturn={toggleQuestionMode} />
-                          ) : (
-                            <Table columns={tableHeaders} data={tableData} />
-                          )}
-                        </Box>
-                      </ContextContainer>
+                      <StudentResultsTable
+                        {...store}
+                        t={t}
+                        styles={styles}
+                        cx={cx}
+                        scrollRef={scrollRef}
+                        studentUserAgentId={store.userLoaded}
+                        afterSaveCorrection={init}
+                        containerStyles={{
+                          paddingInline: 22 + 16, // 16 + accordeon padding
+                          paddingBlock: 16,
+                        }}
+                      />
                     </ActivityAccordionPanel>
                   )}
                 </ActivityAccordion>
