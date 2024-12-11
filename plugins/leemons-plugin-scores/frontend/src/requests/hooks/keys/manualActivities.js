@@ -35,3 +35,10 @@ export const manualActivityScoresKey = ({ classId }) => [
     classId,
   },
 ];
+
+export const myManualActivityScoresKey = ({ classId, user }) => [
+  {
+    ...manualActivityScoresKey({ classId })[0],
+    user,
+  },
+];

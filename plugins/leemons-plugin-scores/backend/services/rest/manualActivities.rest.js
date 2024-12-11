@@ -4,6 +4,7 @@ const addManualActivity = require('../../core/manualActivities/add');
 const listManualActivitiesForClassAndPeriod = require('../../core/manualActivities/list');
 const removeManualActivity = require('../../core/manualActivities/remove');
 const getScores = require('../../core/manualActivities/scores/get');
+const getMyScores = require('../../core/manualActivities/scores/myScores');
 const setScores = require('../../core/manualActivities/scores/set');
 const updateManualActivity = require('../../core/manualActivities/upate');
 
@@ -120,6 +121,25 @@ const restActions = {
     async handler(ctx) {
       const { classId } = ctx.params;
       const data = await getScores({ classId, ctx });
+
+      return {
+        data,
+        status: 200,
+      };
+    },
+  },
+  getMyScores: {
+    rest: {
+      method: 'GET',
+      path: '/scores/class/:classId/user/me',
+    },
+    params: {
+      classId: 'string',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const { classId } = ctx.params;
+      const data = await getMyScores({ classId, ctx });
 
       return {
         data,
