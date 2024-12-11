@@ -74,6 +74,7 @@ export default function NotebookFilters({ filters, onChange, value }) {
         onClose={() => setWeightDrawerIsOpen(false)}
       />
       <ManualActivityDrawer
+        classId={filters?.class?.id}
         isOpen={manualActivityDrawerIsOpen}
         onClose={() => setManualActivityDrawerIsOpen(false)}
         minDate={new Date(filters?.period?.startDate)}
@@ -82,7 +83,6 @@ export default function NotebookFilters({ filters, onChange, value }) {
           try {
             await createManualActivity({
               ...data,
-              role: 'task',
               classId: filters.class.id,
             });
             addSuccessAlert(t('manualActivityCreated'));
@@ -93,7 +93,7 @@ export default function NotebookFilters({ filters, onChange, value }) {
         }}
       />
 
-      <Stack direction="row" justifyContent="space-between" alignItems="baseline">
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Stack direction="row" spacing={4}>
           <Controller
             name="searchType"
@@ -113,7 +113,7 @@ export default function NotebookFilters({ filters, onChange, value }) {
             )}
           />
         </Stack>
-        <Stack direction="row" spacing={4} alignItems="baseline">
+        <Stack direction="row" spacing={4} alignItems="center">
           <Controller
             name="showNonEvaluable"
             control={form.control}

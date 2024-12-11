@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
+import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
 import {
   Drawer,
   Button,
@@ -9,18 +10,35 @@ import {
   TextInput,
   Textarea,
   Box,
+  Text,
+  Select,
 } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { capitalize } from 'lodash';
 import PropTypes from 'prop-types';
 
 import { prefixPN } from '@scores/helpers';
+import useWeights from '@scores/requests/hooks/queries/useWeights';
 
 const defaultValues = { date: null, name: '', description: '' };
 
-export function ManualActivityDrawer({ isOpen, onClose: _onClose, onSubmit, minDate, maxDate }) {
+export function ManualActivityDrawer({
+  isOpen,
+  classId,
+  onClose: _onClose,
+  onSubmit,
+  minDate,
+  maxDate,
+}) {
   const [t] = useTranslateLoader(prefixPN('manualActivityDrawer'));
+  const [weightT] = useTranslateLoader(prefixPN('weightingTypes'));
   const form = useForm({ defaultValues });
   const [isLoading, setIsLoading] = useState(false);
+
+  const { data: weights } = useWeights({ classId });
+  const isRolesWeight = weights?.type === 'roles';
+
+  const rolesLocalizations = useRolesLocalizations(['task', 'test']);
 
   const onClose = () => {
     _onClose();
@@ -87,7 +105,39 @@ export function ManualActivityDrawer({ isOpen, onClose: _onClose, onSubmit, minD
           />
         </ContextContainer>
 
-        <ContextContainer title={t('weight')}></ContextContainer>
+        <ContextContainer title={t('weightType.title')}>
+          <Text>
+            {t('weightType.weightingBy')}{' '}
+            <b style={{ textDecoration: 'underline' }}>{weightT(weights?.type ?? 'averages')}</b>,{' '}
+            {t(`weightType.${weights?.type ?? 'averages'}`)}
+          </Text>
+
+          <Controller
+            control={form.control}
+            name="role"
+            defaultValue={'task'}
+            render={({ field }) =>
+              isRolesWeight && (
+                <Box sx={{ width: '50%' }}>
+                  <Select
+                    {...field}
+                    label={t('roles')}
+                    data={[
+                      {
+                        value: 'task',
+                        label: capitalize(rolesLocalizations.task.singular),
+                      },
+                      {
+                        value: 'tests',
+                        label: capitalize(rolesLocalizations.tests.singular),
+                      },
+                    ]}
+                  />
+                </Box>
+              )
+            }
+          />
+        </ContextContainer>
       </Drawer.Content>
 
       <Drawer.Footer>
@@ -108,6 +158,7 @@ export function ManualActivityDrawer({ isOpen, onClose: _onClose, onSubmit, minD
 
 ManualActivityDrawer.propTypes = {
   isOpen: PropTypes.bool.isRequired,
+  classId: PropTypes.string.isRequired,
   onClose: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   minDate: PropTypes.instanceOf(Date),

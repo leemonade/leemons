@@ -459,5 +459,13 @@ module.exports = {
     description: { label: 'Description' },
     cancel: 'Cancel',
     save: 'Create activity',
+
+    weightType: {
+      title: 'Weighting',
+      weightingBy: 'You are weighting by',
+      averages: 'this activity will count as part of the average',
+      modules: 'this activity will appear as a module',
+      roles: 'in which type would you like to add this activity?',
+    },
   },
 };

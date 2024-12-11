@@ -461,5 +461,13 @@ module.exports = {
     description: { label: 'Descripción' },
     cancel: 'Cancelar',
     save: 'Crear actividad',
+
+    weightType: {
+      title: 'Ponderación',
+      weightingBy: 'Estás ponderando por',
+      averages: 'esta actividad pasará a contabilizarse en la media.',
+      modules: 'esta actividad aparecerá como Módulo.',
+      roles: '¿en qué tipo quieres incluir esta actividad?',
+    },
   },
 };
