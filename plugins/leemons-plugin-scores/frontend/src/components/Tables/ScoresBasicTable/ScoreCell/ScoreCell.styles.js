@@ -1,10 +1,4 @@
-import {
-  createStyles,
-  pxToRem,
-  getPaddings,
-  getFontExpressive,
-  getFontProductive,
-} from '@bubbles-ui/components';
+import { createStyles } from '@bubbles-ui/components';
 
 export const ScoreCellStyles = createStyles((theme, { isEditing, allowChange }) => ({
   root: {
@@ -16,11 +10,15 @@ export const ScoreCellStyles = createStyles((theme, { isEditing, allowChange }) 
     border: '1px solid transparent',
     borderColor: isEditing && theme.colors.interactive01d,
   },
+  score: {
+    width: '100%',
+  },
   inputContainer: {
     width: '100%',
     height: '100%',
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    gap: 0,
     alignItems: 'center',
     cursor: 'pointer',
     textAlign: 'center',

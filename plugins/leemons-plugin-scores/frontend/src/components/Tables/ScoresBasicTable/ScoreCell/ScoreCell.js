@@ -9,7 +9,7 @@ import {
   NumberInput,
 } from '@bubbles-ui/components';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
-import { isFunction, isNil } from 'lodash';
+import { isFunction } from 'lodash';
 import PropTypes from 'prop-types';
 
 import { SCORES_CELL_DEFAULT_PROPS } from './ScoreCell.constants';
@@ -63,6 +63,7 @@ const ScoreCell = ({
   isClosed,
   grades,
   usePercentage,
+  source,
   row,
   column,
   setValue,
@@ -72,6 +73,8 @@ const ScoreCell = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value ?? grades[0].number);
+
+  const isAssignable = source === 'assignables';
 
   useEffect(() => {
     if (value !== editValue) {
@@ -86,17 +89,25 @@ const ScoreCell = ({
   ]);
 
   const renderValue = (_value) => {
-    if (!_value && !isSubmitted && isClosed)
-      return `${grades[0].letter ?? grades[0].number}${usePercentage ? '%' : ''} (${noActivityLabel})`;
+    const hasGrade = _value !== undefined && _value !== null;
 
-    if (!_value && isSubmitted)
+    // Use minimum grade if no grade and the activity is not submitted and is closed
+    if (!hasGrade && !isSubmitted && isClosed) {
+      return `${grades[0].letter ?? grades[0].number}${usePercentage ? '%' : ''} (${noActivityLabel})`;
+    }
+
+    // Use submitted label if the activity is submitted and not graded
+    if (!hasGrade && isSubmitted && isAssignable) {
       return (
         <Text color="success" role="productive" style={{ flex: 1 }}>
           {submittedLabel}
         </Text>
       );
+    }
 
-    if (isNil(_value)) return '-';
+    if (!hasGrade) {
+      return '-';
+    }
 
     let render = _value;
 
@@ -160,23 +171,25 @@ const ScoreCell = ({
 
     return (
       <Box className={classes.inputContainer} ref={setInputContainer} onClick={onClickHandler}>
-        {!!allowChange && !!isEditing && (
-          <SelectScore
-            value={editValue}
-            grades={grades}
-            onChange={setEditValue}
-            onClose={onCloseThenChangeHandler}
-            style={{ flex: 1 }}
-            ref={selectRef}
-            isCustom={isCustom}
-          />
-        )}
-        {(!isEditing || !allowChange) && (
-          <Text color={isSubmitted ? 'primary' : 'error'} role="productive" style={{ flex: 1 }}>
-            {renderValue(value)}
-          </Text>
-        )}
-        {isEditing && !isCustom && (
+        <Box className={classes.score}>
+          {!!allowChange && !!isEditing && (
+            <SelectScore
+              value={editValue}
+              grades={grades}
+              onChange={setEditValue}
+              onClose={onCloseThenChangeHandler}
+              style={{ flex: 1 }}
+              ref={selectRef}
+              isCustom={isCustom}
+            />
+          )}
+          {(!isEditing || !allowChange) && (
+            <Text color={isSubmitted ? 'primary' : 'error'} role="productive" style={{ flex: 1 }}>
+              {renderValue(value)}
+            </Text>
+          )}
+        </Box>
+        {isEditing && !isCustom && isAssignable && (
           <Box className={classes.expandIcon}>
             <IconButton
               variant="transparent"

@@ -14,6 +14,7 @@ import useTableData from './hooks/useTableData';
 import { ScoresBasicTable } from '@scores/components/Tables/ScoresBasicTable';
 import { prefixPN } from '@scores/helpers';
 import { useScoresMutation } from '@scores/requests/hooks/mutations';
+import { useSetManualActivityScoresMutation } from '@scores/requests/hooks/mutations/useSetManualActivityScoresMutation';
 import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
 
 export default function ScoresTable({ program, class: klass, period, filters }) {
@@ -36,6 +37,7 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
   const setTableData = useEvaluationNotebookStore((state) => state.setTableData);
   const { mutateAsync: assignationScoreMutate } = useStudentAssignationMutation();
   const { mutateAsync: customScoreMutate } = useScoresMutation();
+  const { mutateAsync: manualActivityScoreMutate } = useSetManualActivityScoresMutation();
 
   const { scales, usePercentage, activities, studentsData, isLoading } = useTableData({
     program,
@@ -88,6 +90,7 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
         onDataChange={onDataChange({
           assignationScoreMutate,
           customScoreMutate,
+          manualActivityScoreMutate,
           scales,
           students: studentsData,
           activities,

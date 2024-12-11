@@ -1,14 +1,16 @@
 import { useMemo } from 'react';
 
+import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
+import useRolesList from '@assignables/requests/hooks/queries/useRolesList';
+import useSearchAssignableInstances from '@assignables/requests/hooks/queries/useSearchAssignableInstancesQuery';
 import { without } from 'lodash';
 
-import useSearchAssignableInstances from '@assignables/requests/hooks/queries/useSearchAssignableInstancesQuery';
+import { useManualActivitiesForStudent } from './useManualActivitiesForStudent';
+
 import {
   getNextDayFirstMillisecond,
   getPreviousDayLastMillisecond,
 } from '@scores/components/EvaluationNotebook/ScoresTable/hooks/useActivities';
-import useRolesList from '@assignables/requests/hooks/queries/useRolesList';
-import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
 
 export default function useActivities({ class: klass, period, showNonEvaluable, weights, search }) {
   const { data: roles } = useRolesList({
@@ -27,17 +29,26 @@ export default function useActivities({ class: klass, period, showNonEvaluable, 
       role: weights?.type === 'modules' ? 'learningpaths.module' : roles,
       classes: klass?.id,
 
-      isEvaluable: !showNonEvaluable,
+      isEvaluable: true,
+      calificableOnly: !showNonEvaluable,
     },
     select: (result) => result.items,
   });
 
-  const { data: activities, isLoading: activitiesLoading } = useAssignationsByProfile(
+  const { data: assignations, isLoading: activitiesLoading } = useAssignationsByProfile(
     activitiesIds,
     {
       enabled: !!activitiesIds?.length,
     }
   );
+
+  const { manualActivities, isLoading: manualActivitiesLoading } = useManualActivitiesForStudent({
+    klass,
+    period,
+    search,
+  });
+
+  const activities = (assignations ?? []).concat(manualActivities ?? []);
 
   const activitiesWithGrades = useMemo(
     () =>
@@ -56,6 +67,9 @@ export default function useActivities({ class: klass, period, showNonEvaluable, 
 
   return {
     activities: activitiesWithGrades ?? [],
-    isLoading: activitiesIdsLoading || (activitiesLoading && activitiesIds?.length),
+    isLoading:
+      activitiesIdsLoading ||
+      manualActivitiesLoading ||
+      (activitiesLoading && activitiesIds?.length),
   };
 }
