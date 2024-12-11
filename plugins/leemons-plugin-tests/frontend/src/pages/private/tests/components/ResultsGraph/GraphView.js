@@ -23,7 +23,7 @@ function GraphView({
   t,
 }) {
   const [barWidth, setBarWidth] = useState(0);
-  const [debouncedBarWidth] = useDebouncedValue(barWidth, 25);
+  const [debouncedBarWidth] = useDebouncedValue(barWidth, 10);
   const levels = useLevelsOfDifficulty(true);
   const chartRef = useRef();
   const { QUESTION_STATUS_COLORS, LEGEND_MARK_SIZE, THEME, LABEL_COLOR } = useGraphConstants();
@@ -122,8 +122,6 @@ function GraphView({
     return Array.from({ length: maxQuestions + 1 }, (_, i) => i);
   }, [maxQuestions]);
 
-  // EFFECTTS ········································································
-
   if (!levels || !t)
     return (
       <Stack fullWidth sx={{ height }}>
@@ -135,6 +133,7 @@ function GraphView({
     <Stack spacing={4} direction="column" sx={{ width: '100%' }}>
       <Box ref={chartRef} style={{ height }}>
         <ResponsiveBar
+          key={`bar-${debouncedBarWidth}`} // needed for correct bar width recalcuation (known issue of nivo)
           data={data}
           keys={['ok', 'ko', 'omitted']}
           indexBy="label"
@@ -147,7 +146,7 @@ function GraphView({
           padding={0.1}
           layers={['grid', 'axes', 'bars']}
           maxValue={maxQuestions}
-          valueScale={{ type: 'linear' }}
+          valueScale={{ type: 'linear', max: maxQuestions }}
           indexScale={{ type: 'band', round: true }}
           colors={({ id }) => QUESTION_STATUS_COLORS[id]}
           theme={THEME}
