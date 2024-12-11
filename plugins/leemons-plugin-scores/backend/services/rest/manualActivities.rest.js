@@ -34,8 +34,6 @@ const restActions = {
     },
     params: {
       classId: 'string',
-      startDate: 'string',
-      endDate: 'string',
     },
     async handler(ctx) {
       const { classId, startDate, endDate, search } = ctx.params;

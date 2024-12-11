@@ -4,10 +4,17 @@ async function listManualActivitiesForClassAndPeriod({ classId, startDate, endDa
   const query = {
     classId,
     date: {
-      $gte: startDate,
-      $lte: endDate,
+      $exists: true,
     },
   };
+
+  if (startDate) {
+    query.date.$gte = startDate;
+  }
+
+  if (endDate) {
+    query.date.$lte = endDate;
+  }
 
   if (search) {
     query.name = {

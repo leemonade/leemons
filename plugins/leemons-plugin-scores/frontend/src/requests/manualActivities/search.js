@@ -8,9 +8,13 @@
 export async function searchManualActivities({ classId, startDate, endDate, search }) {
   const searchParams = new URLSearchParams();
 
-  searchParams.set('startDate', startDate);
-  searchParams.set('endDate', endDate);
+  if (startDate) {
+    searchParams.set('startDate', startDate);
+  }
 
+  if (endDate) {
+    searchParams.set('endDate', endDate);
+  }
   if (search) {
     searchParams.set('search', search);
   }
