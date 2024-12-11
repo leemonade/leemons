@@ -17,6 +17,7 @@ const restActions = {
     params: {
       manualActivity: 'object',
     },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const { manualActivity } = ctx.params;
 
@@ -36,6 +37,7 @@ const restActions = {
     params: {
       classId: 'string',
     },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const { classId, startDate, endDate, search } = ctx.params;
       const manualActivities = await listManualActivitiesForClassAndPeriod({
@@ -61,6 +63,7 @@ const restActions = {
       id: 'string',
       manualActivity: 'object',
     },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const { id, manualActivity } = ctx.params;
 
@@ -80,6 +83,7 @@ const restActions = {
     params: {
       id: 'string',
     },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const { id } = ctx.params;
       const removed = await removeManualActivity({ id, ctx });
@@ -118,6 +122,7 @@ const restActions = {
     params: {
       classId: 'string',
     },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const { classId } = ctx.params;
       const data = await getScores({ classId, ctx });
