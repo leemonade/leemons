@@ -2,7 +2,7 @@ import { useHistory } from 'react-router-dom';
 
 import { useSearchParams } from '@common/useSearchParams';
 import { useLayout } from '@layout/context';
-import { compact, get, isArray, omit, set } from 'lodash';
+import { compact, get, isArray, omit, set, cloneDeep } from 'lodash';
 import PropTypes from 'prop-types';
 
 import {
@@ -65,6 +65,17 @@ function DetailQuestionsRouter({ t, form, savingAs, scrollRef, onPrev, onPublish
   };
 
   const removeHideOnHelp = (answers) => answers.map((item) => omit(item, 'hideOnHelp'));
+
+  const processOpenResponseQuestions = (question) => {
+    const _question = cloneDeep(question);
+
+    _question.openResponseProperties = {
+      minCharacters: question.openResponseProperties?.minCharacters || null,
+      maxCharacters: question.openResponseProperties?.maxCharacters || null,
+    };
+
+    return _question;
+  };
 
   function processHasHelp(question, solutionKey) {
     if (!question.hasHelp) return false;
@@ -129,7 +140,11 @@ function DetailQuestionsRouter({ t, form, savingAs, scrollRef, onPrev, onPublish
   };
 
   function onSaveQuestion(question) {
-    const processedQuestion = cleanQuestion(question);
+    let processedQuestion = cleanQuestion(question);
+
+    if (processedQuestion.type === QUESTION_TYPES.OPEN_RESPONSE) {
+      processedQuestion = processOpenResponseQuestions(processedQuestion);
+    }
 
     const currentQuestions = form.getValues('questions') ?? [];
     if (questionIndex !== null && questionIndex >= 0) {
@@ -145,9 +160,6 @@ function DetailQuestionsRouter({ t, form, savingAs, scrollRef, onPrev, onPublish
   function onAddQuestions(questions) {
     const currentQuestions = form.getValues('questions') ?? [];
     const newQuestions = questions.map(cleanQuestion);
-
-    console.log('questions', questions);
-    console.log('newQuestions', newQuestions);
 
     form.setValue('questions', [...currentQuestions, ...newQuestions]);
     onCancel();

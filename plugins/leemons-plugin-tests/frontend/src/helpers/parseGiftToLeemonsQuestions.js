@@ -84,9 +84,9 @@ function parseGiftToLeemonsQuestions(giftQuestions) {
             choice.text.format = 'plain';
             if (i === 0) {
               choice.isMainChoice = true;
-              if (choice.feedback) {
-                question.globalFeedback = choice.feedback;
-              }
+            }
+            if (choice.feedback && !question.globalFeedback) {
+              question.globalFeedback = choice.feedback;
             }
           });
           break;
