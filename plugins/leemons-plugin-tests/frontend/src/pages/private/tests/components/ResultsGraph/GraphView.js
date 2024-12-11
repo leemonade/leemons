@@ -14,9 +14,9 @@ import { GRAPH_TYPES } from '.';
 function GraphView({
   legendLeft,
   legendBottom,
-  height = 500,
+  height,
   xAxisLabelsMaxChars = 30,
-  ariaLabel = 'Learning Analytics',
+  ariaLabel = 'Test Details',
   questions,
   questionResponses,
   graphType,
