@@ -1,7 +1,6 @@
-import React from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
-import { Switch, ContextContainer, Text, RadioGroup } from '@bubbles-ui/components';
+import { Switch, ContextContainer, RadioGroup } from '@bubbles-ui/components';
 import { TextEditorInput, TEXT_EDITOR_TEXTAREA_TOOLBARS } from '@bubbles-ui/editors';
 import { capitalize } from 'lodash';
 import PropTypes from 'prop-types';
@@ -57,14 +56,17 @@ function TrueFalse({ form: formProp, t }) {
           />
         </ContextContainer>
       </ContextContainer>
-      <ContextContainer spacing={4}>
-        <Text>{t('cluesCopy')}</Text>
-
+      <ContextContainer>
         <Controller
           control={form.control}
           name="hasHelp"
           render={({ field }) => (
-            <Switch {...field} checked={field.value} label={t('hasCluesLabel')} />
+            <Switch
+              {...field}
+              checked={field.value}
+              label={t('hasCluesLabel')}
+              description={t('cluesSwitchDescription')}
+            />
           )}
         />
       </ContextContainer>

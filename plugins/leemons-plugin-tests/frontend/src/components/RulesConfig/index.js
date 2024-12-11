@@ -328,12 +328,11 @@ const RulesConfig = ({
                       </Box>
                     ) : null}
                   </InputWrapper>
-
                   <InputWrapper
                     description={
                       <Controller
-                        control={form.control}
                         name="allowClues"
+                        control={form.control}
                         shouldUnregister
                         render={({ field }) => (
                           <Switch checked={field.value} {...field} label={t('allowClues')} />
@@ -394,7 +393,6 @@ const RulesConfig = ({
                       </Box>
                     ) : null}
                   </InputWrapper>
-
                   <RulesByQuestionType control={form.control} t={t} />
 
                   <Box style={{ paddingTop: 12 }}>
@@ -632,6 +630,7 @@ RulesConfig.propTypes = {
   onUpdateConfig: propTypes.func,
   isDrawer: propTypes.bool,
   defaultValues: propTypes.object,
+  onChangeRules: propTypes.func,
 };
 
 export { RulesConfig };
