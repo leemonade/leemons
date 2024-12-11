@@ -5,6 +5,8 @@ import useRolesList from '@assignables/requests/hooks/queries/useRolesList';
 import useSearchAssignableInstances from '@assignables/requests/hooks/queries/useSearchAssignableInstancesQuery';
 import { without } from 'lodash';
 
+import { useManualActivitiesForStudent } from './useManualActivitiesForStudent';
+
 import {
   getNextDayFirstMillisecond,
   getPreviousDayLastMillisecond,
@@ -33,12 +35,20 @@ export default function useActivities({ class: klass, period, showNonEvaluable, 
     select: (result) => result.items,
   });
 
-  const { data: activities, isLoading: activitiesLoading } = useAssignationsByProfile(
+  const { data: assignations, isLoading: activitiesLoading } = useAssignationsByProfile(
     activitiesIds,
     {
       enabled: !!activitiesIds?.length,
     }
   );
+
+  const { manualActivities, isLoading: manualActivitiesLoading } = useManualActivitiesForStudent({
+    klass,
+    period,
+    search,
+  });
+
+  const activities = (assignations ?? []).concat(manualActivities ?? []);
 
   const activitiesWithGrades = useMemo(
     () =>
@@ -57,6 +67,9 @@ export default function useActivities({ class: klass, period, showNonEvaluable, 
 
   return {
     activities: activitiesWithGrades ?? [],
-    isLoading: activitiesIdsLoading || (activitiesLoading && activitiesIds?.length),
+    isLoading:
+      activitiesIdsLoading ||
+      manualActivitiesLoading ||
+      (activitiesLoading && activitiesIds?.length),
   };
 }
