@@ -53,7 +53,7 @@ export function Filters({
     setValue,
   });
 
-  const { startDate, endDate } = useAcademicCalendarDates({ control, selectedClass });
+  const { startDate, endDate } = useAcademicCalendarDates({ selectedClass });
 
   useOnChange(selectedClass, selectedPeriod, onChange);
 

@@ -74,7 +74,7 @@ module.exports = {
     needImages: 'Answers must have images',
     needExplanationAndResponse: 'All answers require a text and an explanation',
     needResponse: 'Answers must have a text',
-    needsResponse: 'Response is required',
+    needsResponse: 'An answer is required',
     needExplanation: 'All answers require an explanation',
     responsesDescription:
       'First, add the answers, then select the correct one by clicking on the circle.',
@@ -83,15 +83,16 @@ module.exports = {
     explanationRequired: 'Field required',
     includeExplanationToEveryAnswerLabel:
       'Include an explanation to every answer (right and wrong ones)',
-    explanationLabel: 'Feedback',
+    explanationLabel: 'Explanation',
     explanationPlaceHolder: 'Add the explanation text here',
     captionPlaceholder: 'Add the image text here',
     caption: 'Caption/ Alt text',
     cluesLabel: 'Clues configuration',
     cluesPlaceholder: 'Add the clues text here',
     addClue: 'Add clue',
-    cluesDescription:
+    cluesSwitchDescription:
       'You can give hints to students providing information that facilitates the memory retrieval task.',
+    cluesDescription: 'Information shown to students',
     cluesRequired: 'Field required',
     hasCluesLabelWithMinResponses: 'With clues (minimum 3 responses)',
     hasCluesLabel: 'With clues',
@@ -105,6 +106,7 @@ module.exports = {
     trueFalse: 'T/F',
     map: 'Map',
     shortResponse: 'Short response',
+    openResponse: 'Open response',
     mapLabel: 'Map',
     addMap: 'Add map',
     itemsLabel: 'Answers',
@@ -136,11 +138,11 @@ module.exports = {
         true: 'True',
         false: 'False',
         type: 'T/F',
-        needsResponse: 'Response is required',
-        shortResponse: {
-          answerPlaceholder: 'Write your answer here',
-        },
       },
+      answerPlaceholder: 'Write your answer here',
+      limitCharactersLabel: 'Limit characters',
+      minCharactersPlaceHolder: 'Min.',
+      maxCharactersPlaceHolder: 'Max.',
     },
     errors: {
       save: 'The changes could not be saved.',
@@ -456,6 +458,14 @@ module.exports = {
     modulesDashboard: 'Module dashboard',
     viewResults: 'Check results',
     nextActivity: 'Next activity',
+    questionLabels: {
+      answerPlaceholder: 'Write your answer here',
+      openResponse: {
+        minLengthCharacters: 'Write your answer here with at least {number} characters',
+        maxLengthCharacters: 'Write your answer here with at most {number} characters',
+        minAndMaxLengthCharacters: 'Write your answer here between {min} and {max} characters',
+      },
+    },
   },
   testAssign: {
     pageTitle: 'Assign Test:',
@@ -528,6 +538,10 @@ module.exports = {
         tolerateCase: 'Case',
         tolerateSpaces: 'Spaces',
       },
+      openResponse: {
+        title: 'Open response',
+        enableTeacherReviewFeedback: 'Enable teacher review feedback',
+      },
     },
   },
   testResult: {
@@ -540,8 +554,6 @@ module.exports = {
     category: 'Category',
     level: 'Level',
     undefined: 'Undefined',
-    question: 'Question',
-    result: 'Result',
     showInTests: 'Detail of responses',
     feedbackForStudent: 'Feedback for student',
     sendFeedback: 'Send feedback',
@@ -580,6 +592,20 @@ module.exports = {
       },
       undefined: 'Undefined',
     },
+    questionResultsTable: {
+      nonGradedQuestionsAlert: {
+        title: 'Questions to be graded',
+        description: 'Evaluate the open-ended questions to send the final grade to the students.',
+      },
+      openQuestions: 'Open questions',
+      testQuestions: 'Test questions',
+      questionType: 'Type',
+      level: 'Level',
+      question: 'Question',
+      category: 'Category',
+      result: 'Result',
+      score: 'Score',
+    },
     responseDetail: {
       answers: 'Answers',
       answer: 'Answer',
@@ -587,7 +613,19 @@ module.exports = {
       solution: 'Solution',
       correct: 'Correct',
       incorrect: 'Incorrect',
+      questionStatus: {
+        ok: 'Correct',
+        ko: 'Incorrect',
+        partial: 'Partially correct',
+        notGraded: 'This question has not been graded yet',
+        notAnswered: 'Not answered',
+      },
+      explanation: 'Explanation',
       feedback: 'Feedback',
+      gradeAndFeedback: 'Grade and feedback',
+      feedbackPlaceholder: 'Write your feedback here',
+      saveCorrection: 'Save correction',
+      correctionSaved: 'Correction saved successfully',
     },
   },
   common: {

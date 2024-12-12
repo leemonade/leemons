@@ -1,15 +1,16 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { useEffect } from 'react';
 
 import { Stack, Text } from '@bubbles-ui/components';
-import { isNil, sortBy } from 'lodash';
-
-import getNearestScale from '@scorm/helpers/getNearestScale';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import getNearestScale from '@scorm/helpers/getNearestScale';
+import { isNil, sortBy } from 'lodash';
+import PropTypes from 'prop-types';
+
+import useActivityScoreTotalStyles from './ActivityScoreTotal.style';
+
 import { prefixPN } from '@scores/helpers';
 import { useScores } from '@scores/requests/hooks/queries';
 import useMyScoresStore from '@scores/stores/myScoresStore';
-import useActivityScoreTotalStyles from './ActivityScoreTotal.style';
 
 export default function ActivityScoreTotal({ class: klass, period, activities, evaluationSystem }) {
   const setFinalScore = useMyScoresStore((state) => state.setFinalScore);
@@ -17,7 +18,7 @@ export default function ActivityScoreTotal({ class: klass, period, activities, e
   const [t] = useTranslateLoader(prefixPN('myScores'));
   const hasNonEvaluatedActivities = activities.some(
     (activity) =>
-      activity.instance.requiresScoring &&
+      activity.instance.gradable &&
       isNil(activity.mainGrade) &&
       activity.instance.metadata?.evaluationType !== 'auto'
   );
@@ -82,7 +83,7 @@ ActivityScoreTotal.propTypes = {
   activities: PropTypes.arrayOf(
     PropTypes.shape({
       instance: PropTypes.shape({
-        requiresScoring: PropTypes.bool,
+        gradable: PropTypes.bool,
         assignable: PropTypes.shape({
           asset: PropTypes.shape({
             name: PropTypes.string,

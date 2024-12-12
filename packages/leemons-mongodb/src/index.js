@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const { mixin } = require('./mixin');
 
 module.exports = {
@@ -27,5 +28,19 @@ module.exports = {
       return connection.models[modelName];
     }
     return connection.model(modelName, schema);
+  },
+
+  leemonsSchemaFields: {
+    id: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
+    deploymentID: {
+      type: String,
+      required: true,
+      index: true,
+    },
   },
 };

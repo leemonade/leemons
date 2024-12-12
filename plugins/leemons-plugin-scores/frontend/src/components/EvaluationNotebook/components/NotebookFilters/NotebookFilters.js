@@ -1,22 +1,40 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-
-import { Box, Button, SearchInput, Select, Stack, Switch } from '@bubbles-ui/components';
-import { CalculatorIcon } from '@bubbles-ui/icons/solid';
+import { useEffect, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
-import { WeightConfigDrawer } from '@scores/components/Weights/components/WeightConfigDrawer';
+import {
+  Box,
+  Button,
+  SearchInput,
+  Select,
+  Stack,
+  Switch,
+  DropdownButton,
+} from '@bubbles-ui/components';
+import { CalculatorIcon } from '@bubbles-ui/icons/solid';
 import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
-import useSearchTypes from './hooks/useSearchTypes';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import PropTypes from 'prop-types';
+
+import { ManualActivityDrawer } from '../ManualActivityDrawer';
+
 import useOnChange from './hooks/useOnChange';
+import useSearchTypes from './hooks/useSearchTypes';
+
+import { WeightConfigDrawer } from '@scores/components/Weights/components/WeightConfigDrawer';
+import { prefixPN } from '@scores/helpers';
+import { useCreateManualActivityMutation } from '@scores/requests/hooks/mutations/useCreateManualActivityMutation';
+import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
 
 export default function NotebookFilters({ filters, onChange, value }) {
   const [t] = useTranslateLoader(prefixPN('evaluationNotebook.filters'));
-  const [drawerIsOpen, setDrawerIsOpen] = useState(false);
+  const [weightDrawerIsOpen, setWeightDrawerIsOpen] = useState(false);
+  const [manualActivityDrawerIsOpen, setManualActivityDrawerIsOpen] = useState(false);
   const deploymentConfig = useDeploymentConfig({ pluginName: 'scores', ignoreVersion: true });
   const hideWeighting = deploymentConfig?.deny?.menu?.includes('scores.weights');
+  const { mutateAsync: createManualActivity } = useCreateManualActivityMutation();
+
+  const isPeriodPublished = useEvaluationNotebookStore((state) => state.isPeriodPublished);
 
   const form = useForm({
     defaultValues: {
@@ -52,11 +70,30 @@ export default function NotebookFilters({ filters, onChange, value }) {
   return (
     <>
       <WeightConfigDrawer
-        class={drawerIsOpen ? filters?.class : null}
-        onClose={() => setDrawerIsOpen(false)}
+        class={weightDrawerIsOpen ? filters?.class : null}
+        onClose={() => setWeightDrawerIsOpen(false)}
+      />
+      <ManualActivityDrawer
+        classId={filters?.class?.id}
+        isOpen={manualActivityDrawerIsOpen}
+        onClose={() => setManualActivityDrawerIsOpen(false)}
+        minDate={new Date(filters?.period?.startDate)}
+        maxDate={new Date(filters?.period?.endDate)}
+        onSubmit={async (data) => {
+          try {
+            await createManualActivity({
+              ...data,
+              classId: filters.class.id,
+            });
+            addSuccessAlert(t('manualActivityCreated'));
+          } catch (e) {
+            addErrorAlert(t('manualActivityError'), e.message);
+            throw e;
+          }
+        }}
       />
 
-      <Stack direction="row" justifyContent="space-between" alignItems="baseline">
+      <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Stack direction="row" spacing={4}>
           <Controller
             name="searchType"
@@ -76,7 +113,7 @@ export default function NotebookFilters({ filters, onChange, value }) {
             )}
           />
         </Stack>
-        <Stack direction="row" spacing={4} alignItems="baseline">
+        <Stack direction="row" spacing={4} alignItems="center">
           <Controller
             name="showNonEvaluable"
             control={form.control}
@@ -90,12 +127,23 @@ export default function NotebookFilters({ filters, onChange, value }) {
               <Button
                 variant="linkInline"
                 leftIcon={<CalculatorIcon />}
-                onClick={() => setDrawerIsOpen(true)}
+                onClick={() => setWeightDrawerIsOpen(true)}
               >
                 {t('goToWeighting')}
               </Button>
             )}
           </Box>
+          <DropdownButton
+            data={[
+              {
+                label: t('manualActivity'),
+                onClick: () => setManualActivityDrawerIsOpen(true),
+                disabled: isPeriodPublished,
+              },
+            ]}
+          >
+            {t('add')}
+          </DropdownButton>
         </Stack>
       </Stack>
     </>

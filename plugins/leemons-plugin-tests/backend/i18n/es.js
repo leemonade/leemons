@@ -8,6 +8,8 @@ const QUESTION_TYPES = {
   map: 'Mapa',
 };
 
+const EXPLANATION = 'Explicación';
+
 module.exports = {
   questionsBanksList: {
     pageTitle: 'Listado de bancos de preguntas',
@@ -85,15 +87,16 @@ module.exports = {
     explanationRequired: 'Campo necesario',
     includeExplanationToEveryAnswerLabel:
       'Incluir una explicación a cada respuesta (correctas e incorrectas)',
-    explanationLabel: 'Retroalimentación',
+    explanationLabel: EXPLANATION,
     explanationPlaceHolder: 'Añadir aquí el texto de la explicación',
     captionPlaceholder: 'Añadir aquí el texto de la imagen',
     caption: 'Pie de foto/texto alternativo',
     cluesLabel: 'Configuración de pistas',
     cluesPlaceholder: 'Añadir aquí el texto de las pistas',
     addClue: 'Añadir pista',
-    cluesDescription:
+    cluesSwitchDescription:
       'Es posible dar pistas a los alumnos proporcionando información que facilite la tarea de recuperación de la memoria.',
+    cluesDescription: 'Información para mostrar al alumno',
     hasCluesLabelWithMinResponses: 'Con pistas (mínimo 3 respuestas)',
     hasCluesLabel: 'Con pistas',
     imageLabel: 'Imagen',
@@ -106,6 +109,7 @@ module.exports = {
     trueFalse: 'V/F',
     map: 'Mapa',
     shortResponse: 'Respuesta corta',
+    openResponse: 'Respuesta abierta',
     mapLabel: 'Mapa',
     addMap: 'Añadir mapa',
     itemsLabel: 'Respuestas',
@@ -139,9 +143,10 @@ module.exports = {
         false: 'Falso',
         type: 'V/F',
       },
-      shortResponse: {
-        answerPlaceholder: 'Escribe aquí tu respuesta',
-      },
+      answerPlaceholder: 'Escribe aquí tu respuesta',
+      limitCharactersLabel: 'Limitar caracteres',
+      minCharactersPlaceHolder: 'Mín.',
+      maxCharactersPlaceHolder: 'Máx.',
     },
     errors: {
       save: 'No se han podido guardar los cambios.',
@@ -451,13 +456,21 @@ module.exports = {
       'Esta pregunta requiere que respondas a todas las opciones presentadas para poder ser evaluada (en caso contrario contará como pregunta no respondida)',
     attention: 'Atención',
     correctResponse: 'Respuesta correcta',
-    explanation: 'Explicación',
+    explanation: EXPLANATION,
     returnToTable: 'Volver al listado',
     clueN: '{number}ª Pista',
     pendingActivities: 'Actividades pendientes',
     modulesDashboard: 'Dashboard del módulo',
     viewResults: 'Consultar resultados',
     nextActivity: 'Siguiente actividad',
+    questionLabels: {
+      answerPlaceholder: 'Escribe aqui tu respuesta',
+      openResponse: {
+        minLengthCharacters: 'Escribe aqui tu respuesta de mínimo {number} caracteres',
+        maxLengthCharacters: 'Escribe aqui tu respuesta de máximo {number} caracteres',
+        minAndMaxLengthCharacters: 'Escribe aqui tu respuesta entre {min} y {max} caracteres',
+      },
+    },
   },
   testAssign: {
     pageTitle: 'Asignar Test:',
@@ -530,6 +543,10 @@ module.exports = {
         tolerateCase: 'Mayúsculas y minúsculas',
         tolerateSpaces: 'Espacios',
       },
+      openResponse: {
+        title: 'Respuesta abierta',
+        enableTeacherReviewFeedback: 'Habilitar feedback de revisión',
+      },
     },
   },
   testResult: {
@@ -542,16 +559,16 @@ module.exports = {
     category: CATEGORY,
     level: 'Nivel',
     undefined: 'No definido',
-    question: 'Pregunta',
-    result: 'Resultado',
     showInTests: 'Detalle de respuestas ',
     feedbackForStudent: 'Comentario para el estudiante',
     sendFeedback: 'Enviar comentario',
     feedbackRequired: 'Comentario obligatorio',
     feedbackDone: 'Comentario actualizado con éxito',
     evaluationAndFeedback: 'Evaluación y Feedback',
-    ok: 'Acertada',
-    ko: 'Errónea',
+    contactStudent: 'Contactar estudiante',
+    contactTeacher: 'Contactar profesor',
+    ok: 'Correcta',
+    ko: 'Incorrecta',
     nsnc: 'NS/NC',
     chatDescription: '¿Quieres hacer alguna consulta sobre esta evaluación?',
     chatTeacherDescription: '¿Quieres escribir alguna observación?',
@@ -580,6 +597,21 @@ module.exports = {
       },
       undefined: 'Indefinido',
     },
+    questionResultsTable: {
+      nonGradedQuestionsAlert: {
+        title: 'Preguntas por corregir',
+        description:
+          'Evalúa las preguntas de respuesta abierta para enviar la nota final a los estudiantes.',
+      },
+      openQuestions: 'Preguntas abiertas',
+      testQuestions: 'Preguntas de test',
+      questionType: 'Tipo',
+      level: 'Nivel',
+      question: 'Pregunta',
+      category: CATEGORY,
+      result: 'Resultado',
+      score: 'Puntuación',
+    },
     responseDetail: {
       answers: 'Respuestas',
       answer: 'Respuesta',
@@ -587,7 +619,19 @@ module.exports = {
       solution: 'Solución',
       correct: 'Correcto',
       incorrect: 'Incorrecto',
-      feedback: 'Explicación',
+      questionStatus: {
+        ok: 'Correcta',
+        ko: 'Incorrecta',
+        partial: 'Parcialmente correcta',
+        notGraded: 'Esta pregunta aún no ha sido corregida',
+        notAnswered: 'No respondida',
+      },
+      explanation: EXPLANATION,
+      feedback: 'Feedback',
+      gradeAndFeedback: 'Corrección y feedback',
+      feedbackPlaceholder: 'Escribe aquí el texto de feedback',
+      saveCorrection: 'Guardar corrección',
+      correctionSaved: 'Corrección guardada correctamente',
     },
   },
   common: {

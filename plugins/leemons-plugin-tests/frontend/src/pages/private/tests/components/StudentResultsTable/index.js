@@ -5,6 +5,8 @@ import { Box, Button, ContextContainer, Alert, Stack, Text } from '@bubbles-ui/c
 import { cloneDeep } from 'lodash';
 import PropTypes from 'prop-types';
 
+import TeacherReview from '../../StudentInstance/components/questions/OpenResponse/TeacherReview';
+
 import QuestionResultsForTeacher from './QuestionResultsForTeacher';
 import QuestionResultsTable from './QuestionResultsTable';
 
@@ -96,7 +98,16 @@ export default function StudentResultsTable({
       }
 
       if (viewMode === VIEW_MODES.REVIEW) {
-        return <div>TeacherReviewComponent</div>;
+        return (
+          <TeacherReview
+            {...questionToReviewProperties}
+            assignmentConfig={props.config}
+            questionsInfo={props.questionsInfo}
+            instance={props.instance}
+            studentUserAgentId={props.studentUserAgentId}
+            afterSaveCorrection={afterSaveCorrection}
+          />
+        );
       }
 
       return TableComponent;
@@ -153,4 +164,5 @@ StudentResultsTable.propTypes = {
   instance: PropTypes.object,
   studentUserAgentId: PropTypes.string,
   afterSaveCorrection: PropTypes.func,
+  containerStyles: PropTypes.object,
 };
