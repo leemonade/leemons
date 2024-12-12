@@ -1,7 +1,9 @@
 const _ = require('lodash');
-const { removeCustomPermissions } = require('./removeCustomPermissions');
-const { getClassProgram } = require('../getClassProgram');
+
 const { getProfiles } = require('../../settings/getProfiles');
+const { getClassProgram } = require('../getClassProgram');
+
+const { removeCustomPermissions } = require('./removeCustomPermissions');
 
 async function removeByClass({ classIds, soft, ctx }) {
   const classeIds = _.isArray(classIds) ? classIds : [classIds];
@@ -53,7 +55,7 @@ async function removeByClass({ classIds, soft, ctx }) {
 
   const studentIds = _.map(classStudents, 'student');
   const promises = [];
-  _.forEach(classIds, (classId) => {
+  _.forEach(classeIds, (classId) => {
     promises.push(
       ctx.tx.call('users.users.removeUserAgentContacts', {
         fromUserAgent: studentIds,
@@ -108,7 +110,7 @@ async function removeByClass({ classIds, soft, ctx }) {
 
   await ctx.tx.emit('after-remove-classes-students', {
     classStudents,
-    classIds,
+    classIds: classeIds,
     soft,
   });
   return true;

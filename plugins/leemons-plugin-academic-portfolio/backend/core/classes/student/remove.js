@@ -1,6 +1,8 @@
 const { LeemonsError } = require('@leemons/error');
-const { getClassProgram } = require('../getClassProgram');
+
 const { getProfiles } = require('../../settings/getProfiles');
+const { getClassProgram } = require('../getClassProgram');
+
 const { removeCustomPermissions } = require('./removeCustomPermissions');
 
 async function remove({ classId, studentId, soft, ctx }) {
@@ -45,11 +47,13 @@ async function remove({ classId, studentId, soft, ctx }) {
       target: classId,
     })
   );
-  promises.push('users.users.removeUserAgentContacts', {
-    fromUserAgent: '*',
-    toUserAgent: studentId,
-    target: classId,
-  });
+  promises.push(
+    ctx.tx.call('users.users.removeUserAgentContacts', {
+      fromUserAgent: '*',
+      toUserAgent: studentId,
+      target: classId,
+    })
+  );
   await Promise.all(promises);
   const { student: studentProfileId } = await getProfiles({ ctx });
 
