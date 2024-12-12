@@ -1,7 +1,7 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { useLevelsOfDifficulty } from '@assignables/components/LevelsOfDifficulty';
-import { Table, ActionButton, Stack, Box, Text, TextClamp } from '@bubbles-ui/components';
+import { PaginatedList, ActionButton, Stack, Box, Text, TextClamp } from '@bubbles-ui/components';
 import { EditIcon, SlashIcon } from '@bubbles-ui/icons/solid';
 import PropTypes from 'prop-types';
 
@@ -19,6 +19,8 @@ export default function QuestionResultsTable({
   questionResponses,
   cx,
 }) {
+  const [currentPage, setCurrentPage] = useState(1); // This pagination is handled entirely in frontend as a presentational thing
+  const size = 10;
   const levels = useLevelsOfDifficulty();
   const getScoreItem = useCallback(
     (questionId) => {
@@ -92,12 +94,15 @@ export default function QuestionResultsTable({
   const tableData = useMemo(() => {
     if (!questions) return [];
 
-    return questions.map((question, i) => ({
+    const startIndex = (currentPage - 1) * size;
+    const paginatedQuestions = questions.slice(startIndex, startIndex + size);
+
+    return paginatedQuestions.map((question, i) => ({
       question: (
-        <Box className={styles.tableCell}>
+        <Box style={{ minWidth: '180px' }} className={styles.tableCell}>
           <TextClamp lines={2} withToolTip>
             <Text>
-              {i + 1}. {htmlToText(question.stem.text)}
+              {startIndex + i + 1}. {htmlToText(question.stem.text)}
             </Text>
           </TextClamp>
         </Box>
@@ -120,9 +125,20 @@ export default function QuestionResultsTable({
       result: getResultItem(question.id),
       score: getScoreItem(question.id),
     }));
-  }, [questions, styles, getScoreItem, getResultItem, levels]);
+  }, [questions, styles, getScoreItem, getResultItem, levels, currentPage, size]);
 
-  return <Table columns={headers} data={tableData} />;
+  return (
+    <PaginatedList
+      columns={headers}
+      items={tableData}
+      size={size}
+      page={currentPage}
+      hidePaper
+      totalCount={questions?.length || 0}
+      totalPages={Math.ceil(questions?.length / size)}
+      onPageChange={setCurrentPage}
+    />
+  );
 }
 
 QuestionResultsTable.propTypes = {
