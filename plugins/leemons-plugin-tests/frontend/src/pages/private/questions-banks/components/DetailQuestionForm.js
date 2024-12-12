@@ -24,7 +24,6 @@ import {
   QUESTION_TYPES,
   SOLUTION_KEY_BY_TYPE,
   QUESTION_TYPES_WITH_HIDDEN_ANSWERS,
-  getQuestionTypesForSelect,
   QUESTION_TYPES_WITH_MIN_RESPONSES_TO_ADD_CLUES,
 } from '../questionConstants';
 
@@ -35,6 +34,7 @@ import { OpenResponse } from './question-types/OpenResponse';
 import { ShortResponse } from './question-types/ShortResponse';
 import { TrueFalse } from './question-types/TrueFalse';
 
+import { QuestionTypeSelect } from '@tests/components/QuestionTypeSelect';
 import ResourcePicker from '@tests/components/ResourcePicker';
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -62,7 +62,7 @@ export default function DetailQuestionForm({
   const [withStemResource, setWithStemResource] = useState(!!defaultValues?.stemResource);
 
   const form = useForm({
-    defaultValues: { ...defaultValues, clues: defaultValues.clues || [] },
+    defaultValues: { ...defaultValues, clues: defaultValues?.clues || [] },
     shouldUnregister: true,
   });
   const choices = form.watch('choices');
@@ -70,8 +70,6 @@ export default function DetailQuestionForm({
   const trueFalseProperties = form.watch('trueFalseProperties');
   const type = form.watch('type');
   const hasHelp = form.watch('hasHelp');
-
-  const questionTypesSelectData = useMemo(() => getQuestionTypesForSelect(t), [t]);
 
   const rightAnswerSelected = useMemo(() => {
     if (type === QUESTION_TYPES.MAP) return true;
@@ -243,14 +241,7 @@ export default function DetailQuestionForm({
                   name="type"
                   rules={{ required: t('typeRequired') }}
                   render={({ field }) => (
-                    <Select
-                      required
-                      placeholder={t('typePlaceholder')}
-                      data={questionTypesSelectData}
-                      error={form.formState.errors.type}
-                      label={t('typeLabel')}
-                      {...field}
-                    />
+                    <QuestionTypeSelect required error={form.formState.errors.type} {...field} />
                   )}
                 />
                 {type ? (

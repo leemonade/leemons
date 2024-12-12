@@ -10,6 +10,7 @@
     "@bubbles-ui/leemons": "dev",
     "@loadable/component": "^5.15.2",
     "dayjs": "^1.11.2",
+    "gift-pegjs": "0.2.4",
     "lodash": "^4.17.21",
     "leemons-hooks": "0.0.32",
     "p-min-delay": "^4.0.2",

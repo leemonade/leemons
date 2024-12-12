@@ -2,24 +2,24 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
+const { registerAssignableRolesDeploy } = require('@leemons/academic-portfolio');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-
-const path = require('path');
-
+const { addCategoryDeploy } = require('@leemons/library');
+const { addMenuItemsDeploy } = require('@leemons/menu-builder');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
 const { LeemonsMultilanguageMixin } = require('@leemons/multilanguage');
 const { addPermissionsDeploy } = require('@leemons/permissions');
+const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('@leemons/widgets');
+const path = require('path');
 
-const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
-const { addMenuItemsDeploy } = require('@leemons/menu-builder');
-const { registerAssignableRolesDeploy } = require('@leemons/academic-portfolio');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { addCategoryDeploy } = require('@leemons/library');
 const {
   permissions,
   assignableRoles,
   menuItems,
   libraryQuestionBankCategory,
+  widgets,
 } = require('../config/constants');
 const { getServiceModels } = require('../models');
 
@@ -80,6 +80,10 @@ module.exports = () => ({
           getByIds: true,
         },
       });
+
+      // Register widget zone
+      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
+      ctx.emit('init-widget-zones');
     },
     // Permissions
     'users.init-permissions': async (ctx) => {
