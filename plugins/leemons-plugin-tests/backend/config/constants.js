@@ -253,6 +253,10 @@ const QUESTION_RESPONSE_STATUS = {
   NOT_GRADED: 'not-graded',
 };
 
+const widgets = {
+  zones: [{ key: `${permissionsPrefix}.qbank.questions.create` }],
+};
+
 module.exports = {
   pluginName: permissionsPrefix,
   permissions: {
@@ -265,4 +269,5 @@ module.exports = {
   libraryQuestionBankCategory,
   QUESTION_TYPES,
   QUESTION_RESPONSE_STATUS,
+  widgets,
 };
