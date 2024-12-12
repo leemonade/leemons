@@ -155,6 +155,7 @@ export default function Question(props) {
       Footer={
         <TotalLayoutFooterContainer
           fixed
+          style={{ zIndex: 100 }}
           showFooterBorder={store.viewMode}
           scrollRef={props.scrollRef}
           rightZone={
