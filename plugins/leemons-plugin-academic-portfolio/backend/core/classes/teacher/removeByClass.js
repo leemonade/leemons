@@ -79,7 +79,9 @@ async function removeByClass({
       const studentIds = _.map(_.filter(classStudents, { class: classId }), 'student');
 
       _.forEach(studentIds, (studentId) => {
-        const studentTeacherRoomKey = ctx.prefixPN(`room.class.${classId}.student.${studentId}.teachers`);
+        const studentTeacherRoomKey = ctx.prefixPN(
+          `room.class.${classId}.student.${studentId}.teachers`
+        );
         promisesRemoveUserAgentsFromRooms.push(
           runIfComunicaRoomExists(
             studentTeacherRoomKey,
@@ -164,7 +166,7 @@ async function removeByClass({
 
   const teacherIds = _.map(classTeachers, 'teacher');
   const promises = [];
-  _.forEach(classIds, (classId) => {
+  _.forEach(classeIds, (classId) => {
     promises.push(
       ctx.tx.call('users.users.removeUserAgentContacts', {
         fromUserAgent: teacherIds,
@@ -184,7 +186,7 @@ async function removeByClass({
 
   await ctx.tx.emit('after-remove-classes-teachers', {
     classTeachers,
-    classIds: _.isArray(classIds) ? classIds : [classIds],
+    classIds: classeIds,
     soft,
   });
   return true;
