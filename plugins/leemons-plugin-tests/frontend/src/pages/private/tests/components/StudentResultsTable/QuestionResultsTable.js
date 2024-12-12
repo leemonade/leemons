@@ -1,7 +1,15 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { useLevelsOfDifficulty } from '@assignables/components/LevelsOfDifficulty';
-import { PaginatedList, ActionButton, Stack, Box, Text, TextClamp } from '@bubbles-ui/components';
+import {
+  PaginatedList,
+  ActionButton,
+  Stack,
+  Box,
+  Text,
+  TextClamp,
+  ContextContainer,
+} from '@bubbles-ui/components';
 import { EditIcon, SlashIcon } from '@bubbles-ui/icons/solid';
 import PropTypes from 'prop-types';
 
@@ -60,35 +68,29 @@ export default function QuestionResultsTable({
       {
         Header: t('questionResultsTable.question'),
         accessor: 'question',
-        className: cx(styles.tableHeader, styles.firstTableHeader),
       },
       {
         Header: t('questionResultsTable.questionType'),
         accessor: 'type',
-        className: styles.tableHeader,
       },
       {
         Header: t('questionResultsTable.category'),
         accessor: 'category',
-        className: styles.tableHeader,
       },
       {
         Header: t('questionResultsTable.level'),
         accessor: 'level',
-        className: styles.tableHeader,
       },
       {
         Header: t('questionResultsTable.result'),
         accessor: 'result',
-        className: styles.tableHeaderResults,
       },
       {
         Header: t('questionResultsTable.score'),
         accessor: 'score',
-        className: styles.tableHeaderResults,
       },
     ],
-    [t, styles, cx]
+    [t]
   );
 
   const tableData = useMemo(() => {
@@ -99,7 +101,7 @@ export default function QuestionResultsTable({
 
     return paginatedQuestions.map((question, i) => ({
       question: (
-        <Box style={{ minWidth: '180px' }} className={styles.tableCell}>
+        <Box sx={{ minWidth: '150px' }}>
           <TextClamp lines={2} withToolTip>
             <Text>
               {startIndex + i + 1}. {htmlToText(question.stem.text)}
@@ -107,37 +109,31 @@ export default function QuestionResultsTable({
           </TextClamp>
         </Box>
       ),
-      type: (
-        <Box style={{ minWidth: '130px' }} className={styles.tableCell}>
-          {question.type}
-        </Box>
-      ),
-      category: (
-        <Box style={{ minWidth: '130px' }} className={styles.tableCell}>
-          {question.category?.category || '-'}
-        </Box>
-      ),
+      type: <Box sx={{ minWidth: '130px' }}>{question.type}</Box>,
+      category: <Box sx={{ minWidth: '130px' }}>{question.category?.category || '-'}</Box>,
       level: (
-        <Box style={{ minWidth: '130px' }} className={styles.tableCell}>
+        <Box sx={{ minWidth: '130px' }}>
           {levels.find((level) => level.value === question.level)?.label || question.level || '-'}
         </Box>
       ),
       result: getResultItem(question.id),
       score: getScoreItem(question.id),
     }));
-  }, [questions, styles, getScoreItem, getResultItem, levels, currentPage, size]);
+  }, [questions, getScoreItem, getResultItem, levels, currentPage, size]);
 
   return (
-    <PaginatedList
-      columns={headers}
-      items={tableData}
-      size={size}
-      page={currentPage}
-      hidePaper
-      totalCount={questions?.length || 0}
-      totalPages={Math.ceil(questions?.length / size)}
-      onPageChange={setCurrentPage}
-    />
+    <ContextContainer>
+      <PaginatedList
+        columns={headers}
+        items={tableData}
+        size={size}
+        page={currentPage}
+        hidePaper
+        totalCount={questions?.length || 0}
+        totalPages={Math.ceil(questions?.length / size)}
+        onPageChange={setCurrentPage}
+      />
+    </ContextContainer>
   );
 }
 

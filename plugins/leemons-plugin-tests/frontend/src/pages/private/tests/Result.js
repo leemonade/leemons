@@ -314,8 +314,8 @@ export default function Result() {
                         studentUserAgentId={store.userLoaded}
                         afterSaveCorrection={init}
                         containerStyles={{
-                          paddingInline: 22 + 16, // 16 + accordeon padding
                           paddingBlock: 16,
+                          paddingInline: 22, // Accordeon title padding
                         }}
                       />
                     </ActivityAccordionPanel>
