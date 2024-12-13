@@ -3,6 +3,7 @@ const _ = require('lodash');
 
 const { getByCenterId, getCalendars } = require('../calendar-configs');
 const { getPermissionConfig: getPermissionConfigEvent } = require('../events/getPermissionConfig');
+const { list: listKanbanColumns } = require('../kanban-columns');
 
 const { getEventsMultipleCalendars } = require('./getEvents');
 const { getPermissionConfig: getPermissionConfigCalendar } = require('./getPermissionConfig');
@@ -328,6 +329,217 @@ async function removeNonCurrentProgramCalendarsAndEvents({ result, ctx }) {
   return result;
 }
 
+async function getKanbanColumnsData({ result, showHiddenColumns, ctx }) {
+  let kanbanColumns = [];
+  const instanceIdEvents = {};
+  let instanceStatusByInstance = {};
+  let instancesById = {};
+
+  try {
+    const instanceIds = [];
+
+    result.events.forEach((event) => {
+      if (event?.data?.instanceId) {
+        instanceIds.push(event?.data?.instanceId);
+        instanceIdEvents[event.id] = event.data.instanceId;
+      }
+    });
+
+    const [instanceStatus, _kanbanColumns, instances] = await Promise.all([
+      ctx.tx.call('assignables.assignableInstances.getAssignableInstancesStatus', {
+        assignableInstanceIds: instanceIds,
+      }),
+      listKanbanColumns({ showHiddenColumns, ctx }),
+      ctx.tx.call('assignables.assignableInstances.getAssignableInstances', {
+        ids: instanceIds,
+        details: true,
+      }),
+    ]);
+
+    kanbanColumns = _kanbanColumns;
+    instanceStatusByInstance = _.keyBy(instanceStatus, 'instance');
+    instancesById = _.keyBy(instances, 'id');
+  } catch (e) {
+    console.error(e);
+  }
+
+  const kanbanColumnsByOrder = _.keyBy(kanbanColumns, 'order');
+
+  return {
+    kanbanColumns: kanbanColumnsByOrder,
+    instanceStatusByInstance,
+    instanceIdEvents,
+    instancesById,
+  };
+}
+
+async function getEventPermissionsAndUsers({ result, ctx }) {
+  const { userSession } = ctx.meta;
+  const permissionNames = [];
+
+  _.forEach(result.events, (event) => {
+    permissionNames.push(getPermissionConfigEvent(event.id).permissionName);
+  });
+
+  const [viewPermissions, _ownerPermissions] = await Promise.all([
+    ctx.tx.call('users.permissions.findUserAgentsWithPermission', {
+      permissions: {
+        permissionName: permissionNames,
+        actionNames: ['view'],
+      },
+      returnUserAgents: false,
+    }),
+    ctx.tx.call('users.permissions.findUserAgentsWithPermission', {
+      permissions: {
+        permissionName: permissionNames,
+        actionNames: ['owner'],
+      },
+      returnUserAgents: false,
+    }),
+  ]);
+
+  const userAgentIds = _.uniq(_.map(viewPermissions, 'userAgent'));
+  const permissionsByName = _.groupBy(viewPermissions, 'permissionName');
+  const ownerPermissionsByName = _.groupBy(_ownerPermissions, 'permissionName');
+
+  const userAgents = await ctx.tx.call('users.users.getUserAgentsInfo', { userAgentIds });
+
+  const userAgentsById = _.keyBy(userAgents, 'id');
+
+  const currentUserAgentIds = new Set(_.map(userSession.userAgents, 'id'));
+
+  return {
+    permissionsByName,
+    ownerPermissionsByName,
+
+    userAgentsById,
+    currentUserAgentIds,
+  };
+}
+
+async function addUsersToEvent({
+  event,
+  permissionsByName,
+  ownerPermissionsByName,
+  userAgentsById,
+  currentUserAgentIds,
+}) {
+  event.users = [];
+  event.owners = [];
+  event.userAgents = [];
+
+  const { permissionName } = getPermissionConfigEvent(event.id);
+  const ownerPermissions = ownerPermissionsByName[permissionName];
+
+  if (ownerPermissions?.length) {
+    event.owners = _.map(ownerPermissions, 'userAgent');
+  }
+
+  const permissions = permissionsByName[permissionName];
+
+  if (permissions?.length) {
+    permissions?.forEach((permission) => {
+      const userAgent = userAgentsById[permission.userAgent];
+
+      if (userAgent && !currentUserAgentIds.has(userAgent.id)) {
+        event.users.push(userAgent.id);
+        event.userAgents.push(userAgent);
+      }
+    });
+  }
+
+  return event;
+}
+
+async function addKanbanDataToEvent({
+  event,
+  kanbanColumns,
+  instanceStatusByInstance,
+  instancesById,
+  instanceIdEvents,
+}) {
+  if (event.data.instanceId) {
+    event.data.hideCalendarField = true;
+  }
+
+  // --- Instancia
+  if (instanceIdEvents[event.id]) {
+    const instanceStatus = instanceStatusByInstance[instanceIdEvents[event.id]];
+    const instance = instancesById[instanceIdEvents[event.id]];
+
+    event.instanceData = {
+      ...instanceStatus,
+      instance,
+    };
+
+    if (instanceStatus && (event.endDate || event.startDate) && instanceStatus.dates.deadline) {
+      event.startDate = instanceStatus.dates.start;
+      event.endDate = instanceStatus.dates.deadline;
+    }
+
+    if (instanceStatus?.dates.archived) {
+      event.data.hideInCalendar = true;
+    }
+
+    if (instanceStatus) {
+      event.disableDrag = true;
+      const now = new Date();
+
+      if (instanceStatus.assignation) {
+        if (instanceStatus.dates.visualization) {
+          // Si hay fecha de visualización
+          if (now >= new Date(instanceStatus.dates.visualization)) {
+            // Si la fecha actual es mayor debe de poder ver el evento
+            event.data.column = kanbanColumns[1]?.id;
+          } else {
+            return null;
+          }
+        }
+        // Si siempre tiene que estar disponible lo ponemos en por hacer
+        if (instanceStatus.alwaysAvailable) {
+          event.data.column = kanbanColumns[2].id;
+        }
+        // Si tiene fecha de inicio y la fecha actual es mayor lo ponemos en por hacer
+        if (instanceStatus.dates.start) {
+          if (now >= new Date(instanceStatus.dates.start)) {
+            event.data.column = kanbanColumns[2].id;
+          } else if (!instanceStatus.dates.visualization) {
+            return null;
+          }
+        }
+      }
+
+      if (instanceStatus.status === 'assigned') {
+        event.data.column = kanbanColumns[1]?.id;
+      }
+      if (instanceStatus.status === 'opened') {
+        event.data.column = kanbanColumns[2].id;
+      }
+      if (instanceStatus.status === 'started') {
+        event.data.column = kanbanColumns[3].id;
+      }
+      if (
+        instanceStatus.status === 'late' ||
+        instanceStatus.status === 'submitted' ||
+        instanceStatus.status === 'closed'
+      ) {
+        event.data.column = kanbanColumns[4].id;
+      }
+      if (instanceStatus.status === 'evaluated') {
+        event.data.column = kanbanColumns[5].id;
+      }
+
+      if (instanceStatus.dates.archived) {
+        event.data.column = kanbanColumns[6].id;
+      }
+
+      if (!event.data.column) {
+        return null;
+      }
+    }
+  }
+}
+
 async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
   const {
     calendars: calendarsIds,
@@ -383,7 +595,27 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
 
   result = await removeNonCurrentProgramCalendarsAndEvents({ result, ctx });
 
-  console.log('result', result);
+  const kanbanData = await getKanbanColumnsData({ result, showHiddenColumns, ctx });
+
+  const eventPermissionsAndUsers = await getEventPermissionsAndUsers({ result, ctx });
+
+  result.events
+    .map((event) => {
+      let _event = addUsersToEvent({
+        ...eventPermissionsAndUsers,
+        event,
+      });
+
+      _event = addKanbanDataToEvent({
+        ...kanbanData,
+        event,
+      });
+
+      return _event;
+    })
+    .filter((event) => !_.isNil(event));
+
+  return result;
 }
 
 module.exports = { getCalendarsToFrontend };
