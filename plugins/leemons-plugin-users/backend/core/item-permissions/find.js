@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const { findPermissionsCacheKey } = require('../../helpers/cacheKeys');
 
 /**
@@ -10,6 +11,10 @@ async function find({ params, ctx }) {
   const cacheKey = findPermissionsCacheKey({ ctx, query: params });
   const cache = await ctx.cache.get(cacheKey);
   if (cache) return cache;
+
+  if (params.$or) {
+    params.$or = params.$or.filter((item) => !_.isEmpty(item));
+  }
 
   const results = await ctx.tx.db.ItemPermissions.find(params).lean();
   const group = _.groupBy(
