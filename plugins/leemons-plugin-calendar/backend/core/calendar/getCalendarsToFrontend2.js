@@ -270,6 +270,64 @@ function getResult({
   };
 }
 
+async function getCalendarsToRemove({ result, ctx }) {
+  const { sessionConfig } = ctx.meta.userSession;
+
+  if (!sessionConfig.program) {
+    return [];
+  }
+
+  const { program } = sessionConfig;
+
+  const calendarIds = result.ownerCalendars.concat(result.calendars).map((calendar) => calendar.id);
+
+  const [noClassCalendars, noProgramCalendars] = await Promise.all([
+    ctx.tx.db.ClassCalendar.find({
+      calendar: calendarIds,
+      program: { $ne: program },
+    })
+      .select({ calendar: 1 })
+      .lean(),
+    ctx.tx.db.ProgramCalendar.find({
+      calendar: calendarIds,
+      program: { $ne: program },
+    })
+      .select({ calendar: 1 })
+      .lean(),
+  ]);
+
+  const calendarIdsToRemove = new Set();
+  noClassCalendars
+    .concat(noProgramCalendars)
+    .forEach(({ calendar }) => calendarIdsToRemove.add(calendar));
+
+  return calendarIdsToRemove;
+}
+
+async function removeNonCurrentProgramCalendarsAndEvents({ result, ctx }) {
+  const calendarsToRemove = await getCalendarsToRemove({ result, ctx });
+
+  if (calendarsToRemove.size) {
+    result.ownerCalendars = result.ownerCalendars.filter(
+      (calendar) => !calendarsToRemove.has(calendar.id)
+    );
+    result.calendars = result.calendars.filter((calendar) => !calendarsToRemove.has(calendar.id));
+    result.events = result.events.filter(({ calendar, data }) => {
+      if (calendarsToRemove.has(calendar)) {
+        return false;
+      }
+
+      if (data && Array.isArray(data.classes)) {
+        return !data.classes.some((classCalendarId) => calendarsToRemove.has(classCalendarId));
+      }
+
+      return true;
+    });
+  }
+
+  return result;
+}
+
 async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
   const {
     calendars: calendarsIds,
@@ -311,7 +369,7 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
     configCalendars,
   });
 
-  const result = getResult({
+  let result = getResult({
     calendars: finalCalendars,
     events,
     userCalendar,
@@ -322,6 +380,8 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
     configCalendars,
     ctx,
   });
+
+  result = await removeNonCurrentProgramCalendarsAndEvents({ result, ctx });
 
   console.log('result', result);
 }
