@@ -1,3 +1,11 @@
+const questionTypes = {
+  trueFalse: 'T/F',
+  monoResponse: 'Mono Response',
+  shortResponse: 'Short',
+  openResponse: 'Open',
+  map: 'Map',
+};
+
 module.exports = {
   questionsBanksList: {
     pageTitle: 'Question Banks List',
@@ -122,6 +130,7 @@ module.exports = {
     hideOptionsLabel: 'Hide options',
     hideOptionsPlaceholder: 'Choose an option',
     hideOptionsHelp: 'Hidden options are identified by the icon {{icon}}',
+    hasStemResourceLabel: 'Featured image',
     hasCoverLabel: 'Featured image',
     stemResourceLabel: 'Add multimedia resource',
     stemResourceDescription: 'You can add image, audio or video elements.',
@@ -383,6 +392,7 @@ module.exports = {
     prev: 'Previous',
     curriculum: 'Curriculum',
     next: 'Continue',
+    askForAHint: 'Ask for a hint...',
     'cluehide-response': 'Hide option',
     cluenote: 'Text track',
     pts: 'pts',
@@ -500,6 +510,7 @@ module.exports = {
     useAllQuestions: 'Use all questions',
     customQuestionSelection: 'Custom question selection',
     levelLabel: 'Level',
+    level: 'Level',
     nQuestionsRequired: 'Field required',
     minOneQuestion: 'Minimum one question',
     all: 'All',
@@ -552,6 +563,7 @@ module.exports = {
   testResult: {
     testResult: 'Statistics by type of question',
     questions: 'Questions',
+    questionList: 'Question List',
     test: 'Test',
     notGradable: 'Non-qualifiable',
     gradable: 'Qualifiable',
@@ -562,10 +574,13 @@ module.exports = {
     feedbackForStudent: 'Feedback for student',
     sendFeedback: 'Send feedback',
     feedbackRequired: 'Feedback required',
-    feedbackDone: 'Feedback sent successfully',
-    ok: 'Correct',
-    ko: 'Incorrect',
-    nsnc: 'NS/NC',
+    feedbackDone: 'Feedback saved successfully',
+    evaluationAndFeedback: 'Evaluation and feedback',
+    contactStudent: 'Contact student',
+    contactTeacher: 'Contact teacher',
+    ok: 'Successful',
+    ko: 'Wrong',
+    nsnc: 'N/R',
     chatDescription: 'Do you have any questions about this evaluation?',
     chatTeacherDescription: 'Would you like to write a comment?',
     chatButtonStudent: 'Write to your student',
@@ -576,6 +591,23 @@ module.exports = {
     returnToTable: 'Return to list',
     nextActivity: 'Next activity',
     goToModule: 'Module dashboard',
+    resultsGraph: {
+      title: 'Test Detail',
+      views: {
+        category: 'Category',
+        level: 'Level',
+        type: 'Type',
+      },
+      questionStatus: {
+        ok: 'Correct',
+        ko: 'Incorrect',
+        omitted: 'N/R',
+      },
+      questionTypes: {
+        ...questionTypes,
+      },
+      undefined: 'Undefined',
+    },
     questionResultsTable: {
       nonGradedQuestionsAlert: {
         title: 'Questions to be graded',

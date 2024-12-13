@@ -34,7 +34,7 @@ export default function Index(props) {
       <>
         <AnswerFeed questionStatus={store.questionResponses?.[question.id]?.status} t={t} />
         {!question.hasImageAnswer && question.stemResource ? (
-          <Stack fullWidth spacing={4}>
+          <Stack fullWidth sx={{ marginBottom: 46 }} spacing={4}>
             <Box>
               <StemResource {...props} asset={question.stemResource} />
             </Box>
@@ -43,10 +43,10 @@ export default function Index(props) {
             </Box>
           </Stack>
         ) : (
-          <>
+          <Box sx={{ marginBottom: 72 }}>
             {question?.stemResource && <StemResource {...props} asset={question.stemResource} />}
             <Responses {...props} />
-          </>
+          </Box>
         )}
       </>
     );

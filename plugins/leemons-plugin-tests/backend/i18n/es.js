@@ -1,5 +1,12 @@
 const CATEGORY = 'Categoría';
 const CATEGORIES = 'Categorías';
+const QUESTION_TYPES = {
+  trueFalse: 'V/F',
+  monoResponse: 'Respuesta Única',
+  shortResponse: 'Respuesta Corta',
+  openResponse: 'Respuesta Abierta',
+  map: 'Mapa',
+};
 
 const EXPLANATION = 'Explicación';
 
@@ -126,7 +133,7 @@ module.exports = {
     hideOptionsLabel: 'Ocultar opciones',
     hideOptionsPlaceholder: 'Selecciona una opción',
     hideOptionsHelp: 'Las opciones ocultas se identifican con el icono {{icon}}',
-    hasStemResourceLabel: 'Feature image',
+    hasStemResourceLabel: 'Imagen destacada',
     hasCoverLabel: 'Imagen destacada',
     stemResourceLabel: 'Incluir recurso multimedia',
     stemResourceDescription: 'Puedes añadir elementos de imagen, audio o video. ',
@@ -505,6 +512,7 @@ module.exports = {
     nOfQuestions: 'Número de preguntas',
     useAllQuestions: 'Utilizar todas las preguntas',
     customQuestionSelection: 'Elección personalizada de preguntas',
+    levelLabel: 'Nivel',
     level: 'Nivel',
     nQuestionsRequired: 'Campo necesario',
     minOneQuestion: 'Seleccionar al menos una pregunta',
@@ -558,6 +566,7 @@ module.exports = {
   testResult: {
     testResult: 'Estadísticas por tipo de pregunta',
     questions: 'Preguntas',
+    questionList: 'Listado de preguntas',
     test: 'Test',
     notGradable: 'No calificable',
     gradable: 'Calificable',
@@ -568,7 +577,10 @@ module.exports = {
     feedbackForStudent: 'Comentario para el estudiante',
     sendFeedback: 'Enviar comentario',
     feedbackRequired: 'Comentario obligatorio',
-    feedbackDone: 'Comentario enviado con éxito',
+    feedbackDone: 'Comentario actualizado con éxito',
+    evaluationAndFeedback: 'Evaluación y Feedback',
+    contactStudent: 'Contactar estudiante',
+    contactTeacher: 'Contactar profesor',
     ok: 'Correcta',
     ko: 'Incorrecta',
     nsnc: 'NS/NC',
@@ -582,6 +594,23 @@ module.exports = {
     returnToTable: 'Volver al listado',
     nextActivity: 'Siguiente actividad',
     goToModule: 'Dashboard del modulo',
+    resultsGraph: {
+      title: 'Detalle del test',
+      views: {
+        category: 'Categoría',
+        level: 'Nivel',
+        type: 'Tipo',
+      },
+      questionStatus: {
+        ok: 'Correcto',
+        ko: 'Incorrecto',
+        omitted: 'NS/NC',
+      },
+      questionTypes: {
+        ...QUESTION_TYPES,
+      },
+      undefined: 'Indefinido',
+    },
     questionResultsTable: {
       nonGradedQuestionsAlert: {
         title: 'Preguntas por corregir',

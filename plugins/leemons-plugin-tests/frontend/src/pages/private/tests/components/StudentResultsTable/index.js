@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { useIsTeacher } from '@academic-portfolio/hooks';
-import { Box, Button, ContextContainer, Alert } from '@bubbles-ui/components';
+import { Box, Button, ContextContainer, Alert, Stack, Text } from '@bubbles-ui/components';
 import { cloneDeep } from 'lodash';
 import PropTypes from 'prop-types';
 
@@ -27,6 +27,7 @@ export default function StudentResultsTable({
   t,
   cx,
   afterSaveCorrection,
+  containerStyles,
   ...props
 }) {
   const [viewMode, setViewMode] = useState(VIEW_MODES.TABLE);
@@ -123,14 +124,7 @@ export default function StudentResultsTable({
   }, [questions, questionResponses, isTeacher]);
 
   return (
-    <ContextContainer
-      titleRightZone={
-        <Button variant="link" onClick={handleViewModeChange}>
-          {viewModeButtonLabel}
-        </Button>
-      }
-      title={`${t('questions')} (${questions?.length})`}
-    >
+    <ContextContainer sx={{ ...containerStyles }} spacing={0}>
       {showNonGradedQuestionsAlert && (
         <Alert
           title={t('questionResultsTable.nonGradedQuestionsAlert.title')}
@@ -140,6 +134,14 @@ export default function StudentResultsTable({
           {t('questionResultsTable.nonGradedQuestionsAlert.description')}
         </Alert>
       )}
+      <Stack justifyContent="space-between" alignItems="center">
+        <Text strong color="primary">
+          {t('questionList')}
+        </Text>
+        <Button variant="link" onClick={handleViewModeChange}>
+          {viewModeButtonLabel}
+        </Button>
+      </Stack>
       <Box>
         {renderContent({
           viewMode,
@@ -162,4 +164,5 @@ StudentResultsTable.propTypes = {
   instance: PropTypes.object,
   studentUserAgentId: PropTypes.string,
   afterSaveCorrection: PropTypes.func,
+  containerStyles: PropTypes.object,
 };

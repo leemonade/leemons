@@ -154,7 +154,8 @@ export default function Question(props) {
       stepName={previewMode || store.viewMode ? '' : t('questions')}
       Footer={
         <TotalLayoutFooterContainer
-          fixed={!store.viewMode}
+          fixed
+          style={{ zIndex: 100 }}
           showFooterBorder={store.viewMode}
           scrollRef={props.scrollRef}
           rightZone={
@@ -196,7 +197,13 @@ export default function Question(props) {
             </Box>
           }
         >
-          <Box sx={() => ({ display: 'flex', justifyContent: 'center', marginLeft: '24px' })}>
+          <Box
+            sx={() => ({
+              display: 'flex',
+              justifyContent: 'center',
+              marginLeft: '24px',
+            })}
+          >
             <Box sx={() => ({ maxWidth: '280px', width: '100%' })}>
               <ProgressBottomBar
                 size="md"
