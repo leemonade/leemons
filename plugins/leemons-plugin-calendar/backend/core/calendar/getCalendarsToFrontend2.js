@@ -1,8 +1,7 @@
 const { getUserAgentCalendarKey, getUserFullName } = require('@leemons/users');
-const assert = require('assert');
 const _ = require('lodash');
 
-const { getByCenterId } = require('../calendar-configs');
+const { getByCenterId, getCalendars } = require('../calendar-configs');
 const { getPermissionConfig: getPermissionConfigEvent } = require('../events/getPermissionConfig');
 
 const { getEventsMultipleCalendars } = require('./getEvents');
@@ -60,12 +59,12 @@ async function getUserPermissionsData({ ctx }) {
 async function getCalendarsData({ ids, ctx }) {
   const promises = [
     ctx.tx.db.Calendars.find({ id: ids }).lean(),
-    ctx.tx.db.ClassCalendar.find({ calendar: ids }).lean(),
+    ctx.tx.db.ClassCalendar.find({ calendar: ids }).select({ id: 1 }).lean(),
   ];
 
   const [calendars, classCalendars] = await Promise.all(promises);
 
-  return { calendars, classCalendars };
+  return { calendars, classCalendars: classCalendars.map((calendar) => calendar.id) };
 }
 
 async function getEventsData({ ids, calendarIds, ctx }) {
@@ -80,41 +79,6 @@ async function getEventsData({ ids, calendarIds, ctx }) {
   return { events, eventsFromCalendars };
 }
 
-function areItemsEqual(items, expectedItems) {
-  const itemsByName = _.keyBy(items, 'permissionName');
-  const expectedItemsByName = _.keyBy(expectedItems, 'permissionName');
-
-  const isEqual =
-    items.length === expectedItems.length &&
-    _.every(itemsByName, (item, key) =>
-      _.isEqualWith(item, expectedItemsByName[key], (a, b) => {
-        if (Array.isArray(a.actionNames) && Array.isArray(b.actionNames)) {
-          return _.isEqual(a.actionNames.sort(), b.actionNames.sort());
-        }
-        return isEqual(a, b);
-      })
-    );
-
-  if (!isEqual) {
-    const differentItems = Object.keys(itemsByName).filter(
-      (key) =>
-        !_.isEqualWith(itemsByName[key], expectedItemsByName[key], (a, b) => {
-          if (Array.isArray(a.actionNames) && Array.isArray(b.actionNames)) {
-            return _.isEqual(a.actionNames.sort(), b.actionNames.sort());
-          }
-          return isEqual(a, b);
-        })
-    );
-    console.log({
-      length: items.length,
-      expectedLength: expectedItems.length,
-      diff: differentItems,
-    });
-  }
-
-  return isEqual;
-}
-
 async function getUserAgentData({ ctx }) {
   const userAgentId = ctx.meta.userSession.userAgents[0].id;
 
@@ -126,7 +90,7 @@ async function getUserAgentData({ ctx }) {
 
   return {
     id: data.id,
-    center: data.center.id,
+    center: Array.isArray(data.center) ? data.center[0]?.id : data.center?.id,
     profile: data.profile.sysName,
   };
 }
@@ -188,6 +152,124 @@ function getOwnedCalendars({ ids, calendars, ctx }) {
   );
 }
 
+function getFinalCalendars({ userCalendar, ownedCalendars, calendars, configCalendars }) {
+  const finalCalendars = new Set();
+  const finalCalendarsIds = new Set();
+
+  if (userCalendar) {
+    finalCalendars.add(userCalendar);
+    finalCalendarsIds.add(userCalendar.id);
+  }
+
+  ownedCalendars.forEach((calendar) => {
+    if (!finalCalendarsIds.has(calendar.id)) {
+      finalCalendars.add(calendar);
+      finalCalendarsIds.add(calendar.id);
+    }
+  });
+
+  calendars.forEach((calendar) => {
+    if (!finalCalendarsIds.has(calendar.id)) {
+      finalCalendars.add(calendar);
+      finalCalendarsIds.add(calendar.id);
+    }
+  });
+
+  let configCalendarEvents = [];
+  if (Array.isArray(configCalendars)) {
+    configCalendars.forEach((calendar) => {
+      configCalendarEvents = configCalendarEvents.concat(calendar.events);
+      delete calendar.events;
+      calendar.section = 'users.calendar.user_section';
+
+      if (!finalCalendarsIds.has(calendar.id)) {
+        finalCalendars.add(calendar);
+        finalCalendarsIds.add(calendar.id);
+      }
+    });
+  }
+
+  return {
+    finalCalendars: Array.from(finalCalendars),
+    finalCalendarsIds: Array.from(finalCalendarsIds),
+    configCalendarEvents,
+  };
+}
+
+async function getConfigCalendars({ userAgentData, ctx }) {
+  if (!userAgentData.center) {
+    return null;
+  }
+
+  const calendarConfig = await getByCenterId({ center: userAgentData.center, ctx });
+
+  if (!calendarConfig) {
+    return null;
+  }
+
+  return await getCalendars({ id: calendarConfig.id, withEvents: true, ctx });
+}
+
+function calendarFormatter({ classCalendarsIds, userCalendar, ctx }) {
+  const classCalendarsIdsSet = new Set(classCalendarsIds);
+  const { userSession } = ctx.meta;
+
+  return (calendar) => ({
+    ...calendar,
+    isClass: classCalendarsIdsSet.has(calendar.id),
+    isUserCalendar: calendar.id === userCalendar?.id,
+    image: calendar.id === userCalendar?.id ? userSession.avatar : null,
+    metadata: calendar.metadata ? JSON.parse(calendar.metadata || null) : calendar.metadata,
+    fullName: calendar.id === userCalendar?.id ? getUserFullName({ userSession }) : calendar.name,
+  });
+}
+
+function sortCalendars(calendars, userCalendar) {
+  return _.sortBy(calendars, ({ id, metadata }) => {
+    try {
+      const met = JSON.parse(metadata || null);
+      return met?.internalId || id === userCalendar?.id ? 0 : 1;
+    } catch (e) {
+      return id === userCalendar?.id ? 0 : 1;
+    }
+  });
+}
+
+function getResult({
+  calendars,
+  events,
+  userCalendar,
+  ownedCalendars,
+  classCalendarsIds,
+  eventsFromCalendars,
+  configCalendarEvents,
+  configCalendars,
+  ctx,
+}) {
+  const formatCalendar = calendarFormatter({ classCalendarsIds, userCalendar, ctx });
+
+  return {
+    userCalendar: formatCalendar(userCalendar),
+    ownerCalendars: sortCalendars(_.map(ownedCalendars, formatCalendar), userCalendar),
+    calendars: sortCalendars(_.map(calendars, formatCalendar), userCalendar),
+    events: _.uniqBy(
+      eventsFromCalendars
+        .map((e) => ({
+          ...e,
+          fromCalendar: true,
+        }))
+        .concat(events)
+        .concat(configCalendarEvents)
+        .map((event) => ({
+          ...event,
+          data: _.isString(event.data) ? JSON.parse(event.data || null) : event.data,
+        })),
+      'id'
+    ),
+    configCalendars,
+  };
+}
+
 async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
   const {
     calendars: calendarsIds,
@@ -201,7 +283,14 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
     getEventsData({ ids: eventsIds, calendarIds: calendarsIds, ctx }),
   ]);
 
-  const { calendars, events, classCalendars } = await filterCalendarDataForUserType({
+  const configCalendars = await getConfigCalendars({ userAgentData, ctx });
+
+  const {
+    calendars,
+    events,
+    eventsFromCalendars,
+    classCalendars: classCalendarsIds,
+  } = await filterCalendarDataForUserType({
     calendars: calendarsData,
     events: eventsData,
     userAgentData,
@@ -215,8 +304,26 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
   }
 
   const ownedCalendars = getOwnedCalendars({ ids: ownedCalendarsIds, calendars, ctx });
+  const { finalCalendars, configCalendarEvents } = getFinalCalendars({
+    userCalendar,
+    ownedCalendars,
+    calendars,
+    configCalendars,
+  });
 
-  console.log('calendars', calendars);
+  const result = getResult({
+    calendars: finalCalendars,
+    events,
+    userCalendar,
+    ownedCalendars,
+    classCalendarsIds,
+    eventsFromCalendars,
+    configCalendarEvents,
+    configCalendars,
+    ctx,
+  });
+
+  console.log('result', result);
 }
 
 module.exports = { getCalendarsToFrontend };
