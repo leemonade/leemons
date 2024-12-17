@@ -8,6 +8,7 @@ const models = {
   ...require('./weights'),
   ...require('./manualActivities'),
   ...require('./manualActivityScores'),
+  ...require('./retakes'),
 };
 
 module.exports = {
@@ -19,6 +20,7 @@ module.exports = {
       Weights: models.weightsModel,
       ManualActivities: models.manualActivitiesModel,
       ManualActivityScores: models.manualActivityScoresModel,
+      Retakes: models.retakesModel,
       KeyValue: getKeyValueModel({ modelName: 'v1::scores_KeyValue' }),
     };
   },
