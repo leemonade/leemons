@@ -55,6 +55,10 @@ const schema = new mongoose.Schema(
     classWithoutGroupId: {
       type: String,
     },
+    status: {
+      type: String,
+      default: 'ready',
+    },
   },
   {
     timestamps: true,

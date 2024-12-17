@@ -9,7 +9,8 @@ import {
   Box,
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { useNotifications } from '@bubbles-ui/notifications';
+import { addErrorAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { cloneDeep, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
@@ -17,12 +18,14 @@ import PropTypes from 'prop-types';
 import EnrollmentTab from './EnrollmentTab';
 import InfoTab from './InfoTab';
 
+import { SOCKET_EVENTS } from '@academic-portfolio/config/constants';
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { useSubjectDetails } from '@academic-portfolio/hooks';
 import { useUpdateClass } from '@academic-portfolio/hooks/mutations/useMutateClass';
 
 const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer }) => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
+  const [tSocket] = useTranslateLoader(prefixPN('socketEvents'));
   const [activeTab, setActiveTab] = useState('0');
   const [dirtyForm, setDirtyForm] = useState(false);
   const [tabsKey, setTabsKey] = useState(0);
@@ -34,9 +37,13 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
     },
     true
   );
-  const { mutate: mutateClass, isLoading: isMutatingClass } = useUpdateClass();
+
+  const { mutate: mutateClass, isLoading: isMutatingClass } = useUpdateClass({
+    invalidateOnSuccess: false,
+  });
   const updateForm = useForm();
   const stackRef = useRef();
+  const notifications = useNotifications();
 
   useEffect(() => {
     setDirtyForm(false);
@@ -87,6 +94,10 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
     ));
   }, [subjectDetails, singleClassToShow, program, activeTab]);
 
+  const selectedClass = useMemo(() => {
+    return subjectDetails?.classes?.find((cls) => cls.id === activeTab);
+  }, [subjectDetails, activeTab]);
+
   useEffect(() => {
     setTabsKey((prevKey) => prevKey + 1);
   }, [EnrollmentTabs]);
@@ -120,7 +131,18 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
 
     mutateClass(requestBody, {
       onSuccess: () => {
-        addSuccessAlert(t('updateClassMessage'));
+        const className = selectedClass?.alias ?? selectedClass?.classroomId;
+        const notificationId = `${SOCKET_EVENTS.CLASS_UPDATE}:${requestBody.id}`;
+
+        notifications.showNotification({
+          id: notificationId,
+          severity: 'info',
+          loading: true,
+          title: tSocket('title.CLASS_UPDATE', { className }),
+          message: tSocket('message.PROCESSING'),
+          autoClose: false,
+          disallowClose: true,
+        });
       },
       onError: (e) => {
         console.error(e);
@@ -138,9 +160,7 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
   return (
     <TotalLayoutStepContainer
       stepName={
-        subjectTreeNode?.text
-          ? `${program?.name} - ${subjectTreeNode?.text}`
-          : (program?.name ?? '')
+        subjectTreeNode?.text ? `${program?.name} - ${subjectTreeNode?.text}` : program?.name ?? ''
       }
       clean
       fullWidth
@@ -151,7 +171,11 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
           fixed
           rectRef={stackRef}
           rightZone={
-            <Button disabled={!dirtyForm} onClick={handleSaveChanges} loading={isMutatingClass}>
+            <Button
+              disabled={!dirtyForm || selectedClass?.status === 'updating'}
+              onClick={handleSaveChanges}
+              loading={isMutatingClass}
+            >
               {t('saveChanges')}
             </Button>
           }
