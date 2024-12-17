@@ -9,6 +9,7 @@ const models = {
   ...require('./manualActivities'),
   ...require('./manualActivityScores'),
   ...require('./retakes'),
+  ...require('./retakeScores'),
 };
 
 module.exports = {
@@ -21,6 +22,7 @@ module.exports = {
       ManualActivities: models.manualActivitiesModel,
       ManualActivityScores: models.manualActivityScoresModel,
       Retakes: models.retakesModel,
+      RetakeScores: models.retakeScoresModel,
       KeyValue: getKeyValueModel({ modelName: 'v1::scores_KeyValue' }),
     };
   },
