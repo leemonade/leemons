@@ -400,8 +400,10 @@ module.exports = {
       noActivity: 'NS',
       submitted: 'Submitted',
       avgScore: 'Average score',
-      calculated: 'Calculated',
-      custom: 'Teacher',
+      calculated: 'CALC.',
+      custom: 'FINAL',
+      retake: 'CALL',
+      attendance: 'Attendance',
     },
 
     newModule:

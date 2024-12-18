@@ -21,10 +21,10 @@ export const allRetakeScoresKey = [
 ];
 
 export const getRetakeScoresKey = ({ classId, period, ...query }) => [
-  ...allRetakeScoresKey,
   {
+    ...allRetakeScoresKey[0],
+    ...query,
     classId,
     period,
   },
-  query,
 ];

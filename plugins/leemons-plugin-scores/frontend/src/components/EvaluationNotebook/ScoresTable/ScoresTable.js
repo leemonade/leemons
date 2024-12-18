@@ -26,6 +26,7 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
     avgScore: t('scoresTable.avgScore'),
     gradingTasks: t('scoresTable.calculated'),
     customScore: t('scoresTable.custom'),
+    retake: t('scoresTable.retake'),
     attendance: t('scoresTable.attendance'),
 
     unableToOpen: t('unableToOpen'),
@@ -39,7 +40,7 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
   const { mutateAsync: customScoreMutate } = useScoresMutation();
   const { mutateAsync: manualActivityScoreMutate } = useSetManualActivityScoresMutation();
 
-  const { scales, usePercentage, activities, studentsData, isLoading } = useTableData({
+  const { scales, usePercentage, activities, studentsData, isLoading, retakes } = useTableData({
     program,
     class: klass,
     period,
@@ -86,6 +87,7 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
         from={period?.startDate}
         to={period?.endDate}
         labels={labels}
+        retakes={retakes}
         onOpen={({ rowId, columnId }) => handleOpen({ rowId, columnId, activities, labels })}
         onDataChange={onDataChange({
           assignationScoreMutate,

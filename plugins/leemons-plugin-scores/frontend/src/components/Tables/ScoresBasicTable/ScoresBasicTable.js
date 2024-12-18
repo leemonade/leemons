@@ -15,6 +15,7 @@ import {
   SCORES_BASIC_TABLE_PROP_TYPES,
 } from './ScoresBasicTable.constants';
 import { ScoresBasicTableStyles } from './ScoresBasicTable.styles';
+import { RightContent } from './components/RightContent';
 
 const ScoresBasicTable = ({
   grades,
@@ -396,6 +397,22 @@ const ScoresBasicTable = ({
             })}
           </Box>
         </Box>
+        <RightContent
+          labels={labels}
+          overFlowRight={overFlowRight}
+          headerProps={{
+            periodName,
+            from,
+            to,
+            locale,
+            hideCustom,
+          }}
+          studentsData={value}
+          grades={grades}
+          activities={activities}
+          useNumbers={useNumbers}
+        />
+
         <Box className={classes.rightBody}>
           <Box className={classes.rightBodyHeader}>
             <Box className={classes.headerAvg}>

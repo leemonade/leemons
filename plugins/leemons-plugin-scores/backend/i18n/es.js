@@ -401,8 +401,9 @@ module.exports = {
       noActivity: 'NE',
       submitted: 'Entregado',
       avgScore: 'Nota promedio',
-      calculated: 'Calculada',
-      custom: 'Docente',
+      calculated: 'CALC.',
+      custom: 'FINAL',
+      retake: 'CONV.',
       attendance: 'Asistencia',
     },
     newModule:
