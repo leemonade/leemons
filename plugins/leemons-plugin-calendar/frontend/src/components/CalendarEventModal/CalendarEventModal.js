@@ -426,7 +426,7 @@ function CalendarEventModal(props) {
       <Drawer.Footer>
         {!disabled ? (
           <Box className={classes.actionButtonsContainer}>
-            <Button type="button" variant="light" compact onClick={onClose}>
+            <Button type="button" variant="link" compact onClick={onClose}>
               {messages.cancelButtonLabel}
             </Button>
             {isNew ? (
