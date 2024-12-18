@@ -38,7 +38,7 @@ export default function NotebookFilters({ filters, onChange, value }) {
   const { mutateAsync: addRetake } = useAddRetakeMutation();
   const { data: retakesCount } = useRetakes({
     classId: filters?.class?.id,
-    period: filters?.period?.period.id,
+    period: filters?.period?.period?.id,
     enabled: !!filters?.class?.id && !filters?.period?.isCustom,
     select: (retakes) => retakes.length,
   });
