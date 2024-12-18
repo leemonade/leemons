@@ -394,6 +394,7 @@ module.exports = {
       manualActivity: 'Actividad evaluable',
       manualActivityCreated: 'Actividad evaluable creada correctamente',
       manualActivityError: 'Error creando actividad evaluable',
+      retake: 'Convocatoria',
     },
     scoresTable: {
       students: 'Estudiantes',

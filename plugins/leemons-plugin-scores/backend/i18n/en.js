@@ -393,6 +393,7 @@ module.exports = {
       manualActivity: 'Graded activity',
       manualActivityCreated: 'Graded activity created successfully',
       manualActivityError: 'Error creating graded activity',
+      retake: 'Second call',
     },
     scoresTable: {
       students: 'Students',

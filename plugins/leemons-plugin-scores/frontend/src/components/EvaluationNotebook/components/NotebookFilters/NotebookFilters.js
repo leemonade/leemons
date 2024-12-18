@@ -23,7 +23,9 @@ import useSearchTypes from './hooks/useSearchTypes';
 
 import { WeightConfigDrawer } from '@scores/components/Weights/components/WeightConfigDrawer';
 import { prefixPN } from '@scores/helpers';
+import { useAddRetakeMutation } from '@scores/requests/hooks/mutations/useAddRetake';
 import { useCreateManualActivityMutation } from '@scores/requests/hooks/mutations/useCreateManualActivityMutation';
+import { useRetakes } from '@scores/requests/hooks/queries/useRetakes';
 import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
 
 export default function NotebookFilters({ filters, onChange, value }) {
@@ -33,6 +35,13 @@ export default function NotebookFilters({ filters, onChange, value }) {
   const deploymentConfig = useDeploymentConfig({ pluginName: 'scores', ignoreVersion: true });
   const hideWeighting = deploymentConfig?.deny?.menu?.includes('scores.weights');
   const { mutateAsync: createManualActivity } = useCreateManualActivityMutation();
+  const { mutateAsync: addRetake } = useAddRetakeMutation();
+  const { data: retakesCount } = useRetakes({
+    classId: filters?.class?.id,
+    period: filters?.period?.period.id,
+    enabled: !!filters?.class?.id && !filters?.period?.isCustom,
+    select: (retakes) => retakes.length,
+  });
 
   const isPeriodPublished = useEvaluationNotebookStore((state) => state.isPeriodPublished);
 
@@ -139,6 +148,12 @@ export default function NotebookFilters({ filters, onChange, value }) {
                 label: t('manualActivity'),
                 onClick: () => setManualActivityDrawerIsOpen(true),
                 disabled: isPeriodPublished,
+              },
+              {
+                label: t('retake'),
+                onClick: () =>
+                  addRetake({ classId: filters?.class?.id, period: filters?.period?.period.id }),
+                disabled: retakesCount > 1 || filters?.period?.isCustom,
               },
             ]}
           >
