@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.20.0](https://github.com/leemonade/leemons/compare/1.19.0...1.20.0) (2024-12-18)
+
+
+### Features
+
+* **qbanks:** Add GIFT import and widget support ([8ead49f](https://github.com/leemonade/leemons/commit/8ead49f820a2834b331ea1631fe4978ec634aa20)), closes [#696](https://github.com/leemonade/leemons/issues/696)
+* **scores:** Implement manual activities with grading functionality ([#695](https://github.com/leemonade/leemons/issues/695)) ([a71a644](https://github.com/leemonade/leemons/commit/a71a6447234d5aacf8ba5d4cb095a5bb8e359b62))
+* **tests:** Enhance student results visualization ([1c1cfe0](https://github.com/leemonade/leemons/commit/1c1cfe0df92fa7446f55c37cbea1f0ae295717ca)), closes [#698](https://github.com/leemonade/leemons/issues/698)
+
+
+### Bug Fixes
+
+* **academic-portfolio:** Fix classIds iteration and contacts removal ([481386a](https://github.com/leemonade/leemons/commit/481386a65bef06a447cbe29c5b8a0f84185867d1)), closes [#697](https://github.com/leemonade/leemons/issues/697)
+
 ## [1.19.0](https://github.com/leemonade/leemons/compare/1.18.0...1.19.0) (2024-12-09)
 
 
