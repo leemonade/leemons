@@ -34,6 +34,7 @@ export type SetKeyQueryResult = {
 export function getKey<T>(model: Model<T>, key: string): Promise<GetKeyQueryResult<T>>;
 export function hasKey(model: Model<unknown>, key: string): Promise<boolean>;
 export function setKey<T>(model: Model<T>, key: string, value?: T): Promise<SetKeyQueryResult>;
+export function deleteKey<T>(model: Model<T>, key: string): Promise<DeleteResult>;
 
 export type GetKeyValueModel = {
   id: string;

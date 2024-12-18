@@ -1,5 +1,16 @@
 const { mongoose, newModel } = require('@leemons/mongodb');
 
+const externalIdentitySchema = new mongoose.Schema({
+  provider: {
+    type: String,
+    required: true,
+  },
+  externalId: {
+    type: String,
+    required: true,
+  },
+});
+
 const schema = new mongoose.Schema(
   {
     id: {
@@ -57,6 +68,11 @@ const schema = new mongoose.Schema(
     gender: {
       type: String,
       required: true,
+    },
+    externalIdentities: {
+      type: [externalIdentitySchema],
+      required: false,
+      default: [],
     },
   },
   {
