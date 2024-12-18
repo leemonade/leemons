@@ -1,7 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import { useUserCenters } from '@users/hooks';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+
 import {
   Select,
   TotalLayoutContainer,
@@ -12,20 +10,24 @@ import {
   Box,
   LoadingOverlay,
 } from '@bubbles-ui/components';
-import useProgramAcademicTree from '@academic-portfolio/hooks/queries/useProgramAcademicTree';
-import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
-import EnrollmentDrawer from '@academic-portfolio/components/AcademicTree/EnrollmentDrawer/EnrollmentDrawer';
-
+import { OpenIcon } from '@bubbles-ui/icons/outline';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import { useUserCenters } from '@users/hooks';
+import { cloneDeep, sortBy } from 'lodash';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { v4 as uuidv4 } from 'uuid';
+
+import { GroupView } from '../../components/AcademicTree/GroupView/GroupView';
+import SubjectView from '../../components/AcademicTree/SubjectView/SubjectView';
+
 import { CourseView } from '@academic-portfolio/components/AcademicTree/CourseView/CourseView';
+import EnrollmentDrawer from '@academic-portfolio/components/AcademicTree/EnrollmentDrawer/EnrollmentDrawer';
 import { KnowledgeView } from '@academic-portfolio/components/AcademicTree/KnowledgeView/KnowledgeView';
 import TreeBox from '@academic-portfolio/components/AcademicTree/TreeBox';
 import { EmptyState } from '@academic-portfolio/components/EmptyState';
-import { OpenIcon } from '@bubbles-ui/icons/outline';
-import { cloneDeep, sortBy } from 'lodash';
-import { GroupView } from '../../components/AcademicTree/GroupView/GroupView';
-import SubjectView from '../../components/AcademicTree/SubjectView/SubjectView';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
+import useProgramAcademicTree from '@academic-portfolio/hooks/queries/useProgramAcademicTree';
 
 const AcademicTreePage = () => {
   const [selectedCenter, setSelectedCenter] = useState('');

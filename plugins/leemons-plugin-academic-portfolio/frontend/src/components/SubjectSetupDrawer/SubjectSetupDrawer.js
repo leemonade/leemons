@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
 
 import {
   BaseDrawer,
@@ -6,14 +6,18 @@ import {
   TotalLayoutStepContainer,
   TotalLayoutContainer,
 } from '@bubbles-ui/components';
+import { useNotifications } from '@bubbles-ui/notifications';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { Header } from '@leebrary/components/AssetPickerDrawer/components/Header';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useQueryClient } from '@tanstack/react-query';
 import { cloneDeep, isArray } from 'lodash';
 import PropTypes from 'prop-types';
 
 import SubjectForm from './SubjectForm';
 
+import { SOCKET_EVENTS } from '@academic-portfolio/config/constants';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { useProgramDetail } from '@academic-portfolio/hooks';
 import { getProgramSubjectsKey } from '@academic-portfolio/hooks/keys/programSubjects';
 import {
@@ -35,12 +39,17 @@ const SubjectSetupDrawer = ({
   localizations,
   allSubjectIds, // temporary for us to be able to reset the details query when updating a subject... for all subjects, shouldn't be like that. TODO: Update hook
 }) => {
+  const [tSocket] = useTranslateLoader(prefixPN('socket'));
+  const notifications = useNotifications();
+
   const { data: programDetail } = useProgramDetail(programId, {
     enabled: programId?.length > 0,
   });
 
   const { mutateAsync: createClassAsync, isLoading: isCreateClassLoading } = useCreateClass();
-  const { mutateAsync: updateClassAsync, isLoading: isUpdateClassLoading } = useUpdateClass();
+  const { mutateAsync: updateClassAsync, isLoading: isUpdateClassLoading } = useUpdateClass({
+    invalidateOnSuccess: false,
+  });
   const { mutateAsync: deleteClassAsync } = useDeleteClass();
 
   const queryClient = useQueryClient();
@@ -129,6 +138,19 @@ const SubjectSetupDrawer = ({
     );
     const classesUpdatePromises = [];
     classesToUpdate.forEach((classToUpdate) => {
+      const className = classToUpdate?.alias ?? classToUpdate?.classroomId;
+      const notificationId = `${SOCKET_EVENTS.CLASS_UPDATE}:${classToUpdate.id}`;
+
+      notifications.showNotification({
+        id: notificationId,
+        severity: 'info',
+        loading: true,
+        title: tSocket('title.CLASS_UPDATE', { className }),
+        message: tSocket('message.PROCESSING'),
+        autoClose: false,
+        disallowClose: true,
+      });
+
       classesUpdatePromises.push(updateClassAsync(classToUpdate));
     });
 

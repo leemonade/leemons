@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import {
-  ContextContainer,
-  Title,
   Box,
-  Button,
-  ActionButton,
-  TextInput,
   Stack,
+  Title,
+  Button,
   Loader,
+  TextInput,
+  ActionButton,
+  LoadingOverlay,
+  ContextContainer,
 } from '@bubbles-ui/components';
 import { DeleteBinIcon, AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -195,7 +196,8 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
   }
 
   return (
-    <ContextContainer sx={{ padding: 24 }}>
+    <ContextContainer sx={{ position: 'relative', padding: 24 }}>
+      <LoadingOverlay visible={classData?.status === 'updating'} />
       <ContextContainer>
         <Title order={1}>{aliasOrClassroomId}</Title>
         <Title order={2}>{t('teachers')}</Title>

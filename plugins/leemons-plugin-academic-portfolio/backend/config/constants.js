@@ -1,4 +1,5 @@
 const permissionsPrefix = 'academic-portfolio';
+const PLUGIN_NAME = permissionsPrefix;
 
 const permissionNames = {
   portfolio: `${permissionsPrefix}.portfolio`,
@@ -371,6 +372,11 @@ const PROGRAM_STAFF_ROLES = {
   EXTERNAL_EVALUATOR: 'external-evaluator',
 };
 
+const SOCKET_EVENTS = {
+  CLASS_UPDATE: `${PLUGIN_NAME}:class-update`,
+  ENROLLMENT_UPDATE: `${PLUGIN_NAME}:enrollment-update`,
+};
+
 module.exports = {
   pluginName: permissionsPrefix,
   permissions: {
@@ -381,7 +387,8 @@ module.exports = {
   menuItems,
   widgets,
   CUSTOMIZABLE_TRANSLATION_KEYS,
-  PLUGIN_NAME: permissionsPrefix,
+  PLUGIN_NAME,
   VERSION: 1,
   PROGRAM_STAFF_ROLES,
+  SOCKET_EVENTS,
 };

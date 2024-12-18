@@ -1,4 +1,9 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { isArray } from 'lodash';
+
+import { getClassStudentsKey } from '../keys/classStudents';
+import { getProgramSubjectsKey } from '../keys/programSubjects';
+
 import {
   addStudentsToClassRequest,
   createClassRequest,
@@ -6,19 +11,21 @@ import {
   removeStudentFromClassRequest,
   updateClassRequest,
 } from '@academic-portfolio/request';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getProgramSubjectsKey } from '../keys/programSubjects';
-import { getClassStudentsKey } from '../keys/classStudents';
 
-export function useUpdateClass() {
+export function useUpdateClass({ invalidateOnSuccess = true } = {}) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (props) => updateClassRequest(props),
     onSuccess: (data) => {
-      const queryKey = getProgramSubjectsKey(data.class?.program);
-      queryClient.invalidateQueries(queryKey);
-      queryClient.invalidateQueries(['subjectDetail', { subject: data.class.subject.id }]);
+      if (invalidateOnSuccess) {
+        const queryKey = getProgramSubjectsKey(data.class?.program?.id ?? data.class?.program);
+        queryClient.invalidateQueries(queryKey);
+        queryClient.invalidateQueries([
+          'subjectDetail',
+          { subject: data.class.subject?.id ?? data.class.subject },
+        ]);
+      }
     },
   });
 }
@@ -41,20 +48,22 @@ export function useDeleteClass() {
   });
 }
 
-export function useEnrollStudentsToClasses() {
+export function useEnrollStudentsToClasses({ invalidateOnSuccess = true } = {}) {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (props) => addStudentsToClassRequest(props),
     onSuccess: (data) => {
-      const classes = isArray(data.class) ? data.class : [data.class];
+      if (invalidateOnSuccess) {
+        const classes = isArray(data.class) ? data.class : [data.class];
 
-      classes.forEach((cls) => {
-        const programSubjectsKey = getProgramSubjectsKey(cls.program);
-        queryClient.invalidateQueries(programSubjectsKey);
-        const classStudentsKey = getClassStudentsKey(cls.id);
-        queryClient.invalidateQueries(classStudentsKey);
-      });
+        classes.forEach((cls) => {
+          const programSubjectsKey = getProgramSubjectsKey(cls.program);
+          queryClient.invalidateQueries(programSubjectsKey);
+          const classStudentsKey = getClassStudentsKey(cls.id);
+          queryClient.invalidateQueries(classStudentsKey);
+        });
+      }
     },
   });
 }
