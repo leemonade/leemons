@@ -37,7 +37,14 @@ function emitUpdateClassEvent({
 
   if (userAgent?.id) {
     ctx.socket.emit(userAgent.id, eventName, {
-      class: pick(classData, ['id', 'alias', 'classroomId', 'subject', 'program']),
+      class: pick(classData, [
+        'id',
+        'alias',
+        'classroomId',
+        'classWithoutGroupId',
+        'subject',
+        'program',
+      ]),
       status,
       message,
       error,

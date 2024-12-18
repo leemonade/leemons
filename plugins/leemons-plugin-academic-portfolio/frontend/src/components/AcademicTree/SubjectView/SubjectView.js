@@ -129,9 +129,15 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
       requestBody.schedule = requestBody.schedule.days;
     }
 
+    requestBody.subject = subjectTreeNode?.itemId;
+
     mutateClass(requestBody, {
       onSuccess: () => {
-        const className = selectedClass?.alias ?? selectedClass?.classroomId;
+        const className =
+          selectedClass?.alias ??
+          selectedClass?.classWithoutGroupId ??
+          selectedClass?.classroomId ??
+          '-';
         const notificationId = `${SOCKET_EVENTS.CLASS_UPDATE}:${requestBody.id}`;
 
         notifications.showNotification({

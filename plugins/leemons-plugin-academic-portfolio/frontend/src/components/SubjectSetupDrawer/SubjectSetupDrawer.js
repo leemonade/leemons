@@ -138,7 +138,11 @@ const SubjectSetupDrawer = ({
     );
     const classesUpdatePromises = [];
     classesToUpdate.forEach((classToUpdate) => {
-      const className = classToUpdate?.alias ?? classToUpdate?.classroomId;
+      const className =
+        classToUpdate?.alias ??
+        classToUpdate?.classWithoutGroupId ??
+        classToUpdate?.classroomId ??
+        '-';
       const notificationId = `${SOCKET_EVENTS.CLASS_UPDATE}:${classToUpdate.id}`;
 
       notifications.showNotification({
