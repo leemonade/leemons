@@ -16,15 +16,58 @@ export function useUpdateClass({ invalidateOnSuccess = true } = {}) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (props) => updateClassRequest(props),
+    mutationFn: async ({ subject, ...props }) => updateClassRequest(props),
+    onMutate: async (newClassData) => {
+      const subjectKey = [
+        'subjectDetail',
+        { subject: newClassData.subject, withClasses: true, showArchived: false },
+      ];
+
+      // Cancel any outgoing refetches to avoid overwriting our optimistic update
+      await queryClient.cancelQueries(subjectKey);
+
+      // Snapshot the previous value
+      const previousSubjectData = queryClient.getQueryData(subjectKey);
+
+      // Optimistically update the cache
+      queryClient.setQueryData(subjectKey, (old) => {
+        if (!old) return old;
+
+        return {
+          ...old,
+          classes:
+            old.classes?.map((cls) =>
+              cls.id === newClassData.id ? { ...cls, ...newClassData, status: 'updating' } : cls
+            ) || [],
+        };
+      });
+
+      // Return a context object with the snapshotted value
+      return { previousSubjectData };
+    },
+    onError: (err, newClassData, context) => {
+      console.error('err', err);
+
+      const subjectKey = [
+        'subjectDetail',
+        { subject: newClassData.subject, withClasses: true, showArchived: false },
+      ];
+
+      // If the mutation fails, use the context returned from onMutate to roll back
+      queryClient.setQueryData(subjectKey, context.previousSubjectData);
+    },
     onSuccess: (data) => {
       if (invalidateOnSuccess) {
-        const queryKey = getProgramSubjectsKey(data.class?.program?.id ?? data.class?.program);
-        queryClient.invalidateQueries(queryKey);
-        queryClient.invalidateQueries([
+        const programSubjectKey = getProgramSubjectsKey(
+          data.class?.program?.id ?? data.class?.program
+        );
+        const subjectKey = [
           'subjectDetail',
           { subject: data.class.subject?.id ?? data.class.subject },
-        ]);
+        ];
+
+        queryClient.invalidateQueries(programSubjectKey);
+        queryClient.invalidateQueries(subjectKey);
       }
     },
   });

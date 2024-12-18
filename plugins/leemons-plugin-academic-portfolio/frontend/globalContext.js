@@ -23,7 +23,7 @@ function getSeverity(status) {
 }
 
 function getClassName(classData) {
-  return classData?.alias ?? classData?.classroomId;
+  return classData?.alias ?? classData?.classWithoutGroupId ?? classData?.classroomId ?? '-';
 }
 
 function processNotification({
