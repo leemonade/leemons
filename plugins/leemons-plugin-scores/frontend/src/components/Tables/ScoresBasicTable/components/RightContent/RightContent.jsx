@@ -29,6 +29,7 @@ export function RightContent({
   onDataChange,
   usePercentage,
   viewOnly,
+  hideCustom,
 }) {
   const { classes } = useRightContentStyles(
     { overFlowRight },
@@ -36,7 +37,12 @@ export function RightContent({
   );
   return (
     <Box className={classes.root}>
-      <RightContentHeader {...headerProps} labels={labels} retakes={retakes} />
+      <RightContentHeader
+        {...headerProps}
+        labels={labels}
+        retakes={retakes}
+        hideCustom={hideCustom}
+      />
       <RightContentBody
         studentsData={studentsData}
         grades={grades}
@@ -46,6 +52,7 @@ export function RightContent({
         onDataChange={onDataChange}
         usePercentage={usePercentage}
         viewOnly={viewOnly}
+        hideCustom={hideCustom}
       />
     </Box>
   );
@@ -63,4 +70,5 @@ RightContent.propTypes = {
   onDataChange: PropTypes.func,
   usePercentage: PropTypes.bool,
   viewOnly: PropTypes.bool,
+  hideCustom: PropTypes.bool,
 };

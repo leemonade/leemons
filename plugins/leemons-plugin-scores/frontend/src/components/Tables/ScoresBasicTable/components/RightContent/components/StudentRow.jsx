@@ -29,8 +29,12 @@ export function StudentRow({
   usePercentage,
   viewOnly,
   retakeScores,
+  hideCustom,
 }) {
   const { classes } = useStudentRowStyles();
+
+  const onlyShowRetakes = retakes?.length === 1;
+
   return (
     <Box className={classes.root}>
       <StudentScore>{avgScore}</StudentScore>
@@ -51,18 +55,20 @@ export function StudentRow({
           </StudentScore>
         );
       })}
-      <StudentScore>
-        <ScoreCell
-          value={isNaN(customScore) ? 8 : customScore}
-          allowChange={allowCustomChange && !viewOnly}
-          grades={grades}
-          usePercentage={usePercentage}
-          row={id}
-          column={'customScore'}
-          onDataChange={onDataChange}
-          isCustom={true}
-        />
-      </StudentScore>
+      {!onlyShowRetakes && !hideCustom && (
+        <StudentScore>
+          <ScoreCell
+            value={isNaN(customScore) ? 8 : customScore}
+            allowChange={allowCustomChange && !viewOnly}
+            grades={grades}
+            usePercentage={usePercentage}
+            row={id}
+            column={'customScore'}
+            onDataChange={onDataChange}
+            isCustom={true}
+          />
+        </StudentScore>
+      )}
     </Box>
   );
 }
@@ -79,4 +85,5 @@ StudentRow.propTypes = {
   usePercentage: PropTypes.bool,
   viewOnly: PropTypes.bool,
   retakeScores: PropTypes.array,
+  hideCustom: PropTypes.bool,
 };

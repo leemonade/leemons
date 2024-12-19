@@ -23,7 +23,7 @@ export default function useStudents({
     enabled: !!klass?.id && !!period,
   });
 
-  const { data: retakeScores, isLoading: retakesScoresLoading } = useRetakesScores({
+  const { data: retakeScores } = useRetakesScores({
     classId: klass?.id,
     period,
     enabled: !!klass?.id && !!period,

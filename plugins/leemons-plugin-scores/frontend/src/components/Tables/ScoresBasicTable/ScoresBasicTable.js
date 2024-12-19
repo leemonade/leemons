@@ -136,42 +136,6 @@ const ScoresBasicTable = ({
     return useNumbers ? weightedAverage : findGradeLetter(weightedAverage);
   };
 
-  const getActivitiesPeriod = () =>
-    periodName ||
-    `${new Date(from).toLocaleDateString(locale) ?? '?'} - ${
-      new Date(to).toLocaleDateString(locale) ?? '?'
-    }`;
-
-  const getRightBodyContent = () =>
-    value.map(({ id, activities: studentActivities, customScore, allowCustomChange }) => {
-      const avgScore = getAvgScore(studentActivities);
-      return (
-        <Box key={id} className={classes.contentRow}>
-          <Box className={classes.separator} />
-          <Box className={classes.studentInfo}>
-            <Text color="primary" role="productive">
-              {isNaN(avgScore) ? '-' : avgScore}
-              {usePercentage ? '%' : ''}
-            </Text>
-          </Box>
-          {!hideCustom && (
-            <Box className={classes.studentInfo}>
-              <ScoreCell
-                value={isNaN(customScore) ? avgScore : customScore}
-                allowChange={allowCustomChange && !viewOnly}
-                grades={grades}
-                usePercentage={usePercentage}
-                row={id}
-                column={'customScore'}
-                onDataChange={onDataChange}
-                isCustom={true}
-              />
-            </Box>
-          )}
-        </Box>
-      );
-    });
-
   const getColumns = () => {
     const columns = [];
     columns.push({
@@ -406,8 +370,8 @@ const ScoresBasicTable = ({
             from,
             to,
             locale,
-            hideCustom,
           }}
+          hideCustom={hideCustom}
           studentsData={value}
           grades={grades}
           activities={activities}

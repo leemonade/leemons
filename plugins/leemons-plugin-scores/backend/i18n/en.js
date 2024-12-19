@@ -406,6 +406,7 @@ module.exports = {
       attendance: 'Attendance',
     },
 
+    retake: 'Call',
     newModule:
       'New modules have been added to this class that are not weighted. To calculate them correctly, access your weighting rules.',
     updatedSuccess: "Updated {{student}}'s score in {{activity}} to {{score}}",

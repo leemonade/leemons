@@ -30,6 +30,7 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
     retake: t('scoresTable.retake'),
     attendance: t('scoresTable.attendance'),
 
+    retakeName: t('retake'),
     unableToOpen: t('unableToOpen'),
     noEvaluationPage: t('noEvaluationPage'),
     updatedSuccess: t('updatedSuccess'),

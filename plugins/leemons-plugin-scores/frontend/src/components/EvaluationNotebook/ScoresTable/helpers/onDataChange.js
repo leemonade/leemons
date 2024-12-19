@@ -75,7 +75,24 @@ export default function onDataChange({
         grade: grade.number,
         retakeId: retakeId === 'null' ? null : retakeId,
         retakeIndex: retake.index,
-      });
+      })
+        .then(() =>
+          printSuccessMessage({
+            labels,
+            student,
+            activity: `${labels.retakeName} ${retake.index + 1}`,
+            score: grade,
+          })
+        )
+        .catch((e) =>
+          printErrorMessage({
+            labels,
+            student,
+            activity: `${labels.retakeName} ${retake.index + 1}`,
+            score: grade,
+            error: e,
+          })
+        );
     }
 
     if (activity.source === 'manualActivities') {

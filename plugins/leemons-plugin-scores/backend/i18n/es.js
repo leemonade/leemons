@@ -406,6 +406,8 @@ module.exports = {
       retake: 'CONV.',
       attendance: 'Asistencia',
     },
+
+    retake: 'Convocatoria',
     newModule:
       'Se han añadido nuevos módulos a esta asignatura que no están ponderados. Para calcularlos correctamente, accede a sus Reglas de ponderación.',
     updatedSuccess: 'Actualizada la nota de {{student}} en {{activity}} a un {{score}}',

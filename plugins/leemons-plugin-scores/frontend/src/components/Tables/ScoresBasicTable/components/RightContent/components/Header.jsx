@@ -44,6 +44,8 @@ const useRightContentHeaderStyles = createStyles((theme) => {
 });
 
 export function RightContentHeader({ labels, periodName, from, to, locale, hideCustom, retakes }) {
+  const onlyShowRetakes = retakes?.length === 1;
+
   const { classes } = useRightContentHeaderStyles(
     {},
     { name: 'ScoresBasicTableRightContentHeader' }
@@ -61,10 +63,14 @@ export function RightContentHeader({ labels, periodName, from, to, locale, hideC
       </Box>
       <Box className={classes.bottomPart}>
         <ColumnHeader label={labels.gradingTasks} />
-        {retakes.map((retake) => (
-          <ColumnHeader key={retake.id} label={`${labels.retake} ${retake.index + 1}`} />
-        ))}
-        {!hideCustom && <ColumnHeader label={labels.customScore} />}
+        {!!retakes &&
+          retakes.map((retake) => (
+            <ColumnHeader
+              key={retake.id}
+              label={onlyShowRetakes ? labels.customScore : `${labels.retake} ${retake.index + 1}`}
+            />
+          ))}
+        {!hideCustom && !onlyShowRetakes && <ColumnHeader label={labels.customScore} />}
       </Box>
     </Box>
   );

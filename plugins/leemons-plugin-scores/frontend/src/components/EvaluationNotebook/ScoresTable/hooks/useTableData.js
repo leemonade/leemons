@@ -23,10 +23,11 @@ export default function useTableData({ program, class: klass, period, filters })
   const { data: programEvaluationSystem, isLoading: programEvaluationSystemLoading } =
     useProgramEvaluationSystems({ program });
 
+  const enableRetakesQuery = !!klass?.id && !!period?.period?.id;
   const { data: retakes, isLoading: retakesLoading } = useRetakes({
     classId: klass?.id,
     period: period?.period?.id,
-    enabled: !!klass?.id && !!period?.period?.id,
+    enabled: enableRetakesQuery,
   });
 
   return {
@@ -36,6 +37,9 @@ export default function useTableData({ program, class: klass, period, filters })
     studentsData,
     retakes,
     isLoading:
-      activitiesLoading || programEvaluationSystemLoading || studentsLoading || retakesLoading,
+      activitiesLoading ||
+      programEvaluationSystemLoading ||
+      studentsLoading ||
+      (retakesLoading && enableRetakesQuery),
   };
 }
