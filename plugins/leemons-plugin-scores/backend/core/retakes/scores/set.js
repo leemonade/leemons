@@ -6,8 +6,8 @@ async function validateRetakeReference({
   retakeScore: { class: classId, period, retakeIndex: index, retakeId: id },
   ctx,
 }) {
-  if (!id && index !== 0) {
-    return false;
+  if (!id) {
+    return index === 0; // retakeId null and retakeIndex 0 is the default retake, other retakeIndex are not allowed with null retakeId
   }
 
   const exists = await ctx.tx.db.Retakes.countDocuments({

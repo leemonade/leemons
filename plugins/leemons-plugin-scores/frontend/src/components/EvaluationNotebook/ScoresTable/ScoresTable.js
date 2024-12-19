@@ -15,6 +15,7 @@ import { ScoresBasicTable } from '@scores/components/Tables/ScoresBasicTable';
 import { prefixPN } from '@scores/helpers';
 import { useScoresMutation } from '@scores/requests/hooks/mutations';
 import { useSetManualActivityScoresMutation } from '@scores/requests/hooks/mutations/useSetManualActivityScoresMutation';
+import { useSetRetakeScoreMutation } from '@scores/requests/hooks/mutations/useSetRetakeScore';
 import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
 
 export default function ScoresTable({ program, class: klass, period, filters }) {
@@ -39,6 +40,7 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
   const { mutateAsync: assignationScoreMutate } = useStudentAssignationMutation();
   const { mutateAsync: customScoreMutate } = useScoresMutation();
   const { mutateAsync: manualActivityScoreMutate } = useSetManualActivityScoresMutation();
+  const { mutateAsync: retakeScoreMutate } = useSetRetakeScoreMutation();
 
   const { scales, usePercentage, activities, studentsData, isLoading, retakes } = useTableData({
     program,
@@ -93,12 +95,14 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
           assignationScoreMutate,
           customScoreMutate,
           manualActivityScoreMutate,
+          retakeScoreMutate,
           scales,
           students: studentsData,
           activities,
           class: klass,
           period,
           labels,
+          retakes,
         })}
         key={studentsData}
         leftBadge={<WeightTypeBadge class={klass} includePlaceholder />}

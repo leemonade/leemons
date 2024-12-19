@@ -28,25 +28,29 @@ export function StudentRow({
   onDataChange,
   usePercentage,
   viewOnly,
+  retakeScores,
 }) {
   const { classes } = useStudentRowStyles();
   return (
     <Box className={classes.root}>
       <StudentScore>{avgScore}</StudentScore>
-      {retakes.map((retake) => (
-        <StudentScore key={retake.id}>
-          <ScoreCell
-            value={isNaN(customScore) ? 8 : customScore}
-            allowChange={allowCustomChange && !viewOnly}
-            grades={grades}
-            usePercentage={usePercentage}
-            row={id}
-            column={`retake-${retake.index}`}
-            onDataChange={onDataChange}
-            isCustom={true}
-          />
-        </StudentScore>
-      ))}
+      {retakes?.map((retake) => {
+        const retakeScore = retakeScores?.find((rs) => rs.retakeId === retake.id);
+        return (
+          <StudentScore key={retake.id}>
+            <ScoreCell
+              value={isNaN(retakeScore?.grade) ? '-' : retakeScore?.grade}
+              allowChange={allowCustomChange && !viewOnly}
+              grades={grades}
+              usePercentage={usePercentage}
+              row={id}
+              column={`retake-${retake.id}`}
+              onDataChange={onDataChange}
+              isCustom={true}
+            />
+          </StudentScore>
+        );
+      })}
       <StudentScore>
         <ScoreCell
           value={isNaN(customScore) ? 8 : customScore}
@@ -74,4 +78,5 @@ StudentRow.propTypes = {
   onDataChange: PropTypes.func,
   usePercentage: PropTypes.bool,
   viewOnly: PropTypes.bool,
+  retakeScores: PropTypes.array,
 };

@@ -4,12 +4,14 @@ export default function onDataChange({
   assignationScoreMutate,
   customScoreMutate,
   manualActivityScoreMutate,
+  retakeScoreMutate,
   scales,
   students,
   activities,
   class: klass,
   period,
   labels,
+  retakes,
 }) {
   return (value) => {
     const grade = scales.find(
@@ -60,6 +62,20 @@ export default function onDataChange({
             error: e,
           })
         );
+    }
+
+    if (value.columnId.startsWith('retake-')) {
+      const [, retakeId] = value.columnId.split('-');
+      const retake = retakeId === 'null' ? retakes[0] : retakes.find((r) => r.id === retakeId);
+
+      return retakeScoreMutate({
+        classId: klass.id,
+        period: period?.period?.id,
+        user: student.id,
+        grade: grade.number,
+        retakeId: retakeId === 'null' ? null : retakeId,
+        retakeIndex: retake.index,
+      });
     }
 
     if (activity.source === 'manualActivities') {
