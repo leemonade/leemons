@@ -62,7 +62,7 @@ export function RightContentHeader({ labels, periodName, from, to, locale, hideC
       <Box className={classes.bottomPart}>
         <ColumnHeader label={labels.gradingTasks} />
         {retakes.map((retake) => (
-          <ColumnHeader key={retake.id} label={`${labels.retake} ${retake.index}`} />
+          <ColumnHeader key={retake.id} label={`${labels.retake} ${retake.index + 1}`} />
         ))}
         {!hideCustom && <ColumnHeader label={labels.customScore} />}
       </Box>
