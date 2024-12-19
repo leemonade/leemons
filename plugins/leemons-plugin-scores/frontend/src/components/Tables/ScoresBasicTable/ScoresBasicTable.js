@@ -417,32 +417,6 @@ const ScoresBasicTable = ({
           usePercentage={usePercentage}
           viewOnly={viewOnly}
         />
-
-        <Box className={classes.rightBody}>
-          <Box className={classes.rightBodyHeader}>
-            <Box className={classes.headerAvg}>
-              <Text color="primary" role="productive" stronger transform="uppercase">
-                {labels.avgScore}
-              </Text>
-              <Text color="primary" role="productive" size="xs">
-                {getActivitiesPeriod()}
-              </Text>
-            </Box>
-            <Box className={classes.columnHeader}>
-              <Text color="primary" role="productive" stronger transform="uppercase" size="xs">
-                {labels.gradingTasks}
-              </Text>
-            </Box>
-            {!hideCustom && (
-              <Box className={classes.columnHeader}>
-                <Text color="primary" role="productive" stronger transform="uppercase" size="xs">
-                  {labels.customScore}
-                </Text>
-              </Box>
-            )}
-          </Box>
-          <Box className={classes.rightBodyContent}>{getRightBodyContent()}</Box>
-        </Box>
       </Box>
     </Box>
   );
