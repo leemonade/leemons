@@ -5,7 +5,16 @@ import { getWeightedAvgScore } from '../../../helpers/getWeightedAvgScore';
 
 import { StudentRow } from './StudentRow';
 
-export function RightContentBody({ studentsData, grades, activities, useNumbers }) {
+export function RightContentBody({
+  studentsData,
+  grades,
+  activities,
+  useNumbers,
+  retakes,
+  onDataChange,
+  usePercentage,
+  viewOnly,
+}) {
   const studentsRows = studentsData.map((student) => {
     const avgScore = getWeightedAvgScore({
       studentActivities: student.activities,
@@ -14,11 +23,24 @@ export function RightContentBody({ studentsData, grades, activities, useNumbers 
       useNumbers,
     });
 
-    return <StudentRow key={student.id} {...student} grades={grades} avgScore={avgScore} />;
+    return (
+      <StudentRow
+        key={student.id}
+        {...student}
+        grades={grades}
+        avgScore={avgScore}
+        retakes={retakes}
+        onDataChange={onDataChange}
+        usePercentage={usePercentage}
+        viewOnly={viewOnly}
+      />
+    );
   });
 
   return (
-    <Box sx={(theme) => ({ borderLeft: `4px solid ${theme.colors.ui03}` })}>{studentsRows}</Box>
+    <Box sx={(theme) => ({ borderLeft: `4px solid ${theme.colors.ui03}`, paddingRight: 2 })}>
+      {studentsRows}
+    </Box>
   );
 }
 
@@ -27,4 +49,8 @@ RightContentBody.propTypes = {
   grades: PropTypes.array.isRequired,
   activities: PropTypes.array.isRequired,
   useNumbers: PropTypes.bool.isRequired,
+  retakes: PropTypes.array,
+  onDataChange: PropTypes.func,
+  usePercentage: PropTypes.bool,
+  viewOnly: PropTypes.bool,
 };

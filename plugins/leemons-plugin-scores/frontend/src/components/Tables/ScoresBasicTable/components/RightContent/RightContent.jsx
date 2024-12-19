@@ -25,6 +25,10 @@ export function RightContent({
   grades,
   activities,
   useNumbers,
+  retakes,
+  onDataChange,
+  usePercentage,
+  viewOnly,
 }) {
   const { classes } = useRightContentStyles(
     { overFlowRight },
@@ -32,12 +36,16 @@ export function RightContent({
   );
   return (
     <Box className={classes.root}>
-      <RightContentHeader {...headerProps} labels={labels} />
+      <RightContentHeader {...headerProps} labels={labels} retakes={retakes} />
       <RightContentBody
         studentsData={studentsData}
         grades={grades}
         activities={activities}
         useNumbers={useNumbers}
+        retakes={retakes}
+        onDataChange={onDataChange}
+        usePercentage={usePercentage}
+        viewOnly={viewOnly}
       />
     </Box>
   );
@@ -51,4 +59,8 @@ RightContent.propTypes = {
   grades: PropTypes.array.isRequired,
   activities: PropTypes.array.isRequired,
   useNumbers: PropTypes.bool.isRequired,
+  retakes: PropTypes.array,
+  onDataChange: PropTypes.func,
+  usePercentage: PropTypes.bool,
+  viewOnly: PropTypes.bool,
 };

@@ -36,6 +36,7 @@ const ScoresBasicTable = ({
   hideCustom,
   viewOnly,
   leftBadge,
+  retakes,
 }) => {
   const { ref: tableRef } = useElementSize(null);
   const [value, setValue] = useState(_value);
@@ -411,6 +412,10 @@ const ScoresBasicTable = ({
           grades={grades}
           activities={activities}
           useNumbers={useNumbers}
+          retakes={retakes}
+          onDataChange={onDataChange}
+          usePercentage={usePercentage}
+          viewOnly={viewOnly}
         />
 
         <Box className={classes.rightBody}>

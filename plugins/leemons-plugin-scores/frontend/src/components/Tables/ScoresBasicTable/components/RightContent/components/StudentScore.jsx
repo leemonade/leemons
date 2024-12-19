@@ -9,7 +9,6 @@ const useStudentScoreStyles = createStyles((theme) => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: 1,
       paddingTop: globalTheme.spacing.padding.md,
       paddingBottom: globalTheme.spacing.padding.md,
       overflow: 'hidden',
@@ -17,6 +16,7 @@ const useStudentScoreStyles = createStyles((theme) => {
       overflowWrap: 'break-word',
       flex: 1,
       minHeight: '100%',
+      width: 75,
     },
   };
 });
