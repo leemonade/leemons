@@ -87,7 +87,7 @@ async function add({ class: _class, teacher, type, ctx }) {
   await addPermissionsBetweenStudentsAndTeachers({ classId: _class, ctx });
   await addPermissionsBetweenTeachers({ programId: program.id, ctx });
 
-  await ctx.emit('after-add-class-teacher', {
+  ctx.emit('after-add-class-teacher', {
     class: _class,
     teacher,
     type,
