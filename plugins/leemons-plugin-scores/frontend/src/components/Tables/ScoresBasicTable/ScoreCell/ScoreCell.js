@@ -27,6 +27,7 @@ const SelectScore = forwardRef(({ value, onChange, onClose, grades }, ref) => {
           onChange={onChange}
           onDropdownClose={onClose}
           style={{ flex: 1 }}
+          autoFocus
           ref={ref}
         />
       </>
@@ -41,6 +42,7 @@ const SelectScore = forwardRef(({ value, onChange, onClose, grades }, ref) => {
       onBlur={onClose}
       min={grades[0].number}
       max={grades[grades.length - 1].number}
+      autoFocus
       ref={ref}
     />
   );

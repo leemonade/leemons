@@ -143,6 +143,7 @@ export default function NotebookFilters({ filters, onChange, value }) {
             )}
           </Box>
           <DropdownButton
+            disabled={retakesCount > 1 || filters?.period?.isCustom || isPeriodPublished}
             data={[
               {
                 label: t('manualActivity'),
@@ -153,7 +154,7 @@ export default function NotebookFilters({ filters, onChange, value }) {
                 label: t('retake'),
                 onClick: () =>
                   addRetake({ classId: filters?.class?.id, period: filters?.period?.period.id }),
-                disabled: retakesCount > 1 || filters?.period?.isCustom,
+                disabled: retakesCount > 1 || filters?.period?.isCustom || isPeriodPublished,
               },
             ]}
           >
