@@ -3,6 +3,8 @@ import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluat
 import useActivitiesWithWeights from './useActivitiesWithWeights';
 import useStudents from './useStudents';
 
+import { useRetakes } from '@scores/requests/hooks/queries/useRetakes';
+
 export default function useTableData({ program, class: klass, period, filters }) {
   const { activities, isLoading: activitiesLoading } = useActivitiesWithWeights({
     program,
@@ -21,11 +23,23 @@ export default function useTableData({ program, class: klass, period, filters })
   const { data: programEvaluationSystem, isLoading: programEvaluationSystemLoading } =
     useProgramEvaluationSystems({ program });
 
+  const enableRetakesQuery = !!klass?.id && !!period?.period?.id;
+  const { data: retakes, isLoading: retakesLoading } = useRetakes({
+    classId: klass?.id,
+    period: period?.period?.id,
+    enabled: enableRetakesQuery,
+  });
+
   return {
     scales: programEvaluationSystem?.scales,
     usePercentage: programEvaluationSystem?.isPercentage,
     activities,
     studentsData,
-    isLoading: activitiesLoading || programEvaluationSystemLoading || studentsLoading,
+    retakes,
+    isLoading:
+      activitiesLoading ||
+      programEvaluationSystemLoading ||
+      studentsLoading ||
+      (retakesLoading && enableRetakesQuery),
   };
 }

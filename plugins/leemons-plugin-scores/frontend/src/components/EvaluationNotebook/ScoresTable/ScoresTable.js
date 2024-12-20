@@ -15,6 +15,7 @@ import { ScoresBasicTable } from '@scores/components/Tables/ScoresBasicTable';
 import { prefixPN } from '@scores/helpers';
 import { useScoresMutation } from '@scores/requests/hooks/mutations';
 import { useSetManualActivityScoresMutation } from '@scores/requests/hooks/mutations/useSetManualActivityScoresMutation';
+import { useSetRetakeScoreMutation } from '@scores/requests/hooks/mutations/useSetRetakeScore';
 import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
 
 export default function ScoresTable({ program, class: klass, period, filters }) {
@@ -26,8 +27,10 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
     avgScore: t('scoresTable.avgScore'),
     gradingTasks: t('scoresTable.calculated'),
     customScore: t('scoresTable.custom'),
+    retake: t('scoresTable.retake'),
     attendance: t('scoresTable.attendance'),
 
+    retakeName: t('retake'),
     unableToOpen: t('unableToOpen'),
     noEvaluationPage: t('noEvaluationPage'),
     updatedSuccess: t('updatedSuccess'),
@@ -38,8 +41,9 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
   const { mutateAsync: assignationScoreMutate } = useStudentAssignationMutation();
   const { mutateAsync: customScoreMutate } = useScoresMutation();
   const { mutateAsync: manualActivityScoreMutate } = useSetManualActivityScoresMutation();
+  const { mutateAsync: retakeScoreMutate } = useSetRetakeScoreMutation();
 
-  const { scales, usePercentage, activities, studentsData, isLoading } = useTableData({
+  const { scales, usePercentage, activities, studentsData, isLoading, retakes } = useTableData({
     program,
     class: klass,
     period,
@@ -59,8 +63,9 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
       programData: program,
       subjectData: klass?.subject,
       class: klass,
+      retakes,
     });
-  }, [activities, studentsData, scales, period, program, klass, setTableData]);
+  }, [activities, studentsData, scales, period, program, klass, setTableData, retakes]);
 
   if (isLoading) {
     return <LoadingOverlay visible />;
@@ -86,17 +91,20 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
         from={period?.startDate}
         to={period?.endDate}
         labels={labels}
+        retakes={retakes}
         onOpen={({ rowId, columnId }) => handleOpen({ rowId, columnId, activities, labels })}
         onDataChange={onDataChange({
           assignationScoreMutate,
           customScoreMutate,
           manualActivityScoreMutate,
+          retakeScoreMutate,
           scales,
           students: studentsData,
           activities,
           class: klass,
           period,
           labels,
+          retakes,
         })}
         key={studentsData}
         leftBadge={<WeightTypeBadge class={klass} includePlaceholder />}
