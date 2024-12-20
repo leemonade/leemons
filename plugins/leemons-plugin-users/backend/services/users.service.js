@@ -137,7 +137,7 @@ module.exports = {
 
         if (
           ctx.callerPlugin &&
-          [provider, 'bulk-data'].filter(Boolean).includes(ctx.callerPlugin)
+          [provider, 'bulk-data', 'sesamehr'].filter(Boolean).includes(ctx.callerPlugin)
         ) {
           return listUsers({ ...ctx.params, ctx });
         }
