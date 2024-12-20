@@ -4,7 +4,6 @@ import { useUserAgentsInfo } from '@users/hooks';
 import { keyBy } from 'lodash';
 
 import { useScores } from '@scores/requests/hooks/queries';
-import { useRetakes } from '@scores/requests/hooks/queries/useRetakes';
 import { useRetakesScores } from '@scores/requests/hooks/queries/useRetakesScores';
 
 export default function useStudents({
@@ -17,20 +16,11 @@ export default function useStudents({
     enabled: !!klass?.students?.length,
   });
 
-  const { data: retakes } = useRetakes({
-    classId: klass?.id,
-    period,
-    enabled: !!klass?.id && !!period,
-  });
-
   const { data: retakeScores } = useRetakesScores({
     classId: klass?.id,
     period,
     enabled: !!klass?.id && !!period,
   });
-
-  console.log('retakesScores', retakeScores);
-  console.log('retakes', retakes);
 
   const { data: scores, isLoading: scoresLoading } = useScores(
     {

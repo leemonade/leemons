@@ -8,7 +8,6 @@ import ColumnHeader from './ColumnHeader';
 const useRightContentHeaderStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
 
-  console.log('globalTheme', globalTheme);
   return {
     root: {
       height: 120,

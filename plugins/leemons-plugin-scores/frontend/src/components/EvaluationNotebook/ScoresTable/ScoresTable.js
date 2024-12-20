@@ -63,8 +63,9 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
       programData: program,
       subjectData: klass?.subject,
       class: klass,
+      retakes,
     });
-  }, [activities, studentsData, scales, period, program, klass, setTableData]);
+  }, [activities, studentsData, scales, period, program, klass, setTableData, retakes]);
 
   if (isLoading) {
     return <LoadingOverlay visible />;
