@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
+import { useMemo } from 'react';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 import { Stack, Text, Box } from '@bubbles-ui/components';
-import { useFormContext, useWatch } from 'react-hook-form';
 import { trimEnd } from 'lodash';
+import PropTypes from 'prop-types';
 
 export default function TotalWeightRenderer({ lockable }) {
   const form = useFormContext();
@@ -18,7 +18,7 @@ export default function TotalWeightRenderer({ lockable }) {
     );
 
     if (Number.isNaN(Number(weight))) {
-      return NaN;
+      return 0;
     }
 
     const value = Number(weight.toFixed(4));

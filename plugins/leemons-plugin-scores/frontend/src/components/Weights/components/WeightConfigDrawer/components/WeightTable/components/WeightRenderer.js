@@ -1,10 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
 
 import { Stack, Text, NumberInput, Box, useTheme } from '@bubbles-ui/components';
 import { UnlockIcon, LockIcon, AlertWarningTriangleIcon } from '@bubbles-ui/icons/solid';
-import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { trimEnd } from 'lodash';
+import PropTypes from 'prop-types';
 
 function useIsNew({ isNew, id }) {
   const form = useFormContext();
@@ -80,8 +79,8 @@ export default function WeightRenderer({
               }}
             >
               <Text>
-                {(field.value * 100).toFixed(
-                  trimEnd((field.value * 100).toString().split('.')[1] || '', '0').length
+                {((field.value ?? 0) * 100).toFixed(
+                  trimEnd(((field.value ?? 0) * 100).toString().split('.')[1] || '', '0').length
                 )}
                 %
               </Text>

@@ -55,7 +55,7 @@ export default function useModulesData({ class: klass }) {
   const instances = (moduleInstances ?? [])?.concat(manualActivitiesInstances ?? []);
 
   const data = useMemo(() => {
-    if (!instances || !modules?.count) return [];
+    if (!instances?.length) return [];
 
     return instances?.map((module) => {
       const weight = weights?.weights?.find((w) => w.id === module.id);
@@ -69,7 +69,7 @@ export default function useModulesData({ class: klass }) {
         isNew: weights?.weights && !weight,
       };
     });
-  }, [weights, instances, modules?.count, role]);
+  }, [weights, instances, role]);
 
   return {
     isLoading:
@@ -77,7 +77,7 @@ export default function useModulesData({ class: klass }) {
       weightsLoading ||
       modulesLoading ||
       manualActivitiesInstancesLoading ||
-      (moduleInstancesLoading && !!instances?.length),
+      (moduleInstancesLoading && !!instances?.length && !!modules?.items?.length),
     data,
   };
 }
