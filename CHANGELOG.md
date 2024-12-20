@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.21.0](https://github.com/leemonade/leemons/compare/1.20.0...1.21.0) (2024-12-20)
+
+
+### Features
+
+* **academic-portfolio:** Enhance class update process ([8750fcb](https://github.com/leemonade/leemons/commit/8750fcbdbf0c20f711412e32dd20b625d9893a47)), closes [#700](https://github.com/leemonade/leemons/issues/700)
+
+
+### Bug Fixes
+
+* **academic-portfolio:** Update class handling to include classWithoutGroupId ([6b46e6f](https://github.com/leemonade/leemons/commit/6b46e6f4e70e24e4150075e7cc280f40c25879c3)), closes [#703](https://github.com/leemonade/leemons/issues/703)
+* **calendar:** Update button style in CalendarEventModal ([a9c8f30](https://github.com/leemonade/leemons/commit/a9c8f30f0d6d44a96e2fef922a1080115e0c1d19)), closes [#699](https://github.com/leemonade/leemons/issues/699)
+* **menu-builder:** Optimize permission query ([36a2385](https://github.com/leemonade/leemons/commit/36a2385eb10392724d838083880ba0257e9c686f)), closes [#702](https://github.com/leemonade/leemons/issues/702)
+
 ## [1.20.0](https://github.com/leemonade/leemons/compare/1.19.0...1.20.0) (2024-12-18)
 
 
