@@ -84,10 +84,11 @@ async function add({ class: _class, teacher, type, ctx }) {
     // Nothing
   }
 
-  await addPermissionsBetweenStudentsAndTeachers({ classId: _class, ctx });
-  await addPermissionsBetweenTeachers({ programId: program.id, ctx });
+  // TODO: Wrap this functions in a transaction in order to catch errors and do rollbacks
+  addPermissionsBetweenStudentsAndTeachers({ classId: _class, ctx });
+  addPermissionsBetweenTeachers({ programId: program.id, ctx });
 
-  await ctx.emit('after-add-class-teacher', {
+  ctx.emit('after-add-class-teacher', {
     class: _class,
     teacher,
     type,
