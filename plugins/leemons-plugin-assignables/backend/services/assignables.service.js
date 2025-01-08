@@ -1,11 +1,12 @@
 /** @type {import('moleculer').ServiceSchema} */
 
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { getServiceModels } = require('../models');
+const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+
+const namespaces = require('../cache/namespaces');
 const {
   createAssignable,
   getAssignable,
@@ -22,6 +23,8 @@ const {
   getAssignablesAssets,
 } = require('../core/assignables');
 const { getUserPermission, getUserPermissions } = require('../core/permissions/assignables/users');
+const { getServiceModels } = require('../models');
+
 const restActions = require('./rest/assignables.rest');
 
 module.exports = {
@@ -29,7 +32,9 @@ module.exports = {
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
-    LeemonsCacheMixin(),
+    LeemonsCacheMixin({
+      namespaces: [namespaces.assignables.get],
+    }),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),

@@ -1,14 +1,16 @@
 const { LeemonsError } = require('@leemons/error');
 
-const { assignableRolesObject } = require('../../../config/constants');
-
-const { getAssignable } = require('../getAssignable');
+const namespaces = require('../../../cache/namespaces');
 const {
-  getUserPermission,
-} = require('../../permissions/assignables/users/getUserPermission');
+  discardGetAssignableCacheById,
+  discardGetAssignableCacheByUserAgent,
+} = require('../../../cache/removeBy');
+const { assignableRolesObject } = require('../../../config/constants');
+const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
 const {
   removePermissionFromUser,
 } = require('../../permissions/assignables/users/removePermissionFromUser');
+const { getAssignable } = require('../getAssignable');
 /**
  * Remove a user from an assignable
  * @async
@@ -65,6 +67,12 @@ async function removeUserFromAssignable({ assignableId, userAgents, ctx }) {
           message: `User cannot remove from assignable with role ${assignee.role}`,
         });
       }
+
+      await discardGetAssignableCacheByUserAgent({
+        ids: [assignableId, assignable.asset?.id ?? assignable.asset],
+        userAgent: userAgent.id,
+        ctx,
+      });
 
       // EN: Remove the users from the assignable
       // ES: Eliminar los usuarios del asignable

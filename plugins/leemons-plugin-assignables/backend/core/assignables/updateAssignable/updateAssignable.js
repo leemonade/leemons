@@ -1,22 +1,23 @@
-const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
+const _ = require('lodash');
 
+const namespaces = require('../../../cache/namespaces');
+const { discardGetAssignableCacheById } = require('../../../cache/removeBy');
+const { getDiff } = require('../../helpers/getDiff');
 const {
   validateAssignable,
   validAssignableProperties,
 } = require('../../helpers/validators/assignable');
-const { getDiff } = require('../../helpers/getDiff');
-
 const { updateAsset } = require('../../leebrary/assets');
+const { duplicateAsset } = require('../../leebrary/assets');
+const { removeAsset } = require('../../leebrary/assets');
+const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
 const { updateSubjects } = require('../../subjects');
 const { addUserToAssignable } = require('../addUserToAssignable');
 const { createAssignable } = require('../createAssignable');
 const { getAssignable } = require('../getAssignable');
 const { listAssignableUserAgents } = require('../listAssignableUserAgents');
-const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
 const { publishAssignable } = require('../publishAssignable');
-const { duplicateAsset } = require('../../leebrary/assets');
-const { removeAsset } = require('../../leebrary/assets');
 
 const updatableFields = [
   'asset',
@@ -321,6 +322,10 @@ async function updateAssignable({ assignable, published = false, ctx }) {
 
     if (published) {
       await publishAssignable({ id, ctx });
+    }
+
+    if (!shouldUpgrade) {
+      await discardGetAssignableCacheById({ ids: [id, assetId], ctx });
     }
 
     return {

@@ -1,5 +1,7 @@
-const { pick } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
+const { pick } = require('lodash');
+
+const { discardGetAssignableCacheById } = require('../../../cache/removeBy');
 const {
   validateAssignable,
   validAssignableProperties,
@@ -55,6 +57,8 @@ async function publishAssignable({ id, ctx }) {
       publish: true,
       setAsCurrent: true,
     });
+
+    await discardGetAssignableCacheById({ ids: [id, assignable.asset.id], ctx });
 
     return true;
   } catch (e) {
