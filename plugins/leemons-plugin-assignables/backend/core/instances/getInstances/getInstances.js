@@ -13,6 +13,32 @@ const { getAssignationsData } = require('./getAssignationsData');
 const { getInstancesSubjects } = require('./getInstancesSubjects');
 const { getRelatedInstances } = require('./getRelatedInstances');
 
+async function getInstancesWithAssignations({ ids, instances, ctx }) {
+  const instancesTeached = {};
+
+  Object.values(instances).forEach((instance) => {
+    if (instance.students) {
+      instancesTeached[instance.id] = true;
+    }
+  });
+
+  const assignations = await getAssignationsData({ instances: ids, instancesTeached, ctx });
+
+  return ids.map((id) => {
+    const students = assignations[id];
+
+    if (!students) {
+      delete instances[id].students;
+      return instances[id];
+    }
+
+    return {
+      ...instances[id],
+      students,
+    };
+  });
+}
+
 /**
  * @async
  * @function getInstances
@@ -101,15 +127,10 @@ async function getInstances({
       })
     );
 
-    // EN: Get the assignations data
-    // ES: Obtener los datos de las assignations
-    promises.push(getAssignationsData({ instances: instancesIds, instancesTeached, ctx }));
-
     promises.push(getInstancesSubjects({ classesPerInstance: classes, ctx }));
   }
 
-  const [relatedInstances, instancesDates, assignables, assignations, subjects] =
-    await Promise.all(promises);
+  const [relatedInstances, instancesDates, assignables, subjects] = await Promise.all(promises);
 
   return instancesData.map((instance) => {
     const isTeacher = instancesTeached[instance.id];
@@ -137,9 +158,8 @@ async function getInstances({
       instanceData.subjects = subjects[instance.id] || [];
     }
 
-    // TODO: This should be done after the caching
     if (isTeacher && details) {
-      instanceData.students = assignations[instance.id];
+      instanceData.students = true;
     }
 
     if (relatedAssignableInstances) {
@@ -205,7 +225,7 @@ async function getInstancesWithCache({
     await ctx.cache.setMany(keysToSave);
   }
 
-  return ids.map((id) => instancesById[id]);
+  return getInstancesWithAssignations({ ids, instances: instancesById, ctx });
 }
 
 module.exports = { getInstances: getInstancesWithCache };
