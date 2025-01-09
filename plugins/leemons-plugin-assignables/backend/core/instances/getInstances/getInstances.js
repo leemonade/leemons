@@ -1,16 +1,17 @@
-const { map } = require('lodash');
-
 const { LeemonsError } = require('@leemons/error');
+const { map, difference } = require('lodash');
 
-const { listInstanceClasses } = require('../../classes/listInstanceClasses');
-const { getUserPermissions } = require('../../permissions/instances/users/getUserPermissions');
+const { getInstanceKeyBuilder } = require('../../../cache/keys/instances');
+const ttl = require('../../../cache/ttl');
 const { getAssignables } = require('../../assignables/getAssignables');
+const { listInstanceClasses } = require('../../classes/listInstanceClasses');
+const { getActivityEvaluationType } = require('../../helpers/getActivityEvaluationType');
+const { getUserPermissions } = require('../../permissions/instances/users/getUserPermissions');
 
-const { getRelatedInstances } = require('./getRelatedInstances');
 const { findDates } = require('./findDates');
 const { getAssignationsData } = require('./getAssignationsData');
 const { getInstancesSubjects } = require('./getInstancesSubjects');
-const { getActivityEvaluationType } = require('../../helpers/getActivityEvaluationType');
+const { getRelatedInstances } = require('./getRelatedInstances');
 
 /**
  * @async
@@ -71,6 +72,7 @@ async function getInstances({
   // EN: Get the related instances data
   // ES: Obtener los datos de las instancias relacionadas
   if (relatedAssignableInstances) {
+    // ! This option will be deprecated
     promises.push(getRelatedInstances({ instances: instancesData, details, ctx }));
   } else {
     promises.push(undefined);
@@ -106,9 +108,8 @@ async function getInstances({
     promises.push(getInstancesSubjects({ classesPerInstance: classes, ctx }));
   }
 
-  const [relatedInstances, instancesDates, assignables, assignations, subjects] = await Promise.all(
-    promises
-  );
+  const [relatedInstances, instancesDates, assignables, assignations, subjects] =
+    await Promise.all(promises);
 
   return instancesData.map((instance) => {
     const isTeacher = instancesTeached[instance.id];
@@ -136,6 +137,7 @@ async function getInstances({
       instanceData.subjects = subjects[instance.id] || [];
     }
 
+    // TODO: This should be done after the caching
     if (isTeacher && details) {
       instanceData.students = assignations[instance.id];
     }
@@ -148,4 +150,62 @@ async function getInstances({
   });
 }
 
-module.exports = { getInstances };
+async function getInstancesWithCache({
+  ids,
+  relatedAssignableInstances = false,
+  details = false,
+  throwOnMissing = true,
+  ctx,
+}) {
+  if (relatedAssignableInstances) {
+    console.warn('relatedAssignableInstances option is deprecated');
+  }
+
+  if (!ids?.length) {
+    return [];
+  }
+
+  const getInstancesCacheKeyBuilder = getInstanceKeyBuilder({
+    options: { relatedAssignableInstances, details, throwOnMissing },
+    ctx,
+  });
+
+  const cacheKeys = ids.map(getInstancesCacheKeyBuilder);
+  const cachedInstances = await ctx.cache.getMany(cacheKeys).then((r) => Object.values(r));
+
+  const instancesById = {};
+  const foundIds = [];
+
+  cachedInstances.forEach((instance) => {
+    instancesById[instance.id] = instance;
+    foundIds.push(instance.id);
+  });
+
+  const missingIds = difference(ids, foundIds);
+
+  if (missingIds.length) {
+    const instances = await getInstances({
+      ids: missingIds,
+      relatedAssignableInstances,
+      details,
+      throwOnMissing,
+      ctx,
+    });
+
+    const keysToSave = instances.map((instance) => {
+      instancesById[instance.id] = instance;
+
+      return {
+        key: getInstancesCacheKeyBuilder(instance.id),
+        val: instance,
+        ttl: ttl.instances.get,
+      };
+    });
+
+    await ctx.cache.setMany(keysToSave);
+  }
+
+  return ids.map((id) => instancesById[id]);
+}
+
+module.exports = { getInstances: getInstancesWithCache };

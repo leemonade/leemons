@@ -7,6 +7,7 @@ const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
 const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 
+const namespaces = require('../cache/namespaces');
 const {
   addStudentsToOpenInstancesWithClass,
 } = require('../core/assignations/addStudentToOpenInstancesWithClass');
@@ -30,7 +31,9 @@ module.exports = {
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
-    LeemonsCacheMixin(),
+    LeemonsCacheMixin({
+      namespaces: [namespaces.instances.get],
+    }),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),

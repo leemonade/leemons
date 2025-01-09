@@ -1,10 +1,6 @@
 const { LeemonsError } = require('@leemons/error');
 
-const namespaces = require('../../../cache/namespaces');
-const {
-  discardGetAssignableCacheById,
-  discardGetAssignableCacheByUserAgent,
-} = require('../../../cache/removeBy');
+const discardCacheBy = require('../../../cache/discardCacheBy');
 const { assignableRolesObject } = require('../../../config/constants');
 const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
 const {
@@ -68,7 +64,7 @@ async function removeUserFromAssignable({ assignableId, userAgents, ctx }) {
         });
       }
 
-      await discardGetAssignableCacheByUserAgent({
+      await discardCacheBy.assignables.discardGetAssignableCacheByUserAgent({
         ids: [assignableId, assignable.asset?.id ?? assignable.asset],
         userAgent: userAgent.id,
         ctx,

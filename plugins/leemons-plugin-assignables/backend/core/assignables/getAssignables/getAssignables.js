@@ -1,7 +1,8 @@
 const { LeemonsError } = require('@leemons/error');
 const { map, difference, omit } = require('lodash');
 
-const assignablesCacheKeys = require('../../../cache/keys/assignables');
+const { getAssignableKeyBuilder } = require('../../../cache/keys/assignables');
+const ttl = require('../../../cache/ttl');
 const { getAsset } = require('../../leebrary/assets');
 const { getUserPermissions } = require('../../permissions/assignables/users/getUserPermissions');
 const { getRoles } = require('../../roles');
@@ -187,7 +188,7 @@ async function getAssignables({
   }));
 }
 
-async function getAssignablesFromCache({
+async function getAssignablesWithCache({
   ids,
   columns = ['asset'],
   withFiles = false,
@@ -199,7 +200,7 @@ async function getAssignablesFromCache({
     return [];
   }
 
-  const getAssignablesCacheKeyBuilder = assignablesCacheKeys.getAssignableKeyBuilder({
+  const getAssignablesCacheKeyBuilder = getAssignableKeyBuilder({
     options: { columns, withFiles, showDeleted, throwOnMissing },
     ctx,
   });
@@ -239,10 +240,12 @@ async function getAssignablesFromCache({
         {
           key: assignableCacheKey,
           val: assignable,
+          ttl: ttl.assignables.get,
         },
         {
           key: assetCacheKey,
           val: assignable,
+          ttl: ttl.assignables.get,
         }
       );
 
@@ -256,4 +259,4 @@ async function getAssignablesFromCache({
   return ids.map((id) => assignablesById[id] ?? assignablesByAsset[id]);
 }
 
-module.exports = { getAssignables: getAssignablesFromCache };
+module.exports = { getAssignables: getAssignablesWithCache };

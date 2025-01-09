@@ -1,7 +1,6 @@
 const { uniq } = require('lodash');
 
-const namespaces = require('../../../cache/namespaces');
-const { discardGetAssignableCacheById } = require('../../../cache/removeBy');
+const discardCacheBy = require('../../../cache/discardCacheBy');
 const { updateAsset, getAsset } = require('../../leebrary/assets');
 const { getAssignables } = require('../getAssignables');
 
@@ -47,7 +46,10 @@ async function removeAssignables({ ids, ctx }) {
     }
   );
 
-  await discardGetAssignableCacheById({ ids: ids.concat(assetIds), ctx });
+  await discardCacheBy.assignables.discardGetAssignableCacheById({
+    ids: ids.concat(assetIds),
+    ctx,
+  });
 
   return modifiedCount;
 }

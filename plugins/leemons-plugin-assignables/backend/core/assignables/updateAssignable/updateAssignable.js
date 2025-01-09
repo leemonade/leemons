@@ -1,8 +1,7 @@
 const { LeemonsError } = require('@leemons/error');
 const _ = require('lodash');
 
-const namespaces = require('../../../cache/namespaces');
-const { discardGetAssignableCacheById } = require('../../../cache/removeBy');
+const discardCacheBy = require('../../../cache/discardCacheBy');
 const { getDiff } = require('../../helpers/getDiff');
 const {
   validateAssignable,
@@ -325,7 +324,7 @@ async function updateAssignable({ assignable, published = false, ctx }) {
     }
 
     if (!shouldUpgrade) {
-      await discardGetAssignableCacheById({ ids: [id, assetId], ctx });
+      await discardCacheBy.assignables.discardGetAssignableCacheById({ ids: [id, assetId], ctx });
     }
 
     return {

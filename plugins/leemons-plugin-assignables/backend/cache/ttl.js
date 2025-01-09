@@ -5,4 +5,7 @@ module.exports = {
   assignables: {
     get: oneMonth,
   },
+  instances: {
+    get: oneMonth,
+  },
 };
