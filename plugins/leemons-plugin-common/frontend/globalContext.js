@@ -1,9 +1,11 @@
-import { TextEditorContext, TextEditorProvider } from '@common/context';
+import React, { useMemo, useState } from 'react';
+
 import { LibraryTool } from '@leebrary/components';
 import libraryProcessor from '@leebrary/helpers/libraryProcessor';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useMemo, useState } from 'react';
+
+import { TextEditorContext, TextEditorProvider } from '@common/context';
 
 const DEFAULT_TOOLS = {
   library: { tool: <LibraryTool /> },
@@ -19,8 +21,9 @@ export function Provider({ children }) {
   const setTextEditorTool = (newTools) => {
     const tools = _.cloneDeep(textEditorTools);
     _.forEach(newTools, (tool) => {
-      tools[tool.id] = { tool: tool.tool, props: tool.props };
+      tools[tool.id] = { tool: tool.tool, props: tool.props, toolbar: tool.toolbar };
     });
+
     setTextEditorTools(tools);
   };
 
@@ -61,7 +64,6 @@ export function Provider({ children }) {
       _.forEach(elements, (element) => {
         const src = element.getAttribute('src');
         if (src.startsWith('/api')) {
-          // console.log('Element', element);
           // eslint-disable-next-line no-param-reassign
           element.src = leemons.apiUrl + src;
         }
