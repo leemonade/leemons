@@ -4,11 +4,11 @@
  */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getServiceModels } = require('../models');
+
 const {
   add,
   list,
@@ -25,6 +25,9 @@ const {
   getRoleForRelationshipProfileCenter,
   existMany,
 } = require('../core/profiles');
+const { getProfileByUserAgent } = require('../core/profiles/getProfileByUserAgent');
+const { getServiceModels } = require('../models');
+
 const restActions = require('./rest/profiles.rest');
 
 /** @type {ServiceSchema} */
@@ -110,6 +113,11 @@ module.exports = {
     getRoleForRelationshipProfileCenter: {
       handler(ctx) {
         return getRoleForRelationshipProfileCenter({ ...ctx.params, ctx });
+      },
+    },
+    detailByUserAgent: {
+      handler(ctx) {
+        return getProfileByUserAgent({ ...ctx.params, ctx });
       },
     },
   },
