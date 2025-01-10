@@ -8,4 +8,7 @@ module.exports = {
   instances: {
     get: oneMonth,
   },
+  assignations: {
+    get: oneMonth,
+  },
 };

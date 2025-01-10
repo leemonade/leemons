@@ -5,4 +5,7 @@ module.exports = {
   instances: {
     get: 'instances.get',
   },
+  assignations: {
+    get: 'assignations.get',
+  },
 };

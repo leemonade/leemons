@@ -1,6 +1,9 @@
 const { LeemonsError } = require('@leemons/error');
 const { map, uniq, keyBy, defaultsDeep } = require('lodash');
 
+const { getAssignationKeyBuilder } = require('../../../cache/keys/assignations');
+const ttl = require('../../../cache/ttl');
+
 const { checkPermissions } = require('./checkPermissions');
 const { findAssignationDates } = require('./findAssignationDates');
 const { findInstanceDates } = require('./findInstanceDates');
@@ -12,17 +15,43 @@ const {
 } = require('./getModuleActivitesTimestampsAndGrades');
 const { getRelatedAssignationsTimestamps } = require('./getRelatedAssignationsTimestamps');
 
-async function getAssignations({
-  assignationsIds,
-  throwOnMissing = true,
-  details = true,
-  fetchInstance,
-  ctx,
-}) {
-  if (!assignationsIds?.length) return [];
-  // Require inside function to avoid circular dependency
-  // eslint-disable-next-line global-require
-  const { getInstances } = require('../../instances/getInstances');
+function getAutoEvaluatedGrades({ assignation, instance, status, evaluationSystems }) {
+  const grades = assignation.grades;
+
+  const instanceIsAutoEvaluable = instance?.metadata?.evaluationType === 'auto';
+
+  if (
+    !instanceIsAutoEvaluable ||
+    !status.finished ||
+    grades.some((grade) => grade.type === 'main')
+  ) {
+    return grades;
+  }
+
+  const subjects = instance.subjects?.map(({ subject }) => subject);
+  const program = instance.subjects[0].program;
+
+  const evaluationSystem = evaluationSystems[program];
+  const minScale = evaluationSystem.minScale?.number;
+
+  subjects.forEach((subject) => {
+    grades.push({
+      subject,
+      type: 'main',
+      grade: minScale,
+      feedback: null,
+      gradedBy: 'auto-graded',
+      visibleToStudent: true,
+    });
+  });
+
+  return grades;
+}
+
+async function getAssignations({ assignationsIds, throwOnMissing = true, details = true, ctx }) {
+  if (!assignationsIds?.length) {
+    return [];
+  }
 
   // EN: Get the assignations data
   // ES: Obtener los datos de las asignaciones
@@ -57,7 +86,6 @@ async function getAssignations({
     Object.values(permissions).filter((permission) => permission);
   }
 
-  const instancesIds = map(assignationsData, 'instance');
   ids = map(assignationsData, 'id');
 
   if (!details) {
@@ -68,59 +96,25 @@ async function getAssignations({
     }));
   }
 
-  const promises = [];
+  const promises = [
+    getRelatedAssignationsTimestamps({ assignationsData, ctx }),
+    findAssignationDates({ assignationsIds: ids, ctx }),
+    getGrades({ assignationsData, ctx }),
 
-  promises.push(getClassesWithSubject({ instancesIds, ctx }));
-
-  promises.push(getRelatedAssignationsTimestamps({ assignationsData, ctx }));
-  promises.push(getModuleActivitiesTimestampsAndGrades({ assignationsData, ctx }));
-
-  promises.push(findAssignationDates({ assignationsIds: ids, ctx }));
-  promises.push(findInstanceDates({ instances: instancesIds, ctx }));
-
-  promises.push(getGrades({ assignationsData, ctx }));
-
-  if (fetchInstance) {
-    promises.push(
-      getInstances({
-        ids: instancesIds,
-        details: true,
-        ctx,
-      }).then((instances) => keyBy(instances, 'id'))
-    );
-  } else {
-    promises.push(
-      ctx.tx.db.Instances.find({ id: instancesIds })
-        .select({ id: 1, metadata: 1 })
-        .lean()
-        .then((instances) => keyBy(instances, 'id'))
-    );
-  }
-
-  const evaluationSystems = {};
+    // TODO: Uncache all activities in the module when sub-activity is modified
+    getModuleActivitiesTimestampsAndGrades({ assignationsData, ctx }),
+  ];
 
   const [
-    classes,
     relatedAssignations,
-    { dates: moduleActivitiesTimestamps, completion, grades: moduleGrades, status: moduleStatus },
     timestamps,
-    dates,
     grades,
-    instances,
+    { dates: moduleActivitiesTimestamps, completion, grades: moduleGrades, status: moduleStatus },
   ] = await Promise.all(promises);
 
   const result = assignationsData.map(async (assignation) => {
-    const chatKeys = classes[assignation.instance].subjectsIds.map((subject) =>
-      ctx.prefixPN(`subject|${subject}.assignation|${assignation.id}.userAgent|${assignation.user}`)
-    );
-
     // Add module child activities timestamps to the assignation timestamps
     defaultsDeep(timestamps, moduleActivitiesTimestamps);
-
-    const status = getAssignationStatus({
-      dates: dates[assignation.instance] || {},
-      timestamps: timestamps[assignation.id] || {},
-    });
 
     let metadata = JSON.parse(assignation.metadata || null);
 
@@ -132,60 +126,187 @@ async function getAssignations({
       };
     }
 
-    const assignationGrades = grades[assignation.id] || moduleGrades[assignation.id] || [];
-
-    if (instances?.[assignation.instance]?.metadata?.evaluationType === 'auto' && status.finished) {
-      const hasMainGrade = assignationGrades?.some((grade) => grade.type === 'main');
-
-      if (!hasMainGrade) {
-        const subjects = uniq(classes[assignation.instance].subjectsIds);
-        const { program } = classes[assignation.instance].classes[0];
-
-        if (!evaluationSystems[program]) {
-          evaluationSystems[program] = ctx.tx.call(
-            'academic-portfolio.programs.getProgramEvaluationSystem',
-            {
-              id: program,
-            }
-          );
-        }
-
-        const evaluationSystem = await evaluationSystems[program];
-        const minScale = evaluationSystem.minScale?.number;
-
-        subjects.forEach((subject) => {
-          assignationGrades.push({
-            subject,
-            type: 'main',
-            feedback: null,
-            grade: minScale,
-            gradedBy: 'auto-graded',
-            visibleToStudent: true,
-          });
-        });
-      }
-    }
-
     // Returns the assignationObject
     return {
       ...assignation,
       classes: JSON.parse(assignation.classes || null),
       metadata,
-      instance: (fetchInstance ? instances?.[assignation.instance] : null) ?? assignation.instance,
 
       relatedAssignableInstances: {
         before: relatedAssignations[assignation.id] || [],
       },
-      grades: assignationGrades,
+      grades: grades[assignation.id] || moduleGrades[assignation.id] || [],
       timestamps: timestamps[assignation.id] || {},
-
-      chatKeys,
-
-      ...status,
     };
   });
 
   return Promise.all(result);
 }
 
-module.exports = { getAssignations };
+async function getInstanceMetadataAndSubjects({ instancesIds, ctx }) {
+  const [classes, instances] = await Promise.all([
+    getClassesWithSubject({ instancesIds, ctx }),
+    ctx.tx.db.Instances.find({ id: instancesIds })
+      .select({ id: 1, metadata: 1 })
+      .lean()
+      .then((instances) => keyBy(instances, 'id')),
+  ]);
+
+  const instancesById = {};
+
+  Object.values(instances).forEach((instance) => {
+    instancesById[instance.id] = {
+      ...instance,
+      subjects: classes[instance.id].subjectsIds.map((subject) => ({
+        subject,
+        program: classes[instance.id].classes[0].program,
+      })),
+    };
+  });
+
+  return instancesById;
+}
+
+async function addStatusAndInstanceToAssignations({ assignations, fetchInstance, ctx }) {
+  const instancesIds = assignations.map((assignation) => assignation.instance);
+
+  const { getInstances } = require('../../instances/getInstances');
+
+  const promises = [findInstanceDates({ instances: instancesIds, ctx })];
+
+  if (fetchInstance) {
+    promises.push(
+      getInstances({
+        ids: instancesIds,
+        details: true,
+        ctx,
+      }).then((instances) => keyBy(instances, 'id'))
+    );
+  } else {
+    promises.push(getInstanceMetadataAndSubjects({ instancesIds, ctx }));
+  }
+
+  const [dates, instances] = await Promise.all(promises);
+
+  const evaluationSystems = {};
+  const programs = uniq(Object.values(instances).map((instance) => instance.subjects[0].program));
+
+  await Promise.all(
+    programs.map(async (program) => {
+      evaluationSystems[program] = await ctx.tx.call(
+        'academic-portfolio.programs.getProgramEvaluationSystem',
+        {
+          id: program,
+        }
+      );
+    })
+  );
+
+  return assignations.map((assignation) => {
+    const status = getAssignationStatus({
+      dates: dates[assignation.instance] || {},
+      timestamps: assignation.timestamps || {},
+    });
+
+    const grades = getAutoEvaluatedGrades({
+      assignation,
+      instance: instances[assignation.instance],
+      status,
+      evaluationSystems,
+    });
+
+    return {
+      ...assignation,
+      ...status,
+
+      grades,
+      chatKeys: instances[assignation.instance].subjects.map(({ subject }) =>
+        ctx.prefixPN(
+          `subject|${subject}.assignation|${assignation.id}.userAgent|${assignation.user}`
+        )
+      ),
+      instance: fetchInstance ? instances[assignation.instance] : assignation.instance,
+    };
+  });
+}
+
+async function getAssignationsWithCache({
+  assignationsIds,
+  throwOnMissing = true,
+  details = true,
+  fetchInstance,
+  ctx,
+}) {
+  if (!assignationsIds?.length) {
+    return [];
+  }
+
+  const getAssignationsCacheKeyBuilder = getAssignationKeyBuilder({
+    options: { throwOnMissing, details, fetchInstance },
+    ctx,
+  });
+
+  const cacheKeys = assignationsIds.map(getAssignationsCacheKeyBuilder);
+  const cachedAssignations = await ctx.cache.getMany(cacheKeys).then((r) => Object.values(r));
+
+  const assignationsById = {};
+  const assignationsByInstanceAndUser = {};
+
+  cachedAssignations.forEach((assignation) => {
+    assignationsById[assignation.id] = assignation;
+    assignationsByInstanceAndUser[`${assignation.instance}|${assignation.user}`] = assignation;
+  });
+
+  const missingIds = assignationsIds.filter(
+    (id) => !assignationsById[id.id] && !assignationsByInstanceAndUser[`${id.instance}|${id.user}`]
+  );
+
+  if (missingIds.length) {
+    const assignations = await getAssignations({
+      assignationsIds: missingIds,
+      throwOnMissing,
+      fetchInstance,
+      details,
+      ctx,
+    });
+
+    const keysToSave = [];
+
+    assignations.forEach((assignation) => {
+      assignationsById[assignation.id] = assignation;
+      assignationsByInstanceAndUser[
+        `${assignation.instance?.id ?? assignation.instance}|${assignation.user}`
+      ] = assignation;
+
+      keysToSave.push(
+        {
+          key: getAssignationsCacheKeyBuilder({ id: assignation.id }),
+          val: assignation,
+          ttl: ttl.assignations.get,
+        },
+        {
+          key: getAssignationsCacheKeyBuilder({
+            instance: assignation.instance?.id ?? assignation.instance,
+            user: assignation.user,
+          }),
+          val: assignation,
+          ttl: ttl.assignations.get,
+        }
+      );
+    });
+
+    await ctx.cache.setMany(keysToSave);
+  }
+
+  const assignations = assignationsIds.map(
+    (id) => assignationsById[id?.id] ?? assignationsByInstanceAndUser[`${id?.instance}|${id?.user}`]
+  );
+
+  if (!details) {
+    return assignations;
+  }
+
+  return await addStatusAndInstanceToAssignations({ assignations, fetchInstance, ctx });
+}
+
+module.exports = { getAssignations: getAssignationsWithCache };
