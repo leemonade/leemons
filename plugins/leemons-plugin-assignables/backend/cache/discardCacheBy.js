@@ -20,4 +20,15 @@ module.exports = {
       );
     },
   },
+  assignations: {
+    discardGetAssignationsCacheById: async ({ ids, ctx }) => {
+      await ctx.cache.deleteByNamespace(namespaces.assignations.get, (key) =>
+        ids.some(
+          ({ id, instance, user }) =>
+            (id && key.includes(`:id:${id}`)) ||
+            (instance && user && key.includes(`:instance:${instance}:user:${user}`))
+        )
+      );
+    },
+  },
 };
