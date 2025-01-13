@@ -15,6 +15,8 @@ module.exports = {
         return `${namespaces.assignations.get}:${ctx.meta.deploymentID}:instance:${id.instance}:user:${id.user}:userAgent:${ctx.meta.userSession?.userAgents?.[0]?.id}:options:${hash(options)}`;
       }
 
+      console.error('Invalid assignation id format for cache key', id);
+
       throw new LeemonsError(ctx, {
         message: 'Invalid assignation id format for cache key',
         httpStatusCode: 400,

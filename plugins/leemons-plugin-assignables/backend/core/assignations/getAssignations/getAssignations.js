@@ -13,7 +13,6 @@ const { getGrades } = require('./getGrades');
 const {
   getModuleActivitiesTimestampsAndGrades,
 } = require('./getModuleActivitesTimestampsAndGrades');
-const { getRelatedAssignationsTimestamps } = require('./getRelatedAssignationsTimestamps');
 
 function getAutoEvaluatedGrades({ assignation, instance, status, evaluationSystems }) {
   const grades = assignation.grades;
@@ -92,53 +91,25 @@ async function getAssignations({ assignationsIds, throwOnMissing = true, details
     return assignationsData.map((assignation) => ({
       ...assignation,
       classes: JSON.parse(assignation.classes || null),
-      metadata: JSON.parse(assignation.metadata || null),
+      metadata: JSON.parse(assignation.metadata || null) ?? {},
     }));
   }
 
   const promises = [
-    getRelatedAssignationsTimestamps({ assignationsData, ctx }),
     findAssignationDates({ assignationsIds: ids, ctx }),
     getGrades({ assignationsData, ctx }),
-
-    // TODO: Uncache all activities in the module when sub-activity is modified
-    getModuleActivitiesTimestampsAndGrades({ assignationsData, ctx }),
   ];
 
-  const [
-    relatedAssignations,
-    timestamps,
-    grades,
-    { dates: moduleActivitiesTimestamps, completion, grades: moduleGrades, status: moduleStatus },
-  ] = await Promise.all(promises);
+  const [timestamps, grades] = await Promise.all(promises);
 
-  const result = assignationsData.map(async (assignation) => {
-    // Add module child activities timestamps to the assignation timestamps
-    defaultsDeep(timestamps, moduleActivitiesTimestamps);
+  const result = assignationsData.map(async (assignation) => ({
+    ...assignation,
+    classes: JSON.parse(assignation.classes || null),
+    metadata: JSON.parse(assignation.metadata || null) ?? {},
 
-    let metadata = JSON.parse(assignation.metadata || null);
-
-    if (completion[assignation.id] || moduleStatus[assignation.id]) {
-      metadata = {
-        completion: completion[assignation.id] ?? null,
-        moduleStatus: moduleStatus[assignation.id] ?? null,
-        ...metadata,
-      };
-    }
-
-    // Returns the assignationObject
-    return {
-      ...assignation,
-      classes: JSON.parse(assignation.classes || null),
-      metadata,
-
-      relatedAssignableInstances: {
-        before: relatedAssignations[assignation.id] || [],
-      },
-      grades: grades[assignation.id] || moduleGrades[assignation.id] || [],
-      timestamps: timestamps[assignation.id] || {},
-    };
-  });
+    grades: grades[assignation.id] || [],
+    timestamps: timestamps[assignation.id] || {},
+  }));
 
   return Promise.all(result);
 }
@@ -172,7 +143,10 @@ async function addStatusAndInstanceToAssignations({ assignations, fetchInstance,
 
   const { getInstances } = require('../../instances/getInstances');
 
-  const promises = [findInstanceDates({ instances: instancesIds, ctx })];
+  const promises = [
+    findInstanceDates({ instances: instancesIds, ctx }),
+    getModuleActivitiesTimestampsAndGrades({ assignationsData: assignations, ctx }),
+  ];
 
   if (fetchInstance) {
     promises.push(
@@ -186,7 +160,11 @@ async function addStatusAndInstanceToAssignations({ assignations, fetchInstance,
     promises.push(getInstanceMetadataAndSubjects({ instancesIds, ctx }));
   }
 
-  const [dates, instances] = await Promise.all(promises);
+  const [
+    dates,
+    { dates: moduleActivitiesTimestamps, completion, grades: moduleGrades, status: moduleStatus },
+    instances,
+  ] = await Promise.all(promises);
 
   const evaluationSystems = {};
   const programs = uniq(Object.values(instances).map((instance) => instance.subjects[0].program));
@@ -203,10 +181,15 @@ async function addStatusAndInstanceToAssignations({ assignations, fetchInstance,
   );
 
   return assignations.map((assignation) => {
+    defaultsDeep(assignation.timestamps, moduleActivitiesTimestamps[assignation.id] || {});
     const status = getAssignationStatus({
       dates: dates[assignation.instance] || {},
       timestamps: assignation.timestamps || {},
     });
+
+    if (!assignation.grades?.length && moduleGrades[assignation.id]?.length) {
+      assignation.grades = moduleGrades[assignation.id];
+    }
 
     const grades = getAutoEvaluatedGrades({
       assignation,
@@ -214,6 +197,11 @@ async function addStatusAndInstanceToAssignations({ assignations, fetchInstance,
       status,
       evaluationSystems,
     });
+
+    if (completion[assignation.id] || moduleStatus[assignation.id]) {
+      assignation.metadata.completion = completion[assignation.id] ?? null;
+      assignation.metadata.moduleStatus = moduleStatus[assignation.id] ?? null;
+    }
 
     return {
       ...assignation,
