@@ -58,6 +58,12 @@ async function getIfHasPermission({ menuKey, ctx }) {
       throw new LeemonsError(ctx, { message: `You do not have access to the '${menuKey}' menu` });
   }
 
+  // Add basic permission to query
+  queryPermissions.push({
+    permissionName: 'users.any',
+    actionName: ['view'],
+  });
+
   // We take only the menu items to which we have access.
   const typeTemplate = ctx.prefixPN(`${menuKey}.menu-item`);
   const query = {
