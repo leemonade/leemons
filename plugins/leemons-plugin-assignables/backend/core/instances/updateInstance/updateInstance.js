@@ -1,6 +1,7 @@
 const { LeemonsError } = require('@leemons/error');
-const { keys, omit, pick, uniq, without, uniqBy } = require('lodash');
+const { keys, omit, pick, uniq, without } = require('lodash');
 
+const discardCacheBy = require('../../../cache/discardCacheBy');
 const { updateClasses } = require('../../classes/updateClasses');
 const { updateDates } = require('../../dates/updateDates');
 const { getDiff } = require('../../helpers/getDiff');
@@ -164,6 +165,8 @@ async function updateInstance({ assignableInstance, propagateRelated, onlyAddDat
 
   const { assignable, dates, event } = object;
   await updateEventAndAddToUsers({ assignable, dates, event, id, ctx });
+
+  await discardCacheBy.instances.discardGetInstancesCacheById({ ids: [id], ctx });
 
   return {
     id,
