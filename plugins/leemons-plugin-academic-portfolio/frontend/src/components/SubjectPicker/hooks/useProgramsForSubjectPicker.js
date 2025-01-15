@@ -1,17 +1,17 @@
 import { useMemo } from 'react';
 
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { map, sortBy } from 'lodash';
+
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { useProgramsPublicInfo } from '@academic-portfolio/hooks';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { map, sortBy, uniq } from 'lodash';
 
-export function useProgramsForSubjectPicker({ subjects }) {
-  const programIds = uniq(map(subjects, 'program'));
+export function useProgramsForSubjectPicker({ programIds }) {
   const [t] = useTranslateLoader(prefixPN('newSubjectsPage.labels'));
 
   const { data, isLoading } = useProgramsPublicInfo({
     programIds,
-    options: { enabled: !!programIds },
+    options: { enabled: !!programIds?.length },
   });
 
   return useMemo(() => {
@@ -26,7 +26,9 @@ export function useProgramsForSubjectPicker({ subjects }) {
         name: `${t('course')} ${index}`,
         id,
       })),
-      hasCourses: !(program?.moreThanOneAcademicYear || program?.maxNumberOfCourses === 1),
+      activateCoursesSelect: !(
+        program?.moreThanOneAcademicYear || program?.maxNumberOfCourses === 1
+      ),
       // TODO UPDATE THIS IN BACK & FRONT FOR IT TO BE: activateCoursesSelect: !(!program?.sequentialCourses || program?.maxNumberOfCourses === 1)),
     }));
   }, [data, isLoading, t]);

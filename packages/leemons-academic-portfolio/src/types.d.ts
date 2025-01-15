@@ -37,6 +37,17 @@ export interface ClassStudent extends Omit<LeemonsSchema, 'id'> {
   student: UserAgentID;
 }
 
+export interface Subject extends Omit<LeemonsSchema, 'id'> {
+  id: SubjectID;
+  name: string;
+  program: ProgramID;
+  course: CourseID | CourseID[];
+  image: Asset | AssetID | null;
+  icon: Asset | AssetID | null;
+  color: string;
+  useBlocks: boolean;
+}
+
 /**
  * TODO: Non exhaustive definition. Review and improve.
  * @file plugins/leemons-plugin-academic-portfolio/backend/models/programs.js
@@ -48,17 +59,7 @@ export interface Program extends Omit<LeemonsSchema, 'id'> {
   nomenclature?: {
     block?: string;
   };
-}
-
-export interface Subject extends Omit<LeemonsSchema, 'id'> {
-  id: SubjectID;
-  name: string;
-  program: ProgramID;
-  course: CourseID | CourseID[];
-  image: Asset | AssetID | null;
-  icon: Asset | AssetID | null;
-  color: string;
-  useBlocks: boolean;
+  subjects: Subject[];
 }
 
 /**

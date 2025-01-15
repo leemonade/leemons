@@ -1,3 +1,9 @@
+const {
+  isAdminUpdatingCenterAsset: isAdminUpdatingCenterAssetFunction,
+} = require('../../permissions/centerAssetItemPermission');
+const {
+  addCenterItemPermission,
+} = require('../../permissions/centerAssetItemPermission/addCenterItemPermission');
 const { duplicate } = require('../duplicate');
 
 /**
@@ -10,14 +16,49 @@ const { duplicate } = require('../duplicate');
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<object>} The duplicated asset.
  */
-async function handleAssetUpgrade({ assetId, scale, published, ctx }) {
+async function handleAssetUpgrade({ assetId, currentAsset, scale, published, subjects, ctx }) {
   const { fullId } = await ctx.tx.call('common.versionControl.upgradeVersion', {
     id: assetId,
     upgrade: scale,
     published,
   });
 
-  return duplicate({ assetId, preserveName: true, newId: fullId, ctx });
+  const isAdminUpdatingCenterAsset = await isAdminUpdatingCenterAssetFunction({
+    asset: currentAsset,
+    ctx,
+  });
+
+  const duplicatedAsset = await duplicate({
+    assetId,
+    preserveName: true,
+    newId: fullId,
+    preserveOwner: isAdminUpdatingCenterAsset,
+    ctx,
+  });
+
+  if (isAdminUpdatingCenterAsset) {
+    const [ownerUserAgentDetails] = await ctx.tx.call('users.users.getUserAgentsInfo', {
+      userAgentIds: [duplicatedAsset.fromUserAgent],
+      withCenter: true,
+      withProfile: true,
+      ctx,
+    });
+    await addCenterItemPermission({
+      assetId: duplicatedAsset.id,
+      centerId: ownerUserAgentDetails.center.id,
+      ctx,
+    });
+  }
+
+  if (subjects?.length) {
+    await Promise.all(
+      subjects.map((item) =>
+        ctx.tx.db.AssetsSubjects.create({ asset: duplicatedAsset.id, subject: item })
+      )
+    );
+  }
+
+  return duplicatedAsset;
 }
 
 module.exports = { handleAssetUpgrade };

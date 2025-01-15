@@ -1,17 +1,21 @@
 /* eslint-disable no-param-reassign */
-const { isEmpty } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
+const { isEmpty } = require('lodash');
 
-const { validateAddAsset } = require('../../validations/forms');
+const { CATEGORIES } = require('../../../config/constants');
+const {
+  set: setCenterAssetItemPermission,
+} = require('../../permissions/centerAssetItemPermission');
 const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
+const { validateAddAsset } = require('../../validations/forms');
 const { getByIds } = require('../getByIds/getByIds');
-const { handleUpdateObject } = require('./handleUpdateObject');
+
 const { handleAssetUpgrade } = require('./handleAssetUpgrade');
-const { handleSubjectsUpdates } = require('./handleSubjectsUpdates');
-const { handleTagsUpdates } = require('./handleTagsUpdates');
 const { handleFileAndCoverUpdates } = require('./handleFileAndCoverUpdates');
 const { handleFilesRemoval } = require('./handleFilesRemoval');
-const { CATEGORIES } = require('../../../config/constants');
+const { handleSubjectsUpdates } = require('./handleSubjectsUpdates');
+const { handleTagsUpdates } = require('./handleTagsUpdates');
+const { handleUpdateObject } = require('./handleUpdateObject');
 
 // -----------------------------------------------------------------------------
 /**
@@ -96,9 +100,11 @@ async function update({ data, upgrade, scale = 'major', published = true, ctx })
   if (upgrade && currentVersion.published) {
     const duplicatedAsset = await handleAssetUpgrade({
       assetId,
+      currentAsset,
       scale,
       published,
       permissions,
+      subjects,
       ctx,
     });
     currentVersion.published = published;
@@ -117,6 +123,9 @@ async function update({ data, upgrade, scale = 'major', published = true, ctx })
       id: assetId,
       publish: published,
     });
+    // ·········································································
+    // HANDLE CENTER ASSET ITEM PERMISSION
+    await setCenterAssetItemPermission({ assetId, isPublishing: published, ctx });
   }
 
   if (!diff.length) {
@@ -124,6 +133,7 @@ async function update({ data, upgrade, scale = 'major', published = true, ctx })
   }
 
   await handleSubjectsUpdates({ assetId, subjects, diff, ctx });
+  updateObject.program = subjects?.length ? assetData.program : null;
 
   // ·········································································
   // HANDLE TAGS
@@ -164,6 +174,10 @@ async function update({ data, upgrade, scale = 'major', published = true, ctx })
   // EN: Update the asset
   // ES: Actualizar el asset
   const asset = await ctx.tx.db.Assets.findOneAndUpdate({ id: assetId }, toUpdate, { lean: true });
+
+  // ·········································································
+  // HANDLE CENTER ASSET ITEM PERMISSION
+  await setCenterAssetItemPermission({ assetId, isPublishing: published, ctx });
 
   return { ...asset, subjects, file: newFile, cover: coverFile, tags: newData.tags };
 }

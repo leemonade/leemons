@@ -3,6 +3,7 @@ const { deleteSubjectWithClasses } = require('./deleteSubjectWithClasses');
 const { getSubjectCredits, getSubjectsCredits } = require('./getSubjectCredits');
 const { getTeachersBySubjects } = require('./getTeachersBySubjects');
 const { getUserSubjectIds } = require('./getUserSubjectIds');
+const { getUserSubjects } = require('./getUserSubjects');
 const { listSubjectCreditsForProgram } = require('./listSubjectCreditsForProgram');
 const { listSubjects } = require('./listSubjects');
 const { setSubjectCredits } = require('./setSubjectCredits');
@@ -25,4 +26,5 @@ module.exports = {
   deleteSubjectWithClasses,
   ...teacherFunctions,
   getUserSubjectIds,
+  getUserSubjects,
 };

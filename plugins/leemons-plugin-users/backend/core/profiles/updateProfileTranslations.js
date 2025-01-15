@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const getDefaultLocale = require('../platform/getDefaultLocale');
 
 /**
@@ -15,8 +16,13 @@ async function updateProfileTranslations({ profile, translations: _translations,
   const defaultLocale = await getDefaultLocale({ ctx });
   if (!translations.name) translations.name = {};
   if (!translations.description) translations.description = {};
-  translations.name[defaultLocale] = profile.name;
-  translations.description[defaultLocale] = profile.description;
+
+  if (defaultLocale && !translations.name[defaultLocale]) {
+    translations.name[defaultLocale] = profile.name;
+  }
+  if (defaultLocale && !translations.description[defaultLocale]) {
+    translations.description[defaultLocale] = profile.description;
+  }
 
   return Promise.all([
     ctx.tx.call('multilanguage.common.setKey', {

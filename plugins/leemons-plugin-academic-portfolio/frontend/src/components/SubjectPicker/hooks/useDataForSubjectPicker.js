@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
 
-import { filter, find, map } from 'lodash';
+import { filter, find, map, uniq } from 'lodash';
 
 import { useProgramsForSubjectPicker } from './useProgramsForSubjectPicker';
 import { useSubjectsForSubjectPicker } from './useSubjectsForSubjectPicker';
@@ -11,8 +11,14 @@ export function useDataForSubjectPicker({
   control,
   teacherType = ['main-teacher', 'associate-teacher'],
 }) {
-  const subjectsData = useSubjectsForSubjectPicker({ subjects, type: teacherType });
-  const programsData = useProgramsForSubjectPicker({ subjects: subjectsData });
+  const subjectsData = useSubjectsForSubjectPicker({
+    subjects,
+    type: teacherType,
+  });
+
+  const programsData = useProgramsForSubjectPicker({
+    programIds: uniq(map(subjectsData, 'program')),
+  });
 
   /*
     --- Selected data ---
@@ -65,7 +71,7 @@ export function useDataForSubjectPicker({
   );
 
   const courses = useMemo(() => {
-    if (selectedProgram?.hasCourses === false) {
+    if (selectedProgram?.activateCoursesSelect === false) {
       return null;
     }
 

@@ -1,20 +1,24 @@
-const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
+const _ = require('lodash');
 
+const addUserInProvider = require('../providers/users/addUser');
 const existManyRoles = require('../roles/existMany');
-const { encryptPassword } = require('./bcrypt/encryptPassword');
-const { exist } = require('./exist');
 const {
-  addCalendarToUserAgentsIfNeedByUser,
-} = require('../user-agents/calendar/addCalendarToUserAgentsIfNeedByUser');
-const { addUserAvatar } = require('./addUserAvatar');
-const {
-  checkIfCanCreateNUserAgentsInRoleProfiles,
-} = require('./checkIfCanCreateNUserAgentsInRoleProfiles');
+  addCenterAssetsPermissionToCenterAdminUserAgent,
+} = require('../user-agents/addCenterAssetsPermissionToCenterAdminUserAgent');
 const {
   addCenterProfilePermissionToUserAgents,
 } = require('../user-agents/addCenterProfilePermissionToUserAgents');
-const addUserInProvider = require('../providers/users/addUser');
+const {
+  addCalendarToUserAgentsIfNeedByUser,
+} = require('../user-agents/calendar/addCalendarToUserAgentsIfNeedByUser');
+
+const { addUserAvatar } = require('./addUserAvatar');
+const { encryptPassword } = require('./bcrypt/encryptPassword');
+const {
+  checkIfCanCreateNUserAgentsInRoleProfiles,
+} = require('./checkIfCanCreateNUserAgentsInRoleProfiles');
+const { exist } = require('./exist');
 
 /**
  * Add a user to platform
@@ -74,6 +78,11 @@ async function add({
   ).map((doc) => doc.toObject());
 
   await addCenterProfilePermissionToUserAgents({ userAgentIds: _.map(user.userAgents, 'id'), ctx });
+  await Promise.all(
+    _.map(user.userAgents, (userAgent) =>
+      addCenterAssetsPermissionToCenterAdminUserAgent({ userAgent, ctx })
+    )
+  );
 
   // --- Asset
   await addUserAvatar({ user, avatar, ctx });

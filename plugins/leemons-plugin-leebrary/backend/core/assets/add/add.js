@@ -1,19 +1,24 @@
 /* eslint-disable no-param-reassign */
 const { isNil } = require('lodash');
+
 const { CATEGORIES } = require('../../../config/constants');
-const { validateAddAsset } = require('../../validations/forms');
 const { add: addBookmark } = require('../../bookmarks/add');
+const {
+  set: setCenterAssetItemPermission,
+} = require('../../permissions/centerAssetItemPermission');
 const { normalizeItemsArray } = require('../../shared');
-const { handleBookmarkData } = require('./handleBookmarkData');
-const { handleUserSessionData } = require('./handleUserSessionData');
-const { handleCategoryData } = require('./handleCategoryData');
+const { validateAddAsset } = require('../../validations/forms');
+
 const { checkAndHandleCanUse } = require('./checkAndHandleCanUse');
-const { handleFileUpload } = require('./handleFileUpload');
-const { handleVersion } = require('./handleVersion');
 const { createAssetInDB } = require('./createAssetInDb');
-const { handleSubjects } = require('./handleSubjects');
-const { handlePermissions } = require('./handlePermissions');
+const { handleBookmarkData } = require('./handleBookmarkData');
+const { handleCategoryData } = require('./handleCategoryData');
+const { handleFileUpload } = require('./handleFileUpload');
 const { handleFiles } = require('./handleFiles');
+const { handlePermissions } = require('./handlePermissions');
+const { handleSubjects } = require('./handleSubjects');
+const { handleUserSessionData } = require('./handleUserSessionData');
+const { handleVersion } = require('./handleVersion');
 
 /*
 * permissions example
@@ -47,6 +52,7 @@ async function add({
   published = true,
   permissions,
   duplicating = false,
+  preserveOwner = false,
   ctx,
 }) {
   // eslint-disable-next-line prefer-const
@@ -74,7 +80,8 @@ async function add({
 
   // eslint-disable-next-line prefer-const
   let { categoryId, categoryKey, tags, subjects, ...assetData } = data;
-  if (ctx.meta.userSession) {
+  const shouldPreserveOwnerWhenDuplicating = duplicating && preserveOwner;
+  if (ctx.meta.userSession && !shouldPreserveOwnerWhenDuplicating) {
     assetData = handleUserSessionData({ assetData, ctx });
   }
   // ··········································
@@ -142,9 +149,12 @@ async function add({
     permissions: pPermissions,
     canAccess,
     asset: newAsset,
+    owner: preserveOwner ? newAsset.fromUserAgent : undefined,
     category,
     ctx,
   });
+
+  await setCenterAssetItemPermission({ assetId: newAsset.id, isPublishing: published, ctx });
 
   // ··········································································
   // ADD FILES

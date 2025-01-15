@@ -56,3 +56,13 @@ export function getUserFullName({
 }: {
   userSession: Pick<User, 'name' | 'surnames' | 'secondSurname'>;
 }): string;
+
+export interface Profile {
+  id: string;
+  name: string;
+  description?: string;
+  uri: string;
+  role: string;
+  indexable: boolean;
+  sysName: 'super' | 'admin' | 'teacher' | 'student' | 'content-developer';
+}

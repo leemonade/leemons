@@ -24,6 +24,7 @@ const {
   listSubjects,
   subjectByIds,
   isMainTeacherInSubject,
+  getUserSubjects,
 } = require('../../core/subjects');
 const { duplicateSubjectByIds } = require('../../core/subjects/duplicateSubjectByIds');
 const {
@@ -319,6 +320,21 @@ module.exports = {
         status: 200,
         isMainTeacher,
       };
+    },
+  },
+  getUserSubjectsRest: {
+    rest: {
+      path: '/user',
+      method: 'GET',
+    },
+    middlewares: [LeemonsMiddlewareAuthenticated()],
+    async handler(ctx) {
+      const { teacherTypeFilter } = ctx.params;
+      const teacherTypeFilterProcessed = teacherTypeFilter
+        ? teacherTypeFilter.split(',')
+        : undefined;
+      const data = await getUserSubjects({ ctx, teacherTypeFilter: teacherTypeFilterProcessed });
+      return { status: 200, data };
     },
   },
 };

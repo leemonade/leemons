@@ -17,7 +17,7 @@ const getAssetPermissionName = require('../../permissions/helpers/getAssetPermis
  * @returns {Promise<void>} A promise that resolves when permissions are handled.
  */
 
-async function handlePermissions({ permissions, canAccess, asset, category, ctx }) {
+async function handlePermissions({ permissions, canAccess, owner, asset, category, ctx }) {
   const { userSession } = ctx.meta;
   const permissionName = getAssetPermissionName({ assetId: asset.id, ctx });
 
@@ -81,7 +81,7 @@ async function handlePermissions({ permissions, canAccess, asset, category, ctx 
   if (!hasOwner) {
     permissionsToAdd.push(
       ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
-        userAgentId: map(userSession?.userAgents, 'id'),
+        userAgentId: owner || map(userSession?.userAgents, 'id'),
         data: {
           permissionName,
           actionNames: ['owner'],

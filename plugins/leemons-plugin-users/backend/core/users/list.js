@@ -85,9 +85,20 @@ async function list({
   const query = Object.fromEntries(
     Object.entries(queries)
       .filter(([prop]) =>
-        ['id', 'name', 'surnames', 'secondSurname', 'email', 'phone', 'search'].includes(prop)
+        ['id', 'ids', 'name', 'surnames', 'secondSurname', 'email', 'phone', 'search'].includes(
+          prop
+        )
       )
       .map(([prop, value]) => {
+        if (prop === 'ids') {
+          // If value is array and not empty, use $in operator
+          if (Array.isArray(value) && value.length) {
+            return ['id', { $in: value }];
+          }
+          // If single value, use direct match
+          return ['id', value];
+        }
+
         if (prop === 'search') {
           const searchValue = { $regex: _.escapeRegExp(value.toLowerCase()), $options: 'i' };
           return [
@@ -123,7 +134,7 @@ async function list({
   let userAgents = null;
   if (_.isArray(roles) || _.isBoolean(disabled) || listUserAgents) {
     userAgents = await queryUserAgents({ roles, disabled, ctx });
-    query.id = _.map(userAgents, 'user');
+    !queries.ids && (query.id = _.map(userAgents, 'user'));
   }
 
   const result = await mongoDBPaginate({

@@ -103,7 +103,7 @@ async function getByAssets({ assetIds, showPublic, onlyShared, ownerUserAgentIds
     forEach(editItems, (asset) => {
       const index = findIndex(results, { asset });
       if (index >= 0) {
-        if (results[index].role === 'viewer') {
+        if (results[index].role === 'viewer' || results[index].role === 'public') {
           results[index].role = 'editor';
           results[index].permissions = getRolePermissions({ role: 'editor', ctx });
         }
