@@ -80,7 +80,7 @@ async function addPermissionToUserAgents({ userAgents }) {
         id,
         permissionName,
         userAgent: userAgent.id,
-        actionName: 'editor',
+        actionName: 'admin',
         deploymentID: userAgent.deploymentID,
         isDeleted: false,
         deletedAt: null,

@@ -16,7 +16,7 @@ async function addCenterAssetsPermissionToCenterAdminUserAgent({ userAgent, ctx 
       userAgentId: userAgentInfo.id,
       data: {
         permissionName: centerAssetPermissionName,
-        actionNames: ['editor'],
+        actionNames: ['admin'],
       },
     });
   }

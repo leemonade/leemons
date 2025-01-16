@@ -31,7 +31,7 @@ async function isAdminUpdatingCenterAsset({ asset, ctx }) {
     query: {
       permissionName: getCenterPermissionName({ centerId: assetOwnerUserAgent.center.id }),
       item: asset.id,
-      actionName: 'editor',
+      actionName: 'admin',
     },
   });
 }

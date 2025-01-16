@@ -21,10 +21,10 @@ async function addCenterItemPermission({
 
   await ctx.tx.call('users.permissions.addItem', {
     item: assetDetail.id,
-    type: ctx.prefixPN('asset.can-edit'),
+    type: ctx.prefixPN('asset.can-administer'),
     data: {
       permissionName: centerAssetPermissionName,
-      actionNames: ['editor'],
+      actionNames: ['admin'],
       target: assetDetail.category,
     },
     isCustomPermission: true,

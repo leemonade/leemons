@@ -39,6 +39,7 @@ async function getByAssets({ assetIds, showPublic, onlyShared, ownerUserAgentIds
     let viewItems = [];
     let editItems = [];
     let assignItems = [];
+    let adminItems = [];
     if (userAgents) {
       permissions = await ctx.tx.call('users.permissions.getUserAgentPermissions', {
         userAgent: userAgents,
@@ -56,7 +57,7 @@ async function getByAssets({ assetIds, showPublic, onlyShared, ownerUserAgentIds
     }
 
     if (userAgents) {
-      [viewItems, editItems, assignItems] = await handleItemPermissions({
+      [viewItems, editItems, assignItems, adminItems] = await handleItemPermissions({
         assetsIds,
         userAgents,
         ctx,
@@ -103,7 +104,7 @@ async function getByAssets({ assetIds, showPublic, onlyShared, ownerUserAgentIds
     forEach(editItems, (asset) => {
       const index = findIndex(results, { asset });
       if (index >= 0) {
-        if (results[index].role === 'viewer' || results[index].role === 'public') {
+        if (results[index].role === 'viewer') {
           results[index].role = 'editor';
           results[index].permissions = getRolePermissions({ role: 'editor', ctx });
         }
@@ -112,6 +113,22 @@ async function getByAssets({ assetIds, showPublic, onlyShared, ownerUserAgentIds
           asset,
           role: 'editor',
           permissions: getRolePermissions({ role: 'editor', ctx }),
+        });
+      }
+    });
+
+    forEach(adminItems, (asset) => {
+      const index = findIndex(results, { asset });
+      if (index >= 0) {
+        if (results[index].role === 'viewer' || results[index].role === 'public') {
+          results[index].role = 'admin';
+          results[index].permissions = getRolePermissions({ role: 'admin', ctx });
+        }
+      } else {
+        results.push({
+          asset,
+          role: 'admin',
+          permissions: getRolePermissions({ role: 'admin', ctx }),
         });
       }
     });

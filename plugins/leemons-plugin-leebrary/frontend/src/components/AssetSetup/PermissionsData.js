@@ -74,6 +74,7 @@ const ROLES_BY_ROLE = {
     // { label: 'Assigner', value: 'assigner' },
     // { label: 'Commentor', value: 'commentor' },
   ],
+  admin: [{ label: 'Viewer', value: 'viewer' }],
 };
 
 const PermissionsData = ({
@@ -159,6 +160,7 @@ const PermissionsData = ({
     const assetPermissions = [];
     const programsNeedCenter = [];
     const classesNeedCenter = [];
+
     _.forEach(Object.keys(asset?.permissions), (role) => {
       _.forEach(asset?.permissions[role], (permission) => {
         const obj = getObjectByPermission(permission);
@@ -274,6 +276,7 @@ const PermissionsData = ({
           canAccess,
           permissions: _permissions,
           isPublic,
+          shouldMaintainSubjectTagsWhenPublic: true,
         };
 
         if (isFunction(onSavePermissions)) {
@@ -407,6 +410,7 @@ const PermissionsData = ({
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
       const { roleLabels } = items.leebrary.assetSetup;
+
       const ROLES = ROLES_BY_ROLE[asset?.role || 'owner'];
       ROLES.forEach((rol, index) => {
         ROLES[index].label = roleLabels[rol.value] || ROLES[index].label;

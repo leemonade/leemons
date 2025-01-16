@@ -127,7 +127,7 @@ const categories = [
 
 // EN: The roles must be ordered by allowance. Each role can only assign lower roles.
 // ES: Los roles deben estar ordenados por permisos. Cada rol sólo puede asignar roles inferiores.
-const assetRoles = ['viewer', 'commentor', 'editor', 'assigner', 'owner'];
+const assetRoles = ['viewer', 'commentor', 'editor', 'assigner', 'admin', 'owner'];
 const roles = ['public', 'noPermission', ...assetRoles];
 
 // EN: The permissions each role has.
@@ -194,6 +194,16 @@ const rolesPermissions = {
     canUnassign: ['assigner', 'viewer', 'commentor'],
   },
   owner: {
+    view: true,
+    assign: true,
+    comment: true,
+    edit: true,
+    delete: true,
+    duplicate: true,
+    canAssign: ['assigner', 'viewer', 'commentor', 'editor', 'owner'],
+    canUnassign: ['assigner', 'viewer', 'commentor', 'editor'],
+  },
+  admin: {
     view: true,
     assign: true,
     comment: true,

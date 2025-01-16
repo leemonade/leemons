@@ -43,7 +43,6 @@ async function duplicate({
   const pPermissions = normalizeItemsArray(permissions);
 
   await checkDuplicatePermissions({ assetId, ctx });
-  // devA = 568 - admin a63
   const asset = await getAndCheckAsset({ assetId, ctx });
   const category = await checkCategoryDuplicable({ categoryId: asset.category, ctx });
 

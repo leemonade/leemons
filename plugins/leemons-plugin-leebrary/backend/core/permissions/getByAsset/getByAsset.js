@@ -1,7 +1,8 @@
-const { find, isEmpty } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
-const getRolePermissions = require('../helpers/getRolePermissions');
+const { find, isEmpty } = require('lodash');
+
 const getAssetPermissionName = require('../helpers/getAssetPermissionName');
+const getRolePermissions = require('../helpers/getRolePermissions');
 
 /**
  * Retrieves permissions by asset.
@@ -18,7 +19,7 @@ async function getByAsset({ assetId, ctx }) {
     const getAllItemsForTheUserAgentHasPermissionsByType =
       'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType';
 
-    const [permissions, canView, canEdit, canAssign] = await Promise.all([
+    const [permissions, canView, canEdit, canAssign, canAdminister] = await Promise.all([
       ctx.tx.call('users.permissions.getUserAgentPermissions', {
         userAgent: userSession.userAgents,
         query: { permissionName: getAssetPermissionName({ assetId, ctx }) },
@@ -38,6 +39,12 @@ async function getByAsset({ assetId, ctx }) {
       ctx.tx.call(getAllItemsForTheUserAgentHasPermissionsByType, {
         userAgentId: userSession.userAgents.map((userAgent) => userAgent.id),
         type: ctx.prefixPN('asset.can-assign'),
+        ignoreOriginalTarget: true,
+        item: assetId,
+      }),
+      ctx.tx.call(getAllItemsForTheUserAgentHasPermissionsByType, {
+        userAgentId: userSession.userAgents.map((userAgent) => userAgent.id),
+        type: ctx.prefixPN('asset.can-administer'),
         ignoreOriginalTarget: true,
         item: assetId,
       }),
@@ -69,6 +76,9 @@ async function getByAsset({ assetId, ctx }) {
     }
     if (canEdit?.length && (!role || role !== 'owner')) {
       role = 'editor';
+    }
+    if (canAdminister?.length && (!role || role !== 'owner')) {
+      role = 'admin';
     }
 
     return {

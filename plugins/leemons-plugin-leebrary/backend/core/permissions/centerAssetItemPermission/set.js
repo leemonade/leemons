@@ -17,7 +17,7 @@ async function determinePermissionAction({
     query: {
       permissionName: centerAssetPermissionName,
       item: assetDetail.id,
-      actionName: 'editor',
+      actionName: 'admin',
     },
   });
 
@@ -64,9 +64,9 @@ async function set({ assetId, isPublishing = false, ctx }) {
       await ctx.tx.call('users.permissions.removeItems', {
         query: {
           permissionName: centerAssetPermissionName,
-          type: ctx.prefixPN('asset.can-edit'),
+          type: ctx.prefixPN('asset.can-administer'),
           item: assetId,
-          actionName: 'editor',
+          actionName: 'admin',
         },
       });
       return { success: true, action: SET_ACTIONS.remove };
