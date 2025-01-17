@@ -19,23 +19,20 @@ const {
 async function getIfHasPermission({ menuKey, ctx }) {
   await validateNotExistMenu({ key: menuKey, ctx });
 
-  const [profileSysName, userPermissions, deploymentConfig] = await Promise.all([
-    ctx.tx.call('users.profiles.getProfileSysName'),
-    ctx.tx.call('users.permissions.getUserAgentPermissions', {
-      userAgent: ctx.meta.userSession.userAgents,
-    }),
+  const [profile, deploymentConfig] = await Promise.all([
+    ctx.tx.call('users.profiles.detailByUserAgent'),
     ctx.tx.call('deployment-manager.getConfigRest', { allConfig: true }),
   ]);
 
   const queryPermissions = [];
+  const profilePermissions = Object.keys(profile.permissions);
 
   // Preparation of the query to check permissions
-  if (userPermissions.length) {
-    _.forEach(userPermissions, (userPermission) => {
+  if (profilePermissions.length) {
+    _.forEach(profilePermissions, (permission) => {
       queryPermissions.push({
-        permissionName: userPermission.permissionName,
-        actionName: userPermission.actionNames,
-        target: userPermission.target,
+        permissionName: permission,
+        actionName: profile.permissions[permission],
       });
     });
   }
@@ -61,10 +58,16 @@ async function getIfHasPermission({ menuKey, ctx }) {
       throw new LeemonsError(ctx, { message: `You do not have access to the '${menuKey}' menu` });
   }
 
+  // Add basic permission to query
+  queryPermissions.push({
+    permissionName: 'users.any',
+    actionName: ['view'],
+  });
+
   // We take only the menu items to which we have access.
-  const typeTemplate = _.escapeRegExp(ctx.prefixPN(`${menuKey}.menu-item`));
+  const typeTemplate = ctx.prefixPN(`${menuKey}.menu-item`);
   const query = {
-    type: { $regex: `^${typeTemplate}` },
+    type: typeTemplate,
   };
   query.$or = queryPermissions;
   const menuItemPermissions = await ctx.tx.call('users.permissions.findItems', { params: query });
@@ -93,7 +96,7 @@ async function getIfHasPermission({ menuKey, ctx }) {
   );
 
   // Skip main menu for super users
-  if (profileSysName === 'super' && menuKey.indexOf('leebrary') < 0) {
+  if (profile.sysName === 'super' && menuKey.indexOf('leebrary') < 0) {
     menuItems = menuItems.filter((item) => item.key.indexOf('admin') === 0);
   }
 

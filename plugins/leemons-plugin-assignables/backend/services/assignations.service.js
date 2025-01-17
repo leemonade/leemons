@@ -1,17 +1,19 @@
 /** @type {import('moleculer').ServiceSchema} */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
 const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
 const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 
-const { getServiceModels } = require('../models');
+const namespaces = require('../cache/namespaces');
 const { createAssignation } = require('../core/assignations/createAssignation');
 const { getAssignation } = require('../core/assignations/getAssignation');
 const { getAssignations } = require('../core/assignations/getAssignations');
-const { updateAssignation } = require('../core/assignations/updateAssignation');
 const { getUserDataForFundae } = require('../core/assignations/getUserDataForFundae');
+const { updateAssignation } = require('../core/assignations/updateAssignation');
+const { getServiceModels } = require('../models');
+
 const restActions = require('./rest/assignations.rest');
 
 module.exports = {
@@ -19,7 +21,9 @@ module.exports = {
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
-    LeemonsCacheMixin(),
+    LeemonsCacheMixin({
+      namespaces: [namespaces.assignations.get],
+    }),
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),

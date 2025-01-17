@@ -5,7 +5,7 @@ const _ = require('lodash');
  * @static
  * @param {UserAgent|UserAgent[]} userAgent - Id or ids of user agents
  * @param {any=} transacting - DB Transaction
- * @return {Promise<boolean>}
+ * @return {Promise<import('@leemons/users').Profile>}
  * */
 async function getUserAgentProfile({ userAgent, ctx }) {
   const isArray = _.isArray(userAgent);

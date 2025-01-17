@@ -9,11 +9,14 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 const { LeemonsValidator } = require('@leemons/validator');
-const { pick } = require('lodash');
 
 const { getUserEnrollments, getClassPublicData } = require('../../core/classes');
 const { addClass } = require('../../core/classes/addClass');
-const { addClassStudentsMany } = require('../../core/classes/addClassStudentsMany');
+const { emitUpdateEnrollmentEvent } = require('../../core/classes/addClassStudents');
+const {
+  addClassStudentsMany,
+  prepareAddClassStudentsMany,
+} = require('../../core/classes/addClassStudentsMany');
 const { addClassTeachersMany } = require('../../core/classes/addClassTeachersMany');
 const { addInstanceClass } = require('../../core/classes/addInstanceClass');
 const { classByIds } = require('../../core/classes/classByIds');
@@ -26,8 +29,13 @@ const { listSubjectClasses } = require('../../core/classes/listSubjectClasses');
 const { listTeacherClasses } = require('../../core/classes/listTeacherClasses');
 const { removeClassesByIds } = require('../../core/classes/removeClassesByIds');
 const { remove: removeStudentFromClass } = require('../../core/classes/student/remove');
-const { updateClass } = require('../../core/classes/updateClass');
+const {
+  prepareUpdateClass,
+  executeUpdateClass,
+  emitUpdateClassEvent,
+} = require('../../core/classes/updateClass');
 const { updateClassMany } = require('../../core/classes/updateClassMany');
+const { validateUpdateClass } = require('../../validations/forms');
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -87,8 +95,21 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const _class = await updateClass({ data: ctx.params, ctx });
-      return { status: 200, class: _class };
+      await validateUpdateClass({ data: ctx.params, ctx });
+
+      const { nClass, program } = await prepareUpdateClass({ data: ctx.params, ctx });
+
+      executeUpdateClass({ data: ctx.params, class: nClass, program, ctx }).catch((error) => {
+        emitUpdateClassEvent({
+          class: nClass,
+          ctx,
+          message: 'CLASS_UPDATE_ERROR',
+          status: 'error',
+          error,
+        });
+      });
+
+      return { status: 200, class: { ...nClass, program } };
     },
   },
   putClassManyRest: {
@@ -107,6 +128,7 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
+      // TODO: This proccess is taking too long, we need to return a status 200 and after that, send a message to the user that the process is finished
       const classes = await updateClassMany({ data: ctx.params, ctx });
       return { status: 200, classes };
     },
@@ -269,8 +291,9 @@ module.exports = {
       }),
     ],
     async handler(ctx) {
-      const _class = await addClassStudentsMany({ data: ctx.params, ctx });
-      return { status: 200, class: _class };
+      addClassStudentsMany({ data: ctx.params, ctx });
+
+      return { status: 200, class: ctx.params.class };
     },
   },
   postClassTeachersRest: {

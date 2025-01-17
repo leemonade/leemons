@@ -1,9 +1,12 @@
-const { map, difference, omit } = require('lodash');
 const { LeemonsError } = require('@leemons/error');
-const { getRoles } = require('../../roles');
-const { getSubjects } = require('../../subjects');
+const { map, difference, omit } = require('lodash');
+
+const { getAssignableKeyBuilder } = require('../../../cache/keys/assignables');
+const ttl = require('../../../cache/ttl');
 const { getAsset } = require('../../leebrary/assets');
 const { getUserPermissions } = require('../../permissions/assignables/users/getUserPermissions');
+const { getRoles } = require('../../roles');
+const { getSubjects } = require('../../subjects');
 
 /**
  * Fetches assignables based on provided ids and showDeleted flag.
@@ -123,7 +126,7 @@ async function getAssetData({ ids, columns, withFiles, ctx }) {
 async function getAssignables({
   ids,
   columns = ['asset'],
-  withFiles,
+  withFiles = false,
   showDeleted = true,
   throwOnMissing = true,
   ctx,
@@ -185,4 +188,75 @@ async function getAssignables({
   }));
 }
 
-module.exports = { getAssignables };
+async function getAssignablesWithCache({
+  ids,
+  columns = ['asset'],
+  withFiles = false,
+  showDeleted = true,
+  throwOnMissing = true,
+  ctx,
+}) {
+  if (!ids?.length) {
+    return [];
+  }
+
+  const getAssignablesCacheKeyBuilder = getAssignableKeyBuilder({
+    options: { columns, withFiles, showDeleted, throwOnMissing },
+    ctx,
+  });
+
+  const cacheKeys = ids.map(getAssignablesCacheKeyBuilder);
+  const cachedAssignables = await ctx.cache.getMany(cacheKeys).then((r) => Object.values(r));
+
+  const assignablesById = {};
+  const assignablesByAsset = {};
+  const foundIds = [];
+
+  cachedAssignables.forEach((assignable) => {
+    assignablesById[assignable.id] = assignable;
+    assignablesByAsset[assignable.asset] = assignable;
+
+    foundIds.push(assignable.id);
+  });
+
+  const missingIds = difference(ids, foundIds);
+
+  if (missingIds.length) {
+    const assignables = await getAssignables({
+      ids: missingIds,
+      columns,
+      withFiles,
+      showDeleted,
+      throwOnMissing,
+      ctx,
+    });
+
+    const keysToSave = [];
+    assignables.forEach((assignable) => {
+      const assignableCacheKey = getAssignablesCacheKeyBuilder(assignable.id);
+      const assetCacheKey = getAssignablesCacheKeyBuilder(assignable.asset?.id ?? assignable.asset);
+
+      keysToSave.push(
+        {
+          key: assignableCacheKey,
+          val: assignable,
+          ttl: ttl.assignables.get,
+        },
+        {
+          key: assetCacheKey,
+          val: assignable,
+          ttl: ttl.assignables.get,
+        }
+      );
+
+      assignablesById[assignable.id] = assignable;
+      assignablesByAsset[assignable.asset] = assignable;
+    });
+
+    await ctx.cache.setMany(keysToSave);
+  }
+
+  return ids.map((id) => assignablesById[id] ?? assignablesByAsset[id]);
+}
+
+module.exports = { getAssignables: getAssignablesWithCache };

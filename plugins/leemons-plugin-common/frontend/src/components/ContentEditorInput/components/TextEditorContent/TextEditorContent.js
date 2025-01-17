@@ -50,6 +50,7 @@ const TextEditorContent = ({
     { editorStyles, fullWidth, compact },
     { name: 'TextEditorContent' }
   );
+
   return (
     <>
       {canExpand && (

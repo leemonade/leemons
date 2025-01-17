@@ -15,6 +15,7 @@ import {
   SCORES_BASIC_TABLE_PROP_TYPES,
 } from './ScoresBasicTable.constants';
 import { ScoresBasicTableStyles } from './ScoresBasicTable.styles';
+import { RightContent } from './components/RightContent';
 
 const ScoresBasicTable = ({
   grades,
@@ -35,6 +36,7 @@ const ScoresBasicTable = ({
   hideCustom,
   viewOnly,
   leftBadge,
+  retakes,
 }) => {
   const { ref: tableRef } = useElementSize(null);
   const [value, setValue] = useState(_value);
@@ -133,42 +135,6 @@ const ScoresBasicTable = ({
     const weightedAverage = (weightedScore / sumOfWeights).toFixed(2);
     return useNumbers ? weightedAverage : findGradeLetter(weightedAverage);
   };
-
-  const getActivitiesPeriod = () =>
-    periodName ||
-    `${new Date(from).toLocaleDateString(locale) ?? '?'} - ${
-      new Date(to).toLocaleDateString(locale) ?? '?'
-    }`;
-
-  const getRightBodyContent = () =>
-    value.map(({ id, activities: studentActivities, customScore, allowCustomChange }) => {
-      const avgScore = getAvgScore(studentActivities);
-      return (
-        <Box key={id} className={classes.contentRow}>
-          <Box className={classes.separator} />
-          <Box className={classes.studentInfo}>
-            <Text color="primary" role="productive">
-              {isNaN(avgScore) ? '-' : avgScore}
-              {usePercentage ? '%' : ''}
-            </Text>
-          </Box>
-          {!hideCustom && (
-            <Box className={classes.studentInfo}>
-              <ScoreCell
-                value={isNaN(customScore) ? avgScore : customScore}
-                allowChange={allowCustomChange && !viewOnly}
-                grades={grades}
-                usePercentage={usePercentage}
-                row={id}
-                column={'customScore'}
-                onDataChange={onDataChange}
-                isCustom={true}
-              />
-            </Box>
-          )}
-        </Box>
-      );
-    });
 
   const getColumns = () => {
     const columns = [];
@@ -396,31 +362,25 @@ const ScoresBasicTable = ({
             })}
           </Box>
         </Box>
-        <Box className={classes.rightBody}>
-          <Box className={classes.rightBodyHeader}>
-            <Box className={classes.headerAvg}>
-              <Text color="primary" role="productive" stronger transform="uppercase">
-                {labels.avgScore}
-              </Text>
-              <Text color="primary" role="productive" size="xs">
-                {getActivitiesPeriod()}
-              </Text>
-            </Box>
-            <Box className={classes.columnHeader}>
-              <Text color="primary" role="productive" stronger transform="uppercase" size="xs">
-                {labels.gradingTasks}
-              </Text>
-            </Box>
-            {!hideCustom && (
-              <Box className={classes.columnHeader}>
-                <Text color="primary" role="productive" stronger transform="uppercase" size="xs">
-                  {labels.customScore}
-                </Text>
-              </Box>
-            )}
-          </Box>
-          <Box className={classes.rightBodyContent}>{getRightBodyContent()}</Box>
-        </Box>
+        <RightContent
+          labels={labels}
+          overFlowRight={overFlowRight}
+          headerProps={{
+            periodName,
+            from,
+            to,
+            locale,
+          }}
+          hideCustom={hideCustom}
+          studentsData={value}
+          grades={grades}
+          activities={activities}
+          useNumbers={useNumbers}
+          retakes={retakes}
+          onDataChange={onDataChange}
+          usePercentage={usePercentage}
+          viewOnly={viewOnly}
+        />
       </Box>
     </Box>
   );

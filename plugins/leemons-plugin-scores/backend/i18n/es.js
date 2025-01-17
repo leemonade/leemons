@@ -394,16 +394,20 @@ module.exports = {
       manualActivity: 'Actividad evaluable',
       manualActivityCreated: 'Actividad evaluable creada correctamente',
       manualActivityError: 'Error creando actividad evaluable',
+      retake: 'Convocatoria',
     },
     scoresTable: {
       students: 'Estudiantes',
       noActivity: 'NE',
       submitted: 'Entregado',
       avgScore: 'Nota promedio',
-      calculated: 'Calculada',
-      custom: 'Docente',
+      calculated: 'CALC.',
+      custom: 'FINAL',
+      retake: 'CONV.',
       attendance: 'Asistencia',
     },
+
+    retake: 'Convocatoria',
     newModule:
       'Se han añadido nuevos módulos a esta asignatura que no están ponderados. Para calcularlos correctamente, accede a sus Reglas de ponderación.',
     updatedSuccess: 'Actualizada la nota de {{student}} en {{activity}} a un {{score}}',

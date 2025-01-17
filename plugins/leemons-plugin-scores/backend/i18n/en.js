@@ -393,16 +393,20 @@ module.exports = {
       manualActivity: 'Graded activity',
       manualActivityCreated: 'Graded activity created successfully',
       manualActivityError: 'Error creating graded activity',
+      retake: 'Second call',
     },
     scoresTable: {
       students: 'Students',
       noActivity: 'NS',
       submitted: 'Submitted',
       avgScore: 'Average score',
-      calculated: 'Calculated',
-      custom: 'Teacher',
+      calculated: 'CALC.',
+      custom: 'FINAL',
+      retake: 'CALL',
+      attendance: 'Attendance',
     },
 
+    retake: 'Call',
     newModule:
       'New modules have been added to this class that are not weighted. To calculate them correctly, access your weighting rules.',
     updatedSuccess: "Updated {{student}}'s score in {{activity}} to {{score}}",
