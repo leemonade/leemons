@@ -35,8 +35,12 @@ export interface User {
   avatarAsset: AssetID;
   locale: string;
   gender: string;
-  bithdate: Date;
+  birthdate: Date;
   center?: Center;
+  externalIdentities?: {
+    provider: string;
+    externalId: string;
+  }[];
 }
 
 export interface UserAgent {
