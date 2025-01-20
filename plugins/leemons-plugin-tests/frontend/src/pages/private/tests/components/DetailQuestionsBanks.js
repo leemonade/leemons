@@ -1,3 +1,8 @@
+import React from 'react';
+import { Controller } from 'react-hook-form';
+import { Link } from 'react-router-dom';
+
+import { useDataForSubjectPicker } from '@academic-portfolio/components/SubjectPicker/hooks/useDataForSubjectPicker';
 import {
   ActionButton,
   Alert,
@@ -21,15 +26,11 @@ import useRequestErrorMessage from '@common/useRequestErrorMessage';
 import { addErrorAlert } from '@layout/alert';
 import _, { find } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { useDataForSubjectPicker } from '@academic-portfolio/components/SubjectPicker/hooks/useDataForSubjectPicker';
-import { Controller } from 'react-hook-form';
-import useUserAgents from '@users/hooks/useUserAgents';
+
 import { listQuestionsBanksRequest } from '../../../../request';
 
-function checkIsOwner(userAgents, item) {
-  return userAgents.some((userAgent) => userAgent === item.asset?.fromUserAgent);
+function checkCanEditQB(qBank) {
+  return ['owner', 'admin', 'editor'].includes(qBank?.asset?.role);
 }
 
 export default function DetailQuestionsBanks({
@@ -52,7 +53,6 @@ export default function DetailQuestionsBanks({
     size: 100,
   });
   const [selectedSubject, setSelectedSubject] = React.useState(null);
-  const userAgents = useUserAgents();
 
   const formValues = form.watch();
 
@@ -217,7 +217,7 @@ export default function DetailQuestionsBanks({
       ),
       actions: (
         <Stack justifyContent="center" fullWidth>
-          {checkIsOwner(userAgents, item) && (
+          {checkCanEditQB(item) && (
             <ActionButton
               as={Link}
               target="_blank"

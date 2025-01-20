@@ -72,6 +72,7 @@ import {
   duplicateSubject,
   updateSubjectCredits,
   isMainTeacherInSubject,
+  getUserSubjects,
 } from './subjects';
 
 export {
@@ -97,6 +98,7 @@ export {
 
 export const updateCycleRequest = updateCycle;
 export const listSubjectsRequest = listSubjects;
+export const getUserSubjectsRequest = getUserSubjects;
 export const createSubjectRequest = createSubject;
 export const updateSubjectRequest = updateSubject;
 export const removeSubjectRequest = removeSubject;

@@ -1,5 +1,5 @@
-const _ = require('lodash');
 const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
+const _ = require('lodash');
 
 async function listQuestionsBanks({
   page,
@@ -42,35 +42,38 @@ async function listQuestionsBanks({
         }
       : { id: ids }),
   };
-  const paginate = await mongoDBPaginate({
+  const paginatedResults = await mongoDBPaginate({
     model: ctx.tx.db.QuestionsBanks,
     page,
     size,
     query: finalQuery,
   });
 
-  const qbanksIds = _.map(paginate.items, 'id');
-  const qbanksAssetsIds = _.map(paginate.items, 'asset');
+  const qbanksIds = _.map(paginatedResults.items, 'id');
+  const qbanksAssetsIds = _.map(paginatedResults.items, 'asset');
 
   const questions = await ctx.tx.db.Questions.find({ questionBank: qbanksIds })
     .select(['id', 'questionBank'])
     .lean();
   const questionsByBank = _.groupBy(questions, 'questionBank');
 
-  let assets = [];
-  if (withAssets) {
-    assets = await ctx.tx.call('leebrary.assets.getByIds', {
-      ids: qbanksAssetsIds,
-    });
-  }
-  const assetsById = _.keyBy(assets, 'id');
+  // Retrieve assets from leebrary to check permissions
+  const authorizedQuestionBankAssets = await ctx.tx.call('leebrary.assets.getByIds', {
+    ids: qbanksAssetsIds,
+    checkPermissions: true,
+  });
+
+  const assetsById = _.keyBy(authorizedQuestionBankAssets, 'id');
+  const finalQuestionBanks = paginatedResults.items.filter((item) =>
+    Object.keys(assetsById).includes(item.asset)
+  );
 
   return {
-    ...paginate,
-    items: _.map(paginate.items, (item) => ({
+    ...paginatedResults,
+    items: _.map(finalQuestionBanks, (item) => ({
       ...item,
       nQuestions: questionsByBank[item.id]?.length || 0,
-      asset: assetsById[item.asset] ?? item.asset,
+      asset: withAssets ? assetsById[item.asset] ?? item.asset : item.asset,
     })),
   };
 }

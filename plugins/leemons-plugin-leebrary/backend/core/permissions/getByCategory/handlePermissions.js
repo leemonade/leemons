@@ -36,6 +36,12 @@ async function handlePermissions({ userSession, categoryId, ctx }) {
       ignoreOriginalTarget: true,
       target: categoryId,
     }),
+    ctx.tx.call(usersService, {
+      userAgentId: userSession.userAgents,
+      type: ctx.prefixPN('asset.can-administer'),
+      ignoreOriginalTarget: true,
+      target: categoryId,
+    }),
   ]);
 }
 

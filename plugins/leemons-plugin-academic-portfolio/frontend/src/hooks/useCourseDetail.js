@@ -1,12 +1,14 @@
-import { getCourseByIdRequest } from '@academic-portfolio/request';
-import { useQuery } from '@tanstack/react-query';
 import { useVariantForQueryKey } from '@common/queries';
+import { useQuery } from '@tanstack/react-query';
+
 import { getCourseDetailKey } from './keys/programCourse';
 
-export default function useCourseDetail({ groupId, options }) {
-  const queryKey = getCourseDetailKey(groupId);
+import { getCourseByIdRequest } from '@academic-portfolio/request';
 
-  const queryFn = () => getCourseByIdRequest(groupId).then((response) => response.data);
+export default function useCourseDetail({ courseId, options }) {
+  const queryKey = getCourseDetailKey(courseId);
+
+  const queryFn = () => getCourseByIdRequest(courseId).then((response) => response.data);
   useVariantForQueryKey(queryKey, {
     modificationTrend: 'frequently',
   });

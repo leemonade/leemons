@@ -1,18 +1,22 @@
 /* eslint-disable no-param-reassign */
+import { useMemo, useState } from 'react';
+
 import { ContextContainer, InputWrapper } from '@bubbles-ui/components';
 import { TagsAutocomplete, unflatten, useRequestErrorMessage } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
-import { getAssetRequest, newAssetRequest, updateAssetRequest } from '@leebrary/request';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useMemo, useState } from 'react';
+
 import prefixPN from '../../helpers/prefixPN';
 import { prepareAsset } from '../../helpers/prepareAsset';
+
 // eslint-disable-next-line import/no-cycle
 import { LibraryDrawerForm } from '../LibraryForm/LibraryDrawerForm';
 import { UploadingFileModal } from '../UploadingFileModal';
+
+import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
+import { getAssetRequest, newAssetRequest, updateAssetRequest } from '@leebrary/request';
 
 const DrawerBasicData = ({
   file,
@@ -62,7 +66,6 @@ const DrawerBasicData = ({
     try {
       data.file = await uploadFileAsMultipart(data.file, {
         onProgress: (info) => {
-          // console.log(info);
           setUploadingFileInfo(info);
         },
       });

@@ -37,6 +37,7 @@ async function set({
   deleteMissing,
   removeAllPermissionsFromPreviousOwner = false,
   ownerUserAgentIds,
+  shouldMaintainSubjectTagsWhenPublic = false,
   ctx,
 }) {
   try {
@@ -46,7 +47,7 @@ async function set({
     // ES: Comprobamos si los roles que se quieren usar existen
     checkIfRolesExist({ canAccess, permissions, ctx });
 
-    // ES: Sacamos que rol (viewer|editor|owner) tiene el usuario actual para el asset que quiere actualizar
+    // ES: Sacamos que rol (viewer|editor|owner|admin) tiene el usuario actual para el asset que quiere actualizar
     const [assetsRole, assetsData] = await Promise.all([
       getByAssets({ assetIds, ownerUserAgentIds, ctx }),
       getByIds({ ids: assetIds, ctx }),
@@ -58,9 +59,10 @@ async function set({
     });
     // ES: Comprobamos que el usuario actual tiene permisos para actualizar los assets
     _.forEach(assetIds, (id) => {
-      if (assetsRoleById[id] !== 'owner' && (isPublic || assetsDataById[id].public)) {
+      const cannotSetPublic = assetsRoleById[id] !== 'owner' && assetsRoleById[id] !== 'admin';
+      if (cannotSetPublic && (isPublic || assetsDataById[id].public)) {
         throw new LeemonsError(ctx, {
-          message: 'Only owner can set public permissions.',
+          message: 'Only owner/admin can set public permissions.',
           httpStatusCode: 412,
         });
       }
@@ -70,10 +72,16 @@ async function set({
     const updatePromises = [];
     _.forEach(assetIds, async (id) => {
       if (isPublic || assetsDataById[id]?.public) {
+        const asset = shouldMaintainSubjectTagsWhenPublic
+          ? {
+              ...assetsDataById[id],
+              subjects: assetsDataById[id].subjects?.map((subject) => subject.subject) || [],
+            }
+          : omit(assetsDataById[id], ['subjects']);
         updatePromises.push(
           updateAsset({
             data: {
-              ...omit(assetsDataById[id], ['subjects']),
+              ...asset,
               public: isPublic,
             },
             ctx,

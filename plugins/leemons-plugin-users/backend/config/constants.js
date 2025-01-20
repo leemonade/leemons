@@ -3,12 +3,14 @@ const SYS_PROFILE_NAMES = {
   STUDENT: 'student',
   PARENT: 'parent',
   ADMIN: 'admin',
+  CONTENT_DEVELOPER: 'content-developer',
 };
 const PLUGIN_NAME = 'users';
 const PLUGIN_VERSION = 1;
 const PUBLIC_ROUTE = `public/${PLUGIN_NAME}`;
 const PRIVATE_ROUTE = `private/${PLUGIN_NAME}`;
 const USERS_PERMISSION_NAME = `${PLUGIN_NAME}.users`;
+const CENTER_ASSETS_PERMISSION_PREFIX = `${PLUGIN_NAME}.center.assets`;
 
 module.exports = {
   // Time in minutes
@@ -196,4 +198,5 @@ module.exports = {
   VERSION: PLUGIN_VERSION,
   PLUGIN_NAME,
   SYS_PROFILE_NAMES,
+  CENTER_ASSETS_PERMISSION_PREFIX,
 };

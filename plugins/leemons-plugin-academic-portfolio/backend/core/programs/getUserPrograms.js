@@ -1,4 +1,5 @@
 const { keyBy, map } = require('lodash');
+
 const { getUserProgramIds } = require('./getUserProgramIds');
 
 async function getUserPrograms({ ctx }) {

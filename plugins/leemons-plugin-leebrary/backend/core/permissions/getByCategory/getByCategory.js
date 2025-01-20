@@ -9,6 +9,7 @@ const { getCategoryId } = require('../../search/byCriteria/getCategoryId');
 const { byProvider: getByProvider } = require('../../search/byProvider');
 const { getPublic } = require('../getPublic/getPublic');
 
+const { handleAdminRole } = require('./handleAdminRole');
 const { handleAssetIds } = require('./handleAssetIds');
 const { handleAssignerRole } = require('./handleAssignerRole');
 const { handleEditorRole } = require('./handleEditorRole');
@@ -70,7 +71,7 @@ async function getByCategory({
 
     const categoryId = _categoryId ?? (await getCategoryId({ category, ctx }));
 
-    const [permissions, viewItems, editItems, assignItems] = await handlePermissions({
+    const [permissions, viewItems, editItems, assignItems, adminItems] = await handlePermissions({
       userSession,
       categoryId,
       ctx,
@@ -88,6 +89,7 @@ async function getByCategory({
         viewItems,
         editItems,
         assignItems,
+        adminItems,
         categoryId,
         published,
         preferCurrent,
@@ -162,6 +164,10 @@ async function getByCategory({
     }
     if (!roles?.length || roles.includes('assigner')) {
       results = handleAssignerRole({ roles, assignItems, results, assetIds, ctx });
+    }
+
+    if (!roles?.length || roles.includes('admin')) {
+      results = handleAdminRole({ roles, adminItems, results, assetIds, ctx });
     }
 
     if (indexable === true) {
