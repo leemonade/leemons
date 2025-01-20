@@ -2,7 +2,10 @@
 
 const { getKeyValueModel } = require('@leemons/mongodb-helpers');
 
+const { subjectsModel } = require('./subjects');
+
 const models = {
+  subjectsModel,
   ...require('./class-course'),
   ...require('./class-group'),
   ...require('./class-knowledges'),
@@ -20,7 +23,6 @@ const models = {
   ...require('./programs'),
   ...require('./settings'),
   ...require('./subject-types'),
-  ...require('./subjects'),
   ...require('./blocks'),
   ...require('./program-staff'),
 };

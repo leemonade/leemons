@@ -102,6 +102,13 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
     setTabsKey((prevKey) => prevKey + 1);
   }, [EnrollmentTabs]);
 
+  function handleUpdateSubject() {
+    console.log('handleUpdateSubject');
+    const data = updateForm.getValues();
+    data.id = subjectTreeNode?.itemId;
+    console.log('data', data);
+  }
+
   const handleUpdateClass = () => {
     const requestBody = updateForm.getValues();
     requestBody.id = activeTab;
@@ -158,7 +165,9 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
   };
 
   const handleSaveChanges = () => {
-    if (activeTab !== '0') {
+    if (activeTab === '0') {
+      handleUpdateSubject();
+    } else {
       handleUpdateClass();
     }
   };
@@ -204,6 +213,8 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
               subjectDetails={subjectDetails}
               onlyClassToShow={singleClassToShow}
               subjectNode={subjectTreeNode}
+              updateForm={updateForm}
+              setDirtyForm={setDirtyForm}
             />
           </TabPanel>
           {EnrollmentTabs}

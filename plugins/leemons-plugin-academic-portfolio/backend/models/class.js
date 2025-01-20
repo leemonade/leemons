@@ -1,5 +1,7 @@
 const { mongoose, newModel } = require('@leemons/mongodb');
 
+const { customPeriodSchema } = require('./subjects');
+
 const schema = new mongoose.Schema(
   {
     id: {
@@ -58,6 +60,10 @@ const schema = new mongoose.Schema(
     status: {
       type: String,
       default: 'ready',
+    },
+    customPeriod: {
+      type: customPeriodSchema,
+      default: null,
     },
   },
   {
