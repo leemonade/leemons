@@ -27,15 +27,20 @@ async function getUserSubjectIds({
   }
 
   if (profile === SYS_PROFILE_NAMES.CONTENT_DEVELOPER) {
-    const developerConfig = await ctx.tx.call(
-      'content-developer.developer-config.getDeveloperConfig',
-      {
-        developer: userSession.userAgents[0].id,
-        ctx,
-      }
-    );
+    try {
+      const developerConfig = await ctx.tx.call(
+        'content-developer.developer-config.getDeveloperConfig',
+        {
+          developer: userSession.userAgents[0].id,
+          ctx,
+        }
+      );
 
-    return developerConfig?.subjects || [];
+      return developerConfig?.subjects || [];
+    } catch (error) {
+      ctx.logger.error(error);
+      return [];
+    }
   }
 
   if (profile === SYS_PROFILE_NAMES.ADMIN) {
