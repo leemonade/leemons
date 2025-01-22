@@ -1001,6 +1001,22 @@ module.exports = {
         '<strong>No se recomienda esta acción si ya existen contenidos o asignaciones asociadas a esta asignatura.</strong> <br/><br/> Al eliminar una asignatura se archivarán todos los grupos de clase asociados a ella y todas las actividades creadas o asignadas que usan esta asignatura, así como las evaluaciones relacionadas con ella. <br/><br/> También pueden producirse errores en la edición de actividades relacionadas.',
       removeClassDescription:
         '<strong>No se recomienda esta acción si ya existen contenidos o asignaciones asociadas a esta clase.</strong> <br/><br/> Al eliminar una clase se archivarán todas las actividades creadas o asignadas que usan esta clase, así como las evaluaciones relacionadas con ella. <br/><br/> También pueden producirse errores en la edición de actividades relacionadas.',
+      customPeriod: {
+        title: 'Fechas de la clase',
+        label: 'Tiene fechas distintas al periodo de la asignatura',
+        startDate: 'Fecha inicio',
+        endDate: 'Fecha fin',
+        info: 'El periodo actual de la asignatura va desde el',
+      },
+    },
+    subject: {
+      customPeriod: {
+        title: 'Fechas de la asignatura',
+        label: 'Tiene fechas distintas al periodo académico',
+        startDate: 'Fecha inicio',
+        endDate: 'Fecha fin',
+        info: 'El periodo académico actual va desde el',
+      },
     },
   },
   selectSubjectsByTable: {
