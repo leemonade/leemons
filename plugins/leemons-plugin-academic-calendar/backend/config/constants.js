@@ -1,4 +1,5 @@
-const permissionsPrefix = 'academic-calendar';
+const PLUGIN_NAME = 'academic-calendar';
+const permissionsPrefix = PLUGIN_NAME;
 
 const permissionNames = {
   config: `${permissionsPrefix}.config`,
@@ -101,4 +102,5 @@ module.exports = {
     bundles: permissionsBundles,
   },
   menuItems,
+  PLUGIN_NAME,
 };

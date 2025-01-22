@@ -1,14 +1,9 @@
 const { LeemonsValidator } = require('@leemons/validator');
-const _ = require('lodash');
+
 const {
   stringSchema,
-  booleanSchema,
-  integerSchema,
   booleanSchemaNullable,
-  arrayStringSchema,
-  integerSchemaNullable,
   stringSchemaNullable,
-  numberSchema,
   dateSchema,
 } = require('./types');
 
@@ -89,7 +84,48 @@ function validateSaveRegionalConfig(data) {
   }
 }
 
+const createCustomPeriodSchema = {
+  type: 'object',
+  properties: {
+    item: stringSchema,
+    startDate: dateSchema,
+    endDate: dateSchema,
+    type: stringSchema,
+  },
+  required: ['item', 'startDate', 'endDate', 'type'],
+  additionalProperties: false,
+};
+
+function validateCreateCustomPeriod(data) {
+  const validator = new LeemonsValidator(createCustomPeriodSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
+const updateCustomPeriodSchema = {
+  type: 'object',
+  properties: {
+    item: stringSchema,
+    startDate: dateSchema,
+    endDate: dateSchema,
+  },
+  required: ['item'],
+  additionalProperties: true,
+};
+
+function validateUpdateCustomPeriod(data) {
+  const validator = new LeemonsValidator(updateCustomPeriodSchema);
+
+  if (!validator.validate(data)) {
+    throw validator.error;
+  }
+}
+
 module.exports = {
   validateSaveConfig,
   validateSaveRegionalConfig,
+  validateCreateCustomPeriod,
+  validateUpdateCustomPeriod,
 };
