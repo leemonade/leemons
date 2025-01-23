@@ -16,7 +16,7 @@ interface StudentData {
 }
 
 export interface Retake {
-  id: string;
+  id: string | null;
   index: number;
 }
 

@@ -24,7 +24,9 @@ export function CloseEvaluationModal({ opened, tableData, onCancel, onConfirm }:
   });
 
   const students = tableData.activitiesData.value.map<StudentScores>((student) => {
-    const { maxGradedRetake, retakeGrades } = getRetakeGrades(student);
+    const { maxGradedRetake, retakeGrades } = getRetakeGrades({
+      student, default: studentGrades[student.id],
+    });
 
     if (!retakeGrades['0']) {
       retakeGrades['0'] = {

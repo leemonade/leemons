@@ -1,7 +1,19 @@
 import type { TableData, StudentScores, GradedRetake } from '../types';
 
-export function getRetakeGrades(student: TableData['activitiesData']['value'][number]) {
-  let maxGradedRetake: GradedRetake | null = null;
+export function getRetakeGrades({
+  student,
+  default: defaultGrade,
+}: {
+  student: TableData['activitiesData']['value'][number];
+  default?: number;
+}) {
+  let maxGradedRetake: GradedRetake | null = defaultGrade
+    ? {
+        id: null,
+        order: 0,
+        grade: defaultGrade,
+      }
+    : null;
 
   if (!student.retakeScores?.length) {
     return {
