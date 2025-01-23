@@ -1,15 +1,15 @@
 import { Box, Button, createStyles, Paper, Text, useClickOutside } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 
-import { Retake, StudentScores } from '../types';
+import { useEvaluationData } from '../hooks/useEvaluationData';
+import { TableData } from '../types';
 
 import { PickRetakeTable } from './PickRetakeTable';
 
 import { prefixPN } from '@scores/helpers';
 
 type Props = {
-  students: StudentScores[];
-  retakes: Retake[];
+  tableData: TableData;
   onCancel: () => void;
   onConfirm: () => void;
 };
@@ -67,11 +67,12 @@ const useStyles = createStyles((theme) => {
   };
 });
 
-export default function ModalContent({ students, retakes, onCancel, onConfirm }: Props) {
+export default function ModalContent({ tableData, onCancel, onConfirm }: Props) {
   const { classes } = useStyles(null, { name: 'CloseEvaluationModalContent' });
   const ref = useClickOutside(onCancel);
-
   const [t] = useTranslateLoader(prefixPN('pickRetakeTable'));
+
+  const { students, retakes } = useEvaluationData(tableData);
 
   return (
     <Box className={classes.root}>

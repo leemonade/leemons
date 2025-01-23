@@ -62,14 +62,22 @@ export function PickRetakeTable({ students, retakes }: Props) {
         columnHelper.accessor(`retakes.${retake.id ?? retake.index}`, {
           header: () => <Header label={`${t('table.retake')} ${(retake.index ?? 0) + 1}`} center />,
           cell: (info) => (
-            <GradeCell {...info.getValue()} selectedRetake={info.row.original.final} />
+            <GradeCell
+              {...info.getValue()}
+              selectedRetake={info.row.original.final}
+              studentId={info.row.original.student.id}
+            />
           ),
         })
       ),
       columnHelper.accessor('final', {
         header: () => <Header label={t('table.final')} center />,
         cell: (info) => (
-          <FinalGradeCell retakeId={info.getValue()} retakes={info.row.original.retakes} />
+          <FinalGradeCell
+            retakeId={info.getValue()}
+            retakes={info.row.original.retakes}
+            studentId={info.row.original.student.id}
+          />
         ),
       }),
     ],

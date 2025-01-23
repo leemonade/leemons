@@ -1,6 +1,8 @@
 import { createStyles, Text } from '@bubbles-ui/components';
 import { isNil, isNumber } from 'lodash';
 
+import { useRetakePicker } from '@scores/stores/retakePickerStore';
+
 const useStyles = createStyles(
   (_, { isSelected, isClickable }: { isSelected: boolean; isClickable: boolean }) => ({
     cell: {
@@ -18,9 +20,14 @@ interface Props {
   id: string | null;
   order: number;
   selectedRetake: string;
+  studentId: string;
 }
 
-export function GradeCell({ grade, selectedRetake, id, order }: Props) {
+export function GradeCell({ grade, selectedRetake: _selectedRetake, id, order, studentId }: Props) {
+  const pickRetake = useRetakePicker((s) => s.pickRetake);
+  const selectedRetake =
+    useRetakePicker((s) => s.students?.[studentId]?.selectedRetake ?? null) ?? _selectedRetake;
+
   const isSelected =
     selectedRetake && !isNil(order)
       ? selectedRetake === id || selectedRetake === `${order}`
@@ -31,7 +38,10 @@ export function GradeCell({ grade, selectedRetake, id, order }: Props) {
   const { classes } = useStyles({ isSelected, isClickable });
 
   return (
-    <td className={classes.cell}>
+    <td
+      className={classes.cell}
+      onClick={isClickable ? () => pickRetake(studentId, id, order) : undefined}
+    >
       <Text>{hasGrade ? grade : '-'}</Text>
     </td>
   );

@@ -52,6 +52,7 @@ export interface GradedRetake {
 
 export interface StudentScores {
   student: {
+    id: string;
     name: string;
     avatar: string | null;
   };

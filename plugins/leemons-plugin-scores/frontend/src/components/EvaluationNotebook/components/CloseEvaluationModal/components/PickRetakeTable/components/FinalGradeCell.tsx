@@ -5,6 +5,7 @@ import { isNumber } from 'lodash';
 import { GradedRetake } from '../../../types';
 
 import { prefixPN } from '@scores/helpers';
+import { useRetakePicker } from '@scores/stores/retakePickerStore';
 
 const useStyles = createStyles(() => ({
   cell: {
@@ -18,9 +19,12 @@ const useStyles = createStyles(() => ({
 interface Props {
   retakeId: string | null;
   retakes: Record<string, GradedRetake>;
+  studentId: string;
 }
 
-export function FinalGradeCell({ retakeId, retakes }: Props) {
+export function FinalGradeCell({ retakeId: _retakeId, retakes, studentId }: Props) {
+  const retakeId =
+    useRetakePicker((s) => s.students?.[studentId]?.selectedRetake ?? null) ?? _retakeId;
   const { classes } = useStyles();
   const [t] = useTranslateLoader(prefixPN('pickRetakeTable'));
 
