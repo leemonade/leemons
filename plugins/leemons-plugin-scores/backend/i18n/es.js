@@ -474,4 +474,16 @@ module.exports = {
       roles: '¿en qué tipo quieres incluir esta actividad?',
     },
   },
+  pickRetakeTable: {
+    title: 'Cerrar evaluación: Nota final',
+    description: 'Selecciona la convocatoria para la nota final de cada alumno',
+    cancel: 'Cancelar',
+    confirm: 'Cerrar evaluación',
+
+    table: {
+      students: 'Estudiantes',
+      retake: 'CONV.',
+      final: 'FINAL',
+    },
+  },
 };

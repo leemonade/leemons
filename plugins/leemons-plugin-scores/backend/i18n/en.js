@@ -472,4 +472,16 @@ module.exports = {
       roles: 'in which type would you like to add this activity?',
     },
   },
+  pickRetakeTable: {
+    title: 'Close evaluation: Final grades',
+    description: "Select the evaluation call for each student's final grade",
+    cancel: 'Cancel',
+    confirm: 'Close evaluation',
+
+    table: {
+      students: 'Students',
+      retake: 'CALL',
+      final: 'FINAL',
+    },
+  },
 };
