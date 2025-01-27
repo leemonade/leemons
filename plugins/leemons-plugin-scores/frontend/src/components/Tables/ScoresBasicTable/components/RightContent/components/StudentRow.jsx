@@ -1,4 +1,5 @@
 import { Box, createStyles } from '@bubbles-ui/components';
+import { isNil } from 'lodash';
 import PropTypes from 'prop-types';
 
 import { ScoreCell } from '../../../ScoreCell';
@@ -19,8 +20,8 @@ const useStudentRowStyles = createStyles((theme) => ({
 
 export function StudentRow({
   id,
-  activities,
   customScore,
+  customScoreRetake,
   allowCustomChange,
   grades,
   avgScore,
@@ -30,10 +31,15 @@ export function StudentRow({
   viewOnly,
   retakeScores,
   hideCustom,
+  labels,
 }) {
   const { classes } = useStudentRowStyles();
 
   const onlyShowRetakes = retakes?.length === 1;
+
+  const retake = isNil(customScoreRetake)
+    ? null
+    : retakes?.find((r) => r.id === customScoreRetake || r.index === Number(customScoreRetake));
 
   return (
     <Box className={classes.root}>
@@ -56,7 +62,7 @@ export function StudentRow({
         );
       })}
       {!onlyShowRetakes && !hideCustom && (
-        <StudentScore>
+        <StudentScore big>
           <ScoreCell
             value={isNaN(customScore) ? 8 : customScore}
             allowChange={allowCustomChange && !viewOnly}
@@ -66,6 +72,8 @@ export function StudentRow({
             column={'customScore'}
             onDataChange={onDataChange}
             isCustom={true}
+            retake={retake ? retake.index : null}
+            labels={labels}
           />
         </StudentScore>
       )}
@@ -77,6 +85,7 @@ StudentRow.propTypes = {
   id: PropTypes.string,
   activities: PropTypes.array,
   customScore: PropTypes.number,
+  customScoreRetake: PropTypes.string,
   allowCustomChange: PropTypes.bool,
   grades: PropTypes.array,
   avgScore: PropTypes.number,
@@ -86,4 +95,5 @@ StudentRow.propTypes = {
   viewOnly: PropTypes.bool,
   retakeScores: PropTypes.array,
   hideCustom: PropTypes.bool,
+  labels: PropTypes.object,
 };

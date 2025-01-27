@@ -1,7 +1,7 @@
 import { Box, createStyles } from '@bubbles-ui/components';
 import PropTypes from 'prop-types';
 
-const useStudentScoreStyles = createStyles((theme) => {
+const useStudentScoreStyles = createStyles((theme, { big }) => {
   const globalTheme = theme.other.global;
 
   return {
@@ -16,17 +16,19 @@ const useStudentScoreStyles = createStyles((theme) => {
       overflowWrap: 'break-word',
       flex: 1,
       minHeight: '100%',
-      width: 75,
+      width: big ? 120 : 75,
+      minWidth: big ? 120 : 75,
     },
   };
 });
 
-export function StudentScore({ children }) {
-  const { classes } = useStudentScoreStyles();
+export function StudentScore({ children, big }) {
+  const { classes } = useStudentScoreStyles({ big });
 
   return <Box className={classes.root}>{children}</Box>;
 }
 
 StudentScore.propTypes = {
   children: PropTypes.node,
+  big: PropTypes.bool,
 };

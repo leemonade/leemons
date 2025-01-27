@@ -1,7 +1,7 @@
 import { Box, createStyles, Text } from '@bubbles-ui/components';
 import PropTypes from 'prop-types';
 
-const useColumnHeaderStyles = createStyles((theme) => {
+const useColumnHeaderStyles = createStyles((theme, { big }) => {
   const globalTheme = theme.other.global;
 
   return {
@@ -17,12 +17,14 @@ const useColumnHeaderStyles = createStyles((theme) => {
       whiteSpace: 'normal',
       overflowWrap: 'break-word',
       flex: 1,
+      width: big ? 120 : 75,
+      minWidth: big ? 120 : 75,
     },
   };
 });
 
-export default function ColumnHeader({ label }) {
-  const { classes } = useColumnHeaderStyles({}, { name: 'ScoresBasicTableColumnHeader' });
+export default function ColumnHeader({ label, big }) {
+  const { classes } = useColumnHeaderStyles({ big }, { name: 'ScoresBasicTableColumnHeader' });
 
   return (
     <Box className={classes.root}>
@@ -35,4 +37,5 @@ export default function ColumnHeader({ label }) {
 
 ColumnHeader.propTypes = {
   label: PropTypes.string.isRequired,
+  big: PropTypes.bool,
 };
