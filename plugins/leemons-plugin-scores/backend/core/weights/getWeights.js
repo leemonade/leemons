@@ -4,6 +4,7 @@ const { isArray, pick } = require('lodash');
 const WEIGHT_COMMON_PROPS = ['id', 'class', 'type'];
 const ROLES_PROPS = [...WEIGHT_COMMON_PROPS, 'weights', 'applySameValue', 'explanation'];
 const MODULES_PROPS = ROLES_PROPS;
+const ACTIVITIES_PROPS = ROLES_PROPS;
 
 async function getWeights({ classes: _classes, ctx }) {
   // TODO: @MIGUELez11 Check if the user has access to the classes
@@ -23,6 +24,10 @@ async function getWeights({ classes: _classes, ctx }) {
 
     if (weight.type === 'modules') {
       return pick(weight, MODULES_PROPS);
+    }
+
+    if (weight.type === 'activities') {
+      return pick(weight, ACTIVITIES_PROPS);
     }
 
     throw new LeemonsError(ctx, { message: 'Invalid weight type', httpStatusCode: 500 });

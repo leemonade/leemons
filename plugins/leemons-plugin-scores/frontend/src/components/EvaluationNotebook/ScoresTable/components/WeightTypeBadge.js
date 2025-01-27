@@ -1,12 +1,11 @@
-import React from 'react';
+import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
+import { Badge, Stack, Text } from '@bubbles-ui/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PropTypes from 'prop-types';
 
-import { Badge, Stack, Text } from '@bubbles-ui/components';
-
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
 import useWeights from '@scores/requests/hooks/queries/useWeights';
-import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
+
 
 export default function WeightTypeBadge({ class: klass, includePlaceholder }) {
   const { data: weights, isLoading } = useWeights({ classId: klass?.id });
@@ -37,6 +36,15 @@ export default function WeightTypeBadge({ class: klass, includePlaceholder }) {
           )
           .join(' - ')}
       </Badge>
+    );
+  }
+
+  if (weights?.type === 'activities') {
+    return (
+      <Stack alignItems="baseline" spacing={2}>
+        {includePlaceholder ? <Text closable={false}>{t2('weighting')}</Text> : null}
+        <Badge closable={false}>{t('activities')}</Badge>
+      </Stack>
     );
   }
 

@@ -42,8 +42,8 @@ export default function useActivities({
     query: {
       query: searchType === 'activity' ? search : undefined,
       finished: true,
-      finished_$gt: getPreviousDayLastMillisecond(period.startDate),
-      finished_$lt: getNextDayFirstMillisecond(period.endDate),
+      finished_$gt: getPreviousDayLastMillisecond(period?.startDate),
+      finished_$lt: getNextDayFirstMillisecond(period?.endDate),
 
       role: weights?.type === 'modules' ? 'learningpaths.module' : roles,
       programs: program,
