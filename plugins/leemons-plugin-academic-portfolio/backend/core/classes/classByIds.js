@@ -46,6 +46,7 @@ async function classByIds({
     students,
     _childClasses,
     timeTables,
+    customPeriods,
   ] = await Promise.all([
     ctx.tx.db.Class.find({ id: _.isArray(ids) ? ids : [ids] }, '', queryOptions).lean(),
     getKnowledgeByClass({ class: ids, ctx }),
@@ -56,6 +57,7 @@ async function classByIds({
     getStudentByClass({ class: ids, ctx }),
     ctx.tx.db.Class.find({ class: _.isArray(ids) ? ids : [ids] }).lean(),
     ctx.tx.call('timetable.timetable.listByClassIds', { classIds: ids }),
+    ctx.tx.call('academic-calendar.custom-period.getByItems', { items: ids }),
   ]);
 
   let programByIds = {};
@@ -197,6 +199,12 @@ async function classByIds({
             type,
           }))
         : [],
+      customPeriod: !_.isEmpty(customPeriods[id])
+        ? {
+            startDate: customPeriods[id].startDate,
+            endDate: customPeriods[id].endDate,
+          }
+        : undefined,
     };
   });
 }

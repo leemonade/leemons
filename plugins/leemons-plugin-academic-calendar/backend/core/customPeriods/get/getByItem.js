@@ -7,7 +7,7 @@
  * @returns {Promise<object>} The custom period object if found, otherwise null.
  */
 async function getByItem({ item, ctx }) {
-  return ctx.tx.db.CustomPeriods.findOne({ item }).lean();
+  return ctx.tx.db.CustomPeriod.findOne({ item }).lean();
 }
 
 module.exports = { getByItem };

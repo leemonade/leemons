@@ -1,71 +1,24 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useMemo } from 'react';
 
-import { useAcademicCalendarConfig } from '@academic-calendar/hooks';
 import {
   Box,
   Text,
-  Alert,
   Paper,
   Stack,
   Title,
   Loader,
-  Switch,
-  DatePicker,
   ImageLoader,
   ContextContainer,
 } from '@bubbles-ui/components';
-import { useLocale } from '@common';
-import { LocaleDate } from '@common/LocaleDate';
 import { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { isArray, get } from 'lodash';
+import { isArray } from 'lodash';
 import PropTypes from 'prop-types';
 
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 
-const InfoTab = ({ subjectDetails, onlyClassToShow, updateForm, setDirtyForm }) => {
+const InfoTab = ({ subjectDetails }) => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
-  const { t: tCommon } = useCommonTranslate('forms');
-  const locale = useLocale();
-  const [hasCustomPeriod, setHasCustomPeriod] = useState(!!subjectDetails?.customPeriod);
-
-  const localForm = useForm();
-  const form = updateForm ?? localForm;
-
-  const academicCalendars = useAcademicCalendarConfig([subjectDetails?.program], {
-    enabled: !!subjectDetails?.program,
-  });
-
-  const [{ data: academicCalendar }] = academicCalendars ?? [{ data: null }];
-
-  // console.log('programDetails', programDetails);
-  console.log('subjectDetails', subjectDetails);
-  console.log('academicCalendar', academicCalendar);
-
-  const courseDates = useMemo(() => {
-    if (!academicCalendar?.courseDates || !subjectDetails?.classes?.length) return null;
-
-    let [course] = subjectDetails.courses ?? [];
-
-    if (!course) {
-      const { courses } = subjectDetails.classes[0] ?? {};
-      if (isArray(courses)) {
-        course = courses[0].id;
-      } else {
-        course = courses.id;
-      }
-    }
-
-    return academicCalendar.courseDates[course];
-  }, [subjectDetails, academicCalendar]);
-
-  console.log('courseDates', courseDates);
-
-  const customStartDate = form.watch('customPeriod.startDate');
-  const customEndDate = form.watch('customPeriod.endDate');
-  const formErrors = form.formState.errors;
 
   const subjectHeaderData = useMemo(() => {
     const subjectData = {};
@@ -96,10 +49,6 @@ const InfoTab = ({ subjectDetails, onlyClassToShow, updateForm, setDirtyForm }) 
     subjectData.credits = credits;
 
     return subjectData;
-  }, [subjectDetails, onlyClassToShow]);
-
-  useEffect(() => {
-    setHasCustomPeriod(!!subjectDetails?.customPeriod);
   }, [subjectDetails]);
 
   const subjectIcon = getFileUrl(subjectDetails?.icon?.cover?.id);
@@ -114,7 +63,7 @@ const InfoTab = ({ subjectDetails, onlyClassToShow, updateForm, setDirtyForm }) 
   }
 
   return (
-    <ContextContainer sx={{ padding: 24 }}>
+    <>
       <ContextContainer>
         <Title order={2}>{t('basicDataTitle')}</Title>
         <Stack spacing={4}>
@@ -153,72 +102,6 @@ const InfoTab = ({ subjectDetails, onlyClassToShow, updateForm, setDirtyForm }) 
             </Box>
           )}
         </Stack>
-        <Box>
-          <Box>
-            <Text strong>{t('subject.customPeriod.title')}</Text>
-          </Box>
-          <Stack direction="column" spacing={2}>
-            <Switch
-              label={t('subject.customPeriod.label')}
-              checked={hasCustomPeriod}
-              onChange={() => setHasCustomPeriod(!hasCustomPeriod)}
-            />
-            {hasCustomPeriod && (
-              <>
-                <Alert variant="info" closeable={false}>
-                  <Stack spacing={2}>
-                    <Text>{t('subject.customPeriod.info')}</Text>
-                    <LocaleDate date={courseDates?.startDate} />
-                    <Text>→</Text>
-                    <LocaleDate date={courseDates?.endDate} />
-                  </Stack>
-                </Alert>
-                <Stack spacing={4}>
-                  <Controller
-                    name={`customPeriod.startDate`}
-                    control={form.control}
-                    rules={{ required: tCommon('required') }}
-                    render={({ field }) => (
-                      <DatePicker
-                        {...field}
-                        value={customStartDate}
-                        locale={locale}
-                        label={t('subject.customPeriod.startDate')}
-                        maxDate={customEndDate}
-                        required
-                        error={get(formErrors, `customPeriod.startDate`)}
-                        onChange={(value) => {
-                          if (!value) {
-                            form.setValue('customPeriod.endDate', null);
-                          }
-                          field.onChange(value);
-                        }}
-                      />
-                    )}
-                  />
-                  <Controller
-                    name={`customPeriod.endDate`}
-                    control={form.control}
-                    rules={{ required: tCommon('required') }}
-                    render={({ field }) => (
-                      <DatePicker
-                        {...field}
-                        clearable={false}
-                        value={customEndDate}
-                        locale={locale}
-                        label={t('subject.customPeriod.endDate')}
-                        minDate={customStartDate}
-                        disabled={!customStartDate}
-                        required
-                        error={get(formErrors, `customPeriod.endDate`)}
-                      />
-                    )}
-                  />
-                </Stack>
-              </>
-            )}
-          </Stack>
-        </Box>
       </ContextContainer>
 
       {subjectIcon && (
@@ -280,15 +163,12 @@ const InfoTab = ({ subjectDetails, onlyClassToShow, updateForm, setDirtyForm }) 
           </Stack>
         </ContextContainer>
       )}
-    </ContextContainer>
+    </>
   );
 };
 
 InfoTab.propTypes = {
   subjectDetails: PropTypes.object,
-  onlyClassToShow: PropTypes.oneOfType([PropTypes.object, PropTypes.null]),
-  updateForm: PropTypes.func,
-  setDirtyForm: PropTypes.func,
 };
 
 export default InfoTab;

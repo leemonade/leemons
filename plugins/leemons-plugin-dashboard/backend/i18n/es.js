@@ -9,6 +9,10 @@ module.exports = {
     virtualClassroom: 'Clase virtual',
     chat: 'Chat',
     schedule: 'Horario',
+    customPeriodLabels: {
+      from: 'De ',
+      to: 'a ',
+    },
   },
   tabControlPanel: {
     label: 'Panel de control',

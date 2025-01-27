@@ -1,30 +1,27 @@
 const _ = require('lodash');
-const { getUserProgramIds } = require('../../programs/getUserProgramIds');
+
 const { getProfiles } = require('../../settings/getProfiles');
 
-async function removeCustomPermissions({ teacherId, programId, ctx }) {
-  const programs = await getUserProgramIds({
-    userSession: { userAgents: [{ id: teacherId }] },
-    ctx,
-  });
-  if (programs.length) {
-    const programsIds = _.map(programs, 'id');
-    if (!programsIds.includes(programId)) {
-      await ctx.tx.call('users.permissions.removeCustomUserAgentPermission', {
-        userAgentId: teacherId,
-        data: {
-          permissionName: `academic-portfolio.program.inside.${programId}`,
-        },
-      });
-      const { teacher: teacherProfileId } = await getProfiles({ ctx });
+const { getTeacherProgramIds } = require('./getTeacherProgramIds');
 
-      await ctx.tx.call('users.permissions.removeCustomUserAgentPermission', {
-        userAgentId: teacherId,
-        data: {
-          permissionName: `academic-portfolio.program-profile.inside.${programId}-${teacherProfileId}`,
-        },
-      });
-    }
+async function removeCustomPermissions({ teacherId, programId, ctx }) {
+  const programs = await getTeacherProgramIds({ teacherId, ctx });
+
+  if (programs.length && !programs.includes(programId)) {
+    await ctx.tx.call('users.permissions.removeCustomUserAgentPermission', {
+      userAgentId: teacherId,
+      data: {
+        permissionName: `academic-portfolio.program.inside.${programId}`,
+      },
+    });
+    const { teacher: teacherProfileId } = await getProfiles({ ctx });
+
+    await ctx.tx.call('users.permissions.removeCustomUserAgentPermission', {
+      userAgentId: teacherId,
+      data: {
+        permissionName: `academic-portfolio.program-profile.inside.${programId}-${teacherProfileId}`,
+      },
+    });
   }
 }
 

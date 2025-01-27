@@ -8,7 +8,7 @@
  */
 
 async function getById({ id, ctx }) {
-  return ctx.tx.db.CustomPeriods.findOne({ id }).lean();
+  return ctx.tx.db.CustomPeriod.findOne({ id }).lean();
 }
 
 module.exports = { getById };

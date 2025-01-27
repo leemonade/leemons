@@ -7,7 +7,7 @@
  * @returns {Promise<boolean>} True if the custom period was successfully removed, otherwise false.
  */
 async function remove({ item, ctx }) {
-  const result = await ctx.tx.db.CustomPeriods.deleteOne({ item });
+  const result = await ctx.tx.db.CustomPeriod.deleteOne({ item });
   return result.deletedCount === 1;
 }
 

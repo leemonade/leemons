@@ -1006,7 +1006,10 @@ module.exports = {
         label: 'Tiene fechas distintas al periodo de la asignatura',
         startDate: 'Fecha inicio',
         endDate: 'Fecha fin',
-        info: 'El periodo actual de la asignatura va desde el',
+        info: {
+          currentPeriod: 'El periodo actual de la asignatura va desde el',
+          noPeriod: 'El periodo actual de la asignatura no está definido',
+        },
       },
     },
     subject: {
@@ -1015,7 +1018,11 @@ module.exports = {
         label: 'Tiene fechas distintas al periodo académico',
         startDate: 'Fecha inicio',
         endDate: 'Fecha fin',
-        info: 'El periodo académico actual va desde el',
+        info: {
+          currentPeriod: 'El periodo académico actual va desde el',
+          noPeriod: 'El periodo académico actual no está definido',
+          childrenDifferentPeriods: 'Algunas clases de esta asignatura tienen sus propias fechas',
+        },
       },
     },
   },

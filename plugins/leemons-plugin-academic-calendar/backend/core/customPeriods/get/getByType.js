@@ -7,7 +7,7 @@
  * @returns {Promise<object[]>} An array of custom period objects if found, otherwise an empty array.
  */
 async function getByType({ type, ctx }) {
-  return ctx.tx.db.CustomPeriods.find({ type }).lean();
+  return ctx.tx.db.CustomPeriod.find({ type }).lean();
 }
 
 module.exports = { getByType };

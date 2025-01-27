@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 /**
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
@@ -9,35 +8,67 @@ const {
   LeemonsMiddlewareNecessaryPermits,
 } = require('@leemons/middlewares');
 
-const { remove, getByItem, create, update, getByItems } = require('../../core/customPeriods');
+const {
+  remove,
+  getByItem,
+  getByItems,
+  assignCustomPeriodToItems,
+  setItem,
+} = require('../../core/customPeriods');
 
 const ITEM_PATH = '/item';
 
 /** @type {ServiceSchema} */
 module.exports = {
-  createRest: {
+  setItemRest: {
     rest: {
       method: 'POST',
-      path: '/',
+      path: `${ITEM_PATH}`,
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
           'academic-calendar.config': {
-            actions: ['admin', 'create'],
+            actions: ['admin', 'create', 'update'],
           },
         },
       }),
     ],
     async handler(ctx) {
-      const customPeriod = await create({
+      const customPeriod = await setItem({
         ...ctx.params,
         ctx,
       });
       return {
         status: 200,
         data: customPeriod,
+      };
+    },
+  },
+  assignToItemsRest: {
+    rest: {
+      method: 'POST',
+      path: `${ITEM_PATH}`,
+    },
+    middlewares: [
+      LeemonsMiddlewareAuthenticated(),
+      LeemonsMiddlewareNecessaryPermits({
+        allowedPermissions: {
+          'academic-calendar.config': {
+            actions: ['admin', 'create', 'update'],
+          },
+        },
+      }),
+    ],
+    async handler(ctx) {
+      const customPeriods = await assignCustomPeriodToItems({
+        ...ctx.params,
+        ctx,
+      });
+      return {
+        status: 200,
+        data: customPeriods,
       };
     },
   },
@@ -70,7 +101,7 @@ module.exports = {
   getByItemsRest: {
     rest: {
       method: 'POST',
-      path: `${ITEM_PATH}/getMany`,
+      path: `${ITEM_PATH}/get-many`,
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
@@ -84,32 +115,6 @@ module.exports = {
     ],
     async handler(ctx) {
       const customPeriod = await getByItems({
-        ...ctx.params,
-        ctx,
-      });
-      return {
-        status: 200,
-        data: customPeriod,
-      };
-    },
-  },
-  updateByItemRest: {
-    rest: {
-      method: 'PUT',
-      path: `${ITEM_PATH}/:item`,
-    },
-    middlewares: [
-      LeemonsMiddlewareAuthenticated(),
-      LeemonsMiddlewareNecessaryPermits({
-        allowedPermissions: {
-          'academic-calendar.config': {
-            actions: ['admin', 'update'],
-          },
-        },
-      }),
-    ],
-    async handler(ctx) {
-      const customPeriod = await update({
         ...ctx.params,
         ctx,
       });

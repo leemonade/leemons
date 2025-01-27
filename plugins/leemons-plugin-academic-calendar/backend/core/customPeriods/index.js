@@ -1,6 +1,11 @@
-const { create } = require('./create');
+const { assignCustomPeriodToItems } = require('./assignCustomPeriodToItems');
 const getMethods = require('./get');
 const { remove } = require('./remove');
-const { update } = require('./update');
+const { setItem } = require('./setItem');
 
-module.exports = { ...getMethods, remove, update, create };
+module.exports = {
+  ...getMethods,
+  setItem,
+  remove,
+  assignCustomPeriodToItems,
+};

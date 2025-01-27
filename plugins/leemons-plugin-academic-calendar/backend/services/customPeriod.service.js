@@ -15,9 +15,8 @@ const {
   getByType,
   getById,
   getByIds,
-  create,
-  update,
   getByItems,
+  setItem,
 } = require('../core/customPeriods');
 const { getServiceModels } = require('../models');
 
@@ -25,7 +24,7 @@ const restActions = require('./rest/customPeriod.rest');
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: `${PLUGIN_NAME}.customPeriod`,
+  name: `${PLUGIN_NAME}.custom-period`,
   version: 1,
   mixins: [
     LeemonsCacheMixin(),
@@ -37,9 +36,9 @@ module.exports = {
   ],
   actions: {
     ...restActions,
-    create: {
+    setItem: {
       handler(ctx) {
-        return create({ ...ctx.params, ctx });
+        return setItem({ ...ctx.params, ctx });
       },
     },
     getByItem: {
@@ -65,11 +64,6 @@ module.exports = {
     getByIds: {
       handler(ctx) {
         return getByIds({ ...ctx.params, ctx });
-      },
-    },
-    update: {
-      handler(ctx) {
-        return update({ ...ctx.params, ctx });
       },
     },
     remove: {
