@@ -343,6 +343,7 @@ module.exports = {
     averages: 'Average',
     roles: 'Type',
     modules: 'Modules',
+    activities: 'Activities',
   },
   weightingDrawer: {
     rules: 'Rules',
@@ -352,6 +353,7 @@ module.exports = {
       applySameValue: 'Apply same value',
       modules: 'Modules',
       roles: 'Types',
+      activities: 'Activities',
       weight: 'Percentage',
       total: 'Total',
     },

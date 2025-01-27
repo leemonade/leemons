@@ -60,6 +60,29 @@ function getActivitiesWeightsByRoles({ weights, activities }) {
   });
 }
 
+function getActivitiesWeightsByActivities({ weights, activities }) {
+  const evaluableActivities = filter(activities, 'isEvaluable');
+  const activitiesCount = evaluableActivities?.length;
+
+  const { applySameValue } = weights;
+  const weightsPerActivity = keyBy(weights.weights, 'id');
+
+  return activities.map((activity) => {
+    const weight = weightsPerActivity[activity.id];
+    let weightValue = weight?.weight;
+
+    if (!weight?.isLocked && applySameValue && activity.isEvaluable && !activity.isLocked) {
+      weightValue = getApplySameValueWeightForUnlocked(weights, activitiesCount);
+    }
+
+    return {
+      ...activity,
+      weight: weightValue ?? 0,
+    };
+  });
+}
+
+
 function getActivitiesWeightsWithSameValue({ activities }) {
   const evaluableActivities = filter(activities, 'isEvaluable');
   const activitiesCount = evaluableActivities?.length;
@@ -99,6 +122,8 @@ export default function useActivitiesWithWeights({ program, class: klass, period
     activitiesWithWeights = getActivitiesWeightsByModules({ weights, activities });
   } else if (weights?.type === 'roles') {
     activitiesWithWeights = getActivitiesWeightsByRoles({ weights, activities });
+  } else if (weights?.type === 'activities') {
+    activitiesWithWeights = getActivitiesWeightsByActivities({ weights, activities });
   } else {
     activitiesWithWeights = getActivitiesWeightsWithSameValue({ activities });
   }
