@@ -83,6 +83,7 @@ export default function useStudents({
 
       retakeScores: retakeScores?.[id],
       customScore: scores?.[id]?.grade ?? null,
+      customScoreRetake: scores?.[id]?.retake ?? null,
       allowCustomChange: !scores?.[id]?.published,
     }));
   }, [students, activities, search, searchType, klass?.subject?.id, scores, retakeScores]);

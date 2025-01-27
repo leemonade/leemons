@@ -1,8 +1,8 @@
 const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
 
 const getScores = require('../../core/scores/getScores');
-const setScores = require('../../core/scores/setScores');
 const removeScores = require('../../core/scores/removeScores');
+const setScores = require('../../core/scores/setScores');
 
 module.exports = {
   getRest: {
@@ -38,6 +38,7 @@ module.exports = {
         grade: score.grade,
         gradedBy: ctx.meta.userSession.userAgents[0].id,
         published: score.published || false,
+        retake: score.retake || null,
       }));
       await setScores({ scores, instances: ctx.params.instances, ctx });
       return { status: 200, message: 'Scores set' };
