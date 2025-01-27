@@ -2,7 +2,8 @@ import { Box, Button, createStyles, Paper, Text, useClickOutside } from '@bubble
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 
 import { useEvaluationData } from '../hooks/useEvaluationData';
-import { TableData } from '../types';
+import { useOnCloseEvaluation } from '../hooks/useOnCloseEvaluation';
+import { StudentEvaluationData, TableData } from '../types';
 
 import { PickRetakeTable } from './PickRetakeTable';
 
@@ -11,7 +12,7 @@ import { prefixPN } from '@scores/helpers';
 type Props = {
   tableData: TableData;
   onCancel: () => void;
-  onConfirm: () => void;
+  onConfirm: (data: Record<string, StudentEvaluationData>) => void;
 };
 
 const useStyles = createStyles((theme) => {
@@ -74,6 +75,8 @@ export default function ModalContent({ tableData, onCancel, onConfirm }: Props) 
 
   const { students, retakes } = useEvaluationData(tableData);
 
+  const onSubmit = useOnCloseEvaluation({ students, onConfirm });
+
   return (
     <Box className={classes.root}>
       <Box className={classes.backdrop} />
@@ -94,7 +97,7 @@ export default function ModalContent({ tableData, onCancel, onConfirm }: Props) 
           <Button variant="link" onClick={onCancel}>
             {t('cancel')}
           </Button>
-          <Button onClick={onConfirm}>{t('confirm')}</Button>
+          <Button onClick={onSubmit}>{t('confirm')}</Button>
         </Box>
       </Paper>
     </Box>

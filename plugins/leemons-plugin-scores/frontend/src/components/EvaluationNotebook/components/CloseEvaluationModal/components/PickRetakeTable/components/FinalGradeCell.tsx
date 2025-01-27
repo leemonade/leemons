@@ -20,9 +20,10 @@ interface Props {
   retakeId: string | null;
   retakes: Record<string, GradedRetake>;
   studentId: string;
+  singleRetake: boolean;
 }
 
-export function FinalGradeCell({ retakeId: _retakeId, retakes, studentId }: Props) {
+export function FinalGradeCell({ retakeId: _retakeId, retakes, studentId, singleRetake }: Props) {
   const retakeId =
     useRetakePicker((s) => s.students?.[studentId]?.selectedRetake ?? null) ?? _retakeId;
   const { classes } = useStyles();
@@ -31,13 +32,17 @@ export function FinalGradeCell({ retakeId: _retakeId, retakes, studentId }: Prop
   const retakeGrade = retakes[retakeId]?.grade;
   const retakeIndex = retakes[retakeId]?.order ?? 0;
 
+  let retakeLabel = '-';
+
+  if (isNumber(retakeGrade)) {
+    retakeLabel = singleRetake
+      ? `${retakeGrade}`
+      : `${retakeGrade} (${t('table.retake').toLowerCase()} ${retakeIndex + 1})`;
+  }
+
   return (
     <td className={classes.cell}>
-      <Text>
-        {isNumber(retakeGrade)
-          ? `${retakeGrade} (${t('table.retake').toLowerCase()} ${retakeIndex + 1})`
-          : '-'}
-      </Text>
+      <Text>{retakeLabel}</Text>
     </td>
   );
 }

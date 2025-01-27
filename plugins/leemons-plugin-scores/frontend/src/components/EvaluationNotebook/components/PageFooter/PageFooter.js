@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 
 import { CloseEvaluationModal } from '../CloseEvaluationModal';
 
-import useCloseEvaluation from './hooks/useCloseEvaluation';
+import { useCloseEvaluation } from './hooks/useCloseEvaluation';
 import useDownloadScoreReport from './hooks/useDownloadScoreReport';
 
 import { prefixPN } from '@scores/helpers';
@@ -24,7 +24,7 @@ export default function Footer({ isCustom }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const downloadScoreReport = useDownloadScoreReport();
-  const onCloseEvaluation = useCloseEvaluation();
+  const onCloseEvaluation = useCloseEvaluation(tableData);
 
   useEffect(() => {
     const isPublished = tableData?.activitiesData?.value?.every(
@@ -46,16 +46,17 @@ export default function Footer({ isCustom }) {
         opened={isModalOpen}
         tableData={tableData}
         onCancel={() => setIsModalOpen(false)}
+        onConfirm={(data) => {
+          setIsLoading(true);
+          setIsModalOpen(false);
+          onCloseEvaluation(data).finally(() => setIsLoading(false));
+        }}
       />
       {!isCustom && (
         <Button
           loading={isLoading}
           disabled={isPeriodPublished}
-          onClick={() => {
-            setIsModalOpen(true);
-            // setIsLoading(true);
-            // onCloseEvaluation(tableData).finally(() => setIsLoading(false));
-          }}
+          onClick={() => setIsModalOpen(true)}
         >
           {t('closeEvaluation')}
         </Button>

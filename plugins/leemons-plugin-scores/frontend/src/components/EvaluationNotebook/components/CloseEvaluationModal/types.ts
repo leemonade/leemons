@@ -26,6 +26,7 @@ export interface TableData {
       period: {
         id: string;
         program: string;
+        name: string;
       };
     };
   };
@@ -42,6 +43,9 @@ export interface TableData {
     number: number;
   }>;
   retakes: Retake[];
+  class: {
+    id: string;
+  };
 }
 
 export interface GradedRetake {
@@ -58,4 +62,10 @@ export interface StudentScores {
   };
   retakes: Record<string, GradedRetake>;
   final: Retake['id'];
+}
+
+export interface StudentEvaluationData {
+  meanGrade: number;
+  final: Retake['id'];
+  finalGrade: number;
 }

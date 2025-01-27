@@ -35,7 +35,7 @@ export const createPickRetakeStore = () =>
 
 type RetakePickerStore = ReturnType<typeof createPickRetakeStore>;
 
-const Context = createContext<RetakePickerStore | null>(null);
+export const Context = createContext<RetakePickerStore | null>(null);
 
 export function RetakePickerProvider({ children }: { children: React.ReactNode }) {
   const [store] = useState(() => createPickRetakeStore());

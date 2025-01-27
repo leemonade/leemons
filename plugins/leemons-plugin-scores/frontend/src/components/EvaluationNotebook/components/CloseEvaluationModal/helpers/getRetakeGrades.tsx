@@ -33,7 +33,7 @@ export function getRetakeGrades({
       };
     }
 
-    acc[retake.retakeId ?? null] = {
+    acc[retake.retakeId ?? '0'] = {
       id: retake.retakeId,
       order: retake.retakeIndex,
       grade: retake.grade,

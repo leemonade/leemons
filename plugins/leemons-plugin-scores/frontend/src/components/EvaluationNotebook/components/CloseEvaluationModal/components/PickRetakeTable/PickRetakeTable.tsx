@@ -58,18 +58,22 @@ export function PickRetakeTable({ students, retakes }: Props) {
         ),
         cell: (info) => <StudentCell student={info.getValue()} />,
       }),
-      ...retakes.map((retake) =>
-        columnHelper.accessor(`retakes.${retake.id ?? retake.index}`, {
-          header: () => <Header label={`${t('table.retake')} ${(retake.index ?? 0) + 1}`} center />,
-          cell: (info) => (
-            <GradeCell
-              {...info.getValue()}
-              selectedRetake={info.row.original.final}
-              studentId={info.row.original.student.id}
-            />
-          ),
-        })
-      ),
+      ...(retakes.length === 1
+        ? []
+        : retakes.map((retake) =>
+            columnHelper.accessor(`retakes.${retake.id ?? retake.index}`, {
+              header: () => (
+                <Header label={`${t('table.retake')} ${(retake.index ?? 0) + 1}`} center />
+              ),
+              cell: (info) => (
+                <GradeCell
+                  {...info.getValue()}
+                  selectedRetake={info.row.original.final}
+                  studentId={info.row.original.student.id}
+                />
+              ),
+            })
+          )),
       columnHelper.accessor('final', {
         header: () => <Header label={t('table.final')} center />,
         cell: (info) => (
@@ -77,6 +81,7 @@ export function PickRetakeTable({ students, retakes }: Props) {
             retakeId={info.getValue()}
             retakes={info.row.original.retakes}
             studentId={info.row.original.student.id}
+            singleRetake={retakes.length === 1}
           />
         ),
       }),
@@ -86,32 +91,30 @@ export function PickRetakeTable({ students, retakes }: Props) {
 
   return (
     <Box>
-      <ContextContainer title="PickRetakeTable">
-        <table className={classes.table}>
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <th key={header.id} className={classes.headerCell}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id}>
-                {row
-                  .getVisibleCells()
-                  .map((cell) => flexRender(cell.column.columnDef.cell, cell.getContext()))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </ContextContainer>
+      <table className={classes.table}>
+        <thead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <th key={header.id} className={classes.headerCell}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(header.column.columnDef.header, header.getContext())}
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id}>
+              {row
+                .getVisibleCells()
+                .map((cell) => flexRender(cell.column.columnDef.cell, cell.getContext()))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </Box>
   );
 }
