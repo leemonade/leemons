@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.22.0](https://github.com/leemonade/leemons/compare/1.21.0...1.22.0) (2025-01-28)
+
+
+### Features
+
+* **assignables:** Add caching mechanism ([2262b19](https://github.com/leemonade/leemons/commit/2262b1990300b6e33f0beb865bf28fccf1029051)), closes [#709](https://github.com/leemonade/leemons/issues/709)
+* **common:** Enhance tool management ([2b7e0ef](https://github.com/leemonade/leemons/commit/2b7e0ef4085c69edf184e62f611e04b952992ae2)), closes [#707](https://github.com/leemonade/leemons/issues/707)
+* **scores:** Add weighting by activities ([f9799e7](https://github.com/leemonade/leemons/commit/f9799e7587a568eca8d3724d42916bbfa2feaedb)), closes [#714](https://github.com/leemonade/leemons/issues/714)
+* **scores:** Implement retake management and evaluation flow ([0fd1d0d](https://github.com/leemonade/leemons/commit/0fd1d0dca292ca8ad202523ebbe8d89c811f9a50)), closes [#715](https://github.com/leemonade/leemons/issues/715)
+* **scores:** Implement retakes functionality ([e30bce2](https://github.com/leemonade/leemons/commit/e30bce22227ec2e569bf526e071ac22f15574e87)), closes [#705](https://github.com/leemonade/leemons/issues/705)
+* **scripts:** Clean all collections inDB but the ones with deploymentID arg ([c87d506](https://github.com/leemonade/leemons/commit/c87d50656989503d7ba337e2b873e5b6e9a026da))
+* **transversal:** Enhance content developer management ([f2b2725](https://github.com/leemonade/leemons/commit/f2b272565d9e942e4cb7386e8b15c312025a2a51)), closes [#713](https://github.com/leemonade/leemons/issues/713)
+
+
+### Bug Fixes
+
+* **academic-portfolio:** Optimize addTeacher action ([e226477](https://github.com/leemonade/leemons/commit/e226477d9fcbf57b8da5403f321ab60841384c7f)), closes [#704](https://github.com/leemonade/leemons/issues/704)
+* **menu-builder:** Add basic permission check for public menu items ([7170255](https://github.com/leemonade/leemons/commit/71702555cc8fdd9c039ecd7b2169077b1e64341c)), closes [#710](https://github.com/leemonade/leemons/issues/710)
+* **menu-permissions:** Update permission handling logic ([55732dd](https://github.com/leemonade/leemons/commit/55732dd00cc3f010da6676a5b7be7e831b98bb49)), closes [#708](https://github.com/leemonade/leemons/issues/708)
+
 ## [1.21.0](https://github.com/leemonade/leemons/compare/1.20.0...1.21.0) (2024-12-20)
 
 
