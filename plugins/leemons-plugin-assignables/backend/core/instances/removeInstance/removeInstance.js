@@ -1,5 +1,6 @@
 const { LeemonsError } = require('@leemons/error');
 
+const discardCacheBy = require('../../../cache/discardCacheBy');
 const removeAssignations = require('../../assignations/removeAssignations/removeAssignations');
 const { unregisterClass } = require('../../classes');
 const { unregisterDates } = require('../../dates/unregisterDates');
@@ -69,6 +70,8 @@ async function removeInstance({ id, ctx }) {
     assignable: assignable.id,
     ctx,
   });
+
+  await discardCacheBy.instances.discardGetInstancesCacheById({ ids: [id], ctx });
 
   return ctx.tx.db.Instances.deleteOne({ id });
 }

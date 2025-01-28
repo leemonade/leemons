@@ -1,25 +1,31 @@
 const { LeemonsError } = require('@leemons/error');
 const slugify = require('slugify');
-const { existName } = require('./existName');
-const createNecessaryRolesForProfilesAccordingToCenters = require('./createNecessaryRolesForProfilesAccordingToCenters');
+
 const { getDefaultLocale } = require('../platform');
+
+const createNecessaryRolesForProfilesAccordingToCenters = require('./createNecessaryRolesForProfilesAccordingToCenters');
+const { existName } = require('./existName');
 const { updateProfileTranslations } = require('./updateProfileTranslations');
 
 /**
- * Update the provided role
- * @public
- * @static
- * @param {ProfileAdd} data - Profile data
- * @param {RolePermissionsAdd} _permissions - Array of permissions
- * @param {any} _transacting - DB Transaction
- * @return {Promise<any>} Created permissions-roles
- * */
+ * Adds a new profile to the system with necessary roles and permissions.
+ * @param {Object} params - The parameters for creating a profile.
+ * @param {string} params.name - The name of the profile.
+ * @param {string} params.description - The description of the profile.
+ * @param {Array} params.permissions - The permissions associated with the profile.
+ * @param {Object} params.translations - Translations for the profile name and description.
+ * @param {boolean} params.indexable - Indicates if the profile is indexable.
+ * @param {string} params.sysName - System name for the profile.
+ * @param {Object} params.ctx - The context object containing transaction and other necessary data.
+ * @returns {Promise<Object>} The created profile object.
+ * @throws {LeemonsError} If a profile with the same name already exists.
+ */
+
 async function add({ name, description, permissions, translations, indexable, sysName, ctx }) {
   const exist = await existName({ name, ctx });
   if (exist)
     throw new LeemonsError(ctx, { message: `Already exists one profile with the name '${name}'` });
 
-  // TODO Roberto: Ver porque no está haciendo ROLLBACK de este create cuando falla la función un poco más adelante
   let profile = await ctx.tx.db.Profiles.create({
     name,
     description,
@@ -43,10 +49,10 @@ async function add({ name, description, permissions, translations, indexable, sy
 
   if (translations) await updateProfileTranslations({ profile, translations, ctx });
 
-  // ES: Creamos el dataset para este perfil para poder añadir campos extras
-  // EN: We create the dataset for this profile to be able to add extra fields
   const platformLocale = await getDefaultLocale({ ctx });
 
+  // ES: Creamos el dataset para este perfil para poder añadir campos extras
+  // EN: We create the dataset for this profile to be able to add extra fields
   await ctx.tx.call('dataset.dataset.addLocation', {
     name: {
       [platformLocale]: `profile:${profile.id}`,

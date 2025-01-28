@@ -1,6 +1,7 @@
 const { intersection, uniq } = require('lodash');
-const getAssetIdFromPermissionName = require('../helpers/getAssetIdFromPermissionName');
+
 const { filterByVersionOfType } = require('../../assets/filterByVersion');
+const getAssetIdFromPermissionName = require('../helpers/getAssetIdFromPermissionName');
 
 /**
  * This function handles the asset IDs by concatenating all IDs and then getting the intersection in accordance with their status.
@@ -21,6 +22,7 @@ async function handleAssetIds({
   viewItems,
   editItems,
   assignItems,
+  adminItems,
   categoryId,
   published,
   preferCurrent,
@@ -35,6 +37,7 @@ async function handleAssetIds({
       .concat(viewItems)
       .concat(editItems)
       .concat(assignItems)
+      .concat(adminItems)
   );
 
   try {

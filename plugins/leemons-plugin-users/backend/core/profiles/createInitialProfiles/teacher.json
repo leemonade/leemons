@@ -131,5 +131,15 @@
   ],
   "name": "Docente",
   "description": "Profile for teachers",
-  "indexable": true
+  "indexable": true,
+  "translations": {
+    "name": {
+      "es": "Docente",
+      "en": "Teacher"
+    },
+    "description": {
+      "es": "Perfil para docentes",
+      "en": "Profile for teachers"
+    }
+  }
 }

@@ -1,8 +1,14 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
-import { isNil, map, trimEnd } from 'lodash';
-import { useHistory } from 'react-router-dom';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useForm, Controller, useWatch } from 'react-hook-form';
+import { useHistory } from 'react-router-dom';
+
+import { SubjectItemDisplay } from '@academic-portfolio/components';
+import { useClassesSubjects } from '@academic-portfolio/hooks';
+import ActivityHeader from '@assignables/components/ActivityHeader';
+import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
+import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
+import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
+import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
 import {
   Box,
   Tabs,
@@ -19,22 +25,20 @@ import {
 } from '@bubbles-ui/components';
 import { TextEditorInput } from '@bubbles-ui/editors';
 import { PluginComunicaIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
-import ActivityHeader from '@assignables/components/ActivityHeader';
-import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
-import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
-import { useUserAgentsInfo } from '@users/hooks';
-import { useClassesSubjects } from '@academic-portfolio/hooks';
-import { SubjectItemDisplay } from '@academic-portfolio/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@tasks/helpers';
-import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
-import { addSuccessAlert } from '@layout/alert';
-import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
-import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
 import { useComunica } from '@comunica/context';
+import { addSuccessAlert } from '@layout/alert';
+import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useUserAgentsInfo } from '@users/hooks';
+import { isNil, map, trimEnd } from 'lodash';
+import PropTypes from 'prop-types';
+
 import ConditionalInput from '../Inputs/ConditionalInput';
+
 import LinkSubmission from './components/LinkSubmission/LinkSubmission';
+
+import { prefixPN } from '@tasks/helpers';
+import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
 
 function useLetterEvaluationData({ evaluationSystem }) {
   return useMemo(() => {
@@ -152,7 +156,7 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
             name="score"
             control={form.control}
             render={({ field }) => {
-              if (evaluationSystem?.type === 'numeric') {
+              if (evaluationSystem?.type === 'number' || evaluationSystem?.type === 'numeric') {
                 return (
                   <NumberInput
                     {...field}

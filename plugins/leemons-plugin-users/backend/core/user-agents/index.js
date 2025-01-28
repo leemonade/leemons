@@ -1,10 +1,8 @@
-const { deleteById } = require('./deleteById');
-const { existUserAgent } = require('./existUserAgent');
-const { searchUserAgents } = require('./searchUserAgents');
-const { getUserAgentsInfo } = require('./getUserAgentsInfo');
-const { getUserAgentCenter } = require('./getUserAgentCenter');
+const { active } = require('./active');
+const {
+  addCenterAssetsPermissionToCenterAdminUserAgent,
+} = require('./addCenterAssetsPermissionToCenterAdminUserAgent');
 const { agentDetailForPage } = require('./agentDetailForPage');
-const { getUserAgentByCenterProfile } = require('./getUserAgentByCenterProfile');
 
 // Calendars
 const {
@@ -17,34 +15,39 @@ const { getUserAgentContacts } = require('./contacts/getUserAgentContacts');
 const { removeUserAgentContacts } = require('./contacts/removeUserAgentContacts');
 
 // Permissions
-const { userAgentHasPermission } = require('./permissions/userAgentHasPermission');
-const { getUserAgentPermissions } = require('./permissions/getUserAgentPermissions');
-const { updateUserAgentPermissions } = require('./permissions/updateUserAgentPermissions');
-const { userAgentHasCustomPermission } = require('./permissions/userAgentHasCustomPermission');
-const { addCustomPermissionToUserAgent } = require('./permissions/addCustomPermissionToUserAgent');
-const {
-  removeCustomUserAgentPermission,
-} = require('./permissions/removeCustomUserAgentPermission');
 
 // Item permissions
-const { getBaseAllPermissionsQuery } = require('./item-permissions/getBaseAllPermissionsQuery');
-const { userAgentHasPermissionToItem } = require('./item-permissions/userAgentHasPermissionToItem');
+const { userAgentsAreContacts } = require('./contacts/userAgentsAreContacts');
+const { deleteById } = require('./deleteById');
+const { disable } = require('./disable');
+const { existUserAgent } = require('./existUserAgent');
+const { filterUserAgentsByProfileAndCenter } = require('./filterUserAgentsByProfileAndCenter');
+const {
+  getActiveUserAgentsCountByProfileSysName,
+} = require('./getActiveUserAgentsCountByProfileSysName');
+const { getDataForUserAgentDatasets } = require('./getDataForUserAgentDatasets');
+const { getUserAgentByCenterProfile } = require('./getUserAgentByCenterProfile');
+const { getUserAgentCenter } = require('./getUserAgentCenter');
+const { getUserAgentsInfo } = require('./getUserAgentsInfo');
 const {
   getAllItemsForTheUserAgentHasPermissions,
 } = require('./item-permissions/getAllItemsForTheUserAgentHasPermissions');
 const {
   getAllItemsForTheUserAgentHasPermissionsByType,
 } = require('./item-permissions/getAllItemsForTheUserAgentHasPermissionsByType');
-const { filterUserAgentsByProfileAndCenter } = require('./filterUserAgentsByProfileAndCenter');
-const { getDataForUserAgentDatasets } = require('./getDataForUserAgentDatasets');
-const { saveDataForUserAgentDatasets } = require('./saveDataForUserAgentDatasets');
-const { update } = require('./update');
-const { disable } = require('./disable');
-const { active } = require('./active');
-const { userAgentsAreContacts } = require('./contacts/userAgentsAreContacts');
+const { getBaseAllPermissionsQuery } = require('./item-permissions/getBaseAllPermissionsQuery');
+const { userAgentHasPermissionToItem } = require('./item-permissions/userAgentHasPermissionToItem');
+const { addCustomPermissionToUserAgent } = require('./permissions/addCustomPermissionToUserAgent');
+const { getUserAgentPermissions } = require('./permissions/getUserAgentPermissions');
 const {
-  getActiveUserAgentsCountByProfileSysName,
-} = require('./getActiveUserAgentsCountByProfileSysName');
+  removeCustomUserAgentPermission,
+} = require('./permissions/removeCustomUserAgentPermission');
+const { updateUserAgentPermissions } = require('./permissions/updateUserAgentPermissions');
+const { userAgentHasCustomPermission } = require('./permissions/userAgentHasCustomPermission');
+const { userAgentHasPermission } = require('./permissions/userAgentHasPermission');
+const { saveDataForUserAgentDatasets } = require('./saveDataForUserAgentDatasets');
+const { searchUserAgents } = require('./searchUserAgents');
+const { update } = require('./update');
 
 module.exports = {
   update,
@@ -77,6 +80,7 @@ module.exports = {
     userAgentHasCustomPermission,
     addCustomPermissionToUserAgent,
     removeCustomUserAgentPermission,
+    addCenterAssetsPermissionToCenterAdminUserAgent,
   },
   itemPermissions: {
     getBaseAllPermissionsQuery,

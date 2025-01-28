@@ -43,5 +43,15 @@
   ],
   "name": "SuperAdmin",
   "description": "Profile for platform super-administrators",
-  "indexable": false
+  "indexable": false,
+  "translations": {
+    "name": {
+      "es": "Super Admin",
+      "en": "Super Admin"
+    },
+    "description": {
+      "es": "Perfil para super administradores de la plataforma",
+      "en": "Profile for platform super-administrators"
+    }
+  }
 }

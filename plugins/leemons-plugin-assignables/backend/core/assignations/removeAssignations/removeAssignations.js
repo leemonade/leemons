@@ -1,6 +1,7 @@
 const { LeemonsError } = require('@leemons/error');
 const { uniq, merge } = require('lodash');
 
+const discardCacheBy = require('../../../cache/discardCacheBy');
 const { unregisterDates } = require('../../dates');
 const { getUserPermission } = require('../../permissions/instances/users');
 const {
@@ -46,6 +47,15 @@ module.exports = async function removeAssignations({ assignations, instance, ctx
     assignable: instance.assignable.id,
     userAgents: students,
     role: 'student',
+    ctx,
+  });
+
+  await discardCacheBy.assignations.discardGetAssignationsCacheById({
+    ids: assignations.map((assignation) => ({
+      id: assignation.id,
+      instance: assignation.instance,
+      user: assignation.user,
+    })),
     ctx,
   });
 

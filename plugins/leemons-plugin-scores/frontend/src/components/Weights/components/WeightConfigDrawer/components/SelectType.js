@@ -25,6 +25,10 @@ export default function SelectType() {
         label: typesT('modules'),
         value: 'modules',
       },
+      {
+        label: typesT('activities'),
+        value: 'activities',
+      },
     ],
     [typesT]
   );

@@ -1,0 +1,73 @@
+{
+  "name": "Desarrollador de Contenidos",
+  "description": "Profile for content developers",
+  "indexable": true,
+  "permissions": [
+    {
+      "permissionName": "users.users",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "users.user-data",
+      "actionNames": ["admin"]
+    },
+    {
+      "permissionName": "users.centers",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "academic-portfolio.programs",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "academic-portfolio.subjects",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "timetable.config",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "timetable.timetable",
+      "actionNames": ["view"]
+    },
+    {
+      "permissionName": "tasks.tasks",
+      "actionNames": ["admin"]
+    },
+    {
+      "permissionName": "tasks.library",
+      "actionNames": ["admin"]
+    },
+    {
+      "permissionName": "leebrary.library",
+      "actionNames": ["update"]
+    },
+    {
+      "permissionName": "tests.tests",
+      "actionNames": ["admin"]
+    },
+    {
+      "permissionName": "tests.questionsBanks",
+      "actionNames": ["admin"]
+    },
+    {
+      "permissionName": "content-creator.creator",
+      "actionNames": ["view", "update", "create", "delete", "admin"]
+    },
+    {
+      "permissionName": "learning-paths.modules",
+      "actionNames": ["view", "update", "create", "delete", "admin"]
+    }
+  ],
+  "translations": {
+    "name": {
+      "es": "Desarrollador de Contenidos",
+      "en": "Content Developer"
+    },
+    "description": {
+      "es": "Perfil para desarrolladores de contenidos",
+      "en": "Profile for content developers"
+    }
+  }
+}

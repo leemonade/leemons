@@ -3,25 +3,19 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const path = require('path');
-const _ = require('lodash');
-
 const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMultilanguageMixin } = require('@leemons/multilanguage');
-const { hasKey, setKey } = require('@leemons/mongodb-helpers');
-const { addPermissionsDeploy } = require('@leemons/permissions');
-const { addMenuItemsDeploy } = require('@leemons/menu-builder');
-const { addWidgetZonesDeploy } = require('@leemons/widgets');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
 const { LeemonsEmailsMixin } = require('@leemons/emails');
-const {
-  updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset,
-} = require('../core/user-agents/updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset');
+const { addMenuItemsDeploy } = require('@leemons/menu-builder');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
+const { hasKey, setKey } = require('@leemons/mongodb-helpers');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { LeemonsMultilanguageMixin } = require('@leemons/multilanguage');
+const { addPermissionsDeploy } = require('@leemons/permissions');
+const { addWidgetZonesDeploy } = require('@leemons/widgets');
+const _ = require('lodash');
+const path = require('path');
 
-const { getServiceModels } = require('../models');
-const { addMany } = require('../core/actions');
 const {
   defaultActions,
   defaultDatasetLocations,
@@ -29,11 +23,17 @@ const {
   menuItems,
   widgets,
 } = require('../config/constants');
+const { addMany } = require('../core/actions');
+const { renderEmailTemplates } = require('../core/deploy/renderEmailTemplates');
+const { getDefaultLocale } = require('../core/platform');
 const {
   createInitialProfiles,
 } = require('../core/profiles/createInitialProfiles/createInitialProfiles');
+const {
+  updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset,
+} = require('../core/user-agents/updateAllUserAgentsToNeedCheckDatasetValuesIfSaveFieldEventChangeDataset');
 const { permissionsNamespace } = require('../helpers/cacheKeys');
-const { renderEmailTemplates } = require('../core/deploy/renderEmailTemplates');
+const { getServiceModels } = require('../models');
 
 const initDataset = async ({ ctx }) => {
   if (!(await hasKey(ctx.tx.db.KeyValue, 'dataset-locations'))) {
@@ -100,6 +100,12 @@ module.exports = {
 
       // Dataset Locations
       await initDataset({ ctx });
+
+      // Register any new default profiles
+      if (await getDefaultLocale({ ctx })) {
+        await createInitialProfiles({ ctx });
+        ctx.tx.emit('init-profiles');
+      }
     },
     'menu-builder.init-main-menu': async (ctx) => addMenuItems(ctx),
     'deployment-manager.config-change': async (ctx) => addMenuItems(ctx),

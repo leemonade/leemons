@@ -72,7 +72,7 @@ export type Profile = {
   /** If the profile is indexable */
   indexable: boolean;
   /** System name of the profile */
-  sysName?: 'teacher' | 'student' | 'admin' | 'parent';
+  sysName?: 'teacher' | 'student' | 'admin' | 'parent' | 'content-developer';
   permissions?: GenericObject[];
   targetPermissions?: GenericObject[];
 };

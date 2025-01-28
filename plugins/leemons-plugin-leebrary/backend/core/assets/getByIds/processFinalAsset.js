@@ -1,4 +1,5 @@
 const { find, isNil, intersection, isArray } = require('lodash');
+
 const { CATEGORIES } = require('../../../config/constants');
 /**
  * Processes the final asset by adding additional properties based on permissions, categories, tags, and pins.
@@ -23,6 +24,7 @@ function processFinalAsset({
   programsById,
   permissionsByAsset,
   canEditPermissions,
+  canAdminPermissions,
   withCategory,
   categories,
   assetCategoryData,
@@ -34,10 +36,10 @@ function processFinalAsset({
 }) {
   const item = { ...asset };
 
-  const deleteRoles = ['owner'];
-  const shareRoles = ['owner', 'editor'];
-  const editRoles = ['owner', 'editor'];
-  const assignRoles = ['owner', 'editor', 'assigner'];
+  const deleteRoles = ['owner', 'admin'];
+  const shareRoles = ['owner', 'editor', 'admin'];
+  const editRoles = ['owner', 'editor', 'admin'];
+  const assignRoles = ['owner', 'editor', 'assigner', 'admin'];
 
   if (item.program) {
     item.programName = programsById[item.program]?.name;
@@ -109,15 +111,20 @@ function processFinalAsset({
     }
   }
 
-  // eslint-disable-next-line sonarjs/no-collapsible-if
-  if (canEditPermissions.includes(item.id)) {
-    if (item.role !== 'owner') {
-      item.role = 'editor';
-      item.editable = editRoles.includes('editor');
-      item.deleteable = deleteRoles.includes('editor');
-      item.shareable = shareRoles.includes('editor');
-      item.assignable = assignRoles.includes('editor');
-    }
+  if (canEditPermissions.includes(item.id) && item.role !== 'owner') {
+    item.role = 'editor';
+    item.editable = editRoles.includes('editor');
+    item.deleteable = deleteRoles.includes('editor');
+    item.shareable = shareRoles.includes('editor');
+    item.assignable = assignRoles.includes('editor');
+  }
+
+  if (canAdminPermissions.includes(item.id) && item.role !== 'owner') {
+    item.role = 'admin';
+    item.editable = editRoles.includes('admin');
+    item.deleteable = deleteRoles.includes('admin');
+    item.shareable = shareRoles.includes('admin');
+    item.assignable = assignRoles.includes('admin');
   }
 
   return item;

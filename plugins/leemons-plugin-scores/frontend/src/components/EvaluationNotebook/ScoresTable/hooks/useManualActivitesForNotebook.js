@@ -13,7 +13,7 @@ function parseActivity({ activity, roles, students, subject, scores }) {
     name: activity.name,
     deadline: activity.date,
     role: activity.role,
-    roleIcon: roles[activity.role]?.icon,
+    roleIcon: roles?.[activity.role]?.icon,
 
     allowChange: true,
     expandable: false,

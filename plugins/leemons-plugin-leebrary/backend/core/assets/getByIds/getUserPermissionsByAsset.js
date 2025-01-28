@@ -9,8 +9,9 @@ const { map, forEach } = require('lodash');
  */
 async function getUserPermissionsByAsset({ assets, ctx }) {
   let canEditPermissions = [];
+  let canAdminPermissions = [];
 
-  const [viewPerms, editPerms, assignPerms] = await Promise.all([
+  const [viewPerms, editPerms, assignPerms, adminPerms] = await Promise.all([
     // eslint-disable-next-line sonarjs/no-duplicate-string
     ctx.tx.call('users.permissions.getItemPermissions', {
       item: map(assets, 'id'),
@@ -27,6 +28,11 @@ async function getUserPermissionsByAsset({ assets, ctx }) {
       type: ctx.prefixPN('asset.can-assign'),
       returnRaw: true,
     }),
+    ctx.tx.call('users.permissions.getItemPermissions', {
+      item: map(assets, 'id'),
+      type: ctx.prefixPN('asset.can-administer'),
+      returnRaw: true,
+    }),
   ]);
 
   if (ctx.meta.userSession) {
@@ -39,9 +45,18 @@ async function getUserPermissionsByAsset({ assets, ctx }) {
         item: map(assets, 'id'),
       }
     );
+    canAdminPermissions = await ctx.tx.call(
+      'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType',
+      {
+        userAgentId: ctx.meta.userSession.userAgents,
+        type: ctx.prefixPN('asset.can-administer'),
+        ignoreOriginalTarget: true,
+        item: map(assets, 'id'),
+      }
+    );
   }
 
-  const currentPermissions = [...viewPerms, ...editPerms, ...assignPerms];
+  const currentPermissions = [...viewPerms, ...editPerms, ...assignPerms, ...adminPerms];
 
   const permissionsByAsset = {};
   forEach(currentPermissions, (permission) => {
@@ -50,6 +65,7 @@ async function getUserPermissionsByAsset({ assets, ctx }) {
         viewer: [],
         editor: [],
         assigner: [],
+        admin: [],
       };
     }
     let role = 'viewer';
@@ -57,10 +73,12 @@ async function getUserPermissionsByAsset({ assets, ctx }) {
       role = 'editor';
     } else if (permission.type.includes('can-assign')) {
       role = 'assigner';
+    } else if (permission.type.includes('can-administer')) {
+      role = 'admin';
     }
     permissionsByAsset[permission.item][role].push(permission.permissionName);
   });
 
-  return [permissionsByAsset, canEditPermissions];
+  return [permissionsByAsset, canEditPermissions, canAdminPermissions];
 }
 module.exports = { getUserPermissionsByAsset };

@@ -3,7 +3,7 @@ import { useCourseDetail } from '@academic-portfolio/hooks';
 
 export default function useMyScoresViewTitle({ course, period } = {}) {
   const { data: courseData } = useCourseDetail({
-    groupId: course,
+    courseId: course,
     options: { enabled: !!course },
   });
 

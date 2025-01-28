@@ -16,23 +16,28 @@ async function cleanCollectionsNotIn(deploymentIds) {
 
   // Process only the collections that have a name that starts with "v1::"
   return Promise.all(
-    collections
-      .filter((collectionInfo) => collectionInfo.name.startsWith('v1::'))
-      .map((collectionInfo) => {
-        const collection = database.collection(collectionInfo.name);
+    collections.map((collectionInfo) => {
+      const collection = database.collection(collectionInfo.name);
+      if (
+        collectionInfo.name.startsWith('v1::') ||
+        collectionInfo.name.includes('deploymentplugins')
+      ) {
         return collection.deleteMany({ deploymentID: { $nin: deploymentIds } });
-      })
+      }
+
+      if (collectionInfo.name.startsWith('package-manager_deployments')) {
+        return collection.deleteMany({ id: { $nin: deploymentIds } });
+      }
+
+      return true;
+    })
   );
 }
 
 (async () => {
   try {
     await init();
-    const keepDeploymentIds = [
-      '66016f43b85fefd89e579d19',
-      '660431cdb85fefd89e585047',
-      '66310ece16d76f12da220080',
-    ];
+    const keepDeploymentIds = ['66d9dfc96a7d2054230b809b'];
     await cleanCollectionsNotIn(keepDeploymentIds);
     await client.close();
   } catch (error) {

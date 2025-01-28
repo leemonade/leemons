@@ -15,8 +15,8 @@ export default function useIsTotalValue100Percent({ control }) {
   const totalValue = weights.weight?.reduce((acc, weight) => acc + (weight.weight ?? 0), 0);
 
   return (
-    totalValue === 0.9999 ||
-    totalValue === 1 ||
+    (totalValue >= 0.9999 &&
+    totalValue <= 1.1) ||
     (!!weights.applySameValue && !weights.weight?.length)
   );
 }

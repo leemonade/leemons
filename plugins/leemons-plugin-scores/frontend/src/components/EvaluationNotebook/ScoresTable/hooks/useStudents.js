@@ -1,8 +1,10 @@
 import { useMemo } from 'react';
 
 import { useUserAgentsInfo } from '@users/hooks';
-import { useScores } from '@scores/requests/hooks/queries';
 import { keyBy } from 'lodash';
+
+import { useScores } from '@scores/requests/hooks/queries';
+import { useRetakesScores } from '@scores/requests/hooks/queries/useRetakesScores';
 
 export default function useStudents({
   activities,
@@ -12,6 +14,12 @@ export default function useStudents({
 }) {
   const { data: students, isLoading: userAgentsLoading } = useUserAgentsInfo(klass?.students, {
     enabled: !!klass?.students?.length,
+  });
+
+  const { data: retakeScores } = useRetakesScores({
+    classId: klass?.id,
+    period,
+    enabled: !!klass?.id && !!period,
   });
 
   const { data: scores, isLoading: scoresLoading } = useScores(
@@ -73,10 +81,12 @@ export default function useStudents({
         };
       }),
 
+      retakeScores: retakeScores?.[id],
       customScore: scores?.[id]?.grade ?? null,
+      customScoreRetake: scores?.[id]?.retake ?? null,
       allowCustomChange: !scores?.[id]?.published,
     }));
-  }, [students, activities, search, searchType, klass?.subject?.id, scores]);
+  }, [students, activities, search, searchType, klass?.subject?.id, scores, retakeScores]);
 
   return {
     data: studentsData,

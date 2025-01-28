@@ -115,5 +115,15 @@
   ],
   "name": "Admin",
   "description": "Profile for platform administrators",
-  "indexable": true
+  "indexable": true,
+  "translations": {
+    "name": {
+      "es": "Administrador",
+      "en": "Admin"
+    },
+    "description": {
+      "es": "Perfil para administradores de la plataforma",
+      "en": "Profile for platform administrators"
+    }
+  }
 }

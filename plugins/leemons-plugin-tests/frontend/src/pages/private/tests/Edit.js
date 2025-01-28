@@ -1,9 +1,9 @@
 /* eslint-disable camelcase */
 import React, { useEffect } from 'react';
-import { groupBy, isString, map, uniqBy } from 'lodash';
 import { useForm } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router-dom';
-import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
+
+import { getUserProgramsRequest, getUserSubjectsRequest } from '@academic-portfolio/request';
 import {
   LoadingOverlay,
   TotalLayoutContainer,
@@ -12,17 +12,21 @@ import {
 } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@tests/helpers/prefixPN';
 import { useLayout } from '@layout/context';
-import { TestIcon } from '@tests/components/Icons/TestIcon';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { groupBy, isString, map } from 'lodash';
+
 import { getTestRequest, saveTestRequest } from '../../../request';
+
 import DetailBasic from './components/DetailBasic';
 import DetailContent from './components/DetailContent';
 import DetailEvaluation from './components/DetailEvaluation';
 import DetailInstructions from './components/DetailInstructions';
 import DetailQuestions from './components/DetailQuestions';
 import DetailQuestionsBanks from './components/DetailQuestionsBanks';
+
+import { TestIcon } from '@tests/components/Icons/TestIcon';
+import prefixPN from '@tests/helpers/prefixPN';
 
 export default function Edit() {
   const [t] = useTranslateLoader(prefixPN('testsEdit'));
@@ -63,6 +67,7 @@ export default function Edit() {
 
       const { subjects, subjectsRaw, ...toSend } = formValues;
       toSend.subjects = subjects?.map((subject) => (isString(subject) ? subject : subject.subject));
+      toSend.program = toSend.subjects?.length ? subjectsRaw[0].programId : null;
       toSend.cover = toSend.cover?.id ?? toSend.cover;
 
       const { test } = await saveTestRequest({ ...toSend, type: 'learn', published: false });
@@ -82,7 +87,9 @@ export default function Edit() {
       store.saving = 'publish';
       render();
       const { subjects, subjectsRaw, ...toSend } = formValues;
+
       toSend.subjects = subjects?.map((subject) => (isString(subject) ? subject : subject.subject));
+      toSend.program = toSend.subjects?.length ? subjectsRaw[0].programId : null;
       toSend.cover = toSend.cover?.id ?? toSend.cover;
 
       const { test } = await saveTestRequest({ ...toSend, type: 'learn', published: true });
@@ -103,12 +110,13 @@ export default function Edit() {
   // INITIAL DATA LOADING
 
   async function load() {
-    const [{ programs }, { classes }] = await Promise.all([
+    const [{ programs }, { data: userSubjects }] = await Promise.all([
       getUserProgramsRequest(),
-      listSessionClassesRequest(),
+      getUserSubjectsRequest(),
     ]);
 
-    store.subjects = uniqBy(map(classes, 'subject'), 'id');
+    store.subjects = userSubjects;
+
     store.subjectsByProgram = groupBy(
       map(store.subjects, (item) => ({
         value: item.id,
@@ -119,6 +127,7 @@ export default function Edit() {
     );
     store.programs = programs;
     store.programsData = map(programs, ({ id, name }) => ({ value: id, label: name }));
+
     render();
   }
 

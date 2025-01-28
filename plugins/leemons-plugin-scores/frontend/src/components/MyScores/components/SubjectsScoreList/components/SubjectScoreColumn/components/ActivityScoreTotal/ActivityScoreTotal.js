@@ -3,13 +3,14 @@ import { useEffect } from 'react';
 import { Stack, Text } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import getNearestScale from '@scorm/helpers/getNearestScale';
-import { isNil, sortBy } from 'lodash';
+import { isNil, keyBy, sortBy } from 'lodash';
 import PropTypes from 'prop-types';
 
 import useActivityScoreTotalStyles from './ActivityScoreTotal.style';
 
 import { prefixPN } from '@scores/helpers';
 import { useScores } from '@scores/requests/hooks/queries';
+import { useRetakes } from '@scores/requests/hooks/queries/useRetakes';
 import useMyScoresStore from '@scores/stores/myScoresStore';
 
 export default function ActivityScoreTotal({ class: klass, period, activities, evaluationSystem }) {
@@ -30,6 +31,12 @@ export default function ActivityScoreTotal({ class: klass, period, activities, e
     classes: [klass.id],
     periods: [period?.period?.id],
     published: true,
+  });
+
+  const {data: retakes} = useRetakes({
+    classId: klass.id,
+    period: period?.period?.id,
+    select: retakes => keyBy(retakes, 'id')
   });
 
   const minGrade = sortBy(evaluationSystem.scales, 'number')?.[0]?.number;
@@ -58,6 +65,9 @@ export default function ActivityScoreTotal({ class: klass, period, activities, e
 
   const { classes, cx } = useActivityScoreTotalStyles();
 
+  const scoreRetake = customScore?.[0]?.retake;
+  const retakeIndex = scoreRetake === '0' ? 0 : retakes?.[scoreRetake]?.index ?? null;
+
   return (
     <Stack justifyContent="space-between" alignItems="center" className={classes.root}>
       <Stack direction="column" className={classes.section}>
@@ -68,12 +78,15 @@ export default function ActivityScoreTotal({ class: klass, period, activities, e
           {hasNonEvaluatedActivities ? '-' : nearestScale?.description ?? '-'}
         </Text>
       </Stack>
-      <Stack className={cx(classes.section, classes.rightSection)} justifyContent="center">
+      <Stack className={cx(classes.section, classes.rightSection)} justifyContent="center" alignItems="center" direction="column">
         <Text className={classes.score} color={color}>
           {weightedScore !== null
             ? nearestScale?.letter ?? parseFloat(weightedScore.toFixed(2))
             : '-'}
         </Text>
+        {retakeIndex !== null && <Text className={classes.retake} color={color}>
+           {t('retake')} {retakeIndex + 1}
+        </Text>}
       </Stack>
     </Stack>
   );

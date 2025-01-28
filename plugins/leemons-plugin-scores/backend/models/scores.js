@@ -25,6 +25,10 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
+    retake: {
+      type: String,
+      default: null,
+    },
     published: {
       type: Boolean,
       default: false,

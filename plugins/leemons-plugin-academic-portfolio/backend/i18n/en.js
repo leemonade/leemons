@@ -1141,9 +1141,11 @@ module.exports = {
       CLASS_UPDATE_SUBSTAGES: 'Processing substages...',
       CLASS_UPDATE_COURSES: 'Processing courses...',
       CLASS_UPDATE_GROUPS: 'Processing groups...',
-      CLASS_UPDATE_TEACHERS: 'Processing teachers...',
+      CLASS_UPDATE_TEACHERS:
+        'Processing teachers... This may take several minutes. You can continue browsing but do not reload the page.',
       CLASS_UPDATE_SCHEDULE: 'Processing schedule...',
-      ENROLLMENT_UPDATE_STUDENTS: 'Processing students...',
+      ENROLLMENT_UPDATE_STUDENTS:
+        'Processing students... This may take several minutes. You can continue browsing but do not reload the page.',
       ENROLLMENT_UPDATE_COMMUNICA: 'Processing Chat rooms...',
       ENROLLMENT_UPDATE_SUCCESS: 'Enrolment updated successfully',
       ENROLLMENT_UPDATE_ERROR: 'Error updating enrolment',

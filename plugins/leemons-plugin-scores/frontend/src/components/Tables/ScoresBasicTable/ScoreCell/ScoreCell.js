@@ -9,7 +9,7 @@ import {
   NumberInput,
 } from '@bubbles-ui/components';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
-import { isFunction } from 'lodash';
+import { isFunction, isNil } from 'lodash';
 import PropTypes from 'prop-types';
 
 import { SCORES_CELL_DEFAULT_PROPS } from './ScoreCell.constants';
@@ -27,6 +27,7 @@ const SelectScore = forwardRef(({ value, onChange, onClose, grades }, ref) => {
           onChange={onChange}
           onDropdownClose={onClose}
           style={{ flex: 1 }}
+          autoFocus
           ref={ref}
         />
       </>
@@ -41,6 +42,7 @@ const SelectScore = forwardRef(({ value, onChange, onClose, grades }, ref) => {
       onBlur={onClose}
       min={grades[0].number}
       max={grades[grades.length - 1].number}
+      autoFocus
       ref={ref}
     />
   );
@@ -70,6 +72,8 @@ const ScoreCell = ({
   onDataChange,
   onOpen,
   isCustom,
+  retake,
+  labels,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value ?? grades[0].number);
@@ -93,7 +97,9 @@ const ScoreCell = ({
 
     // Use minimum grade if no grade and the activity is not submitted and is closed
     if (!hasGrade && !isSubmitted && isClosed) {
-      return `${grades[0].letter ?? grades[0].number}${usePercentage ? '%' : ''} (${noActivityLabel})`;
+      return `${grades[0].letter ?? grades[0].number}${
+        usePercentage ? '%' : ''
+      } (${noActivityLabel})`;
     }
 
     // Use submitted label if the activity is submitted and not graded
@@ -119,7 +125,9 @@ const ScoreCell = ({
       return `${render}${usePercentage ? '%' : ''} (${noActivityLabel})`;
     }
 
-    return `${render}${usePercentage ? '%' : ''}`;
+    const retakeRender = !isNil(retake) ? ` (${labels.retake} ${retake + 1})` : '';
+
+    return `${render}${usePercentage ? '%' : ''}${retakeRender}`;
   };
 
   const onClickHandler = () => {
