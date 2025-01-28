@@ -15,6 +15,7 @@ export function RightContentBody({
   usePercentage,
   viewOnly,
   hideCustom,
+  labels,
 }) {
   const studentsRows = studentsData.map((student) => {
     const avgScore = getWeightedAvgScore({
@@ -35,6 +36,7 @@ export function RightContentBody({
         usePercentage={usePercentage}
         viewOnly={viewOnly}
         hideCustom={hideCustom}
+        labels={labels}
       />
     );
   });
@@ -56,4 +58,5 @@ RightContentBody.propTypes = {
   usePercentage: PropTypes.bool,
   viewOnly: PropTypes.bool,
   hideCustom: PropTypes.bool,
+  labels: PropTypes.object,
 };

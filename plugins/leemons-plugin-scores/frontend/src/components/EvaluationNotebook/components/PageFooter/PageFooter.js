@@ -5,7 +5,9 @@ import { DownloadIcon } from '@bubbles-ui/icons/solid';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PropTypes from 'prop-types';
 
-import useCloseEvaluation from './hooks/useCloseEvaluation';
+import { CloseEvaluationModal } from '../CloseEvaluationModal';
+
+import { useCloseEvaluation } from './hooks/useCloseEvaluation';
 import useDownloadScoreReport from './hooks/useDownloadScoreReport';
 
 import { prefixPN } from '@scores/helpers';
@@ -17,10 +19,12 @@ export default function Footer({ isCustom }) {
   const isPeriodPublished = useEvaluationNotebookStore((state) => state.isPeriodPublished);
   const setIsPeriodPublished = useEvaluationNotebookStore((state) => state.setIsPeriodPublished);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const [isLoading, setIsLoading] = useState(false);
 
   const downloadScoreReport = useDownloadScoreReport();
-  const onCloseEvaluation = useCloseEvaluation();
+  const onCloseEvaluation = useCloseEvaluation(tableData);
 
   useEffect(() => {
     const isPublished = tableData?.activitiesData?.value?.every(
@@ -38,14 +42,21 @@ export default function Footer({ isCustom }) {
 
   return (
     <>
+      <CloseEvaluationModal
+        opened={isModalOpen}
+        tableData={tableData}
+        onCancel={() => setIsModalOpen(false)}
+        onConfirm={(data) => {
+          setIsLoading(true);
+          setIsModalOpen(false);
+          onCloseEvaluation(data).finally(() => setIsLoading(false));
+        }}
+      />
       {!isCustom && (
         <Button
           loading={isLoading}
           disabled={isPeriodPublished}
-          onClick={() => {
-            setIsLoading(true);
-            onCloseEvaluation(tableData).finally(() => setIsLoading(false));
-          }}
+          onClick={() => setIsModalOpen(true)}
         >
           {t('closeEvaluation')}
         </Button>

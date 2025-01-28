@@ -4,7 +4,7 @@
  * @param {string} retake.classId - The class id
  * @param {string} retake.period - The period
  * @param {string|null} retake.retakeId - The retake id
- * @param {string} retake.retakeIndex - The retake index
+ * @param {number} retake.retakeIndex - The retake index
  * @param {string} retake.user - The user id
  * @param {number} retake.grade - The grade
  */

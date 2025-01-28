@@ -4,7 +4,7 @@ import { useSticky } from 'react-table-sticky';
 
 import { Box, Text, UserDisplayItem, useElementSize, Stack } from '@bubbles-ui/components';
 import { motion } from 'framer-motion';
-import { isFunction, sortBy } from 'lodash';
+import { isFunction } from 'lodash';
 
 import { CommonTableStyles } from '../CommonTable.styles';
 
@@ -116,26 +116,6 @@ const ScoresBasicTable = ({
     return activitiesObject;
   };
 
-  const getAvgScore = (studentActivities) => {
-    let weightedScore = 0;
-
-    const minGrade = sortBy(grades, 'number')[0].number;
-
-    studentActivities.forEach((studentActivity) => {
-      weightedScore +=
-        (studentActivity.score ? studentActivity.score : minGrade) *
-        (activities.find((activity) => activity.id === studentActivity.id)?.weight || 0);
-    });
-
-    let sumOfWeights = 0;
-    activities.forEach((activity) => {
-      sumOfWeights += activity.weight;
-    });
-
-    const weightedAverage = (weightedScore / sumOfWeights).toFixed(2);
-    return useNumbers ? weightedAverage : findGradeLetter(weightedAverage);
-  };
-
   const getColumns = () => {
     const columns = [];
     columns.push({
@@ -215,8 +195,8 @@ const ScoresBasicTable = ({
               index === 0
                 ? 'first'
                 : index === expandedData.activities.length - 1
-                  ? 'last'
-                  : 'between';
+                ? 'last'
+                : 'between';
             const completionPercentage = getCompletionPercentage(expandedActivity.id, true);
             return {
               accessor: expandedActivity.id,

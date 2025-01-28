@@ -53,6 +53,7 @@ export function RightContent({
         usePercentage={usePercentage}
         viewOnly={viewOnly}
         hideCustom={hideCustom}
+        labels={labels}
       />
     </Box>
   );

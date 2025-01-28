@@ -69,7 +69,7 @@ export function RightContentHeader({ labels, periodName, from, to, locale, hideC
               label={onlyShowRetakes ? labels.customScore : `${labels.retake} ${retake.index + 1}`}
             />
           ))}
-        {!hideCustom && !onlyShowRetakes && <ColumnHeader label={labels.customScore} />}
+        {!hideCustom && !onlyShowRetakes && <ColumnHeader label={labels.customScore} big />}
       </Box>
     </Box>
   );

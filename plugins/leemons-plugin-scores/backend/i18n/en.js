@@ -456,6 +456,7 @@ module.exports = {
         description: 'We have not found results for your search.',
       },
     },
+    retake: 'CALL',
   },
   manualActivityDrawer: {
     title: 'New graded activity',
@@ -472,6 +473,18 @@ module.exports = {
       averages: 'this activity will count as part of the average',
       modules: 'this activity will appear as a module',
       roles: 'in which type would you like to add this activity?',
+    },
+  },
+  pickRetakeTable: {
+    title: 'Close evaluation: Final grades',
+    description: "Select the evaluation call for each student's final grade",
+    cancel: 'Cancel',
+    confirm: 'Close evaluation',
+
+    table: {
+      students: 'Students',
+      retake: 'CALL',
+      final: 'FINAL',
     },
   },
 };
