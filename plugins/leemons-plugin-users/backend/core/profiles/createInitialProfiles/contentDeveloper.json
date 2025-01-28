@@ -1,6 +1,6 @@
 {
-  "name": "Desarrollador de Contenidos",
-  "description": "Profile for content developers",
+  "name": "Autor",
+  "description": "Profile for authors",
   "indexable": true,
   "permissions": [
     {
@@ -62,12 +62,12 @@
   ],
   "translations": {
     "name": {
-      "es": "Desarrollador de Contenidos",
-      "en": "Content Developer"
+      "es": "Autor",
+      "en": "Author"
     },
     "description": {
-      "es": "Perfil para desarrolladores de contenidos",
-      "en": "Profile for content developers"
+      "es": "Perfil para autores",
+      "en": "Profile for authors"
     }
   }
 }
