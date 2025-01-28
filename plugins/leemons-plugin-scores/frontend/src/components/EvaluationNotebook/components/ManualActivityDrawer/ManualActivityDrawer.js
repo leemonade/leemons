@@ -36,7 +36,7 @@ export function ManualActivityDrawer({
   const [isLoading, setIsLoading] = useState(false);
 
   const { data: weights } = useWeights({ classId });
-  const isRolesWeight = weights?.type === 'roles';
+  const isRolesOrActivitiesWeight = weights?.type === 'roles' || weights?.type === 'activities';
 
   const rolesLocalizations = useRolesLocalizations(['task', 'test']);
 
@@ -117,7 +117,7 @@ export function ManualActivityDrawer({
             name="role"
             defaultValue={'task'}
             render={({ field }) =>
-              isRolesWeight && (
+              isRolesOrActivitiesWeight && (
                 <Box sx={{ width: '50%' }}>
                   <Select
                     {...field}
