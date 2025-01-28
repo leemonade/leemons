@@ -6,7 +6,7 @@ const weightValidationObject = {
   properties: {
     type: {
       type: 'string',
-      enum: ['averages', 'roles', 'modules'],
+      enum: ['averages', 'roles', 'modules', 'activities'],
     },
     class: {
       type: 'string',

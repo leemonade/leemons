@@ -1,18 +1,21 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
-import WeightRenderer from '../components/WeightRenderer';
-import TotalWeightRenderer from '../components/TotalWeightRenderer';
+
 import NameRenderer from '../components/NameRenderer';
+import TotalWeightRenderer from '../components/TotalWeightRenderer';
+import WeightRenderer from '../components/WeightRenderer';
+
+import { prefixPN } from '@scores/helpers';
 
 export default function useColumns({ type, lockable }) {
   const [t] = useTranslateLoader(prefixPN('weightingDrawer.table'));
 
+
   return useMemo(
     () => [
       {
-        Header: type === 'modules' ? t('modules') : t('roles'),
+        Header: t(type),
         accessor: 'name',
         tdStyle: {
           maxWidth: 410,

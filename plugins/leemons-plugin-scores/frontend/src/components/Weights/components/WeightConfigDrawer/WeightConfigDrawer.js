@@ -1,21 +1,21 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-
-import { Drawer, Button } from '@bubbles-ui/components';
-import { noop } from 'lodash';
 import { FormProvider, useForm } from 'react-hook-form';
 
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
-import useWeights from '@scores/requests/hooks/queries/useWeights';
-import useWeightMutation from '@scores/requests/hooks/mutations/useWeightMutation';
 import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
-import SelectType from './components/SelectType';
+import { Drawer, Button } from '@bubbles-ui/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+
 import Explanation from './components/Explanation';
-import Weighting from './components/Weighting';
-import useResetFormOnClassDataChange from './hooks/useResetFormOnClassDataChange';
-import useIsTotalValue100Percent from './hooks/useIsTotalValue100Percent';
 import PreWeightingAlerts from './components/PreWeightingAlerts';
+import SelectType from './components/SelectType';
+import Weighting from './components/Weighting';
+import useIsTotalValue100Percent from './hooks/useIsTotalValue100Percent';
+import useResetFormOnClassDataChange from './hooks/useResetFormOnClassDataChange';
+
+import { prefixPN } from '@scores/helpers';
+import useWeightMutation from '@scores/requests/hooks/mutations/useWeightMutation';
+import useWeights from '@scores/requests/hooks/queries/useWeights';
 
 export default function WeightConfigDrawer({ class: klass, onClose = noop }) {
   const [t] = useTranslateLoader(prefixPN('weightingDrawer'));
@@ -58,7 +58,7 @@ export default function WeightConfigDrawer({ class: klass, onClose = noop }) {
         <FormProvider {...form}>
           <SelectType />
           <PreWeightingAlerts />
-          <Weighting class={klass?.id} />
+          <Weighting class={klass} />
           <Explanation />
         </FormProvider>
       </Drawer.Content>
