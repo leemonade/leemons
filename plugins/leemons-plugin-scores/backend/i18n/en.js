@@ -473,6 +473,7 @@ module.exports = {
       averages: 'this activity will count as part of the average',
       modules: 'this activity will appear as a module',
       roles: 'in which type would you like to add this activity?',
+      activities: 'in which type would you like to add this activity?',
     },
   },
   pickRetakeTable: {

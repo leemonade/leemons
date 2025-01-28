@@ -475,6 +475,7 @@ module.exports = {
       averages: 'esta actividad pasará a contabilizarse en la media.',
       modules: 'esta actividad aparecerá como Módulo.',
       roles: '¿en qué tipo quieres incluir esta actividad?',
+      activities: '¿en qué tipo quieres incluir esta actividad?',
     },
   },
   pickRetakeTable: {
