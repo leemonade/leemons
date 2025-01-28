@@ -456,6 +456,7 @@ module.exports = {
         description: 'No hemos encontrado resultados para tu búsqueda.',
       },
     },
+    retake: 'CONV.',
   },
   manualActivityDrawer: {
     title: 'Nueva actividad evaluable',

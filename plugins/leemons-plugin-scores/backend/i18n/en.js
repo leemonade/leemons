@@ -454,6 +454,7 @@ module.exports = {
         description: 'We have not found results for your search.',
       },
     },
+    retake: 'CALL',
   },
   manualActivityDrawer: {
     title: 'New graded activity',
