@@ -74,7 +74,7 @@ async function prepareUpdateClass({ data, ctx }) {
 }
 
 async function executeUpdateClass({ data, class: nClass, program, ctx }) {
-  const { course, group, substage, teachers, schedule, image } = data;
+  const { course, group, substage, teachers, schedule, image, customPeriod } = data;
 
   try {
     // ··············································
@@ -186,6 +186,17 @@ async function executeUpdateClass({ data, class: nClass, program, ctx }) {
     emitUpdateClassEvent({ class: nClass, ctx, message: 'CLASS_UPDATE_SCHEDULE' });
 
     promises.push(await processScheduleForClass({ schedule, classId: nClass.id, ctx }));
+
+    // ··············································
+    // HANDLING CUSTOM PERIODS
+
+    if (customPeriod) {
+      await ctx.tx.call('academic-calendar.custom-period.setItem', {
+        item: nClass.id,
+        type: 'class',
+        ...customPeriod,
+      });
+    }
 
     // ··············································
     // UPDATE CLASS STATUS TO READY AND EMIT EVENT

@@ -3,9 +3,7 @@ const { keyBy, map } = require('lodash');
 const { getUserProgramIds } = require('./getUserProgramIds');
 
 async function getUserPrograms({ ctx }) {
-  const { userSession } = ctx.meta;
-
-  const programIds = await getUserProgramIds({ userSession, ctx });
+  const programIds = await getUserProgramIds({ ctx });
   const programs = await ctx.tx.db.Programs.find({ id: programIds }).lean();
 
   const images = await ctx.tx.call('leebrary.assets.getByIds', {

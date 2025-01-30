@@ -1,15 +1,17 @@
 const _ = require('lodash');
+
 const { getKnowledgeAreasBySubjects } = require('../knowledges/getKnowledgeAreasBySubjects');
 
 // Todo: Make this function subject details.
 async function subjectByIds({ ids, withClasses = false, showArchived, shouldPrepareAssets, ctx }) {
   const queryOptions = showArchived ? { excludeDeleted: false } : {};
-  const [subjects, creditsAndInternalId, classes] = await Promise.all([
+  const [subjects, creditsAndInternalId, classes, customPeriods] = await Promise.all([
     ctx.tx.db.Subjects.find({ id: _.isArray(ids) ? ids : [ids] }, '', queryOptions).lean(),
     ctx.tx.db.ProgramSubjectsCredits.find({ subject: ids }, '', queryOptions).lean(),
     ctx.tx.db.Class.find({ subject: _.isArray(ids) ? ids : [ids] }, '', queryOptions)
       .select(['id', 'subject', 'subjectType', 'color'])
       .lean(),
+    ctx.tx.call('academic-calendar.custom-period.getByItems', { items: ids }),
   ]);
 
   const [images, icons] = await Promise.all([
@@ -50,6 +52,12 @@ async function subjectByIds({ ids, withClasses = false, showArchived, shouldPrep
     icon: iconsById[subject.icon],
     subjectType: subjectTypesBySubject[subject.id],
     knowledgeArea: knowledgeAreasBySubject[subject.id],
+    customPeriod: customPeriods[subject.id]
+      ? {
+          startDate: customPeriods[subject.id].startDate,
+          endDate: customPeriods[subject.id].endDate,
+        }
+      : undefined,
   }));
 
   if (withClasses) {

@@ -1202,6 +1202,14 @@ const updateClassSchema = {
         additionalProperties: true,
       },
     },
+    customPeriod: {
+      type: 'object',
+      properties: {
+        startDate: stringSchemaNullable,
+        endDate: stringSchemaNullable,
+      },
+      additionalProperties: false,
+    },
     classroomId: { type: 'string', nullable: true },
     alias: { type: 'string', nullable: true },
   },

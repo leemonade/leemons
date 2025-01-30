@@ -6,9 +6,17 @@ import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
 import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
 import { useIsStudent } from '@academic-portfolio/hooks';
 import { classDetailForDashboardRequest } from '@academic-portfolio/request';
-import { Box, LoadingOverlay, TabPanel, Tabs, TotalLayoutContainer } from '@bubbles-ui/components';
+import {
+  Box,
+  LoadingOverlay,
+  TabPanel,
+  Tabs,
+  TotalLayoutContainer,
+  Text,
+} from '@bubbles-ui/components';
 import { ClassroomHeaderBar, HeaderDropdown } from '@bubbles-ui/leemons';
 import { getShare, useLocale, useStore } from '@common';
+import { LocaleDate } from '@common/LocaleDate';
 import { useComunica } from '@comunica/context';
 import { LayoutContext } from '@layout/context/layout';
 import { getLocalizations } from '@multilanguage/useTranslate';
@@ -194,6 +202,22 @@ export default function ClassDashboard({ session }) {
     }
   }
 
+  function renderCustomPeriod() {
+    const { startDate, endDate } =
+      store.class?.customPeriod || store.class?.subject?.customPeriod || {};
+
+    if (startDate && endDate) {
+      return (
+        <Text
+          productive
+          strong
+        >{`${t('customPeriodLabels.from')} ${LocaleDate({ date: startDate })} ${t('customPeriodLabels.to')} ${LocaleDate({ date: endDate })}`}</Text>
+      );
+    }
+
+    return null;
+  }
+
   return (
     <>
       {store.loading ? <LoadingOverlay visible /> : null}
@@ -212,6 +236,7 @@ export default function ClassDashboard({ session }) {
                 address: store.class?.address,
                 virtual_classroom: store.class?.virtualUrl,
                 teacher: mainTeacher?.user,
+                CustomPeriodComponent: renderCustomPeriod,
               }}
               showChat={isChatEnabled}
               onChat={() => {
