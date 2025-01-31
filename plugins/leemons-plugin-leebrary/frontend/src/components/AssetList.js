@@ -49,6 +49,8 @@ import { allGetSimpleAssetListKey } from '@leebrary/request/hooks/keys/simpleAss
 import { useAssets as useAssetsDetails } from '@leebrary/request/hooks/queries/useAssets';
 import useSimpleAssetList from '@leebrary/request/hooks/queries/useSimpleAssetList';
 
+import AuthorFilter from './AuthorFilter';
+
 // -------------------------------------------------------------------------------------
 // HELPERS
 
@@ -134,6 +136,7 @@ const AssetList = ({
   statusFilter,
   onStatusChange,
   allowCategoryFilter,
+  allowAuthorshipFilter,
   categoryFilter,
   onCategoryFilter,
   allowMediaTypeFilter,
@@ -159,6 +162,7 @@ const AssetList = ({
   const [pageAssetsData, setPageAssetsData] = useState(null);
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [cardDetailIsLoading, setCardDetailIsLoading] = useState(false);
+  const [fromUserAgentFilter, setFromUserAgentFilter] = useState(null);
   const isTeacher = useIsTeacher();
 
   const detailLabels = useMemo(() => {
@@ -196,6 +200,7 @@ const AssetList = ({
       published: allowStatusFilter ? statusFilter : true,
       showPublic: category?.key === PINS_CATEGORY,
       preferCurrent: true,
+      fromUserAgent: JSON.stringify(fromUserAgentFilter),
     };
 
     if (allowMediaTypeFilter && mediaTypeFilter !== 'all') query.type = mediaTypeFilter;
@@ -227,7 +232,15 @@ const AssetList = ({
     }
 
     return query;
-  }, [category, searchCriteria, statusFilter, categoryFilter, mediaTypeFilter, academicFilters]);
+  }, [
+    category,
+    searchCriteria,
+    statusFilter,
+    categoryFilter,
+    mediaTypeFilter,
+    academicFilters,
+    fromUserAgentFilter,
+  ]);
 
   const { data: assetList, isLoading: assetListIsLoading } = useSimpleAssetList({
     query: assetListQuery,
@@ -318,6 +331,7 @@ const AssetList = ({
       { label: t('labels.assetStatusDraft'), value: 'draft' },
     ];
   }, [allowStatusFilter, t]);
+
   // -------------------------------------------------------------------------------------
   // DRAWER HANDLERS & TOOLBAR
   const toolbarItems = useMemo(() => {
@@ -661,6 +675,16 @@ const AssetList = ({
               />
             )}
             {!!filterComponents && filterComponents({ loading: assetListIsLoading })}
+            {
+              allowAuthorshipFilter && <AuthorFilter
+                value={fromUserAgentFilter}
+                onChange={(value) => {
+                  const isNull = value === 'mine';
+                  setFromUserAgentFilter(isNull ? null : value);
+                }}
+                isLoading={assetListIsLoading || assetsDetailsAreLoading}
+              />
+            }
             {!isEmpty(mediaTypes) && allowMediaTypeFilter && (
               <Select
                 data-cypress-id="search-asset-type-selector"

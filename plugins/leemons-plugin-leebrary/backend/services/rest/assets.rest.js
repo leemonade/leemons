@@ -168,6 +168,7 @@ module.exports = {
         categoryFilter,
         categoriesFilter,
         hideCoverAssets,
+        fromUserAgent,
         useCache,
         addons,
       } = ctx.params;
@@ -188,9 +189,8 @@ module.exports = {
         categoryFilter,
         categoriesFilter,
         hideCoverAssets,
-
+        fromUserAgent,
         indexable: true,
-
         ctx,
         useCache,
         addons,

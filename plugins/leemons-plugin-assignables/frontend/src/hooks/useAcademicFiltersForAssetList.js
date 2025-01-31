@@ -1,14 +1,17 @@
-import { Select } from '@bubbles-ui/components';
 import React from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 
 import { SelectSubject, SubjectItem } from '@academic-portfolio/components/SelectSubject';
 import { useCenterPrograms, useSessionClasses } from '@academic-portfolio/hooks';
-import { getMultiClassData } from '@assignables/helpers/getClassData';
+import useUserAgentSubjects from '@academic-portfolio/hooks/queries/useUserAgentSubjects';
+import { Select } from '@bubbles-ui/components';
 import { unflatten } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useUserCenters } from '@users/hooks';
+import useIsAdmin from '@users/hooks/useIsAdmin';
 import _ from 'lodash';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+
+import { getMultiClassData } from '@assignables/helpers/getClassData';
 
 export function useAssignablesAssetListLocalizations() {
   const [, translations] = useTranslateLoader('assignables.assetListFilters');
@@ -16,11 +19,9 @@ export function useAssignablesAssetListLocalizations() {
   return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, 'assignables.assetListFilters');
-
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
-      return data;
+      return _.get(res, 'assignables.assetListFilters');
     }
 
     return {};
@@ -63,36 +64,52 @@ export function useSubjects({ labels, control, selectedProgram, useAll = true })
     // eslint-disable-next-line no-param-reassign
     selectedProgram = useWatch({ control, name: 'program' });
   }
-  const { data: classesData } = useSessionClasses({ showType: true });
+  const isAdmin = useIsAdmin();
+  const { data: classesData } = useSessionClasses({ showType: true }, { enabled: !isAdmin });
+  const { data: userAgentSubjects } = useUserAgentSubjects({
+    options: { enabled: isAdmin },
+  });
+  const data = isAdmin ? userAgentSubjects : classesData;
   const multiClassData = getMultiClassData();
 
   return React.useMemo(() => {
-    if (selectedProgram === 'all' || !classesData?.length) {
+    if (selectedProgram === 'all' || !data?.length) {
       return [];
     }
 
     const subjects = {};
-    let goodClasses = classesData;
+    let goodItems = data;
     if (selectedProgram && selectedProgram !== 'all') {
-      goodClasses = _.filter(goodClasses, { program: selectedProgram });
+      goodItems = _.filter(goodItems, { program: selectedProgram });
     }
 
-    goodClasses.forEach((klass) => {
-      if (!subjects[klass.subject.id]) {
-        subjects[klass.subject.id] = {
-          label: klass.subject.name,
-          value: klass.subject.id,
-          color: klass.color,
-          icon: klass.subject.icon,
-          type: klass.type,
+    if (!isAdmin) {
+      goodItems.forEach((klass) => {
+        if (!subjects[klass.subject.id]) {
+          subjects[klass.subject.id] = {
+            label: klass.subject.name,
+            value: klass.subject.id,
+            color: klass.subject.color,
+            icon: klass.subject.icon,
+            type: klass.type,
+          };
+        } else if (
+          subjects[klass.subject.id].type !== 'main-teacher' &&
+          klass.type === 'main-teacher'
+        ) {
+          subjects[klass.subject.id].type = 'main-teacher';
+        }
+      });
+    } else {
+      goodItems.forEach((subject) => {
+        subjects[subject.id] = {
+          label: subject.name,
+          value: subject.id,
+          color: subject.color,
+          icon: subject.icon,
         };
-      } else if (
-        subjects[klass.subject.id].type !== 'main-teacher' &&
-        klass.type === 'main-teacher'
-      ) {
-        subjects[klass.subject.id].type = 'main-teacher';
-      }
-    });
+      });
+    }
 
     const result = [];
 
@@ -116,7 +133,15 @@ export function useSubjects({ labels, control, selectedProgram, useAll = true })
             : labels?.subjectGroups?.collaborations,
       })),
     ];
-  }, [classesData, selectedProgram, labels?.allSubjects, labels?.subjectGroups, multiClassData]);
+  }, [
+    data,
+    selectedProgram,
+    labels?.allSubjects,
+    labels?.subjectGroups,
+    multiClassData,
+    useAll,
+    isAdmin,
+  ]);
 }
 
 function useOnChange({ onChange, watch, getValues }) {

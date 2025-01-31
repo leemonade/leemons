@@ -1,5 +1,6 @@
 const _ = require('lodash');
 
+const { getByIds } = require('../assets/getByIds');
 const { getByCategory } = require('../permissions/getByCategory');
 
 const { byAddons: getByAddons } = require('./byAddons');
@@ -22,12 +23,11 @@ async function list({
   categoryFilter,
   categoriesFilter,
   hideCoverAssets,
-
   indexable = true, // !important: This param is not intended for API use, as it will expose hidden assets
-
   ctx,
   useCache,
   addons,
+  fromUserAgent,
 }) {
   const trueValues = ['true', true, '1', 1];
 
@@ -45,7 +45,7 @@ async function list({
   const _programs = JSON.parse(programs || null);
   const _subjects = JSON.parse(subjects || null);
   const _categoriesFilter = JSON.parse(categoriesFilter || null); // added to filter by multiple categories
-
+  const _fromUserAgent = JSON.parse(fromUserAgent || null);
   const shouldSearchByCriteria = !_.isEmpty(criteria) || !_.isEmpty(type) || _.isEmpty(category);
 
   let query = null;
@@ -124,9 +124,28 @@ async function list({
     await ctx.cache.set(cacheKey, assets, 60); // 1 minute
   }
 
-  // TODO: Temporary solution
-  if (parsedRoles?.length === 1 && parsedRoles[0] === 'owner') {
-    assets = assets.filter((asset) => asset.role === 'owner');
+  // Filters based on ownership
+  const shouldReturnOnlyMine =
+    (parsedRoles?.length === 1 && parsedRoles[0] === 'owner') || !_fromUserAgent;
+  if (shouldReturnOnlyMine) {
+    return assets.filter((asset) => asset.role === 'owner');
+  }
+
+  if (_fromUserAgent) {
+    if (_fromUserAgent === 'all') {
+      return assets.filter(({ role }) => role === 'admin' || role === 'owner');
+    }
+
+    const adminAssets = assets.filter((asset) => asset.role === 'admin');
+    const adminAssetsDetail = await getByIds({
+      ids: adminAssets.map(({ asset }) => asset),
+      ctx,
+    });
+    const adminAssetsIdsFilteredByUserAgent = adminAssetsDetail
+      .filter((asset) => asset.fromUserAgent === _fromUserAgent)
+      .map((asset) => asset.id);
+
+    return assets.filter(({ asset }) => adminAssetsIdsFilteredByUserAgent.includes(asset));
   }
 
   return assets;

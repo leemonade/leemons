@@ -1,13 +1,14 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { useParams, useLocation, useHistory } from 'react-router-dom';
-import { isEmpty } from 'lodash';
 
 import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
 import useAcademicFiltersForAssetList from '@assignables/hooks/useAcademicFiltersForAssetList';
+import { isEmpty } from 'lodash';
+
+import LibraryContext from '../../../context/LibraryContext';
 
 import { AssetList } from '@leebrary/components';
 import loadMediaTypes from '@leebrary/helpers/loadMediaTypes';
-import LibraryContext from '../../../context/LibraryContext';
 
 // HELPERS
 
@@ -205,6 +206,11 @@ const ListAssetPage = () => {
       props.searchInProvider = false;
     }
 
+    // AUTHORSHIP FILTER
+    if (!isMultiCategorySection) {
+      props.allowAuthorshipFilter = true;
+    }
+
     return props;
   }, [
     category,
@@ -214,6 +220,7 @@ const ListAssetPage = () => {
     categoryFilter,
     mediaTypeFilter,
     academicFilters,
+    mediaTypesArray,
   ]);
 
   return (

@@ -616,4 +616,11 @@ module.exports = {
       alertPartTwo: 'all selected resources will be shared.',
     },
   },
+  authorFilter: {
+    mine: 'My items',
+    all: 'All items',
+    placeholder: 'Author',
+    authors: 'Authors',
+    mineAll: 'Mine / All',
+  },
 };

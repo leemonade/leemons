@@ -603,4 +603,11 @@ module.exports = {
       alertPartTwo: 'se aplicarán a todos los recursos seleccionados.',
     },
   },
+  authorFilter: {
+    mine: 'Tus ítems',
+    all: 'Todos los ítems',
+    placeholder: 'Autor',
+    authors: 'Autores',
+    mineAll: 'Tuyos / Todos',
+  },
 };
