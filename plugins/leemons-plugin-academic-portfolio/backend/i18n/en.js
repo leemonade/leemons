@@ -1020,6 +1020,8 @@ module.exports = {
           noPeriod: 'The current academic period is not defined',
           childrenDifferentPeriods: 'Some classes of this subject have different custom periods',
         },
+        success: 'Subject dates updated successfully',
+        error: 'Error updating subject dates',
       },
     },
   },

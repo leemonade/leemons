@@ -38,12 +38,10 @@ function CustomPeriod({
     },
   });
 
-  const { data: academicCalendars } = useAcademicCalendarConfig(programId, {
+  const { data: academicCalendar } = useAcademicCalendarConfig(programId, {
     enabled: !!programId && parentPeriod?.academicKey === 'course',
   });
-  const [{ data: academicCalendar } = { data: null }] = Array.isArray(academicCalendars)
-    ? academicCalendars
-    : [];
+
   const { data: parentCustomPeriod } = useCustomPeriodsByItem(parentPeriod.id, {
     enabled: !!parentPeriod.id && parentPeriod?.academicKey === 'subject',
   });

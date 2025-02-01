@@ -1023,6 +1023,8 @@ module.exports = {
           noPeriod: 'El periodo académico actual no está definido',
           childrenDifferentPeriods: 'Algunas clases de esta asignatura tienen sus propias fechas',
         },
+        success: 'Fechas de la asignatura actualizadas con éxito',
+        error: 'Error actualizando fechas de la asignatura',
       },
     },
   },
