@@ -488,4 +488,10 @@ module.exports = {
       final: 'FINAL',
     },
   },
+  mutations: {
+    removeManualActivity: {
+      success: 'Activity removed successfully',
+      error: 'Error removing activity',
+    },
+  },
 };
