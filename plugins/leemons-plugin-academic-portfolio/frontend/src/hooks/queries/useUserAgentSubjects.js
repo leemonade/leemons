@@ -8,7 +8,7 @@ import { getUserSubjectsRequest } from '@academic-portfolio/request';
 
 export default function useUserAgentSubjects({ teacherTypeFilter, options = {} }) {
   const userAgentId = getSessionUserAgent();
-  const queryKey = getUserAgentSubjectsKey(userAgentId);
+  const queryKey = getUserAgentSubjectsKey(userAgentId, teacherTypeFilter);
 
   const queryFn = () => getUserSubjectsRequest(teacherTypeFilter).then((response) => response.data);
 

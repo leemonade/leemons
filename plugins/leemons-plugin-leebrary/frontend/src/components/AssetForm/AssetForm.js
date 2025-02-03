@@ -677,6 +677,7 @@ const AssetForm = ({
                     }}
                     hideSectionHeaders={false}
                     onlyOneSubject={store.maxOneSubject}
+                    teacherType={['main-teacher', 'associate-teacher', 'invited-teacher']}
                   />
                 )}
               />

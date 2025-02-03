@@ -208,7 +208,7 @@ export default function Form({
                   render={({ field, fieldState: { error } }) => (
                     <SubjectPicker
                       {...field}
-                      teacherType={null}
+                      teacherType={['main-teacher', 'associate-teacher', 'invited-teacher']}
                       error={error}
                       assignable={assignable}
                       localizations={localizations?.subjects}

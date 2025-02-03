@@ -40,7 +40,7 @@ export default function EvaluationNotebookPage() {
         icon={<EvaluatedIcon width={24} height={24} color="#000" />}
         cancelable={false}
       >
-        <Filters hideTitle showProgramSelect onChange={setFilters} value={filters} />
+        <Filters hideTitle showProgramSelect onChange={setFilters} value={filters} teacherTypeFilter={['main-teacher', 'associate-teacher', 'invited-teacher']} />
       </TLayout.Header>
       <TLayout.Content fullWidth>
         {!filters && <EmptyState />}

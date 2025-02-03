@@ -5,11 +5,10 @@ export const allUserAgentSubjects = [
   },
 ];
 
-export const getUserAgentSubjectsKey = (userAgent) => [
+export const getUserAgentSubjectsKey = (userAgent, type) => [
   {
     ...allUserAgentSubjects[0],
-    params: {
-      userAgent,
-    },
+    userAgent,
+    type
   },
 ];
