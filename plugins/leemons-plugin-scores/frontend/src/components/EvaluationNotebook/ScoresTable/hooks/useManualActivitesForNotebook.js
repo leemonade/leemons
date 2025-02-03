@@ -7,7 +7,7 @@ import { keyBy } from 'lodash';
 import { useManualActivities } from '@scores/requests/hooks/queries/useManualActivities';
 import { useManualActivitiesScores } from '@scores/requests/hooks/queries/useManualActivitiesScores';
 
-function parseActivity({ activity, roles, students, subject, scores }) {
+function parseActivity({ activity, roles, students, subject, scores, classId }) {
   return {
     id: activity.id,
     name: activity.name,
@@ -43,6 +43,7 @@ function parseActivity({ activity, roles, students, subject, scores }) {
           ]
         : [],
     })),
+    classId,
 
     source: 'manualActivities',
   };
@@ -75,9 +76,10 @@ export function useManualActivitesForNotebook({ klass, period, filters }) {
           students: classStudents ?? [],
           subject: filters?.subject,
           scores: manualActivitiesScores,
+          classId: klass?.id,
         })
       ),
-    [manualActivities, roles, classStudents, filters?.subject, manualActivitiesScores]
+    [manualActivities, roles, classStudents, filters?.subject, manualActivitiesScores, klass?.id]
   );
 
   return { manualActivities: parsedActivities ?? [], isLoading: manualActivitiesLoading };

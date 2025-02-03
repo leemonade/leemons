@@ -1,14 +1,16 @@
-import React from 'react';
 
-import { isFunction } from 'lodash';
-import { Box, ImageLoader, Stack, Text, TextClamp, useHover } from '@bubbles-ui/components';
-import { MoveLeftIcon, MoveRightIcon } from '@bubbles-ui/icons/outline';
+import { Box, ImageLoader, Stack, Text, TextClamp, useHover, ActionButton } from '@bubbles-ui/components';
+import { DeleteBinIcon, MoveLeftIcon, MoveRightIcon } from '@bubbles-ui/icons/outline';
 import { AlertWarningTriangleIcon, CutStarIcon } from '@bubbles-ui/icons/solid';
+import { isFunction } from 'lodash';
+
 import {
   ACTIVIY_HEADER_DEFAULT_PROPS,
   ACTIVIY_HEADER_PROP_TYPES,
 } from './ActivityHeader.constants';
 import { ActivityHeaderStyles } from './ActivityHeader.styles';
+
+import { useRemoveManualActivityMutation } from '@scores/requests/hooks/mutations/useRemoveManualActivityMutation';
 
 const ActivityHeader = ({
   id,
@@ -23,10 +25,16 @@ const ActivityHeader = ({
   position,
   type,
   roleIcon,
+  source,
+  classId,
+  ...props
 }) => {
   const { ref, hovered } = useHover();
 
   const isEvaluable = type === 'evaluable';
+  const isManualActivity = source === 'manualActivities'
+
+  const { mutate: removeManualActivity } = useRemoveManualActivityMutation();
 
   const onColumnExpandHandler = () => {
     if (isExpanded) {
@@ -37,12 +45,17 @@ const ActivityHeader = ({
   };
 
   const { classes, theme } = ActivityHeaderStyles(
-    { hovered, isExpandable, isExpanded, position },
+    { hovered, isExpandable, isExpanded, position, isManualActivity },
     { name: 'ActivityHeader' }
   );
 
   return (
     <Box ref={ref} className={classes.root}>
+      {isManualActivity && (
+        <Box className={classes.removeIcon}>
+          <ActionButton icon={<DeleteBinIcon />} onClick={() => removeManualActivity({id, classId})} />
+        </Box>
+      )}
       <Box className={classes.header}>
         <Stack spacing={2}>
           {roleIcon && (
