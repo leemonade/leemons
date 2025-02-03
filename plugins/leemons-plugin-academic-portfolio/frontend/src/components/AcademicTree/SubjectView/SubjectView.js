@@ -12,7 +12,7 @@ import {
   ContextContainer,
 } from '@bubbles-ui/components';
 import { useNotifications } from '@bubbles-ui/notifications';
-import { addErrorAlert } from '@layout/alert';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { useQueryClient } from '@tanstack/react-query';
 import { cloneDeep, isArray, isEmpty } from 'lodash';
@@ -135,6 +135,11 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
           { subject: subjectDetails.id, withClasses: true, showArchived: false },
         ];
         queryClient.invalidateQueries({ queryKey });
+        addSuccessAlert(t('subject.customPeriod.success'));
+        setDirtyForm(false);
+      },
+      onError: () => {
+        addErrorAlert(t('subject.customPeriod.error'));
       },
     });
   };
