@@ -161,7 +161,9 @@ async function isMainTeacherInSubject({ subjectIds }) {
 }
 
 async function getUserSubjects(teacherTypeFilter) {
-  return leemons.api(`v1/academic-portfolio/subjects/user?teacherTypeFilter=${teacherTypeFilter}`, {
+  const query = teacherTypeFilter ? `?teacherTypeFilter=${teacherTypeFilter}` : '';
+
+  return leemons.api(`v1/academic-portfolio/subjects/user${query}`, {
     allAgents: true,
     method: 'GET',
   });
