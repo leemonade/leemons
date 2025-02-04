@@ -103,7 +103,7 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
         />
       </TabPanel>
     ));
-  }, [subjectDetails, singleClassToShow, program, activeTab]);
+  }, [subjectDetails, singleClassToShow, program, activeTab, t]);
 
   const selectedClass = useMemo(() => {
     return subjectDetails?.classes?.find((cls) => cls.id === activeTab);
@@ -263,12 +263,11 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
                   setDirtyForm(value.areValuesValid && value.areValuesDifferent);
                 }}
                 academicKey="subject"
-                parentPeriod={{
-                  academicKey: 'course',
-                  id: isArray(subjectDetails?.classes[0]?.courses)
+                courseId={
+                  isArray(subjectDetails?.classes[0]?.courses)
                     ? subjectDetails?.classes[0]?.courses[0]?.id
-                    : subjectDetails?.classes[0]?.courses?.id,
-                }}
+                    : subjectDetails?.classes[0]?.courses?.id
+                }
                 childrenPeriods={subjectDetails?.classes
                   ?.map((cls) => cls.customPeriod)
                   .filter(Boolean)}

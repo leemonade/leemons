@@ -260,12 +260,12 @@ const EnrollmentTab = ({
         />
         <CustomPeriod
           programId={classData?.program}
-          parentPeriod={{
-            academicKey: 'subject',
-            id: subjectData?.id,
-          }}
+          parentPeriod={classData?.subject?.id}
           customPeriod={classData?.customPeriod}
           academicKey="class"
+          courseId={
+            Array.isArray(classData?.courses) ? classData?.courses[0]?.id : classData?.courses?.id
+          }
           onChange={(value) => {
             setCustomPeriod(value.value);
             updateForm.setValue('customPeriod', value.value);

@@ -2,7 +2,16 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 
 import { useAcademicCalendarConfig, useCustomPeriodsByItem } from '@academic-calendar/hooks';
-import { Text, Alert, Stack, Switch, DatePicker, Box } from '@bubbles-ui/components';
+import {
+  Text,
+  Alert,
+  Stack,
+  Switch,
+  DatePicker,
+  Box,
+  Loader,
+  Anchor,
+} from '@bubbles-ui/components';
 import { useLocale } from '@common';
 import { LocaleDate } from '@common/LocaleDate';
 import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
@@ -19,6 +28,7 @@ const ensureDate = (date) => {
 
 function CustomPeriod({
   programId,
+  courseId,
   parentPeriod,
   childrenPeriods,
   customPeriod,
@@ -38,26 +48,30 @@ function CustomPeriod({
     },
   });
 
-  const { data: academicCalendar } = useAcademicCalendarConfig(programId, {
-    enabled: !!programId && parentPeriod?.academicKey === 'course',
+  const { data: academicCalendar, isLoading: academicCalendarLoading } = useAcademicCalendarConfig(
+    programId,
+    {
+      enabled: !!programId,
+    }
+  );
+
+  const { data: parentCustomPeriod } = useCustomPeriodsByItem(parentPeriod, {
+    enabled: !!parentPeriod,
   });
 
-  const { data: parentCustomPeriod } = useCustomPeriodsByItem(parentPeriod.id, {
-    enabled: !!parentPeriod.id && parentPeriod?.academicKey === 'subject',
-  });
+  const courseDates = useMemo(() => {
+    if (!academicCalendar?.courseDates) return null;
+    return academicCalendar.courseDates[courseId];
+  }, [academicCalendar, courseId]);
 
   const parentPeriodDates = useMemo(() => {
-    if (academicKey === 'subject') {
-      if (!academicCalendar?.courseDates) return null;
-      return academicCalendar.courseDates[parentPeriod.id];
-    }
-    if (academicKey === 'class') {
+    if (parentCustomPeriod) {
       return parentCustomPeriod?.startDate && parentCustomPeriod?.endDate
         ? { startDate: parentCustomPeriod.startDate, endDate: parentCustomPeriod.endDate }
         : null;
     }
     return null;
-  }, [parentPeriod, academicCalendar, parentCustomPeriod, academicKey]);
+  }, [parentCustomPeriod]);
 
   const childrenHaveDifferentPeriods = useMemo(() => {
     if (academicKey === 'subject' && childrenPeriods?.length) {
@@ -137,92 +151,137 @@ function CustomPeriod({
     handleOnChange();
   };
 
-  if (tLoading) return null;
+  const ParentPeriodInfoAlert = useMemo(() => {
+    const entitiesWithParentPeriods = ['class'];
+    if (!entitiesWithParentPeriods.includes(academicKey)) return null;
+
+    if (parentPeriodDates?.startDate && parentPeriodDates?.endDate) {
+      return (
+        <Alert variant="info" closeable={false}>
+          <Stack spacing={2}>
+            <Text>{t('info.parentPeriod')}</Text>
+            <LocaleDate date={parentPeriodDates?.startDate} />
+            <Text>→</Text>
+            <LocaleDate date={parentPeriodDates?.endDate} />
+          </Stack>
+        </Alert>
+      );
+    }
+
+    return (
+      <Alert variant="info" closeable={false}>
+        <Text>{t('info.noParentPeriod')}</Text>
+      </Alert>
+    );
+  }, [parentPeriodDates, academicKey, t]);
+
+  if (tLoading || (programId && academicCalendarLoading))
+    return (
+      <Stack sx={{ width: 192 }}>
+        <Loader padded />
+      </Stack>
+    );
   return (
     <Box>
-      <Box>
-        <Text strong>{t('title')}</Text>
-      </Box>
       <Stack direction="column" spacing={2}>
-        <Switch
-          label={t('label')}
-          checked={hasCustomPeriod}
-          onChange={(value) => handleSwitchChange(value)}
-        />
-        {hasCustomPeriod && (
+        <Box>
+          <Text strong>{t('title')}</Text>
+        </Box>
+        {courseDates ? (
           <>
-            <Alert variant="info" closeable={false}>
-              <Stack spacing={2}>
-                {parentPeriodDates?.startDate && parentPeriodDates?.endDate ? (
-                  <>
-                    <Text>{t('info.currentPeriod')}</Text>
-                    <LocaleDate date={parentPeriodDates?.startDate} />
-                    <Text>→</Text>
-                    <LocaleDate date={parentPeriodDates?.endDate} />
-                  </>
-                ) : (
-                  <Text>{t('info.noPeriod')}</Text>
-                )}
-              </Stack>
-            </Alert>
+            <Switch
+              label={t('label')}
+              checked={hasCustomPeriod}
+              onChange={(value) => handleSwitchChange(value)}
+            />
+            {hasCustomPeriod && (
+              <>
+                <Alert variant="info" closeable={false}>
+                  <Stack spacing={2}>
+                    <>
+                      <Text>{t('info.academicPeriod')}</Text>
+                      <LocaleDate date={courseDates?.startDate} />
+                      <Text>→</Text>
+                      <LocaleDate date={courseDates?.endDate} />
+                    </>
+                  </Stack>
+                </Alert>
 
-            {childrenHaveDifferentPeriods && (
-              <Alert variant="info" closeable={false}>
-                <Text>{t('info.childrenDifferentPeriods')}</Text>
-              </Alert>
+                {ParentPeriodInfoAlert}
+
+                {childrenHaveDifferentPeriods && (
+                  <Alert variant="info" closeable={false}>
+                    <Text>{t('info.childrenDifferentPeriods')}</Text>
+                  </Alert>
+                )}
+
+                <Stack spacing={4}>
+                  <Controller
+                    name={`startDate`}
+                    control={form.control}
+                    rules={{ required: tCommon('required') }}
+                    render={({ field }) => (
+                      <DatePicker
+                        {...field}
+                        value={ensureDate(field.value)}
+                        locale={locale}
+                        label={t('startDate')}
+                        minDate={ensureDate(courseDates?.startDate)}
+                        maxDate={
+                          customEndDate
+                            ? Math.min(new Date(customEndDate), new Date(courseDates?.endDate))
+                            : ensureDate(courseDates?.endDate)
+                        }
+                        required
+                        error={get(formErrors, `startDate`)}
+                        onChange={(value) => {
+                          if (!value) {
+                            form.setValue('endDate', null);
+                          }
+                          field.onChange(value);
+                          handleOnChange();
+                        }}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name={`endDate`}
+                    control={form.control}
+                    rules={{ required: tCommon('required') }}
+                    render={({ field }) => (
+                      <DatePicker
+                        {...field}
+                        value={ensureDate(field.value)}
+                        minDate={ensureDate(customStartDate || courseDates?.startDate)}
+                        maxDate={ensureDate(courseDates?.endDate)}
+                        locale={locale}
+                        label={t('endDate')}
+                        onChange={(value) => {
+                          if (!value) {
+                            form.setValue('endDate', null);
+                          }
+                          field.onChange(value);
+                          handleOnChange();
+                        }}
+                        disabled={!customStartDate}
+                        required
+                        error={get(formErrors, `endDate`)}
+                      />
+                    )}
+                  />
+                </Stack>
+              </>
             )}
-
-            <Stack spacing={4}>
-              <Controller
-                name={`startDate`}
-                control={form.control}
-                rules={{ required: tCommon('required') }}
-                render={({ field }) => (
-                  <DatePicker
-                    {...field}
-                    value={ensureDate(field.value)}
-                    locale={locale}
-                    label={t('startDate')}
-                    maxDate={customEndDate}
-                    required
-                    error={get(formErrors, `startDate`)}
-                    onChange={(value) => {
-                      if (!value) {
-                        form.setValue('endDate', null);
-                      }
-                      field.onChange(value);
-                      handleOnChange();
-                    }}
-                  />
-                )}
-              />
-              <Controller
-                name={`endDate`}
-                control={form.control}
-                rules={{ required: tCommon('required') }}
-                render={({ field }) => (
-                  <DatePicker
-                    {...field}
-                    value={ensureDate(field.value)}
-                    maxDate={customEndDate}
-                    locale={locale}
-                    label={t('endDate')}
-                    minDate={customStartDate}
-                    onChange={(value) => {
-                      if (!value) {
-                        form.setValue('endDate', null);
-                      }
-                      field.onChange(value);
-                      handleOnChange();
-                    }}
-                    disabled={!customStartDate}
-                    required
-                    error={get(formErrors, `endDate`)}
-                  />
-                )}
-              />
-            </Stack>
           </>
+        ) : (
+          <Alert variant="info" closeable={false}>
+            <Stack spacing={1}>
+              <Text>{`${t('info.noAcademicPeriod')}`}</Text>
+              <Anchor href={'/private/academic-calendar/program-calendars'}>
+                {t('defineAcademicPeriod')}
+              </Anchor>
+            </Stack>
+          </Alert>
         )}
       </Stack>
     </Box>
@@ -231,10 +290,8 @@ function CustomPeriod({
 
 CustomPeriod.propTypes = {
   programId: PropTypes.string,
-  parentPeriod: PropTypes.shape({
-    academicKey: PropTypes.string, // 'course' or 'subject'
-    id: PropTypes.string,
-  }),
+  courseId: PropTypes.string,
+  parentPeriod: PropTypes.object,
   childrenPeriods: PropTypes.array,
   customPeriod: PropTypes.object,
   onChange: PropTypes.func,
