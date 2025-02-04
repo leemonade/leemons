@@ -224,7 +224,6 @@ function CustomPeriod({
                       <DatePicker
                         {...field}
                         value={ensureDate(field.value)}
-                        // initialMonth={ensureDate(courseDates?.startDate)}
                         locale={locale}
                         label={t('startDate')}
                         minDate={ensureDate(courseDates?.startDate)}
