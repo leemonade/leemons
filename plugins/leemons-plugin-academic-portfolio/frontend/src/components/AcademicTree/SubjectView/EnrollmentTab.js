@@ -208,7 +208,7 @@ const EnrollmentTab = ({
   }
 
   return (
-    <ContextContainer sx={{ position: 'relative', padding: 24 }}>
+    <ContextContainer sx={{ position: 'relative', paddingInline: 24, padingTop: 0 }}>
       <LoadingOverlay visible={classData?.status === 'updating'} />
       <ContextContainer>
         <Title order={1}>{aliasOrClassroomId}</Title>
@@ -222,6 +222,7 @@ const EnrollmentTab = ({
           )}
         </Stack>
       </ContextContainer>
+
       <ContextContainer>
         <Title order={2}>{t('scheduleAndPlace')}</Title>
         <Stack spacing={4} fullWidth>
