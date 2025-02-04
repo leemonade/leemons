@@ -1,10 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Loader, createStyles, RadioGroup, Checkbox } from '@bubbles-ui/components';
+import React, { useMemo } from 'react';
 import { useForm, Controller, useWatch } from 'react-hook-form';
+
+import { Box, Loader, createStyles, RadioGroup, Checkbox } from '@bubbles-ui/components';
 import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
 import { SelectUserAgent } from '@users/components';
 import { intersection } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { NonAssignableStudents } from './NonAssignableStudents';
 import SelectedStudentsInfo from './SelectedStudentsInfo';
 
@@ -28,12 +30,17 @@ const useSelectClassStyles = createStyles((theme) => ({
 function useOnChange({ control, onChange, availableClasses }) {
   const { classes: selectedClasses, autoAssign, showExcluded, excluded } = useWatch({ control });
 
+  const teacherTypes = useMemo(() => {
+    return availableClasses.filter(c => (selectedClasses ?? []).includes(c.id))?.flatMap(c => c.teacherTypes);
+  }, [selectedClasses, availableClasses]);
+
   React.useEffect(() => {
     if (!selectedClasses || !availableClasses?.length) {
       onChange({
         type: 'class',
         value: [],
         autoAssign: !!autoAssign,
+        teacherTypes,
         raw: { classes: selectedClasses, autoAssign, showExcluded, excluded },
       });
       return;
@@ -84,6 +91,7 @@ function useOnChange({ control, onChange, availableClasses }) {
         type: 'class',
         value,
         autoAssign: !!autoAssign,
+        teacherTypes,
         raw: { classes: selectedClasses, autoAssign, showExcluded, excluded },
       });
     } else {
@@ -91,10 +99,11 @@ function useOnChange({ control, onChange, availableClasses }) {
         type: 'class',
         value: [],
         autoAssign: !!autoAssign,
+        teacherTypes,
         raw: { classes: selectedClasses, autoAssign, showExcluded, excluded },
       });
     }
-  }, [selectedClasses, autoAssign, showExcluded, excluded]);
+  }, [selectedClasses, autoAssign, showExcluded, excluded, availableClasses, onChange, teacherTypes]);
 }
 
 export function SelectClass({
@@ -144,7 +153,7 @@ export function SelectClass({
           }
           return a.disabled ? 1 : -1;
         }),
-    [availableClasses, value?.classes, localizations?.studentsCount]
+    [availableClasses, localizations?.studentsCount]
   );
 
   const { classes } = useSelectClassStyles();
