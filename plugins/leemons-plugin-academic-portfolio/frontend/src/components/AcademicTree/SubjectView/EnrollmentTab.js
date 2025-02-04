@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import {
-  ContextContainer,
-  Title,
   Box,
-  Button,
-  ActionButton,
-  TextInput,
   Stack,
+  Title,
+  Button,
   Loader,
+  TextInput,
+  ActionButton,
+  LoadingOverlay,
+  ContextContainer,
 } from '@bubbles-ui/components';
 import { DeleteBinIcon, AddCircleIcon } from '@bubbles-ui/icons/solid';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
@@ -20,6 +21,7 @@ import { compareBySurnamesAndName } from '@users/helpers/compareUsers';
 import { useUserAgentsInfo } from '@users/hooks';
 import PropTypes from 'prop-types';
 
+import CustomPeriod from './CustomPeriod';
 import { EnrollmentTabStyles } from './EnrollmentTab.styles';
 import StudentsTable from './StudentsTable';
 
@@ -29,7 +31,14 @@ import { useRemoveStudentFromClass } from '@academic-portfolio/hooks/mutations/u
 import useClassStudents from '@academic-portfolio/hooks/queries/useClassStudents';
 import { getProfilesRequest } from '@academic-portfolio/request';
 
-const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, setDirtyForm }) => {
+const EnrollmentTab = ({
+  classData,
+  center,
+  subjectData,
+  openEnrollmentDrawer,
+  updateForm,
+  setDirtyForm,
+}) => {
   const [t] = useTranslateLoader(prefixPN('tree_page'));
   const { classes } = EnrollmentTabStyles();
   const queryClient = useQueryClient();
@@ -37,6 +46,7 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
   const [mainTeacher, setMainTeacher] = useState(null);
   const [associateTeachers, setAssociateTeachers] = useState([]);
   const [virtualUrl, setVirtualUrl] = useState(null);
+  const [customPeriod, setCustomPeriod] = useState(null);
   const [address, setAddress] = useState(null);
   const [schedule, setSchedule] = useState(null);
   const { mutate: removeStudentFromClass, isLoading: removeStudentFromClassLoading } =
@@ -105,12 +115,13 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
     );
   };
 
-  const isFormDirty = (accessor, value) => {
+  const checkIsFormDirty = (accessor, value) => {
     const currentFormValues = {
       mainTeacher,
       virtualUrl: virtualUrl || null,
       address: address || null,
       schedule,
+      customPeriod: customPeriod ?? null,
     };
 
     currentFormValues[accessor] = value || null;
@@ -121,10 +132,10 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
       virtualUrl: classData.virtualUrl ?? null,
       address: classData.address ?? null,
       schedule: { days: classData.schedule ?? [] },
+      customPeriod: classData.customPeriod ?? null,
     };
 
-    const result = JSON.stringify(currentFormValues) !== JSON.stringify(initialFormValues);
-    setDirtyForm(result);
+    return JSON.stringify(currentFormValues) !== JSON.stringify(initialFormValues);
   };
 
   const studentsTableData = useMemo(() => {
@@ -157,7 +168,8 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
           onChange={(onChangeValue) => {
             setMainTeacher(onChangeValue);
             updateForm.setValue('mainTeacher', onChangeValue);
-            isFormDirty('mainTeacher', onChangeValue);
+            const isFormDirty = checkIsFormDirty('mainTeacher', onChangeValue);
+            setDirtyForm(isFormDirty);
           }}
         />
       );
@@ -177,7 +189,8 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
           onChange={(onChangeValue) => {
             setAssociateTeachers(onChangeValue);
             updateForm.setValue('associateTeachers', onChangeValue);
-            isFormDirty('associateTeachers', onChangeValue);
+            const isFormDirty = checkIsFormDirty('associateTeachers', onChangeValue);
+            setDirtyForm(isFormDirty);
           }}
           omitUsers={mainTeacher}
         />
@@ -195,7 +208,8 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
   }
 
   return (
-    <ContextContainer sx={{ padding: 24 }}>
+    <ContextContainer sx={{ position: 'relative', padding: 24 }}>
+      <LoadingOverlay visible={classData?.status === 'updating'} />
       <ContextContainer>
         <Title order={1}>{aliasOrClassroomId}</Title>
         <Title order={2}>{t('class.teachersLabel')}</Title>
@@ -217,7 +231,8 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
               onChange={(onChangeValue) => {
                 setVirtualUrl(onChangeValue);
                 updateForm.setValue('virtualUrl', onChangeValue);
-                isFormDirty('virtualUrl', onChangeValue);
+                const isFormDirty = checkIsFormDirty('virtualUrl', onChangeValue);
+                setDirtyForm(isFormDirty);
               }}
               label={t('virtualClassroom')}
             />
@@ -228,7 +243,8 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
               onChange={(onChangeValue) => {
                 setAddress(onChangeValue);
                 updateForm.setValue('address', onChangeValue);
-                isFormDirty('address', onChangeValue);
+                const isFormDirty = checkIsFormDirty('address', onChangeValue);
+                setDirtyForm(isFormDirty);
               }}
               label={t('classroomAdress')}
             />
@@ -240,7 +256,28 @@ const EnrollmentTab = ({ classData, center, openEnrollmentDrawer, updateForm, se
           onChange={(onChangeValue) => {
             setSchedule(onChangeValue);
             updateForm.setValue('schedule', onChangeValue);
-            isFormDirty('schedule', onChangeValue);
+            const isFormDirty = checkIsFormDirty('schedule', onChangeValue);
+            setDirtyForm(isFormDirty);
+          }}
+        />
+        <CustomPeriod
+          programId={classData?.program}
+          parentPeriod={{
+            academicKey: 'subject',
+            id: subjectData?.id,
+          }}
+          customPeriod={classData?.customPeriod}
+          academicKey="class"
+          onChange={(value) => {
+            setCustomPeriod(value.value);
+            updateForm.setValue('customPeriod', value.value);
+            const isFormDirty = checkIsFormDirty('customPeriod', value.value);
+
+            const validResult = value.areValuesDifferent
+              ? isFormDirty && value.areValuesValid
+              : isFormDirty;
+
+            setDirtyForm(validResult);
           }}
         />
       </ContextContainer>
@@ -277,6 +314,7 @@ EnrollmentTab.propTypes = {
   setDirtyForm: PropTypes.func,
   center: PropTypes.array,
   updateForm: PropTypes.object,
+  subjectData: PropTypes.object,
 };
 
 export default EnrollmentTab;

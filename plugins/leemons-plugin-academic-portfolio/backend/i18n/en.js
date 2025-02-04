@@ -998,6 +998,31 @@ module.exports = {
         '<strong>This action is not recommended if there is already content or assignments associated with this subject.</strong> <br/><br/> Deleting a subject will archive all class groups associated with it and all activities created or assigned that use this subject, as well as related assessments. <br/><br/> Errors may also occur when editing related activities.',
       removeClassDescription:
         '<strong>This action is not recommended if there is already content or assignments associated with this classroom.</strong> <br/><br/> Deleting a classroom will archive all activities created or assigned that use this classroom, as well as related assessments. <br/><br/> Errors may also occur when editing related activities.',
+      customPeriod: {
+        title: 'Class dates',
+        label: 'Uses different dates than the subject period',
+        startDate: 'Start date',
+        endDate: 'End date',
+        info: {
+          currentPeriod: 'The current subject period goes from',
+          noPeriod: 'The current subject period is not defined',
+        },
+      },
+    },
+    subject: {
+      customPeriod: {
+        title: 'Subject dates',
+        label: 'Uses different dates than the academic period',
+        startDate: 'Start date',
+        endDate: 'End date',
+        info: {
+          currentPeriod: 'The current academic period goes from',
+          noPeriod: 'The current academic period is not defined',
+          childrenDifferentPeriods: 'Some classes of this subject have different custom periods',
+        },
+        success: 'Subject dates updated successfully',
+        error: 'Error updating subject dates',
+      },
     },
   },
   selectSubjectsByTable: {
@@ -1127,6 +1152,28 @@ module.exports = {
       teacherEnrollmentDate: 'Teacher - Enrollment date',
       teacherLastConnection: 'Teacher - Last connection',
       studentLastConnection: 'Student - Last connection',
+    },
+  },
+  socketEvents: {
+    title: {
+      CLASS_UPDATE: 'Updating class {className}',
+      ENROLLMENT_UPDATE: 'Updating enrolment on {className}',
+    },
+    message: {
+      PROCESSING: 'Processing...',
+      CLASS_UPDATE_SUCCESS: 'Class updated successfully',
+      CLASS_UPDATE_ERROR: 'Error updating class',
+      CLASS_UPDATE_SUBSTAGES: 'Processing substages...',
+      CLASS_UPDATE_COURSES: 'Processing courses...',
+      CLASS_UPDATE_GROUPS: 'Processing groups...',
+      CLASS_UPDATE_TEACHERS:
+        'Processing teachers... This may take several minutes. You can continue browsing but do not reload the page.',
+      CLASS_UPDATE_SCHEDULE: 'Processing schedule...',
+      ENROLLMENT_UPDATE_STUDENTS:
+        'Processing students... This may take several minutes. You can continue browsing but do not reload the page.',
+      ENROLLMENT_UPDATE_COMMUNICA: 'Processing Chat rooms...',
+      ENROLLMENT_UPDATE_SUCCESS: 'Enrolment updated successfully',
+      ENROLLMENT_UPDATE_ERROR: 'Error updating enrolment',
     },
   },
 };

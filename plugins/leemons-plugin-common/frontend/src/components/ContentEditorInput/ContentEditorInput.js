@@ -1,4 +1,4 @@
-import { useEffect, forwardRef } from 'react';
+import { useEffect, useMemo, forwardRef } from 'react';
 
 import { Box } from '@bubbles-ui/components';
 import { MathTool } from '@content-creator/components';
@@ -41,11 +41,11 @@ const ContentEditorInput = forwardRef(
       setTextEditorTool([{ id: 'math', tool: <MathTool /> }]);
     }, []);
 
-    const leemonsTools = () => {
+    const leemonsTools = useMemo(() => {
       const tools = [];
       if (textEditorTools) {
         keys(textEditorTools).forEach((key) => {
-          if (textEditorTools[key].tool && toolbars[key]) {
+          if (textEditorTools[key].tool && (toolbars[key] || textEditorTools[key].toolbar)) {
             tools.push({
               id: key,
               tool: textEditorTools[key].tool,
@@ -55,8 +55,10 @@ const ContentEditorInput = forwardRef(
         });
       }
 
+      console.groupEnd();
+
       return tools;
-    };
+    }, [textEditorTools, toolbars]);
 
     // ··································································
     // STYLES
@@ -78,7 +80,7 @@ const ContentEditorInput = forwardRef(
         <Box className={classes.textEditorContainer} ref={ref}>
           <TextEditorContent
             {...props}
-            leemonsTools={leemonsTools()}
+            leemonsTools={leemonsTools}
             toolbars={toolbars}
             useSchema={useSchema}
             editorLabels={editorLabels}

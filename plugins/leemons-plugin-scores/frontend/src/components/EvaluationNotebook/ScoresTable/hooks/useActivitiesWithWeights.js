@@ -1,8 +1,13 @@
-import { filter, groupBy, keyBy } from 'lodash';
+import { useMemo } from 'react';
+
+import { filter, groupBy, keyBy, sortBy } from 'lodash';
+
+import getApplySameValueWeightForUnlocked from '../helpers/getApplySameValueWeightForUnlocked';
+
+import useActivities from './useActivities';
+import { useManualActivitesForNotebook } from './useManualActivitesForNotebook';
 
 import useWeights from '@scores/requests/hooks/queries/useWeights';
-import useActivities from './useActivities';
-import getApplySameValueWeightForUnlocked from '../helpers/getApplySameValueWeightForUnlocked';
 
 function getActivitiesWeightsByModules({ weights, activities }) {
   const evaluableActivities = filter(activities, 'isEvaluable');
@@ -55,6 +60,29 @@ function getActivitiesWeightsByRoles({ weights, activities }) {
   });
 }
 
+function getActivitiesWeightsByActivities({ weights, activities }) {
+  const evaluableActivities = filter(activities, 'isEvaluable');
+  const activitiesCount = evaluableActivities?.length;
+
+  const { applySameValue } = weights;
+  const weightsPerActivity = keyBy(weights.weights, 'id');
+
+  return activities.map((activity) => {
+    const weight = weightsPerActivity[activity.id];
+    let weightValue = weight?.weight;
+
+    if (!weight?.isLocked && applySameValue && activity.isEvaluable && !activity.isLocked) {
+      weightValue = getApplySameValueWeightForUnlocked(weights, activitiesCount);
+    }
+
+    return {
+      ...activity,
+      weight: weightValue ?? 0,
+    };
+  });
+}
+
+
 function getActivitiesWeightsWithSameValue({ activities }) {
   const evaluableActivities = filter(activities, 'isEvaluable');
   const activitiesCount = evaluableActivities?.length;
@@ -69,7 +97,7 @@ function getActivitiesWeightsWithSameValue({ activities }) {
 export default function useActivitiesWithWeights({ program, class: klass, period, filters }) {
   const { data: weights, isLoading: weightsLoading } = useWeights({ classId: klass?.id });
 
-  const { activities, isLoading: activitiesLoading } = useActivities({
+  const { activities: assignablesActivities, isLoading: activitiesLoading } = useActivities({
     program,
     class: klass,
     period,
@@ -77,18 +105,31 @@ export default function useActivitiesWithWeights({ program, class: klass, period
     weights,
   });
 
+  const { manualActivities, isLoading: manualActivitiesLoading } = useManualActivitesForNotebook({
+    klass,
+    filters,
+    period,
+  });
+
+  const activities = useMemo(
+    () => sortBy([...assignablesActivities, ...manualActivities], 'deadline'),
+    [assignablesActivities, manualActivities]
+  );
+
   let activitiesWithWeights;
 
   if (weights?.type === 'modules') {
     activitiesWithWeights = getActivitiesWeightsByModules({ weights, activities });
   } else if (weights?.type === 'roles') {
     activitiesWithWeights = getActivitiesWeightsByRoles({ weights, activities });
+  } else if (weights?.type === 'activities') {
+    activitiesWithWeights = getActivitiesWeightsByActivities({ weights, activities });
   } else {
     activitiesWithWeights = getActivitiesWeightsWithSameValue({ activities });
   }
 
   return {
     activities: activitiesWithWeights,
-    isLoading: activitiesLoading || weightsLoading,
+    isLoading: activitiesLoading || manualActivitiesLoading || weightsLoading,
   };
 }

@@ -7,6 +7,9 @@ const {
 } = require('../profiles/getRoleForRelationshipProfileCenter');
 const addUserInProvider = require('../providers/users/addUser');
 const {
+  addCenterAssetsPermissionToCenterAdminUserAgent,
+} = require('../user-agents/addCenterAssetsPermissionToCenterAdminUserAgent');
+const {
   addCenterProfilePermissionToUserAgents,
 } = require('../user-agents/addCenterProfilePermissionToUserAgents');
 const {
@@ -115,6 +118,8 @@ async function handleUserAgent({ user, role, isNewUser, profile, ctx }) {
     });
     userAgent = userAgent.toObject();
     await addCenterProfilePermissionToUserAgents({ userAgentIds: userAgent.id, ctx });
+    await addCenterAssetsPermissionToCenterAdminUserAgent({ userAgent, ctx });
+
     // If the user didn't have the profile and it's not a new user, we send the email
     if (!isNewUser) {
       await sendNewProfileAddedEmailToUser({ user, profile, ctx });

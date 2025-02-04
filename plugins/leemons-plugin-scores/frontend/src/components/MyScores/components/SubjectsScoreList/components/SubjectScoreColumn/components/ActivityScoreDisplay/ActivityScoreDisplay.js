@@ -1,14 +1,14 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-
 import { Link } from 'react-router-dom';
-import { Badge, Box, Stack, Text, TextClamp } from '@bubbles-ui/components';
 
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
-import getNearestScale from '@scorm/helpers/getNearestScale';
+import { Badge, Box, Stack, Text, TextClamp } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
+import getNearestScale from '@scorm/helpers/getNearestScale';
+import PropTypes from 'prop-types';
+
 import useActivityScoreDisplayStyles from './ActivityScoreDisplay.styles';
+
+import { prefixPN } from '@scores/helpers';
 
 export default function ActivityScoreDisplay({ activity = {}, evaluationSystem }) {
   const [t] = useTranslateLoader(prefixPN('myScores'));
@@ -38,7 +38,7 @@ export default function ActivityScoreDisplay({ activity = {}, evaluationSystem }
           <Text transform="uppercase" className={classes.role}>
             {roleLocalizations[role]?.singular}
           </Text>
-          {!activity.instance.requiresScoring && (
+          {!activity.instance.gradable && (
             <Text className={classes.nonScoringActivity} color="warning">
               {t('noEvaluable')}
             </Text>
@@ -54,7 +54,7 @@ export default function ActivityScoreDisplay({ activity = {}, evaluationSystem }
       */}
       <Stack direction="column" spacing={1} className={classes.rightSide} alignItems="center">
         <Box className={classes.badge}>
-          {!activity.hasNoWeight && activity.instance.requiresScoring && (
+          {!activity.hasNoWeight && activity.instance.gradable && (
             <Badge closable={false} color="stroke">
               {parseFloat((activity.weight * 100).toFixed(2))}%
             </Badge>
@@ -83,7 +83,7 @@ export default function ActivityScoreDisplay({ activity = {}, evaluationSystem }
 ActivityScoreDisplay.propTypes = {
   activity: PropTypes.shape({
     instance: PropTypes.shape({
-      requiresScoring: PropTypes.bool,
+      gradable: PropTypes.bool,
       id: PropTypes.string,
     }),
     assignable: PropTypes.shape({

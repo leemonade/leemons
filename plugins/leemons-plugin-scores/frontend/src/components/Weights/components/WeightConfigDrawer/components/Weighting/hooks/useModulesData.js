@@ -1,13 +1,35 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 
-import { ImageLoader } from '@bubbles-ui/components';
-
-import useWeights from '@scores/requests/hooks/queries/useWeights';
-import useSearchOngoingActivities from '@assignables/requests/hooks/queries/useSearchOngoingActivities';
 import useInstances from '@assignables/requests/hooks/queries/useInstances';
 import useRole from '@assignables/requests/hooks/queries/useRole';
+import useSearchOngoingActivities from '@assignables/requests/hooks/queries/useSearchOngoingActivities';
+import { ImageLoader } from '@bubbles-ui/components';
+
+import { useManualActivities } from '@scores/requests/hooks/queries/useManualActivities';
+import useWeights from '@scores/requests/hooks/queries/useWeights';
 
 const MODULES_ROLE = 'learningpaths.module';
+
+function useManualActivitiesAsInstances({ class: klass }) {
+  const { data: manualActivities, isLoading: manualActivitiesLoading } = useManualActivities({
+    classId: klass,
+    enabled: !!klass,
+  });
+
+  const instances = manualActivities?.map((activity) => ({
+    id: activity.id,
+    assignable: {
+      asset: {
+        name: activity.name,
+      },
+    },
+  }));
+
+  return {
+    isLoading: manualActivitiesLoading,
+    data: instances,
+  };
+}
 
 export default function useModulesData({ class: klass }) {
   const { data: role, isLoading: roleLoading } = useRole({ role: MODULES_ROLE });
@@ -27,10 +49,15 @@ export default function useModulesData({ class: klass }) {
     enabled: !!modules?.items?.length,
   });
 
-  const data = useMemo(() => {
-    if (!moduleInstances || !modules?.count) return [];
+  const { data: manualActivitiesInstances, isLoading: manualActivitiesInstancesLoading } =
+    useManualActivitiesAsInstances({ class: klass });
 
-    return moduleInstances?.map((module) => {
+  const instances = (moduleInstances ?? [])?.concat(manualActivitiesInstances ?? []);
+
+  const data = useMemo(() => {
+    if (!instances?.length) return [];
+
+    return instances?.map((module) => {
       const weight = weights?.weights?.find((w) => w.id === module.id);
 
       return {
@@ -42,14 +69,15 @@ export default function useModulesData({ class: klass }) {
         isNew: weights?.weights && !weight,
       };
     });
-  }, [weights, moduleInstances, modules?.count, role]);
+  }, [weights, instances, role]);
 
   return {
     isLoading:
       roleLoading ||
       weightsLoading ||
       modulesLoading ||
-      (moduleInstancesLoading && !!modules?.items?.length),
+      manualActivitiesInstancesLoading ||
+      (moduleInstancesLoading && !!instances?.length && !!modules?.items?.length),
     data,
   };
 }

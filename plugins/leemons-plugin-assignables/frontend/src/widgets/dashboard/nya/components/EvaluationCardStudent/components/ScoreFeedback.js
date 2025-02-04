@@ -29,7 +29,7 @@ export function findNearestFloorScore(score, scales) {
 
     const currentDistance = Math.abs(scale.number - score);
 
-    if (currentDistance < distance) {
+    if (currentDistance <= distance) {
       nearestScore = scale;
       distance = currentDistance;
     } else {

@@ -1,15 +1,17 @@
 const { generateEnv } = require('@leemons/utils');
-const getAppDir = require('../src/paths/getAppDir');
-const getPlugins = require('../src/plugins');
+
 const generateMonorepo = require('../src/monorepo');
+const getAppDir = require('../src/paths/getAppDir');
+const getBasePath = require('../src/paths/getBasePath');
+const getBuildDir = require('../src/paths/getBuildDir');
 const getOutputDir = require('../src/paths/getOutputDir');
+const getPlugins = require('../src/plugins');
 const generateAlias = require('../src/plugins/generateAlias');
 const generatePublicFolders = require('../src/plugins/generatePublicFolders');
-const devServer = require('../src/webpack/devServer');
-const getBuildDir = require('../src/paths/getBuildDir');
-const getBasePath = require('../src/paths/getBasePath');
+const rspackDevServer = require('../src/rspack/devServer');
+const webpackDevServer = require('../src/webpack/devServer');
 
-module.exports = async function dev({ app, build, output, base, port }) {
+module.exports = async function dev({ app, build, output, base, port, rspack }) {
   process.env.NODE_ENV = 'development';
   process.env.PORT = port;
 
@@ -33,5 +35,6 @@ module.exports = async function dev({ app, build, output, base, port }) {
 
   await generateMonorepo({ plugins, app: appDir, outputDir, basePath });
 
+  const devServer = rspack ? rspackDevServer : webpackDevServer;
   await devServer({ app: outputDir, alias, build: buildDir, publicFiles });
 };

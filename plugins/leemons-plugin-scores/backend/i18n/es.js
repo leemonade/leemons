@@ -23,6 +23,7 @@ module.exports = {
         placeholder: 'Periodo de evaluación...',
         custom: 'Periodo personalizado',
         final: 'Evaluación final',
+        fullCourse: 'Curso completo',
       },
       startDate: {
         label: 'Fecha inicio',
@@ -343,6 +344,7 @@ module.exports = {
     averages: 'Media',
     roles: 'Tipo',
     modules: 'Módulos',
+    activities: 'Actividades',
   },
   weightingDrawer: {
     rules: 'Reglas',
@@ -352,6 +354,7 @@ module.exports = {
       applySameValue: 'Aplicar mismo valor',
       modules: 'Módulos',
       roles: 'Tipos',
+      activities: 'Actividades',
       weight: 'Porcentaje',
       total: 'Total',
     },
@@ -389,16 +392,24 @@ module.exports = {
       search: 'Buscar {type}...',
       showNonEvaluable: 'Ver no calificables',
       goToWeighting: 'Ponderación',
+      add: 'Añadir',
+      manualActivity: 'Actividad evaluable',
+      manualActivityCreated: 'Actividad evaluable creada correctamente',
+      manualActivityError: 'Error creando actividad evaluable',
+      retake: 'Convocatoria',
     },
     scoresTable: {
       students: 'Estudiantes',
       noActivity: 'NE',
       submitted: 'Entregado',
       avgScore: 'Nota promedio',
-      calculated: 'Calculada',
-      custom: 'Docente',
+      calculated: 'CALC.',
+      custom: 'FINAL',
+      retake: 'CONV.',
       attendance: 'Asistencia',
     },
+
+    retake: 'Convocatoria',
     newModule:
       'Se han añadido nuevos módulos a esta asignatura que no están ponderados. Para calcularlos correctamente, accede a sus Reglas de ponderación.',
     updatedSuccess: 'Actualizada la nota de {{student}} en {{activity}} a un {{score}}',
@@ -446,6 +457,43 @@ module.exports = {
         title: 'Sin resultados',
         description: 'No hemos encontrado resultados para tu búsqueda.',
       },
+    },
+    retake: 'CONV.',
+  },
+  manualActivityDrawer: {
+    title: 'Nueva actividad evaluable',
+    config: 'Configuración',
+    date: { label: 'Fecha', error: 'La fecha es obligatoria' },
+    name: { label: 'Nombre', error: 'El nombre es obligatorio' },
+    description: { label: 'Descripción' },
+    cancel: 'Cancelar',
+    save: 'Crear actividad',
+
+    weightType: {
+      title: 'Ponderación',
+      weightingBy: 'Estás ponderando por',
+      averages: 'esta actividad pasará a contabilizarse en la media.',
+      modules: 'esta actividad aparecerá como Módulo.',
+      roles: '¿en qué tipo quieres incluir esta actividad?',
+      activities: '¿en qué tipo quieres incluir esta actividad?',
+    },
+  },
+  pickRetakeTable: {
+    title: 'Cerrar evaluación: Nota final',
+    description: 'Selecciona la convocatoria para la nota final de cada alumno',
+    cancel: 'Cancelar',
+    confirm: 'Cerrar evaluación',
+
+    table: {
+      students: 'Estudiantes',
+      retake: 'CONV.',
+      final: 'FINAL',
+    },
+  },
+  mutations: {
+    removeManualActivity: {
+      success: 'Actividad eliminada correctamente',
+      error: 'Error eliminando actividad',
     },
   },
 };

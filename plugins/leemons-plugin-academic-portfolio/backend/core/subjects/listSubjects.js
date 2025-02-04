@@ -31,6 +31,11 @@ async function listSubjects({ page, size, program, course, onlyArchived, teacher
   if (onlyArchived) {
     results.items = results.items.filter((subject) => subject.isDeleted);
   }
+
+  results.items = results.items.map((subject) => ({
+    ...subject,
+    courses: subject.course ? JSON.parse(subject.course) : [], // New property to try and unify the subject object around the codebase with a more accurate structure
+  }));
   return results;
 }
 

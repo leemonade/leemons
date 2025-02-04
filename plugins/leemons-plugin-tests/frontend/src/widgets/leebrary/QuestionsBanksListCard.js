@@ -1,19 +1,21 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { createStyles } from '@bubbles-ui/components';
-import { LibraryCard } from '@leebrary/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@tests/helpers/prefixPN';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { deleteQuestionBankRequest } from '@tests/request';
 import { useHistory } from 'react-router-dom';
+
+import { createStyles } from '@bubbles-ui/components';
 import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
+import { LibraryCard } from '@leebrary/components';
 import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
 import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
 import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import PropTypes from 'prop-types';
 
 import { QuestionBankIcon } from '../../components/Icons/QuestionBankIcon';
+
+import prefixPN from '@tests/helpers/prefixPN';
+import { deleteQuestionBankRequest } from '@tests/request';
 
 const ListCardStyles = createStyles((theme, { selected }) => ({
   root: {
@@ -70,7 +72,7 @@ const QuestionsBanksListCard = ({ asset, selected, onRefresh, onShare, ...props 
         items.push({
           icon: <ShareIcon />,
           children: t('share'),
-          onClick: onShare,
+          onClick: () => onShare(asset),
         });
       }
     }

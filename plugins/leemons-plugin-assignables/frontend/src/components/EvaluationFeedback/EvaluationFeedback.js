@@ -1,27 +1,18 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
+import { useIsTeacher } from '@academic-portfolio/hooks';
 import { Box, Button, ContextContainer, HtmlText, Stack } from '@bubbles-ui/components';
 import { PluginComunicaIcon } from '@bubbles-ui/icons/outline';
-import ScoreFeedback from '@assignables/widgets/dashboard/nya/components/EvaluationCardStudent/components/ScoreFeedback';
-import { useClassesSubjects, useIsTeacher } from '@academic-portfolio/hooks';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@assignables/helpers/prefixPN';
 import { noop } from 'lodash';
+import PropTypes from 'prop-types';
+
+import prefixPN from '@assignables/helpers/prefixPN';
+import ScoreFeedback from '@assignables/widgets/dashboard/nya/components/EvaluationCardStudent/components/ScoreFeedback';
+import { useScoreFeedbackData } from '@assignables/widgets/dashboard/nya/hooks';
 
 function EvaluationFeedback({ assignation, subject, onChatClick = noop, hideChat }) {
   const [t] = useTranslateLoader(prefixPN('evaluationFeedbackComponent'));
-  const { instance } = assignation ?? {};
-  const subjects = useClassesSubjects(assignation?.instance?.classes);
   const isTeacher = useIsTeacher();
-
-  const program = useMemo(
-    () => subjects?.find((s) => s.id === subject)?.program,
-    [subjects, subject]
-  );
-  const score = useMemo(
-    () => assignation?.grades?.find((grade) => grade.type === 'main' && grade.subject === subject),
-    [assignation?.grades, subject]
-  );
+  const { program, score, instance } = useScoreFeedbackData({ assignation, subject });
 
   let componentToReturn = null;
 

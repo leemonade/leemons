@@ -1,20 +1,25 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Box, Text, UserDisplayItem, useElementSize, Stack } from '@bubbles-ui/components';
+import { useEffect, useMemo, useState } from 'react';
 import { useTable, useFlexLayout } from 'react-table';
-import { isFunction, sortBy } from 'lodash';
-import { motion } from 'framer-motion';
 import { useSticky } from 'react-table-sticky';
-import { ScoreCell } from './ScoreCell';
+
+import { Box, Text, UserDisplayItem, useElementSize, Stack } from '@bubbles-ui/components';
+import { motion } from 'framer-motion';
+import { isFunction } from 'lodash';
+
+import { CommonTableStyles } from '../CommonTable.styles';
+
 import { ActivityHeader } from './ActivityHeader';
-import { ScoresBasicTableStyles } from './ScoresBasicTable.styles';
+import { ScoreCell } from './ScoreCell';
 import {
   SCORES_BASIC_TABLE_DEFAULT_PROPS,
   SCORES_BASIC_TABLE_PROP_TYPES,
 } from './ScoresBasicTable.constants';
-import { CommonTableStyles } from '../CommonTable.styles';
+import { ScoresBasicTableStyles } from './ScoresBasicTable.styles';
+import { RightContent } from './components/RightContent';
 
 const ScoresBasicTable = ({
   grades,
+  usePercentage,
   activities,
   value: _value,
   labels,
@@ -29,7 +34,9 @@ const ScoresBasicTable = ({
   from,
   to,
   hideCustom,
+  viewOnly,
   leftBadge,
+  retakes,
 }) => {
   const { ref: tableRef } = useElementSize(null);
   const [value, setValue] = useState(_value);
@@ -87,79 +94,27 @@ const ScoresBasicTable = ({
 
   const getActivities = (studentActivities, studentId) => {
     const activitiesObject = {};
-    activities.forEach(({ id }) => {
+    activities.forEach(({ id, source }) => {
       const activity = studentActivities.find((studentActivity) => studentActivity?.id === id);
       activitiesObject[id] = {
         score: useNumbers ? activity?.score : findGradeLetter(activity?.score),
         isSubmitted: activity?.isSubmitted,
+        source,
       };
     });
     const expandedActivities = expandedData?.value.find(
       (student) => student.id === studentId
     )?.activities;
-    expandedData?.activities?.forEach(({ id }) => {
+    expandedData?.activities?.forEach(({ id, source }) => {
       const activity = expandedActivities.find((expandedActivity) => expandedActivity?.id === id);
       activitiesObject[id] = {
         score: useNumbers ? activity?.score : findGradeLetter(activity?.score),
         isSubmitted: activity?.isSubmitted,
+        source,
       };
     });
     return activitiesObject;
   };
-
-  const getAvgScore = (studentActivities) => {
-    let weightedScore = 0;
-
-    const minGrade = sortBy(grades, 'number')[0].number;
-
-    studentActivities.forEach((studentActivity) => {
-      weightedScore +=
-        (studentActivity.score ? studentActivity.score : minGrade) *
-        (activities.find((activity) => activity.id === studentActivity.id)?.weight || 0);
-    });
-
-    let sumOfWeights = 0;
-    activities.forEach((activity) => {
-      sumOfWeights += activity.weight;
-    });
-
-    const weightedAverage = (weightedScore / sumOfWeights).toFixed(2);
-    return useNumbers ? weightedAverage : findGradeLetter(weightedAverage);
-  };
-
-  const getActivitiesPeriod = () =>
-    periodName ||
-    `${new Date(from).toLocaleDateString(locale) ?? '?'} - ${
-      new Date(to).toLocaleDateString(locale) ?? '?'
-    }`;
-
-  const getRightBodyContent = () =>
-    value.map(({ id, activities: studentActivities, customScore, allowCustomChange }) => {
-      const avgScore = getAvgScore(studentActivities);
-      return (
-        <Box key={id} className={classes.contentRow}>
-          <Box className={classes.separator} />
-          <Box className={classes.studentInfo}>
-            <Text color="primary" role="productive">
-              {avgScore}
-            </Text>
-          </Box>
-          {!hideCustom && (
-            <Box className={classes.studentInfo}>
-              <ScoreCell
-                value={isNaN(customScore) ? avgScore : customScore}
-                allowChange={allowCustomChange}
-                grades={grades}
-                row={id}
-                column={'customScore'}
-                onDataChange={onDataChange}
-                isCustom={true}
-              />
-            </Box>
-          )}
-        </Box>
-      );
-    });
 
   const getColumns = () => {
     const columns = [];
@@ -219,10 +174,12 @@ const ScoresBasicTable = ({
             value={value.score}
             noActivity={labels.noActivity}
             submittedLabel={labels.submitted}
-            allowChange={activity.allowChange}
+            allowChange={activity.allowChange && !viewOnly}
             isSubmitted={value.isSubmitted}
+            source={value.source}
             isClosed={isDeadlineFinished}
             grades={grades}
+            usePercentage={usePercentage}
             row={row}
             column={column}
             setValue={setValue}
@@ -263,9 +220,11 @@ const ScoresBasicTable = ({
                   value={value.score}
                   noActivity={labels.noActivity}
                   submittedLabel={labels.submitted}
-                  allowChange={expandedActivity.allowChange}
+                  allowChange={expandedActivity.allowChange && !viewOnly}
                   isSubmitted={value.isSubmitted}
+                  source={value.source}
                   grades={grades}
+                  usePercentage={usePercentage}
                   row={row}
                   column={column}
                   isExpanded={true}
@@ -383,31 +342,25 @@ const ScoresBasicTable = ({
             })}
           </Box>
         </Box>
-        <Box className={classes.rightBody}>
-          <Box className={classes.rightBodyHeader}>
-            <Box className={classes.headerAvg}>
-              <Text color="primary" role="productive" stronger transform="uppercase">
-                {labels.avgScore}
-              </Text>
-              <Text color="primary" role="productive" size="xs">
-                {getActivitiesPeriod()}
-              </Text>
-            </Box>
-            <Box className={classes.columnHeader}>
-              <Text color="primary" role="productive" stronger transform="uppercase" size="xs">
-                {labels.gradingTasks}
-              </Text>
-            </Box>
-            {!hideCustom && (
-              <Box className={classes.columnHeader}>
-                <Text color="primary" role="productive" stronger transform="uppercase" size="xs">
-                  {labels.customScore}
-                </Text>
-              </Box>
-            )}
-          </Box>
-          <Box className={classes.rightBodyContent}>{getRightBodyContent()}</Box>
-        </Box>
+        <RightContent
+          labels={labels}
+          overFlowRight={overFlowRight}
+          headerProps={{
+            periodName,
+            from,
+            to,
+            locale,
+          }}
+          hideCustom={hideCustom}
+          studentsData={value}
+          grades={grades}
+          activities={activities}
+          useNumbers={useNumbers}
+          retakes={retakes}
+          onDataChange={onDataChange}
+          usePercentage={usePercentage}
+          viewOnly={viewOnly}
+        />
       </Box>
     </Box>
   );

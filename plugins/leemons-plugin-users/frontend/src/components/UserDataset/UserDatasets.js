@@ -19,7 +19,9 @@ import { UserDataset } from './UserDataset';
 import { checkForms } from '@users/helpers/dataset';
 import prefixPN from '@users/helpers/prefixPN';
 import { useUserDatasets } from '@users/hooks';
+import { useSaveUserAgentsDatasets } from '@users/hooks/mutations/useSaveUserAgentsDatasets';
 import { useSaveUserDatasets } from '@users/hooks/mutations/useSaveUserDatasets';
+import { useUserAgentsDatasets } from '@users/hooks/queries/useUserAgentsDatasets';
 import { getSessionProfile } from '@users/session';
 
 const DatasetStyles = createStyles((theme) => ({
@@ -41,6 +43,7 @@ const UserDatasets = forwardRef(
   (
     {
       userAgentIds = [],
+      userId,
       preferEditMode,
       hideReadOnly,
       validateOnlyForMe,
@@ -57,11 +60,23 @@ const UserDatasets = forwardRef(
     const formActions = React.useRef([]);
     const [, , , getErrorMessage] = useRequestErrorMessage();
     const profileId = getSessionProfile();
-    const { data: datasets, isLoading: isLoadingDatasets } = useUserDatasets({
-      userAgentIds,
-      enabled: userAgentIds?.length > 0,
+    const { data: userAgentsDatasets, isLoading: isLoadingUserAgentsDatasets } =
+      useUserAgentsDatasets({
+        userAgentIds,
+        enabled: userAgentIds?.length > 0,
+      });
+    const { data: userDatasets, isLoading: isLoadingUserDatasets } = useUserDatasets({
+      userIds: [userId],
+      enabled: userId?.length > 0,
     });
-    const saveUserDatasetsMutation = useSaveUserDatasets({ userAgentIds });
+    const saveUserAgentsDatasetsMutation = useSaveUserAgentsDatasets({ userAgentIds });
+    const saveUserDatasetsMutation = useSaveUserDatasets({ userIds: [userId] });
+
+    const datasets = React.useMemo(() => {
+      const userDatasetsArray = userDatasets ?? [];
+      const userAgentsDatasetsArray = userAgentsDatasets ?? [];
+      return [...userDatasetsArray, ...userAgentsDatasetsArray];
+    }, [userDatasets, userAgentsDatasets]);
 
     /**
      * The user can edit the datasets if at least one of them has at least one field that is not readonly.
@@ -87,13 +102,30 @@ const UserDatasets = forwardRef(
 
     async function handleSave(forms) {
       try {
-        const toSave = forms.map((dataset) => ({
-          userAgent: dataset.userAgent.id,
-          value: dataset.newValues,
-          locationName: dataset.locationName,
-        }));
+        const userDataToSave = [];
+        const userAgentsToSave = [];
 
-        await saveUserDatasetsMutation.mutateAsync(toSave);
+        forms.forEach((dataset) => {
+          const toSave = {
+            value: dataset.newValues,
+            locationName: dataset.locationName,
+          };
+
+          if (dataset.locationName === 'user-data') {
+            userDataToSave.push({
+              ...toSave,
+              userId: dataset.userId,
+            });
+          } else {
+            userAgentsToSave.push({
+              ...toSave,
+              userAgent: dataset.userAgent.id,
+            });
+          }
+        });
+
+        await saveUserDatasetsMutation.mutateAsync(userDataToSave);
+        await saveUserAgentsDatasetsMutation.mutateAsync(userAgentsToSave);
 
         return true;
       } catch (error) {
@@ -127,6 +159,8 @@ const UserDatasets = forwardRef(
       return null;
     }
 
+    const isLoading = isLoadingUserAgentsDatasets || isLoadingUserDatasets;
+
     return (
       <ContextContainer
         title={showTitle ? t('additionalInfo') : null}
@@ -141,7 +175,7 @@ const UserDatasets = forwardRef(
           )
         }
       >
-        {isLoadingDatasets ? (
+        {isLoading ? (
           <LoadingOverlay visible />
         ) : (
           datasets.map((dataset, i) => (
@@ -168,6 +202,7 @@ const UserDatasets = forwardRef(
 UserDatasets.displayName = 'UserDatasets';
 UserDatasets.propTypes = {
   userAgentIds: PropTypes.arrayOf(PropTypes.string),
+  userId: PropTypes.string,
   preferEditMode: PropTypes.bool,
   hideReadOnly: PropTypes.bool,
   validateOnlyForMe: PropTypes.bool,

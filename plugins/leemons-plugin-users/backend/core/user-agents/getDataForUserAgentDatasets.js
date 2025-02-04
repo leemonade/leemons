@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const { getUserAgentsInfo } = require('./getUserAgentsInfo');
 
 async function getData({ locationName, userAgentId, ctx }) {
@@ -22,7 +23,7 @@ async function getData({ locationName, userAgentId, ctx }) {
 }
 
 async function getDataForUserAgentDatasets({ userAgentId, ctx }) {
-  const locationNames = ['user-data'];
+  const locationNames = [];
   let { userAgents } = ctx.meta.userSession;
 
   if (userAgentId) {

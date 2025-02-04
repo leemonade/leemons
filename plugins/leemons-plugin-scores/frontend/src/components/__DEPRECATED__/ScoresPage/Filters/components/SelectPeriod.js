@@ -1,9 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
 import { Select } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
+import PropTypes from 'prop-types';
+
 import usePeriodTypes from '../hooks/usePeriodTypes';
+
+import { prefixPN } from '@scores/helpers';
 
 function usePeriodsData({ periods, t }) {
   const periodTypes = usePeriodTypes();
@@ -27,6 +28,7 @@ function usePeriodsData({ periods, t }) {
       group: periodTypes?.academicCalendar,
     });
   }
+
   return data;
 }
 

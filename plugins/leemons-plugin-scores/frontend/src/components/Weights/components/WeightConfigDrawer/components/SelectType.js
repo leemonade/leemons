@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
-
-import { Select, ContextContainer } from '@bubbles-ui/components';
+import { useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
+import { Select, ContextContainer } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+
 import { prefixPN } from '@scores/helpers';
 
 export default function SelectType() {
@@ -21,10 +21,13 @@ export default function SelectType() {
         label: typesT('roles'),
         value: 'roles',
       },
-      // ! DISABLE MODULES FOR NOW
       {
         label: typesT('modules'),
         value: 'modules',
+      },
+      {
+        label: typesT('activities'),
+        value: 'activities',
       },
     ],
     [typesT]

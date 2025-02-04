@@ -112,14 +112,6 @@ export function MapQuestion({ form: _form, t }) {
       >
         <Controller
           control={form.control}
-          name="hasHelp"
-          render={({ field }) => (
-            <Switch {...field} checked={field.value} label={t('hasCluesLabelWithMinResponses')} />
-          )}
-        />
-
-        <Controller
-          control={form.control}
           name="mapProperties.markers"
           rules={{
             required: t('markersRequired'),
@@ -182,6 +174,20 @@ export function MapQuestion({ form: _form, t }) {
                 ) : null}
               </InputWrapper>
             </>
+          )}
+        />
+      </ContextContainer>
+      <ContextContainer>
+        <Controller
+          control={form.control}
+          name="hasHelp"
+          render={({ field }) => (
+            <Switch
+              {...field}
+              checked={field.value}
+              label={t('hasCluesLabelWithMinResponses')}
+              description={t('cluesSwitchDescription')}
+            />
           )}
         />
       </ContextContainer>

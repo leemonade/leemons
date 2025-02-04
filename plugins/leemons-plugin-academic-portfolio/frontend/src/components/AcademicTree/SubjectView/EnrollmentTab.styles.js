@@ -6,7 +6,7 @@ const EnrollmentTabStyles = createStyles((theme) => ({
     // gap: 25,
   },
   mainTeacher: {
-    width: '25%',
+    width: '30%',
   },
   inlineInputs: {
     width: '50%',

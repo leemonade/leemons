@@ -1,12 +1,12 @@
+const { LeemonsError } = require('@leemons/error');
 const _ = require('lodash');
 
-const { LeemonsError } = require('@leemons/error');
-
-const { validateAssignation } = require('../../helpers/validators/assignation');
-const { getAssignation } = require('../getAssignation');
-const { getDiff } = require('../../helpers/getDiff');
+const discardCacheBy = require('../../../cache/discardCacheBy');
 const { updateDates } = require('../../dates');
 const { registerGrade } = require('../../grades');
+const { getDiff } = require('../../helpers/getDiff');
+const { validateAssignation } = require('../../helpers/validators/assignation');
+const { getAssignation } = require('../getAssignation');
 
 // const updatableFields = [
 //   'indexable',
@@ -101,6 +101,11 @@ async function updateAssignation({ assignation, ctx }) {
       { new: true, lean: true }
     );
   }
+
+  await discardCacheBy.assignations.discardGetAssignationsCacheById({
+    ids: [{ id, instance: assignableInstance, user }],
+    ctx,
+  });
 
   return assignationObj;
 }

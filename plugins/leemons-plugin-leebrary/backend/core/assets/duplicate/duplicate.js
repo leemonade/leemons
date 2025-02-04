@@ -2,15 +2,16 @@
 const { getByAsset: getBookmark } = require('../../bookmarks/getByAsset');
 const { checkDuplicable: checkCategoryDuplicable } = require('../../categories/checkDuplicable');
 const { normalizeItemsArray } = require('../../shared');
+
 const { checkDuplicatePermissions } = require('./checkDuplicatePermissions');
 const { getAndCheckAsset } = require('./getAndCheckAsset');
 const { getFileIds } = require('./getFileIds');
 const { getFilesToDuplicate } = require('./getFilesToDuplicate');
-const { handleTags } = require('./handleTags');
 const { handleAssetDuplication } = require('./handleAssetDuplication');
-const { handleCoverDuplication } = require('./handleCoverDuplication');
 const { handleBookmarkDuplication } = require('./handleBookmarkDuplication');
+const { handleCoverDuplication } = require('./handleCoverDuplication');
 const { handleFilesDuplication } = require('./handleFilesDuplication');
+const { handleTags } = require('./handleTags');
 
 /**
  * Duplicates an asset by creating a new asset with the same properties and associated files, cover, and bookmark.
@@ -32,6 +33,7 @@ const { handleFilesDuplication } = require('./handleFilesDuplication');
 async function duplicate({
   assetId,
   preserveName = false,
+  preserveOwner = false,
   newId,
   indexable,
   public: isPublic,
@@ -41,7 +43,6 @@ async function duplicate({
   const pPermissions = normalizeItemsArray(permissions);
 
   await checkDuplicatePermissions({ assetId, ctx });
-
   const asset = await getAndCheckAsset({ assetId, ctx });
   const category = await checkCategoryDuplicable({ categoryId: asset.category, ctx });
 
@@ -88,6 +89,7 @@ async function duplicate({
     tags,
     newId,
     preserveName,
+    preserveOwner,
     permissions: pPermissions,
     isIndexable: indexable,
     isPublic,

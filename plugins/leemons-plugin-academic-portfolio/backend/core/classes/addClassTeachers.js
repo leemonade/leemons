@@ -1,18 +1,24 @@
-const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
+const _ = require('lodash');
+
 const { validateAddClassTeachers } = require('../../validations/forms');
-const { classByIds } = require('./classByIds');
-const { add: addTeacher } = require('./teacher/add');
+
 const {
   addComunicaRoomsBetweenStudentsAndTeachers,
 } = require('./addComunicaRoomsBetweenStudentsAndTeachers');
+const { classByIds } = require('./classByIds');
+const { add: addTeacher } = require('./teacher/add');
+
+async function getClass({ classId, ctx }) {
+  const classes = await classByIds({ ids: classId, ctx });
+  return classes?.[0];
+}
 
 async function addClassTeachers({ data, ctx }) {
   validateAddClassTeachers(data);
 
-  const getClass = async () => (await classByIds({ ids: data.class, ctx }))[0];
-
-  const _class = await getClass();
+  const classId = data.class;
+  const _class = await getClass({ classId, ctx });
 
   const hasMainTeacher = !!_.find(_class.teachers, { type: 'main-teacher' });
   const newHasMainTeacher = !!_.find(data.teachers, { type: 'main-teacher' });
@@ -31,10 +37,10 @@ async function addClassTeachers({ data, ctx }) {
 
   await Promise.all(promises);
 
-  const classe = (await classByIds({ ids: data.class, ctx }))[0];
+  const classe = await getClass({ classId, ctx });
   await addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx });
 
-  return getClass();
+  return classe;
 }
 
 module.exports = { addClassTeachers };

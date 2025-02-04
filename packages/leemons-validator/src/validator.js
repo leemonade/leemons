@@ -1,7 +1,9 @@
-const _ = require('lodash');
+const { isLRN } = require('@leemons/lrn');
 const Ajv = require('ajv');
 const addFormats = require('ajv-formats');
 const addKeywords = require('ajv-keywords');
+const _ = require('lodash');
+
 const { localeRegex } = require('./validations/localeCode');
 
 const ajv = new Ajv({ allErrors: true });
@@ -40,6 +42,10 @@ class LeemonsValidator {
 // Validaciones de tipos custom
 ajv.addFormat('localeCode', {
   validate: (x) => localeRegex.test(x),
+});
+
+ajv.addFormat('lrn', {
+  validate: isLRN,
 });
 
 LeemonsValidator.ajv = ajv;

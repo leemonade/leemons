@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
+import { useEffect, useMemo, useState } from 'react';
+
 import {
   BaseDrawer,
   TotalLayoutContainer,
@@ -9,17 +9,21 @@ import {
   RadioGroup,
   ContextContainer,
 } from '@bubbles-ui/components';
-
-import { addSuccessAlert, addErrorAlert } from '@layout/alert';
+import { useNotifications } from '@bubbles-ui/notifications';
+import { addErrorAlert } from '@layout/alert';
 import { Header } from '@leebrary/components/AssetPickerDrawer/components/Header';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import FooterContainer from '@academic-portfolio/components/ProgramSetupDrawer/FooterContainer';
-import useSubjectClasses from '@academic-portfolio/hooks/useSubjectClasses';
-import { useEnrollStudentsToClasses } from '@academic-portfolio/hooks/mutations/useMutateClass';
-import { getProfilesRequest } from '@academic-portfolio/request';
-import StudentsSelectByUserData from './StudentsSelectByUserData';
+import PropTypes from 'prop-types';
+
 import StudentsSelectByTags from './StudentsSelectByTags';
+import StudentsSelectByUserData from './StudentsSelectByUserData';
+
+import FooterContainer from '@academic-portfolio/components/ProgramSetupDrawer/FooterContainer';
+import { SOCKET_EVENTS } from '@academic-portfolio/config/constants';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import { useEnrollStudentsToClasses } from '@academic-portfolio/hooks/mutations/useMutateClass';
+import useSubjectClasses from '@academic-portfolio/hooks/useSubjectClasses';
+import { getProfilesRequest } from '@academic-portfolio/request';
 
 function distributeStudentsToClasses(classes, selectedStudents) {
   const cannotEnrollClasses = [];
@@ -99,13 +103,15 @@ const EnrollmentDrawer = ({
   opensFromClasroom = null, // only for cases where it opens form subject view
 }) => {
   const [t] = useTranslateLoader(prefixPN('tree_page.enrrollmentDrawer'));
+  const [tSocket] = useTranslateLoader(prefixPN('socket'));
   const [searchBy, setSearchBy] = useState('userData');
   const [selectedStudents, setSelectedStudents] = useState([]);
   const [previouslyEnrolledStudents, setPreviouslyEnrolledStudents] = useState([]);
   const { mutateAsync: addStudentsToClassesAsync, isLoading: isAddStudentsToClassesLoading } =
-    useEnrollStudentsToClasses();
+    useEnrollStudentsToClasses({ invalidateOnSuccess: false });
 
   const [studentProfile, setStudentProfile] = useState(null);
+  const notifications = useNotifications();
 
   // SETUP ············································································································|
 
@@ -274,10 +280,23 @@ const EnrollmentDrawer = ({
 
       try {
         enrollmentRequests.forEach(async (requestBody) => {
+          const currentClass = classes.find((cls) => cls.id === requestBody.class);
+          const className = currentClass?.alias ?? currentClass?.classroomId;
+          const notificationId = `${SOCKET_EVENTS.ENROLLMENT_UPDATE}:${requestBody.class}`;
+
+          notifications.showNotification({
+            id: notificationId,
+            severity: 'info',
+            loading: true,
+            title: tSocket('title.ENROLLMENT_UPDATE', { className }),
+            message: tSocket('message.PROCESSING'),
+            autoClose: false,
+            disallowClose: true,
+          });
+
           await addStudentsToClassesAsync(requestBody);
         });
         handleOnCancel();
-        addSuccessAlert(t('enrollmentSuccess'));
       } catch (error) {
         addErrorAlert(t('enrollmentError'));
         console.error(error);

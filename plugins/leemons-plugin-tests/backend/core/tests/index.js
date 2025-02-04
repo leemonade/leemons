@@ -1,18 +1,19 @@
-const { listTests } = require('./listTests');
-const { getTestsDetails } = require('./getTestsDetails');
-const { saveTest } = require('./saveTest');
-const { setInstanceTimestamp } = require('./setInstanceTimestamp');
-const { setQuestionResponse } = require('./setQuestionResponse');
-const { getUserQuestionResponses } = require('./getUserQuestionResponses');
-const { deleteTest } = require('./deleteTest');
 const { assignTest } = require('./assignTest');
-const { getInstanceFeedback } = require('./getInstanceFeedback');
-const { setInstanceFeedback } = require('./setInstanceFeedback');
 const { createAssignSavedConfig } = require('./createAssignSavedConfig');
-const { getAssignSavedConfigs } = require('./getAssignSavedConfigs');
-const { updateAssignSavedConfig } = require('./updateAssignSavedConfig');
 const { deleteAssignSavedConfig } = require('./deleteAssignSavedConfig');
+const { deleteTest } = require('./deleteTest');
 const { duplicate } = require('./duplicate');
+const { getAssignSavedConfigs } = require('./getAssignSavedConfigs');
+const { getInstanceFeedback } = require('./getInstanceFeedback');
+const { getTestsDetails } = require('./getTestsDetails');
+const { getUserQuestionResponses } = require('./getUserQuestionResponses');
+const { listTests } = require('./listTests');
+const { saveTest } = require('./saveTest');
+const { setInstanceFeedback } = require('./setInstanceFeedback');
+const { setInstanceTimestamp } = require('./setInstanceTimestamp');
+const { setOpenQuestionGrade } = require('./setOpenQuestionGrade');
+const { setQuestionResponse } = require('./setQuestionResponse');
+const { updateAssignSavedConfig } = require('./updateAssignSavedConfig');
 
 module.exports = {
   assignTest,
@@ -36,4 +37,5 @@ module.exports = {
   setInstanceTimestamp,
   setQuestionResponse,
   getUserQuestionResponses,
+  setOpenQuestionGrade,
 };

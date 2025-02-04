@@ -8,4 +8,9 @@ const PROGRAM_STAFF_ROLES = {
   EXTERNAL_EVALUATOR: 'external-evaluator',
 };
 
-export { PLUGIN_NAME, PROGRAM_STAFF_ROLES };
+const SOCKET_EVENTS = {
+  CLASS_UPDATE: `${PLUGIN_NAME}:class-update`,
+  ENROLLMENT_UPDATE: `${PLUGIN_NAME}:enrollment-update`,
+};
+
+export { PLUGIN_NAME, PROGRAM_STAFF_ROLES, SOCKET_EVENTS };

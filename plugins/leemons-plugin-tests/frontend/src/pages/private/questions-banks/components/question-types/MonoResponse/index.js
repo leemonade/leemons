@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import {
@@ -74,7 +74,6 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
     return error || true;
   }
 
-  // We do it specifically where in edition/creation time so that the user has the option to add hide no answers at all
   const removeHideOnHelp = () =>
     form.setValue(
       'choices',
@@ -82,14 +81,6 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
     );
 
   // RENDER ································································································|
-
-  const monoResponseAnwsersMargin = useMemo(() => {
-    if (!hasHelp) {
-      if (hasImageAnswers) return { marginBottom: 98 };
-      return { marginBottom: 18 };
-    }
-    return {};
-  }, [hasHelp, hasImageAnswers]);
 
   return (
     <ContextContainer>
@@ -124,7 +115,7 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
           )}
         />
       ) : null}
-      <ContextContainer title={`${t('responsesLabel')} *`} spacing={0}>
+      <ContextContainer title={`${t('responsesLabel')} *`} spacing={4}>
         <Controller
           control={form.control}
           name="hasImageAnswers"
@@ -133,6 +124,95 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
           )}
         />
 
+        <Text color="primary" strong>
+          {t('responsesDescription')}
+        </Text>
+        <Controller
+          name="choices"
+          control={form.control}
+          rules={{
+            required: t('typeRequired'),
+            validate: (choicesValue) => validateChoices(choicesValue),
+          }}
+          render={({ field }) => {
+            let canSetHelp = true;
+
+            const listValues = [];
+            forEach(field.value, (item) => {
+              if (item.hideOnHelp) canSetHelp = false;
+              listValues.push({
+                value: {
+                  ...item,
+                },
+              });
+            });
+
+            return (
+              <Box>
+                <InputWrapper error={form.formState.errors.choices?.message || null}>
+                  <ListInput
+                    {...field}
+                    value={listValues}
+                    onChange={(e) => {
+                      const cleanValues = e.map(({ value }) => value);
+                      field.onChange(cleanValues);
+                      setShowInput(false);
+                    }}
+                    hideInput={!showInput}
+                    withItemBorder
+                    withInputBorder
+                    error={form.formState.errors.properties?.responses}
+                    inputRender={
+                      <ListInputRender
+                        t={t}
+                        useExplanation={hasAnswerFeedback}
+                        withImages={hasImageAnswers}
+                        onCancel={() => setShowInput(false)}
+                        scrollRef={scrollRef}
+                        responsesSaved={field.value}
+                      />
+                    }
+                    listRender={
+                      <ListItem
+                        labels={{ cancel: t('cancel'), saveChanges: t('saveChanges') }}
+                        itemContainerRender={({ children }) => (
+                          <Stack alignItems="center" fullWidth>
+                            {children}
+                          </Stack>
+                        )}
+                        valueKey=""
+                        itemValueRender={
+                          <ListItemRender
+                            t={t}
+                            canSetHelp={canSetHelp}
+                            useExplanation={hasAnswerFeedback}
+                            withImages={hasImageAnswers}
+                            toggleHideOnHelp={toggleHideOnHelp}
+                            changeCorrectResponse={changeCorrectResponse}
+                            showEye={field?.value?.length > 2 && hasHelp}
+                          />
+                        }
+                      />
+                    }
+                    hideAddButton
+                    canAdd
+                  />
+                </InputWrapper>
+                {!showInput ? (
+                  <Button
+                    variant="link"
+                    onClick={() => setShowInput(true)}
+                    leftIcon={<AddCircleIcon />}
+                  >
+                    {t('addResponse')}
+                  </Button>
+                ) : null}
+              </Box>
+            );
+          }}
+        />
+      </ContextContainer>
+      <ContextContainer>
         <Controller
           control={form.control}
           name="hasHelp"
@@ -145,97 +225,11 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
               }}
               checked={field.value}
               label={t('hasCluesLabelWithMinResponses')}
+              description={t('cluesSwitchDescription')}
             />
           )}
         />
       </ContextContainer>
-      <Text color="primary" strong>
-        {t('responsesDescription')}
-      </Text>
-      <Controller
-        control={form.control}
-        name="choices"
-        rules={{
-          required: t('typeRequired'),
-          validate: (choicesValue) => validateChoices(choicesValue),
-        }}
-        render={({ field }) => {
-          let canSetHelp = true;
-
-          const listValues = [];
-          forEach(field.value, (item) => {
-            if (item.hideOnHelp) canSetHelp = false;
-            listValues.push({
-              value: {
-                ...item,
-              },
-            });
-          });
-
-          return (
-            <Box sx={monoResponseAnwsersMargin}>
-              <InputWrapper error={form.formState.errors.choices?.message || null}>
-                <ListInput
-                  {...field}
-                  value={listValues}
-                  onChange={(e) => {
-                    const cleanValues = e.map(({ value }) => value);
-                    field.onChange(cleanValues);
-                    setShowInput(false);
-                  }}
-                  hideInput={!showInput}
-                  withItemBorder
-                  withInputBorder
-                  error={form.formState.errors.properties?.responses}
-                  inputRender={
-                    <ListInputRender
-                      t={t}
-                      useExplanation={hasAnswerFeedback}
-                      withImages={hasImageAnswers}
-                      onCancel={() => setShowInput(false)}
-                      scrollRef={scrollRef}
-                      responsesSaved={field.value}
-                    />
-                  }
-                  listRender={
-                    <ListItem
-                      labels={{ cancel: t('cancel'), saveChanges: t('saveChanges') }}
-                      itemContainerRender={({ children }) => (
-                        <Stack alignItems="center" fullWidth>
-                          {children}
-                        </Stack>
-                      )}
-                      valueKey=""
-                      itemValueRender={
-                        <ListItemRender
-                          t={t}
-                          canSetHelp={canSetHelp}
-                          useExplanation={hasAnswerFeedback}
-                          withImages={hasImageAnswers}
-                          toggleHideOnHelp={toggleHideOnHelp}
-                          changeCorrectResponse={changeCorrectResponse}
-                          showEye={field?.value?.length > 2 && hasHelp}
-                        />
-                      }
-                    />
-                  }
-                  hideAddButton
-                  canAdd
-                />
-              </InputWrapper>
-              {!showInput ? (
-                <Button
-                  variant="link"
-                  onClick={() => setShowInput(true)}
-                  leftIcon={<AddCircleIcon />}
-                >
-                  {t('addResponse')}
-                </Button>
-              ) : null}
-            </Box>
-          );
-        }}
-      />
     </ContextContainer>
   );
 }

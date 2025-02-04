@@ -1,14 +1,16 @@
 /* eslint-disable no-param-reassign */
 const { keyBy, isEmpty, flatten, forEach } = require('lodash');
+
 const { getByAssets: getPins } = require('../../pins/getByAssets');
+
 const { buildQuery } = require('./buildQuery');
-const { getUserPermissionsByAsset } = require('./getUserPermissionsByAsset');
-const { getAssetsWithPermissions } = require('./getAssetsWithPermissions');
-const { getAssetsWithSubjects } = require('./getAssetsWithSubjects');
-const { getAssetsWithFiles } = require('./getAssetsWithFiles');
-const { getAssetsTags } = require('./getAssetsTags');
 const { getAssetsCategoryData } = require('./getAssetsCategoryData');
 const { getAssetsProgramsAggregatedById } = require('./getAssetsProgramsAggregatedById');
+const { getAssetsTags } = require('./getAssetsTags');
+const { getAssetsWithFiles } = require('./getAssetsWithFiles');
+const { getAssetsWithPermissions } = require('./getAssetsWithPermissions');
+const { getAssetsWithSubjects } = require('./getAssetsWithSubjects');
+const { getUserPermissionsByAsset } = require('./getUserPermissionsByAsset');
 const { processFinalAsset } = require('./processFinalAsset');
 
 /**
@@ -47,10 +49,11 @@ async function getByIds({
   // ··········································
   // PERMISSIONS & PERSONS
 
-  const [permissionsByAsset, canEditPermissions] = await getUserPermissionsByAsset({
-    assets,
-    ctx,
-  });
+  const [permissionsByAsset, canEditPermissions, canAdminPermissions] =
+    await getUserPermissionsByAsset({
+      assets,
+      ctx,
+    });
 
   if (checkPermissions && ctx.meta.userSession) {
     assets = await getAssetsWithPermissions({
@@ -116,6 +119,7 @@ async function getByIds({
       programsById,
       permissionsByAsset,
       canEditPermissions,
+      canAdminPermissions,
       withCategory,
       categories,
       assetCategoryData,

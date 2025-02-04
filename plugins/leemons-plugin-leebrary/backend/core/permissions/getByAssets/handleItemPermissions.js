@@ -9,7 +9,12 @@
  * @returns {Promise<Array>} An array containing the responses for each permission type for each user agent.
  */
 async function handleItemPermissions({ assetsIds, userAgents, ctx }) {
-  const permissionTypes = ['asset.can-view', 'asset.can-edit', 'asset.can-assign'];
+  const permissionTypes = [
+    'asset.can-view',
+    'asset.can-edit',
+    'asset.can-assign',
+    'asset.can-administer',
+  ];
 
   return Promise.all(
     permissionTypes.map((type) =>

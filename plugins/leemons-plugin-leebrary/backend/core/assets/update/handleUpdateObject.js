@@ -1,7 +1,8 @@
 const { pick } = require('lodash');
 
-const { getById: getCategory } = require('../../categories/getById');
 const { CATEGORIES } = require('../../../config/constants');
+const { getById: getCategory } = require('../../categories/getById');
+
 const { getDiff } = require('./getDiff');
 
 /**
@@ -40,6 +41,7 @@ async function handleUpdateObject({ currentAsset, assetData, ctx }) {
   const newData = pick(assetData, compareProps);
   newData.file = assetData.file || null;
   newData.cover = assetData.cover || assetData.coverFile || null;
+  newData.subjects = assetData.subjects || [];
 
   // EN: Diff the current values with the new ones
   // ES: Compara los valores actuales con los nuevos

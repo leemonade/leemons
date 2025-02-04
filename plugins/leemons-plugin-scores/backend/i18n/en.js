@@ -23,6 +23,7 @@ module.exports = {
         placeholder: 'Evaluation period...',
         custom: 'Custom period',
         final: 'Final evaluation',
+        fullCourse: 'Full course',
       },
       startDate: {
         label: 'Start date',
@@ -342,6 +343,7 @@ module.exports = {
     averages: 'Average',
     roles: 'Type',
     modules: 'Modules',
+    activities: 'Activities',
   },
   weightingDrawer: {
     rules: 'Rules',
@@ -351,6 +353,7 @@ module.exports = {
       applySameValue: 'Apply same value',
       modules: 'Modules',
       roles: 'Types',
+      activities: 'Activities',
       weight: 'Percentage',
       total: 'Total',
     },
@@ -388,16 +391,24 @@ module.exports = {
       search: 'Search {type}...',
       showNonEvaluable: 'See non-evaluable',
       goToWeighting: 'Weights',
+      add: 'Add',
+      manualActivity: 'Graded activity',
+      manualActivityCreated: 'Graded activity created successfully',
+      manualActivityError: 'Error creating graded activity',
+      retake: 'Second call',
     },
     scoresTable: {
       students: 'Students',
       noActivity: 'NS',
       submitted: 'Submitted',
       avgScore: 'Average score',
-      calculated: 'Calculated',
-      custom: 'Teacher',
+      calculated: 'CALC.',
+      custom: 'FINAL',
+      retake: 'CALL',
+      attendance: 'Attendance',
     },
 
+    retake: 'Call',
     newModule:
       'New modules have been added to this class that are not weighted. To calculate them correctly, access your weighting rules.',
     updatedSuccess: "Updated {{student}}'s score in {{activity}} to {{score}}",
@@ -444,6 +455,43 @@ module.exports = {
         title: 'No results',
         description: 'We have not found results for your search.',
       },
+    },
+    retake: 'CALL',
+  },
+  manualActivityDrawer: {
+    title: 'New graded activity',
+    config: 'Configuration',
+    date: { label: 'Date', error: 'The date is required' },
+    name: { label: 'Name', error: 'The name is required' },
+    description: { label: 'Description' },
+    cancel: 'Cancel',
+    save: 'Create activity',
+
+    weightType: {
+      title: 'Weighting',
+      weightingBy: 'You are weighting by',
+      averages: 'this activity will count as part of the average',
+      modules: 'this activity will appear as a module',
+      roles: 'in which type would you like to add this activity?',
+      activities: 'in which type would you like to add this activity?',
+    },
+  },
+  pickRetakeTable: {
+    title: 'Close evaluation: Final grades',
+    description: "Select the evaluation call for each student's final grade",
+    cancel: 'Cancel',
+    confirm: 'Close evaluation',
+
+    table: {
+      students: 'Students',
+      retake: 'CALL',
+      final: 'FINAL',
+    },
+  },
+  mutations: {
+    removeManualActivity: {
+      success: 'Activity removed successfully',
+      error: 'Error removing activity',
     },
   },
 };

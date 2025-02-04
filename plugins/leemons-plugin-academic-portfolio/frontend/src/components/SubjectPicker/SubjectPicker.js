@@ -190,7 +190,6 @@ export function SubjectPicker({
                     }
                     return field.onChange(program);
                   }}
-                  cleanOnMissingValue
                   label={localizations?.program}
                   placeholder={localizations?.placeholder}
                   data={sortedPrograms}

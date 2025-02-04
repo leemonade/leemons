@@ -1,4 +1,4 @@
-const { ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK } = require('./contants');
+const { ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK, EVENT_TYPES } = require('./contants');
 const { ctxCall } = require('./ctxCall');
 const { customCall } = require('./customCall');
 const {
@@ -18,4 +18,5 @@ module.exports = {
   customCall,
   ctxCall,
   ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK,
+  EVENT_TYPES,
 };

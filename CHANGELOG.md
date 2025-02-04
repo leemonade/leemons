@@ -1,5 +1,86 @@
 # Changelog
 
+## [1.22.0](https://github.com/leemonade/leemons/compare/1.21.0...1.22.0) (2025-01-28)
+
+
+### Features
+
+* **assignables:** Add caching mechanism ([2262b19](https://github.com/leemonade/leemons/commit/2262b1990300b6e33f0beb865bf28fccf1029051)), closes [#709](https://github.com/leemonade/leemons/issues/709)
+* **common:** Enhance tool management ([2b7e0ef](https://github.com/leemonade/leemons/commit/2b7e0ef4085c69edf184e62f611e04b952992ae2)), closes [#707](https://github.com/leemonade/leemons/issues/707)
+* **scores:** Add weighting by activities ([f9799e7](https://github.com/leemonade/leemons/commit/f9799e7587a568eca8d3724d42916bbfa2feaedb)), closes [#714](https://github.com/leemonade/leemons/issues/714)
+* **scores:** Implement retake management and evaluation flow ([0fd1d0d](https://github.com/leemonade/leemons/commit/0fd1d0dca292ca8ad202523ebbe8d89c811f9a50)), closes [#715](https://github.com/leemonade/leemons/issues/715)
+* **scores:** Implement retakes functionality ([e30bce2](https://github.com/leemonade/leemons/commit/e30bce22227ec2e569bf526e071ac22f15574e87)), closes [#705](https://github.com/leemonade/leemons/issues/705)
+* **scripts:** Clean all collections inDB but the ones with deploymentID arg ([c87d506](https://github.com/leemonade/leemons/commit/c87d50656989503d7ba337e2b873e5b6e9a026da))
+* **transversal:** Enhance content developer management ([f2b2725](https://github.com/leemonade/leemons/commit/f2b272565d9e942e4cb7386e8b15c312025a2a51)), closes [#713](https://github.com/leemonade/leemons/issues/713)
+
+
+### Bug Fixes
+
+* **academic-portfolio:** Optimize addTeacher action ([e226477](https://github.com/leemonade/leemons/commit/e226477d9fcbf57b8da5403f321ab60841384c7f)), closes [#704](https://github.com/leemonade/leemons/issues/704)
+* **menu-builder:** Add basic permission check for public menu items ([7170255](https://github.com/leemonade/leemons/commit/71702555cc8fdd9c039ecd7b2169077b1e64341c)), closes [#710](https://github.com/leemonade/leemons/issues/710)
+* **menu-permissions:** Update permission handling logic ([55732dd](https://github.com/leemonade/leemons/commit/55732dd00cc3f010da6676a5b7be7e831b98bb49)), closes [#708](https://github.com/leemonade/leemons/issues/708)
+
+## [1.21.0](https://github.com/leemonade/leemons/compare/1.20.0...1.21.0) (2024-12-20)
+
+
+### Features
+
+* **academic-portfolio:** Enhance class update process ([8750fcb](https://github.com/leemonade/leemons/commit/8750fcbdbf0c20f711412e32dd20b625d9893a47)), closes [#700](https://github.com/leemonade/leemons/issues/700)
+
+
+### Bug Fixes
+
+* **academic-portfolio:** Update class handling to include classWithoutGroupId ([6b46e6f](https://github.com/leemonade/leemons/commit/6b46e6f4e70e24e4150075e7cc280f40c25879c3)), closes [#703](https://github.com/leemonade/leemons/issues/703)
+* **calendar:** Update button style in CalendarEventModal ([a9c8f30](https://github.com/leemonade/leemons/commit/a9c8f30f0d6d44a96e2fef922a1080115e0c1d19)), closes [#699](https://github.com/leemonade/leemons/issues/699)
+* **menu-builder:** Optimize permission query ([36a2385](https://github.com/leemonade/leemons/commit/36a2385eb10392724d838083880ba0257e9c686f)), closes [#702](https://github.com/leemonade/leemons/issues/702)
+
+## [1.20.0](https://github.com/leemonade/leemons/compare/1.19.0...1.20.0) (2024-12-18)
+
+
+### Features
+
+* **qbanks:** Add GIFT import and widget support ([8ead49f](https://github.com/leemonade/leemons/commit/8ead49f820a2834b331ea1631fe4978ec634aa20)), closes [#696](https://github.com/leemonade/leemons/issues/696)
+* **scores:** Implement manual activities with grading functionality ([#695](https://github.com/leemonade/leemons/issues/695)) ([a71a644](https://github.com/leemonade/leemons/commit/a71a6447234d5aacf8ba5d4cb095a5bb8e359b62))
+* **tests:** Enhance student results visualization ([1c1cfe0](https://github.com/leemonade/leemons/commit/1c1cfe0df92fa7446f55c37cbea1f0ae295717ca)), closes [#698](https://github.com/leemonade/leemons/issues/698)
+
+
+### Bug Fixes
+
+* **academic-portfolio:** Fix classIds iteration and contacts removal ([481386a](https://github.com/leemonade/leemons/commit/481386a65bef06a447cbe29c5b8a0f84185867d1)), closes [#697](https://github.com/leemonade/leemons/issues/697)
+
+## [1.19.0](https://github.com/leemonade/leemons/compare/1.18.0...1.19.0) (2024-12-09)
+
+
+### Features
+
+* **leemons-react:** Integrate Rspack bundler ([8304c89](https://github.com/leemonade/leemons/commit/8304c89a48457fe42ae97659383ab49e3bc002f2)), closes [#691](https://github.com/leemonade/leemons/issues/691)
+* **scores:** Add full course evaluation and improve scores management ([7b03b6d](https://github.com/leemonade/leemons/commit/7b03b6de4c2cf43f17a2656f72a8401ce6faba3e)), closes [#687](https://github.com/leemonade/leemons/issues/687)
+* **tasks:** Add error alert for missing submission ([76bef87](https://github.com/leemonade/leemons/commit/76bef8708121e14c3d8fb6c96d4b5fa76b156cba)), closes [#683](https://github.com/leemonade/leemons/issues/683)
+
+
+### Bug Fixes
+
+* Remove localhost API_URL as it's reused by dev and prod builds ([c05e9be](https://github.com/leemonade/leemons/commit/c05e9be26f4b5d6b5e483c86967bae51cd3a97b4))
+* **tests:** Solve width issue on test execution ([214e2e0](https://github.com/leemonade/leemons/commit/214e2e0b9f334ddfc4a3394666c79ec79df756f4)), closes [#690](https://github.com/leemonade/leemons/issues/690)
+
+## [1.18.0](https://github.com/leemonade/leemons/compare/1.17.0...1.18.0) (2024-12-03)
+
+
+### Features
+
+* **academic-portfolio:** Restore associate teacher functionality ([b3784ae](https://github.com/leemonade/leemons/commit/b3784ae0d354f4ec36697e49e7cfb3bcf84b0c4e)), closes [#682](https://github.com/leemonade/leemons/issues/682)
+* **tests:** Transform Question Image into Stem Multimedia resource ([1241397](https://github.com/leemonade/leemons/commit/124139709b279ed33fe35e9de123fb733bc1bdc0)), closes [#657](https://github.com/leemonade/leemons/issues/657)
+
+
+### Bug Fixes
+
+* **academic-portfolio:** Fix student initials in StudentsTable ([e270b97](https://github.com/leemonade/leemons/commit/e270b97ba4d72222c8c76a9464862618c0d1e5af)), closes [#674](https://github.com/leemonade/leemons/issues/674)
+* **assignables:** Pass correct arguments to addTeachersToAssignableInstance ([60f4d75](https://github.com/leemonade/leemons/commit/60f4d75cb76f61c72444231bfc8b9dd9e3b93530)), closes [#685](https://github.com/leemonade/leemons/issues/685)
+* **calendar:** Update task label to activity in DayWeek panel ([7cc713d](https://github.com/leemonade/leemons/commit/7cc713d8a7b19ea2f2e4287c03dbf757c7b46d73)), closes [#673](https://github.com/leemonade/leemons/issues/673)
+* **dashboard:** Improve WelcomeCard and user personalization ([935c023](https://github.com/leemonade/leemons/commit/935c0238967f9b5734e1a5f0d619bcf5c8bb4539)), closes [#675](https://github.com/leemonade/leemons/issues/675)
+* **library:** Improve tag display and class data handling ([d3ea86c](https://github.com/leemonade/leemons/commit/d3ea86c966600419a7b9f0cb732bbfbf258378c0)), closes [#677](https://github.com/leemonade/leemons/issues/677)
+* **tests:** Extend execution layout content to footer ([33a6f53](https://github.com/leemonade/leemons/commit/33a6f53dbf24b1c2b58e46e4edbc17adaaac1fc5)), closes [#680](https://github.com/leemonade/leemons/issues/680)
+
 ## [1.17.0](https://github.com/leemonade/leemons/compare/1.16.0...1.17.0) (2024-11-28)
 
 

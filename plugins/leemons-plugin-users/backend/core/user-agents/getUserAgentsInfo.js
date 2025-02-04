@@ -62,7 +62,7 @@ function prepareUserAgents({
  * @param {boolean} [params.withCenter=false] - Indicates whether center information should be included.
  * @param {string[]} [params.userColumns=['id', 'email', 'name', 'surnames', 'secondSurname', 'birthdate', 'avatar', 'gender', 'createdAt']] - An array of user columns to select.
  * @param {import('@leemons/deployment-manager').Context} params.ctx - The context including the database transaction.
- * @returns {UserAgent[]} - An array of objects representing user agents with detailed information.
+ * @returns {Promise<UserAgent[]>} - An array of objects representing user agents with detailed information.
  * */
 async function getUserAgentsInfo({
   userAgentIds,

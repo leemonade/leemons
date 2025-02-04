@@ -1,5 +1,5 @@
-import React, { forwardRef, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import { forwardRef, useEffect, useState } from 'react';
+
 import {
   Box,
   Text,
@@ -10,8 +10,10 @@ import {
 } from '@bubbles-ui/components';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
 import { isFunction, isNil } from 'lodash';
+import PropTypes from 'prop-types';
+
+import { SCORES_CELL_DEFAULT_PROPS } from './ScoreCell.constants';
 import { ScoreCellStyles } from './ScoreCell.styles';
-import { SCORES_CELL_DEFAULT_PROPS, SCORES_CELL_PROP_TYPES } from './ScoreCell.constants';
 
 const SelectScore = forwardRef(({ value, onChange, onClose, grades }, ref) => {
   const isLetterTypes = grades.some((grade) => grade.letter);
@@ -25,6 +27,7 @@ const SelectScore = forwardRef(({ value, onChange, onClose, grades }, ref) => {
           onChange={onChange}
           onDropdownClose={onClose}
           style={{ flex: 1 }}
+          autoFocus
           ref={ref}
         />
       </>
@@ -39,6 +42,7 @@ const SelectScore = forwardRef(({ value, onChange, onClose, grades }, ref) => {
       onBlur={onClose}
       min={grades[0].number}
       max={grades[grades.length - 1].number}
+      autoFocus
       ref={ref}
     />
   );
@@ -60,15 +64,21 @@ const ScoreCell = ({
   isSubmitted = true,
   isClosed,
   grades,
+  usePercentage,
+  source,
   row,
   column,
   setValue,
   onDataChange,
   onOpen,
   isCustom,
+  retake,
+  labels,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value ?? grades[0].number);
+
+  const isAssignable = source === 'assignables';
 
   useEffect(() => {
     if (value !== editValue) {
@@ -83,17 +93,27 @@ const ScoreCell = ({
   ]);
 
   const renderValue = (_value) => {
-    if (!_value && !isSubmitted && isClosed)
-      return `${grades[0].letter ?? grades[0].number} (${noActivityLabel})`;
+    const hasGrade = _value !== undefined && _value !== null;
 
-    if (!_value && isSubmitted)
+    // Use minimum grade if no grade and the activity is not submitted and is closed
+    if (!hasGrade && !isSubmitted && isClosed) {
+      return `${grades[0].letter ?? grades[0].number}${
+        usePercentage ? '%' : ''
+      } (${noActivityLabel})`;
+    }
+
+    // Use submitted label if the activity is submitted and not graded
+    if (!hasGrade && isSubmitted && isAssignable) {
       return (
         <Text color="success" role="productive" style={{ flex: 1 }}>
           {submittedLabel}
         </Text>
       );
+    }
 
-    if (isNil(_value)) return '-';
+    if (!hasGrade) {
+      return '-';
+    }
 
     let render = _value;
 
@@ -102,10 +122,12 @@ const ScoreCell = ({
     }
 
     if (!isSubmitted) {
-      return `${render} (${noActivityLabel})`;
+      return `${render}${usePercentage ? '%' : ''} (${noActivityLabel})`;
     }
 
-    return render;
+    const retakeRender = !isNil(retake) ? ` (${labels.retake} ${retake + 1})` : '';
+
+    return `${render}${usePercentage ? '%' : ''}${retakeRender}`;
   };
 
   const onClickHandler = () => {
@@ -157,23 +179,25 @@ const ScoreCell = ({
 
     return (
       <Box className={classes.inputContainer} ref={setInputContainer} onClick={onClickHandler}>
-        {!!allowChange && !!isEditing && (
-          <SelectScore
-            value={editValue}
-            grades={grades}
-            onChange={setEditValue}
-            onClose={onCloseThenChangeHandler}
-            style={{ flex: 1 }}
-            ref={selectRef}
-            isCustom={isCustom}
-          />
-        )}
-        {(!isEditing || !allowChange) && (
-          <Text color={isSubmitted ? 'primary' : 'error'} role="productive" style={{ flex: 1 }}>
-            {renderValue(value)}
-          </Text>
-        )}
-        {isEditing && !isCustom && (
+        <Box className={classes.score}>
+          {!!allowChange && !!isEditing && (
+            <SelectScore
+              value={editValue}
+              grades={grades}
+              onChange={setEditValue}
+              onClose={onCloseThenChangeHandler}
+              style={{ flex: 1 }}
+              ref={selectRef}
+              isCustom={isCustom}
+            />
+          )}
+          {(!isEditing || !allowChange) && (
+            <Text color={isSubmitted ? 'primary' : 'error'} role="productive" style={{ flex: 1 }}>
+              {renderValue(value)}
+            </Text>
+          )}
+        </Box>
+        {isEditing && !isCustom && isAssignable && (
           <Box className={classes.expandIcon}>
             <IconButton
               variant="transparent"

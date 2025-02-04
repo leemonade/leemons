@@ -1,12 +1,18 @@
 import { useMemo } from 'react';
 
-import { Box } from '@bubbles-ui/components';
+import { Stack } from '@bubbles-ui/components';
 import { AssetPlayerWrapperCCreator } from '@leebrary/components/LibraryTool/AssetPlayerWrapperCCreator';
 import { prepareAsset } from '@leebrary/helpers/prepareAsset';
 import useAsset from '@leebrary/request/hooks/queries/useAsset';
 import PropTypes from 'prop-types';
 
-export default function StemResource({ asset, ...props }) {
+const PLAYER_WIDTHS = {
+  image: 406,
+  audio: 812,
+  video: 812,
+};
+
+export default function StemResource({ asset, playerWidth }) {
   const { data: resourceAsset } = useAsset({
     id: asset,
     showPublic: true,
@@ -18,14 +24,17 @@ export default function StemResource({ asset, ...props }) {
     if (asset?.id) return prepareAsset(asset);
   }, [resourceAsset, asset]);
 
+  const finalPlayerWidth = playerWidth || PLAYER_WIDTHS[preparedResource?.fileType];
+
   if (!preparedResource) return null;
   return (
-    <Box className={props.styles.questionImageContainer}>
+    <Stack fullWidth justifyContent="center">
       <AssetPlayerWrapperCCreator
         asset={preparedResource}
         useAudioCard={preparedResource?.fileType === 'audio'}
+        width={finalPlayerWidth}
       />
-    </Box>
+    </Stack>
   );
 }
 
@@ -33,4 +42,5 @@ StemResource.propTypes = {
   assetId: PropTypes.string,
   asset: PropTypes.any,
   styles: PropTypes.any,
+  playerWidth: PropTypes.number,
 };

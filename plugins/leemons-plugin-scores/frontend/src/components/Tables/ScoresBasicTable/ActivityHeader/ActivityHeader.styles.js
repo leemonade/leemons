@@ -1,14 +1,17 @@
 import { createStyles } from '@bubbles-ui/components';
 
 export const ActivityHeaderStyles = createStyles(
-  (theme, { hovered, isExpandable, isExpanded, position }) => {
+  (theme, { hovered, isExpandable, isExpanded, position, isManualActivity }, getRef) => {
     const isFirst = position === 'first';
     const isLast = position === 'last';
     const isBetween = position === 'between';
 
+    const globalTheme = theme.other.global;
+
     return {
       root: {
         width: '100%',
+        position: 'relative',
         display: 'flex',
         justifyContent: isExpandable && (hovered || isExpanded) ? 'space-between' : 'center',
         backgroundColor: isExpanded && theme.colors.interactive01v1,
@@ -16,10 +19,11 @@ export const ActivityHeaderStyles = createStyles(
         borderRightColor: (isFirst || isBetween) && theme.colors.interactive01v1,
         borderLeftColor: (isLast || isBetween) && theme.colors.interactive01v1,
         '&:hover': {
-          border: `1px solid ${theme.colors.interactive01d}`,
-          borderRightColor: (isFirst || isBetween) && theme.colors.interactive01v1,
-          borderLeftColor: (isLast || isBetween) && theme.colors.interactive01v1,
-          backgroundColor: theme.colors.interactive01v1,
+          backgroundColor: isManualActivity && globalTheme.background.color.primary.subtle,
+          border: isManualActivity && `1px solid ${globalTheme.hover.default.color}`,
+          [`& .${getRef('removeIcon')}`]: {
+            visibility: 'visible'
+          }
         },
       },
       header: {
@@ -58,6 +62,14 @@ export const ActivityHeaderStyles = createStyles(
       starIcon: {
         color: theme.colors.text04,
       },
+      removeIcon: {
+        ref: getRef('removeIcon'),
+        visibility: 'hidden',
+        position: 'absolute',
+        top: 4,
+        right: 4,
+        zIndex: 1
+      }
     };
   }
 );

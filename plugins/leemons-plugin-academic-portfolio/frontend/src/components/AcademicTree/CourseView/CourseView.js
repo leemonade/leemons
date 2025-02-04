@@ -19,14 +19,12 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SelectUserAgent } from '@users/components';
 import PropTypes from 'prop-types';
 
-
 import { CourseViewStyles } from './CourseView.styles';
 
 import prefixPN from '@academic-portfolio/helpers/prefixPN';
 import { useCourseDetail } from '@academic-portfolio/hooks';
 import useUpdateCourse from '@academic-portfolio/hooks/mutations/useMutateCourse';
 import { getProfilesRequest } from '@academic-portfolio/request';
-
 
 const CourseView = ({
   program,
@@ -42,7 +40,7 @@ const CourseView = ({
 
   const { mutate: mutateCourse, isLoading: mutateCourseLoading } = useUpdateCourse();
   const { data: courseDetail, isLoading: courseDetailLoading } = useCourseDetail(
-    { groupId: courseTreeNode?.itemId },
+    { courseId: courseTreeNode?.itemId },
     { enabled: !!courseTreeNode?.itemId }
   );
   const stackRef = useRef();

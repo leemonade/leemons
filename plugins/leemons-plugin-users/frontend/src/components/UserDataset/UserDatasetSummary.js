@@ -1,10 +1,13 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+
 import { compact } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { UserDatasetDrawer } from './UserDatasetDrawer';
 import { UserDatasets } from './UserDatasets';
 
 function UserDatasetSummary({
+  userId,
   userAgentIds,
   openEditDrawer,
   preferEditMode,
@@ -39,6 +42,7 @@ function UserDatasetSummary({
     <>
       <UserDatasets
         ref={userDatasetsRef}
+        userId={userId}
         userAgentIds={userAgentIds}
         onEdit={handleOnOpen}
         onCanEdit={(val) => {
@@ -51,6 +55,7 @@ function UserDatasetSummary({
       />
       {canEdit && !preferEditMode && (
         <UserDatasetDrawer
+          userId={userId}
           userAgentIds={userAgentIds}
           isOpen={showEditDrawer}
           onClose={handleOnClose}
@@ -61,6 +66,7 @@ function UserDatasetSummary({
 }
 
 UserDatasetSummary.propTypes = {
+  userId: PropTypes.string,
   userAgentIds: PropTypes.array,
   openEditDrawer: PropTypes.bool,
   preferEditMode: PropTypes.bool,

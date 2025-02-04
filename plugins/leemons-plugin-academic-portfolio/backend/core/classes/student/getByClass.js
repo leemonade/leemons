@@ -1,7 +1,10 @@
 const _ = require('lodash');
 
 async function getByClass({ class: classe, type, returnIds, ctx }) {
-  const classes = _.isArray(classe) ? classe : [classe];
+  const classes = _.compact([classe].flat());
+
+  if (!classes.length) return [];
+
   const query = {
     class: _.map(classes, (c) => (_.isString(c) ? c : c.id)),
   };

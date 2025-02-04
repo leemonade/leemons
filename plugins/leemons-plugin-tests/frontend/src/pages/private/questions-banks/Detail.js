@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useEffect, useCallback, useMemo, useRef, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router-dom';
 
 import {
@@ -9,6 +9,7 @@ import {
   TotalLayoutHeader,
   VerticalStepperContainer,
 } from '@bubbles-ui/components';
+import { useSearchParams } from '@common/useSearchParams';
 import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import { useLayout } from '@layout/context';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -17,7 +18,7 @@ import { omit } from 'lodash';
 import { getQuestionBankRequest, saveQuestionBankRequest } from '../../../request';
 
 import DetailBasic from './components/DetailBasic';
-import DetailQuestions from './components/DetailQuestions';
+import { DetailQuestionsRouter } from './components/DetailQuestionsRouter';
 
 import { QuestionBankIcon } from '@tests/components/Icons/QuestionBankIcon';
 import prefixPN from '@tests/helpers/prefixPN';
@@ -25,17 +26,11 @@ import prefixPN from '@tests/helpers/prefixPN';
 export default function Detail() {
   const [t] = useTranslateLoader(prefixPN('questionsBanksDetail'));
   const [isLoading, setIsLoading] = useState(false);
-  const [currentStep, setCurrentStep] = useState(0);
+  const searchParams = useSearchParams();
+  const currentStep = parseInt(searchParams.get('step') ?? 0);
   const [savingAs, setSavingAs] = useState(null);
 
   const { layoutState, setLayoutState } = useLayout();
-
-  useEffect(() => {
-    setLayoutState({
-      ...layoutState,
-      hasFooter: true,
-    });
-  }, []);
 
   const scrollRef = useRef();
   const history = useHistory();
@@ -55,16 +50,26 @@ export default function Detail() {
     },
   });
 
+  useEffect(() => {
+    setLayoutState({
+      ...layoutState,
+      hasFooter: true,
+    });
+  }, []);
+
   // FUNCTIONS ········································································ |
 
-  const getRequestBody = () => {
+  const getRequestBody = (type) => {
     const formValues = form.getValues();
+    if (type === 'draft') {
+      formValues.questions = formValues.questions ?? [];
+    }
     return omit(formValues, 'subjectsRaw');
   };
 
   async function saveAsDraft() {
     setSavingAs('draft');
-    const body = getRequestBody();
+    const body = getRequestBody('draft');
     try {
       const { questionBank } = await saveQuestionBankRequest({ ...body, published: false });
       addSuccessAlert(t('savedAsDraft'));
@@ -94,10 +99,19 @@ export default function Detail() {
     }
   }
 
+  const setCurrentStep = useCallback(
+    (step) => {
+      searchParams.set('step', step);
+      history.push(`${window.location.pathname}?${searchParams.toString()}`);
+    },
+    [searchParams, history]
+  );
+
   // EFFECTS ········································································ |
 
   useEffect(() => {
     setIsLoading(true);
+
     if (params.id !== 'new') {
       getQuestionBankRequest(params.id)
         .then(
@@ -129,7 +143,7 @@ export default function Detail() {
     } else {
       setIsLoading(false);
     }
-  }, [params, form]);
+  }, [params.id]);
 
   if (isLoading) return <LoadingOverlay visible />;
 
@@ -146,44 +160,45 @@ export default function Detail() {
         />
       }
     >
-      <VerticalStepperContainer
-        scrollRef={scrollRef}
-        currentStep={currentStep}
-        data={[
-          { label: t('basic'), status: 'OK' },
-          { label: t('questions'), status: 'OK' },
-        ]}
-        onChangeActiveIndex={setCurrentStep}
-      >
-        {currentStep === 0 && (
-          <DetailBasic
-            t={t}
-            form={form}
-            savingAs={savingAs}
-            stepName={t('basic')}
-            scrollRef={scrollRef}
-            advancedConfig={{
-              alwaysOpen: true,
-              program: { show: true, required: false },
-              subjects: { show: true, required: true, showLevel: false, maxOne: true },
-            }}
-            onNext={() => setCurrentStep(1)}
-            onSaveDraft={saveAsDraft}
-          />
-        )}
-        {currentStep === 1 || currentStep === 2 ? (
-          <DetailQuestions
-            t={t}
-            form={form}
-            savingAs={savingAs}
-            scrollRef={scrollRef}
-            stepName={t('questions')}
-            onPrev={() => setCurrentStep(0)}
-            onPublish={saveAsPublished}
-            onSaveDraft={saveAsDraft}
-          />
-        ) : null}
-      </VerticalStepperContainer>
+      <FormProvider {...form}>
+        <VerticalStepperContainer
+          scrollRef={scrollRef}
+          currentStep={currentStep}
+          data={[
+            { label: t('basic'), status: 'OK' },
+            { label: t('questions'), status: 'OK' },
+          ]}
+          onChangeActiveIndex={setCurrentStep}
+        >
+          {currentStep === 0 && (
+            <DetailBasic
+              t={t}
+              form={form}
+              savingAs={savingAs}
+              stepName={t('basic')}
+              scrollRef={scrollRef}
+              advancedConfig={{
+                alwaysOpen: true,
+                program: { show: true, required: false },
+                subjects: { show: true, required: true, showLevel: false, maxOne: true },
+              }}
+              onNext={() => setCurrentStep(1)}
+              onSaveDraft={saveAsDraft}
+            />
+          )}
+          {currentStep === 1 || currentStep === 2 ? (
+            <DetailQuestionsRouter
+              t={t}
+              form={form}
+              savingAs={savingAs}
+              scrollRef={scrollRef}
+              onPrev={() => setCurrentStep(0)}
+              onPublish={saveAsPublished}
+              onSaveDraft={saveAsDraft}
+            />
+          ) : null}
+        </VerticalStepperContainer>
+      </FormProvider>
     </TotalLayoutContainer>
   );
 }

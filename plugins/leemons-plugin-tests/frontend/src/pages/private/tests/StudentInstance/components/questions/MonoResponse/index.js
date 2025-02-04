@@ -1,49 +1,70 @@
-/* eslint-disable no-nested-ternary */
+import { useMemo } from 'react';
 
 import { Box, Stack } from '@bubbles-ui/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PropTypes from 'prop-types';
 
-import QuestionNoteClues from '../../QuestionNoteClues';
-import QuestionTitle from '../../QuestionTitle';
+import QuestionTitleComponent from '../../QuestionTitleComponent';
 import StemResource from '../../StemResource';
-import UnansweredQuestionWarning from '../../UnansweredQuestionWarning';
 
+import AnswerMode from './AnswerMode';
 import Responses from './Responses';
+import ViewModeResponses from './ViewModeResponses';
+
+import prefixPN from '@tests/helpers/prefixPN';
+import AnswerFeed from '@tests/pages/private/tests/components/ResponseDetail/AnswerFeed';
 
 export default function Index(props) {
+  const [t] = useTranslateLoader(prefixPN('testResult.responseDetail'));
   const { styles, store, question } = props;
 
-  let showNotAnsweredWarning = false;
-  if (store.viewMode) {
-    showNotAnsweredWarning = store.questionResponses[question.id].status === null;
-  }
+  const containerClassName = store.viewMode
+    ? styles.viewModeQuestionContainer
+    : styles.executionModeQuestionContainer;
 
-  return (
-    <>
-      {showNotAnsweredWarning ? <UnansweredQuestionWarning {...props} /> : null}
+  // Temporary. Waiting for the new designs
+  const ResolvedViewMode = useMemo(() => {
+    const showOldViewModeResponses = question?.hasAnswerFeedback || question?.hasImageAnswers;
 
-      <Box className={styles.questionCard}>
-        <QuestionTitle {...props} tableViewMode={store.viewMode} />
-        <QuestionNoteClues {...props} />
+    if (!showOldViewModeResponses) {
+      return <ViewModeResponses {...props} />;
+    }
+
+    return (
+      <>
+        <AnswerFeed questionStatus={store.questionResponses?.[question.id]?.status} t={t} />
         {!question.hasImageAnswer && question.stemResource ? (
-          <>
-            <Stack fullWidth spacing={4}>
-              <Box>
-                <StemResource {...props} asset={question.stemResource} />
-              </Box>
-              <Box>
-                <Responses {...props} />
-              </Box>
-            </Stack>
-          </>
+          <Stack fullWidth sx={{ marginBottom: 46 }} spacing={4}>
+            <Box>
+              <StemResource {...props} asset={question.stemResource} />
+            </Box>
+            <Box>
+              <Responses {...props} />
+            </Box>
+          </Stack>
         ) : (
-          <>
+          <Box sx={{ marginBottom: 72 }}>
             {question?.stemResource && <StemResource {...props} asset={question.stemResource} />}
             <Responses {...props} />
-          </>
+          </Box>
         )}
-      </Box>
-    </>
+      </>
+    );
+  }, [question, store?.questionResponses, props, t]);
+
+  return (
+    <Box className={containerClassName}>
+      <QuestionTitleComponent
+        question={question}
+        questionIndex={store.questions?.findIndex((q) => q.id === question?.id)}
+        questionResponse={store.questionResponses?.[question.id]}
+        viewMode={store.viewMode}
+        assignmentConfig={store.config}
+        questionsInfo={store.questionsInfo}
+      />
+
+      {!store.viewMode ? <AnswerMode {...props} /> : ResolvedViewMode}
+    </Box>
   );
 }
 

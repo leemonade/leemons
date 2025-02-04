@@ -1001,6 +1001,31 @@ module.exports = {
         '<strong>No se recomienda esta acción si ya existen contenidos o asignaciones asociadas a esta asignatura.</strong> <br/><br/> Al eliminar una asignatura se archivarán todos los grupos de clase asociados a ella y todas las actividades creadas o asignadas que usan esta asignatura, así como las evaluaciones relacionadas con ella. <br/><br/> También pueden producirse errores en la edición de actividades relacionadas.',
       removeClassDescription:
         '<strong>No se recomienda esta acción si ya existen contenidos o asignaciones asociadas a esta clase.</strong> <br/><br/> Al eliminar una clase se archivarán todas las actividades creadas o asignadas que usan esta clase, así como las evaluaciones relacionadas con ella. <br/><br/> También pueden producirse errores en la edición de actividades relacionadas.',
+      customPeriod: {
+        title: 'Fechas de la clase',
+        label: 'Tiene fechas distintas al periodo de la asignatura',
+        startDate: 'Fecha inicio',
+        endDate: 'Fecha fin',
+        info: {
+          currentPeriod: 'El periodo actual de la asignatura va desde el',
+          noPeriod: 'El periodo actual de la asignatura no está definido',
+        },
+      },
+    },
+    subject: {
+      customPeriod: {
+        title: 'Fechas de la asignatura',
+        label: 'Tiene fechas distintas al periodo académico',
+        startDate: 'Fecha inicio',
+        endDate: 'Fecha fin',
+        info: {
+          currentPeriod: 'El periodo académico actual va desde el',
+          noPeriod: 'El periodo académico actual no está definido',
+          childrenDifferentPeriods: 'Algunas clases de esta asignatura tienen sus propias fechas',
+        },
+        success: 'Fechas de la asignatura actualizadas con éxito',
+        error: 'Error actualizando fechas de la asignatura',
+      },
     },
   },
   selectSubjectsByTable: {
@@ -1130,6 +1155,28 @@ module.exports = {
       teacherEnrollmentDate: 'Profesor - Fecha de matriculación',
       teacherLastConnection: 'Profesor - Última conexión',
       studentLastConnection: 'Estudiante - Última conexión',
+    },
+  },
+  socketEvents: {
+    title: {
+      CLASS_UPDATE: 'Actualizando clase {className}',
+      ENROLLMENT_UPDATE: 'Actualizando matrícula en {className}',
+    },
+    message: {
+      PROCESSING: 'Procesando...',
+      CLASS_UPDATE_SUCCESS: 'Clase actualizada con éxito',
+      CLASS_UPDATE_ERROR: 'Error actualizando clase',
+      CLASS_UPDATE_SUBSTAGES: 'Procesando subetapas...',
+      CLASS_UPDATE_COURSES: 'Procesando cursos...',
+      CLASS_UPDATE_GROUPS: 'Procesando grupos...',
+      CLASS_UPDATE_TEACHERS:
+        'Procesando profesores... Esto puede tardar varios minutos. Puedes seguir navegando pero no recargues la página.',
+      CLASS_UPDATE_SCHEDULE: 'Procesando horario...',
+      ENROLLMENT_UPDATE_STUDENTS:
+        'Procesando estudiantes... Esto puede tardar varios minutos. Puedes seguir navegando pero no recargues la página.',
+      ENROLLMENT_UPDATE_COMMUNICA: 'Procesando salas de chat...',
+      ENROLLMENT_UPDATE_SUCCESS: 'Matrícula actualizada con éxito',
+      ENROLLMENT_UPDATE_ERROR: 'Error actualizando matrícula',
     },
   },
 };

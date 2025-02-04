@@ -7,6 +7,7 @@ import {
   ProgressBottomBar,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
+  Stack,
 } from '@bubbles-ui/components';
 import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
 import { forEach, isNumber } from 'lodash';
@@ -15,6 +16,7 @@ import PropTypes from 'prop-types';
 import QuestionValue from './QuestionValue';
 import Map from './questions/Map';
 import MonoResponse from './questions/MonoResponse';
+import OpenResponse from './questions/OpenResponse';
 import ShortResponse from './questions/ShortResponse';
 import TrueFalse from './questions/TrueFalse';
 
@@ -25,7 +27,7 @@ const getMonoResponseNextLabel = (currentResponse, t) => {
   return isNumber(currentResponse) ? t('nextButton') : t('skipButton');
 };
 
-const getShortResponseNextLabel = (currentResponse, t) => {
+const getShortAndOpenResponseNextLabel = (currentResponse, t) => {
   return currentResponse ? t('nextButton') : t('skipButton');
 };
 
@@ -39,9 +41,10 @@ const getMapNextLabel = (_, t, allSelectsUsed) => {
 
 const getNextLabelByQuestionType = {
   [QUESTION_TYPES.MONO_RESPONSE]: getMonoResponseNextLabel,
-  [QUESTION_TYPES.SHORT_RESPONSE]: getShortResponseNextLabel,
+  [QUESTION_TYPES.SHORT_RESPONSE]: getShortAndOpenResponseNextLabel,
   [QUESTION_TYPES.TRUE_FALSE]: getTrueFalseNextLabel,
   [QUESTION_TYPES.MAP]: getMapNextLabel,
+  [QUESTION_TYPES.OPEN_RESPONSE]: getShortAndOpenResponseNextLabel,
 };
 
 export default function Question(props) {
@@ -111,6 +114,9 @@ export default function Question(props) {
     if (props.question.type === QUESTION_TYPES.TRUE_FALSE) {
       return <TrueFalse {...props} isPreviewMode={previewMode} />;
     }
+    if (props.question.type === QUESTION_TYPES.OPEN_RESPONSE) {
+      return <OpenResponse {...props} isPreviewMode={previewMode} />;
+    }
     return null;
   }, [props, previewMode]);
 
@@ -119,7 +125,10 @@ export default function Question(props) {
       return false;
     }
 
-    if (props.question.type === QUESTION_TYPES.SHORT_RESPONSE) {
+    if (
+      props.question.type === QUESTION_TYPES.SHORT_RESPONSE ||
+      props.question.type === QUESTION_TYPES.OPEN_RESPONSE
+    ) {
       return !currentResponse;
     }
     if (props.question.type === QUESTION_TYPES.MONO_RESPONSE) {
@@ -131,6 +140,7 @@ export default function Question(props) {
     if (props.question.type === QUESTION_TYPES.TRUE_FALSE) {
       return typeof currentResponse !== 'boolean';
     }
+
     return false;
   }, [store?.config?.canOmitQuestions, currentResponse, allSelectsUsed, props.question?.type]);
 
@@ -144,7 +154,8 @@ export default function Question(props) {
       stepName={previewMode || store.viewMode ? '' : t('questions')}
       Footer={
         <TotalLayoutFooterContainer
-          fixed={!store.viewMode}
+          fixed
+          style={{ zIndex: 100 }}
           showFooterBorder={store.viewMode}
           scrollRef={props.scrollRef}
           rightZone={
@@ -186,7 +197,13 @@ export default function Question(props) {
             </Box>
           }
         >
-          <Box sx={() => ({ display: 'flex', justifyContent: 'center', marginLeft: '24px' })}>
+          <Box
+            sx={() => ({
+              display: 'flex',
+              justifyContent: 'center',
+              marginLeft: '24px',
+            })}
+          >
             <Box sx={() => ({ maxWidth: '280px', width: '100%' })}>
               <ProgressBottomBar
                 size="md"
@@ -198,10 +215,12 @@ export default function Question(props) {
         </TotalLayoutFooterContainer>
       }
     >
-      <Box className={className}>
-        <QuestionValue {...props} isPreviewMode={previewMode} />
-        {child}
-      </Box>
+      <Stack sx={{ width: !store.viewMode ? 878 : '100%' }}>
+        <Box className={className}>
+          <QuestionValue {...props} isPreviewMode={previewMode} />
+          {child}
+        </Box>
+      </Stack>
     </TotalLayoutStepContainer>
   );
 }

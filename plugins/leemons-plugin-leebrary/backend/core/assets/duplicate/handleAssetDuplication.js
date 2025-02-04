@@ -1,4 +1,5 @@
 const _ = require('lodash');
+
 const { isTruthy } = require('../../shared');
 const { add } = require('../add');
 
@@ -23,6 +24,7 @@ async function handleAssetDuplication({
   tags,
   newId,
   preserveName,
+  preserveOwner,
   permissions,
   isIndexable,
   isPublic,
@@ -45,6 +47,11 @@ async function handleAssetDuplication({
   const _isIndexable = isIndexable === undefined ? asset.indexable : isTruthy(isIndexable);
   const _isPublic = isPublic === undefined ? asset.public : isTruthy(isPublic);
 
+  if (preserveOwner) {
+    assetData.fromUser = asset.fromUser;
+    assetData.fromUserAgent = asset.fromUserAgent;
+  }
+
   return add({
     asset: {
       ...assetData,
@@ -58,6 +65,7 @@ async function handleAssetDuplication({
     permissions,
     newId,
     duplicating: true,
+    preserveOwner,
     ctx,
   });
 }

@@ -107,5 +107,15 @@
   ],
   "name": "Estudiante",
   "description": "Profile for students",
-  "indexable": true
+  "indexable": true,
+  "translations": {
+    "name": {
+      "es": "Estudiante",
+      "en": "Student"
+    },
+    "description": {
+      "es": "Perfil para estudiantes",
+      "en": "Profile for students"
+    }
+  }
 }

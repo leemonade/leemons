@@ -1,16 +1,10 @@
-import {
-  Box,
-  ContextContainer,
-  Paragraph,
-  Select,
-  TableInput,
-  Title,
-} from '@bubbles-ui/components';
+import React, { useMemo } from 'react';
+
+import { ContextContainer, Select, TableInput, Title } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import { SelectProfile } from '@users/components';
 import _, { find, isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { useMemo } from 'react';
 
 const PermissionsDataProfiles = ({
   roles,

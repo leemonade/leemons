@@ -49,6 +49,8 @@
     "leemons-plugin-communities-frontend-react-private": "1.0.0",
     "leemons-plugin-content-creator": "1.0.35",
     "leemons-plugin-content-creator-frontend-react": "1.0.0",
+    "leemons-plugin-content-developer": "1.0.0",
+    "leemons-plugin-content-developer-frontend-react-private": "1.0.0",
     "leemons-plugin-curriculum": "1.0.35",
     "leemons-plugin-curriculum-frontend-react": "1.0.0",
     "leemons-plugin-dashboard": "1.0.35",

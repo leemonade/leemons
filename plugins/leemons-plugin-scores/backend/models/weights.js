@@ -19,7 +19,7 @@ const schema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['averages', 'roles', 'modules'],
+      enum: ['averages', 'roles', 'modules', 'activities'],
       required: true,
     },
     weights: [

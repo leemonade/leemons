@@ -1,43 +1,66 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@bubbles-ui/components';
 import { DownloadIcon } from '@bubbles-ui/icons/solid';
-
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
-import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
-import useCloseEvaluation from './hooks/useCloseEvaluation';
+import PropTypes from 'prop-types';
+
+import { CloseEvaluationModal } from '../CloseEvaluationModal';
+
+import { useCloseEvaluation } from './hooks/useCloseEvaluation';
 import useDownloadScoreReport from './hooks/useDownloadScoreReport';
 
-export default function Footer() {
+import { prefixPN } from '@scores/helpers';
+import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
+
+export default function Footer({ isCustom }) {
   const [t] = useTranslateLoader(prefixPN('evaluationNotebook.footer'));
   const tableData = useEvaluationNotebookStore((state) => state.tableData);
+  const isPeriodPublished = useEvaluationNotebookStore((state) => state.isPeriodPublished);
+  const setIsPeriodPublished = useEvaluationNotebookStore((state) => state.setIsPeriodPublished);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
 
   const downloadScoreReport = useDownloadScoreReport();
-  const onCloseEvaluation = useCloseEvaluation();
+  const onCloseEvaluation = useCloseEvaluation(tableData);
+
+  useEffect(() => {
+    const isPublished = tableData?.activitiesData?.value?.every(
+      (student) => !student.allowCustomChange
+    );
+
+    if (isPublished !== isPeriodPublished) {
+      setIsPeriodPublished(isPublished);
+    }
+  }, [tableData?.activitiesData?.value, isPeriodPublished, setIsPeriodPublished]);
 
   if (!tableData?.activitiesData?.activities?.length || !tableData?.activitiesData?.value?.length) {
     return null;
   }
 
-  const isPeriodPublished = tableData.activitiesData.value.every(
-    (student) => !student.allowCustomChange
-  );
-
   return (
     <>
-      <Button
-        loading={isLoading}
-        disabled={isPeriodPublished}
-        onClick={() => {
+      <CloseEvaluationModal
+        opened={isModalOpen}
+        tableData={tableData}
+        onCancel={() => setIsModalOpen(false)}
+        onConfirm={(data) => {
           setIsLoading(true);
-          onCloseEvaluation(tableData).finally(() => setIsLoading(false));
+          setIsModalOpen(false);
+          onCloseEvaluation(data).finally(() => setIsLoading(false));
         }}
-      >
-        {t('closeEvaluation')}
-      </Button>
+      />
+      {!isCustom && (
+        <Button
+          loading={isLoading}
+          disabled={isPeriodPublished}
+          onClick={() => setIsModalOpen(true)}
+        >
+          {t('closeEvaluation')}
+        </Button>
+      )}
       <Button
         variant="outline"
         onClick={() => downloadScoreReport(tableData, 'xlsx')}
@@ -55,3 +78,7 @@ export default function Footer() {
     </>
   );
 }
+
+Footer.propTypes = {
+  isCustom: PropTypes.bool,
+};

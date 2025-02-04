@@ -32,6 +32,12 @@ const useActivityScoreTotalStyles = createStyles((theme) => {
     score: {
       ...globalTheme.content.typoMobile.heading.xlg,
     },
+    retake: {
+      ...globalTheme.content.typoMobile.heading.xxsm,
+      whiteSpace: 'nowrap',
+      textAlign: 'left',
+      fontWeight: 600,
+    },
   };
 });
 
