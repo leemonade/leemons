@@ -478,6 +478,12 @@ module.exports = {
       activities: '¿en qué tipo quieres incluir esta actividad?',
     },
   },
+  manualActivityDeletionModal: {
+    title: 'Eliminar actividad evaluable',
+    description: '¿Estás seguro de que quieres eliminar esta actividad evaluable?',
+    cancel: 'Cancelar',
+    confirm: 'Eliminar',
+  },
   pickRetakeTable: {
     title: 'Cerrar evaluación: Nota final',
     description: 'Selecciona la convocatoria para la nota final de cada alumno',
