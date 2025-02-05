@@ -1160,6 +1160,8 @@ module.exports = {
       teacherEnrollmentDate: 'Profesor - Fecha de matriculación',
       teacherLastConnection: 'Profesor - Última conexión',
       studentLastConnection: 'Estudiante - Última conexión',
+      teacherTags: 'Profesor - Etiquetas',
+      studentTags: 'Estudiante - Etiquetas',
     },
   },
   socketEvents: {

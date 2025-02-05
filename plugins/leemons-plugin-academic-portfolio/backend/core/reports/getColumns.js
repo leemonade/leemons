@@ -5,12 +5,14 @@ const COLUMNS = [
   'subject',
   'classroom',
   'teacher',
+  'teacherTags',
   'teacherEmail',
-  'student',
-  'studentEmail',
-  'studentEnrollmentDate',
   'teacherEnrollmentDate',
   'teacherLastConnection',
+  'student',
+  'studentTags',
+  'studentEmail',
+  'studentEnrollmentDate',
   'studentLastConnection',
 ];
 
