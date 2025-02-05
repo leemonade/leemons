@@ -476,6 +476,12 @@ module.exports = {
       activities: 'in which type would you like to add this activity?',
     },
   },
+  manualActivityDeletionModal: {
+    title: 'Delete graded activity',
+    description: 'Are you sure you want to delete this graded activity?',
+    cancel: 'Cancel',
+    confirm: 'Delete',
+  },
   pickRetakeTable: {
     title: 'Close evaluation: Final grades',
     description: "Select the evaluation call for each student's final grade",

@@ -1,7 +1,16 @@
-
-import { Box, ImageLoader, Stack, Text, TextClamp, useHover, ActionButton } from '@bubbles-ui/components';
+import {
+  Box,
+  ImageLoader,
+  Stack,
+  Text,
+  TextClamp,
+  useHover,
+  ActionButton,
+} from '@bubbles-ui/components';
 import { DeleteBinIcon, MoveLeftIcon, MoveRightIcon } from '@bubbles-ui/icons/outline';
 import { AlertWarningTriangleIcon, CutStarIcon } from '@bubbles-ui/icons/solid';
+import { useLayout } from '@layout/context';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { isFunction } from 'lodash';
 
 import {
@@ -10,6 +19,7 @@ import {
 } from './ActivityHeader.constants';
 import { ActivityHeaderStyles } from './ActivityHeader.styles';
 
+import { prefixPN } from '@scores/helpers';
 import { useRemoveManualActivityMutation } from '@scores/requests/hooks/mutations/useRemoveManualActivityMutation';
 
 const ActivityHeader = ({
@@ -30,10 +40,12 @@ const ActivityHeader = ({
   ...props
 }) => {
   const { ref, hovered } = useHover();
+  const [t] = useTranslateLoader(prefixPN('manualActivityDeletionModal'));
 
   const isEvaluable = type === 'evaluable';
-  const isManualActivity = source === 'manualActivities'
+  const isManualActivity = source === 'manualActivities';
 
+  const { openConfirmationModal } = useLayout();
   const { mutate: removeManualActivity } = useRemoveManualActivityMutation();
 
   const onColumnExpandHandler = () => {
@@ -51,12 +63,25 @@ const ActivityHeader = ({
 
   return (
     <Box ref={ref} className={classes.root}>
-      {isManualActivity && (
-        <Box className={classes.removeIcon}>
-          <ActionButton icon={<DeleteBinIcon />} onClick={() => removeManualActivity({id, classId})} />
-        </Box>
-      )}
       <Box className={classes.header}>
+        {isManualActivity && (
+          <Box className={classes.removeIcon}>
+            <ActionButton
+              icon={<DeleteBinIcon width={18} height={18} />}
+              onClick={() =>
+                openConfirmationModal({
+                  title: t('title'),
+                  description: t('description'),
+                  labels: {
+                    cancel: t('cancel'),
+                    confirm: t('confirm'),
+                  },
+                  onConfirm: () => removeManualActivity({ id, classId }),
+                })()
+              }
+            />
+          </Box>
+        )}
         <Stack spacing={2}>
           {roleIcon && (
             <Box sx={{ position: 'relative', width: 16, height: 16 }}>
