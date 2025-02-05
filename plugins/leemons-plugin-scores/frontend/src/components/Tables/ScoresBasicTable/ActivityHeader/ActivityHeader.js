@@ -63,25 +63,25 @@ const ActivityHeader = ({
 
   return (
     <Box ref={ref} className={classes.root}>
-      {isManualActivity && (
-        <Box className={classes.removeIcon}>
-          <ActionButton
-            icon={<DeleteBinIcon width={18} height={18} />}
-            onClick={() =>
-              openConfirmationModal({
-                title: t('title'),
-                description: t('description'),
-                labels: {
-                  cancel: t('cancel'),
-                  confirm: t('confirm'),
-                },
-                onConfirm: () => removeManualActivity({ id, classId }),
-              })()
-            }
-          />
-        </Box>
-      )}
       <Box className={classes.header}>
+        {isManualActivity && (
+          <Box className={classes.removeIcon}>
+            <ActionButton
+              icon={<DeleteBinIcon width={18} height={18} />}
+              onClick={() =>
+                openConfirmationModal({
+                  title: t('title'),
+                  description: t('description'),
+                  labels: {
+                    cancel: t('cancel'),
+                    confirm: t('confirm'),
+                  },
+                  onConfirm: () => removeManualActivity({ id, classId }),
+                })()
+              }
+            />
+          </Box>
+        )}
         <Stack spacing={2}>
           {roleIcon && (
             <Box sx={{ position: 'relative', width: 16, height: 16 }}>

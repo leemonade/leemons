@@ -22,8 +22,8 @@ export const ActivityHeaderStyles = createStyles(
           backgroundColor: isManualActivity && globalTheme.background.color.primary.subtle,
           border: isManualActivity && `1px solid ${globalTheme.hover.default.color}`,
           [`& .${getRef('removeIcon')}`]: {
-            visibility: 'visible'
-          }
+            visibility: 'visible',
+          },
         },
       },
       header: {
@@ -63,13 +63,13 @@ export const ActivityHeaderStyles = createStyles(
         color: theme.colors.text04,
       },
       removeIcon: {
+        display: 'flex',
+        width: '100%',
+        justifyContent: 'center',
         ref: getRef('removeIcon'),
         visibility: 'hidden',
-        position: 'absolute',
-        top: 4,
-        right: 4,
-        zIndex: 1
-      }
+        zIndex: 1,
+      },
     };
   }
 );
