@@ -144,6 +144,12 @@ export default function ClassDashboard({ session }) {
     ? find(store.class.teachers, { type: 'main-teacher' })?.teacher
     : null;
 
+  const secondaryTeacherUsers = store.class
+    ? store.class.teachers
+        .filter(({ type }) => type === 'associate-teacher')
+        .map(({ teacher }) => teacher.user)
+    : [];
+
   const classTabs = React.useCallback(
     ({ Component, key, properties }) => {
       store.tabsProperties[key] = properties;
@@ -236,6 +242,7 @@ export default function ClassDashboard({ session }) {
                 address: store.class?.address,
                 virtual_classroom: store.class?.virtualUrl,
                 teacher: mainTeacher?.user,
+                secondaryTeachers: secondaryTeacherUsers,
                 CustomPeriodComponent: renderCustomPeriod,
               }}
               showChat={isChatEnabled}

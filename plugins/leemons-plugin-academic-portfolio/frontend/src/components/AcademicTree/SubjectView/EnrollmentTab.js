@@ -162,7 +162,7 @@ const EnrollmentTab = ({
       return (
         <SelectUserAgent
           value={mainTeacher}
-          label={t('mainTeacher')}
+          label={t('class.teacherLabel')}
           profiles={teacherProfile}
           centers={center}
           onChange={(onChangeValue) => {
@@ -182,7 +182,7 @@ const EnrollmentTab = ({
       return (
         <SelectUserAgent
           value={associateTeachers}
-          label={t('associateTeachersLabel')}
+          label={t('class.associateTeachersLabel')}
           profiles={teacherProfile}
           centers={center}
           maxSelectedValues={20}
@@ -207,19 +207,25 @@ const EnrollmentTab = ({
     );
   }
 
+  if (classData?.status === 'updating') {
+    return <LoadingOverlay visible />;
+  }
+
   return (
-    <ContextContainer sx={{ position: 'relative', padding: 24 }}>
-      <LoadingOverlay visible={classData?.status === 'updating'} />
+    <ContextContainer sx={{ position: 'relative', paddingInline: 24, padingTop: 0 }}>
       <ContextContainer>
         <Title order={1}>{aliasOrClassroomId}</Title>
-        <Title order={2}>{t('teachers')}</Title>
-        {teacherProfile && center?.length > 0 && (
-          <Box className={classes.mainTeacher}>{TeacherSelect}</Box>
-        )}
-        {SecondaryTeachersSelect && (
-          <Box className={classes.mainTeacher}>{SecondaryTeachersSelect}</Box>
-        )}
+        <Title order={2}>{t('class.teachersLabel')}</Title>
+        <Stack spacing={4}>
+          {teacherProfile && center?.length > 0 && (
+            <Box className={classes.mainTeacher}>{TeacherSelect}</Box>
+          )}
+          {SecondaryTeachersSelect && (
+            <Box className={classes.mainTeacher}>{SecondaryTeachersSelect}</Box>
+          )}
+        </Stack>
       </ContextContainer>
+
       <ContextContainer>
         <Title order={2}>{t('scheduleAndPlace')}</Title>
         <Stack spacing={4} fullWidth>
