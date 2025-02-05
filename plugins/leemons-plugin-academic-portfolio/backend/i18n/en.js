@@ -1156,6 +1156,8 @@ module.exports = {
       teacherEnrollmentDate: 'Teacher - Enrollment date',
       teacherLastConnection: 'Teacher - Last connection',
       studentLastConnection: 'Student - Last connection',
+      teacherTags: 'Teacher - Tags',
+      studentTags: 'Student - Tags',
     },
   },
   socketEvents: {

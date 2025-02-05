@@ -55,6 +55,9 @@
       "@content-creator/*": [
         "./plugins/leemons-plugin-content-creator/frontend/src/*"
       ],
+      "@content-developer/*": [
+        "./private-plugins/leemons-plugin-content-developer/frontend/src/*"
+      ],
       "@curriculum/*": [
         "./plugins/leemons-plugin-curriculum/frontend/src/*"
       ],

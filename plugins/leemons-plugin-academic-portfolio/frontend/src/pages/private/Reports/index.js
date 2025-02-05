@@ -38,11 +38,15 @@ export default function Reports() {
         accessorKey: column,
         cell: ({ getValue }) => {
           const value = getValue();
+
           if (column.toLowerCase().endsWith('date')) {
             return isEmpty(value) ? '-' : <LocaleDate date={value} />;
-          } else if (column === 'dataset') {
+          } else if (column.toLowerCase().endsWith('dataset')) {
             return <ChipsContainer items={value.map((item) => `${item.label}: ${item.value}`)} />;
+          } else if (column.toLowerCase().endsWith('tags')) {
+            return <ChipsContainer items={value} />;
           }
+
           return value;
         },
       })) ?? []
