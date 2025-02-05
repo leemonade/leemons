@@ -26,7 +26,7 @@ export default function useStudents({
     {
       students: klass?.students,
       classes: [klass?.id],
-      periods: period,
+      periods: [period],
     },
     {
       select: (result) => keyBy(result, 'student'),
