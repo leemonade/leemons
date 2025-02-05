@@ -207,9 +207,12 @@ const EnrollmentTab = ({
     );
   }
 
+  if (classData?.status === 'updating') {
+    return <LoadingOverlay visible />;
+  }
+
   return (
     <ContextContainer sx={{ position: 'relative', paddingInline: 24, padingTop: 0 }}>
-      <LoadingOverlay visible={classData?.status === 'updating'} />
       <ContextContainer>
         <Title order={1}>{aliasOrClassroomId}</Title>
         <Title order={2}>{t('class.teachersLabel')}</Title>
