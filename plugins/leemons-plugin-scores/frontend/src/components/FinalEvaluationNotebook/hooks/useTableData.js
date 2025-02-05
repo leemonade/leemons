@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 
 import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
-import { map } from 'lodash';
 
 import { useAcademicCalendarPeriods } from '../../__DEPRECATED__/ScoresPage/useAcademicCalendarPeriods';
 
@@ -14,8 +13,8 @@ export default function useTableData({ class: klass, program, filters }) {
 
   const activities = useMemo(
     () =>
-      map(periods, (period) => ({
-        id: period.periods?.[program]?.[klass.courses.id],
+      periods.filter(period => !!period.periods?.[program]?.[klass.courses.id]).map(period => ({
+        id: period.periods?.[program]?.[klass.courses.id] ?? '',
         name: period.name,
         deadline: period.endDate,
         expandable: false,

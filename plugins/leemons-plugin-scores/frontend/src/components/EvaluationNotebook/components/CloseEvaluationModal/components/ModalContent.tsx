@@ -45,6 +45,8 @@ const useStyles = createStyles((theme) => {
       flexDirection: 'column',
       gap: 16,
       padding: 16,
+      maxHeight: '75%',
+      overflowY: 'auto',
     },
     topBar: {
       display: 'flex',

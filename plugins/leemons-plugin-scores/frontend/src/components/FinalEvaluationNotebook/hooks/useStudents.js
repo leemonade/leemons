@@ -1,7 +1,9 @@
-import { useScores } from '@scores/requests/hooks/queries';
+import { useMemo } from 'react';
+
 import { useUserAgentsInfo } from '@users/hooks';
 import { keyBy, map } from 'lodash';
-import { useMemo } from 'react';
+
+import { useScores } from '@scores/requests/hooks/queries';
 
 export default function useStudents({ class: klass, filters: { search }, periods }) {
   const { data: students, isLoading: userAgentsLoading } = useUserAgentsInfo(klass?.students, {
@@ -19,6 +21,17 @@ export default function useStudents({ class: klass, filters: { search }, periods
     },
     {
       select: (result) => keyBy(result, (score) => `${score.student}|${score.period}`),
+    }
+  );
+
+  const { data: finalScores, isLoading: finalScoresLoading } = useScores(
+    {
+      students: klass?.students,
+      classes: [klass?.id],
+      periods: ['final'],
+    },
+    {
+      select: (result) => keyBy(result, (score) => score.student),
     }
   );
 
@@ -55,7 +68,7 @@ export default function useStudents({ class: klass, filters: { search }, periods
       name: user.name,
       surname: user.surnames,
       image: user.avatar,
-      customScore: scores?.[`${id}|final`]?.grade ?? null,
+      customScore: finalScores?.[id]?.grade ?? null,
       allowCustomChange: true,
       activities: periodsIds.map((period) => ({
         id: period,
@@ -63,7 +76,10 @@ export default function useStudents({ class: klass, filters: { search }, periods
         isSubmitted: true,
       })),
     }));
-  }, [students, periodsIds, scores, search]);
+  }, [students, periodsIds, scores, search, finalScores]);
 
-  return { data: studentsData, isLoading: userAgentsLoading || scoresLoading };
+  return {
+    data: studentsData,
+    isLoading: userAgentsLoading || scoresLoading || finalScoresLoading,
+  };
 }

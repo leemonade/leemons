@@ -417,6 +417,7 @@ module.exports = {
     closedEvaluationError: 'Error closing {period}',
     unableToOpen: 'Error opening activity, the activity could not be found',
     noEvaluationPage: 'This activity does not have a page to evaluate',
+    final: 'final evaluation',
 
     emptyState: {
       noFilters: {

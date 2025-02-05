@@ -419,6 +419,8 @@ module.exports = {
     unableToOpen: 'Error al abrir la actividad, la actividad no se ha podido encontrar',
     noEvaluationPage: 'Esta actividad no tiene una página para evaluar',
 
+    final: 'evaluación final',
+
     emptyState: {
       noFilters: {
         title: 'Seleccionar clase y periodo',
