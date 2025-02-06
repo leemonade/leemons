@@ -1,0 +1,8 @@
+{
+  "extends": "../../../tsconfig.frontend.json",
+  "include": ["./core/**/*.ts", "./emails/**/*.tsx"],
+  "exclude": ["node_modules", "**/node_modules/*", "dist"],
+  "compilerOptions": {
+    "jsx": "preserve"
+  }
+}

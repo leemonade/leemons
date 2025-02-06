@@ -165,6 +165,7 @@
   ],
   "include": [
     "./plugins/*/frontend/**/*",
-    "./private-plugins/*/frontend/**/*"
+    "./private-plugins/*/frontend/**/*",
+    "./plugins/*/backend/emails/**/*"
   ]
 }

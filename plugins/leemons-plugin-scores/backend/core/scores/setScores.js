@@ -1,4 +1,7 @@
 const { sqlDatetime } = require('@leemons/utils');
+
+const { sendEvaluationClosedEmail } = require('../emails/sendEvaluationClosedEmail');
+
 const removeScores = require('./removeScores');
 
 function removeScoresQuery(scores) {
@@ -46,6 +49,10 @@ module.exports = async function setScores({ scores, instances, ctx }) {
       gradedAt: sqlDatetime(new Date()),
     }))
   );
+
+  if (isPublishing) {
+    await sendEvaluationClosedEmail({ scores, ctx });
+  }
 
   return true;
 };
