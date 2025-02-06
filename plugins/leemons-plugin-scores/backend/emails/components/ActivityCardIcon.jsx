@@ -4,24 +4,12 @@ import PropTypes from 'prop-types';
 
 const IS_DEV_MODE = String(process?.env?.EMAIL_DEV) === 'true';
 
-const messages = {
-  en: {
-    multiSubjects: 'Multi-Subject',
-  },
-  es: {
-    multiSubjects: 'Multi-Asignatura',
-  },
-};
-
 export default function ActivityCardIcon({
   subjectColor,
   subjectIcon,
-  locale = 'es',
   subjectName,
   ifSubjectIcon = '{{ @if (it.subjectIconUrl) }}',
-  ifSingleSubject = '{{ @if (it.classes?.length === 1) }}',
   endIf = '{{ /if }}',
-  elseIf = '{{ #else }}',
 }) {
   return (
     <Section>
@@ -41,13 +29,7 @@ export default function ActivityCardIcon({
       </Container>
       <Container className="mt-2">
         <Text className="leading-5 m-0">
-          <span className="text-[14px]">
-            {ifSingleSubject}
-            {subjectName}
-            {elseIf}
-            {messages[locale].multiSubjects}
-            {endIf}
-          </span>
+          <span className="text-[14px]">{subjectName}</span>
         </Text>
       </Container>
     </Section>
