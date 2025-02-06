@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.23.0](https://github.com/leemonade/leemons/compare/1.22.0...1.23.0) (2025-02-06)
+
+
+### Features
+
+* **academic-portfolio:** Add user agent tags to reports ([c5ba9d3](https://github.com/leemonade/leemons/commit/c5ba9d3ab4cd2dc515a1df9fcfe5e56b2ac4caba)), closes [#726](https://github.com/leemonade/leemons/issues/726)
+* **academic-portfolio:** Asociate Teacher Select on EnrollmentTab (AcademicTree) ([4ac27f0](https://github.com/leemonade/leemons/commit/4ac27f014155b1b607019e1667c4b62697b78e75)), closes [#729](https://github.com/leemonade/leemons/issues/729)
+* **academic-portfolio:** Implement custom period functionality ([7b44b9f](https://github.com/leemonade/leemons/commit/7b44b9f312ce2297eb3454c026ce11e5fa45baee)), closes [#716](https://github.com/leemonade/leemons/issues/716)
+* Allow session invited teachers to create activities, assign and evaluate ([c2c8ce4](https://github.com/leemonade/leemons/commit/c2c8ce4389d54fc174bbbf22934bbabc67f25415)), closes [#722](https://github.com/leemonade/leemons/issues/722)
+* **assigns:** Do not allow invited teachers to assign calificable activities ([21aa1c4](https://github.com/leemonade/leemons/commit/21aa1c4fec4a5735887bc9f90ce705aa4aaad4b3)), closes [#730](https://github.com/leemonade/leemons/issues/730)
+* **scores:** Improve MyScores ([a5ffe67](https://github.com/leemonade/leemons/commit/a5ffe67674677acd90ed03369ebb704b2034a439)), closes [#732](https://github.com/leemonade/leemons/issues/732)
+
+
+### Bug Fixes
+
+* **academicPortfolio:** Fix Custom Period component ([f9d3f85](https://github.com/leemonade/leemons/commit/f9d3f85a233d3a23a42f5fc756e5c4e4ba42fc4d)), closes [#721](https://github.com/leemonade/leemons/issues/721)
+* **acaPortfolio:** Append query params for teacherType only if provided ([e92775e](https://github.com/leemonade/leemons/commit/e92775e950e755ab7bf7fe6c6a5f9cc9937a5714)), closes [#723](https://github.com/leemonade/leemons/issues/723)
+* **acaPortfolio:** Verify useCustomPeriodsByItem hook response to avoid errors when data is null ([2fcba06](https://github.com/leemonade/leemons/commit/2fcba06891ba969a5277ca67082846293be4c129)), closes [#720](https://github.com/leemonade/leemons/issues/720)
+* **scores:** Add confirmation modal and make delete manulActivity button bigger ([28d695c](https://github.com/leemonade/leemons/commit/28d695cb66fb44ad6606fdbe10c393113a084d86)), closes [#728](https://github.com/leemonade/leemons/issues/728)
+* **scores:** Add remove button for manualActivities and use brand colors ([e0ddb1d](https://github.com/leemonade/leemons/commit/e0ddb1d0af2b4ad67271107e6e7c95d629fe57e6)), closes [#724](https://github.com/leemonade/leemons/issues/724)
+* **scores:** List manualActivities in weights by type ([c325897](https://github.com/leemonade/leemons/commit/c325897854015b10d0dd510959aeeae62c6924db)), closes [#719](https://github.com/leemonade/leemons/issues/719)
+* **scores:** Rename manualActivities in spanish to actividad calificable ([a150849](https://github.com/leemonade/leemons/commit/a15084908eda2fd874140f91b87c772df6247db6)), closes [#731](https://github.com/leemonade/leemons/issues/731)
+* **users:** Update content developer profile display name ([10da1e1](https://github.com/leemonade/leemons/commit/10da1e1e3ed138602711e97953cc3fb79d16d2c0)), closes [#718](https://github.com/leemonade/leemons/issues/718)
+
 ## [1.22.0](https://github.com/leemonade/leemons/compare/1.21.0...1.22.0) (2025-01-28)
 
 
