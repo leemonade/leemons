@@ -25,7 +25,7 @@
     "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26",
-    "mongoose": "7.5.2"
+    "mongoose": "7.8.4"
   },
   "engines": {
     "node": ">= 16.x.x"
