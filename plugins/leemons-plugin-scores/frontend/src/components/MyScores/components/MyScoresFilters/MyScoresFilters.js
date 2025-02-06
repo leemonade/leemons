@@ -1,16 +1,18 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-
-import { SearchInput, Stack, Switch } from '@bubbles-ui/components';
+import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { SelectSubject } from '@academic-portfolio/components/SelectSubject';
+import { SearchInput, Stack, Switch } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
+import PropTypes from 'prop-types';
+
+
 import useMyScoresSubjects from './hooks/useMyScoresSubjects';
 import useOnChange from './hooks/useOnChange';
 
-export default function MyScoresFilters({ filters, onChange, value }) {
+import { prefixPN } from '@scores/helpers';
+
+export default function MyScoresFilters({ filters, onChange, value, hideActivitySearch,hideSeeNonEvaluable }) {
   const [t] = useTranslateLoader(prefixPN('myScores.localFilters'));
   const form = useForm();
   const { getValues, setValue } = form;
@@ -48,21 +50,23 @@ export default function MyScoresFilters({ filters, onChange, value }) {
             />
           )}
         />
-        <Controller
-          name="search"
-          control={form.control}
-          render={({ field }) => (
-            <SearchInput {...field} sx={{ width: 220 }} placeholder={t('search')} />
-          )}
-        />
+        {!hideActivitySearch && (
+          <Controller
+            name="search"
+            control={form.control}
+            render={({ field }) => (
+              <SearchInput {...field} sx={{ width: 220 }} placeholder={t('search')} />
+            )}
+          />
+        )}
       </Stack>
 
-      <Controller
+      {!hideSeeNonEvaluable && <Controller
         name="showNonEvaluable"
         control={form.control}
         defaultValue={false}
         render={({ field }) => <Switch {...field} label={t('seeNonEvaluable')} />}
-      />
+      />}
     </Stack>
   );
 }
@@ -70,5 +74,7 @@ export default function MyScoresFilters({ filters, onChange, value }) {
 MyScoresFilters.propTypes = {
   filters: PropTypes.object.isRequired,
   onChange: PropTypes.func.isRequired,
+  hideActivitySearch: PropTypes.bool,
+  hideSeeNonEvaluable: PropTypes.bool,
   value: PropTypes.object,
 };

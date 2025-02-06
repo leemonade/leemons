@@ -50,6 +50,10 @@ function useSelectedPeriod({ periods, form, startDate, endDate }) {
 
     return {
       selected: selectedPeriod,
+      period: {
+        name: selectedPeriod.name,
+        id: selectedPeriod.id,
+      },
       isCustom: period === 'custom',
       id: period,
       _id: period,

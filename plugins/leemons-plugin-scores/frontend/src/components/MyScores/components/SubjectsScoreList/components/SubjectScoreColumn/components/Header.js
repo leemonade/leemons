@@ -1,4 +1,3 @@
-import React from 'react';
 
 import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
 import {
@@ -37,13 +36,12 @@ export default function Header({ class: klass, weights }) {
           {className}
         </Text>
       </TextClamp>
-      {weights?.explanation ? (
+      {!!weights && weights?.explanation && (
         <Tooltip label={weights.explanation}>
           <WeightTypeBadge class={klass} />
         </Tooltip>
-      ) : (
-        <WeightTypeBadge class={klass} />
       )}
+      {!!weights && !weights?.explanation && <WeightTypeBadge class={klass} />}
     </Stack>
   );
 }

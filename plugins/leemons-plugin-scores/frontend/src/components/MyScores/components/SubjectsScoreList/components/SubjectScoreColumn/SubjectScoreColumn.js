@@ -1,25 +1,26 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 import { Box, LoadingOverlay, Stack } from '@bubbles-ui/components';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
-import { Link } from 'react-router-dom';
+import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
+import PropTypes from 'prop-types';
+
+import useSubjectScoreColumnStyles from './SubjectsScoreColumn.styles';
+import ActivityScoreDisplay from './components/ActivityScoreDisplay';
+import ActivityScoreTotal from './components/ActivityScoreTotal/ActivityScoreTotal';
+import Header from './components/Header';
+import useActivitiesWithWeights from './hooks/useActivitiesWithWeights';
 
 import useWeights from '@scores/requests/hooks/queries/useWeights';
-import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
 import useMyScoresStore from '@scores/stores/myScoresStore';
-import Header from './components/Header';
-import ActivityScoreDisplay from './components/ActivityScoreDisplay';
-import useSubjectScoreColumnStyles from './SubjectsScoreColumn.styles';
-import useActivitiesWithWeights from './hooks/useActivitiesWithWeights';
-import ActivityScoreTotal from './components/ActivityScoreTotal/ActivityScoreTotal';
 
 export default function SubjectScoreColumn({ class: klass, ...filters }) {
   const addColumn = useMyScoresStore((store) => store.addColumn);
   const removeColumn = useMyScoresStore((store) => store.removeColumn);
 
   const { data: evaluationSystem, isLoading: evaluationSystemLoading } =
-    useProgramEvaluationSystems({ program: klass.program });
+    useProgramEvaluationSystems({ program: klass.program.id });
   const { data: weights, isLoading: weightsLoading } = useWeights({ classId: klass.id });
   const { activities, isLoading: activitiesLoading } = useActivitiesWithWeights({
     ...filters,
