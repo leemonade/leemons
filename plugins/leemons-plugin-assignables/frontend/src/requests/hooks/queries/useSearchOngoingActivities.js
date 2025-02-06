@@ -1,12 +1,14 @@
-import { useQuery } from '@tanstack/react-query';
-import searchOngoingActivities from '@assignables/requests/activities/searchOngoingActivities';
-import { useVariantForQueryKey } from '@common/queries';
 import { useIsTeacher } from '@academic-portfolio/hooks';
+import { useVariantForQueryKey } from '@common/queries';
+import { useQuery } from '@tanstack/react-query';
 import useUserAgents from '@users/hooks/useUserAgents';
+
 import {
   allOngoingActivitiesSearchKey,
   ongoingActivitiesSearchKey,
 } from '../keys/ongoingActivities';
+
+import searchOngoingActivities from '@assignables/requests/activities/searchOngoingActivities';
 
 export default function useSearchOngoingActivities(filters, options) {
   const userAgents = useUserAgents();

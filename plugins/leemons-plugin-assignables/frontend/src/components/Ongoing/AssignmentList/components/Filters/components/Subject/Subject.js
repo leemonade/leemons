@@ -1,14 +1,14 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
-import { unflatten } from '@common';
-import _ from 'lodash';
 
 import { SelectSubject } from '@academic-portfolio/components/SelectSubject';
 import { useSessionClasses } from '@academic-portfolio/hooks';
+import { unflatten } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import _ from 'lodash';
+import PropTypes from 'prop-types';
+
 import { getMultiClassData } from '@assignables/helpers/getClassData';
 import prefixPN from '@assignables/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 
 function useSubjectGroupsLocalizations() {
   const [, translations] = useTranslateLoader(prefixPN('assetListFilters.subjectGroups'));
@@ -31,6 +31,7 @@ function useSubjects({ labels, program }) {
   const { data: classesData } = useSessionClasses({
     showType: true,
     program: selectedProgram === 'all' ? undefined : selectedProgram,
+    type: null,
   });
   const multiClassData = getMultiClassData();
 
@@ -74,7 +75,7 @@ function useSubjects({ labels, program }) {
             : localizations?.collaborations,
       })),
     ];
-  }, [classesData, selectedProgram, labels?.all, localizations, multiClassData]);
+  }, [classesData, labels?.all, localizations, multiClassData]);
 }
 
 function Subject({ labels, value, onChange, program }) {
