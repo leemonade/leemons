@@ -1,12 +1,14 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Select, createStyles, Alert } from '@bubbles-ui/components';
-import { useForm, Controller, useWatch } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
+
 import { useAcademicProfiles } from '@academic-portfolio/hooks';
-import { Container } from '../Container';
+import { Box, createStyles, Alert } from '@bubbles-ui/components';
+import PropTypes from 'prop-types';
+
 import { useGroupedClassesWithSelectedSubjects } from '../../AssignStudents/hooks';
-import { SelectCustomGroup } from './SelectCustomGroup';
+import { Container } from '../Container';
+
 import { SelectClass } from './SelectClass';
+import { SelectCustomGroup } from './SelectCustomGroup';
 import SelectSingleStudent from './SelectSingleStudent';
 
 const useGroupPickerStyles = createStyles((theme) => ({
@@ -37,23 +39,23 @@ export function GroupPicker({ onChange, value, localizations, error, hideSection
     name: 'type',
   });
 
-  const optionsData = React.useMemo(
-    () => [
-      {
-        value: 'class',
-        label: localizations?.options?.class,
-      },
-      {
-        value: 'customGroup',
-        label: localizations?.options?.customGroup,
-      },
-      {
-        value: 'singleStudent',
-        label: localizations?.options?.singleStudent,
-      },
-    ],
-    [localizations?.options]
-  );
+  // const optionsData = React.useMemo(
+  //   () => [
+  //     {
+  //       value: 'class',
+  //       label: localizations?.options?.class,
+  //     },
+  //     {
+  //       value: 'customGroup',
+  //       label: localizations?.options?.customGroup,
+  //     },
+  //     {
+  //       value: 'singleStudent',
+  //       label: localizations?.options?.singleStudent,
+  //     },
+  //   ],
+  //   [localizations?.options]
+  // );
 
   const { student: studentProfile } = useAcademicProfiles();
 

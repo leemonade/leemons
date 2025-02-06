@@ -1,5 +1,5 @@
 import React from 'react';
-import { Controller, FormProvider, useForm } from 'react-hook-form';
+import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
 
 import { SubjectPicker } from '@academic-portfolio/components/SubjectPicker';
 import {
@@ -134,6 +134,9 @@ export default function Form({
     [onSubmit, evaluationType]
   );
 
+  const teacherTypes = useWatch({ control, name: 'students.teacherTypes', defaultValue: [] });
+  const isInvitedTeacher = teacherTypes.includes('invited-teacher');
+
   const { classes } = useFormComponentStyles();
 
   return (
@@ -261,6 +264,7 @@ export default function Form({
                   <EvaluationType
                     {...field}
                     evaluationTypes={evaluationTypes}
+                    isInvitedTeacher={isInvitedTeacher}
                     assignable={assignable}
                     hidden={!showEvaluation}
                     localizations={localizations?.evaluation}

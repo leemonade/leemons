@@ -1,8 +1,11 @@
 import { useMemo } from 'react';
-import _ from 'lodash';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
+
 import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
+import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useUserAgents } from '@users/hooks';
+import _ from 'lodash';
+
 import useTeacherClassesOfSubject from './useTeacherClassesOfSubject';
 
 function difference(...arr) {
@@ -15,6 +18,9 @@ function difference(...arr) {
 // ES: Obtiene todas las clases de una asignatura del profesor agrupadas por grupo si hay suficientes alumnos compartidos
 export default function useGroupedClasses(subjects, disableGrouping = false) {
   const classes = useTeacherClassesOfSubject(subjects);
+
+  const [userAgent] = useUserAgents() ?? [];
+
   const [t] = useTranslateLoader(prefixPN('common'));
 
   return useMemo(() => {
@@ -36,6 +42,8 @@ export default function useGroupedClasses(subjects, disableGrouping = false) {
         nonAssignableStudents: _.intersection(c.c.students, studentsNotPresentInAllSubjects),
         group: c.c.groups?.id,
         class: c,
+
+        teacherType: c.teachers.find(t => t.teacher === userAgent)?.type ?? null
       })),
       (c) => c.group
     );
@@ -69,6 +77,7 @@ export default function useGroupedClasses(subjects, disableGrouping = false) {
           nonAssignableStudents: groupNonAssignableStudents,
           totalStudents: groupStudents.length,
           classes: group,
+          teacherTypes: group.map(g => g.teacherType),
         });
       } else {
         acc.push(
@@ -82,6 +91,7 @@ export default function useGroupedClasses(subjects, disableGrouping = false) {
             nonAssignableStudents: g.nonAssignableStudents,
             totalStudents: g.students.length,
             group: g,
+            teacherTypes: [g.teacherType],
           }))
         );
       }

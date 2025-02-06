@@ -1,11 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+import { useForm, Controller, useWatch } from 'react-hook-form';
+
 import { createStyles, Box, Select, Title } from '@bubbles-ui/components';
 import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
-import { useForm, Controller, useWatch } from 'react-hook-form';
+import PropTypes from 'prop-types';
+
+
 import { Container } from '../Container';
-import { useCurriculumFields } from './useCurriculumFields';
+
 import { CurriculumFieldsPicker } from './CurriculumFieldsPicker';
+import { useCurriculumFields } from './useCurriculumFields';
 
 export const evaluationTypes = {
   calificable: {
@@ -30,7 +34,7 @@ export const evaluationTypes = {
   },
 };
 
-function useOnChange({ control, onChange }) {
+function useOnChange({ control, setValue, onChange, types }) {
   const { type, showCurriculum, curriculum } = useWatch({ control });
 
   React.useEffect(() => {
@@ -38,12 +42,16 @@ function useOnChange({ control, onChange }) {
       return;
     }
 
+    if (!type) {
+      setValue('type', types?.[0]?.value);
+    }
+
     onChange({
-      evaluation: evaluationTypes[type],
+      evaluation: evaluationTypes[type] ?? evaluationTypes[types?.[0]?.value],
       curriculum: showCurriculum ? curriculum ?? [] : [],
-      raw: { type, showCurriculum, curriculum },
+      raw: { type: type || types?.[0]?.value, showCurriculum, curriculum },
     });
-  }, [type, showCurriculum, curriculum, onChange]);
+  }, [type, showCurriculum, curriculum, onChange, types, setValue]);
 }
 
 export const useEvaluationTypeStyles = createStyles((theme) => ({
@@ -65,6 +73,7 @@ export function EvaluationType({
   value,
   onChange,
   evaluationTypes: evaluationTypesToUse,
+  isInvitedTeacher,
   hideSectionHeaders,
   hideDivider,
   onDrawer,
@@ -89,14 +98,18 @@ export function EvaluationType({
       },
     ];
 
+    if (isInvitedTeacher) {
+      return evaluationTypes.filter(({ value: v }) => v !== 'calificable');
+    }
+
     if (!evaluationTypesToUse?.length) {
       return evaluationTypes;
     }
 
     return evaluationTypes.filter(({ value: v }) => evaluationTypesToUse.includes(v));
-  }, [localizations?.typeInput?.options, JSON.stringify(evaluationTypesToUse)]);
+  }, [localizations?.typeInput?.options, JSON.stringify(evaluationTypesToUse), isInvitedTeacher]);
 
-  const { control } = useForm({
+  const { control, setValue } = useForm({
     defaultValues: {
       type: evaluationTypesToUse?.[0] || 'calificable',
       ...value?.raw,
@@ -105,7 +118,7 @@ export function EvaluationType({
 
   const curriculumFields = useCurriculumFields({ assignable });
 
-  useOnChange({ control, onChange });
+  useOnChange({ control, setValue, onChange, types });
 
   const { classes } = useEvaluationTypeStyles();
   return (
@@ -121,12 +134,17 @@ export function EvaluationType({
         <Controller
           name="type"
           control={control}
+          rules={{
+            required: true,
+          }}
           render={({ field }) => (
             <Box className={classes.selectType}>
               <Select
                 {...field}
+                required
                 label={localizations?.typeInput?.label}
                 placeholder={localizations?.typeInput?.placeholder}
+                cleanOnMissingValue
                 data={types}
               />
             </Box>
