@@ -393,9 +393,9 @@ module.exports = {
       showNonEvaluable: 'Ver no calificables',
       goToWeighting: 'Ponderación',
       add: 'Añadir',
-      manualActivity: 'Actividad evaluable',
-      manualActivityCreated: 'Actividad evaluable creada correctamente',
-      manualActivityError: 'Error creando actividad evaluable',
+      manualActivity: 'Actividad calificable',
+      manualActivityCreated: 'Actividad calificable creada correctamente',
+      manualActivityError: 'Error creando actividad calificable',
       retake: 'Convocatoria',
     },
     scoresTable: {
@@ -463,7 +463,7 @@ module.exports = {
     retake: 'CONV.',
   },
   manualActivityDrawer: {
-    title: 'Nueva actividad evaluable',
+    title: 'Nueva actividad calificable',
     config: 'Configuración',
     date: { label: 'Fecha', error: 'La fecha es obligatoria' },
     name: { label: 'Nombre', error: 'El nombre es obligatorio' },
@@ -481,8 +481,8 @@ module.exports = {
     },
   },
   manualActivityDeletionModal: {
-    title: 'Eliminar actividad evaluable',
-    description: '¿Estás seguro de que quieres eliminar esta actividad evaluable?',
+    title: 'Eliminar actividad calificable',
+    description: '¿Estás seguro de que quieres eliminar esta actividad calificable?',
     cancel: 'Cancelar',
     confirm: 'Eliminar',
   },
