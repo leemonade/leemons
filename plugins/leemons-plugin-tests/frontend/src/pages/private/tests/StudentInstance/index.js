@@ -356,16 +356,16 @@ function StudentInstance() {
           }}
           scrollRef={scrollRef}
         >
-          <Stack fullHeight>
-            {isUnavailable ? (
+          {isUnavailable ? (
+            <Stack fullHeight>
               <ActivityUnavailable instance={store.instance} user={getUserId()} />
-            ) : null}
-            {!isUnavailable && verticalStepperProps.data[store.currentStep]
-              ? React.cloneElement(verticalStepperProps.data[store.currentStep].component, {
-                  isFirstStep: !store.currentStep,
-                })
-              : null}
-          </Stack>
+            </Stack>
+          ) : null}
+          {!isUnavailable && verticalStepperProps.data[store.currentStep]
+            ? React.cloneElement(verticalStepperProps.data[store.currentStep].component, {
+                isFirstStep: !store.currentStep,
+              })
+            : null}
         </VerticalStepperContainer>
       </TotalLayoutContainer>
       <Modal

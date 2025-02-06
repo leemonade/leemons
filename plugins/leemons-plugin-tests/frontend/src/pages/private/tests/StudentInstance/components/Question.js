@@ -215,7 +215,7 @@ export default function Question(props) {
         </TotalLayoutFooterContainer>
       }
     >
-      <Stack sx={{ width: !store.viewMode ? 878 : '100%' }}>
+      <Stack>
         <Box className={className}>
           <QuestionValue {...props} isPreviewMode={previewMode} />
           {child}
