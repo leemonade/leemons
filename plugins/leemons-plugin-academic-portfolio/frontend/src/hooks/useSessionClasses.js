@@ -15,7 +15,7 @@ export default function useSessionClasses(
 ) {
   const userAgents = useUserAgents();
 
-  const queryKey = ['sessionClasses', { program, type }];
+  const queryKey = ['sessionClasses', { program, type, withProgram, showType }];
 
   const query = useQuery(
     queryKey,

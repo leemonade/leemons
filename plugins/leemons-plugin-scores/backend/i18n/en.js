@@ -457,6 +457,11 @@ module.exports = {
         description: 'We have not found results for your search.',
       },
     },
+    evaluationRow: {
+      firstRetake: 'First call',
+      secondRetake: 'Second call',
+      other: '{{retake}} call',
+    },
     retake: 'CALL',
   },
   manualActivityDrawer: {

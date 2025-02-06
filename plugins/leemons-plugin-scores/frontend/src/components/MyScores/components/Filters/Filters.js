@@ -1,18 +1,68 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-
-import { Stack } from '@bubbles-ui/components';
-import { map, noop } from 'lodash';
+import { useEffect, useMemo } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 
 import { SelectCourse, SelectProgram } from '@academic-portfolio/components';
+import { Stack } from '@bubbles-ui/components';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { getCentersWithToken } from '@users/session';
+import { map, noop } from 'lodash';
+import PropTypes from 'prop-types';
+
+import useStudentPeriods from './hooks/useStudentPeriods';
+
 import PickDate from '@scores/components/__DEPRECATED__/ScoresPage/Filters/components/PickDate';
 import SelectPeriod from '@scores/components/__DEPRECATED__/ScoresPage/Filters/components/SelectPeriod';
-import useSelectedPeriod from '@scores/components/__DEPRECATED__/ScoresPage/Filters/hooks/useSelectedPeriod';
-import { getCentersWithToken } from '@users/session';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { prefixPN } from '@scores/helpers';
-import useStudentPeriods from './hooks/useStudentPeriods';
+
+function useSelectedPeriod({ periods, form, startDate, endDate }) {
+  const { control, getValues, setValue } = form;
+
+  const period = useWatch({
+    control,
+    name: 'period',
+  });
+
+  useEffect(() => {
+    const currentDate = new Date();
+    const currentPeriod = periods.find((p) => {
+      const periodStartDate = new Date(p.startDate);
+      const periodEndDate = new Date(p.endDate);
+      return (
+        (periodStartDate <= currentDate && currentDate <= periodEndDate) || p.id === 'fullCourse'
+      );
+    });
+
+    if (currentPeriod && currentPeriod.id !== getValues('period')) {
+      setValue('period', currentPeriod.id);
+    }
+  }, [periods, getValues, setValue]);
+
+  return useMemo(() => {
+    if (!period) {
+      return {};
+    }
+
+    const selectedPeriod = periods.find((p) => p.id === period);
+
+    if (!selectedPeriod) {
+      return {};
+    }
+
+    return {
+      selected: selectedPeriod,
+      period: {
+        name: selectedPeriod.name,
+        id: selectedPeriod.id,
+      },
+      isCustom: period === 'custom',
+      id: period,
+      _id: period,
+      isComplete: selectedPeriod.startDate && selectedPeriod.endDate,
+      startDate: selectedPeriod.startDate,
+      endDate: selectedPeriod.endDate,
+    };
+  }, [periods, period]);
+}
 
 export default function Filters({ onChange = noop, value }) {
   const [t] = useTranslateLoader(prefixPN('myScores.filters'));
@@ -26,11 +76,10 @@ export default function Filters({ onChange = noop, value }) {
   const program = useWatch({ name: 'program', control: form.control });
   const selectedPeriod = useSelectedPeriod({
     periods,
-    control: form.control,
+    form,
     program,
-    selectedCourse,
-    // finalLabel: t('period.final'),
-    setValue: form.setValue,
+    startDate,
+    endDate,
   });
 
   useEffect(() => {
@@ -83,7 +132,7 @@ export default function Filters({ onChange = noop, value }) {
         control={form.control}
         name="period"
         render={({ field }) => (
-          <SelectPeriod {...field} periods={periods} disabled={!selectedCourse} />
+          <SelectPeriod {...field} periods={periods} disabled={!selectedCourse} avoidCustomPeriod />
         )}
       />
       {selectedPeriod.selected === 'custom' && startDate !== undefined && endDate !== undefined && (

@@ -3,7 +3,7 @@ const { useMemo } = require('react');
 const { useSessionClasses } = require('@academic-portfolio/hooks');
 
 export default function useClassesMatchingFilters({ program, course, subject }) {
-  const { data: classes, isLoading } = useSessionClasses({ program });
+  const { data: classes, isLoading } = useSessionClasses({ program, withProgram: true });
 
   const filteredClasses = useMemo(() => {
     if (classes && (course || subject)) {

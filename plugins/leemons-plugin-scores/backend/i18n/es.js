@@ -460,6 +460,11 @@ module.exports = {
         description: 'No hemos encontrado resultados para tu búsqueda.',
       },
     },
+    evaluationRow: {
+      firstRetake: 'Primera convocatoria',
+      secondRetake: 'Segunda convocatoria',
+      other: 'convocatoria {{retake}}',
+    },
     retake: 'CONV.',
   },
   manualActivityDrawer: {
