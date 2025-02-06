@@ -6,7 +6,7 @@ import usePeriodTypes from '../hooks/usePeriodTypes';
 
 import { prefixPN } from '@scores/helpers';
 
-function usePeriodsData({ periods, t }) {
+function usePeriodsData({ periods, t, avoidCustomPeriod }) {
   const periodTypes = usePeriodTypes();
 
   const data = [
@@ -15,11 +15,14 @@ function usePeriodsData({ periods, t }) {
       label: period.name,
       group: period.group,
     })) || []),
-    {
+  ];
+
+  if (!avoidCustomPeriod) {
+    data.push({
       value: 'custom',
       label: t('custom'),
-    },
-  ];
+    });
+  }
 
   if (data.some((period) => period.group === periodTypes?.academicCalendar)) {
     data.push({
@@ -32,9 +35,9 @@ function usePeriodsData({ periods, t }) {
   return data;
 }
 
-export default function SelectPeriod({ periods, ...field }) {
+export default function SelectPeriod({ periods, avoidCustomPeriod, ...field }) {
   const [t] = useTranslateLoader(prefixPN('scoresPage.filters.period'));
-  const data = usePeriodsData({ periods, t });
+  const data = usePeriodsData({ periods, t, avoidCustomPeriod });
 
   return (
     <Select
@@ -50,5 +53,6 @@ export default function SelectPeriod({ periods, ...field }) {
 
 SelectPeriod.propTypes = {
   periods: PropTypes.array,
+  avoidCustomPeriod: PropTypes.bool,
   t: PropTypes.func,
 };
