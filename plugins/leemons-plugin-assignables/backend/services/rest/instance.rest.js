@@ -14,6 +14,14 @@ const { searchInstances } = require('../../core/instances/searchInstances');
 const { sendReminder } = require('../../core/instances/sendReminder');
 const { updateInstance } = require('../../core/instances/updateInstance');
 
+function parseBoolean(value, checkUndefined = true) {
+  const trueValues = ['true', true, '1', 1];
+  if (checkUndefined) {
+    return _.isNil(value) ? undefined : trueValues.includes(value);
+  }
+  return trueValues.includes(value);
+}
+
 async function get(ctx) {
   const { id, details, ids, throwOnMissing, relatedInstances } = ctx.params;
 
@@ -56,23 +64,15 @@ module.exports = {
     async handler(ctx) {
       const query = ctx.params;
 
-      if (_.isBoolean(query.closed) ? query.closed : query.closed === 'true') {
-        query.closed = true;
-      } else if (_.isBoolean(query.closed) ? !query.closed : query.closed === 'false') {
-        query.closed = false;
-      }
-
-      if (_.isBoolean(query.evaluated) ? query.evaluated : query.evaluated === 'true') {
-        query.evaluated = true;
-      } else if (_.isBoolean(query.evaluated) ? !query.evaluated : query.evaluated === 'false') {
-        query.evaluated = false;
-      }
-
-      if (_.isBoolean(query.archived) ? query.archived : query.archived === 'true') {
-        query.archived = true;
-      } else if (_.isBoolean(query.archived) ? !query.archived : query.archived === 'false') {
-        query.archived = false;
-      }
+      query.closed = parseBoolean(query.closed);
+      query.evaluated = parseBoolean(query.evaluated);
+      query.archived = parseBoolean(query.archived);
+      query.finished = parseBoolean(query.finished);
+      query.visible = parseBoolean(query.visible);
+      query.calificableOnly = parseBoolean(query.calificableOnly, false);
+      query.isEvaluable = parseBoolean(query.isEvaluable, false);
+      query.isTeacher = parseBoolean(query.isTeacher, false);
+      query.useRangeHours = parseBoolean(query.useRangeHours);
 
       const assignableInstances = await searchInstances({ query, ctx });
 

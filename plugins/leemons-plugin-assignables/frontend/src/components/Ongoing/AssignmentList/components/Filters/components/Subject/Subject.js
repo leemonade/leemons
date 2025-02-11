@@ -45,7 +45,7 @@ function useSubjects({ labels, program }) {
     classesData.forEach((klass) => {
       if (!subjects[klass.subject.id]) {
         subjects[klass.subject.id] = {
-          label: klass.subject.name,
+          label: klass.subject.name ?? '',
           value: klass.subject.id,
           color: klass.color,
           icon: klass.subject.icon,
@@ -61,9 +61,9 @@ function useSubjects({ labels, program }) {
 
     return [
       {
-        label: labels?.all,
+        label: labels?.all ?? '',
         value: 'all',
-        group: labels?.all,
+        group: labels?.all ?? '',
         icon: multiClassData.icon,
         color: multiClassData.color,
       },
