@@ -42,6 +42,8 @@ const SelectScore = forwardRef(({ value, onChange, onClose, grades }, ref) => {
       onBlur={onClose}
       min={grades[0].number}
       max={grades[grades.length - 1].number}
+      precision={2}
+      hideControls
       autoFocus
       ref={ref}
     />
@@ -219,5 +221,24 @@ const ScoreCell = ({
 };
 
 ScoreCell.defaultProps = SCORES_CELL_DEFAULT_PROPS;
+ScoreCell.propTypes = {
+  value: PropTypes.number,
+  noActivity: PropTypes.string,
+  submittedLabel: PropTypes.string,
+  allowChange: PropTypes.bool,
+  isSubmitted: PropTypes.bool,
+  isClosed: PropTypes.bool,
+  grades: PropTypes.arrayOf(PropTypes.object),
+  usePercentage: PropTypes.bool,
+  source: PropTypes.string,
+  row: PropTypes.object,
+  column: PropTypes.object,
+  setValue: PropTypes.func,
+  onDataChange: PropTypes.func,
+  onOpen: PropTypes.func,
+  isCustom: PropTypes.bool,
+  retake: PropTypes.number,
+  labels: PropTypes.object,
+};
 
 export { ScoreCell };
