@@ -1,4 +1,3 @@
-import { Box } from '@bubbles-ui/components';
 import { useStore } from '@common';
 import PropTypes from 'prop-types';
 
@@ -12,32 +11,29 @@ export default function QuestionList(props) {
   const question = props.store.questions[store.questionNumber];
 
   return (
-    <Box>
-      <Question
-        {...props}
-        prevStep={() => {
-          if (store.questionNumber > 0) {
-            store.questionNumber -= 1;
-            render();
-          } else {
-            props.prevStep();
-          }
-        }}
-        nextStep={async (e) => {
-          if (isLast) {
-            await props.finishStep(e);
-          } else {
-            store.questionNumber += 1;
-            render();
-            // props.nextStep(e);
-          }
-        }}
-        question={question}
-        index={store.questionNumber}
-        isLast={isLast}
-        saveQuestion={() => props.saveQuestion(question.id)}
-      />
-    </Box>
+    <Question
+      {...props}
+      prevStep={() => {
+        if (store.questionNumber > 0) {
+          store.questionNumber -= 1;
+          render();
+        } else {
+          props.prevStep();
+        }
+      }}
+      nextStep={async (e) => {
+        if (isLast) {
+          await props.finishStep(e);
+        } else {
+          store.questionNumber += 1;
+          render();
+        }
+      }}
+      question={question}
+      index={store.questionNumber}
+      isLast={isLast}
+      saveQuestion={() => props.saveQuestion(question.id)}
+    />
   );
 }
 

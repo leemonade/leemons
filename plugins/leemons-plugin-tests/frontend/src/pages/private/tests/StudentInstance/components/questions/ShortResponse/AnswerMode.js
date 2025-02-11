@@ -5,16 +5,7 @@ import AnswerModeResponsesLayout from '../AnswerModeResponsesLayout';
 import Responses from './Responses';
 
 const AnswerMode = (props) => {
-  const { question } = props;
-  const resourceIsImage = (question?.stemResource?.file?.type || '').startsWith('image');
-
-  return (
-    <AnswerModeResponsesLayout
-      {...props}
-      displayStemMediaHorizontally={resourceIsImage}
-      ResponsesComponent={Responses}
-    />
-  );
+  return <AnswerModeResponsesLayout {...props} ResponsesComponent={Responses} />;
 };
 
 AnswerMode.propTypes = {

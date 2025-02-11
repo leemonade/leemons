@@ -1,7 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import PropTypes from 'prop-types';
+
 import { Box, COLORS, Select, Text } from '@bubbles-ui/components';
 import { forEach, isArray, keyBy } from 'lodash';
+import PropTypes from 'prop-types';
+
 import { getQuestionClues } from '../helpers/getQuestionClues';
 
 export default function QuestionValue(props) {
@@ -94,7 +96,8 @@ export default function QuestionValue(props) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        borderBottom: `1px solid ${theme.other.divider.background.color.default}`,
+        borderBottom:
+          !store?.embedded && `1px solid ${theme.other.divider.background.color.default}`,
         paddingBottom: !isPreviewMode ? theme.spacing[4] : 0,
         marginBottom: !isPreviewMode ? theme.spacing[4] : 0,
       })}
@@ -179,4 +182,5 @@ QuestionValue.propTypes = {
   store: PropTypes.any,
   render: PropTypes.func,
   saveQuestion: PropTypes.func,
+  isPreviewMode: PropTypes.bool,
 };

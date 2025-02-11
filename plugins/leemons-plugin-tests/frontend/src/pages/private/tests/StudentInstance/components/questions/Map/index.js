@@ -52,7 +52,7 @@ export default function Index(props) {
 
   return (
     <>
-      <Box className={containerClassName}>
+      <Box className={containerClassName} sx={{ marginBottom: store.viewMode && 72 }}>
         <QuestionTitleComponent
           question={question}
           questionIndex={store.questions?.findIndex((q) => q.id === question?.id)}
