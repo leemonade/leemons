@@ -2,16 +2,18 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
 const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-
-const path = require('path');
+const { LeemonsEmailsMixin } = require('@leemons/emails');
+const { addMenuItemsDeploy } = require('@leemons/menu-builder');
+const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
+const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
 const { LeemonsMultilanguageMixin } = require('@leemons/multilanguage');
 const { addPermissionsDeploy } = require('@leemons/permissions');
-const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
-const { addMenuItemsDeploy } = require('@leemons/menu-builder');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const path = require('path');
+
 const { menuItems, permissions } = require('../config/constants');
+const { renderEmailTemplates } = require('../core/deploy/renderEmailTemplates');
 const { getServiceModels } = require('../models');
 
 /** @type {ServiceSchema} */
@@ -27,6 +29,7 @@ module.exports = () => ({
     LeemonsMongoDBMixin({
       models: getServiceModels(),
     }),
+    LeemonsEmailsMixin(),
     LeemonsMQTTMixin(),
     LeemonsDeploymentManagerMixin(),
   ],
@@ -61,5 +64,9 @@ module.exports = () => ({
         ctx,
       });
     },
+  },
+  async started() {
+    const emailTemplates = await renderEmailTemplates();
+    await this.initEmailTemplates(emailTemplates);
   },
 });

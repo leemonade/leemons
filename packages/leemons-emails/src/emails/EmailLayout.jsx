@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react"
 
 import {
   Body,
@@ -63,30 +63,48 @@ function EmailLayout({ locale, previewText, title, logoUrl, logoWidth, platformN
   return (
     <Html>
       <Head>
-        {[400, 500].map((weight, index) => (
-          <React.Fragment key={weight}>
+        <React.Fragment>
             <Font
               fontFamily="Albert Sans"
               fallbackFontFamily="Verdana"
               webFont={{
-                url: `https://fonts.bunny.net/albert-sans/files/albert-sans-latin-${weight}-normal.woff2`,
+                url: `https://fonts.bunny.net/albert-sans/files/albert-sans-latin-400-normal.woff2`,
                 format: 'woff2',
               }}
-              fontWeight={weight}
+              fontWeight={400}
               fontStyle="normal"
             />
             <Font
               fontFamily="Albert Sans"
               fallbackFontFamily="Verdana"
               webFont={{
-                url: `https://fonts.bunny.net/albert-sans/files/albert-sans-latin-ext-${weight}-normal.woff2`,
+                url: `https://fonts.bunny.net/albert-sans/files/albert-sans-latin-ext-400-normal.woff2`,
                 format: 'woff2',
               }}
-              fontWeight={weight}
+              fontWeight={400}
               fontStyle="normal"
             />
-          </React.Fragment>
-        ))}
+            <Font
+              fontFamily="Albert Sans"
+              fallbackFontFamily="Verdana"
+              webFont={{
+                url: `https://fonts.bunny.net/albert-sans/files/albert-sans-latin-500-normal.woff2`,
+                format: 'woff2',
+              }}
+              fontWeight={500}
+              fontStyle="normal"
+            />
+            <Font
+              fontFamily="Albert Sans"
+              fallbackFontFamily="Verdana"
+              webFont={{
+                url: `https://fonts.bunny.net/albert-sans/files/albert-sans-latin-ext-500-normal.woff2`,
+                format: 'woff2',
+              }}
+              fontWeight={500}
+              fontStyle="normal"
+          />
+        </React.Fragment>
       </Head>
       <Preview>{previewText}</Preview>
       <Tailwind

@@ -7,7 +7,8 @@
     "start": "moleculer-runner --env services/**/*.service.js",
     "ci": "jest --watch",
     "test": "jest --coverage",
-    "lint": "eslint services"
+    "lint": "eslint services",
+    "email:dev": "EMAIL_DEV=true email dev"
   },
   "keywords": [
     "microservices",
@@ -17,7 +18,8 @@
   "devDependencies": {
     "eslint": "^8.50.0",
     "jest": "29.7.0",
-    "jest-cli": "29.7.0"
+    "jest-cli": "29.7.0",
+    "react-email": "^3.0.6"
   },
   "dependencies": {
     "@leemons/cache": "0.0.41",
@@ -33,6 +35,9 @@
     "@leemons/permissions": "0.0.71",
     "@leemons/utils": "0.0.41",
     "@leemons/validator": "0.0.41",
+    "@react-email/components": "^0.0.32",
+    "@react-email/render": "^1.0.4",
+    "@react-email/tailwind": "^1.0.4",
     "jaeger-client": "^3.19.0",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26"
