@@ -1,5 +1,5 @@
-const { isNil } = require('lodash');
 const dayjs = require('dayjs');
+const { isNil } = require('lodash');
 
 const { getInstanceDates } = require('./getInstanceDates');
 
@@ -40,14 +40,14 @@ function filterByArchived(query, archived, now) {
 
 function filterByFinished(query, closed, deadline) {
   if (query.finished) {
-    const from = dayjs(query.finished_$gt || null)
-      .set('hours', 0)
-      .set('minutes', 0)
-      .set('seconds', 0);
-    const to = dayjs(query.finished_$lt || null)
-      .set('hours', 23)
-      .set('minutes', 59)
-      .set('seconds', 59);
+    let from = dayjs(query.finished_$gt || null);
+    let to = dayjs(query.finished_$lt || null);
+
+    if (query.useRangeHours !== true) {
+      // If the range of hours is not used, the date is expanded to the start and end of the day.
+      from = from.set('hours', 0).set('minutes', 0).set('seconds', 0);
+      to = to.set('hours', 23).set('minutes', 59).set('seconds', 59);
+    }
 
     if (from.isValid() && to.isValid()) {
       const deadlineDate = dayjs(deadline || null);
@@ -142,7 +142,7 @@ function filterInstancesWithDates(query, _instancesWithDates) {
  * @param {Object} options.query - The query parameters to filter the assignable instances.
  * @param {Array} options.assignableInstancesIds - The array of assignable instance IDs to be filtered.
  * @param {MoleculerContext} options.ctx - The Moleculer context object.
- * @returns {Array} - The filtered array of assignable instance IDs.
+ * @returns {Promise<Array>} - The filtered array of assignable instance IDs.
  */
 async function filterByInstanceDates({ query, assignableInstancesIds, ctx }) {
   if (

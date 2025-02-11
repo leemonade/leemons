@@ -18,9 +18,7 @@ const {
 const { sortInstancesByDates, applyOffsetAndLimit } = require('./helpers/sorts');
 
 async function searchInstances({ query, ctx }) {
-  const isTeacher = [true, 1, 'true'].includes(query?.isTeacher);
-  const isEvaluable = [true, 1, 'true'].includes(query?.isEvaluable);
-  const calificableOnly = [true, 1, 'true'].includes(query?.calificableOnly);
+  const { isTeacher, isEvaluable, calificableOnly } = query;
 
   /*
     === Teacher ===

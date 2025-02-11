@@ -1,8 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
-
-import { get, isEmpty } from 'lodash';
 
 import {
   Box,
@@ -13,12 +10,15 @@ import {
   Stack,
   LoadingOverlay,
 } from '@bubbles-ui/components';
-
 import { unflatten } from '@common';
+import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { get, isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+
+import Form from './FormComponent';
+
 import prefixPN from '@assignables/helpers/prefixPN';
 import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import Form from './FormComponent';
 
 export function useFormLocalizations() {
   const key = prefixPN('assignmentForm');
@@ -33,7 +33,6 @@ export function useFormLocalizations() {
     return {};
   }, [translations, key]);
 }
-
 
 /**
  *

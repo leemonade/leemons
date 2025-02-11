@@ -1,8 +1,8 @@
-import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
+
 import loadable from '@loadable/component';
-import { useSession } from '@users/session';
 import { goLoginPage } from '@users/navigate';
+import { useSession } from '@users/session';
 
 const EvaluationNotebookPage = loadable(() => import('@scores/pages/EvaluationNotebookPage'));
 const PeriodsPage = loadable(() => import('@scores/pages/PeriodsPage'));

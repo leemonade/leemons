@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 import { Box, Text, DatePicker, InputWrapper, createStyles } from '@bubbles-ui/components';
 import dayjs from 'dayjs';
@@ -44,7 +44,14 @@ function updateDeadline(startDate, deadline) {
   return newDeadline;
 }
 
-export function PeriodPicker({ value, onChange, localizations, error }) {
+export function PeriodPicker({
+  value,
+  onChange,
+  localizations,
+  error,
+  startDate: startDateProp,
+  endDate: endDateProp,
+}) {
   const { classes } = usePeriodPickerStyles();
 
   const [startDate, setStartDate] = useState(value?.start || null);
@@ -81,15 +88,16 @@ export function PeriodPicker({ value, onChange, localizations, error }) {
             label={localizations?.startDate?.label}
             placeholder={localizations?.startDate?.placeholder}
             value={startDate}
-            minDate={new Date()}
-            maxDate={deadline ? dayjs(deadline).subtract(1, 'minutes').toDate() : undefined}
+            minDate={startDateProp ?? new Date()}
+            maxDate={deadline ? dayjs(deadline).subtract(1, 'minutes').toDate() : endDateProp}
             onChange={setStartDate}
             withTime
           />
           <DatePicker
             label={localizations?.deadline?.label}
             placeholder={localizations?.deadline?.placeholder}
-            minDate={startDate ? dayjs(startDate).add(1, 'minutes').toDate() : undefined}
+            minDate={startDate ? dayjs(startDate).add(1, 'minutes').toDate() : startDateProp}
+            maxDate={endDateProp}
             value={deadline}
             disabled={!startDate}
             clearable={false}
@@ -111,4 +119,6 @@ PeriodPicker.propTypes = {
   }),
   onChange: PropTypes.func,
   error: PropTypes.any,
+  startDate: PropTypes.instanceOf(Date),
+  endDate: PropTypes.instanceOf(Date),
 };

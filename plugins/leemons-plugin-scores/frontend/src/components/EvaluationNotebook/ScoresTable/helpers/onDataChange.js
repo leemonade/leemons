@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 import { printErrorMessage, printSuccessMessage } from './printMessages';
 
 export default function onDataChange({
@@ -14,9 +16,24 @@ export default function onDataChange({
   retakes,
 }) {
   return (value) => {
-    const grade = scales.find(
-      (g) => g.number === parseInt(value.value, 10) || g.letter === value.value
-    );
+    const score = parseFloat(value.value);
+    const isLetter = _.isNaN(score);
+
+    const grade = {
+      ...(scales.find((g) => g.number === parseInt(value.value, 10) || g.letter === value.value) ??
+        {}),
+    };
+
+    if (!grade?.number) {
+      throw new Error('Invalid grade');
+    }
+
+    if (!isLetter) {
+      const maxScore = scales.reduce((max, current) => Math.max(max, current.number), 0);
+      const minScore = scales.reduce((min, current) => Math.min(min, current.number), maxScore);
+      grade.number = Math.min(Math.max(score, minScore), maxScore);
+    }
+
     const student = students.find((s) => s.id === value.rowId);
     const activity = activities.find((a) => a.id === value.columnId);
 

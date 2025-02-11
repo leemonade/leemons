@@ -1,4 +1,3 @@
-import React from 'react';
 import { Controller } from 'react-hook-form';
 
 import PropTypes from 'prop-types';
@@ -7,9 +6,8 @@ import { useActivityDatesPickerContext } from '../../context/ActivityDatesPicker
 
 import { PeriodPicker } from './PeriodPicker';
 
-export default function ControlledPeriodPicker({sameDay}) {
-  const { form, localizations, error } = useActivityDatesPickerContext();
-
+export default function ControlledPeriodPicker({ sameDay }) {
+  const { form, localizations, error, startDate, endDate } = useActivityDatesPickerContext();
 
   return (
     <Controller
@@ -22,10 +20,13 @@ export default function ControlledPeriodPicker({sameDay}) {
           localizations={localizations?.fixedType}
           sameDay={sameDay}
           error={error}
+          startDate={startDate}
+          endDate={endDate}
         />
       )}
     />
-)};
+  );
+}
 
 ControlledPeriodPicker.propTypes = {
   sameDay: PropTypes.bool,

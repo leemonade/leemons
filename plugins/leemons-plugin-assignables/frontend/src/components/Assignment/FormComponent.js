@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
 
+import { useAcademicCalendarConfig } from '@academic-calendar/hooks';
 import { SubjectPicker } from '@academic-portfolio/components/SubjectPicker';
 import {
   Box,
@@ -124,10 +125,60 @@ export default function Form({
   scrollRef,
   defaultValues,
 }) {
+  const [selectedSubjects, setSelectedSubjects] = useState([]);
+
   const form = useForm({
     defaultValues,
   });
   const { control, handleSubmit } = form;
+
+  const programIds = useMemo(
+    () => selectedSubjects?.map((subject) => subject.programId) ?? [],
+    [selectedSubjects]
+  );
+
+  const academicCalendar = useAcademicCalendarConfig(programIds, {
+    enabled: !!programIds?.length,
+  });
+
+  const coursesDates = useMemo(() => {
+    // data.courseDates has the following structure:
+    // {
+    //   "lrn:local:academic-portfolio:local:66e96bed36a2b19b8d1b9184:Groups:67aa1778ea14e5ddf8baa95b": {
+    //     "startDate": "2025-02-09T23:00:00.000Z",
+    //     "endDate": "2025-02-12T23:00:00.000Z"
+    //   },
+    // }
+    // We need to return an object with the same structure but with all the courseDates merged
+    const allCourses = {};
+    academicCalendar?.forEach((calendar) => {
+      if (calendar?.data?.courseDates) {
+        Object.entries(calendar.data.courseDates).forEach(([key, value]) => {
+          allCourses[key] = value;
+        });
+      }
+    });
+    const selectedCourses = selectedSubjects?.map((subject) => subject.courseId);
+
+    // Filter courses to only include selected ones
+    const selectedCourseDates = Object.entries(allCourses)
+      .filter(([courseId]) => selectedCourses?.includes(courseId))
+      .map(([, dates]) => dates);
+
+    // If no courses are selected, return null
+    if (!selectedCourseDates.length) {
+      return null;
+    }
+
+    // Get earliest start date and latest end date
+    const startDates = selectedCourseDates.map((course) => new Date(course.startDate));
+    const endDates = selectedCourseDates.map((course) => new Date(course.endDate));
+
+    return {
+      startDate: new Date(Math.min(...startDates)),
+      endDate: new Date(Math.max(...endDates)),
+    };
+  }, [academicCalendar, selectedSubjects]);
 
   const submitHandler = React.useCallback(
     (...props) => onSubmitFunc(onSubmit, evaluationType, ...props),
@@ -218,6 +269,7 @@ export default function Form({
                       hideSectionHeaders={hideSectionHeaders}
                       onlyOneSubject={onlyOneSubject}
                       selectInitialSubjects
+                      onChangeRaw={(value) => setSelectedSubjects(value)}
                     />
                   )}
                 />
@@ -254,6 +306,8 @@ export default function Form({
                     hideMaxTime={hideMaxTime}
                     hideSectionHeaders={hideSectionHeaders}
                     hideShowInCalendar={hideShowInCalendar}
+                    startDate={coursesDates?.startDate}
+                    endDate={coursesDates?.endDate}
                   />
                 )}
               />

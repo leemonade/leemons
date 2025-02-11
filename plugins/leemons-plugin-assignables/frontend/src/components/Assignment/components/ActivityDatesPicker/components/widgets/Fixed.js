@@ -1,6 +1,3 @@
-import React from 'react';
-
-
 import { Stack } from '@bubbles-ui/components';
 
 import HideFromCalendar from '../HideFromCalendar';
@@ -16,5 +13,5 @@ export default function Fixed() {
         <MaxTimeToggle />
       </Stack>
     </Stack>
-  )
-};
+  );
+}

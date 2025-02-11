@@ -1,16 +1,13 @@
 import React, { useMemo } from 'react';
 import { useForm, Controller, useWatch } from 'react-hook-form';
 
-import { Box, RadioGroup, createStyles, LoadingOverlay  } from '@bubbles-ui/components';
+import { Box, RadioGroup, createStyles, LoadingOverlay } from '@bubbles-ui/components';
 import PropTypes from 'prop-types';
 
 import { Container } from '../Container';
 
-import {ActivityDatesPickerProvider} from './context/ActivityDatesPickerProvider';
+import { ActivityDatesPickerProvider } from './context/ActivityDatesPickerProvider';
 import useDatesPickerOptions from './hooks/useDatesPickerOptions';
-
-
-
 
 export const useActivityDatesPickerStyles = createStyles((theme) => ({
   root: {
@@ -32,7 +29,9 @@ export const useActivityDatesPickerStyles = createStyles((theme) => ({
 }));
 
 function useOnChange({ control, onChange }) {
-  const { type, dates, hideFromCalendar, maxTimeToggle, maxTime, ...others } = useWatch({ control });
+  const { type, dates, hideFromCalendar, maxTimeToggle, maxTime, ...others } = useWatch({
+    control,
+  });
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const memoizedOthers = useMemo(() => others, [JSON.stringify(others)]);
@@ -64,8 +63,10 @@ export function ActivityDatesPicker({
   hideSectionHeaders,
   hideMaxTime,
   hideShowInCalendar,
+  startDate,
+  endDate,
 }) {
-  const {options, components, isLoading} = useDatesPickerOptions();
+  const { options, components, isLoading } = useDatesPickerOptions();
 
   const form = useForm({
     defaultValues: {
@@ -88,33 +89,34 @@ export function ActivityDatesPicker({
   const TypeComponent = components[type];
 
   return (
-    <ActivityDatesPickerProvider values={{
-      form,
+    <ActivityDatesPickerProvider
+      values={{
+        form,
 
-      localizations,
+        localizations,
 
-      hideSectionHeaders,
-      hideMaxTime,
-      hideShowInCalendar,
-      error
-    }}
+        hideSectionHeaders,
+        hideMaxTime,
+        hideShowInCalendar,
+        error,
+        startDate,
+        endDate,
+      }}
     >
       <Container
-      title={localizations?.title}
-      required
-      hideSectionHeaders={hideSectionHeaders}
-      spacingBottom={16}
-    >
-      <Box className={classes.root}>
-      <Controller
-          name="type"
-          control={control}
-          render={({ field }) => <RadioGroup {...field} minWidth data={options} />}
-        />
-        {
-          type && components[type] ? <TypeComponent form={form} /> : null
-        }
-      </Box>
+        title={localizations?.title}
+        required
+        hideSectionHeaders={hideSectionHeaders}
+        spacingBottom={16}
+      >
+        <Box className={classes.root}>
+          <Controller
+            name="type"
+            control={control}
+            render={({ field }) => <RadioGroup {...field} minWidth data={options} />}
+          />
+          {type && components[type] ? <TypeComponent form={form} /> : null}
+        </Box>
       </Container>
     </ActivityDatesPickerProvider>
   );
@@ -128,4 +130,6 @@ ActivityDatesPicker.propTypes = {
   hideSectionHeaders: PropTypes.bool,
   hideMaxTime: PropTypes.bool,
   hideShowInCalendar: PropTypes.bool,
+  startDate: PropTypes.instanceOf(Date),
+  endDate: PropTypes.instanceOf(Date),
 };

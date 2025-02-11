@@ -38,12 +38,12 @@ export default function useActivities({
     select: (result) => without(result, 'learningpaths.module'),
   });
 
-  const { data: instancesIds, isLoading: instancesIdsLoading } = useSearchAssignableInstances({
-    query: {
+  const query = useMemo(
+    () => ({
       query: searchType === 'activity' ? search : undefined,
       finished: true,
-      finished_$gt: getPreviousDayLastMillisecond(period?.startDate),
-      finished_$lt: getNextDayFirstMillisecond(period?.endDate),
+      finished_$gt: getPreviousDayLastMillisecond(period?.startDate).toISOString(),
+      finished_$lt: getNextDayFirstMillisecond(period?.endDate).toISOString(),
 
       role: weights?.type === 'modules' ? 'learningpaths.module' : roles,
       programs: program,
@@ -51,7 +51,23 @@ export default function useActivities({
 
       isEvaluable: true,
       calificableOnly: !showNonEvaluable,
-    },
+      useRangeHours: true,
+    }),
+    [
+      searchType,
+      search,
+      period?.startDate,
+      period?.endDate,
+      weights?.type,
+      roles,
+      program,
+      klass?.id,
+      showNonEvaluable,
+    ]
+  );
+
+  const { data: instancesIds, isLoading: instancesIdsLoading } = useSearchAssignableInstances({
+    query,
     select: (result) => result.items,
   });
 

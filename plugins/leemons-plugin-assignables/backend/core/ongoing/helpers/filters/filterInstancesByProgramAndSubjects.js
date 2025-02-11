@@ -1,4 +1,5 @@
 const { difference, compact } = require('lodash');
+
 const { tryParse, isNonEmptyArray } = require('../helpers');
 
 function filterInstancesByProgramAndSubjects({
