@@ -30,7 +30,15 @@ async function sendEvaluationClosedEmail({ scores, ctx }) {
   ]);
 
   const promises = scores.map((score) => {
-    const scale = evaluationSystem.scales.find((s) => s.number === score.grade);
+    const scale = evaluationSystem.scales.find((s) => {
+      // Only round score.grade if s.number is an integer
+      const isInteger = Number.isInteger(s.number);
+      return s.number === (isInteger ? Math.round(score.grade) : score.grade);
+    }) ?? {
+      letter: null,
+      number: score.grade,
+      description: null,
+    };
 
     const locale = userAgentsInfo[score.student].user.locale;
 
@@ -47,10 +55,10 @@ async function sendEvaluationClosedEmail({ scores, ctx }) {
       subjectColor: classData[0].subject.color ?? null,
 
       gradeLetter: scale.letter ?? null,
-      gradeInt: !scale.letter ? Math.floor(scale.number).toString() : null,
+      gradeInt: !scale.letter ? Math.floor(score.grade).toString() : null,
       gradeDecimals:
-        !scale.letter && scale.number % 1 !== 0
-          ? Math.round((scale.number - Math.floor(scale.number)) * 100).toString()
+        !scale.letter && score.grade % 1 !== 0
+          ? Math.round((score.grade - Math.floor(score.grade)) * 100).toString()
           : null,
       gradeLabel: scale.description,
 
