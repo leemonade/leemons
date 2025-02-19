@@ -1,4 +1,3 @@
-import React from 'react';
 import EmailLayout from '@leemons/emails/src/emails/EmailLayout.jsx';
 import { Button, Container, Text } from '@react-email/components';
 import PropTypes from 'prop-types';
@@ -11,7 +10,7 @@ const messages = {
   en: {
     title: 'Evaluation closed',
     subtitle: 'We would like to inform you that on {{it.date}}',
-    subtitle2: '',
+    subtitle2: 'the period',
     subtitle3: 'for this subject has been closed',
 
     yourGrade: 'Your grade was:',
@@ -24,7 +23,7 @@ const messages = {
   es: {
     title: 'Evaluación finalizada',
     subtitle: 'Te comunicamos que con fecha {{it.date}}',
-    subtitle2: 'ha finalizado la',
+    subtitle2: 'ha finalizado el periodo',
     subtitle3: 'de la asignatura',
 
     yourGrade: 'Tu nota ha sido:',
