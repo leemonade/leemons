@@ -1,3 +1,4 @@
+import React from 'react';
 import EmailLayout from '@leemons/emails/src/emails/EmailLayout.jsx';
 import { Button, Container, Text } from '@react-email/components';
 import PropTypes from 'prop-types';
