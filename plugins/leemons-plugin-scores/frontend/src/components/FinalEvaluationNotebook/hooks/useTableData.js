@@ -11,18 +11,22 @@ export default function useTableData({ class: klass, program, filters }) {
     classes: [klass],
   });
 
+  const filteredPeriods = periods.filter(
+    (period) => !!period.periods?.[program]?.[klass.courses.id]
+  );
+
   const activities = useMemo(
     () =>
-      periods.filter(period => !!period.periods?.[program]?.[klass.courses.id]).map(period => ({
+      filteredPeriods.map((period) => ({
         id: period.periods?.[program]?.[klass.courses.id] ?? '',
         name: period.name,
         deadline: period.endDate,
         expandable: false,
         allowChange: false,
         type: 'evaluable',
-        weight: 1 / (periods?.length || 1),
+        weight: 1 / (filteredPeriods?.length || 1),
       })),
-    [periods, klass, program]
+    [filteredPeriods, klass, program]
   );
 
   const { data: studentsData, isLoading: studentsLoading } = useStudents({
