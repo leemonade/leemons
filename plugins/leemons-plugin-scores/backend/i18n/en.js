@@ -447,6 +447,18 @@ module.exports = {
     finalGrades: 'Final scores',
     noEvaluable: 'No evaluable',
     downloadReport: 'Download report',
+    reportCard: 'Report card',
+    promotedCredits: 'Promoted credits',
+    totalCredits: 'Total credits',
+
+    reportCardTable: {
+      credits: 'Credits',
+      score: 'Score',
+      code: 'Code',
+      subject: 'Subject',
+      subjectType: 'Type',
+    },
+
     emptyStates: {
       noFilters: {
         title: 'Select course and period',

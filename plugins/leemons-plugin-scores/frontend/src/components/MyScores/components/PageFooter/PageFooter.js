@@ -1,21 +1,17 @@
-import { Button } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import PropTypes from 'prop-types';
 
-import useDownloadStudentReport from './hooks/useDownloadStudentReport';
+import { PrintReportButton } from './PrintReportButton';
 
-import { prefixPN } from '@scores/helpers';
+import useMyScoresStore from '@scores/stores/myScoresStore';
 
-export default function Footer({period}) {
-  const [t] = useTranslateLoader(prefixPN('myScores'));
+export default function Footer({ period }) {
+  const finalScores = useMyScoresStore((store) => store.finalScores);
 
-  const downloadStudentReport = useDownloadStudentReport();
-
-  if (period === 'final') {
+  if (!finalScores?.size) {
     return null;
   }
 
-  return <Button onClick={downloadStudentReport}>{t('downloadReport')}</Button>;
+  return <PrintReportButton />;
 }
 
 Footer.propTypes = {

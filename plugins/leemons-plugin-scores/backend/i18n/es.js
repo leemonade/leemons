@@ -449,6 +449,17 @@ module.exports = {
     finalGrades: 'Notas finales',
     noEvaluable: 'No calificable',
     downloadReport: 'Descargar boletín',
+    reportCard: 'Boletín de notas',
+    promotedCredits: 'Créditos superados',
+    totalCredits: 'Créditos totales',
+
+    reportCardTable: {
+      credits: 'Créditos',
+      score: 'Nota',
+      code: 'Código',
+      subject: 'Asignatura',
+      subjectType: 'Tipo',
+    },
 
     emptyStates: {
       noFilters: {
