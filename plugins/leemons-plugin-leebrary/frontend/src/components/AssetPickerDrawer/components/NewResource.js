@@ -1,19 +1,23 @@
-import React, { useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
+import { useMemo, useState } from 'react';
+
 import { Box, createStyles } from '@bubbles-ui/components';
 import { unflatten, useRequestErrorMessage } from '@common';
+import { addErrorAlert } from '@layout/alert';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useSession } from '@users/session';
 import { keyBy, isEmpty } from 'lodash';
+import PropTypes from 'prop-types';
+
+import { usePickerCategories } from '../hooks/usePickerCategories';
+
 import AssetForm from '@leebrary/components/AssetForm/AssetForm';
-import prefixPN from '@leebrary/helpers/prefixPN';
+import { LIBRARY_FORM_TYPES } from '@leebrary/components/LibraryForm/LibraryForm.constants';
 import UploadingFileModal from '@leebrary/components/UploadingFileModal';
+import compressImage from '@leebrary/helpers/compressImage';
+import imageUrlToFile from '@leebrary/helpers/imageUrlToFile';
+import prefixPN from '@leebrary/helpers/prefixPN';
 import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
 import { newAssetRequest } from '@leebrary/request';
-import compressImage from '@leebrary/helpers/compressImage';
-import { addErrorAlert } from '@layout/alert';
-import { LIBRARY_FORM_TYPES } from '@leebrary/components/LibraryForm/LibraryForm.constants';
-import imageUrlToFile from '@leebrary/helpers/imageUrlToFile';
-import { usePickerCategories } from '../hooks/usePickerCategories';
 
 export const useNewResourceStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
@@ -42,6 +46,7 @@ export function NewResource({
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const { classes } = useNewResourceStyles();
+  const session = useSession();
 
   // ··············································································
   // FORM LABELS & STATICS
@@ -56,7 +61,7 @@ export function NewResource({
     return {};
   }, [translations]);
 
-  if (!categoriesByKey[LIBRARY_FORM_TYPES.MEDIA_FILES]) {
+  if (!categoriesByKey[LIBRARY_FORM_TYPES.MEDIA_FILES] && !session.isSuperAdmin) {
     return null;
   }
 

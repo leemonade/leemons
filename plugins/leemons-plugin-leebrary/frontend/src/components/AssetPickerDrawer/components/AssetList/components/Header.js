@@ -50,7 +50,7 @@ export function Header({
   const resourcesData = useMemo(
     () =>
       sortBy(
-        filteredCategories.map((filteredCategory) => ({
+        (filteredCategories ?? []).map((filteredCategory) => ({
           label: filteredCategory.menuItem.label,
           value: filteredCategory.id,
           order: filteredCategory.order,
