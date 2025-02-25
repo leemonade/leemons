@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+
 import useCategories from '@leebrary/request/hooks/queries/useCategories';
 
 export function usePickerCategories() {
@@ -6,12 +7,12 @@ export function usePickerCategories() {
 
   return useMemo(
     () =>
-      categories.map((category) => ({
+      categories?.map((category) => ({
         ...category,
         icon: category.menuItem.iconSvg,
         name: category.menuItem.label,
         creatable: category.creatable === true || category.creatable === 1,
-      })),
+      })) ?? [],
     [categories]
   );
 }
