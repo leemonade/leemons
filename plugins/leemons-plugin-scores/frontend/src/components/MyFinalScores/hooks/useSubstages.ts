@@ -6,7 +6,7 @@ import { Class } from '../types/class';
 import { useScores } from '@scores/requests/hooks/queries';
 
 export function useSubstages(classData: Class) {
-  const substages = classData.program.substages;
+  const substages = classData.substages.length ? classData.substages : classData.program.substages;
   const student = useUserAgents();
 
   const substagesIds = substages?.map((substage) => substage.id);
@@ -23,10 +23,12 @@ export function useSubstages(classData: Class) {
     }
   );
 
-  return substages?.map((substage) => ({
-    id: substage.id,
-    name: substage.name,
-    score: scores?.[substage.id]?.grade,
-    retake: scores?.[substage.id]?.retake,
-  })) ?? [];
+  return (
+    substages?.map((substage) => ({
+      id: substage.id,
+      name: substage.name,
+      score: scores?.[substage.id]?.grade,
+      retake: scores?.[substage.id]?.retake,
+    })) ?? []
+  );
 }
