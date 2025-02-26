@@ -14,8 +14,9 @@ export function RightContentBody({
   onDataChange,
   usePercentage,
   viewOnly,
-  hideCustom,
   labels,
+  hideCustom,
+  disableCustomChange,
 }) {
   const studentsRows = studentsData.map((student) => {
     const avgScore = getWeightedAvgScore({
@@ -36,6 +37,7 @@ export function RightContentBody({
         usePercentage={usePercentage}
         viewOnly={viewOnly}
         hideCustom={hideCustom}
+        disableCustomChange={disableCustomChange}
         labels={labels}
       />
     );
@@ -57,6 +59,7 @@ RightContentBody.propTypes = {
   onDataChange: PropTypes.func,
   usePercentage: PropTypes.bool,
   viewOnly: PropTypes.bool,
-  hideCustom: PropTypes.bool,
   labels: PropTypes.object,
+  hideCustom: PropTypes.bool,
+  disableCustomChange: PropTypes.bool,
 };

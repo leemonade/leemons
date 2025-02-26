@@ -30,6 +30,7 @@ export function RightContent({
   usePercentage,
   viewOnly,
   hideCustom,
+  disableCustomChange,
 }) {
   const { classes } = useRightContentStyles(
     { overFlowRight },
@@ -54,6 +55,7 @@ export function RightContent({
         viewOnly={viewOnly}
         hideCustom={hideCustom}
         labels={labels}
+        disableCustomChange={disableCustomChange}
       />
     </Box>
   );
@@ -72,4 +74,5 @@ RightContent.propTypes = {
   usePercentage: PropTypes.bool,
   viewOnly: PropTypes.bool,
   hideCustom: PropTypes.bool,
+  disableCustomChange: PropTypes.bool,
 };

@@ -31,6 +31,7 @@ export function StudentRow({
   viewOnly,
   retakeScores,
   hideCustom,
+  disableCustomChange,
   labels,
 }) {
   const { classes } = useStudentRowStyles();
@@ -64,8 +65,8 @@ export function StudentRow({
       {!onlyShowRetakes && !hideCustom && (
         <StudentScore big>
           <ScoreCell
-            value={isNaN(customScore) ? 8 : customScore}
-            allowChange={allowCustomChange && !viewOnly}
+            value={isNaN(customScore) ? '-' : customScore}
+            allowChange={allowCustomChange && !viewOnly && !disableCustomChange}
             grades={grades}
             usePercentage={usePercentage}
             row={id}
@@ -95,5 +96,6 @@ StudentRow.propTypes = {
   viewOnly: PropTypes.bool,
   retakeScores: PropTypes.array,
   hideCustom: PropTypes.bool,
+  disableCustomChange: PropTypes.bool,
   labels: PropTypes.object,
 };
