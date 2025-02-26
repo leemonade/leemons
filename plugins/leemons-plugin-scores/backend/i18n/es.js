@@ -449,6 +449,19 @@ module.exports = {
     finalGrades: 'Notas finales',
     noEvaluable: 'No calificable',
     downloadReport: 'Descargar boletín',
+    reportCard: 'Boletín de notas',
+    promotedCredits: 'Créditos superados',
+    totalCredits: 'Créditos totales',
+    pendingEvaluation: 'Pendiente de evaluación',
+
+    reportCardTable: {
+      credits: 'Créditos',
+      score: 'Nota',
+      code: 'Código',
+      subject: 'Asignatura',
+      subjectType: 'Tipo',
+      retake: 'Convocatoria',
+    },
 
     emptyStates: {
       noFilters: {
