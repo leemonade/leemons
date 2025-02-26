@@ -59,10 +59,10 @@ export default function usePeriods({ selectedClass, classes }) {
             const substageIds = selectedClass?.substages?.map((s) => s.id);
             const selectedClassCourses = Array.isArray(selectedClass?.courses)
               ? selectedClass?.courses.map((c) => c.id)
-              : selectedClass?.courses?.id;
+              : [selectedClass?.courses?.id];
 
             if (
-              !selectedClassCourses.some((course) =>
+              !selectedClassCourses?.some((course) =>
                 substageIds.some(
                   (substage) => period?.periods?.[selectedClass.program]?.[course] === substage
                 )
