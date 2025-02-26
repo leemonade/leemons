@@ -10,7 +10,10 @@ export default function useStudents({ class: klass, filters: { search }, periods
     enabled: !!klass?.students?.length,
   });
 
-  const periodsIds = map(periods, (period) => period.periods[klass.program][klass.courses.id]);
+  const periodsIds = map(
+    periods,
+    (period) => period.periods[klass.program][klass.courses.id ?? klass.courses[0].id]
+  );
 
   const { data: scores, isLoading: scoresLoading } = useScores(
     {

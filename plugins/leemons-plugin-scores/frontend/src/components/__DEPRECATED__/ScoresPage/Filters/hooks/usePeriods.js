@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { useCache } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import _ from 'lodash';
+import _, { intersection } from 'lodash';
 
 import { useAcademicCalendarPeriods } from '../../useAcademicCalendarPeriods';
 
@@ -54,9 +54,32 @@ export default function usePeriods({ selectedClass, classes }) {
         }
 
         if (period.courses?.length) {
+          if (selectedClass.substages?.length) {
+            // If only certain substage matches
+            const substageIds = selectedClass?.substages?.map((s) => s.id);
+            const selectedClassCourses = Array.isArray(selectedClass?.courses)
+              ? selectedClass?.courses.map((c) => c.id)
+              : selectedClass?.courses?.id;
+
+            if (
+              !selectedClassCourses.some((course) =>
+                substageIds.some(
+                  (substage) => period?.periods?.[selectedClass.program]?.[course] === substage
+                )
+              )
+            ) {
+              return false;
+            }
+          }
+
           return (
             period.programs.includes(selectedClass.program) &&
-            period.courses.includes(selectedClass.courses?.id)
+            (selectedClass.courses?.id
+              ? period.courses.includes(selectedClass.courses?.id)
+              : intersection(
+                  period.courses,
+                  selectedClass.courses.map((c) => c.id)
+                ).length > 0)
           );
         }
 

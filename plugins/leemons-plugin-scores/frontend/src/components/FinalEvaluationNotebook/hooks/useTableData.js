@@ -12,13 +12,19 @@ export default function useTableData({ class: klass, program, filters }) {
   });
 
   const filteredPeriods = periods.filter(
-    (period) => !!period.periods?.[program]?.[klass.courses.id]
+    (period) =>
+      !!period.periods?.[program]?.[klass.courses.id ?? klass.courses[0].id] &&
+      (klass.substages.length
+        ? klass.substages
+            .map((s) => s.id)
+            .includes(period.periods?.[program]?.[klass.courses.id ?? klass.courses[0].id])
+        : true)
   );
 
   const activities = useMemo(
     () =>
       filteredPeriods.map((period) => ({
-        id: period.periods?.[program]?.[klass.courses.id] ?? '',
+        id: period.periods?.[program]?.[klass.courses.id ?? klass.courses[0].id] ?? '',
         name: period.name,
         deadline: period.endDate,
         expandable: false,
