@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { Stack, Text } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import getNearestScale from '@scorm/helpers/getNearestScale';
@@ -6,6 +8,7 @@ import { useUserAgents } from '@users/hooks';
 import useActivityScoreTotalStyles from '@scores/components/MyScores/components/SubjectsScoreList/components/SubjectScoreColumn/components/ActivityScoreTotal/ActivityScoreTotal.style';
 import { prefixPN } from '@scores/helpers';
 import { useScores } from '@scores/requests/hooks/queries';
+import useMyScoresStore from '@scores/stores/myScoresStore';
 
 interface Props {
   evaluationSystem: {
@@ -18,6 +21,7 @@ interface Props {
 
 export function FinalScoreTotal({ evaluationSystem, classId }: Props) {
   const [t] = useTranslateLoader(prefixPN('myScores'));
+  const setFinalScore = useMyScoresStore((state) => state.setFinalScore);
 
   const { classes, cx } = useActivityScoreTotalStyles();
 
@@ -31,6 +35,14 @@ export function FinalScoreTotal({ evaluationSystem, classId }: Props) {
 
   const score = scores?.[0]?.grade ?? null;
   const nearestScale = score === null ? null : getNearestScale({ grade: score, evaluationSystem });
+
+  useEffect(() => {
+    setFinalScore(classId, {
+      grade: score,
+      letter: nearestScale?.letter,
+      student,
+    });
+  }, [score, nearestScale, setFinalScore, classId, student]);
 
   let color = 'tertiary';
   if (nearestScale) {

@@ -55,18 +55,20 @@ export default function ActivityScoreTotal({ class: klass, period, activities, e
     color = weightedScore < evaluationSystem.minScaleToPromote.number ? 'error' : 'success';
   }
 
+  const scoreRetake = customScore?.[0]?.retake;
+  const retakeIndex = scoreRetake === '0' ? 0 : retakes?.[scoreRetake]?.index ?? null;
+
   useEffect(() => {
     setFinalScore(klass.id, {
       grade: weightedScore,
       letter: nearestScale?.letter,
       student,
+      scoreRetake,
+      retakeIndex,
     });
-  }, [weightedScore, nearestScale, setFinalScore, klass.id, student]);
+  }, [weightedScore, nearestScale, setFinalScore, klass.id, student, scoreRetake, retakeIndex]);
 
   const { classes, cx } = useActivityScoreTotalStyles();
-
-  const scoreRetake = customScore?.[0]?.retake;
-  const retakeIndex = scoreRetake === '0' ? 0 : retakes?.[scoreRetake]?.index ?? null;
 
   return (
     <Stack justifyContent="space-between" alignItems="center" className={classes.root}>

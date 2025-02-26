@@ -34,10 +34,11 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
   const finalScores = useMyScoresStore((store) => store.finalScores);
   const filters = useMyScoresStore((store) => store.filters);
   const classrooms = useMyScoresStore((store) => keyBy(store.classes, 'id'));
-  const { data: academicCalendar } = useAcademicCalendarConfig(filters?.program, {
-    enabled: !!filters?.program,
-  });
 
+  console.log('finalScores:', finalScores);
+  console.log('classrooms:', classrooms);
+
+  // USER DATA ·······················
   const userAgents = useUserAgents();
   const { data: userAgentsInfo } = useUserAgentsInfo(userAgents?.[0], {
     enabled: !!userAgents?.[0],
@@ -46,6 +47,7 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
   const userInfo = userAgentsInfo?.[0]?.user;
   const userId = userInfo?.id;
 
+  // FINAL SCORES ·······················
   const finalScoresFromClassrooms = useMemo(() => {
     if (!finalScores) {
       return null;
@@ -63,6 +65,7 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
 
   const currentPeriod = filters?.period?.selected;
 
+  // PROGRAM DATA ·······················
   const programData = useMemo(() => {
     if (!filters?.program || !classrooms) {
       return null;
@@ -83,6 +86,11 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
     return programData.courses.find((course) => course.id === filters?.course);
   }, [filters?.course, programData]);
 
+  const { data: academicCalendar } = useAcademicCalendarConfig(filters?.program, {
+    enabled: !!filters?.program,
+  });
+
+  // EVALUATION SYSTEM ·······················
   const { data: evaluationSystem, isLoading: isLoadingProgramEvaluationSystems } =
     useProgramEvaluationSystems({
       program: filters?.program,
@@ -91,6 +99,7 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
       },
     });
 
+  // USER DATASET ·······················
   const { data: userDatasets, isLoading: isLoadingUserDatasets } = useUserDatasets({
     userIds: [userId],
     enabled: userId?.length > 0,
@@ -153,9 +162,16 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
       return 0;
     }
 
-    const result =
-      Array.from(finalScoresFromClassrooms.values()).reduce((acc, score) => acc + score.grade, 0) /
-      finalScoresFromClassrooms.size;
+    // Filter out null grades and calculate average
+    const validScores = Array.from(finalScoresFromClassrooms.values()).filter(
+      (score) => score.grade !== null
+    );
+
+    if (validScores.length === 0) {
+      return 0;
+    }
+
+    const result = validScores.reduce((acc, score) => acc + score.grade, 0) / validScores.length;
 
     return result.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }, [finalScoresFromClassrooms, locale]);
@@ -210,27 +226,36 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
         header: t('reportCardTable.credits'),
         cell: (info) => <Text>{info.getValue()}</Text>,
       }),
+      columnHelper.accessor('retake', {
+        header: t('reportCardTable.retake'),
+        cell: (info) => {
+          if (info.getValue() !== null) {
+            return (
+              <Text>
+                {t('retake')} {info.getValue()}
+              </Text>
+            );
+          }
+          return <Text>-</Text>;
+        },
+      }),
       columnHelper.accessor('score', {
         header: t('reportCardTable.score'),
-        cell: (info) => (
-          <Text>
-            {info
-              .getValue()
-              .toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-          </Text>
-        ),
+        cell: (info) => <Text>{info.getValue()}</Text>,
       })
     );
 
     return baseColumns;
-  }, [columnHelper, t, locale, showSubjectTypeColumn]);
+  }, [columnHelper, t, showSubjectTypeColumn]);
 
   const tableData = useMemo(() => {
     if (!classrooms || !finalScoresFromClassrooms) return [];
 
     return Object.values(classrooms).map((classroom) => {
-      const grade = finalScoresFromClassrooms.get(classroom.id)?.grade ?? 0;
-      const nearestScale = getNearestScale({ grade, evaluationSystem });
+      const scoreData = finalScoresFromClassrooms.get(classroom.id);
+      const grade = scoreData?.grade ?? null;
+      const retakeIndex = scoreData?.retakeIndex > -1 ? scoreData?.retakeIndex + 1 : null;
+      const nearestScale = grade !== null ? getNearestScale({ grade, evaluationSystem }) : null;
       const scaleToPromote = evaluationSystem?.minScaleToPromote?.number ?? 0;
 
       return {
@@ -240,12 +265,13 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
           ? classroom.subjectType?.description
           : classroom.subjectType?.name ?? '',
         credits: grade >= scaleToPromote ? classroom.subject?.credits : 0,
+        retake: retakeIndex,
         score: nearestScale?.description
           ? `${nearestScale.description.toUpperCase()} (${grade})`
-          : grade,
+          : grade ?? `(${t('pendingEvaluation')})`,
       };
     });
-  }, [classrooms, finalScoresFromClassrooms, evaluationSystem]);
+  }, [classrooms, t, finalScoresFromClassrooms, evaluationSystem]);
 
   const table = useReactTable({
     data: tableData,

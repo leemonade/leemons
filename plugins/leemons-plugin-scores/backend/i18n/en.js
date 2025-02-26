@@ -450,6 +450,7 @@ module.exports = {
     reportCard: 'Report card',
     promotedCredits: 'Promoted credits',
     totalCredits: 'Total credits',
+    pendingEvaluation: 'Pending evaluation',
 
     reportCardTable: {
       credits: 'Credits',
@@ -457,6 +458,7 @@ module.exports = {
       code: 'Code',
       subject: 'Subject',
       subjectType: 'Type',
+      retake: 'Retake',
     },
 
     emptyStates: {

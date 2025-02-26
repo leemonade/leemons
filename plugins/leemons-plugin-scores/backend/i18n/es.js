@@ -452,6 +452,7 @@ module.exports = {
     reportCard: 'Boletín de notas',
     promotedCredits: 'Créditos superados',
     totalCredits: 'Créditos totales',
+    pendingEvaluation: 'Pendiente de evaluación',
 
     reportCardTable: {
       credits: 'Créditos',
@@ -459,6 +460,7 @@ module.exports = {
       code: 'Código',
       subject: 'Asignatura',
       subjectType: 'Tipo',
+      retake: 'Convocatoria',
     },
 
     emptyStates: {
