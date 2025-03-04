@@ -40,7 +40,13 @@ export default function EvaluationNotebookPage() {
         icon={<EvaluatedIcon width={24} height={24} color="#000" />}
         cancelable={false}
       >
-        <Filters hideTitle showProgramSelect onChange={setFilters} value={filters} teacherTypeFilter={['main-teacher', 'associate-teacher', 'invited-teacher']} />
+        <Filters
+          hideTitle
+          showProgramSelect
+          onChange={setFilters}
+          value={filters}
+          teacherTypeFilter={['main-teacher', 'associate-teacher', 'invited-teacher']}
+        />
       </TLayout.Header>
       <TLayout.Content fullWidth>
         {!filters && <EmptyState />}
@@ -49,13 +55,14 @@ export default function EvaluationNotebookPage() {
           <FinalEvaluationNotebook filters={filters} />
         )}
       </TLayout.Content>
-      {filters?.period?.selected !== 'final' && (
-        <TLayout.Footer fullWidth>
-          <TLayout.Footer.RightActions>
-            <PageFooter isCustom={!!filters?.period?.isCustom} />
-          </TLayout.Footer.RightActions>
-        </TLayout.Footer>
-      )}
+      <TLayout.Footer fullWidth>
+        <TLayout.Footer.RightActions>
+          <PageFooter
+            isCustom={!!filters?.period?.isCustom}
+            disableReports={filters?.period?.selected === 'final'}
+          />
+        </TLayout.Footer.RightActions>
+      </TLayout.Footer>
     </TLayout>
   );
 }

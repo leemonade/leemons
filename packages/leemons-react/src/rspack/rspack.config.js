@@ -165,7 +165,7 @@ module.exports = function rspackConfig({
         htmlAcceptHeaders: ['text/html', 'application/xhtml+xml'],
       },
     },
-    devtool: isDev ? 'eval-cheap-module-source-map' : 'source-map',
+    devtool: isDev ? 'cheap-module-source-map' : 'source-map',
     experiments: {
       lazyCompilation: isDev && lazy,
       css: true,
