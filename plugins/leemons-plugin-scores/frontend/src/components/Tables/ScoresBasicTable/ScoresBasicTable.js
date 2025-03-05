@@ -34,6 +34,7 @@ const ScoresBasicTable = ({
   from,
   to,
   hideCustom,
+  disableCustomChange,
   viewOnly,
   leftBadge,
   retakes,
@@ -195,8 +196,8 @@ const ScoresBasicTable = ({
               index === 0
                 ? 'first'
                 : index === expandedData.activities.length - 1
-                  ? 'last'
-                  : 'between';
+                ? 'last'
+                : 'between';
             const completionPercentage = getCompletionPercentage(expandedActivity.id, true);
             return {
               accessor: expandedActivity.id,
@@ -351,6 +352,7 @@ const ScoresBasicTable = ({
             to,
             locale,
           }}
+          disableCustomChange={disableCustomChange}
           hideCustom={hideCustom}
           studentsData={value}
           grades={grades}

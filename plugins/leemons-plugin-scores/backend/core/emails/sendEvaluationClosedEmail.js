@@ -49,7 +49,7 @@ async function sendEvaluationClosedEmail({ scores, ctx }) {
         day: '2-digit',
       }),
       // TODO: If periodData is null, we need to get the period name from the AcademicCalendar start and end dates. Example: "2024 - 2025"
-      periodName: periodData?.name ?? '',
+      periodName: periodId === 'final' ? 'Final' : periodData?.name ?? '',
       subjectName: classData[0].subject.name,
       subjectIconUrl: subjectIconUrl ?? null,
       subjectColor: classData[0].subject.color ?? null,

@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { ContextContainer, LoadingOverlay } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 
@@ -36,7 +38,7 @@ function useOnDataChange({ classId, students, scales }) {
           student: studentId,
           class: classId,
           period: 'final',
-          published: true,
+          published: false,
           grade: parseInt(score, 10),
         },
       ],
@@ -64,6 +66,7 @@ function useOnDataChange({ classId, students, scales }) {
 export default function FinalEvaluationNotebook() {
   const filters = useEvaluationNotebookStore((store) => store.filters);
   const setFilters = useEvaluationNotebookStore((store) => store.setFilters);
+  const setTableData = useEvaluationNotebookStore((store) => store.setTableData);
   const { period, class: klass, program } = filters;
 
   const [t] = useTranslateLoader(prefixPN('evaluationNotebook'));
@@ -88,6 +91,18 @@ export default function FinalEvaluationNotebook() {
     program,
     filters,
   });
+
+  useEffect(() => {
+    setTableData({
+      activitiesData: { activities, value: students },
+      grades: scales,
+      filters: { startDate: period?.startDate, endDate: period?.endDate, period },
+      programData: program,
+      subjectData: klass?.subject,
+      class: klass,
+      retakes: [],
+    });
+  }, [activities, students, scales, period, program, klass, setTableData]);
 
   const onDataChange = useOnDataChange({ classId: klass.id, students, scales });
 

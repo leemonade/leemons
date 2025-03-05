@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { Box, ContextContainer, createStyles } from '@bubbles-ui/components';
+import { Box, createStyles } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import {
   useReactTable,
@@ -81,7 +81,7 @@ export function PickRetakeTable({ students, retakes }: Props) {
             retakeId={info.getValue()}
             retakes={info.row.original.retakes}
             studentId={info.row.original.student.id}
-            singleRetake={retakes.length === 1}
+            singleRetake={retakes.length <= 1}
           />
         ),
       }),

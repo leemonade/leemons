@@ -96,7 +96,9 @@ export default function useSelectedPeriod({
         ..._.omit(selectedPeriod, ['id', 'programs', 'courses', 'periods']),
         program: selectedClass.program,
         course: selectedClass.courses.id,
-        id: selectedPeriod.periods[selectedClass.program][selectedClass.courses.id],
+        id: selectedPeriod.periods[selectedClass.program][
+          selectedClass.courses.id ?? selectedClass.courses[0].id
+        ],
         type: 'academic-calendar',
       };
     } else {

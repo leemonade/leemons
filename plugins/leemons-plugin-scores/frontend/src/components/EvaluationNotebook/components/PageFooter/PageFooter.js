@@ -13,7 +13,7 @@ import useDownloadScoreReport from './hooks/useDownloadScoreReport';
 import { prefixPN } from '@scores/helpers';
 import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
 
-export default function Footer({ isCustom }) {
+export default function Footer({ isCustom, disableReports }) {
   const [t] = useTranslateLoader(prefixPN('evaluationNotebook.footer'));
   const tableData = useEvaluationNotebookStore((state) => state.tableData);
   const isPeriodPublished = useEvaluationNotebookStore((state) => state.isPeriodPublished);
@@ -61,24 +61,29 @@ export default function Footer({ isCustom }) {
           {t('closeEvaluation')}
         </Button>
       )}
-      <Button
-        variant="outline"
-        onClick={() => downloadScoreReport(tableData, 'xlsx')}
-        leftIcon={<DownloadIcon />}
-      >
-        Excel
-      </Button>
-      <Button
-        variant="outline"
-        onClick={() => downloadScoreReport(tableData, 'csv')}
-        leftIcon={<DownloadIcon />}
-      >
-        CSV
-      </Button>
+      {!disableReports && (
+        <>
+          <Button
+            variant="outline"
+            onClick={() => downloadScoreReport(tableData, 'xlsx')}
+            leftIcon={<DownloadIcon />}
+          >
+            Excel
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => downloadScoreReport(tableData, 'csv')}
+            leftIcon={<DownloadIcon />}
+          >
+            CSV
+          </Button>
+        </>
+      )}
     </>
   );
 }
 
 Footer.propTypes = {
   isCustom: PropTypes.bool,
+  disableReports: PropTypes.bool,
 };

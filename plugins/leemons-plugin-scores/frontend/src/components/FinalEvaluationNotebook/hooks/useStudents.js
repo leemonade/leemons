@@ -10,7 +10,10 @@ export default function useStudents({ class: klass, filters: { search }, periods
     enabled: !!klass?.students?.length,
   });
 
-  const periodsIds = map(periods, (period) => period.periods[klass.program][klass.courses.id]);
+  const periodsIds = map(
+    periods,
+    (period) => period.periods[klass.program][klass.courses.id ?? klass.courses[0].id]
+  );
 
   const { data: scores, isLoading: scoresLoading } = useScores(
     {
@@ -63,19 +66,32 @@ export default function useStudents({ class: klass, filters: { search }, periods
       });
     }
 
-    return filteredStudents.map(({ id, user }) => ({
-      id,
-      name: user.name,
-      surname: user.surnames,
-      image: user.avatar,
-      customScore: finalScores?.[id]?.grade ?? null,
-      allowCustomChange: true,
-      activities: periodsIds.map((period) => ({
-        id: period,
-        score: scores?.[`${id}|${period}`]?.grade ?? null,
-        isSubmitted: true,
-      })),
-    }));
+    return filteredStudents.map(({ id, user }) => {
+      const score = finalScores?.[id];
+
+      return {
+        id,
+        name: user.name,
+        surname: user.surnames,
+        image: user.avatar,
+        customScore: score?.grade ?? null,
+        allowCustomChange: !score?.published ?? true,
+        activities: periodsIds.map((period) => ({
+          id: period,
+          score: scores?.[`${id}|${period}`]?.grade ?? null,
+          isSubmitted: true,
+        })),
+        retakeScores: !score
+          ? []
+          : [
+              {
+                retakeId: '0',
+                retakeIndex: 0,
+                grade: score?.grade ?? null,
+              },
+            ],
+      };
+    });
   }, [students, periodsIds, scores, search, finalScores]);
 
   return {
