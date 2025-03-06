@@ -257,6 +257,10 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
       const retakeIndex = scoreData?.retakeIndex > -1 ? scoreData?.retakeIndex + 1 : null;
       const nearestScale = grade !== null ? getNearestScale({ grade, evaluationSystem }) : null;
       const scaleToPromote = evaluationSystem?.minScaleToPromote?.number ?? 0;
+      const formattedGrade =
+        grade !== null
+          ? grade.toLocaleString(locale, { minimumFractionDigits: 0, maximumFractionDigits: 2 })
+          : '-';
 
       return {
         code: classroom.subject?.internalId ?? '',
@@ -267,11 +271,11 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
         credits: grade >= scaleToPromote ? classroom.subject?.credits : 0,
         retake: retakeIndex,
         score: nearestScale?.description
-          ? `${nearestScale.description.toUpperCase()} (${grade})`
-          : grade ?? `(${t('pendingEvaluation')})`,
+          ? `${nearestScale.description.toUpperCase()} (${formattedGrade})`
+          : formattedGrade ?? `(${t('pendingEvaluation')})`,
       };
     });
-  }, [classrooms, t, finalScoresFromClassrooms, evaluationSystem]);
+  }, [classrooms, t, finalScoresFromClassrooms, evaluationSystem, locale]);
 
   const table = useReactTable({
     data: tableData,

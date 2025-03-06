@@ -24,7 +24,7 @@ export default function onDataChange({
         {}),
     };
 
-    if (!grade?.number) {
+    if (!_.isNumber(grade?.number)) {
       throw new Error('Invalid grade');
     }
 
