@@ -1,4 +1,3 @@
-import { findNearestFloorScore } from '@assignables/widgets/dashboard/nya/components/EvaluationCardStudent/components/ScoreFeedback';
 import { sortBy } from 'lodash';
 
 import { TableData } from '../types';
@@ -32,9 +31,9 @@ export function getStudentGrades({ activities, students, grades }: Props): Recor
       return acc + score * (weight ?? 0);
     }, 0);
 
-    const scale = findNearestFloorScore(grade, grades) as Scale;
+    // const scale = findNearestFloorScore(grade, grades) as Scale;
 
-    studentsGrades[student.id] = scale.number;
+    studentsGrades[student.id] = grade; // scale.number;
   });
 
   return studentsGrades;
