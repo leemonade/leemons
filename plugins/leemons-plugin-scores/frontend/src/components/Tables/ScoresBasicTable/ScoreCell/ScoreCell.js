@@ -37,7 +37,9 @@ const SelectScore = forwardRef(({ value, onChange, onClose, grades }, ref) => {
     <NumberInput
       value={value}
       onChange={(_value) =>
-        onChange(Math.max(grades[0].number, Math.min(grades[grades.length - 1].number, _value)))
+        onChange(
+          Math.max(grades[0].number, Math.min(grades[grades.length - 1].number, _value ?? null))
+        )
       }
       onBlur={onClose}
       min={grades[0].number}
@@ -78,13 +80,13 @@ const ScoreCell = ({
   labels,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [editValue, setEditValue] = useState(value ?? grades[0].number);
+  const [editValue, setEditValue] = useState(value ?? null); // Before the grade[0].number was used if the value is undefined
 
   const isAssignable = source === 'assignables';
 
   useEffect(() => {
     if (value !== editValue) {
-      setEditValue(value ?? grades[0].number);
+      setEditValue(value ?? null); // Before the grade[0].number was used if the value is undefined
     }
   }, [value, grades]);
 
@@ -216,7 +218,7 @@ const ScoreCell = ({
     if (selectRef.current) selectRef.current.click();
   }, [isEditing, selectRef]);
 
-  const { classes, cx } = ScoreCellStyles({ isEditing, allowChange }, { name: 'ScoreCell' });
+  const { classes } = ScoreCellStyles({ isEditing, allowChange }, { name: 'ScoreCell' });
   return <Box className={classes.root}>{renderInputCell()}</Box>;
 };
 
