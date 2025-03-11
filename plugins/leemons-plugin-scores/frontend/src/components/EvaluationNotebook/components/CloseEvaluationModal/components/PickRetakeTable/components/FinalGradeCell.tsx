@@ -36,8 +36,8 @@ export function FinalGradeCell({ retakeId: _retakeId, retakes, studentId, single
 
   if (isNumber(retakeGrade)) {
     retakeLabel = singleRetake
-      ? `${retakeGrade.toFixed(2)}`
-      : `${retakeGrade.toFixed(2)} (${t('table.retake').toLowerCase()} ${retakeIndex + 1})`;
+      ? `${retakeGrade.toFixed(3)}`
+      : `${retakeGrade.toFixed(3)} (${t('table.retake').toLowerCase()} ${retakeIndex + 1})`;
   }
 
   return (
