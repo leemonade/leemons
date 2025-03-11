@@ -29,7 +29,7 @@ export function FinalGradeCell({ retakeId: _retakeId, retakes, studentId, single
   const { classes } = useStyles();
   const [t] = useTranslateLoader(prefixPN('pickRetakeTable'));
 
-  const retakeGrade = retakes[retakeId]?.grade;
+  const retakeGrade = Math.round(retakes[retakeId]?.grade ?? 0);
   const retakeIndex = retakes[retakeId]?.order ?? 0;
 
   let retakeLabel = '-';
