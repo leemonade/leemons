@@ -29,15 +29,15 @@ export function FinalGradeCell({ retakeId: _retakeId, retakes, studentId, single
   const { classes } = useStyles();
   const [t] = useTranslateLoader(prefixPN('pickRetakeTable'));
 
-  const retakeGrade = Math.round(retakes[retakeId]?.grade ?? 0);
+  const retakeGrade = retakes[retakeId]?.grade ?? 0;
   const retakeIndex = retakes[retakeId]?.order ?? 0;
 
   let retakeLabel = '-';
 
   if (isNumber(retakeGrade)) {
     retakeLabel = singleRetake
-      ? `${retakeGrade}`
-      : `${retakeGrade} (${t('table.retake').toLowerCase()} ${retakeIndex + 1})`;
+      ? `${retakeGrade.toFixed(2)}`
+      : `${retakeGrade.toFixed(2)} (${t('table.retake').toLowerCase()} ${retakeIndex + 1})`;
   }
 
   return (
