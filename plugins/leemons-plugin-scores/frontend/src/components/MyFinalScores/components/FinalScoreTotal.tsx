@@ -34,7 +34,8 @@ export function FinalScoreTotal({ evaluationSystem, classId }: Props) {
   });
 
   const score = scores?.[0]?.grade ?? null;
-  const nearestScale = score === null ? null : getNearestScale({ grade: score, evaluationSystem });
+  const nearestScale =
+    score === null ? null : getNearestScale({ grade: score, evaluationSystem, onlyFloor: true });
 
   useEffect(() => {
     setFinalScore(classId, {

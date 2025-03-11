@@ -1,6 +1,6 @@
 import { orderBy } from 'lodash';
 
-export function getNearestScale({ grade, evaluationSystem }) {
+export function getNearestScale({ grade, evaluationSystem, onlyFloor = false }) {
   const numericGrade = parseFloat(grade);
   const orderedScales = orderBy(evaluationSystem?.scales, ['number'], ['asc']);
   let nearestScale = null;
@@ -16,7 +16,7 @@ export function getNearestScale({ grade, evaluationSystem }) {
 
       if (numericGrade >= scale?.number) {
         nearestScale = scale;
-      } else if (nearestScale) {
+      } else if (nearestScale && !onlyFloor) {
         const diff = Math.abs(numericGrade - scale.number);
         const currentDiff = Math.abs(numericGrade - nearestScale.number);
 

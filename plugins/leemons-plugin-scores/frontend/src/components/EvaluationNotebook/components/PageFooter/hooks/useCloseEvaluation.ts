@@ -26,7 +26,7 @@ export function useCloseEvaluation(tableData: TableData) {
       const finalScores = students.map((student) => {
         const hasFirstRetakeScore = student.retakeScores?.[0]?.grade;
 
-        if (!hasFirstRetakeScore) {
+        if (!hasFirstRetakeScore && period.id !== 'final') {
           promises.push(
             setRetakeScore({
               classId: klass.id,

@@ -30,13 +30,18 @@ async function sendEvaluationClosedEmail({ scores, ctx }) {
   ]);
 
   const promises = scores.map((score) => {
+    const scoreGradeRoundedTo2Decimals = Number(Number.parseFloat(score.grade).toFixed(2));
+
     const scale = evaluationSystem.scales.find((s) => {
       // Only round score.grade if s.number is an integer
       const isInteger = Number.isInteger(s.number);
-      return s.number === (isInteger ? Math.round(score.grade) : score.grade);
+      return (
+        s.number ===
+        (isInteger ? Math.floor(scoreGradeRoundedTo2Decimals) : scoreGradeRoundedTo2Decimals)
+      );
     }) ?? {
       letter: null,
-      number: score.grade,
+      number: scoreGradeRoundedTo2Decimals,
       description: null,
     };
 
@@ -55,10 +60,12 @@ async function sendEvaluationClosedEmail({ scores, ctx }) {
       subjectColor: classData[0].subject.color ?? null,
 
       gradeLetter: scale.letter ?? null,
-      gradeInt: !scale.letter ? Math.floor(score.grade).toString() : null,
+      gradeInt: !scale.letter ? Math.floor(scoreGradeRoundedTo2Decimals).toString() : null,
       gradeDecimals:
-        !scale.letter && score.grade % 1 !== 0
-          ? Math.round((score.grade - Math.floor(score.grade)) * 100).toString()
+        !scale.letter && scoreGradeRoundedTo2Decimals % 1 !== 0
+          ? Math.round(
+              (scoreGradeRoundedTo2Decimals - Math.floor(scoreGradeRoundedTo2Decimals)) * 100
+            ).toString()
           : null,
       gradeLabel: scale.description,
 
