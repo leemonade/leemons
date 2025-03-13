@@ -28,7 +28,9 @@ function useOnDataChange({ classId, students, scales }) {
   };
 
   return ({ rowId: studentId, value: score }) => {
-    const grade = scales.find((g) => g.number === parseInt(score, 10) || g.letter === score);
+    const nearestGrade =
+      scales.find((g) => g.number === Number.parseInt(score, 10) || g.letter === score) ?? {};
+    const grade = { ...nearestGrade, number: Number.parseFloat(score) };
 
     const student = students.find((s) => s.id === studentId);
 
@@ -39,7 +41,7 @@ function useOnDataChange({ classId, students, scales }) {
           class: classId,
           period: 'final',
           published: false,
-          grade: parseInt(score, 10),
+          grade: grade.number,
         },
       ],
     })

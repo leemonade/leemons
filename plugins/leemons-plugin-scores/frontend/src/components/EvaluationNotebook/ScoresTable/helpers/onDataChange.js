@@ -16,12 +16,13 @@ export default function onDataChange({
   retakes,
 }) {
   return (value) => {
-    const score = parseFloat(value.value);
+    const score = Number.parseFloat(value.value);
     const isLetter = _.isNaN(score);
 
     const grade = {
-      ...(scales.find((g) => g.number === parseInt(value.value, 10) || g.letter === value.value) ??
-        {}),
+      ...(scales.find(
+        (g) => g.number === Number.parseInt(value.value, 10) || g.letter === value.value
+      ) ?? {}),
     };
 
     if (!_.isNumber(grade?.number)) {
@@ -58,7 +59,7 @@ export default function onDataChange({
             class: klass.id,
             period: periodId,
             published: false,
-            grade: parseInt(value.value, 10),
+            grade: Number.parseInt(value.value, 10),
           },
         ],
       })

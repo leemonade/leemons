@@ -159,7 +159,7 @@ const ScoreCell = ({
             const newStudentActivities = student.activities.map((activity) => {
               if (activity.id !== columnId) return activity;
               activity.score = useNumbers
-                ? parseFloat(score)
+                ? Number.parseFloat(score)
                 : grades.find(({ letter }) => letter === score)?.number;
               return activity;
             });
