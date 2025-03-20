@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import ReactToPrint from 'react-to-print';
+import { useReactToPrint } from 'react-to-print';
 
 import { Box, Button } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -18,21 +18,21 @@ const PrintReportButton = ({ title }) => {
 
   const printRef = useRef();
 
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: title ?? '',
+    removeAfterPrint: true,
+  });
+
   return (
     <>
       <Box style={{ display: 'none' }}>
         <ReportCard ref={printRef} onLoading={setIsLoading} />
       </Box>
-      <ReactToPrint
-        trigger={(props) => (
-          <Button {...props} loading={isLoading}>
-            {t('downloadReport')}
-          </Button>
-        )}
-        content={() => printRef.current}
-        documentTitle={title ?? ''}
-        removeAfterPrint
-      />
+
+      <Button onClick={handlePrint} loading={isLoading}>
+        {t('downloadReport')}
+      </Button>
     </>
   );
 };

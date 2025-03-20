@@ -1,6 +1,6 @@
-import React, { useCallback } from 'react';
-import PropTypes from 'prop-types';
+import { useCallback } from 'react';
 import { useForm, FormProvider, Controller } from 'react-hook-form';
+
 import { useFormLocalizations } from '@assignables/components/Assignment/Form';
 import { Instructions } from '@assignables/components/Assignment/components/Instructions';
 import {
@@ -10,6 +10,7 @@ import {
   ContextContainer,
   TotalLayoutFooterContainer,
 } from '@bubbles-ui/components';
+import PropTypes from 'prop-types';
 
 export const useAssignmentDrawerStyles = createStyles(() => ({
   buttons: {

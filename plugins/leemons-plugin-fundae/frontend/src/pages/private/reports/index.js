@@ -1,3 +1,6 @@
+import React from 'react';
+import { useReactToPrint } from 'react-to-print';
+
 import { SelectCourse, SelectProgram } from '@academic-portfolio/components/Selectors';
 import { getProfilesRequest, listCoursesRequest } from '@academic-portfolio/request';
 import {
@@ -18,8 +21,9 @@ import {
 } from '@bubbles-ui/components';
 import { DownloadIcon } from '@bubbles-ui/icons/outline';
 import { AlertWarningTriangleIcon } from '@bubbles-ui/icons/solid';
-// TODO: import from @common plugin
 import { AdminPageHeader } from '@bubbles-ui/leemons';
+
+// TODO: import from @common plugin
 import { LocaleDate, useStore } from '@common';
 import prefixPN from '@fundae/helpers/prefixPN';
 import { Pdf } from '@fundae/pages/private/reports/pdf';
@@ -30,8 +34,6 @@ import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import { SelectCenter } from '@users/components';
 import SelectUserAgent from '@users/components/SelectUserAgent';
 import _ from 'lodash';
-import React from 'react';
-import { useReactToPrint } from 'react-to-print';
 
 function toDate(a) {
   if (a) {
@@ -55,7 +57,7 @@ export default function Index() {
   });
 
   store.handlePrint = useReactToPrint({
-    content: () => printRef.current,
+    contentRef: printRef,
     documentTitle: `${t('report')} - ${store.downloadReport?.userAgentName} - ${toDate(
       store.downloadReport?.createdAt
     )}`,

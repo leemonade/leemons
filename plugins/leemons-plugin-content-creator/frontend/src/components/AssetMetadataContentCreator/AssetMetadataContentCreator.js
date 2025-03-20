@@ -1,16 +1,18 @@
 /* eslint-disable sonarjs/cognitive-complexity */
-import React from 'react';
 import { Box, Text, TextClamp } from '@bubbles-ui/components';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import useDocument from '@content-creator/request/hooks/queries/useDocument';
-import prefixPN from '@content-creator/helpers/prefixPN';
-import extractH1AndH2Content from '@content-creator/helpers/extractH1AndH2Content';
-import { AssetMetadataContentCreatorStyles } from './AssetMetadataContentCreator.styles';
+
+import { ContentCreatorCardIcon } from '../icons/ContentCreatorCardIcon';
+
 import {
   ASSET_METADATA_CONTENT_CREATOR_DEFAULT_PROPS,
   ASSET_METADATA_CONTENT_CREATOR_PROP_TYPES,
 } from './AssetMetadataContentCreator.constants';
-import { ContentCreatorCardIcon } from '../icons/ContentCreatorCardIcon';
+import { AssetMetadataContentCreatorStyles } from './AssetMetadataContentCreator.styles';
+
+import extractH1AndH2Content from '@content-creator/helpers/extractH1AndH2Content';
+import prefixPN from '@content-creator/helpers/prefixPN';
+import useDocument from '@content-creator/request/hooks/queries/useDocument';
 
 const AssetMetadataContentCreator = ({ metadata }) => {
   const [t] = useTranslateLoader(prefixPN('contentCreatorDetail'));
@@ -20,8 +22,11 @@ const AssetMetadataContentCreator = ({ metadata }) => {
     { name: 'AssetMetadataContentCreator' }
   );
 
+  const assetId = metadata?.providerData?.id;
+
   const { data: documentData } = useDocument({
-    id: metadata?.providerData?.id,
+    id: assetId,
+    enabled: !!assetId,
   });
   const getH1andH2 = (document) => {
     if (documentData) {

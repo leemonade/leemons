@@ -9,15 +9,19 @@ async function getDocument({ id, ctx }) {
 
   const ids = _.isArray(id) ? id : [id];
 
-  const assignables = await Promise.all(
+  const assignablesResult = await Promise.all(
     _.map(ids, (_id) =>
       ctx.tx.call('assignables.assignables.getAssignable', { id: _id, withFiles: true })
     )
   );
 
+  const assignables = _.compact(assignablesResult); // Remove undefined values
+
   const imagesIds = [];
   _.forEach(assignables, (assignable) => {
-    if (assignable.metadata.featuredImage) imagesIds.push(assignable.metadata.featuredImage);
+    if (assignable?.metadata?.featuredImage) {
+      imagesIds.push(assignable.metadata.featuredImage);
+    }
   });
 
   const documentAssets = await ctx.tx.call('leebrary.assets.getByIds', {
@@ -35,19 +39,22 @@ async function getDocument({ id, ctx }) {
   const result = _.map(assignables, (assignable) => ({
     id: assignable.id,
     asset: assignable.asset,
-    name: assignable.asset.name,
-    file: assignable.asset.file,
-    tags: assignable.asset.tags,
-    color: assignable.asset.color,
-    cover: assignable.asset.cover,
-    tagline: assignable.asset.tagline,
-    featuredImage: documentAssetsById[assignable.metadata.featuredImage],
-    description: assignable.asset.description,
+    name: assignable.asset?.name,
+    file: assignable.asset?.file,
+    tags: assignable.asset?.tags,
+    color: assignable.asset?.color,
+    cover: assignable.asset?.cover,
+    tagline: assignable.asset?.tagline,
+    featuredImage: assignable?.metadata?.featuredImage
+      ? documentAssetsById[assignable.metadata.featuredImage]
+      : null,
+    description: assignable.asset?.description,
     introductoryText: assignable.statement,
     content: documentsById[assignable.id]?.content,
     subjects: assignable.subjects,
     published: assignable.published,
   }));
+
   return _.isArray(id) ? result : result[0];
 }
 

@@ -1,26 +1,20 @@
-import React, { useRef } from 'react';
+import { useReactToPrint } from 'react-to-print';
+
+import { BigCalendar } from '@bubbles-ui/calendars';
+import { Box, Button, ContextContainer, Stack, TabPanel, Tabs } from '@bubbles-ui/components';
+import { ChevLeftIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
+import { useLocale, useStore } from '@common';
+import useRequestErrorMessage from '@common/useRequestErrorMessage';
+import { addErrorAlert, addSuccessAlert } from '@layout/alert';
 import _ from 'lodash';
 import PropTypes from 'prop-types';
-import { BigCalendar } from '@bubbles-ui/calendars';
-import { ChevLeftIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
-import {
-  Box,
-  Button,
-  ContextContainer,
-  Stack,
-  TabPanel,
-  Tabs,
-  IconButton,
-} from '@bubbles-ui/components';
-import { useLocale, useStore } from '@common';
-import { useProcessCalendarConfigForBigCalendar } from '@academic-calendar/helpers/useProcessCalendarConfigForBigCalendar';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { saveConfig } from '@academic-calendar/request/config';
-import CalendarKey from '@academic-calendar/components/CalendarKey';
-import ReactToPrint from 'react-to-print';
-import PrintCalendar from '@academic-calendar/components/PrintCalendar';
+
 import FooterContainer from './FooterContainer';
+
+import CalendarKey from '@academic-calendar/components/CalendarKey';
+import PrintCalendar from '@academic-calendar/components/PrintCalendar';
+import { useProcessCalendarConfigForBigCalendar } from '@academic-calendar/helpers/useProcessCalendarConfigForBigCalendar';
+import { saveConfig } from '@academic-calendar/request/config';
 
 export default function Step3({
   regionalConfigs,
@@ -37,6 +31,10 @@ export default function Step3({
   const [processCalendarConfigForBigCalendar] = useProcessCalendarConfigForBigCalendar();
   const [store, render] = useStore({
     saving: false,
+  });
+
+  const handlePrint = useReactToPrint({
+    contentRef: calendarRef,
   });
 
   const coursesForDates = config.allCoursesHaveSameDates ? [program?.courses[0]] : program?.courses;
@@ -120,14 +118,13 @@ export default function Step3({
             {t('previous')}
           </Button>
           <Stack spacing={4}>
-            <ReactToPrint
-              trigger={() => (
-                <Button leftIcon={<DownloadIcon height={16} width={16} />} variant="outline">
-                  {t('downloadPDF')}
-                </Button>
-              )}
-              content={() => calendarRef.current}
-            />
+            <Button
+              leftIcon={<DownloadIcon height={16} width={16} />}
+              variant="outline"
+              onClick={handlePrint}
+            >
+              {t('downloadPDF')}
+            </Button>
             <Button loading={store.saving} onClick={submit}>
               {t('finishLabel')}
             </Button>

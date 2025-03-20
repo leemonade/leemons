@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import ReactToPrint from 'react-to-print';
+import { useReactToPrint } from 'react-to-print';
 
 import CalendarKey from '@academic-calendar/components/CalendarKey';
 import PrintCalendar from '@academic-calendar/components/PrintCalendar';
@@ -58,6 +58,10 @@ function Calendar({ session }) {
 
   const calendarRef = useRef();
   const userIsAdmin = currentProfileIsAdmin();
+
+  const handlePrint = useReactToPrint({
+    contentRef: calendarRef,
+  });
 
   const [transformEv, evLoading] = useTransformEvent();
   const [t] = useTranslateLoader(prefixPN('calendar'));
@@ -654,15 +658,11 @@ function Calendar({ session }) {
                       </Stack>
                     ) : null}
                     <Box>
-                      <ReactToPrint
-                        trigger={() => (
-                          <IconButton
-                            icon={<DownloadIcon height={16} width={16} />}
-                            color="primary"
-                            rounded
-                          />
-                        )}
-                        content={() => calendarRef.current}
+                      <IconButton
+                        icon={<DownloadIcon height={16} width={16} />}
+                        color="primary"
+                        rounded
+                        onClick={handlePrint}
                       />
                     </Box>
                   </Stack>
