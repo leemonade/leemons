@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import ReactToPrint from 'react-to-print';
+import React, { useMemo, useRef } from 'react';
+import { useReactToPrint } from 'react-to-print';
 
 import { Box, Button } from '@bubbles-ui/components';
 import { DownloadIcon } from '@bubbles-ui/icons/solid';
@@ -17,33 +17,54 @@ const PrintContentButton = ({ content, title, assetId, variant = 'button', onTri
   const { classes } = ContentToPrintStyles({}, { name: 'ContentToPrint' });
   const [t] = useTranslateLoader(prefixPN('printContentButton'));
 
-  const { data: documentData } = useDocument(
-    {
-      id: assetId,
-      isNew: false,
-    },
-    { enabled: !!assetId }
-  );
+  const { data: documentData } = useDocument({
+    id: assetId,
+    isNew: false,
+    enabled: !!assetId,
+  });
 
-  const contentToProcess = documentData?.content ?? content;
-  const processedContent = processContentForPDF(contentToProcess, t);
-  const printRef = useRef();
-  const printInstance = useRef();
+  const processedContent = useMemo(() => {
+    const contentToProcess = documentData?.content ?? content;
+    if (!contentToProcess) {
+      return null;
+    }
+    return processContentForPDF(contentToProcess, t);
+  }, [documentData, content, t]);
 
-  const handlePrint = () => {
-    printInstance.current?.click();
-  };
+  const printRef = useRef(null);
+
+  const handlePrint = useReactToPrint({
+    contentRef: printRef,
+    documentTitle: title ?? '',
+    removeAfterPrint: true,
+  });
 
   React.useEffect(() => {
     if (onTrigger) {
       onTrigger(handlePrint);
     }
-  }, [onTrigger]);
+  }, [onTrigger, handlePrint]);
 
   const variantType = {
-    button: <Button variant="outline">{t('printPDF')}</Button>,
-    icon: <DownloadIcon width={18} height={18} color="#2F463F" />,
+    button: (
+      <Button variant="outline" onClick={handlePrint}>
+        {t('printPDF')}
+      </Button>
+    ),
+    icon: (
+      <DownloadIcon
+        width={18}
+        height={18}
+        color="#2F463F"
+        onClick={handlePrint}
+        style={{ cursor: 'pointer' }}
+      />
+    ),
   };
+
+  if (!processedContent) {
+    return null;
+  }
 
   return (
     <>
@@ -56,16 +77,7 @@ const PrintContentButton = ({ content, title, assetId, variant = 'button', onTri
           compact
         />
       </Box>
-      <ReactToPrint
-        trigger={(props) => (
-          <span {...props} ref={printInstance}>
-            {variantType[variant]}
-          </span>
-        )}
-        content={() => printRef.current}
-        documentTitle={title ?? ''}
-        removeAfterPrint
-      />
+      {variantType[variant]}
     </>
   );
 };

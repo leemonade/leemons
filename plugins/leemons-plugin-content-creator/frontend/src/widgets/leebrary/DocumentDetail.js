@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { useHistory } from 'react-router-dom';
 
 import { useIsStudent } from '@academic-portfolio/hooks';

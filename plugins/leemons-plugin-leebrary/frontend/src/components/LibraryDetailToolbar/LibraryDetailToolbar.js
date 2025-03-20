@@ -135,7 +135,9 @@ const LibraryDetailToolbar = ({
           )}
           {toolbarItems.printPDF && (
             <ActionButton
-              icon={<PrintContentButton variant="icon" assetId={item.id} />}
+              icon={
+                <PrintContentButton variant="icon" assetId={item.providerData?.id ?? item.id} />
+              }
               tooltip={toolbarItems.printPDF}
               className={classes.button}
             />

@@ -1,11 +1,10 @@
-import React from 'react';
 import { Box } from '@bubbles-ui/components';
-import useDocument from '@content-creator/request/hooks/queries/useDocument';
 import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
 import propTypes from 'prop-types';
 
 import prefixPN from '@content-creator/helpers/prefixPN';
+import useDocument from '@content-creator/request/hooks/queries/useDocument';
 
 function DocumentPlayer({ asset }) {
   const { data: document } = useDocument({ id: asset?.providerData?.id });

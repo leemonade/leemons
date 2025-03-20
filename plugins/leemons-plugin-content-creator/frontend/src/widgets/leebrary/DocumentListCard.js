@@ -115,7 +115,7 @@ const DocumentListCard = ({ asset, selected, onRefresh, onShare, ...props }) => 
     items.push({
       icon: (
         <PrintContentButton
-          assetId={asset.id}
+          assetId={asset.providerData?.id ?? asset.id}
           title={asset.name}
           variant="icon"
           onTrigger={(trigger) => {
