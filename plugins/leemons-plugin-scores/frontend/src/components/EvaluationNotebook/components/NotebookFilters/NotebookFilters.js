@@ -28,7 +28,7 @@ import { useCreateManualActivityMutation } from '@scores/requests/hooks/mutation
 import { useRetakes } from '@scores/requests/hooks/queries/useRetakes';
 import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
 
-export default function NotebookFilters({ filters, onChange, value }) {
+export default function NotebookFilters({ filters, onChange, value, hasActivities }) {
   const [t] = useTranslateLoader(prefixPN('evaluationNotebook.filters'));
   const [weightDrawerIsOpen, setWeightDrawerIsOpen] = useState(false);
   const [manualActivityDrawerIsOpen, setManualActivityDrawerIsOpen] = useState(false);
@@ -154,7 +154,11 @@ export default function NotebookFilters({ filters, onChange, value }) {
                 label: t('retake'),
                 onClick: () =>
                   addRetake({ classId: filters?.class?.id, period: filters?.period?.period.id }),
-                disabled: retakesCount > 1 || filters?.period?.isCustom || isPeriodPublished,
+                disabled:
+                  retakesCount > 1 ||
+                  filters?.period?.isCustom ||
+                  isPeriodPublished ||
+                  !hasActivities,
               },
             ]}
           >
@@ -170,4 +174,5 @@ NotebookFilters.propTypes = {
   filters: PropTypes.object,
   onChange: PropTypes.func,
   value: PropTypes.object,
+  hasActivities: PropTypes.bool,
 };

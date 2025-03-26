@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { ContextContainer } from '@bubbles-ui/components';
 
 import { ScoresTable } from './ScoresTable';
@@ -10,16 +12,24 @@ export default function EvaluationNotebook() {
   const filters = useEvaluationNotebookStore((state) => state.filters);
   const setFilters = useEvaluationNotebookStore((state) => state.setFilters);
 
+  const [hasActivities, setHasActivities] = useState(false);
+
   const title = useScoresTableTitle(filters);
 
   return (
     <ContextContainer title={title}>
-      <NotebookFilters filters={filters} onChange={setFilters} value={filters} />
+      <NotebookFilters
+        filters={filters}
+        onChange={setFilters}
+        value={filters}
+        hasActivities={hasActivities}
+      />
       <ScoresTable
         filters={filters}
         program={filters.program}
         class={filters?.class}
         period={filters?.period}
+        setHasActivities={setHasActivities}
       />
     </ContextContainer>
   );

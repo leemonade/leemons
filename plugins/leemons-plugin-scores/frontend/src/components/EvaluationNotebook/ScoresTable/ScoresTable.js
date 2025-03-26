@@ -18,7 +18,7 @@ import { useSetManualActivityScoresMutation } from '@scores/requests/hooks/mutat
 import { useSetRetakeScoreMutation } from '@scores/requests/hooks/mutations/useSetRetakeScore';
 import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
 
-export default function ScoresTable({ program, class: klass, period, filters }) {
+export default function ScoresTable({ program, class: klass, period, filters, setHasActivities }) {
   const [t] = useTranslateLoader(prefixPN('evaluationNotebook'));
   const labels = {
     students: t('scoresTable.students'),
@@ -49,6 +49,14 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
     period,
     filters,
   });
+
+  useEffect(() => {
+    if (!activities?.length) {
+      setHasActivities(false);
+    } else {
+      setHasActivities(true);
+    }
+  }, [activities, setHasActivities]);
 
   const isPeriodClosed = useMemo(
     () => studentsData?.every((student) => !student.allowCustomChange),
@@ -127,4 +135,5 @@ ScoresTable.propTypes = {
     }).isRequired,
   }).isRequired,
   filters: PropTypes.object.isRequired,
+  setHasActivities: PropTypes.func.isRequired,
 };
