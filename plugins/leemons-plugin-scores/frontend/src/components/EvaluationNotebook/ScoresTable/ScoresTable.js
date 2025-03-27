@@ -55,6 +55,10 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
     [studentsData]
   );
 
+  const onDeleteHandler = ({ rowId, columnId }) => {
+    console.log('ScoresTable > onDeleteHandler', rowId, columnId);
+  };
+
   useEffect(() => {
     setTableData({
       activitiesData: { activities, value: studentsData },
@@ -111,6 +115,7 @@ export default function ScoresTable({ program, class: klass, period, filters }) 
         hideCustom={!!filters?.period?.isCustom}
         disableCustomChange
         viewOnly={isPeriodClosed}
+        onDelete={onDeleteHandler}
       />
     </Stack>
   );

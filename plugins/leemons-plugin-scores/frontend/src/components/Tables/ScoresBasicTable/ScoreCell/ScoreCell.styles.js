@@ -3,15 +3,15 @@ import { createStyles } from '@bubbles-ui/components';
 export const ScoreCellStyles = createStyles((theme, { isEditing, allowChange }) => {
   const globalTheme = theme.other.global;
 
-  return ({
+  return {
     root: {
       width: '100%',
       height: '100%',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      border: '2px solid transparent',
-      borderColor: isEditing && globalTheme.focus.default.color,
+      // border: '2px solid transparent',
+      // borderColor: isEditing && globalTheme.focus.default.color,
     },
     score: {
       width: '100%',
@@ -42,5 +42,5 @@ export const ScoreCellStyles = createStyles((theme, { isEditing, allowChange }) 
         color: globalTheme.content.color.primary.strong,
       },
     },
-  });
+  };
 });

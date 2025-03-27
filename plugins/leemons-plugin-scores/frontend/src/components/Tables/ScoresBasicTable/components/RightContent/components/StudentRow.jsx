@@ -1,5 +1,5 @@
 import { Box, createStyles } from '@bubbles-ui/components';
-import { isNil } from 'lodash';
+import { isNil, noop } from 'lodash';
 import PropTypes from 'prop-types';
 
 import { ScoreCell } from '../../../ScoreCell';
@@ -33,6 +33,7 @@ export function StudentRow({
   hideCustom,
   disableCustomChange,
   labels,
+  onDelete = noop,
 }) {
   const { classes } = useStudentRowStyles();
 
@@ -58,6 +59,7 @@ export function StudentRow({
               column={`retake-${retake.id}`}
               onDataChange={onDataChange}
               isCustom={true}
+              onDelete={onDelete}
             />
           </StudentScore>
         );
@@ -75,6 +77,7 @@ export function StudentRow({
             isCustom={true}
             retake={retake ? retake.index : null}
             labels={labels}
+            onDelete={onDelete}
           />
         </StudentScore>
       )}
@@ -98,4 +101,5 @@ StudentRow.propTypes = {
   hideCustom: PropTypes.bool,
   disableCustomChange: PropTypes.bool,
   labels: PropTypes.object,
+  onDelete: PropTypes.func,
 };

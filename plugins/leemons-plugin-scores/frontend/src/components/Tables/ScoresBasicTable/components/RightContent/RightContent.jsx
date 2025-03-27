@@ -27,6 +27,7 @@ export function RightContent({
   useNumbers,
   retakes,
   onDataChange,
+  onDelete,
   usePercentage,
   viewOnly,
   hideCustom,
@@ -56,6 +57,7 @@ export function RightContent({
         hideCustom={hideCustom}
         labels={labels}
         disableCustomChange={disableCustomChange}
+        onDelete={onDelete}
       />
     </Box>
   );
@@ -71,6 +73,7 @@ RightContent.propTypes = {
   useNumbers: PropTypes.bool.isRequired,
   retakes: PropTypes.array,
   onDataChange: PropTypes.func,
+  onDelete: PropTypes.func,
   usePercentage: PropTypes.bool,
   viewOnly: PropTypes.bool,
   hideCustom: PropTypes.bool,

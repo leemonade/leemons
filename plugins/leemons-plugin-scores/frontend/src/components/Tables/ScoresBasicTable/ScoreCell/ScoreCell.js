@@ -1,22 +1,56 @@
-import { forwardRef, useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState, useRef } from 'react';
 
 import {
   Box,
   Text,
+  Stack,
   Select,
-  IconButton,
+  ActionButton,
   useClickOutside,
   NumberInput,
 } from '@bubbles-ui/components';
 import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
-import { isFunction, isNil } from 'lodash';
+import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
+import { isFunction, isNil, isNumber, noop } from 'lodash';
 import PropTypes from 'prop-types';
 
 import { SCORES_CELL_DEFAULT_PROPS } from './ScoreCell.constants';
 import { ScoreCellStyles } from './ScoreCell.styles';
 
-const SelectScore = forwardRef(({ value, onChange, onClose, grades }, ref) => {
+const SelectScore = forwardRef(({ value, onChange, onClose, grades, onDelete }, ref) => {
   const isLetterTypes = grades.some((grade) => grade.letter);
+  const isDeletingRef = useRef(false);
+
+  const onBlurHandler = () => {
+    // Add a small delay to allow "delete" click events to be processed first
+    setTimeout(() => {
+      if (!isDeletingRef.current) {
+        onClose();
+      }
+    }, 300);
+  };
+
+  const onDeleteHandler = () => {
+    console.log('SelectScore > onDeleteHandler!!!');
+    isDeletingRef.current = true;
+    onDelete();
+    onChange(null);
+
+    // Reset the ref after a short delay to ensure the blur event has been processed
+    setTimeout(() => {
+      isDeletingRef.current = false;
+    }, 400);
+  };
+
+  const onKeyDownHandler = (e) => {
+    if (e.key === 'Enter') {
+      onClose();
+    }
+  };
+
+  const onChangeHandler = (val) => {
+    onChange(Math.max(grades[0].number, Math.min(grades[grades.length - 1].number, val ?? null)));
+  };
 
   if (isLetterTypes) {
     return (
@@ -34,21 +68,30 @@ const SelectScore = forwardRef(({ value, onChange, onClose, grades }, ref) => {
     );
   }
   return (
-    <NumberInput
-      value={value}
-      onChange={(_value) =>
-        onChange(
-          Math.max(grades[0].number, Math.min(grades[grades.length - 1].number, _value ?? null))
-        )
-      }
-      onBlur={onClose}
-      min={grades[0].number}
-      max={grades[grades.length - 1].number}
-      precision={2}
-      hideControls
-      autoFocus
-      ref={ref}
-    />
+    <Stack fullWidth spacing={2}>
+      <NumberInput
+        value={value}
+        onChange={onChangeHandler}
+        onBlur={onBlurHandler}
+        onKeyDown={onKeyDownHandler}
+        min={grades[0].number}
+        max={grades[grades.length - 1].number}
+        precision={2}
+        hideControls
+        autoFocus
+        ref={ref}
+        sx={{ width: 75 }}
+      />
+
+      {isNumber(value) && value >= 0 && (
+        <ActionButton
+          noFlex
+          variant="transparent"
+          onClick={onDeleteHandler}
+          icon={<DeleteBinIcon width={18} height={18} />}
+        />
+      )}
+    </Stack>
   );
 });
 
@@ -58,6 +101,7 @@ SelectScore.propTypes = {
   onChange: PropTypes.func,
   onClose: PropTypes.func,
   grades: PropTypes.arrayOf(PropTypes.object),
+  onDelete: PropTypes.func,
 };
 
 const ScoreCell = ({
@@ -74,6 +118,7 @@ const ScoreCell = ({
   column,
   setValue,
   onDataChange,
+  onDelete = noop,
   onOpen,
   isCustom,
   retake,
@@ -145,6 +190,13 @@ const ScoreCell = ({
     setIsEditing(false);
   };
 
+  const onDeleteHandler = () => {
+    const rowId = isCustom ? row : row.original.id;
+    const columnId = isCustom ? column : column.id;
+    onDelete({ rowId, columnId });
+    setIsEditing(false);
+  };
+
   const onCloseThenChangeHandler = () => {
     const score = editValue;
 
@@ -175,14 +227,20 @@ const ScoreCell = ({
   const renderInputCell = () => {
     if (!value && !isSubmitted && !isClosed) {
       return (
-        <Text color="soft" role="productive">
-          -
-        </Text>
+        <Box sx={{ paddingInline: 15 }}>
+          <Text color="soft" role="productive">
+            -
+          </Text>
+        </Box>
       );
     }
 
     return (
-      <Box className={classes.inputContainer} ref={setInputContainer} onClick={onClickHandler}>
+      <Box
+        ref={setInputContainer}
+        onClick={onClickHandler}
+        sx={{ '&:hover': { cursor: !isEditing && !!allowChange ? 'pointer' : 'default' } }}
+      >
         <Box className={classes.score}>
           {!!allowChange && !!isEditing && (
             <SelectScore
@@ -193,17 +251,20 @@ const ScoreCell = ({
               style={{ flex: 1 }}
               ref={selectRef}
               isCustom={isCustom}
+              onDelete={onDeleteHandler}
             />
           )}
           {(!isEditing || !allowChange) && (
-            <Text color={isSubmitted ? 'primary' : 'error'} role="productive" style={{ flex: 1 }}>
-              {renderValue(value)}
-            </Text>
+            <Box sx={{ paddingInline: 15, flex: 1 }}>
+              <Text color={isSubmitted ? 'primary' : 'error'} role="productive">
+                {renderValue(value)}
+              </Text>
+            </Box>
           )}
         </Box>
         {isEditing && !isCustom && isAssignable && (
           <Box className={classes.expandIcon}>
-            <IconButton
+            <ActionButton
               variant="transparent"
               onClick={onOpenHandler}
               icon={<ExpandDiagonalIcon width={16} height={16} />}
@@ -237,6 +298,7 @@ ScoreCell.propTypes = {
   column: PropTypes.object,
   setValue: PropTypes.func,
   onDataChange: PropTypes.func,
+  onDelete: PropTypes.func,
   onOpen: PropTypes.func,
   isCustom: PropTypes.bool,
   retake: PropTypes.number,

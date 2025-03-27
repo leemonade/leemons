@@ -4,7 +4,7 @@ import { useSticky } from 'react-table-sticky';
 
 import { Box, Text, UserDisplayItem, useElementSize, Stack } from '@bubbles-ui/components';
 import { motion } from 'framer-motion';
-import { isFunction } from 'lodash';
+import { isFunction, noop } from 'lodash';
 
 import { CommonTableStyles } from '../CommonTable.styles';
 
@@ -30,6 +30,7 @@ const ScoresBasicTable = ({
   onDataChange,
   onColumnExpand,
   onOpen,
+  onDelete = noop,
   periodName,
   from,
   to,
@@ -186,6 +187,7 @@ const ScoresBasicTable = ({
             setValue={setValue}
             onDataChange={onDataChange}
             onOpen={onOpen}
+            onDelete={onDelete}
           />
         ),
       });
@@ -196,8 +198,8 @@ const ScoresBasicTable = ({
               index === 0
                 ? 'first'
                 : index === expandedData.activities.length - 1
-                ? 'last'
-                : 'between';
+                  ? 'last'
+                  : 'between';
             const completionPercentage = getCompletionPercentage(expandedActivity.id, true);
             return {
               accessor: expandedActivity.id,
@@ -233,6 +235,7 @@ const ScoresBasicTable = ({
                   onDataChange={onDataChange}
                   position={position}
                   onOpen={onOpen}
+                  onDelete={onDelete}
                 />
               ),
             };
@@ -362,6 +365,7 @@ const ScoresBasicTable = ({
           onDataChange={onDataChange}
           usePercentage={usePercentage}
           viewOnly={viewOnly}
+          onDelete={onDelete}
         />
       </Box>
     </Box>

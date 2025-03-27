@@ -12,6 +12,7 @@ export function RightContentBody({
   useNumbers,
   retakes,
   onDataChange,
+  onDelete,
   usePercentage,
   viewOnly,
   labels,
@@ -39,6 +40,7 @@ export function RightContentBody({
         hideCustom={hideCustom}
         disableCustomChange={disableCustomChange}
         labels={labels}
+        onDelete={onDelete}
       />
     );
   });
@@ -62,4 +64,5 @@ RightContentBody.propTypes = {
   labels: PropTypes.object,
   hideCustom: PropTypes.bool,
   disableCustomChange: PropTypes.bool,
+  onDelete: PropTypes.func,
 };

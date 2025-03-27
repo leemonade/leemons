@@ -1,24 +1,26 @@
 import React from 'react';
 
-import { Box, Loader } from '@bubbles-ui/components';
-import { unflatten, useCache, useLocale } from '@common';
-import _ from 'lodash';
-
 import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
 import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
+import { Box, Loader } from '@bubbles-ui/components';
+import { unflatten, useCache, useLocale } from '@common';
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
-import { useScoresMutation } from '@scores/requests/hooks/mutations';
-import { useScores } from '@scores/requests/hooks/queries';
 import { useUserAgentsInfo } from '@users/hooks';
+import _ from 'lodash';
+
 import { ScoresReviewerTable } from '../../Tables/ScoresReviewerTable';
 import { EmptyState } from '../Notebook/components/ActivitiesTab/EmptyState';
 import { filterStudentsByLocalFilters } from '../Notebook/components/ActivitiesTab/useParsedActivities';
 import { useAcademicCalendarPeriods } from '../ScoresPage/useAcademicCalendarPeriods';
+
 import { onDataChange } from './onDataChange';
 import { useClassesManagers } from './useClassesManagers';
 import { useLocalFilters } from './useLocalFilters';
 import { useParsedData } from './useParsedData';
+
+import { prefixPN } from '@scores/helpers';
+import { useScoresMutation } from '@scores/requests/hooks/mutations';
+import { useScores } from '@scores/requests/hooks/queries';
 
 export function useMatchingClasses({ filters }) {
   const cache = useCache();
@@ -216,6 +218,10 @@ export function FinalScores({ filters, localFilters }) {
     filters: { ...localFilters, period: filters?.period },
   }));
 
+  const onDeleteHandler = ({ rowId, columnId }) => {
+    console.log('FinalScores > onDeleteHandler', rowId, columnId);
+  };
+
   const isLoading =
     classesAreLoading ||
     studentsAreLoading ||
@@ -272,6 +278,7 @@ export function FinalScores({ filters, localFilters }) {
         filters,
         localizations: localizations?.update,
       })}
+      onDelete={onDeleteHandler}
     />
   );
 }
