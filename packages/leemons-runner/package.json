@@ -1,10 +1,25 @@
 {
   "name": "@leemons/runner",
-  "version": "0.0.71",
+  "version": "0.0.72",
   "description": "",
-  "main": "lib/index.js",
+  "main": "dist/cjs/runner.js",
+  "module": "dist/esm/runner.js",
+  "types": "dist/esm/runner.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/runner.js",
+      "import": "./dist/esm/runner.js",
+      "types": "./dist/esm/runner.d.ts"
+    }
+  },
   "bin": {
-    "leemons-runner": "bin/leemons-runner.js"
+    "leemons-runner": "dist/cjs/bin/leemons-runner.js"
+  },
+  "scripts": {
+    "build": "npm run clean && npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "clean": "rimraf dist"
   },
   "keywords": [],
   "author": {
@@ -36,5 +51,12 @@
     "kleur": "^4.1.5",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26"
+  },
+  "devDependencies": {
+    "@types/args": "^5.0.0",
+    "@types/lodash": "^4.14.195",
+    "@types/node": "^20.3.1",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.5.2"
   }
 }

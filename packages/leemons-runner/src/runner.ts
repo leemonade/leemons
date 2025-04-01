@@ -1,24 +1,21 @@
-/* eslint-disable no-param-reassign */
-const { ServiceBroker, Utils } = require('moleculer');
-
-const utils = Utils;
-const fs = require('fs');
-const path = require('path');
-const _ = require('lodash');
-const Args = require('args');
-const os = require('os');
-const cluster = require('cluster');
-const kleur = require('kleur');
-const { mongoose } = require('@leemons/mongodb');
+import cluster from 'cluster';
+import fs from 'fs';
+import os from 'os';
+import path from 'path';
+import { mongoose } from '@leemons/mongodb';
+import Args from 'args';
+import kleur from 'kleur';
+import _ from 'lodash';
+import { Service, ServiceBroker, Utils } from 'moleculer';
 
 // Register Babel for JSX files
 require('@babel/register')({
   presets: ['@babel/preset-env', '@babel/preset-react'],
   ignore: [
-    (filename) => {
-      // Ignorar archivos dentro de node_modules
+    (filename: string) => {
+      // Ignore files inside node_modules
       if (filename.includes('/node_modules/')) {
-        return true; // Ignorar
+        return true; // Ignore
       }
       return !filename.endsWith('.jsx');
     },
@@ -40,27 +37,54 @@ const stopSignals = [
   'SIGTERM',
 ];
 
-/* eslint-disable no-console */
+interface Logger {
+  info(message: string): void;
+  error(err: Error | string): void;
+}
 
 /**
  * Logger helper
- *
  */
-const logger = {
-  info(message) {
+const logger: Logger = {
+  info(message: string) {
     console.log(kleur.grey('[Runner]'), kleur.green().bold(message));
   },
-  error(err) {
-    if (err instanceof Error)
+  error(err: Error | string) {
+    if (err instanceof Error) {
       console.error(kleur.grey('[Runner]'), kleur.red().bold(err.message), err);
-    else console.error(kleur.grey('[Runner]'), kleur.red().bold(err));
+    } else {
+      console.error(kleur.grey('[Runner]'), kleur.red().bold(err));
+    }
   },
 };
 
+interface Flags {
+  config?: string;
+  repl?: boolean;
+  hot?: boolean;
+  silent?: boolean;
+  env?: boolean;
+  envfile?: string;
+  instances?: number;
+  mask?: string;
+}
+
+interface Dependency {
+  name: string;
+  path: string;
+}
+
 class LeemonsRunner {
+  private watchFolders: string[];
+  private flags: Flags | null;
+  private configFile: any;
+  private config: any;
+  private servicePaths: string[] | null;
+  private broker: ServiceBroker | null;
+  private worker: any;
+
   constructor() {
     this.watchFolders = [];
-
     this.flags = null;
     this.configFile = null;
     this.config = null;
@@ -73,18 +97,18 @@ class LeemonsRunner {
    * Process command line arguments
    *
    * Available options:
-   -c, --config     Load the configuration from a file
-   -e, --env        Load .env file from the current directory
-   -E, --envfile    Load a specified .env file
-   -h, --help       Output usage information
-   -H, --hot        Hot reload services if changed (disabled by default)
-   -i, --instances  Launch [number] instances node (load balanced)
-   -m, --mask       Filemask for service loading
-   -r, --repl       Start REPL mode (disabled by default)
-   -s, --silent     Silent mode. No logger (disabled by default)
-   -v, --version    Output the version number
+   * -c, --config     Load the configuration from a file
+   * -e, --env        Load .env file from the current directory
+   * -E, --envfile    Load a specified .env file
+   * -h, --help       Output usage information
+   * -H, --hot        Hot reload services if changed (disabled by default)
+   * -i, --instances  Launch [number] instances node (load balanced)
+   * -m, --mask       Filemask for service loading
+   * -r, --repl       Start REPL mode (disabled by default)
+   * -s, --silent     Silent mode. No logger (disabled by default)
+   * -v, --version    Output the version number
    */
-  processFlags(procArgs) {
+  processFlags(procArgs: string[]): void {
     Args.option('config', 'Load the configuration from a file')
       .option('repl', 'Start REPL mode', false)
       .option(['H', 'hot'], 'Hot reload services if changed', false)
@@ -109,6 +133,8 @@ class LeemonsRunner {
         boolean: ['repl', 'silent', 'hot', 'env'],
         string: ['config', 'envfile', 'mask'],
       },
+      mainColor: 'green',
+      subColor: 'yellow',
     });
 
     this.servicePaths = Args.sub;
@@ -117,14 +143,17 @@ class LeemonsRunner {
   /**
    * Load environment variables from '.env' file
    */
-  loadEnvFile() {
-    if (this.flags.env || this.flags.envfile) {
+  loadEnvFile(): void {
+    if (this.flags?.env || this.flags?.envfile) {
       try {
         const dotenv = require('dotenv');
 
-        if (this.flags.envfile) dotenv.config({ path: this.flags.envfile });
-        else dotenv.config();
-      } catch (err) {
+        if (this.flags.envfile) {
+          dotenv.config({ path: this.flags.envfile });
+        } else {
+          dotenv.config();
+        }
+      } catch (e) {
         throw new Error(
           "The 'dotenv' package is missing! Please install it with 'npm install dotenv --save' command."
         );
@@ -133,14 +162,9 @@ class LeemonsRunner {
   }
 
   /**
-   * Fix Uppercase drive letter issue on Windows. It causes problem on custom modules detection (XY instanceof Base)
-   * Unused currently, because it causes problem: https://github.com/moleculerjs/moleculer/issues/788
-   *
-   * More info: https://github.com/nodejs/node/issues/6978
-   * @param {String} s
-   * @returns {String}
+   * Fix Uppercase drive letter issue on Windows
    */
-  fixDriveLetterCase(s) {
+  fixDriveLetterCase(s: string): string {
     if (s && process.platform === 'win32' && s.match(/^[A-Z]:/g)) {
       return s.charAt(0).toLowerCase() + s.slice(1);
     }
@@ -149,18 +173,11 @@ class LeemonsRunner {
 
   /**
    * Load configuration file
-   *
-   * Try to load a configuration file in order to:
-   *
-   *        - load file defined in MOLECULER_CONFIG env var
-   *        - try to load file which is defined in CLI option with --config
-   *        - try to load the `moleculer.config.js` file if exist in the cwd
-   *        - try to load the `moleculer.config.json` file if exist in the cwd
    */
-  loadConfigFile() {
-    let filePath;
+  loadConfigFile(): Promise<any> {
+    let filePath: string | null = null;
     // Env vars have priority over the flags
-    const configPath = process.env.MOLECULER_CONFIG || this.flags.config;
+    const configPath = process.env.MOLECULER_CONFIG || this.flags?.config;
 
     if (configPath != null) {
       if (path.isAbsolute(configPath)) {
@@ -194,7 +211,9 @@ class LeemonsRunner {
           const content = require(filePath);
           return Promise.resolve()
             .then(() => {
-              if (utils.isFunction(content)) return content.call(this);
+              if (Utils.isFunction(content)) {
+                return content.call(this);
+              }
               return content;
             })
             .then((res) => {
@@ -206,16 +225,15 @@ class LeemonsRunner {
           return Promise.reject(new Error(`Not supported file extension: ${ext}`));
       }
     }
+
+    return Promise.resolve();
   }
 
   /**
    * Try to resolve a configuration file at a path
-   * @param {string} configPath - Path to attempt resolution from
-   * @param {boolean} [startFromCwd=false] - Start resolution from current working directory
-   * @returns {string | null}
    */
-  tryConfigPath(configPath, startFromCwd = false) {
-    let resolveOptions;
+  tryConfigPath(configPath: string, startFromCwd = false): string | null {
+    let resolveOptions: { paths?: string[] } = {};
     if (startFromCwd) {
       resolveOptions = { paths: [process.cwd()] };
     }
@@ -227,33 +245,32 @@ class LeemonsRunner {
     }
   }
 
-  normalizeEnvValue(value) {
+  normalizeEnvValue(value: string): string | number | boolean {
     if (value.toLowerCase() === 'true' || value.toLowerCase() === 'false') {
-      // Convert to boolean
       return value === 'true';
     }
 
-    if (!Number.isNaN(value)) {
-      // Convert to number
+    if (!Number.isNaN(Number(value))) {
       return Number(value);
     }
 
     return value;
   }
 
-  overwriteFromEnv(obj, prefix) {
+  overwriteFromEnv(obj: any, prefix?: string): any {
     Object.keys(obj).forEach((key) => {
       const envName = ((prefix ? `${prefix}_` : '') + key).toUpperCase();
 
       if (process.env[envName]) {
-        obj[key] = this.normalizeEnvValue(process.env[envName]);
+        obj[key] = this.normalizeEnvValue(process.env[envName] as string);
       }
 
-      if (utils.isPlainObject(obj[key]))
+      if (Utils.isPlainObject(obj[key])) {
         obj[key] = this.overwriteFromEnv(obj[key], (prefix ? `${prefix}_` : '') + key);
+      }
     });
 
-    // Process MOL_ env vars only the root level
+    // Process MOL_ env vars only at the root level
     if (prefix == null) {
       const moleculerPrefix = 'MOL_';
       Object.keys(process.env)
@@ -278,7 +295,11 @@ class LeemonsRunner {
                 .join('')
             )
             .join('.');
-          obj = utils.dotSet(obj, dotted, this.normalizeEnvValue(process.env[variable.key]));
+          obj = Utils.dotSet(
+            obj,
+            dotted,
+            this.normalizeEnvValue(process.env[variable.key] as string)
+          );
         });
     }
 
@@ -287,26 +308,11 @@ class LeemonsRunner {
 
   /**
    * Merge broker options
-   *
-   * Merge options from environment variables and config file. First
-   * load the config file if exists. After it overwrite the vars from
-   * the environment values.
-   *
-   * Example options:
-   *
-   *    Original broker option: `logLevel`
-   *  Config file property: 	`logLevel`
-   *  Env variable:			`LOGLEVEL`
-   *
-   *    Original broker option: `circuitBreaker.enabled`
-   *  Config file property: 	`circuitBreaker.enabled`
-   *  Env variable:			`CIRCUITBREAKER_ENABLED`
-   *
    */
-  mergeOptions() {
+  mergeOptions(): void {
     this.config = _.defaultsDeep(this.configFile, ServiceBroker.defaultOptions);
     this.config = this.overwriteFromEnv(this.config);
-    this.config.errorHandler = (err, params) => {
+    this.config.errorHandler = (err: Error & { data?: { ignoreStack?: boolean } }, params: any) => {
       if (err?.data?.ignoreStack) {
         err.stack = '';
         delete err.data.ignoreStack;
@@ -319,22 +325,19 @@ class LeemonsRunner {
       throw err;
     };
 
-    if (this.flags.silent) {
+    if (this.flags?.silent) {
       this.config.logger = false;
     }
 
-    if (this.flags.hot) {
+    if (this.flags?.hot) {
       this.config.hotReload = true;
     }
   }
 
   /**
-   * Check the given path whether directory or not
-   *
-   * @param {String} p
-   * @returns {Boolean}
+   * Check if the given path is a directory
    */
-  isDirectory(p) {
+  isDirectory(p: string): boolean {
     try {
       return fs.lstatSync(p).isDirectory();
     } catch (e) {
@@ -344,12 +347,9 @@ class LeemonsRunner {
   }
 
   /**
-   * Check the given path whether a file or not
-   *
-   * @param {String} p
-   * @returns {Boolean}
+   * Check if the given path is a service file
    */
-  isServiceFile(p) {
+  isServiceFile(p: string): boolean {
     try {
       return !fs.lstatSync(p).isDirectory();
     } catch (e) {
@@ -358,7 +358,7 @@ class LeemonsRunner {
     return false;
   }
 
-  getDependenciesFromNPM() {
+  getDependenciesFromNPM(): Dependency[] {
     const serviceDir = process.env.SERVICEDIR || '';
     const svcDir = path.isAbsolute(serviceDir)
       ? serviceDir
@@ -380,7 +380,7 @@ class LeemonsRunner {
 
     const dependencies = Object.keys(packageJson.dependencies);
 
-    const result = [];
+    const result: Dependency[] = [];
     _.forEach(dependencies, (dependency) => {
       try {
         if (dependency.startsWith('leemons-plugin-')) {
@@ -390,7 +390,7 @@ class LeemonsRunner {
           });
         }
       } catch (error) {
-        logger.error(`No se pudo resolver la dependencia "${dependency}": ${error}`);
+        logger.error(`Could not resolve dependency "${dependency}": ${error}`);
       }
     });
 
@@ -401,29 +401,16 @@ class LeemonsRunner {
 
   /**
    * Load services from files or directories
-   *
-   * 1. If find `SERVICEDIR` env var and not find `SERVICES` env var, load all services from the `SERVICEDIR` directory
-   * 2. If find `SERVICEDIR` env var and `SERVICES` env var, load the specified services from the `SERVICEDIR` directory
-   * 3. If not find `SERVICEDIR` env var but find `SERVICES` env var, load the specified services from the current directory
-   * 4. check the CLI arguments. If it find filename(s), load it/them
-   * 5. If find directory(ies), load it/them
-   *
-   * Please note: you can use shorthand names for `SERVICES` env var.
-   *    E.g.
-   *        SERVICES=posts,users
-   *
-   *        It will be load the `posts.service.js` and `users.service.js` files
-   *
-   *
    */
-  loadServices() {
+  loadServices(): void {
     this.watchFolders.length = 0;
-    const fileMask = this.flags.mask || '**/*.service.js';
+    const fileMask = this.flags?.mask || '**/*.service.js';
     const dependencies = this.getDependenciesFromNPM();
     _.forEach(dependencies, (dependency) => {
-      if (this.config.logger)
+      if (this.config.logger) {
         logger.info(`Loading service (${dependency.name}) from path ${dependency.path}`);
-      this.broker.loadServices(dependency.path, fileMask);
+      }
+      this.broker?.loadServices(dependency.path, fileMask);
 
       if (this.config.hotReload && !dependency.path.endsWith('frontend')) {
         this.watchFolders.push(dependency.path);
@@ -434,7 +421,7 @@ class LeemonsRunner {
   /**
    * Start cluster workers
    */
-  startWorkers(instances) {
+  startWorkers(instances?: number): void {
     let stopping = false;
 
     cluster.on('exit', (worker, code) => {
@@ -451,7 +438,9 @@ class LeemonsRunner {
       }
     });
 
-    const workerCount = Number.isInteger(instances) && instances > 0 ? instances : os.cpus().length;
+    // Default to number of CPU cores if instances is undefined or invalid
+    const workerCount =
+      instances && Number.isInteger(instances) && instances > 0 ? instances : os.cpus().length;
 
     logger.info(`Starting ${workerCount} workers...`);
 
@@ -473,54 +462,60 @@ class LeemonsRunner {
 
   /**
    * Load service from NPM module
-   *
-   * @param {String} name
-   * @returns {Service}
    */
-  loadNpmModule(name) {
-    const svc = require(name);
-    return this.broker.createService(svc);
+  loadNpmModule(name: string): Service | undefined {
+    try {
+      const svc = require(name);
+      return this.broker?.createService(svc);
+    } catch (error) {
+      logger.error(`Could not load service "${name}": ${error}`);
+      return undefined;
+    }
   }
 
   /**
    * Start Moleculer broker
    */
-  startBroker() {
+  async startBroker(): Promise<ServiceBroker> {
     this.worker = cluster.worker;
 
     if (this.worker) {
       Object.assign(this.config, {
-        nodeID: `${this.config.nodeID || utils.getNodeID()}-${this.worker.id}`,
+        nodeID: `${this.config.nodeID || Utils.getNodeID()}-${this.worker.id}`,
       });
     }
 
     // Create service broker
     this.broker = new ServiceBroker({ ...this.config });
-    this.broker.runner = this;
+    (this.broker as any).runner = this;
 
     this.loadServices();
 
-    if (this.watchFolders.length > 0) this.broker.runner.folders = this.watchFolders;
+    if (this.watchFolders.length > 0) {
+      (this.broker.runner as any).folders = this.watchFolders;
+    }
 
     return this.broker.start().then(() => {
-      if (this.flags.repl && (!this.worker || this.worker.id === 1)) this.broker.repl();
+      if (this.flags?.repl && (!this.worker || this.worker.id === 1)) {
+        this.broker?.repl();
+      }
 
-      return this.broker;
+      return this.broker as ServiceBroker;
     });
   }
 
   /**
    * Running
    */
-  _run() {
+  private async _run(): Promise<ServiceBroker> {
     return Promise.resolve()
       .then(() => this.loadEnvFile())
       .then(() => this.loadConfigFile())
       .then(() => this.mergeOptions())
       .then(() =>
-        mongoose.connect(process.env.MONGO_URI, {
-          maxPoolSize: process.env.MAX_POOL_SIZE || 100,
-          minPoolSize: process.env.MIN_POOL_SIZE || 25,
+        mongoose.connect(process.env.MONGO_URI as string, {
+          maxPoolSize: Number(process.env.MAX_POOL_SIZE) || 100,
+          minPoolSize: Number(process.env.MIN_POOL_SIZE) || 25,
         })
       )
       .then(() => this.startBroker())
@@ -530,29 +525,31 @@ class LeemonsRunner {
       });
   }
 
-  restartBroker() {
+  async restartBroker(): Promise<ServiceBroker> {
     if (this.broker && this.broker.started) {
       return this.broker
         .stop()
-        .catch((err) => {
-          logger.error('Error while stopping ServiceBroker', err);
+        .catch((e) => {
+          logger.error(`Error while stopping ServiceBroker: ${e.message ?? e}`);
         })
         .then(() => this._run());
     }
     return this._run();
   }
 
-  start(args) {
-    return Promise.resolve()
-      .then(() => this.processFlags(args))
-      .then(() => {
-        if (this.flags.instances !== undefined && cluster.isMaster) {
-          return this.startWorkers(this.flags.instances);
-        }
+  async start(args: string[]): Promise<ServiceBroker> {
+    this.processFlags(args);
 
-        return this._run();
+    if (this.flags?.instances !== undefined && cluster.isPrimary) {
+      this.startWorkers(this.flags.instances);
+      // Master process should never resolve as it manages workers
+      return new Promise((resolve) => {
+        process.on('exit', () => resolve({} as ServiceBroker));
       });
+    }
+
+    return this._run();
   }
 }
 
-module.exports = LeemonsRunner;
+export default LeemonsRunner;
