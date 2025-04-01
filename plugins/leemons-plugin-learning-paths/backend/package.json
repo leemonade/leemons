@@ -22,7 +22,7 @@
   "dependencies": {
     "@leemons/academic-portfolio": "0.0.71",
     "@leemons/cache": "0.0.41",
-    "@leemons/common": "0.0.41",
+    "@leemons/common": "0.0.42",
     "@leemons/deployment-manager": "0.0.71",
     "@leemons/menu-builder": "0.0.71",
     "@leemons/middlewares": "0.0.41",

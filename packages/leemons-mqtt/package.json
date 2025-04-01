@@ -2,7 +2,7 @@
   "devDependencies": {},
   "dependencies": {
     "@leemons/deployment-manager": "0.0.71",
-    "@leemons/error": "0.0.41",
+    "@leemons/error": "0.0.42",
     "lodash": "^4.17.21"
   },
   "name": "@leemons/mqtt",
