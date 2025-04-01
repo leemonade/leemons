@@ -1,7 +1,24 @@
-const { LeemonsError } = require('@leemons/error');
-const { LeemonsValidator } = require('@leemons/validator');
+import { Context, LeemonsError } from '@leemons/error';
+import { LeemonsValidator } from '@leemons/validator';
 
-function getTagsRouterActions({ middlewares } = {}) {
+interface TagsRouterParams {
+  page: number;
+  size: number;
+  query?: Record<string, any>;
+}
+
+interface TagsRouterContext extends Context {
+  params: TagsRouterParams;
+  tx: {
+    call: (service: string, params: any) => Promise<any>;
+  };
+}
+
+interface TagsRouterConfig {
+  middlewares?: any[];
+}
+
+export function getTagsRouterActions({ middlewares }: TagsRouterConfig = {}) {
   return {
     listTagsRest: {
       rest: {
@@ -9,7 +26,7 @@ function getTagsRouterActions({ middlewares } = {}) {
         path: '/list',
       },
       middlewares,
-      async handler(ctx) {
+      async handler(ctx: TagsRouterContext) {
         const validator = new LeemonsValidator({
           type: 'object',
           properties: {
@@ -26,10 +43,8 @@ function getTagsRouterActions({ middlewares } = {}) {
           return { status: 200, data };
         }
 
-        throw new LeemonsError(ctx, { message: validator.error, httpStatusCode: 400 });
+        throw new LeemonsError(ctx, { message: validator.errorMessage, httpStatusCode: 400 });
       },
     },
   };
 }
-
-module.exports = { getTagsRouterActions };

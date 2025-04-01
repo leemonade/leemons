@@ -1,18 +1,16 @@
-/**
- * @typedef {import('./getItemsHashByKey').HashPerItem} HashPerItem
- */
+import { Model } from '@leemons/mongodb';
+import { HashPerItem } from './getItemsHashByKey';
+import { getPersistedItemsHashes } from './getPersistedItemsHashes';
 
-const { getPersistedItemsHashes } = require('./getPersistedItemsHashes');
+interface GetItemsToAddParams {
+  hashPerItem: HashPerItem;
+  KeyValuesModel: Model<any>;
+  documentKey: string;
+  forceReload?: boolean;
+}
 
 /**
  * Determines which items need to be added based on the provided hash per item.
- *
- * @param {Object} params The function parameters.
- * @param {HashPerItem} params.hashPerItem An object mapping each item key to its hash.
- * @param {Object} params.KeyValuesModel The Mongoose model to interact with the key-values store.
- * @param {string} params.documentKey The key used to identify the document in the database.
- * @param {boolean} params.forceReload Whether to force a reload of the persisted items hashes
- * @returns {Promise<string[]>} An array of item keys that need to be added. These are the keys for which the persisted hash check returned false, indicating they are not present in the database.
  *
  * @example
  * // Suppose getPersistedItemsHashes returns:
@@ -30,7 +28,12 @@ const { getPersistedItemsHashes } = require('./getPersistedItemsHashes');
  * });
  * // Expected output: ["item2", "item4"]
  */
-async function getItemsToAdd({ hashPerItem, KeyValuesModel, documentKey, forceReload }) {
+export async function getItemsToAdd({
+  hashPerItem,
+  KeyValuesModel,
+  documentKey,
+  forceReload,
+}: GetItemsToAddParams): Promise<string[]> {
   const persistedItems = await getPersistedItemsHashes({
     KeyValuesModel,
     hashPerItem,
@@ -41,5 +44,3 @@ async function getItemsToAdd({ hashPerItem, KeyValuesModel, documentKey, forceRe
     .filter(([, saved]) => forceReload || !saved)
     .map(([itemKey]) => itemKey);
 }
-
-module.exports = { getItemsToAdd };

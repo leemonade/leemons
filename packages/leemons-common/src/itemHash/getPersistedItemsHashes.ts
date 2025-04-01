@@ -1,18 +1,20 @@
-/**
- * @typedef {import('./getItemsHashByKey').HashPerItem} HashPerItem
- */
+import { Model } from '@leemons/mongodb';
+import { get } from 'lodash';
+import { getItemHashKey } from './getItemHashKey';
+import { HashPerItem } from './getItemsHashByKey';
 
-const { get } = require('lodash');
-const { getItemHashKey } = require('./getItemHashKey');
+interface GetPersistedItemsHashesParams {
+  KeyValuesModel: Model<any>;
+  hashPerItem: HashPerItem;
+  documentKey?: string;
+}
+
+interface PersistedItems {
+  [key: string]: boolean | string;
+}
 
 /**
  * Checks if the hashes for the given template are already saved in the database.
- *
- * @param {Object} param0 - The parameters object containing all necessary data.
- * @param {Object} param0.KeyValuesModel - The Mongoose model used for querying the database.
- * @param {HashPerItem} param0.hashPerItem - An object mapping each item to its corresponding hash.
- * @param {string} [param0.documentKey='default'] - The key used to identify the document in the database.
- * @returns {Promise<Object>} An object where keys are item identifiers and values are the persisted hashes or false if not found.
  *
  * @example
  * // Example of hashPerItem input
@@ -33,7 +35,11 @@ const { getItemHashKey } = require('./getItemHashKey');
  *   // }
  * });
  */
-async function getPersistedItemsHashes({ KeyValuesModel, hashPerItem, documentKey = 'default' }) {
+export async function getPersistedItemsHashes({
+  KeyValuesModel,
+  hashPerItem,
+  documentKey = 'default',
+}: GetPersistedItemsHashesParams): Promise<PersistedItems> {
   const itemKeys = Object.keys(hashPerItem);
   const keys = itemKeys.map((key) => getItemHashKey({ key, hash: hashPerItem[key] }));
 
@@ -44,7 +50,7 @@ async function getPersistedItemsHashes({ KeyValuesModel, hashPerItem, documentKe
       .select(keys)
       .lean()) ?? {};
 
-  const persistedItems = {};
+  const persistedItems: PersistedItems = {};
 
   itemKeys.forEach((key, i) => {
     persistedItems[key] = get(persistedHashes, keys[i], false);
@@ -52,5 +58,3 @@ async function getPersistedItemsHashes({ KeyValuesModel, hashPerItem, documentKe
 
   return persistedItems;
 }
-
-module.exports = { getPersistedItemsHashes };
