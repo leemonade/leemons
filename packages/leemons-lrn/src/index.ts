@@ -3,7 +3,7 @@ export type Region = string;
 
 export type LRN<
   TPlugin extends string = string,
-  TModel extends string = string,
+  TModel extends string = string
 > = `lrn:${Partition}:${TPlugin}:${Region}:${string}:${TModel}:${string}`;
 
 export interface DecodedLRN<TPlugin extends string = string, TModel extends string = string> {
@@ -17,10 +17,26 @@ export interface DecodedLRN<TPlugin extends string = string, TModel extends stri
 
 export function generateLRN<TPlugin extends string = string, TModel extends string = string>(
   parts: DecodedLRN<TPlugin, TModel>
-): LRN<TPlugin, TModel>;
+): LRN<TPlugin, TModel> {
+  const { partition, pluginName, region, deploymentID, modelName, resourceID } = parts;
+  return `lrn:${partition}:${pluginName}:${region}:${deploymentID}:${modelName}:${resourceID}`;
+}
 
-export function isLRN(candidate: string): candidate is LRN;
+export function isLRN(candidate: string): candidate is LRN {
+  return /^lrn:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*$/.test(candidate);
+}
 
 export function parseLRN<TPlugin extends string = string, TModel extends string = string>(
   lrn: LRN<TPlugin, TModel>
-): DecodedLRN<TPlugin, TModel>;
+): DecodedLRN<TPlugin, TModel> {
+  const [, partition, pluginName, region, deploymentID, modelName, resourceID] = lrn.split(':');
+
+  return {
+    partition,
+    pluginName: pluginName as TPlugin,
+    region,
+    deploymentID,
+    modelName: modelName as TModel,
+    resourceID,
+  };
+}
