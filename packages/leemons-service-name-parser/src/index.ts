@@ -1,4 +1,4 @@
-import { Context } from 'moleculer';
+import { AnyContext } from '@leemons/moleculer';
 
 /**
  * Removes the version prefix from an action name if it exists
@@ -48,7 +48,7 @@ export function getPluginNameWithVersionIfHaveFromServiceName(serviceName: strin
 /**
  * Extracts the plugin name from a Moleculer context
  */
-export function getPluginNameFromCTX(ctx: Context): string {
+export function getPluginNameFromCTX(ctx: AnyContext): string {
   if (!ctx?.service?.name) {
     throw new Error(
       '[leemons-service-name-parser - getPluginNameFromCTX] - ctx not a valid moleculer context'
@@ -60,7 +60,7 @@ export function getPluginNameFromCTX(ctx: Context): string {
 /**
  * Extracts the action name from a Moleculer context
  */
-export function getActionNameFromCTX(ctx: Context): string {
+export function getActionNameFromCTX(ctx: AnyContext): string {
   if (!ctx?.service?.fullName || !ctx?.action?.name) {
     throw new Error(
       '[leemons-service-name-parser - getActionNameFromCTX] - ctx not a valid moleculer context'

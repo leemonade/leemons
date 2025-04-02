@@ -13,9 +13,10 @@
     }
   },
   "scripts": {
-    "build": "npm run clean && npm run build:esm && npm run build:cjs",
+    "build": "yarn clean && yarn build:esm && yarn build:cjs",
     "build:esm": "tsc --project tsconfig.json",
     "build:cjs": "tsc --project tsconfig.cjs.json",
+    "build:watch": "yarn build:esm -- --watch",
     "clean": "rimraf dist"
   },
   "keywords": [],
@@ -37,11 +38,12 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "@leemons/moleculer": "0.0.1",
     "moleculer": "^0.14.26"
   },
   "devDependencies": {
     "typescript": "^5.5.2",
     "rimraf": "^6.0.1",
-    "@types/node": "^20.0.0"
+    "@types/node": "^20.14.6"
   }
 }
