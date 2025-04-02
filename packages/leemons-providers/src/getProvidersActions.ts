@@ -1,15 +1,21 @@
-const { LeemonsError } = require('@leemons/error');
+import { LeemonsError } from '@leemons/error';
+import type { Model } from '@leemons/mongodb';
+import type { GetKeyValueModel } from '@leemons/mongodb-helpers';
+import type { GetModelParams, GetProvidersActionsParams, ProvidersActions } from './types';
 
-function getModel({ ctxKeyValueModelName, ctx }) {
+function getModel({ ctxKeyValueModelName, ctx }: GetModelParams): Model<GetKeyValueModel> {
   const model = ctx.tx.db[ctxKeyValueModelName];
-  if (!model)
+  if (!model) {
     throw new LeemonsError(ctx, {
       message: `[leemons-providers] ctx KeyValue model not found (${ctxKeyValueModelName})`,
     });
+  }
   return model;
 }
 
-function getProvidersActions({ ctxKeyValueModelName = 'KeyValue' } = {}) {
+export function getProvidersActions({
+  ctxKeyValueModelName = 'KeyValue',
+}: GetProvidersActionsParams = {}): ProvidersActions {
   return {
     register: {
       handler: async (ctx) => {
@@ -28,11 +34,12 @@ function getProvidersActions({ ctxKeyValueModelName = 'KeyValue' } = {}) {
     unregister: {
       handler: async (ctx) => {
         const model = getModel({ ctx, ctxKeyValueModelName });
-        await model.deleteOne({ key: '_providers_', 'value.pluginName': ctx.callerPlugin });
+        await model.deleteOne({
+          key: '_providers_',
+          'value.pluginName': ctx.callerPlugin,
+        });
         return true;
       },
     },
   };
 }
-
-module.exports = { getProvidersActions };
