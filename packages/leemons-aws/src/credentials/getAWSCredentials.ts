@@ -1,30 +1,22 @@
-const { getRoleToAssume, assumeRole } = require('../roles/assumeRole');
+import type { AWSCredentials, GetAWSCredentialsProps } from '../index';
+import { assumeRole, getRoleToAssume } from '../roles/assumeRole';
 
-/**
- * @typedef {import("../../types").AWSCredentials} AWSCredentials
- * @typedef {import("@leemons/deployment-manager").Context} Context
- */
+type GetAWSCredentialsFromDBProps<C = any> = {
+  ctxKeyValueModelName?: string;
+  ctx: C;
+};
 
-/**
- *
- * @param {object} props
- * @param {string} [props.ctxKeyValueModelName]
- * @param {Context} props.ctx
- * @returns {Promise<AWSCredentials | null>}
- */
-async function getAWSCredentialsFromDB({ ctxKeyValueModelName = 'KeyValue', ctx }) {
-  const keyValueModel = ctx.tx.db[ctxKeyValueModelName];
+async function getAWSCredentialsFromDB<C = any>({
+  ctxKeyValueModelName = 'KeyValue',
+  ctx,
+}: GetAWSCredentialsFromDBProps<C>): Promise<AWSCredentials | null> {
+  const keyValueModel = (ctx as any).tx.db[ctxKeyValueModelName];
   const awsCredentials = await keyValueModel.findOne({ key: 'awsCredentials' }).lean();
 
   return awsCredentials?.value ?? null;
 }
 
-/**
- *
- * @param {string} prefix
- * @returns {AWSCredentials | null}
- */
-function getAWSCredentialsFromEnv(prefix) {
+function getAWSCredentialsFromEnv(prefix?: string): AWSCredentials | null {
   let accessKeyId = process.env.AWS_ACCESS_KEY;
   let secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
   let region = process.env.AWS_REGION;
@@ -46,29 +38,20 @@ function getAWSCredentialsFromEnv(prefix) {
   return { accessKeyId, secretAccessKey, region, sessionToken };
 }
 
-/**
- *
- * @param {object} props
- * @param {string} [props.ctxKeyValueModelName]
- * @param {string} [props.prefix]
- * @param {string} [props.roleName]
- * @param {Context} props.ctx
- * @returns {Promise<AWSCredentials | null>}
- */
-async function getAWSCredentials({
+async function getAWSCredentials<C = any>({
   ctxKeyValueModelName = 'KeyValue',
   prefix,
   roleName,
   sessionName,
   rolePolicy,
   ctx,
-}) {
+}: GetAWSCredentialsProps<C>): Promise<AWSCredentials | null> {
   const dbCredentials = await getAWSCredentialsFromDB({ ctxKeyValueModelName, ctx });
   const envCredentials = getAWSCredentialsFromEnv(prefix);
 
   const roleToAssume = getRoleToAssume({ roleName, prefix });
 
-  if (roleToAssume) {
+  if (roleToAssume && envCredentials) {
     return assumeRole({
       roleArn: roleToAssume,
       sessionName,
@@ -81,4 +64,4 @@ async function getAWSCredentials({
   return dbCredentials ?? envCredentials ?? null;
 }
 
-module.exports = { getAWSCredentials, getAWSCredentialsFromDB, getAWSCredentialsFromEnv };
+export { getAWSCredentials, getAWSCredentialsFromDB, getAWSCredentialsFromEnv };

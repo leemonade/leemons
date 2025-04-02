@@ -1,11 +1,34 @@
 {
   "name": "@leemons/aws",
-  "version": "0.0.1",
-  "main": "src/index.js",
-  "types": "types/index.d.ts",
+  "version": "0.0.2",
+  "license": "MIT",
+  "description": "AWS utilities for Leemons",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "scripts": {
+    "build": "yarn clean && yarn build:esm && yarn build:cjs",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:watch": "yarn build:esm -- --watch",
+    "clean": "rimraf dist"
+  },
   "dependencies": {
+    "@aws-sdk/client-sts": "^3.0.0",
     "@leemons/deployment-manager": "^0.0.12",
+    "@leemons/moleculer": "0.0.1",
     "@leemons/error": "0.0.42",
     "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "rimraf": "^6.0.1",
+    "typescript": "^5.5.2",
+    "@types/lodash": "^4.14.202"
   }
 }

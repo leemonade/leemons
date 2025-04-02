@@ -1,19 +1,20 @@
-const { LeemonsError } = require('@leemons/error');
+import { LeemonsError } from '@leemons/error';
+import { AnyContext } from '@leemons/moleculer';
+import type { AWSCredentials } from '../index';
 
-/**
- *
- * @param {object} props
- * @param {{
- *  accessKeyId: string,
- *  secretAccessKey: string,
- *  region: string
- * }} props.credentials
- * @param {string} props.ctxKeyValueModelName
- * @param {import("@leemons/deployment-manager").Context} props.ctx
- */
-async function saveAWSCredentials({ credentials, ctxKeyValueModelName = 'KeyValue', ctx }) {
+type SaveAWSCredentialsProps<C extends AnyContext = AnyContext> = {
+  credentials: AWSCredentials;
+  ctxKeyValueModelName?: string;
+  ctx: C;
+};
+
+export async function saveAWSCredentials<C extends AnyContext = AnyContext>({
+  credentials,
+  ctxKeyValueModelName = 'KeyValue',
+  ctx,
+}: SaveAWSCredentialsProps<C>) {
   const { accessKeyId, secretAccessKey, region } = credentials;
-  const keyValueModel = ctx.db[ctxKeyValueModelName];
+  const keyValueModel = (ctx as any).db[ctxKeyValueModelName];
 
   try {
     return await keyValueModel
@@ -35,5 +36,3 @@ async function saveAWSCredentials({ credentials, ctxKeyValueModelName = 'KeyValu
     });
   }
 }
-
-module.exports = saveAWSCredentials;
