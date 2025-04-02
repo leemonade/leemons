@@ -1,5 +1,5 @@
-import { Model } from '@leemons/mongodb';
-import { GetKeyValueModel } from './getKeyValueModel';
+import type { Model } from '@leemons/mongodb';
+import type { GetKeyValueModel } from './getKeyValueModel';
 
 export type GetKeyQueryResult<T> = T | undefined;
 

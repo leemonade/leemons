@@ -1,4 +1,4 @@
-import { Model } from '@leemons/mongodb';
+import type { Model } from '@leemons/mongodb';
 
 export type MongoDBPaginateAggregationPipelineParams = {
   page: number;

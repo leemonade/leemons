@@ -1,5 +1,5 @@
-import { Model, PaginatedQueryResult } from '@leemons/mongodb';
-import { FilterQuery, SortOrder } from 'mongoose';
+import type { Model, PaginatedQueryResult } from '@leemons/mongodb';
+import type { FilterQuery, SortOrder } from 'mongoose';
 
 export type MongoDBPaginateParams<M extends Model<any> = Model<any>, R = object> = {
   model: M;

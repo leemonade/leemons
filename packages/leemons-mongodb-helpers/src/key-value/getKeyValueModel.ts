@@ -1,4 +1,4 @@
-import { Model, mongoose, newModel } from '@leemons/mongodb';
+import { type Model, mongoose, newModel } from '@leemons/mongodb';
 
 export type GetKeyValueModel = {
   id: string;
