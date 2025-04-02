@@ -1,8 +1,7 @@
-import { Asset, AssetID } from '@leemons/library';
-import { LRN } from '@leemons/lrn';
-import { LeemonsSchema } from '@leemons/mongodb';
-import { UserAgentID } from '@leemons/users';
-import { Timetable } from 'leemons-plugin-timetable';
+import type { Asset, AssetID } from '@leemons/library';
+import type { LRN } from '@leemons/lrn';
+import type { LeemonsSchema } from '@leemons/mongodb';
+import type { UserAgentID } from '@leemons/users';
 
 type TPlugin = 'academic-portfolio';
 export type ClassID = LRN<TPlugin, 'Class'>;
@@ -83,7 +82,6 @@ export interface Class extends Omit<LeemonsSchema, 'id'> {
   courses: Course[];
   teachers: Pick<ClassTeacher, 'teacher' | 'type'>[];
   students: UserAgentID[];
-  schedule: Timetable[];
 }
 
 export type AfterAddClassEventParams = {
@@ -111,5 +109,3 @@ export type BeforeRemoveStudentsFromClassEventParams = {
   studentId: UserAgentID;
   soft?: boolean;
 };
-
-export function getCourseName(item: { name?: string; index: number }): string;
