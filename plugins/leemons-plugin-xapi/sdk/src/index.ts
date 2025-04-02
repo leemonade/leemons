@@ -1,4 +1,25 @@
-class XAPIVerbs {
+interface XAPIVerbDefinition {
+  id: string;
+  display: {
+    'en-US': string;
+  };
+}
+
+export class XAPIVerbs {
+  public readonly INITIALIZED: XAPIVerbDefinition;
+  public readonly TERMINATED: XAPIVerbDefinition;
+  public readonly SUSPENDED: XAPIVerbDefinition;
+  public readonly RESUMED: XAPIVerbDefinition;
+  public readonly PASSED: XAPIVerbDefinition;
+  public readonly FAILED: XAPIVerbDefinition;
+  public readonly SCORED: XAPIVerbDefinition;
+  public readonly COMPLETED: XAPIVerbDefinition;
+  public readonly RESPONDED: XAPIVerbDefinition;
+  public readonly COMMENTED: XAPIVerbDefinition;
+  public readonly VOIDED: XAPIVerbDefinition;
+  public readonly PROGRESSED: XAPIVerbDefinition;
+  public readonly ANSWERED: XAPIVerbDefinition;
+
   constructor() {
     this.INITIALIZED = XAPIVerbs.INITIALIZED;
     this.TERMINATED = XAPIVerbs.TERMINATED;
@@ -15,100 +36,94 @@ class XAPIVerbs {
     this.ANSWERED = XAPIVerbs.ANSWERED;
   }
 
-  static INITIALIZED = {
+  static readonly INITIALIZED: XAPIVerbDefinition = {
     id: 'https://adlnet.gov/expapi/verbs/initialized',
     display: {
       'en-US': 'initialized',
     },
   };
 
-  static TERMINATED = {
+  static readonly TERMINATED: XAPIVerbDefinition = {
     id: 'https://adlnet.gov/expapi/verbs/terminated',
     display: {
       'en-US': 'terminated',
     },
   };
 
-  static SUSPENDED = {
+  static readonly SUSPENDED: XAPIVerbDefinition = {
     id: 'https://adlnet.gov/expapi/verbs/suspended',
     display: {
       'en-US': 'suspended',
     },
   };
 
-  static RESUMED = {
+  static readonly RESUMED: XAPIVerbDefinition = {
     id: 'https://adlnet.gov/expapi/verbs/resumed',
     display: {
       'en-US': 'resumed',
     },
   };
 
-  static PASSED = {
+  static readonly PASSED: XAPIVerbDefinition = {
     id: 'https://adlnet.gov/expapi/verbs/passed',
     display: {
       'en-US': 'passed',
     },
   };
 
-  static FAILED = {
+  static readonly FAILED: XAPIVerbDefinition = {
     id: 'https://adlnet.gov/expapi/verbs/failed',
     display: {
       'en-US': 'failed',
     },
   };
 
-  static SCORED = {
+  static readonly SCORED: XAPIVerbDefinition = {
     id: 'https://adlnet.gov/expapi/verbs/scored',
     display: {
       'en-US': 'scored',
     },
   };
 
-  static COMPLETED = {
+  static readonly COMPLETED: XAPIVerbDefinition = {
     id: 'https://adlnet.gov/expapi/verbs/completed',
     display: {
       'en-US': 'completed',
     },
   };
 
-  static RESPONDED = {
+  static readonly RESPONDED: XAPIVerbDefinition = {
     id: 'https://adlnet.gov/expapi/verbs/responded',
     display: {
       'en-US': 'responded',
     },
   };
 
-  static COMMENTED = {
+  static readonly COMMENTED: XAPIVerbDefinition = {
     id: 'https://adlnet.gov/expapi/verbs/commented',
     display: {
       'en-US': 'commented',
     },
   };
 
-  static VOIDED = {
+  static readonly VOIDED: XAPIVerbDefinition = {
     id: 'https://adlnet.gov/expapi/verbs/voided',
     display: {
       'en-US': 'voided',
     },
   };
 
-  static PROGRESSED = {
+  static readonly PROGRESSED: XAPIVerbDefinition = {
     id: 'https://adlnet.gov/expapi/verbs/progressed',
     display: {
       'en-US': 'progressed',
     },
   };
 
-  static ANSWERED = {
+  static readonly ANSWERED: XAPIVerbDefinition = {
     id: 'https://adlnet.gov/expapi/verbs/answered',
     display: {
       'en-US': 'answered',
     },
   };
 }
-
-module.exports = {
-  XAPIVerbs,
-};
-
-// Test
