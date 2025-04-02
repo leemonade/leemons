@@ -1,7 +1,7 @@
+import { AnyContext } from '@leemons/moleculer';
 import { getPluginNameFromCTX } from '@leemons/service-name-parser';
 import _ from 'lodash';
-import { Context, Errors } from 'moleculer';
-
+import { Errors } from 'moleculer';
 export interface LeemonsErrorOptions {
   message: string;
   httpStatusCode?: number;
@@ -17,7 +17,7 @@ function errorMessage(message: string): string {
 
 export class LeemonsError extends Errors.MoleculerError {
   constructor(
-    ctx: Context,
+    ctx: AnyContext,
     {
       message,
       httpStatusCode,
