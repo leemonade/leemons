@@ -1,6 +1,4 @@
-/**
- * @typedef {import('moleculer').BrokerOptions} BrokerOptions
- */
+import type { BrokerOptions } from 'moleculer';
 
 /**
  * Generate a moleculer config. Suitable for defining `moleculer.config.js`'s content in plugins.
@@ -22,13 +20,11 @@
  *   logLevel: 'debug',
  * });
  * ```
- *
- * @param {string} name - The name of the plugin, excluding leemons-plugin prefix
- * @param {BrokerOptions} [overrides={}] - The overrides for the config
- *
- * @returns {BrokerOptions}
  */
-function generateMoleculerConfig(name, overrides = {}) {
+function generateMoleculerConfig(
+  name: string,
+  overrides: Partial<BrokerOptions> = {}
+): BrokerOptions {
   if (!name) {
     throw new Error('Name is required');
   }
@@ -93,7 +89,7 @@ function generateMoleculerConfig(name, overrides = {}) {
       // Backoff factor for delay. 2 means exponential backoff.
       factor: 2,
       // A function to check failed requests.
-      check: (err) => err && !!err.retryable,
+      check: (err: Error & { retryable?: boolean }) => err && !!err.retryable,
     },
 
     // Limit of calling level. If it reaches the limit, broker will throw an MaxCallLevelError error. (Infinite loop protection)
@@ -140,7 +136,7 @@ function generateMoleculerConfig(name, overrides = {}) {
       // Number of milliseconds to switch from open to half-open state
       halfOpenTime: 10 * 1000,
       // A function to check failed requests.
-      check: (err) => err && err.code >= 500,
+      check: (err: Error & { code?: number }) => err && (err.code ?? 0) >= 500,
     },
 
     // Settings of bulkhead feature. More info: https://moleculer.services/docs/0.14/fault-tolerance.html#Bulkhead
@@ -167,7 +163,7 @@ function generateMoleculerConfig(name, overrides = {}) {
           port: 3030,
           path: '/metrics',
           metricNamePrefix: `${name}.`,
-          defaultLabels: (registry) => ({
+          defaultLabels: (registry: { broker: { namespace: string; nodeID: string } }) => ({
             namespace: registry.broker.namespace,
             nodeID: registry.broker.nodeID,
           }),
@@ -203,4 +199,5 @@ function generateMoleculerConfig(name, overrides = {}) {
     ...overrides,
   };
 }
-module.exports.generateMoleculerConfig = generateMoleculerConfig;
+
+export { generateMoleculerConfig };

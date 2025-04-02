@@ -1,17 +1,11 @@
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-cond-assign */
-/* eslint-disable no-bitwise */
-/* eslint-disable no-nested-ternary */
-/* eslint-disable no-return-assign */
-const crypto = require('crypto');
+import crypto from 'crypto';
 
 /**
  * Generate long random string
- * @public
- * @static
- * @return {string}
- * */
-function randomString(size = 32) {
+ * @param size - The size of the random string to generate (default: 32)
+ * @returns A random string of the specified size
+ */
+function randomString(size: number = 32): string {
   return `rs${crypto.webcrypto
     .getRandomValues(new Uint8Array(size - 2))
     .reduce(
@@ -28,4 +22,4 @@ function randomString(size = 32) {
     )}`;
 }
 
-module.exports = { randomString };
+export { randomString };

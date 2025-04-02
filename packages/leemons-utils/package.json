@@ -1,30 +1,43 @@
 {
   "name": "@leemons/utils",
-  "version": "0.0.41",
-  "description": "",
-  "main": "src/index.js",
+  "version": "0.0.42",
+  "description": "Leemons utility functions",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "scripts": {
+    "build": "yarn clean && yarn build:esm && yarn build:cjs",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:watch": "yarn build:esm -- --watch",
+    "clean": "rimraf dist"
+  },
   "keywords": [],
   "author": {
     "email": "hi@leemons.io",
     "name": "Leemons Edtech Solutions",
     "url": "https://www.leemons.io"
   },
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org/"
-  },
-  "maintainers": [
-    {
-      "email": "hi@leemons.io",
-      "name": "Leemons Edutech Solutions",
-      "url": "https://www.leemons.io"
-    }
-  ],
   "license": "MIT",
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/lodash": "^4.14.202",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.5.2"
+  },
   "dependencies": {
+    "@leemons/error": "0.0.41",
+    "@leemons/moleculer": "0.0.1",
+    "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
     "fs-extra": "^11.1.1",
     "lodash": "^4.17.21",
-    "dayjs": "^1.11.10"
+    "moleculer": "^0.14.26"
   }
 }
