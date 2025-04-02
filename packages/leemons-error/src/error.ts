@@ -1,4 +1,4 @@
-import { AnyContext } from '@leemons/moleculer';
+import type { AnyContext } from '@leemons/moleculer';
 import { getPluginNameFromCTX } from '@leemons/service-name-parser';
 import _ from 'lodash';
 import { Errors } from 'moleculer';
@@ -6,7 +6,10 @@ export interface LeemonsErrorOptions {
   message: string;
   httpStatusCode?: number;
   customCode?: string;
-  allowedPermissions?: string[];
+  allowedPermissions?: Array<{
+    permissionName: string;
+    actions: string[];
+  }>;
   ignoreStack?: boolean;
   [key: string]: any;
 }

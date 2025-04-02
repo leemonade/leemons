@@ -1,4 +1,4 @@
-import { AnyContext } from '@leemons/moleculer';
+import type { AnyContext } from '@leemons/moleculer';
 
 interface TransactionOptions {
   meta?: Record<string, unknown>;

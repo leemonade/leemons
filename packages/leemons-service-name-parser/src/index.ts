@@ -1,4 +1,4 @@
-import { AnyContext } from '@leemons/moleculer';
+import type { AnyContext } from '@leemons/moleculer';
 
 /**
  * Removes the version prefix from an action name if it exists

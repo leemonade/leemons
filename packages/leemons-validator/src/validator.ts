@@ -1,5 +1,5 @@
 import { isLRN } from '@leemons/lrn';
-import Ajv, { ErrorObject, ValidateFunction } from 'ajv';
+import Ajv, { type ErrorObject, type ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
 import addKeywords from 'ajv-keywords';
 import _ from 'lodash';
