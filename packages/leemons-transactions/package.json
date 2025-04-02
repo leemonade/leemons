@@ -1,8 +1,24 @@
 {
   "name": "@leemons/transactions",
-  "version": "0.0.41",
+  "version": "0.0.42",
   "description": "",
-  "main": "src/index.js",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js",
+      "types": "./dist/esm/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "yarn clean && yarn build:esm && yarn build:cjs",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:watch": "yarn build:esm -- --watch",
+    "clean": "rimraf dist"
+  },
   "keywords": [],
   "author": {
     "email": "hi@leemons.io",
@@ -21,5 +37,12 @@
     }
   ],
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "@leemons/moleculer": "0.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.6",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.5.2"
+  }
 }
