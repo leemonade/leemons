@@ -1,21 +1,29 @@
-const { LRNRegex } = require('@leemons/lrn');
-const { isFunction } = require('lodash');
-const QueriesBase = require('./QueriesBase');
+import type { Redis } from 'ioredis';
+import { isFunction } from 'lodash';
+import { QueriesBase } from './QueriesBase';
 
 const GLOBAL_NAMESPACE = 'leemons.cache.namespaces';
-const NAMESPACE = (namespace) => `${GLOBAL_NAMESPACE}.${namespace}`;
-const namespaceHasSeparatorError = (namespace, separator) =>
+const NAMESPACE = (namespace: string): string => `${GLOBAL_NAMESPACE}.${namespace}`;
+const namespaceHasSeparatorError = (namespace: string, separator: string): Error =>
   new Error(`Namespace ${namespace} has a "${separator}" in it, which is not allowed`);
 
-class NamespaceQueries extends QueriesBase {
-  #registeredNamespaces = new Map();
+interface NamespaceQueriesConstructor {
+  separator?: string;
+  client: Redis;
+  isCluster: boolean;
+  pluginName: string;
+}
 
-  constructor({ separator = ':', ...rest }) {
+export class NamespaceQueries extends QueriesBase {
+  #registeredNamespaces = new Map<string, boolean>();
+  protected separator: string;
+
+  constructor({ separator = ':', ...rest }: NamespaceQueriesConstructor) {
     super(rest);
     this.separator = separator;
   }
 
-  async isNamespaceRegistered({ namespace }) {
+  protected async isNamespaceRegistered({ namespace }: { namespace: string }): Promise<boolean> {
     if (this.#registeredNamespaces.has(namespace)) {
       return true;
     }
@@ -26,10 +34,10 @@ class NamespaceQueries extends QueriesBase {
       this.#registeredNamespaces.set(namespace, true);
     }
 
-    return response;
+    return !!response;
   }
 
-  async registerNamespace({ namespace: _namespace }) {
+  async registerNamespace({ namespace: _namespace }: { namespace: string }): Promise<void> {
     if (_namespace.includes(this.separator)) {
       throw namespaceHasSeparatorError(_namespace, this.separator);
     }
@@ -43,10 +51,11 @@ class NamespaceQueries extends QueriesBase {
     await this.client.sadd(GLOBAL_NAMESPACE, namespace);
   }
 
-  getNamespaceFromKey({ key }) {
-    key.replace(LRNRegex, 'LRN');
+  protected getNamespaceFromKey({ key }: { key: string }): string | null {
+    // Remove LRN pattern from key
+    const cleanedKey = key.replace(/lrn:[^:]+/, 'LRN');
 
-    const parts = key.split(this.separator);
+    const parts = cleanedKey.split(this.separator);
     if (parts.length === 1) {
       return null;
     }
@@ -54,20 +63,21 @@ class NamespaceQueries extends QueriesBase {
     return parts[0];
   }
 
-  async isKeyInNamespace({ key }) {
+  protected async isKeyInNamespace({ key }: { key: string }): Promise<boolean> {
     const namespace = this.getNamespaceFromKey({ key });
 
     if (!namespace) {
       return false;
     }
 
-    return this.client.sismember(NAMESPACE(namespace), key);
+    const result = await this.client.sismember(NAMESPACE(namespace), key);
+    return !!result;
   }
 
-  async saveKeyToNamespace({ key }) {
+  protected async saveKeyToNamespace({ key }: { key: string }): Promise<boolean> {
     const namespace = this.getNamespaceFromKey({ key });
     const isAlreadySaved = await this.isKeyInNamespace({ key });
-    const namespaceExists = await this.isNamespaceRegistered({ namespace });
+    const namespaceExists = namespace ? await this.isNamespaceRegistered({ namespace }) : false;
 
     if (!namespace || isAlreadySaved || !namespaceExists) {
       return isAlreadySaved;
@@ -78,15 +88,21 @@ class NamespaceQueries extends QueriesBase {
     return true;
   }
 
-  async deleteKeysFromNamespace({ keys, namespace }) {
+  protected async deleteKeysFromNamespace({
+    keys,
+    namespace,
+  }: {
+    keys: string[];
+    namespace: string;
+  }): Promise<number> {
     return this.client.srem(NAMESPACE(namespace), keys);
   }
 
-  async getKeysInNamespace({ namespace }) {
+  protected async getKeysInNamespace({ namespace }: { namespace: string }): Promise<string[]> {
     return this.client.smembers(NAMESPACE(namespace));
   }
 
-  async deleteByNamespace(_namespace, filter) {
+  async deleteByNamespace(_namespace: string, filter?: (key: string) => boolean): Promise<number> {
     if (_namespace.includes(this.separator)) {
       throw namespaceHasSeparatorError(_namespace, this.separator);
     }
@@ -106,5 +122,3 @@ class NamespaceQueries extends QueriesBase {
     return this.client.del(keys);
   }
 }
-
-module.exports = NamespaceQueries;
