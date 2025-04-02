@@ -14,9 +14,10 @@
   },
   "keywords": [],
   "scripts": {
-    "build": "npm run build:esm && npm run build:cjs",
+    "build": "yarn clean && yarn build:esm && yarn build:cjs",
     "build:esm": "tsc -p tsconfig.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:watch": "yarn build:esm -- --watch",
     "clean": "rimraf dist"
   },
   "author": {
@@ -43,6 +44,7 @@
   },
   "dependencies": {
     "@leemons/validator": "0.0.42",
-    "@leemons/mongodb": "0.0.71"
+    "@leemons/mongodb": "0.0.72",
+    "@leemons/moleculer": "0.0.1"
   }
 }

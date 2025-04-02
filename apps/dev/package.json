@@ -17,7 +17,7 @@
   },
   "leemons": {},
   "dependencies": {
-    "@leemons/runner": "0.0.72",
+    "@leemons/moleculer": "0.0.1",
     "colord": "^2.9.3",
     "dotenv": "^16.0.3",
     "leemons-plugin-ai-assistant": "1.0.0",

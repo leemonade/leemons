@@ -2,7 +2,7 @@
   "devDependencies": {},
   "dependencies": {
     "@leemons/error": "0.0.42",
-    "@leemons/service-name-parser": "0.0.41",
+    "@leemons/service-name-parser": "0.0.42",
     "lodash": "^4.17.21"
   },
   "name": "@leemons/middlewares",

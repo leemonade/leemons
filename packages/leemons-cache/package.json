@@ -2,8 +2,8 @@
   "devDependencies": {},
   "dependencies": {
     "@leemons/deployment-manager": "0.0.71",
-    "@leemons/lrn": "0.0.41",
-    "@leemons/service-name-parser": "0.0.41",
+    "@leemons/lrn": "0.0.42",
+    "@leemons/service-name-parser": "0.0.42",
     "ioredis": "^5.3.2",
     "lodash": "^4.17.21",
     "node-cache": "^5.1.2"

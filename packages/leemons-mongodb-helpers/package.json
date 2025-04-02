@@ -23,7 +23,7 @@
   ],
   "devDependencies": {},
   "dependencies": {
-    "@leemons/mongodb": "0.0.71"
+    "@leemons/mongodb": "0.0.72"
   },
   "license": "MIT"
 }

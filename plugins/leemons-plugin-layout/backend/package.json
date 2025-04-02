@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "@leemons/deployment-manager": "0.0.71",
-    "@leemons/mongodb": "0.0.71",
+    "@leemons/mongodb": "0.0.72",
     "@leemons/mongodb-helpers": "0.0.71",
     "@leemons/multilanguage": "0.0.71",
     "jaeger-client": "^3.19.0",

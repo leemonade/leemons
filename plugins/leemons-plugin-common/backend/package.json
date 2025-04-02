@@ -24,7 +24,7 @@
     "@leemons/deployment-manager": "0.0.71",
     "@leemons/error": "0.0.42",
     "@leemons/middlewares": "0.0.41",
-    "@leemons/mongodb": "0.0.71",
+    "@leemons/mongodb": "0.0.72",
     "@leemons/mongodb-helpers": "0.0.71",
     "@leemons/mqtt": "0.0.41",
     "@leemons/multilanguage": "0.0.71",

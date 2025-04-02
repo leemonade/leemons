@@ -15,9 +15,10 @@
   },
   "keywords": [],
   "scripts": {
-    "build": "npm run build:esm && npm run build:cjs",
+    "build": "yarn clean && yarn build:esm && yarn build:cjs",
     "build:esm": "tsc -p tsconfig.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:watch": "yarn build:esm -- --watch",
     "clean": "rm -rf dist"
   },
   "author": {
@@ -44,8 +45,8 @@
     "@leemons/lrn": "0.0.42"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.202",
-    "@types/node": "^20.11.24",
+    "@types/lodash": "^4.17.7",
+    "@types/node": "^20.14.6",
     "typescript": "^5.5.2"
   }
 }

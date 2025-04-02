@@ -1,7 +1,6 @@
 # Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv)
 apps/
 dist
-.cursorignore
 monolyth.Dockerfile
 .husky
 CODE_OF_CONDUCT.md
@@ -19,7 +18,6 @@ README.md
 .dockerignore
 sonar-project.properties
 .gitignore
-package.json
 CONTRIBUTING.md
 .nvmrc
 plugins/leemons-plugin-comunica
