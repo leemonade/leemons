@@ -1,7 +1,19 @@
-const { LeemonsError } = require('@leemons/error');
-const { getDeploymentIDFromCTX } = require('./getDeploymentIDFromCTX');
+import { LeemonsError } from '@leemons/error';
+import { AnyContext } from '@leemons/moleculer';
+import { getDeploymentIDFromCTX } from './getDeploymentIDFromCTX';
 
-async function getDeploymentID(ctx) {
+interface RequestParams {
+  req?: {
+    query?: {
+      deploymentID?: string;
+      [key: string]: any;
+    };
+    [key: string]: any;
+  };
+  [key: string]: any;
+}
+
+export async function getDeploymentID(ctx: AnyContext & { params?: RequestParams }): Promise<void> {
   try {
     ctx.meta.deploymentID = getDeploymentIDFromCTX(ctx);
   } catch (e) {
@@ -18,11 +30,9 @@ async function getDeploymentID(ctx) {
     }
 
     if (!ctx.meta.deploymentID) {
-      throw new LeemonsError(ctx, { message: `No deploymentID found [${ctx.meta.hostname}]` });
+      throw new LeemonsError(ctx, {
+        message: `No deploymentID found [${ctx.meta.hostname}]`,
+      });
     }
   }
 }
-
-module.exports = {
-  getDeploymentID,
-};

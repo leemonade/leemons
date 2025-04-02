@@ -1,6 +1,18 @@
-const { LeemonsError } = require('@leemons/error');
+import { LeemonsError } from '@leemons/error';
+import { AnyContext } from '@leemons/moleculer';
 
-function validateInternalPrivateKey({ ctx }) {
+interface ValidateParams {
+  manualPassword?: string;
+  internalPrivateKey?: string;
+  privateKey?: string;
+  [key: string]: any;
+}
+
+export function validateInternalPrivateKey({
+  ctx,
+}: {
+  ctx: AnyContext & { params: ValidateParams };
+}): void {
   if (!process.env.MANUAL_PASSWORD) {
     throw new LeemonsError(ctx, {
       message: 'Disabled by default specify process.env.MANUAL_PASSWORD to be able to use it.',
@@ -20,5 +32,3 @@ function validateInternalPrivateKey({ ctx }) {
   delete ctx.params.internalPrivateKey;
   delete ctx.params.privateKey;
 }
-
-module.exports = { validateInternalPrivateKey };

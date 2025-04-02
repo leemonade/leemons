@@ -1,10 +1,25 @@
 {
   "name": "@leemons/deployment-manager",
-  "version": "0.0.71",
+  "version": "0.0.72",
   "description": "Leemons Deployment Manager SDK",
   "license": "MIT",
-  "main": "src/index.js",
-  "types": "src/types.d.ts",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/index.js",
+      "import": "./dist/esm/index.js",
+      "types": "./dist/esm/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "yarn clean && yarn build:esm && yarn build:cjs",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:watch": "yarn build:esm -- --watch",
+    "clean": "rimraf dist"
+  },
   "keywords": [
     "leemons",
     "sdk"
@@ -25,11 +40,15 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/lodash": "^4.17.7",
+    "typescript": "^5.5.2",
+    "rimraf": "^6.0.1"
+  },
   "dependencies": {
     "@leemons/error": "0.0.42",
-    "@leemons/mongodb": "0.0.71",
-    "@leemons/service-name-parser": "0.0.41",
+    "@leemons/service-name-parser": "0.0.42",
+    "@leemons/moleculer": "0.0.1",
     "lodash": "^4.17.21"
   }
 }
