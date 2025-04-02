@@ -2,7 +2,6 @@ import { checkSuperAdmin } from './checkSuperAdmin';
 import { diffHours } from './diffHours';
 import { env, generateEnv } from './env';
 import { getObjectArrayKeys } from './getObjectArrayKeys';
-import { generateMoleculerConfig } from './moleculer';
 import { createDateInTimezone, normalizeDate } from './normalizeDates';
 import { numberToEncodedLetter } from './numberToEncodedLetter';
 import { randomString } from './randomString';
@@ -21,7 +20,6 @@ export {
   getObjectArrayKeys,
   numberToEncodedLetter,
   settledResponseToManyResponse,
-  generateMoleculerConfig,
   normalizeDate,
   createDateInTimezone,
 };
