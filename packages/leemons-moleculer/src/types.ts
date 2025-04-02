@@ -1,5 +1,5 @@
-import { UserSession } from '@leemons/users';
-import {
+import type { UserSession } from '@leemons/users';
+import type {
   EventSchema,
   LoggerInstance,
   ActionSchema as MoleculerActionSchema,
@@ -9,7 +9,7 @@ import {
   Service,
   ServiceSettingSchema,
 } from 'moleculer';
-import { Model } from 'mongoose';
+import type { Model } from 'mongoose';
 
 type DB<Models extends Record<string, Model<any>>> = {
   [modelName in keyof Models]: Models[modelName];
@@ -25,7 +25,7 @@ export interface EventParams {
 export type Meta<M extends object = Record<string, never>> = M &
   GenericObject & {
     deploymentID: string;
-    userSession: UserSession;
+    userSession: UserSession | null;
     $statusCode?: number;
     $statusMessage?: string;
     $location?: string;
@@ -33,7 +33,16 @@ export type Meta<M extends object = Record<string, never>> = M &
     $responseHeaders?: Record<string, string>;
     relationshipID?: string;
     transactionID?: string;
+    transactionExecutionId?: string;
+    debugTransaction?: boolean;
+    waitToRollbackFinishOnError?: boolean;
+    authorization?: string | string[];
   };
+
+export interface MQTTSocket {
+  emit: (ids: string | string[], eventName: string, eventData: any) => Promise<void>;
+  emitToAll: (eventName: string, eventData: any) => Promise<void>;
+}
 
 export interface ExtendedContext<
   P = any,
@@ -49,7 +58,7 @@ export interface ExtendedContext<
   };
   callerPlugin: string;
   callerPluginV?: string;
-  socket: any;
+  socket?: MQTTSocket;
   logger: LoggerInstance;
   cache: any;
   service: Service;
@@ -62,12 +71,6 @@ export interface ExtendedContext<
   prefixPN: (string?: string) => string;
   prefixPNV: (string?: string) => string;
   params?: P extends EventParams ? P : any;
-  meta: Meta<M> & {
-    transactionID?: string;
-    transactionExecutionId?: string;
-    debugTransaction?: boolean;
-    waitToRollbackFinishOnError?: boolean;
-  };
   id: string;
   event: EventSchema | null;
   deploymentID?: string;

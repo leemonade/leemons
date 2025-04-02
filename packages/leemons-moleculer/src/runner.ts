@@ -5,7 +5,7 @@ import path from 'path';
 import Args from 'args';
 import kleur from 'kleur';
 import _ from 'lodash';
-import { Service, ServiceBroker, Utils } from 'moleculer';
+import { type Service, ServiceBroker, Utils } from 'moleculer';
 import mongoose from 'mongoose';
 
 // Register Babel for JSX files
