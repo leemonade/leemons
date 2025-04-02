@@ -1,4 +1,4 @@
-const { LOCK_NAME } = require('../../constants');
+import { LOCK_NAME } from '../../constants';
 
 /**
  * Returns the lock name for the given name.
@@ -6,8 +6,6 @@ const { LOCK_NAME } = require('../../constants');
  * @param {string} name - The name of the lock.
  * @returns {string} - The lock name.
  */
-function getLockName(name) {
+export function getLockName(name: string): string {
   return `${LOCK_NAME}.${name}`;
 }
-
-module.exports = { getLockName };

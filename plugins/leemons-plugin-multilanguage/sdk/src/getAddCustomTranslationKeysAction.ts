@@ -1,8 +1,35 @@
-const { LeemonsError } = require('@leemons/error');
-const { LeemonsValidator } = require('@leemons/validator');
-const { cloneDeep } = require('lodash');
+import { LeemonsError } from '@leemons/error';
+import type { ActionSchema, Context } from '@leemons/moleculer';
+import { LeemonsValidator } from '@leemons/validator';
+import { cloneDeep, isString } from 'lodash';
 
-function getAddCustomTranslationKeysAction({ middlewares } = {}) {
+interface AddCustomTranslationKeysParams {
+  id: string;
+  prefix: string;
+  localizations: {
+    [locale: string]: {
+      [key: string]: string;
+    };
+  };
+}
+
+interface GetAddCustomTranslationKeysActionParams {
+  middlewares?: ActionSchema['middlewares'];
+}
+
+interface AddCustomTranslationKeysResponse {
+  status: number;
+  data: any;
+}
+
+/**
+ * Creates an action schema for adding custom translation keys
+ * @param {GetAddCustomTranslationKeysActionParams} params - The parameters for creating the action
+ * @returns {Record<string, ActionSchema>} The action schema
+ */
+export function getAddCustomTranslationKeysAction({
+  middlewares,
+}: GetAddCustomTranslationKeysActionParams = {}): Record<string, ActionSchema> {
   return {
     addCustomTranslationKeys: {
       rest: {
@@ -10,7 +37,7 @@ function getAddCustomTranslationKeysAction({ middlewares } = {}) {
         path: '/custom-keys',
       },
       middlewares,
-      async handler(ctx) {
+      async handler(ctx: Context): Promise<AddCustomTranslationKeysResponse> {
         const validator = new LeemonsValidator({
           type: 'object',
           properties: {
@@ -32,8 +59,10 @@ function getAddCustomTranslationKeysAction({ middlewares } = {}) {
           required: ['localizations', 'id', 'prefix'],
           additionalProperties: false,
         });
+
         if (validator.validate(ctx.params)) {
-          const { id, prefix, localizations } = ctx.params;
+          const params = ctx.params as AddCustomTranslationKeysParams;
+          const { id, prefix, localizations } = params;
           const localizationsToSave = cloneDeep(localizations);
 
           Object.keys(localizationsToSave).forEach((language) => {
@@ -47,13 +76,15 @@ function getAddCustomTranslationKeysAction({ middlewares } = {}) {
           const data = await ctx.tx.call('multilanguage.contents.setManyByJSON', {
             data: localizationsToSave,
           });
+
           return { status: 200, data };
         }
 
-        throw new LeemonsError(ctx, { message: validator.error, httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: isString(validator.error) ? validator.error : 'Validation failed',
+          httpStatusCode: 400,
+        });
       },
     },
   };
 }
-
-module.exports = { getAddCustomTranslationKeysAction };

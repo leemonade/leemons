@@ -1,16 +1,16 @@
-const { getHashKey } = require('./getHashKey');
-const { HASH_DOCUMENT_KEY } = require('../constants');
+import { HASH_DOCUMENT_KEY } from '../constants';
+import { getHashKey } from './getHashKey';
+import type { SaveHashParams } from './types';
 
 /**
  * Saves the hash for each locale in the database.
  * If the hash document does not exist, it creates a new document with the hash for each locale.
  * If the hash document exists, it updates the document with the new hash for each locale.
  *
- * @param {Object} params - The parameters for saving the hash.
- * @param {Object} params.KeyValuesModel - The Mongoose model for key-value pairs.
- * @param {{[locale: string]: string}} params.hashPerLocale - An object mapping each locale to its hash.
+ * @param {SaveHashParams} params - The parameters for saving the hash.
+ * @returns {Promise<void>} A promise that resolves when the hash is saved.
  */
-async function saveHash({ KeyValuesModel, hashPerLocale }) {
+export async function saveHash({ KeyValuesModel, hashPerLocale }: SaveHashParams): Promise<void> {
   const locales = Object.keys(hashPerLocale);
 
   const hashDocumentExists = await KeyValuesModel.countDocuments({
@@ -18,17 +18,18 @@ async function saveHash({ KeyValuesModel, hashPerLocale }) {
   });
 
   if (!hashDocumentExists) {
-    const value = {};
+    const value: Record<string, Record<string, boolean>> = {};
 
     locales.forEach((locale) => {
       value[locale] = { [hashPerLocale[locale]]: true };
     });
+
     await KeyValuesModel.create({
       key: HASH_DOCUMENT_KEY,
       value,
     });
   } else {
-    const $set = {};
+    const $set: Record<string, boolean | Record<string, boolean>> = {};
 
     if (process.env.FORCE_RELOAD_I18N === 'true') {
       locales.forEach((locale) => {
@@ -51,5 +52,3 @@ async function saveHash({ KeyValuesModel, hashPerLocale }) {
     );
   }
 }
-
-module.exports = { saveHash };
