@@ -1,17 +1,14 @@
-import { Context, LeemonsError } from '@leemons/error';
+import { LeemonsError } from '@leemons/error';
+import { AnyContext } from '@leemons/moleculer';
 import { LeemonsValidator } from '@leemons/validator';
-
 interface TagsRouterParams {
   page: number;
   size: number;
   query?: Record<string, any>;
 }
 
-interface TagsRouterContext extends Context {
+interface TagsRouterContext extends AnyContext {
   params: TagsRouterParams;
-  tx: {
-    call: (service: string, params: any) => Promise<any>;
-  };
 }
 
 interface TagsRouterConfig {
