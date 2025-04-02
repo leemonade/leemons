@@ -1,7 +1,7 @@
-import { Model } from '@leemons/mongodb';
+import type { Model } from '@leemons/mongodb';
 import { get } from 'lodash';
 import { getItemHashKey } from './getItemHashKey';
-import { HashPerItem } from './getItemsHashByKey';
+import type { HashPerItem } from './getItemsHashByKey';
 
 interface GetPersistedItemsHashesParams {
   KeyValuesModel: Model<any>;

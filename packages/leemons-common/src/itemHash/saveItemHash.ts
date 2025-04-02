@@ -1,6 +1,6 @@
-import { Model } from '@leemons/mongodb';
+import type { Model } from '@leemons/mongodb';
 import { getItemHashKey } from './getItemHashKey';
-import { HashPerItem } from './getItemsHashByKey';
+import type { HashPerItem } from './getItemsHashByKey';
 
 interface SaveItemHashParams {
   KeyValuesModel: Model<any>;

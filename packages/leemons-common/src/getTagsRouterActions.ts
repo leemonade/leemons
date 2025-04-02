@@ -1,5 +1,5 @@
 import { LeemonsError } from '@leemons/error';
-import { AnyContext } from '@leemons/moleculer';
+import type { AnyContext } from '@leemons/moleculer';
 import { LeemonsValidator } from '@leemons/validator';
 interface TagsRouterParams {
   page: number;
@@ -36,11 +36,18 @@ export function getTagsRouterActions({ middlewares }: TagsRouterConfig = {}) {
         });
         if (validator.validate(ctx.params)) {
           const { page, size, query } = ctx.params;
-          const data = await ctx.tx.call('common.tags.listTags', { page, size, query });
+          const data = await ctx.tx.call('common.tags.listTags', {
+            page,
+            size,
+            query,
+          });
           return { status: 200, data };
         }
 
-        throw new LeemonsError(ctx, { message: validator.errorMessage, httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: validator.errorMessage,
+          httpStatusCode: 400,
+        });
       },
     },
   };

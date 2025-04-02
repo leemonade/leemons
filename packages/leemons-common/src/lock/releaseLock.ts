@@ -1,4 +1,4 @@
-import { Model } from '@leemons/mongodb';
+import type { Model } from '@leemons/mongodb';
 
 interface ReleaseLockParams {
   KeyValueModel: Model<any>;

@@ -1,4 +1,4 @@
-import { Model } from '@leemons/mongodb';
+import type { Model } from '@leemons/mongodb';
 
 const DUPLICATED_INDEX_ERROR_CODE = 11000;
 

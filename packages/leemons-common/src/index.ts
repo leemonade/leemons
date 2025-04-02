@@ -1,6 +1,6 @@
 import { getTagsRouterActions } from './getTagsRouterActions';
 import { getItemHashKey } from './itemHash/getItemHashKey';
-import { HashPerItem, getItemsHashByKey } from './itemHash/getItemsHashByKey';
+import { type HashPerItem, getItemsHashByKey } from './itemHash/getItemsHashByKey';
 import { getItemsToAdd } from './itemHash/getItemsToAdd';
 import { getPersistedItemsHashes } from './itemHash/getPersistedItemsHashes';
 import { saveItemHash } from './itemHash/saveItemHash';
