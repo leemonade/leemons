@@ -1,5 +1,5 @@
-import { AssetID } from '@leemons/library';
-import { LRN } from '@leemons/lrn';
+import type { AssetID } from '@leemons/library';
+import type { LRN } from '@leemons/lrn';
 
 type TPlugin = 'users';
 export type UserAgentID = LRN<TPlugin, 'UserAgent'>;
@@ -50,13 +50,8 @@ export interface UserAgent {
 export interface UserSession extends Omit<User, 'id'> {
   id: string;
   userAgents: UserAgent[];
+  deploymentID?: string;
 }
-
-export function getUserFullName({
-  userSession,
-}: {
-  userSession: Pick<User, 'name' | 'surnames' | 'secondSurname'>;
-}): string;
 
 export type Profile = {
   /** Unique identifier of the profile */
@@ -73,6 +68,6 @@ export type Profile = {
   indexable: boolean;
   /** System name of the profile */
   sysName?: 'teacher' | 'student' | 'admin' | 'parent' | 'content-developer';
-  permissions?: GenericObject[];
-  targetPermissions?: GenericObject[];
+  permissions?: any[];
+  targetPermissions?: any[];
 };
