@@ -1,9 +1,24 @@
 {
   "name": "@leemons/cronjobs",
   "version": "0.0.1",
-  "description": "",
-  "main": "src/index.js",
-  "types": "types/index.d.ts",
+  "description": "Leemons cronjobs module",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "scripts": {
+    "build": "yarn clean && yarn build:esm && yarn build:cjs",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "clean": "rimraf dist",
+    "test": "jest",
+    "watch": "yarn build:esm -- --watch"
+  },
   "keywords": [],
   "author": {
     "email": "hi@leemons.io",
@@ -22,8 +37,17 @@
     }
   ],
   "license": "MIT",
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.14.6",
+    "jest": "^29.7.0",
+    "rimraf": "^6.0.1",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.5.2"
+  },
   "dependencies": {
-    "@hokify/agenda": "^6.3.0"
+    "@hokify/agenda": "^6.3.0",
+    "@leemons/moleculer": "0.0.1",
+    "moleculer": "^0.14.26"
   }
 }
