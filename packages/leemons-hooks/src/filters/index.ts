@@ -1,16 +1,17 @@
-const _ = require('lodash');
-const chalk = require('chalk');
+import chalk from 'chalk';
+import _ from 'lodash';
+import type { EventHandler, EventHandlerMap } from '../types';
 
-const filters = {};
+const filters: EventHandlerMap = {};
 
 // Gets the filters for an event, if not defined, return defaultValue
-function getFilters(eventName, defaultValue = []) {
+function getFilters(eventName: string, defaultValue: EventHandler[] = []): EventHandler[] {
   return _.get(filters, eventName, defaultValue);
 }
 
 // Appends a new filter to the filters object
-function setFilter(eventName, func) {
-  const eventFilters = getFilters(eventName, null);
+function setFilter(eventName: string, func: EventHandler): void {
+  const eventFilters = getFilters(eventName, undefined);
   if (!eventFilters) {
     _.set(filters, eventName, [func]);
   } else {
@@ -19,7 +20,7 @@ function setFilter(eventName, func) {
 }
 
 // Registers a new filter
-function registerFilter(eventName, func) {
+function registerFilter(eventName: string, func: EventHandler): void {
   if (!_.isFunction(func)) {
     throw new Error('All the filters must be functions');
   }
@@ -31,7 +32,7 @@ function registerFilter(eventName, func) {
   );
 }
 
-function unregisterFilter(eventName, func) {
+function unregisterFilter(eventName: string, func: EventHandler): EventHandler[] {
   if (!_.isFunction(func)) {
     throw new Error('All the filters must be functions');
   }
@@ -52,8 +53,9 @@ function unregisterFilter(eventName, func) {
     });
 }
 
-module.exports = {
-  addFilter: registerFilter,
-  removeFilter: unregisterFilter,
-  getFilters: (eventName, defaultValue = []) => _.clone(getFilters(eventName, defaultValue)),
-};
+export const addFilter = registerFilter;
+export const removeFilter = unregisterFilter;
+export const getFiltersClone = (
+  eventName: string,
+  defaultValue: EventHandler[] = []
+): EventHandler[] => _.clone(getFilters(eventName, defaultValue));

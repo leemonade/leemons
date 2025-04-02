@@ -1,16 +1,17 @@
-const _ = require('lodash');
-const chalk = require('chalk');
+import chalk from 'chalk';
+import _ from 'lodash';
+import type { EventHandler, EventHandlerMap } from '../types';
 
-const actions = {};
+const actions: EventHandlerMap = {};
 
 // Gets the actions for an event, if not defined, return defaultValue
-function getActions(eventName, defaultValue = []) {
+function getActions(eventName: string, defaultValue: EventHandler[] = []): EventHandler[] {
   return _.get(actions, eventName, defaultValue);
 }
 
 // Appends a new action to the actions object
-function setAction(eventName, func) {
-  const eventActions = getActions(eventName, null);
+function setAction(eventName: string, func: EventHandler): void {
+  const eventActions = getActions(eventName, undefined);
   if (!eventActions) {
     _.set(actions, eventName, [func]);
   } else {
@@ -19,7 +20,7 @@ function setAction(eventName, func) {
 }
 
 // Registers a new action
-function registerAction(eventName, func) {
+function registerAction(eventName: string, func: EventHandler): void {
   if (!_.isFunction(func)) {
     throw new Error('All the actions must be functions');
   }
@@ -31,7 +32,7 @@ function registerAction(eventName, func) {
   );
 }
 
-function unregisterAction(eventName, func) {
+function unregisterAction(eventName: string, func: EventHandler): EventHandler[] {
   if (!_.isFunction(func)) {
     throw new Error('All the actions must be functions');
   }
@@ -52,8 +53,9 @@ function unregisterAction(eventName, func) {
     });
 }
 
-module.exports = {
-  addAction: registerAction,
-  removeAction: unregisterAction,
-  getActions: (eventName, defaultValue = []) => _.clone(getActions(eventName, defaultValue)),
-};
+export const addAction = registerAction;
+export const removeAction = unregisterAction;
+export const getActionsClone = (
+  eventName: string,
+  defaultValue: EventHandler[] = []
+): EventHandler[] => _.clone(getActions(eventName, defaultValue));

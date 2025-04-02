@@ -1,11 +1,30 @@
 {
-  "devDependencies": {},
+  "name": "leemons-hooks",
+  "version": "0.0.33",
+  "description": "Hooks system for Leemons LMS",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "scripts": {
+    "build": "yarn clean && yarn build:esm && yarn build:cjs",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:watch": "yarn build:esm -- --watch",
+    "clean": "rimraf dist"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "rimraf": "^6.0.1",
+    "typescript": "^5.5.2"
+  },
   "dependencies": {
     "chalk": "^4.1.0",
     "lodash": "^4.17.21"
-  },
-  "name": "leemons-hooks",
-  "version": "0.0.32",
-  "main": "lib/index.js",
-  "license": "MIT"
+  }
 }
