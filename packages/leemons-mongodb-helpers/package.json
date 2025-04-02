@@ -1,9 +1,23 @@
 {
   "name": "@leemons/mongodb-helpers",
-  "version": "0.0.71",
+  "version": "0.0.72",
   "description": "",
-  "main": "src/index.js",
-  "types": "types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "scripts": {
+    "build": "yarn clean && yarn build:esm && yarn build:cjs",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:watch": "yarn build:esm -- --watch",
+    "clean": "rimraf dist"
+  },
   "keywords": [],
   "author": {
     "email": "hi@leemons.io",
@@ -21,9 +35,13 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "devDependencies": {},
+  "devDependencies": {
+    "rimraf": "^6.0.1",
+    "typescript": "^5.5.2"
+  },
   "dependencies": {
-    "@leemons/mongodb": "0.0.72"
+    "@leemons/mongodb": "0.0.72",
+    "mongoose": "7.5.2"
   },
   "license": "MIT"
 }

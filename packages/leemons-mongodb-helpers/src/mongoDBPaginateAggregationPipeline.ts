@@ -1,15 +1,16 @@
-/**
- * @param {object} params
- * @param {number} params.page
- * @param {number} params.size
- * @param {string} params.path
- * @returns {object[]}
- */
-module.exports = function mongoDBPaginateAggregationPipeline({
+import { Model } from '@leemons/mongodb';
+
+export type MongoDBPaginateAggregationPipelineParams = {
+  page: number;
+  size: number;
+  path?: string;
+};
+
+export function mongoDBPaginateAggregationPipeline({
   page: _page,
   size: _size,
   path = '$$ROOT',
-}) {
+}: MongoDBPaginateAggregationPipelineParams): Parameters<Model<unknown>['aggregate']>[0] {
   const page = Math.max(0, _page);
   const size = Math.max(1, _size);
   const offset = page * size;
@@ -46,4 +47,4 @@ module.exports = function mongoDBPaginateAggregationPipeline({
       },
     },
   ];
-};
+}

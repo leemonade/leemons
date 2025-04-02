@@ -1,4 +1,18 @@
-async function mongoDBPaginate({
+import { Model, PaginatedQueryResult } from '@leemons/mongodb';
+import { FilterQuery, SortOrder } from 'mongoose';
+
+export type MongoDBPaginateParams<M extends Model<any> = Model<any>, R = object> = {
+  model: M;
+  page: number;
+  size: number;
+  query: FilterQuery<R>;
+  columns?: string[];
+  sort?: { [key: string]: SortOrder };
+  collation?: Parameters<M['find']>[2];
+  options?: Parameters<M['find']>[2];
+};
+
+export async function mongoDBPaginate<R = unknown, M extends Model<any> = Model<any>>({
   model,
   page,
   size,
@@ -6,10 +20,10 @@ async function mongoDBPaginate({
   columns,
   sort,
   collation,
-  options = {},
-}) {
+  options,
+}: MongoDBPaginateParams<M, R>): Promise<PaginatedQueryResult<R>> {
   const queryItems = model
-    .find(query || {}, '', options)
+    .find(query ?? {}, '', options ?? {})
     .limit(size)
     .skip(page * size);
 
@@ -43,11 +57,7 @@ async function mongoDBPaginate({
   };
 }
 
-/**
- * @template T
- * @type {import("@leemons/mongodb").PaginatedQueryResult<T>}
- */
-const EMPTY_PAGINATED_RESULT = {
+export const EMPTY_PAGINATED_RESULT: PaginatedQueryResult<never> = {
   items: [],
   page: 0,
   size: 1,
@@ -59,5 +69,3 @@ const EMPTY_PAGINATED_RESULT = {
   canGoPrevPage: false,
   canGoNextPage: false,
 };
-
-module.exports = { mongoDBPaginate, EMPTY_PAGINATED_RESULT };
