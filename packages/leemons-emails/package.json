@@ -12,7 +12,7 @@
     "url": "https://www.leemons.io"
   },
   "scripts": {
-    "email:dev": "EMAIL_DEV=true email dev --dir ./src/emails",
+    "email:dev": "EMAIL_DEV=true email dev --dir ./emails",
     "build:esm": "tsc -p tsconfig.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build": "npm run build:esm && npm run build:cjs",

@@ -16,26 +16,12 @@ import {
   Tailwind,
   Text,
 } from '@react-email/components';
-
-import type { EmailLayoutProps } from '../index';
+import PropTypes from 'prop-types';
 
 const IS_DEV_MODE = String(process?.env?.EMAIL_DEV) === 'true';
 const PLATFORM_NAME = '{{it.__platformName}}';
 const currentYear = new Date().getFullYear();
-
-interface SocialButton {
-  url: string;
-  icon: string;
-}
-
-interface SocialButtons {
-  twitter: SocialButton;
-  linkedin: SocialButton;
-  productHunt: SocialButton;
-  [key: string]: SocialButton;
-}
-
-const SOCIAL_BUTTONS: SocialButtons = {
+const SOCIAL_BUTTONS = {
   twitter: {
     url: 'https://twitter.com/leemonslxp',
     icon: 'https://s3.eu-west-1.amazonaws.com/global-assets.leemons.io/twitter_38830e4b97.png',
@@ -50,23 +36,7 @@ const SOCIAL_BUTTONS: SocialButtons = {
   },
 };
 
-interface LocaleMessages {
-  bodyEnd: string;
-  privacyPolicy: string;
-  privacyPolicyUrl: string;
-  social: SocialButtons;
-  helpCenter: string;
-  helpCenterUrl: string;
-  allRightsReserved: string;
-}
-
-interface Messages {
-  en: LocaleMessages;
-  es: LocaleMessages;
-  [key: string]: LocaleMessages;
-}
-
-const messages: Messages = {
+const messages = {
   en: {
     bodyEnd: `🫶🏼 ${IS_DEV_MODE ? 'Leemons' : PLATFORM_NAME}`,
     privacyPolicy: 'Privacy policy',
@@ -87,15 +57,7 @@ const messages: Messages = {
   },
 };
 
-export function EmailLayout({
-  locale = 'en',
-  previewText,
-  title,
-  logoUrl,
-  logoWidth,
-  platformName,
-  children,
-}: EmailLayoutProps) {
+function EmailLayout({ locale, previewText, title, logoUrl, logoWidth, platformName, children }) {
   const socialButtons = Object.keys(messages[locale].social);
   const socialButtonsWidth = (socialButtons.length * 2 - 1) * 24;
   return (
@@ -144,7 +106,7 @@ export function EmailLayout({
           />
         </React.Fragment>
       </Head>
-      <Preview>{previewText ?? ''}</Preview>
+      <Preview>{previewText}</Preview>
       <Tailwind
         config={{
           theme: {
@@ -223,9 +185,7 @@ export function EmailLayout({
               </Link>
               <Text
                 className="text-[12px] text-[#878D96] mb-0 leading-4"
-                dangerouslySetInnerHTML={{
-                  __html: messages[locale].allRightsReserved,
-                }}
+                dangerouslySetInnerHTML={{ __html: messages[locale].allRightsReserved }}
               />
             </Section>
           </Container>
@@ -234,3 +194,36 @@ export function EmailLayout({
     </Html>
   );
 }
+
+const PROD_PROPS = {
+  locale: 'en',
+  title: '',
+  previewText: '',
+  logoUrl: '{{it.__logoUrl}}',
+  logoWidth: '{{it.__logoWidth}}',
+  platformName: '{{it.__platformName}}',
+};
+
+const DEV_PROPS = {
+  locale: 'en',
+  title: 'Welcome to Leemons!',
+  previewText: '[Leemons] - New Email',
+  logoUrl:
+    'https://s3.eu-west-1.amazonaws.com/global-assets.leemons.io/logo_leemons_407d9548b9.png',
+  logoWidth: '224px',
+  platformName: 'Leemons',
+};
+
+EmailLayout.defaultProps = IS_DEV_MODE ? DEV_PROPS : PROD_PROPS;
+
+EmailLayout.propTypes = {
+  locale: PropTypes.string,
+  title: PropTypes.string,
+  children: PropTypes.node,
+  previewText: PropTypes.string,
+  logoUrl: PropTypes.string,
+  logoWidth: PropTypes.string,
+  platformName: PropTypes.string,
+};
+
+export default EmailLayout;
