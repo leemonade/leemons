@@ -1,0 +1,52 @@
+{
+  "name": "@leemons/widgets",
+  "version": "0.0.72",
+  "description": "Leemons widgets management",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/cjs/index.js"
+    }
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/esm/index.d.ts",
+  "scripts": {
+    "build": "yarn clean && yarn build:esm && yarn build:cjs",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:watch": "yarn build:esm -- --watch",
+    "clean": "rimraf dist"
+  },
+  "keywords": [],
+  "author": {
+    "email": "hi@leemons.io",
+    "name": "Leemons Edtech Solutions",
+    "url": "https://www.leemons.io"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "maintainers": [
+    {
+      "email": "hi@leemons.io",
+      "name": "Leemons Edutech Solutions",
+      "url": "https://www.leemons.io"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@leemons/error": "0.0.42",
+    "@leemons/mongodb-helpers": "0.0.72",
+    "@leemons/users": "0.0.42",
+    "@leemons/mongodb": "0.0.42",
+    "@leemons/moleculer": "0.0.1",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.202",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.5.2"
+  }
+}
