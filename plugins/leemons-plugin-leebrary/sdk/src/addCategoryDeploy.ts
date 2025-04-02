@@ -1,7 +1,6 @@
 import type { Context } from '@leemons/moleculer';
 import type { Model } from '@leemons/mongodb';
-import { hasKey, setKey } from '@leemons/mongodb-helpers';
-import type { GetKeyValueModel } from './types';
+import { type GetKeyValueModel, hasKey, setKey } from '@leemons/mongodb-helpers';
 
 /**
  * Adds a category deployment to the library system

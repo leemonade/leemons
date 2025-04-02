@@ -4,7 +4,10 @@ import type { GetKeyValueModel } from '@leemons/mongodb-helpers';
 
 export interface ProviderValue {
   pluginName: string;
-  params: Record<string, any>;
+  params?: Record<string, unknown>;
+  name?: string;
+  type?: any;
+  supportedMethods?: any;
 }
 
 export interface GetPluginProviderParams {

@@ -1,9 +1,12 @@
+import type { ProgramID, SubjectID } from '@leemons/academic-portfolio';
 import type { LRN } from '@leemons/lrn';
-
-export type UserAgentID = LRN<'users', 'UserAgent'>;
-export type UserID = LRN<'users', 'User'>;
+import type { UserAgentID, UserID } from '@leemons/users';
 
 export type FileID = LRN<'leebrary', 'File'>;
+export type PinID = LRN<'leebrary', 'Pin'>;
+export type AssetID = LRN<'common', 'CurrentVersions'>;
+export type ProviderID = LRN<'leebrary', 'Provider'>;
+
 export type File = {
   id: FileID;
   deploymentID: string;
@@ -34,7 +37,15 @@ export type Category = {
   order: number;
 };
 
-export type AssetID = LRN<'common', 'CurrentVersions'>;
+export type AssetFile = {
+  id: string;
+  type: string;
+};
+
+export type SubjectInAsset = {
+  subject: SubjectID;
+  name: string;
+};
 
 export type Asset = {
   id: AssetID;
@@ -63,7 +74,6 @@ export type Asset = {
   mediaType?: string;
 };
 
-export type PinID = LRN<'leebrary', 'Pin'>;
 export type Pin = {
   id: PinID;
   deploymentID: string;
@@ -71,7 +81,6 @@ export type Pin = {
   userAgent: UserAgentID;
 };
 
-export type ProviderID = LRN<'leebrary', 'Provider'>;
 export type Provider = {
   pluginName: string;
   name: string;
@@ -92,9 +101,16 @@ export type Provider = {
   };
 };
 
-export interface GetKeyValueModel {
-  id: string;
-  deploymentID: string;
-  key: string;
-  value: unknown;
+export interface GenericAsset {
+  id: AssetID;
+  name: string;
+  description?: string;
+  cover?: string | AssetFile;
+  tags?: string[];
+  color?: string;
+  file?: AssetFile | string;
+  subjects?: SubjectInAsset[];
+  program?: ProgramID;
+  providerData?: Record<string, unknown>;
+  fromUserAgent?: UserAgentID;
 }

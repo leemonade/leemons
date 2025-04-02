@@ -6,8 +6,8 @@ import _ from 'lodash';
 
 interface Zone {
   key: string;
-  name: string;
-  description: string;
+  name?: string;
+  description?: string;
 }
 
 interface AddWidgetZonesDeployParams {

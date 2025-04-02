@@ -37,9 +37,11 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "@leemons/academic-portfolio": "0.0.72",
     "@leemons/mongodb-helpers": "0.0.72",
     "@leemons/mongodb": "0.0.72",
-    "@leemons/lrn": "0.0.42"
+    "@leemons/lrn": "0.0.42",
+    "@leemons/users": "0.0.42"
   },
   "devDependencies": {
     "rimraf": "^6.0.1",
