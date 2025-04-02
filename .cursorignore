@@ -22,7 +22,6 @@ CONTRIBUTING.md
 .nvmrc
 plugins/leemons-plugin-comunica
 plugins/leemons-plugin-attendance-control
-scripts/
 .github
 .prettierrc
 .eslintignore
