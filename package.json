@@ -55,13 +55,7 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@babel/core": "^7.22.15",
-    "@babel/eslint-parser": "^7.22.15",
-    "@babel/plugin-proposal-export-default-from": "^7.22.0",
-    "@babel/plugin-syntax-jsx": "^7.22.5",
-    "@babel/preset-env": "^7.22.20",
     "@biomejs/biome": "^1.9.4",
-    "rimraf": "^5.0.1",
     "start-server-and-test": "^2.0.0"
   },
   "resolutions": {

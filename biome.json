@@ -96,7 +96,8 @@
         "useConsistentBuiltinInstantiation": "error",
         "useConst": "error",
         "useSingleVarDeclarator": "error",
-        "useWhile": "error"
+        "useWhile": "error",
+        "useImportType": "error"
       },
       "suspicious": {
         "noAsyncPromiseExecutor": "error",
