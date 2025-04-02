@@ -1,29 +1,16 @@
-const { hasKey, setKey } = require('@leemons/mongodb-helpers');
-const _ = require('lodash');
-
-/**
- * @typedef {import('@leemons/deployment-manager').Context} Context
- */
+import { hasKey, setKey } from '@leemons/mongodb-helpers';
+import { flatten } from 'lodash';
+import type { AddMenuItemsDeployParams, ExecParams } from './types';
 
 /**
  * Manages the addition or removal of menu items based on configurations and current state.
- *
- * @param {Object} params - Input parameters.
- * @param {Object} params.keyValueModel - Model for interacting with key-value storage.
- * @param {Object} params.item - Menu item object including `item`, `permissions`, `removed`, `isCustomPermission`.
- * @param {string} params.menuKey - Key of the menu to which the item belongs.
- * @param {Context} params.ctx - Context for making calls and emitting events.
- *
- * - Checks if the item should be removed based on `removed` and configuration.
- * - If it does not exist or a reload is forced, decides whether to add or remove the item.
- * - Updates the key-value system and emits an event to initialize the item.
  */
 async function exec({
   keyValueModel,
   item: { item, permissions, removed, isCustomPermission },
   menuKey,
   ctx,
-}) {
+}: ExecParams): Promise<void> {
   // Check if the item has a key in the key-value storage
   const itemHasKey = await hasKey(keyValueModel, `menu-item-${menuKey}-${item.key}`);
 
@@ -62,36 +49,33 @@ async function exec({
 
 /**
  * Adds or removes menu items based on configurations and current state.
- *
- * @param {Object} params - Input parameters.
- * @param {Object} params.keyValueModel - Model for interacting with key-value storage.
- * @param {Object} params.item - Menu item object including `item`, `permissions`, `removed`, `isCustomPermission`.
- * @param {string} params.menuKey - Key of the menu to which the item belongs.
- * @param {boolean} params.shouldWait - Whether to wait for all promises to resolve.
- * @param {Context} params.ctx - Context for making calls and emitting events.
- *
- * @returns {Promise} A promise that resolves to an array of results.
  */
-async function addMenuItemsDeploy({
+export async function addMenuItemsDeploy({
   keyValueModel,
   item,
   menuKey = 'menu-builder.main',
   shouldWait = false,
   ctx,
-}) {
-  const config = await ctx.tx.call('deployment-manager.getConfigRest', { allConfig: true });
-  const items = _.flatten([item]);
+}: AddMenuItemsDeployParams): Promise<void[]> {
+  const config = await ctx.tx.call('deployment-manager.getConfigRest', {
+    allConfig: true,
+  });
+  const items = flatten([item]);
 
   if (shouldWait) {
     return items.reduce(async (accPromise, currentItem) => {
       const acc = await accPromise;
-      const result = await exec({ config, keyValueModel, item: currentItem, menuKey, ctx });
+      const result = await exec({
+        config,
+        keyValueModel,
+        item: currentItem,
+        menuKey,
+        ctx,
+      });
       acc.push(result);
       return acc;
-    }, Promise.resolve([]));
+    }, Promise.resolve([] as void[]));
   }
 
   return Promise.all(items.map((l) => exec({ config, keyValueModel, item: l, menuKey, ctx })));
 }
-
-module.exports = { addMenuItemsDeploy };
