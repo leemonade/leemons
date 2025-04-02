@@ -18,7 +18,7 @@
     "exceljs": "^4.3.0",
     "framer-motion": "^10.16.4",
     "immer": "^10.1.1",
-    "leemons-hooks": "0.0.32",
+    "leemons-hooks": "0.0.33",
     "lodash": "^4.17.21",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",

@@ -6,7 +6,7 @@
     "@bubbles-ui/components": "dev",
     "@bubbles-ui/notifications": "dev",
     "js-cookie": "^3.0.5",
-    "leemons-hooks": "0.0.32",
+    "leemons-hooks": "0.0.33",
     "lodash": "^4.17.21",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",

@@ -19,13 +19,13 @@
     "jest-cli": "29.7.0"
   },
   "dependencies": {
-    "@leemons/cache": "0.0.41",
-    "@leemons/deployment-manager": "0.0.71",
+    "@leemons/cache": "0.0.42",
+    "@leemons/deployment-manager": "0.0.72",
     "@leemons/error": "0.0.42",
-    "@leemons/middlewares": "0.0.41",
+    "@leemons/middlewares": "0.0.42",
     "@leemons/mongodb": "0.0.72",
-    "@leemons/mqtt": "0.0.41",
-    "@leemons/multi-events": "0.0.71",
+    "@leemons/mqtt": "0.0.42",
+    "@leemons/multi-events": "0.0.72",
     "async-promise-pool": "^1.0.6",
     "chalk": "^4.1.1",
     "exceljs": "^4.4.0",
