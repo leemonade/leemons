@@ -1,4 +1,4 @@
-import { LRN } from '@leemons/lrn';
+import type { LRN } from '@leemons/lrn';
 
 export type UserAgentID = LRN<'users', 'UserAgent'>;
 export type UserID = LRN<'users', 'User'>;
@@ -92,12 +92,9 @@ export type Provider = {
   };
 };
 
-export function addCategoryDeploy<C = Context>(params: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  keyValueModel: any;
-  category: {
-    key: string;
-    [key: string]: unknown;
-  };
-  ctx: C;
-}): Promise<void>;
+export interface GetKeyValueModel {
+  id: string;
+  deploymentID: string;
+  key: string;
+  value: unknown;
+}
