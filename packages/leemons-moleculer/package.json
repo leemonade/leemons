@@ -1,0 +1,65 @@
+{
+  "name": "@leemons/moleculer",
+  "version": "0.0.1",
+  "description": "",
+  "main": "dist/cjs/runner.js",
+  "module": "dist/esm/runner.js",
+  "types": "dist/esm/types.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/runner.js",
+      "import": "./dist/esm/runner.js",
+      "types": "./dist/esm/types.d.ts"
+    }
+  },
+  "bin": {
+    "leemons-runner": "dist/cjs/bin/leemons-runner.js"
+  },
+  "scripts": {
+    "build": "yarn clean && yarn build:esm && yarn build:cjs",
+    "build:esm": "tsc -p tsconfig.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:watch": "yarn build:esm -- --watch",
+    "clean": "rimraf dist"
+  },
+  "keywords": [],
+  "author": {
+    "email": "hi@leemons.io",
+    "name": "Leemons Edtech Solutions",
+    "url": "https://www.leemons.io"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "maintainers": [
+    {
+      "email": "hi@leemons.io",
+      "name": "Leemons Edutech Solutions",
+      "url": "https://www.leemons.io"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@babel/core": "^7.23.9",
+    "@babel/preset-env": "^7.23.9",
+    "@babel/preset-react": "^7.23.3",
+    "@babel/register": "^7.23.7",
+    "@leemons/mongodb": "0.0.71",
+    "@leemons/users": "0.0.41",
+    "args": "^5.0.3",
+    "dotenv": "^16.0.3",
+    "glob": "^10.2.7",
+    "kleur": "^4.1.5",
+    "lodash": "^4.17.21",
+    "moleculer": "^0.14.26",
+    "mongoose": "7.5.2"
+  },
+  "devDependencies": {
+    "@types/args": "^5.0.0",
+    "@types/lodash": "^4.17.7",
+    "@types/node": "^20.14.6",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.5.2"
+  }
+}
