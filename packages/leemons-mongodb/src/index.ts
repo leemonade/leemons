@@ -1,7 +1,9 @@
-import type { ServiceSchema } from '@leemons/deployment-manager';
-import { Connection, HydratedDocumentFromSchema, Model as MongooseModel, Schema } from 'mongoose';
+import type { AnyContext, ServiceSchema } from '@leemons/moleculer';
+import { Connection, CreateOptions, Model as MongooseModel, Schema } from 'mongoose';
+import mongoose from 'mongoose';
+import { MixinOptions, mixin } from './mixin';
 
-type LeemonsOptions = {
+export type LeemonsOptions = {
   disableAutoDeploy?: boolean;
   disableAutoLRN?: boolean;
 };
@@ -18,7 +20,7 @@ export type LeemonsSchema = {
 export type CreateQuery<T> = (
   items: Partial<T> & Pick<T, Exclude<keyof T, keyof LeemonsSchema>>,
   options?: CreateOptions & LeemonsOptions
-) => HydratedDocumentFromSchema<T> & T;
+) => Promise<T>;
 export type FindQuery<T> = MongooseModel<T>['find'];
 export type FindByIdQuery<T> = MongooseModel<T>['findById'];
 export type FindOneQuery<T> = MongooseModel<T>['findOne'];
@@ -57,24 +59,18 @@ export interface Model<T> {
 export function newModel<T>(
   connection: Connection,
   modelName: string,
-  schema: Schema<T, any, any> | Schema<T & Document, any, any>
-): Model<T>;
+  schema: Schema<T>
+): Model<T> {
+  schema.add({
+    isDeleted: { type: Boolean, required: true, default: false },
+    deletedAt: { type: Date, default: null },
+  } as any);
 
-type MixinOptions = {
-  waitToRollbackFinishOnError?: boolean;
-  autoDeploymentID?: boolean;
-  autoTransaction?: boolean;
-  autoRollback?: boolean;
-  autoLRN?: boolean;
-  debugTransaction?: boolean;
-  forceLeemonsDeploymentManagerMixinNeedToBeImported?: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  models?: Record<string, Model<any>>;
-};
-
-export const mongoose: typeof import('mongoose');
-
-export function LeemonsMongoDBMixin(options?: MixinOptions): Partial<ServiceSchema>;
+  if (modelName in connection.models) {
+    return connection.models[modelName] as unknown as Model<T>;
+  }
+  return connection.model(modelName, schema) as unknown as Model<T>;
+}
 
 export type PaginatedQueryResult<T> = {
   items: T[];
@@ -104,3 +100,9 @@ export const leemonsSchemaFields = {
     index: true,
   },
 } as const;
+
+export function LeemonsMongoDBMixin(options?: MixinOptions): Partial<ServiceSchema<AnyContext>> {
+  return mixin(options);
+}
+
+export { mongoose };
