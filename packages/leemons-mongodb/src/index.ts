@@ -1,7 +1,7 @@
 import type { AnyContext, ServiceSchema } from '@leemons/moleculer';
-import { Connection, CreateOptions, Model as MongooseModel, Schema } from 'mongoose';
+import type { Connection, CreateOptions, Model as MongooseModel, Schema } from 'mongoose';
 import mongoose from 'mongoose';
-import { MixinOptions, mixin } from './mixin';
+import { type MixinOptions, mixin } from './mixin';
 
 export type LeemonsOptions = {
   disableAutoDeploy?: boolean;
