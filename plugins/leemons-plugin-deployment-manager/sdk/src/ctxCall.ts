@@ -1,6 +1,6 @@
-import { AnyContext } from '@leemons/moleculer';
+import type { AnyContext } from '@leemons/moleculer';
 import _ from 'lodash';
-import { CallingOptions } from 'moleculer';
+import type { CallingOptions } from 'moleculer';
 import { getDeploymentID } from './getDeploymentID';
 
 interface ActionCallCacheItem {

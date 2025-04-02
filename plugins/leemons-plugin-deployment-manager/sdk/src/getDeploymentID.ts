@@ -1,5 +1,5 @@
 import { LeemonsError } from '@leemons/error';
-import { AnyContext } from '@leemons/moleculer';
+import type { AnyContext } from '@leemons/moleculer';
 import { getDeploymentIDFromCTX } from './getDeploymentIDFromCTX';
 
 interface RequestParams {

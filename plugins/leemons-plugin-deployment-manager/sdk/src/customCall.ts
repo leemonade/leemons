@@ -1,4 +1,4 @@
-import { CallingOptions, ServiceBroker } from 'moleculer';
+import type { CallingOptions, ServiceBroker } from 'moleculer';
 
 interface CustomCallParams {
   broker: ServiceBroker;

@@ -1,11 +1,11 @@
 import { LeemonsError } from '@leemons/error';
-import { AnyContext, Context, ServiceSchema } from '@leemons/moleculer';
+import type { AnyContext, Context, ServiceSchema } from '@leemons/moleculer';
 import {
   getPluginNameFromServiceName,
   getPluginNameWithVersionIfHaveFromServiceName,
 } from '@leemons/service-name-parser';
 import _ from 'lodash';
-import { ActionHookAfter, ActionHookBefore, Endpoint, GenericObject } from 'moleculer';
+import type { Endpoint, GenericObject } from 'moleculer';
 import { ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK } from './contants';
 import { ctxCall } from './ctxCall';
 import { getDeploymentID } from './getDeploymentID';
@@ -107,7 +107,7 @@ export function LeemonsDeploymentManagerMixin({
     },
     hooks: {
       after: {
-        '*': function afterHook(ctx: Context, res: any): any {
+        '*': function afterHook(ctx: Context, res: any) {
           if (
             ctx.meta.$statusCode === undefined ||
             !CONTROLLED_HTTP_STATUS_CODE.includes(ctx.meta.$statusCode)
@@ -115,7 +115,7 @@ export function LeemonsDeploymentManagerMixin({
             ctx.meta.$statusCode = 200;
           }
           return res;
-        } as ActionHookAfter,
+        } as any,
       },
       before: {
         '*': [
@@ -159,7 +159,7 @@ export function LeemonsDeploymentManagerMixin({
                 actionCanCache[ctx.meta.deploymentID].push(cacheKey);
               }
             }
-          } as ActionHookBefore,
+          },
         ],
       },
     },

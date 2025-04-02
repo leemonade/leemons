@@ -1,5 +1,5 @@
 import { LeemonsError } from '@leemons/error';
-import { AnyContext } from '@leemons/moleculer';
+import type { AnyContext } from '@leemons/moleculer';
 
 export function getAutoDeploymentIDIfCanIFNotThrowError(ctx: AnyContext): string {
   if (process.env.DISABLE_AUTO_INIT !== 'true') {
