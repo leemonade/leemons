@@ -24,6 +24,6 @@
   "license": "MIT",
   "devDependencies": {},
   "dependencies": {
-    "@leemons/mongodb-helpers": "0.0.71"
+    "@leemons/mongodb-helpers": "0.0.72"
   }
 }

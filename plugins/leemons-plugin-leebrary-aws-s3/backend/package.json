@@ -15,7 +15,6 @@
   ],
   "author": "",
   "devDependencies": {
-    "eslint": "^8.25.0",
     "jest": "^27.5.1",
     "jest-cli": "^27.5.1"
   },
@@ -25,7 +24,7 @@
     "@leemons/deployment-manager": "0.0.71",
     "@leemons/middlewares": "0.0.41",
     "@leemons/mongodb": "0.0.72",
-    "@leemons/mongodb-helpers": "0.0.71",
+    "@leemons/mongodb-helpers": "0.0.72",
     "@leemons/multilanguage": "0.0.71",
     "@leemons/testing": "0.0.71",
     "@leemons/utils": "0.0.41",
