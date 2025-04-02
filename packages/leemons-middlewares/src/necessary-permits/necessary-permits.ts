@@ -1,10 +1,12 @@
-const { LeemonsError } = require('@leemons/error');
+import { LeemonsError } from '@leemons/error';
+import type { AnyContext } from '@leemons/moleculer';
+import type { LeemonsMiddleware, LeemonsMiddlewareNecessaryPermitsOptions } from '../types';
+import { checkRequiredPermissions } from './checkRequiredPermissions';
 
-const checkRequiredPermissions = require('./checkRequiredPermissions');
-
-module.exports =
-  ({ allowedPermissions }) =>
-  async (ctx) => {
+export const LeemonsMiddlewareNecessaryPermits = ({
+  allowedPermissions,
+}: LeemonsMiddlewareNecessaryPermitsOptions): LeemonsMiddleware => {
+  return async (ctx: AnyContext): Promise<void> => {
     // TODO: Ahora mismo con que cualquiera de los user auth tenga permiso pasa al controlador, aqui entra la duda de si se le deberian de pasar todos los user auth o solo los que tengan permiso, por qe es posible que relacione algun dato a un user auth que realmente no deberia de tener acceso
     // TODO QUITAR LOS USER AUTH QUE NO TENGAN EL PERMISO
     if (!ctx.meta.userSession) {
@@ -17,3 +19,4 @@ module.exports =
 
     await checkRequiredPermissions({ allowedPermissions, ctx });
   };
+};

@@ -1,50 +1,63 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
+import { LeemonsError } from '@leemons/error';
+import type { AnyContext } from '@leemons/moleculer';
+import type { UserAgent, UserSession } from '@leemons/users';
+import _ from 'lodash';
+import type { LeemonsMiddleware, LeemonsMiddlewareAuthenticatedOptions } from './types';
 
 function handleUnauthorizedAccess(
-  ctx,
-  continueEvenThoughYouAreNotLoggedIn,
+  ctx: AnyContext,
+  continueEvenThoughYouAreNotLoggedIn?: boolean,
   message = 'Authorization required'
-) {
+): void {
   if (continueEvenThoughYouAreNotLoggedIn) {
     ctx.meta.userSession = null;
     return;
   }
-  throw new LeemonsError(ctx, { httpStatusCode: 401, message, ignoreStack: true });
+  throw new LeemonsError(ctx, {
+    httpStatusCode: 401,
+    message,
+    ignoreStack: true,
+  });
 }
 
-async function authenticateWithToken(ctx, token, forceOnlyUser) {
-  const user = await ctx.tx.call('users.auth.detailForJWT', {
+async function authenticateWithToken(
+  ctx: AnyContext,
+  token: string,
+  forceOnlyUser: boolean
+): Promise<UserSession | null> {
+  const user = (await ctx.tx.call('users.auth.detailForJWT', {
     jwtToken: token,
     forceOnlyUser,
-  });
+  })) as UserSession | null;
   if (user) {
     ctx.meta.userSession = user;
   }
   return user;
 }
 
-async function authenticateWithMultipleTokens(ctx) {
+async function authenticateWithMultipleTokens(ctx: AnyContext): Promise<UserSession | null> {
   ctx.meta.authorization = _.compact(ctx.meta.authorization);
   const user = await authenticateWithToken(ctx, ctx.meta.authorization[0], true);
   const userAgents = await Promise.all(
-    _.map(ctx.meta.authorization, (auth) =>
-      ctx.tx.call('users.auth.detailForJWT', {
-        jwtToken: auth,
-        forceOnlyUser: false,
-        forceOnlyUserAgent: true,
-      })
+    _.map(
+      ctx.meta.authorization,
+      (auth) =>
+        ctx.tx.call('users.auth.detailForJWT', {
+          jwtToken: auth,
+          forceOnlyUser: false,
+          forceOnlyUserAgent: true,
+        }) as Promise<UserAgent>
     )
   );
   if (user && userAgents.length) {
-    user.userAgents = userAgents;
+    user.userAgents = userAgents.filter((ua) => !!ua);
     ctx.meta.userSession = user;
     return user;
   }
   return null;
 }
 
-async function authenticateUser(ctx) {
+async function authenticateUser(ctx: AnyContext): Promise<UserSession | null> {
   if (_.isString(ctx.meta.authorization)) {
     return authenticateWithToken(ctx, ctx.meta.authorization, false);
   }
@@ -56,9 +69,10 @@ async function authenticateUser(ctx) {
   return null;
 }
 
-module.exports =
-  ({ continueEvenThoughYouAreNotLoggedIn } = {}) =>
-  async (ctx) => {
+export const LeemonsMiddlewareAuthenticated = ({
+  continueEvenThoughYouAreNotLoggedIn,
+}: LeemonsMiddlewareAuthenticatedOptions = {}): LeemonsMiddleware => {
+  return async (ctx: AnyContext): Promise<void> => {
     if (ctx.meta.userSession) {
       return;
     }
@@ -81,3 +95,4 @@ module.exports =
       handleUnauthorizedAccess(ctx, continueEvenThoughYouAreNotLoggedIn);
     }
   };
+};
