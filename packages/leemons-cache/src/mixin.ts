@@ -1,4 +1,4 @@
-import type { AnyContext, ServiceSchema } from '@leemons/moleculer';
+import type { Context, ServiceSchema } from '@leemons/moleculer';
 import { getPluginNameFromCTX } from '@leemons/service-name-parser';
 import _ from 'lodash';
 import { nodeCache } from './providers/node';
@@ -8,7 +8,7 @@ import type { CacheContext, CacheOptions } from './types';
 let nodeCacheInstance: ReturnType<typeof nodeCache>;
 let redisCacheInstance: Awaited<ReturnType<typeof redisCache>>;
 
-async function modifyCTX(ctx: AnyContext, { redis }: Pick<CacheOptions, 'redis'>) {
+async function modifyCTX(ctx: Context, { redis }: Pick<CacheOptions, 'redis'>) {
   const pluginName = getPluginNameFromCTX(ctx as any);
   const redisConfig = getClientConfig(redis);
 
@@ -38,7 +38,7 @@ export function LeemonsCacheMixin({
     hooks: {
       before: {
         '*': [
-          async function (ctx: AnyContext) {
+          async function (ctx: Context) {
             await modifyCTX(ctx, {
               redis,
             });
@@ -53,10 +53,10 @@ export function LeemonsCacheMixin({
             this.events![key] = async (
               params: any,
               opts: any,
-              { afterModifyCTX }: { afterModifyCTX?: (ctx: AnyContext) => Promise<void> } = {}
+              { afterModifyCTX }: { afterModifyCTX?: (ctx: Context) => Promise<void> } = {}
             ) =>
               value(params, opts, {
-                afterModifyCTX: async (ctx: AnyContext) => {
+                afterModifyCTX: async (ctx: Context) => {
                   await modifyCTX(ctx, {
                     redis,
                   });
@@ -72,7 +72,7 @@ export function LeemonsCacheMixin({
 
     async started() {
       if (namespaces?.length) {
-        const ctx = { service: this } as AnyContext;
+        const ctx = { service: this } as Context;
         await modifyCTX(ctx, {
           redis,
         });

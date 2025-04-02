@@ -1,8 +1,8 @@
 import { Agenda, type IAgendaConfig, type Job } from '@hokify/agenda';
-import type { AnyContext, ServiceSchema } from '@leemons/moleculer';
+import type { Context, ServiceSchema } from '@leemons/moleculer';
 import type { ServiceBroker } from 'moleculer';
 
-export interface CronJobContext extends AnyContext {
+export interface CronJobContext extends Context {
   params: {
     job: Job;
     name?: string;
@@ -132,7 +132,7 @@ export function LeemonsCronJobsMixin<T = unknown>({
     hooks: {
       before: {
         '*': [
-          function (this: LeemonsCronJobsService, ctx: AnyContext): void {
+          function (this: LeemonsCronJobsService, ctx: Context): void {
             const { deploymentID } = ctx.meta;
 
             const CronJob = this.metadata.CronJob;

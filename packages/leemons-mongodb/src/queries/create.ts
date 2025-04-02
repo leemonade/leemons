@@ -1,4 +1,4 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import { addTransactionState } from '@leemons/transactions';
 import _ from 'lodash';
 import type { Document, Model, SaveOptions } from 'mongoose';
@@ -16,7 +16,7 @@ interface CreateParams {
   autoRollback?: boolean;
   autoLRN?: boolean;
   ignoreTransaction?: boolean;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 interface LeemonsCreateOptions extends SaveOptions {

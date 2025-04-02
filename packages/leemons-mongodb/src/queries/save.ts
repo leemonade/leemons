@@ -1,11 +1,11 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import type { Document, Model } from 'mongoose';
 
 interface SaveParams {
   model: Model<any>;
   autoDeploymentID?: boolean;
   autoRollback?: boolean;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 interface LeemonsDocument extends Document {

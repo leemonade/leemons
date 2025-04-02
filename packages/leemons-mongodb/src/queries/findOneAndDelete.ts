@@ -1,4 +1,4 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import { addTransactionState } from '@leemons/transactions';
 import type { Document, FilterQuery, Model, QueryOptions } from 'mongoose';
 import { findOneAndUpdate } from './findOneAndUpdate';
@@ -14,7 +14,7 @@ interface FindOneAndDeleteParams {
   autoTransaction?: boolean;
   autoRollback?: boolean;
   ignoreTransaction?: boolean;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 interface LeemonsFindOneAndDeleteOptions<T> extends QueryOptions<T> {

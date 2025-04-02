@@ -1,5 +1,5 @@
 import { LeemonsError } from '@leemons/error';
-import type { AnyContext, Context, ServiceSchema } from '@leemons/moleculer';
+import type { Context, ServiceSchema } from '@leemons/moleculer';
 import {
   getPluginNameFromServiceName,
   getPluginNameWithVersionIfHaveFromServiceName,
@@ -15,7 +15,7 @@ const actionCanCache: Record<string, string[]> = {};
 const CONTROLLED_HTTP_STATUS_CODE = [307];
 
 async function modifyCTX(
-  ctx: AnyContext,
+  ctx: Context,
   {
     getDeploymentIdInCall = false,
     dontGetDeploymentIDOnActionCall = [...ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK],
@@ -78,20 +78,20 @@ async function modifyCTX(
 }
 
 interface EventHandlerOptions {
-  afterModifyCTX?: (ctx: AnyContext) => Promise<void>;
-  onError?: (ctx: AnyContext, err: any) => Promise<void>;
+  afterModifyCTX?: (ctx: Context) => Promise<void>;
+  onError?: (ctx: Context, err: any) => Promise<void>;
 }
 
 export function LeemonsDeploymentManagerMixin({
   checkIfCanCallMe = true,
   getDeploymentIdInCall = false,
   dontGetDeploymentIDOnActionCall = [...ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK],
-} = {}): ServiceSchema<AnyContext> {
+} = {}): ServiceSchema<Context> {
   return {
     name: '',
     actions: {
       leemonsDeploymentManagerEvent: {
-        async handler(ctx: AnyContext) {
+        async handler(ctx: Context) {
           if (!ctx.params?.event) {
             throw new LeemonsError(ctx, { message: 'event param required' });
           }
@@ -186,12 +186,7 @@ export function LeemonsDeploymentManagerMixin({
               local: true,
               state: true,
             };
-            ctx = this.broker.ContextFactory.create(
-              this.broker,
-              ep,
-              params,
-              opts || {}
-            ) as AnyContext;
+            ctx = this.broker.ContextFactory.create(this.broker, ep, params, opts || {}) as Context;
           }
           ctx.eventName = key;
           ctx.eventType = 'emit';

@@ -1,11 +1,11 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import { getPluginNameFromCTX } from '@leemons/service-name-parser';
 
 interface GetTranslationKeyParams {
   locationName: string;
   pluginName: string;
   key?: string;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 /**

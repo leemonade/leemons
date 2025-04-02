@@ -1,10 +1,10 @@
 import { LeemonsError } from '@leemons/error';
-import type { AnyContext, ServiceSchema } from '@leemons/moleculer';
+import type { Context, ServiceSchema } from '@leemons/moleculer';
 import { getActionNameFromCTX } from '@leemons/service-name-parser';
 import { rollbackTransaction } from '@leemons/transactions';
 import _ from 'lodash';
 import type { Span } from 'moleculer';
-import { type Model, Query, Types } from 'mongoose';
+import { Query } from 'mongoose';
 import { countDocuments } from './queries/countDocuments';
 import { create } from './queries/create';
 import { deleteMany } from './queries/deleteMany';
@@ -21,8 +21,7 @@ import { insertMany } from './queries/insertMany';
 import { save } from './queries/save';
 import { updateMany } from './queries/updateMany';
 import { updateOne } from './queries/updateOne';
-
-const { ObjectId } = Types;
+import type { Model } from './types';
 
 interface ModelParams {
   model: any;
@@ -32,7 +31,7 @@ interface ModelParams {
   autoTransaction?: boolean;
   autoRollback?: boolean;
   autoLRN?: boolean;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 function tracingWrapper(f: Function, modelParams: ModelParams) {
@@ -286,13 +285,13 @@ function getDBModels({
   ignoreTransaction,
   ctx,
 }: {
-  models: Record<string, Model<any>>;
+  models: Record<string, Model<unknown>>;
   autoDeploymentID?: boolean;
   autoTransaction?: boolean;
   autoRollback?: boolean;
   autoLRN?: boolean;
   ignoreTransaction?: boolean;
-  ctx: AnyContext;
+  ctx: Context;
 }) {
   return _.mapValues(models, (model, modelKey) =>
     getModelActions({
@@ -309,7 +308,7 @@ function getDBModels({
 }
 
 function modifyCTX(
-  ctx: AnyContext,
+  ctx: Context,
   {
     waitToRollbackFinishOnError,
     autoDeploymentID,
@@ -327,7 +326,7 @@ function modifyCTX(
     autoLRN?: boolean;
     debugTransaction?: boolean;
     forceLeemonsDeploymentManagerMixinNeedToBeImported?: boolean;
-    models?: Record<string, Model<any>>;
+    models?: Record<string, Model<unknown>>;
   }
 ) {
   if (!ctx.meta.transactionID) {
@@ -392,7 +391,7 @@ export type MixinOptions = {
   autoLRN?: boolean;
   debugTransaction?: boolean;
   forceLeemonsDeploymentManagerMixinNeedToBeImported?: boolean;
-  models?: Record<string, Model<any>>;
+  models?: Record<string, Model<unknown>>;
 };
 
 export const mixin = ({
@@ -404,13 +403,13 @@ export const mixin = ({
   debugTransaction = false,
   forceLeemonsDeploymentManagerMixinNeedToBeImported = true,
   models,
-}: MixinOptions = {}): Partial<ServiceSchema<AnyContext>> => ({
+}: MixinOptions = {}): Partial<ServiceSchema<Context>> => ({
   name: 'leemons-mongodb',
 
   hooks: {
     before: {
       '*': [
-        async function (ctx: AnyContext) {
+        async function (ctx: Context) {
           modifyCTX(ctx, {
             waitToRollbackFinishOnError,
             autoDeploymentID,
@@ -426,7 +425,7 @@ export const mixin = ({
     },
     error: {
       '*': [
-        async function (ctx: AnyContext, err: Error) {
+        async function (ctx: Context, err: Error) {
           if (autoRollback && ctx.tx) {
             await rollbackTransaction(ctx);
           }

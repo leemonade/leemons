@@ -1,4 +1,4 @@
-import type { ActionSchema, AnyContext } from '@leemons/moleculer';
+import type { ActionSchema, Context } from '@leemons/moleculer';
 import type { Model } from '@leemons/mongodb';
 import type { GetKeyValueModel } from '@leemons/mongodb-helpers';
 
@@ -19,7 +19,7 @@ export interface GetPluginProvidersParams {
 
 export interface GetModelParams {
   ctxKeyValueModelName: string;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 export interface GetProvidersActionsParams {

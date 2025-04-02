@@ -24,7 +24,7 @@
     "@leemons/multi-events": "0.0.72",
     "@leemons/multilanguage": "0.0.72",
     "@leemons/permissions": "0.0.72",
-    "@leemons/testing": "0.0.72",
+    "@leemons/testing": "0.0.71",
     "@leemons/utils": "0.0.42",
     "@leemons/validator": "0.0.42",
     "@leemons/widgets": "0.0.72",

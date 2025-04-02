@@ -42,7 +42,7 @@
     "@types/lodash": "^4.17.7"
   },
   "dependencies": {
-    "@leemons/deployment-manager": "0.0.72",
+    "@leemons/moleculer": "0.0.1",
     "@leemons/error": "0.0.42",
     "@leemons/lrn": "0.0.42",
     "@leemons/service-name-parser": "0.0.42",

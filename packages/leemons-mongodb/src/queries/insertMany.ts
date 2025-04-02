@@ -1,4 +1,4 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import { addTransactionState } from '@leemons/transactions';
 import _ from 'lodash';
 import type { Document, InsertManyOptions, Model } from 'mongoose';
@@ -16,7 +16,7 @@ interface InsertManyParams {
   autoRollback?: boolean;
   autoLRN?: boolean;
   ignoreTransaction?: boolean;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 interface LeemonsInsertManyOptions<T> extends InsertManyOptions {

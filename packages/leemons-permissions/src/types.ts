@@ -1,16 +1,17 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import type { Model } from '@leemons/mongodb';
 import type { GetKeyValueModel } from '@leemons/mongodb-helpers';
 
 export interface Permission {
   permissionName: string;
-  actionNames: string[];
+  actions: string[];
+  localizationName?: Record<string, string>;
 }
 
 export interface AddPermissionsDeployParams {
   keyValueModel: Model<GetKeyValueModel>;
   permissions: Permission[];
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 export interface PermissionsUpdated {

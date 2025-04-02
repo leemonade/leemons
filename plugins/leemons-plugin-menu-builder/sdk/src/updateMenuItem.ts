@@ -1,18 +1,18 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import { isArray, map } from 'lodash';
 import type { MenuItem, MenuItemConfig } from './types';
 
 interface ExecParams {
   item: MenuItemConfig;
   menuKey: string;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 interface UpdateMenuItemParams {
   item: MenuItemConfig | MenuItemConfig[];
   menuKey?: string;
   shouldWait?: boolean;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 async function exec({

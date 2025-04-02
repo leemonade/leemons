@@ -1,4 +1,4 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import { getActionNameFromCTX } from '@leemons/service-name-parser';
 import Redis from 'ioredis';
 import _ from 'lodash';
@@ -61,7 +61,7 @@ export function getClientConfig(_config?: string | Redis | RedisConfig): RedisCo
   };
 }
 
-function tracingWrapper<T extends (...args: any[]) => Promise<any>>(f: T, ctx?: AnyContext): T {
+function tracingWrapper<T extends (...args: any[]) => Promise<any>>(f: T, ctx?: Context): T {
   return ((...params: Parameters<T>) => {
     if (!ctx?.span) {
       return f(...params);

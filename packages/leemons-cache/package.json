@@ -1,20 +1,6 @@
 {
-  "devDependencies": {
-    "rimraf": "^6.0.1",
-    "typescript": "^5.5.2"
-  },
-  "dependencies": {
-    "@leemons/moleculer": "0.0.1",
-    "@leemons/lrn": "0.0.42",
-    "@leemons/service-name-parser": "0.0.42",
-    "ioredis": "^5.3.2",
-    "lodash": "^4.17.21",
-    "node-cache": "^5.1.2",
-    "@types/lodash": "^4.17.7",
-    "@types/node": "^20.14.6"
-  },
   "name": "@leemons/cache",
-  "version": "0.0.41",
+  "version": "0.0.42",
   "description": "",
   "exports": {
     ".": {
@@ -49,5 +35,19 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "rimraf": "^6.0.1",
+    "typescript": "^5.5.2"
+  },
+  "dependencies": {
+    "@leemons/moleculer": "0.0.1",
+    "@leemons/lrn": "0.0.42",
+    "@leemons/service-name-parser": "0.0.42",
+    "ioredis": "^5.3.2",
+    "lodash": "^4.17.21",
+    "node-cache": "^5.1.2",
+    "@types/lodash": "^4.17.7",
+    "@types/node": "^20.14.6"
+  }
 }

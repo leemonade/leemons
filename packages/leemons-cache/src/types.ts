@@ -1,4 +1,4 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import type { Redis } from 'ioredis';
 
 export interface CacheOptions {
@@ -6,7 +6,7 @@ export interface CacheOptions {
   namespaces?: string[];
 }
 
-export interface CacheContext extends AnyContext {
+export interface CacheContext extends Context {
   cache: {
     get: (key: string) => Promise<any>;
     set: (key: string, value: any, ttl?: number) => Promise<'OK'>;
@@ -25,7 +25,7 @@ export interface CacheContext extends AnyContext {
 
 export interface CachePluginOptions {
   pluginName: string;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 export interface NodeCacheInstance {

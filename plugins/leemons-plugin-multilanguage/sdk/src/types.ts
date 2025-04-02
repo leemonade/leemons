@@ -1,4 +1,4 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import type { Model } from '@leemons/mongodb';
 import type { GetKeyValueModel } from '@leemons/mongodb-helpers';
 
@@ -13,7 +13,7 @@ export interface MultilanguageOptions {
 
 export interface LeemonsMongoDBMixinModels {
   (options: {
-    ctx: AnyContext;
+    ctx: Context;
     autoTransaction: boolean;
     autoLRN: boolean;
     autoDeploymentID: boolean;

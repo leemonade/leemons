@@ -1,10 +1,10 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 
 export interface MQTTMixinOptions {
   forceLeemonsDeploymentManagerMixinNeedToBeImported?: boolean;
 }
 
 export interface EventHandlerOptions {
-  afterModifyCTX?: (ctx: AnyContext) => Promise<void>;
+  afterModifyCTX?: (ctx: Context) => Promise<void>;
   onError?: (error: Error) => void;
 }

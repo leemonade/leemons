@@ -1,10 +1,10 @@
 import { LeemonsError } from '@leemons/error';
-import type { AnyContext, ServiceSchema } from '@leemons/moleculer';
+import type { Context, ServiceSchema } from '@leemons/moleculer';
 import _ from 'lodash';
 import type { EventHandlerOptions, MQTTMixinOptions } from './types';
 
 function modifyCTX(
-  ctx: AnyContext,
+  ctx: Context,
   { forceLeemonsDeploymentManagerMixinNeedToBeImported }: MQTTMixinOptions
 ): void {
   if (forceLeemonsDeploymentManagerMixinNeedToBeImported) {
@@ -30,7 +30,7 @@ export const mixin = ({
   hooks: {
     before: {
       '*': [
-        async function (ctx: AnyContext) {
+        async function (ctx: Context) {
           modifyCTX(ctx, {
             forceLeemonsDeploymentManagerMixinNeedToBeImported,
           });
@@ -48,7 +48,7 @@ export const mixin = ({
       ) =>
         value(params, opts, {
           onError,
-          afterModifyCTX: async (ctx: AnyContext) => {
+          afterModifyCTX: async (ctx: Context) => {
             modifyCTX(ctx, {
               forceLeemonsDeploymentManagerMixinNeedToBeImported,
             });

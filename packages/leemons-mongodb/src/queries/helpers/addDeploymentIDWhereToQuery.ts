@@ -1,10 +1,10 @@
 import { getDeploymentIDFromCTX } from '@leemons/deployment-manager';
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import type { Query } from 'mongoose';
 
 interface AddDeploymentIDWhereParams<T> {
   query: Query<T, T>;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 export function addDeploymentIDWhereToQuery<T>({

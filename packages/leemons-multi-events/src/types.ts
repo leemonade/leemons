@@ -1,9 +1,9 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 
 export type EventType = 'once' | 'once-per-install' | 'on';
 
 export interface MultiEventHandler {
-  (ctx: AnyContext, ...params: any[]): Promise<void>;
+  (ctx: Context, ...params: any[]): Promise<void>;
 }
 
 export interface MultiEventConfig {
@@ -22,7 +22,7 @@ export interface MultiEventsMixinOptions {
 }
 
 export interface MarkEventCalledParams {
-  ctx: AnyContext;
+  ctx: Context;
   events: string[];
   event: string;
   type: EventType;

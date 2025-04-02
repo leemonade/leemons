@@ -1,11 +1,11 @@
 import { LeemonsError } from '@leemons/error';
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import { forIn } from 'lodash';
 import type { PermissionsForMiddleware } from '../types';
 
 interface CheckRequiredPermissionsParams {
   allowedPermissions: PermissionsForMiddleware;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 export async function checkRequiredPermissions({

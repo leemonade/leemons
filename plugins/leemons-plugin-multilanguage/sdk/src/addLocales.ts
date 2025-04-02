@@ -1,11 +1,11 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import { flattenDeep } from 'lodash';
 import type { LocalizationObject } from './mixin/helpers/types';
 
 interface AddLocalesParams {
   locales: string | string[];
   i18nPath: string;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 interface AddLocalesResponse {

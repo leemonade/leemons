@@ -1,4 +1,4 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import type { Model } from '@leemons/mongodb';
 
 export interface GetKeyValueModel {
@@ -12,8 +12,10 @@ export interface MenuItem {
   key: string;
   menuKey?: string;
   order?: number;
-  label?: string;
+  label?: string | Record<string, string>;
   icon?: string;
+  iconSvg?: string;
+  activeIconSvg?: string;
   iconFamily?: string;
   url?: string;
   parent?: string | null;
@@ -23,7 +25,10 @@ export interface MenuItem {
 
 export interface MenuItemConfig {
   item: MenuItem;
-  permissions?: string[];
+  permissions?: Array<{
+    permissionName: string;
+    actionNames: string[];
+  }>;
   removed?: boolean;
   isCustomPermission?: boolean;
 }
@@ -33,13 +38,13 @@ export interface AddMenuItemsDeployParams {
   item: MenuItemConfig | MenuItemConfig[];
   menuKey?: string;
   shouldWait?: boolean;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 export interface ExecParams {
   keyValueModel: Model<GetKeyValueModel>;
   item: MenuItemConfig;
   menuKey: string;
-  ctx: AnyContext;
+  ctx: Context;
   config?: any;
 }

@@ -1,6 +1,6 @@
 {
   "name": "@leemons/mqtt",
-  "version": "0.0.41",
+  "version": "0.0.42",
   "description": "MQTT mixin for Leemons",
   "license": "MIT",
   "exports": {

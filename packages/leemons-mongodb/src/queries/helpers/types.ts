@@ -1,4 +1,4 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 
 export interface LRNConfig {
   prefix: string;
@@ -13,7 +13,7 @@ export interface ModelParams {
   autoTransaction?: boolean;
   autoRollback?: boolean;
   autoLRN?: boolean;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 export interface QueryOptions {

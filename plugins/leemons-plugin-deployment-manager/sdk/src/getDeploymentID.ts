@@ -1,5 +1,5 @@
 import { LeemonsError } from '@leemons/error';
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import { getDeploymentIDFromCTX } from './getDeploymentIDFromCTX';
 
 interface RequestParams {
@@ -13,7 +13,7 @@ interface RequestParams {
   [key: string]: any;
 }
 
-export async function getDeploymentID(ctx: AnyContext & { params?: RequestParams }): Promise<void> {
+export async function getDeploymentID(ctx: Context & { params?: RequestParams }): Promise<void> {
   try {
     ctx.meta.deploymentID = getDeploymentIDFromCTX(ctx);
   } catch (e) {

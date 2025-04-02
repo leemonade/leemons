@@ -1,11 +1,11 @@
 import { getDeploymentIDFromCTX } from '@leemons/deployment-manager';
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import { getPluginNameFromCTX } from '@leemons/service-name-parser';
 import { ObjectId } from 'mongodb';
 
 interface GetLRNConfigParams {
   modelKey: string;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 interface LRNConfig {

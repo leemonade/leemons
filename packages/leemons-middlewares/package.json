@@ -1,6 +1,6 @@
 {
   "name": "@leemons/middlewares",
-  "version": "0.0.41",
+  "version": "0.0.42",
   "description": "Leemons middlewares",
   "license": "MIT",
   "exports": {
@@ -43,8 +43,8 @@
   "dependencies": {
     "@leemons/error": "0.0.42",
     "@leemons/service-name-parser": "0.0.42",
-    "@leemons/moleculer": "0.0.42",
-    "@leemons/users": "0.0.41",
+    "@leemons/moleculer": "0.0.1",
+    "@leemons/users": "0.0.42",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.26"
   }

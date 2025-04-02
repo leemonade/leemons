@@ -46,7 +46,7 @@
     "@babel/preset-react": "^7.23.3",
     "@babel/register": "^7.23.7",
     "@leemons/mongodb": "0.0.72",
-    "@leemons/users": "0.0.41",
+    "@leemons/users": "0.0.42",
     "args": "^5.0.3",
     "dotenv": "^16.0.3",
     "glob": "^10.2.7",

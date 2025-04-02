@@ -1,14 +1,14 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import type { Model } from '@leemons/mongodb';
 import type { AWSCredentials, GetAWSCredentialsProps } from '../index';
 import { assumeRole, getRoleToAssume } from '../roles/assumeRole';
 
-type GetAWSCredentialsFromDBProps<C extends AnyContext = AnyContext> = {
+type GetAWSCredentialsFromDBProps<C extends Context = Context> = {
   ctxKeyValueModelName?: string;
   ctx: C;
 };
 
-async function getAWSCredentialsFromDB<C extends AnyContext = AnyContext>({
+async function getAWSCredentialsFromDB<C extends Context = Context>({
   ctxKeyValueModelName = 'KeyValue',
   ctx,
 }: GetAWSCredentialsFromDBProps<C>): Promise<AWSCredentials | null> {
@@ -41,7 +41,7 @@ function getAWSCredentialsFromEnv(prefix?: string): AWSCredentials | null {
   return { accessKeyId, secretAccessKey, region, sessionToken };
 }
 
-async function getAWSCredentials<C extends AnyContext = AnyContext>({
+async function getAWSCredentials<C extends Context = Context>({
   ctxKeyValueModelName = 'KeyValue',
   prefix,
   roleName,

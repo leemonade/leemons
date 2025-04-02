@@ -1,4 +1,4 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 
 interface TransactionOptions {
   meta?: Record<string, unknown>;
@@ -9,7 +9,7 @@ interface TransactionState {
   [key: string]: unknown;
 }
 
-export async function newTransaction(ctx: AnyContext): Promise<string> {
+export async function newTransaction(ctx: Context): Promise<string> {
   if (ctx.meta.transactionID) {
     return ctx.meta.transactionID;
   }
@@ -23,7 +23,7 @@ export async function newTransaction(ctx: AnyContext): Promise<string> {
   return ctx.meta.transactionID;
 }
 
-export function increaseTransactionPending(ctx: AnyContext): Promise<void> {
+export function increaseTransactionPending(ctx: Context): Promise<void> {
   if (ctx.tx?.call) {
     return ctx.tx.call('transactions.addPendingState', undefined, {
       meta: { __isInternalCall: true },
@@ -32,7 +32,7 @@ export function increaseTransactionPending(ctx: AnyContext): Promise<void> {
   return ctx.call('transactions.addPendingState');
 }
 
-export function increaseTransactionFinished(ctx: AnyContext): Promise<void> {
+export function increaseTransactionFinished(ctx: Context): Promise<void> {
   if (ctx.tx?.call) {
     return ctx.tx.call('transactions.addFinishedState', undefined, {
       meta: { __isInternalCall: true },
@@ -42,7 +42,7 @@ export function increaseTransactionFinished(ctx: AnyContext): Promise<void> {
 }
 
 export function addTransactionState(
-  ctx: AnyContext,
+  ctx: Context,
   params: TransactionState,
   options?: TransactionOptions
 ): Promise<void> {
@@ -55,7 +55,7 @@ export function addTransactionState(
   return ctx.call('transactions.addTransactionState', params, options);
 }
 
-export function rollbackTransaction(ctx: AnyContext): Promise<void> {
+export function rollbackTransaction(ctx: Context): Promise<void> {
   if (ctx.tx?.call) {
     return ctx.tx.call('transactions.rollbackTransaction', undefined, {
       meta: { __isInternalCall: true },

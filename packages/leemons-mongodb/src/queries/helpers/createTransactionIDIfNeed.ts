@@ -1,10 +1,10 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import { newTransaction } from '@leemons/transactions';
 
 interface CreateTransactionParams {
   ignoreTransaction?: boolean;
   autoTransaction?: boolean;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 export async function createTransactionIDIfNeed({

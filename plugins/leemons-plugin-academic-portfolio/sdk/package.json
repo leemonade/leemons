@@ -44,7 +44,8 @@
     "@leemons/mongodb-helpers": "0.0.72",
     "@leemons/lrn": "0.0.42",
     "@leemons/mongodb": "0.0.72",
-    "@leemons/moleculer": "0.0.72",
+    "@leemons/moleculer": "0.0.1",
+    "@leemons/library": "0.0.72",
     "@leemons/users": "0.0.42",
     "lodash": "^4.17.21"
   }

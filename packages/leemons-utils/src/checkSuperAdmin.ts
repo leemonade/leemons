@@ -1,5 +1,5 @@
 import { LeemonsError } from '@leemons/error';
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 
 interface CheckSuperAdminOptions {
   notThrow?: boolean;
@@ -14,7 +14,7 @@ interface CheckSuperAdminOptions {
  * @throws {LeemonsError} If user is not super admin and notThrow is false
  */
 async function checkSuperAdmin(
-  ctx: AnyContext,
+  ctx: Context,
   { notThrow = false }: CheckSuperAdminOptions = {}
 ): Promise<boolean> {
   const isSuper = await ctx.tx.call('users.users.isSuperAdmin', {

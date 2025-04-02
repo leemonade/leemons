@@ -1,4 +1,4 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import type { Document, Model, QueryOptions, UpdateQuery } from 'mongoose';
 import { findOneAndUpdate } from './findOneAndUpdate';
 
@@ -10,7 +10,7 @@ interface FindByIdAndUpdateParams {
   autoRollback?: boolean;
   autoLRN?: boolean;
   ignoreTransaction?: boolean;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 interface LeemonsFindByIdAndUpdateOptions<T> extends QueryOptions<T> {

@@ -1,4 +1,4 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 
 export type Action = 'create' | 'view' | 'update' | 'delete' | 'admin';
 
@@ -14,6 +14,6 @@ export interface LeemonsMiddlewareNecessaryPermitsOptions {
   allowedPermissions: PermissionsForMiddleware;
 }
 
-export type LeemonsMiddleware = (ctx: AnyContext) => Promise<void>;
+export type LeemonsMiddleware = (ctx: Context) => Promise<void>;
 
 export type LeemonsMiddlewareFactory<T> = (options?: T) => LeemonsMiddleware;

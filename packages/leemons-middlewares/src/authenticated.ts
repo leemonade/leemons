@@ -1,11 +1,11 @@
 import { LeemonsError } from '@leemons/error';
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import type { UserAgent, UserSession } from '@leemons/users';
 import _ from 'lodash';
 import type { LeemonsMiddleware, LeemonsMiddlewareAuthenticatedOptions } from './types';
 
 function handleUnauthorizedAccess(
-  ctx: AnyContext,
+  ctx: Context,
   continueEvenThoughYouAreNotLoggedIn?: boolean,
   message = 'Authorization required'
 ): void {
@@ -21,7 +21,7 @@ function handleUnauthorizedAccess(
 }
 
 async function authenticateWithToken(
-  ctx: AnyContext,
+  ctx: Context,
   token: string,
   forceOnlyUser: boolean
 ): Promise<UserSession | null> {
@@ -35,7 +35,7 @@ async function authenticateWithToken(
   return user;
 }
 
-async function authenticateWithMultipleTokens(ctx: AnyContext): Promise<UserSession | null> {
+async function authenticateWithMultipleTokens(ctx: Context): Promise<UserSession | null> {
   ctx.meta.authorization = _.compact(ctx.meta.authorization);
   const user = await authenticateWithToken(ctx, ctx.meta.authorization[0], true);
   const userAgents = await Promise.all(
@@ -57,7 +57,7 @@ async function authenticateWithMultipleTokens(ctx: AnyContext): Promise<UserSess
   return null;
 }
 
-async function authenticateUser(ctx: AnyContext): Promise<UserSession | null> {
+async function authenticateUser(ctx: Context): Promise<UserSession | null> {
   if (_.isString(ctx.meta.authorization)) {
     return authenticateWithToken(ctx, ctx.meta.authorization, false);
   }
@@ -72,7 +72,7 @@ async function authenticateUser(ctx: AnyContext): Promise<UserSession | null> {
 export const LeemonsMiddlewareAuthenticated = ({
   continueEvenThoughYouAreNotLoggedIn,
 }: LeemonsMiddlewareAuthenticatedOptions = {}): LeemonsMiddleware => {
-  return async (ctx: AnyContext): Promise<void> => {
+  return async (ctx: Context): Promise<void> => {
     if (ctx.meta.userSession) {
       return;
     }

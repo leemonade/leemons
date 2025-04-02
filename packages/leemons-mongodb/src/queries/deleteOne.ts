@@ -1,4 +1,4 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import { addTransactionState } from '@leemons/transactions';
 import type { Document, FilterQuery, Model, QueryOptions, UpdateWriteOpResult } from 'mongoose';
 import { addDeploymentIDToArrayOrObject } from './helpers/addDeploymentIDToArrayOrObject';
@@ -14,7 +14,7 @@ interface DeleteOneParams {
   autoTransaction?: boolean;
   autoRollback?: boolean;
   ignoreTransaction?: boolean;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 interface LeemonsDeleteOneOptions<T> extends QueryOptions<T> {

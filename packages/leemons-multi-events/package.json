@@ -1,6 +1,6 @@
 {
   "name": "@leemons/multi-events",
-  "version": "0.0.42",
+  "version": "0.0.72",
   "description": "Multi events handler for Leemons",
   "exports": {
     ".": {

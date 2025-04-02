@@ -1,4 +1,4 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import type { Model } from '@leemons/mongodb';
 import { hasKey, setKey } from '@leemons/mongodb-helpers';
 import { isArray, map } from 'lodash';
@@ -12,13 +12,13 @@ interface Menu {
 interface ExecParams {
   keyValueModel: Model<GetKeyValueModel>;
   menu: Menu;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 interface AddMenusDeployParams {
   keyValueModel: Model<GetKeyValueModel>;
   menu: Menu | Menu[];
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 async function exec({ keyValueModel, menu, ctx }: ExecParams): Promise<void> {

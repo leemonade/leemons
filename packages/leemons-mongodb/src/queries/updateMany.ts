@@ -1,5 +1,5 @@
 import { generateLRN } from '@leemons/lrn';
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import { addTransactionState } from '@leemons/transactions';
 import _ from 'lodash';
 import { ObjectId } from 'mongodb';
@@ -26,7 +26,7 @@ interface UpdateManyParams {
   autoRollback?: boolean;
   autoLRN?: boolean;
   ignoreTransaction?: boolean;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 interface LeemonsUpdateManyOptions<T> extends QueryOptions<T> {

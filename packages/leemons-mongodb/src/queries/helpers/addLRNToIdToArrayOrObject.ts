@@ -1,5 +1,5 @@
 import { generateLRN } from '@leemons/lrn';
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import _ from 'lodash';
 import { ObjectId } from 'mongodb';
 import { getLRNConfig } from './getLRNConfig';
@@ -12,7 +12,7 @@ export interface WithId {
 interface AddLRNToIdParams {
   items: WithId | WithId[];
   modelKey: string;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 export function addLRNToIdToArrayOrObject({

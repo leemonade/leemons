@@ -1,5 +1,5 @@
 import type { STSClientConfig } from '@aws-sdk/client-sts';
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 
 export type AWSCredentials = {
   accessKeyId: string;
@@ -11,7 +11,7 @@ export type AWSCredentials = {
 
 export type AWSClientConfig = STSClientConfig;
 
-export type GetAWSCredentialsProps<C = AnyContext> = {
+export type GetAWSCredentialsProps<C = Context> = {
   ctxKeyValueModelName?: string;
   prefix?: string;
   roleName?: string;

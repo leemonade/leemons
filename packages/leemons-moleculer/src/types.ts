@@ -1,3 +1,4 @@
+import type { Model } from '@leemons/mongodb';
 import type { UserSession } from '@leemons/users';
 import type {
   EventSchema,
@@ -9,7 +10,6 @@ import type {
   Service,
   ServiceSettingSchema,
 } from 'moleculer';
-import type { Model } from 'mongoose';
 
 type DB<Models extends Record<string, Model<any>>> = {
   [modelName in keyof Models]: Models[modelName];
@@ -81,7 +81,7 @@ export type Context<
   P = any,
   M extends object = Record<string, never>,
   L extends GenericObject = GenericObject,
-  Models extends Record<string, Model<any>> = Record<string, never>
+  Models extends Record<string, Model<any>> = Record<string, Model<any>>
 > = ExtendedContext<P, M, L, Models>;
 
 export type AnyContext = Context<any, Record<string, never>, GenericObject, Record<string, never>>;

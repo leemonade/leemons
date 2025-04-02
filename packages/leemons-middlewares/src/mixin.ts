@@ -1,4 +1,4 @@
-import type { AnyContext, ServiceSchema } from '@leemons/moleculer';
+import type { Context, ServiceSchema } from '@leemons/moleculer';
 import { getActionNameFromCTX } from '@leemons/service-name-parser';
 import _ from 'lodash';
 import type { Service } from 'moleculer';
@@ -14,7 +14,7 @@ export const LeemonsMiddlewaresMixin = (): ServiceSchema => ({
   hooks: {
     before: {
       '*': [
-        async function (this: Service, ctx: AnyContext) {
+        async function (this: Service, ctx: Context) {
           const action = (this.schema.actions as Record<string, ActionSchema>)[
             getActionNameFromCTX(ctx)
           ];

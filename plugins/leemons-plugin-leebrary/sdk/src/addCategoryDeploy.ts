@@ -1,4 +1,4 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import type { Model } from '@leemons/mongodb';
 import { hasKey, setKey } from '@leemons/mongodb-helpers';
 import type { GetKeyValueModel } from './types';
@@ -16,7 +16,7 @@ export async function addCategoryDeploy(params: {
     key: string;
     [key: string]: unknown;
   };
-  ctx: AnyContext;
+  ctx: Context;
 }): Promise<void> {
   const { keyValueModel, category, ctx } = params;
 

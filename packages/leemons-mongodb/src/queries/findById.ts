@@ -1,4 +1,4 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import type { Document, Model, ProjectionType, QueryOptions } from 'mongoose';
 import { addDeploymentIDWhereToQuery } from './helpers/addDeploymentIDWhereToQuery';
 import { excludeDeleteIfNeedToQuery } from './helpers/excludeDeleteIfNeedToQuery';
@@ -6,7 +6,7 @@ import { excludeDeleteIfNeedToQuery } from './helpers/excludeDeleteIfNeedToQuery
 interface FindByIdParams {
   model: Model<any>;
   autoDeploymentID?: boolean;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 interface LeemonsFindByIdOptions<T> extends QueryOptions<T> {

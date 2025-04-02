@@ -1,15 +1,15 @@
 import { LeemonsError } from '@leemons/error';
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import type { Model } from '@leemons/mongodb';
 import type { AWSCredentials } from '../index';
 
-type SaveAWSCredentialsProps<C extends AnyContext = AnyContext> = {
+type SaveAWSCredentialsProps<C extends Context = Context> = {
   credentials: AWSCredentials;
   ctxKeyValueModelName?: string;
   ctx: C;
 };
 
-export async function saveAWSCredentials<C extends AnyContext = AnyContext>({
+export async function saveAWSCredentials<C extends Context = Context>({
   credentials,
   ctxKeyValueModelName = 'KeyValue',
   ctx,

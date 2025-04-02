@@ -1,4 +1,4 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import type { Model } from '@leemons/mongodb';
 import { hasKey, setKey } from '@leemons/mongodb-helpers';
 import type { GetKeyValueModel } from '@leemons/mongodb-helpers';
@@ -9,7 +9,7 @@ interface AddLocalesDeployParams {
   keyValueModel: Model<GetKeyValueModel>;
   locale: string | string[];
   i18nPath: string;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 /**

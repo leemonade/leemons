@@ -1,5 +1,5 @@
 import { LeemonsError } from '@leemons/error';
-import { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 
 interface ValidateParams {
   manualPassword?: string;
@@ -11,7 +11,7 @@ interface ValidateParams {
 export function validateInternalPrivateKey({
   ctx,
 }: {
-  ctx: AnyContext & { params: ValidateParams };
+  ctx: Context & { params: ValidateParams };
 }): void {
   if (!process.env.MANUAL_PASSWORD) {
     throw new LeemonsError(ctx, {

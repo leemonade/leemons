@@ -1,4 +1,4 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import type { Document, Model, QueryOptions } from 'mongoose';
 import { findOneAndDelete } from './findOneAndDelete';
 
@@ -9,7 +9,7 @@ interface FindByIdAndDeleteParams {
   autoTransaction?: boolean;
   autoRollback?: boolean;
   ignoreTransaction?: boolean;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 interface LeemonsFindByIdAndDeleteOptions<T> extends QueryOptions<T> {

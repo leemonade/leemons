@@ -1,5 +1,5 @@
 import { getDeploymentIDFromCTX } from '@leemons/deployment-manager';
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import _ from 'lodash';
 
 export interface WithDeploymentID {
@@ -9,7 +9,7 @@ export interface WithDeploymentID {
 
 interface AddDeploymentIDParams {
   items: WithDeploymentID | WithDeploymentID[];
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 export function addDeploymentIDToArrayOrObject({

@@ -1,9 +1,9 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import { increaseTransactionPending } from '@leemons/transactions';
 
 interface IncreaseTransactionPendingParams {
   ignoreTransaction?: boolean;
-  ctx: AnyContext;
+  ctx: Context;
 }
 
 export async function increaseTransactionPendingIfNeed({

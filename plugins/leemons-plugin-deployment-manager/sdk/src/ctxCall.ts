@@ -1,4 +1,4 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import _ from 'lodash';
 import type { CallingOptions } from 'moleculer';
 import { getDeploymentID } from './getDeploymentID';
@@ -22,7 +22,7 @@ interface CtxCallOptions {
 }
 
 export async function ctxCall(
-  ctx: AnyContext,
+  ctx: Context,
   _actionName: string | { action: { name: string } },
   params: Record<string, any> | null = null,
   opts: CallingOptions | null = null,

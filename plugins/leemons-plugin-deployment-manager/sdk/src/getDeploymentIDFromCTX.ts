@@ -1,7 +1,7 @@
-import type { AnyContext } from '@leemons/moleculer';
+import type { Context } from '@leemons/moleculer';
 import { getAutoDeploymentIDIfCanIFNotThrowError } from './getAutoDeploymentIDIfCanIFNotThrowError';
 
-export function getDeploymentIDFromCTX(ctx: AnyContext): string {
+export function getDeploymentIDFromCTX(ctx: Context): string {
   if (ctx.meta.deploymentID) {
     return ctx.meta.deploymentID;
   }
