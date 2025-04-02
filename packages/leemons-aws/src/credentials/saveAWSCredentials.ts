@@ -1,5 +1,6 @@
 import { LeemonsError } from '@leemons/error';
-import { AnyContext } from '@leemons/moleculer';
+import type { AnyContext } from '@leemons/moleculer';
+import type { Model } from '@leemons/mongodb';
 import type { AWSCredentials } from '../index';
 
 type SaveAWSCredentialsProps<C extends AnyContext = AnyContext> = {
@@ -14,7 +15,8 @@ export async function saveAWSCredentials<C extends AnyContext = AnyContext>({
   ctx,
 }: SaveAWSCredentialsProps<C>) {
   const { accessKeyId, secretAccessKey, region } = credentials;
-  const keyValueModel = (ctx as any).db[ctxKeyValueModelName];
+  const keyValueModel: Model<{ key: string; value: AWSCredentials }> =
+    ctx.tx.db[ctxKeyValueModelName];
 
   try {
     return await keyValueModel

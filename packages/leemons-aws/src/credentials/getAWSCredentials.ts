@@ -1,16 +1,19 @@
+import type { AnyContext } from '@leemons/moleculer';
+import type { Model } from '@leemons/mongodb';
 import type { AWSCredentials, GetAWSCredentialsProps } from '../index';
 import { assumeRole, getRoleToAssume } from '../roles/assumeRole';
 
-type GetAWSCredentialsFromDBProps<C = any> = {
+type GetAWSCredentialsFromDBProps<C extends AnyContext = AnyContext> = {
   ctxKeyValueModelName?: string;
   ctx: C;
 };
 
-async function getAWSCredentialsFromDB<C = any>({
+async function getAWSCredentialsFromDB<C extends AnyContext = AnyContext>({
   ctxKeyValueModelName = 'KeyValue',
   ctx,
 }: GetAWSCredentialsFromDBProps<C>): Promise<AWSCredentials | null> {
-  const keyValueModel = (ctx as any).tx.db[ctxKeyValueModelName];
+  const keyValueModel: Model<{ key: string; value: AWSCredentials }> =
+    ctx.tx.db[ctxKeyValueModelName];
   const awsCredentials = await keyValueModel.findOne({ key: 'awsCredentials' }).lean();
 
   return awsCredentials?.value ?? null;
@@ -38,7 +41,7 @@ function getAWSCredentialsFromEnv(prefix?: string): AWSCredentials | null {
   return { accessKeyId, secretAccessKey, region, sessionToken };
 }
 
-async function getAWSCredentials<C = any>({
+async function getAWSCredentials<C extends AnyContext = AnyContext>({
   ctxKeyValueModelName = 'KeyValue',
   prefix,
   roleName,
