@@ -1,37 +1,39 @@
-const { pick, values } = require('lodash');
-const {
+import {
   acquireLock,
-  releaseLock,
   getItemsHashByKey,
   getItemsToAdd,
+  releaseLock,
   saveItemHash,
-} = require('@leemons/common');
-const { HASH_DOCUMENT_KEY, LOCK_KEY, ADD_EMAIL_TEMPLATES_LOCK_NAME } = require('../constants');
+} from '@leemons/common';
+import { pick, values } from 'lodash';
+import { ADD_EMAIL_TEMPLATES_LOCK_NAME, HASH_DOCUMENT_KEY, LOCK_KEY } from '../constants';
 
-/**
- * @typedef {Object} EmailTemplate
- * @property {string} templateName - The name of the email template.
- * @property {string} language - The language of the email template.
- * @property {string} subject - The subject of the email.
- * @property {string} html - The HTML content of the email.
- * @property {string} type - The type of the email.
- */
+export interface EmailTemplate {
+  templateName: string;
+  language: string;
+  subject: string;
+  html: string;
+  type: string;
+}
+
+interface AddEmailTemplatesParams {
+  KeyValuesModel: any; // TODO: Add proper type from @leemons/mongodb
+  templates: EmailTemplate[];
+  version?: number;
+}
 
 /**
  * Adds email templates to the system, including acquiring and releasing a lock to ensure
  * that templates are added atomically. It prepares the templates by appending the language
  * to the template name, checks for existing templates, waits for necessary services,
  * and finally saves the new templates if they do not already exist.
- *
- * @param {Object} params - The parameters for adding email templates.
- * @param {Object} params.KeyValuesModel - The Mongoose model for key-value pairs.
- * @param {EmailTemplate[]} params.templates - An array of email template objects to be added.
- * @param {number} [params.version=1] - The version of the email service to use.
- * @returns {Promise<void>} A promise that resolves when the operation is complete.
  */
-async function addEmailTemplates({ KeyValuesModel, templates, version = 1 }) {
+export async function addEmailTemplates(
+  this: any, // TODO: Add proper type from moleculer
+  { KeyValuesModel, templates, version = 1 }: AddEmailTemplatesParams
+): Promise<void> {
   // Convert the templates array into an object with the key as the key and the value as the template
-  const templatesByKey = templates.reduce((acc, template) => {
+  const templatesByKey = templates.reduce<Record<string, EmailTemplate>>((acc, template) => {
     const key = `${template.templateName}_${template.language}`;
     acc[key] = template;
     return acc;
@@ -92,5 +94,3 @@ async function addEmailTemplates({ KeyValuesModel, templates, version = 1 }) {
     await releaseLock({ KeyValueModel: KeyValuesModel, lockKey });
   }
 }
-
-module.exports = { addEmailTemplates };
