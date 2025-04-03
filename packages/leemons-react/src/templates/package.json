@@ -1,7 +1,7 @@
 {
   "name": "{{it.name}}",
   "version": "{{it.version}}",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "private": true,
   "workspaces": [
     "./plugins/*",
