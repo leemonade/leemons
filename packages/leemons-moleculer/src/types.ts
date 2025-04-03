@@ -40,8 +40,8 @@ export type Meta<M extends object = Record<string, never>> = M &
   };
 
 export interface MQTTSocket {
-  emit: (ids: string | string[], eventName: string, eventData: any) => Promise<void>;
-  emitToAll: (eventName: string, eventData: any) => Promise<void>;
+  emit: (ids: string | string[], eventName: string, eventData?: any) => Promise<void>;
+  emitToAll: (eventName: string, eventData?: any) => Promise<void>;
 }
 
 export interface ExtendedContext<
