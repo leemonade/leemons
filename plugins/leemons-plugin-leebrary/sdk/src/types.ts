@@ -1,5 +1,6 @@
 import type { ProgramID, SubjectID } from '@leemons/academic-portfolio';
 import type { LRN } from '@leemons/lrn';
+import type { LeemonsSchema } from '@leemons/mongodb';
 import type { UserAgentID, UserID } from '@leemons/users';
 
 export type FileID = LRN<'leebrary', 'File'>;
@@ -47,7 +48,7 @@ export type SubjectInAsset = {
   name: string;
 };
 
-export type Asset = {
+export type Asset = Omit<LeemonsSchema, 'id'> & {
   id: AssetID;
   deploymentID: string;
   name: string;
@@ -72,6 +73,9 @@ export type Asset = {
     role?: string;
   };
   mediaType?: string;
+  subjects?: SubjectInAsset[];
+  coverFile?: string;
+  tags?: string[];
 };
 
 export type Pin = {
