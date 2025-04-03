@@ -2,6 +2,11 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+// Parse command line arguments
+const args = process.argv.slice(2);
+const buildSdkOnly = args.includes('--sdk');
+const buildPluginsOnly = args.includes('--plugin');
+
 // Get all workspaces info
 const workspaces = JSON.parse(execSync('yarn workspaces info --json').toString());
 
@@ -32,6 +37,7 @@ function createDependencyGraph(workspaces) {
   });
 
   // Debug information
+  /*
   console.log('\nDependency Graph:');
   Object.entries(graph).forEach(([pkg, deps]) => {
     if (deps.length > 0) {
@@ -39,6 +45,7 @@ function createDependencyGraph(workspaces) {
     }
   });
   console.log('\n');
+  */
 
   return graph;
 }
@@ -89,6 +96,7 @@ function calculateDependencyDepth(graph) {
   });
 
   // Debug information
+  /*
   console.log('Dependency Depths:');
   Object.entries(depths)
     .sort((a, b) => a[1] - b[1])
@@ -96,6 +104,7 @@ function calculateDependencyDepth(graph) {
       console.log(`${pkg}: ${depth}`);
     });
   console.log('\n');
+  */
 
   return depths;
 }
@@ -106,8 +115,25 @@ const depths = calculateDependencyDepth(graph);
 
 // Sort packages by dependency depth (less dependencies first)
 const sortedPackages = Object.entries(workspaces)
-  .filter(([name]) => name.startsWith('@leemons/'))
+  .filter(([name]) => {
+    if (buildSdkOnly) {
+      return name.startsWith('@leemons/');
+    }
+    if (buildPluginsOnly) {
+      return name.startsWith('leemons-plugin-');
+    }
+    return name.startsWith('@leemons/') || name.startsWith('leemons-plugin-');
+  })
   .sort(([nameA], [nameB]) => (depths[nameA] || 0) - (depths[nameB] || 0));
+
+// Log build mode
+if (buildSdkOnly) {
+  console.log('\nBuilding SDK packages only (@leemons/*)...\n');
+} else if (buildPluginsOnly) {
+  console.log('\nBuilding Plugin packages only (leemons-plugin-*)...\n');
+} else {
+  console.log('\nBuilding all packages...\n');
+}
 
 // Build packages in order
 sortedPackages.forEach(([name, info]) => {
