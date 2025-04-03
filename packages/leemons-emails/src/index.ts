@@ -1,4 +1,3 @@
-import type { ReactElement, ReactNode } from 'react';
 import '@babel/register';
 
 // Register Babel for JSX/TSX files
@@ -15,7 +14,6 @@ require('@babel/register')({
   ],
 });
 
-import { EmailLayout } from './emails/EmailLayout';
 import { getEmailTypes } from './getEmailTypes';
 import { LeemonsEmailsMixin } from './mixin/mixin';
 
@@ -23,15 +21,4 @@ export interface EmailTypes {
   active: 'active';
 }
 
-export interface EmailLayoutProps {
-  locale?: string;
-  title?: string;
-  previewText?: string;
-  logoUrl?: string;
-  logoWidth?: string;
-  platformName?: string;
-  children: ReactNode;
-}
-
-export type { ReactElement, ReactNode };
-export { EmailLayout, getEmailTypes, LeemonsEmailsMixin };
+export { getEmailTypes, LeemonsEmailsMixin };
