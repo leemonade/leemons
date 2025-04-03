@@ -1,6 +1,7 @@
-import React from 'react';
-import { Container, Section, Text, Img } from '@react-email/components';
+import { Container, Img, Section, Text } from '@react-email/components';
 import PropTypes from 'prop-types';
+// biome-ignore lint/correctness/noUnusedImports: File is used on backend rendering
+import React from 'react';
 
 const IS_DEV_MODE = String(process?.env?.EMAIL_DEV) === 'true';
 

@@ -14,7 +14,7 @@
     "@jest/globals": "^29.7.0",
     "@leemons/cache": "0.0.42",
     "@leemons/deployment-manager": "0.0.72",
-    "@leemons/emails": "0.0.54",
+    "@leemons/emails": "0.0.55",
     "@leemons/error": "0.0.42",
     "@leemons/menu-builder": "0.0.72",
     "@leemons/middlewares": "0.0.42",

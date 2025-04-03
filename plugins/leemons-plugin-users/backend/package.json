@@ -27,7 +27,7 @@
     "@leemons/common": "0.0.42",
     "@leemons/cronjobs": "0.0.2",
     "@leemons/deployment-manager": "0.0.72",
-    "@leemons/emails": "0.0.54",
+    "@leemons/emails": "0.0.55",
     "@leemons/error": "0.0.42",
     "@leemons/menu-builder": "0.0.72",
     "@leemons/middlewares": "0.0.42",

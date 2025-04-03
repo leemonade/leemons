@@ -1,15 +1,13 @@
-import '@babel/register';
-
-// Register Babel for JSX/TSX files
+// Register Babel for JSX files
 require('@babel/register')({
-  presets: ['@babel/preset-env', '@babel/preset-react', '@babel/preset-typescript'],
-  extensions: ['.jsx', '.tsx', '.ts'],
+  presets: ['@babel/preset-env', '@babel/preset-react'],
   ignore: [
     (filename: string) => {
+      // Ignore files inside node_modules
       if (filename.includes('/node_modules/')) {
         return true; // Ignore
       }
-      return !filename.match(/\.(jsx|tsx)$/);
+      return !filename.endsWith('.jsx');
     },
   ],
 });

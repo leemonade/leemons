@@ -1,8 +1,8 @@
-import React from 'react';
-
-import EmailLayout from '@leemons/emails/src/emails/EmailLayout.jsx';
+import EmailLayout from '@leemons/emails/emails/EmailLayout.jsx';
 import { Button, Container, Link, Text } from '@react-email/components';
 import PropTypes from 'prop-types';
+// biome-ignore lint/correctness/noUnusedImports: File is used on backend rendering
+import React from 'react';
 
 const IS_DEV_MODE = String(process?.env?.EMAIL_DEV) === 'true';
 const PLATFORM_NAME = '{{it.__platformName}}';

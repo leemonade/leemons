@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb/src');
+const { mongoose, newModel } = require('@leemons/mongodb');
 
 const schema = new mongoose.Schema({
   id: {

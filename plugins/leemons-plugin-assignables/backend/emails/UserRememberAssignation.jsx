@@ -1,7 +1,7 @@
+import EmailLayout from '@leemons/emails/emails/EmailLayout.jsx';
+import { Button, Column, Container, Img, Row, Section, Text } from '@react-email/components';
+// biome-ignore lint/correctness/noUnusedImports: File is used on backend rendering
 import React from 'react';
-
-import EmailLayout from '@leemons/emails/src/emails/EmailLayout.jsx';
-import { Section, Row, Column, Button, Container, Img, Text } from '@react-email/components';
 
 import ActivityCard from './ActivityCard.jsx';
 import { DEV_PROPS, PROD_PROPS, PROP_TYPES } from './UserNewAssignation.jsx';

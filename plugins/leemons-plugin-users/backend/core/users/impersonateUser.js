@@ -1,6 +1,6 @@
 const { LeemonsError } = require('@leemons/error');
 
-const { getUserFullName } = require('../../../../../packages/leemons-users/src');
+const { getUserFullName } = require('@leemons/users');
 
 const { generateJWTToken } = require('./jwt/generateJWTToken');
 
