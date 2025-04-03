@@ -2,7 +2,7 @@
   "name": "leemons-plugin-feedback-frontend-react",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "scripts": {
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"

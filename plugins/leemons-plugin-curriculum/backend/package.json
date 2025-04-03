@@ -19,7 +19,7 @@
     "jest-cli": "29.7.0"
   },
   "dependencies": {
-    "@leemons/academic-portfolio": "0.0.71",
+    "@leemons/academic-portfolio": "0.0.72",
     "@leemons/cache": "0.0.42",
     "@leemons/deployment-manager": "0.0.72",
     "@leemons/error": "0.0.42",

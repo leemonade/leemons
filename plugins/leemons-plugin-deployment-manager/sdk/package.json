@@ -2,7 +2,7 @@
   "name": "@leemons/deployment-manager",
   "version": "0.0.72",
   "description": "Leemons Deployment Manager SDK",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",

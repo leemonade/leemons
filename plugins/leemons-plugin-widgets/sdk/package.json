@@ -35,7 +35,7 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "dependencies": {
     "@leemons/error": "0.0.42",
     "@leemons/mongodb-helpers": "0.0.72",

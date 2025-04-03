@@ -2,7 +2,7 @@
   "name": "leemons-plugin-dashboard-frontend-react",
   "version": "1.0.0",
   "main": "Public.js",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "dependencies": {
     "@bubbles-ui/leemons": "dev",
     "@bubbles-ui/components": "dev",

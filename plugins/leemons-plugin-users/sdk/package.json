@@ -35,13 +35,13 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "devDependencies": {
     "rimraf": "^6.0.1",
     "typescript": "^5.5.2"
   },
   "dependencies": {
-    "@leemons/library": "0.0.42",
+    "@leemons/library": "0.0.72",
     "@leemons/lrn": "0.0.42"
   }
 }

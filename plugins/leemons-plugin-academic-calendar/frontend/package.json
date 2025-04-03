@@ -2,7 +2,7 @@
   "name": "leemons-plugin-academic-calendar-frontend-react",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "dependencies": {
     "@bubbles-ui/calendars": "dev",
     "@bubbles-ui/components": "dev",

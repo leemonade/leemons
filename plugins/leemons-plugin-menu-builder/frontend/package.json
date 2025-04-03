@@ -1,7 +1,7 @@
 {
   "name": "leemons-plugin-menu-builder-frontend-react",
   "version": "1.0.0",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "displayName": "Menu Builder",
   "description": "The Menu Builder is a plugin that provides functionality for creating and managing menus within the Leemons platform. It allows for the addition, removal, and modification of menu items, as well as the ability to set permissions for each item. It also supports multilingual menus.",
   "scripts": {

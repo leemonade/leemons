@@ -2,7 +2,7 @@
   "name": "leemons-plugin-leebrary-frontend-react",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "displayName": "Library",
   "description": "The Library is a plugin that provides functionality for managing a digital library. It allows users to add, edit, and remove resources, as well as manage permissions and multilanguage support. It also includes features for tagging and categorizing resources, and supports advanced configuration options.",
   "scripts": {
