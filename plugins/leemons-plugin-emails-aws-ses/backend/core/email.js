@@ -2,7 +2,7 @@ const { htmlToText } = require('nodemailer-html-to-text');
 const inlineBase64 = require('nodemailer-plugin-inline-base64');
 const aws = require('aws-sdk');
 const nodemailer = require('nodemailer');
-const { getAWSCredentials } = require('@leemons/aws/src');
+const { getAWSCredentials } = require('@leemons/aws');
 
 class Email {
   static async saveConfig({ ctx, config }) {

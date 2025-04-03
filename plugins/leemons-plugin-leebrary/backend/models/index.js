@@ -17,7 +17,6 @@ module.exports = {
   ...models,
   getServiceModels() {
     return {
-      Actions: models.actionsModel,
       Assets: models.assetsModel,
       AssetsFiles: models.assetsFilesModel,
       AssetsSubjects: models.assetsSubjectsModel,

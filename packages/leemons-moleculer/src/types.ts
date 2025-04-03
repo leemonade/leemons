@@ -68,6 +68,8 @@ export interface ExtendedContext<
   };
   __leemonsDeploymentManagerCall: MoleculerContext['call'];
   __leemonsDeploymentManagerEmit: MoleculerContext['emit'];
+  __leemonsMongoDBCall: MoleculerContext['call'];
+  __leemonsMongoDBEmit: MoleculerContext['emit'];
   prefixPN: (string?: string) => string;
   prefixPNV: (string?: string) => string;
   params?: P extends EventParams ? P : any;

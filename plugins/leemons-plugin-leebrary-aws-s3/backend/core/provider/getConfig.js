@@ -1,4 +1,4 @@
-const { getAWSCredentials } = require('@leemons/aws/src');
+const { getAWSCredentials } = require('@leemons/aws');
 
 /**
  * This function retrieves the first configuration object from the database.

@@ -4,7 +4,7 @@ const _ = require('lodash');
 const { LeemonsError } = require('@leemons/error');
 const aws = require('aws-sdk');
 const { randomString } = require('@leemons/utils');
-const { getAWSCredentials } = require('@leemons/aws/src');
+const { getAWSCredentials } = require('@leemons/aws');
 
 let config = null;
 let account = null;

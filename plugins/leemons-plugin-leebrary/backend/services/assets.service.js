@@ -1,6 +1,6 @@
 /**
- * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
- * @typedef {import('moleculer').Context} Context Moleculer's Context
+ * @typedef {import('@leemons/moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
+ * @typedef {import('@leemons/moleculer').Context} Context Moleculer's Context
  */
 
 const { LeemonsCacheMixin } = require('@leemons/cache');

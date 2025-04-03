@@ -19,9 +19,8 @@ export const LeemonsMiddlewaresMixin = (): ServiceSchema => ({
             getActionNameFromCTX(ctx)
           ];
           if (_.isObject(action) && 'middlewares' in action) {
-            const middlewares = _.isArray(action.middlewares)
-              ? action.middlewares
-              : [action.middlewares];
+            const middlewares = [action.middlewares].flat();
+
             for (let i = 0, l = middlewares.length; i < l; i++) {
               if (_.isFunction(middlewares[i])) {
                 await middlewares[i]!(ctx);

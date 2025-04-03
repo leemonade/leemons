@@ -383,7 +383,7 @@ class LeemonsRunner {
     const result: Dependency[] = [];
     _.forEach(dependencies, (dependency) => {
       try {
-        if (dependency.startsWith('leemons-plugin-')) {
+        if (dependency.startsWith('leemons-plugin-') && !dependency.includes('frontend')) {
           result.push({
             name: dependency,
             path: require.resolve(`${dependency}/package.json`).replace('/package.json', ''),

@@ -13,7 +13,6 @@ module.exports = {
   ...models,
   getServiceModels() {
     return {
-      Actions: models.actionsModel,
       Breaks: models.breaksModel,
       Config: models.configModel,
       Settings: models.settingsModel,

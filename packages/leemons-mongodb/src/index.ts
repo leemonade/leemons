@@ -1,7 +1,7 @@
 import type { Context, ServiceSchema } from '@leemons/moleculer';
 import type { Connection, Schema } from 'mongoose';
 import mongoose from 'mongoose';
-import { type MixinOptions, mixin } from './mixin';
+import { type MixinOptions, mixin } from './mixin/mixin';
 import type { Model } from './types';
 
 export function newModel<T>(

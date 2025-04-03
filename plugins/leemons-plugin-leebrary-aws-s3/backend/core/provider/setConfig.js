@@ -1,5 +1,5 @@
 const aws = require('aws-sdk');
-const { getAWSCredentials } = require('@leemons/aws/src');
+const { getAWSCredentials } = require('@leemons/aws');
 const { hasPermissions } = require('./hasPermissions');
 
 /**
