@@ -36,7 +36,7 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "dependencies": {
     "@leemons/moleculer": "0.0.1"
   },

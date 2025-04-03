@@ -36,7 +36,7 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "devDependencies": {
     "@types/object-hash": "^3.0.6",
     "typescript": "^5.5.2",

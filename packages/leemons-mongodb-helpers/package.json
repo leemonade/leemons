@@ -43,5 +43,5 @@
     "@leemons/mongodb": "0.0.72",
     "mongoose": "7.5.2"
   },
-  "license": "MIT"
+  "license": "SEE LICENSE IN LICENSE.md"
 }

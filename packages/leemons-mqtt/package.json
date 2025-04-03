@@ -2,7 +2,7 @@
   "name": "@leemons/mqtt",
   "version": "0.0.42",
   "description": "MQTT mixin for Leemons",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "exports": {
     ".": {
       "import": "./dist/esm/index.js",

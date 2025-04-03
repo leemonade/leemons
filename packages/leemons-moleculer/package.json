@@ -39,7 +39,7 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "dependencies": {
     "@babel/core": "^7.23.9",
     "@babel/preset-env": "^7.23.9",

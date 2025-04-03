@@ -2,7 +2,7 @@
   "name": "@leemons/providers",
   "version": "0.0.42",
   "description": "Leemons providers management",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "exports": {
     ".": {
       "import": "./dist/esm/index.js",

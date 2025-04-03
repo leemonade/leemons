@@ -2,7 +2,7 @@
   "name": "@leemons/middlewares",
   "version": "0.0.42",
   "description": "Leemons middlewares",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "exports": {
     ".": {
       "import": "./dist/esm/index.js",

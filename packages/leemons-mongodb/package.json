@@ -35,7 +35,7 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "devDependencies": {
     "rimraf": "^6.0.1",
     "typescript": "^5.5.2",

@@ -2,7 +2,7 @@
   "name": "@leemons/error",
   "version": "0.0.42",
   "description": "Leemons Errors handler SDK",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/esm/index.d.ts",

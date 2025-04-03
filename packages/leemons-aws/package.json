@@ -1,7 +1,7 @@
 {
   "name": "@leemons/aws",
   "version": "0.0.2",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "description": "AWS utilities for Leemons",
   "exports": {
     ".": {

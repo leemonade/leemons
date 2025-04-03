@@ -24,7 +24,7 @@
     "name": "Leemons Edtech Solutions",
     "url": "https://www.leemons.io"
   },
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "devDependencies": {
     "@types/fs-extra": "^11.0.4",
     "@types/lodash": "^4.17.7",

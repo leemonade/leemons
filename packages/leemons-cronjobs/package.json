@@ -36,7 +36,7 @@
       "url": "https://www.leemons.io"
     }
   ],
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.md",
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "@types/node": "^20.14.6",
