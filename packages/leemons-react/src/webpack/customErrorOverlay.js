@@ -1,4 +1,4 @@
-const DefaultOverlay = require('@pmmmwh/react-refresh-webpack-plugin/overlay');
+const DefaultOverlay = require("@pmmmwh/react-refresh-webpack-plugin/overlay");
 
 const ErrorOverlay = {
   hasUnrecoverableErrors() {

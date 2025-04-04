@@ -1,26 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import ReactDom from 'react-dom';
-import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import App from './App';
-import { Provider as GlobalProvider } from './contexts/global';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import React, { useState, useEffect } from "react";
+import ReactDom from "react-dom";
+import App from "./App";
+import { Provider as GlobalProvider } from "./contexts/global";
 
 const queryClient = new QueryClient();
 
 function ReactQueryDevtoolsWrapper() {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV === "production") {
     return null;
   }
 
   const [showQueryDevtools, setShowQueryDevtools] = useState(
-    window.localStorage.getItem('showReactQueryDevTools') === 'true'
+    window.localStorage.getItem("showReactQueryDevTools") === "true"
   );
 
   useEffect(() => {
     window.toggleQueryDevtools = (persist) =>
       setShowQueryDevtools((s) => {
         if (persist) {
-          window.localStorage.setItem('showReactQueryDevTools', !s);
+          window.localStorage.setItem("showReactQueryDevTools", !s);
         }
         return !s;
       });
@@ -43,7 +43,7 @@ const render = (Component) => {
         <ReactQueryDevtoolsWrapper />
       </QueryClientProvider>
     </React.StrictMode>,
-    document.getElementById('root')
+    document.getElementById("root")
   );
 };
 

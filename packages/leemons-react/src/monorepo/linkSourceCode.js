@@ -1,5 +1,5 @@
-const path = require('path');
-const { createFolderIfMissing, createSymlink, listFiles } = require('../fs');
+const path = require("path");
+const { createFolderIfMissing, createSymlink, listFiles } = require("../fs");
 
 module.exports = async function linkSourceCode(dir, plugins) {
   await createFolderIfMissing(dir);

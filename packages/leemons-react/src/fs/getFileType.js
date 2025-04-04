@@ -1,10 +1,10 @@
 // Get which file type is a file
 
 const fileType = {
-  SymbolicLink: 'symbolicLink',
-  Directory: 'directory',
-  File: 'file',
-  Null: 'null',
+  SymbolicLink: "symbolicLink",
+  Directory: "directory",
+  File: "file",
+  Null: "null",
 };
 
 module.exports = function getFileType(file) {

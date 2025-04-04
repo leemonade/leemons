@@ -1,15 +1,15 @@
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import React, { createContext, useCallback, useEffect, useState } from 'react';
-import { addErrorAlert } from '@layout/alert';
-import { apiUrl as API_URL, allOriginsUrl as ALL_ORIGINS_URL } from './apiURL';
+import { addErrorAlert } from "@layout/alert";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React, { createContext, useCallback, useEffect, useState } from "react";
+import { allOriginsUrl as ALL_ORIGINS_URL, apiUrl as API_URL } from "./apiURL";
 
 const context = createContext();
-const CONTENT_TYPE = 'content-type';
+const CONTENT_TYPE = "content-type";
 
 export default context;
 export const { Consumer: GlobalConsumer } = context;
-context.displayName = 'Global Context';
+context.displayName = "Global Context";
 
 // Leemons Api is an api fetcher with middlewares
 class LeemonsApi {
@@ -22,10 +22,12 @@ class LeemonsApi {
   constructor({ reqMiddlewares, resMiddlewares, resErrorMiddlewares } = {}) {
     this.#reqMiddlewares = Array.isArray(reqMiddlewares) ? reqMiddlewares : [];
     this.#resMiddlewares = Array.isArray(resMiddlewares) ? resMiddlewares : [];
-    this.#resErrorMiddlewares = Array.isArray(resErrorMiddlewares) ? resErrorMiddlewares : [];
-    this.api.useReq = this.#use('req');
-    this.api.useRes = this.#use('res');
-    this.api.useResError = this.#use('resError');
+    this.#resErrorMiddlewares = Array.isArray(resErrorMiddlewares)
+      ? resErrorMiddlewares
+      : [];
+    this.api.useReq = this.#use("req");
+    this.api.useRes = this.#use("res");
+    this.api.useResError = this.#use("resError");
     this.api.hasReq = this.#apiHasReqMiddleware;
     this.api.hasRes = this.#apiHasResMiddleware;
     this.apiCache = {};
@@ -37,7 +39,9 @@ class LeemonsApi {
         const check = () => {
           if (this.apiWaitToFinish[waitKey]?.finish) {
             const { isError } = this.apiWaitToFinish[waitKey];
-            const response = _.cloneDeep(this.apiWaitToFinish[waitKey].response);
+            const response = _.cloneDeep(
+              this.apiWaitToFinish[waitKey].response
+            );
             this.apiWaitToFinish[waitKey].waiting--;
             if (isError) {
               reject(response);
@@ -53,7 +57,10 @@ class LeemonsApi {
     this.removeWhenNoWaits = (waitKey) => {
       let times = 0;
       const check = () => {
-        if (this.apiWaitToFinish[waitKey]?.finish && !this.apiWaitToFinish[waitKey]?.waiting) {
+        if (
+          this.apiWaitToFinish[waitKey]?.finish &&
+          !this.apiWaitToFinish[waitKey]?.waiting
+        ) {
           delete this.apiWaitToFinish[waitKey];
         } else if (times < 60) {
           times++;
@@ -116,7 +123,10 @@ class LeemonsApi {
 
       // }
 
-      const response = await fetch(`${global.leemons.apiUrl}/api/${ctx.url}`, ctx.options);
+      const response = await fetch(
+        `${global.leemons.apiUrl}/api/${ctx.url}`,
+        ctx.options
+      );
 
       const responseCtx = { middlewares: [], response };
       await this.#callMiddleware(this.#resMiddlewares, 0, responseCtx);
@@ -151,7 +161,9 @@ class LeemonsApi {
       }
 
       // Crear un error personalizado que extiende el error original
-      const customError = new Error(responseCtx.response.message || 'LeemonsApiError');
+      const customError = new Error(
+        responseCtx.response.message || "LeemonsApiError"
+      );
       Object.assign(customError, responseCtx.response);
       customError.isLeemonsApiError = true;
       customError.leemonsApiErrorDetails = {
@@ -181,30 +193,33 @@ class LeemonsApi {
   };
 
   #use = (type) => (middleware) => {
-    if (type === 'req') {
+    if (type === "req") {
       this.#reqMiddlewares.push(middleware);
-    } else if (type === 'res') {
+    } else if (type === "res") {
       this.#resMiddlewares.push(middleware);
-    } else if (type === 'resError') {
+    } else if (type === "resError") {
       this.#resErrorMiddlewares.push(middleware);
     }
   };
 }
 
-
 function apiContentTypeMiddleware(ctx) {
   if (!ctx.options) ctx.options = {};
   if (ctx.options && !ctx.options.headers) ctx.options.headers = {};
-  if (ctx.options && !ctx.options.headers[CONTENT_TYPE] && !ctx.options.headers['Content-Type'])
-    ctx.options.headers[CONTENT_TYPE] = 'application/json';
+  if (
+    ctx.options &&
+    !ctx.options.headers[CONTENT_TYPE] &&
+    !ctx.options.headers["Content-Type"]
+  )
+    ctx.options.headers[CONTENT_TYPE] = "application/json";
   if (
     ctx.options &&
     _.isObject(ctx.options.body) &&
-    ctx.options.headers[CONTENT_TYPE] === 'application/json'
+    ctx.options.headers[CONTENT_TYPE] === "application/json"
   ) {
     ctx.options.body = JSON.stringify(ctx.options.body);
   }
-  if (ctx.options.headers[CONTENT_TYPE] === 'none') {
+  if (ctx.options.headers[CONTENT_TYPE] === "none") {
     delete ctx.options.headers[CONTENT_TYPE];
   }
 }
@@ -228,7 +243,7 @@ async function apiResponseParserMiddleware(ctx) {
     throw await ctx.response.json();
   }
   ctx.response = await ctx.response.json();
-};
+}
 
 export function Provider({ children }) {
   const { api } = new LeemonsApi({
@@ -236,9 +251,7 @@ export function Provider({ children }) {
     resMiddlewares: [apiResponseParserMiddleware],
   });
 
-
   useEffect(() => {
-
     const handleUnhandledRejection = (event) => {
       if (event.reason && event.reason.isLeemonsApiError) {
         event.preventDefault();
@@ -246,21 +259,27 @@ export function Provider({ children }) {
           const message = event.reason.message ?? event.reason.error;
 
           if (
-            typeof message === 'string' &&
-            message.toLowerCase().indexOf('no authorization header') < 0
+            typeof message === "string" &&
+            message.toLowerCase().indexOf("no authorization header") < 0
           ) {
-            addErrorAlert(`[ApiError] ${event.reason.pluginName}`, event.reason.message ?? event.reason.error);
+            addErrorAlert(
+              `[ApiError] ${event.reason.pluginName}`,
+              event.reason.message ?? event.reason.error
+            );
           }
 
-          console.warn('Unhandled Leemons API error:', event.reason);
+          console.warn("Unhandled Leemons API error:", event.reason);
         }
       }
     };
 
-    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+    window.addEventListener("unhandledrejection", handleUnhandledRejection);
 
     return () => {
-      window.removeEventListener('unhandledrejection', handleUnhandledRejection);
+      window.removeEventListener(
+        "unhandledrejection",
+        handleUnhandledRejection
+      );
     };
   }, []);
 
@@ -275,7 +294,7 @@ export function Provider({ children }) {
     leemons: {
       api,
       log: console,
-      version: '1.0.0',
+      version: "1.0.0",
       apiUrl,
       allOriginsUrl,
     },

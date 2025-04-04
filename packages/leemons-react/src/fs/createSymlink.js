@@ -1,8 +1,8 @@
-const fs = require('fs-extra');
-const folderExists = require('./folderExists');
+const fs = require("fs-extra");
+const folderExists = require("./folderExists");
 
 // Create a symbolic link
-module.exports = async function createSymLink(src, dest, type = 'dir') {
+module.exports = async function createSymLink(src, dest, type = "dir") {
   try {
     if (await folderExists(src)) {
       return await fs.createSymlink(src, dest, type);

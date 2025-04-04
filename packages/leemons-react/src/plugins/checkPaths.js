@@ -1,5 +1,5 @@
-const path = require('path');
-const { fileExists, folderExists } = require('../fs');
+const path = require("path");
+const { fileExists, folderExists } = require("../fs");
 
 module.exports = async function checkPaths({ plugin }) {
   if (Array.isArray(plugin)) {
@@ -9,13 +9,17 @@ module.exports = async function checkPaths({ plugin }) {
   return {
     ...plugin,
     routers: {
-      public: await fileExists(path.resolve(plugin.path, 'Public.js')),
-      private: await fileExists(path.resolve(plugin.path, 'Private.js')),
-      protected: await fileExists(path.resolve(plugin.path, 'Protected.js')),
+      public: await fileExists(path.resolve(plugin.path, "Public.js")),
+      private: await fileExists(path.resolve(plugin.path, "Private.js")),
+      protected: await fileExists(path.resolve(plugin.path, "Protected.js")),
     },
-    public: await folderExists(path.resolve(plugin.path, 'public')),
-    hooks: await fileExists(path.resolve(plugin.path, 'globalHooks.js')),
-    globalContext: await fileExists(path.resolve(plugin.path, 'globalContext.js')),
-    localContext: await fileExists(path.resolve(plugin.path, 'localContext.js')),
+    public: await folderExists(path.resolve(plugin.path, "public")),
+    hooks: await fileExists(path.resolve(plugin.path, "globalHooks.js")),
+    globalContext: await fileExists(
+      path.resolve(plugin.path, "globalContext.js")
+    ),
+    localContext: await fileExists(
+      path.resolve(plugin.path, "localContext.js")
+    ),
   };
 };

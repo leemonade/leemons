@@ -1,4 +1,4 @@
-const { hash } = require('../crypto');
+const { hash } = require("../crypto");
 
 // Generate current status description file
 module.exports = async function generateLockFile(plugins) {

@@ -1,21 +1,21 @@
 // @ts-check
-const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const NodePolyfillPlugin = require('node-polyfill-webpack-plugin');
-const path = require('path');
-const TerserPlugin = require('terser-webpack-plugin');
-const webpack = require('webpack');
-const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
+const CopyPlugin = require("copy-webpack-plugin");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+const path = require("path");
+const TerserPlugin = require("terser-webpack-plugin");
+const webpack = require("webpack");
+const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 
 module.exports = function webpackConfig({
   app,
   build,
   alias,
   publicFiles,
-  isDev = process.env.NODE_ENV !== 'production',
+  isDev = process.env.NODE_ENV !== "production",
   lazy,
   useDebug = process.env.DEBUG,
 }) {
@@ -23,21 +23,21 @@ module.exports = function webpackConfig({
 
   /** @type {import("webpack").Configuration} */
   const config = {
-    mode: isDev ? 'development' : 'production',
-    entry: [path.join(app, 'index.js'), path.resolve(app, 'hotManagement.js')],
+    mode: isDev ? "development" : "production",
+    entry: [path.join(app, "index.js"), path.resolve(app, "hotManagement.js")],
     output: {
       path: build,
       // Add /* filename */ comments to generated require()s in the output.
       pathinfo: isDev,
       // There will be one main bundle, and one file per asynchronous chunk.
       // In development, it does not produce real files.
-      filename: 'static/js/[name].[contenthash].js',
+      filename: "static/js/[name].[contenthash].js",
       // There are also additional JS chunk files if you use code splitting.
-      chunkFilename: 'static/js/[name].[contenthash].chunk.js',
-      assetModuleFilename: 'static/media/[name].[contenthash][ext]',
+      chunkFilename: "static/js/[name].[contenthash].chunk.js",
+      assetModuleFilename: "static/media/[name].[contenthash][ext]",
       // webpack uses `publicPath` to determine where the app is being served from.
       // It requires a trailing slash, or the file assets will get an incorrect path.
-      publicPath: '/',
+      publicPath: "/",
     },
     optimization: {
       minimize: isProduction,
@@ -73,7 +73,7 @@ module.exports = function webpackConfig({
       ],
       // Automatically split vendor and commons
       splitChunks: {
-        chunks: 'all',
+        chunks: "all",
         minSize: 0,
         usedExports: true,
       },
@@ -90,11 +90,11 @@ module.exports = function webpackConfig({
       },
       historyApiFallback: {
         disableDotRule: true,
-        htmlAcceptHeaders: ['text/html', 'application/xhtml+xml'],
+        htmlAcceptHeaders: ["text/html", "application/xhtml+xml"],
       },
     },
     resolve: {
-      extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
+      extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
       /*
       fallback: {
         fs: false,
@@ -106,13 +106,21 @@ module.exports = function webpackConfig({
       symlinks: false,
       alias: {
         ...alias,
-        chalk: path.resolve(require.resolve('chalk'), '..'),
-        react: path.resolve(require.resolve('react'), '..'),
-        'react-dom': path.resolve(require.resolve('react-dom'), '..'),
-        'react-router-dom': path.resolve(require.resolve('react-router-dom'), '..'),
-        '@tanstack/react-query': path.resolve(require.resolve('@tanstack/react-query'), '..'),
-        '@loadable/component': path.resolve(require.resolve('@loadable/component')),
-        'leemons-hooks': path.resolve(require.resolve('leemons-hooks')),
+        chalk: path.resolve(require.resolve("chalk"), ".."),
+        react: path.resolve(require.resolve("react"), ".."),
+        "react-dom": path.resolve(require.resolve("react-dom"), ".."),
+        "react-router-dom": path.resolve(
+          require.resolve("react-router-dom"),
+          ".."
+        ),
+        "@tanstack/react-query": path.resolve(
+          require.resolve("@tanstack/react-query"),
+          ".."
+        ),
+        "@loadable/component": path.resolve(
+          require.resolve("@loadable/component")
+        ),
+        "leemons-hooks": path.resolve(require.resolve("leemons-hooks")),
       },
     },
     module: {
@@ -120,10 +128,10 @@ module.exports = function webpackConfig({
       // strictExportPresence: isProduction,
       rules: [
         {
-          enforce: 'pre',
+          enforce: "pre",
           exclude: /@babel(?:\/|\\{1,2})runtime/,
           test: /\.(js|mjs|jsx|ts|tsx|css)$/,
-          loader: require.resolve('source-map-loader'),
+          loader: require.resolve("source-map-loader"),
         },
         {
           // "oneOf" will traverse all following loaders until one will
@@ -135,7 +143,7 @@ module.exports = function webpackConfig({
             // A missing `test` is equivalent to a match.
             {
               test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
-              type: 'asset',
+              type: "asset",
               parser: {
                 dataUrlCondition: {
                   // TODO: Allow users to define it
@@ -147,7 +155,7 @@ module.exports = function webpackConfig({
               test: /\.svg$/,
               use: [
                 {
-                  loader: require.resolve('@svgr/webpack'),
+                  loader: require.resolve("@svgr/webpack"),
                   options: {
                     prettier: false,
                     svgo: false,
@@ -159,9 +167,9 @@ module.exports = function webpackConfig({
                   },
                 },
                 {
-                  loader: require.resolve('file-loader'),
+                  loader: require.resolve("file-loader"),
                   options: {
-                    name: 'static/media/[name].[contenthash].[ext]',
+                    name: "static/media/[name].[contenthash].[ext]",
                   },
                 },
               ],
@@ -173,11 +181,11 @@ module.exports = function webpackConfig({
               test: /\.(ts|tsx)$/,
               use: [
                 {
-                  loader: 'ts-loader',
+                  loader: "ts-loader",
                   options: {
                     transpileOnly: true, // This option is important for performance
                     experimentalWatchApi: true,
-                    configFile: path.resolve('../..', 'tsconfig.frontend.json'),
+                    configFile: path.resolve("../..", "tsconfig.frontend.json"),
                   },
                 },
               ],
@@ -187,17 +195,19 @@ module.exports = function webpackConfig({
               exclude: /node_modules\/(?!(@bubbles-ui\/*)\/).*/,
               use: [
                 {
-                  loader: 'babel-loader',
+                  loader: "babel-loader",
                   options: {
                     presets: [
                       [
-                        '@babel/preset-react',
+                        "@babel/preset-react",
                         {
-                          runtime: 'automatic',
+                          runtime: "automatic",
                         },
                       ],
                     ],
-                    plugins: [isDev && require.resolve('react-refresh/babel')].filter(Boolean),
+                    plugins: [
+                      isDev && require.resolve("react-refresh/babel"),
+                    ].filter(Boolean),
                     cacheDirectory: true,
                     cacheCompression: false,
                     compact: isProduction,
@@ -210,7 +220,7 @@ module.exports = function webpackConfig({
               use: [
                 MiniCssExtractPlugin.loader,
                 {
-                  loader: 'css-loader',
+                  loader: "css-loader",
                   options: {
                     importLoaders: 1,
                   },
@@ -219,7 +229,7 @@ module.exports = function webpackConfig({
             },
             {
               test: /\.scss$/,
-              use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
+              use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
             },
             // "file" loader makes sure those assets get served by WebpackDevServer.
             // When you `import` an asset, you get its (virtual) filename.
@@ -232,7 +242,7 @@ module.exports = function webpackConfig({
               // Also exclude `html` and `json` extensions so they get processed
               // by webpacks internal loaders.
               exclude: [/^$/, /\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
-              type: 'asset/resource',
+              type: "asset/resource",
             },
             // ** STOP ** Are you adding a new loader?
             // Make sure to add the new loader(s) before the "file" loader.
@@ -244,24 +254,30 @@ module.exports = function webpackConfig({
       new NodePolyfillPlugin(),
       new MiniCssExtractPlugin(),
       new HtmlWebpackPlugin({
-        filename: 'index.html',
-        template: path.resolve(__dirname, '../templates', isDev ? 'dev.html' : 'prod.html'),
+        filename: "index.html",
+        template: path.resolve(
+          __dirname,
+          "../templates",
+          isDev ? "dev.html" : "prod.html"
+        ),
       }),
       isDev &&
         new ReactRefreshWebpackPlugin({
           overlay: {
-            entry: require.resolve('@pmmmwh/react-refresh-webpack-plugin/client/ErrorOverlayEntry'),
-            module: path.resolve(__dirname, 'customErrorOverlay.js'),
+            entry: require.resolve(
+              "@pmmmwh/react-refresh-webpack-plugin/client/ErrorOverlayEntry"
+            ),
+            module: path.resolve(__dirname, "customErrorOverlay.js"),
           },
         }),
-      useDebug && new BundleAnalyzerPlugin({ analyzerMode: 'disabled' }),
+      useDebug && new BundleAnalyzerPlugin({ analyzerMode: "disabled" }),
       useDebug && new webpack.debug.ProfilingPlugin(),
       isProduction &&
         new MiniCssExtractPlugin({
           // Options similar to the same options in webpackOptions.output
           // both options are optional
-          filename: 'static/css/[name].[contenthash:8].css',
-          chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+          filename: "static/css/[name].[contenthash:8].css",
+          chunkFilename: "static/css/[name].[contenthash:8].chunk.css",
         }),
       // new LoadablePlugin({ filename: 'stats.json', writeToDisk: true }),
       publicFiles?.length &&
@@ -271,7 +287,7 @@ module.exports = function webpackConfig({
       new ForkTsCheckerWebpackPlugin({
         async: isDev,
         typescript: {
-          configFile: path.resolve('../..', 'tsconfig.frontend.json'),
+          configFile: path.resolve("../..", "tsconfig.frontend.json"),
         },
       }),
     ].filter(Boolean),
@@ -285,11 +301,11 @@ module.exports = function webpackConfig({
     },
     stats: false,
     infrastructureLogging: {
-      level: 'none',
+      level: "none",
     },
   };
 
-  console.log('webpack ready!');
+  console.log("webpack ready!");
 
   return config;
 };

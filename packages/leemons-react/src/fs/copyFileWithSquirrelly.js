@@ -1,15 +1,18 @@
-const squirrelly = require('squirrelly');
-const path = require('path');
-const fs = require('fs-extra');
+const squirrelly = require("squirrelly");
+const path = require("path");
+const fs = require("fs-extra");
 
 /* Squirrelly Helpers */
-squirrelly.filters.define('capitalize', (str) => str.charAt(0).toUpperCase() + str.substring(1));
+squirrelly.filters.define(
+  "capitalize",
+  (str) => str.charAt(0).toUpperCase() + str.substring(1)
+);
 
-squirrelly.filters.define('clear', (str) =>
+squirrelly.filters.define("clear", (str) =>
   str
     .split(/[-_]/)
     .map((string) => string.charAt(0).toUpperCase() + string.substring(1))
-    .join('')
+    .join("")
 );
 
 module.exports = async function copyFileWithSquirrelly(src, dest, config) {

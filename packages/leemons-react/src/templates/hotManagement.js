@@ -1,13 +1,13 @@
-const ELEMENT_ID = 'hot-loader';
+const ELEMENT_ID = "hot-loader";
 
 let loaderShown = 1;
-let loaderContent = '';
+let loaderContent = "";
 
 function showLoader() {
   let loader = document.getElementById(ELEMENT_ID);
 
   if (!loader) {
-    loader = document.createElement('div');
+    loader = document.createElement("div");
     loader.id = ELEMENT_ID;
     loader.innerHTML = loaderContent;
 
@@ -44,7 +44,7 @@ if (module.hot) {
   let isFirstRender = true;
 
   ws.onopen = () => {
-    console.debug('[Leemons HMR] Connected to Hot Module Replacement server.');
+    console.debug("[Leemons HMR] Connected to Hot Module Replacement server.");
   };
 
   ws.onmessage = (event) => {
@@ -55,25 +55,25 @@ if (module.hot) {
       message = event.data;
     }
 
-    if (!isFirstRender && message?.type === 'invalid') {
-      console.error('[Leemons HMR] Content has changed.');
+    if (!isFirstRender && message?.type === "invalid") {
+      console.error("[Leemons HMR] Content has changed.");
       showLoader();
     }
 
     module.hot.addStatusHandler((status) => {
-      if (status === 'idle' && loaderShown) {
+      if (status === "idle" && loaderShown) {
         hideLoader();
       }
     });
 
     // EN: Only change firstRender if type is 'hash'
     // ES: Solo cambiar firstRender si el tipo es 'hash'
-    if (isFirstRender && message.type === 'hash') {
+    if (isFirstRender && message.type === "hash") {
       isFirstRender = false;
     }
   };
 
   ws.onerror = (event) => {
-    console.error('[Leemons HMR] Error:', event);
+    console.error("[Leemons HMR] Error:", event);
   };
 }

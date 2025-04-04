@@ -1,20 +1,32 @@
-const chalk = require('chalk');
-const ora = require('ora');
-const webpack = require('webpack');
-const WebpackDevServer = require('webpack-dev-server');
+const chalk = require("chalk");
+const ora = require("ora");
+const webpack = require("webpack");
+const WebpackDevServer = require("webpack-dev-server");
 
-const { parseWebpackMessage } = require('./parseWebpackMessage');
-const webpackConfig = require('./webpack.config');
+const { parseWebpackMessage } = require("./parseWebpackMessage");
+const webpackConfig = require("./webpack.config");
 
-module.exports = async function startDevServer({ app, build, alias, publicFiles }) {
-  const config = webpackConfig({ app, build, alias, publicFiles, isDev: true, lazy: true });
+module.exports = async function startDevServer({
+  app,
+  build,
+  alias,
+  publicFiles,
+}) {
+  const config = webpackConfig({
+    app,
+    build,
+    alias,
+    publicFiles,
+    isDev: true,
+    lazy: true,
+  });
   const devServerOptions = config.devServer;
 
   let compiler;
   try {
     compiler = webpack(config);
-    if (process.env.DEBUG === 'true') {
-      compiler.hooks.done.tap('done', (stats) => {
+    if (process.env.DEBUG === "true") {
+      compiler.hooks.done.tap("done", (stats) => {
         console.log(
           stats.toString({
             colors: true,
@@ -31,7 +43,10 @@ module.exports = async function startDevServer({ app, build, alias, publicFiles 
     console.log(e.message || e);
   }
 
-  const devServer = new WebpackDevServer({ ...devServerOptions, setupExitSignals: true }, compiler);
+  const devServer = new WebpackDevServer(
+    { ...devServerOptions, setupExitSignals: true },
+    compiler
+  );
 
   await devServer.start();
 
@@ -43,32 +58,32 @@ module.exports = async function startDevServer({ app, build, alias, publicFiles 
   const handler = () => {
     if (!exiting) {
       global.spinner.stopAndPersist({
-        symbol: '🚫',
-        text: 'Server is shutting down...',
+        symbol: "🚫",
+        text: "Server is shutting down...",
       });
 
       console.clear();
       exiting = true;
 
       console.log(chalk`{gray Press Ctrl+C again to force stop.}`);
-      exitSpinner.start('Server is shutting down...');
+      exitSpinner.start("Server is shutting down...");
 
       devServer.stopCallback((error) => {
         if (error) {
-          exitSpinner.error('Server failed to stop.');
+          exitSpinner.error("Server failed to stop.");
           console.log(chalk`{redBright [ERROR]} ${error.message}`);
         }
 
-        exitSpinner.succeed('Server stopped.');
+        exitSpinner.succeed("Server stopped.");
         process.exit(0);
       });
     } else {
-      exitSpinner.warn('Force stopping...');
+      exitSpinner.warn("Force stopping...");
       process.exit(0);
     }
   };
 
-  const signals = ['SIGINT', 'SIGTERM'];
+  const signals = ["SIGINT", "SIGTERM"];
 
   signals.forEach((signal) => {
     process.on(signal, handler);

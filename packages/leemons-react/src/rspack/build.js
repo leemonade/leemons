@@ -1,19 +1,19 @@
-const rspack = require('@rspack/core');
-const boxen = require('boxen');
-const chalk = require('chalk');
-const ora = require('ora');
-const path = require('path');
+const rspack = require("@rspack/core");
+const boxen = require("boxen");
+const chalk = require("chalk");
+const ora = require("ora");
+const path = require("path");
 
-const { formatWebpackMessages } = require('../webpack/parseWebpackMessage');
+const { formatWebpackMessages } = require("../webpack/parseWebpackMessage");
 
-const rspackConfig = require('./rspack.config');
+const rspackConfig = require("./rspack.config");
 
 const { isTTY } = process.stdout;
 
 function getRelativePath(dir) {
   const relativePath = path.relative(process.cwd(), dir);
 
-  if (relativePath.startsWith('.')) {
+  if (relativePath.startsWith(".")) {
     return relativePath;
   }
 
@@ -21,7 +21,14 @@ function getRelativePath(dir) {
 }
 
 module.exports = async function buildApp({ app, alias, build, publicFiles }) {
-  const config = rspackConfig({ app, alias, build, publicFiles, isDev: false, lazy: false });
+  const config = rspackConfig({
+    app,
+    alias,
+    build,
+    publicFiles,
+    isDev: false,
+    lazy: false,
+  });
   const compiler = rspack(config);
 
   const startTime = Date.now();
@@ -37,7 +44,7 @@ module.exports = async function buildApp({ app, alias, build, publicFiles }) {
 
         const { errors } = formatWebpackMessages(parsedStats);
 
-        console.error(errors.join('\n'));
+        console.error(errors.join("\n"));
         process.exit(1);
       }
 
@@ -57,7 +64,9 @@ module.exports = async function buildApp({ app, alias, build, publicFiles }) {
         )
       );
 
-      compiler.close(() => {});
+      compiler.close(() => {
+        //
+      });
     });
   } else {
     console.log(chalk`Starting {yellow Leemons} front build`);
@@ -90,7 +99,9 @@ module.exports = async function buildApp({ app, alias, build, publicFiles }) {
         )
       );
 
-      compiler.close(() => {});
+      compiler.close(() => {
+        //
+      });
     });
   }
 };

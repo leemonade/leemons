@@ -1,10 +1,10 @@
-const path = require('path');
-const fs = require('fs-extra');
-const chalk = require('chalk');
+const path = require("path");
+const fs = require("fs-extra");
+const chalk = require("chalk");
 
 module.exports = async function get({ app }) {
   try {
-    const packageJSON = await fs.readJSON(path.resolve(app, 'package.json'));
+    const packageJSON = await fs.readJSON(path.resolve(app, "package.json"));
     const plugins = [];
     if (packageJSON.dependencies) {
       plugins.push(
@@ -12,12 +12,17 @@ module.exports = async function get({ app }) {
           .map((name) => {
             try {
               // Get those dependencies called 'leemons-plugin-*'
-              if (name.includes(`leemons-plugin-`) && name.includes(`frontend-react`)) {
-                const pluginPath = path.dirname(require.resolve(`${name}/package.json`));
+              if (
+                name.includes(`leemons-plugin-`) &&
+                name.includes(`frontend-react`)
+              ) {
+                const pluginPath = path.dirname(
+                  require.resolve(`${name}/package.json`)
+                );
                 const isPlugin = name.startsWith(`leemons-plugin-`);
-                const prefix = isPlugin ? 'plugin' : 'provider';
+                const prefix = isPlugin ? "plugin" : "provider";
                 return {
-                  name: name.replace(`leemons-${prefix}-`, ''),
+                  name: name.replace(`leemons-${prefix}-`, ""),
                   path: pluginPath,
                 };
               }
@@ -31,10 +36,14 @@ module.exports = async function get({ app }) {
       return plugins;
     }
 
-    console.warn(chalk`{yellowBright Warning:} No plugins found in {bold ${app}}`);
+    console.warn(
+      chalk`{yellowBright Warning:} No plugins found in {bold ${app}}`
+    );
     return [];
   } catch (e) {
-    console.error(chalk`{redBright Error:} Cannot read package.json in {bold ${app}}`);
+    console.error(
+      chalk`{redBright Error:} Cannot read package.json in {bold ${app}}`
+    );
     throw e;
   }
 };

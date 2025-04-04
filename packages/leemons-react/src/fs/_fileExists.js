@@ -1,4 +1,4 @@
-const fs = require('fs-extra');
+const fs = require("fs-extra");
 
 module.exports = async function _fileExists(dir, validateFiles = false) {
   try {

@@ -1,25 +1,30 @@
-const webpack = require('webpack');
-const chalk = require('chalk');
-const ora = require('ora');
+const webpack = require("webpack");
+const chalk = require("chalk");
+const ora = require("ora");
 
-const boxen = require('boxen');
-const path = require('path');
-const webpackConfig = require('./webpack.config');
-const { formatWebpackMessages } = require('./parseWebpackMessage');
+const boxen = require("boxen");
+const path = require("path");
+const webpackConfig = require("./webpack.config");
+const { formatWebpackMessages } = require("./parseWebpackMessage");
 
 const { isTTY } = process.stdout;
 
 function getRelativePath(dir) {
   const relativePath = path.relative(process.cwd(), dir);
 
-  if (relativePath.startsWith('.')) {
+  if (relativePath.startsWith(".")) {
     return relativePath;
   }
 
   return `./${relativePath}`;
 }
 
-module.exports = async function startDevServer({ app, build, alias, publicFiles }) {
+module.exports = async function startDevServer({
+  app,
+  build,
+  alias,
+  publicFiles,
+}) {
   const config = webpackConfig({ app, build, alias, publicFiles, lazy: false });
   const compiler = webpack(config);
 
@@ -56,7 +61,9 @@ module.exports = async function startDevServer({ app, build, alias, publicFiles 
         )
       );
 
-      compiler.close(() => {});
+      compiler.close(() => {
+        //
+      });
     });
   } else {
     console.log(chalk`Starting {yellow Leemons} front build`);
@@ -89,7 +96,9 @@ module.exports = async function startDevServer({ app, build, alias, publicFiles 
         )
       );
 
-      compiler.close(() => {});
+      compiler.close(() => {
+        //
+      });
     });
   }
 };

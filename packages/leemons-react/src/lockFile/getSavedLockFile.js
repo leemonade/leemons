@@ -1,4 +1,4 @@
-const fs = require('fs-extra');
+const fs = require("fs-extra");
 
 // Get saved lock file
 module.exports = async function getSavedLockFile(lockDir) {

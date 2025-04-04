@@ -1,7 +1,7 @@
-const fs = require('fs-extra');
-const path = require('path');
+const fs = require("fs-extra");
+const path = require("path");
 
-const jsConfigFilename = 'jsconfig.json';
+const jsConfigFilename = "jsconfig.json";
 const jsConfigPath = (basePath) => path.resolve(basePath, jsConfigFilename);
 
 async function getJsConfig(basePath) {
@@ -15,23 +15,26 @@ async function getJsConfig(basePath) {
     throw new Error(`${jsConfigFilename} not found`);
   } catch (e) {
     return {
-      extends: './tsconfig.base.json',
+      extends: "./tsconfig.base.json",
       compilerOptions: {
-        target: 'ESNext',
-        lib: ['DOM', 'DOM.Iterable', 'ESNext'],
-        module: 'ESNext',
-        jsx: 'react',
+        target: "ESNext",
+        lib: ["DOM", "DOM.Iterable", "ESNext"],
+        module: "ESNext",
+        jsx: "react",
         allowJs: true,
       },
-      exclude: ['node_modules'],
-      include: ['./plugins/*/frontend/**/*', './private-plugins/*/frontend/**/*'],
+      exclude: ["node_modules"],
+      include: [
+        "./plugins/*/frontend/**/*",
+        "./private-plugins/*/frontend/**/*",
+      ],
     };
   }
 }
 
 module.exports = async function createJsConfig({
   plugins,
-  basePath = path.resolve(__dirname, '../../../../'),
+  basePath = path.resolve(__dirname, "../../../../"),
 }) {
   if (!basePath) {
     throw new Error(`basePath is required to create ${jsConfigFilename}`);
@@ -48,8 +51,8 @@ module.exports = async function createJsConfig({
     .forEach((plugin) => {
       const relativePath = path.relative(basePath, plugin.path);
       const pluginName = `@${plugin.name
-        .replace('-frontend-react-private', '')
-        .replace('-frontend-react', '')}/*`;
+        .replace("-frontend-react-private", "")
+        .replace("-frontend-react", "")}/*`;
 
       const srcPath = `./${relativePath}/src/*`;
 
@@ -64,7 +67,7 @@ module.exports = async function createJsConfig({
   config.compilerOptions.paths = paths;
 
   await fs.writeJSON(jsConfigPath(basePath), config, {
-    encoding: 'utf8',
+    encoding: "utf8",
     spaces: 2,
   });
 };

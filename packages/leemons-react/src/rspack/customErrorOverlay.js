@@ -1,4 +1,4 @@
-const DefaultOverlay = require('@rspack/plugin-react-refresh/overlay');
+const DefaultOverlay = require("@rspack/plugin-react-refresh/overlay");
 
 const ErrorOverlay = {
   ...DefaultOverlay,

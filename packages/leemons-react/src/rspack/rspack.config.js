@@ -1,72 +1,72 @@
-const { rspack } = require('@rspack/core');
-const ReactRefreshPlugin = require('@rspack/plugin-react-refresh');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-const path = require('path');
+const { rspack } = require("@rspack/core");
+const ReactRefreshPlugin = require("@rspack/plugin-react-refresh");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+const path = require("path");
 
 module.exports = function rspackConfig({
   app,
   build,
   alias,
   publicFiles,
-  isDev = process.env.NODE_ENV !== 'production',
+  isDev = process.env.NODE_ENV !== "production",
   lazy,
   useDebug = process.env.DEBUG,
 }) {
   /** @type {import('@rspack/core').Configuration} */
   const config = {
-    mode: isDev ? 'development' : 'production',
-    entry: [path.join(app, 'index.js'), path.resolve(app, 'hotManagement.js')],
+    mode: isDev ? "development" : "production",
+    entry: [path.join(app, "index.js"), path.resolve(app, "hotManagement.js")],
     output: {
       path: build,
-      filename: 'static/js/[name].[contenthash].js',
-      chunkFilename: 'static/js/[name].[contenthash].chunk.js',
-      assetModuleFilename: 'static/media/[name].[contenthash][ext]',
-      cssFilename: 'static/css/[name].[contenthash].css',
-      publicPath: '/',
+      filename: "static/js/[name].[contenthash].js",
+      chunkFilename: "static/js/[name].[contenthash].chunk.js",
+      assetModuleFilename: "static/media/[name].[contenthash][ext]",
+      cssFilename: "static/css/[name].[contenthash].css",
+      publicPath: "/",
     },
     module: {
       rules: [
         {
           test: /\.tsx?$/,
           exclude: /node_modules/,
-          loader: 'builtin:swc-loader',
-          type: 'javascript/auto',
+          loader: "builtin:swc-loader",
+          type: "javascript/auto",
           options: {
             jsc: {
               parser: {
-                syntax: 'typescript',
+                syntax: "typescript",
                 tsx: true,
               },
               transform: {
                 react: {
-                  runtime: 'automatic',
+                  runtime: "automatic",
                   development: isDev,
                   refresh: isDev,
                 },
               },
-              target: 'es2015',
+              target: "es2015",
             },
           },
         },
         {
           test: /\.c?m?jsx?$/,
           exclude: /node_modules/,
-          loader: 'builtin:swc-loader',
-          type: 'javascript/auto',
+          loader: "builtin:swc-loader",
+          type: "javascript/auto",
           options: {
             jsc: {
               parser: {
-                syntax: 'ecmascript',
+                syntax: "ecmascript",
                 jsx: true,
               },
               transform: {
                 react: {
-                  runtime: 'automatic',
+                  runtime: "automatic",
                   development: isDev,
                   refresh: isDev,
                 },
               },
-              target: 'es2015',
+              target: "es2015",
             },
           },
         },
@@ -79,7 +79,7 @@ module.exports = function rspackConfig({
               },
               use: [
                 {
-                  loader: '@svgr/webpack',
+                  loader: "@svgr/webpack",
                   options: {
                     prettier: false,
                     svgo: false,
@@ -91,7 +91,7 @@ module.exports = function rspackConfig({
                   },
                 },
               ],
-              type: 'asset/resource',
+              type: "asset/resource",
             },
           ],
         },
@@ -102,7 +102,7 @@ module.exports = function rspackConfig({
               maxSize: 10000,
             },
           },
-          type: 'asset',
+          type: "asset",
         },
 
         // ** STOP ** Are you adding a new loader?
@@ -110,18 +110,26 @@ module.exports = function rspackConfig({
       ],
     },
     resolve: {
-      extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
+      extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
       symlinks: false,
-      mainFields: ['browser', 'module', 'main'],
+      mainFields: ["browser", "module", "main"],
       alias: {
         ...alias,
-        chalk: path.resolve(require.resolve('chalk'), '..'),
-        react: path.resolve(require.resolve('react'), '..'),
-        'react-dom': path.resolve(require.resolve('react-dom'), '..'),
-        'react-router-dom': path.resolve(require.resolve('react-router-dom'), '..'),
-        '@tanstack/react-query': path.resolve(require.resolve('@tanstack/react-query'), '..'),
-        '@loadable/component': path.resolve(require.resolve('@loadable/component')),
-        'leemons-hooks': path.resolve(require.resolve('leemons-hooks')),
+        chalk: path.resolve(require.resolve("chalk"), ".."),
+        react: path.resolve(require.resolve("react"), ".."),
+        "react-dom": path.resolve(require.resolve("react-dom"), ".."),
+        "react-router-dom": path.resolve(
+          require.resolve("react-router-dom"),
+          ".."
+        ),
+        "@tanstack/react-query": path.resolve(
+          require.resolve("@tanstack/react-query"),
+          ".."
+        ),
+        "@loadable/component": path.resolve(
+          require.resolve("@loadable/component")
+        ),
+        "leemons-hooks": path.resolve(require.resolve("leemons-hooks")),
       },
       fallback: {
         fs: false,
@@ -132,13 +140,17 @@ module.exports = function rspackConfig({
     },
     plugins: [
       new rspack.HtmlRspackPlugin({
-        template: path.resolve(__dirname, '../templates', isDev ? 'dev.html' : 'prod.html'),
-        filename: 'index.html',
+        template: path.resolve(
+          __dirname,
+          "../templates",
+          isDev ? "dev.html" : "prod.html"
+        ),
+        filename: "index.html",
       }),
       isDev &&
         new ReactRefreshPlugin({
           overlay: {
-            module: path.resolve(__dirname, './customErrorOverlay.js'),
+            module: path.resolve(__dirname, "./customErrorOverlay.js"),
           },
         }),
       publicFiles?.length &&
@@ -147,7 +159,7 @@ module.exports = function rspackConfig({
         }),
       new ForkTsCheckerWebpackPlugin({
         typescript: {
-          configFile: path.resolve('../..', 'tsconfig.frontend.json'),
+          configFile: path.resolve("../..", "tsconfig.frontend.json"),
         },
       }),
     ].filter(Boolean),
@@ -162,10 +174,10 @@ module.exports = function rspackConfig({
       liveReload: true,
       historyApiFallback: {
         disableDotRule: true,
-        htmlAcceptHeaders: ['text/html', 'application/xhtml+xml'],
+        htmlAcceptHeaders: ["text/html", "application/xhtml+xml"],
       },
     },
-    devtool: isDev ? 'cheap-module-source-map' : 'source-map',
+    devtool: isDev ? "cheap-module-source-map" : "source-map",
     experiments: {
       lazyCompilation: isDev && lazy,
       css: true,
@@ -173,11 +185,11 @@ module.exports = function rspackConfig({
 
     stats: false,
     infrastructureLogging: {
-      level: 'none',
+      level: "none",
     },
   };
 
-  console.log('rspack ready!');
+  console.log("rspack ready!");
 
   return config;
 };

@@ -1,13 +1,16 @@
-const execa = require('execa');
+const execa = require("execa");
 // Intall front monorepo dependencies
 module.exports = function installDeps(dir) {
   return new Promise((resolve, reject) => {
     const { stdout, stderr } = execa.command(`yarn --cwd ${dir}`);
 
     if (stderr) {
-      stderr.on('data', (e) => {
+      stderr.on("data", (e) => {
         const message = e.toString();
-        if (!message.startsWith('warning') && !message.includes('DeprecationWarning')) {
+        if (
+          !message.startsWith("warning") &&
+          !message.includes("DeprecationWarning")
+        ) {
           reject(new Error(message));
         }
       });
@@ -16,7 +19,7 @@ module.exports = function installDeps(dir) {
     if (stdout) {
       stdout.pipe(process.stdout);
 
-      stdout.on('end', () => {
+      stdout.on("end", () => {
         resolve();
       });
     }

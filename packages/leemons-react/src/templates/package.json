@@ -5,6 +5,7 @@
   "private": true,
   "workspaces": [
     "./plugins/*",
+    "../../../packages/*",
     "../../../plugins/*/sdk",
     "../../../private-plugins/*/sdk"
   ],
