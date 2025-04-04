@@ -1,7 +1,7 @@
-import type { Context } from '@leemons/moleculer';
-import type { Model } from '@leemons/mongodb';
-import type { AWSCredentials, GetAWSCredentialsProps } from '../index';
-import { assumeRole, getRoleToAssume } from '../roles/assumeRole';
+import type { Context } from "@leemons/moleculer";
+import type { Model } from "@leemons/mongodb";
+import type { AWSCredentials, GetAWSCredentialsProps } from "../index";
+import { assumeRole, getRoleToAssume } from "../roles/assumeRole";
 
 type GetAWSCredentialsFromDBProps<C extends Context = Context> = {
   ctxKeyValueModelName?: string;
@@ -9,12 +9,14 @@ type GetAWSCredentialsFromDBProps<C extends Context = Context> = {
 };
 
 async function getAWSCredentialsFromDB<C extends Context = Context>({
-  ctxKeyValueModelName = 'KeyValue',
+  ctxKeyValueModelName = "KeyValue",
   ctx,
 }: GetAWSCredentialsFromDBProps<C>): Promise<AWSCredentials | null> {
   const keyValueModel: Model<{ key: string; value: AWSCredentials }> =
     ctx.tx.db[ctxKeyValueModelName];
-  const awsCredentials = await keyValueModel.findOne({ key: 'awsCredentials' }).lean();
+  const awsCredentials = await keyValueModel
+    .findOne({ key: "awsCredentials" })
+    .lean();
 
   return awsCredentials?.value ?? null;
 }
@@ -28,10 +30,14 @@ function getAWSCredentialsFromEnv(prefix?: string): AWSCredentials | null {
   const upperCasePrefix = prefix?.toUpperCase();
 
   if (prefix) {
-    accessKeyId = process.env[`${upperCasePrefix}_AWS_ACCESS_KEY`] ?? accessKeyId;
-    secretAccessKey = process.env[`${upperCasePrefix}_AWS_SECRET_ACCESS_KEY`] ?? secretAccessKey;
+    accessKeyId =
+      process.env[`${upperCasePrefix}_AWS_ACCESS_KEY`] ?? accessKeyId;
+    secretAccessKey =
+      process.env[`${upperCasePrefix}_AWS_SECRET_ACCESS_KEY`] ??
+      secretAccessKey;
     region = process.env[`${upperCasePrefix}_AWS_REGION`] ?? region;
-    sessionToken = process.env[`${upperCasePrefix}_AWS_SESSION_TOKEN`] ?? sessionToken;
+    sessionToken =
+      process.env[`${upperCasePrefix}_AWS_SESSION_TOKEN`] ?? sessionToken;
   }
 
   if (!accessKeyId || !secretAccessKey || !region) {
@@ -42,14 +48,17 @@ function getAWSCredentialsFromEnv(prefix?: string): AWSCredentials | null {
 }
 
 async function getAWSCredentials<C extends Context = Context>({
-  ctxKeyValueModelName = 'KeyValue',
+  ctxKeyValueModelName = "KeyValue",
   prefix,
   roleName,
   sessionName,
   rolePolicy,
   ctx,
 }: GetAWSCredentialsProps<C>): Promise<AWSCredentials | null> {
-  const dbCredentials = await getAWSCredentialsFromDB({ ctxKeyValueModelName, ctx });
+  const dbCredentials = await getAWSCredentialsFromDB({
+    ctxKeyValueModelName,
+    ctx,
+  });
   const envCredentials = getAWSCredentialsFromEnv(prefix);
 
   const roleToAssume = getRoleToAssume({ roleName, prefix });

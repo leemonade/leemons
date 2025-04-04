@@ -1,7 +1,7 @@
-import { LeemonsError } from '@leemons/error';
-import type { Context } from '@leemons/moleculer';
-import type { Model } from '@leemons/mongodb';
-import type { AWSCredentials } from '../index';
+import { LeemonsError } from "@leemons/error";
+import type { Context } from "@leemons/moleculer";
+import type { Model } from "@leemons/mongodb";
+import type { AWSCredentials } from "../index";
 
 type SaveAWSCredentialsProps<C extends Context = Context> = {
   credentials: AWSCredentials;
@@ -11,7 +11,7 @@ type SaveAWSCredentialsProps<C extends Context = Context> = {
 
 export async function saveAWSCredentials<C extends Context = Context>({
   credentials,
-  ctxKeyValueModelName = 'KeyValue',
+  ctxKeyValueModelName = "KeyValue",
   ctx,
 }: SaveAWSCredentialsProps<C>) {
   const { accessKeyId, secretAccessKey, region } = credentials;
@@ -21,7 +21,7 @@ export async function saveAWSCredentials<C extends Context = Context>({
   try {
     return await keyValueModel
       .findOneAndUpdate(
-        { key: 'awsCredentials' },
+        { key: "awsCredentials" },
         { value: { accessKeyId, secretAccessKey, region } },
         {
           new: true,
@@ -31,9 +31,9 @@ export async function saveAWSCredentials<C extends Context = Context>({
       .lean();
   } catch (error) {
     throw new LeemonsError(ctx, {
-      message: 'Error saving AWS credentials',
+      message: "Error saving AWS credentials",
       cause: error,
-      customCode: 'LEEMONS_ERROR_SAVING_AWS_CREDENTIALS',
+      customCode: "LEEMONS_ERROR_SAVING_AWS_CREDENTIALS",
       httpStatusCode: 500,
     });
   }

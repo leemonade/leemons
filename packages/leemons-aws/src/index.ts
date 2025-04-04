@@ -1,5 +1,5 @@
-import type { STSClientConfig } from '@aws-sdk/client-sts';
-import type { Context } from '@leemons/moleculer';
+import type { STSClientConfig } from "@aws-sdk/client-sts";
+import type { Context } from "@leemons/moleculer";
 
 export type AWSCredentials = {
   accessKeyId: string;
@@ -20,11 +20,11 @@ export type GetAWSCredentialsProps<C = Context> = {
   ctx: C;
 };
 
-export { getAWSConfig } from './config/getAWSConfig';
+export { getAWSConfig } from "./config/getAWSConfig";
 export {
   getAWSCredentials,
   getAWSCredentialsFromDB,
   getAWSCredentialsFromEnv,
-} from './credentials/getAWSCredentials';
-export { saveAWSCredentials } from './credentials/saveAWSCredentials';
-export { assumeRole, getRoleToAssume } from './roles/assumeRole';
+} from "./credentials/getAWSCredentials";
+export { saveAWSCredentials } from "./credentials/saveAWSCredentials";
+export { assumeRole, getRoleToAssume } from "./roles/assumeRole";
