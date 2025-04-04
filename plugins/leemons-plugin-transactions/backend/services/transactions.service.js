@@ -2,23 +2,29 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const _ = require('lodash');
-const { setTimeout } = require('timers/promises');
-const mongoose = require('mongoose');
-const { randomString } = require('@leemons/utils');
-const { Transaction } = require('../models/transaction');
-const { TransactionState } = require('../models/transaction-state');
-const { LeemonsError } = require('@leemons/error');
+const _ = require("lodash");
+const { setTimeout } = require("timers/promises");
+const mongoose = require("mongoose");
+const { randomString } = require("@leemons/utils");
+const { Transaction } = require("../models/transaction");
+const { TransactionState } = require("../models/transaction-state");
+const { LeemonsError } = require("@leemons/error");
 
-async function checkIfCanRollbackAndWaitToPendingFinishOrTimeout(ctx, tryNumber = 0) {
+async function checkIfCanRollbackAndWaitToPendingFinishOrTimeout(
+  ctx,
+  tryNumber = 0
+) {
   const transaction = await Transaction.findOne({
     _id: ctx.meta.transactionID,
     deploymentID: ctx.meta.deploymentID,
   })
-    .select(['pending', 'finished'])
+    .select(["pending", "finished"])
     .lean();
   // Si no se encuentra la transaccion lanzamos pete
-  if (!transaction) throw new Error(`The transactionID ${ctx.meta.transactionID} don\`t exists`);
+  if (!transaction)
+    throw new Error(
+      `The transactionID ${ctx.meta.transactionID} don\`t exists`
+    );
   // Si el intento numero 50 es que ya han pasado mas de 5 segundos desde que esperamos a que se completaran las acciones pendientes, no esperamos mas, vamos a lanzar el rollback
   if (tryNumber >= 50) {
     return true;
@@ -26,7 +32,10 @@ async function checkIfCanRollbackAndWaitToPendingFinishOrTimeout(ctx, tryNumber 
   // Si aun no han finalizado todos los pendiente esperamos un poco y lo volvemos a intentar
   if (transaction.finished < transaction.pending) {
     await setTimeout(100);
-    return checkIfCanRollbackAndWaitToPendingFinishOrTimeout(ctx, tryNumber + 1);
+    return checkIfCanRollbackAndWaitToPendingFinishOrTimeout(
+      ctx,
+      tryNumber + 1
+    );
   }
   return true;
 }
@@ -37,8 +46,10 @@ async function tryToRollbackState(ctx, state, tryNumber = 0) {
     return true;
   }
   try {
-    if (process.env.DEBUG === 'true')
-      console.log(`CALL from "${ctx.action?.name || ctx.event.name}" to  "${state.caller}"`);
+    if (process.env.DEBUG === "true")
+      console.log(
+        `CALL from "${ctx.action?.name || ctx.event.name}" to  "${state.caller}"`
+      );
     return await ctx.call(state.caller, state.payload);
   } catch (e) {
     return tryToRollbackState(ctx, state, tryNumber + 1);
@@ -56,14 +67,14 @@ async function safeTransactionStateDelete(_id) {
 
 /** @type {ServiceSchema} */
 module.exports = (broker) => ({
-  name: 'transactions',
+  name: "transactions",
 
   actions: {
     new: {
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
           throw new LeemonsError(ctx, {
-            message: 'Need ctx.meta.deploymentID',
+            message: "Need ctx.meta.deploymentID",
             caller: ctx.caller,
           });
         }
@@ -81,13 +92,13 @@ module.exports = (broker) => ({
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
           throw new LeemonsError(ctx, {
-            message: 'Need ctx.meta.deploymentID',
+            message: "Need ctx.meta.deploymentID",
             caller: ctx.caller,
           });
         }
         if (!ctx.meta.transactionID) {
           throw new LeemonsError(ctx, {
-            message: 'Need ctx.meta.transactionID',
+            message: "Need ctx.meta.transactionID",
             caller: ctx.caller,
           });
         }
@@ -104,7 +115,9 @@ module.exports = (broker) => ({
         // console.log(`pendding - ${ctx.meta.transactionID} - ${transaction.pending}`);
 
         if (!transaction)
-          throw new Error(`The transactionID ${ctx.meta.transactionID} don\`t exists`);
+          throw new Error(
+            `The transactionID ${ctx.meta.transactionID} don\`t exists`
+          );
         return true;
       },
     },
@@ -112,13 +125,13 @@ module.exports = (broker) => ({
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
           throw new LeemonsError(ctx, {
-            message: 'Need ctx.meta.deploymentID',
+            message: "Need ctx.meta.deploymentID",
             caller: ctx.caller,
           });
         }
         if (!ctx.meta.transactionID) {
           throw new LeemonsError(ctx, {
-            message: 'Need ctx.meta.transactionID',
+            message: "Need ctx.meta.transactionID",
             caller: ctx.caller,
           });
         }
@@ -132,7 +145,9 @@ module.exports = (broker) => ({
         );
         // console.log(`finished - ${ctx.meta.transactionID} - ${transaction.finished}`);
         if (!transaction)
-          throw new Error(`The transactionID ${ctx.meta.transactionID} don\`t exists`);
+          throw new Error(
+            `The transactionID ${ctx.meta.transactionID} don\`t exists`
+          );
         return true;
       },
     },
@@ -140,28 +155,32 @@ module.exports = (broker) => ({
       async handler(ctx) {
         if (!ctx.meta.deploymentID) {
           throw new LeemonsError(ctx, {
-            message: 'Need ctx.meta.deploymentID',
+            message: "Need ctx.meta.deploymentID",
             caller: ctx.caller,
           });
         }
         if (!ctx.meta.transactionID) {
           throw new LeemonsError(ctx, {
-            message: 'Need ctx.meta.transactionID',
+            message: "Need ctx.meta.transactionID",
             caller: ctx.caller,
           });
         }
         if (!_.isString(ctx.params.action)) {
-          throw new LeemonsError(ctx, { message: 'Field "action" is required and must be string' });
+          throw new LeemonsError(ctx, {
+            message: 'Field "action" is required and must be string',
+          });
         }
         const transaction = await Transaction.findOne({
           _id: ctx.meta.transactionID,
           deploymentID: ctx.meta.deploymentID,
         })
-          .select(['active'])
+          .select(["active"])
           .lean();
 
         if (!transaction)
-          throw new Error(`The transactionID ${ctx.meta.transactionID} don\`t exists`);
+          throw new Error(
+            `The transactionID ${ctx.meta.transactionID} don\`t exists`
+          );
         // Si la transaccion esta activa añadimos el estado por si se hace rollback
         if (transaction.active) {
           await TransactionState.create({
@@ -190,13 +209,13 @@ module.exports = (broker) => ({
         console.log(`--- ROLLBACK - ${ctx.meta.transactionID}`);
         if (!ctx.meta.deploymentID) {
           throw new LeemonsError(ctx, {
-            message: 'Need ctx.meta.deploymentID',
+            message: "Need ctx.meta.deploymentID",
             caller: ctx.caller,
           });
         }
         if (!ctx.meta.transactionID) {
           throw new LeemonsError(ctx, {
-            message: 'Need ctx.meta.transactionID',
+            message: "Need ctx.meta.transactionID",
             caller: ctx.caller,
           });
         }
@@ -205,11 +224,13 @@ module.exports = (broker) => ({
           _id: ctx.meta.transactionID,
           deploymentID: ctx.meta.deploymentID,
         })
-          .select(['active', 'pending'])
+          .select(["active", "pending"])
           .lean();
 
         if (!transaction)
-          throw new Error(`The transactionID ${ctx.meta.transactionID} don\`t exists`);
+          throw new Error(
+            `The transactionID ${ctx.meta.transactionID} don\`t exists`
+          );
 
         // Si no esta activo es que ya se esta lanzando algun rollback ignoramos y devolvemos como que esta todo ok
         if (!transaction.active || !transaction.pending) {
@@ -234,7 +255,7 @@ module.exports = (broker) => ({
           _id: ctx.meta.transactionID,
           deploymentID: ctx.meta.deploymentID,
         })
-          .select(['checkNumber'])
+          .select(["checkNumber"])
           .lean();
 
         // Solo continua si el checkNumber es igual
@@ -249,8 +270,8 @@ module.exports = (broker) => ({
           deploymentID: ctx.meta.deploymentID,
           transaction: ctx.meta.transactionID,
         })
-          .select(['caller', 'payload', 'createdAt'])
-          .sort({ createdAt: 'desc' })
+          .select(["caller", "payload", "createdAt"])
+          .sort({ createdAt: "desc" })
           .lean();
 
         // Empezamos a hacer rollback en orden

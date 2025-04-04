@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const transactionStateSchema = new mongoose.Schema(
   {
@@ -8,7 +8,7 @@ const transactionStateSchema = new mongoose.Schema(
     },
     transaction: {
       type: mongoose.ObjectId,
-      ref: 'transaction_Transaction',
+      ref: "transaction_Transaction",
     },
     payload: {
       type: mongoose.Schema.Types.Mixed,
@@ -33,11 +33,11 @@ const transactionStateSchema = new mongoose.Schema(
 transactionStateSchema.index({ deploymentID: 1, transaction: 1 });
 
 let TransactionState = null;
-if (mongoose.connection.models.hasOwnProperty('transaction_TransactionState')) {
+if (mongoose.connection.models.hasOwnProperty("transaction_TransactionState")) {
   TransactionState = mongoose.connection.models.transaction_TransactionState;
 } else {
   TransactionState = mongoose.connection.model(
-    'transaction_TransactionState',
+    "transaction_TransactionState",
     transactionStateSchema
   );
 }
