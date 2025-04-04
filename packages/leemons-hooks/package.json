@@ -1,6 +1,6 @@
 {
-  "name": "leemons-hooks",
-  "version": "0.0.33",
+  "name": "@leemons/hooks",
+  "version": "0.0.1",
   "description": "Hooks system for Leemons LMS",
   "exports": {
     ".": {
@@ -18,6 +18,22 @@
     "build:watch": "yarn build:esm -- --watch",
     "clean": "rimraf dist"
   },
+  "author": {
+    "email": "hi@leemons.io",
+    "name": "Leemons Edtech Solutions",
+    "url": "https://www.leemons.io"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "maintainers": [
+    {
+      "email": "hi@leemons.io",
+      "name": "Leemons Edutech Solutions",
+      "url": "https://www.leemons.io"
+    }
+  ],
   "license": "SEE LICENSE IN LICENSE.md",
   "devDependencies": {
     "rimraf": "^6.0.1",

@@ -1,16 +1,19 @@
-import chalk from 'chalk';
-import _ from 'lodash';
-import type { EventHandler, EventHandlerMap } from '../types';
+import chalk from "chalk";
+import _ from "lodash";
+import type { EventHandlerMap } from "../types";
 
 const filters: EventHandlerMap = {};
 
 // Gets the filters for an event, if not defined, return defaultValue
-function getFilters(eventName: string, defaultValue: EventHandler[] = []): EventHandler[] {
+function getFilters(
+  eventName: string,
+  defaultValue: Function[] = []
+): Function[] {
   return _.get(filters, eventName, defaultValue);
 }
 
 // Appends a new filter to the filters object
-function setFilter(eventName: string, func: EventHandler): void {
+function setFilter(eventName: string, func: Function): void {
   const eventFilters = getFilters(eventName, undefined);
   if (!eventFilters) {
     _.set(filters, eventName, [func]);
@@ -20,9 +23,9 @@ function setFilter(eventName: string, func: EventHandler): void {
 }
 
 // Registers a new filter
-function registerFilter(eventName: string, func: EventHandler): void {
+function registerFilter(eventName: string, func: Function): void {
   if (!_.isFunction(func)) {
-    throw new Error('All the filters must be functions');
+    throw new Error("All the filters must be functions");
   }
 
   setFilter(eventName, func);
@@ -32,9 +35,9 @@ function registerFilter(eventName: string, func: EventHandler): void {
   );
 }
 
-function unregisterFilter(eventName: string, func: EventHandler): EventHandler[] {
+function unregisterFilter(eventName: string, func: Function): Function[] {
   if (!_.isFunction(func)) {
-    throw new Error('All the filters must be functions');
+    throw new Error("All the filters must be functions");
   }
 
   const eventFilters = getFilters(eventName, []);
@@ -57,5 +60,5 @@ export const addFilter = registerFilter;
 export const removeFilter = unregisterFilter;
 export const getFiltersClone = (
   eventName: string,
-  defaultValue: EventHandler[] = []
-): EventHandler[] => _.clone(getFilters(eventName, defaultValue));
+  defaultValue: Function[] = []
+): Function[] => _.clone(getFilters(eventName, defaultValue));

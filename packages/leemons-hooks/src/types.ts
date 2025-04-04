@@ -1,7 +1,5 @@
-export type EventHandler = (params: { eventName: string; args: any[] }) => Promise<any[]> | any[];
-
 export type EventHandlerMap = {
-  [eventName: string]: EventHandler[];
+  [eventName: string]: Function[];
 };
 
 // Declare the global leemons type for TypeScript

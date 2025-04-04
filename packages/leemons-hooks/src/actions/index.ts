@@ -1,16 +1,19 @@
-import chalk from 'chalk';
-import _ from 'lodash';
-import type { EventHandler, EventHandlerMap } from '../types';
+import chalk from "chalk";
+import _ from "lodash";
+import type { EventHandlerMap } from "../types";
 
 const actions: EventHandlerMap = {};
 
 // Gets the actions for an event, if not defined, return defaultValue
-function getActions(eventName: string, defaultValue: EventHandler[] = []): EventHandler[] {
+function getActions(
+  eventName: string,
+  defaultValue: Function[] = []
+): Function[] {
   return _.get(actions, eventName, defaultValue);
 }
 
 // Appends a new action to the actions object
-function setAction(eventName: string, func: EventHandler): void {
+function setAction(eventName: string, func: Function): void {
   const eventActions = getActions(eventName, undefined);
   if (!eventActions) {
     _.set(actions, eventName, [func]);
@@ -20,9 +23,9 @@ function setAction(eventName: string, func: EventHandler): void {
 }
 
 // Registers a new action
-function registerAction(eventName: string, func: EventHandler): void {
+function registerAction(eventName: string, func: Function): void {
   if (!_.isFunction(func)) {
-    throw new Error('All the actions must be functions');
+    throw new Error("All the actions must be functions");
   }
 
   setAction(eventName, func);
@@ -32,9 +35,9 @@ function registerAction(eventName: string, func: EventHandler): void {
   );
 }
 
-function unregisterAction(eventName: string, func: EventHandler): EventHandler[] {
+function unregisterAction(eventName: string, func: Function): Function[] {
   if (!_.isFunction(func)) {
-    throw new Error('All the actions must be functions');
+    throw new Error("All the actions must be functions");
   }
 
   const eventActions = getActions(eventName, []);
@@ -57,5 +60,5 @@ export const addAction = registerAction;
 export const removeAction = unregisterAction;
 export const getActionsClone = (
   eventName: string,
-  defaultValue: EventHandler[] = []
-): EventHandler[] => _.clone(getActions(eventName, defaultValue));
+  defaultValue: Function[] = []
+): Function[] => _.clone(getActions(eventName, defaultValue));
