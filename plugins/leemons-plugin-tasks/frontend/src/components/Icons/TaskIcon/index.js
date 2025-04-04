@@ -1,1 +1,1 @@
-export * from './TaskIcon';
+export * from "./TaskIcon";

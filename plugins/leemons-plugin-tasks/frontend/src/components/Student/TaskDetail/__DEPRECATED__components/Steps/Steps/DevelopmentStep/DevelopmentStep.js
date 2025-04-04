@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   Box,
   Button,
@@ -8,12 +8,12 @@ import {
   Title,
   Paper,
   useResizeObserver,
-} from '@bubbles-ui/components';
-import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { TextEditorViewer } from '@common/components';
-import dayjs from 'dayjs';
-import LimitedTimeAlert from '../../../LimitedTimeAlert';
-import { AnimatedPane } from './AnimatedPane';
+} from "@bubbles-ui/components";
+import { ChevLeftIcon, ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { TextEditorViewer } from "@common/components";
+import dayjs from "dayjs";
+import LimitedTimeAlert from "../../../LimitedTimeAlert";
+import { AnimatedPane } from "./AnimatedPane";
 
 function _DevelopmentText({ text, style, classes }, ref) {
   if (!text) {
@@ -37,7 +37,7 @@ function _DevelopmentText({ text, style, classes }, ref) {
   );
 }
 
-_DevelopmentText.displayName = 'DevelopmentText';
+_DevelopmentText.displayName = "DevelopmentText";
 
 const DevelopmentText = React.forwardRef(_DevelopmentText);
 
@@ -45,28 +45,29 @@ const useDevelopmentStepStyles = createStyles((theme, { marginTop }) => {
   const buttonsHeight = 44;
   const buttonsPaddingTop = theme.spacing[6];
   const buttonsPaddingBottom = theme.spacing[10];
-  const buttonContainerHeight = buttonsHeight + buttonsPaddingTop + buttonsPaddingBottom;
+  const buttonContainerHeight =
+    buttonsHeight + buttonsPaddingTop + buttonsPaddingBottom;
 
   return {
     root: {
       height: `calc(100vh - ${marginTop + buttonContainerHeight}px)`,
-      display: 'flex',
-      flexDirection: 'column',
+      display: "flex",
+      flexDirection: "column",
       gap: theme.spacing[5],
     },
     developmentContainer: {
-      position: 'relative',
-      height: '100%',
-      width: '100%',
-      display: 'flex',
-      flexDirection: 'row',
+      position: "relative",
+      height: "100%",
+      width: "100%",
+      display: "flex",
+      flexDirection: "row",
       gap: theme.spacing[3],
     },
     developmentText: {
-      height: '100%',
-      width: '100%',
-      overflowY: 'auto',
-      overflowX: 'hidden',
+      height: "100%",
+      width: "100%",
+      overflowY: "auto",
+      overflowX: "hidden",
     },
   };
 });
@@ -87,12 +88,16 @@ export default function DevelopmentStep({
   preview,
 }) {
   const labels = _labels?.development_step;
-  const { development: developments } = assignation.instance.assignable.metadata;
+  const { development: developments } =
+    assignation.instance.assignable.metadata;
   const developmentLength = developments?.length;
-  const [step, setStep] = React.useState(previousIndex < index ? 0 : developmentLength - 1);
+  const [step, setStep] = React.useState(
+    previousIndex < index ? 0 : developmentLength - 1
+  );
   const [animation, setAnimation] = React.useState(null);
 
-  const followingStepAfterAnimation = animation === 'backward' ? step - 1 : step + 1;
+  const followingStepAfterAnimation =
+    animation === "backward" ? step - 1 : step + 1;
 
   const hasNextDevelopment = step < developmentLength - 1;
   const hasPrevDevelopment = step > 0;
@@ -102,7 +107,8 @@ export default function DevelopmentStep({
   const now = dayjs();
   const startDate = dayjs(assignation?.instance?.dates?.start || null);
   const canSubmit =
-    assignation?.instance?.alwaysAvailable || (startDate.isValid() && !now.isBefore(startDate));
+    assignation?.instance?.alwaysAvailable ||
+    (startDate.isValid() && !now.isBefore(startDate));
 
   React.useEffect(() => {
     setButtons(
@@ -111,9 +117,15 @@ export default function DevelopmentStep({
           {hasPrevDevelopment && (
             <Button
               disabled={!!animation}
-              onClick={() => setAnimation('backward')}
-              variant={animation ? 'filled' : 'link' /* Use filled when disabled to avoid bugs */}
-              rounded={!!animation /* Use rounded when disabled to avoid bugs */}
+              onClick={() => setAnimation("backward")}
+              variant={
+                animation
+                  ? "filled"
+                  : "link" /* Use filled when disabled to avoid bugs */
+              }
+              rounded={
+                !!animation /* Use rounded when disabled to avoid bugs */
+              }
               leftIcon={<ChevLeftIcon />}
             >
               {_labels?.buttons?.previous}
@@ -122,8 +134,14 @@ export default function DevelopmentStep({
           {!hasPrevDevelopment && hasPrevStep && (
             <Button
               onClick={onPrevStep}
-              variant={animation ? 'filled' : 'link' /* Use filled when disabled to avoid bugs */}
-              rounded={!!animation /* Use rounded when disabled to avoid bugs */}
+              variant={
+                animation
+                  ? "filled"
+                  : "link" /* Use filled when disabled to avoid bugs */
+              }
+              rounded={
+                !!animation /* Use rounded when disabled to avoid bugs */
+              }
               leftIcon={<ChevLeftIcon />}
               disabled={!!animation}
             >
@@ -134,7 +152,7 @@ export default function DevelopmentStep({
         {hasNextDevelopment && (
           <Button
             disabled={!!animation}
-            onClick={() => setAnimation('forward')}
+            onClick={() => setAnimation("forward")}
             variant="outline"
             rightIcon={<ChevRightIcon />}
             rounded
@@ -145,7 +163,7 @@ export default function DevelopmentStep({
         {!hasNextDevelopment && (hasNextStep || !hasNextActivity) && (
           <Button
             onClick={onNextStep}
-            variant={hasNextStep ? 'outline' : 'filled'}
+            variant={hasNextStep ? "outline" : "filled"}
             rightIcon={<ChevRightIcon />}
             rounded
             disabled={!!animation || !canSubmit || (!hasNextStep && preview)}
@@ -190,7 +208,7 @@ export default function DevelopmentStep({
   return (
     <Box className={classes.root}>
       <Title color="primary" order={2}>
-        {labels?.development}{' '}
+        {labels?.development}{" "}
         {developmentLength > 1 &&
           `(${(animation ? followingStepAfterAnimation : step) + 1}/${developmentLength})`}
       </Title>
@@ -198,12 +216,12 @@ export default function DevelopmentStep({
         <AnimatedPane
           variant="primaryPane"
           animating={!!animation}
-          reversed={animation === 'backward'}
+          reversed={animation === "backward"}
           width={textWidth}
           gap={gap}
           onAnimationEnd={() => {
             setAnimation(null);
-            setStep((s) => (animation === 'backward' ? s - 1 : s + 1));
+            setStep((s) => (animation === "backward" ? s - 1 : s + 1));
           }}
         >
           <DevelopmentText
@@ -217,18 +235,18 @@ export default function DevelopmentStep({
           <AnimatedPane
             variant="secondaryPane"
             animating={!!animation}
-            reversed={animation === 'backward'}
+            reversed={animation === "backward"}
             width={textWidth}
             gap={gap}
           >
             <DevelopmentText
               classes={classes}
               text={
-                animation === 'backward'
+                animation === "backward"
                   ? developments?.[step - 1]?.development
                   : developments?.[step + 1]?.development
               }
-              key={animation === 'backward' ? step - 1 : step + 1}
+              key={animation === "backward" ? step - 1 : step + 1}
             />
           </AnimatedPane>
         )}
@@ -239,7 +257,8 @@ export default function DevelopmentStep({
         show={
           hasDeliverable &&
           ((!animation && !hasNextDevelopment) ||
-            (animation && followingStepAfterAnimation === developmentLength - 1))
+            (animation &&
+              followingStepAfterAnimation === developmentLength - 1))
         }
       />
     </Box>

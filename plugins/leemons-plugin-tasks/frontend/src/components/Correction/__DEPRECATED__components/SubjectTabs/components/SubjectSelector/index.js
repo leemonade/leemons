@@ -1,1 +1,1 @@
-export { default } from './SubjectSelector';
+export { default } from "./SubjectSelector";

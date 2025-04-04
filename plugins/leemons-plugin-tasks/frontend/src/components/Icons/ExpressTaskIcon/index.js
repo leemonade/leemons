@@ -1,1 +1,1 @@
-export * from './ExpressTaskIcon';
+export * from "./ExpressTaskIcon";

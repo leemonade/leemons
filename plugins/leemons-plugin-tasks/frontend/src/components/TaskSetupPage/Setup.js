@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { isFunction, isNil } from 'lodash';
-import { VerticalStepperContainer } from '@bubbles-ui/components';
-import { useObservableContext } from '@common/context/ObservableContext';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { isFunction, isNil } from "lodash";
+import { VerticalStepperContainer } from "@bubbles-ui/components";
+import { useObservableContext } from "@common/context/ObservableContext";
 
 function getInitialProgram(sharedData) {
   if (sharedData?.subjects?.length > 0) {
@@ -12,14 +12,23 @@ function getInitialProgram(sharedData) {
   return null;
 }
 
-function Setup({ labels, steps, values, editable, onSave, useObserver, scrollRef, ...props }) {
+function Setup({
+  labels,
+  steps,
+  values,
+  editable,
+  onSave,
+  useObserver,
+  scrollRef,
+  ...props
+}) {
   const { setValue, getValues } = useObservableContext();
 
   useEffect(() => {
-    const task = getValues('task');
+    const task = getValues("task");
     if (!isNil(values) && JSON.stringify(task) !== JSON.stringify(values)) {
-      setValue('task', values);
-      setValue('sharedData', { ...values, program: getInitialProgram(values) });
+      setValue("task", values);
+      setValue("sharedData", { ...values, program: getInitialProgram(values) });
     }
   }, [values]);
 
@@ -29,31 +38,31 @@ function Setup({ labels, steps, values, editable, onSave, useObserver, scrollRef
 
   const onChangeActiveIndex = (index) => {
     const f = (event) => {
-      if (event === 'stepSaved') {
+      if (event === "stepSaved") {
         setActive(index);
         unsubscribe(f);
-      } else if (event === 'saveStepFailed') {
+      } else if (event === "saveStepFailed") {
         unsubscribe(f);
       }
     };
     subscribe(f);
 
-    emitEvent('saveStep');
+    emitEvent("saveStep");
   };
 
   const [callOnSave, setCallOnSave] = useState(false);
 
   useEffect(() => {
     if (callOnSave) {
-      if (isFunction(onSave)) onSave(getValues('sharedData'), callOnSave);
+      if (isFunction(onSave)) onSave(getValues("sharedData"), callOnSave);
       setCallOnSave(false);
     }
   }, [callOnSave]);
 
   useEffect(() => {
     const f = (event) => {
-      if (event === 'saveData') {
-        setCallOnSave('edit');
+      if (event === "saveData") {
+        setCallOnSave("edit");
       }
     };
 
@@ -69,7 +78,7 @@ function Setup({ labels, steps, values, editable, onSave, useObserver, scrollRef
     if (active < steps.length - 1) {
       setActive(active + 1);
     } else {
-      setCallOnSave('library');
+      setCallOnSave("library");
     }
   };
 

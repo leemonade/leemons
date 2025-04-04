@@ -1,15 +1,15 @@
-import React, { useMemo } from 'react';
-import _, { find } from 'lodash';
-import { useFormContext, useWatch } from 'react-hook-form';
-import PropTypes from 'prop-types';
-import { ContextContainer, TableInput, Select } from '@bubbles-ui/components';
+import React, { useMemo } from "react";
+import _, { find } from "lodash";
+import { useFormContext, useWatch } from "react-hook-form";
+import PropTypes from "prop-types";
+import { ContextContainer, TableInput, Select } from "@bubbles-ui/components";
 import {
   SelectLevelsOfDifficulty,
   useLevelsOfDifficulty,
-} from '@assignables/components/LevelsOfDifficulty';
-import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
-import useTableInputLabels from '../../../../helpers/useTableInputLabels';
-import ConditionalInput from '../../../Inputs/ConditionalInput';
+} from "@assignables/components/LevelsOfDifficulty";
+import useSessionClasses from "@academic-portfolio/hooks/useSessionClasses";
+import useTableInputLabels from "../../../../helpers/useTableInputLabels";
+import ConditionalInput from "../../../Inputs/ConditionalInput";
 
 function useSubjectColumns({ labels, placeholders, errorMessages, subjects }) {
   const difficultyLevels = useLevelsOfDifficulty();
@@ -18,7 +18,7 @@ function useSubjectColumns({ labels, placeholders, errorMessages, subjects }) {
 
     columns.push({
       Header: labels?.subject,
-      accessor: 'subject',
+      accessor: "subject",
       input: {
         node: (
           <Select
@@ -37,7 +37,7 @@ function useSubjectColumns({ labels, placeholders, errorMessages, subjects }) {
 
     columns.push({
       Header: labels?.level,
-      accessor: 'level',
+      accessor: "level",
       input: {
         node: (
           <SelectLevelsOfDifficulty
@@ -66,18 +66,26 @@ export default function SelectSubjects({
   const tableInputLabels = useTableInputLabels();
 
   const { control, getValues } = useFormContext();
-  const programId = useWatch({ name: 'program', control, defaultValue: getValues('program') });
+  const programId = useWatch({
+    name: "program",
+    control,
+    defaultValue: getValues("program"),
+  });
 
   // const subjects = useProgramSubjects(programId);
 
-  const { data: classes } = useSessionClasses({ program: programId, showType: true, type: null });
+  const { data: classes } = useSessionClasses({
+    program: programId,
+    showType: true,
+    type: null,
+  });
 
   const subjects = classes?.map((klass) => ({
     value: klass.subject.subject || klass.subject.id,
     label: klass.subject.name,
     type: klass.type,
   }));
-  const uniqSubjects = _.uniqBy(subjects, 'value');
+  const uniqSubjects = _.uniqBy(subjects, "value");
 
   const subjectsToUse = useMemo(() => {
     if (programId) {
@@ -89,7 +97,7 @@ export default function SelectSubjects({
 
   const mainTeacherSubjects = useMemo(() => {
     if (subjectsToUse) {
-      return subjectsToUse.filter((subject) => subject.type === 'main-teacher');
+      return subjectsToUse.filter((subject) => subject.type === "main-teacher");
     }
 
     return [];
@@ -97,7 +105,7 @@ export default function SelectSubjects({
 
   const otherTypeTeacherSubjects = useMemo(() => {
     if (subjectsToUse) {
-      return subjectsToUse.filter((subject) => subject.type !== 'main-teacher');
+      return subjectsToUse.filter((subject) => subject.type !== "main-teacher");
     }
 
     return [];
@@ -138,9 +146,9 @@ export default function SelectSubjects({
   }, [value, otherTypeTeacherSubjects]);
 
   const handleChange = (type) => (newValues) => {
-    if (type === 'main-teacher') {
+    if (type === "main-teacher") {
       onChange([...otherTypeTeacherValues, ...newValues]);
-    } else if (type === 'other-type') {
+    } else if (type === "other-type") {
       onChange([...mainTeacherValues, ...newValues]);
     }
   };
@@ -158,7 +166,7 @@ export default function SelectSubjects({
     <ContextContainer title={labels?.subjects}>
       <TableInput
         data={mainTeacherValues}
-        onChange={handleChange('main-teacher')}
+        onChange={handleChange("main-teacher")}
         columns={mainTeacherSubjectsColumns}
         labels={tableInputLabels}
         unique
@@ -179,7 +187,7 @@ export default function SelectSubjects({
         render={() => (
           <TableInput
             data={otherTypeTeacherValues}
-            onChange={handleChange('other-type')}
+            onChange={handleChange("other-type")}
             columns={otherTypeTeacherSubjectsColumns}
             labels={tableInputLabels}
             unique

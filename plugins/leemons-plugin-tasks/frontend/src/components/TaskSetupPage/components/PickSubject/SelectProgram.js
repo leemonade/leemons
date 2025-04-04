@@ -1,11 +1,16 @@
-import React, { useMemo } from 'react';
-import { useFormContext, Controller } from 'react-hook-form';
-import PropTypes from 'prop-types';
-import { ContextContainer } from '@bubbles-ui/components';
-import { SelectProgram as APSelectProgram } from '@academic-portfolio/components';
-import { getCentersWithToken } from '@users/session';
+import React, { useMemo } from "react";
+import { useFormContext, Controller } from "react-hook-form";
+import PropTypes from "prop-types";
+import { ContextContainer } from "@bubbles-ui/components";
+import { SelectProgram as APSelectProgram } from "@academic-portfolio/components";
+import { getCentersWithToken } from "@users/session";
 
-export default function SelectProgram({ errorMessages, labels, placeholders, required }) {
+export default function SelectProgram({
+  errorMessages,
+  labels,
+  placeholders,
+  required,
+}) {
   const {
     control,
     getValues,
@@ -14,7 +19,7 @@ export default function SelectProgram({ errorMessages, labels, placeholders, req
   } = useFormContext();
 
   const centerId = useMemo(() => {
-    const savedCenter = getValues('center');
+    const savedCenter = getValues("center");
 
     if (savedCenter) {
       return savedCenter;
@@ -24,7 +29,7 @@ export default function SelectProgram({ errorMessages, labels, placeholders, req
     const { id } = centers[0];
     // EN: There should be only one center.
     // ES: Debe haber solo un centro.
-    setValue('center', id);
+    setValue("center", id);
     return id;
   }, []);
 

@@ -1,8 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useFormContext } from 'react-hook-form';
-import { InputWrapper } from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
+import React from "react";
+import PropTypes from "prop-types";
+import { Controller, useFormContext } from "react-hook-form";
+import { InputWrapper } from "@bubbles-ui/components";
+import { TextEditorInput } from "@bubbles-ui/editors";
 
 export default function Development({ name, label, required }) {
   const { control } = useFormContext();
@@ -16,10 +16,12 @@ export default function Development({ name, label, required }) {
         render={({ field, fieldState: { error } }) => (
           <TextEditorInput
             {...field}
-            error={error && 'This field is required'}
+            error={error && "This field is required"}
             value={field.value?.[0] ? field.value[0].development : null}
-            onChange={(value) => field.onChange(value ? [{ development: value }] : [])}
-            editorStyles={{ minHeight: '96px' }}
+            onChange={(value) =>
+              field.onChange(value ? [{ development: value }] : [])
+            }
+            editorStyles={{ minHeight: "96px" }}
           />
         )}
       />

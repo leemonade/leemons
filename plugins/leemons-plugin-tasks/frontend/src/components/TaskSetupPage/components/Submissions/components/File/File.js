@@ -1,9 +1,15 @@
-import React from 'react';
-import _ from 'lodash';
-import mime from 'mime';
-import PropTypes from 'prop-types';
-import { useFormContext, Controller } from 'react-hook-form';
-import { Checkbox, TagsInput, NumberInput, Stack, ContextContainer } from '@bubbles-ui/components';
+import React from "react";
+import _ from "lodash";
+import mime from "mime";
+import PropTypes from "prop-types";
+import { useFormContext, Controller } from "react-hook-form";
+import {
+  Checkbox,
+  TagsInput,
+  NumberInput,
+  Stack,
+  ContextContainer,
+} from "@bubbles-ui/components";
 
 export default function File({ labels }) {
   const {
@@ -16,7 +22,11 @@ export default function File({ labels }) {
         control={control}
         name="data.multipleFiles"
         render={({ field }) => (
-          <Checkbox {...field} checked={field.value} label={labels?.multiFile} />
+          <Checkbox
+            {...field}
+            checked={field.value}
+            label={labels?.multiFile}
+          />
         )}
       />
       <Controller
@@ -37,38 +47,41 @@ export default function File({ labels }) {
             error={errors.data?.extensions}
             onChange={(extensions) => {
               const cleanedExtensions = extensions.map((extension) =>
-                extension.replace(/[ .]/g, '')
+                extension.replace(/[ .]/g, "")
               );
-              const validExtensions = cleanedExtensions.reduce((values, extension) => {
-                if (field.value && field.value[extension]) {
-                  return {
-                    ...values,
-                    [extension]: field.value[extension],
-                  };
-                }
-                const type = mime.getType(extension);
-                const ext = mime.getExtension(extension);
+              const validExtensions = cleanedExtensions.reduce(
+                (values, extension) => {
+                  if (field.value && field.value[extension]) {
+                    return {
+                      ...values,
+                      [extension]: field.value[extension],
+                    };
+                  }
+                  const type = mime.getType(extension);
+                  const ext = mime.getExtension(extension);
 
-                if (type) {
-                  return {
-                    ...values,
-                    [extension]: type,
-                  };
-                }
-                if (ext) {
+                  if (type) {
+                    return {
+                      ...values,
+                      [extension]: type,
+                    };
+                  }
+                  if (ext) {
+                    return {
+                      ...values,
+                      [extension]: extension,
+                    };
+                  }
+
                   return {
                     ...values,
                     [extension]: extension,
                   };
-                }
-
-                return {
-                  ...values,
-                  [extension]: extension,
-                };
-              }, {});
-              if (Object.keys(validExtensions).includes('rtf')) {
-                validExtensions.rtf = '.rtf';
+                },
+                {}
+              );
+              if (Object.keys(validExtensions).includes("rtf")) {
+                validExtensions.rtf = ".rtf";
               }
               field.onChange(validExtensions);
             }}

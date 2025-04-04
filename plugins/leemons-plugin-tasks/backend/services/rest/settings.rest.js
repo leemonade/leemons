@@ -7,13 +7,13 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { LeemonsValidator } = require('@leemons/validator');
+} = require("@leemons/middlewares");
+const { LeemonsValidator } = require("@leemons/validator");
 
 const {
   permissions: { names: permissions },
-} = require('../../config/constants');
-const { findOne, update } = require('../../core/settings');
+} = require("../../config/constants");
+const { findOne, update } = require("../../core/settings");
 
 const getPermissions = (permissionsArr, actions = null) => {
   if (Array.isArray(permissionsArr)) {
@@ -21,7 +21,9 @@ const getPermissions = (permissionsArr, actions = null) => {
       (obj, [permission, _actions]) => ({
         ...obj,
         [permission]: {
-          actions: _actions.includes('admin') ? _actions : ['admin', ..._actions],
+          actions: _actions.includes("admin")
+            ? _actions
+            : ["admin", ..._actions],
         },
       }),
       {}
@@ -29,7 +31,7 @@ const getPermissions = (permissionsArr, actions = null) => {
   }
   return {
     [permissionsArr]: {
-      actions: actions.includes('admin') ? actions : ['admin', ...actions],
+      actions: actions.includes("admin") ? actions : ["admin", ...actions],
     },
   };
 };
@@ -38,13 +40,13 @@ const getPermissions = (permissionsArr, actions = null) => {
 module.exports = {
   findOneRest: {
     rest: {
-      path: '/',
-      method: 'GET',
+      path: "/",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        allowedPermissions: getPermissions(permissions.tasks, ['view']),
+        allowedPermissions: getPermissions(permissions.tasks, ["view"]),
       }),
     ],
     async handler(ctx) {
@@ -54,26 +56,26 @@ module.exports = {
   },
   updateRest: {
     rest: {
-      path: '/',
-      method: 'POST',
+      path: "/",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        allowedPermissions: getPermissions(permissions.tasks, ['update']),
+        allowedPermissions: getPermissions(permissions.tasks, ["update"]),
       }),
     ],
     async handler(ctx) {
       const settingsSchema = {
         hideWelcome: {
-          type: 'boolean',
+          type: "boolean",
         },
         configured: {
-          type: 'boolean',
+          type: "boolean",
         },
       };
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: { ...settingsSchema },
         required: [],
         additionalProperties: false,
@@ -87,24 +89,24 @@ module.exports = {
   },
   enableMenuItemRest: {
     rest: {
-      path: '/enable-menu-item',
-      method: 'POST',
+      path: "/enable-menu-item",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        allowedPermissions: getPermissions(permissions.tasks, ['update']),
+        allowedPermissions: getPermissions(permissions.tasks, ["update"]),
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
-        properties: { key: { type: 'string' } },
-        required: ['key'],
+        type: "object",
+        properties: { key: { type: "string" } },
+        required: ["key"],
       });
       if (validator.validate(ctx.params)) {
         // To verify: menuKey defaults to mainMenuKey, verificar que es lo que se quiere
-        const item = await ctx.tx.call('menu-builder.menuItem.enable', {
+        const item = await ctx.tx.call("menu-builder.menuItem.enable", {
           key: ctx.prefixPN(ctx.params.key),
         });
         return { status: 200, item };

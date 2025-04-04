@@ -1,26 +1,32 @@
-import React from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
-import loadable from '@loadable/component';
-import pMinDelay from 'p-min-delay';
-import { LoadingOverlay } from '@bubbles-ui/components';
-import { useSession } from '@users/session';
-import { goLoginPage } from '@users/navigate';
-import { useSearchParams } from '@common';
+import React from "react";
+import { Route, Switch, useRouteMatch } from "react-router-dom";
+import loadable from "@loadable/component";
+import pMinDelay from "p-min-delay";
+import { LoadingOverlay } from "@bubbles-ui/components";
+import { useSession } from "@users/session";
+import { goLoginPage } from "@users/navigate";
+import { useSearchParams } from "@common";
 
 const AssignmentPage = loadable(() =>
-  pMinDelay(import('./src/pages/private/assignment/AssignmentPage'), 500)
+  pMinDelay(import("./src/pages/private/assignment/AssignmentPage"), 500)
 );
-const Welcome = loadable(() => pMinDelay(import('./src/pages/private/welcome/WelcomePage'), 500));
-const Library = loadable(() => pMinDelay(import('./src/pages/private/library/LibraryPage'), 500));
+const Welcome = loadable(() =>
+  pMinDelay(import("./src/pages/private/welcome/WelcomePage"), 500)
+);
+const Library = loadable(() =>
+  pMinDelay(import("./src/pages/private/library/LibraryPage"), 500)
+);
 const SetupTask = loadable(() =>
-  pMinDelay(import('./src/pages/private/library/TaskSetupPage'), 500)
+  pMinDelay(import("./src/pages/private/library/TaskSetupPage"), 500)
 );
 const Profiles = loadable(() =>
-  pMinDelay(import('./src/pages/private/profiles/ProfilesPage'), 500)
+  pMinDelay(import("./src/pages/private/profiles/ProfilesPage"), 500)
 );
-const UserDetails = loadable(() => pMinDelay(import('./src/pages/private/student/Details'), 500));
+const UserDetails = loadable(() =>
+  pMinDelay(import("./src/pages/private/student/Details"), 500)
+);
 const Correction = loadable(() =>
-  pMinDelay(import('./src/pages/private/assignment/Correction'), 500)
+  pMinDelay(import("./src/pages/private/assignment/Correction"), 500)
 );
 
 export default function Private() {
@@ -46,10 +52,17 @@ export default function Private() {
         <SetupTask session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/library/view/:id`}>
-        <UserDetails session={session} fallback={<LoadingOverlay visible />} preview />
+        <UserDetails
+          session={session}
+          fallback={<LoadingOverlay visible />}
+          preview
+        />
       </Route>
       <Route path={`${path}/library/assign/:id`}>
-        <AssignmentPage session={session} fallback={<LoadingOverlay visible />} />
+        <AssignmentPage
+          session={session}
+          fallback={<LoadingOverlay visible />}
+        />
       </Route>
       <Route path={`${path}/library`}>
         <Library session={session} fallback={<LoadingOverlay visible />} />

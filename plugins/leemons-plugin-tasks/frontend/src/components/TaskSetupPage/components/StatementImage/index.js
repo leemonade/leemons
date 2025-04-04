@@ -1,1 +1,1 @@
-export { default } from './StatementImage';
+export { default } from "./StatementImage";

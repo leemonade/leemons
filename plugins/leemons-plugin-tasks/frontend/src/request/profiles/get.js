@@ -3,7 +3,10 @@ export default function getProfiles(key) {
 
   return Promise.all(
     keys.map(async (k) => {
-      const tuple = await leemons.api(`v1/tasks/profiles/${k}`, { method: 'GET', allAgents: true });
+      const tuple = await leemons.api(`v1/tasks/profiles/${k}`, {
+        method: "GET",
+        allAgents: true,
+      });
       return { key: k, profile: tuple.profile };
     })
   );

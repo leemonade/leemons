@@ -1,8 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, TextClamp, Text } from '@bubbles-ui/components';
-import { OpenIcon } from '@bubbles-ui/icons/solid';
-import { useLinkSubmissionStyles } from './LinkSubmission.style';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, TextClamp, Text } from "@bubbles-ui/components";
+import { OpenIcon } from "@bubbles-ui/icons/solid";
+import { useLinkSubmissionStyles } from "./LinkSubmission.style";
 
 function LinkSubmission({ assignation }) {
   const { classes } = useLinkSubmissionStyles();
@@ -14,7 +14,10 @@ function LinkSubmission({ assignation }) {
   }
 
   return (
-    <Box className={classes.linkSubmission} onClick={() => window.open(submission)}>
+    <Box
+      className={classes.linkSubmission}
+      onClick={() => window.open(submission)}
+    >
       <TextClamp lines={1} showTooltip>
         <Text className={classes.linkSubmissionText}>{submission}</Text>
       </TextClamp>

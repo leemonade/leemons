@@ -1,9 +1,13 @@
-import React, { useMemo, useState } from 'react';
-import { Box, ActivityAccordion, ActivityAccordionPanel } from '@bubbles-ui/components';
-import loadable from '@loadable/component';
-import pMinDelay from 'p-min-delay';
-import { PluginAssignmentsIcon } from '@bubbles-ui/icons/outline';
-import styles from '../../components/LinkSubmission/LinkSubmission.style';
+import React, { useMemo, useState } from "react";
+import {
+  Box,
+  ActivityAccordion,
+  ActivityAccordionPanel,
+} from "@bubbles-ui/components";
+import loadable from "@loadable/component";
+import pMinDelay from "p-min-delay";
+import { PluginAssignmentsIcon } from "@bubbles-ui/icons/outline";
+import styles from "../../components/LinkSubmission/LinkSubmission.style";
 
 function TypeNotFound({ labels }) {
   return <Box>{labels?.types?.notFound?.notFound}</Box>;
@@ -43,7 +47,10 @@ export default function Submission({ assignation, labels }) {
 
   return (
     <ActivityAccordion value={state} onChange={setState}>
-      <ActivityAccordionPanel label={labels?.title} icon={<PluginAssignmentsIcon />}>
+      <ActivityAccordionPanel
+        label={labels?.title}
+        icon={<PluginAssignmentsIcon />}
+      >
         <Box className={classes?.accordionPanel}>
           <Component assignation={assignation} labels={labels} />
         </Box>

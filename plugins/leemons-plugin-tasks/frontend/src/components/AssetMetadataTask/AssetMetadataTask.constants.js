@@ -1,4 +1,4 @@
-import propTypes from 'prop-types';
+import propTypes from "prop-types";
 
 export const ASSET_METADATA_TASK_PROP_TYPES = {
   metadata: propTypes.object,

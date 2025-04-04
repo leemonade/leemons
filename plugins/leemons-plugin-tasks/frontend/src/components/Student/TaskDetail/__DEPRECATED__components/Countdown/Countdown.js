@@ -1,16 +1,16 @@
-import React, { useMemo, useEffect } from 'react';
-import { ActivityCountdown, createStyles, Box } from '@bubbles-ui/components';
-import { useHistory } from 'react-router-dom';
-import dayjs from 'dayjs';
-import dayjsDuration from 'dayjs/plugin/duration';
+import React, { useMemo, useEffect } from "react";
+import { ActivityCountdown, createStyles, Box } from "@bubbles-ui/components";
+import { useHistory } from "react-router-dom";
+import dayjs from "dayjs";
+import dayjsDuration from "dayjs/plugin/duration";
 
-import { useLayout } from '@layout/context';
-import FinalizationModal from '../FinalizationModal';
+import { useLayout } from "@layout/context";
+import FinalizationModal from "../FinalizationModal";
 
 const useStyles = createStyles((theme) => ({
   root: {
-    display: 'flex',
-    justifyContent: 'flex-end',
+    display: "flex",
+    justifyContent: "flex-end",
     marginBottom: theme.spacing[6],
     marginRight: theme.spacing[5],
   },
@@ -28,13 +28,13 @@ const useCountdownDate = (assignation) =>
   useMemo(() => {
     const instance = assignation?.instance;
     const startDate = dayjs(assignation?.timestamps?.start || null);
-    const [durationValue, durationUnits] = instance?.duration?.split(' ') || [];
+    const [durationValue, durationUnits] = instance?.duration?.split(" ") || [];
 
     if (!startDate.isValid() || !durationValue || !durationUnits) {
       return null;
     }
     const duration = dayjs.duration({ [durationUnits]: durationValue });
-    const endDate = startDate.add(duration.asSeconds(), 'seconds');
+    const endDate = startDate.add(duration.asSeconds(), "seconds");
 
     if (!endDate.isValid()) {
       return null;
@@ -58,7 +58,7 @@ export default function Countdown({
 
   React.useEffect(() => {
     if (endDate?.isValid() && !opened.current) {
-      const timeUntilEnd = endDate?.diff(dayjs(), 'millisecond');
+      const timeUntilEnd = endDate?.diff(dayjs(), "millisecond");
 
       if (timeUntilEnd <= 0) {
         onTimeout?.();
@@ -84,8 +84,8 @@ export default function Countdown({
 
   const role = assignation?.instance?.assignable?.roleDetails;
   const revisionUrl = role.evaluationDetailUrl
-    .replace(':id', assignation?.instance?.id)
-    .replace(':user', assignation?.user);
+    .replace(":id", assignation?.instance?.id)
+    .replace(":user", assignation?.user);
 
   return (
     <Box className={classes?.root}>

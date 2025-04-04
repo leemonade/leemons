@@ -1,8 +1,8 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
 async function duplicate({ taskId, published, ctx }) {
   try {
-    return await ctx.tx.call('assignables.assignables.duplicateAssignable', {
+    return await ctx.tx.call("assignables.assignables.duplicateAssignable", {
       assignableId: taskId,
       published,
     });

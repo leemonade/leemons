@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useFormContext } from 'react-hook-form';
-import { Button, InputWrapper, Stack } from '@bubbles-ui/components';
-import { CurriculumSelectContentsModal } from '@curriculum/components/CurriculumSelectContentsModal';
-import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { listCurriculumsByProgramRequest } from '@curriculum/request';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { Controller, useFormContext } from "react-hook-form";
+import { Button, InputWrapper, Stack } from "@bubbles-ui/components";
+import { CurriculumSelectContentsModal } from "@curriculum/components/CurriculumSelectContentsModal";
+import { CurriculumListContents } from "@curriculum/components/CurriculumListContents";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import { listCurriculumsByProgramRequest } from "@curriculum/request";
 
 function useCurriculum(program) {
   const [curriculum, setCurriculum] = useState(null);
@@ -16,7 +16,8 @@ function useCurriculum(program) {
         return;
       }
 
-      const { data: curriculumData } = await listCurriculumsByProgramRequest(program);
+      const { data: curriculumData } =
+        await listCurriculumsByProgramRequest(program);
 
       if (curriculumData.count) {
         setCurriculum(curriculumData.items[0]);
@@ -62,16 +63,26 @@ export default function Curriculum({
                 curriculum={curriculum?.id}
                 onChange={(contents) => {
                   field.onChange(
-                    type ? contents.map((content) => ({ [type]: content })) : contents
+                    type
+                      ? contents.map((content) => ({ [type]: content }))
+                      : contents
                   );
                   setShow(false);
                 }}
                 onClose={() => setShow(false)}
               />
-              <CurriculumListContents {...field} value={value} subjects={subjects} />
+              <CurriculumListContents
+                {...field}
+                value={value}
+                subjects={subjects}
+              />
 
               <Stack>
-                <Button leftIcon={<AddCircleIcon />} variant="light" onClick={() => setShow(true)}>
+                <Button
+                  leftIcon={<AddCircleIcon />}
+                  variant="light"
+                  onClick={() => setShow(true)}
+                >
                   {addLabel}
                 </Button>
               </Stack>

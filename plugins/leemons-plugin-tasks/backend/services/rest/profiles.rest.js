@@ -4,17 +4,17 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
 
-const get = require('../../core/profiles/get');
-const set = require('../../core/profiles/set');
+const get = require("../../core/profiles/get");
+const set = require("../../core/profiles/set");
 
 /** @type {ServiceSchema} */
 module.exports = {
   getRest: {
     rest: {
-      method: 'GET',
-      path: '/:key',
+      method: "GET",
+      path: "/:key",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -29,8 +29,8 @@ module.exports = {
 
   setRest: {
     rest: {
-      method: 'POST',
-      path: '/:key',
+      method: "POST",
+      path: "/:key",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -47,14 +47,16 @@ module.exports = {
 
   setManyRest: {
     rest: {
-      method: 'POST',
-      path: '/',
+      method: "POST",
+      path: "/",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const { profiles } = ctx.params;
 
-      await Promise.all(profiles.map(({ profile, key }) => set({ key, profile, ctx })));
+      await Promise.all(
+        profiles.map(({ profile, key }) => set({ key, profile, ctx }))
+      );
 
       return {
         status: 200,

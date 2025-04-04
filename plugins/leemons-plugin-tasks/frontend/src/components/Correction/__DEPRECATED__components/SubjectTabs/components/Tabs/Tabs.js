@@ -1,5 +1,5 @@
-import React from 'react';
-import _ from 'lodash';
+import React from "react";
+import _ from "lodash";
 
 export default function Tabs({ children, tabToShow, context }) {
   if (_.isNil(tabToShow)) {

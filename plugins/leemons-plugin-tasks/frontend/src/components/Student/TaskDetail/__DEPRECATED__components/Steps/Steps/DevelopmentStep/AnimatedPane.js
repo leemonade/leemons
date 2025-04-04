@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Motion, spring, presets } from 'react-motion';
-import { Box } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Motion, spring, presets } from "react-motion";
+import { Box } from "@bubbles-ui/components";
 
 function useAnimatedPaneStyles({ variant, reversed, width, gap }) {
   const fullOpacity = 1;
@@ -9,7 +9,7 @@ function useAnimatedPaneStyles({ variant, reversed, width, gap }) {
   const mediumOpacity = 0.6;
 
   switch (variant) {
-    case 'primaryPane':
+    case "primaryPane":
       return {
         zIndex: 0,
         initialStyle: { translateX: 0, opacity: fullOpacity },
@@ -23,7 +23,7 @@ function useAnimatedPaneStyles({ variant, reversed, width, gap }) {
               opacity: spring(hiddenOpacity, presets.noWobble),
             },
       };
-    case 'secondaryPane':
+    case "secondaryPane":
       return reversed
         ? {
             zIndex: 1,
@@ -82,7 +82,11 @@ export function AnimatedPane({
         });
 
         return (
-          <Box sx={{ position: 'absolute', zIndex, height: '100%', width: '100%' }}>{element}</Box>
+          <Box
+            sx={{ position: "absolute", zIndex, height: "100%", width: "100%" }}
+          >
+            {element}
+          </Box>
         );
       }}
     </Motion>
@@ -94,6 +98,6 @@ AnimatedPane.propTypes = {
   gap: PropTypes.number,
   animating: PropTypes.bool,
   reversed: PropTypes.bool,
-  variant: PropTypes.oneOf(['primaryPane', 'secondaryPane']),
+  variant: PropTypes.oneOf(["primaryPane", "secondaryPane"]),
   onAnimationEnd: PropTypes.func,
 };

@@ -1,21 +1,27 @@
-import { Box, Text } from '@bubbles-ui/components';
+import { Box, Text } from "@bubbles-ui/components";
 // TODO: import from @library plugin
-import { LibraryItem } from '@leebrary/components';
-import { useApi } from '@common';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
-import { getAssetsByIdsRequest } from '@leebrary/request';
-import React from 'react';
-import { sidebarStyles } from './Sidebar.style';
+import { LibraryItem } from "@leebrary/components";
+import { useApi } from "@common";
+import prepareAsset from "@leebrary/helpers/prepareAsset";
+import { getAssetsByIdsRequest } from "@leebrary/request";
+import React from "react";
+import { sidebarStyles } from "./Sidebar.style";
 
 async function getResources(ids) {
-  const response = await getAssetsByIdsRequest(ids, { showPublic: true, indexable: 0 });
+  const response = await getAssetsByIdsRequest(ids, {
+    showPublic: true,
+    indexable: 0,
+  });
 
   return response.assets.map((asset) => prepareAsset(asset));
 }
 
 export default function Sidebar({ assignation, show = true, labels }) {
   const { classes, cx } = sidebarStyles();
-  const [resources] = useApi(getResources, assignation?.instance?.assignable?.resources);
+  const [resources] = useApi(
+    getResources,
+    assignation?.instance?.assignable?.resources
+  );
 
   const showTeam = false;
   const showResources = resources?.length;
@@ -28,9 +34,15 @@ export default function Sidebar({ assignation, show = true, labels }) {
             <Box className={classes.resourceContainer}>
               {resources?.map((resource) => (
                 <Box
-                  onClick={() => window.open(resource.url || resource.cover, '_blank', 'noopener')}
+                  onClick={() =>
+                    window.open(
+                      resource.url || resource.cover,
+                      "_blank",
+                      "noopener"
+                    )
+                  }
                   key={resource?.id}
-                  sx={{ cursor: 'pointer' }}
+                  sx={{ cursor: "pointer" }}
                 >
                   <LibraryItem asset={resource} />
                 </Box>

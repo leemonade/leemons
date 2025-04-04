@@ -1,15 +1,18 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
 async function update({ taskId, published, role, ctx, ...data }) {
   try {
-    const assignable = await ctx.tx.call('assignables.assignables.updateAssignable', {
-      assignable: {
-        id: taskId,
-        ...data,
-      },
-    });
+    const assignable = await ctx.tx.call(
+      "assignables.assignables.updateAssignable",
+      {
+        assignable: {
+          id: taskId,
+          ...data,
+        },
+      }
+    );
 
-    const version = await ctx.tx.call('common.versionControl.parseId', {
+    const version = await ctx.tx.call("common.versionControl.parseId", {
       id: assignable.id,
     });
 

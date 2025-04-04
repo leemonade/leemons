@@ -1,7 +1,7 @@
-import React, { useEffect, useCallback, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { noop, uniq } from 'lodash';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useEffect, useCallback, useMemo } from "react";
+import PropTypes from "prop-types";
+import { noop, uniq } from "lodash";
+import { useForm, Controller } from "react-hook-form";
 import {
   Box,
   ContextContainer,
@@ -9,22 +9,27 @@ import {
   DropdownButton,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
-} from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
-import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import { useObservableContext } from '@common/context/ObservableContext';
-import { Attachments } from '@leebrary/components';
-import TimeUnitsInput from '@common/components/TimeUnitsInput';
+} from "@bubbles-ui/components";
+import { TextEditorInput } from "@bubbles-ui/editors";
+import { ChevLeftIcon } from "@bubbles-ui/icons/outline";
+import { useObservableContext } from "@common/context/ObservableContext";
+import { Attachments } from "@leebrary/components";
+import TimeUnitsInput from "@common/components/TimeUnitsInput";
 
 function useDefaultValues() {
   const { getValues } = useObservableContext();
 
   return useMemo(() => {
-    const [instructionsForTeachers, instructionsForStudents, resources, duration] = getValues([
-      'sharedData.instructionsForTeachers',
-      'sharedData.instructionsForStudents',
-      'sharedData.resources',
-      'sharedData.duration',
+    const [
+      instructionsForTeachers,
+      instructionsForStudents,
+      resources,
+      duration,
+    ] = getValues([
+      "sharedData.instructionsForTeachers",
+      "sharedData.instructionsForStudents",
+      "sharedData.resources",
+      "sharedData.duration",
     ]);
 
     return {
@@ -70,18 +75,21 @@ function InstructionData({
 
   const onSubmit = useCallback(
     (e) => {
-      const sharedData = getValues('sharedData');
+      const sharedData = getValues("sharedData");
 
       const data = {
         ...sharedData,
         ...e,
         metadata: {
           ...sharedData.metadata,
-          visitedSteps: uniq([...(sharedData.metadata?.visitedSteps || []), 'instructionData']),
+          visitedSteps: uniq([
+            ...(sharedData.metadata?.visitedSteps || []),
+            "instructionData",
+          ]),
         },
       };
 
-      setValue('sharedData', data);
+      setValue("sharedData", data);
 
       return data;
     },
@@ -89,29 +97,29 @@ function InstructionData({
   );
   useEffect(() => {
     const f = (event) => {
-      if (event === 'saveTask') {
+      if (event === "saveTask") {
         handleSubmit(
           (data) => {
             onSubmit(data);
-            emitEvent('saveData');
+            emitEvent("saveData");
           },
           () => {
-            emitEvent('saveTaskFailed');
+            emitEvent("saveTaskFailed");
           }
         )();
-      } else if (event === 'saveTaskFailed') {
+      } else if (event === "saveTaskFailed") {
         setLoading(false);
-      } else if (event === 'saveStep') {
+      } else if (event === "saveStep") {
         if (!isDirty) {
-          emitEvent('stepSaved');
+          emitEvent("stepSaved");
         } else {
           handleSubmit(
             (data) => {
               onSubmit(data);
-              emitEvent('stepSaved');
+              emitEvent("stepSaved");
             },
             () => {
-              emitEvent('saveStepFailed');
+              emitEvent("saveStepFailed");
             }
           )();
         }
@@ -120,7 +128,15 @@ function InstructionData({
     subscribe(f);
 
     return () => unsubscribe(f);
-  }, [isDirty, onSubmit, emitEvent, handleSubmit, subscribe, unsubscribe, setLoading]);
+  }, [
+    isDirty,
+    onSubmit,
+    emitEvent,
+    handleSubmit,
+    subscribe,
+    unsubscribe,
+    setLoading,
+  ]);
 
   // ·······························································
   // HANDLERS
@@ -150,24 +166,24 @@ function InstructionData({
   const handleOnSave = () => {
     handleSubmit((values) => {
       onSubmit(values);
-      setLoading('draft');
-      emitEvent('saveTask');
+      setLoading("draft");
+      emitEvent("saveTask");
     })();
   };
 
   const handleOnPublish = () => {
     handleSubmit((values) => {
       onSubmit(values);
-      setLoading('publish');
-      emitEvent('publishTaskAndLibrary');
+      setLoading("publish");
+      emitEvent("publishTaskAndLibrary");
     })();
   };
 
   const handleOnAssign = () => {
     handleSubmit((values) => {
       onSubmit(values);
-      setLoading('publish');
-      emitEvent('publishTaskAndAssign');
+      setLoading("publish");
+      emitEvent("publishTaskAndAssign");
     })();
   };
 
@@ -196,21 +212,24 @@ function InstructionData({
                 variant="link"
                 onClick={handleOnSave}
                 disabled={loading}
-                loading={loading === 'draft'}
+                loading={loading === "draft"}
               >
-                {t('common.save')}
+                {t("common.save")}
               </Button>
               <DropdownButton
                 chevronUp
                 width="auto"
                 data={[
                   { label: labels.buttonPublish, onClick: handleOnPublish },
-                  { label: labels.buttonPublishAndAssign, onClick: handleOnAssign },
+                  {
+                    label: labels.buttonPublishAndAssign,
+                    onClick: handleOnAssign,
+                  },
                 ]}
-                loading={loading === 'publish'}
+                loading={loading === "publish"}
                 disabled={loading}
               >
-                {t('common.finish')}
+                {t("common.finish")}
               </DropdownButton>
             </>
           }
@@ -248,7 +267,7 @@ function InstructionData({
                           placeholder={placeholders.forTeacher}
                           help={helps.forTeacher}
                           error={errors.instructionsForTeachers}
-                          editorStyles={{ minHeight: '96px' }}
+                          editorStyles={{ minHeight: "96px" }}
                         />
                       )}
                     />
@@ -264,7 +283,7 @@ function InstructionData({
                           placeholder={placeholders.forStudent}
                           help={helps.forStudent}
                           error={errors.instructionsForStudents}
-                          editorStyles={{ minHeight: '96px' }}
+                          editorStyles={{ minHeight: "96px" }}
                         />
                       )}
                     />

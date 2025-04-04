@@ -1,35 +1,41 @@
-import React, { useMemo } from 'react';
-import { useHistory } from 'react-router-dom';
-import { Box, ContextContainer, createStyles, TabPanel, Tabs } from '@bubbles-ui/components';
+import React, { useMemo } from "react";
+import { useHistory } from "react-router-dom";
+import {
+  Box,
+  ContextContainer,
+  createStyles,
+  TabPanel,
+  Tabs,
+} from "@bubbles-ui/components";
 // TODO: import from @feedback plugin maybe?
-import { AdminPageHeader } from '@bubbles-ui/leemons';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import AssetList from '@leebrary/components/AssetList';
-import { prepareAsset } from '@leebrary/helpers/prepareAsset';
-import useAcademicFiltersForAssetList from '@assignables/hooks/useAcademicFiltersForAssetList';
-import { prefixPN } from '../../../helpers';
+import { AdminPageHeader } from "@bubbles-ui/leemons";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import AssetList from "@leebrary/components/AssetList";
+import { prepareAsset } from "@leebrary/helpers/prepareAsset";
+import useAcademicFiltersForAssetList from "@assignables/hooks/useAcademicFiltersForAssetList";
+import { prefixPN } from "../../../helpers";
 
 const LibraryPageStyles = createStyles((theme) => ({
   pageContainer: {
-    display: 'flex',
+    display: "flex",
   },
   tabs: {
-    display: 'flex',
+    display: "flex",
     flex: 1,
   },
   tabPane: {
-    display: 'flex',
+    display: "flex",
     flex: 1,
-    height: '100%',
+    height: "100%",
     paddingTop: theme.spacing[5],
     paddingBottom: theme.spacing[5],
   },
 }));
 
 export default function LibraryPage() {
-  const [t] = useTranslateLoader(prefixPN('library_page'));
-  const { t: tCommonHeader } = useCommonTranslate('page_header');
+  const [t] = useTranslateLoader(prefixPN("library_page"));
+  const { t: tCommonHeader } = useCommonTranslate("page_header");
   const [currentAsset, setCurrentAsset] = React.useState(null);
   const academicFilters = useAcademicFiltersForAssetList();
 
@@ -39,7 +45,7 @@ export default function LibraryPage() {
   // HANDLERS
 
   const handleOnNewTask = () => {
-    history.push('/private/tasks/library/create');
+    history.push("/private/tasks/library/create");
   };
 
   const handleOnSelectTask = (item) => {
@@ -54,16 +60,16 @@ export default function LibraryPage() {
 
   const headerLabels = useMemo(
     () => ({
-      title: t('page_title'),
-      published: t('published'),
-      draft: t('draft'),
+      title: t("page_title"),
+      published: t("published"),
+      draft: t("draft"),
     }),
     [t]
   );
 
   const headerButtons = useMemo(
     () => ({
-      new: tCommonHeader('new'),
+      new: tCommonHeader("new"),
     }),
     [tCommonHeader]
   );
@@ -71,7 +77,7 @@ export default function LibraryPage() {
   // -------------------------------------------------------------------------
   // COMPONENT
 
-  const { classes } = LibraryPageStyles({}, { name: 'LibraryPage' });
+  const { classes } = LibraryPageStyles({}, { name: "LibraryPage" });
 
   return (
     <ContextContainer fullHeight>
@@ -100,7 +106,7 @@ export default function LibraryPage() {
               variant="embedded"
               category="assignables.task"
               onSelectItem={handleOnSelectTask}
-              roles={['owner', 'assigner']}
+              roles={["owner", "assigner"]}
             />
           </Box>
         </TabPanel>
@@ -116,7 +122,7 @@ export default function LibraryPage() {
               variant="embedded"
               category="assignables.task"
               onSelectItem={handleOnSelectTask}
-              roles={['owner', 'assigner']}
+              roles={["owner", "assigner"]}
             />
           </Box>
         </TabPanel>

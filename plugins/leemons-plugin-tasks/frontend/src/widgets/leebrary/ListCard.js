@@ -1,29 +1,29 @@
-import React, { useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { useHistory } from 'react-router-dom';
-import { createStyles } from '@bubbles-ui/components';
-import { LibraryCard } from '@leebrary/components';
-import { addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import _, { noop } from 'lodash';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { AssignIcon } from '@leebrary/components/LibraryDetailToolbar/icons/AssignIcon';
-import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
-import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
-import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
-import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
-import useIsMainTeacherInSubject from '@academic-portfolio/hooks/queries/useIsMainTeacherInSubject';
-import { useIsOwner } from '@leebrary/hooks/useIsOwner';
-import { ExpressTaskIcon } from '../../components/Icons/ExpressTaskIcon';
-import { TaskIcon } from '../../components/Icons/TaskIcon';
-import { prefixPN } from '../../helpers/prefixPN';
+import React, { useMemo, useState } from "react";
+import PropTypes from "prop-types";
+import { useHistory } from "react-router-dom";
+import { createStyles } from "@bubbles-ui/components";
+import { LibraryCard } from "@leebrary/components";
+import { addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import _, { noop } from "lodash";
+import { unflatten } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { AssignIcon } from "@leebrary/components/LibraryDetailToolbar/icons/AssignIcon";
+import { DeleteIcon } from "@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon";
+import { EditIcon } from "@leebrary/components/LibraryDetailToolbar/icons/EditIcon";
+import { DuplicateIcon } from "@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon";
+import { ShareIcon } from "@leebrary/components/LibraryDetailToolbar/icons/ShareIcon";
+import useIsMainTeacherInSubject from "@academic-portfolio/hooks/queries/useIsMainTeacherInSubject";
+import { useIsOwner } from "@leebrary/hooks/useIsOwner";
+import { ExpressTaskIcon } from "../../components/Icons/ExpressTaskIcon";
+import { TaskIcon } from "../../components/Icons/TaskIcon";
+import { prefixPN } from "../../helpers/prefixPN";
 
 const ListCardStyles = createStyles((theme, { single, selected }) => ({
   root: {
-    cursor: single ? 'default' : 'pointer',
-    borderColor: selected && theme.other.core.color.primary['400'],
-    borderWidth: selected && '1px',
+    cursor: single ? "default" : "pointer",
+    borderColor: selected && theme.other.core.color.primary["400"],
+    borderWidth: selected && "1px",
     boxShadow: selected && theme.shadows.shadow03,
   },
 }));
@@ -38,7 +38,8 @@ const ListCard = ({
   ...props
 }) => {
   const history = useHistory();
-  const [enableIsTeacherInSubjectQuery, setEnableIsTeacherInSubjectQuery] = useState(false);
+  const [enableIsTeacherInSubjectQuery, setEnableIsTeacherInSubjectQuery] =
+    useState(false);
   const {
     openConfirmationModal,
     openDeleteConfirmationModal,
@@ -47,9 +48,9 @@ const ListCard = ({
   const isExpress = !!asset?.providerData?.metadata?.express;
 
   const [, translations] = useTranslateLoader([
-    prefixPN('cardMenu'),
-    'tasks.variant',
-    'tasks.expressVariant',
+    prefixPN("cardMenu"),
+    "tasks.variant",
+    "tasks.expressVariant",
   ]);
 
   const { menuLabels, taskLabel, expressTaskLabel } = useMemo(() => {
@@ -59,21 +60,24 @@ const ListCard = ({
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
       return {
-        menuLabels: _.get(res, prefixPN('cardMenu')),
-        taskLabel: _.get(res, 'tasks.variant'),
-        expressTaskLabel: _.get(res, 'tasks.expressVariant'),
+        menuLabels: _.get(res, prefixPN("cardMenu")),
+        taskLabel: _.get(res, "tasks.variant"),
+        expressTaskLabel: _.get(res, "tasks.expressVariant"),
       };
     }
 
     return {
       menuLabels: {},
-      taskLabel: '',
+      taskLabel: "",
     };
   }, [translations]);
 
   const { data: isMainTeacherInAssetSubjects, isLoading: teacherCheckLoading } =
     useIsMainTeacherInSubject({
-      subjectIds: asset.subjects?.length > 0 ? asset.subjects.map((item) => item.subject) : [],
+      subjectIds:
+        asset.subjects?.length > 0
+          ? asset.subjects.map((item) => item.subject)
+          : [],
       options: {
         enabled: enableIsTeacherInSubjectQuery && asset.subjects?.length > 0,
         refetchOnWindowFocus: false,
@@ -94,14 +98,14 @@ const ListCard = ({
   // ·········································································
   // HANDLERS
 
-  const handleClick = (url, target = 'self', callback = noop) => {
-    if (target === 'self') {
+  const handleClick = (url, target = "self", callback = noop) => {
+    if (target === "self") {
       history.push(url);
-      return callback('redirected', url);
+      return callback("redirected", url);
     }
 
-    if (target === 'api') {
-      const [method, uri] = url.split('://');
+    if (target === "api") {
+      const [method, uri] = url.split("://");
       return leemons
         .api(uri, {
           method,
@@ -144,7 +148,8 @@ const ListCard = ({
         const assignAction = (e) => {
           e.stopPropagation();
           if (asset.subjects?.length > 0 && !isMainTeacherInAssetSubjects) {
-            const updateAsset = () => handleClick(`/private/tasks/library/edit/${taskId}`);
+            const updateAsset = () =>
+              handleClick(`/private/tasks/library/edit/${taskId}`);
 
             openConfirmationModal({
               title: menuLabels?.cannotAssignModal.title,
@@ -188,11 +193,15 @@ const ListCard = ({
             openConfirmationModal({
               onConfirm: () => {
                 setAppLoading(true);
-                handleClick(`POST://v1/tasks/tasks/${taskId}/duplicate`, 'api', () => {
-                  addSuccessAlert('Task duplicated');
-                  setAppLoading(false);
-                  onRefresh();
-                });
+                handleClick(
+                  `POST://v1/tasks/tasks/${taskId}/duplicate`,
+                  "api",
+                  () => {
+                    addSuccessAlert("Task duplicated");
+                    setAppLoading(false);
+                    onRefresh();
+                  }
+                );
               },
             })();
           },
@@ -208,8 +217,8 @@ const ListCard = ({
             openDeleteConfirmationModal({
               onConfirm: () => {
                 setAppLoading(true);
-                handleClick(`DELETE://v1/tasks/tasks/${taskId}`, 'api', () => {
-                  addSuccessAlert('Task deleted');
+                handleClick(`DELETE://v1/tasks/tasks/${taskId}`, "api", () => {
+                  addSuccessAlert("Task deleted");
                   setAppLoading(false);
                   onRefresh();
                 });
@@ -226,7 +235,14 @@ const ListCard = ({
     }
 
     return items;
-  }, [asset, embedded, menuLabels, onRefresh, isMainTeacherInAssetSubjects, isOwner]);
+  }, [
+    asset,
+    embedded,
+    menuLabels,
+    onRefresh,
+    isMainTeacherInAssetSubjects,
+    isOwner,
+  ]);
 
   // ·········································································
   // RENDER
@@ -235,7 +251,7 @@ const ListCard = ({
   return (
     <LibraryCard
       {...props}
-      asset={{ ...asset, fileType: 'task' }}
+      asset={{ ...asset, fileType: "task" }}
       menuItems={menuItems}
       variant="task"
       variantIcon={isExpress ? <ExpressTaskIcon /> : <TaskIcon />}

@@ -1,4 +1,4 @@
-const pluginPath = 'tasks';
+const pluginPath = "tasks";
 
 async function getSettings() {
   return leemons.api(`v1/${pluginPath}/settings`, {
@@ -10,8 +10,8 @@ async function updateSettings(values) {
   const body = values;
 
   if (values) {
-    body.configured = ['true', '1', 'on'].includes(String(body.configured));
-    body.hideWelcome = ['true', '1', 'on'].includes(String(body.hideWelcome));
+    body.configured = ["true", "1", "on"].includes(String(body.configured));
+    body.hideWelcome = ["true", "1", "on"].includes(String(body.hideWelcome));
     delete body.created_at;
     delete body.updated_at;
     delete body.createdAt;
@@ -20,13 +20,17 @@ async function updateSettings(values) {
     delete body.id;
   }
 
-  return leemons.api(`v1/${pluginPath}/settings`, { allAgents: true, method: 'POST', body });
+  return leemons.api(`v1/${pluginPath}/settings`, {
+    allAgents: true,
+    method: "POST",
+    body,
+  });
 }
 
 async function enableMenuItem(key) {
   return leemons.api(`v1/${pluginPath}/settings/enable-menu-item`, {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: { key },
   });
 }

@@ -1,58 +1,63 @@
-import React from 'react';
-import _ from 'lodash';
-import { VerticalStepper, Box, createStyles, Button } from '@bubbles-ui/components';
-import updateStudentRequest from '@tasks/request/instance/updateStudent';
-import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
-import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import StatementStep from './Steps/StatementStep';
-import DevelopmentStep from './Steps/DevelopmentStep';
-import DeliveryStep from './Steps/DeliveryStep';
-import Sidebar from '../Sidebar';
-import LimitedTimeAlert from '../LimitedTimeAlert';
-import Countdown from '../Countdown';
-import FinalizationModal from '../FinalizationModal';
+import React from "react";
+import _ from "lodash";
+import {
+  VerticalStepper,
+  Box,
+  createStyles,
+  Button,
+} from "@bubbles-ui/components";
+import updateStudentRequest from "@tasks/request/instance/updateStudent";
+import useStudentAssignationMutation from "@tasks/hooks/student/useStudentAssignationMutation";
+import { ChevLeftIcon, ChevRightIcon } from "@bubbles-ui/icons/outline";
+import StatementStep from "./Steps/StatementStep";
+import DevelopmentStep from "./Steps/DevelopmentStep";
+import DeliveryStep from "./Steps/DeliveryStep";
+import Sidebar from "../Sidebar";
+import LimitedTimeAlert from "../LimitedTimeAlert";
+import Countdown from "../Countdown";
+import FinalizationModal from "../FinalizationModal";
 
 const useStepsStyles = createStyles((theme, { marginTop }) => ({
   root: {
-    position: 'absolute',
+    position: "absolute",
     top: marginTop,
     height: `calc(100vh - ${marginTop}px)`,
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'flex-start',
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "flex-start",
   },
   stepperContainer: {
     minWidth: 276,
     width: 276,
     maxWidth: 276,
-    height: 'fit-content',
+    height: "fit-content",
   },
   stepper: {
     width: 276,
-    position: 'absolute',
+    position: "absolute",
     top: 0,
   },
   contentContainer: {
     paddingLeft: theme.spacing[13],
     paddingRight: theme.spacing[13],
     paddingTop: theme.spacing[7],
-    width: '100%',
-    height: '100%',
-    minHeight: '100%',
-    overflow: 'auto',
-    overflowX: 'clip',
+    width: "100%",
+    height: "100%",
+    minHeight: "100%",
+    overflow: "auto",
+    overflowX: "clip",
   },
   content: {
-    width: '100%',
+    width: "100%",
     maxWidth: theme.breakpoints.sm,
-    height: '100%',
+    height: "100%",
     paddingTop: theme.spacing[7],
   },
   buttonsBar: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'space-between',
+    width: "100%",
+    display: "flex",
+    justifyContent: "space-between",
     gap: theme.spacing[4],
     padding: theme.spacing[4],
     paddingBottom: theme.spacing[10],
@@ -64,8 +69,8 @@ const useStepsStyles = createStyles((theme, { marginTop }) => ({
   },
   sidebar: {
     width: 280,
-    position: 'absolute',
-    height: '100%',
+    position: "absolute",
+    height: "100%",
     right: 0,
     top: 0,
   },
@@ -77,7 +82,8 @@ function useSteps({ assignation, localizations }) {
   const hasDeliverable = !!assignable?.submission?.type;
   const developmentLength = assignable?.metadata?.development?.length;
   const hasDevelopment = developmentLength > 0;
-  const hasNextActivity = assignation?.instance?.relatedAssignableInstances?.after?.length > 0;
+  const hasNextActivity =
+    assignation?.instance?.relatedAssignableInstances?.after?.length > 0;
 
   const steps = React.useMemo(() => {
     if (!localizations) {
@@ -86,27 +92,27 @@ function useSteps({ assignation, localizations }) {
 
     return [
       {
-        id: 'statement',
+        id: "statement",
         label: hasDeliverable
           ? localizations?.steps?.statement
           : localizations?.steps?.presentation,
         component: <StatementStep />,
         customButtons: !hasDevelopment,
-        status: 'OK',
+        status: "OK",
       },
       hasDevelopment && {
-        id: 'development',
+        id: "development",
         label: localizations?.steps?.development,
         component: <DevelopmentStep />,
         customButtons: true,
-        status: 'OK',
+        status: "OK",
       },
       hasDeliverable && {
-        id: 'submission',
+        id: "submission",
         label: localizations?.steps?.submission,
         component: <DeliveryStep />,
         customButtons: true,
-        status: 'OK',
+        status: "OK",
       },
     ].filter(Boolean);
   }, [assignation, localizations, hasDeliverable, hasDevelopment]);
@@ -179,7 +185,12 @@ function setDefaultButtons({
     <>
       <Box>
         {hasPrev && (
-          <Button variant="link" onClick={onPrevStep} rounded leftIcon={<ChevLeftIcon />}>
+          <Button
+            variant="link"
+            onClick={onPrevStep}
+            rounded
+            leftIcon={<ChevLeftIcon />}
+          >
             {localizations?.buttons?.previous}
           </Button>
         )}
@@ -187,13 +198,15 @@ function setDefaultButtons({
       <Box>
         {(hasNext || hasDeliverable || !hasNextActivity) && (
           <Button
-            variant={hasNext ? 'outline' : 'filled'}
+            variant={hasNext ? "outline" : "filled"}
             onClick={() => (hasNext ? onNextStep() : toggleModal.current())}
             rounded
             disabled={!hasNext && preview}
             rightIcon={hasNext && <ChevRightIcon />}
           >
-            {hasNext ? localizations?.buttons?.next : localizations?.buttons?.finish}
+            {hasNext
+              ? localizations?.buttons?.next
+              : localizations?.buttons?.finish}
           </Button>
         )}
         {!hasNext && !hasDeliverable && hasNextActivity && (
@@ -242,9 +255,16 @@ export function useUpdateTimestamps(mutateAsync, assignation) {
 
 async function useUpdateVisitedSteps(assignation, step, preview) {
   React.useMemo(async () => {
-    if (step?.id && !assignation?.metadata?.visitedSteps?.includes(step.id) && !preview) {
+    if (
+      step?.id &&
+      !assignation?.metadata?.visitedSteps?.includes(step.id) &&
+      !preview
+    ) {
       try {
-        const visitedSteps = [...(assignation?.metadata?.visitedSteps || []), step.id];
+        const visitedSteps = [
+          ...(assignation?.metadata?.visitedSteps || []),
+          step.id,
+        ];
         await updateStudentRequest({
           instance: assignation?.instance?.id,
           student: assignation.user,
@@ -254,7 +274,7 @@ async function useUpdateVisitedSteps(assignation, step, preview) {
           },
         });
 
-        _.set(assignation, 'metadata.visitedSteps', visitedSteps);
+        _.set(assignation, "metadata.visitedSteps", visitedSteps);
       } catch (e) {
         // TODO: Handle error
       }
@@ -262,7 +282,13 @@ async function useUpdateVisitedSteps(assignation, step, preview) {
   }, [step?.id]);
 }
 
-export default function Steps({ assignation, localizations, marginTop, setIsFirstStep, preview }) {
+export default function Steps({
+  assignation,
+  localizations,
+  marginTop,
+  setIsFirstStep,
+  preview,
+}) {
   const [buttons, setButtons] = React.useState(null);
 
   const { classes, theme } = useStepsStyles({ marginTop });
@@ -297,7 +323,7 @@ export default function Steps({ assignation, localizations, marginTop, setIsFirs
 
   React.useEffect(() => {
     if (assignation) {
-      updateTimestamps('open');
+      updateTimestamps("open");
     }
   }, [assignation?.id]);
 
@@ -328,7 +354,9 @@ export default function Steps({ assignation, localizations, marginTop, setIsFirs
       React.cloneElement(currentStep?.component, {
         assignation,
         localizations,
-        setButtons: currentStep.customButtons ? setButtonsf(setButtons) : () => {},
+        setButtons: currentStep.customButtons
+          ? setButtonsf(setButtons)
+          : () => {},
         onNextStep: () => (hasNext ? onNextStep : toggleModal.current)(),
         onPrevStep,
         setStep,
@@ -389,7 +417,11 @@ export default function Steps({ assignation, localizations, marginTop, setIsFirs
             <LimitedTimeAlert
               assignation={assignation}
               labels={localizations?.limitedTimeAlert}
-              show={hasDeliverable && !hasDevelopment && currentStep.id === 'statement'}
+              show={
+                hasDeliverable &&
+                !hasDevelopment &&
+                currentStep.id === "statement"
+              }
             />
             <Box className={classes.buttonsBar}>{buttons}</Box>
           </Box>

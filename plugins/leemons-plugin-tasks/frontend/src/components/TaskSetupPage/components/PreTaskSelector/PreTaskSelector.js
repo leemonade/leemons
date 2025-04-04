@@ -1,8 +1,13 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { useForm, useFormContext, Controller } from 'react-hook-form';
-import { TextInput, Select, NumberInput, ContextContainer } from '@bubbles-ui/components';
-import ConditionalInput from '../../../Inputs/ConditionalInput';
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
+import { useForm, useFormContext, Controller } from "react-hook-form";
+import {
+  TextInput,
+  Select,
+  NumberInput,
+  ContextContainer,
+} from "@bubbles-ui/components";
+import ConditionalInput from "../../../Inputs/ConditionalInput";
 
 export default function PreTaskSelector({ labels }) {
   const { control, setValue } = useForm({
@@ -16,7 +21,7 @@ export default function PreTaskSelector({ labels }) {
     const subscription = originalForm.watch((v) => {
       if (v.name) {
         const value = v.preTaskOptions?.mandatory || v.preTask;
-        setValue('show', value !== null && value !== undefined);
+        setValue("show", value !== null && value !== undefined);
         subscription.unsubscribe();
       }
     });
@@ -34,8 +39,8 @@ export default function PreTaskSelector({ labels }) {
           onChange={(value) => {
             show.onChange(value);
             if (!value) {
-              originalForm.setValue('preTask', null);
-              originalForm.setValue('preTaskOptions', null);
+              originalForm.setValue("preTask", null);
+              originalForm.setValue("preTaskOptions", null);
             }
           }}
           showOnTrue
@@ -47,7 +52,10 @@ export default function PreTaskSelector({ labels }) {
                 control={originalForm.control}
                 shouldUnregister
                 render={({ field }) => (
-                  <TextInput {...field} label="Task Id  (REPLACE IN FUTURE BY TEST SELECTOR)" />
+                  <TextInput
+                    {...field}
+                    label="Task Id  (REPLACE IN FUTURE BY TEST SELECTOR)"
+                  />
                 )}
               />
               <Controller
@@ -62,7 +70,7 @@ export default function PreTaskSelector({ labels }) {
                     onChange={(value) => {
                       mandatory.onChange(value);
                       if (!value) {
-                        originalForm.setValue('preTaskOptions', null);
+                        originalForm.setValue("preTaskOptions", null);
                       }
                     }}
                     render={() => (
@@ -77,14 +85,17 @@ export default function PreTaskSelector({ labels }) {
                                 {...condition}
                                 label={labels?.condition}
                                 data={[
-                                  { label: labels?.conditions?.take, value: 'take' },
+                                  {
+                                    label: labels?.conditions?.take,
+                                    value: "take",
+                                  },
                                   {
                                     label: labels?.conditions?.greater,
-                                    value: 'greater',
+                                    value: "greater",
                                   },
                                 ]}
                               />
-                              {condition.value === 'greater' && (
+                              {condition.value === "greater" && (
                                 <Controller
                                   name="preTaskOptions.minScore"
                                   control={originalForm.control}

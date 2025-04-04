@@ -1,4 +1,4 @@
-import useGrades from './useGrades';
+import useGrades from "./useGrades";
 
 export default function useGrade(evaluation, grade) {
   const grades = useGrades(evaluation);

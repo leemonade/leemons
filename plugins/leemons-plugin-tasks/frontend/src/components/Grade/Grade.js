@@ -1,8 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { getScaleLabel } from '@grades/helpers/getScaleLabel';
-import { Text } from '@bubbles-ui/components';
-import useGrade from './hooks/useGrade';
+import React from "react";
+import PropTypes from "prop-types";
+import { getScaleLabel } from "@grades/helpers/getScaleLabel";
+import { Text } from "@bubbles-ui/components";
+import useGrade from "./hooks/useGrade";
 
 export default function Grade({ evaluation, value }) {
   const grade = useGrade(evaluation, value);

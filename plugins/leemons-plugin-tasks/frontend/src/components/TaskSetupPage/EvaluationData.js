@@ -1,27 +1,27 @@
-import React, { useEffect, useCallback, useMemo, useState } from 'react';
-import { noop, set, uniq } from 'lodash';
-import { useForm, Controller } from 'react-hook-form';
-import PropTypes from 'prop-types';
+import React, { useEffect, useCallback, useMemo, useState } from "react";
+import { noop, set, uniq } from "lodash";
+import { useForm, Controller } from "react-hook-form";
+import PropTypes from "prop-types";
 import {
   ContextContainer,
   Button,
   DropdownButton,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
-} from '@bubbles-ui/components';
-import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { useObservableContext } from '@common/context/ObservableContext';
-import { SubjectSelect } from '@academic-portfolio/components';
+} from "@bubbles-ui/components";
+import { ChevLeftIcon, ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { useObservableContext } from "@common/context/ObservableContext";
+import { SubjectSelect } from "@academic-portfolio/components";
 
-import Curriculum from './components/Curriculum';
-import Objectives from './components/Objectives';
+import Curriculum from "./components/Curriculum";
+import Objectives from "./components/Objectives";
 
 function useDefaultValues() {
   const { getValues } = useObservableContext();
 
   return useMemo(
     () => ({
-      ...getValues('sharedData'),
+      ...getValues("sharedData"),
     }),
     []
   );
@@ -48,34 +48,39 @@ function EvaluationData({
   const { getValues, setValue } = useObservableContext();
   const defaultValues = useDefaultValues();
 
-  const [selectedSubject, setSelectedSubject] = useState(defaultValues.subjects?.[0] || null);
-  const [objectiveName, setObjectiveName] = useState('');
+  const [selectedSubject, setSelectedSubject] = useState(
+    defaultValues.subjects?.[0] || null
+  );
+  const [objectiveName, setObjectiveName] = useState("");
 
   const form = useForm({ defaultValues });
-  const subjects = form.watch('subjects');
+  const subjects = form.watch("subjects");
 
   useEffect(() => {
     setObjectiveName(`curriculum.${selectedSubject}.objectives`);
   }, [selectedSubject]);
 
-  const program = form.watch('program'); // needed when curriculum is enabled again
+  const program = form.watch("program"); // needed when curriculum is enabled again
 
   const { subscribe, unsubscribe, emitEvent } = useObserver();
 
   const onSubmit = useCallback(
     (e) => {
-      const sharedData = getValues('sharedData');
+      const sharedData = getValues("sharedData");
 
       const data = {
         ...sharedData,
         ...e,
         metadata: {
           ...sharedData.metadata,
-          visitedSteps: uniq([...(sharedData.metadata?.visitedSteps || []), 'evaluationData']),
+          visitedSteps: uniq([
+            ...(sharedData.metadata?.visitedSteps || []),
+            "evaluationData",
+          ]),
         },
       };
 
-      setValue('sharedData', data);
+      setValue("sharedData", data);
 
       return data;
     },
@@ -84,29 +89,29 @@ function EvaluationData({
 
   useEffect(() => {
     const f = (event) => {
-      if (event === 'saveTask') {
+      if (event === "saveTask") {
         form.handleSubmit(
           (data) => {
             onSubmit(data);
-            emitEvent('saveData');
+            emitEvent("saveData");
           },
           () => {
-            emitEvent('saveTaskFailed');
+            emitEvent("saveTaskFailed");
           }
         )();
-      } else if (event === 'saveTaskFailed') {
+      } else if (event === "saveTaskFailed") {
         setLoading(null);
-      } else if (event === 'saveStep') {
+      } else if (event === "saveStep") {
         if (!form.formState.isDirty) {
-          emitEvent('stepSaved');
+          emitEvent("stepSaved");
         } else {
           form.handleSubmit(
             (data) => {
               onSubmit(data);
-              emitEvent('stepSaved');
+              emitEvent("stepSaved");
             },
             () => {
-              emitEvent('saveStepFailed');
+              emitEvent("saveStepFailed");
             }
           )();
         }
@@ -115,7 +120,14 @@ function EvaluationData({
     subscribe(f);
 
     return () => unsubscribe(f);
-  }, [form.formState.isDirty, onSubmit, emitEvent, form.handleSubmit, subscribe, unsubscribe]);
+  }, [
+    form.formState.isDirty,
+    onSubmit,
+    emitEvent,
+    form.handleSubmit,
+    subscribe,
+    unsubscribe,
+  ]);
 
   // ·······························································
   // HANDLERS
@@ -142,24 +154,24 @@ function EvaluationData({
   const handleOnSave = () => {
     form.handleSubmit((values) => {
       onSubmit(values);
-      setLoading('draft');
-      emitEvent('saveTask');
+      setLoading("draft");
+      emitEvent("saveTask");
     })();
   };
 
   const handleOnPublish = () => {
     form.handleSubmit((values) => {
       onSubmit(values);
-      setLoading('publish');
-      emitEvent('publishTaskAndLibrary');
+      setLoading("publish");
+      emitEvent("publishTaskAndLibrary");
     })();
   };
 
   const handleOnAssign = () => {
     form.handleSubmit((values) => {
       onSubmit(values);
-      setLoading('publish');
-      emitEvent('publishTaskAndAssign');
+      setLoading("publish");
+      emitEvent("publishTaskAndAssign");
     })();
   };
 
@@ -188,9 +200,9 @@ function EvaluationData({
                 variant="link"
                 onClick={handleOnSave}
                 disabled={loading}
-                loading={loading === 'draft'}
+                loading={loading === "draft"}
               >
-                {t('common.save')}
+                {t("common.save")}
               </Button>
               {isLastStep ? (
                 <DropdownButton
@@ -201,19 +213,22 @@ function EvaluationData({
                       label: labels.buttonPublish,
                       onClick: handleOnPublish,
                     },
-                    { label: labels.buttonPublishAndAssign, onClick: handleOnAssign },
+                    {
+                      label: labels.buttonPublishAndAssign,
+                      onClick: handleOnAssign,
+                    },
                   ]}
-                  loading={loading === 'publish'}
+                  loading={loading === "publish"}
                   disabled={loading}
                 >
-                  {t('common.finish')}
+                  {t("common.finish")}
                 </DropdownButton>
               ) : (
                 <Button
                   rightIcon={<ChevRightIcon height={20} width={20} />}
                   onClick={handleOnNext}
                   disabled={loading}
-                  loading={loading === 'publish'}
+                  loading={loading === "publish"}
                 >
                   {labels.buttonNext}
                 </Button>
@@ -231,9 +246,9 @@ function EvaluationData({
       >
         {!!subjects?.length && (
           <ContextContainer {...props}>
-            <ContextContainer style={{ width: '212px' }}>
+            <ContextContainer style={{ width: "212px" }}>
               <SubjectSelect
-                labels={{ subject: t('setup.configData.labels.subject') }}
+                labels={{ subject: t("setup.configData.labels.subject") }}
                 subjectIds={subjects}
                 value={selectedSubject}
                 onChange={setSelectedSubject}

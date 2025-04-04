@@ -8,10 +8,10 @@ module.exports = async function unfitSearch(
       return previousResults;
     }
 
-    throw new Error('Error in search: No filters provided');
+    throw new Error("Error in search: No filters provided");
   }
 
-  if (filters.some((filter) => typeof filter !== 'function')) {
+  if (filters.some((filter) => typeof filter !== "function")) {
     throw new Error(
       `Error in search: Invalid filter provided, expected function, got: ${typeof filter}`
     );
@@ -92,7 +92,10 @@ module.exports = async function unfitSearch(
   if (previousResults) {
     // EN: The offset must be always tweaked to be the first offset searched
     // ES: El offset debe siempre ser ajustado para que sea el primer offset buscado
-    results.offset = previousResults.offset !== undefined ? previousResults.offset : results.offset;
+    results.offset =
+      previousResults.offset !== undefined
+        ? previousResults.offset
+        : results.offset;
 
     // EN: Add the previous results to the results if they are not included yet
     // ES: Añade los resultados anteriores al resultado si no están incluidos aún

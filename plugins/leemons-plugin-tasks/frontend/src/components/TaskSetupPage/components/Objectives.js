@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useFormContext } from 'react-hook-form';
+import React, { useMemo, useState } from "react";
+import PropTypes from "prop-types";
+import { Controller, useFormContext } from "react-hook-form";
 import {
   HtmlText,
   InputWrapper,
@@ -9,15 +9,15 @@ import {
   Button,
   Box,
   Text,
-} from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import useTableInputLabels from '../../../helpers/useTableInputLabels';
-import { ObjectivesStyles } from './Objectives.styles';
+} from "@bubbles-ui/components";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import useTableInputLabels from "../../../helpers/useTableInputLabels";
+import { ObjectivesStyles } from "./Objectives.styles";
 
 export default function Objectives({ form, name, label, labels, required }) {
   const tableInputLabels = useTableInputLabels();
   const localForm = useFormContext();
-  const [newObjective, setNewObjective] = useState('');
+  const [newObjective, setNewObjective] = useState("");
   const { classes } = ObjectivesStyles();
 
   const {
@@ -39,25 +39,28 @@ export default function Objectives({ form, name, label, labels, required }) {
     const updatedObjectives = [
       ...(curriculumObjectivesExists ? curriculumObjectives : []),
       {
-        id: (Array.isArray(curriculumObjectives) ? curriculumObjectives.length : 0) + 1,
+        id:
+          (Array.isArray(curriculumObjectives)
+            ? curriculumObjectives.length
+            : 0) + 1,
         objective: newObjective,
       },
     ];
     setValue(name, updatedObjectives);
-    setNewObjective('');
+    setNewObjective("");
   };
 
   const columns = useMemo(
     () => [
       {
         Header: labels?.numberHeader,
-        accessor: 'id',
+        accessor: "id",
         valueRender: (value) => <Text>{value}</Text>,
         style: { width: 80, paddingLeft: 10 },
       },
       {
         Header: labels?.objectiveHeader,
-        accessor: 'objective',
+        accessor: "objective",
         input: {
           node: <TextInput />,
           rules: { required: true },
@@ -79,12 +82,12 @@ export default function Objectives({ form, name, label, labels, required }) {
           render={({ field: { onChange, value, ...field } }) => (
             <TextInput
               {...field}
-              value={newObjective ?? ''}
+              value={newObjective ?? ""}
               label={labels.inputLabel}
               onChange={(e) => setNewObjective(e)}
               placeholder={labels.inputPlaceholder}
               onKeyPress={(e) => {
-                if (e.key === 'Enter' && newObjective.trim() !== '') {
+                if (e.key === "Enter" && newObjective.trim() !== "") {
                   addNewObjective();
                   e.preventDefault(); // Previene la acción por defecto para no enviar un formulario si es que el input está dentro de uno
                 }

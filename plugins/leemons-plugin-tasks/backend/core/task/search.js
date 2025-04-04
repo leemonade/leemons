@@ -1,9 +1,17 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
-async function searchTask({ draft, preferCurrent, search, subjects, sort, ctx, ...query }) {
+async function searchTask({
+  draft,
+  preferCurrent,
+  search,
+  subjects,
+  sort,
+  ctx,
+  ...query
+}) {
   try {
-    return await ctx.tx.call('assignables.assignables.searchAssignables', {
-      roles: 'task',
+    return await ctx.tx.call("assignables.assignables.searchAssignables", {
+      roles: "task",
       data: {
         published: !draft,
         preferCurrent,

@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   Box,
   ContextContainer,
@@ -10,19 +10,26 @@ import {
   TotalLayoutStepContainer,
   Alert,
   ModalZoom,
-} from '@bubbles-ui/components';
-import useAssets from '@leebrary/request/hooks/queries/useAssets';
-import { ChevRightIcon } from '@bubbles-ui/icons/outline';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@tasks/helpers';
-import dayjs from 'dayjs';
-import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
-import useIntroductionStepStyles from './IntroductionStep.styles';
-import CurriculumRender from './components/CurriculumRender/CurriculumRender';
+} from "@bubbles-ui/components";
+import useAssets from "@leebrary/request/hooks/queries/useAssets";
+import { ChevRightIcon } from "@bubbles-ui/icons/outline";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { prefixPN } from "@tasks/helpers";
+import dayjs from "dayjs";
+import { AssetEmbedList } from "@leebrary/components/AssetEmbedList";
+import useIntroductionStepStyles from "./IntroductionStep.styles";
+import CurriculumRender from "./components/CurriculumRender/CurriculumRender";
 
-export default function IntroductionStep({ stepName, instance, onNextStep, scrollRef }) {
-  const [t] = useTranslateLoader(prefixPN('task_realization.introduction_step'));
-  const [buttonsT] = useTranslateLoader(prefixPN('task_realization.buttons'));
+export default function IntroductionStep({
+  stepName,
+  instance,
+  onNextStep,
+  scrollRef,
+}) {
+  const [t] = useTranslateLoader(
+    prefixPN("task_realization.introduction_step")
+  );
+  const [buttonsT] = useTranslateLoader(prefixPN("task_realization.buttons"));
 
   const { assignable } = instance ?? {};
   /*
@@ -48,7 +55,8 @@ export default function IntroductionStep({ stepName, instance, onNextStep, scrol
     === Handle activity dates ===
   */
   const activityIsInVisualizationMode =
-    !instance?.alwaysAvailable && dayjs(instance?.dates?.start ?? null).isAfter(dayjs());
+    !instance?.alwaysAvailable &&
+    dayjs(instance?.dates?.start ?? null).isAfter(dayjs());
 
   const { classes } = useIntroductionStepStyles();
 
@@ -66,7 +74,7 @@ export default function IntroductionStep({ stepName, instance, onNextStep, scrol
               onClick={onNextStep}
               disabled={activityIsInVisualizationMode}
             >
-              {buttonsT('next')}
+              {buttonsT("next")}
             </Button>
           }
         />
@@ -74,16 +82,16 @@ export default function IntroductionStep({ stepName, instance, onNextStep, scrol
     >
       <Box className={classes.root}>
         {!!activityIsInVisualizationMode && (
-          <Alert type="info" closeable={false} title={t('not_opened.title')}>
-            {t('not_opened.description', {
-              date: dayjs(instance?.dates?.start).format('DD/mm/YYYY'),
-              time: dayjs(instance?.dates?.start).format('HH:mm'),
+          <Alert type="info" closeable={false} title={t("not_opened.title")}>
+            {t("not_opened.description", {
+              date: dayjs(instance?.dates?.start).format("DD/mm/YYYY"),
+              time: dayjs(instance?.dates?.start).format("HH:mm"),
             })}
           </Alert>
         )}
         {!!assignable?.statement && (
           <Box className={classes.statementContainer}>
-            <ContextContainer title={t('statement')}>
+            <ContextContainer title={t("statement")}>
               <HtmlText>{assignable?.statement}</HtmlText>
             </ContextContainer>
 
@@ -96,7 +104,7 @@ export default function IntroductionStep({ stepName, instance, onNextStep, scrol
         )}
 
         {!assignable?.statement && !!previewAsset && (
-          <ContextContainer title={t('statement')}>
+          <ContextContainer title={t("statement")}>
             <ModalZoom>
               <ImageLoader src={previewAsset.url} width={300} height={150} />
             </ModalZoom>
@@ -105,13 +113,16 @@ export default function IntroductionStep({ stepName, instance, onNextStep, scrol
 
         {!!resources?.length && (
           <Box>
-            <ContextContainer title={t('resources')}>
-              <AssetEmbedList assets={resources} width={'50%'} />
+            <ContextContainer title={t("resources")}>
+              <AssetEmbedList assets={resources} width={"50%"} />
             </ContextContainer>
           </Box>
         )}
 
-        <CurriculumRender instance={instance} showCurriculum={instance?.curriculum ?? {}} />
+        <CurriculumRender
+          instance={instance}
+          showCurriculum={instance?.curriculum ?? {}}
+        />
       </Box>
     </TotalLayoutStepContainer>
   );

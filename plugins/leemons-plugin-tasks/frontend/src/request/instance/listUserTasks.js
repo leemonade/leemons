@@ -3,9 +3,9 @@ export default function listUserTasks(filters) {
     `v1/tasks/tasks/instances/search?${Object.entries(filters)
       .filter(([, value]) => value)
       .map(([key, value]) => `${key}=${value}`)
-      .join('&')}`,
+      .join("&")}`,
     {
-      method: 'GET',
+      method: "GET",
       allAgents: true,
     }
   );

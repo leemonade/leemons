@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useMemo, useRef } from "react";
+import PropTypes from "prop-types";
 
 import {
   Box,
@@ -17,31 +17,31 @@ import {
   ActivityAccordionPanel,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 
-import { ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { useSearchParams } from '@common';
-import ActivityHeader from '@assignables/components/ActivityHeader';
-import { isEmpty } from 'lodash';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@tasks/helpers';
-import { Link } from 'react-router-dom';
-import { DocumentIcon } from '@content-creator/components';
-import { CurriculumIcon } from '@tasks/assets/images/CurriculumIcon';
-import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
-import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
-import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
-import { SubjectItemDisplay } from '@academic-portfolio/components';
-import { useClassesSubjects } from '@academic-portfolio/hooks';
-import ActivityFeedbackAlertManager from '@assignables/components/EvaluationFeedback/Alerts/ActivityFeedbackAlertManager';
-import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
-import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
-import { useComunica } from '@comunica/context';
-import CurriculumRender from '../Student/TaskDetail/components/IntroductionStep/components/CurriculumRender/CurriculumRender';
-import { useStudentCorrectionStyles } from './StudentCorrection.style';
-import { TextIcon } from '../../assets/images/TextIcon';
-import LinkSubmission from '../Correction/components/LinkSubmission/LinkSubmission';
-import { useUpdateTimestamps } from '../Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
+import { ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { useSearchParams } from "@common";
+import ActivityHeader from "@assignables/components/ActivityHeader";
+import { isEmpty } from "lodash";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { prefixPN } from "@tasks/helpers";
+import { Link } from "react-router-dom";
+import { DocumentIcon } from "@content-creator/components";
+import { CurriculumIcon } from "@tasks/assets/images/CurriculumIcon";
+import useNextActivityUrl from "@assignables/hooks/useNextActivityUrl";
+import EvaluationFeedback from "@assignables/components/EvaluationFeedback/EvaluationFeedback";
+import { AssetEmbedList } from "@leebrary/components/AssetEmbedList";
+import { SubjectItemDisplay } from "@academic-portfolio/components";
+import { useClassesSubjects } from "@academic-portfolio/hooks";
+import ActivityFeedbackAlertManager from "@assignables/components/EvaluationFeedback/Alerts/ActivityFeedbackAlertManager";
+import useAssignationComunicaRoom from "@assignables/hooks/useAssignationComunicaRoom";
+import useStudentAssignationMutation from "@tasks/hooks/student/useStudentAssignationMutation";
+import { useComunica } from "@comunica/context";
+import CurriculumRender from "../Student/TaskDetail/components/IntroductionStep/components/CurriculumRender/CurriculumRender";
+import { useStudentCorrectionStyles } from "./StudentCorrection.style";
+import { TextIcon } from "../../assets/images/TextIcon";
+import LinkSubmission from "../Correction/components/LinkSubmission/LinkSubmission";
+import { useUpdateTimestamps } from "../Student/TaskDetail/__DEPRECATED__components/Steps/Steps";
 
 function SubjectTab({ assignation, subject, t }) {
   const room = useAssignationComunicaRoom({ assignation, subject });
@@ -52,7 +52,9 @@ function SubjectTab({ assignation, subject, t }) {
 
   const isEvaluated = useMemo(
     () =>
-      !!assignation?.grades?.find((grade) => grade.type === 'main' && grade.subject === subject),
+      !!assignation?.grades?.find(
+        (grade) => grade.type === "main" && grade.subject === subject
+      ),
     [assignation?.grades, subject]
   );
 
@@ -60,14 +62,18 @@ function SubjectTab({ assignation, subject, t }) {
 
   useEffect(() => {
     if (isEvaluated && !isModuleActivity) {
-      updateTimestamps('gradesViewed');
+      updateTimestamps("gradesViewed");
     }
   }, [isEvaluated, updateTimestamps, isModuleActivity]);
 
   if (!isEvaluated) {
     return (
-      <Alert severity="warning" title={t('pending_evaluation_alert.title')} closeable={false}>
-        {t('pending_evaluation_alert.message')}
+      <Alert
+        severity="warning"
+        title={t("pending_evaluation_alert.title")}
+        closeable={false}
+      >
+        {t("pending_evaluation_alert.message")}
       </Alert>
     );
   }
@@ -85,13 +91,13 @@ function SubjectTab({ assignation, subject, t }) {
 }
 
 export default function StudentCorrection({ assignation }) {
-  const [t] = useTranslateLoader(prefixPN('task_correction.student'));
-  const [correctionT] = useTranslateLoader(prefixPN('task_correction'));
-  const [buttonsT] = useTranslateLoader(prefixPN('task_realization.buttons'));
+  const [t] = useTranslateLoader(prefixPN("task_correction.student"));
+  const [correctionT] = useTranslateLoader(prefixPN("task_correction"));
+  const [buttonsT] = useTranslateLoader(prefixPN("task_realization.buttons"));
 
   const scrollRef = useRef();
   const params = useSearchParams();
-  const fromExecution = useRef(params.has('fromExecution')).current;
+  const fromExecution = useRef(params.has("fromExecution")).current;
 
   const { instance } = assignation ?? {};
   const { assignable } = instance ?? {};
@@ -103,14 +109,14 @@ export default function StudentCorrection({ assignation }) {
   const nextActivityUrl = useNextActivityUrl(assignation);
 
   const submissionAssetsIds = useMemo(() => {
-    if (assignable?.submission?.type === 'File') {
+    if (assignable?.submission?.type === "File") {
       return assignation?.metadata?.submission?.map((file) => file.id);
     }
     return [];
   }, [assignation?.metadata?.submission, assignable?.submission?.type]);
 
   const isEvaluated = useMemo(
-    () => !!assignation?.grades?.find((grade) => grade.type === 'main'),
+    () => !!assignation?.grades?.find((grade) => grade.type === "main"),
     [assignation?.grades]
   );
 
@@ -122,7 +128,7 @@ export default function StudentCorrection({ assignation }) {
       Header={
         <ActivityHeader
           instance={instance}
-          action={correctionT('action')}
+          action={correctionT("action")}
           showClass
           showRole
           showEvaluationType
@@ -132,7 +138,11 @@ export default function StudentCorrection({ assignation }) {
         />
       }
     >
-      <Stack justifyContent="center" style={{ overflow: 'auto' }} ref={scrollRef}>
+      <Stack
+        justifyContent="center"
+        style={{ overflow: "auto" }}
+        ref={scrollRef}
+      >
         <TotalLayoutStepContainer
           Footer={
             fromExecution &&
@@ -148,7 +158,9 @@ export default function StudentCorrection({ assignation }) {
                     }
                   >
                     <Button rightIcon={!!nextActivityUrl && <ChevRightIcon />}>
-                      {nextActivityUrl ? buttonsT('nextActivity') : buttonsT('goToModule')}
+                      {nextActivityUrl
+                        ? buttonsT("nextActivity")
+                        : buttonsT("goToModule")}
                     </Button>
                   </Link>
                 }
@@ -170,54 +182,74 @@ export default function StudentCorrection({ assignation }) {
                     {subjects.map((subject) => (
                       <TabPanel
                         key={subject.id}
-                        label={<SubjectItemDisplay subjectsIds={[subject.id]} />}
+                        label={
+                          <SubjectItemDisplay subjectsIds={[subject.id]} />
+                        }
                       >
                         <ContextContainer
-                          sx={(theme) => ({ marginTop: theme.other.global.spacing.padding.lg })}
+                          sx={(theme) => ({
+                            marginTop: theme.other.global.spacing.padding.lg,
+                          })}
                         >
-                          <SubjectTab assignation={assignation} subject={subject.id} t={t} />
+                          <SubjectTab
+                            assignation={assignation}
+                            subject={subject.id}
+                            t={t}
+                          />
                         </ContextContainer>
                       </TabPanel>
                     ))}
                   </Tabs>
                 ) : (
-                  <SubjectTab assignation={assignation} subject={subjects?.[0]?.id} t={t} />
+                  <SubjectTab
+                    assignation={assignation}
+                    subject={subjects?.[0]?.id}
+                    t={t}
+                  />
                 ))}
             </Stack>
             {!!hasSubmission && (
               <Box>
-                <ContextContainer title={t('submission')}>
-                  {assignable?.submission?.type === 'Link' &&
+                <ContextContainer title={t("submission")}>
+                  {assignable?.submission?.type === "Link" &&
                     (activitySubmitted ? (
                       <LinkSubmission assignation={assignation} />
                     ) : (
-                      <Text>{t('no_submission')}</Text>
+                      <Text>{t("no_submission")}</Text>
                     ))}
 
-                  {assignable?.submission?.type === 'File' &&
+                  {assignable?.submission?.type === "File" &&
                     (activitySubmitted ? (
                       <AssetEmbedList assets={submissionAssetsIds} />
                     ) : (
-                      <Text>{t('no_submission')}</Text>
+                      <Text>{t("no_submission")}</Text>
                     ))}
                 </ContextContainer>
               </Box>
             )}
 
             <Box>
-              <ContextContainer title={t('activity_summary')}>
+              <ContextContainer title={t("activity_summary")}>
                 <ActivityAccordion>
-                  <ActivityAccordionPanel label={t('statement')} icon={<TextIcon />}>
+                  <ActivityAccordionPanel
+                    label={t("statement")}
+                    icon={<TextIcon />}
+                  >
                     <Box className={classes?.accordionPanel}>
                       <HtmlText>{assignable?.statement}</HtmlText>
                     </Box>
                   </ActivityAccordionPanel>
                   {!isEmpty(assignable?.resources) && (
                     <ActivityAccordionPanel
-                      label={t('resources')}
+                      label={t("resources")}
                       icon={
-                        <Box sx={{ position: 'relative', width: 22, height: 22 }}>
-                          <ImageLoader src="/public/leebrary/media-files.svg" color="#7F7F7F" />
+                        <Box
+                          sx={{ position: "relative", width: 22, height: 22 }}
+                        >
+                          <ImageLoader
+                            src="/public/leebrary/media-files.svg"
+                            color="#7F7F7F"
+                          />
                         </Box>
                       }
                     >
@@ -227,7 +259,10 @@ export default function StudentCorrection({ assignation }) {
                     </ActivityAccordionPanel>
                   )}
                   {!isEmpty(instance?.curriculum) && (
-                    <ActivityAccordionPanel label={t('curriculum')} icon={<CurriculumIcon />}>
+                    <ActivityAccordionPanel
+                      label={t("curriculum")}
+                      icon={<CurriculumIcon />}
+                    >
                       <Box className={classes?.accordionPanel}>
                         <CurriculumRender
                           instance={instance}
@@ -238,11 +273,16 @@ export default function StudentCorrection({ assignation }) {
                     </ActivityAccordionPanel>
                   )}
                   {!!assignable?.metadata?.development?.length && (
-                    <ActivityAccordionPanel label={t('development')} icon={<DocumentIcon />}>
+                    <ActivityAccordionPanel
+                      label={t("development")}
+                      icon={<DocumentIcon />}
+                    >
                       <Box className={classes?.accordionPanel}>
-                        {(assignable?.metadata?.development || []).map(({ development }, i) => (
-                          <HtmlText key={i}>{development}</HtmlText>
-                        ))}
+                        {(assignable?.metadata?.development || []).map(
+                          ({ development }, i) => (
+                            <HtmlText key={i}>{development}</HtmlText>
+                          )
+                        )}
                       </Box>
                     </ActivityAccordionPanel>
                   )}

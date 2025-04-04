@@ -1,4 +1,4 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 const useCurriculumRenderStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
@@ -6,8 +6,8 @@ const useCurriculumRenderStyles = createStyles((theme) => {
   return {
     section: {
       marginLeft: globalTheme.spacing.padding.lg,
-      display: 'flex',
-      flexDirection: 'column',
+      display: "flex",
+      flexDirection: "column",
       gap: globalTheme.spacing.gap.md,
     },
     sectionTitle: {

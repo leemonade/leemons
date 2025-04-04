@@ -1,1 +1,1 @@
-export * from './AssetMetadataTask.constants';
+export * from "./AssetMetadataTask.constants";

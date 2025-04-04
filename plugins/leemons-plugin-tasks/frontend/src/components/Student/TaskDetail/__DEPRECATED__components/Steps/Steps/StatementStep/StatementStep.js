@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import dayjs from 'dayjs';
+import React from "react";
+import PropTypes from "prop-types";
+import dayjs from "dayjs";
 import {
   Box,
   Button,
@@ -8,9 +8,9 @@ import {
   HtmlText,
   ImageLoader,
   Title,
-} from '@bubbles-ui/components';
-import { ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { useSupportImage, CurriculumRender } from './CurriculumRender';
+} from "@bubbles-ui/components";
+import { ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { useSupportImage, CurriculumRender } from "./CurriculumRender";
 
 export default function StatementStep({
   assignation,
@@ -45,7 +45,7 @@ export default function StatementStep({
         {(hasNextStep || !hasNextActivity) && (
           <Button
             onClick={onNextStep}
-            variant={hasNextStep ? 'outline' : 'filled'}
+            variant={hasNextStep ? "outline" : "filled"}
             rightIcon={<ChevRightIcon />}
             rounded
             disabled={!canSubmit}
@@ -66,7 +66,14 @@ export default function StatementStep({
         )}
       </>
     );
-  }, [setButtons, onNextStep, hasNextStep, _labels?.buttons, hasNextActivity, canSubmit]);
+  }, [
+    setButtons,
+    onNextStep,
+    hasNextStep,
+    _labels?.buttons,
+    hasNextActivity,
+    canSubmit,
+  ]);
 
   return (
     <ContextContainer>

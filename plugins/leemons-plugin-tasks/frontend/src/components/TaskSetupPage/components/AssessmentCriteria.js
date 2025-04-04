@@ -1,10 +1,10 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { useFormContext, Controller } from 'react-hook-form';
-import { TableInput, Box } from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
+import React, { useMemo } from "react";
+import PropTypes from "prop-types";
+import { useFormContext, Controller } from "react-hook-form";
+import { TableInput, Box } from "@bubbles-ui/components";
+import { TextEditorInput } from "@bubbles-ui/editors";
 
-import useTableInputLabels from '../../../helpers/useTableInputLabels';
+import useTableInputLabels from "../../../helpers/useTableInputLabels";
 
 export default function AssessmentCriteria({ label, name, error }) {
   const tableInputLabels = useTableInputLabels();
@@ -13,9 +13,11 @@ export default function AssessmentCriteria({ label, name, error }) {
   const columns = useMemo(() => [
     {
       Header: label,
-      accessor: 'assessmentCriteria',
+      accessor: "assessmentCriteria",
       input: { node: <TextEditorInput />, rules: { required: true } },
-      valueRender: (value) => <Box dangerouslySetInnerHTML={{ __html: value }} />,
+      valueRender: (value) => (
+        <Box dangerouslySetInnerHTML={{ __html: value }} />
+      ),
     },
   ]);
 

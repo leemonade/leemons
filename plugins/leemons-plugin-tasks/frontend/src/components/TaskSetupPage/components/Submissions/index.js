@@ -1,3 +1,3 @@
-import Submissions from './Submissions';
+import Submissions from "./Submissions";
 
 export default Submissions;

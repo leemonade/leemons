@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState } from 'react';
-import PropTypes from 'prop-types';
-import { createStore, useStore } from 'zustand';
-import { uuidv4 } from '@bubbles-ui/leemons';
+import React, { createContext, useContext, useState } from "react";
+import PropTypes from "prop-types";
+import { createStore, useStore } from "zustand";
+import { uuidv4 } from "@bubbles-ui/leemons";
 
 const FileUploadedContext = createContext(null);
 
@@ -58,11 +58,17 @@ function createFileUploadedStore(initialFiles = []) {
       },
       updateLeebraryId: (id, leebraryId) =>
         set((state) => ({
-          files: new Map(state.files).set(id, { ...state.files.get(id), leebraryId }),
+          files: new Map(state.files).set(id, {
+            ...state.files.get(id),
+            leebraryId,
+          }),
         })),
       changeStatus: (id, newState) =>
         set((state) => ({
-          files: new Map(state.files).set(id, { ...state.files.get(id), status: newState }),
+          files: new Map(state.files).set(id, {
+            ...state.files.get(id),
+            status: newState,
+          }),
         })),
     },
   }));
@@ -71,7 +77,11 @@ function createFileUploadedStore(initialFiles = []) {
 export function FileUploadProvider({ children, initialFiles }) {
   const [store] = useState(() => createFileUploadedStore(initialFiles));
 
-  return <FileUploadedContext.Provider value={store}>{children}</FileUploadedContext.Provider>;
+  return (
+    <FileUploadedContext.Provider value={store}>
+      {children}
+    </FileUploadedContext.Provider>
+  );
 }
 
 FileUploadProvider.propTypes = {
@@ -87,7 +97,7 @@ export function useFileUploadStore(selector) {
   const store = useContext(FileUploadedContext);
 
   if (!store) {
-    throw new Error('Missing FileUploadProvider');
+    throw new Error("Missing FileUploadProvider");
   }
 
   return useStore(store, selector);

@@ -7,25 +7,26 @@ import {
   DropdownButton,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
-} from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
-import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { noop, uniq } from 'lodash';
-import PropTypes from 'prop-types';
-import React, { useCallback, useEffect, useMemo } from 'react';
-import { Controller, FormProvider, useForm } from 'react-hook-form';
-import { useObservableContext } from '@common/context/ObservableContext';
+} from "@bubbles-ui/components";
+import { TextEditorInput } from "@bubbles-ui/editors";
+import { ChevLeftIcon, ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { noop, uniq } from "lodash";
+import PropTypes from "prop-types";
+import React, { useCallback, useEffect, useMemo } from "react";
+import { Controller, FormProvider, useForm } from "react-hook-form";
+import { useObservableContext } from "@common/context/ObservableContext";
 
-import Submissions from './components/Submissions';
-import StatementImage from './components/StatementImage';
-import Development from './components/Development';
+import Submissions from "./components/Submissions";
+import StatementImage from "./components/StatementImage";
+import Development from "./components/Development";
 
 function useDefaultValues() {
   const { getValues } = useObservableContext();
-  const hasDevelopment = getValues('sharedData.metadata.development')?.length > 0;
+  const hasDevelopment =
+    getValues("sharedData.metadata.development")?.length > 0;
 
   return useMemo(() => {
-    const sharedData = { ...getValues('sharedData') };
+    const sharedData = { ...getValues("sharedData") };
     sharedData.metadata = { ...sharedData.metadata, hasDevelopment };
     return {
       gradable: false,
@@ -53,7 +54,7 @@ function ContentData({
   ...props
 }) {
   const { useWatch, getValues, setValue } = useObservableContext();
-  const isExpress = !!useWatch({ name: 'isExpress' });
+  const isExpress = !!useWatch({ name: "isExpress" });
   const [isLastStep, setIsLastStep] = React.useState(isExpress);
 
   // ·······························································
@@ -70,31 +71,36 @@ function ContentData({
   } = formData;
 
   // MANAGE OPTIONAL FIELDS -------------------------------------------------
-  const hasDevelopment = watch('metadata.hasDevelopment');
-  const hasInstructions = watch('metadata.hasInstructions');
-  const hasAttachments = watch('metadata.hasAttachments');
-  const hasCurriculum = watch('metadata.hasCurriculum');
-  const hasCustomObjectives = watch('metadata.hasCustomObjectives');
-  const hasSubjects = !!watch('subjects')?.length;
+  const hasDevelopment = watch("metadata.hasDevelopment");
+  const hasInstructions = watch("metadata.hasInstructions");
+  const hasAttachments = watch("metadata.hasAttachments");
+  const hasCurriculum = watch("metadata.hasCurriculum");
+  const hasCustomObjectives = watch("metadata.hasCustomObjectives");
+  const hasSubjects = !!watch("subjects")?.length;
 
   function amITheLastStep() {
-    return !!(!hasInstructions && !hasAttachments && !hasCurriculum && !hasCustomObjectives);
+    return !!(
+      !hasInstructions &&
+      !hasAttachments &&
+      !hasCurriculum &&
+      !hasCustomObjectives
+    );
   }
 
   useEffect(() => {
-    config?.setValue('hasInstructions', hasInstructions);
+    config?.setValue("hasInstructions", hasInstructions);
     setIsLastStep(amITheLastStep());
   }, [hasInstructions]);
   useEffect(() => {
-    config?.setValue('hasAttachments', hasAttachments);
+    config?.setValue("hasAttachments", hasAttachments);
     setIsLastStep(amITheLastStep());
   }, [hasAttachments]);
   useEffect(() => {
-    config?.setValue('hasCurriculum', hasCurriculum);
+    config?.setValue("hasCurriculum", hasCurriculum);
     setIsLastStep(amITheLastStep());
   }, [hasCurriculum]);
   useEffect(() => {
-    config?.setValue('hasCustomObjectives', hasCustomObjectives);
+    config?.setValue("hasCustomObjectives", hasCustomObjectives);
     setIsLastStep(amITheLastStep());
   }, [hasCustomObjectives]);
 
@@ -102,15 +108,18 @@ function ContentData({
 
   const onSubmit = useCallback(
     (e) => {
-      const sharedData = getValues('sharedData');
+      const sharedData = getValues("sharedData");
 
-      setValue('sharedData', {
+      setValue("sharedData", {
         ...sharedData,
         ...e,
         metadata: {
           ...sharedData.metadata,
           ...e.metadata,
-          visitedSteps: uniq([...(sharedData.metadata?.visitedSteps || []), 'contentData']),
+          visitedSteps: uniq([
+            ...(sharedData.metadata?.visitedSteps || []),
+            "contentData",
+          ]),
         },
       });
     },
@@ -119,29 +128,29 @@ function ContentData({
 
   useEffect(() => {
     const f = (event) => {
-      if (event === 'saveTask') {
+      if (event === "saveTask") {
         handleSubmit(
           (data) => {
             onSubmit(data);
-            emitEvent('saveData');
+            emitEvent("saveData");
           },
           () => {
-            emitEvent('saveTaskFailed');
+            emitEvent("saveTaskFailed");
           }
         )();
-      } else if (event === 'saveTaskFailed') {
+      } else if (event === "saveTaskFailed") {
         setLoading(null);
-      } else if (event === 'saveStep') {
+      } else if (event === "saveStep") {
         if (!isDirty) {
-          emitEvent('stepSaved');
+          emitEvent("stepSaved");
         } else {
           handleSubmit(
             (data) => {
               onSubmit(data);
-              emitEvent('stepSaved');
+              emitEvent("stepSaved");
             },
             () => {
-              emitEvent('saveStepFailed');
+              emitEvent("saveStepFailed");
             }
           )();
         }
@@ -177,24 +186,24 @@ function ContentData({
   const handleOnSave = () => {
     handleSubmit((values) => {
       onSubmit(values);
-      setLoading('draft');
-      emitEvent('saveTask');
+      setLoading("draft");
+      emitEvent("saveTask");
     })();
   };
 
   const handleOnPublish = () => {
     handleSubmit((values) => {
       onSubmit(values);
-      setLoading('publish');
-      emitEvent('publishTaskAndLibrary');
+      setLoading("publish");
+      emitEvent("publishTaskAndLibrary");
     })();
   };
 
   const handleOnAssign = () => {
     handleSubmit((values) => {
       onSubmit(values);
-      setLoading('publish');
-      emitEvent('publishTaskAndAssign');
+      setLoading("publish");
+      emitEvent("publishTaskAndAssign");
     })();
   };
 
@@ -222,9 +231,9 @@ function ContentData({
                 variant="link"
                 onClick={handleOnSave}
                 disabled={loading}
-                loading={loading === 'draft'}
+                loading={loading === "draft"}
               >
-                {t('common.save')}
+                {t("common.save")}
               </Button>
               {isExpress || isLastStep ? (
                 <DropdownButton
@@ -232,19 +241,22 @@ function ContentData({
                   width="auto"
                   data={[
                     { label: labels.buttonPublish, onClick: handleOnPublish },
-                    { label: labels.buttonPublishAndAssign, onClick: handleOnAssign },
+                    {
+                      label: labels.buttonPublishAndAssign,
+                      onClick: handleOnAssign,
+                    },
                   ]}
-                  loading={loading === 'publish'}
+                  loading={loading === "publish"}
                   disabled={loading}
                 >
-                  {t('common.finish')}
+                  {t("common.finish")}
                 </DropdownButton>
               ) : (
                 <Button
                   rightIcon={<ChevRightIcon height={20} width={20} />}
                   onClick={handleOnNext}
                   disabled={loading}
-                  loading={loading === 'publish'}
+                  loading={loading === "publish"}
                 >
                   {labels.buttonNext}
                 </Button>
@@ -268,7 +280,7 @@ function ContentData({
                       {...field}
                       label={labels?.statementLabel}
                       error={errors.statement}
-                      editorStyles={{ minHeight: '96px' }}
+                      editorStyles={{ minHeight: "96px" }}
                     />
                   )}
                 />
@@ -278,7 +290,11 @@ function ContentData({
                     control={control}
                     name="metadata.hasDevelopment"
                     render={({ field }) => (
-                      <Switch {...field} label={labels.development} checked={field.value} />
+                      <Switch
+                        {...field}
+                        label={labels.development}
+                        checked={field.value}
+                      />
                     )}
                   />
                 )}
@@ -302,14 +318,22 @@ function ContentData({
                     name="metadata.hasCurriculum"
                     disabled
                     render={({ field }) => (
-                      <Switch {...field} label={labels.enableCurriculum} checked={field.value} />
+                      <Switch
+                        {...field}
+                        label={labels.enableCurriculum}
+                        checked={field.value}
+                      />
                     )}
                   />
                   <Controller
                     control={control}
                     name="metadata.hasCustomObjectives"
                     render={({ field }) => (
-                      <Switch {...field} label={labels.addCustomObjectives} checked={field.value} />
+                      <Switch
+                        {...field}
+                        label={labels.addCustomObjectives}
+                        checked={field.value}
+                      />
                     )}
                   />
                 </ContextContainer>
@@ -321,14 +345,22 @@ function ContentData({
                     control={control}
                     name="metadata.hasAttachments"
                     render={({ field }) => (
-                      <Switch {...field} label={labels.addResources} checked={field.value} />
+                      <Switch
+                        {...field}
+                        label={labels.addResources}
+                        checked={field.value}
+                      />
                     )}
                   />
                   <Controller
                     control={control}
                     name="metadata.hasInstructions"
                     render={({ field }) => (
-                      <Switch {...field} label={labels.addInstructions} checked={field.value} />
+                      <Switch
+                        {...field}
+                        label={labels.addInstructions}
+                        checked={field.value}
+                      />
                     )}
                   />
                 </ContextContainer>

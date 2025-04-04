@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types';
-import React, { useContext, useRef } from 'react';
+import PropTypes from "prop-types";
+import React, { useContext, useRef } from "react";
 
 function useObserverState() {
   const ref = useRef({
@@ -31,7 +31,9 @@ function useObserverState() {
   // ES: Emitir un evento a todos los suscriptores
   const emitEvent = (event, data) => {
     if (Array.isArray(subscribers())) {
-      return Promise.all(subscribers().map((callback) => callback(event, data)));
+      return Promise.all(
+        subscribers().map((callback) => callback(event, data))
+      );
     }
     return new Promise([]);
   };
@@ -53,7 +55,9 @@ export default function useObserver() {
   const Observer = React.useMemo(() => {
     const { Provider } = context;
 
-    const ObserverProvider = ({ children }) => <Provider value={state}>{children}</Provider>;
+    const ObserverProvider = ({ children }) => (
+      <Provider value={state}>{children}</Provider>
+    );
     ObserverProvider.propTypes = {
       children: PropTypes.node,
     };

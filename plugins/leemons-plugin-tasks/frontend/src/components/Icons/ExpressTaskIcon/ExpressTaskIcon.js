@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 import {
   EXPRESS_TASK_ICON_PROP_TYPES,
   EXPRESS_TASK_ICON_DEFAULT_PROPS,
-} from './ExpressTaskIcon.constants';
+} from "./ExpressTaskIcon.constants";
 
 const ExpressTaskIcon = ({ width, height, color }) => (
   <svg
@@ -33,6 +33,6 @@ const ExpressTaskIcon = ({ width, height, color }) => (
 ExpressTaskIcon.defaultProps = EXPRESS_TASK_ICON_DEFAULT_PROPS;
 ExpressTaskIcon.propTypes = EXPRESS_TASK_ICON_PROP_TYPES;
 
-ExpressTaskIcon.displayName = 'ExpressTaskIcon';
+ExpressTaskIcon.displayName = "ExpressTaskIcon";
 export default ExpressTaskIcon;
 export { ExpressTaskIcon };

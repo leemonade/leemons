@@ -1,1 +1,1 @@
-export { default } from './SubjectTabs';
+export { default } from "./SubjectTabs";

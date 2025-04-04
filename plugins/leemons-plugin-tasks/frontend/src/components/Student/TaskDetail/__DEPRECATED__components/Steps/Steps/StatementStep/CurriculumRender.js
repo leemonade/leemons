@@ -1,18 +1,26 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, ContextContainer, HtmlText, SegmentedControl, Title } from '@bubbles-ui/components';
-import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
-import { useClassesSubjects } from '@academic-portfolio/hooks';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
-import { useQuery } from '@tanstack/react-query';
-import { getAssetsByIdsRequest } from '@leebrary/request';
-import { useCurriculumVisibleValues } from '@assignables/components/Assignment/components/EvaluationType';
-import { uniqBy } from 'lodash';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@tasks/helpers';
+import React from "react";
+import PropTypes from "prop-types";
+import {
+  Box,
+  ContextContainer,
+  HtmlText,
+  SegmentedControl,
+  Title,
+} from "@bubbles-ui/components";
+import { CurriculumListContents } from "@curriculum/components/CurriculumListContents";
+import { useClassesSubjects } from "@academic-portfolio/hooks";
+import prepareAsset from "@leebrary/helpers/prepareAsset";
+import { useQuery } from "@tanstack/react-query";
+import { getAssetsByIdsRequest } from "@leebrary/request";
+import { useCurriculumVisibleValues } from "@assignables/components/Assignment/components/EvaluationType";
+import { uniqBy } from "lodash";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { prefixPN } from "@tasks/helpers";
 
 function CurriculumTab({ subjects, curriculumTab }) {
-  const [t] = useTranslateLoader(prefixPN('task_realization.statement_step.curriculum'));
+  const [t] = useTranslateLoader(
+    prefixPN("task_realization.statement_step.curriculum")
+  );
 
   const subject = subjects[curriculumTab];
 
@@ -34,27 +42,31 @@ function CurriculumTab({ subjects, curriculumTab }) {
 
       <Box
         sx={(theme) => ({
-          display: 'flex',
-          flexDirection: 'column',
+          display: "flex",
+          flexDirection: "column",
           gap: theme.spacing[4],
         })}
       >
         {!!curriculum?.curriculum?.length && (
           <Box sx={tabPanelStyle}>
             <Box>
-              <CurriculumListContents value={curriculum?.curriculum} subjects={id} />
+              <CurriculumListContents
+                value={curriculum?.curriculum}
+                subjects={id}
+              />
             </Box>
           </Box>
         )}
-        {!!['objectives'].includes('objectives') && !!curriculum?.objectives?.length && (
-          <Box sx={tabPanelStyle}>
-            <Box>
-              <Title color="primary" order={5}>
-                {t('objectives')}
-              </Title>
-              {/* TODO: Use react lists */}
-              <HtmlText>
-                {`
+        {!!["objectives"].includes("objectives") &&
+          !!curriculum?.objectives?.length && (
+            <Box sx={tabPanelStyle}>
+              <Box>
+                <Title color="primary" order={5}>
+                  {t("objectives")}
+                </Title>
+                {/* TODO: Use react lists */}
+                <HtmlText>
+                  {`
               <ul>
               ${curriculum?.objectives
                 ?.map(
@@ -62,20 +74,25 @@ function CurriculumTab({ subjects, curriculumTab }) {
                     ${objective}
                   </li>`
                 )
-                ?.join('')}
+                ?.join("")}
               </ul>
             `}
-              </HtmlText>
+                </HtmlText>
+              </Box>
             </Box>
-          </Box>
-        )}
+          )}
       </Box>
     </Box>
   );
 }
 
-export function CurriculumRender({ assignation, showCurriculum: showCurriculumObj = {} }) {
-  const [t] = useTranslateLoader(prefixPN('task_realization.statement_step.curriculum'));
+export function CurriculumRender({
+  assignation,
+  showCurriculum: showCurriculumObj = {},
+}) {
+  const [t] = useTranslateLoader(
+    prefixPN("task_realization.statement_step.curriculum")
+  );
   const curriculum = useCurriculumVisibleValues({ assignation });
   const subjects = useClassesSubjects(assignation.instance.classes);
 
@@ -88,14 +105,17 @@ export function CurriculumRender({ assignation, showCurriculum: showCurriculumOb
             name: subjects.find((s) => s.id === subject.subject)?.name,
           }))
           ?.filter((subject) => subject.name),
-        'subject'
+        "subject"
       ),
     [(subjects, curriculum)]
   );
 
   const [curriculumTab, setCurriculumTab] = React.useState(0);
 
-  if (Object.keys(showCurriculumObj).length === 0 || subjectsWithCurriculum?.length === 0) {
+  if (
+    Object.keys(showCurriculumObj).length === 0 ||
+    subjectsWithCurriculum?.length === 0
+  ) {
     return null;
   }
 
@@ -125,12 +145,15 @@ CurriculumRender.propTypes = {
 };
 export function useSupportImage(assignable) {
   return useQuery(
-    ['asset', { id: assignable?.metadata?.leebrary?.statementImage?.[0] }],
+    ["asset", { id: assignable?.metadata?.leebrary?.statementImage?.[0] }],
     () =>
-      getAssetsByIdsRequest([assignable?.metadata?.leebrary?.statementImage?.[0]], {
-        indexable: false,
-        showPublic: true,
-      })
+      getAssetsByIdsRequest(
+        [assignable?.metadata?.leebrary?.statementImage?.[0]],
+        {
+          indexable: false,
+          showPublic: true,
+        }
+      )
         .then((response) => response.assets[0])
         .then((asset) => (asset ? prepareAsset(asset) : asset)),
     { enabled: !!assignable?.metadata?.leebrary?.statementImage?.[0] }

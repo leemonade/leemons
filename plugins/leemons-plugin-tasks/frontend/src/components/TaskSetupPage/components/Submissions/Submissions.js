@@ -1,10 +1,15 @@
-import React, { useRef, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import loadable from '@loadable/component';
-import { useFormContext, FormProvider, useForm, Controller } from 'react-hook-form';
-import { ContextContainer, Select } from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
-import ConditionalInput from '../../../Inputs/ConditionalInput';
+import React, { useRef, useEffect } from "react";
+import PropTypes from "prop-types";
+import loadable from "@loadable/component";
+import {
+  useFormContext,
+  FormProvider,
+  useForm,
+  Controller,
+} from "react-hook-form";
+import { ContextContainer, Select } from "@bubbles-ui/components";
+import { TextEditorInput } from "@bubbles-ui/editors";
+import ConditionalInput from "../../../Inputs/ConditionalInput";
 
 function useValueUpdater(form, originalForm) {
   const shouldUpdate = useRef(true);
@@ -13,10 +18,10 @@ function useValueUpdater(form, originalForm) {
   // ES: Manejar cambios en el formulario dinámico
   useEffect(() => {
     const subscription = form.watch((value, field) => {
-      if (field.name?.startsWith('data')) {
+      if (field.name?.startsWith("data")) {
         shouldUpdate.current = false;
 
-        originalForm.setValue('submission.data', value?.data);
+        originalForm.setValue("submission.data", value?.data);
       }
     });
     return () => subscription.unsubscribe();
@@ -26,8 +31,8 @@ function useValueUpdater(form, originalForm) {
   // ES: Propagar cambios del formulario padre al formulario hijo
   useEffect(() => {
     const subscription = originalForm.watch((value, field) => {
-      if (shouldUpdate.current && field.name?.startsWith('submission.data')) {
-        form.setValue('data', value);
+      if (shouldUpdate.current && field.name?.startsWith("submission.data")) {
+        form.setValue("data", value);
       }
 
       shouldUpdate.current = true;
@@ -49,12 +54,12 @@ function useValueUpdater(form, originalForm) {
   // EN: Propagate the first value to the child form
   // ES: Propagar el primer valor al formulario hijo
   useEffect(() => {
-    const s = originalForm.getValues('submission');
+    const s = originalForm.getValues("submission");
 
-    form.setValue('show', !!s?.type || !!s?.description);
+    form.setValue("show", !!s?.type || !!s?.description);
 
     if (s?.data) {
-      form.setValue('data', s?.data);
+      form.setValue("data", s?.data);
     }
   }, []);
 }
@@ -72,7 +77,7 @@ export default function Submissions({ labels, errorMessages }) {
 
   const Component = (type) =>
     loadable(() => {
-      const validTypes = ['File'];
+      const validTypes = ["File"];
 
       if (!validTypes.includes(type)) {
         return Promise.resolve(() => <></>);
@@ -93,7 +98,7 @@ export default function Submissions({ labels, errorMessages }) {
             onChange={(value) => {
               field.onChange(value);
               if (!value) {
-                originalForm.setValue('submission', null);
+                originalForm.setValue("submission", null);
               }
             }}
             showOnTrue
@@ -128,11 +133,11 @@ export default function Submissions({ labels, errorMessages }) {
                       data={[
                         {
                           label: labels?.submission?.types?.file,
-                          value: 'File',
+                          value: "File",
                         },
                         {
                           label: labels?.submission?.types?.link,
-                          value: 'Link',
+                          value: "Link",
                         },
                       ]}
                     />
@@ -156,7 +161,7 @@ export default function Submissions({ labels, errorMessages }) {
                     <TextEditorInput
                       {...f}
                       label={labels?.submission?.description}
-                      editorStyles={{ minHeight: '96px' }}
+                      editorStyles={{ minHeight: "96px" }}
                     />
                   )}
                 />

@@ -1,42 +1,61 @@
-import React, { useCallback, useRef, useMemo } from 'react';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { FileUpload } from '@bubbles-ui/components';
-import { DownloadIcon } from '@bubbles-ui/icons/outline';
-import { deleteAssetRequest, newAssetRequest, listCategoriesRequest } from '@leebrary/request';
-import { useApi } from '@common';
-import { addErrorAlert } from '@layout/alert';
-import handleDeliverySubmission from './handleDeliverySubmission';
+import React, { useCallback, useRef, useMemo } from "react";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { FileUpload } from "@bubbles-ui/components";
+import { DownloadIcon } from "@bubbles-ui/icons/outline";
+import {
+  deleteAssetRequest,
+  newAssetRequest,
+  listCategoriesRequest,
+} from "@leebrary/request";
+import { useApi } from "@common";
+import { addErrorAlert } from "@layout/alert";
+import handleDeliverySubmission from "./handleDeliverySubmission";
 
-export default function File({ assignation, updateStatus, onSave, value, labels: _labels }) {
+export default function File({
+  assignation,
+  updateStatus,
+  onSave,
+  value,
+  labels: _labels,
+}) {
   const labels = _labels?.submission_type?.file;
 
   const [categories] = useApi(listCategoriesRequest);
-  const category = (categories || [])?.find(({ key }) => key === 'media-files')?.id;
+  const category = (categories || [])?.find(
+    ({ key }) => key === "media-files"
+  )?.id;
 
   const fileData = assignation?.instance?.assignable?.submission?.data;
 
   const savedFiles = useRef(value || []);
   const files = useRef(value || []);
-  const saveSubmission = useMemo(() => handleDeliverySubmission(assignation), [assignation]);
+  const saveSubmission = useMemo(
+    () => handleDeliverySubmission(assignation),
+    [assignation]
+  );
   const handleSubmit = useCallback(async () => {
-    updateStatus('loading');
+    updateStatus("loading");
 
     // 1. Remove the assets saved
     // 2. Save the new assets
 
-    const filesToSave = !files.current ? [] : [files.current].flat().filter((file) => !file.id);
+    const filesToSave = !files.current
+      ? []
+      : [files.current].flat().filter((file) => !file.id);
     const filesToRemove = _.difference(savedFiles.current, files.current);
     const filesToKeep = _.difference(savedFiles.current, filesToRemove);
 
     try {
       if (!filesToSave?.length && !filesToRemove?.length) {
-        updateStatus(filesToKeep?.length ? 'submitted' : 'cleared');
+        updateStatus(filesToKeep?.length ? "submitted" : "cleared");
         return true;
       }
 
       if (filesToRemove?.length) {
-        await Promise.all(filesToRemove.map((file) => deleteAssetRequest(file.id)));
+        await Promise.all(
+          filesToRemove.map((file) => deleteAssetRequest(file.id))
+        );
       }
 
       let filesSaved = [];
@@ -47,20 +66,22 @@ export default function File({ assignation, updateStatus, onSave, value, labels:
             newAssetRequest(
               { file, name: file.name, indexable: 0, public: 1 },
               category,
-              'media-files'
+              "media-files"
             )
           )
         );
 
-        filesSaved = _.map(_.map(filesSaved, 'asset'), (file) => _.pick(file, ['id', 'name']));
+        filesSaved = _.map(_.map(filesSaved, "asset"), (file) =>
+          _.pick(file, ["id", "name"])
+        );
       }
       filesSaved = [...filesToKeep, ...filesSaved];
       await saveSubmission(filesSaved, !filesSaved.length);
       savedFiles.current = filesSaved;
-      updateStatus(savedFiles.current.length ? 'submitted' : 'cleared');
+      updateStatus(savedFiles.current.length ? "submitted" : "cleared");
       return true;
     } catch (e) {
-      updateStatus('error', e.message);
+      updateStatus("error", e.message);
       return false;
     }
   }, [updateStatus, category]);
@@ -83,20 +104,23 @@ export default function File({ assignation, updateStatus, onSave, value, labels:
         onChange={(newFiles) => {
           if (_.isEqual(newFiles, savedFiles.current)) {
             if (!newFiles.length) {
-              updateStatus('cleared');
+              updateStatus("cleared");
             } else {
-              updateStatus('submitted');
+              updateStatus("submitted");
             }
             return;
           }
-          updateStatus('changed');
+          updateStatus("changed");
           files.current = newFiles;
         }}
         onReject={(allErrors) => {
           allErrors.forEach((error) => {
             const errorMessage = labels?.errorAlert
-              ?.replace('{{fileName}}', error.file.name)
-              .replace('{{error}}', error?.errors?.map((e) => e.message).join(', '));
+              ?.replace("{{fileName}}", error.file.name)
+              .replace(
+                "{{error}}",
+                error?.errors?.map((e) => e.message).join(", ")
+              );
 
             addErrorAlert(errorMessage);
           });

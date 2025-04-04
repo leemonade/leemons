@@ -1,39 +1,39 @@
-import React, { useEffect, useMemo } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect, useMemo } from "react";
+import { useHistory } from "react-router-dom";
 
-import { ActivityUnavailable } from '@assignables/components/ActivityUnavailable';
-import { useActivityStates } from '@assignables/components/ActivityUnavailable/hooks/useActivityStates';
-import { VerticalStepperContainer } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PropTypes from 'prop-types';
+import { ActivityUnavailable } from "@assignables/components/ActivityUnavailable";
+import { useActivityStates } from "@assignables/components/ActivityUnavailable/hooks/useActivityStates";
+import { VerticalStepperContainer } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
 
-import { useUpdateTimestamps } from '../../__DEPRECATED__components/Steps/Steps';
-import DevelopmentStep from '../DevelopmentStep/DevelopmentStep';
-import IntroductionStep from '../IntroductionStep/IntroductionStep';
-import SubmissionStep from '../SubmissionStep/SubmissionStep';
+import { useUpdateTimestamps } from "../../__DEPRECATED__components/Steps/Steps";
+import DevelopmentStep from "../DevelopmentStep/DevelopmentStep";
+import IntroductionStep from "../IntroductionStep/IntroductionStep";
+import SubmissionStep from "../SubmissionStep/SubmissionStep";
 
-import { prefixPN } from '@tasks/helpers';
-import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
+import { prefixPN } from "@tasks/helpers";
+import useStudentAssignationMutation from "@tasks/hooks/student/useStudentAssignationMutation";
 
 function useSteps({ instance, isUnavailable }) {
-  const [t] = useTranslateLoader(prefixPN('task_realization.steps'));
+  const [t] = useTranslateLoader(prefixPN("task_realization.steps"));
   return useMemo(
     () =>
       [
         {
-          id: 'introduction',
-          label: t('introduction'),
+          id: "introduction",
+          label: t("introduction"),
           component: IntroductionStep,
         },
         {
-          id: 'development',
-          label: t('development'),
+          id: "development",
+          label: t("development"),
           component: DevelopmentStep,
           isBlocked: isUnavailable,
         },
         !!instance?.assignable?.submission && {
-          id: 'submission',
-          label: t('submission'),
+          id: "submission",
+          label: t("submission"),
           component: SubmissionStep,
           isBlocked: isUnavailable,
         },
@@ -42,8 +42,16 @@ function useSteps({ instance, isUnavailable }) {
   );
 }
 
-export default function StepContainer({ preview, assignation, instance, scrollRef }) {
-  const { isUnavailable } = useActivityStates({ instance, user: assignation?.user });
+export default function StepContainer({
+  preview,
+  assignation,
+  instance,
+  scrollRef,
+}) {
+  const { isUnavailable } = useActivityStates({
+    instance,
+    user: assignation?.user,
+  });
 
   const steps = useSteps({ instance, isUnavailable });
   const [currentStep, setCurrentStep] = React.useState(0);
@@ -56,7 +64,7 @@ export default function StepContainer({ preview, assignation, instance, scrollRe
   const updateTimestamp = useUpdateTimestamps(mutateAsync, assignation);
   useEffect(() => {
     if (assignation) {
-      updateTimestamp('open');
+      updateTimestamp("open");
     }
   }, [updateTimestamp]);
 
@@ -65,9 +73,11 @@ export default function StepContainer({ preview, assignation, instance, scrollRe
       setCurrentStep(currentStep + 1);
     } else {
       try {
-        await updateTimestamp('end');
+        await updateTimestamp("end");
 
-        history.push(`/private/tasks/correction/${instance.id}/${assignation?.user}?fromExecution`);
+        history.push(
+          `/private/tasks/correction/${instance.id}/${assignation?.user}?fromExecution`
+        );
       } catch (e) {
         console.error(e);
       }
@@ -80,7 +90,9 @@ export default function StepContainer({ preview, assignation, instance, scrollRe
     }
   };
 
-  const StepComponent = isUnavailable ? ActivityUnavailable : steps[currentStep].component;
+  const StepComponent = isUnavailable
+    ? ActivityUnavailable
+    : steps[currentStep].component;
 
   return (
     <VerticalStepperContainer

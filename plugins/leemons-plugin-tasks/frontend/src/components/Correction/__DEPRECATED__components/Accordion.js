@@ -1,6 +1,6 @@
-import React, { useContext, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useFormContext, useWatch } from 'react-hook-form';
+import React, { useContext, useMemo } from "react";
+import PropTypes from "prop-types";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 import {
   ActivityAccordion,
   ActivityAccordionPanel,
@@ -10,19 +10,29 @@ import {
   ContextContainer,
   ScoreInput,
   Text,
-} from '@bubbles-ui/components';
-import { PluginComunicaIcon, RatingStarIcon } from '@bubbles-ui/icons/outline';
-import { TextEditorInput } from '@bubbles-ui/editors';
-import ChatDrawer from '@comunica/components/ChatDrawer/ChatDrawer';
-import ChatButton from '@comunica/components/ChatButton';
-import { useStore } from '@common';
-import { findNearestFloorScore } from '@assignables/widgets/dashboard/nya/components/EvaluationCardStudent/components/ScoreFeedback';
+} from "@bubbles-ui/components";
+import { PluginComunicaIcon, RatingStarIcon } from "@bubbles-ui/icons/outline";
+import { TextEditorInput } from "@bubbles-ui/editors";
+import ChatDrawer from "@comunica/components/ChatDrawer/ChatDrawer";
+import ChatButton from "@comunica/components/ChatButton";
+import { useStore } from "@common";
+import { findNearestFloorScore } from "@assignables/widgets/dashboard/nya/components/EvaluationCardStudent/components/ScoreFeedback";
 
-function Grades({ classes, evaluationSystem, scoreInputProps, control, subject, user }) {
+function Grades({
+  classes,
+  evaluationSystem,
+  scoreInputProps,
+  control,
+  subject,
+  user,
+}) {
   const formKey = `${user}.${subject}.score`;
 
   const score = useWatch({ control, name: formKey });
-  const scale = useMemo(() => findNearestFloorScore(score, evaluationSystem.scales), [score]);
+  const scale = useMemo(
+    () => findNearestFloorScore(score, evaluationSystem.scales),
+    [score]
+  );
 
   return (
     <Box className={classes.accordionPanel}>
@@ -35,7 +45,11 @@ function Grades({ classes, evaluationSystem, scoreInputProps, control, subject, 
             <ScoreInput
               {...scoreInputProps}
               tags={[]}
-              value={scale ? { score: scale.number, letter: scale.letter } : undefined}
+              value={
+                scale
+                  ? { score: scale.number, letter: scale.letter }
+                  : undefined
+              }
               decimalPrecision={2}
               decimalSeparator=","
               direction="ltr"
@@ -63,7 +77,9 @@ function Feedback({ classes, subject, control, user }) {
         key={`${user}.${subject}.feedback`}
         control={control}
         name={`${user}.${subject}.feedback`}
-        render={({ field }) => <TextEditorInput {...field} editorStyles={{ minHeight: '96px' }} />}
+        render={({ field }) => (
+          <TextEditorInput {...field} editorStyles={{ minHeight: "96px" }} />
+        )}
       />
     </Box>
   );
@@ -109,7 +125,12 @@ export default function Accordion({
   const Chat = (
     <>
       {store.room ? (
-        <Box sx={(theme) => ({ marginTop: theme.spacing[10], marginBottom: theme.spacing[10] })}>
+        <Box
+          sx={(theme) => ({
+            marginTop: theme.spacing[10],
+            marginBottom: theme.spacing[10],
+          })}
+        >
           <ContextContainer alignItems="center">
             <Text size="md" color="primary" strong>
               {labels?.chatTeacherDescription}
@@ -155,7 +176,11 @@ export default function Accordion({
 
   return (
     <>
-      <ActivityAccordion noFlex onChange={setState} value={state || initialState}>
+      <ActivityAccordion
+        noFlex
+        onChange={setState}
+        value={state || initialState}
+      >
         {!!instance.requiresScoring && (
           <ActivityAccordionPanel
             label={labels?.punctuation}

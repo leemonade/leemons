@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useMemo } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
-import { Loader, Text } from '@bubbles-ui/components';
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
-import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
-import Correction from '../../../components/Correction';
-import StudentCorrection from '../../../components/StudentCorrection';
+import React, { useEffect, useRef, useMemo } from "react";
+import { useParams, useHistory } from "react-router-dom";
+import { Loader, Text } from "@bubbles-ui/components";
+import { useIsTeacher } from "@academic-portfolio/hooks";
+import useInstances from "@assignables/requests/hooks/queries/useInstances";
+import useAssignations from "@assignables/requests/hooks/queries/useAssignations";
+import Correction from "../../../components/Correction";
+import StudentCorrection from "../../../components/StudentCorrection";
 
 export default function CorrectionPage() {
   const isTeacher = useIsTeacher();
@@ -14,11 +14,15 @@ export default function CorrectionPage() {
   const { instance: instanceId } = useParams();
   let { student } = useParams();
 
-  if (!student || student === 'null' || student === 'undefined') {
+  if (!student || student === "null" || student === "undefined") {
     student = null;
   }
 
-  const { data: instance, error, isLoading: loading } = useInstances({ id: instanceId });
+  const {
+    data: instance,
+    error,
+    isLoading: loading,
+  } = useInstances({ id: instanceId });
 
   const { data: assignation } = useAssignations({
     query: { instance: instanceId, user: student },
@@ -70,7 +74,13 @@ export default function CorrectionPage() {
     if (!assignation) {
       return null;
     }
-    return <Correction assignation={fullAssignation} instance={instance} loading={loading} />;
+    return (
+      <Correction
+        assignation={fullAssignation}
+        instance={instance}
+        loading={loading}
+      />
+    );
   }
   return <StudentCorrection assignation={fullAssignation} />;
 }

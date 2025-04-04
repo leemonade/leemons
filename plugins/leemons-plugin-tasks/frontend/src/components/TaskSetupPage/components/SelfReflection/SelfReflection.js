@@ -1,9 +1,15 @@
-import React, { useEffect, useState, useRef } from 'react';
-import PropTypes from 'prop-types';
-import { useFormContext, Controller } from 'react-hook-form';
-import { ContextContainer, TextInput, Checkbox, Select, NumberInput } from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
-import ConditionalInput from '../../../Inputs/ConditionalInput';
+import React, { useEffect, useState, useRef } from "react";
+import PropTypes from "prop-types";
+import { useFormContext, Controller } from "react-hook-form";
+import {
+  ContextContainer,
+  TextInput,
+  Checkbox,
+  Select,
+  NumberInput,
+} from "@bubbles-ui/components";
+import { TextEditorInput } from "@bubbles-ui/editors";
+import ConditionalInput from "../../../Inputs/ConditionalInput";
 
 function getValue(value, key, defaultValue) {
   try {
@@ -21,7 +27,12 @@ function getJSON(value) {
   }
 }
 
-export default function SelfReflection({ name, labels, description, showType = false }) {
+export default function SelfReflection({
+  name,
+  labels,
+  description,
+  showType = false,
+}) {
   const [show, setShow] = useState(false);
   const firstRender = useRef(true);
   const { control, setValue } = useFormContext();
@@ -53,22 +64,24 @@ export default function SelfReflection({ name, labels, description, showType = f
                 control={control}
                 render={({ field: typeField }) => (
                   <ContextContainer>
-                    {showType && !typeField.value && typeField.onChange('freeText')}
+                    {showType &&
+                      !typeField.value &&
+                      typeField.onChange("freeText")}
                     {showType && (
                       <Select
                         {...typeField}
                         value={typeField.value}
-                        label={'Type'}
+                        label={"Type"}
                         data={[
                           {
-                            value: 'freeText',
+                            value: "freeText",
                             // TRANSLATE: Label
-                            label: 'Free text',
+                            label: "Free text",
                           },
                           {
-                            value: 'feedback',
+                            value: "feedback",
                             // TRANSLATE: Label
-                            label: 'Feedback',
+                            label: "Feedback",
                           },
                         ]}
                       />
@@ -83,18 +96,25 @@ export default function SelfReflection({ name, labels, description, showType = f
                           {...field}
                           // TODO: Remove temporary free text
                           value={
-                            typeField.value === 'freeText'
-                              ? getValue(field.value, 'title', '')
+                            typeField.value === "freeText"
+                              ? getValue(field.value, "title", "")
                               : field.value
                           }
                           onChange={(value) =>
                             field.onChange(
-                              typeField.value === 'freeText'
-                                ? JSON.stringify({ ...getJSON(field.value), title: value })
+                              typeField.value === "freeText"
+                                ? JSON.stringify({
+                                    ...getJSON(field.value),
+                                    title: value,
+                                  })
                                 : value
                             )
                           }
-                          label={showType && typeField.value === 'freeText' ? 'Title' : labels?.id}
+                          label={
+                            showType && typeField.value === "freeText"
+                              ? "Title"
+                              : labels?.id
+                          }
                         />
                       )}
                     />
@@ -106,7 +126,7 @@ export default function SelfReflection({ name, labels, description, showType = f
                         <TextEditorInput
                           {...field}
                           label={labels?.description}
-                          editorStyles={{ minHeight: '96px' }}
+                          editorStyles={{ minHeight: "96px" }}
                         />
                       )}
                     />
@@ -115,25 +135,28 @@ export default function SelfReflection({ name, labels, description, showType = f
                       control={control}
                       shouldUnregister
                       render={({ field }) => {
-                        if (typeField.value !== 'freeText') {
+                        if (typeField.value !== "freeText") {
                           return null;
                         }
 
                         return (
                           <ConditionalInput
-                            value={getValue(field.value, 'limitedWords', false)}
+                            value={getValue(field.value, "limitedWords", false)}
                             onChange={(value) =>
                               field.onChange(
-                                JSON.stringify({ ...getJSON(field.value), limitedWords: value })
+                                JSON.stringify({
+                                  ...getJSON(field.value),
+                                  limitedWords: value,
+                                })
                               )
                             }
-                            label={'Limited words'}
+                            label={"Limited words"}
                             showOnTrue
                             render={() => (
                               <>
                                 <NumberInput
                                   label="min words"
-                                  value={getValue(field.value, 'minWords', 0)}
+                                  value={getValue(field.value, "minWords", 0)}
                                   onChange={(value) =>
                                     field.onChange(
                                       JSON.stringify({
@@ -145,7 +168,7 @@ export default function SelfReflection({ name, labels, description, showType = f
                                 />
                                 <NumberInput
                                   label="max words"
-                                  value={getValue(field.value, 'maxWords', 0)}
+                                  value={getValue(field.value, "maxWords", 0)}
                                   onChange={(value) =>
                                     field.onChange(
                                       JSON.stringify({
@@ -166,7 +189,11 @@ export default function SelfReflection({ name, labels, description, showType = f
                       control={control}
                       shouldUnregister
                       render={({ field }) => (
-                        <Checkbox {...field} checked={field.value} label={labels?.mandatory} />
+                        <Checkbox
+                          {...field}
+                          checked={field.value}
+                          label={labels?.mandatory}
+                        />
                       )}
                     />
                   </ContextContainer>

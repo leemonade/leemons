@@ -1,5 +1,8 @@
-import React from 'react';
-import { TASK_ICON_PROP_TYPES, TASK_ICON_DEFAULT_PROPS } from './TaskIcon.constants';
+import React from "react";
+import {
+  TASK_ICON_PROP_TYPES,
+  TASK_ICON_DEFAULT_PROPS,
+} from "./TaskIcon.constants";
 
 const TaskIcon = ({ width, height, color }) => (
   <svg
@@ -23,6 +26,6 @@ const TaskIcon = ({ width, height, color }) => (
 TaskIcon.defaultProps = TASK_ICON_DEFAULT_PROPS;
 TaskIcon.propTypes = TASK_ICON_PROP_TYPES;
 
-TaskIcon.displayName = 'TaskIcon';
+TaskIcon.displayName = "TaskIcon";
 export default TaskIcon;
 export { TaskIcon };

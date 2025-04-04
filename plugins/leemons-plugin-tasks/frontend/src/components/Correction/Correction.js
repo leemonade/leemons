@@ -1,14 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { useForm, Controller, useWatch } from 'react-hook-form';
-import { useHistory } from 'react-router-dom';
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useForm, Controller, useWatch } from "react-hook-form";
+import { useHistory } from "react-router-dom";
 
-import { SubjectItemDisplay } from '@academic-portfolio/components';
-import { useClassesSubjects } from '@academic-portfolio/hooks';
-import ActivityHeader from '@assignables/components/ActivityHeader';
-import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
-import EvaluationFeedback from '@assignables/components/EvaluationFeedback/EvaluationFeedback';
-import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
-import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
+import { SubjectItemDisplay } from "@academic-portfolio/components";
+import { useClassesSubjects } from "@academic-portfolio/hooks";
+import ActivityHeader from "@assignables/components/ActivityHeader";
+import AssignableUserNavigator from "@assignables/components/AssignableUserNavigator";
+import EvaluationFeedback from "@assignables/components/EvaluationFeedback/EvaluationFeedback";
+import useAssignationComunicaRoom from "@assignables/hooks/useAssignationComunicaRoom";
+import useProgramEvaluationSystem from "@assignables/hooks/useProgramEvaluationSystem";
 import {
   Box,
   Tabs,
@@ -22,27 +22,27 @@ import {
   VerticalContainer,
   TotalLayoutContainer,
   TotalLayoutStepContainer,
-} from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
-import { PluginComunicaIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
-import { useComunica } from '@comunica/context';
-import { addSuccessAlert } from '@layout/alert';
-import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useUserAgentsInfo } from '@users/hooks';
-import { isNil, map, trimEnd } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { TextEditorInput } from "@bubbles-ui/editors";
+import { PluginComunicaIcon, SendMessageIcon } from "@bubbles-ui/icons/outline";
+import { useComunica } from "@comunica/context";
+import { addSuccessAlert } from "@layout/alert";
+import { AssetEmbedList } from "@leebrary/components/AssetEmbedList";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useUserAgentsInfo } from "@users/hooks";
+import { isNil, map, trimEnd } from "lodash";
+import PropTypes from "prop-types";
 
-import ConditionalInput from '../Inputs/ConditionalInput';
+import ConditionalInput from "../Inputs/ConditionalInput";
 
-import LinkSubmission from './components/LinkSubmission/LinkSubmission';
+import LinkSubmission from "./components/LinkSubmission/LinkSubmission";
 
-import { prefixPN } from '@tasks/helpers';
-import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
+import { prefixPN } from "@tasks/helpers";
+import useStudentAssignationMutation from "@tasks/hooks/student/useStudentAssignationMutation";
 
 function useLetterEvaluationData({ evaluationSystem }) {
   return useMemo(() => {
-    if (evaluationSystem?.type !== 'letter') {
+    if (evaluationSystem?.type !== "letter") {
       return null;
     }
 
@@ -55,15 +55,28 @@ function useLetterEvaluationData({ evaluationSystem }) {
   }, [evaluationSystem]);
 }
 
-function useOnEvaluationChange({ form, instance, assignation, subject, evaluationSystem }) {
+function useOnEvaluationChange({
+  form,
+  instance,
+  assignation,
+  subject,
+  evaluationSystem,
+}) {
   const { requiresScoring } = instance ?? {};
-  const { score: _score, feedback: _feedback, showFeedback } = useWatch({ control: form.control });
+  const {
+    score: _score,
+    feedback: _feedback,
+    showFeedback,
+  } = useWatch({ control: form.control });
 
   const score = isNil(_score) ? null : Number(_score);
   const feedback = !showFeedback || isNil(_feedback) ? null : _feedback;
 
   const previousScore = useMemo(
-    () => assignation?.grades?.find((grade) => grade.type === 'main' && grade.subject === subject),
+    () =>
+      assignation?.grades?.find(
+        (grade) => grade.type === "main" && grade.subject === subject
+      ),
     [assignation?.grades, subject]
   );
 
@@ -80,7 +93,7 @@ function useOnEvaluationChange({ form, instance, assignation, subject, evaluatio
         subject,
         grade: isNil(formValues.score) ? null : Number(formValues.score),
         feedback: formValues.showFeedback ? formValues.feedback : null,
-        type: 'main',
+        type: "main",
         visibleToStudent: !!visibleToStudent,
       };
 
@@ -101,19 +114,23 @@ function useOnEvaluationChange({ form, instance, assignation, subject, evaluatio
     const gradeObj = previousScore;
     const { grade, feedback: savedFeedback } = gradeObj ?? {};
 
-    const gradeIsDirty = form.getFieldState('grade').isDirty;
-    const feedbackIsDirty = form.getFieldState('feedback').isDirty;
+    const gradeIsDirty = form.getFieldState("grade").isDirty;
+    const feedbackIsDirty = form.getFieldState("feedback").isDirty;
 
     if (!gradeIsDirty && !isNil(grade) && grade !== score) {
-      form.setValue('score', grade);
-    } else if (isNil(score) && evaluationSystem?.minScale && !!requiresScoring) {
-      form.setValue('score', evaluationSystem.minScale?.number);
+      form.setValue("score", grade);
+    } else if (
+      isNil(score) &&
+      evaluationSystem?.minScale &&
+      !!requiresScoring
+    ) {
+      form.setValue("score", evaluationSystem.minScale?.number);
     }
 
     if (!feedbackIsDirty && savedFeedback !== feedback) {
-      form.setValue('feedback', savedFeedback);
+      form.setValue("feedback", savedFeedback);
       if (savedFeedback) {
-        form.setValue('showFeedback', true);
+        form.setValue("showFeedback", true);
       }
     }
   }, [previousScore, evaluationSystem]);
@@ -122,7 +139,7 @@ function useOnEvaluationChange({ form, instance, assignation, subject, evaluatio
 }
 
 function CorrectionSubjectTab({ assignation, instance, subject }) {
-  const [t] = useTranslateLoader(prefixPN('task_correction.teacher'));
+  const [t] = useTranslateLoader(prefixPN("task_correction.teacher"));
   const form = useForm();
   const { openRoom } = useComunica();
 
@@ -133,7 +150,13 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
   const evaluationSystem = useProgramEvaluationSystem(instance);
   const data = useLetterEvaluationData({ evaluationSystem });
 
-  const publish = useOnEvaluationChange({ form, instance, assignation, subject, evaluationSystem });
+  const publish = useOnEvaluationChange({
+    form,
+    instance,
+    assignation,
+    subject,
+    evaluationSystem,
+  });
 
   if (instance.dates.evaluationClosed) {
     return (
@@ -149,36 +172,42 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
   }
 
   return (
-    <ContextContainer title={t('evaluation')} spacing={8}>
+    <ContextContainer title={t("evaluation")} spacing={8}>
       {!!instance?.requiresScoring && (
         <Box sx={{ maxWidth: 212 }}>
           <Controller
             name="score"
             control={form.control}
             render={({ field }) => {
-              if (evaluationSystem?.type === 'number' || evaluationSystem?.type === 'numeric') {
+              if (
+                evaluationSystem?.type === "number" ||
+                evaluationSystem?.type === "numeric"
+              ) {
                 return (
                   <NumberInput
                     {...field}
-                    label={t('score_placeholder')}
+                    label={t("score_placeholder")}
                     min={evaluationSystem?.minScale?.number}
                     max={evaluationSystem?.maxScale?.number}
                     precision={2}
                     formatter={(userInput) => {
                       let _value = userInput;
-                      const precision = trimEnd(_value.toString().split('.')[1] || '', '0').length;
+                      const precision = trimEnd(
+                        _value.toString().split(".")[1] || "",
+                        "0"
+                      ).length;
 
-                      if (_value.endsWith('.')) {
+                      if (_value.endsWith(".")) {
                         return _value;
                       }
 
-                      if (_value.startsWith('0') && !_value.startsWith('0.')) {
-                        _value = _value.replace('^0', '');
+                      if (_value.startsWith("0") && !_value.startsWith("0.")) {
+                        _value = _value.replace("^0", "");
                       }
 
                       return `${(_value * 1 || 0).toFixed(precision)}`;
                     }}
-                    parser={(value) => value.replace(',', '.').trim()}
+                    parser={(value) => value.replace(",", ".").trim()}
                   />
                 );
               }
@@ -187,8 +216,8 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
                   {...field}
                   searchable
                   data={data}
-                  label={t('score_label')}
-                  placeholder={t('score_placeholder')}
+                  label={t("score_label")}
+                  placeholder={t("score_placeholder")}
                 />
               );
             }}
@@ -207,8 +236,13 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
                 <ConditionalInput
                   {...showFeedbackField}
                   checked={!!showFeedbackField.value}
-                  label={t('add_feedback')}
-                  render={() => <TextEditorInput {...field} editorStyles={{ minHeight: '96px' }} />}
+                  label={t("add_feedback")}
+                  render={() => (
+                    <TextEditorInput
+                      {...field}
+                      editorStyles={{ minHeight: "96px" }}
+                    />
+                  )}
                 />
               )}
             />
@@ -224,7 +258,7 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
             }}
             rightIcon={<PluginComunicaIcon />}
           >
-            {t('comunica')}
+            {t("comunica")}
           </Button>
         )}
         <Button
@@ -234,7 +268,7 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
             setTimeout(async () => {
               try {
                 await publish({ visibleToStudent: true });
-                addSuccessAlert(t('publish_success'));
+                addSuccessAlert(t("publish_success"));
               } finally {
                 setLoading(false);
               }
@@ -242,7 +276,7 @@ function CorrectionSubjectTab({ assignation, instance, subject }) {
           }}
           rightIcon={<SendMessageIcon />}
         >
-          {t('publish')}
+          {t("publish")}
         </Button>
       </Stack>
     </ContextContainer>
@@ -256,14 +290,14 @@ CorrectionSubjectTab.propTypes = {
 };
 
 export default function Correction({ assignation, instance }) {
-  const [t] = useTranslateLoader(prefixPN('task_correction.teacher'));
+  const [t] = useTranslateLoader(prefixPN("task_correction.teacher"));
   const scrollRef = useRef();
   const history = useHistory();
 
   const subjects = useClassesSubjects(instance?.classes);
 
   const submission = useMemo(
-    () => map(assignation?.metadata?.submission, 'id'),
+    () => map(assignation?.metadata?.submission, "id"),
     [assignation?.metadata?.submission]
   );
 
@@ -286,7 +320,7 @@ export default function Correction({ assignation, instance }) {
           showEvaluationType
           showDeadline
           showAssignmentDetailButton
-          action={t('evaluation')}
+          action={t("evaluation")}
         />
       }
     >
@@ -295,7 +329,7 @@ export default function Correction({ assignation, instance }) {
         leftZone={
           <>
             <Box sx={(theme) => ({ marginBottom: theme.spacing[1] })}>
-              <Text>{t('student')}</Text>
+              <Text>{t("student")}</Text>
             </Box>
             <AssignableUserNavigator
               onlySelect
@@ -309,21 +343,21 @@ export default function Correction({ assignation, instance }) {
         <TotalLayoutStepContainer
           stepName={
             userAgentInfo?.user
-              ? `${userAgentInfo.user.name ?? ''} ${userAgentInfo.user.surnames ?? ''}`
+              ? `${userAgentInfo.user.name ?? ""} ${userAgentInfo.user.surnames ?? ""}`
               : null
           }
         >
           <Stack direction="column" spacing={8}>
-            {instance?.assignable?.submission?.type === 'File' && (
+            {instance?.assignable?.submission?.type === "File" && (
               <Box>
-                <ContextContainer title={t('submission')}>
+                <ContextContainer title={t("submission")}>
                   <AssetEmbedList assets={submission} />
                 </ContextContainer>
               </Box>
             )}
-            {instance?.assignable?.submission?.type === 'Link' && (
+            {instance?.assignable?.submission?.type === "Link" && (
               <Box>
-                <ContextContainer title={t('submission')}>
+                <ContextContainer title={t("submission")}>
                   <LinkSubmission assignation={assignation} />
                 </ContextContainer>
               </Box>
@@ -347,7 +381,9 @@ export default function Correction({ assignation, instance }) {
                       label={<SubjectItemDisplay subjectsIds={[subject.id]} />}
                     >
                       <ContextContainer
-                        sx={(theme) => ({ marginTop: theme.other.global.spacing.padding.lg })}
+                        sx={(theme) => ({
+                          marginTop: theme.other.global.spacing.padding.lg,
+                        })}
                       >
                         <CorrectionSubjectTab
                           assignation={assignation}

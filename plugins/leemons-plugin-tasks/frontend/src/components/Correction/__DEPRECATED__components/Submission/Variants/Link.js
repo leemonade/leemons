@@ -1,5 +1,5 @@
-import React from 'react';
-import { Anchor } from '@bubbles-ui/components';
+import React from "react";
+import { Anchor } from "@bubbles-ui/components";
 
 export default function Link({ assignation }) {
   return (

@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useMemo } from 'react';
-import { map } from 'lodash';
-import PropTypes from 'prop-types';
-import { ContextContainer, Select } from '@bubbles-ui/components';
-import { detailProgramRequest } from '@academic-portfolio/request';
+import React, { useEffect, useState, useMemo } from "react";
+import { map } from "lodash";
+import PropTypes from "prop-types";
+import { ContextContainer, Select } from "@bubbles-ui/components";
+import { detailProgramRequest } from "@academic-portfolio/request";
 
 export default function SelectSubject({
   value: userValue,
@@ -70,12 +70,12 @@ export default function SelectSubject({
   const levelsList = useMemo(
     () => [
       {
-        label: 'Beginner',
-        value: 'beginner',
+        label: "Beginner",
+        value: "beginner",
       },
       {
-        label: 'Intermediate',
-        value: 'intermediate',
+        label: "Intermediate",
+        value: "intermediate",
       },
     ],
     []
@@ -88,21 +88,21 @@ export default function SelectSubject({
         label={labels?.course}
         placeholder={placeholders?.course}
         data={selects.courses}
-        onChange={handleChange('course')}
+        onChange={handleChange("course")}
         value={value?.course}
       />
       <Select
         label={labels?.subject}
         placeholder={placeholders?.subject}
         data={selects.subjects}
-        onChange={handleChange('subject')}
+        onChange={handleChange("subject")}
         value={value?.subject}
       />
       <Select
         label={labels?.level}
         placeholder={placeholders?.level}
         data={levelsList}
-        onChange={handleChange('level')}
+        onChange={handleChange("level")}
         value={value?.level}
       />
     </ContextContainer>

@@ -1,2 +1,2 @@
-export { default as SubjectSelector } from './SubjectSelector';
-export { default as Tabs } from './Tabs';
+export { default as SubjectSelector } from "./SubjectSelector";
+export { default as Tabs } from "./Tabs";

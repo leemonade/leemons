@@ -1,6 +1,6 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { useFormContext } from 'react-hook-form';
+import React, { useState, useMemo, useCallback, useEffect } from "react";
+import PropTypes from "prop-types";
+import { useFormContext } from "react-hook-form";
 import {
   Box,
   Button,
@@ -8,19 +8,19 @@ import {
   useResizeObserver,
   useViewportSize,
   InputWrapper,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 // TODO: import from @library plugin
-import { LibraryCardEmbed, AssetListDrawer } from '@leebrary/components';
-import { uniqBy, map } from 'lodash';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
-import getAssetsByIds from '@leebrary/request/getAssetsByIds';
-import { PluginLeebraryIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
-import ImagePicker from '@leebrary/components/ImagePicker';
+import { LibraryCardEmbed, AssetListDrawer } from "@leebrary/components";
+import { uniqBy, map } from "lodash";
+import prepareAsset from "@leebrary/helpers/prepareAsset";
+import getAssetsByIds from "@leebrary/request/getAssetsByIds";
+import { PluginLeebraryIcon, RemoveIcon } from "@bubbles-ui/icons/outline";
+import ImagePicker from "@leebrary/components/ImagePicker";
 
 const styles = createStyles((theme) => ({
   attachmentContainer: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     gap: theme.spacing[5],
   },
 }));
@@ -30,7 +30,10 @@ export default function StatementImage({ labels }) {
     --- Drawer state ---
   */
   const [showAssetDrawer, setShowAssetDrawer] = useState(false);
-  const onDrawerClose = useCallback(() => setShowAssetDrawer(false), [setShowAssetDrawer]);
+  const onDrawerClose = useCallback(
+    () => setShowAssetDrawer(false),
+    [setShowAssetDrawer]
+  );
   const toggleDrawer = useCallback(
     () => setShowAssetDrawer((showDrawer) => !showDrawer),
     [setShowAssetDrawer]
@@ -56,15 +59,21 @@ export default function StatementImage({ labels }) {
   const [resources, setResources] = useState([]);
   useEffect(() => {
     (async () => {
-      const formResources = getValues('metadata.leebrary.statementImage');
+      const formResources = getValues("metadata.leebrary.statementImage");
       if (formResources?.length) {
-        const savedAssets = await getAssetsByIds(formResources, { public: true, indexable: false });
+        const savedAssets = await getAssetsByIds(formResources, {
+          public: true,
+          indexable: false,
+        });
         const newAssets = await getAssetsByIds(formResources, { public: true });
 
-        const assets = uniqBy([...savedAssets.assets, ...newAssets.assets], 'id');
+        const assets = uniqBy(
+          [...savedAssets.assets, ...newAssets.assets],
+          "id"
+        );
 
         if (assets?.length) {
-          setResources(map(assets, 'file.id'));
+          setResources(map(assets, "file.id"));
         }
       }
     })();
@@ -77,8 +86,8 @@ export default function StatementImage({ labels }) {
 
   const onAssetSelect = (asset) => {
     const value = asset ? [asset] : [];
-    setResources(map(value, 'file.id'));
-    setValue('metadata.leebrary.statementImage', map(value, 'id'), {
+    setResources(map(value, "file.id"));
+    setValue("metadata.leebrary.statementImage", map(value, "id"), {
       shouldDirty: true,
       shouldTouch: true,
     });
@@ -104,7 +113,7 @@ export default function StatementImage({ labels }) {
               key={asset.id}
               actionIcon={
                 <Box
-                  sx={{ cursor: 'pointer' }}
+                  sx={{ cursor: "pointer" }}
                   onClick={() => {
                     onAssetRemove(asset);
                   }}
@@ -126,11 +135,11 @@ export default function StatementImage({ labels }) {
           onSubmit={(e) => {
             // EN: Added to prevent the event from bubbling up to the parent form
             // ES: Añadido para evitar que el evento se propague hacia arriba del formulario
-            if (typeof e.preventDefault === 'function') {
+            if (typeof e.preventDefault === "function") {
               e.preventDefault();
             }
 
-            if (typeof e.stopPropagation === 'function') {
+            if (typeof e.stopPropagation === "function") {
               e.stopPropagation();
             }
           }}

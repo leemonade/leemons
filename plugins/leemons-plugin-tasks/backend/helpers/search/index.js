@@ -1,5 +1,5 @@
-const search = require('./search');
-const unfitSearch = require('./unfitSearch');
+const search = require("./search");
+const unfitSearch = require("./unfitSearch");
 
 module.exports = {
   unfitSearch,

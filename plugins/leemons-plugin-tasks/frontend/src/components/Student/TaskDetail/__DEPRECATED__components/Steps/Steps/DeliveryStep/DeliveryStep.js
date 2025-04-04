@@ -1,36 +1,54 @@
-import React, { useMemo, useState, useEffect, useCallback } from 'react';
-import loadable from '@loadable/component';
-import PropTypes from 'prop-types';
-import { ContextContainer, Alert, HtmlText, Title, Box, Button } from '@bubbles-ui/components';
-import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
+import React, { useMemo, useState, useEffect, useCallback } from "react";
+import loadable from "@loadable/component";
+import PropTypes from "prop-types";
+import {
+  ContextContainer,
+  Alert,
+  HtmlText,
+  Title,
+  Box,
+  Button,
+} from "@bubbles-ui/components";
+import { ChevLeftIcon, ChevRightIcon } from "@bubbles-ui/icons/outline";
 
 function SubmissionState({ status, error, labels: _labels }) {
   const labels = _labels?.submission_state;
 
-  if (status === 'error' && error) {
+  if (status === "error" && error) {
     return (
       <Alert title={labels?.error?.title} severity="error" closeable={false}>
-        {labels?.error?.message?.replace('{{error}}', error !== true ? error : '')}
+        {labels?.error?.message?.replace(
+          "{{error}}",
+          error !== true ? error : ""
+        )}
       </Alert>
     );
   }
-  if (status === 'loading') {
+  if (status === "loading") {
     return (
       <Alert title={labels?.loading?.title} severity="info" closeable={false}>
         {labels?.loading?.message}
       </Alert>
     );
   }
-  if (status === 'submitted') {
+  if (status === "submitted") {
     return (
-      <Alert title={labels?.submitted?.title} severity="success" closeable={false}>
+      <Alert
+        title={labels?.submitted?.title}
+        severity="success"
+        closeable={false}
+      >
         {labels?.submitted?.message}
       </Alert>
     );
   }
-  if (status === 'changed') {
+  if (status === "changed") {
     return (
-      <Alert title={labels?.notSubmitted?.title} severity="info" closeable={false}>
+      <Alert
+        title={labels?.notSubmitted?.title}
+        severity="info"
+        closeable={false}
+      >
         {labels?.notSubmitted?.message}
       </Alert>
     );
@@ -52,16 +70,16 @@ function buttonsToSet({
   let next = true;
   let save = true;
 
-  if (status === 'cleared') {
+  if (status === "cleared") {
     save = false;
     next = false;
-  } else if (['error', 'changed'].includes(status)) {
+  } else if (["error", "changed"].includes(status)) {
     next = true;
     save = true;
-  } else if (status === 'submitted') {
+  } else if (status === "submitted") {
     save = false;
     next = true;
-  } else if (status === 'loading') {
+  } else if (status === "loading") {
     save = false;
     next = false;
   }
@@ -74,18 +92,28 @@ function buttonsToSet({
     <>
       <Box>
         {hasPrevStep && (
-          <Button onClick={onPrevStep} variant="link" rounded leftIcon={<ChevLeftIcon />}>
+          <Button
+            onClick={onPrevStep}
+            variant="link"
+            rounded
+            leftIcon={<ChevLeftIcon />}
+          >
             {localizations?.buttons?.previous}
           </Button>
         )}
       </Box>
-      <Box sx={(theme) => ({ display: 'flex', gap: theme.spacing[4] })}>
-        <Button variant="outline" onClick={() => onSave.current()} disabled={!save} rounded>
+      <Box sx={(theme) => ({ display: "flex", gap: theme.spacing[4] })}>
+        <Button
+          variant="outline"
+          onClick={() => onSave.current()}
+          disabled={!save}
+          rounded
+        >
           {localizations?.buttons?.save}
         </Button>
 
         <Button
-          variant={hasNextStep ? 'outline' : 'filled'}
+          variant={hasNextStep ? "outline" : "filled"}
           onClick={async () => {
             const canContinue = await onSave.current();
 
@@ -97,7 +125,9 @@ function buttonsToSet({
           rounded
           rightIcon={hasNextStep && <ChevRightIcon />}
         >
-          {hasNextStep ? localizations?.buttons?.next : localizations?.buttons?.submit}
+          {hasNextStep
+            ? localizations?.buttons?.next
+            : localizations?.buttons?.submit}
         </Button>
       </Box>
     </>
@@ -116,7 +146,7 @@ export default function DeliveryStep({
   preview,
 }) {
   React.useEffect(() => {
-    updateTimestamps('start');
+    updateTimestamps("start");
   }, [assignation?.id]);
   const onSave = React.useRef(null);
 
@@ -124,11 +154,19 @@ export default function DeliveryStep({
   const { instance } = assignation;
   const { assignable } = instance;
   const { submission } = assignable;
-  const [status, setStatus] = useState(assignation.metadata?.submission ? 'submitted' : 'cleared');
+  const [status, setStatus] = useState(
+    assignation.metadata?.submission ? "submitted" : "cleared"
+  );
   const [error, setError] = useState(null);
 
   const updateStatus = (newStatus, e) => {
-    const availableStatus = ['cleared', 'submitted', 'changed', 'loading', 'error'];
+    const availableStatus = [
+      "cleared",
+      "submitted",
+      "changed",
+      "loading",
+      "error",
+    ];
 
     if (!availableStatus.includes(newStatus)) {
       throw new Error(`Invalid status ${newStatus}`);
@@ -159,11 +197,19 @@ export default function DeliveryStep({
         preview,
       })
     );
-  }, [status, hasPrevStep, hasNextStep, onPrevStep, onNextStep, _labels?.buttons, preview]);
+  }, [
+    status,
+    hasPrevStep,
+    hasNextStep,
+    onPrevStep,
+    onNextStep,
+    _labels?.buttons,
+    preview,
+  ]);
 
   const Component = (type) =>
     loadable(() => {
-      const validTypes = ['File', 'Link'];
+      const validTypes = ["File", "Link"];
 
       if (!validTypes.includes(type)) {
         return Promise.resolve(() => <></>);

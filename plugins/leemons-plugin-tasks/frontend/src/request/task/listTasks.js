@@ -3,10 +3,10 @@ export default async function listTasks(query) {
     `v1/tasks/tasks/search?${Object.entries(query)
       .filter(([, value]) => value)
       .map(([key, value]) => `${key}=${value}`)
-      .join('&')}`,
+      .join("&")}`,
     {
       allAgents: true,
-      method: 'GET',
+      method: "GET",
     }
   );
 

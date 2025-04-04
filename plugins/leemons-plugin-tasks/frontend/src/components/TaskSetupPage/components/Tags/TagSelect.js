@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { useFormContext, Controller } from 'react-hook-form';
-import { MultiSelect } from '@bubbles-ui/components';
-import { useApi } from '@common';
-import listTags from '../../../../request/tags/list';
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import { useFormContext, Controller } from "react-hook-form";
+import { MultiSelect } from "@bubbles-ui/components";
+import { useApi } from "@common";
+import listTags from "../../../../request/tags/list";
 
 export default function TagSelect({ labels, placeholders }) {
   const [data, setData] = useState([]);
@@ -32,7 +32,9 @@ export default function TagSelect({ labels, placeholders }) {
           searchable
           multiple
           getCreateLabel={(tag) => `+ ${tag}`}
-          onCreate={(tag) => setExtraTags((d) => [...d, { label: tag, value: tag }])}
+          onCreate={(tag) =>
+            setExtraTags((d) => [...d, { label: tag, value: tag }])
+          }
         />
       )}
     />

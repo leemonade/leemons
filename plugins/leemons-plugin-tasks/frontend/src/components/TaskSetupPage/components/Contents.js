@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { useFormContext, Controller } from 'react-hook-form';
-import { TableInput, Box } from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
-import useTableInputLabels from '../../../helpers/useTableInputLabels';
+import React, { useMemo } from "react";
+import PropTypes from "prop-types";
+import { useFormContext, Controller } from "react-hook-form";
+import { TableInput, Box } from "@bubbles-ui/components";
+import { TextEditorInput } from "@bubbles-ui/editors";
+import useTableInputLabels from "../../../helpers/useTableInputLabels";
 
 export default function Contents({ name, label, required }) {
   const tableInputLabels = useTableInputLabels();
@@ -14,10 +14,12 @@ export default function Contents({ name, label, required }) {
 
   const columns = useMemo(() => [
     {
-      Header: `${label}${required ? '*' : ''}`,
-      accessor: 'content',
+      Header: `${label}${required ? "*" : ""}`,
+      accessor: "content",
       input: { node: <TextEditorInput />, rules: { required: true } },
-      valueRender: (value) => <Box dangerouslySetInnerHTML={{ __html: value }} />,
+      valueRender: (value) => (
+        <Box dangerouslySetInnerHTML={{ __html: value }} />
+      ),
     },
   ]);
 
@@ -31,7 +33,7 @@ export default function Contents({ name, label, required }) {
           <TableInput
             {...field}
             // TRANSLATE: Required error label
-            error={errors.content && 'This field is required'}
+            error={errors.content && "This field is required"}
             columns={columns}
             editable
             data={field.value || []}

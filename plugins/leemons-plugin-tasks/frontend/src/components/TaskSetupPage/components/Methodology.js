@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useFormContext } from 'react-hook-form';
-import { Select } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { unflatten } from '@common';
-import { prefixPN } from '../../../helpers/prefixPN';
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import { Controller, useFormContext } from "react-hook-form";
+import { Select } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { unflatten } from "@common";
+import { prefixPN } from "../../../helpers/prefixPN";
 
 function useMethodologyLabels() {
   const [methodologyLabels, setMethodologyLabels] = useState({});
-  const [, translations] = useTranslateLoader(prefixPN('methodology'));
+  const [, translations] = useTranslateLoader(prefixPN("methodology"));
 
   useEffect(() => {
     if (translations && translations.items) {
@@ -29,7 +29,12 @@ function useMethodologyLabels() {
   return methodologyLabels;
 }
 
-export default function Methodology({ labels, errorMessages, placeholders, required }) {
+export default function Methodology({
+  labels,
+  errorMessages,
+  placeholders,
+  required,
+}) {
   const methodologyLabels = useMethodologyLabels();
 
   const {

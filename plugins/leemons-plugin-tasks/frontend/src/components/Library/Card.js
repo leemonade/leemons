@@ -1,9 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box } from "@bubbles-ui/components";
 // TODO: import from @library plugin
-import { LibraryCard } from '@leebrary/components';
-import getFakeImage from '../../helpers/getFakeImage';
+import { LibraryCard } from "@leebrary/components";
+import getFakeImage from "../../helpers/getFakeImage";
 
 export default function Card({ refresh, ...task }) {
   return (
@@ -17,7 +17,7 @@ export default function Card({ refresh, ...task }) {
             cover: getFakeImage(task?.cover),
             subtitle: task.tagline,
             description: task.summary,
-            type: 'task',
+            type: "task",
           }}
           showImage
           variant="task"

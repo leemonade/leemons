@@ -3,17 +3,17 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
-const { LeemonsError } = require('@leemons/error');
-const create = require('../../core/task/create');
-const update = require('../../core/task/update');
-const { get } = require('../../core/task/get');
-const duplicate = require('../../core/task/duplicate');
-const remove = require('../../core/task/remove');
-const publish = require('../../core/task/publish');
-const search = require('../../core/task/search');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
+const { LeemonsError } = require("@leemons/error");
+const create = require("../../core/task/create");
+const update = require("../../core/task/update");
+const { get } = require("../../core/task/get");
+const duplicate = require("../../core/task/duplicate");
+const remove = require("../../core/task/remove");
+const publish = require("../../core/task/publish");
+const search = require("../../core/task/search");
 
 function parseTaskObject(ctx) {
   // eslint-disable-next-line prefer-const
@@ -31,8 +31,8 @@ function parseTaskObject(ctx) {
 module.exports = {
   createRest: {
     rest: {
-      method: 'POST',
-      path: '/',
+      method: "POST",
+      path: "/",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -55,8 +55,8 @@ module.exports = {
   },
   updateRest: {
     rest: {
-      method: 'PUT',
-      path: '/:id',
+      method: "PUT",
+      path: "/:id",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -78,8 +78,8 @@ module.exports = {
   },
   getRest: {
     rest: {
-      method: 'GET',
-      path: '/:id',
+      method: "GET",
+      path: "/:id",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -89,7 +89,7 @@ module.exports = {
         try {
           columns = JSON.parse(columns);
         } catch (e) {
-          if (columns !== '*') {
+          if (columns !== "*") {
             columns = undefined;
           }
         }
@@ -114,8 +114,8 @@ module.exports = {
   },
   duplicateRest: {
     rest: {
-      method: 'POST',
-      path: '/:id/duplicate',
+      method: "POST",
+      path: "/:id/duplicate",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -136,8 +136,8 @@ module.exports = {
   },
   removeRest: {
     rest: {
-      method: 'DELETE',
-      path: '/:id',
+      method: "DELETE",
+      path: "/:id",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -160,8 +160,8 @@ module.exports = {
   },
   publishRest: {
     rest: {
-      method: 'POST',
-      path: '/:id/publish',
+      method: "POST",
+      path: "/:id/publish",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -184,8 +184,8 @@ module.exports = {
   },
   searchRest: {
     rest: {
-      method: 'GET',
-      path: '/search',
+      method: "GET",
+      path: "/search",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -195,8 +195,8 @@ module.exports = {
         const tasks = await search({
           // offset: parseInt(offset, 10) || 0,
           // size: parseInt(size, 10) || 10,
-          draft: draft === 'true',
-          preferCurrent: preferCurrent === 'true',
+          draft: draft === "true",
+          preferCurrent: preferCurrent === "true",
           ...query,
           ctx,
         });

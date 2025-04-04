@@ -1,1 +1,1 @@
-export { default } from './LimitedTimeAlert';
+export { default } from "./LimitedTimeAlert";

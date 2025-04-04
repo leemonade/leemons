@@ -1,8 +1,8 @@
-import React, { useMemo, useState, useEffect } from 'react';
-import _ from 'lodash';
-import { Box, Loader } from '@bubbles-ui/components';
-import { Swiper } from '@bubbles-ui/extras';
-import SubjectCard from './components/SubjectCard';
+import React, { useMemo, useState, useEffect } from "react";
+import _ from "lodash";
+import { Box, Loader } from "@bubbles-ui/components";
+import { Swiper } from "@bubbles-ui/extras";
+import SubjectCard from "./components/SubjectCard";
 
 export default function SubjectSelector({
   assignation,
@@ -12,7 +12,7 @@ export default function SubjectSelector({
 }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const subjectsIds = useMemo(() => _.map(subjects, 'id'), [subjects]);
+  const subjectsIds = useMemo(() => _.map(subjects, "id"), [subjects]);
   useEffect(() => {
     const subjectIndex = subjectsIds.indexOf(currentSubject);
     if (subjectIndex !== -1 && subjectIndex !== selectedIndex) {
@@ -21,14 +21,21 @@ export default function SubjectSelector({
   }, [currentSubject, subjectsIds]);
 
   useEffect(() => {
-    if (subjectsIds?.length && !currentSubject && typeof setCurrentSubject === 'function') {
+    if (
+      subjectsIds?.length &&
+      !currentSubject &&
+      typeof setCurrentSubject === "function"
+    ) {
       setCurrentSubject(subjectsIds[selectedIndex]);
     }
   }, [subjectsIds]);
 
   const handleSelectIndex = (newIndex) => {
     if (currentSubject !== undefined) {
-      if (typeof setCurrentSubject === 'function' && currentSubject !== subjectsIds[newIndex]) {
+      if (
+        typeof setCurrentSubject === "function" &&
+        currentSubject !== subjectsIds[newIndex]
+      ) {
         setCurrentSubject(subjectsIds[newIndex]);
       }
     } else if (newIndex !== selectedIndex) {
@@ -39,7 +46,7 @@ export default function SubjectSelector({
   const gradesBySubject = useMemo(
     () =>
       assignation.grades.reduce((acc, grade) => {
-        if (grade.type === 'main') {
+        if (grade.type === "main") {
           return {
             ...acc,
             [grade.subject]: grade,

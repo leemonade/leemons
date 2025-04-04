@@ -1,13 +1,19 @@
-import { useClassesSubjects, useSubjects } from '@academic-portfolio/hooks';
-import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
-import { Loader } from '@bubbles-ui/components';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useState } from 'react';
-import { SubjectSelector, Tabs } from './components';
-import tabContext, { TabProvider } from './context/tabsContext';
+import { useClassesSubjects, useSubjects } from "@academic-portfolio/hooks";
+import useSessionClasses from "@academic-portfolio/hooks/useSessionClasses";
+import { Loader } from "@bubbles-ui/components";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React, { useEffect, useMemo, useState } from "react";
+import { SubjectSelector, Tabs } from "./components";
+import tabContext, { TabProvider } from "./context/tabsContext";
 
-export default function SubjectTabs({ assignation, instance, children, loading, onChange }) {
+export default function SubjectTabs({
+  assignation,
+  instance,
+  children,
+  loading,
+  onChange,
+}) {
   const [activeTab, setActiveTab] = useState(null);
   const instanceSubjects = useClassesSubjects(instance?.classes);
   const { data: classes } = useSessionClasses();
@@ -20,7 +26,9 @@ export default function SubjectTabs({ assignation, instance, children, loading, 
     return instanceSubjects
       .filter((subject) =>
         classes.find(
-          (klass) => klass.subject.subject === subject.id || klass.subject.id === subject.id
+          (klass) =>
+            klass.subject.subject === subject.id ||
+            klass.subject.id === subject.id
         )
       )
       .map((s) => s.id);

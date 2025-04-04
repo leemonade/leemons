@@ -1,33 +1,33 @@
-import React, { useCallback, useEffect, useRef } from 'react';
-import { noop, omit, uniq } from 'lodash';
-import PropTypes from 'prop-types';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import React, { useCallback, useEffect, useRef } from "react";
+import { noop, omit, uniq } from "lodash";
+import PropTypes from "prop-types";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import {
   Button,
   ContextContainer,
   Switch,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
-} from '@bubbles-ui/components';
-import { ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { AssetFormInput } from '@leebrary/components/AssetFormInput';
-import { useObservableContext } from '@common/context/ObservableContext';
+} from "@bubbles-ui/components";
+import { ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { AssetFormInput } from "@leebrary/components/AssetFormInput";
+import { useObservableContext } from "@common/context/ObservableContext";
 
 function useUpdateFormData(formData) {
   const { useWatch: useContextWatch } = useObservableContext();
 
   const [asset, program, subjects, express] = useContextWatch({
     name: [
-      'sharedData.asset',
-      'sharedData.program',
-      'sharedData.subjects',
-      'sharedData.metadata.express',
+      "sharedData.asset",
+      "sharedData.program",
+      "sharedData.subjects",
+      "sharedData.metadata.express",
     ],
   });
 
   useEffect(() => {
     formData.reset({
-      ...omit(asset, 'file'),
+      ...omit(asset, "file"),
       program,
       subjects,
       express: !!express,
@@ -40,14 +40,14 @@ function useOnNameOrExpressChange(formData) {
   const isFirstNameCall = useRef(true);
   const isFirstExpressCall = useRef(true);
 
-  const name = useWatch({ control: formData.control, name: 'name' });
-  const isExpress = useWatch({ control: formData.control, name: 'express' });
+  const name = useWatch({ control: formData.control, name: "name" });
+  const isExpress = useWatch({ control: formData.control, name: "express" });
 
   useEffect(() => {
     if (isFirstNameCall.current) {
       isFirstNameCall.current = false;
     } else {
-      setValue('taskName', name);
+      setValue("taskName", name);
     }
   }, [name]);
 
@@ -55,17 +55,17 @@ function useOnNameOrExpressChange(formData) {
     if (isFirstExpressCall.current) {
       isFirstExpressCall.current = false;
     } else {
-      setValue('isExpress', !!isExpress);
+      setValue("isExpress", !!isExpress);
     }
   }, [isExpress]);
 }
 
 function useCoverFileRef(formData) {
   const coverFile = useRef();
-  const cover = useWatch({ control: formData.control, name: 'cover' });
+  const cover = useWatch({ control: formData.control, name: "cover" });
 
   useEffect(() => {
-    if (cover instanceof File || typeof cover === 'string') {
+    if (cover instanceof File || typeof cover === "string") {
       coverFile.current = cover;
     }
   }, [cover]);
@@ -89,7 +89,11 @@ function BasicData({
 }) {
   // ·······························································
   // FORM
-  const { getValues, setValue, useWatch: useObservableWatch } = useObservableContext();
+  const {
+    getValues,
+    setValue,
+    useWatch: useObservableWatch,
+  } = useObservableContext();
   const formData = useForm();
   const {
     handleSubmit,
@@ -97,8 +101,8 @@ function BasicData({
     formState: { isDirty },
   } = formData;
 
-  const taskId = useObservableWatch({ name: 'task.id' });
-  const express = !!useWatch({ control, name: 'express' });
+  const taskId = useObservableWatch({ name: "task.id" });
+  const express = !!useWatch({ control, name: "express" });
 
   useUpdateFormData(formData);
   useOnNameOrExpressChange(formData);
@@ -113,42 +117,45 @@ function BasicData({
         e.cover = coverFile.current;
       }
 
-      const visitedSteps = getValues('sharedData.metadata.visitedSteps');
+      const visitedSteps = getValues("sharedData.metadata.visitedSteps");
 
-      setValue('sharedData.asset', e);
-      setValue('sharedData.program', program);
-      setValue('sharedData.subjects', subjects);
-      setValue('sharedData.metadata.express', !!e.express);
-      setValue('sharedData.metadata.visitedSteps', uniq([...(visitedSteps || []), 'basicData']));
+      setValue("sharedData.asset", e);
+      setValue("sharedData.program", program);
+      setValue("sharedData.subjects", subjects);
+      setValue("sharedData.metadata.express", !!e.express);
+      setValue(
+        "sharedData.metadata.visitedSteps",
+        uniq([...(visitedSteps || []), "basicData"])
+      );
 
-      setValue('isExpress', !!e.express);
+      setValue("isExpress", !!e.express);
     },
     [getValues, setValue]
   );
 
   useEffect(() => {
     const f = (event) => {
-      if (event === 'saveTask') {
+      if (event === "saveTask") {
         handleSubmit(
           (e) => {
             onSubmit(e);
-            emitEvent('saveData');
+            emitEvent("saveData");
           },
           () => {
-            emitEvent('saveTaskFailed');
+            emitEvent("saveTaskFailed");
           }
         )();
-      } else if (event === 'saveStep') {
+      } else if (event === "saveStep") {
         if (!isDirty) {
-          emitEvent('stepSaved');
+          emitEvent("stepSaved");
         } else {
           handleSubmit(
             (e) => {
               onSubmit(e);
-              emitEvent('stepSaved');
+              emitEvent("stepSaved");
             },
             () => {
-              emitEvent('saveStepFailed');
+              emitEvent("saveStepFailed");
             }
           )();
         }
@@ -174,8 +181,8 @@ function BasicData({
   const handleOnSave = () => {
     handleSubmit((data) => {
       onSubmit(data);
-      setLoading('draft');
-      emitEvent('saveTask');
+      setLoading("draft");
+      emitEvent("saveTask");
     })();
   };
 
@@ -195,16 +202,16 @@ function BasicData({
                 variant="link"
                 onClick={handleOnSave}
                 disabled={loading}
-                loading={loading === 'draft'}
+                loading={loading === "draft"}
               >
-                {t('common.save')}
+                {t("common.save")}
               </Button>
 
               <Button
                 rightIcon={<ChevRightIcon height={20} width={20} />}
                 onClick={handleOnNext}
                 disabled={loading}
-                loading={loading === 'publish'}
+                loading={loading === "publish"}
               >
                 {labels.buttonNext}
               </Button>
@@ -227,7 +234,7 @@ function BasicData({
           advancedConfig={advancedConfig}
           category="assignables.task"
           useTags={!express}
-          tagsPluginName={!express ? 'tasks' : undefined}
+          tagsPluginName={!express ? "tasks" : undefined}
           preview
           previewVariant="task"
         />

@@ -1,17 +1,26 @@
-import React, { useState, useRef, useCallback, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { TextInput } from '@bubbles-ui/components';
-import handleDeliverySubmission from './handleDeliverySubmission';
+import React, { useState, useRef, useCallback, useMemo } from "react";
+import PropTypes from "prop-types";
+import { TextInput } from "@bubbles-ui/components";
+import handleDeliverySubmission from "./handleDeliverySubmission";
 
-export default function Link({ updateStatus, value, assignation, labels: _labels, onSave }) {
+export default function Link({
+  updateStatus,
+  value,
+  assignation,
+  labels: _labels,
+  onSave,
+}) {
   const labels = _labels?.submission_type?.link;
   const [url, setUrl] = useState(value);
   const urlRef = useRef(value);
 
-  const saveSubmission = useMemo(() => handleDeliverySubmission(assignation), [assignation]);
+  const saveSubmission = useMemo(
+    () => handleDeliverySubmission(assignation),
+    [assignation]
+  );
 
   const handleSubmit = useCallback(async () => {
-    updateStatus('loading');
+    updateStatus("loading");
     const urlToSave = urlRef.current;
 
     if (urlToSave.length) {
@@ -19,17 +28,17 @@ export default function Link({ updateStatus, value, assignation, labels: _labels
         // eslint-disable-next-line no-new
         new URL(urlToSave);
       } catch (e) {
-        updateStatus('error', labels?.invalidURL);
+        updateStatus("error", labels?.invalidURL);
         return false;
       }
     }
 
     try {
       await saveSubmission(urlToSave, !urlToSave?.length);
-      updateStatus(urlToSave.length ? 'submitted' : 'cleared');
+      updateStatus(urlToSave.length ? "submitted" : "cleared");
     } catch (e) {
-      if (e.message !== 'No changes detected') {
-        updateStatus('error', e.message);
+      if (e.message !== "No changes detected") {
+        updateStatus("error", e.message);
         return false;
       }
     }
@@ -45,7 +54,7 @@ export default function Link({ updateStatus, value, assignation, labels: _labels
       label={labels?.link}
       value={url}
       onChange={(newUrl) => {
-        updateStatus('changed');
+        updateStatus("changed");
         urlRef.current = newUrl;
         setUrl(newUrl);
       }}

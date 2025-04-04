@@ -1,25 +1,29 @@
-import React, { useEffect, useMemo } from 'react';
 import {
-  Paper,
-  Divider,
   Checkbox,
-  PageContainer,
-  ContextContainer,
-  Grid,
   Col,
-} from '@bubbles-ui/components';
+  ContextContainer,
+  Divider,
+  Grid,
+  PageContainer,
+  Paper,
+} from "@bubbles-ui/components";
 // TODO: import from @feedback plugin maybe?
-import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useStore, useRequestErrorMessage } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import hooks from 'leemons-hooks';
-import { prefixPN } from '../../../helpers';
-import { getSettingsRequest, updateSettingsRequest, enableMenuItemRequest } from '../../../request';
-import { WelcomeStepCard } from './components';
+import { AdminPageHeader } from "@bubbles-ui/leemons";
+import { useRequestErrorMessage, useStore } from "@common";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import hooks from "@leemons/hooks";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useEffect, useMemo } from "react";
+import { prefixPN } from "../../../helpers";
+import {
+  enableMenuItemRequest,
+  getSettingsRequest,
+  updateSettingsRequest,
+} from "../../../request";
+import { WelcomeStepCard } from "./components";
 
 export default function WelcomePage() {
-  const [t] = useTranslateLoader(prefixPN('welcome_page'));
+  const [t] = useTranslateLoader(prefixPN("welcome_page"));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [store, render] = useStore({});
 
@@ -30,7 +34,7 @@ export default function WelcomePage() {
     try {
       store.settings = data;
       await updateSettingsRequest(data);
-      addSuccessAlert(t('settings_updated'));
+      addSuccessAlert(t("settings_updated"));
       render();
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
@@ -58,7 +62,10 @@ export default function WelcomePage() {
   // HANDLERS
 
   const handleOnHideHelp = () => {
-    const newSettings = { ...store.settings, hideWelcome: !store.settings?.hideWelcome };
+    const newSettings = {
+      ...store.settings,
+      hideWelcome: !store.settings?.hideWelcome,
+    };
     updateSettings(newSettings);
   };
 
@@ -66,8 +73,8 @@ export default function WelcomePage() {
     try {
       // EN: Enable the menu item
       // ES: Habilitar el item del menú
-      await enableMenuItemRequest('profiles');
-      await hooks.fireEvent('menu-build:user:updateItem', 'profiles');
+      await enableMenuItemRequest("profiles");
+      await hooks.fireEvent("menu-build:user:updateItem", "profiles");
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
     }
@@ -76,9 +83,9 @@ export default function WelcomePage() {
   const handleOnCreateTask = async () => {
     try {
       // Let's enable Library menu item
-      const itemKey = 'library';
+      const itemKey = "library";
       await enableMenuItemRequest(itemKey);
-      await hooks.fireEvent('menu-builder:user:updateItem', itemKey);
+      await hooks.fireEvent("menu-builder:user:updateItem", itemKey);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
     }
@@ -89,8 +96,8 @@ export default function WelcomePage() {
 
   const headerValues = useMemo(
     () => ({
-      title: t('page_title'),
-      description: t('page_description'),
+      title: t("page_title"),
+      description: t("page_description"),
     }),
     [t]
   );
@@ -106,7 +113,7 @@ export default function WelcomePage() {
       </PageContainer>
       <PageContainer noFlex>
         <Checkbox
-          label={t('hide_info_label')}
+          label={t("hide_info_label")}
           onChange={handleOnHideHelp}
           checked={store.settings?.hideWelcome === 1}
           value={store.settings?.hideWelcome === 1}
@@ -134,10 +141,20 @@ export default function WelcomePage() {
                 />
               </Col>
               <Col span={3}>
-                <WelcomeStepCard t={t} step="step_ongoing" to="/private/tasks/ongoing" disabled />
+                <WelcomeStepCard
+                  t={t}
+                  step="step_ongoing"
+                  to="/private/tasks/ongoing"
+                  disabled
+                />
               </Col>
               <Col span={3}>
-                <WelcomeStepCard t={t} step="step_history" to="/private/tasks/history" disabled />
+                <WelcomeStepCard
+                  t={t}
+                  step="step_history"
+                  to="/private/tasks/history"
+                  disabled
+                />
               </Col>
             </Grid>
           </ContextContainer>

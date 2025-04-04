@@ -1,9 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { Text, ContextContainer, Box, Loader, Anchor } from '@bubbles-ui/components';
+import React, { useState, useEffect } from "react";
+import {
+  Text,
+  ContextContainer,
+  Box,
+  Loader,
+  Anchor,
+} from "@bubbles-ui/components";
 // TODO: import from @library plugin
-import { LibraryCardEmbed } from '@leebrary/components';
-import getAssetsByIds from '@leebrary/request/getAssetsByIds';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
+import { LibraryCardEmbed } from "@leebrary/components";
+import getAssetsByIds from "@leebrary/request/getAssetsByIds";
+import prepareAsset from "@leebrary/helpers/prepareAsset";
 
 export default function File({ assignation, labels }) {
   const submittedFiles = assignation.metadata?.submission;
@@ -44,7 +50,8 @@ export default function File({ assignation, labels }) {
           fileType: preparedAsset.file.extension,
           // fileExtension: preparedAsset.file.extension,
           title:
-            preparedAsset.name.substr(0, preparedAsset.name.lastIndexOf('.')) || preparedAsset.name,
+            preparedAsset.name.substr(0, preparedAsset.name.lastIndexOf(".")) ||
+            preparedAsset.name,
           description: preparedAsset.description,
           // tagline: preparedAsset.tagline,
           // metadata: preparedAsset.metadata,
