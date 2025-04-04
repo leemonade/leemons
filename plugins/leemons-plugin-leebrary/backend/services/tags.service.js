@@ -5,15 +5,17 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { getTagsRouterActions } = require('@leemons/common');
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getServiceModels } = require('../models');
-const { pluginName } = require('../config/constants');
+} = require("@leemons/middlewares");
+const { getTagsRouterActions } = require("@leemons/common");
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const { LeemonsMongoDBMixin } = require("@leemons/mongodb");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
+const { getServiceModels } = require("../models");
+const { pluginName } = require("../config/constants");
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -35,8 +37,8 @@ module.exports = {
         LeemonsMiddlewareAuthenticated(),
         LeemonsMiddlewareNecessaryPermits({
           allowedPermissions: {
-            'leebrary.library': {
-              actions: ['update', 'create', 'delete', 'admin'],
+            "leebrary.library": {
+              actions: ["update", "create", "delete", "admin"],
             },
           },
         }),

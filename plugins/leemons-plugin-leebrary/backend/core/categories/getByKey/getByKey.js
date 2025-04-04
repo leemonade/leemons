@@ -10,7 +10,9 @@
  * @returns {Promise<Object>} The category corresponding to the provided key.
  */
 async function getByKey({ key, columns, ctx }) {
-  const category = await ctx.tx.db.Categories.findOne({ key }).select(columns).lean();
+  const category = await ctx.tx.db.Categories.findOne({ key })
+    .select(columns)
+    .lean();
   if (category?.canUse) category.canUse = JSON.parse(category.canUse || null);
 
   return category;

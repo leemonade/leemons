@@ -1,6 +1,6 @@
-const { LeemonsError } = require('@leemons/error');
-const { handlePermissions } = require('./handlePermissions');
-const { handleExistence } = require('./handleExistence');
+const { LeemonsError } = require("@leemons/error");
+const { handlePermissions } = require("./handlePermissions");
+const { handleExistence } = require("./handleExistence");
 
 /**
  * Add a file to an asset

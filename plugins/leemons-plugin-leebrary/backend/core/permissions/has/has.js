@@ -1,5 +1,5 @@
-const { LeemonsError } = require('@leemons/error');
-const { getByAsset } = require('../getByAsset');
+const { LeemonsError } = require("@leemons/error");
+const { getByAsset } = require("../getByAsset");
 
 /**
  * Checks if the asset has the specified permissions.

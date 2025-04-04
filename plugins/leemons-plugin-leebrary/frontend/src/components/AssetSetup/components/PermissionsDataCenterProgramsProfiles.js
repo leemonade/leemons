@@ -1,4 +1,4 @@
-import { SelectProgram } from '@academic-portfolio/components';
+import { SelectProgram } from "@academic-portfolio/components";
 import {
   Alert,
   Box,
@@ -9,17 +9,26 @@ import {
   Switch,
   TableInput,
   Title,
-} from '@bubbles-ui/components';
-import { useStore } from '@common';
-import { addErrorAlert } from '@layout/alert';
-import { SelectCenter, SelectProfile } from '@users/components';
-import _, { find, isEmpty } from 'lodash';
-import PropTypes from 'prop-types';
-import React, { useMemo } from 'react';
+} from "@bubbles-ui/components";
+import { useStore } from "@common";
+import { addErrorAlert } from "@layout/alert";
+import { SelectCenter, SelectProfile } from "@users/components";
+import _, { find, isEmpty } from "lodash";
+import PropTypes from "prop-types";
+import React, { useMemo } from "react";
 
 function ProgramSelect(props) {
-  const center = props.center || props.form.getValues(props.name.replace('program', 'center'));
-  return <SelectProgram {...props} ensureIntegrity autoSelectOneOption={false} center={center} />;
+  const center =
+    props.center ||
+    props.form.getValues(props.name.replace("program", "center"));
+  return (
+    <SelectProgram
+      {...props}
+      ensureIntegrity
+      autoSelectOneOption={false}
+      center={center}
+    />
+  );
 }
 
 const PermissionsDataCenterProgramsProfiles = ({
@@ -39,19 +48,28 @@ const PermissionsDataCenterProgramsProfiles = ({
   function haveEqualsToPublic() {
     const item = _.find(
       value,
-      (val) => val.center === '*' && !val.program && !val.profile && val.role === 'viewer'
+      (val) =>
+        val.center === "*" &&
+        !val.program &&
+        !val.profile &&
+        val.role === "viewer"
     );
 
     return !!item;
   }
 
   function isEqualsToAllEdit(val) {
-    return val.center === '*' && !val.program && !val.profile && val.role === 'editor';
+    return (
+      val.center === "*" &&
+      !val.program &&
+      !val.profile &&
+      val.role === "editor"
+    );
   }
 
   function checkIfCanBeAdded(val) {
     if (isEqualsToAllEdit(val)) {
-      addErrorAlert(t('permissionsData.labels.addCenterEditAll'));
+      addErrorAlert(t("permissionsData.labels.addCenterEditAll"));
       return false;
     }
     return true;
@@ -71,11 +89,11 @@ const PermissionsDataCenterProgramsProfiles = ({
 
   const USER_LABELS = useMemo(
     () => ({
-      add: t('permissionsData.labels.addUserButton', 'Add'),
-      remove: t('permissionsData.labels.removeUserButton', 'Remove'),
-      edit: t('permissionsData.labels.editUserButton', 'Edit'),
-      accept: t('permissionsData.labels.acceptButton', 'Accept'),
-      cancel: t('permissionsData.labels.cancelButton', 'Cancel'),
+      add: t("permissionsData.labels.addUserButton", "Add"),
+      remove: t("permissionsData.labels.removeUserButton", "Remove"),
+      edit: t("permissionsData.labels.editUserButton", "Edit"),
+      accept: t("permissionsData.labels.acceptButton", "Accept"),
+      cancel: t("permissionsData.labels.cancelButton", "Cancel"),
     }),
     [t]
   );
@@ -83,19 +101,21 @@ const PermissionsDataCenterProgramsProfiles = ({
   const COLUMNS = useMemo(() => {
     const result = [];
     result.push({
-      Header: t('permissionsData.labels.shareCenters'),
-      accessor: 'center',
+      Header: t("permissionsData.labels.shareCenters"),
+      accessor: "center",
       input: {
         node: (
           <SelectCenter
-            additionalData={[{ label: t('permissionsData.labels.allCenters'), value: '*' }]}
+            additionalData={[
+              { label: t("permissionsData.labels.allCenters"), value: "*" },
+            ]}
           />
         ),
-        rules: { required: 'Required field' },
+        rules: { required: "Required field" },
       },
       editable: false,
       valueRender: (values) => {
-        if (values === '*') return t('permissionsData.labels.allCenters');
+        if (values === "*") return t("permissionsData.labels.allCenters");
         const center = _.find(centers, { id: values });
         return center?.name;
       },
@@ -103,8 +123,8 @@ const PermissionsDataCenterProgramsProfiles = ({
 
     if (store.canAddPrograms) {
       result.push({
-        Header: t('permissionsData.labels.sharePrograms'),
-        accessor: 'program',
+        Header: t("permissionsData.labels.sharePrograms"),
+        accessor: "program",
         input: {
           node: <ProgramSelect />,
         },
@@ -117,8 +137,8 @@ const PermissionsDataCenterProgramsProfiles = ({
 
     if (store.canAddProfiles) {
       result.push({
-        Header: t('permissionsData.labels.shareProfiles'),
-        accessor: 'profile',
+        Header: t("permissionsData.labels.shareProfiles"),
+        accessor: "profile",
         input: {
           node: <SelectProfile />,
         },
@@ -128,12 +148,14 @@ const PermissionsDataCenterProgramsProfiles = ({
     }
 
     result.push({
-      Header: t('permissionsData.labels.sharePermissions'),
-      accessor: 'role',
+      Header: t("permissionsData.labels.sharePermissions"),
+      accessor: "role",
       input: {
         node: <Select />,
-        rules: { required: 'Required field' },
-        data: roles?.filter((role) => ['viewer', 'editor', 'assigner'].includes(role.value)),
+        rules: { required: "Required field" },
+        data: roles?.filter((role) =>
+          ["viewer", "editor", "assigner"].includes(role.value)
+        ),
       },
       valueRender: (val) => find(roles, { value: val })?.label,
     });
@@ -157,7 +179,7 @@ const PermissionsDataCenterProgramsProfiles = ({
                   render();
                 }}
                 checked={store.canAddProfiles}
-                label={t('permissionsData.labels.profilesPerCenter')}
+                label={t("permissionsData.labels.profilesPerCenter")}
               />
             ) : null}
 
@@ -167,12 +189,12 @@ const PermissionsDataCenterProgramsProfiles = ({
                 render();
               }}
               checked={store.canAddPrograms}
-              label={t('permissionsData.labels.programsPerCenter')}
+              label={t("permissionsData.labels.programsPerCenter")}
             />
           </Stack>
         </>
       ) : (
-        <Title order={5}>{t('permissionsData.labels.addCentersEdit')}</Title>
+        <Title order={5}>{t("permissionsData.labels.addCentersEdit")}</Title>
       )}
       {!isEmpty(COLUMNS) && !isEmpty(USER_LABELS) && (
         <TableInput
@@ -190,7 +212,7 @@ const PermissionsDataCenterProgramsProfiles = ({
       )}
       {haveEqualsToPublic() ? (
         <Alert severity="warning" closeable={false}>
-          {t('permissionsData.labels.addCenterAsPublic')}
+          {t("permissionsData.labels.addCenterAsPublic")}
         </Alert>
       ) : null}
     </ContextContainer>

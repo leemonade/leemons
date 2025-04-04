@@ -1,6 +1,6 @@
-import { duplicateAssetRequest, deleteAssetRequest } from '@leebrary/request';
-import _ from 'lodash';
-import { prepareAsset } from './prepareAsset';
+import { duplicateAssetRequest, deleteAssetRequest } from "@leebrary/request";
+import _ from "lodash";
+import { prepareAsset } from "./prepareAsset";
 
 async function newAssetForTextEditor(props) {
   const { asset: duplicatedAsset } = await duplicateAssetRequest(props.id, {
@@ -13,7 +13,7 @@ async function newAssetForTextEditor(props) {
 
   let url = preparedAsset.url || preparedAsset.cover;
 
-  if (props.filetype === 'bookmark') {
+  if (props.filetype === "bookmark") {
     url = props.url;
   }
 
@@ -32,17 +32,17 @@ function propsToObject(propsStr) {
   const propsArray = propsStr.split(/ (?=\w+?=)/g);
   const propsObj = Object.fromEntries(
     propsArray
-      .map((propTuple) => propTuple.split('='))
+      .map((propTuple) => propTuple.split("="))
       .map(([key, ..._value]) => {
-        const value = _value.join('=');
+        const value = _value.join("=");
         if (value.startsWith('"')) {
           return [key, value.substring(1, value.length - 1)];
         }
-        if (value === 'null') {
+        if (value === "null") {
           return [key, null];
         }
-        if (value === 'true' || value === 'false') {
-          return [key, value === 'true'];
+        if (value === "true" || value === "false") {
+          return [key, value === "true"];
         }
 
         return [key, value];
@@ -80,7 +80,9 @@ export async function libraryProcessor(html, oldHtml, { force }) {
   const parsedAssets = {};
   let processedHTML = html;
 
-  const oldHtmlAssets = force ? [] : getHtmlAssets(oldHtml, { onlyProcessed: true });
+  const oldHtmlAssets = force
+    ? []
+    : getHtmlAssets(oldHtml, { onlyProcessed: true });
   const newHtmlAssets = [];
 
   try {
@@ -105,8 +107,11 @@ export async function libraryProcessor(html, oldHtml, { force }) {
           }
 
           const stringifiedProps = Object.entries(newProps)
-            .map(([key, value]) => `${key}=${typeof value === 'string' ? `"${value}"` : value}`)
-            .join(' ');
+            .map(
+              ([key, value]) =>
+                `${key}=${typeof value === "string" ? `"${value}"` : value}`
+            )
+            .join(" ");
 
           processedHTML = processedHTML.replace(
             component,
@@ -116,7 +121,7 @@ export async function libraryProcessor(html, oldHtml, { force }) {
       }
     }
   } catch (e) {
-    throw new Error('Error processing library assets');
+    throw new Error("Error processing library assets");
   }
 
   const unusedAssets = _.difference(oldHtmlAssets, newHtmlAssets);
@@ -124,7 +129,7 @@ export async function libraryProcessor(html, oldHtml, { force }) {
   try {
     await Promise.all(unusedAssets.map((asset) => deleteAssetRequest(asset)));
   } catch (e) {
-    throw new Error('Error removing old library assets');
+    throw new Error("Error removing old library assets");
   }
 
   return processedHTML || html;

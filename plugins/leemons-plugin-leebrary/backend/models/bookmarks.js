@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const bookmarksSchema = new mongoose.Schema(
   {
@@ -35,6 +35,10 @@ const bookmarksSchema = new mongoose.Schema(
 bookmarksSchema.index({ asset: 1, deploymentID: 1, isDeleted: 1 });
 bookmarksSchema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
 
-const bookmarksModel = newModel(mongoose.connection, 'v1::leebrary_Bookmarks', bookmarksSchema);
+const bookmarksModel = newModel(
+  mongoose.connection,
+  "v1::leebrary_Bookmarks",
+  bookmarksSchema
+);
 
 module.exports = { bookmarksModel, bookmarksSchema };

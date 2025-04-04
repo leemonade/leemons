@@ -1,1 +1,10 @@
-["temp", "got", "mediainfo.js", "metascraper", "mime-types", "office-document-properties", "semver", "sharp"]
+[
+  "temp",
+  "got",
+  "mediainfo.js",
+  "metascraper",
+  "mime-types",
+  "office-document-properties",
+  "semver",
+  "sharp"
+]

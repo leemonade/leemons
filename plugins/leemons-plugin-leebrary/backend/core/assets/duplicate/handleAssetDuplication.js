@@ -1,7 +1,7 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { isTruthy } = require('../../shared');
-const { add } = require('../add');
+const { isTruthy } = require("../../shared");
+const { add } = require("../add");
 
 /**
  * Handles the creation of a new asset during the duplication process.
@@ -31,20 +31,21 @@ async function handleAssetDuplication({
   ctx,
 }) {
   const assetData = _.omit(asset, [
-    '_id',
-    'id',
-    'file',
-    'cover',
-    'icon',
-    'category',
-    'fromUser',
-    'fromUserAgent',
-    'created_at',
-    'updated_at',
-    'createdAt',
-    'updatedAt',
+    "_id",
+    "id",
+    "file",
+    "cover",
+    "icon",
+    "category",
+    "fromUser",
+    "fromUserAgent",
+    "created_at",
+    "updated_at",
+    "createdAt",
+    "updatedAt",
   ]);
-  const _isIndexable = isIndexable === undefined ? asset.indexable : isTruthy(isIndexable);
+  const _isIndexable =
+    isIndexable === undefined ? asset.indexable : isTruthy(isIndexable);
   const _isPublic = isPublic === undefined ? asset.public : isTruthy(isPublic);
 
   if (preserveOwner) {

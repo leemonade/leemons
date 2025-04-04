@@ -1,25 +1,32 @@
-const { it, expect, beforeAll, afterAll, beforeEach, describe } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { LeemonsError } = require('@leemons/error');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  describe,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { LeemonsError } = require("@leemons/error");
+const { newModel } = require("@leemons/mongodb");
 
-const { removeByAsset } = require('./removeByAsset');
-const { pinsSchema } = require('../../../models/pins');
-const getUserSession = require('../../../__fixtures__/getUserSession');
+const { removeByAsset } = require("./removeByAsset");
+const { pinsSchema } = require("../../../models/pins");
+const getUserSession = require("../../../__fixtures__/getUserSession");
 
-jest.mock('../getByAsset');
-const { getByAsset: getPinByAsset } = require('../getByAsset');
+jest.mock("../getByAsset");
+const { getByAsset: getPinByAsset } = require("../getByAsset");
 
-describe('removeByAsset pin', () => {
+describe("removeByAsset pin", () => {
   let mongooseConnection;
   let disconnectMongoose;
   let ctx;
 
   const userSession = getUserSession();
-  const assetId = 'testAssetId';
+  const assetId = "testAssetId";
   const pins = [
-    { id: 'pinId1', asset: assetId, userAgent: userSession.userAgents[0].id },
-    { id: 'pinId2', asset: assetId, userAgent: 'otherUserAgentId' },
+    { id: "pinId1", asset: assetId, userAgent: userSession.userAgents[0].id },
+    { id: "pinId2", asset: assetId, userAgent: "otherUserAgentId" },
   ];
 
   beforeAll(async () => {
@@ -29,7 +36,7 @@ describe('removeByAsset pin', () => {
 
     ctx = generateCtx({
       models: {
-        Pins: newModel(mongooseConnection, 'Pins', pinsSchema),
+        Pins: newModel(mongooseConnection, "Pins", pinsSchema),
       },
     });
     ctx.meta.userSession = { ...userSession };
@@ -48,8 +55,8 @@ describe('removeByAsset pin', () => {
     await ctx.tx.db.Pins.create(pins);
   });
 
-  describe('Intended workload', () => {
-    it('should remove a pin', async () => {
+  describe("Intended workload", () => {
+    it("should remove a pin", async () => {
       // Arrange
       getPinByAsset.mockResolvedValue(pins[0]);
 
@@ -72,7 +79,7 @@ describe('removeByAsset pin', () => {
       expect(afterRemovePins).toHaveLength(0);
     });
 
-    it('should SOFT remove a pin', async () => {
+    it("should SOFT remove a pin", async () => {
       // Arrange
       getPinByAsset.mockResolvedValue(pins[0]);
 
@@ -95,8 +102,8 @@ describe('removeByAsset pin', () => {
     });
   });
 
-  describe('Limit use cases', () => {
-    it('should not remove a pin if pin does not exist', async () => {
+  describe("Limit use cases", () => {
+    it("should not remove a pin if pin does not exist", async () => {
       // Arrange
       getPinByAsset.mockResolvedValue(null);
 
@@ -106,33 +113,34 @@ describe('removeByAsset pin', () => {
       // Assert
       await expect(testFunc).rejects.toThrow(
         new LeemonsError(ctx, {
-          message: 'Pin not found',
+          message: "Pin not found",
           httpStatusCode: 404,
         })
       );
     });
   });
 
-  describe('Error handling', () => {
-    it('should throw an error if asset ID is missing', async () => {
+  describe("Error handling", () => {
+    it("should throw an error if asset ID is missing", async () => {
       // Arrange
       const assetIdMissing = undefined;
 
       // Act
-      const testFunc = async () => removeByAsset({ assetId: assetIdMissing, ctx });
+      const testFunc = async () =>
+        removeByAsset({ assetId: assetIdMissing, ctx });
 
       // Assert
       await expect(testFunc).rejects.toThrow(
         new LeemonsError(ctx, {
-          message: 'Pin not found',
+          message: "Pin not found",
           httpStatusCode: 404,
         })
       );
     });
 
-    it('should throw an error if failed to remove pin', async () => {
+    it("should throw an error if failed to remove pin", async () => {
       // Arrange
-      getPinByAsset.mockResolvedValue({ id: 'existingPinId' });
+      getPinByAsset.mockResolvedValue({ id: "existingPinId" });
       ctx.tx.db.Pins.deleteOne = jest.fn().mockRejectedValue(new Error());
 
       // Act
@@ -141,7 +149,7 @@ describe('removeByAsset pin', () => {
       // Assert
       await expect(testFunc).rejects.toThrow(
         new LeemonsError(ctx, {
-          message: 'Failed to remove Pin',
+          message: "Failed to remove Pin",
           httpStatusCode: 500,
         })
       );

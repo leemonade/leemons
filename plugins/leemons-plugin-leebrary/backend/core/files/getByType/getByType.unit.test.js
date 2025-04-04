@@ -1,11 +1,17 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const { isPlainObject } = require('lodash');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const { isPlainObject } = require("lodash");
 
-const { getByType } = require('./getByType');
-const { filesSchema } = require('../../../models/files');
-const getMediaFileData = require('../../../__fixtures__/getMediaFileData');
+const { getByType } = require("./getByType");
+const { filesSchema } = require("../../../models/files");
+const getMediaFileData = require("../../../__fixtures__/getMediaFileData");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -30,19 +36,19 @@ beforeEach(async () => {
 
 const { imageFile } = getMediaFileData();
 
-it('Should return files by type', async () => {
+it("Should return files by type", async () => {
   // Arrange
   const file1 = {
     ...imageFile,
     metadata: JSON.stringify(imageFile.metadata),
-    id: 'fileOne',
-    type: 'pdf',
+    id: "fileOne",
+    type: "pdf",
   };
-  const file2 = { ...file1, id: 'fileTwo', type: 'doc' };
+  const file2 = { ...file1, id: "fileTwo", type: "doc" };
 
   const ctx = generateCtx({
     models: {
-      Files: newModel(mongooseConnection, 'Files', filesSchema),
+      Files: newModel(mongooseConnection, "Files", filesSchema),
     },
   });
 
@@ -50,7 +56,7 @@ it('Should return files by type', async () => {
   await ctx.db.Files.create(initialValues);
 
   // Act
-  const response = await getByType({ type: 'pdf', ctx });
+  const response = await getByType({ type: "pdf", ctx });
 
   // Assert
   expect(response).toHaveLength(1);
@@ -59,16 +65,16 @@ it('Should return files by type', async () => {
   expect(response[0].metadata).toEqual(imageFile.metadata);
 });
 
-it('Should return empty array if no files of the specified type exist', async () => {
+it("Should return empty array if no files of the specified type exist", async () => {
   // Arrange
   const ctx = generateCtx({
     models: {
-      Files: newModel(mongooseConnection, 'Files', filesSchema),
+      Files: newModel(mongooseConnection, "Files", filesSchema),
     },
   });
 
   // Act
-  const response = await getByType({ type: 'pdf', ctx });
+  const response = await getByType({ type: "pdf", ctx });
 
   // Assert
   expect(response).toHaveLength(0);

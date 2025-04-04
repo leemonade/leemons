@@ -1,3 +1,3 @@
-const remove = require('./remove');
+const remove = require("./remove");
 
 module.exports = { ...remove };

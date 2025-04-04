@@ -1,12 +1,14 @@
-import React from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
-import loadable from '@loadable/component';
-import pMinDelay from 'p-min-delay';
-import { LoadingOverlay } from '@bubbles-ui/components';
-import { useSession } from '@users/session';
-import { goLoginPage } from '@users/navigate';
+import React from "react";
+import { Route, Switch, useRouteMatch } from "react-router-dom";
+import loadable from "@loadable/component";
+import pMinDelay from "p-min-delay";
+import { LoadingOverlay } from "@bubbles-ui/components";
+import { useSession } from "@users/session";
+import { goLoginPage } from "@users/navigate";
 
-const PlayerPage = loadable(() => pMinDelay(import('./src/pages/protected/player'), 500));
+const PlayerPage = loadable(() =>
+  pMinDelay(import("./src/pages/protected/player"), 500)
+);
 
 export default function Protected() {
   const { path } = useRouteMatch();

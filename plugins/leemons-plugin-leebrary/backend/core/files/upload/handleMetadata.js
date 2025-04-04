@@ -1,4 +1,4 @@
-const { getReadableFileSize } = require('./getReadableFileSize');
+const { getReadableFileSize } = require("./getReadableFileSize");
 /**
  * Handles the metadata of a file.
  *

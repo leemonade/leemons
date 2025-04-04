@@ -6,7 +6,9 @@
  * @returns {Promise<LibraryPin[]>} A promise that resolves with the found pin documents.
  */
 async function getByUser({ ctx }) {
-  return ctx.tx.db.Pins.find({ userAgent: ctx.meta.userSession.userAgents[0].id });
+  return ctx.tx.db.Pins.find({
+    userAgent: ctx.meta.userSession.userAgents[0].id,
+  });
 }
 
 module.exports = { getByUser };

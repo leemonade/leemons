@@ -1,21 +1,21 @@
-import { ActionButton, Box, Stack, Divider } from '@bubbles-ui/components';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
-import { PrintContentButton } from '@content-creator/components';
-import { isFunction } from 'lodash';
+import { ActionButton, Box, Stack, Divider } from "@bubbles-ui/components";
+import { RemoveIcon } from "@bubbles-ui/icons/outline";
+import { PrintContentButton } from "@content-creator/components";
+import { isFunction } from "lodash";
 
 import {
   LIBRARY_DETAIL_TOOLBAR_DEFAULT_PROPS,
   LIBRARY_DETAIL_TOOLBAR_PROP_TYPES,
-} from './LibraryDetailToolbar.constants';
-import { LibraryDetailToolbarStyles } from './LibraryDetailToolbar.styles';
-import { AssignIcon } from './icons/AssignIcon';
-import { DeleteIcon } from './icons/DeleteIcon';
-import { DownloadIcon } from './icons/DownloadIcon';
-import { DuplicateIcon } from './icons/DuplicateIcon';
-import { EditIcon } from './icons/EditIcon';
-import { LoveFullIcon } from './icons/LoveFullIcon';
-import { LoveIcon } from './icons/LoveIcon';
-import { ShareIcon } from './icons/ShareIcon';
+} from "./LibraryDetailToolbar.constants";
+import { LibraryDetailToolbarStyles } from "./LibraryDetailToolbar.styles";
+import { AssignIcon } from "./icons/AssignIcon";
+import { DeleteIcon } from "./icons/DeleteIcon";
+import { DownloadIcon } from "./icons/DownloadIcon";
+import { DuplicateIcon } from "./icons/DuplicateIcon";
+import { EditIcon } from "./icons/EditIcon";
+import { LoveFullIcon } from "./icons/LoveFullIcon";
+import { LoveIcon } from "./icons/LoveIcon";
+import { ShareIcon } from "./icons/ShareIcon";
 
 const LibraryDetailToolbar = ({
   item,
@@ -36,7 +36,10 @@ const LibraryDetailToolbar = ({
   isEmbedded,
   ...props
 }) => {
-  const { classes } = LibraryDetailToolbarStyles({}, { name: 'LibraryDetailToolbar' });
+  const { classes } = LibraryDetailToolbarStyles(
+    {},
+    { name: "LibraryDetailToolbar" }
+  );
   // const handleView = () => {
   //   if (isFunction(onView)) {
   //     onView(item);
@@ -91,8 +94,9 @@ const LibraryDetailToolbar = ({
     }
   };
   const canShowLoveIcon = toolbarItems.pin || toolbarItems.unpin;
-  const canShowFirstSetOfIcons = toolbarItems.share || toolbarItems.assign || toolbarItems.download;
-  const isEmbeddedVariant = variant === 'embedded' || isEmbedded;
+  const canShowFirstSetOfIcons =
+    toolbarItems.share || toolbarItems.assign || toolbarItems.download;
+  const isEmbeddedVariant = variant === "embedded" || isEmbedded;
   if (isEmbeddedVariant) {
     return (
       <Box className={classes.root} data-cypress-id="library-detail-toolbar">
@@ -108,7 +112,10 @@ const LibraryDetailToolbar = ({
               />
             )}
           </Box>
-          <ActionButton icon={<RemoveIcon height={18} width={18} />} onClick={onCloseDrawer} />
+          <ActionButton
+            icon={<RemoveIcon height={18} width={18} />}
+            onClick={onCloseDrawer}
+          />
         </Stack>
       </Box>
     );
@@ -136,7 +143,10 @@ const LibraryDetailToolbar = ({
           {toolbarItems.printPDF && (
             <ActionButton
               icon={
-                <PrintContentButton variant="icon" assetId={item.providerData?.id ?? item.id} />
+                <PrintContentButton
+                  variant="icon"
+                  assetId={item.providerData?.id ?? item.id}
+                />
               }
               tooltip={toolbarItems.printPDF}
               className={classes.button}
@@ -200,7 +210,10 @@ const LibraryDetailToolbar = ({
           <ActionButton icon={<SettingMenuVerticalIcon height={16} width={16} />} />
         </Box>
         */}
-        <ActionButton icon={<RemoveIcon height={18} width={18} />} onClick={onCloseDrawer} />
+        <ActionButton
+          icon={<RemoveIcon height={18} width={18} />}
+          onClick={onCloseDrawer}
+        />
       </Stack>
     </Box>
   );

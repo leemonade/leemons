@@ -1,4 +1,4 @@
-const find = require('./find');
+const find = require("./find");
 
 module.exports = {
   ...find,

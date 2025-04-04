@@ -1,3 +1,3 @@
-const getByType = require('./getByType');
+const getByType = require("./getByType");
 
 module.exports = { getByType };

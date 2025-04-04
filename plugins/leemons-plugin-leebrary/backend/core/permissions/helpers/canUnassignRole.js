@@ -1,4 +1,4 @@
-const getRolePermissions = require('./getRolePermissions');
+const getRolePermissions = require("./getRolePermissions");
 
 /**
  * Determines if a user can unassign a role from another user.

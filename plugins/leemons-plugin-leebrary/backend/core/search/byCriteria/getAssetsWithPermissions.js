@@ -1,8 +1,10 @@
-const { uniq } = require('lodash');
+const { uniq } = require("lodash");
 
-const { getByAssets: getPermissions } = require('../../permissions/getByAssets');
+const {
+  getByAssets: getPermissions,
+} = require("../../permissions/getByAssets");
 
-const { filterByPublishStatus } = require('./filterByPublishStatus');
+const { filterByPublishStatus } = require("./filterByPublishStatus");
 /**
  * Retrieves assets with permissions based on the provided parameters.
  *

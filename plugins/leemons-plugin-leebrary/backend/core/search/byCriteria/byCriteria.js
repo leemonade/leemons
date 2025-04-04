@@ -25,23 +25,23 @@
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<Array>} - Returns the search results.
  */
-const { LeemonsError } = require('@leemons/error');
-const { isObject } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { isObject } = require("lodash");
 
-const { getAssets } = require('./getAssets');
-const { getAssetsWithPermissions } = require('./getAssetsWithPermissions');
-const { getCategoryId } = require('./getCategoryId');
-const { getPinnedAssets } = require('./getPinnedAssets');
-const { getProviderAssets } = require('./getProviderAssets');
-const { sortAssets } = require('./sortAssets');
+const { getAssets } = require("./getAssets");
+const { getAssetsWithPermissions } = require("./getAssetsWithPermissions");
+const { getCategoryId } = require("./getCategoryId");
+const { getPinnedAssets } = require("./getPinnedAssets");
+const { getProviderAssets } = require("./getProviderAssets");
+const { sortAssets } = require("./sortAssets");
 
 async function byCriteria({
-  criteria = '',
+  criteria = "",
   type,
   category,
   // allVersions = false, // unused Param
   sortBy: sortingBy,
-  sortDirection = 'asc',
+  sortDirection = "asc",
   published: _published = true,
   indexable = true,
   preferCurrent: _preferCurrent,

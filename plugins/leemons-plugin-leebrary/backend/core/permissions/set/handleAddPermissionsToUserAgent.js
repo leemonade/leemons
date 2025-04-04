@@ -1,8 +1,8 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const getAssetPermissionName = require('../helpers/getAssetPermissionName');
+const getAssetPermissionName = require("../helpers/getAssetPermissionName");
 
-const { addPermissionsToUserAgent } = require('./addPermissionsToUserAgent');
+const { addPermissionsToUserAgent } = require("./addPermissionsToUserAgent");
 
 /**
  * This function handles the addition of permissions to a user agent.
@@ -23,7 +23,7 @@ async function handleAddPermissionsToUserAgent({
   removeAllPermissionsFromPreviousOwner,
   ctx,
 }) {
-  const currentUserAgentIds = _.map(ctx.meta.userSession.userAgents, 'id');
+  const currentUserAgentIds = _.map(ctx.meta.userSession.userAgents, "id");
 
   const userPromises = [];
   _.forEach(assetIds, (id) => {

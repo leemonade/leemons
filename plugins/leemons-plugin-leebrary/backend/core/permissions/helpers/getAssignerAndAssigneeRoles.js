@@ -1,4 +1,4 @@
-const { getByAsset } = require('../getByAsset');
+const { getByAsset } = require("../getByAsset");
 
 /**
  * This function retrieves the roles of the assigner and assignee for a given asset.
@@ -9,7 +9,12 @@ const { getByAsset } = require('../getByAsset');
  * @param {MoleculerContext} ctx - The context object containing additional information.
  * @returns {Promise<object>} An object containing the roles of the assigner and assignee.
  */
-async function getAssignerAndAssigneeRoles({ assetId, assignerSession, assigneeId, ctx } = {}) {
+async function getAssignerAndAssigneeRoles({
+  assetId,
+  assignerSession,
+  assigneeId,
+  ctx,
+} = {}) {
   const permissions = await Promise.all([
     // EN: Get assigner role
     // ES: Obtener rol del asignador

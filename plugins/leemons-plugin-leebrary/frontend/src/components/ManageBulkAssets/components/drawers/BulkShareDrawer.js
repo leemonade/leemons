@@ -1,10 +1,16 @@
-import { Alert, Text } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+import { Alert, Text } from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
-import { PermissionsDataDrawer } from '@leebrary/components/AssetSetup';
-import { setPermissionsRequest } from '@leebrary/request';
+import { PermissionsDataDrawer } from "@leebrary/components/AssetSetup";
+import { setPermissionsRequest } from "@leebrary/request";
 
-const BulkShareDrawer = ({ isOpen, onClose, selectedAssets = [], onAssetsUpdate, t }) => {
+const BulkShareDrawer = ({
+  isOpen,
+  onClose,
+  selectedAssets = [],
+  onAssetsUpdate,
+  t,
+}) => {
   const getAssetForPermissions = () => {
     if (!selectedAssets?.length) return null;
 
@@ -18,7 +24,9 @@ const BulkShareDrawer = ({ isOpen, onClose, selectedAssets = [], onAssetsUpdate,
       return (
         currentCanAccess.length === firstAssetCanAccess.length &&
         currentCanAccess.every(
-          (access, index) => JSON.stringify(access) === JSON.stringify(firstAssetCanAccess[index])
+          (access, index) =>
+            JSON.stringify(access) ===
+            JSON.stringify(firstAssetCanAccess[index])
         )
       );
     });
@@ -29,7 +37,7 @@ const BulkShareDrawer = ({ isOpen, onClose, selectedAssets = [], onAssetsUpdate,
 
     return {
       ...selectedAssets[0],
-      canAccess: [{ permissions: ['owner'] }],
+      canAccess: [{ permissions: ["owner"] }],
     };
   };
 
@@ -69,8 +77,8 @@ const BulkShareDrawer = ({ isOpen, onClose, selectedAssets = [], onAssetsUpdate,
         selectedAssets.length > 1 && (
           <Alert closeable={false}>
             <Text>
-              {t('bulkShareDrawer.alertPartOne')}
-              <Text strong>{t('bulkShareDrawer.alertPartTwo')}</Text>
+              {t("bulkShareDrawer.alertPartOne")}
+              <Text strong>{t("bulkShareDrawer.alertPartTwo")}</Text>
             </Text>
           </Alert>
         )

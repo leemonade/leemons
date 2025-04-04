@@ -1,4 +1,4 @@
-const mime = require('mime-types');
+const mime = require("mime-types");
 
 /**
  * Get the common file details
@@ -11,8 +11,10 @@ const mime = require('mime-types');
 function handleCommonFileDetails({ file, path }) {
   return {
     file,
-    contentType: path ? mime.lookup(path.split('.').reverse()[0]) : file.type,
-    fileName: path ? path.split('/').reverse()[0] : `${file.name}.${file.extension}`,
+    contentType: path ? mime.lookup(path.split(".").reverse()[0]) : file.type,
+    fileName: path
+      ? path.split("/").reverse()[0]
+      : `${file.name}.${file.extension}`,
   };
 }
 

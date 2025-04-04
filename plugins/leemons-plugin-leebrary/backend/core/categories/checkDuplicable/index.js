@@ -1,4 +1,4 @@
-const checkDuplicable = require('./checkDuplicable');
+const checkDuplicable = require("./checkDuplicable");
 
 module.exports = {
   ...checkDuplicable,

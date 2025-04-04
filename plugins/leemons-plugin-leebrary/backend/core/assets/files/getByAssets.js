@@ -1,4 +1,4 @@
-const { isArray } = require('lodash');
+const { isArray } = require("lodash");
 
 /**
  * Get the files associated with multiple assets

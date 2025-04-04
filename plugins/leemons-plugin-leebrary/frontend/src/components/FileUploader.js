@@ -1,12 +1,12 @@
-import React from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { Button, TextInput, FileUpload } from '@bubbles-ui/components';
-import { DownloadIcon } from '@bubbles-ui/icons/outline';
+import React from "react";
+import { useForm, Controller } from "react-hook-form";
+import { Button, TextInput, FileUpload } from "@bubbles-ui/components";
+import { DownloadIcon } from "@bubbles-ui/icons/outline";
 
 export default function FileUploader() {
   const defaultValues = {
-    name: '',
-    description: '',
+    name: "",
+    description: "",
     files: [],
   };
 
@@ -20,16 +20,16 @@ export default function FileUploader() {
     <form
       onSubmit={handleSubmit((values) => {
         const data = new FormData();
-        data.append('name', values.name);
-        data.append('description', values.description);
-        values.files.map((file) => data.append('files', file));
+        data.append("name", values.name);
+        data.append("description", values.description);
+        values.files.map((file) => data.append("files", file));
 
-        leemons.api('v1/leebrary/upload', {
+        leemons.api("v1/leebrary/upload", {
           allAgents: true,
-          method: 'POST',
+          method: "POST",
           body: data,
           headers: {
-            'content-type': 'none',
+            "content-type": "none",
           },
         });
       })}
@@ -38,7 +38,7 @@ export default function FileUploader() {
       <Controller
         control={control}
         name="name"
-        rules={{ required: 'Required Field' }}
+        rules={{ required: "Required Field" }}
         render={({ field }) => (
           <TextInput
             label="Name"
@@ -53,7 +53,7 @@ export default function FileUploader() {
       <Controller
         control={control}
         name="description"
-        rules={{ required: 'Required Field' }}
+        rules={{ required: "Required Field" }}
         render={({ field }) => (
           <TextInput
             label="Description"
@@ -68,7 +68,7 @@ export default function FileUploader() {
       <Controller
         control={control}
         name="files"
-        rules={{ required: 'Required Field' }}
+        rules={{ required: "Required Field" }}
         render={({ field: { onChange, ...field } }) => (
           <FileUpload
             icon={<DownloadIcon height={32} />}

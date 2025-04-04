@@ -1,4 +1,4 @@
-const getByAssets = require('./getByAssets');
+const getByAssets = require("./getByAssets");
 
 module.exports = {
   ...getByAssets,

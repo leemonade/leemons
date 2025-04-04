@@ -1,7 +1,7 @@
-const _ = require('lodash');
-const { CATEGORIES } = require('../../../config/constants');
-const { duplicate: duplicateFile } = require('../../files/duplicate');
-const { add: addFiles } = require('../files/add/add');
+const _ = require("lodash");
+const { CATEGORIES } = require("../../../config/constants");
+const { duplicate: duplicateFile } = require("../../files/duplicate");
+const { add: addFiles } = require("../files/add/add");
 /**
  * Handles the duplication of files associated with a given asset.
  * It duplicates each file, excluding the cover, and updates the new asset with the duplicated files.
@@ -16,7 +16,13 @@ const { add: addFiles } = require('../files/add/add');
  * @param {MoleculerContext} params.ctx - The Moleculer context
  * @returns {Promise<Object>} - Returns a promise with the updated asset
  */
-async function handleFilesDuplication({ filesToDuplicate, cover, newAsset, category, ctx }) {
+async function handleFilesDuplication({
+  filesToDuplicate,
+  cover,
+  newAsset,
+  category,
+  ctx,
+}) {
   let newFiles = [];
   const isMediaFile = category.key === CATEGORIES.MEDIA_FILES;
 

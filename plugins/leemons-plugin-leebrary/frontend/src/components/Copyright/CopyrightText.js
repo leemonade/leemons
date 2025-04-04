@@ -1,13 +1,13 @@
-import React, { useMemo } from 'react';
-import { capitalize } from 'lodash';
-import PropTypes from 'prop-types';
+import React, { useMemo } from "react";
+import { capitalize } from "lodash";
+import PropTypes from "prop-types";
 
-import { Text } from '@bubbles-ui/components';
+import { Text } from "@bubbles-ui/components";
 
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
 
-import prefixPN from '@leebrary/helpers/prefixPN';
-import useCopyrightTextStyles from './CopyrightText.styles';
+import prefixPN from "@leebrary/helpers/prefixPN";
+import useCopyrightTextStyles from "./CopyrightText.styles";
 
 export default function CopyrightText({
   author,
@@ -17,7 +17,7 @@ export default function CopyrightText({
   resourceType,
   reverseColors,
 }) {
-  const [t] = useTranslateLoader(prefixPN('copyright'));
+  const [t] = useTranslateLoader(prefixPN("copyright"));
   const { classes } = useCopyrightTextStyles({ reverseColors });
 
   const handleOnClick = (e) => {
@@ -26,7 +26,7 @@ export default function CopyrightText({
 
   const resourceText = useMemo(() => {
     const type = t(`types.${resourceType}`);
-    const by = t('by');
+    const by = t("by");
     if (type) {
       return `${type} ${by} `;
     }
@@ -45,7 +45,7 @@ export default function CopyrightText({
       >
         {author}
       </a>
-      {` ${t('on')} `}
+      {` ${t("on")} `}
       <a
         className={classes.link}
         href={sourceUrl}
@@ -65,7 +65,7 @@ CopyrightText.propTypes = {
   source: PropTypes.string.isRequired,
   sourceUrl: PropTypes.string.isRequired,
   bottomOffset: PropTypes.number,
-  align: PropTypes.oneOf(['left', 'right', 'center']),
+  align: PropTypes.oneOf(["left", "right", "center"]),
   reverseColors: PropTypes.bool,
   resourceType: PropTypes.string,
 };

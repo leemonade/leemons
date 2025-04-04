@@ -1,5 +1,5 @@
-const getRolePermissions = require('../helpers/getRolePermissions');
-const getAssetIdFromPermissionName = require('../helpers/getAssetIdFromPermissionName');
+const getRolePermissions = require("../helpers/getRolePermissions");
+const getAssetIdFromPermissionName = require("../helpers/getAssetIdFromPermissionName");
 
 /**
  * This function handles the permissions roles.

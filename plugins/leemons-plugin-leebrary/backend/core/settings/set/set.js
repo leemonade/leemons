@@ -1,5 +1,5 @@
-const { isNil } = require('lodash');
-const { findOne } = require('../findOne');
+const { isNil } = require("lodash");
+const { findOne } = require("../findOne");
 
 /**
  * This function is used to set the settings.
@@ -16,10 +16,14 @@ async function set({ settings, ctx } = {}) {
     currentSettings = newDoc.toObject();
   }
   const { id, ...newSettings } = { ...currentSettings, ...settings };
-  return ctx.tx.db.Settings.findOneAndUpdate({ id: currentSettings.id }, newSettings, {
-    new: true,
-    lean: true,
-  });
+  return ctx.tx.db.Settings.findOneAndUpdate(
+    { id: currentSettings.id },
+    newSettings,
+    {
+      new: true,
+      lean: true,
+    }
+  );
 }
 
 module.exports = { set };

@@ -3,43 +3,43 @@ const {
   expect,
   beforeEach,
   jest: { fn },
-} = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
-const { omit } = require('lodash');
+} = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
+const { omit } = require("lodash");
 
-const { add } = require('./add');
-const getAssets = require('../../../__fixtures__/getAssets');
-const getAssetAddDataInput = require('../../../__fixtures__/getAssetAddDataInput');
-const getUserSession = require('../../../__fixtures__/getUserSession');
-const getMediaFileData = require('../../../__fixtures__/getMediaFileData');
+const { add } = require("./add");
+const getAssets = require("../../../__fixtures__/getAssets");
+const getAssetAddDataInput = require("../../../__fixtures__/getAssetAddDataInput");
+const getUserSession = require("../../../__fixtures__/getUserSession");
+const getMediaFileData = require("../../../__fixtures__/getMediaFileData");
 
 // MOCKS
-jest.mock('../../validations/forms');
-jest.mock('../../bookmarks/add');
-jest.mock('./handleBookmarkData');
-jest.mock('./handleUserSessionData');
-jest.mock('./handleCategoryData');
-jest.mock('./checkAndHandleCanUse');
-jest.mock('./handleFileUpload');
-jest.mock('./handleVersion');
-jest.mock('./createAssetInDB');
-jest.mock('./handleSubjects');
-jest.mock('./handlePermissions');
-jest.mock('./handleFiles');
+jest.mock("../../validations/forms");
+jest.mock("../../bookmarks/add");
+jest.mock("./handleBookmarkData");
+jest.mock("./handleUserSessionData");
+jest.mock("./handleCategoryData");
+jest.mock("./checkAndHandleCanUse");
+jest.mock("./handleFileUpload");
+jest.mock("./handleVersion");
+jest.mock("./createAssetInDB");
+jest.mock("./handleSubjects");
+jest.mock("./handlePermissions");
+jest.mock("./handleFiles");
 
-const { validateAddAsset } = require('../../validations/forms');
-const { add: addBookmark } = require('../../bookmarks/add');
-const { handleBookmarkData } = require('./handleBookmarkData');
-const { handleUserSessionData } = require('./handleUserSessionData');
-const { handleCategoryData } = require('./handleCategoryData');
-const { checkAndHandleCanUse } = require('./checkAndHandleCanUse');
-const { handleFileUpload } = require('./handleFileUpload');
-const { handleVersion } = require('./handleVersion');
-const { createAssetInDB } = require('./createAssetInDb');
-const { handleSubjects } = require('./handleSubjects');
-const { handlePermissions } = require('./handlePermissions');
-const { handleFiles } = require('./handleFiles');
-const { CATEGORIES } = require('../../../config/constants');
+const { validateAddAsset } = require("../../validations/forms");
+const { add: addBookmark } = require("../../bookmarks/add");
+const { handleBookmarkData } = require("./handleBookmarkData");
+const { handleUserSessionData } = require("./handleUserSessionData");
+const { handleCategoryData } = require("./handleCategoryData");
+const { checkAndHandleCanUse } = require("./checkAndHandleCanUse");
+const { handleFileUpload } = require("./handleFileUpload");
+const { handleVersion } = require("./handleVersion");
+const { createAssetInDB } = require("./createAssetInDb");
+const { handleSubjects } = require("./handleSubjects");
+const { handlePermissions } = require("./handlePermissions");
+const { handleFiles } = require("./handleFiles");
+const { CATEGORIES } = require("../../../config/constants");
 
 beforeEach(() => jest.resetAllMocks());
 
@@ -48,9 +48,9 @@ const { bookmarkAsset } = getAssets();
 const userSession = getUserSession();
 const { imageFile } = getMediaFileData();
 
-it('Should correctly add a new bookmark', async () => {
+it("Should correctly add a new bookmark", async () => {
   // Arrange
-  const mockNewId = 'fullId@1.0.0';
+  const mockNewId = "fullId@1.0.0";
   const assetDataAfterHandleUserSession = {
     name: bookMarkDataInput.name,
     color: bookMarkDataInput.color,
@@ -59,11 +59,11 @@ it('Should correctly add a new bookmark', async () => {
     program: bookMarkDataInput.program,
     tagline: bookMarkDataInput.tagline,
     url: bookMarkDataInput.url,
-    fromUser: '5738414e-3c5e-40a4-9b89-e5d27adc3719',
-    fromUserAgent: 'a1c917f3-8771-4f92-8e2d-18657b3ec709',
+    fromUser: "5738414e-3c5e-40a4-9b89-e5d27adc3719",
+    fromUserAgent: "a1c917f3-8771-4f92-8e2d-18657b3ec709",
   };
   const assetAfterDB = {
-    ...omit(bookmarkAsset, ['subjects', 'file', 'tags']),
+    ...omit(bookmarkAsset, ["subjects", "file", "tags"]),
     id: mockNewId,
     cover: imageFile.id,
   };
@@ -73,16 +73,19 @@ it('Should correctly add a new bookmark', async () => {
 
   handleUserSessionData.mockReturnValue(assetDataAfterHandleUserSession);
   handleCategoryData.mockResolvedValue({ ...bookMarkDataInput.category });
-  handleFileUpload.mockResolvedValue({ newFile: null, coverFile: { ...imageFile } });
+  handleFileUpload.mockResolvedValue({
+    newFile: null,
+    coverFile: { ...imageFile },
+  });
   handleVersion.mockResolvedValue(mockNewId);
   createAssetInDB.mockResolvedValue(assetAfterDB);
   addBookmark.mockResolvedValue(true);
 
   const ctx = generateCtx({
     actions: {
-      'common.tags.setTagsToValues': setTagsToValuesMock,
+      "common.tags.setTagsToValues": setTagsToValuesMock,
     },
-    caller: 'leebrary',
+    caller: "leebrary",
   });
   ctx.meta.userSession = { ...userSession };
 
@@ -96,7 +99,7 @@ it('Should correctly add a new bookmark', async () => {
   expect(validateAddAsset).toBeCalledWith({
     ...bookMarkDataInput,
     category: undefined,
-    categoryKey: 'media-files',
+    categoryKey: "media-files",
   });
   expect(handleUserSessionData).toBeCalledWith({
     assetData: {
@@ -113,7 +116,7 @@ it('Should correctly add a new bookmark', async () => {
   expect(handleCategoryData).toBeCalledWith({
     category: bookMarkDataInput.category,
     categoryId: bookMarkDataInput.categoryId,
-    categoryKey: 'media-files', // default value
+    categoryKey: "media-files", // default value
     ctx,
   });
   expect(checkAndHandleCanUse).toBeCalledWith({
@@ -164,26 +167,26 @@ it('Should correctly add a new bookmark', async () => {
     ctx,
   });
   expect(setTagsToValuesMock).toBeCalledWith({
-    type: ctx.prefixPN(''),
+    type: ctx.prefixPN(""),
     tags: bookMarkDataInput.tags,
     values: assetAfterDB.id,
   });
   expect(bookmarkResponse).toEqual(newBookmarkExpectedResponse);
 });
 
-it('Should handle bookmark data correctly', async () => {
+it("Should handle bookmark data correctly", async () => {
   // Arrange
   const dataInput = {
     ...bookMarkDataInput,
-    categoryKey: 'bookmarks',
+    categoryKey: "bookmarks",
   };
   const setTagsToValuesMock = fn();
 
   const ctx = generateCtx({
     actions: {
-      'common.tags.setTagsToValues': setTagsToValuesMock,
+      "common.tags.setTagsToValues": setTagsToValuesMock,
     },
-    caller: 'leebrary',
+    caller: "leebrary",
   });
   ctx.meta.userSession = { ...userSession };
 
@@ -208,24 +211,24 @@ it('Should handle bookmark data correctly', async () => {
   });
 });
 
-it('Should not create a bookmark for media files', async () => {
+it("Should not create a bookmark for media files", async () => {
   // Arrange
   const setTagsToValuesMock = fn();
   const ctx = generateCtx({
     actions: {
-      'common.tags.setTagsToValues': setTagsToValuesMock,
+      "common.tags.setTagsToValues": setTagsToValuesMock,
     },
   });
   delete ctx.meta.userSession;
-  const assetData = { category: 'categoryId', name: 'assetOne' };
+  const assetData = { category: "categoryId", name: "assetOne" };
 
   handleCategoryData.mockResolvedValue({
-    canUse: '*',
+    canUse: "*",
     id: assetData.category,
     key: CATEGORIES.MEDIA_FILES,
   });
   handleFileUpload.mockResolvedValue({ newFile: null, coverFile: null });
-  createAssetInDB.mockResolvedValue({ ...assetData, id: 'assetOne' });
+  createAssetInDB.mockResolvedValue({ ...assetData, id: "assetOne" });
   // Act
   await add({ asset: assetData, ctx });
 
@@ -233,24 +236,28 @@ it('Should not create a bookmark for media files', async () => {
   expect(handleUserSessionData).not.toBeCalled();
 });
 
-it('Should set asset data corrctly', async () => {
+it("Should set asset data corrctly", async () => {
   // Arrange
   const setTagsToValuesMock = fn();
   const ctx = generateCtx({
     actions: {
-      'common.tags.setTagsToValues': setTagsToValuesMock,
+      "common.tags.setTagsToValues": setTagsToValuesMock,
     },
   });
   delete ctx.meta.userSession;
-  const assetData = { category: 'categoryId', name: 'assetOne', indexable: false };
+  const assetData = {
+    category: "categoryId",
+    name: "assetOne",
+    indexable: false,
+  };
 
   handleCategoryData.mockResolvedValue({
-    canUse: '*',
+    canUse: "*",
     id: assetData.category,
     key: CATEGORIES.MEDIA_FILES,
   });
   handleFileUpload.mockResolvedValue({ newFile: null, coverFile: null });
-  createAssetInDB.mockResolvedValue({ ...assetData, id: 'assetOne' });
+  createAssetInDB.mockResolvedValue({ ...assetData, id: "assetOne" });
   // Act
   const response = await add({ asset: assetData, ctx });
 
@@ -258,5 +265,5 @@ it('Should set asset data corrctly', async () => {
   expect(handleUserSessionData).not.toBeCalled();
   expect(response.subjects).toBe(undefined);
   expect(response.indexable).toBe(assetData.indexable);
-  expect(response).not.toHaveProperty(['fromUser', 'fromUserAgent']);
+  expect(response).not.toHaveProperty(["fromUser", "fromUserAgent"]);
 });

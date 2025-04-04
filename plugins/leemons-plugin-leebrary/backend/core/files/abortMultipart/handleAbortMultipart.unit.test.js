@@ -1,17 +1,24 @@
-const { it, expect, describe, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const fs = require('fs/promises');
-const { handleAbortMultipart } = require('./handleAbortMultipart');
-const { getByName } = require('../../providers/getByName');
-const getProviders = require('../../../__fixtures__/getProviders');
+const {
+  it,
+  expect,
+  describe,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const fs = require("fs/promises");
+const { handleAbortMultipart } = require("./handleAbortMultipart");
+const { getByName } = require("../../providers/getByName");
+const getProviders = require("../../../__fixtures__/getProviders");
 
-jest.mock('../../providers/getByName');
-jest.mock('fs/promises');
+jest.mock("../../providers/getByName");
+jest.mock("fs/promises");
 
 let mongooseConnection;
 let disconnectMongoose;
 
-describe('Handle Abort Multipart', () => {
+describe("Handle Abort Multipart", () => {
   beforeAll(async () => {
     const { mongoose, disconnect } = await createMongooseConnection();
 
@@ -33,11 +40,11 @@ describe('Handle Abort Multipart', () => {
     fs.unlink.mockClear();
   });
 
-  it('Should correctly handle abort multipart for non-sys provider', async () => {
+  it("Should correctly handle abort multipart for non-sys provider", async () => {
     // Arrange
     const { provider } = getProviders();
     getByName.mockResolvedValue(provider.value.params);
-    const file = { provider: provider.value.pluginName, uri: 'test-uri' };
+    const file = { provider: provider.value.pluginName, uri: "test-uri" };
     const ctx = generateCtx({});
     ctx.tx.call = jest.fn(); // Mock ctx.call
 
@@ -46,13 +53,16 @@ describe('Handle Abort Multipart', () => {
 
     // Assert
     expect(getByName).toHaveBeenCalledWith({ name: file.provider, ctx });
-    expect(ctx.tx.call).toHaveBeenCalledWith(`${file.provider}.files.abortMultipart`, { file });
+    expect(ctx.tx.call).toHaveBeenCalledWith(
+      `${file.provider}.files.abortMultipart`,
+      { file }
+    );
   });
 
-  it('Should correctly handle abort multipart for sys provider and isFolder is true', async () => {
+  it("Should correctly handle abort multipart for sys provider and isFolder is true", async () => {
     // Arrange
     const ctx = generateCtx({});
-    const file = { provider: 'sys', uri: 'test-uri', isFolder: true };
+    const file = { provider: "sys", uri: "test-uri", isFolder: true };
 
     // Act
     await handleAbortMultipart({ file, ctx });
@@ -61,10 +71,10 @@ describe('Handle Abort Multipart', () => {
     expect(fs.rmdir).toHaveBeenCalledWith(file.uri, { recursive: true });
   });
 
-  it('Should correctly handle abort multipart for sys provider and isFolder is false', async () => {
+  it("Should correctly handle abort multipart for sys provider and isFolder is false", async () => {
     // Arrange
     const ctx = generateCtx({});
-    const file = { provider: 'sys', uri: 'test-uri', isFolder: false };
+    const file = { provider: "sys", uri: "test-uri", isFolder: false };
 
     // Act
     await handleAbortMultipart({ file, ctx });

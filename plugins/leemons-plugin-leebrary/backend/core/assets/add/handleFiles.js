@@ -1,5 +1,5 @@
-const { isString } = require('lodash');
-const { add: addFiles } = require('../files/add/add');
+const { isString } = require("lodash");
+const { add: addFiles } = require("../files/add/add");
 /**
  * Handles the files of the asset.
  *
@@ -13,7 +13,12 @@ const { add: addFiles } = require('../files/add/add');
 async function handleFiles({ newFile, assetId, ctx }) {
   if (isString(newFile?.id)) {
     try {
-      await addFiles({ fileId: newFile.id, assetId, skipPermissions: true, ctx });
+      await addFiles({
+        fileId: newFile.id,
+        assetId,
+        skipPermissions: true,
+        ctx,
+      });
       return true;
     } catch (error) {
       ctx.logger.error(error);

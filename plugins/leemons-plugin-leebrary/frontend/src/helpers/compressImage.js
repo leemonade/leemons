@@ -1,4 +1,4 @@
-import { readAndCompressImage } from 'browser-image-resizer';
+import { readAndCompressImage } from "browser-image-resizer";
 
 const DEFAULT_RESIZING_CONFIG = {
   quality: 0.8,

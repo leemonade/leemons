@@ -1,37 +1,43 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { Box, Stack, Loader, Pager, createStyles } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useQuery } from '@tanstack/react-query';
-import { map } from 'lodash';
-import PropTypes from 'prop-types';
+import {
+  Box,
+  Stack,
+  Loader,
+  Pager,
+  createStyles,
+} from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useQuery } from "@tanstack/react-query";
+import { map } from "lodash";
+import PropTypes from "prop-types";
 
-import CardList from './CardList/List';
-import { RowList } from './RowList/List';
-import ThumbnailList from './ThumnailList/List';
+import CardList from "./CardList/List";
+import { RowList } from "./RowList/List";
+import ThumbnailList from "./ThumnailList/List";
 
-import SearchEmpty from '@leebrary/components/SearchEmpty';
-import prefixPN from '@leebrary/helpers/prefixPN';
-import { getAssetsRequest } from '@leebrary/request';
-import useAssets from '@leebrary/request/hooks/queries/useAssets';
+import SearchEmpty from "@leebrary/components/SearchEmpty";
+import prefixPN from "@leebrary/helpers/prefixPN";
+import { getAssetsRequest } from "@leebrary/request";
+import useAssets from "@leebrary/request/hooks/queries/useAssets";
 
 export const useListStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
 
   return {
     root: {
-      display: 'flex',
+      display: "flex",
       flex: 1,
-      width: '100%',
-      flexDirection: 'column',
+      width: "100%",
+      flexDirection: "column",
       paddingBottom: globalTheme.spacing.padding.xlg,
       gap: globalTheme.spacing.padding.lg,
     },
     pager: {
-      width: '100%',
+      width: "100%",
       flex: 1,
-      display: 'flex',
-      justifyContent: 'center',
+      display: "flex",
+      justifyContent: "center",
     },
   };
 });
@@ -39,15 +45,15 @@ export const useListStyles = createStyles((theme) => {
 export function useAssetList(query, options) {
   const verifiedQuery = {
     category: query.category,
-    criteria: query.search || '',
+    criteria: query.search || "",
     showPublic: true,
     published: true,
   };
-  if (query.type && query.type !== 'all') verifiedQuery.type = query.type;
+  if (query.type && query.type !== "all") verifiedQuery.type = query.type;
 
   const { data: assets, isLoading } = useQuery({
     // TODO: Add a good queryKey
-    queryKey: ['assetPickerDrawer.assets', query, options],
+    queryKey: ["assetPickerDrawer.assets", query, options],
     queryFn: () =>
       getAssetsRequest({
         ...options,
@@ -71,14 +77,14 @@ export function List({ variant, query, filters, onSelect }) {
   const assetsToLoad = assets?.slice((page - 1) * size, page * size) ?? [];
 
   const { data: assetsData, isLoading: isLoadingData } = useAssets({
-    ids: map(assetsToLoad, 'asset'),
+    ids: map(assetsToLoad, "asset"),
     enabled: totalCount > 0,
   });
 
   const isLoading = isLoadingList || (!!assets?.length && isLoadingData);
 
-  const [t] = useTranslateLoader(prefixPN('list'));
-  const { classes } = useListStyles({}, { name: 'AssetListList' });
+  const [t] = useTranslateLoader(prefixPN("list"));
+  const { classes } = useListStyles({}, { name: "AssetListList" });
 
   global.isLoadingList = isLoadingList;
   global.enabled = !!assets?.length;
@@ -102,9 +108,13 @@ export function List({ variant, query, filters, onSelect }) {
 
   return (
     <Box className={classes.root}>
-      {variant === 'rows' && <RowList items={assetsData} onSelect={onSelect} />}
-      {variant === 'thumbnails' && <ThumbnailList items={assetsData} onSelect={onSelect} />}
-      {variant === 'cards' && <CardList items={assetsData} onSelect={onSelect} />}
+      {variant === "rows" && <RowList items={assetsData} onSelect={onSelect} />}
+      {variant === "thumbnails" && (
+        <ThumbnailList items={assetsData} onSelect={onSelect} />
+      )}
+      {variant === "cards" && (
+        <CardList items={assetsData} onSelect={onSelect} />
+      )}
       {totalPages > 1 && (
         <Box className={classes.pager}>
           <Pager
@@ -124,7 +134,7 @@ export function List({ variant, query, filters, onSelect }) {
 }
 
 List.propTypes = {
-  variant: PropTypes.oneOf(['rows', 'thumbnails', 'cards']),
+  variant: PropTypes.oneOf(["rows", "thumbnails", "cards"]),
   query: PropTypes.object,
   filters: PropTypes.object,
   onSelect: PropTypes.func,

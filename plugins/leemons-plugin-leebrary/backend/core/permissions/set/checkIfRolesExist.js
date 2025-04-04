@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const validateRole = require('../helpers/validateRole');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const validateRole = require("../helpers/validateRole");
 
 /**
  * This function checks if the roles are valid.
@@ -13,7 +13,7 @@ const validateRole = require('../helpers/validateRole');
 function checkIfRolesExist({ canAccess, permissions, ctx }) {
   const roles = [];
   if (canAccess.length) {
-    roles.push(..._.map(canAccess, 'role'));
+    roles.push(..._.map(canAccess, "role"));
   }
   if (permissions) {
     roles.push(...Object.keys(permissions));
@@ -21,7 +21,10 @@ function checkIfRolesExist({ canAccess, permissions, ctx }) {
 
   _.forEach(_.uniq(roles), (role) => {
     if (!validateRole(role)) {
-      throw new LeemonsError(ctx, { message: `Invalid role: ${role}}`, httpStatusCode: 412 });
+      throw new LeemonsError(ctx, {
+        message: `Invalid role: ${role}}`,
+        httpStatusCode: 412,
+      });
     }
   });
 }

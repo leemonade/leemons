@@ -1,13 +1,20 @@
-const { expect, beforeAll, beforeEach, afterAll, describe, it } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  expect,
+  beforeAll,
+  beforeEach,
+  afterAll,
+  describe,
+  it,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getById } = require('./getById');
+const { getById } = require("./getById");
 
-const { categoriesSchema } = require('../../../models/categories');
-const getCategory = require('../../../__fixtures__/getCategory');
+const { categoriesSchema } = require("../../../models/categories");
+const getCategory = require("../../../__fixtures__/getCategory");
 
-describe('Get By Id Category Test', () => {
+describe("Get By Id Category Test", () => {
   // Arrange: Setting up the test environment
   let mongooseConnection;
   let disconnectMongoose;
@@ -22,7 +29,11 @@ describe('Get By Id Category Test', () => {
 
     ctx = generateCtx({
       models: {
-        Categories: newModel(mongooseConnection, 'Categories', categoriesSchema),
+        Categories: newModel(
+          mongooseConnection,
+          "Categories",
+          categoriesSchema
+        ),
       },
     });
   });
@@ -44,7 +55,7 @@ describe('Get By Id Category Test', () => {
     await ctx.tx.db.Categories.create(categoryData);
   });
 
-  it('should find a category by id in the database', async () => {
+  it("should find a category by id in the database", async () => {
     // Arrange
 
     // Act: Execution of the function to test
@@ -55,9 +66,9 @@ describe('Get By Id Category Test', () => {
     expect(category.id).toBe(categoryData.id);
   });
 
-  it('should return only key field', async () => {
+  it("should return only key field", async () => {
     // Arrange
-    const columns = 'key';
+    const columns = "key";
     // Act
     const category = await getById({ id: categoryData.id, columns, ctx });
 
@@ -66,9 +77,9 @@ describe('Get By Id Category Test', () => {
     expect(category.canUse).not.toBeDefined();
   });
 
-  it('should return null if no category is found', async () => {
+  it("should return null if no category is found", async () => {
     // Arrange
-    const id = 'nonexistentCategory';
+    const id = "nonexistentCategory";
 
     // Act
     const category = await getById({ id, ctx });

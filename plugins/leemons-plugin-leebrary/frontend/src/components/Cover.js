@@ -1,13 +1,13 @@
-import React, { useCallback, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { isEmpty, isString } from 'lodash';
-import { Box, ImageLoader } from '@bubbles-ui/components';
-import useFileCopyright from '@leebrary/request/hooks/queries/useFileCopyright';
-import { isLRN as stringIsLRN } from '@leebrary/helpers/isLRN';
-import CoverCopyright from './Copyright/CoverCopyright';
+import React, { useCallback, useMemo } from "react";
+import PropTypes from "prop-types";
+import { isEmpty, isString } from "lodash";
+import { Box, ImageLoader } from "@bubbles-ui/components";
+import useFileCopyright from "@leebrary/request/hooks/queries/useFileCopyright";
+import { isLRN as stringIsLRN } from "@leebrary/helpers/isLRN";
+import CoverCopyright from "./Copyright/CoverCopyright";
 
 const Cover = ({
-  height = 'auto',
+  height = "auto",
   src,
   alt,
   asset = {},
@@ -18,7 +18,10 @@ const Cover = ({
   ...imageProps
 }) => {
   const { cover: processedCover, file, fileType, url, coverId } = asset;
-  const cover = useMemo(() => asset?.original?.cover || processedCover, [asset, processedCover]);
+  const cover = useMemo(
+    () => asset?.original?.cover || processedCover,
+    [asset, processedCover]
+  );
 
   // If needed get the copyright and external url (same function)
   const fileIdToFetchCopyrightData = useMemo(() => {
@@ -32,10 +35,10 @@ const Cover = ({
       return cover;
     }
 
-    const isUrlToFile = cover.startsWith('http') && cover.includes('lrn');
+    const isUrlToFile = cover.startsWith("http") && cover.includes("lrn");
     if (isUrlToFile) {
       let decodedCover = decodeURIComponent(cover.match(/lrn[^?]+/)[0]);
-      decodedCover = decodedCover.replace(/\.[^/.]+$/, '');
+      decodedCover = decodedCover.replace(/\.[^/.]+$/, "");
       return decodedCover;
     }
 
@@ -53,8 +56,9 @@ const Cover = ({
   const coverSource = useMemo(() => {
     if (src) return src;
 
-    const fileIsAnImage = fileType === 'image';
-    const urlLeadsToSourceFile = url && url.startsWith('http') && url.includes('unsplash');
+    const fileIsAnImage = fileType === "image";
+    const urlLeadsToSourceFile =
+      url && url.startsWith("http") && url.includes("unsplash");
     const hasCopyright = !isEmpty(file?.copyright);
 
     if (fileIsAnImage && urlLeadsToSourceFile && hasCopyright) {
@@ -78,11 +82,12 @@ const Cover = ({
 
   const getCoverCopyright = useCallback(() => {
     if (hideCopyright) return null;
-    const fileIsAnImage = fileType === 'image';
+    const fileIsAnImage = fileType === "image";
 
     if (fileIsAnImage && !isEmpty(file)) {
       if (!file.copyright) return null; // It does not come form an external source
-      const { author, authorProfileUrl, providerUrl, provider } = file.copyright;
+      const { author, authorProfileUrl, providerUrl, provider } =
+        file.copyright;
 
       return (
         <CoverCopyright
@@ -97,7 +102,8 @@ const Cover = ({
     }
 
     if (cover?.copyright) {
-      const { author, authorProfileUrl, providerUrl, provider } = cover.copyright;
+      const { author, authorProfileUrl, providerUrl, provider } =
+        cover.copyright;
       return (
         <CoverCopyright
           author={author}
@@ -125,11 +131,22 @@ const Cover = ({
       );
     }
     return null;
-  }, [cover, file, coverCopyrightDataFetched, copyrightAlign, copyrightBottomOffset]);
+  }, [
+    cover,
+    file,
+    coverCopyrightDataFetched,
+    copyrightAlign,
+    copyrightBottomOffset,
+  ]);
 
   return (
-    <Box sx={{ position: 'relative', ...inlineStyles }}>
-      <ImageLoader {...imageProps} height={height} src={coverSource} alt={alt} />
+    <Box sx={{ position: "relative", ...inlineStyles }}>
+      <ImageLoader
+        {...imageProps}
+        height={height}
+        src={coverSource}
+        alt={alt}
+      />
       {getCoverCopyright()}
     </Box>
   );

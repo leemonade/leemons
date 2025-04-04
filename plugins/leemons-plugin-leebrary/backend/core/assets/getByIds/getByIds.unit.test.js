@@ -7,36 +7,38 @@ const {
   beforeEach,
   afterEach,
   jest: { spyOn },
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getByIds } = require('./getByIds');
-const { assetsSchema } = require('../../../models/assets');
-const getUserSession = require('../../../__fixtures__/getUserSession');
+const { getByIds } = require("./getByIds");
+const { assetsSchema } = require("../../../models/assets");
+const getUserSession = require("../../../__fixtures__/getUserSession");
 
 // MOCKS
-jest.mock('./getUserPermissionsByAsset');
-jest.mock('./getAssetsWithPermissions');
-jest.mock('./getAssetsWithSubjects');
-jest.mock('./getAssetsWithFiles');
-jest.mock('./getAssetsTags');
-jest.mock('./getAssetsCategoryData');
-jest.mock('./getAssetsProgramsAggregatedById');
-jest.mock('./processFinalAsset');
-jest.mock('../../pins/getByAssets');
-const { getByAssets: getPins } = require('../../pins/getByAssets');
-const { getUserPermissionsByAsset } = require('./getUserPermissionsByAsset');
-const { getAssetsWithPermissions } = require('./getAssetsWithPermissions');
-const { getAssetsWithSubjects } = require('./getAssetsWithSubjects');
-const { getAssetsWithFiles } = require('./getAssetsWithFiles');
-const { getAssetsTags } = require('./getAssetsTags');
-const { getAssetsCategoryData } = require('./getAssetsCategoryData');
-const { getAssetsProgramsAggregatedById } = require('./getAssetsProgramsAggregatedById');
-const { processFinalAsset } = require('./processFinalAsset');
+jest.mock("./getUserPermissionsByAsset");
+jest.mock("./getAssetsWithPermissions");
+jest.mock("./getAssetsWithSubjects");
+jest.mock("./getAssetsWithFiles");
+jest.mock("./getAssetsTags");
+jest.mock("./getAssetsCategoryData");
+jest.mock("./getAssetsProgramsAggregatedById");
+jest.mock("./processFinalAsset");
+jest.mock("../../pins/getByAssets");
+const { getByAssets: getPins } = require("../../pins/getByAssets");
+const { getUserPermissionsByAsset } = require("./getUserPermissionsByAsset");
+const { getAssetsWithPermissions } = require("./getAssetsWithPermissions");
+const { getAssetsWithSubjects } = require("./getAssetsWithSubjects");
+const { getAssetsWithFiles } = require("./getAssetsWithFiles");
+const { getAssetsTags } = require("./getAssetsTags");
+const { getAssetsCategoryData } = require("./getAssetsCategoryData");
+const {
+  getAssetsProgramsAggregatedById,
+} = require("./getAssetsProgramsAggregatedById");
+const { processFinalAsset } = require("./processFinalAsset");
 
 // Functions to spy
-const buildQueryModule = require('./buildQuery');
+const buildQueryModule = require("./buildQuery");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -59,7 +61,7 @@ let spyBuildQuery;
 
 beforeEach(async () => {
   await mongooseConnection.dropDatabase();
-  spyBuildQuery = spyOn(buildQueryModule, 'buildQuery');
+  spyBuildQuery = spyOn(buildQueryModule, "buildQuery");
 });
 
 afterEach(() => {
@@ -69,34 +71,45 @@ afterEach(() => {
 
 const userSession = getUserSession();
 
-it('Should fetch assets by their IDs', async () => {
+it("Should fetch assets by their IDs", async () => {
   // Arrange
-  const assets = [{ id: 'assetOne' }, { id: 'assetTwo' }];
+  const assets = [{ id: "assetOne" }, { id: "assetTwo" }];
   const assetsIds = assets.map((item) => item.id);
 
   const ctx = generateCtx({
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
   ctx.meta.userSession = userSession;
 
-  const initialValues = [{ ...assets[0] }, { ...assets[1] }, { id: 'otherAsset' }];
+  const initialValues = [
+    { ...assets[0] },
+    { ...assets[1] },
+    { id: "otherAsset" },
+  ];
   await ctx.db.Assets.create(initialValues);
   const assetsFromDB = await ctx.db.Assets.find({ id: assetsIds }).lean();
   const assetsWithSubjects = assetsFromDB.map((asset) => ({
     ...asset,
-    subjects: ['subjectsArray'],
+    subjects: ["subjectsArray"],
   }));
-  const assetsWithFiles = assetsWithSubjects.map((asset) => ({ ...asset, file: 'fileObjectHere' }));
-  const permissionsByAsset = [['permissions'], ['canEditPermissions']];
-  const tags = [['leemons'], []];
-  const categories = ['categoryObjectsHere'];
-  const assetCategoryData = ['assetCategoryDataHere'];
-  const programsById = 'Programs by id here';
-  const pins = ['pins'];
+  const assetsWithFiles = assetsWithSubjects.map((asset) => ({
+    ...asset,
+    file: "fileObjectHere",
+  }));
+  const permissionsByAsset = [["permissions"], ["canEditPermissions"]];
+  const tags = [["leemons"], []];
+  const categories = ["categoryObjectsHere"];
+  const assetCategoryData = ["assetCategoryDataHere"];
+  const programsById = "Programs by id here";
+  const pins = ["pins"];
   const finalAssetsOne = { ...assetsWithFiles[0], tags: tags[0], pinned: true };
-  const finalAssetsTwo = { ...assetsWithFiles[1], tags: tags[1], pinned: false };
+  const finalAssetsTwo = {
+    ...assetsWithFiles[1],
+    tags: tags[1],
+    pinned: false,
+  };
   let processFinalTimesCalled = 0;
 
   getUserPermissionsByAsset.mockResolvedValue(permissionsByAsset);
@@ -175,19 +188,23 @@ it('Should fetch assets by their IDs', async () => {
   expect(response).toEqual([finalAssetsOne, finalAssetsTwo]);
 });
 
-it('Should check permissions only if userSession is provided and handle falsy flags correctly', async () => {
+it("Should check permissions only if userSession is provided and handle falsy flags correctly", async () => {
   // Arrange
-  const assets = [{ id: 'assetOne' }, { id: 'assetTwo' }];
+  const assets = [{ id: "assetOne" }, { id: "assetTwo" }];
   const assetsIds = assets.map((item) => item.id);
 
   const ctx = generateCtx({
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
   ctx.meta.userSession = undefined;
 
-  const initialValues = [{ ...assets[0] }, { ...assets[1] }, { id: 'otherAsset' }];
+  const initialValues = [
+    { ...assets[0] },
+    { ...assets[1] },
+    { id: "otherAsset" },
+  ];
   await ctx.db.Assets.create(initialValues);
   const assetsFromDB = await ctx.db.Assets.find({ id: assetsIds }).lean();
 
@@ -238,11 +255,11 @@ it('Should check permissions only if userSession is provided and handle falsy fl
   expect(response).toEqual(expect.arrayContaining(assetsFromDB));
 });
 
-it('Should return empty array if no asset IDs are provided', async () => {
+it("Should return empty array if no asset IDs are provided", async () => {
   // Arrange
   const ctx = generateCtx({
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
 

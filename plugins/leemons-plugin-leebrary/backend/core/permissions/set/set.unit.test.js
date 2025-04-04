@@ -5,31 +5,37 @@ const {
   expect,
   beforeEach,
   jest: { spyOn },
-} = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
-const { LeemonsError } = require('@leemons/error');
+} = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
+const { LeemonsError } = require("@leemons/error");
 
-const { set } = require('./set');
-const getAssets = require('../../../__fixtures__/getAssets');
-const getPermissionsMocks = require('../../../__fixtures__/getPermissionsMocks');
+const { set } = require("./set");
+const getAssets = require("../../../__fixtures__/getAssets");
+const getPermissionsMocks = require("../../../__fixtures__/getPermissionsMocks");
 
 // MOCKS
-jest.mock('../../validations/forms');
-jest.mock('../getByAssets');
-jest.mock('../../assets/update');
-jest.mock('./handleAddPermissionsToUserAgent');
-jest.mock('./checkIfRolesExist');
-jest.mock('../../assets/getByIds');
-jest.mock('./handleAddPermissionsToAsset');
-jest.mock('./handleRemoveMissingPermissions');
-const { validateSetPermissions } = require('../../validations/forms');
-const { getByAssets } = require('../getByAssets');
-const { update: updateAsset } = require('../../assets/update');
-const { handleAddPermissionsToUserAgent } = require('./handleAddPermissionsToUserAgent');
-const { checkIfRolesExist } = require('./checkIfRolesExist');
-const { getByIds } = require('../../assets/getByIds');
-const { handleAddPermissionsToAsset } = require('./handleAddPermissionsToAsset');
-const { handleRemoveMissingPermissions } = require('./handleRemoveMissingPermissions');
+jest.mock("../../validations/forms");
+jest.mock("../getByAssets");
+jest.mock("../../assets/update");
+jest.mock("./handleAddPermissionsToUserAgent");
+jest.mock("./checkIfRolesExist");
+jest.mock("../../assets/getByIds");
+jest.mock("./handleAddPermissionsToAsset");
+jest.mock("./handleRemoveMissingPermissions");
+const { validateSetPermissions } = require("../../validations/forms");
+const { getByAssets } = require("../getByAssets");
+const { update: updateAsset } = require("../../assets/update");
+const {
+  handleAddPermissionsToUserAgent,
+} = require("./handleAddPermissionsToUserAgent");
+const { checkIfRolesExist } = require("./checkIfRolesExist");
+const { getByIds } = require("../../assets/getByIds");
+const {
+  handleAddPermissionsToAsset,
+} = require("./handleAddPermissionsToAsset");
+const {
+  handleRemoveMissingPermissions,
+} = require("./handleRemoveMissingPermissions");
 
 beforeEach(() => jest.resetAllMocks());
 
@@ -41,7 +47,7 @@ const {
   permissionByAsset,
 } = getPermissionsMocks();
 
-it('Should correctly set permissions by user', async () => {
+it("Should correctly set permissions by user", async () => {
   // Arrange
   const assetData = {
     ...assetModel,
@@ -102,7 +108,7 @@ it('Should correctly set permissions by user', async () => {
   expect(response).toBe(true);
 });
 
-it('Should correctly set permissions by class', async () => {
+it("Should correctly set permissions by class", async () => {
   // Arrange
   const assetData = {
     ...assetModel,
@@ -157,13 +163,13 @@ it('Should correctly set permissions by class', async () => {
   expect(response).toBe(true);
 });
 
-it('Should validate the data and throw if necessary', async () => {
+it("Should validate the data and throw if necessary", async () => {
   const assetData = { ...assetModel };
   const payload = { ...payloadByUser };
   const ctx = generateCtx({});
-  const spyLogger = spyOn(ctx.logger, 'error');
+  const spyLogger = spyOn(ctx.logger, "error");
 
-  validateSetPermissions.mockRejectedValue(new Error('I am a validator error'));
+  validateSetPermissions.mockRejectedValue(new Error("I am a validator error"));
 
   // Act
   const testFnToThrow = async () =>
@@ -186,7 +192,7 @@ it('Should validate the data and throw if necessary', async () => {
   expect(spyLogger).toHaveBeenCalledWith(expect.any(Error));
 });
 
-it('Should throw a Leemons error when the current user is not allowed to set the asset', async () => {
+it("Should throw a Leemons error when the current user is not allowed to set the asset", async () => {
   // Arrange
   const assetData = {
     ...assetModel,
@@ -194,8 +200,10 @@ it('Should throw a Leemons error when the current user is not allowed to set the
   };
   const payload = { ...payloadByUser };
   const ctx = generateCtx({});
-  const assetsRole = [{ ...permissionByAsset, role: 'viewer', asset: assetData.id }];
-  const spyLogger = spyOn(ctx.logger, 'error');
+  const assetsRole = [
+    { ...permissionByAsset, role: "viewer", asset: assetData.id },
+  ];
+  const spyLogger = spyOn(ctx.logger, "error");
 
   getByAssets.mockResolvedValue(assetsRole);
   getByIds.mockResolvedValue([assetData]);
@@ -211,7 +219,7 @@ it('Should throw a Leemons error when the current user is not allowed to set the
   }
 });
 
-it('Should correctly update asset permissions to be public when needed', async () => {
+it("Should correctly update asset permissions to be public when needed", async () => {
   // Arrange
   const assetData = {
     ...assetModel,
@@ -239,12 +247,15 @@ it('Should correctly update asset permissions to be public when needed', async (
     ctx,
   });
 
-  expect(updateAsset).toBeCalledWith({ data: { ...assetData, public: payload.isPublic }, ctx });
+  expect(updateAsset).toBeCalledWith({
+    data: { ...assetData, public: payload.isPublic },
+    ctx,
+  });
   expect(updateAsset).toBeCalledTimes(assetIds.length);
   expect(response).toBe(true);
 });
 
-it('Should correctly remove user and class permissions', async () => {
+it("Should correctly remove user and class permissions", async () => {
   // Arrange
   const payload = { ...payloadRemoveAll };
   const ctx = generateCtx({});
@@ -255,9 +266,13 @@ it('Should correctly remove user and class permissions', async () => {
     duplicable: 1,
     indexable: 1,
     pinned: false,
-    permissions: { editor: [], viewer: ['academic-portfolio.class.classId'], assigner: [] },
+    permissions: {
+      editor: [],
+      viewer: ["academic-portfolio.class.classId"],
+      assigner: [],
+    },
     tags: [],
-    role: 'editor',
+    role: "editor",
     ...assetDBExtraProps,
   };
   const assetIds = [assetData.id];
@@ -293,7 +308,7 @@ it('Should correctly remove user and class permissions', async () => {
   expect(response).toBe(true);
 });
 
-it('Should modify item permissions only if necessary', async () => {
+it("Should modify item permissions only if necessary", async () => {
   // Arrange
   const assetData = { ...assetModel };
   const payload = { ...payloadByUser, permissions: null };

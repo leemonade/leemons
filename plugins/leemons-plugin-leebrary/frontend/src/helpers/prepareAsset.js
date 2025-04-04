@@ -1,6 +1,9 @@
-import { capitalize, isEmpty, isNil, isString, toLower } from 'lodash';
-import { getAuthorizationTokenForAllCenters, getCookieToken } from '@users/session';
-import { prepareAssetType } from './prepareAssetType';
+import { capitalize, isEmpty, isNil, isString, toLower } from "lodash";
+import {
+  getAuthorizationTokenForAllCenters,
+  getCookieToken,
+} from "@users/session";
+import { prepareAssetType } from "./prepareAssetType";
 
 export function getAssetUrl(assetID) {
   const authTokens = getAuthorizationTokenForAllCenters();
@@ -11,10 +14,10 @@ export function getAssetUrl(assetID) {
 
 export function getFileUrl(fileID, segment, isPublic = false) {
   if (!isString(fileID)) {
-    return '';
+    return "";
   }
 
-  if (fileID.startsWith('http')) {
+  if (fileID.startsWith("http")) {
     return fileID;
   }
 
@@ -23,12 +26,14 @@ export function getFileUrl(fileID, segment, isPublic = false) {
     const userToken = getCookieToken();
     authTokens = JSON.stringify([userToken]);
   }
-  const urlSuffixSegment = segment ? `/${segment}` : '';
+  const urlSuffixSegment = segment ? `/${segment}` : "";
 
-  const authParam = !isPublic ? `?authorization=${encodeURIComponent(authTokens)}` : '';
+  const authParam = !isPublic
+    ? `?authorization=${encodeURIComponent(authTokens)}`
+    : "";
 
   return `${leemons.apiUrl}/api/v1/leebrary/file/${
-    isPublic ? 'public/' : ''
+    isPublic ? "public/" : ""
   }${fileID}${urlSuffixSegment}${authParam}`;
 }
 
@@ -40,11 +45,11 @@ export function isValidURL(url, checkAuthorization) {
   const urlPattern =
     /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi;
 
-  if (checkAuthorization && url.indexOf('authorization=') < 0) {
+  if (checkAuthorization && url.indexOf("authorization=") < 0) {
     return false;
   }
 
-  return urlPattern.test(url) ? true : 'Invalid URL';
+  return urlPattern.test(url) ? true : "Invalid URL";
 }
 
 export function prepareAsset(assetFromApi, isPublished = true) {
@@ -52,7 +57,7 @@ export function prepareAsset(assetFromApi, isPublished = true) {
     return assetFromApi;
   }
   const asset = { ...assetFromApi, original: assetFromApi, prepared: true };
-  asset.public = [1, '1', true, 'true'].includes(asset.public);
+  asset.public = [1, "1", true, "true"].includes(asset.public);
   asset.canAccess = asset.canAccess || [];
 
   if (isNil(asset.pinneable)) {
@@ -74,7 +79,7 @@ export function prepareAsset(assetFromApi, isPublished = true) {
 
     if (isNil(asset.metadata) && asset.file.metadata) {
       let { metadata } = asset.file;
-      if (typeof metadata === 'string') {
+      if (typeof metadata === "string") {
         metadata = JSON.parse(metadata);
       }
       asset.metadata = Object.keys(metadata).map((key) => ({
@@ -110,15 +115,15 @@ export function prepareAsset(assetFromApi, isPublished = true) {
 }
 
 export function isImageFile(file) {
-  if (file?.type && file?.type.indexOf('image') === 0) {
+  if (file?.type && file?.type.indexOf("image") === 0) {
     return true;
   }
 
   const name = file?.path || file?.name;
 
   if (!isEmpty(name)) {
-    const ext = toLower(name.split('.').at(-1));
-    return ['png', 'jpeg', 'jpg', 'webp', 'gif', 'bmp'].includes(ext);
+    const ext = toLower(name.split(".").at(-1));
+    return ["png", "jpeg", "jpg", "webp", "gif", "bmp"].includes(ext);
   }
 
   return false;
@@ -154,14 +159,18 @@ export function getCoverName(cover) {
 }
 
 export function resolveAssetType(file, type, asset) {
-  let defaultType = 'file';
-  if (type === 'bookmarks') defaultType = 'bookmark';
+  let defaultType = "file";
+  if (type === "bookmarks") defaultType = "bookmark";
 
   const isNewAsset = !asset?.id;
-  const fileExtension = isNewAsset ? file?.name?.split('.').pop() : asset?.fileExtension;
+  const fileExtension = isNewAsset
+    ? file?.name?.split(".").pop()
+    : asset?.fileExtension;
 
-  const fileType = file?.type?.split('/')[0]?.toLowerCase() || defaultType;
-  const resolvedFileType = ['audio', 'video', 'image', 'bookmark'].includes(fileType)
+  const fileType = file?.type?.split("/")[0]?.toLowerCase() || defaultType;
+  const resolvedFileType = ["audio", "video", "image", "bookmark"].includes(
+    fileType
+  )
     ? fileType
     : defaultType;
 

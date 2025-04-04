@@ -1,11 +1,18 @@
-const { it, expect, beforeAll, afterAll, beforeEach, describe } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const { getByUser } = require('./getByUser');
-const { pinsSchema } = require('../../../models/pins');
-const getUserSession = require('../../../__fixtures__/getUserSession');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  describe,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const { getByUser } = require("./getByUser");
+const { pinsSchema } = require("../../../models/pins");
+const getUserSession = require("../../../__fixtures__/getUserSession");
 
-describe('getByUser pin', () => {
+describe("getByUser pin", () => {
   let mongooseConnection;
   let disconnectMongoose;
   let ctx;
@@ -21,7 +28,7 @@ describe('getByUser pin', () => {
 
     ctx = generateCtx({
       models: {
-        Pins: newModel(mongooseConnection, 'Pins', pinsSchema),
+        Pins: newModel(mongooseConnection, "Pins", pinsSchema),
       },
     });
   });
@@ -38,16 +45,16 @@ describe('getByUser pin', () => {
 
     ctx.meta.userSession = { ...userSession };
 
-    assetId = 'testAssetId';
+    assetId = "testAssetId";
 
     await ctx.tx.db.Pins.create([
       { asset: assetId, userAgent: userSession.userAgents[0].id },
-      { asset: assetId, userAgent: 'otherUserAgentId' },
+      { asset: assetId, userAgent: "otherUserAgentId" },
     ]);
   });
 
-  describe('Intended workload', () => {
-    it('should return pins only for the user agent', async () => {
+  describe("Intended workload", () => {
+    it("should return pins only for the user agent", async () => {
       // Arrange
 
       // Act
@@ -61,8 +68,8 @@ describe('getByUser pin', () => {
     });
   });
 
-  describe('Limit use cases', () => {
-    it('should return empty array if no pin found for user agent', async () => {
+  describe("Limit use cases", () => {
+    it("should return empty array if no pin found for user agent", async () => {
       // Arrange
       await ctx.tx.db.Pins.deleteMany({});
 
@@ -74,8 +81,8 @@ describe('getByUser pin', () => {
     });
   });
 
-  describe('Error handling', () => {
-    it('should throw an error if user session is not available', async () => {
+  describe("Error handling", () => {
+    it("should throw an error if user session is not available", async () => {
       // Arrange
       delete ctx.meta.userSession;
 
@@ -87,8 +94,8 @@ describe('getByUser pin', () => {
     });
   });
 
-  describe('Additional tests', () => {
-    it('should return all pins if multiple pins exist for the user agent', async () => {
+  describe("Additional tests", () => {
+    it("should return all pins if multiple pins exist for the user agent", async () => {
       // Arrange
       await ctx.tx.db.Pins.create([
         { userAgent: userSession.userAgents[0].id },

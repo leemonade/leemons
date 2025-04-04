@@ -1,2 +1,2 @@
-export * from './ProgressBar';
-export * from './ProgressBar.constants';
+export * from "./ProgressBar";
+export * from "./ProgressBar.constants";

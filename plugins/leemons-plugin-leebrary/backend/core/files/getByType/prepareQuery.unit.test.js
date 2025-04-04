@@ -1,7 +1,7 @@
-const { it, expect } = require('@jest/globals');
-const { prepareQuery } = require('./prepareQuery');
+const { it, expect } = require("@jest/globals");
+const { prepareQuery } = require("./prepareQuery");
 
-it('should return an empty object when no parameters are provided', () => {
+it("should return an empty object when no parameters are provided", () => {
   // Arrange
   const type = undefined;
   const files = undefined;
@@ -13,10 +13,10 @@ it('should return an empty object when no parameters are provided', () => {
   expect(result).toEqual({});
 });
 
-it('should return a query object with id when files parameter is provided', () => {
+it("should return a query object with id when files parameter is provided", () => {
   // Arrange
   const type = undefined;
-  const files = ['file1', 'file2'];
+  const files = ["file1", "file2"];
 
   // Act
   const result = prepareQuery(type, files);
@@ -25,26 +25,29 @@ it('should return a query object with id when files parameter is provided', () =
   expect(result).toEqual({ id: files });
 });
 
-it('should return a query object with type when type parameter is provided', () => {
+it("should return a query object with type when type parameter is provided", () => {
   // Arrange
-  const type = 'pdf';
+  const type = "pdf";
   const files = undefined;
 
   // Act
   const result = prepareQuery(type, files);
 
   // Assert
-  expect(result).toEqual({ type: { $regex: 'pdf', $options: 'i' } });
+  expect(result).toEqual({ type: { $regex: "pdf", $options: "i" } });
 });
 
-it('should return a query object with id and type when both parameters are provided', () => {
+it("should return a query object with id and type when both parameters are provided", () => {
   // Arrange
-  const type = 'document';
-  const file = 'file1';
+  const type = "document";
+  const file = "file1";
 
   // Act
   const result = prepareQuery(type, file);
 
   // Assert
-  expect(result).toEqual({ id: [file], type: { $regex: 'application', $options: 'i' } });
+  expect(result).toEqual({
+    id: [file],
+    type: { $regex: "application", $options: "i" },
+  });
 });

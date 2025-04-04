@@ -1,5 +1,8 @@
-import React from 'react';
-import { LOVE_ICON_PROP_TYPES, LOVE_ICON_DEFAULT_PROPS } from './LoveIcon.constants';
+import React from "react";
+import {
+  LOVE_ICON_PROP_TYPES,
+  LOVE_ICON_DEFAULT_PROPS,
+} from "./LoveIcon.constants";
 
 const LoveIcon = ({ width, height, color }) => (
   <svg
@@ -29,6 +32,6 @@ const LoveIcon = ({ width, height, color }) => (
 LoveIcon.defaultProps = LOVE_ICON_DEFAULT_PROPS;
 LoveIcon.propTypes = LOVE_ICON_PROP_TYPES;
 
-LoveIcon.displayName = 'LoveIcon';
+LoveIcon.displayName = "LoveIcon";
 export default LoveIcon;
 export { LoveIcon };

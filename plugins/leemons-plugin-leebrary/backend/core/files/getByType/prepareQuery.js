@@ -1,4 +1,4 @@
-const { isArray, isEmpty, escapeRegExp } = require('lodash');
+const { isArray, isEmpty, escapeRegExp } = require("lodash");
 /**
  * Prepare the query object based on the provided parameters.
  *
@@ -15,17 +15,17 @@ function prepareQuery(type, files) {
   }
 
   if (type && !isEmpty(type)) {
-    if (type?.includes(',')) {
-      const typesArray = type.split(',');
+    if (type?.includes(",")) {
+      const typesArray = type.split(",");
 
       const patterns = typesArray.map((t) => {
-        const regexStr = t === 'document' ? 'application' : escapeRegExp(t);
-        return new RegExp(regexStr, 'i');
+        const regexStr = t === "document" ? "application" : escapeRegExp(t);
+        return new RegExp(regexStr, "i");
       });
       query.type = { $in: patterns };
     } else {
-      const regexStr = type === 'document' ? 'application' : escapeRegExp(type);
-      query.type = { $regex: regexStr, $options: 'i' };
+      const regexStr = type === "document" ? "application" : escapeRegExp(type);
+      query.type = { $regex: regexStr, $options: "i" };
     }
   }
 

@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { addPermissionsToAsset } = require('./addPermissionsToAsset');
+const _ = require("lodash");
+const { addPermissionsToAsset } = require("./addPermissionsToAsset");
 
 /**
  * This function handles the addition of permissions to an asset.

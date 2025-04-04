@@ -1,18 +1,25 @@
-const { it, expect, beforeAll, afterAll, beforeEach, describe } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  describe,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { exists } = require('./exists');
+const { exists } = require("./exists");
 
-const { categoriesSchema } = require('../../../models/categories');
-const getCategory = require('../../../__fixtures__/getCategory');
+const { categoriesSchema } = require("../../../models/categories");
+const getCategory = require("../../../__fixtures__/getCategory");
 
 let mongooseConnection;
 let disconnectMongoose;
 let ctx;
 let categoryData;
 
-describe('Exists Category Test', () => {
+describe("Exists Category Test", () => {
   // Arrange: Set up the test environment
   beforeAll(async () => {
     const { mongoose, disconnect } = await createMongooseConnection();
@@ -22,7 +29,11 @@ describe('Exists Category Test', () => {
 
     ctx = generateCtx({
       models: {
-        Categories: newModel(mongooseConnection, 'Categories', categoriesSchema),
+        Categories: newModel(
+          mongooseConnection,
+          "Categories",
+          categoriesSchema
+        ),
       },
     });
   });
@@ -45,7 +56,7 @@ describe('Exists Category Test', () => {
     await ctx.tx.db.Categories.create(categoryData);
   });
 
-  it('should return true if category exists in the database', async () => {
+  it("should return true if category exists in the database", async () => {
     // Arrange
 
     // Act
@@ -65,11 +76,14 @@ describe('Exists Category Test', () => {
     expect(doesExistWithoutKey).toBe(true);
   });
 
-  it('should return false if category does not exist in the database', async () => {
+  it("should return false if category does not exist in the database", async () => {
     // Arrange
 
     // Act
-    const doesExist = await exists({ categoryData: { ...categoryData, id: 'otherId' }, ctx });
+    const doesExist = await exists({
+      categoryData: { ...categoryData, id: "otherId" },
+      ctx,
+    });
 
     // Assert
     expect(doesExist).toBe(false);

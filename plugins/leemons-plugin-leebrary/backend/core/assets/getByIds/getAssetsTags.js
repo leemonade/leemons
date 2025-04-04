@@ -9,8 +9,8 @@
 async function getAssetsTags({ assets, ctx }) {
   return Promise.all(
     assets.map((item) =>
-      ctx.tx.call('common.tags.getValuesTags', {
-        type: ctx.prefixPN(''),
+      ctx.tx.call("common.tags.getValuesTags", {
+        type: ctx.prefixPN(""),
         values: item.id,
       })
     )

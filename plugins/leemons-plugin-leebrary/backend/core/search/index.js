@@ -1,8 +1,8 @@
-const { byCriteria } = require('./byCriteria');
-const { byDescription } = require('./byDescription');
-const { byName } = require('./byName');
-const { byProvider } = require('./byProvider');
-const { list } = require('./list');
+const { byCriteria } = require("./byCriteria");
+const { byDescription } = require("./byDescription");
+const { byName } = require("./byName");
+const { byProvider } = require("./byProvider");
+const { list } = require("./list");
 
 module.exports = {
   list,

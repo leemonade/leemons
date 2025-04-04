@@ -1,8 +1,8 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
-const { getByIds: getAssetsByIds } = require('../../assets/getByIds');
-const { getById: getCategoryById } = require('../../categories/getById');
-const { getByName: getProviderByName } = require('../../providers/getByName');
+const { getByIds: getAssetsByIds } = require("../../assets/getByIds");
+const { getById: getCategoryById } = require("../../categories/getById");
+const { getByName: getProviderByName } = require("../../providers/getByName");
 
 /**
  * @function byProvider
@@ -37,7 +37,10 @@ async function byProvider({
   }
 
   if (!category) {
-    throw new LeemonsError(ctx, { message: 'Category is required', httpStatusCode: 400 });
+    throw new LeemonsError(ctx, {
+      message: "Category is required",
+      httpStatusCode: 400,
+    });
   }
 
   try {

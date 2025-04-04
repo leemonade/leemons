@@ -1,3 +1,3 @@
-const setActiveProvider = require('./setActiveProvider');
+const setActiveProvider = require("./setActiveProvider");
 
 module.exports = { ...setActiveProvider };

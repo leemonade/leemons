@@ -1,12 +1,18 @@
-const { LeemonsError } = require('@leemons/error');
-const { uniqBy, flattenDeep, forEach, findIndex, escapeRegExp } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const {
+  uniqBy,
+  flattenDeep,
+  forEach,
+  findIndex,
+  escapeRegExp,
+} = require("lodash");
 
-const getAssetIdFromPermissionName = require('../helpers/getAssetIdFromPermissionName');
-const getAssetPermissionName = require('../helpers/getAssetPermissionName');
-const getRolePermissions = require('../helpers/getRolePermissions');
+const getAssetIdFromPermissionName = require("../helpers/getAssetIdFromPermissionName");
+const getAssetPermissionName = require("../helpers/getAssetPermissionName");
+const getRolePermissions = require("../helpers/getRolePermissions");
 
-const { handleItemPermissions } = require('./handleItemPermissions');
-const { handleOnlyShared } = require('./handleOnlyShared');
+const { handleItemPermissions } = require("./handleItemPermissions");
+const { handleOnlyShared } = require("./handleOnlyShared");
 
 /**
  * Retrieves permissions by assets.
@@ -21,13 +27,19 @@ const { handleOnlyShared } = require('./handleOnlyShared');
  */
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
-async function getByAssets({ assetIds, showPublic, onlyShared, ownerUserAgentIds, ctx }) {
+async function getByAssets({
+  assetIds,
+  showPublic,
+  onlyShared,
+  ownerUserAgentIds,
+  ctx,
+}) {
   const { userSession } = ctx.meta;
   let assetsIds = flattenDeep([assetIds]);
 
   let ownerUserAgents = [];
   if (ownerUserAgentIds) {
-    ownerUserAgents = await ctx.tx.call('users.users.getUserAgentsInfo', {
+    ownerUserAgents = await ctx.tx.call("users.users.getUserAgentsInfo", {
       userAgentIds: ownerUserAgentIds,
     });
   }
@@ -41,15 +53,20 @@ async function getByAssets({ assetIds, showPublic, onlyShared, ownerUserAgentIds
     let assignItems = [];
     let adminItems = [];
     if (userAgents) {
-      permissions = await ctx.tx.call('users.permissions.getUserAgentPermissions', {
-        userAgent: userAgents,
-        query: {
-          $or: assetsIds.map((id) => {
-            const rx = escapeRegExp(getAssetPermissionName({ assetId: id, ctx }));
-            return { permissionName: { $regex: rx, $options: 'i' } };
-          }),
-        },
-      });
+      permissions = await ctx.tx.call(
+        "users.permissions.getUserAgentPermissions",
+        {
+          userAgent: userAgents,
+          query: {
+            $or: assetsIds.map((id) => {
+              const rx = escapeRegExp(
+                getAssetPermissionName({ assetId: id, ctx })
+              );
+              return { permissionName: { $regex: rx, $options: "i" } };
+            }),
+          },
+        }
+      );
     }
 
     if (onlyShared) {
@@ -57,21 +74,29 @@ async function getByAssets({ assetIds, showPublic, onlyShared, ownerUserAgentIds
     }
 
     if (userAgents) {
-      [viewItems, editItems, assignItems, adminItems] = await handleItemPermissions({
-        assetsIds,
-        userAgents,
-        ctx,
-      });
+      [viewItems, editItems, assignItems, adminItems] =
+        await handleItemPermissions({
+          assetsIds,
+          userAgents,
+          ctx,
+        });
     }
 
     const publicAssets = showPublic
-      ? await ctx.tx.db.Assets.find({ id: assetsIds, public: true }).select(['id', 'public']).lean()
+      ? await ctx.tx.db.Assets.find({ id: assetsIds, public: true })
+          .select(["id", "public"])
+          .lean()
       : [];
 
     const results = permissions.concat(publicAssets).map((item) => ({
-      asset: item.public ? item.id : getAssetIdFromPermissionName(item.permissionName),
-      role: item.public ? 'public' : item.actionNames[0],
-      permissions: getRolePermissions({ role: item.public ? 'public' : item.actionNames[0], ctx }),
+      asset: item.public
+        ? item.id
+        : getAssetIdFromPermissionName(item.permissionName),
+      role: item.public ? "public" : item.actionNames[0],
+      permissions: getRolePermissions({
+        role: item.public ? "public" : item.actionNames[0],
+        ctx,
+      }),
     }));
 
     forEach(viewItems, (asset) => {
@@ -79,8 +104,8 @@ async function getByAssets({ assetIds, showPublic, onlyShared, ownerUserAgentIds
       if (index < 0) {
         results.push({
           asset,
-          role: 'viewer',
-          permissions: getRolePermissions({ role: 'viewer', ctx }),
+          role: "viewer",
+          permissions: getRolePermissions({ role: "viewer", ctx }),
         });
       }
     });
@@ -88,15 +113,18 @@ async function getByAssets({ assetIds, showPublic, onlyShared, ownerUserAgentIds
     forEach(assignItems, (asset) => {
       const index = findIndex(results, { asset });
       if (index >= 0) {
-        if (results[index].role === 'viewer') {
-          results[index].role = 'assigner';
-          results[index].permissions = getRolePermissions({ role: 'assigner', ctx });
+        if (results[index].role === "viewer") {
+          results[index].role = "assigner";
+          results[index].permissions = getRolePermissions({
+            role: "assigner",
+            ctx,
+          });
         }
       } else {
         results.push({
           asset,
-          role: 'assigner',
-          permissions: getRolePermissions({ role: 'assigner', ctx }),
+          role: "assigner",
+          permissions: getRolePermissions({ role: "assigner", ctx }),
         });
       }
     });
@@ -104,15 +132,18 @@ async function getByAssets({ assetIds, showPublic, onlyShared, ownerUserAgentIds
     forEach(editItems, (asset) => {
       const index = findIndex(results, { asset });
       if (index >= 0) {
-        if (results[index].role === 'viewer') {
-          results[index].role = 'editor';
-          results[index].permissions = getRolePermissions({ role: 'editor', ctx });
+        if (results[index].role === "viewer") {
+          results[index].role = "editor";
+          results[index].permissions = getRolePermissions({
+            role: "editor",
+            ctx,
+          });
         }
       } else {
         results.push({
           asset,
-          role: 'editor',
-          permissions: getRolePermissions({ role: 'editor', ctx }),
+          role: "editor",
+          permissions: getRolePermissions({ role: "editor", ctx }),
         });
       }
     });
@@ -120,20 +151,26 @@ async function getByAssets({ assetIds, showPublic, onlyShared, ownerUserAgentIds
     forEach(adminItems, (asset) => {
       const index = findIndex(results, { asset });
       if (index >= 0) {
-        if (results[index].role === 'viewer' || results[index].role === 'public') {
-          results[index].role = 'admin';
-          results[index].permissions = getRolePermissions({ role: 'admin', ctx });
+        if (
+          results[index].role === "viewer" ||
+          results[index].role === "public"
+        ) {
+          results[index].role = "admin";
+          results[index].permissions = getRolePermissions({
+            role: "admin",
+            ctx,
+          });
         }
       } else {
         results.push({
           asset,
-          role: 'admin',
-          permissions: getRolePermissions({ role: 'admin', ctx }),
+          role: "admin",
+          permissions: getRolePermissions({ role: "admin", ctx }),
         });
       }
     });
 
-    return uniqBy(results, 'asset');
+    return uniqBy(results, "asset");
   } catch (e) {
     ctx.logger.error(e);
     throw new LeemonsError(ctx, {

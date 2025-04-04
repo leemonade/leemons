@@ -3,30 +3,30 @@ const {
   expect,
   beforeEach,
   jest: { spyOn },
-} = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
-const { LeemonsError } = require('@leemons/error');
+} = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
+const { LeemonsError } = require("@leemons/error");
 
-const { uploadFromUrl } = require('./uploadFromUrl');
-const { getById } = require('../getById');
-const { download } = require('./download');
-const { upload } = require('./upload');
+const { uploadFromUrl } = require("./uploadFromUrl");
+const { getById } = require("../getById");
+const { download } = require("./download");
+const { upload } = require("./upload");
 
 // MOCKS
-jest.mock('../getById');
-jest.mock('./download');
-jest.mock('./upload');
+jest.mock("../getById");
+jest.mock("./download");
+jest.mock("./upload");
 
 beforeEach(() => jest.resetAllMocks());
 
-it('Should upload a file from a URL', async () => {
+it("Should upload a file from a URL", async () => {
   // Arrange
-  const url = 'http://example.com/file.txt';
-  const name = 'file.txt';
+  const url = "http://example.com/file.txt";
+  const name = "file.txt";
   const file = {};
-  const downloadedFile = { path: 'path', contentType: 'image/jpg' };
+  const downloadedFile = { path: "path", contentType: "image/jpg" };
   const ctx = generateCtx({});
-  const expetedUploadedFile = { id: 'fileId', isFolder: false };
+  const expetedUploadedFile = { id: "fileId", isFolder: false };
 
   getById.mockResolvedValue(file);
   download.mockResolvedValue(downloadedFile);
@@ -46,11 +46,11 @@ it('Should upload a file from a URL', async () => {
   expect(result).toEqual(expetedUploadedFile);
 });
 
-it('Identifies when a file must not be uploaded and returns it unmodified', async () => {
+it("Identifies when a file must not be uploaded and returns it unmodified", async () => {
   // Arrange
-  const url = 'fileId';
-  const name = 'fileName';
-  const file = { id: '123', isFolder: false };
+  const url = "fileId";
+  const name = "fileName";
+  const file = { id: "123", isFolder: false };
   const ctx = generateCtx({});
 
   getById.mockResolvedValue(file);
@@ -65,12 +65,12 @@ it('Identifies when a file must not be uploaded and returns it unmodified', asyn
   expect(upload).not.toHaveBeenCalledWith();
 });
 
-it('should throw and log an error when the download fails', async () => {
+it("should throw and log an error when the download fails", async () => {
   // Arrange
-  const url = 'http://example.com/file.txt';
-  const name = 'file.txt';
+  const url = "http://example.com/file.txt";
+  const name = "file.txt";
   const ctx = generateCtx({});
-  const spyLogger = spyOn(ctx.logger, 'error');
+  const spyLogger = spyOn(ctx.logger, "error");
 
   getById.mockResolvedValue(null);
   download.mockRejectedValue(new Error());

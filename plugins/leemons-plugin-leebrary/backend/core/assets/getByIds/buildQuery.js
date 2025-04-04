@@ -1,4 +1,4 @@
-const { isNil } = require('lodash');
+const { isNil } = require("lodash");
 /**
  * Builds a query object based on the provided asset IDs and indexable flag.
  * @param {Object} params - The params object

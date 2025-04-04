@@ -1,26 +1,32 @@
-import React, { useMemo } from 'react';
-import { find } from 'lodash';
-import PropTypes from 'prop-types';
-import { ContextContainer, TableInput } from '@bubbles-ui/components';
+import React, { useMemo } from "react";
+import { find } from "lodash";
+import PropTypes from "prop-types";
+import { ContextContainer, TableInput } from "@bubbles-ui/components";
 import {
   SelectLevelsOfDifficulty,
   useLevelsOfDifficulty,
-} from '@assignables/components/LevelsOfDifficulty';
+} from "@assignables/components/LevelsOfDifficulty";
 import {
   SelectAutoClearable,
   useSubjects,
-} from '@assignables/hooks/useAcademicFiltersForAssetList';
-import useTableInputLabels from '../helpers/useTableInputLabels';
+} from "@assignables/hooks/useAcademicFiltersForAssetList";
+import useTableInputLabels from "../helpers/useTableInputLabels";
 
-function useSubjectColumns({ labels, placeholders, errorMessages, subjects, showLevel }) {
+function useSubjectColumns({
+  labels,
+  placeholders,
+  errorMessages,
+  subjects,
+  showLevel,
+}) {
   const difficultyLevels = useLevelsOfDifficulty();
 
   return useMemo(() => {
     const columns = [];
 
     columns.push({
-      Header: labels?.subject || '',
-      accessor: 'subject',
+      Header: labels?.subject || "",
+      accessor: "subject",
       input: {
         node: (
           <SelectAutoClearable
@@ -36,8 +42,8 @@ function useSubjectColumns({ labels, placeholders, errorMessages, subjects, show
 
     if (showLevel) {
       columns.push({
-        Header: labels?.level || '',
-        accessor: 'level',
+        Header: labels?.level || "",
+        accessor: "level",
         input: {
           node: (
             <SelectLevelsOfDifficulty
@@ -68,7 +74,11 @@ export default function SelectSubjects({
   errors,
 }) {
   const tableInputLabels = useTableInputLabels();
-  const subjects = useSubjects({ labels, selectedProgram: programId, useAll: false });
+  const subjects = useSubjects({
+    labels,
+    selectedProgram: programId,
+    useAll: false,
+  });
 
   const mainTeacherSubjectsColumns = useSubjectColumns({
     labels,

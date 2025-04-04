@@ -1,8 +1,14 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const { set } = require('./set');
-const { settingsSchema } = require('../../../models/settings');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const { set } = require("./set");
+const { settingsSchema } = require("../../../models/settings");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -25,18 +31,18 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should set a new setting if none exists', async () => {
+it("Should set a new setting if none exists", async () => {
   // Arrange
   const setting = {
-    id: 'settingOneId',
-    deploymentID: 'deploymentOneId',
-    defaultCategory: 'defaultCategoryOne',
-    providerName: 'providerNameOne',
+    id: "settingOneId",
+    deploymentID: "deploymentOneId",
+    defaultCategory: "defaultCategoryOne",
+    providerName: "providerNameOne",
   };
 
   const ctx = generateCtx({
     models: {
-      Settings: newModel(mongooseConnection, 'Settings', settingsSchema),
+      Settings: newModel(mongooseConnection, "Settings", settingsSchema),
     },
   });
 
@@ -48,23 +54,23 @@ it('Should set a new setting if none exists', async () => {
   expect(response.providerName).toEqual(setting.providerName);
 });
 
-it('Should update an existing setting', async () => {
+it("Should update an existing setting", async () => {
   // Arrange
   const setting = {
-    id: 'settingOneId',
-    deploymentID: 'deploymentOneId',
-    defaultCategory: 'defaultCategoryOne',
-    providerName: 'providerNameOne',
+    id: "settingOneId",
+    deploymentID: "deploymentOneId",
+    defaultCategory: "defaultCategoryOne",
+    providerName: "providerNameOne",
   };
 
   const updatedSetting = {
     ...setting,
-    defaultCategory: 'updatedDefaultCategory',
+    defaultCategory: "updatedDefaultCategory",
   };
 
   const ctx = generateCtx({
     models: {
-      Settings: newModel(mongooseConnection, 'Settings', settingsSchema),
+      Settings: newModel(mongooseConnection, "Settings", settingsSchema),
     },
   });
 

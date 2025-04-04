@@ -1,14 +1,14 @@
-import { Stack, Button } from '@bubbles-ui/components';
-import propTypes from 'prop-types';
+import { Stack, Button } from "@bubbles-ui/components";
+import propTypes from "prop-types";
 
 const BulkActions = ({ onEdit, onShare, disabled, t }) => {
   return (
     <Stack justifyContent="flex-end" spacing={4}>
       <Button variant="outline" onClick={onEdit} disabled={disabled}>
-        {t('bulkActionEditLabel')}
+        {t("bulkActionEditLabel")}
       </Button>
       <Button variant="outline" onClick={onShare} disabled={disabled}>
-        {t('bulkActionShareLabel')}
+        {t("bulkActionShareLabel")}
       </Button>
     </Stack>
   );

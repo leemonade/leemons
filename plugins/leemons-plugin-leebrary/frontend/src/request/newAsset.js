@@ -1,12 +1,17 @@
-import { isString } from 'lodash';
-import { uploadFileAsMultipart } from '../helpers/uploadFileAsMultipart';
+import { isString } from "lodash";
+import { uploadFileAsMultipart } from "../helpers/uploadFileAsMultipart";
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
-async function newAsset(assetData, categoryId, categoryKey, { onProgress = () => {} } = {}) {
+async function newAsset(
+  assetData,
+  categoryId,
+  categoryKey,
+  { onProgress = () => {} } = {}
+) {
   const { file, cover, ...data } = assetData;
   const formData = {};
 
-  if (categoryKey === 'media-files') {
+  if (categoryKey === "media-files") {
     if (isString(file)) {
       formData.file = file;
     } else {
@@ -19,10 +24,13 @@ async function newAsset(assetData, categoryId, categoryKey, { onProgress = () =>
     }
   }
 
-  if (categoryKey === 'bookmarks') {
+  if (categoryKey === "bookmarks") {
     if (cover && isString(cover)) formData.cover = cover;
     if (cover?.name) {
-      formData.cover = await uploadFileAsMultipart(cover, { onProgress, name: cover.name });
+      formData.cover = await uploadFileAsMultipart(cover, {
+        onProgress,
+        name: cover.name,
+      });
     }
   }
 
@@ -33,8 +41,11 @@ async function newAsset(assetData, categoryId, categoryKey, { onProgress = () =>
   }
 
   Object.keys(data).forEach((key) => {
-    if (data[key] !== undefined && (typeof data[key] !== 'string' || data[key]?.length > 0)) {
-      if (key === 'subjects') {
+    if (
+      data[key] !== undefined &&
+      (typeof data[key] !== "string" || data[key]?.length > 0)
+    ) {
+      if (key === "subjects") {
         formData[key] = JSON.stringify(data[key]);
       } else {
         formData[key] = data[key];
@@ -42,9 +53,9 @@ async function newAsset(assetData, categoryId, categoryKey, { onProgress = () =>
     }
   });
 
-  return leemons.api('v1/leebrary/assets', {
+  return leemons.api("v1/leebrary/assets", {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: formData,
   });
 }

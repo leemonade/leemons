@@ -2,21 +2,23 @@ const {
   it,
   expect,
   jest: { fn },
-} = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+} = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { getAssetsProgramsAggregatedById } = require('./getAssetsProgramsAggregatedById');
+const {
+  getAssetsProgramsAggregatedById,
+} = require("./getAssetsProgramsAggregatedById");
 
-it('Should call getAssetsProgramsAggregatedById correctly', async () => {
+it("Should call getAssetsProgramsAggregatedById correctly", async () => {
   // Arrange
   const assets = [
-    { id: 'assetOne', program: 'programOneId' },
-    { id: 'assetTwo', program: 'programTwoId' },
+    { id: "assetOne", program: "programOneId" },
+    { id: "assetTwo", program: "programTwoId" },
   ];
   const mockProgram = {
-    id: 'programOneId',
-    name: 'programOne',
-    abbreviation: 'p1',
+    id: "programOneId",
+    name: "programOne",
+    abbreviation: "p1",
     credits: null,
     maxGroupAbbreviation: 9,
     maxGroupAbbreviationIsOnlyNumbers: true,
@@ -25,22 +27,26 @@ it('Should call getAssetsProgramsAggregatedById correctly', async () => {
     hideCoursesInTree: false,
     moreThanOneAcademicYear: false,
     numberOfSubstages: 1,
-    subjectsFirstDigit: 'a',
+    subjectsFirstDigit: "a",
     subjectsDigits: 1,
   };
   const programsByIdsAction = fn(() => [
     { ...mockProgram },
-    { ...mockProgram, id: 'programTwoId', name: 'programTwo' },
+    { ...mockProgram, id: "programTwoId", name: "programTwo" },
   ]);
 
   const ctx = generateCtx({
     actions: {
-      'academic-portfolio.programs.programsByIds': programsByIdsAction,
+      "academic-portfolio.programs.programsByIds": programsByIdsAction,
     },
   });
   const expectedValue = {
     [assets[0].program]: mockProgram,
-    [assets[1].program]: { ...mockProgram, id: 'programTwoId', name: 'programTwo' },
+    [assets[1].program]: {
+      ...mockProgram,
+      id: "programTwoId",
+      name: "programTwo",
+    },
   };
 
   // Act
@@ -54,12 +60,12 @@ it('Should call getAssetsProgramsAggregatedById correctly', async () => {
   expect(response).toEqual(expectedValue);
 });
 
-it('Should return an empty object when assets do not have programs', async () => {
+it("Should return an empty object when assets do not have programs", async () => {
   // Arrange
-  const assets = [{ id: 'assetOne' }, { id: 'assetTwo' }];
+  const assets = [{ id: "assetOne" }, { id: "assetTwo" }];
   const ctx = generateCtx({
     actions: {
-      'academic-portfolio.programs.programsByIds': fn(() => []),
+      "academic-portfolio.programs.programsByIds": fn(() => []),
     },
   });
   const expectedValue = {};
@@ -71,12 +77,12 @@ it('Should return an empty object when assets do not have programs', async () =>
   expect(response).toEqual(expectedValue);
 });
 
-it('Should return an empty object when no assets are provided', async () => {
+it("Should return an empty object when no assets are provided", async () => {
   // Arrange
   const assets = [];
   const ctx = generateCtx({
     actions: {
-      'academic-portfolio.programs.programsByIds': fn(() => []),
+      "academic-portfolio.programs.programsByIds": fn(() => []),
     },
   });
   const expectedValue = {};

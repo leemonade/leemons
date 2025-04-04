@@ -1,15 +1,18 @@
-import React from 'react';
-import { Box, Text, Stack } from '@bubbles-ui/components';
+import React from "react";
+import { Box, Text, Stack } from "@bubbles-ui/components";
 import {
   ExpandIcon,
   ControlsPlayIcon,
   ControlsPauseIcon,
   VolumeControlLowIcon,
   VolumeControlOffIcon,
-} from '@bubbles-ui/icons/solid';
-import { PluginSettingsIcon, ShrinkIcon } from '@bubbles-ui/icons/outline';
-import { ProgressBarStyles } from './ProgressBar.styles';
-import { PROGRESS_BAR_DEFAULT_PROPS, PROGRESS_BAR_PROP_TYPES } from './ProgressBar.constants';
+} from "@bubbles-ui/icons/solid";
+import { PluginSettingsIcon, ShrinkIcon } from "@bubbles-ui/icons/outline";
+import { ProgressBarStyles } from "./ProgressBar.styles";
+import {
+  PROGRESS_BAR_DEFAULT_PROPS,
+  PROGRESS_BAR_PROP_TYPES,
+} from "./ProgressBar.constants";
 
 const ProgressBar = ({
   seekValue,
@@ -47,13 +50,23 @@ const ProgressBar = ({
   // ··································································
   // COMPONENT
 
-  const { classes } = ProgressBarStyles({ isVideoHovered }, { name: 'ProgressBar' });
+  const { classes } = ProgressBarStyles(
+    { isVideoHovered },
+    { name: "ProgressBar" }
+  );
   return (
     <Box className={classes.progressBarWrapper}>
       <Box className={classes.controlBar}>
-        <Box onClick={() => setIsPlaying(!isPlaying)} className={classes.iconWrapper}>
+        <Box
+          onClick={() => setIsPlaying(!isPlaying)}
+          className={classes.iconWrapper}
+        >
           {isPlaying ? (
-            <ControlsPauseIcon height={20} width={20} className={classes.whiteIcon} />
+            <ControlsPauseIcon
+              height={20}
+              width={20}
+              className={classes.whiteIcon}
+            />
           ) : (
             <ControlsPlayIcon
               height={18}
@@ -64,12 +77,12 @@ const ProgressBar = ({
           )}
         </Box>
 
-        <Text size={'xs'} role={'productive'} className={classes.duration}>
+        <Text size={"xs"} role={"productive"} className={classes.duration}>
           {getDuration()} / {getTotalDuration()}
         </Text>
         <Box
           className={classes.iconWrapper}
-          style={{ flex: 1, justifyContent: 'right', marginRight: 2 }}
+          style={{ flex: 1, justifyContent: "right", marginRight: 2 }}
         >
           <Box className={classes.progressBar}>
             <Box
@@ -80,10 +93,10 @@ const ProgressBar = ({
             />
             <input
               className={classes.progressBarSeekSlider}
-              type={'range'}
+              type={"range"}
               min={0}
               max={0.999999}
-              step={'any'}
+              step={"any"}
               value={seekValue}
               onChange={handleSeekChange}
               onMouseDown={handleSeekMouseDown}
@@ -93,21 +106,47 @@ const ProgressBar = ({
           <Stack spacing={2}>
             <Box className={classes.iconWrapper} onClick={handleVolumeChange}>
               {mediaVolume > 0 ? (
-                <VolumeControlLowIcon height={20} width={20} className={classes.whiteIcon} />
+                <VolumeControlLowIcon
+                  height={20}
+                  width={20}
+                  className={classes.whiteIcon}
+                />
               ) : (
-                <VolumeControlOffIcon height={20} width={20} className={classes.whiteIcon} />
+                <VolumeControlOffIcon
+                  height={20}
+                  width={20}
+                  className={classes.whiteIcon}
+                />
               )}
             </Box>
 
-            <Box className={classes.iconWrapper} onClick={handleFullscreenChange}>
+            <Box
+              className={classes.iconWrapper}
+              onClick={handleFullscreenChange}
+            >
               {fullScreenMode ? (
-                <ShrinkIcon height={20} width={20} className={classes.whiteIcon} />
+                <ShrinkIcon
+                  height={20}
+                  width={20}
+                  className={classes.whiteIcon}
+                />
               ) : (
-                <ExpandIcon height={20} width={20} className={classes.whiteIcon} />
+                <ExpandIcon
+                  height={20}
+                  width={20}
+                  className={classes.whiteIcon}
+                />
               )}
             </Box>
-            <Box className={classes.iconWrapper} onClick={(e) => e.stopPropagation()}>
-              <PluginSettingsIcon height={20} width={20} className={classes.whiteIcon} />
+            <Box
+              className={classes.iconWrapper}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <PluginSettingsIcon
+                height={20}
+                width={20}
+                className={classes.whiteIcon}
+              />
             </Box>
           </Stack>
         </Box>

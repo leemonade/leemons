@@ -1,6 +1,10 @@
-import type { Context } from '@leemons/moleculer';
-import type { Model } from '@leemons/mongodb';
-import { type GetKeyValueModel, hasKey, setKey } from '@leemons/mongodb-helpers';
+import type { Context } from "@leemons/moleculer";
+import type { Model } from "@leemons/mongodb";
+import {
+  type GetKeyValueModel,
+  hasKey,
+  setKey,
+} from "@leemons/mongodb-helpers";
 
 /**
  * Adds a category deployment to the library system
@@ -20,7 +24,7 @@ export async function addCategoryDeploy(params: {
   const { keyValueModel, category, ctx } = params;
 
   if (!(await hasKey(keyValueModel, `library-categories-${category.key}`))) {
-    await ctx.tx.call('leebrary.categories.add', { data: category });
+    await ctx.tx.call("leebrary.categories.add", { data: category });
     await setKey(keyValueModel, `library-categories-${category.key}`);
   }
   await ctx.tx.emit(`init-library-category-${category.key}`);

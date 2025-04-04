@@ -1,18 +1,18 @@
-const { it, expect, beforeEach } = require('@jest/globals');
-const { LeemonsError } = require('@leemons/error');
-const { generateCtx } = require('@leemons/testing');
+const { it, expect, beforeEach } = require("@jest/globals");
+const { LeemonsError } = require("@leemons/error");
+const { generateCtx } = require("@leemons/testing");
 
-const { checkIfRolesExist } = require('./checkIfRolesExist');
-const validateRole = require('../helpers/validateRole');
+const { checkIfRolesExist } = require("./checkIfRolesExist");
+const validateRole = require("../helpers/validateRole");
 
 // MOCKS
-jest.mock('../helpers/validateRole');
+jest.mock("../helpers/validateRole");
 
 beforeEach(() => jest.resetAllMocks());
 
-it('should throw error when roles are invalid', () => {
+it("should throw error when roles are invalid", () => {
   // Arrange
-  const canAccess = [{ userAgent: 'userAgentId', role: 'admin' }];
+  const canAccess = [{ userAgent: "userAgentId", role: "admin" }];
   const ctx = generateCtx({});
   validateRole.mockReturnValue(false);
 
@@ -27,7 +27,7 @@ it('should throw error when roles are invalid', () => {
   }
 });
 
-it('should not throw when roles are valid', () => {
+it("should not throw when roles are valid", () => {
   // Arrange
   const canAccess = [];
   const permissions = { viewer: [], editor: [], assigner: [] };

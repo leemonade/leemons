@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-const { duplicate: duplicateFile } = require('../../files/duplicate');
+const { duplicate: duplicateFile } = require("../../files/duplicate");
 /**
  * Handles the duplication of the cover associated with a given asset.
  * It duplicates the cover file and updates the new asset with the duplicated cover.
@@ -13,7 +13,10 @@ const { duplicate: duplicateFile } = require('../../files/duplicate');
 async function handleCoverDuplication({ newAsset, cover, ctx }) {
   const newCover = await duplicateFile({ file: cover, ctx });
   if (newCover) {
-    await ctx.tx.db.Assets.updateOne({ id: newAsset.id }, { cover: newCover.id });
+    await ctx.tx.db.Assets.updateOne(
+      { id: newAsset.id },
+      { cover: newCover.id }
+    );
     newAsset.cover = newCover;
   }
   return newAsset;

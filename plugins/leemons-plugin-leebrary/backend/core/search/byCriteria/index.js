@@ -1,4 +1,4 @@
-const byCriteria = require('./byCriteria');
+const byCriteria = require("./byCriteria");
 
 module.exports = {
   ...byCriteria,

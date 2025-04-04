@@ -1,6 +1,6 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
-const { getById } = require('../getById');
+const { getById } = require("../getById");
 
 /**
  * Checks if a category is duplicable. If the category is not duplicable, it throws an HTTP error.
@@ -17,7 +17,7 @@ async function checkDuplicable({ categoryId, ctx }) {
   const category = await getById({ id: categoryId, ctx });
   if (!category?.duplicable) {
     throw new LeemonsError(ctx, {
-      message: 'Assets in this category cannot be duplicated',
+      message: "Assets in this category cannot be duplicated",
       httpStatusCode: 401,
     });
   }

@@ -1,18 +1,24 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from "react";
 
-import { Box, TabPanel, Tabs, createStyles, Drawer } from '@bubbles-ui/components';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { ZoneWidgets } from '@widgets';
-import { get } from 'lodash';
-import PropTypes from 'prop-types';
+import {
+  Box,
+  TabPanel,
+  Tabs,
+  createStyles,
+  Drawer,
+} from "@bubbles-ui/components";
+import { unflatten } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { ZoneWidgets } from "@widgets";
+import { get } from "lodash";
+import PropTypes from "prop-types";
 
-import { AssetList } from './components/AssetList';
+import { AssetList } from "./components/AssetList";
 
-import prefixPN from '@leebrary/helpers/prefixPN';
+import prefixPN from "@leebrary/helpers/prefixPN";
 
 export function useAssetPickerDrawerLocalizations() {
-  const key = prefixPN('pickerDrawer');
+  const key = prefixPN("pickerDrawer");
   const [, translations] = useTranslateLoader(key);
 
   return useMemo(() => {
@@ -28,15 +34,15 @@ export function useAssetPickerDrawerLocalizations() {
 
 export const useAssetPickerDrawerStyles = createStyles((theme) => ({
   root: {
-    display: 'flex',
-    flexDirection: 'column',
-    overflow: 'hidden',
-    height: '100%',
+    display: "flex",
+    flexDirection: "column",
+    overflow: "hidden",
+    height: "100%",
   },
   content: {},
   contentPadding: {
-    overflowY: 'auto',
-    height: '100%',
+    overflowY: "auto",
+    height: "100%",
   },
 }));
 
@@ -70,14 +76,20 @@ export function AssetPickerDrawer({
   onlyImages,
   isPickingACover,
   newDataOverride,
-  size = 'xl',
+  size = "xl",
 }) {
   const localizations = useAssetPickerDrawerLocalizations();
-  const { classes } = useAssetPickerDrawerStyles({}, { name: 'AssetPickerDrawer' });
+  const { classes } = useAssetPickerDrawerStyles(
+    {},
+    { name: "AssetPickerDrawer" }
+  );
 
   const classTabs = React.useCallback(
     ({ Component, key, properties }) => (
-      <TabPanel label={get(localizations ?? {}, properties.label, '-')} key={key}>
+      <TabPanel
+        label={get(localizations ?? {}, properties.label, "-")}
+        key={key}
+      >
         <Component
           {...properties}
           variant={layout}
@@ -139,19 +151,19 @@ AssetPickerDrawer.defaultProps = {
   onlyCreateImages: true,
 };
 AssetPickerDrawer.propTypes = {
-  position: PropTypes.oneOf(['left', 'right']),
+  position: PropTypes.oneOf(["left", "right"]),
   opened: PropTypes.bool,
   shadow: PropTypes.bool,
   creatable: PropTypes.bool,
   onClose: PropTypes.func,
   onSelect: PropTypes.func,
   categories: PropTypes.arrayOf(PropTypes.string),
-  layout: PropTypes.oneOf(['rows', 'thumbnails', 'cards']),
+  layout: PropTypes.oneOf(["rows", "thumbnails", "cards"]),
   filters: PropTypes.object,
   onlyCreateImages: PropTypes.bool,
   onlyImages: PropTypes.bool,
   acceptedFileTypes: PropTypes.arrayOf(PropTypes.string),
   isPickingACover: PropTypes.bool,
   newDataOverride: PropTypes.object,
-  size: PropTypes.oneOf(['xs', 'sm', 'md', 'xl', 'full']),
+  size: PropTypes.oneOf(["xs", "sm", "md", "xl", "full"]),
 };

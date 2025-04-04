@@ -1,10 +1,16 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const _ = require('lodash');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const _ = require("lodash");
 
-const { find } = require('./find');
-const { assetsSchema } = require('../../../models/assets');
+const { find } = require("./find");
+const { assetsSchema } = require("../../../models/assets");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -27,21 +33,21 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should correctly query the db and return the desired fields', async () => {
+it("Should correctly query the db and return the desired fields", async () => {
   // Arrange
   const query = { public: true };
-  const columns = ['id', 'indexable'];
+  const columns = ["id", "indexable"];
 
   const ctx = generateCtx({
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
 
   const initialValues = [
-    { public: true, id: 'asset1', indexable: true },
-    { public: false, id: 'asset2', indexable: true },
-    { public: true, id: 'asset3', indexable: false },
+    { public: true, id: "asset1", indexable: true },
+    { public: false, id: "asset2", indexable: true },
+    { public: true, id: "asset3", indexable: false },
   ];
   await ctx.db.Assets.create(initialValues);
   const expectedResponse = [
@@ -62,21 +68,21 @@ it('Should correctly query the db and return the desired fields', async () => {
   });
 });
 
-it('Should accept emtpy object as query and columns', async () => {
+it("Should accept emtpy object as query and columns", async () => {
   // Arrange
   const query = {};
   const columns = {};
 
   const ctx = generateCtx({
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
 
   const initialValues = [
-    { public: true, id: 'asset1', indexable: true },
-    { public: false, id: 'asset2', indexable: true },
-    { public: true, id: 'asset3', indexable: false },
+    { public: true, id: "asset1", indexable: true },
+    { public: false, id: "asset2", indexable: true },
+    { public: true, id: "asset3", indexable: false },
   ];
   await ctx.db.Assets.create(initialValues);
 
@@ -86,22 +92,23 @@ it('Should accept emtpy object as query and columns', async () => {
   // Assert
   expect(response.length).toBe(initialValues.length);
   response.forEach((obj) => {
-    expect(obj).toHaveProperty(['id']);
-    expect(obj).toHaveProperty(['public']);
-    expect(obj).toHaveProperty(['indexable']);
+    expect(obj).toHaveProperty(["id"]);
+    expect(obj).toHaveProperty(["public"]);
+    expect(obj).toHaveProperty(["indexable"]);
   });
 });
 
-it('Should not catch db errors provoked by wrong query or columns values', async () => {
+it("Should not catch db errors provoked by wrong query or columns values", async () => {
   // Arrange
   const ctx = generateCtx({
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
 
   const responseWrongQuery = async () => find({ query: 123, ctx });
-  const responseWrongColumns = async () => find({ query: {}, columns: 123, ctx });
+  const responseWrongColumns = async () =>
+    find({ query: {}, columns: 123, ctx });
 
   // Act and Assert
   await expect(responseWrongQuery).rejects.toThrow();

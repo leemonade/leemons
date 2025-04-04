@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types';
-import { LIBRARY_DETAIL_VARIANTS } from '../LibraryDetail/LibraryDetail.constants';
+import PropTypes from "prop-types";
+import { LIBRARY_DETAIL_VARIANTS } from "../LibraryDetail/LibraryDetail.constants";
 
 export const LIBRARY_DETAIL_PLAYER_DEFAULT_PROPS = {
   height: 202,

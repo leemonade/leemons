@@ -1,4 +1,4 @@
-const { defaults, cloneDeep, isEqual, differenceWith } = require('lodash');
+const { defaults, cloneDeep, isEqual, differenceWith } = require("lodash");
 
 /**
  * @module getDiff
@@ -16,7 +16,9 @@ function getDiff(a, b) {
 
   return {
     object: _a,
-    diff: differenceWith(Object.entries(_a), Object.entries(b), isEqual).map(([key]) => key),
+    diff: differenceWith(Object.entries(_a), Object.entries(b), isEqual).map(
+      ([key]) => key
+    ),
   };
 }
 

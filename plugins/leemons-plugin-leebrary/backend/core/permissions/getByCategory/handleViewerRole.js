@@ -1,5 +1,5 @@
-const { forEach, findIndex } = require('lodash');
-const getRolePermissions = require('../helpers/getRolePermissions');
+const { forEach, findIndex } = require("lodash");
+const getRolePermissions = require("../helpers/getRolePermissions");
 
 /**
  * handleViewerRole is a function that handles the viewer role permissions.
@@ -19,8 +19,8 @@ function handleViewerRole({ viewItems, results, assetIds, ctx }) {
     if (index < 0 && assetIds.includes(asset)) {
       results.push({
         asset,
-        role: 'viewer',
-        permissions: getRolePermissions({ role: 'viewer', ctx }),
+        role: "viewer",
+        permissions: getRolePermissions({ role: "viewer", ctx }),
       });
     }
   });

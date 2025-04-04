@@ -1,18 +1,18 @@
-const { it, expect, afterEach } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+const { it, expect, afterEach } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { handleCategoryData } = require('./handleCategoryData');
-const getCategory = require('../../../__fixtures__/getCategory');
+const { handleCategoryData } = require("./handleCategoryData");
+const getCategory = require("../../../__fixtures__/getCategory");
 
 // Mocks
-jest.mock('../../categories/getById');
-jest.mock('../../categories/getByKey');
-const { getById: getCategoryById } = require('../../categories/getById');
-const { getByKey: getCategoryByKey } = require('../../categories/getByKey');
+jest.mock("../../categories/getById");
+jest.mock("../../categories/getByKey");
+const { getById: getCategoryById } = require("../../categories/getById");
+const { getByKey: getCategoryByKey } = require("../../categories/getByKey");
 
 afterEach(() => jest.resetAllMocks());
 
-it('Should return a category Object by correctly calling inner functions or return it unaffected when passed.', async () => {
+it("Should return a category Object by correctly calling inner functions or return it unaffected when passed.", async () => {
   // Arrange
   const { categoryObject, categoryId, bookmarkKey } = getCategory();
   getCategoryById.mockResolvedValue({ ...categoryObject });
@@ -51,17 +51,26 @@ it('Should return a category Object by correctly calling inner functions or retu
   // Assert
   expect(response).toEqual(expectedValue);
   expect(responseWithCategoryId).toEqual(expectedValue);
-  expect(getCategoryById).nthCalledWith(1, expect.objectContaining({ id: categoryId, ctx }));
+  expect(getCategoryById).nthCalledWith(
+    1,
+    expect.objectContaining({ id: categoryId, ctx })
+  );
   expect(responseWithCategoryKey).toEqual(expectedValue);
-  expect(getCategoryByKey).nthCalledWith(1, expect.objectContaining({ key: bookmarkKey, ctx }));
+  expect(getCategoryByKey).nthCalledWith(
+    1,
+    expect.objectContaining({ key: bookmarkKey, ctx })
+  );
   expect(responseWithIdString).toEqual(expectedValue);
-  expect(getCategoryById).nthCalledWith(2, expect.objectContaining({ id: categoryId, ctx }));
+  expect(getCategoryById).nthCalledWith(
+    2,
+    expect.objectContaining({ id: categoryId, ctx })
+  );
 });
 
-it('Should survive', async () => {
+it("Should survive", async () => {
   // Arrange
   const ctx = generateCtx({});
-  const notStandardUUID = '550e8400e29b41d4a716446655440000';
+  const notStandardUUID = "550e8400e29b41d4a716446655440000";
 
   // Act
   await handleCategoryData({

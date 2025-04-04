@@ -1,4 +1,4 @@
-const listWithMenuItem = require('./listWithMenuItem');
+const listWithMenuItem = require("./listWithMenuItem");
 
 module.exports = {
   ...listWithMenuItem,

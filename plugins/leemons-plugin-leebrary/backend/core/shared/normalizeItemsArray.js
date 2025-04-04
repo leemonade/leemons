@@ -1,4 +1,4 @@
-const { isArray, compact, uniq } = require('lodash');
+const { isArray, compact, uniq } = require("lodash");
 
 /**
  * Normalize the input to ensures it is always an array

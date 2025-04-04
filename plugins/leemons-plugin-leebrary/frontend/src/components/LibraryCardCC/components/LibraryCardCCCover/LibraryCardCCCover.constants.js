@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const LIBRARY_CARD_CC_COVER_PROPTYPES = {
   cover: PropTypes.string,
@@ -11,11 +11,11 @@ export const LIBRARY_CARD_CC_COVER_PROPTYPES = {
 };
 
 export const LIBRARY_CARD_CC_COVER_DEFAULTPROPS = {
-  cover: '',
-  color: '',
+  cover: "",
+  color: "",
   fileIcon: null,
   subject: null,
-  fileType: '',
-  fileExtension: '',
+  fileType: "",
+  fileExtension: "",
   variantIcon: null,
 };

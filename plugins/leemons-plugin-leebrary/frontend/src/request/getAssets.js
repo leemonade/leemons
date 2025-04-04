@@ -1,4 +1,4 @@
-import { keys } from 'lodash';
+import { keys } from "lodash";
 
 async function getAssets({ pinned, showPublic, ...filters } = {}) {
   let params = keys(filters)
@@ -6,12 +6,12 @@ async function getAssets({ pinned, showPublic, ...filters } = {}) {
     .map((key) => `${key}=${filters[key]}`);
 
   if (pinned) {
-    params.push('showPublic=true');
+    params.push("showPublic=true");
   } else {
     params.push(`showPublic=${showPublic}`);
   }
 
-  params = params.join('&');
+  params = params.join("&");
 
   let url = `v1/leebrary/assets/list?${params}`;
 
@@ -21,7 +21,7 @@ async function getAssets({ pinned, showPublic, ...filters } = {}) {
 
   return leemons.api(url, {
     allAgents: true,
-    method: 'GET',
+    method: "GET",
   });
 }
 

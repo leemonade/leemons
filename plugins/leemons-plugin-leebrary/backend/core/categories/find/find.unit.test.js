@@ -1,13 +1,20 @@
-const { expect, beforeAll, beforeEach, afterAll, describe, it } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  expect,
+  beforeAll,
+  beforeEach,
+  afterAll,
+  describe,
+  it,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { find } = require('./find');
+const { find } = require("./find");
 
-const { categoriesSchema } = require('../../../models/categories');
-const getCategory = require('../../../__fixtures__/getCategory');
+const { categoriesSchema } = require("../../../models/categories");
+const getCategory = require("../../../__fixtures__/getCategory");
 
-describe('find Category Test', () => {
+describe("find Category Test", () => {
   // Arrange: Setting up the test environment
   let mongooseConnection;
   let disconnectMongoose;
@@ -22,7 +29,11 @@ describe('find Category Test', () => {
 
     ctx = generateCtx({
       models: {
-        Categories: newModel(mongooseConnection, 'Categories', categoriesSchema),
+        Categories: newModel(
+          mongooseConnection,
+          "Categories",
+          categoriesSchema
+        ),
       },
     });
   });
@@ -44,7 +55,7 @@ describe('find Category Test', () => {
     await ctx.tx.db.Categories.create(categoryData);
   });
 
-  it('should query categories in the database', async () => {
+  it("should query categories in the database", async () => {
     // Arrange
 
     // Act: Execution of the function to test
@@ -55,12 +66,16 @@ describe('find Category Test', () => {
     expect(category[0].key).toBe(categoryData.key);
   });
 
-  it('should query categories in the database and return only key field', async () => {
+  it("should query categories in the database and return only key field", async () => {
     // Arrange
-    const columns = 'key';
+    const columns = "key";
     // Act
 
-    const category = await find({ query: { key: categoryData.key }, columns, ctx });
+    const category = await find({
+      query: { key: categoryData.key },
+      columns,
+      ctx,
+    });
 
     // Assert
     expect(category[0].key).toBeDefined();
@@ -68,9 +83,9 @@ describe('find Category Test', () => {
     expect(category[0].key).toBe(categoryData.key);
   });
 
-  it('should return null if no category is found', async () => {
+  it("should return null if no category is found", async () => {
     // Arrange
-    const id = 'nonexistentCategory';
+    const id = "nonexistentCategory";
 
     // Act
     const category = await find({ query: { id }, ctx });

@@ -1,4 +1,4 @@
-import propTypes from 'prop-types';
+import propTypes from "prop-types";
 
 export const DETAIL_CONTENT_PROP_TYPES = {
   asset: propTypes.object,
@@ -22,21 +22,21 @@ export const DETAIL_CONTENT_PROP_TYPES = {
 };
 
 export const DETAIL_CONTENT_DEFAULT_PROPS = {
-  name: '',
-  description: '',
+  name: "",
+  description: "",
   subjectsIds: [],
-  program: '',
+  program: "",
   metadataComponent: null,
   handleCopy: () => {},
   tags: [],
   metadata: {},
-  icon: '',
-  fileType: '',
-  fileExtension: '',
-  variant: '',
-  variantIcon: '',
-  variantTitle: '',
+  icon: "",
+  fileType: "",
+  fileExtension: "",
+  variant: "",
+  variantIcon: "",
+  variantTitle: "",
   file: {},
-  url: '',
+  url: "",
   classes: {},
 };

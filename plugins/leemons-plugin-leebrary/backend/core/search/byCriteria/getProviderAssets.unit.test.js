@@ -1,17 +1,24 @@
-const { it, expect, beforeAll, afterAll, beforeEach, describe } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  describe,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getProviderAssets } = require('./getProviderAssets');
-const { assetsSchema } = require('../../../models/assets');
-const getAssets = require('../../../__fixtures__/getAssets');
+const { getProviderAssets } = require("./getProviderAssets");
+const { assetsSchema } = require("../../../models/assets");
+const getAssets = require("../../../__fixtures__/getAssets");
 
-jest.mock('../byProvider');
-const { byProvider: getByProvider } = require('../byProvider');
+jest.mock("../byProvider");
+const { byProvider: getByProvider } = require("../byProvider");
 
 const getTagsValueByPartialTags = jest.fn();
 
-describe('getProviderAssets', () => {
+describe("getProviderAssets", () => {
   let mongooseConnection;
   let disconnectMongoose;
   let ctx;
@@ -25,10 +32,10 @@ describe('getProviderAssets', () => {
 
     ctx = generateCtx({
       actions: {
-        'common.tags.getTagsValueByPartialTags': getTagsValueByPartialTags,
+        "common.tags.getTagsValueByPartialTags": getTagsValueByPartialTags,
       },
       models: {
-        Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+        Assets: newModel(mongooseConnection, "Assets", assetsSchema),
       },
     });
   });
@@ -49,22 +56,22 @@ describe('getProviderAssets', () => {
     assets = [
       {
         ...asset,
-        id: 'assetId1',
-        name: 'First Asset',
+        id: "assetId1",
+        name: "First Asset",
       },
       {
         ...asset,
-        id: 'assetId2',
-        name: 'Second Asset',
+        id: "assetId2",
+        name: "Second Asset",
       },
     ];
     await ctx.tx.db.Assets.create(assets);
   });
 
-  describe('Intended workload', () => {
-    it('should return assets by provider', async () => {
+  describe("Intended workload", () => {
+    it("should return assets by provider", async () => {
       // Arrange
-      const criteria = 'First';
+      const criteria = "First";
       getByProvider.mockResolvedValue([assets[0].id]);
       getTagsValueByPartialTags.mockResolvedValue([assets[0].id]);
       // Act
@@ -88,9 +95,9 @@ describe('getProviderAssets', () => {
       expect(result.nothingFound).toEqual(false);
     });
 
-    it('should return assets by provider with no case sensitive search', async () => {
+    it("should return assets by provider with no case sensitive search", async () => {
       // Arrange
-      const criteria = 'first';
+      const criteria = "first";
       getByProvider.mockResolvedValue([assets[0].id]);
       getTagsValueByPartialTags.mockResolvedValue([assets[0].id]);
       // Act
@@ -115,10 +122,10 @@ describe('getProviderAssets', () => {
     });
   });
 
-  describe('Limit use cases', () => {
-    it('should return  array if no assets match criteria', async () => {
+  describe("Limit use cases", () => {
+    it("should return  array if no assets match criteria", async () => {
       // Arrange
-      const criteria = 'Other criteria';
+      const criteria = "Other criteria";
 
       // Act
       const result = await getProviderAssets({
@@ -131,9 +138,9 @@ describe('getProviderAssets', () => {
       expect(result.assets).toEqual([]);
       expect(result.nothingFound).toEqual(true);
     });
-    it('should return same assets array if getByProvider returns an empty array', async () => {
+    it("should return same assets array if getByProvider returns an empty array", async () => {
       // Arrange
-      const criteria = 'First';
+      const criteria = "First";
       const assetIds = assets.map((el) => el.id);
       getByProvider.mockResolvedValue([]);
 
@@ -158,7 +165,7 @@ describe('getProviderAssets', () => {
       expect(result.nothingFound).toEqual(true);
     });
 
-    it('should return same assets array if criteria is empty', async () => {
+    it("should return same assets array if criteria is empty", async () => {
       // Arrange
       const criteria = undefined;
       const assetIds = assets.map((el) => el.id);

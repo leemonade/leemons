@@ -1,4 +1,4 @@
-const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
+const { mongoDBPaginate } = require("@leemons/mongodb-helpers");
 
 async function list({ page = 0, size = 10, ctx }) {
   return mongoDBPaginate({
@@ -6,7 +6,7 @@ async function list({ page = 0, size = 10, ctx }) {
     page,
     size,
     query: { id: { $exists: true } },
-    sort: { order: 'asc' },
+    sort: { order: "asc" },
   });
 }
 

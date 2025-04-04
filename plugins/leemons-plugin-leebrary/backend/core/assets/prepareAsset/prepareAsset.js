@@ -1,11 +1,16 @@
-const { capitalize, isEmpty, isNil, isString } = require('lodash');
-const { prepareAssetType } = require('./prepareAssetType');
-const { getFileUrl } = require('./getFileUrl');
+const { capitalize, isEmpty, isNil, isString } = require("lodash");
+const { prepareAssetType } = require("./prepareAssetType");
+const { getFileUrl } = require("./getFileUrl");
 
-async function prepareAsset({ rawAsset, isPublished = true, signedURLExpirationTime, ctx }) {
+async function prepareAsset({
+  rawAsset,
+  isPublished = true,
+  signedURLExpirationTime,
+  ctx,
+}) {
   // Create a prepared asset that also contains the original raw asset
   const asset = { ...rawAsset, original: rawAsset, prepared: true };
-  asset.public = [1, '1', true, 'true'].includes(asset.public);
+  asset.public = [1, "1", true, "true"].includes(asset.public);
   asset.canAccess = asset.canAccess || [];
   asset.pinneable = isPublished;
 
@@ -27,7 +32,7 @@ async function prepareAsset({ rawAsset, isPublished = true, signedURLExpirationT
 
     if (isNil(asset.metadata) && asset.file.metadata) {
       let { metadata } = asset.file;
-      if (typeof metadata === 'string') {
+      if (typeof metadata === "string") {
         metadata = JSON.parse(metadata);
       }
       asset.metadata = Object.keys(metadata).map((key) => ({
@@ -49,7 +54,11 @@ async function prepareAsset({ rawAsset, isPublished = true, signedURLExpirationT
     } else if (asset.cover instanceof File) {
       asset.cover = URL.createObjectURL(asset.cover);
     } else if (isString(asset.cover)) {
-      asset.cover = await getFileUrl({ fileID: asset.cover, signedURLExpirationTime, ctx });
+      asset.cover = await getFileUrl({
+        fileID: asset.cover,
+        signedURLExpirationTime,
+        ctx,
+      });
     }
   }
 

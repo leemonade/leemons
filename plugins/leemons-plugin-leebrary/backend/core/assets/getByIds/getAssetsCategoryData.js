@@ -1,6 +1,8 @@
-const { uniq, compact } = require('lodash');
-const { getByIds: getCategories } = require('../../categories/getByIds');
-const { getByNames: getProviderByNames } = require('../../providers/getByNames');
+const { uniq, compact } = require("lodash");
+const { getByIds: getCategories } = require("../../categories/getByIds");
+const {
+  getByNames: getProviderByNames,
+} = require("../../providers/getByNames");
 
 /**
  * Fetches category data associated with each asset
@@ -15,10 +17,13 @@ async function getAssetsCategoryData({ assets, ctx }) {
   const categories = await getCategories({ categoriesIds: categoryIds, ctx });
 
   // Extract unique provider names from the categories, excluding 'leebrary'
-  const providersNames = uniq(categories.map((category) => category.provider)).filter(
-    (provider) => provider !== 'leebrary'
-  );
-  const providers = await getProviderByNames({ names: compact(providersNames), ctx });
+  const providersNames = uniq(
+    categories.map((category) => category.provider)
+  ).filter((provider) => provider !== "leebrary");
+  const providers = await getProviderByNames({
+    names: compact(providersNames),
+    ctx,
+  });
 
   // Fetch asset data for each category using the providers
   const providersResults = await Promise.all(
@@ -30,7 +35,9 @@ async function getAssetsCategoryData({ assets, ctx }) {
 
       // If the provider supports the 'getByIds' methoda
       if (categoryProvider?.supportedMethods?.getByIds) {
-        const categoryAssets = assets.filter((item) => item.category === category.id);
+        const categoryAssets = assets.filter(
+          (item) => item.category === category.id
+        );
 
         // Call the 'getByIds' method on the provider to fetch asset data
         return ctx.tx.call(`${category.provider}.assets.getByIds`, {

@@ -1,4 +1,4 @@
-const getByKeys = require('./getByKeys');
+const getByKeys = require("./getByKeys");
 
 module.exports = {
   ...getByKeys,

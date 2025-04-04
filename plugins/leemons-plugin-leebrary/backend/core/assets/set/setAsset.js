@@ -1,14 +1,14 @@
-const { LeemonsError } = require('@leemons/error');
-const _ = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const _ = require("lodash");
 
-const { getById: getCategoryById } = require('../../categories/getById');
-const { getByKey: getCategoryByKey } = require('../../categories/getByKey');
-const { update } = require('../update');
-const { add } = require('../add');
-const canAssignRole = require('../../permissions/helpers/canAssignRole');
-const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
-const { getUsersByAsset } = require('../../permissions/getUsersByAsset');
-const { CATEGORIES } = require('../../../config/constants');
+const { getById: getCategoryById } = require("../../categories/getById");
+const { getByKey: getCategoryByKey } = require("../../categories/getByKey");
+const { update } = require("../update");
+const { add } = require("../add");
+const canAssignRole = require("../../permissions/helpers/canAssignRole");
+const { getByAsset: getPermissions } = require("../../permissions/getByAsset");
+const { getUsersByAsset } = require("../../permissions/getUsersByAsset");
+const { CATEGORIES } = require("../../../config/constants");
 
 /**
  * Set asset data
@@ -38,14 +38,17 @@ async function setAsset({
   ...assetData
 }) {
   Object.keys(assetData).forEach((key) => {
-    if (assetData[key] === 'null') {
+    if (assetData[key] === "null") {
       // eslint-disable-next-line no-param-reassign
       assetData[key] = null;
     }
   });
 
   if (_.isEmpty(categoryId) && _.isEmpty(categoryKey)) {
-    throw new LeemonsError(ctx, { message: 'Category is required', httpStatusCode: 400 });
+    throw new LeemonsError(ctx, {
+      message: "Category is required",
+      httpStatusCode: 400,
+    });
   }
 
   let category = null;
@@ -65,15 +68,20 @@ async function setAsset({
   // Media files
   if (category.key === CATEGORIES.MEDIA_FILES) {
     if (!filesData && !assetFile) {
-      throw new LeemonsError(ctx, { message: 'No file was uploaded', httpStatusCode: 400 });
+      throw new LeemonsError(ctx, {
+        message: "No file was uploaded",
+        httpStatusCode: 400,
+      });
     }
 
     if (filesData?.files) {
-      const files = filesData.files.length ? filesData.files : [filesData.files];
+      const files = filesData.files.length
+        ? filesData.files
+        : [filesData.files];
 
       if (files.length > 1) {
         throw new LeemonsError(ctx, {
-          message: 'Multiple file uploading is not enabled yet',
+          message: "Multiple file uploading is not enabled yet",
           httpStatusCode: 501,
         });
       }
@@ -83,11 +91,19 @@ async function setAsset({
       file = assetFile;
     }
 
-    cover = filesData?.cover || filesData?.coverFile || assetCover || assetData.coverFile;
+    cover =
+      filesData?.cover ||
+      filesData?.coverFile ||
+      assetCover ||
+      assetData.coverFile;
   }
   // Bookmarks
   else if (category.key === CATEGORIES.BOOKMARKS) {
-    cover = assetCover || filesData?.cover || filesData?.coverFile || assetData.coverFile;
+    cover =
+      assetCover ||
+      filesData?.cover ||
+      filesData?.coverFile ||
+      assetData.coverFile;
   }
 
   // ES: Preparamos las Tags en caso de que lleguen como string
@@ -95,7 +111,7 @@ async function setAsset({
   let tagValues = tags || [];
 
   if (_.isString(tagValues)) {
-    tagValues = tagValues.split(',');
+    tagValues = tagValues.split(",");
   }
 
   let asset;
@@ -107,13 +123,28 @@ async function setAsset({
 
   if (id) {
     asset = await update({
-      data: { ...assetData, id, category, categoryId, cover, file, tags: tagValues },
-      ctx: { ...ctx, callerPlugin: ctx.prefixPN('') },
+      data: {
+        ...assetData,
+        id,
+        category,
+        categoryId,
+        cover,
+        file,
+        tags: tagValues,
+      },
+      ctx: { ...ctx, callerPlugin: ctx.prefixPN("") },
     });
   } else {
     asset = await add({
-      asset: { ...assetData, category, categoryId, cover, file, tags: tagValues },
-      ctx: { ...ctx, callerPlugin: ctx.prefixPN('') },
+      asset: {
+        ...assetData,
+        category,
+        categoryId,
+        cover,
+        file,
+        tags: tagValues,
+      },
+      ctx: { ...ctx, callerPlugin: ctx.prefixPN("") },
     });
   }
 

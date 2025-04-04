@@ -1,7 +1,7 @@
-const temp = require('temp');
-const fs = require('fs');
-const { isReadableStream } = require('./isReadableStream');
-const { streamToBuffer } = require('./streamToBuffer');
+const temp = require("temp");
+const fs = require("fs");
+const { isReadableStream } = require("./isReadableStream");
+const { streamToBuffer } = require("./streamToBuffer");
 /**
  * Creates a temporary file from a readable stream or a buffer.
  *
@@ -12,12 +12,13 @@ const { streamToBuffer } = require('./streamToBuffer');
  */
 function createTemp({ readStream, contentType }) {
   return new Promise((resolve, reject) => {
-    temp.open('leebrary', async (err, info) => {
+    temp.open("leebrary", async (err, info) => {
       if (err) {
         reject(err);
       }
 
-      let dataToWrite = readStream?.type === 'Buffer' ? Buffer.from(readStream) : readStream;
+      let dataToWrite =
+        readStream?.type === "Buffer" ? Buffer.from(readStream) : readStream;
 
       if (isReadableStream(dataToWrite)) {
         dataToWrite = await streamToBuffer(dataToWrite);

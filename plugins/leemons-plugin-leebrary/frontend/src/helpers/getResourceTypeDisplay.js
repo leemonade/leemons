@@ -1,15 +1,15 @@
-import { capitalize } from 'lodash';
+import { capitalize } from "lodash";
 
-import prepareAssetType from './prepareAssetType';
+import prepareAssetType from "./prepareAssetType";
 
 function getResourceTypeDisplay(asset) {
   const parseFileType = prepareAssetType(asset?.file?.type, false);
 
   const isFile =
-    parseFileType === 'audio' ||
-    parseFileType === 'video' ||
-    parseFileType === 'image' ||
-    parseFileType === 'document';
+    parseFileType === "audio" ||
+    parseFileType === "video" ||
+    parseFileType === "image" ||
+    parseFileType === "document";
 
   const fileLabel = isFile ? parseFileType : asset?.extension;
 

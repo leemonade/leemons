@@ -1,5 +1,5 @@
-const { fetchAssetFilesByAssets } = require('./fetchAssetFilesByAssets');
-const { fetchAssetFilesByType } = require('./fetchAssetFilesByType');
+const { fetchAssetFilesByAssets } = require("./fetchAssetFilesByAssets");
+const { fetchAssetFilesByType } = require("./fetchAssetFilesByType");
 
 /**
  * Fetches the assets by type.

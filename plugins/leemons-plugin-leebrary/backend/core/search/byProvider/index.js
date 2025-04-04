@@ -1,4 +1,4 @@
-const byProvider = require('./byProvider');
+const byProvider = require("./byProvider");
 
 module.exports = {
   ...byProvider,

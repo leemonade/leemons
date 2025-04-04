@@ -1,5 +1,8 @@
-import React from 'react';
-import { ASSIGN_ICON_PROP_TYPES, ASSIGN_ICON_DEFAULT_PROPS } from './AssignIcon.constants';
+import React from "react";
+import {
+  ASSIGN_ICON_PROP_TYPES,
+  ASSIGN_ICON_DEFAULT_PROPS,
+} from "./AssignIcon.constants";
 
 const AssignIcon = ({ width, height, color }) => (
   <svg
@@ -29,6 +32,6 @@ const AssignIcon = ({ width, height, color }) => (
 AssignIcon.defaultProps = ASSIGN_ICON_DEFAULT_PROPS;
 AssignIcon.propTypes = ASSIGN_ICON_PROP_TYPES;
 
-AssignIcon.displayName = 'AssignIcon';
+AssignIcon.displayName = "AssignIcon";
 export default AssignIcon;
 export { AssignIcon };

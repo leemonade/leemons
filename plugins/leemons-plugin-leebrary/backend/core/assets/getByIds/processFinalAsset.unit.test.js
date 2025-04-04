@@ -1,15 +1,15 @@
-const { it, expect } = require('@jest/globals');
+const { it, expect } = require("@jest/globals");
 
-const { processFinalAsset } = require('./processFinalAsset');
-const getAssets = require('../../../__fixtures__/getAssets');
-const getCategory = require('../../../__fixtures__/getCategory');
-const { CATEGORIES } = require('../../../config/constants');
+const { processFinalAsset } = require("./processFinalAsset");
+const getAssets = require("../../../__fixtures__/getAssets");
+const getCategory = require("../../../__fixtures__/getCategory");
+const { CATEGORIES } = require("../../../config/constants");
 
 const { assetModel } = getAssets();
 const mockProgram = {
-  id: 'programOneId',
-  name: 'programOne',
-  abbreviation: 'p1',
+  id: "programOneId",
+  name: "programOne",
+  abbreviation: "p1",
   credits: null,
   maxGroupAbbreviation: 9,
   maxGroupAbbreviationIsOnlyNumbers: true,
@@ -18,55 +18,55 @@ const mockProgram = {
   hideCoursesInTree: false,
   moreThanOneAcademicYear: false,
   numberOfSubstages: 1,
-  subjectsFirstDigit: 'a',
+  subjectsFirstDigit: "a",
   subjectsDigits: 1,
 };
 const assetOne = {
   ...assetModel,
-  id: 'assetOneId',
-  name: 'assetOne',
+  id: "assetOneId",
+  name: "assetOne",
   program: mockProgram.id,
   canAccess: [
     {
-      id: 'userId1',
-      email: 'user1@example.com',
-      name: 'User1',
-      surnames: 'Surname1',
-      secondSurname: 'SecondSurname1',
-      birthdate: '1990-01-01',
-      avatar: 'avatar1.png',
-      gender: 'male',
-      userAgentIds: ['userAgentOne'],
-      permissions: ['owner'],
+      id: "userId1",
+      email: "user1@example.com",
+      name: "User1",
+      surnames: "Surname1",
+      secondSurname: "SecondSurname1",
+      birthdate: "1990-01-01",
+      avatar: "avatar1.png",
+      gender: "male",
+      userAgentIds: ["userAgentOne"],
+      permissions: ["owner"],
       editable: true,
     },
   ],
 };
 const assetTwo = {
   ...assetModel,
-  id: 'assetTwoId',
-  name: 'assetTwo',
+  id: "assetTwoId",
+  name: "assetTwo",
   program: mockProgram.id,
   canAccess: [
     {
-      id: 'userId1',
-      email: 'user1@example.com',
-      name: 'User1',
-      surnames: 'Surname1',
-      secondSurname: 'SecondSurname1',
-      birthdate: '1990-01-01',
-      avatar: 'avatar1.png',
-      gender: 'male',
-      userAgentIds: ['userAgentOne'],
-      permissions: ['editor'],
+      id: "userId1",
+      email: "user1@example.com",
+      name: "User1",
+      surnames: "Surname1",
+      secondSurname: "SecondSurname1",
+      birthdate: "1990-01-01",
+      avatar: "avatar1.png",
+      gender: "male",
+      userAgentIds: ["userAgentOne"],
+      permissions: ["editor"],
       editable: true,
     },
   ],
 };
 const { categoryObject: mockCategory } = getCategory();
-const mockTags = [['Leemons'], []];
+const mockTags = [["Leemons"], []];
 
-it('should process the final asset with additional properties', () => {
+it("should process the final asset with additional properties", () => {
   const programsById = {
     [mockProgram.id]: mockProgram,
   };
@@ -84,7 +84,7 @@ it('should process the final asset with additional properties', () => {
   const tags = mockTags;
   const checkPins = true;
   const pins = [];
-  const userAgents = ['userAgentOne'];
+  const userAgents = ["userAgentOne"];
 
   const processedAsset = processFinalAsset({
     asset: assetOne,
@@ -114,11 +114,11 @@ it('should process the final asset with additional properties', () => {
     deleteable: true,
     shareable: true,
     assignable: true,
-    role: 'owner',
+    role: "owner",
   });
 });
 
-it('should process the final asset with all flags set to false', () => {
+it("should process the final asset with all flags set to false", () => {
   const programsById = {
     [mockProgram.id]: mockProgram,
   };
@@ -136,7 +136,7 @@ it('should process the final asset with all flags set to false', () => {
   const tags = [];
   const checkPins = false;
   const pins = [];
-  const userAgents = ['userAgentOne'];
+  const userAgents = ["userAgentOne"];
 
   const processedAsset = processFinalAsset({
     asset: assetTwo,
@@ -160,16 +160,16 @@ it('should process the final asset with all flags set to false', () => {
     editable: true,
     deleteable: false,
     shareable: true,
-    role: 'editor',
+    role: "editor",
     assignable: true,
   });
 });
 
-it('should process an asset without canAccess, permissionsByAsset and canEditPermissions', () => {
+it("should process an asset without canAccess, permissionsByAsset and canEditPermissions", () => {
   const assetThree = {
     ...assetModel,
-    id: 'assetThreeId',
-    name: 'assetThree',
+    id: "assetThreeId",
+    name: "assetThree",
     canAccess: null,
   };
   const programsById = {
@@ -184,7 +184,7 @@ it('should process an asset without canAccess, permissionsByAsset and canEditPer
   const tags = [];
   const checkPins = false;
   const pins = [];
-  const userAgents = ['userAgentOne'];
+  const userAgents = ["userAgentOne"];
 
   const processedAsset = processFinalAsset({
     asset: assetThree,

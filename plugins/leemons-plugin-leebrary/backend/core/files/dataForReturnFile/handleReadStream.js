@@ -1,5 +1,5 @@
-const fs = require('fs');
-const { getByName: getProviderByName } = require('../../providers/getByName');
+const fs = require("fs");
+const { getByName: getProviderByName } = require("../../providers/getByName");
 
 /**
  * Get the read stream for the file
@@ -26,14 +26,17 @@ async function handleReadStream({
   let readStream = null;
 
   // Default provider
-  if (file.provider === 'sys') {
-    readStream = fs.createReadStream(file.uri + (path ? `/${path}` : ''), readParams);
+  if (file.provider === "sys") {
+    readStream = fs.createReadStream(
+      file.uri + (path ? `/${path}` : ""),
+      readParams
+    );
   } else {
     // Other providers
     const provider = await getProviderByName({ name: file.provider, ctx });
     if (provider?.supportedMethods?.getReadStream) {
       readStream = await ctx.tx.call(`${file.provider}.files.getReadStream`, {
-        key: file.uri + (path ? `/${path}` : ''),
+        key: file.uri + (path ? `/${path}` : ""),
         start: bytesStart,
         end: bytesEnd,
         forceStream,

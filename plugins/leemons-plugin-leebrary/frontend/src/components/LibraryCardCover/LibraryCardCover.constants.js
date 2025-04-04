@@ -1,11 +1,11 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 import {
   LIBRARY_CARD_DEADLINE_PROP_TYPES,
   LIBRARYCARD_COVER_DIRECTIONS,
   LIBRARY_CARD_MENU_ITEM,
   LIBRARYCARD_ASSIGMENT_ROLES,
-} from '../Library.constants';
-import { SUBJECT_PROPS } from '../LibraryCard/LibraryCard.constants';
+} from "../Library.constants";
+import { SUBJECT_PROPS } from "../LibraryCard/LibraryCard.constants";
 
 export { LIBRARYCARD_COVER_DIRECTIONS };
 
@@ -42,14 +42,14 @@ export const overlayVariants = {
     opacity: 0,
     transition: {
       duration: 0.3,
-      type: 'tween',
+      type: "tween",
     },
   },
   visible: {
     opacity: 1,
     transition: {
       duration: 0.3,
-      type: 'tween',
+      type: "tween",
     },
   },
 };

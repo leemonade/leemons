@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import useCategories from '@leebrary/request/hooks/queries/useCategories';
+import useCategories from "@leebrary/request/hooks/queries/useCategories";
 
 export function usePickerCategories() {
   const { data: categories } = useCategories({ placeholderData: [] });

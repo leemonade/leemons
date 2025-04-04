@@ -1,2 +1,2 @@
-export * from './PDFPlayer';
-export * from './PDFPlayer.constants';
+export * from "./PDFPlayer";
+export * from "./PDFPlayer.constants";

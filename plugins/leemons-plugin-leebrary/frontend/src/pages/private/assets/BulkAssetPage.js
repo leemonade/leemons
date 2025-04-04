@@ -1,6 +1,6 @@
-import { useRef, useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { useHistory } from 'react-router-dom';
+import { useRef, useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useHistory } from "react-router-dom";
 
 import {
   TotalLayoutContainer,
@@ -10,21 +10,21 @@ import {
   Button,
   Stack,
   LoadingOverlay,
-} from '@bubbles-ui/components';
-import { addErrorAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { ScormCardIcon } from '@scorm/components/icons';
+} from "@bubbles-ui/components";
+import { addErrorAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { ScormCardIcon } from "@scorm/components/icons";
 
-import AddBulkResources from '@leebrary/components/AddBulkResources/AddBulkResources';
-import { LIBRARY_FORM_TYPES } from '@leebrary/components/LibraryForm/LibraryForm.constants';
-import { ManageBulkAssets } from '@leebrary/components/ManageBulkAssets/ManageBulkAssets';
-import compressImage from '@leebrary/helpers/compressImage';
-import prefixPN from '@leebrary/helpers/prefixPN';
-import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
-import { newAssetRequest, getAssetsByIdsRequest } from '@leebrary/request';
+import AddBulkResources from "@leebrary/components/AddBulkResources/AddBulkResources";
+import { LIBRARY_FORM_TYPES } from "@leebrary/components/LibraryForm/LibraryForm.constants";
+import { ManageBulkAssets } from "@leebrary/components/ManageBulkAssets/ManageBulkAssets";
+import compressImage from "@leebrary/helpers/compressImage";
+import prefixPN from "@leebrary/helpers/prefixPN";
+import uploadFileAsMultipart from "@leebrary/helpers/uploadFileAsMultipart";
+import { newAssetRequest, getAssetsByIdsRequest } from "@leebrary/request";
 
 const BulkAssetPage = () => {
-  const [t] = useTranslateLoader(prefixPN('bulkUpload'));
+  const [t] = useTranslateLoader(prefixPN("bulkUpload"));
   const scrollRef = useRef(null);
   const history = useHistory();
   const formForAssets = useForm({
@@ -35,7 +35,7 @@ const BulkAssetPage = () => {
 
   const { control, watch } = formForAssets;
 
-  const assetFiles = watch('file');
+  const assetFiles = watch("file");
   const hasFilesSelected = assetFiles?.length > 0;
   const filesSelectedCount = assetFiles?.length;
 
@@ -50,7 +50,9 @@ const BulkAssetPage = () => {
   useEffect(() => {
     if (assetFiles?.length) {
       const newQueue = assetFiles.filter(
-        (file) => !uploadStatus[file.name] && !currentBatch.find((f) => f.name === file.name)
+        (file) =>
+          !uploadStatus[file.name] &&
+          !currentBatch.find((f) => f.name === file.name)
       );
       setUploadQueue(newQueue);
     }
@@ -77,7 +79,7 @@ const BulkAssetPage = () => {
 
   const removeFile = (fileName) => {
     const newFiles = assetFiles?.filter((file) => file.name !== fileName);
-    formForAssets.setValue('file', newFiles);
+    formForAssets.setValue("file", newFiles);
 
     setUploadStatus((prev) => {
       const newStatus = { ...prev };
@@ -99,14 +101,14 @@ const BulkAssetPage = () => {
     try {
       setUploadStatus((prev) => ({
         ...prev,
-        [file.name]: { state: 'uploading', percentageCompleted: 0 },
+        [file.name]: { state: "uploading", percentageCompleted: 0 },
       }));
 
       let fileToUpload = file;
       if (
-        file.type?.startsWith('image') &&
-        !file.type?.includes('gif') &&
-        !file.type?.includes('svg')
+        file.type?.startsWith("image") &&
+        !file.type?.includes("gif") &&
+        !file.type?.includes("svg")
       ) {
         fileToUpload = await compressImage({ file });
       }
@@ -127,12 +129,12 @@ const BulkAssetPage = () => {
 
       setUploadStatus((prev) => ({
         ...prev,
-        [file.name]: { state: 'uploaded', fileId: uploadedFile },
+        [file.name]: { state: "uploaded", fileId: uploadedFile },
       }));
     } catch (error) {
       setUploadStatus((prev) => ({
         ...prev,
-        [file.name]: { state: 'error' },
+        [file.name]: { state: "error" },
       }));
       addErrorAlert(error.message);
     }
@@ -155,12 +157,12 @@ const BulkAssetPage = () => {
 
           setUploadStatus((prev) => ({
             ...prev,
-            [fileInfo.name]: { ...prev[fileInfo.name], state: 'completed' },
+            [fileInfo.name]: { ...prev[fileInfo.name], state: "completed" },
           }));
         } catch (error) {
           setUploadStatus((prev) => ({
             ...prev,
-            [fileInfo.name]: { state: 'error' },
+            [fileInfo.name]: { state: "error" },
           }));
           addErrorAlert(error.message);
         }
@@ -178,11 +180,11 @@ const BulkAssetPage = () => {
   const handleTitle = () => {
     if (hasFilesSelected) {
       if (assetFiles?.length === 1) {
-        return `${filesSelectedCount} ${t('fileSelected').toLowerCase()}`;
+        return `${filesSelectedCount} ${t("fileSelected").toLowerCase()}`;
       }
-      return `${filesSelectedCount} ${t('filesSelected').toLowerCase()}`;
+      return `${filesSelectedCount} ${t("filesSelected").toLowerCase()}`;
     }
-    return `${t('contentLabel')}`;
+    return `${t("contentLabel")}`;
   };
 
   const areAllFilesUploaded = () => {
@@ -190,15 +192,17 @@ const BulkAssetPage = () => {
       assetFiles?.length > 0 &&
       assetFiles.every(
         (file) =>
-          uploadStatus[file.name]?.state === 'uploaded' ||
-          uploadStatus[file.name]?.state === 'completed'
+          uploadStatus[file.name]?.state === "uploaded" ||
+          uploadStatus[file.name]?.state === "completed"
       )
     );
   };
 
   const handleAssetsUpdate = async (updatedAssets) => {
     try {
-      const refreshedAssets = await getAssetsByIdsRequest(updatedAssets.map((asset) => asset.id));
+      const refreshedAssets = await getAssetsByIdsRequest(
+        updatedAssets.map((asset) => asset.id)
+      );
       if (refreshedAssets?.assets) {
         setCreatedAssets(refreshedAssets.assets);
       }
@@ -212,13 +216,13 @@ const BulkAssetPage = () => {
       scrollRef={scrollRef}
       Header={
         <TotalLayoutHeader
-          title={t('title').toUpperCase()}
+          title={t("title").toUpperCase()}
           icon={<ScormCardIcon />}
           onCancel={() => history.goBack()}
           direction="column"
           formTitlePlaceholder={
             <Text color="soft" style={{ fontSize: 18 }}>
-              {t('bulkLoadLabel')}
+              {t("bulkLoadLabel")}
             </Text>
           }
         />
@@ -232,7 +236,7 @@ const BulkAssetPage = () => {
                 disabled={!areAllFilesUploaded()}
                 onClick={handleSave}
               >
-                {t('saveButton')}
+                {t("saveButton")}
               </Button>
             </Stack>
           </TLayout.Footer>

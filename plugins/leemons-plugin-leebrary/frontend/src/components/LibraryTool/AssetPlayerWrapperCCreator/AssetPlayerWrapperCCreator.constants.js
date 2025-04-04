@@ -1,9 +1,9 @@
-import propTypes from 'prop-types';
+import propTypes from "prop-types";
 
 export const ASSET_PLAYER_WRAPPER_CCREATOR_DEFAULT_PROPS = {
   asset: {},
   isFloating: false,
-  width: '',
+  width: "",
   readOnly: false,
 };
 

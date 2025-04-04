@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { NewResource } from '@leebrary/components/AssetPickerDrawer/components/NewResource';
+import React from "react";
+import PropTypes from "prop-types";
+import { NewResource } from "@leebrary/components/AssetPickerDrawer/components/NewResource";
 
 export default function New({
   localizations,

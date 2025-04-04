@@ -1,6 +1,6 @@
-const { sortBy } = require('lodash');
-const { getByIds } = require('../../assets/getByIds');
-const { getByAssets } = require('../getByAssets/getByAssets');
+const { sortBy } = require("lodash");
+const { getByIds } = require("../../assets/getByIds");
+const { getByAssets } = require("../getByAssets/getByAssets");
 
 /**
  * This function sorts assets based on the provided parameters.
@@ -40,13 +40,15 @@ async function handleSorting({
 
   let sortedAssets = sortBy(assets, sortingBy);
 
-  if (sortDirection === 'desc') {
+  if (sortDirection === "desc") {
     sortedAssets = sortedAssets.reverse();
   }
 
   const sortedIds = sortedAssets.map((item) => item.id);
 
-  return assetsAccessibles.sort((a, b) => sortedIds.indexOf(a.asset) - sortedIds.indexOf(b.asset));
+  return assetsAccessibles.sort(
+    (a, b) => sortedIds.indexOf(a.asset) - sortedIds.indexOf(b.asset)
+  );
 }
 
 module.exports = { handleSorting };

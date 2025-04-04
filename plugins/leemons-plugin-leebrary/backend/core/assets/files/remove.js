@@ -1,4 +1,4 @@
-const { normalizeItemsArray } = require('../../shared');
+const { normalizeItemsArray } = require("../../shared");
 
 /**
  * Removes files and associated assets from the database.

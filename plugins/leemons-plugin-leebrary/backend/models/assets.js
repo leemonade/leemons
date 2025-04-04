@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const assetsSchema = new mongoose.Schema(
   {
@@ -75,11 +75,26 @@ assetsSchema.index({ id: 1, public: 1, deploymentID: 1, isDeleted: 1 });
 assetsSchema.index({ program: 1, id: 1, deploymentID: 1, isDeleted: 1 });
 assetsSchema.index({ fromUser: 1, deploymentID: 1, isDeleted: 1 });
 assetsSchema.index({ category: 1, deploymentID: 1, isDeleted: 1 });
-assetsSchema.index({ category: 1, indexable: 1, deploymentID: 1, isDeleted: 1 });
-assetsSchema.index({ category: 1, public: 1, indexable: 1, deploymentID: 1, isDeleted: 1 });
+assetsSchema.index({
+  category: 1,
+  indexable: 1,
+  deploymentID: 1,
+  isDeleted: 1,
+});
+assetsSchema.index({
+  category: 1,
+  public: 1,
+  indexable: 1,
+  deploymentID: 1,
+  isDeleted: 1,
+});
 assetsSchema.index({ name: 1, indexable: 1, deploymentID: 1, isDeleted: 1 });
 assetsSchema.index({ tagline: 1, indexable: 1, deploymentID: 1, isDeleted: 1 });
 
-const assetsModel = newModel(mongoose.connection, 'v1::leebrary_Assets', assetsSchema);
+const assetsModel = newModel(
+  mongoose.connection,
+  "v1::leebrary_Assets",
+  assetsSchema
+);
 
 module.exports = { assetsModel, assetsSchema };

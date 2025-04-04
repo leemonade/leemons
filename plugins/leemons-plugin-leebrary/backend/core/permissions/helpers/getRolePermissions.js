@@ -1,6 +1,6 @@
-const { LeemonsError } = require('@leemons/error');
-const validateRole = require('./validateRole');
-const { rolesPermissions } = require('../../../config/constants');
+const { LeemonsError } = require("@leemons/error");
+const validateRole = require("./validateRole");
+const { rolesPermissions } = require("../../../config/constants");
 
 /**
  * Retrieves the permissions associated with a given role.
@@ -11,12 +11,15 @@ const { rolesPermissions } = require('../../../config/constants');
  * @returns {Object} The permissions associated with the given role.
  * @throws {LeemonsError} If the provided role is not valid.
  */
-function getRolePermissions({ role = 'noPermission', ctx }) {
+function getRolePermissions({ role = "noPermission", ctx }) {
   if (validateRole(role)) {
     return rolesPermissions[role];
   }
 
-  throw new LeemonsError(ctx, { message: `The role "${role}" is not valid.`, httpStatusCode: 412 });
+  throw new LeemonsError(ctx, {
+    message: `The role "${role}" is not valid.`,
+    httpStatusCode: 412,
+  });
 }
 
 module.exports = getRolePermissions;

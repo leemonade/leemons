@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-const { map, groupBy, find, omit } = require('lodash');
-const semver = require('semver');
+const { map, groupBy, find, omit } = require("lodash");
+const semver = require("semver");
 
 /**
  * This function handles the preference for current assets. It takes in an object with results and context.
@@ -13,7 +13,7 @@ const semver = require('semver');
 async function handlePreferCurrent({ results, ctx }) {
   results = await Promise.all(
     results.map(async (item) => ({
-      ...(await ctx.tx.call('common.versionControl.parseId', {
+      ...(await ctx.tx.call("common.versionControl.parseId", {
         id: item.asset,
         verifyVersion: false,
         ignoreMissing: true,
@@ -32,11 +32,11 @@ async function handlePreferCurrent({ results, ctx }) {
   return map(groupedAssets, (values) => {
     const versions = map(values, (id) => id.version);
 
-    const latest = semver.maxSatisfying(versions, '*');
+    const latest = semver.maxSatisfying(versions, "*");
 
     return omit(
       find(values, (id) => id.version === latest),
-      ['uuid', 'version', 'fullId']
+      ["uuid", "version", "fullId"]
     );
   });
 }

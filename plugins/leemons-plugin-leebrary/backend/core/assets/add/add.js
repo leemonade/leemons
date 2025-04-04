@@ -1,24 +1,24 @@
 /* eslint-disable no-param-reassign */
-const { isNil } = require('lodash');
+const { isNil } = require("lodash");
 
-const { CATEGORIES } = require('../../../config/constants');
-const { add: addBookmark } = require('../../bookmarks/add');
+const { CATEGORIES } = require("../../../config/constants");
+const { add: addBookmark } = require("../../bookmarks/add");
 const {
   set: setCenterAssetItemPermission,
-} = require('../../permissions/centerAssetItemPermission');
-const { normalizeItemsArray } = require('../../shared');
-const { validateAddAsset } = require('../../validations/forms');
+} = require("../../permissions/centerAssetItemPermission");
+const { normalizeItemsArray } = require("../../shared");
+const { validateAddAsset } = require("../../validations/forms");
 
-const { checkAndHandleCanUse } = require('./checkAndHandleCanUse');
-const { createAssetInDB } = require('./createAssetInDb');
-const { handleBookmarkData } = require('./handleBookmarkData');
-const { handleCategoryData } = require('./handleCategoryData');
-const { handleFileUpload } = require('./handleFileUpload');
-const { handleFiles } = require('./handleFiles');
-const { handlePermissions } = require('./handlePermissions');
-const { handleSubjects } = require('./handleSubjects');
-const { handleUserSessionData } = require('./handleUserSessionData');
-const { handleVersion } = require('./handleVersion');
+const { checkAndHandleCanUse } = require("./checkAndHandleCanUse");
+const { createAssetInDB } = require("./createAssetInDb");
+const { handleBookmarkData } = require("./handleBookmarkData");
+const { handleCategoryData } = require("./handleCategoryData");
+const { handleFileUpload } = require("./handleFileUpload");
+const { handleFiles } = require("./handleFiles");
+const { handlePermissions } = require("./handlePermissions");
+const { handleSubjects } = require("./handleSubjects");
+const { handleUserSessionData } = require("./handleUserSessionData");
+const { handleVersion } = require("./handleVersion");
 
 /*
 * permissions example
@@ -87,7 +87,12 @@ async function add({
   // ··········································
   // PROCESS CATEGORY AND CHECK PERMISSIONS
 
-  category = await handleCategoryData({ category, categoryId, categoryKey, ctx });
+  category = await handleCategoryData({
+    category,
+    categoryId,
+    categoryKey,
+    ctx,
+  });
   checkAndHandleCanUse({ category, calledFrom: ctx.callerPlugin, ctx });
 
   // ··········································································
@@ -154,7 +159,11 @@ async function add({
     ctx,
   });
 
-  await setCenterAssetItemPermission({ assetId: newAsset.id, isPublishing: published, ctx });
+  await setCenterAssetItemPermission({
+    assetId: newAsset.id,
+    isPublishing: published,
+    ctx,
+  });
 
   // ··········································································
   // ADD FILES
@@ -183,8 +192,8 @@ async function add({
 
   if (tags?.length > 0) {
     promises.push(
-      ctx.tx.call('common.tags.setTagsToValues', {
-        type: ctx.prefixPN(''),
+      ctx.tx.call("common.tags.setTagsToValues", {
+        type: ctx.prefixPN(""),
         tags,
         values: newAsset.id,
       })

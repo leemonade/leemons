@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 /**
  * Retrieves file IDs associated with a given asset.
  * It first checks if the asset has a cover and if so, adds the cover to the file IDs array.
@@ -16,8 +16,10 @@ async function getFileIds({ asset, ctx }) {
   if (asset.cover) {
     fileIds.push(asset.cover);
   }
-  const assetFiles = await ctx.tx.db.AssetsFiles.find({ asset: asset.id }).lean();
-  fileIds.push(..._.map(assetFiles, 'file'));
+  const assetFiles = await ctx.tx.db.AssetsFiles.find({
+    asset: asset.id,
+  }).lean();
+  fileIds.push(..._.map(assetFiles, "file"));
 
   return _.compact(_.uniq(fileIds));
 }

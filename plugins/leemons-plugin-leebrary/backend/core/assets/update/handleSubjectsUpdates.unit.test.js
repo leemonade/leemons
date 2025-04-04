@@ -1,9 +1,15 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { handleSubjectsUpdates } = require('./handleSubjectsUpdates');
-const { assetsSubjectsSchema } = require('../../../models/assetsSubjects');
+const { handleSubjectsUpdates } = require("./handleSubjectsUpdates");
+const { assetsSubjectsSchema } = require("../../../models/assetsSubjects");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -21,31 +27,35 @@ beforeAll(async () => {
   ctx = generateCtx({
     actions: {},
     models: {
-      AssetsSubjects: newModel(mongooseConnection, 'ExampleModel', assetsSubjectsSchema),
+      AssetsSubjects: newModel(
+        mongooseConnection,
+        "ExampleModel",
+        assetsSubjectsSchema
+      ),
     },
   });
 
   initialSubjects = [
     {
-      asset: 'someAssetId',
-      subject: 'subject1',
+      asset: "someAssetId",
+      subject: "subject1",
     },
     {
-      asset: 'someAssetId',
-      subject: 'subject2',
+      asset: "someAssetId",
+      subject: "subject2",
     },
   ];
 
-  assetId = 'someAssetId';
+  assetId = "someAssetId";
   subjects = [
     {
-      subject: 'subject3',
+      subject: "subject3",
     },
     {
-      subject: 'subject4',
+      subject: "subject4",
     },
     {
-      subject: 'subject5',
+      subject: "subject5",
     },
   ];
 });
@@ -61,11 +71,11 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should handle subjects updates correctly', async () => {
+it("Should handle subjects updates correctly", async () => {
   // Arrange
 
   await ctx.tx.db.AssetsSubjects.create(initialSubjects);
-  const diff = ['subjects'];
+  const diff = ["subjects"];
 
   // Act
   await handleSubjectsUpdates({ assetId, subjects, diff, ctx });
@@ -85,7 +95,7 @@ it('Should not update subjects if diff does not include "subjects"', async () =>
   // Arrange
 
   await ctx.tx.db.AssetsSubjects.create(initialSubjects);
-  const diff = ['notSubjects'];
+  const diff = ["notSubjects"];
 
   // Act
   await handleSubjectsUpdates({ assetId, subjects, diff, ctx });
@@ -102,26 +112,26 @@ it('Should not update subjects if diff does not include "subjects"', async () =>
   expect(newSubjects.length).toBe(0);
 });
 
-it('Should throw an error if subjects to add do not have the subject field', async () => {
+it("Should throw an error if subjects to add do not have the subject field", async () => {
   // Arrange
   const invalidSubjects = [
     {
-      asset: 'someAssetId',
+      asset: "someAssetId",
       // missing subject field
     },
   ];
 
-  const diff = ['subjects'];
+  const diff = ["subjects"];
 
   // Act and Assert
   await expect(
     handleSubjectsUpdates({ assetId, subjects: invalidSubjects, diff, ctx })
   ).rejects.toThrow();
 });
-it('Should handle empty subjects array correctly', async () => {
+it("Should handle empty subjects array correctly", async () => {
   // Arrange
   const emptySubjects = [];
-  const diff = ['subjects'];
+  const diff = ["subjects"];
 
   // Act
   await handleSubjectsUpdates({ assetId, subjects: emptySubjects, diff, ctx });

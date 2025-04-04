@@ -1,7 +1,9 @@
-const { LeemonsError } = require('@leemons/error');
-const { getByIds: getAssets } = require('../getByIds/getByIds');
-const { getByCategory: getByPermissions } = require('../../permissions/getByCategory');
-const { getPublicAssets } = require('./getPublicAssets');
+const { LeemonsError } = require("@leemons/error");
+const { getByIds: getAssets } = require("../getByIds/getByIds");
+const {
+  getByCategory: getByPermissions,
+} = require("../../permissions/getByCategory");
+const { getPublicAssets } = require("./getPublicAssets");
 
 /**
  * Fetches assets by user and category.
@@ -24,7 +26,11 @@ async function getByUserAndCategory({
 }) {
   try {
     // Must include private and public assets
-    const privateAssets = await getByPermissions({ categoryId, indexable, ctx });
+    const privateAssets = await getByPermissions({
+      categoryId,
+      indexable,
+      ctx,
+    });
     const publicAssets = await getPublicAssets({
       includePublic,
       categoryId,
@@ -32,7 +38,9 @@ async function getByUserAndCategory({
       ctx,
     });
 
-    const assets = privateAssets.concat(publicAssets).map((item) => item.id || item.asset);
+    const assets = privateAssets
+      .concat(publicAssets)
+      .map((item) => item.id || item.asset);
 
     if (details) {
       return getAssets({ ids: assets, ctx });

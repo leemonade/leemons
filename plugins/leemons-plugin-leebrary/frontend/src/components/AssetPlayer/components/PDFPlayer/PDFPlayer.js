@@ -1,18 +1,29 @@
-import React, { useState } from 'react';
-import { Box, RadioGroup } from '@bubbles-ui/components';
-import { ArrowRightIcon, ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { ComputerKeyboardIcon, ComputerKeyboardNextIcon, StarIcon } from '@bubbles-ui/icons/solid';
-import { Document, Page } from 'react-pdf';
-import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import 'react-pdf/dist/esm/Page/TextLayer.css';
-import { PDF_PLAYER_DEFAULT_PROPS, PDF_PLAYER_PROP_TYPES } from './PDFPlayer.constants';
-import { PDFPlayerStyles } from './PDFPlayer.styles';
+import React, { useState } from "react";
+import { Box, RadioGroup } from "@bubbles-ui/components";
+import {
+  ArrowRightIcon,
+  ChevLeftIcon,
+  ChevRightIcon,
+} from "@bubbles-ui/icons/outline";
+import {
+  ComputerKeyboardIcon,
+  ComputerKeyboardNextIcon,
+  StarIcon,
+} from "@bubbles-ui/icons/solid";
+import { Document, Page } from "react-pdf";
+import "react-pdf/dist/esm/Page/AnnotationLayer.css";
+import "react-pdf/dist/esm/Page/TextLayer.css";
+import {
+  PDF_PLAYER_DEFAULT_PROPS,
+  PDF_PLAYER_PROP_TYPES,
+} from "./PDFPlayer.constants";
+import { PDFPlayerStyles } from "./PDFPlayer.styles";
 
 const PDFPlayer = ({ pdf, labels, useSchema, className }) => {
   const [activePage, setActivePage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [isThumbnailOpen, setIsThumbnailOpen] = useState(true);
-  const [thumbnailMode, setThumbnailMode] = useState('thumbnail');
+  const [thumbnailMode, setThumbnailMode] = useState("thumbnail");
   const [isCurrentPageRendered, setIsCurrentPageRendered] = useState(false);
 
   const changePage = (page) => {
@@ -42,7 +53,7 @@ const PDFPlayer = ({ pdf, labels, useSchema, className }) => {
 
   const { classes, cx } = PDFPlayerStyles(
     { isThumbnailOpen, isCurrentPageRendered, thumbnailMode },
-    { name: 'PDFPlayer' }
+    { name: "PDFPlayer" }
   );
   return (
     <Document
@@ -79,8 +90,11 @@ const PDFPlayer = ({ pdf, labels, useSchema, className }) => {
               {Array.from(new Array(totalPages), (el, index) => {
                 const currentPage = index + 1;
                 return (
-                  <Box key={`page_${currentPage}`} className={classes.thumbnailWrapper}>
-                    {thumbnailMode === 'thumbnail' && (
+                  <Box
+                    key={`page_${currentPage}`}
+                    className={classes.thumbnailWrapper}
+                  >
+                    {thumbnailMode === "thumbnail" && (
                       <Page
                         pageNumber={currentPage}
                         renderAnnotationLayer={false}
@@ -94,7 +108,11 @@ const PDFPlayer = ({ pdf, labels, useSchema, className }) => {
                     )}
                     <Box
                       className={classes.pageLabel}
-                      onClick={thumbnailMode !== 'thumbnail' ? () => changePage(currentPage) : null}
+                      onClick={
+                        thumbnailMode !== "thumbnail"
+                          ? () => changePage(currentPage)
+                          : null
+                      }
                     >{`${labels.pageLabel} ${currentPage}`}</Box>
                   </Box>
                 );
@@ -113,7 +131,9 @@ const PDFPlayer = ({ pdf, labels, useSchema, className }) => {
           <ChevLeftIcon
             height={24}
             width={24}
-            className={cx(classes.paginatorIcon, { [classes.disabledIcon]: activePage === 1 })}
+            className={cx(classes.paginatorIcon, {
+              [classes.disabledIcon]: activePage === 1,
+            })}
             onClick={() => pageBackward()}
           />
           <Box

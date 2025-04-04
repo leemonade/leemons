@@ -1,6 +1,6 @@
-const { parseMetadata } = require('../helpers/parseMetadata');
+const { parseMetadata } = require("../helpers/parseMetadata");
 
-const { prepareQuery } = require('./prepareQuery');
+const { prepareQuery } = require("./prepareQuery");
 
 /**
  * Get files by type.

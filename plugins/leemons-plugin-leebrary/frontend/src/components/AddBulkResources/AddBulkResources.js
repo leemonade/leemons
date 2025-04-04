@@ -1,10 +1,10 @@
-import { Controller } from 'react-hook-form';
+import { Controller } from "react-hook-form";
 
-import { FileUpload, ContextContainer, TLayout } from '@bubbles-ui/components';
-import { DownloadIcon } from '@bubbles-ui/icons/outline';
-import propTypes from 'prop-types';
+import { FileUpload, ContextContainer, TLayout } from "@bubbles-ui/components";
+import { DownloadIcon } from "@bubbles-ui/icons/outline";
+import propTypes from "prop-types";
 
-import BulkUploadTable from '../BulkUploadTable/BulkUploadTable';
+import BulkUploadTable from "../BulkUploadTable/BulkUploadTable";
 
 const MAX_FILE_SIZE = 1073741824; // 1GB
 
@@ -24,7 +24,7 @@ const AddBulkResources = ({
           <Controller
             control={control}
             name="file"
-            rules={{ required: t('requiredLabel') }}
+            rules={{ required: t("requiredLabel") }}
             render={({ field: { ref, value, ...field } }) => (
               <FileUpload
                 {...field}
@@ -32,36 +32,36 @@ const AddBulkResources = ({
                 initialFiles={assetFiles}
                 maxSize={MAX_FILE_SIZE}
                 icon={<DownloadIcon height={32} width={32} />}
-                title={t('fileUploadTitle')}
-                subtitle={t('fileUploadSubtitle')}
+                title={t("fileUploadTitle")}
+                subtitle={t("fileUploadSubtitle")}
                 errorMessage={{
-                  title: t('fileUploadErrorTitle'),
-                  message: t('fileUploadErrorMessage'),
+                  title: t("fileUploadErrorTitle"),
+                  message: t("fileUploadErrorMessage"),
                 }}
                 hideUploadButton
                 showItemsToUpload={false}
                 accept={[
                   // Imágenes
-                  'image/*',
+                  "image/*",
                   // Videos
-                  'video/*',
+                  "video/*",
                   // Audio
-                  'audio/*',
+                  "audio/*",
                   // Documentos de texto
-                  '.txt',
-                  '.pdf',
-                  'application/pdf',
+                  ".txt",
+                  ".pdf",
+                  "application/pdf",
                   // Microsoft Office
-                  '.doc',
-                  '.docx',
-                  '.xls',
-                  '.xlsx',
-                  '.ppt',
-                  '.pptx',
+                  ".doc",
+                  ".docx",
+                  ".xls",
+                  ".xlsx",
+                  ".ppt",
+                  ".pptx",
                   // OpenDocument
-                  '.odt',
-                  '.ods',
-                  '.odp',
+                  ".odt",
+                  ".ods",
+                  ".odp",
                 ]}
               />
             )}

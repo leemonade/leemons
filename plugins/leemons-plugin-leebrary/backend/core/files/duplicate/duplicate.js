@@ -1,8 +1,8 @@
-const { findOne: getSettings } = require('../../settings');
-const { dataForReturnFile } = require('../dataForReturnFile');
-const { uploadFromSource } = require('../helpers/uploadFromSource');
+const { findOne: getSettings } = require("../../settings");
+const { dataForReturnFile } = require("../dataForReturnFile");
+const { uploadFromSource } = require("../helpers/uploadFromSource");
 
-const { handleCloneFile } = require('./handleCloneFile');
+const { handleCloneFile } = require("./handleCloneFile");
 
 /**
  * Duplicates a file by creating a new file with the same content.
@@ -13,7 +13,7 @@ const { handleCloneFile } = require('./handleCloneFile');
  * @param {MoleculerContext} params.ctx - The moleculer context object.
  * @returns {Promise<Object>} The duplicated file object.
  */
-async function duplicate({ file, toFolder = 'leebrary', ctx } = {}) {
+async function duplicate({ file, toFolder = "leebrary", ctx } = {}) {
   // eslint-disable-next-line camelcase
   const { created_at, updated_at, createdAt, updatedAt, ...fromFile } = file;
 
@@ -22,7 +22,12 @@ async function duplicate({ file, toFolder = 'leebrary', ctx } = {}) {
   const { providerName } = await getSettings({ ctx });
 
   if (providerName) {
-    const newFile = await handleCloneFile({ fromFile, providerName, toFolder, ctx });
+    const newFile = await handleCloneFile({
+      fromFile,
+      providerName,
+      toFolder,
+      ctx,
+    });
     if (newFile) {
       return newFile;
     }

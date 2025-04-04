@@ -1,14 +1,16 @@
-const { isEmpty } = require('lodash');
-const { LeemonsError } = require('@leemons/error');
+const { isEmpty } = require("lodash");
+const { LeemonsError } = require("@leemons/error");
 
-const { remove: removeFiles } = require('../files/remove');
-const { getByAsset: getFilesByAsset } = require('../files/getByAsset/getByAsset');
-const { getById: getCategoryById } = require('../../categories/getById');
-const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
-const getAssetPermissionName = require('../../permissions/helpers/getAssetPermissionName');
-const { getByIds } = require('../getByIds/getByIds');
-const { remove: removeBookmark } = require('../../bookmarks/remove');
-const { CATEGORIES } = require('../../../config/constants');
+const { remove: removeFiles } = require("../files/remove");
+const {
+  getByAsset: getFilesByAsset,
+} = require("../files/getByAsset/getByAsset");
+const { getById: getCategoryById } = require("../../categories/getById");
+const { getByAsset: getPermissions } = require("../../permissions/getByAsset");
+const getAssetPermissionName = require("../../permissions/helpers/getAssetPermissionName");
+const { getByIds } = require("../getByIds/getByIds");
+const { remove: removeBookmark } = require("../../bookmarks/remove");
+const { CATEGORIES } = require("../../../config/constants");
 
 /**
  * Removes an asset from the database.
@@ -46,7 +48,7 @@ async function remove({ id, soft, ctx }) {
     });
   }
 
-  await ctx.tx.emit('before-remove-asset', { assetId: id, soft });
+  await ctx.tx.emit("before-remove-asset", { assetId: id, soft });
 
   try {
     // ··········································································
@@ -55,8 +57,8 @@ async function remove({ id, soft, ctx }) {
     // EN: Delete the asset tags to clean the database
     // ES: Eliminar las etiquetas del asset para limpiar la base de datos
 
-    await ctx.tx.call('common.tags.removeAllTagsForValues', {
-      type: ctx.prefixPN(''),
+    await ctx.tx.call("common.tags.removeAllTagsForValues", {
+      type: ctx.prefixPN(""),
       values: id,
     });
 
@@ -109,11 +111,14 @@ async function remove({ id, soft, ctx }) {
 
     await Promise.all([
       // ES: Borramos a todos los agentes el permiso del evento ya que este dejara de existir
-      await ctx.tx.call('users.permissions.removeCustomPermissionForAllUserAgents', {
-        data: permissionQuery,
-      }),
+      await ctx.tx.call(
+        "users.permissions.removeCustomPermissionForAllUserAgents",
+        {
+          data: permissionQuery,
+        }
+      ),
       // ES: Borramos el elemento de la tabla items de permisos ya que dejara de existir
-      await ctx.tx.call('users.permissions.removeItems', {
+      await ctx.tx.call("users.permissions.removeItems", {
         query: {
           type: ctx.prefixPN(asset.category),
           item: id,
@@ -122,7 +127,7 @@ async function remove({ id, soft, ctx }) {
       }),
     ]);
 
-    await ctx.tx.emit('after-remove-asset', { assetId: id, soft });
+    await ctx.tx.emit("after-remove-asset", { assetId: id, soft });
     return true;
   } catch (e) {
     throw new LeemonsError(ctx, {

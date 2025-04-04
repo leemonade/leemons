@@ -1,16 +1,23 @@
-const { it, expect, beforeAll, afterAll, beforeEach, describe } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { LeemonsError } = require('@leemons/error');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  describe,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { LeemonsError } = require("@leemons/error");
+const { newModel } = require("@leemons/mongodb");
 
-const { byTagline } = require('./byTagline');
-const { assetsSchema } = require('../../../models/assets');
-const getAssets = require('../../../__fixtures__/getAssets');
+const { byTagline } = require("./byTagline");
+const { assetsSchema } = require("../../../models/assets");
+const getAssets = require("../../../__fixtures__/getAssets");
 
-jest.mock('../../assets/getByIds');
-const { getByIds: getAssetsByIds } = require('../../assets/getByIds');
+jest.mock("../../assets/getByIds");
+const { getByIds: getAssetsByIds } = require("../../assets/getByIds");
 
-describe('byTagline', () => {
+describe("byTagline", () => {
   let mongooseConnection;
   let disconnectMongoose;
   let ctx;
@@ -24,7 +31,7 @@ describe('byTagline', () => {
 
     ctx = generateCtx({
       models: {
-        Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+        Assets: newModel(mongooseConnection, "Assets", assetsSchema),
       },
     });
   });
@@ -45,59 +52,64 @@ describe('byTagline', () => {
     assets = [
       {
         ...asset,
-        id: 'assetId1',
-        tagline: 'First asset TagLine',
+        id: "assetId1",
+        tagline: "First asset TagLine",
       },
       {
         ...asset,
-        id: 'assetId2',
-        tagline: 'Second asset TagLine',
+        id: "assetId2",
+        tagline: "Second asset TagLine",
       },
     ];
     await ctx.tx.db.Assets.create(assets);
   });
 
-  it('should return assets with the given tagline', async () => {
+  it("should return assets with the given tagline", async () => {
     // Arrange
-    const tagline = 'First';
+    const tagline = "First";
 
     // Act
     const result = await byTagline({ tagline, ctx });
 
     // Assert
-    expect(result).toEqual(['assetId1']);
+    expect(result).toEqual(["assetId1"]);
   });
 
-  it('should return assets with the given tagline (no sensitive search)', async () => {
+  it("should return assets with the given tagline (no sensitive search)", async () => {
     // Arrange
-    const tagline = 'first';
+    const tagline = "first";
 
     // Act
     const result = await byTagline({ tagline, ctx });
 
     // Assert
-    expect(result).toEqual(['assetId1']);
+    expect(result).toEqual(["assetId1"]);
   });
 
-  it('should return detailed assets with the given tagline and details true params', async () => {
+  it("should return detailed assets with the given tagline and details true params", async () => {
     // Arrange
-    const tagline = 'First';
+    const tagline = "First";
     const details = true;
     getAssetsByIds.mockResolvedValue([assets[0].id]);
 
     // Act
-    const result = await byTagline({ tagline, ctx, details, assets: assets.map((el) => el.id) });
+    const result = await byTagline({
+      tagline,
+      ctx,
+      details,
+      assets: assets.map((el) => el.id),
+    });
 
     // Assert
     expect(getAssetsByIds).toBeCalledWith({ ids: [assets[0].id], ctx });
-    expect(result).toEqual(['assetId1']);
+    expect(result).toEqual(["assetId1"]);
   });
 
-  it('should throw an error if function fails', async () => {
+  it("should throw an error if function fails", async () => {
     // Arrange
-    const tagline = 'First';
+    const tagline = "First";
     const details = true;
-    const errorMessage = 'Error Message';
+    const errorMessage = "Error Message";
     getAssetsByIds.mockImplementation(() => {
       throw new Error(errorMessage);
     });

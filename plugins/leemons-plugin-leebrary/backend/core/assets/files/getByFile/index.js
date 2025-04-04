@@ -1,3 +1,3 @@
-const getByFile = require('./getByFile');
+const getByFile = require("./getByFile");
 
 module.exports = { ...getByFile };

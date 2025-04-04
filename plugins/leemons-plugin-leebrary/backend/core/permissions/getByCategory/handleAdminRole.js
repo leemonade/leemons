@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
-const { forEach, findIndex } = require('lodash');
+const { forEach, findIndex } = require("lodash");
 
-const getRolePermissions = require('../helpers/getRolePermissions');
+const getRolePermissions = require("../helpers/getRolePermissions");
 
 /**
  * handleAdminRole is a function that handles the admin role permissions.
@@ -20,15 +20,15 @@ function handleAdminRole({ adminItems, results, assetIds, ctx }) {
   forEach(adminItems, (asset) => {
     const index = findIndex(results, { asset });
     if (index >= 0) {
-      if (results[index].role === 'viewer') {
-        results[index].role = 'admin';
-        results[index].permissions = getRolePermissions({ role: 'admin', ctx });
+      if (results[index].role === "viewer") {
+        results[index].role = "admin";
+        results[index].permissions = getRolePermissions({ role: "admin", ctx });
       }
     } else if (assetIds.includes(asset)) {
       results.push({
         asset,
-        role: 'admin',
-        permissions: getRolePermissions({ role: 'admin', ctx }),
+        role: "admin",
+        permissions: getRolePermissions({ role: "admin", ctx }),
       });
     }
   });

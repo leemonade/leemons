@@ -1,13 +1,13 @@
-import React from 'react';
-import ReactPlayer from 'react-player';
-import { Box, CardEmptyCover } from '@bubbles-ui/components';
-import Cover from '@leebrary/components/Cover';
+import React from "react";
+import ReactPlayer from "react-player";
+import { Box, CardEmptyCover } from "@bubbles-ui/components";
+import Cover from "@leebrary/components/Cover";
 import {
   AUDIO_CARD_PLAYER_DEFAULT_PROPS,
   AUDIO_CARD_PLAYER_PROP_TYPES,
-} from './AudioCardPlayer.constants';
-import { AudioCardPlayerStyles } from './AudioCardPlayer.styles';
-import { AudioProgressBar } from '../AudioProgressBar';
+} from "./AudioCardPlayer.constants";
+import { AudioCardPlayerStyles } from "./AudioCardPlayer.styles";
+import { AudioProgressBar } from "../AudioProgressBar";
 
 const AudioCardPlayer = ({
   url,
@@ -42,7 +42,7 @@ const AudioCardPlayer = ({
   // ··································································
   // COMPONENT
 
-  const { classes } = AudioCardPlayerStyles({}, { name: 'AudioProgressBar' });
+  const { classes } = AudioCardPlayerStyles({}, { name: "AudioProgressBar" });
   return (
     <Box className={classes.audioCardRoot}>
       <Box className={classes.audioCardCover}>
@@ -51,12 +51,12 @@ const AudioCardPlayer = ({
             height="100%"
             alt={title}
             asset={{ cover }}
-            inlineStyles={{ borderRadius: '4px' }}
-            copyrightAlign={'right'}
+            inlineStyles={{ borderRadius: "4px" }}
+            copyrightAlign={"right"}
             hideCopyright
           />
         ) : (
-          <CardEmptyCover fileType={'audio'} />
+          <CardEmptyCover fileType={"audio"} />
         )}
       </Box>
       <AudioProgressBar

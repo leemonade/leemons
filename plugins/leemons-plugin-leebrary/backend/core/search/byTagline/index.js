@@ -1,4 +1,4 @@
-const byTagline = require('./byTagline');
+const byTagline = require("./byTagline");
 
 module.exports = {
   ...byTagline,

@@ -1,31 +1,31 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const LIBRARY_FORM_TYPES = {
-  MEDIA_FILES: 'media-files',
-  BOOKMARKS: 'bookmarks',
-  DOCUMENT: 'document',
-  RECORDINGS: 'sessions-recordings',
+  MEDIA_FILES: "media-files",
+  BOOKMARKS: "bookmarks",
+  DOCUMENT: "document",
+  RECORDINGS: "sessions-recordings",
 };
 
 export const LIBRARY_FORM_DEFAULT_PROPS = {
   asset: {},
   labels: {
-    title: '',
-    featuredImage: '',
-    changeImage: '',
-    uploadButton: '',
-    submitForm: '',
-    name: '',
-    description: '',
+    title: "",
+    featuredImage: "",
+    changeImage: "",
+    uploadButton: "",
+    submitForm: "",
+    name: "",
+    description: "",
   },
   placeholders: {
-    name: '',
-    description: '',
-    color: '',
+    name: "",
+    description: "",
+    color: "",
   },
   errorMessages: {
-    name: '',
-    file: '',
+    name: "",
+    file: "",
   },
   loading: false,
   type: LIBRARY_FORM_TYPES.MEDIA_FILES,
@@ -60,7 +60,9 @@ export const LIBRARY_FORM_PROP_TYPES = {
   }),
   onSubmit: PropTypes.func,
   loading: PropTypes.bool,
-  type: PropTypes.oneOf(Object.keys(LIBRARY_FORM_TYPES).map((key) => LIBRARY_FORM_TYPES[key])),
+  type: PropTypes.oneOf(
+    Object.keys(LIBRARY_FORM_TYPES).map((key) => LIBRARY_FORM_TYPES[key])
+  ),
   hideSubmit: PropTypes.bool,
   form: PropTypes.any,
   ContentExtraFields: PropTypes.element,

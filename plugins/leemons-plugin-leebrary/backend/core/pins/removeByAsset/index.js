@@ -1,4 +1,4 @@
-const removeByAsset = require('./removeByAsset');
+const removeByAsset = require("./removeByAsset");
 
 module.exports = {
   ...removeByAsset,

@@ -1,8 +1,8 @@
-const fsPromises = require('fs/promises');
+const fsPromises = require("fs/promises");
 
-const { handleDocumentInfo } = require('./handleDocumentInfo');
-const { handleMediaInfo } = require('./handleMediaInfo');
-const { handleMetadata } = require('./handleMetadata');
+const { handleDocumentInfo } = require("./handleDocumentInfo");
+const { handleMediaInfo } = require("./handleMediaInfo");
+const { handleMetadata } = require("./handleMetadata");
 
 /**
  * This function centralizes the metadata recolection for a file.
@@ -15,11 +15,20 @@ const { handleMetadata } = require('./handleMetadata');
  * @returns {Promise<Object>} - A promise that resolves to an object containing the file's metadata and its size
  */
 async function getMetadataObject({ filePath, fileType, extension, ctx }) {
-  const fileHandle = await fsPromises.open(filePath, 'r');
-  const [type] = fileType.split('/');
+  const fileHandle = await fsPromises.open(filePath, "r");
+  const [type] = fileType.split("/");
   // eslint-disable-next-line prefer-const
-  let { metadata, fileSize } = await handleMetadata({ fileHandle, path: filePath });
-  metadata = await handleMediaInfo({ metadata, fileHandle, fileType: type, fileSize, ctx });
+  let { metadata, fileSize } = await handleMetadata({
+    fileHandle,
+    path: filePath,
+  });
+  metadata = await handleMediaInfo({
+    metadata,
+    fileHandle,
+    fileType: type,
+    fileSize,
+    ctx,
+  });
   metadata = await handleDocumentInfo({ metadata, path: filePath, extension });
 
   return { metadata, fileSize };

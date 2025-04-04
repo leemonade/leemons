@@ -10,8 +10,8 @@
 async function handleCreateFile({ fileData, pathsInfo, ctx }) {
   const result = await ctx.tx.db.Files.create({
     ...fileData,
-    provider: 'sys',
-    uri: '',
+    provider: "sys",
+    uri: "",
     metadata: JSON.stringify({ pathsInfo }),
   });
   return result.toObject();

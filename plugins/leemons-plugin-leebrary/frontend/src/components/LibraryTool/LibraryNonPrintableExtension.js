@@ -1,9 +1,13 @@
 /* eslint-disable import/prefer-default-export */
-import { Box } from '@bubbles-ui/components';
-import { mergeAttributes, Node, ReactNodeViewRenderer } from '@bubbles-ui/editors';
-import propTypes from 'prop-types';
+import { Box } from "@bubbles-ui/components";
+import {
+  mergeAttributes,
+  Node,
+  ReactNodeViewRenderer,
+} from "@bubbles-ui/editors";
+import propTypes from "prop-types";
 
-const EXTENSION_NAME = 'library-non-printable';
+const EXTENSION_NAME = "library-non-printable";
 
 const NonPrintableComponent = ({ node }) => {
   return (
@@ -14,7 +18,7 @@ const NonPrintableComponent = ({ node }) => {
           backgroundColor: global.background.color.surface.muted,
           borderRadius: global.border.radius.md,
           padding: theme.spacing[4],
-          width: 'fit-content',
+          width: "fit-content",
           marginTop: theme.spacing[4],
           marginBottom: theme.spacing[4],
         };
@@ -30,7 +34,7 @@ const NonPrintableComponent = ({ node }) => {
     </Box>
   );
 };
-NonPrintableComponent.displayName = 'NonPrintableComponent';
+NonPrintableComponent.displayName = "NonPrintableComponent";
 
 NonPrintableComponent.propTypes = {
   node: propTypes.object.isRequired,
@@ -38,7 +42,7 @@ NonPrintableComponent.propTypes = {
 
 export const LibraryNonPrintableExtension = Node.create({
   name: EXTENSION_NAME,
-  group: 'block',
+  group: "block",
   selectable: false,
   draggable: false,
   atom: true,
@@ -46,15 +50,15 @@ export const LibraryNonPrintableExtension = Node.create({
   addAttributes() {
     return {
       message: {
-        default: '',
-        parseHTML: (element) => element.getAttribute('message'),
+        default: "",
+        parseHTML: (element) => element.getAttribute("message"),
         renderHTML: (attributes) => ({
           message: attributes.message,
         }),
       },
       link: {
         default: null,
-        parseHTML: (element) => element.getAttribute('link'),
+        parseHTML: (element) => element.getAttribute("link"),
         renderHTML: (attributes) => ({
           link: attributes.link,
         }),

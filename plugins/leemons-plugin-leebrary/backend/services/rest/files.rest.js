@@ -4,31 +4,38 @@
  */
 /** @type {ServiceSchema} */
 
-const { LeemonsError } = require('@leemons/error');
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
-const fs = require('fs/promises');
-const _ = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
+const fs = require("fs/promises");
+const _ = require("lodash");
 
-const { getByFile } = require('../../core/assets/files/getByFile');
-const { getByIds } = require('../../core/assets/getByIds');
-const { dataForReturnFile } = require('../../core/files');
-const { abortMultipart } = require('../../core/files/abortMultipart');
-const { finishMultipart } = require('../../core/files/finishMultipart');
-const { getUploadChunkUrls } = require('../../core/files/getUploadChunkUrls/getUploadChunkUrls');
-const { newMultipart } = require('../../core/files/newMultipart');
-const { createTemp } = require('../../core/files/upload/createTemp');
-const { uploadMultipartChunk } = require('../../core/files/uploadMultipartChunk');
+const { getByFile } = require("../../core/assets/files/getByFile");
+const { getByIds } = require("../../core/assets/getByIds");
+const { dataForReturnFile } = require("../../core/files");
+const { abortMultipart } = require("../../core/files/abortMultipart");
+const { finishMultipart } = require("../../core/files/finishMultipart");
+const {
+  getUploadChunkUrls,
+} = require("../../core/files/getUploadChunkUrls/getUploadChunkUrls");
+const { newMultipart } = require("../../core/files/newMultipart");
+const { createTemp } = require("../../core/files/upload/createTemp");
+const {
+  uploadMultipartChunk,
+} = require("../../core/files/uploadMultipartChunk");
 
 const getFileRest = async ({ ctx, payload }) => {
   const { id, download, onlyPublic } = payload;
 
   if (_.isEmpty(id)) {
-    throw new LeemonsError(ctx, { message: 'Id is required', httpStatusCode: 400 });
+    throw new LeemonsError(ctx, {
+      message: "Id is required",
+      httpStatusCode: 400,
+    });
   }
 
   let checkPermissions = !onlyPublic;
   if (checkPermissions) {
-    const isSuperAdmin = await ctx.tx.call('users.users.isSuperAdmin', {
+    const isSuperAdmin = await ctx.tx.call("users.users.isSuperAdmin", {
       userId: ctx.meta.userSession.id,
     });
 
@@ -45,7 +52,7 @@ const getFileRest = async ({ ctx, payload }) => {
 
   if (!canAccess) {
     throw new LeemonsError(ctx, {
-      message: 'You do not have permissions to view this file',
+      message: "You do not have permissions to view this file",
       httpStatusCode: 403,
     });
   }
@@ -54,8 +61,8 @@ const getFileRest = async ({ ctx, payload }) => {
   let bytesEnd = -1;
   const range = ctx.meta.headers?.range || undefined;
 
-  if (!download && range?.indexOf('bytes=') > -1) {
-    const parts = range.replace(/bytes=/, '').split('-');
+  if (!download && range?.indexOf("bytes=") > -1) {
+    const parts = range.replace(/bytes=/, "").split("-");
     bytesStart = parseInt(parts[0], 10);
     bytesEnd = parts[1] ? parseInt(parts[1], 10) : bytesStart + 10 * 1024 ** 2;
   }
@@ -70,40 +77,43 @@ const getFileRest = async ({ ctx, payload }) => {
   });
 
   // Redirect to external URL
-  if (_.isString(readStream) && readStream.indexOf('http') === 0) {
+  if (_.isString(readStream) && readStream.indexOf("http") === 0) {
     ctx.meta.$statusCode = 307;
     ctx.meta.$responseHeaders = {
-      'Cache-Control': 'max-age=300',
+      "Cache-Control": "max-age=300",
     };
     ctx.meta.$location = readStream;
     return;
   }
 
-  const mediaType = contentType.split('/')[0];
+  const mediaType = contentType.split("/")[0];
 
   ctx.meta.$responseType = contentType;
   ctx.meta.$responseHeaders = {
-    'Content-Type': contentType,
+    "Content-Type": contentType,
   };
-  if (download || (!['image', 'video', 'audio'].includes(mediaType) && !file.isFolder)) {
+  if (
+    download ||
+    (!["image", "video", "audio"].includes(mediaType) && !file.isFolder)
+  ) {
     ctx.meta.$responseHeaders = {
-      'Content-Disposition': `attachment; filename=${encodeURIComponent(fileName)}`,
+      "Content-Disposition": `attachment; filename=${encodeURIComponent(fileName)}`,
     };
   }
 
-  if (!download && ['video', 'audio'].includes(mediaType)) {
+  if (!download && ["video", "audio"].includes(mediaType)) {
     let fileSize = file.size;
 
-    if (!fileSize && file.provider === 'sys') {
-      const fileHandle = await fs.open(file.uri, 'r');
+    if (!fileSize && file.provider === "sys") {
+      const fileHandle = await fs.open(file.uri, "r");
       const stats = await fileHandle.stat(file.uri);
       fileSize = stats.size;
     }
 
     if (fileSize > 0) {
-      ctx.meta.$responseHeaders = { 'Content-Length': fileSize };
+      ctx.meta.$responseHeaders = { "Content-Length": fileSize };
       // TO solve: Check if Accept-Ranges header is needed and streaming implications
-      ctx.meta.$responseHeaders = { 'Accept-Ranges': 'bytes' };
+      ctx.meta.$responseHeaders = { "Accept-Ranges": "bytes" };
     }
   }
   // eslint-disable-next-line consistent-return
@@ -113,8 +123,8 @@ const getFileRest = async ({ ctx, payload }) => {
 module.exports = {
   newMultipartRest: {
     rest: {
-      method: 'POST',
-      path: '/multipart/new',
+      method: "POST",
+      path: "/multipart/new",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -125,8 +135,8 @@ module.exports = {
   },
   getUploadChunkUrlsRest: {
     rest: {
-      method: 'POST',
-      path: '/multipart/chunk/urls',
+      method: "POST",
+      path: "/multipart/chunk/urls",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -137,9 +147,9 @@ module.exports = {
   },
   uploadMultipartChunkRest: {
     rest: {
-      method: 'POST',
-      path: '/multipart/chunk',
-      type: 'multipart',
+      method: "POST",
+      path: "/multipart/chunk",
+      type: "multipart",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -156,8 +166,8 @@ module.exports = {
   },
   abortMultipartRest: {
     rest: {
-      method: 'POST',
-      path: '/multipart/abort',
+      method: "POST",
+      path: "/multipart/abort",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -169,8 +179,8 @@ module.exports = {
 
   finishMultipartRest: {
     rest: {
-      method: 'POST',
-      path: '/multipart/finish',
+      method: "POST",
+      path: "/multipart/finish",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -181,10 +191,14 @@ module.exports = {
   },
   fileRest: {
     rest: {
-      path: '/:id',
-      method: 'GET',
+      path: "/:id",
+      method: "GET",
     },
-    middlewares: [LeemonsMiddlewareAuthenticated({ continueEvenThoughYouAreNotLoggedIn: true })],
+    middlewares: [
+      LeemonsMiddlewareAuthenticated({
+        continueEvenThoughYouAreNotLoggedIn: true,
+      }),
+    ],
     // eslint-disable-next-line sonarjs/cognitive-complexity
     async handler(ctx) {
       return getFileRest({ ctx, payload: ctx.params });
@@ -192,8 +206,8 @@ module.exports = {
   },
   publicFileRest: {
     rest: {
-      path: '/public/:id',
-      method: 'GET',
+      path: "/public/:id",
+      method: "GET",
     },
     async handler(ctx) {
       const payload = { ...ctx.params };
@@ -203,8 +217,8 @@ module.exports = {
   },
   publicFolderRest: {
     rest: {
-      path: '/public/:id/(.*)',
-      method: 'GET',
+      path: "/public/:id/(.*)",
+      method: "GET",
     },
     async handler(ctx) {
       const payload = { ...ctx.params };
@@ -215,15 +229,22 @@ module.exports = {
   },
   coverRest: {
     rest: {
-      path: '/img/:assetId',
-      method: 'GET',
+      path: "/img/:assetId",
+      method: "GET",
     },
-    middlewares: [LeemonsMiddlewareAuthenticated({ continueEvenThoughYouAreNotLoggedIn: true })],
+    middlewares: [
+      LeemonsMiddlewareAuthenticated({
+        continueEvenThoughYouAreNotLoggedIn: true,
+      }),
+    ],
     async handler(ctx) {
       const { assetId } = ctx.params;
 
       if (_.isEmpty(assetId)) {
-        throw new LeemonsError(ctx, { message: 'Asset ID is required', httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: "Asset ID is required",
+          httpStatusCode: 400,
+        });
       }
 
       const assets = await getByIds({
@@ -237,7 +258,8 @@ module.exports = {
 
       if (!asset) {
         throw new LeemonsError(ctx, {
-          message: "You don't have permissions to view this Asset or the asset doens't exists",
+          message:
+            "You don't have permissions to view this Asset or the asset doens't exists",
           httpStatusCode: 403,
         });
       }
@@ -249,27 +271,27 @@ module.exports = {
           ctx,
         });
 
-        if (_.isString(readStream) && readStream.indexOf('http') === 0) {
+        if (_.isString(readStream) && readStream.indexOf("http") === 0) {
           // Redirect to external URL
           ctx.meta.$statusCode = 307;
           ctx.meta.$responseHeaders = {
-            'Cache-Control': 'max-age=86400',
+            "Cache-Control": "max-age=86400",
           };
           ctx.meta.$location = readStream;
           return;
         }
 
-        const mediaType = contentType.split('/')[0];
+        const mediaType = contentType.split("/")[0];
 
         ctx.meta.$responseHeaders = {
-          'Contet-Type': contentType,
+          "Contet-Type": contentType,
         };
 
-        if (['image', 'video', 'audio'].includes(mediaType)) {
+        if (["image", "video", "audio"].includes(mediaType)) {
           // To implement: handle content disposition for images, video and audio. Taking care of download param
         } else {
           ctx.meta.$responseHeaders = {
-            'Content-disposition': `attachment; filename=${encodeURIComponent(fileName)}`,
+            "Content-disposition": `attachment; filename=${encodeURIComponent(fileName)}`,
           };
         }
         // eslint-disable-next-line consistent-return
@@ -278,7 +300,7 @@ module.exports = {
 
       // eslint-disable-next-line consistent-return
       throw new LeemonsError(ctx, {
-        message: 'This asset does not have a cover',
+        message: "This asset does not have a cover",
         httpStatusCode: 400,
       });
       // The following two lines were commented in leemons legacy
@@ -288,20 +310,20 @@ module.exports = {
   },
   getFileCopyright: {
     rest: {
-      path: '/copyright/:id',
-      method: 'GET',
+      path: "/copyright/:id",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const data = await ctx.tx.db.Files.findOne({
         id: ctx.params.id,
       })
-        .select(['copyright', 'externalUrl'])
+        .select(["copyright", "externalUrl"])
         .lean();
 
       if (!data) {
         throw new LeemonsError(ctx, {
-          message: 'File not found',
+          message: "File not found",
           httpStatusCode: 404,
         });
       }

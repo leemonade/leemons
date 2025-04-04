@@ -1,8 +1,8 @@
-const { isEmpty } = require('lodash');
-const { LeemonsError } = require('@leemons/error');
+const { isEmpty } = require("lodash");
+const { LeemonsError } = require("@leemons/error");
 
-const { getByAsset } = require('../getByAsset');
-const { remove: removeFiles } = require('../../files/remove/remove');
+const { getByAsset } = require("../getByAsset");
+const { remove: removeFiles } = require("../../files/remove/remove");
 
 /**
  * Removes a bookmark from the database.
@@ -20,11 +20,17 @@ async function remove({ assetId, soft, ctx }) {
   const bookmark = await getByAsset({ assetId, ctx });
 
   if (!bookmark) {
-    throw new LeemonsError(ctx, { message: 'Bookmark not found', httpStatusCode: 404 });
+    throw new LeemonsError(ctx, {
+      message: "Bookmark not found",
+      httpStatusCode: 404,
+    });
   }
 
   try {
-    const deleted = await ctx.tx.db.Bookmarks.deleteOne({ id: bookmark.id }, { soft });
+    const deleted = await ctx.tx.db.Bookmarks.deleteOne(
+      { id: bookmark.id },
+      { soft }
+    );
 
     if (!isEmpty(bookmark.icon)) {
       await removeFiles({ fileIds: bookmark.icon, assetId, soft, ctx });

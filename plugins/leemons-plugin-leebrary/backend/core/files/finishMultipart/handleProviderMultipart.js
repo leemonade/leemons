@@ -1,4 +1,4 @@
-const { getByName: getProviderByName } = require('../../providers/getByName');
+const { getByName: getProviderByName } = require("../../providers/getByName");
 
 /**
  * Finishes multipart upload for a file if the provider supports it.
@@ -11,7 +11,11 @@ const { getByName: getProviderByName } = require('../../providers/getByName');
 async function finishProviderMultipart({ file, path, etags, ctx }) {
   const provider = await getProviderByName({ name: file.provider, ctx });
   if (provider?.supportedMethods?.finishMultipart) {
-    await ctx.tx.call(`${file.provider}.files.finishMultipart`, { file, etags, path });
+    await ctx.tx.call(`${file.provider}.files.finishMultipart`, {
+      file,
+      etags,
+      path,
+    });
   }
 }
 

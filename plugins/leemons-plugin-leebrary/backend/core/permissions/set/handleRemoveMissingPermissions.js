@@ -1,7 +1,7 @@
-const { map, forEach, isNil, some, negate } = require('lodash');
-const { removeMissingPermissions } = require('./removeMissingPermissions');
-const { removeMissingUserAgents } = require('./removeMissingUserAgents');
-const getAssetPermissionName = require('../helpers/getAssetPermissionName');
+const { map, forEach, isNil, some, negate } = require("lodash");
+const { removeMissingPermissions } = require("./removeMissingPermissions");
+const { removeMissingUserAgents } = require("./removeMissingUserAgents");
+const getAssetPermissionName = require("../helpers/getAssetPermissionName");
 
 /**
  * This function handles the removal of missing permissions.
@@ -21,8 +21,8 @@ async function handleRemoveMissingPermissions({
   assetsRoleById,
   ctx,
 }) {
-  const currentUserAgentIds = map(ctx.meta.userSession.userAgents, 'id');
-  const toUpdate = map(canAccess, 'userAgent');
+  const currentUserAgentIds = map(ctx.meta.userSession.userAgents, "id");
+  const toUpdate = map(canAccess, "userAgent");
 
   const missingPromises = [];
   forEach(assetIds, (id) => {
@@ -38,7 +38,9 @@ async function handleRemoveMissingPermissions({
         ctx,
       })
     );
-    missingPromises.push(removeMissingPermissions({ id, permissions, assignerRole, ctx }));
+    missingPromises.push(
+      removeMissingPermissions({ id, permissions, assignerRole, ctx })
+    );
   });
   if (some(missingPromises, negate(isNil))) await Promise.all(missingPromises);
 }

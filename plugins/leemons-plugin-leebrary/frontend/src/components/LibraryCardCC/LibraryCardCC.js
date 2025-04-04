@@ -1,19 +1,22 @@
-import React from 'react';
-import { Box } from '@bubbles-ui/components';
-import { LibraryCardSkeleton } from '../LibraryCardSkeleton';
-import { LibraryCardCCStyles } from './LibraryCardCC.styles';
-import LibraryCardCCCover from './components/LibraryCardCCCover/LibraryCardCCCover';
-import { LibraryCardCCBody } from './components/LibraryCardCCBody/LibraryCardCCBody';
-import { LibraryCardCCFooter } from './components/LibraryCardCCFooter/LibraryCardCCFooter';
-import { LIBRARY_CARD_CC_PROPTYPES, LIBRARY_CARD_CC_DEFAULTPROPS } from './LibraryCardCC.constants';
+import React from "react";
+import { Box } from "@bubbles-ui/components";
+import { LibraryCardSkeleton } from "../LibraryCardSkeleton";
+import { LibraryCardCCStyles } from "./LibraryCardCC.styles";
+import LibraryCardCCCover from "./components/LibraryCardCCCover/LibraryCardCCCover";
+import { LibraryCardCCBody } from "./components/LibraryCardCCBody/LibraryCardCCBody";
+import { LibraryCardCCFooter } from "./components/LibraryCardCCFooter/LibraryCardCCFooter";
+import {
+  LIBRARY_CARD_CC_PROPTYPES,
+  LIBRARY_CARD_CC_DEFAULTPROPS,
+} from "./LibraryCardCC.constants";
 
 const LibraryCardCC = ({ asset, canPlay }) => {
-  const isPDF = asset?.fileExtension === 'pdf';
+  const isPDF = asset?.fileExtension === "pdf";
   const { classes } = LibraryCardCCStyles({ canPlay });
   function handleOpenAsset() {
     if (!canPlay) return;
     const url = isPDF ? `/protected/leebrary/play/${asset.id}` : asset?.url;
-    const windowFeatures = isPDF ? '_blank,noopener,noreferrer' : '_blank';
+    const windowFeatures = isPDF ? "_blank,noopener,noreferrer" : "_blank";
     window.open(url, windowFeatures);
   }
   if (!asset) return <LibraryCardSkeleton />;

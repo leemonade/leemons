@@ -1,24 +1,24 @@
-const { it, expect, beforeEach } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+const { it, expect, beforeEach } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { getAssetsByType } = require('./getAssetsByType');
+const { getAssetsByType } = require("./getAssetsByType");
 
 // MOCKS
-jest.mock('./fetchAssetFilesByAssets');
-const { fetchAssetFilesByAssets } = require('./fetchAssetFilesByAssets');
+jest.mock("./fetchAssetFilesByAssets");
+const { fetchAssetFilesByAssets } = require("./fetchAssetFilesByAssets");
 
-jest.mock('./fetchAssetFilesByType');
-const { fetchAssetFilesByType } = require('./fetchAssetFilesByType');
+jest.mock("./fetchAssetFilesByType");
+const { fetchAssetFilesByType } = require("./fetchAssetFilesByType");
 
 beforeEach(() => jest.resetAllMocks());
 
-it('Should correctly call its inner functions in orther to fetch assets by type', async () => {
+it("Should correctly call its inner functions in orther to fetch assets by type", async () => {
   // Arrange
   const ctx = generateCtx({});
-  const type = 'testType';
-  const assetsIds = ['assetOne', 'assetTwo'];
-  const fileIds = ['fileOne', 'fileTwo'];
-  const assetFiles = [{ asset: 'assetOne' }, { asset: 'assetTwo' }];
+  const type = "testType";
+  const assetsIds = ["assetOne", "assetTwo"];
+  const fileIds = ["fileOne", "fileTwo"];
+  const assetFiles = [{ asset: "assetOne" }, { asset: "assetTwo" }];
 
   fetchAssetFilesByAssets.mockResolvedValue(fileIds);
   fetchAssetFilesByType.mockResolvedValue(assetFiles);
@@ -32,21 +32,21 @@ it('Should correctly call its inner functions in orther to fetch assets by type'
   expect(response).toEqual(assetsIds);
 });
 
-it('Does not catch any error thrown by the inner functions', async () => {
+it("Does not catch any error thrown by the inner functions", async () => {
   // Arrange
   const ctx = generateCtx({});
-  const type = 'testType';
+  const type = "testType";
   const assets = [];
 
   fetchAssetFilesByAssets.mockImplementation(() => {
-    throw new Error('Some error');
+    throw new Error("Some error");
   });
 
   // Act
   const testFnToBreak = async () => getAssetsByType({ type, assets, ctx });
 
   // Assert
-  await expect(testFnToBreak).rejects.toThrow('Some error');
+  await expect(testFnToBreak).rejects.toThrow("Some error");
   expect(fetchAssetFilesByAssets).toBeCalled();
   expect(fetchAssetFilesByType).not.toBeCalled();
 });

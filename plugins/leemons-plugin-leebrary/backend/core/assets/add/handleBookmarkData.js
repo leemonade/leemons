@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
-const { isEmpty, trim } = require('lodash');
-const got = require('got');
-const { metascraper } = require('../../shared');
+const { isEmpty, trim } = require("lodash");
+const got = require("got");
+const { metascraper } = require("../../shared");
 
 /**
  * Handles bookmark data.
@@ -23,12 +23,13 @@ const { metascraper } = require('../../shared');
  * @returns {Promise<[Object, string]>} The handled bookmark data as a tuple [data, cover].
  */
 async function handleBookmarkData({ data, cover, ctx }) {
-  if (isEmpty(data.name) && data?.url?.startsWith('http')) {
+  if (isEmpty(data.name) && data?.url?.startsWith("http")) {
     try {
       const response = await got(data.url);
       const { body: html } = response;
       const metas = await metascraper({ html, url: data.url });
-      data.name = !isEmpty(data.name) && data.name !== 'null' ? data.name : metas.title;
+      data.name =
+        !isEmpty(data.name) && data.name !== "null" ? data.name : metas.title;
       data.description = data.description || metas.description;
 
       if (isEmpty(trim(data.cover))) data.cover = null;
@@ -40,7 +41,7 @@ async function handleBookmarkData({ data, cover, ctx }) {
         data.icon = data.icon || metas.logo;
       }
     } catch (err) {
-      ctx.logger.error('Error getting bookmark metadata:', data.url, err);
+      ctx.logger.error("Error getting bookmark metadata:", data.url, err);
     }
   }
   return [data, cover];

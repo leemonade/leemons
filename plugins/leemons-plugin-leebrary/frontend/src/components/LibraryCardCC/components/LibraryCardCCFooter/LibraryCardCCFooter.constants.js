@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const LIBRARY_CARD_CC_FOOTER_PROPTYPES = {
   fileType: PropTypes.string,
@@ -8,8 +8,8 @@ export const LIBRARY_CARD_CC_FOOTER_PROPTYPES = {
 };
 
 export const LIBRARY_CARD_CC_FOOTER_DEFAULTPROPS = {
-  fileType: '',
-  fileExtension: '',
-  variant: '',
-  variantTitle: '',
+  fileType: "",
+  fileExtension: "",
+  variant: "",
+  variantTitle: "",
 };

@@ -1,11 +1,11 @@
-const { it, expect, beforeEach } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
-const { handleFileUpload } = require('./handleFileUpload');
+const { it, expect, beforeEach } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
+const { handleFileUpload } = require("./handleFileUpload");
 
 // mocks
-jest.mock('../../files/helpers/uploadFromSource');
-const { uploadFromSource } = require('../../files/helpers/uploadFromSource');
-const getMediaFileData = require('../../../__fixtures__/getMediaFileData');
+jest.mock("../../files/helpers/uploadFromSource");
+const { uploadFromSource } = require("../../files/helpers/uploadFromSource");
+const getMediaFileData = require("../../../__fixtures__/getMediaFileData");
 
 beforeEach(() => jest.resetAllMocks());
 
@@ -15,7 +15,7 @@ const {
   audioFile: audioFileUploaded,
 } = getMediaFileData();
 
-it('Should handle files without cover', async () => {
+it("Should handle files without cover", async () => {
   // Arrange
   const expectedValueNoCover = {
     newFile: { ...imageFileUploaded },
@@ -46,7 +46,7 @@ it('Should handle files without cover', async () => {
   );
 });
 
-it('Should handle files with cover', async () => {
+it("Should handle files with cover", async () => {
   // Arrange
   const expectedValue = {
     newFile: { ...audioFileUploaded },
@@ -92,7 +92,7 @@ it('Should handle files with cover', async () => {
   );
 });
 
-it('Should not throw if unexpected values are returned from the inner functions', async () => {
+it("Should not throw if unexpected values are returned from the inner functions", async () => {
   uploadFromSource.mockResolvedValue(undefined);
   const ctx = generateCtx({});
 
@@ -108,12 +108,12 @@ it('Should not throw if unexpected values are returned from the inner functions'
   expect(testFn).not.toThrow();
 });
 
-it('Should return null values if no file or cover are passed without trying to upload them', async () => {
+it("Should return null values if no file or cover are passed without trying to upload them", async () => {
   // Arrange
   const ctx = generateCtx({});
 
   // Act
-  const response = await handleFileUpload({ assetName: 'asset', ctx });
+  const response = await handleFileUpload({ assetName: "asset", ctx });
 
   // Assert
   expect(response).toEqual({ newFile: null, coverFile: null });

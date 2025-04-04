@@ -1,9 +1,9 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const ASSET_PLAYER_DEFAULT_PROPS = {
   asset: {},
-  height: 'auto',
-  width: '100%',
+  height: "auto",
+  width: "100%",
   styles: {},
   playing: false,
   muted: false,
@@ -18,9 +18,9 @@ export const ASSET_PLAYER_DEFAULT_PROPS = {
   hideURLInfo: false,
   useAudioCard: false,
   pdfLabels: {
-    pageLabel: '',
-    paginatorLabel: '',
-    schemaLabel: '',
+    pageLabel: "",
+    paginatorLabel: "",
+    schemaLabel: "",
   },
   useSchema: true,
   viewPDF: true,

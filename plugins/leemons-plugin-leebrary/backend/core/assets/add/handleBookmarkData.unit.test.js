@@ -3,20 +3,20 @@ const {
   expect,
   beforeEach,
   jest: { spyOn },
-} = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+} = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-jest.mock('../../shared');
-jest.mock('got');
-const got = require('got');
-const { metascraper } = require('../../shared');
+jest.mock("../../shared");
+jest.mock("got");
+const got = require("got");
+const { metascraper } = require("../../shared");
 
-const { handleBookmarkData } = require('./handleBookmarkData');
-const getAssetAddDataInput = require('../../../__fixtures__/getAssetAddDataInput');
+const { handleBookmarkData } = require("./handleBookmarkData");
+const getAssetAddDataInput = require("../../../__fixtures__/getAssetAddDataInput");
 
 beforeEach(() => jest.resetAllMocks());
 
-it('Should process bookmark data and cover correctly, only when data.url is passed and data.icon is missing', async () => {
+it("Should process bookmark data and cover correctly, only when data.url is passed and data.icon is missing", async () => {
   // Arrange
   const { dataInput, dataInputWithEmptyFields, cover } = getAssetAddDataInput();
   const inputWithoutUrl = {
@@ -25,15 +25,15 @@ it('Should process bookmark data and cover correctly, only when data.url is pass
   };
 
   const ctx = generateCtx({});
-  const spyLogger = spyOn(ctx.logger, 'error');
+  const spyLogger = spyOn(ctx.logger, "error");
 
   const mockedMeta = {
-    title: 'Mock meta Title',
-    description: 'Mock meta Description',
-    logo: 'Mock meta Logo URL',
-    image: 'Mock meta Image',
+    title: "Mock meta Title",
+    description: "Mock meta Description",
+    logo: "Mock meta Logo URL",
+    image: "Mock meta Image",
   };
-  const mockHtml = '<html></html>';
+  const mockHtml = "<html></html>";
   got.mockResolvedValue({ body: mockHtml });
   metascraper.mockResolvedValue(mockedMeta);
 
@@ -56,12 +56,16 @@ it('Should process bookmark data and cover correctly, only when data.url is pass
     cover,
     ctx,
   });
-  const [dataOutputWithEmptyFields, coverOutputWithEmptyFields] = await handleBookmarkData({
-    data: { ...dataInputWithEmptyFields },
-    cover: null,
+  const [dataOutputWithEmptyFields, coverOutputWithEmptyFields] =
+    await handleBookmarkData({
+      data: { ...dataInputWithEmptyFields },
+      cover: null,
+      ctx,
+    });
+  const testFnWithoutUrl = await handleBookmarkData({
+    ...inputWithoutUrl,
     ctx,
   });
-  const testFnWithoutUrl = await handleBookmarkData({ ...inputWithoutUrl, ctx });
 
   // Assert
   expect(dataOutput).toEqual(expectedResult.data);
@@ -72,40 +76,44 @@ it('Should process bookmark data and cover correctly, only when data.url is pass
   expect(spyLogger).not.toHaveBeenCalled();
 });
 
-it('Logs an error message when an error is catched and handles unexpected values without throwing', async () => {
+it("Logs an error message when an error is catched and handles unexpected values without throwing", async () => {
   // Arrange
   const { dataInputWithEmptyFields, cover } = getAssetAddDataInput();
 
   const ctx = generateCtx({});
-  const spyLogger = spyOn(ctx.logger, 'error');
+  const spyLogger = spyOn(ctx.logger, "error");
 
   got.mockImplementation(() => {
-    throw new Error('Got Error');
+    throw new Error("Got Error");
   });
 
   // Act
-  await handleBookmarkData({ data: { ...dataInputWithEmptyFields }, cover, ctx });
+  await handleBookmarkData({
+    data: { ...dataInputWithEmptyFields },
+    cover,
+    ctx,
+  });
 
   // Assert
   expect(spyLogger).toHaveBeenCalledWith(
-    'Error getting bookmark metadata:',
+    "Error getting bookmark metadata:",
     dataInputWithEmptyFields.url,
     expect.any(Error)
   );
 });
 
-it('Should correctly process data', async () => {
+it("Should correctly process data", async () => {
   // Arrange
-  const data = { cover: ' dataCover', url: 'url', name: 'name' };
+  const data = { cover: " dataCover", url: "url", name: "name" };
   const ctx = generateCtx({});
 
   const mockedMeta = {
-    title: 'Mock meta Title',
-    description: 'Mock meta Description',
-    logo: '',
-    image: 'Mock meta Image',
+    title: "Mock meta Title",
+    description: "Mock meta Description",
+    logo: "",
+    image: "Mock meta Image",
   };
-  const mockHtml = '<html></html>';
+  const mockHtml = "<html></html>";
   got.mockResolvedValue({ body: mockHtml });
   metascraper.mockResolvedValue(mockedMeta);
 

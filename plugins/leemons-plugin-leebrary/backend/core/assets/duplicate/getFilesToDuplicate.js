@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { getByIds: getFiles } = require('../../files/getByIds/getByIds');
+const _ = require("lodash");
+const { getByIds: getFiles } = require("../../files/getByIds/getByIds");
 /**
  * Handles files and cover associated with an asset.
  * It retrieves the files using their IDs and finds the cover file among them.
@@ -11,7 +11,11 @@ const { getByIds: getFiles } = require('../../files/getByIds/getByIds');
  * @returns {Promise<Object>} - Returns a promise with an object containing the files and the cover.
  */
 async function getFilesToDuplicate({ filesIds, coverId, ctx }) {
-  const filesToDuplicate = await getFiles({ fileIds: filesIds, parsed: false, ctx });
+  const filesToDuplicate = await getFiles({
+    fileIds: filesIds,
+    parsed: false,
+    ctx,
+  });
   const cover = _.find(filesToDuplicate, { id: coverId });
 
   return { filesToDuplicate, cover };

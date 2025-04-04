@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   LibraryGlobalContext,
   LibraryGlobalProvider,
-} from '@leebrary/context/LibraryGlobalContext';
-import { pdfjs } from 'react-pdf';
+} from "@leebrary/context/LibraryGlobalContext";
+import { pdfjs } from "react-pdf";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 

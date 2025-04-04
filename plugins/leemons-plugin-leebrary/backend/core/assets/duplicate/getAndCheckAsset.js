@@ -1,4 +1,4 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
 /**
  * Retrieves an asset by its ID from the database.
@@ -11,7 +11,11 @@ const { LeemonsError } = require('@leemons/error');
  */
 async function getAndCheckAsset({ assetId, ctx }) {
   const asset = await ctx.tx.db.Assets.findOne({ id: assetId }).lean();
-  if (!asset) throw new LeemonsError(ctx, { message: 'Asset not found', httpStatusCode: 422 });
+  if (!asset)
+    throw new LeemonsError(ctx, {
+      message: "Asset not found",
+      httpStatusCode: 422,
+    });
   return asset;
 }
 

@@ -1,18 +1,20 @@
-const { it, expect, beforeEach } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
-const { LeemonsError } = require('@leemons/error');
+const { it, expect, beforeEach } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
+const { LeemonsError } = require("@leemons/error");
 
-const { handlePermissions } = require('./handlePermissions');
+const { handlePermissions } = require("./handlePermissions");
 
 // MOCKS
-jest.mock('../../../permissions/getByAsset');
-const { getByAsset: getPermissions } = require('../../../permissions/getByAsset');
+jest.mock("../../../permissions/getByAsset");
+const {
+  getByAsset: getPermissions,
+} = require("../../../permissions/getByAsset");
 
 beforeEach(() => jest.resetAllMocks());
 
-it('Should throw when the user is not allowed to edit and flag skipPermissions is falsy', async () => {
+it("Should throw when the user is not allowed to edit and flag skipPermissions is falsy", async () => {
   // Arrange
-  const mockAssetId = 'assetId';
+  const mockAssetId = "assetId";
   const ctx = generateCtx({});
 
   getPermissions.mockResolvedValue({ permissions: { edit: false } });
@@ -27,13 +29,15 @@ it('Should throw when the user is not allowed to edit and flag skipPermissions i
     // Assert
     expect(error).toBeInstanceOf(LeemonsError);
     expect(error.httpStatusCode).toBe(401);
-    expect(error.message).toBe("You don't have permissions to update this asset");
+    expect(error.message).toBe(
+      "You don't have permissions to update this asset"
+    );
   }
 });
 
-it('Does not throw when skipPermissions is true', async () => {
+it("Does not throw when skipPermissions is true", async () => {
   // Arrange
-  const mockAssetId = 'assetId';
+  const mockAssetId = "assetId";
   const ctx = generateCtx({});
 
   getPermissions.mockResolvedValue({ permissions: { edit: false } });
@@ -49,9 +53,9 @@ it('Does not throw when skipPermissions is true', async () => {
   await expect(testFn()).resolves.not.toThrow();
 });
 
-it('Should not throw when the user is allowed to edit and flag skipPermissions is falsy', async () => {
+it("Should not throw when the user is allowed to edit and flag skipPermissions is falsy", async () => {
   // Arrange
-  const mockAssetId = 'assetId';
+  const mockAssetId = "assetId";
   const ctx = generateCtx({});
 
   getPermissions.mockResolvedValue({ permissions: { edit: true } });

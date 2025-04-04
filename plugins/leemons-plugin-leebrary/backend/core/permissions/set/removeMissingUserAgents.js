@@ -1,6 +1,6 @@
-const { forEach } = require('lodash');
+const { forEach } = require("lodash");
 
-const { removeMissingUserAgent } = require('./removeMissingUserAgent');
+const { removeMissingUserAgent } = require("./removeMissingUserAgent");
 
 /**
  * This function removes missing user agents.
@@ -22,9 +22,12 @@ async function removeMissingUserAgents({
   currentUserAgentIds,
   ctx,
 }) {
-  let toRemove = await ctx.tx.call('users.permissions.findUserAgentsWithPermission', {
-    permissions: { permissionName },
-  });
+  let toRemove = await ctx.tx.call(
+    "users.permissions.findUserAgentsWithPermission",
+    {
+      permissions: { permissionName },
+    }
+  );
   toRemove = toRemove.filter((ua) => !toUpdate.includes(ua));
 
   const removePromises = [];

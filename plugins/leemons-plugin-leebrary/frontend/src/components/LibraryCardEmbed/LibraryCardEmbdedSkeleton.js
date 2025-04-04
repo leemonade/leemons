@@ -1,10 +1,10 @@
-import { Box, Skeleton, Stack } from '@bubbles-ui/components';
-import React from 'react';
+import { Box, Skeleton, Stack } from "@bubbles-ui/components";
+import React from "react";
 // import { LibraryCardSkeletonStyles } from './LibraryCardSkeleton.styles';
 
 const LibraryCardEmbedSkeleton = () => (
   // const { classes } = LibraryCardSkeletonStyles();
-  <Box style={{ width: '100%', paddingTop: 4, paddingBottom: 4 }}>
+  <Box style={{ width: "100%", paddingTop: 4, paddingBottom: 4 }}>
     <Stack alignItems="center" fullWidth spacing={4}>
       <Box>
         <Skeleton height={58} width={72} radius={4} ml={8} />

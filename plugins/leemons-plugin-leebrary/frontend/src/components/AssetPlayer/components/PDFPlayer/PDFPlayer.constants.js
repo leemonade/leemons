@@ -1,9 +1,9 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const PDF_PLAYER_DEFAULT_PROPS = {
   labels: {
-    pageLabel: '',
-    paginatorLabel: '',
+    pageLabel: "",
+    paginatorLabel: "",
   },
   useSchema: true,
 };

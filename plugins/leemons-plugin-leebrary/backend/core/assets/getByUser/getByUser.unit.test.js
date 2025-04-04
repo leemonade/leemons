@@ -1,10 +1,16 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const _ = require('lodash');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const _ = require("lodash");
 
-const { getByUser } = require('./getByUser');
-const { assetsSchema } = require('../../../models/assets');
+const { getByUser } = require("./getByUser");
+const { assetsSchema } = require("../../../models/assets");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -27,20 +33,20 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should correctly query the db and return the assets of the user', async () => {
+it("Should correctly query the db and return the assets of the user", async () => {
   // Arrange
-  const userId = 'user1';
+  const userId = "user1";
 
   const ctx = generateCtx({
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
 
   const initialValues = [
-    { fromUser: 'user1', id: 'asset1' },
-    { fromUser: 'user2', id: 'asset2' },
-    { fromUser: 'user1', id: 'asset3' },
+    { fromUser: "user1", id: "asset1" },
+    { fromUser: "user2", id: "asset2" },
+    { fromUser: "user1", id: "asset3" },
   ];
   await ctx.db.Assets.create(initialValues);
   const expectedResponse = [
@@ -60,20 +66,20 @@ it('Should correctly query the db and return the assets of the user', async () =
   });
 });
 
-it('Should return an empty array if no assets are found for the user', async () => {
+it("Should return an empty array if no assets are found for the user", async () => {
   // Arrange
-  const userId = 'user3';
+  const userId = "user3";
 
   const ctx = generateCtx({
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
 
   const initialValues = [
-    { fromUser: 'user1', id: 'asset1' },
-    { fromUser: 'user2', id: 'asset2' },
-    { fromUser: 'user1', id: 'asset3' },
+    { fromUser: "user1", id: "asset1" },
+    { fromUser: "user2", id: "asset2" },
+    { fromUser: "user1", id: "asset3" },
   ];
   await ctx.db.Assets.create(initialValues);
 

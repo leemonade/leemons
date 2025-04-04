@@ -1,3 +1,3 @@
-const duplicate = require('./duplicate');
+const duplicate = require("./duplicate");
 
 module.exports = { ...duplicate };

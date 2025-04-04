@@ -1,6 +1,6 @@
-const { LeemonsError } = require('@leemons/error');
-const { exists: fileExists } = require('../../../files/exists');
-const { exists: assetExists } = require('../../exists');
+const { LeemonsError } = require("@leemons/error");
+const { exists: fileExists } = require("../../../files/exists");
+const { exists: assetExists } = require("../../exists");
 /**
  * Check if the file and asset exist in the database
  *
@@ -12,11 +12,17 @@ const { exists: assetExists } = require('../../exists');
  */
 async function handleExistence({ fileId, assetId, ctx }) {
   if (!(await fileExists({ fileId, ctx }))) {
-    throw new LeemonsError(ctx, { message: 'File not found', httpStatusCode: 422 });
+    throw new LeemonsError(ctx, {
+      message: "File not found",
+      httpStatusCode: 422,
+    });
   }
 
   if (!(await assetExists({ assetId, ctx }))) {
-    throw new LeemonsError(ctx, { message: 'Asset not found', httpStatusCode: 422 });
+    throw new LeemonsError(ctx, {
+      message: "Asset not found",
+      httpStatusCode: 422,
+    });
   }
 }
 

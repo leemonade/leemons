@@ -1,12 +1,18 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const _ = require('lodash');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const _ = require("lodash");
 
-const { handleSubjects } = require('./handleSubjects');
-const { assetsSubjectsSchema } = require('../../../models/assetsSubjects');
-const getAssets = require('../../../__fixtures__/getAssets');
-const getAssetAddDataInput = require('../../../__fixtures__/getAssetAddDataInput');
+const { handleSubjects } = require("./handleSubjects");
+const { assetsSubjectsSchema } = require("../../../models/assetsSubjects");
+const getAssets = require("../../../__fixtures__/getAssets");
+const getAssetAddDataInput = require("../../../__fixtures__/getAssetAddDataInput");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -29,14 +35,18 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should correctly create asset subjets in the db and return them as an array of objects', async () => {
+it("Should correctly create asset subjets in the db and return them as an array of objects", async () => {
   // Arrange
   const { assetModel } = getAssets();
   const { dataInput } = getAssetAddDataInput();
 
   const ctx = generateCtx({
     models: {
-      AssetsSubjects: newModel(mongooseConnection, 'AssetsSubjects', assetsSubjectsSchema),
+      AssetsSubjects: newModel(
+        mongooseConnection,
+        "AssetsSubjects",
+        assetsSubjectsSchema
+      ),
     },
   });
 

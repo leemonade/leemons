@@ -1,7 +1,7 @@
-const { isLRN } = require('@leemons/lrn');
+const { isLRN } = require("@leemons/lrn");
 
-const { getById: getCategoryById } = require('../../categories/getById');
-const { getByKey: getCategoryByKey } = require('../../categories/getByKey');
+const { getById: getCategoryById } = require("../../categories/getById");
+const { getByKey: getCategoryByKey } = require("../../categories/getByKey");
 
 /**
  * This function fetches a specific category ID based on the provided category input.
@@ -15,13 +15,17 @@ const { getByKey: getCategoryByKey } = require('../../categories/getByKey');
  */
 async function getCategoryId({ category, ctx }) {
   let categoryId;
-  if (typeof category === 'string') {
+  if (typeof category === "string") {
     let _category;
 
     if (isLRN(category)) {
-      _category = await getCategoryById({ id: category, columns: ['id'], ctx });
+      _category = await getCategoryById({ id: category, columns: ["id"], ctx });
     } else {
-      _category = await getCategoryByKey({ key: category, columns: ['id'], ctx });
+      _category = await getCategoryByKey({
+        key: category,
+        columns: ["id"],
+        ctx,
+      });
     }
     categoryId = _category.id;
   }

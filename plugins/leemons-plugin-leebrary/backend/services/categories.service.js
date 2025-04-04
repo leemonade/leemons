@@ -3,16 +3,18 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getServiceModels } = require('../models');
-const { pluginName } = require('../config/constants');
-const restActions = require('./rest/categories.rest');
-const { add } = require('../core/categories/add');
-const { removeByKey } = require('../core/categories/removeByKey');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const { LeemonsMongoDBMixin } = require("@leemons/mongodb");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
+const { getServiceModels } = require("../models");
+const { pluginName } = require("../config/constants");
+const restActions = require("./rest/categories.rest");
+const { add } = require("../core/categories/add");
+const { removeByKey } = require("../core/categories/removeByKey");
 
 /** @type {ServiceSchema} */
 module.exports = {

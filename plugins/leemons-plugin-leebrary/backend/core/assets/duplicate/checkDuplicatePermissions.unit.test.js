@@ -1,25 +1,27 @@
-const { it, expect, afterEach } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
-const { LeemonsError } = require('@leemons/error');
+const { it, expect, afterEach } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
+const { LeemonsError } = require("@leemons/error");
 
-const { checkDuplicatePermissions } = require('./checkDuplicatePermissions');
+const { checkDuplicatePermissions } = require("./checkDuplicatePermissions");
 
 // MOCKS
-jest.mock('../../permissions/getByAsset');
-const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
+jest.mock("../../permissions/getByAsset");
+const { getByAsset: getPermissions } = require("../../permissions/getByAsset");
 
 afterEach(() => jest.resetAllMocks());
 
-it('calls getPermissions correctly and throws a LeemonsError if the user is not allowed to duplicate the asset', async () => {
+it("calls getPermissions correctly and throws a LeemonsError if the user is not allowed to duplicate the asset", async () => {
   // Arrange
-  const assetId = 'anAssetId@1.0.0';
+  const assetId = "anAssetId@1.0.0";
   getPermissions.mockResolvedValue({ permissions: { duplicate: false } });
 
   const ctx = generateCtx({});
 
   // Act
-  const testFnNoDupPermission = async () => checkDuplicatePermissions({ assetId, ctx });
-  const testWithDupPermission = async () => checkDuplicatePermissions({ assetId, ctx });
+  const testFnNoDupPermission = async () =>
+    checkDuplicatePermissions({ assetId, ctx });
+  const testWithDupPermission = async () =>
+    checkDuplicatePermissions({ assetId, ctx });
 
   // Assert
   await expect(testFnNoDupPermission).rejects.toThrowError(LeemonsError);
@@ -30,15 +32,16 @@ it('calls getPermissions correctly and throws a LeemonsError if the user is not 
   expect(getPermissions).nthCalledWith(2, { assetId, ctx });
 });
 
-it('Throws when the system cannot determine if the user has permission to duplicate the asset', async () => {
+it("Throws when the system cannot determine if the user has permission to duplicate the asset", async () => {
   // Arrange
-  const assetId = 'anAssetId@1.0.0';
+  const assetId = "anAssetId@1.0.0";
   getPermissions.mockResolvedValue(undefined);
 
   const ctx = generateCtx({});
 
   // Act
-  const testWrongResponse = async () => checkDuplicatePermissions({ assetId, ctx });
+  const testWrongResponse = async () =>
+    checkDuplicatePermissions({ assetId, ctx });
 
   // Assert
   expect(testWrongResponse).rejects.toThrow();

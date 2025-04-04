@@ -1,43 +1,53 @@
-import React, { useMemo } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useMemo } from "react";
+import { useHistory } from "react-router-dom";
 
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import { Box, createStyles } from '@bubbles-ui/components';
-import loadable from '@loadable/component';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { isEmpty, isNil } from 'lodash';
-import PropTypes from 'prop-types';
+import { useIsTeacher } from "@academic-portfolio/hooks";
+import { Box, createStyles } from "@bubbles-ui/components";
+import loadable from "@loadable/component";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { isEmpty, isNil } from "lodash";
+import PropTypes from "prop-types";
 
-import prefixPN from '../helpers/prefixPN';
-import { getCoverUrl, prepareAsset, resolveAssetType } from '../helpers/prepareAsset';
+import prefixPN from "../helpers/prefixPN";
+import {
+  getCoverUrl,
+  prepareAsset,
+  resolveAssetType,
+} from "../helpers/prepareAsset";
 
-import { AssignIcon } from './LibraryDetailToolbar/icons/AssignIcon';
-import { DeleteIcon } from './LibraryDetailToolbar/icons/DeleteIcon';
-import { DownloadIcon } from './LibraryDetailToolbar/icons/DownloadIcon';
-import { DuplicateIcon } from './LibraryDetailToolbar/icons/DuplicateIcon';
-import { EditIcon } from './LibraryDetailToolbar/icons/EditIcon';
-import { ShareIcon } from './LibraryDetailToolbar/icons/ShareIcon';
+import { AssignIcon } from "./LibraryDetailToolbar/icons/AssignIcon";
+import { DeleteIcon } from "./LibraryDetailToolbar/icons/DeleteIcon";
+import { DownloadIcon } from "./LibraryDetailToolbar/icons/DownloadIcon";
+import { DuplicateIcon } from "./LibraryDetailToolbar/icons/DuplicateIcon";
+import { EditIcon } from "./LibraryDetailToolbar/icons/EditIcon";
+import { ShareIcon } from "./LibraryDetailToolbar/icons/ShareIcon";
 
-import { LibraryCard } from '@leebrary/components/LibraryCard';
+import { LibraryCard } from "@leebrary/components/LibraryCard";
 
 function dynamicImport(pluginName, component) {
   return loadable(async () => {
     try {
-      return await import(`@app/plugins/${pluginName}/src/widgets/leebrary/${component}.js`);
+      return await import(
+        `@app/plugins/${pluginName}/src/widgets/leebrary/${component}.js`
+      );
     } catch (error) {
-      return await import(`@app/plugins/${pluginName}/src/widgets/leebrary/${component}.tsx`);
+      return await import(
+        `@app/plugins/${pluginName}/src/widgets/leebrary/${component}.tsx`
+      );
     }
   });
 }
 
-const CardWrapperStyles = createStyles((theme, { selected, isCreationPreview }) => ({
-  root: {
-    cursor: isCreationPreview ? 'default' : 'pointer',
-    borderColor: selected && theme.other.core.color.primary['400'],
-    borderWidth: selected && '1px',
-    boxShadow: selected && theme.shadows.shadow03,
-  },
-}));
+const CardWrapperStyles = createStyles(
+  (theme, { selected, isCreationPreview }) => ({
+    root: {
+      cursor: isCreationPreview ? "default" : "pointer",
+      borderColor: selected && theme.other.core.color.primary["400"],
+      borderWidth: selected && "1px",
+      boxShadow: selected && theme.shadows.shadow03,
+    },
+  })
+);
 
 const CardWrapper = ({
   key,
@@ -45,7 +55,7 @@ const CardWrapper = ({
   headers,
   selected,
   className,
-  variant = 'media',
+  variant = "media",
   category,
   realCategory,
   isEmbedded,
@@ -67,7 +77,7 @@ const CardWrapper = ({
 }) => {
   const asset = !isEmpty(item?.original) ? prepareAsset(item.original) : {};
 
-  const [t] = useTranslateLoader(prefixPN('list'));
+  const [t] = useTranslateLoader(prefixPN("list"));
   const history = useHistory();
   const { classes } = CardWrapperStyles({ selected, isCreationPreview });
   const isTeacher = useIsTeacher();
@@ -79,17 +89,20 @@ const CardWrapper = ({
       if (isTeacher) {
         items.push({
           icon: <AssignIcon />,
-          children: t('cardToolbar.covertToTask'),
+          children: t("cardToolbar.covertToTask"),
           onClick: (e) => {
             e.stopPropagation();
             history.push(`/private/leebrary/assign/${asset.id}`);
           },
         });
       }
-      if (asset.shareable && (asset.providerData?.published || asset.providerData === undefined)) {
+      if (
+        asset.shareable &&
+        (asset.providerData?.published || asset.providerData === undefined)
+      ) {
         items.push({
           icon: <ShareIcon />,
-          children: t('cardToolbar.share'),
+          children: t("cardToolbar.share"),
           onClick: (e) => {
             e.stopPropagation();
             onShare(asset);
@@ -99,7 +112,7 @@ const CardWrapper = ({
       if (asset.downloadable) {
         items.push({
           icon: <DownloadIcon />,
-          children: t('cardToolbar.download'),
+          children: t("cardToolbar.download"),
           onClick: (e) => {
             e.stopPropagation();
             onDownload(asset);
@@ -109,7 +122,7 @@ const CardWrapper = ({
       if (asset.editable) {
         items.push({
           icon: <EditIcon />,
-          children: t('cardToolbar.edit'),
+          children: t("cardToolbar.edit"),
           onClick: (e) => {
             e.stopPropagation();
             onEdit(asset);
@@ -119,7 +132,7 @@ const CardWrapper = ({
       if (asset.duplicable) {
         items.push({
           icon: <DuplicateIcon />,
-          children: t('cardToolbar.duplicate'),
+          children: t("cardToolbar.duplicate"),
           onClick: (e) => {
             e.stopPropagation();
             onDuplicate(asset);
@@ -130,7 +143,7 @@ const CardWrapper = ({
       if (asset.deleteable) {
         items.push({
           icon: <DeleteIcon />,
-          children: t('cardToolbar.delete'),
+          children: t("cardToolbar.delete"),
           onClick: (e) => {
             e.stopPropagation();
             onDelete(asset);
@@ -147,17 +160,24 @@ const CardWrapper = ({
     const componentOwner = category?.componentOwner || category?.pluginOwner;
     if (category?.listCardComponent && componentOwner) {
       try {
-        componentToRender = dynamicImport(componentOwner, category.listCardComponent);
+        componentToRender = dynamicImport(
+          componentOwner,
+          category.listCardComponent
+        );
       } catch (e) {
-        console.log('error', e);
+        console.log("error", e);
       }
     }
 
     return componentToRender;
-  }, [category?.componentOwner, category?.pluginOwner, category?.listCardComponent]);
+  }, [
+    category?.componentOwner,
+    category?.pluginOwner,
+    category?.listCardComponent,
+  ]);
 
   return !isNil(category) && !isEmpty(asset) ? (
-    <Box key={key} {...props} style={{ display: 'flex', gap: 32, ...style }}>
+    <Box key={key} {...props} style={{ display: "flex", gap: 32, ...style }}>
       <Component
         isCreationPreview={isCreationPreview}
         asset={{

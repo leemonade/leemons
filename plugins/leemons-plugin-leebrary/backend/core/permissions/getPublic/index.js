@@ -1,3 +1,3 @@
-const getPublic = require('./getPublic');
+const getPublic = require("./getPublic");
 
 module.exports = { ...getPublic };

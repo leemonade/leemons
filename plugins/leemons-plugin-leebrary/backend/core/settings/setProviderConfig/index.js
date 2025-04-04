@@ -1,3 +1,3 @@
-const setProviderConfig = require('./setProviderConfig');
+const setProviderConfig = require("./setProviderConfig");
 
 module.exports = { ...setProviderConfig };

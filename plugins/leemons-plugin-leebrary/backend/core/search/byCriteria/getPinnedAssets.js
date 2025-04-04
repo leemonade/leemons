@@ -1,6 +1,6 @@
-const { isArray } = require('lodash');
+const { isArray } = require("lodash");
 
-const { getByUser: getPinsByUser } = require('../../pins/getByUser');
+const { getByUser: getPinsByUser } = require("../../pins/getByUser");
 /**
  * This function retrieves pinned assets based on the provided parameters.
  * If the 'pinned' parameter is true, it fetches the pins for the user and maps them to assets.

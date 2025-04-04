@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-const { forEach, findIndex } = require('lodash');
-const getRolePermissions = require('../helpers/getRolePermissions');
+const { forEach, findIndex } = require("lodash");
+const getRolePermissions = require("../helpers/getRolePermissions");
 
 /**
  * handleEditorRole is a function that handles the editor role permissions.
@@ -19,15 +19,18 @@ function handleEditorRole({ editItems, results, assetIds, ctx }) {
   forEach(editItems, (asset) => {
     const index = findIndex(results, { asset });
     if (index >= 0) {
-      if (results[index].role === 'viewer') {
-        results[index].role = 'editor';
-        results[index].permissions = getRolePermissions({ role: 'editor', ctx });
+      if (results[index].role === "viewer") {
+        results[index].role = "editor";
+        results[index].permissions = getRolePermissions({
+          role: "editor",
+          ctx,
+        });
       }
     } else if (assetIds.includes(asset)) {
       results.push({
         asset,
-        role: 'editor',
-        permissions: getRolePermissions({ role: 'editor', ctx }),
+        role: "editor",
+        permissions: getRolePermissions({ role: "editor", ctx }),
       });
     }
   });

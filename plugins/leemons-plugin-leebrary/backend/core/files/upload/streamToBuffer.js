@@ -8,15 +8,15 @@ function streamToBuffer(readStream) {
   return new Promise((resolve, reject) => {
     const data = [];
 
-    readStream.on('data', (chunk) => {
+    readStream.on("data", (chunk) => {
       data.push(chunk);
     });
 
-    readStream.on('end', () => {
+    readStream.on("end", () => {
       resolve(Buffer.concat(data));
     });
 
-    readStream.on('error', (err) => {
+    readStream.on("error", (err) => {
       reject(err);
     });
   });

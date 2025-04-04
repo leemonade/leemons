@@ -1,10 +1,10 @@
 /* eslint-disable no-unsafe-optional-chaining */
-import React from 'react';
+import React from "react";
 
-import { AvatarsGroup, Box, FileIcon, Text } from '@bubbles-ui/components';
+import { AvatarsGroup, Box, FileIcon, Text } from "@bubbles-ui/components";
 
-import { LIBRARY_CARD_FOOTER_PROP_TYPES } from './LibraryCardFooter.constants';
-import { LibraryCardFooterStyles } from './LibraryCardFooter.styles';
+import { LIBRARY_CARD_FOOTER_PROP_TYPES } from "./LibraryCardFooter.constants";
+import { LibraryCardFooterStyles } from "./LibraryCardFooter.styles";
 
 const LibraryCardFooter = ({
   fileType,
@@ -22,7 +22,7 @@ const LibraryCardFooter = ({
 }) => {
   const { classes, cx } = LibraryCardFooterStyles(
     { action, size: 12, autoHeight },
-    { name: 'LibraryCardFooter' }
+    { name: "LibraryCardFooter" }
   );
 
   const variantIconLabel =
@@ -34,19 +34,23 @@ const LibraryCardFooter = ({
       {!action && variantIcon ? (
         <Box className={classes.FileIconRoot}>
           {variantIcon}
-          {variantIconLabel && <Text className={classes.FileIconLabel}>{variantIconLabel}</Text>}
+          {variantIconLabel && (
+            <Text className={classes.FileIconLabel}>{variantIconLabel}</Text>
+          )}
         </Box>
       ) : (
         <Box className={classes.fileIconContainer}>
           <FileIcon
             size={18}
-            fileType={fileType === 'file' ? fileExtension : fileType || variant}
+            fileType={fileType === "file" ? fileExtension : fileType || variant}
             fileExtension={fileExtension}
-            color={'#878D96'}
+            color={"#878D96"}
             hideExtension
           />
           <Text className={classes.fileLabel}>
-            {fileType === 'file' ? fileExtension?.toUpperCase() : variantIconLabel}
+            {fileType === "file"
+              ? fileExtension?.toUpperCase()
+              : variantIconLabel}
           </Text>
         </Box>
       )}

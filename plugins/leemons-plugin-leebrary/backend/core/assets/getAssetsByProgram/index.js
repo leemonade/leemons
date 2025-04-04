@@ -1,3 +1,3 @@
-const getAssetByProgram = require('./getAssetsByProgram');
+const getAssetByProgram = require("./getAssetsByProgram");
 
 module.exports = { ...getAssetByProgram };

@@ -1,7 +1,7 @@
 async function assignAsset({ assignable, instance }) {
   return leemons.api(`v1/leebrary/assignables/assign`, {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
 
     body: {
       assignable,

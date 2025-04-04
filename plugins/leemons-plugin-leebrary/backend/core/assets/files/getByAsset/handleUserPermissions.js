@@ -1,4 +1,6 @@
-const { getByAsset: getPermissions } = require('../../../permissions/getByAsset');
+const {
+  getByAsset: getPermissions,
+} = require("../../../permissions/getByAsset");
 
 /**
  * Check if the user has permissions to view the asset

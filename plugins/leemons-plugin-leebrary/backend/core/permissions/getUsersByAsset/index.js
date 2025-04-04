@@ -1,3 +1,3 @@
-const getUsersByAsset = require('./getUsersByAsset');
+const getUsersByAsset = require("./getUsersByAsset");
 
 module.exports = { ...getUsersByAsset };

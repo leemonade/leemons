@@ -1,3 +1,3 @@
-const has = require('./has');
+const has = require("./has");
 
 module.exports = { ...has };

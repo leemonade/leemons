@@ -1,4 +1,4 @@
-const { getCenterPermissionData } = require('./getCenterPermissionData');
+const { getCenterPermissionData } = require("./getCenterPermissionData");
 
 async function addCenterItemPermission({
   ctx,
@@ -12,19 +12,21 @@ async function addCenterItemPermission({
   let centerAssetPermissionName = permissionName;
 
   if (!skipGetData) {
-    ({ assetDetail, centerAssetPermissionName } = await getCenterPermissionData({
-      assetId,
-      centerId,
-      ctx,
-    }));
+    ({ assetDetail, centerAssetPermissionName } = await getCenterPermissionData(
+      {
+        assetId,
+        centerId,
+        ctx,
+      }
+    ));
   }
 
-  await ctx.tx.call('users.permissions.addItem', {
+  await ctx.tx.call("users.permissions.addItem", {
     item: assetDetail.id,
-    type: ctx.prefixPN('asset.can-administer'),
+    type: ctx.prefixPN("asset.can-administer"),
     data: {
       permissionName: centerAssetPermissionName,
-      actionNames: ['admin'],
+      actionNames: ["admin"],
       target: assetDetail.category,
     },
     isCustomPermission: true,

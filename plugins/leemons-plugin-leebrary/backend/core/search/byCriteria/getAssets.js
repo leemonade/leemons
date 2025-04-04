@@ -1,9 +1,9 @@
-const { difference, map } = require('lodash');
+const { difference, map } = require("lodash");
 
-const { getAssetsByProgram } = require('../../assets/getAssetsByProgram');
-const { getAssetsBySubject } = require('../../assets/getAssetsBySubject');
-const { getIndexables } = require('../../assets/getIndexables');
-const { getAssetsByType } = require('../../files/getAssetsByType');
+const { getAssetsByProgram } = require("../../assets/getAssetsByProgram");
+const { getAssetsBySubject } = require("../../assets/getAssetsBySubject");
+const { getIndexables } = require("../../assets/getIndexables");
+const { getAssetsByType } = require("../../files/getAssetsByType");
 
 /**
  * Retrieves assets based on the provided parameters.
@@ -49,15 +49,19 @@ async function getAssets({
     }
 
     if (indexable && assets && assets.length) {
-      assets = await getIndexables({ assetIds: assets, columns: ['id'], ctx });
-      assets = map(assets, 'id');
+      assets = await getIndexables({ assetIds: assets, columns: ["id"], ctx });
+      assets = map(assets, "id");
       nothingFound = assets.length === 0;
     }
   } else {
-    const sysName = await ctx.tx.call('users.profiles.getProfileSysName');
+    const sysName = await ctx.tx.call("users.profiles.getProfileSysName");
 
-    if (sysName === 'student') {
-      const assetsToRemove = await getAssetsBySubject({ subject: [], assets, ctx });
+    if (sysName === "student") {
+      const assetsToRemove = await getAssetsBySubject({
+        subject: [],
+        assets,
+        ctx,
+      });
       assets = difference(assets, assetsToRemove);
     }
   }

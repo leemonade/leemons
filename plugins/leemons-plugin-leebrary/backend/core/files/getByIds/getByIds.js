@@ -1,7 +1,7 @@
-const { isEmpty, escapeRegExp } = require('lodash');
+const { isEmpty, escapeRegExp } = require("lodash");
 
-const { normalizeItemsArray } = require('../../shared');
-const { parseMetadata } = require('../helpers/parseMetadata');
+const { normalizeItemsArray } = require("../../shared");
+const { parseMetadata } = require("../helpers/parseMetadata");
 
 /**
  * Fetches and returns files from the database using provided file IDs.
@@ -22,7 +22,7 @@ async function getByIds({ fileIds, type, parsed = true, columns, ctx }) {
   };
 
   if (type && !isEmpty(type)) {
-    query.type = { $regex: escapeRegExp(type), $options: 'i' };
+    query.type = { $regex: escapeRegExp(type), $options: "i" };
   }
 
   const items = await ctx.tx.db.Files.find(query).select(columns).lean();

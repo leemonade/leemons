@@ -1,37 +1,44 @@
-const { afterAll, beforeAll, beforeEach, describe, expect, it } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { LeemonsError } = require('@leemons/error');
-const { newModel } = require('@leemons/mongodb');
+const {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { LeemonsError } = require("@leemons/error");
+const { newModel } = require("@leemons/mongodb");
 
-const getAssetAddDataInput = require('../../../__fixtures__/getAssetUpdateDataInput');
+const getAssetAddDataInput = require("../../../__fixtures__/getAssetUpdateDataInput");
 
-const { assetsSchema } = require('../../../models/assets');
-const { update } = require('./update');
+const { assetsSchema } = require("../../../models/assets");
+const { update } = require("./update");
 
-jest.mock('../../validations/forms');
-jest.mock('../../permissions/getByAsset');
-const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
+jest.mock("../../validations/forms");
+jest.mock("../../permissions/getByAsset");
+const { getByAsset: getPermissions } = require("../../permissions/getByAsset");
 
-jest.mock('../getByIds/getByIds');
-const { getByIds } = require('../getByIds/getByIds');
+jest.mock("../getByIds/getByIds");
+const { getByIds } = require("../getByIds/getByIds");
 
-jest.mock('./handleUpdateObject');
-const { handleUpdateObject } = require('./handleUpdateObject');
+jest.mock("./handleUpdateObject");
+const { handleUpdateObject } = require("./handleUpdateObject");
 
-jest.mock('./handleAssetUpgrade');
-const { handleAssetUpgrade } = require('./handleAssetUpgrade');
+jest.mock("./handleAssetUpgrade");
+const { handleAssetUpgrade } = require("./handleAssetUpgrade");
 
-jest.mock('./handleSubjectsUpdates');
-const { handleSubjectsUpdates } = require('./handleSubjectsUpdates');
+jest.mock("./handleSubjectsUpdates");
+const { handleSubjectsUpdates } = require("./handleSubjectsUpdates");
 
-jest.mock('./handleTagsUpdates');
-const { handleTagsUpdates } = require('./handleTagsUpdates');
+jest.mock("./handleTagsUpdates");
+const { handleTagsUpdates } = require("./handleTagsUpdates");
 
-jest.mock('./handleFileAndCoverUpdates');
-const { handleFileAndCoverUpdates } = require('./handleFileAndCoverUpdates');
+jest.mock("./handleFileAndCoverUpdates");
+const { handleFileAndCoverUpdates } = require("./handleFileAndCoverUpdates");
 
-jest.mock('./handleFilesRemoval');
-const { handleFilesRemoval } = require('./handleFilesRemoval');
+jest.mock("./handleFilesRemoval");
+const { handleFilesRemoval } = require("./handleFilesRemoval");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -40,12 +47,12 @@ let getVersion;
 let publishVersion;
 
 const VERSION_MOCK = {
-  uuid: 'd5c4e1ac-18dc-414a-9be7-c7776c524674',
-  version: '1.0.0',
-  fullId: 'd5c4e1ac-18dc-414a-9be7-c7776c524674@1.0.0',
+  uuid: "d5c4e1ac-18dc-414a-9be7-c7776c524674",
+  version: "1.0.0",
+  fullId: "d5c4e1ac-18dc-414a-9be7-c7776c524674@1.0.0",
 };
 
-describe('update', () => {
+describe("update", () => {
   beforeAll(async () => {
     const { mongoose, disconnect } = await createMongooseConnection();
     mongooseConnection = mongoose;
@@ -64,28 +71,28 @@ describe('update', () => {
     publishVersion = jest.fn().mockResolvedValue();
     ctx = generateCtx({
       actions: {
-        'common.versionControl.getVersion': getVersion,
-        'common.versionControl.publishVersion': publishVersion,
+        "common.versionControl.getVersion": getVersion,
+        "common.versionControl.publishVersion": publishVersion,
       },
       models: {
-        Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+        Assets: newModel(mongooseConnection, "Assets", assetsSchema),
       },
     });
     jest.resetAllMocks();
     await mongooseConnection.dropDatabase();
   });
 
-  it('should throw an error if no changes are detected', async () => {
+  it("should throw an error if no changes are detected", async () => {
     // Arrange
     const data = {};
 
     // Act and Assert
-    await expect(update({ data, ctx })).rejects.toThrow('No changes detected');
+    await expect(update({ data, ctx })).rejects.toThrow("No changes detected");
   });
 
-  it('should throw an error if user does not have permissions to update the asset', async () => {
+  it("should throw an error if user does not have permissions to update the asset", async () => {
     // Arrange
-    const data = { id: 'testAssetId' };
+    const data = { id: "testAssetId" };
 
     getPermissions.mockResolvedValue({ permissions: { edit: false } });
 
@@ -95,9 +102,9 @@ describe('update', () => {
     );
   });
 
-  it('should throw an error if current asset is not found', async () => {
+  it("should throw an error if current asset is not found", async () => {
     // Arrange
-    const data = { id: 'testAssetId' };
+    const data = { id: "testAssetId" };
 
     getPermissions.mockResolvedValue({ permissions: { edit: true } });
     getByIds.mockResolvedValue([]);
@@ -108,21 +115,26 @@ describe('update', () => {
     // Assert
     await expect(update({ data, ctx })).rejects.toThrow(
       new LeemonsError(ctx, {
-        message: 'Asset not found',
+        message: "Asset not found",
         httpStatusCode: 422,
       })
     );
   });
 
-  it('should handle asset update', async () => {
+  it("should handle asset update", async () => {
     // Arrange
 
-    const { initialData, assetData, currentAsset, handleUpdateObjectReturn, fileAndCoverUpdates } =
-      getAssetAddDataInput();
+    const {
+      initialData,
+      assetData,
+      currentAsset,
+      handleUpdateObjectReturn,
+      fileAndCoverUpdates,
+    } = getAssetAddDataInput();
 
     await ctx.tx.db.Assets.create({
       ...initialData,
-      name: 'initialName',
+      name: "initialName",
       category: initialData.category.id,
     });
 
@@ -139,7 +151,7 @@ describe('update', () => {
     const response = await update({
       data: initialData,
       published: true,
-      scale: 'major',
+      scale: "major",
       upgrade: undefined,
       ctx,
     });
@@ -154,7 +166,10 @@ describe('update', () => {
       assetData,
       ctx,
     });
-    expect(publishVersion).toHaveBeenCalledWith({ id: initialData.id, publish: true });
+    expect(publishVersion).toHaveBeenCalledWith({
+      id: initialData.id,
+      publish: true,
+    });
     expect(handleSubjectsUpdates).toHaveBeenCalledWith({
       assetId: initialData.id,
       subjects: handleUpdateObjectReturn.subjects,
@@ -185,13 +200,18 @@ describe('update', () => {
       coverNeedsUpdate: false,
       ctx,
     });
-    expect(response.name).toBe('NEW Asset Name');
+    expect(response.name).toBe("NEW Asset Name");
   });
-  it('should handle asset update if there was no changes', async () => {
+  it("should handle asset update if there was no changes", async () => {
     // Arrange
 
-    const { initialData, assetData, currentAsset, handleUpdateObjectReturn, fileAndCoverUpdates } =
-      getAssetAddDataInput();
+    const {
+      initialData,
+      assetData,
+      currentAsset,
+      handleUpdateObjectReturn,
+      fileAndCoverUpdates,
+    } = getAssetAddDataInput();
 
     await ctx.tx.db.Assets.create({
       ...initialData,
@@ -204,14 +224,17 @@ describe('update', () => {
       ...VERSION_MOCK,
       published: false,
     });
-    handleUpdateObject.mockResolvedValue({ ...handleUpdateObjectReturn, diff: [] });
+    handleUpdateObject.mockResolvedValue({
+      ...handleUpdateObjectReturn,
+      diff: [],
+    });
     handleFileAndCoverUpdates.mockResolvedValue(fileAndCoverUpdates);
 
     // Act
     const response = await update({
       data: initialData,
       published: true,
-      scale: 'major',
+      scale: "major",
       upgrade: undefined,
       ctx,
     });
@@ -226,7 +249,10 @@ describe('update', () => {
       assetData,
       ctx,
     });
-    expect(publishVersion).toHaveBeenCalledWith({ id: initialData.id, publish: true });
+    expect(publishVersion).toHaveBeenCalledWith({
+      id: initialData.id,
+      publish: true,
+    });
     expect(handleSubjectsUpdates).toHaveBeenCalledTimes(0);
     expect(handleTagsUpdates).toHaveBeenCalledTimes(0);
     expect(handleFileAndCoverUpdates).toHaveBeenCalledTimes(0);
@@ -234,21 +260,26 @@ describe('update', () => {
 
     expect(response.name).toBe(currentAsset.name);
   });
-  it('should handle asset upgrade when upgrade is true and currentVersion.published is also true', async () => {
+  it("should handle asset upgrade when upgrade is true and currentVersion.published is also true", async () => {
     // Arrange
-    const { initialData, assetData, currentAsset, handleUpdateObjectReturn, fileAndCoverUpdates } =
-      getAssetAddDataInput();
+    const {
+      initialData,
+      assetData,
+      currentAsset,
+      handleUpdateObjectReturn,
+      fileAndCoverUpdates,
+    } = getAssetAddDataInput();
 
     await ctx.tx.db.Assets.create({
       ...initialData,
-      name: 'initialName',
+      name: "initialName",
       category: initialData.category.id,
     });
 
     await ctx.tx.db.Assets.create({
       ...initialData,
-      id: 'duplicatedAssetId',
-      name: 'initialName',
+      id: "duplicatedAssetId",
+      name: "initialName",
       category: initialData.category.id,
     });
 
@@ -263,14 +294,14 @@ describe('update', () => {
     handleUpdateObject.mockResolvedValue(handleUpdateObjectReturn);
     handleFileAndCoverUpdates.mockResolvedValue(fileAndCoverUpdates);
     handleAssetUpgrade.mockResolvedValue({
-      id: 'duplicatedAssetId',
+      id: "duplicatedAssetId",
     });
 
     // Act
     const response = await update({
       data: initialData,
       published: true,
-      scale: 'major',
+      scale: "major",
       upgrade: true,
       ctx,
     });
@@ -288,19 +319,19 @@ describe('update', () => {
     });
     expect(publishVersion).toHaveBeenCalledTimes(0);
     expect(handleSubjectsUpdates).toHaveBeenCalledWith({
-      assetId: 'duplicatedAssetId',
+      assetId: "duplicatedAssetId",
       subjects: handleUpdateObjectReturn.subjects,
       diff: handleUpdateObjectReturn.diff,
       ctx,
     });
     expect(handleAssetUpgrade).toHaveBeenCalledWith({
       assetId: initialData.id,
-      scale: 'major',
+      scale: "major",
       published: true,
       ctx,
     });
     expect(handleFileAndCoverUpdates).toHaveBeenCalledWith({
-      assetId: 'duplicatedAssetId',
+      assetId: "duplicatedAssetId",
       assetData,
       updateObject: handleUpdateObjectReturn.updateObject,
       currentAsset,
@@ -316,7 +347,7 @@ describe('update', () => {
       coverNeedsUpdate: false,
       ctx,
     });
-    expect(response.name).toBe('NEW Asset Name');
-    expect(initialAsset.name).toBe('initialName');
+    expect(response.name).toBe("NEW Asset Name");
+    expect(initialAsset.name).toBe("initialName");
   });
 });

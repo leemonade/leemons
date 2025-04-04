@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const LIBRARY_DETAIL_TOOLBAR_DEFAULT_PROPS = {
   open: true,

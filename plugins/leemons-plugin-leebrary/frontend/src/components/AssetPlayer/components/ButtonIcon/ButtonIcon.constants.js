@@ -1,7 +1,7 @@
-import propTypes from 'prop-types';
+import propTypes from "prop-types";
 
 export const BUTTONICON_DEFAULT_PROPS = {
-  fileType: '',
+  fileType: "",
 };
 
 export const BUTTONICON_PROP_TYPES = {

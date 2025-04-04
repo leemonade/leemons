@@ -1,12 +1,19 @@
-const { expect, beforeAll, beforeEach, afterAll, describe, it } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  expect,
+  beforeAll,
+  beforeEach,
+  afterAll,
+  describe,
+  it,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getByAsset } = require('./getByAsset');
+const { getByAsset } = require("./getByAsset");
 
-const { bookmarksSchema } = require('../../../models/bookmarks');
+const { bookmarksSchema } = require("../../../models/bookmarks");
 
-describe('Get By Asset Bookmark Test', () => {
+describe("Get By Asset Bookmark Test", () => {
   // Arrange: Set up the test environment
   let mongooseConnection;
   let disconnectMongoose;
@@ -21,7 +28,7 @@ describe('Get By Asset Bookmark Test', () => {
 
     ctx = generateCtx({
       models: {
-        Bookmarks: newModel(mongooseConnection, 'Bookmarks', bookmarksSchema),
+        Bookmarks: newModel(mongooseConnection, "Bookmarks", bookmarksSchema),
       },
     });
   });
@@ -42,30 +49,30 @@ describe('Get By Asset Bookmark Test', () => {
     // Insert test data into the Bookmarks collection
     await ctx.tx.db.Bookmarks.create([
       {
-        asset: 'asset1',
-        url: 'https://test1.com',
-        icon: 'icon1',
+        asset: "asset1",
+        url: "https://test1.com",
+        icon: "icon1",
       },
       {
-        asset: 'asset2',
-        url: 'https://test2.com',
-        icon: 'icon2',
+        asset: "asset2",
+        url: "https://test2.com",
+        icon: "icon2",
       },
       {
-        asset: 'asset3',
-        url: 'https://test1.com',
-        icon: 'icon3',
+        asset: "asset3",
+        url: "https://test1.com",
+        icon: "icon3",
       },
     ]);
 
     params = {
-      assetId: 'asset1',
+      assetId: "asset1",
       columns: [],
       ctx,
     };
   });
 
-  it('should find a bookmark by asset in the database', async () => {
+  it("should find a bookmark by asset in the database", async () => {
     // Arrange
 
     // Act
@@ -73,12 +80,12 @@ describe('Get By Asset Bookmark Test', () => {
 
     // Assert
     expect(bookmark).toBeDefined();
-    expect(bookmark.asset).toBe('asset1');
+    expect(bookmark.asset).toBe("asset1");
   });
 
-  it('should return only icon field', async () => {
+  it("should return only icon field", async () => {
     // Arrange
-    params.columns = 'icon';
+    params.columns = "icon";
     // Act
     const bookmark = await getByAsset(params);
 
@@ -87,9 +94,9 @@ describe('Get By Asset Bookmark Test', () => {
     expect(bookmark.url).not.toBeDefined();
   });
 
-  it('should return null if no bookmark is found', async () => {
+  it("should return null if no bookmark is found", async () => {
     // Arrange
-    params.assetId = 'nonexistentAsset';
+    params.assetId = "nonexistentAsset";
 
     // Act
     const bookmark = await getByAsset(params);

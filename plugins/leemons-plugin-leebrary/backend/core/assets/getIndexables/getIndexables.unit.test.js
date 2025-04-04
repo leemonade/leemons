@@ -1,10 +1,16 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const _ = require('lodash');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const _ = require("lodash");
 
-const { getIndexables } = require('./getIndexables');
-const { assetsSchema } = require('../../../models/assets');
+const { getIndexables } = require("./getIndexables");
+const { assetsSchema } = require("../../../models/assets");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -27,21 +33,21 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should correctly query the db and return the desired fields', async () => {
+it("Should correctly query the db and return the desired fields", async () => {
   // Arrange
-  const assetIds = ['asset1', 'asset3'];
-  const columns = ['id', 'indexable'];
+  const assetIds = ["asset1", "asset3"];
+  const columns = ["id", "indexable"];
 
   const ctx = generateCtx({
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
 
   const initialValues = [
-    { id: 'asset1', indexable: true },
-    { id: 'asset2', indexable: true },
-    { id: 'asset3', indexable: false },
+    { id: "asset1", indexable: true },
+    { id: "asset2", indexable: true },
+    { id: "asset3", indexable: false },
   ];
   await ctx.db.Assets.create(initialValues);
   const expectedResponse = [
@@ -61,21 +67,21 @@ it('Should correctly query the db and return the desired fields', async () => {
   });
 });
 
-it('Should return empty array if no matching assetIds are found', async () => {
+it("Should return empty array if no matching assetIds are found", async () => {
   // Arrange
-  const assetIds = ['asset4', 'asset5'];
-  const columns = ['id', 'indexable'];
+  const assetIds = ["asset4", "asset5"];
+  const columns = ["id", "indexable"];
 
   const ctx = generateCtx({
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
 
   const initialValues = [
-    { id: 'asset1', indexable: true },
-    { id: 'asset2', indexable: true },
-    { id: 'asset3', indexable: false },
+    { id: "asset1", indexable: true },
+    { id: "asset2", indexable: true },
+    { id: "asset3", indexable: false },
   ];
   await ctx.db.Assets.create(initialValues);
 
@@ -86,18 +92,18 @@ it('Should return empty array if no matching assetIds are found', async () => {
   expect(response).toEqual([]);
 });
 
-it('Should not throw if assetsIds is not passed', async () => {
+it("Should not throw if assetsIds is not passed", async () => {
   // Arrange
   const ctx = generateCtx({
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
 
   const initialValues = [
-    { id: 'asset1', indexable: true },
-    { id: 'asset2', indexable: true },
-    { id: 'asset3', indexable: false },
+    { id: "asset1", indexable: true },
+    { id: "asset2", indexable: true },
+    { id: "asset3", indexable: false },
   ];
   await ctx.db.Assets.create(initialValues);
   const response = await getIndexables({ ctx });

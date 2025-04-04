@@ -1,4 +1,4 @@
-const { find: findAssets } = require('../../find');
+const { find: findAssets } = require("../../find");
 /**
  * Checks if the asset is public.
  *

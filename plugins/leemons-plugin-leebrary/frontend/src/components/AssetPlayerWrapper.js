@@ -1,37 +1,40 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from "react";
 
-import { Box } from '@bubbles-ui/components';
-import loadable from '@loadable/component';
-import propTypes from 'prop-types';
+import { Box } from "@bubbles-ui/components";
+import loadable from "@loadable/component";
+import propTypes from "prop-types";
 
-import { AssetPlayer } from './AssetPlayer/AssetPlayer';
+import { AssetPlayer } from "./AssetPlayer/AssetPlayer";
 
 function dynamicImport(pluginName, component) {
-  return loadable(() => import(`@app/plugins/${pluginName}/src/widgets/leebrary/${component}.js`));
+  return loadable(
+    () =>
+      import(`@app/plugins/${pluginName}/src/widgets/leebrary/${component}.js`)
+  );
 }
 const AssetPlayerWrapper = ({ asset, category }) => {
   const getMultimediaProps = () => {
-    if (asset?.fileType === 'audio') {
+    if (asset?.fileType === "audio") {
       return {
         useAudioCard: true,
       };
     }
-    if (asset?.fileType === 'video') {
+    if (asset?.fileType === "video") {
       return {
         width: 720,
-        height: 'auto',
+        height: "auto",
       };
     }
-    if (asset?.fileType === 'pdf') {
+    if (asset?.fileType === "pdf") {
       return {
         viewPDF: true,
-        width: '100%',
+        width: "100%",
       };
     }
-    if (asset?.fileType === 'image') {
+    if (asset?.fileType === "image") {
       return {
         width: 500,
-        height: 'auto',
+        height: "auto",
       };
     }
     return {};
@@ -40,9 +43,16 @@ const AssetPlayerWrapper = ({ asset, category }) => {
   const Component = useMemo(() => {
     let componentToRender = AssetPlayer;
     const componentOwner = category?.componentOwner || category?.pluginOwner;
-    if (componentOwner !== 'leebrary' && category?.playerComponent && componentOwner) {
+    if (
+      componentOwner !== "leebrary" &&
+      category?.playerComponent &&
+      componentOwner
+    ) {
       try {
-        componentToRender = dynamicImport(componentOwner, category.playerComponent);
+        componentToRender = dynamicImport(
+          componentOwner,
+          category.playerComponent
+        );
       } catch (e) {
         //
       }
@@ -55,10 +65,10 @@ const AssetPlayerWrapper = ({ asset, category }) => {
     <Box
       data-cypress-id="library-detail-player"
       style={{
-        display: 'grid',
-        placeContent: 'center',
-        width: '100%',
-        minHeight: '100vh',
+        display: "grid",
+        placeContent: "center",
+        width: "100%",
+        minHeight: "100vh",
       }}
     >
       <Component asset={asset} {...getMultimediaProps()} execMode />

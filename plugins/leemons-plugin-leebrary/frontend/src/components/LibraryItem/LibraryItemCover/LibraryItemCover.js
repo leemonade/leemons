@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { isNil } from 'lodash';
-import { Box, ImageLoader, COLORS } from '@bubbles-ui/components';
-import { LibraryItemCoverStyles } from './LibraryItemCover.styles';
-import { getSize } from '../LibraryItem.constants';
+import React, { useMemo } from "react";
+import PropTypes from "prop-types";
+import { isNil } from "lodash";
+import { Box, ImageLoader, COLORS } from "@bubbles-ui/components";
+import { LibraryItemCoverStyles } from "./LibraryItemCover.styles";
+import { getSize } from "../LibraryItem.constants";
 
 const LibraryItemCover = ({ size, cover, color, fileIcon }) => {
   const { height } = getSize(size);
@@ -19,7 +19,10 @@ const LibraryItemCover = ({ size, cover, color, fileIcon }) => {
         : null,
     [fileIcon]
   );
-  const { classes } = LibraryItemCoverStyles({ size, color, cover }, { name: 'LibraryItemCover' });
+  const { classes } = LibraryItemCoverStyles(
+    { size, color, cover },
+    { name: "LibraryItemCover" }
+  );
 
   return (
     <Box className={classes.root}>
@@ -30,10 +33,10 @@ const LibraryItemCover = ({ size, cover, color, fileIcon }) => {
 };
 
 LibraryItemCover.defaultProps = {
-  size: 'sm',
+  size: "sm",
 };
 LibraryItemCover.propTypes = {
-  size: PropTypes.oneOf(['sm', 'md', 'lg']),
+  size: PropTypes.oneOf(["sm", "md", "lg"]),
   cover: PropTypes.string,
   color: PropTypes.string,
   fileIcon: PropTypes.node,

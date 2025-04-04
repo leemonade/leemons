@@ -4,23 +4,23 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
-const { uniq } = require('lodash');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
+const { uniq } = require("lodash");
 
-const { add } = require('../../core/categories/add');
-const { listWithMenuItem } = require('../../core/categories/listWithMenuItem');
-const { getByCategory } = require('../../core/assets/getByCategory');
-const { getTypesByAssets } = require('../../core/files/getTypesByAssets');
-const { exists } = require('../../core/categories/exists');
-const { list } = require('../../core/categories/list');
-const { remove } = require('../../core/categories/remove');
+const { add } = require("../../core/categories/add");
+const { listWithMenuItem } = require("../../core/categories/listWithMenuItem");
+const { getByCategory } = require("../../core/assets/getByCategory");
+const { getTypesByAssets } = require("../../core/files/getTypesByAssets");
+const { exists } = require("../../core/categories/exists");
+const { list } = require("../../core/categories/list");
+const { remove } = require("../../core/categories/remove");
 
 /** @type {ServiceSchema} */
 module.exports = {
   listWithMenuItemRest: {
     rest: {
-      path: '/menu-list',
-      method: 'GET',
+      path: "/menu-list",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -31,21 +31,23 @@ module.exports = {
   },
   assetTypesRest: {
     rest: {
-      path: '/:id/types',
-      method: 'GET',
+      path: "/:id/types",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const { id } = ctx.params;
-      const assets = (await getByCategory({ categoryId: id, ctx })).map((item) => item.id);
+      const assets = (await getByCategory({ categoryId: id, ctx })).map(
+        (item) => item.id
+      );
       const types = await getTypesByAssets({ assetIds: assets, ctx });
       return { status: 200, types: uniq(types) };
     },
   },
   addRest: {
     rest: {
-      method: 'POST',
-      path: '', // No hay ruta en leemons-legacy
+      method: "POST",
+      path: "", // No hay ruta en leemons-legacy
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -55,8 +57,8 @@ module.exports = {
   },
   existsRest: {
     rest: {
-      method: 'GET',
-      path: '', // No hay ruta en leemons-legacy
+      method: "GET",
+      path: "", // No hay ruta en leemons-legacy
     },
     async handler(ctx) {
       const { key } = ctx.params;
@@ -66,8 +68,8 @@ module.exports = {
   },
   listRest: {
     rest: {
-      method: 'GET',
-      path: '', // No hay ruta en leemons-legacy
+      method: "GET",
+      path: "", // No hay ruta en leemons-legacy
     },
     async handler(ctx) {
       const { page, size } = ctx.params;
@@ -77,8 +79,8 @@ module.exports = {
   },
   removeRest: {
     rest: {
-      method: 'DELETE',
-      path: '', // No hay ruta en leemons-legacy
+      method: "DELETE",
+      path: "", // No hay ruta en leemons-legacy
     },
     async handler(ctx) {
       const { key } = ctx.params;

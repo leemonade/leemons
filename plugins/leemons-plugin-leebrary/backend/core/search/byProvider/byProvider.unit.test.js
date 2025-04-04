@@ -1,24 +1,31 @@
-const { it, expect, beforeAll, afterAll, beforeEach, describe } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { LeemonsError } = require('@leemons/error');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  describe,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { LeemonsError } = require("@leemons/error");
+const { newModel } = require("@leemons/mongodb");
 
-const { byProvider } = require('./byProvider');
-const { assetsSchema } = require('../../../models/assets');
-const getAssets = require('../../../__fixtures__/getAssets');
-const getCategory = require('../../../__fixtures__/getCategory');
-const getProviders = require('../../../__fixtures__/getProviders');
+const { byProvider } = require("./byProvider");
+const { assetsSchema } = require("../../../models/assets");
+const getAssets = require("../../../__fixtures__/getAssets");
+const getCategory = require("../../../__fixtures__/getCategory");
+const getProviders = require("../../../__fixtures__/getProviders");
 
-jest.mock('../../assets/getByIds');
-const { getByIds: getAssetsByIds } = require('../../assets/getByIds');
+jest.mock("../../assets/getByIds");
+const { getByIds: getAssetsByIds } = require("../../assets/getByIds");
 
-jest.mock('../../providers/getByName');
-const { getByName: getProviderByName } = require('../../providers/getByName');
+jest.mock("../../providers/getByName");
+const { getByName: getProviderByName } = require("../../providers/getByName");
 
-jest.mock('../../categories/getById');
-const { getById: getCategoryById } = require('../../categories/getById');
+jest.mock("../../categories/getById");
+const { getById: getCategoryById } = require("../../categories/getById");
 
-describe('byProvider', () => {
+describe("byProvider", () => {
   let mongooseConnection;
   let disconnectMongoose;
   let ctx;
@@ -27,18 +34,24 @@ describe('byProvider', () => {
   const assets = [
     {
       ...asset,
-      id: 'assetId1',
-      provider: 'First Provider',
+      id: "assetId1",
+      provider: "First Provider",
     },
     {
       ...asset,
-      id: 'assetId2',
-      provider: 'Second Provider',
+      id: "assetId2",
+      provider: "Second Provider",
     },
   ];
 
-  const category = { ...getCategory().categoryObject, provider: 'leebrary-aws-s3' };
-  const provider = { ...getProviders().provider.value.params, supportedMethods: { search: true } };
+  const category = {
+    ...getCategory().categoryObject,
+    provider: "leebrary-aws-s3",
+  };
+  const provider = {
+    ...getProviders().provider.value.params,
+    supportedMethods: { search: true },
+  };
   const assetsSearchHandler = jest.fn().mockResolvedValue([assets[0]].id);
 
   beforeAll(async () => {
@@ -51,7 +64,7 @@ describe('byProvider', () => {
         [`${provider.pluginName}.assets.search`]: assetsSearchHandler,
       },
       models: {
-        Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+        Assets: newModel(mongooseConnection, "Assets", assetsSchema),
       },
     });
   });
@@ -70,7 +83,7 @@ describe('byProvider', () => {
     await ctx.tx.db.Assets.create(assets);
   });
 
-  it('should return assets by provider', async () => {
+  it("should return assets by provider", async () => {
     // Arrange
     getCategoryById.mockReturnValue(category);
     getProviderByName.mockReturnValue(provider);
@@ -90,7 +103,7 @@ describe('byProvider', () => {
     expect(result).toEqual([assets[0]]);
   });
 
-  it('should return assets by provider, only ids, if details param is not true', async () => {
+  it("should return assets by provider, only ids, if details param is not true", async () => {
     // Arrange
     getCategoryById.mockReturnValue(category);
     getProviderByName.mockReturnValue(provider);
@@ -109,7 +122,7 @@ describe('byProvider', () => {
     expect(result).toEqual([assets[0].id]);
   });
 
-  it('should return null if provider is missing', async () => {
+  it("should return null if provider is missing", async () => {
     // Arrange
 
     // Act
@@ -136,7 +149,10 @@ describe('byProvider', () => {
     // Act
     // Arrange
     getCategoryById.mockReturnValue(category);
-    getProviderByName.mockReturnValue({ ...provider, supportedMethods: { otherMethod: true } });
+    getProviderByName.mockReturnValue({
+      ...provider,
+      supportedMethods: { otherMethod: true },
+    });
 
     // Act
     const result = await byProvider({
@@ -152,25 +168,28 @@ describe('byProvider', () => {
     expect(result).toBeNull();
   });
 
-  it('should return Error if category is not found', async () => {
+  it("should return Error if category is not found", async () => {
     // Arrange
     getCategoryById.mockResolvedValue(null);
     // Act
     const testFunc = async () =>
       byProvider({
         ctx,
-        categoryId: 'otherCategoryId',
+        categoryId: "otherCategoryId",
         details: true,
         assets: assets.map((el) => el.id),
       });
     // Assert
     await expect(testFunc).rejects.toThrow(
-      new LeemonsError(ctx, { message: 'Category is required', httpStatusCode: 400 })
+      new LeemonsError(ctx, {
+        message: "Category is required",
+        httpStatusCode: 400,
+      })
     );
     expect(getAssetsByIds).toBeCalledTimes(0);
   });
 
-  it('should return Error if either category or categoryId params is not passed', async () => {
+  it("should return Error if either category or categoryId params is not passed", async () => {
     // Arrange
     getCategoryById.mockResolvedValue(null);
     // Act
@@ -182,14 +201,17 @@ describe('byProvider', () => {
       });
     // Assert
     await expect(testFunc).rejects.toThrow(
-      new LeemonsError(ctx, { message: 'Category is required', httpStatusCode: 400 })
+      new LeemonsError(ctx, {
+        message: "Category is required",
+        httpStatusCode: 400,
+      })
     );
     expect(getAssetsByIds).toBeCalledTimes(0);
   });
 
-  it('should return Error if byProvider method fails', async () => {
+  it("should return Error if byProvider method fails", async () => {
     // Arrange
-    const errorMessage = 'Error Message';
+    const errorMessage = "Error Message";
     getCategoryById.mockReturnValue(category);
     getProviderByName.mockReturnValue(provider);
     assetsSearchHandler.mockImplementation(() => {
@@ -199,7 +221,7 @@ describe('byProvider', () => {
     const testFunc = async () =>
       byProvider({
         ctx,
-        categoryId: 'otherCategoryId',
+        categoryId: "otherCategoryId",
       });
     // Assert
     await expect(testFunc).rejects.toThrow(

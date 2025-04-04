@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const LIBRARY_CARD_CC_PROPTYPES = {
   asset: PropTypes.object,

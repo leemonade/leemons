@@ -1,2 +1,2 @@
-export * from './addCategoryDeploy';
-export * from './types';
+export * from "./addCategoryDeploy";
+export * from "./types";

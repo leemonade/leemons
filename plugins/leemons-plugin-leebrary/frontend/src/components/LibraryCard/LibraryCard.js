@@ -1,17 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import { Box } from '@bubbles-ui/components';
-import { isNil } from 'lodash';
+import { Box } from "@bubbles-ui/components";
+import { isNil } from "lodash";
 
-import { LibraryCardBody } from '../LibraryCardBody';
-import { LibraryCardCover } from '../LibraryCardCover';
-import { LibraryCardEmbed } from '../LibraryCardEmbed';
-import { LibraryCardEmbedSkeleton } from '../LibraryCardEmbed/LibraryCardEmbdedSkeleton';
-import { LibraryCardFooter } from '../LibraryCardFooter';
-import { LibraryCardSkeleton } from '../LibraryCardSkeleton';
+import { LibraryCardBody } from "../LibraryCardBody";
+import { LibraryCardCover } from "../LibraryCardCover";
+import { LibraryCardEmbed } from "../LibraryCardEmbed";
+import { LibraryCardEmbedSkeleton } from "../LibraryCardEmbed/LibraryCardEmbdedSkeleton";
+import { LibraryCardFooter } from "../LibraryCardFooter";
+import { LibraryCardSkeleton } from "../LibraryCardSkeleton";
 
-import { LIBRARY_CARD_DEFAULT_PROPS, LIBRARY_CARD_PROP_TYPES } from './LibraryCard.constants';
-import { LibraryCardStyles } from './LibraryCard.styles';
+import {
+  LIBRARY_CARD_DEFAULT_PROPS,
+  LIBRARY_CARD_PROP_TYPES,
+} from "./LibraryCard.constants";
+import { LibraryCardStyles } from "./LibraryCard.styles";
 
 const LibraryCard = ({
   asset,
@@ -48,15 +51,27 @@ const LibraryCard = ({
   const [isHovered, setIsHovered] = useState(false);
   const { classes, cx } = LibraryCardStyles(
     { shadow, isCreationPreview, fullHeight, autoHeight },
-    { name: 'LibraryCard' }
+    { name: "LibraryCard" }
   );
   if (isLoading) {
-    return isEmbeddedList ? <LibraryCardEmbedSkeleton /> : <LibraryCardSkeleton />;
+    return isEmbeddedList ? (
+      <LibraryCardEmbedSkeleton />
+    ) : (
+      <LibraryCardSkeleton />
+    );
   }
   if (isEmbeddedList) {
     return (
-      <Box data-cypress-id={`libraryCard-${asset.id}`} sx={(theme) => ({ width: '100%' })}>
-        <LibraryCardEmbed asset={asset} category={category} fullWidth hasActionButton />
+      <Box
+        data-cypress-id={`libraryCard-${asset.id}`}
+        sx={(theme) => ({ width: "100%" })}
+      >
+        <LibraryCardEmbed
+          asset={asset}
+          category={category}
+          fullWidth
+          hasActionButton
+        />
       </Box>
     );
   }
@@ -72,7 +87,7 @@ const LibraryCard = ({
         {...asset}
         deadlineProps={!isNil(deadlineProps) ? deadlineProps : null}
         locale={locale || deadlineProps?.locale}
-        direction={variant === 'assigment' ? 'vertical' : null}
+        direction={variant === "assigment" ? "vertical" : null}
         menuItems={menuItems}
         dashboard={dashboard}
         parentHovered={isHovered}
@@ -87,7 +102,10 @@ const LibraryCard = ({
       <LibraryCardBody
         {...asset}
         metadata={(Array.isArray(asset.metadata) ? asset.metadata : []).filter(
-          (item) => !excludeMetadatas.map((e) => e.toLowerCase()).includes(item.label.toLowerCase())
+          (item) =>
+            !excludeMetadatas
+              .map((e) => e.toLowerCase())
+              .includes(item.label.toLowerCase())
         )}
         locale={locale}
         variant={variant}

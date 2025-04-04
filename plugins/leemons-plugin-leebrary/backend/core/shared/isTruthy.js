@@ -4,7 +4,7 @@
  * @returns {boolean} - Returns true if the value is truthy, false otherwise.
  */
 function isTruthy(value) {
-  const truthyValues = ['true', true, 1, '1'];
+  const truthyValues = ["true", true, 1, "1"];
   return truthyValues.includes(value);
 }
 

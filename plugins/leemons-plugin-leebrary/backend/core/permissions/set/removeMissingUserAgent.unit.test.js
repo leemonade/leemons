@@ -3,45 +3,46 @@ const {
   expect,
   beforeEach,
   jest: { fn },
-} = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
-const { LeemonsError } = require('@leemons/error');
+} = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
+const { LeemonsError } = require("@leemons/error");
 
-const { removeMissingUserAgent } = require('./removeMissingUserAgent');
-const getUserSession = require('../../../__fixtures__/getUserSession');
-const { permissionSeparator } = require('../../../config/constants');
+const { removeMissingUserAgent } = require("./removeMissingUserAgent");
+const getUserSession = require("../../../__fixtures__/getUserSession");
+const { permissionSeparator } = require("../../../config/constants");
 
 // MOCKS
-jest.mock('../helpers/canUnassignRole');
-jest.mock('../getByAsset');
-const canUnassignRole = require('../helpers/canUnassignRole');
-const { getByAsset } = require('../getByAsset');
+jest.mock("../helpers/canUnassignRole");
+jest.mock("../getByAsset");
+const canUnassignRole = require("../helpers/canUnassignRole");
+const { getByAsset } = require("../getByAsset");
 
 beforeEach(() => jest.resetAllMocks());
 
 const userSession = getUserSession();
 
-it('Should correctly remove user agent permissions', async () => {
+it("Should correctly remove user agent permissions", async () => {
   // Arrange
-  const asset = { id: 'assetOne', category: 'categoryId' };
-  const userAgentToRemoveId = 'userAgentId';
+  const asset = { id: "assetOne", category: "categoryId" };
+  const userAgentToRemoveId = "userAgentId";
   const removeCustomUserAgentPermissionAction = fn();
   const ctx = generateCtx({
     actions: {
-      'users.permissions.removeCustomUserAgentPermission': removeCustomUserAgentPermissionAction,
+      "users.permissions.removeCustomUserAgentPermission":
+        removeCustomUserAgentPermissionAction,
     },
   });
   ctx.meta.userSession = { ...userSession };
   const permissionName = ctx.prefixPN(permissionSeparator + asset.id);
 
-  getByAsset.mockResolvedValue({ canAccessRole: 'editor' });
+  getByAsset.mockResolvedValue({ canAccessRole: "editor" });
   canUnassignRole.mockReturnValue(true);
 
   // Act
   await removeMissingUserAgent({
     id: asset.id,
     userAgent: userAgentToRemoveId,
-    assignerRole: 'owner',
+    assignerRole: "owner",
     permissionName,
     ctx,
   });
@@ -51,7 +52,10 @@ it('Should correctly remove user agent permissions', async () => {
     assetId: asset.id,
     ctx: {
       ...ctx,
-      meta: { ...ctx.meta, userSession: { userAgents: [{ id: userAgentToRemoveId }] } },
+      meta: {
+        ...ctx.meta,
+        userSession: { userAgents: [{ id: userAgentToRemoveId }] },
+      },
     },
   });
   expect(removeCustomUserAgentPermissionAction).toBeCalledWith({
@@ -62,20 +66,21 @@ it('Should correctly remove user agent permissions', async () => {
   });
 });
 
-it('Should throw a Leemons error when the assigner is not allowed to assign the role to the assignee', async () => {
+it("Should throw a Leemons error when the assigner is not allowed to assign the role to the assignee", async () => {
   // Arrange
-  const asset = { id: 'assetOne', category: 'categoryId' };
-  const userAgentToRemoveId = 'userAgentId';
+  const asset = { id: "assetOne", category: "categoryId" };
+  const userAgentToRemoveId = "userAgentId";
   const removeCustomUserAgentPermissionAction = fn();
   const ctx = generateCtx({
     actions: {
-      'users.permissions.removeCustomUserAgentPermission': removeCustomUserAgentPermissionAction,
+      "users.permissions.removeCustomUserAgentPermission":
+        removeCustomUserAgentPermissionAction,
     },
   });
   ctx.meta.userSession = { ...userSession };
   const permissionName = ctx.prefixPN(permissionSeparator + asset.id);
 
-  getByAsset.mockResolvedValue({ canAccessRole: 'viewer' });
+  getByAsset.mockResolvedValue({ canAccessRole: "viewer" });
   canUnassignRole.mockReturnValue(false);
 
   try {
@@ -83,7 +88,7 @@ it('Should throw a Leemons error when the assigner is not allowed to assign the 
     await removeMissingUserAgent({
       id: asset.id,
       userAgent: userAgentToRemoveId,
-      assignerRole: 'owner',
+      assignerRole: "owner",
       permissionName,
       ctx,
     });
@@ -95,23 +100,23 @@ it('Should throw a Leemons error when the assigner is not allowed to assign the 
   }
 });
 
-it('Should identify an owner and avoid removing their permission', async () => {
+it("Should identify an owner and avoid removing their permission", async () => {
   // Arrange
-  const asset = { id: 'assetOne', category: 'categoryId' };
-  const userAgentToRemoveId = 'userAgentId';
+  const asset = { id: "assetOne", category: "categoryId" };
+  const userAgentToRemoveId = "userAgentId";
   const ctx = generateCtx({
     actions: {},
   });
   ctx.meta.userSession = { ...userSession };
   const permissionName = ctx.prefixPN(permissionSeparator + asset.id);
 
-  getByAsset.mockResolvedValue({ canAccessRole: 'owner' });
+  getByAsset.mockResolvedValue({ canAccessRole: "owner" });
 
   // Act
   await removeMissingUserAgent({
     id: asset.id,
     userAgent: userAgentToRemoveId,
-    assignerRole: 'owner',
+    assignerRole: "owner",
     permissionName,
     ctx,
   });

@@ -1,4 +1,4 @@
-const { isNil, isEmpty } = require('lodash');
+const { isNil, isEmpty } = require("lodash");
 /**
  * This function handles the creation of a new asset version.
  * It generates a new ID if not provided and returns it.
@@ -15,7 +15,7 @@ async function handleVersion({ newId, categoryId, published, ctx }) {
   if (isNil(newId) || isEmpty(newId)) {
     // ES: Añadimos el control de versiones
     // EN: Add version control
-    const { fullId } = await ctx.tx.call('common.versionControl.register', {
+    const { fullId } = await ctx.tx.call("common.versionControl.register", {
       type: ctx.prefixPN(categoryId),
       published,
     });

@@ -1,5 +1,5 @@
-const { LeemonsError } = require('@leemons/error');
-const { getByIds } = require('../getByIds');
+const { LeemonsError } = require("@leemons/error");
+const { getByIds } = require("../getByIds");
 
 /**
  * Retrieves categories by asset. If the operation fails, it throws an HTTP error.

@@ -1,8 +1,8 @@
-import React, { useState, useContext } from 'react';
-import PropTypes from 'prop-types';
-import { isFunction } from 'lodash';
-import { HorizontalStepper, Box } from '@bubbles-ui/components';
-import { LayoutContext } from '@layout/context/layout';
+import React, { useState, useContext } from "react";
+import PropTypes from "prop-types";
+import { isFunction } from "lodash";
+import { HorizontalStepper, Box } from "@bubbles-ui/components";
+import { LayoutContext } from "@layout/context/layout";
 
 function Setup({ steps, onNext, onPrev, onFinish, ...props }) {
   const [active, setActive] = useState(0);

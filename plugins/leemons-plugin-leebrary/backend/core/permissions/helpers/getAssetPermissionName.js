@@ -1,4 +1,4 @@
-const { permissionSeparator } = require('../../../config/constants');
+const { permissionSeparator } = require("../../../config/constants");
 
 /**
  * Generates the permission name for a given asset.

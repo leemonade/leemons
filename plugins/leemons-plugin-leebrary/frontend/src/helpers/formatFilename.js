@@ -4,18 +4,20 @@
  * @returns {string} - Formatted filename
  */
 function formatFileName(filename) {
-  if (!filename) return '';
+  if (!filename) return "";
 
-  const nameWithoutExtension = filename.split('.').slice(0, -1).join('.');
+  const nameWithoutExtension = filename.split(".").slice(0, -1).join(".");
 
-  const nameWithSpaces = nameWithoutExtension.replace(/[_-]/g, ' ');
+  const nameWithSpaces = nameWithoutExtension.replace(/[_-]/g, " ");
 
   return nameWithSpaces
-    .split(' ')
+    .split(" ")
     .map((word, index) =>
-      index === 0 ? word.charAt(0).toUpperCase() + word.slice(1).toLowerCase() : word.toLowerCase()
+      index === 0
+        ? word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        : word.toLowerCase()
     )
-    .join(' ');
+    .join(" ");
 }
 
 export default formatFileName;

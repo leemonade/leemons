@@ -1,5 +1,5 @@
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import { getUserProgramsRequest } from '@academic-portfolio/request';
+import { useIsTeacher } from "@academic-portfolio/hooks";
+import { getUserProgramsRequest } from "@academic-portfolio/request";
 import {
   ActionButton,
   Box,
@@ -16,28 +16,28 @@ import {
   TextInput,
   useResizeObserver,
   useViewportSize,
-} from '@bubbles-ui/components';
-import { DownloadIcon, CommonFileSearchIcon } from '@bubbles-ui/icons/outline';
-import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
-import { addErrorAlert } from '@layout/alert';
-import _, { isEmpty, isFunction, isNil } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { SubjectPicker } from '@academic-portfolio/components/SubjectPicker';
+} from "@bubbles-ui/components";
+import { DownloadIcon, CommonFileSearchIcon } from "@bubbles-ui/icons/outline";
+import { TagsAutocomplete, useRequestErrorMessage, useStore } from "@common";
+import { addErrorAlert } from "@layout/alert";
+import _, { isEmpty, isFunction, isNil } from "lodash";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { SubjectPicker } from "@academic-portfolio/components/SubjectPicker";
 import {
   getCoverUrl,
   isImageFile,
   isNullish,
   isValidURL,
   prepareAsset,
-} from '../../helpers/prepareAsset';
-import { getUrlMetadataRequest } from '../../request';
-import { AssetListDrawer } from '../AssetListDrawer';
+} from "../../helpers/prepareAsset";
+import { getUrlMetadataRequest } from "../../request";
+import { AssetListDrawer } from "../AssetListDrawer";
 import {
   LIBRARY_FORM_DEFAULT_PROPS,
   LIBRARY_FORM_PROP_TYPES,
   LIBRARY_FORM_TYPES,
-} from './LibraryForm.constants';
+} from "./LibraryForm.constants";
 
 const LibraryForm = ({
   advancedConfigMode,
@@ -80,10 +80,10 @@ const LibraryForm = ({
 
   const defaultValues = {
     file: asset?.file || null,
-    name: asset?.name || '',
-    tagline: asset?.tagline || '',
-    description: asset?.description || '',
-    color: asset?.color || '',
+    name: asset?.name || "",
+    tagline: asset?.tagline || "",
+    description: asset?.description || "",
+    color: asset?.color || "",
     cover: asset?.cover || null,
     url: asset?.url || null,
     program: asset?.program || null,
@@ -101,10 +101,10 @@ const LibraryForm = ({
   } = form || useForm({ defaultValues });
 
   const formValues = watch();
-  const coverFile = watch('cover');
-  const assetFile = watch('file');
-  const bookmarkUrl = watch('url');
-  const program = watch('program');
+  const coverFile = watch("cover");
+  const assetFile = watch("file");
+  const bookmarkUrl = watch("url");
+  const program = watch("program");
 
   useEffect(() => {
     if (_.isObject(coverFile) || store.cover) {
@@ -120,7 +120,9 @@ const LibraryForm = ({
     store.subjectRequired = undefined;
     if (advancedConfig?.program?.show) {
       if (advancedConfig.program.required) {
-        store.programRequired = { required: errorMessages.program?.required || 'Field required' };
+        store.programRequired = {
+          required: errorMessages.program?.required || "Field required",
+        };
       }
       if (advancedConfig.alwaysOpen) {
         store.alwaysOpen = advancedConfig.alwaysOpen;
@@ -130,11 +132,16 @@ const LibraryForm = ({
         store.showLevel = advancedConfig.subjects.showLevel;
         store.maxOneSubject = advancedConfig.subjects.maxOne;
         if (advancedConfig.subjects.required) {
-          store.subjectRequired = { required: errorMessages.subject?.required || 'Field required' };
+          store.subjectRequired = {
+            required: errorMessages.subject?.required || "Field required",
+          };
         }
       }
       const { programs } = await getUserProgramsRequest();
-      store.programs = _.map(programs, (item) => ({ label: item.name, value: item.id }));
+      store.programs = _.map(programs, (item) => ({
+        label: item.name,
+        value: item.id,
+      }));
     }
     render();
   }
@@ -142,15 +149,15 @@ const LibraryForm = ({
   useEffect(() => {
     if (!isNullish(asset) && isEmpty(asset?.id)) {
       const valueNames = [
-        'file',
-        'name',
-        'tagline',
-        'description',
-        'color',
-        'cover',
-        'program',
-        'subjects',
-        'mediaType',
+        "file",
+        "name",
+        "tagline",
+        "description",
+        "color",
+        "cover",
+        "program",
+        "subjects",
+        "mediaType",
       ];
       const values = getValues(valueNames);
       valueNames.forEach((valueName, index) => {
@@ -168,7 +175,7 @@ const LibraryForm = ({
       const isImageType = isImageFile(assetFile);
       setIsImage(isImageType);
       if (isEmpty(formValues.name)) {
-        setValue('name', assetFile.name.match(/(.+?)(\.[^.]+$|$)/)[1]);
+        setValue("name", assetFile.name.match(/(.+?)(\.[^.]+$|$)/)[1]);
       }
     }
   }, [assetFile]);
@@ -204,7 +211,7 @@ const LibraryForm = ({
     if (isFunction(onSubmit)) onSubmit(e);
   };
 
-  const validateUrl = async () => trigger('url', { shouldFocus: true });
+  const validateUrl = async () => trigger("url", { shouldFocus: true });
 
   const handleCheckUrl = async () => {
     if (await validateUrl()) {
@@ -214,18 +221,18 @@ const LibraryForm = ({
         const result = await getUrlMetadataRequest(url);
         const metadata = result.metas;
 
-        console.group('handleCheckUrl');
-        console.log('url:', url);
-        console.log('metadata:', metadata);
+        console.group("handleCheckUrl");
+        console.log("url:", url);
+        console.log("metadata:", metadata);
         console.groupEnd();
 
         if (!isEmpty(metadata)) {
           setUrlMetadata(metadata);
-          setValue('name', metadata.title);
-          setValue('description', metadata.description);
+          setValue("name", metadata.title);
+          setValue("description", metadata.description);
 
           if (!isEmpty(metadata.image)) {
-            setValue('cover', metadata.image);
+            setValue("cover", metadata.image);
           }
         }
         setChecking(false);
@@ -244,7 +251,7 @@ const LibraryForm = ({
     store.cover = item.cover;
     const preparedAsset = prepareAsset(item);
     setCoverAsset(preparedAsset);
-    setValue('cover', preparedAsset.cover);
+    setValue("cover", preparedAsset.cover);
     setShowAssetDrawer(false);
   };
 
@@ -254,14 +261,24 @@ const LibraryForm = ({
   const getAssetIcon = useCallback(() => {
     if (type === LIBRARY_FORM_TYPES.BOOKMARKS && !isEmpty(urlMetadata.logo)) {
       return {
-        icon: <ImageLoader src={urlMetadata.logo} width={26} height={26} radius={'4px'} />,
+        icon: (
+          <ImageLoader
+            src={urlMetadata.logo}
+            width={26}
+            height={26}
+            radius={"4px"}
+          />
+        ),
       };
     }
 
     return {};
   }, [type, urlMetadata]);
 
-  const drawerSize = useMemo(() => Math.max(Math.round(viewportWidth * 0.3), 720), [viewportWidth]);
+  const drawerSize = useMemo(
+    () => Math.max(Math.round(viewportWidth * 0.3), 720),
+    [viewportWidth]
+  );
 
   if (store.alwaysOpen) store.showAdvancedConfig = true;
 
@@ -271,7 +288,9 @@ const LibraryForm = ({
         <ContextContainer
           title={!hideTitle ? labels.title : undefined}
           divided={!advancedConfigMode}
-          sx={(theme) => ({ marginTop: advancedConfigMode ? theme.spacing[4] : 0 })}
+          sx={(theme) => ({
+            marginTop: advancedConfigMode ? theme.spacing[4] : 0,
+          })}
         >
           <ContextContainer>
             {!advancedConfigMode ? (
@@ -281,21 +300,25 @@ const LibraryForm = ({
                     control={control}
                     name="file"
                     shouldUnregister
-                    rules={{ required: errorMessages.file?.required || 'Field required' }}
+                    rules={{
+                      required:
+                        errorMessages.file?.required || "Field required",
+                    }}
                     render={({ field: { ref, value, ...field } }) => (
                       <FileUpload
                         icon={<DownloadIcon height={32} width={32} />}
                         title={labels.browseFile}
                         subtitle={labels.dropFile}
                         errorMessage={{
-                          title: 'Error',
-                          message: errorMessages.file?.rejected || 'File was rejected',
+                          title: "Error",
+                          message:
+                            errorMessages.file?.rejected || "File was rejected",
                         }}
                         hideUploadButton
                         single
                         initialFiles={value ? [value] : []}
                         inputWrapperProps={{ error: errors.file }}
-                        accept={onlyImages ? ['image/*'] : undefined}
+                        accept={onlyImages ? ["image/*"] : undefined}
                         {...field}
                       />
                     )}
@@ -307,7 +330,7 @@ const LibraryForm = ({
                     name="url"
                     shouldUnregister
                     rules={{
-                      required: errorMessages.url?.required || 'Field required',
+                      required: errorMessages.url?.required || "Field required",
                       validate: isValidURL,
                     }}
                     render={({ field }) => (
@@ -322,7 +345,10 @@ const LibraryForm = ({
                             onBlur={validateUrl}
                           />
                         </Box>
-                        <Box skipFlex style={{ marginBottom: errors.url ? 18 : 0 }}>
+                        <Box
+                          skipFlex
+                          style={{ marginBottom: errors.url ? 18 : 0 }}
+                        >
                           <Button
                             color="secondary"
                             leftIcon={<CommonFileSearchIcon />}
@@ -339,7 +365,9 @@ const LibraryForm = ({
                 <Controller
                   control={control}
                   name="name"
-                  rules={{ required: errorMessages.name?.required || 'Field required' }}
+                  rules={{
+                    required: errorMessages.name?.required || "Field required",
+                  }}
                   render={({ field }) => (
                     <TextInput
                       label={labels.name}
@@ -439,13 +467,15 @@ const LibraryForm = ({
                   {store.programs && !store.alwaysOpen ? (
                     <Switch
                       onChange={(e) => {
-                        setValue('program', null);
-                        setValue('subjects', null);
+                        setValue("program", null);
+                        setValue("subjects", null);
                         store.showAdvancedConfig = e;
                         render();
                       }}
                       disabled={store.alwaysOpen}
-                      checked={store.alwaysOpen ? true : store.showAdvancedConfig}
+                      checked={
+                        store.alwaysOpen ? true : store.showAdvancedConfig
+                      }
                       label={labels.advancedConfig}
                     />
                   ) : null}
@@ -460,15 +490,15 @@ const LibraryForm = ({
                       render={({ field, fieldState: { error } }) => (
                         <SubjectPicker
                           {...field}
-                          value={_.map(field.value || [], 'subject')}
+                          value={_.map(field.value || [], "subject")}
                           onChange={(e) => {
                             // console.log('field.value', field.value);
                             // console.log('Hola?', e);
                           }}
                           onChangeRaw={(e) => {
                             if (e.length > 0) {
-                              if (!program) setValue('program', e[0].program);
-                            } else if (program) setValue('program', null);
+                              if (!program) setValue("program", e[0].program);
+                            } else if (program) setValue("program", null);
                           }}
                           error={error}
                           assignable={{}}
@@ -476,7 +506,8 @@ const LibraryForm = ({
                             title: labels?.programAndSubjects,
                             program: labels?.program,
                             subject: labels?.subjectSelects?.labels?.subject,
-                            add: labels?.subjectSelects?.placeholders?.addSubject,
+                            add: labels?.subjectSelects?.placeholders
+                              ?.addSubject,
                             course: labels?.course,
                             placeholder: labels?.selectPlaceholder,
                           }}
@@ -532,8 +563,11 @@ const LibraryForm = ({
               ) : null}
 
               {!hideSubmit && (
-                <Stack justifyContent={'end'} fullWidth>
-                  <Button onClick={handleSubmit(handleOnSubmit)} loading={loading}>
+                <Stack justifyContent={"end"} fullWidth>
+                  <Button
+                    onClick={handleSubmit(handleOnSubmit)}
+                    loading={loading}
+                  >
                     {labels.submitForm}
                   </Button>
                 </Stack>

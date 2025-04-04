@@ -1,8 +1,8 @@
-const { it, expect, describe } = require('@jest/globals');
-const { handleReadParams } = require('./handleReadParams');
+const { it, expect, describe } = require("@jest/globals");
+const { handleReadParams } = require("./handleReadParams");
 
-describe('handleReadParams', () => {
-  it('should return correct read parameters when file size is greater than 0 and start and end bytes are valid', () => {
+describe("handleReadParams", () => {
+  it("should return correct read parameters when file size is greater than 0 and start and end bytes are valid", () => {
     // Arrange
     const file = { size: 100 };
     const start = 10;
@@ -17,14 +17,14 @@ describe('handleReadParams', () => {
       bytesEnd: end,
       readParams: {
         emitClose: false,
-        flags: 'r',
+        flags: "r",
         start,
         end,
       },
     });
   });
 
-  it('should return -1 for start and end bytes when file size is 0 or start and end bytes are invalid', () => {
+  it("should return -1 for start and end bytes when file size is 0 or start and end bytes are invalid", () => {
     // Arrange
     const file = { size: 0 };
     const start = -10;
@@ -41,7 +41,7 @@ describe('handleReadParams', () => {
     });
   });
 
-  it('should adjust end byte to be file size - 1 when end byte is greater than file size', () => {
+  it("should adjust end byte to be file size - 1 when end byte is greater than file size", () => {
     // Arrange
     const file = { size: 100 };
     const start = 10;
@@ -56,7 +56,7 @@ describe('handleReadParams', () => {
       bytesEnd: file.size - 1,
       readParams: {
         emitClose: false,
-        flags: 'r',
+        flags: "r",
         start,
         end: file.size - 1,
       },

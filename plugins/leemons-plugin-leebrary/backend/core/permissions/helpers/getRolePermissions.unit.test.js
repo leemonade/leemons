@@ -1,13 +1,13 @@
-const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
-const { LeemonsError } = require('@leemons/error');
+const { it, expect } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
+const { LeemonsError } = require("@leemons/error");
 
-const getRolePermissions = require('./getRolePermissions');
-const { rolesPermissions } = require('../../../config/constants');
+const getRolePermissions = require("./getRolePermissions");
+const { rolesPermissions } = require("../../../config/constants");
 
-it('Should get role permissions correctly', () => {
+it("Should get role permissions correctly", () => {
   // Arrange
-  const role = 'editor';
+  const role = "editor";
 
   const ctx = generateCtx({});
 
@@ -18,8 +18,8 @@ it('Should get role permissions correctly', () => {
   expect(response).toBe(rolesPermissions.editor);
 });
 
-it('Should throw if an invalid role is passed', () => {
-  const role = 'invalid';
+it("Should throw if an invalid role is passed", () => {
+  const role = "invalid";
 
   const ctx = generateCtx({});
 
@@ -36,7 +36,7 @@ it('Should throw if an invalid role is passed', () => {
   }
 });
 
-it('Should set noPermission as the default role when not passed', () => {
+it("Should set noPermission as the default role when not passed", () => {
   const ctx = generateCtx({});
 
   // Act

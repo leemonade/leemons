@@ -1,12 +1,11 @@
-import { useCallback } from 'react';
+import { useCallback } from "react";
 
-import { useVariantForQueryKey } from '@common/queries';
-import { useQuery } from '@tanstack/react-query';
+import { useVariantForQueryKey } from "@common/queries";
+import { useQuery } from "@tanstack/react-query";
 
-import { fetchAssetByFile } from '../../fetchAssetByFile';
-import getAsset from '../../getAsset';
-import { getAssetByFileKey, getAssetsKey } from '../keys/assets';
-
+import { fetchAssetByFile } from "../../fetchAssetByFile";
+import getAsset from "../../getAsset";
+import { getAssetByFileKey, getAssetsKey } from "../keys/assets";
 
 function useAsset({ id, showPublic, fileId, ...options }) {
   let queryKey = getAssetsKey({ id });
@@ -16,7 +15,7 @@ function useAsset({ id, showPublic, fileId, ...options }) {
   }
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'frequently',
+    modificationTrend: "frequently",
   });
 
   const queryFn = useCallback(() => {

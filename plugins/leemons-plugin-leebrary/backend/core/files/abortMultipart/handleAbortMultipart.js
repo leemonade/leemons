@@ -1,5 +1,5 @@
-const fs = require('fs/promises');
-const { getByName: getProviderByName } = require('../../providers/getByName');
+const fs = require("fs/promises");
+const { getByName: getProviderByName } = require("../../providers/getByName");
 
 /**
  * Handles the aborting of a multipart upload.
@@ -9,7 +9,7 @@ const { getByName: getProviderByName } = require('../../providers/getByName');
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  */
 async function handleAbortMultipart({ file, ctx }) {
-  if (file.provider !== 'sys') {
+  if (file.provider !== "sys") {
     const provider = await getProviderByName({ name: file.provider, ctx });
     if (provider?.supportedMethods?.abortMultipart) {
       await ctx.tx.call(`${file.provider}.files.abortMultipart`, { file });

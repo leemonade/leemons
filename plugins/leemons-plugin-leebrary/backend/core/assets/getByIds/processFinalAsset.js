@@ -1,6 +1,6 @@
-const { find, isNil, intersection, isArray } = require('lodash');
+const { find, isNil, intersection, isArray } = require("lodash");
 
-const { CATEGORIES } = require('../../../config/constants');
+const { CATEGORIES } = require("../../../config/constants");
 /**
  * Processes the final asset by adding additional properties based on permissions, categories, tags, and pins.
  * @async
@@ -36,10 +36,10 @@ function processFinalAsset({
 }) {
   const item = { ...asset };
 
-  const deleteRoles = ['owner', 'admin'];
-  const shareRoles = ['owner', 'editor', 'admin'];
-  const editRoles = ['owner', 'editor', 'admin'];
-  const assignRoles = ['owner', 'editor', 'assigner', 'admin'];
+  const deleteRoles = ["owner", "admin"];
+  const shareRoles = ["owner", "editor", "admin"];
+  const editRoles = ["owner", "editor", "admin"];
+  const assignRoles = ["owner", "editor", "assigner", "admin"];
 
   if (item.program) {
     item.programName = programsById[item.program]?.name;
@@ -48,7 +48,9 @@ function processFinalAsset({
   item.permissions = permissionsByAsset[item.id] || { viewer: [], editor: [] };
 
   if (withCategory) {
-    const { key, duplicable, assignable } = find(categories, { id: asset.category });
+    const { key, duplicable, assignable } = find(categories, {
+      id: asset.category,
+    });
     item.duplicable = duplicable;
     item.assignable = assignable;
     item.downloadable = key === CATEGORIES.MEDIA_FILES;
@@ -89,42 +91,42 @@ function processFinalAsset({
         intersection(permission.userAgentIds, userAgents).length > 0
     );
 
-    item.role = 'viewer';
+    item.role = "viewer";
     if (
       item.canAccess.some(
         (permission) =>
-          intersection(permission.permissions, ['editor']).length > 0 &&
+          intersection(permission.permissions, ["editor"]).length > 0 &&
           intersection(permission.userAgentIds, userAgents).length > 0
       )
     ) {
-      item.role = 'editor';
+      item.role = "editor";
     }
 
     if (
       item.canAccess.some(
         (permission) =>
-          intersection(permission.permissions, ['owner']).length > 0 &&
+          intersection(permission.permissions, ["owner"]).length > 0 &&
           intersection(permission.userAgentIds, userAgents).length > 0
       )
     ) {
-      item.role = 'owner';
+      item.role = "owner";
     }
   }
 
-  if (canEditPermissions.includes(item.id) && item.role !== 'owner') {
-    item.role = 'editor';
-    item.editable = editRoles.includes('editor');
-    item.deleteable = deleteRoles.includes('editor');
-    item.shareable = shareRoles.includes('editor');
-    item.assignable = assignRoles.includes('editor');
+  if (canEditPermissions.includes(item.id) && item.role !== "owner") {
+    item.role = "editor";
+    item.editable = editRoles.includes("editor");
+    item.deleteable = deleteRoles.includes("editor");
+    item.shareable = shareRoles.includes("editor");
+    item.assignable = assignRoles.includes("editor");
   }
 
-  if (canAdminPermissions.includes(item.id) && item.role !== 'owner') {
-    item.role = 'admin';
-    item.editable = editRoles.includes('admin');
-    item.deleteable = deleteRoles.includes('admin');
-    item.shareable = shareRoles.includes('admin');
-    item.assignable = assignRoles.includes('admin');
+  if (canAdminPermissions.includes(item.id) && item.role !== "owner") {
+    item.role = "admin";
+    item.editable = editRoles.includes("admin");
+    item.deleteable = deleteRoles.includes("admin");
+    item.shareable = shareRoles.includes("admin");
+    item.assignable = assignRoles.includes("admin");
   }
 
   return item;

@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const pinsSchema = new mongoose.Schema(
   {
@@ -31,6 +31,10 @@ pinsSchema.index({ asset: 1, deploymentID: 1, isDeleted: 1 });
 pinsSchema.index({ asset: 1, userAgent: 1, deploymentID: 1, isDeleted: 1 });
 pinsSchema.index({ userAgent: 1, deploymentID: 1, isDeleted: 1 });
 
-const pinsModel = newModel(mongoose.connection, 'v1::leebrary_Pins', pinsSchema);
+const pinsModel = newModel(
+  mongoose.connection,
+  "v1::leebrary_Pins",
+  pinsSchema
+);
 
 module.exports = { pinsModel, pinsSchema };

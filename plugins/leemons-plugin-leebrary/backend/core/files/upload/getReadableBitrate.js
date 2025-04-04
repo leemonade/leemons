@@ -6,10 +6,19 @@
  * @returns {string} The bitrate in a readable format.
  */
 function getReadableBitrate(bitrate) {
-  if (bitrate < 0) return '-1';
+  if (bitrate < 0) return "-1";
 
   let i = -1;
-  const byteUnits = ['kbps', 'Mbps', 'Gbps', 'Tbps', 'Pbps', 'Ebps', 'Zbps', 'Ybps'];
+  const byteUnits = [
+    "kbps",
+    "Mbps",
+    "Gbps",
+    "Tbps",
+    "Pbps",
+    "Ebps",
+    "Zbps",
+    "Ybps",
+  ];
   do {
     bitrate /= 1000;
     i++;

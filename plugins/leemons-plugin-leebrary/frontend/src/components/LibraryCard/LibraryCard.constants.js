@@ -1,20 +1,20 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 import {
   LIBRARY_CARD_DEADLINE_PROP_TYPES,
   LIBRARY_CARD_MENU_ITEM,
   LIBRARYCARD_ASSIGMENT_ROLES,
-} from '../Library.constants';
+} from "../Library.constants";
 
-export const LIBRARYCARD_ROLES = ['owner', 'editor', 'commentor', 'viewer'];
+export const LIBRARYCARD_ROLES = ["owner", "editor", "commentor", "viewer"];
 export const LIBRARYCARD_VARIANTS = [
-  'media',
-  'task',
-  'assigment',
-  'bookmark',
-  'curriculum',
-  'feedback',
-  '3d',
+  "media",
+  "task",
+  "assigment",
+  "bookmark",
+  "curriculum",
+  "feedback",
+  "3d",
 ];
 export const LIBRARYCARD_ASSIGMENT = {
   completed: PropTypes.number,
@@ -36,7 +36,9 @@ export const ASSET_PROPS = PropTypes.shape({
   name: PropTypes.string,
   description: PropTypes.string,
   tagline: PropTypes.string,
-  metadata: PropTypes.arrayOf(PropTypes.shape({ label: PropTypes.any, value: PropTypes.any })),
+  metadata: PropTypes.arrayOf(
+    PropTypes.shape({ label: PropTypes.any, value: PropTypes.any })
+  ),
   created: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
   version: PropTypes.string,
   cover: PropTypes.string,
@@ -57,10 +59,10 @@ export const SUBJECT_PROPS = PropTypes.shape({
 export const LIBRARY_CARD_DEFAULT_PROPS = {
   menuItems: [],
   dashboard: false,
-  role: 'teacher',
+  role: "teacher",
   isNew: false,
   shadow: true,
-  locale: 'en-GB',
+  locale: "en-GB",
   fullHeight: false,
   excludeMetadatas: [],
   isLoading: false,

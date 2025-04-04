@@ -1,29 +1,29 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { Box } from '@bubbles-ui/components';
-import { noop } from 'lodash';
-import PropTypes from 'prop-types';
+import { Box } from "@bubbles-ui/components";
+import { noop } from "lodash";
+import PropTypes from "prop-types";
 
-import { prepareAsset } from '../../helpers/prepareAsset';
-import { AssetPickerDrawer } from '../AssetPickerDrawer';
+import { prepareAsset } from "../../helpers/prepareAsset";
+import { AssetPickerDrawer } from "../AssetPickerDrawer";
 
 export const LIBRARY_MODAL_DEFAULT_PROPS = {
   labels: {
-    width: '',
-    display: '',
-    align: '',
-    cancel: '',
-    add: '',
-    update: '',
-    card: '',
-    embed: '',
-    player: '',
+    width: "",
+    display: "",
+    align: "",
+    cancel: "",
+    add: "",
+    update: "",
+    card: "",
+    embed: "",
+    player: "",
   },
   placeholders: {
-    width: '',
-    display: '',
-    cancel: '',
-    add: '',
+    width: "",
+    display: "",
+    cancel: "",
+    add: "",
   },
   errorMessages: {},
   openLibraryModal: true,
@@ -78,13 +78,14 @@ const LibraryModal = ({
     const preparedAsset = prepareAsset(item);
     if (openLibraryDrawer) {
       onChange({
-        width: '100%',
-        align: 'left',
+        width: "100%",
+        align: "left",
         display:
-          ['image', 'video', 'audio'].includes(preparedAsset.fileType) ||
-          (preparedAsset.fileType === 'bookmark' && preparedAsset.mediaType === 'video')
-            ? 'player'
-            : 'embed',
+          ["image", "video", "audio"].includes(preparedAsset.fileType) ||
+          (preparedAsset.fileType === "bookmark" &&
+            preparedAsset.mediaType === "video")
+            ? "player"
+            : "embed",
         asset: preparedAsset,
         readOnly,
       });
@@ -104,7 +105,7 @@ const LibraryModal = ({
         onClose={handleOnCloseAssetDrawer}
         onSelect={handleOnSelectAsset}
         shadow
-        categories={['bookmarks', 'media-files']}
+        categories={["bookmarks", "media-files"]}
         itemMinWidth={250}
       />
     </Box>

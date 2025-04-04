@@ -3,19 +3,19 @@ const {
   expect,
   beforeEach,
   jest: { fn },
-} = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
-const pathSys = require('path');
-const fsPromises = require('fs/promises');
+} = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
+const pathSys = require("path");
+const fsPromises = require("fs/promises");
 
-const { handleFileProvider } = require('./handleFileProvider');
-const { getByName } = require('../../providers/getByName');
-const getProviders = require('../../../__fixtures__/getProviders');
+const { handleFileProvider } = require("./handleFileProvider");
+const { getByName } = require("../../providers/getByName");
+const getProviders = require("../../../__fixtures__/getProviders");
 
 // MOCKS
-jest.mock('path');
-jest.mock('fs/promises');
-jest.mock('../../providers/getByName');
+jest.mock("path");
+jest.mock("fs/promises");
+jest.mock("../../providers/getByName");
 
 beforeEach(() => jest.resetAllMocks());
 
@@ -25,13 +25,13 @@ const {
   },
 } = getProviders();
 
-it('Should call handleFileProvider correctly', async () => {
+it("Should call handleFileProvider correctly", async () => {
   // Arrange
-  const newFile = { name: 'file' };
+  const newFile = { name: "file" };
   const settings = { providerName: mockProvider.pluginName };
-  const path = 'path/to/file.txt';
-  const uploadAction = fn(() => Promise.resolve('uri'));
-  const mockBuffer = Buffer.from('This is a mock buffer');
+  const path = "path/to/file.txt";
+  const uploadAction = fn(() => Promise.resolve("uri"));
+  const mockBuffer = Buffer.from("This is a mock buffer");
 
   const ctx = generateCtx({
     actions: {
@@ -42,7 +42,7 @@ it('Should call handleFileProvider correctly', async () => {
   getByName.mockResolvedValue({ ...mockProvider });
   fsPromises.readFile.mockResolvedValue(mockBuffer);
 
-  const expectedResponse = { provider: settings.providerName, uri: 'uri' };
+  const expectedResponse = { provider: settings.providerName, uri: "uri" };
   // Act
   const response = await handleFileProvider({ newFile, settings, path, ctx });
 
@@ -53,12 +53,12 @@ it('Should call handleFileProvider correctly', async () => {
   expect(response).toEqual(expectedResponse);
 });
 
-it('Should correctly set urlData for default provider', async () => {
+it("Should correctly set urlData for default provider", async () => {
   // Arrange
-  const newFile = { name: 'file' };
-  const path = 'path/to/file.txt';
+  const newFile = { name: "file" };
+  const path = "path/to/file.txt";
   const uploadAction = fn();
-  const mockBuffer = Buffer.from('This is a mock buffer');
+  const mockBuffer = Buffer.from("This is a mock buffer");
 
   const ctx = generateCtx({
     actions: {
@@ -67,10 +67,10 @@ it('Should correctly set urlData for default provider', async () => {
   });
 
   getByName.mockResolvedValue({});
-  pathSys.resolve.mockReturnValue('uri');
+  pathSys.resolve.mockReturnValue("uri");
   fsPromises.readFile.mockResolvedValue(mockBuffer);
 
-  const expectedResponse = { provider: 'sys', uri: 'uri' };
+  const expectedResponse = { provider: "sys", uri: "uri" };
 
   // Act
   const response = await handleFileProvider({ newFile, path, ctx });
@@ -82,7 +82,7 @@ it('Should correctly set urlData for default provider', async () => {
   });
 
   // Assert
-  expect(fsPromises.writeFile).toBeCalledWith('uri', mockBuffer);
+  expect(fsPromises.writeFile).toBeCalledWith("uri", mockBuffer);
   expect(response).toEqual(expectedResponse);
   expect(getByName).toBeCalledTimes(1);
   expect(uploadAction).not.toBeCalled();

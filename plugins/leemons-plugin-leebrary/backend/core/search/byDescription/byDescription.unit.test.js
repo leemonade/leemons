@@ -1,16 +1,23 @@
-const { it, expect, beforeAll, afterAll, beforeEach, describe } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { LeemonsError } = require('@leemons/error');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  describe,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { LeemonsError } = require("@leemons/error");
+const { newModel } = require("@leemons/mongodb");
 
-const { byDescription } = require('./byDescription');
-const { assetsSchema } = require('../../../models/assets');
-const getAssets = require('../../../__fixtures__/getAssets');
+const { byDescription } = require("./byDescription");
+const { assetsSchema } = require("../../../models/assets");
+const getAssets = require("../../../__fixtures__/getAssets");
 
-jest.mock('../../assets/getByIds');
-const { getByIds: getAssetsByIds } = require('../../assets/getByIds');
+jest.mock("../../assets/getByIds");
+const { getByIds: getAssetsByIds } = require("../../assets/getByIds");
 
-describe('byDescription', () => {
+describe("byDescription", () => {
   let mongooseConnection;
   let disconnectMongoose;
   let ctx;
@@ -24,7 +31,7 @@ describe('byDescription', () => {
 
     ctx = generateCtx({
       models: {
-        Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+        Assets: newModel(mongooseConnection, "Assets", assetsSchema),
       },
     });
   });
@@ -45,22 +52,22 @@ describe('byDescription', () => {
     assets = [
       {
         ...asset,
-        id: 'assetId1',
-        description: 'First Asset',
+        id: "assetId1",
+        description: "First Asset",
       },
       {
         ...asset,
-        id: 'assetId2',
-        description: 'Second Asset',
+        id: "assetId2",
+        description: "Second Asset",
       },
     ];
     await ctx.tx.db.Assets.create(assets);
   });
 
-  describe('Intended workload', () => {
-    it('should return assets by description', async () => {
+  describe("Intended workload", () => {
+    it("should return assets by description", async () => {
       // Arrange
-      const description = 'First';
+      const description = "First";
       getAssetsByIds.mockResolvedValue([assets[0]]);
       // Act
       const result = await byDescription({
@@ -73,9 +80,9 @@ describe('byDescription', () => {
       expect(getAssetsByIds).toBeCalledWith({ ids: [assets[0].id], ctx });
       expect(result).toEqual([assets[0]]);
     });
-    it('should return assets by description with no case sensitive search', async () => {
+    it("should return assets by description with no case sensitive search", async () => {
       // Arrange
-      const description = 'first';
+      const description = "first";
       getAssetsByIds.mockResolvedValue([assets[0]]);
       // Act
       const result = await byDescription({
@@ -90,10 +97,10 @@ describe('byDescription', () => {
     });
   });
 
-  describe('Limit use cases', () => {
-    it('should return empty array if no assets match description', async () => {
+  describe("Limit use cases", () => {
+    it("should return empty array if no assets match description", async () => {
       // Arrange
-      const description = 'Other description';
+      const description = "Other description";
 
       // Act
       const result = await byDescription({ description, ctx });
@@ -104,13 +111,14 @@ describe('byDescription', () => {
     });
   });
 
-  describe('Error handling', () => {
-    it('should throw an error if description is missing', async () => {
+  describe("Error handling", () => {
+    it("should throw an error if description is missing", async () => {
       // Arrange
       const descriptionMissing = undefined;
 
       // Act
-      const testFunc = async () => byDescription({ description: descriptionMissing, ctx });
+      const testFunc = async () =>
+        byDescription({ description: descriptionMissing, ctx });
 
       // Assert
       await expect(testFunc).rejects.toThrowError(LeemonsError);

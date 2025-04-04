@@ -1,4 +1,4 @@
-const { escapeRegExp } = require('lodash');
+const { escapeRegExp } = require("lodash");
 /**
  * handlePermissions is an asynchronous function that fetches permissions for a specific category.
  * It makes three different calls to fetch permissions related to the user and the category.
@@ -9,36 +9,37 @@ const { escapeRegExp } = require('lodash');
  * @returns {Promise<Array>} - Returns a promise that resolves to an array of permissions.
  */
 async function handlePermissions({ userSession, categoryId, ctx }) {
-  const usersService = 'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType';
+  const usersService =
+    "users.permissions.getAllItemsForTheUserAgentHasPermissionsByType";
   return Promise.all([
-    ctx.tx.call('users.permissions.getUserAgentPermissions', {
+    ctx.tx.call("users.permissions.getUserAgentPermissions", {
       userAgent: userSession.userAgents,
       query: {
-        permissionName: { $regex: `^${escapeRegExp(ctx.prefixPN(''))}` },
+        permissionName: { $regex: `^${escapeRegExp(ctx.prefixPN(""))}` },
         target: categoryId,
       },
     }),
     ctx.tx.call(usersService, {
       userAgentId: userSession.userAgents,
-      type: ctx.prefixPN('asset.can-view'),
+      type: ctx.prefixPN("asset.can-view"),
       ignoreOriginalTarget: true,
       target: categoryId,
     }),
     ctx.tx.call(usersService, {
       userAgentId: userSession.userAgents,
-      type: ctx.prefixPN('asset.can-edit'),
+      type: ctx.prefixPN("asset.can-edit"),
       ignoreOriginalTarget: true,
       target: categoryId,
     }),
     ctx.tx.call(usersService, {
       userAgentId: userSession.userAgents,
-      type: ctx.prefixPN('asset.can-assign'),
+      type: ctx.prefixPN("asset.can-assign"),
       ignoreOriginalTarget: true,
       target: categoryId,
     }),
     ctx.tx.call(usersService, {
       userAgentId: userSession.userAgents,
-      type: ctx.prefixPN('asset.can-administer'),
+      type: ctx.prefixPN("asset.can-administer"),
       ignoreOriginalTarget: true,
       target: categoryId,
     }),

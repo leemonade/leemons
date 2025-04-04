@@ -1,4 +1,4 @@
-import { SelectProgram } from '@academic-portfolio/components';
+import { SelectProgram } from "@academic-portfolio/components";
 import {
   Box,
   ContextContainer,
@@ -8,16 +8,25 @@ import {
   Switch,
   TableInput,
   Title,
-} from '@bubbles-ui/components';
-import { useStore } from '@common';
-import { SelectProfile } from '@users/components';
-import _, { find, isEmpty } from 'lodash';
-import PropTypes from 'prop-types';
-import React, { useMemo } from 'react';
+} from "@bubbles-ui/components";
+import { useStore } from "@common";
+import { SelectProfile } from "@users/components";
+import _, { find, isEmpty } from "lodash";
+import PropTypes from "prop-types";
+import React, { useMemo } from "react";
 
 function ProgramSelect(props) {
-  const center = props.center || props.form.getValues(props.name.replace('program', 'center'));
-  return <SelectProgram {...props} ensureIntegrity autoSelectOneOption={false} center={center} />;
+  const center =
+    props.center ||
+    props.form.getValues(props.name.replace("program", "center"));
+  return (
+    <SelectProgram
+      {...props}
+      ensureIntegrity
+      autoSelectOneOption={false}
+      center={center}
+    />
+  );
 }
 
 const PermissionsDataPrograms = ({
@@ -33,15 +42,18 @@ const PermissionsDataPrograms = ({
 
   let value = [];
   if (editMode) {
-    const centerIds = _.map(centers, 'id');
-    value = _.filter(_value, (val) => centerIds.includes(val.center) && !!val.program);
+    const centerIds = _.map(centers, "id");
+    value = _.filter(
+      _value,
+      (val) => centerIds.includes(val.center) && !!val.program
+    );
   } else {
     value = _value;
   }
 
   function preOnChange(e, { type }) {
     let vals = _.map(e, (v) => ({ ...v, center: v.center || centers[0].id }));
-    if (editMode && ['remove', 'edit'].includes(type)) {
+    if (editMode && ["remove", "edit"].includes(type)) {
       const stringifyValue = _.map(value, (v) => JSON.stringify(v));
       const stringifyVals = _.map(vals, (v) => JSON.stringify(v));
       const [item] = _.difference(stringifyValue, stringifyVals);
@@ -50,7 +62,7 @@ const PermissionsDataPrograms = ({
         const sValues = _.map(_value, (v) => JSON.stringify(v));
         const index = sValues.indexOf(item);
         if (index >= 0) {
-          if (type === 'remove') {
+          if (type === "remove") {
             sValues.splice(index, 1);
           } else {
             sValues[index] = newItem;
@@ -74,11 +86,11 @@ const PermissionsDataPrograms = ({
 
   const USER_LABELS = useMemo(
     () => ({
-      add: t('permissionsData.labels.addUserButton', 'Add'),
-      remove: t('permissionsData.labels.removeUserButton', 'Remove'),
-      edit: t('permissionsData.labels.editUserButton', 'Edit'),
-      accept: t('permissionsData.labels.acceptButton', 'Accept'),
-      cancel: t('permissionsData.labels.cancelButton', 'Cancel'),
+      add: t("permissionsData.labels.addUserButton", "Add"),
+      remove: t("permissionsData.labels.removeUserButton", "Remove"),
+      edit: t("permissionsData.labels.editUserButton", "Edit"),
+      accept: t("permissionsData.labels.acceptButton", "Accept"),
+      cancel: t("permissionsData.labels.cancelButton", "Cancel"),
     }),
     [t]
   );
@@ -87,21 +99,25 @@ const PermissionsDataPrograms = ({
     const result = [];
 
     result.push({
-      Header: t('permissionsData.labels.sharePrograms'),
-      accessor: 'program',
+      Header: t("permissionsData.labels.sharePrograms"),
+      accessor: "program",
       input: {
         node: <ProgramSelect center={centers[0]?.id} />,
       },
       editable: false,
       valueRender: (values, formValues) => (
-        <ProgramSelect readOnly value={values} center={formValues.center || centers[0].id} />
+        <ProgramSelect
+          readOnly
+          value={values}
+          center={formValues.center || centers[0].id}
+        />
       ),
     });
 
     if (store.canAddProfiles) {
       result.push({
-        Header: t('permissionsData.labels.shareProfiles'),
-        accessor: 'profile',
+        Header: t("permissionsData.labels.shareProfiles"),
+        accessor: "profile",
         input: {
           node: <SelectProfile />,
         },
@@ -111,12 +127,14 @@ const PermissionsDataPrograms = ({
     }
 
     result.push({
-      Header: t('permissionsData.labels.sharePermissions'),
-      accessor: 'role',
+      Header: t("permissionsData.labels.sharePermissions"),
+      accessor: "role",
       input: {
         node: <Select />,
-        rules: { required: 'Required field' },
-        data: roles?.filter((role) => ['viewer', 'editor', 'assigner'].includes(role.value)),
+        rules: { required: "Required field" },
+        data: roles?.filter((role) =>
+          ["viewer", "editor", "assigner"].includes(role.value)
+        ),
       },
       valueRender: (val) => find(roles, { value: val })?.label,
     });
@@ -143,13 +161,13 @@ const PermissionsDataPrograms = ({
                   render();
                 }}
                 checked={store.canAddProfiles}
-                label={t('permissionsData.labels.profilesPerProgram')}
+                label={t("permissionsData.labels.profilesPerProgram")}
               />
             </Stack>
           ) : null}
         </>
       ) : (
-        <Title order={5}>{t('permissionsData.labels.addProgramsEdit')}</Title>
+        <Title order={5}>{t("permissionsData.labels.addProgramsEdit")}</Title>
       )}
       {!isEmpty(COLUMNS) && !isEmpty(USER_LABELS) && (
         <TableInput

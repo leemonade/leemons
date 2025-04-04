@@ -1,13 +1,13 @@
-import React, { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useMemo } from "react";
+import { useParams } from "react-router-dom";
 
-import { Box, LoadingOverlay } from '@bubbles-ui/components';
+import { Box, LoadingOverlay } from "@bubbles-ui/components";
 
-import { prepareAsset } from '../../../helpers/prepareAsset';
-import useCategories from '../../../request/hooks/queries/useCategories';
+import { prepareAsset } from "../../../helpers/prepareAsset";
+import useCategories from "../../../request/hooks/queries/useCategories";
 
-import { AssetPlayerWrapper } from '@leebrary/components/AssetPlayerWrapper';
-import { useAsset } from '@leebrary/request/hooks/queries/useAsset';
+import { AssetPlayerWrapper } from "@leebrary/components/AssetPlayerWrapper";
+import { useAsset } from "@leebrary/request/hooks/queries/useAsset";
 
 function PlayerPage() {
   const { data: categories, isLoading: isCategoriesLoading } = useCategories();

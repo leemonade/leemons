@@ -1,16 +1,16 @@
-import { capitalize } from 'lodash';
+import { capitalize } from "lodash";
 
-import prepareAssetType from './prepareAssetType';
+import prepareAssetType from "./prepareAssetType";
 
 function getFileTypeDisplay(file) {
   const parseFileType = prepareAssetType(file?.type, false);
-  const parseExtension = file?.path.split('.').pop();
+  const parseExtension = file?.path.split(".").pop();
 
   const isFile =
-    parseFileType === 'audio' ||
-    parseFileType === 'video' ||
-    parseFileType === 'image' ||
-    parseFileType === 'document';
+    parseFileType === "audio" ||
+    parseFileType === "video" ||
+    parseFileType === "image" ||
+    parseFileType === "document";
 
   const fileLabel = isFile ? parseFileType : parseExtension;
 

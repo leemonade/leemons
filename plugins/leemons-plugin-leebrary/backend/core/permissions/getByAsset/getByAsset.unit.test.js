@@ -6,15 +6,18 @@ const {
   beforeAll,
   afterAll,
   jest: { fn },
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const { LeemonsError } = require('@leemons/error');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const { LeemonsError } = require("@leemons/error");
 
-const { getByAsset } = require('./getByAsset');
-const { assetsSchema } = require('../../../models/assets');
-const getUserSession = require('../../../__fixtures__/getUserSession');
-const { permissionSeparator, rolesPermissions } = require('../../../config/constants');
+const { getByAsset } = require("./getByAsset");
+const { assetsSchema } = require("../../../models/assets");
+const getUserSession = require("../../../__fixtures__/getUserSession");
+const {
+  permissionSeparator,
+  rolesPermissions,
+} = require("../../../config/constants");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -41,36 +44,41 @@ beforeEach(async () => {
 const userSession = getUserSession();
 
 const getUserAgentPermissionsResult = {
-  id: 'idOne',
-  permissionName: 'leebrary.(ASSET_ID)assetOne',
-  target: 'categoryId',
+  id: "idOne",
+  permissionName: "leebrary.(ASSET_ID)assetOne",
+  target: "categoryId",
   role: null,
   center: null,
   deleted: 0,
   deleted_at: null,
-  actionNames: ['viewer'],
+  actionNames: ["viewer"],
 };
 
-it('Should correctly get permissions for asset private asset', async () => {
+it("Should correctly get permissions for asset private asset", async () => {
   // Arrange
-  const asset = { id: 'assetOne' };
+  const asset = { id: "assetOne" };
   const getUserAgentPermissions = fn().mockResolvedValue([
     { ...getUserAgentPermissionsResult },
-    { ...getUserAgentPermissionsResult, permissionName: 'testing.(ASSET_ID)assetTwo' },
+    {
+      ...getUserAgentPermissionsResult,
+      permissionName: "testing.(ASSET_ID)assetTwo",
+    },
   ]);
-  const getAllItemsForTheUserAgentHasPermissionsByType = fn().mockResolvedValue([]);
+  const getAllItemsForTheUserAgentHasPermissionsByType = fn().mockResolvedValue(
+    []
+  );
   const ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions': getUserAgentPermissions,
-      'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType':
+      "users.permissions.getUserAgentPermissions": getUserAgentPermissions,
+      "users.permissions.getAllItemsForTheUserAgentHasPermissionsByType":
         getAllItemsForTheUserAgentHasPermissionsByType,
     },
   });
   ctx.meta.userSession = { ...userSession };
   const permissionTypes = {
-    view: ctx.prefixPN('asset.can-view'),
-    edit: ctx.prefixPN('asset.can-edit'),
-    assign: ctx.prefixPN('asset.can-assign'),
+    view: ctx.prefixPN("asset.can-view"),
+    edit: ctx.prefixPN("asset.can-edit"),
+    assign: ctx.prefixPN("asset.can-assign"),
   };
 
   const expectedPermissionName = ctx.prefixPN(permissionSeparator + asset.id);
@@ -84,33 +92,38 @@ it('Should correctly get permissions for asset private asset', async () => {
     query: expect.objectContaining({ permissionName: expectedPermissionName }),
   });
   Object.keys(permissionTypes).forEach((type, i) => {
-    expect(getAllItemsForTheUserAgentHasPermissionsByType).nthCalledWith(i + 1, {
-      userAgentId: userSession.userAgents,
-      type: permissionTypes[type],
-      ignoreOriginalTarget: true,
-      item: asset.id,
-    });
+    expect(getAllItemsForTheUserAgentHasPermissionsByType).nthCalledWith(
+      i + 1,
+      {
+        userAgentId: userSession.userAgents,
+        type: permissionTypes[type],
+        ignoreOriginalTarget: true,
+        item: asset.id,
+      }
+    );
   });
   expect(response).toEqual({
     role: getUserAgentPermissionsResult.actionNames[0],
     permissions: rolesPermissions.viewer,
-    canAccessRole: 'viewer',
+    canAccessRole: "viewer",
   });
 });
 
-it('Should get permissions for a public asset', async () => {
+it("Should get permissions for a public asset", async () => {
   // Arrange
-  const asset = { id: 'assetOne', public: true };
+  const asset = { id: "assetOne", public: true };
   const getUserAgentPermissions = fn().mockResolvedValue([]);
-  const getAllItemsForTheUserAgentHasPermissionsByType = fn().mockResolvedValue([]);
+  const getAllItemsForTheUserAgentHasPermissionsByType = fn().mockResolvedValue(
+    []
+  );
   const ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions': getUserAgentPermissions,
-      'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType':
+      "users.permissions.getUserAgentPermissions": getUserAgentPermissions,
+      "users.permissions.getAllItemsForTheUserAgentHasPermissionsByType":
         getAllItemsForTheUserAgentHasPermissionsByType,
     },
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
   ctx.meta.userSession = { ...userSession };
@@ -121,29 +134,31 @@ it('Should get permissions for a public asset', async () => {
 
   // Assert
   expect(response).toEqual({
-    role: 'public',
+    role: "public",
     permissions: rolesPermissions.public,
-    canAccessRole: 'public',
+    canAccessRole: "public",
   });
 });
 
-it('Should determine the correct role for an editor', async () => {
+it("Should determine the correct role for an editor", async () => {
   // Arrange
-  const asset = { id: 'assetOne' };
+  const asset = { id: "assetOne" };
   const getUserAgentPermissions = fn().mockResolvedValue([
     {
       ...getUserAgentPermissionsResult,
-      actionNames: ['viewer'],
+      actionNames: ["viewer"],
     },
   ]);
-  const getAllItemsForTheUserAgentHasPermissionsByType = fn().mockImplementation(({ type }) => {
-    const response = type === 'leemons-testing.asset.can-edit' ? [asset.id] : [];
-    return Promise.resolve(response);
-  });
+  const getAllItemsForTheUserAgentHasPermissionsByType =
+    fn().mockImplementation(({ type }) => {
+      const response =
+        type === "leemons-testing.asset.can-edit" ? [asset.id] : [];
+      return Promise.resolve(response);
+    });
   const ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions': getUserAgentPermissions,
-      'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType':
+      "users.permissions.getUserAgentPermissions": getUserAgentPermissions,
+      "users.permissions.getAllItemsForTheUserAgentHasPermissionsByType":
         getAllItemsForTheUserAgentHasPermissionsByType,
     },
   });
@@ -154,28 +169,30 @@ it('Should determine the correct role for an editor', async () => {
 
   // Assert
   expect(response).toEqual({
-    role: 'editor',
+    role: "editor",
     permissions: rolesPermissions.editor,
-    canAccessRole: 'viewer',
+    canAccessRole: "viewer",
   });
 });
 
-it('Should determine the correct role for a viewer', async () => {
+it("Should determine the correct role for a viewer", async () => {
   // Arrange
-  const asset = { id: 'assetOne', public: false };
+  const asset = { id: "assetOne", public: false };
   const getUserAgentPermissions = fn().mockResolvedValue([]);
-  const getAllItemsForTheUserAgentHasPermissionsByType = fn().mockImplementation(({ type }) => {
-    const response = type === 'leemons-testing.asset.can-view' ? [asset.id] : [];
-    return Promise.resolve(response);
-  });
+  const getAllItemsForTheUserAgentHasPermissionsByType =
+    fn().mockImplementation(({ type }) => {
+      const response =
+        type === "leemons-testing.asset.can-view" ? [asset.id] : [];
+      return Promise.resolve(response);
+    });
   const ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions': getUserAgentPermissions,
-      'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType':
+      "users.permissions.getUserAgentPermissions": getUserAgentPermissions,
+      "users.permissions.getAllItemsForTheUserAgentHasPermissionsByType":
         getAllItemsForTheUserAgentHasPermissionsByType,
     },
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
   ctx.meta.userSession = { ...userSession };
@@ -186,33 +203,35 @@ it('Should determine the correct role for a viewer', async () => {
 
   // Assert
   expect(response).toEqual({
-    role: 'viewer',
+    role: "viewer",
     permissions: rolesPermissions.viewer,
-    canAccessRole: 'viewer',
+    canAccessRole: "viewer",
   });
 });
 
-it('Should determine the correct role for an assigner', async () => {
+it("Should determine the correct role for an assigner", async () => {
   // Arrange
-  const asset = { id: 'assetOne' };
+  const asset = { id: "assetOne" };
   const getUserAgentPermissions = fn().mockResolvedValue([
     {
       ...getUserAgentPermissionsResult,
-      actionNames: ['assigner'],
+      actionNames: ["assigner"],
     },
   ]);
-  const getAllItemsForTheUserAgentHasPermissionsByType = fn().mockImplementation(({ type }) => {
-    const response = type === 'leemons-testing.asset.can-assign' ? [asset.id] : [];
-    return Promise.resolve(response);
-  });
+  const getAllItemsForTheUserAgentHasPermissionsByType =
+    fn().mockImplementation(({ type }) => {
+      const response =
+        type === "leemons-testing.asset.can-assign" ? [asset.id] : [];
+      return Promise.resolve(response);
+    });
   const ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions': getUserAgentPermissions,
-      'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType':
+      "users.permissions.getUserAgentPermissions": getUserAgentPermissions,
+      "users.permissions.getAllItemsForTheUserAgentHasPermissionsByType":
         getAllItemsForTheUserAgentHasPermissionsByType,
     },
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
   ctx.meta.userSession = { ...userSession };
@@ -222,33 +241,35 @@ it('Should determine the correct role for an assigner', async () => {
 
   // Assert
   expect(response).toEqual({
-    role: 'assigner',
+    role: "assigner",
     permissions: rolesPermissions.assigner,
-    canAccessRole: 'assigner',
+    canAccessRole: "assigner",
   });
 });
 
-it('Should determine the correct role for an owner', async () => {
+it("Should determine the correct role for an owner", async () => {
   // Arrange
-  const asset = { id: 'assetOne' };
+  const asset = { id: "assetOne" };
   const getUserAgentPermissions = fn().mockResolvedValue([
     {
       ...getUserAgentPermissionsResult,
-      actionNames: ['owner'],
+      actionNames: ["owner"],
     },
   ]);
-  const getAllItemsForTheUserAgentHasPermissionsByType = fn().mockImplementation(({ type }) => {
-    const response = type === 'leemons-testing.asset.can-assigner' ? [asset.id] : [];
-    return Promise.resolve(response);
-  });
+  const getAllItemsForTheUserAgentHasPermissionsByType =
+    fn().mockImplementation(({ type }) => {
+      const response =
+        type === "leemons-testing.asset.can-assigner" ? [asset.id] : [];
+      return Promise.resolve(response);
+    });
   const ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions': getUserAgentPermissions,
-      'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType':
+      "users.permissions.getUserAgentPermissions": getUserAgentPermissions,
+      "users.permissions.getAllItemsForTheUserAgentHasPermissionsByType":
         getAllItemsForTheUserAgentHasPermissionsByType,
     },
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
   ctx.meta.userSession = { ...userSession };
@@ -258,35 +279,37 @@ it('Should determine the correct role for an owner', async () => {
 
   // Assert
   expect(response).toEqual({
-    role: 'owner',
+    role: "owner",
     permissions: rolesPermissions.owner,
-    canAccessRole: 'owner',
+    canAccessRole: "owner",
   });
 });
 
-it('Should get permissions correctly for an user agent without permissions', async () => {
+it("Should get permissions correctly for an user agent without permissions", async () => {
   // Arrange
-  const asset = { id: 'assetOne', public: null };
+  const asset = { id: "assetOne", public: null };
   const getUserAgentPermissions = fn().mockResolvedValue([]);
-  const getAllItemsForTheUserAgentHasPermissionsByType = fn().mockResolvedValue([]);
+  const getAllItemsForTheUserAgentHasPermissionsByType = fn().mockResolvedValue(
+    []
+  );
   const ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions': getUserAgentPermissions,
-      'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType':
+      "users.permissions.getUserAgentPermissions": getUserAgentPermissions,
+      "users.permissions.getAllItemsForTheUserAgentHasPermissionsByType":
         getAllItemsForTheUserAgentHasPermissionsByType,
     },
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
   ctx.meta.userSession = { ...userSession };
   const permissionTypes = {
-    view: ctx.prefixPN('asset.can-view'),
-    edit: ctx.prefixPN('asset.can-edit'),
-    assign: ctx.prefixPN('asset.can-assign'),
+    view: ctx.prefixPN("asset.can-view"),
+    edit: ctx.prefixPN("asset.can-edit"),
+    assign: ctx.prefixPN("asset.can-assign"),
   };
 
-  await ctx.db.Assets.create([{ ...asset }, { id: 'assetTwo', public: true }]);
+  await ctx.db.Assets.create([{ ...asset }, { id: "assetTwo", public: true }]);
 
   const expectedPermissionName = ctx.prefixPN(permissionSeparator + asset.id);
 
@@ -299,12 +322,15 @@ it('Should get permissions correctly for an user agent without permissions', asy
     query: expect.objectContaining({ permissionName: expectedPermissionName }),
   });
   Object.keys(permissionTypes).forEach((type, i) => {
-    expect(getAllItemsForTheUserAgentHasPermissionsByType).nthCalledWith(i + 1, {
-      userAgentId: userSession.userAgents,
-      type: permissionTypes[type],
-      ignoreOriginalTarget: true,
-      item: asset.id,
-    });
+    expect(getAllItemsForTheUserAgentHasPermissionsByType).nthCalledWith(
+      i + 1,
+      {
+        userAgentId: userSession.userAgents,
+        type: permissionTypes[type],
+        ignoreOriginalTarget: true,
+        item: asset.id,
+      }
+    );
   });
   expect(response).toEqual({
     role: undefined,
@@ -313,7 +339,7 @@ it('Should get permissions correctly for an user agent without permissions', asy
   });
 });
 
-it('Should catch any error type and throw a Leemons Error with the error information', async () => {
+it("Should catch any error type and throw a Leemons Error with the error information", async () => {
   // Arrange
   const ctx = generateCtx({});
 

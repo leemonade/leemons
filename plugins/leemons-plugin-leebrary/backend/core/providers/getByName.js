@@ -1,4 +1,4 @@
-const { list: listProviders } = require('./list');
+const { list: listProviders } = require("./list");
 
 /**
  * This function retrieves a specific provider by its name from the list of all providers available in the plugin.
@@ -11,7 +11,9 @@ const { list: listProviders } = require('./list');
 async function getByName({ name, ctx }) {
   const providers = (await listProviders({ ctx })) ?? [];
   const provider = providers.find((item) => item.pluginName === name);
-  return provider ? { pluginName: provider.pluginName, ...provider.params } : null;
+  return provider
+    ? { pluginName: provider.pluginName, ...provider.params }
+    : null;
 }
 
 module.exports = { getByName };

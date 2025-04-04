@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from "react";
 
-import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
-import { useSessionClasses } from '@academic-portfolio/hooks';
+import { getClassIcon } from "@academic-portfolio/helpers/getClassIcon";
+import { useSessionClasses } from "@academic-portfolio/hooks";
 import {
   Box,
   ContextContainer,
@@ -11,11 +11,11 @@ import {
   TableInput,
   Text,
   AvatarSubject,
-} from '@bubbles-ui/components';
-import { useStore } from '@common';
-import { SelectProfile } from '@users/components';
-import _, { find, isEmpty } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { useStore } from "@common";
+import { SelectProfile } from "@users/components";
+import _, { find, isEmpty } from "lodash";
+import PropTypes from "prop-types";
 
 function ClassItem({ class: klass, ...props }) {
   if (!klass) {
@@ -25,22 +25,22 @@ function ClassItem({ class: klass, ...props }) {
     <Box {...props}>
       <Box
         sx={(theme) => ({
-          display: 'flex',
-          flexDirection: 'row',
+          display: "flex",
+          flexDirection: "row",
           gap: theme.spacing[2],
-          alignItems: 'center',
+          alignItems: "center",
         })}
       >
         <Box
           sx={() => ({
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             minWidth: 26,
             minHeight: 26,
             maxWidth: 26,
             maxHeight: 26,
-            borderRadius: '50%',
+            borderRadius: "50%",
           })}
         >
           <AvatarSubject
@@ -51,7 +51,9 @@ function ClassItem({ class: klass, ...props }) {
           />
         </Box>
         <Text>{`${klass.subject.name}${
-          klass?.groups?.name ? ` - ${klass.groups.name ?? klass.groups.fullName}` : ''
+          klass?.groups?.name
+            ? ` - ${klass.groups.name ?? klass.groups.fullName}`
+            : ""
         }`}</Text>
       </Box>
     </Box>
@@ -89,15 +91,18 @@ const PermissionsDataClasses = ({
 
   let value = [];
   if (editMode) {
-    const centerIds = _.map(centers, 'id');
-    value = _.filter(_value, (val) => centerIds.includes(val.center) && !!val.class);
+    const centerIds = _.map(centers, "id");
+    value = _.filter(
+      _value,
+      (val) => centerIds.includes(val.center) && !!val.class
+    );
   } else {
     value = _value;
   }
 
   function preOnChange(e, { type }) {
     let vals = _.map(e, (v) => ({ ...v, center: v.center || centers[0].id }));
-    if (editMode && ['remove', 'edit'].includes(type)) {
+    if (editMode && ["remove", "edit"].includes(type)) {
       const stringifyValue = _.map(value, (v) => JSON.stringify(v));
       const stringifyVals = _.map(vals, (v) => JSON.stringify(v));
       const [item] = _.difference(stringifyValue, stringifyVals);
@@ -106,7 +111,7 @@ const PermissionsDataClasses = ({
         const sValues = _.map(_value, (v) => JSON.stringify(v));
         const index = sValues.indexOf(item);
         if (index >= 0) {
-          if (type === 'remove') {
+          if (type === "remove") {
             sValues.splice(index, 1);
           } else {
             sValues[index] = newItem;
@@ -130,11 +135,11 @@ const PermissionsDataClasses = ({
 
   const USER_LABELS = useMemo(
     () => ({
-      add: t('permissionsData.labels.addUserButton', 'Add'),
-      remove: t('permissionsData.labels.removeUserButton', 'Remove'),
-      edit: t('permissionsData.labels.editUserButton', 'Edit'),
-      accept: t('permissionsData.labels.acceptButton', 'Accept'),
-      cancel: t('permissionsData.labels.cancelButton', 'Cancel'),
+      add: t("permissionsData.labels.addUserButton", "Add"),
+      remove: t("permissionsData.labels.removeUserButton", "Remove"),
+      edit: t("permissionsData.labels.editUserButton", "Edit"),
+      accept: t("permissionsData.labels.acceptButton", "Accept"),
+      cancel: t("permissionsData.labels.cancelButton", "Cancel"),
     }),
     [t]
   );
@@ -156,16 +161,22 @@ const PermissionsDataClasses = ({
     const result = [];
 
     result.push({
-      Header: t('permissionsData.labels.shareClasses'),
-      accessor: 'class',
+      Header: t("permissionsData.labels.shareClasses"),
+      accessor: "class",
       input: {
         node: (
           <Select
             itemComponent={(item) => (
-              <ClassItem {...item} class={classesData.find((klass) => klass.id === item.value)} />
+              <ClassItem
+                {...item}
+                class={classesData.find((klass) => klass.id === item.value)}
+              />
             )}
             valueComponent={(item) => (
-              <ClassItem {...item} class={classesData.find((klass) => klass.id === item.value)} />
+              <ClassItem
+                {...item}
+                class={classesData.find((klass) => klass.id === item.value)}
+              />
             )}
             data={classesData}
           />
@@ -187,8 +198,8 @@ const PermissionsDataClasses = ({
 
     if (store.canAddProfiles) {
       result.push({
-        Header: t('permissionsData.labels.shareProfiles'),
-        accessor: 'profile',
+        Header: t("permissionsData.labels.shareProfiles"),
+        accessor: "profile",
         input: {
           node: <SelectProfile />,
         },
@@ -198,12 +209,14 @@ const PermissionsDataClasses = ({
     }
 
     result.push({
-      Header: t('permissionsData.labels.sharePermissions'),
-      accessor: 'role',
+      Header: t("permissionsData.labels.sharePermissions"),
+      accessor: "role",
       input: {
         node: <Select />,
-        rules: { required: 'Required field' },
-        data: roles?.filter((role) => ['viewer', 'editor', 'assigner'].includes(role.value)),
+        rules: { required: "Required field" },
+        data: roles?.filter((role) =>
+          ["viewer", "editor", "assigner"].includes(role.value)
+        ),
       },
       valueRender: (val) => find(roles, { value: val })?.label,
     });
@@ -218,7 +231,7 @@ const PermissionsDataClasses = ({
       spacing={editMode ? 0 : 5}
       sx={() => ({
         thead: {
-          display: editMode ? 'none' : 'block',
+          display: editMode ? "none" : "block",
         },
       })}
     >
@@ -236,7 +249,7 @@ const PermissionsDataClasses = ({
                   render();
                 }}
                 checked={store.canAddProfiles}
-                label={t('permissionsData.labels.profilesPerProgram')}
+                label={t("permissionsData.labels.profilesPerProgram")}
               />
             </Stack>
           ) : null}

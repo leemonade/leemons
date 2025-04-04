@@ -1,8 +1,8 @@
-const { expect, it } = require('@jest/globals');
-const stream = require('stream');
-const { isReadableStream } = require('./isReadableStream');
+const { expect, it } = require("@jest/globals");
+const stream = require("stream");
+const { isReadableStream } = require("./isReadableStream");
 
-it('should return true for a readable stream', () => {
+it("should return true for a readable stream", () => {
   // Arrange
   const readable = new stream.Readable();
 
@@ -13,7 +13,7 @@ it('should return true for a readable stream', () => {
   expect(result).toBe(true);
 });
 
-it('should return false for a non-readable stream', () => {
+it("should return false for a non-readable stream", () => {
   // Arrange
   const nonReadable = {};
 
@@ -24,7 +24,7 @@ it('should return false for a non-readable stream', () => {
   expect(result).toBe(false);
 });
 
-it('should return false for a non-stream object', () => {
+it("should return false for a non-stream object", () => {
   // Arrange
   const nonStream = new Date();
 

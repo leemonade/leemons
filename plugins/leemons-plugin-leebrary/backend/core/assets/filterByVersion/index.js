@@ -1,3 +1,3 @@
-const filterByVersionOfType = require('./filterByVersionOfType');
+const filterByVersionOfType = require("./filterByVersionOfType");
 
 module.exports = { ...filterByVersionOfType };

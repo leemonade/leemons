@@ -1,10 +1,10 @@
-import React from 'react';
-import { Box, Text, TextClamp } from '@bubbles-ui/components';
-import { LibraryCardCCBodyStyles } from './LibraryCardCCBody.styles';
+import React from "react";
+import { Box, Text, TextClamp } from "@bubbles-ui/components";
+import { LibraryCardCCBodyStyles } from "./LibraryCardCCBody.styles";
 import {
   LIBRARY_CARD_CC_BODY_PROPTYPES,
   LIBRARY_CARD_CC_BODY_DEFAULTPROPS,
-} from './LibraryCardCCBody.constants';
+} from "./LibraryCardCCBody.constants";
 
 const LibraryCardCCBody = ({ description, name }) => {
   const { classes } = LibraryCardCCBodyStyles();

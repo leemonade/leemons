@@ -7,9 +7,9 @@
  * @returns {Promise<Array>} - Returns a promise with an array of tags
  */
 async function handleTags({ assetId, ctx }) {
-  const [tags] = await ctx.tx.call('common.tags.getValuesTags', {
+  const [tags] = await ctx.tx.call("common.tags.getValuesTags", {
     values: assetId,
-    type: ctx.prefixPN(''),
+    type: ctx.prefixPN(""),
   });
   return tags;
 }

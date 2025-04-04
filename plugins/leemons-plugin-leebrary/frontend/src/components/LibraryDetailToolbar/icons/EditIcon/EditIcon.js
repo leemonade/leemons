@@ -1,5 +1,8 @@
-import React from 'react';
-import { EDIT_ICON_PROP_TYPES, EDIT_ICON_DEFAULT_PROPS } from './EditIcon.constants';
+import React from "react";
+import {
+  EDIT_ICON_PROP_TYPES,
+  EDIT_ICON_DEFAULT_PROPS,
+} from "./EditIcon.constants";
 
 const EditIcon = ({ width, height, color }) => (
   <svg
@@ -22,6 +25,6 @@ const EditIcon = ({ width, height, color }) => (
 EditIcon.defaultProps = EDIT_ICON_DEFAULT_PROPS;
 EditIcon.propTypes = EDIT_ICON_PROP_TYPES;
 
-EditIcon.displayName = 'EditIcon';
+EditIcon.displayName = "EditIcon";
 export default EditIcon;
 export { EditIcon };

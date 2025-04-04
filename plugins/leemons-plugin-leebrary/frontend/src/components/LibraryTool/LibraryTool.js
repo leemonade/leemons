@@ -1,18 +1,18 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from "react";
 
-import { Popover } from '@bubbles-ui/components';
-import { Button, useTextEditor } from '@bubbles-ui/editors';
-import { isEmpty } from 'lodash';
-import PropTypes from 'prop-types';
+import { Popover } from "@bubbles-ui/components";
+import { Button, useTextEditor } from "@bubbles-ui/editors";
+import { isEmpty } from "lodash";
+import PropTypes from "prop-types";
 
-import { LibraryBubbleMenu } from './LibraryBubbleMenu';
-import { LibraryExtension } from './LibraryExtension';
-import { LibraryIcon } from './LibraryIcon';
-import { LibraryModal } from './LibraryModal';
-import { LibraryNonPrintableExtension } from './LibraryNonPrintableExtension';
+import { LibraryBubbleMenu } from "./LibraryBubbleMenu";
+import { LibraryExtension } from "./LibraryExtension";
+import { LibraryIcon } from "./LibraryIcon";
+import { LibraryModal } from "./LibraryModal";
+import { LibraryNonPrintableExtension } from "./LibraryNonPrintableExtension";
 
 export const LIBRARY_TOOL_DEFAULT_PROPS = {
-  label: 'Library',
+  label: "Library",
   labels: {},
   placeholders: {},
   errorMessages: {},
@@ -84,9 +84,9 @@ const LibraryTool = ({
   };
 
   const handleOnEdit = () => {
-    const content = editor.getAttributes('library');
+    const content = editor.getAttributes("library");
     editToolData(
-      'library',
+      "library",
       !isEmpty(content) ? content : currentTool.data,
       !isEmpty(content.asset),
       <LibraryBubbleMenu
@@ -100,17 +100,17 @@ const LibraryTool = ({
   };
 
   const libraryModalOpened = useMemo(
-    () => currentTool.type === 'library' && toolModalOpen,
+    () => currentTool.type === "library" && toolModalOpen,
     [currentTool, toolModalOpen]
   );
 
   useEffect(() => {
-    if (editor.isActive('library')) {
-      const content = editor.getAttributes('library');
+    if (editor.isActive("library")) {
+      const content = editor.getAttributes("library");
       const data = !isEmpty(content) ? content : currentTool.data;
       const editing = !isEmpty(content.asset);
       openBubbleMenu(
-        'library',
+        "library",
         data,
         editing,
         <LibraryBubbleMenu
@@ -125,7 +125,7 @@ const LibraryTool = ({
       closeBubbleMenu();
       closeToolModal();
     }
-  }, [editor.isActive('library')]);
+  }, [editor.isActive("library")]);
 
   if (readOnly) return null;
   return (
@@ -140,7 +140,7 @@ const LibraryTool = ({
           {...props}
           label={label}
           icon={<LibraryIcon height={16} width={16} />}
-          actived={libraryModalOpened || editor?.isActive('library')}
+          actived={libraryModalOpened || editor?.isActive("library")}
           onClick={handleOnEdit}
         />
       }

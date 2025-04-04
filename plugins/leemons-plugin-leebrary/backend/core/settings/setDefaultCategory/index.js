@@ -1,3 +1,3 @@
-const setDefaultCategory = require('./setDefaultCategory');
+const setDefaultCategory = require("./setDefaultCategory");
 
 module.exports = { ...setDefaultCategory };

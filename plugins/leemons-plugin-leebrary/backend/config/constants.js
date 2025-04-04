@@ -1,4 +1,4 @@
-const permissionsPrefix = 'leebrary';
+const permissionsPrefix = "leebrary";
 
 const permissionNames = {
   library: `${permissionsPrefix}.library`,
@@ -7,8 +7,8 @@ const permissionNames = {
 const permissions = [
   {
     permissionName: permissionNames.library,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
-    localizationName: { es: 'Library', en: 'Library' },
+    actions: ["view", "update", "create", "delete", "admin"],
+    localizationName: { es: "Library", en: "Library" },
   },
 ];
 
@@ -16,19 +16,19 @@ const permissionsBundles = {
   library: {
     view: {
       permission: permissionNames.library,
-      actions: ['view', 'admin'],
+      actions: ["view", "admin"],
     },
     create: {
       permission: permissionNames.library,
-      actions: ['create', 'admin'],
+      actions: ["create", "admin"],
     },
     update: {
       permission: permissionNames.library,
-      actions: ['update', 'admin'],
+      actions: ["update", "admin"],
     },
     delete: {
       permission: permissionNames.library,
-      actions: ['delete', 'admin'],
+      actions: ["delete", "admin"],
     },
   },
 };
@@ -36,20 +36,20 @@ const permissionsBundles = {
 const menuItems = [
   {
     item: {
-      key: 'library',
+      key: "library",
       order: 400,
-      iconSvg: '/public/leebrary/menu-icon.svg',
-      activeIconSvg: '/public/leebrary/menu-icon.svg',
-      url: '/private/leebrary/',
+      iconSvg: "/public/leebrary/menu-icon.svg",
+      activeIconSvg: "/public/leebrary/menu-icon.svg",
+      url: "/private/leebrary/",
       label: {
-        en: 'Library',
-        es: 'Biblioteca',
+        en: "Library",
+        es: "Biblioteca",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.library,
-        actionNames: ['view', 'update', 'create', 'delete', 'admin'],
+        actionNames: ["view", "update", "create", "delete", "admin"],
       },
     ],
   },
@@ -60,14 +60,14 @@ const categoriesMenu = {
   permissions: [
     {
       permissionName: permissionNames.library,
-      actionNames: ['view', 'update', 'create', 'delete', 'admin'],
+      actionNames: ["view", "update", "create", "delete", "admin"],
     },
   ],
 };
 
 const CATEGORIES = {
-  BOOKMARKS: 'bookmarks',
-  MEDIA_FILES: 'media-files',
+  BOOKMARKS: "bookmarks",
+  MEDIA_FILES: "media-files",
 };
 
 const categories = [
@@ -75,60 +75,67 @@ const categories = [
     key: CATEGORIES.MEDIA_FILES,
     creatable: true,
     duplicable: true,
-    provider: 'leebrary',
-    canUse: '*',
+    provider: "leebrary",
+    canUse: "*",
     order: 1,
     menu: {
       item: {
-        iconSvg: '/public/leebrary/media-files.svg',
-        activeIconSvg: '/public/leebrary/media-files.svg',
+        iconSvg: "/public/leebrary/media-files.svg",
+        activeIconSvg: "/public/leebrary/media-files.svg",
         label: {
-          en: 'Resources',
-          es: 'Recursos',
+          en: "Resources",
+          es: "Recursos",
         },
       },
       permissions: [
         {
           permissionName: permissionNames.library,
-          actionNames: ['view', 'update', 'create', 'delete', 'admin'],
+          actionNames: ["view", "update", "create", "delete", "admin"],
         },
       ],
     },
-    pluralName: { en: 'resources', es: 'recursos' },
-    singularName: { en: 'resource', es: 'recurso' },
+    pluralName: { en: "resources", es: "recursos" },
+    singularName: { en: "resource", es: "recurso" },
   },
   {
     key: CATEGORIES.BOOKMARKS,
     creatable: true,
     duplicable: true,
-    provider: 'leebrary',
-    canUse: '*',
+    provider: "leebrary",
+    canUse: "*",
     order: 2,
     menu: {
       item: {
-        iconSvg: '/public/leebrary/bookmarks.svg',
-        activeIconSvg: '/public/leebrary/bookmarks.svg',
+        iconSvg: "/public/leebrary/bookmarks.svg",
+        activeIconSvg: "/public/leebrary/bookmarks.svg",
         label: {
-          en: 'Bookmarks',
-          es: 'Marcadores',
+          en: "Bookmarks",
+          es: "Marcadores",
         },
       },
       permissions: [
         {
           permissionName: permissionNames.library,
-          actionNames: ['view', 'update', 'create', 'delete', 'admin'],
+          actionNames: ["view", "update", "create", "delete", "admin"],
         },
       ],
     },
-    pluralName: { en: 'bookmarks', es: 'marcadores' },
-    singularName: { en: 'bookmark', es: 'marcador' },
+    pluralName: { en: "bookmarks", es: "marcadores" },
+    singularName: { en: "bookmark", es: "marcador" },
   },
 ];
 
 // EN: The roles must be ordered by allowance. Each role can only assign lower roles.
 // ES: Los roles deben estar ordenados por permisos. Cada rol sólo puede asignar roles inferiores.
-const assetRoles = ['viewer', 'commentor', 'editor', 'assigner', 'admin', 'owner'];
-const roles = ['public', 'noPermission', ...assetRoles];
+const assetRoles = [
+  "viewer",
+  "commentor",
+  "editor",
+  "assigner",
+  "admin",
+  "owner",
+];
+const roles = ["public", "noPermission", ...assetRoles];
 
 // EN: The permissions each role has.
 // ES: Los permisos que cada rol tiene.
@@ -160,7 +167,7 @@ const rolesPermissions = {
     edit: false,
     delete: false,
     duplicate: true,
-    canAssign: ['viewer'],
+    canAssign: ["viewer"],
     canUnassign: [],
   },
   assigner: {
@@ -170,7 +177,7 @@ const rolesPermissions = {
     edit: false,
     delete: false,
     duplicate: false,
-    canAssign: ['viewer'],
+    canAssign: ["viewer"],
     canUnassign: [],
   },
   commentor: {
@@ -180,8 +187,8 @@ const rolesPermissions = {
     edit: false,
     delete: false,
     duplicate: true,
-    canAssign: ['viewer', 'commentor'],
-    canUnassign: ['viewer'],
+    canAssign: ["viewer", "commentor"],
+    canUnassign: ["viewer"],
   },
   editor: {
     view: true,
@@ -190,8 +197,8 @@ const rolesPermissions = {
     edit: true,
     delete: false,
     duplicate: true,
-    canAssign: ['assigner', 'viewer', 'commentor', 'editor'],
-    canUnassign: ['assigner', 'viewer', 'commentor'],
+    canAssign: ["assigner", "viewer", "commentor", "editor"],
+    canUnassign: ["assigner", "viewer", "commentor"],
   },
   owner: {
     view: true,
@@ -200,8 +207,8 @@ const rolesPermissions = {
     edit: true,
     delete: true,
     duplicate: true,
-    canAssign: ['assigner', 'viewer', 'commentor', 'editor', 'owner'],
-    canUnassign: ['assigner', 'viewer', 'commentor', 'editor'],
+    canAssign: ["assigner", "viewer", "commentor", "editor", "owner"],
+    canUnassign: ["assigner", "viewer", "commentor", "editor"],
   },
   admin: {
     view: true,
@@ -210,8 +217,8 @@ const rolesPermissions = {
     edit: true,
     delete: true,
     duplicate: true,
-    canAssign: ['assigner', 'viewer', 'commentor', 'editor', 'owner'],
-    canUnassign: ['assigner', 'viewer', 'commentor', 'editor'],
+    canAssign: ["assigner", "viewer", "commentor", "editor", "owner"],
+    canUnassign: ["assigner", "viewer", "commentor", "editor"],
   },
 };
 
@@ -226,12 +233,12 @@ const widgets = {
     {
       zoneKey: `admin.admin-page`,
       key: `${permissionsPrefix}.admin.config`,
-      url: 'admin-config/index',
+      url: "admin-config/index",
       properties: {
         card: {
-          headerColor: '#EEEAF7',
+          headerColor: "#EEEAF7",
           title: `${permissionsPrefix}.admin.card.title`,
-          image: '',
+          image: "",
           imageWidth: 0,
           imageHeight: 0,
           description: `${permissionsPrefix}.admin.card.description`,
@@ -241,17 +248,17 @@ const widgets = {
     {
       zoneKey: `${permissionsPrefix}.drawer.tabs`,
       key: `${permissionsPrefix}.drawer.tabs.library`,
-      url: 'drawer/library/index',
+      url: "drawer/library/index",
       properties: {
-        label: 'tabs.library',
+        label: "tabs.library",
       },
     },
     {
       zoneKey: `${permissionsPrefix}.drawer.tabs`,
       key: `${permissionsPrefix}.drawer.tabs.new`,
-      url: 'drawer/new/index',
+      url: "drawer/new/index",
       properties: {
-        label: 'tabs.new',
+        label: "tabs.new",
       },
     },
   ],
@@ -259,37 +266,37 @@ const widgets = {
 
 const assignableRoles = [
   {
-    role: 'leebrary.asset',
+    role: "leebrary.asset",
     options: {
-      teacherDetailUrl: '/',
-      studentDetailUrl: '/private/leebrary/activities/student-detail/:id/:user',
-      evaluationDetailUrl: '/private/leebrary/activities/correction/:id/:user',
+      teacherDetailUrl: "/",
+      studentDetailUrl: "/private/leebrary/activities/student-detail/:id/:user",
+      evaluationDetailUrl: "/private/leebrary/activities/correction/:id/:user",
       creatable: false,
       canUse: [],
-      pluralName: { en: 'assets', es: 'recursos' },
-      singularName: { en: 'asset', es: 'recurso' },
+      pluralName: { en: "assets", es: "recursos" },
+      singularName: { en: "asset", es: "recurso" },
       menu: {
         removed: true,
         item: {
-          iconSvg: '/public/leebrary/media-files.svg',
-          activeIconSvg: '/public/leebrary/media-files.svg',
+          iconSvg: "/public/leebrary/media-files.svg",
+          activeIconSvg: "/public/leebrary/media-files.svg",
           label: {
-            en: 'Resources',
-            es: 'Recursos',
+            en: "Resources",
+            es: "Recursos",
           },
         },
         permissions: [
           {
             permissionName: permissionNames.library,
-            actionNames: ['view', 'admin'],
+            actionNames: ["view", "admin"],
           },
         ],
       },
 
-      componentOwner: 'leebrary',
-      listCardComponent: 'ListCard',
-      detailComponent: 'Detail',
-      type: 'resource',
+      componentOwner: "leebrary",
+      listCardComponent: "ListCard",
+      detailComponent: "Detail",
+      type: "resource",
     },
   },
 ];
@@ -308,7 +315,7 @@ module.exports = {
   categories,
   categoriesMenu,
   CATEGORIES,
-  permissionSeparator: '(ASSET_ID)',
+  permissionSeparator: "(ASSET_ID)",
   widgets,
 
   assignableRoles,

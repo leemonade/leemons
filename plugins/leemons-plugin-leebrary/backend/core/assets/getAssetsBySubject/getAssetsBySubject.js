@@ -1,5 +1,5 @@
-const { map, uniq } = require('lodash');
-const { normalizeItemsArray } = require('../../shared');
+const { map, uniq } = require("lodash");
+const { normalizeItemsArray } = require("../../shared");
 
 /**
  * Get assets by subject
@@ -21,8 +21,10 @@ async function getAssetsBySubject({ subject, assets, ctx }) {
     subject: subjects,
     asset: assetsArray,
   };
-  const _assets = await ctx.tx.db.AssetsSubjects.find(query).select(['asset']).lean();
-  return uniq(map(_assets, 'asset'));
+  const _assets = await ctx.tx.db.AssetsSubjects.find(query)
+    .select(["asset"])
+    .lean();
+  return uniq(map(_assets, "asset"));
 }
 
 module.exports = { getAssetsBySubject };

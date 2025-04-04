@@ -1,4 +1,4 @@
-const getByUserAndCategory = require('./getByUserAndCategory');
+const getByUserAndCategory = require("./getByUserAndCategory");
 
 module.exports = {
   ...getByUserAndCategory,

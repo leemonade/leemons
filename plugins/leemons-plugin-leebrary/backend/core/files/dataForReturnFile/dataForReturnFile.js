@@ -1,8 +1,8 @@
-const { LeemonsError } = require('@leemons/error');
-const { getById } = require('../getById/getById');
-const { handleCommonFileDetails } = require('./handleCommonFileDetails');
-const { handleReadParams } = require('./handleReadParams');
-const { handleReadStream } = require('./handleReadStream');
+const { LeemonsError } = require("@leemons/error");
+const { getById } = require("../getById/getById");
+const { handleCommonFileDetails } = require("./handleCommonFileDetails");
+const { handleReadParams } = require("./handleReadParams");
+const { handleReadStream } = require("./handleReadStream");
 
 /**
  * Prepares the necessary data for returning a file.
@@ -23,7 +23,7 @@ const { handleReadStream } = require('./handleReadStream');
  */
 async function dataForReturnFile({
   id,
-  path = '',
+  path = "",
   start = -1,
   end = -1,
   forceStream = true,
@@ -42,7 +42,11 @@ async function dataForReturnFile({
     file.size = file.metadata.pathsInfo[path].size;
   }
 
-  const { bytesStart, bytesEnd, readParams } = handleReadParams({ file, start, end });
+  const { bytesStart, bytesEnd, readParams } = handleReadParams({
+    file,
+    start,
+    end,
+  });
 
   const readStream = await handleReadStream({
     file,

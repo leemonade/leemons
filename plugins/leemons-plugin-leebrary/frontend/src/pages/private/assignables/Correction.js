@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef } from "react";
 
 import {
   ActivityAccordion,
@@ -14,20 +14,20 @@ import {
   TotalLayoutContainer,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
-} from '@bubbles-ui/components';
-import { ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { InfoIcon } from '@bubbles-ui/icons/solid';
-import { useSearchParams } from '@common';
-import { Link, useParams } from 'react-router-dom';
+} from "@bubbles-ui/components";
+import { ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { InfoIcon } from "@bubbles-ui/icons/solid";
+import { useSearchParams } from "@common";
+import { Link, useParams } from "react-router-dom";
 
-import { useIsStudent } from '@academic-portfolio/hooks';
-import ActivityHeader from '@assignables/components/ActivityHeader';
-import ActivityFeedbackAlertManager from '@assignables/components/EvaluationFeedback/Alerts/ActivityFeedbackAlertManager';
-import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
-import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
-import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
-import prefixPN from '@leebrary/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useIsStudent } from "@academic-portfolio/hooks";
+import ActivityHeader from "@assignables/components/ActivityHeader";
+import ActivityFeedbackAlertManager from "@assignables/components/EvaluationFeedback/Alerts/ActivityFeedbackAlertManager";
+import useNextActivityUrl from "@assignables/hooks/useNextActivityUrl";
+import useAssignations from "@assignables/requests/hooks/queries/useAssignations";
+import { AssetEmbedList } from "@leebrary/components/AssetEmbedList";
+import prefixPN from "@leebrary/helpers/prefixPN";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
 
 const useCorrectionStyles = createStyles(() => ({
   accordionPanel: {
@@ -40,11 +40,11 @@ export default function Correction() {
   const { id, user } = useParams();
   const scrollRef = useRef();
   const { classes } = useCorrectionStyles();
-  const [t] = useTranslateLoader(prefixPN('assignableCorrection'));
+  const [t] = useTranslateLoader(prefixPN("assignableCorrection"));
 
   const isStudent = useIsStudent();
   const params = useSearchParams();
-  const fromExecution = useRef(params.has('fromExecution')).current;
+  const fromExecution = useRef(params.has("fromExecution")).current;
 
   const { data: assignation, isLoading } = useAssignations({
     query: { instance: id, user },
@@ -67,7 +67,7 @@ export default function Correction() {
         <ActivityHeader
           assignation={assignation}
           instance={instance}
-          action={t('action')}
+          action={t("action")}
           showClass
           showRole
           showEvaluationType
@@ -77,7 +77,11 @@ export default function Correction() {
         />
       }
     >
-      <Stack justifyContent="center" style={{ overflowY: 'auto' }} ref={scrollRef}>
+      <Stack
+        justifyContent="center"
+        style={{ overflowY: "auto" }}
+        ref={scrollRef}
+      >
         <TotalLayoutStepContainer
           Footer={
             isStudent &&
@@ -94,7 +98,7 @@ export default function Correction() {
                     }
                   >
                     <Button rightIcon={!!nextActivityUrl && <ChevRightIcon />}>
-                      {nextActivityUrl ? t('nextActivity') : t('goToModule')}
+                      {nextActivityUrl ? t("nextActivity") : t("goToModule")}
                     </Button>
                   </Link>
                 }
@@ -104,26 +108,29 @@ export default function Correction() {
         >
           <Stack direction="column" spacing="xl">
             <ActivityFeedbackAlertManager assignation={assignation} />
-            <ContextContainer title={t('summary')}>
+            <ContextContainer title={t("summary")}>
               <ActivityAccordion>
                 {!!instance?.metadata?.statement && (
-                  <ActivityAccordionPanel label={t('information')} icon={<InfoIcon />}>
+                  <ActivityAccordionPanel
+                    label={t("information")}
+                    icon={<InfoIcon />}
+                  >
                     <Box className={classes.accordionPanel}>
                       <HtmlText>{instance?.metadata?.statement}</HtmlText>
                     </Box>
                   </ActivityAccordionPanel>
                 )}
                 <ActivityAccordionPanel
-                  label={t('resources')}
+                  label={t("resources")}
                   icon={
                     <Box
                       sx={{
-                        position: 'relative',
+                        position: "relative",
                         width: 22,
                         height: 22,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
                       <ImageLoader src="/public/leebrary/media-files.svg" />
@@ -131,7 +138,9 @@ export default function Correction() {
                   }
                 >
                   <Box className={classes.accordionPanel}>
-                    <AssetEmbedList assets={[assignable.metadata.leebrary.asset]} />
+                    <AssetEmbedList
+                      assets={[assignable.metadata.leebrary.asset]}
+                    />
                   </Box>
                 </ActivityAccordionPanel>
               </ActivityAccordion>

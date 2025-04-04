@@ -1,22 +1,22 @@
-const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
-const _ = require('lodash');
+const { it, expect } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
+const _ = require("lodash");
 
-const { handleAssetDuplication } = require('./handleAssetDuplication');
-const getAssets = require('../../../__fixtures__/getAssets');
+const { handleAssetDuplication } = require("./handleAssetDuplication");
+const getAssets = require("../../../__fixtures__/getAssets");
 
 // MOCKS
-jest.mock('../add');
-const { add } = require('../add');
+jest.mock("../add");
+const { add } = require("../add");
 
 const { bookmarkAsset } = getAssets();
 
-it('Correctly call add asset and return the new one', async () => {
+it("Correctly call add asset and return the new one", async () => {
   // Arrange
   const asset = {
     ...bookmarkAsset,
     cover: bookmarkAsset.cover.id,
-    fileType: 'bookmark',
+    fileType: "bookmark",
     metadata: [],
   };
   delete asset.subjects;
@@ -24,18 +24,21 @@ it('Correctly call add asset and return the new one', async () => {
   delete asset.file;
 
   const assetData = _.omit({ ...asset }, [
-    '_id',
-    'id',
-    'cover',
-    'icon',
-    'category',
-    'fromUser',
-    'fromUserAgent',
-    'created_at',
-    'updated_at',
+    "_id",
+    "id",
+    "cover",
+    "icon",
+    "category",
+    "fromUser",
+    "fromUserAgent",
+    "created_at",
+    "updated_at",
   ]);
 
-  const expectedResponseBookmark = { ...bookmarkAsset, name: `${asset.name} (1)` };
+  const expectedResponseBookmark = {
+    ...bookmarkAsset,
+    name: `${asset.name} (1)`,
+  };
 
   const ctx = generateCtx({});
   add.mockResolvedValue(expectedResponseBookmark);

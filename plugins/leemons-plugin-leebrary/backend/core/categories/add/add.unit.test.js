@@ -1,16 +1,23 @@
-const { it, expect, beforeAll, afterAll, beforeEach, describe } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { LeemonsError } = require('@leemons/error');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  describe,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { LeemonsError } = require("@leemons/error");
+const { newModel } = require("@leemons/mongodb");
 
-const getCategory = require('../../../__fixtures__/getCategory');
-const { add } = require('./add');
-const { categoriesSchema } = require('../../../models/categories');
+const getCategory = require("../../../__fixtures__/getCategory");
+const { add } = require("./add");
+const { categoriesSchema } = require("../../../models/categories");
 
-jest.mock('../exists');
-const { exists } = require('../exists');
+jest.mock("../exists");
+const { exists } = require("../exists");
 
-describe('add category', () => {
+describe("add category", () => {
   let mongooseConnection;
   let disconnectMongoose;
   let ctx;
@@ -25,11 +32,17 @@ describe('add category', () => {
 
     addItemsFromPlugin = jest.fn();
     ctx = generateCtx({
-      actions: { 'menu-builder.menuItem.addItemsFromPlugin': addItemsFromPlugin },
-      models: {
-        Categories: newModel(mongooseConnection, 'Categories', categoriesSchema),
+      actions: {
+        "menu-builder.menuItem.addItemsFromPlugin": addItemsFromPlugin,
       },
-      caller: 'leemons-testing',
+      models: {
+        Categories: newModel(
+          mongooseConnection,
+          "Categories",
+          categoriesSchema
+        ),
+      },
+      caller: "leemons-testing",
     });
   });
 
@@ -48,22 +61,27 @@ describe('add category', () => {
     menu = {
       removed: false,
       item: {
-        key: 'testKey',
+        key: "testKey",
         order: 1,
       },
-      permissions: 'testPermissions',
+      permissions: "testPermissions",
     };
   });
 
-  it('should add a category', async () => {
+  it("should add a category", async () => {
     // Arrange
     exists.mockResolvedValue(false);
-    const idWithoutComponentOwner = 'idWithoutComponentOwner';
+    const idWithoutComponentOwner = "idWithoutComponentOwner";
 
     // Act
     const result = await add({ data: { ...categoryData, menu }, ctx });
     const resultWithoutComponentOwner = await add({
-      data: { ...categoryData, menu, componentOwner: undefined, id: idWithoutComponentOwner },
+      data: {
+        ...categoryData,
+        menu,
+        componentOwner: undefined,
+        id: idWithoutComponentOwner,
+      },
       ctx,
     });
 
@@ -73,7 +91,7 @@ describe('add category', () => {
     expect(resultWithoutComponentOwner.id).toEqual(idWithoutComponentOwner);
   });
 
-  it('should not add a category if it already exists', async () => {
+  it("should not add a category if it already exists", async () => {
     // Arrange
     exists.mockResolvedValue(true);
 
@@ -84,37 +102,40 @@ describe('add category', () => {
     // Assert
     expect(result).toBeNull();
   });
-  it('should not add a category if key is missing', async () => {
+  it("should not add a category if key is missing", async () => {
     // Arrange
     exists.mockResolvedValue(false);
     const categoryDataWithoutKey = { ...categoryData, key: undefined };
 
     // Act
-    const testFuncWithoutKey = async () => add({ data: { ...categoryDataWithoutKey, menu }, ctx });
-    const testFuncWithoutMenu = async () => add({ data: { ...categoryData }, ctx });
+    const testFuncWithoutKey = async () =>
+      add({ data: { ...categoryDataWithoutKey, menu }, ctx });
+    const testFuncWithoutMenu = async () =>
+      add({ data: { ...categoryData }, ctx });
 
     // Assert
     await expect(testFuncWithoutKey).rejects.toThrow(
       new LeemonsError(ctx, {
-        message: 'Category `key` is required',
+        message: "Category `key` is required",
         httpStatusCode: 400,
       })
     );
     await expect(testFuncWithoutMenu).rejects.toThrow(
       new LeemonsError(ctx, {
-        message: 'Category `menu` is required',
+        message: "Category `menu` is required",
         httpStatusCode: 400,
       })
     );
   });
-  it('should throw an error if there is an error inside the function', async () => {
+  it("should throw an error if there is an error inside the function", async () => {
     // Arrange
-    const errorMessage = 'An error message';
+    const errorMessage = "An error message";
     exists.mockImplementation(() => {
       throw new Error(errorMessage);
     });
     // Act
-    const testFuncWithFaultyData = async () => add({ data: { ...categoryData, menu }, ctx });
+    const testFuncWithFaultyData = async () =>
+      add({ data: { ...categoryData, menu }, ctx });
 
     // Assert
     await expect(testFuncWithFaultyData).rejects.toThrow(

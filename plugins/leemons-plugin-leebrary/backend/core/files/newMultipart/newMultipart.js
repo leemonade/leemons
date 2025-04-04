@@ -1,9 +1,9 @@
-const mime = require('mime-types');
-const { isEmpty } = require('lodash');
-const { handleCreateFile } = require('./handleCreateFile');
-const { handleFileProvider } = require('./handleFileProvider');
-const { handleFileSystem } = require('./handleFileSystem');
-const { findOne: getSettings } = require('../../settings');
+const mime = require("mime-types");
+const { isEmpty } = require("lodash");
+const { handleCreateFile } = require("./handleCreateFile");
+const { handleFileProvider } = require("./handleFileProvider");
+const { handleFileSystem } = require("./handleFileSystem");
+const { findOne: getSettings } = require("../../settings");
 
 /**
  * Creates a new multipart file with the provided file information and transaction details.

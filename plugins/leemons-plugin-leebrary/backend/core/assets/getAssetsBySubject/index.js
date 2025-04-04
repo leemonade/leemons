@@ -1,3 +1,3 @@
-const getAssetsBySubject = require('./getAssetsBySubject');
+const getAssetsBySubject = require("./getAssetsBySubject");
 
 module.exports = { ...getAssetsBySubject };

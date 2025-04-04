@@ -1,13 +1,20 @@
-const { it, expect, beforeAll, afterAll, beforeEach, describe } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  describe,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
 
-const { newModel } = require('@leemons/mongodb');
+const { newModel } = require("@leemons/mongodb");
 
-const { getByAsset } = require('./getByAsset');
-const { pinsSchema } = require('../../../models/pins');
-const getUserSession = require('../../../__fixtures__/getUserSession');
+const { getByAsset } = require("./getByAsset");
+const { pinsSchema } = require("../../../models/pins");
+const getUserSession = require("../../../__fixtures__/getUserSession");
 
-describe('getByAsset pin', () => {
+describe("getByAsset pin", () => {
   let mongooseConnection;
   let disconnectMongoose;
   let ctx;
@@ -34,11 +41,11 @@ describe('getByAsset pin', () => {
 
     ctx = generateCtx({
       models: {
-        Pins: newModel(mongooseConnection, 'Pins', pinsSchema),
+        Pins: newModel(mongooseConnection, "Pins", pinsSchema),
       },
     });
 
-    assetId = 'testAssetId';
+    assetId = "testAssetId";
     await ctx.tx.db.Pins.create([
       {
         asset: assetId,
@@ -46,17 +53,17 @@ describe('getByAsset pin', () => {
       },
       {
         asset: assetId,
-        userAgent: 'otherUserAgentId',
+        userAgent: "otherUserAgentId",
       },
       {
-        asset: 'otherAssetId',
+        asset: "otherAssetId",
         userAgent: userSession.userAgents[0].id,
       },
     ]);
   });
 
-  describe('Intended workload', () => {
-    it('should get a pin by asset ID', async () => {
+  describe("Intended workload", () => {
+    it("should get a pin by asset ID", async () => {
       // Arrange
       ctx.meta.userSession = userSession;
       // Act
@@ -65,7 +72,7 @@ describe('getByAsset pin', () => {
       // Asser
       expect(result.asset).toBe(assetId);
     });
-    it('should get a pin array by asset ID and no userSession is in ctx.meta', async () => {
+    it("should get a pin array by asset ID and no userSession is in ctx.meta", async () => {
       // Arrange
       delete ctx.meta.userSession;
       // Act
@@ -79,10 +86,10 @@ describe('getByAsset pin', () => {
     });
   });
 
-  describe('Limit use cases', () => {
-    it('should return null if no pin found for asset ID', async () => {
+  describe("Limit use cases", () => {
+    it("should return null if no pin found for asset ID", async () => {
       // Arrange
-      const nonExistentAssetId = 'nonExistentAssetId';
+      const nonExistentAssetId = "nonExistentAssetId";
       ctx.meta.userSession = userSession;
 
       // Act
@@ -92,9 +99,9 @@ describe('getByAsset pin', () => {
       expect(result).toBeNull();
     });
 
-    it('should return an empty array if no pin found for asset ID and no userSession is in ctx.meta', async () => {
+    it("should return an empty array if no pin found for asset ID and no userSession is in ctx.meta", async () => {
       // Arrange
-      const nonExistentAssetId = 'nonExistentAssetId';
+      const nonExistentAssetId = "nonExistentAssetId";
       ctx.meta.userSession = undefined;
 
       // Act

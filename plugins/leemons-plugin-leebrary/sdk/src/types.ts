@@ -1,12 +1,12 @@
-import type { ProgramID, SubjectID } from '@leemons/academic-portfolio';
-import type { LRN } from '@leemons/lrn';
-import type { LeemonsSchema } from '@leemons/mongodb';
-import type { UserAgentID, UserID } from '@leemons/users';
+import type { ProgramID, SubjectID } from "@leemons/academic-portfolio";
+import type { LRN } from "@leemons/lrn";
+import type { LeemonsSchema } from "@leemons/mongodb";
+import type { UserAgentID, UserID } from "@leemons/users";
 
-export type FileID = LRN<'leebrary', 'File'>;
-export type PinID = LRN<'leebrary', 'Pin'>;
-export type AssetID = LRN<'common', 'CurrentVersions'>;
-export type ProviderID = LRN<'leebrary', 'Provider'>;
+export type FileID = LRN<"leebrary", "File">;
+export type PinID = LRN<"leebrary", "Pin">;
+export type AssetID = LRN<"common", "CurrentVersions">;
+export type ProviderID = LRN<"leebrary", "Provider">;
 
 export type File = {
   id: FileID;
@@ -20,7 +20,7 @@ export type File = {
   metadata: string;
 };
 
-export type CategoryID = LRN<'leebrary', 'Category'>;
+export type CategoryID = LRN<"leebrary", "Category">;
 export type Category = {
   id: CategoryID;
   deploymentID: string;
@@ -48,7 +48,7 @@ export type SubjectInAsset = {
   name: string;
 };
 
-export type Asset = Omit<LeemonsSchema, 'id'> & {
+export type Asset = Omit<LeemonsSchema, "id"> & {
   id: AssetID;
   deploymentID: string;
   name: string;

@@ -1,4 +1,4 @@
-const getRolePermissions = require('./getRolePermissions');
+const getRolePermissions = require("./getRolePermissions");
 
 /**
  * Determines if a user can assign a new role to another user.

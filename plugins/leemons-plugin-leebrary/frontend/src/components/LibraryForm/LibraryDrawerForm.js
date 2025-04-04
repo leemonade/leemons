@@ -1,5 +1,5 @@
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import { getUserProgramsRequest } from '@academic-portfolio/request';
+import { useIsTeacher } from "@academic-portfolio/hooks";
+import { getUserProgramsRequest } from "@academic-portfolio/request";
 import {
   ActionButton,
   Box,
@@ -17,22 +17,22 @@ import {
   Textarea,
   useResizeObserver,
   useViewportSize,
-} from '@bubbles-ui/components';
-import { CommonFileSearchIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
-import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
-import { addErrorAlert } from '@layout/alert';
-import SelectSubjects from '@leebrary/components/SelectSubjects';
-import _, { isEmpty, isFunction, isNil, isString, toLower } from 'lodash';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { getFileUrl, prepareAsset } from '../../helpers/prepareAsset';
-import { getUrlMetadataRequest } from '../../request';
-import { AssetListDrawer } from '../AssetListDrawer';
+} from "@bubbles-ui/components";
+import { CommonFileSearchIcon, DownloadIcon } from "@bubbles-ui/icons/outline";
+import { TagsAutocomplete, useRequestErrorMessage, useStore } from "@common";
+import { addErrorAlert } from "@layout/alert";
+import SelectSubjects from "@leebrary/components/SelectSubjects";
+import _, { isEmpty, isFunction, isNil, isString, toLower } from "lodash";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { getFileUrl, prepareAsset } from "../../helpers/prepareAsset";
+import { getUrlMetadataRequest } from "../../request";
+import { AssetListDrawer } from "../AssetListDrawer";
 import {
   LIBRARY_FORM_DEFAULT_PROPS,
   LIBRARY_FORM_PROP_TYPES,
   LIBRARY_FORM_TYPES,
-} from './LibraryForm.constants';
+} from "./LibraryForm.constants";
 
 // -----------------------------------------------------------------------------
 // HELPERS
@@ -40,19 +40,19 @@ import {
 function isValidURL(url) {
   const urlPattern =
     /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi;
-  return urlPattern.test(url) ? true : 'Invalid URL';
+  return urlPattern.test(url) ? true : "Invalid URL";
 }
 
 function isImageFile(file) {
-  if (file?.type && file?.type.indexOf('image') === 0) {
+  if (file?.type && file?.type.indexOf("image") === 0) {
     return true;
   }
 
   const name = file?.path || file?.name;
 
   if (!isEmpty(name)) {
-    const ext = toLower(name.split('.').at(-1));
-    return ['png', 'jpeg', 'jpg', 'webp', 'gif', 'bmp'].includes(ext);
+    const ext = toLower(name.split(".").at(-1));
+    return ["png", "jpeg", "jpg", "webp", "gif", "bmp"].includes(ext);
   }
 
   return false;
@@ -135,9 +135,9 @@ const LibraryDrawerForm = ({
 
   const defaultValues = {
     file: asset?.file || null,
-    name: asset?.name || '',
-    description: asset?.description || '',
-    color: asset?.color || '',
+    name: asset?.name || "",
+    description: asset?.description || "",
+    color: asset?.color || "",
     cover: asset?.cover || null,
     url: asset?.url || null,
     program: asset?.program || null,
@@ -155,10 +155,10 @@ const LibraryDrawerForm = ({
   } = form || useForm({ defaultValues });
 
   const formValues = watch();
-  const coverFile = watch('cover');
-  const assetFile = watch('file');
-  const bookmarkUrl = watch('url');
-  const program = watch('program');
+  const coverFile = watch("cover");
+  const assetFile = watch("file");
+  const bookmarkUrl = watch("url");
+  const program = watch("program");
 
   useEffect(() => {
     if (_.isObject(coverFile) || store.cover) {
@@ -174,7 +174,9 @@ const LibraryDrawerForm = ({
     store.subjectRequired = undefined;
     if (advancedConfig?.program?.show) {
       if (advancedConfig.program.required) {
-        store.programRequired = { required: errorMessages.program?.required || 'Field required' };
+        store.programRequired = {
+          required: errorMessages.program?.required || "Field required",
+        };
       }
       if (advancedConfig.alwaysOpen) {
         store.alwaysOpen = advancedConfig.alwaysOpen;
@@ -184,18 +186,31 @@ const LibraryDrawerForm = ({
         store.showLevel = advancedConfig.subjects.showLevel;
         store.maxOneSubject = advancedConfig.subjects.maxOne;
         if (advancedConfig.subjects.required) {
-          store.subjectRequired = { required: errorMessages.subject?.required || 'Field required' };
+          store.subjectRequired = {
+            required: errorMessages.subject?.required || "Field required",
+          };
         }
       }
       const { programs } = await getUserProgramsRequest();
-      store.programs = _.map(programs, (item) => ({ label: item.name, value: item.id }));
+      store.programs = _.map(programs, (item) => ({
+        label: item.name,
+        value: item.id,
+      }));
     }
     render();
   }
 
   useEffect(() => {
     if (!isNullish(asset) && isEmpty(asset?.id)) {
-      const valueNames = ['file', 'name', 'description', 'color', 'cover', 'program', 'subjects'];
+      const valueNames = [
+        "file",
+        "name",
+        "description",
+        "color",
+        "cover",
+        "program",
+        "subjects",
+      ];
       const values = getValues(valueNames);
       valueNames.forEach((valueName, index) => {
         setValue(valueName, asset[valueName] || values[index]);
@@ -212,7 +227,7 @@ const LibraryDrawerForm = ({
       const isImageType = isImageFile(assetFile);
       setIsImage(isImageType);
       if (isEmpty(formValues.name)) {
-        setValue('name', assetFile.name.match(/(.+?)(\.[^.]+$|$)/)[1]);
+        setValue("name", assetFile.name.match(/(.+?)(\.[^.]+$|$)/)[1]);
       }
     }
   }, [assetFile]);
@@ -248,7 +263,7 @@ const LibraryDrawerForm = ({
     if (isFunction(onSubmit)) onSubmit(e);
   };
 
-  const validateUrl = async () => trigger('url', { shouldFocus: true });
+  const validateUrl = async () => trigger("url", { shouldFocus: true });
 
   const handleCheckUrl = async () => {
     if (await validateUrl()) {
@@ -260,11 +275,11 @@ const LibraryDrawerForm = ({
 
         if (!isEmpty(metadata)) {
           setUrlMetadata(metadata);
-          setValue('name', metadata.title);
-          setValue('description', metadata.description);
+          setValue("name", metadata.title);
+          setValue("description", metadata.description);
 
           if (!isEmpty(metadata.image)) {
-            setValue('cover', metadata.image);
+            setValue("cover", metadata.image);
           }
         }
         setChecking(false);
@@ -283,7 +298,7 @@ const LibraryDrawerForm = ({
     store.cover = item.cover;
     const preparedAsset = prepareAsset(item);
     setCoverAsset(preparedAsset);
-    setValue('cover', preparedAsset.cover);
+    setValue("cover", preparedAsset.cover);
     setShowAssetDrawer(false);
   };
 
@@ -293,14 +308,24 @@ const LibraryDrawerForm = ({
   const getAssetIcon = useCallback(() => {
     if (type === LIBRARY_FORM_TYPES.BOOKMARKS && !isEmpty(urlMetadata.logo)) {
       return {
-        icon: <ImageLoader src={urlMetadata.logo} width={26} height={26} radius={'4px'} />,
+        icon: (
+          <ImageLoader
+            src={urlMetadata.logo}
+            width={26}
+            height={26}
+            radius={"4px"}
+          />
+        ),
       };
     }
 
     return {};
   }, [type, urlMetadata]);
 
-  const drawerSize = useMemo(() => Math.max(Math.round(viewportWidth * 0.3), 720), [viewportWidth]);
+  const drawerSize = useMemo(
+    () => Math.max(Math.round(viewportWidth * 0.3), 720),
+    [viewportWidth]
+  );
 
   if (store.alwaysOpen) store.showAdvancedConfig = true;
 
@@ -309,7 +334,9 @@ const LibraryDrawerForm = ({
       <form autoComplete="off">
         <ContextContainer
           title={!hideTitle ? labels.title : undefined}
-          sx={(theme) => ({ marginTop: advancedConfigMode ? theme.spacing[4] : 0 })}
+          sx={(theme) => ({
+            marginTop: advancedConfigMode ? theme.spacing[4] : 0,
+          })}
         >
           <ContextContainer>
             {!advancedConfigMode ? (
@@ -319,21 +346,25 @@ const LibraryDrawerForm = ({
                     control={control}
                     name="file"
                     shouldUnregister
-                    rules={{ required: errorMessages.file?.required || 'Field required' }}
+                    rules={{
+                      required:
+                        errorMessages.file?.required || "Field required",
+                    }}
                     render={({ field: { ref, value, ...field } }) => (
                       <FileUpload
                         icon={<DownloadIcon height={32} width={32} />}
                         title={labels.browseFile}
                         subtitle={labels.dropFile}
                         errorMessage={{
-                          title: 'Error',
-                          message: errorMessages.file?.rejected || 'File was rejected',
+                          title: "Error",
+                          message:
+                            errorMessages.file?.rejected || "File was rejected",
                         }}
                         hideUploadButton
                         single
                         initialFiles={value ? [value] : []}
                         inputWrapperProps={{ error: errors.file }}
-                        accept={onlyImages ? ['image/*'] : undefined}
+                        accept={onlyImages ? ["image/*"] : undefined}
                         {...field}
                       />
                     )}
@@ -345,7 +376,7 @@ const LibraryDrawerForm = ({
                     name="url"
                     shouldUnregister
                     rules={{
-                      required: errorMessages.url?.required || 'Field required',
+                      required: errorMessages.url?.required || "Field required",
                       validate: isValidURL,
                     }}
                     render={({ field }) => (
@@ -360,7 +391,10 @@ const LibraryDrawerForm = ({
                             onBlur={validateUrl}
                           />
                         </Box>
-                        <Box skipFlex style={{ marginBottom: errors.url ? 18 : 0 }}>
+                        <Box
+                          skipFlex
+                          style={{ marginBottom: errors.url ? 18 : 0 }}
+                        >
                           <Button
                             color="secondary"
                             leftIcon={<CommonFileSearchIcon />}
@@ -377,7 +411,9 @@ const LibraryDrawerForm = ({
                 <Controller
                   control={control}
                   name="name"
-                  rules={{ required: errorMessages.name?.required || 'Field required' }}
+                  rules={{
+                    required: errorMessages.name?.required || "Field required",
+                  }}
                   render={({ field }) => (
                     <TextInput
                       label={labels.name}
@@ -458,9 +494,14 @@ const LibraryDrawerForm = ({
                 <>
                   {advancedConfigMode ? (
                     <InputWrapper label={labels.featuredImage}>
-                      <Box sx={(theme) => ({ display: 'flex', gap: theme.spacing[2] })}>
+                      <Box
+                        sx={(theme) => ({
+                          display: "flex",
+                          gap: theme.spacing[2],
+                        })}
+                      >
                         <TextInput
-                          style={{ width: '100%' }}
+                          style={{ width: "100%" }}
                           value={store.coverName}
                           readonly
                           onClick={() => setShowAssetDrawer(true)}
@@ -477,12 +518,16 @@ const LibraryDrawerForm = ({
                     <ContextContainer
                       subtitle={labels.featuredImage}
                       description={
-                        type === LIBRARY_FORM_TYPES.BOOKMARKS && descriptions?.featuredImage
+                        type === LIBRARY_FORM_TYPES.BOOKMARKS &&
+                        descriptions?.featuredImage
                       }
                     >
                       <Stack direction="row" spacing={3}>
                         {!coverFile && (
-                          <Button variant={'outline'} onClick={() => setShowAssetDrawer(true)}>
+                          <Button
+                            variant={"outline"}
+                            onClick={() => setShowAssetDrawer(true)}
+                          >
                             {labels.search}
                           </Button>
                         )}
@@ -497,7 +542,7 @@ const LibraryDrawerForm = ({
                               }}
                               previewURL={getCoverUrl(value)}
                               // previewURL={value}
-                              value={''}
+                              value={""}
                               {...field}
                             />
                           )}
@@ -517,13 +562,15 @@ const LibraryDrawerForm = ({
                   {store.programs && !store.alwaysOpen ? (
                     <Switch
                       onChange={(e) => {
-                        setValue('program', null);
-                        setValue('subjects', null);
+                        setValue("program", null);
+                        setValue("subjects", null);
                         store.showAdvancedConfig = e;
                         render();
                       }}
                       disabled={store.alwaysOpen}
-                      checked={store.alwaysOpen ? true : store.showAdvancedConfig}
+                      checked={
+                        store.alwaysOpen ? true : store.showAdvancedConfig
+                      }
                       label={labels.advancedConfig}
                     />
                   ) : null}
@@ -571,8 +618,11 @@ const LibraryDrawerForm = ({
               ) : null}
 
               {!hideSubmit && (
-                <Stack justifyContent={'end'} fullWidth>
-                  <Button onClick={handleSubmit(handleOnSubmit)} loading={loading}>
+                <Stack justifyContent={"end"} fullWidth>
+                  <Button
+                    onClick={handleSubmit(handleOnSubmit)}
+                    loading={loading}
+                  >
                     {labels.submitForm}
                   </Button>
                 </Stack>

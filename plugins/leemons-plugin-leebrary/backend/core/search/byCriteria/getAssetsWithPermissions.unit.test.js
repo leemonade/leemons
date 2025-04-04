@@ -1,16 +1,24 @@
-const { it, beforeAll, beforeEach, describe, expect } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+const {
+  it,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+} = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { getAssetsWithPermissions } = require('./getAssetsWithPermissions');
-const getPermissionsMock = require('../../../__fixtures__/getPermissionsMocks');
+const { getAssetsWithPermissions } = require("./getAssetsWithPermissions");
+const getPermissionsMock = require("../../../__fixtures__/getPermissionsMocks");
 
-jest.mock('../../permissions/getByAssets');
-const { getByAssets: getPermissions } = require('../../permissions/getByAssets');
+jest.mock("../../permissions/getByAssets");
+const {
+  getByAssets: getPermissions,
+} = require("../../permissions/getByAssets");
 
-jest.mock('./filterByPublishStatus');
-const { filterByPublishStatus } = require('./filterByPublishStatus');
+jest.mock("./filterByPublishStatus");
+const { filterByPublishStatus } = require("./filterByPublishStatus");
 
-describe('getAssetsWithPermissions', () => {
+describe("getAssetsWithPermissions", () => {
   const assetPermission = getPermissionsMock().permissionByAssetOne;
   let ctx;
   let assets;
@@ -27,20 +35,20 @@ describe('getAssetsWithPermissions', () => {
   });
 
   beforeEach(() => {
-    assets = ['assetId1', 'assetId2'];
+    assets = ["assetId1", "assetId2"];
     assetPermissions = [
-      { ...assetPermission, asset: 'assetId1' },
-      { ...assetPermission, asset: 'assetId2' },
+      { ...assetPermission, asset: "assetId1" },
+      { ...assetPermission, asset: "assetId2" },
     ];
     nothingFound = false;
     onlyShared = false;
     preferCurrent = true;
     published = true;
-    roles = ['rol1'];
+    roles = ["rol1"];
     showPublic = true;
   });
 
-  it('returns asset with permissions', async () => {
+  it("returns asset with permissions", async () => {
     // Arrange
     getPermissions.mockReturnValue(assetPermissions);
     filterByPublishStatus.mockReturnValue(assetPermissions);
@@ -76,7 +84,7 @@ describe('getAssetsWithPermissions', () => {
     expect(response).toBe(assetPermissions);
   });
 
-  it('returns asset without permissions if nothingFound is false', async () => {
+  it("returns asset without permissions if nothingFound is false", async () => {
     // Arrange
     filterByPublishStatus.mockReturnValue(assets);
     nothingFound = true;

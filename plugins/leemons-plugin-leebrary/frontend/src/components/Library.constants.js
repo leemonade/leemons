@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const validateURL = (props, propName, componentName) => {
   let url;
@@ -8,12 +8,13 @@ export const validateURL = (props, propName, componentName) => {
   } catch (error) {
     return new Error(errorString);
   }
-  if (url.protocol !== 'http:' && url.protocol !== 'https:') return new Error(errorString);
+  if (url.protocol !== "http:" && url.protocol !== "https:")
+    return new Error(errorString);
 };
 
-export const LIBRARYCARD_COVER_DIRECTIONS = ['vertical', 'horizontal'];
-export const LIBRARYCARD_ASSIGMENT_ROLES = ['teacher', 'student'];
-export const LIBRARY_CARD_DEADLINE_SEVERITY = ['low', 'medium', 'high'];
+export const LIBRARYCARD_COVER_DIRECTIONS = ["vertical", "horizontal"];
+export const LIBRARYCARD_ASSIGMENT_ROLES = ["teacher", "student"];
+export const LIBRARY_CARD_DEADLINE_SEVERITY = ["low", "medium", "high"];
 export const LIBRARY_CARD_DEADLINE_PROP_TYPES = {
   labels: PropTypes.shape({
     title: PropTypes.string,
@@ -22,7 +23,8 @@ export const LIBRARY_CARD_DEADLINE_PROP_TYPES = {
   }),
   icon: PropTypes.oneOfType([
     PropTypes.element,
-    (props, propName, componentName) => validateURL(props, propName, componentName),
+    (props, propName, componentName) =>
+      validateURL(props, propName, componentName),
   ]),
   locale: PropTypes.string,
   deadline: PropTypes.instanceOf(Date),
@@ -36,7 +38,8 @@ export const LIBRARY_CARD_DEADLINE_PROP_TYPES = {
 export const LIBRARY_CARD_MENU_ITEM = {
   icon: PropTypes.oneOfType([
     PropTypes.element,
-    (props, propName, componentName) => validateURL(props, propName, componentName),
+    (props, propName, componentName) =>
+      validateURL(props, propName, componentName),
   ]),
   label: PropTypes.string,
   rightSection: PropTypes.element,

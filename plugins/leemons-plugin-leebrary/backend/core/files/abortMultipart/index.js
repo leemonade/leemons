@@ -1,4 +1,4 @@
-const abortMultipart = require('./abortMultipart');
+const abortMultipart = require("./abortMultipart");
 
 module.exports = {
   ...abortMultipart,

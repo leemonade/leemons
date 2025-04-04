@@ -1,12 +1,22 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback } from "react";
 
-import { SubjectItemDisplay } from '@academic-portfolio/components';
-import { Box, Text, Stack, pxToRem, Badge, TextClamp } from '@bubbles-ui/components';
-import { ZoneWidgets } from '@widgets/ZoneWidgets';
+import { SubjectItemDisplay } from "@academic-portfolio/components";
+import {
+  Box,
+  Text,
+  Stack,
+  pxToRem,
+  Badge,
+  TextClamp,
+} from "@bubbles-ui/components";
+import { ZoneWidgets } from "@widgets/ZoneWidgets";
 
-import { MetadataDisplay } from '../MetadataDisplay/MetadataDisplay';
+import { MetadataDisplay } from "../MetadataDisplay/MetadataDisplay";
 
-import { DETAIL_CONTENT_PROP_TYPES, DETAIL_CONTENT_DEFAULT_PROPS } from './DetailContent.constants';
+import {
+  DETAIL_CONTENT_PROP_TYPES,
+  DETAIL_CONTENT_DEFAULT_PROPS,
+} from "./DetailContent.constants";
 
 const DetailContent = ({
   asset,
@@ -33,7 +43,9 @@ const DetailContent = ({
 
   const Widgets = useCallback(
     ({ Component, key, properties }) =>
-      showWidgets ? <Component key={key} {...properties} asset={asset} /> : null,
+      showWidgets ? (
+        <Component key={key} {...properties} asset={asset} />
+      ) : null,
     [asset, showWidgets]
   );
 
@@ -50,11 +62,13 @@ const DetailContent = ({
         </TextClamp>
       )}
 
-      <Box sx={{
+      <Box
+        sx={{
           marginBlock: 24,
-          '&:empty': { marginBlock: 0 },
-          display: widgetsLoading || !showWidgets ? 'none' : 'block'
-        }}>
+          "&:empty": { marginBlock: 0 },
+          display: widgetsLoading || !showWidgets ? "none" : "block",
+        }}
+      >
         <ZoneWidgets
           zone="leebrary.asset.drawer"
           container={<React.Fragment />}
@@ -71,7 +85,10 @@ const DetailContent = ({
         <Box sx={{ marginBlock: 24 }}>
           {subjectsIds?.map((subject) => (
             <Box key={subject?.subject} className={classes.subjectItem}>
-              <SubjectItemDisplay subjectsIds={[subject?.subject]} programId={program} />
+              <SubjectItemDisplay
+                subjectsIds={[subject?.subject]}
+                programId={program}
+              />
             </Box>
           ))}
         </Box>
@@ -107,8 +124,8 @@ const DetailContent = ({
                 <Badge
                   label={tag}
                   size="xs"
-                  color={'stroke'}
-                  radius={'rounded'}
+                  color={"stroke"}
+                  radius={"rounded"}
                   closable={false}
                   skipFlex
                 />
@@ -123,6 +140,6 @@ const DetailContent = ({
 
 DetailContent.propTypes = DETAIL_CONTENT_PROP_TYPES;
 DetailContent.defaultProps = DETAIL_CONTENT_DEFAULT_PROPS;
-DetailContent.displayName = 'DetailContent';
+DetailContent.displayName = "DetailContent";
 
 export { DetailContent };

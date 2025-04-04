@@ -4,12 +4,12 @@ import {
   getPaddings,
   getFontExpressive,
   getFontProductive,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 
 export const LibraryItemStyles = createStyles((theme, {}) => {
   return {
     root: {
-      ...getFontExpressive(theme.fontSizes['2']),
+      ...getFontExpressive(theme.fontSizes["2"]),
       paddingRight: theme.spacing[1],
     },
   };

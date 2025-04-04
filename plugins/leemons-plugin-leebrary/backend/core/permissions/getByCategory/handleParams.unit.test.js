@@ -1,10 +1,10 @@
-const { it, expect } = require('@jest/globals');
-const { handleParams } = require('./handleParams');
+const { it, expect } = require("@jest/globals");
+const { handleParams } = require("./handleParams");
 
-it('should handle params correctly when programs and subjects are provided', () => {
+it("should handle params correctly when programs and subjects are provided", () => {
   const params = {
-    programs: ['program1', 'program2'],
-    subjects: ['subject1', 'subject2'],
+    programs: ["program1", "program2"],
+    subjects: ["subject1", "subject2"],
     providerQuery: {},
   };
   const [programs, subjects, providerQuery] = handleParams(params);
@@ -13,11 +13,11 @@ it('should handle params correctly when programs and subjects are provided', () 
   expect(providerQuery).toEqual(params.providerQuery);
 });
 
-it('should handle params correctly when programs and subjects are not provided', () => {
+it("should handle params correctly when programs and subjects are not provided", () => {
   const params = {
     providerQuery: {
-      program: 'program1',
-      subjects: ['subject1', 'subject2'],
+      program: "program1",
+      subjects: ["subject1", "subject2"],
     },
   };
   const [programs, subjects, providerQuery] = handleParams(params);
@@ -26,13 +26,16 @@ it('should handle params correctly when programs and subjects are not provided',
   expect(providerQuery).toEqual(params.providerQuery);
 });
 
-it('should handle params correctly when providerQuery is not provided', () => {
+it("should handle params correctly when providerQuery is not provided", () => {
   const params = {
-    programs: ['program1', 'program2'],
-    subjects: ['subject1', 'subject2'],
+    programs: ["program1", "program2"],
+    subjects: ["subject1", "subject2"],
   };
   const [programs, subjects, providerQuery] = handleParams(params);
   expect(programs).toEqual(params.programs);
   expect(subjects).toEqual(params.subjects);
-  expect(providerQuery).toEqual({ program: params.programs[0], subjects: params.subjects });
+  expect(providerQuery).toEqual({
+    program: params.programs[0],
+    subjects: params.subjects,
+  });
 });

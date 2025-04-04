@@ -1,6 +1,6 @@
-const { isEmpty } = require('lodash');
-const { uploadFromUrl: uploadFileFromUrl } = require('../../files/upload');
-const { validateAddBookmark } = require('../../validations/forms');
+const { isEmpty } = require("lodash");
+const { uploadFromUrl: uploadFileFromUrl } = require("../../files/upload");
+const { validateAddBookmark } = require("../../validations/forms");
 
 /**
  * Adds a bookmark to the database.
@@ -28,12 +28,16 @@ async function add({ url, mediaType, iconUrl, asset, ctx }) {
     try {
       // EN: Upload the file to the provider
       // ES: Subir el archivo al proveedor
-      const iconFile = await uploadFileFromUrl({ url: iconUrl, name: asset.name || 'icon', ctx });
+      const iconFile = await uploadFileFromUrl({
+        url: iconUrl,
+        name: asset.name || "icon",
+        ctx,
+      });
 
       icon = iconFile?.id;
     } catch (e) {
-      ctx.logger.error('ERROR: downloading icon:', iconUrl);
-      ctx.logger.debug('Despite the error, continue creating Asset ...');
+      ctx.logger.error("ERROR: downloading icon:", iconUrl);
+      ctx.logger.debug("Despite the error, continue creating Asset ...");
     }
   }
 

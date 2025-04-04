@@ -1,16 +1,20 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Stack, Text, ImageLoader, Box } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@leebrary/helpers';
-import { RenderTextWithCTAs } from '@common/components';
-import { useImage } from './hooks/useImage';
-import { useListEmptyStyles } from './ListEmpty.styles';
-import { getCategory } from './helpers/getCategory';
+import React from "react";
+import PropTypes from "prop-types";
+import { Stack, Text, ImageLoader, Box } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { prefixPN } from "@leebrary/helpers";
+import { RenderTextWithCTAs } from "@common/components";
+import { useImage } from "./hooks/useImage";
+import { useListEmptyStyles } from "./ListEmpty.styles";
+import { getCategory } from "./helpers/getCategory";
 
 function ListEmpty({ t, category }) {
-  const [navT] = useTranslateLoader(prefixPN('home.navbar'));
-  const { key: categoryKey, singularName, pluralName } = getCategory({ category, t: navT });
+  const [navT] = useTranslateLoader(prefixPN("home.navbar"));
+  const {
+    key: categoryKey,
+    singularName,
+    pluralName,
+  } = getCategory({ category, t: navT });
   const EmptyStateImage = useImage(categoryKey);
 
   const { classes, cx } = useListEmptyStyles();
@@ -22,13 +26,13 @@ function ListEmpty({ t, category }) {
   return (
     <Box className={classes.root}>
       <Stack direction="column" spacing={8}>
-        <Box sx={{ position: 'relative' }}>
-          <ImageLoader src={EmptyStateImage} style={{ position: 'relative' }} />
+        <Box sx={{ position: "relative" }}>
+          <ImageLoader src={EmptyStateImage} style={{ position: "relative" }} />
         </Box>
         <Stack direction="column" spacing={4} sx={{ maxWidth: 502 }}>
           <Text color="primary" className={cx(classes.text, classes.title)}>
             {t(
-              categoryKey === 'leebrary-subject'
+              categoryKey === "leebrary-subject"
                 ? `emptyStates.${categoryKey}.title`
                 : `emptyStates.title`,
               { category: pluralName }
@@ -41,8 +45,8 @@ function ListEmpty({ t, category }) {
               singularCategory: singularName,
               pluralCategory: pluralName,
               CTA: {
-                type: 'linkT',
-                url: category.createUrl ?? '/private/leebrary/media-files/new',
+                type: "linkT",
+                url: category.createUrl ?? "/private/leebrary/media-files/new",
                 value: `emptyStates.${categoryKey}.descriptionCTA`,
               },
             }}
@@ -54,7 +58,7 @@ function ListEmpty({ t, category }) {
               singularCategory: singularName,
               pluralCategory: pluralName,
               CTA: {
-                type: 'linkT',
+                type: "linkT",
                 url: t(`emptyStates.links.${categoryKey}`),
                 value: `emptyStates.${categoryKey}.helpCTA`,
               },

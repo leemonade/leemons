@@ -1,16 +1,16 @@
 /* eslint-disable import/prefer-default-export */
-import React, { useState, useEffect } from 'react';
-import { Box, Badge, Text, TextClamp } from '@bubbles-ui/components';
-import { isArray, noop } from 'lodash';
-import { SubjectItemDisplay } from '@academic-portfolio/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@leebrary/helpers/prefixPN';
+import React, { useState, useEffect } from "react";
+import { Box, Badge, Text, TextClamp } from "@bubbles-ui/components";
+import { isArray, noop } from "lodash";
+import { SubjectItemDisplay } from "@academic-portfolio/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@leebrary/helpers/prefixPN";
 import {
   LIBRARY_CARD_BODY_PROP_TYPES,
   LIBRARY_CARD_BODY_DEFAULT_PROPS,
-} from './LibraryCardBody.constants';
-import { LibraryCardBodyStyles } from './LibraryCardBody.styles';
-import { FavButton } from '../FavButton';
+} from "./LibraryCardBody.constants";
+import { LibraryCardBodyStyles } from "./LibraryCardBody.styles";
+import { FavButton } from "../FavButton";
 
 const LibraryCardBody = ({
   description,
@@ -27,11 +27,16 @@ const LibraryCardBody = ({
   onUnpin = noop,
   ...props
 }) => {
-  const { classes } = LibraryCardBodyStyles({ fullHeight }, { name: 'LibraryCardBody' });
-  const [t] = useTranslateLoader(prefixPN('assetsList'));
+  const { classes } = LibraryCardBodyStyles(
+    { fullHeight },
+    { name: "LibraryCardBody" }
+  );
+  const [t] = useTranslateLoader(prefixPN("assetsList"));
   const [isFav, setIsFav] = useState(pinned);
   const [subjectData, setSubjectData] = useState(null);
-  const isDraft = typeof providerData?.published === 'boolean' && providerData?.published === false;
+  const isDraft =
+    typeof providerData?.published === "boolean" &&
+    providerData?.published === false;
   const title = props.name ? props.name : null;
 
   const handleIsFav = (e) => {
@@ -52,7 +57,7 @@ const LibraryCardBody = ({
   useEffect(() => {
     if (isArray(subjects)) {
       let subjectIds;
-      if (isArray(subjects) && typeof subjects[0] === 'string') {
+      if (isArray(subjects) && typeof subjects[0] === "string") {
         subjectIds = subjects;
       } else {
         subjectIds = subjects.map((s) => s.subject);
@@ -83,7 +88,9 @@ const LibraryCardBody = ({
         )}
         {isDraft && (
           <Badge closable={false} size="xs" className={classes.draftBadge}>
-            <Text className={classes.draftText}>{t('isDraft').toUpperCase()}</Text>
+            <Text className={classes.draftText}>
+              {t("isDraft").toUpperCase()}
+            </Text>
           </Badge>
         )}
       </Box>

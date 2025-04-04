@@ -1,4 +1,4 @@
-const byDescription = require('./byDescription');
+const byDescription = require("./byDescription");
 
 module.exports = {
   ...byDescription,

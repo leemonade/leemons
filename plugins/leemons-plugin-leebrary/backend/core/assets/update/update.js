@@ -1,21 +1,21 @@
 /* eslint-disable no-param-reassign */
-const { LeemonsError } = require('@leemons/error');
-const { isEmpty } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { isEmpty } = require("lodash");
 
-const { CATEGORIES } = require('../../../config/constants');
+const { CATEGORIES } = require("../../../config/constants");
 const {
   set: setCenterAssetItemPermission,
-} = require('../../permissions/centerAssetItemPermission');
-const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
-const { validateAddAsset } = require('../../validations/forms');
-const { getByIds } = require('../getByIds/getByIds');
+} = require("../../permissions/centerAssetItemPermission");
+const { getByAsset: getPermissions } = require("../../permissions/getByAsset");
+const { validateAddAsset } = require("../../validations/forms");
+const { getByIds } = require("../getByIds/getByIds");
 
-const { handleAssetUpgrade } = require('./handleAssetUpgrade');
-const { handleFileAndCoverUpdates } = require('./handleFileAndCoverUpdates');
-const { handleFilesRemoval } = require('./handleFilesRemoval');
-const { handleSubjectsUpdates } = require('./handleSubjectsUpdates');
-const { handleTagsUpdates } = require('./handleTagsUpdates');
-const { handleUpdateObject } = require('./handleUpdateObject');
+const { handleAssetUpgrade } = require("./handleAssetUpgrade");
+const { handleFileAndCoverUpdates } = require("./handleFileAndCoverUpdates");
+const { handleFilesRemoval } = require("./handleFilesRemoval");
+const { handleSubjectsUpdates } = require("./handleSubjectsUpdates");
+const { handleTagsUpdates } = require("./handleTagsUpdates");
+const { handleUpdateObject } = require("./handleUpdateObject");
 
 // -----------------------------------------------------------------------------
 /**
@@ -33,9 +33,15 @@ const { handleUpdateObject } = require('./handleUpdateObject');
  * @throws {Error} If no changes are detected or if the user doesn't have permissions to update the asset.
  */
 
-async function update({ data, upgrade, scale = 'major', published = true, ctx }) {
+async function update({
+  data,
+  upgrade,
+  scale = "major",
+  published = true,
+  ctx,
+}) {
   if (isEmpty(data)) {
-    throw new LeemonsError(ctx, { message: 'No changes detected' });
+    throw new LeemonsError(ctx, { message: "No changes detected" });
   }
 
   // const { id, ...assetData } = prepareAssetData({ data });
@@ -67,18 +73,22 @@ async function update({ data, upgrade, scale = 'major', published = true, ctx })
 
   // EN: Get the current values
   // ES: Obtenemos los valores actuales
-  const currentAsset = (await getByIds({ ids: assetId, withFiles: true, ctx }))[0];
+  const currentAsset = (
+    await getByIds({ ids: assetId, withFiles: true, ctx })
+  )[0];
 
   if (!currentAsset) {
     throw new LeemonsError(ctx, {
-      message: 'Asset not found',
+      message: "Asset not found",
       httpStatusCode: 422,
     });
   }
 
   // If the new subjects are strings, we pick the current subjects ids
-  if (assetData.subjects && typeof assetData.subjects[0] === 'string') {
-    currentAsset.subjects = currentAsset.subjects?.map((subject) => subject.subject ?? subject);
+  if (assetData.subjects && typeof assetData.subjects[0] === "string") {
+    currentAsset.subjects = currentAsset.subjects?.map(
+      (subject) => subject.subject ?? subject
+    );
   }
 
   const { updateProperties, newData, diff } = await handleUpdateObject({
@@ -91,7 +101,7 @@ async function update({ data, upgrade, scale = 'major', published = true, ctx })
   // ·········································································
   // DUPLICATE ASSET
 
-  const currentVersion = await ctx.tx.call('common.versionControl.getVersion', {
+  const currentVersion = await ctx.tx.call("common.versionControl.getVersion", {
     id: assetId,
   });
 
@@ -119,13 +129,17 @@ async function update({ data, upgrade, scale = 'major', published = true, ctx })
   // EN: If the asset is not published and we want to publish it, we do it
   // ES: Si el activo no está publicado y queremos publicarlo, lo hacemos
   if (published && !currentVersion.published) {
-    await ctx.tx.call('common.versionControl.publishVersion', {
+    await ctx.tx.call("common.versionControl.publishVersion", {
       id: assetId,
       publish: published,
     });
     // ·········································································
     // HANDLE CENTER ASSET ITEM PERMISSION
-    await setCenterAssetItemPermission({ assetId, isPublishing: published, ctx });
+    await setCenterAssetItemPermission({
+      assetId,
+      isPublishing: published,
+      ctx,
+    });
   }
 
   if (!diff.length) {
@@ -138,25 +152,26 @@ async function update({ data, upgrade, scale = 'major', published = true, ctx })
   // ·········································································
   // HANDLE TAGS
 
-  if (diff.includes('tags')) {
+  if (diff.includes("tags")) {
     handleTagsUpdates({ assetId, updateObject, ctx });
   }
 
   // ·········································································
   // HANDLE FILES
 
-  const fileNeedsUpdate = diff.includes('file');
-  const coverNeedsUpdate = diff.includes('cover');
+  const fileNeedsUpdate = diff.includes("file");
+  const coverNeedsUpdate = diff.includes("cover");
 
-  const { newFile, coverFile, toUpdate, filesToRemove } = await handleFileAndCoverUpdates({
-    assetId,
-    assetData,
-    updateObject,
-    currentAsset,
-    fileNeedsUpdate,
-    coverNeedsUpdate,
-    ctx,
-  });
+  const { newFile, coverFile, toUpdate, filesToRemove } =
+    await handleFileAndCoverUpdates({
+      assetId,
+      assetData,
+      updateObject,
+      currentAsset,
+      fileNeedsUpdate,
+      coverNeedsUpdate,
+      ctx,
+    });
 
   // Removes the old files
   await handleFilesRemoval({
@@ -173,13 +188,23 @@ async function update({ data, upgrade, scale = 'major', published = true, ctx })
 
   // EN: Update the asset
   // ES: Actualizar el asset
-  const asset = await ctx.tx.db.Assets.findOneAndUpdate({ id: assetId }, toUpdate, { lean: true });
+  const asset = await ctx.tx.db.Assets.findOneAndUpdate(
+    { id: assetId },
+    toUpdate,
+    { lean: true }
+  );
 
   // ·········································································
   // HANDLE CENTER ASSET ITEM PERMISSION
   await setCenterAssetItemPermission({ assetId, isPublishing: published, ctx });
 
-  return { ...asset, subjects, file: newFile, cover: coverFile, tags: newData.tags };
+  return {
+    ...asset,
+    subjects,
+    file: newFile,
+    cover: coverFile,
+    tags: newData.tags,
+  };
 }
 
 module.exports = { update };

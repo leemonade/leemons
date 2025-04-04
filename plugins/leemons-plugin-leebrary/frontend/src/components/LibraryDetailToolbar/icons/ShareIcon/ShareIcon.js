@@ -1,5 +1,8 @@
-import React from 'react';
-import { SHARE_ICON_PROP_TYPES, SHARE_ICON_DEFAULT_PROPS } from './ShareIcon.constants';
+import React from "react";
+import {
+  SHARE_ICON_PROP_TYPES,
+  SHARE_ICON_DEFAULT_PROPS,
+} from "./ShareIcon.constants";
 
 const ShareIcon = ({ width, height, color }) => (
   <svg
@@ -22,6 +25,6 @@ const ShareIcon = ({ width, height, color }) => (
 ShareIcon.defaultProps = SHARE_ICON_DEFAULT_PROPS;
 ShareIcon.propTypes = SHARE_ICON_PROP_TYPES;
 
-ShareIcon.displayName = 'ShareIcon';
+ShareIcon.displayName = "ShareIcon";
 export default ShareIcon;
 export { ShareIcon };

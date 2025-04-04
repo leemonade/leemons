@@ -1,4 +1,4 @@
-const { groupBy, uniq, escapeRegExp } = require('lodash');
+const { groupBy, uniq, escapeRegExp } = require("lodash");
 
 /**
  * getClassesPermissions is a function that retrieves the permissions for classes.
@@ -12,11 +12,13 @@ const { groupBy, uniq, escapeRegExp } = require('lodash');
 async function getClassesPermissions({ assetsIds, withInfo, ctx }) {
   const ids = Array.isArray(assetsIds) ? assetsIds : [assetsIds];
 
-  const permissions = await ctx.tx.call('users.permissions.findItems', {
+  const permissions = await ctx.tx.call("users.permissions.findItems", {
     params: {
       item: ids,
-      permissionName: { $regex: `^${escapeRegExp('academic-portfolio.class.')}` },
-      type: { $regex: `^${escapeRegExp(ctx.prefixPN('asset'))}` },
+      permissionName: {
+        $regex: `^${escapeRegExp("academic-portfolio.class.")}`,
+      },
+      type: { $regex: `^${escapeRegExp(ctx.prefixPN("asset"))}` },
     },
   });
 
@@ -24,19 +26,23 @@ async function getClassesPermissions({ assetsIds, withInfo, ctx }) {
   if (withInfo) {
     const classes = uniq(
       permissions.map((permission) =>
-        permission.permissionName.replace(`academic-portfolio.class.`, '')
+        permission.permissionName.replace(`academic-portfolio.class.`, "")
       )
     );
 
     if (classes.length) {
-      const classesInfo = await ctx.tx.call('academic-portfolio.classes.classByIds', {
-        ids: classes,
-      });
+      const classesInfo = await ctx.tx.call(
+        "academic-portfolio.classes.classByIds",
+        {
+          ids: classes,
+        }
+      );
 
       classesInfo.forEach((klass) => {
-        const className =  !klass.groups || klass.groups?.isAlone
-        ? klass.subject.name
-        : `${klass.subject.name} - ${klass.groups.name}`;
+        const className =
+          !klass.groups || klass.groups?.isAlone
+            ? klass.subject.name
+            : `${klass.subject.name} - ${klass.groups.name}`;
         classesData[klass.id] = {
           id: klass.id,
           subject: klass.subject.id,
@@ -49,20 +55,23 @@ async function getClassesPermissions({ assetsIds, withInfo, ctx }) {
     }
   }
 
-  const permissionsByAsset = groupBy(permissions, 'item');
+  const permissionsByAsset = groupBy(permissions, "item");
 
   return ids.map(
     (id) =>
       permissionsByAsset[id]?.map((permission) => {
-        let role = 'viewer';
-        if (permission.type === ctx.prefixPN('asset.can-edit')) {
-          role = 'editor';
+        let role = "viewer";
+        if (permission.type === ctx.prefixPN("asset.can-edit")) {
+          role = "editor";
         }
 
-        if (permission.type === ctx.prefixPN('asset.can-assign')) {
-          role = 'assigner';
+        if (permission.type === ctx.prefixPN("asset.can-assign")) {
+          role = "assigner";
         }
-        const classId = permission.permissionName.replace(`academic-portfolio.class.`, '');
+        const classId = permission.permissionName.replace(
+          `academic-portfolio.class.`,
+          ""
+        );
         return {
           ...classesData[classId],
           class: classId,

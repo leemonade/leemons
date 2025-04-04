@@ -1,4 +1,4 @@
-const getIndexables = require('./getIndexables');
+const getIndexables = require("./getIndexables");
 
 module.exports = {
   ...getIndexables,

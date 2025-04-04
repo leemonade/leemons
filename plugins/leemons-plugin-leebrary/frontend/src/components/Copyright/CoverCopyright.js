@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-import { Box } from '@bubbles-ui/components';
+import { Box } from "@bubbles-ui/components";
 
-import useCoverCopyright from './CoverCopyright.styles';
-import CopyrightText from '../Copyright/CopyrightText';
+import useCoverCopyright from "./CoverCopyright.styles";
+import CopyrightText from "../Copyright/CopyrightText";
 
 export default function CoverCopyright({
   author,
@@ -24,7 +24,7 @@ export default function CoverCopyright({
         source={source}
         sourceUrl={sourceUrl}
         reverseColors
-        resourceType={source?.toLowerCase() === 'unsplash' ? 'photo' : 'image'}
+        resourceType={source?.toLowerCase() === "unsplash" ? "photo" : "image"}
       />
     </Box>
   );
@@ -36,7 +36,7 @@ CoverCopyright.propTypes = {
   source: PropTypes.string.isRequired,
   sourceUrl: PropTypes.string.isRequired,
   bottomOffset: PropTypes.number,
-  align: PropTypes.oneOf(['left', 'right', 'center']),
+  align: PropTypes.oneOf(["left", "right", "center"]),
 };
 
 CoverCopyright.defaultProps = {

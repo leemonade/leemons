@@ -1,4 +1,6 @@
-const { getByAsset: getPermissions } = require('../../../permissions/getByAsset');
+const {
+  getByAsset: getPermissions,
+} = require("../../../permissions/getByAsset");
 /**
  * Checks if the user has permissions to delete the asset.
  *

@@ -1,3 +1,3 @@
-const newMultipart = require('./newMultipart');
+const newMultipart = require("./newMultipart");
 
 module.exports = { ...newMultipart };

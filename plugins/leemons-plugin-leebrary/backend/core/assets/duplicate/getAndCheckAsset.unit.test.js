@@ -1,13 +1,19 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
 
-const { getAndCheckAsset } = require('./getAndCheckAsset');
-const { assetsSchema } = require('../../../models/assets');
+const { getAndCheckAsset } = require("./getAndCheckAsset");
+const { assetsSchema } = require("../../../models/assets");
 
-const getAssets = require('../../../__fixtures__/getAssets');
+const getAssets = require("../../../__fixtures__/getAssets");
 
 // MOCKS
 const { assetModel } = getAssets();
@@ -33,17 +39,17 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should retrieve an asset from the DB', async () => {
+it("Should retrieve an asset from the DB", async () => {
   // Arrange
   const ctx = generateCtx({
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
 
   const initialValues = [
-    { ...assetModel, cover: 'coverPath' },
-    { ...assetModel, cover: 'coverPath', id: 'otherId@1.0.0' },
+    { ...assetModel, cover: "coverPath" },
+    { ...assetModel, cover: "coverPath", id: "otherId@1.0.0" },
   ];
   await ctx.db.Assets.create(initialValues);
 
@@ -52,21 +58,21 @@ it('Should retrieve an asset from the DB', async () => {
 
   // Assert
   expect(response.id).toEqual(assetModel.id);
-  expect(response).toHaveProperty('createdAt');
+  expect(response).toHaveProperty("createdAt");
   expect(_.isPlainObject(response)).toBe(true);
 });
 
-it('Should throw a LeemonsError if no asset is found', async () => {
+it("Should throw a LeemonsError if no asset is found", async () => {
   // Arrange
   const ctx = generateCtx({
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
 
   const initialValues = [
-    { ...assetModel, cover: 'coverPath' },
-    { ...assetModel, cover: 'coverPath', id: 'otherId@1.0.0' },
+    { ...assetModel, cover: "coverPath" },
+    { ...assetModel, cover: "coverPath", id: "otherId@1.0.0" },
   ];
   await ctx.db.Assets.create(initialValues);
 

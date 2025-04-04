@@ -1,8 +1,8 @@
-const { isEmpty, escapeRegExp } = require('lodash');
+const { isEmpty, escapeRegExp } = require("lodash");
 
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
-const { getByIds: getAssetsByIds } = require('../../assets/getByIds');
+const { getByIds: getAssetsByIds } = require("../../assets/getByIds");
 
 async function byDescription({
   description,
@@ -12,9 +12,9 @@ async function byDescription({
   ctx,
 }) {
   try {
-    if (!description) throw new Error('Description is required.');
+    if (!description) throw new Error("Description is required.");
     const query = {
-      description: { $regex: escapeRegExp(description), $options: 'i' },
+      description: { $regex: escapeRegExp(description), $options: "i" },
       indexable,
     };
 
@@ -22,7 +22,7 @@ async function byDescription({
       query.id = assetsIds;
     }
 
-    let assets = await ctx.tx.db.Assets.find(query).select('id').lean();
+    let assets = await ctx.tx.db.Assets.find(query).select("id").lean();
     assets = assets.map((entry) => entry.id);
 
     if (details) {

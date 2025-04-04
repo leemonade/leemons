@@ -1,5 +1,5 @@
-const { createTemp } = require('./createTemp');
-const { upload } = require('./upload');
+const { createTemp } = require("./createTemp");
+const { upload } = require("./upload");
 /**
  * Uploads a file from a given file stream.
  *

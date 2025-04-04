@@ -1,4 +1,4 @@
-const getByIds = require('./getByIds');
+const getByIds = require("./getByIds");
 
 module.exports = {
   ...getByIds,

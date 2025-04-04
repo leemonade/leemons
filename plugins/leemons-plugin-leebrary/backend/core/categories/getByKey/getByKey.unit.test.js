@@ -1,16 +1,23 @@
-const { it, expect, describe, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const { getByKey } = require('./getByKey');
-const { categoriesSchema } = require('../../../models/categories');
-const getCategory = require('../../../__fixtures__/getCategory');
+const {
+  it,
+  expect,
+  describe,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const { getByKey } = require("./getByKey");
+const { categoriesSchema } = require("../../../models/categories");
+const getCategory = require("../../../__fixtures__/getCategory");
 
 let mongooseConnection;
 let disconnectMongoose;
 let ctx;
 let categoryData;
 
-describe('Get Category by Key', () => {
+describe("Get Category by Key", () => {
   beforeAll(async () => {
     const { mongoose, disconnect } = await createMongooseConnection();
 
@@ -19,7 +26,11 @@ describe('Get Category by Key', () => {
 
     ctx = generateCtx({
       models: {
-        Categories: newModel(mongooseConnection, 'Categories', categoriesSchema),
+        Categories: newModel(
+          mongooseConnection,
+          "Categories",
+          categoriesSchema
+        ),
       },
     });
   });
@@ -39,10 +50,10 @@ describe('Get Category by Key', () => {
     await ctx.tx.db.Categories.create(categoryData);
   });
 
-  it('Should correctly get category by key and return category object', async () => {
+  it("Should correctly get category by key and return category object", async () => {
     // Arrange
     const { key } = categoryData;
-    const columns = ['name', 'description', 'canUse'];
+    const columns = ["name", "description", "canUse"];
 
     // Act
     const response = await getByKey({ key, columns, ctx });
@@ -52,10 +63,10 @@ describe('Get Category by Key', () => {
     expect(response.key).toBeUndefined();
   });
 
-  it('Should return null if no category found for the provided key', async () => {
+  it("Should return null if no category found for the provided key", async () => {
     // Arrange
-    const key = 'nonExistingKey';
-    const columns = ['name', 'description'];
+    const key = "nonExistingKey";
+    const columns = ["name", "description"];
 
     // Act
     const response = await getByKey({ key, columns, ctx });

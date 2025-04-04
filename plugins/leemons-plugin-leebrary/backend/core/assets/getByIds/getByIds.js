@@ -1,17 +1,19 @@
 /* eslint-disable no-param-reassign */
-const { keyBy, isEmpty, flatten, forEach } = require('lodash');
+const { keyBy, isEmpty, flatten, forEach } = require("lodash");
 
-const { getByAssets: getPins } = require('../../pins/getByAssets');
+const { getByAssets: getPins } = require("../../pins/getByAssets");
 
-const { buildQuery } = require('./buildQuery');
-const { getAssetsCategoryData } = require('./getAssetsCategoryData');
-const { getAssetsProgramsAggregatedById } = require('./getAssetsProgramsAggregatedById');
-const { getAssetsTags } = require('./getAssetsTags');
-const { getAssetsWithFiles } = require('./getAssetsWithFiles');
-const { getAssetsWithPermissions } = require('./getAssetsWithPermissions');
-const { getAssetsWithSubjects } = require('./getAssetsWithSubjects');
-const { getUserPermissionsByAsset } = require('./getUserPermissionsByAsset');
-const { processFinalAsset } = require('./processFinalAsset');
+const { buildQuery } = require("./buildQuery");
+const { getAssetsCategoryData } = require("./getAssetsCategoryData");
+const {
+  getAssetsProgramsAggregatedById,
+} = require("./getAssetsProgramsAggregatedById");
+const { getAssetsTags } = require("./getAssetsTags");
+const { getAssetsWithFiles } = require("./getAssetsWithFiles");
+const { getAssetsWithPermissions } = require("./getAssetsWithPermissions");
+const { getAssetsWithSubjects } = require("./getAssetsWithSubjects");
+const { getUserPermissionsByAsset } = require("./getUserPermissionsByAsset");
+const { processFinalAsset } = require("./processFinalAsset");
 
 /**
  * Fetch assets by their IDs
@@ -111,7 +113,8 @@ async function getByIds({
   // FINALLY
 
   const programsById = await getAssetsProgramsAggregatedById({ assets, ctx });
-  const userAgents = ctx.meta.userSession?.userAgents?.map(({ id }) => id) || [];
+  const userAgents =
+    ctx.meta.userSession?.userAgents?.map(({ id }) => id) || [];
 
   const finalAssets = assets.map((asset, index) =>
     processFinalAsset({
@@ -131,7 +134,7 @@ async function getByIds({
     })
   );
 
-  const finalAssetsAggregatedById = keyBy(finalAssets, 'id');
+  const finalAssetsAggregatedById = keyBy(finalAssets, "id");
 
   const result = [];
   forEach(assetsIds, (assetId) => {

@@ -1,3 +1,3 @@
-const exists = require('./exists');
+const exists = require("./exists");
 
 module.exports = { ...exists };

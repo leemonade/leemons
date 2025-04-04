@@ -1,2 +1,2 @@
-export * from './FavButton';
-export * from './FavButton.constants';
+export * from "./FavButton";
+export * from "./FavButton.constants";

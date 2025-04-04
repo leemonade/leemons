@@ -1,14 +1,22 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { find, isEmpty, isString } from 'lodash';
-import { ActionButton, Box, Modal, Paper, Stack, TabPanel, Tabs } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
-import { PluginLeebraryIcon } from '@bubbles-ui/icons/solid';
-import { listCategoriesRequest } from '../request';
-import { AssetList } from './AssetList';
-import { BasicData } from './AssetSetup/BasicData';
-import prefixPN from '../helpers/prefixPN';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { find, isEmpty, isString } from "lodash";
+import {
+  ActionButton,
+  Box,
+  Modal,
+  Paper,
+  Stack,
+  TabPanel,
+  Tabs,
+} from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { RemoveIcon } from "@bubbles-ui/icons/outline";
+import { PluginLeebraryIcon } from "@bubbles-ui/icons/solid";
+import { listCategoriesRequest } from "../request";
+import { AssetList } from "./AssetList";
+import { BasicData } from "./AssetSetup/BasicData";
+import prefixPN from "../helpers/prefixPN";
 
 const AssetListModal = ({
   opened,
@@ -25,12 +33,12 @@ const AssetListModal = ({
 }) => {
   const [categories, setCategories] = useState(categoriesProp);
   const [category, setCategory] = useState(categoryProp);
-  const [t] = useTranslateLoader(prefixPN('assetSetup'));
+  const [t] = useTranslateLoader(prefixPN("assetSetup"));
 
   // ·········································································
   // DATA PROCESSING
 
-  const selectCategory = (item = 'media-files', items = []) => {
+  const selectCategory = (item = "media-files", items = []) => {
     if (isString(item)) {
       setCategory(find(items, { key: item }));
     } else if (item?.id) {
@@ -78,7 +86,7 @@ const AssetListModal = ({
       canChangeLayout={false}
       canSearch
       onSelectItem={onSelect}
-      itemMinWidth={assetType === 'image' ? 200 : undefined}
+      itemMinWidth={assetType === "image" ? 200 : undefined}
     />
   );
 
@@ -97,7 +105,7 @@ const AssetListModal = ({
         padding="none"
         radius="none"
         fullWidth
-        style={{ flex: 1, height: '100%', minHeight: 300 }}
+        style={{ flex: 1, height: "100%", minHeight: 300 }}
       >
         <Stack
           sx={(theme) => ({
@@ -109,7 +117,11 @@ const AssetListModal = ({
           alignItems="center"
         >
           <PluginLeebraryIcon height={18} width={18} />
-          <ActionButton icon={<RemoveIcon />} tooltip={t('header.close')} onClick={onClose} />
+          <ActionButton
+            icon={<RemoveIcon />}
+            tooltip={t("header.close")}
+            onClick={onClose}
+          />
         </Stack>
         <Box
           sx={(theme) => ({
@@ -135,9 +147,11 @@ const AssetListModal = ({
                     maxWidth: theme.breakpoints.xs,
                   })}
                 >
-                  {category?.key === 'media-files' ? (
+                  {category?.key === "media-files" ? (
                     <BasicData
-                      {...(onlyCreateImages ? { onlyImages: true, hideTitle: true } : {})}
+                      {...(onlyCreateImages
+                        ? { onlyImages: true, hideTitle: true }
+                        : {})}
                       categoryId={category?.id}
                       onSave={onSelect}
                     />
@@ -158,9 +172,9 @@ const AssetListModal = ({
 
 AssetListModal.defaultProps = {
   opened: false,
-  size: 'xl',
-  layout: 'grid',
-  assetType: 'image',
+  size: "xl",
+  layout: "grid",
+  assetType: "image",
   canChangeType: false,
   onlyThumbnails: true,
   creatable: false,

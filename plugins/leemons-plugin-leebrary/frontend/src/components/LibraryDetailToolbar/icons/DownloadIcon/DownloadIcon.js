@@ -1,5 +1,8 @@
-import React from 'react';
-import { DOWNLOAD_ICON_PROP_TYPES, DOWNLOAD_ICON_DEFAULT_PROPS } from './DownloadIcon.constants';
+import React from "react";
+import {
+  DOWNLOAD_ICON_PROP_TYPES,
+  DOWNLOAD_ICON_DEFAULT_PROPS,
+} from "./DownloadIcon.constants";
 
 const DownloadIcon = ({ width, height, color }) => (
   <svg
@@ -22,6 +25,6 @@ const DownloadIcon = ({ width, height, color }) => (
 DownloadIcon.defaultProps = DOWNLOAD_ICON_DEFAULT_PROPS;
 DownloadIcon.propTypes = DOWNLOAD_ICON_PROP_TYPES;
 
-DownloadIcon.displayName = 'DownloadIcon';
+DownloadIcon.displayName = "DownloadIcon";
 export default DownloadIcon;
 export { DownloadIcon };

@@ -1,22 +1,25 @@
-const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
-const { LeemonsError } = require('@leemons/error');
+const { it, expect } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
+const { LeemonsError } = require("@leemons/error");
 
-const { checkAndHandleCanUse } = require('./checkAndHandleCanUse');
-const getCategory = require('../../../__fixtures__/getCategory');
+const { checkAndHandleCanUse } = require("./checkAndHandleCanUse");
+const getCategory = require("../../../__fixtures__/getCategory");
 
-const unauthorizedPlugin = 'unauthorized-plugin';
-const authorizedPlugin = 'authorized-plugin';
+const unauthorizedPlugin = "unauthorized-plugin";
+const authorizedPlugin = "authorized-plugin";
 const { categoryObject } = getCategory();
 
-it('Should throw if the caller is not authorized', () => {
+it("Should throw if the caller is not authorized", () => {
   // Arrange
-  const categoryWithCanUseArray = { ...categoryObject, canUse: [authorizedPlugin] };
+  const categoryWithCanUseArray = {
+    ...categoryObject,
+    canUse: [authorizedPlugin],
+  };
 
   const ctx = generateCtx({
     caller: categoryObject.pluginOwner,
   });
-  const expectedValue = [ctx.prefixPN(''), categoryObject.pluginOwner];
+  const expectedValue = [ctx.prefixPN(""), categoryObject.pluginOwner];
 
   // Act
   const response = checkAndHandleCanUse({
@@ -44,10 +47,13 @@ it('Should throw if the caller is not authorized', () => {
       httpStatusCode: 403,
     })
   );
-  expect(responseAuthorizedPlugin).toEqual([...expectedValue, authorizedPlugin]);
+  expect(responseAuthorizedPlugin).toEqual([
+    ...expectedValue,
+    authorizedPlugin,
+  ]);
 });
 
-it('Should handle unexpected values and throw unauthorization errors', () => {
+it("Should handle unexpected values and throw unauthorization errors", () => {
   // Arrange
   const categoryWithWrongCanUseValue = { ...categoryObject, canUse: '"[]"' };
   const ctx = generateCtx({});

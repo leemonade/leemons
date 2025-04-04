@@ -13,8 +13,12 @@ async function getPublicAssets({ includePublic, categoryId, indexable, ctx }) {
   let publicAssets = [];
 
   if (includePublic) {
-    publicAssets = await ctx.tx.db.Assets.find({ category: categoryId, public: true, indexable })
-      .select(['id'])
+    publicAssets = await ctx.tx.db.Assets.find({
+      category: categoryId,
+      public: true,
+      indexable,
+    })
+      .select(["id"])
       .lean();
   }
 

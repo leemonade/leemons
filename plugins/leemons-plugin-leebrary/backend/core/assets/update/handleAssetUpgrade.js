@@ -1,10 +1,10 @@
 const {
   isAdminUpdatingCenterAsset: isAdminUpdatingCenterAssetFunction,
-} = require('../../permissions/centerAssetItemPermission');
+} = require("../../permissions/centerAssetItemPermission");
 const {
   addCenterItemPermission,
-} = require('../../permissions/centerAssetItemPermission/addCenterItemPermission');
-const { duplicate } = require('../duplicate');
+} = require("../../permissions/centerAssetItemPermission/addCenterItemPermission");
+const { duplicate } = require("../duplicate");
 
 /**
  * Handles the asset version upgrade if the current version is published.
@@ -16,8 +16,15 @@ const { duplicate } = require('../duplicate');
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<object>} The duplicated asset.
  */
-async function handleAssetUpgrade({ assetId, currentAsset, scale, published, subjects, ctx }) {
-  const { fullId } = await ctx.tx.call('common.versionControl.upgradeVersion', {
+async function handleAssetUpgrade({
+  assetId,
+  currentAsset,
+  scale,
+  published,
+  subjects,
+  ctx,
+}) {
+  const { fullId } = await ctx.tx.call("common.versionControl.upgradeVersion", {
     id: assetId,
     upgrade: scale,
     published,
@@ -37,12 +44,15 @@ async function handleAssetUpgrade({ assetId, currentAsset, scale, published, sub
   });
 
   if (isAdminUpdatingCenterAsset) {
-    const [ownerUserAgentDetails] = await ctx.tx.call('users.users.getUserAgentsInfo', {
-      userAgentIds: [duplicatedAsset.fromUserAgent],
-      withCenter: true,
-      withProfile: true,
-      ctx,
-    });
+    const [ownerUserAgentDetails] = await ctx.tx.call(
+      "users.users.getUserAgentsInfo",
+      {
+        userAgentIds: [duplicatedAsset.fromUserAgent],
+        withCenter: true,
+        withProfile: true,
+        ctx,
+      }
+    );
     await addCenterItemPermission({
       assetId: duplicatedAsset.id,
       centerId: ownerUserAgentDetails.center.id,
@@ -53,7 +63,10 @@ async function handleAssetUpgrade({ assetId, currentAsset, scale, published, sub
   if (subjects?.length) {
     await Promise.all(
       subjects.map((item) =>
-        ctx.tx.db.AssetsSubjects.create({ asset: duplicatedAsset.id, subject: item })
+        ctx.tx.db.AssetsSubjects.create({
+          asset: duplicatedAsset.id,
+          subject: item,
+        })
       )
     );
   }

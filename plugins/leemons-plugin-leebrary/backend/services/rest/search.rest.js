@@ -4,15 +4,15 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
-const { search } = require('../../core/search');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
+const { search } = require("../../core/search");
 
 /** @type {ServiceSchema} */
 module.exports = {
   searchRest: {
     rest: {
-      path: '/search',
-      method: 'GET',
+      path: "/search",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

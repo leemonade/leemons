@@ -2,25 +2,26 @@ const {
   it,
   expect,
   jest: { fn },
-} = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+} = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { handleItemPermissions } = require('./handleItemPermissions');
+const { handleItemPermissions } = require("./handleItemPermissions");
 
-it('Should call handleItemPermissions correctly', async () => {
+it("Should call handleItemPermissions correctly", async () => {
   // Arrange
-  const assetsIds = ['assetOne', 'assetTwo'];
-  const mockResolvedValue = 'value';
+  const assetsIds = ["assetOne", "assetTwo"];
+  const mockResolvedValue = "value";
   const permissionTypes = {
-    view: 'asset.can-view',
-    edit: 'asset.can-edit',
-    assign: 'asset.can-assign',
+    view: "asset.can-view",
+    edit: "asset.can-edit",
+    assign: "asset.can-assign",
   };
-  const userAgents = ['userAgentOne'];
-  const getAllItemsForTheUserAgentHasPermissionsByType = fn().mockResolvedValue(mockResolvedValue);
+  const userAgents = ["userAgentOne"];
+  const getAllItemsForTheUserAgentHasPermissionsByType =
+    fn().mockResolvedValue(mockResolvedValue);
   const ctx = generateCtx({
     actions: {
-      'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType':
+      "users.permissions.getAllItemsForTheUserAgentHasPermissionsByType":
         getAllItemsForTheUserAgentHasPermissionsByType,
     },
   });
@@ -30,12 +31,17 @@ it('Should call handleItemPermissions correctly', async () => {
 
   // Assert
   Object.keys(permissionTypes).forEach((type, i) => {
-    expect(getAllItemsForTheUserAgentHasPermissionsByType).nthCalledWith(i + 1, {
-      userAgentId: userAgents,
-      type: ctx.prefixPN(permissionTypes[type]),
-      ignoreOriginalTarget: true,
-      item: assetsIds,
-    });
+    expect(getAllItemsForTheUserAgentHasPermissionsByType).nthCalledWith(
+      i + 1,
+      {
+        userAgentId: userAgents,
+        type: ctx.prefixPN(permissionTypes[type]),
+        ignoreOriginalTarget: true,
+        item: assetsIds,
+      }
+    );
   });
-  expect(response).toEqual(new Array(Object.keys(permissionTypes).length).fill(mockResolvedValue));
+  expect(response).toEqual(
+    new Array(Object.keys(permissionTypes).length).fill(mockResolvedValue)
+  );
 });

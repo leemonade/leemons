@@ -1,5 +1,5 @@
-import PropTypes from 'prop-types';
-import { ASSET_PROPS } from '../LibraryCard/LibraryCard.constants';
+import PropTypes from "prop-types";
+import { ASSET_PROPS } from "../LibraryCard/LibraryCard.constants";
 
 export function getSize(size) {
   const sizes = {
@@ -19,10 +19,10 @@ export function getSize(size) {
   return sizes[size];
 }
 
-export const LIBRARY_ITEM_SIZES = ['sm', 'md', 'lg'];
+export const LIBRARY_ITEM_SIZES = ["sm", "md", "lg"];
 
 export const LIBRARY_ITEM_DEFAULT_PROPS = {
-  size: 'sm',
+  size: "sm",
 };
 export const LIBRARY_ITEM_PROP_TYPES = {
   asset: ASSET_PROPS,

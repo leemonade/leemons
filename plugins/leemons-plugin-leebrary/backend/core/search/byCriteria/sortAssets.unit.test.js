@@ -1,18 +1,25 @@
-const { it, expect, beforeAll, afterAll, beforeEach, describe } = require('@jest/globals');
-const { map } = require('lodash');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  describe,
+} = require("@jest/globals");
+const { map } = require("lodash");
 
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { sortAssets } = require('./sortAssets');
-const { assetsSchema } = require('../../../models/assets');
-const getPermissionsMock = require('../../../__fixtures__/getPermissionsMocks');
-const getAssets = require('../../../__fixtures__/getAssets');
+const { sortAssets } = require("./sortAssets");
+const { assetsSchema } = require("../../../models/assets");
+const getPermissionsMock = require("../../../__fixtures__/getPermissionsMocks");
+const getAssets = require("../../../__fixtures__/getAssets");
 
-jest.mock('../../assets/getByIds');
-const { getByIds: getAssetsByIds } = require('../../assets/getByIds');
+jest.mock("../../assets/getByIds");
+const { getByIds: getAssetsByIds } = require("../../assets/getByIds");
 
-describe('sortAssets', () => {
+describe("sortAssets", () => {
   const permissionAsset = getPermissionsMock().permissionByAssetOne;
   const asset = getAssets().assetModel;
 
@@ -33,7 +40,7 @@ describe('sortAssets', () => {
 
     ctx = generateCtx({
       models: {
-        Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+        Assets: newModel(mongooseConnection, "Assets", assetsSchema),
       },
     });
   });
@@ -49,21 +56,21 @@ describe('sortAssets', () => {
     await mongooseConnection.dropDatabase();
     jest.resetAllMocks();
     assets = [
-      { ...asset, name: 'asset1', id: 'asset1@1.0.0' },
-      { ...asset, name: 'asset2', id: 'asset2@2.0.0' },
+      { ...asset, name: "asset1", id: "asset1@1.0.0" },
+      { ...asset, name: "asset2", id: "asset2@2.0.0" },
     ];
     permissionAssets = [
-      { ...permissionAsset, asset: 'asset1@1.0.0' },
-      { ...permissionAsset, asset: 'asset2@2.0.0' },
+      { ...permissionAsset, asset: "asset1@1.0.0" },
+      { ...permissionAsset, asset: "asset2@2.0.0" },
     ];
-    sortingBy = 'name';
+    sortingBy = "name";
     indexable = true;
     showPublic = true;
-    sortDirection = 'asc';
+    sortDirection = "asc";
   });
 
-  describe('Intended workload', () => {
-    it('should return sorted assets by name', async () => {
+  describe("Intended workload", () => {
+    it("should return sorted assets by name", async () => {
       // Arrange
       getAssetsByIds.mockResolvedValue(assets);
       // Act
@@ -77,7 +84,7 @@ describe('sortAssets', () => {
       });
       // Assert
       expect(getAssetsByIds).toBeCalledWith({
-        ids: map(permissionAssets, 'asset'),
+        ids: map(permissionAssets, "asset"),
         withCategory: false,
         withTags: false,
         indexable,
@@ -88,8 +95,8 @@ describe('sortAssets', () => {
     });
   });
 
-  describe('Limit use cases', () => {
-    it('should return assets in ascendent order if sortingBy is not provided', async () => {
+  describe("Limit use cases", () => {
+    it("should return assets in ascendent order if sortingBy is not provided", async () => {
       // Arrange
       sortingBy = undefined;
       // Act
@@ -107,11 +114,11 @@ describe('sortAssets', () => {
     });
   });
 
-  describe('Additional tests', () => {
-    it('should return sorted assets in descending order', async () => {
+  describe("Additional tests", () => {
+    it("should return sorted assets in descending order", async () => {
       // Arrange
-      sortingBy = 'name';
-      sortDirection = 'desc';
+      sortingBy = "name";
+      sortDirection = "desc";
       getAssetsByIds.mockResolvedValue(assets);
       // Act
       const result = await sortAssets({
@@ -124,7 +131,7 @@ describe('sortAssets', () => {
       });
       // Assert
       expect(getAssetsByIds).toBeCalledWith({
-        ids: map(permissionAssets, 'asset'),
+        ids: map(permissionAssets, "asset"),
         withCategory: false,
         withTags: false,
         indexable,

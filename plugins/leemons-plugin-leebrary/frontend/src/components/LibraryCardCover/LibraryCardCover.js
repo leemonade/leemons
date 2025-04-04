@@ -1,17 +1,28 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { isEmpty, isNil, isString, noop } from 'lodash';
-import { Box, COLORS, IconButton, ImageLoader, Menu, CardEmptyCover } from '@bubbles-ui/components';
-import { BookmarksIcon, DeleteBinIcon, SettingMenuVerticalIcon } from '@bubbles-ui/icons/solid/';
-import { isLRN as stringIsLRN } from '@leebrary/helpers/isLRN';
-import useFileCopyright from '@leebrary/request/hooks/queries/useFileCopyright';
-import { LibraryCardCoverStyles } from './LibraryCardCover.styles';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { isEmpty, isNil, isString, noop } from "lodash";
+import {
+  Box,
+  COLORS,
+  IconButton,
+  ImageLoader,
+  Menu,
+  CardEmptyCover,
+} from "@bubbles-ui/components";
+import {
+  BookmarksIcon,
+  DeleteBinIcon,
+  SettingMenuVerticalIcon,
+} from "@bubbles-ui/icons/solid/";
+import { isLRN as stringIsLRN } from "@leebrary/helpers/isLRN";
+import useFileCopyright from "@leebrary/request/hooks/queries/useFileCopyright";
+import { LibraryCardCoverStyles } from "./LibraryCardCover.styles";
 import {
   LIBRARY_CARD_COVER_DEFAULT_PROPS,
   LIBRARY_CARD_COVER_PROP_TYPES,
-} from './LibraryCardCover.constants';
+} from "./LibraryCardCover.constants";
 
-import { LibraryCardMenuSkeletonItems } from './LibraryCardMenuSkeletonItems';
-import CoverCopyright from '../Copyright/CoverCopyright';
+import { LibraryCardMenuSkeletonItems } from "./LibraryCardMenuSkeletonItems";
+import CoverCopyright from "../Copyright/CoverCopyright";
 
 const LibraryCardCover = ({
   height,
@@ -38,7 +49,7 @@ const LibraryCardCover = ({
   );
   const { classes, cx } = LibraryCardCoverStyles(
     { color, height, parentHovered, subjectColor: subject?.color, showMenu },
-    { name: 'LibraryCardCover' }
+    { name: "LibraryCardCover" }
   );
 
   const fileIdToFetchCopyright = useMemo(() => {
@@ -49,7 +60,8 @@ const LibraryCardCover = ({
       return original.cover;
     }
 
-    const isUrlToFile = original.cover.startsWith('http') && original.cover.includes('lrn');
+    const isUrlToFile =
+      original.cover.startsWith("http") && original.cover.includes("lrn");
     if (isUrlToFile) {
       return original.cover.match(/lrn:[^?]+/)[0];
     }
@@ -63,8 +75,9 @@ const LibraryCardCover = ({
   });
 
   const coverSource = useMemo(() => {
-    const fileIsAnImage = fileType === 'image';
-    const isExternalUrl = url && url.startsWith('http') && url.includes('unsplash');
+    const fileIsAnImage = fileType === "image";
+    const isExternalUrl =
+      url && url.startsWith("http") && url.includes("unsplash");
     const hasCopyright = !isEmpty(file?.copyright);
 
     if (fileIsAnImage && isExternalUrl && hasCopyright) {
@@ -92,11 +105,12 @@ const LibraryCardCover = ({
   ]);
 
   const getCoverCopyright = useCallback(() => {
-    const fileIsAnImage = fileType === 'image';
+    const fileIsAnImage = fileType === "image";
 
     if (fileIsAnImage) {
       if (!file.copyright) return null;
-      const { author, authorProfileUrl, providerUrl, provider } = file.copyright;
+      const { author, authorProfileUrl, providerUrl, provider } =
+        file.copyright;
 
       return (
         <CoverCopyright
@@ -110,7 +124,8 @@ const LibraryCardCover = ({
     }
 
     if (original?.cover?.copyright) {
-      const { author, authorProfileUrl, providerUrl, provider } = original.cover.copyright;
+      const { author, authorProfileUrl, providerUrl, provider } =
+        original.cover.copyright;
       return (
         <CoverCopyright
           author={author}
@@ -147,7 +162,9 @@ const LibraryCardCover = ({
   const icon = useMemo(
     () =>
       !isNil(fileIcon)
-        ? React.cloneElement(fileIcon, { iconStyle: { backgroundColor: COLORS.interactive03h } })
+        ? React.cloneElement(fileIcon, {
+            iconStyle: { backgroundColor: COLORS.interactive03h },
+          })
         : null,
     [fileIcon]
   );
@@ -163,7 +180,9 @@ const LibraryCardCover = ({
     e.stopPropagation();
   };
 
-  const menuSkeletonItems = [{ children: <LibraryCardMenuSkeletonItems items={2} /> }];
+  const menuSkeletonItems = [
+    { children: <LibraryCardMenuSkeletonItems items={2} /> },
+  ];
 
   const heightAndSubjectColor = color ? height : height + 6;
   const iconRow = (
@@ -184,15 +203,25 @@ const LibraryCardCover = ({
                   }
                   onShowMenu(false);
                 }}
-                items={(menuItemsLoading ? menuSkeletonItems : menuItems).map((item) => ({
-                  ...item,
-                  className: cx(classes.menuItem, item.className),
-                }))}
+                items={(menuItemsLoading ? menuSkeletonItems : menuItems).map(
+                  (item) => ({
+                    ...item,
+                    className: cx(classes.menuItem, item.className),
+                  })
+                )}
                 position="bottom-end"
                 withinPortal={true}
                 control={
-                  <Box as="button" className={classes.ellipsisBox} onClick={preventPropagation}>
-                    <SettingMenuVerticalIcon width={16} height={16} className={classes.menuIcon} />
+                  <Box
+                    as="button"
+                    className={classes.ellipsisBox}
+                    onClick={preventPropagation}
+                  >
+                    <SettingMenuVerticalIcon
+                      width={16}
+                      height={16}
+                      className={classes.menuIcon}
+                    />
                   </Box>
                 }
               />
@@ -201,13 +230,25 @@ const LibraryCardCover = ({
           {dashboard && !hideDashboardIcons && (
             <>
               <IconButton
-                icon={<DeleteBinIcon width={16} height={16} className={classes.menuIcon} />}
-                variant={'transparent'}
+                icon={
+                  <DeleteBinIcon
+                    width={16}
+                    height={16}
+                    className={classes.menuIcon}
+                  />
+                }
+                variant={"transparent"}
                 size="xs"
               />
               <IconButton
-                icon={<BookmarksIcon width={16} height={16} className={classes.menuIcon} />}
-                variant={'transparent'}
+                icon={
+                  <BookmarksIcon
+                    width={16}
+                    height={16}
+                    className={classes.menuIcon}
+                  />
+                }
+                variant={"transparent"}
                 size="xs"
               />
             </>
@@ -229,11 +270,18 @@ const LibraryCardCover = ({
         <Box>{iconRow}</Box>
       </Box>
       {coverSource ? (
-        <ImageLoader src={coverSource} height={heightAndSubjectColor} width={'100%'} forceImage />
+        <ImageLoader
+          src={coverSource}
+          height={heightAndSubjectColor}
+          width={"100%"}
+          forceImage
+        />
       ) : (
         MemoizedEmptyCover
       )}
-      {(original?.cover?.copyright || file?.copyright || !isEmpty(coverCopyrightDataFetched)) &&
+      {(original?.cover?.copyright ||
+        file?.copyright ||
+        !isEmpty(coverCopyrightDataFetched)) &&
         getCoverCopyright()}
     </Box>
     // </AnimatePresence>

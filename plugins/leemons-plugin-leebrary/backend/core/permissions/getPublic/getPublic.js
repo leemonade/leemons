@@ -7,9 +7,9 @@
  * @returns {Promise<Array>} An array of public assets with their respective roles and permissions.
  * @throws {LeemonsError} When the asset fetching fails.
  */
-const { LeemonsError } = require('@leemons/error');
-const getRolePermissions = require('../helpers/getRolePermissions');
-const { find: findAsset } = require('../../assets/find');
+const { LeemonsError } = require("@leemons/error");
+const getRolePermissions = require("../helpers/getRolePermissions");
+const { find: findAsset } = require("../../assets/find");
 
 async function getPublic({ categoryId, indexable = true, ctx }) {
   try {
@@ -23,8 +23,8 @@ async function getPublic({ categoryId, indexable = true, ctx }) {
 
     return publicAssets.map((asset) => ({
       asset: asset.id,
-      role: 'public',
-      permissions: getRolePermissions({ role: 'public', ctx }),
+      role: "public",
+      permissions: getRolePermissions({ role: "public", ctx }),
     }));
   } catch (e) {
     throw new LeemonsError(ctx, {

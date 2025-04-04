@@ -1,6 +1,6 @@
-const { LeemonsError } = require('@leemons/error');
-const canUnassignRole = require('./helpers/canUnassignRole');
-const getAssignerAndAssigneeRoles = require('./helpers/getAssignerAndAssigneeRoles');
+const { LeemonsError } = require("@leemons/error");
+const canUnassignRole = require("./helpers/canUnassignRole");
+const getAssignerAndAssigneeRoles = require("./helpers/getAssignerAndAssigneeRoles");
 
 /**
  * This function removes a role from a user.
@@ -27,7 +27,11 @@ async function remove({ assetId, assigneeAgent, ctx } = {}) {
     // EN: Check if assigner can remove role from assignee
     // ES: Comprobar si el asignador puede eliminar el rol del asignado
     if (
-      !canUnassignRole({ userRole: assignerRole, assignedUserCurrentRole: assigneeRole, ctx: null })
+      !canUnassignRole({
+        userRole: assignerRole,
+        assignedUserCurrentRole: assigneeRole,
+        ctx: null,
+      })
     ) {
       throw new LeemonsError(ctx, {
         message: "You don't have permission to remove this role",

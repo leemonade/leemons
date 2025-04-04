@@ -1,9 +1,15 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getById } = require('./getById');
-const { filesSchema } = require('../../../models/files');
+const { getById } = require("./getById");
+const { filesSchema } = require("../../../models/files");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -26,26 +32,26 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should retrieve a file by its ID from the database', async () => {
+it("Should retrieve a file by its ID from the database", async () => {
   // Arrange
   const file = {
-    id: 'fileOneId',
-    uri: 'uri',
-    name: 'fileOne',
-    extension: '.png',
-    type: 'type',
-    provider: 'leebrary',
+    id: "fileOneId",
+    uri: "uri",
+    name: "fileOne",
+    extension: ".png",
+    type: "type",
+    provider: "leebrary",
   };
   const fileMetadata = {
     ...file,
-    id: 'fileTwoId',
+    id: "fileTwoId",
     metadata: JSON.stringify({ metaParam: 422 }),
-    name: 'fileTwo',
+    name: "fileTwo",
   };
 
   const ctx = generateCtx({
     models: {
-      Files: newModel(mongooseConnection, 'Files', filesSchema),
+      Files: newModel(mongooseConnection, "Files", filesSchema),
     },
   });
 
@@ -55,11 +61,13 @@ it('Should retrieve a file by its ID from the database', async () => {
   // Act
   const response = await getById({ id: file.id, ctx });
   const responseMetadata = await getById({ id: fileMetadata.id, ctx });
-  const responseNull = await getById({ id: 'notExistentFile', ctx });
+  const responseNull = await getById({ id: "notExistentFile", ctx });
 
   // Assert
   expect(response.id).toEqual(file.id);
   expect(responseMetadata.id).toEqual(fileMetadata.id);
-  expect(responseMetadata.metadata).toEqual(JSON.parse(fileMetadata.metadata || null));
+  expect(responseMetadata.metadata).toEqual(
+    JSON.parse(fileMetadata.metadata || null)
+  );
   expect(responseNull).toBe(null);
 });

@@ -1,7 +1,7 @@
-const { isEmpty, forEach, map } = require('lodash');
+const { isEmpty, forEach, map } = require("lodash");
 
-const { assetRoles } = require('../../../config/constants');
-const getAssetPermissionName = require('../../permissions/helpers/getAssetPermissionName');
+const { assetRoles } = require("../../../config/constants");
+const getAssetPermissionName = require("../../permissions/helpers/getAssetPermissionName");
 
 /**
  * Handles the permissions of the asset.
@@ -17,14 +17,21 @@ const getAssetPermissionName = require('../../permissions/helpers/getAssetPermis
  * @returns {Promise<void>} A promise that resolves when permissions are handled.
  */
 
-async function handlePermissions({ permissions, canAccess, owner, asset, category, ctx }) {
+async function handlePermissions({
+  permissions,
+  canAccess,
+  owner,
+  asset,
+  category,
+  ctx,
+}) {
   const { userSession } = ctx.meta;
   const permissionName = getAssetPermissionName({ assetId: asset.id, ctx });
 
   // ES: Primero, añadimos permisos al archivo
   // EN: First, add permission to the asset
   const permissionsPromises = [
-    ctx.tx.call('users.permissions.addItem', {
+    ctx.tx.call("users.permissions.addItem", {
       item: asset.id,
       type: ctx.prefixPN(category.id),
       data: {
@@ -36,22 +43,25 @@ async function handlePermissions({ permissions, canAccess, owner, asset, categor
   ];
 
   if (permissions?.length) {
-    forEach(permissions, ({ isCustomPermission, canEdit, canView, canAssign, ...per }) => {
-      let permission = 'can-view';
-      if (canEdit) {
-        permission = 'can-edit';
-      } else if (canAssign) {
-        permission = 'can-assign';
+    forEach(
+      permissions,
+      ({ isCustomPermission, canEdit, canView, canAssign, ...per }) => {
+        let permission = "can-view";
+        if (canEdit) {
+          permission = "can-edit";
+        } else if (canAssign) {
+          permission = "can-assign";
+        }
+        permissionsPromises.push(
+          ctx.tx.call("users.permissions.addItem", {
+            item: asset.id,
+            type: ctx.prefixPN(`asset.${permission}`),
+            data: { ...per },
+            isCustomPermission,
+          })
+        );
       }
-      permissionsPromises.push(
-        ctx.tx.call('users.permissions.addItem', {
-          item: asset.id,
-          type: ctx.prefixPN(`asset.${permission}`),
-          data: { ...per },
-          isCustomPermission,
-        })
-      );
-    });
+    );
   }
   await Promise.all(permissionsPromises);
 
@@ -63,10 +73,10 @@ async function handlePermissions({ permissions, canAccess, owner, asset, categor
   if (canAccess && !isEmpty(canAccess)) {
     for (let i = 0, len = canAccess.length; i < len; i++) {
       const { userAgent, role } = canAccess[i];
-      hasOwner = hasOwner || role === 'owner';
+      hasOwner = hasOwner || role === "owner";
 
       permissionsToAdd.push(
-        ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
+        ctx.tx.call("users.permissions.addCustomPermissionToUserAgent", {
           userAgentId: userAgent,
           data: {
             permissionName,
@@ -80,11 +90,11 @@ async function handlePermissions({ permissions, canAccess, owner, asset, categor
 
   if (!hasOwner) {
     permissionsToAdd.push(
-      ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
-        userAgentId: owner || map(userSession?.userAgents, 'id'),
+      ctx.tx.call("users.permissions.addCustomPermissionToUserAgent", {
+        userAgentId: owner || map(userSession?.userAgents, "id"),
         data: {
           permissionName,
-          actionNames: ['owner'],
+          actionNames: ["owner"],
           target: category.id,
         },
       })

@@ -1,6 +1,6 @@
-const { LeemonsError } = require('@leemons/error');
-const { remove } = require('../remove');
-const { handleUserPermissions } = require('./handleUserPermissions');
+const { LeemonsError } = require("@leemons/error");
+const { remove } = require("../remove");
+const { handleUserPermissions } = require("./handleUserPermissions");
 
 /**
  * Unlinks files from an asset.
@@ -27,7 +27,9 @@ async function unlink({ fileIds, assetId, soft, ctx }) {
     throw new LeemonsError(ctx, {
       message: `Failed to delete file: ${e.message}`,
       httpStatusCode:
-        e instanceof LeemonsError && Number.isInteger(e.httpStatusCode) ? e.httpStatusCode : 500,
+        e instanceof LeemonsError && Number.isInteger(e.httpStatusCode)
+          ? e.httpStatusCode
+          : 500,
     });
   }
 }

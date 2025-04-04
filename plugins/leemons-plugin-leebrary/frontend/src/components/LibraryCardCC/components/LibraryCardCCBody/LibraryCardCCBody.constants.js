@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const LIBRARY_CARD_CC_BODY_PROPTYPES = {
   description: PropTypes.string,
@@ -6,6 +6,6 @@ export const LIBRARY_CARD_CC_BODY_PROPTYPES = {
 };
 
 export const LIBRARY_CARD_CC_BODY_DEFAULTPROPS = {
-  description: '',
-  name: '',
+  description: "",
+  name: "",
 };

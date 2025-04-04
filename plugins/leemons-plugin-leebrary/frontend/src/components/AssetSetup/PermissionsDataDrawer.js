@@ -1,10 +1,10 @@
-import { BaseDrawer } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PropTypes from 'prop-types';
+import { BaseDrawer } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
 
-import { PermissionsData } from './PermissionsData';
+import { PermissionsData } from "./PermissionsData";
 
-import prefixPN from '@leebrary/helpers/prefixPN';
+import prefixPN from "@leebrary/helpers/prefixPN";
 
 const PermissionsDataDrawer = ({
   opened,
@@ -17,7 +17,7 @@ const PermissionsDataDrawer = ({
   onClose,
   ...props
 }) => {
-  const [t, translations] = useTranslateLoader(prefixPN('assetSetup'));
+  const [t, translations] = useTranslateLoader(prefixPN("assetSetup"));
 
   return (
     <BaseDrawer
@@ -30,7 +30,15 @@ const PermissionsDataDrawer = ({
       {...props}
     >
       <PermissionsData
-        {...{ asset, assets, loading, sharing, onNext, onSavePermissions, onClose }}
+        {...{
+          asset,
+          assets,
+          loading,
+          sharing,
+          onNext,
+          onSavePermissions,
+          onClose,
+        }}
         isDrawer
         drawerTranslations={[t, translations]}
       />

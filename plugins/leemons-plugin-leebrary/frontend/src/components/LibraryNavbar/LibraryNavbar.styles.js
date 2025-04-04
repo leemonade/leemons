@@ -4,52 +4,54 @@ import {
   getPaddings,
   getFontExpressive,
   getFontProductive,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 
 export const LibraryNavbarStyles = createStyles((theme, { isExpanded }) => {
   return {
     root: {
-      height: '100%',
-      display: 'flex',
-      flexDirection: 'column',
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
       backgroundColor: theme.other.core.color.white,
       paddingBottom: theme.spacing[3],
-      borderRight: '1px solid ' + theme.other.core.color.neutral[100],
+      borderRight: "1px solid " + theme.other.core.color.neutral[100],
     },
     header: {
       gap: 4,
       padding: 24,
       paddingBottom: 30,
-      display: 'flex',
+      display: "flex",
       color: theme.colors.text01,
     },
     title: {
       fontSize: pxToRem(24),
       lineHeight: pxToRem(30),
-      color: 'inherit',
+      color: "inherit",
     },
     uploadButton: {
-      display: isExpanded && 'none',
+      display: isExpanded && "none",
       padding: `${pxToRem(24)} ${pxToRem(14)} ${pxToRem(0)} ${pxToRem(14)}`,
     },
     navbarBottom: {
-      width: 'calc(100% - 20px)',
+      width: "calc(100% - 20px)",
       marginTop: isExpanded ? 24 : 12,
       maxHeight: isExpanded ? 700 : 92,
       marginInline: 10,
-      overflow: 'hidden',
-      border: isExpanded ? `1px solid ${theme.colors.ui04}` : `1px solid transparent`,
-      position: 'relative',
+      overflow: "hidden",
+      border: isExpanded
+        ? `1px solid ${theme.colors.ui04}`
+        : `1px solid transparent`,
+      position: "relative",
       zIndex: 2,
       borderRadius: 4,
-      backgroundColor: isExpanded ? theme.colors.mainWhite : 'transparent',
+      backgroundColor: isExpanded ? theme.colors.mainWhite : "transparent",
     },
     navbarTopSubWrapper: {
       opacity: isExpanded ? 1 : 0,
-      transition: 'opacity 0.2s ease-out',
+      transition: "opacity 0.2s ease-out",
     },
     fileUpload: {
-      width: 'calc(100% - 20px)',
+      width: "calc(100% - 20px)",
       marginInline: 10,
     },
     sectionTitle: {
@@ -64,7 +66,7 @@ export const LibraryNavbarStyles = createStyles((theme, { isExpanded }) => {
     },
     navbarTopList: {
       paddingBottom: theme.spacing[2],
-      '& > span': {
+      "& > span": {
         padding: 16,
       },
     },

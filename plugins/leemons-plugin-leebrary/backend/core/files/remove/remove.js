@@ -1,6 +1,6 @@
-const { unlink: unlinkFiles } = require('../../assets/files/unlink');
-const { normalizeItemsArray } = require('../../shared');
-const { deleteFile } = require('./deleteFile');
+const { unlink: unlinkFiles } = require("../../assets/files/unlink");
+const { normalizeItemsArray } = require("../../shared");
+const { deleteFile } = require("./deleteFile");
 
 /**
  * Remove files from the system
@@ -13,7 +13,9 @@ const { deleteFile } = require('./deleteFile');
  * @returns {Promise<number>} - Returns the number of files successfully removed
  */
 async function remove({ fileIds, assetId, soft, ctx }) {
-  const files = await ctx.tx.db.Files.find({ id: normalizeItemsArray(fileIds) }).lean();
+  const files = await ctx.tx.db.Files.find({
+    id: normalizeItemsArray(fileIds),
+  }).lean();
 
   // EN: Unlink the file from the asset
   // ES: Desvincular el archivo del asset
@@ -24,7 +26,9 @@ async function remove({ fileIds, assetId, soft, ctx }) {
     ctx,
   });
 
-  const deleted = await Promise.all(files.map((file) => deleteFile({ file, assetId, soft, ctx })));
+  const deleted = await Promise.all(
+    files.map((file) => deleteFile({ file, assetId, soft, ctx }))
+  );
   return deleted.reduce((acc, curr) => acc + (curr === true), 0);
 }
 

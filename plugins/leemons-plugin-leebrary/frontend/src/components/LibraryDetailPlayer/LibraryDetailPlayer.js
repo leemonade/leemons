@@ -1,10 +1,10 @@
 /* eslint-disable consistent-return */
-import React from 'react';
+import React from "react";
 import {
   LIBRARY_DETAIL_PLAYER_DEFAULT_PROPS,
   LIBRARY_DETAIL_PLAYER_PROP_TYPES,
-} from './LibraryDetailPlayer.constants';
-import { AssetPlayerLibraryWrapper } from './AssetPlayerLibraryWrapper';
+} from "./LibraryDetailPlayer.constants";
+import { AssetPlayerLibraryWrapper } from "./AssetPlayerLibraryWrapper";
 
 const LibraryDetailPlayer = ({
   name,

@@ -1,30 +1,33 @@
-import PropTypes from 'prop-types';
-import { ASSET_PROPS, LIBRARYCARD_VARIANTS } from '../LibraryCard/LibraryCard.constants';
+import PropTypes from "prop-types";
+import {
+  ASSET_PROPS,
+  LIBRARYCARD_VARIANTS,
+} from "../LibraryCard/LibraryCard.constants";
 
 export const LIBRARY_DETAIL_VARIANTS = LIBRARYCARD_VARIANTS;
-export const LIBRARY_DETAIL_ROLES = ['owner', 'editor', 'commentor', 'viewer'];
+export const LIBRARY_DETAIL_ROLES = ["owner", "editor", "commentor", "viewer"];
 
 export const LIBRARY_DETAIL_DEFAULT_PROPS = {
   toolbarItems: {
-    edit: 'Edit',
-    duplicate: 'Duplicate',
-    download: 'Download',
-    delete: 'Delete',
-    share: 'Share',
-    assign: 'Assign',
-    pin: 'Pin',
+    edit: "Edit",
+    duplicate: "Duplicate",
+    download: "Download",
+    delete: "Delete",
+    share: "Share",
+    assign: "Assign",
+    pin: "Pin",
     unpin: false,
-    toggle: 'Toggle',
+    toggle: "Toggle",
   },
   drawer: true,
   toolbar: true,
   open: true,
   labels: {
-    copy: 'Copy',
-    copied: 'Copied',
-    sharedWith: 'Shared with',
-    sharedViewAll: 'View all',
-    sharedWithEverybody: 'Shared with everybody',
+    copy: "Copy",
+    copied: "Copied",
+    sharedWith: "Shared with",
+    sharedViewAll: "View all",
+    sharedWithEverybody: "Shared with everybody",
   },
   excludeMetadatas: [],
 };

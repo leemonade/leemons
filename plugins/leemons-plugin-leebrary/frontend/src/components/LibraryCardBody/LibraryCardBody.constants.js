@@ -1,21 +1,26 @@
-import PropTypes from 'prop-types';
-import { LIBRARYCARD_ASSIGMENT_ROLES } from '../Library.constants';
-import { LIBRARYCARD_ASSIGMENT, LIBRARYCARD_VARIANTS } from '../LibraryCard/LibraryCard.constants';
+import PropTypes from "prop-types";
+import { LIBRARYCARD_ASSIGMENT_ROLES } from "../Library.constants";
+import {
+  LIBRARYCARD_ASSIGMENT,
+  LIBRARYCARD_VARIANTS,
+} from "../LibraryCard/LibraryCard.constants";
 
 export const LIBRARY_CARD_BODY_DEFAULT_PROPS = {
   metadata: [],
   tags: [],
-  variant: 'media',
-  badgeColor: 'solid',
+  variant: "media",
+  badgeColor: "solid",
   truncated: true,
-  locale: 'en-GB',
+  locale: "en-GB",
   fullHeight: false,
-  role: 'teacher',
+  role: "teacher",
 };
 export const LIBRARY_CARD_BODY_PROP_TYPES = {
   tagline: PropTypes.string,
   description: PropTypes.string,
-  metadata: PropTypes.arrayOf(PropTypes.shape({ label: PropTypes.any, value: PropTypes.any })),
+  metadata: PropTypes.arrayOf(
+    PropTypes.shape({ label: PropTypes.any, value: PropTypes.any })
+  ),
   tags: PropTypes.arrayOf(PropTypes.string),
   locale: PropTypes.string,
   variant: PropTypes.oneOf(LIBRARYCARD_VARIANTS),

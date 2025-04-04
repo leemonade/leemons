@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
 
 /**
  * Handles 'can use' data for an asset category.
@@ -16,12 +16,12 @@ const { LeemonsError } = require('@leemons/error');
  * @throws {LeemonsError} Throws an error if the caller is not authorized to use the category.
  */
 function checkAndHandleCanUse({ category, calledFrom, ctx }) {
-  let canUse = [ctx.prefixPN(''), category?.pluginOwner];
+  let canUse = [ctx.prefixPN(""), category?.pluginOwner];
   if (_.isArray(category?.canUse) && category?.canUse.length) {
     canUse = canUse.concat(category.canUse);
   }
 
-  if (category?.canUse !== '*' && !canUse.includes(calledFrom)) {
+  if (category?.canUse !== "*" && !canUse.includes(calledFrom)) {
     throw new LeemonsError(ctx, {
       message: `Category "${category?.key}" was not created by the "${calledFrom}" plugin. You can only add assets to categories created by the "${calledFrom}" plugin.`,
       httpStatusCode: 403,

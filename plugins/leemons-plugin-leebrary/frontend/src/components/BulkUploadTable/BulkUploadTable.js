@@ -1,10 +1,10 @@
-import { Stack, Table, createStyles } from '@bubbles-ui/components';
-import propTypes from 'prop-types';
+import { Stack, Table, createStyles } from "@bubbles-ui/components";
+import propTypes from "prop-types";
 
-import useBulkUploadColumns from '@leebrary/hooks/useBulkUploadColumns';
+import useBulkUploadColumns from "@leebrary/hooks/useBulkUploadColumns";
 
 const useProgressStyles = createStyles((theme) => {
-  const progressColor = '#B1E400';
+  const progressColor = "#B1E400";
   return {
     bar: {
       background: progressColor,
@@ -18,7 +18,12 @@ const useProgressStyles = createStyles((theme) => {
 });
 const BulkUploadTable = ({ data, uploadStatus, t, onRemoveFile }) => {
   const { classes } = useProgressStyles();
-  const columns = useBulkUploadColumns({ t, uploadStatus, onRemoveFile, classes });
+  const columns = useBulkUploadColumns({
+    t,
+    uploadStatus,
+    onRemoveFile,
+    classes,
+  });
   return (
     <Stack direction="column" spacing={4}>
       <Table columns={columns} data={data} />

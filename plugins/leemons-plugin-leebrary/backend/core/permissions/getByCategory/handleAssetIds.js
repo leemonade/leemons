@@ -1,7 +1,7 @@
-const { intersection, uniq } = require('lodash');
+const { intersection, uniq } = require("lodash");
 
-const { filterByVersionOfType } = require('../../assets/filterByVersion');
-const getAssetIdFromPermissionName = require('../helpers/getAssetIdFromPermissionName');
+const { filterByVersionOfType } = require("../../assets/filterByVersion");
+const getAssetIdFromPermissionName = require("../helpers/getAssetIdFromPermissionName");
 
 /**
  * This function handles the asset IDs by concatenating all IDs and then getting the intersection in accordance with their status.
@@ -41,9 +41,17 @@ async function handleAssetIds({
   );
 
   try {
-    assetIds = await filterByVersionOfType({ assetIds, categoryId, ctx, published, preferCurrent });
+    assetIds = await filterByVersionOfType({
+      assetIds,
+      categoryId,
+      ctx,
+      published,
+      preferCurrent,
+    });
   } catch (e) {
-    ctx.logger.error(`Failed to get asset by status from categoryId ${categoryId}`);
+    ctx.logger.error(
+      `Failed to get asset by status from categoryId ${categoryId}`
+    );
   }
 
   return assetIds;

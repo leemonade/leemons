@@ -1,6 +1,6 @@
-const { LeemonsError } = require('@leemons/error');
-const { setActiveProvider } = require('../setActiveProvider');
-const { getByName: getProviderByName } = require('../../providers/getByName');
+const { LeemonsError } = require("@leemons/error");
+const { setActiveProvider } = require("../setActiveProvider");
+const { getByName: getProviderByName } = require("../../providers/getByName");
 
 /**
  * This function sets the configuration for a specific provider.
@@ -14,8 +14,12 @@ const { getByName: getProviderByName } = require('../../providers/getByName');
  * @throws {LeemonsError} If the provider is not found or does not support the setConfig method.
  */
 async function setProviderConfig({ providerName, config, ctx } = {}) {
-  if (!['bulk-data', 'admin', 'leebrary', 'client-manager'].includes(ctx.callerPlugin)) {
-    throw new Error('Must be called from leemons-plugin-leebrary');
+  if (
+    !["bulk-data", "admin", "leebrary", "client-manager"].includes(
+      ctx.callerPlugin
+    )
+  ) {
+    throw new Error("Must be called from leemons-plugin-leebrary");
   }
 
   const provider = await getProviderByName({ name: providerName, ctx });
@@ -30,7 +34,7 @@ async function setProviderConfig({ providerName, config, ctx } = {}) {
   if (!provider.supportedMethods?.setConfig) {
     throw new LeemonsError(ctx, {
       message:
-        'Bad implementation for media library, the service provider need the function: setConfig',
+        "Bad implementation for media library, the service provider need the function: setConfig",
       httpStatusCode: 412,
     });
   }

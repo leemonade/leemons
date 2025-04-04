@@ -1,4 +1,4 @@
-const byName = require('./byName');
+const byName = require("./byName");
 
 module.exports = {
   ...byName,

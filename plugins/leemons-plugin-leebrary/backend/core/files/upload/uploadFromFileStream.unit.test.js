@@ -1,24 +1,28 @@
-const { it, expect } = require('@jest/globals');
-const { uploadFromFileStream } = require('./uploadFromFileStream');
-const { createTemp } = require('./createTemp');
-const { upload } = require('./upload');
+const { it, expect } = require("@jest/globals");
+const { uploadFromFileStream } = require("./uploadFromFileStream");
+const { createTemp } = require("./createTemp");
+const { upload } = require("./upload");
 
-jest.mock('./createTemp');
-jest.mock('./upload');
+jest.mock("./createTemp");
+jest.mock("./upload");
 
-it('should upload file from stream successfully', async () => {
+it("should upload file from stream successfully", async () => {
   // Arrange
-  const mockFile = { readStream: {}, contentType: 'image/png' };
-  const mockName = 'test.png';
+  const mockFile = { readStream: {}, contentType: "image/png" };
+  const mockName = "test.png";
   const mockCtx = {};
-  const mockPath = '/fake-tmp/test.png';
-  const mockFileObject = { uri: '/uploaded/test.png' };
+  const mockPath = "/fake-tmp/test.png";
+  const mockFileObject = { uri: "/uploaded/test.png" };
 
   createTemp.mockResolvedValue({ path: mockPath });
   upload.mockResolvedValue(mockFileObject);
 
   // Act
-  const result = await uploadFromFileStream({ file: mockFile, name: mockName, ctx: mockCtx });
+  const result = await uploadFromFileStream({
+    file: mockFile,
+    name: mockName,
+    ctx: mockCtx,
+  });
 
   // Assert
   expect(result).toEqual(mockFileObject);
@@ -33,12 +37,12 @@ it('should upload file from stream successfully', async () => {
   });
 });
 
-it('should throw error when createTemp fails', async () => {
+it("should throw error when createTemp fails", async () => {
   // Arrange
-  const mockFile = { readStream: {}, contentType: 'image/png' };
-  const mockName = 'test.png';
+  const mockFile = { readStream: {}, contentType: "image/png" };
+  const mockName = "test.png";
   const mockCtx = {};
-  const mockError = new Error('Failed to create temp file');
+  const mockError = new Error("Failed to create temp file");
 
   createTemp.mockRejectedValue(mockError);
 
@@ -52,13 +56,13 @@ it('should throw error when createTemp fails', async () => {
   });
 });
 
-it('should throw error when upload fails', async () => {
+it("should throw error when upload fails", async () => {
   // Arrange
-  const mockFile = { readStream: {}, contentType: 'image/png' };
-  const mockName = 'test.png';
+  const mockFile = { readStream: {}, contentType: "image/png" };
+  const mockName = "test.png";
   const mockCtx = {};
-  const mockPath = '/fake-tmp/test.png';
-  const mockError = new Error('Failed to upload file');
+  const mockPath = "/fake-tmp/test.png";
+  const mockError = new Error("Failed to upload file");
 
   createTemp.mockResolvedValue({ path: mockPath });
   upload.mockRejectedValue(mockError);

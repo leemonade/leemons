@@ -1,8 +1,8 @@
-const { LeemonsError } = require('@leemons/error');
-const { find, isEmpty } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { find, isEmpty } = require("lodash");
 
-const getAssetPermissionName = require('../helpers/getAssetPermissionName');
-const getRolePermissions = require('../helpers/getRolePermissions');
+const getAssetPermissionName = require("../helpers/getAssetPermissionName");
+const getRolePermissions = require("../helpers/getRolePermissions");
 
 /**
  * Retrieves permissions by asset.
@@ -17,45 +17,48 @@ async function getByAsset({ assetId, ctx }) {
   try {
     const { userSession } = ctx.meta;
     const getAllItemsForTheUserAgentHasPermissionsByType =
-      'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType';
+      "users.permissions.getAllItemsForTheUserAgentHasPermissionsByType";
 
-    const [permissions, canView, canEdit, canAssign, canAdminister] = await Promise.all([
-      ctx.tx.call('users.permissions.getUserAgentPermissions', {
-        userAgent: userSession.userAgents,
-        query: { permissionName: getAssetPermissionName({ assetId, ctx }) },
-      }),
-      ctx.tx.call(getAllItemsForTheUserAgentHasPermissionsByType, {
-        userAgentId: userSession.userAgents.map((userAgent) => userAgent.id),
-        type: ctx.prefixPN('asset.can-view'),
-        ignoreOriginalTarget: true,
-        item: assetId,
-      }),
-      ctx.tx.call(getAllItemsForTheUserAgentHasPermissionsByType, {
-        userAgentId: userSession.userAgents.map((userAgent) => userAgent.id),
-        type: ctx.prefixPN('asset.can-edit'),
-        ignoreOriginalTarget: true,
-        item: assetId,
-      }),
-      ctx.tx.call(getAllItemsForTheUserAgentHasPermissionsByType, {
-        userAgentId: userSession.userAgents.map((userAgent) => userAgent.id),
-        type: ctx.prefixPN('asset.can-assign'),
-        ignoreOriginalTarget: true,
-        item: assetId,
-      }),
-      ctx.tx.call(getAllItemsForTheUserAgentHasPermissionsByType, {
-        userAgentId: userSession.userAgents.map((userAgent) => userAgent.id),
-        type: ctx.prefixPN('asset.can-administer'),
-        ignoreOriginalTarget: true,
-        item: assetId,
-      }),
-    ]);
+    const [permissions, canView, canEdit, canAssign, canAdminister] =
+      await Promise.all([
+        ctx.tx.call("users.permissions.getUserAgentPermissions", {
+          userAgent: userSession.userAgents,
+          query: { permissionName: getAssetPermissionName({ assetId, ctx }) },
+        }),
+        ctx.tx.call(getAllItemsForTheUserAgentHasPermissionsByType, {
+          userAgentId: userSession.userAgents.map((userAgent) => userAgent.id),
+          type: ctx.prefixPN("asset.can-view"),
+          ignoreOriginalTarget: true,
+          item: assetId,
+        }),
+        ctx.tx.call(getAllItemsForTheUserAgentHasPermissionsByType, {
+          userAgentId: userSession.userAgents.map((userAgent) => userAgent.id),
+          type: ctx.prefixPN("asset.can-edit"),
+          ignoreOriginalTarget: true,
+          item: assetId,
+        }),
+        ctx.tx.call(getAllItemsForTheUserAgentHasPermissionsByType, {
+          userAgentId: userSession.userAgents.map((userAgent) => userAgent.id),
+          type: ctx.prefixPN("asset.can-assign"),
+          ignoreOriginalTarget: true,
+          item: assetId,
+        }),
+        ctx.tx.call(getAllItemsForTheUserAgentHasPermissionsByType, {
+          userAgentId: userSession.userAgents.map((userAgent) => userAgent.id),
+          type: ctx.prefixPN("asset.can-administer"),
+          ignoreOriginalTarget: true,
+          item: assetId,
+        }),
+      ]);
 
     let role = null;
 
     if (isEmpty(permissions)) {
-      const asset = await ctx.tx.db.Assets.findOne({ id: assetId }).select(['id', 'public']).lean();
+      const asset = await ctx.tx.db.Assets.findOne({ id: assetId })
+        .select(["id", "public"])
+        .lean();
       if (asset?.public) {
-        role = 'public';
+        role = "public";
       }
     }
 
@@ -69,16 +72,16 @@ async function getByAsset({ assetId, ctx }) {
     const canAccessRole = role;
 
     if (canView?.length && !role) {
-      role = 'viewer';
+      role = "viewer";
     }
-    if (canAssign?.length && (!role || role !== 'owner')) {
-      role = 'assigner';
+    if (canAssign?.length && (!role || role !== "owner")) {
+      role = "assigner";
     }
-    if (canEdit?.length && (!role || role !== 'owner')) {
-      role = 'editor';
+    if (canEdit?.length && (!role || role !== "owner")) {
+      role = "editor";
     }
-    if (canAdminister?.length && (!role || role !== 'owner')) {
-      role = 'admin';
+    if (canAdminister?.length && (!role || role !== "owner")) {
+      role = "admin";
     }
 
     return {

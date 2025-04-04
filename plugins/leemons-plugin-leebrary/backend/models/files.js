@@ -1,5 +1,5 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
-const { isString } = require('lodash');
+const { mongoose, newModel } = require("@leemons/mongodb");
+const { isString } = require("lodash");
 
 function requiredWhenNotString() {
   return !isString(this.uri);
@@ -65,6 +65,10 @@ filesSchema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
 filesSchema.index({ id: 1, type: 1, deploymentID: 1, isDeleted: 1 });
 filesSchema.index({ fromUser: 1, deploymentID: 1, isDeleted: 1 });
 
-const filesModel = newModel(mongoose.connection, 'v1::leebrary_Files', filesSchema);
+const filesModel = newModel(
+  mongoose.connection,
+  "v1::leebrary_Files",
+  filesSchema
+);
 
 module.exports = { filesModel, filesSchema };

@@ -1,4 +1,4 @@
-const { handleAbortMultipart } = require('./handleAbortMultipart');
+const { handleAbortMultipart } = require("./handleAbortMultipart");
 
 /**
  * Aborts a multipart upload and deletes the file from the database.
@@ -11,7 +11,7 @@ const { handleAbortMultipart } = require('./handleAbortMultipart');
 async function abortMultipart({ fileId, ctx }) {
   // Fetches the file from the database.
   const file = await ctx.tx.db.Files.findOne({ id: fileId }).lean();
-  if (!file) throw new Error('No file found');
+  if (!file) throw new Error("No file found");
 
   await handleAbortMultipart({ file, ctx });
 

@@ -1,13 +1,13 @@
-const { it, expect, describe, beforeEach } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+const { it, expect, describe, beforeEach } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { filterByPublishStatus } = require('./filterByPublishStatus');
-const getPermissionsMock = require('../../../__fixtures__/getPermissionsMocks');
-const getAssets = require('../../../__fixtures__/getAssets');
+const { filterByPublishStatus } = require("./filterByPublishStatus");
+const getPermissionsMock = require("../../../__fixtures__/getPermissionsMocks");
+const getAssets = require("../../../__fixtures__/getAssets");
 
 const getVersionHandle = jest.fn();
 
-describe('filterByPublishStatus', () => {
+describe("filterByPublishStatus", () => {
   const asset = getPermissionsMock().permissionByAsset;
 
   let ctx;
@@ -22,24 +22,24 @@ describe('filterByPublishStatus', () => {
   beforeEach(() => {
     ctx = generateCtx({
       actions: {
-        'common.versionControl.getVersion': getVersionHandle,
+        "common.versionControl.getVersion": getVersionHandle,
       },
     });
 
     assets = [
-      { ...asset, asset: 'asset1@2.0.0' },
-      { ...asset, asset: 'asset2@2.0.0' },
+      { ...asset, asset: "asset1@2.0.0" },
+      { ...asset, asset: "asset2@2.0.0" },
     ];
     assetsWithPermissions = assets;
     assetsVersion = getAssets().assetsVersion;
     nothingFound = false;
     preferCurrent = true;
-    published = 'all';
-    roles = ['owner'];
+    published = "all";
+    roles = ["owner"];
   });
 
-  describe('Intended workload', () => {
-    it('should return assets with permissions', async () => {
+  describe("Intended workload", () => {
+    it("should return assets with permissions", async () => {
       // Arrange
       getVersionHandle.mockReturnValue(assetsVersion);
 
@@ -59,8 +59,8 @@ describe('filterByPublishStatus', () => {
     });
   });
 
-  describe('Limit use cases', () => {
-    it('should return entry assets if nothingFound is true', async () => {
+  describe("Limit use cases", () => {
+    it("should return entry assets if nothingFound is true", async () => {
       // Arrange
       nothingFound = true;
 
@@ -79,9 +79,9 @@ describe('filterByPublishStatus', () => {
       expect(response).toEqual(assets);
     });
 
-    it('should return empty array if roles are not included', async () => {
+    it("should return empty array if roles are not included", async () => {
       // Arrange
-      roles = ['role3'];
+      roles = ["role3"];
 
       // Act
       const response = await filterByPublishStatus({
@@ -99,7 +99,7 @@ describe('filterByPublishStatus', () => {
     });
   });
 
-  describe('Additional tests', () => {
+  describe("Additional tests", () => {
     it('should return assets with permissions if published is not "all"', async () => {
       // Arrange
       published = true;
@@ -119,11 +119,11 @@ describe('filterByPublishStatus', () => {
       expect(response).toEqual([assetsWithPermissions[1]]);
     });
   });
-  it('should return assets with permissions of not lastest version if preferCurrent is false', async () => {
+  it("should return assets with permissions of not lastest version if preferCurrent is false", async () => {
     // Arrange
     preferCurrent = false;
     const newAssetsWithPermissions = assetsWithPermissions;
-    newAssetsWithPermissions[0].asset = 'asset1@1.0.0';
+    newAssetsWithPermissions[0].asset = "asset1@1.0.0";
 
     // Act
     const response = await filterByPublishStatus({

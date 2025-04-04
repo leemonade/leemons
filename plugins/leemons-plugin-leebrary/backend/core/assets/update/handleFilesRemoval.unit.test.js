@@ -1,27 +1,27 @@
-const { afterEach, describe, expect, it } = require('@jest/globals');
-const { cloneDeep } = require('lodash');
+const { afterEach, describe, expect, it } = require("@jest/globals");
+const { cloneDeep } = require("lodash");
 
-const { handleFilesRemoval } = require('./handleFilesRemoval');
-const { remove: removeFilesById } = require('../files/remove');
+const { handleFilesRemoval } = require("./handleFilesRemoval");
+const { remove: removeFilesById } = require("../files/remove");
 
-jest.mock('../files/remove');
+jest.mock("../files/remove");
 
-describe('handleFilesRemoval', () => {
+describe("handleFilesRemoval", () => {
   // Arrange
-  const assetId = 'testAssetId';
+  const assetId = "testAssetId";
   const assetData = {
-    file: 'testFile',
-    cover: 'testCover',
-    coverFile: 'testCoverFile',
+    file: "testFile",
+    cover: "testCover",
+    coverFile: "testCoverFile",
   };
-  const filesToRemove = ['file1'];
+  const filesToRemove = ["file1"];
   const ctx = {};
 
   afterEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should remove file if fileNeedsUpdate is true', async () => {
+  it("should remove file if fileNeedsUpdate is true", async () => {
     // Arrange
     const fileNeedsUpdate = true;
     const coverNeedsUpdate = false;
@@ -44,7 +44,7 @@ describe('handleFilesRemoval', () => {
     });
   });
 
-  it('should remove cover and coverFile if coverNeedsUpdate is true', async () => {
+  it("should remove cover and coverFile if coverNeedsUpdate is true", async () => {
     // Arrange
     const fileNeedsUpdate = false;
     const coverNeedsUpdate = true;
@@ -67,7 +67,7 @@ describe('handleFilesRemoval', () => {
     });
   });
 
-  it('should not remove any files if fileNeedsUpdate and coverNeedsUpdate are false', async () => {
+  it("should not remove any files if fileNeedsUpdate and coverNeedsUpdate are false", async () => {
     // Arrange
     const fileNeedsUpdate = false;
     const coverNeedsUpdate = false;
@@ -86,12 +86,12 @@ describe('handleFilesRemoval', () => {
     expect(removeFilesById).not.toHaveBeenCalled();
   });
 
-  it('should not throw an error if removeFilesById fails', async () => {
+  it("should not throw an error if removeFilesById fails", async () => {
     // Arrange
     const fileNeedsUpdate = true;
     const coverNeedsUpdate = false;
     removeFilesById.mockImplementationOnce(() => {
-      throw new Error('Test error');
+      throw new Error("Test error");
     });
 
     // Act and Assert

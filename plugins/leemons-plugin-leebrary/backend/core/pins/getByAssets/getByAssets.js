@@ -7,7 +7,7 @@
  * @param {Context} params.ctx - The Moleculer context object.
  * @returns {Promise<LibraryPin[]>} A promise that resolves with the found pin documents.
  */
-const { flattenDeep } = require('lodash');
+const { flattenDeep } = require("lodash");
 
 async function getByAssets({ assetsIds, columns, ctx }) {
   const assets = flattenDeep([assetsIds]);

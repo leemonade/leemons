@@ -1,4 +1,4 @@
-const getByUser = require('./getByUser');
+const getByUser = require("./getByUser");
 
 module.exports = {
   ...getByUser,

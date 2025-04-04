@@ -1,15 +1,21 @@
-import React, { useRef, useCallback, useEffect, useState } from 'react';
-import { Box, Text, TextClamp, Loader } from '@bubbles-ui/components';
-import { ControlsPlayIcon, ControlsPauseIcon } from '@bubbles-ui/icons/solid';
-import { WaveSurfer, WaveForm } from 'wavesurfer-react';
+import React, { useRef, useCallback, useEffect, useState } from "react";
+import { Box, Text, TextClamp, Loader } from "@bubbles-ui/components";
+import { ControlsPlayIcon, ControlsPauseIcon } from "@bubbles-ui/icons/solid";
+import { WaveSurfer, WaveForm } from "wavesurfer-react";
 import {
   AUDIO_PROGRESS_BAR_DEFAULT_PROPS,
   AUDIO_PROGRESS_BAR_PROP_TYPES,
-} from './AudioProgressBar.constants';
-import { AudioProgressBarStyles } from './AudioProgressBar.styles';
+} from "./AudioProgressBar.constants";
+import { AudioProgressBarStyles } from "./AudioProgressBar.styles";
 
 const Back15Icon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="19" viewBox="0 0 18 19" fill="none">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="18"
+    height="19"
+    viewBox="0 0 18 19"
+    fill="none"
+  >
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -20,7 +26,13 @@ const Back15Icon = () => (
 );
 
 const Forward15Icon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="19" viewBox="0 0 18 19" fill="none">
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="18"
+    height="19"
+    viewBox="0 0 18 19"
+    fill="none"
+  >
     <path
       fillRule="evenodd"
       clipRule="evenodd"
@@ -57,8 +69,8 @@ const AudioProgressBar = ({
     const minutes = Math.floor(currentTimeInSeconds / 60);
     const seconds = Math.floor(currentTimeInSeconds % 60);
 
-    const formattedMinutes = minutes.toString().padStart(2, '0');
-    const formattedSeconds = seconds.toString().padStart(2, '0');
+    const formattedMinutes = minutes.toString().padStart(2, "0");
+    const formattedSeconds = seconds.toString().padStart(2, "0");
 
     return `${formattedMinutes}:${formattedSeconds}`;
   };
@@ -68,8 +80,8 @@ const AudioProgressBar = ({
     const minutes = Math.floor(durationInSeconds / 60);
     const seconds = Math.floor(durationInSeconds % 60);
 
-    const formattedMinutes = minutes.toString().padStart(2, '0');
-    const formattedSeconds = seconds.toString().padStart(2, '0');
+    const formattedMinutes = minutes.toString().padStart(2, "0");
+    const formattedSeconds = seconds.toString().padStart(2, "0");
 
     return `${formattedMinutes}:${formattedSeconds}`;
   };
@@ -80,7 +92,7 @@ const AudioProgressBar = ({
 
       if (wavesurferRef.current) {
         wavesurferRef.current.load(url);
-        wavesurferRef.current.on('ready', () => {
+        wavesurferRef.current.on("ready", () => {
           setIsAudioLoaded(true);
         });
 
@@ -94,7 +106,9 @@ const AudioProgressBar = ({
 
   const handlePlayPause = () => {
     setHandlePlay(!handlePlay);
-    return handlePlay ? wavesurferRef.current.pause() : wavesurferRef.current.play();
+    return handlePlay
+      ? wavesurferRef.current.pause()
+      : wavesurferRef.current.play();
   };
 
   // ··································································
@@ -167,7 +181,7 @@ const AudioProgressBar = ({
 
   const { classes } = AudioProgressBarStyles(
     { useSpaceBetween: title || subtitle },
-    { name: 'AudioProgressBar' }
+    { name: "AudioProgressBar" }
   );
 
   return (
@@ -214,7 +228,7 @@ const AudioProgressBar = ({
       {isAudioLoaded && (
         <Box className={classes.controlsWrapper}>
           <Box>
-            <Text size={'xs'} role={'productive'} className={classes.duration}>
+            <Text size={"xs"} role={"productive"} className={classes.duration}>
               {getDuration()}
             </Text>
           </Box>
@@ -227,10 +241,10 @@ const AudioProgressBar = ({
             />
             <input
               className={classes.progressBarSeekSlider}
-              type={'range'}
+              type={"range"}
               min={0}
               max={0.999999}
-              step={'any'}
+              step={"any"}
               value={currentPercentage}
               onChange={handleSeekChange}
               onMouseDown={handleSeekMouseDown}
@@ -238,7 +252,7 @@ const AudioProgressBar = ({
             />
           </Box>
           <Box>
-            <Text size={'xs'} role={'productive'} className={classes.duration}>
+            <Text size={"xs"} role={"productive"} className={classes.duration}>
               {getTotalDuration()}
             </Text>
           </Box>
@@ -248,9 +262,16 @@ const AudioProgressBar = ({
                 <Box onClick={handleGoBackward} className={classes.iconWrapper}>
                   <Back15Icon className={classes.controlIcon} />
                 </Box>
-                <Box onClick={() => handlePlayPause()} className={classes.iconWrapper}>
+                <Box
+                  onClick={() => handlePlayPause()}
+                  className={classes.iconWrapper}
+                >
                   {handlePlay ? (
-                    <ControlsPauseIcon height={20} width={20} className={classes.controlIcon} />
+                    <ControlsPauseIcon
+                      height={20}
+                      width={20}
+                      className={classes.controlIcon}
+                    />
                   ) : (
                     <ControlsPlayIcon
                       height={18}

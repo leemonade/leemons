@@ -1,17 +1,24 @@
-const { it, expect, describe, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const { handleCloneFile } = require('./handleCloneFile');
-const { filesSchema } = require('../../../models');
-const { getByName } = require('../../providers/getByName');
-const getProviders = require('../../../__fixtures__/getProviders');
+const {
+  it,
+  expect,
+  describe,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const { handleCloneFile } = require("./handleCloneFile");
+const { filesSchema } = require("../../../models");
+const { getByName } = require("../../providers/getByName");
+const getProviders = require("../../../__fixtures__/getProviders");
 
-jest.mock('../../providers/getByName');
+jest.mock("../../providers/getByName");
 
 let mongooseConnection;
 let disconnectMongoose;
 
-describe('Handle Clone File', () => {
+describe("Handle Clone File", () => {
   beforeAll(async () => {
     const { mongoose, disconnect } = await createMongooseConnection();
 
@@ -31,21 +38,21 @@ describe('Handle Clone File', () => {
     getByName.mockClear();
   });
 
-  it('Should correctly handle clone file for provider with clone method', async () => {
+  it("Should correctly handle clone file for provider with clone method", async () => {
     // Arrange
     const { provider } = getProviders();
     getByName.mockResolvedValue(provider.value.params);
     const fromFileData = {
       provider: provider.value.pluginName,
-      id: 'testFileId',
-      name: 'testFileName',
-      type: 'testFileType',
-      uri: 'testFileUrl',
-      extension: 'testExtension',
+      id: "testFileId",
+      name: "testFileName",
+      type: "testFileType",
+      uri: "testFileUrl",
+      extension: "testExtension",
     };
     const ctx = generateCtx({
       models: {
-        Files: newModel(mongooseConnection, 'Files', filesSchema),
+        Files: newModel(mongooseConnection, "Files", filesSchema),
       },
     });
 
@@ -54,7 +61,9 @@ describe('Handle Clone File', () => {
 
     // Act
     await handleCloneFile({ fromFile, providerName: fromFile.provider, ctx });
-    const newFile = await ctx.tx.db.Files.findOne({ id: { $ne: fromFile.id } }).lean();
+    const newFile = await ctx.tx.db.Files.findOne({
+      id: { $ne: fromFile.id },
+    }).lean();
 
     // Assert
     expect(getByName).toHaveBeenCalledWith({ name: fromFile.provider, ctx });
@@ -69,16 +78,20 @@ describe('Handle Clone File', () => {
     );
   });
 
-  it('Should return null for provider without clone method', async () => {
+  it("Should return null for provider without clone method", async () => {
     // Arrange
     const { provider } = getProviders();
     provider.value.params.supportedMethods.clone = false;
     getByName.mockResolvedValue(provider.value.params);
-    const fromFile = { provider: provider.value.pluginName, uri: 'test-uri' };
+    const fromFile = { provider: provider.value.pluginName, uri: "test-uri" };
     const ctx = generateCtx({});
 
     // Act
-    const result = await handleCloneFile({ fromFile, providerName: fromFile.provider, ctx });
+    const result = await handleCloneFile({
+      fromFile,
+      providerName: fromFile.provider,
+      ctx,
+    });
 
     // Assert
     expect(result).toBeNull();

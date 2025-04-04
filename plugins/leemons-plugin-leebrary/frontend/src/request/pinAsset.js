@@ -1,7 +1,7 @@
 async function pinAsset(assetId) {
   return leemons.api(`v1/leebrary/assets/pins`, {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: { asset: assetId },
   });
 }

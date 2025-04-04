@@ -1,7 +1,7 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-param-reassign */
-const path = require('path');
-const fsPromises = require('fs/promises');
+const path = require("path");
+const fsPromises = require("fs/promises");
 
 /**
  * Handles the file system for the given file.
@@ -14,18 +14,25 @@ const fsPromises = require('fs/promises');
  * @returns {Promise<LibraryFile>} A promise that resolves with the handled file.
  */
 async function handleFileSystem({ file, filePaths }) {
-  file.provider = 'sys';
+  file.provider = "sys";
 
   if (!file.isFolder) {
-    file.uri = path.resolve(__dirname, '..', '..', '..', 'files', `${file.id}.${file.extension}`);
-    await fsPromises.writeFile(file.uri, '');
+    file.uri = path.resolve(
+      __dirname,
+      "..",
+      "..",
+      "..",
+      "files",
+      `${file.id}.${file.extension}`
+    );
+    await fsPromises.writeFile(file.uri, "");
   } else {
-    file.uri = path.resolve(__dirname, '..', '..', '..', 'files', `${file.id}`);
+    file.uri = path.resolve(__dirname, "..", "..", "..", "files", `${file.id}`);
     Promise.allSettled(
       filePaths.map((filePath) =>
         fsPromises
           .mkdir(path.dirname(`${file.uri}/${filePath}`), { recursive: true })
-          .then(() => fsPromises.writeFile(`${file.uri}/${filePath}`, ''))
+          .then(() => fsPromises.writeFile(`${file.uri}/${filePath}`, ""))
       )
     );
   }

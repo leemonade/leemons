@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useEffect, useRef, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
 
-import ActivityHeader from '@assignables/components/ActivityHeader';
+import ActivityHeader from "@assignables/components/ActivityHeader";
 import {
   ActivityUnavailable,
   ActivityUnavailableFooter,
   useActivityStates,
-} from '@assignables/components/ActivityUnavailable';
-import TotalLayoutStepContainerWithAccordion from '@assignables/components/TotalLayoutStepContainerWithAccordion/TotalLayoutStepContainerWithAccordion';
-import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
+} from "@assignables/components/ActivityUnavailable";
+import TotalLayoutStepContainerWithAccordion from "@assignables/components/TotalLayoutStepContainerWithAccordion/TotalLayoutStepContainerWithAccordion";
+import useAssignations from "@assignables/requests/hooks/queries/useAssignations";
 import {
   Button,
   HtmlText,
@@ -17,19 +17,19 @@ import {
   TotalLayoutContainer,
   TotalLayoutFooterContainer,
   useTheme,
-} from '@bubbles-ui/components';
-import { DownloadIcon } from '@bubbles-ui/icons/outline';
-import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
-import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
+} from "@bubbles-ui/components";
+import { DownloadIcon } from "@bubbles-ui/icons/outline";
+import { AlertInformationCircleIcon } from "@bubbles-ui/icons/solid";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useUpdateTimestamps } from "@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps";
+import useStudentAssignationMutation from "@tasks/hooks/student/useStudentAssignationMutation";
 
-import { AssetPlayerWrapperExecution } from '@leebrary/components/LibraryTool/AssetPlayerWrapperExecution';
-import prefixPN from '@leebrary/helpers/prefixPN';
-import useAssets from '@leebrary/request/hooks/queries/useAssets';
+import { AssetPlayerWrapperExecution } from "@leebrary/components/LibraryTool/AssetPlayerWrapperExecution";
+import prefixPN from "@leebrary/helpers/prefixPN";
+import useAssets from "@leebrary/request/hooks/queries/useAssets";
 
 export default function Execution() {
-  const [t] = useTranslateLoader(prefixPN('assignableExecution'));
+  const [t] = useTranslateLoader(prefixPN("assignableExecution"));
   const { id, user } = useParams();
   const scrollRef = useRef();
   const history = useHistory();
@@ -48,15 +48,15 @@ export default function Execution() {
 
   const isFinished = assignation?.timestamps?.end;
   const correctionUrl = `${assignable?.roleDetails?.evaluationDetailUrl
-    ?.replace(':id', id)
-    ?.replace(':user', user)}?fromExecution`;
+    ?.replace(":id", id)
+    ?.replace(":user", user)}?fromExecution`;
 
   const { mutateAsync } = useStudentAssignationMutation();
   const updateTimestamps = useUpdateTimestamps(mutateAsync, assignation);
 
   useEffect(() => {
-    updateTimestamps('open');
-    updateTimestamps('start');
+    updateTimestamps("open");
+    updateTimestamps("start");
   }, [updateTimestamps]);
 
   const { data: asset } = useAssets({
@@ -66,7 +66,7 @@ export default function Execution() {
     select: (assets) => assets?.[0] ?? null,
   });
 
-  const isPdf = asset?.fileExtension === 'pdf';
+  const isPdf = asset?.fileExtension === "pdf";
 
   if (isLoading) {
     return <LoadingOverlay />;
@@ -88,13 +88,19 @@ export default function Execution() {
         />
       }
     >
-      <Stack justifyContent="center" style={{ overflowY: 'auto' }} ref={scrollRef}>
+      <Stack
+        justifyContent="center"
+        style={{ overflowY: "auto" }}
+        ref={scrollRef}
+      >
         <TotalLayoutStepContainerWithAccordion
           accordion={
             !!instance?.metadata?.statement && {
-              title: t('instructions'),
+              title: t("instructions"),
               icon: (
-                <AlertInformationCircleIcon color={theme.other.global.content.color.icon.default} />
+                <AlertInformationCircleIcon
+                  color={theme.other.global.content.color.icon.default}
+                />
               ),
               children: <HtmlText>{instance?.metadata?.statement}</HtmlText>,
             }
@@ -110,9 +116,11 @@ export default function Execution() {
                     <Button
                       leftIcon={<DownloadIcon />}
                       variant="outline"
-                      onClick={() => window.open(asset.url, '_blank', 'noopener')}
+                      onClick={() =>
+                        window.open(asset.url, "_blank", "noopener")
+                      }
                     >
-                      {t('download')}
+                      {t("download")}
                     </Button>
                   )}
                   <Button
@@ -120,12 +128,12 @@ export default function Execution() {
                     disabled={isFinished}
                     onClick={async () => {
                       setIsSubmitting(true);
-                      await updateTimestamps('end');
+                      await updateTimestamps("end");
                       setIsSubmitting(false);
                       history.push(correctionUrl);
                     }}
                   >
-                    {t('finish')}
+                    {t("finish")}
                   </Button>
                 </Stack>
               </TotalLayoutFooterContainer>
@@ -133,9 +141,19 @@ export default function Execution() {
           }
         >
           {isUnavailable ? (
-            <ActivityUnavailable instance={instance} user={user} scrollRef={scrollRef} clean />
+            <ActivityUnavailable
+              instance={instance}
+              user={user}
+              scrollRef={scrollRef}
+              clean
+            />
           ) : (
-            <Stack fullWidth fullHeight justifyContent="center" alignItems="center">
+            <Stack
+              fullWidth
+              fullHeight
+              justifyContent="center"
+              alignItems="center"
+            >
               <AssetPlayerWrapperExecution asset={asset} />
             </Stack>
           )}

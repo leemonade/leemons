@@ -4,16 +4,16 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
 
-const { set } = require('../../core/permissions/set');
+const { set } = require("../../core/permissions/set");
 
 /** @type {ServiceSchema} */
 module.exports = {
   setRest: {
     rest: {
-      method: 'POST',
-      path: '/asset/:asset',
+      method: "POST",
+      path: "/asset/:asset",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

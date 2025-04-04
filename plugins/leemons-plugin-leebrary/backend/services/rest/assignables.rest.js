@@ -1,12 +1,12 @@
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
 
-const assignAsset = require('../../core/assignables/assignAsset');
+const assignAsset = require("../../core/assignables/assignAsset");
 
 module.exports = {
   assign: {
     rest: {
-      path: '/assign',
-      method: 'POST',
+      path: "/assign",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     handler: async (ctx) => {

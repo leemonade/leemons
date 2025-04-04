@@ -1,8 +1,12 @@
-const { CATEGORIES } = require('../../../config/constants');
-const { getById: getCategoryById } = require('../../categories/getById');
+const { CATEGORIES } = require("../../../config/constants");
+const { getById: getCategoryById } = require("../../categories/getById");
 
-const CATEGORY_WITHOUT_STATUS_KEYS = [CATEGORIES.BOOKMARKS, CATEGORIES.MEDIA_FILES];
-const statusCheck = ({ asset, isPublishing }) => isPublishing || !!asset?.providerData?.published;
+const CATEGORY_WITHOUT_STATUS_KEYS = [
+  CATEGORIES.BOOKMARKS,
+  CATEGORIES.MEDIA_FILES,
+];
+const statusCheck = ({ asset, isPublishing }) =>
+  isPublishing || !!asset?.providerData?.published;
 const academicTagsCheck = ({ asset }) => asset.subjects?.length > 0;
 
 /**
@@ -21,7 +25,8 @@ async function shouldAssetHavePermission({ assetDetail, isPublishing, ctx }) {
     return academicTagsCheck({ asset: assetDetail });
   }
   return (
-    statusCheck({ asset: assetDetail, isPublishing }) && academicTagsCheck({ asset: assetDetail })
+    statusCheck({ asset: assetDetail, isPublishing }) &&
+    academicTagsCheck({ asset: assetDetail })
   );
 }
 

@@ -11,7 +11,7 @@
 function handleUserSessionData({ assetData, ctx }) {
   const { userSession } = ctx.meta;
   if (!Object.keys(userSession).length)
-    ctx.logger.warn('Empty userSession passed to handleUserSessionData');
+    ctx.logger.warn("Empty userSession passed to handleUserSessionData");
 
   assetData.fromUser = userSession.id;
   assetData.fromUserAgent = userSession.userAgents?.[0]?.id || null;

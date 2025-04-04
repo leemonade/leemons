@@ -1,3 +1,3 @@
-const getClassesPermissions = require('./getClassesPermissions');
+const getClassesPermissions = require("./getClassesPermissions");
 
 module.exports = { ...getClassesPermissions };

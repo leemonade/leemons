@@ -1,8 +1,8 @@
-const { LeemonsError } = require('@leemons/error');
-const { map } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { map } = require("lodash");
 
-const { getByAsset } = require('../getByAsset');
-const canAssignRole = require('../helpers/canAssignRole');
+const { getByAsset } = require("../getByAsset");
+const canAssignRole = require("../helpers/canAssignRole");
 
 /**
  * This function gives a user agent permission for an asset.
@@ -30,7 +30,10 @@ async function addPermissionsToUserAgent({
   const result = [];
   const { canAccessRole: assigneeRole } = await getByAsset({
     assetId: id,
-    ctx: { ...ctx, meta: { ...ctx.meta, userSession: { userAgents: [{ id: userAgent }] } } },
+    ctx: {
+      ...ctx,
+      meta: { ...ctx.meta, userSession: { userAgents: [{ id: userAgent }] } },
+    },
   });
 
   if (assigneeRole === role) return [];
@@ -55,26 +58,26 @@ async function addPermissionsToUserAgent({
 
   // EN: When assigning owner role, replace current owner role by editor role
   // ES: Cuando se asigna el rol de propietario, reemplazar el rol de propietario actual por el rol de editor
-  if (role === 'owner' && assignerRole === 'owner') {
+  if (role === "owner" && assignerRole === "owner") {
     // First, remove all permissions to the asset
-    await ctx.tx.call('users.permissions.removeCustomUserAgentPermission', {
-      userAgentId: map(ctx.meta.userSession.userAgents, 'id'),
+    await ctx.tx.call("users.permissions.removeCustomUserAgentPermission", {
+      userAgentId: map(ctx.meta.userSession.userAgents, "id"),
       data: { permissionName },
     });
 
     // Then, add editor permission to the asset
     if (!removeAllPermissionsFromPreviousOwner) {
       result.push(
-        await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
-          userAgentId: map(ctx.meta.userSession.userAgents, 'id'),
-          data: { permissionName, actionNames: ['editor'], target: categoryId },
+        await ctx.tx.call("users.permissions.addCustomPermissionToUserAgent", {
+          userAgentId: map(ctx.meta.userSession.userAgents, "id"),
+          data: { permissionName, actionNames: ["editor"], target: categoryId },
         })
       );
     }
   }
 
   // First, remove all permissions to the asset
-  await ctx.tx.call('users.permissions.removeCustomUserAgentPermission', {
+  await ctx.tx.call("users.permissions.removeCustomUserAgentPermission", {
     userAgentId: userAgent,
     data: { permissionName },
   });
@@ -83,13 +86,15 @@ async function addPermissionsToUserAgent({
     // EN: Set role
     // ES: Asignar rol
     result.push(
-      await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
+      await ctx.tx.call("users.permissions.addCustomPermissionToUserAgent", {
         userAgentId: userAgent,
         data: { permissionName, actionNames: [role], target: categoryId },
       })
     );
   } catch (e) {
-    ctx.logger.error(`Cannot assign custom permissions to UserAgent ${userAgent}: ${e.message}`);
+    ctx.logger.error(
+      `Cannot assign custom permissions to UserAgent ${userAgent}: ${e.message}`
+    );
   }
   return result;
 }

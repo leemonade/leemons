@@ -1,19 +1,25 @@
 /* eslint-disable no-inner-declarations */
 /* eslint-disable no-await-in-loop */
-const { LeemonsError } = require('@leemons/error');
-const _ = require('lodash');
-const { map } = require('lodash');
-const { omit } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const _ = require("lodash");
+const { map } = require("lodash");
+const { omit } = require("lodash");
 
-const { getByIds } = require('../../assets/getByIds');
-const { update: updateAsset } = require('../../assets/update');
-const { validateSetPermissions } = require('../../validations/forms');
-const { getByAssets } = require('../getByAssets');
+const { getByIds } = require("../../assets/getByIds");
+const { update: updateAsset } = require("../../assets/update");
+const { validateSetPermissions } = require("../../validations/forms");
+const { getByAssets } = require("../getByAssets");
 
-const { checkIfRolesExist } = require('./checkIfRolesExist');
-const { handleAddPermissionsToAsset } = require('./handleAddPermissionsToAsset');
-const { handleAddPermissionsToUserAgent } = require('./handleAddPermissionsToUserAgent');
-const { handleRemoveMissingPermissions } = require('./handleRemoveMissingPermissions');
+const { checkIfRolesExist } = require("./checkIfRolesExist");
+const {
+  handleAddPermissionsToAsset,
+} = require("./handleAddPermissionsToAsset");
+const {
+  handleAddPermissionsToUserAgent,
+} = require("./handleAddPermissionsToUserAgent");
+const {
+  handleRemoveMissingPermissions,
+} = require("./handleRemoveMissingPermissions");
 
 /**
  * Set permissions/roles for userAgents to access a specified assetID
@@ -42,7 +48,12 @@ async function set({
 }) {
   try {
     const assetIds = _.isArray(assetId) ? assetId : [assetId];
-    await validateSetPermissions({ assets: assetIds, permissions, canAccess, isPublic });
+    await validateSetPermissions({
+      assets: assetIds,
+      permissions,
+      canAccess,
+      isPublic,
+    });
 
     // ES: Comprobamos si los roles que se quieren usar existen
     checkIfRolesExist({ canAccess, permissions, ctx });
@@ -52,17 +63,18 @@ async function set({
       getByAssets({ assetIds, ownerUserAgentIds, ctx }),
       getByIds({ ids: assetIds, ctx }),
     ]);
-    const assetsDataById = _.keyBy(assetsData, 'id');
+    const assetsDataById = _.keyBy(assetsData, "id");
     const assetsRoleById = {};
     _.forEach(assetsRole, (assetRole) => {
       assetsRoleById[assetRole.asset] = assetRole.role;
     });
     // ES: Comprobamos que el usuario actual tiene permisos para actualizar los assets
     _.forEach(assetIds, (id) => {
-      const cannotSetPublic = assetsRoleById[id] !== 'owner' && assetsRoleById[id] !== 'admin';
+      const cannotSetPublic =
+        assetsRoleById[id] !== "owner" && assetsRoleById[id] !== "admin";
       if (cannotSetPublic && (isPublic || assetsDataById[id].public)) {
         throw new LeemonsError(ctx, {
-          message: 'Only owner/admin can set public permissions.',
+          message: "Only owner/admin can set public permissions.",
           httpStatusCode: 412,
         });
       }
@@ -75,9 +87,12 @@ async function set({
         const asset = shouldMaintainSubjectTagsWhenPublic
           ? {
               ...assetsDataById[id],
-              subjects: assetsDataById[id].subjects?.map((subject) => subject.subject) || [],
+              subjects:
+                assetsDataById[id].subjects?.map(
+                  (subject) => subject.subject
+                ) || [],
             }
-          : omit(assetsDataById[id], ['subjects']);
+          : omit(assetsDataById[id], ["subjects"]);
         updatePromises.push(
           updateAsset({
             data: {

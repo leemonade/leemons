@@ -10,20 +10,23 @@
  */
 async function handleItemPermissions({ assetsIds, userAgents, ctx }) {
   const permissionTypes = [
-    'asset.can-view',
-    'asset.can-edit',
-    'asset.can-assign',
-    'asset.can-administer',
+    "asset.can-view",
+    "asset.can-edit",
+    "asset.can-assign",
+    "asset.can-administer",
   ];
 
   return Promise.all(
     permissionTypes.map((type) =>
-      ctx.tx.call('users.permissions.getAllItemsForTheUserAgentHasPermissionsByType', {
-        userAgentId: userAgents,
-        type: ctx.prefixPN(type),
-        ignoreOriginalTarget: true,
-        item: assetsIds,
-      })
+      ctx.tx.call(
+        "users.permissions.getAllItemsForTheUserAgentHasPermissionsByType",
+        {
+          userAgentId: userAgents,
+          type: ctx.prefixPN(type),
+          ignoreOriginalTarget: true,
+          item: assetsIds,
+        }
+      )
     )
   );
 }

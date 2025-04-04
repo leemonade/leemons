@@ -1,16 +1,22 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { handleBookmarkDuplication } = require('./handleBookmarkDuplication');
-const { bookmarksSchema } = require('../../../models/bookmarks');
-const getAssets = require('../../../__fixtures__/getAssets');
-const getBookmarkFromDB = require('../../../__fixtures__/getBookmarkFromDB');
-const getMediaFileData = require('../../../__fixtures__/getMediaFileData');
+const { handleBookmarkDuplication } = require("./handleBookmarkDuplication");
+const { bookmarksSchema } = require("../../../models/bookmarks");
+const getAssets = require("../../../__fixtures__/getAssets");
+const getBookmarkFromDB = require("../../../__fixtures__/getBookmarkFromDB");
+const getMediaFileData = require("../../../__fixtures__/getMediaFileData");
 
 // MOCKS
-jest.mock('../../files/duplicate');
-const { duplicate: duplicateFile } = require('../../files/duplicate');
+jest.mock("../../files/duplicate");
+const { duplicate: duplicateFile } = require("../../files/duplicate");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -37,16 +43,20 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Creates a new bookmark in the DB and, if bookmark has an a icon, it duplicates it and modifies the asset otherwise it does not.', async () => {
+it("Creates a new bookmark in the DB and, if bookmark has an a icon, it duplicates it and modifies the asset otherwise it does not.", async () => {
   // Arrange
   const asset = { ...bookmarkAsset };
-  const bookmark = { ...bookmarkFromDB, icon: 'notTheCoverFile' };
-  const filesToDuplicate = [{ ...imageFile, id: 'notTheCoverFile' }];
-  const newIcon = { ...imageFile, id: 'newIconId', uri: 'leemons/leebrary/newIconId.png' };
+  const bookmark = { ...bookmarkFromDB, icon: "notTheCoverFile" };
+  const filesToDuplicate = [{ ...imageFile, id: "notTheCoverFile" }];
+  const newIcon = {
+    ...imageFile,
+    id: "newIconId",
+    uri: "leemons/leebrary/newIconId.png",
+  };
 
   const ctx = generateCtx({
     models: {
-      Bookmarks: newModel(mongooseConnection, 'Bookmarks', bookmarksSchema),
+      Bookmarks: newModel(mongooseConnection, "Bookmarks", bookmarksSchema),
     },
   });
 
@@ -55,11 +65,11 @@ it('Creates a new bookmark in the DB and, if bookmark has an a icon, it duplicat
   const expectedValue = {
     ...asset,
     url: bookmark.url,
-    fileType: 'bookmark',
+    fileType: "bookmark",
     metadata: [],
     icon: newIcon,
   };
-  const expectedValueNoIcon = { ...asset, id: 'bookmarkWithNoIcon' };
+  const expectedValueNoIcon = { ...asset, id: "bookmarkWithNoIcon" };
 
   // Act
   const response = await handleBookmarkDuplication({
@@ -68,15 +78,17 @@ it('Creates a new bookmark in the DB and, if bookmark has an a icon, it duplicat
     filesToDuplicate,
     ctx,
   });
-  const foundBookmark = await ctx.db.Bookmarks.findOne({ url: bookmark.url }).lean();
+  const foundBookmark = await ctx.db.Bookmarks.findOne({
+    url: bookmark.url,
+  }).lean();
   const responseNoIcon = await handleBookmarkDuplication({
-    newAsset: { ...asset, id: 'bookmarkWithNoIcon' },
+    newAsset: { ...asset, id: "bookmarkWithNoIcon" },
     bookmark: { ...bookmark, icon: undefined },
     filesToDuplicate,
     ctx,
   });
   const foundBookmarkNoIcon = await ctx.db.Bookmarks.findOne({
-    asset: 'bookmarkWithNoIcon',
+    asset: "bookmarkWithNoIcon",
   }).lean();
 
   // Assert
@@ -89,14 +101,14 @@ it('Creates a new bookmark in the DB and, if bookmark has an a icon, it duplicat
   expect(responseNoIcon).toEqual(expectedValueNoIcon);
 });
 
-it('Does not throw if file duplication retuns unexpected values', async () => {
+it("Does not throw if file duplication retuns unexpected values", async () => {
   // Arrange
   const bookmark = { ...bookmarkFromDB };
   const unexpectedValue = undefined;
 
   const ctx = generateCtx({
     models: {
-      Bookmarks: newModel(mongooseConnection, 'Bookmarks', bookmarksSchema),
+      Bookmarks: newModel(mongooseConnection, "Bookmarks", bookmarksSchema),
     },
   });
 
@@ -115,7 +127,7 @@ it('Does not throw if file duplication retuns unexpected values', async () => {
     ...bookmarkAsset,
     url: bookmark.url,
     icon: unexpectedValue,
-    fileType: 'bookmark',
+    fileType: "bookmark",
     metadata: [],
   });
 });

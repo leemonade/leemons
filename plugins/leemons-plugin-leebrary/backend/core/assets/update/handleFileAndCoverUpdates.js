@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
-const { isEmpty } = require('lodash');
+const { isEmpty } = require("lodash");
 
-const { uploadFromSource } = require('../../files/helpers/uploadFromSource');
-const { add: addFiles } = require('../files/add');
+const { uploadFromSource } = require("../../files/helpers/uploadFromSource");
+const { add: addFiles } = require("../files/add");
 
 /**
  * Handles the file and cover updates if necessary.
@@ -30,9 +30,13 @@ async function handleFileAndCoverUpdates({
   let newCoverFile;
 
   if (fileNeedsUpdate && !isEmpty(file)) {
-    newFile = await uploadFromSource({ source: file, name: assetData.name, ctx });
+    newFile = await uploadFromSource({
+      source: file,
+      name: assetData.name,
+      ctx,
+    });
 
-    if (newFile?.type?.indexOf('image') === 0) {
+    if (newFile?.type?.indexOf("image") === 0) {
       newCoverFile = newFile;
     }
 
@@ -42,7 +46,11 @@ async function handleFileAndCoverUpdates({
   }
 
   if (coverNeedsUpdate && !newCoverFile && !isEmpty(cover)) {
-    newCoverFile = await uploadFromSource({ source: cover, name: assetData.name, ctx });
+    newCoverFile = await uploadFromSource({
+      source: cover,
+      name: assetData.name,
+      ctx,
+    });
   }
 
   if (newCoverFile?.id) {
@@ -59,7 +67,12 @@ async function handleFileAndCoverUpdates({
     newCoverFile = currentAsset.cover;
   }
 
-  return { newFile, coverFile: newCoverFile, toUpdate: updateObject, filesToRemove };
+  return {
+    newFile,
+    coverFile: newCoverFile,
+    toUpdate: updateObject,
+    filesToRemove,
+  };
 }
 
 module.exports = { handleFileAndCoverUpdates };

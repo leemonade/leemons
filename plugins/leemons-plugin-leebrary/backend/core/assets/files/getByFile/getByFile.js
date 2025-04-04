@@ -1,8 +1,8 @@
-const { last } = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { getRelatedAssets } = require('./getRelatedAssets');
-const { handleIsPublic } = require('./handleIsPublic');
-const { handleUserPermissions } = require('./handleUserPermissions');
+const { last } = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { getRelatedAssets } = require("./getRelatedAssets");
+const { handleIsPublic } = require("./handleIsPublic");
+const { handleUserPermissions } = require("./handleUserPermissions");
 
 /**
  * Fetches the asset related to a file by its ID.

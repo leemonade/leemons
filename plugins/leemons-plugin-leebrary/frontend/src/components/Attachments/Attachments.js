@@ -1,18 +1,23 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { uniqBy, map } from 'lodash';
-import { Box, Button, createStyles, SortableList } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
-import getAssetsByIds from '@leebrary/request/getAssetsByIds';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { AssetPickerDrawer } from '@leebrary/components/AssetPickerDrawer';
+import React, { useState, useCallback, useEffect } from "react";
+import { uniqBy, map } from "lodash";
+import {
+  Box,
+  Button,
+  createStyles,
+  SortableList,
+} from "@bubbles-ui/components";
+import PropTypes from "prop-types";
+import prepareAsset from "@leebrary/helpers/prepareAsset";
+import getAssetsByIds from "@leebrary/request/getAssetsByIds";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import { AssetPickerDrawer } from "@leebrary/components/AssetPickerDrawer";
 
-import { AttachmentItem } from './AttchmentItem';
+import { AttachmentItem } from "./AttchmentItem";
 
 const styles = createStyles(() => ({
   attachmentContainer: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     gap: 2,
   },
 }));
@@ -22,7 +27,10 @@ function Attachments({ setValue, getValues, labels }) {
     --- Drawer state ---
   */
   const [showAssetDrawer, setShowAssetDrawer] = useState(false);
-  const onDrawerClose = useCallback(() => setShowAssetDrawer(false), [setShowAssetDrawer]);
+  const onDrawerClose = useCallback(
+    () => setShowAssetDrawer(false),
+    [setShowAssetDrawer]
+  );
   const toggleDrawer = useCallback(
     () => setShowAssetDrawer((showDrawer) => !showDrawer),
     [setShowAssetDrawer]
@@ -33,12 +41,18 @@ function Attachments({ setValue, getValues, labels }) {
   const [resources, setResources] = useState([]);
   useEffect(() => {
     (async () => {
-      const formResources = getValues('resources');
+      const formResources = getValues("resources");
       if (formResources?.length) {
-        const savedAssets = await getAssetsByIds(formResources, { public: true, indexable: false });
+        const savedAssets = await getAssetsByIds(formResources, {
+          public: true,
+          indexable: false,
+        });
         const newAssets = await getAssetsByIds(formResources, { public: true });
 
-        const assets = uniqBy([...savedAssets.assets, ...newAssets.assets], 'id');
+        const assets = uniqBy(
+          [...savedAssets.assets, ...newAssets.assets],
+          "id"
+        );
         const preparedAssets = assets?.map(prepareAsset);
         if (preparedAssets?.length) {
           setResources(preparedAssets);
@@ -48,7 +62,7 @@ function Attachments({ setValue, getValues, labels }) {
   }, []);
 
   useEffect(() => {
-    setValue('resources', map(resources, 'id'), {
+    setValue("resources", map(resources, "id"), {
       shouldDirty: true,
       shouldTouch: true,
     });
@@ -63,12 +77,12 @@ function Attachments({ setValue, getValues, labels }) {
     (asset) => {
       let newResources;
       setResources((currentResources) => {
-        newResources = uniqBy([...currentResources, prepareAsset(asset)], 'id');
+        newResources = uniqBy([...currentResources, prepareAsset(asset)], "id");
 
         return newResources;
       });
       onDrawerClose();
-      setValue('resources', map(newResources, 'id'), {
+      setValue("resources", map(newResources, "id"), {
         shouldDirty: true,
         shouldTouch: true,
       });
@@ -80,10 +94,15 @@ function Attachments({ setValue, getValues, labels }) {
     (asset) => {
       let newResources;
       setResources((currentResources) => {
-        newResources = currentResources.filter((resource) => resource.id !== asset.id);
+        newResources = currentResources.filter(
+          (resource) => resource.id !== asset.id
+        );
         return newResources;
       });
-      setValue('resources', map(newResources, 'id'), { shouldDirty: true, shouldTouch: true });
+      setValue("resources", map(newResources, "id"), {
+        shouldDirty: true,
+        shouldTouch: true,
+      });
     },
 
     [setResources]
@@ -100,11 +119,11 @@ function Attachments({ setValue, getValues, labels }) {
           onSubmit={(e) => {
             // EN: Added to prevent the event from bubbling up to the parent form
             // ES: Añadido para evitar que el evento se propague hacia arriba del formulario
-            if (typeof e.preventDefault === 'function') {
+            if (typeof e.preventDefault === "function") {
               e.preventDefault();
             }
 
-            if (typeof e.stopPropagation === 'function') {
+            if (typeof e.stopPropagation === "function") {
               e.stopPropagation();
             }
           }}
@@ -112,7 +131,7 @@ function Attachments({ setValue, getValues, labels }) {
           <AssetPickerDrawer
             opened={showAssetDrawer}
             layout="rows"
-            categories={['bookmarks', 'media-files']}
+            categories={["bookmarks", "media-files"]}
             creatable
             onClose={onDrawerClose}
             onSelect={onAssetSelect}
@@ -128,7 +147,11 @@ function Attachments({ setValue, getValues, labels }) {
           />
         </Box>
         <Box>
-          <Button variant="link" onClick={toggleDrawer} leftIcon={<AddCircleIcon />}>
+          <Button
+            variant="link"
+            onClick={toggleDrawer}
+            leftIcon={<AddCircleIcon />}
+          >
             {labels?.addResource}
           </Button>
         </Box>

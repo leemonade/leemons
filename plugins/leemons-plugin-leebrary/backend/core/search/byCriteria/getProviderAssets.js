@@ -7,9 +7,9 @@ const {
   uniq,
   escapeRegExp,
   concat,
-} = require('lodash');
+} = require("lodash");
 
-const { byProvider: getByProvider } = require('../byProvider');
+const { byProvider: getByProvider } = require("../byProvider");
 /**
  * This function retrieves provider assets based on the provided parameters.
  * It first checks if the search is to be conducted in the provider and if a category ID and criteria are provided.
@@ -49,9 +49,9 @@ function buildQueryObject({
   };
   if (criteria) {
     query.$or = [
-      { name: { $regex: escapeRegExp(criteria), $options: 'i' } },
-      { tagline: { $regex: escapeRegExp(criteria), $options: 'i' } },
-      { description: { $regex: escapeRegExp(criteria), $options: 'i' } },
+      { name: { $regex: escapeRegExp(criteria), $options: "i" } },
+      { tagline: { $regex: escapeRegExp(criteria), $options: "i" } },
+      { description: { $regex: escapeRegExp(criteria), $options: "i" } },
     ];
   }
 
@@ -123,10 +123,10 @@ async function getProviderAssets({
   });
 
   const [assetsFound, byTags] = await Promise.all([
-    ctx.tx.db.Assets.find(query).select(['id']).lean(),
-    ctx.tx.call('common.tags.getTagsValueByPartialTags', {
+    ctx.tx.db.Assets.find(query).select(["id"]).lean(),
+    ctx.tx.call("common.tags.getTagsValueByPartialTags", {
       values: criteria,
-      type: ctx.prefixPN(''),
+      type: ctx.prefixPN(""),
     }),
   ]);
 
@@ -134,20 +134,25 @@ async function getProviderAssets({
 
   if (byTags?.length && categoryId) {
     const byTagsQuery = { id: byTags, category: categoryId, indexable };
-    byTagsFiltered = await ctx.tx.db.Assets.find(byTagsQuery).select(['id']).lean();
-    byTagsFiltered = map(byTagsFiltered, 'id');
+    byTagsFiltered = await ctx.tx.db.Assets.find(byTagsQuery)
+      .select(["id"])
+      .lean();
+    byTagsFiltered = map(byTagsFiltered, "id");
   } else {
     byTagsFiltered = byTags;
   }
 
-  const matches = map(assetsFound, 'id');
+  const matches = map(assetsFound, "id");
 
   // ES: Si existen recursos, se debe a un filtro previo que debemos aplicar como intersección
   // EN: If there are resources, we must apply a previous filter as an intersection
   if (isEmpty(criteria)) {
     assets = matches;
   } else if (!isEmpty(assets)) {
-    const assetsByTags = intersection(assets, compact(uniq(flattenDeep(byTagsFiltered))));
+    const assetsByTags = intersection(
+      assets,
+      compact(uniq(flattenDeep(byTagsFiltered)))
+    );
     const assetsByDBMatches = intersection(assets, matches);
     assets = compact(uniq(assetsByTags.concat(assetsByDBMatches)));
   } else {

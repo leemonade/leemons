@@ -1,1 +1,1 @@
-export * from './DeleteIcon';
+export * from "./DeleteIcon";

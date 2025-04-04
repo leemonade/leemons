@@ -1,7 +1,7 @@
 async function getProviders() {
   return leemons.api(`v1/leebrary/providers`, {
     allAgents: true,
-    method: 'GET',
+    method: "GET",
   });
 }
 

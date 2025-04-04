@@ -1,11 +1,17 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const { LeemonsError } = require('@leemons/error');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const { LeemonsError } = require("@leemons/error");
 
-const { remove } = require('./remove');
-const { categoriesSchema } = require('../../../models/categories');
-const getCategory = require('../../../__fixtures__/getCategory');
+const { remove } = require("./remove");
+const { categoriesSchema } = require("../../../models/categories");
+const getCategory = require("../../../__fixtures__/getCategory");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -21,7 +27,7 @@ beforeAll(async () => {
   ctx = generateCtx({
     actions: {},
     models: {
-      Categories: newModel(mongooseConnection, 'Categories', categoriesSchema),
+      Categories: newModel(mongooseConnection, "Categories", categoriesSchema),
     },
   });
 
@@ -41,21 +47,23 @@ beforeEach(async () => {
   await ctx.tx.db.Categories.create(categoryData);
 });
 
-it('Should remove a category', async () => {
+it("Should remove a category", async () => {
   // Arrange
 
   // Act
   const response = await remove({ category: categoryData, ctx });
-  const expectedValue = await ctx.tx.db.Categories.findOne({ id: categoryData.id }).lean();
+  const expectedValue = await ctx.tx.db.Categories.findOne({
+    id: categoryData.id,
+  }).lean();
 
   // Assert
   expect(response).toStrictEqual({ acknowledged: true, deletedCount: 1 });
   expect(expectedValue).toEqual(null);
 });
 
-it('Should throw an error if function fails', async () => {
+it("Should throw an error if function fails", async () => {
   // Arrange
-  const errorMessage = 'Error';
+  const errorMessage = "Error";
   ctx.tx.db.Categories.deleteMany = jest.fn().mockImplementation(() => {
     throw new Error(errorMessage);
   });

@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const categoriesSchema = new mongoose.Schema(
   {
@@ -59,8 +59,8 @@ const categoriesSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      default: 'resource',
-      enum: ['activity', 'resource'],
+      default: "resource",
+      enum: ["activity", "resource"],
     },
   },
   {
@@ -72,6 +72,10 @@ const categoriesSchema = new mongoose.Schema(
 categoriesSchema.index({ key: 1, deploymentID: 1, isDeleted: 1 });
 categoriesSchema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
 
-const categoriesModel = newModel(mongoose.connection, 'v1::leebrary_Categories', categoriesSchema);
+const categoriesModel = newModel(
+  mongoose.connection,
+  "v1::leebrary_Categories",
+  categoriesSchema
+);
 
 module.exports = { categoriesModel, categoriesSchema };

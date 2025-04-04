@@ -2,21 +2,21 @@ const {
   it,
   expect,
   jest: { fn },
-} = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+} = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { handleTags } = require('./handleTags');
-const getAssets = require('../../../__fixtures__/getAssets');
+const { handleTags } = require("./handleTags");
+const getAssets = require("../../../__fixtures__/getAssets");
 
 const { bookmarkAsset } = getAssets();
 
-it('Should retrieve an array of tags associated to the particular asset', async () => {
+it("Should retrieve an array of tags associated to the particular asset", async () => {
   // Arrange
-  const getValuesTags = fn(() => [['Leemons'], 'wrong']);
+  const getValuesTags = fn(() => [["Leemons"], "wrong"]);
 
   const ctx = generateCtx({
     actions: {
-      'common.tags.getValuesTags': getValuesTags,
+      "common.tags.getValuesTags": getValuesTags,
     },
   });
 
@@ -28,7 +28,7 @@ it('Should retrieve an array of tags associated to the particular asset', async 
   // Assert
   expect(getValuesTags).toBeCalledWith({
     values: bookmarkAsset.id,
-    type: ctx.prefixPN(''),
+    type: ctx.prefixPN(""),
   });
   expect(response).toEqual(expectedResponse);
 });

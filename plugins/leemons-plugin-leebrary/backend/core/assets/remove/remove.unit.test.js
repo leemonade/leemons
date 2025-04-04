@@ -1,29 +1,37 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const { LeemonsError } = require('@leemons/error');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const { LeemonsError } = require("@leemons/error");
 
-const { remove } = require('./remove');
+const { remove } = require("./remove");
 
-const { assetsSchema } = require('../../../models/assets');
-const getAssets = require('../../../__fixtures__/getAssets');
-const { CATEGORIES } = require('../../../config/constants');
+const { assetsSchema } = require("../../../models/assets");
+const getAssets = require("../../../__fixtures__/getAssets");
+const { CATEGORIES } = require("../../../config/constants");
 
-jest.mock('../getByIds/getByIds');
-jest.mock('../../permissions/getByAsset');
-jest.mock('../files/getByAsset/getByAsset');
-jest.mock('../../categories/getById');
-jest.mock('../../bookmarks/remove');
-jest.mock('../files/remove');
-jest.mock('../../permissions/helpers/getAssetPermissionName');
+jest.mock("../getByIds/getByIds");
+jest.mock("../../permissions/getByAsset");
+jest.mock("../files/getByAsset/getByAsset");
+jest.mock("../../categories/getById");
+jest.mock("../../bookmarks/remove");
+jest.mock("../files/remove");
+jest.mock("../../permissions/helpers/getAssetPermissionName");
 
-const { getByIds } = require('../getByIds/getByIds');
-const { getByAsset: getPermissions } = require('../../permissions/getByAsset');
-const { getByAsset: getFilesByAsset } = require('../files/getByAsset/getByAsset');
-const { getById: getCategoryById } = require('../../categories/getById');
-const { remove: removeBookmark } = require('../../bookmarks/remove');
-const { remove: removeFiles } = require('../files/remove');
-const getAssetPermissionName = require('../../permissions/helpers/getAssetPermissionName');
+const { getByIds } = require("../getByIds/getByIds");
+const { getByAsset: getPermissions } = require("../../permissions/getByAsset");
+const {
+  getByAsset: getFilesByAsset,
+} = require("../files/getByAsset/getByAsset");
+const { getById: getCategoryById } = require("../../categories/getById");
+const { remove: removeBookmark } = require("../../bookmarks/remove");
+const { remove: removeFiles } = require("../files/remove");
+const getAssetPermissionName = require("../../permissions/helpers/getAssetPermissionName");
 
 const permissions = {
   view: true,
@@ -32,10 +40,10 @@ const permissions = {
   edit: true,
   delete: true,
   duplicate: true,
-  canAssign: ['assigner', 'viewer', 'commentor', 'editor', 'owner'],
-  canUnassign: ['assigner', 'viewer', 'commentor', 'editor'],
+  canAssign: ["assigner", "viewer", "commentor", "editor", "owner"],
+  canUnassign: ["assigner", "viewer", "commentor", "editor"],
 };
-const files = ['f1fb124b-b7d4-4a81-81d1-e7f179f6e96'];
+const files = ["f1fb124b-b7d4-4a81-81d1-e7f179f6e96"];
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -60,18 +68,18 @@ beforeAll(async () => {
 
   ctx = generateCtx({
     actions: {
-      'common.tags.removeAllTagsForValues': removeAllTagsForValues,
-      'users.permissions.removeCustomPermissionForAllUserAgents':
+      "common.tags.removeAllTagsForValues": removeAllTagsForValues,
+      "users.permissions.removeCustomPermissionForAllUserAgents":
         removeCustomPermissionFormAllUserAgents,
-      'users.permissions.removeItems': removePermissions,
+      "users.permissions.removeItems": removePermissions,
     },
     events: {
-      'before-remove-asset': beforeRemoveAsset,
-      'after-remove-asset': afterRemoveAsset,
+      "before-remove-asset": beforeRemoveAsset,
+      "after-remove-asset": afterRemoveAsset,
     },
 
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
 });
@@ -88,7 +96,7 @@ beforeEach(async () => {
   jest.resetAllMocks();
 });
 
-it('Should remove an Bookmark Asset correctly', async () => {
+it("Should remove an Bookmark Asset correctly", async () => {
   // Arrange
   const { bookmarkAsset: asset } = getAssets();
   asset.cover = asset.cover.id;
@@ -116,13 +124,22 @@ it('Should remove an Bookmark Asset correctly', async () => {
   expect(getByIds).toBeCalledWith({ ids: asset.id, ctx });
   expect(getPermissions).toBeCalledWith({ assetId: asset.id, ctx });
   expect(beforeRemoveAsset).toBeCalledWith({ assetId: asset.id, soft });
-  expect(removeAllTagsForValues).toBeCalledWith({ type: ctx.prefixPN(''), values: asset.id });
+  expect(removeAllTagsForValues).toBeCalledWith({
+    type: ctx.prefixPN(""),
+    values: asset.id,
+  });
   expect(getFilesByAsset).toBeCalledWith({ assetId: asset.id, ctx });
   expect(getCategoryById).toBeCalledWith({ id: asset.category, ctx });
   expect(removeBookmark).toBeCalledWith({ assetId: asset.id, ctx });
-  expect(removeFiles).toBeCalledWith({ fileIds: asset.cover, assetId: asset.id, ctx });
+  expect(removeFiles).toBeCalledWith({
+    fileIds: asset.cover,
+    assetId: asset.id,
+    ctx,
+  });
   expect(getAssetPermissionName).toBeCalledWith({ assetId: asset.id, ctx });
-  expect(removeCustomPermissionFormAllUserAgents).toBeCalledWith({ data: { permissionName } });
+  expect(removeCustomPermissionFormAllUserAgents).toBeCalledWith({
+    data: { permissionName },
+  });
   expect(removePermissions).toBeCalledWith({
     query: {
       type: ctx.prefixPN(asset.category),
@@ -135,7 +152,7 @@ it('Should remove an Bookmark Asset correctly', async () => {
   expect(findAsset).toEqual(null);
 });
 
-it('Should remove a Asset different than a Bookmark correctly', async () => {
+it("Should remove a Asset different than a Bookmark correctly", async () => {
   // Arrange
   const { bookmarkAsset: asset } = getAssets();
   asset.cover = asset.cover.id;
@@ -152,8 +169,8 @@ it('Should remove a Asset different than a Bookmark correctly', async () => {
       edit: true,
       delete: true,
       duplicate: true,
-      canAssign: ['assigner', 'viewer', 'commentor', 'editor', 'owner'],
-      canUnassign: ['assigner', 'viewer', 'commentor', 'editor'],
+      canAssign: ["assigner", "viewer", "commentor", "editor", "owner"],
+      canUnassign: ["assigner", "viewer", "commentor", "editor"],
     },
   });
   getFilesByAsset.mockResolvedValue(files);
@@ -172,14 +189,27 @@ it('Should remove a Asset different than a Bookmark correctly', async () => {
   expect(getByIds).toBeCalledWith({ ids: asset.id, ctx });
   expect(getPermissions).toBeCalledWith({ assetId: asset.id, ctx });
   expect(beforeRemoveAsset).toBeCalledWith({ assetId: asset.id, soft });
-  expect(removeAllTagsForValues).toBeCalledWith({ type: ctx.prefixPN(''), values: asset.id });
+  expect(removeAllTagsForValues).toBeCalledWith({
+    type: ctx.prefixPN(""),
+    values: asset.id,
+  });
   expect(getFilesByAsset).toBeCalledWith({ assetId: asset.id, ctx });
   expect(getCategoryById).toBeCalledWith({ id: asset.category, ctx });
-  expect(removeFiles).toHaveBeenNthCalledWith(1, { fileIds: files, assetId: asset.id, ctx });
+  expect(removeFiles).toHaveBeenNthCalledWith(1, {
+    fileIds: files,
+    assetId: asset.id,
+    ctx,
+  });
   expect(removeBookmark).toHaveBeenCalledTimes(0);
-  expect(removeFiles).toHaveBeenNthCalledWith(2, { fileIds: asset.cover, assetId: asset.id, ctx });
+  expect(removeFiles).toHaveBeenNthCalledWith(2, {
+    fileIds: asset.cover,
+    assetId: asset.id,
+    ctx,
+  });
   expect(getAssetPermissionName).toBeCalledWith({ assetId: asset.id, ctx });
-  expect(removeCustomPermissionFormAllUserAgents).toBeCalledWith({ data: { permissionName } });
+  expect(removeCustomPermissionFormAllUserAgents).toBeCalledWith({
+    data: { permissionName },
+  });
   expect(removePermissions).toBeCalledWith({
     query: {
       type: ctx.prefixPN(asset.category),
@@ -192,7 +222,7 @@ it('Should remove a Asset different than a Bookmark correctly', async () => {
   expect(findAsset).toEqual(null);
 });
 
-it('Should throw if asset ID is not valid', async () => {
+it("Should throw if asset ID is not valid", async () => {
   // Arrange
   const {
     bookmarkAsset: { id },
@@ -212,7 +242,7 @@ it('Should throw if asset ID is not valid', async () => {
   expect(getByIds).toBeCalledWith({ ids: id, ctx });
 });
 
-it('Should throw if no delete permission', async () => {
+it("Should throw if no delete permission", async () => {
   // Arrange
   const { bookmarkAsset: asset } = getAssets();
   asset.cover = asset.cover.id;

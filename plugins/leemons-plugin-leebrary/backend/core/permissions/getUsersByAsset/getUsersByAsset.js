@@ -1,6 +1,6 @@
-const { LeemonsError } = require('@leemons/error');
-const { getByAsset } = require('../getByAsset');
-const getAssetPermissionName = require('../helpers/getAssetPermissionName');
+const { LeemonsError } = require("@leemons/error");
+const { getByAsset } = require("../getByAsset");
+const getAssetPermissionName = require("../helpers/getAssetPermissionName");
 
 /**
  * Gets users by asset.
@@ -16,8 +16,10 @@ async function getUsersByAsset({ assetId, ctx }) {
 
     // If user has at least VIEW permission
     if (permissions.view) {
-      return ctx.tx.call('users.permissions.findUsersWithPermissions', {
-        permissions: { permissionName: getAssetPermissionName({ assetId, ctx }) },
+      return ctx.tx.call("users.permissions.findUsersWithPermissions", {
+        permissions: {
+          permissionName: getAssetPermissionName({ assetId, ctx }),
+        },
       });
     }
 
@@ -28,7 +30,8 @@ async function getUsersByAsset({ assetId, ctx }) {
   } catch (e) {
     throw new LeemonsError(ctx, {
       message: `Failed to get permissions: ${e.message}`,
-      httpStatusCode: e.message === "You don't have permission to list users" ? 401 : 500,
+      httpStatusCode:
+        e.message === "You don't have permission to list users" ? 401 : 500,
     });
   }
 }

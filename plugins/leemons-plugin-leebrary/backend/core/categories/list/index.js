@@ -1,4 +1,4 @@
-const list = require('./list');
+const list = require("./list");
 
 module.exports = {
   ...list,

@@ -1,9 +1,9 @@
-import React from 'react';
-import { AssetPlayer } from '@leebrary/components/AssetPlayer';
+import React from "react";
+import { AssetPlayer } from "@leebrary/components/AssetPlayer";
 import {
   ASSET_PLAYER_WRAPPER_CCREATOR_DEFAULT_PROPS,
   ASSET_PLAYER_WRAPPER_CCREATOR_PROP_TYPES,
-} from './AssetPlayerWrapperCCreator.constants';
+} from "./AssetPlayerWrapperCCreator.constants";
 
 const AssetPlayerWrapperCCreator = ({
   asset,
@@ -22,14 +22,15 @@ const AssetPlayerWrapperCCreator = ({
     useAudioCard,
     ccMode: true,
   };
-  if (asset?.fileType === 'video') {
+  if (asset?.fileType === "video") {
     CCreatorProps.compact = true;
     CCreatorProps.useAspectRatio = true;
   }
   return <AssetPlayer {...CCreatorProps} />;
 };
 
-AssetPlayerWrapperCCreator.defaultProps = ASSET_PLAYER_WRAPPER_CCREATOR_DEFAULT_PROPS;
+AssetPlayerWrapperCCreator.defaultProps =
+  ASSET_PLAYER_WRAPPER_CCREATOR_DEFAULT_PROPS;
 AssetPlayerWrapperCCreator.propTypes = ASSET_PLAYER_WRAPPER_CCREATOR_PROP_TYPES;
-AssetPlayerWrapperCCreator.displayName = 'AssetPlayerWrapperCCreator';
+AssetPlayerWrapperCCreator.displayName = "AssetPlayerWrapperCCreator";
 export { AssetPlayerWrapperCCreator };

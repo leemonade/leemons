@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from "react";
 
 import {
   Box,
@@ -7,28 +7,31 @@ import {
   ModalZoom,
   TextClamp,
   CardEmptyCover,
-} from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { isFunction } from 'lodash';
-import ReactPlayer from 'react-player/lazy';
+} from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { isFunction } from "lodash";
+import ReactPlayer from "react-player/lazy";
 
-import prefixPN from '../../helpers/prefixPN';
-import Cover from '../Cover';
+import prefixPN from "../../helpers/prefixPN";
+import Cover from "../Cover";
 
-import { ASSET_PLAYER_DEFAULT_PROPS, ASSET_PLAYER_PROP_TYPES } from './AssetPlayer.constants';
-import { AssetPlayerStyles } from './AssetPlayer.styles';
-import { AudioCardPlayer } from './components/AudioCardPlayer';
-import { ButtonIcon } from './components/ButtonIcon';
-import { PDFPlayer } from './components/PDFPlayer';
-import { ProgressBar } from './components/ProgressBar';
+import {
+  ASSET_PLAYER_DEFAULT_PROPS,
+  ASSET_PLAYER_PROP_TYPES,
+} from "./AssetPlayer.constants";
+import { AssetPlayerStyles } from "./AssetPlayer.styles";
+import { AudioCardPlayer } from "./components/AudioCardPlayer";
+import { ButtonIcon } from "./components/ButtonIcon";
+import { PDFPlayer } from "./components/PDFPlayer";
+import { ProgressBar } from "./components/ProgressBar";
 
 const format = (seconds) => {
   const date = new Date(seconds * 1000);
   const hh = date.getUTCHours();
   const mm = date.getUTCMinutes();
-  const ss = String(date.getUTCSeconds()).padStart(2, '0');
+  const ss = String(date.getUTCSeconds()).padStart(2, "0");
   if (hh) {
-    return `${hh}:${String(mm).padStart(2, '0')}:${ss}`;
+    return `${hh}:${String(mm).padStart(2, "0")}:${ss}`;
   }
   return `${mm}:${ss}`;
 };
@@ -80,7 +83,7 @@ const AssetPlayer = ({
   if (!url && cover) {
     url = cover;
     if (!fileType) {
-      fileType = 'image';
+      fileType = "image";
     }
   }
   const playerRef = useRef(null);
@@ -96,24 +99,24 @@ const AssetPlayer = ({
   const [mediaVolume, setMediaVolume] = useState(volume || 1);
   const [assetHeight, setAssetHeight] = useState(0);
   const [isVideoHovered, setIsVideoHovered] = useState(false);
-  const [t] = useTranslateLoader(prefixPN('pdfPlayer'));
+  const [t] = useTranslateLoader(prefixPN("pdfPlayer"));
   const pdfLabels = {
-    pageLabel: t('pageLabel'),
-    paginatorLabel: t('paginatorLabel'),
-    schemaLabel: t('schemaLabel'),
+    pageLabel: t("pageLabel"),
+    paginatorLabel: t("paginatorLabel"),
+    schemaLabel: t("schemaLabel"),
   };
   const media = useMemo(() => {
     let result = {
-      isPlayable: fileType === 'video' || fileType === 'audio',
-      isVideo: fileType === 'video',
-      isAudio: fileType === 'audio',
-      isImage: fileType === 'image',
-      isPDF: fileExtension === 'pdf',
+      isPlayable: fileType === "video" || fileType === "audio",
+      isVideo: fileType === "video",
+      isAudio: fileType === "audio",
+      isImage: fileType === "image",
+      isPDF: fileExtension === "pdf",
       // isAFrame3D: ['gltf', 'glb', 'obj'].includes(fileExtension?.toLowerCase()),
-      isURL: ['bookmark', 'url', 'link'].includes(fileType),
-      isFile: !['video', 'audio', 'image', 'url'].includes(fileType),
+      isURL: ["bookmark", "url", "link"].includes(fileType),
+      isFile: !["video", "audio", "image", "url"].includes(fileType),
     };
-    if (result.isURL && mediaType === 'video') {
+    if (result.isURL && mediaType === "video") {
       result = {
         ...result,
         isPlayable: true,
@@ -126,15 +129,15 @@ const AssetPlayer = ({
   }, [fileType, mediaType]);
 
   const mediaRatio = useMemo(() => {
-    if (fileType !== 'video') return 9 / 16;
+    if (fileType !== "video") return 9 / 16;
 
     let mediaDimensions = {};
     (metadata || []).reduce((prev, curr) => {
       let data = {};
-      if (curr.label.toLowerCase() === 'height') {
+      if (curr.label.toLowerCase() === "height") {
         data = { ...prev, height: parseInt(curr.value) };
       }
-      if (curr.label.toLowerCase() === 'width') {
+      if (curr.label.toLowerCase() === "width") {
         data = { ...prev, width: parseInt(curr.value) };
       }
       mediaDimensions = data;
@@ -153,18 +156,26 @@ const AssetPlayer = ({
   // ··································································
   // METHODS
 
-  const getDuration = () => <time dateTime={`P${Math.round(seconds)}S`}>{format(seconds)}</time>;
+  const getDuration = () => (
+    <time dateTime={`P${Math.round(seconds)}S`}>{format(seconds)}</time>
+  );
 
   const getTotalDuration = () => {
-    const totalDuration = playerRef.current ? playerRef.current.getDuration() : 0;
-    return <time dateTime={`P${Math.round(totalDuration)}S`}>{format(totalDuration)}</time>;
+    const totalDuration = playerRef.current
+      ? playerRef.current.getDuration()
+      : 0;
+    return (
+      <time dateTime={`P${Math.round(totalDuration)}S`}>
+        {format(totalDuration)}
+      </time>
+    );
   };
 
   // ··································································
   // HANDLERS
 
   const openPdfHandler = () => {
-    window.open(url, '_blank', 'noreferrer');
+    window.open(url, "_blank", "noreferrer");
   };
 
   const onEventHandler = (event, eventInfo) => {
@@ -207,7 +218,7 @@ const AssetPlayer = ({
   };
 
   const toggleOnSpaceBar = (event) => {
-    if (event.code === 'Space') {
+    if (event.code === "Space") {
       setIsPlaying(!isPlaying);
     }
   };
@@ -240,14 +251,15 @@ const AssetPlayer = ({
 
   useEffect(() => {
     if (!rootRef.current) return null;
-    rootRef.current.addEventListener('fullscreenchange', (e) => {
+    rootRef.current.addEventListener("fullscreenchange", (e) => {
       const isFullScreen = !!document.fullscreenElement;
       setFullScreenMode(isFullScreen);
     });
     setAssetHeight(rootRef.current.clientHeight);
 
     return () => {
-      if (rootRef.current) rootRef.current.removeEventListener('fullscreenchange');
+      if (rootRef.current)
+        rootRef.current.removeEventListener("fullscreenchange");
     };
   }, [rootRef]);
 
@@ -256,9 +268,9 @@ const AssetPlayer = ({
   useEffect(() => setMediaVolume(volume), [volume, media]);
 
   useEffect(() => {
-    document.body.addEventListener('keydown', toggleOnSpaceBar);
+    document.body.addEventListener("keydown", toggleOnSpaceBar);
     return () => {
-      document.body.removeEventListener('keydown', toggleOnSpaceBar);
+      document.body.removeEventListener("keydown", toggleOnSpaceBar);
     };
   }, [isPlaying]);
 
@@ -281,7 +293,7 @@ const AssetPlayer = ({
       framed,
       ccMode,
     },
-    { name: 'AssetPlayer' }
+    { name: "AssetPlayer" }
   );
 
   return (
@@ -381,7 +393,7 @@ const AssetPlayer = ({
                       <Box className={classes.buttonIcon}>
                         {isPlaying ? null : (
                           <ButtonIcon
-                            fileType={'video'}
+                            fileType={"video"}
                             onClick={(e) => {
                               if (ccMode && !canPlay) handleInitPlay();
                             }}
@@ -391,11 +403,11 @@ const AssetPlayer = ({
                     )}
                     {cover ? (
                       <Cover
-                        height={ccMode || execMode ? '100%' : '200px'}
+                        height={ccMode || execMode ? "100%" : "200px"}
                         alt={name}
                         asset={asset}
-                        copyrightAlign={'right'}
-                        imageStyles={{ aspectRatio: '16/9' }}
+                        copyrightAlign={"right"}
+                        imageStyles={{ aspectRatio: "16/9" }}
                       />
                     ) : (
                       <CardEmptyCover
@@ -416,7 +428,7 @@ const AssetPlayer = ({
                 {showPlayButton && (
                   <Box className={classes.buttonIcon}>
                     <ButtonIcon
-                      fileType={'image'}
+                      fileType={"image"}
                       onClick={() => {
                         if (ccMode && !canPlay) setOpenImageZoom(true);
                       }}
@@ -428,7 +440,12 @@ const AssetPlayer = ({
                   opened={openImageZoom}
                   onClose={() => setOpenImageZoom(false)}
                 >
-                  <Cover height="100%" alt={name} asset={asset} copyrightAlign="right" />
+                  <Cover
+                    height="100%"
+                    alt={name}
+                    asset={asset}
+                    copyrightAlign="right"
+                  />
                 </ModalZoom>
               </Box>
             )}
@@ -439,18 +456,28 @@ const AssetPlayer = ({
               >
                 {showPlayButton && (
                   <Box className={classes.buttonIcon}>
-                    <ButtonIcon fileType={'image'} />
+                    <ButtonIcon fileType={"image"} />
                   </Box>
                 )}
                 {!execMode && (
-                  <Cover height={'200px'} alt={name} asset={asset} copyrightAlign={'right'} />
+                  <Cover
+                    height={"200px"}
+                    alt={name}
+                    asset={asset}
+                    copyrightAlign={"right"}
+                  />
                 )}
                 <ModalZoom
                   canPlay={!ccMode || canPlay}
                   opened={openImageZoom}
                   onClose={() => setOpenImageZoom(false)}
                 >
-                  <Cover height={'100%'} alt={name} asset={asset} copyrightAlign={'right'} />
+                  <Cover
+                    height={"100%"}
+                    alt={name}
+                    asset={asset}
+                    copyrightAlign={"right"}
+                  />
                 </ModalZoom>
               </Box>
             )}
@@ -460,19 +487,19 @@ const AssetPlayer = ({
                 target="_blank"
                 rel="noreferrer nofollow"
                 style={{
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  pointerEvents: !canPlay && 'none',
+                  textDecoration: "none",
+                  color: "inherit",
+                  pointerEvents: !canPlay && "none",
                 }}
               >
                 <Box className={classes.buttonIcon}>
-                  <ButtonIcon fileType={'document'} />
+                  <ButtonIcon fileType={"document"} />
                 </Box>
                 <Cover
-                  height={ccMode || execMode ? '100%' : '200px'}
+                  height={ccMode || execMode ? "100%" : "200px"}
                   alt={name}
                   asset={asset}
-                  copyrightAlign={'right'}
+                  copyrightAlign={"right"}
                 />
                 {!hideURLInfo && (
                   <Box style={{ padding: 8 }}>
@@ -504,23 +531,33 @@ const AssetPlayer = ({
               <>
                 {viewPDF ? (
                   <Box className={classes.pdfContainer}>
-                    <PDFPlayer pdf={url} labels={pdfLabels} useSchema={useSchema} />
+                    <PDFPlayer
+                      pdf={url}
+                      labels={pdfLabels}
+                      useSchema={useSchema}
+                    />
                   </Box>
                 ) : (
                   <Box className={classes.pdfCover}>
-                    <Box className={classes.buttonIcon} onClick={openPdfHandler}>
-                      <ButtonIcon fileType={'document'} />
+                    <Box
+                      className={classes.buttonIcon}
+                      onClick={openPdfHandler}
+                    >
+                      <ButtonIcon fileType={"document"} />
                     </Box>
                     <ImageLoader height="auto" src={cover} alt={name} />
                   </Box>
                 )}
               </>
             ) : null}
-            {!media.isImage && !media.isURL && !media.isPDF && !media.isAFrame3D && (
-              <Box className={classes.buttonIcon}>
-                <ButtonIcon fileType={'file'} />
-              </Box>
-            )}
+            {!media.isImage &&
+              !media.isURL &&
+              !media.isPDF &&
+              !media.isAFrame3D && (
+                <Box className={classes.buttonIcon}>
+                  <ButtonIcon fileType={"file"} />
+                </Box>
+              )}
           </>
         )}
       </Box>

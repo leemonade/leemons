@@ -1,17 +1,19 @@
 /* eslint-disable no-param-reassign */
-const { getByAsset: getBookmark } = require('../../bookmarks/getByAsset');
-const { checkDuplicable: checkCategoryDuplicable } = require('../../categories/checkDuplicable');
-const { normalizeItemsArray } = require('../../shared');
+const { getByAsset: getBookmark } = require("../../bookmarks/getByAsset");
+const {
+  checkDuplicable: checkCategoryDuplicable,
+} = require("../../categories/checkDuplicable");
+const { normalizeItemsArray } = require("../../shared");
 
-const { checkDuplicatePermissions } = require('./checkDuplicatePermissions');
-const { getAndCheckAsset } = require('./getAndCheckAsset');
-const { getFileIds } = require('./getFileIds');
-const { getFilesToDuplicate } = require('./getFilesToDuplicate');
-const { handleAssetDuplication } = require('./handleAssetDuplication');
-const { handleBookmarkDuplication } = require('./handleBookmarkDuplication');
-const { handleCoverDuplication } = require('./handleCoverDuplication');
-const { handleFilesDuplication } = require('./handleFilesDuplication');
-const { handleTags } = require('./handleTags');
+const { checkDuplicatePermissions } = require("./checkDuplicatePermissions");
+const { getAndCheckAsset } = require("./getAndCheckAsset");
+const { getFileIds } = require("./getFileIds");
+const { getFilesToDuplicate } = require("./getFilesToDuplicate");
+const { handleAssetDuplication } = require("./handleAssetDuplication");
+const { handleBookmarkDuplication } = require("./handleBookmarkDuplication");
+const { handleCoverDuplication } = require("./handleCoverDuplication");
+const { handleFilesDuplication } = require("./handleFilesDuplication");
+const { handleTags } = require("./handleTags");
 
 /**
  * Duplicates an asset by creating a new asset with the same properties and associated files, cover, and bookmark.
@@ -44,7 +46,10 @@ async function duplicate({
 
   await checkDuplicatePermissions({ assetId, ctx });
   const asset = await getAndCheckAsset({ assetId, ctx });
-  const category = await checkCategoryDuplicable({ categoryId: asset.category, ctx });
+  const category = await checkCategoryDuplicable({
+    categoryId: asset.category,
+    ctx,
+  });
 
   // EN: Store the IDs of files associated with the asset in order to track them
   const filesIds = await getFileIds({ asset: { ...asset }, ctx });
@@ -58,7 +63,7 @@ async function duplicate({
   const bookmark = await getBookmark({ assetId, ctx });
 
   if (bookmark) {
-    asset.fileType = 'bookmark';
+    asset.fileType = "bookmark";
     asset.metadata = [];
 
     if (bookmark.icon) {

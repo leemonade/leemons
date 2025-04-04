@@ -1,5 +1,5 @@
-const { LeemonsError } = require('@leemons/error');
-const { getByAsset } = require('./getByAsset');
+const { LeemonsError } = require("@leemons/error");
+const { getByAsset } = require("./getByAsset");
 
 /**
  * This function removes all users from a given asset.

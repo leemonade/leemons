@@ -1,5 +1,5 @@
-import { Table } from '@bubbles-ui/components';
-import propTypes from 'prop-types';
+import { Table } from "@bubbles-ui/components";
+import propTypes from "prop-types";
 
 const AssetsTable = ({ data, columns }) => {
   return <Table columns={columns} data={data} />;

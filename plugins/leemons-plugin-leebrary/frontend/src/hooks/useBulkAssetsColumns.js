@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { SubjectItemDisplay } from '@academic-portfolio/components';
+import { SubjectItemDisplay } from "@academic-portfolio/components";
 import {
   Box,
   Checkbox,
@@ -10,13 +10,19 @@ import {
   FileIcon,
   FileItemDisplay,
   AvatarsGroup,
-} from '@bubbles-ui/components';
-import { ChipsContainer } from '@common/components';
+} from "@bubbles-ui/components";
+import { ChipsContainer } from "@common/components";
 
-import formatFileName from '@leebrary/helpers/formatFilename';
-import getResourceTypeDisplay from '@leebrary/helpers/getResourceTypeDisplay';
+import formatFileName from "@leebrary/helpers/formatFilename";
+import getResourceTypeDisplay from "@leebrary/helpers/getResourceTypeDisplay";
 
-function useBulkAssetsColumns({ selectedAssets, onSelectAll, onSelectRow, assets, t }) {
+function useBulkAssetsColumns({
+  selectedAssets,
+  onSelectAll,
+  onSelectRow,
+  assets,
+  t,
+}) {
   return useMemo(() => {
     return [
       {
@@ -24,12 +30,15 @@ function useBulkAssetsColumns({ selectedAssets, onSelectAll, onSelectRow, assets
           <Box>
             <Checkbox
               checked={selectedAssets.length === assets.length}
-              indeterminate={selectedAssets.length > 0 && selectedAssets.length < assets.length}
+              indeterminate={
+                selectedAssets.length > 0 &&
+                selectedAssets.length < assets.length
+              }
               onChange={(e) => onSelectAll(e)}
             />
           </Box>
         ),
-        accessor: 'check',
+        accessor: "check",
         Cell: ({ row }) => (
           <Box>
             <Checkbox
@@ -38,25 +47,26 @@ function useBulkAssetsColumns({ selectedAssets, onSelectAll, onSelectRow, assets
             />
           </Box>
         ),
-        className: 'text-left',
+        className: "text-left",
         style: { width: 24 },
       },
       {
-        Header: t('table.headers.type'),
-        accessor: 'type',
+        Header: t("table.headers.type"),
+        accessor: "type",
         Cell: ({ row }) => {
           const { original } = row;
-          const { isFile, displayLabel, fileType } = getResourceTypeDisplay(original);
+          const { isFile, displayLabel, fileType } =
+            getResourceTypeDisplay(original);
           return (
             <Stack spacing={2} alignItems="center">
               {isFile ? (
-                <FileIcon fileType={fileType} size={18} color={'#878D96'} />
+                <FileIcon fileType={fileType} size={18} color={"#878D96"} />
               ) : (
                 <FileItemDisplay
                   showFileName={false}
                   filename={original?.name}
                   size={18}
-                  color={'#878D96'}
+                  color={"#878D96"}
                 />
               )}
               <TextClamp lines={1}>
@@ -68,12 +78,12 @@ function useBulkAssetsColumns({ selectedAssets, onSelectAll, onSelectRow, assets
           );
         },
         style: { width: 130 },
-        cellStyle: { alignItems: 'center', height: 'auto' },
+        cellStyle: { alignItems: "center", height: "auto" },
       },
       {
-        Header: t('table.headers.file'),
-        accessor: 'name',
-        align: 'center',
+        Header: t("table.headers.file"),
+        accessor: "name",
+        align: "center",
         Cell: ({ value }) => {
           return (
             <TextClamp lines={1}>
@@ -86,8 +96,8 @@ function useBulkAssetsColumns({ selectedAssets, onSelectAll, onSelectRow, assets
         },
       },
       {
-        Header: t('table.headers.name'),
-        accessor: 'isCover',
+        Header: t("table.headers.name"),
+        accessor: "isCover",
         Cell: ({ row }) => {
           const { original } = row;
           return (
@@ -98,33 +108,42 @@ function useBulkAssetsColumns({ selectedAssets, onSelectAll, onSelectRow, assets
         },
         style: {
           width: 220,
-          justifyContent: 'center',
+          justifyContent: "center",
         },
       },
       {
-        Header: t('table.headers.subjects'),
-        accessor: 'subjects',
+        Header: t("table.headers.subjects"),
+        accessor: "subjects",
         Cell: ({ value }) => {
           if (value) {
-            return <SubjectItemDisplay subjectsIds={value.map((subject) => subject.subject)} />;
+            return (
+              <SubjectItemDisplay
+                subjectsIds={value.map((subject) => subject.subject)}
+              />
+            );
           }
           return <Text size="xs">-</Text>;
         },
       },
       {
-        Header: t('table.headers.tags'),
-        accessor: 'tags',
+        Header: t("table.headers.tags"),
+        accessor: "tags",
         Cell: ({ value }) => {
           return value.length > 0 ? (
-            <ChipsContainer items={value} chipsToShow={2} truncate truncateLines={1} />
+            <ChipsContainer
+              items={value}
+              chipsToShow={2}
+              truncate
+              truncateLines={1}
+            />
           ) : (
             <Text size="xs">-</Text>
           );
         },
       },
       {
-        Header: t('table.headers.sharedWith'),
-        accessor: 'canAccess',
+        Header: t("table.headers.sharedWith"),
+        accessor: "canAccess",
         Cell: ({ value, row }) => {
           return (
             <Box>
@@ -141,12 +160,12 @@ function useBulkAssetsColumns({ selectedAssets, onSelectAll, onSelectRow, assets
             </Box>
           );
         },
-        align: 'right',
+        align: "right",
         style: {
-          textAlign: 'right',
+          textAlign: "right",
         },
         cellStyle: {
-          justifyContent: 'flex-end',
+          justifyContent: "flex-end",
         },
       },
     ];

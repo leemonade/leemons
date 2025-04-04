@@ -1,30 +1,30 @@
-const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+const { it, expect } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const getMenuItems = require('../../../__fixtures__/getMenuItems');
-const getCategory = require('../../../__fixtures__/getCategory');
+const getMenuItems = require("../../../__fixtures__/getMenuItems");
+const getCategory = require("../../../__fixtures__/getCategory");
 
-const { listWithMenuItem } = require('./listWithMenuItem');
+const { listWithMenuItem } = require("./listWithMenuItem");
 
-jest.mock('../list');
-const { list } = require('../list');
+jest.mock("../list");
+const { list } = require("../list");
 
 const { menuItems } = getMenuItems();
 const categoryData = getCategory().categoryObject;
 const getIfHasPermissionHandler = jest.fn().mockReturnValue(menuItems);
 const ctx = generateCtx({
   actions: {
-    'menu-builder.menu.getIfHasPermission': getIfHasPermissionHandler,
+    "menu-builder.menu.getIfHasPermission": getIfHasPermissionHandler,
   },
-  pluginName: 'leebrary',
+  pluginName: "leebrary",
 });
 
-it('Should return a list of categories with menuItems', async () => {
+it("Should return a list of categories with menuItems", async () => {
   // Arrange
   const categories = [
-    { ...categoryData, id: 'id1', key: 'media-files' },
-    { ...categoryData, id: 'id2', key: 'assignables.feedback' },
-    { ...categoryData, id: 'id3', key: 'assignables.task' },
+    { ...categoryData, id: "id1", key: "media-files" },
+    { ...categoryData, id: "id2", key: "assignables.feedback" },
+    { ...categoryData, id: "id3", key: "assignables.task" },
   ];
   list.mockReturnValue({
     count: 3,
@@ -47,13 +47,15 @@ it('Should return a list of categories with menuItems', async () => {
     expect(response[i].menuItem).toBeDefined();
     // Assert order of menuItems
     if (i < response.length - 1)
-      expect(response[i].menuItem.order - response[i + 1].menuItem.order).toBeLessThanOrEqual(0);
+      expect(
+        response[i].menuItem.order - response[i + 1].menuItem.order
+      ).toBeLessThanOrEqual(0);
   }
 });
 
-it('Should not return a category if its key is not contained in menuItems keys', async () => {
+it("Should not return a category if its key is not contained in menuItems keys", async () => {
   // Arrange
-  const categories = [{ ...categoryData, id: 'id1', key: 'non-existing-key' }];
+  const categories = [{ ...categoryData, id: "id1", key: "non-existing-key" }];
   list.mockReturnValue({
     count: 1,
     totalCount: 1,

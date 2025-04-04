@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
-import { SubjectPicker } from '@academic-portfolio/components/SubjectPicker';
-import { getUserProgramsRequest } from '@academic-portfolio/request';
+import { SubjectPicker } from "@academic-portfolio/components/SubjectPicker";
+import { getUserProgramsRequest } from "@academic-portfolio/request";
 import {
   Box,
   Button,
@@ -18,31 +18,50 @@ import {
   TotalLayoutFooterContainer,
   Alert,
   useResizeObserver,
-} from '@bubbles-ui/components';
-import { CommonFileSearchIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
-import { TagsAutocomplete, useRequestErrorMessage, useStore } from '@common';
-import { addErrorAlert } from '@layout/alert';
-import { ZoneWidgets } from '@widgets';
-import { flatten, isEmpty, isFunction, isNil, noop, toLower, map, isString } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { CommonFileSearchIcon, DownloadIcon } from "@bubbles-ui/icons/outline";
+import { TagsAutocomplete, useRequestErrorMessage, useStore } from "@common";
+import { addErrorAlert } from "@layout/alert";
+import { ZoneWidgets } from "@widgets";
+import {
+  flatten,
+  isEmpty,
+  isFunction,
+  isNil,
+  noop,
+  toLower,
+  map,
+  isString,
+} from "lodash";
+import PropTypes from "prop-types";
 
-import { isImageFile, isNullish, isValidURL } from '../../helpers/prepareAsset';
-import { getUrlMetadataRequest } from '../../request';
-import CopyrightText from '../Copyright/CopyrightText';
-import { ImagePicker } from '../ImagePicker';
+import { isImageFile, isNullish, isValidURL } from "../../helpers/prepareAsset";
+import { getUrlMetadataRequest } from "../../request";
+import CopyrightText from "../Copyright/CopyrightText";
+import { ImagePicker } from "../ImagePicker";
 import {
   LIBRARY_FORM_DEFAULT_PROPS,
   LIBRARY_FORM_PROP_TYPES,
   LIBRARY_FORM_TYPES,
-} from '../LibraryForm/LibraryForm.constants';
+} from "../LibraryForm/LibraryForm.constants";
 
-const REQUIRED_FIELD = 'Field required';
+const REQUIRED_FIELD = "Field required";
 
 const FooterContainer = ({ children, scrollRef, drawerLayout }) => {
   if (!drawerLayout) return React.Fragment;
   return (
-    <Box sx={(theme) => ({ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 1000 })}>
-      <TotalLayoutFooterContainer scrollRef={scrollRef}>{children}</TotalLayoutFooterContainer>
+    <Box
+      sx={(theme) => ({
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
+      })}
+    >
+      <TotalLayoutFooterContainer scrollRef={scrollRef}>
+        {children}
+      </TotalLayoutFooterContainer>
     </Box>
   );
 };
@@ -83,14 +102,16 @@ const AssetForm = ({
   externalFileFromDrawer,
   onRemoveExternalFile = noop,
 }) => {
-  const [externalFile, setExternalFile] = useState({ ...(externalFileFromDrawer ?? {}) });
+  const [externalFile, setExternalFile] = useState({
+    ...(externalFileFromDrawer ?? {}),
+  });
   const [store, render] = useStore({
     programs: null,
     showAdvancedConfig: !!asset?.program,
   });
 
   const [isImage, setIsImage] = useState(
-    onlyImages || (categories?.length && categories[0] === 'media-files')
+    onlyImages || (categories?.length && categories[0] === "media-files")
   );
   const [checking, setChecking] = useState(false);
   const [urlMetadata, setUrlMetadata] = useState({});
@@ -98,18 +119,21 @@ const AssetForm = ({
   const [coverAsset, setCoverAsset] = useState(null);
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [boxRef] = useResizeObserver();
-  const [showExternalResourceWidgets, setShowExternalResourceWidgets] = useState(true);
-  const [widgetsLoading, setWidgetsLoading] = useState(type === LIBRARY_FORM_TYPES.MEDIA_FILES);
+  const [showExternalResourceWidgets, setShowExternalResourceWidgets] =
+    useState(true);
+  const [widgetsLoading, setWidgetsLoading] = useState(
+    type === LIBRARY_FORM_TYPES.MEDIA_FILES
+  );
 
   // ························································
   // FORM SETUP
 
   const defaultValues = {
     file: asset?.file || null,
-    name: asset?.name || '',
-    tagline: asset?.tagline || '',
-    description: asset?.description || '',
-    color: asset?.color || '',
+    name: asset?.name || "",
+    tagline: asset?.tagline || "",
+    description: asset?.description || "",
+    color: asset?.color || "",
     cover: asset?.cover || null,
     url: asset?.url || null,
     program: asset?.program || null,
@@ -129,10 +153,10 @@ const AssetForm = ({
   } = form || formForAsset;
 
   const formValues = watch();
-  const coverFile = watch('cover');
-  const assetFile = watch('file');
-  const bookmarkUrl = watch('url');
-  const program = watch('program');
+  const coverFile = watch("cover");
+  const assetFile = watch("file");
+  const bookmarkUrl = watch("url");
+  const program = watch("program");
 
   async function loadAdvancedConfig() {
     store.programs = null;
@@ -141,7 +165,9 @@ const AssetForm = ({
     store.subjectRequired = undefined;
     if (advancedConfig?.program?.show) {
       if (advancedConfig.program.required) {
-        store.programRequired = { required: errorMessages.program?.required ?? REQUIRED_FIELD };
+        store.programRequired = {
+          required: errorMessages.program?.required ?? REQUIRED_FIELD,
+        };
       }
       if (advancedConfig.alwaysOpen) {
         store.alwaysOpen = advancedConfig.alwaysOpen;
@@ -151,38 +177,43 @@ const AssetForm = ({
         store.showLevel = advancedConfig.subjects.showLevel;
         store.maxOneSubject = advancedConfig.subjects.maxOne;
         if (advancedConfig.subjects.required) {
-          store.subjectRequired = { required: errorMessages.subject?.required ?? REQUIRED_FIELD };
+          store.subjectRequired = {
+            required: errorMessages.subject?.required ?? REQUIRED_FIELD,
+          };
         }
       }
       const { programs } = await getUserProgramsRequest();
-      store.programs = map(programs, (item) => ({ label: item.name, value: item.id }));
+      store.programs = map(programs, (item) => ({
+        label: item.name,
+        value: item.id,
+      }));
     }
     render();
   }
 
   const setAssetColorToSubjectColor = (subjectsFromPicker) => {
     if (!subjectsFromPicker?.length) {
-      setValue('color', null);
+      setValue("color", null);
     }
     if (subjectsFromPicker.length === 1) {
-      setValue('color', subjectsFromPicker[0].color);
+      setValue("color", subjectsFromPicker[0].color);
     }
     if (subjectsFromPicker.length > 1) {
-      setValue('color', '#878D96');
+      setValue("color", "#878D96");
     }
   };
 
   useEffect(() => {
     if (!isNullish(asset) && isEmpty(asset?.id)) {
       const valueNames = [
-        'file',
-        'name',
-        'tagline',
-        'description',
-        'color',
-        'cover',
-        'program',
-        'subjects',
+        "file",
+        "name",
+        "tagline",
+        "description",
+        "color",
+        "cover",
+        "program",
+        "subjects",
       ];
       const values = getValues(valueNames);
       valueNames.forEach((valueName, index) => {
@@ -200,28 +231,28 @@ const AssetForm = ({
     if (!isEmpty(assetFile)) {
       setIsImage(isImageType); // This could be outside this if statment so that it updates on file change
       if (isEmpty(formValues.name)) {
-        setValue('name', assetFile.name.replace(/\.[^.]*$/, ''));
+        setValue("name", assetFile.name.replace(/\.[^.]*$/, ""));
       }
     }
     if (isImageType) {
-      setValue('cover', assetFile);
+      setValue("cover", assetFile);
     }
 
     if (!isEmpty(externalFile)) {
-      setValue('name', externalFile.name);
+      setValue("name", externalFile.name);
       if (isImageType) {
-        setValue('cover', externalFile.url);
+        setValue("cover", externalFile.url);
       }
     }
 
     // Clean values on file remove
     if (type === LIBRARY_FORM_TYPES.MEDIA_FILES && isEmpty(externalFile)) {
       if (!editing && !assetFile?.path) {
-        setValue('name', null);
-        setValue('cover', null);
+        setValue("name", null);
+        setValue("cover", null);
       } else if (editing && !assetFile?.id) {
-        setValue('cover', null);
-        setValue('copyright', undefined);
+        setValue("cover", null);
+        setValue("copyright", undefined);
       }
     }
 
@@ -231,8 +262,8 @@ const AssetForm = ({
       isEmpty(assetFile)
     ) {
       setExternalFile({});
-      setValue('name', null);
-      setValue('cover', null);
+      setValue("name", null);
+      setValue("cover", null);
     }
   }, [assetFile, externalFile]);
 
@@ -242,7 +273,7 @@ const AssetForm = ({
       // Mark the external file as initialized
       if (!externalFile.initialized) {
         externalFile.initialized = true;
-        setValue('file', externalFile);
+        setValue("file", externalFile);
       } else {
         onRemoveExternalFile();
       }
@@ -293,7 +324,7 @@ const AssetForm = ({
     if (isFunction(onSubmit)) onSubmit(e);
   };
 
-  const validateUrl = async () => trigger('url', { shouldFocus: true });
+  const validateUrl = async () => trigger("url", { shouldFocus: true });
 
   const handleCheckUrl = async () => {
     if (await validateUrl()) {
@@ -306,28 +337,28 @@ const AssetForm = ({
 
         if (!isEmpty(metadata)) {
           setUrlMetadata(metadata);
-          setValue('name', metadata.title);
-          setValue('description', metadata.description);
+          setValue("name", metadata.title);
+          setValue("description", metadata.description);
 
           if (!isEmpty(metadata.image)) {
-            setValue('cover', metadata.image);
+            setValue("cover", metadata.image);
           }
 
           if (!isEmpty(metadata.video)) {
-            setValue('mediaType', 'video');
+            setValue("mediaType", "video");
           } else if (!isEmpty(metadata.audio)) {
-            setValue('mediaType', 'audio');
+            setValue("mediaType", "audio");
           } else if (
-            toLower(metadata.publisher) === 'youtube' ||
-            metadata.url?.startsWith('https://www.youtube')
+            toLower(metadata.publisher) === "youtube" ||
+            metadata.url?.startsWith("https://www.youtube")
           ) {
-            setValue('mediaType', 'video');
+            setValue("mediaType", "video");
           }
         }
         setChecking(false);
       } catch (err) {
         setChecking(false);
-        if (err.data?.code === 'URL_METADATA_ERROR') {
+        if (err.data?.code === "URL_METADATA_ERROR") {
           setUrlMetadataError(true);
         } else {
           addErrorAlert(getErrorMessage(err));
@@ -337,7 +368,7 @@ const AssetForm = ({
   };
 
   const handleOnSelectAsset = (assetId) => {
-    setValue('cover', assetId);
+    setValue("cover", assetId);
   };
 
   // ························································
@@ -349,9 +380,10 @@ const AssetForm = ({
 
   const copyrightTextProps = useMemo(() => {
     if (externalFile?.copyright?.author) {
-      const { author, authorProfileUrl, providerUrl, provider } = externalFile.copyright;
+      const { author, authorProfileUrl, providerUrl, provider } =
+        externalFile.copyright;
       const providerName = provider.charAt(0).toUpperCase() + provider.slice(1);
-      const resourceType = provider === 'unsplash' ? 'photo' : 'image';
+      const resourceType = provider === "unsplash" ? "photo" : "image";
 
       return {
         resourceType,
@@ -366,7 +398,11 @@ const AssetForm = ({
 
   const ExternalResourceProvider = useCallback(
     ({ Component, key, properties }) => (
-      <Component key={key} {...properties} onSelect={handleOnSelectExternalResource} />
+      <Component
+        key={key}
+        {...properties}
+        onSelect={handleOnSelectExternalResource}
+      />
     ),
     []
   );
@@ -377,7 +413,14 @@ const AssetForm = ({
   const getAssetIcon = useCallback(() => {
     if (type === LIBRARY_FORM_TYPES.BOOKMARKS && !isEmpty(urlMetadata.logo)) {
       return {
-        icon: <ImageLoader src={urlMetadata.logo} width={26} height={26} radius={'4px'} />,
+        icon: (
+          <ImageLoader
+            src={urlMetadata.logo}
+            width={26}
+            height={26}
+            radius={"4px"}
+          />
+        ),
       };
     }
 
@@ -387,13 +430,13 @@ const AssetForm = ({
   if (store.alwaysOpen) store.showAdvancedConfig = true;
 
   const getPlaceholderLabelByType = (assetType, name) => {
-    if (assetType === 'assignables.task' && name === 'name') {
+    if (assetType === "assignables.task" && name === "name") {
       return placeholders.namePlaceholder;
     }
-    if (assetType === 'assignables.task' && name === 'description') {
+    if (assetType === "assignables.task" && name === "description") {
       return placeholders.descriptionPlaceholder;
     }
-    const typeParsedForLabel = assetType.replaceAll('.', '-');
+    const typeParsedForLabel = assetType.replaceAll(".", "-");
     return placeholders[name][typeParsedForLabel];
   };
 
@@ -406,7 +449,7 @@ const AssetForm = ({
               LIBRARY_FORM_TYPES.MEDIA_FILES,
               LIBRARY_FORM_TYPES.BOOKMARKS,
               LIBRARY_FORM_TYPES.RECORDINGS,
-              'assignables.scorm',
+              "assignables.scorm",
             ].includes(type) && (
               <ContextContainer title={!hideTitle ? labels.title : undefined}>
                 {type === LIBRARY_FORM_TYPES.MEDIA_FILES && (
@@ -415,7 +458,10 @@ const AssetForm = ({
                       control={control}
                       name="file"
                       shouldUnregister
-                      rules={{ required: errorMessages.file?.required ?? REQUIRED_FIELD }}
+                      rules={{
+                        required:
+                          errorMessages.file?.required ?? REQUIRED_FIELD,
+                      }}
                       render={({ field: { ref, value, ...field } }) => (
                         <>
                           <FileUpload
@@ -425,14 +471,18 @@ const AssetForm = ({
                             subtitle={labels.dropFile}
                             labels={labels}
                             errorMessage={{
-                              title: 'Error',
-                              message: errorMessages.file?.rejected || 'File was rejected',
+                              title: "Error",
+                              message:
+                                errorMessages.file?.rejected ||
+                                "File was rejected",
                             }}
                             hideUploadButton
                             single
                             initialFiles={value ? flatten([value]) : []}
                             inputWrapperProps={{ error: errors.file }}
-                            accept={onlyImages ? ['image/*'] : acceptedFileTypes}
+                            accept={
+                              onlyImages ? ["image/*"] : acceptedFileTypes
+                            }
                           />
                           {drawerLayout && copyrightTextProps && (
                             <CopyrightText {...copyrightTextProps} />
@@ -440,32 +490,41 @@ const AssetForm = ({
                         </>
                       )}
                     />
-                    {!drawerLayout && isEmpty(assetFile) && showExternalResourceWidgets && (
-                      <ContextContainer
-                        subtitle={
-                          showExternalResourceWidgets && !widgetsLoading
-                            ? labels.findResourcesInExternalProvider
-                            : undefined
-                        }
-                      >
-                        <Box sx={{ display: widgetsLoading ? 'none' : 'block' }}>
-                          <ZoneWidgets
-                            zone="leebrary.asset.form"
-                            onGetZone={(value) => {
-                              setShowExternalResourceWidgets(value.widgetItems?.length > 0);
-                              setWidgetsLoading(false);
-                            }}
+                    {!drawerLayout &&
+                      isEmpty(assetFile) &&
+                      showExternalResourceWidgets && (
+                        <ContextContainer
+                          subtitle={
+                            showExternalResourceWidgets && !widgetsLoading
+                              ? labels.findResourcesInExternalProvider
+                              : undefined
+                          }
+                        >
+                          <Box
+                            sx={{ display: widgetsLoading ? "none" : "block" }}
                           >
-                            {ExternalResourceProvider}
-                          </ZoneWidgets>
-                        </Box>
-                        {widgetsLoading && (
-                          <Box sx={{ position: 'relative', height: 50 }} skipFlex>
-                            <LoadingOverlay visible />
+                            <ZoneWidgets
+                              zone="leebrary.asset.form"
+                              onGetZone={(value) => {
+                                setShowExternalResourceWidgets(
+                                  value.widgetItems?.length > 0
+                                );
+                                setWidgetsLoading(false);
+                              }}
+                            >
+                              {ExternalResourceProvider}
+                            </ZoneWidgets>
                           </Box>
-                        )}
-                      </ContextContainer>
-                    )}
+                          {widgetsLoading && (
+                            <Box
+                              sx={{ position: "relative", height: 50 }}
+                              skipFlex
+                            >
+                              <LoadingOverlay visible />
+                            </Box>
+                          )}
+                        </ContextContainer>
+                      )}
                   </>
                 )}
                 {type === LIBRARY_FORM_TYPES.RECORDINGS && (
@@ -473,7 +532,9 @@ const AssetForm = ({
                     control={control}
                     name="file"
                     shouldUnregister
-                    rules={{ required: errorMessages.file?.required ?? REQUIRED_FIELD }}
+                    rules={{
+                      required: errorMessages.file?.required ?? REQUIRED_FIELD,
+                    }}
                     render={({ field: { ref, value, ...field } }) => (
                       <>
                         <FileUpload
@@ -483,8 +544,10 @@ const AssetForm = ({
                           subtitle={labels.dropFile}
                           labels={labels}
                           errorMessage={{
-                            title: 'Error',
-                            message: errorMessages.file?.rejected || 'File was rejected',
+                            title: "Error",
+                            message:
+                              errorMessages.file?.rejected ||
+                              "File was rejected",
                           }}
                           hideUploadButton
                           single
@@ -520,7 +583,10 @@ const AssetForm = ({
                               disabled={editing}
                             />
                           </Box>
-                          <Box skipFlex style={{ marginBottom: errors.url ? 18 : 0 }}>
+                          <Box
+                            skipFlex
+                            style={{ marginBottom: errors.url ? 18 : 0 }}
+                          >
                             <Button
                               variant="outline"
                               leftIcon={<CommonFileSearchIcon />}
@@ -542,14 +608,15 @@ const AssetForm = ({
                   </>
                 )}
 
-                {type === 'assignables.scorm' && (
+                {type === "assignables.scorm" && (
                   <>
                     <Controller
                       control={form.control}
                       name="file"
                       shouldUnregister
                       rules={{
-                        required: errorMessages.file?.required ?? REQUIRED_FIELD,
+                        required:
+                          errorMessages.file?.required ?? REQUIRED_FIELD,
                       }}
                       render={({ field: { ref, value, ...field } }) => (
                         <FileUpload
@@ -558,18 +625,20 @@ const AssetForm = ({
                           title={labels.browseFile}
                           subtitle={labels.dropFile}
                           errorMessage={{
-                            title: 'Error',
-                            message: errorMessages.file?.rejected || 'File was rejected',
+                            title: "Error",
+                            message:
+                              errorMessages.file?.rejected ||
+                              "File was rejected",
                           }}
                           hideUploadButton
                           single
                           initialFiles={value ? flatten([value]) : []}
                           inputWrapperProps={{ error: errors.file }}
                           accept={[
-                            'application/octet-stream',
-                            'application/zip',
-                            'application/x-zip',
-                            'application/x-zip-compressed',
+                            "application/octet-stream",
+                            "application/zip",
+                            "application/x-zip",
+                            "application/x-zip-compressed",
                           ]}
                         />
                       )}
@@ -592,11 +661,13 @@ const AssetForm = ({
               <Controller
                 control={control}
                 name="name"
-                rules={{ required: errorMessages.name?.required ?? REQUIRED_FIELD }}
+                rules={{
+                  required: errorMessages.name?.required ?? REQUIRED_FIELD,
+                }}
                 render={({ field }) => (
                   <TextInput
                     label={labels.name}
-                    placeholder={getPlaceholderLabelByType(type, 'name')}
+                    placeholder={getPlaceholderLabelByType(type, "name")}
                     error={errors.name}
                     required
                     {...getAssetIcon()}
@@ -615,7 +686,7 @@ const AssetForm = ({
                 render={({ field }) => (
                   <Textarea
                     label={labels.description}
-                    placeholder={getPlaceholderLabelByType(type, 'description')}
+                    placeholder={getPlaceholderLabelByType(type, "description")}
                     required={!isNil(errorMessages?.description?.required)}
                     error={errors.description}
                     minRows={3}
@@ -659,11 +730,11 @@ const AssetForm = ({
                     onChangeRaw={(subjectsRaw) => {
                       setAssetColorToSubjectColor(subjectsRaw);
                       if (subjectsRaw.length > 0) {
-                        setValue('subjectsRaw', subjectsRaw);
+                        setValue("subjectsRaw", subjectsRaw);
                         if (subjectsRaw[0].programId !== program) {
-                          setValue('program', subjectsRaw[0].programId);
+                          setValue("program", subjectsRaw[0].programId);
                         }
-                      } else if (program) setValue('program', null);
+                      } else if (program) setValue("program", null);
                     }}
                     error={error}
                     assignable={{}}
@@ -677,7 +748,11 @@ const AssetForm = ({
                     }}
                     hideSectionHeaders={false}
                     onlyOneSubject={store.maxOneSubject}
-                    teacherType={['main-teacher', 'associate-teacher', 'invited-teacher']}
+                    teacherType={[
+                      "main-teacher",
+                      "associate-teacher",
+                      "invited-teacher",
+                    ]}
                   />
                 )}
               />
@@ -716,8 +791,8 @@ const AssetForm = ({
                         contentStyle={{ width: 190 }}
                         clearable
                         onChange={(inputValue) => {
-                          if (!inputValue) setValue('color', null);
-                          else setValue('color', inputValue);
+                          if (!inputValue) setValue("color", null);
+                          else setValue("color", inputValue);
                         }}
                       />
                     )}
@@ -729,8 +804,11 @@ const AssetForm = ({
 
           {!hideSubmit && (
             <FooterContainer drawerLayout={drawerLayout}>
-              <Stack justifyContent={'end'} fullWidth>
-                <Button onClick={() => handleSubmit(handleOnSubmit)()} loading={loading}>
+              <Stack justifyContent={"end"} fullWidth>
+                <Button
+                  onClick={() => handleSubmit(handleOnSubmit)()}
+                  loading={loading}
+                >
                   {labels.submitForm}
                 </Button>
               </Stack>

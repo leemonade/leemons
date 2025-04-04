@@ -1,8 +1,15 @@
 /* eslint-disable no-param-reassign */
-import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { useHistory } from "react-router-dom";
 
-import { useIsTeacher } from '@academic-portfolio/hooks';
+import { useIsTeacher } from "@academic-portfolio/hooks";
 import {
   Select,
   Box,
@@ -15,52 +22,52 @@ import {
   TotalLayoutContainer,
   PaginatedList,
   BaseDrawer,
-} from '@bubbles-ui/components';
-import { LocaleDate, unflatten, useRequestErrorMessage } from '@common';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useQueryClient } from '@tanstack/react-query';
-import { useSession } from '@users/session';
-import { cloneDeep, find, forEach, isArray, isEmpty, noop } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { LocaleDate, unflatten, useRequestErrorMessage } from "@common";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useQueryClient } from "@tanstack/react-query";
+import { useSession } from "@users/session";
+import { cloneDeep, find, forEach, isArray, isEmpty, noop } from "lodash";
+import PropTypes from "prop-types";
 
-import prefixPN from '../helpers/prefixPN';
-import { prepareAsset } from '../helpers/prepareAsset';
+import prefixPN from "../helpers/prefixPN";
+import { prepareAsset } from "../helpers/prepareAsset";
 
-import { PermissionsDataDrawer } from './AssetSetup/PermissionsDataDrawer';
-import { CardDetailWrapper } from './CardDetailWrapper';
-import { CardWrapper } from './CardWrapper';
-import { ListEmpty } from './ListEmpty';
-import { NewLibraryCardButton } from './NewLibraryCardButton/NewLibraryCardButton';
-import { SearchEmpty } from './SearchEmpty';
+import { PermissionsDataDrawer } from "./AssetSetup/PermissionsDataDrawer";
+import { CardDetailWrapper } from "./CardDetailWrapper";
+import { CardWrapper } from "./CardWrapper";
+import { ListEmpty } from "./ListEmpty";
+import { NewLibraryCardButton } from "./NewLibraryCardButton/NewLibraryCardButton";
+import { SearchEmpty } from "./SearchEmpty";
 
-import { LibraryItem } from '@leebrary/components/LibraryItem';
-import LibraryContext from '@leebrary/context/LibraryContext';
-import getPageItems from '@leebrary/helpers/getPageItems';
+import { LibraryItem } from "@leebrary/components/LibraryItem";
+import LibraryContext from "@leebrary/context/LibraryContext";
+import getPageItems from "@leebrary/helpers/getPageItems";
 import {
   deleteAssetRequest,
   duplicateAssetRequest,
   pinAssetRequest,
   unpinAssetRequest,
-} from '@leebrary/request';
-import { allGetAssetsKey } from '@leebrary/request/hooks/keys/assets';
-import { allGetSimpleAssetListKey } from '@leebrary/request/hooks/keys/simpleAssetList';
-import { useAssets as useAssetsDetails } from '@leebrary/request/hooks/queries/useAssets';
-import useSimpleAssetList from '@leebrary/request/hooks/queries/useSimpleAssetList';
+} from "@leebrary/request";
+import { allGetAssetsKey } from "@leebrary/request/hooks/keys/assets";
+import { allGetSimpleAssetListKey } from "@leebrary/request/hooks/keys/simpleAssetList";
+import { useAssets as useAssetsDetails } from "@leebrary/request/hooks/queries/useAssets";
+import useSimpleAssetList from "@leebrary/request/hooks/queries/useSimpleAssetList";
 
 // -------------------------------------------------------------------------------------
 // HELPERS
 
 function getLocale(session) {
-  return session ? session.locale : navigator?.language || 'en';
+  return session ? session.locale : navigator?.language || "en";
 }
 
 function getOwner(asset) {
   const owner = (asset?.canAccess || []).filter((person) =>
-    person.permissions.includes('owner')
+    person.permissions.includes("owner")
   )[0];
-  return !isEmpty(owner) ? `${owner?.name} ${owner?.surnames}` : '-';
+  return !isEmpty(owner) ? `${owner?.name} ${owner?.surnames}` : "-";
 }
 
 function handlePaginationAndDetailsLoad({
@@ -81,7 +88,7 @@ function handlePaginationAndDetailsLoad({
   if (assetsDetails && !isEmpty(assetsDetails)) {
     paginatedObject.items = cloneDeep(assetsDetails);
     forEach(paginatedObject.items, (item) => {
-      if (item.file?.metadata?.indexOf('pathsInfo')) {
+      if (item.file?.metadata?.indexOf("pathsInfo")) {
         item.file.metadata = JSON.parse(item.file.metadata);
         delete item.file.metadata.pathsInfo;
         item.file.metadata = JSON.stringify(item.file.metadata);
@@ -90,8 +97,11 @@ function handlePaginationAndDetailsLoad({
   }
 
   // If a new item should be inserted and it doesn't already exist, add it to the beginning of the items array
-  if (shouldInsertNewItem && !paginatedObject.items.some((item) => item.action === 'new')) {
-    paginatedObject.items.unshift({ action: 'new' });
+  if (
+    shouldInsertNewItem &&
+    !paginatedObject.items.some((item) => item.action === "new")
+  ) {
+    paginatedObject.items.unshift({ action: "new" });
   }
   return paginatedObject;
 }
@@ -100,7 +110,7 @@ function handlePaginationAndEmptyAssetList({ shouldInsertNewItem }) {
   // Minimal structure where there are no assets to show but it's a creatable category
   if (shouldInsertNewItem) {
     return {
-      items: [{ action: 'new' }],
+      items: [{ action: "new" }],
       page: 0,
       size: 1,
       totalCount: 1,
@@ -111,10 +121,10 @@ function handlePaginationAndEmptyAssetList({ shouldInsertNewItem }) {
   return null;
 }
 
-const RECENT_CATEGORY = 'leebrary-recent';
-const SHARED_CATEGORY = 'leebrary-shared';
-const SUBJECT_CATEGORY = 'leebrary-subject';
-const PINS_CATEGORY = 'pins';
+const RECENT_CATEGORY = "leebrary-recent";
+const SHARED_CATEGORY = "leebrary-shared";
+const SUBJECT_CATEGORY = "leebrary-subject";
+const PINS_CATEGORY = "pins";
 const NOT_CREATABLE_CATEGORIES = [
   PINS_CATEGORY,
   RECENT_CATEGORY,
@@ -148,7 +158,7 @@ const AssetList = ({
 }) => {
   const session = useSession();
   const locale = getLocale(session);
-  const [t, translations] = useTranslateLoader(prefixPN('list'));
+  const [t, translations] = useTranslateLoader(prefixPN("list"));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(12);
@@ -190,7 +200,7 @@ const AssetList = ({
     if (!category || waitForAcademicFilters) return null;
     const query = {
       providerQuery: academicFilters ? JSON.stringify(academicFilters) : null,
-      criteria: searchCriteria || '',
+      criteria: searchCriteria || "",
       pinned: category?.key === PINS_CATEGORY,
       category: category?.id,
       published: allowStatusFilter ? statusFilter : true,
@@ -198,7 +208,8 @@ const AssetList = ({
       preferCurrent: true,
     };
 
-    if (allowMediaTypeFilter && mediaTypeFilter !== 'all') query.type = mediaTypeFilter;
+    if (allowMediaTypeFilter && mediaTypeFilter !== "all")
+      query.type = mediaTypeFilter;
 
     // HANDLE MULTI-CATEGORY SECTIONS
     if (category?.key?.startsWith(SUBJECT_CATEGORY)) {
@@ -212,27 +223,36 @@ const AssetList = ({
       query.onlyShared = true;
     }
     if (category?.key === RECENT_CATEGORY) {
-      query.roles = JSON.stringify(['owner']);
+      query.roles = JSON.stringify(["owner"]);
       query.hideCoverAssets = true;
       delete query.category;
-      if (categoryFilter !== 'all') {
+      if (categoryFilter !== "all") {
         query.categoryFilter = find(categories, { key: categoryFilter })?.id;
       }
     }
     if (category?.key === PINS_CATEGORY) {
       delete query.category;
-      if (categoryFilter !== 'all') {
+      if (categoryFilter !== "all") {
         query.categoryFilter = find(categories, { key: categoryFilter })?.id;
       }
     }
 
     return query;
-  }, [category, searchCriteria, statusFilter, categoryFilter, mediaTypeFilter, academicFilters]);
+  }, [
+    category,
+    searchCriteria,
+    statusFilter,
+    categoryFilter,
+    mediaTypeFilter,
+    academicFilters,
+  ]);
 
-  const { data: assetList, isLoading: assetListIsLoading } = useSimpleAssetList({
-    query: assetListQuery,
-    enabled: !!assetListQuery,
-  });
+  const { data: assetList, isLoading: assetListIsLoading } = useSimpleAssetList(
+    {
+      query: assetListQuery,
+      enabled: !!assetListQuery,
+    }
+  );
 
   const { items: currentPageAssets } = useMemo(
     () =>
@@ -244,17 +264,18 @@ const AssetList = ({
     [assetList, page, pageSize]
   );
 
-  const { data: assetsDetails, isLoading: assetsDetailsAreLoading } = useAssetsDetails({
-    ids: currentPageAssets?.map((item) => item.asset),
-    filters: {
-      published: allowStatusFilter ? statusFilter : true,
-      showPublic: category?.key === PINS_CATEGORY,
-      onlyPinned: category?.key === PINS_CATEGORY,
-    },
-    options: {
-      enabled: !isEmpty(assetList) && !assetListIsLoading,
-    },
-  });
+  const { data: assetsDetails, isLoading: assetsDetailsAreLoading } =
+    useAssetsDetails({
+      ids: currentPageAssets?.map((item) => item.asset),
+      filters: {
+        published: allowStatusFilter ? statusFilter : true,
+        showPublic: category?.key === PINS_CATEGORY,
+        onlyPinned: category?.key === PINS_CATEGORY,
+      },
+      options: {
+        enabled: !isEmpty(assetList) && !assetListIsLoading,
+      },
+    });
 
   const lastNotEmptyPage = useMemo(() => {
     const currentPage = page;
@@ -285,7 +306,9 @@ const AssetList = ({
   const getCategoriesSelectData = useMemo(() => {
     const filteredCategories = categories
       ?.filter((item) =>
-        Array.isArray(allowCategoryFilter) ? allowCategoryFilter.includes(item.key) : true
+        Array.isArray(allowCategoryFilter)
+          ? allowCategoryFilter.includes(item.key)
+          : true
       )
       .map((item) => ({
         value: item.key,
@@ -293,29 +316,38 @@ const AssetList = ({
         icon: (
           <Box
             sx={(theme) => ({
-              color: theme.other.core.color.neutral['600'],
+              color: theme.other.core.color.neutral["600"],
               height: 16,
               marginBottom: 5,
             })}
           >
-            <ImageLoader src={item.icon} style={{ width: 16, height: 16, position: 'relative' }} />
+            <ImageLoader
+              src={item.icon}
+              style={{ width: 16, height: 16, position: "relative" }}
+            />
           </Box>
         ),
       }));
-    return [{ label: t('labels.allResourceTypes'), value: 'all' }, ...filteredCategories];
+    return [
+      { label: t("labels.allResourceTypes"), value: "all" },
+      ...filteredCategories,
+    ];
   }, [allowCategoryFilter, categories, t]);
 
   const getMediaTypeSelectData = useMemo(() => {
     if (!mediaTypes?.length) return null;
-    return [{ label: t('labels.allResourceTypes'), value: 'all' }, ...mediaTypes];
+    return [
+      { label: t("labels.allResourceTypes"), value: "all" },
+      ...mediaTypes,
+    ];
   }, [mediaTypes, t]);
 
   const getStatusSelectData = useMemo(() => {
     if (!allowStatusFilter) return null;
     return [
-      { label: t('labels.assetStatusAll'), value: 'all' },
-      { label: t('labels.assetStatusPublished'), value: 'published' },
-      { label: t('labels.assetStatusDraft'), value: 'draft' },
+      { label: t("labels.assetStatusAll"), value: "all" },
+      { label: t("labels.assetStatusPublished"), value: "published" },
+      { label: t("labels.assetStatusDraft"), value: "draft" },
     ];
   }, [allowStatusFilter, t]);
   // -------------------------------------------------------------------------------------
@@ -324,18 +356,22 @@ const AssetList = ({
     const published = allowStatusFilter ? statusFilter : true;
 
     return {
-      edit: selectedAsset?.editable ? t('cardToolbar.edit') : false,
-      duplicate: selectedAsset?.duplicable ? t('cardToolbar.duplicate') : false,
-      download: selectedAsset?.downloadable ? t('cardToolbar.download') : false,
-      delete: selectedAsset?.deleteable ? t('cardToolbar.delete') : false,
-      share: isTeacher && selectedAsset?.shareable ? t('cardToolbar.share') : false,
-      assign: isTeacher && selectedAsset?.assignable ? t('cardToolbar.assign') : false,
+      edit: selectedAsset?.editable ? t("cardToolbar.edit") : false,
+      duplicate: selectedAsset?.duplicable ? t("cardToolbar.duplicate") : false,
+      download: selectedAsset?.downloadable ? t("cardToolbar.download") : false,
+      delete: selectedAsset?.deleteable ? t("cardToolbar.delete") : false,
+      share:
+        isTeacher && selectedAsset?.shareable ? t("cardToolbar.share") : false,
+      assign:
+        isTeacher && selectedAsset?.assignable
+          ? t("cardToolbar.assign")
+          : false,
       pin:
         !selectedAsset?.pinned && selectedAsset?.pinneable && published
-          ? t('cardToolbar.pin')
+          ? t("cardToolbar.pin")
           : false,
-      unpin: selectedAsset?.pinned ? t('cardToolbar.unpin') : false,
-      toggle: t('cardToolbar.toggle'),
+      unpin: selectedAsset?.pinned ? t("cardToolbar.unpin") : false,
+      toggle: t("cardToolbar.toggle"),
     };
   }, [selectedAsset, t, isTeacher, allowStatusFilter, statusFilter]);
 
@@ -344,11 +380,15 @@ const AssetList = ({
 
   const userIsFilteringOrSearching = useCallback(() => {
     const isSearchingByCriteria = searchCriteriaDebounced?.length > 0;
-    const isFilteringByStatus = statusFilter?.length && statusFilter !== 'all';
-    const isFilteringByAcademicFilters = academicFilters && academicFilters?.program?.length > 0;
-    const isFilteringByMediaType = mediaTypeFilter?.length && mediaTypeFilter !== 'all';
+    const isFilteringByStatus = statusFilter?.length && statusFilter !== "all";
+    const isFilteringByAcademicFilters =
+      academicFilters && academicFilters?.program?.length > 0;
+    const isFilteringByMediaType =
+      mediaTypeFilter?.length && mediaTypeFilter !== "all";
     const isFiltering =
-      isFilteringByStatus || isFilteringByAcademicFilters || isFilteringByMediaType;
+      isFilteringByStatus ||
+      isFilteringByAcademicFilters ||
+      isFilteringByMediaType;
 
     return isSearchingByCriteria || isFiltering;
   }, [statusFilter, academicFilters, mediaTypeFilter, searchCriteriaDebounced]);
@@ -370,7 +410,7 @@ const AssetList = ({
       const response = await duplicateAssetRequest(id);
       if (response?.asset) {
         setAppLoading(false);
-        addSuccessAlert(t('labels.duplicateSuccess'));
+        addSuccessAlert(t("labels.duplicateSuccess"));
         handleRefresh();
       }
     } catch (err) {
@@ -384,7 +424,7 @@ const AssetList = ({
     try {
       await deleteAssetRequest(id);
       setAppLoading(false);
-      addSuccessAlert(t('labels.removeSuccess'));
+      addSuccessAlert(t("labels.removeSuccess"));
       setSelectedAsset(null);
       handleRefresh();
     } catch (err) {
@@ -457,13 +497,13 @@ const AssetList = ({
   };
 
   function handleOnDownload(item) {
-    window.open(item.url, '_blank', 'noopener');
+    window.open(item.url, "_blank", "noopener");
   }
 
   function handleOnNew() {
     if (!isEmpty(category?.createUrl)) {
       const newURL = new URL(category.createUrl, window?.location);
-      newURL.searchParams.set('from', 'leebrary');
+      newURL.searchParams.set("from", "leebrary");
       history.push(newURL.href.substring(newURL.origin.length));
     } else {
       newAsset(null, category);
@@ -480,7 +520,14 @@ const AssetList = ({
   // Every new query should reset the page to one.
   useEffect(() => {
     setPage(1);
-  }, [category, searchCriteria, statusFilter, categoryFilter, mediaTypeFilter, academicFilters]);
+  }, [
+    category,
+    searchCriteria,
+    statusFilter,
+    categoryFilter,
+    mediaTypeFilter,
+    academicFilters,
+  ]);
 
   // DELETE operations may leave the current page empty
   // Page is set to the last valid page if the current page isn't
@@ -506,7 +553,7 @@ const AssetList = ({
   useEffect(() => {
     if (asset?.id) {
       setSelectedAsset(asset);
-    } else if (typeof asset === 'string' && asset.length) {
+    } else if (typeof asset === "string" && asset.length) {
       const loadedAsset = find(pageAssetsData?.items, { id: asset });
       if (loadedAsset) setSelectedAsset(loadedAsset);
     } else {
@@ -524,8 +571,9 @@ const AssetList = ({
     if (!assetListIsLoading) {
       const searchingOrFiltering = userIsFilteringOrSearching();
       const shouldInsertNewItem =
-        !NOT_CREATABLE_CATEGORIES.some((catKey) => category?.key?.startsWith(catKey)) &&
-        !searchingOrFiltering;
+        !NOT_CREATABLE_CATEGORIES.some((catKey) =>
+          category?.key?.startsWith(catKey)
+        ) && !searchingOrFiltering;
 
       if (shouldInsertNewItem) setPageSize(11);
       else setPageSize(12);
@@ -540,7 +588,9 @@ const AssetList = ({
         });
         setPageAssetsData(cloneDeep(paginated));
       } else {
-        const emptyData = handlePaginationAndEmptyAssetList({ shouldInsertNewItem });
+        const emptyData = handlePaginationAndEmptyAssetList({
+          shouldInsertNewItem,
+        });
         setPageAssetsData(cloneDeep(emptyData));
       }
     }
@@ -560,18 +610,20 @@ const AssetList = ({
     const published = allowStatusFilter ? statusFilter : true;
     return [
       {
-        Header: t('tableLabels.name'),
-        accessor: 'name',
-        valueRender: (_, row) => <LibraryItem asset={prepareAsset(row, published)} />,
+        Header: t("tableLabels.name"),
+        accessor: "name",
+        valueRender: (_, row) => (
+          <LibraryItem asset={prepareAsset(row, published)} />
+        ),
       },
       {
-        Header: t('tableLabels.owner'),
-        accessor: 'owner',
+        Header: t("tableLabels.owner"),
+        accessor: "owner",
         valueRender: (_, row) => getOwner(row),
       },
       {
-        Header: t('tableLabels.updated'),
-        accessor: 'updated',
+        Header: t("tableLabels.updated"),
+        accessor: "updated",
         valueRender: (_, row) => <LocaleDate date={row.updatedAt} />,
       },
     ];
@@ -579,16 +631,18 @@ const AssetList = ({
 
   const cardVariant = useMemo(() => {
     const categoryKey = category?.key;
-    return categoryKey === 'bookmarks' ? 'bookmark' : 'media';
+    return categoryKey === "bookmarks" ? "bookmark" : "media";
   }, [category]);
 
   const offsets = childRef.current?.getBoundingClientRect() || childRect;
-  const headerOffset = Math.round(offsets.top + childRect.height + childRect.top);
+  const headerOffset = Math.round(
+    offsets.top + childRect.height + childRect.top
+  );
   const paginatedListProps = useMemo(
     () => ({
       itemRender: (p) => (
         <Box>
-          {p?.item?.original?.action === 'new' ? (
+          {p?.item?.original?.action === "new" ? (
             <NewLibraryCardButton
               categoryKey={category?.key}
               categoryLabel={category?.singularName}
@@ -600,8 +654,10 @@ const AssetList = ({
               {...p}
               variant={cardVariant}
               category={
-                categories?.find((_category) => _category.id === p.item.original.category) || {
-                  key: 'media-file',
+                categories?.find(
+                  (_category) => _category.id === p.item.original.category
+                ) || {
+                  key: "media-file",
                 }
               }
               realCategory={category}
@@ -622,11 +678,11 @@ const AssetList = ({
           )}
         </Box>
       ),
-      itemMinWidth: '300px',
+      itemMinWidth: "300px",
       staticColumnWidth: true,
       margin: 16,
       spacing: 4,
-      paperProps: { shadow: 'none', padding: 0 },
+      paperProps: { shadow: "none", padding: 0 },
     }),
     [category, categories, pageAssetsData?.items, cardDetailIsLoading]
   );
@@ -645,29 +701,30 @@ const AssetList = ({
             padding={0}
             style={{
               flex: 0,
-              alignItems: 'end',
-              padding: '16px 24px',
-              height: '72px',
-              backgroundColor: 'white',
+              alignItems: "end",
+              padding: "16px 24px",
+              height: "72px",
+              backgroundColor: "white",
             }}
           >
             {/* FILTERS ········· */}
             {allowSearchByCriteria && (
               <SearchInput
-                placeholder={t('labels.searchPlaceholder')}
+                placeholder={t("labels.searchPlaceholder")}
                 value={searchCriteria}
                 onChange={(value) => setTempSearchCriteria(value)}
                 disabled={assetListIsLoading || assetsDetailsAreLoading}
               />
             )}
-            {!!filterComponents && filterComponents({ loading: assetListIsLoading })}
+            {!!filterComponents &&
+              filterComponents({ loading: assetListIsLoading })}
             {!isEmpty(mediaTypes) && allowMediaTypeFilter && (
               <Select
                 data-cypress-id="search-asset-type-selector"
                 data={getMediaTypeSelectData}
                 value={mediaTypeFilter}
                 onChange={onMediaTypeChange}
-                placeholder={t('labels.resourceTypes')}
+                placeholder={t("labels.resourceTypes")}
                 disabled={assetListIsLoading || assetsDetailsAreLoading}
                 skipFlex
               />
@@ -677,7 +734,7 @@ const AssetList = ({
                 data={getCategoriesSelectData}
                 onChange={onCategoryFilter}
                 value={categoryFilter}
-                placeholder={t('labels.resourceTypes')}
+                placeholder={t("labels.resourceTypes")}
                 disabled={assetListIsLoading || assetsDetailsAreLoading}
                 skipFlex
               />
@@ -687,11 +744,11 @@ const AssetList = ({
                 data={getStatusSelectData}
                 onChange={onStatusChange}
                 value={statusFilter}
-                placeholder={t('labels.assetStatus')}
+                placeholder={t("labels.assetStatus")}
                 disabled={
                   assetListIsLoading ||
                   assetsDetailsAreLoading ||
-                  ['media-files', 'bookmarks'].includes(categoryFilter)
+                  ["media-files", "bookmarks"].includes(categoryFilter)
                 }
                 skipFlex
               />
@@ -704,16 +761,16 @@ const AssetList = ({
           ref={scrollRef}
           fullHeight
           style={{
-            width: ' 100%',
-            transition: 'width 0.3s ease',
-            padding: '0 24px',
-            overflow: 'auto',
+            width: " 100%",
+            transition: "width 0.3s ease",
+            padding: "0 24px",
+            overflow: "auto",
           }}
         >
           <Box
             sx={(theme) => ({
               flex: 1,
-              position: 'relative',
+              position: "relative",
               marginTop: 24,
               paddingRight: theme.spacing[5],
               paddingLeft: theme.spacing[5],
@@ -722,21 +779,21 @@ const AssetList = ({
             <LoadingOverlay
               visible={assetListIsLoading}
               overlayOpacity={0}
-              style={{ height: '100%' }}
+              style={{ height: "100%" }}
             />
             {pageAssetsData?.items?.length && (
               <Box
                 sx={(theme) => ({
                   paddingBottom: theme.spacing[5],
-                  backgroundColor: '#f7f8fa',
-                  width: '100%',
+                  backgroundColor: "#f7f8fa",
+                  width: "100%",
                 })}
               >
                 <PaginatedList
                   data-cypress-id="paginated-asset-list"
                   {...pageAssetsData}
                   {...paginatedListProps}
-                  paperProps={{ color: 'none', shadow: 'none', padding: 0 }}
+                  paperProps={{ color: "none", shadow: "none", padding: 0 }}
                   selectable
                   selected={selectedAsset}
                   columns={columns}
@@ -745,8 +802,8 @@ const AssetList = ({
                   size={pageSize}
                   sizes={[12, 18, 24]}
                   labels={{
-                    show: t('show'),
-                    goTo: t('goTo'),
+                    show: t("show"),
+                    goTo: t("goTo"),
                   }}
                   onSelect={handleOnSelect}
                   onPageChange={(value) => {
@@ -768,7 +825,12 @@ const AssetList = ({
                 />
               )}
             {showFilteringEmptyState && (
-              <Stack justifyContent="center" alignItems="center" fullWidth fullHeight>
+              <Stack
+                justifyContent="center"
+                alignItems="center"
+                fullWidth
+                fullHeight
+              >
                 <SearchEmpty t={t} />
               </Stack>
             )}
@@ -778,7 +840,7 @@ const AssetList = ({
         {/* SIDE PANEL ········· */}
         <Box
           sx={(theme) => ({
-            position: 'fixed',
+            position: "fixed",
             height: `calc(100% - ${headerOffset + theme.spacing[5]}px)`,
             right: 0,
             top: headerOffset + theme.spacing[5],
@@ -791,15 +853,17 @@ const AssetList = ({
             close={false}
             empty={true}
             className={{
-              root: { borderRadius: 0, border: 'none !important' },
-              body: { borderRadius: 0, border: 'none !important' },
+              root: { borderRadius: 0, border: "none !important" },
+              body: { borderRadius: 0, border: "none !important" },
             }}
           >
             <CardDetailWrapper
               category={
                 category?.id && !category?.key?.startsWith(SUBJECT_CATEGORY)
                   ? category
-                  : categories?.find((_category) => _category?.id === selectedAsset?.category)
+                  : categories?.find(
+                      (_category) => _category?.id === selectedAsset?.category
+                    )
               }
               asset={selectedAsset}
               labels={detailLabels}

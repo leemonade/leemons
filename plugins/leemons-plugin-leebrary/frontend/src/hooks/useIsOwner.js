@@ -1,5 +1,5 @@
-import React from 'react';
-import useUserAgents from '@users/hooks/useUserAgents';
+import React from "react";
+import useUserAgents from "@users/hooks/useUserAgents";
 
 function useIsOwner(asset, useCreationAsOwnership = true) {
   const userAgents = useUserAgents();
@@ -15,7 +15,10 @@ function useIsOwner(asset, useCreationAsOwnership = true) {
 
     asset.canAccess.forEach((user) => {
       user.userAgentIds.forEach((userAgent) => {
-        if (userAgents.includes(userAgent) && user.permissions.includes('owner')) {
+        if (
+          userAgents.includes(userAgent) &&
+          user.permissions.includes("owner")
+        ) {
           hasPermission = true;
         }
       });

@@ -1,13 +1,20 @@
-const { it, expect, beforeAll, afterAll, beforeEach, describe } = require('@jest/globals');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  describe,
+} = require("@jest/globals");
 
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { pinsSchema } = require('../../../models/pins');
-const getUserSession = require('../../../__fixtures__/getUserSession');
-const { find } = require('./find');
+const { pinsSchema } = require("../../../models/pins");
+const getUserSession = require("../../../__fixtures__/getUserSession");
+const { find } = require("./find");
 
-describe('find pin', () => {
+describe("find pin", () => {
   let mongooseConnection;
   let disconnectMongoose;
   let ctx;
@@ -23,7 +30,7 @@ describe('find pin', () => {
 
     ctx = generateCtx({
       models: {
-        Pins: newModel(mongooseConnection, 'Pins', pinsSchema),
+        Pins: newModel(mongooseConnection, "Pins", pinsSchema),
       },
     });
   });
@@ -38,19 +45,23 @@ describe('find pin', () => {
   beforeEach(async () => {
     await mongooseConnection.dropDatabase();
 
-    assetId = 'testAssetId';
+    assetId = "testAssetId";
     await ctx.tx.db.Pins.create({
       asset: assetId,
       userAgent: userSession.userAgents[0].id,
     });
   });
 
-  describe('Intended workload', () => {
-    it('should find a pin', async () => {
+  describe("Intended workload", () => {
+    it("should find a pin", async () => {
       // Arrange
 
       // Act
-      const result = await find({ query: { asset: assetId }, columns: ['asset'], ctx });
+      const result = await find({
+        query: { asset: assetId },
+        columns: ["asset"],
+        ctx,
+      });
 
       // Assert
       expect(result[0].asset).toEqual(assetId);
@@ -58,14 +69,14 @@ describe('find pin', () => {
     });
   });
 
-  describe('Limit use cases', () => {
-    it('should return empty array if no pin matches the query', async () => {
+  describe("Limit use cases", () => {
+    it("should return empty array if no pin matches the query", async () => {
       // Arrange
 
       // Act
       const result = await find({
-        query: { asset: 'nonExistingAssetId' },
-        columns: ['asset'],
+        query: { asset: "nonExistingAssetId" },
+        columns: ["asset"],
         ctx,
       });
 

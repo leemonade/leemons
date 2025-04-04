@@ -1,7 +1,7 @@
-import { uniqBy } from 'lodash';
+import { uniqBy } from "lodash";
 
-import { getAssetTypesRequest } from '@leebrary/request';
-import prepareAssetType from '@leebrary/helpers/prepareAssetType';
+import { getAssetTypesRequest } from "@leebrary/request";
+import prepareAssetType from "@leebrary/helpers/prepareAssetType";
 
 export default async function loadMediaTypes(categoryId) {
   try {
@@ -11,7 +11,7 @@ export default async function loadMediaTypes(categoryId) {
         label: prepareAssetType(type),
         value: prepareAssetType(type, false),
       })),
-      'value'
+      "value"
     );
   } catch (err) {
     return [];

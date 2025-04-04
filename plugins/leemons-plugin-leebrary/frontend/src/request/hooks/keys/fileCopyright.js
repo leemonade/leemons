@@ -1,14 +1,14 @@
 export const allFileCopyrights = [
   {
-    plugin: 'plugin.leebrary',
-    scope: 'fileCopyright',
+    plugin: "plugin.leebrary",
+    scope: "fileCopyright",
   },
 ];
 
 export const allGetFileCopyright = [
   {
     ...allFileCopyrights[0],
-    action: 'get',
+    action: "get",
   },
 ];
 

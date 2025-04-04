@@ -1,21 +1,21 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from "react";
 
-import { Box, SearchInput, Select, createStyles } from '@bubbles-ui/components';
-import { isArray, keyBy, map, pick, sortBy } from 'lodash';
-import PropTypes from 'prop-types';
+import { Box, SearchInput, Select, createStyles } from "@bubbles-ui/components";
+import { isArray, keyBy, map, pick, sortBy } from "lodash";
+import PropTypes from "prop-types";
 
-import { usePickerCategories } from '@leebrary/components/AssetPickerDrawer/hooks/usePickerCategories';
-import loadMediaTypes from '@leebrary/helpers/loadMediaTypes';
+import { usePickerCategories } from "@leebrary/components/AssetPickerDrawer/hooks/usePickerCategories";
+import loadMediaTypes from "@leebrary/helpers/loadMediaTypes";
 
 export const useHeaderStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
 
   return {
     root: {
-      position: 'sticky',
+      position: "sticky",
       top: 0,
-      display: 'flex',
-      flexDirection: 'row',
+      display: "flex",
+      flexDirection: "row",
       gap: globalTheme.spacing.padding.md,
       paddingTop: globalTheme.spacing.padding.lg,
       paddingBottom: globalTheme.spacing.padding.md,
@@ -32,14 +32,14 @@ export function Header({
   hideMediaFilter,
   hideAddonsFilter,
 }) {
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [category, setCategory] = useState(null);
   const [mediaTypes, setMediaTypes] = useState([]);
-  const [mediaTypeFilter, setMediaTypeFilter] = useState('all');
+  const [mediaTypeFilter, setMediaTypeFilter] = useState("all");
 
   const categories = usePickerCategories();
 
-  const categoriesByKey = useMemo(() => keyBy(categories, 'key'), [categories]);
+  const categoriesByKey = useMemo(() => keyBy(categories, "key"), [categories]);
   const filteredCategories = useMemo(
     () =>
       isArray(categoriesToUse) && categoriesToUse?.length
@@ -55,17 +55,20 @@ export function Header({
           value: filteredCategory.id,
           order: filteredCategory.order,
           type: filteredCategory.type,
-          icon: filteredCategory.menuItem.iconSvg.startsWith('/api')
+          icon: filteredCategory.menuItem.iconSvg.startsWith("/api")
             ? `${leemons.apiUrl}${filteredCategory.menuItem.iconSvg}`
             : filteredCategory.menuItem.iconSvg,
         })),
-        ['type', 'order']
+        ["type", "order"]
       ),
     [filteredCategories]
   );
 
   useEffect(() => {
-    if (!map(resourcesData, 'value').includes(category) && resourcesData?.length) {
+    if (
+      !map(resourcesData, "value").includes(category) &&
+      resourcesData?.length
+    ) {
       setCategory(resourcesData[0].value);
     }
   }, [resourcesData]);
@@ -75,16 +78,17 @@ export function Header({
     [category, search, mediaTypeFilter]
   );
 
-  const { classes } = useHeaderStyles({}, { name: 'AssetList-Header' });
+  const { classes } = useHeaderStyles({}, { name: "AssetList-Header" });
 
   // ----------------------------------------------------------------------------------
   // MEDIA TYPES FILTER
 
   useEffect(() => {
-    const categoryIsMediaFiles = categoriesByKey?.['media-files']?.id === category;
+    const categoryIsMediaFiles =
+      categoriesByKey?.["media-files"]?.id === category;
 
     if (categoryIsMediaFiles && !hideMediaFilter && !onlyImages) {
-      loadMediaTypes(categoriesByKey?.['media-files']?.id).then((types) => {
+      loadMediaTypes(categoriesByKey?.["media-files"]?.id).then((types) => {
         setMediaTypes([...types]);
       });
     } else {
@@ -94,7 +98,10 @@ export function Header({
 
   const mediaTypeSelectData = useMemo(() => {
     if (!mediaTypes?.length) return null;
-    return [{ label: localizations?.mediaType?.allTypes, value: 'all' }, ...mediaTypes];
+    return [
+      { label: localizations?.mediaType?.allTypes, value: "all" },
+      ...mediaTypes,
+    ];
   }, [mediaTypes, localizations]);
 
   return (

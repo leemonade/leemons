@@ -1,1 +1,1 @@
-export * from './EditIcon';
+export * from "./EditIcon";

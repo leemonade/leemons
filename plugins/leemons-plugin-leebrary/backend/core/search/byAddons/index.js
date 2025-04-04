@@ -1,4 +1,4 @@
-const byAddons = require('./byAddons');
+const byAddons = require("./byAddons");
 
 module.exports = {
   ...byAddons,

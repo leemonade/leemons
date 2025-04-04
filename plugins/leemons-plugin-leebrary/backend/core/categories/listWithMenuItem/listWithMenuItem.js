@@ -1,6 +1,6 @@
-const { find, isEmpty, sortBy } = require('lodash');
-const { categoriesMenu } = require('../../../config/constants');
-const { list } = require('../list');
+const { find, isEmpty, sortBy } = require("lodash");
+const { categoriesMenu } = require("../../../config/constants");
+const { list } = require("../list");
 
 /**
  * Lists categories with menu items.
@@ -15,7 +15,7 @@ const { list } = require('../list');
  */
 async function listWithMenuItem({ page, size = 999, ctx }) {
   const categories = await list({ page, size, ctx });
-  const menuItems = await ctx.tx.call('menu-builder.menu.getIfHasPermission', {
+  const menuItems = await ctx.tx.call("menu-builder.menu.getIfHasPermission", {
     menuKey: categoriesMenu.key,
   });
 
@@ -26,7 +26,7 @@ async function listWithMenuItem({ page, size = 999, ctx }) {
         menuItem: find(menuItems, { key: ctx.prefixPN(category.key) }),
       }))
       .filter((item) => !isEmpty(item.menuItem)),
-    'menuItem.order'
+    "menuItem.order"
   );
 }
 

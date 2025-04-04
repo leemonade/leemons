@@ -1,5 +1,5 @@
-const document = require('office-document-properties');
-const { getMetaProps } = require('./getMetaProps');
+const document = require("office-document-properties");
+const { getMetaProps } = require("./getMetaProps");
 
 /**
  * Handles the document information and extracts metadata if it's a docx, docm, pptx, pptm, xlsx, or xlsm file.
@@ -11,7 +11,7 @@ const { getMetaProps } = require('./getMetaProps');
  * @returns {Promise<Object>} The metadata of the file.
  */
 async function handleDocumentInfo({ metadata, path, extension }) {
-  if (['docx', 'docm', 'pptx', 'pptm', 'xlsx', 'xlsm'].includes(extension)) {
+  if (["docx", "docm", "pptx", "pptm", "xlsx", "xlsm"].includes(extension)) {
     const props = await new Promise((resolve, reject) => {
       document.fromFilePath(path, (err, data) => {
         if (err) {

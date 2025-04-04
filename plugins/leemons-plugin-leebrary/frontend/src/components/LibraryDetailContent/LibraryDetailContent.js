@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from "react";
 
-import { useIsTeacher } from '@academic-portfolio/hooks';
+import { useIsTeacher } from "@academic-portfolio/hooks";
 import {
   Box,
   Text,
@@ -11,22 +11,22 @@ import {
   HtmlText,
   ContextContainer,
   AvatarSubject,
-} from '@bubbles-ui/components';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN as tasksPrefixPN } from '@tasks/helpers/prefixPN';
-import { isEmpty } from 'lodash';
+} from "@bubbles-ui/components";
+import { unflatten } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { prefixPN as tasksPrefixPN } from "@tasks/helpers/prefixPN";
+import { isEmpty } from "lodash";
 
-import prefixPN from '../../helpers/prefixPN';
+import prefixPN from "../../helpers/prefixPN";
 
 import {
   LIBRARY_DETAIL_CONTENT_DEFAULT_PROPS,
   LIBRARY_DETAIL_CONTENT_PROP_TYPES,
-} from './LibraryDetailContent.constants';
-import { LibraryDetailContentStyles } from './LibraryDetailContent.styles';
-import { DetailContent } from './components/DetailContent/DetailContent';
+} from "./LibraryDetailContent.constants";
+import { LibraryDetailContentStyles } from "./LibraryDetailContent.styles";
+import { DetailContent } from "./components/DetailContent/DetailContent";
 
-import { getFileUrl } from '@leebrary/helpers/prepareAsset';
+import { getFileUrl } from "@leebrary/helpers/prepareAsset";
 
 const LibraryDetailContent = ({
   description,
@@ -56,17 +56,21 @@ const LibraryDetailContent = ({
   ...props
 }) => {
   const isTeacher = useIsTeacher();
-  const { classes } = LibraryDetailContentStyles({}, { name: 'LibraryDetailContent' });
+  const { classes } = LibraryDetailContentStyles(
+    {},
+    { name: "LibraryDetailContent" }
+  );
   const clipboard = useClipboard({ timeout: 2000 });
-  const [t, translations] = useTranslateLoader(prefixPN('list'));
+  const [t, translations] = useTranslateLoader(prefixPN("list"));
   const [tasksT] = useTranslateLoader(
-    tasksPrefixPN('task_setup_page.setup.instructionData.labels')
+    tasksPrefixPN("task_setup_page.setup.instructionData.labels")
   );
 
   const [subjectsIds, setSubjectsIds] = useState([]);
   const [canAccessData, setCanAccessData] = useState([]);
   const isAssetWithInstuctions =
-    asset?.providerData?.instructionsForTeachers || asset?.providerData?.instructionsForStudents;
+    asset?.providerData?.instructionsForTeachers ||
+    asset?.providerData?.instructionsForStudents;
   const detailLabels = useMemo(() => {
     if (!isEmpty(translations)) {
       const items = unflatten(translations.items);
@@ -117,7 +121,7 @@ const LibraryDetailContent = ({
       classes={classes}
     />
   );
-  if (variant === 'embedded' || isEmbedded) {
+  if (variant === "embedded" || isEmbedded) {
     return DetailContentComponent;
   }
 
@@ -159,7 +163,7 @@ const LibraryDetailContent = ({
                           </Box>
                           <Box className={classes.canAccessTextContainer}>
                             <Text className={classes.canAccessText}>
-                              {item?.role ? t(`${item?.role}`) : ''}
+                              {item?.role ? t(`${item?.role}`) : ""}
                             </Text>
                           </Box>
                         </Box>
@@ -168,11 +172,16 @@ const LibraryDetailContent = ({
                       return (
                         <Box key={item.id} className={classes.canAccessItem}>
                           <Box className={classes.avatarWrapper}>
-                            <UserDisplayItem variant="inline" size="md" {...item} />
+                            <UserDisplayItem
+                              variant="inline"
+                              size="md"
+                              {...item}
+                            />
                           </Box>
                           <Box className={classes.canAccessTextContainer}>
                             <Text className={classes.canAccessText}>
-                              {Array.isArray(item.permissions) && t(`${item?.permissions[0]}`)}
+                              {Array.isArray(item.permissions) &&
+                                t(`${item?.permissions[0]}`)}
                             </Text>
                           </Box>
                         </Box>
@@ -190,13 +199,17 @@ const LibraryDetailContent = ({
           <Box className={classes.tabPanel}>
             <ContextContainer>
               {!!asset.providerData.instructionsForTeachers && (
-                <ContextContainer title={tasksT('forTeacher')}>
-                  <HtmlText>{asset.providerData.instructionsForTeachers}</HtmlText>
+                <ContextContainer title={tasksT("forTeacher")}>
+                  <HtmlText>
+                    {asset.providerData.instructionsForTeachers}
+                  </HtmlText>
                 </ContextContainer>
               )}
               {!!asset.providerData.instructionsForStudents && (
-                <ContextContainer title={tasksT('forStudent')}>
-                  <HtmlText>{asset.providerData.instructionsForStudents}</HtmlText>
+                <ContextContainer title={tasksT("forStudent")}>
+                  <HtmlText>
+                    {asset.providerData.instructionsForStudents}
+                  </HtmlText>
                 </ContextContainer>
               )}
             </ContextContainer>

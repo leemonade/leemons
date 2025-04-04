@@ -1,9 +1,15 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getAssetsByProgram } = require('./getAssetsByProgram');
-const { assetsSchema } = require('../../../models/assets');
+const { getAssetsByProgram } = require("./getAssetsByProgram");
+const { assetsSchema } = require("../../../models/assets");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -26,17 +32,17 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should return an array of asset IDs for a given program', async () => {
+it("Should return an array of asset IDs for a given program", async () => {
   // Arrange
-  const program = 'programOne';
+  const program = "programOne";
   const assets = [
-    { id: 'assetOne', program: 'programOne' },
-    { id: 'assetTwo', program: 'programTwo' },
+    { id: "assetOne", program: "programOne" },
+    { id: "assetTwo", program: "programTwo" },
   ];
 
   const ctx = generateCtx({
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
 
@@ -50,20 +56,20 @@ it('Should return an array of asset IDs for a given program', async () => {
   });
 
   // Assert
-  expect(response).toEqual(['assetOne']);
+  expect(response).toEqual(["assetOne"]);
 });
 
-it('Should return an empty array if no assets are associated with the program', async () => {
+it("Should return an empty array if no assets are associated with the program", async () => {
   // Arrange
-  const program = 'programThree';
+  const program = "programThree";
   const assets = [
-    { id: 'assetOne', program: 'programOne' },
-    { id: 'assetTwo', program: 'programTwo' },
+    { id: "assetOne", program: "programOne" },
+    { id: "assetTwo", program: "programTwo" },
   ];
 
   const ctx = generateCtx({
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
 
@@ -80,13 +86,13 @@ it('Should return an empty array if no assets are associated with the program', 
   expect(response).toEqual([]);
 });
 
-it('Should return an empty array if no assets are provided', async () => {
+it("Should return an empty array if no assets are provided", async () => {
   // Arrange
-  const program = 'programOne';
+  const program = "programOne";
 
   const ctx = generateCtx({
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
 

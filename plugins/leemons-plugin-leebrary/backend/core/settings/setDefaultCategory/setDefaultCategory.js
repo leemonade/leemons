@@ -1,4 +1,4 @@
-const { set: updateSettings } = require('../set');
+const { set: updateSettings } = require("../set");
 
 /**
  * This function sets the default category for the settings.
@@ -10,8 +10,8 @@ const { set: updateSettings } = require('../set');
  * @throws {Error} If the function is not called from 'leemons-plugin-leebrary'.
  */
 async function setDefaultCategory({ categoryId, ctx }) {
-  if (ctx.callerPlugin !== 'leebrary') {
-    throw new Error('Must be called from leemons-plugin-leebrary');
+  if (ctx.callerPlugin !== "leebrary") {
+    throw new Error("Must be called from leemons-plugin-leebrary");
   }
 
   return updateSettings({ settings: { defaultCategory: categoryId }, ctx });

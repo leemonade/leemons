@@ -3,26 +3,29 @@ const {
   it,
   beforeEach,
   jest: { fn },
-} = require('@jest/globals');
-const got = require('got');
+} = require("@jest/globals");
+const got = require("got");
 
-const { getRemoteContentType } = require('./getRemoteContentType');
+const { getRemoteContentType } = require("./getRemoteContentType");
 
-jest.mock('got');
+jest.mock("got");
 
 beforeEach(() => {
   jest.resetAllMocks();
 });
 
-const url = 'http://example.com';
+const url = "http://example.com";
 
-it('Should resolve with content type when got resolves', async () => {
+it("Should resolve with content type when got resolves", async () => {
   // Arrange
-  const contentType = 'text/html';
+  const contentType = "text/html";
   got.mockImplementationOnce(() => ({
     on: (event, handler) => {
-      if (event === 'response') {
-        handler({ headers: { 'content-type': contentType }, destroy: jest.fn() });
+      if (event === "response") {
+        handler({
+          headers: { "content-type": contentType },
+          destroy: jest.fn(),
+        });
       }
       return { on: fn() };
     },
@@ -36,12 +39,12 @@ it('Should resolve with content type when got resolves', async () => {
   expect(result).toBe(contentType);
 });
 
-it('Should reject with error when got rejects', async () => {
+it("Should reject with error when got rejects", async () => {
   // Arrange
-  const error = new Error('Network error');
+  const error = new Error("Network error");
   got.mockImplementationOnce(() => {
     const mockOn = jest.fn((event, handler) => {
-      if (event === 'error') {
+      if (event === "error") {
         handler(error);
       }
       return { on: mockOn };
@@ -53,9 +56,9 @@ it('Should reject with error when got rejects', async () => {
   await expect(getRemoteContentType(url)).rejects.toEqual(error);
 });
 
-it('Should reject with error when exception is thrown', async () => {
+it("Should reject with error when exception is thrown", async () => {
   // Arrange
-  const error = new Error('Exception error');
+  const error = new Error("Exception error");
   got.mockImplementationOnce(() => {
     throw error;
   });

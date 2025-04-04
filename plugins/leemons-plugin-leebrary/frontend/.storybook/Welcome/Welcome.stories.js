@@ -1,9 +1,9 @@
-import React from 'react';
-import { Welcome as Intro } from './Welcome';
-import mdx from './Welcome.mdx';
+import React from "react";
+import { Welcome as Intro } from "./Welcome";
+import mdx from "./Welcome.mdx";
 
 export default {
-  title: ' Getting Started',
+  title: " Getting Started",
   component: Intro,
   parameters: {
     docs: {

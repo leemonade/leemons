@@ -1,12 +1,12 @@
-import PropTypes from 'prop-types';
-import { ASSET_PROPS } from '../LibraryCard/LibraryCard.constants';
+import PropTypes from "prop-types";
+import { ASSET_PROPS } from "../LibraryCard/LibraryCard.constants";
 
-export const LIBRARY_CARD_EMBED_VARIANTS = ['media', 'bookmark'];
+export const LIBRARY_CARD_EMBED_VARIANTS = ["media", "bookmark"];
 
 export const LIBRARY_CARD_EMBED_DEFAULT_PROPS = {
-  variant: 'media',
+  variant: "media",
   labels: {
-    link: '',
+    link: "",
   },
 };
 export const LIBRARY_CARD_EMBED_PROP_TYPES = {

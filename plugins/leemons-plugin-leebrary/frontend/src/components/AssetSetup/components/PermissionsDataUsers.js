@@ -1,11 +1,21 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from "react";
 
-import { ContextContainer, Select, TableInput, UserDisplayItem } from '@bubbles-ui/components';
-import SelectUserAgent from '@users/components/SelectUserAgent';
-import _, { find, isEmpty, isNil } from 'lodash';
-import PropTypes from 'prop-types';
+import {
+  ContextContainer,
+  Select,
+  TableInput,
+  UserDisplayItem,
+} from "@bubbles-ui/components";
+import SelectUserAgent from "@users/components/SelectUserAgent";
+import _, { find, isEmpty, isNil } from "lodash";
+import PropTypes from "prop-types";
 
-const SelectAgents = ({ usersData, onlyForTeachers, userProfiles, ...props }) => {
+const SelectAgents = ({
+  usersData,
+  onlyForTeachers,
+  userProfiles,
+  ...props
+}) => {
   const profilesHandler = useMemo(() => {
     if (onlyForTeachers) {
       return userProfiles.teacher;
@@ -17,7 +27,7 @@ const SelectAgents = ({ usersData, onlyForTeachers, userProfiles, ...props }) =>
       {...props}
       onlyContacts={true}
       profiles={profilesHandler}
-      selectedUsers={_.map(usersData, 'user.id')}
+      selectedUsers={_.map(usersData, "user.id")}
       returnItem
     />
   );
@@ -31,7 +41,7 @@ SelectAgents.propTypes = {
 
 const RoleSelect = (props) => {
   if (!props.value) {
-    props.onChange('viewer');
+    props.onChange("viewer");
   }
   return <Select {...props} />;
 };
@@ -63,8 +73,8 @@ const PermissionsDataUsers = ({
   const USERS_COLUMNS = useMemo(
     () => [
       {
-        Header: 'User',
-        accessor: 'user',
+        Header: "User",
+        accessor: "user",
         input: {
           node: (
             <SelectAgents
@@ -73,19 +83,21 @@ const PermissionsDataUsers = ({
               usersData={[...alreadySelectedUsers, ...value]}
             />
           ),
-          rules: { required: 'Required field' },
+          rules: { required: "Required field" },
         },
         editable: false,
-        valueRender: (val) => <UserDisplayItem {...val} variant="inline" size="xs" />,
-        style: { width: '60%' },
+        valueRender: (val) => (
+          <UserDisplayItem {...val} variant="inline" size="xs" />
+        ),
+        style: { width: "60%" },
       },
       {
-        Header: 'Role',
-        accessor: 'role',
+        Header: "Role",
+        accessor: "role",
         editable: false,
         input: {
           node: <RoleSelect />,
-          rules: { required: 'Required field' },
+          rules: { required: "Required field" },
           data: roles,
         },
         valueRender: (val) => find(roles, { value: val })?.label,
@@ -97,7 +109,7 @@ const PermissionsDataUsers = ({
   const USER_LABELS = useMemo(
     () => ({
       // add: t('permissionsData.labels.addUserButton', 'Add'),
-      remove: t('permissionsData.labels.removeUserButton', 'Remove'),
+      remove: t("permissionsData.labels.removeUserButton", "Remove"),
       // edit: t('permissionsData.labels.editUserButton', 'Edit'),
       // accept: t('permissionsData.labels.acceptButton', 'Accept'),
       // cancel: t('permissionsData.labels.cancelButton', 'Cancel'),
@@ -113,7 +125,7 @@ const PermissionsDataUsers = ({
       spacing={0}
       sx={() => ({
         thead: {
-          display: editMode ? 'none' : 'block',
+          display: editMode ? "none" : "block",
         },
       })}
     >

@@ -1,21 +1,21 @@
 export const allAssetsKey = [
   {
-    plugin: 'plugin.leebrary',
-    scope: 'assets',
+    plugin: "plugin.leebrary",
+    scope: "assets",
   },
 ];
 
 export const allGetAssetsKey = [
   {
     ...allAssetsKey[0],
-    action: 'get',
+    action: "get",
   },
 ];
 
 export const getAssetByFileKey = (fileId) => [
   {
     ...allAssetsKey[0],
-    action: 'getAssetByFileKey',
+    action: "getAssetByFileKey",
     params: {
       fileId,
     },

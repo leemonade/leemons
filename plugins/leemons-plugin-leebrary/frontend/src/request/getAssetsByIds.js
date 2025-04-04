@@ -1,4 +1,4 @@
-import prepareAsset from '@leebrary/helpers/prepareAsset';
+import prepareAsset from "@leebrary/helpers/prepareAsset";
 
 async function getAssetsByIds(assets, filters = {}) {
   if (!assets?.length) return [];
@@ -8,7 +8,7 @@ async function getAssetsByIds(assets, filters = {}) {
       assets,
       filters,
     },
-    method: 'POST',
+    method: "POST",
   });
 
   return {

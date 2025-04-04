@@ -1,20 +1,20 @@
 /* eslint-disable no-param-reassign */
-const { toLower } = require('lodash');
+const { toLower } = require("lodash");
 
 const ADMITTED_METADATA = [
-  'format',
-  'duration',
+  "format",
+  "duration",
   // 'framerate',
-  'words',
-  'totaltime',
-  'revision',
-  'pages',
-  'slides',
-  'spreadsheets',
-  'books',
-  'height',
-  'width',
-  'bitrate',
+  "words",
+  "totaltime",
+  "revision",
+  "pages",
+  "slides",
+  "spreadsheets",
+  "books",
+  "height",
+  "width",
+  "bitrate",
   // 'channels',
 ];
 

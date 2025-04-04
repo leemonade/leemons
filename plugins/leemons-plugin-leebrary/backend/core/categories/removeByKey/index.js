@@ -1,4 +1,4 @@
-const removeByKey = require('./removeByKey');
+const removeByKey = require("./removeByKey");
 
 module.exports = {
   ...removeByKey,

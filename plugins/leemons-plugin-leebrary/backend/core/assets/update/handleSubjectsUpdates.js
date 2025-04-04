@@ -1,4 +1,4 @@
-const { map } = require('lodash');
+const { map } = require("lodash");
 
 /**
  * Handles the asset subjects if necessary.
@@ -10,11 +10,13 @@ const { map } = require('lodash');
  * @returns {Promise<void>} Resolves when the subjects are handled.
  */
 async function handleSubjectsUpdates({ assetId, subjects, diff, ctx }) {
-  if (diff.includes('subjects')) {
+  if (diff.includes("subjects")) {
     await ctx.tx.db.AssetsSubjects.deleteMany({ asset: assetId });
     if (subjects?.length) {
       await Promise.all(
-        map(subjects, (item) => ctx.tx.db.AssetsSubjects.create({ asset: assetId, subject: item }))
+        map(subjects, (item) =>
+          ctx.tx.db.AssetsSubjects.create({ asset: assetId, subject: item })
+        )
       );
     }
   }

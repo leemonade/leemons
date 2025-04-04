@@ -1,3 +1,3 @@
-const getById = require('./getById');
+const getById = require("./getById");
 
 module.exports = { ...getById };

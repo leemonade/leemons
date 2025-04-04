@@ -1,4 +1,4 @@
-const { uniqBy, find, groupBy, map, isString, uniq } = require('lodash');
+const { uniqBy, find, groupBy, map, isString, uniq } = require("lodash");
 
 /**
  * Filters assets by publish status.
@@ -25,13 +25,15 @@ async function filterByPublishStatus({
   const assetsIds = assets.map((asset) => asset?.asset ?? asset);
 
   if (!nothingFound) {
-    assets = await ctx.tx.call('common.versionControl.getVersion', {
+    assets = await ctx.tx.call("common.versionControl.getVersion", {
       id: assetsIds,
       getLatestInfo: true,
     });
 
-    if (published !== 'all') {
-      assets = assets.filter(({ published: isPublished }) => isPublished === published);
+    if (published !== "all") {
+      assets = assets.filter(
+        ({ published: isPublished }) => isPublished === published
+      );
     }
 
     // EN: Filter by preferCurrent status
@@ -46,7 +48,8 @@ async function filterByPublishStatus({
         // ES: Obtener la última versión publicada y no publicada de cada uuid si ya están en la búsqueda
         const latestVersion = values.find((version) => version.isLatestVersion);
 
-        return find(values, (id) => id.version === latestVersion?.version)?.fullId;
+        return find(values, (id) => id.version === latestVersion?.version)
+          ?.fullId;
       }).filter(Boolean);
     } else {
       assets = assets.map(({ fullId }) => fullId);
@@ -54,11 +57,9 @@ async function filterByPublishStatus({
   }
 
   const [assetChecker] = assets;
-  return isString(assetChecker) ? uniq(assets) : uniqBy(assets, 'asset');
+  return isString(assetChecker) ? uniq(assets) : uniqBy(assets, "asset");
 }
 
 module.exports = {
   filterByPublishStatus,
 };
-
-

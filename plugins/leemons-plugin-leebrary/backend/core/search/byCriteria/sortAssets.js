@@ -1,6 +1,6 @@
-const { isEmpty, keyBy, forEach, map, sortBy } = require('lodash');
+const { isEmpty, keyBy, forEach, map, sortBy } = require("lodash");
 
-const { getByIds: getAssetsByIds } = require('../../assets/getByIds');
+const { getByIds: getAssetsByIds } = require("../../assets/getByIds");
 /**
  * Sorts the provided assets based on the given criteria.
  *
@@ -14,7 +14,14 @@ const { getByIds: getAssetsByIds } = require('../../assets/getByIds');
  * @returns {Promise<Array>} - Returns a promise that resolves with the sorted assets.
  */
 
-async function sortAssets({ sortingBy, assets, indexable, showPublic, sortDirection, ctx }) {
+async function sortAssets({
+  sortingBy,
+  assets,
+  indexable,
+  showPublic,
+  sortDirection,
+  ctx,
+}) {
   // ES: Para el caso que necesite ordenación, necesitamos una lógica distinta
   // EN: For the case that you need sorting, we need a different logic
 
@@ -23,7 +30,7 @@ async function sortAssets({ sortingBy, assets, indexable, showPublic, sortDirect
   if (sortingBy && !isEmpty(sortingBy)) {
     const [items] = await Promise.all([
       getAssetsByIds({
-        ids: map(assets, 'asset'),
+        ids: map(assets, "asset"),
         withCategory: false,
         withTags: false,
         indexable,
@@ -34,13 +41,13 @@ async function sortAssets({ sortingBy, assets, indexable, showPublic, sortDirect
 
     let sortedAssets = sortBy(items, sortingBy);
 
-    if (sortDirection === 'desc') {
+    if (sortDirection === "desc") {
       sortedAssets = sortedAssets.reverse();
     }
 
     const assetIds = sortedAssets.map((item) => item.id);
     result = [];
-    const resultByAsset = keyBy(assets, 'asset');
+    const resultByAsset = keyBy(assets, "asset");
     forEach(assetIds, (assetId) => {
       if (resultByAsset[assetId]) {
         result.push(resultByAsset[assetId]);

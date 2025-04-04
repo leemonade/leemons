@@ -1,6 +1,6 @@
-const { compact, uniq } = require('lodash');
-const { find: findBookmarks } = require('../../../bookmarks/find');
-const { find: findAssets } = require('../../find');
+const { compact, uniq } = require("lodash");
+const { find: findBookmarks } = require("../../../bookmarks/find");
+const { find: findAssets } = require("../../find");
 /**
  * Fetches the assets and bookmarks related to a file.
  *

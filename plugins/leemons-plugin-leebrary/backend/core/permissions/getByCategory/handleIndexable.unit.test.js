@@ -1,9 +1,15 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { handleIndexable } = require('./handleIndexable');
-const { assetsSchema } = require('../../../models/assets');
+const { handleIndexable } = require("./handleIndexable");
+const { assetsSchema } = require("../../../models/assets");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -26,21 +32,23 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should call handleIndexable correctly', async () => {
+it("Should call handleIndexable correctly", async () => {
   // Arrange
-  const assetOne = { id: 'assetOne', indexable: true };
-  const assetTwo = { id: 'assetTwo', indexable: false };
-  const assetThree = { id: 'assetTwo', indexable: true };
+  const assetOne = { id: "assetOne", indexable: true };
+  const assetTwo = { id: "assetTwo", indexable: false };
+  const assetThree = { id: "assetTwo", indexable: true };
   const resultsParam = [
-    { asset: assetOne.id, role: 'viewer', permissions: {} },
-    { asset: assetTwo.id, role: 'viewer', permissions: {} },
-    { asset: assetThree.id, role: 'viewer', permissions: {} },
+    { asset: assetOne.id, role: "viewer", permissions: {} },
+    { asset: assetTwo.id, role: "viewer", permissions: {} },
+    { asset: assetThree.id, role: "viewer", permissions: {} },
   ];
-  const expectedResult = resultsParam.filter((item) => item.asset !== assetTwo.id);
+  const expectedResult = resultsParam.filter(
+    (item) => item.asset !== assetTwo.id
+  );
 
   const ctx = generateCtx({
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
 

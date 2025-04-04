@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
-import { Controller, useWatch } from 'react-hook-form';
+import { useState, useEffect } from "react";
+import { Controller, useWatch } from "react-hook-form";
 
-import { SubjectPicker } from '@academic-portfolio/components/SubjectPicker';
+import { SubjectPicker } from "@academic-portfolio/components/SubjectPicker";
 import {
   Drawer,
   Text,
@@ -10,12 +10,12 @@ import {
   Alert,
   ColorInput,
   ContextContainer,
-} from '@bubbles-ui/components';
-import { TagsAutocomplete } from '@common';
-import { map, isString } from 'lodash';
-import propTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { TagsAutocomplete } from "@common";
+import { map, isString } from "lodash";
+import propTypes from "prop-types";
 
-import { ImagePicker } from '../../../ImagePicker';
+import { ImagePicker } from "../../../ImagePicker";
 
 const BulkEditDrawer = ({
   isOpen,
@@ -34,7 +34,7 @@ const BulkEditDrawer = ({
 
   const subjects = useWatch({
     control,
-    name: 'subjects',
+    name: "subjects",
   });
 
   const getCommonValueFromAssets = (propertyPath) => {
@@ -51,7 +51,7 @@ const BulkEditDrawer = ({
 
       if (!allHaveSameLength) return null;
 
-      if (propertyPath === 'tags') {
+      if (propertyPath === "tags") {
         return selectedAssets.every(
           (asset) =>
             asset[propertyPath]?.every((tag) => firstValue.includes(tag)) &&
@@ -61,14 +61,18 @@ const BulkEditDrawer = ({
           : null;
       }
 
-      if (propertyPath === 'subjects') {
+      if (propertyPath === "subjects") {
         return selectedAssets.every(
           (asset) =>
             asset[propertyPath]?.every((subject) =>
-              firstValue.some((firstSubject) => firstSubject.subject === subject.subject)
+              firstValue.some(
+                (firstSubject) => firstSubject.subject === subject.subject
+              )
             ) &&
             firstValue.every((firstSubject) =>
-              asset[propertyPath]?.some((subject) => subject.subject === firstSubject.subject)
+              asset[propertyPath]?.some(
+                (subject) => subject.subject === firstSubject.subject
+              )
             )
         )
           ? firstValue
@@ -76,11 +80,11 @@ const BulkEditDrawer = ({
       }
     }
 
-    if (propertyPath === 'cover') {
+    if (propertyPath === "cover") {
       return selectedAssets.every(
         (asset) =>
           (typeof asset[propertyPath] === typeof firstValue &&
-            (typeof firstValue === 'string'
+            (typeof firstValue === "string"
               ? asset[propertyPath] === firstValue
               : asset[propertyPath]?.id === firstValue?.id)) ||
           (asset[propertyPath] === null && firstValue === null)
@@ -89,17 +93,19 @@ const BulkEditDrawer = ({
         : null;
     }
 
-    return selectedAssets.every((asset) => asset[propertyPath] === firstValue) ? firstValue : null;
+    return selectedAssets.every((asset) => asset[propertyPath] === firstValue)
+      ? firstValue
+      : null;
   };
 
   useEffect(() => {
     if (isOpen) {
       const values = {
-        cover: getCommonValueFromAssets('cover'),
-        color: getCommonValueFromAssets('color'),
-        subjects: getCommonValueFromAssets('subjects'),
-        tags: getCommonValueFromAssets('tags'),
-        program: getCommonValueFromAssets('program'),
+        cover: getCommonValueFromAssets("cover"),
+        color: getCommonValueFromAssets("color"),
+        subjects: getCommonValueFromAssets("subjects"),
+        tags: getCommonValueFromAssets("tags"),
+        program: getCommonValueFromAssets("program"),
       };
 
       Object.entries(values).forEach(([key, value]) => {
@@ -118,34 +124,34 @@ const BulkEditDrawer = ({
 
   const setAssetColorToSubjectColor = (subjectsFromPicker) => {
     if (!subjectsFromPicker?.length) {
-      setValue('color', null);
+      setValue("color", null);
       return;
     }
     if (subjectsFromPicker.length === 1) {
-      setValue('color', subjectsFromPicker[0].color);
+      setValue("color", subjectsFromPicker[0].color);
     }
     if (subjectsFromPicker.length > 1) {
-      setValue('color', '#878D96');
+      setValue("color", "#878D96");
     }
   };
 
   return (
     <Drawer size="xl" opened={isOpen} onClose={onClose}>
-      <Drawer.Header title={t('bulkEditDrawer.title')} />
+      <Drawer.Header title={t("bulkEditDrawer.title")} />
       <Drawer.Content>
         <Alert closeable={false}>
           <Text>
-            {t('bulkEditDrawer.alertEditPartOne')}
-            <Text strong>{t('bulkEditDrawer.alertEditPartTwo')}</Text>
+            {t("bulkEditDrawer.alertEditPartOne")}
+            <Text strong>{t("bulkEditDrawer.alertEditPartTwo")}</Text>
           </Text>
         </Alert>
-        <ContextContainer title={t('bulkEditDrawer.presentation')}>
+        <ContextContainer title={t("bulkEditDrawer.presentation")}>
           {!areAllImagesSelected && (
             <>
               <Alert closeable={false}>
                 <Text>
-                  {t('bulkEditDrawer.alertCoverPartOne')}
-                  <Text strong>{t('bulkEditDrawer.alertCoverPartTwo')}</Text>
+                  {t("bulkEditDrawer.alertCoverPartOne")}
+                  <Text strong>{t("bulkEditDrawer.alertCoverPartTwo")}</Text>
                 </Text>
               </Alert>
               <Controller
@@ -154,7 +160,11 @@ const BulkEditDrawer = ({
                 render={({ field }) => (
                   <ImagePicker
                     labels={labels}
-                    value={initialFormValues.cover?.id || initialFormValues.cover || field.value}
+                    value={
+                      initialFormValues.cover?.id ||
+                      initialFormValues.cover ||
+                      field.value
+                    }
                     onChange={field.onChange}
                     isPickingACover
                   />
@@ -168,9 +178,9 @@ const BulkEditDrawer = ({
             render={({ field }) => (
               <ColorInput
                 {...field}
-                label={t('bulkEditDrawer.colorLabel')}
+                label={t("bulkEditDrawer.colorLabel")}
                 value={field.value}
-                placeholder={t('bulkEditDrawer.colorPlaceholder')}
+                placeholder={t("bulkEditDrawer.colorPlaceholder")}
                 manual={false}
                 disabled={subjects?.length > 0}
                 contentStyle={{ width: 190 }}
@@ -193,38 +203,38 @@ const BulkEditDrawer = ({
                 onChangeRaw={(subjectsRaw) => {
                   setAssetColorToSubjectColor(subjectsRaw);
                   if (subjectsRaw.length > 0) {
-                    setValue('subjectsRaw', subjectsRaw);
+                    setValue("subjectsRaw", subjectsRaw);
                     if (subjectsRaw[0].programId !== program) {
                       setProgram(subjectsRaw[0].programId);
-                      setValue('program', subjectsRaw[0].programId);
+                      setValue("program", subjectsRaw[0].programId);
                     }
                   } else if (program) {
                     setProgram(null);
-                    setValue('program', null);
+                    setValue("program", null);
                   }
                 }}
                 localizations={{
-                  title: t('bulkEditDrawer.subjectsTitle'),
-                  program: t('bulkEditDrawer.programLabel'),
-                  subject: t('bulkEditDrawer.subjectLabel'),
-                  add: t('bulkEditDrawer.addSubjectLabel'),
-                  course: t('bulkEditDrawer.courseLabel'),
-                  placeholder: t('bulkEditDrawer.subjectsPlaceholder'),
+                  title: t("bulkEditDrawer.subjectsTitle"),
+                  program: t("bulkEditDrawer.programLabel"),
+                  subject: t("bulkEditDrawer.subjectLabel"),
+                  add: t("bulkEditDrawer.addSubjectLabel"),
+                  course: t("bulkEditDrawer.courseLabel"),
+                  placeholder: t("bulkEditDrawer.subjectsPlaceholder"),
                 }}
                 hideSectionHeaders={false}
               />
             )}
           />
         </ContextContainer>
-        <ContextContainer title={'Tags'}>
+        <ContextContainer title={"Tags"}>
           <Controller
             control={control}
             name="tags"
             render={({ field }) => (
               <TagsAutocomplete
-                label={t('bulkEditDrawer.tagsLabel')}
-                labels={{ addButton: t('bulkEditDrawer.addTagLabel') }}
-                placeholder={t('bulkEditDrawer.tagsPlaceholder')}
+                label={t("bulkEditDrawer.tagsLabel")}
+                labels={{ addButton: t("bulkEditDrawer.addTagLabel") }}
+                placeholder={t("bulkEditDrawer.tagsPlaceholder")}
                 pluginName="leebrary"
                 {...field}
               />
@@ -236,9 +246,9 @@ const BulkEditDrawer = ({
       <Drawer.Footer>
         <Stack justifyContent="space-between" fullWidth>
           <Button variant="outline" onClick={onClose}>
-            {t('bulkEditDrawer.cancelButton')}
+            {t("bulkEditDrawer.cancelButton")}
           </Button>
-          <Button onClick={onSave}>{t('bulkEditDrawer.saveButton')}</Button>
+          <Button onClick={onSave}>{t("bulkEditDrawer.saveButton")}</Button>
         </Stack>
       </Drawer.Footer>
     </Drawer>

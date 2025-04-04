@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   Box,
   ActionButton,
@@ -9,30 +9,30 @@ import {
   CardEmptyCover,
   TextClamp,
   Badge,
-} from '@bubbles-ui/components';
-import { SortDragIcon, DeleteBinIcon } from '@bubbles-ui/icons/outline';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@tasks/helpers';
-import { isEmpty } from 'lodash';
-import { AttachmentsStyles } from './Attachments.styles';
+} from "@bubbles-ui/components";
+import { SortDragIcon, DeleteBinIcon } from "@bubbles-ui/icons/outline";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { prefixPN } from "@tasks/helpers";
+import { isEmpty } from "lodash";
+import { AttachmentsStyles } from "./Attachments.styles";
 
 const AttachmentItem = React.forwardRef(
   ({ provided, item, removeItem, classes, useAria, removeLabel }, ref) => {
     const { classes: styles } = AttachmentsStyles();
-    const [, translations] = useTranslateLoader(prefixPN('task_setup_page'));
+    const [, translations] = useTranslateLoader(prefixPN("task_setup_page"));
 
     const getAssetBadgeType = () => {
       const typeMappings = {
-        image: 'Image',
-        bookmark: ['video'].includes(item.mediaType) ? 'Video' : 'Bookmark',
-        'content-creator': 'Content creator',
-        file: item?.fileExtension === 'pdf' ? 'PDF' : 'File',
-        video: 'Video',
-        audio: 'Audio',
-        document: item?.fileExtension === 'pdf' ? 'PDF' : 'Document',
+        image: "Image",
+        bookmark: ["video"].includes(item.mediaType) ? "Video" : "Bookmark",
+        "content-creator": "Content creator",
+        file: item?.fileExtension === "pdf" ? "PDF" : "File",
+        video: "Video",
+        audio: "Audio",
+        document: item?.fileExtension === "pdf" ? "PDF" : "Document",
       };
 
-      return typeMappings[item.fileType] || 'Media';
+      return typeMappings[item.fileType] || "Media";
     };
 
     const badgeCategory = getAssetBadgeType();
@@ -55,7 +55,7 @@ const AttachmentItem = React.forwardRef(
             {item.cover ? (
               <ImageLoader src={item.cover || null} alt={item.name} />
             ) : (
-              <CardEmptyCover icon={''} fileType={item.fileType} height={48} />
+              <CardEmptyCover icon={""} fileType={item.fileType} height={48} />
             )}
           </Box>
           <Stack direction="column" fullHeight className={styles.bodyContainer}>
@@ -64,7 +64,12 @@ const AttachmentItem = React.forwardRef(
                 {item.name}
               </Text>
             </TextClamp>
-            <Badge size="xs" label={badgeCategory} closable={false} radius={'default'} />
+            <Badge
+              size="xs"
+              label={badgeCategory}
+              closable={false}
+              radius={"default"}
+            />
           </Stack>
           <Box className={styles.actionButton}>
             <ActionButton
@@ -79,7 +84,7 @@ const AttachmentItem = React.forwardRef(
     );
   }
 );
-AttachmentItem.displayName = 'AttachmentItem';
+AttachmentItem.displayName = "AttachmentItem";
 AttachmentItem.propTypes = {
   item: PropTypes.object,
   removeItem: PropTypes.func,

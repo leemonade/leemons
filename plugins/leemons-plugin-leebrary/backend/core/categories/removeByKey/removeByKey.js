@@ -1,8 +1,8 @@
-const { isEmpty } = require('lodash');
+const { isEmpty } = require("lodash");
 
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
-const { getByKey } = require('../getByKey');
+const { getByKey } = require("../getByKey");
 
 /**
  * Removes a category by its key. If the category has associated assets, it throws an HTTP error.
@@ -17,13 +17,19 @@ const { getByKey } = require('../getByKey');
  */
 async function removeByKey({ categoryKey, ctx }) {
   if (isEmpty(categoryKey)) {
-    throw new LeemonsError(ctx, { message: 'Category key is required.', httpStatusCode: 400 });
+    throw new LeemonsError(ctx, {
+      message: "Category key is required.",
+      httpStatusCode: 400,
+    });
   }
 
   const category = await getByKey({ key: categoryKey, ctx });
 
   if (!category || isEmpty(category)) {
-    throw new LeemonsError(ctx, { message: 'Category not found.', httpStatusCode: 400 });
+    throw new LeemonsError(ctx, {
+      message: "Category not found.",
+      httpStatusCode: 400,
+    });
   }
 
   // ES: Revisamos que no existan assets asociados a la categoría
@@ -31,7 +37,10 @@ async function removeByKey({ categoryKey, ctx }) {
   const assets = await ctx.tx.db.Assets.find({ category: category.id });
 
   if (!isEmpty(assets)) {
-    throw new LeemonsError(ctx, { message: 'Category has assets.', httpStatusCode: 400 });
+    throw new LeemonsError(ctx, {
+      message: "Category has assets.",
+      httpStatusCode: 400,
+    });
   }
 
   try {

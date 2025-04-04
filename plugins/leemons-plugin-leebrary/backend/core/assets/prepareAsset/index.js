@@ -1,4 +1,4 @@
-const prepareAsset = require('./prepareAsset');
+const prepareAsset = require("./prepareAsset");
 
 module.exports = {
   ...prepareAsset,

@@ -1,4 +1,4 @@
-const { pad } = require('./pad');
+const { pad } = require("./pad");
 /**
  * Converts milliseconds to a readable duration format (HH:MM:SS or MM:SS).
  *

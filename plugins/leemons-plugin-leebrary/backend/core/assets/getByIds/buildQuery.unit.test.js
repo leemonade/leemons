@@ -1,10 +1,10 @@
-const { it, expect } = require('@jest/globals');
+const { it, expect } = require("@jest/globals");
 
-const { buildQuery } = require('./buildQuery');
+const { buildQuery } = require("./buildQuery");
 
-it('should return a query with only id when indexable is falsy', () => {
+it("should return a query with only id when indexable is falsy", () => {
   // Arrange
-  const assetsIds = ['1', '2', '3'];
+  const assetsIds = ["1", "2", "3"];
   const indexable = undefined;
 
   // Act
@@ -14,9 +14,9 @@ it('should return a query with only id when indexable is falsy', () => {
   expect(result).toEqual({ id: assetsIds });
 });
 
-it('should return a query with id and indexable when indexable is true', () => {
+it("should return a query with id and indexable when indexable is true", () => {
   // Arrange
-  const assetsIds = ['1', '2', '3'];
+  const assetsIds = ["1", "2", "3"];
   const indexable = true;
 
   // Act

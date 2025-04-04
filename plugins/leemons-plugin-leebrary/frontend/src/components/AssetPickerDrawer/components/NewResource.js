@@ -1,23 +1,23 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from "react";
 
-import { Box, createStyles } from '@bubbles-ui/components';
-import { unflatten, useRequestErrorMessage } from '@common';
-import { addErrorAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useSession } from '@users/session';
-import { keyBy, isEmpty } from 'lodash';
-import PropTypes from 'prop-types';
+import { Box, createStyles } from "@bubbles-ui/components";
+import { unflatten, useRequestErrorMessage } from "@common";
+import { addErrorAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useSession } from "@users/session";
+import { keyBy, isEmpty } from "lodash";
+import PropTypes from "prop-types";
 
-import { usePickerCategories } from '../hooks/usePickerCategories';
+import { usePickerCategories } from "../hooks/usePickerCategories";
 
-import AssetForm from '@leebrary/components/AssetForm/AssetForm';
-import { LIBRARY_FORM_TYPES } from '@leebrary/components/LibraryForm/LibraryForm.constants';
-import UploadingFileModal from '@leebrary/components/UploadingFileModal';
-import compressImage from '@leebrary/helpers/compressImage';
-import imageUrlToFile from '@leebrary/helpers/imageUrlToFile';
-import prefixPN from '@leebrary/helpers/prefixPN';
-import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
-import { newAssetRequest } from '@leebrary/request';
+import AssetForm from "@leebrary/components/AssetForm/AssetForm";
+import { LIBRARY_FORM_TYPES } from "@leebrary/components/LibraryForm/LibraryForm.constants";
+import UploadingFileModal from "@leebrary/components/UploadingFileModal";
+import compressImage from "@leebrary/helpers/compressImage";
+import imageUrlToFile from "@leebrary/helpers/imageUrlToFile";
+import prefixPN from "@leebrary/helpers/prefixPN";
+import uploadFileAsMultipart from "@leebrary/helpers/uploadFileAsMultipart";
+import { newAssetRequest } from "@leebrary/request";
 
 export const useNewResourceStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
@@ -39,9 +39,9 @@ export function NewResource({
   externalFile,
   onRemoveExternalFile,
 }) {
-  const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
+  const [, translations] = useTranslateLoader(prefixPN("assetSetup"));
   const categories = usePickerCategories();
-  const categoriesByKey = useMemo(() => keyBy(categories, 'key'), [categories]);
+  const categoriesByKey = useMemo(() => keyBy(categories, "key"), [categories]);
   const [uploadingFileInfo, setUploadingFileInfo] = useState(null);
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
@@ -61,7 +61,10 @@ export function NewResource({
     return {};
   }, [translations]);
 
-  if (!categoriesByKey[LIBRARY_FORM_TYPES.MEDIA_FILES] && !session.isSuperAdmin) {
+  if (
+    !categoriesByKey[LIBRARY_FORM_TYPES.MEDIA_FILES] &&
+    !session.isSuperAdmin
+  ) {
     return null;
   }
 
@@ -73,19 +76,19 @@ export function NewResource({
       const body = { ...data };
 
       if (
-        body.file?.type?.startsWith('image') &&
-        body.file?.type?.indexOf('/gif') < 0 &&
-        body.file?.type?.indexOf('/svg') < 0
+        body.file?.type?.startsWith("image") &&
+        body.file?.type?.indexOf("/gif") < 0 &&
+        body.file?.type?.indexOf("/svg") < 0
       ) {
         const compressedImage = await compressImage({ file: body.file });
         body.file = compressedImage;
       }
 
       let originalExternalResource = null;
-      if (body.externalFile && body.externalFile.type === 'image') {
+      if (body.externalFile && body.externalFile.type === "image") {
         originalExternalResource = body.externalFile;
 
-        setUploadingFileInfo({ state: 'processingImage' });
+        setUploadingFileInfo({ state: "processingImage" });
         const fileFromUrl = await imageUrlToFile(originalExternalResource.url);
         const compressedImage = await compressImage({ file: fileFromUrl });
         body.file = compressedImage;
@@ -103,10 +106,15 @@ export function NewResource({
           externalUrl: originalExternalResource?.url,
         },
       });
-      setUploadingFileInfo({ state: 'finalize' });
+      setUploadingFileInfo({ state: "finalize" });
       try {
         const { asset } = await newAssetRequest(
-          { ...body, file: uploadedFile, isCover: !!isPickingACover, ...dataOverride },
+          {
+            ...body,
+            file: uploadedFile,
+            isCover: !!isPickingACover,
+            ...dataOverride,
+          },
           null,
           LIBRARY_FORM_TYPES.MEDIA_FILES
         );
@@ -128,7 +136,8 @@ export function NewResource({
   // v - category.key === 'media-files'
 
   const onlyCreateMediaFiles =
-    creatableCategories.length === 1 && creatableCategories[0] === LIBRARY_FORM_TYPES.MEDIA_FILES;
+    creatableCategories.length === 1 &&
+    creatableCategories[0] === LIBRARY_FORM_TYPES.MEDIA_FILES;
 
   return (
     <Box className={classes.root}>
@@ -143,7 +152,10 @@ export function NewResource({
         externalFileFromDrawer={externalFile}
         onRemoveExternalFile={onRemoveExternalFile}
       />
-      <UploadingFileModal opened={uploadingFileInfo !== null} info={uploadingFileInfo} />
+      <UploadingFileModal
+        opened={uploadingFileInfo !== null}
+        info={uploadingFileInfo}
+      />
     </Box>
   );
 }

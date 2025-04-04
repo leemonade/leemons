@@ -1,13 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { isString } from 'lodash';
-import { getAssetUrl, getFileUrl, prepareAsset } from '../helpers/prepareAsset';
+import React from "react";
+import PropTypes from "prop-types";
+import { isString } from "lodash";
+import { getAssetUrl, getFileUrl, prepareAsset } from "../helpers/prepareAsset";
 
 const LeebraryImage = ({ value, src, ...props }) => {
   const _src = React.useMemo(() => {
     const val = value || src;
     if (isString(val)) {
-      if (val.includes('@')) {
+      if (val.includes("@")) {
         return getAssetUrl(val);
       }
       return getFileUrl(val);

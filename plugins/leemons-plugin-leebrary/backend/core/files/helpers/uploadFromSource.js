@@ -1,11 +1,11 @@
-const { isString } = require('lodash');
-const mime = require('mime-types');
+const { isString } = require("lodash");
+const mime = require("mime-types");
 const {
   upload: uploadFile,
   uploadFromUrl: uploadFileFromUrl,
   uploadFromFileStream: uploadFileFromStream,
   prepareImage,
-} = require('../upload');
+} = require("../upload");
 
 /**
  * Uploads a file from various sources (URL, readable stream, or file object) and returns the uploaded file details.
@@ -31,11 +31,20 @@ async function uploadFromSource({ source, name, ctx }) {
     resultFile = await uploadFileFromStream({ file: source, name, ctx });
   } else if (source.type && source.path) {
     const contentType = source.type;
-    const [fileType] = contentType.split('/');
+    const [fileType] = contentType.split("/");
     const extension = mime.extension(contentType);
-    if (fileType === 'image' && ['jpeg', 'jpg', 'png'].includes(extension)) {
-      const imageFile = await prepareImage({ path: source.path, extension, ctx });
-      resultFile = await uploadFile({ ...imageFile, type: contentType, name, ctx });
+    if (fileType === "image" && ["jpeg", "jpg", "png"].includes(extension)) {
+      const imageFile = await prepareImage({
+        path: source.path,
+        extension,
+        ctx,
+      });
+      resultFile = await uploadFile({
+        ...imageFile,
+        type: contentType,
+        name,
+        ctx,
+      });
     } else {
       resultFile = await uploadFile({ file: { ...source }, name, ctx });
     }

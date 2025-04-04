@@ -1,16 +1,16 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from "react";
 
-import { Box, Button, ImagePreviewInput, Stack } from '@bubbles-ui/components';
-import { PluginLeebraryIcon } from '@bubbles-ui/icons/outline';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { isEmpty, isString, noop } from 'lodash';
-import PropTypes from 'prop-types';
+import { Box, Button, ImagePreviewInput, Stack } from "@bubbles-ui/components";
+import { PluginLeebraryIcon } from "@bubbles-ui/icons/outline";
+import { unflatten } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { isEmpty, isString, noop } from "lodash";
+import PropTypes from "prop-types";
 
-import prefixPN from '../helpers/prefixPN';
-import { getFileUrl, prepareAsset } from '../helpers/prepareAsset';
+import prefixPN from "../helpers/prefixPN";
+import { getFileUrl, prepareAsset } from "../helpers/prepareAsset";
 
-import { AssetPickerDrawer } from './AssetPickerDrawer';
+import { AssetPickerDrawer } from "./AssetPickerDrawer";
 
 const ImagePicker = ({
   labels,
@@ -27,7 +27,7 @@ const ImagePicker = ({
   hideChangeButton,
   ...props
 }) => {
-  const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
+  const [, translations] = useTranslateLoader(prefixPN("assetSetup"));
   const [showAssetDrawer, setShowAssetDrawer] = useState(false);
   const [assetUrl, setAssetUrl] = useState(null);
 
@@ -85,7 +85,7 @@ const ImagePicker = ({
       <Stack direction="row" spacing={3}>
         {!assetUrl && !readonly && !disabled ? (
           <Button
-            variant={'link'}
+            variant={"link"}
             leftIcon={<PluginLeebraryIcon height={18} width={18} />}
             onClick={() => setShowAssetDrawer(true)}
           >
@@ -111,14 +111,14 @@ const ImagePicker = ({
 
       <AssetPickerDrawer
         {...props}
-        layout={'thumbnails'}
+        layout={"thumbnails"}
         opened={showAssetDrawer}
         onClose={handleOnCloseAssetDrawer}
         onSelect={handleOnSelectAsset}
-        categories={['media-files']}
+        categories={["media-files"]}
         acceptedFileTypes={acceptedFileTypes}
         onlyCreateImages
-        filters={{ type: 'image' }}
+        filters={{ type: "image" }}
       />
     </Box>
   );
@@ -126,16 +126,16 @@ const ImagePicker = ({
 
 ImagePicker.defaultProps = {
   labels: {
-    changeImage: 'Change image',
-    uploadButton: 'Upload',
-    search: 'Search from library',
-    removeButton: 'Remove',
+    changeImage: "Change image",
+    uploadButton: "Upload",
+    search: "Search from library",
+    removeButton: "Remove",
   },
   creatable: true,
   modal: false,
   returnAsset: false,
   isPickingACover: false,
-  acceptedFileTypes: ['image/*'],
+  acceptedFileTypes: ["image/*"],
   hideChangeButton: false,
 };
 ImagePicker.propTypes = {

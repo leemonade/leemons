@@ -1,3 +1,3 @@
-const dataForReturnFile = require('./dataForReturnFile');
+const dataForReturnFile = require("./dataForReturnFile");
 
 module.exports = { ...dataForReturnFile };

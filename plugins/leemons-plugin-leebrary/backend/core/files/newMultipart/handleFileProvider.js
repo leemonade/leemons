@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-const { getByName: getProviderByName } = require('../../providers/getByName');
+const { getByName: getProviderByName } = require("../../providers/getByName");
 
 /**
  * Handles the file provider for the given file. If the provider supports multipart operations,
@@ -13,11 +13,17 @@ const { getByName: getProviderByName } = require('../../providers/getByName');
  * @returns {Promise<LibraryFile>} A promise that resolves with the handled file.
  */
 async function handleFileProvider({ file, filePaths, settings, ctx }) {
-  const provider = await getProviderByName({ name: settings.providerName, ctx });
+  const provider = await getProviderByName({
+    name: settings.providerName,
+    ctx,
+  });
   file.provider = settings.providerName;
 
   if (provider?.supportedMethods?.newMultipart) {
-    file.uri = await ctx.tx.call(`${file.provider}.files.newMultipart`, { file, filePaths });
+    file.uri = await ctx.tx.call(`${file.provider}.files.newMultipart`, {
+      file,
+      filePaths,
+    });
   }
 
   return file;

@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
-const { isEmpty, isString } = require('lodash');
-const { isLRN } = require('@leemons/lrn');
-const { getById: getCategoryById } = require('../../categories/getById');
-const { getByKey: getCategoryByKey } = require('../../categories/getByKey');
+const { isEmpty, isString } = require("lodash");
+const { isLRN } = require("@leemons/lrn");
+const { getById: getCategoryById } = require("../../categories/getById");
+const { getByKey: getCategoryByKey } = require("../../categories/getByKey");
 
 /**
  * Handles the category data.

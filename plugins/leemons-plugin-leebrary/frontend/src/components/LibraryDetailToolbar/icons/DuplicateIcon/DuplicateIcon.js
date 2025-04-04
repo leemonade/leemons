@@ -1,5 +1,8 @@
-import React from 'react';
-import { DUPLICATE_ICON_PROP_TYPES, DUPLICATE_ICON_DEFAULT_PROPS } from './DuplicateIcon.constants';
+import React from "react";
+import {
+  DUPLICATE_ICON_PROP_TYPES,
+  DUPLICATE_ICON_DEFAULT_PROPS,
+} from "./DuplicateIcon.constants";
 
 const DuplicateIcon = ({ width, height, color }) => (
   <svg
@@ -22,6 +25,6 @@ const DuplicateIcon = ({ width, height, color }) => (
 DuplicateIcon.defaultProps = DUPLICATE_ICON_DEFAULT_PROPS;
 DuplicateIcon.propTypes = DUPLICATE_ICON_PROP_TYPES;
 
-DuplicateIcon.displayName = 'DuplicateIcon';
+DuplicateIcon.displayName = "DuplicateIcon";
 export default DuplicateIcon;
 export { DuplicateIcon };

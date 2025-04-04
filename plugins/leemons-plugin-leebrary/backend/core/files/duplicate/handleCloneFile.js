@@ -1,4 +1,4 @@
-const { getByName: getProviderByName } = require('../../providers/getByName');
+const { getByName: getProviderByName } = require("../../providers/getByName");
 
 /**
  * Clones the file using the provider's clone service.
@@ -10,7 +10,12 @@ const { getByName: getProviderByName } = require('../../providers/getByName');
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<LibraryFile|null>} The updated file object.
  */
-async function handleCloneFile({ fromFile, providerName, toFolder = 'leebrary', ctx }) {
+async function handleCloneFile({
+  fromFile,
+  providerName,
+  toFolder = "leebrary",
+  ctx,
+}) {
   const provider = await getProviderByName({ name: providerName, ctx });
   const urlData = {};
   let newFile = null;
@@ -21,17 +26,23 @@ async function handleCloneFile({ fromFile, providerName, toFolder = 'leebrary', 
     delete toCreate.id;
     delete toCreate._id;
 
-    newFile = await ctx.tx.db.Files.create(toCreate).then((doc) => doc.toObject());
+    newFile = await ctx.tx.db.Files.create(toCreate).then((doc) =>
+      doc.toObject()
+    );
     urlData.provider = providerName;
     urlData.uri = await ctx.tx.call(`${providerName}.files.clone`, {
       itemFrom: fromFile,
       itemTo: newFile,
       toFolder,
     });
-    newFile = await ctx.tx.db.Files.findOneAndUpdate({ id: newFile.id }, urlData, {
-      new: true,
-      lean: true,
-    });
+    newFile = await ctx.tx.db.Files.findOneAndUpdate(
+      { id: newFile.id },
+      urlData,
+      {
+        new: true,
+        lean: true,
+      }
+    );
   }
   return newFile;
 }

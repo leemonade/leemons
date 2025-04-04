@@ -1,10 +1,10 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { getByCategory } = require('../permissions/getByCategory');
+const { getByCategory } = require("../permissions/getByCategory");
 
-const { byAddons: getByAddons } = require('./byAddons');
-const { byCriteria: getByCriteria } = require('./byCriteria');
-const { searchAssetsCacheKey } = require('./helpers/cacheKeys');
+const { byAddons: getByAddons } = require("./byAddons");
+const { byCriteria: getByCriteria } = require("./byCriteria");
+const { searchAssetsCacheKey } = require("./helpers/cacheKeys");
 
 async function list({
   category,
@@ -29,11 +29,13 @@ async function list({
   useCache,
   addons,
 }) {
-  const trueValues = ['true', true, '1', 1];
+  const trueValues = ["true", true, "1", 1];
 
   let assets = [];
   const publishedStatus =
-    published === 'all' ? published : [...trueValues, 'published'].includes(published);
+    published === "all"
+      ? published
+      : [...trueValues, "published"].includes(published);
   const displayPublic = trueValues.includes(showPublic);
   const searchProvider = trueValues.includes(searchInProvider);
   const preferCurrentValue = trueValues.includes(preferCurrent);
@@ -46,7 +48,8 @@ async function list({
   const _subjects = JSON.parse(subjects || null);
   const _categoriesFilter = JSON.parse(categoriesFilter || null); // added to filter by multiple categories
 
-  const shouldSearchByCriteria = !_.isEmpty(criteria) || !_.isEmpty(type) || _.isEmpty(category);
+  const shouldSearchByCriteria =
+    !_.isEmpty(criteria) || !_.isEmpty(type) || _.isEmpty(category);
 
   let query = null;
   let searchFunction = null;
@@ -69,8 +72,8 @@ async function list({
       onlyShared: _onlyShared,
       categoriesFilter: _categoriesFilter,
       hideCoverAssets: _hideCoverAssets,
-      sortBy: 'updated_at',
-      sortDirection: 'desc',
+      sortBy: "updated_at",
+      sortDirection: "desc",
       addons,
     };
   } else {
@@ -87,8 +90,8 @@ async function list({
       programs: _programs,
       subjects: _subjects,
       onlyShared: _onlyShared, // not used within getByCategory()
-      sortBy: 'updated_at',
-      sortDirection: 'desc',
+      sortBy: "updated_at",
+      sortDirection: "desc",
       addons,
     };
   }
@@ -125,8 +128,8 @@ async function list({
   }
 
   // TODO: Temporary solution
-  if (parsedRoles?.length === 1 && parsedRoles[0] === 'owner') {
-    assets = assets.filter((asset) => asset.role === 'owner');
+  if (parsedRoles?.length === 1 && parsedRoles[0] === "owner") {
+    assets = assets.filter((asset) => asset.role === "owner");
   }
 
   return assets;

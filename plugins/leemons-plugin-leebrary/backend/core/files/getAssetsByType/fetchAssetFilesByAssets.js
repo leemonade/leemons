@@ -1,5 +1,7 @@
-const { isArray, uniq, isEmpty } = require('lodash');
-const { getByAssets: getFilesByAssets } = require('../../assets/files/getByAssets');
+const { isArray, uniq, isEmpty } = require("lodash");
+const {
+  getByAssets: getFilesByAssets,
+} = require("../../assets/files/getByAssets");
 /**
  * Fetches the asset files by assets.
  *

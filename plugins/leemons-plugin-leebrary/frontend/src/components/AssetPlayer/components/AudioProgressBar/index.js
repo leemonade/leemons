@@ -1,2 +1,2 @@
-export * from './AudioProgressBar';
-export * from './AudioProgressBar.constants';
+export * from "./AudioProgressBar";
+export * from "./AudioProgressBar.constants";

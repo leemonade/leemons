@@ -1,1 +1,1 @@
-export * from './LibraryCardCCFooter';
+export * from "./LibraryCardCCFooter";

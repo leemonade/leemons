@@ -1,14 +1,14 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const LIBRARY_NAVBAR_DEFAULT_PROPS = {
   labels: {
-    title: '',
-    uploadButton: '',
-    quickAccess: '',
-    createNewTitle: '',
-    uploadTitle: '',
-    fileUploadTitle: '',
-    fileUploadSubtitle: '',
+    title: "",
+    uploadButton: "",
+    quickAccess: "",
+    createNewTitle: "",
+    uploadTitle: "",
+    fileUploadTitle: "",
+    fileUploadSubtitle: "",
   },
   categories: [],
   selectedCategory: null,

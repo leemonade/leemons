@@ -3,46 +3,53 @@ const {
   expect,
   beforeEach,
   jest: { fn, spyOn },
-} = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+} = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { handleAssetIds } = require('./handleAssetIds');
+const { handleAssetIds } = require("./handleAssetIds");
 
 beforeEach(() => jest.resetAllMocks());
 
 const getUserAgentPermissionsResult = {
-  id: 'permissionOne',
-  permissionName: 'leemons-testing.(ASSET_ID)assetOne@1.0.0',
-  target: 'categoryOne',
+  id: "permissionOne",
+  permissionName: "leemons-testing.(ASSET_ID)assetOne@1.0.0",
+  target: "categoryOne",
   role: null,
   center: null,
   deleted: 0,
   deleted_at: null,
-  actionNames: ['owner'],
+  actionNames: ["owner"],
 };
 
-it('Should call hanleAssetIds correctly', async () => {
+it("Should call hanleAssetIds correctly", async () => {
   // Arrange
   const permissions = [{ ...getUserAgentPermissionsResult }];
-  const publicAssets = [{ asset: 'publicAssetId@1.0.0', role: 'public', permissions: {} }];
-  const viewAssetId = 'assetIdView@1.0.0';
-  const editAssetId = 'assetIdEdit@2.0.0';
-  const categoryId = 'categoryOne';
+  const publicAssets = [
+    { asset: "publicAssetId@1.0.0", role: "public", permissions: {} },
+  ];
+  const viewAssetId = "assetIdView@1.0.0";
+  const editAssetId = "assetIdEdit@2.0.0";
+  const categoryId = "categoryOne";
   const listVersionsOfType = fn().mockResolvedValue([
-    { fullId: 'assetIdEdit@1.0.0' },
+    { fullId: "assetIdEdit@1.0.0" },
     { fullId: editAssetId },
     { fullId: viewAssetId },
-    { fullId: 'assetOne@1.0.0' },
+    { fullId: "assetOne@1.0.0" },
     { fullId: publicAssets[0].asset },
   ]);
 
   const ctx = generateCtx({
     actions: {
-      'common.versionControl.listVersionsOfType': listVersionsOfType,
+      "common.versionControl.listVersionsOfType": listVersionsOfType,
     },
   });
-  const sypLogger = spyOn(ctx.logger, 'error');
-  const expectedResponse = ['assetOne@1.0.0', editAssetId, viewAssetId, publicAssets[0].asset];
+  const sypLogger = spyOn(ctx.logger, "error");
+  const expectedResponse = [
+    "assetOne@1.0.0",
+    editAssetId,
+    viewAssetId,
+    publicAssets[0].asset,
+  ];
 
   // Act
   const response = await handleAssetIds({
@@ -66,22 +73,22 @@ it('Should call hanleAssetIds correctly', async () => {
   expect(sypLogger).not.toBeCalled();
 });
 
-it('Should not throw if something goes wrong in the system but inform about it', async () => {
+it("Should not throw if something goes wrong in the system but inform about it", async () => {
   // Arrange
   const permissions = [];
   const publicAssets = [];
-  const viewAssetId = 'assetIdView@1.0.0';
-  const categoryId = 'categoryOne';
+  const viewAssetId = "assetIdView@1.0.0";
+  const categoryId = "categoryOne";
   const listVersionsOfType = fn().mockImplementation(() => {
     throw new Error();
   });
 
   const ctx = generateCtx({
     actions: {
-      'common.versionControl.listVersionsOfType': listVersionsOfType,
+      "common.versionControl.listVersionsOfType": listVersionsOfType,
     },
   });
-  const sypLogger = spyOn(ctx.logger, 'error');
+  const sypLogger = spyOn(ctx.logger, "error");
 
   // Act
   const result = await handleAssetIds({

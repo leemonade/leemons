@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Skeleton, Stack } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Skeleton, Stack } from "@bubbles-ui/components";
 
 const LibraryCardMenuSkeletonItems = ({ items = 1 }) => {
   const Item = (

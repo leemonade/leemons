@@ -1,4 +1,4 @@
-const { keyBy, forEach, uniq } = require('lodash');
+const { keyBy, forEach, uniq } = require("lodash");
 /**
  * Fetches programs associated with each asset and aggregates them by ID
  * @async
@@ -17,11 +17,14 @@ async function getAssetsProgramsAggregatedById({ assets, ctx }) {
   });
 
   if (programIds.length) {
-    const programs = await ctx.tx.call('academic-portfolio.programs.programsByIds', {
-      ids: uniq(programIds),
-      onlyProgram: true,
-    });
-    programsById = keyBy(programs, 'id');
+    const programs = await ctx.tx.call(
+      "academic-portfolio.programs.programsByIds",
+      {
+        ids: uniq(programIds),
+        onlyProgram: true,
+      }
+    );
+    programsById = keyBy(programs, "id");
   }
 
   return programsById;

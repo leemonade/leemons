@@ -1,17 +1,17 @@
-import React from 'react';
-import { find, isEmpty } from 'lodash';
-import { Box, Stack, ContextContainer } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useSession } from '@users/session';
-import prefixPN from '../helpers/prefixPN';
-import { listCategoriesRequest } from '../request';
-import { CardWrapper } from './CardWrapper';
-import { AssetForm } from './AssetForm/AssetForm';
+import React from "react";
+import { find, isEmpty } from "lodash";
+import { Box, Stack, ContextContainer } from "@bubbles-ui/components";
+import PropTypes from "prop-types";
+import { unflatten } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useSession } from "@users/session";
+import prefixPN from "../helpers/prefixPN";
+import { listCategoriesRequest } from "../request";
+import { CardWrapper } from "./CardWrapper";
+import { AssetForm } from "./AssetForm/AssetForm";
 
 function getLocale(session) {
-  return session ? session.locale : navigator?.language || 'en';
+  return session ? session.locale : navigator?.language || "en";
 }
 
 const AssetFormInput = ({
@@ -30,7 +30,7 @@ const AssetFormInput = ({
   ...props
 }) => {
   const [category, setCategory] = React.useState(null);
-  const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
+  const [, translations] = useTranslateLoader(prefixPN("assetSetup"));
   const session = useSession();
   const locale = getLocale(session);
   const formValues = form?.watch();
@@ -82,7 +82,7 @@ const AssetFormInput = ({
       form={form}
       pluginName="leebrary"
       advancedConfig={advancedConfig}
-      tagsType={prefixPN('')}
+      tagsType={prefixPN("")}
       useTags={!!tagsPluginName}
       hideSubmit
     >
@@ -94,7 +94,9 @@ const AssetFormInput = ({
     return (
       <Box style={{ marginBottom: 16 }}>
         <Stack fullWidth>
-          <Box sx={(theme) => ({ width: '100%', paddingRight: theme.spacing[5] })}>
+          <Box
+            sx={(theme) => ({ width: "100%", paddingRight: theme.spacing[5] })}
+          >
             {formComponent}
           </Box>
 
@@ -121,7 +123,7 @@ const AssetFormInput = ({
 
 AssetFormInput.defaultProps = {
   labels: {},
-  previewVariant: 'media',
+  previewVariant: "media",
 };
 AssetFormInput.propTypes = {
   editing: PropTypes.bool,

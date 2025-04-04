@@ -1,26 +1,26 @@
 /* eslint-disable prettier/prettier */
-import React, { useEffect, useState, useMemo } from 'react';
-import { Box, createStyles, BaseDrawer } from '@bubbles-ui/components';
-import { useAssets } from '@leebrary/request/hooks/queries/useAssets';
-import propTypes from 'prop-types';
-import useCategories from '@leebrary/request/hooks/queries/useCategories';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { isEmpty } from 'lodash';
-import { unflatten } from '@common';
-import { useSession } from '@users/session';
-import { CardWrapper } from './CardWrapper';
-import { CardDetailWrapper } from './CardDetailWrapper';
-import prefixPN from '../helpers/prefixPN';
+import React, { useEffect, useState, useMemo } from "react";
+import { Box, createStyles, BaseDrawer } from "@bubbles-ui/components";
+import { useAssets } from "@leebrary/request/hooks/queries/useAssets";
+import propTypes from "prop-types";
+import useCategories from "@leebrary/request/hooks/queries/useCategories";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { isEmpty } from "lodash";
+import { unflatten } from "@common";
+import { useSession } from "@users/session";
+import { CardWrapper } from "./CardWrapper";
+import { CardDetailWrapper } from "./CardDetailWrapper";
+import prefixPN from "../helpers/prefixPN";
 
 function getLocale(session) {
-  return session ? session.locale : navigator?.language || 'en';
+  return session ? session.locale : navigator?.language || "en";
 }
 
 const useStyles = createStyles((theme, { width }) => ({
   root: {
     width,
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     gap: 16,
   },
   item: {
@@ -32,7 +32,7 @@ const AssetEmbedList = ({ assets, width }) => {
   const [assetIds, setAssetIds] = useState([]);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState(null);
-  const [t, translations] = useTranslateLoader(prefixPN('list'));
+  const [t, translations] = useTranslateLoader(prefixPN("list"));
   const session = useSession();
   const locale = getLocale(session);
 
@@ -46,7 +46,7 @@ const AssetEmbedList = ({ assets, width }) => {
 
   const toolbarItems = useMemo(
     () => ({
-      download: selectedAsset?.downloadable ? t('cardToolbar.download') : false,
+      download: selectedAsset?.downloadable ? t("cardToolbar.download") : false,
     }),
     [selectedAsset, t]
   );
@@ -62,7 +62,7 @@ const AssetEmbedList = ({ assets, width }) => {
   });
   const { data: categoriesData } = useCategories();
 
-  const { classes } = useStyles({ width }, { name: 'AssetEmbedList' });
+  const { classes } = useStyles({ width }, { name: "AssetEmbedList" });
 
   function pickAsset(assetId) {
     return assetsData?.find((asset) => asset.id === assetId) || {};
@@ -81,7 +81,7 @@ const AssetEmbedList = ({ assets, width }) => {
     }
   }, [assets]);
   function handleOnDownload(item) {
-    window.open(item.url, '_blank', 'noopener');
+    window.open(item.url, "_blank", "noopener");
   }
   return (
     <Box className={classes.root}>
@@ -98,12 +98,12 @@ const AssetEmbedList = ({ assets, width }) => {
                   categoriesData?.find(
                     (category) => category.id === pickAsset(assetId).category
                   ) || {
-                    key: 'media-file',
+                    key: "media-file",
                   }
                 }
                 isCreationPreview={false}
                 isEmbeddedList={true}
-                variant={'embedded'}
+                variant={"embedded"}
                 assetsLoading={isLoading}
                 onClick={() => {
                   handleOnSelect(pickAsset(assetId));
@@ -114,7 +114,7 @@ const AssetEmbedList = ({ assets, width }) => {
         : null}
       <Box
         sx={() => ({
-          position: 'fixed',
+          position: "fixed",
           right: 0,
           zIndex: 99,
         })}
@@ -125,21 +125,22 @@ const AssetEmbedList = ({ assets, width }) => {
           close={false}
           empty={true}
           className={{
-            root: { borderRadius: 0, border: 'none !important' },
-            body: { borderRadius: 0, border: 'none !important' },
+            root: { borderRadius: 0, border: "none !important" },
+            body: { borderRadius: 0, border: "none !important" },
           }}
         >
           <CardDetailWrapper
             category={
               categoriesData?.find(
-                (category) => category.id === pickAsset(selectedAsset?.id).category
+                (category) =>
+                  category.id === pickAsset(selectedAsset?.id).category
               ) || {
-                key: 'media-file',
+                key: "media-file",
               }
             }
             asset={selectedAsset}
             labels={detailLabels}
-            variant={'embedded'}
+            variant={"embedded"}
             open={isDrawerOpen}
             toolbarItems={toolbarItems}
             onToggle={() => setIsDrawerOpen(!isDrawerOpen)}

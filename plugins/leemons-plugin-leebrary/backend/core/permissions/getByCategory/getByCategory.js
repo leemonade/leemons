@@ -1,25 +1,27 @@
 /* eslint-disable no-param-reassign */
-const { LeemonsError } = require('@leemons/error');
-const { isEmpty, uniqBy, isBoolean } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { isEmpty, uniqBy, isBoolean } = require("lodash");
 
-const { getAssetsByProgram } = require('../../assets/getAssetsByProgram');
-const { getAssetsBySubject } = require('../../assets/getAssetsBySubject');
-const { filterByPublishStatus } = require('../../search/byCriteria/filterByPublishStatus');
-const { getCategoryId } = require('../../search/byCriteria/getCategoryId');
-const { byProvider: getByProvider } = require('../../search/byProvider');
-const { getPublic } = require('../getPublic/getPublic');
+const { getAssetsByProgram } = require("../../assets/getAssetsByProgram");
+const { getAssetsBySubject } = require("../../assets/getAssetsBySubject");
+const {
+  filterByPublishStatus,
+} = require("../../search/byCriteria/filterByPublishStatus");
+const { getCategoryId } = require("../../search/byCriteria/getCategoryId");
+const { byProvider: getByProvider } = require("../../search/byProvider");
+const { getPublic } = require("../getPublic/getPublic");
 
-const { handleAdminRole } = require('./handleAdminRole');
-const { handleAssetIds } = require('./handleAssetIds');
-const { handleAssignerRole } = require('./handleAssignerRole');
-const { handleEditorRole } = require('./handleEditorRole');
-const { handleIndexable } = require('./handleIndexable');
-const { handleParams } = require('./handleParams');
-const { handlePermissions } = require('./handlePermissions');
-const { handlePermissionsRoles } = require('./handlePermissionsRoles');
-const { handlePreferCurrent } = require('./handlePreferCurrent');
-const { handleSorting } = require('./handleSorting');
-const { handleViewerRole } = require('./handleViewerRole');
+const { handleAdminRole } = require("./handleAdminRole");
+const { handleAssetIds } = require("./handleAssetIds");
+const { handleAssignerRole } = require("./handleAssignerRole");
+const { handleEditorRole } = require("./handleEditorRole");
+const { handleIndexable } = require("./handleIndexable");
+const { handleParams } = require("./handleParams");
+const { handlePermissions } = require("./handlePermissions");
+const { handlePermissionsRoles } = require("./handlePermissionsRoles");
+const { handlePreferCurrent } = require("./handlePreferCurrent");
+const { handleSorting } = require("./handleSorting");
+const { handleViewerRole } = require("./handleViewerRole");
 
 /**
  * This function retrieves permissions by category.
@@ -48,7 +50,7 @@ async function getByCategory({
   category,
   categoryId: _categoryId,
   sortBy: sortingBy,
-  sortDirection = 'asc',
+  sortDirection = "asc",
   published = true,
   indexable = true,
   preferCurrent,
@@ -71,18 +73,21 @@ async function getByCategory({
 
     const categoryId = _categoryId ?? (await getCategoryId({ category, ctx }));
 
-    const [permissions, viewItems, editItems, assignItems, adminItems] = await handlePermissions({
-      userSession,
-      categoryId,
-      ctx,
-    });
+    const [permissions, viewItems, editItems, assignItems, adminItems] =
+      await handlePermissions({
+        userSession,
+        categoryId,
+        ctx,
+      });
 
     let assetIds = assets ?? [];
     let publicAssets = [];
 
     // If no assetIds, we get the public assets as start point
     if (!assetIds.length) {
-      publicAssets = showPublic ? await getPublic({ categoryId, indexable, ctx }) : [];
+      publicAssets = showPublic
+        ? await getPublic({ categoryId, indexable, ctx })
+        : [];
       assetIds = await handleAssetIds({
         permissions,
         publicAssets,
@@ -103,7 +108,7 @@ async function getByCategory({
       try {
         assetIds = await getByProvider({
           categoryId,
-          criteria: '',
+          criteria: "",
           query: providerQuery,
           assets: assetIds,
           published,
@@ -117,16 +122,26 @@ async function getByCategory({
 
     if (isBoolean(indexable)) {
       assetIds = (
-        await ctx.tx.db.Assets.find({ id: assetIds, indexable }).select(['id']).lean()
+        await ctx.tx.db.Assets.find({ id: assetIds, indexable })
+          .select(["id"])
+          .lean()
       ).map((item) => item.id);
     }
 
     if (programs) {
-      assetIds = await getAssetsByProgram({ program: programs, assets: assetIds, ctx });
+      assetIds = await getAssetsByProgram({
+        program: programs,
+        assets: assetIds,
+        ctx,
+      });
     }
 
     if (subjects) {
-      assetIds = await getAssetsBySubject({ subject: subjects, assets: assetIds, ctx });
+      assetIds = await getAssetsBySubject({
+        subject: subjects,
+        assets: assetIds,
+        ctx,
+      });
     }
 
     if (published !== undefined && preferCurrent) {
@@ -155,18 +170,24 @@ async function getByCategory({
 
     let results = handlePermissionsRoles({ permissions, roles, assetIds, ctx });
 
-    if (!roles?.length || roles.includes('viewer')) {
+    if (!roles?.length || roles.includes("viewer")) {
       results = handleViewerRole({ roles, viewItems, results, assetIds, ctx });
     }
 
-    if (!roles?.length || roles.includes('editor')) {
+    if (!roles?.length || roles.includes("editor")) {
       results = handleEditorRole({ roles, editItems, results, assetIds, ctx });
     }
-    if (!roles?.length || roles.includes('assigner')) {
-      results = handleAssignerRole({ roles, assignItems, results, assetIds, ctx });
+    if (!roles?.length || roles.includes("assigner")) {
+      results = handleAssignerRole({
+        roles,
+        assignItems,
+        results,
+        assetIds,
+        ctx,
+      });
     }
 
-    if (!roles?.length || roles.includes('admin')) {
+    if (!roles?.length || roles.includes("admin")) {
       results = handleAdminRole({ roles, adminItems, results, assetIds, ctx });
     }
 
@@ -175,15 +196,17 @@ async function getByCategory({
     }
 
     results = uniqBy(
-      results.concat(publicAssets.filter(({ asset }) => assetIds.includes(asset))),
-      'asset'
+      results.concat(
+        publicAssets.filter(({ asset }) => assetIds.includes(asset))
+      ),
+      "asset"
     );
 
     if (preferCurrent) {
       results = await handlePreferCurrent({ results, ctx });
     }
 
-    return uniqBy(results, 'asset');
+    return uniqBy(results, "asset");
   } catch (e) {
     throw new LeemonsError(ctx, {
       message: `Failed to get permissions: ${e.message}`,

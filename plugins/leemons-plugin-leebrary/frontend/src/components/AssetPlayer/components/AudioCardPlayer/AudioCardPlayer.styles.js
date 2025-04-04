@@ -1,4 +1,4 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 const AudioCardPlayerStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
@@ -10,10 +10,10 @@ const AudioCardPlayerStyles = createStyles((theme) => {
       paddingLeft: 4,
       paddingRight: 24,
       backgroundColor: globalTheme.background.color.surface.subtle,
-      display: 'flex',
-      alignItems: 'center',
-      width: '100%',
-      position: 'relative',
+      display: "flex",
+      alignItems: "center",
+      width: "100%",
+      position: "relative",
       gap: 14,
       borderRadius: 4,
     },
@@ -24,8 +24,8 @@ const AudioCardPlayerStyles = createStyles((theme) => {
       borderRadius: 4,
     },
     reactPlayer: {
-      position: 'absolute',
-      pointerEvents: 'none',
+      position: "absolute",
+      pointerEvents: "none",
       top: 0,
       left: 0,
     },

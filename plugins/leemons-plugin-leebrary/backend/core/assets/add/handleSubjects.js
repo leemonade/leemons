@@ -1,4 +1,4 @@
-const { map } = require('lodash');
+const { map } = require("lodash");
 /**
  * Handle the subjects of the asset.
  * It creates a new entry in the assetsSubjects table for each subject associated with the asset.
@@ -12,9 +12,10 @@ const { map } = require('lodash');
 async function handleSubjects({ subjects, assetId, ctx }) {
   return Promise.all(
     map(subjects, (subjectId) =>
-      ctx.tx.db.AssetsSubjects.create({ asset: assetId, subject: subjectId }).then((mongooseDoc) =>
-        mongooseDoc.toObject()
-      )
+      ctx.tx.db.AssetsSubjects.create({
+        asset: assetId,
+        subject: subjectId,
+      }).then((mongooseDoc) => mongooseDoc.toObject())
     )
   );
 }

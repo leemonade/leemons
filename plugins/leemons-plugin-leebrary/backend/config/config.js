@@ -1,5 +1,5 @@
 module.exports = {
   private: false,
-  defaultCategory: 'media-files',
-  unwatchedDirs: ['files'],
+  defaultCategory: "media-files",
+  unwatchedDirs: ["files"],
 };

@@ -3,29 +3,29 @@ const {
   expect,
   beforeEach,
   jest: { fn },
-} = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+} = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { getFileUrl } = require('./getFileUrl');
+const { getFileUrl } = require("./getFileUrl");
 
-jest.mock('../../providers/getByName');
-const { getByName: getProviderByName } = require('../../providers/getByName');
+jest.mock("../../providers/getByName");
+const { getByName: getProviderByName } = require("../../providers/getByName");
 
 beforeEach(() => {
   jest.resetAllMocks();
 });
 
-const mockFileId = 'fileOne';
-const mockUri = 'IAmAnUri';
+const mockFileId = "fileOne";
+const mockUri = "IAmAnUri";
 const mockProvider = {
   supportedMethods: { getReadStream: true },
 };
 
-it('Should return a signed url when provider is not sys', async () => {
+it("Should return a signed url when provider is not sys", async () => {
   // Arrange
-  const expectedValue = 'SUCCESS';
+  const expectedValue = "SUCCESS";
   const getReadStream = fn().mockResolvedValue(expectedValue);
-  const provider = 'leemons-aws-s3';
+  const provider = "leemons-aws-s3";
 
   const ctx = generateCtx({
     actions: {
@@ -36,7 +36,12 @@ it('Should return a signed url when provider is not sys', async () => {
   getProviderByName.mockResolvedValue(mockProvider);
 
   // Act
-  const response = await getFileUrl({ fileID: mockFileId, provider, uri: mockUri, ctx });
+  const response = await getFileUrl({
+    fileID: mockFileId,
+    provider,
+    uri: mockUri,
+    ctx,
+  });
 
   // Assert
   expect(getReadStream).toBeCalledWith({
@@ -46,10 +51,10 @@ it('Should return a signed url when provider is not sys', async () => {
   expect(response).toBe(expectedValue);
 });
 
-it('Should not try to get a signed url if the file provider does not support getReadStream', async () => {
+it("Should not try to get a signed url if the file provider does not support getReadStream", async () => {
   // Arrange
   const getReadStream = fn();
-  const provider = 'other-provider';
+  const provider = "other-provider";
   const ctx = generateCtx({
     actions: {
       [`${provider}.files.getReadStream`]: getReadStream,
@@ -59,32 +64,42 @@ it('Should not try to get a signed url if the file provider does not support get
   const expectedValue = null;
 
   // Act
-  const response = await getFileUrl({ fileID: mockFileId, provider, uri: mockUri, ctx });
+  const response = await getFileUrl({
+    fileID: mockFileId,
+    provider,
+    uri: mockUri,
+    ctx,
+  });
 
   // Assert
   expect(getReadStream).not.toBeCalled();
   expect(response).toBe(expectedValue);
 });
 
-it('Should return the file url when provider is sys', async () => {
+it("Should return the file url when provider is sys", async () => {
   // Arrange
   const getReadStream = fn();
-  const provider = 'sys';
-  const segment = 'segment';
+  const provider = "sys";
+  const segment = "segment";
 
   const ctx = generateCtx({
     actions: {
       [`${provider}.files.getReadStream`]: getReadStream,
     },
   });
-  ctx.meta.authorization = ['auth'];
+  ctx.meta.authorization = ["auth"];
   const authorization = `?authorization=${encodeURIComponent(ctx.meta.authorization)}`;
   const expectedPrivateResult = `http://localhost:8080/api/v1/leebrary/file/${mockFileId}${authorization}`;
   const expectedPublicResult = `http://localhost:8080/api/v1/leebrary/file/public/${mockFileId}`;
   const expectedPrivateWithSegmentResult = `http://localhost:8080/api/v1/leebrary/file/${mockFileId}/${segment}${authorization}`;
 
   // Act
-  const privateResult = await getFileUrl({ fileID: mockFileId, provider, uri: mockUri, ctx });
+  const privateResult = await getFileUrl({
+    fileID: mockFileId,
+    provider,
+    uri: mockUri,
+    ctx,
+  });
   const publicResult = await getFileUrl({
     fileID: mockFileId,
     provider,
@@ -107,16 +122,19 @@ it('Should return the file url when provider is sys', async () => {
   expect(segmentPrivateResult).toBe(expectedPrivateWithSegmentResult);
 });
 
-it('Should recognize wrong fileIDs or uris already resolved and return accordingly', async () => {
+it("Should recognize wrong fileIDs or uris already resolved and return accordingly", async () => {
   // Arrange
-  const alreadyResolvedUrl = 'http...';
+  const alreadyResolvedUrl = "http...";
   const ctx = generateCtx({});
 
   // Act
   const responseWrongId = await getFileUrl({ fileID: {}, ctx });
-  const responseResolvedUrl = await getFileUrl({ fileID: alreadyResolvedUrl, ctx });
+  const responseResolvedUrl = await getFileUrl({
+    fileID: alreadyResolvedUrl,
+    ctx,
+  });
 
   // Assert
-  expect(responseWrongId).toBe('');
+  expect(responseWrongId).toBe("");
   expect(responseResolvedUrl).toBe(alreadyResolvedUrl);
 });

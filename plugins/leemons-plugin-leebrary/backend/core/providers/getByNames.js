@@ -1,5 +1,5 @@
-const { list: listProviders } = require('./list');
-const { normalizeItemsArray } = require('../shared/normalizeItemsArray');
+const { list: listProviders } = require("./list");
+const { normalizeItemsArray } = require("../shared/normalizeItemsArray");
 
 /**
  * This function retrieves a specific provider by its name from the list of all providers available in the plugin.
@@ -12,8 +12,13 @@ const { normalizeItemsArray } = require('../shared/normalizeItemsArray');
 async function getByNames({ names, ctx }) {
   const providers = (await listProviders({ ctx })) ?? [];
   return providers
-    .filter((provider) => normalizeItemsArray(names).includes(provider.pluginName))
-    .map((provider) => ({ pluginName: provider.pluginName, ...provider.params }));
+    .filter((provider) =>
+      normalizeItemsArray(names).includes(provider.pluginName)
+    )
+    .map((provider) => ({
+      pluginName: provider.pluginName,
+      ...provider.params,
+    }));
 }
 
 module.exports = { getByNames };

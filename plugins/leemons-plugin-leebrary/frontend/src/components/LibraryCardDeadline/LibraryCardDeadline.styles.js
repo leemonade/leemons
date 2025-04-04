@@ -1,4 +1,8 @@
-import { createStyles, pxToRem, getFontProductive } from '@bubbles-ui/components';
+import {
+  createStyles,
+  pxToRem,
+  getFontProductive,
+} from "@bubbles-ui/components";
 
 const inRange = (value, min, max) => {
   return value > min && value <= max;
@@ -6,11 +10,11 @@ const inRange = (value, min, max) => {
 
 const getSeverityColor = (theme, severity) => {
   switch (severity) {
-    case 'low':
+    case "low":
       return theme.colors.fatic02;
-    case 'medium':
+    case "medium":
       return theme.colors.fatic03;
-    case 'high':
+    case "high":
       return theme.colors.fatic01;
     default:
       return theme.colors.fatic02;
@@ -18,8 +22,8 @@ const getSeverityColor = (theme, severity) => {
 };
 
 const getTitleColor = (theme, remainingDays, isNew, severity, role) => {
-  const isTeacher = role === 'teacher';
-  const isStudent = role === 'student';
+  const isTeacher = role === "teacher";
+  const isStudent = role === "student";
   if (isNew) return theme.colors.fatic02;
   if (isTeacher) return getTeacherColor(theme, remainingDays, severity);
   else if (isStudent) return getStudentColor(theme, remainingDays, severity);
@@ -41,14 +45,20 @@ const getStudentColor = (theme, remainingDays, severity) => {
 
 export const LibraryCardDeadlineStyles = createStyles(
   (theme, { isNew, parentHovered, remainingDays, severity, role }) => {
-    const titleColor = getTitleColor(theme, remainingDays, isNew, severity, role);
+    const titleColor = getTitleColor(
+      theme,
+      remainingDays,
+      isNew,
+      severity,
+      role
+    );
 
     return {
       root: {
-        ...getFontProductive(theme.fontSizes['2'], 400),
-        display: 'flex',
+        ...getFontProductive(theme.fontSizes["2"], 400),
+        display: "flex",
         padding: pxToRem(8),
-        backgroundColor: 'white',
+        backgroundColor: "white",
       },
       icon: {
         color: theme.colors.text04,
@@ -66,8 +76,9 @@ export const LibraryCardDeadlineStyles = createStyles(
         fontSize: pxToRem(12),
         lineHeight: pxToRem(14),
         height: parentHovered ? 14 : 0,
-        transition: 'height 0.2s ease-in, opacity 0.3s ease-in, max-width 0.3s ease-in',
-        overflow: 'hidden',
+        transition:
+          "height 0.2s ease-in, opacity 0.3s ease-in, max-width 0.3s ease-in",
+        overflow: "hidden",
       },
       info: {},
     };

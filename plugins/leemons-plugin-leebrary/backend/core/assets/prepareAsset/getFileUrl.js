@@ -1,5 +1,5 @@
-const { isString } = require('lodash');
-const { getByName: getProviderByName } = require('../../providers/getByName');
+const { isString } = require("lodash");
+const { getByName: getProviderByName } = require("../../providers/getByName");
 
 async function getFileUrl({
   fileID,
@@ -11,18 +11,20 @@ async function getFileUrl({
   ctx,
 }) {
   if (!isString(fileID)) {
-    return '';
+    return "";
   }
-  if (fileID.startsWith('http')) {
+  if (fileID.startsWith("http")) {
     return fileID;
   }
 
-  if (provider === 'sys') {
+  if (provider === "sys") {
     const authTokens = ctx.meta.authorization;
-    const urlSuffixSegment = segment ? `/${segment}` : '';
-    const authParam = !isPublic ? `?authorization=${encodeURIComponent(authTokens)}` : '';
+    const urlSuffixSegment = segment ? `/${segment}` : "";
+    const authParam = !isPublic
+      ? `?authorization=${encodeURIComponent(authTokens)}`
+      : "";
     return `${process.env.API_URL}/api/v1/leebrary/file/${
-      isPublic ? 'public/' : ''
+      isPublic ? "public/" : ""
     }${fileID}${urlSuffixSegment}${authParam}`;
   }
 

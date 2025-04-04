@@ -1,4 +1,4 @@
-const finishMultipart = require('./finishMultipart');
+const finishMultipart = require("./finishMultipart");
 
 module.exports = {
   ...finishMultipart,

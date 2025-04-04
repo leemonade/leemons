@@ -1,18 +1,18 @@
-import React from 'react';
-import { Box } from '@bubbles-ui/components';
-import { LibraryCardSkeleton } from './LibraryCardSkeleton';
+import React from "react";
+import { Box } from "@bubbles-ui/components";
+import { LibraryCardSkeleton } from "./LibraryCardSkeleton";
 
 export default {
-  title: 'leemons/Library/LibraryCardSkeleton',
+  title: "leemons/Library/LibraryCardSkeleton",
   parameters: {
     component: LibraryCardSkeleton,
     design: {
-      type: 'figma',
+      type: "figma",
       // url: 'https://www.figma.com/file/c3MWm2gVHU4JfYlVfr5VvB/🍋💧-Bubbles-SD-v2',
     },
   },
   argTypes: {
-    onAction: { action: 'onAction' },
+    onAction: { action: "onAction" },
   },
 };
 

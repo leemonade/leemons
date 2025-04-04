@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
-const mime = require('mime-types');
-const { findOne: getSettings } = require('../../settings');
-const { handleFileProvider } = require('./handleFileProvider');
-const { getMetadataObject } = require('./getMetadataObject');
+const mime = require("mime-types");
+const { findOne: getSettings } = require("../../settings");
+const { handleFileProvider } = require("./handleFileProvider");
+const { getMetadataObject } = require("./getMetadataObject");
 
 /**
  * Uploads a file.
@@ -27,11 +27,11 @@ async function upload({ file, name, ctx }) {
   // ·········································································
   // CREATE NEW FILE IN DB
   const fileData = {
-    provider: 'sys',
+    provider: "sys",
     name,
     type,
     extension,
-    uri: '',
+    uri: "",
     size: fileSize,
     metadata: JSON.stringify(metadata),
   };
@@ -52,10 +52,14 @@ async function upload({ file, name, ctx }) {
 
   // EN: Update the asset with the new URI and provider
   // ES: Actualizamos el archivo con la nueva URI y proveedor
-  newFile = await ctx.tx.db.Files.findOneAndUpdate({ id: newFile.id }, urlData, {
-    new: true,
-    lean: true,
-  });
+  newFile = await ctx.tx.db.Files.findOneAndUpdate(
+    { id: newFile.id },
+    urlData,
+    {
+      new: true,
+      lean: true,
+    }
+  );
 
   return { ...newFile, metadata };
 }

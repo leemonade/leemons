@@ -1,5 +1,5 @@
-const { map } = require('lodash');
-const { normalizeItemsArray } = require('../../shared');
+const { map } = require("lodash");
+const { normalizeItemsArray } = require("../../shared");
 
 /**
  * Get assets by program
@@ -23,8 +23,8 @@ async function getAssetsByProgram({ program, assets, ctx }) {
     id: assetsArray,
   };
 
-  const _assets = await ctx.tx.db.Assets.find(query).select(['id']).lean();
-  return map(_assets, 'id');
+  const _assets = await ctx.tx.db.Assets.find(query).select(["id"]).lean();
+  return map(_assets, "id");
 }
 
 module.exports = { getAssetsByProgram };

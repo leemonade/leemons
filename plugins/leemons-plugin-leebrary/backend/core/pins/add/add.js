@@ -1,7 +1,7 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
-const { exists: checkAssetExists } = require('../../assets/exists');
-const { getByAsset: getPinByAsset } = require('../getByAsset');
+const { exists: checkAssetExists } = require("../../assets/exists");
+const { getByAsset: getPinByAsset } = require("../getByAsset");
 
 /**
  * Adds a pin for a given asset.
@@ -15,18 +15,27 @@ const { getByAsset: getPinByAsset } = require('../getByAsset');
 async function add({ assetId, ctx }) {
   // Check if assetId is provided
   if (!assetId) {
-    throw new LeemonsError(ctx, { message: 'Asset ID is required', httpStatusCode: 400 });
+    throw new LeemonsError(ctx, {
+      message: "Asset ID is required",
+      httpStatusCode: 400,
+    });
   }
 
   // Check if asset exists
   if (!(await checkAssetExists({ assetId, ctx }))) {
-    throw new LeemonsError(ctx, { message: 'Asset does not exist', httpStatusCode: 400 });
+    throw new LeemonsError(ctx, {
+      message: "Asset does not exist",
+      httpStatusCode: 400,
+    });
   }
 
   // Check if asset is already pinned
   const pin = await getPinByAsset({ assetId, ctx });
   if (pin?.id) {
-    throw new LeemonsError(ctx, { message: 'Asset already pinned', httpStatusCode: 400 });
+    throw new LeemonsError(ctx, {
+      message: "Asset already pinned",
+      httpStatusCode: 400,
+    });
   }
 
   // Create a new pin

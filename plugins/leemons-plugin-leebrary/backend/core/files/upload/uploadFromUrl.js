@@ -1,7 +1,7 @@
-const { LeemonsError } = require('@leemons/error');
-const { getById } = require('../getById');
-const { download } = require('./download');
-const { upload } = require('./upload');
+const { LeemonsError } = require("@leemons/error");
+const { getById } = require("../getById");
+const { download } = require("./download");
+const { upload } = require("./upload");
 /**
  * Uploads a file from a given URL.
  *
@@ -22,10 +22,12 @@ async function uploadFromUrl({ url, name, ctx }) {
     const { path, contentType } = await download({ url, compress: true });
     return upload({ file: { path, type: contentType }, name, ctx });
   } catch (err) {
-    ctx.logger.error('ERROR: downloading file:', url);
+    ctx.logger.error("ERROR: downloading file:", url);
     // eslint-disable-next-line no-console
     console.dir(url, { depth: null });
-    throw new LeemonsError(ctx, { message: `-- ERROR: downloading file ${url} --` });
+    throw new LeemonsError(ctx, {
+      message: `-- ERROR: downloading file ${url} --`,
+    });
   }
 }
 

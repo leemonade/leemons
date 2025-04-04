@@ -1,3 +1,3 @@
-const setAsset = require('./setAsset');
+const setAsset = require("./setAsset");
 
 module.exports = { ...setAsset };

@@ -1,3 +1,3 @@
-const getByCategory = require('./getByCategory');
+const getByCategory = require("./getByCategory");
 
 module.exports = { ...getByCategory };

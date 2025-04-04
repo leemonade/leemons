@@ -16,7 +16,7 @@ function handleReadParams({ file, start, end }) {
     bytesEnd = Math.min(file.size - 1, bytesEnd);
     readParams = {
       emitClose: false,
-      flags: 'r',
+      flags: "r",
       start: bytesStart,
       end: bytesEnd,
     };

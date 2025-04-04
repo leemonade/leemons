@@ -1,6 +1,6 @@
-const { compact, isEmpty, uniq } = require('lodash');
+const { compact, isEmpty, uniq } = require("lodash");
 
-const { remove: removeFilesById } = require('../files/remove');
+const { remove: removeFilesById } = require("../files/remove");
 
 /**
  * Handles the removal of asset files if necessary.
@@ -35,7 +35,11 @@ async function handleFilesRemoval({
   */
   if (!isEmpty(filesToRemove)) {
     try {
-      await removeFilesById({ fileIds: compact(uniq(filesToRemove)), assetId, ctx });
+      await removeFilesById({
+        fileIds: compact(uniq(filesToRemove)),
+        assetId,
+        ctx,
+      });
     } catch (e) {
       //
     }

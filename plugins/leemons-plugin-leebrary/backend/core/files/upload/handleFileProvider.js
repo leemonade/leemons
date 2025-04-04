@@ -1,7 +1,7 @@
-const pathSys = require('path');
-const { isEmpty } = require('lodash');
-const fsPromises = require('fs/promises');
-const { getByName } = require('../../providers/getByName');
+const pathSys = require("path");
+const { isEmpty } = require("lodash");
+const fsPromises = require("fs/promises");
+const { getByName } = require("../../providers/getByName");
 /**
  * Handles the file provider for file upload.
  *
@@ -31,13 +31,13 @@ async function handleFileProvider({ newFile, settings, path, ctx }) {
   // ES: Si no hay proveedor activo, usar el por defecto
   if (isEmpty(urlData.uri)) {
     // Generamos la nueva url y copiamos desde la carpeta temporal a la nuestra donde se almacenan todos los archivos
-    urlData.provider = 'sys';
+    urlData.provider = "sys";
     urlData.uri = pathSys.resolve(
       __dirname,
-      '..',
-      '..',
-      '..',
-      'files',
+      "..",
+      "..",
+      "..",
+      "files",
       `${newFile.id}.${newFile.extension}`
     );
 

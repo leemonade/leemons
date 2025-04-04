@@ -4,7 +4,7 @@ import {
   getFontExpressive,
   pxToRem,
   getBoxShadowFromToken,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 
 export const LibraryCardStyles = createStyles(
   (theme, { fullHeight, autoHeight, isCreationPreview }) => {
@@ -13,21 +13,21 @@ export const LibraryCardStyles = createStyles(
 
     return {
       root: {
-        ...getFontExpressive(theme.fontSizes['2']),
+        ...getFontExpressive(theme.fontSizes["2"]),
         border: `1px solid ${cardTheme.border.color.subtle}`,
         borderRadius: cardTheme.border.radius.sm,
         backgroundColor: cardTheme.background.color.default,
-        height: fullHeight ? '100%' : 'auto',
-        display: 'flex',
-        flexDirection: 'column',
-        overflow: 'hidden',
-        position: 'relative',
-        width: '100%',
+        height: fullHeight ? "100%" : "auto",
+        display: "flex",
+        flexDirection: "column",
+        overflow: "hidden",
+        position: "relative",
+        width: "100%",
         minWidth: pxToRem(264),
         maxWidth: pxToRem(330),
-        minHeight: autoHeight ? 'auto' : pxToRem(396),
-        '&:hover': {
-          boxShadow: isCreationPreview ? 'none' : cardShadow.boxShadow,
+        minHeight: autoHeight ? "auto" : pxToRem(396),
+        "&:hover": {
+          boxShadow: isCreationPreview ? "none" : cardShadow.boxShadow,
         },
       },
     };

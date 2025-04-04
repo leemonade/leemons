@@ -6,7 +6,7 @@
  */
 function getReadableFileSize(size) {
   const i = size === 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
-  const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const sizes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
 
   return `${(size / 1024 ** i).toFixed(i ? 1 : 0)} ${sizes[i]}`;
 }

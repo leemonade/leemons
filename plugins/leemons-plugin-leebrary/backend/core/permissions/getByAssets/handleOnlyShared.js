@@ -1,5 +1,5 @@
-const { forEach, difference } = require('lodash');
-const getAssetIdFromPermissionName = require('../helpers/getAssetIdFromPermissionName');
+const { forEach, difference } = require("lodash");
+const getAssetIdFromPermissionName = require("../helpers/getAssetIdFromPermissionName");
 /**
  * This function handles the permissions that are only shared. It filters out the 'owner' permissions
  * and returns the remaining permissions along with the asset IDs that do not have 'owner' permissions.
@@ -13,7 +13,7 @@ function handleOnlyShared({ permissions, assetsIds }) {
   const assetIdsOwner = [];
   const newPermissions = [];
   forEach(permissions, (item) => {
-    if (item.actionNames.includes('owner')) {
+    if (item.actionNames.includes("owner")) {
       assetIdsOwner.push(getAssetIdFromPermissionName(item.permissionName));
     } else {
       newPermissions.push(item);

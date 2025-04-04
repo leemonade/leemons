@@ -1,32 +1,40 @@
-const { LeemonsValidator } = require('@leemons/validator');
-const { stringSchema, booleanSchema, stringSchemaNullable } = require('./types');
+const { LeemonsValidator } = require("@leemons/validator");
+const {
+  stringSchema,
+  booleanSchema,
+  stringSchemaNullable,
+} = require("./types");
 
 const addAssetSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     name: stringSchema,
     color: stringSchemaNullable,
     description: {
-      type: 'string',
+      type: "string",
       maxLength: 65000,
       nullable: true,
     },
     categoryId: stringSchema,
     categoryKey: stringSchema,
     category: {
-      oneOf: [stringSchemaNullable, { type: 'object', nullable: true }],
+      oneOf: [stringSchemaNullable, { type: "object", nullable: true }],
     },
     program: stringSchemaNullable,
     subjects: {
       nullable: true,
-      type: 'array',
+      type: "array",
       items: {
-        type: 'string',
+        type: "string",
       },
     },
   },
-  required: ['name'],
-  anyOf: [{ required: ['categoryId'] }, { required: ['categoryKey'] }, { required: ['category'] }],
+  required: ["name"],
+  anyOf: [
+    { required: ["categoryId"] },
+    { required: ["categoryKey"] },
+    { required: ["category"] },
+  ],
   additionalProperties: true,
 };
 
@@ -39,40 +47,44 @@ async function validateAddAsset(data) {
 }
 
 const setPermissionsSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     assets: {
-      type: 'array',
+      type: "array",
       items: stringSchema,
     },
     isPublic: booleanSchema,
     canAccess: {
-      type: 'array',
+      type: "array",
       items: {
-        type: 'object',
+        type: "object",
         properties: {
           userAgent: stringSchema,
           role: stringSchema,
         },
-        required: ['userAgent', 'role'],
+        required: ["userAgent", "role"],
       },
     },
     permissions: {
-      type: 'object',
+      type: "object",
       properties: {
         viewer: {
-          type: 'array',
+          type: "array",
           items: stringSchema,
         },
         editor: {
-          type: 'array',
+          type: "array",
           items: stringSchema,
         },
       },
     },
   },
-  required: ['assets'],
-  anyOf: [{ required: ['canAccess'] }, { required: ['permissions'] }, { required: ['isPublic'] }],
+  required: ["assets"],
+  anyOf: [
+    { required: ["canAccess"] },
+    { required: ["permissions"] },
+    { required: ["isPublic"] },
+  ],
   additionalProperties: true,
 };
 
@@ -85,13 +97,13 @@ async function validateSetPermissions(data) {
 }
 
 const addBookmarkSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     url: stringSchema,
     iconUrl: stringSchemaNullable,
     assetId: stringSchema,
   },
-  required: ['url', 'assetId'],
+  required: ["url", "assetId"],
   additionalProperties: true,
 };
 

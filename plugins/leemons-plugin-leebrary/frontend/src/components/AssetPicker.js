@@ -1,19 +1,19 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect } from "react";
 
-import { Box, Button, Stack, ActionButton } from '@bubbles-ui/components';
-import { PluginLeebraryIcon } from '@bubbles-ui/icons/outline';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { noop } from 'lodash';
-import PropTypes from 'prop-types';
+import { Box, Button, Stack, ActionButton } from "@bubbles-ui/components";
+import { PluginLeebraryIcon } from "@bubbles-ui/icons/outline";
+import { DeleteBinIcon } from "@bubbles-ui/icons/solid";
+import { unflatten } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { noop } from "lodash";
+import PropTypes from "prop-types";
 
-import prefixPN from '../helpers/prefixPN';
-import { prepareAsset } from '../helpers/prepareAsset';
-import { useAsset } from '../request/hooks/queries/useAsset';
+import prefixPN from "../helpers/prefixPN";
+import { prepareAsset } from "../helpers/prepareAsset";
+import { useAsset } from "../request/hooks/queries/useAsset";
 
-import { AssetPickerDrawer } from './AssetPickerDrawer';
-import { LibraryCardEmbed } from './LibraryCardEmbed';
+import { AssetPickerDrawer } from "./AssetPickerDrawer";
+import { LibraryCardEmbed } from "./LibraryCardEmbed";
 
 const AssetPicker = ({
   labels,
@@ -27,7 +27,7 @@ const AssetPicker = ({
   acceptedFileTypes,
   ...props
 }) => {
-  const [, translations] = useTranslateLoader(prefixPN('assetSetup'));
+  const [, translations] = useTranslateLoader(prefixPN("assetSetup"));
   const [showAssetDrawer, setShowAssetDrawer] = useState(false);
   const [asset, setAsset] = useState(null);
 
@@ -81,7 +81,7 @@ const AssetPicker = ({
     <Box {...{ styles, className }}>
       {!asset && !readonly && (
         <Button
-          variant={'link'}
+          variant={"link"}
           leftIcon={<PluginLeebraryIcon height={18} width={18} />}
           onClick={() => setShowAssetDrawer(true)}
           disabled={disabled}
@@ -115,16 +115,16 @@ const AssetPicker = ({
 
 AssetPicker.defaultProps = {
   labels: {
-    selectButton: 'Pick from library',
-    removeButton: 'Remove',
+    selectButton: "Pick from library",
+    removeButton: "Remove",
   },
-  layout: 'thumbnails',
-  categories: ['media-files'],
+  layout: "thumbnails",
+  categories: ["media-files"],
   filters: {},
   readonly: false,
   creatable: true,
   returnAsset: false,
-  acceptedFileTypes: ['image/*'],
+  acceptedFileTypes: ["image/*"],
   hideChangeButton: false,
 };
 AssetPicker.propTypes = {

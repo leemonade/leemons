@@ -1,4 +1,4 @@
-import propTypes from 'prop-types';
+import propTypes from "prop-types";
 
 export const METADATA_DISPLAY_PROP_TYPES = {
   metadata: propTypes.object,

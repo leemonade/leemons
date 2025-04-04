@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
-const { LeemonsError } = require('@leemons/error');
-const { default: mediainfoAlias } = require('mediainfo.js');
-const { getReadableDuration } = require('./getReadableDuration');
-const { getReadableBitrate } = require('./getReadableBitrate');
-const { getMetaProps } = require('./getMetaProps');
+const { LeemonsError } = require("@leemons/error");
+const { default: mediainfoAlias } = require("mediainfo.js");
+const { getReadableDuration } = require("./getReadableDuration");
+const { getReadableBitrate } = require("./getReadableBitrate");
+const { getMetaProps } = require("./getMetaProps");
 
 // This mediainfo variable is set globally because we want to instanciate it
 // and not create a new instance everytime the "analyzeFile" function is called
@@ -22,8 +22,14 @@ let mediainfo;
  */
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
-async function handleMediaInfo({ metadata = {}, fileHandle, fileType, fileSize, ctx }) {
-  if (['image', 'audio', 'video'].includes(fileType)) {
+async function handleMediaInfo({
+  metadata = {},
+  fileHandle,
+  fileType,
+  fileSize,
+  ctx,
+}) {
+  if (["image", "audio", "video"].includes(fileType)) {
     const readChunk = async (size, offset) => {
       const buffer = Buffer.alloc(size);
       await fileHandle.read(buffer, 0, size, offset);
@@ -31,11 +37,11 @@ async function handleMediaInfo({ metadata = {}, fileHandle, fileType, fileSize, 
     };
 
     try {
-      if (!fileSize) throw new LeemonsError(ctx, { message: 'No file size' });
+      if (!fileSize) throw new LeemonsError(ctx, { message: "No file size" });
       if (!mediainfo) {
         // mediainfo = await global.utils.mediaInfo({ format: 'JSON' });
         // eslint-disable-next-line global-require
-        mediainfo = await mediainfoAlias({ format: 'JSON' });
+        mediainfo = await mediainfoAlias({ format: "JSON" });
       }
 
       const metainfo = await mediainfo.analyzeData(() => fileSize, readChunk);
@@ -49,10 +55,12 @@ async function handleMediaInfo({ metadata = {}, fileHandle, fileType, fileSize, 
       }
 
       if (metadata.duration) {
-        metadata.duration = getReadableDuration({ duration: Number(metadata.duration) * 1000 });
+        metadata.duration = getReadableDuration({
+          duration: Number(metadata.duration) * 1000,
+        });
       }
     } catch (err) {
-      ctx.logger.error('-- ERROR: obtaining metadata --');
+      ctx.logger.error("-- ERROR: obtaining metadata --");
       ctx.logger.info(err);
     }
 

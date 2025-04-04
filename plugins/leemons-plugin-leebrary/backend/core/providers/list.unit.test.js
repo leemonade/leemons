@@ -1,14 +1,21 @@
-const { it, expect, describe, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const { keyValueSchema } = require('@leemons/mongodb-helpers');
-const { list } = require('./list');
-const getProviders = require('../../__fixtures__/getProviders');
+const {
+  it,
+  expect,
+  describe,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const { keyValueSchema } = require("@leemons/mongodb-helpers");
+const { list } = require("./list");
+const getProviders = require("../../__fixtures__/getProviders");
 
 let mongooseConnection;
 let disconnectMongoose;
 
-describe('List Plugin Providers', () => {
+describe("List Plugin Providers", () => {
   beforeAll(async () => {
     const { mongoose, disconnect } = await createMongooseConnection();
 
@@ -27,11 +34,11 @@ describe('List Plugin Providers', () => {
     await mongooseConnection.dropDatabase();
   });
 
-  it('Should correctly list all plugin providers', async () => {
+  it("Should correctly list all plugin providers", async () => {
     // Arrange
     const ctx = generateCtx({
       models: {
-        KeyValue: newModel(mongooseConnection, 'KeyValue', keyValueSchema),
+        KeyValue: newModel(mongooseConnection, "KeyValue", keyValueSchema),
       },
     });
     const { provider } = getProviders();
@@ -45,11 +52,11 @@ describe('List Plugin Providers', () => {
     expect(response[0].pluginName).toEqual(provider.value.pluginName);
   });
 
-  it('Should return an empty array if no providers are available', async () => {
+  it("Should return an empty array if no providers are available", async () => {
     // Arrange
     const ctx = generateCtx({
       models: {
-        KeyValue: newModel(mongooseConnection, 'KeyValue', keyValueSchema),
+        KeyValue: newModel(mongooseConnection, "KeyValue", keyValueSchema),
       },
     });
 

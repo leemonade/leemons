@@ -1,5 +1,5 @@
-const { last } = require('lodash');
-const { permissionSeparator } = require('../../../config/constants');
+const { last } = require("lodash");
+const { permissionSeparator } = require("../../../config/constants");
 
 /**
  * Extracts the asset ID from a permission name.

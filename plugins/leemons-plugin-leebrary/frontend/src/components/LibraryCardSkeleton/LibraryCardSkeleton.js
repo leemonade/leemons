@@ -1,6 +1,6 @@
-import { Box, Skeleton } from '@bubbles-ui/components';
-import React from 'react';
-import { LibraryCardSkeletonStyles } from './LibraryCardSkeleton.styles';
+import { Box, Skeleton } from "@bubbles-ui/components";
+import React from "react";
+import { LibraryCardSkeletonStyles } from "./LibraryCardSkeleton.styles";
 
 const LibraryCardSkeleton = () => {
   const { classes } = LibraryCardSkeletonStyles();

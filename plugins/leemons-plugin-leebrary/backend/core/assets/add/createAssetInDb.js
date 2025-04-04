@@ -1,4 +1,4 @@
-const { omit } = require('lodash');
+const { omit } = require("lodash");
 
 /**
  * This function creates a new asset in the database.
@@ -14,14 +14,14 @@ const { omit } = require('lodash');
  */
 async function createAssetInDB({ newId, categoryId, coverId, assetData, ctx }) {
   const prepareNewAssetForDB = omit({ ...assetData }, [
-    '_id',
-    'id',
-    'deploymentID',
-    '__v',
-    'isDeleted',
-    'deletedAt',
-    'createdAt',
-    'updatedAt',
+    "_id",
+    "id",
+    "deploymentID",
+    "__v",
+    "isDeleted",
+    "deletedAt",
+    "createdAt",
+    "updatedAt",
   ]);
 
   const assetDoc = await ctx.tx.db.Assets.create({

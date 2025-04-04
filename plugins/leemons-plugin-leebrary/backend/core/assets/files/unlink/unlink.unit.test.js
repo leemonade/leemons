@@ -1,21 +1,21 @@
-const { it, expect, beforeEach } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
-const { LeemonsError } = require('@leemons/error');
+const { it, expect, beforeEach } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
+const { LeemonsError } = require("@leemons/error");
 
-const { unlink } = require('./unlink');
+const { unlink } = require("./unlink");
 
 // MOCKS
-jest.mock('./handleUserPermissions');
-jest.mock('../remove');
-const { handleUserPermissions } = require('./handleUserPermissions');
-const { remove } = require('../remove');
+jest.mock("./handleUserPermissions");
+jest.mock("../remove");
+const { handleUserPermissions } = require("./handleUserPermissions");
+const { remove } = require("../remove");
 
 beforeEach(() => jest.resetAllMocks());
 
-it('Should unlink files from an asset only when the user is allowed to delete the asset', async () => {
+it("Should unlink files from an asset only when the user is allowed to delete the asset", async () => {
   // Arrange
-  const assetId = 'assetId';
-  const fileIds = ['file1', 'file2'];
+  const assetId = "assetId";
+  const fileIds = ["file1", "file2"];
   const soft = true;
   const ctx = generateCtx({});
   const removeResponse = true;
@@ -33,14 +33,14 @@ it('Should unlink files from an asset only when the user is allowed to delete th
   expect(response).toBe(removeResponse);
 });
 
-it('Should throw a Leemons error if the user is not authorized to delete the asset or if anything else goes wrong', async () => {
+it("Should throw a Leemons error if the user is not authorized to delete the asset or if anything else goes wrong", async () => {
   // Arrange
-  const assetId = 'assetId';
-  const fileIds = ['file1', 'file2'];
+  const assetId = "assetId";
+  const fileIds = ["file1", "file2"];
   const ctx = generateCtx({});
   const errorMessages = [
     "You don't have permissions to delete this asset",
-    'Something went wrong while removing the file',
+    "Something went wrong while removing the file",
   ];
 
   remove.mockImplementation(() => {

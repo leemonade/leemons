@@ -1,17 +1,17 @@
-const { it, expect, beforeEach } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
-const { LeemonsError } = require('@leemons/error');
+const { it, expect, beforeEach } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
+const { LeemonsError } = require("@leemons/error");
 
-const { getByFile } = require('./getByFile');
-const getAssets = require('../../../../__fixtures__/getAssets');
+const { getByFile } = require("./getByFile");
+const getAssets = require("../../../../__fixtures__/getAssets");
 
 // MOCKS
-jest.mock('./getRelatedAssets');
-jest.mock('./handleIsPublic');
-jest.mock('./handleUserPermissions');
-const { getRelatedAssets } = require('./getRelatedAssets');
-const { handleIsPublic } = require('./handleIsPublic');
-const { handleUserPermissions } = require('./handleUserPermissions');
+jest.mock("./getRelatedAssets");
+jest.mock("./handleIsPublic");
+jest.mock("./handleUserPermissions");
+const { getRelatedAssets } = require("./getRelatedAssets");
+const { handleIsPublic } = require("./handleIsPublic");
+const { handleUserPermissions } = require("./handleUserPermissions");
 
 beforeEach(() => jest.resetAllMocks());
 const { assetModel } = getAssets();
@@ -20,7 +20,7 @@ it("Should get the asset related to a file by the file's id accordingly to check
   // Arrange
   const ctx = generateCtx({});
   const relatedAssets = [assetModel.id];
-  const fileId = 'fileId';
+  const fileId = "fileId";
 
   getRelatedAssets.mockResolvedValue(relatedAssets);
   handleIsPublic.mockResolvedValue(true);
@@ -28,7 +28,11 @@ it("Should get the asset related to a file by the file's id accordingly to check
 
   // Act
   const responseDefault = await getByFile({ fileId, ctx });
-  const responseNoPermissions = await getByFile({ fileId, checkPermissions: false, ctx });
+  const responseNoPermissions = await getByFile({
+    fileId,
+    checkPermissions: false,
+    ctx,
+  });
   const responseOnlyPublic = await getByFile({
     fileId,
     checkPermissions: false,
@@ -49,11 +53,11 @@ it("Should get the asset related to a file by the file's id accordingly to check
   expect(responseOnlyPublic).toEqual(assetModel.id);
 });
 
-it('Should return null when the asset is not public and the onlyPublic flag is true', async () => {
+it("Should return null when the asset is not public and the onlyPublic flag is true", async () => {
   // Arrange
   const ctx = generateCtx({});
   const relatedAssets = [assetModel.id];
-  const fileId = 'fileId';
+  const fileId = "fileId";
 
   getRelatedAssets.mockResolvedValue(relatedAssets);
   handleIsPublic.mockResolvedValue(false);
@@ -66,11 +70,11 @@ it('Should return null when the asset is not public and the onlyPublic flag is t
   expect(response).toBeNull();
 });
 
-it('Should return null when the user does not have permissions to view the asset and the permissions flag is true', async () => {
+it("Should return null when the user does not have permissions to view the asset and the permissions flag is true", async () => {
   // Arrange
   const ctx = generateCtx({});
   const relatedAssets = [assetModel.id];
-  const fileId = 'fileId';
+  const fileId = "fileId";
 
   getRelatedAssets.mockResolvedValue(relatedAssets);
   handleIsPublic.mockResolvedValue(true);
@@ -83,14 +87,14 @@ it('Should return null when the user does not have permissions to view the asset
   expect(response).toBeNull();
 });
 
-it('Should throw a LeemonsError with a 500 HTTP code when an error occurs', async () => {
+it("Should throw a LeemonsError with a 500 HTTP code when an error occurs", async () => {
   // Arrange
   const ctx = generateCtx({});
   const relatedAssets = [assetModel.id];
-  const fileId = 'fileId';
+  const fileId = "fileId";
   const errorMessages = [
-    'Cannot determine if the user has permission to view.',
-    'Cannot determine if the asset is public.',
+    "Cannot determine if the user has permission to view.",
+    "Cannot determine if the asset is public.",
   ];
 
   getRelatedAssets.mockResolvedValue(relatedAssets);
@@ -103,7 +107,8 @@ it('Should throw a LeemonsError with a 500 HTTP code when an error occurs', asyn
 
   // Act
   const fnFailsAtPermissionsCheck = async () => getByFile({ fileId, ctx });
-  const fnFailsAtOnlyPublicCheck = async () => getByFile({ fileId, onlyPublic: true, ctx });
+  const fnFailsAtOnlyPublicCheck = async () =>
+    getByFile({ fileId, onlyPublic: true, ctx });
 
   // Assert
   try {

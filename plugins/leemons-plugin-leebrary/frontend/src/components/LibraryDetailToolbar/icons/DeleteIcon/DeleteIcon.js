@@ -1,5 +1,8 @@
-import React from 'react';
-import { DELETE_ICON_PROP_TYPES, DELETE_ICON_DEFAULT_PROPS } from './DeleteIcon.constants';
+import React from "react";
+import {
+  DELETE_ICON_PROP_TYPES,
+  DELETE_ICON_DEFAULT_PROPS,
+} from "./DeleteIcon.constants";
 
 const DeleteIcon = ({ width, height, color }) => (
   <svg
@@ -22,6 +25,6 @@ const DeleteIcon = ({ width, height, color }) => (
 DeleteIcon.defaultProps = DELETE_ICON_DEFAULT_PROPS;
 DeleteIcon.propTypes = DELETE_ICON_PROP_TYPES;
 
-DeleteIcon.displayName = 'DeleteIcon';
+DeleteIcon.displayName = "DeleteIcon";
 export default DeleteIcon;
 export { DeleteIcon };

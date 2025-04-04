@@ -1,4 +1,4 @@
-import propTypes from 'prop-types';
+import propTypes from "prop-types";
 
 export const ASSET_PLAYER_LIBRARY_WRAPPER_PROP_TYPES = {
   asset: propTypes.object,

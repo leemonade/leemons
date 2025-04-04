@@ -2,19 +2,19 @@ const {
   it,
   expect,
   jest: { spyOn },
-} = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+} = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { handleUserSessionData } = require('./handleUserSessionData');
-const getUserSession = require('../../../__fixtures__/getUserSession');
+const { handleUserSessionData } = require("./handleUserSessionData");
+const getUserSession = require("../../../__fixtures__/getUserSession");
 
-it('should correctly use userSession data to modify and return assetData', () => {
+it("should correctly use userSession data to modify and return assetData", () => {
   // Arrange
   const mockedUserSession = getUserSession();
   const simpleAssetData = {
-    name: 'mockName',
+    name: "mockName",
     fromUser: null,
-    fromUserAgent: '007',
+    fromUserAgent: "007",
   };
 
   const ctx = generateCtx({});
@@ -48,18 +48,18 @@ it('should correctly use userSession data to modify and return assetData', () =>
   expect(resultNoUserAgents).toEqual(expectedResultNoUserAgents);
 });
 
-it('should handle unexpected arguments without trhowing ', () => {
+it("should handle unexpected arguments without trhowing ", () => {
   // Arrange
   const mockedUserSession = getUserSession();
   const simpleAssetData = {
-    name: 'mockName',
+    name: "mockName",
     fromUser: null,
-    fromUserAgent: '007',
+    fromUserAgent: "007",
   };
 
   const ctx = generateCtx({});
   ctx.meta.userSession = {};
-  const spyLogger = spyOn(ctx.logger, 'warn');
+  const spyLogger = spyOn(ctx.logger, "warn");
 
   // Act
   const testFnWithWrongArgs = () =>
@@ -71,7 +71,9 @@ it('should handle unexpected arguments without trhowing ', () => {
   const responseWithUnexpectedArgs = (() => {
     const modifiedCtx = {
       ...ctx,
-      meta: { userSession: { ...mockedUserSession, userAgents: { id: 'wrong' } } },
+      meta: {
+        userSession: { ...mockedUserSession, userAgents: { id: "wrong" } },
+      },
     };
     return handleUserSessionData({
       assetData: { ...simpleAssetData },

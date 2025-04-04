@@ -1,15 +1,21 @@
 /* eslint-disable consistent-return */
-import { useCallback } from 'react';
+import { useCallback } from "react";
 
-import { Box, ImageLoader, Text, TextClamp, Stack } from '@bubbles-ui/components';
-import { ChevUpIcon } from '@bubbles-ui/icons/outline';
-import { isFunction } from 'lodash';
+import {
+  Box,
+  ImageLoader,
+  Text,
+  TextClamp,
+  Stack,
+} from "@bubbles-ui/components";
+import { ChevUpIcon } from "@bubbles-ui/icons/outline";
+import { isFunction } from "lodash";
 
 import {
   LIBRARY_NAVBAR_ITEM_DEFAULT_PROPS,
   LIBRARY_NAVBAR_ITEM_PROP_TYPES,
-} from './LibraryNavbarItem.constants';
-import { LibraryNavbarItemStyles } from './LibraryNavbarItem.styles';
+} from "./LibraryNavbarItem.constants";
+import { LibraryNavbarItemStyles } from "./LibraryNavbarItem.styles";
 
 const LibraryNavbarItem = ({
   icon,
@@ -29,12 +35,12 @@ const LibraryNavbarItem = ({
 
   const { classes } = LibraryNavbarItemStyles(
     { selected, disabled, loading, opened, canOpen },
-    { name: 'LibraryNavbarItem' }
+    { name: "LibraryNavbarItem" }
   );
 
   const renderIcon = useCallback(() => {
     if (!icon) return;
-    if (typeof icon === 'string') {
+    if (typeof icon === "string") {
       return <ImageLoader className={classes.icon} src={icon} fillCurrent />;
     }
     return icon;
@@ -43,7 +49,7 @@ const LibraryNavbarItem = ({
   return (
     <>
       <Box className={classes.root} onClick={onClickHandler}>
-        <Stack spacing={3} alignItems={!canOpen ? 'center' : 'flex-start'}>
+        <Stack spacing={3} alignItems={!canOpen ? "center" : "flex-start"}>
           <Box className={classes.iconWrapper}>{renderIcon()}</Box>
           <TextClamp lines={2}>
             <Text className={classes.label}>{label}</Text>

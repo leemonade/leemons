@@ -5,14 +5,14 @@ const {
   afterAll,
   beforeEach,
   jest: { fn },
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const { setProviderConfig } = require('./setProviderConfig');
-const { settingsSchema } = require('../../../models/settings');
-const { getByName: getProviderByName } = require('../../providers/getByName');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const { setProviderConfig } = require("./setProviderConfig");
+const { settingsSchema } = require("../../../models/settings");
+const { getByName: getProviderByName } = require("../../providers/getByName");
 
-jest.mock('../../providers/getByName');
+jest.mock("../../providers/getByName");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -36,21 +36,24 @@ beforeEach(async () => {
   jest.resetAllMocks();
 });
 
-it('Should set provider config correctly', async () => {
+it("Should set provider config correctly", async () => {
   // Arrange
-  const providerName = 'providerOne';
-  const config = { key: 'key', value: 'value' };
+  const providerName = "providerOne";
+  const config = { key: "key", value: "value" };
   const setConfigAction = fn();
   const ctx = generateCtx({
     models: {
-      Settings: newModel(mongooseConnection, 'Settings', settingsSchema),
+      Settings: newModel(mongooseConnection, "Settings", settingsSchema),
     },
     actions: {
       [`${providerName}.config.setConfig`]: setConfigAction,
     },
-    caller: 'leebrary',
+    caller: "leebrary",
   });
-  const provider = { pluginName: providerName, supportedMethods: { setConfig: true } };
+  const provider = {
+    pluginName: providerName,
+    supportedMethods: { setConfig: true },
+  };
   getProviderByName.mockReturnValue(provider);
 
   // Act
@@ -69,47 +72,49 @@ it('Should set provider config correctly', async () => {
   });
 });
 
-it('Should throw an error if the caller is not supported', async () => {
+it("Should throw an error if the caller is not supported", async () => {
   // Arrange
-  const providerName = 'providerOne';
-  const config = { key: 'key', value: 'value' };
+  const providerName = "providerOne";
+  const config = { key: "key", value: "value" };
   const ctx = generateCtx({
-    caller: 'unsupportedCaller',
+    caller: "unsupportedCaller",
   });
 
   // Act and Assert
-  await expect(setProviderConfig({ providerName, config, ctx })).rejects.toThrow(
-    'Must be called from leemons-plugin-leebrary'
-  );
+  await expect(
+    setProviderConfig({ providerName, config, ctx })
+  ).rejects.toThrow("Must be called from leemons-plugin-leebrary");
 });
 
-it('Should throw an error if the provider is not found', async () => {
+it("Should throw an error if the provider is not found", async () => {
   // Arrange
-  const providerName = 'nonExistentProvider';
-  const config = { key: 'key', value: 'value' };
+  const providerName = "nonExistentProvider";
+  const config = { key: "key", value: "value" };
   const ctx = generateCtx({
-    caller: 'leebrary',
+    caller: "leebrary",
   });
   getProviderByName.mockReturnValue(null);
 
   // Act and Assert
-  await expect(setProviderConfig({ providerName, config, ctx })).rejects.toThrow(
-    'The provider "nonExistentProvider" not found'
-  );
+  await expect(
+    setProviderConfig({ providerName, config, ctx })
+  ).rejects.toThrow('The provider "nonExistentProvider" not found');
 });
 
-it('Should throw an error if the provider does not support setConfig method', async () => {
+it("Should throw an error if the provider does not support setConfig method", async () => {
   // Arrange
-  const providerName = 'providerWithoutSetConfig';
-  const config = { key: 'key', value: 'value' };
+  const providerName = "providerWithoutSetConfig";
+  const config = { key: "key", value: "value" };
   const ctx = generateCtx({
-    caller: 'leebrary',
+    caller: "leebrary",
   });
   const provider = { pluginName: providerName, supportedMethods: {} };
   getProviderByName.mockReturnValue(provider);
 
   // Act and Assert
-  await expect(setProviderConfig({ providerName, config, ctx })).rejects.toThrow(
-    'Bad implementation for media library, the service provider need the function: setConfig'
+  await expect(
+    setProviderConfig({ providerName, config, ctx })
+  ).rejects.toThrow(
+    "Bad implementation for media library, the service provider need the function: setConfig"
   );
 });

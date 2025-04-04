@@ -1,5 +1,5 @@
-const { LeemonsError } = require('@leemons/error');
-const { handleUserPermissions } = require('./handleUserPermissions');
+const { LeemonsError } = require("@leemons/error");
+const { handleUserPermissions } = require("./handleUserPermissions");
 /**
  * Get the files associated with an asset if the user has view permissions
  *

@@ -1,14 +1,21 @@
-const { it, expect, describe, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const { filesSchema } = require('../../../models');
-const getFile = require('../../../__fixtures__/getFile');
-const { exists } = require('./exists');
+const {
+  it,
+  expect,
+  describe,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const { filesSchema } = require("../../../models");
+const getFile = require("../../../__fixtures__/getFile");
+const { exists } = require("./exists");
 
 let mongooseConnection;
 let disconnectMongoose;
 
-describe('Exists', () => {
+describe("Exists", () => {
   beforeAll(async () => {
     const { mongoose, disconnect } = await createMongooseConnection();
 
@@ -27,15 +34,15 @@ describe('Exists', () => {
     await mongooseConnection.dropDatabase();
   });
 
-  it('Should return true when file exists in the database', async () => {
+  it("Should return true when file exists in the database", async () => {
     // Arrange
     const ctx = generateCtx({
       models: {
-        Files: newModel(mongooseConnection, 'Files', filesSchema),
+        Files: newModel(mongooseConnection, "Files", filesSchema),
       },
     });
     const { file } = getFile();
-    await ctx.tx.db.Files.create({ ...file, provider: 'sys' });
+    await ctx.tx.db.Files.create({ ...file, provider: "sys" });
 
     // Act
     const result = await exists({ fileId: file.id, ctx });
@@ -44,14 +51,14 @@ describe('Exists', () => {
     expect(result).toBe(true);
   });
 
-  it('Should return false when file does not exist in the database', async () => {
+  it("Should return false when file does not exist in the database", async () => {
     // Arrange
     const ctx = generateCtx({
       models: {
-        Files: newModel(mongooseConnection, 'Files', filesSchema),
+        Files: newModel(mongooseConnection, "Files", filesSchema),
       },
     });
-    const fileId = 'nonexistent-file-id';
+    const fileId = "nonexistent-file-id";
 
     // Act
     const result = await exists({ fileId, ctx });

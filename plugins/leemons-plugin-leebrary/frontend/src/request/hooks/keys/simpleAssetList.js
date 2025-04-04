@@ -1,14 +1,14 @@
 export const allSimpleAssetListKey = [
   {
-    plugin: 'plugin.leebrary',
-    scope: 'simpleAssetList',
+    plugin: "plugin.leebrary",
+    scope: "simpleAssetList",
   },
 ];
 
 export const allGetSimpleAssetListKey = [
   {
     ...allSimpleAssetListKey[0],
-    action: 'get',
+    action: "get",
   },
 ];
 

@@ -1,4 +1,4 @@
-const { roles } = require('../../../config/constants');
+const { roles } = require("../../../config/constants");
 
 /**
  * Validates if the provided role is included in the predefined roles.

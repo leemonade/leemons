@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
 import {
   Stack,
@@ -8,33 +8,34 @@ import {
   TextClamp,
   Progress,
   IconButton,
-} from '@bubbles-ui/components';
-import { DeleteBinIcon } from '@bubbles-ui/icons/outline';
+} from "@bubbles-ui/components";
+import { DeleteBinIcon } from "@bubbles-ui/icons/outline";
 
-import formatFileSize from '@leebrary/helpers/formatFileSize';
-import formatFileName from '@leebrary/helpers/formatFilename';
-import getFileTypeDisplay from '@leebrary/helpers/getFileTypeDisplay';
+import formatFileSize from "@leebrary/helpers/formatFileSize";
+import formatFileName from "@leebrary/helpers/formatFilename";
+import getFileTypeDisplay from "@leebrary/helpers/getFileTypeDisplay";
 
 function useBulkUploadColumns({ t, uploadStatus, onRemoveFile, classes }) {
   return useMemo(() => {
     return [
       {
-        Header: t('table.headers.type'),
-        accessor: 'type',
+        Header: t("table.headers.type"),
+        accessor: "type",
         Cell: ({ row }) => {
           const { original } = row;
-          const { isFile, displayLabel, fileType } = getFileTypeDisplay(original);
+          const { isFile, displayLabel, fileType } =
+            getFileTypeDisplay(original);
 
           return (
             <Stack spacing={2} alignItems="center">
               {isFile ? (
-                <FileIcon fileType={fileType} size={18} color={'#878D96'} />
+                <FileIcon fileType={fileType} size={18} color={"#878D96"} />
               ) : (
                 <FileItemDisplay
                   showFileName={false}
                   filename={original?.name}
                   size={18}
-                  color={'#878D96'}
+                  color={"#878D96"}
                 />
               )}
               <TextClamp lines={1}>
@@ -46,12 +47,12 @@ function useBulkUploadColumns({ t, uploadStatus, onRemoveFile, classes }) {
           );
         },
         style: { width: 130 },
-        cellStyle: { alignItems: 'center', height: 'auto' },
+        cellStyle: { alignItems: "center", height: "auto" },
       },
       {
-        Header: t('table.headers.file'),
-        accessor: 'name',
-        align: 'center',
+        Header: t("table.headers.file"),
+        accessor: "name",
+        align: "center",
         Cell: ({ value }) => {
           return (
             <TextClamp lines={1}>
@@ -64,8 +65,8 @@ function useBulkUploadColumns({ t, uploadStatus, onRemoveFile, classes }) {
         },
       },
       {
-        Header: t('table.headers.name'),
-        accessor: 'lastModified',
+        Header: t("table.headers.name"),
+        accessor: "lastModified",
         Cell: ({ row }) => {
           const { original } = row;
           return (
@@ -76,12 +77,12 @@ function useBulkUploadColumns({ t, uploadStatus, onRemoveFile, classes }) {
         },
         style: {
           width: 220,
-          justifyContent: 'center',
+          justifyContent: "center",
         },
       },
       {
-        Header: t('table.headers.size'),
-        accessor: 'size',
+        Header: t("table.headers.size"),
+        accessor: "size",
         Cell: ({ value }) => {
           return (
             <TextClamp lines={1}>
@@ -91,19 +92,19 @@ function useBulkUploadColumns({ t, uploadStatus, onRemoveFile, classes }) {
         },
         cellStyle: {
           maxWidth: 100,
-          justifyContent: 'flex-start',
+          justifyContent: "flex-start",
         },
         style: {
           maxWidth: 100,
         },
         thStyle: {
           maxWidth: 100,
-          textAlign: 'right',
+          textAlign: "right",
         },
       },
       {
-        Header: t('table.headers.load'),
-        accessor: 'upload',
+        Header: t("table.headers.load"),
+        accessor: "upload",
         Cell: ({ row }) => {
           const { original } = row;
           const status = uploadStatus[original.name];
@@ -111,32 +112,32 @@ function useBulkUploadColumns({ t, uploadStatus, onRemoveFile, classes }) {
           if (!status) {
             return (
               <Stack fullWidth justify="end">
-                <Text size="xs">{t('table.queue')}</Text>
+                <Text size="xs">{t("table.queue")}</Text>
               </Stack>
             );
           }
 
-          if (status.state === 'uploaded' || status.state === 'finalize') {
+          if (status.state === "uploaded" || status.state === "finalize") {
             return (
               <Stack fullWidth justify="end">
                 <Text color="success" size="xs" strong>
-                  {t('table.completed')}
+                  {t("table.completed")}
                 </Text>
               </Stack>
             );
           }
 
-          if (status.state === 'error') {
+          if (status.state === "error") {
             return (
               <Stack fullWidth justify="end">
                 <Text color="error" size="xs" strong>
-                  {t('table.error')}
+                  {t("table.error")}
                 </Text>
               </Stack>
             );
           }
 
-          if (status.state === 'uploading' || status.state === 'finalize') {
+          if (status.state === "uploading" || status.state === "finalize") {
             const percentage = status.percentageCompleted || 0;
             return (
               <Stack spacing={4} justifyContent="flex-end">
@@ -146,27 +147,31 @@ function useBulkUploadColumns({ t, uploadStatus, onRemoveFile, classes }) {
                   classNames={classes}
                   size="xl"
                   radius="xl"
-                  value={!percentage || isNaN(percentage) ? 0 : Math.min(percentage, 100)}
+                  value={
+                    !percentage || isNaN(percentage)
+                      ? 0
+                      : Math.min(percentage, 100)
+                  }
                 />
               </Stack>
             );
           }
         },
         style: {
-          width: 'auto',
-          textAlign: 'right',
+          width: "auto",
+          textAlign: "right",
         },
         thStyle: {
-          textAlign: 'right',
+          textAlign: "right",
         },
         cellStyle: {
-          textAlign: 'right',
-          justifyContent: 'flex-end',
+          textAlign: "right",
+          justifyContent: "flex-end",
         },
       },
       {
-        Header: t('table.headers.actions') || 'Actions',
-        accessor: 'actions',
+        Header: t("table.headers.actions") || "Actions",
+        accessor: "actions",
         Cell: ({ row }) => {
           const { original } = row;
 

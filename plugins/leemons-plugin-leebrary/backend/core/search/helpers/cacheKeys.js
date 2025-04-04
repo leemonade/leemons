@@ -1,6 +1,6 @@
-const hash = require('object-hash');
+const hash = require("object-hash");
 
-const assetsNamespace = 'leebrary.assets';
+const assetsNamespace = "leebrary.assets";
 
 const searchAssetsCacheKey = ({ ctx, query }) => {
   const queryHash = hash(query ?? {});

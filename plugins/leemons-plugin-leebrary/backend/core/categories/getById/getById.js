@@ -11,7 +11,9 @@
  * @throws {LeemonsError} If the required fields are not provided, a LeemonsError is thrown.
  */
 async function getById({ id, columns, ctx }) {
-  const category = await ctx.tx.db.Categories.findOne({ id }).select(columns).lean();
+  const category = await ctx.tx.db.Categories.findOne({ id })
+    .select(columns)
+    .lean();
   if (category?.canUse) category.canUse = JSON.parse(category.canUse || null);
   return category;
 }

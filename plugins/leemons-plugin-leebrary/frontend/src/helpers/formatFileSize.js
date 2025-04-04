@@ -5,10 +5,12 @@
  * @returns {string} - Formatted size with units
  */
 function formatFileSize(bytes, useBinaryBase = false) {
-  if (!bytes) return '0 B';
+  if (!bytes) return "0 B";
 
   const base = useBinaryBase ? 1024 : 1000;
-  const units = useBinaryBase ? ['B', 'KiB', 'MiB', 'GiB', 'TiB'] : ['B', 'KB', 'MB', 'GB', 'TB'];
+  const units = useBinaryBase
+    ? ["B", "KiB", "MiB", "GiB", "TiB"]
+    : ["B", "KB", "MB", "GB", "TB"];
 
   const exponent = Math.floor(Math.log(bytes) / Math.log(base));
   const unit = units[Math.min(exponent, units.length - 1)];

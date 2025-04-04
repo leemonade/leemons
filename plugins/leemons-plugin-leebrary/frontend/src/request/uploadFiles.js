@@ -1,20 +1,20 @@
 async function uploadFiles(files) {
   const formData = new FormData();
-  if (files.constructor.name === 'FileList') {
+  if (files.constructor.name === "FileList") {
     // eslint-disable-next-line no-restricted-syntax
     for (const file of files) {
-      formData.append('files', file, file.name);
+      formData.append("files", file, file.name);
     }
   } else {
-    formData.append('files', files);
+    formData.append("files", files);
   }
 
-  return leemons.api('v1/leebrary/upload', {
+  return leemons.api("v1/leebrary/upload", {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: formData,
     headers: {
-      'content-type': 'none',
+      "content-type": "none",
     },
   });
 }

@@ -9,14 +9,14 @@
  * @returns {Promise<void>} Resolves when the tags are updated.
  */
 async function handleTagsUpdates({ assetId, updateObject, ctx }) {
-  const tagsType = ctx.prefixPN('');
+  const tagsType = ctx.prefixPN("");
 
-  await ctx.tx.call('common.tags.removeAllTagsForValues', {
+  await ctx.tx.call("common.tags.removeAllTagsForValues", {
     type: tagsType,
     values: assetId,
   });
 
-  await ctx.tx.call('common.tags.setTagsToValues', {
+  await ctx.tx.call("common.tags.setTagsToValues", {
     type: tagsType,
     tags: updateObject.tags,
     values: assetId,

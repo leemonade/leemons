@@ -1,20 +1,23 @@
-import React, { useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import Form from '@assignables/components/Assignment/Form';
-import useAsset from '@leebrary/request/hooks/queries/useAsset';
-import { LoadingOverlay } from '@bubbles-ui/components';
-import useRole from '@assignables/requests/hooks/queries/useRole';
-import { omit } from 'lodash';
-import { assignAssetRequest } from '@leebrary/request';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@leebrary/helpers/prefixPN';
-import { useHistory } from 'react-router-dom';
+import React, { useMemo, useState } from "react";
+import PropTypes from "prop-types";
+import Form from "@assignables/components/Assignment/Form";
+import useAsset from "@leebrary/request/hooks/queries/useAsset";
+import { LoadingOverlay } from "@bubbles-ui/components";
+import useRole from "@assignables/requests/hooks/queries/useRole";
+import { omit } from "lodash";
+import { assignAssetRequest } from "@leebrary/request";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@leebrary/helpers/prefixPN";
+import { useHistory } from "react-router-dom";
 
 function useAssetAsAssignable({ id }) {
-  const { data: asset, isLoading: isLoadingAsset } = useAsset({ id, showPublic: true });
+  const { data: asset, isLoading: isLoadingAsset } = useAsset({
+    id,
+    showPublic: true,
+  });
 
-  const roleName = 'leebrary.asset';
+  const roleName = "leebrary.asset";
   const { data: role, isLoading: isLoadingRole } = useRole({ role: roleName });
 
   const assignable = useMemo(
@@ -33,12 +36,12 @@ function useAssetAsAssignable({ id }) {
 }
 
 function AssignAsset({ id }) {
-  const [t] = useTranslateLoader(prefixPN('assignAsset'));
+  const [t] = useTranslateLoader(prefixPN("assignAsset"));
   const { data: assignable, isLoading } = useAssetAsAssignable({ id });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const history = useHistory();
 
-  const isImage = assignable?.asset?.file?.type?.startsWith('image/');
+  const isImage = assignable?.asset?.file?.type?.startsWith("image/");
 
   const handleAssignment = async ({ raw, value }) => {
     try {
@@ -46,11 +49,14 @@ function AssignAsset({ id }) {
 
       await assignAssetRequest({
         assignable: {
-          ...omit(assignable, ['roleDetails']),
+          ...omit(assignable, ["roleDetails"]),
           asset: {
             name: raw?.title ?? assignable.asset.name,
             color: assignable?.asset?.color,
-            cover: raw?.thumbnail !== undefined ? raw.thumbnail : assignable.asset.cover?.id,
+            cover:
+              raw?.thumbnail !== undefined
+                ? raw.thumbnail
+                : assignable.asset.cover?.id,
           },
           metadata: {
             leebrary: {
@@ -61,10 +67,10 @@ function AssignAsset({ id }) {
         instance: value,
       });
 
-      addSuccessAlert(t('successAlert'));
-      history.push('/private/assignables/ongoing');
+      addSuccessAlert(t("successAlert"));
+      history.push("/private/assignables/ongoing");
     } catch (e) {
-      addErrorAlert(t('errorAlert'), e.message);
+      addErrorAlert(t("errorAlert"), e.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -79,7 +85,7 @@ function AssignAsset({ id }) {
       assignable={assignable}
       defaultValues={{ title: assignable.asset.name }}
       evaluationType="none"
-      evaluationTypes={['nonEvaluable']}
+      evaluationTypes={["nonEvaluable"]}
       showTitle
       showThumbnail={!isImage}
       showInstructions

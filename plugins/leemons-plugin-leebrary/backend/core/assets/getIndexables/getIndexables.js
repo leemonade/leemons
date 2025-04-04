@@ -11,7 +11,9 @@
  */
 
 async function getIndexables({ assetIds = [], columns, ctx }) {
-  return ctx.tx.db.Assets.find({ id: assetIds, indexable: true }).select(columns).lean();
+  return ctx.tx.db.Assets.find({ id: assetIds, indexable: true })
+    .select(columns)
+    .lean();
 }
 
 module.exports = { getIndexables };

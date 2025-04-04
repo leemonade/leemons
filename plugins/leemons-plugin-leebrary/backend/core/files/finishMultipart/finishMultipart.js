@@ -1,11 +1,13 @@
-const { LeemonsError } = require('@leemons/error');
-const https = require('https');
+const { LeemonsError } = require("@leemons/error");
+const https = require("https");
 
-const { dataForReturnFile } = require('../dataForReturnFile');
-const { createTemp } = require('../upload/createTemp');
-const { getMetadataObject } = require('../upload/getMetadataObject');
+const { dataForReturnFile } = require("../dataForReturnFile");
+const { createTemp } = require("../upload/createTemp");
+const { getMetadataObject } = require("../upload/getMetadataObject");
 
-const { finishProviderMultipart: handleProviderMultipart } = require('./handleProviderMultipart');
+const {
+  finishProviderMultipart: handleProviderMultipart,
+} = require("./handleProviderMultipart");
 
 function getStream(url) {
   return new Promise((resolve) => {
@@ -29,10 +31,10 @@ function getStream(url) {
  */
 async function finishMultipart({ fileId, path, etags, skipMetadata, ctx }) {
   const file = await ctx.tx.db.Files.findOne({ id: fileId }).lean();
-  if (!file) throw new LeemonsError(ctx, { message: 'No file found' });
+  if (!file) throw new LeemonsError(ctx, { message: "No file found" });
 
   // Finish provider multipart process
-  if (file.provider !== 'sys') {
+  if (file.provider !== "sys") {
     await handleProviderMultipart({ file, path, etags, ctx });
   }
 
@@ -43,7 +45,10 @@ async function finishMultipart({ fileId, path, etags, skipMetadata, ctx }) {
       ctx,
       forceStream: false,
     });
-    const temp = await createTemp({ readStream: await getStream(readStream), contentType });
+    const temp = await createTemp({
+      readStream: await getStream(readStream),
+      contentType,
+    });
 
     const { metadata } = await getMetadataObject({
       filePath: temp.path,
@@ -52,7 +57,10 @@ async function finishMultipart({ fileId, path, etags, skipMetadata, ctx }) {
       ctx,
     });
 
-    await ctx.tx.db.Files.findOneAndUpdate({ id: fileId }, { metadata: JSON.stringify(metadata) });
+    await ctx.tx.db.Files.findOneAndUpdate(
+      { id: fileId },
+      { metadata: JSON.stringify(metadata) }
+    );
   }
 
   return true;

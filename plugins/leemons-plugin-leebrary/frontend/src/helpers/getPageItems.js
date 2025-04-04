@@ -1,4 +1,9 @@
-function getPageItems({ data = [], page = 1, size = 10, includeNewItem = false }) {
+function getPageItems({
+  data = [],
+  page = 1,
+  size = 10,
+  includeNewItem = false,
+}) {
   const startRow = page * size;
   const endRow = startRow + size;
   const realCount = data.length;

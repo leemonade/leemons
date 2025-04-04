@@ -1,12 +1,12 @@
-import { Box, UnstyledButton, Stack } from '@bubbles-ui/components';
-import { AddCircleIcon, UploadIcon } from '@bubbles-ui/icons/solid';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { noop, capitalize } from 'lodash';
-import PropTypes from 'prop-types';
+import { Box, UnstyledButton, Stack } from "@bubbles-ui/components";
+import { AddCircleIcon, UploadIcon } from "@bubbles-ui/icons/solid";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { noop, capitalize } from "lodash";
+import PropTypes from "prop-types";
 
-import { NewLibraryCardButtonStyles } from './NewLibraryCardButton.styles';
+import { NewLibraryCardButtonStyles } from "./NewLibraryCardButton.styles";
 
-import prefixPN from '@leebrary/helpers/prefixPN';
+import prefixPN from "@leebrary/helpers/prefixPN";
 
 function NewLibraryCardButton({
   categoryKey,
@@ -14,14 +14,14 @@ function NewLibraryCardButton({
   onClickNew = noop,
   onClickBulkUpload = noop,
 }) {
-  const isMultipleButton = categoryKey.includes('media');
-  const [t] = useTranslateLoader(prefixPN('list'));
+  const isMultipleButton = categoryKey.includes("media");
+  const [t] = useTranslateLoader(prefixPN("list"));
   const { classes } = NewLibraryCardButtonStyles(
     { isMultipleButton },
-    { name: 'NewLibraryCardButton' }
+    { name: "NewLibraryCardButton" }
   );
   const secondaryButtonLabel = {
-    'media-files': t('uploadBulk'),
+    "media-files": t("uploadBulk"),
   }[categoryKey];
 
   return (
@@ -30,7 +30,9 @@ function NewLibraryCardButton({
         <Box className={classes.icon}>
           <AddCircleIcon width={24} height={24} />
         </Box>
-        <Box className={classes.label}>{t('genericNew', { label: capitalize(categoryLabel) })}</Box>
+        <Box className={classes.label}>
+          {t("genericNew", { label: capitalize(categoryLabel) })}
+        </Box>
       </UnstyledButton>
       {isMultipleButton && (
         <UnstyledButton className={classes.root} onClick={onClickBulkUpload}>

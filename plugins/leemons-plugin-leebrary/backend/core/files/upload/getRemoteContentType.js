@@ -1,4 +1,4 @@
-const got = require('got');
+const got = require("got");
 /**
  * Fetches the content type of a remote file.
  *
@@ -9,11 +9,11 @@ function getRemoteContentType(url) {
   return new Promise((resolve, reject) => {
     try {
       got(url, { isStream: true })
-        .on('response', (response) => {
+        .on("response", (response) => {
           response.destroy();
-          resolve(response.headers['content-type']);
+          resolve(response.headers["content-type"]);
         })
-        .on('error', (error) => reject(error));
+        .on("error", (error) => reject(error));
     } catch (e) {
       reject(e);
     }

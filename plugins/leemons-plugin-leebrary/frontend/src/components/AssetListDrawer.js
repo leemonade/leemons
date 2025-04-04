@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { isEmpty, isString, find } from 'lodash';
+import React, { useEffect, useMemo, useState } from "react";
+import PropTypes from "prop-types";
+import { isEmpty, isString, find } from "lodash";
 import {
   BaseDrawer,
   Box,
@@ -9,14 +9,14 @@ import {
   ActionButton,
   Tabs,
   TabPanel,
-} from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
-import { PluginLeebraryIcon } from '@bubbles-ui/icons/solid';
-import { listCategoriesRequest } from '../request';
-import { AssetList } from './AssetList';
-import { DrawerBasicData } from './AssetSetup/DrawerBasicData';
-import prefixPN from '../helpers/prefixPN';
+} from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { RemoveIcon } from "@bubbles-ui/icons/outline";
+import { PluginLeebraryIcon } from "@bubbles-ui/icons/solid";
+import { listCategoriesRequest } from "../request";
+import { AssetList } from "./AssetList";
+import { DrawerBasicData } from "./AssetSetup/DrawerBasicData";
+import prefixPN from "../helpers/prefixPN";
 
 const AssetListDrawer = ({
   position,
@@ -35,12 +35,12 @@ const AssetListDrawer = ({
 }) => {
   const [categories, setCategories] = useState(categoriesProp);
   const [category, setCategory] = useState(categoryProp);
-  const [t] = useTranslateLoader(prefixPN('assetSetup'));
+  const [t] = useTranslateLoader(prefixPN("assetSetup"));
 
   // ·········································································
   // DATA PROCESSING
 
-  const selectCategory = (item = 'media-files', items = []) => {
+  const selectCategory = (item = "media-files", items = []) => {
     if (isString(item)) {
       setCategory(find(items, { key: item }));
     } else if (item?.id) {
@@ -108,7 +108,7 @@ const AssetListDrawer = ({
         padding="none"
         fullWidth
         fullHeight
-        style={{ flex: 1, height: '100%' }}
+        style={{ flex: 1, height: "100%" }}
       >
         <Stack
           sx={(theme) => ({
@@ -120,40 +120,46 @@ const AssetListDrawer = ({
           alignItems="center"
         >
           <PluginLeebraryIcon height={18} width={18} />
-          <ActionButton icon={<RemoveIcon />} tooltip={t('header.close')} onClick={onClose} />
+          <ActionButton
+            icon={<RemoveIcon />}
+            tooltip={t("header.close")}
+            onClick={onClose}
+          />
         </Stack>
         <Box
           sx={(theme) => ({
             // padding: `0 ${theme.spacing[7]}px`,
             marginTop: creatable ? 0 : theme.spacing[4],
-            display: 'flex',
+            display: "flex",
             flex: 1,
-            overflow: 'hidden',
+            overflow: "hidden",
           })}
         >
           {creatable ? (
             <Tabs usePaddedLayout fullHeight>
-              <TabPanel key="library" label={t('header.title')}>
+              <TabPanel key="library" label={t("header.title")}>
                 <Box
                   sx={(theme) => ({
                     marginTop: theme.spacing[5],
-                    height: '100%',
+                    height: "100%",
                   })}
                 >
                   {LibraryList}
                 </Box>
               </TabPanel>
-              <TabPanel key="create" label={t('basicData.header.titleNew')}>
+              <TabPanel key="create" label={t("basicData.header.titleNew")}>
                 <Box
                   sx={(theme) => ({
                     marginTop: theme.spacing[5],
                     maxWidth: theme.breakpoints.xs,
-                    height: '100%',
+                    height: "100%",
                   })}
                 >
-                  {category?.key === 'media-files' ? (
+                  {category?.key === "media-files" ? (
                     <DrawerBasicData
-                      {...(onlyCreateImages ? { onlyImages: true, hideTitle: true } : {})}
+                      {...(onlyCreateImages
+                        ? { onlyImages: true, hideTitle: true }
+                        : {})}
                       categoryId={category?.id}
                       onSave={onSelect}
                     />
@@ -174,12 +180,12 @@ const AssetListDrawer = ({
 
 AssetListDrawer.defaultProps = {
   opened: false,
-  position: 'right',
+  position: "right",
   size: 500,
   pageSize: 50,
   pageSizes: [50, 100, 150],
-  layout: 'grid',
-  assetType: 'image',
+  layout: "grid",
+  assetType: "image",
   canChangeType: false,
   allowChangeCategories: false,
   onlyThumbnails: true,
@@ -189,14 +195,17 @@ AssetListDrawer.defaultProps = {
 };
 AssetListDrawer.propTypes = {
   opened: PropTypes.bool,
-  position: PropTypes.oneOf(['left', 'right']),
+  position: PropTypes.oneOf(["left", "right"]),
   size: PropTypes.number,
   pageSize: PropTypes.number,
   pageSizes: PropTypes.array,
   onClose: PropTypes.func,
   categories: PropTypes.arrayOf(PropTypes.object),
   category: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-  allowChangeCategories: PropTypes.oneOfType([PropTypes.bool, PropTypes.arrayOf(PropTypes.string)]),
+  allowChangeCategories: PropTypes.oneOfType([
+    PropTypes.bool,
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
   layout: PropTypes.string,
   onSelect: PropTypes.func,
   assetType: PropTypes.string,

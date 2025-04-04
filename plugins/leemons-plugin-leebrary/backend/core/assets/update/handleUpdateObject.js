@@ -1,9 +1,9 @@
-const { pick } = require('lodash');
+const { pick } = require("lodash");
 
-const { CATEGORIES } = require('../../../config/constants');
-const { getById: getCategory } = require('../../categories/getById');
+const { CATEGORIES } = require("../../../config/constants");
+const { getById: getCategory } = require("../../categories/getById");
 
-const { getDiff } = require('./getDiff');
+const { getDiff } = require("./getDiff");
 
 /**
  * This function handles the update object for the asset. It compares the current asset data with the new asset data and returns the updated object and the differences.
@@ -16,22 +16,22 @@ const { getDiff } = require('./getDiff');
  */
 async function handleUpdateObject({ currentAsset, assetData, ctx }) {
   const compareProps = [
-    'name',
-    'tagline',
-    'description',
-    'color',
-    'file',
-    'cover',
-    'public',
-    'indexable',
-    'tags',
-    'program',
-    'subjects',
+    "name",
+    "tagline",
+    "description",
+    "color",
+    "file",
+    "cover",
+    "public",
+    "indexable",
+    "tags",
+    "program",
+    "subjects",
   ];
 
   const category = await getCategory({ id: currentAsset.category, ctx });
   if (category.key === CATEGORIES.BOOKMARKS) {
-    compareProps.push('url');
+    compareProps.push("url");
   }
 
   const currentData = pick(currentAsset, compareProps);

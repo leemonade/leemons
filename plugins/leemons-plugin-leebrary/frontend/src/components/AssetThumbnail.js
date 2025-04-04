@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   Box,
   Stack,
@@ -8,33 +8,40 @@ import {
   createStyles,
   Text,
   COLORS,
-} from '@bubbles-ui/components';
-import { prepareAsset } from '../helpers/prepareAsset';
+} from "@bubbles-ui/components";
+import { prepareAsset } from "../helpers/prepareAsset";
 
 const AssetThumbnailStyles = createStyles((theme, { selected }) => ({
   root: {
-    cursor: 'pointer',
-    borderStyle: 'solid',
+    cursor: "pointer",
+    borderStyle: "solid",
     borderColor: selected ? theme.colors.interactive01d : theme.colors.ui02,
     borderWidth: 1,
     boxShadow: selected && theme.shadows.shadow03,
-    width: '100%',
-    '&:hover': {
+    width: "100%",
+    "&:hover": {
       boxShadow: theme.shadows.shadow03,
     },
   },
   fileIcon: {
     height: 170,
-    display: 'flex',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-end',
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "flex-end",
     backgroundColor: theme.colors.interactive03h,
     padding: theme.spacing[3],
     borderRadius: 4,
   },
 }));
 
-const AssetThumbnail = ({ key, item, selected, headers, className, ...props }) => {
+const AssetThumbnail = ({
+  key,
+  item,
+  selected,
+  headers,
+  className,
+  ...props
+}) => {
   const asset = prepareAsset(item.original || item);
   const { classes, cx } = AssetThumbnailStyles({ selected });
 
@@ -49,7 +56,7 @@ const AssetThumbnail = ({ key, item, selected, headers, className, ...props }) =
               size={32}
               fileExtension={asset.fileExtension}
               fileType={asset.fileType}
-              color={'#B9BEC4'}
+              color={"#B9BEC4"}
               iconStyle={{ backgroundColor: COLORS.interactive03h }}
               hideExtension
             />

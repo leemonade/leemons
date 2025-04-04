@@ -3,30 +3,35 @@ const {
   expect,
   beforeEach,
   jest: { fn },
-} = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+} = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { handlePermissions } = require('./handlePermissions');
-const { permissionSeparator, assetRoles } = require('../../../config/constants');
-const getAssets = require('../../../__fixtures__/getAssets');
-const getUserSession = require('../../../__fixtures__/getUserSession');
+const { handlePermissions } = require("./handlePermissions");
+const {
+  permissionSeparator,
+  assetRoles,
+} = require("../../../config/constants");
+const getAssets = require("../../../__fixtures__/getAssets");
+const getUserSession = require("../../../__fixtures__/getUserSession");
 
-jest.mock('../../permissions/helpers/getAssetPermissionName');
-const getAssetPermissionName = require('../../permissions/helpers/getAssetPermissionName');
+jest.mock("../../permissions/helpers/getAssetPermissionName");
+const getAssetPermissionName = require("../../permissions/helpers/getAssetPermissionName");
 
 const { assetModel: asset } = getAssets();
 const userSession = getUserSession();
 
 beforeEach(() => jest.resetAllMocks());
 
-it('Should call the users service to add permissions and custom permissions for new assets', async () => {
+it("Should call the users service to add permissions and custom permissions for new assets", async () => {
   // Arrange
-  const mockUsersPermissionsAddItem = fn(() => [Promise.resolve('test')]);
-  const mockUsersPermissionsaddCustomPermissionToUserAgent = fn(() => [Promise.resolve('test')]);
+  const mockUsersPermissionsAddItem = fn(() => [Promise.resolve("test")]);
+  const mockUsersPermissionsaddCustomPermissionToUserAgent = fn(() => [
+    Promise.resolve("test"),
+  ]);
   const ctx = generateCtx({
     actions: {
-      'users.permissions.addItem': mockUsersPermissionsAddItem,
-      'users.permissions.addCustomPermissionToUserAgent':
+      "users.permissions.addItem": mockUsersPermissionsAddItem,
+      "users.permissions.addCustomPermissionToUserAgent":
         mockUsersPermissionsaddCustomPermissionToUserAgent,
     },
   });
@@ -56,7 +61,7 @@ it('Should call the users service to add permissions and custom permissions for 
     userAgentId: userSession.userAgents.map((uA) => uA.id),
     data: {
       permissionName: assetPermissionName,
-      actionNames: ['owner'],
+      actionNames: ["owner"],
       target: asset.category,
     },
   });
@@ -64,15 +69,17 @@ it('Should call the users service to add permissions and custom permissions for 
   expect(responseNewAsset).toBe(true);
 });
 
-it('Should call the users service to add permissions and custom permissions for existent assets', async () => {
+it("Should call the users service to add permissions and custom permissions for existent assets", async () => {
   // Arrange
-  const mockUsersPermissionsAddItem = fn(() => [Promise.resolve('test')]);
-  const mockUsersPermissionsaddCustomPermissionToUserAgent = fn(() => [Promise.resolve('test')]);
+  const mockUsersPermissionsAddItem = fn(() => [Promise.resolve("test")]);
+  const mockUsersPermissionsaddCustomPermissionToUserAgent = fn(() => [
+    Promise.resolve("test"),
+  ]);
 
   const ctx = generateCtx({
     actions: {
-      'users.permissions.addItem': mockUsersPermissionsAddItem,
-      'users.permissions.addCustomPermissionToUserAgent':
+      "users.permissions.addItem": mockUsersPermissionsAddItem,
+      "users.permissions.addCustomPermissionToUserAgent":
         mockUsersPermissionsaddCustomPermissionToUserAgent,
     },
   });
@@ -87,26 +94,26 @@ it('Should call the users service to add permissions and custom permissions for 
       canEdit: true,
       canView: true,
       canAssign: true,
-      id: 'permissionOneId',
+      id: "permissionOneId",
     },
     {
       isCustomPermission: false,
       canEdit: false,
       canView: true,
       canAssign: false,
-      id: 'permissionTwoId',
+      id: "permissionTwoId",
     },
     {
       isCustomPermission: false,
       canEdit: false,
       canView: true,
       canAssign: true,
-      id: 'permissionThreeId',
+      id: "permissionThreeId",
     },
   ];
   const canAccess = [
-    { userAgent: 'userAgentOne', role: 'owner' },
-    { userAgent: 'userAgentTwo', role: 'editor' },
+    { userAgent: "userAgentOne", role: "owner" },
+    { userAgent: "userAgentTwo", role: "editor" },
   ];
 
   // Act
@@ -121,23 +128,29 @@ it('Should call the users service to add permissions and custom permissions for 
   // Assert
   expect(getAssetPermissionName).toBeCalledWith({ assetId: asset.id, ctx });
   expect(mockUsersPermissionsAddItem).toBeCalledTimes(permissions.length + 1);
-  permissions.forEach(({ isCustomPermission, canEdit, canView, canAssign, ...per }, index) => {
-    let permissionType = 'can-view';
-    if (canEdit) {
-      permissionType = 'can-edit';
-    } else if (canAssign) {
-      permissionType = 'can-assign';
+  permissions.forEach(
+    ({ isCustomPermission, canEdit, canView, canAssign, ...per }, index) => {
+      let permissionType = "can-view";
+      if (canEdit) {
+        permissionType = "can-edit";
+      } else if (canAssign) {
+        permissionType = "can-assign";
+      }
+      expect(mockUsersPermissionsAddItem).toHaveBeenNthCalledWith(index + 2, {
+        item: asset.id,
+        type: ctx.prefixPN(`asset.${permissionType}`),
+        data: { ...per },
+        isCustomPermission,
+      });
     }
-    expect(mockUsersPermissionsAddItem).toHaveBeenNthCalledWith(index + 2, {
-      item: asset.id,
-      type: ctx.prefixPN(`asset.${permissionType}`),
-      data: { ...per },
-      isCustomPermission,
-    });
-  });
-  expect(mockUsersPermissionsaddCustomPermissionToUserAgent).toBeCalledTimes(canAccess.length);
+  );
+  expect(mockUsersPermissionsaddCustomPermissionToUserAgent).toBeCalledTimes(
+    canAccess.length
+  );
   canAccess.forEach((access, index) => {
-    expect(mockUsersPermissionsaddCustomPermissionToUserAgent).toHaveBeenNthCalledWith(index + 1, {
+    expect(
+      mockUsersPermissionsaddCustomPermissionToUserAgent
+    ).toHaveBeenNthCalledWith(index + 1, {
       userAgentId: access.userAgent,
       data: {
         permissionName: assetPermissionName,

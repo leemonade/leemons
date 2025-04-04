@@ -1,4 +1,4 @@
-const { set: updateSettings } = require('../set');
+const { set: updateSettings } = require("../set");
 
 /**
  * This function sets the active provider for the settings.

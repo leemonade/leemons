@@ -3,37 +3,37 @@ const {
   it,
   beforeEach,
   jest: { fn },
-} = require('@jest/globals');
-const mime = require('mime-types');
-const got = require('got');
-const temp = require('temp');
+} = require("@jest/globals");
+const mime = require("mime-types");
+const got = require("got");
+const temp = require("temp");
 
-const { download } = require('./download');
-const { getOptimizedImage } = require('./getOptimizedImage');
-const { getRemoteContentType } = require('./getRemoteContentType');
+const { download } = require("./download");
+const { getOptimizedImage } = require("./getOptimizedImage");
+const { getRemoteContentType } = require("./getRemoteContentType");
 
-jest.mock('got');
-jest.mock('mime-types');
-jest.mock('temp');
-jest.mock('./getOptimizedImage');
-jest.mock('./getRemoteContentType');
+jest.mock("got");
+jest.mock("mime-types");
+jest.mock("temp");
+jest.mock("./getOptimizedImage");
+jest.mock("./getRemoteContentType");
 
 beforeEach(() => jest.resetAllMocks());
 
-const url = 'http://example.com/file.jpg';
-const mockMimeExtension = 'image/jpeg';
-const mockTempPath = '/fake-tmp/file.jpg';
+const url = "http://example.com/file.jpg";
+const mockMimeExtension = "image/jpeg";
+const mockTempPath = "/fake-tmp/file.jpg";
 
-it('should download a file successfully', async () => {
+it("should download a file successfully", async () => {
   // Arrange
   const mockGotOn = fn();
   const mockGotPipe = fn();
   got.mockReturnValue({ on: mockGotOn, pipe: mockGotPipe });
-  mime.extension.mockReturnValue('jpeg');
+  mime.extension.mockReturnValue("jpeg");
 
   const mockTempEnd = fn();
   const mockTempOn = fn((event, handler) => {
-    if (event === 'finish') {
+    if (event === "finish") {
       handler();
     }
     return { on: mockTempOn };
@@ -73,18 +73,18 @@ it('should download a file successfully', async () => {
   });
 });
 
-it('should compress an image file successfully', async () => {
+it("should compress an image file successfully", async () => {
   // Arrange
   const compress = true;
   const mockGotOn = fn();
 
   const mockGotPipe = fn().mockReturnThis();
   got.mockReturnValue({ on: mockGotOn, pipe: mockGotPipe });
-  mime.extension.mockReturnValue('jpeg');
+  mime.extension.mockReturnValue("jpeg");
 
   const mockTempEnd = fn();
   const mockTempOn = fn((event, handler) => {
-    if (event === 'finish') {
+    if (event === "finish") {
       handler();
     }
     return { on: mockTempOn };
@@ -95,29 +95,32 @@ it('should compress an image file successfully', async () => {
     path: mockTempPath,
   }));
   getRemoteContentType.mockResolvedValue(mockMimeExtension);
-  getOptimizedImage.mockReturnValue({ path: mockTempPath, extension: 'jpeg' });
+  getOptimizedImage.mockReturnValue({ path: mockTempPath, extension: "jpeg" });
 
   // Act
   await download({ url, compress });
 
   // Assert
-  expect(getOptimizedImage).toHaveBeenCalledWith({ path: null, extension: 'jpeg' });
+  expect(getOptimizedImage).toHaveBeenCalledWith({
+    path: null,
+    extension: "jpeg",
+  });
   expect(mockGotPipe).toBeCalledTimes(2);
 });
 
-it('should handle download error', async () => {
+it("should handle download error", async () => {
   // Arrange
   const compress = false;
-  const error = new Error('Download error');
+  const error = new Error("Download error");
   const mockGotOn = fn((event, handler) => {
-    if (event === 'error') {
+    if (event === "error") {
       handler(error);
     }
     return { on: mockGotOn };
   });
   const mockGotPipe = fn();
   got.mockReturnValue({ on: mockGotOn, pipe: mockGotPipe });
-  mime.extension.mockReturnValue('jpeg');
+  mime.extension.mockReturnValue("jpeg");
 
   const mockTempEnd = fn();
   const mockTempOn = fn();
@@ -132,18 +135,18 @@ it('should handle download error', async () => {
   await expect(download({ url, compress })).rejects.toEqual(error);
 });
 
-it('should handle file write error', async () => {
+it("should handle file write error", async () => {
   // Arrange
   const compress = false;
-  const error = new Error('File write error');
+  const error = new Error("File write error");
   const mockGotOn = fn();
   const mockGotPipe = fn();
   got.mockReturnValue({ on: mockGotOn, pipe: mockGotPipe });
-  mime.extension.mockReturnValue('jpeg');
+  mime.extension.mockReturnValue("jpeg");
 
   const mockTempEnd = fn();
   const mockTempOn = fn((event, handler) => {
-    if (event === 'error') {
+    if (event === "error") {
       handler(error);
     }
     return { on: mockTempOn };

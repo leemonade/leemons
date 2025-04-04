@@ -1,40 +1,48 @@
 /* eslint-disable no-loop-func */
 /* eslint-disable no-await-in-loop */
 
-import * as JSZip from 'jszip';
-import * as _ from 'lodash';
-import * as mime from 'mime-types';
+import * as JSZip from "jszip";
+import * as _ from "lodash";
+import * as mime from "mime-types";
 
 const chunksSize = 1024 * 1024 * 5; // 5mb
 const maxRetry = 3;
 
 async function abort(dbfile) {
-  return leemons.api('v1/leebrary/file/multipart/abort', {
+  return leemons.api("v1/leebrary/file/multipart/abort", {
     allAgents: true,
     body: {
       fileId: dbfile.id,
     },
-    method: 'POST',
+    method: "POST",
   });
 }
 
-async function sendChunk(dbfile, chunk, partNumber, path, uploadUrl, onProgress, retry = 0) {
+async function sendChunk(
+  dbfile,
+  chunk,
+  partNumber,
+  path,
+  uploadUrl,
+  onProgress,
+  retry = 0
+) {
   try {
     if (uploadUrl) {
       return new Promise((resolve, reject) => {
         const xhr = new XMLHttpRequest();
 
-        xhr.upload.addEventListener('progress', (data) => {
+        xhr.upload.addEventListener("progress", (data) => {
           const progress = Math.round((data.loaded * 100) / data.total);
           onProgress(progress);
         });
 
-        xhr.open('PUT', uploadUrl);
+        xhr.open("PUT", uploadUrl);
 
         xhr.onreadystatechange = () => {
           if (xhr.readyState === 4 && xhr.status === 200) {
             // retrieving the ETag parameter from the HTTP headers
-            const ETag = xhr.getResponseHeader('ETag');
+            const ETag = xhr.getResponseHeader("ETag");
 
             if (ETag) {
               resolve(JSON.parse(ETag));
@@ -47,7 +55,7 @@ async function sendChunk(dbfile, chunk, partNumber, path, uploadUrl, onProgress,
         };
 
         xhr.onabort = () => {
-          reject(new Error('Upload canceled by user'));
+          reject(new Error("Upload canceled by user"));
         };
 
         xhr.send(chunk);
@@ -55,26 +63,34 @@ async function sendChunk(dbfile, chunk, partNumber, path, uploadUrl, onProgress,
     }
     const formData = new FormData();
     formData.append(
-      'body',
+      "body",
       JSON.stringify({
         fileId: dbfile.id,
         partNumber,
         path,
       })
     );
-    formData.append('chunk', chunk, 'chunk');
-    await leemons.api('v1/leebrary/file/multipart/chunk', {
+    formData.append("chunk", chunk, "chunk");
+    await leemons.api("v1/leebrary/file/multipart/chunk", {
       allAgents: true,
       body: formData,
       headers: {
-        'content-type': 'none',
+        "content-type": "none",
       },
-      method: 'POST',
+      method: "POST",
     });
   } catch (e) {
-    console.error('error', e);
+    console.error("error", e);
     if (retry < maxRetry) {
-      return sendChunk(dbfile, chunk, partNumber, path, uploadUrl, onProgress, retry + 1);
+      return sendChunk(
+        dbfile,
+        chunk,
+        partNumber,
+        path,
+        uploadUrl,
+        onProgress,
+        retry + 1
+      );
     }
     throw e;
   }
@@ -90,14 +106,14 @@ async function sendAllChunksInOrder(jsfile, dbfile, onProgress) {
     remainingChunks: nChunks,
   });
 
-  const { urls } = await leemons.api('v1/leebrary/file/multipart/chunk/urls', {
+  const { urls } = await leemons.api("v1/leebrary/file/multipart/chunk/urls", {
     allAgents: true,
     body: {
       fileId: dbfile.id,
       nChunks,
       path: jsfile.name,
     },
-    method: 'POST',
+    method: "POST",
   });
 
   const etags = [];
@@ -149,22 +165,22 @@ async function createNewMultipartFileUpload(
   if (externalUrl) {
     body.externalUrl = externalUrl;
   }
-  return leemons.api('v1/leebrary/file/multipart/new', {
+  return leemons.api("v1/leebrary/file/multipart/new", {
     allAgents: true,
     body,
-    method: 'POST',
+    method: "POST",
   });
 }
 
 async function finishMultipartFileUpload(dbfile, path, etags) {
-  return leemons.api('v1/leebrary/file/multipart/finish', {
+  return leemons.api("v1/leebrary/file/multipart/finish", {
     allAgents: true,
     body: {
       fileId: dbfile.id,
       path,
       etags,
     },
-    method: 'POST',
+    method: "POST",
   });
 }
 
@@ -172,21 +188,21 @@ async function getZipFiles(jsfile) {
   const zip = new JSZip();
 
   // Check if the file is a valid zip file
-  if (jsfile.type !== 'application/zip') {
-    throw new Error('Invalid file type. Only zip files are allowed.');
+  if (jsfile.type !== "application/zip") {
+    throw new Error("Invalid file type. Only zip files are allowed.");
   }
 
   // Check if the file size is within acceptable limits (e.g., 200MB)
   const maxFileSize = 200 * 1024 * 1024; // 200MB
   if (jsfile.size > maxFileSize) {
-    throw new Error('File size exceeds the maximum limit of 200MB.');
+    throw new Error("File size exceeds the maximum limit of 200MB.");
   }
 
   await zip.loadAsync(jsfile);
 
   async function downloadEntry(entry) {
-    const type = mime.lookup(entry.name.split('.').reverse()[0]);
-    return new File([await zip.file(entry.name).async('blob')], entry.name, {
+    const type = mime.lookup(entry.name.split(".").reverse()[0]);
+    return new File([await zip.file(entry.name).async("blob")], entry.name, {
       type,
     });
   }
@@ -201,17 +217,22 @@ async function getZipFiles(jsfile) {
 
 async function uploadFileAsMultipart(
   jsfile,
-  { onProgress = () => {}, name, isFolder: _isFolder = false, externalFileInfo } = {}
+  {
+    onProgress = () => {},
+    name,
+    isFolder: _isFolder = false,
+    externalFileInfo,
+  } = {}
 ) {
   if (jsfile instanceof File || jsfile instanceof Blob) {
-    const isFolder = _isFolder && jsfile.name?.endsWith('.zip');
+    const isFolder = _isFolder && jsfile.name?.endsWith(".zip");
     const filePaths = [];
     const pathsInfo = {};
 
     let filesToUpload = [jsfile];
     if (isFolder) {
       onProgress({
-        state: 'unzip',
+        state: "unzip",
       });
       filesToUpload = await getZipFiles(jsfile);
       _.forEach(filesToUpload, (file) => {
@@ -223,7 +244,7 @@ async function uploadFileAsMultipart(
     }
 
     onProgress({
-      state: 'init',
+      state: "init",
     });
     const dbfile = await createNewMultipartFileUpload(jsfile, {
       filePaths,
@@ -233,10 +254,10 @@ async function uploadFileAsMultipart(
       copyright: externalFileInfo?.copyright,
       externalUrl: externalFileInfo?.externalUrl,
     });
-    const totalSize = _.sum(_.map(filesToUpload, 'size'));
+    const totalSize = _.sum(_.map(filesToUpload, "size"));
     try {
       onProgress({
-        state: 'uploading',
+        state: "uploading",
         totalSize,
         totalFiles: filesToUpload.length,
         percentageCompleted: 0,
@@ -250,7 +271,8 @@ async function uploadFileAsMultipart(
           dbfile,
           ({ percentageCompleted }) => {
             const filePercentageOnSize = (currentFileSize / totalSize) * 100;
-            let totalPercentageSize = (percentageCompleted / 100) * filePercentageOnSize;
+            let totalPercentageSize =
+              (percentageCompleted / 100) * filePercentageOnSize;
 
             if (percentageCompleted === 100) {
               oldper += totalPercentageSize;
@@ -258,7 +280,7 @@ async function uploadFileAsMultipart(
             }
 
             onProgress({
-              state: 'uploading',
+              state: "uploading",
               totalFiles: filesToUpload.length,
               totalSize,
               currentFileSize,

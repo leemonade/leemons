@@ -1,16 +1,23 @@
-const { it, expect, beforeAll, afterAll, beforeEach, describe } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { LeemonsError } = require('@leemons/error');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  describe,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { LeemonsError } = require("@leemons/error");
+const { newModel } = require("@leemons/mongodb");
 
-const { byName } = require('./byName');
-const { assetsSchema } = require('../../../models/assets');
-const getAssets = require('../../../__fixtures__/getAssets');
+const { byName } = require("./byName");
+const { assetsSchema } = require("../../../models/assets");
+const getAssets = require("../../../__fixtures__/getAssets");
 
-jest.mock('../../assets/getByIds');
-const { getByIds: getAssetsByIds } = require('../../assets/getByIds');
+jest.mock("../../assets/getByIds");
+const { getByIds: getAssetsByIds } = require("../../assets/getByIds");
 
-describe('byName', () => {
+describe("byName", () => {
   let mongooseConnection;
   let disconnectMongoose;
   let ctx;
@@ -24,7 +31,7 @@ describe('byName', () => {
 
     ctx = generateCtx({
       models: {
-        Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+        Assets: newModel(mongooseConnection, "Assets", assetsSchema),
       },
     });
   });
@@ -45,22 +52,22 @@ describe('byName', () => {
     assets = [
       {
         ...asset,
-        id: 'assetId1',
-        name: 'First Asset',
+        id: "assetId1",
+        name: "First Asset",
       },
       {
         ...asset,
-        id: 'assetId2',
-        name: 'Second Asset',
+        id: "assetId2",
+        name: "Second Asset",
       },
     ];
     await ctx.tx.db.Assets.create(assets);
   });
 
-  describe('Intended workload', () => {
-    it('should return assets by name', async () => {
+  describe("Intended workload", () => {
+    it("should return assets by name", async () => {
       // Arrange
-      const name = 'First';
+      const name = "First";
       getAssetsByIds.mockResolvedValue([assets[0]]);
       // Act
       const result = await byName({
@@ -73,9 +80,9 @@ describe('byName', () => {
       expect(getAssetsByIds).toBeCalledWith({ ids: [assets[0].id], ctx });
       expect(result).toEqual([assets[0]]);
     });
-    it('should return assets by name with no case sensitive search', async () => {
+    it("should return assets by name with no case sensitive search", async () => {
       // Arrange
-      const name = 'first';
+      const name = "first";
       getAssetsByIds.mockResolvedValue([assets[0]]);
       // Act
       const result = await byName({
@@ -90,10 +97,10 @@ describe('byName', () => {
     });
   });
 
-  describe('Limit use cases', () => {
-    it('should return empty array if no assets match name', async () => {
+  describe("Limit use cases", () => {
+    it("should return empty array if no assets match name", async () => {
       // Arrange
-      const name = 'Other name';
+      const name = "Other name";
 
       // Act
       const result = await byName({ name, ctx });
@@ -104,8 +111,8 @@ describe('byName', () => {
     });
   });
 
-  describe('Error handling', () => {
-    it('should throw an error if name is missing', async () => {
+  describe("Error handling", () => {
+    it("should throw an error if name is missing", async () => {
       // Arrange
       const nameMissing = undefined;
 

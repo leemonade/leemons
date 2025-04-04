@@ -1,10 +1,16 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const _ = require('lodash');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const _ = require("lodash");
 
-const { getByAssets } = require('./getByAssets');
-const { assetsFilesSchema } = require('../../../models/assetsFiles');
+const { getByAssets } = require("./getByAssets");
+const { assetsFilesSchema } = require("../../../models/assetsFiles");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -27,18 +33,22 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should call getByAssets correctly', async () => {
+it("Should call getByAssets correctly", async () => {
   // Arrange
   const ctx = generateCtx({
     models: {
-      AssetsFiles: newModel(mongooseConnection, 'AssetsFiles', assetsFilesSchema),
+      AssetsFiles: newModel(
+        mongooseConnection,
+        "AssetsFiles",
+        assetsFilesSchema
+      ),
     },
   });
 
-  const assetIds = ['asset1', 'asset2'];
+  const assetIds = ["asset1", "asset2"];
   const initialValues = [
-    { asset: 'asset1', file: 'file1' },
-    { asset: 'asset2', file: 'file2' },
+    { asset: "asset1", file: "file1" },
+    { asset: "asset2", file: "file2" },
   ];
   await ctx.db.AssetsFiles.create(initialValues);
 
@@ -54,15 +64,19 @@ it('Should call getByAssets correctly', async () => {
   });
 });
 
-it('Should return an empty array when no assets are found', async () => {
+it("Should return an empty array when no assets are found", async () => {
   // Arrange
   const ctx = generateCtx({
     models: {
-      AssetsFiles: newModel(mongooseConnection, 'AssetsFiles', assetsFilesSchema),
+      AssetsFiles: newModel(
+        mongooseConnection,
+        "AssetsFiles",
+        assetsFilesSchema
+      ),
     },
   });
 
-  const assetIds = ['asset1', 'asset2'];
+  const assetIds = ["asset1", "asset2"];
 
   // Act
   const response = await getByAssets({ assetIds, ctx });
@@ -71,11 +85,15 @@ it('Should return an empty array when no assets are found', async () => {
   expect(response).toHaveLength(0);
 });
 
-it('Should throw when assetIds is a wrong value', async () => {
+it("Should throw when assetIds is a wrong value", async () => {
   // Arrange
   const ctx = generateCtx({
     models: {
-      AssetsFiles: newModel(mongooseConnection, 'AssetsFiles', assetsFilesSchema),
+      AssetsFiles: newModel(
+        mongooseConnection,
+        "AssetsFiles",
+        assetsFilesSchema
+      ),
     },
   });
 

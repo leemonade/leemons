@@ -1,27 +1,33 @@
-const { it, expect, beforeAll, beforeEach, describe } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
-const { LeemonsError } = require('@leemons/error');
-const { byCriteria } = require('./byCriteria');
+const {
+  it,
+  expect,
+  beforeAll,
+  beforeEach,
+  describe,
+} = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
+const { LeemonsError } = require("@leemons/error");
+const { byCriteria } = require("./byCriteria");
 
-jest.mock('./getCategoryId');
-const { getCategoryId } = require('./getCategoryId');
+jest.mock("./getCategoryId");
+const { getCategoryId } = require("./getCategoryId");
 
-jest.mock('./getPinnedAssets');
-const { getPinnedAssets } = require('./getPinnedAssets');
+jest.mock("./getPinnedAssets");
+const { getPinnedAssets } = require("./getPinnedAssets");
 
-jest.mock('./getProviderAssets');
-const { getProviderAssets } = require('./getProviderAssets');
+jest.mock("./getProviderAssets");
+const { getProviderAssets } = require("./getProviderAssets");
 
-jest.mock('./getAssets');
-const { getAssets } = require('./getAssets');
+jest.mock("./getAssets");
+const { getAssets } = require("./getAssets");
 
-jest.mock('./getAssetsWithPermissions');
-const { getAssetsWithPermissions } = require('./getAssetsWithPermissions');
+jest.mock("./getAssetsWithPermissions");
+const { getAssetsWithPermissions } = require("./getAssetsWithPermissions");
 
-jest.mock('./sortAssets');
-const { sortAssets } = require('./sortAssets');
+jest.mock("./sortAssets");
+const { sortAssets } = require("./sortAssets");
 
-describe('byCriteria', () => {
+describe("byCriteria", () => {
   let ctx;
   let assets;
   let permissionAssets;
@@ -30,15 +36,15 @@ describe('byCriteria', () => {
   beforeAll(async () => {
     ctx = generateCtx({});
     assets = [
-      '0b4635b5-d4ed-4c47-8cbe-7ed551d8eac1@1.0.0',
-      '55c84a20-94e9-40ca-8afa-94aa675bb625@1.0.0',
-      'a49b8df7-f06c-408e-bbca-5fbce6a33cfc@1.0.0',
-      'edbbc5f1-98e8-42bc-a01c-f523f44d047d@1.0.0',
+      "0b4635b5-d4ed-4c47-8cbe-7ed551d8eac1@1.0.0",
+      "55c84a20-94e9-40ca-8afa-94aa675bb625@1.0.0",
+      "a49b8df7-f06c-408e-bbca-5fbce6a33cfc@1.0.0",
+      "edbbc5f1-98e8-42bc-a01c-f523f44d047d@1.0.0",
     ];
     permissionAssets = [
       {
-        asset: 'a49b8df7-f06c-408e-bbca-5fbce6a33cfc@1.0.0',
-        role: 'owner',
+        asset: "a49b8df7-f06c-408e-bbca-5fbce6a33cfc@1.0.0",
+        role: "owner",
         permissions: {
           view: true,
           assign: true,
@@ -46,13 +52,13 @@ describe('byCriteria', () => {
           edit: true,
           delete: true,
           duplicate: true,
-          canAssign: ['assigner', 'viewer', 'commentor', 'editor', 'owner'],
-          canUnassign: ['assigner', 'viewer', 'commentor', 'editor'],
+          canAssign: ["assigner", "viewer", "commentor", "editor", "owner"],
+          canUnassign: ["assigner", "viewer", "commentor", "editor"],
         },
       },
       {
-        asset: '55c84a20-94e9-40ca-8afa-94aa675bb625@1.0.0',
-        role: 'owner',
+        asset: "55c84a20-94e9-40ca-8afa-94aa675bb625@1.0.0",
+        role: "owner",
         permissions: {
           view: true,
           assign: true,
@@ -60,8 +66,8 @@ describe('byCriteria', () => {
           edit: true,
           delete: true,
           duplicate: true,
-          canAssign: ['assigner', 'viewer', 'commentor', 'editor', 'owner'],
-          canUnassign: ['assigner', 'viewer', 'commentor', 'editor'],
+          canAssign: ["assigner", "viewer", "commentor", "editor", "owner"],
+          canUnassign: ["assigner", "viewer", "commentor", "editor"],
         },
       },
     ];
@@ -71,15 +77,15 @@ describe('byCriteria', () => {
     jest.resetAllMocks();
 
     params = {
-      criteria: 'projects',
-      type: 'type1',
-      category: '1ac55ed0-9d52-43b6-922c-9e2542cac347',
+      criteria: "projects",
+      type: "type1",
+      category: "1ac55ed0-9d52-43b6-922c-9e2542cac347",
       allVersions: false,
-      sortBy: 'updated_at',
-      sortDirection: 'desc',
+      sortBy: "updated_at",
+      sortDirection: "desc",
       published: true,
       indexable: true,
-      preferCurrent: 'true',
+      preferCurrent: "true",
       searchInProvider: false,
       providerQuery: { program: null },
       pinned: undefined,
@@ -92,8 +98,8 @@ describe('byCriteria', () => {
     };
   });
 
-  describe('Intended workload', () => {
-    it('should return sorted assets based on the provided criteria', async () => {
+  describe("Intended workload", () => {
+    it("should return sorted assets based on the provided criteria", async () => {
       // Arrange
       getCategoryId.mockResolvedValue(params.category);
       getPinnedAssets.mockResolvedValue({ assets: [], nothingFound: false });
@@ -152,8 +158,8 @@ describe('byCriteria', () => {
     });
   });
 
-  describe('Limit use cases', () => {
-    it('should return sorted assets based on the provided criteria using default params', async () => {
+  describe("Limit use cases", () => {
+    it("should return sorted assets based on the provided criteria using default params", async () => {
       // Arrange
       getCategoryId.mockResolvedValue(params.category);
       getPinnedAssets.mockResolvedValue({ assets: [], nothingFound: false });
@@ -166,8 +172,8 @@ describe('byCriteria', () => {
       params.indexable = undefined;
       params.providerQuery = undefined;
       const defaultParams = {
-        criteria: '',
-        sortDirection: 'asc',
+        criteria: "",
+        sortDirection: "asc",
         published: true,
         indexable: true,
         providerQuery: {},
@@ -203,7 +209,7 @@ describe('byCriteria', () => {
       });
     });
 
-    it('should return sorted assets based on the provided criteria using default params #2', async () => {
+    it("should return sorted assets based on the provided criteria using default params #2", async () => {
       // Arrange
       getCategoryId.mockResolvedValue(params.category);
       getPinnedAssets.mockResolvedValue({ assets: [], nothingFound: false });
@@ -214,15 +220,15 @@ describe('byCriteria', () => {
       params.sortDirection = undefined;
       params.published = undefined;
       params.indexable = undefined;
-      params.providerQuery = 'not-an-object';
-      params.programs = ['program1'];
-      params.subjects = ['subject1'];
+      params.providerQuery = "not-an-object";
+      params.programs = ["program1"];
+      params.subjects = ["subject1"];
       const defaultParams = {
-        criteria: '',
-        sortDirection: 'asc',
+        criteria: "",
+        sortDirection: "asc",
         published: true,
         indexable: true,
-        providerQuery: { program: 'program1', subjects: ['subject1'] },
+        providerQuery: { program: "program1", subjects: ["subject1"] },
       };
 
       // Act
@@ -253,7 +259,7 @@ describe('byCriteria', () => {
         ctx,
       });
     });
-    it('should return sorted assets based on the provided criteria using default params #3', async () => {
+    it("should return sorted assets based on the provided criteria using default params #3", async () => {
       // Arrange
       getCategoryId.mockResolvedValue(params.category);
       getPinnedAssets.mockResolvedValue({ assets: [], nothingFound: false });
@@ -264,17 +270,17 @@ describe('byCriteria', () => {
       params.sortDirection = undefined;
       params.published = undefined;
       params.indexable = undefined;
-      params.providerQuery = { program: 'program1', subjects: ['subject1'] };
+      params.providerQuery = { program: "program1", subjects: ["subject1"] };
       params.pinned = true;
 
       const defaultParams = {
-        criteria: '',
-        sortDirection: 'asc',
-        published: 'all',
+        criteria: "",
+        sortDirection: "asc",
+        published: "all",
         preferCurrent: false,
         indexable: true,
-        programs: ['program1'],
-        subjects: ['subject1'],
+        programs: ["program1"],
+        subjects: ["subject1"],
       };
 
       // Act
@@ -306,9 +312,9 @@ describe('byCriteria', () => {
       });
     });
 
-    it('should return empty array if no assets found', async () => {
+    it("should return empty array if no assets found", async () => {
       // Arrange
-      getCategoryId.mockResolvedValue('categoryId');
+      getCategoryId.mockResolvedValue("categoryId");
       getPinnedAssets.mockResolvedValue({ assets: [], nothingFound: true });
       getProviderAssets.mockResolvedValue({ assets: [], nothingFound: true });
       getAssets.mockResolvedValue({ assets: [], nothingFound: true });
@@ -324,10 +330,10 @@ describe('byCriteria', () => {
     });
   });
 
-  describe('Error handling', () => {
-    it('should throw an error if any of the functions fails', async () => {
+  describe("Error handling", () => {
+    it("should throw an error if any of the functions fails", async () => {
       // Arrange
-      const errorMessage = 'error message';
+      const errorMessage = "error message";
       getCategoryId.mockRejectedValue(new Error(errorMessage));
 
       // Act

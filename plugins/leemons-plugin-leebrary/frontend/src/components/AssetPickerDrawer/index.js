@@ -1,1 +1,1 @@
-export * from './AssetPickerDrawer';
+export * from "./AssetPickerDrawer";

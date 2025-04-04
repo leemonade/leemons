@@ -1,11 +1,19 @@
-const { uniq, intersection } = require('lodash');
+const { uniq, intersection } = require("lodash");
 
-async function filterByVersionOfType({ assetIds, categoryId, ctx, ...options }) {
+async function filterByVersionOfType({
+  assetIds,
+  categoryId,
+  ctx,
+  ...options
+}) {
   try {
-    const filteredAssets = await ctx.tx.call('common.versionControl.listVersionsOfType', {
-      type: ctx.prefixPN(categoryId),
-      ...options,
-    });
+    const filteredAssets = await ctx.tx.call(
+      "common.versionControl.listVersionsOfType",
+      {
+        type: ctx.prefixPN(categoryId),
+        ...options,
+      }
+    );
 
     return uniq(
       intersection(
@@ -14,7 +22,10 @@ async function filterByVersionOfType({ assetIds, categoryId, ctx, ...options }) 
       )
     );
   } catch (e) {
-    ctx.logger.error(`Failed to list asset versions of category with id ${categoryId}`, e);
+    ctx.logger.error(
+      `Failed to list asset versions of category with id ${categoryId}`,
+      e
+    );
   }
   return assetIds;
 }

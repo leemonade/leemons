@@ -1,19 +1,26 @@
-const { it, expect, beforeAll, afterAll, beforeEach, describe } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { LeemonsError } = require('@leemons/error');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+  describe,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { LeemonsError } = require("@leemons/error");
+const { newModel } = require("@leemons/mongodb");
 
-const { add } = require('./add');
-const { pinsSchema } = require('../../../models/pins');
-const getUserSession = require('../../../__fixtures__/getUserSession');
+const { add } = require("./add");
+const { pinsSchema } = require("../../../models/pins");
+const getUserSession = require("../../../__fixtures__/getUserSession");
 
-jest.mock('../../assets/exists');
-const { exists: checkAssetExists } = require('../../assets/exists');
+jest.mock("../../assets/exists");
+const { exists: checkAssetExists } = require("../../assets/exists");
 
-jest.mock('../getByAsset');
-const { getByAsset: getPinByAsset } = require('../getByAsset');
+jest.mock("../getByAsset");
+const { getByAsset: getPinByAsset } = require("../getByAsset");
 
-describe('add pin', () => {
+describe("add pin", () => {
   let mongooseConnection;
   let disconnectMongoose;
   let ctx;
@@ -29,7 +36,7 @@ describe('add pin', () => {
 
     ctx = generateCtx({
       models: {
-        Pins: newModel(mongooseConnection, 'Pins', pinsSchema),
+        Pins: newModel(mongooseConnection, "Pins", pinsSchema),
       },
     });
     ctx.meta.userSession = { ...userSession };
@@ -45,11 +52,11 @@ describe('add pin', () => {
   beforeEach(async () => {
     await mongooseConnection.dropDatabase();
 
-    assetId = 'testAssetId';
+    assetId = "testAssetId";
   });
 
-  describe('Intended workload', () => {
-    it('should add a pin', async () => {
+  describe("Intended workload", () => {
+    it("should add a pin", async () => {
       // Arrange
       checkAssetExists.mockResolvedValue(true);
       getPinByAsset.mockResolvedValue(null);
@@ -67,11 +74,11 @@ describe('add pin', () => {
     });
   });
 
-  describe('Limit use cases', () => {
-    it('should not add a pin if asset is already pinned', async () => {
+  describe("Limit use cases", () => {
+    it("should not add a pin if asset is already pinned", async () => {
       // Arrange
       checkAssetExists.mockResolvedValue(true);
-      getPinByAsset.mockResolvedValue({ id: 'existingPinId' });
+      getPinByAsset.mockResolvedValue({ id: "existingPinId" });
 
       // Act
       const testFunc = async () => add({ assetId, ctx });
@@ -79,15 +86,15 @@ describe('add pin', () => {
       // Assert
       await expect(testFunc).rejects.toThrow(
         new LeemonsError(ctx, {
-          message: 'Asset already pinned',
+          message: "Asset already pinned",
           httpStatusCode: 400,
         })
       );
     });
   });
 
-  describe('Error handling', () => {
-    it('should throw an error if asset ID is missing', async () => {
+  describe("Error handling", () => {
+    it("should throw an error if asset ID is missing", async () => {
       // Arrange
       const assetIdMissing = undefined;
 
@@ -97,13 +104,13 @@ describe('add pin', () => {
       // Assert
       await expect(testFunc).rejects.toThrow(
         new LeemonsError(ctx, {
-          message: 'Asset ID is required',
+          message: "Asset ID is required",
           httpStatusCode: 400,
         })
       );
     });
 
-    it('should throw an error if asset does not exist', async () => {
+    it("should throw an error if asset does not exist", async () => {
       // Arrange
       checkAssetExists.mockResolvedValue(false);
 
@@ -113,7 +120,7 @@ describe('add pin', () => {
       // Assert
       await expect(testFunc).rejects.toThrow(
         new LeemonsError(ctx, {
-          message: 'Asset does not exist',
+          message: "Asset does not exist",
           httpStatusCode: 400,
         })
       );

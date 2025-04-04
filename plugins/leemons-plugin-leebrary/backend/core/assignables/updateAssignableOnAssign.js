@@ -1,5 +1,5 @@
-const { pick } = require('lodash');
-const createAssignableFromAsset = require('./createAssignableFromAsset');
+const { pick } = require("lodash");
+const createAssignableFromAsset = require("./createAssignableFromAsset");
 
 module.exports = async function updateAssignableOnAssign({ instance, ctx }) {
   const { assignable } = instance;
@@ -11,9 +11,12 @@ module.exports = async function updateAssignableOnAssign({ instance, ctx }) {
     return { id: assignable };
   }
 
-  const assignableData = await ctx.tx.call('assignables.assignables.getAssignable', {
-    id: assignable,
-  });
+  const assignableData = await ctx.tx.call(
+    "assignables.assignables.getAssignable",
+    {
+      id: assignable,
+    }
+  );
 
   if (instance.metadata.asset.title) {
     assignableData.asset.name = instance.metadata.asset.title;
@@ -25,15 +28,15 @@ module.exports = async function updateAssignableOnAssign({ instance, ctx }) {
 
   return createAssignableFromAsset({
     assignable: pick(assignableData, [
-      'asset.name',
-      'asset.tagline',
-      'asset.description',
-      'asset.tags',
-      'asset.color',
-      'asset.cover',
-      'role',
-      'gradable',
-      'metadata',
+      "asset.name",
+      "asset.tagline",
+      "asset.description",
+      "asset.tags",
+      "asset.color",
+      "asset.cover",
+      "role",
+      "gradable",
+      "metadata",
     ]),
     ctx,
   });

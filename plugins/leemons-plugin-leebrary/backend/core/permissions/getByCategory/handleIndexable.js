@@ -1,4 +1,4 @@
-const { map } = require('lodash');
+const { map } = require("lodash");
 
 /**
  * This function filters out the results based on the indexability of the assets.
@@ -10,10 +10,10 @@ const { map } = require('lodash');
  */
 async function handleIndexable({ results, ctx }) {
   const indexableAssetsIds = await ctx.tx.db.Assets.find({
-    id: map(results, 'asset'),
+    id: map(results, "asset"),
     indexable: true,
   })
-    .select(['id'])
+    .select(["id"])
     .lean();
 
   const indexableAssetsObject = indexableAssetsIds.reduce(

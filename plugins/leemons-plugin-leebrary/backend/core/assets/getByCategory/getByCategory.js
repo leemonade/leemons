@@ -1,6 +1,6 @@
-const { isEmpty } = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { getByIds } = require('../getByIds/getByIds');
+const { isEmpty } = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { getByIds } = require("../getByIds/getByIds");
 
 /**
  * Fetch assets by category
@@ -31,7 +31,9 @@ async function getByCategory({
       query.id = assetIds;
     }
 
-    const assets = await ctx.tx.db.Assets.find(query).sort({ id: 'asc' }).lean();
+    const assets = await ctx.tx.db.Assets.find(query)
+      .sort({ id: "asc" })
+      .lean();
 
     if (details) {
       return getByIds({

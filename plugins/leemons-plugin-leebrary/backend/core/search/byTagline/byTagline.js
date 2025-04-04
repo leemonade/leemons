@@ -1,13 +1,19 @@
-const { isEmpty, escapeRegExp } = require('lodash');
+const { isEmpty, escapeRegExp } = require("lodash");
 
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
-const { getByIds: getAssetsByIds } = require('../../assets/getByIds');
+const { getByIds: getAssetsByIds } = require("../../assets/getByIds");
 
-async function byTagline({ tagline, details = false, indexable = true, assets: assetsIds, ctx }) {
+async function byTagline({
+  tagline,
+  details = false,
+  indexable = true,
+  assets: assetsIds,
+  ctx,
+}) {
   try {
     const query = {
-      tagline: { $regex: escapeRegExp(tagline), $options: 'i' },
+      tagline: { $regex: escapeRegExp(tagline), $options: "i" },
       indexable,
     };
 
@@ -15,7 +21,7 @@ async function byTagline({ tagline, details = false, indexable = true, assets: a
       query.id = assetsIds;
     }
 
-    let assets = await ctx.tx.db.Assets.find(query).select('id').lean();
+    let assets = await ctx.tx.db.Assets.find(query).select("id").lean();
 
     assets = assets.map((entry) => entry.id);
 

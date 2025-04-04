@@ -1,9 +1,15 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { exists } = require('./exists');
-const { assetsSchema } = require('../../../models/assets');
+const { exists } = require("./exists");
+const { assetsSchema } = require("../../../models/assets");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -26,41 +32,41 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should determine wether an asset exists in db', async () => {
+it("Should determine wether an asset exists in db", async () => {
   // Arrange
-  const asset = { id: 'assetOne' };
+  const asset = { id: "assetOne" };
 
   const ctx = generateCtx({
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
 
-  const initialValues = [asset, { id: 'assetTwo' }];
+  const initialValues = [asset, { id: "assetTwo" }];
   await ctx.db.Assets.create(initialValues);
 
   // Act
   const responseTrue = await exists({ assetId: asset.id, ctx });
-  const responseFalse = await exists({ assetId: 'assetThree', ctx });
+  const responseFalse = await exists({ assetId: "assetThree", ctx });
 
   // Assert
   expect(responseTrue).toBe(true);
   expect(responseFalse).toBe(false);
 });
 
-it('Should return false if assetId is an unexpected type of value', async () => {
+it("Should return false if assetId is an unexpected type of value", async () => {
   // Arrange
   const ctx = generateCtx({
     models: {
-      Assets: newModel(mongooseConnection, 'Assets', assetsSchema),
+      Assets: newModel(mongooseConnection, "Assets", assetsSchema),
     },
   });
 
   // Act
   const assetIdUndefined = await exists({ ctx });
-  const assetIdEmpty = await exists({ assetId: '', ctx });
+  const assetIdEmpty = await exists({ assetId: "", ctx });
   const assetIdNull = await exists({ assetId: null, ctx });
-  const assetIdObj = await exists({ assetId: { assetId: '123' }, ctx });
+  const assetIdObj = await exists({ assetId: { assetId: "123" }, ctx });
   const assetIdNumber = await exists({ assetId: 8, ctx });
 
   // Assert

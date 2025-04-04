@@ -1,5 +1,5 @@
-const { isEmpty } = require('lodash');
-const { uploadFromSource } = require('../../files/helpers/uploadFromSource');
+const { isEmpty } = require("lodash");
+const { uploadFromSource } = require("../../files/helpers/uploadFromSource");
 
 /**
  * Handles the upload of a file and its associated cover.
@@ -24,13 +24,17 @@ async function handleFileUpload({ file, cover, assetName, ctx }) {
     if (!isEmpty(file)) {
       // If file is an id of an existent file this function below will bring the file
       newFile = await uploadFromSource({ source: file, name: assetName, ctx });
-      if (newFile?.type?.indexOf('image') === 0) {
+      if (newFile?.type?.indexOf("image") === 0) {
         coverFile = newFile;
       }
     }
 
     if (!coverFile && !isEmpty(cover)) {
-      coverFile = await uploadFromSource({ source: cover, name: assetName, ctx });
+      coverFile = await uploadFromSource({
+        source: cover,
+        name: assetName,
+        ctx,
+      });
     }
   } catch (error) {
     ctx.logger.error(error);

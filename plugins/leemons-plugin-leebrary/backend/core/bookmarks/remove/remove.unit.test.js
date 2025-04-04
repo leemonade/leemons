@@ -1,21 +1,27 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const { LeemonsError } = require('@leemons/error');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const { LeemonsError } = require("@leemons/error");
 
-const { remove } = require('./remove');
-const { bookmarksSchema } = require('../../../models/bookmarks');
+const { remove } = require("./remove");
+const { bookmarksSchema } = require("../../../models/bookmarks");
 
 let mongooseConnection;
 let disconnectMongoose;
 let ctx;
 let bookmark;
 
-jest.mock('../getByAsset');
-const { getByAsset } = require('../getByAsset');
+jest.mock("../getByAsset");
+const { getByAsset } = require("../getByAsset");
 
-jest.mock('../../files/remove/remove');
-const { remove: removeFiles } = require('../../files/remove/remove');
+jest.mock("../../files/remove/remove");
+const { remove: removeFiles } = require("../../files/remove/remove");
 
 beforeAll(async () => {
   const { mongoose, disconnect } = await createMongooseConnection();
@@ -35,35 +41,41 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
   ctx = generateCtx({
     models: {
-      Bookmarks: newModel(mongooseConnection, 'ExampleModel', bookmarksSchema),
+      Bookmarks: newModel(mongooseConnection, "ExampleModel", bookmarksSchema),
     },
   });
   bookmark = {
-    id: 'bookmarkId',
-    asset: 'assetId',
-    url: 'https://test1.com',
-    icon: 'icon1',
+    id: "bookmarkId",
+    asset: "assetId",
+    url: "https://test1.com",
+    icon: "icon1",
   };
 
   await ctx.tx.db.Bookmarks.create(bookmark);
 });
 
-it('Should remove the bookmark', async () => {
+it("Should remove the bookmark", async () => {
   // Arrange
 
   getByAsset.mockResolvedValue(bookmark);
 
   // Act
   const response = await remove({ assetId: bookmark.asset, ctx });
-  const removedBookmark = await ctx.tx.db.Bookmarks.findOne({ id: bookmark.id });
+  const removedBookmark = await ctx.tx.db.Bookmarks.findOne({
+    id: bookmark.id,
+  });
 
   // Assert
-  expect(removeFiles).toBeCalledWith({ fileIds: bookmark.icon, assetId: bookmark.asset, ctx });
+  expect(removeFiles).toBeCalledWith({
+    fileIds: bookmark.icon,
+    assetId: bookmark.asset,
+    ctx,
+  });
   expect(response).toEqual({ acknowledged: true, deletedCount: 1 });
   expect(removedBookmark).toBe(null);
 });
 
-it('Should soft remove the bookmark and icon file', async () => {
+it("Should soft remove the bookmark and icon file", async () => {
   // Arrange
 
   getByAsset.mockResolvedValue(bookmark);
@@ -81,7 +93,7 @@ it('Should soft remove the bookmark and icon file', async () => {
   expect(removedBookmark).toBeDefined();
 });
 
-it('Should soft remove the bookmark without icon file', async () => {
+it("Should soft remove the bookmark without icon file", async () => {
   // Arrange
 
   getByAsset.mockResolvedValue({ ...bookmark, icon: undefined });
@@ -99,19 +111,19 @@ it('Should soft remove the bookmark without icon file', async () => {
   expect(removedBookmark).toBeDefined();
 });
 
-it('Should throw an error when the bookmark is not found', async () => {
+it("Should throw an error when the bookmark is not found", async () => {
   // Arrange
   getByAsset.mockResolvedValue(null);
-  const testFunc = async () => remove({ assetId: 'nonexistentAssetId', ctx });
+  const testFunc = async () => remove({ assetId: "nonexistentAssetId", ctx });
 
   // Act and Assert
-  await expect(testFunc()).rejects.toThrow('Bookmark not found');
+  await expect(testFunc()).rejects.toThrow("Bookmark not found");
 });
 
-it('Should throw an error when deletion fails', async () => {
+it("Should throw an error when deletion fails", async () => {
   // Arrange
   getByAsset.mockResolvedValue(bookmark);
-  const errorMessage = 'An error message';
+  const errorMessage = "An error message";
   removeFiles.mockImplementation(() => {
     throw new Error(errorMessage);
   });

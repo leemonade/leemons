@@ -1,13 +1,20 @@
-const { it, expect, describe, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const { filesSchema } = require('../../../models');
-const { handleCreateFile } = require('./handleCreateFile');
+const {
+  it,
+  expect,
+  describe,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const { filesSchema } = require("../../../models");
+const { handleCreateFile } = require("./handleCreateFile");
 
 let mongooseConnection;
 let disconnectMongoose;
 
-describe('Handle Create File', () => {
+describe("Handle Create File", () => {
   beforeAll(async () => {
     const { mongoose, disconnect } = await createMongooseConnection();
 
@@ -26,45 +33,47 @@ describe('Handle Create File', () => {
     await mongooseConnection.dropDatabase();
   });
 
-  it('Should correctly create a new file', async () => {
+  it("Should correctly create a new file", async () => {
     // Arrange
     const ctx = generateCtx({
       models: {
-        Files: newModel(mongooseConnection, 'Files', filesSchema),
+        Files: newModel(mongooseConnection, "Files", filesSchema),
       },
     });
     const fileData = {
-      deploymentID: 'testDeploymentId',
-      type: 'testFileType',
-      extension: 'testExtension',
-      name: 'testFileName',
+      deploymentID: "testDeploymentId",
+      type: "testFileType",
+      extension: "testExtension",
+      name: "testFileName",
       size: 1234,
-      uri: 'testUri',
-      metadata: 'testMetadata',
+      uri: "testUri",
+      metadata: "testMetadata",
     };
     const pathsInfo = {
-      path: 'testPath',
+      path: "testPath",
     };
 
     // Act
     const result = await handleCreateFile({ fileData, pathsInfo, ctx });
 
     // Assert
-    expect(result).toHaveProperty('name', fileData.name);
-    expect(result).toHaveProperty('type', fileData.type);
-    expect(result).toHaveProperty('extension', fileData.extension);
-    expect(result).toHaveProperty('metadata', JSON.stringify({ pathsInfo }));
+    expect(result).toHaveProperty("name", fileData.name);
+    expect(result).toHaveProperty("type", fileData.type);
+    expect(result).toHaveProperty("extension", fileData.extension);
+    expect(result).toHaveProperty("metadata", JSON.stringify({ pathsInfo }));
   });
 
-  it('Should return null if no file data is provided', async () => {
+  it("Should return null if no file data is provided", async () => {
     // Arrange
     const ctx = generateCtx({
       models: {
-        Files: newModel(mongooseConnection, 'Files', filesSchema),
+        Files: newModel(mongooseConnection, "Files", filesSchema),
       },
     });
 
     // Assert
-    await expect(handleCreateFile({ fileData: null, pathsInfo: null, ctx })).rejects.toThrow();
+    await expect(
+      handleCreateFile({ fileData: null, pathsInfo: null, ctx })
+    ).rejects.toThrow();
   });
 });

@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
-const { duplicate: duplicateFile } = require('../../files/duplicate');
+const _ = require("lodash");
+const { duplicate: duplicateFile } = require("../../files/duplicate");
 /**
  * Handles the duplication of the bookmark associated with a given asset.
  * It duplicates the bookmark icon file and updates the new asset with the duplicated bookmark.
@@ -12,7 +12,12 @@ const { duplicate: duplicateFile } = require('../../files/duplicate');
  * @param {MoleculerContext} params.ctx - The moleculer context
  * @returns {Promise<Object>} - Returns a promise with the updated asset
  */
-async function handleBookmarkDuplication({ newAsset, bookmark, filesToDuplicate, ctx }) {
+async function handleBookmarkDuplication({
+  newAsset,
+  bookmark,
+  filesToDuplicate,
+  ctx,
+}) {
   let newIconId = null;
 
   if (bookmark.icon) {
@@ -22,11 +27,15 @@ async function handleBookmarkDuplication({ newAsset, bookmark, filesToDuplicate,
 
     newAsset.url = bookmark.url;
     newAsset.icon = newIcon;
-    newAsset.fileType = 'bookmark';
+    newAsset.fileType = "bookmark";
     newAsset.metadata = [];
   }
 
-  await ctx.tx.db.Bookmarks.create({ url: bookmark.url, asset: newAsset.id, icon: newIconId });
+  await ctx.tx.db.Bookmarks.create({
+    url: bookmark.url,
+    asset: newAsset.id,
+    icon: newIconId,
+  });
 
   return newAsset;
 }
