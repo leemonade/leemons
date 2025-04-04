@@ -4,27 +4,27 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { generate, retry, listReports } = require('../../core/report');
+} = require("@leemons/middlewares");
+const { generate, retry, listReports } = require("../../core/report");
 
 /** @type {ServiceSchema} */
 module.exports = {
   generateRest: {
     rest: {
-      method: 'POST',
-      path: '/add',
+      method: "POST",
+      path: "/add",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'fundae.fundae': {
-            actions: ['admin', 'create'],
+          "fundae.fundae": {
+            actions: ["admin", "create"],
           },
         },
       }),
@@ -41,15 +41,15 @@ module.exports = {
   },
   retryRest: {
     rest: {
-      method: 'POST',
-      path: '/retry',
+      method: "POST",
+      path: "/retry",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'fundae.fundae': {
-            actions: ['admin', 'create'],
+          "fundae.fundae": {
+            actions: ["admin", "create"],
           },
         },
       }),
@@ -64,27 +64,27 @@ module.exports = {
   },
   listRest: {
     rest: {
-      method: 'POST',
-      path: '/list',
+      method: "POST",
+      path: "/list",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'fundae.fundae': {
-            actions: ['admin', 'view'],
+          "fundae.fundae": {
+            actions: ["admin", "view"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
+          page: { type: ["number", "string"] },
+          size: { type: ["number", "string"] },
         },
-        required: ['page', 'size'],
+        required: ["page", "size"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {

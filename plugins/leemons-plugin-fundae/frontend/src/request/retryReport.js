@@ -1,7 +1,7 @@
 async function retryReport(id) {
   return leemons.api(`v1/fundae/report/retry`, {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: { id },
   });
 }

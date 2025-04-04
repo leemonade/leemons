@@ -1,7 +1,7 @@
 async function generateReport(config) {
   return leemons.api(`v1/fundae/report/add`, {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: config,
   });
 }

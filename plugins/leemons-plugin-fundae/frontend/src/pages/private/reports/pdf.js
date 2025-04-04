@@ -8,57 +8,57 @@ import {
   Logo,
   Stack,
   Title,
-} from '@bubbles-ui/components';
-import { useLayout } from '@layout/context';
-import _ from 'lodash';
-import React from 'react';
+} from "@bubbles-ui/components";
+import { useLayout } from "@layout/context";
+import _ from "lodash";
+import React from "react";
 
 export const PdfStyles = createStyles((theme) => ({
   logoUrl: {
-    width: '50mm',
-    marginLeft: 'auto',
-    marginRight: 'auto',
+    width: "50mm",
+    marginLeft: "auto",
+    marginRight: "auto",
   },
   logo: {
-    width: '24px',
-    marginLeft: 'auto',
-    marginRight: 'auto',
+    width: "24px",
+    marginLeft: "auto",
+    marginRight: "auto",
   },
   tableTitle: {
     padding: theme.spacing[2],
     backgroundColor: theme.colors.uiBackground03,
     color: theme.colors.mainWhite,
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: theme.fontSizes[1],
     fontWeight: 600,
-    textTransform: 'uppercase',
+    textTransform: "uppercase",
   },
   tableSubTitle: {
-    marginTop: '1px',
+    marginTop: "1px",
     padding: theme.spacing[2],
     backgroundColor: theme.colors.uiBackground03,
     color: theme.colors.mainWhite,
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: theme.fontSizes[1],
     fontWeight: 600,
   },
   table: {
-    width: '100%',
-    borderSpacing: '1px',
-    borderCollapse: 'separate',
+    width: "100%",
+    borderSpacing: "1px",
+    borderCollapse: "separate",
     td: {
       background: theme.colors.ui04,
       padding: theme.spacing[1],
-      textAlign: 'center',
+      textAlign: "center",
       fontSize: theme.fontSizes[1],
       fontWeight: 500,
-      verticalAlign: 'middle',
+      verticalAlign: "middle",
     },
     th: {
       padding: theme.spacing[1],
       backgroundColor: theme.colors.uiBackground03,
       color: theme.colors.mainWhite,
-      textAlign: 'center',
+      textAlign: "center",
       fontSize: theme.fontSizes[1],
       fontWeight: 500,
     },
@@ -81,20 +81,20 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
   if (course) {
     if (course.startDate && course.endDate) {
       coursesDates = `${new Date(course.startDate).toLocaleString(undefined, {
-        dateStyle: 'short',
-      })} - ${new Date(course.endDate).toLocaleString(undefined, { dateStyle: 'short' })}`;
+        dateStyle: "short",
+      })} - ${new Date(course.endDate).toLocaleString(undefined, { dateStyle: "short" })}`;
     }
   }
 
   return (
-    <Box style={{ display: show ? 'block' : 'none' }}>
+    <Box style={{ display: show ? "block" : "none" }}>
       <Box
         ref={ref}
         style={{
-          border: '1px solid black',
-          padding: '10mm',
-          width: '300mm',
-          minHeight: '297mm',
+          border: "1px solid black",
+          padding: "10mm",
+          width: "300mm",
+          minHeight: "297mm",
         }}
       >
         <ContextContainer divided>
@@ -102,8 +102,8 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
             <Box>
               <Box
                 sx={(theme) => ({
-                  display: 'inline-block',
-                  verticalAlign: 'middle',
+                  display: "inline-block",
+                  verticalAlign: "middle",
                 })}
               >
                 {!_.isEmpty(squareLogoUrl) ? (
@@ -120,20 +120,20 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
               <Box
                 sx={(theme) => ({
                   marginLeft: theme.spacing[4],
-                  display: 'inline-block',
-                  verticalAlign: 'middle',
+                  display: "inline-block",
+                  verticalAlign: "middle",
                 })}
               >
                 <Title order={3}>{report.centerName}</Title>
               </Box>
             </Box>
             <Box>
-              <Title order={3}>{t('followUpReport')}</Title>
+              <Title order={3}>{t("followUpReport")}</Title>
             </Box>
           </Stack>
           <ContextContainer>
             <Box>
-              <Box style={{ textAlign: 'center' }}>
+              <Box style={{ textAlign: "center" }}>
                 <Box>
                   <Title order={6}>{report.programId}</Title>
                 </Box>
@@ -144,35 +144,42 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
                 </Box>
                 <Box>{coursesDates}</Box>
               </Box>
-              <Box sx={(theme) => ({ textAlign: 'center', marginTop: theme.spacing[4] })}>
+              <Box
+                sx={(theme) => ({
+                  textAlign: "center",
+                  marginTop: theme.spacing[4],
+                })}
+              >
                 <Box>
                   <Title order={6}>
-                    {t('student')}: {report.userAgentName} ({report.userAgentId})
+                    {t("student")}: {report.userAgentName} ({report.userAgentId}
+                    )
                   </Title>
                 </Box>
                 <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
                   <Title order={6}>
-                    {t('emitDate')}: {new Date(report.createdAt).toLocaleString()}
+                    {t("emitDate")}:{" "}
+                    {new Date(report.createdAt).toLocaleString()}
                   </Title>
                 </Box>
               </Box>
             </Box>
 
             <Box>
-              <Box className={classes.tableTitle}>{t('courseData')}</Box>
+              <Box className={classes.tableTitle}>{t("courseData")}</Box>
               <table className={classes.table}>
                 <thead>
                   <tr>
-                    <th>{t('fCourseInit')}</th>
-                    <th>{t('fCourseEnd')}</th>
-                    <th>{t('courseHours')}</th>
-                    <th>{t('nStudents')}</th>
-                    <th>{t('examsPlatform')}</th>
-                    <th>{t('examsScorm')}</th>
-                    <th>{t('totalExams')}</th>
-                    <th>{t('nLessons')}</th>
-                    <th>{t('nVideoconferences')}</th>
-                    <th>{t('nTutors')}</th>
+                    <th>{t("fCourseInit")}</th>
+                    <th>{t("fCourseEnd")}</th>
+                    <th>{t("courseHours")}</th>
+                    <th>{t("nStudents")}</th>
+                    <th>{t("examsPlatform")}</th>
+                    <th>{t("examsScorm")}</th>
+                    <th>{t("totalExams")}</th>
+                    <th>{t("nLessons")}</th>
+                    <th>{t("nVideoconferences")}</th>
+                    <th>{t("nTutors")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -180,16 +187,16 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
                     <td>
                       {course?.startDate
                         ? new Date(course.startDate).toLocaleString(undefined, {
-                            dateStyle: 'short',
+                            dateStyle: "short",
                           })
-                        : ''}
+                        : ""}
                     </td>
                     <td>
                       {course?.startDate
                         ? new Date(course.endDate).toLocaleString(undefined, {
-                            dateStyle: 'short',
+                            dateStyle: "short",
                           })
-                        : ''}
+                        : ""}
                     </td>
                     <td>{report.programHours}</td>
                     <td>{report.usersInProgram}</td>
@@ -208,38 +215,39 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
             <Box>
               <Box>
                 <Title order={6}>
-                  {t('student')}: {report.userAgentName} ({report.userAgentId})
+                  {t("student")}: {report.userAgentName} ({report.userAgentId})
                 </Title>
               </Box>
               <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
                 <Title order={6}>
-                  {t('course')}: {report.programId} - {coursesDates ? `${coursesDates} - ` : ''}{' '}
+                  {t("course")}: {report.programId} -{" "}
+                  {coursesDates ? `${coursesDates} - ` : ""}{" "}
                   {report.programName} ({report.programAbbreviation})
                 </Title>
               </Box>
               <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
                 <Title order={6}>
-                  {t('email')}: {report.userAgentEmail}
+                  {t("email")}: {report.userAgentEmail}
                 </Title>
               </Box>
             </Box>
             <Box>
-              <Box className={classes.tableTitle}>{t('resume')}</Box>
+              <Box className={classes.tableTitle}>{t("resume")}</Box>
               <table className={classes.table}>
                 <thead>
                   <tr>
-                    <th>{t('firstCon')}</th>
-                    <th>{t('lastCon')}</th>
-                    <th>{t('totalTime')}</th>
-                    <th>{t('nCon')}</th>
-                    <th>{t('learningControls')}</th>
-                    <th>{t('examsPerformed')}</th>
-                    <th>{t('examsCompleted')}</th>
-                    <th>{t('intForums')}</th>
-                    <th>{t('intChats')}</th>
-                    <th>{t('messagesSended')}</th>
-                    <th>{t('receivedMessages')}</th>
-                    <th>{t('intVideo')}</th>
+                    <th>{t("firstCon")}</th>
+                    <th>{t("lastCon")}</th>
+                    <th>{t("totalTime")}</th>
+                    <th>{t("nCon")}</th>
+                    <th>{t("learningControls")}</th>
+                    <th>{t("examsPerformed")}</th>
+                    <th>{t("examsCompleted")}</th>
+                    <th>{t("intForums")}</th>
+                    <th>{t("intChats")}</th>
+                    <th>{t("messagesSended")}</th>
+                    <th>{t("receivedMessages")}</th>
+                    <th>{t("intVideo")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -247,12 +255,12 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
                     <td>
                       {report.firstConnection
                         ? new Date(report.firstConnection).toLocaleString()
-                        : ''}
+                        : ""}
                     </td>
                     <td>
                       {report.lastConnection
                         ? new Date(report.lastConnection).toLocaleString()
-                        : ''}
+                        : ""}
                     </td>
                     <td>{report.totalHoursConnected}</td>
                     <td>{report.connections.length}</td>
@@ -269,14 +277,14 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
               </table>
             </Box>
             <Box>
-              <Box className={classes.tableTitle}>{t('connections')}</Box>
+              <Box className={classes.tableTitle}>{t("connections")}</Box>
               <table className={classes.table}>
                 <thead>
                   <tr>
-                    <th>{t('courseEntryDate')}</th>
-                    <th>{t('courseDepartureDate')}</th>
-                    <th>{t('timeInCourse')}</th>
-                    <th>{t('ip')}</th>
+                    <th>{t("courseEntryDate")}</th>
+                    <th>{t("courseDepartureDate")}</th>
+                    <th>{t("timeInCourse")}</th>
+                    <th>{t("ip")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -292,21 +300,21 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
               </table>
             </Box>
             <Box>
-              <Box className={classes.tableTitle}>{t('evaluations')}</Box>
+              <Box className={classes.tableTitle}>{t("evaluations")}</Box>
               {_.map(report.exams, (subject) => (
                 <Box>
                   <Box className={classes.tableSubTitle}>{subject.name}</Box>
                   <table className={classes.table}>
                     <thead>
                       <tr>
-                        <th>{t('nEx')}</th>
-                        <th>{t('exam')}</th>
-                        <th>{t('tModule')}</th>
-                        <th>{t('calification')}</th>
-                        <th>{t('calificationLetter')}</th>
-                        <th>{t('evaluationDate')}</th>
-                        <th>{t('state')}</th>
-                        <th>{t('stateDate')}</th>
+                        <th>{t("nEx")}</th>
+                        <th>{t("exam")}</th>
+                        <th>{t("tModule")}</th>
+                        <th>{t("calification")}</th>
+                        <th>{t("calificationLetter")}</th>
+                        <th>{t("evaluationDate")}</th>
+                        <th>{t("state")}</th>
+                        <th>{t("stateDate")}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -318,11 +326,17 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
                           <td>{item.note}</td>
                           <td>{item.noteLetter}</td>
                           <td>
-                            {item.deliveredOn ? new Date(item.deliveredOn).toLocaleString() : ''}
+                            {item.deliveredOn
+                              ? new Date(item.deliveredOn).toLocaleString()
+                              : ""}
                           </td>
-                          <td>{item.status ? t('submitted') : t('noSubmitted')}</td>
                           <td>
-                            {item.evaluatedOn ? new Date(item.evaluatedOn).toLocaleString() : ''}
+                            {item.status ? t("submitted") : t("noSubmitted")}
+                          </td>
+                          <td>
+                            {item.evaluatedOn
+                              ? new Date(item.evaluatedOn).toLocaleString()
+                              : ""}
                           </td>
                         </tr>
                       ))}
@@ -332,24 +346,30 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
               ))}
             </Box>
             <Box>
-              <Box className={classes.tableTitle}>{t('privateChats')}</Box>
+              <Box className={classes.tableTitle}>{t("privateChats")}</Box>
               {_.map(report.privateChats, (chat) => {
                 let lastDay = null;
-                const userAgentsById = _.keyBy(chat.userAgents, 'id');
+                const userAgentsById = _.keyBy(chat.userAgents, "id");
                 return (
-                  <Box sx={(theme) => ({ border: `1px solid ${theme.colors.uiBackground03}` })}>
+                  <Box
+                    sx={(theme) => ({
+                      border: `1px solid ${theme.colors.uiBackground03}`,
+                    })}
+                  >
                     <Box className={classes.tableSubTitle}>
-                      {t('privateChat')} {chat.name || chat.key}
+                      {t("privateChat")} {chat.name || chat.key}
                     </Box>
                     <Box sx={(theme) => ({ padding: theme.spacing[4] })}>
                       {_.map(chat.messages, (message, index) => {
                         const comp = [];
                         let forceUserImage = false;
-                        const day = new Date(message.createdAt).toLocaleDateString(undefined, {
-                          weekday: 'short',
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric',
+                        const day = new Date(
+                          message.createdAt
+                        ).toLocaleDateString(undefined, {
+                          weekday: "short",
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
                         });
                         if (index === 0 || lastDay !== day) {
                           lastDay = day;
@@ -367,7 +387,8 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
                             sx={(theme) => ({
                               marginTop:
                                 index !== 0 &&
-                                chat.messages[index - 1].userAgent !== message.userAgent
+                                chat.messages[index - 1].userAgent !==
+                                  message.userAgent
                                   ? theme.spacing[4]
                                   : 0,
                             })}
@@ -376,9 +397,12 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
                               showUser={
                                 forceUserImage || index === 0
                                   ? true
-                                  : chat.messages[index - 1].userAgent !== message.userAgent
+                                  : chat.messages[index - 1].userAgent !==
+                                    message.userAgent
                               }
-                              isOwn={message.userAgent === report.item.userAgent.id}
+                              isOwn={
+                                message.userAgent === report.item.userAgent.id
+                              }
                               user={userAgentsById?.[message.userAgent].user}
                               message={{
                                 ...message.message,
@@ -395,13 +419,13 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
               })}
             </Box>
             <Box>
-              <Box className={classes.tableTitle}>{t('videoconferencing')}</Box>
+              <Box className={classes.tableTitle}>{t("videoconferencing")}</Box>
               <table className={classes.table}>
                 <thead>
                   <tr>
-                    <th>{t('subject')}</th>
-                    <th>{t('dateAccess')}</th>
-                    <th>{t('url')}</th>
+                    <th>{t("subject")}</th>
+                    <th>{t("dateAccess")}</th>
+                    <th>{t("url")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -416,13 +440,13 @@ export const Pdf = React.forwardRef(({ show, report, t }, ref) => {
               </table>
             </Box>
             <Box>
-              <Box className={classes.tableTitle}>{t('didacticMaterial')}</Box>
+              <Box className={classes.tableTitle}>{t("didacticMaterial")}</Box>
               <table className={classes.table}>
                 <thead>
                   <tr>
-                    <th>{t('name')}</th>
-                    <th>{t('firstAccess')}</th>
-                    <th>{t('lastAccess')}</th>
+                    <th>{t("name")}</th>
+                    <th>{t("firstAccess")}</th>
+                    <th>{t("lastAccess")}</th>
                   </tr>
                 </thead>
                 <tbody>

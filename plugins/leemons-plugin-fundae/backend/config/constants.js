@@ -1,4 +1,4 @@
-const permissionsPrefix = 'fundae';
+const permissionsPrefix = "fundae";
 
 const permissionNames = {
   fundae: `${permissionsPrefix}.fundae`,
@@ -7,10 +7,10 @@ const permissionNames = {
 const permissions = [
   {
     permissionName: permissionNames.fundae,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
+    actions: ["view", "update", "create", "delete", "admin"],
     localizationName: {
-      es: 'Fundae',
-      en: 'Fundae ',
+      es: "Fundae",
+      en: "Fundae ",
     },
   },
 ];
@@ -19,38 +19,38 @@ const menuItems = [
   // Main
   {
     item: {
-      key: 'fundae',
+      key: "fundae",
       order: 101,
-      iconSvg: '/public/fundae/menu-icon.svg',
-      activeIconSvg: '/public/fundae/menu-icon-active.svg',
+      iconSvg: "/public/fundae/menu-icon.svg",
+      activeIconSvg: "/public/fundae/menu-icon-active.svg",
       label: {
-        en: 'Fundae management',
-        es: 'Gestión fundae',
+        en: "Fundae management",
+        es: "Gestión fundae",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.fundae,
-        actionNames: ['view', 'admin'],
+        actionNames: ["view", "admin"],
       },
     ],
   },
   // List
   {
     item: {
-      key: 'fundae-list',
+      key: "fundae-list",
       order: 2,
       parentKey: `${permissionsPrefix}.fundae`,
-      url: '/private/fundae/reports',
+      url: "/private/fundae/reports",
       label: {
-        en: 'Configuration and reporting',
-        es: 'Configuración e informes',
+        en: "Configuration and reporting",
+        es: "Configuración e informes",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.fundae,
-        actionNames: ['view', 'admin'],
+        actionNames: ["view", "admin"],
       },
     ],
   },

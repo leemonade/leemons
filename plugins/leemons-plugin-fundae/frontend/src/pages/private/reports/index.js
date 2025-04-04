@@ -1,8 +1,14 @@
-import React from 'react';
-import { useReactToPrint } from 'react-to-print';
+import React from "react";
+import { useReactToPrint } from "react-to-print";
 
-import { SelectCourse, SelectProgram } from '@academic-portfolio/components/Selectors';
-import { getProfilesRequest, listCoursesRequest } from '@academic-portfolio/request';
+import {
+  SelectCourse,
+  SelectProgram,
+} from "@academic-portfolio/components/Selectors";
+import {
+  getProfilesRequest,
+  listCoursesRequest,
+} from "@academic-portfolio/request";
 import {
   Box,
   Button,
@@ -18,22 +24,26 @@ import {
   Stack,
   Table,
   Title,
-} from '@bubbles-ui/components';
-import { DownloadIcon } from '@bubbles-ui/icons/outline';
-import { AlertWarningTriangleIcon } from '@bubbles-ui/icons/solid';
-import { AdminPageHeader } from '@bubbles-ui/leemons';
+} from "@bubbles-ui/components";
+import { DownloadIcon } from "@bubbles-ui/icons/outline";
+import { AlertWarningTriangleIcon } from "@bubbles-ui/icons/solid";
+import { AdminPageHeader } from "@bubbles-ui/leemons";
 
 // TODO: import from @common plugin
-import { LocaleDate, useStore } from '@common';
-import prefixPN from '@fundae/helpers/prefixPN';
-import { Pdf } from '@fundae/pages/private/reports/pdf';
-import { generateReportRequest, listReportsRequest, retryReportRequest } from '@fundae/request';
-import { addErrorAlert } from '@layout/alert';
-import { SocketIoService } from '@mqtt-socket-io/service';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { SelectCenter } from '@users/components';
-import SelectUserAgent from '@users/components/SelectUserAgent';
-import _ from 'lodash';
+import { LocaleDate, useStore } from "@common";
+import prefixPN from "@fundae/helpers/prefixPN";
+import { Pdf } from "@fundae/pages/private/reports/pdf";
+import {
+  generateReportRequest,
+  listReportsRequest,
+  retryReportRequest,
+} from "@fundae/request";
+import { addErrorAlert } from "@layout/alert";
+import { SocketIoService } from "@mqtt-socket-io/service";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { SelectCenter } from "@users/components";
+import SelectUserAgent from "@users/components/SelectUserAgent";
+import _ from "lodash";
 
 function toDate(a) {
   if (a) {
@@ -48,7 +58,7 @@ function toDate(a) {
 
 export default function Index() {
   const printRef = React.useRef();
-  const [t] = useTranslateLoader(prefixPN('reports'));
+  const [t] = useTranslateLoader(prefixPN("reports"));
   const [store, render] = useStore({
     loading: true,
     page: 1,
@@ -58,31 +68,31 @@ export default function Index() {
 
   store.handlePrint = useReactToPrint({
     contentRef: printRef,
-    documentTitle: `${t('report')} - ${store.downloadReport?.userAgentName} - ${toDate(
+    documentTitle: `${t("report")} - ${store.downloadReport?.userAgentName} - ${toDate(
       store.downloadReport?.createdAt
     )}`,
   });
 
   const tableHeaders = [
     {
-      Header: t('student'),
-      accessor: 'studentName',
-      className: 'text-left',
+      Header: t("student"),
+      accessor: "studentName",
+      className: "text-left",
     },
     {
-      Header: t('program'),
-      accessor: 'programName',
-      className: 'text-left',
+      Header: t("program"),
+      accessor: "programName",
+      className: "text-left",
     },
     {
-      Header: t('startDate'),
-      accessor: 'created',
-      className: 'text-left',
+      Header: t("startDate"),
+      accessor: "created",
+      className: "text-left",
     },
     {
-      Header: ' ',
-      accessor: 'addons',
-      className: 'text-left',
+      Header: " ",
+      accessor: "addons",
+      className: "text-left",
     },
   ];
 
@@ -103,11 +113,17 @@ export default function Index() {
       let addons = null;
       if (item.percentageCompleted < 100) {
         addons = (
-          <Box style={{ display: 'flex', alignItems: 'center' }}>
+          <Box style={{ display: "flex", alignItems: "center" }}>
             <Box style={{ width: 100 }}>
               <Progress value={item.percentageCompleted} />
             </Box>
-            <Box sx={(theme) => ({ fontSize: 12, fontWeight: 500, marginLeft: theme.spacing[1] })}>
+            <Box
+              sx={(theme) => ({
+                fontSize: 12,
+                fontWeight: 500,
+                marginLeft: theme.spacing[1],
+              })}
+            >
               {item.percentageCompleted}%
             </Box>
           </Box>
@@ -121,7 +137,7 @@ export default function Index() {
               icon={<DownloadIcon height={16} width={16} />}
               color="primary"
               rounded
-              label={t('downloadPDF')}
+              label={t("downloadPDF")}
             />
           </Box>
         );
@@ -134,9 +150,11 @@ export default function Index() {
               color="fatic"
               variant="outline"
               onClick={() => retry(item)}
-              leftIcon={<AlertWarningTriangleIcon style={{ color: COLORS.fatic01 }} />}
+              leftIcon={
+                <AlertWarningTriangleIcon style={{ color: COLORS.fatic01 }} />
+              }
             >
-              {t('retry')}
+              {t("retry")}
             </Button>
           </Box>
         );
@@ -147,12 +165,12 @@ export default function Index() {
           <LocaleDate
             date={item.createdAt}
             options={{
-              year: 'numeric',
-              month: 'numeric',
-              day: 'numeric',
-              hour: 'numeric',
-              minute: 'numeric',
-              second: 'numeric',
+              year: "numeric",
+              month: "numeric",
+              day: "numeric",
+              hour: "numeric",
+              minute: "numeric",
+              second: "numeric",
             }}
           />
         ),
@@ -163,7 +181,7 @@ export default function Index() {
           item.userAgent.user.secondSurname,
         ]
           .filter((item) => !_.isEmpty(item))
-          .join(' '),
+          .join(" "),
         addons,
       };
     });
@@ -181,7 +199,11 @@ export default function Index() {
       if (store.filterSelectedUserAgents?.length) {
         filters.userAgent = store.filterSelectedUserAgents;
       }
-      const result = await listReportsRequest(store.page - 1, store.perPage, filters);
+      const result = await listReportsRequest(
+        store.page - 1,
+        store.perPage,
+        filters
+      );
 
       store.totalPages = result.data.totalPages;
       store.data = result.data.items;
@@ -303,7 +325,7 @@ export default function Index() {
     init();
   }, []);
 
-  SocketIoService.useOn('FUNDAE_REPORT_CHANGE', (event, data) => {
+  SocketIoService.useOn("FUNDAE_REPORT_CHANGE", (event, data) => {
     const index = _.findIndex(store.data, { id: data.id });
     if (index >= 0) {
       store.data[index].percentageCompleted = data.percentageCompleted;
@@ -320,7 +342,7 @@ export default function Index() {
       <Stack direction="column" fullHeight>
         <AdminPageHeader
           values={{
-            title: t('title'),
+            title: t("title"),
           }}
         />
         <PageContainer>
@@ -330,7 +352,7 @@ export default function Index() {
                 <Col span={3}>
                   <SelectCenter
                     clearable={true}
-                    label={t('centerLabel')}
+                    label={t("centerLabel")}
                     onChange={onSelectCenter}
                     value={store.centerId}
                   />
@@ -340,7 +362,7 @@ export default function Index() {
                 <Col span={3}>
                   <SelectProgram
                     firstSelected
-                    label={t('programLabel')}
+                    label={t("programLabel")}
                     onChange={onSelectProgram}
                     center={store.centerId}
                     value={store.programId}
@@ -350,7 +372,7 @@ export default function Index() {
                   <Col span={3}>
                     <SelectCourse
                       firstSelected
-                      label={t('courseLabel')}
+                      label={t("courseLabel")}
                       onChange={onSelectCourse}
                       program={store.programId}
                       value={store.courseId}
@@ -364,7 +386,8 @@ export default function Index() {
                         disabled={
                           !(
                             store.programId &&
-                            ((store.hasCourses && store.courseId) || !store.hasCourses)
+                            ((store.hasCourses && store.courseId) ||
+                              !store.hasCourses)
                           )
                         }
                         value={store.selectedUserAgents}
@@ -374,19 +397,25 @@ export default function Index() {
                         courses={store.courseId}
                         onChange={onChangeUserAgent}
                         maxSelectedValues={9999}
-                        label={t('studentsLabel')}
+                        label={t("studentsLabel")}
                         itemRenderProps={{}}
                         valueRenderProps={{}}
                       />
                     </Box>
-                    <Box sx={(theme) => ({ marginTop: theme.spacing[5] })} skipFlex>
+                    <Box
+                      sx={(theme) => ({ marginTop: theme.spacing[5] })}
+                      skipFlex
+                    >
                       <Button
                         size="sm"
-                        disabled={!store.selectedUserAgents || !store.selectedUserAgents.length}
+                        disabled={
+                          !store.selectedUserAgents ||
+                          !store.selectedUserAgents.length
+                        }
                         onClick={generate}
                         loading={store.generating}
                       >
-                        {t('generateReport')}
+                        {t("generateReport")}
                       </Button>
                     </Box>
                   </Stack>
@@ -395,7 +424,7 @@ export default function Index() {
             </Box>
 
             <Box>
-              <Title order={4}>{t('reportsGenerated')}</Title>
+              <Title order={4}>{t("reportsGenerated")}</Title>
 
               <Box sx={(theme) => ({ marginTop: theme.spacing[4] })}>
                 <Grid grow>
@@ -403,7 +432,7 @@ export default function Index() {
                     <SelectProgram
                       clearable
                       firstSelected
-                      label={t('programLabel')}
+                      label={t("programLabel")}
                       onChange={onFilterSelectProgram}
                       center={store.centerId}
                       value={store.filterProgramId}
@@ -414,7 +443,7 @@ export default function Index() {
                     {store.filterHasCourses ? (
                       <SelectCourse
                         clearable
-                        label={t('courseLabel')}
+                        label={t("courseLabel")}
                         onChange={onFilterSelectCourse}
                         program={store.filterProgramId}
                         value={store.filterCourseId}
@@ -434,7 +463,7 @@ export default function Index() {
                         courses={store.filterCourseId}
                         onChange={onFilterChangeUserAgent}
                         maxSelectedValues={9999}
-                        label={t('studentsLabel')}
+                        label={t("studentsLabel")}
                         itemRenderProps={{}}
                         valueRenderProps={{}}
                       />
@@ -448,11 +477,11 @@ export default function Index() {
               </Box>
 
               {store.totalPages > 1 && (
-                <Stack fullWidth justifyContent={'center'}>
+                <Stack fullWidth justifyContent={"center"}>
                   <Pager
                     labels={{
-                      goTo: t('goTo'),
-                      show: t('show'),
+                      goTo: t("goTo"),
+                      show: t("show"),
                     }}
                     page={store.page}
                     totalPages={Math.ceil(store.totalPages)}

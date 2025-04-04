@@ -1,8 +1,8 @@
 /* eslint-disable no-nested-ternary */
-const _ = require('lodash');
-const { DateTime } = require('luxon');
-const { forEach, orderBy } = require('lodash');
-const { XAPIVerbs } = require('@leemons/xapi');
+const _ = require("lodash");
+const { DateTime } = require("luxon");
+const { forEach, orderBy } = require("lodash");
+const { XAPIVerbs } = require("@leemons/xapi");
 
 function capitalizeFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
@@ -12,7 +12,7 @@ function getNoteAsText(grade, evaluationSystem) {
   const userNote = parseFloat(grade || evaluationSystem.minScale.number);
 
   let scale = null;
-  _.forEach(orderBy(evaluationSystem.scales, ['number'], ['asc']), (s) => {
+  _.forEach(orderBy(evaluationSystem.scales, ["number"], ["asc"]), (s) => {
     if (userNote >= s.number) {
       scale = s;
     } else if (scale) {
@@ -30,7 +30,12 @@ function getNoteAsText(grade, evaluationSystem) {
   return scale?.letter;
 }
 
-async function updateReportPer({ report, percentageCompleted, dataToSocket, ctx }) {
+async function updateReportPer({
+  report,
+  percentageCompleted,
+  dataToSocket,
+  ctx,
+}) {
   await ctx.tx.db.Report.updateOne(
     { id: report.id },
     {
@@ -48,16 +53,22 @@ async function startGeneration({ report, dataToSocket, ctx }) {
   try {
     const toSave = {};
 
-    const [program] = await ctx.tx.call('academic-portfolio.programs.programsByIds', {
-      ids: [report.program],
-    });
+    const [program] = await ctx.tx.call(
+      "academic-portfolio.programs.programsByIds",
+      {
+        ids: [report.program],
+      }
+    );
     const course = report.course
       ? _.find(program.courses, { id: report.course })
       : program.courses[0];
     const coursesLength = program.courses.length;
-    const courseIsAlone = coursesLength === 1 ? program.courses[0].isAlone : false;
+    const courseIsAlone =
+      coursesLength === 1 ? program.courses[0].isAlone : false;
 
-    const center = await ctx.tx.call('users.centers.detail', { id: program.centers[0] });
+    const center = await ctx.tx.call("users.centers.detail", {
+      id: program.centers[0],
+    });
 
     toSave.centerId = center.id;
     toSave.centerName = center.name;
@@ -68,7 +79,9 @@ async function startGeneration({ report, dataToSocket, ctx }) {
     toSave.programNCourses = courseIsAlone ? 0 : coursesLength;
 
     const [calendarConfig] = await Promise.all([
-      ctx.tx.call('academic-calendar.config.getConfig', { program: program.id }),
+      ctx.tx.call("academic-calendar.config.getConfig", {
+        program: program.id,
+      }),
       updateReportPer({ report, percentageCompleted: 5, dataToSocket, ctx }),
     ]);
 
@@ -88,10 +101,12 @@ async function startGeneration({ report, dataToSocket, ctx }) {
       });
     }
 
-    const courseDates = course ? _.find(toSave.courses, { id: course.id }) : toSave.courses[0];
+    const courseDates = course
+      ? _.find(toSave.courses, { id: course.id })
+      : toSave.courses[0];
 
     const [[userAgentInfo]] = await Promise.all([
-      ctx.tx.call('users.users.getUserAgentsInfo', {
+      ctx.tx.call("users.users.getUserAgentsInfo", {
         userAgentsIds: [report.userAgent],
       }),
       updateReportPer({ report, percentageCompleted: 10, dataToSocket, ctx }),
@@ -105,10 +120,10 @@ async function startGeneration({ report, dataToSocket, ctx }) {
       userAgentInfo.user.secondSurname,
     ]
       .filter((item) => !_.isEmpty(item))
-      .join(' ');
+      .join(" ");
 
     const [usersInProgram] = await Promise.all([
-      ctx.tx.call('academic-portfolio.programs.getUsersInProgram', {
+      ctx.tx.call("academic-portfolio.programs.getUsersInProgram", {
         program: program.id,
         course: report.course || program.courses[0].id,
         onlyStudents: true,
@@ -121,16 +136,19 @@ async function startGeneration({ report, dataToSocket, ctx }) {
     let classesPromise = null;
     if (course) {
       classesPromise = await ctx.tx.call(
-        'academic-portfolio.classes.getClassesUnderProgramCourse',
+        "academic-portfolio.classes.getClassesUnderProgramCourse",
         {
           program: program.id,
           course: course.id,
         }
       );
     } else {
-      classesPromise = await ctx.tx.call('academic-portfolio.classes.getClassesUnderProgram', {
-        program: program.id,
-      });
+      classesPromise = await ctx.tx.call(
+        "academic-portfolio.classes.getClassesUnderProgram",
+        {
+          program: program.id,
+        }
+      );
     }
 
     const [classesIds] = await Promise.all([
@@ -145,7 +163,9 @@ async function startGeneration({ report, dataToSocket, ctx }) {
       // Copy start date
       const current = new Date(start);
       // Shift to next of required days
-      current.setDate(current.getDate() + ((weekDay - current.getDay() + 7) % 7));
+      current.setDate(
+        current.getDate() + ((weekDay - current.getDay() + 7) % 7)
+      );
       // While less than end date, add dates to result array
       while (current < end) {
         result.push(new Date(+current));
@@ -155,9 +175,12 @@ async function startGeneration({ report, dataToSocket, ctx }) {
     }
 
     if (courseDates?.startDate && courseDates?.endDate) {
-      const classes = await ctx.tx.call('academic-portfolio.classes.classByIds', {
-        ids: classesIds,
-      });
+      const classes = await ctx.tx.call(
+        "academic-portfolio.classes.classByIds",
+        {
+          ids: classesIds,
+        }
+      );
       _.forEach(classes, (classe) => {
         _.forEach(classe.schedule, ({ dayWeek }) => {
           toSave.classVideoN += getDaysBetweenDates(
@@ -169,42 +192,44 @@ async function startGeneration({ report, dataToSocket, ctx }) {
       });
     }
 
-    const [xapiVirtualClass, xapiProgramViewDates, xapiLeebraryMediaFiles] = await Promise.all([
-      ctx.tx.call('xapi.xapi.find', {
-        query: {
-          type: 'log',
-          'statement.actor.account.name': report.userAgent.toString(),
-          'statement.object.definition.extensions.id': classesIds,
-          'statement.object.id': {
-            $regex: /^.*\/api\/open\/virtual-classroom$/,
+    const [xapiVirtualClass, xapiProgramViewDates, xapiLeebraryMediaFiles] =
+      await Promise.all([
+        ctx.tx.call("xapi.xapi.find", {
+          query: {
+            type: "log",
+            "statement.actor.account.name": report.userAgent.toString(),
+            "statement.object.definition.extensions.id": classesIds,
+            "statement.object.id": {
+              $regex: /^.*\/api\/open\/virtual-classroom$/,
+            },
           },
-        },
-        sort: { createdAt: 1 },
-      }),
-      ctx.tx.call('xapi.xapi.find', {
-        query: {
-          type: 'log',
-          'statement.actor.account.name': report.userAgent.toString(),
-          'statement.object.definition.extensions.id': program.id.toString(),
-          'statement.object.id': {
-            $regex: /^.*\/api\/view\/program$/,
+          sort: { createdAt: 1 },
+        }),
+        ctx.tx.call("xapi.xapi.find", {
+          query: {
+            type: "log",
+            "statement.actor.account.name": report.userAgent.toString(),
+            "statement.object.definition.extensions.id": program.id.toString(),
+            "statement.object.id": {
+              $regex: /^.*\/api\/view\/program$/,
+            },
           },
-        },
-        sort: { createdAt: 1 },
-      }),
-      ctx.tx.call('xapi.xapi.find', {
-        query: {
-          type: 'log',
-          'statement.actor.account.name': report.userAgent.toString(),
-          'statement.object.definition.extensions.program': program.id.toString(),
-          'statement.object.id': {
-            $regex: /^.*\/api\/view\/leebrary\/media-files$/,
+          sort: { createdAt: 1 },
+        }),
+        ctx.tx.call("xapi.xapi.find", {
+          query: {
+            type: "log",
+            "statement.actor.account.name": report.userAgent.toString(),
+            "statement.object.definition.extensions.program":
+              program.id.toString(),
+            "statement.object.id": {
+              $regex: /^.*\/api\/view\/leebrary\/media-files$/,
+            },
           },
-        },
-        sort: { createdAt: 1 },
-      }),
-      updateReportPer({ report, percentageCompleted: 40, dataToSocket, ctx }),
-    ]);
+          sort: { createdAt: 1 },
+        }),
+        updateReportPer({ report, percentageCompleted: 40, dataToSocket, ctx }),
+      ]);
 
     toSave.mediaFiles = [];
     _.forEach(xapiLeebraryMediaFiles, (item) => {
@@ -264,16 +289,19 @@ async function startGeneration({ report, dataToSocket, ctx }) {
         if (con.start && con.end) {
           const s = DateTime.fromJSDate(con.start);
           const e = DateTime.fromJSDate(con.end);
-          const diff = e.diff(s, ['hours', 'minutes', 'seconds']);
-          const diffSeconds = e.diff(s, ['seconds']);
+          const diff = e.diff(s, ["hours", "minutes", "seconds"]);
+          const diffSeconds = e.diff(s, ["seconds"]);
           toSave.connections.push({
             ...con,
             start: con.start.toString(),
             end: con.end.toString(),
             timeInSeconds: diffSeconds.values.seconds,
-            time: `${diff.values.hours.toFixed(0).padStart(2, '0')}:${diff.values.minutes
+            time: `${diff.values.hours.toFixed(0).padStart(2, "0")}:${diff.values.minutes
               .toFixed(0)
-              .padStart(2, '0')}:${diff.values.seconds.toFixed(0).padStart(2, '0')}`,
+              .padStart(
+                2,
+                "0"
+              )}:${diff.values.seconds.toFixed(0).padStart(2, "0")}`,
           });
           con.start = null;
           con.end = null;
@@ -283,7 +311,8 @@ async function startGeneration({ report, dataToSocket, ctx }) {
     });
 
     toSave.firstConnection = toSave.connections[0]?.start;
-    toSave.lastConnection = toSave.connections[toSave.connections.length - 1]?.end;
+    toSave.lastConnection =
+      toSave.connections[toSave.connections.length - 1]?.end;
     toSave.totalHoursConnected = 0;
     _.forEach(toSave.connections, ({ timeInSeconds }) => {
       toSave.totalHoursConnected += timeInSeconds;
@@ -291,7 +320,7 @@ async function startGeneration({ report, dataToSocket, ctx }) {
     toSave.totalHoursConnected = (toSave.totalHoursConnected / 3600).toFixed(2);
 
     const [assignablesData] = await Promise.all([
-      ctx.tx.call('assignables.assignations.getUserDataForFundae', {
+      ctx.tx.call("assignables.assignations.getUserDataForFundae", {
         userAgent: report.userAgent,
         classes: classesIds,
       }),
@@ -300,9 +329,12 @@ async function startGeneration({ report, dataToSocket, ctx }) {
 
     let evaluationSystem = null;
     try {
-      evaluationSystem = await ctx.call('academic-portfolio.programs.getProgramEvaluationSystem', {
-        id: program.id,
-      });
+      evaluationSystem = await ctx.call(
+        "academic-portfolio.programs.getProgramEvaluationSystem",
+        {
+          id: program.id,
+        }
+      );
     } catch (e) {}
 
     toSave.exams = {};
@@ -314,14 +346,19 @@ async function startGeneration({ report, dataToSocket, ctx }) {
             name: _.find(program.subjects, { id: subjectId })?.name,
             items: [],
           };
-        const grade = _.find(assignablesData.grades, { subject: subjectId, assignation: exam.id });
+        const grade = _.find(assignablesData.grades, {
+          subject: subjectId,
+          assignation: exam.id,
+        });
         const data = {
           n: index,
           name: exam.asset.name,
           type: capitalizeFirstLetter(exam.assignable.role),
           note: grade ? grade.grade : null,
           noteLetter:
-            grade && evaluationSystem ? getNoteAsText(grade.grade, evaluationSystem) : null,
+            grade && evaluationSystem
+              ? getNoteAsText(grade.grade, evaluationSystem)
+              : null,
           status: !!exam.endDate,
           deliveredOn: exam.endDate?.date || null,
           evaluatedOn: grade ? grade.date : null,
@@ -334,24 +371,30 @@ async function startGeneration({ report, dataToSocket, ctx }) {
     toSave.totalExams = toSave.examsPlatform;
     toSave.lessonsPlatfom = assignablesData.noGradables.length;
     toSave.examsPerformed = `${
-      (assignablesData.endDatesGradables.length / assignablesData.gradables.length) * 100
+      (assignablesData.endDatesGradables.length /
+        assignablesData.gradables.length) *
+      100
     }% (${assignablesData.endDatesGradables.length}/${assignablesData.gradables.length})`;
     toSave.lessonsPerformed = `${
-      (assignablesData.endDatesNoGradables.length / assignablesData.noGradables.length) * 100
+      (assignablesData.endDatesNoGradables.length /
+        assignablesData.noGradables.length) *
+      100
     }% (${assignablesData.endDatesNoGradables.length}/${assignablesData.noGradables.length})`;
 
     toSave.totalPerformed = `${
-      ((assignablesData.endDatesNoGradables.length + assignablesData.endDatesGradables.length) /
-        (assignablesData.noGradables.length + assignablesData.gradables.length)) *
+      ((assignablesData.endDatesNoGradables.length +
+        assignablesData.endDatesGradables.length) /
+        (assignablesData.noGradables.length +
+          assignablesData.gradables.length)) *
       100
     }% (${assignablesData.endDatesNoGradables.length + assignablesData.endDatesGradables.length}/${
       assignablesData.noGradables.length + assignablesData.gradables.length
     })`;
 
     const [teachersInClasses] = await Promise.all([
-      ctx.tx.call('academic-portfolio.classes.teacherGetByClass', {
+      ctx.tx.call("academic-portfolio.classes.teacherGetByClass", {
         classe: classesIds,
-        type: 'main-teacher',
+        type: "main-teacher",
         returnIds: true,
       }),
       updateReportPer({ report, percentageCompleted: 65, dataToSocket, ctx }),
@@ -360,7 +403,7 @@ async function startGeneration({ report, dataToSocket, ctx }) {
     toSave.nTeachers = teachersInClasses.length;
 
     const [userAgentRooms] = await Promise.all([
-      ctx.tx.call('comunica.room.getUserAgentRooms', {
+      ctx.tx.call("comunica.room.getUserAgentRooms", {
         userAgent: report.userAgent,
       }),
       updateReportPer({ report, percentageCompleted: 70, dataToSocket, ctx }),
@@ -370,14 +413,14 @@ async function startGeneration({ report, dataToSocket, ctx }) {
     const promises2 = [];
     _.forEach(userAgentRooms, (room) => {
       promises1.push(
-        ctx.tx.call('comunica.room.get', {
+        ctx.tx.call("comunica.room.get", {
           key: room,
           userAgent: report.userAgent,
           returnUserAgents: true,
         })
       );
       promises2.push(
-        ctx.tx.call('comunica.room.getMessages', {
+        ctx.tx.call("comunica.room.getMessages", {
           key: room,
           userAgent: report.userAgent,
         })
@@ -400,7 +443,7 @@ async function startGeneration({ report, dataToSocket, ctx }) {
         if (room.userAgents.length === 2) {
           const privateChat = {
             ...room,
-            userAgents: _.keyBy(_.map(room.userAgents, 'userAgent'), 'id'),
+            userAgents: _.keyBy(_.map(room.userAgents, "userAgent"), "id"),
             messages: [],
           };
           _.forEach(roomMessages[index], (message) => {
@@ -438,21 +481,30 @@ async function startGeneration({ report, dataToSocket, ctx }) {
     // console.log(toSave);
   } catch (e) {
     console.error(e);
-    await updateReportPer({ report, percentageCompleted: 0, dataToSocket, ctx });
+    await updateReportPer({
+      report,
+      percentageCompleted: 0,
+      dataToSocket,
+      ctx,
+    });
   }
 }
 
 async function retry({ id, ctx }) {
   const report = await ctx.tx.db.Report.findOne({ id }).lean();
-  const [userAgentInfo] = await ctx.tx.call('users.users.getUserAgentsInfo', {
+  const [userAgentInfo] = await ctx.tx.call("users.users.getUserAgentsInfo", {
     userAgentIds: [report.userAgent],
   });
   startGeneration({
     report,
     dataToSocket: {
-      name: [userAgentInfo.user.name, userAgentInfo.user.surnames, userAgentInfo.user.secondSurname]
+      name: [
+        userAgentInfo.user.name,
+        userAgentInfo.user.surnames,
+        userAgentInfo.user.secondSurname,
+      ]
         .filter((item) => !_.isEmpty(item))
-        .join(' '),
+        .join(" "),
     },
     ctx,
   });
@@ -481,15 +533,19 @@ async function generate({ userAgent, program, course, ctx }) {
     percentageCompleted: 1,
   });
   report = report.toObject();
-  const [userAgentInfo] = await ctx.tx.call('users.users.getUserAgentsInfo', {
+  const [userAgentInfo] = await ctx.tx.call("users.users.getUserAgentsInfo", {
     userAgentIds: [report.userAgent],
   });
   startGeneration({
     report,
     dataToSocket: {
-      name: [userAgentInfo.user.name, userAgentInfo.user.surnames, userAgentInfo.user.secondSurname]
+      name: [
+        userAgentInfo.user.name,
+        userAgentInfo.user.surnames,
+        userAgentInfo.user.secondSurname,
+      ]
         .filter((item) => !_.isEmpty(item))
-        .join(' '),
+        .join(" "),
     },
     ctx,
   });
