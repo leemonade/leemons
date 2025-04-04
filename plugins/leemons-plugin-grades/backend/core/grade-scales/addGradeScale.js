@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { validateAddGradeScale } = require('../../validations/forms');
+const _ = require("lodash");
+const { validateAddGradeScale } = require("../../validations/forms");
 
 async function addGradeScale({ data, ctx }) {
   await validateAddGradeScale({ data, ctx });

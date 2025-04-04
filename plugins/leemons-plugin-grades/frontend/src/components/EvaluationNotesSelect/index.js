@@ -1,12 +1,16 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { useStore } from '@common';
-import { Select } from '@bubbles-ui/components';
-import { map, orderBy } from 'lodash';
-import { getGradeRequest } from '../../request';
-import { getScaleLabel } from '../../helpers/getScaleLabel';
+import React from "react";
+import PropTypes from "prop-types";
+import { useStore } from "@common";
+import { Select } from "@bubbles-ui/components";
+import { map, orderBy } from "lodash";
+import { getGradeRequest } from "../../request";
+import { getScaleLabel } from "../../helpers/getScaleLabel";
 
-const EvaluationNotesSelect = ({ evaluation, valueKey = 'number', ...props }) => {
+const EvaluationNotesSelect = ({
+  evaluation,
+  valueKey = "number",
+  ...props
+}) => {
   const [store, render] = useStore({ notes: [] });
 
   async function init() {
@@ -15,7 +19,7 @@ const EvaluationNotesSelect = ({ evaluation, valueKey = 'number', ...props }) =>
 
       store.notes = [];
       if (grade) {
-        const scales = orderBy(grade.scales, ['number'], ['asc']);
+        const scales = orderBy(grade.scales, ["number"], ["asc"]);
         store.notes = map(scales, (item) => ({
           value: item[valueKey],
           label: getScaleLabel(item),

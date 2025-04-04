@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function getUserAgentNotesForSubjects({ userAgentId, subjectIds, ctx }) {
   // TODO Integrar con el plugin que devuelva las notas

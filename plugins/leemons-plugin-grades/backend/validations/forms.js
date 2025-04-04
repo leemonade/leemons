@@ -1,75 +1,75 @@
-const _ = require('lodash');
-const { LeemonsValidator } = require('@leemons/validator');
-const { LeemonsError } = require('@leemons/error');
-const { stringSchema, numberSchema } = require('./types');
+const _ = require("lodash");
+const { LeemonsValidator } = require("@leemons/validator");
+const { LeemonsError } = require("@leemons/error");
+const { stringSchema, numberSchema } = require("./types");
 
 const addGradeSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     name: stringSchema,
     center: stringSchema,
     minScaleToPromote: numberSchema,
     type: {
-      type: 'string',
-      enum: ['numeric', 'letter'],
+      type: "string",
+      enum: ["numeric", "letter"],
     },
   },
-  required: ['name', 'type', 'center', 'minScaleToPromote'],
+  required: ["name", "type", "center", "minScaleToPromote"],
   additionalProperties: false,
 };
 const addGradeNumericSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     isPercentage: {
-      type: 'boolean',
+      type: "boolean",
     },
     scales: {
-      type: 'array',
+      type: "array",
       items: {
-        type: 'object',
+        type: "object",
         properties: {
           number: {
-            type: 'number',
+            type: "number",
             minimum: 0,
           },
           description: stringSchema,
         },
-        required: ['number'],
+        required: ["number"],
         additionalProperties: false,
       },
     },
   },
-  required: ['isPercentage', 'scales'],
+  required: ["isPercentage", "scales"],
   additionalProperties: false,
 };
 const addGradeLetterSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     scales: {
-      type: 'array',
+      type: "array",
       items: {
-        type: 'object',
+        type: "object",
         properties: {
           letter: stringSchema,
           number: {
-            type: 'number',
+            type: "number",
             minimum: 0,
           },
           description: stringSchema,
         },
-        required: ['number', 'letter'],
+        required: ["number", "letter"],
         additionalProperties: false,
       },
     },
   },
-  required: ['scales'],
+  required: ["scales"],
   additionalProperties: false,
 };
 
 function validateAddGrade({ data, disableRequired }) {
   const schema = addGradeSchema;
   if (disableRequired) {
-    schema.required = ['name', 'type', 'center'];
+    schema.required = ["name", "type", "center"];
   }
 
   const validator = new LeemonsValidator(schema);
@@ -79,7 +79,7 @@ function validateAddGrade({ data, disableRequired }) {
     throw validator.error;
   }
 
-  if (type === 'numeric') {
+  if (type === "numeric") {
     const validator2 = new LeemonsValidator(addGradeNumericSchema);
     if (!validator2.validate(rest)) {
       throw validator2.error;
@@ -93,13 +93,13 @@ function validateAddGrade({ data, disableRequired }) {
 }
 
 const updateGradeSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     id: stringSchema,
     name: stringSchema,
     minScaleToPromote: stringSchema,
   },
-  required: ['id'],
+  required: ["id"],
   additionalProperties: false,
 };
 
@@ -113,31 +113,33 @@ async function validateUpdateGrade({ data, ctx }) {
   // ES: Comprobar que el id existe
   // EN: Check if the id exists
   const grade = await ctx.tx.db.Grades.countDocuments({ id: data.id });
-  if (!grade) throw new LeemonsError(ctx, { message: 'Grade not found' });
+  if (!grade) throw new LeemonsError(ctx, { message: "Grade not found" });
 
   if (data.minScaleToPromote) {
     // ES: Comprobamos que el scale existe
     // EN: Check if the scale exists
-    const scale = ctx.tx.db.GradeScales.countDocuments({ id: data.minScaleToPromote });
+    const scale = ctx.tx.db.GradeScales.countDocuments({
+      id: data.minScaleToPromote,
+    });
     if (!scale) throw new LeemonsError(ctx, { message });
   }
 }
 
 const addGradeScaleSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     letter: stringSchema,
     number: {
-      type: 'number',
+      type: "number",
       minimum: 0,
     },
     order: {
-      type: 'number',
+      type: "number",
     },
     description: stringSchema,
     grade: stringSchema,
   },
-  required: ['number', 'grade'],
+  required: ["number", "grade"],
   additionalProperties: false,
 };
 
@@ -149,32 +151,34 @@ async function validateAddGradeScale({ data, ctx }) {
   }
 
   const grade = await ctx.tx.db.Grades.findOne({ id: data.grade })
-    .select(['type', 'letter'])
+    .select(["type", "letter"])
     .lean();
-  if (!grade) throw new LeemonsError(ctx, { message: 'Grade not found' });
+  if (!grade) throw new LeemonsError(ctx, { message: "Grade not found" });
 
-  if (grade.type === 'numeric') {
+  if (grade.type === "numeric") {
     if (data.letter) {
-      throw new LeemonsError(ctx, { message: 'Letter not allowed in grade type numeric' });
+      throw new LeemonsError(ctx, {
+        message: "Letter not allowed in grade type numeric",
+      });
     }
   }
 }
 
 const updateGradeScaleSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     id: stringSchema,
     letter: stringSchema,
     number: {
-      type: 'number',
+      type: "number",
       minimum: 0,
     },
     order: {
-      type: 'number',
+      type: "number",
     },
     description: stringSchema,
   },
-  required: ['id', 'number'],
+  required: ["id", "number"],
   additionalProperties: false,
 };
 
@@ -185,30 +189,34 @@ async function validateUpdateGradeScale({ data, ctx }) {
     throw validator.error;
   }
 
-  const scale = await ctx.tx.db.GradeScales.findOne({ id: data.id }).select(['id', 'grade']).lean();
-  if (!scale) throw new LeemonsError(ctx, { message: 'Scale not found' });
+  const scale = await ctx.tx.db.GradeScales.findOne({ id: data.id })
+    .select(["id", "grade"])
+    .lean();
+  if (!scale) throw new LeemonsError(ctx, { message: "Scale not found" });
 
   const grade = await ctx.tx.db.Grades.findOne({ id: scale.grade })
-    .select(['type', 'letter'])
+    .select(["type", "letter"])
     .lean();
-  if (!grade) throw new LeemonsError(ctx, { message: 'Grade not found' });
+  if (!grade) throw new LeemonsError(ctx, { message: "Grade not found" });
 
-  if (grade.type === 'numeric') {
+  if (grade.type === "numeric") {
     if (data.letter) {
-      throw new LeemonsError(ctx, { message: 'Letter not allowed in grade type numeric' });
+      throw new LeemonsError(ctx, {
+        message: "Letter not allowed in grade type numeric",
+      });
     }
   }
 }
 
 const addGradeTagSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     letter: stringSchema,
     scale: stringSchema,
     description: stringSchema,
     grade: stringSchema,
   },
-  required: ['scale', 'grade', 'letter', 'description'],
+  required: ["scale", "grade", "letter", "description"],
   additionalProperties: false,
 };
 
@@ -222,23 +230,23 @@ async function validateAddGradeTag({ data, ctx }) {
   // ES: Comprobamos si existe el grado
   // EN: Check if the grade exists
   const grade = await ctx.tx.db.Grades.countDocuments({ id: data.grade });
-  if (!grade) throw new LeemonsError(ctx, { message: 'Grade not found' });
+  if (!grade) throw new LeemonsError(ctx, { message: "Grade not found" });
 
   // ES: Comprobamos si existe la escala
   // EN: Check if the scale exists
   const scale = await ctx.tx.db.GradeScales.countDocuments({ id: data.scale });
-  if (!scale) throw new LeemonsError(ctx, { message: 'Scale not found' });
+  if (!scale) throw new LeemonsError(ctx, { message: "Scale not found" });
 }
 
 const updateGradeTagSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     id: stringSchema,
     letter: stringSchema,
     scale: stringSchema,
     description: stringSchema,
   },
-  required: ['id', 'scale', 'letter', 'description'],
+  required: ["id", "scale", "letter", "description"],
   additionalProperties: false,
 };
 
@@ -252,41 +260,49 @@ async function validateUpdateGradeTag({ data, ctx }) {
   // ES: Comprobamos si existe el tag de grado
   // EN: Check if the grade tag exists
   const gradeTag = await ctx.tx.db.GradeTags.countDocuments({ id: data.id });
-  if (!gradeTag) throw new LeemonsError(ctx, { message: 'Grade tag not found' });
+  if (!gradeTag)
+    throw new LeemonsError(ctx, { message: "Grade tag not found" });
 
   // ES: Comprobamos si existe la escala
   // EN: Check if the scale exists
   const scale = await ctx.tx.db.GradeScales.countDocuments({ id: data.scale });
-  if (!scale) throw new LeemonsError(ctx, { message: 'Scale not found' });
+  if (!scale) throw new LeemonsError(ctx, { message: "Scale not found" });
 }
 
 const conditionSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     source: {
-      type: 'string',
-      enum: ['program', 'course', 'subject-type', 'knowledge', 'subject', 'subject-group'],
+      type: "string",
+      enum: [
+        "program",
+        "course",
+        "subject-type",
+        "knowledge",
+        "subject",
+        "subject-group",
+      ],
     },
     sourceIds: {
-      type: 'array',
+      type: "array",
       items: stringSchema,
     },
     data: {
-      type: 'string',
-      enum: ['gpa', 'cpp', 'cpc', 'grade', 'enrolled', 'credits', 'cbcg'],
+      type: "string",
+      enum: ["gpa", "cpp", "cpc", "grade", "enrolled", "credits", "cbcg"],
     },
     dataTargets: {
-      type: 'array',
+      type: "array",
       items: stringSchema,
     },
     operator: {
-      type: 'string',
-      enum: ['lte', 'gte', 'lt', 'gt', 'eq', 'neq'],
+      type: "string",
+      enum: ["lte", "gte", "lt", "gt", "eq", "neq"],
     },
     target: numberSchema,
     targetGradeScale: stringSchema,
     group: {
-      type: 'object',
+      type: "object",
       additionalProperties: true,
     },
   },
@@ -295,23 +311,23 @@ const conditionSchema = {
 };
 
 const groupSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     operator: {
-      type: 'string',
-      enum: ['and', 'or'],
+      type: "string",
+      enum: ["and", "or"],
     },
     conditions: {
-      type: 'array',
+      type: "array",
       items: _.cloneDeep(conditionSchema),
     },
   },
-  required: ['operator'],
+  required: ["operator"],
   additionalProperties: false,
 };
 
 const addRuleSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     name: stringSchema,
     center: stringSchema,
@@ -319,7 +335,7 @@ const addRuleSchema = {
     program: stringSchema,
     group: _.cloneDeep(groupSchema),
   },
-  required: ['name', 'center', 'grade', 'program', 'group'],
+  required: ["name", "center", "grade", "program", "group"],
   additionalProperties: false,
 };
 
@@ -327,7 +343,7 @@ function validateAddRule({ data, isDependency }) {
   const rules = _.cloneDeep(addRuleSchema);
   if (isDependency) {
     rules.properties.subject = stringSchema;
-    rules.required.push('subject');
+    rules.required.push("subject");
   }
   const validator = new LeemonsValidator(rules);
 
@@ -337,7 +353,7 @@ function validateAddRule({ data, isDependency }) {
 }
 
 const updateRuleSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     id: stringSchema,
     name: stringSchema,
@@ -346,7 +362,7 @@ const updateRuleSchema = {
     program: stringSchema,
     group: _.cloneDeep(groupSchema),
   },
-  required: ['id', 'name', 'center', 'grade', 'program', 'group'],
+  required: ["id", "name", "center", "grade", "program", "group"],
   additionalProperties: false,
 };
 
@@ -354,7 +370,7 @@ function validateUpdateRule({ data, isDependency }) {
   const rules = _.cloneDeep(updateRuleSchema);
   if (isDependency) {
     rules.properties.subject = stringSchema;
-    rules.required.push('subject');
+    rules.required.push("subject");
   }
   const validator = new LeemonsValidator(rules);
 
@@ -364,19 +380,19 @@ function validateUpdateRule({ data, isDependency }) {
 }
 
 const addConditionGroupSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     operator: {
-      type: 'string',
-      enum: ['and', 'or'],
+      type: "string",
+      enum: ["and", "or"],
     },
     rule: stringSchema,
     conditions: {
-      type: 'array',
+      type: "array",
       items: _.cloneDeep(conditionSchema),
     },
   },
-  required: ['operator', 'rule', 'conditions'],
+  required: ["operator", "rule", "conditions"],
   additionalProperties: false,
 };
 
@@ -389,20 +405,26 @@ function validateAddConditionGroup({ data }) {
 }
 
 const addConditionRefToGroupSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     group: _.cloneDeep(groupSchema),
     rule: stringSchema,
     parentGroup: stringSchema,
   },
-  required: ['group', 'rule', 'parentGroup'],
+  required: ["group", "rule", "parentGroup"],
   additionalProperties: false,
 };
 
 const addConditionSchema = _.cloneDeep(conditionSchema);
 addConditionSchema.properties.rule = stringSchema;
 addConditionSchema.properties.parentGroup = stringSchema;
-addConditionSchema.required = ['source', 'sourceIds', 'data', 'rule', 'parentGroup'];
+addConditionSchema.required = [
+  "source",
+  "sourceIds",
+  "data",
+  "rule",
+  "parentGroup",
+];
 
 function validateAddCondition({ group, ...rest }) {
   const schema = group ? addConditionRefToGroupSchema : addConditionSchema;

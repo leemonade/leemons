@@ -1,4 +1,4 @@
-import { enableMenuItem, getSettings, updateSettings } from './settings';
+import { enableMenuItem, getSettings, updateSettings } from "./settings";
 import {
   addGrade,
   addGradeScale,
@@ -13,20 +13,20 @@ import {
   updateGrade,
   updateGradeScale,
   updateGradeTag,
-} from './evaluations';
+} from "./evaluations";
 import {
   addPromotion,
   deletePromotion,
   havePromotions,
   listPromotions,
   updatePromotion,
-} from './promotions';
+} from "./promotions";
 import {
   addDependency,
   deleteDependency,
   listDependencies,
   updateDependency,
-} from './dependencies';
+} from "./dependencies";
 
 export const getGradeRequest = getGrade;
 export const addGradeRequest = addGrade;

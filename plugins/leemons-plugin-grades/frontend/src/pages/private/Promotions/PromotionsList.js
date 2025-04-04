@@ -1,5 +1,8 @@
 /* eslint-disable no-param-reassign */
-import { detailProgramRequest, listProgramsRequest } from '@academic-portfolio/request';
+import {
+  detailProgramRequest,
+  listProgramsRequest,
+} from "@academic-portfolio/request";
 import {
   Box,
   Col,
@@ -8,46 +11,56 @@ import {
   PageContainer,
   Paper,
   Tree,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 // TODO: import from @common plugin
-import { AdminPageHeader, uuidv4 } from '@bubbles-ui/leemons';
-import { useStore } from '@common/useStore';
-import prefixPN from '@grades/helpers/prefixPN';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { SelectCenter } from '@users/components/SelectCenter';
-import { clone, cloneDeep, find, forIn, identity, isNil, isString, map, pickBy } from 'lodash';
-import React, { useMemo } from 'react';
+import { AdminPageHeader, uuidv4 } from "@bubbles-ui/leemons";
+import { useStore } from "@common/useStore";
+import prefixPN from "@grades/helpers/prefixPN";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { SelectCenter } from "@users/components/SelectCenter";
+import {
+  clone,
+  cloneDeep,
+  find,
+  forIn,
+  identity,
+  isNil,
+  isString,
+  map,
+  pickBy,
+} from "lodash";
+import React, { useMemo } from "react";
 import {
   PROMOTION_DETAIL_FORM_ERROR_MESSAGES,
   PromotionDetail,
-} from '../../../components/PromotionDetail';
-import { TreeItem } from '../../../components/TreeItem/TreeItem';
-import { activeMenuItemDependencies } from '../../../helpers/activeMenuItemDependencies';
-import { getDataTypes } from '../../../helpers/getDataTypes';
-import { getOperators } from '../../../helpers/getOperators';
-import { getPromotionDetailMessages } from '../../../helpers/getPromotionDetailMessages';
-import { getScaleLabel } from '../../../helpers/getScaleLabel';
-import { getSources } from '../../../helpers/getSources';
+} from "../../../components/PromotionDetail";
+import { TreeItem } from "../../../components/TreeItem/TreeItem";
+import { activeMenuItemDependencies } from "../../../helpers/activeMenuItemDependencies";
+import { getDataTypes } from "../../../helpers/getDataTypes";
+import { getOperators } from "../../../helpers/getOperators";
+import { getPromotionDetailMessages } from "../../../helpers/getPromotionDetailMessages";
+import { getScaleLabel } from "../../../helpers/getScaleLabel";
+import { getSources } from "../../../helpers/getSources";
 import {
   addPromotionRequest,
   deletePromotionRequest,
   listGradesRequest,
   listPromotionsRequest,
   updatePromotionRequest,
-} from '../../../request';
+} from "../../../request";
 
 export default function PromotionsList() {
-  const [t, , , tLoading] = useTranslateLoader(prefixPN('promotionsPage'));
-  const [tC] = useTranslateLoader(prefixPN('conditionOptions'));
-  const [tP] = useTranslateLoader(prefixPN('promotionDetail'));
+  const [t, , , tLoading] = useTranslateLoader(prefixPN("promotionsPage"));
+  const [tC] = useTranslateLoader(prefixPN("conditionOptions"));
+  const [tP] = useTranslateLoader(prefixPN("promotionDetail"));
 
   const [store, render] = useStore();
 
   const headerValues = useMemo(
     () => ({
-      title: t('pageTitle'),
-      description: t('pageDescription'),
+      title: t("pageTitle"),
+      description: t("pageDescription"),
     }),
     [t]
   );
@@ -55,14 +68,22 @@ export default function PromotionsList() {
   async function getPromotions() {
     const {
       data: { items },
-    } = await listPromotionsRequest({ page: 0, size: 9999, center: store.center });
+    } = await listPromotionsRequest({
+      page: 0,
+      size: 9999,
+      center: store.center,
+    });
     return items;
   }
 
   async function getPrograms() {
     const {
       data: { items },
-    } = await listProgramsRequest({ page: 0, size: 9999, center: store.center });
+    } = await listProgramsRequest({
+      page: 0,
+      size: 9999,
+      center: store.center,
+    });
     return items;
   }
 
@@ -87,13 +108,13 @@ export default function PromotionsList() {
       render: TreeItem,
     }));
     data.push({
-      id: 'add',
+      id: "add",
       parent: 0,
-      text: t('addPromotion'),
-      type: 'button',
+      text: t("addPromotion"),
+      type: "button",
       draggable: false,
       data: {
-        action: 'add',
+        action: "add",
       },
     });
     return data;
@@ -113,7 +134,10 @@ export default function PromotionsList() {
     store.programs = programs;
     store.grades = grades;
     store.selectData = {
-      programs: map(programs, (program) => ({ label: program.name, value: program.id })),
+      programs: map(programs, (program) => ({
+        label: program.name,
+        value: program.id,
+      })),
       grades: map(grades, (grade) => ({ label: grade.name, value: grade.id })),
       sources: getSources(tC),
       dataTypes: getDataTypes(tC),
@@ -126,7 +150,7 @@ export default function PromotionsList() {
   }
 
   async function onChange({ program: programId }, { name }, useRender = true) {
-    if (name === 'program') {
+    if (name === "program") {
       const program = await getProgramDetail(programId);
       store.selectData.gradeScales = map(
         find(store.grades, { id: program.evaluationSystem }).scales,
@@ -137,7 +161,7 @@ export default function PromotionsList() {
       );
 
       store.selectData.courses = map(program.courses, (course) => ({
-        label: course.name || t('courseName', { index: course.index }),
+        label: course.name || t("courseName", { index: course.index }),
         value: course.id,
       }));
       store.selectData.knowledges = map(program.knowledges, (knowledge) => ({
@@ -148,10 +172,13 @@ export default function PromotionsList() {
         label: subject.name,
         value: subject.id,
       }));
-      store.selectData.subjectTypes = map(program.subjectType, (subjectType) => ({
-        label: subjectType.name,
-        value: subjectType.id,
-      }));
+      store.selectData.subjectTypes = map(
+        program.subjectType,
+        (subjectType) => ({
+          label: subjectType.name,
+          value: subjectType.id,
+        })
+      );
       store.selectData.groups = map(program.groups, (group) => ({
         label: group.name,
         value: group.id,
@@ -166,8 +193,17 @@ export default function PromotionsList() {
       program: null,
       grade: null,
       group: {
-        operator: 'and',
-        conditions: [{ id: '1', source: '', sourceIds: [], data: '', operator: '', target: 0 }],
+        operator: "and",
+        conditions: [
+          {
+            id: "1",
+            source: "",
+            sourceIds: [],
+            data: "",
+            operator: "",
+            target: 0,
+          },
+        ],
       },
     };
     render();
@@ -200,8 +236,8 @@ export default function PromotionsList() {
     store.selectedPromotion.group = processGroup(store.selectedPromotion.group);
 
     await Promise.all([
-      onChange(store.selectedPromotion, { name: 'program' }, false),
-      onChange(store.selectedPromotion, { name: 'grade' }, false),
+      onChange(store.selectedPromotion, { name: "program" }, false),
+      onChange(store.selectedPromotion, { name: "grade" }, false),
     ]);
 
     render();
@@ -214,7 +250,7 @@ export default function PromotionsList() {
         store.selectedPromotion = null;
       }
       await onSelectCenter(store.center);
-      await addSuccessAlert(t('successDelete'));
+      await addSuccessAlert(t("successDelete"));
     } catch (err) {
       await addErrorAlert(err.message);
     }
@@ -282,8 +318,11 @@ export default function PromotionsList() {
 
         store.selectedPromotion = null;
         store.saving = false;
-        await Promise.all([onSelectCenter(store.center), activeMenuItemDependencies()]);
-        await addSuccessAlert(t('successSave'));
+        await Promise.all([
+          onSelectCenter(store.center),
+          activeMenuItemDependencies(),
+        ]);
+        await addSuccessAlert(t("successSave"));
       }
     } catch (error) {
       store.saving = false;
@@ -315,7 +354,10 @@ export default function PromotionsList() {
                   <ContextContainer divided>
                     {!tLoading && (
                       <Box>
-                        <SelectCenter label={t('selectCenter')} onChange={onSelectCenter} />
+                        <SelectCenter
+                          label={t("selectCenter")}
+                          onChange={onSelectCenter}
+                        />
                       </Box>
                     )}
                     {store.center && (

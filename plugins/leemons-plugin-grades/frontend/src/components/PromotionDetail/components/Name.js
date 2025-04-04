@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Controller } from 'react-hook-form';
-import { TextInput } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Controller } from "react-hook-form";
+import { TextInput } from "@bubbles-ui/components";
 
 const Name = ({ messages, errorMessages, form }) => {
   const {

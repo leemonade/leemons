@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-import React, { useMemo } from 'react';
-import { clone, cloneDeep, find, forIn, isNil, isString, map } from 'lodash';
+import React, { useMemo } from "react";
+import { clone, cloneDeep, find, forIn, isNil, isString, map } from "lodash";
 import {
   Box,
   Col,
@@ -9,43 +9,46 @@ import {
   PageContainer,
   Paper,
   Tree,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 // TODO: import from @common plugin
-import { AdminPageHeader, uuidv4 } from '@bubbles-ui/leemons';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@grades/helpers/prefixPN';
-import { SelectCenter } from '@users/components/SelectCenter';
-import { useStore } from '@common/useStore';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { detailProgramRequest, listProgramsRequest } from '@academic-portfolio/request';
+import { AdminPageHeader, uuidv4 } from "@bubbles-ui/leemons";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@grades/helpers/prefixPN";
+import { SelectCenter } from "@users/components/SelectCenter";
+import { useStore } from "@common/useStore";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import {
+  detailProgramRequest,
+  listProgramsRequest,
+} from "@academic-portfolio/request";
 import {
   addDependencyRequest,
   deleteDependencyRequest,
   listDependenciesRequest,
   listGradesRequest,
   updateDependencyRequest,
-} from '../../../request';
-import { TreeItem } from '../../../components/TreeItem/TreeItem';
+} from "../../../request";
+import { TreeItem } from "../../../components/TreeItem/TreeItem";
 import {
   PROMOTION_DETAIL_FORM_ERROR_MESSAGES,
   PromotionDetail,
-} from '../../../components/PromotionDetail';
-import { getOperators } from '../../../helpers/getOperators';
-import { getDataTypes } from '../../../helpers/getDataTypes';
-import { getSources } from '../../../helpers/getSources';
-import { getPromotionDetailMessages } from '../../../helpers/getPromotionDetailMessages';
+} from "../../../components/PromotionDetail";
+import { getOperators } from "../../../helpers/getOperators";
+import { getDataTypes } from "../../../helpers/getDataTypes";
+import { getSources } from "../../../helpers/getSources";
+import { getPromotionDetailMessages } from "../../../helpers/getPromotionDetailMessages";
 
 export default function DependenciesList() {
-  const [t] = useTranslateLoader(prefixPN('dependenciesPage'));
-  const [tC] = useTranslateLoader(prefixPN('conditionOptions'));
-  const [tP] = useTranslateLoader(prefixPN('promotionDetail'));
+  const [t] = useTranslateLoader(prefixPN("dependenciesPage"));
+  const [tC] = useTranslateLoader(prefixPN("conditionOptions"));
+  const [tP] = useTranslateLoader(prefixPN("promotionDetail"));
 
   const [store, render] = useStore();
 
   const headerValues = useMemo(
     () => ({
-      title: t('pageTitle'),
-      description: t('pageDescription'),
+      title: t("pageTitle"),
+      description: t("pageDescription"),
     }),
     [t]
   );
@@ -53,14 +56,22 @@ export default function DependenciesList() {
   async function getDependencies() {
     const {
       data: { items },
-    } = await listDependenciesRequest({ page: 0, size: 9999, center: store.center });
+    } = await listDependenciesRequest({
+      page: 0,
+      size: 9999,
+      center: store.center,
+    });
     return items;
   }
 
   async function getPrograms() {
     const {
       data: { items },
-    } = await listProgramsRequest({ page: 0, size: 9999, center: store.center });
+    } = await listProgramsRequest({
+      page: 0,
+      size: 9999,
+      center: store.center,
+    });
     return items;
   }
 
@@ -85,13 +96,13 @@ export default function DependenciesList() {
       render: TreeItem,
     }));
     data.push({
-      id: 'add',
+      id: "add",
       parent: 0,
-      text: t('addPromotion'),
-      type: 'button',
+      text: t("addPromotion"),
+      type: "button",
       draggable: false,
       data: {
-        action: 'add',
+        action: "add",
       },
     });
     return data;
@@ -111,7 +122,10 @@ export default function DependenciesList() {
     store.programs = programs;
     store.grades = grades;
     store.selectData = {
-      programs: map(programs, (program) => ({ label: program.name, value: program.id })),
+      programs: map(programs, (program) => ({
+        label: program.name,
+        value: program.id,
+      })),
       grades: map(grades, (grade) => ({ label: grade.name, value: grade.id })),
       sources: getSources(tC),
       dataTypes: getDataTypes(tC),
@@ -123,19 +137,26 @@ export default function DependenciesList() {
     render();
   }
 
-  async function onChange({ program: programId, grade: gradeId }, { name }, useRender = true) {
-    if (name === 'grade') {
-      store.selectData.gradeScales = map(find(store.grades, { id: gradeId }).scales, (scale) => ({
-        label: `${scale.letter ? `${scale.letter} (` : ''} ${scale.number}${
-          scale.letter ? `)` : ''
-        }`,
-        value: scale.id,
-      }));
+  async function onChange(
+    { program: programId, grade: gradeId },
+    { name },
+    useRender = true
+  ) {
+    if (name === "grade") {
+      store.selectData.gradeScales = map(
+        find(store.grades, { id: gradeId }).scales,
+        (scale) => ({
+          label: `${scale.letter ? `${scale.letter} (` : ""} ${scale.number}${
+            scale.letter ? `)` : ""
+          }`,
+          value: scale.id,
+        })
+      );
     }
-    if (name === 'program') {
+    if (name === "program") {
       const program = await getProgramDetail(programId);
       store.selectData.courses = map(program.courses, (course) => ({
-        label: course.name || t('courseName', { index: course.index }),
+        label: course.name || t("courseName", { index: course.index }),
         value: course.id,
       }));
       store.selectData.knowledges = map(program.knowledges, (knowledge) => ({
@@ -146,10 +167,13 @@ export default function DependenciesList() {
         label: subject.name,
         value: subject.id,
       }));
-      store.selectData.subjectTypes = map(program.subjectType, (subjectType) => ({
-        label: subjectType.name,
-        value: subjectType.id,
-      }));
+      store.selectData.subjectTypes = map(
+        program.subjectType,
+        (subjectType) => ({
+          label: subjectType.name,
+          value: subjectType.id,
+        })
+      );
       store.selectData.groups = map(program.groups, (group) => ({
         label: group.name,
         value: group.id,
@@ -165,8 +189,17 @@ export default function DependenciesList() {
       grade: null,
       subject: null,
       group: {
-        operator: 'and',
-        conditions: [{ id: '1', source: '', sourceIds: [], data: '', operator: '', target: 0 }],
+        operator: "and",
+        conditions: [
+          {
+            id: "1",
+            source: "",
+            sourceIds: [],
+            data: "",
+            operator: "",
+            target: 0,
+          },
+        ],
       },
     };
     render();
@@ -195,12 +228,16 @@ export default function DependenciesList() {
       };
     }
 
-    store.selectedDependency = cloneDeep(find(store.dependencies, { id: e.id }));
-    store.selectedDependency.group = processGroup(store.selectedDependency.group);
+    store.selectedDependency = cloneDeep(
+      find(store.dependencies, { id: e.id })
+    );
+    store.selectedDependency.group = processGroup(
+      store.selectedDependency.group
+    );
 
     await Promise.all([
-      onChange(store.selectedDependency, { name: 'program' }, false),
-      onChange(store.selectedDependency, { name: 'grade' }, false),
+      onChange(store.selectedDependency, { name: "program" }, false),
+      onChange(store.selectedDependency, { name: "grade" }, false),
     ]);
 
     render();
@@ -213,7 +250,7 @@ export default function DependenciesList() {
         store.selectedDependency = null;
       }
       await onSelectCenter(store.center);
-      await addSuccessAlert(t('successDelete'));
+      await addSuccessAlert(t("successDelete"));
     } catch (err) {
       await addErrorAlert(err.message);
     }
@@ -280,7 +317,7 @@ export default function DependenciesList() {
         store.selectedDependency = null;
         store.saving = false;
         await onSelectCenter(store.center);
-        await addSuccessAlert(t('successSave'));
+        await addSuccessAlert(t("successSave"));
       }
     } catch (error) {
       store.saving = false;
@@ -291,7 +328,7 @@ export default function DependenciesList() {
 
   const messages = useMemo(() => {
     const m = getPromotionDetailMessages(tP);
-    m.nameLabel = t('nameLabel');
+    m.nameLabel = t("nameLabel");
     return m;
   }, [t]);
 
@@ -315,7 +352,10 @@ export default function DependenciesList() {
                 <Paper fullWidth padding={5}>
                   <ContextContainer divided>
                     <Box>
-                      <SelectCenter label={t('selectCenter')} onChange={onSelectCenter} />
+                      <SelectCenter
+                        label={t("selectCenter")}
+                        onChange={onSelectCenter}
+                      />
                     </Box>
                     {store.center && (
                       <Box>

@@ -4,33 +4,38 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const _ = require('lodash');
-const { LeemonsValidator } = require('@leemons/validator');
+const _ = require("lodash");
+const { LeemonsValidator } = require("@leemons/validator");
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { listGrades } = require('../../core/grades');
-const { listRules, addRule, updateRule, removeRule } = require('../../core/rules');
+} = require("@leemons/middlewares");
+const { listGrades } = require("../../core/grades");
+const {
+  listRules,
+  addRule,
+  updateRule,
+  removeRule,
+} = require("../../core/rules");
 
 /** @type {ServiceSchema} */
 module.exports = {
   // TODO Mirar si deberiamos de meter permisos a los endpoinds
   listDependenciesRest: {
     rest: {
-      path: '/',
-      method: 'GET',
+      path: "/",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-          center: { type: ['string'] },
+          page: { type: ["number", "string"] },
+          size: { type: ["number", "string"] },
+          center: { type: ["string"] },
         },
-        required: ['page', 'size'],
+        required: ["page", "size"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -50,8 +55,8 @@ module.exports = {
   },
   postDependencyRest: {
     rest: {
-      path: '/',
-      method: 'POST',
+      path: "/",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -65,8 +70,8 @@ module.exports = {
   },
   putDependencyRest: {
     rest: {
-      path: '/',
-      method: 'PUT',
+      path: "/",
+      method: "PUT",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -80,8 +85,8 @@ module.exports = {
   },
   deleteDependencyRest: {
     rest: {
-      path: '/:id',
-      method: 'DELETE',
+      path: "/:id",
+      method: "DELETE",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

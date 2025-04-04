@@ -1,9 +1,9 @@
-import { pxToRem, createStyles } from '@bubbles-ui/components';
+import { pxToRem, createStyles } from "@bubbles-ui/components";
 
 const RuleConditionStyles = createStyles((theme) => ({
   root: {
-    display: 'flex',
-    alignItems: 'baseline',
+    display: "flex",
+    alignItems: "baseline",
     // padding: pxToRem(8),
     gap: theme.spacing[1],
     marginBottom: theme.spacing[1],
@@ -13,7 +13,7 @@ const RuleConditionStyles = createStyles((theme) => ({
     width: pxToRem(80),
   },
   sourceSelects: {
-    display: 'flex',
+    display: "flex",
     gap: theme.spacing[1],
   },
 }));

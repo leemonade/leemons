@@ -1,7 +1,7 @@
 export const allProgramsEvaluationSystemsKeys = [
   {
-    plugin: 'plugin.grades',
-    scope: 'program-evaluation-systems',
+    plugin: "plugin.grades",
+    scope: "program-evaluation-systems",
   },
 ];
 

@@ -1,12 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Controller } from 'react-hook-form';
-import { TextInput } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@grades/helpers/prefixPN';
+import React from "react";
+import PropTypes from "prop-types";
+import { Controller } from "react-hook-form";
+import { TextInput } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@grades/helpers/prefixPN";
 
 const Name = ({ form, inUse }) => {
-  const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
+  const [t] = useTranslateLoader(prefixPN("evaluationsPage"));
   const {
     control,
     formState: { errors },
@@ -17,12 +17,12 @@ const Name = ({ form, inUse }) => {
       name="name"
       control={control}
       rules={{
-        required: t('errorTypeRequired'),
+        required: t("errorTypeRequired"),
       }}
       render={({ field }) => (
         <TextInput
-          label={t('nameLabel')}
-          placeholder={t('namePlaceholder')}
+          label={t("nameLabel")}
+          placeholder={t("namePlaceholder")}
           error={errors.name}
           required
           disabled={inUse}

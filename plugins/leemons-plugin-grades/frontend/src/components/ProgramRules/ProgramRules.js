@@ -1,10 +1,17 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { ProgramRulesStyles } from './ProgramRules.styles';
-import { RuleGroup } from '../RuleGroup';
-import { v4 as uuidv4 } from 'uuid';
-import { Box, Button, Paper, Select, Stack, TextInput } from '@bubbles-ui/components';
-import { isFunction } from 'lodash';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import { ProgramRulesStyles } from "./ProgramRules.styles";
+import { RuleGroup } from "../RuleGroup";
+import { v4 as uuidv4 } from "uuid";
+import {
+  Box,
+  Button,
+  Paper,
+  Select,
+  Stack,
+  TextInput,
+} from "@bubbles-ui/components";
+import { isFunction } from "lodash";
 
 const PROPTYPES_SHAPE = PropTypes.shape({
   label: PropTypes.string,
@@ -12,8 +19,8 @@ const PROPTYPES_SHAPE = PropTypes.shape({
 });
 
 export const LOGIC_OPERATORS = [
-  { label: 'AND', value: 'and' },
-  { label: 'OR', value: 'or' },
+  { label: "AND", value: "and" },
+  { label: "OR", value: "or" },
 ];
 
 export const PROGRAM_RULES_DEFAULT_PROPS = {};
@@ -82,17 +89,26 @@ const ProgramRules = ({
   const { classes, cx } = ProgramRulesStyles({});
 
   const [data, setData] = useState({
-    name: '',
-    program: '',
-    grade: '',
+    name: "",
+    program: "",
+    grade: "",
     group: {
       operator: LOGIC_OPERATORS[0].value,
-      conditions: [{ id: uuidv4(), source: '', sourceIds: [], data: '', operator: '', target: 0 }],
+      conditions: [
+        {
+          id: uuidv4(),
+          source: "",
+          sourceIds: [],
+          data: "",
+          operator: "",
+          target: 0,
+        },
+      ],
     },
   });
-  const [nameValue, setNameValue] = useState('');
+  const [nameValue, setNameValue] = useState("");
   const [program, setProgram] = useState(null);
-  const [gradeSystem, setGradeSystem] = useState('');
+  const [gradeSystem, setGradeSystem] = useState("");
   const [edited, setEdited] = useState([]);
   const [error, setError] = useState(false);
 
@@ -108,7 +124,7 @@ const ProgramRules = ({
 
   return (
     <Box className={classes.root}>
-      <Stack justifyContent={'space-between'} fullWidth>
+      <Stack justifyContent={"space-between"} fullWidth>
         <TextInput
           placeholder={placeholders.programName}
           value={nameValue}
@@ -117,7 +133,9 @@ const ProgramRules = ({
             setData({ ...data, name: e });
           }}
         />
-        <Button onClick={() => handleOnChange(data)}>{labels.saveButton}</Button>
+        <Button onClick={() => handleOnChange(data)}>
+          {labels.saveButton}
+        </Button>
       </Stack>
       <Stack fullWidth>
         <Select

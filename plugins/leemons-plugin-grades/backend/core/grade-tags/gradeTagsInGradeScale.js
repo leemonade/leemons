@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function gradeTagsInGradeScale({ gradeScale, ctx }) {
   return ctx.tx.db.GradeTags.countDocuments({

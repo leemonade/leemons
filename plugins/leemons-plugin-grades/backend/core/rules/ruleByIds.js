@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { getRuleConditionsByRuleIds } = require('./getRuleConditionsByRuleIds');
+const _ = require("lodash");
+const { getRuleConditionsByRuleIds } = require("./getRuleConditionsByRuleIds");
 
 async function ruleByIds({ ids, ctx }) {
   const [rules, ruleConditions] = await Promise.all([

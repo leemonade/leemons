@@ -1,1 +1,1 @@
-export * from './RuleGroup';
+export * from "./RuleGroup";

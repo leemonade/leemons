@@ -1,8 +1,10 @@
-const _ = require('lodash');
-const { validateUpdateRule } = require('../../validations/forms');
-const { addConditionGroup } = require('../condition-groups/addConditionGroup');
-const { ruleByIds } = require('./ruleByIds');
-const { removeConditionGroupsByRule } = require('../condition-groups/removeConditionGroupsByRule');
+const _ = require("lodash");
+const { validateUpdateRule } = require("../../validations/forms");
+const { addConditionGroup } = require("../condition-groups/addConditionGroup");
+const { ruleByIds } = require("./ruleByIds");
+const {
+  removeConditionGroupsByRule,
+} = require("../condition-groups/removeConditionGroupsByRule");
 
 async function updateRule({ data, isDependency = false, ctx }) {
   await validateUpdateRule({ data, isDependency });
@@ -19,9 +21,15 @@ async function updateRule({ data, isDependency = false, ctx }) {
   // EN: Only delete the groups because it does a delete cascade and the conditions of those groups are deleted
   await removeConditionGroupsByRule({ ruleId: id, ctx });
 
-  const _group = await addConditionGroup({ data: { ...group, rule: rule.id }, ctx });
+  const _group = await addConditionGroup({
+    data: { ...group, rule: rule.id },
+    ctx,
+  });
 
-  await ctx.tx.db.Rules.updateOne({ id: rule.id, isDependency }, { group: _group.id });
+  await ctx.tx.db.Rules.updateOne(
+    { id: rule.id, isDependency },
+    { group: _group.id }
+  );
 
   return (await ruleByIds({ ids: rule.id, ctx }))[0];
 }

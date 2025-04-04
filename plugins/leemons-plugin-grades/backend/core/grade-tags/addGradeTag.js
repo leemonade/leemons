@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const { validateAddGradeTag } = require('../../validations/forms');
-const { getGradeTagsByIds } = require('./getGradeTagsByIds');
+const _ = require("lodash");
+const { validateAddGradeTag } = require("../../validations/forms");
+const { getGradeTagsByIds } = require("./getGradeTagsByIds");
 
 async function addGradeTag({ data, ctx }) {
   await validateAddGradeTag({ data, ctx });

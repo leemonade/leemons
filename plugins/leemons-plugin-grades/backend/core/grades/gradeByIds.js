@@ -1,6 +1,8 @@
-const _ = require('lodash');
-const { getGradeScalesByGrade } = require('../grade-scales/getGradeScalesByGrade');
-const { getGradeTagsByGrade } = require('../grade-tags/getGradeTagsByGrade');
+const _ = require("lodash");
+const {
+  getGradeScalesByGrade,
+} = require("../grade-scales/getGradeScalesByGrade");
+const { getGradeTagsByGrade } = require("../grade-tags/getGradeTagsByGrade");
 
 async function gradeByIds({ ids, ctx }) {
   const [grades, gradeScales, gradeTags] = await Promise.all([
@@ -9,12 +11,12 @@ async function gradeByIds({ ids, ctx }) {
     getGradeTagsByGrade({ grade: ids, ctx }),
   ]);
 
-  const gradeScalesByGrade = _.groupBy(gradeScales, 'grade');
-  const gradeTagsByGrade = _.groupBy(gradeTags, 'grade');
+  const gradeScalesByGrade = _.groupBy(gradeScales, "grade");
+  const gradeTagsByGrade = _.groupBy(gradeTags, "grade");
 
   return _.map(grades, (grade) => {
     let scales = gradeScalesByGrade[grade.id] || [];
-    scales = _.orderBy(scales, 'order', 'asc');
+    scales = _.orderBy(scales, "order", "asc");
     return {
       ...grade,
       scales,

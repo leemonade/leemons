@@ -4,12 +4,12 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const _ = require('lodash');
-const { LeemonsValidator } = require('@leemons/validator');
+const _ = require("lodash");
+const { LeemonsValidator } = require("@leemons/validator");
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 
 const {
   listGrades,
@@ -18,26 +18,26 @@ const {
   haveGrades,
   gradeByIds,
   removeGrade,
-} = require('../../core/grades');
+} = require("../../core/grades");
 
 /** @type {ServiceSchema} */
 module.exports = {
   // TODO Mirar si deberiamos de meter permisos a los endpoinds
   listGradesRest: {
     rest: {
-      path: '/',
-      method: 'GET',
+      path: "/",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-          center: { type: ['string'] },
+          page: { type: ["number", "string"] },
+          size: { type: ["number", "string"] },
+          center: { type: ["string"] },
         },
-        required: ['page', 'size'],
+        required: ["page", "size"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -56,8 +56,8 @@ module.exports = {
   },
   postGradeRest: {
     rest: {
-      path: '/',
-      method: 'POST',
+      path: "/",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -71,8 +71,8 @@ module.exports = {
   },
   putGradeRest: {
     rest: {
-      path: '/',
-      method: 'PUT',
+      path: "/",
+      method: "PUT",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -85,8 +85,8 @@ module.exports = {
   },
   haveGradesRest: {
     rest: {
-      path: '/have',
-      method: 'GET',
+      path: "/have",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -98,8 +98,8 @@ module.exports = {
   },
   getGradeRest: {
     rest: {
-      path: '/:id',
-      method: 'GET',
+      path: "/:id",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -112,8 +112,8 @@ module.exports = {
   },
   removeGradeRest: {
     rest: {
-      path: '/:id',
-      method: 'DELETE',
+      path: "/:id",
+      method: "DELETE",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

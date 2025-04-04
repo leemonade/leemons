@@ -4,26 +4,26 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const _ = require('lodash');
-const { LeemonsValidator } = require('@leemons/validator');
+const _ = require("lodash");
+const { LeemonsValidator } = require("@leemons/validator");
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 const {
   addGradeScale,
   updateGradeScale,
   removeGradeScale,
   canRemoveGradeScale,
-} = require('../../core/grade-scales');
+} = require("../../core/grade-scales");
 
 /** @type {ServiceSchema} */
 module.exports = {
   // TODO Mirar si deberiamos de meter permisos a los endpoinds
   postGradeScaleRest: {
     rest: {
-      path: '/',
-      method: 'POST',
+      path: "/",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -33,8 +33,8 @@ module.exports = {
   },
   putGradeScaleRest: {
     rest: {
-      path: '/',
-      method: 'PUT',
+      path: "/",
+      method: "PUT",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -44,8 +44,8 @@ module.exports = {
   },
   canRemoveGradeScaleRest: {
     rest: {
-      path: '/can/:id',
-      method: 'DELETE',
+      path: "/can/:id",
+      method: "DELETE",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -55,8 +55,8 @@ module.exports = {
   },
   removeGradeScaleRest: {
     rest: {
-      path: '/:id',
-      method: 'DELETE',
+      path: "/:id",
+      method: "DELETE",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

@@ -1,9 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { useStore } from '@common';
-import { map } from 'lodash';
-import { Select } from '@bubbles-ui/components';
-import { listGradesRequest } from '../../request';
+import React from "react";
+import PropTypes from "prop-types";
+import { useStore } from "@common";
+import { map } from "lodash";
+import { Select } from "@bubbles-ui/components";
+import { listGradesRequest } from "../../request";
 
 const EvaluationsSelect = ({ center, ...props }) => {
   const [store, render] = useStore({ evaluations: [] });

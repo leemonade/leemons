@@ -1,15 +1,15 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('@leemons/mongodb-helpers');
+const { getKeyValueModel } = require("@leemons/mongodb-helpers");
 
 const models = {
-  ...require('./condition-groups'),
-  ...require('./conditions'),
-  ...require('./grade-scales'),
-  ...require('./grade-tags'),
-  ...require('./grades'),
-  ...require('./rules'),
-  ...require('./settings'),
+  ...require("./condition-groups"),
+  ...require("./conditions"),
+  ...require("./grade-scales"),
+  ...require("./grade-tags"),
+  ...require("./grades"),
+  ...require("./rules"),
+  ...require("./settings"),
 };
 
 module.exports = {
@@ -24,7 +24,7 @@ module.exports = {
       Rules: models.rulesModel,
       Settings: models.settingsModel,
 
-      KeyValue: getKeyValueModel({ modelName: 'v1::grades_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: "v1::grades_KeyValue" }),
     };
   },
 };

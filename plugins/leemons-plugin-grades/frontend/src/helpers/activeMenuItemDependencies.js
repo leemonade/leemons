@@ -1,8 +1,8 @@
-import hooks from 'leemons-hooks';
-import { enableMenuItemRequest } from '@grades/request';
+import { enableMenuItemRequest } from "@grades/request";
+import hooks from "@leemons/hooks";
 
 export async function activeMenuItemDependencies() {
-  const itemKey = 'dependencies';
+  const itemKey = "dependencies";
   await enableMenuItemRequest(itemKey);
-  await hooks.fireEvent('menu-builder:user:updateItem', itemKey);
+  await hooks.fireEvent("menu-builder:user:updateItem", itemKey);
 }

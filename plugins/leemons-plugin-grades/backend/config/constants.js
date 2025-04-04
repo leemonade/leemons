@@ -1,4 +1,4 @@
-const permissionsPrefix = 'grades';
+const permissionsPrefix = "grades";
 
 const permissionNames = {
   rules: `${permissionsPrefix}.rules`,
@@ -10,31 +10,31 @@ const permissionNames = {
 const permissions = [
   {
     permissionName: permissionNames.rules,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
-    localizationName: { es: 'Reglas Académicas', en: 'Academic Rules' },
+    actions: ["view", "update", "create", "delete", "admin"],
+    localizationName: { es: "Reglas Académicas", en: "Academic Rules" },
   },
   {
     permissionName: permissionNames.evaluations,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
+    actions: ["view", "update", "create", "delete", "admin"],
     localizationName: {
-      es: 'Reglas Académicas - Evaluaciones',
-      en: 'Academic Rules - Evaluations',
+      es: "Reglas Académicas - Evaluaciones",
+      en: "Academic Rules - Evaluations",
     },
   },
   {
     permissionName: permissionNames.promotions,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
+    actions: ["view", "update", "create", "delete", "admin"],
     localizationName: {
-      es: 'Reglas Académicas - Promociones',
-      en: 'Academic Rules - Promotions',
+      es: "Reglas Académicas - Promociones",
+      en: "Academic Rules - Promotions",
     },
   },
   {
     permissionName: permissionNames.dependencies,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
+    actions: ["view", "update", "create", "delete", "admin"],
     localizationName: {
-      es: 'Reglas Académicas - Dependencias',
-      en: 'Academic Rules - Dependencies',
+      es: "Reglas Académicas - Dependencias",
+      en: "Academic Rules - Dependencies",
     },
   },
 ];
@@ -43,73 +43,73 @@ const permissionsBundles = {
   rules: {
     create: {
       permission: permissionNames.rules,
-      actions: ['create', 'admin'],
+      actions: ["create", "admin"],
     },
     view: {
       permission: permissionNames.rules,
-      actions: ['view', 'admin'],
+      actions: ["view", "admin"],
     },
     update: {
       permission: permissionNames.rules,
-      actions: ['update', 'admin'],
+      actions: ["update", "admin"],
     },
     delete: {
       permission: permissionNames.rules,
-      actions: ['delete', 'admin'],
+      actions: ["delete", "admin"],
     },
   },
   evaluations: {
     create: {
       permission: permissionNames.evaluations,
-      actions: ['create', 'admin'],
+      actions: ["create", "admin"],
     },
     view: {
       permission: permissionNames.evaluations,
-      actions: ['view', 'admin'],
+      actions: ["view", "admin"],
     },
     update: {
       permission: permissionNames.evaluations,
-      actions: ['update', 'admin'],
+      actions: ["update", "admin"],
     },
     delete: {
       permission: permissionNames.evaluations,
-      actions: ['delete', 'admin'],
+      actions: ["delete", "admin"],
     },
   },
   promotions: {
     create: {
       permission: permissionNames.promotions,
-      actions: ['create', 'admin'],
+      actions: ["create", "admin"],
     },
     view: {
       permission: permissionNames.promotions,
-      actions: ['view', 'admin'],
+      actions: ["view", "admin"],
     },
     update: {
       permission: permissionNames.promotions,
-      actions: ['update', 'admin'],
+      actions: ["update", "admin"],
     },
     delete: {
       permission: permissionNames.promotions,
-      actions: ['delete', 'admin'],
+      actions: ["delete", "admin"],
     },
   },
   dependencies: {
     create: {
       permission: permissionNames.dependencies,
-      actions: ['create', 'admin'],
+      actions: ["create", "admin"],
     },
     view: {
       permission: permissionNames.dependencies,
-      actions: ['view', 'admin'],
+      actions: ["view", "admin"],
     },
     update: {
       permission: permissionNames.dependencies,
-      actions: ['update', 'admin'],
+      actions: ["update", "admin"],
     },
     delete: {
       permission: permissionNames.dependencies,
-      actions: ['delete', 'admin'],
+      actions: ["delete", "admin"],
     },
   },
 };
@@ -118,98 +118,98 @@ const menuItems = [
   // Main
   {
     item: {
-      key: 'rules',
+      key: "rules",
       order: 101,
-      iconSvg: '/public/grades/menu-icon.svg',
-      activeIconSvg: '/public/grades/menu-icon.svg',
+      iconSvg: "/public/grades/menu-icon.svg",
+      activeIconSvg: "/public/grades/menu-icon.svg",
       label: {
-        en: 'Academic Rules',
-        es: 'Reglas Académicas',
+        en: "Academic Rules",
+        es: "Reglas Académicas",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.rules,
-        actionNames: ['admin'],
+        actionNames: ["admin"],
       },
     ],
   },
   // Welcome
   {
     item: {
-      key: 'welcome',
+      key: "welcome",
       order: 1,
       parentKey: `${permissionsPrefix}.rules`,
-      url: '/private/grades/welcome',
+      url: "/private/grades/welcome",
       label: {
-        en: 'Welcome',
-        es: 'Bienvenida',
+        en: "Welcome",
+        es: "Bienvenida",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.rules,
-        actionNames: ['admin'],
+        actionNames: ["admin"],
       },
     ],
   },
   // Evaluation System
   {
     item: {
-      key: 'evaluations',
+      key: "evaluations",
       order: 2,
       parentKey: `${permissionsPrefix}.rules`,
-      url: '/private/grades/evaluations',
+      url: "/private/grades/evaluations",
       label: {
-        en: 'Evaluation system',
-        es: 'Sistemas de evaluación',
+        en: "Evaluation system",
+        es: "Sistemas de evaluación",
       },
       disabled: true,
     },
     permissions: [
       {
         permissionName: permissionNames.evaluations,
-        actionNames: ['admin'],
+        actionNames: ["admin"],
       },
     ],
   },
   // Promotion rules
   {
     item: {
-      key: 'promotions',
+      key: "promotions",
       order: 3,
       parentKey: `${permissionsPrefix}.rules`,
-      url: '/private/grades/promotions',
+      url: "/private/grades/promotions",
       label: {
-        en: 'Promotion rules',
-        es: 'Reglas de promoción',
+        en: "Promotion rules",
+        es: "Reglas de promoción",
       },
       disabled: true,
     },
     permissions: [
       {
         permissionName: permissionNames.promotions,
-        actionNames: ['admin'],
+        actionNames: ["admin"],
       },
     ],
   },
   // Dependencies
   {
     item: {
-      key: 'dependencies',
+      key: "dependencies",
       order: 4,
       parentKey: `${permissionsPrefix}.rules`,
-      url: '/private/grades/dependencies',
+      url: "/private/grades/dependencies",
       label: {
-        en: 'Dependencies',
-        es: 'Dependencias',
+        en: "Dependencies",
+        es: "Dependencias",
       },
       disabled: true,
     },
     permissions: [
       {
         permissionName: permissionNames.dependencies,
-        actionNames: ['admin'],
+        actionNames: ["admin"],
       },
     ],
   },

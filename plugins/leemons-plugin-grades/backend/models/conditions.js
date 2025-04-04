@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -35,7 +35,7 @@ const schema = new mongoose.Schema(
       type: String,
     },
     target: {
-      type: 'Number',
+      type: "Number",
     },
     targetGradeScale: {
       // ref: 'plugins_grades::grade-scales',
@@ -60,6 +60,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-const conditionsModel = newModel(mongoose.connection, 'v1::grades_conditions', schema);
+const conditionsModel = newModel(
+  mongoose.connection,
+  "v1::grades_conditions",
+  schema
+);
 
 module.exports = { conditionsModel };

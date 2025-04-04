@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Controller } from 'react-hook-form';
-import { Select } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Controller } from "react-hook-form";
+import { Select } from "@bubbles-ui/components";
 
 const Program = ({ messages, errorMessages, selectData, form }) => {
   const {

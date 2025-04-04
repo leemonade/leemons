@@ -1,5 +1,5 @@
-import React, { useMemo, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useMemo, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 
 import {
   Box,
@@ -12,21 +12,21 @@ import {
   TotalLayoutContainer,
   TotalLayoutHeader,
   TotalLayoutStepContainer,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 import {
   AddCircleIcon,
   DeleteBinIcon,
   EditIcon,
   PluginScoresBasicIcon,
-} from '@bubbles-ui/icons/outline';
-import { useStore } from '@common/useStore';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { SelectCenter } from '@users/components/SelectCenter';
-import { cloneDeep, find, groupBy, map } from 'lodash';
+} from "@bubbles-ui/icons/outline";
+import { useStore } from "@common/useStore";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { SelectCenter } from "@users/components/SelectCenter";
+import { cloneDeep, find, groupBy, map } from "lodash";
 
-import { EvaluationDetail } from '../../../components/EvaluationDetail';
-import { activeMenuItemPromotions } from '../../../helpers/activeMenuItemPromotions';
+import { EvaluationDetail } from "../../../components/EvaluationDetail";
+import { activeMenuItemPromotions } from "../../../helpers/activeMenuItemPromotions";
 import {
   addGradeRequest,
   addGradeScaleRequest,
@@ -39,13 +39,13 @@ import {
   updateGradeRequest,
   updateGradeScaleRequest,
   updateGradeTagRequest,
-} from '../../../request';
+} from "../../../request";
 
-import { EmptyState } from '@grades/components/EvaluationDetail/components/EmptyState';
-import prefixPN from '@grades/helpers/prefixPN';
+import { EmptyState } from "@grades/components/EvaluationDetail/components/EmptyState";
+import prefixPN from "@grades/helpers/prefixPN";
 
 export default function EvaluationList() {
-  const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
+  const [t] = useTranslateLoader(prefixPN("evaluationsPage"));
   const [isDrawerOpened, setIsDrawerOpened] = useState(false);
   const scrollRef = useRef();
   const [store, render] = useStore();
@@ -54,8 +54,8 @@ export default function EvaluationList() {
 
   const headerValues = useMemo(
     () => ({
-      title: t('pageTitle'),
-      description: t('pageDescription'),
+      title: t("pageTitle"),
+      description: t("pageDescription"),
     }),
     [t]
   );
@@ -99,8 +99,10 @@ export default function EvaluationList() {
       ...tag,
       scale: tag.scale.number,
     }));
-    if (store.selectedGrade.type === 'numeric') {
-      store.selectedGrade.scales = store.selectedGrade.scales.sort((a, b) => a.number - b.number);
+    if (store.selectedGrade.type === "numeric") {
+      store.selectedGrade.scales = store.selectedGrade.scales.sort(
+        (a, b) => a.number - b.number
+      );
     }
     setIsDrawerOpened(true);
     render();
@@ -110,7 +112,7 @@ export default function EvaluationList() {
     try {
       await deleteGradeRequest(e.id);
       await onSelectCenter(store.center);
-      addSuccessAlert(t('successDelete'));
+      addSuccessAlert(t("successDelete"));
     } catch (err) {
       addErrorAlert(err.message);
     }
@@ -125,8 +127,11 @@ export default function EvaluationList() {
         if (!e.id) {
           // Add
           const add = { name: e.name, type: e.type, scales: [] };
-          if (e.type === 'numeric') add.isPercentage = !!e.isPercentage;
-          const { grade: addGrade } = await addGradeRequest({ ...add, center: store.center });
+          if (e.type === "numeric") add.isPercentage = !!e.isPercentage;
+          const { grade: addGrade } = await addGradeRequest({
+            ...add,
+            center: store.center,
+          });
           grade = addGrade;
         }
 
@@ -140,10 +145,10 @@ export default function EvaluationList() {
         if (!e.tags) e.tags = [];
         if (!e.scales) e.scales = [];
 
-        const currentTagIds = map(store.selectedGrade.tags, 'id');
-        const currentScaleIds = map(store.selectedGrade.scales, 'id');
-        const newTagIds = map(e.tags, 'id');
-        const newScaleIds = map(e.scales, 'id');
+        const currentTagIds = map(store.selectedGrade.tags, "id");
+        const currentScaleIds = map(store.selectedGrade.scales, "id");
+        const newTagIds = map(e.tags, "id");
+        const newScaleIds = map(e.scales, "id");
 
         e.scales = map(e.scales, (scale, index) => {
           const item = {
@@ -158,19 +163,27 @@ export default function EvaluationList() {
 
         // ES: Cogemos las ids actuales que no existan dentro de las nuevas para borrarlas
         tagsToDelete = currentTagIds.filter((id) => !newTagIds.includes(id));
-        scalesToDelete = currentScaleIds.filter((id) => !newScaleIds.includes(id));
+        scalesToDelete = currentScaleIds.filter(
+          (id) => !newScaleIds.includes(id)
+        );
         scalesToAdd = e.scales.filter((scale) => !scale.id);
         scalesToUpdate = e.scales.filter((scale) => scale.id);
 
         const [newScales, updatedScales] = await Promise.all([
           Promise.all(
-            scalesToAdd.map((scale) => addGradeScaleRequest({ ...scale, grade: grade.id }))
+            scalesToAdd.map((scale) =>
+              addGradeScaleRequest({ ...scale, grade: grade.id })
+            )
           ),
-          Promise.all(scalesToUpdate.map((scale) => updateGradeScaleRequest(scale))),
+          Promise.all(
+            scalesToUpdate.map((scale) => updateGradeScaleRequest(scale))
+          ),
           Promise.all(tagsToDelete.map((id) => deleteGradeTagRequest(id))),
         ]);
 
-        const scales = map(newScales, 'gradeScale').concat(map(updatedScales, 'gradeScale'));
+        const scales = map(newScales, "gradeScale").concat(
+          map(updatedScales, "gradeScale")
+        );
 
         // Update
         const update = {
@@ -188,7 +201,10 @@ export default function EvaluationList() {
             letter: tag.letter,
             description: tag.description,
             scale: find(
-              map(updatedGrade.scales, (s) => ({ ...s, number: s.number.toString() })),
+              map(updatedGrade.scales, (s) => ({
+                ...s,
+                number: s.number.toString(),
+              })),
               { number: tag.scale.toString() }
             ).id,
           };
@@ -205,15 +221,22 @@ export default function EvaluationList() {
         await Promise.all([
           Promise.all(scalesToDelete.map((id) => deleteGradeScaleRequest(id))),
           Promise.all(
-            tagsToAdd.map((tag) => addGradeTagRequest({ ...tag, grade: updatedGrade.id }))
+            tagsToAdd.map((tag) =>
+              addGradeTagRequest({ ...tag, grade: updatedGrade.id })
+            )
           ),
-          Promise.all(tagsToUpdate.map((tag) => updateGradeTagRequest({ ...tag }))),
+          Promise.all(
+            tagsToUpdate.map((tag) => updateGradeTagRequest({ ...tag }))
+          ),
         ]);
 
         store.selectedGrade = null;
         store.saving = false;
-        await Promise.all([onSelectCenter(store.center), activeMenuItemPromotions()]);
-        await addSuccessAlert(t('successSave'));
+        await Promise.all([
+          onSelectCenter(store.center),
+          activeMenuItemPromotions(),
+        ]);
+        await addSuccessAlert(t("successSave"));
         setIsDrawerOpened(false);
       }
     } catch (error) {
@@ -224,14 +247,17 @@ export default function EvaluationList() {
   }
 
   async function onBeforeRemoveScale(e, { tags, minScaleToPromote }) {
-    const tagsByScale = groupBy(tags, 'scale');
+    const tagsByScale = groupBy(tags, "scale");
 
     if (tagsByScale[e.number]) {
       addErrorAlert(t(`errorCode6003`));
       return false;
     }
 
-    if (!!minScaleToPromote && minScaleToPromote?.toString() === e.number?.toString()) {
+    if (
+      !!minScaleToPromote &&
+      minScaleToPromote?.toString() === e.number?.toString()
+    ) {
       addErrorAlert(t(`errorCode6004`));
       return false;
     }
@@ -241,7 +267,9 @@ export default function EvaluationList() {
         await canDeleteGradeScaleRequest(e.id);
       } catch (err) {
         if (err.code !== 6003 && err.code !== 6004) {
-          await addErrorAlert(err.code ? t(`errorCode${err.code}`) : err.message);
+          await addErrorAlert(
+            err.code ? t(`errorCode${err.code}`) : err.message
+          );
           return false;
         }
       }
@@ -251,7 +279,7 @@ export default function EvaluationList() {
 
   function getCenter() {
     const query = new URLSearchParams(window.location.search);
-    return query.get('center');
+    return query.get("center");
   }
 
   React.useEffect(() => {
@@ -262,24 +290,26 @@ export default function EvaluationList() {
   const columns = useMemo(
     () => [
       {
-        Header: t('nameLabel'),
-        accessor: 'name',
+        Header: t("nameLabel"),
+        accessor: "name",
       },
       {
-        Header: t('scaleLabel'),
-        accessor: 'type',
+        Header: t("scaleLabel"),
+        accessor: "type",
       },
       {
-        Header: t('minToPromoteLabel'),
-        id: 'minScaleToPromote',
+        Header: t("minToPromoteLabel"),
+        id: "minScaleToPromote",
         accessor: (data) => {
-          const scale = data.scales.find((scl) => scl.id === data.minScaleToPromote);
-          return scale && data.type === 'letter' ? scale.letter : scale.number;
+          const scale = data.scales.find(
+            (scl) => scl.id === data.minScaleToPromote
+          );
+          return scale && data.type === "letter" ? scale.letter : scale.number;
         },
       },
       {
-        Header: '',
-        accessor: 'actions',
+        Header: "",
+        accessor: "actions",
       },
     ],
     [t]
@@ -321,12 +351,16 @@ export default function EvaluationList() {
           icon={<PluginScoresBasicIcon />}
         >
           <Box>
-            <SelectCenter firstSelected value={store.center} onChange={onSelectCenter} />
+            <SelectCenter
+              firstSelected
+              value={store.center}
+              onChange={onSelectCenter}
+            />
           </Box>
         </TotalLayoutHeader>
       }
     >
-      <Stack justifyContent="center" ref={scrollRef} sx={{ overflowY: 'auto' }}>
+      <Stack justifyContent="center" ref={scrollRef} sx={{ overflowY: "auto" }}>
         <TotalLayoutStepContainer>
           {store.loading ? (
             <LoadingOverlay visible />
@@ -335,8 +369,12 @@ export default function EvaluationList() {
               {store?.grades?.length > 0 ? (
                 <>
                   <Box>
-                    <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onAdd}>
-                      {t('newEvaluationSystemButtonLabel')}
+                    <Button
+                      variant="link"
+                      leftIcon={<AddCircleIcon />}
+                      onClick={onAdd}
+                    >
+                      {t("newEvaluationSystemButtonLabel")}
                     </Button>
                   </Box>
                   <Box style={{ marginTop: 16 }}>
@@ -350,15 +388,19 @@ export default function EvaluationList() {
           )}
         </TotalLayoutStepContainer>
       </Stack>
-      <Drawer opened={isDrawerOpened} onClose={() => setIsDrawerOpened(false)} size="xl">
-        <Drawer.Header title={t('newEvaluationSystemButtonLabel')} />
+      <Drawer
+        opened={isDrawerOpened}
+        onClose={() => setIsDrawerOpened(false)}
+        size="xl"
+      >
+        <Drawer.Header title={t("newEvaluationSystemButtonLabel")} />
         <Drawer.Content>
           {store.selectedGrade && (
             <EvaluationDetail
               selectData={{
                 type: [
-                  { label: t('numbersTitle'), value: 'numeric' },
-                  { label: t('lettersTitle'), value: 'letter' },
+                  { label: t("numbersTitle"), value: "numeric" },
+                  { label: t("lettersTitle"), value: "letter" },
                 ],
               }}
               defaultValues={store.selectedGrade}
@@ -370,14 +412,14 @@ export default function EvaluationList() {
         <Drawer.Footer>
           <Stack justifyContent="space-between" fullWidth>
             <Button variant="link" onClick={() => setIsDrawerOpened(false)}>
-              {t('tableCancel')}
+              {t("tableCancel")}
             </Button>
             <Button
               onClick={form.handleSubmit(onSubmit)}
               loading={store.saving}
               disabled={store?.selectedGrade?.inUse}
             >
-              {t('saveButtonLabel')}
+              {t("saveButtonLabel")}
             </Button>
           </Stack>
         </Drawer.Footer>

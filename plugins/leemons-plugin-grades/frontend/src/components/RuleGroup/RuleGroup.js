@@ -1,13 +1,21 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-import { v4 as uuidv4 } from 'uuid';
-import { DeleteBinIcon, AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { DuplicateIcon, SwitchHorizontalIcon } from '@bubbles-ui/icons/outline';
-import { Paper, Box, Text, Button, Stack, Select, Menu } from '@bubbles-ui/components';
-import { RuleCondition } from '../RuleCondition/';
-import { LOGIC_OPERATORS } from '../ProgramRules';
-import { RuleGroupStyles } from './RuleGroup.styles';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
+import { v4 as uuidv4 } from "uuid";
+import { DeleteBinIcon, AddCircleIcon } from "@bubbles-ui/icons/solid";
+import { DuplicateIcon, SwitchHorizontalIcon } from "@bubbles-ui/icons/outline";
+import {
+  Paper,
+  Box,
+  Text,
+  Button,
+  Stack,
+  Select,
+  Menu,
+} from "@bubbles-ui/components";
+import { RuleCondition } from "../RuleCondition/";
+import { LOGIC_OPERATORS } from "../ProgramRules";
+import { RuleGroupStyles } from "./RuleGroup.styles";
 
 const PROPTYPES_SHAPE = PropTypes.shape({
   label: PropTypes.string,
@@ -94,17 +102,17 @@ const RuleGroup = ({
   placeholders,
   ...props
 }) => {
-  const { classes, cx } = RuleGroupStyles({}, { name: 'RuleGroup' });
+  const { classes, cx } = RuleGroupStyles({}, { name: "RuleGroup" });
 
   const [logicOperator, setLogicOperator] = useState(LOGIC_OPERATORS[0]);
 
   const addCondition = () => {
     group.conditions.push({
       id: uuidv4(),
-      source: '',
+      source: "",
       sourceIds: [],
-      data: '',
-      operator: '',
+      data: "",
+      operator: "",
       target: 0,
     });
     setData({ ...data });
@@ -118,10 +126,10 @@ const RuleGroup = ({
         conditions: [
           {
             id: uuidv4(),
-            source: '',
+            source: "",
             sourceIds: [],
-            data: '',
-            operator: '',
+            data: "",
+            operator: "",
             target: 0,
           },
         ],
@@ -179,7 +187,10 @@ const RuleGroup = ({
       id: uuidv4(),
       group: {
         operator: group.operator,
-        conditions: group.conditions.map((condition) => ({ ...condition, id: uuidv4() })),
+        conditions: group.conditions.map((condition) => ({
+          ...condition,
+          id: uuidv4(),
+        })),
       },
     });
     setData({ ...data });
@@ -270,7 +281,7 @@ const RuleGroup = ({
           )}
         </Droppable>
       </DragDropContext>
-      <Stack direction={'column'} alignItems={'start'}>
+      <Stack direction={"column"} alignItems={"start"}>
         <Button
           variant="light"
           compact
@@ -280,7 +291,13 @@ const RuleGroup = ({
         >
           {labels.newRule}
         </Button>
-        <Button variant="light" compact size="xs" leftIcon={<AddCircleIcon />} onClick={addGroup}>
+        <Button
+          variant="light"
+          compact
+          size="xs"
+          leftIcon={<AddCircleIcon />}
+          onClick={addGroup}
+        >
           {labels.newRuleGroup}
         </Button>
       </Stack>
@@ -289,9 +306,17 @@ const RuleGroup = ({
   return draggableId ? (
     <Draggable draggableId={draggableId} index={index}>
       {(provided, snapshot) => (
-        <Box {...provided.draggableProps} {...provided.dragHandleProps} ref={provided.innerRef}>
+        <Box
+          {...provided.draggableProps}
+          {...provided.dragHandleProps}
+          ref={provided.innerRef}
+        >
           <Box className={classes.ruleGroup}>
-            {<Box className={classes.logicOperator}>{getLogicOperatorSelect()}</Box>}
+            {
+              <Box className={classes.logicOperator}>
+                {getLogicOperatorSelect()}
+              </Box>
+            }
             <Paper fullWidth className={className} padding={3}>
               {ruleGroup}
             </Paper>

@@ -1,14 +1,17 @@
-const pluginPath = 'grades';
+const pluginPath = "grades";
 
 async function listDependencies({ page, size, center }) {
-  return leemons.api(`v1/${pluginPath}/dependency?page=${page}&size=${size}&center=${center}`, {
-    allAgents: true,
-  });
+  return leemons.api(
+    `v1/${pluginPath}/dependency?page=${page}&size=${size}&center=${center}`,
+    {
+      allAgents: true,
+    }
+  );
 }
 
 async function addDependency(body) {
   return leemons.api(`v1/${pluginPath}/dependency`, {
-    method: 'POST',
+    method: "POST",
     body,
     allAgents: true,
   });
@@ -16,7 +19,7 @@ async function addDependency(body) {
 
 async function updateDependency(body) {
   return leemons.api(`v1/${pluginPath}/dependency`, {
-    method: 'PUT',
+    method: "PUT",
     body,
     allAgents: true,
   });
@@ -24,7 +27,7 @@ async function updateDependency(body) {
 
 async function deleteDependency(id) {
   return leemons.api(`v1/${pluginPath}/dependency/${id}`, {
-    method: 'DELETE',
+    method: "DELETE",
     allAgents: true,
   });
 }

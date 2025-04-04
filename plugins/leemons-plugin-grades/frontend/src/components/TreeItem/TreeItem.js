@@ -1,13 +1,19 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { ActionButton, Box, Stack, Text, UnstyledButton } from '@bubbles-ui/components';
-import { FolderIcon } from '@bubbles-ui/icons/outline';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
+import React from "react";
+import PropTypes from "prop-types";
+import {
+  ActionButton,
+  Box,
+  Stack,
+  Text,
+  UnstyledButton,
+} from "@bubbles-ui/components";
+import { FolderIcon } from "@bubbles-ui/icons/outline";
+import { DeleteBinIcon } from "@bubbles-ui/icons/solid";
 
-import { TreeItemStyles } from './TreeItem.styles';
+import { TreeItemStyles } from "./TreeItem.styles";
 
 const TreeItem = ({ node, isSelected, onSelect, onDelete }) => {
-  const { classes } = TreeItemStyles({ isSelected }, { name: 'TreeItem' });
+  const { classes } = TreeItemStyles({ isSelected }, { name: "TreeItem" });
 
   return (
     <UnstyledButton className={classes.root} onClick={onSelect}>
@@ -22,7 +28,7 @@ const TreeItem = ({ node, isSelected, onSelect, onDelete }) => {
             </Text>
           </Stack>
         </Box>
-        <Box style={{ marginLeft: 'auto' }}>
+        <Box style={{ marginLeft: "auto" }}>
           <ActionButton
             onClick={(e) => {
               e.preventDefault();

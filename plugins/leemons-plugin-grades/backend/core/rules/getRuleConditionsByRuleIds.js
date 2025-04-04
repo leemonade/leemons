@@ -1,13 +1,15 @@
-const _ = require('lodash');
-const { getConditionsByRule } = require('../conditions/getConditionsByRule');
-const { getConditionGroupsByRule } = require('../condition-groups/getConditionGroupsByRule');
+const _ = require("lodash");
+const { getConditionsByRule } = require("../conditions/getConditionsByRule");
+const {
+  getConditionGroupsByRule,
+} = require("../condition-groups/getConditionGroupsByRule");
 
 async function getRuleConditionsByRuleIds({ ids, ctx }) {
   const result = {};
 
   const [rules, conditions, groupConditions] = await Promise.all([
     ctx.tx.db.Rules.find({ id: _.isArray(ids) ? ids : [ids] })
-      .select(['id', 'group'])
+      .select(["id", "group"])
       .lean(),
     getConditionsByRule({ ids, ctx }),
     getConditionGroupsByRule({ ids, ctx }),
@@ -26,22 +28,22 @@ async function getRuleConditionsByRuleIds({ ids, ctx }) {
     };
   });
 
-  const groupsById = _.keyBy(groupConditions, 'id');
-  const conditionsByGroup = _.groupBy(conditions, 'parentGroup');
+  const groupsById = _.keyBy(groupConditions, "id");
+  const conditionsByGroup = _.groupBy(conditions, "parentGroup");
 
   const toRemove = [
-    'id',
-    'created_at',
-    'updated_at',
-    'deleted_at',
-    'deleted',
-    'createdAt',
-    'updatedAt',
-    'deletedAt',
-    'isDeleted',
-    'rule',
-    'childGroup',
-    'parentGroup',
+    "id",
+    "created_at",
+    "updated_at",
+    "deleted_at",
+    "deleted",
+    "createdAt",
+    "updatedAt",
+    "deletedAt",
+    "isDeleted",
+    "rule",
+    "childGroup",
+    "parentGroup",
   ];
 
   _.forEach(groupConditions, (group) => {
@@ -56,17 +58,17 @@ async function getRuleConditionsByRuleIds({ ids, ctx }) {
 
   _.forEach(conditions, (condition) => {
     result[condition.rule].conditions.push(condition);
-    if (condition.source === 'program')
+    if (condition.source === "program")
       result[condition.rule].programIds.push(condition.sourceIds[0]);
-    if (condition.source === 'course')
+    if (condition.source === "course")
       result[condition.rule].courseIds.push(condition.sourceIds[0]);
-    if (condition.source === 'subject-type')
+    if (condition.source === "subject-type")
       result[condition.rule].subjectTypeIds.push(condition.sourceIds[0]);
-    if (condition.source === 'knowledge')
+    if (condition.source === "knowledge")
       result[condition.rule].knowledgeIds.push(condition.sourceIds[0]);
-    if (condition.source === 'subject')
+    if (condition.source === "subject")
       result[condition.rule].subjectIds.push(condition.sourceIds[0]);
-    if (condition.source === 'subject-group')
+    if (condition.source === "subject-group")
       result[condition.rule].subjectIds.push(...condition.sourceIds);
     if (condition.childGroup) {
       // eslint-disable-next-line no-param-reassign

@@ -1,8 +1,8 @@
-import hooks from 'leemons-hooks';
-import { enableMenuItemRequest } from '@grades/request';
+import { enableMenuItemRequest } from "@grades/request";
+import hooks from "@leemons/hooks";
 
 export async function activeMenuItemPromotions() {
-  const itemKey = 'promotions';
+  const itemKey = "promotions";
   await enableMenuItemRequest(itemKey);
-  await hooks.fireEvent('menu-builder:user:updateItem', itemKey);
+  await hooks.fireEvent("menu-builder:user:updateItem", itemKey);
 }

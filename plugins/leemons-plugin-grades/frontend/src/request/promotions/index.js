@@ -1,4 +1,4 @@
-const pluginPath = 'grades';
+const pluginPath = "grades";
 
 async function havePromotions() {
   return leemons.api(`v1/${pluginPath}/rules/have`, {
@@ -7,14 +7,17 @@ async function havePromotions() {
 }
 
 async function listPromotions({ page, size, center }) {
-  return leemons.api(`v1/${pluginPath}/rules?page=${page}&size=${size}&center=${center}`, {
-    allAgents: true,
-  });
+  return leemons.api(
+    `v1/${pluginPath}/rules?page=${page}&size=${size}&center=${center}`,
+    {
+      allAgents: true,
+    }
+  );
 }
 
 async function addPromotion(body) {
   return leemons.api(`v1/${pluginPath}/rules`, {
-    method: 'POST',
+    method: "POST",
     body,
     allAgents: true,
   });
@@ -22,7 +25,7 @@ async function addPromotion(body) {
 
 async function updatePromotion(body) {
   return leemons.api(`v1/${pluginPath}/rules`, {
-    method: 'PUT',
+    method: "PUT",
     body,
     allAgents: true,
   });
@@ -30,9 +33,15 @@ async function updatePromotion(body) {
 
 async function deletePromotion(id) {
   return leemons.api(`v1/${pluginPath}/rules/${id}`, {
-    method: 'DELETE',
+    method: "DELETE",
     allAgents: true,
   });
 }
 
-export { listPromotions, deletePromotion, addPromotion, updatePromotion, havePromotions };
+export {
+  listPromotions,
+  deletePromotion,
+  addPromotion,
+  updatePromotion,
+  havePromotions,
+};

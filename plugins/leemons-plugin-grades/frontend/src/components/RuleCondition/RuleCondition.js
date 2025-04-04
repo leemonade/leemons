@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
-import { Draggable } from 'react-beautiful-dnd';
-import { v4 as uuidv4 } from 'uuid';
-import { filter } from 'lodash';
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import PropTypes from "prop-types";
+import { Draggable } from "react-beautiful-dnd";
+import { v4 as uuidv4 } from "uuid";
+import { filter } from "lodash";
 import {
   Box,
   Menu,
@@ -13,11 +13,11 @@ import {
   Stack,
   Text,
   TextInput,
-} from '@bubbles-ui/components';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import { DuplicateIcon, SwitchHorizontalIcon } from '@bubbles-ui/icons/outline';
-import { LOGIC_OPERATORS } from '../ProgramRules';
-import { RuleConditionStyles } from './RuleCondition.styles';
+} from "@bubbles-ui/components";
+import { DeleteBinIcon } from "@bubbles-ui/icons/solid";
+import { DuplicateIcon, SwitchHorizontalIcon } from "@bubbles-ui/icons/outline";
+import { LOGIC_OPERATORS } from "../ProgramRules";
+import { RuleConditionStyles } from "./RuleCondition.styles";
 
 const PROPTYPES_SHAPE = PropTypes.shape({
   label: PropTypes.string,
@@ -98,80 +98,86 @@ const RuleCondition = ({
   placeholders,
   ...props
 }) => {
-  const { classes, cx } = RuleConditionStyles({}, { name: 'RuleCondition' });
+  const { classes, cx } = RuleConditionStyles({}, { name: "RuleCondition" });
 
-  const [sourceValue, setSourceValue] = useState(condition.source || '');
-  const [sourceIdsValue, setSourceIdsValue] = useState(condition.sourceIds || []);
-  const [dataType, setDataType] = useState(condition.data || '');
-  const [operatorValue, setOperatorValue] = useState(condition.operator || '');
-  const [targetValue, setTargetValue] = useState(condition.target || '');
+  const [sourceValue, setSourceValue] = useState(condition.source || "");
+  const [sourceIdsValue, setSourceIdsValue] = useState(
+    condition.sourceIds || []
+  );
+  const [dataType, setDataType] = useState(condition.data || "");
+  const [operatorValue, setOperatorValue] = useState(condition.operator || "");
+  const [targetValue, setTargetValue] = useState(condition.target || "");
   const isFirstRenderRef = useRef(true);
 
   const setNewData = (e, field) => {
-    if (field === 'source') {
+    if (field === "source") {
       condition[field] = e;
       condition.sourceIds = [];
       setSourceIdsValue([]);
-      if (e === 'program') {
+      if (e === "program") {
         condition.sourceIds = [program.value];
         setSourceIdsValue([program.value]);
       }
     }
-    if (field === 'sourceIds') setSourceIdsValue(e);
-    if (field === 'data' && e === 'enrolled') {
+    if (field === "sourceIds") setSourceIdsValue(e);
+    if (field === "data" && e === "enrolled") {
       delete condition.target;
       delete condition.operator;
     }
-    if ((field === 'operator' || field === 'target') && condition.data === 'enrolled') return;
+    if (
+      (field === "operator" || field === "target") &&
+      condition.data === "enrolled"
+    )
+      return;
     condition[field] = e;
     setData({ ...data });
   };
 
   const getSourceSelect = (value) => {
     switch (value) {
-      case 'course':
+      case "course":
         return (
           <MultiSelect
             data={courses}
             placeholder={placeholders.selectCourse}
             value={sourceIdsValue}
-            onChange={(e) => setNewData(e, 'sourceIds')}
+            onChange={(e) => setNewData(e, "sourceIds")}
           />
         );
-      case 'knowledge':
+      case "knowledge":
         return (
           <MultiSelect
             data={knowledges}
             placeholder={placeholders.selectKnowledge}
             value={sourceIdsValue}
-            onChange={(e) => setNewData(e, 'sourceIds')}
+            onChange={(e) => setNewData(e, "sourceIds")}
           />
         );
-      case 'subject':
+      case "subject":
         return (
           <MultiSelect
             data={subjects}
             placeholder={placeholders.selectSubject}
             value={sourceIdsValue}
-            onChange={(e) => setNewData(e, 'sourceIds')}
+            onChange={(e) => setNewData(e, "sourceIds")}
           />
         );
-      case 'subject-type':
+      case "subject-type":
         return (
           <MultiSelect
             data={subjectTypes}
             placeholder={placeholders.selectSubjectType}
             value={sourceIdsValue}
-            onChange={(e) => setNewData(e, 'sourceIds')}
+            onChange={(e) => setNewData(e, "sourceIds")}
           />
         );
-      case 'subject-group':
+      case "subject-group":
         return (
           <MultiSelect
             data={subjectGroups}
             placeholder={placeholders.selectSubjectGroup}
             value={sourceIdsValue}
-            onChange={(e) => setNewData(e, 'sourceIds')}
+            onChange={(e) => setNewData(e, "sourceIds")}
           />
         );
       default:
@@ -209,11 +215,11 @@ const RuleCondition = ({
   };
 
   const isTargetValid = () => {
-    if (dataType === 'enrolled') return true;
-    if (targetValue === '') return false;
+    if (dataType === "enrolled") return true;
+    if (targetValue === "") return false;
     if (targetValue === 0 || targetValue < 0) return false;
     if (targetValue === undefined || targetValue === null) return false;
-    if (targetValue === '0') return false;
+    if (targetValue === "0") return false;
 
     return true;
   };
@@ -231,20 +237,20 @@ const RuleCondition = ({
   const turnToGroup = () => {
     group.conditions.splice(index, 1, {
       id: uuidv4(),
-      group: { operator: 'and', conditions: [condition] },
+      group: { operator: "and", conditions: [condition] },
     });
     setData({ ...data });
   };
 
   const resetValues = (withDataType) => {
     if (withDataType) {
-      setDataType('');
-      setNewData('', 'data');
+      setDataType("");
+      setNewData("", "data");
     }
-    setOperatorValue('');
+    setOperatorValue("");
     setTargetValue(0);
-    setNewData('', 'operator');
-    setNewData(0, 'target');
+    setNewData("", "operator");
+    setNewData(0, "target");
   };
 
   const filteredDataTypes = useMemo(() => {
@@ -252,21 +258,21 @@ const RuleCondition = ({
     if (sourceValue && dataTypes) {
       let filters = [];
       switch (sourceValue) {
-        case 'program':
-          filters = ['cpp', 'cpc', 'gpa'];
+        case "program":
+          filters = ["cpp", "cpc", "gpa"];
           break;
-        case 'course':
-          filters = ['cpc', 'gpa'];
+        case "course":
+          filters = ["cpc", "gpa"];
           break;
-        case 'knowledge':
-        case 'subject-type':
-          filters = ['cpp', 'cpc', 'gpa', 'cpcg'];
+        case "knowledge":
+        case "subject-type":
+          filters = ["cpp", "cpc", "gpa", "cpcg"];
           break;
-        case 'subject':
-          filters = ['grade', 'enrolled'];
+        case "subject":
+          filters = ["grade", "enrolled"];
           break;
-        case 'subject-group':
-          filters = ['gpa', 'credits'];
+        case "subject-group":
+          filters = ["gpa", "credits"];
           break;
         default:
           break;
@@ -280,7 +286,7 @@ const RuleCondition = ({
   useEffect(() => {
     if (isFirstRenderRef.current) return;
     setTargetValue(0);
-    setNewData(0, 'target');
+    setNewData(0, "target");
   }, [gradeSystem]);
 
   useEffect(() => {
@@ -308,7 +314,7 @@ const RuleCondition = ({
   }, [edited]);
 
   useEffect(() => {
-    if (sourceValue === 'program' && condition.sourceIds[0] !== program.value) {
+    if (sourceValue === "program" && condition.sourceIds[0] !== program.value) {
       condition.sourceIds = [program.value];
       setSourceIdsValue([program.value]);
       setData({ ...data });
@@ -336,7 +342,9 @@ const RuleCondition = ({
           {...provided.dragHandleProps}
         >
           <Box className={classes.root}>
-            <Box className={classes.logicOperator}>{getLogicOperatorSelect()}</Box>
+            <Box className={classes.logicOperator}>
+              {getLogicOperatorSelect()}
+            </Box>
             <Stack fullWidth spacing={1}>
               {/* <Box className={classes.sourceSelects} skipFlex> */}
               <Select
@@ -345,7 +353,7 @@ const RuleCondition = ({
                 value={sourceValue}
                 onChange={(e) => {
                   setSourceValue(e);
-                  setNewData(e, 'source');
+                  setNewData(e, "source");
                   resetValues(true);
                 }}
                 disabled={!program}
@@ -360,15 +368,16 @@ const RuleCondition = ({
                 value={dataType}
                 onChange={(e) => {
                   setDataType(e);
-                  setNewData(e, 'data');
+                  setNewData(e, "data");
                   resetValues();
                 }}
                 disabled={
-                  !sourceValue || (sourceValue !== 'program' && sourceIdsValue.length === 0)
+                  !sourceValue ||
+                  (sourceValue !== "program" && sourceIdsValue.length === 0)
                 }
                 skipFlex
               />
-              {dataType !== 'enrolled' && (
+              {dataType !== "enrolled" && (
                 <>
                   <Select
                     data={operators || []}
@@ -376,35 +385,39 @@ const RuleCondition = ({
                     value={operatorValue}
                     onChange={(e) => {
                       setOperatorValue(e);
-                      setNewData(e, 'operator');
+                      setNewData(e, "operator");
                       setTargetValue(0);
-                      setNewData(0, 'target');
+                      setNewData(0, "target");
                     }}
                     disabled={!dataType}
                   />
-                  {dataType === 'gpa' || dataType === 'grade' ? (
+                  {dataType === "gpa" || dataType === "grade" ? (
                     <Select
                       data={grades || []}
                       placeholder={placeholders.selectTargetGrade}
                       value={targetValue}
                       onChange={(e) => {
                         setTargetValue(e);
-                        setNewData(e, 'target');
+                        setNewData(e, "target");
                       }}
                       disabled={!operatorValue || !gradeSystem}
-                      error={error ? errorMessage || 'Please select a grade' : null}
+                      error={
+                        error ? errorMessage || "Please select a grade" : null
+                      }
                       required
                     />
-                  ) : operatorValue === 'contains' ? (
+                  ) : operatorValue === "contains" ? (
                     <TextInput
                       placeholder={placeholders.enterTarget}
                       value={targetValue}
                       onChange={(e) => {
                         setTargetValue(e);
-                        setNewData(e, 'target');
+                        setNewData(e, "target");
                       }}
                       disabled={!operatorValue || !gradeSystem}
-                      error={error ? errorMessage || 'Please select a grade' : null}
+                      error={
+                        error ? errorMessage || "Please select a grade" : null
+                      }
                       required
                     />
                   ) : (
@@ -414,10 +427,12 @@ const RuleCondition = ({
                       value={targetValue}
                       onChange={(e) => {
                         setTargetValue(e);
-                        setNewData(e, 'target');
+                        setNewData(e, "target");
                       }}
                       disabled={!operatorValue || !gradeSystem}
-                      error={error ? errorMessage || 'Please select a grade' : null}
+                      error={
+                        error ? errorMessage || "Please select a grade" : null
+                      }
                       required
                     />
                   )}

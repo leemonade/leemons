@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const { validateUpdateGrade } = require('../../validations/forms');
-const { gradeByIds } = require('./gradeByIds');
+const _ = require("lodash");
+const { validateUpdateGrade } = require("../../validations/forms");
+const { gradeByIds } = require("./gradeByIds");
 
 async function updateGrade({ data, ctx }) {
   await validateUpdateGrade({ data, ctx });

@@ -4,30 +4,35 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const _ = require('lodash');
-const { LeemonsValidator } = require('@leemons/validator');
+const _ = require("lodash");
+const { LeemonsValidator } = require("@leemons/validator");
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { listGrades } = require('../../core/grades');
-const { listRules, addRule, updateRule, removeRule } = require('../../core/rules');
-const { findOne, update } = require('../../core/settings');
+} = require("@leemons/middlewares");
+const { listGrades } = require("../../core/grades");
+const {
+  listRules,
+  addRule,
+  updateRule,
+  removeRule,
+} = require("../../core/rules");
+const { findOne, update } = require("../../core/settings");
 
 /** @type {ServiceSchema} */
 module.exports = {
   // TODO Mirar si deberiamos de meter permisos a los endpoinds
   findOneRest: {
     rest: {
-      path: '/',
-      method: 'GET',
+      path: "/",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'grades.rules': {
-            actions: ['admin', 'view'],
+          "grades.rules": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -39,28 +44,28 @@ module.exports = {
   },
   updateRest: {
     rest: {
-      path: '/',
-      method: 'POST',
+      path: "/",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'grades.rules': {
-            actions: ['admin', 'edit'],
+          "grades.rules": {
+            actions: ["admin", "edit"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
           hideWelcome: {
-            type: 'boolean',
+            type: "boolean",
           },
           configured: {
-            type: 'boolean',
+            type: "boolean",
           },
         },
         required: [],
@@ -78,34 +83,36 @@ module.exports = {
   },
   enableMenuItemRest: {
     rest: {
-      path: '/enable-menu-item',
-      method: 'POST',
+      path: "/enable-menu-item",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'grades.rules': {
-            actions: ['admin', 'edit'],
+          "grades.rules": {
+            actions: ["admin", "edit"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
-        properties: { key: { type: 'string' } },
-        required: ['key'],
+        type: "object",
+        properties: { key: { type: "string" } },
+        required: ["key"],
       });
       if (validator.validate(ctx.params)) {
-        const config = await ctx.tx.call('deployment-manager.getConfigRest', { allConfig: true });
+        const config = await ctx.tx.call("deployment-manager.getConfigRest", {
+          allConfig: true,
+        });
         const disableMenuKeys = config[ctx.prefixPNV()]?.deny?.menu;
         let toRemove = false;
         if (disableMenuKeys?.indexOf(ctx.params.key) >= 0) {
           toRemove = true;
         }
         if (!toRemove) {
-          const item = await ctx.tx.call('menu-builder.menuItem.enable', {
+          const item = await ctx.tx.call("menu-builder.menuItem.enable", {
             key: ctx.prefixPN(ctx.params.key),
           });
           return { status: 200, item };

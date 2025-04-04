@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { RuleGroup } from '../../RuleGroup';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import { RuleGroup } from "../../RuleGroup";
 
 const Conditions = ({ messages, errorMessages, selectData, form }) => {
   const {
@@ -13,19 +13,19 @@ const Conditions = ({ messages, errorMessages, selectData, form }) => {
   const [edited, setEdited] = useState([]);
   const [error, setError] = useState(false);
 
-  const program = watch('program');
+  const program = watch("program");
 
-  register('group', {
+  register("group", {
     validate: () => {
       const err = edited.filter((item) => item.value === false).length !== 0;
       setError(err);
       return !err;
     },
   });
-  const group = watch('group');
+  const group = watch("group");
 
   function onChange(e) {
-    setValue('group', e);
+    setValue("group", e);
   }
 
   return (

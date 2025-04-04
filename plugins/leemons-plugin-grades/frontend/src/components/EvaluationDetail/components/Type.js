@@ -1,9 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Controller } from 'react-hook-form';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@grades/helpers/prefixPN';
-import { Select } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Controller } from "react-hook-form";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@grades/helpers/prefixPN";
+import { Select } from "@bubbles-ui/components";
 
 const Type = ({ form, selectData, inUse }) => {
   const {
@@ -11,22 +11,22 @@ const Type = ({ form, selectData, inUse }) => {
     control,
     formState: { errors },
   } = form;
-  const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
-  const disabled = !!watch('id') || inUse;
+  const [t] = useTranslateLoader(prefixPN("evaluationsPage"));
+  const disabled = !!watch("id") || inUse;
   return (
     <Controller
       name="type"
       control={control}
       rules={{
-        required: t('errorTypeRequired'),
+        required: t("errorTypeRequired"),
       }}
       render={({ field }) => (
         <Select
-          label={t('scaleTypesLabel')}
+          label={t("scaleTypesLabel")}
           data={selectData.type}
-          error={errors.type ? t('errorTypeRequired') : null}
+          error={errors.type ? t("errorTypeRequired") : null}
           required
-          placeholder={t('scaleTypesPlaceholder')}
+          placeholder={t("scaleTypesPlaceholder")}
           {...field}
           disabled={disabled}
           onChange={(value) => field.onChange(value)}

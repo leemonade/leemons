@@ -1,9 +1,12 @@
-const pluginPath = 'grades';
+const pluginPath = "grades";
 
 async function listGrades({ page, size, center }) {
-  return leemons.api(`v1/${pluginPath}/grades?page=${page}&size=${size}&center=${center}`, {
-    allAgents: true,
-  });
+  return leemons.api(
+    `v1/${pluginPath}/grades?page=${page}&size=${size}&center=${center}`,
+    {
+      allAgents: true,
+    }
+  );
 }
 
 async function haveGrades() {
@@ -14,7 +17,7 @@ async function haveGrades() {
 
 async function addGrade(body) {
   return leemons.api(`v1/${pluginPath}/grades`, {
-    method: 'POST',
+    method: "POST",
     body,
     allAgents: true,
   });
@@ -22,7 +25,7 @@ async function addGrade(body) {
 
 async function updateGrade(body) {
   return leemons.api(`v1/${pluginPath}/grades`, {
-    method: 'PUT',
+    method: "PUT",
     body,
     allAgents: true,
   });
@@ -30,21 +33,21 @@ async function updateGrade(body) {
 
 async function getGrade(id) {
   return leemons.api(`v1/${pluginPath}/grades/${id}`, {
-    method: 'GET',
+    method: "GET",
     allAgents: true,
   });
 }
 
 async function deleteGrade(id) {
   return leemons.api(`v1/${pluginPath}/grades/${id}`, {
-    method: 'DELETE',
+    method: "DELETE",
     allAgents: true,
   });
 }
 
 async function addGradeTag(body) {
   return leemons.api(`v1/${pluginPath}/gradeTags`, {
-    method: 'POST',
+    method: "POST",
     body,
     allAgents: true,
   });
@@ -52,7 +55,7 @@ async function addGradeTag(body) {
 
 async function updateGradeTag(body) {
   return leemons.api(`v1/${pluginPath}/gradeTags`, {
-    method: 'PUT',
+    method: "PUT",
     body,
     allAgents: true,
   });
@@ -60,14 +63,14 @@ async function updateGradeTag(body) {
 
 async function deleteGradeTag(id) {
   return leemons.api(`v1/${pluginPath}/gradeTags/${id}`, {
-    method: 'DELETE',
+    method: "DELETE",
     allAgents: true,
   });
 }
 
 async function addGradeScale(body) {
   return leemons.api(`v1/${pluginPath}/gradeScales`, {
-    method: 'POST',
+    method: "POST",
     body,
     allAgents: true,
   });
@@ -75,7 +78,7 @@ async function addGradeScale(body) {
 
 async function updateGradeScale(body) {
   return leemons.api(`v1/${pluginPath}/gradeScales`, {
-    method: 'PUT',
+    method: "PUT",
     body,
     allAgents: true,
   });
@@ -83,14 +86,14 @@ async function updateGradeScale(body) {
 
 async function deleteGradeScale(id) {
   return leemons.api(`v1/${pluginPath}/gradeScales/${id}`, {
-    method: 'DELETE',
+    method: "DELETE",
     allAgents: true,
   });
 }
 
 async function canDeleteGradeScale(id) {
   return leemons.api(`v1/${pluginPath}/gradeScales/${id}`, {
-    method: 'DELETE',
+    method: "DELETE",
     allAgents: true,
   });
 }

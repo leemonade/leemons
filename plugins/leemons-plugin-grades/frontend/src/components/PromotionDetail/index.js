@@ -1,33 +1,39 @@
 /* eslint-disable no-param-reassign */
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { useForm } from 'react-hook-form';
-import { Box, Button, Col, ContextContainer, Grid } from '@bubbles-ui/components';
-import { isString, map } from 'lodash';
-import { EvaluationDetailStyles } from './styles';
-import { Name } from './components/Name';
-import { Program } from './components/Program';
-import { Conditions } from './components/Conditions';
-import { Subject } from './components/Subject';
-import { Grades } from './components/Grades';
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
+import { useForm } from "react-hook-form";
+import {
+  Box,
+  Button,
+  Col,
+  ContextContainer,
+  Grid,
+} from "@bubbles-ui/components";
+import { isString, map } from "lodash";
+import { EvaluationDetailStyles } from "./styles";
+import { Name } from "./components/Name";
+import { Program } from "./components/Program";
+import { Conditions } from "./components/Conditions";
+import { Subject } from "./components/Subject";
+import { Grades } from "./components/Grades";
 
 export const PROMOTION_DETAIL_FORM_MESSAGES = {
-  nameLabel: 'Promotion name',
-  subjectLabel: 'Subject',
-  saveButtonLabel: 'Save',
-  programLabel: 'Program',
-  programPlaceholder: 'Select one...',
-  gradeLabel: 'System evaluation',
-  gradePlaceholder: 'Select one...',
-  subjectPlaceholder: 'Select one...',
+  nameLabel: "Promotion name",
+  subjectLabel: "Subject",
+  saveButtonLabel: "Save",
+  programLabel: "Program",
+  programPlaceholder: "Select one...",
+  gradeLabel: "System evaluation",
+  gradePlaceholder: "Select one...",
+  subjectPlaceholder: "Select one...",
 };
 
 export const PROMOTION_DETAIL_FORM_ERROR_MESSAGES = {
-  nameRequired: 'Field required',
-  programRequired: 'Field required',
-  gradeRequired: 'Field required',
-  subjectRequired: 'Field required',
-  conditionErrorMessage: 'Please select a grade',
+  nameRequired: "Field required",
+  programRequired: "Field required",
+  gradeRequired: "Field required",
+  subjectRequired: "Field required",
+  conditionErrorMessage: "Please select a grade",
 };
 
 const PromotionDetail = ({
@@ -76,8 +82,8 @@ const PromotionDetail = ({
   useEffect(() => {
     const subscription = watch((formData, event) => {
       onChange(formData, event);
-      if (event.name === 'grade') {
-        setValue('group', removeAllConditionsScaleTargets(formData.group));
+      if (event.name === "grade") {
+        setValue("group", removeAllConditionsScaleTargets(formData.group));
       }
     });
     return () => subscription.unsubscribe();

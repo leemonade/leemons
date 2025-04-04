@@ -1,10 +1,10 @@
-const _ = require('lodash');
-const { validateAddConditionGroup } = require('../../validations/forms');
+const _ = require("lodash");
+const { validateAddConditionGroup } = require("../../validations/forms");
 
 // eslint-disable-next-line no-use-before-define
 module.exports = { addConditionGroup };
 
-const { addCondition } = require('../conditions/addCondition');
+const { addCondition } = require("../conditions/addCondition");
 
 async function addConditionGroup({ data, ctx }) {
   await validateAddConditionGroup({ data });
@@ -18,7 +18,11 @@ async function addConditionGroup({ data, ctx }) {
     await Promise.all(
       _.map(conditions, async (condition) =>
         addCondition({
-          data: { ...condition, rule: data.rule, parentGroup: conditionGroup.id },
+          data: {
+            ...condition,
+            rule: data.rule,
+            parentGroup: conditionGroup.id,
+          },
           ctx,
         })
       )

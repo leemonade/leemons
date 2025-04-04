@@ -1,7 +1,7 @@
 export const allCenterEvaluationSystemsKeys = [
   {
-    plugin: 'plugin.grades',
-    scope: 'center-evaluation-systems',
+    plugin: "plugin.grades",
+    scope: "center-evaluation-systems",
   },
 ];
 

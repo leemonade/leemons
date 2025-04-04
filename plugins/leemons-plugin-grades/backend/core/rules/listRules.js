@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
-const { ruleByIds } = require('./ruleByIds');
+const _ = require("lodash");
+const { mongoDBPaginate } = require("@leemons/mongodb-helpers");
+const { ruleByIds } = require("./ruleByIds");
 
 async function listRules({ page, size, center, isDependency = false, ctx }) {
   const results = await mongoDBPaginate({
@@ -10,7 +10,7 @@ async function listRules({ page, size, center, isDependency = false, ctx }) {
     query: { center, isDependency },
   });
 
-  results.items = await ruleByIds({ ids: _.map(results.items, 'id'), ctx });
+  results.items = await ruleByIds({ ids: _.map(results.items, "id"), ctx });
 
   return results;
 }

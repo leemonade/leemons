@@ -1,23 +1,23 @@
-import { createStyles, getFontExpressive } from '@bubbles-ui/components';
+import { createStyles, getFontExpressive } from "@bubbles-ui/components";
 
 const EvaluationDetailStyles = createStyles((theme) => ({
   root: {
-    ...getFontExpressive(theme.fontSizes['2']),
-    display: 'flex',
-    flexDirection: 'column',
+    ...getFontExpressive(theme.fontSizes["2"]),
+    display: "flex",
+    flexDirection: "column",
     gap: 30,
   },
   containerFiftyPercent: {
-    width: '50%',
+    width: "50%",
   },
   containerTwentyPercent: {
-    width: '20%',
+    width: "20%",
   },
   inputsTableHeader: {
-    display: 'flex',
+    display: "flex",
     gap: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   scalesDescription: {
     width: 362,

@@ -4,12 +4,12 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const _ = require('lodash');
-const { LeemonsValidator } = require('@leemons/validator');
+const _ = require("lodash");
+const { LeemonsValidator } = require("@leemons/validator");
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 const {
   listRules,
   haveRules,
@@ -17,26 +17,26 @@ const {
   updateRule,
   removeRule,
   processRulesForUserAgent,
-} = require('../../core/rules');
+} = require("../../core/rules");
 
 /** @type {ServiceSchema} */
 module.exports = {
   // TODO Mirar si deberiamos de meter permisos a los endpoinds
   listRulesRest: {
     rest: {
-      path: '/',
-      method: 'GET',
+      path: "/",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-          center: { type: ['string'] },
+          page: { type: ["number", "string"] },
+          size: { type: ["number", "string"] },
+          center: { type: ["string"] },
         },
-        required: ['page', 'size'],
+        required: ["page", "size"],
         additionalProperties: false,
       });
 
@@ -57,8 +57,8 @@ module.exports = {
   },
   haveRulesRest: {
     rest: {
-      path: '/have',
-      method: 'GET',
+      path: "/have",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -68,8 +68,8 @@ module.exports = {
   },
   postRuleRest: {
     rest: {
-      path: '/',
-      method: 'POST',
+      path: "/",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -79,8 +79,8 @@ module.exports = {
   },
   putRuleRest: {
     rest: {
-      path: '/',
-      method: 'PUT',
+      path: "/",
+      method: "PUT",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -90,8 +90,8 @@ module.exports = {
   },
   deleteRuleRest: {
     rest: {
-      path: '/:id',
-      method: 'DELETE',
+      path: "/:id",
+      method: "DELETE",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -101,8 +101,8 @@ module.exports = {
   },
   postRuleProcessRest: {
     rest: {
-      path: '/process',
-      method: 'POST',
+      path: "/process",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

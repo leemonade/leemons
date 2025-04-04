@@ -1,25 +1,36 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { Controller } from 'react-hook-form';
-import { Select, TableInput, TextInput, Box, Button, Stack } from '@bubbles-ui/components';
-import { map } from 'lodash';
-import { AddCircleIcon } from '@bubbles-ui/icons/outline';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@grades/helpers/prefixPN';
-import { EvaluationDetailStyles } from '../styles';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import { Controller } from "react-hook-form";
+import {
+  Select,
+  TableInput,
+  TextInput,
+  Box,
+  Button,
+  Stack,
+} from "@bubbles-ui/components";
+import { map } from "lodash";
+import { AddCircleIcon } from "@bubbles-ui/icons/outline";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@grades/helpers/prefixPN";
+import { EvaluationDetailStyles } from "../styles";
 
 const OtherTags = ({ onBeforeRemove, form, inUse }) => {
-  const [t] = useTranslateLoader(prefixPN('evaluationsPage'));
+  const [t] = useTranslateLoader(prefixPN("evaluationsPage"));
   const { classes } = EvaluationDetailStyles({});
   const { control, watch, setValue, getValues } = form;
-  const [newTag, setNewTag] = useState({ letter: '', description: '', scale: '' });
+  const [newTag, setNewTag] = useState({
+    letter: "",
+    description: "",
+    scale: "",
+  });
   const addNewTag = () => {
-    const tags = getValues('tags') || [];
+    const tags = getValues("tags") || [];
     const updatedTags = [...tags, newTag];
-    setValue('tags', updatedTags);
-    setNewTag({ letter: '', description: '', scale: '' }); // Resetear el estado local después de agregar
+    setValue("tags", updatedTags);
+    setNewTag({ letter: "", description: "", scale: "" }); // Resetear el estado local después de agregar
   };
-  const scales = watch('scales');
+  const scales = watch("scales");
   let data = [];
   if (scales) {
     data = map(scales, ({ number }) => ({
@@ -31,42 +42,42 @@ const OtherTags = ({ onBeforeRemove, form, inUse }) => {
   const tableInputConfig = {
     columns: [
       {
-        Header: t('letterLabel'),
-        accessor: 'letter',
+        Header: t("letterLabel"),
+        accessor: "letter",
         input: {
           node: <TextInput />,
-          rules: { required: t('errorTypeRequired'), maxLength: 4 },
+          rules: { required: t("errorTypeRequired"), maxLength: 4 },
         },
       },
       {
-        Header: t('scalesDescriptionLabel'),
-        accessor: 'description',
+        Header: t("scalesDescriptionLabel"),
+        accessor: "description",
         input: {
           node: <TextInput />,
-          rules: { required: t('errorTypeRequired') },
+          rules: { required: t("errorTypeRequired") },
         },
         cellStyle: {
-          maxWidth: '50px',
+          maxWidth: "50px",
         },
         style: {
-          maxWidth: '50px',
+          maxWidth: "50px",
         },
       },
       {
-        Header: t('otherTagsRelationScaleLabel'),
-        accessor: 'scale',
+        Header: t("otherTagsRelationScaleLabel"),
+        accessor: "scale",
         input: {
           node: <Select data={data} />,
-          rules: { required: t('errorTypeRequired') },
+          rules: { required: t("errorTypeRequired") },
         },
       },
     ],
     labels: {
-      add: t('tableAdd'),
-      remove: t('tableRemove'),
-      edit: t('tableEdit'),
-      accept: t('tableAccept'),
-      cancel: t('tableCancel'),
+      add: t("tableAdd"),
+      remove: t("tableRemove"),
+      edit: t("tableEdit"),
+      accept: t("tableAccept"),
+      cancel: t("tableCancel"),
     },
   };
 
@@ -75,31 +86,40 @@ const OtherTags = ({ onBeforeRemove, form, inUse }) => {
       <Box className={classes.inputsTableHeader}>
         <Box className={classes.containerTwentyPercent}>
           <TextInput
-            label={t('letterLabel')}
+            label={t("letterLabel")}
             value={newTag.letter}
             disabled={inUse}
-            onChange={(valueLetter) => setNewTag({ ...newTag, letter: valueLetter })}
-            placeholder={t('addLetterPlaceholder')}
+            onChange={(valueLetter) =>
+              setNewTag({ ...newTag, letter: valueLetter })
+            }
+            placeholder={t("addLetterPlaceholder")}
           />
         </Box>
         <TextInput
-          label={t('scalesDescriptionLabel')}
+          label={t("scalesDescriptionLabel")}
           value={newTag.description}
           disabled={inUse}
-          onChange={(valueDescription) => setNewTag({ ...newTag, description: valueDescription })}
-          placeholder={t('addTextPlaceholder')}
+          onChange={(valueDescription) =>
+            setNewTag({ ...newTag, description: valueDescription })
+          }
+          placeholder={t("addTextPlaceholder")}
         />
         <Select
-          label={t('otherTagsRelationScaleLabel')}
+          label={t("otherTagsRelationScaleLabel")}
           data={data}
           value={newTag.scale}
           disabled={inUse}
           onChange={(value) => setNewTag({ ...newTag, scale: value })}
-          placeholder={t('addCorelationPlaceholder')}
+          placeholder={t("addCorelationPlaceholder")}
         />
         <Box className={classes.tableButton}>
-          <Button onClick={addNewTag} variant="link" leftIcon={<AddCircleIcon />} disabled={inUse}>
-            {t('tableAdd')}
+          <Button
+            onClick={addNewTag}
+            variant="link"
+            leftIcon={<AddCircleIcon />}
+            disabled={inUse}
+          >
+            {t("tableAdd")}
           </Button>
         </Box>
       </Box>

@@ -1,21 +1,29 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 const groupOperators = {
-  and: '&&',
-  or: '||',
+  and: "&&",
+  or: "||",
 };
 
 const conditionOperators = {
-  gte: '>=',
-  lte: '<=',
-  gt: '>',
-  lt: '<',
-  eq: '==',
-  neq: '!=',
+  gte: ">=",
+  lte: "<=",
+  gt: ">",
+  lt: "<",
+  eq: "==",
+  neq: "!=",
 };
 
 class RuleProcess {
-  constructor(rule, ruleConditions, grade, classes, notes, subjectCredits, userAgentClasses) {
+  constructor(
+    rule,
+    ruleConditions,
+    grade,
+    classes,
+    notes,
+    subjectCredits,
+    userAgentClasses
+  ) {
     this.logs = true;
     this.rule = rule;
     this.ruleConditions = ruleConditions;
@@ -29,14 +37,18 @@ class RuleProcess {
   // ES: Comprueba si todos los campos pasados en el constructor estan bien configurados como para poder procesar las reglas
   // EN: Checks if all the fields passed in the constructor are configured properly to be able to process the rules
   checkIfAllDataIsProvided() {
-    if (!this.rule) throw new Error('Rule is not provided');
-    if (!this.ruleConditions) throw new Error('Rule conditions are not provided');
-    if (!this.grade) throw new Error('Grade is not provided');
-    if (!this.classes) throw new Error('Classes are not provided');
-    if (!this.notes) throw new Error('Notes are not provided');
-    if (!this.subjectCredits) throw new Error('Subject credits are not provided');
-    if (!this.userAgentClasses) throw new Error('User agent classes are not provided');
-    if (!this.grade.minScaleToPromote) throw new Error('Min scale to promote is not provided');
+    if (!this.rule) throw new Error("Rule is not provided");
+    if (!this.ruleConditions)
+      throw new Error("Rule conditions are not provided");
+    if (!this.grade) throw new Error("Grade is not provided");
+    if (!this.classes) throw new Error("Classes are not provided");
+    if (!this.notes) throw new Error("Notes are not provided");
+    if (!this.subjectCredits)
+      throw new Error("Subject credits are not provided");
+    if (!this.userAgentClasses)
+      throw new Error("User agent classes are not provided");
+    if (!this.grade.minScaleToPromote)
+      throw new Error("Min scale to promote is not provided");
   }
 
   // ES: Prepara varibales preprocesadas para comodidad del codigo
@@ -44,13 +56,14 @@ class RuleProcess {
   prepareDataForProcess() {
     // ES: Comprueba que la scala para aprobar existe
     // EN: Checks that the scale to pass exists
-    this.scaleByIds = _.keyBy(this.grade.scales, 'id');
+    this.scaleByIds = _.keyBy(this.grade.scales, "id");
     if (!this.scaleByIds[this.grade.minScaleToPromote])
-      throw new Error('Min scale to promote is not valid');
+      throw new Error("Min scale to promote is not valid");
 
     // ES: Almacenamos el valor a superar para aprobar
     // EN: Store the value to surpass to pass
-    this.minNoteToPromote = this.scaleByIds[this.grade.minScaleToPromote].number;
+    this.minNoteToPromote =
+      this.scaleByIds[this.grade.minScaleToPromote].number;
 
     // ES: Montamos un objeto con todas las asignaturas y sus valores recorriendonos todas las clases
     // EN: We build an object with all the subjects and their values by traversing all the classes
@@ -61,8 +74,8 @@ class RuleProcess {
     this.knowledgeSubjectsByKnowledgeId = {};
     this.subjectTypesSubjectsBySubjectTypeId = {};
     this.subjectByIds = {};
-    const subjectCreditsBySubject = _.keyBy(this.subjectCredits, 'subject');
-    const userAgentClassesByClass = _.keyBy(this.userAgentClasses, 'class');
+    const subjectCreditsBySubject = _.keyBy(this.subjectCredits, "subject");
+    const userAgentClassesByClass = _.keyBy(this.userAgentClasses, "class");
     _.forEach(this.classes, (_class) => {
       if (userAgentClassesByClass[_class.id]) {
         this.userAgentSubjects.push(_class.subject);
@@ -82,14 +95,17 @@ class RuleProcess {
 
         if (!this.subjectTypesSubjectsBySubjectTypeId[_class.subjectType])
           this.subjectTypesSubjectsBySubjectTypeId[_class.subjectType] = [];
-        this.subjectTypesSubjectsBySubjectTypeId[_class.subjectType].push(_class.subject);
+        this.subjectTypesSubjectsBySubjectTypeId[_class.subjectType].push(
+          _class.subject
+        );
 
         // ES: Si no encontramos los creditos que van en la asignatura devolvemos error por que no vamos a poder procesar las condiciones
         // EN: If we do not find the credits that go in the subject return error because we cannot process the conditions
         if (_.isNil(this.subjectByIds[_class.subject].credits))
-          throw new Error('Subject credits are not valid');
+          throw new Error("Subject credits are not valid");
       }
-      if (_class.groups) this.subjectByIds[_class.subject].groups.push(_class.groups);
+      if (_class.groups)
+        this.subjectByIds[_class.subject].groups.push(_class.groups);
       if (_class.courses) {
         this.subjectByIds[_class.subject].courses.push(_class.courses);
         if (!this.courseSubjectsByCourseId[_class.courses])
@@ -98,27 +114,41 @@ class RuleProcess {
 
         const subjectTypeCourseId = `${_class.subjectType}|${_class.courses}`;
 
-        if (!this.subjectTypesCourseSubjectsBySubjectTypeCourseId[subjectTypeCourseId])
-          this.subjectTypesCourseSubjectsBySubjectTypeCourseId[subjectTypeCourseId] = [];
-        this.subjectTypesCourseSubjectsBySubjectTypeCourseId[subjectTypeCourseId].push(
-          _class.subject
-        );
+        if (
+          !this.subjectTypesCourseSubjectsBySubjectTypeCourseId[
+            subjectTypeCourseId
+          ]
+        )
+          this.subjectTypesCourseSubjectsBySubjectTypeCourseId[
+            subjectTypeCourseId
+          ] = [];
+        this.subjectTypesCourseSubjectsBySubjectTypeCourseId[
+          subjectTypeCourseId
+        ].push(_class.subject);
       }
 
       if (_class.knowledges) {
         this.subjectByIds[_class.subject].knowledges.push(_class.knowledges);
         if (!this.knowledgeSubjectsByKnowledgeId[_class.knowledges])
           this.knowledgeSubjectsByKnowledgeId[_class.knowledges] = [];
-        this.knowledgeSubjectsByKnowledgeId[_class.knowledges].push(_class.subject);
+        this.knowledgeSubjectsByKnowledgeId[_class.knowledges].push(
+          _class.subject
+        );
 
         if (_class.courses) {
           const knowledgeCourseId = `${_class.knowledges}|${_class.courses}`;
-          if (!this.knowledgeCourseSubjectsByKnowledgeCourseId[knowledgeCourseId])
-            this.knowledgeCourseSubjectsByKnowledgeCourseId[knowledgeCourseId] = [];
-          this.knowledgeCourseSubjectsByKnowledgeCourseId[knowledgeCourseId].push(_class.subject);
+          if (
+            !this.knowledgeCourseSubjectsByKnowledgeCourseId[knowledgeCourseId]
+          )
+            this.knowledgeCourseSubjectsByKnowledgeCourseId[knowledgeCourseId] =
+              [];
+          this.knowledgeCourseSubjectsByKnowledgeCourseId[
+            knowledgeCourseId
+          ].push(_class.subject);
         }
       }
-      if (_class.substages) this.subjectByIds[_class.subject].substages.push(_class.substages);
+      if (_class.substages)
+        this.subjectByIds[_class.subject].substages.push(_class.substages);
     });
   }
 
@@ -145,7 +175,7 @@ class RuleProcess {
 
   calculeCondition(condition, lines) {
     const skFunctions = {
-      'subject-type': {
+      "subject-type": {
         cpp: this.getUserCreditsInSubjectTypes.bind(this),
         cpc: this.getUserCreditsInSubjectTypesForCourse.bind(this),
         gpa: this.getUserGPAInSubjectTypes.bind(this),
@@ -167,53 +197,56 @@ class RuleProcess {
     };
 
     // --- PROGRAM ---
-    if (condition.source === 'program') {
+    if (condition.source === "program") {
       // ES: Si la condicion es creditos por programa tenemos que coger todas las notas de las asignaturas cursadas por el alumno en el programa ver cuales a aprobado y sumar sus creditos
       // EN: If the condition is credits by program we have to take all the notes of the subjects taken by the student in the program to see which ones passed and add their credits
-      if (condition.data === 'cpp') {
+      if (condition.data === "cpp") {
         toEval.from.push(this.getUserCreditsInProgram());
       }
       // ES: Si la condicion es creditos por curso tenemos que coger los creditos que suma el alumno para cada curso y comprobar si cada uno de los cursos cumple la condicion
       // EN: If the condition is credits by course we have to take the credits that the student adds to each course and check if each one of the courses satisfies the condition
-      else if (condition.data === 'cpc') {
+      else if (condition.data === "cpc") {
         const userCredits = this.getUserCreditsInCourses();
         _.forIn(userCredits, (courseCredits) => {
           toEval.from.push(courseCredits);
         });
-      } else if (condition.data === 'gpa') {
+      } else if (condition.data === "gpa") {
         toEval.from.push(this.getUserGPAInProgram());
       }
     }
     // --- COURSE ---
-    else if (condition.source === 'course') {
+    else if (condition.source === "course") {
       // ES: Si la condicion es creditos por curso tenemos que coger los creditos que suma el alumno para ese curso y comprobar si cumple la condicion
       // EN: If the condition is credits by course we have to take the credits that the student adds to the course and check if it satisfies the condition
-      if (condition.data === 'cpc') {
+      if (condition.data === "cpc") {
         const userCredits = this.getUserCreditsInCourses();
         if (!_.isNil(userCredits[condition.sourceIds[0]])) {
           toEval.from.push(userCredits[condition.sourceIds[0]]);
         }
-      } else if (condition.data === 'gpa') {
+      } else if (condition.data === "gpa") {
         const coursesGPA = this.getUserGPAInCourses();
         toEval.from.push(coursesGPA[condition.sourceIds[0]]);
       }
     }
     // --- SUBJECT TYPE && KNOWLEDGE ---
-    else if (condition.source === 'subject-type' || condition.source === 'knowledge') {
-      if (condition.data === 'cpp') {
+    else if (
+      condition.source === "subject-type" ||
+      condition.source === "knowledge"
+    ) {
+      if (condition.data === "cpp") {
         const userCredits = skFunctions[condition.source][condition.data]();
         if (!_.isNil(userCredits[condition.sourceIds[0]])) {
           toEval.from.push(userCredits[condition.sourceIds[0]]);
         }
-      } else if (condition.data === 'cpc') {
+      } else if (condition.data === "cpc") {
         const userCredits = skFunctions[condition.source][condition.data]();
         _.forIn(userCredits, (courseCredits) => {
           toEval.from.push(courseCredits);
         });
-      } else if (condition.data === 'gpa') {
+      } else if (condition.data === "gpa") {
         const gpas = skFunctions[condition.source][condition.data]();
         toEval.from.push(gpas[condition.sourceIds[0]]);
-      } else if (condition.data === 'cbcg') {
+      } else if (condition.data === "cbcg") {
         const credits = skFunctions[condition.source][condition.data](
           condition.sourceIds[0],
           condition.dataTargets
@@ -222,20 +255,23 @@ class RuleProcess {
       }
     }
     // --- SUBJECT ---
-    else if (condition.source === 'subject') {
-      if (condition.data === 'grade') {
+    else if (condition.source === "subject") {
+      if (condition.data === "grade") {
         if (!_.isNil(this.notes[condition.sourceIds[0]])) {
-          toEval.from.push(this.getSubjectCreditsIfPromote(condition.sourceIds[0]));
+          toEval.from.push(
+            this.getSubjectCreditsIfPromote(condition.sourceIds[0])
+          );
         }
-      } else if (condition.data === 'enrolled') {
-        toEval.autoResult = this.userAgentSubjects.indexOf(condition.sourceIds[0]) >= 0;
+      } else if (condition.data === "enrolled") {
+        toEval.autoResult =
+          this.userAgentSubjects.indexOf(condition.sourceIds[0]) >= 0;
       }
     }
     // --- SUBJECT GROUP ---
-    else if (condition.source === 'subject-group') {
-      if (condition.data === 'gpa') {
+    else if (condition.source === "subject-group") {
+      if (condition.data === "gpa") {
         toEval.from.push(this.getUserGPABySubjectIds(condition.sourceIds));
-      } else if (condition.data === 'credits') {
+      } else if (condition.data === "credits") {
         toEval.from.push(this.getUserCreditsBySubjectIds(condition.sourceIds));
       }
     }
@@ -249,47 +285,50 @@ class RuleProcess {
         );
       return response.result;
     } catch (e) {
-      console.error(`Error on process eval: ${toEval} for condition: `, condition);
-      throw new Error('Error on eval rules');
+      console.error(
+        `Error on process eval: ${toEval} for condition: `,
+        condition
+      );
+      throw new Error("Error on eval rules");
     }
   }
 
   static evalFromConfig(config) {
     const response = {
       result: false,
-      eval: '',
+      eval: "",
     };
 
     const addEvalString = (from) => {
-      response.eval += `${response.eval ? ' && ' : ''}${from} ${
+      response.eval += `${response.eval ? " && " : ""}${from} ${
         conditionOperators[config.operator]
       } ${config.target}`;
     };
 
     if (config.autoResult !== null) {
       response.result = !!config.autoResult;
-      response.eval = response.result ? 'true' : 'false';
+      response.eval = response.result ? "true" : "false";
     } else if (config.from.length > 0) {
       let done = true;
       _.forEach(config.from, (from) => {
         addEvalString(from);
         switch (config.operator) {
-          case 'gte':
+          case "gte":
             if (from < config.target) done = false;
             break;
-          case 'lte':
+          case "lte":
             if (from > config.target) done = false;
             break;
-          case 'gt':
+          case "gt":
             if (from < config.target) done = false;
             break;
-          case 'lt':
+          case "lt":
             if (from > config.target) done = false;
             break;
-          case 'eq':
+          case "eq":
             if (from !== config.target) done = false;
             break;
-          case 'neq':
+          case "neq":
             if (from === config.target) done = false;
             break;
           default:
@@ -305,7 +344,7 @@ class RuleProcess {
   getConditionTarget(condition) {
     if (condition.targetGradeScale) {
       if (!this.scaleByIds[condition.targetGradeScale])
-        throw new Error('Target grade scale is not valid');
+        throw new Error("Target grade scale is not valid");
       return this.scaleByIds[condition.targetGradeScale].number;
     }
     return condition.target;
@@ -330,7 +369,9 @@ class RuleProcess {
   }
 
   getUserCreditsInSubjectTypesForCourse() {
-    return this.getUserCreditsInData(this.subjectTypesCourseSubjectsBySubjectTypeCourseId);
+    return this.getUserCreditsInData(
+      this.subjectTypesCourseSubjectsBySubjectTypeCourseId
+    );
   }
 
   getUserCreditsInSubjectTypes() {
@@ -338,7 +379,9 @@ class RuleProcess {
   }
 
   getUserCreditsInKnowledgesForCourse() {
-    return this.getUserCreditsInData(this.knowledgeCourseSubjectsByKnowledgeCourseId);
+    return this.getUserCreditsInData(
+      this.knowledgeCourseSubjectsByKnowledgeCourseId
+    );
   }
 
   getUserCreditsInKnowledges() {
@@ -361,8 +404,11 @@ class RuleProcess {
     let credits = 0;
     const alreadyAddedSubjects = [];
     _.forIn(data, (subjects, key) => {
-      const keySplitted = key.split('|');
-      if (keySplitted[0] === targetId && courseIds.indexOf(keySplitted[1]) >= 0) {
+      const keySplitted = key.split("|");
+      if (
+        keySplitted[0] === targetId &&
+        courseIds.indexOf(keySplitted[1]) >= 0
+      ) {
         _.forEach(subjects, (subjectId) => {
           if (alreadyAddedSubjects.indexOf(subjectId) < 0) {
             credits += this.getSubjectCreditsIfPromote(subjectId);
@@ -439,7 +485,7 @@ class RuleProcess {
   process() {
     this.checkIfAllDataIsProvided();
     this.prepareDataForProcess();
-    return this.processGroup(this.ruleConditions.tree, '-');
+    return this.processGroup(this.ruleConditions.tree, "-");
   }
 }
 

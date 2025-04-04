@@ -1,5 +1,5 @@
-import { clone, forIn } from 'lodash';
-import { PROMOTION_DETAIL_FORM_MESSAGES } from '../components/PromotionDetail';
+import { clone, forIn } from "lodash";
+import { PROMOTION_DETAIL_FORM_MESSAGES } from "../components/PromotionDetail";
 
 export function getPromotionDetailMessages(t) {
   const m = clone(PROMOTION_DETAIL_FORM_MESSAGES);
@@ -25,14 +25,30 @@ export function getPromotionDetailMessages(t) {
       selectGradeSystem: t(`detail.placeholders.selectGradeSystem`),
       conditionPlaceholders: {
         selectItem: t(`detail.placeholders.conditionPlaceholders.selectItem`),
-        selectCourse: t(`detail.placeholders.conditionPlaceholders.selectCourse`),
-        selectKnowledge: t(`detail.placeholders.conditionPlaceholders.selectKnowledge`),
-        selectSubject: t(`detail.placeholders.conditionPlaceholders.selectSubject`),
-        selectSubjectType: t(`detail.placeholders.conditionPlaceholders.selectSubjectType`),
-        selectSubjectGroup: t(`detail.placeholders.conditionPlaceholders.selectSubjectGroup`),
-        selectDataType: t(`detail.placeholders.conditionPlaceholders.selectDataType`),
-        selectOperator: t(`detail.placeholders.conditionPlaceholders.selectOperator`),
-        selectTargetGrade: t(`detail.placeholders.conditionPlaceholders.selectTargetGrade`),
+        selectCourse: t(
+          `detail.placeholders.conditionPlaceholders.selectCourse`
+        ),
+        selectKnowledge: t(
+          `detail.placeholders.conditionPlaceholders.selectKnowledge`
+        ),
+        selectSubject: t(
+          `detail.placeholders.conditionPlaceholders.selectSubject`
+        ),
+        selectSubjectType: t(
+          `detail.placeholders.conditionPlaceholders.selectSubjectType`
+        ),
+        selectSubjectGroup: t(
+          `detail.placeholders.conditionPlaceholders.selectSubjectGroup`
+        ),
+        selectDataType: t(
+          `detail.placeholders.conditionPlaceholders.selectDataType`
+        ),
+        selectOperator: t(
+          `detail.placeholders.conditionPlaceholders.selectOperator`
+        ),
+        selectTargetGrade: t(
+          `detail.placeholders.conditionPlaceholders.selectTargetGrade`
+        ),
         enterTarget: t(`detail.placeholders.conditionPlaceholders.enterTarget`),
       },
     },

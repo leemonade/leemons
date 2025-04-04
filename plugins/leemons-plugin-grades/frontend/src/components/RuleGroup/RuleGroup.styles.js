@@ -1,4 +1,4 @@
-import { pxToRem, createStyles } from '@bubbles-ui/components';
+import { pxToRem, createStyles } from "@bubbles-ui/components";
 
 const RuleGroupStyles = createStyles((theme) => ({
   root: {
@@ -20,7 +20,7 @@ const RuleGroupStyles = createStyles((theme) => ({
     // marginRight: pxToRem(8),
   },
   ruleGroup: {
-    display: 'flex',
+    display: "flex",
     gap: theme.spacing[1],
     // padding: pxToRem(8),
   },
