@@ -1,7 +1,7 @@
 async function infoPlugin(name) {
-  return leemons.api('deployment-manager/info', {
+  return leemons.api("deployment-manager/info", {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: {
       name,
     },

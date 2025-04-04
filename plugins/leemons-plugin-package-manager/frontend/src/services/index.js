@@ -1,3 +1,3 @@
-import PackageManagerService from './package-manager';
+import PackageManagerService from "./package-manager";
 
 export { PackageManagerService };

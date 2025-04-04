@@ -1,3 +1,3 @@
 module.exports = () => {
-  console.log('package-manager was loaded');
+  console.log("package-manager was loaded");
 };

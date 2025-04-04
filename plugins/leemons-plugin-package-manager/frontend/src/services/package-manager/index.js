@@ -2,7 +2,7 @@ import {
   infoPluginRequest,
   installPluginByNPMRequest,
   removePluginByNPMRequest,
-} from '../../request';
+} from "../../request";
 
 function installPluginByNPM(name, version) {
   return installPluginByNPMRequest(name, version);
@@ -22,4 +22,9 @@ async function getPluginInfo(name) {
   return data;
 }
 
-export default { installPluginByNPM, removePluginByNPM, isPluginInstalled, getPluginInfo };
+export default {
+  installPluginByNPM,
+  removePluginByNPM,
+  isPluginInstalled,
+  getPluginInfo,
+};
