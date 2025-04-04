@@ -6,11 +6,14 @@
  * Usage: Run this script to migrate the data (assetid) in questionImage to new property stemResource, and eliminate the questionImage property.
  */
 
-const { MongoClient } = require('mongodb');
+const { MongoClient } = require("mongodb");
 
 const MONGO_URI = process.env.MONGO_URI;
 
-const client = new MongoClient(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+const client = new MongoClient(MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 let database;
 
@@ -19,7 +22,7 @@ async function init() {
     await client.connect();
     database = client.db();
   } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
+    console.error("Error connecting to MongoDB:", error);
     process.exit(1);
   }
 }
@@ -28,13 +31,13 @@ async function init() {
 // FUNCTIONS
 
 async function processQuestions() {
-  const questionsCollection = database.collection('v1::tests_questions');
+  const questionsCollection = database.collection("v1::tests_questions");
   const questionsWithQuestionImage = await questionsCollection
     .find({ questionImage: { $exists: true } })
     .toArray();
 
   if (questionsWithQuestionImage.length === 0) {
-    console.log('✨ No questions with question image to update found.');
+    console.log("✨ No questions with question image to update found.");
     return;
   }
 
@@ -44,7 +47,7 @@ async function processQuestions() {
       filter: { id: question.id },
       update: {
         $set: { stemResource: question.questionImage },
-        $unset: { questionImage: '' },
+        $unset: { questionImage: "" },
       },
     },
   }));
@@ -66,7 +69,7 @@ async function processQuestions() {
     await processQuestions();
     await client.close();
   } catch (error) {
-    console.error('ERROR', error);
+    console.error("ERROR", error);
     await client.close();
   }
 })();

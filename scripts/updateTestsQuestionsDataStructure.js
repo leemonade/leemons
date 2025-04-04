@@ -1,7 +1,10 @@
-const { MongoClient } = require('mongodb');
+const { MongoClient } = require("mongodb");
 
 const uri = process.env.MONGO_URI;
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 let database;
 
@@ -11,16 +14,16 @@ async function init() {
 }
 
 const QUESTION_TYPES = {
-  MONO_RESPONSE: 'mono-response',
-  MAP: 'map',
+  MONO_RESPONSE: "mono-response",
+  MAP: "map",
 };
 
 async function getQuestions() {
-  const questionsCollection = database.collection('v1::tests_questions');
+  const questionsCollection = database.collection("v1::tests_questions");
   return questionsCollection
     .find({
       properties: {
-        $type: 'string',
+        $type: "string",
         $regex: /^{.*}$/,
       },
     })
@@ -28,18 +31,18 @@ async function getQuestions() {
 }
 
 function prepareUpdatedQuestion(question) {
-  const properties = JSON.parse(question.properties || '{}');
-  const clues = JSON.parse(question.clues || '[]');
+  const properties = JSON.parse(question.properties || "{}");
+  const clues = JSON.parse(question.clues || "[]");
 
   const updatedQuestion = {
     ...question,
-    stem: { format: 'html', text: question.question },
+    stem: { format: "html", text: question.question },
     hasHelp: !!properties.hasClues,
     clues: clues.map((clue) => clue.value).filter(Boolean),
     hasEmbeddedAnswers: false,
     hasAnswerFeedback: !!properties.explanationInResponses,
     globalFeedback: properties.explanation
-      ? { format: 'html', text: properties.explanation }
+      ? { format: "html", text: properties.explanation }
       : null,
     hasImageAnswers: !!question.withImages,
   };
@@ -57,11 +60,13 @@ function prepareUpdatedQuestion(question) {
     };
   } else if (question.type === QUESTION_TYPES.MONO_RESPONSE) {
     updatedQuestion.choices = (properties.responses || []).map((response) => ({
-      text: response.value.response ? { format: 'html', text: response.value.response } : null,
+      text: response.value.response
+        ? { format: "html", text: response.value.response }
+        : null,
       image: response.value.image || null,
       imageDescription: response.value.imageDescription || null,
       feedback: response.value.explanation
-        ? { format: 'html', text: response.value.explanation }
+        ? { format: "html", text: response.value.explanation }
         : null,
       isCorrect: response.value.isCorrectResponse,
       hideOnHelp: response.value.hideOnHelp,
@@ -77,7 +82,7 @@ function prepareUpdatedQuestion(question) {
 }
 
 async function updateQuestions(questions) {
-  const questionsCollection = database.collection('v1::tests_questions');
+  const questionsCollection = database.collection("v1::tests_questions");
   const bulkOps = questions.map((question) => {
     const updatedQuestion = prepareUpdatedQuestion(question);
     return {
@@ -86,9 +91,9 @@ async function updateQuestions(questions) {
         update: {
           $set: updatedQuestion,
           $unset: {
-            question: '',
-            properties: '',
-            withImages: '',
+            question: "",
+            properties: "",
+            withImages: "",
           },
         },
       },
@@ -117,22 +122,22 @@ async function updateQuestions(questions) {
     const updateResult = await updateQuestions(questionsToUpdate);
 
     if (updateResult.success) {
-      console.log('Update Results:');
+      console.log("Update Results:");
       console.log(`Total questions: ${questionsToUpdate.length}`);
       console.log(`Matched count: ${updateResult.matchedCount}`);
       console.log(`Modified count: ${updateResult.modifiedCount}`);
       console.log(`Upserted count: ${updateResult.upsertedCount}`);
     } else {
-      console.error('Bulk update failed:', updateResult.error);
+      console.error("Bulk update failed:", updateResult.error);
     }
 
     console.log(
-      '✨✨✨ Bulk update completed. --------------------------------------------------------------------------'
+      "✨✨✨ Bulk update completed. --------------------------------------------------------------------------"
     );
 
     await client.close();
   } catch (error) {
-    console.error('Error during update process:', error);
+    console.error("Error during update process:", error);
     await client.close();
   }
 })();

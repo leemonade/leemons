@@ -6,11 +6,14 @@
  * Usage: Execute this script to ensure all relevant assets are publicly accessible in the database.
  */
 
-const { MongoClient } = require('mongodb');
+const { MongoClient } = require("mongodb");
 
 const { MONGO_URI } = process.env;
 
-const client = new MongoClient(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+const client = new MongoClient(MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 let database;
 
@@ -19,7 +22,7 @@ async function init() {
     await client.connect();
     database = client.db();
   } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
+    console.error("Error connecting to MongoDB:", error);
     process.exit(1);
   }
 }
@@ -28,10 +31,12 @@ async function init() {
 // FUNCIONS
 
 async function getAssetsToUpdate(leebraryAssetsCollection) {
-  const leebraryCategories = database.collection('v1::leebrary_categories');
-  const testCategoryIds = await leebraryCategories.distinct('id', { key: 'assignables.tests' });
-  const qBankCategoryIds = await leebraryCategories.distinct('id', {
-    key: 'tests-questions-banks',
+  const leebraryCategories = database.collection("v1::leebrary_categories");
+  const testCategoryIds = await leebraryCategories.distinct("id", {
+    key: "assignables.tests",
+  });
+  const qBankCategoryIds = await leebraryCategories.distinct("id", {
+    key: "tests-questions-banks",
   });
 
   return leebraryAssetsCollection
@@ -59,11 +64,11 @@ async function updateAssets(assetsToUpdate, leebraryAssetsCollection) {
 (async () => {
   try {
     await init();
-    const leebraryAssetsCollection = database.collection('v1::leebrary_assets');
+    const leebraryAssetsCollection = database.collection("v1::leebrary_assets");
     const assetsToUpdate = await getAssetsToUpdate(leebraryAssetsCollection);
 
     if (assetsToUpdate.length === 0) {
-      console.log('✨ No assets to update found.');
+      console.log("✨ No assets to update found.");
       await client.close();
       return;
     }
@@ -71,7 +76,7 @@ async function updateAssets(assetsToUpdate, leebraryAssetsCollection) {
 
     await client.close();
   } catch (error) {
-    console.error('ERROR', error);
+    console.error("ERROR", error);
     await client.close();
   }
 })();

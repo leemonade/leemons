@@ -1,29 +1,29 @@
-const { MongoClient } = require('mongodb');
-const aws = require('aws-sdk');
-const { URL } = require('url');
-const http = require('http');
-const https = require('https');
+const { MongoClient } = require("mongodb");
+const aws = require("aws-sdk");
+const { URL } = require("url");
+const http = require("http");
+const https = require("https");
 
 const TEMPLATES_INFO = {
   TEMPLATE_A: {
-    name: 'school',
-    domain: 'emootidemo.leemons.app',
-    url: 'https://emootidemo.leemons.app',
+    name: "school",
+    domain: "emootidemo.leemons.app",
+    url: "https://emootidemo.leemons.app",
   },
   TEMPLATE_B: {
-    name: 'superior',
-    domain: 'unidemo.leemons.dev',
-    url: 'https://unidemo.leemons.dev/users/login',
+    name: "superior",
+    domain: "unidemo.leemons.dev",
+    url: "https://unidemo.leemons.dev/users/login",
   },
   TEMPLATE_C: {
-    name: 'corporate',
-    domain: 'edtdemo.leemons.app',
-    url: 'https://emootidemo.leemons.app',
+    name: "corporate",
+    domain: "edtdemo.leemons.app",
+    url: "https://emootidemo.leemons.app",
   },
   TEMPLATE_D: {
-    name: 'master',
-    domain: 'myuniversity.leemons.app',
-    url: 'https://myuniversity.leemons.app',
+    name: "master",
+    domain: "myuniversity.leemons.app",
+    url: "https://myuniversity.leemons.app",
   },
 };
 
@@ -31,47 +31,54 @@ const templateKey = process.env.TEMPLATE_KEY;
 
 // DEFAULTS TO LOCAL
 const isLocal = !(
-  process.env.LOCAL === 'false' ||
-  process.env.LOCAL === 'FALSE' ||
-  process.env.LOCAL === '0'
+  process.env.LOCAL === "false" ||
+  process.env.LOCAL === "FALSE" ||
+  process.env.LOCAL === "0"
 );
-const localApiUrl = process.env.LOCAL_API_URL || 'http://localhost:8080';
+const localApiUrl = process.env.LOCAL_API_URL || "http://localhost:8080";
 
 const urlToUse = isLocal ? localApiUrl : TEMPLATES_INFO[templateKey].url;
 const parsedUrl = new URL(urlToUse);
-const reqModule = parsedUrl.protocol === 'https:' ? https : http;
+const reqModule = parsedUrl.protocol === "https:" ? https : http;
 
 // S3 CONFIG························································································
 const s3 = new aws.S3({
-  apiVersion: '2010-12-01',
+  apiVersion: "2010-12-01",
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: 'eu-west-1',
+  region: "eu-west-1",
 });
 
 // DB CONFIG ·························································································································||
-const localDB = 'leemons-production-templates'; //! Template B comes from a dev enviroment DB. dev === 'leemons-development-templates', produ === 'leemons-production-templates'
+const localDB = "leemons-production-templates"; //! Template B comes from a dev enviroment DB. dev === 'leemons-development-templates', produ === 'leemons-production-templates'
 
 const dbUri =
-  process.env.MONGODB_URI || process.env.MONGO_URI || `mongodb://localhost:27017/${localDB}`; // defaults to local db
-const client = new MongoClient(dbUri, { useNewUrlParser: true, useUnifiedTopology: true });
+  process.env.MONGODB_URI ||
+  process.env.MONGO_URI ||
+  `mongodb://localhost:27017/${localDB}`; // defaults to local db
+const client = new MongoClient(dbUri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 let database;
 
 async function initDB() {
   await client.connect();
   database = client.db();
 }
-const deploymentsCollectionKey = 'package-manager_deployments';
+const deploymentsCollectionKey = "package-manager_deployments";
 
 const getDeployment = async () => {
   const deployments = database.collection(deploymentsCollectionKey);
-  return deployments.find({ domains: { $in: [TEMPLATES_INFO[templateKey].domain] } }).toArray();
+  return deployments
+    .find({ domains: { $in: [TEMPLATES_INFO[templateKey].domain] } })
+    .toArray();
 };
 
 const updateDeployment = async () => {
   const doploymentsIncludingLocalhost = await database
     .collection(deploymentsCollectionKey)
-    .find({ domains: 'localhost' })
+    .find({ domains: "localhost" })
     .toArray();
   const templateDeployment = await getDeployment();
 
@@ -84,18 +91,21 @@ const updateDeployment = async () => {
 
   // Remove localhost form any other deployment
   const updatePromises = doploymentsIncludingLocalhost.map((deployment) => {
-    const index = deployment.domains.indexOf('localhost');
+    const index = deployment.domains.indexOf("localhost");
     if (index !== -1) {
       deployment.domains.splice(index, 1);
     }
     return database
       .collection(deploymentsCollectionKey)
-      .updateOne({ id: deployment.id }, { $set: { domains: deployment.domains } });
+      .updateOne(
+        { id: deployment.id },
+        { $set: { domains: deployment.domains } }
+      );
   });
 
   // Add localhost to template deployment
-  if (!templateDeployment[0].domains.includes('localhost')) {
-    templateDeployment[0].domains.push('localhost');
+  if (!templateDeployment[0].domains.includes("localhost")) {
+    templateDeployment[0].domains.push("localhost");
     updatePromises.push(
       database
         .collection(deploymentsCollectionKey)
@@ -104,7 +114,7 @@ const updateDeployment = async () => {
           { $set: { domains: templateDeployment[0].domains } }
         )
         .then((result) => {
-          console.log('Localhost added to template deployment', result);
+          console.log("Localhost added to template deployment", result);
           return result;
         })
     );
@@ -115,41 +125,41 @@ const updateDeployment = async () => {
 
 const processDeployments = async () => {
   const updatedDeployments = await updateDeployment();
-  console.log('Updated Deployments:', updatedDeployments);
+  console.log("Updated Deployments:", updatedDeployments);
 };
 
 // REQUESTS: LOGIN AND EXPORT DATA ······································································································||
 
 const loginAndGetToken = async () => {
-  const [email, password] = process.env.ADMIN_CREDENTIALS.split(':');
+  const [email, password] = process.env.ADMIN_CREDENTIALS.split(":");
   const adminCredentials = { email, password };
   const data = JSON.stringify(adminCredentials);
 
   const options = {
     hostname: parsedUrl.hostname,
     port: parsedUrl.port || 443, // default when not local
-    path: '/api/v1/users/users/login',
-    method: 'POST',
+    path: "/api/v1/users/users/login",
+    method: "POST",
     headers: {
-      'Content-Type': 'application/json',
-      'Content-Length': data.length,
+      "Content-Type": "application/json",
+      "Content-Length": data.length,
     },
   };
   return new Promise((resolve, reject) => {
     const req = reqModule.request(options, (res) => {
-      let responseBody = '';
+      let responseBody = "";
 
-      res.on('data', (d) => {
+      res.on("data", (d) => {
         responseBody += d;
       });
 
-      res.on('end', () => {
-        const cookies = res.headers['set-cookie'];
+      res.on("end", () => {
+        const cookies = res.headers["set-cookie"];
         resolve({ body: JSON.parse(responseBody), cookies });
       });
     });
 
-    req.on('error', (error) => {
+    req.on("error", (error) => {
       reject(error);
     });
 
@@ -167,26 +177,26 @@ const makeRequestWithToken = async (path, jwtToken, data, method) => {
     path,
     method,
     headers: {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
       Authorization: jwtToken,
-      'Content-Length': Buffer.byteLength(dataString),
+      "Content-Length": Buffer.byteLength(dataString),
     },
   };
 
   return new Promise((resolve, reject) => {
     const req = reqModule.request(options, (res) => {
-      let responseBody = '';
+      let responseBody = "";
 
-      res.on('data', (d) => {
+      res.on("data", (d) => {
         responseBody += d;
       });
 
-      res.on('end', () => {
+      res.on("end", () => {
         resolve(JSON.parse(responseBody));
       });
     });
 
-    req.on('error', (error) => {
+    req.on("error", (error) => {
       reject(error);
     });
 
@@ -197,16 +207,18 @@ const makeRequestWithToken = async (path, jwtToken, data, method) => {
 
 const getProfile = async (jwtToken) => {
   const requestBody = {
-    useProfile: 'Admin',
+    useProfile: "Admin",
   };
   const response = await makeRequestWithToken(
-    '/api/v1/users/users/profile',
+    "/api/v1/users/users/profile",
     jwtToken,
     requestBody,
-    'GET'
+    "GET"
   );
 
-  return response.profiles.find((profile) => profile.name.includes(requestBody.useProfile))?.id;
+  return response.profiles.find((profile) =>
+    profile.name.includes(requestBody.useProfile)
+  )?.id;
 };
 
 const getAuthToken = async (jwtToken, userProfile) => {
@@ -217,7 +229,7 @@ const getAuthToken = async (jwtToken, userProfile) => {
     `/api/v1/users/users/profile/${userProfile}/token`,
     jwtToken,
     requestBody,
-    'GET'
+    "GET"
   );
 
   return response.jwtToken.centers
@@ -236,16 +248,18 @@ const processGenerateBulkData = async (jwtToken) => {
     isClientManagerTemplate: true,
   };
   const response = await makeRequestWithToken(
-    '/api/v1/bulk-data/bulk/generate-bulk-data',
+    "/api/v1/bulk-data/bulk/generate-bulk-data",
     jwtToken,
     requestBody,
-    'POST'
+    "POST"
   );
-  console.log('Response from generate bulk data:', response);
+  console.log("Response from generate bulk data:", response);
 };
 
 const processLoginAndBulkData = async () => {
-  console.log('PROCESSING BULK DATA ------------------------------------------------------ ');
+  console.log(
+    "PROCESSING BULK DATA ------------------------------------------------------ "
+  );
   const {
     body: { jwtToken },
   } = await loginAndGetToken();
@@ -267,7 +281,7 @@ const processLoginAndBulkData = async () => {
       return;
     }
     if (!process.env.ADMIN_CREDENTIALS) {
-      console.error('No admin credentials found');
+      console.error("No admin credentials found");
       return;
     }
 
@@ -282,7 +296,7 @@ const processLoginAndBulkData = async () => {
       await client.close();
     }
   } catch (error) {
-    console.error('error', error);
+    console.error("error", error);
     await client.close();
   }
 })();

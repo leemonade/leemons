@@ -1,7 +1,10 @@
-const { MongoClient } = require('mongodb');
+const { MongoClient } = require("mongodb");
 
 const uri = process.env.MONGO_URI;
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 let database;
 
@@ -19,13 +22,13 @@ async function cleanCollectionsNotIn(deploymentIds) {
     collections.map((collectionInfo) => {
       const collection = database.collection(collectionInfo.name);
       if (
-        collectionInfo.name.startsWith('v1::') ||
-        collectionInfo.name.includes('deploymentplugins')
+        collectionInfo.name.startsWith("v1::") ||
+        collectionInfo.name.includes("deploymentplugins")
       ) {
         return collection.deleteMany({ deploymentID: { $nin: deploymentIds } });
       }
 
-      if (collectionInfo.name.startsWith('package-manager_deployments')) {
+      if (collectionInfo.name.startsWith("package-manager_deployments")) {
         return collection.deleteMany({ id: { $nin: deploymentIds } });
       }
 
@@ -37,11 +40,11 @@ async function cleanCollectionsNotIn(deploymentIds) {
 (async () => {
   try {
     await init();
-    const keepDeploymentIds = ['66d9dfc96a7d2054230b809b'];
+    const keepDeploymentIds = ["66d9dfc96a7d2054230b809b"];
     await cleanCollectionsNotIn(keepDeploymentIds);
     await client.close();
   } catch (error) {
-    console.error('error', error);
+    console.error("error", error);
     await client.close();
   }
 })();

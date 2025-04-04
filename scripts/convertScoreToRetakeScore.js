@@ -4,11 +4,14 @@
  * Usage: Execute this script to convert the score of an evaluation to the score of a retake.
  */
 
-const { MongoClient } = require('mongodb');
+const { MongoClient } = require("mongodb");
 
 const { MONGO_URI } = process.env;
 
-const client = new MongoClient(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+const client = new MongoClient(MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 let database;
 
@@ -17,14 +20,14 @@ async function init() {
     await client.connect();
     database = client.db();
   } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
+    console.error("Error connecting to MongoDB:", error);
     process.exit(1);
   }
 }
 
 async function* getDeployments() {
   const deploymentsCount = await database
-    .collection('package-manager_deployments')
+    .collection("package-manager_deployments")
     .countDocuments();
 
   yield deploymentsCount;
@@ -34,7 +37,7 @@ async function* getDeployments() {
 
   for (let page = 0; page < pages; page++) {
     const deployments = await database
-      .collection('package-manager_deployments')
+      .collection("package-manager_deployments")
       .find({}, { projection: { id: 1 } })
       .skip(page * size)
       .limit(size)
@@ -48,14 +51,14 @@ async function* getDeployments() {
 
 async function getPublishedScores(deploymentId) {
   return await database
-    .collection('v1::scores_scores')
+    .collection("v1::scores_scores")
     .find({ deploymentID: deploymentId, published: true })
     .toArray();
 }
 
 async function getUnpublishedScores(deploymentId) {
   return await database
-    .collection('v1::scores_scores')
+    .collection("v1::scores_scores")
     .find({ deploymentID: deploymentId, published: false })
     .toArray();
 }
@@ -63,7 +66,7 @@ async function getUnpublishedScores(deploymentId) {
 function convertScoreToRetakeScore({ gradedAt, student, published, ...score }) {
   return {
     ...score,
-    id: score.id.replace('Scores', 'RetakeScores'),
+    id: score.id.replace("Scores", "RetakeScores"),
     retakeId: null,
     retakeIndex: 0,
     user: student,
@@ -71,11 +74,15 @@ function convertScoreToRetakeScore({ gradedAt, student, published, ...score }) {
 }
 
 function saveRetakeScores(retakeScores) {
-  return database.collection('v1::scores_retakescores').insertMany(retakeScores);
+  return database
+    .collection("v1::scores_retakescores")
+    .insertMany(retakeScores);
 }
 
 function removeScores(scoreIds) {
-  return database.collection('v1::scores_scores').deleteMany({ id: { $in: scoreIds } });
+  return database
+    .collection("v1::scores_scores")
+    .deleteMany({ id: { $in: scoreIds } });
 }
 
 async function main() {
@@ -92,7 +99,9 @@ async function main() {
       const publishedScores = await getPublishedScores(deploymentId);
 
       const retakeScores = unpublishedScores.map(convertScoreToRetakeScore);
-      const publishedRetakeScores = publishedScores.map(convertScoreToRetakeScore);
+      const publishedRetakeScores = publishedScores.map(
+        convertScoreToRetakeScore
+      );
 
       if (retakeScores.length > 0) {
         await saveRetakeScores(retakeScores);
@@ -104,13 +113,15 @@ async function main() {
       }
 
       if (unpublishedScores.length === 0 && publishedScores.length === 0) {
-        console.log(`No scores to convert for deployment ${i++}/${deploymentsCount}`);
+        console.log(
+          `No scores to convert for deployment ${i++}/${deploymentsCount}`
+        );
       } else {
         console.log(`Converted score of deployment ${i++}/${deploymentsCount}`);
       }
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error("Error:", error);
 
     throw error;
   } finally {

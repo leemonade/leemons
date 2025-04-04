@@ -1,24 +1,26 @@
-const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
+const { execSync } = require("child_process");
+const fs = require("fs");
+const path = require("path");
 
 // Parse command line arguments
 const args = process.argv.slice(2);
-const buildSdkOnly = args.includes('--sdk');
-const buildPluginsOnly = args.includes('--plugin');
+const buildSdkOnly = args.includes("--sdk");
+const buildPluginsOnly = args.includes("--plugin");
 
 // Get all workspaces info
-const workspaces = JSON.parse(execSync('yarn workspaces info --json').toString());
+const workspaces = JSON.parse(
+  execSync("yarn workspaces info --json").toString()
+);
 
 // Create a graph of dependencies
 function createDependencyGraph(workspaces) {
   const graph = {};
 
   Object.entries(workspaces).forEach(([name, info]) => {
-    const packageJsonPath = path.join(info.location, 'package.json');
+    const packageJsonPath = path.join(info.location, "package.json");
 
     if (fs.existsSync(packageJsonPath)) {
-      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+      const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
       const dependencies = {
         ...(packageJson.dependencies || {}),
         ...(packageJson.devDependencies || {}),
@@ -29,7 +31,7 @@ function createDependencyGraph(workspaces) {
 
       // Only track @leemons dependencies that exist in our workspaces
       Object.keys(dependencies).forEach((dep) => {
-        if (dep.startsWith('@leemons/') && workspaces[dep]) {
+        if (dep.startsWith("@leemons/") && workspaces[dep]) {
           graph[name].push(dep);
         }
       });
@@ -117,39 +119,41 @@ const depths = calculateDependencyDepth(graph);
 const sortedPackages = Object.entries(workspaces)
   .filter(([name]) => {
     if (buildSdkOnly) {
-      return name.startsWith('@leemons/');
+      return name.startsWith("@leemons/");
     }
     if (buildPluginsOnly) {
-      return name.startsWith('leemons-plugin-');
+      return name.startsWith("leemons-plugin-");
     }
-    return name.startsWith('@leemons/') || name.startsWith('leemons-plugin-');
+    return name.startsWith("@leemons/") || name.startsWith("leemons-plugin-");
   })
   .sort(([nameA], [nameB]) => (depths[nameA] || 0) - (depths[nameB] || 0));
 
 // Log build mode
 if (buildSdkOnly) {
-  console.log('\nBuilding SDK packages only (@leemons/*)...\n');
+  console.log("\nBuilding SDK packages only (@leemons/*)...\n");
 } else if (buildPluginsOnly) {
-  console.log('\nBuilding Plugin packages only (leemons-plugin-*)...\n');
+  console.log("\nBuilding Plugin packages only (leemons-plugin-*)...\n");
 } else {
-  console.log('\nBuilding all packages...\n');
+  console.log("\nBuilding all packages...\n");
 }
 
 // Build packages in order
 sortedPackages.forEach(([name, info]) => {
-  const packageJsonPath = path.join(info.location, 'package.json');
+  const packageJsonPath = path.join(info.location, "package.json");
 
   if (fs.existsSync(packageJsonPath)) {
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
 
     if (
-      !packageJson.name.includes('frontend') &&
+      !packageJson.name.includes("frontend") &&
       packageJson.scripts &&
       packageJson.scripts.build
     ) {
-      console.log(`Building ${name}... (dependency depth: ${depths[name] || 0})`);
+      console.log(
+        `Building ${name}... (dependency depth: ${depths[name] || 0})`
+      );
       try {
-        execSync(`yarn workspace ${name} build`, { stdio: 'inherit' });
+        execSync(`yarn workspace ${name} build`, { stdio: "inherit" });
       } catch (error) {
         console.error(`Error building ${name}: ${error.message}`);
         process.exit(1); // Exit if any build fails since dependencies are ordered
