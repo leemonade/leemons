@@ -1,7 +1,7 @@
-const { keys, trim, isEmpty, isNil, toLower, pick, omit } = require('lodash');
-const showdown = require('showdown');
-const mime = require('mime');
-const itemsImport = require('./helpers/simpleListImport');
+const { keys, trim, isEmpty, isNil, toLower, pick, omit } = require("lodash");
+const showdown = require("showdown");
+const mime = require("mime");
+const itemsImport = require("./helpers/simpleListImport");
 
 const converter = new showdown.Converter();
 
@@ -12,13 +12,13 @@ function getFileUrl(fileID) {
 }
 
 function scapeHTML(value) {
-  if (typeof value === 'string') {
+  if (typeof value === "string") {
     return value
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&quot;');
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&quot;");
   }
 
   return value;
@@ -26,7 +26,7 @@ function scapeHTML(value) {
 
 async function newAssetForTextEditor({ props, userSession, ctx }) {
   const duplicatedAsset = await ctx.call(
-    'leebrary.assets.duplicate',
+    "leebrary.assets.duplicate",
     { assetId: props.id, preserveName: true, indexable: false, public: true },
     { meta: { userSession } }
   );
@@ -52,17 +52,21 @@ async function parseDevelopment({ task, assets, userSession, ctx }) {
     return null;
   }
 
-  const developmentArray = task.development.split('\n[---]\n');
+  const developmentArray = task.development.split("\n[---]\n");
 
   const parsedMarkdownArray = developmentArray
     // EN: Unescape the separator.
     // ES: Eliminar escapado del separador.
-    .map((development) => development.replace(/\\\[---\]/g, '[---]'))
+    .map((development) => development.replace(/\\\[---\]/g, "[---]"))
     // EN: Move assets to new line (<p> tag)
     // ES: Mover assets a nueva línea (etiqueta <p>)
-    .map((development) => development.replace(/(\[asset.*?\])/g, '\n<p>$1</p>\n'));
+    .map((development) =>
+      development.replace(/(\[asset.*?\])/g, "\n<p>$1</p>\n")
+    );
 
-  const htmlArray = parsedMarkdownArray.map((development) => converter.makeHtml(development));
+  const htmlArray = parsedMarkdownArray.map((development) =>
+    converter.makeHtml(development)
+  );
 
   const finalArray = await Promise.all(
     htmlArray.map(async (development) => {
@@ -78,8 +82,8 @@ async function parseDevelopment({ task, assets, userSession, ctx }) {
         const componentInfo = Object.fromEntries(
           asset
             .substring(1, asset.length - 1)
-            .split(',')
-            .map((prop) => prop.split(':').map((s) => s.trim()))
+            .split(",")
+            .map((prop) => prop.split(":").map((s) => s.trim()))
         );
 
         let assetInfo;
@@ -89,7 +93,9 @@ async function parseDevelopment({ task, assets, userSession, ctx }) {
           const props = assets[componentInfo.asset];
 
           if (!props) {
-            throw new Error(`Invalid asset id (${componentInfo.asset}) provided`);
+            throw new Error(
+              `Invalid asset id (${componentInfo.asset}) provided`
+            );
           }
 
           // eslint-disable-next-line no-await-in-loop
@@ -101,34 +107,34 @@ async function parseDevelopment({ task, assets, userSession, ctx }) {
         const fullAssetinfo = {
           ...componentInfo,
           ...assetInfo,
-          filetype: assetInfo.file?.type.replace(/\/.*/, ''),
+          filetype: assetInfo.file?.type.replace(/\/.*/, ""),
         };
 
         const assetText = `<library ${Object.entries(
           pick(
             fullAssetinfo,
             [
-              'id',
-              'color',
-              'name',
-              'metadata',
-              'cover',
-              'url',
-              'width',
-              'display',
-              'align',
-              'tags',
-              'filetype',
-              !isEmpty(fullAssetinfo.tagline) && 'tagline',
-              !isEmpty(fullAssetinfo.description) && 'description',
+              "id",
+              "color",
+              "name",
+              "metadata",
+              "cover",
+              "url",
+              "width",
+              "display",
+              "align",
+              "tags",
+              "filetype",
+              !isEmpty(fullAssetinfo.tagline) && "tagline",
+              !isEmpty(fullAssetinfo.description) && "description",
             ].filter(Boolean)
           )
         )
           .map(
             ([key, value]) =>
-              `${key}="${scapeHTML(typeof value === 'object' ? JSON.stringify(value) : value)}"`
+              `${key}="${scapeHTML(typeof value === "object" ? JSON.stringify(value) : value)}"`
           )
-          .join('\n')}></library>`;
+          .join("\n")}></library>`;
 
         finalDevelopment = finalDevelopment.replace(paragraph, assetText);
       }
@@ -166,37 +172,41 @@ function getDataType(extensions) {
 }
 
 function booleanCheck(value) {
-  if (toLower(value) === 'no') {
+  if (toLower(value) === "no") {
     return false;
   }
-  if (toLower(value) === 'yes') {
+  if (toLower(value) === "yes") {
     return true;
   }
   return value;
 }
 
 const getMetadataFields = (task, assets) => {
-  const metadataObj = (task.metadata ?? '')
-    .split(',')
+  const metadataObj = (task.metadata ?? "")
+    .split(",")
     .map((field) => field.trim())
     .reduce((acc, item) => {
-      const [key, value] = item.split('|');
+      const [key, value] = item.split("|");
       acc[key] = booleanCheck(value) ?? null;
       return acc;
     }, {});
 
-  metadataObj.visitedSteps = metadataObj.visitedSteps.split('&');
+  metadataObj.visitedSteps = metadataObj.visitedSteps.split("&");
 
   const assetForStatementImage = assets[metadataObj.statementImage];
   if (assetForStatementImage?.id) {
     metadataObj.leebrary = { statementImage: [assetForStatementImage.id] };
   }
-  return omit(metadataObj, ['statementImage']);
+  return omit(metadataObj, ["statementImage"]);
 };
 
-async function importTasks({ filePath, config: { users, centers, programs, assets }, ctx }) {
-  const items = await itemsImport(filePath, 'ta_tasks', 40);
-  const subjects = await itemsImport(filePath, 'ta_task_subjects', 40, false);
+async function importTasks({
+  filePath,
+  config: { users, centers, programs, assets },
+  ctx,
+}) {
+  const items = await itemsImport(filePath, "ta_tasks", 40);
+  const subjects = await itemsImport(filePath, "ta_task_subjects", 40, false);
 
   await Promise.all(
     keys(items)
@@ -214,21 +224,24 @@ async function importTasks({ filePath, config: { users, centers, programs, asset
             level: item.level ?? null,
             program: program.id,
             curriculum: {
-              objectives: (item.objectives || '')
-                .split('\n')
-                .map((val) => `<p style="margin-left: 0px!important;">${trim(val)}</p>`),
+              objectives: (item.objectives || "")
+                .split("\n")
+                .map(
+                  (val) =>
+                    `<p style="margin-left: 0px!important;">${trim(val)}</p>`
+                ),
             },
           }));
 
-        task.resources = (task.resources || '')
-          .split(',')
+        task.resources = (task.resources || "")
+          .split(",")
           .map((val) => trim(val))
           .filter((val) => !isEmpty(val))
           .map((val) => assets && assets[val]?.id)
           .filter(Boolean);
 
-        task.tags = (task.tags || '')
-          .split(',')
+        task.tags = (task.tags || "")
+          .split(",")
           .map((val) => trim(val))
           .filter((val) => !isEmpty(val));
 
@@ -241,11 +254,13 @@ async function importTasks({ filePath, config: { users, centers, programs, asset
         if (type && !isEmpty(type)) {
           let data = null;
 
-          if (toLower(type) === 'file') {
+          if (toLower(type) === "file") {
             data = {
               maxSize: task.submission_max_size,
               extensions: getDataType(
-                (task.submission_extensions || '').split(',').map((ext) => ext.trim())
+                (task.submission_extensions || "")
+                  .split(",")
+                  .map((ext) => ext.trim())
               ),
               multipleFiles: task.submission_multiple_files,
             };
@@ -261,7 +276,12 @@ async function importTasks({ filePath, config: { users, centers, programs, asset
         }
 
         const creator = users[task.creator];
-        const development = await parseDevelopment({ task, assets, userSession: creator, ctx });
+        const development = await parseDevelopment({
+          task,
+          assets,
+          userSession: creator,
+          ctx,
+        });
         const metadata = {
           ...getMetadataFields(task, assets),
           development: development ?? null,
@@ -283,7 +303,7 @@ async function importTasks({ filePath, config: { users, centers, programs, asset
           },
           center: task.center || null,
           subjects: task.subjects,
-          statement: converter.makeHtml(task.statement || ''),
+          statement: converter.makeHtml(task.statement || ""),
           duration: task.duration || null,
           submission,
           gradable: task.gradable,

@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-await-in-loop */
-const { keys, map, uniq, isEmpty } = require('lodash');
-const Pool = require('async-promise-pool');
-const importUsers = require('./bulk/users');
+const { keys, map, uniq, isEmpty } = require("lodash");
+const Pool = require("async-promise-pool");
+const importUsers = require("./bulk/users");
 
 async function _addUser({ key, users, ctx }) {
   const { roles, ...item } = users[key];
@@ -11,7 +11,7 @@ async function _addUser({ key, users, ctx }) {
     roles
       .filter((rol) => rol.center)
       .map((rol) =>
-        ctx.call('users.profiles.getRoleForRelationshipProfileCenter', {
+        ctx.call("users.profiles.getRoleForRelationshipProfileCenter", {
           profileId: rol.profile,
           centerId: rol.center,
         })
@@ -23,9 +23,9 @@ async function _addUser({ key, users, ctx }) {
   }
 
   ctx.logger.debug(`Adding user: ${item.name}`);
-  const itemData = await ctx.call('users.users.add', {
+  const itemData = await ctx.call("users.users.add", {
     ...item,
-    roles: map(itemRoles, 'id'),
+    roles: map(itemRoles, "id"),
     active: true,
   });
   ctx.logger.info(`User ADDED: ${item.name}`);
@@ -43,14 +43,14 @@ async function initUsers({ file, centers, profiles, ctx }) {
 
     for (let i = 0, len = itemsKeys.length; i < len; i++) {
       const itemKey = itemsKeys[i];
-      if (itemKey !== 'super') {
+      if (itemKey !== "super") {
         pool.add(() => _addUser({ key: itemKey, users, ctx }));
       }
     }
 
-    ctx.logger.debug('Batch processing users ...');
+    ctx.logger.debug("Batch processing users ...");
     await pool.all();
-    ctx.logger.info('Users CREATED');
+    ctx.logger.info("Users CREATED");
 
     return users;
   } catch (err) {

@@ -1,8 +1,8 @@
-const { keys, trim, isNil, isEmpty, toLower, isNumber } = require('lodash');
-const itemsImport = require('../helpers/simpleListImport');
+const { keys, trim, isNil, isEmpty, toLower, isNumber } = require("lodash");
+const itemsImport = require("../helpers/simpleListImport");
 
 async function importAcademicPortfolioPrograms(filePath, centers, grades) {
-  const items = await itemsImport(filePath, 'ap_programs', 40, true, true);
+  const items = await itemsImport(filePath, "ap_programs", 40, true, true);
 
   keys(items)
     .filter((key) => !isNil(key) && !isEmpty(key))
@@ -13,7 +13,7 @@ async function importAcademicPortfolioPrograms(filePath, centers, grades) {
       // CENTERS
 
       program.centers = program.centers
-        .split(',')
+        .split(",")
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val))
         .map((val) => centers[val]?.id);
@@ -27,7 +27,8 @@ async function importAcademicPortfolioPrograms(filePath, centers, grades) {
       // CREDITS & DURATION
 
       if (program.creditSystem) {
-        const totalHours = Number(program.credits) * Number(program.hoursPerCredit);
+        const totalHours =
+          Number(program.credits) * Number(program.hoursPerCredit);
         program.totalHours = totalHours;
       }
 
@@ -46,18 +47,22 @@ async function importAcademicPortfolioPrograms(filePath, centers, grades) {
 
       program.courses = [];
       for (let i = 0; i < program.maxNumberOfCourses; i++) {
-        program.courses.push({ index: i + 1, minCredits: null, maxCredits: null });
+        program.courses.push({
+          index: i + 1,
+          minCredits: null,
+          maxCredits: null,
+        });
       }
 
       if (!isEmpty(program.courseCredits) && program.creditSystem) {
         const courseCreditsArray = program.courseCredits
-          .split(',')
+          .split(",")
           .map((val) => trim(val))
           .filter((val) => !isEmpty(val))
           .map((val) => {
-            const [index, credits] = val.split(':');
+            const [index, credits] = val.split(":");
             const [minCredits, maxCredits] = credits
-              .split('|')
+              .split("|")
               .map((item) => (!isEmpty(item) ? Number(item) : null));
             return {
               index: Number(index),
@@ -82,27 +87,27 @@ async function importAcademicPortfolioPrograms(filePath, centers, grades) {
       if (program.referenceGroups) {
         if (!program.seatsPerCourse)
           throw new Error(
-            'Courses must have specified seats for Program that use reference groups.'
+            "Courses must have specified seats for Program that use reference groups."
           );
         // We allow both formats: a) Single number (20); b) A string representing courseIndex:numberOfSeats (1:20)
         const sameSeatsForAllCourses = isNumber(program.seatsPerCourse)
           ? true
-          : !program.seatsPerCourse.includes(',');
+          : !program.seatsPerCourse.includes(",");
         if (sameSeatsForAllCourses) {
           program.seatsForAllCourses = isNumber(program.seatsPerCourse)
             ? program.seatsPerCourse
-            : Number(program.seatsPerCourse.split(':')[1]);
+            : Number(program.seatsPerCourse.split(":")[1]);
           program.courses = program.courses.map((course) => ({
             ...course,
             seats: program.seatsPerCourse,
           }));
         } else {
           program.seatsPerCourse
-            .split(',')
+            .split(",")
             .map((val) => trim(val))
             .filter((val) => !isEmpty(val))
             .forEach((val) => {
-              const [courseIndex, seats] = val.split(':');
+              const [courseIndex, seats] = val.split(":");
               const courseToUpdate = program.courses.find(
                 (course) => course.index === Number(courseIndex)
               );
@@ -119,7 +124,7 @@ async function importAcademicPortfolioPrograms(filePath, centers, grades) {
       // GROUPS
 
       if (program.referenceGroups) {
-        const finalNameFormat = program.prefix ? 'custom' : program.nameFormat;
+        const finalNameFormat = program.prefix ? "custom" : program.nameFormat;
         const finalReferenceGroups = {
           nameFormat: finalNameFormat,
           digits: program.digits ?? null,
@@ -127,20 +132,23 @@ async function importAcademicPortfolioPrograms(filePath, centers, grades) {
           prefix: program.prefix ?? null,
         };
 
-        if (finalNameFormat === 'custom') {
+        if (finalNameFormat === "custom") {
           finalReferenceGroups.customNameFormat = program.nameFormat;
         }
 
         if (!program.sequentialCourses) {
-          finalReferenceGroups.groupsForAllCourses = Number(program.groupsPerCourse ?? 1);
+          finalReferenceGroups.groupsForAllCourses = Number(
+            program.groupsPerCourse ?? 1
+          );
         } else {
           program.groupsPerCourse
-            .split(',')
+            .split(",")
             .map((val) => trim(val))
             .filter((val) => !isEmpty(val))
             .forEach((val) => {
-              const [courseIndex, amountOfGroups] = val.split(':');
-              finalReferenceGroups[`groupsForCourse${courseIndex}`] = Number(amountOfGroups);
+              const [courseIndex, amountOfGroups] = val.split(":");
+              finalReferenceGroups[`groupsForCourse${courseIndex}`] =
+                Number(amountOfGroups);
             });
         }
         program.referenceGroups = finalReferenceGroups;
@@ -158,11 +166,11 @@ async function importAcademicPortfolioPrograms(filePath, centers, grades) {
 
       if (!isEmpty(program.substages)) {
         program.substages = program.substages
-          .split(',')
+          .split(",")
           .map((val) => trim(val))
           .filter((val) => !isEmpty(val))
           .map((val) => {
-            const [name, abbreviation] = val.split('|');
+            const [name, abbreviation] = val.split("|");
             return { name, abbreviation };
           });
 
@@ -176,16 +184,16 @@ async function importAcademicPortfolioPrograms(filePath, centers, grades) {
       if (program.sequentialCourses) {
         if (!isEmpty(program.cycles)) {
           program.cycles = program.cycles
-            .split(',')
+            .split(",")
             .map((val) => trim(val))
             .filter((val) => !isEmpty(val))
             .map((val, i) => {
-              const [name, courses] = val.split('@');
+              const [name, courses] = val.split("@");
               return {
                 name,
                 index: i + 1,
                 courses: courses
-                  .split('|')
+                  .split("|")
                   .filter((course) => !isEmpty(course))
                   .map(Number),
               };

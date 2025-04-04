@@ -1,13 +1,13 @@
-const _ = require('lodash');
-const TurndownService = require('turndown');
+const _ = require("lodash");
+const TurndownService = require("turndown");
 
 const {
   configureSheetColumns,
   booleanToYesNoAnswer,
   getDuplicatedAssetsReferenceAsString,
-} = require('../helpers');
+} = require("../helpers");
 
-const { TASK_COLUMN_DEFINITIONS } = require('./columnDefinitions');
+const { TASK_COLUMN_DEFINITIONS } = require("./columnDefinitions");
 
 const turndown = new TurndownService();
 
@@ -25,16 +25,20 @@ const getMetadataString = (task, libraryAssets, notIndexableAssets) => {
   } = task.providerData.metadata;
 
   const processedHasDevelopment = booleanToYesNoAnswer(!!hasDevelopment);
-  const processedVisitedSteps = visitedSteps?.join('&') || 'basicData';
+  const processedVisitedSteps = visitedSteps?.join("&") || "basicData";
   const processedExpress = booleanToYesNoAnswer(!!express);
   const processedHasAttachments = booleanToYesNoAnswer(!!hasAttachments);
   const prcessedHasInstructions = booleanToYesNoAnswer(!!hasInstructions);
-  const processedHasCustomObjectives = booleanToYesNoAnswer(!!hasCustomObjectives);
+  const processedHasCustomObjectives = booleanToYesNoAnswer(
+    !!hasCustomObjectives
+  );
 
   let processedStatementImage;
   const statementImage = leebrary?.statementImage?.[0];
   if (statementImage) {
-    const statementImageAsset = notIndexableAssets.find((asset) => asset.id === statementImage);
+    const statementImageAsset = notIndexableAssets.find(
+      (asset) => asset.id === statementImage
+    );
     processedStatementImage = getDuplicatedAssetsReferenceAsString({
       libraryAssets,
       dups: [statementImageAsset],
@@ -53,21 +57,26 @@ const getMetadataString = (task, libraryAssets, notIndexableAssets) => {
     result.push(`statementImage|${processedStatementImage}`);
   }
 
-  return result.join(', ');
+  return result.join(", ");
 };
 
 const getCenter = (centers, task, taskProgram) => {
   if (task.providerData.center) {
-    return centers.find((item) => item.id === task.providerData.center)?.bulkId || '';
+    return (
+      centers.find((item) => item.id === task.providerData.center)?.bulkId || ""
+    );
   }
-  return taskProgram?.centerBulkId || '';
+  return taskProgram?.centerBulkId || "";
 };
 
-const getCreator = (taskAsset, users) => users.find((u) => u.id === taskAsset.fromUser)?.bulkId;
+const getCreator = (taskAsset, users) =>
+  users.find((u) => u.id === taskAsset.fromUser)?.bulkId;
 
 // NOTE => Currently, no library asset tags are added from the editor
 const getDevelopmentString = (task) =>
-  turndown.turndown(task.providerData.metadata?.development?.[0]?.development ?? '');
+  turndown.turndown(
+    task.providerData.metadata?.development?.[0]?.development ?? ""
+  );
 
 // MAIN FUNCTION ······································································|
 
@@ -81,12 +90,18 @@ async function createTasksSheet({
   users,
   ctx,
 }) {
-  const worksheet = workbook.addWorksheet('ta_tasks');
-  configureSheetColumns({ worksheet, columnDefinitions: TASK_COLUMN_DEFINITIONS });
+  const worksheet = workbook.addWorksheet("ta_tasks");
+  configureSheetColumns({
+    worksheet,
+    columnDefinitions: TASK_COLUMN_DEFINITIONS,
+  });
 
   const notIndexableAssetIds = taskDetails.reduce((acc, task) => {
-    const statementImageId = task.providerData.metadata.leebrary?.statementImage?.[0];
-    const imageInLibraryAssets = libraryAssets.find((item) => item.id === statementImageId);
+    const statementImageId =
+      task.providerData.metadata.leebrary?.statementImage?.[0];
+    const imageInLibraryAssets = libraryAssets.find(
+      (item) => item.id === statementImageId
+    );
     if (statementImageId && !imageInLibraryAssets) {
       acc.push(statementImageId);
     }
@@ -94,7 +109,9 @@ async function createTasksSheet({
     const resources = task.providerData?.resources;
     if (resources?.length) {
       resources.forEach((element) => {
-        const resourceInLibraryAssets = libraryAssets.find((item) => item.id === element);
+        const resourceInLibraryAssets = libraryAssets.find(
+          (item) => item.id === element
+        );
         if (!resourceInLibraryAssets) {
           acc.push(element);
         }
@@ -104,7 +121,7 @@ async function createTasksSheet({
     return acc;
   }, []);
 
-  const notIndexableAssets = await ctx.call('leebrary.assets.getByIds', {
+  const notIndexableAssets = await ctx.call("leebrary.assets.getByIds", {
     ids: notIndexableAssetIds,
     shouldPrepareAssets: true,
     withFiles: true,
@@ -121,34 +138,36 @@ async function createTasksSheet({
     const development = getDevelopmentString(task);
 
     // HANDLE HTML TO MARKDOWN
-    const statementMarkdown = turndown.turndown(task.providerData.statement ?? '');
+    const statementMarkdown = turndown.turndown(
+      task.providerData.statement ?? ""
+    );
     const instructionsForStudentsMarkdown = turndown.turndown(
-      task.providerData.instructionsForStudents ?? ''
+      task.providerData.instructionsForStudents ?? ""
     );
     const instructionsForTeachersMarkdown = turndown.turndown(
-      task.providerData.instructionsForTeachers ?? ''
+      task.providerData.instructionsForTeachers ?? ""
     );
     const submissionDescriptionMarkdown = turndown.turndown(
-      task.providerData.submission?.description ?? ''
+      task.providerData.submission?.description ?? ""
     );
 
     // HANDLE DATA
     const program = programs.find((item) => item.id === task.program);
     const center = getCenter(centers, task, program); // Sometimes it's not present in providerData
 
-    const bulkId = `task${(index + 1).toString().padStart(2, '0')}`;
-    const creator = adminShouldOwnAllAssets ? 'admin' : getCreator(task, users);
+    const bulkId = `task${(index + 1).toString().padStart(2, "0")}`;
+    const creator = adminShouldOwnAllAssets ? "admin" : getCreator(task, users);
 
     const taskObject = {
       root: bulkId,
       name: task.name,
       tagline: task.tagline,
       description: task.description,
-      tags: task.tags?.join(', '),
+      tags: task.tags?.join(", "),
       color: task.color,
       cover: task.cover,
       creator,
-      program: program?.bulkId || '',
+      program: program?.bulkId || "",
       center,
       duration: task.providerData.duration,
       resources: resourcesString,
@@ -156,9 +175,9 @@ async function createTasksSheet({
       development,
       gradable: booleanToYesNoAnswer(task.providerData.gradable),
       submission_type: task.providerData.submission?.type,
-      submission_extensions: Object.keys(task.providerData.submission?.data?.extensions ?? {}).join(
-        ', '
-      ),
+      submission_extensions: Object.keys(
+        task.providerData.submission?.data?.extensions ?? {}
+      ).join(", "),
       submission_max_size: task.providerData.submission?.data?.maxSize,
       submission_multiple_files: booleanToYesNoAnswer(
         task.providerData.submission?.data?.multipleFiles

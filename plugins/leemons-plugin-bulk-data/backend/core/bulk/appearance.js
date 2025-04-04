@@ -1,6 +1,6 @@
-const { range, keys, findIndex, isEmpty, isNil } = require('lodash');
-const getColumns = require('./helpers/getColumns');
-const DataImporter = require('./helpers/getXlsImporter')();
+const { range, keys, findIndex, isEmpty, isNil } = require("lodash");
+const getColumns = require("./helpers/getColumns");
+const DataImporter = require("./helpers/getXlsImporter")();
 
 const factory = new DataImporter();
 
@@ -8,14 +8,14 @@ async function importAppearanceSettings(filePath) {
   const importer = await factory.from(filePath);
   const config = {
     data: {
-      worksheet: 'appearance',
-      type: 'list',
+      worksheet: "appearance",
+      type: "list",
       columns: getColumns(20),
     },
   };
   const data = importer.getAllItems(config.data);
-  const customFalsie = 'No';
-  const customTruthy = 'Yes';
+  const customFalsie = "No";
+  const customTruthy = "Yes";
 
   // ·····················································
   // HEADER FIELDS
@@ -27,12 +27,14 @@ async function importAppearanceSettings(filePath) {
   // ITEM FIELDS START COLUMN INDEX
   const fieldStartColumnOffset = 1; // first column is omitted
   const fieldStartColumn =
-    findIndex(fields, (field) => field.indexOf('root') > -1) + fieldStartColumnOffset;
+    findIndex(fields, (field) => field.indexOf("root") > -1) +
+    fieldStartColumnOffset;
 
   // ·····················································
   // ITEMS START ROW INDEX
   const itemsStartRowOffset = 2; // fields names and header items
-  const itemsStartRow = findIndex(data.slice(1), (item) => item[1] !== '') + itemsStartRowOffset;
+  const itemsStartRow =
+    findIndex(data.slice(1), (item) => item[1] !== "") + itemsStartRowOffset;
 
   return data
     .slice(itemsStartRow)

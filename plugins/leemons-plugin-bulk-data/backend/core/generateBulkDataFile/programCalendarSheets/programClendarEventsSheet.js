@@ -1,7 +1,7 @@
-const { cloneDeep, isEmpty, isArray } = require('lodash');
-const { PROGRAM_CALENDAR_EVENT_TYPES } = require('../config/constants');
-const { configureSheetColumns, booleanToYesNoAnswer } = require('../helpers');
-const { PROGRAM_EVENTS_COLUMN_DEFINITIONS } = require('./columnDefinitions');
+const { cloneDeep, isEmpty, isArray } = require("lodash");
+const { PROGRAM_CALENDAR_EVENT_TYPES } = require("../config/constants");
+const { configureSheetColumns, booleanToYesNoAnswer } = require("../helpers");
+const { PROGRAM_EVENTS_COLUMN_DEFINITIONS } = require("./columnDefinitions");
 
 const getSubstage = (substage, programSubstages) =>
   programSubstages.find((item) => item.id === substage)?.abbreviation;
@@ -11,8 +11,10 @@ const getCourse = (course, programCourses) => {
   return programCourses?.find((item) => item.id === normalizedCourse)?.index;
 };
 const getCourses = (courses, programCourses) => {
-  const courseObjects = programCourses.filter((item) => courses.includes(item.id));
-  return courseObjects.map((item) => item.index).join('|');
+  const courseObjects = programCourses.filter((item) =>
+    courses.includes(item.id)
+  );
+  return courseObjects.map((item) => item.index).join("|");
 };
 
 const getGroupingFields = (event, program) => {
@@ -47,7 +49,9 @@ const normaliizeEvents = (events, eventType) => {
     const allCourseEvents = [];
     Object.keys(events).forEach((key) => {
       const courseEvents = events[key];
-      allCourseEvents.push(...courseEvents.map((event) => ({ ...event, course: key })));
+      allCourseEvents.push(
+        ...courseEvents.map((event) => ({ ...event, course: key }))
+      );
     });
     return allCourseEvents;
   }
@@ -71,7 +75,7 @@ const addEventsToWorksheet = ({
 
   normalizedEvents.forEach((event) => {
     count++;
-    const bulkId = `prog_event${count.toString().padStart(2, '0')}`;
+    const bulkId = `prog_event${count.toString().padStart(2, "0")}`;
     const eventObject = {
       root: bulkId,
       eventType,
@@ -86,7 +90,9 @@ const addEventsToWorksheet = ({
     if (eventType === PROGRAM_CALENDAR_EVENT_TYPES.COURSE_EVENTS.type) {
       eventObject.color = event.color;
       eventObject.dayType = event.dayType;
-      eventObject.ordinaryClasses = booleanToYesNoAnswer(!event.withoutOrdinaryDays);
+      eventObject.ordinaryClasses = booleanToYesNoAnswer(
+        !event.withoutOrdinaryDays
+      );
     }
 
     worksheet.addRow(eventObject);
@@ -96,7 +102,7 @@ const addEventsToWorksheet = ({
 };
 
 function createProgramCalendarEventsSheet({ workbook, programCalendars }) {
-  const worksheet = workbook.addWorksheet('ac_program_calendar_events');
+  const worksheet = workbook.addWorksheet("ac_program_calendar_events");
   configureSheetColumns({
     worksheet,
     withGroupedTitles: true,

@@ -1,23 +1,28 @@
-const { omit } = require('lodash');
-const importProgramCalendars = require('./bulk/academic-calendar/programCalendars');
-const importRegionalCalendars = require('./bulk/academic-calendar/regionalCalendars');
+const { omit } = require("lodash");
+const importProgramCalendars = require("./bulk/academic-calendar/programCalendars");
+const importRegionalCalendars = require("./bulk/academic-calendar/regionalCalendars");
 
 async function initAcademicCalendar({ file, config, ctx }) {
   const regionalCalendars = await importRegionalCalendars(file, config.centers);
   const regCalendarsKeys = Object.keys(regionalCalendars);
 
   const promises = regCalendarsKeys.map((key) => {
-    const { creator, regionalEventsRel, ...regCalendar } = regionalCalendars[key];
+    const { creator, regionalEventsRel, ...regCalendar } =
+      regionalCalendars[key];
     return ctx
       .call(
-        'academic-calendar.regionalConfig.saveRest',
+        "academic-calendar.regionalConfig.saveRest",
         {
           ...regCalendar,
         },
         { meta: { userSession: { ...config.users[creator] } } }
       )
       .then(({ regionalConfig }) => {
-        regionalCalendars[key] = { ...regionalConfig, creator, regionalEventsRel };
+        regionalCalendars[key] = {
+          ...regionalConfig,
+          creator,
+          regionalEventsRel,
+        };
       });
   });
 
@@ -38,7 +43,7 @@ async function initAcademicCalendar({ file, config, ctx }) {
       if (regionalEventsRel) {
         updatePromises.push(
           ctx.call(
-            'academic-calendar.regionalConfig.saveRest',
+            "academic-calendar.regionalConfig.saveRest",
             {
               id,
               name,
@@ -58,7 +63,7 @@ async function initAcademicCalendar({ file, config, ctx }) {
 
   return regCalendarsKeys.reduce((acc, key) => {
     acc[key] = {
-      ...omit(regionalCalendars[key], ['creator']),
+      ...omit(regionalCalendars[key], ["creator"]),
       regionalEventsRel: regionalCalendars[key].regionalEventsRel?.id,
     };
     return acc;
@@ -72,7 +77,9 @@ async function initProgramCalendars({ file, config, ctx }) {
   const promises = [];
   programCalendarsKeys.forEach((key) => {
     const { creator, ...programCalendar } = programCalendars[key];
-    promises.push(ctx.call('academic-calendar.config.saveRest', { ...programCalendar }));
+    promises.push(
+      ctx.call("academic-calendar.config.saveRest", { ...programCalendar })
+    );
   });
 
   await Promise.all(promises);

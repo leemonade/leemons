@@ -1,9 +1,9 @@
 /* eslint-disable no-await-in-loop */
-const chalk = require('chalk');
-const { keys } = require('lodash');
-const _delay = require('./bulk/helpers/delay');
-const { LOAD_PHASES } = require('./importHandlers/getLoadStatus');
-const importModules = require('./bulk/modules');
+const chalk = require("chalk");
+const { keys } = require("lodash");
+const _delay = require("./bulk/helpers/delay");
+const { LOAD_PHASES } = require("./importHandlers/getLoadStatus");
+const importModules = require("./bulk/modules");
 
 async function initModules({ file, config, ctx, useCache, phaseKey }) {
   try {
@@ -16,16 +16,20 @@ async function initModules({ file, config, ctx, useCache, phaseKey }) {
       const { creator, ...module } = modules[key];
 
       try {
-        ctx.logger.debug(chalk`{cyan.bold BULK} {gray Adding module: ${module.asset?.name}}`);
+        ctx.logger.debug(
+          chalk`{cyan.bold BULK} {gray Adding module: ${module.asset?.name}}`
+        );
         const { module: moduleData } = await ctx.call(
-          'learning-paths.modules.createRest',
+          "learning-paths.modules.createRest",
           { ...module, published: true },
           { meta: { userSession: creator } }
         );
 
         modules[key] = { ...moduleData };
 
-        ctx.logger.info(chalk`{cyan.bold BULK} Module ADDED: ${module.asset?.name}`);
+        ctx.logger.info(
+          chalk`{cyan.bold BULK} Module ADDED: ${module.asset?.name}`
+        );
         if (useCache) {
           await ctx.cache.set(
             phaseKey,
@@ -34,7 +38,7 @@ async function initModules({ file, config, ctx, useCache, phaseKey }) {
           );
         }
       } catch (e) {
-        ctx.logger.log('-- MODULE CREATION ERROR --');
+        ctx.logger.log("-- MODULE CREATION ERROR --");
         ctx.logger.log(`module: ${module.asset?.name}`);
         ctx.logger.log(`creator: ${creator.name}`);
         ctx.logger.error(e);

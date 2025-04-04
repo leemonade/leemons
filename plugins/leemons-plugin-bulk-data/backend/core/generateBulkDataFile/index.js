@@ -1,4 +1,4 @@
-const { generateBulkDataFile } = require('./generateBulkDataFile');
+const { generateBulkDataFile } = require("./generateBulkDataFile");
 
 module.exports = {
   generateBulkDataFile,

@@ -1,13 +1,13 @@
-const { keys, trim, isEmpty, isNil, toLower } = require('lodash');
-const { v4: uuidv4 } = require('uuid');
+const { keys, trim, isEmpty, isNil, toLower } = require("lodash");
+const { v4: uuidv4 } = require("uuid");
 
-const itemsImport = require('./helpers/simpleListImport');
+const itemsImport = require("./helpers/simpleListImport");
 
 function convertYesNoToBoolean(value) {
-  if (toLower(value) === 'no') {
+  if (toLower(value) === "no") {
     return false;
   }
-  if (toLower(value) === 'yes') {
+  if (toLower(value) === "yes") {
     return true;
   }
   return value;
@@ -15,9 +15,17 @@ function convertYesNoToBoolean(value) {
 
 async function importModules({
   filePath,
-  config: { users, tasks, tests, contentCreatorDocs, programs, assets, nonIndexableAssets },
+  config: {
+    users,
+    tasks,
+    tests,
+    contentCreatorDocs,
+    programs,
+    assets,
+    nonIndexableAssets,
+  },
 }) {
-  const items = await itemsImport(filePath, 'lp_modules', 40, false);
+  const items = await itemsImport(filePath, "lp_modules", 40, false);
 
   await Promise.all(
     keys(items)
@@ -26,7 +34,7 @@ async function importModules({
         const module = items[key];
 
         let cover = module.cover || null;
-        if (cover && !cover.startsWith('http')) {
+        if (cover && !cover.startsWith("http")) {
           const matchedAsset = assets[cover];
           if (matchedAsset?.cover?.id) {
             cover = matchedAsset.cover.id;
@@ -35,14 +43,14 @@ async function importModules({
           }
         }
 
-        const tags = (module.tags || '')
-          .split(',')
+        const tags = (module.tags || "")
+          .split(",")
           .map((val) => trim(val))
           .filter((val) => !isEmpty(val));
 
         const program = programs[module.program];
-        const subjects = (module.subjects || '')
-          .split(',')
+        const subjects = (module.subjects || "")
+          .split(",")
           .map((val) => trim(val))
           .filter((val) => !isEmpty(val))
           .map((val) => ({
@@ -55,8 +63,8 @@ async function importModules({
         // ·····················································
         // RESOURCES
 
-        const resources = (module.resources || '')
-          .split(',')
+        const resources = (module.resources || "")
+          .split(",")
           .map((val) => trim(val))
           .filter((val) => !isEmpty(val))
           .map((val) => {
@@ -70,16 +78,16 @@ async function importModules({
 
         let submission = null;
         const activities = module.submission
-          .split(',')
+          .split(",")
           .map((val) => trim(val))
           .filter((val) => !isEmpty(val))
           .map((val) => {
-            let type = 'activity';
+            let type = "activity";
             let match = tasks[val] ?? tests[val] ?? contentCreatorDocs[val];
 
             if (!match) {
               match = assets[val] ?? nonIndexableAssets?.[val];
-              type = 'asset';
+              type = "asset";
             }
 
             if (!match) return null;
@@ -110,7 +118,7 @@ async function importModules({
           subjects,
           resources,
           submission,
-          statement: 'Module', // follows the current implementation of module creation
+          statement: "Module", // follows the current implementation of module creation
         };
       })
   );

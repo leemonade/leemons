@@ -1,16 +1,16 @@
 /* eslint-disable no-await-in-loop */
-const { isEmpty, isNil } = require('lodash');
-const chalk = require('chalk');
-const importProviders = require('./bulk/providers');
+const { isEmpty, isNil } = require("lodash");
+const chalk = require("chalk");
+const importProviders = require("./bulk/providers");
 
 async function initProviders({ file, ctx }) {
-  const euCentralOneRegion = 'eu-central-1';
+  const euCentralOneRegion = "eu-central-1";
   try {
     const providers = await importProviders(file);
-    const storageProvider = 'leebrary-aws-s3';
-    const emailProvider = 'emails-aws-ses';
-    const smtpEmailProvider = 'emails-smtp';
-    const mqttAwsIot = 'mqtt-aws-iot';
+    const storageProvider = "leebrary-aws-s3";
+    const emailProvider = "emails-aws-ses";
+    const smtpEmailProvider = "emails-smtp";
+    const mqttAwsIot = "mqtt-aws-iot";
 
     // ·····································
     // MQTT AWS IOT
@@ -21,13 +21,15 @@ async function initProviders({ file, ctx }) {
       !isEmpty(providers.storage.secretAccessKey)
     ) {
       try {
-        await ctx.call('mqtt-aws-iot.socket.setConfig', {
+        await ctx.call("mqtt-aws-iot.socket.setConfig", {
           region: providers.iot.region || euCentralOneRegion,
           accessKeyId: providers.iot.accessKey,
           secretAccessKey: providers.iot.secretAccessKey,
         });
       } catch (err) {
-        ctx.logger.error(chalk`{red.bold BULK} Error setting MQTT AWS IOT config: ${err.message}`);
+        ctx.logger.error(
+          chalk`{red.bold BULK} Error setting MQTT AWS IOT config: ${err.message}`
+        );
       }
     }
 
@@ -46,7 +48,7 @@ async function initProviders({ file, ctx }) {
         secretAccessKey: providers.storage.secretAccessKey,
       };
       try {
-        await ctx.call('leebrary.settings.setProviderConfig', {
+        await ctx.call("leebrary.settings.setProviderConfig", {
           providerName: storageProvider,
           config: storageConfig,
         });
@@ -72,7 +74,7 @@ async function initProviders({ file, ctx }) {
         secretAccessKey: providers.email.secretAccessKey,
       };
       try {
-        await ctx.call('emails.email.addProvider', {
+        await ctx.call("emails.email.addProvider", {
           providerName: emailProvider,
           config: emailConfig,
         });
@@ -100,7 +102,7 @@ async function initProviders({ file, ctx }) {
       };
 
       try {
-        await ctx.call('emails.email.addProvider', {
+        await ctx.call("emails.email.addProvider", {
           providerName: smtpEmailProvider,
           config: emailConfig,
         });

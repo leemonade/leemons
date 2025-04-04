@@ -1,12 +1,12 @@
-const { booleanToYesNoAnswer } = require('./booleanToYesNoAnswer');
-const { configureSheetColumns } = require('./configureSheetColumns');
+const { booleanToYesNoAnswer } = require("./booleanToYesNoAnswer");
+const { configureSheetColumns } = require("./configureSheetColumns");
 const {
   getDuplicatedAssetsReferenceAsString,
   handleNonIndexableAssetsNeeded,
-} = require('./getDuplicatedAssetsReferenceAsString');
-const { mergeGroupTitleCells } = require('./mergeGroupTitleCells');
-const { solveCoverImage } = require('./solveCoverImage');
-const { styleCell } = require('./styleCell');
+} = require("./getDuplicatedAssetsReferenceAsString");
+const { mergeGroupTitleCells } = require("./mergeGroupTitleCells");
+const { solveCoverImage } = require("./solveCoverImage");
+const { styleCell } = require("./styleCell");
 
 module.exports = {
   styleCell,

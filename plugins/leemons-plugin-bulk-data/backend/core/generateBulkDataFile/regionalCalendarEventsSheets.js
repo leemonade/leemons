@@ -1,5 +1,5 @@
-const { REGIONAL_CALENDAR_EVENT_TYPE } = require('./config/constants');
-const { styleCell } = require('./helpers');
+const { REGIONAL_CALENDAR_EVENT_TYPE } = require("./config/constants");
+const { styleCell } = require("./helpers");
 
 const addEventsToWorksheet = ({
   worksheet,
@@ -13,7 +13,7 @@ const addEventsToWorksheet = ({
   let count = dateCounter;
   events.forEach((event) => {
     count++;
-    const bulkId = `date${count.toString().padStart(2, '0')}`;
+    const bulkId = `date${count.toString().padStart(2, "0")}`;
     const calendarObject = {
       root: bulkId,
       name: event.name,
@@ -30,33 +30,33 @@ const addEventsToWorksheet = ({
 };
 
 function createRegionalCalendarEventsSheet({ workbook, regionalCalendars }) {
-  const worksheet = workbook.addWorksheet('ac_reg_events');
+  const worksheet = workbook.addWorksheet("ac_reg_events");
   worksheet.columns = [
-    { header: 'root', key: 'root', width: 10 },
-    { header: 'name', key: 'name', width: 20 },
-    { header: 'center', key: 'center', width: 20 },
-    { header: 'regionalCalendar', key: 'regionalCalendar', width: 20 },
-    { header: 'type', key: 'type', width: 15 },
-    { header: 'startDate', key: 'startDate', width: 15 },
-    { header: 'endDate', key: 'endDate', width: 15 },
-    { header: 'creator', key: 'creator', width: 10 },
+    { header: "root", key: "root", width: 10 },
+    { header: "name", key: "name", width: 20 },
+    { header: "center", key: "center", width: 20 },
+    { header: "regionalCalendar", key: "regionalCalendar", width: 20 },
+    { header: "type", key: "type", width: 15 },
+    { header: "startDate", key: "startDate", width: 15 },
+    { header: "endDate", key: "endDate", width: 15 },
+    { header: "creator", key: "creator", width: 10 },
   ];
 
   worksheet.addRow({
-    root: 'BulkId',
-    name: 'Name',
-    center: 'Center',
-    regionalCalendar: 'Regional Calendar',
-    type: 'Type',
-    startDate: 'Start Date',
-    endDate: 'End Date',
-    creator: 'Creator',
+    root: "BulkId",
+    name: "Name",
+    center: "Center",
+    regionalCalendar: "Regional Calendar",
+    type: "Type",
+    startDate: "Start Date",
+    endDate: "End Date",
+    creator: "Creator",
   });
   worksheet.getRow(2).eachCell((cell, colNumber) => {
     if (colNumber === 1) {
-      styleCell({ cell, fontColor: 'white', bgColor: 'black' });
+      styleCell({ cell, fontColor: "white", bgColor: "black" });
     } else {
-      styleCell({ cell, fontColor: 'black', bgColor: 'lightBlue' });
+      styleCell({ cell, fontColor: "black", bgColor: "lightBlue" });
     }
   });
 

@@ -1,9 +1,17 @@
 /* eslint-disable no-await-in-loop */
-const { keys, isString, isEmpty, isNaN: _isNaN, trim, isNil, forEach } = require('lodash');
-const itemsImport = require('./helpers/simpleListImport');
+const {
+  keys,
+  isString,
+  isEmpty,
+  isNaN: _isNaN,
+  trim,
+  isNil,
+  forEach,
+} = require("lodash");
+const itemsImport = require("./helpers/simpleListImport");
 
 function getSubjectAndClassroom(programs, subjectString) {
-  const [subjectKey, classroomKey] = subjectString.split('|');
+  const [subjectKey, classroomKey] = subjectString.split("|");
   let subject = null;
   let classroom = null;
 
@@ -19,7 +27,7 @@ function getSubjectAndClassroom(programs, subjectString) {
     classroom = subject.classes.find((cls) =>
       subjectUsesGroups
         ? cls.groups.index === Number(classroomKey)
-        : cls.classWithoutGroupId === classroomKey.padStart(3, '0')
+        : cls.classWithoutGroupId === classroomKey.padStart(3, "0")
     );
   }
   if (!classroomKey && !classroom && subject?.classes?.length) {
@@ -30,10 +38,17 @@ function getSubjectAndClassroom(programs, subjectString) {
 }
 
 async function importEvents({ filePath, config: { users, programs }, ctx }) {
-  const items = await itemsImport(filePath, 'calendar', 40, true, true);
+  const items = await itemsImport(filePath, "calendar", 40, true, true);
 
-  const kanbanColumns = await ctx.call('calendar.kanban.listColumns');
-  const kanbanCols = ['', 'backlog', 'todo', 'inprogress', 'underreview', 'done'];
+  const kanbanColumns = await ctx.call("calendar.kanban.listColumns");
+  const kanbanCols = [
+    "",
+    "backlog",
+    "todo",
+    "inprogress",
+    "underreview",
+    "done",
+  ];
 
   const calendars = {};
   const itemsKeys = keys(items).filter((key) => !isNil(key) && !isEmpty(key));
@@ -58,7 +73,10 @@ async function importEvents({ filePath, config: { users, programs }, ctx }) {
     }
 
     if (!isNil(event.hideInCalendar) && !_isNaN(event.hideInCalendar)) {
-      event.data = { ...(event.data || {}), hideInCalendar: event.hideInCalendar };
+      event.data = {
+        ...(event.data || {}),
+        hideInCalendar: event.hideInCalendar,
+      };
     }
 
     event.type = `calendar.${event.type}`;
@@ -70,7 +88,7 @@ async function importEvents({ filePath, config: { users, programs }, ctx }) {
       event.data = {
         ...(event.data || {}),
         subtask: event.subtask
-          .split('|')
+          .split("|")
           .map((val) => trim(val))
           .filter((val) => !isEmpty(val))
           .map((title) => ({ checked: false, title })),
@@ -84,7 +102,8 @@ async function importEvents({ filePath, config: { users, programs }, ctx }) {
       const columnIndex = kanbanCols.indexOf(event.column);
       event.data = {
         ...(event.data || {}),
-        column: kanbanColumns.find((column) => column.order === columnIndex)?.id,
+        column: kanbanColumns.find((column) => column.order === columnIndex)
+          ?.id,
       };
     }
 
@@ -96,7 +115,7 @@ async function importEvents({ filePath, config: { users, programs }, ctx }) {
     if (!creatorCalendars) {
       const creator = users[event.creator];
       const results = await ctx.call(
-        'calendar.calendar.getCalendars',
+        "calendar.calendar.getCalendars",
         {},
         {
           meta: { userSession: { ...creator } },
@@ -125,16 +144,20 @@ async function importEvents({ filePath, config: { users, programs }, ctx }) {
 
         if (ref) {
           event.calendar = creatorCalendars.ownerCalendars
-            .filter((calendar) => calendar.key.indexOf('users.calendar.agent') > -1)
+            .filter(
+              (calendar) => calendar.key.indexOf("users.calendar.agent") > -1
+            )
             .find((calendar) =>
-              ref.userAgents.map(({ id }) => id).some((element) => calendar.key.includes(element))
+              ref.userAgents
+                .map(({ id }) => id)
+                .some((element) => calendar.key.includes(element))
             )?.key;
 
           // ES: Eventos de tipo tarea pueden estar etiquetados con alguna clase (clase, no asignatura)
           // EN: If the event has classes linked
           if (event.calendar && event.classes && !isEmpty(event.classes)) {
             const classes = event.classes
-              .split(',')
+              .split(",")
               .map((val) => trim(val))
               .filter((val) => !isEmpty(val));
 

@@ -1,119 +1,119 @@
-const markdownNote = 'We write mark down as plain text here.';
+const markdownNote = "We write mark down as plain text here.";
 
 const TASK_COLUMN_DEFINITIONS = {
   root: {
-    title: 'Root',
+    title: "Root",
     width: 15,
-    style: { fontColor: 'white', bgColor: 'black' },
+    style: { fontColor: "white", bgColor: "black" },
   },
   name: {
-    title: 'Name',
+    title: "Name",
     width: 20,
   },
   tagline: {
-    title: 'Tagline',
+    title: "Tagline",
     width: 30,
   },
   description: {
-    title: 'Description',
+    title: "Description",
     width: 50,
   },
   tags: {
-    title: 'Tags',
+    title: "Tags",
     width: 25,
   },
   color: {
-    title: 'Color',
+    title: "Color",
     width: 10,
   },
   cover: {
-    title: 'Cover',
+    title: "Cover",
     width: 15,
   },
   creator: {
-    title: 'Creator',
+    title: "Creator",
     width: 20,
   },
   center: {
-    title: 'Center',
+    title: "Center",
     width: 20,
   },
   program: {
-    title: 'Program',
+    title: "Program",
     width: 20,
   },
   duration: {
-    title: 'Duration',
+    title: "Duration",
     width: 15,
   },
   resources: {
-    title: 'Resources',
+    title: "Resources",
     width: 25,
   },
   statement: {
-    title: 'Statement',
+    title: "Statement",
     width: 30,
     note: markdownNote,
   },
   development: {
-    title: 'Development',
+    title: "Development",
     width: 30,
   },
   gradable: {
-    title: 'Gradable',
+    title: "Gradable",
     width: 10,
   },
   submission_type: {
-    title: 'Submission Type',
+    title: "Submission Type",
     width: 20,
-    style: { fontColor: 'white', bgColor: 'green' },
+    style: { fontColor: "white", bgColor: "green" },
   },
   submission_extensions: {
-    title: 'Submission Extensions',
+    title: "Submission Extensions",
     width: 20,
-    style: { fontColor: 'white', bgColor: 'green' },
+    style: { fontColor: "white", bgColor: "green" },
   },
   submission_max_size: {
-    title: 'Submission Max Size',
+    title: "Submission Max Size",
     width: 20,
-    style: { fontColor: 'white', bgColor: 'green' },
+    style: { fontColor: "white", bgColor: "green" },
   },
   submission_multiple_files: {
-    title: 'Submission Multiple Files',
+    title: "Submission Multiple Files",
     width: 25,
-    style: { fontColor: 'white', bgColor: 'green' },
+    style: { fontColor: "white", bgColor: "green" },
   },
   submission_description: {
-    title: 'Submission Description',
+    title: "Submission Description",
     width: 30,
-    style: { fontColor: 'white', bgColor: 'green' },
+    style: { fontColor: "white", bgColor: "green" },
     note: markdownNote,
   },
   instructions_for_teachers: {
-    title: 'Instructions for Teachers',
+    title: "Instructions for Teachers",
     width: 30,
-    style: { fontColor: 'white', bgColor: 'red' },
+    style: { fontColor: "white", bgColor: "red" },
     note: markdownNote,
   },
   instructions_for_students: {
-    title: 'Instructions for Students',
+    title: "Instructions for Students",
     width: 30,
-    style: { fontColor: 'white', bgColor: 'red' },
+    style: { fontColor: "white", bgColor: "red" },
     note: markdownNote,
   },
   metadata: {
-    title: 'Task Metadata',
+    title: "Task Metadata",
     width: 30,
   },
   hideInLibrary: {
-    title: 'Hide in library',
+    title: "Hide in library",
     width: 10,
   },
 };
 
 Object.keys(TASK_COLUMN_DEFINITIONS).forEach((key) => {
   if (!TASK_COLUMN_DEFINITIONS[key].style) {
-    TASK_COLUMN_DEFINITIONS[key].style = { bgColor: 'lightBlue' };
+    TASK_COLUMN_DEFINITIONS[key].style = { bgColor: "lightBlue" };
   }
 });
 

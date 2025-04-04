@@ -1,13 +1,13 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-unreachable */
 /* eslint-disable no-await-in-loop */
-const { keys, find, compact, isNil, omit } = require('lodash');
-const Pool = require('async-promise-pool');
-const importProfiles = require('./bulk/academic-portfolio/profiles');
-const importPrograms = require('./bulk/academic-portfolio/programs');
-const importSubjectTypes = require('./bulk/academic-portfolio/subjectTypes');
-const importKnowledgeAreas = require('./bulk/academic-portfolio/knowledgeAreas');
-const importSubjects = require('./bulk/academic-portfolio/subjects');
+const { keys, find, compact, isNil, omit } = require("lodash");
+const Pool = require("async-promise-pool");
+const importProfiles = require("./bulk/academic-portfolio/profiles");
+const importPrograms = require("./bulk/academic-portfolio/programs");
+const importSubjectTypes = require("./bulk/academic-portfolio/subjectTypes");
+const importKnowledgeAreas = require("./bulk/academic-portfolio/knowledgeAreas");
+const importSubjects = require("./bulk/academic-portfolio/subjects");
 
 async function _addSubjectAndClassroom({
   key,
@@ -23,9 +23,9 @@ async function _addSubjectAndClassroom({
   try {
     ctx.logger.debug(`Adding subject: ${subject.name}`);
     const subjectData = await ctx.call(
-      'academic-portfolio.subjects.addSubject',
+      "academic-portfolio.subjects.addSubject",
       {
-        data: omit(subject, 'students'),
+        data: omit(subject, "students"),
       },
       { meta: { userSession: { ...users[creator] } } }
     );
@@ -64,7 +64,7 @@ async function _addSubjectAndClassroom({
         const teachersData = await Promise.all(
           // eslint-disable-next-line no-loop-func
           teachers.map(({ teacher }) =>
-            ctx.call('users.users.getUserAgentByCenterProfile', {
+            ctx.call("users.users.getUserAgentByCenterProfile", {
               userId: teacher,
               centerId: center,
               profileId: apProfiles.teacher,
@@ -79,7 +79,7 @@ async function _addSubjectAndClassroom({
       }
 
       const classroom = await ctx.call(
-        'academic-portfolio.classes.addClass',
+        "academic-portfolio.classes.addClass",
         {
           data: classroomData,
         },
@@ -95,7 +95,7 @@ async function _addSubjectAndClassroom({
         let studentsData = await Promise.all(
           students.map((item) => {
             if (item?.student) {
-              return ctx.call('users.users.getUserAgentByCenterProfile', {
+              return ctx.call("users.users.getUserAgentByCenterProfile", {
                 userId: item.student,
                 centerId: center,
                 profileId: apProfiles.student,
@@ -113,7 +113,7 @@ async function _addSubjectAndClassroom({
             students: studentsData.map(({ id }) => id),
           };
 
-          await ctx.call('academic-portfolio.classes.addStudentsToClasses', {
+          await ctx.call("academic-portfolio.classes.addStudentsToClasses", {
             data,
           });
         }
@@ -123,7 +123,7 @@ async function _addSubjectAndClassroom({
 
     subjects[key].classes = classesData;
   } catch (error) {
-    ctx.logger.log('-- ERROR: Subject cannot be imported');
+    ctx.logger.log("-- ERROR: Subject cannot be imported");
     ctx.logger.log(error);
   }
 }
@@ -136,14 +136,16 @@ async function initAcademicPortfolio({
   returnAll = false,
   ctx,
 }) {
-  const weekdays = await ctx.call('timetable.timetable.getWeekdays');
+  const weekdays = await ctx.call("timetable.timetable.getWeekdays");
   const pool = new Pool({ concurrency: 1 });
   try {
     // ·····················································
     // SETTINGS
 
     let apProfiles = await importProfiles(file, profiles);
-    apProfiles = await ctx.call('academic-portfolio.settings.setProfiles', { ...apProfiles });
+    apProfiles = await ctx.call("academic-portfolio.settings.setProfiles", {
+      ...apProfiles,
+    });
 
     // ·····················································
     // KNOWLEDGE AREAS
@@ -157,13 +159,16 @@ async function initAcademicPortfolio({
       ctx.logger.debug(`Adding Knowledge area: ${knowledgeArea.name}`);
 
       try {
-        const knowledgeAreaData = await ctx.call('academic-portfolio.knowledges.addKnowledge', {
-          data: knowledgeArea,
-        });
+        const knowledgeAreaData = await ctx.call(
+          "academic-portfolio.knowledges.addKnowledge",
+          {
+            data: knowledgeArea,
+          }
+        );
         knowledgeAreas[key] = { ...knowledgeAreaData };
         ctx.logger.info(`Knowledge area ADDED: ${knowledgeArea.name}`);
       } catch (error) {
-        ctx.logger.log('-- ERROR: Knowledge area cannot be imported');
+        ctx.logger.log("-- ERROR: Knowledge area cannot be imported");
         ctx.logger.log(error);
       }
     }
@@ -177,9 +182,15 @@ async function initAcademicPortfolio({
     for (let i = 0, len = subjectTypesKeys.length; i < len; i++) {
       const key = subjectTypesKeys[i];
       const subjectType = subjectTypes[key];
-      const subjectTypeData = await ctx.call('academic-portfolio.subjectType.addSubjectType', {
-        data: { ...subjectType, description: subjectType.description ?? null },
-      });
+      const subjectTypeData = await ctx.call(
+        "academic-portfolio.subjectType.addSubjectType",
+        {
+          data: {
+            ...subjectType,
+            description: subjectType.description ?? null,
+          },
+        }
+      );
       subjectTypes[key] = { ...subjectTypeData };
     }
 
@@ -191,10 +202,13 @@ async function initAcademicPortfolio({
 
     for (let i = 0, len = programsKeys.length; i < len; i++) {
       const { creator, ...program } = programs[programsKeys[i]];
-      const programData = await ctx.call('academic-portfolio.programs.addProgram', {
-        data: program,
-        userSession: users[creator],
-      });
+      const programData = await ctx.call(
+        "academic-portfolio.programs.addProgram",
+        {
+          data: program,
+          userSession: users[creator],
+        }
+      );
       programs[programsKeys[i]] = { ...programData, subjects: {} };
     }
 
@@ -226,14 +240,14 @@ async function initAcademicPortfolio({
         );
       }
 
-      ctx.logger.debug('Batch processing Subjects & Classrooms ...');
+      ctx.logger.debug("Batch processing Subjects & Classrooms ...");
       await pool.all();
-      ctx.logger.info('Classrooms CREATED');
+      ctx.logger.info("Classrooms CREATED");
     }
 
     // ·····················································
     // MENU BUILDER
-    await ctx.call('academic-portfolio.settings.enableAllMenuItems');
+    await ctx.call("academic-portfolio.settings.enableAllMenuItems");
 
     if (returnAll) {
       return {

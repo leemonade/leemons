@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
-const { keys } = require('lodash');
-const importPlatform = require('./bulk/platform');
+const { keys } = require("lodash");
+const importPlatform = require("./bulk/platform");
 
 async function initPlatform({ file, ctx }) {
   try {
@@ -11,10 +11,10 @@ async function initPlatform({ file, ctx }) {
     const { email, locale, hostname } = platform[itemKey];
 
     await Promise.all([
-      ctx.call('users.platform.setDefaultLocale', { value: locale }),
-      ctx.call('users.platform.setEmail', { value: email }),
-      ctx.call('users.platform.setHostname', { value: hostname }),
-      ctx.call('users.platform.setAppearanceDarkMode', { value: true }),
+      ctx.call("users.platform.setDefaultLocale", { value: locale }),
+      ctx.call("users.platform.setEmail", { value: email }),
+      ctx.call("users.platform.setHostname", { value: hostname }),
+      ctx.call("users.platform.setAppearanceDarkMode", { value: true }),
     ]);
 
     return platform;

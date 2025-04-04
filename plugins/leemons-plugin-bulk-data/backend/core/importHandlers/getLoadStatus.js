@@ -1,24 +1,27 @@
-const { getCurrentPhaseKey, getLastPhaseOnErrorKey } = require('../../helpers/cacheKeys');
+const {
+  getCurrentPhaseKey,
+  getLastPhaseOnErrorKey,
+} = require("../../helpers/cacheKeys");
 
 const LOAD_PHASES = {
-  LOCALES: 'locales',
-  PLATFORM: 'platform',
-  PROVIDERS: 'providers',
-  ADMIN: 'admin',
-  CENTERS: 'centers',
-  PROFILES: 'profiles',
-  USERS: 'users',
-  GRADES: 'grades',
-  LIBRARY: 'library',
-  ACADEMIC_PORTFOLIO: 'academic portfolio',
-  CALENDAR: 'calendar',
-  ACADEMIC_CALENDAR: 'academic calendar',
-  CONTENT_CREATOR: 'content creator',
-  TESTS: 'tests',
-  TASKS: 'tasks',
-  WIDGETS: 'widgets',
+  LOCALES: "locales",
+  PLATFORM: "platform",
+  PROVIDERS: "providers",
+  ADMIN: "admin",
+  CENTERS: "centers",
+  PROFILES: "profiles",
+  USERS: "users",
+  GRADES: "grades",
+  LIBRARY: "library",
+  ACADEMIC_PORTFOLIO: "academic portfolio",
+  CALENDAR: "calendar",
+  ACADEMIC_CALENDAR: "academic calendar",
+  CONTENT_CREATOR: "content creator",
+  TESTS: "tests",
+  TASKS: "tasks",
+  WIDGETS: "widgets",
 };
-const LOAD_ERROR = 'error';
+const LOAD_ERROR = "error";
 const PHASES = Object.values(LOAD_PHASES);
 
 function getLoadProgress(currentPhase, initOnPhase) {
@@ -37,11 +40,11 @@ function getLoadProgress(currentPhase, initOnPhase) {
 
   // Some of the phases are divided into subphases, so we need to count them as a single phase
   // Example: LIBRARY[1/3] -> LIBRARY
-  if (currentPhase.indexOf('[') < 0) {
+  if (currentPhase.indexOf("[") < 0) {
     return Math.floor((current / total) * 100);
   }
 
-  const phase = currentPhase.split('[').shift();
+  const phase = currentPhase.split("[").shift();
   current = PHASES.indexOf(phase) + 1 - offset;
   const next = current + 1;
 
@@ -63,7 +66,9 @@ async function getLoadStatus({
   ctx,
   initOnPhase,
 }) {
-  const current = useCache ? await ctx.cache.get(getCurrentPhaseKey(ctx)) : localCurrentPhase;
+  const current = useCache
+    ? await ctx.cache.get(getCurrentPhaseKey(ctx))
+    : localCurrentPhase;
 
   if (current === LOAD_ERROR) {
     const lastOnError = useCache
@@ -84,15 +89,15 @@ async function getLoadStatus({
   // Some of the phases are divided into subphases, so we need to count them as a single phase
   // Example: LIBRARY[1/3] -> LIBRARY
   let phase = current;
-  if (current.indexOf('[') > -1) {
-    phase = current.split('[').shift();
+  if (current.indexOf("[") > -1) {
+    phase = current.split("[").shift();
   }
 
   const workingPhaseIndex = PHASES.indexOf(phase);
 
   return {
     status: 200,
-    inProgressPhase: String(PHASES[workingPhaseIndex] || '').toUpperCase(),
+    inProgressPhase: String(PHASES[workingPhaseIndex] || "").toUpperCase(),
     currentPhase: String(phase).toUpperCase(),
     overallProgress: `${progress} %`,
   };

@@ -1,27 +1,33 @@
-const fs = require('fs');
-const chalk = require('chalk');
-const { setTimeout } = require('timers/promises');
-const { isString } = require('lodash');
-const initLocales = require('../locales');
-const initPlatform = require('../platform');
-const initProviders = require('../providers');
-const initAdmin = require('../admin');
-const initCenters = require('../centers');
-const initProfiles = require('../profiles');
-const initUsers = require('../users');
-const initGrades = require('../grades');
-const { initLibrary, updateLibrary } = require('../leebrary');
-const initAcademicPortfolio = require('../academicPortfolio');
-const initCalendar = require('../calendar');
-const { initAcademicCalendar, initProgramCalendars } = require('../academicCalendar');
-const initTests = require('../tests');
-const initTasks = require('../tasks');
-const initWidgets = require('../widgets');
-const { getCurrentPhaseKey, getLastPhaseOnErrorKey } = require('../../helpers/cacheKeys');
-const { LOAD_PHASES, LOAD_ERROR } = require('./getLoadStatus');
-const { getLoadStatus } = require('.');
-const { initContentCreator } = require('../contentCreator');
-const initModules = require('../modules');
+const fs = require("fs");
+const chalk = require("chalk");
+const { setTimeout } = require("timers/promises");
+const { isString } = require("lodash");
+const initLocales = require("../locales");
+const initPlatform = require("../platform");
+const initProviders = require("../providers");
+const initAdmin = require("../admin");
+const initCenters = require("../centers");
+const initProfiles = require("../profiles");
+const initUsers = require("../users");
+const initGrades = require("../grades");
+const { initLibrary, updateLibrary } = require("../leebrary");
+const initAcademicPortfolio = require("../academicPortfolio");
+const initCalendar = require("../calendar");
+const {
+  initAcademicCalendar,
+  initProgramCalendars,
+} = require("../academicCalendar");
+const initTests = require("../tests");
+const initTasks = require("../tasks");
+const initWidgets = require("../widgets");
+const {
+  getCurrentPhaseKey,
+  getLastPhaseOnErrorKey,
+} = require("../../helpers/cacheKeys");
+const { LOAD_PHASES, LOAD_ERROR } = require("./getLoadStatus");
+const { getLoadStatus } = require(".");
+const { initContentCreator } = require("../contentCreator");
+const initModules = require("../modules");
 
 let currentPhaseLocal = null;
 let lastPhaseOnErrorLocal = null;
@@ -34,9 +40,14 @@ async function getStatusWhenLocal() {
   });
 }
 
-async function shareAssetsWithProfile({ profileId, assets, forcedIsPublicValue, ctx }) {
+async function shareAssetsWithProfile({
+  profileId,
+  assets,
+  forcedIsPublicValue,
+  ctx,
+}) {
   if (!profileId) {
-    console.error('Could not share asset, no profile id found');
+    console.error("Could not share asset, no profile id found");
     return;
   }
 
@@ -46,7 +57,7 @@ async function shareAssetsWithProfile({ profileId, assets, forcedIsPublicValue, 
     const assetId = isString(asset) ? asset : asset.id;
 
     promises.push(
-      ctx.tx.call('leebrary.permissions.set', {
+      ctx.tx.call("leebrary.permissions.set", {
         canAccess: [],
         permissions: {
           viewer: [permissionName],
@@ -94,7 +105,9 @@ async function importBulkData({
         // ·······························································
         // LOCALES
 
-        ctx.logger.debug(chalk`{cyan.bold BULK} {gray Init Platform & locales ...}`);
+        ctx.logger.debug(
+          chalk`{cyan.bold BULK} {gray Init Platform & locales ...}`
+        );
         await initLocales({ file: docPath, ctx });
         currentPhaseLocal = LOAD_PHASES.LOCALES;
 
@@ -113,12 +126,16 @@ async function importBulkData({
         // ·······························································
         // CENTERS, PROFILES
 
-        ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Admin plugin ...}`);
+        ctx.logger.debug(
+          chalk`{cyan.bold BULK} {gray Starting Admin plugin ...}`
+        );
         await initAdmin({ file: docPath, ctx });
         ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Admin plugin`);
         currentPhaseLocal = LOAD_PHASES.ADMIN;
 
-        ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Users plugin ...}`);
+        ctx.logger.debug(
+          chalk`{cyan.bold BULK} {gray Starting Users plugin ...}`
+        );
         config.centers = await initCenters({ file: docPath, ctx });
         currentPhaseLocal = LOAD_PHASES.CENTERS;
 
@@ -143,16 +160,25 @@ async function importBulkData({
       // ·······························································
       // GRADES
 
-      ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Academic Rules plugin ...}`);
-      config.grades = await initGrades({ file: docPath, centers: config.centers, ctx });
+      ctx.logger.debug(
+        chalk`{cyan.bold BULK} {gray Starting Academic Rules plugin ...}`
+      );
+      config.grades = await initGrades({
+        file: docPath,
+        centers: config.centers,
+        ctx,
+      });
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Academic Rules plugin`);
       currentPhaseLocal = LOAD_PHASES.GRADES;
-      if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.GRADES, 60 * 60);
+      if (useCache)
+        await ctx.cache.set(currentPhaseKey, LOAD_PHASES.GRADES, 60 * 60);
 
       // ·······························································
       // MEDIA LIBRARY
 
-      ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Leebrary plugin ...}`);
+      ctx.logger.debug(
+        chalk`{cyan.bold BULK} {gray Starting Leebrary plugin ...}`
+      );
       const { assets, nonIndexableAssets } = await initLibrary({
         file: docPath,
         config,
@@ -174,47 +200,85 @@ async function importBulkData({
 
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Leebrary plugin`);
       currentPhaseLocal = LOAD_PHASES.LIBRARY;
-      if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.LIBRARY, 60 * 60);
+      if (useCache)
+        await ctx.cache.set(currentPhaseKey, LOAD_PHASES.LIBRARY, 60 * 60);
 
       // ·······························································
       // ACADEMIC PORTFOLIO -> Da error por duplicación de userAgentPermisions, expected & handled in academic portfolio
 
-      ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Academic Portfolio plugin ...}`);
-      config.programs = await initAcademicPortfolio({ file: docPath, config, skipEnrollment, ctx });
+      ctx.logger.debug(
+        chalk`{cyan.bold BULK} {gray Starting Academic Portfolio plugin ...}`
+      );
+      config.programs = await initAcademicPortfolio({
+        file: docPath,
+        config,
+        skipEnrollment,
+        ctx,
+      });
       await setTimeout(1000);
-      await ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Academic Portfolio plugin`);
+      await ctx.logger.info(
+        chalk`{cyan.bold BULK} COMPLETED Academic Portfolio plugin`
+      );
       currentPhaseLocal = LOAD_PHASES.ACADEMIC_PORTFOLIO;
-      await ctx.cache.set(currentPhaseKey, LOAD_PHASES.ACADEMIC_PORTFOLIO, 60 * 60);
+      await ctx.cache.set(
+        currentPhaseKey,
+        LOAD_PHASES.ACADEMIC_PORTFOLIO,
+        60 * 60
+      );
 
-      ctx.logger.debug(chalk`{cyan.bold BULK} {gray Updating Leebrary plugin with AP conf ...}`);
+      ctx.logger.debug(
+        chalk`{cyan.bold BULK} {gray Updating Leebrary plugin with AP conf ...}`
+      );
       await updateLibrary({ file: docPath, config, ctx });
       ctx.logger.info(chalk`{cyan.bold BULK} UPDATED Leebrary plugin`);
 
       // ·······························································
       // CALENDAR & KANBAN
 
-      ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Calendar plugin ...}`);
+      ctx.logger.debug(
+        chalk`{cyan.bold BULK} {gray Starting Calendar plugin ...}`
+      );
       await initCalendar({ file: docPath, config, ctx });
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Calendar plugin`);
       currentPhaseLocal = LOAD_PHASES.CALENDAR;
-      if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.CALENDAR, 60 * 60);
+      if (useCache)
+        await ctx.cache.set(currentPhaseKey, LOAD_PHASES.CALENDAR, 60 * 60);
 
       // ·······························································
       // ACADEMIC CALENDAR
 
-      ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Academic Calendar plugin ...}`);
-      config.regionalCalendars = await initAcademicCalendar({ file: docPath, config, ctx });
+      ctx.logger.debug(
+        chalk`{cyan.bold BULK} {gray Starting Academic Calendar plugin ...}`
+      );
+      config.regionalCalendars = await initAcademicCalendar({
+        file: docPath,
+        config,
+        ctx,
+      });
 
       await initProgramCalendars({ file: docPath, config, ctx });
 
-      ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Academic Clendar plugin`);
+      ctx.logger.info(
+        chalk`{cyan.bold BULK} COMPLETED Academic Clendar plugin`
+      );
       currentPhaseLocal = LOAD_PHASES.ACADEMIC_CALENDAR;
-      if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.ACADEMIC_CALENDAR, 60 * 60);
+      if (useCache)
+        await ctx.cache.set(
+          currentPhaseKey,
+          LOAD_PHASES.ACADEMIC_CALENDAR,
+          60 * 60
+        );
 
       // ·······························································
       // CONTENT CREATOR
-      ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Content Creator plugin ...}`);
-      config.contentCreatorDocs = await initContentCreator({ file: docPath, config, ctx });
+      ctx.logger.debug(
+        chalk`{cyan.bold BULK} {gray Starting Content Creator plugin ...}`
+      );
+      config.contentCreatorDocs = await initContentCreator({
+        file: docPath,
+        config,
+        ctx,
+      });
 
       if (
         shareLibraryAssetsWithTeacherProfile &&
@@ -232,12 +296,19 @@ async function importBulkData({
 
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Content Creator plugin`);
       currentPhaseLocal = LOAD_PHASES.CONTENT_CREATOR;
-      if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.CONTENT_CREATOR, 60 * 60);
+      if (useCache)
+        await ctx.cache.set(
+          currentPhaseKey,
+          LOAD_PHASES.CONTENT_CREATOR,
+          60 * 60
+        );
 
       // ·······························································
       // TESTS & QBANKS
 
-      ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Tests plugin ...}`);
+      ctx.logger.debug(
+        chalk`{cyan.bold BULK} {gray Starting Tests plugin ...}`
+      );
       const { tests, qbanks } = await initTests({
         file: docPath,
         config,
@@ -249,8 +320,12 @@ async function importBulkData({
       config.qbanks = qbanks;
 
       if (shareLibraryAssetsWithTeacherProfile) {
-        const testAssets = Object.values(config.tests).map((item) => item.asset);
-        const qbankAssets = Object.values(config.qbanks).map((item) => item.asset);
+        const testAssets = Object.values(config.tests).map(
+          (item) => item.asset
+        );
+        const qbankAssets = Object.values(config.qbanks).map(
+          (item) => item.asset
+        );
         await shareAssetsWithProfile({
           profileId: config.profiles.teacher?.id,
           profileSysName: config.profiles.teacher?.sysName,
@@ -262,12 +337,15 @@ async function importBulkData({
 
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Tests plugin`);
       currentPhaseLocal = LOAD_PHASES.TESTS;
-      if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.TESTS, 60 * 60);
+      if (useCache)
+        await ctx.cache.set(currentPhaseKey, LOAD_PHASES.TESTS, 60 * 60);
 
       // ·······························································
       // TASKS
 
-      ctx.logger.debug(chalk`{cyan.bold BULK} {gray Starting Tasks plugin ...}`);
+      ctx.logger.debug(
+        chalk`{cyan.bold BULK} {gray Starting Tasks plugin ...}`
+      );
       config.tasks = await initTasks({
         file: docPath,
         config,
@@ -277,7 +355,7 @@ async function importBulkData({
       });
 
       if (shareLibraryAssetsWithTeacherProfile) {
-        const { task: tasks } = await ctx.call('tasks.tasks.getRest', {
+        const { task: tasks } = await ctx.call("tasks.tasks.getRest", {
           id: Object.values(config.tasks).map((task) => task.fullId),
         });
 
@@ -292,7 +370,8 @@ async function importBulkData({
 
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Tasks plugin`);
       currentPhaseLocal = LOAD_PHASES.TASKS;
-      if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.TASKS, 60 * 60);
+      if (useCache)
+        await ctx.cache.set(currentPhaseKey, LOAD_PHASES.TASKS, 60 * 60);
 
       // ·······························································
       // MODULES
@@ -325,20 +404,22 @@ async function importBulkData({
       await initWidgets({ ctx });
       currentPhaseLocal = LOAD_PHASES.WIDGETS;
       ctx.logger.info(chalk`{cyan.bold BULK} COMPLETED Widgets plugin`);
-      if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_PHASES.WIDGETS, 60 * 60);
+      if (useCache)
+        await ctx.cache.set(currentPhaseKey, LOAD_PHASES.WIDGETS, 60 * 60);
 
       // ·······························································
       // FINISH
 
-      ctx.emit('finish-load-template', {
+      ctx.emit("finish-load-template", {
         ...onFinishData,
         caller: ctx.callerPlugin,
       });
     }
   } catch (error) {
-    console.error('Error in importBulkData =>', error);
+    console.error("Error in importBulkData =>", error);
     const lastPhaseOnErrorKey = getLastPhaseOnErrorKey(ctx);
-    if (useCache) await ctx.cache.set(lastPhaseOnErrorKey, currentPhaseLocal, 60 * 60);
+    if (useCache)
+      await ctx.cache.set(lastPhaseOnErrorKey, currentPhaseLocal, 60 * 60);
     if (useCache) await ctx.cache.set(currentPhaseKey, LOAD_ERROR, 60 * 60);
 
     lastPhaseOnErrorLocal = currentPhaseLocal;

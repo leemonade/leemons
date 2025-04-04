@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
-const { keys } = require('lodash');
-const importLocales = require('./bulk/locales');
+const { keys } = require("lodash");
+const importLocales = require("./bulk/locales");
 
 async function initLocales({ file, ctx }) {
   try {
@@ -10,7 +10,7 @@ async function initLocales({ file, ctx }) {
     for (let i = 0, len = itemKeys.length; i < len; i++) {
       const itemKey = itemKeys[i];
       const { code, name } = locales[itemKey];
-      const localeData = await ctx.call('users.platform.addLocale', {
+      const localeData = await ctx.call("users.platform.addLocale", {
         locale: code,
         name,
       });
@@ -18,7 +18,7 @@ async function initLocales({ file, ctx }) {
       locales[itemKey] = localeData;
     }
 
-    await ctx.call('admin.settings.update', { status: 'LOCALIZED' });
+    await ctx.call("admin.settings.update", { status: "LOCALIZED" });
 
     return locales;
   } catch (err) {

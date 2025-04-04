@@ -1,8 +1,8 @@
-const { keys, trim, isEmpty, isNil, toLower } = require('lodash');
-const itemsImport = require('./helpers/simpleListImport');
+const { keys, trim, isEmpty, isNil, toLower } = require("lodash");
+const itemsImport = require("./helpers/simpleListImport");
 
 async function importGrades(filePath, centers) {
-  const items = await itemsImport(filePath, 'ar_evaluations', 20);
+  const items = await itemsImport(filePath, "ar_evaluations", 20);
 
   keys(items)
     .filter((key) => !isNil(key) && !isEmpty(key))
@@ -12,17 +12,17 @@ async function importGrades(filePath, centers) {
       grade.type = toLower(grade.type);
       grade.minScaleToPromote = Number(grade.minScaleToPromote);
 
-      if (grade.type !== 'numeric') {
+      if (grade.type !== "numeric") {
         delete grade.isPercentage;
       }
 
       grade.scales = grade.scales
-        .split(',')
+        .split(",")
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val))
         .map((scale) => {
-          const props = scale.split('|');
-          if (grade.type === 'numeric') {
+          const props = scale.split("|");
+          if (grade.type === "numeric") {
             const [number, description] = props;
             return { number: Number(number), description };
           }

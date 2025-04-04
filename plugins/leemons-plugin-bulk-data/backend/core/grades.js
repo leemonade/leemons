@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
-const { keys } = require('lodash');
-const importGrades = require('./bulk/grades');
+const { keys } = require("lodash");
+const importGrades = require("./bulk/grades");
 
 async function initGrades({ file, centers, ctx }) {
   try {
@@ -11,7 +11,7 @@ async function initGrades({ file, centers, ctx }) {
       const itemKey = itemsKeys[i];
       const item = grades[itemKey];
 
-      const itemData = await ctx.call('grades.evaluations.add', { data: item });
+      const itemData = await ctx.call("grades.evaluations.add", { data: item });
       grades[itemKey] = { ...itemData };
     }
 

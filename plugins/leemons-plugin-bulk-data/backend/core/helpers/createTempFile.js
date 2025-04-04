@@ -1,5 +1,5 @@
-const temp = require('temp');
-const fs = require('fs');
+const temp = require("temp");
+const fs = require("fs");
 
 /**
  * Converts a readable stream into a buffer.
@@ -11,15 +11,15 @@ function streamToBuffer(readStream) {
   return new Promise((resolve, reject) => {
     const data = [];
 
-    readStream.on('data', (chunk) => {
+    readStream.on("data", (chunk) => {
       data.push(chunk);
     });
 
-    readStream.on('end', () => {
+    readStream.on("end", () => {
       resolve(Buffer.concat(data));
     });
 
-    readStream.on('error', (err) => {
+    readStream.on("error", (err) => {
       reject(err);
     });
   });
@@ -34,7 +34,7 @@ function streamToBuffer(readStream) {
  */
 function createTempFile({ readStream }) {
   return new Promise((resolve, reject) => {
-    temp.open('bulk-data', async (err, info) => {
+    temp.open("bulk-data", async (err, info) => {
       if (err) {
         reject(err);
       }

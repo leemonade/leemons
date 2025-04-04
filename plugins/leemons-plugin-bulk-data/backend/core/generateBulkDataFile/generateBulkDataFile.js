@@ -1,10 +1,12 @@
-const Excel = require('exceljs');
-const { uniqBy } = require('lodash');
+const Excel = require("exceljs");
+const { uniqBy } = require("lodash");
 
-const { createAcademicPortfolioProfilesSheet } = require('./academicPortfolioProfilesSheet');
-const { createAppearanceSheet } = require('./appearanceSheet');
-const { createCalendarSheet } = require('./calendarSheet');
-const { createCentersSheet } = require('./centersSheet');
+const {
+  createAcademicPortfolioProfilesSheet,
+} = require("./academicPortfolioProfilesSheet");
+const { createAppearanceSheet } = require("./appearanceSheet");
+const { createCalendarSheet } = require("./calendarSheet");
+const { createCentersSheet } = require("./centersSheet");
 const {
   ASSET_CATEGORIES: {
     LIBRARY_CATEGORIES,
@@ -14,39 +16,50 @@ const {
     CONTENT_CREATOR,
     LEARNING_PATHS_MODULE,
   },
-} = require('./config/constants');
-const { createContentCreatorSheet } = require('./contentCreatorSheet');
-const { createEvaluationsSheet } = require('./evaluationsSheet');
-const { createKnowledgeAreasSheet } = require('./knowledgeAreasSheet');
-const { createLibraryResourcesSheet } = require('./librarySheet');
-const { createLocalesSheet } = require('./localesSheet');
-const { createModulesSheet } = require('./modulesSheet');
-const { createNonIndexableLibraryAssetsSheet } = require('./nonIndexableLibraryAssetsSheet');
-const { createPlatformSheet } = require('./platformSheet');
-const { createProfilesSheet } = require('./profilesSheet');
+} = require("./config/constants");
+const { createContentCreatorSheet } = require("./contentCreatorSheet");
+const { createEvaluationsSheet } = require("./evaluationsSheet");
+const { createKnowledgeAreasSheet } = require("./knowledgeAreasSheet");
+const { createLibraryResourcesSheet } = require("./librarySheet");
+const { createLocalesSheet } = require("./localesSheet");
+const { createModulesSheet } = require("./modulesSheet");
+const {
+  createNonIndexableLibraryAssetsSheet,
+} = require("./nonIndexableLibraryAssetsSheet");
+const { createPlatformSheet } = require("./platformSheet");
+const { createProfilesSheet } = require("./profilesSheet");
 const {
   createProgramCalendarsSheet,
   createProgramCalendarEventsSheet,
-} = require('./programCalendarSheets');
-const { createProgramsSheet } = require('./programsSheet');
-const { createProvidersSheet } = require('./providersSheet');
-const { createRegionalCalendarEventsSheet } = require('./regionalCalendarEventsSheets');
-const { createRegionalCalendarsSheet } = require('./regionalCalendarsSheet');
-const { createSubjectTypesSheet } = require('./subjectTypesSheet');
-const { createSubjectsSheet } = require('./subjectsSheet');
-const { createTasksSheet, createTaskSubjectSheet } = require('./tasksSheets');
-const { createTestsQBanksSheet } = require('./testsQBanksSheet');
-const { createTestsQuestionsSheet } = require('./testsQuestionsSheet');
-const { createTestsSheet } = require('./testsSheet');
-const { createUsersSheet } = require('./usersSheet');
+} = require("./programCalendarSheets");
+const { createProgramsSheet } = require("./programsSheet");
+const { createProvidersSheet } = require("./providersSheet");
+const {
+  createRegionalCalendarEventsSheet,
+} = require("./regionalCalendarEventsSheets");
+const { createRegionalCalendarsSheet } = require("./regionalCalendarsSheet");
+const { createSubjectTypesSheet } = require("./subjectTypesSheet");
+const { createSubjectsSheet } = require("./subjectsSheet");
+const { createTasksSheet, createTaskSubjectSheet } = require("./tasksSheets");
+const { createTestsQBanksSheet } = require("./testsQBanksSheet");
+const { createTestsQuestionsSheet } = require("./testsQuestionsSheet");
+const { createTestsSheet } = require("./testsSheet");
+const { createUsersSheet } = require("./usersSheet");
 
-async function filterQbanksByRequiredByTestAndVersion({ detailedTests, qBanks, ctx }) {
-  const versionControlledQbankIds = await ctx.call('leebrary.assets.filterByVersionOfType', {
-    assetIds: qBanks.map((a) => a.id),
-    categoryId: qBanks?.[0]?.category?.id,
-  });
+async function filterQbanksByRequiredByTestAndVersion({
+  detailedTests,
+  qBanks,
+  ctx,
+}) {
+  const versionControlledQbankIds = await ctx.call(
+    "leebrary.assets.filterByVersionOfType",
+    {
+      assetIds: qBanks.map((a) => a.id),
+      categoryId: qBanks?.[0]?.category?.id,
+    }
+  );
 
-  const allQBankDetails = await ctx.call('leebrary.assets.getByIds', {
+  const allQBankDetails = await ctx.call("leebrary.assets.getByIds", {
     ids: qBanks.map((a) => a.id),
     shouldPrepareAssets: true,
     signedURLExpirationTime: 7 * 24 * 60 * 60,
@@ -56,20 +69,25 @@ async function filterQbanksByRequiredByTestAndVersion({ detailedTests, qBanks, c
   const qBanksNeeded = [];
   detailedTests.forEach((test) => {
     const questionBank = allQBankDetails.find(
-      (qBank) => qBank.providerData.id === test.providerData.metadata.questionBank
+      (qBank) =>
+        qBank.providerData.id === test.providerData.metadata.questionBank
     );
     qBanksNeeded.push(questionBank);
   });
 
   // Add last version of any qbank regardless if it's used in a test or not
   versionControlledQbankIds.forEach((latestVersionOfQBank) => {
-    const match = qBanksNeeded.find((qBank) => qBank.id === latestVersionOfQBank.id);
+    const match = qBanksNeeded.find(
+      (qBank) => qBank.id === latestVersionOfQBank.id
+    );
     if (!match) {
-      qBanksNeeded.push(allQBankDetails.find((qBank) => qBank.id === latestVersionOfQBank));
+      qBanksNeeded.push(
+        allQBankDetails.find((qBank) => qBank.id === latestVersionOfQBank)
+      );
     }
   });
 
-  const filteredQBankDetails = uniqBy(qBanksNeeded, 'id').map((item) => ({
+  const filteredQBankDetails = uniqBy(qBanksNeeded, "id").map((item) => ({
     ...item,
     hideInLibrary: !versionControlledQbankIds.includes(item.id),
   }));
@@ -94,7 +112,8 @@ function filterAssetsByRequiredByModuleAndVersion({
           .includes(item.providerData.id)
       ) && !seenIds.has(item.id);
 
-    const isLastVersionOfAsset = versionControlledSet.has(item.id) && !seenIds.has(item.id);
+    const isLastVersionOfAsset =
+      versionControlledSet.has(item.id) && !seenIds.has(item.id);
 
     if (isNeededForModule || isLastVersionOfAsset) {
       neededAssets.push(item);
@@ -116,14 +135,18 @@ async function getAssignablesData({
   categories,
   ctx,
 }) {
-  const filterAssetsByVersionOfTypeService = 'leebrary.assets.filterByVersionOfType';
-  const getAssetsByIdsService = 'leebrary.assets.getByIds';
+  const filterAssetsByVersionOfTypeService =
+    "leebrary.assets.filterByVersionOfType";
+  const getAssetsByIdsService = "leebrary.assets.getByIds";
 
   // MODULES
-  const versionConrolledModuleIds = await ctx.call(filterAssetsByVersionOfTypeService, {
-    assetIds: modules.map((a) => a.id),
-    categoryId: modules?.[0]?.category?.id,
-  });
+  const versionConrolledModuleIds = await ctx.call(
+    filterAssetsByVersionOfTypeService,
+    {
+      assetIds: modules.map((a) => a.id),
+      categoryId: modules?.[0]?.category?.id,
+    }
+  );
   const filteredModuleDetails = await ctx.call(getAssetsByIdsService, {
     ids: versionConrolledModuleIds,
     shouldPrepareAssets: true,
@@ -131,25 +154,36 @@ async function getAssignablesData({
   });
 
   // ALL OTHER ASSIGNABLES
-  const allAssetIds = [...tests, ...tasks, ...cCreatorDocuments].map((a) => a.id);
+  const allAssetIds = [...tests, ...tasks, ...cCreatorDocuments].map(
+    (a) => a.id
+  );
   const allAssetDetails = await ctx.call(getAssetsByIdsService, {
     ids: allAssetIds,
     shouldPrepareAssets: true,
     withFiles: true,
   });
 
-  const versionControlledTestIds = await ctx.call(filterAssetsByVersionOfTypeService, {
-    assetIds: tests.map((a) => a.id),
-    categoryId: tests?.[0]?.category?.id,
-  });
-  const versionControlledTaskIds = await ctx.call(filterAssetsByVersionOfTypeService, {
-    assetIds: tasks.map((a) => a.id),
-    categoryId: tasks?.[0]?.category?.id,
-  });
-  const versionControlledDocumentIds = await ctx.call(filterAssetsByVersionOfTypeService, {
-    assetIds: cCreatorDocuments.map((a) => a.id),
-    categoryId: cCreatorDocuments?.[0]?.category?.id,
-  });
+  const versionControlledTestIds = await ctx.call(
+    filterAssetsByVersionOfTypeService,
+    {
+      assetIds: tests.map((a) => a.id),
+      categoryId: tests?.[0]?.category?.id,
+    }
+  );
+  const versionControlledTaskIds = await ctx.call(
+    filterAssetsByVersionOfTypeService,
+    {
+      assetIds: tasks.map((a) => a.id),
+      categoryId: tasks?.[0]?.category?.id,
+    }
+  );
+  const versionControlledDocumentIds = await ctx.call(
+    filterAssetsByVersionOfTypeService,
+    {
+      assetIds: cCreatorDocuments.map((a) => a.id),
+      categoryId: cCreatorDocuments?.[0]?.category?.id,
+    }
+  );
 
   // FILTER BY MODULE DEPENDENCY AND LAST VERSION
   const filteredDetailedAssets = filterAssetsByRequiredByModuleAndVersion({
@@ -169,7 +203,8 @@ async function getAssignablesData({
     (item) => item.category === categories.find((c) => c.key === TASKS).id
   );
   const filteredDocumentDetails = filteredDetailedAssets.filter(
-    (item) => item.category === categories.find((c) => c.key === CONTENT_CREATOR).id
+    (item) =>
+      item.category === categories.find((c) => c.key === CONTENT_CREATOR).id
   );
 
   return {
@@ -193,7 +228,10 @@ async function generateBulkDataFile({
 
   const workbook = new Excel.Workbook();
 
-  ctx.meta = { ...ctx.meta, leebrary: { signedURLExpireSeconds: 7 * 24 * 60 * 60 } };
+  ctx.meta = {
+    ...ctx.meta,
+    leebrary: { signedURLExpireSeconds: 7 * 24 * 60 * 60 },
+  };
 
   // BASIC CONFIG
   await createLocalesSheet({ workbook, ctx });
@@ -203,16 +241,34 @@ async function generateBulkDataFile({
 
   // USERS
   const centers = await createCentersSheet({ workbook, ctx });
-  const users = await createUsersSheet({ workbook, centers, admin, superAdmin, ctx });
+  const users = await createUsersSheet({
+    workbook,
+    centers,
+    admin,
+    superAdmin,
+    ctx,
+  });
 
   // ACADEMIC CONFIGS
-  const evaluationSystems = await createEvaluationsSheet({ workbook, centers, ctx });
+  const evaluationSystems = await createEvaluationsSheet({
+    workbook,
+    centers,
+    ctx,
+  });
   await createProfilesSheet({ workbook, centers, ctx });
   await createAcademicPortfolioProfilesSheet({ workbook, ctx });
 
   // ACADEMIC PORTFOLIO DATA
-  const subjectTypes = await createSubjectTypesSheet({ workbook, centers, ctx });
-  const knowledgeAreas = await createKnowledgeAreasSheet({ workbook, centers, ctx });
+  const subjectTypes = await createSubjectTypesSheet({
+    workbook,
+    centers,
+    ctx,
+  });
+  const knowledgeAreas = await createKnowledgeAreasSheet({
+    workbook,
+    centers,
+    ctx,
+  });
   const programs = await createProgramsSheet({
     workbook,
     centers,
@@ -232,8 +288,11 @@ async function generateBulkDataFile({
   // these not indexable assets are use to handle versions needed by other assets (i.e.: Modules using a previouse version of a task, Tests using previous versions of a qbank)
 
   // ALL ASSETS
-  const { items: assetCategories } = await ctx.call('leebrary.categories.listRest', {});
-  const allAssets = await ctx.call('leebrary.assets.getAllAssets', {
+  const { items: assetCategories } = await ctx.call(
+    "leebrary.categories.listRest",
+    {}
+  );
+  const allAssets = await ctx.call("leebrary.assets.getAllAssets", {
     indexable: true,
   });
 
@@ -299,11 +358,13 @@ async function generateBulkDataFile({
   createTaskSubjectSheet({ workbook, tasks, subjects });
 
   // TESTS AND QBANKS
-  const { filteredQBankDetails } = await filterQbanksByRequiredByTestAndVersion({
-    detailedTests: filteredTestDetails,
-    qBanks: assetsByCategoryKey[TEST_QUESTION_BANKS],
-    ctx,
-  });
+  const { filteredQBankDetails } = await filterQbanksByRequiredByTestAndVersion(
+    {
+      detailedTests: filteredTestDetails,
+      qBanks: assetsByCategoryKey[TEST_QUESTION_BANKS],
+      ctx,
+    }
+  );
 
   const qBanks = createTestsQBanksSheet({
     workbook,
@@ -349,7 +410,11 @@ async function generateBulkDataFile({
   await createCalendarSheet({ workbook, users, subjects, noUsers, ctx });
 
   // ACADEMIC CALENDAR: REGIONAL CALENDARS
-  const regionalCalendars = await createRegionalCalendarsSheet({ workbook, centers, ctx });
+  const regionalCalendars = await createRegionalCalendarsSheet({
+    workbook,
+    centers,
+    ctx,
+  });
   createRegionalCalendarEventsSheet({ workbook, regionalCalendars, ctx });
 
   const programCalendars = await createProgramCalendarsSheet({
@@ -367,15 +432,17 @@ async function generateBulkDataFile({
     adminShouldOwnAllAssets,
     nonIndexableAssets: nonIndexableAssetsNeeded.map((item) => ({
       ...item,
-      categoryKey: assetCategories.find((category) => category.id === item.asset.category).key,
+      categoryKey: assetCategories.find(
+        (category) => category.id === item.asset.category
+      ).key,
     })),
     users,
     ctx,
   });
 
   if (writeFileLocally) {
-    await workbook.xlsx.writeFile('generated-bulk-data.xlsx');
-    return 'generated-bulk-data.xlsx';
+    await workbook.xlsx.writeFile("generated-bulk-data.xlsx");
+    return "generated-bulk-data.xlsx";
   }
 
   return workbook.xlsx.writeBuffer();

@@ -1,12 +1,12 @@
-const { keys, isNil, isEmpty, trim, values } = require('lodash');
-const itemsImport = require('../helpers/simpleListImport');
+const { keys, isNil, isEmpty, trim, values } = require("lodash");
+const itemsImport = require("../helpers/simpleListImport");
 
 const getBreakEvents = ({ events, program }) =>
   values(events)
-    .filter(({ eventType }) => eventType === 'breaks')
+    .filter(({ eventType }) => eventType === "breaks")
     .map((event) => {
-      const courseIndexes = (String(event.courses) || '')
-        .split('|')
+      const courseIndexes = (String(event.courses) || "")
+        .split("|")
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val))
         .map((val) => parseInt(val));
@@ -25,7 +25,7 @@ const getBreakEvents = ({ events, program }) =>
 
 const getCourseDates = ({ events, program }) =>
   values(events)
-    .filter(({ eventType }) => eventType === 'course')
+    .filter(({ eventType }) => eventType === "course")
     .reduce((acc, event) => {
       const course = program.courses.find((cs) => cs.index === event.courses);
       if (course) {
@@ -39,7 +39,7 @@ const getCourseDates = ({ events, program }) =>
 
 const getCourseEvents = ({ events, program }) =>
   values(events)
-    .filter(({ eventType }) => eventType === 'course-events')
+    .filter(({ eventType }) => eventType === "course-events")
     .reduce((acc, event) => {
       const course = program.courses.find((cs) => cs.index === event.courses);
       if (!course) return acc;
@@ -68,9 +68,11 @@ function getSubstageDates({ events, program }) {
     acc[course.id] = {};
 
     values(events)
-      .filter(({ eventType }) => eventType === 'substages')
+      .filter(({ eventType }) => eventType === "substages")
       .forEach((event) => {
-        const substage = program.substages.find((ss) => ss.abbreviation === event.substage);
+        const substage = program.substages.find(
+          (ss) => ss.abbreviation === event.substage
+        );
         if (substage) {
           acc[course.id][substage.id] = {
             startDate: event.startDate,
@@ -86,12 +88,18 @@ function getSubstageDates({ events, program }) {
 async function importProgramCalendars(filePath, config) {
   const programRegionalCalendarConfig = await itemsImport(
     filePath,
-    'ac_program_calendars',
+    "ac_program_calendars",
     40,
     false,
     false
   );
-  const eventItems = await itemsImport(filePath, 'ac_program_calendar_events', 40, true, true);
+  const eventItems = await itemsImport(
+    filePath,
+    "ac_program_calendar_events",
+    40,
+    true,
+    true
+  );
 
   keys(programRegionalCalendarConfig)
     .filter((key) => !isNil(key) && !isEmpty(key))
@@ -99,9 +107,12 @@ async function importProgramCalendars(filePath, config) {
       const programConfig = programRegionalCalendarConfig[key];
       const program = config.programs[programConfig.program];
 
-      programConfig.regionalConfig = config.regionalCalendars[programConfig.regionalConfig]?.id;
+      programConfig.regionalConfig =
+        config.regionalCalendars[programConfig.regionalConfig]?.id;
       programConfig.program = program.id;
-      const programEvents = values(eventItems).filter((event) => event.program === key);
+      const programEvents = values(eventItems).filter(
+        (event) => event.program === key
+      );
 
       programConfig.breaks = getBreakEvents({ events: programEvents, program });
       programConfig.courseDates = getCourseDates({

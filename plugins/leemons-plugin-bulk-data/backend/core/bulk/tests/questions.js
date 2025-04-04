@@ -1,12 +1,12 @@
-const { keys, trim, isNil, isEmpty, isString, isArray } = require('lodash');
-const showdown = require('showdown');
+const { keys, trim, isNil, isEmpty, isString, isArray } = require("lodash");
+const showdown = require("showdown");
 
-const itemsImport = require('../helpers/simpleListImport');
+const itemsImport = require("../helpers/simpleListImport");
 
 const converter = new showdown.Converter();
 
 async function importQuestions(filePath) {
-  const items = await itemsImport(filePath, 'te_questions', 40, true, true);
+  const items = await itemsImport(filePath, "te_questions", 40, true, true);
   const questions = [];
 
   keys(items)
@@ -15,19 +15,19 @@ async function importQuestions(filePath) {
       const question = items[key];
 
       question.stem = {
-        format: 'html',
-        text: converter.makeHtml(question.question || ''),
+        format: "html",
+        text: converter.makeHtml(question.question || ""),
       };
 
-      question.tags = (question.tags || '')
-        .split(',')
+      question.tags = (question.tags || "")
+        .split(",")
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val));
 
       question.tags = question.tags || [];
 
-      question.clues = (question.clues || '')
-        .split('|')
+      question.clues = (question.clues || "")
+        .split("|")
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val))
         .map((value) => value);
@@ -35,12 +35,12 @@ async function importQuestions(filePath) {
       // ·····················································
       // FEEDBACK
 
-      const answerFeedback = (question.answers_feedback || '')
-        .split('|')
+      const answerFeedback = (question.answers_feedback || "")
+        .split("|")
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val))
         .map((feedbackItem) => {
-          const [answer, feedback] = feedbackItem.split('@');
+          const [answer, feedback] = feedbackItem.split("@");
           return {
             answer: Number(answer),
             feedback: converter.makeHtml(feedback),
@@ -53,7 +53,7 @@ async function importQuestions(filePath) {
       } else if (question.answers_feedback?.length) {
         question.hasAnswerFeedback = false;
         question.globalFeedback = {
-          format: 'html',
+          format: "html",
           text: converter.makeHtml(question.answers_feedback),
         };
       } else {
@@ -64,8 +64,10 @@ async function importQuestions(filePath) {
       // ·····················································
       // RESPONSES
 
-      const imageResponses = Boolean(question.withImages && question.answers_images);
-      const responseBreak = imageResponses ? ',' : '|';
+      const imageResponses = Boolean(
+        question.withImages && question.answers_images
+      );
+      const responseBreak = imageResponses ? "," : "|";
 
       if (
         imageResponses &&
@@ -74,20 +76,21 @@ async function importQuestions(filePath) {
       ) {
         question.answers_images = question.answers_images.richText
           .map((item) => item.text)
-          .join('');
+          .join("");
       }
 
-      if (question.type === 'mono-response') {
+      if (question.type === "mono-response") {
         try {
           question.choices = String(
-            (imageResponses ? question.answers_images : question.answers) || ''
+            (imageResponses ? question.answers_images : question.answers) || ""
           )
             .split(responseBreak)
             .map((val) => trim(val))
             .filter((val) => !isEmpty(val))
             .map((answer, index) => {
-              const { feedback } = answerFeedback.find((item) => item.answer === index + 1) || {};
-              const hideOnHelp = answer.slice(-1) === '@';
+              const { feedback } =
+                answerFeedback.find((item) => item.answer === index + 1) || {};
+              const hideOnHelp = answer.slice(-1) === "@";
               let response = answer;
 
               if (hideOnHelp) {
@@ -95,44 +98,45 @@ async function importQuestions(filePath) {
               }
 
               const value = {
-                feedback: feedback ? { format: 'plain', text: feedback } : null,
+                feedback: feedback ? { format: "plain", text: feedback } : null,
                 isCorrect: Number(question.answer_correct) === index + 1,
                 hideOnHelp,
               };
 
               if (imageResponses) {
-                const [url, caption] = response.split('|');
+                const [url, caption] = response.split("|");
                 value.image = url;
                 value.imageDescription = caption;
               } else {
-                value.text = { text: response, format: 'plain' };
+                value.text = { text: response, format: "plain" };
               }
 
               return value;
             });
         } catch (e) {
-          console.log('-- QUESTIONS IMPORT ERROR --');
+          console.log("-- QUESTIONS IMPORT ERROR --");
           console.log(e);
-          console.log('imageResponses:', imageResponses);
-          console.log('question.answers_images:', question.answers_images);
-          console.log('question.answers:', question.answers);
-          console.log('---------------------------------');
+          console.log("imageResponses:", imageResponses);
+          console.log("question.answers_images:", question.answers_images);
+          console.log("question.answers:", question.answers);
+          console.log("---------------------------------");
           question.choices = [];
         }
       }
       // ·····················································
       // QUESTION MAP
 
-      if (question.type === 'map') {
+      if (question.type === "map") {
         if (!isEmpty(question.stemResource)) {
           question.mapProperties = { image: question.stemResource };
           delete question.stemResource;
         }
 
-        const mapInfo = question.map_info.split('::').map((val) => trim(val));
+        const mapInfo = question.map_info.split("::").map((val) => trim(val));
 
-        const [type, backgroundColor, positionString, mapImageCaption] = mapInfo;
-        const [positionLeft, positionTop] = positionString.split('|');
+        const [type, backgroundColor, positionString, mapImageCaption] =
+          mapInfo;
+        const [positionLeft, positionTop] = positionString.split("|");
 
         if (mapImageCaption?.length) {
           question.mapProperties.caption = mapImageCaption;
@@ -144,11 +148,16 @@ async function importQuestions(filePath) {
             .map((val) => trim(val))
             .filter((val) => !isEmpty(val))
             .map((answer) => {
-              const hideOnHelp = answer.slice(-1) === '@';
+              const hideOnHelp = answer.slice(-1) === "@";
               const responseValue = hideOnHelp ? answer.slice(0, -1) : answer;
-              const [left, top, response] = responseValue.split(':');
+              const [left, top, response] = responseValue.split(":");
 
-              return { left, top, response, hideOnHelp: hideOnHelp || undefined };
+              return {
+                left,
+                top,
+                response,
+                hideOnHelp: hideOnHelp || undefined,
+              };
             }),
           position: { left: positionLeft, top: positionTop },
           type,

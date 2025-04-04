@@ -1,4 +1,4 @@
-const { range } = require('lodash');
+const { range } = require("lodash");
 
 function getColumns(len = 10) {
   return range(1, len).map((i) => ({

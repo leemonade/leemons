@@ -1,10 +1,10 @@
 /* eslint-disable no-await-in-loop */
-const chalk = require('chalk');
-const { keys } = require('lodash');
-const importTasks = require('./bulk/tasks');
-const _delay = require('./bulk/helpers/delay');
-const { LOAD_PHASES } = require('./importHandlers/getLoadStatus');
-const { makeAssetNotIndexable } = require('./helpers/makeAssetNotIndexable');
+const chalk = require("chalk");
+const { keys } = require("lodash");
+const importTasks = require("./bulk/tasks");
+const _delay = require("./bulk/helpers/delay");
+const { LOAD_PHASES } = require("./importHandlers/getLoadStatus");
+const { makeAssetNotIndexable } = require("./helpers/makeAssetNotIndexable");
 
 async function initTasks({ file, config, ctx, useCache, phaseKey }) {
   try {
@@ -17,15 +17,17 @@ async function initTasks({ file, config, ctx, useCache, phaseKey }) {
       const { creator, hideInLibrary, ...task } = tasks[key];
 
       try {
-        ctx.logger.debug(chalk`{cyan.bold BULK} {gray Adding task: ${task.asset?.name}}`);
+        ctx.logger.debug(
+          chalk`{cyan.bold BULK} {gray Adding task: ${task.asset?.name}}`
+        );
         const taskData = await ctx.call(
-          'tasks.tasks.create',
+          "tasks.tasks.create",
           { ...task, published: true },
           { meta: { userSession: creator } }
         );
 
         if (hideInLibrary) {
-          const { task: taskDetail } = await ctx.call('tasks.tasks.getRest', {
+          const { task: taskDetail } = await ctx.call("tasks.tasks.getRest", {
             id: taskData.fullId,
           });
           await makeAssetNotIndexable({
@@ -37,7 +39,9 @@ async function initTasks({ file, config, ctx, useCache, phaseKey }) {
         }
         tasks[key] = { ...taskData };
 
-        ctx.logger.info(chalk`{cyan.bold BULK} Task ADDED: ${task.asset?.name}`);
+        ctx.logger.info(
+          chalk`{cyan.bold BULK} Task ADDED: ${task.asset?.name}`
+        );
         if (useCache) {
           await ctx.cache.set(
             phaseKey,
@@ -46,7 +50,7 @@ async function initTasks({ file, config, ctx, useCache, phaseKey }) {
           );
         }
       } catch (e) {
-        ctx.logger.log('-- TASK CREATION ERROR --');
+        ctx.logger.log("-- TASK CREATION ERROR --");
         ctx.logger.log(`task: ${task.asset?.name}`);
         ctx.logger.log(`creator: ${creator.name}`);
         ctx.logger.error(e);

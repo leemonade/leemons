@@ -1,9 +1,21 @@
-const { keys, isNil, isEmpty } = require('lodash');
-const itemsImport = require('../helpers/simpleListImport');
+const { keys, isNil, isEmpty } = require("lodash");
+const itemsImport = require("../helpers/simpleListImport");
 
 async function importRegionalCalendars(filePath, centers) {
-  const calendarItems = await itemsImport(filePath, 'ac_regional_calendars', 40, true, true);
-  const eventItems = await itemsImport(filePath, 'ac_reg_events', 40, true, true);
+  const calendarItems = await itemsImport(
+    filePath,
+    "ac_regional_calendars",
+    40,
+    true,
+    true
+  );
+  const eventItems = await itemsImport(
+    filePath,
+    "ac_reg_events",
+    40,
+    true,
+    true
+  );
 
   keys(calendarItems).forEach((key) => {
     const centerKey = calendarItems[key].center;
@@ -20,13 +32,13 @@ async function importRegionalCalendars(filePath, centers) {
       const calendar = calendarItems[event?.regionalCalendar];
 
       if (calendar) {
-        if (event.type === 'regional' && !calendar.regionalCalendarRel) {
+        if (event.type === "regional" && !calendar.regionalCalendarRel) {
           calendar.regionalEvents.push(event);
         }
-        if (event.type === 'local') {
+        if (event.type === "local") {
           calendar.localEvents.push(event);
         }
-        if (event.type === 'day-off') {
+        if (event.type === "day-off") {
           calendar.daysOffEvents.push(event);
         }
       }

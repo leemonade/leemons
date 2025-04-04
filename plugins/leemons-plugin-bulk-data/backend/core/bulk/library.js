@@ -1,8 +1,8 @@
-const { keys, trim, isEmpty, isNil } = require('lodash');
-const itemsImport = require('./helpers/simpleListImport');
+const { keys, trim, isEmpty, isNil } = require("lodash");
+const itemsImport = require("./helpers/simpleListImport");
 
 async function importLibrary(filePath, { users }) {
-  const items = await itemsImport(filePath, 'library', 30, true, true);
+  const items = await itemsImport(filePath, "library", 30, true, true);
 
   keys(items)
     .filter((key) => !isNil(key) && !isEmpty(key))
@@ -10,11 +10,11 @@ async function importLibrary(filePath, { users }) {
       const asset = items[key];
 
       asset.canAccess = asset.canAccess
-        .split(',')
+        .split(",")
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val))
         .map((userItem) => {
-          const [user, role] = userItem.split('|');
+          const [user, role] = userItem.split("|");
           return {
             user: users[user],
             userAgent: users[user]?.userAgents[0]?.id,
@@ -22,10 +22,12 @@ async function importLibrary(filePath, { users }) {
           };
         });
 
-      asset.creator = asset.canAccess.find((item) => item.role === 'owner').user;
+      asset.creator = asset.canAccess.find(
+        (item) => item.role === "owner"
+      ).user;
 
-      asset.tags = (asset.tags || '')
-        .split(',')
+      asset.tags = (asset.tags || "")
+        .split(",")
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val));
 

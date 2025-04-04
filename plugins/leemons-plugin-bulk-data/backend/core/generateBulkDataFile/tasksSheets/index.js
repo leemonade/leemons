@@ -1,4 +1,4 @@
-const { createTasksSheet } = require('./tasksSheet');
-const { createTaskSubjectSheet } = require('./taskSubjectSheet');
+const { createTasksSheet } = require("./tasksSheet");
+const { createTaskSubjectSheet } = require("./taskSubjectSheet");
 
 module.exports = { createTasksSheet, createTaskSubjectSheet };

@@ -1,8 +1,8 @@
-const { keys, isNil, isEmpty } = require('lodash');
-const itemsImport = require('../helpers/simpleListImport');
+const { keys, isNil, isEmpty } = require("lodash");
+const itemsImport = require("../helpers/simpleListImport");
 
 async function importAcademicPortfolioProfiles(filePath, profiles) {
-  const items = await itemsImport(filePath, 'ap_profiles', 5);
+  const items = await itemsImport(filePath, "ap_profiles", 5);
 
   /*
   We want items to be transformed from this:

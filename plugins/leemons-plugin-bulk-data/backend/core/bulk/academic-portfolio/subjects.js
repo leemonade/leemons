@@ -1,11 +1,11 @@
-const { keys, isEmpty, find, trim, isNil } = require('lodash');
-const itemsImport = require('../helpers/simpleListImport');
+const { keys, isEmpty, find, trim, isNil } = require("lodash");
+const itemsImport = require("../helpers/simpleListImport");
 
 async function importAcademicPortfolioSubjects(
   filePath,
   { programs, users, knowledgeAreas, subjectTypes, weekdays }
 ) {
-  const items = await itemsImport(filePath, 'ap_subjects', 30, false, false);
+  const items = await itemsImport(filePath, "ap_subjects", 30, false, false);
 
   const now = new Date();
 
@@ -35,21 +35,26 @@ async function importAcademicPortfolioSubjects(
 
         if (dayValue && !isEmpty(dayValue)) {
           const dayGroups = dayValue
-            .split(',')
+            .split(",")
             .map((val) => trim(val))
             .filter((val) => !isEmpty(val));
 
           dayGroups.forEach((dayGroup) => {
-            const [classIdentifier, durationRaw] = dayGroup.split('@');
-            const [start, end] = durationRaw.split('|');
+            const [classIdentifier, durationRaw] = dayGroup.split("@");
+            const [start, end] = durationRaw.split("|");
 
-            const [startH, startM] = start.split(':');
-            const [endH, endM] = end.split(':');
+            const [startH, startM] = start.split(":");
+            const [endH, endM] = end.split(":");
 
-            const startDate = new Date(new Date(now.setHours(startH)).setMinutes(startM));
-            const endDate = new Date(new Date(now.setHours(endH)).setMinutes(endM));
+            const startDate = new Date(
+              new Date(now.setHours(startH)).setMinutes(startM)
+            );
+            const endDate = new Date(
+              new Date(now.setHours(endH)).setMinutes(endM)
+            );
 
-            const duration = new Date(endDate - startDate).getTime() / (60 * 1000);
+            const duration =
+              new Date(endDate - startDate).getTime() / (60 * 1000);
 
             if (!schedule[classIdentifier]) {
               schedule[classIdentifier] = [];
@@ -72,17 +77,17 @@ async function importAcademicPortfolioSubjects(
       // ·····················································
       // TEACHERS
 
-      const teachers = (items[key].teachers || '')
-        .split(',')
+      const teachers = (items[key].teachers || "")
+        .split(",")
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val))
         .map((value) => {
-          const [user, classIdentifier] = value.split('@');
-          const [teacher, type] = user.split('|').map((val) => trim(val));
+          const [user, classIdentifier] = value.split("@");
+          const [teacher, type] = user.split("|").map((val) => trim(val));
 
           return {
             teacher: users[teacher]?.id,
-            type: type ? `${type}-teacher` : 'teacher',
+            type: type ? `${type}-teacher` : "teacher",
             classIdentifier: Number(classIdentifier),
           };
         });
@@ -94,20 +99,23 @@ async function importAcademicPortfolioSubjects(
 
       if (items[key].students && !isEmpty(items[key].students)) {
         students = items[key].students
-          .split(',')
+          .split(",")
           .map((val) => trim(val))
           .filter((val) => !isEmpty(val))
           .map((value) => {
-            const [user, classIdentifier] = value.split('@');
-            return { student: users[user]?.id, classIdentifier: Number(classIdentifier) };
+            const [user, classIdentifier] = value.split("@");
+            return {
+              student: users[user]?.id,
+              classIdentifier: Number(classIdentifier),
+            };
           });
       }
 
       // ·····················································
       // COURSES
 
-      const courseIndexes = (item.courses ?? '')
-        .split('|')
+      const courseIndexes = (item.courses ?? "")
+        .split("|")
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val))
         .map(Number);
@@ -116,7 +124,7 @@ async function importAcademicPortfolioSubjects(
         (index) =>
           find(program.courses, {
             index,
-            type: 'course',
+            type: "course",
           })?.id
       );
 
@@ -128,13 +136,14 @@ async function importAcademicPortfolioSubjects(
 
       if (items[key].credits && !isEmpty(items[key].credits)) {
         // It is mandatory for the subject to have a minimum of 1 credit
-        items[key].credits = Number(items[key].credits) > 0 ? Number(items[key].credits) : 1;
+        items[key].credits =
+          Number(items[key].credits) > 0 ? Number(items[key].credits) : 1;
       }
 
       // ·····················································
       // SUBSTAGES
 
-      let substage = '';
+      let substage = "";
       if (program.numberOfSubstages > 0 && items[key].substage?.length) {
         substage += program.substages.find(
           (ss) => ss.abbreviation === trim(items[key].substage)
@@ -148,13 +157,16 @@ async function importAcademicPortfolioSubjects(
       const classrooms = [];
       const classesCustomIds = {};
 
-      if (items[key].classesCustomIds && !isEmpty(items[key].classesCustomIds)) {
+      if (
+        items[key].classesCustomIds &&
+        !isEmpty(items[key].classesCustomIds)
+      ) {
         items[key].classesCustomIds
-          .split(',')
+          .split(",")
           .map((val) => trim(val))
           .filter((val) => !isEmpty(val))
           .forEach((value) => {
-            const [classIdentifier, classroomId] = value.split(':');
+            const [classIdentifier, classroomId] = value.split(":");
             classesCustomIds[classIdentifier] = classroomId;
           });
       }
@@ -169,8 +181,9 @@ async function importAcademicPortfolioSubjects(
           ...sortedProgramGroups.slice(0, groupsAmount).map((group) => ({
             group: group.id,
             classroomId: classesCustomIds[group.index] ?? null,
-            seats: program.courses.find((course) => course.index === group.metadata.course).metadata
-              .seats,
+            seats: program.courses.find(
+              (course) => course.index === group.metadata.course
+            ).metadata.seats,
           }))
         );
       }
@@ -178,12 +191,12 @@ async function importAcademicPortfolioSubjects(
       if (items[key].classrooms && !classGroups?.length) {
         classrooms.push(
           ...items[key].classrooms
-            .split(',')
+            .split(",")
             .map((val) => trim(val))
             .filter((val) => !isEmpty(val))
             .map((classroom) => {
-              const [index, classInfo] = classroom.split(':');
-              const [seats, alias] = classInfo.split('@');
+              const [index, classInfo] = classroom.split(":");
+              const [seats, alias] = classInfo.split("@");
 
               return {
                 classWithoutGroupId: index,
@@ -243,7 +256,8 @@ async function importAcademicPortfolioSubjects(
 
         // Format classWithoutGroupId to have three digits
         if (classroom.classWithoutGroupId) {
-          classroom.classWithoutGroupId = classroom.classWithoutGroupId.padStart(3, '0');
+          classroom.classWithoutGroupId =
+            classroom.classWithoutGroupId.padStart(3, "0");
         }
 
         // Substage
@@ -264,7 +278,7 @@ async function importAcademicPortfolioSubjects(
       delete items[key].courses;
       delete items[key].classesCustomIds;
       delete items[key].substage;
-      delete items[key][' '];
+      delete items[key][" "];
 
       // Cleans empty keys
       keys(items[key]).forEach((prop) => {

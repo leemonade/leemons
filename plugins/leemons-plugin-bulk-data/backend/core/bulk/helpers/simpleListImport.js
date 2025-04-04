@@ -1,6 +1,13 @@
-const { range, keys, findIndex, toLower, isNaN: _isNaN, isEmpty } = require('lodash');
-const getColumns = require('./getColumns');
-const DataImporter = require('./getXlsImporter')();
+const {
+  range,
+  keys,
+  findIndex,
+  toLower,
+  isNaN: _isNaN,
+  isEmpty,
+} = require("lodash");
+const getColumns = require("./getColumns");
+const DataImporter = require("./getXlsImporter")();
 
 const factory = new DataImporter();
 
@@ -15,7 +22,7 @@ async function simpleListImport(
   const config = {
     data: {
       worksheet,
-      type: 'list',
+      type: "list",
       columns: getColumns(columnLength),
     },
   };
@@ -27,14 +34,15 @@ async function simpleListImport(
 
   const fields = keys(data[0])
     .map((key) => data[0][key])
-    .filter((val) => val !== '');
+    .filter((val) => val !== "");
 
   // ·····················································
   // ITEMS FIELDS START COLUMN INDEX
 
   const fieldStartColumnOffset = 1; // first column is omitted (bulk info)
   const fieldStartColumn =
-    findIndex(fields, (field) => field.indexOf('root') > -1) + fieldStartColumnOffset;
+    findIndex(fields, (field) => field.indexOf("root") > -1) +
+    fieldStartColumnOffset;
 
   const fieldEndColumn = fields.length;
 
@@ -42,7 +50,8 @@ async function simpleListImport(
   // ITEMS START ROW INDEX
 
   const itemsStartRowOffset = 2; // fields names and header items
-  const itemsStartRow = findIndex(data.slice(1), (item) => item[1] !== '') + itemsStartRowOffset;
+  const itemsStartRow =
+    findIndex(data.slice(1), (item) => item[1] !== "") + itemsStartRowOffset;
 
   return data
     .slice(itemsStartRow)
@@ -55,9 +64,9 @@ async function simpleListImport(
         if (!cleanEmpty || (cleanEmpty && !isEmpty(value))) {
           if (autoDetectType) {
             // Boolean check
-            if (toLower(value) === 'no') {
+            if (toLower(value) === "no") {
               value = false;
-            } else if (toLower(value) === 'yes') {
+            } else if (toLower(value) === "yes") {
               value = true;
             }
             // Number check

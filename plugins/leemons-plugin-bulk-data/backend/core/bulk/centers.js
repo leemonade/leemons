@@ -1,7 +1,7 @@
-const itemsImport = require('./helpers/simpleListImport');
+const itemsImport = require("./helpers/simpleListImport");
 
 async function importCenters(filePath) {
-  return itemsImport(filePath, 'centers', 10);
+  return itemsImport(filePath, "centers", 10);
 }
 
 module.exports = importCenters;

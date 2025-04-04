@@ -1,9 +1,9 @@
 /* eslint-disable no-await-in-loop */
-const { keys, isEmpty } = require('lodash');
-const importLibrary = require('./bulk/library');
-const _delay = require('./bulk/helpers/delay');
-const importNonIndexableAssets = require('./bulk/libraryNonIndexables');
-const { LOAD_PHASES } = require('./importHandlers/getLoadStatus');
+const { keys, isEmpty } = require("lodash");
+const importLibrary = require("./bulk/library");
+const _delay = require("./bulk/helpers/delay");
+const importNonIndexableAssets = require("./bulk/libraryNonIndexables");
+const { LOAD_PHASES } = require("./importHandlers/getLoadStatus");
 
 async function addNonIndexableAssets({ file, users, ctx }) {
   try {
@@ -20,7 +20,7 @@ async function addNonIndexableAssets({ file, users, ctx }) {
       try {
         ctx.logger.debug(`Adding asset: ${asset.name}`);
         const assetData = await ctx.call(
-          'leebrary.assets.add',
+          "leebrary.assets.add",
           {
             asset: { ...asset, indexable: false, public: true },
           },
@@ -32,7 +32,7 @@ async function addNonIndexableAssets({ file, users, ctx }) {
 
         ctx.logger.info(`Non indexable asset ADDED: ${asset.name}`);
       } catch (e) {
-        ctx.logger.log('-- ASSET CREATION ERROR --');
+        ctx.logger.log("-- ASSET CREATION ERROR --");
         ctx.logger.error(e);
       }
 
@@ -47,7 +47,13 @@ async function addNonIndexableAssets({ file, users, ctx }) {
   return { assets: null, nonIndexableAssets: null };
 }
 
-async function initLibrary({ file, config: { users }, ctx, useCache, phaseKey }) {
+async function initLibrary({
+  file,
+  config: { users },
+  ctx,
+  useCache,
+  phaseKey,
+}) {
   try {
     const assets = await importLibrary(file, { users });
     const assetsKeys = keys(assets);
@@ -56,11 +62,11 @@ async function initLibrary({ file, config: { users }, ctx, useCache, phaseKey })
       const key = assetsKeys[i];
       const { creator, enabled, program, subject, ...asset } = assets[key];
 
-      if (enabled !== false && enabled !== 'No') {
+      if (enabled !== false && enabled !== "No") {
         try {
           ctx.logger.debug(`Adding asset: ${asset.name}`);
           const assetData = await ctx.call(
-            'leebrary.assets.add',
+            "leebrary.assets.add",
             {
               asset,
             },
@@ -80,7 +86,7 @@ async function initLibrary({ file, config: { users }, ctx, useCache, phaseKey })
             );
           }
         } catch (e) {
-          ctx.logger.log('-- ASSET CREATION ERROR --');
+          ctx.logger.log("-- ASSET CREATION ERROR --");
           ctx.logger.error(e);
         }
 
@@ -88,7 +94,11 @@ async function initLibrary({ file, config: { users }, ctx, useCache, phaseKey })
       }
     }
 
-    const nonIndexableAssets = await addNonIndexableAssets({ file, users, ctx });
+    const nonIndexableAssets = await addNonIndexableAssets({
+      file,
+      users,
+      ctx,
+    });
     return { assets, nonIndexableAssets };
   } catch (err) {
     ctx.logger.error(err);
@@ -97,13 +107,22 @@ async function initLibrary({ file, config: { users }, ctx, useCache, phaseKey })
   return null;
 }
 
-async function updateLibrary({ file, config: { assets, programs, users }, ctx }) {
+async function updateLibrary({
+  file,
+  config: { assets, programs, users },
+  ctx,
+}) {
   try {
     const assetsRaw = await importLibrary(file, { users });
     const updatePromises = keys(assets)
       .map((key) => {
-        const { creator, enabled, program: programKey, subject: subjectKey } = assetsRaw[key];
-        if (enabled !== false && enabled !== 'No') {
+        const {
+          creator,
+          enabled,
+          program: programKey,
+          subject: subjectKey,
+        } = assetsRaw[key];
+        if (enabled !== false && enabled !== "No") {
           const {
             // eslint-disable-next-line camelcase
             created_at,
@@ -129,7 +148,7 @@ async function updateLibrary({ file, config: { assets, programs, users }, ctx })
             asset.program = programs[programKey]?.id;
 
             return ctx.call(
-              'leebrary.assets.update',
+              "leebrary.assets.update",
               {
                 data: asset,
               },

@@ -1,25 +1,25 @@
-const { keys, trim, isEmpty, isNil } = require('lodash');
-const chalk = require('chalk');
+const { keys, trim, isEmpty, isNil } = require("lodash");
+const chalk = require("chalk");
 
-const itemsImport = require('./helpers/simpleListImport');
+const itemsImport = require("./helpers/simpleListImport");
 
 function parseAttributes(attributesString) {
   const attributes = {};
   attributesString.replace(/(\w+)=["']([^"']*)["']/g, (match, key, value) => {
     attributes[key] = value;
-    return '';
+    return "";
   });
   return attributes;
 }
 
 async function newAssetForTextEditor({ props, userSession, ctx }) {
   const duplicatedAsset = await ctx.call(
-    'leebrary.assets.duplicate',
+    "leebrary.assets.duplicate",
     { assetId: props.id, preserveName: true, indexable: false, public: true },
     { meta: { userSession } }
   );
 
-  const [assetDetail] = await ctx.call('leebrary.assets.getByIds', {
+  const [assetDetail] = await ctx.call("leebrary.assets.getByIds", {
     ids: [duplicatedAsset.id],
     withFiles: true,
     shouldPrepareAssets: true,
@@ -53,7 +53,8 @@ async function parseContent({
 
   // eslint-disable-next-line no-cond-assign
   while ((match = regex.exec(htmlString)) !== null) {
-    const [fullMatch, preBulkIdAttributes, bulkId, postBulkIdAttributes] = match;
+    const [fullMatch, preBulkIdAttributes, bulkId, postBulkIdAttributes] =
+      match;
 
     let assetInfo;
     if (duplicatedAssets[bulkId]) {
@@ -66,7 +67,9 @@ async function parseContent({
         duplicatedAssets[bulkId] = assetInfo;
       } else {
         assetInfo = null;
-        ctx.logger.info(chalk`{yellow.bold WARN} Could not find asset with bulkId: ${bulkId}`);
+        ctx.logger.info(
+          chalk`{yellow.bold WARN} Could not find asset with bulkId: ${bulkId}`
+        );
       }
     }
 
@@ -81,13 +84,13 @@ async function parseContent({
       attributesObject.coverid = assetInfo.coverid;
 
       const updatedAttributes = Object.entries(attributesObject)
-        .map(([key, value]) => `${key}="${value ?? ''}"`)
-        .join(' ');
+        .map(([key, value]) => `${key}="${value ?? ""}"`)
+        .join(" ");
 
       const assetText = `<library ${updatedAttributes}></library>`;
       finalContent = finalContent.replace(fullMatch, assetText);
     } else {
-      finalContent = finalContent.replace(fullMatch, '');
+      finalContent = finalContent.replace(fullMatch, "");
     }
   }
 
@@ -96,7 +99,7 @@ async function parseContent({
 
 async function importContentCreatorDocuments({ file, config, ctx }) {
   const { users, programs, assets, nonIndexableAssets } = config;
-  const items = await itemsImport(file, 'content_creator', 50);
+  const items = await itemsImport(file, "content_creator", 50);
 
   await Promise.all(
     keys(items)
@@ -106,15 +109,21 @@ async function importContentCreatorDocuments({ file, config, ctx }) {
 
         // BASIC DATA
 
-        const { name, description = null, color = null, published, hideInLibrary } = document;
+        const {
+          name,
+          description = null,
+          color = null,
+          published,
+          hideInLibrary,
+        } = document;
 
-        const tags = (document.tags || '')
-          .split(',')
+        const tags = (document.tags || "")
+          .split(",")
           .map((val) => trim(val))
           .filter((val) => !isEmpty(val));
 
         let { cover } = document;
-        if (cover && !cover.startsWith('http')) {
+        if (cover && !cover.startsWith("http")) {
           const matchedAsset = assets[cover];
           if (matchedAsset?.cover?.id) {
             cover = matchedAsset.cover.id;
@@ -129,8 +138,8 @@ async function importContentCreatorDocuments({ file, config, ctx }) {
         let { subjects } = document;
         const program = programs[programBulkId];
         if (program) {
-          subjects = (subjects || '')
-            ?.split(',')
+          subjects = (subjects || "")
+            ?.split(",")
             .map((val) => trim(val))
             .filter((val) => !isEmpty(val))
             .map((subject) => program.subjects[subject]?.id);

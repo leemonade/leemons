@@ -1,1 +1,1 @@
-module.exports = { pluginName: 'bulk-data' };
+module.exports = { pluginName: "bulk-data" };

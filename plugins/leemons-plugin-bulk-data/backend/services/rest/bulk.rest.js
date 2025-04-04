@@ -1,19 +1,19 @@
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
 
-const { generateBulkDataFile } = require('../../core/generateBulkDataFile');
+const { generateBulkDataFile } = require("../../core/generateBulkDataFile");
 const {
   loadFromFile,
   getLoadStatus,
   loadFromTemplateURL,
   getStatusWhenLocal,
-} = require('../../core/importHandlers');
+} = require("../../core/importHandlers");
 
 module.exports = {
   loadRest: {
     rest: {
-      path: '/load-from-file',
-      method: 'POST',
-      type: 'multipart',
+      path: "/load-from-file",
+      method: "POST",
+      type: "multipart",
     },
     timeout: 0,
     async handler(ctx) {
@@ -22,9 +22,9 @@ module.exports = {
   },
   loadRestSync: {
     rest: {
-      path: '/load-from-file-sync',
-      method: 'POST',
-      type: 'multipart',
+      path: "/load-from-file-sync",
+      method: "POST",
+      type: "multipart",
     },
     timeout: 0,
     async handler(ctx) {
@@ -33,20 +33,24 @@ module.exports = {
   },
   loadFromTemplateURLRest: {
     rest: {
-      path: '/load-from-template-url',
-      method: 'POST',
+      path: "/load-from-template-url",
+      method: "POST",
     },
     timeout: 0,
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const { templateURL, shareLibraryAssetsWithTeacherProfile } = ctx.params;
-      return loadFromTemplateURL({ templateURL, shareLibraryAssetsWithTeacherProfile, ctx });
+      return loadFromTemplateURL({
+        templateURL,
+        shareLibraryAssetsWithTeacherProfile,
+        ctx,
+      });
     },
   },
   getLocalLoadStatusRest: {
     rest: {
-      path: '/load-from-file', // todo update
-      method: 'GET',
+      path: "/load-from-file", // todo update
+      method: "GET",
     },
     handler() {
       return getStatusWhenLocal();
@@ -54,22 +58,32 @@ module.exports = {
   },
   getLoadStatusRest: {
     rest: {
-      path: '/get-load-status',
-      method: 'GET',
+      path: "/get-load-status",
+      method: "GET",
     },
     async handler(ctx) {
-      return getLoadStatus({ useCache: true, initOnPhase: ctx.params?.initOnPhase, ctx });
+      return getLoadStatus({
+        useCache: true,
+        initOnPhase: ctx.params?.initOnPhase,
+        ctx,
+      });
     },
   },
   generateBulkDataRest: {
     rest: {
-      path: '/generate-bulk-data',
-      method: 'POST',
+      path: "/generate-bulk-data",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
 
     async handler(ctx) {
-      const { admin, superAdmin, noUsers, isClientManagerTemplate, writeFileLocally } = ctx.params;
+      const {
+        admin,
+        superAdmin,
+        noUsers,
+        isClientManagerTemplate,
+        writeFileLocally,
+      } = ctx.params;
       const result = await generateBulkDataFile({
         admin,
         superAdmin,

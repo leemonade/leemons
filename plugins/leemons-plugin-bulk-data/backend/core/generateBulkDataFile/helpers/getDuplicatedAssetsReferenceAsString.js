@@ -1,7 +1,9 @@
-const { get } = require('lodash');
+const { get } = require("lodash");
 
 function handleNonIndexableAssetsNeeded(nonIndexableAssets, assetToAdd) {
-  const match = nonIndexableAssets.find(({ asset }) => asset.id === assetToAdd.id);
+  const match = nonIndexableAssets.find(
+    ({ asset }) => asset.id === assetToAdd.id
+  );
   if (match) {
     return match.bulkId;
   }
@@ -14,29 +16,31 @@ function handleNonIndexableAssetsNeeded(nonIndexableAssets, assetToAdd) {
 function getDuplicatedAssetsReferenceAsString({
   libraryAssets,
   dups,
-  separator = ',',
+  separator = ",",
   addNotFoundToNonIndexableAssets = false,
   nonIndexableAssets,
 }) {
   const keysToCompare = [
-    'name',
-    'fromUser',
-    'fromUserAgent',
-    'fileExtension',
-    'fileType',
-    'category',
-    'description',
-    'program',
-    'color',
-    'file.name',
-    'file.extension',
-    'file.metadata',
+    "name",
+    "fromUser",
+    "fromUserAgent",
+    "fileExtension",
+    "fileType",
+    "category",
+    "description",
+    "program",
+    "color",
+    "file.name",
+    "file.extension",
+    "file.metadata",
   ];
 
   const libraryResourcesMatching = dups
     .map((asset) => {
       const matchingAsset = libraryAssets.find((libraryResource) =>
-        keysToCompare.every((key) => get(asset, key) === get(libraryResource.asset, key))
+        keysToCompare.every(
+          (key) => get(asset, key) === get(libraryResource.asset, key)
+        )
       );
       if (matchingAsset) {
         return matchingAsset.bulkId;

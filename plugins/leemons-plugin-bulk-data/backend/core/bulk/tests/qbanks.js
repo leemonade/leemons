@@ -1,8 +1,8 @@
-const { keys, trim, isNil, isEmpty } = require('lodash');
-const itemsImport = require('../helpers/simpleListImport');
+const { keys, trim, isNil, isEmpty } = require("lodash");
+const itemsImport = require("../helpers/simpleListImport");
 
 async function importQbanks(filePath, programs) {
-  const items = await itemsImport(filePath, 'te_qbanks', 40, true, true);
+  const items = await itemsImport(filePath, "te_qbanks", 40, true, true);
 
   keys(items)
     .filter((key) => !isNil(key) && !isEmpty(key))
@@ -13,15 +13,15 @@ async function importQbanks(filePath, programs) {
       const program = programs[qbank.program];
 
       qbank.program = program?.id;
-      qbank.subjects = (qbank.subjects || '')
-        ?.split(',')
+      qbank.subjects = (qbank.subjects || "")
+        ?.split(",")
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val))
         .map((subject) => program.subjects[subject]?.id);
 
       // Tags
-      qbank.tags = (qbank.tags || '')
-        ?.split(',')
+      qbank.tags = (qbank.tags || "")
+        ?.split(",")
         .map((val) => trim(val))
         .filter((val) => !isEmpty(val));
 

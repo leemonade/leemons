@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
-const { keys } = require('lodash');
-const importCenters = require('./bulk/centers');
+const { keys } = require("lodash");
+const importCenters = require("./bulk/centers");
 
 async function initCenters({ file, ctx }) {
   try {
@@ -9,7 +9,7 @@ async function initCenters({ file, ctx }) {
 
     for (let i = 0, len = centersKeys.length; i < len; i++) {
       const centerKey = centersKeys[i];
-      const centerData = await ctx.call('users.centers.add', {
+      const centerData = await ctx.call("users.centers.add", {
         ...centers[centerKey],
       });
       centers[centerKey] = centerData;

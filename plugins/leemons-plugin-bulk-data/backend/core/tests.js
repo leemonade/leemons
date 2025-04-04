@@ -1,16 +1,22 @@
 /* eslint-disable no-unreachable */
 /* eslint-disable no-await-in-loop */
-const chalk = require('chalk');
-const { keys, isEmpty, uniqBy, isNil } = require('lodash');
+const chalk = require("chalk");
+const { keys, isEmpty, uniqBy, isNil } = require("lodash");
 
-const _delay = require('./bulk/helpers/delay');
-const importQbanks = require('./bulk/tests/qbanks');
-const importQuestions = require('./bulk/tests/questions');
-const importTests = require('./bulk/tests/tests');
-const { makeAssetNotIndexable } = require('./helpers/makeAssetNotIndexable');
-const { LOAD_PHASES } = require('./importHandlers/getLoadStatus');
+const _delay = require("./bulk/helpers/delay");
+const importQbanks = require("./bulk/tests/qbanks");
+const importQuestions = require("./bulk/tests/questions");
+const importTests = require("./bulk/tests/tests");
+const { makeAssetNotIndexable } = require("./helpers/makeAssetNotIndexable");
+const { LOAD_PHASES } = require("./importHandlers/getLoadStatus");
 
-async function initTests({ file, config: { users, programs }, ctx, useCache, phaseKey }) {
+async function initTests({
+  file,
+  config: { users, programs },
+  ctx,
+  useCache,
+  phaseKey,
+}) {
   try {
     // ·····················································
     // QUESTIONS
@@ -21,7 +27,7 @@ async function initTests({ file, config: { users, programs }, ctx, useCache, pha
       questions
         .filter((question) => question.category)
         .map((question) => ({ value: question.category })),
-      'value'
+      "value"
     ).map((category, index) => ({ ...category, order: index }));
 
     // ·····················································
@@ -43,14 +49,16 @@ async function initTests({ file, config: { users, programs }, ctx, useCache, pha
       let qbankData = null;
 
       try {
-        ctx.logger.debug(chalk`{cyan.bold BULK} {gray Adding QBank: ${qbank.name}}`);
+        ctx.logger.debug(
+          chalk`{cyan.bold BULK} {gray Adding QBank: ${qbank.name}}`
+        );
         const payload = { ...qbank };
         if (categories.length) {
           payload.categories = categories;
         }
 
         qbankData = await ctx.call(
-          'tests.questionsBanks.save',
+          "tests.questionsBanks.save",
           {
             data: payload,
           },
@@ -68,7 +76,7 @@ async function initTests({ file, config: { users, programs }, ctx, useCache, pha
 
         ctx.logger.info(chalk`{cyan.bold BULK} QBank ADDED: ${qbank.name}`);
       } catch (e) {
-        ctx.logger.log('-- QBANK CREATION ERROR --');
+        ctx.logger.log("-- QBANK CREATION ERROR --");
         ctx.logger.log(`qbank: ${qbank.name}`);
         ctx.logger.log(`creator: ${creator}`);
         ctx.logger.error(e);
@@ -81,7 +89,7 @@ async function initTests({ file, config: { users, programs }, ctx, useCache, pha
 
       const qbanksDetail = (
         await ctx.call(
-          'tests.questionsBanks.findByAssetIds',
+          "tests.questionsBanks.findByAssetIds",
           {
             ids: [qbankData?.asset],
           },
@@ -101,13 +109,19 @@ async function initTests({ file, config: { users, programs }, ctx, useCache, pha
         });
       }
 
-      qbanks[key] = !isNil(qbankData) ? { ...qbankData, questions: qbanksDetail?.questions } : null;
+      qbanks[key] = !isNil(qbankData)
+        ? { ...qbankData, questions: qbanksDetail?.questions }
+        : null;
     }
 
     // ·····················································
     // TESTS
 
-    const tests = await importTests(file, { qbanks, programs, questions: questionItems });
+    const tests = await importTests(file, {
+      qbanks,
+      programs,
+      questions: questionItems,
+    });
     const testsKeys = keys(tests);
 
     for (let i = 0, len = testsKeys.length; i < len; i++) {
@@ -115,9 +129,11 @@ async function initTests({ file, config: { users, programs }, ctx, useCache, pha
       const { creator, hideInLibrary, ...test } = tests[key];
 
       try {
-        ctx.logger.debug(chalk`{cyan.bold BULK} {gray Adding Test: ${test.name}}`);
+        ctx.logger.debug(
+          chalk`{cyan.bold BULK} {gray Adding Test: ${test.name}}`
+        );
         const testData = await ctx.call(
-          'tests.tests.save',
+          "tests.tests.save",
           {
             ...test,
           },
@@ -144,7 +160,7 @@ async function initTests({ file, config: { users, programs }, ctx, useCache, pha
           );
         }
       } catch (e) {
-        ctx.logger.log('-- TEST CREATION ERROR --');
+        ctx.logger.log("-- TEST CREATION ERROR --");
         ctx.logger.log(`test: ${test.name}`);
         ctx.logger.log(`creator: ${creator}`);
         ctx.logger.error(e);

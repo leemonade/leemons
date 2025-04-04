@@ -1,12 +1,15 @@
-const { mergeByPath } = require('./mergeGroupTitleCells');
-const { styleCell } = require('./styleCell');
+const { mergeByPath } = require("./mergeGroupTitleCells");
+const { styleCell } = require("./styleCell");
 
 const getItemSecondaryFontColor = (item) => {
   if (!item.style?.bgColor) return item;
-  if (item.style.bgColor.startsWith('light')) {
+  if (item.style.bgColor.startsWith("light")) {
     return {
       ...item,
-      style: { ...item.style, fontColor: item.style.bgColor.replace('light', '').toLowerCase() },
+      style: {
+        ...item.style,
+        fontColor: item.style.bgColor.replace("light", "").toLowerCase(),
+      },
     };
   }
   return {
@@ -53,7 +56,9 @@ function addStyledRow({
       cell,
       fontColor: style.fontColor,
       bgColor: style.bgColor,
-      alignment: centerText ? { horizontal: 'center', vertical: 'center' } : undefined,
+      alignment: centerText
+        ? { horizontal: "center", vertical: "center" }
+        : undefined,
     });
     if (note) {
       cell.note = note;
@@ -72,11 +77,13 @@ function configureSheetColumns({
   addGroupTitleKeysRow = false,
   modifyColumnHeaders,
 }) {
-  worksheet.columns = Object.entries(columnDefinitions).map(([key, { width }]) => ({
-    header: key,
-    key,
-    width,
-  }));
+  worksheet.columns = Object.entries(columnDefinitions).map(
+    ([key, { width }]) => ({
+      header: key,
+      key,
+      width,
+    })
+  );
   if (modifyColumnHeaders) {
     modifyColumnHeaders(worksheet);
   }
@@ -92,9 +99,10 @@ function configureSheetColumns({
         worksheet,
         columnDefinitions,
         currentRow,
-        keyExtractor: (item) => item.groupTitle?.key ?? '',
-        valueExtractor: (item) => getItemSecondaryFontColor(item.groupTitle || {}),
-        pathToMergeBy: 'groupTitle.key',
+        keyExtractor: (item) => item.groupTitle?.key ?? "",
+        valueExtractor: (item) =>
+          getItemSecondaryFontColor(item.groupTitle || {}),
+        pathToMergeBy: "groupTitle.key",
       });
     }
 
@@ -102,9 +110,9 @@ function configureSheetColumns({
       worksheet,
       columnDefinitions,
       currentRow,
-      keyExtractor: (item) => item.groupTitle?.title ?? '',
+      keyExtractor: (item) => item.groupTitle?.title ?? "",
       valueExtractor: (item) => item.groupTitle || {},
-      pathToMergeBy: 'groupTitle.title',
+      pathToMergeBy: "groupTitle.title",
     });
   }
 

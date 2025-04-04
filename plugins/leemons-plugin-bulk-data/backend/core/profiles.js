@@ -1,6 +1,6 @@
 /* eslint-disable no-await-in-loop */
-const { keys, isArray, isEmpty } = require('lodash');
-const importProfiles = require('./bulk/profiles');
+const { keys, isArray, isEmpty } = require("lodash");
+const importProfiles = require("./bulk/profiles");
 
 async function initProfiles({ file, ctx }) {
   try {
@@ -13,7 +13,7 @@ async function initProfiles({ file, ctx }) {
     for (let i = 0, len = itemsKeys.length; i < len; i++) {
       const itemKey = itemsKeys[i];
       const { accessTo, ...item } = profiles[itemKey];
-      const itemData = await ctx.call('users.profiles.saveBySysName', {
+      const itemData = await ctx.call("users.profiles.saveBySysName", {
         ...item,
         sysName: itemKey,
       });
@@ -30,7 +30,7 @@ async function initProfiles({ file, ctx }) {
       if (isArray(item.accessTo) && !isEmpty(item.accessTo)) {
         await Promise.all(
           item.accessTo.map((profileFrom) =>
-            ctx.call('users.profiles.addProfileContact', {
+            ctx.call("users.profiles.addProfileContact", {
               fromProfile: profiles[profileFrom].id,
               toProfile: item.id,
             })

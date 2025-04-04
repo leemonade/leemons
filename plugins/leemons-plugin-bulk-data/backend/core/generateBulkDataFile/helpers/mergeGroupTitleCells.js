@@ -2,8 +2,11 @@ const mergeByPath = ({ columnDefinitionsObject, path, worksheet, row = 2 }) => {
   const groupRanges = {};
 
   Object.entries(columnDefinitionsObject).forEach(([, value], index) => {
-    const pathParts = path.split('.');
-    const criteriaValue = pathParts.reduce((acc, part) => (acc ? acc[part] : undefined), value);
+    const pathParts = path.split(".");
+    const criteriaValue = pathParts.reduce(
+      (acc, part) => (acc ? acc[part] : undefined),
+      value
+    );
 
     if (criteriaValue) {
       if (!groupRanges[criteriaValue]) {

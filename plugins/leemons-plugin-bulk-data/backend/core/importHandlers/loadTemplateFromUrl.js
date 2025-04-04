@@ -1,13 +1,13 @@
-const got = require('got');
-const { LeemonsError } = require('@leemons/error');
+const got = require("got");
+const { LeemonsError } = require("@leemons/error");
 
-const { createTempFile } = require('../helpers/createTempFile');
-const { importBulkData } = require('./importBulkData');
+const { createTempFile } = require("../helpers/createTempFile");
+const { importBulkData } = require("./importBulkData");
 
 async function setAdminUsers(profiles, ctx) {
-  const deployment = await ctx.call('deployment-manager.getDeployment');
+  const deployment = await ctx.call("deployment-manager.getDeployment");
 
-  if (deployment.type === 'free') {
+  if (deployment.type === "free") {
     return {
       admin: {
         ...ctx.meta.userSession,
@@ -15,8 +15,8 @@ async function setAdminUsers(profiles, ctx) {
     };
   }
 
-  if (deployment.type === 'basic') {
-    const adminAgents = await ctx.call('users.users.searchUserAgents', {
+  if (deployment.type === "basic") {
+    const adminAgents = await ctx.call("users.users.searchUserAgents", {
       profile: profiles.admin.id,
       user: ctx.meta.userSession.id,
     });
@@ -35,19 +35,22 @@ async function setAdminUsers(profiles, ctx) {
 }
 
 async function initializeForClientManager({ ctx }) {
-  const { items: centersData } = await ctx.tx.call('users.centers.list', {
+  const { items: centersData } = await ctx.tx.call("users.centers.list", {
     page: 0,
     size: 9999,
   });
   const centers = { centerA: centersData[0] };
 
-  const { items: profilesData } = await ctx.call('users.profiles.list', {
+  const { items: profilesData } = await ctx.call("users.profiles.list", {
     page: 0,
     size: 9999,
   });
-  const { profiles: userAdministrativeProfiles } = await ctx.call('users.users.profilesRest', {
-    user: ctx.meta.userSession.id,
-  });
+  const { profiles: userAdministrativeProfiles } = await ctx.call(
+    "users.users.profilesRest",
+    {
+      user: ctx.meta.userSession.id,
+    }
+  );
   const allProfiles = [...profilesData, ...userAdministrativeProfiles];
   const uniqueProfiles = allProfiles.reduce((acc, profile) => {
     if (!acc[profile.sysName]) {
@@ -71,7 +74,7 @@ async function loadFromTemplateURL({
 }) {
   if (!templateURL) {
     throw new LeemonsError(ctx, {
-      message: 'Template URL is required',
+      message: "Template URL is required",
       httpStatusCode: 400,
     });
   }
@@ -103,7 +106,7 @@ async function loadFromTemplateURL({
     });
     return { status: 200 };
   } catch (error) {
-    console.error('Error importing bulk-data', error);
+    console.error("Error importing bulk-data", error);
     throw new LeemonsError(ctx, {
       message: `Something went wrong importing from template URL: ${error}`,
       httpStatusCode: 500,
