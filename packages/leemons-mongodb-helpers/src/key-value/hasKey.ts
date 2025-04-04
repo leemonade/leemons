@@ -1,7 +1,10 @@
-import type { Model } from '@leemons/mongodb';
-import type { GetKeyValueModel } from './getKeyValueModel';
+import type { Model } from "@leemons/mongodb";
+import type { GetKeyValueModel } from "./getKeyValueModel";
 
-export async function hasKey(model: Model<GetKeyValueModel>, key: string): Promise<boolean> {
+export async function hasKey(
+  model: Model<GetKeyValueModel>,
+  key: string
+): Promise<boolean> {
   const result = await model.countDocuments({ key });
   return !!result;
 }

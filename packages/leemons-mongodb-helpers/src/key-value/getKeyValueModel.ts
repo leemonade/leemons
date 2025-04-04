@@ -1,4 +1,4 @@
-import { type Model, mongoose, newModel } from '@leemons/mongodb';
+import { type Model, mongoose, newModel } from "@leemons/mongodb";
 
 export type GetKeyValueModel = {
   id: string;
@@ -38,7 +38,9 @@ const keyValueSchema = new mongoose.Schema(
 
 // keyValueSchema.index({ deploymentID: 1, key: 1 }, { unique: true });
 
-export function getKeyValueModel({ modelName }: { modelName: string }): Model<GetKeyValueModel> {
+export function getKeyValueModel({
+  modelName,
+}: { modelName: string }): Model<GetKeyValueModel> {
   return newModel(mongoose.connection, modelName, keyValueSchema);
 }
 

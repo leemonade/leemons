@@ -1,5 +1,5 @@
-import type { Model } from '@leemons/mongodb';
-import type { GetKeyValueModel } from './getKeyValueModel';
+import type { Model } from "@leemons/mongodb";
+import type { GetKeyValueModel } from "./getKeyValueModel";
 
 export type SetKeyQueryResult = {
   acknowledged: boolean;
@@ -13,7 +13,7 @@ export async function setKey<T>(
   value?: T
 ): Promise<SetKeyQueryResult> {
   const toUpdate: Partial<GetKeyValueModel> = { key };
-  if (typeof value !== 'undefined') {
+  if (typeof value !== "undefined") {
     toUpdate.value = value;
   }
   const result = await model.updateOne({ key }, toUpdate, { upsert: true });
