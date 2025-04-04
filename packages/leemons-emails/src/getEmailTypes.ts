@@ -1,7 +1,7 @@
-import type { EmailTypes } from './index';
+import type { EmailTypes } from "./index";
 
 export function getEmailTypes(): EmailTypes {
   return {
-    active: 'active',
+    active: "active",
   };
 }

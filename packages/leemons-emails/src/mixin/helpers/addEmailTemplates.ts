@@ -4,9 +4,13 @@ import {
   getItemsToAdd,
   releaseLock,
   saveItemHash,
-} from '@leemons/common';
-import { pick, values } from 'lodash';
-import { ADD_EMAIL_TEMPLATES_LOCK_NAME, HASH_DOCUMENT_KEY, LOCK_KEY } from '../constants';
+} from "@leemons/common";
+import { pick, values } from "lodash";
+import {
+  ADD_EMAIL_TEMPLATES_LOCK_NAME,
+  HASH_DOCUMENT_KEY,
+  LOCK_KEY,
+} from "../constants";
 
 export interface EmailTemplate {
   templateName: string;
@@ -33,22 +37,25 @@ export async function addEmailTemplates(
   { KeyValuesModel, templates, version = 1 }: AddEmailTemplatesParams
 ): Promise<void> {
   // Convert the templates array into an object with the key as the key and the value as the template
-  const templatesByKey = templates.reduce<Record<string, EmailTemplate>>((acc, template) => {
-    const key = `${template.templateName}_${template.language}`;
-    acc[key] = template;
-    return acc;
-  }, {});
+  const templatesByKey = templates.reduce<Record<string, EmailTemplate>>(
+    (acc, template) => {
+      const key = `${template.templateName}_${template.language}`;
+      acc[key] = template;
+      return acc;
+    },
+    {}
+  );
 
   const hashPerItem = getItemsHashByKey({ items: templatesByKey });
   const templatesKeysToAdd = await getItemsToAdd({
     hashPerItem,
     KeyValuesModel,
     documentKey: HASH_DOCUMENT_KEY,
-    forceReload: String(process.env.FORCE_RELOAD_EMAILS) === 'true',
+    forceReload: String(process.env.FORCE_RELOAD_EMAILS) === "true",
   });
 
   if (!templatesKeysToAdd.length) {
-    this.logger.info('No email templates to add');
+    this.logger.info("No email templates to add");
     return;
   }
 
@@ -70,12 +77,12 @@ export async function addEmailTemplates(
       `v${version}.emails.global.addEmailTemplates`,
       {
         templates: values(pick(templatesByKey, templatesKeysToAdd)),
-        plugin: this.name.split('.')[0],
+        plugin: this.name.split(".")[0],
         version: this.version ?? null,
       },
       {
         meta: {
-          deploymentID: 'global',
+          deploymentID: "global",
         },
       }
     );
@@ -85,11 +92,11 @@ export async function addEmailTemplates(
         KeyValuesModel,
         hashPerItem: pick(hashPerItem, templatesKeysToAdd),
         documentKey: HASH_DOCUMENT_KEY,
-        forceReload: String(process.env.FORCE_RELOAD_EMAILS) === 'true',
+        forceReload: String(process.env.FORCE_RELOAD_EMAILS) === "true",
       });
     }
   } catch (e) {
-    this.logger.error('Error while adding email templates', e);
+    this.logger.error("Error while adding email templates", e);
   } finally {
     await releaseLock({ KeyValueModel: KeyValuesModel, lockKey });
   }
