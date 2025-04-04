@@ -1,3 +1,3 @@
 module.exports = () => {
-  console.log('families-emergency-numbers was loaded');
+  console.log("families-emergency-numbers was loaded");
 };

@@ -1,20 +1,20 @@
-import * as _ from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
+import * as _ from "lodash";
+import React, { useEffect, useMemo, useState } from "react";
 // import { Button, FormControl, Input } from 'leemons--ui';
-import { useForm } from 'react-hook-form';
-import { useAsync } from '@common/useAsync';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useFormWithTheme } from '@common/hooks/useFormWithTheme';
-import PropTypes from 'prop-types';
-import { EmergencyNumbersService } from '../services';
+import { useForm } from "react-hook-form";
+import { useAsync } from "@common/useAsync";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { useFormWithTheme } from "@common/hooks/useFormWithTheme";
+import PropTypes from "prop-types";
+import { EmergencyNumbersService } from "../services";
 
 function PhoneNumbersModal({ t, item, onSave = () => {} }) {
-  const { t: tCommonForm } = useCommonTranslate('forms');
-  const [loading, setLoading] = useState('');
+  const { t: tCommonForm } = useCommonTranslate("forms");
+  const [loading, setLoading] = useState("");
   const [datasetConfig, setDatasetConfig] = useState(null);
   const [datasetData, setDatasetData] = useState(null);
-  const [otherRelationValue, setOtherRelationValue] = useState('');
+  const [otherRelationValue, setOtherRelationValue] = useState("");
   const [error, setError, ErrorAlert] = useRequestErrorMessage();
 
   const {
@@ -28,20 +28,20 @@ function PhoneNumbersModal({ t, item, onSave = () => {} }) {
 
   useEffect(() => {
     if (item) {
-      setValue('name', item.name);
-      setValue('phone', item.phone);
+      setValue("name", item.name);
+      setValue("phone", item.phone);
       // TODO: MIGRACION MIRAR LA LOGICA DEL PLUGINS.
-      if (item.relation.startsWith('plugins.')) {
-        setValue('relation', item.relation);
+      if (item.relation.startsWith("plugins.")) {
+        setValue("relation", item.relation);
       } else {
-        setValue('relation', 'other');
+        setValue("relation", "other");
         setOtherRelationValue(item.relation);
       }
       if (item.dataset) {
         setDatasetData(item.dataset);
       }
     } else {
-      setValue('relation', '...');
+      setValue("relation", "...");
     }
   }, []);
 
@@ -50,7 +50,8 @@ function PhoneNumbersModal({ t, item, onSave = () => {} }) {
       setLoading(true);
       const response = {};
       try {
-        const { jsonSchema, jsonUI } = await EmergencyNumbersService.getDatasetForm();
+        const { jsonSchema, jsonUI } =
+          await EmergencyNumbersService.getDatasetForm();
         response.dataset = { jsonSchema, jsonUI };
       } catch (e) {}
 
@@ -87,13 +88,15 @@ function PhoneNumbersModal({ t, item, onSave = () => {} }) {
     { formData: datasetData }
   );
 
-  const relation = watch('relation');
+  const relation = watch("relation");
   const relationError =
-    _.get(errors, 'relation') || (isSubmitted && relation === '...')
-      ? { message: tCommonForm('required') }
+    _.get(errors, "relation") || (isSubmitted && relation === "...")
+      ? { message: tCommonForm("required") }
       : null;
   const otherRelationError =
-    isSubmitted && !otherRelationValue ? { message: tCommonForm('required') } : null;
+    isSubmitted && !otherRelationValue
+      ? { message: tCommonForm("required") }
+      : null;
 
   const _onSubmit = (e) => {
     const callback = handleSubmit(onSubmit);
@@ -101,10 +104,10 @@ function PhoneNumbersModal({ t, item, onSave = () => {} }) {
     callback(e);
   };
   const onSubmit = (e) => {
-    if (e.relation === '...') return false;
-    if (e.relation === 'other' && !otherRelationValue) return false;
+    if (e.relation === "...") return false;
+    if (e.relation === "other" && !otherRelationValue) return false;
     if (formActions.isLoaded() && formActions.getErrors().length) return false;
-    if (e.relation === 'other') e.relation = otherRelationValue;
+    if (e.relation === "other") e.relation = otherRelationValue;
     if (formActions.isLoaded()) e.dataset = formActions.getValues();
     let data = {};
     if (item) data = { ...item };
@@ -112,7 +115,7 @@ function PhoneNumbersModal({ t, item, onSave = () => {} }) {
     onSave(data);
   };
 
-  return 'Hay que migrar a bubbles-ui';
+  return "Hay que migrar a bubbles-ui";
 
   /*
   return (

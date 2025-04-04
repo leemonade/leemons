@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 // import { Button, Modal, PageContainer, Table, useModal } from 'leemons--ui';
 
 /*
@@ -14,8 +14,12 @@ import { constants } from '../constants';
 
  */
 
-function PhoneNumbers({ editMode, phoneNumbers = [], onChangePhoneNumbers = () => {} }) {
-  return 'Hay que cambiar a bubbles-ui';
+function PhoneNumbers({
+  editMode,
+  phoneNumbers = [],
+  onChangePhoneNumbers = () => {},
+}) {
+  return "Hay que cambiar a bubbles-ui";
 
   /*
 

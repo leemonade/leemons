@@ -1,10 +1,10 @@
-const _ = require('lodash');
+const _ = require("lodash");
 const {
   getSessionEmergencyPhoneNumbersPermissions,
-} = require('./getSessionEmergencyPhoneNumbersPermissions');
-const { createPhone } = require('./createPhone');
-const { updatePhone } = require('./updatePhone');
-const { removePhone } = require('./removePhone');
+} = require("./getSessionEmergencyPhoneNumbersPermissions");
+const { createPhone } = require("./createPhone");
+const { updatePhone } = require("./updatePhone");
+const { removePhone } = require("./removePhone");
 
 /**
  * ES: Crea/Actualiza/Elimina los numeros de teléfono de la familia
@@ -24,10 +24,12 @@ async function saveFamilyPhones({ family, phones, fromBulk, ctx }) {
     permissions = await getSessionEmergencyPhoneNumbersPermissions({ ctx });
   }
   if (fromBulk || permissions.phoneNumbersInfo.update) {
-    const alreadyPhones = await ctx.tx.db.EmergencyPhones.find({ family }).lean();
+    const alreadyPhones = await ctx.tx.db.EmergencyPhones.find({
+      family,
+    }).lean();
 
-    const alreadyPhonesById = _.keyBy(alreadyPhones, 'id');
-    const phonesById = _.keyBy(phones, 'id');
+    const alreadyPhonesById = _.keyBy(alreadyPhones, "id");
+    const phonesById = _.keyBy(phones, "id");
 
     // const unknownPhones = [];
     const addPhones = [];

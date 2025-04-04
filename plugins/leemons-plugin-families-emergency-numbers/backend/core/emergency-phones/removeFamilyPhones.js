@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { removePhone } = require('./removePhone');
+const _ = require("lodash");
+const { removePhone } = require("./removePhone");
 
 /**
  * ES: Elimina todos los numeros de teléfono de la familia

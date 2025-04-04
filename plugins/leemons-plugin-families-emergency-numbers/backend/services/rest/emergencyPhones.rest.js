@@ -7,35 +7,39 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 
 /** @type {ServiceSchema} */
 module.exports = {
   getDatasetFormRest: {
     rest: {
-      method: 'GET',
-      path: '/dataset-form',
+      method: "GET",
+      path: "/dataset-form",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'families-emergency-numbers.families-emergency-numbers': {
-            actions: ['admin', 'view', 'update', 'create'],
+          "families-emergency-numbers.families-emergency-numbers": {
+            actions: ["admin", "view", "update", "create"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const { compileJsonSchema, compileJsonUI } = await ctx.tx.call(
-        'dataset.dataset.getSchemaWithLocale',
+        "dataset.dataset.getSchemaWithLocale",
         {
           locationName: `families-emergency-numbers-data`,
-          pluginName: 'families-emergency-numbers',
+          pluginName: "families-emergency-numbers",
           locale: ctx.meta.userSession.locale,
         }
       );
-      return { status: 200, jsonSchema: compileJsonSchema, jsonUI: compileJsonUI };
+      return {
+        status: 200,
+        jsonSchema: compileJsonSchema,
+        jsonUI: compileJsonUI,
+      };
     },
   },
 };

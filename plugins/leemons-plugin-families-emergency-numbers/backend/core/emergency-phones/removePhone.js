@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { removePhoneDataset } = require('./removePhoneDataset');
+const _ = require("lodash");
+const { removePhoneDataset } = require("./removePhoneDataset");
 
 async function removePhone({ id, ctx }) {
   return Promise.all([

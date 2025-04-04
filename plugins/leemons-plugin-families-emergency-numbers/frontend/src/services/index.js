@@ -1,4 +1,4 @@
-import EmergencyNumbersService from './emergency-numbers';
+import EmergencyNumbersService from "./emergency-numbers";
 
 export { EmergencyNumbersService };
 export default EmergencyNumbersService;

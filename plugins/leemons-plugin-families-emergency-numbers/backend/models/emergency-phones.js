@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -38,7 +38,7 @@ const schema = new mongoose.Schema(
 
 const emergencyPhonesModel = newModel(
   mongoose.connection,
-  'v1::families-emergency-numbers_EmergencyPhones',
+  "v1::families-emergency-numbers_EmergencyPhones",
   schema
 );
 
