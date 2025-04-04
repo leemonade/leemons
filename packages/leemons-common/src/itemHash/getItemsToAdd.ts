@@ -1,6 +1,6 @@
-import type { Model } from '@leemons/mongodb';
-import type { HashPerItem } from './getItemsHashByKey';
-import { getPersistedItemsHashes } from './getPersistedItemsHashes';
+import type { Model } from "@leemons/mongodb";
+import type { HashPerItem } from "./getItemsHashByKey";
+import { getPersistedItemsHashes } from "./getPersistedItemsHashes";
 
 interface GetItemsToAddParams {
   hashPerItem: HashPerItem;

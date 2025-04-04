@@ -1,7 +1,7 @@
-import type { Model } from '@leemons/mongodb';
-import { get } from 'lodash';
-import { getItemHashKey } from './getItemHashKey';
-import type { HashPerItem } from './getItemsHashByKey';
+import type { Model } from "@leemons/mongodb";
+import { get } from "lodash";
+import { getItemHashKey } from "./getItemHashKey";
+import type { HashPerItem } from "./getItemsHashByKey";
 
 interface GetPersistedItemsHashesParams {
   KeyValuesModel: Model<any>;
@@ -38,10 +38,12 @@ interface PersistedItems {
 export async function getPersistedItemsHashes({
   KeyValuesModel,
   hashPerItem,
-  documentKey = 'default',
+  documentKey = "default",
 }: GetPersistedItemsHashesParams): Promise<PersistedItems> {
   const itemKeys = Object.keys(hashPerItem);
-  const keys = itemKeys.map((key) => getItemHashKey({ key, hash: hashPerItem[key] }));
+  const keys = itemKeys.map((key) =>
+    getItemHashKey({ key, hash: hashPerItem[key] })
+  );
 
   const persistedHashes =
     (await KeyValuesModel.findOne({

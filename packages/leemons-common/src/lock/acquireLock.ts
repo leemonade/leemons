@@ -1,4 +1,4 @@
-import type { Model } from '@leemons/mongodb';
+import type { Model } from "@leemons/mongodb";
 
 const DUPLICATED_INDEX_ERROR_CODE = 11000;
 
@@ -22,7 +22,7 @@ interface LockDocument {
  */
 export async function acquireLock({
   KeyValueModel,
-  lockKey = 'default',
+  lockKey = "default",
   timeout = 300000 /* 5 minutes */,
 }: AcquireLockParams): Promise<boolean> {
   const expirationDate = new Date(Date.now() + timeout);
@@ -31,7 +31,10 @@ export async function acquireLock({
     const lock: LockDocument = await KeyValueModel.findOneAndUpdate(
       {
         key: lockKey,
-        $or: [{ 'value.acquired': { $ne: true } }, { 'value.expiration': { $lt: new Date() } }],
+        $or: [
+          { "value.acquired": { $ne: true } },
+          { "value.expiration": { $lt: new Date() } },
+        ],
       },
       { key: lockKey, value: { acquired: true, expiration: expirationDate } },
       { upsert: true, new: true }

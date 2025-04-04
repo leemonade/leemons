@@ -1,6 +1,6 @@
-import type { Model } from '@leemons/mongodb';
-import { getItemHashKey } from './getItemHashKey';
-import type { HashPerItem } from './getItemsHashByKey';
+import type { Model } from "@leemons/mongodb";
+import { getItemHashKey } from "./getItemHashKey";
+import type { HashPerItem } from "./getItemsHashByKey";
 
 interface SaveItemHashParams {
   KeyValuesModel: Model<any>;
@@ -35,7 +35,7 @@ export async function saveItemHash({
   });
 
   if (!hashDocumentExists) {
-    const value: HashDocument['value'] = {};
+    const value: HashDocument["value"] = {};
 
     itemsKeys.forEach((itemKey) => {
       value[itemKey] = { [hashPerItem[itemKey]]: true };

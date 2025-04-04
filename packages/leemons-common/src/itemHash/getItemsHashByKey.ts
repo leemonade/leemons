@@ -1,4 +1,4 @@
-import { sha1 } from 'object-hash';
+import { sha1 } from "object-hash";
 
 /**
  * An object mapping each item to its corresponding hash.
@@ -26,7 +26,9 @@ interface GetItemsHashByKeyParams {
  * computes a SHA1 hash for the content of each item, and returns an object
  * mapping each item to its corresponding hash.
  */
-export function getItemsHashByKey({ items }: GetItemsHashByKeyParams): HashPerItem {
+export function getItemsHashByKey({
+  items,
+}: GetItemsHashByKeyParams): HashPerItem {
   const itemKeys = Object.keys(items);
   const hashPerItem: HashPerItem = {};
 

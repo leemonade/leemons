@@ -1,4 +1,4 @@
-import type { Model } from '@leemons/mongodb';
+import type { Model } from "@leemons/mongodb";
 
 interface ReleaseLockParams {
   KeyValueModel: Model<any>;
@@ -10,7 +10,7 @@ interface ReleaseLockParams {
  */
 export async function releaseLock({
   KeyValueModel,
-  lockKey = 'default',
+  lockKey = "default",
 }: ReleaseLockParams): Promise<void> {
   await KeyValueModel.deleteOne({ key: lockKey });
 }
