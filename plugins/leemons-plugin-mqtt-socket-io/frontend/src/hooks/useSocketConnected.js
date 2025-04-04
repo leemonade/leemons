@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { SocketIoService } from '@mqtt-socket-io/service';
+import { useState, useEffect } from "react";
+import { SocketIoService } from "@mqtt-socket-io/service";
 
 function useSocketConnected() {
   const [isConnected, setIsConnected] = useState(false);

@@ -1,6 +1,6 @@
-import hooks from 'leemons-hooks';
-import { useEffect, useRef } from 'react';
-import { io } from 'socket.io-client';
+import hooks from "@leemons/hooks";
+import { useEffect, useRef } from "react";
+import { io } from "socket.io-client";
 
 let socket = null;
 
@@ -8,7 +8,7 @@ export const SocketIoService = {
   isConnected: () => socket !== null,
   connect: (endpoint, config) => {
     socket = io(endpoint, config);
-    console.log('Socket.io connected');
+    console.log("Socket.io connected");
     return socket;
   },
   useOn: (_event, callback) => {
@@ -23,9 +23,9 @@ export const SocketIoService = {
       return null;
     };
     useEffect(() => {
-      hooks.addAction('socket.io:onAny', onEvent);
+      hooks.addAction("socket.io:onAny", onEvent);
       return () => {
-        hooks.removeAction('socket.io:onAny', onEvent);
+        hooks.removeAction("socket.io:onAny", onEvent);
       };
     }, []);
   },
@@ -34,13 +34,13 @@ export const SocketIoService = {
     const ref = useRef({ callback });
     ref.current.callback = callback;
     const onEvent = ({ args: [{ event, data }] }) => {
-      console.log('useOnAny', event, data);
+      console.log("useOnAny", event, data);
       ref.current.callback(event, data);
     };
     useEffect(() => {
-      hooks.addAction('socket.io:onAny', onEvent);
+      hooks.addAction("socket.io:onAny", onEvent);
       return () => {
-        hooks.removeAction('socket.io:onAny', onEvent);
+        hooks.removeAction("socket.io:onAny", onEvent);
       };
     }, []);
   },
@@ -48,10 +48,10 @@ export const SocketIoService = {
     if (socket) {
       socket.disconnect();
       socket = null;
-      console.log('Socket.io disconnected');
+      console.log("Socket.io disconnected");
     }
   },
-  isCreating: () => console.log('wrong socket'),
+  isCreating: () => console.log("wrong socket"),
 };
 
 export default SocketIoService;

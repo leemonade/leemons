@@ -1,10 +1,10 @@
-import { useStore } from '@common';
-import { SocketIoService } from '@mqtt-socket-io/service';
-import { getCookieToken } from '@users/session';
-import hooks from 'leemons-hooks';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { useEffect } from 'react';
+import { useStore } from "@common";
+import hooks from "@leemons/hooks";
+import { SocketIoService } from "@mqtt-socket-io/service";
+import { getCookieToken } from "@users/session";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { useEffect } from "react";
 
 export function Provider({ children }) {
   const [store] = useStore();
@@ -21,11 +21,11 @@ export function Provider({ children }) {
       } else if (token.centers.length === 1) {
         config.auth.token = token.centers[0].token;
       } else {
-        config.auth.token = JSON.stringify(_.map(token.centers, 'token'));
+        config.auth.token = JSON.stringify(_.map(token.centers, "token"));
       }
       await SocketIoService.connect(leemons.apiUrl, config);
       SocketIoService.onAny((event, data) =>
-        hooks.fireEvent('socket.io:onAny', {
+        hooks.fireEvent("socket.io:onAny", {
           event,
           data,
         })
@@ -36,10 +36,10 @@ export function Provider({ children }) {
 
   useEffect(() => {
     init();
-    hooks.addAction('user:cookie:session:change', init);
+    hooks.addAction("user:cookie:session:change", init);
     return () => {
       SocketIoService.disconnect();
-      hooks.removeAction('user:cookie:session:change', init);
+      hooks.removeAction("user:cookie:session:change", init);
     };
   });
 
