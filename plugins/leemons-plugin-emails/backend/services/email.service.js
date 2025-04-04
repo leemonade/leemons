@@ -3,19 +3,21 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getServiceModels } = require('../models');
-const restActions = require('./rest/email.rest');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const { LeemonsMongoDBMixin } = require("@leemons/mongodb");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
+const { getServiceModels } = require("../models");
+const restActions = require("./rest/email.rest");
 
-const EmailService = require('../core/email');
+const EmailService = require("../core/email");
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'emails.email',
+  name: "emails.email",
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),

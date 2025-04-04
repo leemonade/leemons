@@ -4,15 +4,15 @@
  */
 /** @type {ServiceSchema} */
 
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
 
-const configService = require('../../core/config');
+const configService = require("../../core/config");
 
 module.exports = {
   getConfigRest: {
     rest: {
-      method: 'GET',
-      path: '/',
+      method: "GET",
+      path: "/",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -25,8 +25,8 @@ module.exports = {
   },
   saveConfigRest: {
     rest: {
-      method: 'POST',
-      path: '/',
+      method: "POST",
+      path: "/",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

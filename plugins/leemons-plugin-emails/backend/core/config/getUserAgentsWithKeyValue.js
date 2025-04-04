@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function getUserAgentsWithKeyValue({ key, value, ctx } = {}) {
   const query = {
@@ -10,10 +10,13 @@ async function getUserAgentsWithKeyValue({ key, value, ctx } = {}) {
     query.value = { $ne: JSON.stringify(false) };
   }
 
-  const configs = await ctx.tx.db.Config.find(query, ['userAgent', 'value']).lean();
+  const configs = await ctx.tx.db.Config.find(query, [
+    "userAgent",
+    "value",
+  ]).lean();
 
   if (value) {
-    return _.map(configs, 'userAgent');
+    return _.map(configs, "userAgent");
   }
 
   const result = {};

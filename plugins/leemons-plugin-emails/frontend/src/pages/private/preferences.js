@@ -1,6 +1,6 @@
-import { useEffect, useCallback, useRef } from 'react';
-import { Controller, FormProvider, useForm } from 'react-hook-form';
-import { useHistory } from 'react-router-dom';
+import { useEffect, useCallback, useRef } from "react";
+import { Controller, FormProvider, useForm } from "react-hook-form";
+import { useHistory } from "react-router-dom";
 
 import {
   Alert,
@@ -15,19 +15,25 @@ import {
   TotalLayoutFooterContainer,
   TotalLayoutHeader,
   TotalLayoutStepContainer,
-} from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { ZoneWidgets } from '@widgets/ZoneWidgets';
-import { isUndefined } from 'lodash';
+} from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { ZoneWidgets } from "@widgets/ZoneWidgets";
+import { isUndefined } from "lodash";
 
-import { PLUGIN_NAME } from '@emails/config/constants';
-import prefixPN from '@emails/helpers/prefixPN';
-import { useSaveConfig } from '@emails/hooks/mutations/useSaveConfig';
-import { useConfig } from '@emails/hooks/queries/useConfig';
+import { PLUGIN_NAME } from "@emails/config/constants";
+import prefixPN from "@emails/helpers/prefixPN";
+import { useSaveConfig } from "@emails/hooks/mutations/useSaveConfig";
+import { useConfig } from "@emails/hooks/queries/useConfig";
 
 function HeaderIcon() {
   return (
-    <svg width="24" height="24" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -39,7 +45,7 @@ function HeaderIcon() {
 }
 
 export default function Preferences() {
-  const [t] = useTranslateLoader(prefixPN('preferences'));
+  const [t] = useTranslateLoader(prefixPN("preferences"));
   const history = useHistory();
   const scrollRef = useRef();
 
@@ -49,8 +55,8 @@ export default function Preferences() {
   const form = useForm();
   const { watch, reset, control, getValues, setValue } = form;
 
-  const disableEmail = watch('disable-all-activity-emails');
-  const newAssignations = watch('new-assignation-email');
+  const disableEmail = watch("disable-all-activity-emails");
+  const newAssignations = watch("new-assignation-email");
 
   const { data: configs } = useConfig();
   const { mutate: saveConfig, isLoading: isSaving } = useSaveConfig();
@@ -71,20 +77,22 @@ export default function Preferences() {
   }
 
   const widgets = useCallback(
-    ({ Component, key, properties }) => <Component {...properties} key={key} form={form} />,
+    ({ Component, key, properties }) => (
+      <Component {...properties} key={key} form={form} />
+    ),
     [form]
   );
 
   return (
-    <Box style={{ height: '100vh', overflow: 'hidden' }}>
+    <Box style={{ height: "100vh", overflow: "hidden" }}>
       <TotalLayoutContainer
         scrollRef={scrollRef}
         Header={
           <TotalLayoutHeader
-            title={t('pageTitle')}
+            title={t("pageTitle")}
             onCancel={() => history.goBack()}
             icon={<HeaderIcon />}
-            mainActionLabel={t('cancel')}
+            mainActionLabel={t("cancel")}
           />
         }
       >
@@ -92,8 +100,8 @@ export default function Preferences() {
           ref={scrollRef}
           justifyContent="center"
           style={{
-            overflow: 'auto',
-            position: 'relative',
+            overflow: "auto",
+            position: "relative",
           }}
         >
           <TotalLayoutStepContainer
@@ -103,7 +111,7 @@ export default function Preferences() {
                 scrollRef={scrollRef}
                 rightZone={
                   <Button onClick={handleOnSave} loading={isSaving}>
-                    {t('savePreferences')}
+                    {t("savePreferences")}
                   </Button>
                 }
               />
@@ -111,22 +119,22 @@ export default function Preferences() {
           >
             <FormProvider {...form}>
               <Box mb={20}>
-                <ContextContainer title={t('assignments')}>
+                <ContextContainer title={t("assignments")}>
                   <Controller
                     control={control}
                     name="disable-all-activity-emails"
                     render={({ field }) => (
                       <Switch
                         {...field}
-                        label={t('disableAllActivityEmails')}
+                        label={t("disableAllActivityEmails")}
                         checked={field.value}
                         onChange={(e) => {
                           reset({
-                            'disable-all-activity-emails': e,
-                            'week-resume-email': false,
-                            'new-assignation-email': false,
-                            'new-assignation-timeout-email': false,
-                            'new-assignation-per-day-email': false,
+                            "disable-all-activity-emails": e,
+                            "week-resume-email": false,
+                            "new-assignation-email": false,
+                            "new-assignation-timeout-email": false,
+                            "new-assignation-per-day-email": false,
                           });
                         }}
                       />
@@ -139,13 +147,13 @@ export default function Preferences() {
                       <Checkbox
                         {...field}
                         disabled={disableEmail}
-                        label={t('newAssignationEmail')}
-                        help={t('newAssignationEmailDescription')}
+                        label={t("newAssignationEmail")}
+                        help={t("newAssignationEmailDescription")}
                         helpPosition="bottom"
                         checked={field.value}
                         onChange={(e) => {
                           if (!e) {
-                            setValue('new-assignation-per-day-email', false);
+                            setValue("new-assignation-per-day-email", false);
                           }
                           field.onChange(e);
                         }}
@@ -160,10 +168,12 @@ export default function Preferences() {
                         <Checkbox
                           {...field}
                           disabled={disableEmail}
-                          label={t('weekResumeEmail')}
-                          help={t('weekResumeEmailDescription')}
+                          label={t("weekResumeEmail")}
+                          help={t("weekResumeEmailDescription")}
                           helpPosition="bottom"
-                          checked={!isUndefined(field.value) && field.value !== false}
+                          checked={
+                            !isUndefined(field.value) && field.value !== false
+                          }
                           onChange={(e) => {
                             field.onChange(e ? 1 : false);
                           }}
@@ -183,13 +193,13 @@ export default function Preferences() {
                               }}
                               value={field.value}
                               data={[
-                                { label: t('sunday'), value: 0 },
-                                { label: t('monday'), value: 1 },
-                                { label: t('tuesday'), value: 2 },
-                                { label: t('wednesday'), value: 3 },
-                                { label: t('thursday'), value: 4 },
-                                { label: t('friday'), value: 5 },
-                                { label: t('saturday'), value: 6 },
+                                { label: t("sunday"), value: 0 },
+                                { label: t("monday"), value: 1 },
+                                { label: t("tuesday"), value: 2 },
+                                { label: t("wednesday"), value: 3 },
+                                { label: t("thursday"), value: 4 },
+                                { label: t("friday"), value: 5 },
+                                { label: t("saturday"), value: 6 },
                               ]}
                             />
                           </Box>
@@ -198,9 +208,13 @@ export default function Preferences() {
                     )}
                   />
                 </ContextContainer>
-                <ContextContainer title={t('advancedConfig')} level={1}>
-                  <Alert closeable={false} severity="warning" title={t('alertTitle')}>
-                    {t('alertDescription')}
+                <ContextContainer title={t("advancedConfig")} level={1}>
+                  <Alert
+                    closeable={false}
+                    severity="warning"
+                    title={t("alertTitle")}
+                  >
+                    {t("alertDescription")}
                   </Alert>
                   <Controller
                     control={control}
@@ -210,10 +224,12 @@ export default function Preferences() {
                         <Checkbox
                           {...field}
                           disabled={disableEmail || !newAssignations}
-                          label={t('newAssignationDaysEmail')}
-                          help={t('newAssignationDaysEmailDescription')}
+                          label={t("newAssignationDaysEmail")}
+                          help={t("newAssignationDaysEmailDescription")}
                           helpPosition="bottom"
-                          checked={!isUndefined(field.value) && field.value !== false}
+                          checked={
+                            !isUndefined(field.value) && field.value !== false
+                          }
                           onChange={(e) => {
                             field.onChange(e ? 10 : false);
                           }}
@@ -232,10 +248,10 @@ export default function Preferences() {
                               }}
                               value={field.value}
                               data={[
-                                { label: t('ndays', { n: 10 }), value: 10 },
-                                { label: t('ndays', { n: 7 }), value: 7 },
-                                { label: t('ndays', { n: 5 }), value: 5 },
-                                { label: t('ndays', { n: 2 }), value: 2 },
+                                { label: t("ndays", { n: 10 }), value: 10 },
+                                { label: t("ndays", { n: 7 }), value: 7 },
+                                { label: t("ndays", { n: 5 }), value: 5 },
+                                { label: t("ndays", { n: 2 }), value: 2 },
                               ]}
                             />
                           </Box>
@@ -251,10 +267,12 @@ export default function Preferences() {
                         <Checkbox
                           {...field}
                           disabled={disableEmail}
-                          label={t('emailLastHour')}
-                          help={t('emailLastHourDescription')}
+                          label={t("emailLastHour")}
+                          help={t("emailLastHourDescription")}
                           helpPosition="bottom"
-                          checked={!isUndefined(field.value) && field.value !== false}
+                          checked={
+                            !isUndefined(field.value) && field.value !== false
+                          }
                           onChange={(e) => {
                             field.onChange(e ? 72 : false);
                           }}
@@ -274,9 +292,9 @@ export default function Preferences() {
                               }}
                               value={field.value}
                               data={[
-                                { label: t('nhours', { n: 72 }), value: 72 },
-                                { label: t('nhours', { n: 48 }), value: 48 },
-                                { label: t('nhours', { n: 24 }), value: 24 },
+                                { label: t("nhours", { n: 72 }), value: 72 },
+                                { label: t("nhours", { n: 48 }), value: 48 },
+                                { label: t("nhours", { n: 24 }), value: 24 },
                               ]}
                             />
                           </Box>
@@ -286,7 +304,9 @@ export default function Preferences() {
                   />
                 </ContextContainer>
               </Box>
-              <ZoneWidgets zone={`${PLUGIN_NAME}.preferences`}>{widgets}</ZoneWidgets>
+              <ZoneWidgets zone={`${PLUGIN_NAME}.preferences`}>
+                {widgets}
+              </ZoneWidgets>
             </FormProvider>
           </TotalLayoutStepContainer>
         </Stack>

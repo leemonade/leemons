@@ -2,15 +2,17 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { LeemonsMultilanguageMixin } = require('@leemons/multilanguage');
-const { addWidgetZonesDeploy } = require('@leemons/widgets');
-const path = require('path');
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMongoDBMixin } = require("@leemons/mongodb");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
+const { LeemonsMultilanguageMixin } = require("@leemons/multilanguage");
+const { addWidgetZonesDeploy } = require("@leemons/widgets");
+const path = require("path");
 
-const { PLUGIN_NAME, VERSION, widgets } = require('../config/constants');
-const { getServiceModels } = require('../models');
+const { PLUGIN_NAME, VERSION, widgets } = require("../config/constants");
+const { getServiceModels } = require("../models");
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
@@ -18,7 +20,7 @@ module.exports = () => ({
   version: VERSION,
   mixins: [
     LeemonsMultilanguageMixin({
-      locales: ['es', 'en'],
+      locales: ["es", "en"],
       i18nPath: path.resolve(__dirname, `../i18n/`),
     }),
     LeemonsMongoDBMixin({
@@ -28,7 +30,7 @@ module.exports = () => ({
     LeemonsDeploymentManagerMixin(),
   ],
   events: {
-    'deployment-manager.install': async (ctx) => {
+    "deployment-manager.install": async (ctx) => {
       // Widgets
       await addWidgetZonesDeploy({
         keyValueModel: ctx.tx.db.KeyValue,

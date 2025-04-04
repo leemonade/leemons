@@ -1,11 +1,11 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('@leemons/mongodb-helpers');
+const { getKeyValueModel } = require("@leemons/mongodb-helpers");
 
 const models = {
-  ...require('./config'),
-  ...require('./emailTemplate'),
-  ...require('./emailTemplateDetail'),
+  ...require("./config"),
+  ...require("./emailTemplate"),
+  ...require("./emailTemplateDetail"),
 };
 
 module.exports = {
@@ -15,7 +15,7 @@ module.exports = {
       Config: models.configModel,
       EmailTemplate: models.emailTemplateModel,
       EmailTemplateDetail: models.emailTemplateDetailModel,
-      KeyValue: getKeyValueModel({ modelName: 'v1::emails_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: "v1::emails_KeyValue" }),
     };
   },
 };

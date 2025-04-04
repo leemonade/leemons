@@ -7,45 +7,45 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 
-const { LeemonsValidator } = require('@leemons/validator');
-const EmailService = require('../../core/email');
+const { LeemonsValidator } = require("@leemons/validator");
+const EmailService = require("../../core/email");
 
 const validateProviderConfigObj = {
-  type: 'object',
+  type: "object",
   properties: {
-    providerName: { type: 'string' },
+    providerName: { type: "string" },
     config: {
-      type: 'object',
+      type: "object",
     },
   },
-  required: ['providerName', 'config'],
+  required: ["providerName", "config"],
   additionalProperties: false,
 };
 
 const validateRemoveProviderConfigObj = {
-  type: 'object',
+  type: "object",
   properties: {
-    providerName: { type: 'string' },
-    id: { type: 'string' },
+    providerName: { type: "string" },
+    id: { type: "string" },
   },
-  required: ['providerName', 'id'],
+  required: ["providerName", "id"],
   additionalProperties: false,
 };
 
 module.exports = {
   providersRest: {
     rest: {
-      method: 'GET',
-      path: '/',
+      method: "GET",
+      path: "/",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'admin.setup': {
-            actions: ['admin'],
+          "admin.setup": {
+            actions: ["admin"],
           },
         },
       }),
@@ -57,8 +57,8 @@ module.exports = {
   },
   sendTestRest: {
     rest: {
-      method: 'POST',
-      path: '/send-test',
+      method: "POST",
+      path: "/send-test",
     },
     async handler() {
       //* Código sin portar a leemons Saas (estaba comentado en lo antiguo)
@@ -76,8 +76,8 @@ module.exports = {
   },
   sendCustomTestRest: {
     rest: {
-      method: 'POST',
-      path: '/send-custom-test',
+      method: "POST",
+      path: "/send-custom-test",
     },
     async handler() {
       //* Código sin portar a leemons Saas (estaba comentado en lo antiguo)
@@ -105,15 +105,15 @@ module.exports = {
   },
   saveProviderRest: {
     rest: {
-      method: 'POST',
-      path: '/save-provider',
+      method: "POST",
+      path: "/save-provider",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'admin.setup': {
-            actions: ['admin'],
+          "admin.setup": {
+            actions: ["admin"],
           },
         },
       }),
@@ -121,7 +121,10 @@ module.exports = {
     async handler(ctx) {
       const validator = new LeemonsValidator(validateProviderConfigObj);
       if (validator.validate(ctx.params)) {
-        const provider = await EmailService.saveProvider({ ...ctx.params, ctx });
+        const provider = await EmailService.saveProvider({
+          ...ctx.params,
+          ctx,
+        });
         return { status: 200, provider };
       }
       throw validator.error;
@@ -129,15 +132,15 @@ module.exports = {
   },
   removeProviderRest: {
     rest: {
-      method: 'POST',
-      path: '/remove-provider',
+      method: "POST",
+      path: "/remove-provider",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'admin.setup': {
-            actions: ['admin'],
+          "admin.setup": {
+            actions: ["admin"],
           },
         },
       }),
@@ -154,8 +157,8 @@ module.exports = {
   },
   getEmailRest: {
     rest: {
-      method: 'POST',
-      path: '/get-email',
+      method: "POST",
+      path: "/get-email",
     },
     async handler(ctx) {
       const email = await EmailService.get({ ...ctx.params, ctx });

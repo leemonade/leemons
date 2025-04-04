@@ -1,9 +1,9 @@
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert } from '@layout/alert';
-import { useQuery } from '@tanstack/react-query';
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert } from "@layout/alert";
+import { useQuery } from "@tanstack/react-query";
 
-import fetchConfig from '../../request/getConfig';
-import { getConfigKey } from '../keys/configKeys';
+import fetchConfig from "../../request/getConfig";
+import { getConfigKey } from "../keys/configKeys";
 
 function useConfig({ options } = {}) {
   const queryKey = getConfigKey();

@@ -1,3 +1,3 @@
 module.exports = () => {
-  console.log('emails was loaded');
+  console.log("emails was loaded");
 };

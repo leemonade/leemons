@@ -1,4 +1,4 @@
-const PLUGIN_NAME = 'emails';
+const PLUGIN_NAME = "emails";
 const VERSION = 1;
 
 const widgets = {

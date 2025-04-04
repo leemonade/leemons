@@ -1,7 +1,7 @@
 async function saveProvider(body) {
-  return leemons.api('v1/emails/email/save-provider', {
+  return leemons.api("v1/emails/email/save-provider", {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body,
   });
 }

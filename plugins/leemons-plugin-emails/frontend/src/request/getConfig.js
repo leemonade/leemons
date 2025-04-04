@@ -1,7 +1,7 @@
 async function getConfig() {
-  return leemons.api('v1/emails/config', {
+  return leemons.api("v1/emails/config", {
     allAgents: true,
-    method: 'GET',
+    method: "GET",
   });
 }
 

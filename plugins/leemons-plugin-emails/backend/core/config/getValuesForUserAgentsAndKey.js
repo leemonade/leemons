@@ -1,16 +1,18 @@
-const _ = require('lodash');
-const { keysDefaults } = require('./getConfig');
+const _ = require("lodash");
+const { keysDefaults } = require("./getConfig");
 
 async function getValuesForUserAgentsAndKey({ key, userAgents, ctx } = {}) {
   const configs = await ctx.tx.db.Config.find({ key, userAgent: userAgents }, [
-    'userAgent',
-    'value',
+    "userAgent",
+    "value",
   ]);
-  const configByUserAgents = _.keyBy(configs, 'userAgent');
+  const configByUserAgents = _.keyBy(configs, "userAgent");
   const result = {};
   _.forEach(userAgents, (userAgent) => {
     if (configByUserAgents[userAgent]) {
-      result[userAgent] = JSON.parse(configByUserAgents[userAgent].value || null);
+      result[userAgent] = JSON.parse(
+        configByUserAgents[userAgent].value || null
+      );
     } else {
       result[userAgent] = keysDefaults[key];
     }

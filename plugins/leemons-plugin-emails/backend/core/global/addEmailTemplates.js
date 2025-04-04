@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const EmailService = require('../email');
+const _ = require("lodash");
+const EmailService = require("../email");
 
 async function addEmailTemplatesByLanguage({ templates, language, ctx }) {
   const emailTemplates = templates[language];
@@ -24,7 +24,7 @@ async function addEmailTemplates({ templates, ctx }) {
   // Organize templates into distinct arrays based on their language attribute.
   // This approach is necessary as EmailService.addIfNotExist function will generate a new "template" if one does not already exist.
   // Processing templates language-wise sequentially ensures orderly creation.
-  const templatesByLanguage = _.groupBy(templates, 'language');
+  const templatesByLanguage = _.groupBy(templates, "language");
   const languages = _.keys(templatesByLanguage);
 
   // Sequentially execute tasks for each language

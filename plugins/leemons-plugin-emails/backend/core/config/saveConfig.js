@@ -1,6 +1,6 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { getConfig } = require('./getConfig');
+const { getConfig } = require("./getConfig");
 
 async function saveConfig({ ctx, userAgent, ...values } = {}) {
   const promises = [];

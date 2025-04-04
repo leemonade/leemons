@@ -1,23 +1,23 @@
-import { PLUGIN_NAME } from '@emails/config/constants';
+import { PLUGIN_NAME } from "@emails/config/constants";
 
 const allConfigKey = [
   {
     plugin: `plugin.${PLUGIN_NAME}`,
-    scope: 'config',
+    scope: "config",
   },
 ];
 
 const getConfigKey = () => [
   {
     ...allConfigKey[0],
-    action: 'getConfig',
+    action: "getConfig",
   },
 ];
 
 const saveConfigKey = ({ data }) => [
   {
     ...allConfigKey[0],
-    action: 'saveConfigKey',
+    action: "saveConfigKey",
     params: {
       data,
     },
