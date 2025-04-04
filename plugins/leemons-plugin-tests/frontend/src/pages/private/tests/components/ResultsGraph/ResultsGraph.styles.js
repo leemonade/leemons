@@ -1,4 +1,4 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 const useResultsGraphStyles = createStyles((theme) => {
   return {
@@ -7,8 +7,8 @@ const useResultsGraphStyles = createStyles((theme) => {
       marginBottom: 8,
     },
     headerContainer: {
-      justifyContent: 'space-between',
-      width: '100%',
+      justifyContent: "space-between",
+      width: "100%",
     },
   };
 });

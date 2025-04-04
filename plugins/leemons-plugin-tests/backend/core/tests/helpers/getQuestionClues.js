@@ -10,14 +10,14 @@
  * `ln ../../../../frontend/src/pages/private/tests/StudentInstance/helpers/getQuestionClues.js`
  */
 
-const { forEach, isNumber, isString } = require('lodash');
+const { forEach, isNumber, isString } = require("lodash");
 
 function getQuestionClues(question, limit, config) {
   let clues = [];
   const hideResponses = [];
   const notes = [];
 
-  if (question.type === 'map') {
+  if (question.type === "map") {
     const responsesIndexsToHide = [];
     forEach(question.mapProperties.markers.list, (response, index) => {
       if (response.hideOnHelp) {
@@ -26,13 +26,13 @@ function getQuestionClues(question, limit, config) {
     });
     if (responsesIndexsToHide.length) {
       hideResponses.push({
-        type: 'hide-response',
+        type: "hide-response",
         indexs: responsesIndexsToHide,
       });
     }
   }
 
-  if (question.type === 'mono-response') {
+  if (question.type === "mono-response") {
     const responsesIndexsToHide = [];
     forEach(question.choices, (choice, index) => {
       if (choice.hideOnHelp) {
@@ -41,28 +41,31 @@ function getQuestionClues(question, limit, config) {
     });
     if (responsesIndexsToHide.length) {
       hideResponses.push({
-        type: 'hide-response',
+        type: "hide-response",
         indexs: responsesIndexsToHide,
       });
     }
   }
 
   if (question.clues?.length) {
-    forEach(isString(question.clues) ? JSON.parse(question.clues) : question.clues, (clue) => {
-      notes.push({
-        type: 'note',
-        text: clue,
-      });
-    });
+    forEach(
+      isString(question.clues) ? JSON.parse(question.clues) : question.clues,
+      (clue) => {
+        notes.push({
+          type: "note",
+          text: clue,
+        });
+      }
+    );
   }
 
   if (config.allowClues) {
     forEach(config.clues, (clue) => {
       if (clue.canUse) {
-        if (clue.type === 'hide-response') {
+        if (clue.type === "hide-response") {
           clues = clues.concat(hideResponses);
         }
-        if (clue.type === 'note') {
+        if (clue.type === "note") {
           clues = clues.concat(notes);
         }
       }

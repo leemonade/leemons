@@ -1,33 +1,39 @@
-import React from 'react';
-import { useHistory } from 'react-router-dom';
+import React from "react";
+import { useHistory } from "react-router-dom";
 
-import { createStyles } from '@bubbles-ui/components';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import { LibraryCard } from '@leebrary/components';
-import { DeleteIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon';
-import { EditIcon } from '@leebrary/components/LibraryDetailToolbar/icons/EditIcon';
-import { ShareIcon } from '@leebrary/components/LibraryDetailToolbar/icons/ShareIcon';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PropTypes from 'prop-types';
+import { createStyles } from "@bubbles-ui/components";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import { LibraryCard } from "@leebrary/components";
+import { DeleteIcon } from "@leebrary/components/LibraryDetailToolbar/icons/DeleteIcon";
+import { EditIcon } from "@leebrary/components/LibraryDetailToolbar/icons/EditIcon";
+import { ShareIcon } from "@leebrary/components/LibraryDetailToolbar/icons/ShareIcon";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
 
-import { QuestionBankIcon } from '../../components/Icons/QuestionBankIcon';
+import { QuestionBankIcon } from "../../components/Icons/QuestionBankIcon";
 
-import prefixPN from '@tests/helpers/prefixPN';
-import { deleteQuestionBankRequest } from '@tests/request';
+import prefixPN from "@tests/helpers/prefixPN";
+import { deleteQuestionBankRequest } from "@tests/request";
 
 const ListCardStyles = createStyles((theme, { selected }) => ({
   root: {
-    cursor: 'pointer',
-    borderColor: selected && theme.other.core.color.primary['400'],
-    borderWidth: selected && '1px',
+    cursor: "pointer",
+    borderColor: selected && theme.other.core.color.primary["400"],
+    borderWidth: selected && "1px",
     boxShadow: selected && theme.shadows.shadow03,
   },
 }));
 
-const QuestionsBanksListCard = ({ asset, selected, onRefresh, onShare, ...props }) => {
-  const [t] = useTranslateLoader(prefixPN('testsCard'));
+const QuestionsBanksListCard = ({
+  asset,
+  selected,
+  onRefresh,
+  onShare,
+  ...props
+}) => {
+  const [t] = useTranslateLoader(prefixPN("testsCard"));
   const { classes } = ListCardStyles({ selected });
   const { openDeleteConfirmationModal } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
@@ -41,24 +47,26 @@ const QuestionsBanksListCard = ({ asset, selected, onRefresh, onShare, ...props 
       if (asset.editable) {
         items.push({
           icon: <EditIcon />,
-          children: t('edit'),
+          children: t("edit"),
           onClick: (e) => {
             e.stopPropagation();
-            history.push(`/private/tests/questions-banks/${asset.providerData.id}`);
+            history.push(
+              `/private/tests/questions-banks/${asset.providerData.id}`
+            );
           },
         });
       }
       if (asset.deleteable) {
         items.push({
           icon: <DeleteIcon />,
-          children: t('delete'),
+          children: t("delete"),
           onClick: (e) => {
             e.stopPropagation();
             openDeleteConfirmationModal({
               onConfirm: async () => {
                 try {
                   await deleteQuestionBankRequest(asset.providerData.id);
-                  addSuccessAlert(t('deleted'));
+                  addSuccessAlert(t("deleted"));
                   onRefresh();
                 } catch (err) {
                   addErrorAlert(getErrorMessage(err));
@@ -71,7 +79,7 @@ const QuestionsBanksListCard = ({ asset, selected, onRefresh, onShare, ...props 
       if (asset.shareable) {
         items.push({
           icon: <ShareIcon />,
-          children: t('share'),
+          children: t("share"),
           onClick: () => onShare(asset),
         });
       }
@@ -83,10 +91,10 @@ const QuestionsBanksListCard = ({ asset, selected, onRefresh, onShare, ...props 
   return (
     <LibraryCard
       {...props}
-      asset={{ ...asset, fileType: 'questionBank' }}
+      asset={{ ...asset, fileType: "questionBank" }}
       menuItems={menuItems}
       variant="questionBank"
-      variantTitle={t('questionBank')}
+      variantTitle={t("questionBank")}
       variantIcon={<QuestionBankIcon width={18} height={18} />}
       className={classes.root}
     />

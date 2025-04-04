@@ -1,21 +1,21 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { Box, Stack } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PropTypes from 'prop-types';
+import { Box, Stack } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
 
-import QuestionTitleComponent from '../../QuestionTitleComponent';
-import StemResource from '../../StemResource';
+import QuestionTitleComponent from "../../QuestionTitleComponent";
+import StemResource from "../../StemResource";
 
-import AnswerMode from './AnswerMode';
-import Responses from './Responses';
-import ViewModeResponses from './ViewModeResponses';
+import AnswerMode from "./AnswerMode";
+import Responses from "./Responses";
+import ViewModeResponses from "./ViewModeResponses";
 
-import prefixPN from '@tests/helpers/prefixPN';
-import AnswerFeed from '@tests/pages/private/tests/components/ResponseDetail/AnswerFeed';
+import prefixPN from "@tests/helpers/prefixPN";
+import AnswerFeed from "@tests/pages/private/tests/components/ResponseDetail/AnswerFeed";
 
 export default function Index(props) {
-  const [t] = useTranslateLoader(prefixPN('testResult.responseDetail'));
+  const [t] = useTranslateLoader(prefixPN("testResult.responseDetail"));
   const { styles, store, question } = props;
 
   const containerClassName = store.viewMode
@@ -24,7 +24,8 @@ export default function Index(props) {
 
   // Temporary. Waiting for the new designs
   const ResolvedViewMode = useMemo(() => {
-    const showOldViewModeResponses = question?.hasAnswerFeedback || question?.hasImageAnswers;
+    const showOldViewModeResponses =
+      question?.hasAnswerFeedback || question?.hasImageAnswers;
 
     if (!showOldViewModeResponses) {
       return <ViewModeResponses {...props} />;
@@ -32,7 +33,10 @@ export default function Index(props) {
 
     return (
       <>
-        <AnswerFeed questionStatus={store.questionResponses?.[question.id]?.status} t={t} />
+        <AnswerFeed
+          questionStatus={store.questionResponses?.[question.id]?.status}
+          t={t}
+        />
         {!question.hasImageAnswer && question.stemResource ? (
           <Stack fullWidth sx={{ marginBottom: 46 }} spacing={4}>
             <Box>
@@ -44,7 +48,9 @@ export default function Index(props) {
           </Stack>
         ) : (
           <Box sx={{ marginBottom: 72 }}>
-            {question?.stemResource && <StemResource {...props} asset={question.stemResource} />}
+            {question?.stemResource && (
+              <StemResource {...props} asset={question.stemResource} />
+            )}
             <Responses {...props} />
           </Box>
         )}

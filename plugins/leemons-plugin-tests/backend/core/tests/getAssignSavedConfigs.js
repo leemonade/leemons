@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function getAssignSavedConfigs({ ctx }) {
   const configs = await ctx.tx.db.AssignSavedConfig.find({

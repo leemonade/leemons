@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from "react";
 
 import {
   Stack,
@@ -9,18 +9,21 @@ import {
   Button,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
-} from '@bubbles-ui/components';
-import { TextEditorInput, TEXT_EDITOR_TEXTAREA_TOOLBARS } from '@bubbles-ui/editors';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import {
+  TextEditorInput,
+  TEXT_EDITOR_TEXTAREA_TOOLBARS,
+} from "@bubbles-ui/editors";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
 
-import { getConfigByInstance } from '../../../helpers/getConfigByInstance';
-import QuestionTitleComponent from '../../QuestionTitleComponent';
+import { getConfigByInstance } from "../../../helpers/getConfigByInstance";
+import QuestionTitleComponent from "../../QuestionTitleComponent";
 
-import prefixPN from '@tests/helpers/prefixPN';
-import { setOpenQuestionGradeRequest } from '@tests/request';
+import prefixPN from "@tests/helpers/prefixPN";
+import { setOpenQuestionGradeRequest } from "@tests/request";
 
 const useTeacherReviewStyles = createStyles((theme) => ({
   container: {
@@ -40,14 +43,14 @@ export default function TeacherReview({
   instance,
   afterSaveCorrection,
 }) {
-  const [t] = useTranslateLoader(prefixPN('testResult.responseDetail'));
+  const [t] = useTranslateLoader(prefixPN("testResult.responseDetail"));
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const [teacherFeedback, setTeacherFeedback] = useState('');
+  const [teacherFeedback, setTeacherFeedback] = useState("");
   const [questionStatus, setQuestionStatus] = useState(null);
   const { classes } = useTeacherReviewStyles();
   const [isLoading, setIsLoading] = useState(false);
 
-  const userAnswer = response?.properties?.response || '-';
+  const userAnswer = response?.properties?.response || "-";
   const studentSkipped = !response?.status;
   const { questionFilters } = getConfigByInstance(instance);
 
@@ -59,16 +62,16 @@ export default function TeacherReview({
   const radioData = useMemo(
     () => [
       {
-        value: 'ok',
-        label: t('questionStatus.ok'),
+        value: "ok",
+        label: t("questionStatus.ok"),
       },
       {
-        value: 'partial',
-        label: t('questionStatus.partial'),
+        value: "partial",
+        label: t("questionStatus.partial"),
       },
       {
-        value: 'ko',
-        label: t('questionStatus.ko'),
+        value: "ko",
+        label: t("questionStatus.ko"),
       },
     ],
     [t]
@@ -85,7 +88,7 @@ export default function TeacherReview({
         questionId: question?.id,
         ...data,
       });
-      addSuccessAlert(t('correctionSaved'));
+      addSuccessAlert(t("correctionSaved"));
       await afterSaveCorrection();
     } catch (error) {
       console.error(error);
@@ -116,8 +119,8 @@ export default function TeacherReview({
           showFooterBorder
           scrollRef={scrollRef}
           rightZone={
-            <Box sx={{ minWidth: '120px' }}>
-              <Box style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Box sx={{ minWidth: "120px" }}>
+              <Box style={{ display: "flex", justifyContent: "flex-end" }}>
                 <Button
                   position="left"
                   rounded
@@ -126,7 +129,7 @@ export default function TeacherReview({
                   onClick={handleSaveCorrection}
                   disabled={!questionStatus}
                 >
-                  {t('saveCorrection')}
+                  {t("saveCorrection")}
                 </Button>
               </Box>
             </Box>
@@ -146,15 +149,19 @@ export default function TeacherReview({
         <Stack className={classes.container} direction="column">
           <Stack spacing={2} direction="column">
             <Text role="productive" color="primary" strong>
-              {t('answer')}
+              {t("answer")}
             </Text>
             <Text>{userAnswer}</Text>
           </Stack>
 
           {!studentSkipped && (
-            <Stack direction="column" spacing={2} sx={{ marginBottom: !showFeedbackSection && 16 }}>
+            <Stack
+              direction="column"
+              spacing={2}
+              sx={{ marginBottom: !showFeedbackSection && 16 }}
+            >
               <Text role="productive" color="primary" strong>
-                {t('gradeAndFeedback')}
+                {t("gradeAndFeedback")}
               </Text>
               <RadioGroup data={radioData} onChange={setQuestionStatus} />
 
@@ -163,7 +170,7 @@ export default function TeacherReview({
                   toolbars={TEXT_EDITOR_TEXTAREA_TOOLBARS}
                   value={teacherFeedback}
                   onChange={setTeacherFeedback}
-                  placeholder={t('feedbackPlaceholder')}
+                  placeholder={t("feedbackPlaceholder")}
                   editorStyles={{ minHeight: 80 }}
                 />
               )}

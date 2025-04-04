@@ -1,20 +1,20 @@
 /* eslint-disable no-param-reassign */
-const dayjs = require('dayjs');
-const duration = require('dayjs/plugin/duration');
-const { keyBy } = require('lodash');
+const dayjs = require("dayjs");
+const duration = require("dayjs/plugin/duration");
+const { keyBy } = require("lodash");
 
-const { QUESTION_TYPES } = require('../../config/constants');
-const { getByIds } = require('../questions/getByIds');
+const { QUESTION_TYPES } = require("../../config/constants");
+const { getByIds } = require("../questions/getByIds");
 
-const { getUserQuestionResponses } = require('./getUserQuestionResponses');
-const { getConfigByInstance } = require('./helpers/getConfigByInstance');
+const { getUserQuestionResponses } = require("./getUserQuestionResponses");
+const { getConfigByInstance } = require("./helpers/getConfigByInstance");
 const {
   gradeMonoResponseQuestion,
   gradeMapQuestion,
   gradeTrueFalseQuestion,
   gradeShortResponseQuestion,
   gradeOpenQuestion,
-} = require('./helpers/gradeQuestions');
+} = require("./helpers/gradeQuestions");
 
 dayjs.extend(duration);
 
@@ -27,13 +27,16 @@ const QUESTION_GRADING_FUNCTIONS_BY_TYPE = {
 };
 
 async function calculateUserAgentInstanceNote({ instanceId, userAgent, ctx }) {
-  const instance = await ctx.tx.call('assignables.assignableInstances.getAssignableInstance', {
-    id: instanceId,
-    details: true,
-  });
+  const instance = await ctx.tx.call(
+    "assignables.assignableInstances.getAssignableInstance",
+    {
+      id: instanceId,
+      details: true,
+    }
+  );
 
   const [evaluationSystem, questionResponses, questions] = await Promise.all([
-    ctx.tx.call('academic-portfolio.programs.getProgramEvaluationSystem', {
+    ctx.tx.call("academic-portfolio.programs.getProgramEvaluationSystem", {
       id: instance.subjects[0].program,
     }),
     getUserQuestionResponses({ instance: instance.id, userAgent, ctx }),
@@ -41,9 +44,10 @@ async function calculateUserAgentInstanceNote({ instanceId, userAgent, ctx }) {
   ]);
 
   const pointsPerQuestion =
-    (evaluationSystem.maxScale.number - evaluationSystem.minScale.number) / questions.length;
+    (evaluationSystem.maxScale.number - evaluationSystem.minScale.number) /
+    questions.length;
   const config = getConfigByInstance(instance);
-  const cluesConfigByType = keyBy(config.clues, 'type');
+  const cluesConfigByType = keyBy(config.clues, "type");
 
   let note = evaluationSystem.minScale.number;
   const correctedQuestions = {};

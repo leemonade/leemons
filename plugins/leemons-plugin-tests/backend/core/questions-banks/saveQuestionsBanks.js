@@ -1,22 +1,26 @@
 /* eslint-disable no-param-reassign */
-const { LeemonsError } = require('@leemons/error');
-const _ = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const _ = require("lodash");
 
-const { validateSaveQuestionBank } = require('../../validations/forms');
-const { createCategory } = require('../question-bank-categories/createCategory');
-const { updateCategory } = require('../question-bank-categories/updateCategory');
+const { validateSaveQuestionBank } = require("../../validations/forms");
+const {
+  createCategory,
+} = require("../question-bank-categories/createCategory");
+const {
+  updateCategory,
+} = require("../question-bank-categories/updateCategory");
 const {
   addSubjectsToQuestionBanks,
-} = require('../question-bank-subjects/addSubjectsToQuestionBanks');
+} = require("../question-bank-subjects/addSubjectsToQuestionBanks");
 const {
   removeSubjectsFromQuestionBanks,
-} = require('../question-bank-subjects/removeSubjectsFromQuestionBanks');
-const { createQuestion } = require('../questions/createQuestion');
-const { deleteQuestions } = require('../questions/deleteQuestions');
-const { updateQuestion } = require('../questions/updateQuestion');
+} = require("../question-bank-subjects/removeSubjectsFromQuestionBanks");
+const { createQuestion } = require("../questions/createQuestion");
+const { deleteQuestions } = require("../questions/deleteQuestions");
+const { updateQuestion } = require("../questions/updateQuestion");
 
 const removeUnusedFields = (data, otherFields = []) =>
-  _.omit(data, ['_id', '__v', 'deploymentID', 'isDeleted', ...otherFields]);
+  _.omit(data, ["_id", "__v", "deploymentID", "isDeleted", ...otherFields]);
 
 /**
  * @typedef {Object} QuestionBank
@@ -83,37 +87,40 @@ const removeUnusedFields = (data, otherFields = []) =>
  */
 async function saveQuestionsBanks({ data: _data, ctx }) {
   const { userSession } = ctx.meta;
-  const data = removeUnusedFields(_.cloneDeep(_data), ['asset']);
+  const data = removeUnusedFields(_.cloneDeep(_data), ["asset"]);
   data.questions = _.map(data.questions, (question) =>
     removeUnusedFields(question, [
-      'questionBank',
-      'deleted',
-      'created_at',
-      'updated_at',
-      'deleted_at',
-      'createdAt',
-      'updatedAt',
-      'deletedAt',
+      "questionBank",
+      "deleted",
+      "created_at",
+      "updated_at",
+      "deleted_at",
+      "createdAt",
+      "updatedAt",
+      "deletedAt",
     ])
   );
 
   // Check is userSession is provided
   if (!userSession) {
-    throw new LeemonsError(ctx, { message: 'User session is required (saveQuestionsBanks)' });
+    throw new LeemonsError(ctx, {
+      message: "User session is required (saveQuestionsBanks)",
+    });
   }
 
   validateSaveQuestionBank(data, ctx);
 
-  const { id, questions, categories, tags, published, subjects, ...props } = data;
+  const { id, questions, categories, tags, published, subjects, ...props } =
+    data;
   let questionBank;
 
   if (id) {
-    let version = await ctx.tx.call('common.versionControl.getVersion', { id });
+    let version = await ctx.tx.call("common.versionControl.getVersion", { id });
 
     if (version.published) {
-      version = await ctx.tx.call('common.versionControl.upgradeVersion', {
+      version = await ctx.tx.call("common.versionControl.upgradeVersion", {
         id,
-        upgrade: 'major',
+        upgrade: "major",
         published,
         setAsCurrent: !!published,
       });
@@ -132,7 +139,7 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
       });
     } else {
       if (published) {
-        await ctx.tx.call('common.versionControl.publishVersion', {
+        await ctx.tx.call("common.versionControl.publishVersion", {
           id,
           publish: true,
           setAsCurrent: true,
@@ -148,8 +155,8 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
       );
     }
   } else {
-    const version = await ctx.tx.call('common.versionControl.register', {
-      type: 'question-bank',
+    const version = await ctx.tx.call("common.versionControl.register", {
+      type: "question-bank",
       published,
       setAsCurrent: !!published,
     });
@@ -167,7 +174,7 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
     const assetsToSave = {
       indexable: true,
       public: true,
-      category: 'tests-questions-banks',
+      category: "tests-questions-banks",
     };
     assetsToSave.name = props.name;
     if (props.description) assetsToSave.description = props.description;
@@ -179,11 +186,13 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
     if (subjects) assetsToSave.subjects = subjects;
 
     if (id) {
-      const q = await ctx.tx.db.QuestionsBanks.findOne({ id }).select(['asset']).lean();
+      const q = await ctx.tx.db.QuestionsBanks.findOne({ id })
+        .select(["asset"])
+        .lean();
       // -- Asset update --
       assetsToSave.id = q.asset;
 
-      const asset = await ctx.tx.call('leebrary.assets.update', {
+      const asset = await ctx.tx.call("leebrary.assets.update", {
         data: assetsToSave,
         upgrade: true,
         published,
@@ -196,7 +205,7 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
       );
     } else {
       // -- Asset create
-      const asset = await ctx.tx.call('leebrary.assets.add', {
+      const asset = await ctx.tx.call("leebrary.assets.add", {
         asset: assetsToSave,
         published,
       });
@@ -211,24 +220,32 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
   // -- Subjects --
   await removeSubjectsFromQuestionBanks({ questionBank: questionBank.id, ctx });
   if (_.isArray(subjects) && subjects.length > 0) {
-    await addSubjectsToQuestionBanks({ subject: subjects, questionBank: questionBank.id, ctx });
+    await addSubjectsToQuestionBanks({
+      subject: subjects,
+      questionBank: questionBank.id,
+      ctx,
+    });
   }
 
   // -- Tags --
-  await ctx.tx.call('common.tags.setTagsToValues', {
+  await ctx.tx.call("common.tags.setTagsToValues", {
     type: `tests.questionBanks`,
     tags: tags || [],
     values: questionBank.id,
   });
 
   const [currentCategories, currentQuestions] = await Promise.all([
-    ctx.tx.db.QuestionBankCategories.find({ questionBank: questionBank.id }).select(['id']).lean(),
-    ctx.tx.db.Questions.find({ questionBank: questionBank.id }).select(['id']).lean(),
+    ctx.tx.db.QuestionBankCategories.find({ questionBank: questionBank.id })
+      .select(["id"])
+      .lean(),
+    ctx.tx.db.Questions.find({ questionBank: questionBank.id })
+      .select(["id"])
+      .lean(),
   ]);
 
   // -- Categories --
 
-  const currentCategoriesIds = _.map(currentCategories, 'id');
+  const currentCategoriesIds = _.map(currentCategories, "id");
   const categoriesToCreate = [];
   const categoriesToUpdate = [];
   const categoriesToDelete = [];
@@ -251,7 +268,10 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
   if (categoriesToDelete.length) {
     await Promise.all([
       ctx.tx.db.QuestionBankCategories.deleteMany({ id: categoriesToDelete }),
-      ctx.tx.db.Questions.updateMany({ category: categoriesToDelete }, { category: null }),
+      ctx.tx.db.Questions.updateMany(
+        { category: categoriesToDelete },
+        { category: null }
+      ),
     ]);
   }
   if (categoriesToUpdate.length) {
@@ -284,7 +304,7 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
   }).lean();
 
   // -- Questions --
-  const currentQuestionsIds = _.map(currentQuestions, 'id');
+  const currentQuestionsIds = _.map(currentQuestions, "id");
   const questionsToCreate = [];
   const questionsToUpdate = [];
   const questionsToDelete = [];
@@ -317,8 +337,9 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
           data: {
             ...question,
             category:
-              questionBankCategories.find((category) => category.order === question.category)?.id ||
-              null,
+              questionBankCategories.find(
+                (category) => category.order === question.category
+              )?.id || null,
           },
           published,
           ctx,
@@ -335,8 +356,9 @@ async function saveQuestionsBanks({ data: _data, ctx }) {
             ...question,
             questionBank: questionBank.id,
             category:
-              questionBankCategories.find((category) => category.order === question.category)?.id ||
-              null,
+              questionBankCategories.find(
+                (category) => category.order === question.category
+              )?.id || null,
           },
           published,
           ctx,

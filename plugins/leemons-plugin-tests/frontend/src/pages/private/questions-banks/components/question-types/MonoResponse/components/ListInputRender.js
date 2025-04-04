@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
   InputWrapper,
@@ -8,10 +8,10 @@ import {
   Stack,
   Textarea,
   TextInput,
-} from '@bubbles-ui/components';
-import ImagePicker from '@leebrary/components/ImagePicker';
-import { capitalize } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import ImagePicker from "@leebrary/components/ImagePicker";
+import { capitalize } from "lodash";
+import PropTypes from "prop-types";
 
 // eslint-disable-next-line import/prefer-default-export
 export function ListInputRender({
@@ -25,16 +25,25 @@ export function ListInputRender({
   responsesSaved,
   ...props
 }) {
-  const choice = useMemo(() => ({ ...value, isCorrect: value?.isCorrect ?? false }), [value]);
+  const choice = useMemo(
+    () => ({ ...value, isCorrect: value?.isCorrect ?? false }),
+    [value]
+  );
 
-  const [answerText, setAnswerText] = useState(choice.text?.text || '');
-  const [explanation, setExplanation] = useState(choice.feedback?.text || '');
-  const [image, setImage] = useState(choice.image?.cover?.id || choice.image || null);
-  const [imageDescription, setImageDescription] = useState(choice.imageDescription || '');
+  const [answerText, setAnswerText] = useState(choice.text?.text || "");
+  const [explanation, setExplanation] = useState(choice.feedback?.text || "");
+  const [image, setImage] = useState(
+    choice.image?.cover?.id || choice.image || null
+  );
+  const [imageDescription, setImageDescription] = useState(
+    choice.imageDescription || ""
+  );
   const [dirty, setDirty] = useState(false);
 
   const useButton = useRef(
-    !responsesSaved?.some((response) => JSON.stringify(response) === JSON.stringify(choice))
+    !responsesSaved?.some(
+      (response) => JSON.stringify(response) === JSON.stringify(choice)
+    )
   ).current;
 
   // FUNCTIONS ··············································································|
@@ -42,7 +51,10 @@ export function ListInputRender({
     setAnswerText(updatedText);
     if (!dirty) setDirty(true);
     if (updatedText) {
-      props.onChange({ ...choice, text: { format: 'plain', text: updatedText } });
+      props.onChange({
+        ...choice,
+        text: { format: "plain", text: updatedText },
+      });
     }
   }
 
@@ -50,7 +62,10 @@ export function ListInputRender({
     setExplanation(newExplanation);
     if (!dirty) setDirty(true);
     if (newExplanation) {
-      props.onChange({ ...choice, feedback: { format: 'plain', text: newExplanation } });
+      props.onChange({
+        ...choice,
+        feedback: { format: "plain", text: newExplanation },
+      });
     }
   }
 
@@ -71,7 +86,7 @@ export function ListInputRender({
   function reset() {
     if (answerText) {
       setDirty(false);
-      setAnswerText('');
+      setAnswerText("");
     }
   }
 
@@ -104,9 +119,9 @@ export function ListInputRender({
       <ContextContainer>
         <Box
           style={{
-            display: useExplanation ? 'block' : 'flex',
-            flexDirection: useExplanation ? 'column' : 'row',
-            alignItems: 'flex-start',
+            display: useExplanation ? "block" : "flex",
+            flexDirection: useExplanation ? "column" : "row",
+            alignItems: "flex-start",
             gap: 16,
           }}
         >
@@ -116,20 +131,20 @@ export function ListInputRender({
             }}
           >
             <InputWrapper
-              label={`${t('imageLabel')} *`}
-              error={dirty && !useButton && !image ? t('needImages') : null}
+              label={`${t("imageLabel")} *`}
+              error={dirty && !useButton && !image ? t("needImages") : null}
             >
               <ImagePicker value={image} onChange={mutateAnswerImage} />
             </InputWrapper>
           </Box>
           <Stack fullWidth spacing={4}>
             <Box noFlex={useExplanation}>
-              <Box style={{ width: useExplanation ? 250 : '100%' }}>
+              <Box style={{ width: useExplanation ? 250 : "100%" }}>
                 <TextInput
                   ref={answerInputRef}
-                  label={t('caption')}
+                  label={t("caption")}
                   value={imageDescription}
-                  placeholder={t('captionPlaceholder')}
+                  placeholder={t("captionPlaceholder")}
                   onChange={mutateAnswerImageDescription}
                 />
               </Box>
@@ -138,10 +153,12 @@ export function ListInputRender({
               <Box>
                 <TextInput
                   value={explanation}
-                  label={`${capitalize(t('explanationLabel'))} *`}
+                  label={`${capitalize(t("explanationLabel"))} *`}
                   onChange={mutateAnswerExplanation}
-                  placeholder={t('explanationPlaceHolder')}
-                  error={dirty && !explanation ? t('explanationRequired') : null}
+                  placeholder={t("explanationPlaceHolder")}
+                  error={
+                    dirty && !explanation ? t("explanationRequired") : null
+                  }
                 />
               </Box>
             ) : null}
@@ -151,10 +168,10 @@ export function ListInputRender({
         {useButton ? (
           <Stack justifyContent="end" spacing={4}>
             <Button variant="link" onClick={onCancel}>
-              {t('cancel')}
+              {t("cancel")}
             </Button>
             <Button variant="outline" onClick={addNewItem}>
-              {t('saveResponse')}
+              {t("saveResponse")}
             </Button>
           </Stack>
         ) : null}
@@ -168,14 +185,14 @@ export function ListInputRender({
         <TextInput
           value={answerText}
           ref={answerInputRef}
-          label={`${t('responseLabel')} *`}
-          placeholder={t('responsePlaceholder')}
-          error={dirty && !answerText ? t('responseRequired') : null}
+          label={`${t("responseLabel")} *`}
+          placeholder={t("responsePlaceholder")}
+          error={dirty && !answerText ? t("responseRequired") : null}
           onChange={(textValue) => {
             mutateAnswerText(textValue);
           }}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' && typeof addItem === 'function') {
+            if (e.key === "Enter" && typeof addItem === "function") {
               addNewItem();
             }
           }}
@@ -185,20 +202,20 @@ export function ListInputRender({
         <Box>
           <Textarea
             value={explanation}
-            label={`${capitalize(t('explanationLabel'))} *`}
+            label={`${capitalize(t("explanationLabel"))} *`}
             onChange={mutateAnswerExplanation}
-            placeholder={t('explanationPlaceHolder')}
-            error={dirty && !explanation ? t('explanationRequired') : null}
+            placeholder={t("explanationPlaceHolder")}
+            error={dirty && !explanation ? t("explanationRequired") : null}
           />
         </Box>
       ) : null}
       {useButton ? (
         <Stack justifyContent="end" spacing={4}>
           <Button variant="link" onClick={onCancel}>
-            {t('cancel')}
+            {t("cancel")}
           </Button>
           <Button variant="outline" onClick={addNewItem}>
-            {t('saveResponse')}
+            {t("saveResponse")}
           </Button>
         </Stack>
       ) : null}

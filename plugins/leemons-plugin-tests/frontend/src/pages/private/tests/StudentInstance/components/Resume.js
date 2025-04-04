@@ -1,12 +1,12 @@
-import { useClassesSubjects } from '@academic-portfolio/hooks';
-import { useCurriculumVisibleValues } from '@assignables/components/Assignment/components/EvaluationType';
-import { Box, HtmlText, Title } from '@bubbles-ui/components';
-import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
-import dayjs from 'dayjs';
-import { isEmpty, map } from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { ButtonNavigation } from './ButtonNavigation';
+import { useClassesSubjects } from "@academic-portfolio/hooks";
+import { useCurriculumVisibleValues } from "@assignables/components/Assignment/components/EvaluationType";
+import { Box, HtmlText, Title } from "@bubbles-ui/components";
+import { CurriculumListContents } from "@curriculum/components/CurriculumListContents";
+import dayjs from "dayjs";
+import { isEmpty, map } from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import { ButtonNavigation } from "./ButtonNavigation";
 
 export default function Resume(props) {
   const { classes, cx, t, store, styles } = props;
@@ -21,7 +21,9 @@ export default function Resume(props) {
     }
   }
 
-  const curriculumValues = useCurriculumVisibleValues({ assignation: store.assignation });
+  const curriculumValues = useCurriculumVisibleValues({
+    assignation: store.assignation,
+  });
   const subjects = useClassesSubjects(store.instance.classes);
 
   let curriculum = null;
@@ -35,8 +37,13 @@ export default function Resume(props) {
     <Box className={cx(classes.loremIpsum, classes.limitedWidthStep)}>
       {store.instance?.assignable?.statement ? (
         <>
-          <Title order={2}>{t('resume')}</Title>
-          <Box sx={(theme) => ({ marginTop: theme.spacing[4], marginBottom: theme.spacing[4] })}>
+          <Title order={2}>{t("resume")}</Title>
+          <Box
+            sx={(theme) => ({
+              marginTop: theme.spacing[4],
+              marginBottom: theme.spacing[4],
+            })}
+          >
             <HtmlText>{store.instance.assignable.statement}</HtmlText>
           </Box>
         </>
@@ -50,24 +57,28 @@ export default function Resume(props) {
             */}
           <Box
             sx={(theme) => ({
-              display: 'flex',
-              flexDirection: 'column',
+              display: "flex",
+              flexDirection: "column",
               gap: theme.spacing[4],
             })}
           >
             {curriculum ? (
               <Box sx={tabPanelStyle}>
                 <Box>
-                  <CurriculumListContents value={curriculum} subjects={map(subjects, 'id')} />
+                  <CurriculumListContents
+                    value={curriculum}
+                    subjects={map(subjects, "id")}
+                  />
                 </Box>
               </Box>
             ) : null}
             {!!store.instance.assignable.subjects[0].curriculum.objectives &&
-              !!store.instance.assignable.subjects[0].curriculum.objectives?.length ? (
+            !!store.instance.assignable.subjects[0].curriculum.objectives
+              ?.length ? (
               <Box sx={tabPanelStyle}>
                 <Box>
                   <Title color="primary" order={5}>
-                    {t('objectives')}
+                    {t("objectives")}
                   </Title>
                   {/* TODO: Use react lists */}
                   <HtmlText>
@@ -80,7 +91,7 @@ export default function Resume(props) {
                             ${objective}
                           </li>`
                         )
-                        ?.join('')}
+                        ?.join("")}
                       </ul>
                     `}
                   </HtmlText>
@@ -97,7 +108,7 @@ export default function Resume(props) {
         <ButtonNavigation {...props} />
       ) : (
         <Box className={styles.timeLimitContainer} style={{ margin: 0 }}>
-          <Title order={5}>{t('importantInformation')}</Title>
+          <Title order={5}>{t("importantInformation")}</Title>
           <Box className={styles.timeLimitContent}>
             <Box
               className={styles.timeLimitInfo}
@@ -105,14 +116,14 @@ export default function Resume(props) {
                 paddingLeft: theme.spacing[6],
                 gap: theme.spacing[4],
                 // textAlign: 'left',
-                textAlign: 'center',
-                flexDirection: 'column',
+                textAlign: "center",
+                flexDirection: "column",
               })}
             >
-              <Box>{t('informationOnlyView')}</Box>
+              <Box>{t("informationOnlyView")}</Box>
               <Box>
-                {t('informationStart', {
-                  date: `${dayjs(store.instance.dates.start).format('L - HH:mm ')}h`,
+                {t("informationStart", {
+                  date: `${dayjs(store.instance.dates.start).format("L - HH:mm ")}h`,
                 })}
               </Box>
             </Box>

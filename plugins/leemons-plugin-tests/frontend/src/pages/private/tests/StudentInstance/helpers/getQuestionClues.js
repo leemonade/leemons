@@ -10,9 +10,11 @@
  * `ln ../../../../frontend/src/pages/private/tests/StudentInstance/helpers/getQuestionClues.js`
  */
 
-const { forEach, isNumber, isString, filter, isArray } = require('lodash');
+const { forEach, isNumber, isString, filter, isArray } = require("lodash");
 
-const { QUESTION_TYPES } = require('@tests/pages/private/questions-banks/questionConstants');
+const {
+  QUESTION_TYPES,
+} = require("@tests/pages/private/questions-banks/questionConstants");
 
 function getQuestionClues(question, types, config) {
   let clues = [];
@@ -28,7 +30,7 @@ function getQuestionClues(question, types, config) {
     });
     if (responsesIndicesToHide.length) {
       hideResponses.push({
-        type: 'hide-response',
+        type: "hide-response",
         indexs: responsesIndicesToHide, // TODO update map responses to use the correct word here, it can be very misleading
       });
     }
@@ -43,37 +45,40 @@ function getQuestionClues(question, types, config) {
     });
     if (responsesIndicesToHide.length) {
       hideResponses.push({
-        type: 'hide-response',
+        type: "hide-response",
         indices: responsesIndicesToHide,
       });
     }
   }
 
   if (question.clues?.length) {
-    forEach(isString(question.clues) ? JSON.parse(question.clues) : question.clues, (clue) => {
-      notes.push({
-        type: 'note',
-        text: clue,
-      });
-    });
+    forEach(
+      isString(question.clues) ? JSON.parse(question.clues) : question.clues,
+      (clue) => {
+        notes.push({
+          type: "note",
+          text: clue,
+        });
+      }
+    );
   }
 
   if (config.allowClues) {
     forEach(config.clues, (clue) => {
       if (clue.canUse) {
-        if (clue.type === 'hide-response') {
+        if (clue.type === "hide-response") {
           clues = clues.concat(hideResponses);
         }
-        if (clue.type === 'note') {
+        if (clue.type === "note") {
           clues = clues.concat(notes);
         }
       }
     });
   }
 
-  if (isArray(types) || typeof types === 'undefined') {
+  if (isArray(types) || typeof types === "undefined") {
     return filter(clues, (clue) => {
-      if (typeof types === 'undefined') return false;
+      if (typeof types === "undefined") return false;
       return types.includes(clue.type);
     });
   }

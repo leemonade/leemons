@@ -1,18 +1,18 @@
-import React from 'react';
-import { Link, useHistory, useParams } from 'react-router-dom';
+import React from "react";
+import { Link, useHistory, useParams } from "react-router-dom";
 
-import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
-import ActivityHeader from '@assignables/components/ActivityHeader';
+import { getProgramEvaluationSystemRequest } from "@academic-portfolio/request";
+import ActivityHeader from "@assignables/components/ActivityHeader";
 import {
   ActivityUnavailable,
   useActivityStates,
-} from '@assignables/components/ActivityUnavailable';
-import getClassData from '@assignables/helpers/getClassData';
-import getNextActivityUrl from '@assignables/helpers/getNextActivityUrl';
-import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
-import getAssignation from '@assignables/requests/assignations/getAssignation';
-import { allAssignationsGetKey } from '@assignables/requests/hooks/keys/assignations';
-import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
+} from "@assignables/components/ActivityUnavailable";
+import getClassData from "@assignables/helpers/getClassData";
+import getNextActivityUrl from "@assignables/helpers/getNextActivityUrl";
+import getAssignableInstance from "@assignables/requests/assignableInstances/getAssignableInstance";
+import getAssignation from "@assignables/requests/assignations/getAssignation";
+import { allAssignationsGetKey } from "@assignables/requests/hooks/keys/assignations";
+import useAssignations from "@assignables/requests/hooks/queries/useAssignations";
 import {
   Box,
   Button,
@@ -22,31 +22,34 @@ import {
   Text,
   TotalLayoutContainer,
   VerticalStepperContainer,
-} from '@bubbles-ui/components';
-import { ChevronRightIcon, ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
-import { useStore } from '@common';
-import { addErrorAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useQueryClient } from '@tanstack/react-query';
-import { getCentersWithToken } from '@users/session';
-import { forEach, intersectionBy } from 'lodash';
+} from "@bubbles-ui/components";
+import {
+  ChevronRightIcon,
+  ExpandDiagonalIcon,
+} from "@bubbles-ui/icons/outline";
+import { useStore } from "@common";
+import { addErrorAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useQueryClient } from "@tanstack/react-query";
+import { getCentersWithToken } from "@users/session";
+import { forEach, intersectionBy } from "lodash";
 
 import {
   getQuestionByIdsRequest,
   getUserQuestionResponsesRequest,
   setInstanceTimestampRequest,
   setQuestionResponseRequest,
-} from '../../../../request';
+} from "../../../../request";
 
-import { StudentInstanceStyles } from './StudentInstance.style';
-import { TestStyles } from './TestStyles.style';
-import Development from './components/Development';
-import QuestionList from './components/QuestionList';
-import { calculeInfoValues } from './helpers/calculeInfoValues';
-import { getConfigByInstance } from './helpers/getConfigByInstance';
-import { getIfCurriculumSubjectsHaveValues } from './helpers/getIfCurriculumSubjectsHaveValues';
+import { StudentInstanceStyles } from "./StudentInstance.style";
+import { TestStyles } from "./TestStyles.style";
+import Development from "./components/Development";
+import QuestionList from "./components/QuestionList";
+import { calculeInfoValues } from "./helpers/calculeInfoValues";
+import { getConfigByInstance } from "./helpers/getConfigByInstance";
+import { getIfCurriculumSubjectsHaveValues } from "./helpers/getIfCurriculumSubjectsHaveValues";
 
-import prefixPN from '@tests/helpers/prefixPN';
+import prefixPN from "@tests/helpers/prefixPN";
 
 const setInstanceTimestamp = (queryClient) => async (instance, key, user) => {
   const result = await setInstanceTimestampRequest(instance, key, user);
@@ -59,10 +62,10 @@ const setInstanceTimestamp = (queryClient) => async (instance, key, user) => {
 
 function StudentInstance() {
   const scrollRef = React.useRef();
-  const [t, translations] = useTranslateLoader(prefixPN('studentInstance'));
+  const [t, translations] = useTranslateLoader(prefixPN("studentInstance"));
   const [store, render] = useStore({
     loading: true,
-    idLoaded: '',
+    idLoaded: "",
     isFirstStep: true,
     currentStep: 0,
     maxNavigatedStep: 0,
@@ -74,10 +77,10 @@ function StudentInstance() {
   const queryClient = useQueryClient();
   const updateTimestamp = setInstanceTimestamp(queryClient);
 
-  const { classes: styles } = TestStyles({}, { name: 'Tests' });
+  const { classes: styles } = TestStyles({}, { name: "Tests" });
   const { classes, cx } = StudentInstanceStyles(
     { isFirstStep: store.isFirstStep },
-    { name: 'TaskDoing' }
+    { name: "TaskDoing" }
   );
 
   const history = useHistory();
@@ -89,7 +92,11 @@ function StudentInstance() {
   }
 
   async function onStartQuestions() {
-    const { timestamps } = await updateTimestamp(params.id, 'start', getUserId());
+    const { timestamps } = await updateTimestamp(
+      params.id,
+      "start",
+      getUserId()
+    );
     store.timestamps = timestamps;
     store.assignation.timestamps = timestamps;
     render();
@@ -121,8 +128,14 @@ function StudentInstance() {
       history.push(`/private/tests/result/${params.id}/${getUserId()}`);
     } else {
       // store.showFinishModal = true;
-      const { timestamps } = await updateTimestamp(params.id, 'end', getUserId());
-      history.push(`/private/tests/result/${params.id}/${getUserId()}?fromTest`);
+      const { timestamps } = await updateTimestamp(
+        params.id,
+        "end",
+        getUserId()
+      );
+      history.push(
+        `/private/tests/result/${params.id}/${getUserId()}?fromTest`
+      );
       store.timestamps = timestamps;
       render();
     }
@@ -135,17 +148,22 @@ function StudentInstance() {
         getAssignation({ id: params.id, user: getUserId() }),
       ]);
 
-      const [{ evaluationSystem }, classe, { questions }, { responses }, { timestamps }] =
-        await Promise.all([
-          getProgramEvaluationSystemRequest(store.instance.subjects[0].program),
-          getClassData(store.instance.classes, {
-            multiSubject: t('multiSubject'),
-            groupName: store.instance?.metadata?.groupName,
-          }),
-          getQuestionByIdsRequest(store.instance.metadata.questions),
-          getUserQuestionResponsesRequest(params.id, getUserId()),
-          updateTimestamp(params.id, 'open', getUserId()),
-        ]);
+      const [
+        { evaluationSystem },
+        classe,
+        { questions },
+        { responses },
+        { timestamps },
+      ] = await Promise.all([
+        getProgramEvaluationSystemRequest(store.instance.subjects[0].program),
+        getClassData(store.instance.classes, {
+          multiSubject: t("multiSubject"),
+          groupName: store.instance?.metadata?.groupName,
+        }),
+        getQuestionByIdsRequest(store.instance.metadata.questions),
+        getUserQuestionResponsesRequest(params.id, getUserId()),
+        updateTimestamp(params.id, "open", getUserId()),
+      ]);
       if (store.assignation.finished) store.viewMode = true;
       store.questionResponses = responses;
       store.questionMax = Object.keys(responses).length - 1;
@@ -164,8 +182,8 @@ function StudentInstance() {
 
       store.nextActivityUrl = await getNextActivityUrl(store.assignation);
       store.hasNextActivity =
-        store.assignation?.instance?.relatedAssignableInstances?.after?.length > 0 &&
-        store.nextActivityUrl;
+        store.assignation?.instance?.relatedAssignableInstances?.after?.length >
+          0 && store.nextActivityUrl;
       store.timestamps = timestamps;
       store.config = getConfigByInstance(store.instance);
       store.questionsInfo = calculeInfoValues(
@@ -190,7 +208,7 @@ function StudentInstance() {
 
   async function forceFinishTest() {
     store.showForceFinishModal = true;
-    const { timestamps } = await updateTimestamp(params.id, 'end', getUserId());
+    const { timestamps } = await updateTimestamp(params.id, "end", getUserId());
     store.timestamps = timestamps;
     render();
   }
@@ -226,7 +244,10 @@ function StudentInstance() {
     fetchInstance: true,
   });
 
-  const { isUnavailable } = useActivityStates({ instance: store.instance, user: getUserId() });
+  const { isUnavailable } = useActivityStates({
+    instance: store.instance,
+    user: getUserId(),
+  });
 
   React.useEffect(() => {
     if (params?.id && translations && store.idLoaded !== params?.id) init();
@@ -249,7 +270,11 @@ function StudentInstance() {
       const steps = [];
 
       const curriculumValues = getIfCurriculumSubjectsHaveValues(
-        intersectionBy(store.instance.assignable.subjects, store.instance.subjects, 'subject')
+        intersectionBy(
+          store.instance.assignable.subjects,
+          store.instance.subjects,
+          "subject"
+        )
       );
       /*
       if (
@@ -270,14 +295,14 @@ function StudentInstance() {
       const testProps = { onStartQuestions };
 
       steps.push({
-        label: t('development'),
-        status: 'OK',
+        label: t("development"),
+        status: "OK",
         component: <Development {...commonProps} {...testProps} />,
       });
 
       steps.push({
-        label: t('questions'),
-        status: 'OK',
+        label: t("questions"),
+        status: "OK",
         component: (
           <QuestionList
             {...commonProps}
@@ -300,7 +325,8 @@ function StudentInstance() {
 
   React.useEffect(() => {
     if (verticalStepperProps.data) {
-      store.isFirstStep = !verticalStepperProps.data[store.currentStep].isQuestion;
+      store.isFirstStep =
+        !verticalStepperProps.data[store.currentStep].isQuestion;
       render();
     }
   }, [store.currentStep, verticalStepperProps]);
@@ -310,7 +336,7 @@ function StudentInstance() {
   }
 
   const goToOnGoing = () => {
-    history.push('/private/assignables/ongoing');
+    history.push("/private/assignables/ongoing");
   };
 
   const goToModuleDashboard = () => {
@@ -320,13 +346,13 @@ function StudentInstance() {
   const goToResults = (e, openInNewTab = false, fromTimeout = false) => {
     if (openInNewTab)
       window.open(
-        `/private/tests/result/${params?.id}/${getUserId()}${fromTimeout ? '?fromTimeout' : ''}`,
-        '_blank',
-        'noopener'
+        `/private/tests/result/${params?.id}/${getUserId()}${fromTimeout ? "?fromTimeout" : ""}`,
+        "_blank",
+        "noopener"
       );
     else
       history.push(
-        `/private/tests/result/${params?.id}/${getUserId()}${fromTimeout ? '?fromTimeout' : ''}`
+        `/private/tests/result/${params?.id}/${getUserId()}${fromTimeout ? "?fromTimeout" : ""}`
       );
   };
 
@@ -358,18 +384,24 @@ function StudentInstance() {
         >
           {isUnavailable ? (
             <Stack fullHeight>
-              <ActivityUnavailable instance={store.instance} user={getUserId()} />
+              <ActivityUnavailable
+                instance={store.instance}
+                user={getUserId()}
+              />
             </Stack>
           ) : null}
           {!isUnavailable && verticalStepperProps.data[store.currentStep]
-            ? React.cloneElement(verticalStepperProps.data[store.currentStep].component, {
-                isFirstStep: !store.currentStep,
-              })
+            ? React.cloneElement(
+                verticalStepperProps.data[store.currentStep].component,
+                {
+                  isFirstStep: !store.currentStep,
+                }
+              )
             : null}
         </VerticalStepperContainer>
       </TotalLayoutContainer>
       <Modal
-        title={t('finishTestModalTitle')}
+        title={t("finishTestModalTitle")}
         opened={store.showFinishModal}
         onClose={() => {}}
         centerTitle
@@ -382,7 +414,7 @@ function StudentInstance() {
         <Box className={styles.howItWorksModalContainer}>
           <Text
             dangerouslySetInnerHTML={{
-              __html: t('finishTestModalDescription'),
+              __html: t("finishTestModalDescription"),
             }}
           />
         </Box>
@@ -392,19 +424,19 @@ function StudentInstance() {
               {store.isModule ? (
                 <Box>
                   <Button variant="light" compact onClick={goToModuleDashboard}>
-                    {t('modulesDashboard')}
+                    {t("modulesDashboard")}
                   </Button>
                 </Box>
               ) : (
                 <Box>
                   <Button variant="light" compact onClick={goToOnGoing}>
-                    {t('pendingActivities')}
+                    {t("pendingActivities")}
                   </Button>
                 </Box>
               )}
               <Box>
                 <Button compact onClick={goToResults}>
-                  {t('viewResults')}
+                  {t("viewResults")}
                 </Button>
               </Box>
             </Stack>
@@ -417,11 +449,11 @@ function StudentInstance() {
                 compact
                 onClick={() => goToResults(null, true)}
               >
-                {t('viewResults')}
+                {t("viewResults")}
               </Button>
               <Link to={store.nextActivityUrl}>
                 <Button rightIcon={<ChevronRightIcon />} compact>
-                  {t('nextActivity')}
+                  {t("nextActivity")}
                 </Button>
               </Link>
             </Stack>
@@ -429,7 +461,7 @@ function StudentInstance() {
         </Box>
       </Modal>
       <Modal
-        title={t('finishForceTestModalTitle')}
+        title={t("finishForceTestModalTitle")}
         opened={store.showForceFinishModal}
         onClose={closeForceFinishModal}
         withCloseButton={false}
@@ -439,7 +471,7 @@ function StudentInstance() {
         <Box className={styles.howItWorksModalContainer}>
           <Paragraph
             dangerouslySetInnerHTML={{
-              __html: t('finishForceTestModalDescription'),
+              __html: t("finishForceTestModalDescription"),
             }}
           />
         </Box>
@@ -453,16 +485,18 @@ function StudentInstance() {
                 history.push(`/private/assignables/ongoing`);
               }}
             >
-              {t('activitiesInCourse')}
+              {t("activitiesInCourse")}
             </Button>
             <Button
               onClick={() => {
                 store.showForceFinishModal = false;
                 render();
-                history.push(`/private/tests/result/${params.id}/${getUserId()}`);
+                history.push(
+                  `/private/tests/result/${params.id}/${getUserId()}`
+                );
               }}
             >
-              {t('reviewResults')}
+              {t("reviewResults")}
             </Button>
           </Stack>
         </Box>

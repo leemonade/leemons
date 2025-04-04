@@ -1,14 +1,14 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
-const dayjs = require('dayjs');
-const duration = require('dayjs/plugin/duration');
-const { findQuestionResponses } = require('./findQuestionResponses');
+const _ = require("lodash");
+const dayjs = require("dayjs");
+const duration = require("dayjs/plugin/duration");
+const { findQuestionResponses } = require("./findQuestionResponses");
 
 dayjs.extend(duration);
 
 async function getUserQuestionResponses({ instance, userAgent, ctx }) {
   // TODO: Do we need this?
-  await ctx.tx.call('assignables.assignations.getAssignation', {
+  await ctx.tx.call("assignables.assignations.getAssignation", {
     assignableInstanceId: instance,
     user: userAgent,
   });
@@ -18,7 +18,14 @@ async function getUserQuestionResponses({ instance, userAgent, ctx }) {
       instance,
       userAgent,
     },
-    columns: ['question', 'clues', 'cluesTypes', 'properties', 'status', 'points'],
+    columns: [
+      "question",
+      "clues",
+      "cluesTypes",
+      "properties",
+      "status",
+      "points",
+    ],
     ctx,
   });
 

@@ -1,37 +1,42 @@
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PropTypes from 'prop-types';
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
 
-import prefixPN from '@tests/helpers/prefixPN';
-import ResponseDetail from '@tests/pages/private/tests/components/ResponseDetail';
+import prefixPN from "@tests/helpers/prefixPN";
+import ResponseDetail from "@tests/pages/private/tests/components/ResponseDetail";
 
 function ViewModeResponses(props) {
-  const [t] = useTranslateLoader(prefixPN('questionsBanksDetail.questionLabels.trueFalse'));
+  const [t] = useTranslateLoader(
+    prefixPN("questionsBanksDetail.questionLabels.trueFalse")
+  );
   const { question, store } = props;
 
-  const userAnswer = store?.questionResponses?.[question.id]?.properties?.response;
+  const userAnswer =
+    store?.questionResponses?.[question.id]?.properties?.response;
 
   const correctAnswer = {
     value: question.trueFalseProperties?.isTrue,
-    label: question.trueFalseProperties?.isTrue ? t('true') : t('false'),
+    label: question.trueFalseProperties?.isTrue ? t("true") : t("false"),
   };
 
   const userSkippedQuestion = !store?.questionResponses[question.id]?.status;
 
   const responses = [
     {
-      choice: t('true'),
+      choice: t("true"),
       isUserAnswer: userAnswer === true,
       isCorrect: question.trueFalseProperties?.isTrue,
     },
     {
-      choice: t('false'),
+      choice: t("false"),
       isUserAnswer: userAnswer === false,
       isCorrect: !question.trueFalseProperties?.isTrue,
     },
   ];
 
   const feedback = question.globalFeedback?.text || null;
-  const stemResourceIsImage = (question?.stemResource?.file?.type || '').startsWith('image');
+  const stemResourceIsImage = (
+    question?.stemResource?.file?.type || ""
+  ).startsWith("image");
 
   return (
     <ResponseDetail

@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Button, ContextContainer, Stack } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Button, ContextContainer, Stack } from "@bubbles-ui/components";
 
 export default function DetailDesign({ form, t, onNext }) {
   async function next() {
@@ -13,7 +13,7 @@ export default function DetailDesign({ form, t, onNext }) {
   return (
     <ContextContainer>
       <Stack justifyContent="end">
-        <Button onClick={next}>{t('next')}</Button>
+        <Button onClick={next}>{t("next")}</Button>
       </Stack>
     </ContextContainer>
   );

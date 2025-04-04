@@ -1,4 +1,4 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
 async function createAssignSavedConfig({ ctx, name, config }) {
   try {

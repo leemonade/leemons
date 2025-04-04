@@ -1,5 +1,5 @@
-const { QUESTION_RESPONSE_STATUS } = require('../../../../config/constants');
-const { getQuestionTotalPoints } = require('../getQuestionTotalPoints');
+const { QUESTION_RESPONSE_STATUS } = require("../../../../config/constants");
+const { getQuestionTotalPoints } = require("../getQuestionTotalPoints");
 
 function gradeOpenQuestion({
   responseData,

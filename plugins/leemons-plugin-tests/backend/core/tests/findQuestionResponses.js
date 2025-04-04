@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function findQuestionResponses({ query, columns, ctx }) {
   let responses = ctx.tx.db.UserAgentAssignableInstanceResponses.find(query);

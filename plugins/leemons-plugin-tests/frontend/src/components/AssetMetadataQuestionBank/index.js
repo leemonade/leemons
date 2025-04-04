@@ -1,1 +1,1 @@
-export * from './AssetMetadataQuestionBank';
+export * from "./AssetMetadataQuestionBank";

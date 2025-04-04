@@ -1,17 +1,17 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   Box,
   Button,
   ContextContainer,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
-} from '@bubbles-ui/components';
-import Curriculum from '@tasks/components/TaskSetupPage/components/Curriculum';
-import Objectives from '@tasks/components/TaskSetupPage/components/Objectives';
-import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { find, map, noop } from 'lodash';
-import FinalDropdown from './FinalDropdown';
+} from "@bubbles-ui/components";
+import Curriculum from "@tasks/components/TaskSetupPage/components/Curriculum";
+import Objectives from "@tasks/components/TaskSetupPage/components/Objectives";
+import { ChevLeftIcon, ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { find, map, noop } from "lodash";
+import FinalDropdown from "./FinalDropdown";
 
 export default function DetailEvaluation({
   t,
@@ -28,19 +28,20 @@ export default function DetailEvaluation({
 }) {
   const [, setIsDirty] = React.useState(false);
   const formValues = form.watch();
-  const validate = async () => form.trigger(['instructionsForTeachers', 'instructionsForStudents']);
+  const validate = async () =>
+    form.trigger(["instructionsForTeachers", "instructionsForStudents"]);
 
-  const programId = form.getValues('program');
-  const subjectIds = form.getValues('subjects');
+  const programId = form.getValues("program");
+  const subjectIds = form.getValues("subjects");
 
   const subjects = store.subjectsByProgram[programId];
   const subject = find(subjects, { value: subjectIds?.[0]?.subject });
 
   const labels = {
-    inputLabel: t('inputLabel'),
-    inputPlaceholder: t('inputPlaceholder'),
-    numberHeader: t('numberHeader'),
-    objectiveHeader: t('objectiveHeader'),
+    inputLabel: t("inputLabel"),
+    inputPlaceholder: t("inputPlaceholder"),
+    numberHeader: t("numberHeader"),
+    objectiveHeader: t("objectiveHeader"),
   };
 
   // ························································
@@ -72,7 +73,7 @@ export default function DetailEvaluation({
               leftIcon={<ChevLeftIcon height={20} width={20} />}
               onClick={onPrev}
             >
-              {t('previous')}
+              {t("previous")}
             </Button>
           }
           rightZone={
@@ -82,9 +83,9 @@ export default function DetailEvaluation({
                   variant="link"
                   onClick={handleOnSave}
                   disabled={store.saving}
-                  loading={store.saving === 'draft'}
+                  loading={store.saving === "draft"}
                 >
-                  {t('saveDraft')}
+                  {t("saveDraft")}
                 </Button>
               ) : null}
               {isLastStep ? (
@@ -101,9 +102,9 @@ export default function DetailEvaluation({
                   rightIcon={<ChevRightIcon height={20} width={20} />}
                   onClick={handleOnNext}
                   disabled={store.saving}
-                  loading={store.saving === 'publish'}
+                  loading={store.saving === "publish"}
                 >
-                  {t('next')}
+                  {t("next")}
                 </Button>
               )}
             </>
@@ -114,19 +115,26 @@ export default function DetailEvaluation({
       <Box>
         <ContextContainer>
           {formValues.config?.hasCurriculum && (
-            <ContextContainer title={t('curriculum')} subtitle={subject ? subject.label : null}>
+            <ContextContainer
+              title={t("curriculum")}
+              subtitle={subject ? subject.label : null}
+            >
               <Curriculum
-                program={form.getValues('program')}
-                subjects={map(form.getValues('subjects'), 'subject')}
+                program={form.getValues("program")}
+                subjects={map(form.getValues("subjects"), "subject")}
                 name="curriculum.curriculum"
                 control={form.control}
-                addLabel={t('addFromCurriculum')}
+                addLabel={t("addFromCurriculum")}
               />
             </ContextContainer>
           )}
           {formValues.config?.hasObjectives && (
-            <ContextContainer title={t('objectivesCurriculum')}>
-              <Objectives form={form} name={`curriculum.objectives`} labels={labels} />
+            <ContextContainer title={t("objectivesCurriculum")}>
+              <Objectives
+                form={form}
+                name={`curriculum.objectives`}
+                labels={labels}
+              />
             </ContextContainer>
           )}
         </ContextContainer>

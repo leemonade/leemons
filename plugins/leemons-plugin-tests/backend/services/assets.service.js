@@ -3,13 +3,15 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getServiceModels } = require('../models');
-const { findByAssetIds } = require('../core/questions-banks');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const { LeemonsMongoDBMixin } = require("@leemons/mongodb");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
+const { getServiceModels } = require("../models");
+const { findByAssetIds } = require("../core/questions-banks");
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -27,7 +29,11 @@ module.exports = {
   actions: {
     getByIds: {
       handler(ctx) {
-        return findByAssetIds({ ids: ctx.params.assetIds, getAssets: ctx.params.getAssets, ctx });
+        return findByAssetIds({
+          ids: ctx.params.assetIds,
+          getAssets: ctx.params.getAssets,
+          ctx,
+        });
       },
     },
   },

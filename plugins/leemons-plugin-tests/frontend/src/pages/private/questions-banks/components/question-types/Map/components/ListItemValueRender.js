@@ -1,13 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Stack, Title } from '@bubbles-ui/components';
-import { ViewOffIcon } from '@bubbles-ui/icons/solid';
-import { numberToEncodedLetter } from '@common';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, Stack, Title } from "@bubbles-ui/components";
+import { ViewOffIcon } from "@bubbles-ui/icons/solid";
+import { numberToEncodedLetter } from "@common";
 
 // eslint-disable-next-line import/prefer-default-export
 export function ListItemValueRender({ item, markers, showEye, index }) {
   return (
-    <Box sx={() => ({ width: '100%' })}>
+    <Box sx={() => ({ width: "100%" })}>
       <Stack fullWidth alignItems="center">
         <Box
           sx={(theme) => ({
@@ -15,7 +15,9 @@ export function ListItemValueRender({ item, markers, showEye, index }) {
           })}
         >
           <Title order={6}>
-            {markers.type === 'letter' ? numberToEncodedLetter(index + 1) : index + 1}
+            {markers.type === "letter"
+              ? numberToEncodedLetter(index + 1)
+              : index + 1}
           </Title>
         </Box>
         {showEye && markers?.list?.[index]?.hideOnHelp ? (

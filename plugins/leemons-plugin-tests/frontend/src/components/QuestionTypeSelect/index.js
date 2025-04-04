@@ -1,1 +1,1 @@
-export * from './QuestionTypeSelect';
+export * from "./QuestionTypeSelect";

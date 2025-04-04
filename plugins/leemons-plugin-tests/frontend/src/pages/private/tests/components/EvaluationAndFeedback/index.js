@@ -1,11 +1,11 @@
-import ScoreFeedback from '@assignables/widgets/dashboard/nya/components/EvaluationCardStudent/components/ScoreFeedback';
-import { useScoreFeedbackData } from '@assignables/widgets/dashboard/nya/hooks';
-import { ContextContainer, Box, Stack } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+import ScoreFeedback from "@assignables/widgets/dashboard/nya/components/EvaluationCardStudent/components/ScoreFeedback";
+import { useScoreFeedbackData } from "@assignables/widgets/dashboard/nya/hooks";
+import { ContextContainer, Box, Stack } from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
-import ResultsGraph from '../ResultsGraph';
+import ResultsGraph from "../ResultsGraph";
 
-import Feedback from './Feedback';
+import Feedback from "./Feedback";
 
 function EvaluationAndFeedback({
   assignation,
@@ -16,7 +16,10 @@ function EvaluationAndFeedback({
   onSaveFeedback,
   t,
 }) {
-  const { instance, program, score } = useScoreFeedbackData({ assignation, subject });
+  const { instance, program, score } = useScoreFeedbackData({
+    assignation,
+    subject,
+  });
   return (
     <ContextContainer spacing={5}>
       <Stack spacing={5}>
@@ -39,7 +42,10 @@ function EvaluationAndFeedback({
             />
           </Stack>
         </Box>
-        <ResultsGraph questions={questions} questionResponses={questionResponses} />
+        <ResultsGraph
+          questions={questions}
+          questionResponses={questionResponses}
+        />
       </Stack>
 
       <Stack>

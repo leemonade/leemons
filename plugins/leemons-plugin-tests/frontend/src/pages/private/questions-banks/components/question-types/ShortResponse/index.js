@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Controller, useFormContext } from 'react-hook-form';
+import { useEffect, useState } from "react";
+import { Controller, useFormContext } from "react-hook-form";
 
 import {
   Switch,
@@ -10,19 +10,23 @@ import {
   Text,
   Box,
   TagsInput,
-} from '@bubbles-ui/components';
-import { TextEditorInput, TEXT_EDITOR_TEXTAREA_TOOLBARS } from '@bubbles-ui/editors';
-import { InfoIcon } from '@bubbles-ui/icons/solid';
-import { find, capitalize } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import {
+  TextEditorInput,
+  TEXT_EDITOR_TEXTAREA_TOOLBARS,
+} from "@bubbles-ui/editors";
+import { InfoIcon } from "@bubbles-ui/icons/solid";
+import { find, capitalize } from "lodash";
+import PropTypes from "prop-types";
 
 export default function ShortResponse({ form: _form, t }) {
   const form = useFormContext() || _form;
   const [altChoices, setAltChoices] = useState([]);
 
   function validateChoices(choicesValue) {
-    const mainResponseText = find(choicesValue, { isMainChoice: true })?.text?.text;
-    if (!mainResponseText) return t('typeRequired');
+    const mainResponseText = find(choicesValue, { isMainChoice: true })?.text
+      ?.text;
+    if (!mainResponseText) return t("typeRequired");
 
     return true;
   }
@@ -30,7 +34,7 @@ export default function ShortResponse({ form: _form, t }) {
   // EFFECTS ·······························································································|
   useEffect(() => {
     setAltChoices(() => {
-      const choicesValue = form.getValues('choices') ?? [];
+      const choicesValue = form.getValues("choices") ?? [];
       return choicesValue.filter((item) => !item?.isMainChoice);
     });
   }, []);
@@ -39,7 +43,7 @@ export default function ShortResponse({ form: _form, t }) {
 
   return (
     <ContextContainer>
-      <ContextContainer title={`${capitalize(t('explanationLabel'))}`}>
+      <ContextContainer title={`${capitalize(t("explanationLabel"))}`}>
         <Controller
           control={form.control}
           name="globalFeedback"
@@ -48,41 +52,45 @@ export default function ShortResponse({ form: _form, t }) {
               {...field}
               toolbars={TEXT_EDITOR_TEXTAREA_TOOLBARS}
               value={field.value?.text}
-              editorStyles={{ minHeight: '96px' }}
-              placeholder={t('explanationPlaceHolder')}
+              editorStyles={{ minHeight: "96px" }}
+              placeholder={t("explanationPlaceHolder")}
               error={form.formState.errors.globalFeedback?.message}
               onChange={(value) => {
-                field.onChange({ format: 'html', text: value });
+                field.onChange({ format: "html", text: value });
               }}
             />
           )}
         />
       </ContextContainer>
-      <ContextContainer title={`${t('responsesLabel')} *`} spacing={0}>
+      <ContextContainer title={`${t("responsesLabel")} *`} spacing={0}>
         <Stack spacing={4}>
           <Controller
             control={form.control}
             name="choices"
             rules={{
-              required: t('typeRequired'),
+              required: t("typeRequired"),
               validate: (choicesValue) => validateChoices(choicesValue),
             }}
             render={({ field }) => {
-              const currentMainChoice = (field.value || []).find((item) => item?.isMainChoice);
-              const currentAltChoices = (field.value || []).filter((item) => !item?.isMainChoice);
+              const currentMainChoice = (field.value || []).find(
+                (item) => item?.isMainChoice
+              );
+              const currentAltChoices = (field.value || []).filter(
+                (item) => !item?.isMainChoice
+              );
 
               return (
                 <TextInput
-                  label={t('responseLabel')}
-                  sx={{ width: '100%' }}
-                  placeholder={t('responsePlaceholder')}
+                  label={t("responseLabel")}
+                  sx={{ width: "100%" }}
+                  placeholder={t("responsePlaceholder")}
                   required
-                  value={currentMainChoice?.text?.text ?? ''}
+                  value={currentMainChoice?.text?.text ?? ""}
                   error={form.formState.errors.choices?.message}
                   onChange={(mainChoiceTextValue) => {
                     field.onChange([
                       {
-                        text: { text: mainChoiceTextValue, format: 'plain' },
+                        text: { text: mainChoiceTextValue, format: "plain" },
                         isCorrect: true,
                         isMainChoice: true,
                       },
@@ -94,7 +102,7 @@ export default function ShortResponse({ form: _form, t }) {
             }}
           />
 
-          <Box sx={{ width: '100%' }}>
+          <Box sx={{ width: "100%" }}>
             <TagsInput
               label={
                 <Tooltip
@@ -102,32 +110,35 @@ export default function ShortResponse({ form: _form, t }) {
                   size="md"
                   multiline
                   position="right-start"
-                  label={'Equaly valid alternative answers'}
+                  label={"Equaly valid alternative answers"}
                 >
                   <Stack spacing={1}>
-                    <Text>{t('alternativeResponseLabel')}</Text>
+                    <Text>{t("alternativeResponseLabel")}</Text>
                     <InfoIcon width={15} height={15} />
                   </Stack>
                 </Tooltip>
               }
-              styles={{ width: '100%' }}
+              styles={{ width: "100%" }}
               value={altChoices.map((item) => item?.text?.text)}
-              placeholder={t('tagsInputPlaceholder')}
+              placeholder={t("tagsInputPlaceholder")}
               onChange={(values) => {
                 const finalAltChoices = [
                   ...values.map((item) => ({
-                    text: { text: item, format: 'plain' },
+                    text: { text: item, format: "plain" },
                     isCorrect: true,
                   })),
                 ];
                 setAltChoices(finalAltChoices);
                 const currentMainChoice = form
-                  .getValues('choices')
+                  .getValues("choices")
                   ?.find((item) => item?.isMainChoice);
                 if (currentMainChoice) {
-                  form.setValue('choices', [currentMainChoice, ...finalAltChoices]);
+                  form.setValue("choices", [
+                    currentMainChoice,
+                    ...finalAltChoices,
+                  ]);
                 } else {
-                  form.setValue('choices', finalAltChoices);
+                  form.setValue("choices", finalAltChoices);
                 }
               }}
             />
@@ -142,8 +153,8 @@ export default function ShortResponse({ form: _form, t }) {
             <Switch
               {...field}
               checked={field.value}
-              label={t('hasCluesLabel')}
-              description={t('cluesSwitchDescription')}
+              label={t("hasCluesLabel")}
+              description={t("cluesSwitchDescription")}
             />
           )}
         />

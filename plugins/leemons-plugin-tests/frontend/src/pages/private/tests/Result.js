@@ -1,14 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useHistory, useParams } from 'react-router-dom';
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Link, useHistory, useParams } from "react-router-dom";
 
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import { getProgramEvaluationSystemRequest } from '@academic-portfolio/request';
-import ActivityHeader from '@assignables/components/ActivityHeader';
-import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
-import TimeoutAlert from '@assignables/components/EvaluationFeedback/Alerts/TimeoutAlert';
-import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
-import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
-import getAssignation from '@assignables/requests/assignations/getAssignation';
+import { useIsTeacher } from "@academic-portfolio/hooks";
+import { getProgramEvaluationSystemRequest } from "@academic-portfolio/request";
+import ActivityHeader from "@assignables/components/ActivityHeader";
+import AssignableUserNavigator from "@assignables/components/AssignableUserNavigator";
+import TimeoutAlert from "@assignables/components/EvaluationFeedback/Alerts/TimeoutAlert";
+import useNextActivityUrl from "@assignables/hooks/useNextActivityUrl";
+import getAssignableInstance from "@assignables/requests/assignableInstances/getAssignableInstance";
+import getAssignation from "@assignables/requests/assignations/getAssignation";
 import {
   ActivityAccordion,
   ActivityAccordionPanel,
@@ -20,35 +20,35 @@ import {
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
   VerticalContainer,
-} from '@bubbles-ui/components';
-import { ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { useSearchParams, useStore } from '@common';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
-import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
-import updateStudentRequest from '@tasks/request/instance/updateStudent';
-import { forEach, orderBy } from 'lodash';
+} from "@bubbles-ui/components";
+import { ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { useSearchParams, useStore } from "@common";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useUpdateTimestamps } from "@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps";
+import useStudentAssignationMutation from "@tasks/hooks/student/useStudentAssignationMutation";
+import updateStudentRequest from "@tasks/request/instance/updateStudent";
+import { forEach, orderBy } from "lodash";
 
 import {
   getQuestionByIdsRequest,
   getUserQuestionResponsesRequest,
   setInstanceTimestampRequest,
-} from '../../../request';
+} from "../../../request";
 
-import { ResultStyles } from './Result.style';
-import { calculeInfoValues } from './StudentInstance/helpers/calculeInfoValues';
-import { getConfigByInstance } from './StudentInstance/helpers/getConfigByInstance';
-import { htmlToText } from './StudentInstance/helpers/htmlToText';
-import EvaluationAndFeedback from './components/EvaluationAndFeedback';
-import StudentResultsTable from './components/StudentResultsTable';
+import { ResultStyles } from "./Result.style";
+import { calculeInfoValues } from "./StudentInstance/helpers/calculeInfoValues";
+import { getConfigByInstance } from "./StudentInstance/helpers/getConfigByInstance";
+import { htmlToText } from "./StudentInstance/helpers/htmlToText";
+import EvaluationAndFeedback from "./components/EvaluationAndFeedback";
+import StudentResultsTable from "./components/StudentResultsTable";
 
-import prefixPN from '@tests/helpers/prefixPN';
+import prefixPN from "@tests/helpers/prefixPN";
 
 export default function Result() {
-  const [t] = useTranslateLoader(prefixPN('testResult'));
-  const [accordionState, setAccordionState] = useState('evaluationAndFeedback');
-  const { classes: styles, cx } = ResultStyles({}, { name: 'Result' });
+  const [t] = useTranslateLoader(prefixPN("testResult"));
+  const [accordionState, setAccordionState] = useState("evaluationAndFeedback");
+  const { classes: styles, cx } = ResultStyles({}, { name: "Result" });
   const scrollRef = useRef();
 
   const [store, render] = useStore({
@@ -64,15 +64,15 @@ export default function Result() {
   const { mutateAsync } = useStudentAssignationMutation();
   const updateTimestamps = useUpdateTimestamps(mutateAsync, store.assignation);
 
-  const fromTest = useMemo(() => searchParams.has('fromTest'), []);
-  const fromTimeout = searchParams.has('fromTimeout');
+  const fromTest = useMemo(() => searchParams.has("fromTest"), []);
+  const fromTimeout = searchParams.has("fromTimeout");
 
   const isTeacher = useIsTeacher();
   const isModuleActivity = !!store.assignation?.instance?.metadata?.module;
 
   useEffect(() => {
     if (!isTeacher && !isModuleActivity) {
-      updateTimestamps('gradesViewed');
+      updateTimestamps("gradesViewed");
     }
   }, [isTeacher, updateTimestamps, isModuleActivity]);
 
@@ -96,13 +96,19 @@ export default function Result() {
         getAssignation({ id: params.id, user: getUserId() }),
       ]);
 
-      const [{ evaluationSystem }, { questions }, { responses }, { timestamps }] =
-        await Promise.all([
-          getProgramEvaluationSystemRequest(store.instance.subjects[0].program),
-          getQuestionByIdsRequest(store.instance.metadata.questions, { categories: true }),
-          getUserQuestionResponsesRequest(params.id, getUserId()),
-          setInstanceTimestampRequest(params.id, 'open', getUserId()),
-        ]);
+      const [
+        { evaluationSystem },
+        { questions },
+        { responses },
+        { timestamps },
+      ] = await Promise.all([
+        getProgramEvaluationSystemRequest(store.instance.subjects[0].program),
+        getQuestionByIdsRequest(store.instance.metadata.questions, {
+          categories: true,
+        }),
+        getUserQuestionResponsesRequest(params.id, getUserId()),
+        setInstanceTimestampRequest(params.id, "open", getUserId()),
+      ]);
 
       if (store.assignation.finished) store.viewMode = true;
       store.questionResponses = responses;
@@ -153,7 +159,7 @@ export default function Result() {
     const originalGrade = store.assignation.grades[0];
     const currentGrade = originalGrade ?? {
       subject: store.instance.subjects[0].subject,
-      type: 'main',
+      type: "main",
       grade: store.evaluationSystem?.minScale.number,
       feedback: null,
       visibleToStudent: true,
@@ -174,7 +180,7 @@ export default function Result() {
       store.assignation.grades = [currentGrade];
 
       if (!hideSuccessAlert) {
-        addSuccessAlert(t('feedbackDone'));
+        addSuccessAlert(t("feedbackDone"));
       }
     } catch (e) {
       addErrorAlert(e);
@@ -183,11 +189,12 @@ export default function Result() {
   }
 
   const userNote = parseFloat(
-    store.assignation?.grades[0]?.grade || store.evaluationSystem?.minScale.number
+    store.assignation?.grades[0]?.grade ||
+      store.evaluationSystem?.minScale.number
   );
 
   let scale = null;
-  forEach(orderBy(store.evaluationSystem?.scales, ['number'], ['asc']), (s) => {
+  forEach(orderBy(store.evaluationSystem?.scales, ["number"], ["asc"]), (s) => {
     if (userNote >= s.number) {
       scale = s;
     } else if (scale) {
@@ -226,7 +233,7 @@ export default function Result() {
             {isTeacher ? (
               <>
                 <Box sx={(theme) => ({ marginBottom: theme.spacing[1] })}>
-                  <Text>{t('student')}</Text>
+                  <Text>{t("student")}</Text>
                 </Box>
                 <AssignableUserNavigator
                   onlySelect
@@ -254,7 +261,7 @@ export default function Result() {
                     }
                   >
                     <Button rightIcon={!!nextActivityUrl && <ChevRightIcon />}>
-                      {nextActivityUrl ? t('nextActivity') : t('goToModule')}
+                      {nextActivityUrl ? t("nextActivity") : t("goToModule")}
                     </Button>
                   </Link>
                 }
@@ -268,7 +275,7 @@ export default function Result() {
                 {fromTimeout && (
                   <TimeoutAlert
                     onClose={() => {
-                      searchParams.delete('fromTimeout');
+                      searchParams.delete("fromTimeout");
                       history.replace({ search: searchParams.toString() });
                     }}
                   />
@@ -280,9 +287,11 @@ export default function Result() {
                 >
                   <ActivityAccordionPanel
                     key={1}
-                    itemValue={'evaluationAndFeedback'}
+                    itemValue={"evaluationAndFeedback"}
                     hideIcon={true}
-                    title={<Title order={3}>{t('evaluationAndFeedback')}</Title>}
+                    title={
+                      <Title order={3}>{t("evaluationAndFeedback")}</Title>
+                    }
                   >
                     <EvaluationAndFeedback
                       t={t}
@@ -298,10 +307,12 @@ export default function Result() {
                   {(store.instance?.showCorrectAnswers || isTeacher) && (
                     <ActivityAccordionPanel
                       key={2}
-                      itemValue={'responsesDetailTable'}
+                      itemValue={"responsesDetailTable"}
                       hideIcon={true}
                       title={
-                        <Title order={3}>{`${t('questions')} (${store.questions?.length})`}</Title>
+                        <Title
+                          order={3}
+                        >{`${t("questions")} (${store.questions?.length})`}</Title>
                       }
                       compact
                     >

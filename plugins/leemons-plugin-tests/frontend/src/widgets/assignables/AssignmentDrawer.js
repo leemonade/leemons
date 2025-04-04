@@ -1,11 +1,11 @@
-import { useEffect, useCallback } from 'react';
-import { useForm, FormProvider, Controller } from 'react-hook-form';
+import { useEffect, useCallback } from "react";
+import { useForm, FormProvider, Controller } from "react-hook-form";
 
-import { useFormLocalizations } from '@assignables/components/Assignment/Form';
+import { useFormLocalizations } from "@assignables/components/Assignment/Form";
 import {
   EvaluationType,
   evaluationTypes,
-} from '@assignables/components/Assignment/components/EvaluationType';
+} from "@assignables/components/Assignment/components/EvaluationType";
 import {
   Box,
   ContextContainer,
@@ -13,29 +13,29 @@ import {
   TotalLayoutFooterContainer,
   createStyles,
   LoadingOverlay,
-} from '@bubbles-ui/components';
-import { useStore } from '@common';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { map } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { useStore } from "@common";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { map } from "lodash";
+import PropTypes from "prop-types";
 
-import AssignConfig from '@tests/components/AssignConfig';
-import { RulesConfig } from '@tests/components/RulesConfig';
-import prefixPN from '@tests/helpers/prefixPN';
+import AssignConfig from "@tests/components/AssignConfig";
+import { RulesConfig } from "@tests/components/RulesConfig";
+import prefixPN from "@tests/helpers/prefixPN";
 import {
   createAssignedConfigRequest,
   deleteAssignedConfigRequest,
   getAssignConfigsRequest,
   getTestRequest,
   updateAssignedConfigRequest,
-} from '@tests/request';
+} from "@tests/request";
 
 export const useAssignmentDrawerStyles = createStyles(() => ({
   buttons: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'end',
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "end",
   },
 }));
 
@@ -62,11 +62,17 @@ async function init({ assignable, store, render }) {
   }
 }
 
-export default function AssignmentDrawer({ assignable, value, onSave, onClose, scrollRef }) {
+export default function AssignmentDrawer({
+  assignable,
+  value,
+  onSave,
+  onClose,
+  scrollRef,
+}) {
   const form = useForm({ defaultValues: value });
   const localizations = useFormLocalizations();
   const [store, render] = useStore();
-  const [t] = useTranslateLoader(prefixPN('testAssign'));
+  const [t] = useTranslateLoader(prefixPN("testAssign"));
 
   useEffect(() => {
     if (store.test?.id !== assignable.id) {
@@ -78,7 +84,7 @@ export default function AssignmentDrawer({ assignable, value, onSave, onClose, s
     try {
       const id = await createAssignedConfigRequest(values.presetName, values);
 
-      addSuccessAlert(t('createdConfigSuccess'));
+      addSuccessAlert(t("createdConfigSuccess"));
       return id;
     } catch (e) {
       addErrorAlert(e.message);
@@ -88,7 +94,7 @@ export default function AssignmentDrawer({ assignable, value, onSave, onClose, s
   async function handleDeleteAssignmentConfig(id) {
     try {
       await deleteAssignedConfigRequest(id);
-      addSuccessAlert(t('deletedConfig'));
+      addSuccessAlert(t("deletedConfig"));
     } catch (e) {
       addErrorAlert(e.message);
     }
@@ -103,7 +109,7 @@ export default function AssignmentDrawer({ assignable, value, onSave, onClose, s
   async function handleUpdateAssignmentConfig(id, name, config) {
     try {
       await updateAssignedConfigRequest(id, name, config);
-      addSuccessAlert(t('updatedConfig'));
+      addSuccessAlert(t("updatedConfig"));
     } catch (e) {
       addErrorAlert(e.message);
     }
@@ -114,20 +120,30 @@ export default function AssignmentDrawer({ assignable, value, onSave, onClose, s
 
   const onSubmit = useCallback(
     form.handleSubmit(async (values) => {
-      if (values.rules?.filters?.settings === 'new' && values.rules?.filters?.presetName) {
+      if (
+        values.rules?.filters?.settings === "new" &&
+        values.rules?.filters?.presetName
+      ) {
         const id = await handleCreateAssignmentConfig(values.rules.filters);
         values.rules.filters.configSelected = id;
-        values.rules.filters.settings = 'existing';
+        values.rules.filters.settings = "existing";
       }
 
       onSave({
         config: {
           ...values?.evaluation?.evaluation,
           curriculum: Object.fromEntries(
-            (values.evaluation.curriculum || []).map((category) => [category, true])
+            (values.evaluation.curriculum || []).map((category) => [
+              category,
+              true,
+            ])
           ),
           showCorrectAnswers: !values.others?.hideResponses,
-          metadata: { ...values?.assignConfig, ...values?.rules, evaluationType: 'auto' },
+          metadata: {
+            ...values?.assignConfig,
+            ...values?.rules,
+            evaluationType: "auto",
+          },
         },
         raw: values,
       });
@@ -149,7 +165,7 @@ export default function AssignmentDrawer({ assignable, value, onSave, onClose, s
                 <EvaluationType
                   {...field}
                   assignable={assignable}
-                  evaluationTypes={['calificable', 'punctuable']}
+                  evaluationTypes={["calificable", "punctuable"]}
                   localizations={localizations?.evaluation}
                   onDrawer
                 />
@@ -178,7 +194,7 @@ export default function AssignmentDrawer({ assignable, value, onSave, onClose, s
                   {...field}
                   isDrawer
                   hideButtons
-                  stepName={t('rules')}
+                  stepName={t("rules")}
                   defaultValues={field.value?.filters}
                   onDeleteConfig={handleDeleteAssignmentConfig}
                   onUpdateConfig={handleUpdateAssignmentConfig}
@@ -199,7 +215,9 @@ export default function AssignmentDrawer({ assignable, value, onSave, onClose, s
           style={{ right: 0 }}
           scrollRef={scrollRef}
           width={728}
-          rightZone={<Button onClick={onSubmit}>{localizations?.buttons?.save}</Button>}
+          rightZone={
+            <Button onClick={onSubmit}>{localizations?.buttons?.save}</Button>
+          }
           leftZone={
             <Button variant="link" onClick={onClose}>
               {localizations?.buttons?.cancel}
@@ -217,11 +235,11 @@ AssignmentDrawer.defaultValues = async (activity) => {
   return {
     showCorrectAnswers: true,
     metadata: {
-      evaluationType: 'auto',
+      evaluationType: "auto",
       filters: {
         useAllQuestions: true,
       },
-      questions: map(test.questions, 'id'),
+      questions: map(test.questions, "id"),
     },
     ...evaluationTypes.calificable,
   };

@@ -1,5 +1,5 @@
-const { QUESTION_RESPONSE_STATUS } = require('../../../../config/constants');
-const { getQuestionTotalPoints } = require('../getQuestionTotalPoints');
+const { QUESTION_RESPONSE_STATUS } = require("../../../../config/constants");
+const { getQuestionTotalPoints } = require("../getQuestionTotalPoints");
 
 function gradeTrueFalseQuestion({
   responseData,
@@ -12,7 +12,7 @@ function gradeTrueFalseQuestion({
   const questionIsTrue = question.trueFalseProperties.isTrue;
 
   let status;
-  if (typeof response !== 'boolean') {
+  if (typeof response !== "boolean") {
     status = QUESTION_RESPONSE_STATUS.OMITTED;
   } else if (response === questionIsTrue) {
     status = QUESTION_RESPONSE_STATUS.OK;

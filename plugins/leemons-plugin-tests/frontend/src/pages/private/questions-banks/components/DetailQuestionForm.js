@@ -1,7 +1,7 @@
-import { cloneElement, useEffect, useMemo, useState } from 'react';
-import { Controller, FormProvider, useForm } from 'react-hook-form';
+import { cloneElement, useEffect, useMemo, useState } from "react";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 
-import SelectLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/SelectLevelsOfDifficulty';
+import SelectLevelsOfDifficulty from "@assignables/components/LevelsOfDifficulty/SelectLevelsOfDifficulty";
 import {
   Box,
   Button,
@@ -13,31 +13,34 @@ import {
   Textarea,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
-} from '@bubbles-ui/components';
-import { TextEditorInput, TEXT_EDITOR_TEXTAREA_TOOLBARS } from '@bubbles-ui/editors';
-import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import { ViewOffIcon } from '@bubbles-ui/icons/solid';
-import { isEmpty, map } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import {
+  TextEditorInput,
+  TEXT_EDITOR_TEXTAREA_TOOLBARS,
+} from "@bubbles-ui/editors";
+import { ChevLeftIcon } from "@bubbles-ui/icons/outline";
+import { ViewOffIcon } from "@bubbles-ui/icons/solid";
+import { isEmpty, map } from "lodash";
+import PropTypes from "prop-types";
 
 import {
   QUESTION_TYPES,
   SOLUTION_KEY_BY_TYPE,
   QUESTION_TYPES_WITH_HIDDEN_ANSWERS,
   QUESTION_TYPES_WITH_MIN_RESPONSES_TO_ADD_CLUES,
-} from '../questionConstants';
+} from "../questionConstants";
 
-import CategoryPicker from './CategoryPicker';
-import { MapQuestion } from './question-types/Map';
-import { MonoResponse } from './question-types/MonoResponse';
-import { OpenResponse } from './question-types/OpenResponse';
-import { ShortResponse } from './question-types/ShortResponse';
-import { TrueFalse } from './question-types/TrueFalse';
+import CategoryPicker from "./CategoryPicker";
+import { MapQuestion } from "./question-types/Map";
+import { MonoResponse } from "./question-types/MonoResponse";
+import { OpenResponse } from "./question-types/OpenResponse";
+import { ShortResponse } from "./question-types/ShortResponse";
+import { TrueFalse } from "./question-types/TrueFalse";
 
-import { QuestionTypeSelect } from '@tests/components/QuestionTypeSelect';
-import ResourcePicker from '@tests/components/ResourcePicker';
+import { QuestionTypeSelect } from "@tests/components/QuestionTypeSelect";
+import ResourcePicker from "@tests/components/ResourcePicker";
 
-const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const questionComponents = {
   [QUESTION_TYPES.MONO_RESPONSE]: <MonoResponse />,
   [QUESTION_TYPES.MAP]: <MapQuestion />,
@@ -59,17 +62,19 @@ export default function DetailQuestionForm({
   onCategoriesChange,
   onCancel,
 }) {
-  const [withStemResource, setWithStemResource] = useState(!!defaultValues?.stemResource);
+  const [withStemResource, setWithStemResource] = useState(
+    !!defaultValues?.stemResource
+  );
 
   const form = useForm({
     defaultValues: { ...defaultValues, clues: defaultValues?.clues || [] },
     shouldUnregister: true,
   });
-  const choices = form.watch('choices');
-  const mapProperties = form.watch('mapProperties');
-  const trueFalseProperties = form.watch('trueFalseProperties');
-  const type = form.watch('type');
-  const hasHelp = form.watch('hasHelp');
+  const choices = form.watch("choices");
+  const mapProperties = form.watch("mapProperties");
+  const trueFalseProperties = form.watch("trueFalseProperties");
+  const type = form.watch("type");
+  const hasHelp = form.watch("hasHelp");
 
   const rightAnswerSelected = useMemo(() => {
     if (type === QUESTION_TYPES.MAP) return true;
@@ -77,15 +82,22 @@ export default function DetailQuestionForm({
       return choices?.some((item) => item?.isCorrect);
     }
     if (type === QUESTION_TYPES.TRUE_FALSE) {
-      return typeof trueFalseProperties?.isTrue === 'boolean';
+      return typeof trueFalseProperties?.isTrue === "boolean";
     }
 
-    return type === QUESTION_TYPES.SHORT_RESPONSE || type === QUESTION_TYPES.OPEN_RESPONSE;
+    return (
+      type === QUESTION_TYPES.SHORT_RESPONSE ||
+      type === QUESTION_TYPES.OPEN_RESPONSE
+    );
   }, [type, choices, trueFalseProperties?.isTrue]);
 
   const solutionValues = form.watch(SOLUTION_KEY_BY_TYPE[type]);
   const answersArray = useMemo(() => {
-    if (!type || type === QUESTION_TYPES.TRUE_FALSE || type === QUESTION_TYPES.OPEN_RESPONSE)
+    if (
+      !type ||
+      type === QUESTION_TYPES.TRUE_FALSE ||
+      type === QUESTION_TYPES.OPEN_RESPONSE
+    )
       return [];
     return solutionValues ?? [];
   }, [type, solutionValues]);
@@ -135,14 +147,18 @@ export default function DetailQuestionForm({
     if (isEmpty(answersArray)) return [];
 
     let useLetters = true;
-    if (type === QUESTION_TYPES.MAP && mapProperties?.markers.type === 'numbering') {
+    if (
+      type === QUESTION_TYPES.MAP &&
+      mapProperties?.markers.type === "numbering"
+    ) {
       useLetters = false;
     }
 
     return map(answersArray, (item, index) => ({
       value: index,
       label: useLetters ? LETTERS[index] : `${index + 1}`,
-      disabled: type === QUESTION_TYPES.MAP ? item?.hideOnHelp : item?.isCorrect,
+      disabled:
+        type === QUESTION_TYPES.MAP ? item?.hideOnHelp : item?.isCorrect,
     }));
   }, [
     JSON.stringify(choices),
@@ -160,17 +176,17 @@ export default function DetailQuestionForm({
   }, [type, answersArray]);
 
   const hideOptionsHelp = useMemo(() => {
-    if (!rightAnswerSelected) return t('hideOptionNoRightAnswer');
+    if (!rightAnswerSelected) return t("hideOptionNoRightAnswer");
 
-    const parts = t('hideOptionsHelp').split('{{icon}}');
+    const parts = t("hideOptionsHelp").split("{{icon}}");
     return [
       parts[0],
       <Box
         key={2}
         sx={(theme) => ({
-          display: 'inline',
+          display: "inline",
           fontSize: theme.fontSizes[3],
-          verticalAlign: 'middle',
+          verticalAlign: "middle",
         })}
       >
         <ViewOffIcon />
@@ -191,7 +207,7 @@ export default function DetailQuestionForm({
   useEffect(() => {
     // Reset rules when type changes
     return () => {
-      form.unregister(['globalFeedback']);
+      form.unregister(["globalFeedback"]);
     };
   }, [type]);
 
@@ -209,7 +225,7 @@ export default function DetailQuestionForm({
                 leftIcon={<ChevLeftIcon height={20} width={20} />}
                 onClick={onCancel}
               >
-                {t('returnToList')}
+                {t("returnToList")}
               </Button>
             }
             rightZone={
@@ -219,13 +235,13 @@ export default function DetailQuestionForm({
                     variant="link"
                     onClick={handleOnSave}
                     disabled={savingAs || !type}
-                    loading={savingAs === 'draft'}
+                    loading={savingAs === "draft"}
                   >
-                    {t('saveDraft')}
+                    {t("saveDraft")}
                   </Button>
                 ) : null}
                 <Button disabled={!type} onClick={handleOnSaveQuestion}>
-                  {t('saveQuestion')}
+                  {t("saveQuestion")}
                 </Button>
               </>
             }
@@ -233,15 +249,19 @@ export default function DetailQuestionForm({
         }
       >
         <Box style={{ marginBottom: 42 }}>
-          <ContextContainer title={t('questionDetail')} spacing={4}>
+          <ContextContainer title={t("questionDetail")} spacing={4}>
             <Box>
               <ContextContainer fullWidth direction="row">
                 <Controller
                   control={form.control}
                   name="type"
-                  rules={{ required: t('typeRequired') }}
+                  rules={{ required: t("typeRequired") }}
                   render={({ field }) => (
-                    <QuestionTypeSelect required error={form.formState.errors.type} {...field} />
+                    <QuestionTypeSelect
+                      required
+                      error={form.formState.errors.type}
+                      {...field}
+                    />
                   )}
                 />
                 {type ? (
@@ -251,8 +271,8 @@ export default function DetailQuestionForm({
                     render={({ field }) => (
                       <SelectLevelsOfDifficulty
                         error={form.formState.errors.level}
-                        label={t('levelLabel')}
-                        placeholder={t('levelPlaceholder')}
+                        label={t("levelLabel")}
+                        placeholder={t("levelPlaceholder")}
                         {...field}
                       />
                     )}
@@ -290,20 +310,20 @@ export default function DetailQuestionForm({
                   control={form.control}
                   name="stem"
                   rules={{
-                    required: t('questionRequired'),
+                    required: t("questionRequired"),
                   }}
                   render={({ field }) => (
                     <TextEditorInput
                       required
                       toolbars={TEXT_EDITOR_TEXTAREA_TOOLBARS}
                       error={form.formState.errors.stem}
-                      label={t('questionLabel')}
-                      editorStyles={{ minHeight: '96px' }}
-                      placeholder={t('statementPlaceHolder')}
+                      label={t("questionLabel")}
+                      editorStyles={{ minHeight: "96px" }}
+                      placeholder={t("statementPlaceHolder")}
                       {...field}
                       value={field.value?.text}
                       onChange={(value) => {
-                        field.onChange({ text: value, format: 'html' });
+                        field.onChange({ text: value, format: "html" });
                       }}
                     />
                   )}
@@ -315,12 +335,12 @@ export default function DetailQuestionForm({
                       checked={withStemResource}
                       onChange={(value) => {
                         if (!value) {
-                          form.setValue('stemResource', null);
+                          form.setValue("stemResource", null);
                         }
                         setWithStemResource(value);
                       }}
-                      label={t('stemResourceLabel')}
-                      description={t('stemResourceDescription')}
+                      label={t("stemResourceLabel")}
+                      description={t("stemResourceDescription")}
                     />
                     {withStemResource && (
                       <Controller
@@ -337,11 +357,13 @@ export default function DetailQuestionForm({
                 {hasHelp ? (
                   <ContextContainer
                     title={
-                      QUESTION_TYPES_WITH_MIN_RESPONSES_TO_ADD_CLUES.includes(type)
-                        ? t('hasCluesLabelWithMinResponses')
-                        : t('hasCluesLabel')
+                      QUESTION_TYPES_WITH_MIN_RESPONSES_TO_ADD_CLUES.includes(
+                        type
+                      )
+                        ? t("hasCluesLabelWithMinResponses")
+                        : t("hasCluesLabel")
                     }
-                    description={t('cluesDescription')}
+                    description={t("cluesDescription")}
                   >
                     <Controller
                       control={form.control}
@@ -349,9 +371,11 @@ export default function DetailQuestionForm({
                       render={({ field }) => (
                         <Textarea
                           {...field}
-                          disabled={!rightAnswerSelected || !hasEnoughAnswersToAddClues}
+                          disabled={
+                            !rightAnswerSelected || !hasEnoughAnswersToAddClues
+                          }
                           minRows={3}
-                          placeholder={t('cluesPlaceholder')}
+                          placeholder={t("cluesPlaceholder")}
                         />
                       )}
                     />
@@ -359,12 +383,15 @@ export default function DetailQuestionForm({
                       <Stack direction="column" spacing={2}>
                         <Box style={{ width: 200 }}>
                           <Select
-                            label={t('hideOptionsLabel')}
+                            label={t("hideOptionsLabel")}
                             value={hiddenAnswer}
                             data={hideAnswersSelectData}
-                            disabled={!rightAnswerSelected || !hasEnoughAnswersToAddClues}
+                            disabled={
+                              !rightAnswerSelected ||
+                              !hasEnoughAnswersToAddClues
+                            }
                             onChange={handleHideOnHelp}
-                            placeholder={t('hideOptionsPlaceholder')}
+                            placeholder={t("hideOptionsPlaceholder")}
                           />
                         </Box>
                         <Text size="xs">{hideOptionsHelp}</Text>

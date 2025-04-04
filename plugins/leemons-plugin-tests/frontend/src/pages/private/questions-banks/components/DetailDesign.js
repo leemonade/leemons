@@ -1,15 +1,21 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Button, ContextContainer, InputWrapper, Stack } from '@bubbles-ui/components';
-import { Controller } from 'react-hook-form';
-import ImagePicker from '@leebrary/components/ImagePicker';
+import React from "react";
+import PropTypes from "prop-types";
+import {
+  Box,
+  Button,
+  ContextContainer,
+  InputWrapper,
+  Stack,
+} from "@bubbles-ui/components";
+import { Controller } from "react-hook-form";
+import ImagePicker from "@leebrary/components/ImagePicker";
 
 export default function DetailDesign({ form, t, onNext }) {
   const [isDirty, setIsDirty] = React.useState(false);
 
   async function next() {
     setIsDirty(true);
-    const formGood = await form.trigger(['cover']);
+    const formGood = await form.trigger(["cover"]);
     if (formGood) {
       onNext();
     }
@@ -20,7 +26,7 @@ export default function DetailDesign({ form, t, onNext }) {
       <Stack justifyContent="space-between">
         <Box sx={(theme) => ({ marginRight: theme.spacing[8] })}>
           <InputWrapper
-            label={t('coverImage')}
+            label={t("coverImage")}
             error={isDirty ? form.formState.errors.cover : null}
           >
             <Controller
@@ -30,7 +36,7 @@ export default function DetailDesign({ form, t, onNext }) {
             />
           </InputWrapper>
         </Box>
-        <Button onClick={next}>{t('continue')}</Button>
+        <Button onClick={next}>{t("continue")}</Button>
       </Stack>
     </ContextContainer>
   );

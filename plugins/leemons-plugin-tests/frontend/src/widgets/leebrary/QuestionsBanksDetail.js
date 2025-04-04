@@ -1,18 +1,18 @@
-import React from 'react';
-import { LibraryDetail } from '@leebrary/components';
+import React from "react";
+import { LibraryDetail } from "@leebrary/components";
 
-import { useHistory } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@tests/helpers/prefixPN';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { deleteQuestionBankRequest } from '@tests/request';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useLayout } from '@layout/context';
-import { AssetMetadataQuestionBank } from '@tests/components/AssetMetadataQuestionBank';
+import { useHistory } from "react-router-dom";
+import PropTypes from "prop-types";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@tests/helpers/prefixPN";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { deleteQuestionBankRequest } from "@tests/request";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { useLayout } from "@layout/context";
+import { AssetMetadataQuestionBank } from "@tests/components/AssetMetadataQuestionBank";
 
 const QuestionsBanksDetail = ({ asset, onRefresh, onShare, ...props }) => {
-  const [t] = useTranslateLoader(prefixPN('testsCard'));
+  const [t] = useTranslateLoader(prefixPN("testsCard"));
   const { openConfirmationModal, openDeleteConfirmationModal } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
@@ -21,19 +21,19 @@ const QuestionsBanksDetail = ({ asset, onRefresh, onShare, ...props }) => {
 
   if (asset?.id) {
     if (asset.editable) {
-      toolbarItems.edit = t('edit');
+      toolbarItems.edit = t("edit");
     }
     if (asset.deleteable) {
-      toolbarItems.delete = t('delete');
+      toolbarItems.delete = t("delete");
     }
     if (asset.pinned === false) {
-      toolbarItems.pin = t('pin');
+      toolbarItems.pin = t("pin");
     }
     if (asset.pinned === true) {
-      toolbarItems.unpin = t('unpin');
+      toolbarItems.unpin = t("unpin");
     }
     if (asset.shareable) {
-      toolbarItems.share = t('share');
+      toolbarItems.share = t("share");
     }
   }
 
@@ -49,7 +49,7 @@ const QuestionsBanksDetail = ({ asset, onRefresh, onShare, ...props }) => {
       onConfirm: async () => {
         try {
           await deleteQuestionBankRequest(asset.providerData.id);
-          addSuccessAlert(t('deleted'));
+          addSuccessAlert(t("deleted"));
           onRefresh();
         } catch (err) {
           addErrorAlert(getErrorMessage(err));
@@ -64,10 +64,16 @@ const QuestionsBanksDetail = ({ asset, onRefresh, onShare, ...props }) => {
   const metadata = [];
 
   if (asset?.providerData?.questions?.length) {
-    metadata.push({ label: t('questions'), value: asset.providerData.questions.length });
+    metadata.push({
+      label: t("questions"),
+      value: asset.providerData.questions.length,
+    });
   }
   if (asset?.providerData?.categories?.length) {
-    metadata.push({ label: t('categories'), value: asset.providerData.categories.length });
+    metadata.push({
+      label: t("categories"),
+      value: asset.providerData.categories.length,
+    });
   }
 
   return (
@@ -86,7 +92,7 @@ const QuestionsBanksDetail = ({ asset, onRefresh, onShare, ...props }) => {
         />
       }
       variant="questionBank"
-      variantTitle={t('questionBank')}
+      variantTitle={t("questionBank")}
       toolbarItems={toolbarItems}
       onEdit={handleEdit}
       onDelete={handleDelete}

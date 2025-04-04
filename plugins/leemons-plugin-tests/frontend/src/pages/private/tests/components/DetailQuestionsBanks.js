@@ -1,8 +1,8 @@
-import React from 'react';
-import { Controller } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Controller } from "react-hook-form";
+import { Link } from "react-router-dom";
 
-import { useDataForSubjectPicker } from '@academic-portfolio/components/SubjectPicker/hooks/useDataForSubjectPicker';
+import { useDataForSubjectPicker } from "@academic-portfolio/components/SubjectPicker/hooks/useDataForSubjectPicker";
 import {
   ActionButton,
   Alert,
@@ -19,18 +19,22 @@ import {
   Select,
   Modal,
   Text,
-} from '@bubbles-ui/components';
-import { ChevLeftIcon, ChevRightIcon, OpenIcon } from '@bubbles-ui/icons/outline';
-import { useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert } from '@layout/alert';
-import _, { find } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import {
+  ChevLeftIcon,
+  ChevRightIcon,
+  OpenIcon,
+} from "@bubbles-ui/icons/outline";
+import { useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert } from "@layout/alert";
+import _, { find } from "lodash";
+import PropTypes from "prop-types";
 
-import { listQuestionsBanksRequest } from '../../../../request';
+import { listQuestionsBanksRequest } from "../../../../request";
 
 function checkCanEditQB(qBank) {
-  return ['owner', 'admin', 'editor'].includes(qBank?.asset?.role);
+  return ["owner", "admin", "editor"].includes(qBank?.asset?.role);
 }
 
 export default function DetailQuestionsBanks({
@@ -56,12 +60,12 @@ export default function DetailQuestionsBanks({
 
   const formValues = form.watch();
 
-  const questionBank = form.watch('questionBank');
-  const subjects = form.watch('subjects');
-  const subjectsRaw = form.watch('subjectsRaw');
-  const courseIdRaw = subjectsRaw?.[0]?.courseId || '';
-  const programIdRaw = subjectsRaw?.[0]?.programId || '';
-  const idRaw = subjectsRaw?.[0]?.id || '';
+  const questionBank = form.watch("questionBank");
+  const subjects = form.watch("subjects");
+  const subjectsRaw = form.watch("subjectsRaw");
+  const courseIdRaw = subjectsRaw?.[0]?.courseId || "";
+  const programIdRaw = subjectsRaw?.[0]?.programId || "";
+  const idRaw = subjectsRaw?.[0]?.id || "";
   const {
     programs,
     courses,
@@ -70,7 +74,7 @@ export default function DetailQuestionsBanks({
     subjects: subjects || [],
     control: form.control,
   });
-  const validate = async () => form.trigger(['questionBank']);
+  const validate = async () => form.trigger(["questionBank"]);
 
   async function handleOnNext() {
     setIsDirty(true);
@@ -107,9 +111,9 @@ export default function DetailQuestionsBanks({
       if (questionBank) {
         const found = find(data.items, { id: questionBank });
         if (!found) {
-          form.setValue('questionBank', null);
-          form.setValue('filters', null);
-          form.setValue('questions', []);
+          form.setValue("questionBank", null);
+          form.setValue("filters", null);
+          form.setValue("questions", []);
         }
       }
       return data;
@@ -150,19 +154,19 @@ export default function DetailQuestionsBanks({
   const tableColumns = React.useMemo(
     () => [
       {
-        Header: ' ',
-        accessor: 'radio',
+        Header: " ",
+        accessor: "radio",
         style: { width: 32 },
       },
       {
-        Header: t('nameHeader'),
-        accessor: 'name',
-        style: { width: '350px' },
+        Header: t("nameHeader"),
+        accessor: "name",
+        style: { width: "350px" },
       },
       {
-        Header: t('nQuestionsHeader'),
-        accessor: 'nQuestions',
-        style: { textAlign: 'center' },
+        Header: t("nQuestionsHeader"),
+        accessor: "nQuestions",
+        style: { textAlign: "center" },
         // eslint-disable-next-line react/prop-types
         Cell: ({ value }) => (
           <Stack justifyContent="center" fullWidth>
@@ -183,9 +187,9 @@ export default function DetailQuestionsBanks({
       },
       */
       {
-        Header: t('actionsHeader'),
-        accessor: 'actions',
-        style: { textAlign: 'center' },
+        Header: t("actionsHeader"),
+        accessor: "actions",
+        style: { textAlign: "center" },
       },
     ],
     [t]
@@ -207,9 +211,9 @@ export default function DetailQuestionsBanks({
                 setIsNewQBankSelected(true);
                 setModalOpen(true);
               } else {
-                form.setValue('questionBank', item.id);
-                form.setValue('filters', null);
-                form.setValue('questions', []);
+                form.setValue("questionBank", item.id);
+                form.setValue("filters", null);
+                form.setValue("questions", []);
               }
             }
           }}
@@ -222,8 +226,8 @@ export default function DetailQuestionsBanks({
               as={Link}
               target="_blank"
               to={`/private/tests/questions-banks/${item.id}`}
-              tooltip={t('view')}
-              icon={<OpenIcon width={20} height={20} color={'#2F463F'} />}
+              tooltip={t("view")}
+              icon={<OpenIcon width={20} height={20} color={"#2F463F"} />}
             />
           )}
         </Stack>
@@ -233,9 +237,9 @@ export default function DetailQuestionsBanks({
 
   React.useEffect(() => {
     if (subjectsRaw?.length > 0 && formValues.subjects?.length > 0) {
-      form.setValue('program', programIdRaw);
-      form.setValue('course', courseIdRaw);
-      form.setValue('subject', idRaw);
+      form.setValue("program", programIdRaw);
+      form.setValue("course", courseIdRaw);
+      form.setValue("subject", idRaw);
     }
   }, [subjectsRaw, programs]);
 
@@ -253,7 +257,7 @@ export default function DetailQuestionsBanks({
                 leftIcon={<ChevLeftIcon height={20} width={20} />}
                 onClick={onPrev}
               >
-                {t('previous')}
+                {t("previous")}
               </Button>
             }
             rightZone={
@@ -263,9 +267,9 @@ export default function DetailQuestionsBanks({
                     variant="link"
                     onClick={handleOnSave}
                     disabled={store.saving}
-                    loading={store.saving === 'draft'}
+                    loading={store.saving === "draft"}
                   >
-                    {t('saveDraft')}
+                    {t("saveDraft")}
                   </Button>
                 ) : null}
 
@@ -273,9 +277,9 @@ export default function DetailQuestionsBanks({
                   rightIcon={<ChevRightIcon height={20} width={20} />}
                   onClick={handleOnNext}
                   disabled={store.saving}
-                  loading={store.saving === 'publish'}
+                  loading={store.saving === "publish"}
                 >
-                  {t('next')}
+                  {t("next")}
                 </Button>
               </>
             }
@@ -283,15 +287,17 @@ export default function DetailQuestionsBanks({
         }
       >
         <Box>
-          <ContextContainer title={t('questionsBanksDescription')}>
-            <InputWrapper error={isDirty ? form.formState.errors.questionBank : null} />
+          <ContextContainer title={t("questionsBanksDescription")}>
+            <InputWrapper
+              error={isDirty ? form.formState.errors.questionBank : null}
+            />
             <Stack
               fullWidth
               style={{
-                width: '100%',
-                display: 'flex',
+                width: "100%",
+                display: "flex",
                 gap: 16,
-                alignItems: 'end',
+                alignItems: "end",
               }}
             >
               <Box>
@@ -303,8 +309,8 @@ export default function DetailQuestionsBanks({
                       {...field}
                       cleanOnMissingValue
                       defaultValue={programIdRaw}
-                      label={t('programLabel')}
-                      placeholder={t('programPlaceholder')}
+                      label={t("programLabel")}
+                      placeholder={t("programPlaceholder")}
                       data={programs}
                       disabled={!programs?.length || !!subjects?.length}
                     />
@@ -322,8 +328,8 @@ export default function DetailQuestionsBanks({
                         {...field}
                         cleanOnMissingValue
                         defaultValue={courseIdRaw}
-                        label={t('courseLabel')}
-                        placeholder={t('programPlaceholder')}
+                        label={t("courseLabel")}
+                        placeholder={t("programPlaceholder")}
                         data={courses}
                         disabled={!!subjects?.length}
                       />
@@ -340,8 +346,8 @@ export default function DetailQuestionsBanks({
                       {...field}
                       cleanOnMissingValue
                       defaultValue={idRaw}
-                      label={t('subjectLabel')}
-                      placeholder={t('programPlaceholder')}
+                      label={t("subjectLabel")}
+                      placeholder={t("programPlaceholder")}
                       data={allSubjects}
                       disabled={!!subjects?.length}
                       onChange={(selected) => {
@@ -368,8 +374,8 @@ export default function DetailQuestionsBanks({
                       onChange={(val) => onPageChange(val - 1)}
                       onSizeChange={onPageSizeChange}
                       labels={{
-                        show: t('show'),
-                        goTo: t('goTo'),
+                        show: t("show"),
+                        goTo: t("goTo"),
                       }}
                     />
                   </Stack>
@@ -379,7 +385,7 @@ export default function DetailQuestionsBanks({
               <>
                 {!store.loading ? (
                   <Alert severity="error" closeable={false}>
-                    {t('noQuestionBanks')}
+                    {t("noQuestionBanks")}
                   </Alert>
                 ) : null}
               </>
@@ -391,27 +397,27 @@ export default function DetailQuestionsBanks({
         <Modal
           opened={modalOpen}
           onClose={() => setModalOpen(false)}
-          title={t('changeQBankTitle')}
-          size={'lg'}
+          title={t("changeQBankTitle")}
+          size={"lg"}
         >
           <ContextContainer>
             <Box>
-              <Text>{t('changeQBankDescription')}</Text>
+              <Text>{t("changeQBankDescription")}</Text>
             </Box>
             <Stack fullWidth justifyContent="end" spacing={5}>
               <Button variant="link" onClick={() => setModalOpen(false)}>
-                {t('changeQBankCancel')}
+                {t("changeQBankCancel")}
               </Button>
 
               <Button
                 onClick={() => {
-                  form.setValue('questionBank', newQuestionBankId);
-                  form.setValue('filters', null);
-                  form.setValue('questions', []);
+                  form.setValue("questionBank", newQuestionBankId);
+                  form.setValue("filters", null);
+                  form.setValue("questions", []);
                   setModalOpen(false);
                 }}
               >
-                {t('changeQBankConfirm')}
+                {t("changeQBankConfirm")}
               </Button>
             </Stack>
           </ContextContainer>

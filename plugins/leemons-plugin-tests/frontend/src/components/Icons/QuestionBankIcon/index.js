@@ -1,1 +1,1 @@
-export * from './QuestionBankIcon';
+export * from "./QuestionBankIcon";

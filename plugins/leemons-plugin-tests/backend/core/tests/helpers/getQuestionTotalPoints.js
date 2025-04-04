@@ -1,11 +1,11 @@
 /* eslint-disable no-param-reassign */
-const dayjs = require('dayjs');
-const duration = require('dayjs/plugin/duration');
-const { forEach } = require('lodash');
+const dayjs = require("dayjs");
+const duration = require("dayjs/plugin/duration");
+const { forEach } = require("lodash");
 
-const { QUESTION_RESPONSE_STATUS } = require('../../../config/constants');
+const { QUESTION_RESPONSE_STATUS } = require("../../../config/constants");
 
-const { getQuestionClues } = require('./getQuestionClues');
+const { getQuestionClues } = require("./getQuestionClues");
 
 dayjs.extend(duration);
 
@@ -21,7 +21,8 @@ function getCluePenaltyPoints({
   let cluesPenaltyPoints = 0;
   forEach(clues, (clue, index) => {
     if (index < usedClues) {
-      const lessPoints = pointsPerQuestion * (cluesConfigByType[clue.type].value / 100);
+      const lessPoints =
+        pointsPerQuestion * (cluesConfigByType[clue.type].value / 100);
       cluesPenaltyPoints += lessPoints;
     }
   });
@@ -73,4 +74,8 @@ function getQuestionTotalPoints({
   return points;
 }
 
-module.exports = { getQuestionTotalPoints, getPointsByStatus, getCluePenaltyPoints };
+module.exports = {
+  getQuestionTotalPoints,
+  getPointsByStatus,
+  getCluePenaltyPoints,
+};

@@ -7,9 +7,9 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { LeemonsValidator } = require('@leemons/validator');
-const _ = require('lodash');
+} = require("@leemons/middlewares");
+const { LeemonsValidator } = require("@leemons/validator");
+const _ = require("lodash");
 
 const {
   list,
@@ -28,41 +28,41 @@ const {
   getUserQuestionResponses,
   createAssignSavedConfig,
   setOpenQuestionGrade,
-} = require('../../core/tests');
+} = require("../../core/tests");
 
 /** @type {ServiceSchema} */
 module.exports = {
   listTestsRest: {
     rest: {
-      method: 'GET',
-      path: '/',
+      method: "GET",
+      path: "/",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'tests.tests': {
-            actions: ['admin', 'view'],
+          "tests.tests": {
+            actions: ["admin", "view"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-          published: { type: ['boolean', 'string'] },
+          page: { type: ["number", "string"] },
+          size: { type: ["number", "string"] },
+          published: { type: ["boolean", "string"] },
         },
-        required: ['page', 'size'],
+        required: ["page", "size"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
         const { page, size, ...options } = ctx.params;
-        if (options.published === 'true') {
+        if (options.published === "true") {
           options.published = true;
-        } else if (options.published === 'false') {
+        } else if (options.published === "false") {
           options.published = false;
         }
         const data = await list({
@@ -78,15 +78,15 @@ module.exports = {
   },
   getTestRest: {
     rest: {
-      method: 'GET',
-      path: '/:id',
+      method: "GET",
+      path: "/:id",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'tests.tests': {
-            actions: ['admin', 'view'],
+          "tests.tests": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -96,7 +96,7 @@ module.exports = {
         id: ctx.params.id,
         withQuestionBank: _.isBoolean(ctx.params.withQuestionBank)
           ? ctx.params.withQuestionBank
-          : ctx.params.withQuestionBank === 'true',
+          : ctx.params.withQuestionBank === "true",
         ctx,
       });
       return { status: 200, test };
@@ -104,15 +104,15 @@ module.exports = {
   },
   deleteTestRest: {
     rest: {
-      method: 'DELETE',
-      path: '/:id',
+      method: "DELETE",
+      path: "/:id",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'tests.tests': {
-            actions: ['admin', 'delete'],
+          "tests.tests": {
+            actions: ["admin", "delete"],
           },
         },
       }),
@@ -127,15 +127,15 @@ module.exports = {
   },
   saveTestRest: {
     rest: {
-      method: 'POST',
-      path: '/',
+      method: "POST",
+      path: "/",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'tests.tests': {
-            actions: ['admin', 'create', 'update'],
+          "tests.tests": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),
@@ -153,15 +153,15 @@ module.exports = {
   },
   getAssignConfigsRest: {
     rest: {
-      method: 'GET',
-      path: '/assign/configs',
+      method: "GET",
+      path: "/assign/configs",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'tests.tests': {
-            actions: ['admin', 'create', 'update'],
+          "tests.tests": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),
@@ -175,15 +175,15 @@ module.exports = {
   },
   createAssignConfigRest: {
     rest: {
-      method: 'POST',
-      path: '/assign/configs',
+      method: "POST",
+      path: "/assign/configs",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'tests.tests': {
-            actions: ['admin', 'create'],
+          "tests.tests": {
+            actions: ["admin", "create"],
           },
         },
       }),
@@ -202,15 +202,15 @@ module.exports = {
   },
   updateAssignConfigRest: {
     rest: {
-      method: 'PUT',
-      path: '/assign/configs/:id',
+      method: "PUT",
+      path: "/assign/configs/:id",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'tests.tests': {
-            actions: ['admin', 'create', 'update'],
+          "tests.tests": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),
@@ -230,15 +230,15 @@ module.exports = {
   },
   deleteAssignConfigRest: {
     rest: {
-      method: 'DELETE',
-      path: '/assign/configs/:id',
+      method: "DELETE",
+      path: "/assign/configs/:id",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'tests.tests': {
-            actions: ['admin', 'create', 'update'],
+          "tests.tests": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),
@@ -256,15 +256,15 @@ module.exports = {
   },
   assignTestRest: {
     rest: {
-      method: 'POST',
-      path: '/assign',
+      method: "POST",
+      path: "/assign",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'tests.tests': {
-            actions: ['admin', 'create', 'update'],
+          "tests.tests": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),
@@ -279,15 +279,15 @@ module.exports = {
   },
   duplicateRest: {
     rest: {
-      method: 'POST',
-      path: '/duplicate',
+      method: "POST",
+      path: "/duplicate",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'tests.tests': {
-            actions: ['admin', 'create', 'update'],
+          "tests.tests": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),
@@ -305,8 +305,8 @@ module.exports = {
   },
   getInstanceFeedbackRest: {
     rest: {
-      method: 'GET',
-      path: '/instance/:id/feedback/:user',
+      method: "GET",
+      path: "/instance/:id/feedback/:user",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -320,8 +320,8 @@ module.exports = {
   },
   setInstanceFeedbackRest: {
     rest: {
-      method: 'POST',
-      path: '/instance/feedback',
+      method: "POST",
+      path: "/instance/feedback",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -336,8 +336,8 @@ module.exports = {
   },
   setInstanceTimestampRest: {
     rest: {
-      method: 'POST',
-      path: '/instance/timestamp',
+      method: "POST",
+      path: "/instance/timestamp",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -352,8 +352,8 @@ module.exports = {
   },
   setQuestionResponseRest: {
     rest: {
-      method: 'POST',
-      path: '/instance/question/response',
+      method: "POST",
+      path: "/instance/question/response",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -366,8 +366,8 @@ module.exports = {
   },
   getUserQuestionResponsesRest: {
     rest: {
-      method: 'GET',
-      path: '/instance/:id/question/response',
+      method: "GET",
+      path: "/instance/:id/question/response",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -381,8 +381,8 @@ module.exports = {
   },
   gradeOpenQuestionRest: {
     rest: {
-      method: 'POST',
-      path: '/instance/question/grade',
+      method: "POST",
+      path: "/instance/question/grade",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

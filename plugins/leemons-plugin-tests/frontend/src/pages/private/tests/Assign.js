@@ -1,28 +1,28 @@
-import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import React from "react";
+import { useHistory, useParams } from "react-router-dom";
 
-import Form from '@assignables/components/Assignment/Form';
-import getAssignablesRequest from '@assignables/requests/assignables/getAssignables';
-import { useStore } from '@common';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { map } from 'lodash';
+import Form from "@assignables/components/Assignment/Form";
+import getAssignablesRequest from "@assignables/requests/assignables/getAssignables";
+import { useStore } from "@common";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { getFileUrl } from "@leebrary/helpers/prepareAsset";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { map } from "lodash";
 
-import AssignConfig from '../../../components/AssignConfig';
+import AssignConfig from "../../../components/AssignConfig";
 import {
   assignTestRequest,
   getAssignConfigsRequest,
   getTestRequest,
   deleteAssignedConfigRequest,
   updateAssignedConfigRequest,
-} from '../../../request';
+} from "../../../request";
 
-import { RulesConfig } from '@tests/components/RulesConfig';
-import prefixPN from '@tests/helpers/prefixPN';
+import { RulesConfig } from "@tests/components/RulesConfig";
+import prefixPN from "@tests/helpers/prefixPN";
 
 export default function Assign() {
-  const [t] = useTranslateLoader(prefixPN('testAssign'));
+  const [t] = useTranslateLoader(prefixPN("testAssign"));
 
   const [store, render] = useStore({
     loading: false,
@@ -42,8 +42,8 @@ export default function Assign() {
 
     try {
       await assignTestRequest(store.test.id, instanceData);
-      addSuccessAlert(t('assignDone'));
-      history.push('/private/assignables/ongoing');
+      addSuccessAlert(t("assignDone"));
+      history.push("/private/assignables/ongoing");
     } catch (e) {
       addErrorAlert(e.message);
     } finally {
@@ -98,7 +98,7 @@ export default function Assign() {
   async function handleDeleteAssignmentConfig(id) {
     try {
       await deleteAssignedConfigRequest(id);
-      addSuccessAlert(t('deletedConfig'));
+      addSuccessAlert(t("deletedConfig"));
     } catch (e) {
       addErrorAlert(e.message);
     }
@@ -113,7 +113,7 @@ export default function Assign() {
   async function handleUpdateAssignmentConfig(id, name, config) {
     try {
       await updateAssignedConfigRequest(id, name, config);
-      addSuccessAlert(t('updatedConfig'));
+      addSuccessAlert(t("updatedConfig"));
     } catch (e) {
       addErrorAlert(e.message);
     }
@@ -131,7 +131,7 @@ export default function Assign() {
       defaultValues={store.rawData}
       assignable={store.assignable}
       evaluationType="auto"
-      evaluationTypes={['calificable', 'punctuable']}
+      evaluationTypes={["calificable", "punctuable"]}
       showEvaluation
       showResponses
       showMessageForStudents
@@ -139,7 +139,7 @@ export default function Assign() {
       onSubmit={handleAssignment}
     >
       <AssignConfig
-        stepName={t('questions')}
+        stepName={t("questions")}
         defaultValues={store.data.metadata}
         data={store.rawData}
         test={store.test}
@@ -159,7 +159,7 @@ export default function Assign() {
         }}
       />
       <RulesConfig
-        stepName={t('rules')}
+        stepName={t("rules")}
         defaultValues={store.data?.metadata?.filters}
         onDeleteConfig={handleDeleteAssignmentConfig}
         onUpdateConfig={handleUpdateAssignmentConfig}
@@ -184,11 +184,11 @@ export default function Assign() {
             omit: 0,
             clues: [
               {
-                type: 'hide-response',
+                type: "hide-response",
                 value: 0,
                 canUse: true,
               },
-              { type: 'note', value: 0, canUse: true },
+              { type: "note", value: 0, canUse: true },
             ],
           };
           if (store.data.metadata.filters) {

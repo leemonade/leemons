@@ -1,8 +1,8 @@
-import { Box, Stack } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+import { Box, Stack } from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
-import QuestionNoteClues from '../QuestionNoteClues';
-import StemResource from '../StemResource';
+import QuestionNoteClues from "../QuestionNoteClues";
+import StemResource from "../StemResource";
 
 const AnswerModeResponsesLayout = ({
   ResponsesComponent,
@@ -29,7 +29,9 @@ const AnswerModeResponsesLayout = ({
         </Stack>
       ) : (
         <>
-          {question.stemResource && <StemResource {...props} asset={question.stemResource} />}
+          {question.stemResource && (
+            <StemResource {...props} asset={question.stemResource} />
+          )}
           <ResponsesComponent {...props} />
         </>
       )}

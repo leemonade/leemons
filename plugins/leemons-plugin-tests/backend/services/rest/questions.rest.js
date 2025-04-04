@@ -4,20 +4,20 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { getByIds } = require('../../core/questions');
+} = require("@leemons/middlewares");
+const { getByIds } = require("../../core/questions");
 
 /** @type {ServiceSchema} */
 module.exports = {
   getDetailsRest: {
     rest: {
-      method: 'POST',
-      path: '/details',
+      method: "POST",
+      path: "/details",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

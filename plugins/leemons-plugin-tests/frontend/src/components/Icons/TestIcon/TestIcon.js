@@ -1,5 +1,8 @@
-import React from 'react';
-import { TEST_ICON_PROP_TYPES, TEST_ICON_DEFAULT_PROPS } from './TestIcon.constants';
+import React from "react";
+import {
+  TEST_ICON_PROP_TYPES,
+  TEST_ICON_DEFAULT_PROPS,
+} from "./TestIcon.constants";
 
 const TestIcon = ({ width, height, color }) => (
   <svg
@@ -23,6 +26,6 @@ const TestIcon = ({ width, height, color }) => (
 TestIcon.defaultProps = TEST_ICON_DEFAULT_PROPS;
 TestIcon.propTypes = TEST_ICON_PROP_TYPES;
 
-TestIcon.displayName = 'TestIcon';
+TestIcon.displayName = "TestIcon";
 export default TestIcon;
 export { TestIcon };

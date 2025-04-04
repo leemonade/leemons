@@ -1,22 +1,28 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from "react";
 
-import { useLevelsOfDifficulty } from '@assignables/components/LevelsOfDifficulty';
-import { Box, Stack, Text, useDebouncedValue, Loader } from '@bubbles-ui/components';
-import { ResponsiveBar } from '@nivo/bar';
-import { toUpper, camelCase } from 'lodash';
-import PropTypes from 'prop-types';
+import { useLevelsOfDifficulty } from "@assignables/components/LevelsOfDifficulty";
+import {
+  Box,
+  Stack,
+  Text,
+  useDebouncedValue,
+  Loader,
+} from "@bubbles-ui/components";
+import { ResponsiveBar } from "@nivo/bar";
+import { toUpper, camelCase } from "lodash";
+import PropTypes from "prop-types";
 
-import { Bar } from './Bar';
-import useGraphConstants from './constants';
+import { Bar } from "./Bar";
+import useGraphConstants from "./constants";
 
-import { GRAPH_TYPES } from '.';
+import { GRAPH_TYPES } from ".";
 
 function GraphView({
   legendLeft,
   legendBottom,
   height,
   xAxisLabelsMaxChars = 30,
-  ariaLabel = 'Test Details',
+  ariaLabel = "Test Details",
   questions,
   questionResponses,
   graphType,
@@ -26,7 +32,8 @@ function GraphView({
   const [debouncedBarWidth] = useDebouncedValue(barWidth, 10);
   const levels = useLevelsOfDifficulty(true);
   const chartRef = useRef();
-  const { QUESTION_STATUS_COLORS, LEGEND_MARK_SIZE, THEME, LABEL_COLOR } = useGraphConstants();
+  const { QUESTION_STATUS_COLORS, LEGEND_MARK_SIZE, THEME, LABEL_COLOR } =
+    useGraphConstants();
 
   const getBarLabel = useCallback(
     (key) => {
@@ -53,7 +60,9 @@ function GraphView({
         const itemsWithoutLevel = [];
         const itemsWithLevel = [];
         data.forEach((item) => {
-          const order = levels?.findIndex((level) => level.label === item.label);
+          const order = levels?.findIndex(
+            (level) => level.label === item.label
+          );
 
           if (order === -1) {
             itemsWithoutLevel.push(item);
@@ -62,14 +71,17 @@ function GraphView({
           }
         });
 
-        return [...itemsWithLevel.sort((a, b) => a.order - b.order), ...itemsWithoutLevel];
+        return [
+          ...itemsWithLevel.sort((a, b) => a.order - b.order),
+          ...itemsWithoutLevel,
+        ];
       }
       if (graphType === GRAPH_TYPES.category) {
         return [
           ...data
-            .filter((item) => item.label !== t('undefined'))
+            .filter((item) => item.label !== t("undefined"))
             .sort((a, b) => a.label.localeCompare(b.label)),
-          ...data.filter((item) => item.label === t('undefined')),
+          ...data.filter((item) => item.label === t("undefined")),
         ];
       }
 
@@ -80,13 +92,13 @@ function GraphView({
 
   const data = useMemo(() => {
     const questionsByGraphType = questions.reduce((acc, question) => {
-      let groupKey = '';
+      let groupKey = "";
       if (graphType === GRAPH_TYPES.type) {
         groupKey = question.type;
       } else if (graphType === GRAPH_TYPES.level) {
-        groupKey = question.level || t('undefined');
+        groupKey = question.level || t("undefined");
       } else if (graphType === GRAPH_TYPES.category) {
-        groupKey = question.category?.category || t('undefined');
+        groupKey = question.category?.category || t("undefined");
       }
       if (!acc[groupKey]) {
         acc[groupKey] = { ok: 0, ko: 0, omitted: 0 };
@@ -95,7 +107,7 @@ function GraphView({
       const response = questionResponses[question.id];
       if (!response?.status) {
         acc[groupKey].omitted++;
-      } else if (response.status === 'ok') {
+      } else if (response.status === "ok") {
         acc[groupKey].ok++;
       } else {
         acc[groupKey].ko++;
@@ -104,12 +116,14 @@ function GraphView({
       return acc;
     }, {});
 
-    const processedData = Object.entries(questionsByGraphType).map(([key, stats]) => ({
-      label: getBarLabel(key),
-      ok: stats.ok,
-      ko: stats.ko,
-      omitted: stats.omitted,
-    }));
+    const processedData = Object.entries(questionsByGraphType).map(
+      ([key, stats]) => ({
+        label: getBarLabel(key),
+        ok: stats.ok,
+        ko: stats.ko,
+        omitted: stats.omitted,
+      })
+    );
 
     return orderData(processedData);
   }, [questions, questionResponses, graphType, t, getBarLabel, orderData]);
@@ -130,12 +144,12 @@ function GraphView({
     );
 
   return (
-    <Stack spacing={4} direction="column" sx={{ width: '100%' }}>
+    <Stack spacing={4} direction="column" sx={{ width: "100%" }}>
       <Box ref={chartRef} style={{ height }}>
         <ResponsiveBar
           key={`bar-${debouncedBarWidth}`} // needed for correct bar width recalcuation (known issue of nivo)
           data={data}
-          keys={['ok', 'ko', 'omitted']}
+          keys={["ok", "ko", "omitted"]}
           indexBy="label"
           margin={{
             top: 10,
@@ -144,10 +158,10 @@ function GraphView({
             left: legendLeft ? 60 : 30,
           }}
           padding={0.1}
-          layers={['grid', 'axes', 'bars']}
+          layers={["grid", "axes", "bars"]}
           maxValue={maxQuestions}
-          valueScale={{ type: 'linear', max: maxQuestions }}
-          indexScale={{ type: 'band', round: true }}
+          valueScale={{ type: "linear", max: maxQuestions }}
+          indexScale={{ type: "band", round: true }}
           colors={({ id }) => QUESTION_STATUS_COLORS[id]}
           theme={THEME}
           animate={false}
@@ -155,7 +169,7 @@ function GraphView({
           axisRight={null}
           axisBottom={{
             legend: toUpper(legendBottom),
-            legendPosition: 'middle',
+            legendPosition: "middle",
             legendOffset: 40,
             tickSize: 0,
             tickPadding: 10,
@@ -163,7 +177,7 @@ function GraphView({
           }}
           axisLeft={{
             legend: toUpper(legendLeft),
-            legendPosition: 'middle',
+            legendPosition: "middle",
             legendOffset: -50,
             tickSize: 5,
             tickPadding: 12,
@@ -184,21 +198,36 @@ function GraphView({
       </Box>
       <Stack spacing={6} alignItems="center" justifyContent="center">
         <Stack spacing={2} alignItems="center">
-          <Box sx={{ backgroundColor: QUESTION_STATUS_COLORS.ok, ...LEGEND_MARK_SIZE }} />
+          <Box
+            sx={{
+              backgroundColor: QUESTION_STATUS_COLORS.ok,
+              ...LEGEND_MARK_SIZE,
+            }}
+          />
           <Text size="xs" color="primary">
-            {t('questionStatus.ok')}
+            {t("questionStatus.ok")}
           </Text>
         </Stack>
         <Stack spacing={2} alignItems="center">
-          <Box sx={{ backgroundColor: QUESTION_STATUS_COLORS.ko, ...LEGEND_MARK_SIZE }} />
+          <Box
+            sx={{
+              backgroundColor: QUESTION_STATUS_COLORS.ko,
+              ...LEGEND_MARK_SIZE,
+            }}
+          />
           <Text size="xs" color="primary">
-            {t('questionStatus.ko')}
+            {t("questionStatus.ko")}
           </Text>
         </Stack>
         <Stack spacing={2} alignItems="center">
-          <Box sx={{ backgroundColor: QUESTION_STATUS_COLORS.omitted, ...LEGEND_MARK_SIZE }} />
+          <Box
+            sx={{
+              backgroundColor: QUESTION_STATUS_COLORS.omitted,
+              ...LEGEND_MARK_SIZE,
+            }}
+          />
           <Text size="xs" color="primary">
-            {t('questionStatus.omitted')}
+            {t("questionStatus.omitted")}
           </Text>
         </Stack>
       </Stack>

@@ -1,45 +1,47 @@
-import { Box, COLORS, Text, Stack } from '@bubbles-ui/components';
-import { htmlToText } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PropTypes from 'prop-types';
+import { Box, COLORS, Text, Stack } from "@bubbles-ui/components";
+import { htmlToText } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
 
-import { TestStyles } from '../TestStyles.style';
+import { TestStyles } from "../TestStyles.style";
 
-import prefixPN from '@tests/helpers/prefixPN';
+import prefixPN from "@tests/helpers/prefixPN";
 
 const colorsByStatus = { ok: COLORS.fatic02, ko: COLORS.fatic01, null: null };
 
 function Score({ questionResponse, assignmentConfig, questionsInfo }) {
-  const [t] = useTranslateLoader(prefixPN('studentInstance'));
+  const [t] = useTranslateLoader(prefixPN("studentInstance"));
   if (!questionResponse || !t) return null;
 
   const { status, cluesTypes: clueTypesArray, points } = questionResponse ?? {};
 
   const getPointsToSubstractFromClue = (clueType, totalPoints) => {
-    const clue = assignmentConfig?.clues?.find((clue) => clue.type === clueType);
+    const clue = assignmentConfig?.clues?.find(
+      (clue) => clue.type === clueType
+    );
     if (clue && totalPoints) {
       return ((clue.value / 100) * totalPoints).toFixed(2);
     }
     return 0;
   };
 
-  let responsePoints = '';
+  let responsePoints = "";
   const okPoints = questionsInfo?.perQuestionNumber?.toFixed(2);
   const koPoints =
     questionsInfo?.perErrorQuestionNumber < 0
       ? questionsInfo?.perErrorQuestionNumber?.toFixed(2)
-      : '0';
+      : "0";
   const omitPoints =
     questionsInfo?.perOmitQuestionNumber < 0
       ? questionsInfo?.perOmitQuestionNumber?.toFixed(2)
-      : '0';
+      : "0";
 
-  if (status === 'ok') {
+  if (status === "ok") {
     responsePoints = okPoints;
-  } else if (status === 'ko') {
+  } else if (status === "ko") {
     responsePoints = koPoints;
   } else {
-    responsePoints = omitPoints ?? '';
+    responsePoints = omitPoints ?? "";
   }
 
   const finalPoints = points?.toFixed(2);
@@ -48,7 +50,7 @@ function Score({ questionResponse, assignmentConfig, questionsInfo }) {
     <Stack spacing={3}>
       {clueTypesArray?.length > 0 && (
         <Stack spacing={3}>
-          <Text style={{ whiteSpace: 'nowrap' }} size="xs">
+          <Text style={{ whiteSpace: "nowrap" }} size="xs">
             <span
               style={{
                 color: colorsByStatus[status],
@@ -56,14 +58,18 @@ function Score({ questionResponse, assignmentConfig, questionsInfo }) {
               }}
             >
               {responsePoints}
-            </span>{' '}
-            {t('pointsInTotal')}
+            </span>{" "}
+            {t("pointsInTotal")}
           </Text>
 
           {clueTypesArray.map((usedClueType, index) => (
             <>
-              <Box style={{ borderLeft: '1px solid gray' }} />
-              <Text style={{ whiteSpace: 'nowrap' }} size="xs" key={`${index}-${usedClueType}`}>
+              <Box style={{ borderLeft: "1px solid gray" }} />
+              <Text
+                style={{ whiteSpace: "nowrap" }}
+                size="xs"
+                key={`${index}-${usedClueType}`}
+              >
                 <span
                   style={{
                     color: colorsByStatus.ko,
@@ -78,15 +84,15 @@ function Score({ questionResponse, assignmentConfig, questionsInfo }) {
           ))}
         </Stack>
       )}
-      <Text style={{ whiteSpace: 'nowrap' }} size="xs">
+      <Text style={{ whiteSpace: "nowrap" }} size="xs">
         <span
           style={{
             color: colorsByStatus[status],
           }}
         >
           {finalPoints}
-        </span>{' '}
-        {t('pointsOutOf', { questionPoints: okPoints })}
+        </span>{" "}
+        {t("pointsOutOf", { questionPoints: okPoints })}
       </Text>
     </Stack>
   );
@@ -106,12 +112,19 @@ export default function QuestionTitleComponent({
   questionsInfo,
   viewMode,
 }) {
-  const { classes } = TestStyles({}, { name: 'Tests' });
+  const { classes } = TestStyles({}, { name: "Tests" });
 
   return (
-    <Box className={viewMode ? classes.tableViewModeTitle : classes.questionTitle}>
+    <Box
+      className={viewMode ? classes.tableViewModeTitle : classes.questionTitle}
+    >
       <Box className={classes.questionTitleText}>
-        <Text size={viewMode ? 'md' : 'lg'} role="productive" color="primary" strong>
+        <Text
+          size={viewMode ? "md" : "lg"}
+          role="productive"
+          color="primary"
+          strong
+        >
           {questionIndex + 1}. {htmlToText(question.stem.text)}
         </Text>
       </Box>

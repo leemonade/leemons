@@ -3,7 +3,7 @@ export {
   saveQuestionBank as saveQuestionBankRequest,
   getQuestionBank as getQuestionBankRequest,
   deleteQuestionBank as deleteQuestionBankRequest,
-} from './questionsBanks';
+} from "./questionsBanks";
 
 export {
   getUserQuestionResponses as getUserQuestionResponsesRequest,
@@ -22,6 +22,6 @@ export {
   updateAssignedConfig as updateAssignedConfigRequest,
   duplicate as duplicateRequest,
   setOpenQuestionGrade as setOpenQuestionGradeRequest,
-} from './tests';
+} from "./tests";
 
-export { getQuestionByIds as getQuestionByIdsRequest } from './questions';
+export { getQuestionByIds as getQuestionByIdsRequest } from "./questions";

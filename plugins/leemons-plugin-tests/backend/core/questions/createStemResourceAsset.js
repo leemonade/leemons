@@ -1,6 +1,6 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
-const QUESTION_STEM_RESOURCE_SUFFIX = ' - Question stem resource';
+const QUESTION_STEM_RESOURCE_SUFFIX = " - Question stem resource";
 
 /**
  * Generates a standardized name for a stem resource asset.
@@ -9,10 +9,15 @@ const QUESTION_STEM_RESOURCE_SUFFIX = ' - Question stem resource';
  * @param {number} maxLength - The maximum length allowed for the truncated asset name. Defaults to 45.
  * @returns {string} - The formatted asset name with the standard suffix appended.
  */
-const getStemResouceAssetName = (sourceAssetName = 'media file asset', maxLength = 45) => {
-  const assetName = sourceAssetName.replace(QUESTION_STEM_RESOURCE_SUFFIX, '');
+const getStemResouceAssetName = (
+  sourceAssetName = "media file asset",
+  maxLength = 45
+) => {
+  const assetName = sourceAssetName.replace(QUESTION_STEM_RESOURCE_SUFFIX, "");
   const truncatedName =
-    assetName.length > maxLength ? `${assetName.substring(0, maxLength)}...` : assetName;
+    assetName.length > maxLength
+      ? `${assetName.substring(0, maxLength)}...`
+      : assetName;
   return `${truncatedName}${QUESTION_STEM_RESOURCE_SUFFIX}`;
 };
 
@@ -30,10 +35,11 @@ const getStemResouceAssetName = (sourceAssetName = 'media file asset', maxLength
  */
 
 async function createStemResourceAsset({ sourceAsset, published, ctx }) {
-  if (!sourceAsset) throw new LeemonsError(ctx, { message: 'Source asset is required' });
+  if (!sourceAsset)
+    throw new LeemonsError(ctx, { message: "Source asset is required" });
 
   const fileId = sourceAsset.file?.id || sourceAsset.cover?.id || sourceAsset; // For compatibility with old "question image" assets and bulkdata
-  const asset = await ctx.tx.call('leebrary.assets.add', {
+  const asset = await ctx.tx.call("leebrary.assets.add", {
     asset: {
       name: getStemResouceAssetName(sourceAsset.name),
       indexable: false,

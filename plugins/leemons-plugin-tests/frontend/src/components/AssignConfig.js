@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
 import {
   Box,
   Button,
@@ -12,32 +12,32 @@ import {
   TotalLayoutStepContainer,
   createStyles,
   RadioGroup,
-} from '@bubbles-ui/components';
-import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { isArray, isFunction, map, omit } from 'lodash';
-import { Controller, useForm, useWatch } from 'react-hook-form';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@tests/helpers/prefixPN';
-import { RandomQuestionsGenerator } from '@tests/pages/private/tests/components/RandomQuestionsGenerator';
-import QuestionsTable from '@tests/pages/private/tests/components/QuestionsTable';
-import { FilteredQuestionsGenerator } from '@tests/pages/private/tests/components/FilteredQuestionsGenerator';
-import { ManualQuestionsGenerator } from '@tests/pages/private/tests/components/ManualQuestionsGenerator';
+} from "@bubbles-ui/components";
+import { ChevLeftIcon, ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { isArray, isFunction, map, omit } from "lodash";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@tests/helpers/prefixPN";
+import { RandomQuestionsGenerator } from "@tests/pages/private/tests/components/RandomQuestionsGenerator";
+import QuestionsTable from "@tests/pages/private/tests/components/QuestionsTable";
+import { FilteredQuestionsGenerator } from "@tests/pages/private/tests/components/FilteredQuestionsGenerator";
+import { ManualQuestionsGenerator } from "@tests/pages/private/tests/components/ManualQuestionsGenerator";
 
 const AssignConfigStyles = createStyles((theme, { isDrawer }) => ({
   root: {
-    display: 'flex',
-    flexDirection: 'row',
+    display: "flex",
+    flexDirection: "row",
     gap: theme.other.global.spacing.gap.xlg, // 24
     zIndex: 0,
     paddingBottom: 10,
-    maxWidth: isDrawer ? '660px' : '100%',
+    maxWidth: isDrawer ? "660px" : "100%",
   },
 
   totalQuestions: {
-    width: 'fit-content',
+    width: "fit-content",
   },
   listElements: {
-    listStyleType: 'disc',
+    listStyleType: "disc",
     marginLeft: theme.spacing.md,
     paddingTop: 12,
   },
@@ -45,23 +45,23 @@ const AssignConfigStyles = createStyles((theme, { isDrawer }) => ({
     marginLeft: 24,
   },
   counterContainer: {
-    display: 'flex',
-    justifyContent: 'flex-start',
+    display: "flex",
+    justifyContent: "flex-start",
     gap: 8,
   },
   selectedCounter: {
     color: theme.other.chip.content.color.default,
-    backgroundColor: theme.other.core.color.neutral['100'],
+    backgroundColor: theme.other.core.color.neutral["100"],
     borderRadius: 4,
-    display: 'block',
-    width: 'fit-content',
+    display: "block",
+    width: "fit-content",
     padding: 10,
     ...theme.other.global.content.typo.heading.xsm,
     marginTop: 24,
     marginBottom: 8,
   },
   advancedInputs: {
-    width: 'fit-content',
+    width: "fit-content",
   },
 }));
 
@@ -78,12 +78,14 @@ function useOnChange({ onChange, control }) {
       let usedQuestions = [];
 
       if (isArray(questions)) {
-        usedQuestions = useAllQuestions ? questions : questions.slice(0, nQuestions);
+        usedQuestions = useAllQuestions
+          ? questions
+          : questions.slice(0, nQuestions);
       }
 
       onChange({
         questions: usedQuestions,
-        filters: omit(formValues, 'questions'),
+        filters: omit(formValues, "questions"),
       });
     }
   }, [formValues]);
@@ -103,8 +105,13 @@ export default function AssignConfig({
 }) {
   let defaultValues = {
     clues: [
-      { type: 'note', name: t('clueExtraInfo'), value: 0, canUse: true },
-      { type: 'hide-response', name: t('clueHideOption'), value: 0, canUse: true },
+      { type: "note", name: t("clueExtraInfo"), value: 0, canUse: true },
+      {
+        type: "hide-response",
+        name: t("clueHideOption"),
+        value: 0,
+        canUse: true,
+      },
     ],
   };
   if (dv) {
@@ -115,27 +122,27 @@ export default function AssignConfig({
       defaultValues.questions = dv.questions;
     }
   }
-  const [t2] = useTranslateLoader(prefixPN('testsEdit'));
+  const [t2] = useTranslateLoader(prefixPN("testsEdit"));
   const [radioSelection, setRadioSelection] = React.useState(null);
   const [randomQuestions, setRandomQuestions] = React.useState([]);
   const [filteredQuestions, setFilteredQuestions] = React.useState([]);
   const [manualQuestions, setManualQuestions] = React.useState([]);
   const { classes } = AssignConfigStyles({ isDrawer });
   const form = useForm({ defaultValues });
-  const useAllQuestions = form.watch('useAllQuestions');
-  const filtersValue = 'filters.nQuestions';
+  const useAllQuestions = form.watch("useAllQuestions");
+  const filtersValue = "filters.nQuestions";
   const nQuestionsSelector = form.watch(filtersValue);
 
   useOnChange({ onChange, control: form.control });
 
   React.useEffect(() => {
-    if (typeof onSave === 'function') {
+    if (typeof onSave === "function") {
       onSave({
         questions: test.questions.map((q) => q.id),
       });
     }
     form.setValue(
-      'questions',
+      "questions",
       test.questions.map((q) => q.id)
     );
   }, [test]);
@@ -143,16 +150,16 @@ export default function AssignConfig({
   const customOptions = React.useMemo(
     () => [
       {
-        value: 'randomQuestions',
-        help: t2('randomQuestions'),
+        value: "randomQuestions",
+        help: t2("randomQuestions"),
       },
       {
-        value: 'filteredQuestions',
-        help: t2('filteredQuestions'),
+        value: "filteredQuestions",
+        help: t2("filteredQuestions"),
       },
       {
-        value: 'manualQuestions',
-        help: t2('manualQuestions'),
+        value: "manualQuestions",
+        help: t2("manualQuestions"),
       },
     ],
     [t2]
@@ -169,14 +176,20 @@ export default function AssignConfig({
         selectedQuestions.push(question);
       }
     }
-    const selectedQuestionIds = selectedQuestions.map((question) => question.id);
-    form.setValue('questions', selectedQuestionIds);
+    const selectedQuestionIds = selectedQuestions.map(
+      (question) => question.id
+    );
+    form.setValue("questions", selectedQuestionIds);
     setRandomQuestions(selectedQuestions);
-    form.setValue('config.randomQuestions.selectedQuestions', [...selectedQuestionIds]);
+    form.setValue("config.randomQuestions.selectedQuestions", [
+      ...selectedQuestionIds,
+    ]);
   };
 
-  const randomQuestionsActive = radioSelection === 'randomQuestions' ? randomQuestions : null;
-  const filteredQuestionsActive = radioSelection === 'filteredQuestions' ? filteredQuestions : null;
+  const randomQuestionsActive =
+    radioSelection === "randomQuestions" ? randomQuestions : null;
+  const filteredQuestionsActive =
+    radioSelection === "filteredQuestions" ? filteredQuestions : null;
 
   return (
     <TotalLayoutStepContainer
@@ -202,7 +215,7 @@ export default function AssignConfig({
                   onPrevStep();
                 }}
               >
-                {t('prev')}
+                {t("prev")}
               </Button>
             }
             rightZone={
@@ -219,7 +232,7 @@ export default function AssignConfig({
                   onNextStep();
                 }}
               >
-                {t('next')}
+                {t("next")}
               </Button>
             }
           />
@@ -230,9 +243,11 @@ export default function AssignConfig({
         <Box>
           <ContextContainer divided>
             <ContextContainer>
-              <Title order={isDrawer ? 4 : 3}>{t('configTitle')}</Title>
+              <Title order={isDrawer ? 4 : 3}>{t("configTitle")}</Title>
               <Box className={classes.totalQuestions}>
-                <Chip subject={t('totalQuestions', { n: test.questions.length })} />
+                <Chip
+                  subject={t("totalQuestions", { n: test.questions.length })}
+                />
               </Box>
               <Box>
                 <InputWrapper
@@ -243,10 +258,10 @@ export default function AssignConfig({
                       render={({ field }) => (
                         <Switch
                           {...field}
-                          label={t('customQuestionSelection')}
+                          label={t("customQuestionSelection")}
                           checked={field.value}
                           onChange={() => {
-                            form.setValue('useAllQuestions', !field.value);
+                            form.setValue("useAllQuestions", !field.value);
                           }}
                         />
                       )}
@@ -263,18 +278,18 @@ export default function AssignConfig({
                             <RadioGroup
                               {...field}
                               value={radioSelection}
-                              label={t2('customChoicesLabel')}
+                              label={t2("customChoicesLabel")}
                               className={classes.radioGroup}
-                              placeholder={t2('customChoicesPlaceholder')}
+                              placeholder={t2("customChoicesPlaceholder")}
                               data={customOptions}
                               onChange={(option) => {
-                                form.setValue('config.customChoice', option);
+                                form.setValue("config.customChoice", option);
                                 return setRadioSelection(option);
                               }}
                             />
                           )}
                         />
-                        {radioSelection === 'randomQuestions' && (
+                        {radioSelection === "randomQuestions" && (
                           <RandomQuestionsGenerator
                             t={t2}
                             form={form}
@@ -283,7 +298,7 @@ export default function AssignConfig({
                             generateQuestions={generateQuestions}
                           />
                         )}
-                        {radioSelection === 'filteredQuestions' && (
+                        {radioSelection === "filteredQuestions" && (
                           <FilteredQuestionsGenerator
                             t={t2}
                             form={form}
@@ -296,7 +311,7 @@ export default function AssignConfig({
                             isNewTest={false}
                           />
                         )}
-                        {radioSelection === 'manualQuestions' && (
+                        {radioSelection === "manualQuestions" && (
                           <ManualQuestionsGenerator
                             t={t2}
                             form={form}
@@ -308,14 +323,20 @@ export default function AssignConfig({
                             isDrawer={isDrawer}
                           />
                         )}
-                        {(radioSelection === 'randomQuestions' && randomQuestions.length > 0) ||
-                        (radioSelection === 'filteredQuestions' && filteredQuestions.length > 0) ? (
+                        {(radioSelection === "randomQuestions" &&
+                          randomQuestions.length > 0) ||
+                        (radioSelection === "filteredQuestions" &&
+                          filteredQuestions.length > 0) ? (
                           <Controller
                             control={form.control}
                             name="questions"
                             render={({ field }) => (
                               <QuestionsTable
-                                questions={randomQuestionsActive ?? filteredQuestionsActive ?? []}
+                                questions={
+                                  randomQuestionsActive ??
+                                  filteredQuestionsActive ??
+                                  []
+                                }
                                 forceSortable
                                 value={field.value}
                                 onChange={(e) => field.onChange(e)}

@@ -1,14 +1,14 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
 
 async function addSubjectsToQuestionBanks({ subject, questionBank, ctx }) {
   // Check if test is empty
   if (_.isEmpty(questionBank)) {
-    throw new LeemonsError(ctx, { message: 'QuestionBank is empty' });
+    throw new LeemonsError(ctx, { message: "QuestionBank is empty" });
   }
   // Check if question is empty
   if (_.isEmpty(subject)) {
-    throw new LeemonsError(ctx, { message: 'Subject is empty' });
+    throw new LeemonsError(ctx, { message: "Subject is empty" });
   }
   const questionBanks = _.isArray(questionBank) ? questionBank : [questionBank];
   const subjects = _.isArray(subject) ? subject : [subject];

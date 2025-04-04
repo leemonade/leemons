@@ -1,11 +1,11 @@
-import { InfoIcon, NoPauseIcon } from '@bubbles-ui/icons/solid';
-import { AlarmClockIcon } from '@bubbles-ui/icons/outline';
-import PropTypes from 'prop-types';
-import { getLocaleDuration, LocaleDuration } from '@common';
-import React from 'react';
-import dayjs from 'dayjs';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@tests/helpers/prefixPN';
+import { InfoIcon, NoPauseIcon } from "@bubbles-ui/icons/solid";
+import { AlarmClockIcon } from "@bubbles-ui/icons/outline";
+import PropTypes from "prop-types";
+import { getLocaleDuration, LocaleDuration } from "@common";
+import React from "react";
+import dayjs from "dayjs";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@tests/helpers/prefixPN";
 import {
   Box,
   Button,
@@ -15,20 +15,20 @@ import {
   Paragraph,
   Text,
   Stack,
-} from '@bubbles-ui/components';
-import { useSession } from '@users/session';
+} from "@bubbles-ui/components";
+import { useSession } from "@users/session";
 
 export const InstructionsStyles = createStyles((theme) => ({
   instructionsIcon: {
-    color: '#878D96',
-    display: 'flex',
-    alignItems: 'center',
+    color: "#878D96",
+    display: "flex",
+    alignItems: "center",
     gap: theme.spacing[2],
   },
   instructions: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   howItWorksModalContainer: {
     padding: theme.spacing[2],
@@ -38,12 +38,12 @@ export const InstructionsStyles = createStyles((theme) => ({
 
 function Instructions({ instance }) {
   const session = useSession();
-  const [t] = useTranslateLoader(prefixPN('instructions'));
+  const [t] = useTranslateLoader(prefixPN("instructions"));
   const { classes } = InstructionsStyles();
   const [showModal, setShowModal] = React.useState(false);
   const durationSeconds = React.useMemo(() => {
     if (instance?.duration) {
-      const [value, unit] = instance.duration.split(' ');
+      const [value, unit] = instance.duration.split(" ");
       return dayjs.duration({ [unit]: value }).asSeconds();
     }
     return null;
@@ -52,7 +52,7 @@ function Instructions({ instance }) {
   return (
     <>
       <ContextContainer
-        title={t('instructions')}
+        title={t("instructions")}
         spacing={3}
         titleRightZone={
           <>
@@ -64,7 +64,7 @@ function Instructions({ instance }) {
                 compact
                 onClick={() => setShowModal(true)}
               >
-                {t('howItWorks')}
+                {t("howItWorks")}
               </Button>
             ) : null}
           </>
@@ -78,14 +78,14 @@ function Instructions({ instance }) {
             <Text>
               {durationSeconds ? (
                 <>
-                  {t('timeLimit1')}{' '}
+                  {t("timeLimit1")}{" "}
                   <b>
                     <LocaleDuration seconds={durationSeconds} />
-                  </b>{' '}
-                  {t('timeLimit2')}
+                  </b>{" "}
+                  {t("timeLimit2")}
                 </>
               ) : (
-                t('noTimeLimit')
+                t("noTimeLimit")
               )}
             </Text>
           </Box>
@@ -95,28 +95,38 @@ function Instructions({ instance }) {
                 <NoPauseIcon width={18} height={18} />
               </Box>
               <Text>
-                <b>{t('withoutPause1')}</b> {t('withoutPause2')}
+                <b>{t("withoutPause1")}</b> {t("withoutPause2")}
               </Text>
             </Box>
           ) : null}
         </>
       </ContextContainer>
-      <Modal title={t('howItWorks')} opened={showModal} onClose={() => setShowModal(false)}>
+      <Modal
+        title={t("howItWorks")}
+        opened={showModal}
+        onClose={() => setShowModal(false)}
+      >
         <Stack spacing="xl" direction="column">
-          <ContextContainer title={t('limitedTime')}>
+          <ContextContainer title={t("limitedTime")}>
             <Paragraph
               dangerouslySetInnerHTML={{
-                __html: t('limitedTimeDescription', {
-                  time: getLocaleDuration({ seconds: durationSeconds }, session),
+                __html: t("limitedTimeDescription", {
+                  time: getLocaleDuration(
+                    { seconds: durationSeconds },
+                    session
+                  ),
                 }),
               }}
             />
           </ContextContainer>
-          <ContextContainer title={t('canNotStop')}>
+          <ContextContainer title={t("canNotStop")}>
             <Paragraph
               dangerouslySetInnerHTML={{
-                __html: t('canNotStopDescription', {
-                  time: getLocaleDuration({ seconds: durationSeconds }, session),
+                __html: t("canNotStopDescription", {
+                  time: getLocaleDuration(
+                    { seconds: durationSeconds },
+                    session
+                  ),
                 }),
               }}
             />

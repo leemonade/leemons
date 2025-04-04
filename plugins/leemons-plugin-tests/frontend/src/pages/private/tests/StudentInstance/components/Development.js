@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   Alert,
   Box,
@@ -10,17 +10,17 @@ import {
   Title,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
-} from '@bubbles-ui/components';
-import dayjs from 'dayjs';
-import * as duration from 'dayjs/plugin/duration';
-import { ChevRightIcon } from '@bubbles-ui/icons/outline';
+} from "@bubbles-ui/components";
+import dayjs from "dayjs";
+import * as duration from "dayjs/plugin/duration";
+import { ChevRightIcon } from "@bubbles-ui/icons/outline";
 
-import { find, map } from 'lodash';
-import { useCurriculumVisibleValues } from '@assignables/components/Assignment/components/EvaluationType';
-import { useClassesSubjects } from '@academic-portfolio/hooks';
-import { CurriculumListContents } from '@curriculum/components/CurriculumListContents';
-import { Instructions } from '@tests/pages/private/tests/StudentInstance/components/Instructions';
-import InfoCard from './InfoCard';
+import { find, map } from "lodash";
+import { useCurriculumVisibleValues } from "@assignables/components/Assignment/components/EvaluationType";
+import { useClassesSubjects } from "@academic-portfolio/hooks";
+import { CurriculumListContents } from "@curriculum/components/CurriculumListContents";
+import { Instructions } from "@tests/pages/private/tests/StudentInstance/components/Instructions";
+import InfoCard from "./InfoCard";
 
 dayjs.extend(duration);
 export default function Development(props) {
@@ -42,14 +42,15 @@ export default function Development(props) {
   const cluePer = find(store.config.clues, (cl) => cl.canUse);
 
   if (cluePer) {
-    const cluePoints = store.questionsInfo.perQuestionNumber * (cluePer.value / 100);
+    const cluePoints =
+      store.questionsInfo.perQuestionNumber * (cluePer.value / 100);
     clueText =
       cluePer.value !== 0
-        ? t('clueWithPer', {
+        ? t("clueWithPer", {
             per: cluePer.value,
             points: `-${cluePoints.toFixed(2)}`,
           })
-        : t('clueWithoutPer');
+        : t("clueWithoutPer");
     clueEl = (
       <Box className={styles.resumeBoxContainer}>
         <InfoCard
@@ -65,7 +66,9 @@ export default function Development(props) {
 
   const tabPanelStyle = (theme) => ({ marginLeft: theme.spacing[3] });
 
-  const curriculumValues = useCurriculumVisibleValues({ assignation: store.assignation });
+  const curriculumValues = useCurriculumVisibleValues({
+    assignation: store.assignation,
+  });
   const subjects = useClassesSubjects(store.instance.classes);
 
   let curriculum = null;
@@ -75,7 +78,7 @@ export default function Development(props) {
 
   return (
     <TotalLayoutStepContainer
-      stepName={t('development')}
+      stepName={t("development")}
       Footer={
         <TotalLayoutFooterContainer
           fixed
@@ -90,7 +93,7 @@ export default function Development(props) {
                 onStartQuestions();
               }}
             >
-              {t('nextButton')}
+              {t("nextButton")}
             </Button>
           }
         />
@@ -98,16 +101,16 @@ export default function Development(props) {
     >
       <ContextContainer spacing={8}>
         {!canStart ? (
-          <Alert closeable={false} title={t('activityNotAvailable')}>
-            {t('informationStart', {
-              date: `${dayjs(store.instance.dates.start).format('L ')}`,
-              hour: `${dayjs(store.instance.dates.start).format('HH:mm ')}`,
+          <Alert closeable={false} title={t("activityNotAvailable")}>
+            {t("informationStart", {
+              date: `${dayjs(store.instance.dates.start).format("L ")}`,
+              hour: `${dayjs(store.instance.dates.start).format("HH:mm ")}`,
             })}
           </Alert>
         ) : null}
 
         {store.instance?.assignable?.statement ? (
-          <ContextContainer title={t('resume')}>
+          <ContextContainer title={t("resume")}>
             <HtmlText>{store.instance.assignable.statement}</HtmlText>
           </ContextContainer>
         ) : null}
@@ -119,51 +122,51 @@ export default function Development(props) {
             cx={cx}
             styles={styles}
             number={store.questionsInfo.questions}
-            label={t('questions')}
+            label={t("questions")}
           />
           <InfoCard
             cx={cx}
             styles={styles}
             number={store.questionsInfo.perQuestion}
-            label={t('perQuestion')}
+            label={t("perQuestion")}
           />
           {store.questionsInfo.minPoints !== 0 ? (
             <InfoCard
               cx={cx}
               styles={styles}
               number={store.questionsInfo.minPoints}
-              label={t('minScore')}
+              label={t("minScore")}
             />
           ) : null}
           <InfoCard
             cx={cx}
             styles={styles}
             number={store.questionsInfo.totalPoints}
-            label={t('maxScore')}
+            label={t("maxScore")}
           />
           <InfoCard
             cx={cx}
             styles={styles}
             number={store.questionsInfo.minToApprove}
-            label={t('minToApprove')}
+            label={t("minToApprove")}
           />
         </Box>
 
-        <ContextContainer title={t('penalties')}>
+        <ContextContainer title={t("penalties")}>
           <Box sx={() => ({ marginLeft: 20 })}>
-            <ul style={{ listStyle: 'disc' }}>
+            <ul style={{ listStyle: "disc" }}>
               <li>
                 <Text>
                   <span
                     dangerouslySetInnerHTML={{
                       __html: store.config.canOmitQuestions
                         ? store.config.omit
-                          ? t('blankQuestionsScores', {
+                          ? t("blankQuestionsScores", {
                               per: store.config.omit,
                               points: store.questionsInfo.perOmitQuestion,
                             })
-                          : t('blankQuestions')
-                        : t('noBlankQuestions'),
+                          : t("blankQuestions")
+                        : t("noBlankQuestions"),
                     }}
                   />
                 </Text>
@@ -173,11 +176,11 @@ export default function Development(props) {
                   <span
                     dangerouslySetInnerHTML={{
                       __html: store.config.wrong
-                        ? t('errorQuestions', {
+                        ? t("errorQuestions", {
                             per: store.config.wrong,
                             points: store.questionsInfo.perErrorQuestion,
                           })
-                        : t('noErrorQuestions'),
+                        : t("noErrorQuestions"),
                     }}
                   />
                 </Text>
@@ -195,21 +198,26 @@ export default function Development(props) {
 
         {!!curriculum?.length ||
         (!!store.instance.assignable.subjects[0]?.curriculum.objectives &&
-          !!store.instance.assignable.subjects[0]?.curriculum.objectives?.length) ? (
-          <ContextContainer title={t('curriculum')}>
+          !!store.instance.assignable.subjects[0]?.curriculum.objectives
+            ?.length) ? (
+          <ContextContainer title={t("curriculum")}>
             {curriculum?.length ? (
               <Box sx={tabPanelStyle}>
                 <Box>
-                  <CurriculumListContents value={curriculum} subjects={map(subjects, 'id')} />
+                  <CurriculumListContents
+                    value={curriculum}
+                    subjects={map(subjects, "id")}
+                  />
                 </Box>
               </Box>
             ) : null}
             {!!store.instance.assignable.subjects[0]?.curriculum.objectives &&
-            !!store.instance.assignable.subjects[0]?.curriculum.objectives?.length ? (
+            !!store.instance.assignable.subjects[0]?.curriculum.objectives
+              ?.length ? (
               <Box sx={tabPanelStyle}>
                 <Box>
                   <Title color="primary" order={5}>
-                    {t('objectives')}
+                    {t("objectives")}
                   </Title>
                   {/* TODO: Use react lists */}
                   <HtmlText>
@@ -222,7 +230,7 @@ export default function Development(props) {
                             ${objective}
                           </li>`
                         )
-                        ?.join('')}
+                        ?.join("")}
                       </ul>
                     `}
                   </HtmlText>

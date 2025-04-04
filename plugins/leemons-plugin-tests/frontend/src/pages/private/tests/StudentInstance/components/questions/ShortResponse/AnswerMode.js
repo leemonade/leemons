@@ -1,11 +1,13 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import AnswerModeResponsesLayout from '../AnswerModeResponsesLayout';
+import AnswerModeResponsesLayout from "../AnswerModeResponsesLayout";
 
-import Responses from './Responses';
+import Responses from "./Responses";
 
 const AnswerMode = (props) => {
-  return <AnswerModeResponsesLayout {...props} ResponsesComponent={Responses} />;
+  return (
+    <AnswerModeResponsesLayout {...props} ResponsesComponent={Responses} />
+  );
 };
 
 AnswerMode.propTypes = {

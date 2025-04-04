@@ -1,30 +1,39 @@
-import React from 'react';
+import React from "react";
 
-import { Alert, Box, HtmlText, Text } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { find, forEach, isNumber } from 'lodash';
-import PropTypes from 'prop-types';
+import { Alert, Box, HtmlText, Text } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { find, forEach, isNumber } from "lodash";
+import PropTypes from "prop-types";
 
-import { QuestionImage } from '../../../../../../../components/QuestionImage';
-import { getQuestionClues } from '../../../helpers/getQuestionClues';
-import { htmlToText } from '../../../helpers/htmlToText';
-import QuestionNoteClues from '../../QuestionNoteClues';
-import QuestionTitleComponent from '../../QuestionTitleComponent';
+import { QuestionImage } from "../../../../../../../components/QuestionImage";
+import { getQuestionClues } from "../../../helpers/getQuestionClues";
+import { htmlToText } from "../../../helpers/htmlToText";
+import QuestionNoteClues from "../../QuestionNoteClues";
+import QuestionTitleComponent from "../../QuestionTitleComponent";
 
-import Responses from './Responses';
+import Responses from "./Responses";
 
-import prefixPN from '@tests/helpers/prefixPN';
-import AnswerFeed from '@tests/pages/private/tests/components/ResponseDetail/AnswerFeed';
+import prefixPN from "@tests/helpers/prefixPN";
+import AnswerFeed from "@tests/pages/private/tests/components/ResponseDetail/AnswerFeed";
 
 export default function Index(props) {
   const { styles, store, question, t, cx } = props;
-  const [answerFeedT] = useTranslateLoader(prefixPN('testResult.responseDetail'));
+  const [answerFeedT] = useTranslateLoader(
+    prefixPN("testResult.responseDetail")
+  );
 
   const clue = React.useMemo(
     () =>
-      find(getQuestionClues(question, store.questionResponses[question.id].clues, store.config), {
-        type: 'hide-response',
-      }),
+      find(
+        getQuestionClues(
+          question,
+          store.questionResponses[question.id].clues,
+          store.config
+        ),
+        {
+          type: "hide-response",
+        }
+      ),
     [question, store.questionResponses[question.id].clues]
   );
 
@@ -34,7 +43,11 @@ export default function Index(props) {
     allWithValues = true;
     used = true;
     forEach(question.mapProperties.markers.list, (r, index) => {
-      if (!isNumber(store.questionResponses[question.id].properties.responses[index])) {
+      if (
+        !isNumber(
+          store.questionResponses[question.id].properties.responses[index]
+        )
+      ) {
         allWithValues = false;
       }
     });
@@ -52,10 +65,15 @@ export default function Index(props) {
 
   return (
     <>
-      <Box className={containerClassName} sx={{ marginBottom: store.viewMode && 72 }}>
+      <Box
+        className={containerClassName}
+        sx={{ marginBottom: store.viewMode && 72 }}
+      >
         <QuestionTitleComponent
           question={question}
-          questionIndex={store.questions?.findIndex((q) => q.id === question?.id)}
+          questionIndex={store.questions?.findIndex(
+            (q) => q.id === question?.id
+          )}
           questionResponse={store.questionResponses?.[question.id]}
           viewMode={store.viewMode}
           assignmentConfig={store.config}
@@ -73,16 +91,23 @@ export default function Index(props) {
           src={question.mapProperties.image}
           markers={question.mapProperties.markers}
           values={
-            store.viewMode ? store.questionResponses[question.id].properties?.responses : null
+            store.viewMode
+              ? store.questionResponses[question.id].properties?.responses
+              : null
           }
           clue={clue}
         />
 
         {explanation && (
-          <Box className={cx(styles.textExplanation, styles.textExplanationRemovePadding)}>
+          <Box
+            className={cx(
+              styles.textExplanation,
+              styles.textExplanationRemovePadding
+            )}
+          >
             <Box sx={(theme) => ({ paddingBottom: theme.spacing[3] })}>
               <Text role="productive" size="xs" color="primary">
-                {t('explanation').toUpperCase()}
+                {t("explanation").toUpperCase()}
               </Text>
             </Box>
             <HtmlText>{explanation}</HtmlText>
@@ -96,8 +121,8 @@ export default function Index(props) {
 
       {!store.viewMode && !allWithValues && used ? (
         <Box sx={(theme) => ({ marginBottom: theme.spacing[8] })}>
-          <Alert title={t('attention')} severity="warning" closeable={false}>
-            {t('mapNeedResponses')}
+          <Alert title={t("attention")} severity="warning" closeable={false}>
+            {t("mapNeedResponses")}
           </Alert>
         </Box>
       ) : null}

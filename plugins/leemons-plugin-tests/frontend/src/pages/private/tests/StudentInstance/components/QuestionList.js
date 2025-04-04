@@ -1,7 +1,7 @@
-import { useStore } from '@common';
-import PropTypes from 'prop-types';
+import { useStore } from "@common";
+import PropTypes from "prop-types";
 
-import Question from './Question';
+import Question from "./Question";
 
 export default function QuestionList(props) {
   const [store, render] = useStore({

@@ -1,8 +1,8 @@
-const { LeemonsError } = require('@leemons/error');
-const { LeemonsValidator } = require('@leemons/validator');
-const _ = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { LeemonsValidator } = require("@leemons/validator");
+const _ = require("lodash");
 
-const { QUESTION_TYPES } = require('../config/constants');
+const { QUESTION_TYPES } = require("../config/constants");
 
 const {
   stringSchema,
@@ -12,12 +12,12 @@ const {
   textSchemaNoLimit,
   numberSchema,
   integerSchemaGreaterThanZeroNullable,
-} = require('./types');
+} = require("./types");
 
 const questionTypes = Object.values(QUESTION_TYPES);
 
 const formattedTextSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     text: textSchemaNoLimit,
     format: stringSchema,
@@ -25,7 +25,7 @@ const formattedTextSchema = {
 };
 
 const choiceSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     isCorrect: booleanSchema,
     text: {
@@ -38,74 +38,74 @@ const choiceSchema = {
     },
     hideOnHelp: booleanSchema,
     image: {
-      type: ['object', 'string'],
+      type: ["object", "string"],
       nullable: true,
     },
     imageDescription: stringSchemaNullable,
     isMainChoice: booleanSchema, // Only for short-response questions
   },
-  required: ['isCorrect'],
+  required: ["isCorrect"],
 };
 
 const mapMarkerSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     response: textSchemaNoLimit,
     hideOnHelp: booleanSchema,
     left: stringSchema,
     top: stringSchema,
   },
-  required: ['response', 'left', 'top'],
+  required: ["response", "left", "top"],
 };
 
 const markersSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     backgroundColor: stringSchema,
     type: {
-      type: 'string',
-      enum: ['numbering', 'letter'],
+      type: "string",
+      enum: ["numbering", "letter"],
     },
     list: {
-      type: 'array',
+      type: "array",
       items: mapMarkerSchema,
     },
     position: {
-      type: 'object',
+      type: "object",
       properties: {
         left: stringSchema,
         top: stringSchema,
       },
-      required: ['left', 'top'],
+      required: ["left", "top"],
     },
   },
-  required: ['backgroundColor', 'type', 'list', 'position'],
+  required: ["backgroundColor", "type", "list", "position"],
 };
 
 const mapPropertiesSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     image: {
-      type: ['object', 'string'],
+      type: ["object", "string"],
     },
     caption: stringSchemaNullable,
     markers: markersSchema,
   },
-  required: ['image', 'markers'],
+  required: ["image", "markers"],
   nullable: true,
 };
 
 const trueFalsePropertiesSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     isTrue: booleanSchema,
   },
-  required: ['isTrue'],
+  required: ["isTrue"],
   nullable: true,
 };
 
 const openResponsePropertiesSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     minCharacters: integerSchemaGreaterThanZeroNullable,
     maxCharacters: integerSchemaGreaterThanZeroNullable,
@@ -113,20 +113,20 @@ const openResponsePropertiesSchema = {
 };
 
 const questionTypeSchema = {
-  type: 'string',
+  type: "string",
   enum: questionTypes,
 };
 
 const questionSchema = {
-  type: 'object',
+  type: "object",
   additionalProperties: false,
-  required: ['type', 'stem'],
+  required: ["type", "stem"],
   properties: {
     id: stringSchema,
     type: questionTypeSchema,
     level: stringSchemaNullable,
     category: {
-      type: ['string', 'number'],
+      type: ["string", "number"],
       minLength: 1,
       maxLength: 255,
       nullable: true,
@@ -134,7 +134,7 @@ const questionSchema = {
     hasImageAnswers: booleanSchema,
     hasEmbeddedAnswers: booleanSchema, // fill the blank questions
     tags: {
-      type: 'array',
+      type: "array",
       items: stringSchema,
       nullable: true,
     },
@@ -147,21 +147,21 @@ const questionSchema = {
     },
     hasAnswerFeedback: booleanSchema,
     stemResource: {
-      type: ['object', 'string'],
+      type: ["object", "string"],
       nullable: true,
     },
     hasHelp: booleanSchema,
     clues: {
-      type: 'array',
+      type: "array",
       items: {
-        type: ['string'],
+        type: ["string"],
       },
       nullable: true,
     },
 
     // Validation by question type
     choices: {
-      type: 'array',
+      type: "array",
       items: choiceSchema,
       nullable: true,
     },
@@ -172,7 +172,7 @@ const questionSchema = {
 };
 
 const saveQuestionBankSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     id: stringSchema,
     name: stringSchema,
@@ -180,47 +180,47 @@ const saveQuestionBankSchema = {
     description: textSchemaNullable,
     color: stringSchemaNullable,
     cover: {
-      type: ['object', 'string'],
+      type: ["object", "string"],
       nullable: true,
     },
     state: textSchemaNullable,
     program: stringSchemaNullable,
     categories: {
-      type: 'array',
+      type: "array",
       items: {
-        type: 'object',
+        type: "object",
         additionalProperties: false,
         properties: {
           id: stringSchema,
           value: stringSchema,
           order: numberSchema,
         },
-        required: ['value', 'order'],
+        required: ["value", "order"],
       },
     },
     subjects: {
-      type: 'array',
+      type: "array",
       items: stringSchema,
     },
     tags: {
-      type: 'array',
+      type: "array",
       items: stringSchema,
     },
     published: booleanSchema,
     questions: {
-      type: 'array',
+      type: "array",
       items: questionSchema,
     },
   },
-  required: ['name'],
+  required: ["name"],
   additionalProperties: false,
 };
 
 function validateSaveQuestionBank(data, ctx) {
   const schema = _.cloneDeep(saveQuestionBankSchema);
   if (data.published) {
-    schema.required = ['name', 'questions'];
-    schema.properties.questions.items.required = ['type', 'stem'];
+    schema.required = ["name", "questions"];
+    schema.properties.questions.items.required = ["type", "stem"];
   }
   const validator = new LeemonsValidator(schema);
 
@@ -230,7 +230,7 @@ function validateSaveQuestionBank(data, ctx) {
 }
 
 const saveTestSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     id: stringSchema,
     name: stringSchema,
@@ -238,12 +238,12 @@ const saveTestSchema = {
     tagline: stringSchemaNullable,
     color: stringSchemaNullable,
     cover: {
-      type: ['object', 'string'],
+      type: ["object", "string"],
       nullable: true,
     },
     description: textSchemaNullable,
     tags: {
-      type: 'array',
+      type: "array",
       items: stringSchema,
     },
     level: stringSchemaNullable,
@@ -255,44 +255,50 @@ const saveTestSchema = {
     questionBank: stringSchemaNullable,
     program: stringSchemaNullable,
     curriculum: {
-      type: 'object',
+      type: "object",
       additionalProperties: true,
       nullable: true,
     },
     subjects: {
-      type: 'array',
+      type: "array",
       items: stringSchema,
     },
     filters: {
-      type: 'object',
+      type: "object",
       additionalProperties: true,
       nullable: true,
     },
     questions: {
-      type: 'array',
+      type: "array",
       items: {
-        type: 'string',
+        type: "string",
       },
     },
     resources: {
-      type: 'array',
+      type: "array",
       items: stringSchema,
     },
     config: {
-      type: 'object',
+      type: "object",
       additionalProperties: true,
       nullable: true,
     },
     published: booleanSchema,
   },
-  required: ['name'],
+  required: ["name"],
   additionalProperties: true,
 };
 
 function validateSaveTest(data) {
   const schema = _.cloneDeep(saveTestSchema);
   if (data.published) {
-    schema.required = ['name', 'type', 'questionBank', 'questions', 'statement'];
+    schema.required = [
+      "name",
+      "type",
+      "questionBank",
+      "questions",
+      "statement",
+    ];
   }
   const validator = new LeemonsValidator(schema);
 

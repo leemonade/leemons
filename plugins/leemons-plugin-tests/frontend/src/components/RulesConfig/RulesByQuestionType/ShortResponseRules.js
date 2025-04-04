@@ -1,22 +1,31 @@
-import { Controller, useWatch } from 'react-hook-form';
+import { Controller, useWatch } from "react-hook-form";
 
-import { Text, ContextContainer, Switch, Stack, Checkbox } from '@bubbles-ui/components';
-import propTypes from 'prop-types';
+import {
+  Text,
+  ContextContainer,
+  Switch,
+  Stack,
+  Checkbox,
+} from "@bubbles-ui/components";
+import propTypes from "prop-types";
 
 export default function ShortResponseRules({ control, classes, t }) {
-  const [shortResponse] = useWatch({ control, name: ['questionFilters.shortResponse'] });
+  const [shortResponse] = useWatch({
+    control,
+    name: ["questionFilters.shortResponse"],
+  });
 
   return (
     <ContextContainer className={classes.questionConfigContainer} spacing={2}>
       <Text className={classes.questionConfigTitle}>
-        {t('rulesByQuestionType.shortResponse.title')}
+        {t("rulesByQuestionType.shortResponse.title")}
       </Text>
       <Controller
         control={control}
         name="questionFilters.shortResponse.activateTolerances"
         render={({ field }) => (
           <Switch
-            label={t('rulesByQuestionType.shortResponse.activateTolerances')}
+            label={t("rulesByQuestionType.shortResponse.activateTolerances")}
             checked={field.value}
             {...field}
           />
@@ -29,7 +38,7 @@ export default function ShortResponseRules({ control, classes, t }) {
             name="questionFilters.shortResponse.tolerateAccents"
             render={({ field }) => (
               <Checkbox
-                label={t('rulesByQuestionType.shortResponse.tolerateAccents')}
+                label={t("rulesByQuestionType.shortResponse.tolerateAccents")}
                 {...field}
                 checked={field.value}
               />
@@ -40,7 +49,7 @@ export default function ShortResponseRules({ control, classes, t }) {
             name="questionFilters.shortResponse.tolerateCase"
             render={({ field }) => (
               <Checkbox
-                label={t('rulesByQuestionType.shortResponse.tolerateCase')}
+                label={t("rulesByQuestionType.shortResponse.tolerateCase")}
                 {...field}
                 checked={field.value}
               />
@@ -51,7 +60,7 @@ export default function ShortResponseRules({ control, classes, t }) {
             name="questionFilters.shortResponse.tolerateSpaces"
             render={({ field }) => (
               <Checkbox
-                label={t('rulesByQuestionType.shortResponse.tolerateSpaces')}
+                label={t("rulesByQuestionType.shortResponse.tolerateSpaces")}
                 {...field}
                 checked={field.value}
               />

@@ -1,11 +1,11 @@
-const { isLRN } = require('@leemons/lrn');
-const _ = require('lodash');
+const { isLRN } = require("@leemons/lrn");
+const _ = require("lodash");
 
-const { QUESTION_TYPES } = require('../../config/constants');
+const { QUESTION_TYPES } = require("../../config/constants");
 
-const { createStemResourceAsset } = require('./createStemResourceAsset');
+const { createStemResourceAsset } = require("./createStemResourceAsset");
 
-const LIBRARY_ADD_ASSET = 'leebrary.assets.add';
+const LIBRARY_ADD_ASSET = "leebrary.assets.add";
 
 /**
  * Represents a formatted text shape.
@@ -97,8 +97,14 @@ const LIBRARY_ADD_ASSET = 'leebrary.assets.add';
  */
 
 async function createQuestion({ data, published, ctx }) {
-  const { tags, choices, mapProperties, trueFalseProperties, openResponseProperties, ...props } =
-    _.cloneDeep(data);
+  const {
+    tags,
+    choices,
+    mapProperties,
+    trueFalseProperties,
+    openResponseProperties,
+    ...props
+  } = _.cloneDeep(data);
 
   // For map questions, create the map image asset
   if (props.type === QUESTION_TYPES.MAP) {
@@ -140,14 +146,18 @@ async function createQuestion({ data, published, ctx }) {
 
   if (props.stemResource) {
     let sourceAsset = props.stemResource;
-    if (typeof props.stemResource === 'string' && isLRN(props.stemResource)) {
-      [sourceAsset] = await ctx.tx.call('leebrary.assets.getByIds', {
+    if (typeof props.stemResource === "string" && isLRN(props.stemResource)) {
+      [sourceAsset] = await ctx.tx.call("leebrary.assets.getByIds", {
         ids: [props.stemResource],
         withFiles: true,
       });
     }
 
-    props.stemResource = await createStemResourceAsset({ ctx, sourceAsset, published });
+    props.stemResource = await createStemResourceAsset({
+      ctx,
+      sourceAsset,
+      published,
+    });
   }
 
   const questionToCreate = { ...props };
@@ -169,8 +179,8 @@ async function createQuestion({ data, published, ctx }) {
   let question = await ctx.tx.db.Questions.create(questionToCreate);
   question = question.toObject();
 
-  await ctx.tx.call('common.tags.setTagsToValues', {
-    type: 'tests.questions',
+  await ctx.tx.call("common.tags.setTagsToValues", {
+    type: "tests.questions",
     tags: tags || [],
     values: question.id,
   });

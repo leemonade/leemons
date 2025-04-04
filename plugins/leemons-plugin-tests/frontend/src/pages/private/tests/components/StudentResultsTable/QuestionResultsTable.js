@@ -1,6 +1,6 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from "react";
 
-import { useLevelsOfDifficulty } from '@assignables/components/LevelsOfDifficulty';
+import { useLevelsOfDifficulty } from "@assignables/components/LevelsOfDifficulty";
 import {
   PaginatedList,
   ActionButton,
@@ -9,14 +9,14 @@ import {
   Text,
   TextClamp,
   ContextContainer,
-} from '@bubbles-ui/components';
-import { EditIcon, SlashIcon } from '@bubbles-ui/icons/solid';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { EditIcon, SlashIcon } from "@bubbles-ui/icons/solid";
+import PropTypes from "prop-types";
 
-import { htmlToText } from '../../StudentInstance/helpers/htmlToText';
-import ResponseStatusIcon from '../ResponseDetail/ResponseStatusIcon';
+import { htmlToText } from "../../StudentInstance/helpers/htmlToText";
+import ResponseStatusIcon from "../ResponseDetail/ResponseStatusIcon";
 
-import { QUESTION_RESPONSE_STATUS } from '@tests/constants';
+import { QUESTION_RESPONSE_STATUS } from "@tests/constants";
 
 export default function QuestionResultsTable({
   isTeacher,
@@ -42,7 +42,7 @@ export default function QuestionResultsTable({
               onClick={() => onReviewQuestion(questionId)}
             />
           ) : (
-            points?.toFixed(2) || '-'
+            points?.toFixed(2) || "-"
           )}
         </Stack>
       );
@@ -54,7 +54,9 @@ export default function QuestionResultsTable({
     (questionId) => (
       <Stack justifyContent="center" fullWidth>
         {questionResponses?.[questionId]?.status ? (
-          <ResponseStatusIcon status={questionResponses?.[questionId]?.status} />
+          <ResponseStatusIcon
+            status={questionResponses?.[questionId]?.status}
+          />
         ) : (
           <SlashIcon height={10} width={10} />
         )}
@@ -66,28 +68,28 @@ export default function QuestionResultsTable({
   const headers = useMemo(
     () => [
       {
-        Header: t('questionResultsTable.question'),
-        accessor: 'question',
+        Header: t("questionResultsTable.question"),
+        accessor: "question",
       },
       {
-        Header: t('questionResultsTable.questionType'),
-        accessor: 'type',
+        Header: t("questionResultsTable.questionType"),
+        accessor: "type",
       },
       {
-        Header: t('questionResultsTable.category'),
-        accessor: 'category',
+        Header: t("questionResultsTable.category"),
+        accessor: "category",
       },
       {
-        Header: t('questionResultsTable.level'),
-        accessor: 'level',
+        Header: t("questionResultsTable.level"),
+        accessor: "level",
       },
       {
-        Header: t('questionResultsTable.result'),
-        accessor: 'result',
+        Header: t("questionResultsTable.result"),
+        accessor: "result",
       },
       {
-        Header: t('questionResultsTable.score'),
-        accessor: 'score',
+        Header: t("questionResultsTable.score"),
+        accessor: "score",
       },
     ],
     [t]
@@ -101,7 +103,7 @@ export default function QuestionResultsTable({
 
     return paginatedQuestions.map((question, i) => ({
       question: (
-        <Box sx={{ minWidth: '150px' }}>
+        <Box sx={{ minWidth: "150px" }}>
           <TextClamp lines={2} withToolTip>
             <Text>
               {startIndex + i + 1}. {htmlToText(question.stem.text)}
@@ -109,11 +111,17 @@ export default function QuestionResultsTable({
           </TextClamp>
         </Box>
       ),
-      type: <Box sx={{ minWidth: '130px' }}>{question.type}</Box>,
-      category: <Box sx={{ minWidth: '130px' }}>{question.category?.category || '-'}</Box>,
+      type: <Box sx={{ minWidth: "130px" }}>{question.type}</Box>,
+      category: (
+        <Box sx={{ minWidth: "130px" }}>
+          {question.category?.category || "-"}
+        </Box>
+      ),
       level: (
-        <Box sx={{ minWidth: '130px' }}>
-          {levels.find((level) => level.value === question.level)?.label || question.level || '-'}
+        <Box sx={{ minWidth: "130px" }}>
+          {levels.find((level) => level.value === question.level)?.label ||
+            question.level ||
+            "-"}
         </Box>
       ),
       result: getResultItem(question.id),

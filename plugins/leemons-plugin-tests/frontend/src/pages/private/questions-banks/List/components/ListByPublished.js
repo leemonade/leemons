@@ -1,15 +1,23 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { ActionButton, Box, Pager, Paper, Stack, Table } from '@bubbles-ui/components';
-import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
-import { useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { Link } from 'react-router-dom';
-import _ from 'lodash';
-import { listQuestionsBanksRequest } from '../../../../../request';
+import React from "react";
+import PropTypes from "prop-types";
+import {
+  ActionButton,
+  Box,
+  Pager,
+  Paper,
+  Stack,
+  Table,
+} from "@bubbles-ui/components";
+import { ExpandDiagonalIcon } from "@bubbles-ui/icons/outline";
+import { useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { Link } from "react-router-dom";
+import _ from "lodash";
+import { listQuestionsBanksRequest } from "../../../../../request";
 
 export default function ListByPublished({ t, published }) {
-  const [loadingError, setLoadingError, LoadingErrorAlert] = useRequestErrorMessage();
+  const [loadingError, setLoadingError, LoadingErrorAlert] =
+    useRequestErrorMessage();
 
   // ----------------------------------------------------------------------
   // SETTINGS
@@ -57,24 +65,24 @@ export default function ListByPublished({ t, published }) {
   const tableHeaders = React.useMemo(
     () => [
       {
-        Header: t('nameHeader'),
-        accessor: 'name',
-        className: 'text-left',
+        Header: t("nameHeader"),
+        accessor: "name",
+        className: "text-left",
       },
       {
-        Header: t('nQuestionsHeader'),
-        accessor: 'nQuestions',
-        className: 'text-right',
+        Header: t("nQuestionsHeader"),
+        accessor: "nQuestions",
+        className: "text-right",
       },
       {
-        Header: t('levelHeader'),
-        accessor: 'level',
-        className: 'text-right',
+        Header: t("levelHeader"),
+        accessor: "level",
+        className: "text-right",
       },
       {
-        Header: t('actionsHeader'),
-        accessor: 'actions',
-        className: 'text-right',
+        Header: t("actionsHeader"),
+        accessor: "actions",
+        className: "text-right",
       },
     ],
     [t]
@@ -86,11 +94,11 @@ export default function ListByPublished({ t, published }) {
         ? _.map(store.pagination.items, (item) => ({
             ...item,
             actions: (
-              <Box style={{ textAlign: 'right', width: '100%' }}>
+              <Box style={{ textAlign: "right", width: "100%" }}>
                 <ActionButton
                   as={Link}
                   to={`/private/tests/questions-banks/${item.id}`}
-                  tooltip={t('view')}
+                  tooltip={t("view")}
                   icon={<ExpandDiagonalIcon />}
                 />
               </Box>
@@ -117,8 +125,8 @@ export default function ListByPublished({ t, published }) {
               onChange={(val) => onPageChange(val - 1)}
               onSizeChange={onPageSizeChange}
               labels={{
-                show: t('show'),
-                goTo: t('goTo'),
+                show: t("show"),
+                goTo: t("goTo"),
               }}
             />
           </Stack>

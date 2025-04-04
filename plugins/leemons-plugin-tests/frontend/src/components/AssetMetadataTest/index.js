@@ -1,1 +1,1 @@
-export * from './AssetMetadataTest';
+export * from "./AssetMetadataTest";

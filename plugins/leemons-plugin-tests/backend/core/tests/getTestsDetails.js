@@ -1,15 +1,20 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { getQuestionsBanksDetails } = require('../questions-banks/getQuestionsBanksDetails');
+const {
+  getQuestionsBanksDetails,
+} = require("../questions-banks/getQuestionsBanksDetails");
 
 async function getTestsDetails({ id, withQuestionBank, ctx }) {
   const ids = _.isArray(id) ? id : [id];
 
-  const assignables = await ctx.tx.call('assignables.assignables.getAssignables', {
-    ids,
-    withFiles: true,
-  });
+  const assignables = await ctx.tx.call(
+    "assignables.assignables.getAssignables",
+    {
+      ids,
+      withFiles: true,
+    }
+  );
 
   const questionBankIds = [];
   let questionIds = [];
@@ -29,8 +34,8 @@ async function getTestsDetails({ id, withQuestionBank, ctx }) {
     getQuestionsBanksDetails({ id: questionBankIds, ctx }),
   ]);
 
-  const questionBankById = _.keyBy(questionBanks, 'id');
-  const questionsById = _.keyBy(questions, 'id');
+  const questionBankById = _.keyBy(questionBanks, "id");
+  const questionsById = _.keyBy(questions, "id");
 
   return _.map(assignables, (assignable) => ({
     id: assignable.id,

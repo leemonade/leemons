@@ -1,7 +1,7 @@
-const { findIndex, isNumber } = require('lodash');
+const { findIndex, isNumber } = require("lodash");
 
-const { QUESTION_RESPONSE_STATUS } = require('../../../../config/constants');
-const { getQuestionTotalPoints } = require('../getQuestionTotalPoints');
+const { QUESTION_RESPONSE_STATUS } = require("../../../../config/constants");
+const { getQuestionTotalPoints } = require("../getQuestionTotalPoints");
 
 function gradeMonoResponseQuestion({
   responseData,

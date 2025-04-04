@@ -1,6 +1,6 @@
-import { parse } from 'gift-pegjs';
+import { parse } from "gift-pegjs";
 
-import { QUESTION_TYPES } from '@tests/pages/private/questions-banks/questionConstants';
+import { QUESTION_TYPES } from "@tests/pages/private/questions-banks/questionConstants";
 
 function parseGiftToLeemonsQuestions(giftQuestions) {
   const parsed = parse(giftQuestions);
@@ -19,13 +19,17 @@ function parseGiftToLeemonsQuestions(giftQuestions) {
         isCorrect: choice.isCorrect,
         text: choice.text
           ? {
-              format: choice.text.format === 'moodle' ? 'html' : choice.text.format,
+              format:
+                choice.text.format === "moodle" ? "html" : choice.text.format,
               text: choice.text.text,
             }
           : undefined,
         feedback: choice.feedback
           ? {
-              format: choice.feedback.format === 'moodle' ? 'html' : choice.feedback.format,
+              format:
+                choice.feedback.format === "moodle"
+                  ? "html"
+                  : choice.feedback.format,
               text: choice.feedback.text,
             }
           : null,
@@ -40,15 +44,17 @@ function parseGiftToLeemonsQuestions(giftQuestions) {
 
       const globalFeedback = question.globalFeedback
         ? {
-            format: 'html',
+            format: "html",
             text: question.globalFeedback.text,
           }
         : null;
 
-      const hasAnswerFeedback = Boolean(choices?.every((choice) => choice.feedback !== null));
+      const hasAnswerFeedback = Boolean(
+        choices?.every((choice) => choice.feedback !== null)
+      );
 
       switch (type) {
-        case 'MC': {
+        case "MC": {
           const correctAnswers = choices?.filter((c) => c.isCorrect);
           question.type =
             correctAnswers?.length === 1
@@ -56,7 +62,7 @@ function parseGiftToLeemonsQuestions(giftQuestions) {
               : QUESTION_TYPES.MULTI_RESPONSE;
           break;
         }
-        case 'TF': {
+        case "TF": {
           question.type = QUESTION_TYPES.TRUE_FALSE;
           const { incorrectFeedback, correctFeedback, isTrue } = question;
           const trueFalseProperties = {
@@ -78,10 +84,10 @@ function parseGiftToLeemonsQuestions(giftQuestions) {
 
           break;
         }
-        case 'Short': {
+        case "Short": {
           question.type = QUESTION_TYPES.SHORT_RESPONSE;
           question.choices?.forEach((choice, i) => {
-            choice.text.format = 'plain';
+            choice.text.format = "plain";
             if (i === 0) {
               choice.isMainChoice = true;
             }
@@ -91,7 +97,7 @@ function parseGiftToLeemonsQuestions(giftQuestions) {
           });
           break;
         }
-        case 'Essay': {
+        case "Essay": {
           question.type = QUESTION_TYPES.OPEN_RESPONSE;
           question.openResponseProperties = {};
           break;
@@ -108,7 +114,7 @@ function parseGiftToLeemonsQuestions(giftQuestions) {
       return {
         ...question,
         stem: {
-          format: 'html',
+          format: "html",
           text: question.stem.text,
         },
         hasEmbeddedAnswers: !!question.hasEmbeddedAnswers,

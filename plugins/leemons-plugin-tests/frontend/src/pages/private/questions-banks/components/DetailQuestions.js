@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useState } from "react";
+import { useHistory } from "react-router-dom";
 
 import {
   Box,
@@ -9,17 +9,17 @@ import {
   ContextContainer,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
-} from '@bubbles-ui/components';
-import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { useSearchParams } from '@common/useSearchParams';
-import { isLRN } from '@leebrary/helpers/isLRN';
-import { ZoneWidgets } from '@widgets/ZoneWidgets';
-import { noop } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { ChevLeftIcon } from "@bubbles-ui/icons/outline";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import { useSearchParams } from "@common/useSearchParams";
+import { isLRN } from "@leebrary/helpers/isLRN";
+import { ZoneWidgets } from "@widgets/ZoneWidgets";
+import { noop } from "lodash";
+import PropTypes from "prop-types";
 
-import { DetailQuestionsList } from './DetailQuestionsList';
-import { GiftImporter } from './gift-import/GiftImporter';
+import { DetailQuestionsList } from "./DetailQuestionsList";
+import { GiftImporter } from "./gift-import/GiftImporter";
 
 export default function DetailQuestions({
   t,
@@ -39,8 +39,8 @@ export default function DetailQuestions({
   const history = useHistory();
 
   const formValues = form.watch();
-  const categories = form.watch('categories');
-  const questions = form.watch('questions');
+  const categories = form.watch("categories");
+  const questions = form.watch("questions");
 
   // FUNCTIONS ························································|
 
@@ -53,18 +53,18 @@ export default function DetailQuestions({
       return { value: category.value, order: index };
     });
 
-    const processedQuestions = form.getValues('questions').map((question) => {
+    const processedQuestions = form.getValues("questions").map((question) => {
       if (!question.category) return question;
       return { ...question, category: categoriesOrderMap[question.category] };
     });
 
-    form.setValue('categories', processedCategories);
-    form.setValue('questions', processedQuestions);
+    form.setValue("categories", processedCategories);
+    form.setValue("questions", processedQuestions);
   };
 
   const onNewQuestion = () => {
-    searchParams.delete('questionIndex');
-    searchParams.set('createFrom', 'new');
+    searchParams.delete("questionIndex");
+    searchParams.set("createFrom", "new");
     history.push(`${window.location.pathname}?${searchParams.toString()}`);
   };
 
@@ -78,7 +78,12 @@ export default function DetailQuestions({
   }
 
   const widgets = ({ Component, key, properties }) => (
-    <Component {...properties} key={key} form={form} onAddQuestions={onAddQuestions} />
+    <Component
+      {...properties}
+      key={key}
+      form={form}
+      onAddQuestions={onAddQuestions}
+    />
   );
 
   return (
@@ -94,7 +99,7 @@ export default function DetailQuestions({
               leftIcon={<ChevLeftIcon height={20} width={20} />}
               onClick={onPrev}
             >
-              {t('previous')}
+              {t("previous")}
             </Button>
           }
           rightZone={
@@ -104,17 +109,17 @@ export default function DetailQuestions({
                   variant="link"
                   onClick={() => onSaveQBank(onSaveDraft)}
                   disabled={savingAs}
-                  loading={savingAs === 'draft'}
+                  loading={savingAs === "draft"}
                 >
-                  {t('saveDraft')}
+                  {t("saveDraft")}
                 </Button>
               ) : null}
               <Button
                 onClick={() => onSaveQBank(onPublish)}
                 disabled={savingAs || !questions?.length}
-                loading={savingAs === 'published'}
+                loading={savingAs === "published"}
               >
-                {t('publish')}
+                {t("publish")}
               </Button>
             </>
           }
@@ -122,17 +127,23 @@ export default function DetailQuestions({
       }
     >
       <Box>
-        <ContextContainer title={t('questionList')}>
+        <ContextContainer title={t("questionList")}>
           <Stack justifyContent="space-between">
             <Box>
-              <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onNewQuestion}>
-                {t('addQuestion')}
+              <Button
+                variant="link"
+                leftIcon={<AddCircleIcon />}
+                onClick={onNewQuestion}
+              >
+                {t("addQuestion")}
               </Button>
             </Box>
             <Box>
               <Stack spacing={2}>
                 <GiftImporter onAddQuestions={onAddQuestions} />
-                <ZoneWidgets zone="tests.qbank.questions.create">{widgets}</ZoneWidgets>
+                <ZoneWidgets zone="tests.qbank.questions.create">
+                  {widgets}
+                </ZoneWidgets>
               </Stack>
             </Box>
           </Stack>

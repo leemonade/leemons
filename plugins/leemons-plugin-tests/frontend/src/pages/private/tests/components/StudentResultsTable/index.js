@@ -1,22 +1,29 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from "react";
 
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import { Box, Button, ContextContainer, Alert, Stack, Text } from '@bubbles-ui/components';
-import { cloneDeep } from 'lodash';
-import PropTypes from 'prop-types';
+import { useIsTeacher } from "@academic-portfolio/hooks";
+import {
+  Box,
+  Button,
+  ContextContainer,
+  Alert,
+  Stack,
+  Text,
+} from "@bubbles-ui/components";
+import { cloneDeep } from "lodash";
+import PropTypes from "prop-types";
 
-import TeacherReview from '../../StudentInstance/components/questions/OpenResponse/TeacherReview';
+import TeacherReview from "../../StudentInstance/components/questions/OpenResponse/TeacherReview";
 
-import QuestionResultsForTeacher from './QuestionResultsForTeacher';
-import QuestionResultsTable from './QuestionResultsTable';
+import QuestionResultsForTeacher from "./QuestionResultsForTeacher";
+import QuestionResultsTable from "./QuestionResultsTable";
 
-import ViewModeQuestions from '@tests/components/ViewModeQuestions';
-import { QUESTION_RESPONSE_STATUS } from '@tests/constants';
+import ViewModeQuestions from "@tests/components/ViewModeQuestions";
+import { QUESTION_RESPONSE_STATUS } from "@tests/constants";
 
 const VIEW_MODES = {
-  TABLE: 'table',
-  QUESTIONS_DETAIL: 'questions-detail',
-  REVIEW: 'review',
+  TABLE: "table",
+  QUESTIONS_DETAIL: "questions-detail",
+  REVIEW: "review",
 };
 
 export default function StudentResultsTable({
@@ -31,14 +38,18 @@ export default function StudentResultsTable({
   ...props
 }) {
   const [viewMode, setViewMode] = useState(VIEW_MODES.TABLE);
-  const [questionToReviewProperties, setQuestionToReviewProperties] = useState(null);
+  const [questionToReviewProperties, setQuestionToReviewProperties] =
+    useState(null);
   const isTeacher = useIsTeacher();
 
   const viewModeButtonLabel = useMemo(() => {
-    if (viewMode === VIEW_MODES.QUESTIONS_DETAIL || viewMode === VIEW_MODES.REVIEW) {
-      return t('returnToTable');
+    if (
+      viewMode === VIEW_MODES.QUESTIONS_DETAIL ||
+      viewMode === VIEW_MODES.REVIEW
+    ) {
+      return t("returnToTable");
     }
-    return t('showInTests');
+    return t("showInTests");
   }, [viewMode, t]);
 
   // HANDLERS ····································································································
@@ -56,7 +67,10 @@ export default function StudentResultsTable({
   );
 
   const handleViewModeChange = () => {
-    if (viewMode === VIEW_MODES.QUESTIONS_DETAIL || viewMode === VIEW_MODES.REVIEW) {
+    if (
+      viewMode === VIEW_MODES.QUESTIONS_DETAIL ||
+      viewMode === VIEW_MODES.REVIEW
+    ) {
       return setViewMode(VIEW_MODES.TABLE);
     }
     return setViewMode(VIEW_MODES.QUESTIONS_DETAIL);
@@ -89,12 +103,25 @@ export default function StudentResultsTable({
         cx={cx}
       />
     );
-  }, [isTeacher, questions, questionResponses, styles, t, levels, cx, handleOnReviewQuestion]);
+  }, [
+    isTeacher,
+    questions,
+    questionResponses,
+    styles,
+    t,
+    levels,
+    cx,
+    handleOnReviewQuestion,
+  ]);
 
   const renderContent = useCallback(
     ({ viewMode, questionToReviewProperties }) => {
       if (viewMode === VIEW_MODES.QUESTIONS_DETAIL) {
-        return <ViewModeQuestions store={{ ...props, questions, questionResponses }} />;
+        return (
+          <ViewModeQuestions
+            store={{ ...props, questions, questionResponses }}
+          />
+        );
       }
 
       if (viewMode === VIEW_MODES.REVIEW) {
@@ -118,7 +145,9 @@ export default function StudentResultsTable({
   const showNonGradedQuestionsAlert = useMemo(() => {
     return (
       questions.some(
-        (q) => questionResponses[q.id]?.status === QUESTION_RESPONSE_STATUS.NOT_GRADED
+        (q) =>
+          questionResponses[q.id]?.status ===
+          QUESTION_RESPONSE_STATUS.NOT_GRADED
       ) && isTeacher
     );
   }, [questions, questionResponses, isTeacher]);
@@ -127,16 +156,16 @@ export default function StudentResultsTable({
     <ContextContainer sx={{ ...containerStyles }} spacing={0}>
       {showNonGradedQuestionsAlert && (
         <Alert
-          title={t('questionResultsTable.nonGradedQuestionsAlert.title')}
+          title={t("questionResultsTable.nonGradedQuestionsAlert.title")}
           severity="warning"
           closeable={false}
         >
-          {t('questionResultsTable.nonGradedQuestionsAlert.description')}
+          {t("questionResultsTable.nonGradedQuestionsAlert.description")}
         </Alert>
       )}
       <Stack justifyContent="space-between" alignItems="center">
         <Text strong color="primary">
-          {t('questionList')}
+          {t("questionList")}
         </Text>
         <Button variant="link" onClick={handleViewModeChange}>
           {viewModeButtonLabel}

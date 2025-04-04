@@ -10,7 +10,7 @@
  * `ln ../../../../frontend/src/pages/private/tests/StudentInstance/helpers/getConfigByInstance.js`
  */
 
-const { isBoolean } = require('lodash');
+const { isBoolean } = require("lodash");
 
 function getConfigByInstance(instance) {
   const filters = instance?.metadata?.filters;
@@ -21,11 +21,13 @@ function getConfigByInstance(instance) {
     clues: filters?.clues
       ? filters?.clues
       : [
-          { type: 'hide-response', value: 0, canUse: true },
-          { type: 'note', value: 0, canUse: true },
+          { type: "hide-response", value: 0, canUse: true },
+          { type: "note", value: 0, canUse: true },
         ],
     wrong: filters?.wrong ? Number(filters.wrong) : 0,
-    canOmitQuestions: isBoolean(filters?.canOmitQuestions) ? filters?.canOmitQuestions : true,
+    canOmitQuestions: isBoolean(filters?.canOmitQuestions)
+      ? filters?.canOmitQuestions
+      : true,
     questionFilters,
   };
 }

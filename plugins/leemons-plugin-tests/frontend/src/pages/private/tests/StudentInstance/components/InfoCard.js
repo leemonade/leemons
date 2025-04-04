@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box } from '@bubbles-ui/components';
-import { isNil } from 'lodash';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box } from "@bubbles-ui/components";
+import { isNil } from "lodash";
 
 export default function InfoCard(props) {
   const { styles, number, label, icon, cx, reverse, withRedColor } = props;
@@ -27,16 +27,22 @@ export default function InfoCard(props) {
       {icon ? (
         <Box
           style={{
-            width: '49px',
-            height: ' 49px',
+            width: "49px",
+            height: " 49px",
             backgroundImage: `url(${icon})`,
-            backgroundSize: 'cover',
+            backgroundSize: "cover",
             paddingBlock: 24,
           }}
         />
       ) : null}
-      {!isNil(number) ? <Box className={styles.resumeNumber}>{number}</Box> : null}
-      <Box className={labelClass} style={{}} dangerouslySetInnerHTML={{ __html: label }} />
+      {!isNil(number) ? (
+        <Box className={styles.resumeNumber}>{number}</Box>
+      ) : null}
+      <Box
+        className={labelClass}
+        style={{}}
+        dangerouslySetInnerHTML={{ __html: label }}
+      />
     </Box>
   );
 }

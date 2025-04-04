@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   Box,
   Checkbox,
@@ -8,18 +8,18 @@ import {
   MultiSelect,
   NumberInput,
   Paragraph,
-} from '@bubbles-ui/components';
-import { Controller } from 'react-hook-form';
-import { forIn, map } from 'lodash';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@tests/helpers/prefixPN';
-import { TagsAutocomplete } from '@common';
-import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
-import { questionTypeT } from '../../questions-banks/components/QuestionForm';
+} from "@bubbles-ui/components";
+import { Controller } from "react-hook-form";
+import { forIn, map } from "lodash";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@tests/helpers/prefixPN";
+import { TagsAutocomplete } from "@common";
+import useLevelsOfDifficulty from "@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty";
+import { questionTypeT } from "../../questions-banks/components/QuestionForm";
 
 export default function DetailQuestionsFilters({ t, form, questionBank }) {
-  const [t2] = useTranslateLoader(prefixPN('questionsBanksDetail'));
-  const useAllQuestions = form.watch('useAllQuestions');
+  const [t2] = useTranslateLoader(prefixPN("questionsBanksDetail"));
+  const useAllQuestions = form.watch("useAllQuestions");
   const levels = useLevelsOfDifficulty();
 
   const questionTypes = [];
@@ -41,8 +41,8 @@ export default function DetailQuestionsFilters({ t, form, questionBank }) {
           shouldUnregister
           render={({ field }) => (
             <MultiSelect
-              placeholder={t('all')}
-              label={t('typeLabel')}
+              placeholder={t("all")}
+              label={t("typeLabel")}
               data={questionTypes}
               {...field}
             />
@@ -60,8 +60,8 @@ export default function DetailQuestionsFilters({ t, form, questionBank }) {
             shouldUnregister
             render={({ field }) => (
               <MultiSelect
-                placeholder={t('all')}
-                label={t('categoriesLabel')}
+                placeholder={t("all")}
+                label={t("categoriesLabel")}
                 data={categoriesData}
                 {...field}
               />
@@ -78,7 +78,12 @@ export default function DetailQuestionsFilters({ t, form, questionBank }) {
           name="level"
           shouldUnregister
           render={({ field }) => (
-            <MultiSelect placeholder={t('all')} label={t('levelLabel')} data={levels} {...field} />
+            <MultiSelect
+              placeholder={t("all")}
+              label={t("levelLabel")}
+              data={levels}
+              {...field}
+            />
           )}
         />
       </Box>,
@@ -90,8 +95,8 @@ export default function DetailQuestionsFilters({ t, form, questionBank }) {
           render={({ field }) => (
             <TagsAutocomplete
               pluginName="tests"
-              label={t('selectByTag')}
-              labels={{ addButton: t('addTag') }}
+              label={t("selectByTag")}
+              labels={{ addButton: t("addTag") }}
               {...field}
             />
           )}
@@ -106,8 +111,8 @@ export default function DetailQuestionsFilters({ t, form, questionBank }) {
     <ContextContainer divided>
       <ContextContainer>
         <Box>
-          <Paragraph>{t('questionFiltersDescription1')}</Paragraph>
-          <Paragraph>{t('questionFiltersDescription2')}</Paragraph>
+          <Paragraph>{t("questionFiltersDescription1")}</Paragraph>
+          <Paragraph>{t("questionFiltersDescription2")}</Paragraph>
         </Box>
 
         <Box>
@@ -115,23 +120,27 @@ export default function DetailQuestionsFilters({ t, form, questionBank }) {
             control={form.control}
             name="useAllQuestions"
             render={({ field }) => (
-              <Checkbox {...field} label={t('useAllQuestions')} checked={field.value} />
+              <Checkbox
+                {...field}
+                label={t("useAllQuestions")}
+                checked={field.value}
+              />
             )}
           />
         </Box>
 
         <Box>
           {!useAllQuestions ? (
-            <InputWrapper label={t('numberOfQuestions')}>
+            <InputWrapper label={t("numberOfQuestions")}>
               <Controller
                 control={form.control}
                 name="nQuestions"
                 shouldUnregister
                 rules={{
-                  required: t('nQuestionsRequired'),
+                  required: t("nQuestionsRequired"),
                   min: {
                     value: 1,
-                    message: t('minOneQuestion'),
+                    message: t("minOneQuestion"),
                   },
                 }}
                 render={({ field }) => (

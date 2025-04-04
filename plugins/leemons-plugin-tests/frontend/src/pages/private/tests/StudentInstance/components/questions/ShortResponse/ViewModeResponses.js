@@ -1,26 +1,31 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import ResponseDetail from '@tests/pages/private/tests/components/ResponseDetail';
+import ResponseDetail from "@tests/pages/private/tests/components/ResponseDetail";
 
 function ViewModeResponses(props) {
   const { question, store, t } = props;
 
-  const userAnswer = store?.questionResponses?.[question.id]?.properties?.response;
-  const userAnswerIsCorrect = store?.questionResponses[question.id]?.status === 'ok';
+  const userAnswer =
+    store?.questionResponses?.[question.id]?.properties?.response;
+  const userAnswerIsCorrect =
+    store?.questionResponses[question.id]?.status === "ok";
   const userSkippedQuestion = !store?.questionResponses[question.id]?.status;
 
-  const solutionLabel = question.choices.find((choice) => choice.isMainChoice).text.text;
+  const solutionLabel = question.choices.find((choice) => choice.isMainChoice)
+    .text.text;
 
   const responses = [
     {
-      choice: userAnswer || '-',
+      choice: userAnswer || "-",
       isUserAnswer: true,
       isCorrect: userAnswerIsCorrect,
     },
   ];
 
   const feedback = question.globalFeedback?.text || null;
-  const stemResourceIsImage = (question?.stemResource?.file?.type || '').startsWith('image');
+  const stemResourceIsImage = (
+    question?.stemResource?.file?.type || ""
+  ).startsWith("image");
 
   return (
     <ResponseDetail

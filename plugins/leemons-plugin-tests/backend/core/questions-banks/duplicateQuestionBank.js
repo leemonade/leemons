@@ -1,8 +1,10 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
-const { getQuestionsBanksDetails } = require('./getQuestionsBanksDetails');
-const { saveQuestionsBanks } = require('./saveQuestionsBanks');
-const { prepareQuestionForDuplication } = require('../questions/duplicateQuestion');
+const { getQuestionsBanksDetails } = require("./getQuestionsBanksDetails");
+const { saveQuestionsBanks } = require("./saveQuestionsBanks");
+const {
+  prepareQuestionForDuplication,
+} = require("../questions/duplicateQuestion");
 
 /**
  * Duplicates a question bank
@@ -16,12 +18,16 @@ const { prepareQuestionForDuplication } = require('../questions/duplicateQuestio
 async function duplicateQuestionBank({ id, ignoreSubjects, ctx }) {
   const qBanks = await getQuestionsBanksDetails({ id, getAssets: true, ctx });
   if (!qBanks.length) {
-    throw new LeemonsError(ctx, { message: 'Question bank not found' });
+    throw new LeemonsError(ctx, { message: "Question bank not found" });
   }
 
   const [qBank] = qBanks;
-  const subjects = ignoreSubjects ? [] : qBank.subjects?.map((subject) => subject.id);
-  const categories = qBank.categories.map((category) => ({ value: category.value }));
+  const subjects = ignoreSubjects
+    ? []
+    : qBank.subjects?.map((subject) => subject.id);
+  const categories = qBank.categories.map((category) => ({
+    value: category.value,
+  }));
 
   const transformed = {
     name: `${qBank.name} (1)`,

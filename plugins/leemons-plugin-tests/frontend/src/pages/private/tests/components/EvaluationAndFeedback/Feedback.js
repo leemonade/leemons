@@ -1,17 +1,36 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import useAssignationComunicaRoom from '@assignables/hooks/useAssignationComunicaRoom';
-import { Box, Button, Stack, Switch, ContextContainer, HtmlText } from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
-import { PluginComunicaIcon, SendMessageIcon } from '@bubbles-ui/icons/outline';
-import { useComunica } from '@comunica/context';
-import { useLayout } from '@layout/context';
-import PropTypes from 'prop-types';
+import useAssignationComunicaRoom from "@assignables/hooks/useAssignationComunicaRoom";
+import {
+  Box,
+  Button,
+  Stack,
+  Switch,
+  ContextContainer,
+  HtmlText,
+} from "@bubbles-ui/components";
+import { TextEditorInput } from "@bubbles-ui/editors";
+import { PluginComunicaIcon, SendMessageIcon } from "@bubbles-ui/icons/outline";
+import { useComunica } from "@comunica/context";
+import { useLayout } from "@layout/context";
+import PropTypes from "prop-types";
 
-export default function Feedback({ isTeacher, onSaveFeedback, assignation, instance, t }) {
-  const [feedback, setFeedback] = useState(assignation.grades?.[0]?.feedback ?? null);
-  const [showFeedback, setShowFeedback] = useState(!!assignation.grades?.[0]?.feedback);
-  const [tempShowFeedback, setTempShowFeedback] = useState(!!assignation.grades?.[0]?.feedback);
+export default function Feedback({
+  isTeacher,
+  onSaveFeedback,
+  assignation,
+  instance,
+  t,
+}) {
+  const [feedback, setFeedback] = useState(
+    assignation.grades?.[0]?.feedback ?? null
+  );
+  const [showFeedback, setShowFeedback] = useState(
+    !!assignation.grades?.[0]?.feedback
+  );
+  const [tempShowFeedback, setTempShowFeedback] = useState(
+    !!assignation.grades?.[0]?.feedback
+  );
   const { openDeleteConfirmationModal } = useLayout();
 
   const room = useAssignationComunicaRoom({
@@ -59,7 +78,7 @@ export default function Feedback({ isTeacher, onSaveFeedback, assignation, insta
     return (
       <ContextContainer>
         <Switch
-          label={t('feedbackForStudent')}
+          label={t("feedbackForStudent")}
           onChange={handleSwitchChange}
           checked={tempShowFeedback}
         />
@@ -68,7 +87,7 @@ export default function Feedback({ isTeacher, onSaveFeedback, assignation, insta
             <Box sx={(theme) => ({ paddingLeft: theme.spacing[10] })}>
               <TextEditorInput
                 value={feedback}
-                editorStyles={{ minHeight: '96px' }}
+                editorStyles={{ minHeight: "96px" }}
                 onChange={(e) => {
                   setFeedback(e);
                 }}
@@ -77,10 +96,12 @@ export default function Feedback({ isTeacher, onSaveFeedback, assignation, insta
             <Stack justifyContent="end" spacing={2}>
               <Button
                 leftIcon={<SendMessageIcon />}
-                onClick={() => setTimeout(() => onSaveFeedback({ feedback }), 100)}
+                onClick={() =>
+                  setTimeout(() => onSaveFeedback({ feedback }), 100)
+                }
                 disabled={!feedback}
               >
-                {t('saveAndSendFeedback')}
+                {t("saveAndSendFeedback")}
               </Button>
             </Stack>
           </>
@@ -90,19 +111,29 @@ export default function Feedback({ isTeacher, onSaveFeedback, assignation, insta
   }
 
   return (
-    <Stack fullWidth direction="column" spacing={4} alignItems="start" sx={{ padding: 8 }}>
+    <Stack
+      fullWidth
+      direction="column"
+      spacing={4}
+      alignItems="start"
+      sx={{ padding: 8 }}
+    >
       <Box
         noFlex
         sx={{
           maxHeight: 80,
-          overflowY: 'auto',
+          overflowY: "auto",
         }}
       >
         <HtmlText>{feedback}</HtmlText>
       </Box>
       {room && (
-        <Button variant="link" leftIcon={<PluginComunicaIcon />} onClick={onChatClick}>
-          {isTeacher ? t('contactStudent') : t('contactTeacher')}
+        <Button
+          variant="link"
+          leftIcon={<PluginComunicaIcon />}
+          onClick={onChatClick}
+        >
+          {isTeacher ? t("contactStudent") : t("contactTeacher")}
         </Button>
       )}
     </Stack>

@@ -1,45 +1,46 @@
-import { createStyles, Box } from '@bubbles-ui/components';
-import { camelCase } from 'lodash';
-import PropTypes from 'prop-types';
+import { createStyles, Box } from "@bubbles-ui/components";
+import { camelCase } from "lodash";
+import PropTypes from "prop-types";
 
-import ResponseStatusIcon from './ResponseStatusIcon';
+import ResponseStatusIcon from "./ResponseStatusIcon";
 
-import { QUESTION_RESPONSE_STATUS } from '@tests/constants';
+import { QUESTION_RESPONSE_STATUS } from "@tests/constants";
 
 const useAnswerFeedStyles = createStyles((theme, { status }) => {
   const questionStatusColors = {
-    [QUESTION_RESPONSE_STATUS.OK]: theme.other.core.color.success['100'],
-    [QUESTION_RESPONSE_STATUS.KO]: theme.other.core.color.danger['100'],
-    [QUESTION_RESPONSE_STATUS.PARTIAL]: theme.other.core.color.attention['100'],
-    [QUESTION_RESPONSE_STATUS.NOT_GRADED]: theme.other.core.color.attention['100'],
-    'not-answered': theme.other.core.color.danger['100'],
+    [QUESTION_RESPONSE_STATUS.OK]: theme.other.core.color.success["100"],
+    [QUESTION_RESPONSE_STATUS.KO]: theme.other.core.color.danger["100"],
+    [QUESTION_RESPONSE_STATUS.PARTIAL]: theme.other.core.color.attention["100"],
+    [QUESTION_RESPONSE_STATUS.NOT_GRADED]:
+      theme.other.core.color.attention["100"],
+    "not-answered": theme.other.core.color.danger["100"],
   };
 
   return {
     wrapper: {
-      backgroundColor: questionStatusColors[status ?? 'not-answered'],
-      display: 'flex',
+      backgroundColor: questionStatusColors[status ?? "not-answered"],
+      display: "flex",
       flex: 1,
-      alignItems: 'center',
+      alignItems: "center",
       minHeight: 48,
       paddingInline: 16,
     },
     variant: {
-      alignItems: 'center',
-      flex: '1 1 100%',
-      display: 'flex',
+      alignItems: "center",
+      flex: "1 1 100%",
+      display: "flex",
       gap: 8,
     },
     content: {
       ...theme.other.global.content.typo.body.sm,
       color: theme.other.global.content.color.text.default,
       lineHeight: 1,
-      display: 'block',
+      display: "block",
       paddingTop: 2,
     },
     contentIcon: {
-      display: 'flex',
-      alignItems: 'center',
+      display: "flex",
+      alignItems: "center",
     },
   };
 });
@@ -54,7 +55,7 @@ function AnswerFeed({ questionStatus, t }) {
           <ResponseStatusIcon status={questionStatus} />
         </Box>
         <Box className={classes.content}>
-          {t(`questionStatus.${camelCase(questionStatus ?? 'not-answered')}`)}
+          {t(`questionStatus.${camelCase(questionStatus ?? "not-answered")}`)}
         </Box>
       </Box>
     </Box>

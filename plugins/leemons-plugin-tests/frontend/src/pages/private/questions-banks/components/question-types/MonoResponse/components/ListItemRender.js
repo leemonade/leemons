@@ -1,11 +1,18 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Text, Radio, Stack, ImageLoader, useTheme } from '@bubbles-ui/components';
-import { ViewOffIcon } from '@bubbles-ui/icons/solid';
-import { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import { omit } from 'lodash';
+import React from "react";
+import PropTypes from "prop-types";
+import {
+  Box,
+  Text,
+  Radio,
+  Stack,
+  ImageLoader,
+  useTheme,
+} from "@bubbles-ui/components";
+import { ViewOffIcon } from "@bubbles-ui/icons/solid";
+import { getFileUrl } from "@leebrary/helpers/prepareAsset";
+import { omit } from "lodash";
 
-const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 // eslint-disable-next-line import/prefer-default-export
 export function ListItemRender({
@@ -28,9 +35,20 @@ export function ListItemRender({
           {LETTERS[index]}
         </Text>
       </Box>
-      <Box noFlex sx={() => ({ width: 50, minHeight: 48, textAlign: 'center', marginTop: -4 })}>
+      <Box
+        noFlex
+        sx={() => ({
+          width: 50,
+          minHeight: 48,
+          textAlign: "center",
+          marginTop: -4,
+        })}
+      >
         {!item.hideOnHelp ? (
-          <Radio checked={item.isCorrect} onChange={() => changeCorrectResponse(item)} />
+          <Radio
+            checked={item.isCorrect}
+            onChange={() => changeCorrectResponse(item)}
+          />
         ) : null}
 
         {showEye && item.hideOnHelp ? (

@@ -1,10 +1,10 @@
-import { Box } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+import { Box } from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
-import QuestionTitleComponent from '../../QuestionTitleComponent';
+import QuestionTitleComponent from "../../QuestionTitleComponent";
 
-import AnswerMode from './AnswerMode';
-import ViewModeResponses from './ViewModeResponses';
+import AnswerMode from "./AnswerMode";
+import ViewModeResponses from "./ViewModeResponses";
 
 export default function Index(props) {
   const { styles, store, question } = props;
@@ -24,7 +24,11 @@ export default function Index(props) {
         questionsInfo={store.questionsInfo}
       />
 
-      {store.viewMode ? <ViewModeResponses {...props} /> : <AnswerMode {...props} />}
+      {store.viewMode ? (
+        <ViewModeResponses {...props} />
+      ) : (
+        <AnswerMode {...props} />
+      )}
     </Box>
   );
 }

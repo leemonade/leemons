@@ -1,33 +1,36 @@
 /* eslint-disable camelcase */
-import { useEffect, useCallback, useMemo, useRef, useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { useHistory, useParams } from 'react-router-dom';
+import { useEffect, useCallback, useMemo, useRef, useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { useHistory, useParams } from "react-router-dom";
 
 import {
   LoadingOverlay,
   TotalLayoutContainer,
   TotalLayoutHeader,
   VerticalStepperContainer,
-} from '@bubbles-ui/components';
-import { useSearchParams } from '@common/useSearchParams';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { omit } from 'lodash';
+} from "@bubbles-ui/components";
+import { useSearchParams } from "@common/useSearchParams";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { omit } from "lodash";
 
-import { getQuestionBankRequest, saveQuestionBankRequest } from '../../../request';
+import {
+  getQuestionBankRequest,
+  saveQuestionBankRequest,
+} from "../../../request";
 
-import DetailBasic from './components/DetailBasic';
-import { DetailQuestionsRouter } from './components/DetailQuestionsRouter';
+import DetailBasic from "./components/DetailBasic";
+import { DetailQuestionsRouter } from "./components/DetailQuestionsRouter";
 
-import { QuestionBankIcon } from '@tests/components/Icons/QuestionBankIcon';
-import prefixPN from '@tests/helpers/prefixPN';
+import { QuestionBankIcon } from "@tests/components/Icons/QuestionBankIcon";
+import prefixPN from "@tests/helpers/prefixPN";
 
 export default function Detail() {
-  const [t] = useTranslateLoader(prefixPN('questionsBanksDetail'));
+  const [t] = useTranslateLoader(prefixPN("questionsBanksDetail"));
   const [isLoading, setIsLoading] = useState(false);
   const searchParams = useSearchParams();
-  const currentStep = parseInt(searchParams.get('step') ?? 0);
+  const currentStep = parseInt(searchParams.get("step") ?? 0);
   const [savingAs, setSavingAs] = useState(null);
 
   const { layoutState, setLayoutState } = useLayout();
@@ -38,13 +41,13 @@ export default function Detail() {
   const isNew = useMemo(() => !params.id, [params.id]);
 
   const form = useForm();
-  const qBankName = form.watch('name');
+  const qBankName = form.watch("name");
 
-  form.register('questions', {
-    required: t('questionRequired'),
+  form.register("questions", {
+    required: t("questionRequired"),
     validate: (value) => {
       if (value.length === 0) {
-        return t('questionRequired');
+        return t("questionRequired");
       }
       return undefined;
     },
@@ -61,22 +64,25 @@ export default function Detail() {
 
   const getRequestBody = (type) => {
     const formValues = form.getValues();
-    if (type === 'draft') {
+    if (type === "draft") {
       formValues.questions = formValues.questions ?? [];
     }
-    return omit(formValues, 'subjectsRaw');
+    return omit(formValues, "subjectsRaw");
   };
 
   async function saveAsDraft() {
-    setSavingAs('draft');
-    const body = getRequestBody('draft');
+    setSavingAs("draft");
+    const body = getRequestBody("draft");
     try {
-      const { questionBank } = await saveQuestionBankRequest({ ...body, published: false });
-      addSuccessAlert(t('savedAsDraft'));
+      const { questionBank } = await saveQuestionBankRequest({
+        ...body,
+        published: false,
+      });
+      addSuccessAlert(t("savedAsDraft"));
       if (isNew) {
         history.replace(`/private/tests/questions-banks/${questionBank.id}`);
       }
-      history.push('/private/tests/questions-banks');
+      history.push("/private/tests/questions-banks");
     } catch (error) {
       addErrorAlert(error);
     } finally {
@@ -85,15 +91,15 @@ export default function Detail() {
   }
 
   async function saveAsPublished() {
-    setSavingAs('published');
+    setSavingAs("published");
     const body = getRequestBody();
 
     try {
       await saveQuestionBankRequest({ ...body, published: true });
-      addSuccessAlert(t('published'));
-      history.push('/private/tests/questions-banks');
+      addSuccessAlert(t("published"));
+      history.push("/private/tests/questions-banks");
     } catch (error) {
-      addErrorAlert(t('errors.save'), error.message);
+      addErrorAlert(t("errors.save"), error.message);
     } finally {
       setSavingAs(null);
     }
@@ -101,7 +107,7 @@ export default function Detail() {
 
   const setCurrentStep = useCallback(
     (step) => {
-      searchParams.set('step', step);
+      searchParams.set("step", step);
       history.push(`${window.location.pathname}?${searchParams.toString()}`);
     },
     [searchParams, history]
@@ -112,7 +118,7 @@ export default function Detail() {
   useEffect(() => {
     setIsLoading(true);
 
-    if (params.id !== 'new') {
+    if (params.id !== "new") {
       getQuestionBankRequest(params.id)
         .then(
           ({
@@ -153,10 +159,10 @@ export default function Detail() {
       Header={
         <TotalLayoutHeader
           icon={<QuestionBankIcon width={23} height={23} />}
-          title={isNew ? t('pageTitleNew') : t('pageTitle')}
-          formTitlePlaceholder={qBankName || t('headerTitlePlaceholder')}
+          title={isNew ? t("pageTitleNew") : t("pageTitle")}
+          formTitlePlaceholder={qBankName || t("headerTitlePlaceholder")}
           onCancel={() => history.goBack()}
-          mainActionLabel={t('cancel')}
+          mainActionLabel={t("cancel")}
         />
       }
     >
@@ -165,8 +171,8 @@ export default function Detail() {
           scrollRef={scrollRef}
           currentStep={currentStep}
           data={[
-            { label: t('basic'), status: 'OK' },
-            { label: t('questions'), status: 'OK' },
+            { label: t("basic"), status: "OK" },
+            { label: t("questions"), status: "OK" },
           ]}
           onChangeActiveIndex={setCurrentStep}
         >
@@ -175,12 +181,17 @@ export default function Detail() {
               t={t}
               form={form}
               savingAs={savingAs}
-              stepName={t('basic')}
+              stepName={t("basic")}
               scrollRef={scrollRef}
               advancedConfig={{
                 alwaysOpen: true,
                 program: { show: true, required: false },
-                subjects: { show: true, required: true, showLevel: false, maxOne: true },
+                subjects: {
+                  show: true,
+                  required: true,
+                  showLevel: false,
+                  maxOne: true,
+                },
               }}
               onNext={() => setCurrentStep(1)}
               onSaveDraft={saveAsDraft}

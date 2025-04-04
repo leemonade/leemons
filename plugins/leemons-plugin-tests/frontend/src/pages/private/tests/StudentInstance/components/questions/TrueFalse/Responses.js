@@ -1,13 +1,15 @@
-import { Box, Stack } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PropTypes from 'prop-types';
+import { Box, Stack } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
 
-import useResponsesStyles from './Responses.styles';
+import useResponsesStyles from "./Responses.styles";
 
-import prefixPN from '@tests/helpers/prefixPN';
+import prefixPN from "@tests/helpers/prefixPN";
 
 function Responses(props) {
-  const [t] = useTranslateLoader(prefixPN('questionsBanksDetail.questionLabels.trueFalse'));
+  const [t] = useTranslateLoader(
+    prefixPN("questionsBanksDetail.questionLabels.trueFalse")
+  );
   const { classes } = useResponsesStyles();
   const { question, store, render } = props;
 
@@ -30,7 +32,8 @@ function Responses(props) {
         className={classes.button}
         sx={(theme) => ({
           border:
-            store.questionResponses?.[question.id]?.properties?.response === true
+            store.questionResponses?.[question.id]?.properties?.response ===
+            true
               ? `2px solid ${theme.other.global.content.color.tertiary.default}`
               : `1px solid${theme.other.global.border.color.line.subtle}`,
         })}
@@ -38,14 +41,15 @@ function Responses(props) {
           if (!store.viewMode) markResponse(true);
         }}
       >
-        <Box>{t('true')}</Box>
+        <Box>{t("true")}</Box>
       </Box>
 
       <Box
         className={classes.button}
         sx={(theme) => ({
           border:
-            store.questionResponses?.[question.id]?.properties?.response === false
+            store.questionResponses?.[question.id]?.properties?.response ===
+            false
               ? `2px solid ${theme.other.global.content.color.tertiary.default}`
               : `1px solid${theme.other.global.border.color.line.subtle}`,
         })}
@@ -53,7 +57,7 @@ function Responses(props) {
           if (!store.viewMode) markResponse(false);
         }}
       >
-        <Box>{t('false')}</Box>
+        <Box>{t("false")}</Box>
       </Box>
     </Stack>
   );

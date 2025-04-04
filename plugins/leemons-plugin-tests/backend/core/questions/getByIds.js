@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { QUESTION_TYPES } = require('../../config/constants');
+const { QUESTION_TYPES } = require("../../config/constants");
 
 /**
  * Represents a formatted text shape.
@@ -84,7 +84,9 @@ const { QUESTION_TYPES } = require('../../config/constants');
  * @returns {Promise<Question[]>} - The retrieved questions.
  */
 async function getByIds({ id, options, ctx }) {
-  const questions = await ctx.tx.db.Questions.find({ id: _.isArray(id) ? id : [id] }).lean();
+  const questions = await ctx.tx.db.Questions.find({
+    id: _.isArray(id) ? id : [id],
+  }).lean();
   const assetIds = [];
 
   _.forEach(questions, (question) => {
@@ -108,24 +110,25 @@ async function getByIds({ id, options, ctx }) {
   });
 
   const [questionAssets, questionsTags] = await Promise.all([
-    ctx.tx.call('leebrary.assets.getByIds', {
+    ctx.tx.call("leebrary.assets.getByIds", {
       ids: assetIds,
       withFiles: true,
     }),
-    ctx.tx.call('common.tags.getValuesTags', {
-      type: 'tests.questions',
-      values: _.map(questions, 'id'),
+    ctx.tx.call("common.tags.getValuesTags", {
+      type: "tests.questions",
+      values: _.map(questions, "id"),
     }),
   ]);
 
-  const questionAssetsById = _.keyBy(questionAssets, 'id');
+  const questionAssetsById = _.keyBy(questionAssets, "id");
 
   _.forEach(questions, (question, i) => {
     question.tags = questionsTags[i];
     question.clues = question.clues || [];
 
     if (question.mapProperties?.image) {
-      question.mapProperties.image = questionAssetsById[question.mapProperties.image];
+      question.mapProperties.image =
+        questionAssetsById[question.mapProperties.image];
     }
     if (question.stemResource) {
       question.stemResource = questionAssetsById[question.stemResource];
@@ -141,9 +144,11 @@ async function getByIds({ id, options, ctx }) {
   });
 
   if (options?.categories) {
-    const categoryIds = _.map(questions, 'category');
-    const categories = await ctx.tx.db.QuestionBankCategories.find({ id: categoryIds }).lean();
-    const categoriesById = _.keyBy(categories, 'id');
+    const categoryIds = _.map(questions, "category");
+    const categories = await ctx.tx.db.QuestionBankCategories.find({
+      id: categoryIds,
+    }).lean();
+    const categoriesById = _.keyBy(categories, "id");
     _.forEach(questions, (question) => {
       question.category = categoriesById[question.category];
     });

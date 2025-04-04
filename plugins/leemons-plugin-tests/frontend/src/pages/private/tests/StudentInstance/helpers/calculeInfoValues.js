@@ -1,6 +1,12 @@
-import { getConfigByInstance } from './getConfigByInstance';
+import { getConfigByInstance } from "./getConfigByInstance";
 
-export function calculeInfoValues(nQuestions, maxPoints, minPoints, minPointsToApprove, instance) {
+export function calculeInfoValues(
+  nQuestions,
+  maxPoints,
+  minPoints,
+  minPointsToApprove,
+  instance
+) {
   const config = getConfigByInstance(instance);
   const perQuestion = (maxPoints - minPoints) / nQuestions;
   const perErrorQuestion = perQuestion * (config.wrong / 100);

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 
 import {
   Text,
@@ -8,17 +8,17 @@ import {
   Button,
   FileUpload,
   ContextContainer,
-} from '@bubbles-ui/components';
-import { DownloadIcon } from '@bubbles-ui/icons/outline';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { DownloadIcon } from "@bubbles-ui/icons/outline";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
 
-import { QuestionsTablePicker } from '@tests/components/QuestionsTablePicker';
-import { parseGiftToLeemonsQuestions } from '@tests/helpers/parseGiftToLeemonsQuestions';
-import prefixPN from '@tests/helpers/prefixPN';
+import { QuestionsTablePicker } from "@tests/components/QuestionsTablePicker";
+import { parseGiftToLeemonsQuestions } from "@tests/helpers/parseGiftToLeemonsQuestions";
+import prefixPN from "@tests/helpers/prefixPN";
 
 function GiftImporterDrawer({ isOpen, onClose, onAddQuestions }) {
-  const [t] = useTranslateLoader(prefixPN('questionsBanksDetail'));
+  const [t] = useTranslateLoader(prefixPN("questionsBanksDetail"));
   const [questions, setQuestions] = useState([]);
   const [processed, setProcessed] = useState(false);
   const [processing, setProcessing] = useState(false);
@@ -39,7 +39,7 @@ function GiftImporterDrawer({ isOpen, onClose, onAddQuestions }) {
         };
 
         reader.onerror = (event) => {
-          reject(new Error('Error reading file'));
+          reject(new Error("Error reading file"));
         };
 
         reader.readAsText(file);
@@ -48,8 +48,8 @@ function GiftImporterDrawer({ isOpen, onClose, onAddQuestions }) {
       const parsed = parseGiftToLeemonsQuestions(fileContent);
       setQuestions(parsed);
     } catch (err) {
-      console.error('Error processing file:', err);
-      setError(err.message || 'Error processing file');
+      console.error("Error processing file:", err);
+      setError(err.message || "Error processing file");
     } finally {
       setProcessed(true);
       setProcessing(false);
@@ -79,34 +79,45 @@ function GiftImporterDrawer({ isOpen, onClose, onAddQuestions }) {
 
   return (
     <Drawer size="xl" opened={isOpen} onClose={onClose}>
-      <Drawer.Header title={t('questions')} />
+      <Drawer.Header title={t("questions")} />
       <Drawer.Content loading={processing}>
-        <ContextContainer title={t('giftImport.importFile')}>
+        <ContextContainer title={t("giftImport.importFile")}>
           {isInvalidFile && (
-            <Alert title={t('giftImport.invalidFileTitle')} severity="error" closeable={false}>
-              {t('giftImport.invalidFileDescription')}
+            <Alert
+              title={t("giftImport.invalidFileTitle")}
+              severity="error"
+              closeable={false}
+            >
+              {t("giftImport.invalidFileDescription")}
             </Alert>
           )}
           {!hasQuestions && (
             <FileUpload
               icon={<DownloadIcon height={32} width={32} />}
-              title={t('giftImport.fileUploadTitle')}
-              subtitle={t('giftImport.fileUploadSubtitle')}
+              title={t("giftImport.fileUploadTitle")}
+              subtitle={t("giftImport.fileUploadSubtitle")}
               hideUploadButton
               single
-              accept={['text/plain']}
+              accept={["text/plain"]}
               onChange={handleFileChange}
             />
           )}
           {hasQuestions && (
             <Stack direction="column" spacing={4}>
-              <Alert title={questions.length} severity="warning" closeable={false}>
-                {t('giftImport.questionsProcessed')}
+              <Alert
+                title={questions.length}
+                severity="warning"
+                closeable={false}
+              >
+                {t("giftImport.questionsProcessed")}
               </Alert>
 
-              <Text>{t('giftImport.selectQuestions')}</Text>
+              <Text>{t("giftImport.selectQuestions")}</Text>
 
-              <QuestionsTablePicker questions={questions} onSelectQuestions={onSelectQuestions} />
+              <QuestionsTablePicker
+                questions={questions}
+                onSelectQuestions={onSelectQuestions}
+              />
             </Stack>
           )}
         </ContextContainer>
@@ -114,13 +125,16 @@ function GiftImporterDrawer({ isOpen, onClose, onAddQuestions }) {
       <Drawer.Footer>
         <Drawer.Footer.LeftActions>
           <Button variant="link" onClick={onClose}>
-            {t('cancel')}
+            {t("cancel")}
           </Button>
         </Drawer.Footer.LeftActions>
         <Drawer.Footer.RightActions>
           {hasQuestions && (
-            <Button onClick={handleAddQuestions} disabled={!selectedQuestions.length}>
-              {t('add')} ({selectedQuestions.length})
+            <Button
+              onClick={handleAddQuestions}
+              disabled={!selectedQuestions.length}
+            >
+              {t("add")} ({selectedQuestions.length})
             </Button>
           )}
         </Drawer.Footer.RightActions>

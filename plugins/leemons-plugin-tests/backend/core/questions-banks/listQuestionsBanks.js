@@ -1,5 +1,5 @@
-const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
-const _ = require('lodash');
+const { mongoDBPaginate } = require("@leemons/mongodb-helpers");
+const _ = require("lodash");
 
 async function listQuestionsBanks({
   page,
@@ -11,13 +11,13 @@ async function listQuestionsBanks({
   query = {},
   ctx,
 }) {
-  const versions = await ctx.tx.call('common.versionControl.list', {
-    type: 'question-bank',
+  const versions = await ctx.tx.call("common.versionControl.list", {
+    type: "question-bank",
     published,
   });
   const allQBsIds = await Promise.all(
     _.map(versions, (version) =>
-      ctx.tx.call('common.versionControl.stringifyId', {
+      ctx.tx.call("common.versionControl.stringifyId", {
         id: version.uuid,
         version: version.current,
         verifyVersion: false,
@@ -31,14 +31,19 @@ async function listQuestionsBanks({
       subject: subjects,
       questionBank: ids,
     }).lean();
-    ids = _.uniq(_.map(questionBankSubjects, 'questionBank'));
+    ids = _.uniq(_.map(questionBankSubjects, "questionBank"));
   }
   const finalQuery = {
     ...query,
     ...(includeAgnosticsQB
       ? {
           id: allQBsIds,
-          $or: [{ id: ids }, { program: { $exists: false } }, { program: null }, { program: '' }],
+          $or: [
+            { id: ids },
+            { program: { $exists: false } },
+            { program: null },
+            { program: "" },
+          ],
         }
       : { id: ids }),
   };
@@ -49,21 +54,24 @@ async function listQuestionsBanks({
     query: finalQuery,
   });
 
-  const qbanksIds = _.map(paginatedResults.items, 'id');
-  const qbanksAssetsIds = _.map(paginatedResults.items, 'asset');
+  const qbanksIds = _.map(paginatedResults.items, "id");
+  const qbanksAssetsIds = _.map(paginatedResults.items, "asset");
 
   const questions = await ctx.tx.db.Questions.find({ questionBank: qbanksIds })
-    .select(['id', 'questionBank'])
+    .select(["id", "questionBank"])
     .lean();
-  const questionsByBank = _.groupBy(questions, 'questionBank');
+  const questionsByBank = _.groupBy(questions, "questionBank");
 
   // Retrieve assets from leebrary to check permissions
-  const authorizedQuestionBankAssets = await ctx.tx.call('leebrary.assets.getByIds', {
-    ids: qbanksAssetsIds,
-    checkPermissions: true,
-  });
+  const authorizedQuestionBankAssets = await ctx.tx.call(
+    "leebrary.assets.getByIds",
+    {
+      ids: qbanksAssetsIds,
+      checkPermissions: true,
+    }
+  );
 
-  const assetsById = _.keyBy(authorizedQuestionBankAssets, 'id');
+  const assetsById = _.keyBy(authorizedQuestionBankAssets, "id");
   const finalQuestionBanks = paginatedResults.items.filter((item) =>
     Object.keys(assetsById).includes(item.asset)
   );
@@ -73,7 +81,7 @@ async function listQuestionsBanks({
     items: _.map(finalQuestionBanks, (item) => ({
       ...item,
       nQuestions: questionsByBank[item.id]?.length || 0,
-      asset: withAssets ? assetsById[item.asset] ?? item.asset : item.asset,
+      asset: withAssets ? (assetsById[item.asset] ?? item.asset) : item.asset,
     })),
   };
 }

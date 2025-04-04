@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react';
-import { Controller } from 'react-hook-form';
+import { useMemo, useState } from "react";
+import { Controller } from "react-hook-form";
 
 import {
   InputWrapper,
@@ -12,16 +12,22 @@ import {
   Button,
   TableInput,
   TextInput,
-} from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import PropTypes from 'prop-types';
-import { v4 as uuidv4 } from 'uuid';
+} from "@bubbles-ui/components";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import PropTypes from "prop-types";
+import { v4 as uuidv4 } from "uuid";
 
-import CommaSeparatedInput from '@tests/components/CommaSeparatedInput';
+import CommaSeparatedInput from "@tests/components/CommaSeparatedInput";
 
-export function CategoryDrawer({ isOpen, onClose, t, categoriesData, onCategoriesChange }) {
-  const { t: tCommon } = useCommonTranslate('formWithTheme');
+export function CategoryDrawer({
+  isOpen,
+  onClose,
+  t,
+  categoriesData,
+  onCategoriesChange,
+}) {
+  const { t: tCommon } = useCommonTranslate("formWithTheme");
   const [categories, setCategories] = useState(categoriesData || []);
   const [isAdding, setIsAdding] = useState(false);
 
@@ -29,7 +35,7 @@ export function CategoryDrawer({ isOpen, onClose, t, categoriesData, onCategorie
     () => ({
       columns: [
         {
-          accessor: 'value',
+          accessor: "value",
           editable: true,
           removable: true,
           input: {
@@ -38,11 +44,11 @@ export function CategoryDrawer({ isOpen, onClose, t, categoriesData, onCategorie
         },
       ],
       labels: {
-        add: tCommon('add'),
-        remove: tCommon('remove'),
-        edit: tCommon('edit'),
-        accept: tCommon('accept'),
-        cancel: tCommon('cancel'),
+        add: tCommon("add"),
+        remove: tCommon("remove"),
+        edit: tCommon("edit"),
+        accept: tCommon("accept"),
+        cancel: tCommon("cancel"),
       },
     }),
     [tCommon]
@@ -65,7 +71,9 @@ export function CategoryDrawer({ isOpen, onClose, t, categoriesData, onCategorie
   const handleOnSave = (initialCats) => {
     if (!categoriesData?.length) {
       if (!categories.length) {
-        setCategories(initialCats.map((category) => ({ value: category, id: uuidv4() })));
+        setCategories(
+          initialCats.map((category) => ({ value: category, id: uuidv4() }))
+        );
       } else {
         onCategoriesChange(categories);
         handleOnCancel();
@@ -84,16 +92,21 @@ export function CategoryDrawer({ isOpen, onClose, t, categoriesData, onCategorie
       );
       return [
         ...prev,
-        ...uniqueNewCategories.map((category) => ({ value: category, id: uuidv4() })),
+        ...uniqueNewCategories.map((category) => ({
+          value: category,
+          id: uuidv4(),
+        })),
       ];
     });
     setIsAdding(false);
   };
 
   const handleOnChange = (updatedCategories, event) => {
-    if (event.type === 'edit') {
+    if (event.type === "edit") {
       setCategories((prev) => {
-        const usedValue = prev.find(({ value }) => value === event.newItem.value);
+        const usedValue = prev.find(
+          ({ value }) => value === event.newItem.value
+        );
         if (usedValue) return [...prev];
 
         return updatedCategories;
@@ -106,13 +119,13 @@ export function CategoryDrawer({ isOpen, onClose, t, categoriesData, onCategorie
 
   return (
     <Drawer size="md" opened={isOpen} onClose={onClose}>
-      <Drawer.Header title={t('questionCategories.categoriesLabel')} />
+      <Drawer.Header title={t("questionCategories.categoriesLabel")} />
       <Drawer.Content>
         {categories?.length > 0 ? (
           <Stack direction="column">
             {isAdding ? (
               <CommaSeparatedInput
-                label={t('questionCategories.newCategory')}
+                label={t("questionCategories.newCategory")}
                 onAdd={addNewCategoriesToList}
                 unique
               />
@@ -123,7 +136,7 @@ export function CategoryDrawer({ isOpen, onClose, t, categoriesData, onCategorie
                   onClick={() => setIsAdding(true)}
                   leftIcon={<AddCircleIcon width={24} height={24} />}
                 >
-                  {t('questionCategories.addCategory')}
+                  {t("questionCategories.addCategory")}
                 </Button>
               </Box>
             )}
@@ -139,7 +152,7 @@ export function CategoryDrawer({ isOpen, onClose, t, categoriesData, onCategorie
           </Stack>
         ) : (
           <CommaSeparatedInput
-            label={t('questionCategories.addCategoriesSeperatedByComma')}
+            label={t("questionCategories.addCategoriesSeperatedByComma")}
             onAdd={handleOnSave}
             useTextArea
             unique
@@ -149,10 +162,10 @@ export function CategoryDrawer({ isOpen, onClose, t, categoriesData, onCategorie
       <Drawer.Footer>
         <Stack fullWidth justifyContent="space-between">
           <Button type="button" variant="link" onClick={handleOnCancel}>
-            {tCommon('cancel')}
+            {tCommon("cancel")}
           </Button>
           <Button onClick={handleOnSave} disabled={disableSaveButton}>
-            {tCommon('save')}
+            {tCommon("save")}
           </Button>
         </Stack>
       </Drawer.Footer>
@@ -169,7 +182,13 @@ CategoryDrawer.propTypes = {
   form: PropTypes.any,
 };
 
-export default function CategoryPicker({ t, categoriesData, control, form, onCategoriesChange }) {
+export default function CategoryPicker({
+  t,
+  categoriesData,
+  control,
+  form,
+  onCategoriesChange,
+}) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [renderKey, setRenderKey] = useState(0);
   const noCategories = useMemo(() => !categoriesData?.length, [categoriesData]);
@@ -188,11 +207,11 @@ export default function CategoryPicker({ t, categoriesData, control, form, onCat
   return (
     <>
       <ContextContainer fullWidth direction="row">
-        <InputWrapper label={t('questionCategories.categoryLabel')}>
+        <InputWrapper label={t("questionCategories.categoryLabel")}>
           <Stack
-            direction={noCategories ? 'column' : 'row'}
+            direction={noCategories ? "column" : "row"}
             justifyContent="start"
-            alignItems={!noCategories && 'center'}
+            alignItems={!noCategories && "center"}
             spacing={2}
           >
             <Controller
@@ -200,31 +219,34 @@ export default function CategoryPicker({ t, categoriesData, control, form, onCat
               name="category"
               render={({ field }) =>
                 noCategories ? (
-                  <Text>{t('questionCategories.noCategories')}</Text>
+                  <Text>{t("questionCategories.noCategories")}</Text>
                 ) : (
                   <Select
                     {...field}
                     data={[
-                      { value: '$none$', label: t('questionCategories.none') },
+                      { value: "$none$", label: t("questionCategories.none") },
                       ...categoriesForSelect,
                     ]}
                     cleanOnMissingValue
                     onChange={(e) => {
-                      if (e === '$none$') {
+                      if (e === "$none$") {
                         field.onChange(null);
                         return;
                       }
                       field.onChange(e);
                     }}
                     error={form.formState.errors.category}
-                    placeholder={t('questionCategories.selectPlaceholder')}
+                    placeholder={t("questionCategories.selectPlaceholder")}
                   />
                 )
               }
             />
             <Box>
-              <Button variant="linkInline" onClick={() => setIsDrawerOpen(true)}>
-                {t('questionCategories.manageCategories')}
+              <Button
+                variant="linkInline"
+                onClick={() => setIsDrawerOpen(true)}
+              >
+                {t("questionCategories.manageCategories")}
               </Button>
             </Box>
           </Stack>

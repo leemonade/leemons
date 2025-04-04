@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -51,7 +51,7 @@ const schema = new mongoose.Schema(
 
 const UserAgentAssignableInstanceResponsesModel = newModel(
   mongoose.connection,
-  'v1::tests_UserAgentAssignableInstanceResponses',
+  "v1::tests_UserAgentAssignableInstanceResponses",
   schema
 );
 

@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { noop } from 'lodash';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import { noop } from "lodash";
 import {
   Button,
   ContextContainer,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
   Box,
-} from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
-import { Controller } from 'react-hook-form';
-import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import { Attachments } from '@leebrary/components';
-import TimeUnitsInput from '@common/components/TimeUnitsInput';
-import FinalDropdown from './FinalDropdown';
+} from "@bubbles-ui/components";
+import { TextEditorInput } from "@bubbles-ui/editors";
+import { Controller } from "react-hook-form";
+import { ChevLeftIcon } from "@bubbles-ui/icons/outline";
+import { Attachments } from "@leebrary/components";
+import TimeUnitsInput from "@common/components/TimeUnitsInput";
+import FinalDropdown from "./FinalDropdown";
 
 export default function DetailInstructions({
   t,
@@ -34,7 +34,8 @@ export default function DetailInstructions({
   // ························································
   // HANDLERS
 
-  const validate = async () => form.trigger(['instructionsForTeachers', 'instructionsForStudents']);
+  const validate = async () =>
+    form.trigger(["instructionsForTeachers", "instructionsForStudents"]);
 
   async function handleOnSave() {
     setIsDirty(true);
@@ -44,7 +45,7 @@ export default function DetailInstructions({
   }
 
   const attachmentsLabels = {
-    addResource: t('addResourcesLabel'),
+    addResource: t("addResourcesLabel"),
   };
 
   return (
@@ -60,7 +61,7 @@ export default function DetailInstructions({
               leftIcon={<ChevLeftIcon height={20} width={20} />}
               onClick={onPrev}
             >
-              {t('previous')}
+              {t("previous")}
             </Button>
           }
           rightZone={
@@ -70,9 +71,9 @@ export default function DetailInstructions({
                   variant="link"
                   onClick={handleOnSave}
                   disabled={store.saving}
-                  loading={store.saving === 'draft'}
+                  loading={store.saving === "draft"}
                 >
-                  {t('saveDraft')}
+                  {t("saveDraft")}
                 </Button>
               ) : null}
 
@@ -92,7 +93,9 @@ export default function DetailInstructions({
       <Box>
         {hasResources && (
           <Box style={{ marginBottom: 24 }}>
-            <ContextContainer title={hasInstructions && hasResources ? t('resources') : ''}>
+            <ContextContainer
+              title={hasInstructions && hasResources ? t("resources") : ""}
+            >
               <Attachments
                 labels={attachmentsLabels}
                 setValue={form.setValue}
@@ -102,15 +105,21 @@ export default function DetailInstructions({
           </Box>
         )}
         {hasInstructions && (
-          <ContextContainer title={hasInstructions && hasResources ? t('instructions') : ''}>
+          <ContextContainer
+            title={hasInstructions && hasResources ? t("instructions") : ""}
+          >
             <Controller
               control={form.control}
               name="instructionsForTeachers"
               render={({ field }) => (
                 <TextEditorInput
-                  error={isDirty ? form.formState.errors.instructionsForTeachers : null}
-                  label={t('instructionsForTeacherLabel')}
-                  editorStyles={{ minHeight: '96px' }}
+                  error={
+                    isDirty
+                      ? form.formState.errors.instructionsForTeachers
+                      : null
+                  }
+                  label={t("instructionsForTeacherLabel")}
+                  editorStyles={{ minHeight: "96px" }}
                   {...field}
                 />
               )}
@@ -120,9 +129,13 @@ export default function DetailInstructions({
               name="instructionsForStudents"
               render={({ field }) => (
                 <TextEditorInput
-                  error={isDirty ? form.formState.errors.instructionsForStudents : null}
-                  label={t('instructionsForStudentLabel')}
-                  editorStyles={{ minHeight: '96px' }}
+                  error={
+                    isDirty
+                      ? form.formState.errors.instructionsForStudents
+                      : null
+                  }
+                  label={t("instructionsForStudentLabel")}
+                  editorStyles={{ minHeight: "96px" }}
                   {...field}
                 />
               )}
@@ -132,11 +145,15 @@ export default function DetailInstructions({
                 control={form.control}
                 name="duration"
                 rules={{
-                  required: t('recommendedDuration'),
-                  min: { value: 1, message: t('recommendedDuration') },
+                  required: t("recommendedDuration"),
+                  min: { value: 1, message: t("recommendedDuration") },
                 }}
                 render={({ field }) => (
-                  <TimeUnitsInput {...field} label={t('recommendedDuration')} min={1} />
+                  <TimeUnitsInput
+                    {...field}
+                    label={t("recommendedDuration")}
+                    min={1}
+                  />
                 )}
               />
             </Box>

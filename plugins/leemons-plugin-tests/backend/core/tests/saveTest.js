@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
-const { validateSaveTest } = require('../../validations/forms');
+const _ = require("lodash");
+const { validateSaveTest } = require("../../validations/forms");
 
 async function saveTest({ data, ignoreAsset, ctx }) {
   validateSaveTest(data);
@@ -16,7 +16,7 @@ async function saveTest({ data, ignoreAsset, ctx }) {
       indexable: true,
       public: true, // TODO Cambiar a false despues de la demo
     },
-    role: 'tests',
+    role: "tests",
     subjects: _.map(data.subjects, (subject) => ({
       subject,
       program: data.program,
@@ -26,7 +26,7 @@ async function saveTest({ data, ignoreAsset, ctx }) {
     instructionsForTeachers: data.instructionsForTeachers,
     instructionsForStudents: data.instructionsForStudents,
     gradable: data.gradable || false,
-    duration: data.duration || '',
+    duration: data.duration || "",
     metadata: {
       questionBank: data.questionBank,
       filters: data.filters,
@@ -45,12 +45,12 @@ async function saveTest({ data, ignoreAsset, ctx }) {
 
   if (data.id) {
     delete toSave.role;
-    assignable = await ctx.tx.call('assignables.assignables.updateAssignable', {
+    assignable = await ctx.tx.call("assignables.assignables.updateAssignable", {
       assignable: { id: data.id, ...toSave },
       published: data.published,
     });
   } else {
-    assignable = await ctx.tx.call('assignables.assignables.createAssignable', {
+    assignable = await ctx.tx.call("assignables.assignables.createAssignable", {
       assignable: toSave,
       published: data.published,
     });

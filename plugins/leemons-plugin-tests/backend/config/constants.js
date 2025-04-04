@@ -1,4 +1,4 @@
-const permissionsPrefix = 'tests';
+const permissionsPrefix = "tests";
 
 const permissionNames = {
   tests: `${permissionsPrefix}.tests`,
@@ -8,18 +8,18 @@ const permissionNames = {
 const permissions = [
   {
     permissionName: permissionNames.tests,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
+    actions: ["view", "update", "create", "delete", "admin"],
     localizationName: {
-      es: 'Tests',
-      en: 'Tests',
+      es: "Tests",
+      en: "Tests",
     },
   },
   {
     permissionName: permissionNames.questionBanks,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
+    actions: ["view", "update", "create", "delete", "admin"],
     localizationName: {
-      es: 'Tests - Bancos de preguntas',
-      en: 'Tests - Questions banks',
+      es: "Tests - Bancos de preguntas",
+      en: "Tests - Questions banks",
     },
   },
 ];
@@ -28,37 +28,37 @@ const permissionsBundles = {
   questionBanks: {
     create: {
       permission: permissionNames.questionBanks,
-      actions: ['create', 'admin'],
+      actions: ["create", "admin"],
     },
     view: {
       permission: permissionNames.questionBanks,
-      actions: ['view', 'admin'],
+      actions: ["view", "admin"],
     },
     update: {
       permission: permissionNames.questionBanks,
-      actions: ['update', 'admin'],
+      actions: ["update", "admin"],
     },
     delete: {
       permission: permissionNames.questionBanks,
-      actions: ['delete', 'admin'],
+      actions: ["delete", "admin"],
     },
   },
   tests: {
     create: {
       permission: permissionNames.tests,
-      actions: ['create', 'admin'],
+      actions: ["create", "admin"],
     },
     view: {
       permission: permissionNames.tests,
-      actions: ['view', 'admin'],
+      actions: ["view", "admin"],
     },
     update: {
       permission: permissionNames.tests,
-      actions: ['update', 'admin'],
+      actions: ["update", "admin"],
     },
     delete: {
       permission: permissionNames.tests,
-      actions: ['delete', 'admin'],
+      actions: ["delete", "admin"],
     },
   },
 };
@@ -68,23 +68,23 @@ const menuItems = [
   {
     removed: true,
     item: {
-      key: 'tests',
+      key: "tests",
       order: 304,
-      iconSvg: '/public/tests/menu-icon.svg',
-      activeIconSvg: '/public/tests/menu-icon-active.svg',
+      iconSvg: "/public/tests/menu-icon.svg",
+      activeIconSvg: "/public/tests/menu-icon-active.svg",
       label: {
-        en: 'Tests',
-        es: 'Tests',
+        en: "Tests",
+        es: "Tests",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.questionBanks,
-        actionNames: ['admin'],
+        actionNames: ["admin"],
       },
       {
         permissionName: permissionNames.tests,
-        actionNames: ['admin'],
+        actionNames: ["admin"],
       },
     ],
   },
@@ -92,38 +92,38 @@ const menuItems = [
   {
     removed: true,
     item: {
-      key: 'test',
+      key: "test",
       order: 2,
       parentKey: `${permissionsPrefix}.tests`,
-      url: '/private/tests',
+      url: "/private/tests",
       label: {
-        en: 'Tests library',
-        es: 'Biblioteca de tests',
+        en: "Tests library",
+        es: "Biblioteca de tests",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.tests,
-        actionNames: ['admin'],
+        actionNames: ["admin"],
       },
     ],
   },
   {
     removed: true,
     item: {
-      key: 'new-test',
+      key: "new-test",
       order: 3,
       parentKey: `${permissionsPrefix}.tests`,
-      url: '/private/tests/new',
+      url: "/private/tests/new",
       label: {
-        en: 'New tests',
-        es: 'Nuevo test',
+        en: "New tests",
+        es: "Nuevo test",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.tests,
-        actionNames: ['admin'],
+        actionNames: ["admin"],
       },
     ],
   },
@@ -131,38 +131,38 @@ const menuItems = [
   {
     removed: true,
     item: {
-      key: 'questionBanks',
+      key: "questionBanks",
       order: 4,
       parentKey: `${permissionsPrefix}.tests`,
-      url: '/private/tests/questions-banks',
+      url: "/private/tests/questions-banks",
       label: {
-        en: 'Question banks',
-        es: 'Bancos de preguntas',
+        en: "Question banks",
+        es: "Bancos de preguntas",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.questionBanks,
-        actionNames: ['admin'],
+        actionNames: ["admin"],
       },
     ],
   },
   {
     removed: true,
     item: {
-      key: 'new-questionBanks',
+      key: "new-questionBanks",
       order: 5,
       parentKey: `${permissionsPrefix}.tests`,
-      url: '/private/tests/questions-banks/new',
+      url: "/private/tests/questions-banks/new",
       label: {
-        en: 'New question bank',
-        es: 'Nuevo banco de preguntas',
+        en: "New question bank",
+        es: "Nuevo banco de preguntas",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.questionBanks,
-        actionNames: ['admin'],
+        actionNames: ["admin"],
       },
     ],
   },
@@ -170,87 +170,87 @@ const menuItems = [
 
 const assignableRoles = [
   {
-    role: 'tests',
+    role: "tests",
     options: {
-      teacherDetailUrl: '/private/tests/detail/:id',
-      studentDetailUrl: '/private/tests/student/:id/:user',
-      evaluationDetailUrl: '/private/tests/result/:id/:user',
-      previewUrl: '/private/tests/detail/:id',
+      teacherDetailUrl: "/private/tests/detail/:id",
+      studentDetailUrl: "/private/tests/student/:id/:user",
+      evaluationDetailUrl: "/private/tests/result/:id/:user",
+      previewUrl: "/private/tests/detail/:id",
       creatable: true,
-      createUrl: '/private/tests/new',
+      createUrl: "/private/tests/new",
       canUse: [], // Assignables le calza 'calledFrom ('tasks')' y 'assignables'
-      pluralName: { en: 'tests', es: 'tests' },
-      singularName: { en: 'test', es: 'test' },
+      pluralName: { en: "tests", es: "tests" },
+      singularName: { en: "test", es: "test" },
       order: 3,
       menu: {
         item: {
-          iconSvg: '/public/tests/menu-icon.svg',
-          activeIconSvg: '/public/tests/menu-icon.svg',
+          iconSvg: "/public/tests/menu-icon.svg",
+          activeIconSvg: "/public/tests/menu-icon.svg",
           label: {
-            en: 'Tests',
-            es: 'Tests',
+            en: "Tests",
+            es: "Tests",
           },
         },
         permissions: [
           {
             permissionName: permissionNames.tests,
-            actionNames: ['admin'],
+            actionNames: ["admin"],
           },
         ],
       },
 
-      componentOwner: 'tests',
-      listCardComponent: 'TestsListCard',
-      detailComponent: 'TestsDetail',
-      type: 'activity',
+      componentOwner: "tests",
+      listCardComponent: "TestsListCard",
+      detailComponent: "TestsDetail",
+      type: "activity",
     },
   },
 ];
 
 const libraryQuestionBankCategory = {
-  key: 'tests-questions-banks',
+  key: "tests-questions-banks",
   creatable: true,
-  createUrl: '/private/tests/questions-banks/new',
+  createUrl: "/private/tests/questions-banks/new",
   duplicable: true,
-  provider: 'tests',
-  canUse: ['tests'],
+  provider: "tests",
+  canUse: ["tests"],
   order: 204,
   menu: {
     item: {
-      iconSvg: '/public/tests/qb-menu-icon.svg',
-      activeIconSvg: '/public/tests/qb-menu-icon.svg',
+      iconSvg: "/public/tests/qb-menu-icon.svg",
+      activeIconSvg: "/public/tests/qb-menu-icon.svg",
       label: {
-        en: 'Question Banks',
-        es: 'Bancos de preguntas',
+        en: "Question Banks",
+        es: "Bancos de preguntas",
       },
     },
     permissions: [
       {
-        permissionName: 'tests.questionsBanks',
-        actionNames: ['admin'],
+        permissionName: "tests.questionsBanks",
+        actionNames: ["admin"],
       },
     ],
   },
-  listCardComponent: 'QuestionsBanksListCard',
-  detailComponent: 'QuestionsBanksDetail',
-  pluralName: { en: 'questions banks', es: 'bancos de preguntas' },
-  singularName: { en: 'questions bank', es: 'banco de preguntas' },
+  listCardComponent: "QuestionsBanksListCard",
+  detailComponent: "QuestionsBanksDetail",
+  pluralName: { en: "questions banks", es: "bancos de preguntas" },
+  singularName: { en: "questions bank", es: "banco de preguntas" },
 };
 
 const QUESTION_TYPES = {
-  MAP: 'map',
-  MONO_RESPONSE: 'mono-response',
-  TRUE_FALSE: 'true-false',
-  SHORT_RESPONSE: 'short-response',
-  OPEN_RESPONSE: 'open-response',
+  MAP: "map",
+  MONO_RESPONSE: "mono-response",
+  TRUE_FALSE: "true-false",
+  SHORT_RESPONSE: "short-response",
+  OPEN_RESPONSE: "open-response",
 };
 
 const QUESTION_RESPONSE_STATUS = {
-  OK: 'ok',
-  KO: 'ko',
+  OK: "ok",
+  KO: "ko",
   OMITTED: null,
-  PARTIAL: 'partial',
-  NOT_GRADED: 'not-graded',
+  PARTIAL: "partial",
+  NOT_GRADED: "not-graded",
 };
 
 const widgets = {

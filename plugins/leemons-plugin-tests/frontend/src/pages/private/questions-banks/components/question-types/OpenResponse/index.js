@@ -1,10 +1,16 @@
-import { useEffect, useState } from 'react';
-import { Controller, useFormContext, useWatch } from 'react-hook-form';
+import { useEffect, useState } from "react";
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 
-import { Switch, ContextContainer, Stack, NumberInput, Box } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+import {
+  Switch,
+  ContextContainer,
+  Stack,
+  NumberInput,
+  Box,
+} from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
-import OpenResponseStyles from './OpenResponse.styles';
+import OpenResponseStyles from "./OpenResponse.styles";
 
 export default function OpenResponse({ form: _form, t }) {
   const { classes } = OpenResponseStyles();
@@ -13,11 +19,14 @@ export default function OpenResponse({ form: _form, t }) {
 
   const [openResponseProperties] = useWatch({
     control: form.control,
-    name: ['openResponseProperties'],
+    name: ["openResponseProperties"],
   });
 
   useEffect(() => {
-    if (openResponseProperties?.minCharacters || openResponseProperties?.maxCharacters) {
+    if (
+      openResponseProperties?.minCharacters ||
+      openResponseProperties?.maxCharacters
+    ) {
       setLimitCharachters(true);
     }
   }, [openResponseProperties]);
@@ -26,11 +35,11 @@ export default function OpenResponse({ form: _form, t }) {
 
   return (
     <ContextContainer>
-      <ContextContainer title={`${t('responseLabel')}`} spacing={0}>
+      <ContextContainer title={`${t("responseLabel")}`} spacing={0}>
         <Stack spacing={2} direction="column">
           <Switch
             checked={limitCharachters}
-            label={t('questionLabels.limitCharactersLabel')}
+            label={t("questionLabels.limitCharactersLabel")}
             onChange={(value) => setLimitCharachters(value)}
           />
           {limitCharachters && (
@@ -44,7 +53,9 @@ export default function OpenResponse({ form: _form, t }) {
                       <NumberInput
                         {...field}
                         min={1}
-                        placeholder={t('questionLabels.minCharactersPlaceHolder')}
+                        placeholder={t(
+                          "questionLabels.minCharactersPlaceHolder"
+                        )}
                         customDesign
                       />
                     );
@@ -61,7 +72,9 @@ export default function OpenResponse({ form: _form, t }) {
                       <NumberInput
                         {...field}
                         min={1}
-                        placeholder={t('questionLabels.maxCharactersPlaceHolder')}
+                        placeholder={t(
+                          "questionLabels.maxCharactersPlaceHolder"
+                        )}
                         customDesign
                       />
                     );
@@ -79,8 +92,8 @@ export default function OpenResponse({ form: _form, t }) {
           <Switch
             {...field}
             checked={field.value}
-            label={t('hasCluesLabel')}
-            description={t('cluesSwitchDescription')}
+            label={t("hasCluesLabel")}
+            description={t("cluesSwitchDescription")}
           />
         )}
       />

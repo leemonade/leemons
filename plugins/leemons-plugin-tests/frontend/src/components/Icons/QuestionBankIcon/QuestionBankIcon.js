@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 import {
   QUESTION_BANK_ICON_PROP_TYPES,
   QUESTION_BANK_ICON_DEFAULT_PROPS,
-} from './QuestionBankIcon.constants';
+} from "./QuestionBankIcon.constants";
 
-const QuestionBankIcon = ({ width, height, color = 'currentColor' }) => (
+const QuestionBankIcon = ({ width, height, color = "currentColor" }) => (
   <svg
     width={width}
     height={height}
@@ -24,6 +24,6 @@ const QuestionBankIcon = ({ width, height, color = 'currentColor' }) => (
 QuestionBankIcon.defaultProps = QUESTION_BANK_ICON_DEFAULT_PROPS;
 QuestionBankIcon.propTypes = QUESTION_BANK_ICON_PROP_TYPES;
 
-QuestionBankIcon.displayName = 'QuestionBankIcon';
+QuestionBankIcon.displayName = "QuestionBankIcon";
 export default QuestionBankIcon;
 export { QuestionBankIcon };

@@ -1,7 +1,7 @@
-const { isNumber, forEach } = require('lodash');
+const { isNumber, forEach } = require("lodash");
 
-const { QUESTION_RESPONSE_STATUS } = require('../../../../config/constants');
-const { getQuestionTotalPoints } = require('../getQuestionTotalPoints');
+const { QUESTION_RESPONSE_STATUS } = require("../../../../config/constants");
+const { getQuestionTotalPoints } = require("../getQuestionTotalPoints");
 
 function gradeMapQuestion({
   responseData,

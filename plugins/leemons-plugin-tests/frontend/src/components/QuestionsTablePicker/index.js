@@ -1,1 +1,1 @@
-export * from './QuestionsTablePicker';
+export * from "./QuestionsTablePicker";

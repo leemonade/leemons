@@ -1,8 +1,8 @@
-import { Text, ContextContainer, createStyles } from '@bubbles-ui/components';
-import propTypes from 'prop-types';
+import { Text, ContextContainer, createStyles } from "@bubbles-ui/components";
+import propTypes from "prop-types";
 
-import OpenResponseRules from './OpenResponseRules';
-import ShortResponseRules from './ShortResponseRules';
+import OpenResponseRules from "./OpenResponseRules";
+import ShortResponseRules from "./ShortResponseRules";
 
 const useStyles = createStyles((theme) => ({
   questionConfigContainer: {
@@ -14,7 +14,7 @@ const useStyles = createStyles((theme) => ({
   questionConfig: {
     gap: 8,
     paddingInline: 24,
-    flexDirection: 'column',
+    flexDirection: "column",
   },
 }));
 
@@ -23,7 +23,7 @@ export const RulesByQuestionType = ({ control, t }) => {
 
   return (
     <ContextContainer spacing={4}>
-      <Text strong>{t('rulesByQuestionType.title')}</Text>
+      <Text strong>{t("rulesByQuestionType.title")}</Text>
       <ShortResponseRules control={control} classes={classes} t={t} />
       <OpenResponseRules control={control} classes={classes} t={t} />
     </ContextContainer>

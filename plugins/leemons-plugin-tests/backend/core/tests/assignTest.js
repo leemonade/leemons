@@ -3,14 +3,17 @@
 async function assignTest({ id, data, ctx }) {
   const { userSession } = ctx.meta;
 
-  const assignable = await ctx.tx.call('assignables.assignables.getAssignable', { id });
+  const assignable = await ctx.tx.call(
+    "assignables.assignables.getAssignable",
+    { id }
+  );
 
   if (!data.metadata?.questions) {
     data.metadata.questions = assignable.metadata?.questions;
   }
 
   if (data.metadata.filters.useAdvancedSettings) {
-    if (data.metadata.filters.settings === 'new') {
+    if (data.metadata.filters.settings === "new") {
       if (data.metadata.filters.presetName) {
         await ctx.tx.db.AssignSavedConfig.create({
           config: JSON.stringify(data.metadata.filters),
@@ -26,12 +29,15 @@ async function assignTest({ id, data, ctx }) {
     }
   }
 
-  return ctx.tx.call('assignables.assignableInstances.createAssignableInstance', {
-    assignableInstance: {
-      assignable: assignable.id,
-      ...data,
-    },
-  });
+  return ctx.tx.call(
+    "assignables.assignableInstances.createAssignableInstance",
+    {
+      assignableInstance: {
+        assignable: assignable.id,
+        ...data,
+      },
+    }
+  );
 }
 
 module.exports = { assignTest };

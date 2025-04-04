@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { isNil, noop } from 'lodash';
-import { Controller } from 'react-hook-form';
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
+import { isNil, noop } from "lodash";
+import { Controller } from "react-hook-form";
 import {
   Box,
   Text,
@@ -11,16 +11,16 @@ import {
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
   RadioGroup,
-} from '@bubbles-ui/components';
-import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { addErrorAlert } from '@layout/alert';
-import { getQuestionBankRequest } from '../../../../request';
-import FinalDropdown from './FinalDropdown';
-import { DetailQuestionsStyles } from './DetailQuestions.styles';
-import QuestionsTable from './QuestionsTable';
-import { RandomQuestionsGenerator } from './RandomQuestionsGenerator';
-import { FilteredQuestionsGenerator } from './FilteredQuestionsGenerator';
-import { ManualQuestionsGenerator } from './ManualQuestionsGenerator';
+} from "@bubbles-ui/components";
+import { ChevLeftIcon, ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { addErrorAlert } from "@layout/alert";
+import { getQuestionBankRequest } from "../../../../request";
+import FinalDropdown from "./FinalDropdown";
+import { DetailQuestionsStyles } from "./DetailQuestions.styles";
+import QuestionsTable from "./QuestionsTable";
+import { RandomQuestionsGenerator } from "./RandomQuestionsGenerator";
+import { FilteredQuestionsGenerator } from "./FilteredQuestionsGenerator";
+import { ManualQuestionsGenerator } from "./ManualQuestionsGenerator";
 
 export default function DetailQuestions({
   form,
@@ -47,22 +47,22 @@ export default function DetailQuestions({
   const [questionBank, setQuestionBank] = React.useState([]);
   const formValues = form.watch();
   const isNewTest = store?.isNew;
-  const filtersValue = 'filters.nQuestions';
+  const filtersValue = "filters.nQuestions";
   const nQuestionsSelector = form.watch(filtersValue);
 
   const customOptions = React.useMemo(
     () => [
       {
-        value: 'randomQuestions',
-        help: t('randomQuestions'),
+        value: "randomQuestions",
+        help: t("randomQuestions"),
       },
       {
-        value: 'filteredQuestions',
-        help: t('filteredQuestions'),
+        value: "filteredQuestions",
+        help: t("filteredQuestions"),
       },
       {
-        value: 'manualQuestions',
-        help: t('manualQuestions'),
+        value: "manualQuestions",
+        help: t("manualQuestions"),
       },
     ],
     [t]
@@ -70,34 +70,44 @@ export default function DetailQuestions({
 
   useEffect(() => {
     if (!questionBank.questions) return;
-    if (formValues.config.customChoice === null || formValues.config.customChoice === undefined) {
+    if (
+      formValues.config.customChoice === null ||
+      formValues.config.customChoice === undefined
+    ) {
       const questionIds = questionBank.questions?.map((q) => q.id);
-      form.setValue('questions', questionIds);
-    } else if (formValues.config.customChoice === 'randomQuestions') {
-      if (formValues.config.randomQuestions?.selectedQuestions && !randomQuestions?.length) {
-        const selectedQuestionsIds = formValues.config.randomQuestions.selectedQuestions;
-        form.setValue('questions', selectedQuestionsIds);
-        const selectedQuestionsData = questionBank.questions?.filter((question) =>
-          selectedQuestionsIds.includes(question.id)
+      form.setValue("questions", questionIds);
+    } else if (formValues.config.customChoice === "randomQuestions") {
+      if (
+        formValues.config.randomQuestions?.selectedQuestions &&
+        !randomQuestions?.length
+      ) {
+        const selectedQuestionsIds =
+          formValues.config.randomQuestions.selectedQuestions;
+        form.setValue("questions", selectedQuestionsIds);
+        const selectedQuestionsData = questionBank.questions?.filter(
+          (question) => selectedQuestionsIds.includes(question.id)
         );
         setRandomQuestions(selectedQuestionsData);
       }
       if (randomQuestions.length > 0) {
         form.setValue(
-          'questions',
+          "questions",
           randomQuestions?.map((q) => q.id)
         );
       }
       if (!formValues?.config?.randomQuestions?.selectedQuestions) {
-        form.setValue('questions', []);
+        form.setValue("questions", []);
       }
     } else if (
-      (formValues.config.customChoice === 'filteredQuestions' &&
+      (formValues.config.customChoice === "filteredQuestions" &&
         formValues.config.filteredQuestions?.level) ||
       formValues.config.filteredQuestions?.categories
     ) {
-      form.setValue('filters.level', formValues.config.filteredQuestions.level);
-      form.setValue('filters.categories', formValues.config.filteredQuestions.categories);
+      form.setValue("filters.level", formValues.config.filteredQuestions.level);
+      form.setValue(
+        "filters.categories",
+        formValues.config.filteredQuestions.categories
+      );
     }
   }, [questionBank, radioSelection]);
 
@@ -116,8 +126,9 @@ export default function DetailQuestions({
 
   async function load() {
     try {
-      const questionBankId = form.getValues('questionBank');
-      const { questionBank: questionBankData } = await getQuestionBankRequest(questionBankId);
+      const questionBankId = form.getValues("questionBank");
+      const { questionBank: questionBankData } =
+        await getQuestionBankRequest(questionBankId);
       setQuestionBank(questionBankData);
       const nQuestions = questionBank?.questions?.length;
       form.setValue(filtersValue, nQuestions);
@@ -128,11 +139,11 @@ export default function DetailQuestions({
 
   React.useEffect(() => {
     if (isNewQBankSelected) {
-      form.setValue('config.personalization', false);
-      form.setValue('config.customChoice', null);
-      form.setValue('config.manualQuestions', undefined);
-      form.setValue('config.filteredQuestions', undefined);
-      form.setValue('config.randomQuestions', undefined);
+      form.setValue("config.personalization", false);
+      form.setValue("config.customChoice", null);
+      form.setValue("config.manualQuestions", undefined);
+      form.setValue("config.filteredQuestions", undefined);
+      form.setValue("config.randomQuestions", undefined);
     }
     load();
   }, []);
@@ -148,9 +159,9 @@ export default function DetailQuestions({
 
   const isMoreThanOneNQuestions =
     nQuestions > 1
-      ? t('nQuestions', { n: nQuestions })
-      : t('nQuestions', { n: nQuestions }).slice(0, -1);
-  const getNextButtonLabel = () => 'next';
+      ? t("nQuestions", { n: nQuestions })
+      : t("nQuestions", { n: nQuestions }).slice(0, -1);
+  const getNextButtonLabel = () => "next";
 
   const generateQuestions = () => {
     const totalQuestions = questionBank?.questions;
@@ -158,7 +169,9 @@ export default function DetailQuestions({
     const selectedQuestions = [];
 
     while (selectedQuestions.length < questionsToSelect) {
-      const randomIndex = Math.floor(Math.random() * (totalQuestions?.length ?? 0));
+      const randomIndex = Math.floor(
+        Math.random() * (totalQuestions?.length ?? 0)
+      );
       const question = totalQuestions[randomIndex];
       if (!selectedQuestions.some((q) => q.id === question.id)) {
         selectedQuestions.push(question);
@@ -166,16 +179,18 @@ export default function DetailQuestions({
     }
 
     const selectedQuestionIds = selectedQuestions.map((q) => q.id);
-    form.setValue('questions', selectedQuestionIds);
+    form.setValue("questions", selectedQuestionIds);
     setQuestionsFiltered(selectedQuestions);
     setRandomQuestions(selectedQuestions);
-    form.setValue('config.randomQuestions.selectedQuestions', [...selectedQuestionIds]);
+    form.setValue("config.randomQuestions.selectedQuestions", [
+      ...selectedQuestionIds,
+    ]);
   };
 
   const handleOnSave = () => {
     if (!customChoice) {
       form.setValue(
-        'questions',
+        "questions",
         questionBank.questions?.map((q) => q.id)
       );
     } else {
@@ -185,8 +200,10 @@ export default function DetailQuestions({
 
   const testHasQuestionsSelected = formValues.questions?.length > 0;
 
-  const filteredQuestionsActive = radioSelection === 'filteredQuestions' ? filteredQuestions : null;
-  const RandomQuestionsActive = radioSelection === 'randomQuestions' ? randomQuestions : null;
+  const filteredQuestionsActive =
+    radioSelection === "filteredQuestions" ? filteredQuestions : null;
+  const RandomQuestionsActive =
+    radioSelection === "randomQuestions" ? randomQuestions : null;
 
   return (
     <TotalLayoutStepContainer
@@ -201,7 +218,7 @@ export default function DetailQuestions({
               leftIcon={<ChevLeftIcon height={20} width={20} />}
               onClick={onPrev}
             >
-              {t('previous')}
+              {t("previous")}
             </Button>
           }
           rightZone={
@@ -211,9 +228,9 @@ export default function DetailQuestions({
                   variant="link"
                   onClick={handleOnSave}
                   disabled={!formValues.name || !testHasQuestionsSelected}
-                  loading={store.saving === 'draft'}
+                  loading={store.saving === "draft"}
                 >
-                  {t('saveDraft')}
+                  {t("saveDraft")}
                 </Button>
               ) : null}
 
@@ -231,7 +248,7 @@ export default function DetailQuestions({
                   rightIcon={<ChevRightIcon height={20} width={20} />}
                   onClick={onNext}
                   disabled={store.saving || !testHasQuestionsSelected}
-                  loading={store.saving === 'publish'}
+                  loading={store.saving === "publish"}
                 >
                   {t(getNextButtonLabel())}
                 </Button>
@@ -242,7 +259,7 @@ export default function DetailQuestions({
       }
     >
       <Box>
-        <ContextContainer title={t('questionBankMethodSelection')} spacing={2}>
+        <ContextContainer title={t("questionBankMethodSelection")} spacing={2}>
           <Box className={classes.counter}>
             <Text>{isMoreThanOneNQuestions}</Text>
           </Box>
@@ -255,9 +272,9 @@ export default function DetailQuestions({
                 <Switch
                   {...field}
                   checked={customChoice}
-                  label={`${t('customQuestionSelection')}`}
+                  label={`${t("customQuestionSelection")}`}
                   onChange={(e) => {
-                    form.setValue('config.personalization', e);
+                    form.setValue("config.personalization", e);
                     return setCustomChoice(e);
                   }}
                 />
@@ -265,7 +282,10 @@ export default function DetailQuestions({
             />
           </ContextContainer>
           {customChoice ? (
-            <ContextContainer spacing={1} className={classes.containerSelection}>
+            <ContextContainer
+              spacing={1}
+              className={classes.containerSelection}
+            >
               <Controller
                 key={2}
                 control={form.control}
@@ -274,19 +294,19 @@ export default function DetailQuestions({
                   <RadioGroup
                     {...field}
                     value={radioSelection}
-                    label={t('customChoicesLabel')}
+                    label={t("customChoicesLabel")}
                     className={classes.radioGroup}
-                    placeholder={t('customChoicesPlaceholder')}
+                    placeholder={t("customChoicesPlaceholder")}
                     data={customOptions}
                     onChange={(option) => {
-                      form.setValue('config.customChoice', option);
+                      form.setValue("config.customChoice", option);
                       return setRadioSelection(option);
                     }}
                   />
                 )}
               />
               <Box className={classes.generatorContainer}>
-                {radioSelection === 'randomQuestions' && (
+                {radioSelection === "randomQuestions" && (
                   <RandomQuestionsGenerator
                     t={t}
                     form={form}
@@ -295,7 +315,7 @@ export default function DetailQuestions({
                     generateQuestions={generateQuestions}
                   />
                 )}
-                {radioSelection === 'filteredQuestions' && (
+                {radioSelection === "filteredQuestions" && (
                   <FilteredQuestionsGenerator
                     t={t}
                     form={form}
@@ -306,7 +326,7 @@ export default function DetailQuestions({
                     isNewTest={isNewTest}
                   />
                 )}
-                {radioSelection === 'manualQuestions' && (
+                {radioSelection === "manualQuestions" && (
                   <ManualQuestionsGenerator
                     t={t}
                     form={form}
@@ -319,17 +339,19 @@ export default function DetailQuestions({
                 <Box>
                   {(randomQuestions &&
                     randomQuestions.length > 0 &&
-                    radioSelection !== 'manualQuestions') ||
+                    radioSelection !== "manualQuestions") ||
                   (filteredQuestions &&
                     filteredQuestions.length > 0 &&
-                    radioSelection !== 'manualQuestions') ? (
+                    radioSelection !== "manualQuestions") ? (
                     <Controller
                       key={4}
                       control={form.control}
                       name="questions"
                       render={({ field }) => (
                         <QuestionsTable
-                          questions={filteredQuestionsActive ?? RandomQuestionsActive}
+                          questions={
+                            filteredQuestionsActive ?? RandomQuestionsActive
+                          }
                           forceSortable
                           value={field.value}
                           onChange={(e) => field.onChange(e)}

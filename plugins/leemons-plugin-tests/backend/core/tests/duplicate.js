@@ -1,8 +1,10 @@
-const { LeemonsError } = require('@leemons/error');
-const { map } = require('lodash');
-const { duplicateQuestionBank } = require('../questions-banks/duplicateQuestionBank');
-const { getTestsDetails } = require('./getTestsDetails');
-const { saveTest } = require('./saveTest');
+const { LeemonsError } = require("@leemons/error");
+const { map } = require("lodash");
+const {
+  duplicateQuestionBank,
+} = require("../questions-banks/duplicateQuestionBank");
+const { getTestsDetails } = require("./getTestsDetails");
+const { saveTest } = require("./saveTest");
 
 /**
  * Duplicate a test
@@ -24,16 +26,27 @@ const { saveTest } = require('./saveTest');
  * 6. Returns the newly duplicated test.
  * If any error occurs during the duplication process, it throws an error with a message indicating the specific error.
  */
-async function duplicate({ taskId, published, ignoreSubjects, keepQuestionBank, ctx }) {
+async function duplicate({
+  taskId,
+  published,
+  ignoreSubjects,
+  keepQuestionBank,
+  ctx,
+}) {
   try {
-    const newTest = await ctx.tx.call('assignables.assignables.duplicateAssignable', {
-      assignableId: taskId,
-      published: false,
-      ignoreSubjects,
-    });
+    const newTest = await ctx.tx.call(
+      "assignables.assignables.duplicateAssignable",
+      {
+        assignableId: taskId,
+        published: false,
+        ignoreSubjects,
+      }
+    );
 
     if (!newTest) {
-      throw new LeemonsError(ctx, { message: 'Test / Assignable duplication failed' });
+      throw new LeemonsError(ctx, {
+        message: "Test / Assignable duplication failed",
+      });
     }
 
     const [newTestDetails] = await getTestsDetails({
@@ -45,10 +58,14 @@ async function duplicate({ taskId, published, ignoreSubjects, keepQuestionBank, 
     newTestDetails.cover = newTestDetails.cover?.id ?? newTestDetails.cover;
 
     // Set default values
-    const [currentTest] = await getTestsDetails({ id: taskId, withQuestionBank: true, ctx });
+    const [currentTest] = await getTestsDetails({
+      id: taskId,
+      withQuestionBank: true,
+      ctx,
+    });
     const { questionBank } = currentTest;
     newTestDetails.questionBank = questionBank?.id ?? questionBank;
-    newTestDetails.questions = map(currentTest.questions, 'id');
+    newTestDetails.questions = map(currentTest.questions, "id");
     // newTestDetails.subjects = currentTest.subjects;
     newTestDetails.published = published;
 
@@ -61,7 +78,7 @@ async function duplicate({ taskId, published, ignoreSubjects, keepQuestionBank, 
       });
       const {
         questionBank: { questions },
-      } = await ctx.tx.call('tests.questionsBanks.getQuestionBankDetailRest', {
+      } = await ctx.tx.call("tests.questionsBanks.getQuestionBankDetailRest", {
         id: newQuestionBank.id,
         getAssets: false,
       });
@@ -80,7 +97,10 @@ async function duplicate({ taskId, published, ignoreSubjects, keepQuestionBank, 
     // If ignoreSubjects is true, we remove the subjects from the config
     if (ignoreSubjects) {
       newTestDetails.subjects = [];
-      newTestDetails.config = { ...(newTestDetails.config ?? {}), hasObjectives: false };
+      newTestDetails.config = {
+        ...(newTestDetails.config ?? {}),
+        hasObjectives: false,
+      };
     }
 
     await saveTest({ data: newTestDetails, ignoreAsset: true, ctx });

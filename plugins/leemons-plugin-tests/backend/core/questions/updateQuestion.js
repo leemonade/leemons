@@ -1,11 +1,14 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { QUESTION_TYPES } = require('../../config/constants');
+const { QUESTION_TYPES } = require("../../config/constants");
 
-const { createStemResourceAsset, getStemResouceAssetName } = require('./createStemResourceAsset');
+const {
+  createStemResourceAsset,
+  getStemResouceAssetName,
+} = require("./createStemResourceAsset");
 
-const LIBRARY_ADD_ASSET = 'leebrary.assets.add';
-const LIBRARY_UPDATE_ASSET = 'leebrary.assets.update';
+const LIBRARY_ADD_ASSET = "leebrary.assets.add";
+const LIBRARY_UPDATE_ASSET = "leebrary.assets.update";
 /**
  * Manages the solution fields for a question based on its type.
  *
@@ -20,13 +23,21 @@ const LIBRARY_UPDATE_ASSET = 'leebrary.assets.update';
  * @returns {Object} - An object containing the solution management fields.
  */
 
-function manageSolutionFields({ mapProperties, choices, type, typeHasChanged }) {
+function manageSolutionFields({
+  mapProperties,
+  choices,
+  type,
+  typeHasChanged,
+}) {
   const solutionManagementFields = {};
 
   if (type === QUESTION_TYPES.MAP) {
     solutionManagementFields.mapProperties = mapProperties;
     if (typeHasChanged) solutionManagementFields.$unset = { choices: 1 };
-  } else if (type === QUESTION_TYPES.MONO_RESPONSE || type === QUESTION_TYPES.SHORT_RESPONSE) {
+  } else if (
+    type === QUESTION_TYPES.MONO_RESPONSE ||
+    type === QUESTION_TYPES.SHORT_RESPONSE
+  ) {
     solutionManagementFields.choices = choices;
     if (typeHasChanged) solutionManagementFields.$unset = { mapProperties: 1 };
   }
@@ -68,7 +79,8 @@ async function updateQuestion({ data, published, ctx }) {
 
   // --- Stem resource
   // When edited, the stem resource should be an asset object, instead of an asset id
-  const newStemResourceFile = props.stemResource?.file?.id || props.stemResource?.cover?.id; // For retrocompatibility we use the cover id as a fallback, as old "question image" assets were created without a file
+  const newStemResourceFile =
+    props.stemResource?.file?.id || props.stemResource?.cover?.id; // For retrocompatibility we use the cover id as a fallback, as old "question image" assets were created without a file
   if (question.stemResource && newStemResourceFile) {
     const asset = await ctx.tx.call(LIBRARY_UPDATE_ASSET, {
       data: {
@@ -122,7 +134,9 @@ async function updateQuestion({ data, published, ctx }) {
     }
 
     if (toRemove.length) {
-      await Promise.all(_.map(toRemove, (r) => ctx.tx.call('leebrary.assets.remove', { id: r })));
+      await Promise.all(
+        _.map(toRemove, (r) => ctx.tx.call("leebrary.assets.remove", { id: r }))
+      );
     }
   }
 
@@ -138,9 +152,12 @@ async function updateQuestion({ data, published, ctx }) {
   };
 
   const [updatedQuestion] = await Promise.all([
-    ctx.tx.db.Questions.findOneAndUpdate({ id }, updateObject, { new: true, lean: true }),
-    ctx.tx.call('common.tags.setTagsToValues', {
-      type: 'tests.questions',
+    ctx.tx.db.Questions.findOneAndUpdate({ id }, updateObject, {
+      new: true,
+      lean: true,
+    }),
+    ctx.tx.call("common.tags.setTagsToValues", {
+      type: "tests.questions",
       tags: tags || [],
       values: id,
     }),

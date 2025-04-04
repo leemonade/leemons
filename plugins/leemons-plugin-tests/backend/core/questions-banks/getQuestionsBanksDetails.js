@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { getByIds } = require('../questions');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { getByIds } = require("../questions");
 
 /**
  * @typedef {Object} QuestionBankDetails
@@ -41,7 +41,9 @@ async function getQuestionsBanksDetails({ id, getAssets = true, ctx }) {
   const { userSession } = ctx.meta;
   // Check is userSession is provided
   if (getAssets && !userSession)
-    throw new LeemonsError(ctx, { message: 'User session is required (getQuestionsBanksDetails)' });
+    throw new LeemonsError(ctx, {
+      message: "User session is required (getQuestionsBanksDetails)",
+    });
 
   const ids = _.isArray(id) ? id : [id];
   const questionsBanks = await ctx.tx.db.QuestionsBanks.find(
@@ -50,29 +52,36 @@ async function getQuestionsBanksDetails({ id, getAssets = true, ctx }) {
     { excludeDeleted: false }
   ).lean();
 
-  const questionBankIds = _.map(questionsBanks, 'id');
-  const questionIds = await ctx.tx.db.Questions.find({ questionBank: questionBankIds })
-    .select(['id'])
+  const questionBankIds = _.map(questionsBanks, "id");
+  const questionIds = await ctx.tx.db.Questions.find({
+    questionBank: questionBankIds,
+  })
+    .select(["id"])
     .lean();
-  const [questions, questionBankSubjects, questionBankCategories] = await Promise.all([
-    getByIds({ id: _.map(questionIds, 'id'), ctx }),
-    ctx.tx.db.QuestionBankSubjects.find({ questionBank: questionBankIds }).lean(),
-    ctx.tx.db.QuestionBankCategories.find({ questionBank: questionBankIds }).lean(),
-  ]);
+  const [questions, questionBankSubjects, questionBankCategories] =
+    await Promise.all([
+      getByIds({ id: _.map(questionIds, "id"), ctx }),
+      ctx.tx.db.QuestionBankSubjects.find({
+        questionBank: questionBankIds,
+      }).lean(),
+      ctx.tx.db.QuestionBankCategories.find({
+        questionBank: questionBankIds,
+      }).lean(),
+    ]);
 
   const promises = [];
   if (questionsBanks.length) {
     promises.push(
-      ctx.tx.call('common.tags.getValuesTags', {
-        type: 'tests.questionBanks',
-        values: _.map(questionsBanks, 'id'),
+      ctx.tx.call("common.tags.getValuesTags", {
+        type: "tests.questionBanks",
+        values: _.map(questionsBanks, "id"),
       })
     );
 
     if (getAssets) {
       promises.push(
-        ctx.tx.call('leebrary.assets.getByIds', {
-          ids: _.map(questionsBanks, 'asset'),
+        ctx.tx.call("leebrary.assets.getByIds", {
+          ids: _.map(questionsBanks, "asset"),
           withFiles: true,
         })
       );
@@ -100,12 +109,21 @@ async function getQuestionsBanksDetails({ id, getAssets = true, ctx }) {
     }
   });
 
-  const questionBankCategoriesByQuestionBank = _.groupBy(questionBankCategories, 'questionBank');
-  const questionBankSubjectsByQuestionBank = _.groupBy(questionBankSubjects, 'questionBank');
-  const questionsByQuestionBank = _.groupBy(questions, 'questionBank');
+  const questionBankCategoriesByQuestionBank = _.groupBy(
+    questionBankCategories,
+    "questionBank"
+  );
+  const questionBankSubjectsByQuestionBank = _.groupBy(
+    questionBankSubjects,
+    "questionBank"
+  );
+  const questionsByQuestionBank = _.groupBy(questions, "questionBank");
 
   return _.map(questionsBanks, (questionBank) => {
-    const categories = _.orderBy(questionBankCategoriesByQuestionBank[questionBank.id], ['order']);
+    const categories = _.orderBy(
+      questionBankCategoriesByQuestionBank[questionBank.id],
+      ["order"]
+    );
     const questionCategories = {};
     _.forEach(categories, (category, index) => {
       questionCategories[category.id] = index;
@@ -116,10 +134,16 @@ async function getQuestionsBanksDetails({ id, getAssets = true, ctx }) {
         value: item.category,
         id: item.id,
       })),
-      subjects: _.map(questionBankSubjectsByQuestionBank[questionBank.id], 'subject'),
-      questions: _.map(questionsByQuestionBank[questionBank.id] || [], (question) => ({
-        ...question,
-      })),
+      subjects: _.map(
+        questionBankSubjectsByQuestionBank[questionBank.id],
+        "subject"
+      ),
+      questions: _.map(
+        questionsByQuestionBank[questionBank.id] || [],
+        (question) => ({
+          ...question,
+        })
+      ),
     };
   });
 }

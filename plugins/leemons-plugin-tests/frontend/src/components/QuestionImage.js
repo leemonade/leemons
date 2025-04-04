@@ -1,26 +1,26 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, colord, COLORS, createStyles } from '@bubbles-ui/components';
-import { numberToEncodedLetter } from '@common';
-import { LeebraryImage } from '@leebrary/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, colord, COLORS, createStyles } from "@bubbles-ui/components";
+import { numberToEncodedLetter } from "@common";
+import { LeebraryImage } from "@leebrary/components";
 
 export const QuestionImageStyles = createStyles((theme, { isLight }) => ({
   root: {},
   marker: {
-    width: '26px',
-    height: '26px',
-    borderRadius: '50%',
-    position: 'absolute',
-    textAlign: 'center',
-    lineHeight: '26px',
+    width: "26px",
+    height: "26px",
+    borderRadius: "50%",
+    position: "absolute",
+    textAlign: "center",
+    lineHeight: "26px",
     color: isLight ? theme.colors.text01 : theme.colors.text07,
   },
   image: {
-    width: '100%',
-    objectFit: 'contain',
+    width: "100%",
+    objectFit: "contain",
   },
   imageContainer: {
-    position: 'relative',
+    position: "relative",
   },
 }));
 
@@ -36,9 +36,11 @@ export function QuestionImage({ src, markers, values, clue }) {
         ? markers.list.map((marker, index) => {
             let { backgroundColor } = markers;
             if (values) {
-              backgroundColor = index === values[index] ? COLORS.fatic02 : COLORS.fatic01;
+              backgroundColor =
+                index === values[index] ? COLORS.fatic02 : COLORS.fatic01;
             }
-            const opacity = markers.canShowHintMarker && marker.hideOnHelp ? 0.5 : 1;
+            const opacity =
+              markers.canShowHintMarker && marker.hideOnHelp ? 0.5 : 1;
 
             return (
               <Box
@@ -51,7 +53,9 @@ export function QuestionImage({ src, markers, values, clue }) {
                   opacity,
                 }}
               >
-                {markers.type === 'letter' ? numberToEncodedLetter(index + 1) : index + 1}
+                {markers.type === "letter"
+                  ? numberToEncodedLetter(index + 1)
+                  : index + 1}
               </Box>
             );
           })

@@ -1,7 +1,7 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
-import useLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty';
+import useLevelsOfDifficulty from "@assignables/components/LevelsOfDifficulty/hooks/useLevelsOfDifficulty";
 import {
   ActionButton,
   Box,
@@ -10,16 +10,16 @@ import {
   TableInput,
   Text,
   TextClamp,
-} from '@bubbles-ui/components';
-import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { keyBy, map } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { ExpandDiagonalIcon } from "@bubbles-ui/icons/outline";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { keyBy, map } from "lodash";
+import PropTypes from "prop-types";
 
-import { getQuestionForTable } from '../../../../helpers/getQuestionForTable';
-import { ResultStyles } from '../Result.style';
+import { getQuestionForTable } from "../../../../helpers/getQuestionForTable";
+import { ResultStyles } from "../Result.style";
 
-import prefixPN from '@tests/helpers/prefixPN';
+import prefixPN from "@tests/helpers/prefixPN";
 
 export default function QuestionsTable({
   questions,
@@ -33,13 +33,15 @@ export default function QuestionsTable({
   isDrawer,
 }) {
   // eslint-disable-next-line prefer-const
-  let { classes: styles, cx } = ResultStyles({}, { name: 'QuestionsTable' });
-  const [t] = useTranslateLoader(prefixPN('testsEdit'));
-  const [t2] = useTranslateLoader(prefixPN('questionsBanksDetail'));
+  let { classes: styles, cx } = ResultStyles({}, { name: "QuestionsTable" });
+  const [t] = useTranslateLoader(prefixPN("testsEdit"));
+  const [t2] = useTranslateLoader(prefixPN("questionsBanksDetail"));
   const levels = useLevelsOfDifficulty();
   if (!withStyle) styles = {};
   const allChecked =
-    value.length === questions?.length && value.length !== 0 && questions?.length !== 0;
+    value.length === questions?.length &&
+    value.length !== 0 &&
+    questions?.length !== 0;
 
   const handleTextCell = (cellValue) => (
     <TextClamp lines={2} withToolTip>
@@ -65,27 +67,31 @@ export default function QuestionsTable({
             />
           </Box>
         ),
-        accessor: 'check',
-        className: 'text-left',
+        accessor: "check",
+        className: "text-left",
       });
     }
     result = result.concat([
       {
-        Header: t('questionLabel'),
-        accessor: 'question',
-        className: cx(styles.tableHeader, styles.firstTableHeader, isDrawer && { minWidth: 200 }),
+        Header: t("questionLabel"),
+        accessor: "question",
+        className: cx(
+          styles.tableHeader,
+          styles.firstTableHeader,
+          isDrawer && { minWidth: 200 }
+        ),
       },
       {
-        Header: t('responsesLabel'),
-        accessor: 'responses',
+        Header: t("responsesLabel"),
+        accessor: "responses",
         className: styles.tableHeader,
         style: {
-          width: '100px',
+          width: "100px",
         },
       },
       {
-        Header: t('typeLabel'),
-        accessor: 'type',
+        Header: t("typeLabel"),
+        accessor: "type",
         className: styles.tableHeader,
       },
     ]);
@@ -93,8 +99,8 @@ export default function QuestionsTable({
     if (!isDrawer) {
       result.push(
         {
-          Header: t('levelLabel'),
-          accessor: 'level',
+          Header: t("levelLabel"),
+          accessor: "level",
           className: styles.tableHeader,
           valueRender: (levelName) => {
             const findLevelName = levels?.find((l) => l.value === levelName);
@@ -102,17 +108,19 @@ export default function QuestionsTable({
           },
         },
         {
-          Header: 'Categoría',
-          accessor: 'category',
+          Header: "Categoría",
+          accessor: "category",
           className: styles.tableHeader,
           valueRender: (categoryId) => {
-            const findCategoryLabel = questionBank?.categories?.find((c) => c.id === categoryId);
+            const findCategoryLabel = questionBank?.categories?.find(
+              (c) => c.id === categoryId
+            );
             return (
               <Box
                 style={{
-                  display: 'flex',
-                  width: '100%',
-                  justifyContent: 'flex-end',
+                  display: "flex",
+                  width: "100%",
+                  justifyContent: "flex-end",
                 }}
               >
                 {handleTextCell(findCategoryLabel?.value)}
@@ -120,15 +128,15 @@ export default function QuestionsTable({
             );
           },
           style: {
-            textAlign: 'right',
+            textAlign: "right",
           },
         }
       );
     }
     if (!hideOpenIcon) {
       result.push({
-        Header: t('actionsHeader'),
-        accessor: 'actions',
+        Header: t("actionsHeader"),
+        accessor: "actions",
         className: styles.tableHeader,
       });
     }
@@ -156,12 +164,15 @@ export default function QuestionsTable({
               />
             ),
             actions: () => (
-              <Box className={styles.tableCell} sx={{ textAlign: 'right', minWidth: '100px' }}>
+              <Box
+                className={styles.tableCell}
+                sx={{ textAlign: "right", minWidth: "100px" }}
+              >
                 <ActionButton
                   as={Link}
                   target="_blank"
                   to={`/private/tests/questions-banks/${item.questionBank}?question=${item.id}`}
-                  tooltip={t('view')}
+                  tooltip={t("view")}
                   icon={<ExpandDiagonalIcon />}
                 />
               </Box>
@@ -173,7 +184,7 @@ export default function QuestionsTable({
 
   let tableComponent = <Table columns={tableHeaders} data={tableItems} />;
   if (reorderMode) {
-    const itemsById = keyBy(tableItems, 'id');
+    const itemsById = keyBy(tableItems, "id");
     const items = tableItems?.length ? map(value, (id) => itemsById[id]) : [];
 
     tableComponent = (

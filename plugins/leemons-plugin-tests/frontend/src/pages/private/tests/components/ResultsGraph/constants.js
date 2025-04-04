@@ -1,13 +1,13 @@
-import { useTheme } from '@bubbles-ui/components';
+import { useTheme } from "@bubbles-ui/components";
 
-const FONT_FAMILY = 'Albert Sans';
+const FONT_FAMILY = "Albert Sans";
 export default function useGraphConstants() {
   const theme = useTheme();
 
   const QUESTION_STATUS_COLORS = {
-    ok: theme.other.core.color.success['300'],
-    ko: theme.other.core.color.danger['300'],
-    omitted: theme.other.core.color.neutral['300'],
+    ok: theme.other.core.color.success["300"],
+    ko: theme.other.core.color.danger["300"],
+    omitted: theme.other.core.color.neutral["300"],
   };
 
   const LEGEND_MARK_SIZE = {
@@ -25,14 +25,14 @@ export default function useGraphConstants() {
     axis: {
       ticks: {
         text: {
-          fill: '#70707B',
+          fill: "#70707B",
           fontSize: 12,
           fontFamily: FONT_FAMILY,
         },
       },
       legend: {
         text: {
-          fill: '#70707B',
+          fill: "#70707B",
           fontSize: 12,
           fontFamily: FONT_FAMILY,
         },
@@ -40,7 +40,7 @@ export default function useGraphConstants() {
     },
     grid: {
       line: {
-        stroke: '#F0F0F3',
+        stroke: "#F0F0F3",
         strokeWidth: 1,
       },
     },

@@ -1,12 +1,14 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import AnswerModeResponsesLayout from '../AnswerModeResponsesLayout';
+import AnswerModeResponsesLayout from "../AnswerModeResponsesLayout";
 
-import Responses from './Responses';
+import Responses from "./Responses";
 
 const AnswerMode = (props) => {
   const { question } = props;
-  const resourceIsImage = (question?.stemResource?.file?.type || '').startsWith('image');
+  const resourceIsImage = (question?.stemResource?.file?.type || "").startsWith(
+    "image"
+  );
   const imageAnswers = question?.hasImageAnswers;
 
   return (

@@ -1,15 +1,18 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { Box, COLORS, Text, Stack } from '@bubbles-ui/components';
-import { htmlToText } from '@common';
-import PropTypes from 'prop-types';
+import { Box, COLORS, Text, Stack } from "@bubbles-ui/components";
+import { htmlToText } from "@common";
+import PropTypes from "prop-types";
 
 export default function QuestionTitle(props) {
   const { styles, question, store, cx, t } = props;
 
   let questionTitleClassName = cx(styles.questionTitle);
   if (store.embedded) {
-    questionTitleClassName = cx(questionTitleClassName, styles.questionTitleEmbedded);
+    questionTitleClassName = cx(
+      questionTitleClassName,
+      styles.questionTitleEmbedded
+    );
   }
 
   const colorsByStatus = useMemo(
@@ -25,7 +28,11 @@ export default function QuestionTitle(props) {
     if (!store.questionResponses || !t) return null;
 
     const questionResponse = store.questionResponses?.[question.id];
-    const { status, cluesTypes: clueTypesArray, points } = questionResponse ?? {};
+    const {
+      status,
+      cluesTypes: clueTypesArray,
+      points,
+    } = questionResponse ?? {};
 
     const getPointsToSubstractFromClue = (clueType, totalPoints) => {
       const clue = store?.config?.clues?.find((clue) => clue.type === clueType);
@@ -35,23 +42,23 @@ export default function QuestionTitle(props) {
       return 0;
     };
 
-    let responsePoints = '';
+    let responsePoints = "";
     const okPoints = store.questionsInfo?.perQuestionNumber?.toFixed(2);
     const koPoints =
       store.questionsInfo?.perErrorQuestionNumber < 0
         ? store.questionsInfo?.perErrorQuestionNumber?.toFixed(2)
-        : '0';
+        : "0";
     const omitPoints =
       store.questionsInfo?.perOmitQuestionNumber < 0
         ? store.questionsInfo?.perOmitQuestionNumber?.toFixed(2)
-        : '0';
+        : "0";
 
-    if (status === 'ok') {
+    if (status === "ok") {
       responsePoints = okPoints;
-    } else if (status === 'ko') {
+    } else if (status === "ko") {
       responsePoints = koPoints;
     } else {
-      responsePoints = omitPoints ?? '';
+      responsePoints = omitPoints ?? "";
     }
 
     const finalPoints = points?.toFixed(2);
@@ -60,7 +67,7 @@ export default function QuestionTitle(props) {
       <Stack spacing={3}>
         {clueTypesArray?.length > 0 && (
           <Stack spacing={3}>
-            <Text style={{ whiteSpace: 'nowrap' }} size="xs">
+            <Text style={{ whiteSpace: "nowrap" }} size="xs">
               <span
                 style={{
                   color: colorsByStatus[status],
@@ -68,14 +75,18 @@ export default function QuestionTitle(props) {
                 }}
               >
                 {responsePoints}
-              </span>{' '}
-              {t('pointsInTotal')}
+              </span>{" "}
+              {t("pointsInTotal")}
             </Text>
 
             {clueTypesArray.map((usedClueType, index) => (
               <>
-                <Box style={{ borderLeft: '1px solid gray' }} />
-                <Text style={{ whiteSpace: 'nowrap' }} size="xs" key={`${index}-${usedClueType}`}>
+                <Box style={{ borderLeft: "1px solid gray" }} />
+                <Text
+                  style={{ whiteSpace: "nowrap" }}
+                  size="xs"
+                  key={`${index}-${usedClueType}`}
+                >
                   <span
                     style={{
                       color: colorsByStatus.ko,
@@ -90,15 +101,15 @@ export default function QuestionTitle(props) {
             ))}
           </Stack>
         )}
-        <Text style={{ whiteSpace: 'nowrap' }} size="xs">
+        <Text style={{ whiteSpace: "nowrap" }} size="xs">
           <span
             style={{
               color: colorsByStatus[status],
             }}
           >
             {finalPoints}
-          </span>{' '}
-          {t('pointsOutOf', { questionPoints: okPoints })}
+          </span>{" "}
+          {t("pointsOutOf", { questionPoints: okPoints })}
         </Text>
       </Stack>
     );
@@ -112,9 +123,18 @@ export default function QuestionTitle(props) {
   ]);
 
   return (
-    <Box className={store.viewMode ? styles.tableViewModeTitle : questionTitleClassName}>
+    <Box
+      className={
+        store.viewMode ? styles.tableViewModeTitle : questionTitleClassName
+      }
+    >
       <Box className={styles.questionTitleText}>
-        <Text size={store.viewMode ? 'md' : 'lg'} role="productive" color="primary" strong>
+        <Text
+          size={store.viewMode ? "md" : "lg"}
+          role="productive"
+          color="primary"
+          strong
+        >
           {props.index + 1}. {htmlToText(question.stem.text)}
         </Text>
       </Box>
@@ -128,21 +148,28 @@ export default function QuestionTitle(props) {
 
       {/* KEPT HERE UNTIL TEST PLUGIN FRONTEND CHANGES ARE FINALIZED - POSSIBLY DEPRECATED */}
       {store.embedded && store.viewMode ? (
-        <Box className={cx(styles.questionValueCard, styles.questionValueCardEmbedded)}>
+        <Box
+          className={cx(
+            styles.questionValueCard,
+            styles.questionValueCardEmbedded
+          )}
+        >
           <Box>
-            <Text style={{ whiteSpace: 'nowrap' }}>
+            <Text style={{ whiteSpace: "nowrap" }}>
               <span
                 style={{
                   color: store.viewMode
-                    ? colorsByStatus[store.questionResponses?.[question.id].status]
+                    ? colorsByStatus[
+                        store.questionResponses?.[question.id].status
+                      ]
                     : COLORS.fatic02,
                 }}
               >
                 {store.viewMode
                   ? store.questionResponses?.[question.id].points.toFixed(2)
                   : store.questionsInfo.perQuestion}
-              </span>{' '}
-              {t('pointsInTotal')}
+              </span>{" "}
+              {t("pointsInTotal")}
             </Text>
           </Box>
           <Text size="xs" color="primary"></Text>

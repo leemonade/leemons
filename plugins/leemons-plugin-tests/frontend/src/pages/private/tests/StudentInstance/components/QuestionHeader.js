@@ -1,9 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { ActivityCountdown, Box, Text, Title } from '@bubbles-ui/components';
-import { ArrowLeftIcon } from '@bubbles-ui/icons/outline';
-import dayjs from 'dayjs';
-import * as duration from 'dayjs/plugin/duration';
+import React from "react";
+import PropTypes from "prop-types";
+import { ActivityCountdown, Box, Text, Title } from "@bubbles-ui/components";
+import { ArrowLeftIcon } from "@bubbles-ui/icons/outline";
+import dayjs from "dayjs";
+import * as duration from "dayjs/plugin/duration";
 
 dayjs.extend(duration);
 
@@ -14,7 +14,9 @@ function Step(props) {
       <Box className={styles.questionStepBar}>
         <Box
           className={styles.questionStepBaInner}
-          style={{ width: `${((store.questionMax + 1) / store.questions.length) * 100}%` }}
+          style={{
+            width: `${((store.questionMax + 1) / store.questions.length) * 100}%`,
+          }}
         />
       </Box>
       <Box className={styles.questionStepNumbers}>
@@ -34,9 +36,11 @@ export default function QuestionHeader(props) {
 
   let endDate = null;
   if (!store.viewMode && store.instance?.duration && store.timestamps?.start) {
-    const [value, unit] = store.instance.duration.split(' ');
+    const [value, unit] = store.instance.duration.split(" ");
     endDate = new Date(store.timestamps.start);
-    endDate.setSeconds(endDate.getSeconds() + dayjs.duration({ [unit]: value }).asSeconds());
+    endDate.setSeconds(
+      endDate.getSeconds() + dayjs.duration({ [unit]: value }).asSeconds()
+    );
   }
 
   return (
@@ -46,12 +50,14 @@ export default function QuestionHeader(props) {
           <>
             <Box>
               <Text role="expressive" size="xs" color="soft">
-                {t('questionNumber', { number: index + 1 })}
+                {t("questionNumber", { number: index + 1 })}
               </Text>
             </Box>
             {store.instance.assignable.asset.tagline ? (
               <Box>
-                <Title order="3">{store.instance.assignable.asset.tagline}</Title>
+                <Title order="3">
+                  {store.instance.assignable.asset.tagline}
+                </Title>
               </Box>
             ) : null}
           </>
@@ -62,7 +68,7 @@ export default function QuestionHeader(props) {
             <ArrowLeftIcon />
             <Box sx={(theme) => ({ paddingLeft: theme.spacing[3] })}>
               <Text role="productive" size="md" color="primary">
-                {t('returnToTable')}
+                {t("returnToTable")}
               </Text>
             </Box>
           </Box>

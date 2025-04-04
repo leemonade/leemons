@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { noop } from 'lodash';
-import { DropdownButton } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { noop } from "lodash";
+import { DropdownButton } from "@bubbles-ui/components";
 
 export default function FinalDropdown({
   t,
@@ -14,7 +14,8 @@ export default function FinalDropdown({
 }) {
   // ························································
   // HANDLERS
-  const validate = async () => form.trigger(['instructionsForTeachers', 'instructionsForStudents']);
+  const validate = async () =>
+    form.trigger(["instructionsForTeachers", "instructionsForStudents"]);
 
   async function handleOnPublish() {
     setIsDirty(true);
@@ -35,13 +36,13 @@ export default function FinalDropdown({
       chevronUp
       width="auto"
       data={[
-        { label: t('onlyPublish'), onClick: handleOnPublish },
-        { label: t('publishAndAssign'), onClick: handleOnAssign },
+        { label: t("onlyPublish"), onClick: handleOnPublish },
+        { label: t("publishAndAssign"), onClick: handleOnAssign },
       ]}
       // loading={store.saving === 'publish'}
       disabled={disabled}
     >
-      {t('finish')}
+      {t("finish")}
     </DropdownButton>
   );
 }

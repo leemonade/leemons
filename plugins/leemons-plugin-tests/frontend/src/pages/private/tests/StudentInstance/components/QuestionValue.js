@@ -1,14 +1,21 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect } from "react";
 
-import { Box, COLORS, Select, Text } from '@bubbles-ui/components';
-import { forEach, isArray, keyBy } from 'lodash';
-import PropTypes from 'prop-types';
+import { Box, COLORS, Select, Text } from "@bubbles-ui/components";
+import { forEach, isArray, keyBy } from "lodash";
+import PropTypes from "prop-types";
 
-import { getQuestionClues } from '../helpers/getQuestionClues';
+import { getQuestionClues } from "../helpers/getQuestionClues";
 
 export default function QuestionValue(props) {
   const [selectedClue, setSelectedClue] = useState(null);
-  const { t, store, render, question, saveQuestion, isPreviewMode = false } = props;
+  const {
+    t,
+    store,
+    render,
+    question,
+    saveQuestion,
+    isPreviewMode = false,
+  } = props;
 
   const usedClues = store.questionResponses?.[question.id].clues;
   const usedCluesTypes = store.questionResponses?.[question.id].cluesTypes;
@@ -21,7 +28,7 @@ export default function QuestionValue(props) {
     setSelectedClue(null); // Resetea el valor seleccionado al cambiar de pregunta
   }, [question.id]); // Dependencia en el ID de la pregunta
   const cluesConfigByType = React.useMemo(
-    () => keyBy(store.config.clues, 'type'),
+    () => keyBy(store.config.clues, "type"),
     [store.config.clues]
   );
   let clueLessPoints = 0;
@@ -30,7 +37,8 @@ export default function QuestionValue(props) {
   forEach(clues, (clue, index) => {
     if (index < usedClues) {
       const lessPoints =
-        store?.questionsInfo?.perQuestion * (cluesConfigByType[clue.type].value / 100);
+        store?.questionsInfo?.perQuestion *
+        (cluesConfigByType[clue.type].value / 100);
       usedCluesObj.push({
         points: `-${lessPoints.toFixed(2)}`,
         index,
@@ -53,10 +61,17 @@ export default function QuestionValue(props) {
         if (clueTypeNotUsedYet) {
           store.questionResponses[question.id].cluesTypes.push(type);
 
-          if (type === 'hide-response') {
-            const questionIndex = store.questions.findIndex((q) => q.id === question.id);
-            if (questionIndex !== -1 && store.questions[questionIndex].mapProperties) {
-              store.questions[questionIndex].mapProperties.markers.canShowHintMarker = true;
+          if (type === "hide-response") {
+            const questionIndex = store.questions.findIndex(
+              (q) => q.id === question.id
+            );
+            if (
+              questionIndex !== -1 &&
+              store.questions[questionIndex].mapProperties
+            ) {
+              store.questions[
+                questionIndex
+              ].mapProperties.markers.canShowHintMarker = true;
             }
           }
         }
@@ -81,9 +96,10 @@ export default function QuestionValue(props) {
     forEach(clues, (clue) => {
       const clueType = `clue${clue.type}`;
       const lessPoints =
-        store?.questionsInfo?.perQuestion * (cluesConfigByType[clue.type].value / 100);
+        store?.questionsInfo?.perQuestion *
+        (cluesConfigByType[clue.type].value / 100);
       selectData.push({
-        label: `${t(clueType)} (-${lessPoints.toFixed(2)} ${t('pts')})`,
+        label: `${t(clueType)} (-${lessPoints.toFixed(2)} ${t("pts")})`,
         value: clue.type,
         disabled: usedCluesTypes?.indexOf(clue.type) >= 0,
       });
@@ -93,16 +109,17 @@ export default function QuestionValue(props) {
   return (
     <Box
       sx={(theme) => ({
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
         borderBottom:
-          !store?.embedded && `1px solid ${theme.other.divider.background.color.default}`,
+          !store?.embedded &&
+          `1px solid ${theme.other.divider.background.color.default}`,
         paddingBottom: !isPreviewMode ? theme.spacing[4] : 0,
         marginBottom: !isPreviewMode ? theme.spacing[4] : 0,
       })}
     >
-      <Box style={{ display: 'flex', alignItems: 'center' }}>
+      <Box style={{ display: "flex", alignItems: "center" }}>
         {/* -- Question value -- */}
 
         {!store.embedded ? (
@@ -118,10 +135,12 @@ export default function QuestionValue(props) {
               +
               {store.viewMode
                 ? store.questionResponses[question.id].points
-                : (store?.questionsInfo?.perQuestion - clueLessPoints).toFixed(2)}
-            </Text>{' '}
+                : (store?.questionsInfo?.perQuestion - clueLessPoints).toFixed(
+                    2
+                  )}
+            </Text>{" "}
             <Text size="xs" color="primary">
-              {t('pointsInTotal')}
+              {t("pointsInTotal")}
             </Text>
           </Box>
         ) : null}
@@ -133,7 +152,8 @@ export default function QuestionValue(props) {
                   sx={(theme) => ({
                     width: 1,
                     height: 26,
-                    backgroundColor: theme.other.divider.background.color.default,
+                    backgroundColor:
+                      theme.other.divider.background.color.default,
                     marginLeft: theme.spacing[4],
                     marginRight: theme.spacing[4],
                   })}
@@ -146,9 +166,9 @@ export default function QuestionValue(props) {
                     })}
                   >
                     {clObj.points}
-                  </Text>{' '}
+                  </Text>{" "}
                   <Text size="xs" color="primary">
-                    {t('clueN', { number: clObj.index + 1 })}
+                    {t("clueN", { number: clObj.index + 1 })}
                   </Text>
                 </Box>
               </>
@@ -161,7 +181,7 @@ export default function QuestionValue(props) {
           {selectData?.length ? (
             <Select
               style={{ width: 200 }}
-              placeholder={t('askForAHint')}
+              placeholder={t("askForAHint")}
               data={selectData}
               value={selectedClue}
               onChange={(value) => {

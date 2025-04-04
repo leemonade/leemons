@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function deleteQuestions({ questionId, ctx }) {
   const questionIds = _.isArray(questionId) ? questionId : [questionId];
@@ -7,8 +7,8 @@ async function deleteQuestions({ questionId, ctx }) {
 
   await Promise.all([
     ctx.tx.db.Questions.deleteMany({ id: questionIds }),
-    ctx.tx.call('common.tags.removeAllTagsForValues', {
-      type: 'tests.questionBanks',
+    ctx.tx.call("common.tags.removeAllTagsForValues", {
+      type: "tests.questionBanks",
       values: questionIds,
     }),
   ]);

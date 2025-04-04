@@ -1,17 +1,23 @@
-import React from 'react';
+import React from "react";
 
-import { Text, Stack, Box, createStyles, ImageLoader } from '@bubbles-ui/components';
-import { filter } from 'lodash';
-import PropTypes from 'prop-types';
+import {
+  Text,
+  Stack,
+  Box,
+  createStyles,
+  ImageLoader,
+} from "@bubbles-ui/components";
+import { filter } from "lodash";
+import PropTypes from "prop-types";
 
-import { getQuestionClues } from '../helpers/getQuestionClues';
+import { getQuestionClues } from "../helpers/getQuestionClues";
 
 const useNoteClueStyles = createStyles((theme) => ({
   container: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
 
-    backgroundColor: '#E8F0FC', // It should be theme.other.banner.background.color.info but colors do not match
+    backgroundColor: "#E8F0FC", // It should be theme.other.banner.background.color.info but colors do not match
     borderRadius: theme.other.banner.border.radius,
     gap: 8,
     padding: 16,
@@ -20,8 +26,14 @@ const useNoteClueStyles = createStyles((theme) => ({
 
 function Icon({ src }) {
   return (
-    <Box sx={() => ({ position: 'relative', display: 'inline-block', verticalAlign: '' })}>
-      <Box sx={() => ({ position: 'relative', width: '24px', height: '24px' })}>
+    <Box
+      sx={() => ({
+        position: "relative",
+        display: "inline-block",
+        verticalAlign: "",
+      })}
+    >
+      <Box sx={() => ({ position: "relative", width: "24px", height: "24px" })}>
         <ImageLoader height="24px" src={src} />
       </Box>
     </Box>
@@ -38,12 +50,21 @@ export default function QuestionNoteClues(props) {
   const clues = React.useMemo(
     () =>
       filter(
-        getQuestionClues(question, store.questionResponses?.[question.id].cluesTypes, store.config),
+        getQuestionClues(
+          question,
+          store.questionResponses?.[question.id].cluesTypes,
+          store.config
+        ),
         {
-          type: 'note',
+          type: "note",
         }
       ),
-    [question, store.questionResponses?.[question.id]?.clues, store.config, store.questionResponses]
+    [
+      question,
+      store.questionResponses?.[question.id]?.clues,
+      store.config,
+      store.questionResponses,
+    ]
   );
 
   if (clues.length) {
@@ -52,7 +73,7 @@ export default function QuestionNoteClues(props) {
         <Stack alignItems="center" spacing={1}>
           <Icon src="/public/tests/responseDetail/hint.svg" />
           <Text sx={{ paddingTop: 2 }} color="primary" strong>
-            {t('hint')}
+            {t("hint")}
           </Text>
         </Stack>
         <Text>{clue.text}</Text>

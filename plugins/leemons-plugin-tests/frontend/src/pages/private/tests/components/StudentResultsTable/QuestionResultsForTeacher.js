@@ -1,16 +1,16 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo } from "react";
 
-import { Tabs, TabPanel, ContextContainer } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+import { Tabs, TabPanel, ContextContainer } from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
-import QuestionResultsTable from './QuestionResultsTable';
+import QuestionResultsTable from "./QuestionResultsTable";
 
-import { QUESTION_RESPONSE_STATUS } from '@tests/constants';
-import { QUESTION_TYPES } from '@tests/pages/private/questions-banks/questionConstants';
+import { QUESTION_RESPONSE_STATUS } from "@tests/constants";
+import { QUESTION_TYPES } from "@tests/pages/private/questions-banks/questionConstants";
 
 const TAB_KEYS = {
-  OPEN_QUESTIONS: 'open-questions',
-  TEST_QUESTIONS: 'test-questions',
+  OPEN_QUESTIONS: "open-questions",
+  TEST_QUESTIONS: "test-questions",
 };
 
 export default function QuestionResultsForTeacher({
@@ -35,7 +35,9 @@ export default function QuestionResultsForTeacher({
 
   const getNotGradedOpenQuestionsAmount = () => {
     const notGradedQuestions = openResponseQuestions.filter(
-      (question) => questionResponses?.[question.id]?.status === QUESTION_RESPONSE_STATUS.NOT_GRADED
+      (question) =>
+        questionResponses?.[question.id]?.status ===
+        QUESTION_RESPONSE_STATUS.NOT_GRADED
     );
     return notGradedQuestions.length;
   };
@@ -46,7 +48,7 @@ export default function QuestionResultsForTeacher({
         <Tabs activeKey={activeTabKey} onChange={setActiveTabKey}>
           <TabPanel
             key={TAB_KEYS.OPEN_QUESTIONS}
-            label={`${props.t('questionResultsTable.openQuestions')} (${getNotGradedOpenQuestionsAmount()})`}
+            label={`${props.t("questionResultsTable.openQuestions")} (${getNotGradedOpenQuestionsAmount()})`}
           >
             <QuestionResultsTable
               {...props}
@@ -57,7 +59,7 @@ export default function QuestionResultsForTeacher({
           </TabPanel>
           <TabPanel
             key={TAB_KEYS.TEST_QUESTIONS}
-            label={`${props.t('questionResultsTable.testQuestions')} (${testQuestions.length})`}
+            label={`${props.t("questionResultsTable.testQuestions")} (${testQuestions.length})`}
           >
             <QuestionResultsTable
               {...props}

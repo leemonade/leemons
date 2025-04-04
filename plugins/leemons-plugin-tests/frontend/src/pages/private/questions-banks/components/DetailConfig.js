@@ -1,17 +1,20 @@
-import { getUserProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
+import {
+  getUserProgramsRequest,
+  listSessionClassesRequest,
+} from "@academic-portfolio/request";
 import {
   Button,
   ContextContainer,
   ListInput,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
-} from '@bubbles-ui/components';
-import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { useStore } from '@common';
-import { groupBy, map, uniqBy } from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { Controller } from 'react-hook-form';
+} from "@bubbles-ui/components";
+import { ChevLeftIcon, ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { useStore } from "@common";
+import { groupBy, map, uniqBy } from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import { Controller } from "react-hook-form";
 
 export default function DetailConfig({
   form,
@@ -28,7 +31,7 @@ export default function DetailConfig({
     subjectsByProgram: {},
   });
   const formValues = form.watch();
-  const program = form.watch('program');
+  const program = form.watch("program");
 
   const validate = async () => form.trigger([]);
 
@@ -51,17 +54,20 @@ export default function DetailConfig({
       getUserProgramsRequest(),
       listSessionClassesRequest(),
     ]);
-    cStore.subjects = uniqBy(map(classes, 'subject'), 'id');
+    cStore.subjects = uniqBy(map(classes, "subject"), "id");
     cStore.subjectsByProgram = groupBy(
       map(cStore.subjects, (item) => ({
         value: item.id,
         label: item.name,
         program: item.program,
       })),
-      'program'
+      "program"
     );
     cStore.programs = programs;
-    cStore.programsData = map(programs, ({ id, name }) => ({ value: id, label: name }));
+    cStore.programsData = map(programs, ({ id, name }) => ({
+      value: id,
+      label: name,
+    }));
     cRender();
   }
 
@@ -82,7 +88,7 @@ export default function DetailConfig({
               leftIcon={<ChevLeftIcon height={20} width={20} />}
               onClick={onPrev}
             >
-              {t('previous')}
+              {t("previous")}
             </Button>
           }
           rightZone={
@@ -92,9 +98,9 @@ export default function DetailConfig({
                   variant="link"
                   onClick={handleOnSave}
                   disabled={store.saving}
-                  loading={store.saving === 'draft'}
+                  loading={store.saving === "draft"}
                 >
-                  {t('saveDraft')}
+                  {t("saveDraft")}
                 </Button>
               ) : null}
 
@@ -102,9 +108,9 @@ export default function DetailConfig({
                 rightIcon={<ChevRightIcon height={20} width={20} />}
                 onClick={handleOnNext}
                 disabled={store.saving}
-                loading={store.saving === 'publish'}
+                loading={store.saving === "publish"}
               >
-                {t('continue')}
+                {t("continue")}
               </Button>
             </>
           }
@@ -118,8 +124,8 @@ export default function DetailConfig({
           render={({ field }) => (
             <ListInput
               {...field}
-              label={t('categoriesLabel')}
-              addButtonLabel={t('addCategory')}
+              label={t("categoriesLabel")}
+              addButtonLabel={t("addCategory")}
               canAdd
             />
           )}

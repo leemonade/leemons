@@ -1,5 +1,5 @@
-import { useEffect, useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useEffect, useMemo } from "react";
+import { useLocation } from "react-router-dom";
 
 import {
   Box,
@@ -8,35 +8,37 @@ import {
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
   Stack,
-} from '@bubbles-ui/components';
-import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { forEach, isNumber } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { ChevLeftIcon, ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { forEach, isNumber } from "lodash";
+import PropTypes from "prop-types";
 
-import QuestionValue from './QuestionValue';
-import Map from './questions/Map';
-import MonoResponse from './questions/MonoResponse';
-import OpenResponse from './questions/OpenResponse';
-import ShortResponse from './questions/ShortResponse';
-import TrueFalse from './questions/TrueFalse';
+import QuestionValue from "./QuestionValue";
+import Map from "./questions/Map";
+import MonoResponse from "./questions/MonoResponse";
+import OpenResponse from "./questions/OpenResponse";
+import ShortResponse from "./questions/ShortResponse";
+import TrueFalse from "./questions/TrueFalse";
 
-import { QUESTION_TYPES } from '@tests/pages/private/questions-banks/questionConstants';
+import { QUESTION_TYPES } from "@tests/pages/private/questions-banks/questionConstants";
 
 // HELPER FUNCTIONS ········································································|
 const getMonoResponseNextLabel = (currentResponse, t) => {
-  return isNumber(currentResponse) ? t('nextButton') : t('skipButton');
+  return isNumber(currentResponse) ? t("nextButton") : t("skipButton");
 };
 
 const getShortAndOpenResponseNextLabel = (currentResponse, t) => {
-  return currentResponse ? t('nextButton') : t('skipButton');
+  return currentResponse ? t("nextButton") : t("skipButton");
 };
 
 const getTrueFalseNextLabel = (currentResponse, t) => {
-  return typeof currentResponse === 'boolean' ? t('nextButton') : t('skipButton');
+  return typeof currentResponse === "boolean"
+    ? t("nextButton")
+    : t("skipButton");
 };
 
 const getMapNextLabel = (_, t, allSelectsUsed) => {
-  return allSelectsUsed ? t('nextButton') : t('skipButton');
+  return allSelectsUsed ? t("nextButton") : t("skipButton");
 };
 
 const getNextLabelByQuestionType = {
@@ -51,7 +53,7 @@ export default function Question(props) {
   const { classes, cx, t, store, render, index } = props;
 
   const url = useLocation();
-  const previewMode = url.pathname.includes('detail');
+  const previewMode = url.pathname.includes("detail");
 
   useEffect(() => {
     if (!store.questionMax || store.questionMax < index) {
@@ -65,15 +67,18 @@ export default function Question(props) {
     className = cx(className, classes.loremIpsumEmbedded);
   }
 
-  const showFirstButton = !props.isFirstStep && (!store.embedded || (store.embedded && index > 0));
+  const showFirstButton =
+    !props.isFirstStep && (!store.embedded || (store.embedded && index > 0));
   const isLastButton = index === store.questions.length - 1;
   const showLastButton = !store.embedded || (store.embedded && !isLastButton);
 
-  const currentResponse = store.questionResponses?.[props.question.id].properties?.response;
+  const currentResponse =
+    store.questionResponses?.[props.question.id].properties?.response;
   let allSelectsUsed = false;
 
   if (props.question.type === QUESTION_TYPES.MAP) {
-    const currentResponses = store.questionResponses[props.question.id].properties?.responses || [];
+    const currentResponses =
+      store.questionResponses[props.question.id].properties?.responses || [];
     allSelectsUsed = true;
 
     forEach(props.question.mapProperties.markers.list, (_, i) => {
@@ -84,14 +89,18 @@ export default function Question(props) {
   }
 
   const nextLabel = useMemo(() => {
-    if (props.isLast) return t('finishButton');
+    if (props.isLast) return t("finishButton");
 
     if (store?.config?.canOmitQuestions) {
       const questionType = props.question.type;
-      return getNextLabelByQuestionType[questionType](currentResponse, t, allSelectsUsed);
+      return getNextLabelByQuestionType[questionType](
+        currentResponse,
+        t,
+        allSelectsUsed
+      );
     }
 
-    return t('nextButton');
+    return t("nextButton");
   }, [
     store.config.canOmitQuestions,
     currentResponse,
@@ -138,11 +147,16 @@ export default function Question(props) {
       return !allSelectsUsed;
     }
     if (props.question.type === QUESTION_TYPES.TRUE_FALSE) {
-      return typeof currentResponse !== 'boolean';
+      return typeof currentResponse !== "boolean";
     }
 
     return false;
-  }, [store?.config?.canOmitQuestions, currentResponse, allSelectsUsed, props.question?.type]);
+  }, [
+    store?.config?.canOmitQuestions,
+    currentResponse,
+    allSelectsUsed,
+    props.question?.type,
+  ]);
 
   return (
     <TotalLayoutStepContainer
@@ -151,7 +165,7 @@ export default function Question(props) {
       hasFooter={!!store.viewMode}
       clean={previewMode || store.viewMode}
       footerPadding={store.viewMode ? 0 : undefined}
-      stepName={previewMode || store.viewMode ? '' : t('questions')}
+      stepName={previewMode || store.viewMode ? "" : t("questions")}
       Footer={
         <TotalLayoutFooterContainer
           fixed
@@ -159,12 +173,12 @@ export default function Question(props) {
           showFooterBorder={store.viewMode}
           scrollRef={props.scrollRef}
           rightZone={
-            <Box sx={{ minWidth: '120px' }}>
+            <Box sx={{ minWidth: "120px" }}>
               {showLastButton && (
-                <Box style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Box style={{ display: "flex", justifyContent: "flex-end" }}>
                   <Button
                     position="left"
-                    variant={isLastButton ? null : 'outline'}
+                    variant={isLastButton ? null : "outline"}
                     rightIcon={<ChevRightIcon />}
                     rounded
                     loading={store.isLoading}
@@ -181,17 +195,21 @@ export default function Question(props) {
                     }}
                     disabled={disableNext}
                   >
-                    {store.embedded ? t('nextButton') : nextLabel || t('next')}
+                    {store.embedded ? t("nextButton") : nextLabel || t("next")}
                   </Button>
                 </Box>
               )}
             </Box>
           }
           leftZone={
-            <Box sx={{ minWidth: '120px' }}>
+            <Box sx={{ minWidth: "120px" }}>
               {showFirstButton && (
-                <Button variant="outline" leftIcon={<ChevLeftIcon />} onClick={props.prevStep}>
-                  {t('prev')}
+                <Button
+                  variant="outline"
+                  leftIcon={<ChevLeftIcon />}
+                  onClick={props.prevStep}
+                >
+                  {t("prev")}
                 </Button>
               )}
             </Box>
@@ -199,12 +217,12 @@ export default function Question(props) {
         >
           <Box
             sx={() => ({
-              display: 'flex',
-              justifyContent: 'center',
-              marginLeft: '24px',
+              display: "flex",
+              justifyContent: "center",
+              marginLeft: "24px",
             })}
           >
-            <Box sx={() => ({ maxWidth: '280px', width: '100%' })}>
+            <Box sx={() => ({ maxWidth: "280px", width: "100%" })}>
               <ProgressBottomBar
                 size="md"
                 labelTop={`${index + 1} / ${store.questions.length}`}

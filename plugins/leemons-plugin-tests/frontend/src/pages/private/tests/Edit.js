@@ -1,35 +1,38 @@
 /* eslint-disable camelcase */
-import React, { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { useHistory, useParams } from 'react-router-dom';
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useHistory, useParams } from "react-router-dom";
 
-import { getUserProgramsRequest, getUserSubjectsRequest } from '@academic-portfolio/request';
+import {
+  getUserProgramsRequest,
+  getUserSubjectsRequest,
+} from "@academic-portfolio/request";
 import {
   LoadingOverlay,
   TotalLayoutContainer,
   TotalLayoutHeader,
   VerticalStepperContainer,
-} from '@bubbles-ui/components';
-import { useStore } from '@common';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { groupBy, isString, map } from 'lodash';
+} from "@bubbles-ui/components";
+import { useStore } from "@common";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { groupBy, isString, map } from "lodash";
 
-import { getTestRequest, saveTestRequest } from '../../../request';
+import { getTestRequest, saveTestRequest } from "../../../request";
 
-import DetailBasic from './components/DetailBasic';
-import DetailContent from './components/DetailContent';
-import DetailEvaluation from './components/DetailEvaluation';
-import DetailInstructions from './components/DetailInstructions';
-import DetailQuestions from './components/DetailQuestions';
-import DetailQuestionsBanks from './components/DetailQuestionsBanks';
+import DetailBasic from "./components/DetailBasic";
+import DetailContent from "./components/DetailContent";
+import DetailEvaluation from "./components/DetailEvaluation";
+import DetailInstructions from "./components/DetailInstructions";
+import DetailQuestions from "./components/DetailQuestions";
+import DetailQuestionsBanks from "./components/DetailQuestionsBanks";
 
-import { TestIcon } from '@tests/components/Icons/TestIcon';
-import prefixPN from '@tests/helpers/prefixPN';
+import { TestIcon } from "@tests/components/Icons/TestIcon";
+import prefixPN from "@tests/helpers/prefixPN";
 
 export default function Edit() {
-  const [t] = useTranslateLoader(prefixPN('testsEdit'));
+  const [t] = useTranslateLoader(prefixPN("testsEdit"));
   const { layoutState, setLayoutState } = useLayout();
 
   useEffect(() => {
@@ -62,16 +65,24 @@ export default function Edit() {
 
   async function saveAsDraft() {
     try {
-      store.saving = 'draft';
+      store.saving = "draft";
       render();
 
       const { subjects, subjectsRaw, ...toSend } = formValues;
-      toSend.subjects = subjects?.map((subject) => (isString(subject) ? subject : subject.subject));
-      toSend.program = toSend.subjects?.length ? subjectsRaw[0].programId : null;
+      toSend.subjects = subjects?.map((subject) =>
+        isString(subject) ? subject : subject.subject
+      );
+      toSend.program = toSend.subjects?.length
+        ? subjectsRaw[0].programId
+        : null;
       toSend.cover = toSend.cover?.id ?? toSend.cover;
 
-      const { test } = await saveTestRequest({ ...toSend, type: 'learn', published: false });
-      addSuccessAlert(t('savedAsDraft'));
+      const { test } = await saveTestRequest({
+        ...toSend,
+        type: "learn",
+        published: false,
+      });
+      addSuccessAlert(t("savedAsDraft"));
       if (store.isNew) {
         history.replace(`/private/tests/${test.id}`);
       }
@@ -84,20 +95,28 @@ export default function Edit() {
 
   async function saveAsPublish(redictToAssign = false) {
     try {
-      store.saving = 'publish';
+      store.saving = "publish";
       render();
       const { subjects, subjectsRaw, ...toSend } = formValues;
 
-      toSend.subjects = subjects?.map((subject) => (isString(subject) ? subject : subject.subject));
-      toSend.program = toSend.subjects?.length ? subjectsRaw[0].programId : null;
+      toSend.subjects = subjects?.map((subject) =>
+        isString(subject) ? subject : subject.subject
+      );
+      toSend.program = toSend.subjects?.length
+        ? subjectsRaw[0].programId
+        : null;
       toSend.cover = toSend.cover?.id ?? toSend.cover;
 
-      const { test } = await saveTestRequest({ ...toSend, type: 'learn', published: true });
-      addSuccessAlert(t('published'));
+      const { test } = await saveTestRequest({
+        ...toSend,
+        type: "learn",
+        published: true,
+      });
+      addSuccessAlert(t("published"));
       if (redictToAssign) {
         history.push(`/private/tests/assign/${test.id}`);
       } else {
-        history.push('/private/tests');
+        history.push("/private/tests");
       }
     } catch (error) {
       addErrorAlert(error);
@@ -123,17 +142,20 @@ export default function Edit() {
         label: item.name,
         program: item.program,
       })),
-      'program'
+      "program"
     );
     store.programs = programs;
-    store.programsData = map(programs, ({ id, name }) => ({ value: id, label: name }));
+    store.programsData = map(programs, ({ id, name }) => ({
+      value: id,
+      label: name,
+    }));
 
     render();
   }
 
   async function init() {
     try {
-      store.isNew = params.id === 'new';
+      store.isNew = params.id === "new";
       render();
       if (!store.isNew) {
         const {
@@ -151,8 +173,8 @@ export default function Edit() {
         test.subjects = map(test.subjects, (subject) => ({ subject }));
         form.reset({
           ...test,
-          type: 'learn',
-          questions: map(test.questions, 'id'),
+          type: "learn",
+          questions: map(test.questions, "id"),
         });
       }
       await load();
@@ -188,10 +210,10 @@ export default function Edit() {
   function getInstructionsLabelKey() {
     const { config = {} } = formValues;
     if (config.hasResources || config.hasInstructions) {
-      let labelKey = 'instructions';
-      if (config.hasResources) labelKey = 'resources';
+      let labelKey = "instructions";
+      if (config.hasResources) labelKey = "resources";
       if (config.hasResources && config.hasInstructions) {
-        labelKey = 'resoucesAndInstructions';
+        labelKey = "resoucesAndInstructions";
       }
       return labelKey;
     }
@@ -200,39 +222,41 @@ export default function Edit() {
 
   const steps = React.useMemo(() => {
     const data = [
-      { label: t('basic'), status: 'OK' },
-      { label: t('contentLabel'), status: 'OK' },
-      { label: t('questionsBank'), status: 'OK' },
-      { label: t('questionsStepName'), status: 'OK' },
+      { label: t("basic"), status: "OK" },
+      { label: t("contentLabel"), status: "OK" },
+      { label: t("questionsBank"), status: "OK" },
+      { label: t("questionsStepName"), status: "OK" },
     ];
     const { config = {} } = formValues;
     if (config.hasCurriculum || config.hasObjectives) {
-      data.push({ label: t('evaluation'), status: 'OK' });
+      data.push({ label: t("evaluation"), status: "OK" });
     }
     if (config.hasResources || config.hasInstructions) {
-      data.push({ label: t(getInstructionsLabelKey()), status: 'OK' });
+      data.push({ label: t(getInstructionsLabelKey()), status: "OK" });
     }
     return data;
   }, [t, formValues]);
 
-  form.register('name', { required: t('nameRequired') });
-  form.register('questionBank', { required: t('questionBankRequired') });
-  form.register('questions', {
-    required: t('questionsRequired'),
+  form.register("name", { required: t("nameRequired") });
+  form.register("questionBank", { required: t("questionBankRequired") });
+  form.register("questions", {
+    required: t("questionsRequired"),
     min: {
       value: 1,
-      message: t('questionsRequired'),
+      message: t("questionsRequired"),
     },
   });
-  form.register('statement', { required: t('statementRequired') });
+  form.register("statement", { required: t("statementRequired") });
 
   const getTitle = () => {
-    if (store.isNew) return t('pageTitleNew');
-    return t('pageTitleEdit');
+    if (store.isNew) return t("pageTitleNew");
+    return t("pageTitleEdit");
   };
   const hasOptionalSteps = () => {
     const { config = {} } = formValues;
-    return config.hasInstructions || config.hasResources || config.hasObjectives;
+    return (
+      config.hasInstructions || config.hasResources || config.hasObjectives
+    );
   };
 
   const stepsContent = React.useMemo(() => {
@@ -243,12 +267,17 @@ export default function Edit() {
         t={t}
         form={form}
         store={store}
-        stepName={t('basic')}
+        stepName={t("basic")}
         scrollRef={scrollRef}
         advancedConfig={{
           alwaysOpen: true,
           program: { show: true, required: false },
-          subjects: { show: true, required: true, showLevel: false, maxOne: true },
+          subjects: {
+            show: true,
+            required: true,
+            showLevel: false,
+            maxOne: true,
+          },
         }}
         onNext={nextStep}
         onSave={saveAsDraft}
@@ -258,7 +287,7 @@ export default function Edit() {
         t={t}
         form={form}
         store={store}
-        stepName={t('contentLabel')}
+        stepName={t("contentLabel")}
         scrollRef={scrollRef}
         onSave={saveAsDraft}
         onNext={nextStep}
@@ -271,7 +300,7 @@ export default function Edit() {
         store={store}
         isNewQBankSelected={isNewQBankSelected}
         setIsNewQBankSelected={setIsNewQBankSelected}
-        stepName={t('questionsBank')}
+        stepName={t("questionsBank")}
         scrollRef={scrollRef}
         onSave={saveAsDraft}
         onNext={nextStep}
@@ -284,7 +313,7 @@ export default function Edit() {
         store={store}
         isNewQBankSelected={isNewQBankSelected}
         setIsNewQBankSelected={setIsNewQBankSelected}
-        stepName={t('questionsStepName')}
+        stepName={t("questionsStepName")}
         scrollRef={scrollRef}
         onSave={saveAsDraft}
         onNext={nextStep}
@@ -302,7 +331,7 @@ export default function Edit() {
           key="s4"
           form={form}
           store={store}
-          stepName={t('evaluation')}
+          stepName={t("evaluation")}
           scrollRef={scrollRef}
           onSave={saveAsDraft}
           onPublish={saveAsPublish}
@@ -348,9 +377,11 @@ export default function Edit() {
         <TotalLayoutHeader
           icon={<TestIcon width={23} height={23} />}
           title={getTitle()}
-          formTitlePlaceholder={formValues.name ? formValues.name : t('headerTitlePlaceholder')}
+          formTitlePlaceholder={
+            formValues.name ? formValues.name : t("headerTitlePlaceholder")
+          }
           onCancel={() => history.goBack()}
-          mainActionLabel={t('cancel')}
+          mainActionLabel={t("cancel")}
         />
       }
     >

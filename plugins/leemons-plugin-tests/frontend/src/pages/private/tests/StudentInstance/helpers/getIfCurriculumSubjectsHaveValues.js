@@ -1,4 +1,4 @@
-import { forEach, isEmpty } from 'lodash';
+import { forEach, isEmpty } from "lodash";
 
 export function getIfCurriculumSubjectsHaveValues(subjects) {
   let assessmentCriteria = false;

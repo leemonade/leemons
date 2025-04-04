@@ -1,8 +1,8 @@
 /* eslint-disable import/prefer-default-export */
-import React from 'react';
-import { ChevronLeftIcon, ChevronRightIcon } from '@bubbles-ui/icons/outline';
-import PropTypes from 'prop-types';
-import { Box, Button } from '@bubbles-ui/components';
+import React from "react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@bubbles-ui/icons/outline";
+import PropTypes from "prop-types";
+import { Box, Button } from "@bubbles-ui/components";
 
 export function ButtonNavigation({
   index,
@@ -15,13 +15,20 @@ export function ButtonNavigation({
   disableNext = false,
   nextLabel,
 }) {
-  const showFirstButton = !isFirstStep && (!store.embedded || (store.embedded && index > 0));
+  const showFirstButton =
+    !isFirstStep && (!store.embedded || (store.embedded && index > 0));
 
   const isLastButton = index === store.questions.length - 1;
   const showLastButton = !store.embedded || (store.embedded && !isLastButton);
   return (
     <>
-      <Box className={!showFirstButton ? classes.continueButtonFirst : classes.continueButton}>
+      <Box
+        className={
+          !showFirstButton
+            ? classes.continueButtonFirst
+            : classes.continueButton
+        }
+      >
         {showFirstButton ? (
           <Button
             position="right"
@@ -31,21 +38,21 @@ export function ButtonNavigation({
             compact
             onClick={prevStep}
           >
-            {t('prev')}
+            {t("prev")}
           </Button>
         ) : null}
 
         {showLastButton ? (
           <Button
             position="left"
-            variant={isLastButton ? null : 'outline'}
+            variant={isLastButton ? null : "outline"}
             rightIcon={<ChevronRightIcon />}
             rounded
             compact
             onClick={nextStep}
             disabled={disableNext}
           >
-            {store.embedded ? t('nextButton') : nextLabel || t('next')}
+            {store.embedded ? t("nextButton") : nextLabel || t("next")}
           </Button>
         ) : null}
       </Box>

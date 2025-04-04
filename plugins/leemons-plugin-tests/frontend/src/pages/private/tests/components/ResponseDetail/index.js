@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from "react";
 
 import {
   Stack,
@@ -8,18 +8,18 @@ import {
   HtmlText,
   Box,
   Checkbox,
-} from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
 
-import StemResource from '../../StudentInstance/components/StemResource';
+import StemResource from "../../StudentInstance/components/StemResource";
 
-import AnswerFeed from './AnswerFeed';
-import ResponseStatusIcon from './ResponseStatusIcon';
+import AnswerFeed from "./AnswerFeed";
+import ResponseStatusIcon from "./ResponseStatusIcon";
 
-import { QUESTION_RESPONSE_STATUS } from '@tests/constants';
-import prefixPN from '@tests/helpers/prefixPN';
-import { QUESTION_TYPES } from '@tests/pages/private/questions-banks/questionConstants';
+import { QUESTION_RESPONSE_STATUS } from "@tests/constants";
+import prefixPN from "@tests/helpers/prefixPN";
+import { QUESTION_TYPES } from "@tests/pages/private/questions-banks/questionConstants";
 
 const CHOICE_BASED_QUESTION_TYPES = [
   QUESTION_TYPES.MONO_RESPONSE,
@@ -31,7 +31,7 @@ const getResultCell = ({ value }) => {
   return (
     <Box
       sx={() => ({
-        marginInline: 'auto',
+        marginInline: "auto",
       })}
     >
       {value}
@@ -44,14 +44,14 @@ function OpenResponseDetail({ response, teacherFeedback, t }) {
     <Stack direction="column" spacing={5}>
       <Stack direction="column" spacing={2}>
         <Text role="productive" color="primary" strong>
-          {t('answer')}
+          {t("answer")}
         </Text>
         <Text>{response}</Text>
       </Stack>
       {teacherFeedback && (
         <Stack direction="column" spacing={2}>
           <Text role="productive" color="primary" strong>
-            {t('feedback')}
+            {t("feedback")}
           </Text>
           <HtmlText>{teacherFeedback}</HtmlText>
         </Stack>
@@ -77,27 +77,27 @@ function ResponseDetail({
 }) {
   const columns = [
     {
-      Header: isChoiceBased ? t('answers') : t('answer'),
-      accessor: 'choice',
-      style: { width: '70%' },
+      Header: isChoiceBased ? t("answers") : t("answer"),
+      accessor: "choice",
+      style: { width: "70%" },
     },
     {
-      Header: t('result'),
-      accessor: 'result',
-      style: { width: '15%', textAlign: 'center' },
+      Header: t("result"),
+      accessor: "result",
+      style: { width: "15%", textAlign: "center" },
 
       Cell: getResultCell,
     },
     {
-      Header: t('solution'),
-      accessor: 'solution',
+      Header: t("solution"),
+      accessor: "solution",
     },
   ];
 
   const getResult = useCallback(
     (isUserAnswer, isCorrect) => {
-      if (userSkipped) return '-';
-      if (!isUserAnswer) return '';
+      if (userSkipped) return "-";
+      if (!isUserAnswer) return "";
       return isCorrect ? (
         <ResponseStatusIcon status={QUESTION_RESPONSE_STATUS.OK} />
       ) : (
@@ -112,7 +112,7 @@ function ResponseDetail({
       if (!isChoiceBased) return solutionLabel;
       if (isUserAnswer && !isCorrect) return solutionLabel;
       if (userSkipped) return solutionLabel;
-      return '';
+      return "";
     },
     [solutionLabel, userSkipped, isChoiceBased]
   );
@@ -174,7 +174,7 @@ ResponseDetail.propTypes = {
 };
 
 function Index(props) {
-  const [t] = useTranslateLoader(prefixPN('testResult.responseDetail'));
+  const [t] = useTranslateLoader(prefixPN("testResult.responseDetail"));
   const {
     questionType,
     questionStatus,
@@ -189,13 +189,15 @@ function Index(props) {
       <Box sx={{ paddingInline: 16 }}>
         {stemResource && displayStemMediaHorizontally ? (
           <Stack fullWidth spacing={1}>
-            <Box noFlex sx={{ width: '30%' }}>
+            <Box noFlex sx={{ width: "30%" }}>
               <StemResource asset={stemResource} />
             </Box>
-            <Box sx={{ width: '70%' }}>
+            <Box sx={{ width: "70%" }}>
               <ResponseDetail
                 {...props}
-                isChoiceBased={CHOICE_BASED_QUESTION_TYPES.includes(questionType)}
+                isChoiceBased={CHOICE_BASED_QUESTION_TYPES.includes(
+                  questionType
+                )}
                 isOpenResponse={questionType === QUESTION_TYPES.OPEN_RESPONSE}
                 t={t}
               />
@@ -217,7 +219,7 @@ function Index(props) {
       {globalFeedback && (
         <Stack direction="column" spacing={2}>
           <Text color="primary" strong>
-            {t('explanation')}
+            {t("explanation")}
           </Text>
           <HtmlText>{globalFeedback}</HtmlText>
         </Stack>

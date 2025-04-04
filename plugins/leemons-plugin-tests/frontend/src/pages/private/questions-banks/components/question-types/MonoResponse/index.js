@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Controller, useFormContext } from 'react-hook-form';
+import { useState } from "react";
+import { Controller, useFormContext } from "react-hook-form";
 
 import {
   Box,
@@ -11,35 +11,38 @@ import {
   Stack,
   Text,
   InputWrapper,
-} from '@bubbles-ui/components';
-import { TextEditorInput, TEXT_EDITOR_TEXTAREA_TOOLBARS } from '@bubbles-ui/editors';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { find, findIndex, forEach, capitalize, omit } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import {
+  TextEditorInput,
+  TEXT_EDITOR_TEXTAREA_TOOLBARS,
+} from "@bubbles-ui/editors";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import { find, findIndex, forEach, capitalize, omit } from "lodash";
+import PropTypes from "prop-types";
 
-import { ListInputRender } from './components/ListInputRender';
-import { ListItemRender } from './components/ListItemRender';
+import { ListInputRender } from "./components/ListInputRender";
+import { ListItemRender } from "./components/ListItemRender";
 
 // eslint-disable-next-line import/prefer-default-export
 export function MonoResponse({ form: _form, t, scrollRef }) {
   const form = useFormContext() || _form;
 
-  const hasHelp = form.watch('hasHelp');
-  const hasImageAnswers = form.watch('hasImageAnswers');
-  const hasAnswerFeedback = form.watch('hasAnswerFeedback');
+  const hasHelp = form.watch("hasHelp");
+  const hasImageAnswers = form.watch("hasImageAnswers");
+  const hasAnswerFeedback = form.watch("hasAnswerFeedback");
   const [showInput, setShowInput] = useState(false);
 
   function toggleHideOnHelp(item) {
-    const data = form.getValues('choices');
+    const data = form.getValues("choices");
     const index = findIndex(data, item);
     if (index >= 0) {
       data[index].hideOnHelp = !data[index].hideOnHelp;
-      form.setValue('choices', data);
+      form.setValue("choices", data);
     }
   }
 
   function changeCorrectResponse(item) {
-    const data = form.getValues('choices');
+    const data = form.getValues("choices");
     const index = findIndex(data, item);
     if (index >= 0) {
       forEach(data, (choice) => {
@@ -47,28 +50,28 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
         choice.isCorrect = false;
       });
       data[index].isCorrect = true;
-      form.setValue('choices', data);
+      form.setValue("choices", data);
     }
   }
 
   function validateChoices(choicesValue) {
     const item = find(choicesValue, { isCorrect: true });
-    if (!item) return t('errorMarkGoodResponse');
+    if (!item) return t("errorMarkGoodResponse");
 
     let error = false;
     forEach(choicesValue, (choice) => {
       if (hasImageAnswers && !choice.image) {
-        error = t('needImages');
+        error = t("needImages");
         return;
       }
 
       if (!hasImageAnswers && !choice.text?.text) {
-        error = t('needResponse');
+        error = t("needResponse");
         return;
       }
 
       if (hasAnswerFeedback && !choice.feedback?.text) {
-        error = t('needExplanation') || 'Error';
+        error = t("needExplanation") || "Error";
       }
     });
     return error || true;
@@ -76,15 +79,15 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
 
   const removeHideOnHelp = () =>
     form.setValue(
-      'choices',
-      form.getValues('choices')?.map((choice) => omit(choice, 'hideOnHelp'))
+      "choices",
+      form.getValues("choices")?.map((choice) => omit(choice, "hideOnHelp"))
     );
 
   // RENDER ································································································|
 
   return (
     <ContextContainer>
-      <ContextContainer title={`${capitalize(t('explanationLabel'))}`}>
+      <ContextContainer title={`${capitalize(t("explanationLabel"))}`}>
         <Controller
           control={form.control}
           name="hasAnswerFeedback"
@@ -92,7 +95,7 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
             <Switch
               {...field}
               checked={field.value}
-              label={t('includeExplanationToEveryAnswerLabel')}
+              label={t("includeExplanationToEveryAnswerLabel")}
             />
           )}
         />
@@ -106,32 +109,36 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
               {...field}
               toolbars={TEXT_EDITOR_TEXTAREA_TOOLBARS}
               value={field.value?.text}
-              editorStyles={{ minHeight: '96px' }}
-              placeholder={t('explanationPlaceHolder')}
+              editorStyles={{ minHeight: "96px" }}
+              placeholder={t("explanationPlaceHolder")}
               onChange={(value) => {
-                field.onChange({ format: 'html', text: value });
+                field.onChange({ format: "html", text: value });
               }}
             />
           )}
         />
       ) : null}
-      <ContextContainer title={`${t('responsesLabel')} *`} spacing={4}>
+      <ContextContainer title={`${t("responsesLabel")} *`} spacing={4}>
         <Controller
           control={form.control}
           name="hasImageAnswers"
           render={({ field }) => (
-            <Switch {...field} checked={field.value} label={t('withImagesLabel')} />
+            <Switch
+              {...field}
+              checked={field.value}
+              label={t("withImagesLabel")}
+            />
           )}
         />
 
         <Text color="primary" strong>
-          {t('responsesDescription')}
+          {t("responsesDescription")}
         </Text>
         <Controller
           name="choices"
           control={form.control}
           rules={{
-            required: t('typeRequired'),
+            required: t("typeRequired"),
             validate: (choicesValue) => validateChoices(choicesValue),
           }}
           render={({ field }) => {
@@ -149,7 +156,9 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
 
             return (
               <Box>
-                <InputWrapper error={form.formState.errors.choices?.message || null}>
+                <InputWrapper
+                  error={form.formState.errors.choices?.message || null}
+                >
                   <ListInput
                     {...field}
                     value={listValues}
@@ -174,7 +183,10 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
                     }
                     listRender={
                       <ListItem
-                        labels={{ cancel: t('cancel'), saveChanges: t('saveChanges') }}
+                        labels={{
+                          cancel: t("cancel"),
+                          saveChanges: t("saveChanges"),
+                        }}
                         itemContainerRender={({ children }) => (
                           <Stack alignItems="center" fullWidth>
                             {children}
@@ -204,7 +216,7 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
                     onClick={() => setShowInput(true)}
                     leftIcon={<AddCircleIcon />}
                   >
-                    {t('addResponse')}
+                    {t("addResponse")}
                   </Button>
                 ) : null}
               </Box>
@@ -224,8 +236,8 @@ export function MonoResponse({ form: _form, t, scrollRef }) {
                 if (!value) removeHideOnHelp();
               }}
               checked={field.value}
-              label={t('hasCluesLabelWithMinResponses')}
-              description={t('cluesSwitchDescription')}
+              label={t("hasCluesLabelWithMinResponses")}
+              description={t("cluesSwitchDescription")}
             />
           )}
         />

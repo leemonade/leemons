@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { Textarea, Stack, Box } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+import { Textarea, Stack, Box } from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
 function Responses(props) {
   const { question, store, render, t } = props;
@@ -22,17 +22,27 @@ function Responses(props) {
   const lengthRequirements = useMemo(() => {
     const min = question.openResponseProperties.minCharacters;
     const max = question.openResponseProperties.maxCharacters;
-    if (!min && !max) return '';
-    if (min && max) return t('questionLabels.openResponse.minAndMaxLengthCharacters', { min, max });
-    if (min && !max) return t('questionLabels.openResponse.minLengthCharacters', { number: min });
-    if (!min && max) return t('questionLabels.openResponse.maxLengthCharacters', { number: max });
+    if (!min && !max) return "";
+    if (min && max)
+      return t("questionLabels.openResponse.minAndMaxLengthCharacters", {
+        min,
+        max,
+      });
+    if (min && !max)
+      return t("questionLabels.openResponse.minLengthCharacters", {
+        number: min,
+      });
+    if (!min && max)
+      return t("questionLabels.openResponse.maxLengthCharacters", {
+        number: max,
+      });
   }, [question.openResponseProperties, t]);
 
   return (
     <Stack fullWidth>
       <Box>
         <Textarea
-          placeholder={t('questionLabels.answerPlaceholder')}
+          placeholder={t("questionLabels.answerPlaceholder")}
           value={store.questionResponses?.[question.id]?.properties?.response}
           onChange={(value) => {
             if (!store.viewMode) markResponse(value);
@@ -43,7 +53,7 @@ function Responses(props) {
           }
           maxLength={question.openResponseProperties.maxCharacters}
           help={lengthRequirements}
-          counterLabels={{ plural: '', singular: '' }}
+          counterLabels={{ plural: "", singular: "" }}
         />
       </Box>
     </Stack>

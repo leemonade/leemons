@@ -1,9 +1,12 @@
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from "react-hook-form";
 
-import { Switch, ContextContainer, RadioGroup } from '@bubbles-ui/components';
-import { TextEditorInput, TEXT_EDITOR_TEXTAREA_TOOLBARS } from '@bubbles-ui/editors';
-import { capitalize } from 'lodash';
-import PropTypes from 'prop-types';
+import { Switch, ContextContainer, RadioGroup } from "@bubbles-ui/components";
+import {
+  TextEditorInput,
+  TEXT_EDITOR_TEXTAREA_TOOLBARS,
+} from "@bubbles-ui/editors";
+import { capitalize } from "lodash";
+import PropTypes from "prop-types";
 
 function TrueFalse({ form: formProp, t }) {
   const contextForm = useFormContext();
@@ -14,7 +17,7 @@ function TrueFalse({ form: formProp, t }) {
   return (
     <>
       <ContextContainer>
-        <ContextContainer title={`${capitalize(t('explanationLabel'))}`}>
+        <ContextContainer title={`${capitalize(t("explanationLabel"))}`}>
           <Controller
             control={form.control}
             name="globalFeedback"
@@ -23,32 +26,32 @@ function TrueFalse({ form: formProp, t }) {
                 {...field}
                 toolbars={TEXT_EDITOR_TEXTAREA_TOOLBARS}
                 value={field.value?.text}
-                editorStyles={{ minHeight: '96px' }}
-                placeholder={t('explanationPlaceHolder')}
+                editorStyles={{ minHeight: "96px" }}
+                placeholder={t("explanationPlaceHolder")}
                 onChange={(value) => {
-                  field.onChange({ format: 'html', text: value });
+                  field.onChange({ format: "html", text: value });
                 }}
               />
             )}
           />
         </ContextContainer>
 
-        <ContextContainer title={`${t('responsesLabel')} *`} spacing={4}>
+        <ContextContainer title={`${t("responsesLabel")} *`} spacing={4}>
           <Controller
             control={form.control}
             name="trueFalseProperties.isTrue"
             rules={{
               validate: (value) => {
-                if (typeof value === 'boolean') return true;
-                return t('needsResponse');
+                if (typeof value === "boolean") return true;
+                return t("needsResponse");
               },
             }}
             render={({ field }) => (
               <RadioGroup
                 {...field}
                 data={[
-                  { label: t('questionLabels.trueFalse.true'), value: true },
-                  { label: t('questionLabels.trueFalse.false'), value: false },
+                  { label: t("questionLabels.trueFalse.true"), value: true },
+                  { label: t("questionLabels.trueFalse.false"), value: false },
                 ]}
                 error={form.formState.errors.trueFalseProperties?.isTrue}
               />
@@ -64,8 +67,8 @@ function TrueFalse({ form: formProp, t }) {
             <Switch
               {...field}
               checked={field.value}
-              label={t('hasCluesLabel')}
-              description={t('cluesSwitchDescription')}
+              label={t("hasCluesLabel")}
+              description={t("cluesSwitchDescription")}
             />
           )}
         />

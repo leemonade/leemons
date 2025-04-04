@@ -1,11 +1,17 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { QUESTION_TYPES } = require('../../config/constants');
+const { QUESTION_TYPES } = require("../../config/constants");
 
-const { createQuestion } = require('./createQuestion');
-const { getByIds: getQuestionById } = require('./getByIds');
+const { createQuestion } = require("./createQuestion");
+const { getByIds: getQuestionById } = require("./getByIds");
 
-function prepareQuestionForDuplication({ id, mapProperties, choices, stemResource, ...question }) {
+function prepareQuestionForDuplication({
+  id,
+  mapProperties,
+  choices,
+  stemResource,
+  ...question
+}) {
   const transformedQuestion = {
     ...question,
   };

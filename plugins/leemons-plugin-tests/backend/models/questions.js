@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const formattedTextShape = new mongoose.Schema(
   {
@@ -56,15 +56,15 @@ const schema = new mongoose.Schema(
     type: {
       type: String,
       enum: [
-        'mono-response',
-        'map',
-        'short-response',
-        'true-false',
-        'open-response',
-        'multi-response',
-        'missing-word',
-        'matching',
-        'numerical',
+        "mono-response",
+        "map",
+        "short-response",
+        "true-false",
+        "open-response",
+        "multi-response",
+        "missing-word",
+        "matching",
+        "numerical",
       ],
       required: true,
     },
@@ -122,6 +122,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-const questionsModel = newModel(mongoose.connection, 'v1::tests_Questions', schema);
+const questionsModel = newModel(
+  mongoose.connection,
+  "v1::tests_Questions",
+  schema
+);
 
 module.exports = { questionsModel };

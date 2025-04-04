@@ -1,7 +1,7 @@
-import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
 
-import SelectLevelsOfDifficulty from '@assignables/components/LevelsOfDifficulty/SelectLevelsOfDifficulty';
+import SelectLevelsOfDifficulty from "@assignables/components/LevelsOfDifficulty/SelectLevelsOfDifficulty";
 import {
   Box,
   Button,
@@ -10,38 +10,44 @@ import {
   ListInput,
   Select,
   Stack,
-} from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
-import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import { TagsAutocomplete } from '@common';
-import ImagePicker from '@leebrary/components/ImagePicker';
-import { forIn, isEmpty, map } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { TextEditorInput } from "@bubbles-ui/editors";
+import { ChevLeftIcon } from "@bubbles-ui/icons/outline";
+import { TagsAutocomplete } from "@common";
+import ImagePicker from "@leebrary/components/ImagePicker";
+import { forIn, isEmpty, map } from "lodash";
+import PropTypes from "prop-types";
 
-import { MapQuestion } from './question-types/Map';
-import { MonoResponse } from './question-types/MonoResponse';
+import { MapQuestion } from "./question-types/Map";
+import { MonoResponse } from "./question-types/MonoResponse";
 
-export const typesWithImage = ['mono-response'];
+export const typesWithImage = ["mono-response"];
 export const questionComponents = {
-  'mono-response': <MonoResponse />,
+  "mono-response": <MonoResponse />,
   map: <MapQuestion />,
 };
 
 export const questionTypeT = {
-  'mono-response': 'monoResponse',
-  map: 'map',
+  "mono-response": "monoResponse",
+  map: "map",
 };
 
 // TODO REMOVE FILE - NOT USED !!
 
-export default function QuestionForm({ t, onSave, defaultValues, categories, onCancel }) {
+export default function QuestionForm({
+  t,
+  onSave,
+  defaultValues,
+  categories,
+  onCancel,
+}) {
   const questionTypes = [];
   forIn(questionTypeT, (value, key) => {
     questionTypes.push({ value: key, label: t(value) });
   });
 
   const form = useForm({ defaultValues });
-  const type = form.watch('type');
+  const type = form.watch("type");
 
   function save() {
     form.handleSubmit((data) => {
@@ -56,20 +62,20 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
 
   return (
     <Box style={{ marginBottom: 20 }}>
-      <ContextContainer title={t('questionDetail')}>
-        <Box style={{ width: '230px' }}>
+      <ContextContainer title={t("questionDetail")}>
+        <Box style={{ width: "230px" }}>
           <ContextContainer fullWidth direction="row">
             <Controller
               control={form.control}
               name="type"
-              rules={{ required: t('typeRequired') }}
+              rules={{ required: t("typeRequired") }}
               render={({ field }) => (
-                <Box style={{ width: '100%' }}>
+                <Box style={{ width: "100%" }}>
                   <Select
                     required
                     data={questionTypes}
                     error={form.formState.errors.type}
-                    label={t('typeLabel')}
+                    label={t("typeLabel")}
                     {...field}
                   />
                 </Box>
@@ -86,11 +92,11 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
                     control={form.control}
                     name="category"
                     render={({ field }) => (
-                      <Box style={{ width: '230px' }}>
+                      <Box style={{ width: "230px" }}>
                         <Select
                           data={categoryData}
                           error={form.formState.errors.category}
-                          label={t('categoryLabel')}
+                          label={t("categoryLabel")}
                           {...field}
                           onChange={(e) => {
                             const item = categoryData[e];
@@ -110,10 +116,10 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
                   control={form.control}
                   name="level"
                   render={({ field }) => (
-                    <Box style={{ width: '230px' }}>
+                    <Box style={{ width: "230px" }}>
                       <SelectLevelsOfDifficulty
                         error={form.formState.errors.level}
-                        label={t('levelLabel')}
+                        label={t("levelLabel")}
                         {...field}
                       />
                     </Box>
@@ -124,12 +130,12 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
                 control={form.control}
                 name="tags"
                 render={({ field }) => (
-                  <Box style={{ width: '484px' }}>
+                  <Box style={{ width: "484px" }}>
                     <TagsAutocomplete
                       pluginName="tests"
                       type="tests.questionBanks"
-                      label={t('tagsLabel')}
-                      labels={{ addButton: t('addTag') }}
+                      label={t("tagsLabel")}
+                      labels={{ addButton: t("addTag") }}
                       {...field}
                     />
                   </Box>
@@ -138,23 +144,23 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
               <Controller
                 control={form.control}
                 name="question"
-                rules={{ required: t('questionRequired') }}
+                rules={{ required: t("questionRequired") }}
                 render={({ field }) => (
                   <TextEditorInput
                     required
                     error={form.formState.errors.question}
-                    label={t('questionLabel')}
-                    editorStyles={{ minHeight: '96px' }}
+                    label={t("questionLabel")}
+                    editorStyles={{ minHeight: "96px" }}
                     {...field}
                   />
                 )}
               />
-              {type !== 'map' ? (
+              {type !== "map" ? (
                 <Controller
                   control={form.control}
                   name="questionImage"
                   render={({ field }) => (
-                    <InputWrapper label={t('questionImage')}>
+                    <InputWrapper label={t("questionImage")}>
                       <ImagePicker {...field} />
                     </InputWrapper>
                   )}
@@ -173,9 +179,9 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
                 render={({ field }) => (
                   <ListInput
                     canAdd={isEmpty(field.value)}
-                    addButtonLabel={t('addClue')}
-                    label={t('cluesLabel')}
-                    description={t('cluesDescription')}
+                    addButtonLabel={t("addClue")}
+                    label={t("cluesLabel")}
+                    description={t("cluesDescription")}
                     {...field}
                   />
                 )}
@@ -183,10 +189,14 @@ export default function QuestionForm({ t, onSave, defaultValues, categories, onC
             </ContextContainer>
 
             <Stack alignItems="center" justifyContent="space-between">
-              <Button variant="light" leftIcon={<ChevLeftIcon />} onClick={onCancel}>
-                {t('returnToList')}
+              <Button
+                variant="light"
+                leftIcon={<ChevLeftIcon />}
+                onClick={onCancel}
+              >
+                {t("returnToList")}
               </Button>
-              <Button onClick={save}>{t('saveQuestion')}</Button>
+              <Button onClick={save}>{t("saveQuestion")}</Button>
             </Stack>
           </ContextContainer>
         ) : null}

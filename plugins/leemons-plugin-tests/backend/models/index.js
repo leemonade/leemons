@@ -1,17 +1,17 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('@leemons/mongodb-helpers');
+const { getKeyValueModel } = require("@leemons/mongodb-helpers");
 
 const models = {
-  ...require('./assignSavedConfig'),
-  ...require('./question-bank-categories'),
-  ...require('./question-bank-subjects'),
-  ...require('./questions'),
-  ...require('./questions-banks'),
-  ...require('./questions-tests'),
-  ...require('./tests'),
-  ...require('./user-agent-assignable-instance-responses'),
-  ...require('./user-feedback'),
+  ...require("./assignSavedConfig"),
+  ...require("./question-bank-categories"),
+  ...require("./question-bank-subjects"),
+  ...require("./questions"),
+  ...require("./questions-banks"),
+  ...require("./questions-tests"),
+  ...require("./tests"),
+  ...require("./user-agent-assignable-instance-responses"),
+  ...require("./user-feedback"),
 };
 
 module.exports = {
@@ -25,10 +25,11 @@ module.exports = {
       QuestionsBanks: models.questionsBanksModel,
       QuestionsTests: models.questionsTestsModel,
       Tests: models.testsModel,
-      UserAgentAssignableInstanceResponses: models.UserAgentAssignableInstanceResponsesModel,
+      UserAgentAssignableInstanceResponses:
+        models.UserAgentAssignableInstanceResponsesModel,
       UserFeedback: models.userFeedbackModel,
 
-      KeyValue: getKeyValueModel({ modelName: 'v1::tests_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: "v1::tests_KeyValue" }),
     };
   },
 };
