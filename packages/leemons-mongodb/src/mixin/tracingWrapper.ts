@@ -1,7 +1,7 @@
-import type { Context } from '@leemons/moleculer';
-import { getActionNameFromCTX } from '@leemons/service-name-parser';
-import type { Span } from 'moleculer';
-import { Query } from 'mongoose';
+import type { Context } from "@leemons/moleculer";
+import { getActionNameFromCTX } from "@leemons/service-name-parser";
+import type { Span } from "moleculer";
+import { Query } from "mongoose";
 
 interface ModelParams {
   model: any;
@@ -23,8 +23,8 @@ export function tracingWrapper(f: Function, modelParams: ModelParams) {
     }
     const span = ctx.broker.tracer.startSpan(`mongoose ${f.name}`, {
       parentSpan: ctx.span,
-      service: 'mongoose',
-      type: 'mongoose',
+      service: "mongoose",
+      type: "mongoose",
       tags: {
         model: modelParams.model.modelName,
         action: getActionNameFromCTX(ctx),

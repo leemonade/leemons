@@ -1,8 +1,8 @@
-import { generateLRN } from '@leemons/lrn';
-import type { Context } from '@leemons/moleculer';
-import { addTransactionState } from '@leemons/transactions';
-import _ from 'lodash';
-import { ObjectId } from 'mongodb';
+import { generateLRN } from "@leemons/lrn";
+import type { Context } from "@leemons/moleculer";
+import { addTransactionState } from "@leemons/transactions";
+import _ from "lodash";
+import { ObjectId } from "mongodb";
 import type {
   Document,
   FilterQuery,
@@ -10,13 +10,13 @@ import type {
   QueryOptions,
   UpdateQuery,
   UpdateWriteOpResult,
-} from 'mongoose';
-import { addDeploymentIDToArrayOrObject } from './helpers/addDeploymentIDToArrayOrObject';
-import { createTransactionIDIfNeed } from './helpers/createTransactionIDIfNeed';
-import { excludeDeleteIfNeedToQuery } from './helpers/excludeDeleteIfNeedToQuery';
-import { getLRNConfig } from './helpers/getLRNConfig';
-import { increaseTransactionFinishedIfNeed } from './helpers/increaseTransactionFinishedIfNeed';
-import { increaseTransactionPendingIfNeed } from './helpers/increaseTransactionPendingIfNeed';
+} from "mongoose";
+import { addDeploymentIDToArrayOrObject } from "./helpers/addDeploymentIDToArrayOrObject";
+import { createTransactionIDIfNeed } from "./helpers/createTransactionIDIfNeed";
+import { excludeDeleteIfNeedToQuery } from "./helpers/excludeDeleteIfNeedToQuery";
+import { getLRNConfig } from "./helpers/getLRNConfig";
+import { increaseTransactionFinishedIfNeed } from "./helpers/increaseTransactionFinishedIfNeed";
+import { increaseTransactionPendingIfNeed } from "./helpers/increaseTransactionPendingIfNeed";
 
 interface UpdateOneParams {
   model: Model<any>;
@@ -64,7 +64,7 @@ export function updateOne({
         update = addDeploymentIDToArrayOrObject({ items: update, ctx });
       }
       let oldItem: T | ObjectId | null = null;
-      let rollbackAction = 'updateMany';
+      let rollbackAction = "updateMany";
 
       if (options?.upsert) {
         if (autoLRN) {
@@ -92,13 +92,13 @@ export function updateOne({
 
       // Si es upsert y no encontramos elemento previo la accion del rollback deberia de ser borrar lo que se cree nuevo
       if (!oldItem && options?.upsert && item.upsertedId) {
-        rollbackAction = 'removeMany';
+        rollbackAction = "removeMany";
         oldItem = item.upsertedId;
       }
 
       if (!ignoreTransaction && ctx.meta.transactionID && oldItem) {
         await addTransactionState(ctx as any, {
-          action: 'leemonsMongoDBRollback',
+          action: "leemonsMongoDBRollback",
           payload: {
             modelKey,
             action: rollbackAction,

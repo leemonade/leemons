@@ -1,8 +1,8 @@
-import { LeemonsError } from '@leemons/error';
-import type { Context } from '@leemons/moleculer';
-import _ from 'lodash';
-import { createTransactionIDIfNeed } from '../queries/helpers/createTransactionIDIfNeed';
-import { getDBModels } from './getDBModels';
+import { LeemonsError } from "@leemons/error";
+import type { Context } from "@leemons/moleculer";
+import _ from "lodash";
+import { createTransactionIDIfNeed } from "../queries/helpers/createTransactionIDIfNeed";
+import { getDBModels } from "./getDBModels";
 
 interface ModifyCTXParams {
   autoDeploymentID?: boolean;
@@ -27,9 +27,13 @@ export function modifyCTX(
   }: ModifyCTXParams
 ) {
   if (forceLeemonsDeploymentManagerMixinNeedToBeImported) {
-    if (!ctx.meta.deploymentID || !ctx.callerPlugin || !ctx.__leemonsDeploymentManagerCall) {
+    if (
+      !ctx.meta.deploymentID ||
+      !ctx.callerPlugin ||
+      !ctx.__leemonsDeploymentManagerCall
+    ) {
       throw new LeemonsError(ctx, {
-        message: 'LeemonsDeploymentManagerMixin need to be used',
+        message: "LeemonsDeploymentManagerMixin need to be used",
       });
     }
   }
@@ -61,7 +65,9 @@ export function modifyCTX(
   ctx.emit = (...args: any[]) => {
     const [event, params] = args;
 
-    return ctx.__leemonsMongoDBEmit(event, params, { meta: { transactionID: null } });
+    return ctx.__leemonsMongoDBEmit(event, params, {
+      meta: { transactionID: null },
+    });
   };
 
   ctx.tx = {
@@ -76,9 +82,9 @@ export function modifyCTX(
 
       if (!opts?.meta?.__isInternalCall) {
         await createTransactionIDIfNeed({ autoTransaction, ctx });
-      } else if (debugTransaction && actionName.startsWith('transactions.')) {
+      } else if (debugTransaction && actionName.startsWith("transactions.")) {
         console.debug(
-          `[MongoDB Transactions] (Call) - ${actionName.replace('transactions.', '')}`,
+          `[MongoDB Transactions] (Call) - ${actionName.replace("transactions.", "")}`,
           params,
           opts
         );

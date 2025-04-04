@@ -1,11 +1,17 @@
-import type { Context } from '@leemons/moleculer';
-import { addTransactionState } from '@leemons/transactions';
-import type { Document, FilterQuery, Model, QueryOptions, UpdateWriteOpResult } from 'mongoose';
-import { addDeploymentIDToArrayOrObject } from './helpers/addDeploymentIDToArrayOrObject';
-import { createTransactionIDIfNeed } from './helpers/createTransactionIDIfNeed';
-import { increaseTransactionFinishedIfNeed } from './helpers/increaseTransactionFinishedIfNeed';
-import { increaseTransactionPendingIfNeed } from './helpers/increaseTransactionPendingIfNeed';
-import { updateOne } from './updateOne';
+import type { Context } from "@leemons/moleculer";
+import { addTransactionState } from "@leemons/transactions";
+import type {
+  Document,
+  FilterQuery,
+  Model,
+  QueryOptions,
+  UpdateWriteOpResult,
+} from "mongoose";
+import { addDeploymentIDToArrayOrObject } from "./helpers/addDeploymentIDToArrayOrObject";
+import { createTransactionIDIfNeed } from "./helpers/createTransactionIDIfNeed";
+import { increaseTransactionFinishedIfNeed } from "./helpers/increaseTransactionFinishedIfNeed";
+import { increaseTransactionPendingIfNeed } from "./helpers/increaseTransactionPendingIfNeed";
+import { updateOne } from "./updateOne";
 
 interface DeleteOneParams {
   model: Model<any>;
@@ -70,10 +76,10 @@ export function deleteOne({
 
       if (!ignoreTransaction && ctx.meta.transactionID && oldItem) {
         await addTransactionState(ctx as any, {
-          action: 'leemonsMongoDBRollback',
+          action: "leemonsMongoDBRollback",
           payload: {
             modelKey,
-            action: 'createMany',
+            action: "createMany",
             data: [oldItem],
           },
         });

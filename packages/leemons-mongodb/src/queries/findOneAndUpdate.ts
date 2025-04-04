@@ -1,15 +1,21 @@
-import { generateLRN } from '@leemons/lrn';
-import type { Context } from '@leemons/moleculer';
-import { addTransactionState } from '@leemons/transactions';
-import _ from 'lodash';
-import { ObjectId } from 'mongodb';
-import type { Document, FilterQuery, Model, QueryOptions, UpdateQuery } from 'mongoose';
-import { addDeploymentIDToArrayOrObject } from './helpers/addDeploymentIDToArrayOrObject';
-import { createTransactionIDIfNeed } from './helpers/createTransactionIDIfNeed';
-import { excludeDeleteIfNeedToQuery } from './helpers/excludeDeleteIfNeedToQuery';
-import { getLRNConfig } from './helpers/getLRNConfig';
-import { increaseTransactionFinishedIfNeed } from './helpers/increaseTransactionFinishedIfNeed';
-import { increaseTransactionPendingIfNeed } from './helpers/increaseTransactionPendingIfNeed';
+import { generateLRN } from "@leemons/lrn";
+import type { Context } from "@leemons/moleculer";
+import { addTransactionState } from "@leemons/transactions";
+import _ from "lodash";
+import { ObjectId } from "mongodb";
+import type {
+  Document,
+  FilterQuery,
+  Model,
+  QueryOptions,
+  UpdateQuery,
+} from "mongoose";
+import { addDeploymentIDToArrayOrObject } from "./helpers/addDeploymentIDToArrayOrObject";
+import { createTransactionIDIfNeed } from "./helpers/createTransactionIDIfNeed";
+import { excludeDeleteIfNeedToQuery } from "./helpers/excludeDeleteIfNeedToQuery";
+import { getLRNConfig } from "./helpers/getLRNConfig";
+import { increaseTransactionFinishedIfNeed } from "./helpers/increaseTransactionFinishedIfNeed";
+import { increaseTransactionPendingIfNeed } from "./helpers/increaseTransactionPendingIfNeed";
 
 interface FindOneAndUpdateParams {
   model: Model<any>;
@@ -63,7 +69,7 @@ export function findOneAndUpdate({
       const options = _options || {};
       let update = _update;
 
-      if (!('new' in options)) {
+      if (!("new" in options)) {
         options.new = true;
       }
 
@@ -79,7 +85,7 @@ export function findOneAndUpdate({
       }
 
       let oldItem: T | null = null;
-      let rollbackAction = 'updateMany';
+      let rollbackAction = "updateMany";
 
       if (options?.upsert) {
         options.new = true;
@@ -94,8 +100,15 @@ export function findOneAndUpdate({
         }
       }
 
-      if (!ignoreTransaction && ctx.meta.transactionID && (options?.new || options?.upsert)) {
-        oldItem = await excludeDeleteIfNeedToQuery(model.findOne(conditions).lean(), options);
+      if (
+        !ignoreTransaction &&
+        ctx.meta.transactionID &&
+        (options?.new || options?.upsert)
+      ) {
+        oldItem = await excludeDeleteIfNeedToQuery(
+          model.findOne(conditions).lean(),
+          options
+        );
       }
 
       const item = await excludeDeleteIfNeedToQuery(
@@ -104,7 +117,7 @@ export function findOneAndUpdate({
       );
 
       if (!oldItem && options?.upsert) {
-        rollbackAction = 'removeMany';
+        rollbackAction = "removeMany";
         oldItem = item;
       }
 
@@ -114,11 +127,11 @@ export function findOneAndUpdate({
 
       if (!ignoreTransaction && ctx.meta.transactionID && oldItem) {
         await addTransactionState(ctx as any, {
-          action: 'leemonsMongoDBRollback',
+          action: "leemonsMongoDBRollback",
           payload: {
             modelKey,
             action: rollbackAction,
-            data: rollbackAction === 'removeMany' ? [oldItem.id] : [oldItem],
+            data: rollbackAction === "removeMany" ? [oldItem.id] : [oldItem],
           },
         });
       }

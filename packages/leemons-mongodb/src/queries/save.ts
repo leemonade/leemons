@@ -1,5 +1,5 @@
-import type { Context } from '@leemons/moleculer';
-import type { Document, Model } from 'mongoose';
+import type { Context } from "@leemons/moleculer";
+import type { Document, Model } from "mongoose";
 
 interface SaveParams {
   model: Model<any>;
@@ -14,8 +14,13 @@ interface LeemonsDocument extends Document {
   [key: string]: any;
 }
 
-export function save({ model, autoDeploymentID, autoRollback, ctx }: SaveParams) {
+export function save({
+  model,
+  autoDeploymentID,
+  autoRollback,
+  ctx,
+}: SaveParams) {
   return async function <T extends LeemonsDocument>(item: T): Promise<T> {
-    throw new Error('Not implemented yet');
+    throw new Error("Not implemented yet");
   };
 }

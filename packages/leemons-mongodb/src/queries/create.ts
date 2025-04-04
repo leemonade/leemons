@@ -1,12 +1,12 @@
-import type { Context } from '@leemons/moleculer';
-import { addTransactionState } from '@leemons/transactions';
-import _ from 'lodash';
-import type { Document, Model, SaveOptions } from 'mongoose';
-import { addDeploymentIDToArrayOrObject } from './helpers/addDeploymentIDToArrayOrObject';
-import { addLRNToIdToArrayOrObject } from './helpers/addLRNToIdToArrayOrObject';
-import { createTransactionIDIfNeed } from './helpers/createTransactionIDIfNeed';
-import { increaseTransactionFinishedIfNeed } from './helpers/increaseTransactionFinishedIfNeed';
-import { increaseTransactionPendingIfNeed } from './helpers/increaseTransactionPendingIfNeed';
+import type { Context } from "@leemons/moleculer";
+import { addTransactionState } from "@leemons/transactions";
+import _ from "lodash";
+import type { Document, Model, SaveOptions } from "mongoose";
+import { addDeploymentIDToArrayOrObject } from "./helpers/addDeploymentIDToArrayOrObject";
+import { addLRNToIdToArrayOrObject } from "./helpers/addLRNToIdToArrayOrObject";
+import { createTransactionIDIfNeed } from "./helpers/createTransactionIDIfNeed";
+import { increaseTransactionFinishedIfNeed } from "./helpers/increaseTransactionFinishedIfNeed";
+import { increaseTransactionPendingIfNeed } from "./helpers/increaseTransactionPendingIfNeed";
 
 interface CreateParams {
   model: Model<any>;
@@ -55,10 +55,17 @@ export function create({
     try {
       let toCreate = toAdd;
       if (autoDeploymentID && !options?.disableAutoDeploy) {
-        toCreate = addDeploymentIDToArrayOrObject({ items: toCreate, ctx }) as typeof toAdd;
+        toCreate = addDeploymentIDToArrayOrObject({
+          items: toCreate,
+          ctx,
+        }) as typeof toAdd;
       }
       if (autoLRN && !options?.disableAutoLRN) {
-        toCreate = addLRNToIdToArrayOrObject({ items: toCreate, modelKey, ctx }) as typeof toAdd;
+        toCreate = addLRNToIdToArrayOrObject({
+          items: toCreate,
+          modelKey,
+          ctx,
+        }) as typeof toAdd;
       }
 
       const { disableAutoDeploy, disableAutoLRN, ..._options } = options || {};
@@ -70,11 +77,13 @@ export function create({
 
       if (!ignoreTransaction && ctx.meta.transactionID) {
         await addTransactionState(ctx as any, {
-          action: 'leemonsMongoDBRollback',
+          action: "leemonsMongoDBRollback",
           payload: {
             modelKey,
-            action: 'removeMany',
-            data: _.isArray(items) ? _.map(items, (item) => item.id) : [items.id],
+            action: "removeMany",
+            data: _.isArray(items)
+              ? _.map(items, (item) => item.id)
+              : [items.id],
           },
         });
       }

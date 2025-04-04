@@ -1,6 +1,6 @@
-import { getDeploymentIDFromCTX } from '@leemons/deployment-manager';
-import type { Context } from '@leemons/moleculer';
-import type { Query } from 'mongoose';
+import { getDeploymentIDFromCTX } from "@leemons/deployment-manager";
+import type { Context } from "@leemons/moleculer";
+import type { Query } from "mongoose";
 
 interface AddDeploymentIDWhereParams<T> {
   query: Query<T, T>;

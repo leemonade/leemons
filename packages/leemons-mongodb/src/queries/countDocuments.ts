@@ -1,7 +1,7 @@
-import type { Context } from '@leemons/moleculer';
-import type { Document, FilterQuery, Model, QueryOptions } from 'mongoose';
-import { addDeploymentIDToArrayOrObject } from './helpers/addDeploymentIDToArrayOrObject';
-import { excludeDeleteIfNeedToQuery } from './helpers/excludeDeleteIfNeedToQuery';
+import type { Context } from "@leemons/moleculer";
+import type { Document, FilterQuery, Model, QueryOptions } from "mongoose";
+import { addDeploymentIDToArrayOrObject } from "./helpers/addDeploymentIDToArrayOrObject";
+import { excludeDeleteIfNeedToQuery } from "./helpers/excludeDeleteIfNeedToQuery";
 
 interface CountDocumentsParams {
   model: Model<any>;
@@ -14,7 +14,11 @@ interface LeemonsCountDocumentsOptions<T> extends QueryOptions<T> {
   disableAutoDeploy?: boolean;
 }
 
-export function countDocuments({ model, autoDeploymentID, ctx }: CountDocumentsParams) {
+export function countDocuments({
+  model,
+  autoDeploymentID,
+  ctx,
+}: CountDocumentsParams) {
   return function <T extends Document>(
     _conditions: FilterQuery<T> = {},
     options?: LeemonsCountDocumentsOptions<T>
@@ -23,6 +27,9 @@ export function countDocuments({ model, autoDeploymentID, ctx }: CountDocumentsP
     if (autoDeploymentID) {
       conditions = addDeploymentIDToArrayOrObject({ items: conditions, ctx });
     }
-    return excludeDeleteIfNeedToQuery(model.countDocuments(conditions, options), options);
+    return excludeDeleteIfNeedToQuery(
+      model.countDocuments(conditions, options),
+      options
+    );
   };
 }

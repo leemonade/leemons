@@ -1,6 +1,6 @@
-import type { Context } from '@leemons/moleculer';
-import _ from 'lodash';
-import { getModelActions } from './getModelActions';
+import type { Context } from "@leemons/moleculer";
+import _ from "lodash";
+import { getModelActions } from "./getModelActions";
 
 interface GetDBModelsParams {
   models: Record<string, any>;

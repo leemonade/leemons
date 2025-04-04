@@ -1,6 +1,6 @@
-import type { Context } from '@leemons/moleculer';
-import type { Document, Model, QueryOptions, UpdateQuery } from 'mongoose';
-import { findOneAndUpdate } from './findOneAndUpdate';
+import type { Context } from "@leemons/moleculer";
+import type { Document, Model, QueryOptions, UpdateQuery } from "mongoose";
+import { findOneAndUpdate } from "./findOneAndUpdate";
 
 interface FindByIdAndUpdateParams {
   model: Model<any>;

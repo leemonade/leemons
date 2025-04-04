@@ -1,6 +1,6 @@
-import type { Context } from '@leemons/moleculer';
-import type { Document, Model, QueryOptions } from 'mongoose';
-import { findOneAndDelete } from './findOneAndDelete';
+import type { Context } from "@leemons/moleculer";
+import type { Document, Model, QueryOptions } from "mongoose";
+import { findOneAndDelete } from "./findOneAndDelete";
 
 interface FindByIdAndDeleteParams {
   model: Model<any>;

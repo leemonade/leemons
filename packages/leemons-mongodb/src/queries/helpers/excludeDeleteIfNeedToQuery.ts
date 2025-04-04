@@ -1,4 +1,4 @@
-import type { Query } from 'mongoose';
+import type { Query } from "mongoose";
 
 interface ExcludeDeleteOptions {
   excludeDeleted?: boolean;

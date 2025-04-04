@@ -1,8 +1,8 @@
-import { generateLRN } from '@leemons/lrn';
-import type { Context } from '@leemons/moleculer';
-import _ from 'lodash';
-import { ObjectId } from 'mongodb';
-import { getLRNConfig } from './getLRNConfig';
+import { generateLRN } from "@leemons/lrn";
+import type { Context } from "@leemons/moleculer";
+import _ from "lodash";
+import { ObjectId } from "mongodb";
+import { getLRNConfig } from "./getLRNConfig";
 
 export interface WithId {
   id?: string;
@@ -25,10 +25,14 @@ export function addLRNToIdToArrayOrObject({
   if (_.isArray(items)) {
     return _.map(items, (item) => {
       // eslint-disable-next-line no-param-reassign
-      item.id = item.id ?? generateLRN({ ...config, resourceID: new ObjectId().toString() });
+      item.id =
+        item.id ??
+        generateLRN({ ...config, resourceID: new ObjectId().toString() });
       return item;
     });
   }
-  items.id = items.id ?? generateLRN({ ...config, resourceID: new ObjectId().toString() });
+  items.id =
+    items.id ??
+    generateLRN({ ...config, resourceID: new ObjectId().toString() });
   return items;
 }

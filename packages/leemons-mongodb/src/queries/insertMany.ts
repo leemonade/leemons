@@ -1,12 +1,12 @@
-import type { Context } from '@leemons/moleculer';
-import { addTransactionState } from '@leemons/transactions';
-import _ from 'lodash';
-import type { Document, InsertManyOptions, Model } from 'mongoose';
-import { addDeploymentIDToArrayOrObject } from './helpers/addDeploymentIDToArrayOrObject';
-import { addLRNToIdToArrayOrObject } from './helpers/addLRNToIdToArrayOrObject';
-import { createTransactionIDIfNeed } from './helpers/createTransactionIDIfNeed';
-import { increaseTransactionFinishedIfNeed } from './helpers/increaseTransactionFinishedIfNeed';
-import { increaseTransactionPendingIfNeed } from './helpers/increaseTransactionPendingIfNeed';
+import type { Context } from "@leemons/moleculer";
+import { addTransactionState } from "@leemons/transactions";
+import _ from "lodash";
+import type { Document, InsertManyOptions, Model } from "mongoose";
+import { addDeploymentIDToArrayOrObject } from "./helpers/addDeploymentIDToArrayOrObject";
+import { addLRNToIdToArrayOrObject } from "./helpers/addLRNToIdToArrayOrObject";
+import { createTransactionIDIfNeed } from "./helpers/createTransactionIDIfNeed";
+import { increaseTransactionFinishedIfNeed } from "./helpers/increaseTransactionFinishedIfNeed";
+import { increaseTransactionPendingIfNeed } from "./helpers/increaseTransactionPendingIfNeed";
 
 interface InsertManyParams {
   model: Model<any>;
@@ -64,10 +64,17 @@ export function insertMany({
     try {
       let toCreate = toAdd;
       if (autoDeploymentID) {
-        toCreate = addDeploymentIDToArrayOrObject({ items: toCreate, ctx }) as Partial<T>[];
+        toCreate = addDeploymentIDToArrayOrObject({
+          items: toCreate,
+          ctx,
+        }) as Partial<T>[];
       }
       if (autoLRN) {
-        toCreate = addLRNToIdToArrayOrObject({ items: toCreate, modelKey, ctx }) as Partial<T>[];
+        toCreate = addLRNToIdToArrayOrObject({
+          items: toCreate,
+          modelKey,
+          ctx,
+        }) as Partial<T>[];
       }
 
       let items: T[] = [];
@@ -76,16 +83,18 @@ export function insertMany({
         items = (Array.isArray(result) ? result : [result]) as T[];
       } catch (e: any) {
         if (e.insertedDocs) {
-          items = (Array.isArray(e.insertedDocs) ? e.insertedDocs : [e.insertedDocs]) as T[];
+          items = (
+            Array.isArray(e.insertedDocs) ? e.insertedDocs : [e.insertedDocs]
+          ) as T[];
         }
         throw e;
       } finally {
         if (!ignoreTransaction && ctx.meta.transactionID && items.length) {
           await addTransactionState(ctx as any, {
-            action: 'leemonsMongoDBRollback',
+            action: "leemonsMongoDBRollback",
             payload: {
               modelKey,
-              action: 'removeMany',
+              action: "removeMany",
               data: _.map(items, (item) => item.id),
             },
           });

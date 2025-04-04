@@ -1,8 +1,8 @@
-import type { Context, ServiceSchema } from '@leemons/moleculer';
-import type { Connection, Schema } from 'mongoose';
-import mongoose from 'mongoose';
-import { type MixinOptions, mixin } from './mixin/mixin';
-import type { Model } from './types';
+import type { Context, ServiceSchema } from "@leemons/moleculer";
+import type { Connection, Schema } from "mongoose";
+import mongoose from "mongoose";
+import { type MixinOptions, mixin } from "./mixin/mixin";
+import type { Model } from "./types";
 
 export function newModel<T>(
   connection: Connection,
@@ -34,9 +34,11 @@ export const leemonsSchemaFields = {
   },
 } as const;
 
-export function LeemonsMongoDBMixin(options?: MixinOptions): Partial<ServiceSchema<Context>> {
+export function LeemonsMongoDBMixin(
+  options?: MixinOptions
+): Partial<ServiceSchema<Context>> {
   return mixin(options);
 }
 
 export { mongoose };
-export * from './types';
+export * from "./types";

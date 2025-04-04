@@ -1,7 +1,13 @@
-import type { Context } from '@leemons/moleculer';
-import type { Document, FilterQuery, Model, ProjectionType, QueryOptions } from 'mongoose';
-import { addDeploymentIDWhereToQuery } from './helpers/addDeploymentIDWhereToQuery';
-import { excludeDeleteIfNeedToQuery } from './helpers/excludeDeleteIfNeedToQuery';
+import type { Context } from "@leemons/moleculer";
+import type {
+  Document,
+  FilterQuery,
+  Model,
+  ProjectionType,
+  QueryOptions,
+} from "mongoose";
+import { addDeploymentIDWhereToQuery } from "./helpers/addDeploymentIDWhereToQuery";
+import { excludeDeleteIfNeedToQuery } from "./helpers/excludeDeleteIfNeedToQuery";
 
 interface FindParams {
   model: Model<any>;
@@ -20,7 +26,10 @@ export function find({ model, autoDeploymentID, ctx }: FindParams) {
     projection?: ProjectionType<T>,
     options?: LeemonsFindOptions<T>
   ) {
-    const query = excludeDeleteIfNeedToQuery(model.find(conditions, projection, options), options);
+    const query = excludeDeleteIfNeedToQuery(
+      model.find(conditions, projection, options),
+      options
+    );
     if (autoDeploymentID) {
       return addDeploymentIDWhereToQuery({ query, ctx });
     }

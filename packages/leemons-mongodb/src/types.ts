@@ -1,4 +1,4 @@
-import type { CreateOptions, Model as MongooseModel } from 'mongoose';
+import type { CreateOptions, Model as MongooseModel } from "mongoose";
 
 export type LeemonsOptions = {
   disableAutoDeploy?: boolean;
@@ -18,20 +18,20 @@ export type CreateQuery<T> = (
   items: Partial<T> & Pick<T, Exclude<keyof T, keyof LeemonsSchema>>,
   options?: CreateOptions & LeemonsOptions
 ) => Promise<T>;
-export type FindQuery<T> = MongooseModel<T>['find'];
-export type FindByIdQuery<T> = MongooseModel<T>['findById'];
-export type FindOneQuery<T> = MongooseModel<T>['findOne'];
-export type FindByIdAndDeleteQuery<T> = MongooseModel<T>['findByIdAndDelete'];
-export type FindOneAndDeleteQuery<T> = MongooseModel<T>['findOneAndDelete'];
-export type FindByIdAndUpdateQuery<T> = MongooseModel<T>['findByIdAndUpdate'];
-export type FindOneAndUpdateQuery<T> = MongooseModel<T>['findOneAndUpdate'];
-export type UpdateOneQuery<T> = MongooseModel<T>['updateOne'];
-export type UpdateManyQuery<T> = MongooseModel<T>['updateMany'];
-export type DeleteOneQuery<T> = MongooseModel<T>['deleteOne'];
-export type DeleteManyQuery<T> = MongooseModel<T>['deleteMany'];
-export type CountDocumentsQuery<T> = MongooseModel<T>['countDocuments'];
-export type InsertManyQuery<T> = MongooseModel<T>['insertMany'];
-export type AggregateQuery<T> = MongooseModel<T>['aggregate'];
+export type FindQuery<T> = MongooseModel<T>["find"];
+export type FindByIdQuery<T> = MongooseModel<T>["findById"];
+export type FindOneQuery<T> = MongooseModel<T>["findOne"];
+export type FindByIdAndDeleteQuery<T> = MongooseModel<T>["findByIdAndDelete"];
+export type FindOneAndDeleteQuery<T> = MongooseModel<T>["findOneAndDelete"];
+export type FindByIdAndUpdateQuery<T> = MongooseModel<T>["findByIdAndUpdate"];
+export type FindOneAndUpdateQuery<T> = MongooseModel<T>["findOneAndUpdate"];
+export type UpdateOneQuery<T> = MongooseModel<T>["updateOne"];
+export type UpdateManyQuery<T> = MongooseModel<T>["updateMany"];
+export type DeleteOneQuery<T> = MongooseModel<T>["deleteOne"];
+export type DeleteManyQuery<T> = MongooseModel<T>["deleteMany"];
+export type CountDocumentsQuery<T> = MongooseModel<T>["countDocuments"];
+export type InsertManyQuery<T> = MongooseModel<T>["insertMany"];
+export type AggregateQuery<T> = MongooseModel<T>["aggregate"];
 
 export interface Model<T> {
   create: CreateQuery<T>;
@@ -66,4 +66,4 @@ export type PaginatedQueryResult<T> = {
   canGoNextPage: boolean;
 };
 
-export type PipelineStage = import('mongoose').PipelineStage;
+export type PipelineStage = import("mongoose").PipelineStage;

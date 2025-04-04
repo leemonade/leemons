@@ -1,5 +1,5 @@
-import type { Context } from '@leemons/moleculer';
-import { newTransaction } from '@leemons/transactions';
+import type { Context } from "@leemons/moleculer";
+import { newTransaction } from "@leemons/transactions";
 
 interface CreateTransactionParams {
   ignoreTransaction?: boolean;
@@ -18,7 +18,7 @@ export async function createTransactionIDIfNeed({
         ctx.meta.transactionID = await newTransaction(ctx as any);
         ctx.meta.transactionExecutionId = ctx.id;
 
-        if (process.env.DEBUG === 'true') {
+        if (process.env.DEBUG === "true") {
           console.log(
             `NEW TRANSACTION from (${ctx.service.name}) ${ctx.action?.name || ctx.event?.name}`
           );

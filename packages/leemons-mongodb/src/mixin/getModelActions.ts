@@ -1,20 +1,20 @@
-import type { Context } from '@leemons/moleculer';
-import { countDocuments } from '../queries/countDocuments';
-import { create } from '../queries/create';
-import { deleteMany } from '../queries/deleteMany';
-import { deleteOne } from '../queries/deleteOne';
-import { find } from '../queries/find';
-import { findById } from '../queries/findById';
-import { findByIdAndDelete } from '../queries/findByIdAndDelete';
-import { findByIdAndUpdate } from '../queries/findByIdAndUpdate';
-import { findOne } from '../queries/findOne';
-import { findOneAndDelete } from '../queries/findOneAndDelete';
-import { findOneAndUpdate } from '../queries/findOneAndUpdate';
-import { insertMany } from '../queries/insertMany';
-import { save } from '../queries/save';
-import { updateMany } from '../queries/updateMany';
-import { updateOne } from '../queries/updateOne';
-import { tracingWrapper } from './tracingWrapper';
+import type { Context } from "@leemons/moleculer";
+import { countDocuments } from "../queries/countDocuments";
+import { create } from "../queries/create";
+import { deleteMany } from "../queries/deleteMany";
+import { deleteOne } from "../queries/deleteOne";
+import { find } from "../queries/find";
+import { findById } from "../queries/findById";
+import { findByIdAndDelete } from "../queries/findByIdAndDelete";
+import { findByIdAndUpdate } from "../queries/findByIdAndUpdate";
+import { findOne } from "../queries/findOne";
+import { findOneAndDelete } from "../queries/findOneAndDelete";
+import { findOneAndUpdate } from "../queries/findOneAndUpdate";
+import { insertMany } from "../queries/insertMany";
+import { save } from "../queries/save";
+import { updateMany } from "../queries/updateMany";
+import { updateOne } from "../queries/updateOne";
+import { tracingWrapper } from "./tracingWrapper";
 
 interface ModelParams {
   model: any;
@@ -149,7 +149,7 @@ export function getModelActions({
       ctx,
     }),
     findOneAndReplace: () => {
-      throw new Error('findOneAndReplace not implemented');
+      throw new Error("findOneAndReplace not implemented");
     },
     updateOne: tracingWrapper(updateOne, {
       model,

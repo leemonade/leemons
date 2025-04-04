@@ -1,8 +1,8 @@
-import { generateLRN } from '@leemons/lrn';
-import type { Context } from '@leemons/moleculer';
-import { addTransactionState } from '@leemons/transactions';
-import _ from 'lodash';
-import { ObjectId } from 'mongodb';
+import { generateLRN } from "@leemons/lrn";
+import type { Context } from "@leemons/moleculer";
+import { addTransactionState } from "@leemons/transactions";
+import _ from "lodash";
+import { ObjectId } from "mongodb";
 import type {
   Document,
   FilterQuery,
@@ -10,13 +10,13 @@ import type {
   QueryOptions,
   UpdateQuery,
   UpdateWriteOpResult,
-} from 'mongoose';
-import { addDeploymentIDToArrayOrObject } from './helpers/addDeploymentIDToArrayOrObject';
-import { createTransactionIDIfNeed } from './helpers/createTransactionIDIfNeed';
-import { excludeDeleteIfNeedToQuery } from './helpers/excludeDeleteIfNeedToQuery';
-import { getLRNConfig } from './helpers/getLRNConfig';
-import { increaseTransactionFinishedIfNeed } from './helpers/increaseTransactionFinishedIfNeed';
-import { increaseTransactionPendingIfNeed } from './helpers/increaseTransactionPendingIfNeed';
+} from "mongoose";
+import { addDeploymentIDToArrayOrObject } from "./helpers/addDeploymentIDToArrayOrObject";
+import { createTransactionIDIfNeed } from "./helpers/createTransactionIDIfNeed";
+import { excludeDeleteIfNeedToQuery } from "./helpers/excludeDeleteIfNeedToQuery";
+import { getLRNConfig } from "./helpers/getLRNConfig";
+import { increaseTransactionFinishedIfNeed } from "./helpers/increaseTransactionFinishedIfNeed";
+import { increaseTransactionPendingIfNeed } from "./helpers/increaseTransactionPendingIfNeed";
 
 interface UpdateManyParams {
   model: Model<any>;
@@ -91,10 +91,10 @@ export function updateMany({
 
       if (!ignoreTransaction && ctx.meta.transactionID && oldItems?.length) {
         await addTransactionState(ctx as any, {
-          action: 'leemonsMongoDBRollback',
+          action: "leemonsMongoDBRollback",
           payload: {
             modelKey,
-            action: 'updateMany',
+            action: "updateMany",
             data: oldItems,
           },
         });

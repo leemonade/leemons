@@ -1,6 +1,6 @@
-import { getDeploymentIDFromCTX } from '@leemons/deployment-manager';
-import type { Context } from '@leemons/moleculer';
-import _ from 'lodash';
+import { getDeploymentIDFromCTX } from "@leemons/deployment-manager";
+import type { Context } from "@leemons/moleculer";
+import _ from "lodash";
 
 export interface WithDeploymentID {
   deploymentID?: string;

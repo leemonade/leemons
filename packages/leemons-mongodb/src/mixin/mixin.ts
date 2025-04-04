@@ -1,13 +1,13 @@
-import type { Context, ServiceSchema } from '@leemons/moleculer';
-import { getActionNameFromCTX } from '@leemons/service-name-parser';
-import { rollbackTransaction } from '@leemons/transactions';
-import _ from 'lodash';
+import type { Context, ServiceSchema } from "@leemons/moleculer";
+import { getActionNameFromCTX } from "@leemons/service-name-parser";
+import { rollbackTransaction } from "@leemons/transactions";
+import _ from "lodash";
 
-import { ObjectId } from 'mongodb';
-import { createTransactionIDIfNeed } from '../queries/helpers/createTransactionIDIfNeed';
-import type { Model } from '../types';
-import { getDBModels } from './getDBModels';
-import { modifyCTX } from './modifyCTX';
+import { ObjectId } from "mongodb";
+import { createTransactionIDIfNeed } from "../queries/helpers/createTransactionIDIfNeed";
+import type { Model } from "../types";
+import { getDBModels } from "./getDBModels";
+import { modifyCTX } from "./modifyCTX";
 
 export type MixinOptions = {
   waitToRollbackFinishOnError?: boolean;
@@ -30,13 +30,16 @@ export const mixin = ({
   forceLeemonsDeploymentManagerMixinNeedToBeImported = true,
   models = {},
 }: MixinOptions = {}): Partial<ServiceSchema<Context>> => ({
-  name: '',
+  name: "",
   metadata: {
     mixins: {
       LeemonsMongoDBMixin: true,
     },
     LeemonsMongoDBMixin: {
-      models: ({ ctx, ...options }: { ctx: Context; options: Record<string, unknown> }) =>
+      models: ({
+        ctx,
+        ...options
+      }: { ctx: Context; options: Record<string, unknown> }) =>
         getDBModels({
           ...options,
           ctx,
@@ -53,7 +56,7 @@ export const mixin = ({
             `Error on MongoDB rollback: The model "${ctx.params.modelKey}" not found in ctx.db`
           );
         }
-        if (debugTransaction || process.env.DEBUG === 'true') {
+        if (debugTransaction || process.env.DEBUG === "true") {
           console.debug(
             `[MongoDB Transactions] (Rollback) - ${ctx.params.action}`,
             ctx.params.data
@@ -61,7 +64,7 @@ export const mixin = ({
         }
 
         switch (ctx.params.action) {
-          case 'removeMany':
+          case "removeMany":
             await model.deleteMany({
               $or: [
                 { id: ctx.params.data },
@@ -71,16 +74,20 @@ export const mixin = ({
               ],
             });
             break;
-          case 'createMany':
+          case "createMany":
             await model.create(ctx.params.data);
             break;
-          case 'updateMany':
+          case "updateMany":
             await Promise.all(
-              _.map(ctx.params.data, (data) => model.findOneAndUpdate({ id: data.id }, data))
+              _.map(ctx.params.data, (data) =>
+                model.findOneAndUpdate({ id: data.id }, data)
+              )
             );
             break;
           default:
-            throw new Error(`Error on MongoDB rollback: The action ${ctx.params.action} not found`);
+            throw new Error(
+              `Error on MongoDB rollback: The action ${ctx.params.action} not found`
+            );
         }
         return true;
       },
@@ -88,10 +95,10 @@ export const mixin = ({
   },
   hooks: {
     error: {
-      '*': [
+      "*": [
         async function (ctx, err) {
-          if (!err.message?.includes?.('LeemonsMiddlewareAuthenticated')) {
-            console.error('[MongoDB Hook Error] - ', err);
+          if (!err.message?.includes?.("LeemonsMiddlewareAuthenticated")) {
+            console.error("[MongoDB Hook Error] - ", err);
           }
           if (
             autoRollback &&
@@ -109,7 +116,7 @@ export const mixin = ({
       ],
     },
     before: {
-      '*': [
+      "*": [
         async function (this: ServiceSchema<Context>, ctx) {
           modifyCTX(ctx, {
             autoDeploymentID,
@@ -122,7 +129,8 @@ export const mixin = ({
           });
           let createTransaction = true;
           if (ctx.action?.name) {
-            const action = this.originalSchema.actions?.[getActionNameFromCTX(ctx)];
+            const action =
+              this.originalSchema.actions?.[getActionNameFromCTX(ctx)];
             if (action?.dontCreateTransactionOnCallThisFunction) {
               createTransaction = false;
             }
@@ -139,11 +147,13 @@ export const mixin = ({
       this.events[key] = async (
         params: any,
         opts: any,
-        { afterModifyCTX }: { afterModifyCTX?: (ctx: Context) => Promise<void> } = {}
+        {
+          afterModifyCTX,
+        }: { afterModifyCTX?: (ctx: Context) => Promise<void> } = {}
       ) =>
         value(params, opts, {
           onError: async (ctx: Context, err: Error) => {
-            console.error('[MongoDB Event Error] - ', err);
+            console.error("[MongoDB Event Error] - ", err);
             if (
               autoRollback &&
               ctx.meta.transactionID &&
