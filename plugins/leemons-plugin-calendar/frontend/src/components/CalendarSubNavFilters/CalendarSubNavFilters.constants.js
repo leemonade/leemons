@@ -1,14 +1,14 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const CALENDAR_SUB_NAV_FILTERS_DEFAULT_PROPS = {
   messages: {
-    title: 'Calendar',
-    centers: 'Centers',
-    closeTooltip: 'Close',
+    title: "Calendar",
+    centers: "Centers",
+    closeTooltip: "Close",
   },
   pages: [
-    { label: 'Calendar', value: 'calendar' },
-    { label: 'Schedule', value: 'schedule' },
+    { label: "Calendar", value: "calendar" },
+    { label: "Schedule", value: "schedule" },
   ],
   centers: [],
   onChange: () => {},
@@ -16,8 +16,8 @@ export const CALENDAR_SUB_NAV_FILTERS_DEFAULT_PROPS = {
   pageOnChange: () => {},
   onClose: () => {},
   showPageControl: false,
-  mainColor: '#212B3D',
-  drawerColor: '#333F56',
+  mainColor: "#212B3D",
+  drawerColor: "#333F56",
   lightMode: false,
 };
 export const CALENDAR_SUB_NAV_FILTERS_PROP_TYPES = {

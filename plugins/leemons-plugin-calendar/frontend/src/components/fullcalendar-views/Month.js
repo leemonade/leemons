@@ -1,21 +1,21 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import clsx from 'clsx';
+import PropTypes from "prop-types";
+import React from "react";
+import clsx from "clsx";
 
-import chunk from 'lodash/chunk';
+import chunk from "lodash/chunk";
 
-import getPosition from 'dom-helpers/position';
-import * as animationFrame from 'dom-helpers/animationFrame';
-import Overlay from 'react-overlays/Overlay';
-import { navigate, views } from './utils/constants';
-import { notify } from './utils/helpers';
+import getPosition from "dom-helpers/position";
+import * as animationFrame from "dom-helpers/animationFrame";
+import Overlay from "react-overlays/Overlay";
+import { navigate, views } from "./utils/constants";
+import { notify } from "./utils/helpers";
 
-import Popup from './Popup';
-import DateContentRow from './DateContentRow';
-import Header from './Header';
-import DateHeader from './DateHeader';
+import Popup from "./Popup";
+import DateContentRow from "./DateContentRow";
+import Header from "./Header";
+import DateHeader from "./DateHeader";
 
-import { inRange, sortEvents } from './utils/eventLevels';
+import { inRange, sortEvents } from "./utils/eventLevels";
 
 const eventsForWeek = (evts, start, end, accessors, localizer) =>
   evts.filter((e) => inRange(e, start, end, accessors, localizer));
@@ -38,7 +38,7 @@ class MonthView extends React.Component {
 
     if (propsDate !== date) {
       this.setState({
-        needLimitMeasure: localizer.neq(date, propsDate, 'month'),
+        needLimitMeasure: localizer.neq(date, propsDate, "month"),
       });
     }
     return true;
@@ -47,7 +47,10 @@ class MonthView extends React.Component {
   componentDidMount() {
     let running;
 
-    const days = this.props.localizer.visibleDays(this.props.date, this.props.localizer);
+    const days = this.props.localizer.visibleDays(
+      this.props.date,
+      this.props.localizer
+    );
     days[days.length - 1].setHours(23, 59, 59);
     this.props.onRangeChange({
       start: days[0],
@@ -57,7 +60,7 @@ class MonthView extends React.Component {
     if (this.state.needLimitMeasure) this.measureRowLimit(this.props);
 
     window.addEventListener(
-      'resize',
+      "resize",
       (this._resizeListener = () => {
         if (!running) {
           animationFrame.request(() => {
@@ -75,7 +78,7 @@ class MonthView extends React.Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this._resizeListener, false);
+    window.removeEventListener("resize", this._resizeListener, false);
   }
 
   getContainer = () => this.container;
@@ -91,7 +94,7 @@ class MonthView extends React.Component {
       <div
         ref={(r) => (this.container = r)}
         style={style}
-        className={clsx('rbc-month-view', className)}
+        className={clsx("rbc-month-view", className)}
         role="table"
         aria-label="Month View"
       >
@@ -168,16 +171,20 @@ class MonthView extends React.Component {
 
   readerDateHeading = ({ date, className, ...props }) => {
     const { date: currentDate, getDrilldownView, localizer } = this.props;
-    const isOffRange = localizer.neq(date, currentDate, 'month');
+    const isOffRange = localizer.neq(date, currentDate, "month");
     const isCurrent = localizer.isSameDate(date, currentDate);
     const drilldownView = getDrilldownView(date);
-    const label = localizer.format(date, 'dateFormat');
+    const label = localizer.format(date, "dateFormat");
     const DateHeaderComponent = this.props.components.dateHeader || DateHeader;
 
     return (
       <div
         {...props}
-        className={clsx(className, isOffRange && 'rbc-off-range', isCurrent && 'rbc-current')}
+        className={clsx(
+          className,
+          isOffRange && "rbc-off-range",
+          isCurrent && "rbc-current"
+        )}
         role="cell"
       >
         <DateHeaderComponent
@@ -197,12 +204,12 @@ class MonthView extends React.Component {
     const last = row[row.length - 1];
     const HeaderComponent = components.header || Header;
 
-    return localizer.range(first, last, 'day').map((day, idx) => (
+    return localizer.range(first, last, "day").map((day, idx) => (
       <div key={`header_${idx}`} className="rbc-header">
         <HeaderComponent
           date={day}
           localizer={localizer}
-          label={localizer.format(day, 'weekdayFormat')}
+          label={localizer.format(day, "weekdayFormat")}
         />
       </div>
     ));
@@ -210,7 +217,8 @@ class MonthView extends React.Component {
 
   renderOverlay() {
     const overlay = (this.state && this.state.overlay) || {};
-    const { accessors, localizer, components, getters, selected, popupOffset } = this.props;
+    const { accessors, localizer, components, getters, selected, popupOffset } =
+      this.props;
 
     return (
       <Overlay
@@ -280,7 +288,13 @@ class MonthView extends React.Component {
   };
 
   handleShowMore = (events, date, cell, slot, target) => {
-    const { popup, onDrillDown, onShowMore, getDrilldownView, doShowMoreDrillDown } = this.props;
+    const {
+      popup,
+      onDrillDown,
+      onShowMore,
+      getDrilldownView,
+      doShowMoreDrillDown,
+    } = this.props;
     // cancel any pending selections so only the event click goes through.
     this.clearSelection();
 
@@ -351,7 +365,7 @@ MonthView.propTypes = {
   localizer: PropTypes.object.isRequired,
 
   selected: PropTypes.object,
-  selectable: PropTypes.oneOf([true, false, 'ignoreEvents']),
+  selectable: PropTypes.oneOf([true, false, "ignoreEvents"]),
   longPressThreshold: PropTypes.number,
 
   onNavigate: PropTypes.func,
@@ -386,16 +400,17 @@ MonthView.range = (date, { localizer }) => {
 MonthView.navigate = (date, action, { localizer }) => {
   switch (action) {
     case navigate.PREVIOUS:
-      return localizer.add(date, -1, 'month');
+      return localizer.add(date, -1, "month");
 
     case navigate.NEXT:
-      return localizer.add(date, 1, 'month');
+      return localizer.add(date, 1, "month");
 
     default:
       return date;
   }
 };
 
-MonthView.title = (date, { localizer }) => localizer.format(date, 'monthHeaderFormat');
+MonthView.title = (date, { localizer }) =>
+  localizer.format(date, "monthHeaderFormat");
 
 export default MonthView;

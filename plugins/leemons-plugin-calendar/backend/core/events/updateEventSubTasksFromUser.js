@@ -1,11 +1,13 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
 const {
   getPermissionConfig: getPermissionConfigCalendar,
-} = require('../calendar/getPermissionConfig');
-const { getPermissionConfig: getPermissionConfigEvent } = require('./getPermissionConfig');
-const { detail: detailEvent } = require('./detail');
-const { getEventCalendars } = require('./getEventCalendars');
+} = require("../calendar/getPermissionConfig");
+const {
+  getPermissionConfig: getPermissionConfigEvent,
+} = require("./getPermissionConfig");
+const { detail: detailEvent } = require("./detail");
+const { getEventCalendars } = require("./getEventCalendars");
 
 async function updateEventSubTasksFromUser({ id, subtask, ctx }) {
   const { userSession } = ctx.meta;
@@ -23,7 +25,7 @@ async function updateEventSubTasksFromUser({ id, subtask, ctx }) {
   const [calendarPermissions, [eventPermission]] = await Promise.all([
     await Promise.all(
       _.map(permissionConfigCalendars, (permissionConfigCalendar) =>
-        ctx.tx.call('users.permissions.getUserAgentPermissions', {
+        ctx.tx.call("users.permissions.getUserAgentPermissions", {
           userAgent: userSession.userAgents,
           query: {
             permissionName: permissionConfigCalendar.permissionName,
@@ -31,7 +33,7 @@ async function updateEventSubTasksFromUser({ id, subtask, ctx }) {
         })
       )
     ),
-    ctx.tx.call('users.permissions.getUserAgentPermissions', {
+    ctx.tx.call("users.permissions.getUserAgentPermissions", {
       userAgent: userSession.userAgents,
       query: {
         permissionName: permissionConfigEvent.permissionName,
@@ -42,7 +44,10 @@ async function updateEventSubTasksFromUser({ id, subtask, ctx }) {
   let isOwnerCalendar = false;
 
   _.forEach(calendarPermissions, ([calendarPermission]) => {
-    if (calendarPermission && calendarPermission.actionNames.indexOf('owner') >= 0) {
+    if (
+      calendarPermission &&
+      calendarPermission.actionNames.indexOf("owner") >= 0
+    ) {
       isOwnerCalendar = true;
       return false;
     }
@@ -51,8 +56,8 @@ async function updateEventSubTasksFromUser({ id, subtask, ctx }) {
   // ES: Por ahora cualquier persona con el evento puede actualizarlo
   if (
     isOwnerCalendar ||
-    (eventPermission && eventPermission.actionNames.indexOf('owner') >= 0) ||
-    (eventPermission && eventPermission.actionNames.indexOf('view') >= 0)
+    (eventPermission && eventPermission.actionNames.indexOf("owner") >= 0) ||
+    (eventPermission && eventPermission.actionNames.indexOf("view") >= 0)
   ) {
     const { data } = event;
     data.subtask = subtask;
@@ -64,7 +69,7 @@ async function updateEventSubTasksFromUser({ id, subtask, ctx }) {
     );
   }
 
-  throw new LeemonsError(ctx, { message: 'You can`t update this event' });
+  throw new LeemonsError(ctx, { message: "You can`t update this event" });
 }
 
 module.exports = { updateEventSubTasksFromUser };

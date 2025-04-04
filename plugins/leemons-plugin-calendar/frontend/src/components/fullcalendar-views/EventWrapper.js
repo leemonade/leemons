@@ -1,3 +1,3 @@
-import NoopWrapper from './NoopWrapper'
+import NoopWrapper from "./NoopWrapper";
 
-export default NoopWrapper
+export default NoopWrapper;

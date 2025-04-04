@@ -1,7 +1,7 @@
-import React from 'react';
-import _ from 'lodash';
-import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
-import { Box, Text } from '@bubbles-ui/components';
+import React from "react";
+import _ from "lodash";
+import { getAssetUrl } from "@leebrary/helpers/prepareAsset";
+import { Box, Text } from "@bubbles-ui/components";
 
 export default function getClassScheduleAsEvents(
   _classe,
@@ -21,17 +21,29 @@ export default function getClassScheduleAsEvents(
       const title = classe.groups?.abbreviation
         ? `${classe.subject.name} (${classe.groups.abbreviation})`
         : classe.subject.name;
-      const icon = classe.subject.icon ? getAssetUrl(classe.subject.icon.id) : null;
+      const icon = classe.subject.icon
+        ? getAssetUrl(classe.subject.icon.id)
+        : null;
       _.forEach(classe.schedule, (schedule, i) => {
         function getDates(dayWeek) {
           curr = new Date();
           curr.setDate(first + dayWeek);
           const start = new Date(curr);
           const end = new Date(curr);
-          const startSplit = schedule.start.split(':');
-          const endSplit = schedule.end.split(':');
-          start.setHours(parseInt(startSplit[0], 10), parseInt(startSplit[1], 10), 0, 0);
-          end.setHours(parseInt(endSplit[0], 10), parseInt(endSplit[1], 10), 0, 0);
+          const startSplit = schedule.start.split(":");
+          const endSplit = schedule.end.split(":");
+          start.setHours(
+            parseInt(startSplit[0], 10),
+            parseInt(startSplit[1], 10),
+            0,
+            0
+          );
+          end.setHours(
+            parseInt(endSplit[0], 10),
+            parseInt(endSplit[1], 10),
+            0,
+            0
+          );
           return {
             start,
             end,
@@ -94,17 +106,17 @@ export default function getClassScheduleAsEvents(
           allDay: false,
           start,
           end,
-          display: 'background',
+          display: "background",
           component: (
             <Box
               sx={(theme) => ({
-                display: 'flex',
-                width: 'calc(100% + 0.5rem)',
-                height: 'calc(100% + 0.5rem)',
-                alignItems: 'center',
-                justifyContent: 'center',
+                display: "flex",
+                width: "calc(100% + 0.5rem)",
+                height: "calc(100% + 0.5rem)",
+                alignItems: "center",
+                justifyContent: "center",
                 backgroundColor: theme.colors.interactive03h,
-                margin: '-0.25rem',
+                margin: "-0.25rem",
               })}
             >
               <Text role="productive" transform="uppercase">

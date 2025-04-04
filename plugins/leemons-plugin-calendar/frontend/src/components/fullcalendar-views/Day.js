@@ -1,8 +1,8 @@
-import PropTypes from 'prop-types'
-import React from 'react'
+import PropTypes from "prop-types";
+import React from "react";
 
-import { navigate } from './utils/constants'
-import TimeGrid from './TimeGrid'
+import { navigate } from "./utils/constants";
+import TimeGrid from "./TimeGrid";
 
 class Day extends React.Component {
   render() {
@@ -14,12 +14,12 @@ class Day extends React.Component {
     let {
       date,
       localizer,
-      min = localizer.startOf(new Date(), 'day'),
-      max = localizer.endOf(new Date(), 'day'),
-      scrollToTime = localizer.startOf(new Date(), 'day'),
+      min = localizer.startOf(new Date(), "day"),
+      max = localizer.endOf(new Date(), "day"),
+      scrollToTime = localizer.startOf(new Date(), "day"),
       ...props
-    } = this.props
-    let range = Day.range(date, { localizer: localizer })
+    } = this.props;
+    let range = Day.range(date, { localizer: localizer });
 
     return (
       <TimeGrid
@@ -31,7 +31,7 @@ class Day extends React.Component {
         max={max}
         scrollToTime={scrollToTime}
       />
-    )
+    );
   }
 }
 
@@ -41,25 +41,25 @@ Day.propTypes = {
   min: PropTypes.instanceOf(Date),
   max: PropTypes.instanceOf(Date),
   scrollToTime: PropTypes.instanceOf(Date),
-}
+};
 
 Day.range = (date, { localizer }) => {
-  return [localizer.startOf(date, 'day')]
-}
+  return [localizer.startOf(date, "day")];
+};
 
 Day.navigate = (date, action, { localizer }) => {
   switch (action) {
     case navigate.PREVIOUS:
-      return localizer.add(date, -1, 'day')
+      return localizer.add(date, -1, "day");
 
     case navigate.NEXT:
-      return localizer.add(date, 1, 'day')
+      return localizer.add(date, 1, "day");
 
     default:
-      return date
+      return date;
   }
-}
+};
 
-Day.title = (date, { localizer }) => localizer.format(date, 'dayHeaderFormat')
+Day.title = (date, { localizer }) => localizer.format(date, "dayHeaderFormat");
 
-export default Day
+export default Day;

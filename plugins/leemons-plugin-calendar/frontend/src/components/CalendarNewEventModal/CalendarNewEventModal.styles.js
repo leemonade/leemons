@@ -4,12 +4,12 @@ import {
   getPaddings,
   getFontExpressive,
   getFontProductive,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 
 export const CalendarNewEventModalStyles = createStyles((theme, {}) => {
   return {
     root: {
-      ...getFontExpressive(theme.fontSizes['2']),
+      ...getFontExpressive(theme.fontSizes["2"]),
     },
     dayType: {
       marginTop: 8,
@@ -18,11 +18,11 @@ export const CalendarNewEventModalStyles = createStyles((theme, {}) => {
       marginTop: 8,
     },
     buttonWrapper: {
-      display: 'flex',
-      justifyContent: 'space-between',
+      display: "flex",
+      justifyContent: "space-between",
     },
     nameInput: {
-      width: '212px',
+      width: "212px",
     },
   };
 });

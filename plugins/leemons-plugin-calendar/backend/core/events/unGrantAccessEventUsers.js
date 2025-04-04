@@ -1,7 +1,9 @@
-const _ = require('lodash');
-const { validateNotExistEvent } = require('../../validations/exists');
-const { getPermissionConfig } = require('./getPermissionConfig');
-const { unGrantAccessUserAgentToEvent } = require('./unGrantAccessUserAgentToEvent');
+const _ = require("lodash");
+const { validateNotExistEvent } = require("../../validations/exists");
+const { getPermissionConfig } = require("./getPermissionConfig");
+const {
+  unGrantAccessUserAgentToEvent,
+} = require("./unGrantAccessUserAgentToEvent");
 
 /**
  *
@@ -17,16 +19,16 @@ async function unGrantAccessEventUsers({ id, ctx }) {
   const permissionConfig = getPermissionConfig(id);
 
   const [toRemove, notRemove] = await Promise.all([
-    ctx.tx.call('users.permissions.findUserAgentsWithPermission', {
+    ctx.tx.call("users.permissions.findUserAgentsWithPermission", {
       permissions: {
         permissionName: permissionConfig.permissionName,
-        actionNames: ['view'],
+        actionNames: ["view"],
       },
     }),
-    ctx.tx.call('users.permissions.findUserAgentsWithPermission', {
+    ctx.tx.call("users.permissions.findUserAgentsWithPermission", {
       permissions: {
         permissionName: permissionConfig.permissionName,
-        actionNames: ['owner'],
+        actionNames: ["owner"],
       },
     }),
   ]);
@@ -37,7 +39,12 @@ async function unGrantAccessEventUsers({ id, ctx }) {
     }
   });
 
-  return unGrantAccessUserAgentToEvent({ id, userAgentId: toRemove, actionName: ['view'], ctx });
+  return unGrantAccessUserAgentToEvent({
+    id,
+    userAgentId: toRemove,
+    actionName: ["view"],
+    ctx,
+  });
 }
 
 module.exports = { unGrantAccessEventUsers };

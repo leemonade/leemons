@@ -1,9 +1,9 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { validateNotExistCalendarConfig } = require('../../validations/exists');
-const { removeByConfigId } = require('../center-calendar-configs');
-const { remove: removeCalendar } = require('../calendar');
-const { getCalendars } = require('./getCalendars');
+const { validateNotExistCalendarConfig } = require("../../validations/exists");
+const { removeByConfigId } = require("../center-calendar-configs");
+const { remove: removeCalendar } = require("../calendar");
+const { getCalendars } = require("./getCalendars");
 
 /**
  * Delete calendar config
@@ -17,7 +17,11 @@ async function remove({ id, ctx }) {
   await validateNotExistCalendarConfig({ id, ctx });
   const configCalendars = getCalendars({ id, ctx });
   await ctx.tx.db.CalendarConfigCalendars.deleteMany({ config: id });
-  await Promise.all(_.map(configCalendars, (calendar) => removeCalendar({ id: calendar.id, ctx })));
+  await Promise.all(
+    _.map(configCalendars, (calendar) =>
+      removeCalendar({ id: calendar.id, ctx })
+    )
+  );
   await removeByConfigId({ configId: id, ctx });
   await ctx.tx.db.CalendarConfigs.deleteOne({ id });
   return true;

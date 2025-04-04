@@ -1,6 +1,9 @@
-const _ = require('lodash');
-const { validateNotExistCalendarKey, validateKeyPrefix } = require('../../validations/exists');
-const { getPermissionConfig } = require('./getPermissionConfig');
+const _ = require("lodash");
+const {
+  validateNotExistCalendarKey,
+  validateKeyPrefix,
+} = require("../../validations/exists");
+const { getPermissionConfig } = require("./getPermissionConfig");
 
 /**
  *
@@ -12,7 +15,12 @@ const { getPermissionConfig } = require('./getPermissionConfig');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function unGrantAccessUserAgentToCalendar({ key, userAgentId, actionName, ctx }) {
+async function unGrantAccessUserAgentToCalendar({
+  key,
+  userAgentId,
+  actionName,
+  ctx,
+}) {
   validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
   await validateNotExistCalendarKey({ key, ctx });
 
@@ -28,12 +36,16 @@ async function unGrantAccessUserAgentToCalendar({ key, userAgentId, actionName, 
     query.actionNames = actionNames;
   }
 
-  const { warnings } = await ctx.tx.call('users.users.removeCustomUserAgentPermission', {
-    userAgentId: userAgentIds,
-    data: query,
-  });
+  const { warnings } = await ctx.tx.call(
+    "users.users.removeCustomUserAgentPermission",
+    {
+      userAgentId: userAgentIds,
+      data: query,
+    }
+  );
 
-  if (warnings && warnings.errors && warnings.errors.length) throw warnings.errors[0];
+  if (warnings && warnings.errors && warnings.errors.length)
+    throw warnings.errors[0];
   return true;
 }
 

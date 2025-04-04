@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useMemo } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 import {
   Box,
@@ -11,18 +11,18 @@ import {
   RadioGroup,
   ActionButton,
   ContextContainer,
-} from '@bubbles-ui/components';
-import { EditWriteIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import { get, isArray, isFunction, isNil, keyBy, map } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { EditWriteIcon, DeleteBinIcon } from "@bubbles-ui/icons/solid";
+import { get, isArray, isFunction, isNil, keyBy, map } from "lodash";
+import PropTypes from "prop-types";
 
-import { CalendarEventModalStyles } from './CalendarEventModal.styles';
-import { Dates } from './components/Dates';
+import { CalendarEventModalStyles } from "./CalendarEventModal.styles";
+import { Dates } from "./components/Dates";
 
-const REQUIRED_FIELD = 'Field is required';
+const REQUIRED_FIELD = "Field is required";
 const CALENDAR_TYPES = {
-  EVENT: 'calendar.event',
-  TASK: 'calendar.task',
+  EVENT: "calendar.event",
+  TASK: "calendar.task",
 };
 
 export const CALENDAR_EVENT_MODAL_DEFAULT_PROPS = {
@@ -33,29 +33,29 @@ export const CALENDAR_EVENT_MODAL_DEFAULT_PROPS = {
   onSubmit: () => {},
   selectData: {
     repeat: [
-      { label: "Don't repeat", value: 'dont_repeat' },
-      { label: 'Every day', value: 'every_day' },
-      { label: 'Every week', value: 'every_week' },
-      { label: 'Every month', value: 'every_month' },
-      { label: 'Every year', value: 'every_year' },
+      { label: "Don't repeat", value: "dont_repeat" },
+      { label: "Every day", value: "every_day" },
+      { label: "Every week", value: "every_week" },
+      { label: "Every month", value: "every_month" },
+      { label: "Every year", value: "every_year" },
     ],
     calendars: [],
     eventTypes: [],
   },
   messages: {
-    newEvent: 'New event',
-    newTask: 'New task',
-    fromLabel: 'From',
-    toLabel: 'To',
-    repeatLabel: 'Repeat',
-    allDayLabel: 'All day',
-    titlePlaceholder: 'Event title',
-    cancelButtonLabel: 'Cancel',
-    saveButtonLabel: 'Save',
-    updateButtonLabel: 'Update',
-    calendarPlaceholder: 'Select calendar',
-    calendarLabel: 'Choose calendar where to display',
-    showInCalendar: 'Show in calendar',
+    newEvent: "New event",
+    newTask: "New task",
+    fromLabel: "From",
+    toLabel: "To",
+    repeatLabel: "Repeat",
+    allDayLabel: "All day",
+    titlePlaceholder: "Event title",
+    cancelButtonLabel: "Cancel",
+    saveButtonLabel: "Save",
+    updateButtonLabel: "Update",
+    calendarPlaceholder: "Select calendar",
+    calendarLabel: "Choose calendar where to display",
+    showInCalendar: "Show in calendar",
   },
   errorMessages: {
     titleRequired: REQUIRED_FIELD,
@@ -121,7 +121,7 @@ function CalendarEventModal(props) {
   const [canEdit, setCanEdit] = React.useState(false);
   const { classes } = CalendarEventModalStyles({});
   const isTask = defaultValues?.type === CALENDAR_TYPES.TASK;
-  const isSessionsEvent = event?.data?.pluginName === 'sessions';
+  const isSessionsEvent = event?.data?.pluginName === "sessions";
 
   if (isTask && isNil(defaultValues?.data?.hideInCalendar)) {
     if (isNil(defaultValues.data)) defaultValues.data = {};
@@ -141,26 +141,29 @@ function CalendarEventModal(props) {
     formState: { errors, isSubmitted },
   } = form;
 
-  const calendar = watch('calendar');
-  const hideInCalendar = watch('data.hideInCalendar');
-  const hideCalendarField = watch('data.hideCalendarField');
-  const hideGuests = watch('data.hideGuests');
-  const type = watch('type');
-  const eventTypesByValue = keyBy(selectData.eventTypes, 'value');
-  const config = { ...(eventTypesByValue[type]?.config || {}), ...(event?.data?.config || {}) };
+  const calendar = watch("calendar");
+  const hideInCalendar = watch("data.hideInCalendar");
+  const hideCalendarField = watch("data.hideCalendarField");
+  const hideGuests = watch("data.hideGuests");
+  const type = watch("type");
+  const eventTypesByValue = keyBy(selectData.eventTypes, "value");
+  const config = {
+    ...(eventTypesByValue[type]?.config || {}),
+    ...(event?.data?.config || {}),
+  };
 
   React.useEffect(() => {
     const subscription = watch((value, { name }) => {
       if (value.type === CALENDAR_TYPES.TASK) {
-        if (name === 'type') {
-          setValue('data.hideInCalendar', true);
+        if (name === "type") {
+          setValue("data.hideInCalendar", true);
         }
         if (
-          name === 'data.hideInCalendar' &&
+          name === "data.hideInCalendar" &&
           hideInCalendar &&
           calendar !== selectData.calendars[0]?.value
         ) {
-          setValue('calendar', selectData.calendars[0]?.value);
+          setValue("calendar", selectData.calendars[0]?.value);
         }
       }
     });
@@ -192,16 +195,27 @@ function CalendarEventModal(props) {
   const hasCard = useMemo(() => !!components?.card, [components]);
 
   return (
-    <Drawer size={'sm'} className={classes.root} onClose={onClose} opened={opened}>
+    <Drawer
+      size={"sm"}
+      className={classes.root}
+      onClose={onClose}
+      opened={opened}
+    >
       <Drawer.Header title={titleDrawer()}>
         <Drawer.Header.RightActions>
           <Box>
             {isOwner && !isSessionsEvent ? (
-              <ActionButton icon={<EditWriteIcon width={18} height={18} />} onClick={onEdit} />
+              <ActionButton
+                icon={<EditWriteIcon width={18} height={18} />}
+                onClick={onEdit}
+              />
             ) : null}
 
             {!isNew && isOwner && !isSessionsEvent ? (
-              <ActionButton icon={<DeleteBinIcon width={18} height={18} />} onClick={onRemove} />
+              <ActionButton
+                icon={<DeleteBinIcon width={18} height={18} />}
+                onClick={onRemove}
+              />
             ) : null}
           </Box>
         </Drawer.Header.RightActions>
@@ -239,8 +253,10 @@ function CalendarEventModal(props) {
                         readOnly={disabled}
                         disabled={disabled}
                         label={config?.titleLabel || messages.name}
-                        placeholder={config?.titlePlaceholder || messages.titlePlaceholder}
-                        error={get(errors, 'title')}
+                        placeholder={
+                          config?.titlePlaceholder || messages.titlePlaceholder
+                        }
+                        error={get(errors, "title")}
                         required={!disabled}
                         {...field}
                       />
@@ -265,8 +281,12 @@ function CalendarEventModal(props) {
                             {...field}
                             disabled={disabled}
                             variant="default"
-                            direction={selectData.eventTypes.length < 3 ? 'row' : 'column'}
-                            error={get(errors, 'type')}
+                            direction={
+                              selectData.eventTypes.length < 3
+                                ? "row"
+                                : "column"
+                            }
+                            error={get(errors, "type")}
                             data={selectData.eventTypes}
                             noRootPadding
                           />
@@ -295,7 +315,7 @@ function CalendarEventModal(props) {
               <Component
                 isEditing={true}
                 allFormData={watch()}
-                data={watch('data')}
+                data={watch("data")}
                 classes={classes}
                 readOnly={disabled}
                 disabled={disabled}
@@ -305,9 +325,11 @@ function CalendarEventModal(props) {
                   Controller: MyController,
                   control,
                   register: (ref, options) => register(`data.${ref}`, options),
-                  setValue: (ref, value, options) => setValue(`data.${ref}`, value, options),
+                  setValue: (ref, value, options) =>
+                    setValue(`data.${ref}`, value, options),
                   getValues: (refs) => {
-                    if (isArray(refs)) return getValues(map(refs, (ref) => `data.${ref}`));
+                    if (isArray(refs))
+                      return getValues(map(refs, (ref) => `data.${ref}`));
                     return getValues(`data.${refs}`);
                   },
                   watch: (refs, options) => {
@@ -323,11 +345,13 @@ function CalendarEventModal(props) {
                     return watch(`data.${refs}`, options);
                   },
                   unregister: (refs) => {
-                    if (isArray(refs)) return unregister(map(refs, (ref) => `data.${ref}`));
+                    if (isArray(refs))
+                      return unregister(map(refs, (ref) => `data.${ref}`));
                     return unregister(`data.${refs}`);
                   },
                   trigger: (refs) => {
-                    if (isArray(refs)) return trigger(map(refs, (ref) => `data.${ref}`));
+                    if (isArray(refs))
+                      return trigger(map(refs, (ref) => `data.${ref}`));
                     return trigger(`data.${refs}`);
                   },
                   formState: { errors: errors ? errors.data : {}, isSubmitted },
@@ -337,7 +361,8 @@ function CalendarEventModal(props) {
 
             {!disabled &&
             (isNew || (!isNew && isOwner)) &&
-            (type !== CALENDAR_TYPES.TASK || (type === CALENDAR_TYPES.TASK && !hideInCalendar)) ? (
+            (type !== CALENDAR_TYPES.TASK ||
+              (type === CALENDAR_TYPES.TASK && !hideInCalendar)) ? (
               <ContextContainer spacing={4}>
                 <Controller
                   name="calendar"
@@ -354,7 +379,7 @@ function CalendarEventModal(props) {
                       placeholder={messages.calendarPlaceholder}
                       {...field}
                       required={!disabled}
-                      error={get(errors, 'calendar')}
+                      error={get(errors, "calendar")}
                       data={selectData.calendars}
                       withinPortal={false}
                     />
@@ -378,7 +403,7 @@ function CalendarEventModal(props) {
                       disabled={disabled}
                       {...field}
                       required={!disabled}
-                      error={get(errors, 'calendar')}
+                      error={get(errors, "calendar")}
                       data={selectData.calendars}
                       withinPortal={false}
                     />
@@ -402,7 +427,7 @@ function CalendarEventModal(props) {
                 />
               </ContextContainer>
             ) : null}
-            {disabled && !hideGuests && form.getValues('users')?.length ? (
+            {disabled && !hideGuests && form.getValues("users")?.length ? (
               <ContextContainer spacing={2}>
                 <Text size="lg" strong>
                   {messages.usersDisabled}

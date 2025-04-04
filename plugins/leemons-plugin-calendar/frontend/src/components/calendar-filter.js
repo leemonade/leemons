@@ -1,9 +1,14 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Checkbox } from '@bubbles-ui/components';
-import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
+import React from "react";
+import PropTypes from "prop-types";
+import { Checkbox } from "@bubbles-ui/components";
+import getCalendarNameWithConfigAndSession from "../helpers/getCalendarNameWithConfigAndSession";
 
-export function CalendarFilter({ calendar, session, config, showEventsChange = () => {} }) {
+export function CalendarFilter({
+  calendar,
+  session,
+  config,
+  showEventsChange = () => {},
+}) {
   return (
     <Checkbox
       label={getCalendarNameWithConfigAndSession(calendar, config, session)}

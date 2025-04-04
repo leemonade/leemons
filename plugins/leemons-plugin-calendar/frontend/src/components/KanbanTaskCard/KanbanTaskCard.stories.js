@@ -1,13 +1,16 @@
-import React from 'react';
-import { KANBAN_TASK_CARD_DEFAULT_PROPS, KanbanTaskCard } from './KanbanTaskCard';
-import { mock } from './mock/mock';
+import React from "react";
+import {
+  KANBAN_TASK_CARD_DEFAULT_PROPS,
+  KanbanTaskCard,
+} from "./KanbanTaskCard";
+import { mock } from "./mock/mock";
 
 export default {
-  title: 'Leemons/Kanban/KanbanTaskCard',
+  title: "Leemons/Kanban/KanbanTaskCard",
   parameters: {
     component: KanbanTaskCard,
     design: {
-      type: 'figma',
+      type: "figma",
       // url: 'https://www.figma.com/file/kcSXz3QZFByFDTumNgzPpV/?node-id=2962%3A31342',
     },
   },
@@ -32,6 +35,6 @@ Playground.args = {
   // mySelectProp: 'Hello'
   ...KANBAN_TASK_CARD_DEFAULT_PROPS,
   labels: {
-    delivery: 'Delivery',
+    delivery: "Delivery",
   },
 };

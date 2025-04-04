@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const { validateNotExistCalendarConfig } = require('../../validations/exists');
-const { listByConfigId } = require('../center-calendar-configs');
+const _ = require("lodash");
+const { validateNotExistCalendarConfig } = require("../../validations/exists");
+const { listByConfigId } = require("../center-calendar-configs");
 
 /**
  * List kanban columns
@@ -17,7 +17,10 @@ async function detail({ id, ctx }) {
 
   const centersConfig = await listByConfigId({ config: id, ctx });
   if (centersConfig.length) {
-    const centers = await ctx.tx.call('users.centers.list', { page: 0, size: 99999 });
+    const centers = await ctx.tx.call("users.centers.list", {
+      page: 0,
+      size: 99999,
+    });
     response.centers = _.intersectionBy(
       centers.items,
       centersConfig,

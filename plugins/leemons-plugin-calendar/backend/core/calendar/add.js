@@ -2,9 +2,9 @@ const {
   validateKeyPrefix,
   validateExistCalendarKey,
   validateSectionPrefix,
-} = require('../../validations/exists');
-const { getPermissionConfig } = require('./getPermissionConfig');
-const { validateAddCalendar } = require('../../validations/forms');
+} = require("../../validations/exists");
+const { getPermissionConfig } = require("./getPermissionConfig");
+const { validateAddCalendar } = require("../../validations/forms");
 
 /**
  * Add calendar with the provided key if not already exists
@@ -17,7 +17,11 @@ const { validateAddCalendar } = require('../../validations/forms');
  * */
 async function add({ key, config, ctx }) {
   validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
-  validateSectionPrefix({ key: config.section, calledFrom: ctx.callerPlugin, ctx });
+  validateSectionPrefix({
+    key: config.section,
+    calledFrom: ctx.callerPlugin,
+    ctx,
+  });
   validateAddCalendar(config);
 
   await validateExistCalendarKey({ key, ctx });
@@ -30,7 +34,7 @@ async function add({ key, config, ctx }) {
   });
   const calendar = calendarDoc.toObject();
 
-  await ctx.tx.call('users.permissions.addItem', {
+  await ctx.tx.call("users.permissions.addItem", {
     item: calendar.id,
     type: permissionConfig.type,
     data: permissionConfig.all,

@@ -1,11 +1,12 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import EventRowMixin from './EventRowMixin';
-import { eventLevels } from './utils/eventLevels';
-import range from 'lodash/range';
+import PropTypes from "prop-types";
+import React from "react";
+import EventRowMixin from "./EventRowMixin";
+import { eventLevels } from "./utils/eventLevels";
+import range from "lodash/range";
 
 let isSegmentInSlot = (seg, slot) => seg.left <= slot && seg.right >= slot;
-let eventsInSlot = (segments, slot) => segments.filter((seg) => isSegmentInSlot(seg, slot)).length;
+let eventsInSlot = (segments, slot) =>
+  segments.filter((seg) => isSegmentInSlot(seg, slot)).length;
 
 class EventEndingRow extends React.Component {
   render() {
@@ -20,7 +21,7 @@ class EventEndingRow extends React.Component {
       row = [];
 
     while (current <= slots) {
-      let key = '_lvl_' + current;
+      let key = "_lvl_" + current;
 
       let { event, left, right, span } =
         rowSegments.filter((seg) => isSegmentInSlot(seg, current))[0] || {}; //eslint-disable-line
@@ -36,7 +37,7 @@ class EventEndingRow extends React.Component {
         let content = EventRowMixin.renderEvent(this.props, event);
 
         if (gap) {
-          row.push(EventRowMixin.renderSpan(slots, gap, key + '_gap'));
+          row.push(EventRowMixin.renderSpan(slots, gap, key + "_gap"));
         }
 
         row.push(EventRowMixin.renderSpan(slots, span, key, content));
@@ -44,16 +45,23 @@ class EventEndingRow extends React.Component {
         lastEnd = current = right + 1;
       } else {
         if (gap) {
-          row.push(EventRowMixin.renderSpan(slots, gap, key + '_gap'));
+          row.push(EventRowMixin.renderSpan(slots, gap, key + "_gap"));
         }
 
-        row.push(EventRowMixin.renderSpan(slots, 1, key, this.renderShowMore(segments, current)));
+        row.push(
+          EventRowMixin.renderSpan(
+            slots,
+            1,
+            key,
+            this.renderShowMore(segments, current)
+          )
+        );
         lastEnd = current = current + 1;
       }
     }
 
     return (
-      <div className="rbc-row" style={{ pointerEvents: 'all' }}>
+      <div className="rbc-row" style={{ pointerEvents: "all" }}>
         {row}
       </div>
     );
@@ -75,9 +83,9 @@ class EventEndingRow extends React.Component {
 
     return count ? (
       <a
-        key={'sm_' + slot}
+        key={"sm_" + slot}
         href="#"
-        className={'rbc-show-more'}
+        className={"rbc-show-more"}
         onClick={(e) => this.showMore(slot, e)}
       >
         {localizer.messages.showMore(count)}

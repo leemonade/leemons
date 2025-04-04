@@ -8,11 +8,11 @@
 function getPermissionConfig(id) {
   const permissionName = `calendar.calendar.event.${id}`;
   return {
-    type: 'calendar.calendar.events',
+    type: "calendar.calendar.events",
     permissionName,
     all: {
       permissionName,
-      actionNames: ['view', 'create', 'update', 'delete', 'admin', 'owner'],
+      actionNames: ["view", "create", "update", "delete", "admin", "owner"],
     },
   };
 }

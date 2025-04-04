@@ -1,50 +1,50 @@
-import * as _ from 'lodash';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { withLayout } from '@layout/hoc';
-import { useAsync } from '@common/useAsync';
-import { useHistory, useParams } from 'react-router-dom';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import prefixPN from '@calendar/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { PageContainer } from '@bubbles-ui/components';
+import { PageContainer } from "@bubbles-ui/components";
+import prefixPN from "@calendar/helpers/prefixPN";
+import { useAsync } from "@common/useAsync";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { withLayout } from "@layout/hoc";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import * as _ from "lodash";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
 // TODO: import from @common plugin
 
-import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
-import tKeys from '@multilanguage/helpers/tKeys';
+import { AdminPageHeader } from "@bubbles-ui/leemons";
+import { useCalendarSimpleEventModal } from "@calendar/components/calendar-simple-event-modal";
+import { FullCalendar } from "@calendar/components/fullcalendar";
+import DateMonthRangeView from "@calendar/components/fullcalendar-views/DateMonthRange";
+import transformCalendarConfigToEvents from "@calendar/helpers/transformCalendarConfigToEvents";
+import transformDBEventsToFullCalendarEvents from "@calendar/helpers/transformDBEventsToFullCalendarEvents";
 import {
   detailCalendarConfigsRequest,
   listCalendarConfigCalendarsRequest,
-} from '@calendar/request';
-import { FullCalendar } from '@calendar/components/fullcalendar';
-import transformCalendarConfigToEvents from '@calendar/helpers/transformCalendarConfigToEvents';
-import { useCalendarSimpleEventModal } from '@calendar/components/calendar-simple-event-modal';
-import hooks from 'leemons-hooks';
-import DateMonthRangeView from '@calendar/components/fullcalendar-views/DateMonthRange';
-import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
+} from "@calendar/request";
+import hooks from "@leemons/hooks";
+import tKeys from "@multilanguage/helpers/tKeys";
+import { getLocalizationsByArrayOfItems } from "@multilanguage/useTranslate";
 
 function ConfigAdd({ session }) {
   const monthsList = useMemo(
     () => [
-      { value: 0, name: 'january' },
-      { value: 1, name: 'february' },
-      { value: 2, name: 'march' },
-      { value: 3, name: 'april' },
-      { value: 4, name: 'may' },
-      { value: 5, name: 'june' },
-      { value: 6, name: 'july' },
-      { value: 7, name: 'august' },
-      { value: 8, name: 'september' },
-      { value: 9, name: 'october' },
-      { value: 10, name: 'november' },
-      { value: 11, name: 'december' },
+      { value: 0, name: "january" },
+      { value: 1, name: "february" },
+      { value: 2, name: "march" },
+      { value: 3, name: "april" },
+      { value: 4, name: "may" },
+      { value: 5, name: "june" },
+      { value: 6, name: "july" },
+      { value: 7, name: "august" },
+      { value: 8, name: "september" },
+      { value: 9, name: "october" },
+      { value: 10, name: "november" },
+      { value: 11, name: "december" },
     ],
     []
   );
 
-  const [t] = useTranslateLoader(prefixPN('detail_calendars_page'));
-  const { t: tCommonHeader } = useCommonTranslate('page_header');
+  const [t] = useTranslateLoader(prefixPN("detail_calendars_page"));
+  const { t: tCommonHeader } = useCommonTranslate("page_header");
 
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
@@ -55,18 +55,22 @@ function ConfigAdd({ session }) {
   const [event, setEvent] = useState(null);
 
   const [toggleEventModal, EventModal] = useCalendarSimpleEventModal();
-  const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
+  const [error, setError, ErrorAlert, getErrorMessage] =
+    useRequestErrorMessage();
 
   const history = useHistory();
   const params = useParams();
 
   const eventTypes = useMemo(
-    () => _.map(calendars, ({ name, bgColor }) => ({ key: name, color: bgColor })),
+    () =>
+      _.map(calendars, ({ name, bgColor }) => ({ key: name, color: bgColor })),
     [calendars]
   );
 
   const getEventTypeTranslations = async () => {
-    const { items } = await getLocalizationsByArrayOfItems(_.map(eventTypes, 'key'));
+    const { items } = await getLocalizationsByArrayOfItems(
+      _.map(eventTypes, "key")
+    );
     setEventTypesT(items);
   };
 
@@ -128,13 +132,16 @@ function ConfigAdd({ session }) {
     }
 
     if (events && calendars && calendars.length) {
-      const calendarsByName = _.keyBy(calendars, 'name');
+      const calendarsByName = _.keyBy(calendars, "name");
       conf.events = conf.events.concat(
-        _.map(transformDBEventsToFullCalendarEvents(events, calendars), (e) => ({
-          ...e,
-          display: 'background',
-          backgroundColor: calendarsByName[e.originalEvent.type].bgColor,
-        }))
+        _.map(
+          transformDBEventsToFullCalendarEvents(events, calendars),
+          (e) => ({
+            ...e,
+            display: "background",
+            backgroundColor: calendarsByName[e.originalEvent.type].bgColor,
+          })
+        )
       );
     }
 
@@ -176,9 +183,9 @@ function ConfigAdd({ session }) {
   };
 
   useEffect(() => {
-    hooks.addAction('calendar:force:reload', reloadCalendarEvents);
+    hooks.addAction("calendar:force:reload", reloadCalendarEvents);
     return () => {
-      hooks.removeAction('calendar:force:reload', reloadCalendarEvents);
+      hooks.removeAction("calendar:force:reload", reloadCalendarEvents);
     };
   });
 
@@ -198,17 +205,21 @@ function ConfigAdd({ session }) {
               title: config.title,
             }}
             buttons={{
-              save: tCommonHeader('save'),
+              save: tCommonHeader("save"),
             }}
-            loading={saveLoading && 'save'}
+            loading={saveLoading && "save"}
           />
           <div className="bg-primary-content">
             <PageContainer>
-              <div className="page-description max-w-screen-sm">{t('description')}</div>
+              <div className="page-description max-w-screen-sm">
+                {t("description")}
+              </div>
 
               <div className="flex group-4">
-                <div style={{ backgroundColor: '#fff' }}>{t('school_day')}</div>
-                <div style={{ backgroundColor: 'rgba(51,51,51,0.3)' }}>{t('non_school_day')}</div>
+                <div style={{ backgroundColor: "#fff" }}>{t("school_day")}</div>
+                <div style={{ backgroundColor: "rgba(51,51,51,0.3)" }}>
+                  {t("non_school_day")}
+                </div>
                 {eventTypes.map(({ key, color }) => (
                   <div key={key} style={{ backgroundColor: color }}>
                     {getEventTypeName(key)}

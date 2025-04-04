@@ -1,5 +1,5 @@
-import React from 'react';
-import { EventDetailPanelStyles } from './EventDetailPanel.styles';
+import React from "react";
+import { EventDetailPanelStyles } from "./EventDetailPanel.styles";
 import {
   Anchor,
   Box,
@@ -9,7 +9,7 @@ import {
   ImageLoader,
   Text,
   UserDisplayItem,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 import {
   MeetingCameraIcon,
   PluginClassesIcon,
@@ -17,12 +17,12 @@ import {
   SchoolTeacherMaleIcon,
   StopwatchIcon,
   StyleThreePinTableIcon,
-} from '@bubbles-ui/icons/outline';
+} from "@bubbles-ui/icons/outline";
 import {
   EVENT_DETAIL_PANEL_DEFAULT_PROPS,
   EVENT_DETAIL_PANEL_PROP_TYPES,
-} from './EventDetailPanel.constants';
-import { isFunction } from 'lodash';
+} from "./EventDetailPanel.constants";
+import { isFunction } from "lodash";
 
 const EventDetailPanel = ({
   opened,
@@ -44,25 +44,29 @@ const EventDetailPanel = ({
 
   const renderDateRange = () => {
     const dateString = `${event.dateRange[0].toLocaleDateString(locale, {
-      weekday: 'long',
+      weekday: "long",
     })}, ${event.dateRange[0].toLocaleDateString(locale, {
-      day: 'numeric',
+      day: "numeric",
     })} ${event.dateRange[0].toLocaleDateString(locale, {
-      month: 'short',
-      year: 'numeric',
+      month: "short",
+      year: "numeric",
     })} — ${event.dateRange[0].toLocaleTimeString(locale, {
       hour12: false,
-      timeStyle: 'short',
-    })} - ${event.dateRange[1].toLocaleTimeString(locale, { hour12: false, timeStyle: 'short' })}`;
+      timeStyle: "short",
+    })} - ${event.dateRange[1].toLocaleTimeString(locale, { hour12: false, timeStyle: "short" })}`;
 
     return <Text role="productive">{`${dateString}`}</Text>;
   };
 
-  const { classes, cx } = EventDetailPanelStyles({}, { name: 'EventDetailPanel' });
+  const { classes, cx } = EventDetailPanelStyles(
+    {},
+    { name: "EventDetailPanel" }
+  );
 
   let inside = null;
   if (event) {
-    const { title, period, classGroup, subject, teacher, classroom, location } = event;
+    const { title, period, classGroup, subject, teacher, classroom, location } =
+      event;
     inside = (
       <Box style={{ margin: -16 }}>
         <ContextContainer title={title} divided>
@@ -76,7 +80,11 @@ const EventDetailPanel = ({
               <Text role="productive">{period}</Text>
             </Box>
             <Box className={classes.sectionRow}>
-              <PluginClassesIcon height={16} width={16} className={classes.icon} />
+              <PluginClassesIcon
+                height={16}
+                width={16}
+                className={classes.icon}
+              />
               <Text role="productive" color="primary">
                 {classGroup}
               </Text>
@@ -95,7 +103,11 @@ const EventDetailPanel = ({
               </Text>
             </Box>
             <Box className={classes.sectionRow}>
-              <SchoolTeacherMaleIcon height={16} width={16} className={classes.icon} />
+              <SchoolTeacherMaleIcon
+                height={16}
+                width={16}
+                className={classes.icon}
+              />
               <UserDisplayItem
                 textRole="productive"
                 noBreak
@@ -120,9 +132,13 @@ const EventDetailPanel = ({
           <Box className={classes.section}>
             {classroom ? (
               <Box className={classes.sectionRow}>
-                <MeetingCameraIcon height={16} width={16} className={classes.icon} />
+                <MeetingCameraIcon
+                  height={16}
+                  width={16}
+                  className={classes.icon}
+                />
                 <Anchor
-                  style={{ textDecoration: 'none' }}
+                  style={{ textDecoration: "none" }}
                   onClick={onClickClassRoom}
                   role="productive"
                 >
@@ -133,7 +149,11 @@ const EventDetailPanel = ({
 
             {location ? (
               <Box className={classes.sectionRow}>
-                <StyleThreePinTableIcon height={16} width={16} className={classes.icon} />
+                <StyleThreePinTableIcon
+                  height={16}
+                  width={16}
+                  className={classes.icon}
+                />
                 <Text role="productive" color="primary">
                   {location}
                 </Text>
@@ -146,7 +166,12 @@ const EventDetailPanel = ({
   }
 
   return (
-    <BaseDrawer opened={opened} onClose={handleOnClose} className={classes.root} size={500}>
+    <BaseDrawer
+      opened={opened}
+      onClose={handleOnClose}
+      className={classes.root}
+      size={500}
+    >
       {inside}
     </BaseDrawer>
   );

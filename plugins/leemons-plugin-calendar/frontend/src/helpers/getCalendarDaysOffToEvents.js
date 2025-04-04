@@ -1,5 +1,5 @@
-import dayjs from 'dayjs';
-import isBetween from 'dayjs/plugin/isBetween';
+import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
 
 dayjs.extend(isBetween);
 
@@ -10,7 +10,8 @@ const getCalendarDaysOffToEvents = (schedule) => {
 
   courses?.forEach((courseId) => {
     const courseEvents = schedule?.config?.courseEvents[courseId];
-    const { daysOffEvents, localEvents, regionalEvents } = schedule?.config?.regionalConfig ?? {
+    const { daysOffEvents, localEvents, regionalEvents } = schedule?.config
+      ?.regionalConfig ?? {
       daysOffEvents: [],
       localEvents: [],
       regionalEvents: [],
@@ -23,11 +24,11 @@ const getCalendarDaysOffToEvents = (schedule) => {
   });
 
   return events
-    .filter((event) => event.dayType !== 'schoolDays')
+    .filter((event) => event.dayType !== "schoolDays")
     .flatMap((event) => {
       const start = dayjs(event.startDate);
       const end = dayjs(event.endDate);
-      const daysDifference = end.diff(start, 'day');
+      const daysDifference = end.diff(start, "day");
 
       if (daysDifference === 0) {
         return [
@@ -42,11 +43,14 @@ const getCalendarDaysOffToEvents = (schedule) => {
 
       const multiDayEvents = [];
       for (let i = 0; i <= daysDifference; i++) {
-        const currentDay = start.add(i, 'day');
+        const currentDay = start.add(i, "day");
         multiDayEvents.push({
           originalEvent: event,
-          start: i === 0 ? start.toDate() : currentDay.startOf('day').toDate(),
-          end: i === daysDifference ? end.toDate() : currentDay.endOf('day').toDate(),
+          start: i === 0 ? start.toDate() : currentDay.startOf("day").toDate(),
+          end:
+            i === daysDifference
+              ? end.toDate()
+              : currentDay.endOf("day").toDate(),
           isDayOff: true,
         });
       }

@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -38,6 +38,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-const kanbanColumnsModel = newModel(mongoose.connection, 'v1::calendar_kanbanColumns', schema);
+const kanbanColumnsModel = newModel(
+  mongoose.connection,
+  "v1::calendar_kanbanColumns",
+  schema
+);
 
 module.exports = { kanbanColumnsModel };

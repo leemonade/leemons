@@ -10,17 +10,17 @@ function onAcademicPortfolioAddClassStudent({
       const [classCalendar] = await Promise.all([
         ctx.tx.db.ClassCalendar.findOne({ class: classId }).lean(),
 
-        ctx.tx.call('calendar.calendar.grantAccessUserAgentToCalendar', {
+        ctx.tx.call("calendar.calendar.grantAccessUserAgentToCalendar", {
           key: ctx.prefixPN(`class.${classId}`),
           userAgentId: student,
-          actionName: 'view',
+          actionName: "view",
         }),
       ]);
       try {
-        await ctx.tx.call('calendar.calendar.grantAccessUserAgentToCalendar', {
+        await ctx.tx.call("calendar.calendar.grantAccessUserAgentToCalendar", {
           key: ctx.prefixPN(`program.${classCalendar.program}`),
           userAgentId: student,
-          actionName: 'view',
+          actionName: "view",
         });
       } catch (e) {
         // console.error(e);

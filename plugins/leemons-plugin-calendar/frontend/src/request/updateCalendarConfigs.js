@@ -1,7 +1,7 @@
 async function updateCalendarConfigs(id, config) {
   return leemons.api(`v1/calendar/calendar/configs/update/${id}`, {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: {
       config,
     },

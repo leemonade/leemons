@@ -1,17 +1,21 @@
-const { LeemonsError } = require('@leemons/error');
-const _ = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const _ = require("lodash");
 
-const { detailByKey } = require('../calendar/detailByKey');
+const { detailByKey } = require("../calendar/detailByKey");
 const {
   getPermissionConfig: getPermissionConfigCalendar,
-} = require('../calendar/getPermissionConfig');
+} = require("../calendar/getPermissionConfig");
 
-const { detail: detailEvent } = require('./detail');
-const { getEventCalendars } = require('./getEventCalendars');
-const { getPermissionConfig: getPermissionConfigEvent } = require('./getPermissionConfig');
-const { grantAccessUserAgentToEvent } = require('./grantAccessUserAgentToEvent');
-const { unGrantAccessEventUsers } = require('./unGrantAccessEventUsers');
-const { update } = require('./update');
+const { detail: detailEvent } = require("./detail");
+const { getEventCalendars } = require("./getEventCalendars");
+const {
+  getPermissionConfig: getPermissionConfigEvent,
+} = require("./getPermissionConfig");
+const {
+  grantAccessUserAgentToEvent,
+} = require("./grantAccessUserAgentToEvent");
+const { unGrantAccessEventUsers } = require("./unGrantAccessEventUsers");
+const { update } = require("./update");
 
 /**
  * Add event to calendar if the user have access
@@ -29,7 +33,7 @@ async function updateFromUser({ id, data, ownerUserAgentId, ctx }) {
 
   let ownerUserAgent;
   if (ownerUserAgentId) {
-    [ownerUserAgent] = await ctx.tx.call('users.users.getUserAgentsInfo', {
+    [ownerUserAgent] = await ctx.tx.call("users.users.getUserAgentsInfo", {
       userAgentIds: [ownerUserAgentId],
     });
   }
@@ -48,7 +52,7 @@ async function updateFromUser({ id, data, ownerUserAgentId, ctx }) {
   const [calendarPermissions, [eventPermission]] = await Promise.all([
     await Promise.all(
       _.map(permissionConfigCalendars, (permissionConfigCalendar) =>
-        ctx.tx.call('users.permissions.getUserAgentPermissions', {
+        ctx.tx.call("users.permissions.getUserAgentPermissions", {
           userAgent: userAgents,
           query: {
             permissionName: permissionConfigCalendar.permissionName,
@@ -56,7 +60,7 @@ async function updateFromUser({ id, data, ownerUserAgentId, ctx }) {
         })
       )
     ),
-    ctx.tx.call('users.permissions.getUserAgentPermissions', {
+    ctx.tx.call("users.permissions.getUserAgentPermissions", {
       userAgent: userAgents,
       query: {
         permissionName: permissionConfigEvent.permissionName,
@@ -67,7 +71,10 @@ async function updateFromUser({ id, data, ownerUserAgentId, ctx }) {
   let isOwnerCalendar = false;
 
   _.forEach(calendarPermissions, ([calendarPermission]) => {
-    if (calendarPermission && calendarPermission.actionNames.indexOf('owner') >= 0) {
+    if (
+      calendarPermission &&
+      calendarPermission.actionNames.indexOf("owner") >= 0
+    ) {
       isOwnerCalendar = true;
       return false;
     }
@@ -76,15 +83,17 @@ async function updateFromUser({ id, data, ownerUserAgentId, ctx }) {
   // ES: Por ahora cualquier persona con el evento puede actualizarlo
   if (
     isOwnerCalendar ||
-    (eventPermission && eventPermission.actionNames.indexOf('owner') >= 0) ||
-    (eventPermission && eventPermission.actionNames.indexOf('view') >= 0)
+    (eventPermission && eventPermission.actionNames.indexOf("owner") >= 0) ||
+    (eventPermission && eventPermission.actionNames.indexOf("view") >= 0)
   ) {
     let calendar = data.calendar || null;
     if (calendar) {
       const c = await Promise.all(
-        _.map(_.isArray(calendar) ? calendar : [calendar], (k) => detailByKey({ key: k, ctx }))
+        _.map(_.isArray(calendar) ? calendar : [calendar], (k) =>
+          detailByKey({ key: k, ctx })
+        )
       );
-      calendar = _.map(c, 'id');
+      calendar = _.map(c, "id");
     }
 
     if (data?.users) {
@@ -100,15 +109,20 @@ async function updateFromUser({ id, data, ownerUserAgentId, ctx }) {
         await grantAccessUserAgentToEvent({
           id,
           userAgentId: data.users,
-          actionName: ['view'],
+          actionName: ["view"],
           ctx,
         });
       } catch (error) {
         if (
-          error?.type === 'LEEMONS_ERROR' &&
-          error?.message.includes('You have already been assigned this custom permit')
+          error?.type === "LEEMONS_ERROR" &&
+          error?.message.includes(
+            "You have already been assigned this custom permit"
+          )
         ) {
-          console.error('Attempt to duplicate custom permission while updating event', error);
+          console.error(
+            "Attempt to duplicate custom permission while updating event",
+            error
+          );
         } else {
           throw error;
         }
@@ -116,14 +130,16 @@ async function updateFromUser({ id, data, ownerUserAgentId, ctx }) {
     }
 
     if (data.data?.instanceId) {
-      throw new LeemonsError(ctx, { message: 'Instance events can not be updated' });
+      throw new LeemonsError(ctx, {
+        message: "Instance events can not be updated",
+      });
     }
 
     const { users: __, calendar: ___, ...dat } = data;
     return update({ id: event.id, data: dat, calendar, ctx });
   }
 
-  throw new LeemonsError(ctx, { message: 'You can`t update this event' });
+  throw new LeemonsError(ctx, { message: "You can`t update this event" });
 }
 
 module.exports = { updateFromUser };

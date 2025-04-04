@@ -1,4 +1,4 @@
-const { validateAddKanbanColumn } = require('../../validations/forms');
+const { validateAddKanbanColumn } = require("../../validations/forms");
 
 /**
  * Add kanban column
@@ -25,7 +25,7 @@ async function add({ data, ctx }) {
   //     transacting,
   //   }
   // );
-  await ctx.tx.call('multilanguage.common.addManyByKey', {
+  await ctx.tx.call("multilanguage.common.addManyByKey", {
     key: ctx.prefixPN(`kanban.columns.${column.id}`),
     data: name,
   });

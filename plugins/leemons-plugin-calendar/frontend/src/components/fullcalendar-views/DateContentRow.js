@@ -1,14 +1,14 @@
-import clsx from 'clsx';
-import getHeight from 'dom-helpers/height';
-import qsa from 'dom-helpers/querySelectorAll';
-import PropTypes from 'prop-types';
-import React from 'react';
-import EventRow from './EventRow';
-import EventEndingRow from './EventEndingRow';
-import NoopWrapper from './NoopWrapper';
-import ScrollableWeekWrapper from './ScrollableWeekWrapper';
-import * as DateSlotMetrics from './utils/DateSlotMetrics';
-import BackgroundCells from './BackgroundCells';
+import clsx from "clsx";
+import getHeight from "dom-helpers/height";
+import qsa from "dom-helpers/querySelectorAll";
+import PropTypes from "prop-types";
+import React from "react";
+import EventRow from "./EventRow";
+import EventEndingRow from "./EventEndingRow";
+import NoopWrapper from "./NoopWrapper";
+import ScrollableWeekWrapper from "./ScrollableWeekWrapper";
+import * as DateSlotMetrics from "./utils/DateSlotMetrics";
+import BackgroundCells from "./BackgroundCells";
 
 class DateContentRow extends React.Component {
   constructor(...args) {
@@ -26,7 +26,7 @@ class DateContentRow extends React.Component {
   handleShowMore = (slot, target) => {
     const { range, onShowMore } = this.props;
     const metrics = this.slotMetrics(this.props);
-    const row = qsa(this.container, '.rbc-row-bg')[0];
+    const row = qsa(this.container, ".rbc-row-bg")[0];
 
     let cell;
     if (row) cell = row.children[slot - 1];
@@ -62,7 +62,10 @@ class DateContentRow extends React.Component {
     return renderHeader({
       date,
       key: `header_${index}`,
-      className: clsx('rbc-date-cell', localizer.isSameDate(date, getNow()) && 'rbc-now'),
+      className: clsx(
+        "rbc-date-cell",
+        localizer.isSameDate(date, getNow()) && "rbc-now"
+      ),
     });
   };
 
@@ -70,7 +73,12 @@ class DateContentRow extends React.Component {
     const { className, range, renderHeader, showAllEvents } = this.props;
     return (
       <div className={className} ref={(r) => (this.container = r)}>
-        <div className={clsx('rbc-row-content', showAllEvents && 'rbc-row-content-scrollable')}>
+        <div
+          className={clsx(
+            "rbc-row-content",
+            showAllEvents && "rbc-row-content-scrollable"
+          )}
+        >
           {renderHeader && (
             <div className="rbc-row" ref={this.createHeadingRef}>
               {range.map(this.renderHeadingCell)}
@@ -124,7 +132,7 @@ class DateContentRow extends React.Component {
     const normalEvents = [];
     const backgroundEvents = [];
     events.forEach((event) => {
-      if (event.display === 'background') {
+      if (event.display === "background") {
         backgroundEvents.push(event);
       } else {
         normalEvents.push(event);
@@ -134,7 +142,9 @@ class DateContentRow extends React.Component {
     const metrics = this.slotMetrics({ ...this.props, events: normalEvents });
     const { levels, extra } = metrics;
 
-    const ScrollableWeekComponent = showAllEvents ? ScrollableWeekWrapper : NoopWrapper;
+    const ScrollableWeekComponent = showAllEvents
+      ? ScrollableWeekWrapper
+      : NoopWrapper;
     const WeekWrapper = components.weekWrapper;
 
     const eventRowProps = {
@@ -152,7 +162,11 @@ class DateContentRow extends React.Component {
     };
 
     return (
-      <div className={className} role="rowgroup" ref={(r) => (this.container = r)}>
+      <div
+        className={className}
+        role="rowgroup"
+        ref={(r) => (this.container = r)}
+      >
         <BackgroundCells
           localizer={localizer}
           date={date}
@@ -173,12 +187,19 @@ class DateContentRow extends React.Component {
         />
 
         <div
-          className={clsx('rbc-row-content', showAllEvents && 'rbc-row-content-scrollable')}
-          style={{ pointerEvents: 'none' }}
+          className={clsx(
+            "rbc-row-content",
+            showAllEvents && "rbc-row-content-scrollable"
+          )}
+          style={{ pointerEvents: "none" }}
           role="row"
         >
           {renderHeader && (
-            <div className="rbc-row " style={{ pointerEvents: 'none' }} ref={this.createHeadingRef}>
+            <div
+              className="rbc-row "
+              style={{ pointerEvents: "none" }}
+              ref={this.createHeadingRef}
+            >
               {range.map(this.renderHeadingCell)}
             </div>
           )}
@@ -215,7 +236,7 @@ DateContentRow.propTypes = {
 
   container: PropTypes.func,
   selected: PropTypes.object,
-  selectable: PropTypes.oneOf([true, false, 'ignoreEvents']),
+  selectable: PropTypes.oneOf([true, false, "ignoreEvents"]),
   longPressThreshold: PropTypes.number,
 
   onShowMore: PropTypes.func,

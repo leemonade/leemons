@@ -1,4 +1,7 @@
-const { validateKeyPrefix, validateExistEventTypeKey } = require('../../validations/exists');
+const {
+  validateKeyPrefix,
+  validateExistEventTypeKey,
+} = require("../../validations/exists");
 
 /**
  * Add event type with the provided key if not already exists

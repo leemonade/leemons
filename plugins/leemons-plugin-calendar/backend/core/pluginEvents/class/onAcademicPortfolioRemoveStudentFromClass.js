@@ -1,8 +1,8 @@
 async function remove({ classId, student, ctx }) {
-  await ctx.tx.call('calendar.calendar.unGrantAccessUserAgentToCalendar', {
+  await ctx.tx.call("calendar.calendar.unGrantAccessUserAgentToCalendar", {
     key: ctx.prefixPN(`class.${classId}`),
     userAgentId: student,
-    actionName: 'view',
+    actionName: "view",
   });
 }
 

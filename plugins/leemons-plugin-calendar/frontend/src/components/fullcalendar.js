@@ -1,15 +1,15 @@
-import * as _ from 'lodash';
-import 'react-big-calendar/lib/css/react-big-calendar.css';
+import * as _ from "lodash";
+import "react-big-calendar/lib/css/react-big-calendar.css";
 
-import React, { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from "react";
 
-import moment from 'moment';
-import hooks from 'leemons-hooks';
-import { RRule } from 'rrule';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@calendar/helpers/prefixPN';
-import { momentLocalizer } from './fullcalendar-views';
-import Calendar from './fullcalendar-views/Calendar';
+import prefixPN from "@calendar/helpers/prefixPN";
+import hooks from "@leemons/hooks";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import moment from "moment";
+import { RRule } from "rrule";
+import { momentLocalizer } from "./fullcalendar-views";
+import Calendar from "./fullcalendar-views/Calendar";
 
 export function FullCalendar({
   events,
@@ -25,7 +25,7 @@ export function FullCalendar({
   messages,
   ...props
 }) {
-  const [t] = useTranslateLoader(prefixPN('calendar'));
+  const [t] = useTranslateLoader(prefixPN("calendar"));
 
   const [dateRange, setDateRange] = useState(null);
   const [date, setDate] = useState(new Date());
@@ -81,11 +81,14 @@ export function FullCalendar({
   };
 
   useEffect(() => {
-    hooks.addAction('big-calendar:dayClick', _onDayClick);
-    hooks.addAction('big-calendar:backgroundEventClick', _backgroundEventClick);
+    hooks.addAction("big-calendar:dayClick", _onDayClick);
+    hooks.addAction("big-calendar:backgroundEventClick", _backgroundEventClick);
     return () => {
-      hooks.removeAction('big-calendar:dayClick', _onDayClick);
-      hooks.removeAction('big-calendar:backgroundEventClick', _backgroundEventClick);
+      hooks.removeAction("big-calendar:dayClick", _onDayClick);
+      hooks.removeAction(
+        "big-calendar:backgroundEventClick",
+        _backgroundEventClick
+      );
     };
   });
 
@@ -122,7 +125,11 @@ export function FullCalendar({
           const dates = rule.all();
           _.forEach(dates, (date) => {
             const evStart = new Date(ev.start);
-            date.setHours(evStart.getHours(), evStart.getMinutes(), evStart.getSeconds());
+            date.setHours(
+              evStart.getHours(),
+              evStart.getMinutes(),
+              evStart.getSeconds()
+            );
             acc.push({
               ...ev,
               start: date,
@@ -140,13 +147,13 @@ export function FullCalendar({
   const _messages = useMemo(() => {
     if (messages) return messages;
     return {
-      month: t('month'),
-      week: t('week'),
-      day: t('day'),
-      agenda: t('agenda'),
-      today: t('today'),
-      previous: t('previous'),
-      next: t('next'),
+      month: t("month"),
+      week: t("week"),
+      day: t("day"),
+      agenda: t("agenda"),
+      today: t("today"),
+      previous: t("previous"),
+      next: t("next"),
     };
   }, [messages]);
 

@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Avatar } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Avatar } from "@bubbles-ui/components";
 
 export function FullCalendarEventContent({ info }) {
   const event = info.event.extendedProps.originalEvent;

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from "react";
 
 import {
   ActionButton,
@@ -8,23 +8,31 @@ import {
   Paragraph,
   TextInput,
   TextClamp,
-} from '@bubbles-ui/components';
-import { OpenIcon } from '@bubbles-ui/icons/outline';
-import { linkify } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import dayjs from 'dayjs';
-import isBetween from 'dayjs/plugin/isBetween';
-import { get } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { OpenIcon } from "@bubbles-ui/icons/outline";
+import { linkify } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
+import { get } from "lodash";
+import PropTypes from "prop-types";
 
-import prefixPN from '@calendar/helpers/prefixPN';
+import prefixPN from "@calendar/helpers/prefixPN";
 
 dayjs.extend(isBetween);
 
 const PREVENT_MINUTES_BEFORE_START = 15;
 
-export default function Event({ isEditing, event, form, data, allFormData, classes, disabled }) {
-  const [t] = useTranslateLoader(prefixPN('event_mode_event_type'));
+export default function Event({
+  isEditing,
+  event,
+  form,
+  data,
+  allFormData,
+  classes,
+  disabled,
+}) {
+  const [t] = useTranslateLoader(prefixPN("event_mode_event_type"));
 
   const {
     Controller,
@@ -32,16 +40,20 @@ export default function Event({ isEditing, event, form, data, allFormData, class
     formState: { errors },
   } = form;
 
-  const onClickCallLink = () => window.open(form.getValues('videoLink'), '_blank');
+  const onClickCallLink = () =>
+    window.open(form.getValues("videoLink"), "_blank");
 
   const showVideoLink = useMemo(() => {
     const currentTime = dayjs();
-    const startTime = dayjs(event?.startDate).subtract(PREVENT_MINUTES_BEFORE_START, 'minutes');
+    const startTime = dayjs(event?.startDate).subtract(
+      PREVENT_MINUTES_BEFORE_START,
+      "minutes"
+    );
     const endTime = dayjs(event?.endDate);
     return (
       disabled &&
-      form.getValues('videoLink') &&
-      currentTime.isBetween(startTime, endTime, null, '[]')
+      form.getValues("videoLink") &&
+      currentTime.isBetween(startTime, endTime, null, "[]")
     );
   }, [form, event, disabled]);
 
@@ -58,8 +70,8 @@ export default function Event({ isEditing, event, form, data, allFormData, class
                   <TextInput
                     size="xs"
                     disabled={disabled}
-                    label={t('video_link')}
-                    error={get(errors, 'videoLink')}
+                    label={t("video_link")}
+                    error={get(errors, "videoLink")}
                     {...field}
                   />
                 );
@@ -68,8 +80,8 @@ export default function Event({ isEditing, event, form, data, allFormData, class
                 <TextInput
                   size="xs"
                   disabled={disabled}
-                  label={t('video_link')}
-                  error={get(errors, 'videoLink')}
+                  label={t("video_link")}
+                  error={get(errors, "videoLink")}
                   {...field}
                 />
               );
@@ -82,8 +94,11 @@ export default function Event({ isEditing, event, form, data, allFormData, class
             render={({ field }) => {
               if (disabled) {
                 return (
-                  <InputWrapper label={t('add_place')}>
-                    <Paragraph clean dangerouslySetInnerHTML={{ __html: linkify(field.value) }} />
+                  <InputWrapper label={t("add_place")}>
+                    <Paragraph
+                      clean
+                      dangerouslySetInnerHTML={{ __html: linkify(field.value) }}
+                    />
                   </InputWrapper>
                 );
               }
@@ -92,8 +107,8 @@ export default function Event({ isEditing, event, form, data, allFormData, class
                   size="xs"
                   readOnly={disabled}
                   disabled={disabled}
-                  label={t('add_place')}
-                  error={get(errors, 'place')}
+                  label={t("add_place")}
+                  error={get(errors, "place")}
                   {...field}
                 />
               );
@@ -106,8 +121,11 @@ export default function Event({ isEditing, event, form, data, allFormData, class
             render={({ field }) => {
               if (disabled) {
                 return (
-                  <InputWrapper label={t('add_description')}>
-                    <Paragraph clean dangerouslySetInnerHTML={{ __html: linkify(field.value) }} />
+                  <InputWrapper label={t("add_description")}>
+                    <Paragraph
+                      clean
+                      dangerouslySetInnerHTML={{ __html: linkify(field.value) }}
+                    />
                   </InputWrapper>
                 );
               }
@@ -115,8 +133,8 @@ export default function Event({ isEditing, event, form, data, allFormData, class
                 <TextInput
                   size="xs"
                   disabled={disabled}
-                  label={t('add_description')}
-                  error={get(errors, 'description')}
+                  label={t("add_description")}
+                  error={get(errors, "description")}
                   {...field}
                 />
               );
@@ -129,16 +147,20 @@ export default function Event({ isEditing, event, form, data, allFormData, class
           {showVideoLink && (
             <ContextContainer spacing={2}>
               <Text size="lg" strong>
-                {t('video_link_view')}
+                {t("video_link_view")}
               </Text>
-              <ContextContainer direction="row" justifyContent="space-between" alignItems="center">
+              <ContextContainer
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
                 <TextClamp lines={1} withTooltip>
-                  <Text>{form.getValues('videoLink')}</Text>
+                  <Text>{form.getValues("videoLink")}</Text>
                 </TextClamp>
                 <ActionButton
                   onClick={onClickCallLink}
                   variant="linkInline"
-                  style={{ paddingBottom: '6px' }}
+                  style={{ paddingBottom: "6px" }}
                 >
                   <OpenIcon width={18} height={18} />
                 </ActionButton>
@@ -146,21 +168,21 @@ export default function Event({ isEditing, event, form, data, allFormData, class
             </ContextContainer>
           )}
 
-          {form.getValues('place') ? (
+          {form.getValues("place") ? (
             <ContextContainer spacing={2}>
               <Text size="lg" strong>
-                {t('add_place')}
+                {t("add_place")}
               </Text>
-              <Text>{form.getValues('place')}</Text>
+              <Text>{form.getValues("place")}</Text>
             </ContextContainer>
           ) : null}
 
-          {form.getValues('description') ? (
+          {form.getValues("description") ? (
             <ContextContainer spacing={2}>
               <Text size="lg" strong>
-                {t('add_description')}
+                {t("add_description")}
               </Text>
-              <Text>{form.getValues('description')}</Text>
+              <Text>{form.getValues("description")}</Text>
             </ContextContainer>
           ) : null}
         </ContextContainer>

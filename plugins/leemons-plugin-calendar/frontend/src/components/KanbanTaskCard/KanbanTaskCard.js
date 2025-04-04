@@ -1,14 +1,14 @@
 /* eslint-disable sonarjs/cognitive-complexity */
 /* eslint-disable import/prefer-default-export */
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import ClassroomItemDisplay from '@academic-portfolio/components/ClassroomItemDisplay/ClassroomItemDisplay';
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import { NYACardBodyStyles } from '@assignables/components/NYACard/NYCardBody/NYACardBody.styles';
-import getActivityType from '@assignables/helpers/getActivityType';
-import getColorByDateRange from '@assignables/helpers/getColorByDateRange';
-import getDeadlineData from '@assignables/helpers/getDeadlineData';
-import assignablePrefixPN from '@assignables/helpers/prefixPN';
+import ClassroomItemDisplay from "@academic-portfolio/components/ClassroomItemDisplay/ClassroomItemDisplay";
+import { useIsTeacher } from "@academic-portfolio/hooks";
+import { NYACardBodyStyles } from "@assignables/components/NYACard/NYCardBody/NYACardBody.styles";
+import getActivityType from "@assignables/helpers/getActivityType";
+import getColorByDateRange from "@assignables/helpers/getColorByDateRange";
+import getDeadlineData from "@assignables/helpers/getDeadlineData";
+import assignablePrefixPN from "@assignables/helpers/prefixPN";
 import {
   AvatarsGroup,
   Badge,
@@ -17,20 +17,20 @@ import {
   ProgressColorBar,
   Text,
   TextClamp,
-} from '@bubbles-ui/components';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useSession } from '@users/session';
-import _, { filter, find, map } from 'lodash';
+} from "@bubbles-ui/components";
+import { unflatten } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useSession } from "@users/session";
+import _, { filter, find, map } from "lodash";
 
 import {
   KANBAN_TASK_CARD_PROP_TYPES,
   KANBAN_TASK_CARD_DEFAULT_PROPS,
   emptyPixel,
-} from './KanbanTaskCard.constants';
-import { KanbanTaskCardStyles } from './KanbanTaskCard.styles';
-import prefixPN from '@calendar/helpers/prefixPN';
-import getUserFullName from '@users/helpers/getUserFullName';
+} from "./KanbanTaskCard.constants";
+import { KanbanTaskCardStyles } from "./KanbanTaskCard.styles";
+import prefixPN from "@calendar/helpers/prefixPN";
+import getUserFullName from "@users/helpers/getUserFullName";
 
 const getClassIds = (value, config) => {
   const classIds = [];
@@ -38,21 +38,25 @@ const getClassIds = (value, config) => {
     value.uniqClasses.forEach((id) => {
       const ca = _.find(config.calendars, { id });
       if (ca) {
-        classIds.push(ca.key.replace('calendar.class.', ''));
+        classIds.push(ca.key.replace("calendar.class.", ""));
       }
     });
   }
   return classIds;
 };
 
-const getCalendar = (value, config) => find(config.calendars, { id: value.calendar });
+const getCalendar = (value, config) =>
+  find(config.calendars, { id: value.calendar });
 
 const KanbanTaskCard = ({ value, config, onClick, labels }) => {
   const session = useSession();
   const classIds = getClassIds(value, config);
   const isTeacher = useIsTeacher();
 
-  const { classes: classesNya } = NYACardBodyStyles({}, { name: 'NYACardBody' });
+  const { classes: classesNya } = NYACardBodyStyles(
+    {},
+    { name: "NYACardBody" }
+  );
   const calendar = getCalendar(value, config);
   if (!calendar) return null;
 
@@ -91,10 +95,10 @@ const KanbanTaskCard = ({ value, config, onClick, labels }) => {
           height="14px"
           imageStyles={{
             width: 14,
-            position: 'absolute',
-            left: '50%',
-            top: '50%',
-            transform: 'translate(-50%, -50%)',
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            transform: "translate(-50%, -50%)",
           }}
           src={value.icon}
           forceImage
@@ -117,13 +121,15 @@ const KanbanTaskCard = ({ value, config, onClick, labels }) => {
     avatarNoImage.icon = avatarNoImage._icon;
   }
 
-  const [t] = useTranslateLoader([prefixPN('kanbanCard')]);
-  const [, translations] = useTranslateLoader([assignablePrefixPN('need_your_attention')]);
+  const [t] = useTranslateLoader([prefixPN("kanbanCard")]);
+  const [, translations] = useTranslateLoader([
+    assignablePrefixPN("need_your_attention"),
+  ]);
   const trans = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       return {
-        ..._.get(res, assignablePrefixPN('need_your_attention')),
+        ..._.get(res, assignablePrefixPN("need_your_attention")),
       };
     }
 
@@ -141,14 +147,20 @@ const KanbanTaskCard = ({ value, config, onClick, labels }) => {
     new Date(value.startDate),
     trans?.deadline || {}
   );
-  const deadlineColors = getColorByDateRange(end ? new Date(end) : null, new Date(value.startDate));
+  const deadlineColors = getColorByDateRange(
+    end ? new Date(end) : null,
+    new Date(value.startDate)
+  );
   endEl = (
     <Box className={classesNya.deadline}>
       <Text className={classesNya.deadlineDate}>{`${formattedDeadline.date}${
-        formattedDeadline.status ? ' - ' : ''
+        formattedDeadline.status ? " - " : ""
       }`}</Text>
       {!!formattedDeadline.status && (
-        <Text className={classesNya.deadlineDate} style={{ color: deadlineColors }}>
+        <Text
+          className={classesNya.deadlineDate}
+          style={{ color: deadlineColors }}
+        >
           {formattedDeadline.status}
         </Text>
       )}
@@ -156,11 +168,12 @@ const KanbanTaskCard = ({ value, config, onClick, labels }) => {
   );
 
   const activityType = getActivityType(value?.instanceData?.instance || {});
-  const isModule = value?.instanceData?.instance?.assignable?.role === 'learningpaths.module';
+  const isModule =
+    value?.instanceData?.instance?.assignable?.role === "learningpaths.module";
   return (
     <Box
       className={classes.root}
-      style={{ cursor: value.disableDrag ? 'pointer' : 'grab' }}
+      style={{ cursor: value.disableDrag ? "pointer" : "grab" }}
       onClick={() => onClick(value)}
     >
       <Box className={classes.topSection}>
@@ -171,7 +184,9 @@ const KanbanTaskCard = ({ value, config, onClick, labels }) => {
             size="xs"
             className={classesNya.calificationBadge}
           >
-            <Text className={classesNya.draftText}>{labels[activityType]?.toUpperCase()}</Text>
+            <Text className={classesNya.draftText}>
+              {labels[activityType]?.toUpperCase()}
+            </Text>
           </Badge>
         )}
 
@@ -179,16 +194,24 @@ const KanbanTaskCard = ({ value, config, onClick, labels }) => {
           <Box className={classes.title}>{value.title}</Box>
         </TextClamp>
 
-        <Box sx={(theme) => ({ marginTop: theme.spacing[4], marginBottom: theme.spacing[4] })}>
+        <Box
+          sx={(theme) => ({
+            marginTop: theme.spacing[4],
+            marginBottom: theme.spacing[4],
+          })}
+        >
           {classIds.length ? (
             <ClassroomItemDisplay classroomIds={classIds} showSubject={true} />
           ) : (
-            <Box style={{ display: 'flex' }}>
+            <Box style={{ display: "flex" }}>
               <AvatarsGroup
                 size="sm"
-                data={map([...map(value?.userAgents, 'user'), session], (e) => ({
-                  fullName: getUserFullName(e, { singleSurname: true }),
-                }))}
+                data={map(
+                  [...map(value?.userAgents, "user"), session],
+                  (e) => ({
+                    fullName: getUserFullName(e, { singleSurname: true }),
+                  })
+                )}
                 moreThanUsersAsMulti={2}
                 numberFromClassesAndData
                 customAvatarMargin={14}
@@ -206,16 +229,16 @@ const KanbanTaskCard = ({ value, config, onClick, labels }) => {
             <ProgressColorBar
               labelLeft={
                 <Box>
-                  {t('progress')}: {percentaje.percentaje}%
+                  {t("progress")}: {percentaje.percentaje}%
                 </Box>
               }
               labelRight={
                 <Box>
-                  ({percentaje.completed}/{percentaje.total}{' '}
-                  {t(value?.instanceData ? 'activities' : 'subtask')})
+                  ({percentaje.completed}/{percentaje.total}{" "}
+                  {t(value?.instanceData ? "activities" : "subtask")})
                 </Box>
               }
-              size={'md'}
+              size={"md"}
               value={percentaje.percentaje}
             />
           </Box>

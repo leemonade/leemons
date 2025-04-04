@@ -1,6 +1,6 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { validateNotExistCalendarConfig } = require('../../validations/exists');
+const { validateNotExistCalendarConfig } = require("../../validations/exists");
 
 /**
  * Delete calendar config
@@ -13,19 +13,25 @@ const { validateNotExistCalendarConfig } = require('../../validations/exists');
  * */
 async function getCalendars({ id, withEvents, ctx }) {
   await validateNotExistCalendarConfig({ id, ctx });
-  const configCalendars = await ctx.tx.db.CalendarConfigCalendars.find({ config: id }).lean();
+  const configCalendars = await ctx.tx.db.CalendarConfigCalendars.find({
+    config: id,
+  }).lean();
   const calendars = await ctx.tx.db.Calendars.find({
-    id: _.map(configCalendars, 'calendar'),
+    id: _.map(configCalendars, "calendar"),
   }).lean();
   let eventsByCalendar = null;
   if (withEvents) {
-    const events = await ctx.tx.db.Events.find({ calendar: _.map(calendars, 'id') }).lean();
+    const events = await ctx.tx.db.Events.find({
+      calendar: _.map(calendars, "id"),
+    }).lean();
     eventsByCalendar = _.groupBy(
       _.map(events, (event) => ({
         ...event,
-        data: _.isString(event.data) ? JSON.parse(event.data || null) : event.data,
+        data: _.isString(event.data)
+          ? JSON.parse(event.data || null)
+          : event.data,
       })),
-      'calendar'
+      "calendar"
     );
   }
   return _.map(calendars, (calendar) => ({

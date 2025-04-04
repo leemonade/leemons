@@ -1,5 +1,5 @@
-const randomColor = require('randomcolor');
-const _ = require('lodash');
+const randomColor = require("randomcolor");
+const _ = require("lodash");
 
 function onAcademicPortfolioAddProgram({
   // data, //unused old param
@@ -13,24 +13,27 @@ function onAcademicPortfolioAddProgram({
       // eslint-disable-next-line global-require,no-shadow
       const config = {
         name,
-        section: ctx.prefixPN('programs'),
-        bgColor: color || randomColor({ luminosity: 'light' }),
+        section: ctx.prefixPN("programs"),
+        bgColor: color || randomColor({ luminosity: "light" }),
       };
 
       if (icon) config.icon = icon;
 
-      const calendar = await ctx.tx.call('calendar.calendar.add', {
+      const calendar = await ctx.tx.call("calendar.calendar.add", {
         key: ctx.prefixPN(`program.${id}`),
         config,
       });
 
       if (userSession) {
         try {
-          await ctx.tx.call('calendar.calendar.grantAccessUserAgentToCalendar', {
-            key: ctx.prefixPN(`program.${id}`),
-            userAgentId: _.map(userSession.userAgents, 'id'),
-            actionName: 'owner',
-          });
+          await ctx.tx.call(
+            "calendar.calendar.grantAccessUserAgentToCalendar",
+            {
+              key: ctx.prefixPN(`program.${id}`),
+              userAgentId: _.map(userSession.userAgents, "id"),
+              actionName: "owner",
+            }
+          );
         } catch (e) {
           // eslint-disable-next-line no-console
           console.error(e);

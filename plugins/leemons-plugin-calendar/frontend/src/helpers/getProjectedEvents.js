@@ -1,14 +1,14 @@
-import dayjs from 'dayjs';
-import isBetween from 'dayjs/plugin/isBetween';
-import utc from 'dayjs/plugin/utc';
-import { RRule } from 'rrule';
+import dayjs from "dayjs";
+import isBetween from "dayjs/plugin/isBetween";
+import utc from "dayjs/plugin/utc";
+import { RRule } from "rrule";
 
 dayjs.extend(isBetween);
 dayjs.extend(utc);
 
 const getProjectedEvents = (eventsProp, dateRange) => {
   if (!dateRange || !Array.isArray(eventsProp)) {
-    console.warn('Invalid input to getProjectedEvents');
+    console.warn("Invalid input to getProjectedEvents");
     return [];
   }
 
@@ -31,7 +31,7 @@ const getProjectedEvents = (eventsProp, dateRange) => {
 
         occurrences.forEach((date) => {
           const occurrenceStart = dayjs(date);
-          const occurrenceEnd = occurrenceStart.add(duration, 'millisecond');
+          const occurrenceEnd = occurrenceStart.add(duration, "millisecond");
 
           acc.push({
             ...ev,
@@ -39,17 +39,17 @@ const getProjectedEvents = (eventsProp, dateRange) => {
             end: occurrenceEnd.toDate(),
           });
 
-          if (!occurrenceStart.isSame(occurrenceEnd, 'day')) {
+          if (!occurrenceStart.isSame(occurrenceEnd, "day")) {
             acc.push({
               ...ev,
               isEndEvent: true,
-              start: occurrenceEnd.startOf('day').toDate(),
+              start: occurrenceEnd.startOf("day").toDate(),
               end: occurrenceEnd.toDate(),
             });
           }
         });
       } catch (error) {
-        console.error('Error processing recurring event:', error, ev);
+        console.error("Error processing recurring event:", error, ev);
       }
     } else {
       const eventStart = dayjs(ev.start);
@@ -58,11 +58,11 @@ const getProjectedEvents = (eventsProp, dateRange) => {
       if (eventStart.isBefore(end) && eventEnd.isAfter(start)) {
         acc.push({ ...ev });
 
-        if (!eventStart.isSame(eventEnd, 'day')) {
+        if (!eventStart.isSame(eventEnd, "day")) {
           acc.push({
             ...ev,
             isEndEvent: true,
-            start: eventEnd.startOf('day').toDate(),
+            start: eventEnd.startOf("day").toDate(),
             end: eventEnd.toDate(),
           });
         }

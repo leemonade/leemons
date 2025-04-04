@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
+const _ = require("lodash");
 
 function getBreakData(breaks) {
   const start = new Date();
@@ -12,10 +12,10 @@ function getBreakData(breaks) {
   let eMinute = bEnd.getMinutes();
   start.setHours(sHour, sMinute, 0);
   end.setHours(eHour, eMinute, 59);
-  sHour = `${sHour > 9 ? '' : '0'}${sHour}`;
-  sMinute = `${sMinute > 9 ? '' : '0'}${sMinute}`;
-  eHour = `${eHour > 9 ? '' : '0'}${eHour}`;
-  eMinute = `${eMinute > 9 ? '' : '0'}${eMinute}`;
+  sHour = `${sHour > 9 ? "" : "0"}${sHour}`;
+  sMinute = `${sMinute > 9 ? "" : "0"}${sMinute}`;
+  eHour = `${eHour > 9 ? "" : "0"}${eHour}`;
+  eMinute = `${eMinute > 9 ? "" : "0"}${eMinute}`;
   return {
     minHour: `${sHour}:${sMinute}`,
     minHourDate: start,
@@ -27,22 +27,25 @@ function getBreakData(breaks) {
 async function getScheduleToFrontend({ ctx }) {
   const { userSession } = ctx.meta;
   if (userSession.sessionConfig?.program) {
-    const isAcademicCalendarInstalled = await ctx.tx.call('deployment-manager.pluginIsInstalled', {
-      pluginName: 'academic-calendar',
-    });
+    const isAcademicCalendarInstalled = await ctx.tx.call(
+      "deployment-manager.pluginIsInstalled",
+      {
+        pluginName: "academic-calendar",
+      }
+    );
     // eslint-disable-next-line prefer-const
     let [classes, [program], config] = await Promise.all([
-      ctx.tx.call('academic-portfolio.classes.listSessionClasses', {
+      ctx.tx.call("academic-portfolio.classes.listSessionClasses", {
         program: userSession.sessionConfig.program,
         withProgram: true,
         withTeachers: true,
         type: null,
       }),
-      ctx.tx.call('academic-portfolio.programs.programsByIds', {
+      ctx.tx.call("academic-portfolio.programs.programsByIds", {
         ids: [userSession.sessionConfig.program],
       }),
       isAcademicCalendarInstalled
-        ? ctx.tx.call('academic-calendar.config.getConfig', {
+        ? ctx.tx.call("academic-calendar.config.getConfig", {
             program: userSession.sessionConfig.program,
           })
         : null,
@@ -51,7 +54,9 @@ async function getScheduleToFrontend({ ctx }) {
     let allCourses = [];
 
     _.forEach(allClasses, (classe) => {
-      const classCourses = _.isArray(classe.courses) ? classe.courses : [classe.courses];
+      const classCourses = _.isArray(classe.courses)
+        ? classe.courses
+        : [classe.courses];
       allCourses = allCourses.concat(classCourses);
     });
 
@@ -89,8 +94,10 @@ async function getScheduleToFrontend({ ctx }) {
     }
 
     _.forEach(classes, (classe) => {
-      const classCourses = _.isArray(classe.courses) ? classe.courses : [classe.courses];
-      const cIds = _.map(classCourses, 'id');
+      const classCourses = _.isArray(classe.courses)
+        ? classe.courses
+        : [classe.courses];
+      const cIds = _.map(classCourses, "id");
       courses = courses.concat(classCourses);
       courses = _.compact(courses);
       _.forEach(cIds, (cId) => {
@@ -121,19 +128,29 @@ async function getScheduleToFrontend({ ctx }) {
       });
 
       _.forEach(classe.schedule, (schedule) => {
-        startSplit = schedule.start.split(':');
-        endSplit = schedule.end.split(':');
-        start.setHours(parseInt(startSplit[0], 10), parseInt(startSplit[1], 10), 0);
+        startSplit = schedule.start.split(":");
+        endSplit = schedule.end.split(":");
+        start.setHours(
+          parseInt(startSplit[0], 10),
+          parseInt(startSplit[1], 10),
+          0
+        );
         end.setHours(parseInt(endSplit[0], 10), parseInt(endSplit[1], 10), 59);
         dayWeeks.push(schedule.dayWeek);
         _.forEach(cIds, (cId) => {
           configByCourse[cId].dayWeeks.push(schedule.dayWeek);
           // Por curso
-          if (!configByCourse[cId].minHour || start < configByCourse[cId].minHourDate) {
+          if (
+            !configByCourse[cId].minHour ||
+            start < configByCourse[cId].minHourDate
+          ) {
             configByCourse[cId].minHour = schedule.start;
             configByCourse[cId].minHourDate = new Date(start);
           }
-          if (!configByCourse[cId].maxHour || end > configByCourse[cId].maxHourDate) {
+          if (
+            !configByCourse[cId].maxHour ||
+            end > configByCourse[cId].maxHourDate
+          ) {
             configByCourse[cId].maxHour = schedule.end;
             configByCourse[cId].maxHourDate = new Date(end);
           }
@@ -155,7 +172,7 @@ async function getScheduleToFrontend({ ctx }) {
       configByCourse[key].weekDays = _.uniq(conf.dayWeeks);
     });
 
-    courses = _.sortBy(_.uniqBy(courses, 'id'), ['index']);
+    courses = _.sortBy(_.uniqBy(courses, "id"), ["index"]);
 
     return {
       calendarConfig: {
@@ -168,7 +185,7 @@ async function getScheduleToFrontend({ ctx }) {
       calendarConfigByCourse: configByCourse,
       classes,
       allClasses,
-      allCourses: _.sortBy(_.uniqBy(allCourses, 'id'), ['index']),
+      allCourses: _.sortBy(_.uniqBy(allCourses, "id"), ["index"]),
       courses,
       config,
     };

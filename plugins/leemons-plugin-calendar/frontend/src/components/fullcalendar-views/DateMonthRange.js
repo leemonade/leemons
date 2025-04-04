@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 
-import { inRange } from './utils/eventLevels';
-import MonthView from './Month';
+import { inRange } from "./utils/eventLevels";
+import MonthView from "./Month";
 
 let eventsForWeek = (evts, start, end, accessors, localizer) =>
   evts.filter((e) => inRange(e, start, end, accessors, localizer));
@@ -14,8 +14,22 @@ class DateMonthRangeView extends React.Component {
   componentDidMount() {
     let { dateMonthRange, onRangeChange } = this.props;
     onRangeChange({
-      start: new Date(dateMonthRange.startYear, dateMonthRange.startMonth, 1, 0, 0, 0),
-      end: new Date(dateMonthRange.endYear, dateMonthRange.endMonth + 1, 0, 23, 59, 59),
+      start: new Date(
+        dateMonthRange.startYear,
+        dateMonthRange.startMonth,
+        1,
+        0,
+        0,
+        0
+      ),
+      end: new Date(
+        dateMonthRange.endYear,
+        dateMonthRange.endMonth + 1,
+        0,
+        23,
+        59,
+        59
+      ),
     });
   }
 
@@ -49,12 +63,21 @@ class DateMonthRangeView extends React.Component {
           return months.map((month) => {
             const date = new Date(year, month, 1);
             return (
-              <div style={{ paddingBottom: '100%', position: 'relative' }} key={`${year}${month}`}>
-                <div style={{ position: 'absolute', width: '95%', height: '95%' }}>
+              <div
+                style={{ paddingBottom: "100%", position: "relative" }}
+                key={`${year}${month}`}
+              >
+                <div
+                  style={{ position: "absolute", width: "95%", height: "95%" }}
+                >
                   <div className="text-center pt-4">
-                    {localizer.format(date, 'monthHeaderFormat')}
+                    {localizer.format(date, "monthHeaderFormat")}
                   </div>
-                  <MonthView {...this.props} date={date} onRangeChange={() => {}} />
+                  <MonthView
+                    {...this.props}
+                    date={date}
+                    onRangeChange={() => {}}
+                  />
                 </div>
               </div>
             );
@@ -75,6 +98,7 @@ DateMonthRangeView.navigate = (date) => {
   return date;
 };
 
-DateMonthRangeView.title = (date, { localizer }) => localizer.format(date, 'monthHeaderFormat');
+DateMonthRangeView.title = (date, { localizer }) =>
+  localizer.format(date, "monthHeaderFormat");
 
 export default DateMonthRangeView;

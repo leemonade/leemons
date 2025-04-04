@@ -1,4 +1,4 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 const CalendarEventModalStyles = createStyles((theme) => ({
   root: {},
@@ -11,15 +11,15 @@ const CalendarEventModalStyles = createStyles((theme) => ({
     fontSize: theme.fontSizes[3],
   },
   inputsDatesContainer: {
-    alignItems: 'end',
+    alignItems: "end",
   },
   actionButtonsContainer: {
-    position: 'absolute',
-    width: '100%',
+    position: "absolute",
+    width: "100%",
     right: 0,
     bottom: 0,
-    display: 'flex',
-    justifyContent: 'space-between',
+    display: "flex",
+    justifyContent: "space-between",
     padding: theme.spacing[4],
     backgroundColor: theme.colors.uiBackground04,
   },
@@ -28,26 +28,26 @@ const CalendarEventModalStyles = createStyles((theme) => ({
     marginBottom: theme.spacing[6],
   },
   headerActions: {
-    position: 'absolute',
+    position: "absolute",
     left: theme.spacing[4],
     top: theme.spacing[4],
-    width: '50%',
+    width: "50%",
   },
   subject: {
     marginBottom: 8,
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
     gap: 8,
   },
   subjectIcon: {
     padding: 4,
-    borderRadius: '50%',
+    borderRadius: "50%",
     img: {
-      filter: 'brightness(0) invert(1)',
+      filter: "brightness(0) invert(1)",
     },
   },
   inputSubTask: {
-    flex: 'unset!important',
+    flex: "unset!important",
     flexGrow: 1,
   },
 }));

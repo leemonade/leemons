@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
-import { RRule } from 'rrule';
+import * as _ from "lodash";
+import { RRule } from "rrule";
 
 export default function transformCalendarConfigToEvents(config) {
   if (config && _.isArray(config.notSchoolDays)) {
@@ -9,9 +9,9 @@ export default function transformCalendarConfigToEvents(config) {
     end.setHours(23, 59, 59);
     return [
       {
-        title: '',
-        display: 'background',
-        backgroundColor: 'rgba(69,69,69,0.3)',
+        title: "",
+        display: "background",
+        backgroundColor: "rgba(69,69,69,0.3)",
         start,
         end,
         rrule: {

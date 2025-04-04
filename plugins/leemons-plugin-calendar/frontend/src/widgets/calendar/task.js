@@ -1,7 +1,7 @@
-import NYACard from '@assignables/components/NYACard';
-import getClassData from '@assignables/helpers/getClassData';
-import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
-import getAssignation from '@assignables/requests/assignations/getAssignation';
+import NYACard from "@assignables/components/NYACard";
+import getClassData from "@assignables/helpers/getClassData";
+import getAssignableInstance from "@assignables/requests/assignableInstances/getAssignableInstance";
+import getAssignation from "@assignables/requests/assignations/getAssignation";
 import {
   ActionButton,
   Box,
@@ -16,29 +16,29 @@ import {
   Select,
   Textarea,
   TextInput,
-} from '@bubbles-ui/components';
-import { PluginRedactorIcon, TagsIcon } from '@bubbles-ui/icons/outline';
+} from "@bubbles-ui/components";
+import { PluginRedactorIcon, TagsIcon } from "@bubbles-ui/icons/outline";
 import {
   AddCircleIcon,
   DeleteBinIcon,
   EditorListBulletsIcon,
   PluginKanbanIcon,
-} from '@bubbles-ui/icons/solid';
-import prefixPN from '@calendar/helpers/prefixPN';
-import { listKanbanColumnsRequest } from '@calendar/request';
-import { useLocale, useStore } from '@common';
-import tKeys from '@multilanguage/helpers/tKeys';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import * as _ from 'lodash';
-import { get, map } from 'lodash';
-import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useState } from 'react';
-import useUserAgents from '@users/hooks/useUserAgents';
-import { updateEventSubTasksRequest } from '../../request';
+} from "@bubbles-ui/icons/solid";
+import prefixPN from "@calendar/helpers/prefixPN";
+import { listKanbanColumnsRequest } from "@calendar/request";
+import { useLocale, useStore } from "@common";
+import tKeys from "@multilanguage/helpers/tKeys";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import { getLocalizationsByArrayOfItems } from "@multilanguage/useTranslate";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import * as _ from "lodash";
+import { get, map } from "lodash";
+import PropTypes from "prop-types";
+import React, { useEffect, useMemo, useState } from "react";
+import useUserAgents from "@users/hooks/useUserAgents";
+import { updateEventSubTasksRequest } from "../../request";
 
-const { classByIdsRequest } = require('@academic-portfolio/request');
+const { classByIdsRequest } = require("@academic-portfolio/request");
 
 export default function Task({ event, form, classes, disabled, allProps }) {
   const locale = useLocale();
@@ -51,10 +51,12 @@ export default function Task({ event, form, classes, disabled, allProps }) {
 
   const [store, render] = useStore();
 
-  const [t] = useTranslateLoader(prefixPN('task_mode_event_type'));
-  const { t: tCommon } = useCommonTranslate('forms');
+  const [t] = useTranslateLoader(prefixPN("task_mode_event_type"));
+  const { t: tCommon } = useCommonTranslate("forms");
   const [columns, setColumns] = useState(allProps.parent.store.columns || []);
-  const [columnsT, setColumnsT] = useState(allProps.parent.store.columnsT || []);
+  const [columnsT, setColumnsT] = useState(
+    allProps.parent.store.columnsT || []
+  );
 
   // EN: Get the user agents
   // ES: Obtiene los user agents
@@ -68,11 +70,11 @@ export default function Task({ event, form, classes, disabled, allProps }) {
       const { columns: _columns } = await listKanbanColumnsRequest();
       allProps.parent.store.columns = _columns;
     }
-    setColumns(_.orderBy(allProps.parent.store.columns, ['order'], ['asc']));
+    setColumns(_.orderBy(allProps.parent.store.columns, ["order"], ["asc"]));
   };
 
   const getTranslationColumns = async () => {
-    const keys = _.map(columns, 'nameKey');
+    const keys = _.map(columns, "nameKey");
     if (!allProps.parent.store.columnsT && keys.length) {
       const { items } = await getLocalizationsByArrayOfItems(keys);
       allProps.parent.store.columnsT = items;
@@ -106,11 +108,14 @@ export default function Task({ event, form, classes, disabled, allProps }) {
   async function loadInstance() {
     store.instance = await getAssignableInstance({ id: store.instanceId });
     if (!store.instance.students) {
-      store.assignation = await getAssignation({ id: store.instanceId, user: userAgent });
+      store.assignation = await getAssignation({
+        id: store.instanceId,
+        user: userAgent,
+      });
     }
     store.classes = await classByIdsRequest(store.instance.classes);
     store.subjectData = await getClassData(store.instance.classes, {
-      multiSubject: t('multiSubject'),
+      multiSubject: t("multiSubject"),
       groupName: store.instance?.metadata?.groupName,
     });
     render();
@@ -128,25 +133,25 @@ export default function Task({ event, form, classes, disabled, allProps }) {
   }, [columns]);
 
   const addSubTask = () => {
-    let subtask = form.getValues('subtask');
+    let subtask = form.getValues("subtask");
     if (!subtask) subtask = [];
     subtask.push({
       checked: false,
-      title: '',
+      title: "",
     });
-    form.setValue('subtask', subtask);
+    form.setValue("subtask", subtask);
   };
 
   const onInputCheckboxChange = (e, index) => {
-    const subtask = form.getValues('subtask');
+    const subtask = form.getValues("subtask");
     subtask[index].title = e;
-    form.setValue('subtask', subtask);
+    form.setValue("subtask", subtask);
   };
 
   const onCheckedChange = async (e, index) => {
-    const subtask = form.getValues('subtask');
+    const subtask = form.getValues("subtask");
     subtask[index].checked = e;
-    form.setValue('subtask', subtask);
+    form.setValue("subtask", subtask);
     if (disabled) {
       try {
         allProps.parent.setSaving(true);
@@ -162,20 +167,23 @@ export default function Task({ event, form, classes, disabled, allProps }) {
     }
   };
   const removeSubtask = (index) => {
-    const subtask = form.getValues('subtask');
+    const subtask = form.getValues("subtask");
     subtask.splice(index, 1);
-    form.setValue('subtask', subtask);
+    form.setValue("subtask", subtask);
   };
 
-  const subtask = form.watch('subtask');
-  const formClasses = form.watch('classes');
+  const subtask = form.watch("subtask");
+  const formClasses = form.watch("classes");
 
   if (store.instanceId) {
     if (store.instance) {
       return (
         <Box>
           <Box>
-            <NYACard instance={store.assignation || store.instance} showSubject />
+            <NYACard
+              instance={store.assignation || store.instance}
+              showSubject
+            />
           </Box>
         </Box>
       );
@@ -195,19 +203,19 @@ export default function Task({ event, form, classes, disabled, allProps }) {
                 size="xs"
                 disabled={disabled}
                 readOnly={disabled}
-                label={t('description')}
-                error={get(errors, 'description')}
+                label={t("description")}
+                error={get(errors, "description")}
                 {...field}
               />
             )}
           />
         ) : null}
-        {disabled && form.getValues('description') ? (
+        {disabled && form.getValues("description") ? (
           <>
             <Text size="lg" strong>
-              {t('description')}
+              {t("description")}
             </Text>
-            <Text>{form.getValues('description')}</Text>
+            <Text>{form.getValues("description")}</Text>
           </>
         ) : null}
       </ContextContainer>
@@ -222,21 +230,21 @@ export default function Task({ event, form, classes, disabled, allProps }) {
               paddingBottom: theme.spacing[2],
             })}
           >
-            <Box>{t('subtaskLabel')}</Box>
+            <Box>{t("subtaskLabel")}</Box>
             <Button
               variant="linkInline"
               size="xs"
               leftIcon={<AddCircleIcon />}
               onClick={addSubTask}
             >
-              {t('add_subtask')}
+              {t("add_subtask")}
             </Button>
           </ContextContainer>
         ) : null}
         {!disabled || (disabled && subtask && subtask.length) ? (
           <ContextContainer spacing={4}>
             <Text size="lg" strong>
-              {subtask?.length === 1 ? t('subtask') : t('subtaskLabel')}
+              {subtask?.length === 1 ? t("subtask") : t("subtaskLabel")}
             </Text>
 
             <Controller
@@ -291,30 +299,31 @@ export default function Task({ event, form, classes, disabled, allProps }) {
                 readOnly={disabled}
                 disabled={disabled}
                 data={classCalendars}
-                label={t('tags')}
-                error={get(errors, 'classes')}
+                label={t("tags")}
+                error={get(errors, "classes")}
                 {...field}
               />
             )}
           />
         ) : null}
-        {columnsData && (!disabled || (disabled && form.getValues('column'))) ? (
+        {columnsData &&
+        (!disabled || (disabled && form.getValues("column"))) ? (
           <Controller
             name="column"
             control={control}
             rules={{
-              required: tCommon('required'),
+              required: tCommon("required"),
             }}
             render={({ field }) => (
               <Select
                 size="xs"
-                label={t('column')}
+                label={t("column")}
                 disabled={disabled}
                 readOnly={disabled}
                 data={columnsData}
                 {...field}
                 required={!disabled}
-                error={get(errors, 'column')}
+                error={get(errors, "column")}
               />
             )}
           />

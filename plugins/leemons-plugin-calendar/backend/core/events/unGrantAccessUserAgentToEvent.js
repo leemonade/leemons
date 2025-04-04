@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const { validateNotExistEvent } = require('../../validations/exists');
-const { getPermissionConfig } = require('./getPermissionConfig');
+const _ = require("lodash");
+const { validateNotExistEvent } = require("../../validations/exists");
+const { getPermissionConfig } = require("./getPermissionConfig");
 
 /**
  *
@@ -12,7 +12,12 @@ const { getPermissionConfig } = require('./getPermissionConfig');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function unGrantAccessUserAgentToEvent({ id, userAgentId, actionName, ctx }) {
+async function unGrantAccessUserAgentToEvent({
+  id,
+  userAgentId,
+  actionName,
+  ctx,
+}) {
   await validateNotExistEvent({ id, ctx });
 
   const userAgentIds = _.isArray(userAgentId) ? userAgentId : [userAgentId];
@@ -27,12 +32,16 @@ async function unGrantAccessUserAgentToEvent({ id, userAgentId, actionName, ctx 
     query.actionNames = actionNames;
   }
 
-  const { warnings } = await ctx.tx.call('users.users.removeCustomUserAgentPermission', {
-    userAgentId: userAgentIds,
-    data: query,
-  });
+  const { warnings } = await ctx.tx.call(
+    "users.users.removeCustomUserAgentPermission",
+    {
+      userAgentId: userAgentIds,
+      data: query,
+    }
+  );
 
-  if (warnings && warnings.errors && warnings.errors.length) throw warnings.errors[0];
+  if (warnings && warnings.errors && warnings.errors.length)
+    throw warnings.errors[0];
   return true;
 }
 

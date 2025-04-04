@@ -1,9 +1,9 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { validateAddCalendarConfig } = require('../../validations/forms');
-const { validateNotExistCalendarConfig } = require('../../validations/exists');
-const { removeByConfigId, addMany } = require('../center-calendar-configs');
-const { detail } = require('./detail');
+const { validateAddCalendarConfig } = require("../../validations/forms");
+const { validateNotExistCalendarConfig } = require("../../validations/exists");
+const { removeByConfigId, addMany } = require("../center-calendar-configs");
+const { detail } = require("./detail");
 
 /**
  * Update calendar config
@@ -31,7 +31,10 @@ async function update({ id, centers, ctx, ...data }) {
 
   await removeByConfigId({ configId: id, ctx });
   if (_.isArray(centers)) {
-    await addMany({ items: _.map(centers, (center) => ({ center, config: response.id })), ctx });
+    await addMany({
+      items: _.map(centers, (center) => ({ center, config: response.id })),
+      ctx,
+    });
   }
 
   return detail({ id: response.id, ctx });

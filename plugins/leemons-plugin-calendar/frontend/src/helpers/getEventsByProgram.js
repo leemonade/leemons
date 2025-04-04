@@ -1,15 +1,26 @@
-const getEventsByProgram = (events, programClasses, calendars, classe, inTab) => {
+const getEventsByProgram = (
+  events,
+  programClasses,
+  calendars,
+  classe,
+  inTab
+) => {
   const userCalendarId = calendars.find((cal) => cal.isUserCalendar)?.id;
 
   let relevantCalendarIds = [];
   if (inTab && classe) {
-    const classCalendar = calendars.find((cal) => cal.key === `calendar.class.${classe.id}`);
+    const classCalendar = calendars.find(
+      (cal) => cal.key === `calendar.class.${classe.id}`
+    );
     if (classCalendar) {
       relevantCalendarIds.push(classCalendar.id);
     }
   } else if (!inTab && programClasses) {
     relevantCalendarIds = calendars
-      .filter((cal) => cal.isClass && programClasses.some((cls) => cal.key.includes(cls.id)))
+      .filter(
+        (cal) =>
+          cal.isClass && programClasses.some((cls) => cal.key.includes(cls.id))
+      )
       .map((cal) => cal.id);
   }
 
@@ -22,11 +33,16 @@ const getEventsByProgram = (events, programClasses, calendars, classe, inTab) =>
     }
 
     if (event.data && event.data.classes) {
-      return event.data.classes.some((classId) => relevantCalendarIds.includes(classId));
+      return event.data.classes.some((classId) =>
+        relevantCalendarIds.includes(classId)
+      );
     }
 
     if (event.calendar) {
-      return event.calendar === userCalendarId || relevantCalendarIds.includes(event.calendar);
+      return (
+        event.calendar === userCalendarId ||
+        relevantCalendarIds.includes(event.calendar)
+      );
     }
 
     return !event.data?.classes;

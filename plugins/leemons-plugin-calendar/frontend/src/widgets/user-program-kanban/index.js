@@ -1,56 +1,62 @@
 /* eslint-disable no-nested-ternary */
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 
-import { listSessionClassesRequest } from '@academic-portfolio/request';
+import { listSessionClassesRequest } from "@academic-portfolio/request";
 import {
   Box,
-  Stack,
-  Title,
+  Kanban as BubblesKanban,
   Button,
   Loader,
+  Stack,
+  Title,
   createStyles,
-  Kanban as BubblesKanban,
-} from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { useStore } from '@common';
-import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
-import tKeys from '@multilanguage/helpers/tKeys';
-import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { getCentersWithToken } from '@users/session';
-import hooks from 'leemons-hooks';
-import _, { forEach, keyBy, map } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import { useStore } from "@common";
+import useWelcome from "@dashboard/request/hooks/queries/useWelcome";
+import hooks from "@leemons/hooks";
+import tKeys from "@multilanguage/helpers/tKeys";
+import { getLocalizationsByArrayOfItems } from "@multilanguage/useTranslate";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { getCentersWithToken } from "@users/session";
+import _, { forEach, keyBy, map } from "lodash";
+import PropTypes from "prop-types";
 
-import useTransformEvent from '../../helpers/useTransformEvent';
+import useTransformEvent from "../../helpers/useTransformEvent";
 import {
   getCalendarsToFrontendRequest,
   listKanbanColumnsRequest,
   listKanbanEventOrdersRequest,
   saveKanbanEventOrdersRequest,
   updateEventRequest,
-} from '../../request';
+} from "../../request";
 
-import { KanbanTaskCard } from '@calendar/components';
-import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
-import getCalendarNameWithConfigAndSession from '@calendar/helpers/getCalendarNameWithConfigAndSession';
-import prefixPN from '@calendar/helpers/prefixPN';
+import { KanbanTaskCard } from "@calendar/components";
+import { useCalendarEventModal } from "@calendar/components/calendar-event-modal";
+import getCalendarNameWithConfigAndSession from "@calendar/helpers/getCalendarNameWithConfigAndSession";
+import prefixPN from "@calendar/helpers/prefixPN";
 
 const useStyles = createStyles((theme, { inTab }) => ({
   root: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
+    width: "100%",
+    display: "flex",
+    flexDirection: "column",
     gap: theme.spacing[4],
   },
   calendarContainer: {
-    overflowY: 'auto',
-    height: inTab ? 'calc(100vh - 230px)' : 'auto',
-    maxHeight: inTab ? 'calc(100vh - 230px)' : '600px',
+    overflowY: "auto",
+    height: inTab ? "calc(100vh - 230px)" : "auto",
+    maxHeight: inTab ? "calc(100vh - 230px)" : "600px",
   },
 }));
 
-function UserProgramKanban({ program, classe, session, inTab, useAllColumns = false }) {
+function UserProgramKanban({
+  program,
+  classe,
+  session,
+  inTab,
+  useAllColumns = false,
+}) {
   const { classes } = useStyles({ inTab });
   const [transformEv, evLoading] = useTransformEvent();
   const [store, render] = useStore({
@@ -62,20 +68,23 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
       calendars: [],
     },
   });
-  const [t] = useTranslateLoader(prefixPN('userProgramKanban'));
-  const prefixCard = prefixPN('kanbanTaskCard');
+  const [t] = useTranslateLoader(prefixPN("userProgramKanban"));
+  const prefixCard = prefixPN("kanbanTaskCard");
   const [, translationsCard] = useTranslateLoader(prefixCard);
-  const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
+  const [toggleEventModal, EventModal, { openModal: openEventModal }] =
+    useCalendarEventModal();
 
   const { data: welcomeCompleted } = useWelcome();
-  const hasEvents = store.board?.columns?.some((column) => column.cards?.length);
+  const hasEvents = store.board?.columns?.some(
+    (column) => column.cards?.length
+  );
 
   const filterMessagesCard = React.useMemo(() => {
     if (translationsCard && translationsCard.items) {
       return _.reduce(
         translationsCard.items,
         (acc, value, key) => {
-          acc[key.replace(`${prefixCard}.`, '')] = value;
+          acc[key.replace(`${prefixCard}.`, "")] = value;
           return acc;
         },
         {}
@@ -89,12 +98,14 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
 
   async function getKanbanColumns() {
     const { columns } = await listKanbanColumnsRequest();
-    const orderedColumns = _.orderBy(columns, ['order'], ['asc']);
-    return _.filter(orderedColumns, (column) => [2, 3, 4, 5].includes(column.order));
+    const orderedColumns = _.orderBy(columns, ["order"], ["asc"]);
+    return _.filter(orderedColumns, (column) =>
+      [2, 3, 4, 5].includes(column.order)
+    );
   }
 
   async function getTranslationColumns() {
-    const keys = _.map(store.columns, 'nameKey');
+    const keys = _.map(store.columns, "nameKey");
     const { items } = await getLocalizationsByArrayOfItems(keys);
     return items;
   }
@@ -109,7 +120,9 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
   }
 
   async function getCalendarsForCenter() {
-    const { status, ...response } = await getCalendarsToFrontendRequest(store.center.token);
+    const { status, ...response } = await getCalendarsToFrontendRequest(
+      store.center.token
+    );
 
     return {
       ...response,
@@ -126,7 +139,7 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
 
   function getKanbanBoard() {
     const cols = [];
-    const eventsByColumn = _.groupBy(store.data.events, 'data.column');
+    const eventsByColumn = _.groupBy(store.data.events, "data.column");
     _.forEach(store.columns, (column) => {
       let cards = [];
       if (eventsByColumn[column.id] && store.columnsEventsOrders[column.id]) {
@@ -139,7 +152,10 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
             cardsNoOrdered.push(event);
           }
         });
-        cards = _.map(cardsNoOrdered, (c) => ({ ...c, notOrdered: true })).concat(cards);
+        cards = _.map(cardsNoOrdered, (c) => ({
+          ...c,
+          notOrdered: true,
+        })).concat(cards);
       } else {
         cards = eventsByColumn[column.id] || [];
       }
@@ -160,10 +176,10 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
         });
       }
 
-      const calendarIds = map(store.data.onlyProgramCalendars, 'id');
+      const calendarIds = map(store.data.onlyProgramCalendars, "id");
       cards = _.filter(cards, (c) => {
         let toReturn = false;
-        if (c.type === 'calendar.task' && c.data && c.data.classes) {
+        if (c.type === "calendar.task" && c.data && c.data.classes) {
           // eslint-disable-next-line consistent-return
           forEach(c.data.classes, (calendar) => {
             if (calendarIds.includes(calendar)) {
@@ -202,22 +218,28 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
       const [centerData, programData] = await Promise.all(promises);
       store.data = centerData;
       if (program) {
-        store.classesById = keyBy(programData.classes, 'id');
+        store.classesById = keyBy(programData.classes, "id");
       }
       if (classe) {
         store.classesById = {
           [classe.id]: classe,
         };
       }
-      store.data.onlyProgramCalendars = _.filter(store.data.calendars, (calendar) => {
-        const keySplit = calendar.key.split('.');
-        const classId = keySplit[keySplit.length - 1];
-        return !!store.classesById[classId];
-      });
-      store.filtersData.calendars = _.map(store.data.onlyProgramCalendars, (calendar) => ({
-        label: calendar.name,
-        value: calendar.id,
-      }));
+      store.data.onlyProgramCalendars = _.filter(
+        store.data.calendars,
+        (calendar) => {
+          const keySplit = calendar.key.split(".");
+          const classId = keySplit[keySplit.length - 1];
+          return !!store.classesById[classId];
+        }
+      );
+      store.filtersData.calendars = _.map(
+        store.data.onlyProgramCalendars,
+        (calendar) => ({
+          label: calendar.name,
+          value: calendar.id,
+        })
+      );
       store.board = getKanbanBoard();
     }
 
@@ -247,7 +269,10 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
     const cardsById = {};
     _.forEach(values.columns, (column) => {
       _.forEach(column.cards, (card) => {
-        cardsById[card.id] = { ...card, data: { ...card.data, column: column.id } };
+        cardsById[card.id] = {
+          ...card,
+          data: { ...card.data, column: column.id },
+        };
       });
     });
     const changedColumns = [];
@@ -260,18 +285,26 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
     }
     _.forEach(store.data.events, (ev) => {
       const card = cardsById[ev.id];
-      if (ev.data && ev.data.column && card && ev.data.column !== card.data.column) {
+      if (
+        ev.data &&
+        ev.data.column &&
+        card &&
+        ev.data.column !== card.data.column
+      ) {
         changedColumns.push(card.data.column);
         // eslint-disable-next-line no-param-reassign
         ev.data.column = card.data.column;
         updateEventRequest(store.center.token, ev.id, { data: ev.data });
-        hooks.fireEvent('calendar:kanban:reorded', { id: ev.id, column: ev.data.column });
+        hooks.fireEvent("calendar:kanban:reorded", {
+          id: ev.id,
+          column: ev.data.column,
+        });
       }
     });
 
     _.forEach(values.columns, (column) => {
       if (changedColumns.indexOf(column.id) >= 0) {
-        store.columnsEventsOrders[column.id] = _.map(column.cards, 'id');
+        store.columnsEventsOrders[column.id] = _.map(column.cards, "id");
         saveKanbanEventOrdersRequest(
           store.center.token,
           column.id,
@@ -292,9 +325,9 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
   }
 
   useEffect(() => {
-    hooks.addAction('calendar:force:reload', load);
+    hooks.addAction("calendar:force:reload", load);
     return () => {
-      hooks.removeAction('calendar:force:reload', load);
+      hooks.removeAction("calendar:force:reload", load);
     };
   });
 
@@ -309,12 +342,16 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
     <Box className={classes.root}>
       <Stack fullWidth alignItems="end" justifyContent="space-between">
         <Box>
-          <Title order={3}>{t(inTab ? 'kanban' : 'kanbanHighlight')}</Title>
+          <Title order={3}>{t(inTab ? "kanban" : "kanbanHighlight")}</Title>
         </Box>
         <Box>
           {!store.loading ? (
-            <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onNewEvent}>
-              {t('newTask')}
+            <Button
+              variant="link"
+              leftIcon={<AddCircleIcon />}
+              onClick={onNewEvent}
+            >
+              {t("newTask")}
             </Button>
           ) : null}
         </Box>
@@ -327,7 +364,7 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
             event={store.selectedEvent}
             close={toggleEventModal}
             classCalendars={store.filtersData.calendars}
-            forceType={'calendar.task'}
+            forceType={"calendar.task"}
           />
           <BubblesKanban
             value={store.board}
@@ -335,7 +372,7 @@ function UserProgramKanban({ program, classe, session, inTab, useAllColumns = fa
             onChange={onChange}
             disableCardDrag={false}
             showNewOnFirstColumn
-            newItemLabel={t('addNewTask')}
+            newItemLabel={t("addNewTask")}
             onNew={onNewEvent}
             itemRender={(props) => (
               <KanbanTaskCard

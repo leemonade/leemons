@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 import {
   Button,
@@ -9,11 +9,11 @@ import {
   Stack,
   Text,
   TextClamp,
-} from '@bubbles-ui/components';
-import { LocaleDate, useLocale } from '@common';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { LocaleDate, useLocale } from "@common";
+import PropTypes from "prop-types";
 
-import { DayRowStyles } from './DayRow.styles';
+import { DayRowStyles } from "./DayRow.styles";
 
 const parseColumnByEvents = (events, date, locale) => {
   const result = {
@@ -33,7 +33,10 @@ const parseColumnByEvents = (events, date, locale) => {
         date1.getDate() === date2.getDate();
 
       const formatTime = (dateParam) =>
-        dateParam.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' });
+        dateParam.toLocaleTimeString(locale, {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
 
       const eventInfo = {
         allDay: event.allDay,
@@ -41,17 +44,26 @@ const parseColumnByEvents = (events, date, locale) => {
       };
 
       if (!event.allDay) {
-        if (isSameDay(eventStart, currentDate) && !isSameDay(eventStart, eventEnd)) {
+        if (
+          isSameDay(eventStart, currentDate) &&
+          !isSameDay(eventStart, eventEnd)
+        ) {
           eventInfo.isStart = true;
           eventInfo.startTime = formatTime(eventStart);
         }
 
-        if (isSameDay(eventEnd, currentDate) && !isSameDay(eventStart, eventEnd)) {
+        if (
+          isSameDay(eventEnd, currentDate) &&
+          !isSameDay(eventStart, eventEnd)
+        ) {
           eventInfo.isEnd = true;
           eventInfo.endTime = formatTime(eventEnd);
         }
 
-        if (isSameDay(eventStart, eventEnd) && isSameDay(eventStart, currentDate)) {
+        if (
+          isSameDay(eventStart, eventEnd) &&
+          isSameDay(eventStart, currentDate)
+        ) {
           eventInfo.rangeTime = `${formatTime(eventStart)} - ${formatTime(eventEnd)}`;
         }
       }
@@ -62,7 +74,7 @@ const parseColumnByEvents = (events, date, locale) => {
 
       const descriptionInfo = {
         bgColor: event.color,
-        isTask: event.originalEvent?.type === 'calendar.task',
+        isTask: event.originalEvent?.type === "calendar.task",
         title: event.title,
         originalEvent: event.originalEvent,
       };
@@ -74,9 +86,9 @@ const parseColumnByEvents = (events, date, locale) => {
 
   const getEventTime = (event) => {
     if (event.rangeTime) {
-      return event.rangeTime.split('-')[0].trim();
+      return event.rangeTime.split("-")[0].trim();
     }
-    return event.startTime || event.endTime || '00:00';
+    return event.startTime || event.endTime || "00:00";
   };
 
   result.hoursAndDuration.sort((a, b) => {
@@ -103,8 +115,11 @@ const DayRow = ({ date, events, calendarWeekdays, t, onEventClick }) => {
   const locale = useLocale();
   const dateWithDayoff = events.filter((event) => event.isDayOff);
   const { classes } = DayRowStyles(
-    { dateWithDayoff: !!dateWithDayoff.length || isSchoolDay, hasEvents: !!events.length },
-    { name: 'DayRow' }
+    {
+      dateWithDayoff: !!dateWithDayoff.length || isSchoolDay,
+      hasEvents: !!events.length,
+    },
+    { name: "DayRow" }
   );
   const [preparedEvents, setPreparedEvents] = useState([]);
 
@@ -123,22 +138,29 @@ const DayRow = ({ date, events, calendarWeekdays, t, onEventClick }) => {
         <Box className={classes.date}>
           <LocaleDate
             date={date}
-            options={{ day: 'numeric', month: 'short', weekday: 'short', type: 'agenda' }}
+            options={{
+              day: "numeric",
+              month: "short",
+              weekday: "short",
+              type: "agenda",
+            }}
           />
         </Box>
         <Box className={classes.hoursAndDuration}>
           {preparedEvents?.hoursAndDuration
             ? preparedEvents?.hoursAndDuration.map((event, index) => (
                 <Box key={index}>
-                  {event.allDay ? <Text>{t('allDay')}</Text> : null}
+                  {event.allDay ? <Text>{t("allDay")}</Text> : null}
                   {event.isStart ? (
                     <Stack
                       key={event.startTime}
                       spacing={2}
                       alignItems="center"
-                      style={{ position: 'relative' }}
+                      style={{ position: "relative" }}
                     >
-                      <Text className={classes.timeWithTag}>{event.startTime}</Text>
+                      <Text className={classes.timeWithTag}>
+                        {event.startTime}
+                      </Text>
                       <Badge
                         closable={false}
                         radius="default"
@@ -146,7 +168,7 @@ const DayRow = ({ date, events, calendarWeekdays, t, onEventClick }) => {
                         color="stroke"
                         disableHover
                       >
-                        <Text>{t('init')}</Text>
+                        <Text>{t("init")}</Text>
                       </Badge>
                     </Stack>
                   ) : null}
@@ -155,9 +177,11 @@ const DayRow = ({ date, events, calendarWeekdays, t, onEventClick }) => {
                       key={event.endTime}
                       spacing={2}
                       alignItems="center"
-                      style={{ position: 'relative' }}
+                      style={{ position: "relative" }}
                     >
-                      <Text className={classes.timeWithTag}>{event.endTime}</Text>
+                      <Text className={classes.timeWithTag}>
+                        {event.endTime}
+                      </Text>
                       <Badge
                         closable={false}
                         radius="default"
@@ -165,11 +189,13 @@ const DayRow = ({ date, events, calendarWeekdays, t, onEventClick }) => {
                         color="stroke"
                         disableHover
                       >
-                        <Text>{t('end')}</Text>
+                        <Text>{t("end")}</Text>
                       </Badge>
                     </Stack>
                   ) : null}
-                  {event.rangeTime ? <Text key={event.rangeTime}>{event.rangeTime}</Text> : null}
+                  {event.rangeTime ? (
+                    <Text key={event.rangeTime}>{event.rangeTime}</Text>
+                  ) : null}
                 </Box>
               ))
             : null}
@@ -177,11 +203,16 @@ const DayRow = ({ date, events, calendarWeekdays, t, onEventClick }) => {
         <Box className={classes.eventDescription}>
           {preparedEvents.description &&
             preparedEvents.description.map((event, index) => {
-              const isTask = event.isTask ? `${t('activityLabel').toUpperCase()}. ` : '';
+              const isTask = event.isTask
+                ? `${t("activityLabel").toUpperCase()}. `
+                : "";
               return (
                 <Stack key={index} spacing={2} alignItems="center">
                   <AvatarSubject color={event.bgColor} size="xs" />
-                  <Button variant="linkInline" onClick={() => onEventClick(event.originalEvent)}>
+                  <Button
+                    variant="linkInline"
+                    onClick={() => onEventClick(event.originalEvent)}
+                  >
                     <TextClamp lines={1}>
                       <Text key={index}>{`${isTask} ${event.title}`}</Text>
                     </TextClamp>

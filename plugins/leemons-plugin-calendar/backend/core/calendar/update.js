@@ -2,8 +2,8 @@ const {
   validateKeyPrefix,
   validateSectionPrefix,
   validateNotExistCalendarKey,
-} = require('../../validations/exists');
-const { validateAddCalendar } = require('../../validations/forms');
+} = require("../../validations/exists");
+const { validateAddCalendar } = require("../../validations/forms");
 
 /**
  * Update calendar with the provided key if not already exists
@@ -16,7 +16,11 @@ const { validateAddCalendar } = require('../../validations/forms');
  * */
 async function update({ key, config, ctx }) {
   validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
-  validateSectionPrefix({ key: config.section, calledFrom: ctx.callerPlugin, ctx });
+  validateSectionPrefix({
+    key: config.section,
+    calledFrom: ctx.callerPlugin,
+    ctx,
+  });
   validateAddCalendar(config);
 
   await validateNotExistCalendarKey({ key, ctx });

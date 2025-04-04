@@ -1,16 +1,25 @@
-import React from 'react';
-import { Box, Button, MultiSelect, Stack, Switch } from '@bubbles-ui/components';
-import { AddIcon as PlusIcon, PluginSubjectsIcon } from '@bubbles-ui/icons/outline';
-import PropTypes from 'prop-types';
-import { KanbanFiltersStyles } from './KanbanFilters.styles';
+import React from "react";
+import {
+  Box,
+  Button,
+  MultiSelect,
+  Stack,
+  Switch,
+} from "@bubbles-ui/components";
+import {
+  AddIcon as PlusIcon,
+  PluginSubjectsIcon,
+} from "@bubbles-ui/icons/outline";
+import PropTypes from "prop-types";
+import { KanbanFiltersStyles } from "./KanbanFilters.styles";
 
 export const KANBAN_FILTERS_DEFAULT_PROPS = {
   messages: {
-    title: 'Kanban',
-    filter: 'Filter by',
-    archived: 'Show archived tasks',
-    selectCalendarsSubjects: 'All subjects',
-    onlyByMy: 'Only those created by me',
+    title: "Kanban",
+    filter: "Filter by",
+    archived: "Show archived tasks",
+    selectCalendarsSubjects: "All subjects",
+    onlyByMy: "Only those created by me",
   },
   value: {},
   data: {
@@ -34,7 +43,14 @@ export const KANBAN_FILTERS_PROP_TYPES = {
   addEventClick: PropTypes.func,
 };
 
-const KanbanFilters = ({ value, data, messages, onChange, addEventClick, ...props }) => {
+const KanbanFilters = ({
+  value,
+  data,
+  messages,
+  onChange,
+  addEventClick,
+  ...props
+}) => {
   const { classes, cx } = KanbanFiltersStyles({});
 
   return (

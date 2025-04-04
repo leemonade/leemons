@@ -1,5 +1,5 @@
-const { getPermissionConfig } = require('./getPermissionConfig');
-const { remove } = require('./remove');
+const { getPermissionConfig } = require("./getPermissionConfig");
+const { remove } = require("./remove");
 
 /**
  * Add calendar with the provided key if not already exists
@@ -15,15 +15,18 @@ async function removeOrCancel({ id, forceDelete, ctx }) {
     permissionName: permissionConfig.permissionName,
   };
   // ES: Buscamos que agentes tienen permiso al evento
-  const userAgentIds = await ctx.tx.call('users.permissions.findUserAgentsWithPermission', {
-    permissions: permissionQuery,
-  });
+  const userAgentIds = await ctx.tx.call(
+    "users.permissions.findUserAgentsWithPermission",
+    {
+      permissions: permissionQuery,
+    }
+  );
 
   // ES: Si hay mas de un invitado (Owner + otros) cancelamos el evento
   if (userAgentIds.length > 1 && !forceDelete) {
     return ctx.tx.db.Events.findOneAndUpdate(
       { id },
-      { status: 'cancel' },
+      { status: "cancel" },
       { new: true, lean: true }
     );
   }

@@ -1,11 +1,15 @@
-import * as _ from 'lodash';
-import moment from 'moment';
-import transformCalendarConfigToEvents from './transformCalendarConfigToEvents';
-import { RRule } from 'rrule';
+import * as _ from "lodash";
+import moment from "moment";
+import transformCalendarConfigToEvents from "./transformCalendarConfigToEvents";
+import { RRule } from "rrule";
 
-export default function transformDBEventsToFullCalendarEvents(events, calendars, config) {
+export default function transformDBEventsToFullCalendarEvents(
+  events,
+  calendars,
+  config
+) {
   let goodEvents = [];
-  const calendarsById = _.keyBy(calendars, 'id');
+  const calendarsById = _.keyBy(calendars, "id");
 
   _.forEach(events, (event) => {
     const ev = {
@@ -19,14 +23,14 @@ export default function transformDBEventsToFullCalendarEvents(events, calendars,
       },
     };
 
-    if (event.repeat && event.repeat !== 'dont_repeat') {
-      if (event.repeat === 'every_day') {
+    if (event.repeat && event.repeat !== "dont_repeat") {
+      if (event.repeat === "every_day") {
         ev.rrule = {
           freq: RRule.DAILY,
         };
       }
 
-      if (event.repeat === 'every_week') {
+      if (event.repeat === "every_week") {
         const weekDay = moment(ev.start).isoWeekday();
         ev.rrule = {
           freq: RRule.WEEKLY,
@@ -34,14 +38,14 @@ export default function transformDBEventsToFullCalendarEvents(events, calendars,
         };
       }
 
-      if (event.repeat === 'every_month') {
+      if (event.repeat === "every_month") {
         ev.rrule = {
           freq: RRule.MONTHLY,
           bymonthday: [new Date(ev.start).getDate()],
         };
       }
 
-      if (event.repeat === 'every_year') {
+      if (event.repeat === "every_year") {
         ev.rrule = {
           freq: RRule.YEARLY,
           byyearday: [moment(ev.start).dayOfYear()],

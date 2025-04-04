@@ -1,14 +1,14 @@
-import PropTypes from 'prop-types'
-import React from 'react'
-import clsx from 'clsx'
-import { accessor as get } from '../../utils/accessors'
-import { DnDContext } from './DnDContext'
+import PropTypes from "prop-types";
+import React from "react";
+import clsx from "clsx";
+import { accessor as get } from "../../utils/accessors";
+import { DnDContext } from "./DnDContext";
 
 class EventWrapper extends React.Component {
-  static contextType = DnDContext
+  static contextType = DnDContext;
 
   static propTypes = {
-    type: PropTypes.oneOf(['date', 'time']),
+    type: PropTypes.oneOf(["date", "time"]),
     event: PropTypes.object.isRequired,
 
     draggable: PropTypes.bool,
@@ -19,36 +19,36 @@ class EventWrapper extends React.Component {
     isDragging: PropTypes.bool,
     isResizing: PropTypes.bool,
     resizable: PropTypes.bool,
-  }
+  };
 
-  handleResizeUp = e => {
-    if (e.button !== 0) return
-    this.context.draggable.onBeginAction(this.props.event, 'resize', 'UP')
-  }
-  handleResizeDown = e => {
-    if (e.button !== 0) return
-    this.context.draggable.onBeginAction(this.props.event, 'resize', 'DOWN')
-  }
-  handleResizeLeft = e => {
-    if (e.button !== 0) return
-    this.context.draggable.onBeginAction(this.props.event, 'resize', 'LEFT')
-  }
-  handleResizeRight = e => {
-    if (e.button !== 0) return
-    this.context.draggable.onBeginAction(this.props.event, 'resize', 'RIGHT')
-  }
-  handleStartDragging = e => {
-    if (e.button !== 0) return
+  handleResizeUp = (e) => {
+    if (e.button !== 0) return;
+    this.context.draggable.onBeginAction(this.props.event, "resize", "UP");
+  };
+  handleResizeDown = (e) => {
+    if (e.button !== 0) return;
+    this.context.draggable.onBeginAction(this.props.event, "resize", "DOWN");
+  };
+  handleResizeLeft = (e) => {
+    if (e.button !== 0) return;
+    this.context.draggable.onBeginAction(this.props.event, "resize", "LEFT");
+  };
+  handleResizeRight = (e) => {
+    if (e.button !== 0) return;
+    this.context.draggable.onBeginAction(this.props.event, "resize", "RIGHT");
+  };
+  handleStartDragging = (e) => {
+    if (e.button !== 0) return;
     // hack: because of the way the anchors are arranged in the DOM, resize
     // anchor events will bubble up to the move anchor listener. Don't start
     // move operations when we're on a resize anchor.
-    const isResizeHandle = e.target.className.includes('rbc-addons-dnd-resize')
+    const isResizeHandle = e.target.className.includes("rbc-addons-dnd-resize");
     if (!isResizeHandle)
-      this.context.draggable.onBeginAction(this.props.event, 'move')
-  }
+      this.context.draggable.onBeginAction(this.props.event, "move");
+  };
 
   renderAnchor(direction) {
-    const cls = direction === 'Up' || direction === 'Down' ? 'ns' : 'ew'
+    const cls = direction === "Up" || direction === "Down" ? "ns" : "ew";
     return (
       <div
         className={`rbc-addons-dnd-resize-${cls}-anchor`}
@@ -56,38 +56,33 @@ class EventWrapper extends React.Component {
       >
         <div className={`rbc-addons-dnd-resize-${cls}-icon`} />
       </div>
-    )
+    );
   }
 
   render() {
-    const {
-      event,
-      type,
-      continuesPrior,
-      continuesAfter,
-      resizable,
-    } = this.props
+    const { event, type, continuesPrior, continuesAfter, resizable } =
+      this.props;
 
-    let { children } = this.props
+    let { children } = this.props;
 
     if (event.__isPreview)
       return React.cloneElement(children, {
         className: clsx(
           children.props.className,
-          'rbc-addons-dnd-drag-preview'
+          "rbc-addons-dnd-drag-preview"
         ),
-      })
+      });
 
-    const { draggable } = this.context
-    const { draggableAccessor, resizableAccessor } = draggable
+    const { draggable } = this.context;
+    const { draggableAccessor, resizableAccessor } = draggable;
 
     const isDraggable = draggableAccessor
       ? !!get(event, draggableAccessor)
-      : true
+      : true;
 
     /* Event is not draggable, no need to wrap it */
     if (!isDraggable) {
-      return children
+      return children;
     }
 
     /*
@@ -110,7 +105,7 @@ class EventWrapper extends React.Component {
      * events at the edges of the calendar's min/max location.
      */
     const isResizable =
-      resizable && (resizableAccessor ? !!get(event, resizableAccessor) : true)
+      resizable && (resizableAccessor ? !!get(event, resizableAccessor) : true);
 
     if (isResizable || isDraggable) {
       /*
@@ -124,19 +119,19 @@ class EventWrapper extends React.Component {
       const newProps = {
         onMouseDown: this.handleStartDragging,
         onTouchStart: this.handleStartDragging,
-      }
+      };
 
       if (isResizable) {
         // replace original event child with anchor-embellished child
-        let StartAnchor = null
-        let EndAnchor = null
+        let StartAnchor = null;
+        let EndAnchor = null;
 
-        if (type === 'date') {
-          StartAnchor = !continuesPrior && this.renderAnchor('Left')
-          EndAnchor = !continuesAfter && this.renderAnchor('Right')
+        if (type === "date") {
+          StartAnchor = !continuesPrior && this.renderAnchor("Left");
+          EndAnchor = !continuesAfter && this.renderAnchor("Right");
         } else {
-          StartAnchor = !continuesPrior && this.renderAnchor('Up')
-          EndAnchor = !continuesAfter && this.renderAnchor('Down')
+          StartAnchor = !continuesPrior && this.renderAnchor("Up");
+          EndAnchor = !continuesAfter && this.renderAnchor("Down");
         }
 
         newProps.children = (
@@ -145,7 +140,7 @@ class EventWrapper extends React.Component {
             {children.props.children}
             {EndAnchor}
           </div>
-        )
+        );
       }
 
       if (
@@ -155,15 +150,15 @@ class EventWrapper extends React.Component {
         // add a new class to it
         newProps.className = clsx(
           children.props.className,
-          'rbc-addons-dnd-dragged-event'
-        )
+          "rbc-addons-dnd-dragged-event"
+        );
       }
 
-      children = React.cloneElement(children, newProps)
+      children = React.cloneElement(children, newProps);
     }
 
-    return children
+    return children;
   }
 }
 
-export default EventWrapper
+export default EventWrapper;

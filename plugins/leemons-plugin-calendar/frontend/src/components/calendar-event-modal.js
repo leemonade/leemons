@@ -2,49 +2,61 @@
 /* eslint-disable camelcase */
 /* eslint-disable no-param-reassign */
 
-import React, { useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useEffect, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 
-import { Box, ImageLoader, LoadingOverlay, UserDisplayItemList } from '@bubbles-ui/components';
-import { getLocale, useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import loadable from '@loadable/component';
-import tKeys from '@multilanguage/helpers/tKeys';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import { getLocalizations, getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import SelectUserAgent from '@users/components/SelectUserAgent';
-import { goLoginPage } from '@users/navigate';
-import { getCentersWithToken, useSession } from '@users/session';
-import hooks from 'leemons-hooks';
-import _, { find, forEach, isString, map, set } from 'lodash';
-import PropTypes from 'prop-types';
+import {
+  Box,
+  ImageLoader,
+  LoadingOverlay,
+  UserDisplayItemList,
+} from "@bubbles-ui/components";
+import { getLocale, useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import hooks from "@leemons/hooks";
+import loadable from "@loadable/component";
+import tKeys from "@multilanguage/helpers/tKeys";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import {
+  getLocalizations,
+  getLocalizationsByArrayOfItems,
+} from "@multilanguage/useTranslate";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import SelectUserAgent from "@users/components/SelectUserAgent";
+import { goLoginPage } from "@users/navigate";
+import { getCentersWithToken, useSession } from "@users/session";
+import _, { find, forEach, isString, map, set } from "lodash";
+import PropTypes from "prop-types";
 
-import getCalendarNameWithConfigAndSession from '../helpers/getCalendarNameWithConfigAndSession';
-import getUTCString from '../helpers/getUTCString';
+import getCalendarNameWithConfigAndSession from "../helpers/getCalendarNameWithConfigAndSession";
+import getUTCString from "../helpers/getUTCString";
 import {
   addEventRequest,
+  getCalendarsToFrontendRequest,
   getEventTypesRequest,
   removeEventRequest,
   updateEventRequest,
-  getCalendarsToFrontendRequest,
-} from '../request';
+} from "../request";
 
 import {
   CALENDAR_EVENT_MODAL_DEFAULT_PROPS,
   CalendarEventModal,
-} from '@calendar/components/CalendarEventModal';
-import prefixPN from '@calendar/helpers/prefixPN';
+} from "@calendar/components/CalendarEventModal";
+import prefixPN from "@calendar/helpers/prefixPN";
 
 function dynamicImport(pluginName, component, fallback = null) {
   return loadable(async () => {
     try {
-      return await import(`@app/plugins/${pluginName}/src/widgets/calendar/${component}.js`);
+      return await import(
+        `@app/plugins/${pluginName}/src/widgets/calendar/${component}.js`
+      );
     } catch (error) {
       try {
-        return await import(`@app/plugins/${pluginName}/src/widgets/calendar/${component}.tsx`);
+        return await import(
+          `@app/plugins/${pluginName}/src/widgets/calendar/${component}.tsx`
+        );
       } catch (error) {
         return fallback;
       }
@@ -56,22 +68,22 @@ function ClassIcon({ class: klass, dropdown = false }) {
   return (
     <Box
       sx={() => ({
-        position: dropdown ? 'static' : 'absolute',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        position: dropdown ? "static" : "absolute",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         minWidth: 24,
         minHeight: 24,
         maxWidth: 24,
         maxHeight: 24,
-        borderRadius: '50%',
+        borderRadius: "50%",
         backgroundColor: klass?.bgColor,
       })}
     >
       <ImageLoader
         sx={() => ({
           borderRadius: 0,
-          filter: 'brightness(0) invert(1)',
+          filter: "brightness(0) invert(1)",
         })}
         forceImage
         width={14}
@@ -88,11 +100,19 @@ ClassIcon.propTypes = {
 };
 
 const UsersComponent = React.forwardRef(
-  ({ userAgents, showLess, showMore, disabled, labelDisabled, label, ...props }) => (
+  ({
+    userAgents,
+    showLess,
+    showMore,
+    disabled,
+    labelDisabled,
+    label,
+    ...props
+  }) => (
     <Box>
       {disabled ? (
         <UserDisplayItemList
-          data={map(userAgents, 'user')}
+          data={map(userAgents, "user")}
           labels={{
             showMore,
             showLess,
@@ -130,10 +150,10 @@ function NewCalendarEventModal({
   reff: ref,
   ref2,
 }) {
-  const { t: tCommon } = useCommonTranslate('forms');
+  const { t: tCommon } = useCommonTranslate("forms");
   const session = useSession({ redirectTo: goLoginPage });
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const [t] = useTranslateLoader(prefixPN('event_modal'));
+  const [t] = useTranslateLoader(prefixPN("event_modal"));
   const { openDeleteConfirmationModal } = useLayout();
   const [, setR] = useState();
   const form = useForm({ defaultValues: ref.current.defaultValues });
@@ -143,10 +163,10 @@ function NewCalendarEventModal({
   }
 
   async function getCalendarsForCenter() {
-    const { calendars, events, userCalendar, ownerCalendars } = await getCalendarsToFrontendRequest(
-      centerToken,
-      { showHiddenColumns: true }
-    );
+    const { calendars, events, userCalendar, ownerCalendars } =
+      await getCalendarsToFrontendRequest(centerToken, {
+        showHiddenColumns: true,
+      });
 
     return {
       calendars,
@@ -181,7 +201,8 @@ function NewCalendarEventModal({
     _.forEach(eventTypes, (eventType) => {
       if (eventType.config?.titlePlaceholder) {
         eventType.config.titlePlaceholder =
-          items[eventType.config.titlePlaceholder] || eventType.config.titlePlaceholder;
+          items[eventType.config.titlePlaceholder] ||
+          eventType.config.titlePlaceholder;
       }
       if (eventType.config?.titleLabel) {
         eventType.config.titleLabel =
@@ -192,7 +213,8 @@ function NewCalendarEventModal({
           items[eventType.config.fromLabel] || eventType.config.fromLabel;
       }
       if (eventType.config?.toLabel) {
-        eventType.config.toLabel = items[eventType.config.toLabel] || eventType.config.toLabel;
+        eventType.config.toLabel =
+          items[eventType.config.toLabel] || eventType.config.toLabel;
       }
       if (!eventType.config) {
         eventType.config = {};
@@ -203,7 +225,9 @@ function NewCalendarEventModal({
   }
 
   async function getEventTypeTranslations(eventTypes) {
-    const { items } = await getLocalizationsByArrayOfItems(_.map(eventTypes, 'key'));
+    const { items } = await getLocalizationsByArrayOfItems(
+      _.map(eventTypes, "key")
+    );
     return items;
   }
 
@@ -228,7 +252,8 @@ function NewCalendarEventModal({
 
       if (!ref.current.eventTypes) {
         const eventTypes = await getEventTypes();
-        const eventTypesTranslations = await getEventTypeTranslations(eventTypes);
+        const eventTypesTranslations =
+          await getEventTypeTranslations(eventTypes);
         ref.current.eventTypes = map(eventTypes, (eventType) => ({
           ...eventType,
           value: eventType.key,
@@ -246,22 +271,36 @@ function NewCalendarEventModal({
       if (event?.data?.cardComponent && event?.data?.pluginName) {
         ref.current.components = {
           ...(ref.current.components || {}),
-          card: dynamicImport(`${event.data.pluginName}`, event.data.cardComponent),
+          card: dynamicImport(
+            `${event.data.pluginName}`,
+            event.data.cardComponent
+          ),
         };
       }
 
       ref.current.calendarData = await getCalendarsForCenter();
-      ref.current.calendarData.calendars = map(ref.current.calendarData.calendars, (calendar) => ({
-        ...calendar,
-        value: calendar.key,
-        label: getCalendarNameWithConfigAndSession(calendar, ref.current.calendarData, session),
-      }));
+      ref.current.calendarData.calendars = map(
+        ref.current.calendarData.calendars,
+        (calendar) => ({
+          ...calendar,
+          value: calendar.key,
+          label: getCalendarNameWithConfigAndSession(
+            calendar,
+            ref.current.calendarData,
+            session
+          ),
+        })
+      );
       ref.current.calendarData.ownerCalendars = map(
         ref.current.calendarData.ownerCalendars,
         (calendar) => ({
           ...calendar,
           value: calendar.key,
-          label: getCalendarNameWithConfigAndSession(calendar, ref.current.calendarData, session),
+          label: getCalendarNameWithConfigAndSession(
+            calendar,
+            ref.current.calendarData,
+            session
+          ),
         })
       );
 
@@ -305,32 +344,39 @@ function NewCalendarEventModal({
         });
 
         if (!ref.current.defaultValues.repeat)
-          set(ref.current.defaultValues, 'repeat', 'dont_repeat');
+          set(ref.current.defaultValues, "repeat", "dont_repeat");
         const calendarId = isString(calendar) ? calendar : calendar.id;
-        const foundCalendar = find(ref.current.calendarData.ownerCalendars, { id: calendarId });
-        if (foundCalendar) set(ref.current.defaultValues, 'calendar', foundCalendar.key);
-        set(ref.current.defaultValues, 'isAllDay', !!isAllDay);
+        const foundCalendar = find(ref.current.calendarData.ownerCalendars, {
+          id: calendarId,
+        });
+        if (foundCalendar)
+          set(ref.current.defaultValues, "calendar", foundCalendar.key);
+        set(ref.current.defaultValues, "isAllDay", !!isAllDay);
 
         if (startDate) {
           const start = new Date(startDate);
           start.setSeconds(0, 0);
-          set(ref.current.defaultValues, 'startDate', start);
-          set(ref.current.defaultValues, 'startTime', start);
+          set(ref.current.defaultValues, "startDate", start);
+          set(ref.current.defaultValues, "startTime", start);
         }
         if (endDate) {
           const end = new Date(endDate);
           end.setSeconds(0, 0);
-          set(ref.current.defaultValues, 'endDate', end);
-          set(ref.current.defaultValues, 'endTime', end);
+          set(ref.current.defaultValues, "endDate", end);
+          set(ref.current.defaultValues, "endTime", end);
         }
       } else if (ref.current.eventTypes.length) {
-        set(ref.current.defaultValues, 'type', forceType || ref.current.eventTypes[0].key);
-        set(ref.current.defaultValues, 'repeat', 'dont_repeat');
-        set(ref.current.defaultValues, 'isAllDay', false);
+        set(
+          ref.current.defaultValues,
+          "type",
+          forceType || ref.current.eventTypes[0].key
+        );
+        set(ref.current.defaultValues, "repeat", "dont_repeat");
+        set(ref.current.defaultValues, "isAllDay", false);
         if (ref.current.calendarData && ref.current.calendarData.ownerCalendars)
           set(
             ref.current.defaultValues,
-            'calendar',
+            "calendar",
             ref.current.calendarData.ownerCalendars[0].key
           );
       }
@@ -342,7 +388,7 @@ function NewCalendarEventModal({
   }
 
   async function reloadCalendar() {
-    await hooks.fireEvent('calendar:force:reload');
+    await hooks.fireEvent("calendar:force:reload");
   }
 
   async function removeEvent() {
@@ -363,7 +409,15 @@ function NewCalendarEventModal({
     ref.current.saving = true;
     render();
     // eslint-disable-next-line prefer-const
-    let { startDate, endDate, deadline, uniqClasses, startTime, endTime, ...formData } = _formData;
+    let {
+      startDate,
+      endDate,
+      deadline,
+      uniqClasses,
+      startTime,
+      endTime,
+      ...formData
+    } = _formData;
     if (startDate) startDate = new Date(startDate);
     if (endDate) endDate = new Date(endDate);
     if (formData.isAllDay) {
@@ -395,15 +449,19 @@ function NewCalendarEventModal({
     try {
       if (ref.current.isNew) {
         await addEventRequest(centerToken, toSend);
-        addSuccessAlert(t('add_done'));
+        addSuccessAlert(t("add_done"));
       } else {
         // delete toSend.calendar;
         // delete toSend.type;
         delete toSend.status;
-        const { event: e } = await updateEventRequest(centerToken, event.id, toSend);
+        const { event: e } = await updateEventRequest(
+          centerToken,
+          event.id,
+          toSend
+        );
         ref.current.defaultValues.data = e.data;
 
-        addSuccessAlert(t('updated_done'));
+        addSuccessAlert(t("updated_done"));
       }
       reloadCalendar();
       if (closeOnSend) {
@@ -420,7 +478,7 @@ function NewCalendarEventModal({
   function onKanbanReorded({ args: [{ id, column }] }) {
     if (event && event.id === id) {
       ref.current.defaultValues.data.column = column;
-      form.setValue('data.column', column);
+      form.setValue("data.column", column);
     }
   }
 
@@ -431,9 +489,9 @@ function NewCalendarEventModal({
   }, [session, event]);
 
   useEffect(() => {
-    hooks.addAction('calendar:kanban:reorded', onKanbanReorded);
+    hooks.addAction("calendar:kanban:reorded", onKanbanReorded);
     return () => {
-      hooks.removeAction('calendar:kanban:reorded', onKanbanReorded);
+      hooks.removeAction("calendar:kanban:reorded", onKanbanReorded);
     };
   });
 
@@ -464,8 +522,8 @@ function NewCalendarEventModal({
           reloadCalendar,
           defaultValues: ref.current.defaultValues,
           render,
-          addSuccessAlertAdd: () => addSuccessAlert(t('add_done')),
-          addSuccessAlertUpdate: () => addSuccessAlert(t('updated_done')),
+          addSuccessAlertAdd: () => addSuccessAlert(t("add_done")),
+          addSuccessAlertUpdate: () => addSuccessAlert(t("updated_done")),
           addErrorAlert: (e) => addErrorAlert(getErrorMessage(e)),
         }}
         selectData={{
@@ -479,10 +537,10 @@ function NewCalendarEventModal({
         onSubmit={onSubmit}
         UsersComponent={
           <UsersComponent
-            label={t('users')}
-            labelDisabled={t('usersDisabled')}
-            showMore={t('showMore')}
-            showLess={t('showLess')}
+            label={t("users")}
+            labelDisabled={t("usersDisabled")}
+            showMore={t("showMore")}
+            showLess={t("showLess")}
             userAgents={ref.current.defaultValues?.userAgents}
           />
         }
@@ -491,35 +549,35 @@ function NewCalendarEventModal({
         defaultValues={ref.current.defaultValues}
         classCalendars={classCalendars}
         messages={{
-          subtasks: t('subtasks'),
-          fromLabel: t('from'),
-          toLabel: t('to'),
-          repeatLabel: t('repeatLabel'),
-          allDayLabel: t('all_day'),
-          titlePlaceholder: t('title'),
-          cancelButtonLabel: t('cancel'),
-          saveButtonLabel: t('save'),
-          updateButtonLabel: t('update'),
-          calendarPlaceholder: t('selectCalendar'),
-          calendarLabel: t('calendarLabel'),
-          calendarLabelDisabled: t('calendarLabelDisabled'),
-          showInCalendar: t('showInCalendar'),
-          newEvent: t('newEvent'),
-          newTask: t('newTask'),
-          detailEvent: t('detailEvent'),
-          detailTask: t('detailTask'),
-          title: t('title'),
-          dates: t('dates'),
-          usersDisabled: t('usersDisabled'),
+          subtasks: t("subtasks"),
+          fromLabel: t("from"),
+          toLabel: t("to"),
+          repeatLabel: t("repeatLabel"),
+          allDayLabel: t("all_day"),
+          titlePlaceholder: t("title"),
+          cancelButtonLabel: t("cancel"),
+          saveButtonLabel: t("save"),
+          updateButtonLabel: t("update"),
+          calendarPlaceholder: t("selectCalendar"),
+          calendarLabel: t("calendarLabel"),
+          calendarLabelDisabled: t("calendarLabelDisabled"),
+          showInCalendar: t("showInCalendar"),
+          newEvent: t("newEvent"),
+          newTask: t("newTask"),
+          detailEvent: t("detailEvent"),
+          detailTask: t("detailTask"),
+          title: t("title"),
+          dates: t("dates"),
+          usersDisabled: t("usersDisabled"),
         }}
         errorMessages={{
-          titleRequired: tCommon('required'),
-          startDateRequired: tCommon('required'),
-          startTimeRequired: tCommon('required'),
-          endDateRequired: tCommon('required'),
-          endTimeRequired: tCommon('required'),
-          calendarRequired: tCommon('required'),
-          typeRequired: tCommon('required'),
+          titleRequired: tCommon("required"),
+          startDateRequired: tCommon("required"),
+          startTimeRequired: tCommon("required"),
+          endDateRequired: tCommon("required"),
+          endTimeRequired: tCommon("required"),
+          calendarRequired: tCommon("required"),
+          typeRequired: tCommon("required"),
         }}
       />
     </>
@@ -571,7 +629,11 @@ export const useCalendarEventModal = () => {
         return fallback;
       }
 
-      const EventDrawer = dynamicImport(`${data.event.data.pluginName}`, 'EventDrawer', fallback);
+      const EventDrawer = dynamicImport(
+        `${data.event.data.pluginName}`,
+        "EventDrawer",
+        fallback
+      );
 
       return (
         <EventDrawer

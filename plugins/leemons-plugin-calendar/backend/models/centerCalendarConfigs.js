@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -31,7 +31,7 @@ schema.index({ deploymentID: 1, isDeleted: 1, config: 1 });
 
 const centerCalendarConfigsModel = newModel(
   mongoose.connection,
-  'v1::calendar_centerCalendarConfigs',
+  "v1::calendar_centerCalendarConfigs",
   schema
 );
 

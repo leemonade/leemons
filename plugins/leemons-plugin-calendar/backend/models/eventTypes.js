@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -42,6 +42,10 @@ const schema = new mongoose.Schema(
 
 schema.index({ deploymentID: 1, key: 1 }, { unique: true });
 
-const eventTypesModel = newModel(mongoose.connection, 'v1::calendar_eventTypes', schema);
+const eventTypesModel = newModel(
+  mongoose.connection,
+  "v1::calendar_eventTypes",
+  schema
+);
 
 module.exports = { eventTypesModel };

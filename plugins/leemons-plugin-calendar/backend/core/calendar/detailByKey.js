@@ -1,8 +1,8 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { validateNotExistCalendarKey } = require('../../validations/exists');
+const { validateNotExistCalendarKey } = require("../../validations/exists");
 
-const { getEvents } = require('./getEvents');
+const { getEvents } = require("./getEvents");
 
 /**
  * Return calendar if exists

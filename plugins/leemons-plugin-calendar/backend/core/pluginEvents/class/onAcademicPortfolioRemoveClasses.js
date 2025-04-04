@@ -1,15 +1,18 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function removeStudentFromProgramIfNeed({ program, userAgentId, ctx }) {
-  const insideProgram = await ctx.tx.call('academic-portfolio.programs.isUserInsideProgram', {
-    userSession: { userAgents: [{ id: userAgentId }] },
-    programId: program,
-  });
+  const insideProgram = await ctx.tx.call(
+    "academic-portfolio.programs.isUserInsideProgram",
+    {
+      userSession: { userAgents: [{ id: userAgentId }] },
+      programId: program,
+    }
+  );
   if (!insideProgram) {
-    ctx.tx.call('calendar.calendar.unGrantAccessUserAgentToCalendar', {
+    ctx.tx.call("calendar.calendar.unGrantAccessUserAgentToCalendar", {
       key: ctx.prefixPN(`program.${program}`),
       userAgentId,
-      actionName: 'view',
+      actionName: "view",
     });
   }
 }
@@ -50,7 +53,7 @@ async function remove({ classe, ctx }) {
       );
     });
     await Promise.all([
-      ctx.tx.call('calendar.calendar.remove', {
+      ctx.tx.call("calendar.calendar.remove", {
         id: classCalendar.calendar,
       }),
       ctx.tx.db.ClassCalendar.deleteOne({ id: classCalendar.id }),

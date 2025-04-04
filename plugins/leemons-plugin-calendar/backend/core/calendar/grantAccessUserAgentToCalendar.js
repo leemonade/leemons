@@ -1,6 +1,9 @@
-const _ = require('lodash');
-const { validateNotExistCalendarKey, validateKeyPrefix } = require('../../validations/exists');
-const { getPermissionConfig } = require('./getPermissionConfig');
+const _ = require("lodash");
+const {
+  validateNotExistCalendarKey,
+  validateKeyPrefix,
+} = require("../../validations/exists");
+const { getPermissionConfig } = require("./getPermissionConfig");
 
 /**
  *
@@ -12,7 +15,12 @@ const { getPermissionConfig } = require('./getPermissionConfig');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<any>}
  * */
-async function grantAccessUserAgentToCalendar({ key, userAgentId, actionName, ctx }) {
+async function grantAccessUserAgentToCalendar({
+  key,
+  userAgentId,
+  actionName,
+  ctx,
+}) {
   validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
   await validateNotExistCalendarKey({ key, ctx });
 
@@ -20,16 +28,20 @@ async function grantAccessUserAgentToCalendar({ key, userAgentId, actionName, ct
   const actionNames = _.isArray(actionName) ? actionName : [actionName];
   const permissionConfig = getPermissionConfig(key);
 
-  const { warnings } = await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
-    userAgentId: userAgentIds,
-    throwIfExists: false,
-    data: {
-      permissionName: permissionConfig.permissionName,
-      actionNames,
-    },
-  });
+  const { warnings } = await ctx.tx.call(
+    "users.permissions.addCustomPermissionToUserAgent",
+    {
+      userAgentId: userAgentIds,
+      throwIfExists: false,
+      data: {
+        permissionName: permissionConfig.permissionName,
+        actionNames,
+      },
+    }
+  );
 
-  if (warnings && warnings.errors && warnings.errors.length) throw warnings.errors[0];
+  if (warnings && warnings.errors && warnings.errors.length)
+    throw warnings.errors[0];
   return true;
 }
 

@@ -1,16 +1,19 @@
-import memoize from 'memoize-one';
-import { endOfRange, eventLevels, eventSegments } from './eventLevels';
+import memoize from "memoize-one";
+import { endOfRange, eventLevels, eventSegments } from "./eventLevels";
 
 let isSegmentInSlot = (seg, slot) => seg.left <= slot && seg.right >= slot;
 
-const isEqual = (a, b) => a[0].range === b[0].range && a[0].events === b[0].events;
+const isEqual = (a, b) =>
+  a[0].range === b[0].range && a[0].events === b[0].events;
 
 export function getSlotMetrics() {
   return memoize((options) => {
     const { range, events, maxRows, minRows, accessors, localizer } = options;
     let { first, last } = endOfRange({ dateRange: range, localizer });
 
-    let segments = events.map((evt) => eventSegments(evt, range, accessors, localizer));
+    let segments = events.map((evt) =>
+      eventSegments(evt, range, accessors, localizer)
+    );
 
     let { levels, extra } = eventLevels(segments, Math.max(maxRows - 1, 1));
     while (levels.length < minRows) levels.push([]);
@@ -38,7 +41,9 @@ export function getSlotMetrics() {
       },
 
       getEventsForSlot(slot) {
-        return segments.filter((seg) => isSegmentInSlot(seg, slot)).map((seg) => seg.event);
+        return segments
+          .filter((seg) => isSegmentInSlot(seg, slot))
+          .map((seg) => seg.event);
       },
 
       continuesPrior(event) {

@@ -4,37 +4,40 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { getCalendarsToFrontend, getScheduleToFrontend } = require('../../core/calendar');
-const eventTypesService = require('../../core/event-types');
-const kanbanColumnsService = require('../../core/kanban-columns');
-const listKanbanEventOrders = require('../../core/kanban-event-orders');
-const calendarConfigsService = require('../../core/calendar-configs');
+} = require("@leemons/middlewares");
+const {
+  getCalendarsToFrontend,
+  getScheduleToFrontend,
+} = require("../../core/calendar");
+const eventTypesService = require("../../core/event-types");
+const kanbanColumnsService = require("../../core/kanban-columns");
+const listKanbanEventOrders = require("../../core/kanban-event-orders");
+const calendarConfigsService = require("../../core/calendar-configs");
 const {
   addFromUser,
   updateFromUser,
   updateEventSubTasksFromUser,
   removeFromUser,
-} = require('../../core/events');
+} = require("../../core/events");
 
 /** @type {ServiceSchema} */
 module.exports = {
   getCalendarRest: {
     rest: {
-      method: 'POST',
-      path: '/',
+      method: "POST",
+      path: "/",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'calendar.calendar': {
-            actions: ['view', 'admin'],
+          "calendar.calendar": {
+            actions: ["view", "admin"],
           },
         },
       }),
@@ -46,15 +49,15 @@ module.exports = {
   },
   getScheduleRest: {
     rest: {
-      method: 'POST',
-      path: '/schedule',
+      method: "POST",
+      path: "/schedule",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'calendar.calendar': {
-            actions: ['view', 'admin'],
+          "calendar.calendar": {
+            actions: ["view", "admin"],
           },
         },
       }),
@@ -66,8 +69,8 @@ module.exports = {
   },
   getEventTypesRest: {
     rest: {
-      method: 'GET',
-      path: '/event-types',
+      method: "GET",
+      path: "/event-types",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -77,8 +80,8 @@ module.exports = {
   },
   addEventRest: {
     rest: {
-      method: 'POST',
-      path: '/add/event',
+      method: "POST",
+      path: "/add/event",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -88,8 +91,8 @@ module.exports = {
   },
   updateEventRest: {
     rest: {
-      method: 'POST',
-      path: '/update/event',
+      method: "POST",
+      path: "/update/event",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -108,14 +111,18 @@ module.exports = {
         __v,
         ...body
       } = ctx.params.event;
-      const event = await updateFromUser({ id: ctx.params.id, data: body, ctx });
+      const event = await updateFromUser({
+        id: ctx.params.id,
+        data: body,
+        ctx,
+      });
       return { status: 200, event };
     },
   },
   updateEventSubTasksRest: {
     rest: {
-      method: 'POST',
-      path: '/update/event-subtask',
+      method: "POST",
+      path: "/update/event-subtask",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -125,8 +132,8 @@ module.exports = {
   },
   removeEventRest: {
     rest: {
-      method: 'POST',
-      path: '/remove/event',
+      method: "POST",
+      path: "/remove/event",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -136,8 +143,8 @@ module.exports = {
   },
   listKanbanColumnsRest: {
     rest: {
-      method: 'GET',
-      path: '/kanban/list/columns',
+      method: "GET",
+      path: "/kanban/list/columns",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -147,8 +154,8 @@ module.exports = {
   },
   listKanbanEventOrdersRest: {
     rest: {
-      method: 'GET',
-      path: '/kanban/list/event/orders',
+      method: "GET",
+      path: "/kanban/list/event/orders",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -158,8 +165,8 @@ module.exports = {
   },
   saveKanbanEventOrdersRest: {
     rest: {
-      method: 'POST',
-      path: '/kanban/save/event/orders',
+      method: "POST",
+      path: "/kanban/save/event/orders",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -169,35 +176,38 @@ module.exports = {
   },
   addCalendarConfigRest: {
     rest: {
-      method: 'POST',
-      path: '/configs/add',
+      method: "POST",
+      path: "/configs/add",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'calendar.calendar-configs': {
-            actions: ['create', 'update', 'admin'],
+          "calendar.calendar-configs": {
+            actions: ["create", "update", "admin"],
           },
         },
       }),
     ],
     async handler(ctx) {
-      const config = await calendarConfigsService.add({ ...ctx.params.config, ctx });
+      const config = await calendarConfigsService.add({
+        ...ctx.params.config,
+        ctx,
+      });
       return { status: 200, config };
     },
   },
   updateCalendarConfigRest: {
     rest: {
-      method: 'POST',
-      path: '/configs/update/:id',
+      method: "POST",
+      path: "/configs/update/:id",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'calendar.calendar-configs': {
-            actions: ['update', 'admin'],
+          "calendar.calendar-configs": {
+            actions: ["update", "admin"],
           },
         },
       }),
@@ -213,15 +223,15 @@ module.exports = {
   },
   listCalendarConfigRest: {
     rest: {
-      method: 'GET',
-      path: '/configs/list',
+      method: "GET",
+      path: "/configs/list",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'calendar.calendar-configs': {
-            actions: ['view', 'admin'],
+          "calendar.calendar-configs": {
+            actions: ["view", "admin"],
           },
         },
       }),
@@ -235,15 +245,15 @@ module.exports = {
   },
   detailCalendarConfigRest: {
     rest: {
-      method: 'GET',
-      path: '/configs/detail/:id',
+      method: "GET",
+      path: "/configs/detail/:id",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'calendar.calendar-configs': {
-            actions: ['view', 'admin'],
+          "calendar.calendar-configs": {
+            actions: ["view", "admin"],
           },
         },
       }),
@@ -258,15 +268,15 @@ module.exports = {
   },
   removeCalendarConfigRest: {
     rest: {
-      method: 'DELETE',
-      path: '/configs/remove/:id',
+      method: "DELETE",
+      path: "/configs/remove/:id",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'calendar.calendar-configs': {
-            actions: ['delete', 'admin'],
+          "calendar.calendar-configs": {
+            actions: ["delete", "admin"],
           },
         },
       }),
@@ -281,15 +291,15 @@ module.exports = {
   },
   getCentersWithOutAssignRest: {
     rest: {
-      method: 'GET',
-      path: '/configs/centers-with-out-assign',
+      method: "GET",
+      path: "/configs/centers-with-out-assign",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'calendar.calendar-configs': {
-            actions: ['view', 'admin'],
+          "calendar.calendar-configs": {
+            actions: ["view", "admin"],
           },
         },
       }),
@@ -303,15 +313,15 @@ module.exports = {
   },
   getCalendarConfigCalendarsRest: {
     rest: {
-      method: 'GET',
-      path: '/configs/calendars/:id',
+      method: "GET",
+      path: "/configs/calendars/:id",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'calendar.calendar-configs': {
-            actions: ['view', 'admin'],
+          "calendar.calendar-configs": {
+            actions: ["view", "admin"],
           },
         },
       }),
@@ -327,15 +337,15 @@ module.exports = {
   },
   addConfigEventRest: {
     rest: {
-      method: 'POST',
-      path: '/configs/event/add',
+      method: "POST",
+      path: "/configs/event/add",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'calendar.calendar-configs': {
-            actions: ['create', 'update', 'admin'],
+          "calendar.calendar-configs": {
+            actions: ["create", "update", "admin"],
           },
         },
       }),
@@ -350,15 +360,15 @@ module.exports = {
   },
   updateConfigEventRest: {
     rest: {
-      method: 'POST',
-      path: '/configs/event/update',
+      method: "POST",
+      path: "/configs/event/update",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'calendar.calendar-configs': {
-            actions: ['update', 'admin'],
+          "calendar.calendar-configs": {
+            actions: ["update", "admin"],
           },
         },
       }),
@@ -373,15 +383,15 @@ module.exports = {
   },
   removeConfigEventRest: {
     rest: {
-      method: 'POST',
-      path: '/configs/event/remove',
+      method: "POST",
+      path: "/configs/event/remove",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'calendar.calendar-configs': {
-            actions: ['delete', 'admin'],
+          "calendar.calendar-configs": {
+            actions: ["delete", "admin"],
           },
         },
       }),

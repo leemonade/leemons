@@ -1,13 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import { Box } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+import { Box } from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
-import { WeekEventListStyles } from './WeekEventList.styles';
-import { DayRow } from './components/DayRow';
+import { WeekEventListStyles } from "./WeekEventList.styles";
+import { DayRow } from "./components/DayRow";
 
-const WeekEventList = ({ events, startDate, endDate, calendarConfig, t, onEventClick }) => {
-  const { classes } = WeekEventListStyles({}, { name: 'WeekEventList' });
+const WeekEventList = ({
+  events,
+  startDate,
+  endDate,
+  calendarConfig,
+  t,
+  onEventClick,
+}) => {
+  const { classes } = WeekEventListStyles({}, { name: "WeekEventList" });
   const [eventsInCurrentWeek, setEventsInCurrentWeek] = useState([]);
   const [weekData, setWeekData] = useState([]);
   const generateDateArray = (start, end) => {
@@ -41,8 +48,12 @@ const WeekEventList = ({ events, startDate, endDate, calendarConfig, t, onEventC
           );
         })
         .sort((a, b) => {
-          const timeA = a.isEndEvent ? new Date(a.end).getTime() : new Date(a.start).getTime();
-          const timeB = b.isEndEvent ? new Date(b.end).getTime() : new Date(b.start).getTime();
+          const timeA = a.isEndEvent
+            ? new Date(a.end).getTime()
+            : new Date(a.start).getTime();
+          const timeB = b.isEndEvent
+            ? new Date(b.end).getTime()
+            : new Date(b.start).getTime();
           return timeA - timeB;
         });
 
@@ -55,7 +66,8 @@ const WeekEventList = ({ events, startDate, endDate, calendarConfig, t, onEventC
   React.useEffect(() => {
     setEventsInCurrentWeek(
       events.filter(
-        (event) => new Date(event.start) >= startDate && new Date(event.start) <= endDate
+        (event) =>
+          new Date(event.start) >= startDate && new Date(event.start) <= endDate
       )
     );
     const initialWeekData = generateDateArray(startDate, endDate);

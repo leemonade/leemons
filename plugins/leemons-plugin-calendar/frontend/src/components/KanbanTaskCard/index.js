@@ -1,1 +1,1 @@
-export * from './KanbanTaskCard';
+export * from "./KanbanTaskCard";

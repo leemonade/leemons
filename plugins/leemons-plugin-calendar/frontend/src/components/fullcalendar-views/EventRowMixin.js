@@ -1,7 +1,7 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import EventCell from './EventCell';
-import { isSelected } from './utils/selection';
+import PropTypes from "prop-types";
+import React from "react";
+import EventCell from "./EventCell";
+import { isSelected } from "./utils/selection";
 
 /* eslint-disable react/prop-types */
 export default {
@@ -64,8 +64,8 @@ export default {
     );
   },
 
-  renderSpan(slots, len, key, content = ' ') {
-    let per = (Math.abs(len) / slots) * 100 + '%';
+  renderSpan(slots, len, key, content = " ") {
+    let per = (Math.abs(len) / slots) * 100 + "%";
 
     return (
       <div

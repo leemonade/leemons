@@ -1,4 +1,4 @@
-const { getPermissionConfig } = require('./getPermissionConfig');
+const { getPermissionConfig } = require("./getPermissionConfig");
 
 /**
  *
@@ -16,12 +16,15 @@ async function remove({ id, ctx }) {
 
   await Promise.all([
     // ES: Borramos a todos los agentes el permiso del evento ya que este dejara de existir
-    await ctx.tx.call('users.permissions.removeCustomPermissionForAllUserAgents', {
-      data: permissionQuery,
-    }),
+    await ctx.tx.call(
+      "users.permissions.removeCustomPermissionForAllUserAgents",
+      {
+        data: permissionQuery,
+      }
+    ),
     // ES: Borramos el elemento de la tabla items de permisos ya que dejara de existir
 
-    await ctx.tx.call('users.permissions.removeItems', {
+    await ctx.tx.call("users.permissions.removeItems", {
       query: { type: permissionConfig.type, item: id },
     }),
   ]);

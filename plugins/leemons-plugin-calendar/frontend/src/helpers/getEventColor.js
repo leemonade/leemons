@@ -1,13 +1,18 @@
-import { find } from 'lodash';
+import { find } from "lodash";
 
 const getEventColor = (event, calendars) => {
-  const multiSubjectColor = '#67728E';
+  const multiSubjectColor = "#67728E";
 
-  if (event.originalEvent?.data?.classes && event.originalEvent.data.classes.length >= 2) {
+  if (
+    event.originalEvent?.data?.classes &&
+    event.originalEvent.data.classes.length >= 2
+  ) {
     return multiSubjectColor;
   }
 
-  const eventCalendar = find(calendars, { id: event.originalEvent?.data?.classes?.[0] });
+  const eventCalendar = find(calendars, {
+    id: event.originalEvent?.data?.classes?.[0],
+  });
 
   if (eventCalendar) {
     return eventCalendar.bgColor;

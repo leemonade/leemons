@@ -1,12 +1,12 @@
-import React from 'react';
-import { KANBAN_FILTERS_DEFAULT_PROPS, KanbanFilters } from './KanbanFilters';
+import React from "react";
+import { KANBAN_FILTERS_DEFAULT_PROPS, KanbanFilters } from "./KanbanFilters";
 
 export default {
-  title: 'Leemons/Kanban/KanbanFilters',
+  title: "Leemons/Kanban/KanbanFilters",
   parameters: {
     component: KanbanFilters,
     design: {
-      type: 'figma',
+      type: "figma",
       // url: 'https://www.figma.com/file/kcSXz3QZFByFDTumNgzPpV/?node-id=2962%3A31342',
     },
   },
@@ -24,7 +24,7 @@ const Template = ({ children, ...props }) => {
         calendars: [
           {
             value: 1,
-            label: 'Calendario 1',
+            label: "Calendario 1",
           },
         ],
       }}

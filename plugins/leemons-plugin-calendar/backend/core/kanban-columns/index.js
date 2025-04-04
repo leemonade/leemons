@@ -1,5 +1,5 @@
-const { add } = require('./add');
-const { list } = require('./list');
+const { add } = require("./add");
+const { list } = require("./list");
 
 module.exports = {
   add,

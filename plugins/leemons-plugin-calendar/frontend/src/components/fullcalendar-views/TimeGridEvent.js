@@ -1,8 +1,8 @@
-import clsx from 'clsx'
-import React from 'react'
+import clsx from "clsx";
+import React from "react";
 
 function stringifyPercent(v) {
-  return typeof v === 'string' ? v : v + '%'
+  return typeof v === "string" ? v : v + "%";
 }
 
 /* eslint-disable react/prop-types */
@@ -23,15 +23,15 @@ function TimeGridEvent(props) {
     isBackgroundEvent,
     onKeyPress,
     components: { event: Event, eventWrapper: EventWrapper },
-  } = props
-  let title = accessors.title(event)
-  let tooltip = accessors.tooltip(event)
-  let end = accessors.end(event)
-  let start = accessors.start(event)
+  } = props;
+  let title = accessors.title(event);
+  let tooltip = accessors.tooltip(event);
+  let end = accessors.end(event);
+  let start = accessors.start(event);
 
-  let userProps = getters.eventProp(event, start, end, selected)
+  let userProps = getters.eventProp(event, start, end, selected);
 
-  let { height, top, width, xOffset } = style
+  let { height, top, width, xOffset } = style;
   const inner = [
     <div key="1" className="rbc-event-label">
       {label}
@@ -39,7 +39,7 @@ function TimeGridEvent(props) {
     <div key="2" className="rbc-event-content">
       {Event ? <Event event={event} title={title} /> : title}
     </div>,
-  ]
+  ];
 
   const eventStyle = isBackgroundEvent
     ? {
@@ -48,15 +48,15 @@ function TimeGridEvent(props) {
         height: stringifyPercent(height),
         // Adding 10px to take events container right margin into account
         width: `calc(${width} + 10px)`,
-        [rtl ? 'right' : 'left']: stringifyPercent(Math.max(0, xOffset)),
+        [rtl ? "right" : "left"]: stringifyPercent(Math.max(0, xOffset)),
       }
     : {
         ...userProps.style,
         top: stringifyPercent(top),
         width: stringifyPercent(width),
         height: stringifyPercent(height),
-        [rtl ? 'right' : 'left']: stringifyPercent(xOffset),
-      }
+        [rtl ? "right" : "left"]: stringifyPercent(xOffset),
+      };
 
   return (
     <EventWrapper type="time" {...props}>
@@ -67,24 +67,24 @@ function TimeGridEvent(props) {
         onKeyPress={onKeyPress}
         title={
           tooltip
-            ? (typeof label === 'string' ? label + ': ' : '') + tooltip
+            ? (typeof label === "string" ? label + ": " : "") + tooltip
             : undefined
         }
         className={clsx(
-          isBackgroundEvent ? 'rbc-background-event' : 'rbc-event',
+          isBackgroundEvent ? "rbc-background-event" : "rbc-event",
           className,
           userProps.className,
           {
-            'rbc-selected': selected,
-            'rbc-event-continues-earlier': continuesEarlier,
-            'rbc-event-continues-later': continuesLater,
+            "rbc-selected": selected,
+            "rbc-event-continues-earlier": continuesEarlier,
+            "rbc-event-continues-later": continuesLater,
           }
         )}
       >
         {inner}
       </div>
     </EventWrapper>
-  )
+  );
 }
 
-export default TimeGridEvent
+export default TimeGridEvent;

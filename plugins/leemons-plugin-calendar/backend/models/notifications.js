@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -24,7 +24,7 @@ const schema = new mongoose.Schema(
     state: {
       type: String,
       required: true,
-      enum: ['active', 'sending', 'sended', 'error'],
+      enum: ["active", "sending", "sended", "error"],
     },
   },
   {
@@ -33,6 +33,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-const notificationsModel = newModel(mongoose.connection, 'v1::calendar_notifications', schema);
+const notificationsModel = newModel(
+  mongoose.connection,
+  "v1::calendar_notifications",
+  schema
+);
 
 module.exports = { notificationsModel };

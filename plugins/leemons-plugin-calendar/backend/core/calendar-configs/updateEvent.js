@@ -1,8 +1,8 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { validateNotExistCalendarConfig } = require('../../validations/exists');
-const { getCalendars } = require('./getCalendars');
-const { update: updateEventE } = require('../events');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { validateNotExistCalendarConfig } = require("../../validations/exists");
+const { getCalendars } = require("./getCalendars");
+const { update: updateEventE } = require("../events");
 
 /**
  * Add calendar config

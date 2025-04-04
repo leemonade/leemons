@@ -1,4 +1,4 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 export const useEmptyStateStyles = createStyles((theme) => ({
   title: {
@@ -6,7 +6,7 @@ export const useEmptyStateStyles = createStyles((theme) => ({
   },
   text: {
     ...theme.other.global.content.typo.body.lg,
-    textAlign: 'center',
+    textAlign: "center",
   },
 }));
 

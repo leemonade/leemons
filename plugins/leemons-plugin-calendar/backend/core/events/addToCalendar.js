@@ -1,9 +1,13 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { detail: detailCalendar } = require('../calendar/detail');
-const { detail: detailEvent } = require('./detail');
+const { detail: detailCalendar } = require("../calendar/detail");
+const { detail: detailEvent } = require("./detail");
 
-async function addToCalendar({ eventIds: _eventIds, calendarIds: _calendarIds, ctx }) {
+async function addToCalendar({
+  eventIds: _eventIds,
+  calendarIds: _calendarIds,
+  ctx,
+}) {
   const eventIds = _.isArray(_eventIds) ? _eventIds : [_eventIds];
   const calendarIds = _.isArray(_calendarIds) ? _calendarIds : [_calendarIds];
 
@@ -11,7 +15,9 @@ async function addToCalendar({ eventIds: _eventIds, calendarIds: _calendarIds, c
     _.map(calendarIds, (calendarId) => detailCalendar({ id: calendarId, ctx }))
   );
 
-  const events = await Promise.all(_.map(eventIds, (eventId) => detailEvent({ id: eventId, ctx })));
+  const events = await Promise.all(
+    _.map(eventIds, (eventId) => detailEvent({ id: eventId, ctx }))
+  );
 
   const toAdd = [];
   _.forEach(calendars, (calendar) => {

@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 /**
  * List kanban columns based on visibility settings.

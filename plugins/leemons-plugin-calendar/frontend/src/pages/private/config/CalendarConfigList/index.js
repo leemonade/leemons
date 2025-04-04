@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 /*
 import useTranslateLoader from '@multilanguage/useTranslateLoader';
@@ -13,7 +13,7 @@ import { listCalendarConfigsRequest, removeCalendarConfigRequest } from '@calend
 
  */
 function ConfigsList() {
-  return 'Pasar a bubbles-ui';
+  return "Pasar a bubbles-ui";
   /*
   const [t] = useTranslateLoader(prefixPN('list_page'));
   const { t: tCommon } = useCommonTranslate('page_header');

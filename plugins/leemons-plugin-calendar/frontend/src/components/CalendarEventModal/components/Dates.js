@@ -1,5 +1,5 @@
-import React from 'react';
-import { Controller } from 'react-hook-form';
+import React from "react";
+import { Controller } from "react-hook-form";
 
 import {
   Box,
@@ -12,8 +12,8 @@ import {
   Switch,
   Text,
   TimeInput,
-} from '@bubbles-ui/components';
-import { get } from 'lodash';
+} from "@bubbles-ui/components";
+import { get } from "lodash";
 
 const Dates = ({
   form,
@@ -33,16 +33,16 @@ const Dates = ({
     formState: { errors },
   } = form;
 
-  const type = watch('type');
-  const isAllDay = watch('isAllDay');
-  const hideInCalendar = watch('data.hideInCalendar');
+  const type = watch("type");
+  const isAllDay = watch("isAllDay");
+  const hideInCalendar = watch("data.hideInCalendar");
 
   let dateRequired = true;
-  if (type === 'plugins.calendar.task') {
+  if (type === "plugins.calendar.task") {
     if (hideInCalendar) dateRequired = false;
   }
 
-  const startDate = form.getValues('startDate');
+  const startDate = form.getValues("startDate");
 
   if (disabled && !startDate) {
     return null;
@@ -62,7 +62,11 @@ const Dates = ({
           >
             {/* FROM */}
             {!disabled || (disabled && startDate) ? (
-              <Grid columns={100} gutter={0} className={classes.inputsDatesContainer}>
+              <Grid
+                columns={100}
+                gutter={0}
+                className={classes.inputsDatesContainer}
+              >
                 <Col span={isAllDay || disabled ? 100 : 70}>
                   <Controller
                     name="startDate"
@@ -70,7 +74,8 @@ const Dates = ({
                     fullWidth
                     rules={{
                       validate: (e) => {
-                        if (dateRequired && !e) return errorMessages.startDateRequired;
+                        if (dateRequired && !e)
+                          return errorMessages.startDateRequired;
                         return true;
                       },
                     }}
@@ -81,17 +86,18 @@ const Dates = ({
                         readOnly={readOnly}
                         disabled={disabled}
                         locale={locale || navigator.language}
-                        orientation={disabled ? 'horizontal' : 'vertical'}
-                        error={get(errors, 'startDate')}
+                        orientation={disabled ? "horizontal" : "vertical"}
+                        error={get(errors, "startDate")}
                         label={config?.fromLabel || messages.fromLabel}
                         required={dateRequired && !disabled}
                         {...field}
-                        maxDate={form.getValues('endDate')}
+                        maxDate={form.getValues("endDate")}
                         onChange={(value) => {
                           if (!value) {
-                            form.setValue('endDate', null);
+                            form.setValue("endDate", null);
                           }
-                          if (!form.getValues('endDate')) form.setValue('endDate', value);
+                          if (!form.getValues("endDate"))
+                            form.setValue("endDate", value);
                           field.onChange(value);
                         }}
                       />
@@ -99,13 +105,17 @@ const Dates = ({
                   />
                 </Col>
                 {!isAllDay ? (
-                  <Col span={30} sx={(theme) => ({ paddingLeft: theme.spacing[2] })}>
+                  <Col
+                    span={30}
+                    sx={(theme) => ({ paddingLeft: theme.spacing[2] })}
+                  >
                     <Controller
                       name="startTime"
                       control={control}
                       rules={{
                         validate: (e) => {
-                          if (dateRequired && !e) return errorMessages.startTimeRequired;
+                          if (dateRequired && !e)
+                            return errorMessages.startTimeRequired;
                           return true;
                         },
                       }}
@@ -118,7 +128,7 @@ const Dates = ({
                           <TimeInput
                             readOnly={readOnly}
                             disabled={disabled}
-                            error={get(errors, 'startTime')}
+                            error={get(errors, "startTime")}
                             size="sm"
                             required={dateRequired && !disabled}
                             {...field}
@@ -133,45 +143,55 @@ const Dates = ({
             ) : null}
 
             {/* TO */}
-            {(!disabled || (disabled && form.getValues('endDate'))) && !onlyOneDate ? (
-              <Grid columns={100} gutter={0} className={classes.inputsDatesContainer}>
+            {(!disabled || (disabled && form.getValues("endDate"))) &&
+            !onlyOneDate ? (
+              <Grid
+                columns={100}
+                gutter={0}
+                className={classes.inputsDatesContainer}
+              >
                 <Col span={isAllDay || disabled ? 100 : 70}>
                   <Controller
                     name="endDate"
                     control={control}
                     rules={{
                       validate: (e) => {
-                        if (dateRequired && !e) return errorMessages.endDateRequired;
+                        if (dateRequired && !e)
+                          return errorMessages.endDateRequired;
                         return true;
                       },
                     }}
                     render={({ field }) => (
                       <DatePicker
-                        error={get(errors, 'endDate')}
+                        error={get(errors, "endDate")}
                         size="sm"
                         withTime={disabled}
                         locale={locale || navigator.language}
-                        orientation={disabled ? 'horizontal' : 'vertical'}
+                        orientation={disabled ? "horizontal" : "vertical"}
                         readOnly={readOnly}
                         label={messages.toLabel}
                         required={dateRequired && !disabled}
                         {...field}
                         clearable={false}
-                        disabled={disabled || !form.getValues('startDate')}
-                        minDate={form.getValues('startDate')}
-                        value={field.value || form.getValues('startDate')}
+                        disabled={disabled || !form.getValues("startDate")}
+                        minDate={form.getValues("startDate")}
+                        value={field.value || form.getValues("startDate")}
                       />
                     )}
                   />
                 </Col>
                 {!isAllDay ? (
-                  <Col span={30} sx={(theme) => ({ paddingLeft: theme.spacing[2] })}>
+                  <Col
+                    span={30}
+                    sx={(theme) => ({ paddingLeft: theme.spacing[2] })}
+                  >
                     <Controller
                       name="endTime"
                       control={control}
                       rules={{
                         validate: (e) => {
-                          if (dateRequired && !e) return errorMessages.endTimeRequired;
+                          if (dateRequired && !e)
+                            return errorMessages.endTimeRequired;
                           return true;
                         },
                       }}
@@ -184,7 +204,7 @@ const Dates = ({
                           <TimeInput
                             readOnly={readOnly}
                             disabled={disabled}
-                            error={get(errors, 'endTime')}
+                            error={get(errors, "endTime")}
                             size="sm"
                             required={dateRequired && !disabled}
                             {...field}
@@ -208,10 +228,10 @@ const Dates = ({
                 }}
                 render={({ field }) => (
                   <Select
-                    error={get(errors, 'repeat')}
+                    error={get(errors, "repeat")}
                     size="sm"
                     disabled={disabled}
-                    orientation={disabled ? 'horizontal' : 'vertical'}
+                    orientation={disabled ? "horizontal" : "vertical"}
                     readOnly={readOnly}
                     label={messages.repeatLabel}
                     {...field}
@@ -222,17 +242,19 @@ const Dates = ({
             ) : null}
 
             {/* ALL DAY */}
-            {!config?.hideAllDay && (!disabled || (disabled && form.getValues('isAllDay'))) ? (
+            {!config?.hideAllDay &&
+            (!disabled || (disabled && form.getValues("isAllDay"))) ? (
               <Controller
                 name="isAllDay"
                 control={control}
                 render={({ field }) => {
-                  if (disabled) return <InputWrapper label={messages.allDayLabel} />;
+                  if (disabled)
+                    return <InputWrapper label={messages.allDayLabel} />;
                   return (
                     <Switch
                       {...field}
                       disabled={disabled}
-                      error={get(errors, 'isAllDay')}
+                      error={get(errors, "isAllDay")}
                       label={messages.allDayLabel}
                       labelPosition="end"
                       checked={field.value}

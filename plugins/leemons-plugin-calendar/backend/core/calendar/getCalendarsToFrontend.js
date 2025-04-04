@@ -1,12 +1,16 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
-const { getUserAgentCalendarKey, getUserFullName } = require('@leemons/users');
-const { getPermissionConfig: getPermissionConfigCalendar } = require('./getPermissionConfig');
-const { getPermissionConfig: getPermissionConfigEvent } = require('../events/getPermissionConfig');
-const { getByCenterId } = require('../calendar-configs');
-const { getCalendars } = require('../calendar-configs/getCalendars');
-const { getEventsMultipleCalendars } = require('./getEvents');
-const { list: listKanbanColumns } = require('../kanban-columns');
+const _ = require("lodash");
+const { getUserAgentCalendarKey, getUserFullName } = require("@leemons/users");
+const {
+  getPermissionConfig: getPermissionConfigCalendar,
+} = require("./getPermissionConfig");
+const {
+  getPermissionConfig: getPermissionConfigEvent,
+} = require("../events/getPermissionConfig");
+const { getByCenterId } = require("../calendar-configs");
+const { getCalendars } = require("../calendar-configs/getCalendars");
+const { getEventsMultipleCalendars } = require("./getEvents");
+const { list: listKanbanColumns } = require("../kanban-columns");
 
 function hasGrades(studentData) {
   const grades = studentData?.grades;
@@ -15,7 +19,9 @@ function hasGrades(studentData) {
     return false;
   }
 
-  return grades.some((grade) => grade.type === 'main' && grade.visibleToStudent);
+  return grades.some(
+    (grade) => grade.type === "main" && grade.visibleToStudent
+  );
 }
 
 /**
@@ -38,10 +44,10 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
   // ES: Cogemos todos los permisos del usuario
   // EN: We take all the user permissions
   const [userPermissions, center] = await Promise.all([
-    ctx.tx.call('users.permissions.getUserAgentPermissions', {
+    ctx.tx.call("users.permissions.getUserAgentPermissions", {
       userAgent: userSession.userAgents,
     }),
-    ctx.tx.call('users.users.getUserAgentCenter', {
+    ctx.tx.call("users.users.getUserAgentCenter", {
       userAgent: userSession.userAgents[0],
     }),
   ]);
@@ -58,10 +64,10 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
         actionName: userPermission.actionNames,
         target: userPermission.target,
       });
-      if (userPermission.actionNames.indexOf('owner') >= 0) {
+      if (userPermission.actionNames.indexOf("owner") >= 0) {
         ownerPermissions.push({
           permissionName: userPermission.permissionName,
-          actionName: ['owner'],
+          actionName: ["owner"],
           target: userPermission.target,
         });
       }
@@ -81,15 +87,15 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
   if (!params1.$or.length) delete params1.$or;
   if (!params2.$or.length) delete params2.$or;
   let promises = [
-    ctx.tx.call('users.permissions.findItems', {
+    ctx.tx.call("users.permissions.findItems", {
       params: params1,
     }),
-    ctx.tx.call('users.permissions.findItems', {
+    ctx.tx.call("users.permissions.findItems", {
       params: params2,
     }),
   ];
   promises.push(
-    ctx.tx.call('users.users.getUserAgentsInfo', {
+    ctx.tx.call("users.users.getUserAgentsInfo", {
       userAgentIds: [userSession.userAgents[0].id],
       withProfile: true,
       withCenter: true,
@@ -97,7 +103,8 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
   );
 
   if (center) promises.push(getByCenterId({ center: center.id, ctx }));
-  const [items, ownerItems, [userAgent], calendarConfig] = await Promise.all(promises);
+  const [items, ownerItems, [userAgent], calendarConfig] =
+    await Promise.all(promises);
 
   // ES: Separamos los calendarios de los eventos
   // EN: We separate the calendars from the events
@@ -113,17 +120,24 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
 
   promises = [
     ctx.tx.db.Calendars.find({ id: calendarIds }).lean(),
-    getEventsMultipleCalendars({ calendars: calendarIds, getPrivates: false, ctx }),
+    getEventsMultipleCalendars({
+      calendars: calendarIds,
+      getPrivates: false,
+      ctx,
+    }),
     ctx.tx.db.Events.find({ id: eventIds }).lean(),
     ctx.tx.db.ClassCalendar.find({ calendar: calendarIds }).lean(),
-    ctx.tx.call('academic-portfolio.programs.listPrograms', {
+    ctx.tx.call("academic-portfolio.programs.listPrograms", {
       page: 0,
       size: 9999,
       center: userAgent.center.id,
     }),
   ];
 
-  if (calendarConfig) promises.push(getCalendars({ id: calendarConfig.id, withEvents: true, ctx }));
+  if (calendarConfig)
+    promises.push(
+      getCalendars({ id: calendarConfig.id, withEvents: true, ctx })
+    );
   const [
     _calendars,
     eventsCalendars,
@@ -138,14 +152,17 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
   let eventsFromCalendars = [];
   let events = [];
   let calendars = [];
-  if (userAgent.profile.sysName === 'admin') {
-    const programIds = _.map(programs, (program) => `calendar.program.${program.id}`);
+  if (userAgent.profile.sysName === "admin") {
+    const programIds = _.map(
+      programs,
+      (program) => `calendar.program.${program.id}`
+    );
     _.forEach(_calendars, (calendar) => {
-      if (calendar.section === 'calendar.programs') {
+      if (calendar.section === "calendar.programs") {
         if (programIds.includes(calendar.key)) {
           calendars.push(calendar);
         }
-      } else if (calendar.key.startsWith('users.calendar.agent.')) {
+      } else if (calendar.key.startsWith("users.calendar.agent.")) {
         if (calendar.key.includes(userAgent.id)) {
           calendars.push(calendar);
         }
@@ -153,7 +170,7 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
         calendars.push(calendar);
       }
     });
-    const _calendarIds = _.map(calendars, 'id');
+    const _calendarIds = _.map(calendars, "id");
     events = _.filter(_events, (ev) => _calendarIds.includes(ev.calendar));
     eventsFromCalendars = _.filter(_eventsFromCalendars, (ev) =>
       _calendarIds.includes(ev.calendar)
@@ -177,12 +194,12 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
     });
   }
 
-  const ownerCalendarIds = _.map(ownerItems, 'item');
+  const ownerCalendarIds = _.map(ownerItems, "item");
   const ownerCalendars = _.filter(
     calendars,
     (calendar) =>
       ownerCalendarIds.indexOf(calendar.id) >= 0 &&
-      calendar.section === 'users.calendar.user_section'
+      calendar.section === "users.calendar.user_section"
   );
   const finalCalendarsIds = [];
   const finalCalendars = [];
@@ -195,7 +212,7 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
   _.forEach(ownerCalendars, (calendar) => {
     if (finalCalendarsIds.indexOf(calendar.id) < 0) {
       // eslint-disable-next-line no-param-reassign
-      calendar.section = 'users.calendar.user_section';
+      calendar.section = "users.calendar.user_section";
       finalCalendars.push(calendar);
       finalCalendarsIds.push(calendar.id);
     }
@@ -215,12 +232,12 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
       // eslint-disable-next-line no-param-reassign
       delete calendar.events;
       // eslint-disable-next-line no-param-reassign
-      calendar.section = 'users.calendar.user_section';
+      calendar.section = "users.calendar.user_section";
       finalCalendars.push(calendar);
     });
   }
 
-  const classCalendarsIds = _.map(classCalendars, 'calendar');
+  const classCalendarsIds = _.map(classCalendars, "calendar");
 
   // console.log('EVENTS --------', events);
   // console.log('EVENTS CALENDARS --------', eventsFromCalendars);
@@ -230,30 +247,41 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
     isClass: classCalendarsIds.indexOf(calendar.id) >= 0,
     isUserCalendar: calendar.id === userCalendar?.id,
     image: calendar.id === userCalendar?.id ? userSession.avatar : null,
-    metadata: calendar.metadata ? JSON.parse(calendar.metadata || null) : calendar.metadata,
-    fullName: calendar.id === userCalendar?.id ? getUserFullName({ userSession }) : calendar.name,
+    metadata: calendar.metadata
+      ? JSON.parse(calendar.metadata || null)
+      : calendar.metadata,
+    fullName:
+      calendar.id === userCalendar?.id
+        ? getUserFullName({ userSession })
+        : calendar.name,
   });
 
   // ES: Resultados con todos los eventos y calendarios a los que tiene acceso el usuario
   const result = {
     userCalendar,
-    ownerCalendars: _.sortBy(_.map(ownerCalendars, calendarFunc), ({ id, metadata }) => {
-      try {
-        const met = JSON.parse(metadata || null);
-        return met?.internalId || id === userCalendar?.id ? 0 : 1;
-      } catch (e) {
-        return id === userCalendar?.id ? 0 : 1;
+    ownerCalendars: _.sortBy(
+      _.map(ownerCalendars, calendarFunc),
+      ({ id, metadata }) => {
+        try {
+          const met = JSON.parse(metadata || null);
+          return met?.internalId || id === userCalendar?.id ? 0 : 1;
+        } catch (e) {
+          return id === userCalendar?.id ? 0 : 1;
+        }
       }
-    }),
+    ),
     configCalendars,
-    calendars: _.sortBy(_.map(finalCalendars, calendarFunc), ({ id, metadata }) => {
-      try {
-        const met = JSON.parse(metadata || null);
-        return met?.internalId || id === userCalendar?.id ? 0 : 1;
-      } catch (e) {
-        return id === userCalendar?.id ? 0 : 1;
+    calendars: _.sortBy(
+      _.map(finalCalendars, calendarFunc),
+      ({ id, metadata }) => {
+        try {
+          const met = JSON.parse(metadata || null);
+          return met?.internalId || id === userCalendar?.id ? 0 : 1;
+        } catch (e) {
+          return id === userCalendar?.id ? 0 : 1;
+        }
       }
-    }),
+    ),
     events: _.uniqBy(
       eventsFromCalendars
         .map((e) => ({
@@ -264,16 +292,18 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
         .concat(configCalendarEvents)
         .map((event) => ({
           ...event,
-          data: _.isString(event.data) ? JSON.parse(event.data || null) : event.data,
+          data: _.isString(event.data)
+            ? JSON.parse(event.data || null)
+            : event.data,
         })),
-      'id'
+      "id"
     ),
   };
 
   // Si el usuario esta contextualizado por el programa, quitamos los calendarios y eventos que no pertemezcan a dicho programa
   if (userSession.sessionConfig?.program) {
-    let usedCalendarIds = _.map(result.ownerCalendars, 'id');
-    usedCalendarIds = usedCalendarIds.concat(_.map(result.calendars, 'id'));
+    let usedCalendarIds = _.map(result.ownerCalendars, "id");
+    usedCalendarIds = usedCalendarIds.concat(_.map(result.calendars, "id"));
     usedCalendarIds = _.uniq(usedCalendarIds);
     // Cogemos las ids de los calendarios que entre los que tenemos sabemos que no pertenecen a nuestro programa
     const [noClassCalendars, noProgramCalendars] = await Promise.all([
@@ -287,14 +317,17 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
       }).lean(),
     ]);
 
-    const calendarIdsToRemove = _.map(noClassCalendars, 'calendar').concat(
-      _.map(noProgramCalendars, 'calendar')
+    const calendarIdsToRemove = _.map(noClassCalendars, "calendar").concat(
+      _.map(noProgramCalendars, "calendar")
     );
     result.ownerCalendars = _.filter(
       result.ownerCalendars,
       ({ id }) => !calendarIdsToRemove.includes(id)
     );
-    result.calendars = _.filter(result.calendars, ({ id }) => !calendarIdsToRemove.includes(id));
+    result.calendars = _.filter(
+      result.calendars,
+      ({ id }) => !calendarIdsToRemove.includes(id)
+    );
     result.events = _.filter(result.events, ({ calendar, data }) => {
       if (data && _.isArray(data.classes) && data.classes.length) {
         if (_.intersection(data.classes, calendarIdsToRemove).length > 0) {
@@ -309,8 +342,8 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
   let programIds = [];
   const allCalendars = result.calendars.concat(result.ownerCalendars);
   _.forEach(allCalendars, ({ id, section, key }) => {
-    if (key.startsWith('calendar.program.')) {
-      const split = key.split('.');
+    if (key.startsWith("calendar.program.")) {
+      const split = key.split(".");
       programIds.push(split[split.length - 1]);
       calendarByProgramId[split[split.length - 1]] = id;
     }
@@ -325,17 +358,17 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
 
   // ES: Sacamos para todos los eventos que userAgents tiene permiso de ver y cuales son sus owers
   const [viewPermissions, _ownerPermissions] = await Promise.all([
-    ctx.tx.call('users.permissions.findUserAgentsWithPermission', {
+    ctx.tx.call("users.permissions.findUserAgentsWithPermission", {
       permissions: {
         permissionName: permissionNames,
-        actionNames: ['view'],
+        actionNames: ["view"],
       },
       returnUserAgents: false,
     }),
-    ctx.tx.call('users.permissions.findUserAgentsWithPermission', {
+    ctx.tx.call("users.permissions.findUserAgentsWithPermission", {
       permissions: {
         permissionName: permissionNames,
-        actionNames: ['owner'],
+        actionNames: ["owner"],
       },
       returnUserAgents: false,
     }),
@@ -355,33 +388,38 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
     });
 
     const [instanceStatus, _kanbanColumns, instances] = await Promise.all([
-      ctx.tx.call('assignables.assignableInstances.getAssignableInstancesStatus', {
-        assignableInstanceIds: instanceIds,
-      }),
+      ctx.tx.call(
+        "assignables.assignableInstances.getAssignableInstancesStatus",
+        {
+          assignableInstanceIds: instanceIds,
+        }
+      ),
       listKanbanColumns({ showHiddenColumns, ctx }),
-      ctx.tx.call('assignables.assignableInstances.getAssignableInstances', {
+      ctx.tx.call("assignables.assignableInstances.getAssignableInstances", {
         ids: instanceIds,
         details: true,
       }),
     ]);
 
     kanbanColumns = _kanbanColumns;
-    instanceStatusByInstance = _.keyBy(instanceStatus, 'instance');
-    instancesById = _.keyBy(instances, 'id');
+    instanceStatusByInstance = _.keyBy(instanceStatus, "instance");
+    instancesById = _.keyBy(instances, "id");
   } catch (e) {
     console.error(e);
   }
 
-  const userAgentIds = _.uniq(_.map(viewPermissions, 'userAgent'));
-  const permissionsByName = _.groupBy(viewPermissions, 'permissionName');
-  const ownerPermissionsByName = _.groupBy(_ownerPermissions, 'permissionName');
+  const userAgentIds = _.uniq(_.map(viewPermissions, "userAgent"));
+  const permissionsByName = _.groupBy(viewPermissions, "permissionName");
+  const ownerPermissionsByName = _.groupBy(_ownerPermissions, "permissionName");
 
-  const userAgents = await ctx.tx.call('users.users.getUserAgentsInfo', { userAgentIds });
+  const userAgents = await ctx.tx.call("users.users.getUserAgentsInfo", {
+    userAgentIds,
+  });
 
-  const userAgentsById = _.keyBy(userAgents, 'id');
+  const userAgentsById = _.keyBy(userAgents, "id");
 
-  const currentUserAgentIds = _.map(userSession.userAgents, 'id');
-  const kanbanColumnsByOrder = _.keyBy(kanbanColumns, 'order');
+  const currentUserAgentIds = _.map(userSession.userAgents, "id");
+  const kanbanColumnsByOrder = _.keyBy(kanbanColumns, "order");
 
   // Procesamos todos los eventos para meterles sus userAgents y si son de instancias calcular la columna
   result.events = _.omitBy(
@@ -393,7 +431,7 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
       const permName = getPermissionConfigEvent(event.id).permissionName;
       const ownerPerms = ownerPermissionsByName[permName];
       if (ownerPerms && ownerPerms.length) {
-        event.owners = _.map(ownerPerms, 'userAgent');
+        event.owners = _.map(ownerPerms, "userAgent");
       }
       const perms = permissionsByName[permName];
       if (perms && perms.length) {
@@ -412,14 +450,19 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
 
       // --- Instancia
       if (instanceIdEvents[event.id]) {
-        const instanceStatus = instanceStatusByInstance[instanceIdEvents[event.id]];
+        const instanceStatus =
+          instanceStatusByInstance[instanceIdEvents[event.id]];
         const instance = instancesById[instanceIdEvents[event.id]];
         event.instanceData = {
           ...instanceStatus,
           instance,
         };
 
-        if (instanceStatus && (event.endDate || event.startDate) && instanceStatus.dates.deadline) {
+        if (
+          instanceStatus &&
+          (event.endDate || event.startDate) &&
+          instanceStatus.dates.deadline
+        ) {
           event.startDate = instanceStatus.dates.start;
           event.endDate = instanceStatus.dates.deadline;
         }
@@ -458,23 +501,23 @@ async function getCalendarsToFrontend({ showHiddenColumns, ctx }) {
             }
           }
 
-          if (instanceStatus.status === 'assigned') {
+          if (instanceStatus.status === "assigned") {
             event.data.column = kanbanColumnsByOrder[1]?.id;
           }
-          if (instanceStatus.status === 'opened') {
+          if (instanceStatus.status === "opened") {
             event.data.column = kanbanColumnsByOrder[2].id;
           }
-          if (instanceStatus.status === 'started') {
+          if (instanceStatus.status === "started") {
             event.data.column = kanbanColumnsByOrder[3].id;
           }
           if (
-            instanceStatus.status === 'late' ||
-            instanceStatus.status === 'submitted' ||
-            instanceStatus.status === 'closed'
+            instanceStatus.status === "late" ||
+            instanceStatus.status === "submitted" ||
+            instanceStatus.status === "closed"
           ) {
             event.data.column = kanbanColumnsByOrder[4].id;
           }
-          if (instanceStatus.status === 'evaluated') {
+          if (instanceStatus.status === "evaluated") {
             event.data.column = kanbanColumnsByOrder[5].id;
           }
 

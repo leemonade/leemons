@@ -1,8 +1,8 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box } from '@bubbles-ui/components';
-import { ZoneWidgets } from '@widgets';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box } from "@bubbles-ui/components";
+import { ZoneWidgets } from "@widgets";
 
 function TabCalendarWidget(props) {
   return (

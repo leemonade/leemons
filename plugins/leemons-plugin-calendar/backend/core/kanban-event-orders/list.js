@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 /**
  * List kanban columns
@@ -16,7 +16,10 @@ async function list({ column, ctx }) {
   };
   if (column) query.column = column;
   const response = await ctx.tx.db.KanbanEventOrders.find(query).lean();
-  return _.map(response, (r) => ({ ...r, events: JSON.parse(r.events || null) }));
+  return _.map(response, (r) => ({
+    ...r,
+    events: JSON.parse(r.events || null),
+  }));
 }
 
 module.exports = { list };

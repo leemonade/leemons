@@ -1,18 +1,18 @@
-import PropTypes from 'prop-types';
-import clsx from 'clsx';
-import * as animationFrame from 'dom-helpers/animationFrame';
-import React, { Component } from 'react';
-import memoize from 'memoize-one';
+import PropTypes from "prop-types";
+import clsx from "clsx";
+import * as animationFrame from "dom-helpers/animationFrame";
+import React, { Component } from "react";
+import memoize from "memoize-one";
 
-import getWidth from 'dom-helpers/width';
-import DayColumn from './DayColumn';
-import TimeGutter from './TimeGutter';
+import getWidth from "dom-helpers/width";
+import DayColumn from "./DayColumn";
+import TimeGutter from "./TimeGutter";
 
-import TimeGridHeader from './TimeGridHeader';
-import { notify } from './utils/helpers';
-import { inRange, sortEvents } from './utils/eventLevels';
-import Resources from './utils/Resources';
-import { DayLayoutAlgorithmPropType } from './utils/propTypes';
+import TimeGridHeader from "./TimeGridHeader";
+import { notify } from "./utils/helpers";
+import { inRange, sortEvents } from "./utils/eventLevels";
+import Resources from "./utils/Resources";
+import { DayLayoutAlgorithmPropType } from "./utils/propTypes";
 
 export default class TimeGrid extends Component {
   constructor(props) {
@@ -35,7 +35,7 @@ export default class TimeGrid extends Component {
 
     this.applyScroll();
 
-    window.addEventListener('resize', this.handleResize);
+    window.addEventListener("resize", this.handleResize);
   }
 
   handleScroll = (e) => {
@@ -50,7 +50,7 @@ export default class TimeGrid extends Component {
   };
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.handleResize);
+    window.removeEventListener("resize", this.handleResize);
 
     animationFrame.cancel(this.rafHandle);
 
@@ -72,8 +72,8 @@ export default class TimeGrid extends Component {
     const { range, scrollToTime, localizer } = this.props;
     // When paginating, reset scroll
     if (
-      localizer.neq(nextProps.range[0], range[0], 'minutes') ||
-      localizer.neq(nextProps.scrollToTime, scrollToTime, 'minutes')
+      localizer.neq(nextProps.range[0], range[0], "minutes") ||
+      localizer.neq(nextProps.scrollToTime, scrollToTime, "minutes")
     ) {
       this.calculateScroll(nextProps);
     }
@@ -107,7 +107,8 @@ export default class TimeGrid extends Component {
   };
 
   renderEvents(range, events, backgroundEvents, now) {
-    const { min, max, components, accessors, localizer, dayLayoutAlgorithm } = this.props;
+    const { min, max, components, accessors, localizer, dayLayoutAlgorithm } =
+      this.props;
 
     const resources = this.memoizedResources(this.props.resources, accessors);
     const groupedEvents = resources.groupEvents(events);
@@ -116,11 +117,23 @@ export default class TimeGrid extends Component {
     return resources.map(([id, resource], i) =>
       range.map((date, jj) => {
         const daysEvents = (groupedEvents.get(id) || []).filter((event) =>
-          localizer.inRange(date, accessors.start(event), accessors.end(event), 'day')
+          localizer.inRange(
+            date,
+            accessors.start(event),
+            accessors.end(event),
+            "day"
+          )
         );
 
-        const daysBackgroundEvents = (groupedBackgroundEvents.get(id) || []).filter((event) =>
-          localizer.inRange(date, accessors.start(event), accessors.end(event), 'day')
+        const daysBackgroundEvents = (
+          groupedBackgroundEvents.get(id) || []
+        ).filter((event) =>
+          localizer.inRange(
+            date,
+            accessors.start(event),
+            accessors.end(event),
+            "day"
+          )
         );
 
         return (
@@ -201,7 +214,12 @@ export default class TimeGrid extends Component {
     allDayEvents.sort((a, b) => sortEvents(a, b, accessors, localizer));
 
     return (
-      <div className={clsx('rbc-time-view', resources && 'rbc-time-view-resources')}>
+      <div
+        className={clsx(
+          "rbc-time-view",
+          resources && "rbc-time-view-resources"
+        )}
+      >
         <TimeGridHeader
           range={range}
           events={allDayEvents}
@@ -226,7 +244,11 @@ export default class TimeGrid extends Component {
           getDrilldownView={this.props.getDrilldownView}
           resizable={resizable}
         />
-        <div ref={this.contentRef} className="rbc-time-content" onScroll={this.handleScroll}>
+        <div
+          ref={this.contentRef}
+          className="rbc-time-content"
+          onScroll={this.handleScroll}
+        >
           <TimeGutter
             date={start}
             gref={this.gutterRef}
@@ -240,7 +262,12 @@ export default class TimeGrid extends Component {
             className="rbc-time-gutter"
             getters={getters}
           />
-          {this.renderEvents(range, rangeEvents, rangeBackgroundEvents, getNow())}
+          {this.renderEvents(
+            range,
+            rangeEvents,
+            rangeBackgroundEvents,
+            getNow()
+          )}
         </div>
       </div>
     );
@@ -255,13 +282,15 @@ export default class TimeGrid extends Component {
     if (this.measureGutterAnimationFrameRequest) {
       window.cancelAnimationFrame(this.measureGutterAnimationFrameRequest);
     }
-    this.measureGutterAnimationFrameRequest = window.requestAnimationFrame(() => {
-      const width = getWidth(this.gutter);
+    this.measureGutterAnimationFrameRequest = window.requestAnimationFrame(
+      () => {
+        const width = getWidth(this.gutter);
 
-      if (width && this.state.gutterWidth !== width) {
-        this.setState({ gutterWidth: width });
+        if (width && this.state.gutterWidth !== width) {
+          this.setState({ gutterWidth: width });
+        }
       }
-    });
+    );
   }
 
   applyScroll() {
@@ -276,7 +305,7 @@ export default class TimeGrid extends Component {
   calculateScroll(props = this.props) {
     const { min, max, scrollToTime, localizer } = props;
 
-    const diffMillis = scrollToTime - localizer.startOf(scrollToTime, 'day');
+    const diffMillis = scrollToTime - localizer.startOf(scrollToTime, "day");
     const totalMillis = localizer.diff(max, min);
 
     this._scrollRatio = diffMillis / totalMillis;
@@ -296,7 +325,9 @@ export default class TimeGrid extends Component {
     }
   };
 
-  memoizedResources = memoize((resources, accessors) => Resources(resources, accessors));
+  memoizedResources = memoize((resources, accessors) =>
+    Resources(resources, accessors)
+  );
 }
 
 TimeGrid.propTypes = {
@@ -324,7 +355,7 @@ TimeGrid.propTypes = {
   localizer: PropTypes.object.isRequired,
 
   selected: PropTypes.object,
-  selectable: PropTypes.oneOf([true, false, 'ignoreEvents']),
+  selectable: PropTypes.oneOf([true, false, "ignoreEvents"]),
   longPressThreshold: PropTypes.number,
 
   onNavigate: PropTypes.func,

@@ -3,27 +3,29 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsError } = require('@leemons/error');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const _ = require('lodash');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsError } = require("@leemons/error");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMongoDBMixin, mongoose } = require("@leemons/mongodb");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
+const _ = require("lodash");
 
-const calendar = require('../core/calendar');
-const eventTypes = require('../core/event-types');
-const events = require('../core/events');
-const { getServiceModels } = require('../models');
-const { validateKeyPrefix } = require('../validations/exists');
+const calendar = require("../core/calendar");
+const eventTypes = require("../core/event-types");
+const events = require("../core/events");
+const { getServiceModels } = require("../models");
+const { validateKeyPrefix } = require("../validations/exists");
 
-const restActions = require('./rest/calendar.rest');
+const restActions = require("./rest/calendar.rest");
 
-const FORBIDDEN_MESSAGE = 'Access denied from this plugin';
+const FORBIDDEN_MESSAGE = "Access denied from this plugin";
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'calendar.calendar',
+  name: "calendar.calendar",
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
@@ -73,7 +75,10 @@ module.exports = {
     },
     unGrantAccessUserAgentToCalendar: {
       handler(ctx) {
-        return calendar.unGrantAccessUserAgentToCalendar({ ...ctx.params, ctx });
+        return calendar.unGrantAccessUserAgentToCalendar({
+          ...ctx.params,
+          ctx,
+        });
       },
     },
     getCalendars: {
@@ -83,12 +88,14 @@ module.exports = {
     },
     addEvent: {
       handler(ctx) {
-        const keys = _.isArray(ctx.params.key) ? ctx.params.key : [ctx.params.key];
+        const keys = _.isArray(ctx.params.key)
+          ? ctx.params.key
+          : [ctx.params.key];
         // Check if keys start with 'assignables'
         _.forEach(keys, (k) => {
           if (
-            !ctx.callerPlugin.startsWith('assignables') &&
-            !ctx.callerPlugin.startsWith('bulk-data')
+            !ctx.callerPlugin.startsWith("assignables") &&
+            !ctx.callerPlugin.startsWith("bulk-data")
           ) {
             validateKeyPrefix({ key: k, calledFrom: ctx.callerPlugin, ctx });
           }
@@ -98,8 +105,8 @@ module.exports = {
     },
     addEventFromUser: {
       params: {
-        event: { type: 'object' },
-        ownerUserAgentId: { type: 'string', optional: true },
+        event: { type: "object" },
+        ownerUserAgentId: { type: "string", optional: true },
       },
       async handler(ctx) {
         const { ownerUserAgentId, event } = ctx.params;
@@ -109,9 +116,9 @@ module.exports = {
     },
     updateEventFromUser: {
       params: {
-        id: { type: 'string' },
-        event: { type: 'object' },
-        ownerUserAgentId: { type: 'string', optional: true },
+        id: { type: "string" },
+        event: { type: "object" },
+        ownerUserAgentId: { type: "string", optional: true },
       },
       async handler(ctx) {
         const { id, ownerUserAgentId, event } = ctx.params;
@@ -136,8 +143,8 @@ module.exports = {
     },
     removeEventFromUser: {
       params: {
-        id: { type: 'string' },
-        ownerUserAgentId: { type: 'string', optional: true },
+        id: { type: "string" },
+        ownerUserAgentId: { type: "string", optional: true },
       },
       async handler(ctx) {
         const { id, ownerUserAgentId } = ctx.params;
@@ -147,7 +154,7 @@ module.exports = {
     },
     removeEvent: {
       handler(ctx) {
-        if (!ctx.callerPlugin.startsWith('assignables')) {
+        if (!ctx.callerPlugin.startsWith("assignables")) {
           throw new LeemonsError(ctx, { message: FORBIDDEN_MESSAGE });
         }
         return events.remove({ ...ctx.params, ctx });
@@ -155,7 +162,7 @@ module.exports = {
     },
     updateEvent: {
       handler(ctx) {
-        if (!ctx.callerPlugin.startsWith('assignables')) {
+        if (!ctx.callerPlugin.startsWith("assignables")) {
           throw new LeemonsError(ctx, { message: FORBIDDEN_MESSAGE });
         }
         return events.update({ ...ctx.params, ctx });
@@ -164,13 +171,15 @@ module.exports = {
     getCalendarsByClass: {
       handler(ctx) {
         return ctx.tx.db.ClassCalendar.find({
-          class: _.isArray(ctx.params.classe) ? ctx.params.classe : [ctx.params.classe],
+          class: _.isArray(ctx.params.classe)
+            ? ctx.params.classe
+            : [ctx.params.classe],
         });
       },
     },
     grantAccessUserAgentToEvent: {
       handler(ctx) {
-        if (!ctx.callerPlugin.startsWith('assignables')) {
+        if (!ctx.callerPlugin.startsWith("assignables")) {
           throw new LeemonsError(ctx, { message: FORBIDDEN_MESSAGE });
         }
         return events.grantAccessUserAgentToEvent({ ...ctx.params, ctx });
@@ -178,7 +187,7 @@ module.exports = {
     },
     unGrantAccessUserAgentToEvent: {
       handler(ctx) {
-        if (!ctx.callerPlugin.startsWith('assignables')) {
+        if (!ctx.callerPlugin.startsWith("assignables")) {
           throw new LeemonsError(ctx, { message: FORBIDDEN_MESSAGE });
         }
         return events.unGrantAccessUserAgentToEvent({ ...ctx.params, ctx });

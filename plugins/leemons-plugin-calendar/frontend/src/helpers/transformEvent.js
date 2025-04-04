@@ -1,5 +1,5 @@
-import { parseDeadline } from '@assignables/components/NYACard/NYACard';
-import { cloneDeep, find, keyBy, uniq } from 'lodash';
+import { parseDeadline } from "@assignables/components/NYACard/NYACard";
+import { cloneDeep, find, keyBy, uniq } from "lodash";
 
 export default function transformEvent(
   _event,
@@ -8,9 +8,9 @@ export default function transformEvent(
 ) {
   const event = cloneDeep(_event);
   // if (event.type === 'calendar.task' && event.data && event.data.classes) {
-  const calendarsByKey = keyBy(calendars, 'id');
+  const calendarsByKey = keyBy(calendars, "id");
   let classes = event.data?.classes ? cloneDeep(event.data.classes) : [];
-  if (calendarsByKey[event.calendar]?.key.indexOf('calendar.class.') >= 0) {
+  if (calendarsByKey[event.calendar]?.key.indexOf("calendar.class.") >= 0) {
     classes.push(event.calendar);
   }
   classes = uniq(classes);
@@ -21,10 +21,10 @@ export default function transformEvent(
       event.image = calendar.image;
       event.calendarName = null;
     }
-    event.icon = '/public/assignables/module-three.svg';
-    event.bgColor = '#67728E';
-    event.borderColor = '#67728E';
-    event.calendarName = t ? t('multiSubject') : 'Multi-Subject';
+    event.icon = "/public/assignables/module-three.svg";
+    event.bgColor = "#67728E";
+    event.borderColor = "#67728E";
+    event.calendarName = t ? t("multiSubject") : "Multi-Subject";
   } else {
     let calendar = calendarsByKey[classes[0]];
     if (!calendar) {
@@ -34,7 +34,7 @@ export default function transformEvent(
     event.icon = event.icon || calendar.icon;
     event.bgColor = event.bgColor || calendar.bgColor;
     event.borderColor = event.borderColor || calendar.borderColor;
-    event.calendarName = calendar.name.replace(/(\(-auto-\))/g, '');
+    event.calendarName = calendar.name.replace(/(\(-auto-\))/g, "");
     if (!forKanban) {
       if (calendar.isUserCalendar && !classes.length) {
         event.image = calendar.image;
@@ -45,11 +45,11 @@ export default function transformEvent(
         event.image = eventCalendar.image;
       }
       if (classes.length) {
-        event.calendarName = calendar.name.replace(/(\(-auto-\))/g, '');
+        event.calendarName = calendar.name.replace(/(\(-auto-\))/g, "");
       }
     }
     if (!event.icon && !calendar.isClass && !calendar.isUserCalendar) {
-      event.icon = '/public/assets/svgs/alarm-bell.svg';
+      event.icon = "/public/assets/svgs/alarm-bell.svg";
     }
   }
   event.title = translate(event.title);
@@ -63,9 +63,12 @@ export default function transformEvent(
           deadline: event.endDate,
           start: event.instanceData ? event.startDate : event.createdAt,
         },
-        status: event.instanceData?.status || 'opened',
+        status: event.instanceData?.status || "opened",
       };
-      event.deadline = parseDeadline(isTeacher, isTeacher ? instance : { instance });
+      event.deadline = parseDeadline(
+        isTeacher,
+        isTeacher ? instance : { instance }
+      );
     }
   }
 

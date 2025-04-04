@@ -1,9 +1,9 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const EVENT_DETAIL_PANEL_DEFAULT_PROPS = {
   labels: {
-    attendanceControl: '',
-    mainTeacher: '',
+    attendanceControl: "",
+    mainTeacher: "",
   },
 };
 export const EVENT_DETAIL_PANEL_PROP_TYPES = {

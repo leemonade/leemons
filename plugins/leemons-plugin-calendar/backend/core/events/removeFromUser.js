@@ -1,9 +1,13 @@
-const { LeemonsError } = require('@leemons/error');
-const _ = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const _ = require("lodash");
 
-const { getPermissionConfig: getPermissionConfigEvent } = require('./getPermissionConfig');
-const { removeOrCancel } = require('./removeOrCancel');
-const { unGrantAccessUserAgentToEvent } = require('./unGrantAccessUserAgentToEvent');
+const {
+  getPermissionConfig: getPermissionConfigEvent,
+} = require("./getPermissionConfig");
+const { removeOrCancel } = require("./removeOrCancel");
+const {
+  unGrantAccessUserAgentToEvent,
+} = require("./unGrantAccessUserAgentToEvent");
 
 /**
  * Add calendar with the provided key if not already exists
@@ -20,7 +24,7 @@ async function removeFromUser({ id, ownerUserAgentId, ctx }) {
 
   let ownerUserAgent;
   if (ownerUserAgentId) {
-    [ownerUserAgent] = await ctx.tx.call('users.users.getUserAgentsInfo', {
+    [ownerUserAgent] = await ctx.tx.call("users.users.getUserAgentsInfo", {
       userAgentIds: [ownerUserAgentId],
     });
   }
@@ -35,7 +39,7 @@ async function removeFromUser({ id, ownerUserAgentId, ctx }) {
   const permissionConfigEvent = getPermissionConfigEvent(id);
 
   const [[eventPermission], [calendarPermission]] = await Promise.all([
-    ctx.tx.call('users.permissions.getUserAgentPermissions', {
+    ctx.tx.call("users.permissions.getUserAgentPermissions", {
       userAgent: userAgents,
       query: {
         permissionName: permissionConfigEvent.permissionName,
@@ -56,20 +60,21 @@ async function removeFromUser({ id, ownerUserAgentId, ctx }) {
   // ES: Si el usuario es owner del calendario o del evento entonces procedemos a
   // borrar/cancelar el evento por que tiene permiso para hacerlo
   if (
-    (calendarPermission && calendarPermission.actionNames.indexOf('owner') >= 0) ||
-    (eventPermission && eventPermission.actionNames.indexOf('owner') >= 0)
+    (calendarPermission &&
+      calendarPermission.actionNames.indexOf("owner") >= 0) ||
+    (eventPermission && eventPermission.actionNames.indexOf("owner") >= 0)
   ) {
     return removeOrCancel({ id, forceDelete: true, ctx });
   }
   // ES: Si el usuario tiene permiso para ver el evento y quiere borrarlo, le quitamos el permiso
-  if (eventPermission && eventPermission.actionNames.indexOf('view') >= 0) {
+  if (eventPermission && eventPermission.actionNames.indexOf("view") >= 0) {
     return unGrantAccessUserAgentToEvent({
       id,
-      userAgentId: _.map(userAgents, 'id'),
+      userAgentId: _.map(userAgents, "id"),
       ctx,
     });
   }
-  throw new LeemonsError(ctx, { message: 'You can`t remove this event' });
+  throw new LeemonsError(ctx, { message: "You can`t remove this event" });
 }
 
 module.exports = { removeFromUser };

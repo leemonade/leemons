@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import {
   Autocomplete,
   Box,
@@ -9,16 +9,16 @@ import {
   Drawer,
   RadioGroup,
   ContextContainer,
-} from '@bubbles-ui/components';
-import { noop } from 'lodash';
-import { Controller, useForm } from 'react-hook-form';
-import { CalendarNewEventModalStyles } from './CalendarNewEventModal.styles';
+} from "@bubbles-ui/components";
+import { noop } from "lodash";
+import { Controller, useForm } from "react-hook-form";
+import { CalendarNewEventModalStyles } from "./CalendarNewEventModal.styles";
 import {
   CALENDAR_NEW_EVENT_MODAL_COLORS as MODAL_COLORS,
   CALENDAR_NEW_EVENT_MODAL_DEFAULT_PROPS,
   CALENDAR_NEW_EVENT_MODAL_PROP_TYPES,
-} from './CalendarNewEventModal.constants';
-import { ColorPicker } from './ColorPicker/ColorPicker';
+} from "./CalendarNewEventModal.constants";
+import { ColorPicker } from "./ColorPicker/ColorPicker";
 
 const CalendarNewEventModal = ({
   locale,
@@ -34,12 +34,12 @@ const CalendarNewEventModal = ({
   onClose = noop,
 }) => {
   const defaultValues = {
-    periodName: values.periodName || '',
-    dayType: values.dayType || 'schoolDays',
+    periodName: values.periodName || "",
+    dayType: values.dayType || "schoolDays",
     withoutOrdinaryDays: values.withoutOrdinaryDays || false,
     startDate: values.startDate || null,
     endDate: values.endDate || null,
-    color: values.color || '',
+    color: values.color || "",
   };
 
   const {
@@ -53,13 +53,13 @@ const CalendarNewEventModal = ({
     formState: { errors },
   } = useForm({ defaultValues });
 
-  const isSchoolDay = watch('dayType') === 'schoolDays';
-  const startDate = watch('startDate');
-  const endDate = watch('endDate');
+  const isSchoolDay = watch("dayType") === "schoolDays";
+  const startDate = watch("startDate");
+  const endDate = watch("endDate");
 
   const onSubmitHandler = (val) => {
     const event = { ...val };
-    if (event.dayType !== 'schoolDays') {
+    if (event.dayType !== "schoolDays") {
       delete event.withoutOrdinaryDays;
       delete event.color;
     }
@@ -83,10 +83,13 @@ const CalendarNewEventModal = ({
     _minDate = startDate;
   }
 
-  const { classes } = CalendarNewEventModalStyles({ isSchoolDay }, { name: 'CalendarModal' });
+  const { classes } = CalendarNewEventModalStyles(
+    { isSchoolDay },
+    { name: "CalendarModal" }
+  );
   return (
     <Drawer opened={opened} size="xl" onClose={onClose}>
-      <Drawer.Header title={'New Event'} />
+      <Drawer.Header title={"New Event"} />
       <Drawer.Content>
         <form form={form} className={classes.root}>
           <Controller
@@ -118,8 +121,8 @@ const CalendarNewEventModal = ({
             render={({ field }) => (
               <RadioGroup
                 data={[
-                  { value: 'schoolDays', label: labels.schoolDays },
-                  { value: 'nonSchoolDays', label: labels.nonSchoolDays },
+                  { value: "schoolDays", label: labels.schoolDays },
+                  { value: "nonSchoolDays", label: labels.nonSchoolDays },
                 ]}
                 error={errors.dayType}
                 rounded
@@ -154,7 +157,9 @@ const CalendarNewEventModal = ({
                 rules={{
                   required: errorMessages.color,
                   validate: (v) =>
-                    MODAL_COLORS.includes(v.toUpperCase()) ? true : errorMessages.invalidColor,
+                    MODAL_COLORS.includes(v.toUpperCase())
+                      ? true
+                      : errorMessages.invalidColor,
                 }}
                 render={({ field }) => (
                   <ColorInput
@@ -191,9 +196,9 @@ const CalendarNewEventModal = ({
                   {...field}
                   onChange={(value) => {
                     if (!value) {
-                      setValue('endDate', null);
+                      setValue("endDate", null);
                     }
-                    if (!getValues('endDate')) setValue('endDate', value);
+                    if (!getValues("endDate")) setValue("endDate", value);
                     field.onChange(value);
                   }}
                   style={{ flex: 1 }}

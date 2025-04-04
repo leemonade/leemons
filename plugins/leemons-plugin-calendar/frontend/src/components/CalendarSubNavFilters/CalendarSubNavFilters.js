@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from "react";
 import {
   Box,
   ImageLoader,
@@ -7,15 +7,15 @@ import {
   SegmentedControl,
   Select,
   Text,
-} from '@bubbles-ui/components';
-import { SubNav } from '@bubbles-ui/extras';
-import { PluginCalendarIcon } from '@bubbles-ui/icons/outline';
-import { forEach } from 'lodash';
+} from "@bubbles-ui/components";
+import { SubNav } from "@bubbles-ui/extras";
+import { PluginCalendarIcon } from "@bubbles-ui/icons/outline";
+import { forEach } from "lodash";
 import {
   CALENDAR_SUB_NAV_FILTERS_DEFAULT_PROPS,
   CALENDAR_SUB_NAV_FILTERS_PROP_TYPES,
-} from './CalendarSubNavFilters.constants';
-import { CalendarSubNavFiltersStyles } from './CalendarSubNavFilters.styles';
+} from "./CalendarSubNavFilters.constants";
+import { CalendarSubNavFiltersStyles } from "./CalendarSubNavFilters.styles";
 
 const CalendarSubNavFilters = ({
   messages,
@@ -35,7 +35,7 @@ const CalendarSubNavFilters = ({
 }) => {
   const { classes } = CalendarSubNavFiltersStyles(
     { mainColor, lightMode },
-    { name: 'SubnavFilters' }
+    { name: "SubnavFilters" }
   );
 
   const [, setR] = useState();
@@ -55,14 +55,18 @@ const CalendarSubNavFilters = ({
             fetch(calendar.icon)
               .then((response) => {
                 if (response.status >= 400) {
-                  throw new Error('Bad response from server');
+                  throw new Error("Bad response from server");
                 }
                 ref.current[calendar.icon] = true;
-                setR(new Date().getTime() + Math.floor(Math.random() * 10000) + 1);
+                setR(
+                  new Date().getTime() + Math.floor(Math.random() * 10000) + 1
+                );
               })
               .catch(() => {
                 ref.current[calendar.icon] = false;
-                setR(new Date().getTime() + Math.floor(Math.random() * 10000) + 1);
+                setR(
+                  new Date().getTime() + Math.floor(Math.random() * 10000) + 1
+                );
               });
           }
         });
@@ -78,11 +82,11 @@ const CalendarSubNavFilters = ({
     <>
       <SubNav
         hideHeaderActions={true}
-        item={{ label: '' }}
-        style={{ position: 'static', boxShadow: 'none' }}
+        item={{ label: "" }}
+        style={{ position: "static", boxShadow: "none" }}
         className={classes.subNav}
         subItems={[]}
-        width={'100%'}
+        width={"100%"}
         open={true}
         messages={messages}
         onClose={onClose}
@@ -96,7 +100,7 @@ const CalendarSubNavFilters = ({
         <Box
           sx={(theme) => ({
             margin: theme.spacing[5],
-            paddingBottom: '80px',
+            paddingBottom: "80px",
           })}
         >
           {showPageControl ? (
@@ -104,7 +108,7 @@ const CalendarSubNavFilters = ({
               data={pages}
               value={pageValue}
               onChange={pageOnChange}
-              orientation={'vertical'}
+              orientation={"vertical"}
               classNames={{
                 root: classes.segmentRoot,
                 label: classes.segmentLabel,
@@ -123,7 +127,9 @@ const CalendarSubNavFilters = ({
               <Text
                 strong
                 size="xs"
-                sx={(theme) => ({ color: lightMode ? theme.colors.text05 : theme.colors.text08 })}
+                sx={(theme) => ({
+                  color: lightMode ? theme.colors.text05 : theme.colors.text08,
+                })}
               >
                 {messages.centers}
               </Text>
@@ -132,7 +138,11 @@ const CalendarSubNavFilters = ({
                   marginTop: theme.spacing[5],
                 })}
               >
-                <Select data={centers} value={centerValue} onChange={centerOnChange} />
+                <Select
+                  data={centers}
+                  value={centerValue}
+                  onChange={centerOnChange}
+                />
               </Box>
             </Box>
           ) : null}
@@ -147,7 +157,11 @@ const CalendarSubNavFilters = ({
                 <Text
                   strong
                   size="xs"
-                  sx={(theme) => ({ color: lightMode ? theme.colors.text05 : theme.colors.text08 })}
+                  sx={(theme) => ({
+                    color: lightMode
+                      ? theme.colors.text05
+                      : theme.colors.text08,
+                  })}
                 >
                   {sectionName}
                 </Text>
@@ -186,7 +200,9 @@ const CalendarSubNavFilters = ({
                           </Box>
                         ) : null
                       }
-                      onChange={(event) => _onChange(sectionIndex, calendarIndex, event)}
+                      onChange={(event) =>
+                        _onChange(sectionIndex, calendarIndex, event)
+                      }
                     />
                   </Box>
                 ))}

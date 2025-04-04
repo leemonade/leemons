@@ -1,4 +1,4 @@
-const { addNexts } = require('./addNexts');
+const { addNexts } = require("./addNexts");
 
 module.exports = {
   addNexts,

@@ -1,5 +1,5 @@
-const { validateNotExistCalendar } = require('../../validations/exists');
-const { getEvents } = require('./getEvents');
+const { validateNotExistCalendar } = require("../../validations/exists");
+const { getEvents } = require("./getEvents");
 
 /**
  * Return calendar if exists

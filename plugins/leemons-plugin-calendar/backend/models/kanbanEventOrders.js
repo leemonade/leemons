@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -34,7 +34,7 @@ schema.index({ userAgent: 1, column: 1, deploymentID: 1, isDeleted: 1 });
 
 const kanbanEventOrdersModel = newModel(
   mongoose.connection,
-  'v1::calendar_kanbanEventOrders',
+  "v1::calendar_kanbanEventOrders",
   schema
 );
 

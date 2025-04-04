@@ -1,2 +1,2 @@
-export * from './EventDetailPanel';
-export * from './EventDetailPanel.constants';
+export * from "./EventDetailPanel";
+export * from "./EventDetailPanel.constants";

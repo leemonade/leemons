@@ -1,26 +1,26 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function remove({ classCalendar, teacher, ctx }) {
   // const programService = leemons.getPlugin('academic-portfolio').services.programs;
   const [insideProgram] = await Promise.all([
     ctx.tx.call(
-      'academic-portfolio.programs.isUserInsideProgram',
+      "academic-portfolio.programs.isUserInsideProgram",
       {
         programId: classCalendar.program,
       },
       { meta: { userSession: { userAgents: [{ id: teacher }] } } }
     ),
-    ctx.tx.call('calendar.calendar.unGrantAccessUserAgentToCalendar', {
+    ctx.tx.call("calendar.calendar.unGrantAccessUserAgentToCalendar", {
       key: ctx.prefixPN(`class.${classCalendar.class}`),
       userAgentId: teacher,
-      actionName: ['owner', 'view'],
+      actionName: ["owner", "view"],
     }),
   ]);
   if (!insideProgram) {
-    await ctx.tx.call('calendar.calendar.unGrantAccessUserAgentToCalendar', {
+    await ctx.tx.call("calendar.calendar.unGrantAccessUserAgentToCalendar", {
       key: ctx.prefixPN(`program.${classCalendar.program}`),
       userAgentId: teacher,
-      actionName: 'view',
+      actionName: "view",
     });
   }
 }
@@ -34,15 +34,23 @@ function onAcademicPortfolioRemoveClassTeachers({
   // eslint-disable-next-line no-async-promise-executor
   return new Promise(async (resolve) => {
     try {
-      const classCalendars = await ctx.tx.db.ClassCalendar.find({ class: classIds }).lean();
+      const classCalendars = await ctx.tx.db.ClassCalendar.find({
+        class: classIds,
+      }).lean();
 
-      const classCalendarsByClass = _.keyBy(classCalendars, 'class');
+      const classCalendarsByClass = _.keyBy(classCalendars, "class");
 
       const promises = [];
       _.forEach(classIds, (classId) => {
         _.forEach(classTeachers, ({ teacher }) => {
           if (classCalendarsByClass[classId]) {
-            promises.push(remove({ classCalendar: classCalendarsByClass[classId], teacher, ctx }));
+            promises.push(
+              remove({
+                classCalendar: classCalendarsByClass[classId],
+                teacher,
+                ctx,
+              })
+            );
           }
         });
       });

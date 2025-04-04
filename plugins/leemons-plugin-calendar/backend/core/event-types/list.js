@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 /**
  * Lista all event types
@@ -10,7 +10,7 @@ const _ = require('lodash');
  * */
 async function list({ ctx }) {
   let eventTypes = await ctx.tx.db.EventTypes.find().lean();
-  eventTypes = _.sortBy(eventTypes, 'order');
+  eventTypes = _.sortBy(eventTypes, "order");
   return _.map(eventTypes, (eventType) => ({
     ...eventType,
     config: JSON.parse(eventType.config || null),

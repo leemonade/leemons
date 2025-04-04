@@ -1,18 +1,18 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import clsx from 'clsx';
+import PropTypes from "prop-types";
+import React from "react";
+import clsx from "clsx";
 
-import Selection, { getBoundsForNode, isEvent } from './Selection';
-import * as TimeSlotUtils from './utils/TimeSlots';
-import { isSelected } from './utils/selection';
+import Selection, { getBoundsForNode, isEvent } from "./Selection";
+import * as TimeSlotUtils from "./utils/TimeSlots";
+import { isSelected } from "./utils/selection";
 
-import { notify } from './utils/helpers';
-import * as DayEventLayout from './utils/DayEventLayout';
-import TimeSlotGroup from './TimeSlotGroup';
-import TimeGridEvent from './TimeGridEvent';
-import { DayLayoutAlgorithmPropType } from './utils/propTypes';
+import { notify } from "./utils/helpers";
+import * as DayEventLayout from "./utils/DayEventLayout";
+import TimeSlotGroup from "./TimeSlotGroup";
+import TimeGridEvent from "./TimeGridEvent";
+import { DayLayoutAlgorithmPropType } from "./utils/propTypes";
 
-import DayColumnWrapper from './DayColumnWrapper';
+import DayColumnWrapper from "./DayColumnWrapper";
 
 class DayColumn extends React.Component {
   state = { selecting: false, timeIndicatorPosition: null };
@@ -40,7 +40,8 @@ class DayColumn extends React.Component {
 
   shouldComponentUpdate(nextProps) {
     if (nextProps.selectable && !this.props.selectable) this._selectable();
-    if (!nextProps.selectable && this.props.selectable) this._teardownSelectable();
+    if (!nextProps.selectable && this.props.selectable)
+      this._teardownSelectable();
 
     this.slotMetrics = this.slotMetrics.update(nextProps);
     return true;
@@ -48,7 +49,11 @@ class DayColumn extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { getNow, isNow, localizer, date, min, max } = this.props;
-    const getNowChanged = localizer.neq(prevProps.getNow(), getNow(), 'minutes');
+    const getNowChanged = localizer.neq(
+      prevProps.getNow(),
+      getNow(),
+      "minutes"
+    );
 
     if (prevProps.isNow !== isNow || getNowChanged) {
       this.clearTimeIndicatorInterval();
@@ -56,14 +61,15 @@ class DayColumn extends React.Component {
       if (isNow) {
         const tail =
           !getNowChanged &&
-          localizer.eq(prevProps.date, date, 'minutes') &&
+          localizer.eq(prevProps.date, date, "minutes") &&
           prevState.timeIndicatorPosition === this.state.timeIndicatorPosition;
 
         this.setTimeIndicatorPositionUpdateInterval(tail);
       }
     } else if (
       isNow &&
-      (localizer.neq(prevProps.min, min, 'minutes') || localizer.neq(prevProps.max, max, 'minutes'))
+      (localizer.neq(prevProps.min, min, "minutes") ||
+        localizer.neq(prevProps.max, max, "minutes"))
     ) {
       this.positionTimeIndicator();
     }
@@ -123,7 +129,8 @@ class DayColumn extends React.Component {
 
     const { className, style } = dayProp(max);
 
-    const DayColumnWrapperComponent = components.dayColumnWrapper || DayColumnWrapper;
+    const DayColumnWrapperComponent =
+      components.dayColumnWrapper || DayColumnWrapper;
 
     return (
       <DayColumnWrapperComponent
@@ -132,11 +139,11 @@ class DayColumn extends React.Component {
         style={style}
         className={clsx(
           className,
-          'rbc-day-slot',
-          'rbc-time-column',
-          isNow && 'rbc-now',
-          isNow && 'rbc-today', // WHY
-          selecting && 'rbc-slot-selecting'
+          "rbc-day-slot",
+          "rbc-time-column",
+          isNow && "rbc-now",
+          isNow && "rbc-today", // WHY
+          selecting && "rbc-slot-selecting"
         )}
       >
         {slotMetrics.groups.map((grp, idx) => (
@@ -156,7 +163,7 @@ class DayColumn extends React.Component {
           components={components}
           slotMetrics={slotMetrics}
         >
-          <div className={clsx('rbc-events-container', rtl && 'rtl')}>
+          <div className={clsx("rbc-events-container", rtl && "rtl")}>
             {this.renderEvents({
               events: this.props.backgroundEvents,
               isBackgroundEvent: true,
@@ -167,7 +174,7 @@ class DayColumn extends React.Component {
 
         {selecting && (
           <div className="rbc-slot-selection" style={{ top, height }}>
-            <span>{localizer.format(selectDates, 'selectRangeFormat')}</span>
+            <span>{localizer.format(selectDates, "selectRangeFormat")}</span>
           </div>
         )}
         {isNow && this.intervalTriggered && (
@@ -208,19 +215,20 @@ class DayColumn extends React.Component {
     return styledEvents.map(({ event, style }, idx) => {
       const end = accessors.end(event);
       const start = accessors.start(event);
-      let format = 'eventTimeRangeFormat';
+      let format = "eventTimeRangeFormat";
       let label;
 
       const startsBeforeDay = slotMetrics.startsBeforeDay(start);
       const startsAfterDay = slotMetrics.startsAfterDay(end);
 
-      if (startsBeforeDay) format = 'eventTimeRangeEndFormat';
-      else if (startsAfterDay) format = 'eventTimeRangeStartFormat';
+      if (startsBeforeDay) format = "eventTimeRangeEndFormat";
+      else if (startsAfterDay) format = "eventTimeRangeStartFormat";
 
       if (startsBeforeDay && startsAfterDay) label = messages.allDay;
       else label = localizer.format({ start, end }, format);
 
-      const continuesEarlier = startsBeforeDay || slotMetrics.startsBefore(start);
+      const continuesEarlier =
+        startsBeforeDay || slotMetrics.startsBefore(start);
       const continuesLater = startsAfterDay || slotMetrics.startsAfter(end);
 
       return (
@@ -261,8 +269,8 @@ class DayColumn extends React.Component {
 
       if (onSelecting) {
         if (
-          (localizer.eq(current.startDate, start, 'minutes') &&
-            localizer.eq(current.endDate, end, 'minutes')) ||
+          (localizer.eq(current.startDate, start, "minutes") &&
+            localizer.eq(current.endDate, end, "minutes")) ||
           onSelecting({ start, end, resourceId: this.props.resource }) === false
         )
           return;
@@ -278,7 +286,10 @@ class DayColumn extends React.Component {
     };
 
     let selectionState = (point) => {
-      let currentSlot = this.slotMetrics.closestSlotFromPoint(point, getBoundsForNode(node));
+      let currentSlot = this.slotMetrics.closestSlotFromPoint(
+        point,
+        getBoundsForNode(node)
+      );
 
       if (!this.state.selecting) {
         this._initialSlot = currentSlot;
@@ -318,27 +329,29 @@ class DayColumn extends React.Component {
       this.setState({ selecting: false });
     };
 
-    selector.on('selecting', maybeSelect);
-    selector.on('selectStart', maybeSelect);
+    selector.on("selecting", maybeSelect);
+    selector.on("selectStart", maybeSelect);
 
-    selector.on('beforeSelect', (box) => {
-      if (this.props.selectable !== 'ignoreEvents') return;
+    selector.on("beforeSelect", (box) => {
+      if (this.props.selectable !== "ignoreEvents") return;
 
       return !isEvent(this.container, box);
     });
 
-    selector.on('click', (box) => selectorClicksHandler(box, 'click'));
+    selector.on("click", (box) => selectorClicksHandler(box, "click"));
 
-    selector.on('doubleClick', (box) => selectorClicksHandler(box, 'doubleClick'));
+    selector.on("doubleClick", (box) =>
+      selectorClicksHandler(box, "doubleClick")
+    );
 
-    selector.on('select', (bounds) => {
+    selector.on("select", (bounds) => {
       if (this.state.selecting) {
-        this._selectSlot({ ...this.state, action: 'select', bounds });
+        this._selectSlot({ ...this.state, action: "select", bounds });
         this.setState({ selecting: false });
       }
     });
 
-    selector.on('reset', () => {
+    selector.on("reset", () => {
       if (this.state.selecting) {
         this.setState({ selecting: false });
       }
@@ -407,7 +420,7 @@ DayColumn.propTypes = {
   timeslots: PropTypes.number,
 
   selected: PropTypes.object,
-  selectable: PropTypes.oneOf([true, false, 'ignoreEvents']),
+  selectable: PropTypes.oneOf([true, false, "ignoreEvents"]),
   eventOffset: PropTypes.number,
   longPressThreshold: PropTypes.number,
 

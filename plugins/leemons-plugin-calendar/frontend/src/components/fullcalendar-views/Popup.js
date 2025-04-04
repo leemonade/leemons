@@ -1,11 +1,11 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import getOffset from 'dom-helpers/offset';
-import getScrollTop from 'dom-helpers/scrollTop';
-import getScrollLeft from 'dom-helpers/scrollLeft';
+import PropTypes from "prop-types";
+import React from "react";
+import getOffset from "dom-helpers/offset";
+import getScrollTop from "dom-helpers/scrollTop";
+import getScrollLeft from "dom-helpers/scrollLeft";
 
-import EventCell from './EventCell';
-import { isSelected } from './utils/selection';
+import EventCell from "./EventCell";
+import { isSelected } from "./utils/selection";
 
 class Popup extends React.Component {
   componentDidMount() {
@@ -21,7 +21,8 @@ class Popup extends React.Component {
 
       if (bottom > viewBottom)
         topOffset = bottom - viewBottom + (popupOffset.y || +popupOffset || 0);
-      if (right > viewRight) leftOffset = right - viewRight + (popupOffset.x || +popupOffset || 0);
+      if (right > viewRight)
+        leftOffset = right - viewRight + (popupOffset.x || +popupOffset || 0);
 
       this.setState({ topOffset, leftOffset }); //eslint-disable-line
     }
@@ -54,8 +55,14 @@ class Popup extends React.Component {
     };
 
     return (
-      <div style={{ ...this.props.style, ...style }} className="rbc-overlay" ref={popperRef}>
-        <div className="rbc-overlay-header">{localizer.format(slotStart, 'dayHeaderFormat')}</div>
+      <div
+        style={{ ...this.props.style, ...style }}
+        className="rbc-overlay"
+        ref={popperRef}
+      >
+        <div className="rbc-overlay-header">
+          {localizer.format(slotStart, "dayHeaderFormat")}
+        </div>
         {events.map((event, idx) => (
           <EventCell
             key={idx}
@@ -68,8 +75,16 @@ class Popup extends React.Component {
             components={components}
             onDoubleClick={onDoubleClick}
             onKeyPress={onKeyPress}
-            continuesPrior={localizer.lt(accessors.end(event), slotStart, 'day')}
-            continuesAfter={localizer.gte(accessors.start(event), slotEnd, 'day')}
+            continuesPrior={localizer.lt(
+              accessors.end(event),
+              slotStart,
+              "day"
+            )}
+            continuesAfter={localizer.gte(
+              accessors.start(event),
+              slotEnd,
+              "day"
+            )}
             slotStart={slotStart}
             slotEnd={slotEnd}
             selected={isSelected(event, selected)}
@@ -106,11 +121,16 @@ Popup.propTypes = {
   show: PropTypes.func,
   slotStart: PropTypes.instanceOf(Date),
   slotEnd: PropTypes.number,
-  popperRef: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({ current: PropTypes.Element })]),
+  popperRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.Element }),
+  ]),
 };
 
 /**
  * The Overlay component, of react-overlays, creates a ref that is passed to the Popup, and
  * requires proper ref forwarding to be used without error
  */
-export default React.forwardRef((props, ref) => <Popup popperRef={ref} {...props} />);
+export default React.forwardRef((props, ref) => (
+  <Popup popperRef={ref} {...props} />
+));

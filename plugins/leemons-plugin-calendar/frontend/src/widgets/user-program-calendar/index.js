@@ -1,48 +1,60 @@
 /* eslint-disable no-nested-ternary */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-import { listSessionClassesRequest } from '@academic-portfolio/request';
-import { Title, Box, Button, createStyles, Stack } from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { getCentersWithToken } from '@users/session';
-import dayjs from 'dayjs';
-import PropTypes from 'prop-types';
+import { listSessionClassesRequest } from "@academic-portfolio/request";
+import {
+  Title,
+  Box,
+  Button,
+  createStyles,
+  Stack,
+} from "@bubbles-ui/components";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import useWelcome from "@dashboard/request/hooks/queries/useWelcome";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { getCentersWithToken } from "@users/session";
+import dayjs from "dayjs";
+import PropTypes from "prop-types";
 
-import getProjectedEvents from '../../helpers/getProjectedEvents';
-import { getCalendarsToFrontendRequest, getScheduleToFrontendRequest } from '../../request';
+import getProjectedEvents from "../../helpers/getProjectedEvents";
+import {
+  getCalendarsToFrontendRequest,
+  getScheduleToFrontendRequest,
+} from "../../request";
 
-import { Calendar } from './components/Calendar';
-import { EmptyState } from './components/EmptyState/EmptyState';
-import { WeekEventList } from './components/WeekEventList';
+import { Calendar } from "./components/Calendar";
+import { EmptyState } from "./components/EmptyState/EmptyState";
+import { WeekEventList } from "./components/WeekEventList";
 
-import { useCalendarEventModal } from '@calendar/components/calendar-event-modal';
-import { prefixPN } from '@calendar/helpers';
-import { getCalendarDaysOffToEvents } from '@calendar/helpers/getCalendarDaysOffToEvents';
-import { getEventColor } from '@calendar/helpers/getEventColor';
-import { getEventsByProgram } from '@calendar/helpers/getEventsByProgram';
-import transformDBEventsToFullCalendarEvents from '@calendar/helpers/transformDBEventsToFullCalendarEvents';
+import { useCalendarEventModal } from "@calendar/components/calendar-event-modal";
+import { prefixPN } from "@calendar/helpers";
+import { getCalendarDaysOffToEvents } from "@calendar/helpers/getCalendarDaysOffToEvents";
+import { getEventColor } from "@calendar/helpers/getEventColor";
+import { getEventsByProgram } from "@calendar/helpers/getEventsByProgram";
+import transformDBEventsToFullCalendarEvents from "@calendar/helpers/transformDBEventsToFullCalendarEvents";
 
 const Styles = createStyles((theme, { inTab }) => ({
   root: {
-    width: '100%',
+    width: "100%",
   },
   calendarContainer: {
-    height: 'fit-content',
-    maxHeight: inTab && 'calc(100vh - 230px)',
+    height: "fit-content",
+    maxHeight: inTab && "calc(100vh - 230px)",
     maxWidth: 1600,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     marginTop: theme.spacing[4],
     padding: theme.spacing[6],
     borderRadius: 4,
-    display: 'flex',
+    display: "flex",
   },
 }));
 
 function UserProgramCalendar({ inTab, program, classe }) {
   const [parsedEvents, setParsedEvents] = useState([]);
-  const [currentMonthRange, setCurrentMonthRange] = useState({ start: null, end: null });
+  const [currentMonthRange, setCurrentMonthRange] = useState({
+    start: null,
+    end: null,
+  });
   const [startDate, setStartDate] = React.useState(() => {
     const today = new Date();
     const day = today.getDay();
@@ -66,15 +78,16 @@ function UserProgramCalendar({ inTab, program, classe }) {
 
   const { classes: styles } = Styles({ inTab });
 
-  const [t] = useTranslateLoader(prefixPN('userProgramCalendar'));
-  const [tc] = useTranslateLoader(prefixPN('calendar'));
-  const [toggleEventModal, EventModal, { openModal: openEventModal }] = useCalendarEventModal();
+  const [t] = useTranslateLoader(prefixPN("userProgramCalendar"));
+  const [tc] = useTranslateLoader(prefixPN("calendar"));
+  const [toggleEventModal, EventModal, { openModal: openEventModal }] =
+    useCalendarEventModal();
 
   const { data: welcomeCompleted } = useWelcome();
 
   const calculateCurrentMonthRange = () => {
-    const start = dayjs(startDate).startOf('month').subtract(1, 'week');
-    const end = dayjs(endDate).endOf('month').add(1, 'week');
+    const start = dayjs(startDate).startOf("month").subtract(1, "week");
+    const end = dayjs(endDate).endOf("month").add(1, "week");
 
     setCurrentMonthRange({
       start: start.toJSON(),
@@ -115,7 +128,10 @@ function UserProgramCalendar({ inTab, program, classe }) {
       calendarConfig
     );
 
-    const projectedEvents = getProjectedEvents(parsedEventsNotProjected, currentMonthRange);
+    const projectedEvents = getProjectedEvents(
+      parsedEventsNotProjected,
+      currentMonthRange
+    );
     const eventsWithColor = projectedEvents.map((event) => ({
       ...event,
       color: getEventColor(event, calendars),
@@ -126,7 +142,11 @@ function UserProgramCalendar({ inTab, program, classe }) {
   }
 
   useEffect(() => {
-    if (currentMonthRange.start && currentMonthRange.end && program !== currentProgram?.id) {
+    if (
+      currentMonthRange.start &&
+      currentMonthRange.end &&
+      program !== currentProgram?.id
+    ) {
       getCalendarsForCenter();
     }
   }, [currentMonthRange, startDate, endDate, program]);
@@ -157,11 +177,15 @@ function UserProgramCalendar({ inTab, program, classe }) {
     <Box className={styles.root}>
       <Stack fullWidth alignItems="end" justifyContent="space-between">
         <Box>
-          <Title order={3}>{t('agenda')}</Title>
+          <Title order={3}>{t("agenda")}</Title>
         </Box>
         <Box>
-          <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onNewEvent}>
-            {tc('new')}
+          <Button
+            variant="link"
+            leftIcon={<AddCircleIcon />}
+            onClick={onNewEvent}
+          >
+            {tc("new")}
           </Button>
         </Box>
       </Stack>

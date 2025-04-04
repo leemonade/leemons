@@ -1,6 +1,6 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import clsx from 'clsx';
+import PropTypes from "prop-types";
+import React from "react";
+import clsx from "clsx";
 
 class EventCell extends React.Component {
   render() {
@@ -33,13 +33,15 @@ class EventCell extends React.Component {
     let allDay = accessors.allDay(event);
 
     let showAsAllDay =
-      isAllDay || allDay || localizer.diff(start, localizer.ceil(end, 'day'), 'day') > 1;
+      isAllDay ||
+      allDay ||
+      localizer.diff(start, localizer.ceil(end, "day"), "day") > 1;
 
     let userProps = getters.eventProp(event, start, end, selected);
 
     const content = (
       <div
-        style={{ pointerEvents: 'all' }}
+        style={{ pointerEvents: "all" }}
         className="rbc-event-content"
         title={tooltip || undefined}
       >
@@ -66,17 +68,17 @@ class EventCell extends React.Component {
           {...props}
           tabIndex={0}
           style={{ ...userProps.style, ...style }}
-          className={clsx('rbc-event', className, userProps.className, {
-            'rbc-selected': selected,
-            'rbc-event-allday': showAsAllDay,
-            'rbc-event-continues-prior': continuesPrior,
-            'rbc-event-continues-after': continuesAfter,
+          className={clsx("rbc-event", className, userProps.className, {
+            "rbc-selected": selected,
+            "rbc-event-allday": showAsAllDay,
+            "rbc-event-continues-prior": continuesPrior,
+            "rbc-event-continues-after": continuesAfter,
           })}
           onClick={(e) => onSelect && onSelect(event, e)}
           onDoubleClick={(e) => onDoubleClick && onDoubleClick(event, e)}
           onKeyPress={(e) => onKeyPress && onKeyPress(event, e)}
         >
-          {typeof children === 'function' ? children(content) : content}
+          {typeof children === "function" ? children(content) : content}
         </div>
       </EventWrapper>
     );

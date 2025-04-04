@@ -1,6 +1,6 @@
-import findIndex from 'lodash/findIndex';
+import findIndex from "lodash/findIndex";
 
-export function endOfRange({ dateRange, unit = 'day', localizer }) {
+export function endOfRange({ dateRange, unit = "day", localizer }) {
   return {
     first: dateRange[0],
     last: localizer.add(dateRange[dateRange.length - 1], 1, unit),
@@ -12,12 +12,15 @@ export function endOfRange({ dateRange, unit = 'day', localizer }) {
 export function eventSegments(event, range, accessors, localizer) {
   let { first, last } = endOfRange({ dateRange: range, localizer });
 
-  let slots = localizer.diff(first, last, 'day');
-  let start = localizer.max(localizer.startOf(accessors.start(event), 'day'), first);
-  let end = localizer.min(localizer.ceil(accessors.end(event), 'day'), last);
+  let slots = localizer.diff(first, last, "day");
+  let start = localizer.max(
+    localizer.startOf(accessors.start(event), "day"),
+    first
+  );
+  let end = localizer.min(localizer.ceil(accessors.end(event), "day"), last);
 
   let padding = findIndex(range, (x) => localizer.isSameDate(x, start));
-  let span = localizer.diff(start, end, 'day');
+  let span = localizer.diff(start, end, "day");
 
   span = Math.min(span, slots);
   // The segmentOffset is necessary when adjusting for timezones
@@ -68,7 +71,9 @@ export function inRange(e, start, end, accessors, localizer) {
 }
 
 export function segsOverlap(seg, otherSegs) {
-  return otherSegs.some((otherSeg) => otherSeg.left <= seg.right && otherSeg.right >= seg.left);
+  return otherSegs.some(
+    (otherSeg) => otherSeg.left <= seg.right && otherSeg.right >= seg.left
+  );
 }
 
 export function sortEvents(eventA, eventB, accessors, localizer) {

@@ -5,7 +5,7 @@ async function remove({ id, soft, ctx }) {
 
   if (programCalendar) {
     await Promise.all([
-      ctx.tx.call('calendar.calendar.remove', {
+      ctx.tx.call("calendar.calendar.remove", {
         id: programCalendar.calendar,
       }),
       ctx.tx.db.ProgramCalendar.deleteOne({ id: programCalendar.id }, { soft }),

@@ -1,11 +1,15 @@
-const { LeemonsError } = require('@leemons/error');
-const _ = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const _ = require("lodash");
 
-const { getPermissionConfig } = require('../calendar/getPermissionConfig');
+const { getPermissionConfig } = require("../calendar/getPermissionConfig");
 
-const { add } = require('./add');
-const { getPermissionConfig: getPermissionConfigEvent } = require('./getPermissionConfig');
-const { grantAccessUserAgentToEvent } = require('./grantAccessUserAgentToEvent');
+const { add } = require("./add");
+const {
+  getPermissionConfig: getPermissionConfigEvent,
+} = require("./getPermissionConfig");
+const {
+  grantAccessUserAgentToEvent,
+} = require("./grantAccessUserAgentToEvent");
 
 /**
  * Add event to calendar if the user have access
@@ -22,22 +26,27 @@ async function addFromUser({ data, ownerUserAgentId, ctx }) {
 
   let ownerUserAgent;
   if (ownerUserAgentId) {
-    [ownerUserAgent] = await ctx.tx.call('users.users.getUserAgentsInfo', {
+    [ownerUserAgent] = await ctx.tx.call("users.users.getUserAgentsInfo", {
       userAgentIds: [ownerUserAgentId],
     });
   }
 
   const userAgents = [ownerUserAgent ?? userSession.userAgents].flat();
   const permissionConfig = getPermissionConfig(data.calendar);
-  const [userPermission] = await ctx.tx.call('users.permissions.getUserAgentPermissions', {
-    userAgent: userAgents,
-    query: {
-      permissionName: permissionConfig.permissionName,
-    },
-  });
+  const [userPermission] = await ctx.tx.call(
+    "users.permissions.getUserAgentPermissions",
+    {
+      userAgent: userAgents,
+      query: {
+        permissionName: permissionConfig.permissionName,
+      },
+    }
+  );
 
-  if (userPermission?.actionNames?.indexOf('owner') < 0) {
-    throw new LeemonsError(ctx, { message: 'Only the owner, can add events to this calendar' });
+  if (userPermission?.actionNames?.indexOf("owner") < 0) {
+    throw new LeemonsError(ctx, {
+      message: "Only the owner, can add events to this calendar",
+    });
   }
 
   const { calendar, ...eventData } = data;
@@ -47,7 +56,7 @@ async function addFromUser({ data, ownerUserAgentId, ctx }) {
 
   await grantAccessUserAgentToEvent({
     id: event.id,
-    userAgentId: _.map(userAgents, 'id'),
+    userAgentId: _.map(userAgents, "id"),
     actionName: permissionConfigEvent.all.actionNames,
     ctx,
   });
@@ -56,7 +65,7 @@ async function addFromUser({ data, ownerUserAgentId, ctx }) {
     await grantAccessUserAgentToEvent({
       id: event.id,
       userAgentId: eventData.users,
-      actionName: ['view'],
+      actionName: ["view"],
       ctx,
     });
   }

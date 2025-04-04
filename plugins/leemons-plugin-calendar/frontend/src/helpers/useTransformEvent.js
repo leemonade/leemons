@@ -1,14 +1,14 @@
-import React from 'react';
-import useTranslateTitle from '@calendar/helpers/useTranslateTitle';
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import { listKanbanColumnsRequest } from '@calendar/request';
-import { useStore } from '@common';
-import * as _ from 'lodash';
-import transformEvent from './transformEvent';
+import React from "react";
+import useTranslateTitle from "@calendar/helpers/useTranslateTitle";
+import { useIsTeacher } from "@academic-portfolio/hooks";
+import { listKanbanColumnsRequest } from "@calendar/request";
+import { useStore } from "@common";
+import * as _ from "lodash";
+import transformEvent from "./transformEvent";
 
 async function getKanbanColumns() {
   const { columns } = await listKanbanColumnsRequest();
-  return _.orderBy(columns, ['order'], ['asc']);
+  return _.orderBy(columns, ["order"], ["asc"]);
 }
 
 export default function useTransformEvent({ forKanban } = {}) {

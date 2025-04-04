@@ -1,5 +1,7 @@
-const { getByCenterId: getCenterConfigByCenter } = require('../center-calendar-configs');
-const { detail } = require('./detail');
+const {
+  getByCenterId: getCenterConfigByCenter,
+} = require("../center-calendar-configs");
+const { detail } = require("./detail");
 
 /**
  *

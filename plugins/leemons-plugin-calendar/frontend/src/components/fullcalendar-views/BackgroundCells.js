@@ -1,13 +1,13 @@
-import * as _ from 'lodash';
-import moment from 'moment';
-import PropTypes from 'prop-types';
-import React from 'react';
-import clsx from 'clsx';
+import clsx from "clsx";
+import * as _ from "lodash";
+import moment from "moment";
+import PropTypes from "prop-types";
+import React from "react";
 
-import hooks from 'leemons-hooks';
-import { notify } from './utils/helpers';
-import { dateCellSelection, getSlotAtX, pointInBox } from './utils/selection';
-import Selection, { getBoundsForNode, isEvent } from './Selection';
+import hooks from "@leemons/hooks";
+import Selection, { getBoundsForNode, isEvent } from "./Selection";
+import { notify } from "./utils/helpers";
+import { dateCellSelection, getSlotAtX, pointInBox } from "./utils/selection";
 
 class BackgroundCells extends React.Component {
   constructor(props, context) {
@@ -28,18 +28,19 @@ class BackgroundCells extends React.Component {
 
   shouldComponentUpdate(nextProps) {
     if (nextProps.selectable && !this.props.selectable) this._selectable();
-    if (!nextProps.selectable && this.props.selectable) this._teardownSelectable();
+    if (!nextProps.selectable && this.props.selectable)
+      this._teardownSelectable();
     return true;
   }
 
   onClickDate(date) {
-    hooks.fireEvent('big-calendar:dayClick', date);
+    hooks.fireEvent("big-calendar:dayClick", date);
   }
 
   backgroundEventClick(event, e) {
     e.stopPropagation();
     e.preventDefault();
-    hooks.fireEvent('big-calendar:backgroundEventClick', event);
+    hooks.fireEvent("big-calendar:backgroundEventClick", event);
   }
 
   render() {
@@ -62,12 +63,11 @@ class BackgroundCells extends React.Component {
       const dates = [];
 
       while (now.isSameOrBefore(endDate)) {
-        dates.push(now.format('YYYY/MM/DD'));
-        now.add(1, 'days');
+        dates.push(now.format("YYYY/MM/DD"));
+        now.add(1, "days");
       }
       return dates;
     };
-
 
     const eventsByDay = {};
 
@@ -90,33 +90,37 @@ class BackgroundCells extends React.Component {
           if (!_.isObject(style)) {
             style = {};
           }
-          style.position = 'relative';
+          style.position = "relative";
 
-          const eventsForDay = eventsByDay[moment(date).format('YYYY/MM/DD')];
+          const eventsForDay = eventsByDay[moment(date).format("YYYY/MM/DD")];
 
           return (
             <Wrapper key={index} value={date} range={range}>
               <div
                 style={style}
                 className={clsx(
-                  'rbc-day-bg',
+                  "rbc-day-bg",
                   className,
-                  selected && 'rbc-selected-cell',
-                  localizer.isSameDate(date, current) && 'rbc-today',
-                  currentDate && localizer.neq(currentDate, date, 'month') && 'rbc-off-range-bg'
+                  selected && "rbc-selected-cell",
+                  localizer.isSameDate(date, current) && "rbc-today",
+                  currentDate &&
+                    localizer.neq(currentDate, date, "month") &&
+                    "rbc-off-range-bg"
                 )}
                 onClick={() => this.onClickDate(date)}
               >
                 {eventsForDay ? (
                   <div
-                    onClick={(e) => this.backgroundEventClick(eventsForDay[0], e)}
+                    onClick={(e) =>
+                      this.backgroundEventClick(eventsForDay[0], e)
+                    }
                     style={{
-                      position: 'absolute',
+                      position: "absolute",
                       left: 0,
                       top: 0,
-                      width: '100%',
-                      height: '100%',
-                      padding: '4px',
+                      width: "100%",
+                      height: "100%",
+                      padding: "4px",
                       backgroundColor: eventsForDay[0].backgroundColor,
                     }}
                   >
@@ -158,7 +162,7 @@ class BackgroundCells extends React.Component {
       this.setState({ selecting: false });
     };
 
-    selector.on('selecting', (box) => {
+    selector.on("selecting", (box) => {
       const { range, rtl } = this.props;
 
       let startIdx = -1;
@@ -170,7 +174,13 @@ class BackgroundCells extends React.Component {
       }
       if (selector.isSelected(node)) {
         const nodeBox = getBoundsForNode(node);
-        ({ startIdx, endIdx } = dateCellSelection(this._initial, nodeBox, box, range.length, rtl));
+        ({ startIdx, endIdx } = dateCellSelection(
+          this._initial,
+          nodeBox,
+          box,
+          range.length,
+          rtl
+        ));
       }
 
       this.setState({
@@ -180,18 +190,20 @@ class BackgroundCells extends React.Component {
       });
     });
 
-    selector.on('beforeSelect', (box) => {
-      if (this.props.selectable !== 'ignoreEvents') return;
+    selector.on("beforeSelect", (box) => {
+      if (this.props.selectable !== "ignoreEvents") return;
 
       return !isEvent(this.container, box);
     });
 
-    selector.on('click', (point) => selectorClicksHandler(point, 'click'));
+    selector.on("click", (point) => selectorClicksHandler(point, "click"));
 
-    selector.on('doubleClick', (point) => selectorClicksHandler(point, 'doubleClick'));
+    selector.on("doubleClick", (point) =>
+      selectorClicksHandler(point, "doubleClick")
+    );
 
-    selector.on('select', (bounds) => {
-      this._selectSlot({ ...this.state, action: 'select', bounds });
+    selector.on("select", (bounds) => {
+      this._selectSlot({ ...this.state, action: "select", bounds });
       this._initial = {};
       this.setState({ selecting: false });
       notify(this.props.onSelectEnd, [this.state]);
@@ -227,7 +239,7 @@ BackgroundCells.propTypes = {
 
   container: PropTypes.func,
   dayPropGetter: PropTypes.func,
-  selectable: PropTypes.oneOf([true, false, 'ignoreEvents']),
+  selectable: PropTypes.oneOf([true, false, "ignoreEvents"]),
   longPressThreshold: PropTypes.number,
 
   onSelectSlot: PropTypes.func.isRequired,

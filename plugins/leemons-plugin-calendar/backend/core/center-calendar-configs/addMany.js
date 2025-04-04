@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
 
 /**
  * Add calendar config
@@ -10,11 +10,13 @@ const { LeemonsError } = require('@leemons/error');
  * @return {Promise<any>}
  * */
 async function addMany({ items, ctx }) {
-  const centerIds = _.map(items, 'center');
-  const count = await ctx.tx.db.CenterCalendarConfigs.countDocuments({ center: centerIds });
+  const centerIds = _.map(items, "center");
+  const count = await ctx.tx.db.CenterCalendarConfigs.countDocuments({
+    center: centerIds,
+  });
   if (count)
     throw new LeemonsError(ctx, {
-      message: 'One of the centers is already assigned to a configuration',
+      message: "One of the centers is already assigned to a configuration",
     });
   const result = await ctx.tx.db.CenterCalendarConfigs.insertMany(items);
   return _.map(result, (r) => r.toObject());

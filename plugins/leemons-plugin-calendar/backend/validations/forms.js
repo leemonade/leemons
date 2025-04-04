@@ -1,6 +1,6 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 const {
   dateSchema,
   stringSchema,
@@ -9,10 +9,10 @@ const {
   arrayStringSchema,
   localeObjectSchema,
   dateSchemaNullable,
-} = require('./types');
+} = require("./types");
 
 const addCalendarSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     name: stringSchema,
     icon: stringSchema,
@@ -20,11 +20,11 @@ const addCalendarSchema = {
     borderColor: stringSchema,
     section: stringSchema,
     metadata: {
-      type: 'object',
+      type: "object",
       additionalProperties: true,
     },
   },
-  required: ['name', 'bgColor', 'section'],
+  required: ["name", "bgColor", "section"],
   additionalProperties: false,
 };
 
@@ -37,7 +37,7 @@ function validateAddCalendar(data) {
 }
 
 const addEventSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     title: stringSchema,
     startDate: dateSchemaNullable,
@@ -47,26 +47,26 @@ const addEventSchema = {
     repeat: stringSchema,
     type: stringSchema,
     users: {
-      type: 'array',
+      type: "array",
       items: {
-        type: 'string',
+        type: "string",
       },
       nullable: true,
     },
     data: {
-      type: 'object',
+      type: "object",
       additionalProperties: true,
     },
   },
-  required: ['title', 'type'], // 'startDate', 'endDate',
+  required: ["title", "type"], // 'startDate', 'endDate',
   additionalProperties: false,
 };
 
 function validateAddEvent(data) {
   const schema = _.cloneDeep(addEventSchema);
 
-  if (data.type !== 'calendar.task') {
-    schema.required.push('startDate', 'endDate');
+  if (data.type !== "calendar.task") {
+    schema.required.push("startDate", "endDate");
   }
 
   const validator = new LeemonsValidator(schema);
@@ -77,20 +77,20 @@ function validateAddEvent(data) {
 }
 
 const updateEventSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     title: stringSchema,
     startDate: dateSchemaNullable,
     endDate: dateSchemaNullable,
     isAllDay: booleanSchema,
     isPrivate: {
-      type: ['boolean', 'number'],
+      type: ["boolean", "number"],
       nullable: true,
     },
     repeat: stringSchema,
     type: stringSchema,
     data: {
-      type: 'object',
+      type: "object",
       additionalProperties: true,
     },
   },
@@ -99,7 +99,7 @@ const updateEventSchema = {
 };
 
 function validateUpdateEvent(data) {
-  console.log('data', data);
+  console.log("data", data);
   const validator = new LeemonsValidator(updateEventSchema);
 
   if (!validator.validate(data)) {
@@ -108,7 +108,7 @@ function validateUpdateEvent(data) {
 }
 
 const addKanbanColumnSchema = () => ({
-  type: 'object',
+  type: "object",
   properties: {
     name: localeObjectSchema(),
     order: integerSchema,
@@ -130,7 +130,7 @@ function validateAddKanbanColumn(data) {
 }
 
 const addCalendarConfigSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     title: stringSchema,
     description: stringSchema,
@@ -145,33 +145,33 @@ const addCalendarConfigSchema = {
     endYear: integerSchema,
     weekday: integerSchema,
     notSchoolDays: {
-      type: 'array',
+      type: "array",
       items: {
-        type: 'number',
+        type: "number",
       },
     },
     schoolDays: {
-      type: 'array',
+      type: "array",
       items: {
-        type: 'number',
+        type: "number",
       },
     },
     centers: arrayStringSchema,
   },
   required: [
-    'title',
-    'addedFrom',
-    'countryName',
-    'countryShortCode',
-    'regionShortCode',
-    'regionName',
-    'startMonth',
-    'startYear',
-    'endMonth',
-    'endYear',
-    'weekday',
-    'notSchoolDays',
-    'schoolDays',
+    "title",
+    "addedFrom",
+    "countryName",
+    "countryShortCode",
+    "regionShortCode",
+    "regionName",
+    "startMonth",
+    "startYear",
+    "endMonth",
+    "endYear",
+    "weekday",
+    "notSchoolDays",
+    "schoolDays",
   ],
   additionalProperties: false,
 };
@@ -185,25 +185,25 @@ function validateAddCalendarConfig(data) {
 }
 
 const addCalendarGroupsSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     title: stringSchema,
     center: stringSchema,
     calendars: {
-      type: 'array',
+      type: "array",
       items: {
         ...addCalendarSchema,
         properties: {
           ...addCalendarSchema.properties,
           events: {
-            type: 'array',
+            type: "array",
             items: addEventSchema,
           },
         },
       },
     },
   },
-  required: ['title'],
+  required: ["title"],
   additionalProperties: false,
 };
 
@@ -216,11 +216,11 @@ function validateAddCalendarGroups(data) {
 }
 
 const addClassroomLevelSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     level: stringSchema,
   },
-  required: ['level'],
+  required: ["level"],
   additionalProperties: false,
 };
 

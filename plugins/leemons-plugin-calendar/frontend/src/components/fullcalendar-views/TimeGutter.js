@@ -1,9 +1,9 @@
-import clsx from 'clsx';
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
+import clsx from "clsx";
+import PropTypes from "prop-types";
+import React, { Component } from "react";
 
-import * as TimeSlotUtils from './utils/TimeSlots';
-import TimeSlotGroup from './TimeSlotGroup';
+import * as TimeSlotUtils from "./utils/TimeSlots";
+import TimeSlotGroup from "./TimeSlotGroup";
 
 export default class TimeGutter extends Component {
   constructor(...args) {
@@ -30,8 +30,8 @@ export default class TimeGutter extends Component {
 
     const isNow = this.slotMetrics.dateIsInGroup(getNow(), idx);
     return (
-      <span className={clsx('rbc-label', isNow && 'rbc-now')}>
-        {localizer.format(value, 'timeGutterFormat')}
+      <span className={clsx("rbc-label", isNow && "rbc-now")}>
+        {localizer.format(value, "timeGutterFormat")}
       </span>
     );
   };

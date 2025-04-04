@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 /**
  * List kanban columns
@@ -11,10 +11,10 @@ async function list({ ctx }) {
   const [responses, centersConfigs, centers] = await Promise.all([
     ctx.tx.db.CalendarConfigs.find({}).lean(),
     ctx.tx.db.CenterCalendarConfigs.find({}).lean(),
-    ctx.tx.call('users.centers.list', { page: 0, size: 99999 }),
+    ctx.tx.call("users.centers.list", { page: 0, size: 99999 }),
   ]);
 
-  const centersConfigsByConfig = _.groupBy(centersConfigs, 'group');
+  const centersConfigsByConfig = _.groupBy(centersConfigs, "group");
 
   return _.map(responses, (response) => ({
     ...response,
