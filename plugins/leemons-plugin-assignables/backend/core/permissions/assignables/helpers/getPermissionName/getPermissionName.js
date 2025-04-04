@@ -1,8 +1,8 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
 function getPermissionName({ id, prefix = false, ctx }) {
   if (!id) {
-    throw new LeemonsError(ctx, { message: 'The assignable id is required' });
+    throw new LeemonsError(ctx, { message: "The assignable id is required" });
   }
 
   const name = `assignable.${id}`;

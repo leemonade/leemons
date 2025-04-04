@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
-import { Box, Skeleton } from '@bubbles-ui/components';
+import { Box, Skeleton } from "@bubbles-ui/components";
 
-import { NYACardSkeletonStyles } from './NYACardSkeleton.styles';
+import { NYACardSkeletonStyles } from "./NYACardSkeleton.styles";
 
 const NYACardSkeleton = () => {
   const { classes } = NYACardSkeletonStyles();

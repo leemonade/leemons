@@ -1,18 +1,18 @@
-import React from 'react';
-import { Box } from '@bubbles-ui/components';
-import { NYACardSkeleton } from './NYACardSkeleton';
+import React from "react";
+import { Box } from "@bubbles-ui/components";
+import { NYACardSkeleton } from "./NYACardSkeleton";
 
 export default {
-  title: 'leemons/NYACardSkeleton',
+  title: "leemons/NYACardSkeleton",
   parameters: {
     component: NYACardSkeleton,
     design: {
-      type: 'figma',
+      type: "figma",
       // url: 'https://www.figma.com/file/c3MWm2gVHU4JfYlVfr5VvB/🍋💧-Bubbles-SD-v2',
     },
   },
   argTypes: {
-    onAction: { action: 'onAction' },
+    onAction: { action: "onAction" },
   },
 };
 

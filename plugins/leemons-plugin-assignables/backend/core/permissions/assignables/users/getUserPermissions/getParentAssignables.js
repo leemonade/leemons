@@ -12,7 +12,7 @@ function getParentAssignables({ ids, ctx }) {
   }
   return ctx.tx.db.Assignables.find({
     $or: ids.map((id) => ({
-      'submission.activities.activity': id,
+      "submission.activities.activity": id,
     })),
   })
     .select({ asset: true, id: true, _id: false })

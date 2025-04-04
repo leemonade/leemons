@@ -4,13 +4,13 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getAssignationsDates } = require('./getAssignationsDates');
-const { datesSchema } = require('../../../models/dates');
-const { getDatesObject } = require('../../../__fixtures__/getDatesObject');
+const { getAssignationsDates } = require("./getAssignationsDates");
+const { datesSchema } = require("../../../models/dates");
+const { getDatesObject } = require("../../../__fixtures__/getDatesObject");
 
 const date = getDatesObject();
 
@@ -37,12 +37,12 @@ beforeEach(async () => {
 
   ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 });
 
-it('Should return dates if has assignations', async () => {
+it("Should return dates if has assignations", async () => {
   // Arrange
   await ctx.tx.db.Dates.create(date);
 
@@ -50,7 +50,7 @@ it('Should return dates if has assignations', async () => {
 
   // Act
   const response = await getAssignationsDates({
-    assignations: ['instanceId1'],
+    assignations: ["instanceId1"],
     ctx,
   });
 
@@ -58,7 +58,7 @@ it('Should return dates if has assignations', async () => {
   expect(response).toEqual(expectedResponse);
 });
 
-it('Should return empty object if no assignations', async () => {
+it("Should return empty object if no assignations", async () => {
   // Arrange
 
   // Act

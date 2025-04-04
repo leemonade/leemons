@@ -1,7 +1,7 @@
-const { map, uniq } = require('lodash');
+const { map, uniq } = require("lodash");
 
-const { getGrade } = require('../../grades/getGrade');
-const { getInstancesSubjects } = require('./getInstancesSubjects');
+const { getGrade } = require("../../grades/getGrade");
+const { getInstancesSubjects } = require("./getInstancesSubjects");
 
 /**
  * Filters an array of objects based on a query by subject grades and the user's role.
@@ -16,7 +16,7 @@ const { getInstancesSubjects } = require('./getInstancesSubjects');
 async function filterByGraded({ objects, query, isTeacher, ctx }) {
   let instances = objects;
   if (!isTeacher) {
-    instances = map(objects, 'instance');
+    instances = map(objects, "instance");
   }
   if (query.evaluated === undefined) {
     return instances;
@@ -32,15 +32,17 @@ async function filterByGraded({ objects, query, isTeacher, ctx }) {
         const studentGrades = await getGrade({
           assignation: assignation.id,
           visibleToStudent: true,
-          type: 'main',
+          type: "main",
           ctx,
         });
-        const gradedSubjects = uniq(map(studentGrades, 'subject'));
+        const gradedSubjects = uniq(map(studentGrades, "subject"));
 
         return {
           ...assignation,
           grades: studentGrades,
-          fullyGraded: gradedSubjects.length === instancesSubjects[assignation.instance]?.length,
+          fullyGraded:
+            gradedSubjects.length ===
+            instancesSubjects[assignation.instance]?.length,
         };
       })
     );
@@ -56,7 +58,7 @@ async function filterByGraded({ objects, query, isTeacher, ctx }) {
 
         return true;
       }),
-      'instance'
+      "instance"
     );
   }
 
@@ -65,7 +67,7 @@ async function filterByGraded({ objects, query, isTeacher, ctx }) {
   const studentsAssignations = await ctx.tx.db.Assignations.find({
     instance: instances,
   })
-    .select(['instance', 'id'])
+    .select(["instance", "id"])
     .lean();
 
   // EN: Get all the students grades
@@ -75,14 +77,16 @@ async function filterByGraded({ objects, query, isTeacher, ctx }) {
       const studentGrades = await getGrade({
         assignation: assignation.id,
         visibleToStudent: false,
-        type: 'main',
+        type: "main",
         ctx,
       });
 
       return {
         ...assignation,
         grades: studentGrades,
-        fullyGraded: studentGrades.length === instancesSubjects[assignation.instance]?.length,
+        fullyGraded:
+          studentGrades.length ===
+          instancesSubjects[assignation.instance]?.length,
       };
     })
   );
@@ -92,7 +96,10 @@ async function filterByGraded({ objects, query, isTeacher, ctx }) {
   const studentsGradesByAssignableInstance = studentsGrades.reduce(
     (acc, assignation) => ({
       ...acc,
-      [assignation.instance]: [...(acc[assignation.instance] || []), assignation.fullyGraded],
+      [assignation.instance]: [
+        ...(acc[assignation.instance] || []),
+        assignation.fullyGraded,
+      ],
     }),
     {}
   );

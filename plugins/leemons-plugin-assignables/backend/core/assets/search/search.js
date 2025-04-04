@@ -1,7 +1,9 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { searchAssignables } = require('../../assignables/searchAssignables');
-const { getAssignablesAssets } = require('../../assignables/getAssignablesAssets');
+const { searchAssignables } = require("../../assignables/searchAssignables");
+const {
+  getAssignablesAssets,
+} = require("../../assignables/getAssignablesAssets");
 
 /**
  * This function performs a search operation based on the provided parameters.
@@ -26,7 +28,7 @@ async function search({
   preferCurrent,
   ctx,
 }) {
-  const role = category.key.replace('assignables.', '');
+  const role = category.key.replace("assignables.", "");
 
   const assignablesIds = await searchAssignables({
     roles: role,

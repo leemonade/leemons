@@ -1,29 +1,29 @@
-const _ = require('lodash');
-const { it, expect, beforeEach } = require('@jest/globals');
+const _ = require("lodash");
+const { it, expect, beforeEach } = require("@jest/globals");
 
-const { generateCtx } = require('@leemons/testing');
+const { generateCtx } = require("@leemons/testing");
 
-const { findAssignableByAssetIds } = require('./findAssignableByAssetIds');
-const { getAssignables } = require('../getAssignables');
+const { findAssignableByAssetIds } = require("./findAssignableByAssetIds");
+const { getAssignables } = require("../getAssignables");
 
 // Mocking the getAssignables function
-jest.mock('../getAssignables', () => ({
+jest.mock("../getAssignables", () => ({
   getAssignables: jest.fn(),
 }));
 
-describe('findAssignableByAssetIds', () => {
+describe("findAssignableByAssetIds", () => {
   beforeEach(() => {
     getAssignables.mockReset();
   });
 
-  it('should return assignables for given asset ids', async () => {
+  it("should return assignables for given asset ids", async () => {
     // Arrange
-    const assets = [{ id: 'asset1' }, { id: 'asset2' }];
+    const assets = [{ id: "asset1" }, { id: "asset2" }];
     const deleted = false;
     const ctx = generateCtx({});
     const expectedAssignables = [
-      { id: 'assignable1', asset: 'asset1' },
-      { id: 'assignable2', asset: 'asset2' },
+      { id: "assignable1", asset: "asset1" },
+      { id: "assignable2", asset: "asset2" },
     ];
     getAssignables.mockResolvedValue(expectedAssignables);
 

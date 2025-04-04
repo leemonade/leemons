@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const SCOREFEEDBACK_PROP_TYPES = {
   score: PropTypes.number,

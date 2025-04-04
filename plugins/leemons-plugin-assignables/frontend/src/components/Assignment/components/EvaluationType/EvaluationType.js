@@ -1,15 +1,14 @@
-import React from 'react';
-import { useForm, Controller, useWatch } from 'react-hook-form';
+import React from "react";
+import { useForm, Controller, useWatch } from "react-hook-form";
 
-import { createStyles, Box, Select, Title } from '@bubbles-ui/components';
-import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
-import PropTypes from 'prop-types';
+import { createStyles, Box, Select, Title } from "@bubbles-ui/components";
+import ConditionalInput from "@tasks/components/Inputs/ConditionalInput";
+import PropTypes from "prop-types";
 
+import { Container } from "../Container";
 
-import { Container } from '../Container';
-
-import { CurriculumFieldsPicker } from './CurriculumFieldsPicker';
-import { useCurriculumFields } from './useCurriculumFields';
+import { CurriculumFieldsPicker } from "./CurriculumFieldsPicker";
+import { useCurriculumFields } from "./useCurriculumFields";
 
 export const evaluationTypes = {
   calificable: {
@@ -38,17 +37,17 @@ function useOnChange({ control, setValue, onChange, types }) {
   const { type, showCurriculum, curriculum } = useWatch({ control });
 
   React.useEffect(() => {
-    if (typeof onChange !== 'function') {
+    if (typeof onChange !== "function") {
       return;
     }
 
     if (!type) {
-      setValue('type', types?.[0]?.value);
+      setValue("type", types?.[0]?.value);
     }
 
     onChange({
       evaluation: evaluationTypes[type] ?? evaluationTypes[types?.[0]?.value],
-      curriculum: showCurriculum ? curriculum ?? [] : [],
+      curriculum: showCurriculum ? (curriculum ?? []) : [],
       raw: { type: type || types?.[0]?.value, showCurriculum, curriculum },
     });
   }, [type, showCurriculum, curriculum, onChange, types, setValue]);
@@ -56,8 +55,8 @@ function useOnChange({ control, setValue, onChange, types }) {
 
 export const useEvaluationTypeStyles = createStyles((theme) => ({
   root: {
-    display: 'inline-flex',
-    flexDirection: 'column',
+    display: "inline-flex",
+    flexDirection: "column",
     gap: theme.other.global.spacing.padding.xlg,
   },
   selectType: {
@@ -81,37 +80,43 @@ export function EvaluationType({
   const types = React.useMemo(() => {
     const evaluationTypes = [
       {
-        value: 'calificable',
+        value: "calificable",
         label: localizations?.typeInput?.options?.calificable,
       },
       {
-        value: 'punctuable',
+        value: "punctuable",
         label: localizations?.typeInput?.options?.punctuable,
       },
       {
-        value: 'feedbackOnly',
+        value: "feedbackOnly",
         label: localizations?.typeInput?.options?.feedbackOnly,
       },
       {
-        value: 'nonEvaluable',
+        value: "nonEvaluable",
         label: localizations?.typeInput?.options?.nonEvaluable,
       },
     ];
 
     if (isInvitedTeacher) {
-      return evaluationTypes.filter(({ value: v }) => v !== 'calificable');
+      return evaluationTypes.filter(({ value: v }) => v !== "calificable");
     }
 
     if (!evaluationTypesToUse?.length) {
       return evaluationTypes;
     }
 
-    return evaluationTypes.filter(({ value: v }) => evaluationTypesToUse.includes(v));
-  }, [localizations?.typeInput?.options, JSON.stringify(evaluationTypesToUse), isInvitedTeacher]);
+    return evaluationTypes.filter(({ value: v }) =>
+      evaluationTypesToUse.includes(v)
+    );
+  }, [
+    localizations?.typeInput?.options,
+    JSON.stringify(evaluationTypesToUse),
+    isInvitedTeacher,
+  ]);
 
   const { control, setValue } = useForm({
     defaultValues: {
-      type: evaluationTypesToUse?.[0] || 'calificable',
+      type: evaluationTypesToUse?.[0] || "calificable",
       ...value?.raw,
     },
   });
@@ -188,7 +193,7 @@ EvaluationType.propTypes = {
   hidden: PropTypes.bool,
   value: PropTypes.object,
   onChange: PropTypes.func,
-  evaluationTypes: PropTypes.arrayOf('string'),
+  evaluationTypes: PropTypes.arrayOf("string"),
   hideSectionHeaders: PropTypes.bool,
   hideDivider: PropTypes.bool,
   onDrawer: PropTypes.bool,

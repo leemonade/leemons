@@ -1,1 +1,1 @@
-export * from './EvaluationCardFooter';
+export * from "./EvaluationCardFooter";

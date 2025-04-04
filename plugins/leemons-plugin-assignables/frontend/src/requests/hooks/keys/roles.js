@@ -1,7 +1,7 @@
 export const allRolesKeys = [
   {
-    plugin: 'plugin.assignables',
-    scope: 'roles',
+    plugin: "plugin.assignables",
+    scope: "roles",
   },
 ];
 
@@ -14,7 +14,7 @@ export const allRolesKeys = [
 export const allRolesGetKey = [
   {
     ...allRolesKeys[0],
-    action: 'get',
+    action: "get",
   },
 ];
 
@@ -35,7 +35,7 @@ export const rolesGetKey = ({ role }) => [
 export const allRolesListKey = [
   {
     ...allRolesKeys[0],
-    action: 'list',
+    action: "list",
   },
 ];
 

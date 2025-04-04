@@ -1,8 +1,8 @@
-const { map } = require('lodash');
+const { map } = require("lodash");
 
 function getDate(date) {
   if (!date) return undefined;
-  return typeof date === 'string' ? date : date.toISOString();
+  return typeof date === "string" ? date : date.toISOString();
 }
 /**
  * Registers an event in the calendar.
@@ -17,23 +17,33 @@ function getDate(date) {
  * @param {MoleculerContext} options.ctx - The Moleculer context object.
  * @return {Promise} A promise that resolves to the result of adding the event to the calendar.
  */
-async function registerEvent({ assignable, classes, id, isAllDay, dates, ctx }) {
-  const calendarClasses = await ctx.tx.call('calendar.calendar.getCalendarsByClass', {
-    classe: classes,
-  });
+async function registerEvent({
+  assignable,
+  classes,
+  id,
+  isAllDay,
+  dates,
+  ctx,
+}) {
+  const calendarClasses = await ctx.tx.call(
+    "calendar.calendar.getCalendarsByClass",
+    {
+      classe: classes,
+    }
+  );
 
-  return ctx.tx.call('calendar.calendar.addEvent', {
+  return ctx.tx.call("calendar.calendar.addEvent", {
     key: map(classes, (classe) => `calendar.class.${classe}`),
     data: {
       title: assignable.asset.name,
       isPrivate: true,
       isAllDay,
-      type: 'calendar.task',
+      type: "calendar.task",
       startDate: getDate(dates.deadline), // typeof dates.start === 'string' ? dates.start : dates.start.toISOString(),
       endDate: getDate(dates.deadline),
       data: {
         instanceId: id,
-        classes: map(calendarClasses, 'calendar'),
+        classes: map(calendarClasses, "calendar"),
         hideInCalendar: !dates.deadline,
       },
     },

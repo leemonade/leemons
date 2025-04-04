@@ -1,4 +1,4 @@
-const { searchAssignables } = require('./searchAssignables');
+const { searchAssignables } = require("./searchAssignables");
 
 module.exports = {
   searchAssignables,

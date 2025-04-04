@@ -1,9 +1,9 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
 async function unregisterGrade({ assignation, subject, type, ctx }) {
   if (!assignation) {
     throw new LeemonsError(ctx, {
-      message: 'Cannot unregister grade: assignation is required',
+      message: "Cannot unregister grade: assignation is required",
       httpStatusCode: 400,
     });
   }

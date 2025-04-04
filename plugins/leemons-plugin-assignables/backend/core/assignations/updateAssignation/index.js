@@ -1,4 +1,4 @@
-const { updateAssignation } = require('./updateAssignation');
+const { updateAssignation } = require("./updateAssignation");
 
 module.exports = {
   updateAssignation,

@@ -1,4 +1,4 @@
-const { removePermissionFromUser } = require('./removePermissionFromUser');
+const { removePermissionFromUser } = require("./removePermissionFromUser");
 
 module.exports = {
   removePermissionFromUser,

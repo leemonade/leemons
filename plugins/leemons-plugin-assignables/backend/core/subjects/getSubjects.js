@@ -1,10 +1,10 @@
-const { LeemonsError } = require('@leemons/error');
-const { pick, forEach, sortBy } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { pick, forEach, sortBy } = require("lodash");
 
 async function getSubjects({ assignableIds, useIds = false, ctx }) {
   if (!assignableIds) {
     throw new LeemonsError(ctx, {
-      message: 'Cannot get subjects: assignableIds is required',
+      message: "Cannot get subjects: assignableIds is required",
       httpStatusCode: 400,
     });
   }
@@ -17,7 +17,12 @@ async function getSubjects({ assignableIds, useIds = false, ctx }) {
   const subjectsPerAssignable = {};
 
   subjects.forEach((subject) => {
-    const subjectData = pick(subject, ['program', 'subject', 'level', 'curriculum']);
+    const subjectData = pick(subject, [
+      "program",
+      "subject",
+      "level",
+      "curriculum",
+    ]);
 
     if (useIds) {
       subjectData.id = subject.id;
@@ -33,7 +38,7 @@ async function getSubjects({ assignableIds, useIds = false, ctx }) {
   const sortedSubjectsPerAssignable = {};
 
   forEach(subjectsPerAssignable, (unsortedSubjects, key) => {
-    const sortedSubjects = sortBy(unsortedSubjects, 'subject', 'level');
+    const sortedSubjects = sortBy(unsortedSubjects, "subject", "level");
 
     sortedSubjectsPerAssignable[key] = sortedSubjects;
   });

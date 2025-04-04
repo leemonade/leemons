@@ -1,7 +1,7 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const EVALUATIONCARD_FOOTER_DEFAULT_PROPS = {
-  locale: 'en-GB',
+  locale: "en-GB",
 };
 export const EVALUATIONCARD_FOOTER_PROP_TYPES = {
   fileType: PropTypes.string,

@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const ARROWCOMPONENT_PROPTYPES = {
   state: PropTypes.string,

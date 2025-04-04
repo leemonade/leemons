@@ -1,4 +1,4 @@
-const { getAssignable } = require('./getAssignable');
+const { getAssignable } = require("./getAssignable");
 
 module.exports = {
   getAssignable,

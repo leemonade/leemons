@@ -1,45 +1,46 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
 
-import { Box, PaginatedList, Text } from '@bubbles-ui/components';
+import { Box, PaginatedList, Text } from "@bubbles-ui/components";
 
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@assignables/helpers/prefixPN';
-import useActivitiesWithOpenedModulesChildren from './hooks/useActivitiesWithOpenedModulesChildren';
-import useColumns from './hooks/useColumns';
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@assignables/helpers/prefixPN";
+import useActivitiesWithOpenedModulesChildren from "./hooks/useActivitiesWithOpenedModulesChildren";
+import useColumns from "./hooks/useColumns";
 
 export default function ProgressTable({ class: classroom, weights, filters }) {
-  const [t] = useTranslateLoader(prefixPN('activities_list'));
+  const [t] = useTranslateLoader(prefixPN("activities_list"));
 
   const [modulesOpened, setModulesOpened] = useState([]);
   const [page, setPage] = useState(1);
   const size = 10;
 
   const columns = useColumns({ weights, setModulesOpened, modulesOpened });
-  const { activities, totalCount, isLoading } = useActivitiesWithOpenedModulesChildren({
-    class: classroom,
-    weights,
-    filters,
-    modulesOpened,
-    page,
-    size,
-  });
+  const { activities, totalCount, isLoading } =
+    useActivitiesWithOpenedModulesChildren({
+      class: classroom,
+      weights,
+      filters,
+      modulesOpened,
+      page,
+      size,
+    });
 
   if (!activities?.length) {
     return (
       <Box
         sx={(theme) => ({
-          width: '100%',
+          width: "100%",
           height: 200, // 328,
           borderRadius: theme.spacing[1],
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
           gap: theme.spacing[1],
         })}
       >
-        <Text color="primary">{t('emptyState')}</Text>
+        <Text color="primary">{t("emptyState")}</Text>
       </Box>
     );
   }
@@ -57,8 +58,9 @@ export default function ProgressTable({ class: classroom, weights, filters }) {
       selectable
       hdePaper
       onStyleRow={({ row }) =>
-        weights?.type === 'modules' && row.original.instance.metadata?.module?.id
-          ? { backgroundColor: '#F8F9FB' }
+        weights?.type === "modules" &&
+        row.original.instance.metadata?.module?.id
+          ? { backgroundColor: "#F8F9FB" }
           : null
       }
     />

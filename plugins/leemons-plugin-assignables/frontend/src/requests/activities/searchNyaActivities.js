@@ -12,10 +12,10 @@ export default async function searchNyaActivities(query) {
     `v1/assignables/activities/search/nya?${Object.entries(query)
       .filter(([, value]) => value)
       .map(([key, value]) => `${key}=${value}`)
-      .join('&')}`,
+      .join("&")}`,
     {
       allAgents: true,
-      method: 'GET',
+      method: "GET",
     }
   );
 

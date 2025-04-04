@@ -4,12 +4,12 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getDate } = require('./getDate');
-const { datesSchema } = require('../../models/dates');
+const { getDate } = require("./getDate");
+const { datesSchema } = require("../../models/dates");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -32,16 +32,16 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should return one date', async () => {
+it("Should return one date", async () => {
   // Arrange
-  const type = 'instance';
-  const instance = 'instance-id';
-  const name = 'start';
-  const date = new Date('2012/10/27');
+  const type = "instance";
+  const instance = "instance-id";
+  const name = "start";
+  const date = new Date("2012/10/27");
 
   const ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 
@@ -55,20 +55,20 @@ it('Should return one date', async () => {
     {
       type,
       instance,
-      name: 'end',
-      date: new Date('2012/11/5'),
+      name: "end",
+      date: new Date("2012/11/5"),
     },
     {
-      type: 'assignable',
+      type: "assignable",
       instance,
       name,
-      date: new Date('2012/11/30'),
+      date: new Date("2012/11/30"),
     },
     {
-      type: 'assignable',
-      instance: 'assignable-id',
+      type: "assignable",
+      instance: "assignable-id",
       name,
-      date: new Date('2012/12/4'),
+      date: new Date("2012/12/4"),
     },
   ];
   await ctx.db.Dates.create(initialValues);
@@ -80,15 +80,15 @@ it('Should return one date', async () => {
   expect(response).toEqual(date);
 });
 
-it('Should return null when no date is foun', async () => {
+it("Should return null when no date is foun", async () => {
   // Arrange
-  const type = 'instance';
-  const instance = 'instance-id';
-  const name = 'start';
+  const type = "instance";
+  const instance = "instance-id";
+  const name = "start";
 
   const ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 
@@ -99,15 +99,15 @@ it('Should return null when no date is foun', async () => {
   expect(response).toBeNull();
 });
 
-it('Should throw if no valid params are provided', async () => {
+it("Should throw if no valid params are provided", async () => {
   // Arrange
-  const type = 'instance';
-  const instance = 'instance-id';
-  const name = 'start';
+  const type = "instance";
+  const instance = "instance-id";
+  const name = "start";
 
   const ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 
@@ -118,12 +118,12 @@ it('Should throw if no valid params are provided', async () => {
 
   // Assert
   await expect(noTypeFn).rejects.toThrowError(
-    'Cannot get dates: type, instance and name are required'
+    "Cannot get dates: type, instance and name are required"
   );
   await expect(noInstanceFn).rejects.toThrowError(
-    'Cannot get dates: type, instance and name are required'
+    "Cannot get dates: type, instance and name are required"
   );
   await expect(noNameFn).rejects.toThrowError(
-    'Cannot get dates: type, instance and name are required'
+    "Cannot get dates: type, instance and name are required"
   );
 });

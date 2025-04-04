@@ -4,12 +4,12 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { registerGrade } = require('./registerGrade');
-const { gradesSchema } = require('../../models/grades');
+const { registerGrade } = require("./registerGrade");
+const { gradesSchema } = require("../../models/grades");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -32,14 +32,14 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should register the grade', async () => {
+it("Should register the grade", async () => {
   // Arrange
-  const assignation = 'assignation-id';
-  const subject = 'subject-id';
-  const type = 'main';
+  const assignation = "assignation-id";
+  const subject = "subject-id";
+  const type = "main";
   const grade = 10;
-  const gradedBy = 'main-teacher';
-  const feedback = 'This is your teacher feedback';
+  const gradedBy = "main-teacher";
+  const feedback = "This is your teacher feedback";
   const visibleToStudent = true;
 
   const expectedValue = {
@@ -54,7 +54,7 @@ it('Should register the grade', async () => {
 
   const ctx = generateCtx({
     models: {
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
+      Grades: newModel(mongooseConnection, "Grades", gradesSchema),
     },
   });
 
@@ -77,19 +77,19 @@ it('Should register the grade', async () => {
   expect(foundValue).toEqual(expect.objectContaining(expectedValue));
 });
 
-it('Should throw if required params are not provided', async () => {
+it("Should throw if required params are not provided", async () => {
   // Arrange
-  const assignation = 'assignation-id';
-  const subject = 'subject-id';
-  const type = 'main';
+  const assignation = "assignation-id";
+  const subject = "subject-id";
+  const type = "main";
   const grade = 10;
-  const gradedBy = 'main-teacher';
-  const feedback = 'This is your teacher feedback';
+  const gradedBy = "main-teacher";
+  const feedback = "This is your teacher feedback";
   const visibleToStudent = true;
 
   const ctx = generateCtx({
     models: {
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
+      Grades: newModel(mongooseConnection, "Grades", gradesSchema),
     },
   });
 

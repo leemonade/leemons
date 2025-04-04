@@ -1,5 +1,5 @@
-const { uniq, map } = require('lodash');
-const { getAssetsData } = require('./getAssetsData');
+const { uniq, map } = require("lodash");
+const { getAssetsData } = require("./getAssetsData");
 
 async function getAssignablesData({ assignables, ctx }) {
   const uniqAssignables = uniq(assignables);
@@ -9,14 +9,17 @@ async function getAssignablesData({ assignables, ctx }) {
   const assignablesData = await ctx.tx.db.Assignables.find({
     id: uniqAssignables,
   })
-    .select(['asset', 'id', 'role'])
+    .select(["asset", "id", "role"])
     .lean();
 
-  const assetsIds = map(assignablesData, 'asset');
+  const assetsIds = map(assignablesData, "asset");
   const assetsData = await getAssetsData({ assets: assetsIds, ctx });
 
   assignablesData.forEach((assignable) => {
-    assignablesObj[assignable.id] = { ...assignable, asset: assetsData[assignable.asset] };
+    assignablesObj[assignable.id] = {
+      ...assignable,
+      asset: assetsData[assignable.asset],
+    };
   });
 
   return assignablesObj;

@@ -1,7 +1,9 @@
-const { uniq, difference, escapeRegExp } = require('lodash');
-const { getRoleMatchingActions } = require('../../helpers/getRoleMatchingActions');
-const { getTeacherPermissions } = require('../getTeacherPermissions');
-const { getPermissionName } = require('../../helpers/getPermissionName');
+const { uniq, difference, escapeRegExp } = require("lodash");
+const {
+  getRoleMatchingActions,
+} = require("../../helpers/getRoleMatchingActions");
+const { getTeacherPermissions } = require("../getTeacherPermissions");
+const { getPermissionName } = require("../../helpers/getPermissionName");
 
 // TODO: Impelement item permissions for teachers
 
@@ -32,16 +34,21 @@ async function getUserPermissions({ instancesIds, ctx }) {
   const query = {
     $or: ids.map((id) => ({
       permissionName: {
-        $regex: escapeRegExp(getPermissionName({ assignableInstance: id, ctx })),
-        $options: 'i',
+        $regex: escapeRegExp(
+          getPermissionName({ assignableInstance: id, ctx })
+        ),
+        $options: "i",
       },
     })),
   };
 
-  const permissions = await ctx.tx.call('users.permissions.getUserAgentPermissions', {
-    userAgent: userSession?.userAgents,
-    query,
-  });
+  const permissions = await ctx.tx.call(
+    "users.permissions.getUserAgentPermissions",
+    {
+      userAgent: userSession?.userAgents,
+      query,
+    }
+  );
 
   const directPermissions = Object.fromEntries(
     permissions.map(({ permissionName, actionNames }) => [
@@ -51,21 +58,29 @@ async function getUserPermissions({ instancesIds, ctx }) {
     ])
   );
 
-  const instancesWithoutPermissions = difference(instancesIds, Object.keys(directPermissions));
+  const instancesWithoutPermissions = difference(
+    instancesIds,
+    Object.keys(directPermissions)
+  );
 
   if (!instancesWithoutPermissions.length) {
     return Object.fromEntries(
       instancesIds.map((id) => [
         id,
         {
-          role: getRoleMatchingActions({ actions: directPermissions[id] || [] }),
+          role: getRoleMatchingActions({
+            actions: directPermissions[id] || [],
+          }),
           actions: directPermissions[id] || [],
         },
       ])
     );
   }
 
-  const teacherPermissions = await getTeacherPermissions({ instances: instancesIds, ctx });
+  const teacherPermissions = await getTeacherPermissions({
+    instances: instancesIds,
+    ctx,
+  });
 
   return Object.fromEntries(
     instancesIds.map((id) => {
@@ -74,7 +89,7 @@ async function getUserPermissions({ instancesIds, ctx }) {
       if (directPermissions[id]) {
         actions = directPermissions[id];
       } else if (teacherPermissions[id]) {
-        actions = ['edit', 'view']; // Teacher actions
+        actions = ["edit", "view"]; // Teacher actions
       }
 
       return [

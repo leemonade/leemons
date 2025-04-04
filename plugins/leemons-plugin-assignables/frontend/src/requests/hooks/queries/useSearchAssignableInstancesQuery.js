@@ -1,19 +1,22 @@
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import { useVariantForQueryKey } from '@common/queries';
-import { useQuery } from '@tanstack/react-query';
-import useUserAgents from '@users/hooks/useUserAgents';
+import { useIsTeacher } from "@academic-portfolio/hooks";
+import { useVariantForQueryKey } from "@common/queries";
+import { useQuery } from "@tanstack/react-query";
+import useUserAgents from "@users/hooks/useUserAgents";
 
-import searchAssignableInstances from '../../assignableInstances/searchAssignableInstances';
-import { searchInstancesKey } from '../keys/instances';
+import searchAssignableInstances from "../../assignableInstances/searchAssignableInstances";
+import { searchInstancesKey } from "../keys/instances";
 
-export default function useSearchAssignableInstances({ query = {}, ...options }) {
+export default function useSearchAssignableInstances({
+  query = {},
+  ...options
+}) {
   const userAgents = useUserAgents();
   const isTeacher = useIsTeacher();
 
   const queryKey = searchInstancesKey({ ...query, userAgents });
   const queryFn = () => searchAssignableInstances({ ...query, isTeacher });
 
-  useVariantForQueryKey(queryKey, { modificationTrend: 'frequently' });
+  useVariantForQueryKey(queryKey, { modificationTrend: "frequently" });
 
   return useQuery({
     ...options,

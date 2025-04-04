@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import useTeacherClasses from './useTeacherClasses';
+import { useMemo } from "react";
+import useTeacherClasses from "./useTeacherClasses";
 
 // EN: Get all the classes of a given subject of the teacher
 // ES: Obtiene todas las clases de una asignatura del profesor

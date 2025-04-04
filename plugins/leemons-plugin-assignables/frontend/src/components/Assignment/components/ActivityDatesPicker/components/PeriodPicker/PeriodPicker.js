@@ -1,23 +1,29 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-import { Box, Text, DatePicker, InputWrapper, createStyles } from '@bubbles-ui/components';
-import dayjs from 'dayjs';
-import PropTypes from 'prop-types';
+import {
+  Box,
+  Text,
+  DatePicker,
+  InputWrapper,
+  createStyles,
+} from "@bubbles-ui/components";
+import dayjs from "dayjs";
+import PropTypes from "prop-types";
 
 export const usePeriodPickerStyles = createStyles((theme) => ({
   root: {
-    display: 'inline-flex',
-    flexDirection: 'column',
+    display: "inline-flex",
+    flexDirection: "column",
     gap: theme.other.global.spacing.padding.lg,
   },
   title: {
-    ...theme.other.global.content.typo.body['md--bold'],
+    ...theme.other.global.content.typo.body["md--bold"],
     color: theme.other.global.content.color.text.default,
   },
   dates: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'start',
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "start",
     gap: theme.other.global.spacing.padding.lg,
   },
 }));
@@ -25,7 +31,11 @@ export const usePeriodPickerStyles = createStyles((theme) => ({
 function calculateNewDeadline(startDate, dayjsStartDate) {
   let newDeadline;
   if (startDate) {
-    newDeadline = dayjsStartDate.add(1, 'day').set('hours', 23).set('minutes', 59).toDate();
+    newDeadline = dayjsStartDate
+      .add(1, "day")
+      .set("hours", 23)
+      .set("minutes", 59)
+      .toDate();
   } else {
     newDeadline = null;
   }
@@ -89,14 +99,22 @@ export function PeriodPicker({
             placeholder={localizations?.startDate?.placeholder}
             value={startDate}
             minDate={startDateProp ?? new Date()}
-            maxDate={deadline ? dayjs(deadline).subtract(1, 'minutes').toDate() : endDateProp}
+            maxDate={
+              deadline
+                ? dayjs(deadline).subtract(1, "minutes").toDate()
+                : endDateProp
+            }
             onChange={setStartDate}
             withTime
           />
           <DatePicker
             label={localizations?.deadline?.label}
             placeholder={localizations?.deadline?.placeholder}
-            minDate={startDate ? dayjs(startDate).add(1, 'minutes').toDate() : startDateProp}
+            minDate={
+              startDate
+                ? dayjs(startDate).add(1, "minutes").toDate()
+                : startDateProp
+            }
             maxDate={endDateProp}
             value={deadline}
             disabled={!startDate}

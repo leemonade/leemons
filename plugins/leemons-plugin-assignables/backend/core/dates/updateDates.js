@@ -1,9 +1,9 @@
-const { pick, difference, keys, without } = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { getDates } = require('./getDates');
+const { pick, difference, keys, without } = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { getDates } = require("./getDates");
 // const { unregisterDates } = require('./unregisterDates');
-const { registerDates } = require('./registerDates');
-const { unregisterDates } = require('./unregisterDates');
+const { registerDates } = require("./registerDates");
+const { unregisterDates } = require("./unregisterDates");
 
 // TODO: Verify if updateDates function is expected to remove the dates which are not used, this bug comes from leemons legacy
 
@@ -17,8 +17,8 @@ function getDiff(oldObject, newObject) {
     oldObject[key]
       ? new Date(oldObject[key]).getTime()
       : undefined !== newObject[key]
-      ? new Date(newObject[key]).getTime()
-      : undefined
+        ? new Date(newObject[key]).getTime()
+        : undefined
   );
 
   return {
@@ -40,7 +40,7 @@ function getDiff(oldObject, newObject) {
 async function updateDates({ type, instance, dates, onlyAddDates, ctx }) {
   if (!type || !instance || !dates) {
     throw new LeemonsError(ctx, {
-      message: 'Cannot update dates: type, instance and dates are required',
+      message: "Cannot update dates: type, instance and dates are required",
       httpStatusCode: 400,
     });
   }

@@ -1,10 +1,10 @@
-const { without, map } = require('lodash');
+const { without, map } = require("lodash");
 const {
   getTeacherInstances,
   getStudentAssignations,
   getActivitiesDates,
   getInstanceSubjectsProgramsAndClasses,
-} = require('./helpers/activitiesData');
+} = require("./helpers/activitiesData");
 const {
   filterInstancesByStatusAndArchived,
   filterAssignationsByStudentDidOpen,
@@ -13,15 +13,24 @@ const {
   filterInstancesByProgramAndSubjects,
   filterInstancesByEvaluable,
   filterInstancesByNotModule,
-} = require('./helpers/filters');
+} = require("./helpers/filters");
 const {
   filterInstancesByStudentCompletionPercentage,
-} = require('./helpers/filters/filterInstancesByStudentCompletionPercentage');
-const { sortInstancesByDates, applyOffsetAndLimit } = require('./helpers/sorts');
-const filterByBlockedActivities = require('./helpers/filters/filterByBlockedActivities');
-const { groupInstancesInModules } = require('./helpers/filters/groupInstancesInModules');
-const { filterInstancesByIsModule } = require('./helpers/filters/filterInstancesByIsModule');
-const { updateModuleAssignationDates } = require('./helpers/helpers/updateModuleAssignationDates');
+} = require("./helpers/filters/filterInstancesByStudentCompletionPercentage");
+const {
+  sortInstancesByDates,
+  applyOffsetAndLimit,
+} = require("./helpers/sorts");
+const filterByBlockedActivities = require("./helpers/filters/filterByBlockedActivities");
+const {
+  groupInstancesInModules,
+} = require("./helpers/filters/groupInstancesInModules");
+const {
+  filterInstancesByIsModule,
+} = require("./helpers/filters/filterInstancesByIsModule");
+const {
+  updateModuleAssignationDates,
+} = require("./helpers/helpers/updateModuleAssignationDates");
 
 /**
  * This function is used to search for NYA (Need Your Attention) activities for teachers.
@@ -43,8 +52,8 @@ async function searchTeacherNyaActivities({ query, ctx }) {
   const dates = await getActivitiesDates({
     instances,
     filters: {
-      status: 'closed',
-      sort: 'deadline',
+      status: "closed",
+      sort: "deadline",
       isArchived: false,
     },
     ctx,
@@ -53,7 +62,7 @@ async function searchTeacherNyaActivities({ query, ctx }) {
   const closedInstances = filterInstancesByStatusAndArchived({
     instances,
     filters: {
-      status: 'closed',
+      status: "closed",
       isArchived: false,
     },
     dates,
@@ -61,21 +70,25 @@ async function searchTeacherNyaActivities({ query, ctx }) {
 
   const openedInstances = without(instances, ...closedInstances);
 
-  const instanceSubjectsProgramsAndClasses = await getInstanceSubjectsProgramsAndClasses({
-    instances,
-    ctx,
-  });
+  const instanceSubjectsProgramsAndClasses =
+    await getInstanceSubjectsProgramsAndClasses({
+      instances,
+      ctx,
+    });
 
-  const instancesWithStudentsWhoFinished = await filterInstancesByStudentCompletionPercentage({
-    instances: openedInstances,
-    min: 0,
-    max: 100,
-    instanceSubjectsProgramsAndClasses,
-    excludeStudentsFullyEvaluated: true,
-    ctx,
-  });
+  const instancesWithStudentsWhoFinished =
+    await filterInstancesByStudentCompletionPercentage({
+      instances: openedInstances,
+      min: 0,
+      max: 100,
+      instanceSubjectsProgramsAndClasses,
+      excludeStudentsFullyEvaluated: true,
+      ctx,
+    });
 
-  const instancesToEvaluate = closedInstances.concat(instancesWithStudentsWhoFinished);
+  const instancesToEvaluate = closedInstances.concat(
+    instancesWithStudentsWhoFinished
+  );
 
   const instancesByProgramAndSubjects = filterInstancesByProgramAndSubjects({
     instances: instancesToEvaluate,
@@ -93,11 +106,11 @@ async function searchTeacherNyaActivities({ query, ctx }) {
     instances: instancesGroupedInModules,
     dates,
     filters: {
-      sort: 'deadline',
+      sort: "deadline",
     },
   });
 
-  const instancesToReturn = map(sortedInstances, 'id');
+  const instancesToReturn = map(sortedInstances, "id");
 
   return applyOffsetAndLimit(instancesToReturn, query);
 }
@@ -116,15 +129,15 @@ async function searchStudentNyaActivities({ query, ctx }) {
     relatedInstances: true,
     ctx,
   });
-  let instances = map(assignations, 'instance');
+  let instances = map(assignations, "instance");
 
   let dates = await getActivitiesDates({
     assignations,
     instances,
     filters: {
       studentDidOpen: true,
-      status: 'open',
-      progress: 'notSubmitted',
+      status: "open",
+      progress: "notSubmitted",
       isArchived: false,
     },
     ctx,
@@ -138,7 +151,7 @@ async function searchStudentNyaActivities({ query, ctx }) {
   instances = filterInstancesByStatusAndArchived({
     instances,
     filters: {
-      status: 'open',
+      status: "open",
       isArchived: false,
     },
     dates,
@@ -168,14 +181,14 @@ async function searchStudentNyaActivities({ query, ctx }) {
     max: 5,
   });
 
-  let newInstances = map(newAssignations, 'instance');
-  let instancesEndingNearby = map(assignationsEndingNearby, 'instance');
+  let newInstances = map(newAssignations, "instance");
+  let instancesEndingNearby = map(assignationsEndingNearby, "instance");
 
   newInstances = sortInstancesByDates({
     instances: newInstances,
     dates,
     filters: {
-      sort: 'deadline',
+      sort: "deadline",
     },
   });
 
@@ -183,16 +196,17 @@ async function searchStudentNyaActivities({ query, ctx }) {
     instances: instancesEndingNearby,
     dates,
     filters: {
-      sort: 'deadline',
+      sort: "deadline",
     },
   });
 
   let instancesToReturn = newInstances.concat(instancesEndingNearby);
 
-  const instanceSubjectsProgramsAndClasses = await getInstanceSubjectsProgramsAndClasses({
-    instances: instancesToReturn,
-    ctx,
-  });
+  const instanceSubjectsProgramsAndClasses =
+    await getInstanceSubjectsProgramsAndClasses({
+      instances: instancesToReturn,
+      ctx,
+    });
 
   instancesToReturn = filterInstancesByProgramAndSubjects({
     instances: instancesToReturn,
@@ -200,7 +214,7 @@ async function searchStudentNyaActivities({ query, ctx }) {
     instanceSubjectsProgramsAndClasses,
   });
 
-  instancesToReturn = map(instancesToReturn, 'id');
+  instancesToReturn = map(instancesToReturn, "id");
 
   return applyOffsetAndLimit(instancesToReturn, query);
 }
@@ -218,7 +232,7 @@ async function searchStudentNyaActivities({ query, ctx }) {
 module.exports = async function searchNyaActivities({ query, ctx }) {
   // EN: Keep in mind we are working with 2 different resources: Assignations for students and Instances for teachers.
   // ES: Ten en mente que estamos trabajando con 2 recursos: Assignations para estudiantes e Instancias para profesores.
-  const isTeacher = [true, 1, 'true'].includes(query?.isTeacher);
+  const isTeacher = [true, 1, "true"].includes(query?.isTeacher);
 
   if (isTeacher) {
     return searchTeacherNyaActivities({ query, ctx });

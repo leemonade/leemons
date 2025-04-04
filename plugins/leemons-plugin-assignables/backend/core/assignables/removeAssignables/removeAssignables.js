@@ -1,8 +1,8 @@
-const { uniq } = require('lodash');
+const { uniq } = require("lodash");
 
-const discardCacheBy = require('../../../cache/discardCacheBy');
-const { updateAsset, getAsset } = require('../../leebrary/assets');
-const { getAssignables } = require('../getAssignables');
+const discardCacheBy = require("../../../cache/discardCacheBy");
+const { updateAsset, getAsset } = require("../../leebrary/assets");
+const { getAssignables } = require("../getAssignables");
 
 /**
  * Removes assignables based on provided ids.
@@ -20,8 +20,12 @@ async function removeAssignables({ ids, ctx }) {
   const assignables = await getAssignables({ ids, ctx });
 
   // TODO: Include metadata.leebrary ids
-  const assetIds = assignables.map((assignable) => assignable.asset?.id ?? assignable.asset);
-  const resourcesIds = assignables.flatMap((assignable) => assignable.resources).filter(Boolean);
+  const assetIds = assignables.map(
+    (assignable) => assignable.asset?.id ?? assignable.asset
+  );
+  const resourcesIds = assignables
+    .flatMap((assignable) => assignable.resources)
+    .filter(Boolean);
 
   const allAssetIds = uniq(assetIds.concat(resourcesIds));
   const assets = await getAsset({ id: allAssetIds, ctx });

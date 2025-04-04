@@ -4,15 +4,15 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
-const { getAssignables } = require('../../core/assignables');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
+const { getAssignables } = require("../../core/assignables");
 
 /** @type {ServiceSchema} */
 module.exports = {
   getRest: {
     rest: {
-      method: 'GET',
-      path: '/find',
+      method: "GET",
+      path: "/find",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -20,8 +20,8 @@ module.exports = {
       const idsToUse = Array.isArray(ids) ? ids : [ids];
       const assignables = await getAssignables({
         ids: idsToUse,
-        withFiles: withFiles === 'true',
-        showDeleted: deleted === 'true',
+        withFiles: withFiles === "true",
+        showDeleted: deleted === "true",
         ctx,
       });
       return { status: 200, assignables };

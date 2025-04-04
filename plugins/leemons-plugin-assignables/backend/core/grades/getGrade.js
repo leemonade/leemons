@@ -1,9 +1,9 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
 async function getGrade({ assignation, subject, type, visibleToStudent, ctx }) {
   if (!assignation) {
     throw new LeemonsError(ctx, {
-      message: 'Cannot getGrade: assignation is required',
+      message: "Cannot getGrade: assignation is required",
       httpStatusCode: 400,
     });
   }

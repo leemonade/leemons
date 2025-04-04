@@ -1,9 +1,18 @@
-import React, { useMemo } from 'react';
-import { isNil } from 'lodash';
-import { Box, COLORS, ImageLoader, CardEmptyCover, Text } from '@bubbles-ui/components';
-import { usePendingEvaluationsCount } from '@assignables/hooks/assignableInstance/usePendingEvaluationsCount';
-import { NYACardCoverStyles } from './NYACardCover.styles';
-import { NYACARD_COVER_DEFAULT_PROPS, NYACARD_COVER_PROP_TYPES } from './NYACardCover.constants';
+import React, { useMemo } from "react";
+import { isNil } from "lodash";
+import {
+  Box,
+  COLORS,
+  ImageLoader,
+  CardEmptyCover,
+  Text,
+} from "@bubbles-ui/components";
+import { usePendingEvaluationsCount } from "@assignables/hooks/assignableInstance/usePendingEvaluationsCount";
+import { NYACardCoverStyles } from "./NYACardCover.styles";
+import {
+  NYACARD_COVER_DEFAULT_PROPS,
+  NYACARD_COVER_PROP_TYPES,
+} from "./NYACardCover.constants";
 
 const NYACardCover = ({
   height,
@@ -18,23 +27,31 @@ const NYACardCover = ({
   localizations,
   instance,
 }) => {
-  const { moduleTotal, pendingEvaluationActivitiesCount } = usePendingEvaluationsCount({
-    instance,
-  });
+  const { moduleTotal, pendingEvaluationActivitiesCount } =
+    usePendingEvaluationsCount({
+      instance,
+    });
   const { classes } = NYACardCoverStyles(
     { color: topColor, height, parentHovered },
-    { name: 'NYACardCover' }
+    { name: "NYACardCover" }
   );
   const icon = useMemo(
     () =>
       !isNil(fileIcon)
-        ? React.cloneElement(fileIcon, { iconStyle: { backgroundColor: COLORS.interactive03h } })
+        ? React.cloneElement(fileIcon, {
+            iconStyle: { backgroundColor: COLORS.interactive03h },
+          })
         : null,
     [fileIcon]
   );
 
   const MemoizedEmptyCover = useMemo(
-    () => <CardEmptyCover icon={icon || variantIcon} fileType={fileType || variantTitle} />,
+    () => (
+      <CardEmptyCover
+        icon={icon || variantIcon}
+        fileType={fileType || variantTitle}
+      />
+    ),
     [icon, variantIcon, fileType]
   );
   if (isTeacherSyllabus) {
@@ -43,7 +60,9 @@ const NYACardCover = ({
         <Box className={classes.color} />
         <Box className={classes.commonContainer}>
           <Box>
-            <Text className={classes.submitedNumber}>{pendingEvaluationActivitiesCount}</Text>
+            <Text className={classes.submitedNumber}>
+              {pendingEvaluationActivitiesCount}
+            </Text>
             <Text className={classes.separator}>/{moduleTotal}</Text>
           </Box>
           <Box className={classes.pendigLabelContainer}>
@@ -61,7 +80,7 @@ const NYACardCover = ({
       <Box className={classes.color} />
       <Box className={classes.overlayTransparent}></Box>
       {cover ? (
-        <ImageLoader src={cover} height={height} width={'100%'} forceImage />
+        <ImageLoader src={cover} height={height} width={"100%"} forceImage />
       ) : (
         MemoizedEmptyCover
       )}

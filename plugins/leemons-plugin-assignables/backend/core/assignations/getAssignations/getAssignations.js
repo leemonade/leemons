@@ -1,28 +1,35 @@
-const { LeemonsError } = require('@leemons/error');
-const { map, uniq, keyBy, defaultsDeep } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { map, uniq, keyBy, defaultsDeep } = require("lodash");
 
-const { getAssignationKeyBuilder } = require('../../../cache/keys/assignations');
-const ttl = require('../../../cache/ttl');
+const {
+  getAssignationKeyBuilder,
+} = require("../../../cache/keys/assignations");
+const ttl = require("../../../cache/ttl");
 
-const { checkPermissions } = require('./checkPermissions');
-const { findAssignationDates } = require('./findAssignationDates');
-const { findInstanceDates } = require('./findInstanceDates');
-const { getAssignationStatus } = require('./getAssignationStatus');
-const { getClassesWithSubject } = require('./getClassesWithSubject');
-const { getGrades } = require('./getGrades');
+const { checkPermissions } = require("./checkPermissions");
+const { findAssignationDates } = require("./findAssignationDates");
+const { findInstanceDates } = require("./findInstanceDates");
+const { getAssignationStatus } = require("./getAssignationStatus");
+const { getClassesWithSubject } = require("./getClassesWithSubject");
+const { getGrades } = require("./getGrades");
 const {
   getModuleActivitiesTimestampsAndGrades,
-} = require('./getModuleActivitesTimestampsAndGrades');
+} = require("./getModuleActivitesTimestampsAndGrades");
 
-function getAutoEvaluatedGrades({ assignation, instance, status, evaluationSystems }) {
+function getAutoEvaluatedGrades({
+  assignation,
+  instance,
+  status,
+  evaluationSystems,
+}) {
   const grades = assignation.grades;
 
-  const instanceIsAutoEvaluable = instance?.metadata?.evaluationType === 'auto';
+  const instanceIsAutoEvaluable = instance?.metadata?.evaluationType === "auto";
 
   if (
     !instanceIsAutoEvaluable ||
     !status.finished ||
-    grades.some((grade) => grade.type === 'main')
+    grades.some((grade) => grade.type === "main")
   ) {
     return grades;
   }
@@ -36,10 +43,10 @@ function getAutoEvaluatedGrades({ assignation, instance, status, evaluationSyste
   subjects.forEach((subject) => {
     grades.push({
       subject,
-      type: 'main',
+      type: "main",
       grade: minScale,
       feedback: null,
-      gradedBy: 'auto-graded',
+      gradedBy: "auto-graded",
       visibleToStudent: true,
     });
   });
@@ -47,7 +54,12 @@ function getAutoEvaluatedGrades({ assignation, instance, status, evaluationSyste
   return grades;
 }
 
-async function getAssignations({ assignationsIds, throwOnMissing = true, details = true, ctx }) {
+async function getAssignations({
+  assignationsIds,
+  throwOnMissing = true,
+  details = true,
+  ctx,
+}) {
   if (!assignationsIds?.length) {
     return [];
   }
@@ -80,12 +92,14 @@ async function getAssignations({ assignationsIds, throwOnMissing = true, details
       });
     }
   } else {
-    assignationsData = assignationsData.filter((assignation) => permissions[assignation.id]);
+    assignationsData = assignationsData.filter(
+      (assignation) => permissions[assignation.id]
+    );
 
     Object.values(permissions).filter((permission) => permission);
   }
 
-  ids = map(assignationsData, 'id');
+  ids = map(assignationsData, "id");
 
   if (!details) {
     return assignationsData.map((assignation) => ({
@@ -120,7 +134,7 @@ async function getInstanceMetadataAndSubjects({ instancesIds, ctx }) {
     ctx.tx.db.Instances.find({ id: instancesIds })
       .select({ id: 1, metadata: 1 })
       .lean()
-      .then((instances) => keyBy(instances, 'id')),
+      .then((instances) => keyBy(instances, "id")),
   ]);
 
   const instancesById = {};
@@ -138,14 +152,21 @@ async function getInstanceMetadataAndSubjects({ instancesIds, ctx }) {
   return instancesById;
 }
 
-async function addStatusAndInstanceToAssignations({ assignations, fetchInstance, ctx }) {
+async function addStatusAndInstanceToAssignations({
+  assignations,
+  fetchInstance,
+  ctx,
+}) {
   const instancesIds = assignations.map((assignation) => assignation.instance);
 
-  const { getInstances } = require('../../instances/getInstances');
+  const { getInstances } = require("../../instances/getInstances");
 
   const promises = [
     findInstanceDates({ instances: instancesIds, ctx }),
-    getModuleActivitiesTimestampsAndGrades({ assignationsData: assignations, ctx }),
+    getModuleActivitiesTimestampsAndGrades({
+      assignationsData: assignations,
+      ctx,
+    }),
   ];
 
   if (fetchInstance) {
@@ -154,7 +175,7 @@ async function addStatusAndInstanceToAssignations({ assignations, fetchInstance,
         ids: instancesIds,
         details: true,
         ctx,
-      }).then((instances) => keyBy(instances, 'id'))
+      }).then((instances) => keyBy(instances, "id"))
     );
   } else {
     promises.push(getInstanceMetadataAndSubjects({ instancesIds, ctx }));
@@ -162,17 +183,24 @@ async function addStatusAndInstanceToAssignations({ assignations, fetchInstance,
 
   const [
     dates,
-    { dates: moduleActivitiesTimestamps, completion, grades: moduleGrades, status: moduleStatus },
+    {
+      dates: moduleActivitiesTimestamps,
+      completion,
+      grades: moduleGrades,
+      status: moduleStatus,
+    },
     instances,
   ] = await Promise.all(promises);
 
   const evaluationSystems = {};
-  const programs = uniq(Object.values(instances).map((instance) => instance.subjects[0].program));
+  const programs = uniq(
+    Object.values(instances).map((instance) => instance.subjects[0].program)
+  );
 
   await Promise.all(
     programs.map(async (program) => {
       evaluationSystems[program] = await ctx.tx.call(
-        'academic-portfolio.programs.getProgramEvaluationSystem',
+        "academic-portfolio.programs.getProgramEvaluationSystem",
         {
           id: program,
         }
@@ -181,7 +209,10 @@ async function addStatusAndInstanceToAssignations({ assignations, fetchInstance,
   );
 
   return assignations.map((assignation) => {
-    defaultsDeep(assignation.timestamps, moduleActivitiesTimestamps[assignation.id] || {});
+    defaultsDeep(
+      assignation.timestamps,
+      moduleActivitiesTimestamps[assignation.id] || {}
+    );
     const status = getAssignationStatus({
       dates: dates[assignation.instance] || {},
       timestamps: assignation.timestamps || {},
@@ -213,7 +244,9 @@ async function addStatusAndInstanceToAssignations({ assignations, fetchInstance,
           `subject|${subject}.assignation|${assignation.id}.userAgent|${assignation.user}`
         )
       ),
-      instance: fetchInstance ? instances[assignation.instance] : assignation.instance,
+      instance: fetchInstance
+        ? instances[assignation.instance]
+        : assignation.instance,
     };
   });
 }
@@ -235,18 +268,24 @@ async function getAssignationsWithCache({
   });
 
   const cacheKeys = assignationsIds.map(getAssignationsCacheKeyBuilder);
-  const cachedAssignations = await ctx.cache.getMany(cacheKeys).then((r) => Object.values(r));
+  const cachedAssignations = await ctx.cache
+    .getMany(cacheKeys)
+    .then((r) => Object.values(r));
 
   const assignationsById = {};
   const assignationsByInstanceAndUser = {};
 
   cachedAssignations.forEach((assignation) => {
     assignationsById[assignation.id] = assignation;
-    assignationsByInstanceAndUser[`${assignation.instance}|${assignation.user}`] = assignation;
+    assignationsByInstanceAndUser[
+      `${assignation.instance}|${assignation.user}`
+    ] = assignation;
   });
 
   const missingIds = assignationsIds.filter(
-    (id) => !assignationsById[id.id] && !assignationsByInstanceAndUser[`${id.instance}|${id.user}`]
+    (id) =>
+      !assignationsById[id.id] &&
+      !assignationsByInstanceAndUser[`${id.instance}|${id.user}`]
   );
 
   if (missingIds.length) {
@@ -287,14 +326,20 @@ async function getAssignationsWithCache({
   }
 
   const assignations = assignationsIds.map(
-    (id) => assignationsById[id?.id] ?? assignationsByInstanceAndUser[`${id?.instance}|${id?.user}`]
+    (id) =>
+      assignationsById[id?.id] ??
+      assignationsByInstanceAndUser[`${id?.instance}|${id?.user}`]
   );
 
   if (!details) {
     return assignations;
   }
 
-  return await addStatusAndInstanceToAssignations({ assignations, fetchInstance, ctx });
+  return await addStatusAndInstanceToAssignations({
+    assignations,
+    fetchInstance,
+    ctx,
+  });
 }
 
 module.exports = { getAssignations: getAssignationsWithCache };

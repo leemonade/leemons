@@ -1,12 +1,14 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
-const discardCacheBy = require('../../../cache/discardCacheBy');
-const { assignableRolesObject } = require('../../../config/constants');
-const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
+const discardCacheBy = require("../../../cache/discardCacheBy");
+const { assignableRolesObject } = require("../../../config/constants");
+const {
+  getUserPermission,
+} = require("../../permissions/assignables/users/getUserPermission");
 const {
   removePermissionFromUser,
-} = require('../../permissions/assignables/users/removePermissionFromUser');
-const { getAssignable } = require('../getAssignable');
+} = require("../../permissions/assignables/users/removePermissionFromUser");
+const { getAssignable } = require("../getAssignable");
 /**
  * Remove a user from an assignable
  * @async
@@ -36,7 +38,7 @@ async function removeUserFromAssignable({ assignableId, userAgents, ctx }) {
   // EN: Check if the user has permissions to remove the user from the assignable
   // ES: Comprobar si el usuario tiene permisos para eliminar al usuario del asignable
 
-  const userAgentsInfo = await ctx.tx.call('users.users.getUserAgentsInfo', {
+  const userAgentsInfo = await ctx.tx.call("users.users.getUserAgentsInfo", {
     userAgentIds: userAgents,
   });
 

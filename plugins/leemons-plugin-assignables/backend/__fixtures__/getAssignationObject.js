@@ -1,9 +1,9 @@
 function getAssignationObject() {
   return {
-    id: 'test-id',
-    instance: 'test-instance',
+    id: "test-id",
+    instance: "test-instance",
     indexable: true,
-    user: 'userAgentId',
+    user: "userAgentId",
     classes: {},
     metadata: {},
     emailSended: false,

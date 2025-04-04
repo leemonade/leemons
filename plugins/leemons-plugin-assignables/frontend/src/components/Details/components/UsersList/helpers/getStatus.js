@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 function hasGrades(studentData) {
   const grades = studentData?.grades;
@@ -7,7 +7,9 @@ function hasGrades(studentData) {
     return false;
   }
 
-  return grades.some((grade) => grade.type === 'main' && grade.visibleToStudent);
+  return grades.some(
+    (grade) => grade.type === "main" && grade.visibleToStudent
+  );
 }
 
 export default function getStatus(studentData, instanceData) {
@@ -18,7 +20,7 @@ export default function getStatus(studentData, instanceData) {
     const isGradable = !!instanceData?.requiresScoring;
 
     if (isGradable && hasGrades(studentData)) {
-      return 'evaluated';
+      return "evaluated";
     }
     const deadline = dayjs(instanceData.dates.deadline || null);
     const endDate = dayjs(studentData?.timestamps?.end || null);
@@ -26,24 +28,24 @@ export default function getStatus(studentData, instanceData) {
     const endDateIsLate = endDate.isValid() && endDate.isAfter(deadline);
 
     if (endDateIsLate) {
-      return 'late';
+      return "late";
     }
 
     if (endDate.isValid()) {
-      return isGradable ? 'submitted' : 'ended';
+      return isGradable ? "submitted" : "ended";
     }
 
-    return 'closed';
+    return "closed";
   }
 
   if (studentData.started) {
     const startDate = dayjs(studentData?.timestamps?.start || null);
 
     if (startDate.isValid()) {
-      return 'started';
+      return "started";
     }
-    return 'opened';
+    return "opened";
   }
 
-  return 'assigned';
+  return "assigned";
 }

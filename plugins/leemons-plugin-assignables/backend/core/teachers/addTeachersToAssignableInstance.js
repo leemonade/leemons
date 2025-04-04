@@ -1,4 +1,4 @@
-const { addPermissionToUser } = require('../permissions/instances/users');
+const { addPermissionToUser } = require("../permissions/instances/users");
 
 async function addTeachersToAssignableInstance({
   teachers,
@@ -11,7 +11,7 @@ async function addTeachersToAssignableInstance({
     assignableInstance: assignableInstanceId,
     assignable: assignableId,
     userAgents: teachersIds,
-    role: 'teacher',
+    role: "teacher",
     ctx,
   });
 

@@ -1,12 +1,12 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useUserAgents } from '@users/hooks';
-import _ from 'lodash';
+import getSubjectGroupCourseNamesFromClassData from "@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData";
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useUserAgents } from "@users/hooks";
+import _ from "lodash";
 
-import useTeacherClassesOfSubject from './useTeacherClassesOfSubject';
+import useTeacherClassesOfSubject from "./useTeacherClassesOfSubject";
 
 function difference(...arr) {
   const all = _.uniq(arr.flat());
@@ -21,11 +21,16 @@ export default function useGroupedClasses(subjects, disableGrouping = false) {
 
   const [userAgent] = useUserAgents() ?? [];
 
-  const [t] = useTranslateLoader(prefixPN('common'));
+  const [t] = useTranslateLoader(prefixPN("common"));
 
   return useMemo(() => {
     if (!classes?.length) {
-      return { classes: [], students: [], nonAssignableStudents: [], assignableStudents: [] };
+      return {
+        classes: [],
+        students: [],
+        nonAssignableStudents: [],
+        assignableStudents: [],
+      };
     }
 
     const classesOfSubject = _.groupBy(classes, (c) => c.subject);
@@ -38,12 +43,19 @@ export default function useGroupedClasses(subjects, disableGrouping = false) {
     let groups = _.groupBy(
       classes.flatMap((c) => ({
         students: c.c.students,
-        assignableStudents: _.difference(c.c.students, studentsNotPresentInAllSubjects),
-        nonAssignableStudents: _.intersection(c.c.students, studentsNotPresentInAllSubjects),
+        assignableStudents: _.difference(
+          c.c.students,
+          studentsNotPresentInAllSubjects
+        ),
+        nonAssignableStudents: _.intersection(
+          c.c.students,
+          studentsNotPresentInAllSubjects
+        ),
         group: c.c.groups?.id,
         class: c,
 
-        teacherType: c.teachers.find(t => t.teacher === userAgent)?.type ?? null
+        teacherType:
+          c.teachers.find((t) => t.teacher === userAgent)?.type ?? null,
       })),
       (c) => c.group
     );
@@ -61,30 +73,36 @@ export default function useGroupedClasses(subjects, disableGrouping = false) {
                 common.length >= groupStudents.length * 0.8
               );
             });
-      const parsedGroupName = getSubjectGroupCourseNamesFromClassData(group[0].class.c);
+      const parsedGroupName = getSubjectGroupCourseNamesFromClassData(
+        group[0].class.c
+      );
       if (shouldDisplayOnlyGroup) {
-        const groupAssignableStudents = _.uniq(group.flatMap((c) => c.assignableStudents));
-        const groupNonAssignableStudents = _.uniq(group.flatMap((c) => c.nonAssignableStudents));
+        const groupAssignableStudents = _.uniq(
+          group.flatMap((c) => c.assignableStudents)
+        );
+        const groupNonAssignableStudents = _.uniq(
+          group.flatMap((c) => c.nonAssignableStudents)
+        );
         // We enter here when there are reference groups or when the different subjects share students between classes.
         // the second case requires us to give a generic name to the group.
         // Todo: discuss the need of checking the intersection of students when reference groups are used. We could only do this if the program doesn't use reference groups.
         acc.push({
-          label: parsedGroupName.courseAndGroupParsed ?? t('defaultGroupName'),
-          type: 'group',
+          label: parsedGroupName.courseAndGroupParsed ?? t("defaultGroupName"),
+          type: "group",
           id,
           students: groupStudents,
           assignableStudents: groupAssignableStudents,
           nonAssignableStudents: groupNonAssignableStudents,
           totalStudents: groupStudents.length,
           classes: group,
-          teacherTypes: group.map(g => g.teacherType),
+          teacherTypes: group.map((g) => g.teacherType),
         });
       } else {
         acc.push(
           ...group.map((g) => ({
             // label: g.class.label,
             label: parsedGroupName.courseAndGroupParsed,
-            type: 'class',
+            type: "class",
             id: g.class.id,
             students: g.students,
             assignableStudents: g.assignableStudents,

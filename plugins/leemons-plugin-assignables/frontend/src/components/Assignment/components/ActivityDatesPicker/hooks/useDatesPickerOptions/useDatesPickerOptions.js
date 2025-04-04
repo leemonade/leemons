@@ -1,15 +1,16 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { get } from 'lodash';
+import { get } from "lodash";
 
-import useWidgetLocalizations from './hooks/useWidgetLocalizations';
-import useWidgets from './hooks/useWidgets';
+import useWidgetLocalizations from "./hooks/useWidgetLocalizations";
+import useWidgets from "./hooks/useWidgets";
 
 export default function useDatesPickerOptions() {
   const { data: widgets, isLoading: isLoadingWidgets } = useWidgets();
-  const { data: localizations, isLoading: isLoadingLocalizations } = useWidgetLocalizations({
-    widgets,
-  });
+  const { data: localizations, isLoading: isLoadingLocalizations } =
+    useWidgetLocalizations({
+      widgets,
+    });
 
   const options = useMemo(
     () =>
@@ -29,5 +30,9 @@ export default function useDatesPickerOptions() {
     [widgets]
   );
 
-  return { options, components, isLoading: isLoadingWidgets || isLoadingLocalizations };
+  return {
+    options,
+    components,
+    isLoading: isLoadingWidgets || isLoadingLocalizations,
+  };
 }

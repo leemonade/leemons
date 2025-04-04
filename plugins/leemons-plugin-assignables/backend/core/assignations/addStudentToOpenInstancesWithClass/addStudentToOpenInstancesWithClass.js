@@ -1,9 +1,9 @@
-const { sqlDatetime } = require('@leemons/utils');
-const { map, difference, compact, uniq } = require('lodash');
+const { sqlDatetime } = require("@leemons/utils");
+const { map, difference, compact, uniq } = require("lodash");
 
-const { searchInstancesByClass } = require('../../classes');
-const { addPermissionToUser } = require('../../permissions/instances/users');
-const { createAssignation } = require('../createAssignation');
+const { searchInstancesByClass } = require("../../classes");
+const { addPermissionToUser } = require("../../permissions/instances/users");
+const { createAssignation } = require("../createAssignation");
 
 // TODO: Only add to assignable if student is on all the subjects of the assignableInstance
 
@@ -12,36 +12,36 @@ async function filterByOpenInstances({ instances, ctx }) {
     id: instances,
     addNewClassStudents: true,
   })
-    .select(['id'])
+    .select(["id"])
     .lean();
 
-  const autoAssignableInstancesIds = map(autoAssignableInstances, 'id');
+  const autoAssignableInstancesIds = map(autoAssignableInstances, "id");
 
   const InstanceDates = await ctx.tx.db.Dates.find({
-    type: 'assignableInstance',
+    type: "assignableInstance",
     instance: autoAssignableInstancesIds,
     $or: [
       {
-        name: 'closed',
+        name: "closed",
       },
       {
-        name: 'deadline',
+        name: "deadline",
         date: {
           $lte: new Date(),
         },
       },
       {
-        name: 'archived',
+        name: "archived",
       },
     ],
     date: {
       $ne: null,
     },
   })
-    .select(['instance'])
+    .select(["instance"])
     .lean();
 
-  const expiredInstancesIds = map(InstanceDates, 'instance');
+  const expiredInstancesIds = map(InstanceDates, "instance");
 
   return difference(autoAssignableInstancesIds, expiredInstancesIds);
 }
@@ -51,7 +51,7 @@ async function getAlreadyAssignedInstances({ student, instances, ctx }) {
     instance: instances,
     user: student,
   })
-    .select(['instance'])
+    .select(["instance"])
     .lean();
 
   return assignationsFound.map((assignation) => assignation.instance);
@@ -62,15 +62,15 @@ async function grantUserAccessToEvens({ student, instances, ctx }) {
     id: instances,
     event: { $ne: null },
   })
-    .select(['event'])
+    .select(["event"])
     .lean();
 
   await Promise.all(
     instancesWithEvents.map(({ event }) =>
-      ctx.tx.call('calendar.calendar.grantAccessUserAgentToEvent', {
+      ctx.tx.call("calendar.calendar.grantAccessUserAgentToEvent", {
         id: event,
         userAgentId: [student],
-        actionName: 'view',
+        actionName: "view",
       })
     )
   );
@@ -94,7 +94,7 @@ async function addStudentToInstance({ student, instance, assignable, ctx }) {
     assignableInstance: instance,
     assignable: assignable.id,
     userAgents: [student],
-    role: 'student',
+    role: "student",
     ctx,
   });
 
@@ -140,15 +140,18 @@ async function addStudentToInstances({ student, instances, ctx }) {
 }
 
 async function getMainTeacherUserSession({ klass, ctx }) {
-  const teachers = await ctx.tx.call('academic-portfolio.classes.teacherGetByClass', {
-    classe: { id: klass },
-    type: 'main-teacher',
-    returnIds: true,
-  });
+  const teachers = await ctx.tx.call(
+    "academic-portfolio.classes.teacherGetByClass",
+    {
+      classe: { id: klass },
+      type: "main-teacher",
+      returnIds: true,
+    }
+  );
 
   const mainTeacher = teachers[0];
 
-  const [{ user }] = await ctx.tx.call('users.users.getUserAgentsInfo', {
+  const [{ user }] = await ctx.tx.call("users.users.getUserAgentsInfo", {
     userAgentIds: [mainTeacher],
     withProfile: true,
     withCenter: true,
@@ -164,7 +167,11 @@ async function getMainTeacherUserSession({ klass, ctx }) {
   };
 }
 
-async function addStudentsToOpenInstancesWithClass({ student, class: klass, ctx }) {
+async function addStudentsToOpenInstancesWithClass({
+  student,
+  class: klass,
+  ctx,
+}) {
   const assignableInstances = await searchInstancesByClass({ id: klass, ctx });
 
   const openInstances = await filterByOpenInstances({

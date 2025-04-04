@@ -1,3 +1,3 @@
-const { duplicateAssignable } = require('./duplicateAssignable');
+const { duplicateAssignable } = require("./duplicateAssignable");
 
 module.exports = { duplicateAssignable };

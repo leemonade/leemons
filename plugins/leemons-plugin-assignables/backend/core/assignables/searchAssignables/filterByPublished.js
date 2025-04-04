@@ -1,4 +1,8 @@
-async function filterByPublished({ assignablesIds: _assignablesIds, published, ctx }) {
+async function filterByPublished({
+  assignablesIds: _assignablesIds,
+  published,
+  ctx,
+}) {
   /**
    * Filters assignables based on their published status.
    *
@@ -12,11 +16,11 @@ async function filterByPublished({ assignablesIds: _assignablesIds, published, c
    */
 
   let assignablesIds = _assignablesIds;
-  assignablesIds = await ctx.tx.call('common.versionControl.getVersion', {
+  assignablesIds = await ctx.tx.call("common.versionControl.getVersion", {
     id: assignablesIds,
   });
 
-  if (published !== 'all') {
+  if (published !== "all") {
     assignablesIds = assignablesIds.filter(
       ({ published: isPublished }) => isPublished === published
     );

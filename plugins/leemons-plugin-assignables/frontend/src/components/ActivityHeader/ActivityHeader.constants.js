@@ -1,4 +1,4 @@
-import propTypes from 'prop-types';
+import propTypes from "prop-types";
 
 export const ACTIVITY_HEADER_DEFAULT_PROPS = {
   showAssignmentDetailButton: false,

@@ -1,41 +1,41 @@
-const { it, expect, beforeEach } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
-const { removeUserFromAssignable } = require('./removeUserFromAssignable');
-const { getAssignable } = require('../getAssignable');
+const { it, expect, beforeEach } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
+const { removeUserFromAssignable } = require("./removeUserFromAssignable");
+const { getAssignable } = require("../getAssignable");
 const {
   getUserPermission,
-} = require('../../permissions/assignables/users/getUserPermission');
+} = require("../../permissions/assignables/users/getUserPermission");
 const {
   removePermissionFromUser,
-} = require('../../permissions/assignables/users/removePermissionFromUser');
+} = require("../../permissions/assignables/users/removePermissionFromUser");
 
 // Mocking the external function calls
-jest.mock('../getAssignable');
-jest.mock('../../permissions/assignables/users/getUserPermission');
-jest.mock('../../permissions/assignables/users/removePermissionFromUser');
+jest.mock("../getAssignable");
+jest.mock("../../permissions/assignables/users/getUserPermission");
+jest.mock("../../permissions/assignables/users/removePermissionFromUser");
 
 const getUserAgentsInfoHandle = jest.fn();
 
-const userAgents = ['userAgentId2'];
+const userAgents = ["userAgentId2"];
 
-describe('removeUserFromAssignable', () => {
+describe("removeUserFromAssignable", () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
 
-  it('should remove user from assignable', async () => {
+  it("should remove user from assignable", async () => {
     // Arrange
-    const assignableId = 'assignable1';
-    const actions = ['edit', 'view', 'assign'];
+    const assignableId = "assignable1";
+    const actions = ["edit", "view", "assign"];
     const ctx = generateCtx({
       actions: {
-        'users.users.getUserAgentsInfo': getUserAgentsInfoHandle,
+        "users.users.getUserAgentsInfo": getUserAgentsInfoHandle,
       },
     });
     getAssignable.mockResolvedValue({ id: assignableId });
     getUserPermission
-      .mockResolvedValueOnce({ role: 'editor' })
-      .mockResolvedValue({ role: 'student' });
+      .mockResolvedValueOnce({ role: "editor" })
+      .mockResolvedValue({ role: "student" });
     getUserAgentsInfoHandle.mockResolvedValue(userAgents);
     removePermissionFromUser.mockResolvedValue({ userAgents, actions });
 
@@ -60,31 +60,31 @@ describe('removeUserFromAssignable', () => {
           ...ctx.meta,
           userSession: {
             ...ctx.meta.userSession,
-            userAgents: ['userAgentId2'],
+            userAgents: ["userAgentId2"],
           },
         },
       },
     });
     expect(removePermissionFromUser).toHaveBeenCalledWith({
       assignable: { id: assignableId },
-      userAgent: 'userAgentId2',
+      userAgent: "userAgentId2",
       ctx,
     });
     expect(result).toEqual([{ userAgents, actions }]);
   });
 
-  it('should throw Error if user does not have permission to assignable', async () => {
+  it("should throw Error if user does not have permission to assignable", async () => {
     // Arrange
-    const assignableId = 'assignable1';
+    const assignableId = "assignable1";
     const ctx = generateCtx({
       actions: {
-        'users.users.getUserAgentsInfo': getUserAgentsInfoHandle,
+        "users.users.getUserAgentsInfo": getUserAgentsInfoHandle,
       },
     });
     getAssignable.mockResolvedValue({ id: assignableId });
     getUserPermission
-      .mockResolvedValueOnce({ role: 'student' })
-      .mockResolvedValue({ role: 'student' });
+      .mockResolvedValueOnce({ role: "student" })
+      .mockResolvedValue({ role: "student" });
     getUserAgentsInfoHandle.mockResolvedValue(userAgents);
 
     // Act
@@ -98,12 +98,12 @@ describe('removeUserFromAssignable', () => {
     expect(removePermissionFromUser).not.toBeCalled();
   });
 
-  it('should throw Error if user cannot remove from assignable', async () => {
+  it("should throw Error if user cannot remove from assignable", async () => {
     // Arrange
-    const assignableId = 'assignable1';
+    const assignableId = "assignable1";
     const ctx = generateCtx({
       actions: {
-        'users.users.getUserAgentsInfo': getUserAgentsInfoHandle,
+        "users.users.getUserAgentsInfo": getUserAgentsInfoHandle,
       },
     });
 

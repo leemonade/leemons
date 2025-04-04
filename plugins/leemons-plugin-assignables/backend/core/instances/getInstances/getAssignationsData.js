@@ -1,4 +1,6 @@
-const { getAssignationsOfInstance } = require('../../assignations/getAssignationsOfInstance');
+const {
+  getAssignationsOfInstance,
+} = require("../../assignations/getAssignationsOfInstance");
 
 /**
  * @async

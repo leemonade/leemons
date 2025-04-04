@@ -9,7 +9,7 @@
  */
 async function getAssignablesAssets({ ids, ctx }) {
   const assignablesFound = await ctx.tx.db.Assignables.find({ id: ids })
-    .select(['id', 'asset'])
+    .select(["id", "asset"])
     .lean();
 
   const assetsByAssignable = {};

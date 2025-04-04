@@ -4,12 +4,12 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { registerClass } = require('./registerClass');
-const { classesSchema } = require('../../models/classes');
+const { registerClass } = require("./registerClass");
+const { classesSchema } = require("../../models/classes");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -32,11 +32,11 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should register one class', async () => {
+it("Should register one class", async () => {
   // Arrange
-  const classId = 'class-id';
-  const assignableId = 'assignable-id';
-  const instanceId = 'instance-id';
+  const classId = "class-id";
+  const assignableId = "assignable-id";
+  const instanceId = "instance-id";
 
   const expectedValue = {
     instance: instanceId,
@@ -51,7 +51,7 @@ it('Should register one class', async () => {
 
   const ctx = generateCtx({
     models: {
-      Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+      Classes: newModel(mongooseConnection, "Classes", classesSchema),
     },
   });
 
@@ -70,11 +70,11 @@ it('Should register one class', async () => {
   expect(classesSaved).toHaveLength(1);
 });
 
-it('Should register multiple classes', async () => {
+it("Should register multiple classes", async () => {
   // Arrange
-  const classIds = ['class-id-1', 'class-id-2'];
-  const assignableId = 'assignable-id';
-  const instanceId = 'instance-id';
+  const classIds = ["class-id-1", "class-id-2"];
+  const assignableId = "assignable-id";
+  const instanceId = "instance-id";
 
   const expectedValue = {
     instance: instanceId,
@@ -96,7 +96,7 @@ it('Should register multiple classes', async () => {
 
   const ctx = generateCtx({
     models: {
-      Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+      Classes: newModel(mongooseConnection, "Classes", classesSchema),
     },
   });
 
@@ -120,15 +120,15 @@ it('Should register multiple classes', async () => {
   expect(classesSaved).toHaveLength(2);
 });
 
-it('Should throw if a param is not provided', async () => {
+it("Should throw if a param is not provided", async () => {
   // Arrange
-  const classId = 'class-id';
-  const assignableId = 'assignable-id';
-  const instanceId = 'instance-id';
+  const classId = "class-id";
+  const assignableId = "assignable-id";
+  const instanceId = "instance-id";
 
   const ctx = generateCtx({
     models: {
-      Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+      Classes: newModel(mongooseConnection, "Classes", classesSchema),
     },
   });
 
@@ -159,12 +159,12 @@ it('Should throw if a param is not provided', async () => {
 
   // Assert
   expect(noIdFn).rejects.toThrowError(
-    'id, instance and assignable are required'
+    "id, instance and assignable are required"
   );
   expect(noAssignableFn).rejects.toThrowError(
-    'id, instance and assignable are required'
+    "id, instance and assignable are required"
   );
   expect(noInstanceFn).rejects.toThrowError(
-    'id, instance and assignable are required'
+    "id, instance and assignable are required"
   );
 });

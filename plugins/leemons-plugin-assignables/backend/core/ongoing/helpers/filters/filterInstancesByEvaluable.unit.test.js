@@ -1,15 +1,15 @@
-const { it, expect } = require('@jest/globals');
-const { filterInstancesByEvaluable } = require('./filterInstancesByEvaluable');
+const { it, expect } = require("@jest/globals");
+const { filterInstancesByEvaluable } = require("./filterInstancesByEvaluable");
 
-it('Should call filterInstancesByEvaluable correctly when evaluable is true', () => {
+it("Should call filterInstancesByEvaluable correctly when evaluable is true", () => {
   // Arrange
   const instanceOne = {
-    id: 'instanceOne',
+    id: "instanceOne",
     requiresScoring: true,
     allowFeedback: true,
   };
   const instanceTwo = {
-    id: 'instanceTwo',
+    id: "instanceTwo",
     requiresScoring: false,
     allowFeedback: false,
   };

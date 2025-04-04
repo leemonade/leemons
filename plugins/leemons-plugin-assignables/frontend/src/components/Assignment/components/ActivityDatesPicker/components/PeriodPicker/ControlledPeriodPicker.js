@@ -1,13 +1,14 @@
-import { Controller } from 'react-hook-form';
+import { Controller } from "react-hook-form";
 
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
-import { useActivityDatesPickerContext } from '../../context/ActivityDatesPickerProvider';
+import { useActivityDatesPickerContext } from "../../context/ActivityDatesPickerProvider";
 
-import { PeriodPicker } from './PeriodPicker';
+import { PeriodPicker } from "./PeriodPicker";
 
 export default function ControlledPeriodPicker({ sameDay }) {
-  const { form, localizations, error, startDate, endDate } = useActivityDatesPickerContext();
+  const { form, localizations, error, startDate, endDate } =
+    useActivityDatesPickerContext();
 
   return (
     <Controller

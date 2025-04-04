@@ -1,11 +1,11 @@
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable no-nested-ternary */
-import React from 'react';
-import { Box, FileIcon, Text } from '@bubbles-ui/components';
-import { RoomItemDisplay } from '@comunica/components';
-import { NYACardFooterStyles } from './NYACardFooter.styles';
-import { NYACARD_FOOTER_PROP_TYPES } from './NYACardFooter.constants';
+import React from "react";
+import { Box, FileIcon, Text } from "@bubbles-ui/components";
+import { RoomItemDisplay } from "@comunica/components";
+import { NYACardFooterStyles } from "./NYACardFooter.styles";
+import { NYACARD_FOOTER_PROP_TYPES } from "./NYACardFooter.constants";
 
 const NYACardFooter = ({
   fileType,
@@ -19,8 +19,8 @@ const NYACardFooter = ({
   onOpenChat,
 }) => {
   const { classes, cx } = NYACardFooterStyles(
-    { size: 12, color: '#636D7D' },
-    { name: 'NYACardFooter' }
+    { size: 12, color: "#636D7D" },
+    { name: "NYACardFooter" }
   );
   const variantIconLabel =
     (variantTitle ?? fileType ?? variant)?.charAt(0)?.toUpperCase() +
@@ -39,7 +39,9 @@ const NYACardFooter = ({
       {variantIcon ? (
         <Box className={classes.FileIconRoot}>
           {variantIcon}
-          {variantIconLabel && <Text className={classes.FileIconLabel}>{variantIconLabel}</Text>}
+          {variantIconLabel && (
+            <Text className={classes.FileIconLabel}>{variantIconLabel}</Text>
+          )}
         </Box>
       ) : (
         <Box className={classes.fileIconContainer}>
@@ -47,7 +49,7 @@ const NYACardFooter = ({
             size={24}
             fileType={fileType || variant}
             fileExtension={fileExtension}
-            color={'#878D96'}
+            color={"#878D96"}
             hideExtension
           />
           <Text className={classes.fileLabel}>{variantIconLabel}</Text>

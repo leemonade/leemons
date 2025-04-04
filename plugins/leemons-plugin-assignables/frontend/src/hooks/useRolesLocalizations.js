@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
-import prefixPN from '@assignables/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { escapeRegExp } from 'lodash';
+import { useMemo } from "react";
+import prefixPN from "@assignables/helpers/prefixPN";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { escapeRegExp } from "lodash";
 
 export default function useRolesLocalizations(roles) {
   // key is array
@@ -13,8 +13,8 @@ export default function useRolesLocalizations(roles) {
       const res = {};
       Object.entries(translations.items).forEach(([key, value]) => {
         const match = new RegExp(
-          `^${escapeRegExp(prefixPN('roles'))}\\.(?<role>.*)\\.(?<modifier>.*)`,
-          'gm'
+          `^${escapeRegExp(prefixPN("roles"))}\\.(?<role>.*)\\.(?<modifier>.*)`,
+          "gm"
         ).exec(key);
 
         const role = match?.groups?.role;

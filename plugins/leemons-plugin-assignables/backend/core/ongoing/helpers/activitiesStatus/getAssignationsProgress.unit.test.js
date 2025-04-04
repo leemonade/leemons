@@ -4,12 +4,12 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getAssignationsProgress } = require('./getAssignationsProgress');
-const { gradesSchema } = require('../../../../models/grades');
+const { getAssignationsProgress } = require("./getAssignationsProgress");
+const { gradesSchema } = require("../../../../models/grades");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -32,77 +32,77 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should correctly get the progress status for an evaluated assignation', async () => {
+it("Should correctly get the progress status for an evaluated assignation", async () => {
   // Arrange
   const instanceOne = {
-    id: 'instanceOne',
-    assignable: { asset: {}, id: 'assignableOneId', role: 'task' },
+    id: "instanceOne",
+    assignable: { asset: {}, id: "assignableOneId", role: "task" },
     requiresScoring: 0,
     allowFeedback: 1,
     alwaysAvailable: 1,
   };
   const instanceTwo = {
-    id: 'instanceTwo',
-    assignable: { asset: {}, id: 'assignableTwoId', role: 'task' },
+    id: "instanceTwo",
+    assignable: { asset: {}, id: "assignableTwoId", role: "task" },
     requiresScoring: 1,
     allowFeedback: 0,
     alwaysAvailable: 1,
   };
-  const assignationOne = { id: 'assignationOne', instance: instanceOne };
-  const assignationTwo = { id: 'assignationTwo', instance: instanceTwo };
+  const assignationOne = { id: "assignationOne", instance: instanceOne };
+  const assignationTwo = { id: "assignationTwo", instance: instanceTwo };
   const assignations = [assignationOne, assignationTwo];
   const instanceSubjectsProgramsAndClasses = {
     instanceOne: {
-      subjects: ['subjectOneId', 'subjectTwoId'],
-      programs: ['programA'],
-      classes: ['classOne'],
+      subjects: ["subjectOneId", "subjectTwoId"],
+      programs: ["programA"],
+      classes: ["classOne"],
     },
     instanceTwo: {
-      subjects: ['subjectTwoId', 'subjectThreeId'],
-      programs: ['programB'],
-      classes: ['classTwoId', 'classThreeId'],
+      subjects: ["subjectTwoId", "subjectThreeId"],
+      programs: ["programB"],
+      classes: ["classTwoId", "classThreeId"],
     },
   };
   const dates = {
     instances: {
-      instanceOne: { start: new Date('December 31, 1993') },
-      instanceTwo: { archived: new Date('December 31, 2000') },
+      instanceOne: { start: new Date("December 31, 1993") },
+      instanceTwo: { archived: new Date("December 31, 2000") },
     },
     assignations: {},
   };
 
   const ctx = generateCtx({
     models: {
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
+      Grades: newModel(mongooseConnection, "Grades", gradesSchema),
     },
   });
 
   const mockGrades = [
     {
-      id: '1',
+      id: "1",
       assignation: assignationOne.id,
       subject: instanceSubjectsProgramsAndClasses.instanceOne.subjects[0],
-      type: 'main',
+      type: "main",
       grade: 8.0,
-      gradedBy: 'teacherUserOne',
+      gradedBy: "teacherUserOne",
       visibleToStudent: true,
     },
     {
-      id: '2',
+      id: "2",
       assignation: assignationOne.id,
       subject: instanceSubjectsProgramsAndClasses.instanceOne.subjects[1],
-      type: 'main',
+      type: "main",
       grade: 8.0,
-      gradedBy: 'teacherUserOne',
+      gradedBy: "teacherUserOne",
       visibleToStudent: true,
     },
     {
-      id: '3',
+      id: "3",
       assignation: assignationTwo.id,
       subject: instanceSubjectsProgramsAndClasses.instanceTwo.subjects[0],
-      type: 'main',
+      type: "main",
       grade: 8.0,
-      gradedBy: 'teacherUserOne',
+      gradedBy: "teacherUserOne",
       visibleToStudent: true,
     },
   ];
@@ -117,51 +117,51 @@ it('Should correctly get the progress status for an evaluated assignation', asyn
   });
 
   // Assert
-  expect(response).toEqual(['evaluated', 'notStarted']);
+  expect(response).toEqual(["evaluated", "notStarted"]);
 });
 
-it('Should correctly get the progress status for a not submitted assignation', async () => {
+it("Should correctly get the progress status for a not submitted assignation", async () => {
   // Arrange
   const instanceOne = {
-    id: 'instanceOne',
-    assignable: { asset: {}, id: 'assignableOneId', role: 'task' },
+    id: "instanceOne",
+    assignable: { asset: {}, id: "assignableOneId", role: "task" },
     requiresScoring: 0,
     allowFeedback: 1,
     alwaysAvailable: 1,
   };
   const instanceTwo = {
-    id: 'instanceTwo',
-    assignable: { asset: {}, id: 'assignableTwoId', role: 'task' },
+    id: "instanceTwo",
+    assignable: { asset: {}, id: "assignableTwoId", role: "task" },
     requiresScoring: 1,
     allowFeedback: 0,
     alwaysAvailable: 0,
   };
-  const assignationOne = { id: 'assignationOne', instance: instanceOne };
-  const assignationTwo = { id: 'assignationTwo', instance: instanceTwo };
+  const assignationOne = { id: "assignationOne", instance: instanceOne };
+  const assignationTwo = { id: "assignationTwo", instance: instanceTwo };
   const assignations = [assignationOne, assignationTwo];
   const instanceSubjectsProgramsAndClasses = {
     instanceOne: {
-      subjects: ['subjectOneId', 'subjectTwoId'],
-      programs: ['programA'],
-      classes: ['classOne'],
+      subjects: ["subjectOneId", "subjectTwoId"],
+      programs: ["programA"],
+      classes: ["classOne"],
     },
     instanceTwo: {
-      subjects: ['subjectTwoId', 'subjectThreeId'],
-      programs: ['programB'],
-      classes: ['classTwoId', 'classThreeId'],
+      subjects: ["subjectTwoId", "subjectThreeId"],
+      programs: ["programB"],
+      classes: ["classTwoId", "classThreeId"],
     },
   };
   const dates = {
     instances: {
-      instanceOne: { closed: new Date('December 31, 1993') },
-      instanceTwo: { deadline: new Date('December 31, 2000') },
+      instanceOne: { closed: new Date("December 31, 1993") },
+      instanceTwo: { deadline: new Date("December 31, 2000") },
     },
     assignations: {},
   };
 
   const ctx = generateCtx({
     models: {
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
+      Grades: newModel(mongooseConnection, "Grades", gradesSchema),
     },
   });
 
@@ -174,40 +174,40 @@ it('Should correctly get the progress status for a not submitted assignation', a
   });
 
   // Assert
-  expect(response).toEqual(['notSubmitted', 'notSubmitted']);
+  expect(response).toEqual(["notSubmitted", "notSubmitted"]);
 });
 
-it('Should correctly get the progress status for a finished assignation', async () => {
+it("Should correctly get the progress status for a finished assignation", async () => {
   // Arrange
   const instanceOne = {
-    id: 'instanceOne',
-    assignable: { asset: {}, id: 'assignableOneId', role: 'task' },
+    id: "instanceOne",
+    assignable: { asset: {}, id: "assignableOneId", role: "task" },
     requiresScoring: 0,
     allowFeedback: 1,
     alwaysAvailable: 1,
   };
-  const assignationOne = { id: 'assignationOne', instance: instanceOne };
+  const assignationOne = { id: "assignationOne", instance: instanceOne };
   const assignations = [assignationOne];
   const instanceSubjectsProgramsAndClasses = {
     instanceOne: {
-      subjects: ['subjectOneId', 'subjectTwoId'],
-      programs: ['programA'],
-      classes: ['classOne'],
+      subjects: ["subjectOneId", "subjectTwoId"],
+      programs: ["programA"],
+      classes: ["classOne"],
     },
   };
   const dates = {
     instances: {},
     assignations: {
       [assignationOne.id]: {
-        start: new Date('October 22, 1993'),
-        end: new Date('October 31, 1993'),
+        start: new Date("October 22, 1993"),
+        end: new Date("October 31, 1993"),
       },
     },
   };
 
   const ctx = generateCtx({
     models: {
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
+      Grades: newModel(mongooseConnection, "Grades", gradesSchema),
     },
   });
 
@@ -220,39 +220,39 @@ it('Should correctly get the progress status for a finished assignation', async 
   });
 
   // Assert
-  expect(response).toEqual(['finished']);
+  expect(response).toEqual(["finished"]);
 });
 
-it('Should correctly get the progress status for a started assignation', async () => {
+it("Should correctly get the progress status for a started assignation", async () => {
   // Arrange
   const instanceOne = {
-    id: 'instanceOne',
-    assignable: { asset: {}, id: 'assignableOneId', role: 'task' },
+    id: "instanceOne",
+    assignable: { asset: {}, id: "assignableOneId", role: "task" },
     requiresScoring: 0,
     allowFeedback: 1,
     alwaysAvailable: 1,
   };
-  const assignationOne = { id: 'assignationOne', instance: instanceOne };
+  const assignationOne = { id: "assignationOne", instance: instanceOne };
   const assignations = [assignationOne];
   const instanceSubjectsProgramsAndClasses = {
     instanceOne: {
-      subjects: ['subjectOneId', 'subjectTwoId'],
-      programs: ['programA'],
-      classes: ['classOne'],
+      subjects: ["subjectOneId", "subjectTwoId"],
+      programs: ["programA"],
+      classes: ["classOne"],
     },
   };
   const dates = {
     instances: {},
     assignations: {
       [assignationOne.id]: {
-        start: new Date('October 22, 1993'),
+        start: new Date("October 22, 1993"),
       },
     },
   };
 
   const ctx = generateCtx({
     models: {
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
+      Grades: newModel(mongooseConnection, "Grades", gradesSchema),
     },
   });
 
@@ -265,5 +265,5 @@ it('Should correctly get the progress status for a started assignation', async (
   });
 
   // Assert
-  expect(response).toEqual(['started']);
+  expect(response).toEqual(["started"]);
 });

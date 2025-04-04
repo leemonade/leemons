@@ -1,6 +1,6 @@
-import React from 'react';
-import { Select } from '@bubbles-ui/components';
-import useLevelsOfDifficulty from './hooks/useLevelsOfDifficulty';
+import React from "react";
+import { Select } from "@bubbles-ui/components";
+import useLevelsOfDifficulty from "./hooks/useLevelsOfDifficulty";
 
 export default function SelectLevelsOfDifficulty(props) {
   const levels = useLevelsOfDifficulty();

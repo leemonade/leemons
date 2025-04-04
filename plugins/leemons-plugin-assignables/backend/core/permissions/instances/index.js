@@ -1,5 +1,5 @@
-const { registerPermission } = require('./registerPermission');
-const { removePermission } = require('./removePermission');
+const { registerPermission } = require("./registerPermission");
+const { removePermission } = require("./removePermission");
 
 module.exports = {
   registerPermission,

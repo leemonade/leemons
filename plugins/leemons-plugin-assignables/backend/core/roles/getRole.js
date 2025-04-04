@@ -1,9 +1,9 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
 async function getRole({ role, ctx }) {
   if (!role) {
     throw new LeemonsError(ctx, {
-      message: 'Role param is required',
+      message: "Role param is required",
       httpStatusCode: 400,
     });
   }
@@ -14,7 +14,7 @@ async function getRole({ role, ctx }) {
   }
 
   throw new LeemonsError(ctx, {
-    message: 'Role not found',
+    message: "Role not found",
     httpStatusCode: 404,
   });
 }

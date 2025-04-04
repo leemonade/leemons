@@ -9,10 +9,10 @@
  */
 async function getAssignationsDates({ assignations, ctx }) {
   const datesFound = await ctx.tx.db.Dates.find({
-    type: 'assignation',
+    type: "assignation",
     instance: assignations,
   })
-    .select(['instance', 'name', 'date'])
+    .select(["instance", "name", "date"])
     .lean();
 
   return datesFound.reduce((acc, date) => {

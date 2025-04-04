@@ -1,4 +1,4 @@
-const { registerPermission } = require('./registerPermission');
+const { registerPermission } = require("./registerPermission");
 
 module.exports = {
   registerPermission,

@@ -1,12 +1,15 @@
-import React from 'react';
-import { useForm, Controller, useWatch, useFormContext } from 'react-hook-form';
+import React from "react";
+import { useForm, Controller, useWatch, useFormContext } from "react-hook-form";
 
-import { Switch, Box, createStyles, Checkbox } from '@bubbles-ui/components';
-import { TextEditorInput, HEADINGS_TOOL_DEFAULT_PROPS } from '@bubbles-ui/editors';
-import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
-import PropTypes from 'prop-types';
+import { Switch, Box, createStyles, Checkbox } from "@bubbles-ui/components";
+import {
+  TextEditorInput,
+  HEADINGS_TOOL_DEFAULT_PROPS,
+} from "@bubbles-ui/editors";
+import ConditionalInput from "@tasks/components/Inputs/ConditionalInput";
+import PropTypes from "prop-types";
 
-import { Container } from '../Container';
+import { Container } from "../Container";
 
 function useOnChange({ control, onChange }) {
   const {
@@ -22,14 +25,15 @@ function useOnChange({ control, onChange }) {
   });
 
   React.useEffect(() => {
-    const messageHasContent = message && message !== '<p style="margin-left: 0px!important;"></p>';
+    const messageHasContent =
+      message && message !== '<p style="margin-left: 0px!important;"></p>';
     const value = {
       hideReport: !!hideReport,
       hideResponses: !!hideResponses,
       notifyStudents: !!notifyStudents,
 
       useTeacherDeadline: !!useTeacherDeadline,
-      teacherDeadline: useTeacherDeadline ? teacherDeadline ?? null : null,
+      teacherDeadline: useTeacherDeadline ? (teacherDeadline ?? null) : null,
       message: notifyStudents && messageHasContent ? message : null,
       createComunicaRooms,
     };
@@ -49,12 +53,12 @@ function useOnChange({ control, onChange }) {
 
 export const useOtherOptionsStyles = createStyles((theme) => ({
   root: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     gap: theme.other.global.spacing.padding.sm,
   },
   inlineContent: {
-    display: 'inline-block',
+    display: "inline-block",
   },
   textEditor: {
     maxWidth: 800,
@@ -79,10 +83,11 @@ export function OtherOptions({
   const evaluationType =
     useWatch({
       control: parentControl,
-      name: 'evaluation.evaluation',
-    }) ?? getValues('evaluation.evaluation');
+      name: "evaluation.evaluation",
+    }) ?? getValues("evaluation.evaluation");
 
-  const isEvaluable = evaluationType?.requiresScoring || evaluationType?.allowFeedback;
+  const isEvaluable =
+    evaluationType?.requiresScoring || evaluationType?.allowFeedback;
 
   // const alwaysAvailable = useWatch({
   //   control: parentControl,
@@ -98,7 +103,11 @@ export function OtherOptions({
 
   const { classes } = useOtherOptionsStyles();
   return (
-    <Container title={localizations?.title} hideDivider hideSectionHeaders={hideSectionHeaders}>
+    <Container
+      title={localizations?.title}
+      hideDivider
+      hideSectionHeaders={hideSectionHeaders}
+    >
       <Box className={classes.root}>
         {/* TODO: Make teacher deadline work, and then include it on the assignation */}
         {/* {!alwaysAvailable && (
@@ -169,9 +178,12 @@ export function OtherOptions({
                         <TextEditorInput
                           {...field}
                           placeholder={localizations?.notifyPlaceholder}
-                          editorStyles={{ minHeight: '96px' }}
+                          editorStyles={{ minHeight: "96px" }}
                           toolLabels={{
-                            headingsTool: { ...HEADINGS_TOOL_DEFAULT_PROPS?.labels, label: '' },
+                            headingsTool: {
+                              ...HEADINGS_TOOL_DEFAULT_PROPS?.labels,
+                              label: "",
+                            },
                           }}
                           label={localizations?.messageForStudents}
                         />
@@ -190,7 +202,11 @@ export function OtherOptions({
             control={control}
             shouldUnregister
             render={({ field }) => (
-              <Switch {...field} checked={field.value} label={localizations?.hideResponses} />
+              <Switch
+                {...field}
+                checked={field.value}
+                label={localizations?.hideResponses}
+              />
             )}
           />
         )}
@@ -201,7 +217,11 @@ export function OtherOptions({
             defaultValue={true}
             shouldUnregister
             render={({ field }) => (
-              <Switch {...field} checked={field.value} label={localizations?.hideReport} />
+              <Switch
+                {...field}
+                checked={field.value}
+                label={localizations?.hideReport}
+              />
             )}
           />
         )}

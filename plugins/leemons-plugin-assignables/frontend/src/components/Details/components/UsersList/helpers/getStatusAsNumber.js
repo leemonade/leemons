@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 export default function getStatusAsNumber(student, instance) {
   const finishDate = dayjs(student?.timestamps?.end || null);

@@ -1,9 +1,15 @@
-import { STATUS_NAMES } from '../constants';
+import { STATUS_NAMES } from "../constants";
 
-import getStatus from './getStatus';
+import getStatus from "./getStatus";
 
-export default function getStatusName({ assignation, isBlocked, isEvaluable, hasBeenEvaluated }) {
-  const { activityHasBeenClosed, studentHasStarted, studentHasFinished } = getStatus(assignation);
+export default function getStatusName({
+  assignation,
+  isBlocked,
+  isEvaluable,
+  hasBeenEvaluated,
+}) {
+  const { activityHasBeenClosed, studentHasStarted, studentHasFinished } =
+    getStatus(assignation);
 
   /* --- Evaluated submissions --- */
 
@@ -14,7 +20,9 @@ export default function getStatusName({ assignation, isBlocked, isEvaluable, has
   /* --- Finished submissions --- */
 
   if (studentHasFinished) {
-    return isEvaluable ? STATUS_NAMES.evaluableSubmitted : STATUS_NAMES.nonEvaluableSubmitted;
+    return isEvaluable
+      ? STATUS_NAMES.evaluableSubmitted
+      : STATUS_NAMES.nonEvaluableSubmitted;
   }
 
   if (activityHasBeenClosed) {

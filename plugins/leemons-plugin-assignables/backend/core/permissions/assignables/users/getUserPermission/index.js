@@ -1,4 +1,4 @@
-const { getUserPermission } = require('./getUserPermission');
+const { getUserPermission } = require("./getUserPermission");
 
 module.exports = {
   getUserPermission,

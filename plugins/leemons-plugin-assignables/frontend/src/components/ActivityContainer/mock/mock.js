@@ -9,73 +9,82 @@ export const mock = {
   //   backgroundPosition: 'center',
   // },
   taskHeader: {
-    title: 'La historia detrás del cuadro que tiene más de dos lineas',
-    subtitle: 'Geografía e historia - 3002',
-    icon: 'https://icon-library.com/images/white-globe-icon/white-globe-icon-24.jpg',
-    color: '#4F96FF',
+    title: "La historia detrás del cuadro que tiene más de dos lineas",
+    subtitle: "Geografía e historia - 3002",
+    icon: "https://icon-library.com/images/white-globe-icon/white-globe-icon-24.jpg",
+    color: "#4F96FF",
     styles: {
-      position: 'absolute',
+      position: "absolute",
       bottom: 0,
       left: 0,
     },
   },
   taskDeadline: {
-    label: 'Entrega',
-    deadline: new Date('2022-05-22'),
+    label: "Entrega",
+    deadline: new Date("2022-05-22"),
     styles: {
-      position: 'absolute',
+      position: "absolute",
       top: 8,
     },
   },
   verticalStepper: {
     data: [
       {
-        label: 'Current',
+        label: "Current",
         childSteps: [
-          { label: 'Content' },
-          { label: 'Objectives' },
-          { label: 'Assesment criteria' },
+          { label: "Content" },
+          { label: "Objectives" },
+          { label: "Assesment criteria" },
         ],
       },
       {
-        label: 'Tarea previa',
-        status: 'OK',
+        label: "Tarea previa",
+        status: "OK",
       },
       {
-        label: 'Enunciado',
+        label: "Enunciado",
       },
       {
-        label: 'Desarrollo',
+        label: "Desarrollo",
       },
       {
-        label: 'Entregable',
-        status: 'OK',
+        label: "Entregable",
+        status: "OK",
         onClick: () => {},
       },
       {
-        label: 'Auto reflexión',
-        status: 'OK',
+        label: "Auto reflexión",
+        status: "OK",
 
         onClick: () => {},
       },
       {
-        label: 'Feedback',
-        status: 'OK',
+        label: "Feedback",
+        status: "OK",
 
         onClick: () => {},
       },
-      { label: 'Calificación', status: 'OK' },
+      { label: "Calificación", status: "OK" },
     ],
     calificationProps: {
-      label: 'Aprobado',
+      label: "Aprobado",
       grade: 9,
       minimumGrade: 5,
     },
   },
   fileItems: [
-    { filename: 'Cuadro_Embarque_Moriscos.jpg', url: 'https://www.leemons.io/es' },
-    { filename: 'Cuadro_Embarque_Moriscos.jpg', url: 'https://www.leemons.io/es' },
-    { filename: 'Cuadro_Embarque_Moriscos.jpg', url: 'https://www.leemons.io/es' },
+    {
+      filename: "Cuadro_Embarque_Moriscos.jpg",
+      url: "https://www.leemons.io/es",
+    },
+    {
+      filename: "Cuadro_Embarque_Moriscos.jpg",
+      url: "https://www.leemons.io/es",
+    },
+    {
+      filename: "Cuadro_Embarque_Moriscos.jpg",
+      url: "https://www.leemons.io/es",
+    },
   ],
   calificationScoreFeedback: {
     calification: {
@@ -84,12 +93,12 @@ export const mock = {
     },
   },
   userDisplayItem: {
-    name: 'Ana Maria',
-    surnames: 'Lopez Vilchez',
+    name: "Ana Maria",
+    surnames: "Lopez Vilchez",
     avatar:
-      'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80',
-    rol: 'Profesor',
-    center: '',
-    email: 'bill.sanders@example.com',
+      "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80",
+    rol: "Profesor",
+    center: "",
+    email: "bill.sanders@example.com",
   },
 };

@@ -1,4 +1,4 @@
-const { validateSubjects } = require('../../validations/validateSubjects');
+const { validateSubjects } = require("../../validations/validateSubjects");
 
 async function saveSubjects({ assignableId, subjects, ctx }) {
   try {

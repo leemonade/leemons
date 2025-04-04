@@ -11,8 +11,8 @@ export interface FormWithLayoutProps {
   assignable: object;
   loading?: boolean;
   localizations: object;
-  evaluationType?: 'manual' | 'auto' | 'none';
-  evaluationTypes?: ('manual' | 'auto' | 'none')[];
+  evaluationType?: "manual" | "auto" | "none";
+  evaluationTypes?: ("manual" | "auto" | "none")[];
   hideMaxTime?: boolean;
   hideSectionHeaders?: boolean;
   onlyOneSubject?: boolean;

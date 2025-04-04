@@ -1,4 +1,4 @@
-const { findAssignableByAssetIds } = require('./findAssignableByAssetIds');
+const { findAssignableByAssetIds } = require("./findAssignableByAssetIds");
 
 module.exports = {
   findAssignableByAssetIds,

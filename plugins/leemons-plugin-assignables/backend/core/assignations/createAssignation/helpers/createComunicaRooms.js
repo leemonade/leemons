@@ -1,9 +1,9 @@
-const { uniqBy } = require('lodash');
-const { uniq } = require('lodash');
-const { getTeachersBySubject } = require('./getTeachersBySubject');
-const { createInstanceRoom } = require('./comunica/createInstanceRoom');
-const { createGroupRoom } = require('./comunica/createGroupRoom');
-const { addUserSubjectRoom } = require('./comunica/addUserSubjectRoom');
+const { uniqBy } = require("lodash");
+const { uniq } = require("lodash");
+const { getTeachersBySubject } = require("./getTeachersBySubject");
+const { createInstanceRoom } = require("./comunica/createInstanceRoom");
+const { createGroupRoom } = require("./comunica/createGroupRoom");
+const { addUserSubjectRoom } = require("./comunica/addUserSubjectRoom");
 
 async function createComunicaRooms({
   instance,
@@ -15,7 +15,7 @@ async function createComunicaRooms({
   const teachers = getTeachersBySubject({ classesData });
   const allTeachers = uniq(Object.values(teachers).flat());
 
-  const classes = uniqBy(classesData, 'subject.id');
+  const classes = uniqBy(classesData, "subject.id");
 
   const parentRoom = await createInstanceRoom({
     assignableInstanceId: instance.id,

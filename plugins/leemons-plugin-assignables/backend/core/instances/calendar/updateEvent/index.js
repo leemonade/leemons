@@ -1,3 +1,3 @@
-const { updateEvent } = require('./updateEvent');
+const { updateEvent } = require("./updateEvent");
 
 module.exports = { updateEvent };

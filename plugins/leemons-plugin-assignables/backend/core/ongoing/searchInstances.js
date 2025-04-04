@@ -1,21 +1,26 @@
-const { map, keyBy } = require('lodash');
+const { map, keyBy } = require("lodash");
 
-const { filterByInstanceDates } = require('../instances/searchInstances/filterByInstanceDates');
+const {
+  filterByInstanceDates,
+} = require("../instances/searchInstances/filterByInstanceDates");
 
 const {
   getTeacherInstances,
   getInstanceSubjectsProgramsAndClasses,
   getStudentAssignations,
   getActivitiesDates,
-} = require('./helpers/activitiesData');
+} = require("./helpers/activitiesData");
 const {
   filterInstancesByRoleAndQuery,
   filterInstancesByProgramAndSubjects,
   filterInstancesByEvaluable,
   filterAssignationsByInstance,
   filterAssignationsByProgress,
-} = require('./helpers/filters');
-const { sortInstancesByDates, applyOffsetAndLimit } = require('./helpers/sorts');
+} = require("./helpers/filters");
+const {
+  sortInstancesByDates,
+  applyOffsetAndLimit,
+} = require("./helpers/sorts");
 
 async function searchInstances({ query, ctx }) {
   const { isTeacher, isEvaluable, calificableOnly } = query;
@@ -34,17 +39,18 @@ async function searchInstances({ query, ctx }) {
       calificableOnly,
     });
 
-    const instanceSubjectsProgramsAndClasses = await getInstanceSubjectsProgramsAndClasses({
-      instances,
-      ctx,
-    });
+    const instanceSubjectsProgramsAndClasses =
+      await getInstanceSubjectsProgramsAndClasses({
+        instances,
+        ctx,
+      });
     instances = filterInstancesByProgramAndSubjects({
       instances,
       filters: query,
       instanceSubjectsProgramsAndClasses,
     });
 
-    const instancesByIds = keyBy(instances, 'id');
+    const instancesByIds = keyBy(instances, "id");
     const instancesIds = await filterByInstanceDates({
       assignableInstancesIds: Object.keys(instancesByIds),
       query,
@@ -54,7 +60,7 @@ async function searchInstances({ query, ctx }) {
 
     instances = sortInstancesByDates({ instances });
 
-    return applyOffsetAndLimit(map(instances, 'id'), query);
+    return applyOffsetAndLimit(map(instances, "id"), query);
   }
 
   /*
@@ -63,7 +69,7 @@ async function searchInstances({ query, ctx }) {
   let assignations = await getStudentAssignations({ ctx });
 
   let instances = filterInstancesByRoleAndQuery({
-    instances: map(assignations, 'instance'),
+    instances: map(assignations, "instance"),
     filters: query,
   });
 
@@ -73,10 +79,11 @@ async function searchInstances({ query, ctx }) {
     calificableOnly,
   });
 
-  const instanceSubjectsProgramsAndClasses = await getInstanceSubjectsProgramsAndClasses({
-    instances,
-    ctx,
-  });
+  const instanceSubjectsProgramsAndClasses =
+    await getInstanceSubjectsProgramsAndClasses({
+      instances,
+      ctx,
+    });
   instances = filterInstancesByProgramAndSubjects({
     instances,
     filters: query,
@@ -91,7 +98,7 @@ async function searchInstances({ query, ctx }) {
   const dates = await getActivitiesDates({
     instances,
     assignations,
-    filters: { progress: true, sort: 'deadline' },
+    filters: { progress: true, sort: "deadline" },
     ctx,
   });
 
@@ -99,15 +106,15 @@ async function searchInstances({ query, ctx }) {
     assignations,
     dates,
     filters: {
-      progress: ['notSubmitted', 'finished', 'evaluated'],
+      progress: ["notSubmitted", "finished", "evaluated"],
     },
     instanceSubjectsProgramsAndClasses,
     ctx,
   });
 
-  instances = map(assignations, 'instance');
+  instances = map(assignations, "instance");
 
-  const instancesByIds = keyBy(instances, 'id');
+  const instancesByIds = keyBy(instances, "id");
   const instancesIds = await filterByInstanceDates({
     assignableInstancesIds: Object.keys(instancesByIds),
     query,
@@ -116,9 +123,13 @@ async function searchInstances({ query, ctx }) {
 
   instances = map(instancesIds, (instanceId) => instancesByIds[instanceId]);
 
-  instances = sortInstancesByDates({ instances, dates, filters: { sort: 'deadline' } });
+  instances = sortInstancesByDates({
+    instances,
+    dates,
+    filters: { sort: "deadline" },
+  });
 
-  return applyOffsetAndLimit(map(instances, 'id'), query);
+  return applyOffsetAndLimit(map(instances, "id"), query);
 }
 
 module.exports = { searchInstances };

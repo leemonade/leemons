@@ -1,12 +1,12 @@
-const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+const { it, expect } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { emitLeemonsEvent } = require('./emitLeemonsEvent');
+const { emitLeemonsEvent } = require("./emitLeemonsEvent");
 
-it('Should emit an event', () => {
+it("Should emit an event", () => {
   // Arrange
-  const assignable = { id: 'assignableId', role: 'student' };
-  const instance = 'instanceId';
+  const assignable = { id: "assignableId", role: "student" };
+  const instance = "instanceId";
 
   const instanceCreatedHandler = jest.fn();
   const roleInstanceCreatedHandler = jest.fn();
@@ -19,7 +19,7 @@ it('Should emit an event', () => {
 
   const ctx = generateCtx({
     events: {
-      'instance.created': instanceCreatedHandler,
+      "instance.created": instanceCreatedHandler,
       [`role.${assignable.role}.instance.created`]: roleInstanceCreatedHandler,
     },
   });

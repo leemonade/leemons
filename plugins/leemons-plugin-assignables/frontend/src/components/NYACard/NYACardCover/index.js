@@ -1,1 +1,1 @@
-export * from './NYACardCover';
+export * from "./NYACardCover";

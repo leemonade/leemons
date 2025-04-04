@@ -1,14 +1,14 @@
 export const allEvaluatedActivitiesKey = [
   {
-    plugin: 'plugin.assignables',
-    scope: 'evaluatedActivities',
+    plugin: "plugin.assignables",
+    scope: "evaluatedActivities",
   },
 ];
 
 export const allEvaluatedActivitiesSearchKey = [
   {
     ...allEvaluatedActivitiesKey[0],
-    action: 'search',
+    action: "search",
   },
 ];
 

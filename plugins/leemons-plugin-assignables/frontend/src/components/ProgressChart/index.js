@@ -1,22 +1,22 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Stack, Text } from '@bubbles-ui/components';
-import { ResponsiveBar } from '@nivo/bar';
-import { isNumber } from 'lodash';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@assignables/helpers/prefixPN';
-import { Tooltip } from './components/Tooltip';
-import { AverageMarker } from './components/AverageMarker';
-import { PassMarker } from './components/PassMarker';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, Stack, Text } from "@bubbles-ui/components";
+import { ResponsiveBar } from "@nivo/bar";
+import { isNumber } from "lodash";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@assignables/helpers/prefixPN";
+import { Tooltip } from "./components/Tooltip";
+import { AverageMarker } from "./components/AverageMarker";
+import { PassMarker } from "./components/PassMarker";
 
-const FONT_FAMILY = 'Albert Sans';
+const FONT_FAMILY = "Albert Sans";
 
 export const COLORS = {
-  APPROVED: '#76CEC1',
-  IN_PROGRESS: '#FFAD5B',
-  NOT_APPROVED: '#FF7366',
-  AVERAGE: '#BA73B4',
-  PASS: '#A3A3A3',
+  APPROVED: "#76CEC1",
+  IN_PROGRESS: "#FFAD5B",
+  NOT_APPROVED: "#FF7366",
+  AVERAGE: "#BA73B4",
+  PASS: "#A3A3A3",
 };
 
 export const LEGEND_MARK_SIZE = {
@@ -34,14 +34,14 @@ export const THEME = {
   axis: {
     ticks: {
       text: {
-        fill: '#70707B',
+        fill: "#70707B",
         fontSize: 12,
         fontFamily: FONT_FAMILY,
       },
     },
     legend: {
       text: {
-        fill: '#70707B',
+        fill: "#70707B",
         fontSize: 12,
         fontFamily: FONT_FAMILY,
       },
@@ -49,7 +49,7 @@ export const THEME = {
   },
   grid: {
     line: {
-      stroke: '#F0F0F3',
+      stroke: "#F0F0F3",
       strokeWidth: 1,
     },
   },
@@ -58,7 +58,7 @@ export const THEME = {
 export function formatLabel(text, maxChars) {
   const label = String(text);
   if (maxChars === 0) return label;
-  if (label.startsWith('skip:')) return '';
+  if (label.startsWith("skip:")) return "";
 
   if (label.length > maxChars) {
     return `${label.substring(0, maxChars - 3)}...`;
@@ -67,7 +67,7 @@ export function formatLabel(text, maxChars) {
 }
 
 export function getBarColor(bar, barColorFromLabel) {
-  if (bar.id === 'diff') return 'rgba(207, 207, 214, 0.1)';
+  if (bar.id === "diff") return "rgba(207, 207, 214, 0.1)";
   let value = bar.value ?? 0;
   if (barColorFromLabel) {
     value = Number(bar.indexValue);
@@ -80,13 +80,13 @@ export function getBarColor(bar, barColorFromLabel) {
 
 export function getLabelColor(bar) {
   if (
-    bar?.data?.id === 'diff' ||
-    String(bar?.data?.indexValue).startsWith('skip:') ||
+    bar?.data?.id === "diff" ||
+    String(bar?.data?.indexValue).startsWith("skip:") ||
     bar?.data?.value === 0
   ) {
-    return 'rgba(207, 207, 214, 0)';
+    return "rgba(207, 207, 214, 0)";
   }
-  return '#1A1A1E';
+  return "#1A1A1E";
 }
 
 function ProgressChart({
@@ -100,9 +100,9 @@ function ProgressChart({
   hideLabels,
   roundValues = false,
   height = 500,
-  ariaLabel = 'Learning Analytics',
+  ariaLabel = "Learning Analytics",
 }) {
-  const [t] = useTranslateLoader(prefixPN('progress'));
+  const [t] = useTranslateLoader(prefixPN("progress"));
   const chartRef = React.useRef();
   const [initialized, setInitialized] = React.useState(false);
 
@@ -157,18 +157,18 @@ function ProgressChart({
   }, [hideMarkers, passValue, barColorFromLabel, roundValues]);
 
   return (
-    <Stack spacing={4} direction="column" sx={{ width: '100%' }}>
+    <Stack spacing={4} direction="column" sx={{ width: "100%" }}>
       <Box ref={chartRef} style={{ height }}>
         <ResponsiveBar
           data={dataProcessed}
-          keys={['value', 'diff']}
+          keys={["value", "diff"]}
           indexBy="label"
           margin={{ top: 10, right: 0, bottom: 40, left: 30 }}
           padding={0.1}
-          layers={['grid', 'axes', 'bars', ...markers]}
+          layers={["grid", "axes", "bars", ...markers]}
           maxValue={maxValue}
-          valueScale={{ type: 'linear', max }}
-          indexScale={{ type: 'band', round: true }}
+          valueScale={{ type: "linear", max }}
+          indexScale={{ type: "band", round: true }}
           colors={(bar) => getBarColor(bar, barColorFromLabel)}
           tooltip={hideTooltip ? React.Fragment : tooltip || Tooltip}
           theme={THEME}
@@ -189,7 +189,7 @@ function ProgressChart({
             legendOffset: 0,
             truncateTickAt: 0,
           }}
-          labelTextColor={hideLabels ? 'rgba(0, 0, 0, 0)' : getLabelColor}
+          labelTextColor={hideLabels ? "rgba(0, 0, 0, 0)" : getLabelColor}
           role="application"
           ariaLabel={ariaLabel}
         />
@@ -199,33 +199,49 @@ function ProgressChart({
         <Stack spacing={2} alignItems="center">
           <Box sx={{ backgroundColor: COLORS.APPROVED, ...LEGEND_MARK_SIZE }} />
           <Text size="xs" color="primary">
-            {t('approved')}
+            {t("approved")}
           </Text>
         </Stack>
         <Stack spacing={2} alignItems="center">
-          <Box sx={{ backgroundColor: COLORS.IN_PROGRESS, ...LEGEND_MARK_SIZE }} />
+          <Box
+            sx={{ backgroundColor: COLORS.IN_PROGRESS, ...LEGEND_MARK_SIZE }}
+          />
           <Text size="xs" color="primary">
-            {t('inProgress')}
+            {t("inProgress")}
           </Text>
         </Stack>
         <Stack spacing={2} alignItems="center">
-          <Box sx={{ backgroundColor: COLORS.NOT_APPROVED, ...LEGEND_MARK_SIZE }} />
+          <Box
+            sx={{ backgroundColor: COLORS.NOT_APPROVED, ...LEGEND_MARK_SIZE }}
+          />
           <Text size="xs" color="primary">
-            {t('notApproved')}
+            {t("notApproved")}
           </Text>
         </Stack>
         {!hideMarkers && (
           <>
             <Stack spacing={2} alignItems="center">
-              <Box sx={{ borderTop: `4px solid ${COLORS.AVERAGE}`, width: 24, height: 1 }} />
+              <Box
+                sx={{
+                  borderTop: `4px solid ${COLORS.AVERAGE}`,
+                  width: 24,
+                  height: 1,
+                }}
+              />
               <Text size="xs" color="primary">
-                {t('average')}
+                {t("average")}
               </Text>
             </Stack>
             <Stack spacing={2} alignItems="center">
-              <Box sx={{ borderTop: `2px dashed ${COLORS.PASS}`, width: 24, height: 1 }} />
+              <Box
+                sx={{
+                  borderTop: `2px dashed ${COLORS.PASS}`,
+                  width: 24,
+                  height: 1,
+                }}
+              />
               <Text size="xs" color="primary">
-                {t('pass')}
+                {t("pass")}
               </Text>
             </Stack>
           </>

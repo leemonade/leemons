@@ -1,13 +1,13 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
-const { getPermissionName } = require('../helpers/getPermissionName');
-const { getPermissionType } = require('../helpers/getPermissionType');
+const { getPermissionName } = require("../helpers/getPermissionName");
+const { getPermissionType } = require("../helpers/getPermissionType");
 
-const { assignableInstanceActions } = require('../../../../config/constants');
+const { assignableInstanceActions } = require("../../../../config/constants");
 
 async function registerPermission({ assignableInstance, assignable, ctx }) {
   try {
-    return await ctx.tx.call('users.permissions.addItem', {
+    return await ctx.tx.call("users.permissions.addItem", {
       item: assignableInstance,
       type: getPermissionType({ ctx }),
       data: {

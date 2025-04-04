@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 function getDiff(a, b) {
   const _a = _.defaults(_.cloneDeep(a), b);
@@ -9,7 +9,10 @@ function getDiff(a, b) {
 
   return {
     object: _a,
-    diff: _.map(_.differenceWith(_.entries(_a), _.entries(b), _.isEqual), _.head),
+    diff: _.map(
+      _.differenceWith(_.entries(_a), _.entries(b), _.isEqual),
+      _.head
+    ),
   };
 }
 

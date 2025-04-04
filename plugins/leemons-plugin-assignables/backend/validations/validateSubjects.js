@@ -1,23 +1,23 @@
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 
 const subjectsValidationObject = {
-  type: 'array',
+  type: "array",
   items: {
-    type: 'object',
+    type: "object",
     properties: {
       program: {
-        type: 'string',
+        type: "string",
       },
       subject: {
-        type: 'string',
+        type: "string",
       },
       level: {
-        type: 'string',
+        type: "string",
         maxLength: 255,
         nullable: true,
       },
       curriculum: {
-        type: ['object', 'array'],
+        type: ["object", "array"],
         nullable: true,
       },
     },
@@ -25,7 +25,9 @@ const subjectsValidationObject = {
 };
 
 function validateSubjects(subjects) {
-  const validator = new LeemonsValidator(subjectsValidationObject, { allowUnionTypes: true });
+  const validator = new LeemonsValidator(subjectsValidationObject, {
+    allowUnionTypes: true,
+  });
 
   if (!validator.validate(subjects)) {
     throw validator.error;

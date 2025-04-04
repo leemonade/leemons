@@ -1,13 +1,15 @@
-const { LeemonsError } = require('@leemons/error');
-const { uniq, merge } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { uniq, merge } = require("lodash");
 
-const discardCacheBy = require('../../../cache/discardCacheBy');
-const { unregisterDates } = require('../../dates');
-const { getUserPermission } = require('../../permissions/instances/users');
+const discardCacheBy = require("../../../cache/discardCacheBy");
+const { unregisterDates } = require("../../dates");
+const { getUserPermission } = require("../../permissions/instances/users");
 const {
   removePermissionFromUser,
-} = require('../../permissions/instances/users/removePermissionFromUser');
-const { deleteCommunicaRooms } = require('../createAssignation/helpers/deleteComunicaRooms');
+} = require("../../permissions/instances/users/removePermissionFromUser");
+const {
+  deleteCommunicaRooms,
+} = require("../createAssignation/helpers/deleteComunicaRooms");
 
 /**
  *
@@ -16,12 +18,20 @@ const { deleteCommunicaRooms } = require('../createAssignation/helpers/deleteCom
  * @param {object} params.instance - The instance object
  * @param {import('@leemons/deployment-manager').Context} params.ctx - The Moleculer context
  */
-module.exports = async function removeAssignations({ assignations, instance, ctx }) {
-  const { actions } = await getUserPermission({ assignableInstance: instance.id, ctx });
+module.exports = async function removeAssignations({
+  assignations,
+  instance,
+  ctx,
+}) {
+  const { actions } = await getUserPermission({
+    assignableInstance: instance.id,
+    ctx,
+  });
 
-  if (!actions.includes('edit')) {
+  if (!actions.includes("edit")) {
     throw new LeemonsError(ctx, {
-      message: 'You do not have permission to delete the requested assignations',
+      message:
+        "You do not have permission to delete the requested assignations",
     });
   }
 
@@ -29,7 +39,7 @@ module.exports = async function removeAssignations({ assignations, instance, ctx
   const students = uniq(assignations.map((assignation) => assignation.user));
 
   if (instance.metadata.createComunicaRooms) {
-    const classes = await ctx.tx.call('academic-portfolio.classes.classByIds', {
+    const classes = await ctx.tx.call("academic-portfolio.classes.classByIds", {
       ids: instance.classes,
       withTeachers: true,
     });
@@ -46,7 +56,7 @@ module.exports = async function removeAssignations({ assignations, instance, ctx
     assignableInstance: instance.id,
     assignable: instance.assignable.id,
     userAgents: students,
-    role: 'student',
+    role: "student",
     ctx,
   });
 
@@ -59,9 +69,11 @@ module.exports = async function removeAssignations({ assignations, instance, ctx
     ctx,
   });
 
-  const timestamps = merge(...assignations.map((assignation) => assignation.timestamps));
+  const timestamps = merge(
+    ...assignations.map((assignation) => assignation.timestamps)
+  );
   await unregisterDates({
-    type: 'assignation',
+    type: "assignation",
     instance: assignationIds,
     name: Object.keys(timestamps),
     ctx,

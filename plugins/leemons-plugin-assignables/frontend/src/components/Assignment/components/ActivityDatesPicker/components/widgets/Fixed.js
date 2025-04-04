@@ -1,8 +1,8 @@
-import { Stack } from '@bubbles-ui/components';
+import { Stack } from "@bubbles-ui/components";
 
-import HideFromCalendar from '../HideFromCalendar';
-import MaxTimeToggle from '../MaxTimeToggle';
-import ControlledPeriodPicker from '../PeriodPicker';
+import HideFromCalendar from "../HideFromCalendar";
+import MaxTimeToggle from "../MaxTimeToggle";
+import ControlledPeriodPicker from "../PeriodPicker";
 
 export default function Fixed() {
   return (

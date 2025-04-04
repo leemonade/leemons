@@ -1,6 +1,6 @@
 function filterModuleInstancesByHavingAllActivities({ instances }) {
   return instances.filter((instance) => {
-    const isModule = instance.type === 'module';
+    const isModule = instance.type === "module";
 
     if (!isModule) {
       return true;

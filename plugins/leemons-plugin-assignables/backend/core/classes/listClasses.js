@@ -1,5 +1,5 @@
-const { LeemonsError } = require('@leemons/error');
-const { map } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { map } = require("lodash");
 
 async function listClasses({ assignable, instance, ctx }) {
   let query;
@@ -14,7 +14,7 @@ async function listClasses({ assignable, instance, ctx }) {
     };
   } else {
     throw new LeemonsError(ctx, {
-      message: 'You must provide an assignable or an assignableInstance',
+      message: "You must provide an assignable or an assignableInstance",
       httpStatusCode: 400,
     });
   }

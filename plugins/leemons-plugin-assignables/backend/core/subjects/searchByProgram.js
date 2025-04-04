@@ -1,10 +1,10 @@
-const { LeemonsError } = require('@leemons/error');
-const { compact, isArray, difference } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { compact, isArray, difference } = require("lodash");
 
 async function searchByProgram({ id, ctx }) {
   if (!id) {
     throw new LeemonsError(ctx, {
-      message: 'Cannot search by program: id is required',
+      message: "Cannot search by program: id is required",
       httpStatusCode: 400,
     });
   }
@@ -13,7 +13,7 @@ async function searchByProgram({ id, ctx }) {
   const programs = await ctx.tx.db.Subjects.find({
     program: id,
   })
-    .select(['assignable', 'program'])
+    .select(["assignable", "program"])
     .lean();
 
   const programsByAssignable = {};

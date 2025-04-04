@@ -1,13 +1,13 @@
-const { differenceWith, isEqual, omit, map } = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { getSubjects } = require('./getSubjects');
-const { saveSubjects } = require('./saveSubjects');
-const { removeSubjects } = require('./removeSubjects');
+const { differenceWith, isEqual, omit, map } = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { getSubjects } = require("./getSubjects");
+const { saveSubjects } = require("./saveSubjects");
+const { removeSubjects } = require("./removeSubjects");
 
 async function updateSubjects({ assignable, subjects, ctx }) {
   if (!assignable || !Array.isArray(subjects)) {
     throw new LeemonsError(ctx, {
-      message: 'Cannot update subjects: assignable and subjects are required',
+      message: "Cannot update subjects: assignable and subjects are required",
       httpStatusCode: 400,
     });
   }
@@ -19,10 +19,10 @@ async function updateSubjects({ assignable, subjects, ctx }) {
   });
 
   const subjectsToAdd = differenceWith(subjects, savedSubjects, (a, b) =>
-    isEqual(a, omit(b, ['id']))
+    isEqual(a, omit(b, ["id"]))
   );
   const subjectsToRemove = differenceWith(savedSubjects, subjects, (a, b) =>
-    isEqual(omit(a, ['id']), b)
+    isEqual(omit(a, ["id"]), b)
   );
 
   if (subjectsToAdd.length) {
@@ -33,7 +33,7 @@ async function updateSubjects({ assignable, subjects, ctx }) {
     });
   }
   if (subjectsToRemove.length) {
-    await removeSubjects({ ids: map(subjectsToRemove, 'id'), ctx });
+    await removeSubjects({ ids: map(subjectsToRemove, "id"), ctx });
   }
 
   return getSubjects({ assignableIds: assignable, ctx });

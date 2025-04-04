@@ -1,7 +1,7 @@
-const { beforeEach, describe, test, expect } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+const { beforeEach, describe, test, expect } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { registerPermission } = require('./registerPermission');
+const { registerPermission } = require("./registerPermission");
 
 const addItemHandler = jest.fn();
 
@@ -12,17 +12,17 @@ beforeEach(async () => {
 
   ctx = generateCtx({
     actions: {
-      'users.permissions.addItem': addItemHandler,
+      "users.permissions.addItem": addItemHandler,
     },
   });
 });
 
-describe('registerPermission function', () => {
-  test('should register permission successfully', async () => {
+describe("registerPermission function", () => {
+  test("should register permission successfully", async () => {
     // Arrange
     const mockParams = {
-      assignableInstance: 'assignableInstanceId1',
-      assignable: 'assignableId1',
+      assignableInstance: "assignableInstanceId1",
+      assignable: "assignableId1",
       ctx,
     };
 
@@ -33,31 +33,31 @@ describe('registerPermission function', () => {
 
     // Assert
     expect(addItemHandler).toBeCalledWith({
-      item: 'assignableInstanceId1',
-      type: 'leemons-testing.assignableInstance',
+      item: "assignableInstanceId1",
+      type: "leemons-testing.assignableInstance",
       data: {
         permissionName:
-          'leemons-testing.assignable.assignableId1.assignableInstance.assignableInstanceId1',
-        actionNames: ['view', 'edit'],
+          "leemons-testing.assignable.assignableId1.assignableInstance.assignableInstanceId1",
+        actionNames: ["view", "edit"],
       },
       isCustomPermission: true,
     });
     expect(resp).toBe(true);
   });
 
-  test('should throw error if addItem fails', async () => {
+  test("should throw error if addItem fails", async () => {
     // Arrange
     const mockParams = {
-      assignableInstance: 'assignableInstanceId1',
-      assignable: 'assignableId1',
+      assignableInstance: "assignableInstanceId1",
+      assignable: "assignableId1",
       ctx,
     };
 
-    addItemHandler.mockRejectedValue(new Error('addItem failed'));
+    addItemHandler.mockRejectedValue(new Error("addItem failed"));
 
     // Act and Assert
     await expect(registerPermission(mockParams)).rejects.toThrow(
-      'Error registering permission: addItem failed'
+      "Error registering permission: addItem failed"
     );
   });
 });

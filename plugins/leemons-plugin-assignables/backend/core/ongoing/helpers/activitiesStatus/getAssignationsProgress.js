@@ -1,5 +1,5 @@
-const { map, groupBy } = require('lodash');
-const dayjs = require('dayjs');
+const { map, groupBy } = require("lodash");
+const dayjs = require("dayjs");
 
 function getDates(dates, instance, assignation) {
   const now = dayjs();
@@ -19,16 +19,25 @@ function getDatesStatus({
   grades,
 }) {
   const { instance } = assignation;
-  const { requiresScoring, allowFeedback, alwaysAvailable: isAlwaysAvailable } = instance;
-  const { closeDate, now, deadline, startTime, endTime } = getDates(dates, instance, assignation);
+  const {
+    requiresScoring,
+    allowFeedback,
+    alwaysAvailable: isAlwaysAvailable,
+  } = instance;
+  const { closeDate, now, deadline, startTime, endTime } = getDates(
+    dates,
+    instance,
+    assignation
+  );
 
-  const isModuleChild = instance.metadata?.module?.type === 'activity';
+  const isModuleChild = instance.metadata?.module?.type === "activity";
   const isEvaluable = requiresScoring || allowFeedback;
 
   const hasAllGrades =
     grades[assignation.id]?.length > 0 &&
     grades[assignation.id]?.length ===
-      instanceSubjectsProgramsAndClasses[assignation.instance.id]?.subjects?.length;
+      instanceSubjectsProgramsAndClasses[assignation.instance.id]?.subjects
+        ?.length;
 
   const studentHasStarted = startTime.isValid();
   const studentHasFinished = endTime.isValid();
@@ -39,10 +48,18 @@ function getDatesStatus({
 
   const hasBeenEvaluated =
     isModuleChild && includeNonEvaluableChildren
-      ? (studentHasFinished || activityHasBeenClosed) && (!isEvaluable || hasAllGrades)
-      : (studentHasFinished || activityHasBeenClosed) && isEvaluable && hasAllGrades;
+      ? (studentHasFinished || activityHasBeenClosed) &&
+        (!isEvaluable || hasAllGrades)
+      : (studentHasFinished || activityHasBeenClosed) &&
+        isEvaluable &&
+        hasAllGrades;
 
-  return { hasBeenEvaluated, activityHasBeenClosed, studentHasFinished, studentHasStarted };
+  return {
+    hasBeenEvaluated,
+    activityHasBeenClosed,
+    studentHasFinished,
+    studentHasStarted,
+  };
 }
 
 async function getAssignationsProgress({
@@ -54,40 +71,44 @@ async function getAssignationsProgress({
 }) {
   const grades = groupBy(
     await ctx.tx.db.Grades.find({
-      assignation: map(assignations, 'id'),
-      type: 'main',
+      assignation: map(assignations, "id"),
+      type: "main",
       visibleToStudent: true,
     }).lean(),
-    'assignation'
+    "assignation"
   );
 
   return assignations.map((assignation) => {
-    const { hasBeenEvaluated, activityHasBeenClosed, studentHasFinished, studentHasStarted } =
-      getDatesStatus({
-        dates,
-        assignation,
-        includeNonEvaluableChildren,
-        grades,
-        instanceSubjectsProgramsAndClasses,
-      });
+    const {
+      hasBeenEvaluated,
+      activityHasBeenClosed,
+      studentHasFinished,
+      studentHasStarted,
+    } = getDatesStatus({
+      dates,
+      assignation,
+      includeNonEvaluableChildren,
+      grades,
+      instanceSubjectsProgramsAndClasses,
+    });
 
     if (hasBeenEvaluated) {
-      return 'evaluated';
+      return "evaluated";
     }
 
     if (activityHasBeenClosed && !studentHasFinished) {
-      return 'notSubmitted';
+      return "notSubmitted";
     }
 
     if (!studentHasStarted) {
-      return 'notStarted';
+      return "notStarted";
     }
 
     if (studentHasFinished) {
-      return 'finished';
+      return "finished";
     }
 
-    return 'started';
+    return "started";
   });
 }
 exports.getAssignationsProgress = getAssignationsProgress;

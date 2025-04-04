@@ -1,13 +1,24 @@
-import React from 'react';
-import useCurriculum from '@curriculum/request/hooks/queries/useCurriculum';
-import useListCurriculumsByProgram from '@curriculum/request/hooks/queries/useListCurriculumsByProgram';
-import { cloneDeep, get, intersection, isArray, last, set, uniqBy } from 'lodash';
-import { unflatten, useStore } from '@common';
-import prefixPN from '@assignables/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import React from "react";
+import useCurriculum from "@curriculum/request/hooks/queries/useCurriculum";
+import useListCurriculumsByProgram from "@curriculum/request/hooks/queries/useListCurriculumsByProgram";
+import {
+  cloneDeep,
+  get,
+  intersection,
+  isArray,
+  last,
+  set,
+  uniqBy,
+} from "lodash";
+import { unflatten, useStore } from "@common";
+import prefixPN from "@assignables/helpers/prefixPN";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
 
 function parseCurriculumValue(id) {
-  return { ...Object.fromEntries(id?.split('|').map((pair) => pair.split('.'))), original: id };
+  return {
+    ...Object.fromEntries(id?.split("|").map((pair) => pair.split("."))),
+    original: id,
+  };
 }
 
 function flatCurriculumNodes(curriculumNodes) {
@@ -17,10 +28,15 @@ function flatCurriculumNodes(curriculumNodes) {
         id: node.id,
         nodeLevel: node.nodeLevel,
         nodeLevelPropertyByPropertyId: Object.fromEntries(
-          Object.entries(node.formValues || {}).flatMap(([nodeLevelProperty, props]) => {
-            const properties = isArray(props) ? props : [props];
-            return properties.map((property) => [property.id, nodeLevelProperty]);
-          })
+          Object.entries(node.formValues || {}).flatMap(
+            ([nodeLevelProperty, props]) => {
+              const properties = isArray(props) ? props : [props];
+              return properties.map((property) => [
+                property.id,
+                nodeLevelProperty,
+              ]);
+            }
+          )
         ),
       };
 
@@ -53,7 +69,9 @@ export function useSelectedCurriculumValues({ assignable }) {
         const values = [];
 
         if (subject?.curriculum?.curriculum?.length) {
-          values.push(...subject.curriculum.curriculum.map(parseCurriculumValue));
+          values.push(
+            ...subject.curriculum.curriculum.map(parseCurriculumValue)
+          );
         }
         if (subject?.curriculum?.objectives?.length) {
           hasCustomObjectives = true;
@@ -66,17 +84,17 @@ export function useSelectedCurriculumValues({ assignable }) {
 }
 
 export function useCustomObjectivesLocalizations() {
-  const key = prefixPN('customObjectives');
+  const key = prefixPN("customObjectives");
   const [, translations] = useTranslateLoader(key);
 
   return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
 
-      return get(res, key, '');
+      return get(res, key, "");
     }
 
-    return '';
+    return "";
   }, [translations, key]);
 }
 
@@ -88,7 +106,8 @@ export function useSelectedCurriculumProperties({
 }) {
   const customObjectiveLocalization = useCustomObjectivesLocalizations();
   const customObjectives = React.useMemo(
-    () => !!selectedCurriculumValues?.some((value) => value.hasCustomObjectives),
+    () =>
+      !!selectedCurriculumValues?.some((value) => value.hasCustomObjectives),
     [selectedCurriculumValues]
   );
   const flattenSelectedValues = React.useMemo(
@@ -112,25 +131,27 @@ export function useSelectedCurriculumProperties({
           (level) => level?.schema?.jsonSchema?.properties?.[nodeLevelProperty]
         );
 
-        const property = nodeLevel?.schema?.jsonSchema?.properties?.[nodeLevelProperty];
+        const property =
+          nodeLevel?.schema?.jsonSchema?.properties?.[nodeLevelProperty];
 
         return {
           id: property?.id,
           name: property?.frontConfig?.name,
         };
       }),
-      'id'
+      "id"
     );
   }, [curriculumNodes, flattenSelectedValues, curriculum, nodeLevels]);
 
   if (customObjectives) {
-    if (!usedProperties?.length || last(usedProperties)?.id !== 'custom') {
+    if (!usedProperties?.length || last(usedProperties)?.id !== "custom") {
       usedProperties.push({
-        id: 'custom',
+        id: "custom",
         name: customObjectiveLocalization,
       });
     } else {
-      usedProperties[usedProperties.length - 1].name = customObjectiveLocalization;
+      usedProperties[usedProperties.length - 1].name =
+        customObjectiveLocalization;
     }
   }
 
@@ -140,7 +161,9 @@ export function useSelectedCurriculumProperties({
 export function useInstanceCurriculum({ instance }) {
   const program = instance?.subjects?.[0]?.program;
 
-  const { data: curriculumsList } = useListCurriculumsByProgram(program, { enabled: !!program });
+  const { data: curriculumsList } = useListCurriculumsByProgram(program, {
+    enabled: !!program,
+  });
 
   const { data: curriculum } = useCurriculum(curriculumsList?.items?.[0]?.id, {
     enabled: curriculumsList?.count > 0,
@@ -171,7 +194,8 @@ export function useCurriculumVisibleValues({ assignation }) {
 
     flatValues.forEach((value, i) => {
       const { node, property } = value;
-      const nodeLevel = curriculumNodes[node]?.nodeLevelPropertyByPropertyId[property];
+      const nodeLevel =
+        curriculumNodes[node]?.nodeLevelPropertyByPropertyId[property];
 
       set(store.flatValuesCopy, `${i}.visible`, !!visibleCategories[nodeLevel]);
     });

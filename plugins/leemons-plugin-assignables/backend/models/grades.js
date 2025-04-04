@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const gradesSchema = new mongoose.Schema(
   {
@@ -47,14 +47,31 @@ const gradesSchema = new mongoose.Schema(
   }
 );
 
-gradesSchema.index({ deploymentID: 1, assignation: 1, subject: 1, type: 1 }, { unique: true });
+gradesSchema.index(
+  { deploymentID: 1, assignation: 1, subject: 1, type: 1 },
+  { unique: true }
+);
 
 gradesSchema.index({ assignation: 1, deploymentID: 1, isDeleted: 1 });
 gradesSchema.index({ assignation: 1, type: 1, deploymentID: 1, isDeleted: 1 });
-gradesSchema.index({ assignation: 1, visibleToStudent: 1, deploymentID: 1, isDeleted: 1 });
-gradesSchema.index({ assignation: 1, subject: 1, deploymentID: 1, isDeleted: 1 });
+gradesSchema.index({
+  assignation: 1,
+  visibleToStudent: 1,
+  deploymentID: 1,
+  isDeleted: 1,
+});
+gradesSchema.index({
+  assignation: 1,
+  subject: 1,
+  deploymentID: 1,
+  isDeleted: 1,
+});
 gradesSchema.index({ type: 1, date: 1, deploymentID: 1, isDeleted: 1 });
 
-const gradesModel = newModel(mongoose.connection, 'v1::assignables_Grades', gradesSchema);
+const gradesModel = newModel(
+  mongoose.connection,
+  "v1::assignables_Grades",
+  gradesSchema
+);
 
 module.exports = { gradesSchema, gradesModel };

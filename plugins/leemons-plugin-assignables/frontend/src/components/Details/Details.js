@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useRef } from "react";
+import { useParams } from "react-router-dom";
 
 import {
   Text,
@@ -8,16 +8,16 @@ import {
   TotalLayoutContainer,
   TotalLayoutStepContainer,
   Box,
-} from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+} from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
 
-import ActivityHeader from '../ActivityHeader';
+import ActivityHeader from "../ActivityHeader";
 
-import { TaskOngoingList } from './components/TaskOngoingList';
-import UsersList from './components/UsersList';
+import { TaskOngoingList } from "./components/TaskOngoingList";
+import UsersList from "./components/UsersList";
 
-import prefixPN from '@assignables/helpers/prefixPN';
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
+import prefixPN from "@assignables/helpers/prefixPN";
+import useInstances from "@assignables/requests/hooks/queries/useInstances";
 
 export default function Details() {
   const { id } = useParams();
@@ -25,7 +25,7 @@ export default function Details() {
 
   const { data: instance, isLoading, isError } = useInstances({ id });
 
-  const [t] = useTranslateLoader(prefixPN('studentsList'));
+  const [t] = useTranslateLoader(prefixPN("studentsList"));
 
   if (instance) {
     return (
@@ -33,7 +33,7 @@ export default function Details() {
         scrollRef={scrollRef}
         Header={
           <ActivityHeader
-            action={t('title')}
+            action={t("title")}
             instance={instance}
             showClass
             showDeadline
@@ -52,9 +52,9 @@ export default function Details() {
           fullWidth
           fullHeight
           style={{
-            backgroundColor: '#f8f9fb',
-            overflow: 'auto',
-            position: 'relative',
+            backgroundColor: "#f8f9fb",
+            overflow: "auto",
+            position: "relative",
           }}
           ref={scrollRef}
         >
@@ -63,9 +63,9 @@ export default function Details() {
               <Box
                 noFlex
                 style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'flex-start',
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "flex-start",
                   gap: 30,
                 }}
               >

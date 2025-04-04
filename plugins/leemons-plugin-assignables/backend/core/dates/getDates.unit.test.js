@@ -4,12 +4,12 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getDates } = require('./getDates');
-const { datesSchema } = require('../../models/dates');
+const { getDates } = require("./getDates");
+const { datesSchema } = require("../../models/dates");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -32,28 +32,28 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should return an object with the instance dates', async () => {
+it("Should return an object with the instance dates", async () => {
   // Arrange
-  const instanceId = 'instance-id';
+  const instanceId = "instance-id";
 
   const ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 
   const initialValues = [
     {
       instance: instanceId,
-      type: 'instance',
-      name: 'start',
-      date: new Date('2001/10/27'),
+      type: "instance",
+      name: "start",
+      date: new Date("2001/10/27"),
     },
     {
       instance: instanceId,
-      type: 'instance',
-      name: 'end',
-      date: new Date('2001/10/28'),
+      type: "instance",
+      name: "end",
+      date: new Date("2001/10/28"),
     },
   ];
   await ctx.db.Dates.insertMany(initialValues);
@@ -66,7 +66,7 @@ it('Should return an object with the instance dates', async () => {
   // Act
   const response = await getDates({
     instance: instanceId,
-    type: 'instance',
+    type: "instance",
     ctx,
   });
 
@@ -74,41 +74,41 @@ it('Should return an object with the instance dates', async () => {
   expect(response).toEqual(expectedValue);
 });
 
-it('Should return an object with the dates per instance', async () => {
+it("Should return an object with the dates per instance", async () => {
   // Arrange
-  const instanceId = 'instance-id';
-  const instanceId2 = 'instance-id-2';
+  const instanceId = "instance-id";
+  const instanceId2 = "instance-id-2";
 
   const ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 
   const initialValues = [
     {
       instance: instanceId,
-      type: 'instance',
-      name: 'start',
-      date: new Date('2010/10/27'),
+      type: "instance",
+      name: "start",
+      date: new Date("2010/10/27"),
     },
     {
       instance: instanceId,
-      type: 'instance',
-      name: 'end',
-      date: new Date('2010/10/28'),
+      type: "instance",
+      name: "end",
+      date: new Date("2010/10/28"),
     },
     {
       instance: instanceId2,
-      type: 'instance',
-      name: 'start',
-      date: new Date('2001/5/4'),
+      type: "instance",
+      name: "start",
+      date: new Date("2001/5/4"),
     },
     {
       instance: instanceId2,
-      type: 'instance',
-      name: 'end',
-      date: new Date('2001/5/5'),
+      type: "instance",
+      name: "end",
+      date: new Date("2001/5/5"),
     },
   ];
   await ctx.db.Dates.insertMany(initialValues);
@@ -127,7 +127,7 @@ it('Should return an object with the dates per instance', async () => {
   // Act
   const response = await getDates({
     instance: [instanceId, instanceId2],
-    type: 'instance',
+    type: "instance",
     ctx,
   });
 
@@ -135,20 +135,20 @@ it('Should return an object with the dates per instance', async () => {
   expect(response).toEqual(expectedValue);
 });
 
-it('Should return empty object if no date is found for instance', async () => {
+it("Should return empty object if no date is found for instance", async () => {
   // Arrange
-  const instanceId = 'instance-id';
+  const instanceId = "instance-id";
 
   const ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 
   // Act
   const response = await getDates({
     instance: instanceId,
-    type: 'instance',
+    type: "instance",
     ctx,
   });
 
@@ -156,21 +156,21 @@ it('Should return empty object if no date is found for instance', async () => {
   expect(response).toEqual({});
 });
 
-it('Should return empty object if no date is found in array instances', async () => {
+it("Should return empty object if no date is found in array instances", async () => {
   // Arrange
-  const instanceId = 'instance-id';
-  const instanceId2 = 'instance-id-2';
+  const instanceId = "instance-id";
+  const instanceId2 = "instance-id-2";
 
   const ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 
   // Act
   const response = await getDates({
     instance: [instanceId, instanceId2],
-    type: 'instance',
+    type: "instance",
     ctx,
   });
 
@@ -178,14 +178,14 @@ it('Should return empty object if no date is found in array instances', async ()
   expect(response).toEqual({});
 });
 
-it('Should throw if no instance or type are provided', async () => {
+it("Should throw if no instance or type are provided", async () => {
   // Arrange
-  const instance = 'instance-id';
-  const type = 'instance';
+  const instance = "instance-id";
+  const type = "instance";
 
   const ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
   // Act
@@ -194,9 +194,9 @@ it('Should throw if no instance or type are provided', async () => {
 
   // Assert
   await expect(noInstanceFn).rejects.toThrowError(
-    'Cannot get dates: type and instance are required'
+    "Cannot get dates: type and instance are required"
   );
   await expect(noTypeFn).rejects.toThrowError(
-    'Cannot get dates: type and instance are required'
+    "Cannot get dates: type and instance are required"
   );
 });

@@ -1,10 +1,10 @@
-const { LeemonsError } = require('@leemons/error');
-const { set } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { set } = require("lodash");
 
 async function getDates({ type, instance, ctx }) {
   if (!type || !instance) {
     throw new LeemonsError(ctx, {
-      message: 'Cannot get dates: type and instance are required',
+      message: "Cannot get dates: type and instance are required",
       httpStatusCode: 400,
     });
   }
@@ -19,7 +19,7 @@ async function getDates({ type, instance, ctx }) {
     type,
     instance,
   })
-    .select(['instance', 'name', 'date'])
+    .select(["instance", "name", "date"])
     .lean();
 
   const datesByInstance = {};

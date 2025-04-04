@@ -1,18 +1,34 @@
-import { ContextContainer, Stack, Text, TotalLayoutStepContainer } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+import {
+  ContextContainer,
+  Stack,
+  Text,
+  TotalLayoutStepContainer,
+} from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
-import { ActivityUnavailableFooter } from './ActivityUnavailableFooter';
+import { ActivityUnavailableFooter } from "./ActivityUnavailableFooter";
 
-export function ActivityUnavailableLayout({ children, scrollRef, singlePage, clean, t }) {
+export function ActivityUnavailableLayout({
+  children,
+  scrollRef,
+  singlePage,
+  clean,
+  t,
+}) {
   return (
     <TotalLayoutStepContainer
-      Footer={<ActivityUnavailableFooter scrollRef={scrollRef} singlePage={singlePage} />}
+      Footer={
+        <ActivityUnavailableFooter
+          scrollRef={scrollRef}
+          singlePage={singlePage}
+        />
+      }
       clean={clean}
     >
-      <ContextContainer title={t('activityUnavailable')}>
+      <ContextContainer title={t("activityUnavailable")}>
         <Stack spacing={5} direction="column">
           {children}
-          <Text>{t('checkBackLater')}</Text>
+          <Text>{t("checkBackLater")}</Text>
         </Stack>
       </ContextContainer>
     </TotalLayoutStepContainer>

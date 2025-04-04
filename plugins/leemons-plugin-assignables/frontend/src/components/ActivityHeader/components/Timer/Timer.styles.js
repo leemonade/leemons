@@ -1,10 +1,10 @@
-import { createStyles, keyframes } from '@bubbles-ui/components';
+import { createStyles, keyframes } from "@bubbles-ui/components";
 
 const blink = keyframes({
-  '0%': {
+  "0%": {
     opacity: 0,
   },
-  '100%': {
+  "100%": {
     opacity: 1,
   },
 });
@@ -14,21 +14,21 @@ export const useTimerStyles = createStyles((theme) => {
 
   return {
     root: {
-      display: 'flex',
-      flexDirection: 'row',
+      display: "flex",
+      flexDirection: "row",
       gap: globalTheme.spacing.gap.sm,
-      alignItems: 'center',
+      alignItems: "center",
     },
     icon: {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
       width: 24,
       height: 24,
-      color: '#878D96',
+      color: "#878D96",
     },
     text: {
-      fontSize: { ...globalTheme.content.typoMobile.body['sm--bold'] },
+      fontSize: { ...globalTheme.content.typoMobile.body["sm--bold"] },
     },
     texColor: {
       color: globalTheme.content.color.text.default,

@@ -5,7 +5,9 @@ function filterAssignationsByInstance({ assignations, instances }) {
     instancesMap[instance.id] = instance;
   });
 
-  return assignations.filter((assignation) => !!instancesMap[assignation.instance.id]);
+  return assignations.filter(
+    (assignation) => !!instancesMap[assignation.instance.id]
+  );
 }
 
 module.exports = { filterAssignationsByInstance };

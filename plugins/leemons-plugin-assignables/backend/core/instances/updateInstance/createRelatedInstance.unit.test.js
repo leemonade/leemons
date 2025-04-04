@@ -1,18 +1,18 @@
-const { it, expect, beforeEach } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+const { it, expect, beforeEach } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { createRelatedInstance } = require('./createRelatedInstance');
+const { createRelatedInstance } = require("./createRelatedInstance");
 const {
   getInstanceObject,
-} = require('../../../__fixtures__/getInstanceObject');
+} = require("../../../__fixtures__/getInstanceObject");
 
-const { getInstance } = require('../getInstance');
-const { createInstance } = require('../createInstance');
-const { updateInstance } = require('./updateInstance');
+const { getInstance } = require("../getInstance");
+const { createInstance } = require("../createInstance");
+const { updateInstance } = require("./updateInstance");
 
-jest.mock('../getInstance');
-jest.mock('../createInstance');
-jest.mock('./updateInstance');
+jest.mock("../getInstance");
+jest.mock("../createInstance");
+jest.mock("./updateInstance");
 
 let instance;
 let ctx;
@@ -22,15 +22,15 @@ beforeEach(async () => {
   ctx = generateCtx({});
   instance = {
     ...getInstanceObject(),
-    relatedAssignableInstances: { after: [{ id: 'afterId1' }] },
+    relatedAssignableInstances: { after: [{ id: "afterId1" }] },
   };
 });
 
-it('Should create a related instance successfully', async () => {
+it("Should create a related instance successfully", async () => {
   // Arrange
-  const caller = { id: 'callerInstanceId1' };
-  const relation = { id: 'relationId' };
-  const type = 'before';
+  const caller = { id: "callerInstanceId1" };
+  const relation = { id: "relationId" };
+  const type = "before";
 
   getInstance.mockResolvedValue(instance);
 
@@ -41,7 +41,7 @@ it('Should create a related instance successfully', async () => {
   expect(getInstance).toBeCalledWith({ id: relation.id, ctx });
   expect(updateInstance).toBeCalledWith({
     assignableInstance: {
-      id: 'relationId',
+      id: "relationId",
       relatedAssignableInstances: {
         ...instance.relatedAssignableInstances,
         before: [],
@@ -60,18 +60,18 @@ it('Should create a related instance successfully', async () => {
   expect(createInstance).not.toBeCalled();
 });
 
-it('Should create a related instance successfully if relation is an object (without id)', async () => {
+it("Should create a related instance successfully if relation is an object (without id)", async () => {
   // Arrange
-  const caller = { id: 'callerInstanceId1' };
+  const caller = { id: "callerInstanceId1" };
   const relation = {
     instance: {
       relatedAssignableInstances: {},
     },
   };
-  const type = 'before';
+  const type = "before";
 
   getInstance.mockResolvedValue(instance);
-  createInstance.mockResolvedValue({ id: 'createdInstanceId' });
+  createInstance.mockResolvedValue({ id: "createdInstanceId" });
 
   // Act
   const response = await createRelatedInstance({ caller, relation, type, ctx });
@@ -96,16 +96,16 @@ it('Should create a related instance successfully if relation is an object (with
   });
   const { instance: kk, ...relationResp } = {
     ...relation,
-    id: 'createdInstanceId',
+    id: "createdInstanceId",
   };
   expect(response).toEqual(relationResp);
 });
 
-it('Should throw an error if the related instance does not exist', async () => {
+it("Should throw an error if the related instance does not exist", async () => {
   // Arrange
-  const caller = 'callerId';
-  const relation = { id: 'nonExistentId' };
-  const type = 'after';
+  const caller = "callerId";
+  const relation = { id: "nonExistentId" };
+  const type = "after";
   const propagate = true;
 
   getInstance.mockResolvedValue(null);

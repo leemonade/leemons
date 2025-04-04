@@ -1,3 +1,3 @@
-import ControlledPeriodPicker from './ControlledPeriodPicker';
+import ControlledPeriodPicker from "./ControlledPeriodPicker";
 
 export default ControlledPeriodPicker;

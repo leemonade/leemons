@@ -1,7 +1,7 @@
-const { map, keyBy, clone } = require('lodash');
+const { map, keyBy, clone } = require("lodash");
 
 function updateModuleAssignationDates({ assignations, dates }) {
-  const assignationsByInstance = keyBy(assignations, 'instance.id');
+  const assignationsByInstance = keyBy(assignations, "instance.id");
   const datesToReturn = clone(dates);
 
   assignations.forEach((assignation) => {
@@ -19,7 +19,9 @@ function updateModuleAssignationDates({ assignations, dates }) {
       datesToReturn.assignations[assignation.id] = {
         open: assignationsDates[0]?.open ?? null,
         start: assignationsDates[0]?.start ?? null,
-        end: assignationsDates.every((date) => date?.end) ? assignationsDates[0]?.end : null,
+        end: assignationsDates.every((date) => date?.end)
+          ? assignationsDates[0]?.end
+          : null,
         ...dates.assignations[assignation.id],
       };
     }

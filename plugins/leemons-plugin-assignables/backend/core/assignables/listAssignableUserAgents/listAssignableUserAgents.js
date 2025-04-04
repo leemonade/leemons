@@ -1,6 +1,8 @@
-const { getAssignable } = require('../getAssignable');
-const { getPermissionName } = require('../../permissions/assignables/helpers');
-const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
+const { getAssignable } = require("../getAssignable");
+const { getPermissionName } = require("../../permissions/assignables/helpers");
+const {
+  getUserPermission,
+} = require("../../permissions/assignables/users/getUserPermission");
 /**
  * List assignable user agents
  * @async
@@ -17,13 +19,18 @@ async function listAssignableUserAgents({ assignableId, ctx }) {
   // TODO: Check if the userSession has permission to list users :D
   // EN: Get the userAgents related with the assignable.
   // ES: Obtenemos los userAgents relacionados con el asignable.
-  let users = await ctx.tx.call('users.permissions.findUserAgentsWithPermission', {
-    permissions: { permissionName: getPermissionName({ id: assignableId, ctx }) },
-  });
+  let users = await ctx.tx.call(
+    "users.permissions.findUserAgentsWithPermission",
+    {
+      permissions: {
+        permissionName: getPermissionName({ id: assignableId, ctx }),
+      },
+    }
+  );
 
   // EN: Get the userAgents info.
   // ES: Obtenemos la información del userAgent.
-  users = await ctx.tx.call('users.users.getUserAgentsInfo', {
+  users = await ctx.tx.call("users.users.getUserAgentsInfo", {
     userAgentIds: users,
   });
 

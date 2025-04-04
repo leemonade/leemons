@@ -1,13 +1,13 @@
-import React from 'react';
+import React from "react";
 
-import { Alert } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@assignables/helpers/prefixPN';
+import { Alert } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@assignables/helpers/prefixPN";
 
 function NotSubmittedAlert() {
-  const [t] = useTranslateLoader(prefixPN('evaluation.not_submitted_alert'));
+  const [t] = useTranslateLoader(prefixPN("evaluation.not_submitted_alert"));
 
-  return <Alert severity="error" title={t('title')} closeable={false} />;
+  return <Alert severity="error" title={t("title")} closeable={false} />;
 }
 
 export default NotSubmittedAlert;

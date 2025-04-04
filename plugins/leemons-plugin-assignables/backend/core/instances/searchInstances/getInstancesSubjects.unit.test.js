@@ -4,13 +4,13 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getInstancesSubjects } = require('./getInstancesSubjects');
-const { classesSchema } = require('../../../models/classes');
-const { getClassesObject } = require('../../../__fixtures__/getClassesObject');
+const { getInstancesSubjects } = require("./getInstancesSubjects");
+const { classesSchema } = require("../../../models/classes");
+const { getClassesObject } = require("../../../__fixtures__/getClassesObject");
 
 const classesByIdsHandler = jest.fn();
 
@@ -37,25 +37,25 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should call getInstancesSubjects correctly', async () => {
+it("Should call getInstancesSubjects correctly", async () => {
   // Arrange
-  const instances = ['instanceId1'];
-  const expectedValue = { instanceId1: ['subjectId1'] };
+  const instances = ["instanceId1"];
+  const expectedValue = { instanceId1: ["subjectId1"] };
 
   const ctx = generateCtx({
     actions: {
-      'academic-portfolio.classes.classByIds': classesByIdsHandler,
+      "academic-portfolio.classes.classByIds": classesByIdsHandler,
     },
     models: {
-      Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+      Classes: newModel(mongooseConnection, "Classes", classesSchema),
     },
   });
 
   classesByIdsHandler.mockReturnValue([
     {
-      id: 'clase1',
+      id: "clase1",
       subject: {
-        id: 'subjectId1',
+        id: "subjectId1",
       },
     },
   ]);

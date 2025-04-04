@@ -1,4 +1,4 @@
-const { find, findIndex } = require('lodash');
+const { find, findIndex } = require("lodash");
 /**
  * Sorts the assignables based on the provided sorting criteria
  * @function sortAssignables
@@ -11,7 +11,7 @@ const { find, findIndex } = require('lodash');
 function sortAssignables(sorting, _assignablesIds, assets) {
   let assignablesIds = _assignablesIds;
   if (sorting) {
-    if (find(sorting, { key: 'name' })) {
+    if (find(sorting, { key: "name" })) {
       assignablesIds = assignablesIds.map((assignable) => {
         const asset = findIndex(assets, (a) => a === assignable.asset);
 

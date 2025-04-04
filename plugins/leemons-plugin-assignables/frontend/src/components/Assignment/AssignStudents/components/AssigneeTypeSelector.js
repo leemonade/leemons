@@ -1,16 +1,16 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { RadioGroup } from '@bubbles-ui/components';
+import React, { useMemo } from "react";
+import PropTypes from "prop-types";
+import { RadioGroup } from "@bubbles-ui/components";
 
 export default function AssigneeTypeSelector({ labels, onChange, value }) {
   const options = useMemo(
     () => [
       {
-        value: 'class',
+        value: "class",
         label: labels?.assignTo?.class,
       },
       {
-        value: 'customGroups',
+        value: "customGroups",
         label: labels?.assignTo?.customGroups,
       },
       // {

@@ -1,14 +1,20 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Stack, Text, useDebouncedValue } from '@bubbles-ui/components';
-import { ResponsiveBar } from '@nivo/bar';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@assignables/helpers/prefixPN';
-import { isNil, toUpper } from 'lodash';
-import { COLORS, THEME, LEGEND_MARK_SIZE, getBarColor, getLabelColor } from '../ProgressChart';
-import { Bar } from './components/Bar';
-import { PassMarker } from './components/PassMarker';
-import { AverageMarker } from './components/AverageMarker';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, Stack, Text, useDebouncedValue } from "@bubbles-ui/components";
+import { ResponsiveBar } from "@nivo/bar";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@assignables/helpers/prefixPN";
+import { isNil, toUpper } from "lodash";
+import {
+  COLORS,
+  THEME,
+  LEGEND_MARK_SIZE,
+  getBarColor,
+  getLabelColor,
+} from "../ProgressChart";
+import { Bar } from "./components/Bar";
+import { PassMarker } from "./components/PassMarker";
+import { AverageMarker } from "./components/AverageMarker";
 
 function DistributionChart({
   data,
@@ -21,9 +27,9 @@ function DistributionChart({
   legendBottom,
   hideMarkers,
   height = 500,
-  ariaLabel = 'Learning Analytics',
+  ariaLabel = "Learning Analytics",
 }) {
-  const [t] = useTranslateLoader(prefixPN('progress'));
+  const [t] = useTranslateLoader(prefixPN("progress"));
   const chartRef = React.useRef();
 
   const [barWidth, setBarWidth] = React.useState(0);
@@ -59,18 +65,27 @@ function DistributionChart({
     if (hideMarkers) return [];
     return [
       (props) => <AverageMarker {...props} barWidth={debouncedBarWidth} />,
-      (props) => <PassMarker {...props} barWidth={debouncedBarWidth} passValue={passValue} />,
+      (props) => (
+        <PassMarker
+          {...props}
+          barWidth={debouncedBarWidth}
+          passValue={passValue}
+        />
+      ),
     ];
   }, [hideMarkers, passValue, debouncedBarWidth]);
 
-  const tickValues = React.useMemo(() => Array.from({ length: max + 1 }, (_, i) => i), [max]);
+  const tickValues = React.useMemo(
+    () => Array.from({ length: max + 1 }, (_, i) => i),
+    [max]
+  );
 
   return (
-    <Stack spacing={4} direction="column" sx={{ width: '100%' }}>
+    <Stack spacing={4} direction="column" sx={{ width: "100%" }}>
       <Box ref={chartRef} style={{ height }}>
         <ResponsiveBar
           data={dataProcessed}
-          keys={['value', 'diff']}
+          keys={["value", "diff"]}
           indexBy="label"
           margin={{
             top: 10,
@@ -79,10 +94,10 @@ function DistributionChart({
             left: legendLeft ? 60 : 30,
           }}
           padding={0.1}
-          layers={['grid', 'axes', 'bars', ...markers]}
+          layers={["grid", "axes", "bars", ...markers]}
           maxValue={maxValue}
-          valueScale={{ type: 'linear', max }}
-          indexScale={{ type: 'band', round: true }}
+          valueScale={{ type: "linear", max }}
+          indexScale={{ type: "band", round: true }}
           colors={(bar) => getBarColor(bar, true)}
           tooltip={hideTooltip ? React.Fragment : tooltip || React.Fragment}
           theme={THEME}
@@ -91,7 +106,7 @@ function DistributionChart({
           axisRight={null}
           axisBottom={{
             legend: toUpper(legendBottom),
-            legendPosition: 'middle',
+            legendPosition: "middle",
             legendOffset: 40,
             tickSize: 0,
             tickPadding: 10,
@@ -99,7 +114,7 @@ function DistributionChart({
           }}
           axisLeft={{
             legend: toUpper(legendLeft),
-            legendPosition: 'middle',
+            legendPosition: "middle",
             legendOffset: -50,
             tickSize: 5,
             tickPadding: 12,
@@ -124,33 +139,49 @@ function DistributionChart({
         <Stack spacing={2} alignItems="center">
           <Box sx={{ backgroundColor: COLORS.APPROVED, ...LEGEND_MARK_SIZE }} />
           <Text size="xs" color="primary">
-            {t('approved')}
+            {t("approved")}
           </Text>
         </Stack>
         <Stack spacing={2} alignItems="center">
-          <Box sx={{ backgroundColor: COLORS.IN_PROGRESS, ...LEGEND_MARK_SIZE }} />
+          <Box
+            sx={{ backgroundColor: COLORS.IN_PROGRESS, ...LEGEND_MARK_SIZE }}
+          />
           <Text size="xs" color="primary">
-            {t('inProgress')}
+            {t("inProgress")}
           </Text>
         </Stack>
         <Stack spacing={2} alignItems="center">
-          <Box sx={{ backgroundColor: COLORS.NOT_APPROVED, ...LEGEND_MARK_SIZE }} />
+          <Box
+            sx={{ backgroundColor: COLORS.NOT_APPROVED, ...LEGEND_MARK_SIZE }}
+          />
           <Text size="xs" color="primary">
-            {t('notApproved')}
+            {t("notApproved")}
           </Text>
         </Stack>
         {!hideMarkers && (
           <>
             <Stack spacing={2} alignItems="center">
-              <Box sx={{ borderTop: `4px solid ${COLORS.AVERAGE}`, width: 24, height: 1 }} />
+              <Box
+                sx={{
+                  borderTop: `4px solid ${COLORS.AVERAGE}`,
+                  width: 24,
+                  height: 1,
+                }}
+              />
               <Text size="xs" color="primary">
-                {t('average')}
+                {t("average")}
               </Text>
             </Stack>
             <Stack spacing={2} alignItems="center">
-              <Box sx={{ borderTop: `2px dashed ${COLORS.PASS}`, width: 24, height: 1 }} />
+              <Box
+                sx={{
+                  borderTop: `2px dashed ${COLORS.PASS}`,
+                  width: 24,
+                  height: 1,
+                }}
+              />
               <Text size="xs" color="primary">
-                {t('pass')}
+                {t("pass")}
               </Text>
             </Stack>
           </>

@@ -1,4 +1,4 @@
-const dayjs = require('dayjs');
+const dayjs = require("dayjs");
 
 function getAssignationStatus({ dates, timestamps }) {
   let finished = false;
@@ -21,7 +21,10 @@ function getAssignationStatus({ dates, timestamps }) {
     finished = false;
   }
 
-  if ((startDate.isValid() && !startDate.isAfter(today)) || !startDate.isValid()) {
+  if (
+    (startDate.isValid() && !startDate.isAfter(today)) ||
+    !startDate.isValid()
+  ) {
     started = true;
   } else {
     started = false;

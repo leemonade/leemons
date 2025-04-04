@@ -1,3 +1,3 @@
-const { removeInstance } = require('./removeInstance');
+const { removeInstance } = require("./removeInstance");
 
 module.exports = { removeInstance };

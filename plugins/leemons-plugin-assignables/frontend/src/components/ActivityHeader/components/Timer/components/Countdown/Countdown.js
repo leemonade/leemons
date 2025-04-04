@@ -1,14 +1,14 @@
-import React, { useEffect, useMemo, useRef } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useMemo, useRef } from "react";
+import PropTypes from "prop-types";
 
-import { Text } from '@bubbles-ui/components';
+import { Text } from "@bubbles-ui/components";
 
-import useCountdown from 'react-countdown-hook';
-import dayjs from 'dayjs';
-import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
-import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
-import { useTimerStyles } from '../../Timer.styles';
-import { millisecondsToTime } from '../../helpers/millisecondsToTime';
+import useCountdown from "react-countdown-hook";
+import dayjs from "dayjs";
+import useStudentAssignationMutation from "@tasks/hooks/student/useStudentAssignationMutation";
+import { useUpdateTimestamps } from "@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps";
+import { useTimerStyles } from "../../Timer.styles";
+import { millisecondsToTime } from "../../helpers/millisecondsToTime";
 
 const useCountdownRemainingTime = ({ assignation, duration }) =>
   useMemo(() => {
@@ -18,31 +18,31 @@ const useCountdownRemainingTime = ({ assignation, duration }) =>
     if (!startDate.isValid() || !durationSeconds) {
       return null;
     }
-    const endDate = startDate.add(durationSeconds, 'seconds');
+    const endDate = startDate.add(durationSeconds, "seconds");
 
     if (!endDate.isValid()) {
       return null;
     }
 
-    return endDate.diff(dayjs(), 'milliseconds');
+    return endDate.diff(dayjs(), "milliseconds");
   }, [assignation?.timestamps?.start, duration?.asSeconds()]);
 
 function useCountdownColor({ total, remaining }) {
   const percentage = remaining / (total ?? 1);
 
   if (percentage >= 0.5) {
-    return { color: 'success', blink: false };
+    return { color: "success", blink: false };
   }
 
   if (percentage > 0.3) {
-    return { color: 'warning', blink: false };
+    return { color: "warning", blink: false };
   }
 
   if (percentage > 0.1) {
-    return { color: 'error', blink: false };
+    return { color: "error", blink: false };
   }
 
-  return { color: 'error', blink: true };
+  return { color: "error", blink: true };
 }
 
 export default function Countdown({ assignation, duration, onTimeout }) {
@@ -61,8 +61,12 @@ export default function Countdown({ assignation, duration, onTimeout }) {
 
   const { classes, cx } = useTimerStyles();
 
-  if (timeLeft <= 0 && !assignation?.timestamps?.end && !isFirstRender.current) {
-    updateTimestamp('end');
+  if (
+    timeLeft <= 0 &&
+    !assignation?.timestamps?.end &&
+    !isFirstRender.current
+  ) {
+    updateTimestamp("end");
     onTimeout();
   }
 

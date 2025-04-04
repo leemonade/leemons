@@ -1,8 +1,7 @@
-import React from 'react';
+import React from "react";
 
-import MaxTimeToggle from '../MaxTimeToggle';
+import MaxTimeToggle from "../MaxTimeToggle";
 
 export default function AlwaysAvailable() {
-  return (
-   <MaxTimeToggle />
-)};
+  return <MaxTimeToggle />;
+}

@@ -1,9 +1,15 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getRole } = require('./getRole');
-const { rolesSchema } = require('../../models/roles');
+const { getRole } = require("./getRole");
+const { rolesSchema } = require("../../models/roles");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -26,23 +32,23 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should return the requested role', async () => {
+it("Should return the requested role", async () => {
   // Arrange
-  const roleName = 'testing-role';
+  const roleName = "testing-role";
   const ctx = generateCtx({
     models: {
-      Roles: newModel(mongooseConnection, 'Roles', rolesSchema),
+      Roles: newModel(mongooseConnection, "Roles", rolesSchema),
     },
   });
 
   const existingRoles = [
     {
       name: roleName,
-      plugin: 'leemons-testing',
+      plugin: "leemons-testing",
     },
     {
-      name: 'other-role-name',
-      plugin: 'leemons-testing',
+      name: "other-role-name",
+      plugin: "leemons-testing",
     },
   ];
   await ctx.db.Roles.create(existingRoles);
@@ -55,9 +61,9 @@ it('Should return the requested role', async () => {
   expect(response).toEqual(expectedValue);
 });
 
-it('Should throw if not role is given', async () => {
+it("Should throw if not role is given", async () => {
   // Arrange
-  const expectedError = 'Role param is required';
+  const expectedError = "Role param is required";
   const ctx = generateCtx({});
   // Act
   const testFn = () => getRole({ ctx });
@@ -66,12 +72,12 @@ it('Should throw if not role is given', async () => {
   expect(testFn).rejects.toThrowError(expectedError);
 });
 
-it('Should throw if the given role is not found', () => {
+it("Should throw if the given role is not found", () => {
   // Arrange
-  const roleName = 'testing-role';
+  const roleName = "testing-role";
   const ctx = generateCtx({
     models: {
-      Roles: newModel(mongooseConnection, 'Roles', rolesSchema),
+      Roles: newModel(mongooseConnection, "Roles", rolesSchema),
     },
   });
 
@@ -79,5 +85,5 @@ it('Should throw if the given role is not found', () => {
   const testFn = () => getRole({ role: roleName, ctx });
 
   // Assert
-  return expect(testFn).rejects.toThrowError('Role not found');
+  return expect(testFn).rejects.toThrowError("Role not found");
 });

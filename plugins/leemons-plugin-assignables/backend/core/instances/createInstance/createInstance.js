@@ -1,18 +1,22 @@
-const { getAssignable } = require('../../assignables/getAssignable');
-const { createAssignation } = require('../../assignations/createAssignation');
-const { registerClass } = require('../../classes');
-const { registerDates } = require('../../dates');
-const { validateInstance } = require('../../helpers/validators/instance');
-const { registerPermission } = require('../../permissions/instances/registerPermission');
-const { addPermissionToUser } = require('../../permissions/instances/users/addPermissionToUser');
+const { getAssignable } = require("../../assignables/getAssignable");
+const { createAssignation } = require("../../assignations/createAssignation");
+const { registerClass } = require("../../classes");
+const { registerDates } = require("../../dates");
+const { validateInstance } = require("../../helpers/validators/instance");
+const {
+  registerPermission,
+} = require("../../permissions/instances/registerPermission");
+const {
+  addPermissionToUser,
+} = require("../../permissions/instances/users/addPermissionToUser");
 const {
   addTeachersToAssignableInstance,
-} = require('../../teachers/addTeachersToAssignableInstance');
-const { updateInstance } = require('../updateInstance');
+} = require("../../teachers/addTeachersToAssignableInstance");
+const { updateInstance } = require("../updateInstance");
 
-const { createEventAndAddToUsers } = require('./createEventAndAddToUsers');
-const { emitLeemonsEvent } = require('./emitLeemonsEvent');
-const { getTeachersOfGivenClasses } = require('./getTeachersOfGivenClasses');
+const { createEventAndAddToUsers } = require("./createEventAndAddToUsers");
+const { emitLeemonsEvent } = require("./emitLeemonsEvent");
+const { getTeachersOfGivenClasses } = require("./getTeachersOfGivenClasses");
 
 async function createInstance({ assignableInstance, createEvent = true, ctx }) {
   // EN: Validate the assignable instance properties
@@ -54,11 +58,20 @@ async function createInstance({ assignableInstance, createEvent = true, ctx }) {
 
   // EN: Create the item permission
   // ES: Crea el permiso del item
-  await registerPermission({ assignableInstance: id, assignable: assignable.id, ctx });
+  await registerPermission({
+    assignableInstance: id,
+    assignable: assignable.id,
+    ctx,
+  });
 
   // EN: Save the classes
   // ES: Guarda las clases
-  await registerClass({ instance: id, assignable: assignable.id, id: classes, ctx });
+  await registerClass({
+    instance: id,
+    assignable: assignable.id,
+    id: classes,
+    ctx,
+  });
 
   // EN: Save the teachers
   // ES: Guarda los profesores
@@ -87,7 +100,7 @@ async function createInstance({ assignableInstance, createEvent = true, ctx }) {
 
   // EN: Save the dates
   // ES: Guarda las fechas
-  await registerDates({ type: 'assignableInstance', instance: id, dates, ctx });
+  await registerDates({ type: "assignableInstance", instance: id, dates, ctx });
 
   if (
     relatedAssignableInstances?.before?.length ||
@@ -111,7 +124,7 @@ async function createInstance({ assignableInstance, createEvent = true, ctx }) {
       assignableInstance: id,
       assignable: assignable.id,
       userAgents: students,
-      role: 'student',
+      role: "student",
       ctx,
     });
 

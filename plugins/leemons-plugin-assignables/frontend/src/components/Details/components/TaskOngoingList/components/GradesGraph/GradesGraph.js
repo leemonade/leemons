@@ -1,8 +1,8 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { Box } from '@bubbles-ui/components';
-import { DistributionChart } from '@assignables/components/DistributionChart';
-import { useGradesGraphStyles } from './GradesGraph.styles';
+import React, { useMemo } from "react";
+import PropTypes from "prop-types";
+import { Box } from "@bubbles-ui/components";
+import { DistributionChart } from "@assignables/components/DistributionChart";
+import { useGradesGraphStyles } from "./GradesGraph.styles";
 
 function extrapolateScoresToNearestScale({ scores, grades }) {
   return scores?.map((score) => {
@@ -41,9 +41,12 @@ export default function GradesGraph({
       grades?.map((grade) => ({
         value: grade.number,
         label: grade?.letter ?? grade?.number,
-        studentCount: normalizedScores.filter((score) => score.score === grade.number).length,
+        studentCount: normalizedScores.filter(
+          (score) => score.score === grade.number
+        ).length,
         percentage:
-          (normalizedScores.filter((score) => score.score === grade.number).length /
+          (normalizedScores.filter((score) => score.score === grade.number)
+            .length /
             students.length) *
           100,
       })) ?? [],

@@ -1,9 +1,15 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { listInstanceClasses } = require('./listInstanceClasses');
-const { classesSchema } = require('../../models/classes');
+const { listInstanceClasses } = require("./listInstanceClasses");
+const { classesSchema } = require("../../models/classes");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -26,15 +32,15 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should list one class', async () => {
+it("Should list one class", async () => {
   // Arrange
-  const instanceId = 'instance-id';
-  const assignableId = 'assignable-id';
-  const classId = 'class-id';
+  const instanceId = "instance-id";
+  const assignableId = "assignable-id";
+  const classId = "class-id";
 
   const ctx = generateCtx({
     models: {
-      Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+      Classes: newModel(mongooseConnection, "Classes", classesSchema),
     },
   });
 
@@ -58,16 +64,16 @@ it('Should list one class', async () => {
   ]);
 });
 
-it('Should list multiple classes', async () => {
+it("Should list multiple classes", async () => {
   // Arrange
-  const instanceId = 'instance-id';
-  const assignableId = 'assignable-id';
-  const classId = 'class-id';
-  const classId2 = 'class-id-2';
+  const instanceId = "instance-id";
+  const assignableId = "assignable-id";
+  const classId = "class-id";
+  const classId2 = "class-id-2";
 
   const ctx = generateCtx({
     models: {
-      Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+      Classes: newModel(mongooseConnection, "Classes", classesSchema),
     },
   });
 
@@ -105,17 +111,17 @@ it('Should list multiple classes', async () => {
   );
 });
 
-it('Should list classes for multiple instances', async () => {
+it("Should list classes for multiple instances", async () => {
   // Arrange
-  const instanceId = 'instance-id';
-  const instanceId2 = 'instance-id-2';
-  const assignableId = 'assignable-id';
-  const classId = 'class-id';
-  const classId2 = 'class-id-2';
+  const instanceId = "instance-id";
+  const instanceId2 = "instance-id-2";
+  const assignableId = "assignable-id";
+  const classId = "class-id";
+  const classId2 = "class-id-2";
 
   const ctx = generateCtx({
     models: {
-      Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+      Classes: newModel(mongooseConnection, "Classes", classesSchema),
     },
   });
 

@@ -1,30 +1,30 @@
-const { beforeEach, describe, test, expect } = require('@jest/globals');
+const { beforeEach, describe, test, expect } = require("@jest/globals");
 
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getUserPermissions } = require('./getUserPermissions');
-const { classesSchema } = require('../../../../../models/classes');
+const { getUserPermissions } = require("./getUserPermissions");
+const { classesSchema } = require("../../../../../models/classes");
 
-const { getTeacherPermissions } = require('../getTeacherPermissions');
+const { getTeacherPermissions } = require("../getTeacherPermissions");
 
-jest.mock('../getTeacherPermissions');
+jest.mock("../getTeacherPermissions");
 
 const getUserAgentPermissionsHandler = jest.fn();
 
-const pluginName = 'assignables';
+const pluginName = "assignables";
 const classes = [
   {
-    assignable: 'assignableId1',
-    class: 'classId1',
+    assignable: "assignableId1",
+    class: "classId1",
   },
   {
-    assignable: 'assignableId2',
-    class: 'classId1',
+    assignable: "assignableId2",
+    class: "classId1",
   },
   {
-    assignable: 'assignableId2',
-    class: 'classId2',
+    assignable: "assignableId2",
+    class: "classId2",
   },
 ];
 
@@ -52,11 +52,11 @@ beforeEach(async () => {
 
   ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions':
+      "users.permissions.getUserAgentPermissions":
         getUserAgentPermissionsHandler,
     },
     models: {
-      Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+      Classes: newModel(mongooseConnection, "Classes", classesSchema),
     },
     pluginName,
   });
@@ -64,22 +64,22 @@ beforeEach(async () => {
   await ctx.tx.db.Classes.create(classes);
 });
 
-describe('getUserPermissions function', () => {
-  test('should get user permissions successfully', async () => {
+describe("getUserPermissions function", () => {
+  test("should get user permissions successfully", async () => {
     // Arrange
     getUserAgentPermissionsHandler.mockResolvedValue([
       {
-        permissionName: 'prefix.assignableInstance.instanceId1',
-        actionNames: ['view', 'edit'],
+        permissionName: "prefix.assignableInstance.instanceId1",
+        actionNames: ["view", "edit"],
       },
       {
-        permissionName: 'prefix.assignableInstance.instanceId2',
-        actionNames: ['view'],
+        permissionName: "prefix.assignableInstance.instanceId2",
+        actionNames: ["view"],
       },
     ]);
 
     const mockParams = {
-      instancesIds: ['instanceId1', 'instanceId2'],
+      instancesIds: ["instanceId1", "instanceId2"],
       ctx,
     };
 
@@ -93,14 +93,14 @@ describe('getUserPermissions function', () => {
         $or: [
           {
             permissionName: {
-              $options: 'i',
-              $regex: 'assignableInstance\\.instanceId1',
+              $options: "i",
+              $regex: "assignableInstance\\.instanceId1",
             },
           },
           {
             permissionName: {
-              $options: 'i',
-              $regex: 'assignableInstance\\.instanceId2',
+              $options: "i",
+              $regex: "assignableInstance\\.instanceId2",
             },
           },
         ],
@@ -109,17 +109,17 @@ describe('getUserPermissions function', () => {
     expect(getTeacherPermissions).not.toBeCalled();
     expect(resp).toEqual({
       instanceId1: {
-        actions: ['edit', 'view'],
-        role: 'teacher',
+        actions: ["edit", "view"],
+        role: "teacher",
       },
       instanceId2: {
-        actions: ['view'],
-        role: 'student',
+        actions: ["view"],
+        role: "student",
       },
     });
   });
 
-  test('should get user permissions successfully if there are instances without permissions', async () => {
+  test("should get user permissions successfully if there are instances without permissions", async () => {
     // Arrange
 
     getTeacherPermissions.mockResolvedValue({
@@ -128,14 +128,14 @@ describe('getUserPermissions function', () => {
     });
 
     const mockParams = {
-      instancesIds: ['instanceId1', 'instanceId2'],
+      instancesIds: ["instanceId1", "instanceId2"],
       ctx,
     };
 
     getUserAgentPermissionsHandler.mockResolvedValue([
       {
-        permissionName: 'prefix.assignableInstance.instanceId1',
-        actionNames: ['view', 'edit'],
+        permissionName: "prefix.assignableInstance.instanceId1",
+        actionNames: ["view", "edit"],
       },
     ]);
 
@@ -149,14 +149,14 @@ describe('getUserPermissions function', () => {
         $or: [
           {
             permissionName: {
-              $options: 'i',
-              $regex: 'assignableInstance\\.instanceId1',
+              $options: "i",
+              $regex: "assignableInstance\\.instanceId1",
             },
           },
           {
             permissionName: {
-              $options: 'i',
-              $regex: 'assignableInstance\\.instanceId2',
+              $options: "i",
+              $regex: "assignableInstance\\.instanceId2",
             },
           },
         ],
@@ -168,12 +168,12 @@ describe('getUserPermissions function', () => {
     });
     expect(resp).toEqual({
       instanceId1: {
-        actions: ['edit', 'view'],
-        role: 'teacher',
+        actions: ["edit", "view"],
+        role: "teacher",
       },
       instanceId2: {
-        actions: ['edit', 'view'],
-        role: 'teacher',
+        actions: ["edit", "view"],
+        role: "teacher",
       },
     });
   });

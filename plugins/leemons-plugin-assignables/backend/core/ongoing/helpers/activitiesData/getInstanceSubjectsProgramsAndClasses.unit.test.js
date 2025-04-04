@@ -5,14 +5,14 @@ const {
   afterAll,
   beforeEach,
   jest: { fn },
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
 const {
   getInstanceSubjectsProgramsAndClasses,
-} = require('./getInstanceSubjectsProgramsAndClasses');
-const { classesSchema } = require('../../../../models/classes');
+} = require("./getInstanceSubjectsProgramsAndClasses");
+const { classesSchema } = require("../../../../models/classes");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -36,39 +36,39 @@ beforeEach(async () => {
 });
 
 const instanceOne = {
-  id: 'instanceOne',
+  id: "instanceOne",
   assignable: {
-    asset: { name: 'assetOne' },
-    id: 'assignableOneId',
-    role: 'task',
+    asset: { name: "assetOne" },
+    id: "assignableOneId",
+    role: "task",
   },
 };
 const instanceTwo = {
-  id: 'instanceTwo',
+  id: "instanceTwo",
   assignable: {
-    asset: { name: 'assetTwo' },
-    id: 'assignableTwoId',
-    role: 'learningpaths.module',
+    asset: { name: "assetTwo" },
+    id: "assignableTwoId",
+    role: "learningpaths.module",
   },
 };
 
 const mockClassOne = {
-  id: 'classOneId',
-  subject: { id: 'subjectOneId' },
-  program: 'programA',
+  id: "classOneId",
+  subject: { id: "subjectOneId" },
+  program: "programA",
 };
 const mockClassTwo = {
-  id: 'classTwoId',
-  subject: { id: 'subjectTwoId' },
-  program: 'programB',
+  id: "classTwoId",
+  subject: { id: "subjectTwoId" },
+  program: "programB",
 };
 const mockClassThree = {
-  id: 'classThreeId',
-  subject: { id: 'subjectThreeId' },
-  program: 'programB',
+  id: "classThreeId",
+  subject: { id: "subjectThreeId" },
+  program: "programB",
 };
 
-it('Should call getInstanceSubjectsProgramsAndClasses correctly', async () => {
+it("Should call getInstanceSubjectsProgramsAndClasses correctly", async () => {
   // Arrange
   const instances = [instanceOne, instanceTwo];
   const classByIdsAction = fn().mockResolvedValue([
@@ -79,10 +79,10 @@ it('Should call getInstanceSubjectsProgramsAndClasses correctly', async () => {
 
   const ctx = generateCtx({
     actions: {
-      'academic-portfolio.classes.classByIds': classByIdsAction,
+      "academic-portfolio.classes.classByIds": classByIdsAction,
     },
     models: {
-      Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+      Classes: newModel(mongooseConnection, "Classes", classesSchema),
     },
   });
   const mockClassRelationOne = {
@@ -113,7 +113,7 @@ it('Should call getInstanceSubjectsProgramsAndClasses correctly', async () => {
     {
       ...mockClassRelationOne,
       id: 4,
-      assignableInstance: 'anotherAssignableInstance',
+      assignableInstance: "anotherAssignableInstance",
     },
   ]);
 

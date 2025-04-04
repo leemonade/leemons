@@ -1,12 +1,12 @@
-import { Text } from '@bubbles-ui/components';
-import UnreadMessages from '@comunica/components/UnreadMessages';
-import dayjs from 'dayjs';
-import PropTypes from 'prop-types';
+import { Text } from "@bubbles-ui/components";
+import UnreadMessages from "@comunica/components/UnreadMessages";
+import dayjs from "dayjs";
+import PropTypes from "prop-types";
 
-import { parseAssignationForCommonView } from './parseAssignationForCommon';
+import { parseAssignationForCommonView } from "./parseAssignationForCommon";
 
-import prefixPN from '@assignables/helpers/prefixPN';
-import useAssignationProgress from '@assignables/hooks/useAssignationProgress';
+import prefixPN from "@assignables/helpers/prefixPN";
+import useAssignationProgress from "@assignables/hooks/useAssignationProgress";
 
 export function Progress({ assignation, isBlocked }) {
   const { label, color } = useAssignationProgress({ assignation, isBlocked });
@@ -52,24 +52,34 @@ function getDashboardURL(assignation) {
 
   if (!finished || (!isEvaluable && !roleDetails.evaluationDetailUrl)) {
     return roleDetails.studentDetailUrl
-      .replace(':id', instance.id)
-      .replace(':user', assignation.user);
+      .replace(":id", instance.id)
+      .replace(":user", assignation.user);
   }
 
   return roleDetails.evaluationDetailUrl
-    .replace(':id', instance.id)
-    .replace(':user', assignation.user);
+    .replace(":id", instance.id)
+    .replace(":user", assignation.user);
 }
 
-export async function parseAssignationForStudentView(assignation, labels, options) {
+export async function parseAssignationForStudentView(
+  assignation,
+  labels,
+  options
+) {
   const { instance } = assignation;
 
-  const commonData = await parseAssignationForCommonView(instance, labels, options);
+  const commonData = await parseAssignationForCommonView(
+    instance,
+    labels,
+    options
+  );
 
   // const blockingActivitiesById = options.blockingActivities;
   // const blockingActivities = instance.relatedAssignableInstances?.blocking ?? [];
 
-  const rooms = [prefixPN(`instance:${instance.id}:group`)].concat(assignation.chatKeys);
+  const rooms = [prefixPN(`instance:${instance.id}:group`)].concat(
+    assignation.chatKeys
+  );
   const isBlocked = false; // blockingActivities.some((id) => !blockingActivitiesById?.[id]?.finished);
 
   return {
@@ -78,7 +88,11 @@ export async function parseAssignationForStudentView(assignation, labels, option
     progress: <Progress assignation={assignation} isBlocked={isBlocked} />,
     messages: (
       <UnreadMessages
-        rooms={instance?.metadata?.createComunicaRooms && !commonData?.parentModule ? rooms : []}
+        rooms={
+          instance?.metadata?.createComunicaRooms && !commonData?.parentModule
+            ? rooms
+            : []
+        }
       />
     ),
     dashboardURL: () => getDashboardURL(assignation),

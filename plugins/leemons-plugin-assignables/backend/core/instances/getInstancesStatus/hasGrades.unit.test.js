@@ -1,7 +1,7 @@
-const { it, expect } = require('@jest/globals');
+const { it, expect } = require("@jest/globals");
 
-const { hasGrades } = require('./hasGrades');
-const { getGradeObject } = require('../../../__fixtures__/getGradeObject');
+const { hasGrades } = require("./hasGrades");
+const { getGradeObject } = require("../../../__fixtures__/getGradeObject");
 
 let studentData;
 
@@ -11,7 +11,7 @@ beforeEach(() => {
   };
 });
 
-it('Should return true if student has grades and are visibles to student', () => {
+it("Should return true if student has grades and are visibles to student", () => {
   // Arrange
   const expectedValue = true;
 
@@ -22,13 +22,16 @@ it('Should return true if student has grades and are visibles to student', () =>
   expect(response).toBe(expectedValue);
 });
 
-it('Should return true if student has grades and are visibles to student', () => {
+it("Should return true if student has grades and are visibles to student", () => {
   // Arrange
   const expectedValue = false;
 
   studentData = {
     ...studentData,
-    grades: studentData.grades.map((grade) => ({ ...grade, visibleToStudent: false })),
+    grades: studentData.grades.map((grade) => ({
+      ...grade,
+      visibleToStudent: false,
+    })),
   };
 
   // Act
@@ -38,7 +41,7 @@ it('Should return true if student has grades and are visibles to student', () =>
   expect(response).toBe(expectedValue);
 });
 
-it('Should return false if student has no grades', () => {
+it("Should return false if student has no grades", () => {
   // Arrange
   const expectedValue = false;
 

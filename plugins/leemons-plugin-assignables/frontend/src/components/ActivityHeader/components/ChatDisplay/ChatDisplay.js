@@ -1,13 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Button } from '@bubbles-ui/components';
-import { CommentIcon } from '@bubbles-ui/icons/solid';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@assignables/helpers/prefixPN';
-import { useComunica } from '@comunica/context';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, Button } from "@bubbles-ui/components";
+import { CommentIcon } from "@bubbles-ui/icons/solid";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@assignables/helpers/prefixPN";
+import { useComunica } from "@comunica/context";
 
 function ChatDisplay({ instance }) {
-  const [t] = useTranslateLoader(prefixPN('activity_dashboard'));
+  const [t] = useTranslateLoader(prefixPN("activity_dashboard"));
   const { openRoom } = useComunica();
 
   function onChatHandler() {
@@ -21,7 +21,7 @@ function ChatDisplay({ instance }) {
         variant="link"
         onClick={onChatHandler}
       >
-        {t('chatButton')}
+        {t("chatButton")}
       </Button>
     </Box>
   );

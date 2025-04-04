@@ -1,18 +1,18 @@
 /* eslint-disable react/display-name */
-import unflatten from '@academic-portfolio/helpers/unflatten';
-import prefixPN from '@assignables/helpers/prefixPN';
-import { Select } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { get } from 'lodash';
-import React from 'react';
+import unflatten from "@academic-portfolio/helpers/unflatten";
+import prefixPN from "@assignables/helpers/prefixPN";
+import { Select } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { get } from "lodash";
+import React from "react";
 
 export function useProgress(labels) {
-  const [, translations] = useTranslateLoader(prefixPN('activity_status'));
+  const [, translations] = useTranslateLoader(prefixPN("activity_status"));
 
   const localizations = React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = get(res, prefixPN('activity_status'));
+      const data = get(res, prefixPN("activity_status"));
 
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
@@ -25,27 +25,27 @@ export function useProgress(labels) {
   return React.useMemo(
     () => [
       {
-        value: 'all',
+        value: "all",
         label: labels?.seeAll,
       },
       {
-        value: 'notStarted',
+        value: "notStarted",
         label: localizations?.notStarted,
       },
       {
-        value: 'started',
+        value: "started",
         label: localizations?.started,
       },
       {
-        value: 'finished',
+        value: "finished",
         label: `${localizations?.submitted}/${localizations?.ended}`,
       },
       {
-        value: 'evaluated',
+        value: "evaluated",
         label: localizations?.evaluated,
       },
       {
-        value: 'notSubmitted',
+        value: "notSubmitted",
         label: `${localizations?.notSubmitted} (${localizations?.late})`,
       },
     ],
@@ -55,7 +55,14 @@ export function useProgress(labels) {
 
 const Progress = React.forwardRef(({ labels, value, onChange }, ref) => {
   const status = useProgress(labels);
-  return <Select label={labels?.progress} data={status} value={value} onChange={onChange} />;
+  return (
+    <Select
+      label={labels?.progress}
+      data={status}
+      value={value}
+      onChange={onChange}
+    />
+  );
 });
 
 export default Progress;

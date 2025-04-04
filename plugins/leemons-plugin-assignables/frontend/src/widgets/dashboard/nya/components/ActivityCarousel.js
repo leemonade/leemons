@@ -1,13 +1,13 @@
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+import React from "react";
+import { useLocation } from "react-router-dom";
 
-import { Loader } from '@bubbles-ui/components';
-import { Swiper } from '@bubbles-ui/extras';
-import PropTypes from 'prop-types';
+import { Loader } from "@bubbles-ui/components";
+import { Swiper } from "@bubbles-ui/extras";
+import PropTypes from "prop-types";
 
-import NYACard from '../../../../components/NYACard';
+import NYACard from "../../../../components/NYACard";
 
-import EmptyState from './EmptyState';
+import EmptyState from "./EmptyState";
 
 export default function ActivityCarousel({
   localizations,
@@ -17,10 +17,12 @@ export default function ActivityCarousel({
   classData,
 }) {
   const location = useLocation();
-  const isStudentDashboard = location.pathname.includes('private/dashboard/class');
+  const isStudentDashboard = location.pathname.includes(
+    "private/dashboard/class"
+  );
 
   const swiperProps = {
-    slidesPerView: 'auto',
+    slidesPerView: "auto",
     spaceBetween: 24,
   };
 

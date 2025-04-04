@@ -1,3 +1,3 @@
-const { listAssignableUserAgents } = require('./listAssignableUserAgents');
+const { listAssignableUserAgents } = require("./listAssignableUserAgents");
 
 module.exports = { listAssignableUserAgents };

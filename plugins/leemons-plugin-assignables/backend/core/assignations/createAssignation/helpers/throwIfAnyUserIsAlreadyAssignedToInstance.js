@@ -1,6 +1,10 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
-async function throwIfAnyUserIsAlreadyAssignedToInstance({ users, instance, ctx }) {
+async function throwIfAnyUserIsAlreadyAssignedToInstance({
+  users,
+  instance,
+  ctx,
+}) {
   const assignations = await ctx.tx.db.Assignations.find({
     instance,
     user: users,

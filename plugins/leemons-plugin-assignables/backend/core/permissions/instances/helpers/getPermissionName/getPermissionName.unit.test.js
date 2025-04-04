@@ -1,16 +1,16 @@
-const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+const { it, expect } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { getPermissionName } = require('./getPermissionName');
+const { getPermissionName } = require("./getPermissionName");
 
-it('Should return the permission name without prefix', () => {
+it("Should return the permission name without prefix", () => {
   // Arrange
-  const assignableInstance = 'assignableInstance';
-  const assignable = 'assignableId';
+  const assignableInstance = "assignableInstance";
+  const assignable = "assignableId";
   const expectedValue = `assignable.${assignable}.assignableInstance.${assignableInstance}`;
 
   const ctx = generateCtx({
-    pluginName: 'testing',
+    pluginName: "testing",
   });
 
   // Act
@@ -20,13 +20,13 @@ it('Should return the permission name without prefix', () => {
   expect(response).toBe(expectedValue);
 });
 
-it('Should return the permission name without prefix', () => {
+it("Should return the permission name without prefix", () => {
   // Arrange
-  const assignableInstance = 'assignableInstance';
+  const assignableInstance = "assignableInstance";
   const expectedValue = `assignableInstance.${assignableInstance}`;
 
   const ctx = generateCtx({
-    pluginName: 'testing',
+    pluginName: "testing",
   });
 
   // Act
@@ -36,12 +36,12 @@ it('Should return the permission name without prefix', () => {
   expect(response).toBe(expectedValue);
 });
 
-it('Should return the permission name with prefix', () => {
+it("Should return the permission name with prefix", () => {
   // Arrange
-  const assignableInstance = 'assignableInstanceId';
+  const assignableInstance = "assignableInstanceId";
 
   const ctx = generateCtx({
-    pluginName: 'testing',
+    pluginName: "testing",
   });
 
   const expectedValue = ctx.prefixPN(

@@ -1,5 +1,5 @@
-const { isNonEmptyArray } = require('./isNonEmptyArray');
-const { tryParse } = require('./tryParse');
+const { isNonEmptyArray } = require("./isNonEmptyArray");
+const { tryParse } = require("./tryParse");
 
 module.exports = {
   isNonEmptyArray,

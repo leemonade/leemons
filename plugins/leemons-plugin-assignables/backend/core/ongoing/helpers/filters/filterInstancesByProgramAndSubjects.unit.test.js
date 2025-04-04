@@ -1,37 +1,39 @@
-const { it, expect } = require('@jest/globals');
+const { it, expect } = require("@jest/globals");
 
-const { filterInstancesByProgramAndSubjects } = require('./filterInstancesByProgramAndSubjects');
+const {
+  filterInstancesByProgramAndSubjects,
+} = require("./filterInstancesByProgramAndSubjects");
 
 const instanceOne = {
-  id: 'instanceOne',
+  id: "instanceOne",
   assignable: {
-    asset: { name: 'assetOne' },
-    id: 'assignableOneId',
-    role: 'task',
+    asset: { name: "assetOne" },
+    id: "assignableOneId",
+    role: "task",
   },
 };
 const instanceTwo = {
-  id: 'instanceTwo',
+  id: "instanceTwo",
   assignable: {
-    asset: { name: 'assetTwo' },
-    id: 'assignableTwoId',
-    role: 'learningpaths.module',
+    asset: { name: "assetTwo" },
+    id: "assignableTwoId",
+    role: "learningpaths.module",
   },
 };
 const instanceSubjectsProgramsAndClasses = {
   [instanceOne.id]: {
-    subjects: ['subjectOneId'],
-    programs: ['programA'],
-    classes: ['classOne'],
+    subjects: ["subjectOneId"],
+    programs: ["programA"],
+    classes: ["classOne"],
   },
   [instanceTwo.id]: {
-    subjects: ['subjectTwoId'],
-    programs: ['programB'],
-    classes: ['classTwoId', 'classThreeId'],
+    subjects: ["subjectTwoId"],
+    programs: ["programB"],
+    classes: ["classTwoId", "classThreeId"],
   },
 };
 
-it('Should correctly filter instances by programs parsing data if needed', () => {
+it("Should correctly filter instances by programs parsing data if needed", () => {
   // Arrange
   const instances = [instanceOne, instanceTwo];
 
@@ -49,7 +51,7 @@ it('Should correctly filter instances by programs parsing data if needed', () =>
   });
   const notFoundResponse = filterInstancesByProgramAndSubjects({
     instances,
-    filters: { programs: ['notFoundProgram'] },
+    filters: { programs: ["notFoundProgram"] },
     instanceSubjectsProgramsAndClasses,
   });
 
@@ -58,7 +60,7 @@ it('Should correctly filter instances by programs parsing data if needed', () =>
   expect(notFoundResponse).toEqual([]);
 });
 
-it('Should correctly filter instances by subjects parsing data if needed', () => {
+it("Should correctly filter instances by subjects parsing data if needed", () => {
   // Arrange
   const instances = [instanceOne, instanceTwo];
   const filters = {
@@ -75,7 +77,7 @@ it('Should correctly filter instances by subjects parsing data if needed', () =>
   });
   const notFoundResponse = filterInstancesByProgramAndSubjects({
     instances,
-    filters: { subjects: ['notFoundSubject'] },
+    filters: { subjects: ["notFoundSubject"] },
     instanceSubjectsProgramsAndClasses,
   });
 
@@ -84,19 +86,23 @@ it('Should correctly filter instances by subjects parsing data if needed', () =>
   expect(notFoundResponse).toEqual([]);
 });
 
-it('Should correctly filter instances by classes parsing data if needed', () => {
+it("Should correctly filter instances by classes parsing data if needed", () => {
   // Arrange
   const instances = [instanceOne, instanceTwo];
 
   // Act
   const responseForInstanceOne = filterInstancesByProgramAndSubjects({
     instances,
-    filters: { classes: instanceSubjectsProgramsAndClasses[instanceOne.id].classes },
+    filters: {
+      classes: instanceSubjectsProgramsAndClasses[instanceOne.id].classes,
+    },
     instanceSubjectsProgramsAndClasses,
   });
   const responseForInstanceTwo = filterInstancesByProgramAndSubjects({
     instances,
-    filters: { classes: instanceSubjectsProgramsAndClasses[instanceTwo.id].classes },
+    filters: {
+      classes: instanceSubjectsProgramsAndClasses[instanceTwo.id].classes,
+    },
     instanceSubjectsProgramsAndClasses,
   });
 
@@ -105,9 +111,9 @@ it('Should correctly filter instances by classes parsing data if needed', () => 
   expect(responseForInstanceTwo).toEqual([instanceTwo]);
 });
 
-it('Should not filter if no programs, subjects or classes are passed', () => {
+it("Should not filter if no programs, subjects or classes are passed", () => {
   // Arrange
-  const instances = [{ id: '1' }, { id: '2' }];
+  const instances = [{ id: "1" }, { id: "2" }];
 
   // Act
   const response = filterInstancesByProgramAndSubjects({

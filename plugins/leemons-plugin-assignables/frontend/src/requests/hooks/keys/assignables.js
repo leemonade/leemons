@@ -1,14 +1,14 @@
 export const allAssignablesKey = [
   {
-    plugin: 'plugin.assignables',
-    scope: 'assignables',
+    plugin: "plugin.assignables",
+    scope: "assignables",
   },
 ];
 
 export const allAssignablesGetKey = [
   {
     ...allAssignablesKey[0],
-    action: 'get',
+    action: "get",
   },
 ];
 

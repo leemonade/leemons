@@ -1,5 +1,5 @@
-import React, { useState, useMemo, useCallback } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState, useMemo, useCallback } from "react";
+import PropTypes from "prop-types";
 
 import {
   Box,
@@ -11,15 +11,15 @@ import {
   Stack,
   ContextContainer,
   Paper,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 
-import _ from 'lodash';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import ProgramBarSelector from '@academic-portfolio/components/ProgramBarSelector/ProgramBarSelector';
-import Filters from './components/Filters';
-import ActivitiesList from './components/ActivitiesList';
-import prefixPN from '../../../helpers/prefixPN';
+import _ from "lodash";
+import { unflatten } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import ProgramBarSelector from "@academic-portfolio/components/ProgramBarSelector/ProgramBarSelector";
+import Filters from "./components/Filters";
+import ActivitiesList from "./components/ActivitiesList";
+import prefixPN from "../../../helpers/prefixPN";
 
 function parseTitleKey(title) {
   if (title === null) {
@@ -30,7 +30,7 @@ function parseTitleKey(title) {
     return title;
   }
 
-  return prefixPN('ongoing.ongoing');
+  return prefixPN("ongoing.ongoing");
 }
 
 const useAssignmentListStyles = createStyles((theme) => ({
@@ -39,8 +39,8 @@ const useAssignmentListStyles = createStyles((theme) => ({
     marginRight: theme.spacing[10],
   },
   tabGaps: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     marginTop: theme.spacing[5],
     gap: theme.spacing[8],
     marginBottom: theme.spacing[13],
@@ -57,7 +57,7 @@ export default function AssignmentList({
   ...props
 }) {
   const titleKey = parseTitleKey(title);
-  const keys = [prefixPN('activities_filters')];
+  const keys = [prefixPN("activities_filters")];
   if (titleKey) {
     keys.push(titleKey);
   }
@@ -66,7 +66,10 @@ export default function AssignmentList({
   const labels = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      return { filters: _.get(res, prefixPN('activities_filters')), title: _.get(res, titleKey) };
+      return {
+        filters: _.get(res, prefixPN("activities_filters")),
+        title: _.get(res, titleKey),
+      };
     }
 
     return {};
@@ -79,18 +82,18 @@ export default function AssignmentList({
     () =>
       [
         {
-          label: labels?.filters?.ongoing?.replace?.('{{count}}', ''), // `(${ongoingCount})`),
-          value: 'ongoing',
+          label: labels?.filters?.ongoing?.replace?.("{{count}}", ""), // `(${ongoingCount})`),
+          value: "ongoing",
         },
         !!archived && {
-          label: labels?.filters?.history?.replace?.('{{count}}', ''), // `(${historyCount})`),
-          value: 'evaluated',
+          label: labels?.filters?.history?.replace?.("{{count}}", ""), // `(${historyCount})`),
+          value: "evaluated",
         },
       ].filter(Boolean),
     [labels, archived]
   );
 
-  const { classes } = useAssignmentListStyles({}, { name: 'AssignmentList' });
+  const { classes } = useAssignmentListStyles({}, { name: "AssignmentList" });
 
   const tabPane = useCallback(
     (tab) => (
@@ -100,14 +103,18 @@ export default function AssignmentList({
           value={filters}
           program={program}
           onChange={setFilters}
-          hideStatus={tab.value === 'evaluated'}
+          hideStatus={tab.value === "evaluated"}
           hideProgress
           defaultFilters={defaultFilters}
           useRouter
           {...filtersProps}
         />
         <ActivitiesList
-          filters={{ ...filters, isArchived: tab.value === 'evaluated', program }}
+          filters={{
+            ...filters,
+            isArchived: tab.value === "evaluated",
+            program,
+          }}
           {...props}
         />
       </>
@@ -118,7 +125,7 @@ export default function AssignmentList({
   const View = useMemo(
     () =>
       tabs?.length > 1 ? (
-        <Tabs tabPanelListStyle={{ backgroundColor: 'white' }} fullHeight>
+        <Tabs tabPanelListStyle={{ backgroundColor: "white" }} fullHeight>
           {tabs.map((tab) => (
             <TabPanel key={tab.value} label={tab.label}>
               <ContextContainer padded>
@@ -128,7 +135,7 @@ export default function AssignmentList({
           ))}
         </Tabs>
       ) : (
-        <Paper shadow="none">{tabPane(tabs['0'])}</Paper>
+        <Paper shadow="none">{tabPane(tabs["0"])}</Paper>
       ),
     [tabs, tabPane, classes]
   );
@@ -138,11 +145,16 @@ export default function AssignmentList({
   }
 
   return (
-    <TotalLayoutContainer Header={<ProgramBarSelector onChange={({ id }) => setProgram(id)} />}>
+    <TotalLayoutContainer
+      Header={<ProgramBarSelector onChange={({ id }) => setProgram(id)} />}
+    >
       <Stack
         justifyContent="center"
         fullWidth
-        sx={(theme) => ({ overflow: 'auto', marginTop: theme.other.global.spacing.padding.lg })}
+        sx={(theme) => ({
+          overflow: "auto",
+          marginTop: theme.other.global.spacing.padding.lg,
+        })}
       >
         <TotalLayoutStepContainer clean stepName={labels.title} fullWidth>
           {View}

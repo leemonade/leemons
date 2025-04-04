@@ -1,4 +1,4 @@
-const { orderBy } = require('lodash');
+const { orderBy } = require("lodash");
 
 function compareInstancesByDate(instanceDates, sort) {
   return (a, b) => {
@@ -25,9 +25,9 @@ function compareInstancesByDate(instanceDates, sort) {
 function sortInstancesByDates({ instances, dates, filters = {} }) {
   const { sort } = filters;
   const instanceDates = dates?.instances ?? {};
-  const sortedInstances = orderBy(instances, 'createdAt', 'desc');
+  const sortedInstances = orderBy(instances, "createdAt", "desc");
 
-  if (['start', 'deadline'].includes(sort)) {
+  if (["start", "deadline"].includes(sort)) {
     return sortedInstances.sort(compareInstancesByDate(instanceDates, sort));
   }
   // Default: Sort by 'assignation'

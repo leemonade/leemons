@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 export default function getStatus(assignation) {
   const { instance } = assignation;
@@ -13,7 +13,8 @@ export default function getStatus(assignation) {
   const startTime = dayjs(assignation?.timestamps?.start || null);
   const endTime = dayjs(assignation?.timestamps?.end || null);
 
-  const activityHasStarted = isAlwaysAvailable || (startDate.isValid() && !now.isBefore(startDate));
+  const activityHasStarted =
+    isAlwaysAvailable || (startDate.isValid() && !now.isBefore(startDate));
   const activityHasBeenClosed = isAlwaysAvailable
     ? closeDate.isValid() && !now.isBefore(closeDate)
     : deadline.isValid() && !now.isBefore(deadline);

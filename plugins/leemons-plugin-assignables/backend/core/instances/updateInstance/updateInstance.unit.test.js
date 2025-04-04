@@ -1,45 +1,45 @@
-const { beforeEach, describe, test, expect } = require('@jest/globals');
-const { pick } = require('lodash');
+const { beforeEach, describe, test, expect } = require("@jest/globals");
+const { pick } = require("lodash");
 
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { updateInstance } = require('./updateInstance');
+const { updateInstance } = require("./updateInstance");
 const {
   getInstanceObject,
-} = require('../../../__fixtures__/getInstanceObject');
-const { instancesSchema } = require('../../../models/instances');
+} = require("../../../__fixtures__/getInstanceObject");
+const { instancesSchema } = require("../../../models/instances");
 
 const {
   getUserPermission,
-} = require('../../permissions/instances/users/getUserPermission');
-const { updateClasses } = require('../../classes/updateClasses');
-const { updateDates } = require('../../dates/updateDates');
-const { getInstance } = require('../getInstance');
-const { createRelatedInstance } = require('./createRelatedInstance');
-const { updateEventAndAddToUsers } = require('./updateEventAndAddToUsers');
+} = require("../../permissions/instances/users/getUserPermission");
+const { updateClasses } = require("../../classes/updateClasses");
+const { updateDates } = require("../../dates/updateDates");
+const { getInstance } = require("../getInstance");
+const { createRelatedInstance } = require("./createRelatedInstance");
+const { updateEventAndAddToUsers } = require("./updateEventAndAddToUsers");
 
-jest.mock('../../permissions/instances/users/getUserPermission');
-jest.mock('../../classes/updateClasses');
-jest.mock('../../dates/updateDates');
-jest.mock('../getInstance');
-jest.mock('./createRelatedInstance');
-jest.mock('./updateEventAndAddToUsers');
+jest.mock("../../permissions/instances/users/getUserPermission");
+jest.mock("../../classes/updateClasses");
+jest.mock("../../dates/updateDates");
+jest.mock("../getInstance");
+jest.mock("./createRelatedInstance");
+jest.mock("./updateEventAndAddToUsers");
 
 const updatableFields = [
-  'alwaysAvailable',
-  'dates',
-  'duration',
-  'gradable',
-  'classes',
-  'students',
-  'messageToAssignees',
-  'curriculum',
-  'metadata',
-  'addNewClassStudents',
-  'showResults',
-  'showCorrectAnsers',
-  'relatedAssignableInstances',
+  "alwaysAvailable",
+  "dates",
+  "duration",
+  "gradable",
+  "classes",
+  "students",
+  "messageToAssignees",
+  "curriculum",
+  "metadata",
+  "addNewClassStudents",
+  "showResults",
+  "showCorrectAnsers",
+  "relatedAssignableInstances",
 ];
 
 let mongooseConnection;
@@ -68,7 +68,7 @@ beforeEach(async () => {
 
   ctx = generateCtx({
     models: {
-      Instances: newModel(mongooseConnection, 'Instances', instancesSchema),
+      Instances: newModel(mongooseConnection, "Instances", instancesSchema),
     },
   });
 
@@ -78,39 +78,39 @@ beforeEach(async () => {
     dates,
     classes: [],
     relatedAssignableInstances: {
-      before: ['relatedInstanceId1'],
+      before: ["relatedInstanceId1"],
     },
   };
 
   await ctx.tx.db.Instances.create(instance);
 });
 
-describe('updateInstance function', () => {
-  test('should update instance successfully', async () => {
+describe("updateInstance function", () => {
+  test("should update instance successfully", async () => {
     // Arrange
     const propagateRelated = true;
 
     const changedInstance = {
       ...instance,
       dates: {},
-      classes: ['classId1'],
-      relatedAssignableInstances: { after: ['relatedInstanceId1'] },
+      classes: ["classId1"],
+      relatedAssignableInstances: { after: ["relatedInstanceId1"] },
     };
 
     getUserPermission.mockResolvedValue({
-      actions: ['edit'],
+      actions: ["edit"],
     });
     getInstance.mockResolvedValue({
       ...instance,
-      assignable: { id: 'assignableId1' },
+      assignable: { id: "assignableId1" },
     });
-    createRelatedInstance.mockResolvedValue('relatedInstanceId1');
+    createRelatedInstance.mockResolvedValue("relatedInstanceId1");
     // Act
     const response = await updateInstance({
       assignableInstance: pick(changedInstance, [
         ...updatableFields,
-        'id',
-        'relatedAssignables',
+        "id",
+        "relatedAssignables",
       ]),
       propagateRelated,
       ctx,
@@ -124,9 +124,9 @@ describe('updateInstance function', () => {
       assignableInstance: pick(
         {
           ...instance,
-          relatedAssignableInstances: { before: ['relatedInstanceId2'] },
+          relatedAssignableInstances: { before: ["relatedInstanceId2"] },
         },
-        [...updatableFields, 'id', 'relatedAssignables']
+        [...updatableFields, "id", "relatedAssignables"]
       ),
       propagateRelated,
       ctx,
@@ -134,27 +134,27 @@ describe('updateInstance function', () => {
 
     // Assert
     expect(updateDates).toBeCalledWith({
-      type: 'assignableInstance',
+      type: "assignableInstance",
       instance: instance.id,
       dates: {},
       ctx,
     });
     expect(updateClasses).toBeCalledWith({
       instance: instance.id,
-      assignable: 'assignableId1',
-      ids: ['classId1'],
+      assignable: "assignableId1",
+      ids: ["classId1"],
       ctx,
     });
     expect(createRelatedInstance).toBeCalledWith({
-      relation: 'relatedInstanceId1',
+      relation: "relatedInstanceId1",
       caller: instance.id,
-      type: 'after',
+      type: "after",
       propagate: propagateRelated,
       ctx,
     });
 
     expect(updateEventAndAddToUsers).toBeCalledWith({
-      assignable: { id: 'assignableId1' },
+      assignable: { id: "assignableId1" },
       dates: {},
       event: instance.event,
       id: instance.id,
@@ -164,17 +164,17 @@ describe('updateInstance function', () => {
       ...changedInstance,
       id: instance.id,
       assignable: {
-        id: 'assignableId1',
+        id: "assignableId1",
       },
     });
     expect(altResponse).toBeDefined();
 
     expect(dbInstance.relatedAssignableInstances.after).toEqual([
-      'relatedInstanceId1',
+      "relatedInstanceId1",
     ]);
   });
 
-  test('should throw error if some of the provided keys are not updatable', async () => {
+  test("should throw error if some of the provided keys are not updatable", async () => {
     // Arrange
 
     // Act
@@ -186,11 +186,11 @@ describe('updateInstance function', () => {
 
     // Assert
     expect(testFunc).rejects.toThrowError(
-      'Some of the provided keys are not updatable'
+      "Some of the provided keys are not updatable"
     );
   });
 
-  test('should throw error if user has not permission to update', async () => {
+  test("should throw error if user has not permission to update", async () => {
     // Arrange
     const propagateRelated = true;
     getUserPermission.mockResolvedValue({
@@ -202,8 +202,8 @@ describe('updateInstance function', () => {
       updateInstance({
         assignableInstance: pick(instance, [
           ...updatableFields,
-          'id',
-          'relatedAssignables',
+          "id",
+          "relatedAssignables",
         ]),
         propagateRelated,
         ctx,
@@ -211,17 +211,17 @@ describe('updateInstance function', () => {
 
     // Assert
     expect(testFunc).rejects.toThrowError(
-      'You do not have permission to update this assignable instance'
+      "You do not have permission to update this assignable instance"
     );
   });
 
-  test('should throw error if no changes detected', async () => {
+  test("should throw error if no changes detected", async () => {
     // Arrange
 
     const { relatedAssignableInstances, ...modifiedInstance } = { ...instance };
 
     getUserPermission.mockResolvedValue({
-      actions: ['edit'],
+      actions: ["edit"],
     });
     getInstance.mockResolvedValue(modifiedInstance);
 
@@ -229,8 +229,8 @@ describe('updateInstance function', () => {
     const testFunc = () =>
       updateInstance({
         assignableInstance: pick(modifiedInstance, [
-          'id',
-          'relatedAssignables',
+          "id",
+          "relatedAssignables",
           ...updatableFields,
         ]),
         ctx,

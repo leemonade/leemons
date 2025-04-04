@@ -1,9 +1,15 @@
-import { useQueries } from '@tanstack/react-query';
-import { getAssignationKey } from '@scorm/request/hooks/keys/assignation';
-import getAssignation from '../../requests/assignations/getAssignation';
+import { useQueries } from "@tanstack/react-query";
+import { getAssignationKey } from "@scorm/request/hooks/keys/assignation";
+import getAssignation from "../../requests/assignations/getAssignation";
 
-export default function useAssignations(instances, details = true, { enabled = true } = {}) {
-  const _instances = (Array.isArray(instances) ? instances : [instances])?.filter(Boolean);
+export default function useAssignations(
+  instances,
+  details = true,
+  { enabled = true } = {}
+) {
+  const _instances = (
+    Array.isArray(instances) ? instances : [instances]
+  )?.filter(Boolean);
   const queries = useQueries({
     queries:
       _instances?.map(({ instance, user }) => ({

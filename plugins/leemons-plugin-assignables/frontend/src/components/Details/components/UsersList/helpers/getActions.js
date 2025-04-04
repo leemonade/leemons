@@ -1,13 +1,20 @@
-import React, { useCallback } from 'react';
-import { useHistory } from 'react-router-dom';
-import { Button } from '@bubbles-ui/components';
+import React, { useCallback } from "react";
+import { useHistory } from "react-router-dom";
+import { Button } from "@bubbles-ui/components";
 
-function CorrectionButton({ studentData, instanceData, label, variant = 'outline' }) {
+function CorrectionButton({
+  studentData,
+  instanceData,
+  label,
+  variant = "outline",
+}) {
   const history = useHistory();
 
   const redirect = useCallback(() => {
     const urlTemplate = instanceData.assignable.roleDetails.evaluationDetailUrl;
-    const url = urlTemplate.replace(':id', instanceData.id).replace(':user', studentData.user);
+    const url = urlTemplate
+      .replace(":id", instanceData.id)
+      .replace(":user", studentData.user);
     history.push(url);
   }, [studentData, instanceData]);
 
@@ -30,14 +37,14 @@ export default function getActions(
       return null;
     }
 
-    const grades = studentData.grades?.filter((grade) => grade.type === 'main');
+    const grades = studentData.grades?.filter((grade) => grade.type === "main");
     if (grades?.length >= subjects?.length) {
       return (
         <CorrectionButton
           variant="link"
           studentData={studentData}
           instanceData={instanceData}
-          label={`${score ? `(${score}) ` : ''}${localizations.review}`}
+          label={`${score ? `(${score}) ` : ""}${localizations.review}`}
         />
       );
     }

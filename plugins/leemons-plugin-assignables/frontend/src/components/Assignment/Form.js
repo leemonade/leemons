@@ -1,5 +1,5 @@
-import React, { useMemo, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useMemo, useRef, useState } from "react";
+import { useHistory } from "react-router-dom";
 
 import {
   Box,
@@ -9,19 +9,19 @@ import {
   VerticalStepperContainer,
   Stack,
   LoadingOverlay,
-} from '@bubbles-ui/components';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { get, isEmpty } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { unflatten } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { get, isEmpty } from "lodash";
+import PropTypes from "prop-types";
 
-import Form from './FormComponent';
+import Form from "./FormComponent";
 
-import prefixPN from '@assignables/helpers/prefixPN';
-import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
+import prefixPN from "@assignables/helpers/prefixPN";
+import useRolesLocalizations from "@assignables/hooks/useRolesLocalizations";
 
 export function useFormLocalizations() {
-  const key = prefixPN('assignmentForm');
+  const key = prefixPN("assignmentForm");
   const [, translations] = useTranslateLoader(key);
 
   return React.useMemo(() => {
@@ -48,7 +48,9 @@ export default function FormWithLayout({ assignable, children, ...props }) {
     === Localizations ===
   */
   const localizations = useFormLocalizations();
-  const roleLocalizations = useRolesLocalizations([assignable?.roleDetails?.name]);
+  const roleLocalizations = useRolesLocalizations([
+    assignable?.roleDetails?.name,
+  ]);
 
   /*
     === Handle steps ===
@@ -94,14 +96,17 @@ export default function FormWithLayout({ assignable, children, ...props }) {
     }
   };
 
-  const StepComponent = React.cloneElement(steps[currentStep]?.component || formComponent, {
-    onNextStep,
-    onPrevStep,
-    scrollRef,
+  const StepComponent = React.cloneElement(
+    steps[currentStep]?.component || formComponent,
+    {
+      onNextStep,
+      onPrevStep,
+      scrollRef,
 
-    hasNextStep: currentStep + 1 < steps.length,
-    hasPrevStep: currentStep - 1 >= 0,
-  });
+      hasNextStep: currentStep + 1 < steps.length,
+      hasPrevStep: currentStep - 1 >= 0,
+    }
+  );
 
   /*
     === Render ===
@@ -123,7 +128,7 @@ export default function FormWithLayout({ assignable, children, ...props }) {
           }`}
           formTitlePlaceholder={assignable?.asset?.name}
           icon={
-            <Box sx={{ position: 'relative', width: 24, height: 24 }}>
+            <Box sx={{ position: "relative", width: 24, height: 24 }}>
               <ImageLoader src={roleIcon} width={18} height={18} />
             </Box>
           }
@@ -132,14 +137,18 @@ export default function FormWithLayout({ assignable, children, ...props }) {
     >
       {!steps?.length ? (
         <Stack
-          sx={{ backgroundColor: '#f8f9fb', overflow: 'auto' }}
+          sx={{ backgroundColor: "#f8f9fb", overflow: "auto" }}
           justifyContent="center"
           ref={scrollRef}
         >
           {StepComponent}
         </Stack>
       ) : (
-        <VerticalStepperContainer scrollRef={scrollRef} data={steps} currentStep={currentStep}>
+        <VerticalStepperContainer
+          scrollRef={scrollRef}
+          data={steps}
+          currentStep={currentStep}
+        >
           {StepComponent}
         </VerticalStepperContainer>
       )}

@@ -1,30 +1,32 @@
-import React, { useMemo, useState } from 'react';
-import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
+import React, { useMemo, useState } from "react";
+import { Controller, FormProvider, useForm, useWatch } from "react-hook-form";
 
-import { useAcademicCalendarConfig } from '@academic-calendar/hooks';
-import { SubjectPicker } from '@academic-portfolio/components/SubjectPicker';
+import { useAcademicCalendarConfig } from "@academic-calendar/hooks";
+import { SubjectPicker } from "@academic-portfolio/components/SubjectPicker";
 import {
   Box,
   Button,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
-} from '@bubbles-ui/components';
-import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { isEmpty, set, uniq } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { ChevLeftIcon, ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { isEmpty, set, uniq } from "lodash";
+import PropTypes from "prop-types";
 
-import useFormComponentStyles from './FormComponent.styles';
-import { ActivityDatesPicker } from './components/ActivityDatesPicker';
-import { EvaluationType } from './components/EvaluationType';
-import { GroupPicker } from './components/GroupPicker';
-import { Instructions } from './components/Instructions';
-import { OtherOptions } from './components/OtherOptions';
-import Presentation from './components/Presentation/Presentation';
-import Preview from './components/Preview/Preview';
+import useFormComponentStyles from "./FormComponent.styles";
+import { ActivityDatesPicker } from "./components/ActivityDatesPicker";
+import { EvaluationType } from "./components/EvaluationType";
+import { GroupPicker } from "./components/GroupPicker";
+import { Instructions } from "./components/Instructions";
+import { OtherOptions } from "./components/OtherOptions";
+import Presentation from "./components/Presentation/Presentation";
+import Preview from "./components/Preview/Preview";
 
 function onSubmitFunc(onSubmit, evaluationType, values) {
-  const allowedTypes = ['auto', 'manual', 'none'];
-  const finalEvaluationType = allowedTypes.includes(evaluationType) ? evaluationType : 'manual';
+  const allowedTypes = ["auto", "manual", "none"];
+  const finalEvaluationType = allowedTypes.includes(evaluationType)
+    ? evaluationType
+    : "manual";
 
   const submissionValues = {
     /*
@@ -68,18 +70,18 @@ function onSubmitFunc(onSubmit, evaluationType, values) {
   };
 
   if (!isEmpty(values.dates.others)) {
-    set(submissionValues, 'metadata.assignmentType', values.dates.others);
+    set(submissionValues, "metadata.assignmentType", values.dates.others);
   }
 
   if (values.instructions) {
-    set(submissionValues, 'metadata.statement', values.instructions);
+    set(submissionValues, "metadata.statement", values.instructions);
   }
 
   if (values.students.value[0]?.name) {
-    set(submissionValues, 'metadata.groupName', values.students.value[0]?.name);
+    set(submissionValues, "metadata.groupName", values.students.value[0]?.name);
     set(
       submissionValues,
-      'metadata.showGroupNameToStudents',
+      "metadata.showGroupNameToStudents",
       values.students.value[0]?.showToStudents
     );
   }
@@ -158,7 +160,9 @@ export default function Form({
         });
       }
     });
-    const selectedCourses = selectedSubjects?.map((subject) => subject.courseId);
+    const selectedCourses = selectedSubjects?.map(
+      (subject) => subject.courseId
+    );
 
     // Filter courses to only include selected ones
     const selectedCourseDates = Object.entries(allCourses)
@@ -171,8 +175,12 @@ export default function Form({
     }
 
     // Get earliest start date and latest end date
-    const startDates = selectedCourseDates.map((course) => new Date(course.startDate));
-    const endDates = selectedCourseDates.map((course) => new Date(course.endDate));
+    const startDates = selectedCourseDates.map(
+      (course) => new Date(course.startDate)
+    );
+    const endDates = selectedCourseDates.map(
+      (course) => new Date(course.endDate)
+    );
 
     return {
       startDate: new Date(Math.min(...startDates)),
@@ -185,8 +193,12 @@ export default function Form({
     [onSubmit, evaluationType]
   );
 
-  const teacherTypes = useWatch({ control, name: 'students.teacherTypes', defaultValue: [] });
-  const isInvitedTeacher = teacherTypes.includes('invited-teacher');
+  const teacherTypes = useWatch({
+    control,
+    name: "students.teacherTypes",
+    defaultValue: [],
+  });
+  const isInvitedTeacher = teacherTypes.includes("invited-teacher");
 
   const { classes } = useFormComponentStyles();
 
@@ -224,7 +236,9 @@ export default function Form({
                   rightIcon={hasNextStep ? <ChevRightIcon /> : null}
                   loading={!!loading}
                 >
-                  {hasNextStep ? localizations?.buttons?.next : localizations?.buttons?.assign}
+                  {hasNextStep
+                    ? localizations?.buttons?.next
+                    : localizations?.buttons?.assign}
                 </Button>
               }
             />
@@ -262,7 +276,11 @@ export default function Form({
                   render={({ field, fieldState: { error } }) => (
                     <SubjectPicker
                       {...field}
-                      teacherType={['main-teacher', 'associate-teacher', 'invited-teacher']}
+                      teacherType={[
+                        "main-teacher",
+                        "associate-teacher",
+                        "invited-teacher",
+                      ]}
                       error={error}
                       assignable={assignable}
                       localizations={localizations?.subjects}
@@ -296,7 +314,8 @@ export default function Form({
                 rules={{
                   required: true,
                   validate: (value) =>
-                    value.alwaysAvailable || !!(value.dates?.start && value.dates?.deadline),
+                    value.alwaysAvailable ||
+                    !!(value.dates?.start && value.dates?.deadline),
                 }}
                 render={({ field, fieldState: { error } }) => (
                   <ActivityDatesPicker
@@ -330,7 +349,8 @@ export default function Form({
                 name="others"
                 control={control}
                 rules={{
-                  validate: (value) => !value.useTeacherDeadline || !!value.teacherDeadline,
+                  validate: (value) =>
+                    !value.useTeacherDeadline || !!value.teacherDeadline,
                 }}
                 render={({ field, fieldState: { error } }) => (
                   <OtherOptions
@@ -347,7 +367,10 @@ export default function Form({
               />
             </Box>
             <Box className={classes.rightColumn}>
-              <Preview assignable={assignable} localizations={localizations?.preview} />
+              <Preview
+                assignable={assignable}
+                localizations={localizations?.preview}
+              />
             </Box>
           </Box>
         </TotalLayoutStepContainer>

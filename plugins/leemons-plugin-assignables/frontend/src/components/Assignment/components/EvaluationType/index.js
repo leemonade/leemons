@@ -1,4 +1,4 @@
-export * from './useCurriculumFields';
+export * from "./useCurriculumFields";
 
-export * from './EvaluationType';
-export * from './CurriculumFieldsPicker';
+export * from "./EvaluationType";
+export * from "./CurriculumFieldsPicker";

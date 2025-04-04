@@ -3,17 +3,19 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getByAssetIds, search } = require('../core/assets');
-const { getServiceModels } = require('../models');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const { LeemonsMongoDBMixin } = require("@leemons/mongodb");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
+const { getByAssetIds, search } = require("../core/assets");
+const { getServiceModels } = require("../models");
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'assignables.assets',
+  name: "assignables.assets",
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),

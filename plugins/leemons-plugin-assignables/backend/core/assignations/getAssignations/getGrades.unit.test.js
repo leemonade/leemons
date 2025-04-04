@@ -1,8 +1,8 @@
-const { it, expect } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const { getGrades } = require('./getGrades');
-const { getServiceModels } = require('../../../models');
+const { it, expect } = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const { getGrades } = require("./getGrades");
+const { getServiceModels } = require("../../../models");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -25,40 +25,40 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should get grades', async () => {
+it("Should get grades", async () => {
   // Arrange
   const assignationsData = [
     {
-      user: 'userAgentId',
-      id: 'assignation-id',
+      user: "userAgentId",
+      id: "assignation-id",
     },
     {
-      user: 'NoneuserAgentId',
-      id: 'assignation-id',
+      user: "NoneuserAgentId",
+      id: "assignation-id",
     },
   ];
   const ctx = generateCtx({
     actions: {
-      'users.users.getUserAgentsInfo': () => [],
+      "users.users.getUserAgentsInfo": () => [],
     },
     models: {
       Grades: newModel(
         mongooseConnection,
-        'Grades',
+        "Grades",
         getServiceModels().Grades.schema
       ),
     },
   });
 
   await ctx.tx.db.Grades.create({
-    id: 'grade-id',
-    deploymentID: 'deployment-id',
+    id: "grade-id",
+    deploymentID: "deployment-id",
     assignation: assignationsData[0].id,
-    subject: 'subject',
-    type: 'type',
+    subject: "subject",
+    type: "type",
     grade: 1,
-    gradedBy: 'gradedBy',
-    feedback: 'feedback',
+    gradedBy: "gradedBy",
+    feedback: "feedback",
     visibleToStudent: true,
   });
 
@@ -67,5 +67,5 @@ it('Should get grades', async () => {
 
   // Assert
   expect(result).toBeDefined();
-  expect(result).toHaveProperty('assignation-id');
+  expect(result).toHaveProperty("assignation-id");
 });

@@ -1,4 +1,4 @@
-const { diffHours } = require('@leemons/utils');
+const { diffHours } = require("@leemons/utils");
 
 async function dateIsInLimits({ instance, dayLimits }) {
   if (dayLimits && instance.dates.deadline) {
@@ -14,13 +14,13 @@ async function canSendEmail({ instance, userAgent, ignoreUserConfig, ctx }) {
   }
 
   const [canSend, dayLimits] = await Promise.all([
-    ctx.tx.call('emails.config.getConfig', {
+    ctx.tx.call("emails.config.getConfig", {
       userAgent: userAgent.id,
-      keys: 'new-assignation-email',
+      keys: "new-assignation-email",
     }),
-    ctx.tx.call('emails.config.getConfig', {
+    ctx.tx.call("emails.config.getConfig", {
       userAgent: userAgent.id,
-      keys: 'new-assignation-per-day-email',
+      keys: "new-assignation-per-day-email",
     }),
   ]);
 

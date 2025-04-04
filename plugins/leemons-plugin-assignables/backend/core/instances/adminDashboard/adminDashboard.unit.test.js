@@ -5,24 +5,24 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
+} = require("@jest/globals");
 
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { assignablesSchema } = require('../../../models/assignables');
-const { rolesSchema } = require('../../../models/roles');
-const { instancesSchema } = require('../../../models/instances');
+const { assignablesSchema } = require("../../../models/assignables");
+const { rolesSchema } = require("../../../models/roles");
+const { instancesSchema } = require("../../../models/instances");
 
 const {
   getAssignableObject,
-} = require('../../../__fixtures__/getAssignableObject');
-const { getRoleObject } = require('../../../__fixtures__/getRoleObject');
+} = require("../../../__fixtures__/getAssignableObject");
+const { getRoleObject } = require("../../../__fixtures__/getRoleObject");
 const {
   getInstanceObject,
-} = require('../../../__fixtures__/getInstanceObject');
+} = require("../../../__fixtures__/getInstanceObject");
 
-const { adminDashboard } = require('./adminDashboard');
+const { adminDashboard } = require("./adminDashboard");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -47,26 +47,26 @@ beforeEach(async () => {
 });
 
 // Test case for adminDashboard function
-it('Should handle adminDashboard correctly', async () => {
+it("Should handle adminDashboard correctly", async () => {
   // Arrange
   const { role } = getRoleObject();
   const assignable = {
     ...getAssignableObject(),
-    id: 'assignableId',
-    asset: 'assetId',
+    id: "assignableId",
+    asset: "assetId",
     role: role.name,
   };
-  const instance = { ...getInstanceObject(), assignable: 'assignableId' };
+  const instance = { ...getInstanceObject(), assignable: "assignableId" };
 
   const ctx = generateCtx({
     models: {
       Assignables: newModel(
         mongooseConnection,
-        'Assignables',
+        "Assignables",
         assignablesSchema
       ),
-      Roles: newModel(mongooseConnection, 'Roles', rolesSchema),
-      Instances: newModel(mongooseConnection, 'Instances', instancesSchema),
+      Roles: newModel(mongooseConnection, "Roles", rolesSchema),
+      Instances: newModel(mongooseConnection, "Instances", instancesSchema),
     },
   });
 

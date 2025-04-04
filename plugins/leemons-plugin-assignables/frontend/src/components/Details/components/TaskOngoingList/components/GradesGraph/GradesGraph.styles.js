@@ -1,8 +1,8 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 export const useGradesGraphStyles = createStyles(() => ({
   root: {
-    width: '100%',
+    width: "100%",
   },
 }));
 

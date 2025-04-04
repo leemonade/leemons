@@ -8,20 +8,23 @@ export default async function getAssignableInstances({
     return [];
   }
 
-  const idsQuery = ids.map((id) => `ids=${id}`).join('&');
+  const idsQuery = ids.map((id) => `ids=${id}`).join("&");
 
   let query = `details=${details}`;
   if (relatedInstances) {
-    query += '&relatedInstances=true';
+    query += "&relatedInstances=true";
   }
   if (!throwOnMissing) {
-    query += '&throwOnMissing=false';
+    query += "&throwOnMissing=false";
   }
 
-  const apiData = await leemons.api(`v1/assignables/assignableInstances/find?${query}&${idsQuery}`, {
-    method: 'GET',
-    allAgents: true,
-  });
+  const apiData = await leemons.api(
+    `v1/assignables/assignableInstances/find?${query}&${idsQuery}`,
+    {
+      method: "GET",
+      allAgents: true,
+    }
+  );
 
   return apiData.instances;
 }

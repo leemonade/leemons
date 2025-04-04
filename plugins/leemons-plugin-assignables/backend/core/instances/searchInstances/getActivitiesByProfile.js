@@ -1,4 +1,4 @@
-const { map, uniq } = require('lodash');
+const { map, uniq } = require("lodash");
 
 async function getActivitiesByProfile({ ctx }) {
   const { userSession } = ctx.meta;
@@ -10,12 +10,16 @@ async function getActivitiesByProfile({ ctx }) {
 
   if (assignableInstancesAsTeacher?.length) {
     return {
-      assignableInstances: uniq(map(assignableInstancesAsTeacher, 'assignableInstance')),
+      assignableInstances: uniq(
+        map(assignableInstancesAsTeacher, "assignableInstance")
+      ),
       isTeacher: true,
     };
   }
   // TODO: Only get the needed properties
-  const assignationsAsStudent = await ctx.tx.db.Assignations.find({ user: userAgents }).lean();
+  const assignationsAsStudent = await ctx.tx.db.Assignations.find({
+    user: userAgents,
+  }).lean();
 
   if (assignationsAsStudent?.length) {
     return {

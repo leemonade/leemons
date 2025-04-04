@@ -1,5 +1,5 @@
-const { isString } = require('lodash');
-const { uniq } = require('lodash');
+const { isString } = require("lodash");
+const { uniq } = require("lodash");
 
 function getTeachersBySubject({ classesData }) {
   const teachersBySubject = {};
@@ -12,7 +12,10 @@ function getTeachersBySubject({ classesData }) {
   });
 
   return Object.fromEntries(
-    Object.entries(teachersBySubject).map(([subjectId, teachers]) => [subjectId, uniq(teachers)])
+    Object.entries(teachersBySubject).map(([subjectId, teachers]) => [
+      subjectId,
+      uniq(teachers),
+    ])
   );
 }
 

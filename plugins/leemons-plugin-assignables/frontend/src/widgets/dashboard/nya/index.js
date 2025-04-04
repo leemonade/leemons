@@ -1,21 +1,28 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
-import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
-import { Box, Button, ContextContainer, Loader, Stack, Text } from '@bubbles-ui/components';
-import { ChevRightIcon } from '@bubbles-ui/icons/outline';
-import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
-import PropTypes from 'prop-types';
+import { useIsStudent, useIsTeacher } from "@academic-portfolio/hooks";
+import {
+  Box,
+  Button,
+  ContextContainer,
+  Loader,
+  Stack,
+  Text,
+} from "@bubbles-ui/components";
+import { ChevRightIcon } from "@bubbles-ui/icons/outline";
+import useWelcome from "@dashboard/request/hooks/queries/useWelcome";
+import PropTypes from "prop-types";
 
-import { ActivityCarousel, EvaluationsCarousel, Header } from './components';
+import { ActivityCarousel, EvaluationsCarousel, Header } from "./components";
 import {
   useEvaluatedActivities,
   useNyaActivities,
   useNyaLocalizations,
   useNyaStyles,
-} from './hooks';
+} from "./hooks";
 
-import useClassData from '@assignables/hooks/useClassDataQuery';
+import useClassData from "@assignables/hooks/useClassDataQuery";
 
 export function EmptyState() {
   const localizations = useNyaLocalizations()?.nya;
@@ -52,11 +59,23 @@ export default function NYA({ classe, program }) {
   const isStudent = useIsStudent();
   const { data: welcomeCompleted } = useWelcome();
 
-  const activities = useNyaActivities({ program: program?.id, class: classe?.id });
-  const evaluations = useEvaluatedActivities({ program: program?.id, class: classe?.id });
+  const activities = useNyaActivities({
+    program: program?.id,
+    class: classe?.id,
+  });
+  const evaluations = useEvaluatedActivities({
+    program: program?.id,
+    class: classe?.id,
+  });
 
-  const activitiesClassData = useClassData(activities.activities, localizations);
-  const evaluationsClassData = useClassData(evaluations.activities, localizations);
+  const activitiesClassData = useClassData(
+    activities.activities,
+    localizations
+  );
+  const evaluationsClassData = useClassData(
+    evaluations.activities,
+    localizations
+  );
   const { classes } = useNyaStyles();
 
   const isEmpty = isStudent
@@ -78,10 +97,12 @@ export default function NYA({ classe, program }) {
     return (
       <ContextContainer
         title={
-          isStudent ? localizations?.nya?.activitiesTitle : localizations?.nya?.evaluationsTitle
+          isStudent
+            ? localizations?.nya?.activitiesTitle
+            : localizations?.nya?.evaluationsTitle
         }
         titleRightZone={
-          <Link to={'/private/assignables/ongoing'}>
+          <Link to={"/private/assignables/ongoing"}>
             <Button variant="link" rightIcon={<ChevRightIcon />}>
               {localizations?.nya?.seeAllActivities}
             </Button>
@@ -100,7 +121,9 @@ export default function NYA({ classe, program }) {
           {...activities}
           linkTo="/private/assignables/ongoing"
           titleLabel={
-            isStudent ? localizations?.nya?.activitiesTitle : localizations?.nya?.evaluationsTitle
+            isStudent
+              ? localizations?.nya?.activitiesTitle
+              : localizations?.nya?.evaluationsTitle
           }
           linkLabel={localizations?.nya?.seeAllActivities}
         />

@@ -1,7 +1,7 @@
-const { difference } = require('lodash');
-const { listInstanceClasses } = require('./listInstanceClasses');
-const { unregisterClass } = require('./unregisterClass');
-const { registerClass } = require('./registerClass');
+const { difference } = require("lodash");
+const { listInstanceClasses } = require("./listInstanceClasses");
+const { unregisterClass } = require("./unregisterClass");
+const { registerClass } = require("./registerClass");
 
 async function updateClasses({
   instance,

@@ -13,9 +13,16 @@
  * @return {Promise<void>} A promise that resolves when the email has been sent.
  */
 
-async function sendEmail({ to, language, centerId, templateName, context, ctx }) {
+async function sendEmail({
+  to,
+  language,
+  centerId,
+  templateName,
+  context,
+  ctx,
+}) {
   try {
-    await ctx.tx.call('emails.email.sendAsEducationalCenter', {
+    await ctx.tx.call("emails.email.sendAsEducationalCenter", {
       to,
       templateName,
       language,

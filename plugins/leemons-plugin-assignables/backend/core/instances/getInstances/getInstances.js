@@ -1,17 +1,21 @@
-const { LeemonsError } = require('@leemons/error');
-const { map, difference } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { map, difference } = require("lodash");
 
-const { getInstanceKeyBuilder } = require('../../../cache/keys/instances');
-const ttl = require('../../../cache/ttl');
-const { getAssignables } = require('../../assignables/getAssignables');
-const { listInstanceClasses } = require('../../classes/listInstanceClasses');
-const { getActivityEvaluationType } = require('../../helpers/getActivityEvaluationType');
-const { getUserPermissions } = require('../../permissions/instances/users/getUserPermissions');
+const { getInstanceKeyBuilder } = require("../../../cache/keys/instances");
+const ttl = require("../../../cache/ttl");
+const { getAssignables } = require("../../assignables/getAssignables");
+const { listInstanceClasses } = require("../../classes/listInstanceClasses");
+const {
+  getActivityEvaluationType,
+} = require("../../helpers/getActivityEvaluationType");
+const {
+  getUserPermissions,
+} = require("../../permissions/instances/users/getUserPermissions");
 
-const { findDates } = require('./findDates');
-const { getAssignationsData } = require('./getAssignationsData');
-const { getInstancesSubjects } = require('./getInstancesSubjects');
-const { getRelatedInstances } = require('./getRelatedInstances');
+const { findDates } = require("./findDates");
+const { getAssignationsData } = require("./getAssignationsData");
+const { getInstancesSubjects } = require("./getInstancesSubjects");
+const { getRelatedInstances } = require("./getRelatedInstances");
 
 async function getInstancesWithAssignations({ ids, instances, ctx }) {
   const instancesTeached = {};
@@ -22,7 +26,11 @@ async function getInstancesWithAssignations({ ids, instances, ctx }) {
     }
   });
 
-  const assignations = await getAssignationsData({ instances: ids, instancesTeached, ctx });
+  const assignations = await getAssignationsData({
+    instances: ids,
+    instancesTeached,
+    ctx,
+  });
 
   return ids.map((id) => {
     const students = assignations[id];
@@ -68,7 +76,9 @@ async function getInstances({
   // ES: Lanza un error si faltan permisos, o descarta esas instancias
   if (
     throwOnMissing &&
-    !Object.values(permissions).every((permission) => permission.actions.includes('view'))
+    !Object.values(permissions).every((permission) =>
+      permission.actions.includes("view")
+    )
   ) {
     throw new LeemonsError(ctx, {
       message:
@@ -77,11 +87,11 @@ async function getInstances({
   } else {
     const missingInstances = {};
     Object.entries(permissions).forEach(([instance, permission]) => {
-      if (!permission.actions.includes('view')) {
+      if (!permission.actions.includes("view")) {
         missingInstances[instance] = true;
       }
 
-      instancesTeached[instance] = permission.actions.includes('edit');
+      instancesTeached[instance] = permission.actions.includes("edit");
     });
 
     if (Object.keys(missingInstances).length) {
@@ -91,7 +101,9 @@ async function getInstances({
 
   // EN: Find the instances
   // ES: Busca las instancias
-  const instancesData = await ctx.tx.db.Instances.find({ id: instancesIds }).lean();
+  const instancesData = await ctx.tx.db.Instances.find({
+    id: instancesIds,
+  }).lean();
 
   const promises = [];
 
@@ -99,7 +111,9 @@ async function getInstances({
   // ES: Obtener los datos de las instancias relacionadas
   if (relatedAssignableInstances) {
     // ! This option will be deprecated
-    promises.push(getRelatedInstances({ instances: instancesData, details, ctx }));
+    promises.push(
+      getRelatedInstances({ instances: instancesData, details, ctx })
+    );
   } else {
     promises.push(undefined);
   }
@@ -116,7 +130,7 @@ async function getInstances({
 
     // EN: Get the instances' assignables
     // ES: Obtener los assignables de las instances
-    const assignablesIds = map(instancesData, 'assignable');
+    const assignablesIds = map(instancesData, "assignable");
     promises.push(
       getAssignables({ ids: assignablesIds, ctx }).then((assignables) => {
         const assignablesById = {};
@@ -130,7 +144,8 @@ async function getInstances({
     promises.push(getInstancesSubjects({ classesPerInstance: classes, ctx }));
   }
 
-  const [relatedInstances, instancesDates, assignables, subjects] = await Promise.all(promises);
+  const [relatedInstances, instancesDates, assignables, subjects] =
+    await Promise.all(promises);
 
   return instancesData.map((instance) => {
     const isTeacher = instancesTeached[instance.id];
@@ -146,7 +161,11 @@ async function getInstances({
     // EN: Hide custom group name to students (if checked)
     // ES: Ocultar nombre de grupo personalizado a los estudiantes (si seleccionado)
 
-    if (!isTeacher && instanceData.metadata && !instanceData.metadata?.showGroupNameToStudents) {
+    if (
+      !isTeacher &&
+      instanceData.metadata &&
+      !instanceData.metadata?.showGroupNameToStudents
+    ) {
       instanceData.metadata.groupName = undefined;
       instanceData.metadata.showGroupNameToStudents = undefined;
     }
@@ -178,7 +197,7 @@ async function getInstancesWithCache({
   ctx,
 }) {
   if (relatedAssignableInstances) {
-    console.warn('relatedAssignableInstances option is deprecated');
+    console.warn("relatedAssignableInstances option is deprecated");
   }
 
   if (!ids?.length) {
@@ -191,7 +210,9 @@ async function getInstancesWithCache({
   });
 
   const cacheKeys = ids.map(getInstancesCacheKeyBuilder);
-  const cachedInstances = await ctx.cache.getMany(cacheKeys).then((r) => Object.values(r));
+  const cachedInstances = await ctx.cache
+    .getMany(cacheKeys)
+    .then((r) => Object.values(r));
 
   const instancesById = {};
   const foundIds = [];

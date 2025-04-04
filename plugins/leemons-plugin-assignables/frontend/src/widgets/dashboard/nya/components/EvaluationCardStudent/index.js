@@ -1,3 +1,3 @@
-import EvaluationCardStudent from './EvaluationCardStudent';
+import EvaluationCardStudent from "./EvaluationCardStudent";
 
 export default EvaluationCardStudent;

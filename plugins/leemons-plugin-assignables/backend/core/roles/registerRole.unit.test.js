@@ -5,14 +5,14 @@ const {
   afterAll,
   beforeEach,
   jest: { fn },
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const { LeemonsError } = require('@leemons/error');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const { LeemonsError } = require("@leemons/error");
 
-const { getRoleObject } = require('../../__fixtures__/getRoleObject');
-const { registerRole } = require('./registerRole');
-const { rolesSchema } = require('../../models/roles');
+const { getRoleObject } = require("../../__fixtures__/getRoleObject");
+const { registerRole } = require("./registerRole");
+const { rolesSchema } = require("../../models/roles");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -35,60 +35,64 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should register the role correctly', async () => {
+it("Should register the role correctly", async () => {
   // Arrange
   const { role, category } = getRoleObject();
 
   const actions = {
-    'multilanguage.common.addManyByKey': fn(),
-    'leebrary.categories.add': fn(),
+    "multilanguage.common.addManyByKey": fn(),
+    "leebrary.categories.add": fn(),
   };
 
   const ctx = generateCtx({
     actions,
     models: {
-      Roles: newModel(mongooseConnection, 'Roles', rolesSchema),
+      Roles: newModel(mongooseConnection, "Roles", rolesSchema),
     },
 
-    caller: 'testing',
+    caller: "testing",
   });
 
   // Act
   const response = await registerRole({ ...role, ctx });
 
   // Assert
-  expect(actions['multilanguage.common.addManyByKey']).nthCalledWith(1, {
+  expect(actions["multilanguage.common.addManyByKey"]).nthCalledWith(1, {
     key: ctx.prefixPN(`roles.${role.role}.plural`),
     data: role.pluralName,
   });
-  expect(actions['multilanguage.common.addManyByKey']).nthCalledWith(2, {
+  expect(actions["multilanguage.common.addManyByKey"]).nthCalledWith(2, {
     key: ctx.prefixPN(`roles.${role.role}.singular`),
     data: role.singularName,
   });
-  expect(actions['leebrary.categories.add']).toBeCalledWith(
+  expect(actions["leebrary.categories.add"]).toBeCalledWith(
     expect.objectContaining({
-      data: { ...category, provider: 'leebrary-assignables', key: `assignables.${role.role}` },
+      data: {
+        ...category,
+        provider: "leebrary-assignables",
+        key: `assignables.${role.role}`,
+      },
     })
   );
   expect(response).toBe(true);
 });
 
-it('Should throw if the role already exists', async () => {
+it("Should throw if the role already exists", async () => {
   // Arrange
   const { role } = getRoleObject();
 
   const actions = {
-    'multilanguage.common.addManyByKey': fn(),
-    'leebrary.categories.add': fn(),
+    "multilanguage.common.addManyByKey": fn(),
+    "leebrary.categories.add": fn(),
   };
 
   const ctx = generateCtx({
     actions,
     models: {
-      Roles: newModel(mongooseConnection, 'Roles', rolesSchema),
+      Roles: newModel(mongooseConnection, "Roles", rolesSchema),
     },
 
-    caller: 'testing',
+    caller: "testing",
   });
 
   await ctx.tx.db.Roles.create({
@@ -103,24 +107,25 @@ it('Should throw if the role already exists', async () => {
   return expect(testFn).rejects.toThrow();
 });
 
-it('Should throw if the required params are not provided', () => {
+it("Should throw if the required params are not provided", () => {
   // Arrange
   const { role } = getRoleObject();
 
   const ctx = generateCtx({
     actions: {
-      'multilanguage.common.addManyByKey': () => {},
-      'leebrary.categories.add': () => {},
+      "multilanguage.common.addManyByKey": () => {},
+      "leebrary.categories.add": () => {},
     },
     models: {
-      Roles: newModel(mongooseConnection, 'Roles', rolesSchema),
+      Roles: newModel(mongooseConnection, "Roles", rolesSchema),
     },
 
-    caller: 'testing',
+    caller: "testing",
   });
 
   // Act
-  const testFnWithoutRoleName = () => registerRole({ ...role, role: undefined, ctx });
+  const testFnWithoutRoleName = () =>
+    registerRole({ ...role, role: undefined, ctx });
   const testFnWithoutTeacherDetailUrl = () =>
     registerRole({ ...role, teacherDetailUrl: undefined, ctx });
   const testFnWithoutStudentDetailUrl = () =>
@@ -130,7 +135,9 @@ it('Should throw if the required params are not provided', () => {
 
   // Assert
 
-  expect(testFnWithoutRoleName).rejects.toThrow(/must have required property 'name'/);
+  expect(testFnWithoutRoleName).rejects.toThrow(
+    /must have required property 'name'/
+  );
   expect(testFnWithoutTeacherDetailUrl).rejects.toThrow(
     /must have required property 'teacherDetailUrl'/
   );

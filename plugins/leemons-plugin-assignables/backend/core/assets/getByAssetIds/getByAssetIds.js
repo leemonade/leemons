@@ -1,4 +1,6 @@
-const { findAssignableByAssetIds } = require('../../assignables/findAssignableByAssetIds');
+const {
+  findAssignableByAssetIds,
+} = require("../../assignables/findAssignableByAssetIds");
 
 /**
  * Retrieves assignables by their asset IDs.

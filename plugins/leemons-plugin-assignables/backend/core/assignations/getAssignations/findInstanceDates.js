@@ -1,8 +1,11 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function findInstanceDates({ instances, ctx }) {
-  const datesFound = await ctx.tx.db.Dates.find({ type: 'assignableInstance', instance: instances })
-    .select(['instance', 'name', 'date'])
+  const datesFound = await ctx.tx.db.Dates.find({
+    type: "assignableInstance",
+    instance: instances,
+  })
+    .select(["instance", "name", "date"])
     .lean();
 
   const datesPerInstance = {};

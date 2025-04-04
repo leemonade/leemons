@@ -1,17 +1,21 @@
 /* eslint-disable import/prefer-default-export */
-import { createStyles, pxToRem, getFontExpressive } from '@bubbles-ui/components';
+import {
+  createStyles,
+  pxToRem,
+  getFontExpressive,
+} from "@bubbles-ui/components";
 
 export const NYACardFooterStyles = createStyles((theme, { color }) => ({
   root: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
     minHeight: 38,
-    width: '100%',
+    width: "100%",
     bottom: 0,
     padding: `${pxToRem(16)}`,
-    paddingTop: '0px',
-    position: 'absolute',
+    paddingTop: "0px",
+    position: "absolute",
     backgroundColor: theme.colors.mainWhite,
   },
   date: {
@@ -19,9 +23,9 @@ export const NYACardFooterStyles = createStyles((theme, { color }) => ({
     fontSize: pxToRem(11),
   },
   FileIconRoot: {
-    ...getFontExpressive(theme.fontSizes['2']),
-    display: 'inline-flex',
-    alignItems: 'center',
+    ...getFontExpressive(theme.fontSizes["2"]),
+    display: "inline-flex",
+    alignItems: "center",
     color,
   },
   FileIconLabel: {
@@ -30,8 +34,8 @@ export const NYACardFooterStyles = createStyles((theme, { color }) => ({
     paddingLeft: pxToRem(8),
   },
   fileIconContainer: {
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
   },
   fileLabel: {
     paddingLeft: pxToRem(8),

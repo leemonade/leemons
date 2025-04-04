@@ -1,2 +1,2 @@
-export * from './hooks';
-export { default as SelectLevelsOfDifficulty } from './SelectLevelsOfDifficulty';
+export * from "./hooks";
+export { default as SelectLevelsOfDifficulty } from "./SelectLevelsOfDifficulty";

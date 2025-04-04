@@ -1,26 +1,26 @@
-const { beforeEach, describe, test, expect } = require('@jest/globals');
+const { beforeEach, describe, test, expect } = require("@jest/globals");
 
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getTeacherPermissions } = require('./getTeacherPermissions');
-const { classesSchema } = require('../../../../../models/classes');
+const { getTeacherPermissions } = require("./getTeacherPermissions");
+const { classesSchema } = require("../../../../../models/classes");
 
 const getUserAgentPermissionsHandler = jest.fn();
 
-const pluginName = 'assignables';
+const pluginName = "assignables";
 const classes = [
   {
-    assignableInstance: 'assignableInstanceId1',
-    class: 'classId1',
+    assignableInstance: "assignableInstanceId1",
+    class: "classId1",
   },
   {
-    assignableInstance: 'assignableInstanceId2',
-    class: 'classId1',
+    assignableInstance: "assignableInstanceId2",
+    class: "classId1",
   },
   {
-    assignableInstance: 'assignableInstanceId2',
-    class: 'classId2',
+    assignableInstance: "assignableInstanceId2",
+    class: "classId2",
   },
 ];
 
@@ -48,11 +48,11 @@ beforeEach(async () => {
 
   ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions':
+      "users.permissions.getUserAgentPermissions":
         getUserAgentPermissionsHandler,
     },
     models: {
-      Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+      Classes: newModel(mongooseConnection, "Classes", classesSchema),
     },
     pluginName,
   });
@@ -60,23 +60,23 @@ beforeEach(async () => {
   await ctx.tx.db.Classes.create(classes);
 });
 
-describe('getTeacherPermissions function', () => {
-  test('should get teacher permissions successfully', async () => {
+describe("getTeacherPermissions function", () => {
+  test("should get teacher permissions successfully", async () => {
     // Arrange
 
     const mockParams = {
-      instances: ['assignableInstanceId1', 'assignableInstanceId2'],
+      instances: ["assignableInstanceId1", "assignableInstanceId2"],
       ctx,
     };
 
     getUserAgentPermissionsHandler.mockResolvedValue([
       {
-        permissionName: 'academic-portfolio.class.classId1',
-        actionName: 'edit',
+        permissionName: "academic-portfolio.class.classId1",
+        actionName: "edit",
       },
       {
-        permissionName: 'academic-portfolio.class.classId2',
-        actionName: 'edit',
+        permissionName: "academic-portfolio.class.classId2",
+        actionName: "edit",
       },
     ]);
 
@@ -88,11 +88,11 @@ describe('getTeacherPermissions function', () => {
       userAgent: ctx.meta.userSession.userAgents,
       query: {
         permissionName: expect.arrayContaining([
-          'academic-portfolio.class.classId1',
-          'academic-portfolio.class.classId2',
+          "academic-portfolio.class.classId1",
+          "academic-portfolio.class.classId2",
         ]),
 
-        actionName: 'edit',
+        actionName: "edit",
       },
     });
     expect(resp).toEqual({
@@ -101,11 +101,11 @@ describe('getTeacherPermissions function', () => {
     });
   });
 
-  test('should return false if no permissions are found', async () => {
+  test("should return false if no permissions are found", async () => {
     // Arrange
 
     const mockParams = {
-      instances: ['assignableInstanceId1', 'assignableInstanceId2'],
+      instances: ["assignableInstanceId1", "assignableInstanceId2"],
       ctx,
     };
 
@@ -119,11 +119,11 @@ describe('getTeacherPermissions function', () => {
       userAgent: ctx.meta.userSession.userAgents,
       query: {
         permissionName: expect.arrayContaining([
-          'academic-portfolio.class.classId1',
-          'academic-portfolio.class.classId2',
+          "academic-portfolio.class.classId1",
+          "academic-portfolio.class.classId2",
         ]),
 
-        actionName: 'edit',
+        actionName: "edit",
       },
     });
     expect(resp).toEqual({

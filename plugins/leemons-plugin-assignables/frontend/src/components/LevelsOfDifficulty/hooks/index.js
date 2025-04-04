@@ -1,1 +1,1 @@
-export { default as useLevelsOfDifficulty } from './useLevelsOfDifficulty';
+export { default as useLevelsOfDifficulty } from "./useLevelsOfDifficulty";

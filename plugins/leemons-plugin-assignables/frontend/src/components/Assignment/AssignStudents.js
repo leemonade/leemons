@@ -1,10 +1,14 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { ContextContainer, PageContainer, InputWrapper } from '@bubbles-ui/components';
-import { useForm, FormProvider, Controller } from 'react-hook-form';
-import SubjectSelector from './AssignStudents/components/SubjectSelector';
-import AssigneeTypeSelector from './AssignStudents/components/AssigneeTypeSelector';
-import AssigneeSelector from './AssignStudents/components/AssigneeSelector';
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
+import {
+  ContextContainer,
+  PageContainer,
+  InputWrapper,
+} from "@bubbles-ui/components";
+import { useForm, FormProvider, Controller } from "react-hook-form";
+import SubjectSelector from "./AssignStudents/components/SubjectSelector";
+import AssigneeTypeSelector from "./AssignStudents/components/AssigneeTypeSelector";
+import AssigneeSelector from "./AssignStudents/components/AssigneeSelector";
 
 export default function AssignStudents({
   labels,
@@ -41,14 +45,20 @@ export default function AssignStudents({
           control={control}
           name="subjects"
           render={({ field }) => (
-            <SubjectSelector {...field} labels={labels} assignable={assignable} />
+            <SubjectSelector
+              {...field}
+              labels={labels}
+              assignable={assignable}
+            />
           )}
         />
         <ContextContainer title={labels.selectStudentsTitle}>
           <Controller
             control={control}
             name="type"
-            render={({ field }) => <AssigneeTypeSelector {...field} labels={labels} />}
+            render={({ field }) => (
+              <AssigneeTypeSelector {...field} labels={labels} />
+            )}
           />
           <PageContainer>
             <Controller
@@ -58,7 +68,7 @@ export default function AssignStudents({
                 <AssigneeSelector
                   {...field}
                   onChange={(value, data) => {
-                    setValue('assignmentSetup', data);
+                    setValue("assignmentSetup", data);
                     field.onChange(value);
                   }}
                   defaultValue={defaultValue}

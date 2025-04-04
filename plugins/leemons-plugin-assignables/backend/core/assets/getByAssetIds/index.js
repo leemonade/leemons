@@ -1,3 +1,3 @@
-const { getByAssetIds } = require('./getByAssetIds');
+const { getByAssetIds } = require("./getByAssetIds");
 
 module.exports = { getByAssetIds };

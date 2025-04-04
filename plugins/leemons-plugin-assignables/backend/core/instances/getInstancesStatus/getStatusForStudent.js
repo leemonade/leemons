@@ -1,13 +1,13 @@
-const dayjs = require('dayjs');
+const dayjs = require("dayjs");
 
 const INSTANCE_STATUS = {
-  EVALUATED: 'evaluated',
-  LATE: 'late',
-  SUBMITTED: 'submitted',
-  CLOSED: 'closed',
-  STARTED: 'started',
-  OPENED: 'opened',
-  ASSIGNED: 'assigned',
+  EVALUATED: "evaluated",
+  LATE: "late",
+  SUBMITTED: "submitted",
+  CLOSED: "closed",
+  STARTED: "started",
+  OPENED: "opened",
+  ASSIGNED: "assigned",
 };
 
 function getDates(instance) {
@@ -73,15 +73,18 @@ function getStatus({
  */
 function getStatusForStudent(instance, { requiredGradesCount }) {
   const studentData = instance?.assignations?.[0];
-  const { startDate, endDate, instanceStartDate, deadline, closeDate } = getDates(instance);
+  const { startDate, endDate, instanceStartDate, deadline, closeDate } =
+    getDates(instance);
   const { requiresScoring } = instance;
 
   const endDateIsLate =
-    endDate.isValid() && (endDate.isAfter(deadline) || endDate.isAfter(closeDate));
+    endDate.isValid() &&
+    (endDate.isAfter(deadline) || endDate.isAfter(closeDate));
   const started =
     instance.alwaysAvailable ||
     (instanceStartDate.isValid() && !instanceStartDate.isAfter(dayjs()));
-  const finished = deadline.isValid() && (!deadline.isAfter(dayjs()) || closeDate.isValid());
+  const finished =
+    deadline.isValid() && (!deadline.isAfter(dayjs()) || closeDate.isValid());
   const hasAllGrades = studentData?.grades?.length >= requiredGradesCount;
 
   return getStatus({

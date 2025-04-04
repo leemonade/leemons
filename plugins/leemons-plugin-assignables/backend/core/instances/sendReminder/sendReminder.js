@@ -1,8 +1,10 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { getInstance } = require('../getInstance');
-const { prepareEmailPerStudent } = require('../sendEmail/helpers/prepareEmailPerStudent');
-const { sendEmail } = require('../sendEmail/helpers/sendMail');
+const { getInstance } = require("../getInstance");
+const {
+  prepareEmailPerStudent,
+} = require("../sendEmail/helpers/prepareEmailPerStudent");
+const { sendEmail } = require("../sendEmail/helpers/sendMail");
 
 /**
  * Sends a reminder to users.
@@ -21,25 +23,28 @@ async function sendReminder({ assignableInstanceId, users, type, ctx }) {
       details: true,
       ctx,
     }),
-    ctx.tx.call('users.platform.getHostname'),
-    ctx.tx.call('users.platform.getHostnameApi'),
+    ctx.tx.call("users.platform.getHostname"),
+    ctx.tx.call("users.platform.getHostnameApi"),
   ]);
 
-  const userAgentIds = _.map(instance.students, 'user');
+  const userAgentIds = _.map(instance.students, "user");
   let finalUsers = users && users.length ? users : userAgentIds;
 
   if (type) {
-    const assignationIds = _.map(instance.students, 'id');
-    const assignationsById = _.keyBy(instance.students, 'id');
+    const assignationIds = _.map(instance.students, "id");
+    const assignationsById = _.keyBy(instance.students, "id");
 
     const dats = await ctx.tx.db.Dates.find({
-      type: 'assignation',
+      type: "assignation",
       instance: assignationIds,
       name: type,
     }).lean();
 
-    const assignationIdsToSend = _.map(dats, 'instance');
-    const finalAssignationIds = _.difference(assignationIds, assignationIdsToSend);
+    const assignationIdsToSend = _.map(dats, "instance");
+    const finalAssignationIds = _.difference(
+      assignationIds,
+      assignationIdsToSend
+    );
 
     finalUsers = [];
     _.forEach(finalAssignationIds, (assignationId) => {
@@ -48,18 +53,18 @@ async function sendReminder({ assignableInstanceId, users, type, ctx }) {
   }
 
   const [classesData, userAgents] = await Promise.all([
-    ctx.tx.call('academic-portfolio.classes.classByIds', {
+    ctx.tx.call("academic-portfolio.classes.classByIds", {
       ids: instance.classes,
       withTeachers: true,
     }),
-    ctx.tx.call('users.users.getUserAgentsInfo', {
+    ctx.tx.call("users.users.getUserAgentsInfo", {
       userAgentIds: finalUsers,
       withCenter: true,
-      userColumns: ['id', 'email', 'locale'],
+      userColumns: ["id", "email", "locale"],
     }),
   ]);
 
-  const _classes = _.uniqBy(classesData, 'subject.id');
+  const _classes = _.uniqBy(classesData, "subject.id");
 
   const contexts = (
     await Promise.all(

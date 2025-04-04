@@ -1,4 +1,4 @@
-const { map } = require('lodash');
+const { map } = require("lodash");
 
 /**
  * This function is used to get the dates of activities.
@@ -14,56 +14,71 @@ const { map } = require('lodash');
 
 // eslint-disable-next-line sonarjs/cognitive-complexity
 async function getActivitiesDates({ instances, assignations, filters, ctx }) {
-  const { status, progress, isArchived, sort, studentDidOpen, studentCanSee, gradeWasViewed } =
-    filters;
+  const {
+    status,
+    progress,
+    isArchived,
+    sort,
+    studentDidOpen,
+    studentCanSee,
+    gradeWasViewed,
+  } = filters;
 
-  if (!(status || progress || isArchived !== undefined || studentDidOpen !== undefined || sort)) {
+  if (
+    !(
+      status ||
+      progress ||
+      isArchived !== undefined ||
+      studentDidOpen !== undefined ||
+      sort
+    )
+  ) {
     return {};
   }
 
-  const instancesIds = map(instances || [], 'id');
-  const assignationsIds = map(assignations || [], 'id');
+  const instancesIds = map(instances || [], "id");
+  const assignationsIds = map(assignations || [], "id");
 
   const instanceNames = [];
   const assignationNames = [];
 
   if (status || progress) {
-    instanceNames.push('start', 'deadline', 'closed', 'visualization');
+    instanceNames.push("start", "deadline", "closed", "visualization");
 
     if (progress) {
-      assignationNames.push('start', 'end');
+      assignationNames.push("start", "end");
     }
   }
 
   if (studentDidOpen !== undefined) {
-    assignationNames.push('open');
+    assignationNames.push("open");
   }
 
   if (gradeWasViewed) {
-    assignationNames.push('gradesViewed');
+    assignationNames.push("gradesViewed");
   }
 
   if (isArchived !== undefined) {
-    instanceNames.push('archived');
+    instanceNames.push("archived");
   }
 
-  if (['start', 'deadline'].includes(sort)) {
-    instanceNames.push('start', 'deadline');
+  if (["start", "deadline"].includes(sort)) {
+    instanceNames.push("start", "deadline");
   }
 
   if (studentCanSee) {
-    instanceNames.push('visualization', 'start');
+    instanceNames.push("visualization", "start");
   }
 
   const dates = await ctx.tx.db.Dates.find({
     $or: [
       {
-        type: 'assignableInstance',
+        type: "assignableInstance",
         name: instanceNames,
         instance: instancesIds,
       },
       {
-        type: 'assignation',
+        type: "assignation",
         name: assignationNames,
         instance: assignationsIds,
       },
@@ -74,7 +89,8 @@ async function getActivitiesDates({ instances, assignations, filters, ctx }) {
   const instanceDates = {};
 
   dates.forEach((date) => {
-    const typeDates = date.type === 'assignableInstance' ? instanceDates : assignationDates;
+    const typeDates =
+      date.type === "assignableInstance" ? instanceDates : assignationDates;
 
     if (typeDates[date.instance]) {
       typeDates[date.instance][date.name] = date.date;

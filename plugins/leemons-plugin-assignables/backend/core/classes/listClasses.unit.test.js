@@ -4,12 +4,12 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { listClasses } = require('./listClasses');
-const { classesSchema } = require('../../models/classes');
+const { listClasses } = require("./listClasses");
+const { classesSchema } = require("../../models/classes");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -32,16 +32,16 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-describe('List by instance', () => {
-  it('Should list the classes', async () => {
+describe("List by instance", () => {
+  it("Should list the classes", async () => {
     // Arrange
-    const assignableId = 'assignable-id';
-    const instanceId = 'instance-id';
-    const classId = 'class-id';
+    const assignableId = "assignable-id";
+    const instanceId = "instance-id";
+    const classId = "class-id";
 
     const ctx = generateCtx({
       models: {
-        Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+        Classes: newModel(mongooseConnection, "Classes", classesSchema),
       },
     });
 
@@ -65,13 +65,13 @@ describe('List by instance', () => {
     ]);
   });
 
-  it('Should return an empty array when not found', async () => {
+  it("Should return an empty array when not found", async () => {
     // Arrange
-    const instanceId = 'instance-id';
+    const instanceId = "instance-id";
 
     const ctx = generateCtx({
       models: {
-        Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+        Classes: newModel(mongooseConnection, "Classes", classesSchema),
       },
     });
 
@@ -83,16 +83,16 @@ describe('List by instance', () => {
   });
 });
 
-describe('List by assignable', () => {
-  it('Should list the classes', async () => {
+describe("List by assignable", () => {
+  it("Should list the classes", async () => {
     // Arrange
-    const assignableId = 'assignable-id';
-    const instanceId = 'instance-id';
-    const classId = 'class-id';
+    const assignableId = "assignable-id";
+    const instanceId = "instance-id";
+    const classId = "class-id";
 
     const ctx = generateCtx({
       models: {
-        Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+        Classes: newModel(mongooseConnection, "Classes", classesSchema),
       },
     });
 
@@ -116,13 +116,13 @@ describe('List by assignable', () => {
     ]);
   });
 
-  it('Should return an empty array when not found', async () => {
+  it("Should return an empty array when not found", async () => {
     // Arrange
-    const assignableId = 'assignable-id';
+    const assignableId = "assignable-id";
 
     const ctx = generateCtx({
       models: {
-        Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+        Classes: newModel(mongooseConnection, "Classes", classesSchema),
       },
     });
 
@@ -134,11 +134,11 @@ describe('List by assignable', () => {
   });
 });
 
-it('Should throw an error if no assignable and instance are provided', () => {
+it("Should throw an error if no assignable and instance are provided", () => {
   // Arrange
   const ctx = generateCtx({
     models: {
-      Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+      Classes: newModel(mongooseConnection, "Classes", classesSchema),
     },
   });
 
@@ -147,6 +147,6 @@ it('Should throw an error if no assignable and instance are provided', () => {
 
   // Assert
   expect(testFn).rejects.toThrowError(
-    'You must provide an assignable or an assignableInstance'
+    "You must provide an assignable or an assignableInstance"
   );
 });

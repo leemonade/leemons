@@ -1,7 +1,9 @@
-const { pick } = require('lodash');
-const { getAssignable } = require('../getAssignable');
-const { validAssignableProperties } = require('../../../validations/validateAssignable');
-const { createAssignable } = require('../createAssignable');
+const { pick } = require("lodash");
+const { getAssignable } = require("../getAssignable");
+const {
+  validAssignableProperties,
+} = require("../../../validations/validateAssignable");
+const { createAssignable } = require("../createAssignable");
 
 /**
  * Duplicates an assignable based on the provided id and other parameters.
@@ -18,12 +20,17 @@ const { createAssignable } = require('../createAssignable');
  * @returns {Promise<AssignablesAssignable>} The duplicated assignable.
  * @throws {LeemonsError} If the assignable does not exist or the user does not have access to it, a LeemonsError is thrown.
  */
-async function duplicateAssignable({ assignableId: id, published, ignoreSubjects, ctx }) {
+async function duplicateAssignable({
+  assignableId: id,
+  published,
+  ignoreSubjects,
+  ctx,
+}) {
   const assignable = await getAssignable({
     id,
     ctx,
   });
-  assignable.asset.name += ' (1)';
+  assignable.asset.name += " (1)";
 
   const assignableToCreate = pick(assignable, validAssignableProperties);
 

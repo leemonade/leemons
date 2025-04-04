@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
-import { useApi } from '@common';
-import getAssignableInstance from '../../requests/assignableInstances/getAssignableInstance';
+import { useMemo } from "react";
+import { useApi } from "@common";
+import getAssignableInstance from "../../requests/assignableInstances/getAssignableInstance";
 
 export default function useAssignableInstance(id, details = true) {
   const options = useMemo(

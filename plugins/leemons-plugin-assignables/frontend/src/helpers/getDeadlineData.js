@@ -8,7 +8,10 @@ const getDeadlineData = (deadline, visualizationDate, labels) => {
   }
 
   if (visualizationDate && now < visualizationDateObj) {
-    return { date: deadlineDate.toLocaleDateString(), status: labels?.programmed };
+    return {
+      date: deadlineDate.toLocaleDateString(),
+      status: labels?.programmed,
+    };
   }
 
   const diffDays = Math.ceil((deadlineDate - now) / (1000 * 60 * 60 * 24));
@@ -20,7 +23,7 @@ const getDeadlineData = (deadline, visualizationDate, labels) => {
   if (diffDays > 0) {
     return {
       date: deadlineDate.toLocaleDateString(),
-      status: labels?.daysRemaining?.replace('{{count}}', diffDays),
+      status: labels?.daysRemaining?.replace("{{count}}", diffDays),
     };
   }
 
@@ -28,19 +31,25 @@ const getDeadlineData = (deadline, visualizationDate, labels) => {
 
   if (diffHours > 0) {
     return {
-      date: `${deadlineDate.toLocaleDateString()} - ${deadlineDate.toLocaleTimeString('es-ES', {
-        hour: '2-digit',
-        minute: '2-digit',
-      })}`,
-      status: labels?.hoursRemaining?.replace('{{count}}', diffHours),
+      date: `${deadlineDate.toLocaleDateString()} - ${deadlineDate.toLocaleTimeString(
+        "es-ES",
+        {
+          hour: "2-digit",
+          minute: "2-digit",
+        }
+      )}`,
+      status: labels?.hoursRemaining?.replace("{{count}}", diffHours),
     };
   }
 
   return {
-    date: `${deadlineDate.toLocaleDateString()} - ${deadlineDate.toLocaleTimeString('es-ES', {
-      hour: '2-digit',
-      minute: '2-digit',
-    })}`,
+    date: `${deadlineDate.toLocaleDateString()} - ${deadlineDate.toLocaleTimeString(
+      "es-ES",
+      {
+        hour: "2-digit",
+        minute: "2-digit",
+      }
+    )}`,
     status: labels?.late,
   };
 };

@@ -1,11 +1,16 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { TextInput, Box, InputWrapper, Stack } from '@bubbles-ui/components';
-import { Controller, useFormContext } from 'react-hook-form';
-import ImagePicker from '@leebrary/components/ImagePicker';
-import { Container } from '../Container';
+import React from "react";
+import PropTypes from "prop-types";
+import { TextInput, Box, InputWrapper, Stack } from "@bubbles-ui/components";
+import { Controller, useFormContext } from "react-hook-form";
+import ImagePicker from "@leebrary/components/ImagePicker";
+import { Container } from "../Container";
 
-export default function Presentation({ assignable, localizations, showTitle, showThumbnail }) {
+export default function Presentation({
+  assignable,
+  localizations,
+  showTitle,
+  showThumbnail,
+}) {
   const { control } = useFormContext();
 
   if (!showTitle && !showThumbnail) {
@@ -34,7 +39,9 @@ export default function Presentation({ assignable, localizations, showTitle, sho
           <Controller
             name="thumbnail"
             control={control}
-            defaultValue={assignable?.asset?.cover?.id ?? assignable?.asset?.cover}
+            defaultValue={
+              assignable?.asset?.cover?.id ?? assignable?.asset?.cover
+            }
             render={({ field }) => (
               <InputWrapper label={localizations?.thumbnail}>
                 <ImagePicker {...field} isPickingACover />

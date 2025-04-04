@@ -1,10 +1,10 @@
-const { LeemonsError } = require('@leemons/error');
-const { isString, some, negate } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { isString, some, negate } = require("lodash");
 
 async function removeSubjects({ ids, ctx }) {
   if (!ids || some(ids, negate(isString))) {
     throw new LeemonsError(ctx, {
-      message: 'Cannot remove subjects: Ids must be strings',
+      message: "Cannot remove subjects: Ids must be strings",
       httpStatusCode: 400,
     });
   }

@@ -1,9 +1,9 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { sqlDatetime, diffHours } = require('@leemons/utils');
+const { sqlDatetime, diffHours } = require("@leemons/utils");
 
-const { getAsset } = require('../leebrary/assets/getAsset');
+const { getAsset } = require("../leebrary/assets/getAsset");
 
 async function getNextActivities({ userAgents, ctx }) {
   const now = new Date();
@@ -11,13 +11,13 @@ async function getNextActivities({ userAgents, ctx }) {
   future.setTime(future.getTime() + 15 * 24 * 60 * 60 * 1000); // 15 dias
   // Sacamos las instancias cuya fecha de vencimiento es mayor a la actual y menor que dentro de 15 dias
   const instanceDates = await ctx.tx.db.Dates.find({
-    type: 'assignableInstance',
-    name: 'deadline',
+    type: "assignableInstance",
+    name: "deadline",
     date: { $gt: sqlDatetime(now), $lt: sqlDatetime(future) },
   })
-    .select(['instance', 'date'])
+    .select(["instance", "date"])
     .lean();
-  const instanceIds = _.map(instanceDates, 'instance');
+  const instanceIds = _.map(instanceDates, "instance");
   const instanceDatesByInstanceId = _.reduce(
     instanceDates,
     (acc, { instance, date }) => {
@@ -32,18 +32,18 @@ async function getNextActivities({ userAgents, ctx }) {
     instance: instanceIds,
     user: userAgents,
   })
-    .select(['id', 'instance', 'user'])
+    .select(["id", "instance", "user"])
     .lean();
 
   // Sacamos las asignaciones que tienen fecha de start
   const assignationDates = await ctx.tx.db.Dates.find({
-    type: 'assignation',
-    name: 'start',
-    instance: _.map(assignations, 'id'),
+    type: "assignation",
+    name: "start",
+    instance: _.map(assignations, "id"),
   }).lean();
 
   // Borramos las asignaciones sacadas que ya estan empezadas
-  const startedAssignations = _.map(assignationDates, 'instance');
+  const startedAssignations = _.map(assignationDates, "instance");
   assignations = _.filter(
     assignations,
     (assignation) => !_.includes(startedAssignations, assignation.id)
@@ -69,24 +69,24 @@ async function getEvaluatedActivities({ userAgents, ctx }) {
   const past = new Date();
   past.setTime(past.getTime() - 7 * 24 * 60 * 60 * 1000); // 7 dias
   const grades = await ctx.tx.db.Grades.find({
-    type: 'main',
+    type: "main",
     date: { $gt: sqlDatetime(past) },
   })
-    .select(['assignation', 'grade'])
+    .select(["assignation", "grade"])
     .lean();
-  const gradesByAssignationId = _.groupBy(grades, 'assignation');
-  const assignationIds = _.uniq(_.map(grades, 'assignation'));
+  const gradesByAssignationId = _.groupBy(grades, "assignation");
+  const assignationIds = _.uniq(_.map(grades, "assignation"));
   const assignationFinished = await ctx.tx.db.Dates.find({
-    type: 'assignation',
-    name: 'end',
+    type: "assignation",
+    name: "end",
     instance: assignationIds,
   }).lean();
-  const assignationFinishedIds = _.map(assignationFinished, 'instance');
+  const assignationFinishedIds = _.map(assignationFinished, "instance");
   const assignations = await ctx.tx.db.Assignations.find({
     id: assignationFinishedIds,
     user: userAgents,
   })
-    .select(['id', 'instance', 'user'])
+    .select(["id", "instance", "user"])
     .lean();
   return _.reduce(
     assignations,
@@ -122,7 +122,7 @@ async function createEvaluatedInstance({
   const assignable = assignableById[instance.assignable];
   const url =
     (hostnameApi || hostname) +
-    (await ctx.tx.call('leebrary.assets.getCoverUrl', {
+    (await ctx.tx.call("leebrary.assets.getCoverUrl", {
       assetId: assignable.asset,
     }));
 
@@ -131,7 +131,7 @@ async function createEvaluatedInstance({
       ...assetById[assignable.asset],
       url,
     },
-    classes: _.uniqBy(instanceClasses[instance.id], 'subject.id'),
+    classes: _.uniqBy(instanceClasses[instance.id], "subject.id"),
     note: note.toFixed(2),
   };
 }
@@ -150,18 +150,18 @@ async function createNextInstance({
 }) {
   const instance = instanceById[instanceId];
   const assignable = assignableById[instance.assignable];
-  let timeUnit = 'hours';
-  let timeColor = '#d13b3b';
+  let timeUnit = "hours";
+  let timeColor = "#d13b3b";
   let time = diffHours(now, new Date(instanceDatesByInstanceId[instance.id]));
   if (time > 24) {
     time = Math.floor(time / 24);
-    timeUnit = 'days';
-    if (time > 5) timeColor = '#E0914B';
-    if (time > 10) timeColor = '#212B3D';
+    timeUnit = "days";
+    if (time > 5) timeColor = "#E0914B";
+    if (time > 10) timeColor = "#212B3D";
   }
   const url =
     (hostnameApi || hostname) +
-    (await ctx.tx.call('leebrary.assets.getCoverUrl', {
+    (await ctx.tx.call("leebrary.assets.getCoverUrl", {
       assetId: assignable.asset,
     }));
 
@@ -170,7 +170,7 @@ async function createNextInstance({
       ...assetById[assignable.asset],
       url,
     },
-    classes: _.uniqBy(instanceClasses[instance.id], 'subject.id'),
+    classes: _.uniqBy(instanceClasses[instance.id], "subject.id"),
     time,
     timeUnit,
     timeColor,
@@ -178,16 +178,21 @@ async function createNextInstance({
 }
 
 async function sendWeeklyEmails({ ctx }) {
-  const userAgentIds = await ctx.tx.call('emails.config.getUserAgentsWithKeyValue', {
-    key: 'week-resume-email',
-    value: new Date().getDay().toString(),
-  });
+  const userAgentIds = await ctx.tx.call(
+    "emails.config.getUserAgentsWithKeyValue",
+    {
+      key: "week-resume-email",
+      value: new Date().getDay().toString(),
+    }
+  );
 
-  const [{ userAgentInstances, instanceDatesByInstanceId }, evaluatedActivities] =
-    await Promise.all([
-      getNextActivities({ userAgents: userAgentIds, ctx }),
-      getEvaluatedActivities({ userAgents: userAgentIds, ctx }),
-    ]);
+  const [
+    { userAgentInstances, instanceDatesByInstanceId },
+    evaluatedActivities,
+  ] = await Promise.all([
+    getNextActivities({ userAgents: userAgentIds, ctx }),
+    getEvaluatedActivities({ userAgents: userAgentIds, ctx }),
+  ]);
 
   let instanceIds = [];
   _.forIn(userAgentInstances, (value) => {
@@ -202,44 +207,45 @@ async function sendWeeklyEmails({ ctx }) {
 
   instanceIds = _.uniq(instanceIds);
 
-  const [hostname, hostnameApi, instances, _classes, userAgents] = await Promise.all([
-    ctx.tx.call('users.platform.getHostname'),
-    ctx.tx.call('users.platform.getHostnameApi'),
-    ctx.tx.db.Instances.find({
-      id: instanceIds,
-    }).lean(),
-    ctx.tx.db.Classes.find({
-      assignableInstance: instanceIds,
-    }).lean(),
-    // Sacamos el detalle de los user agent ya que lo necesitamos para enviar el email
-    ctx.tx.call('users.users.getUserAgentsInfo', {
-      userAgentIds: _.uniq(userAgentIds),
-      withCenter: true,
-      userColumns: ['id', 'email', 'locale'],
-    }),
-  ]);
+  const [hostname, hostnameApi, instances, _classes, userAgents] =
+    await Promise.all([
+      ctx.tx.call("users.platform.getHostname"),
+      ctx.tx.call("users.platform.getHostnameApi"),
+      ctx.tx.db.Instances.find({
+        id: instanceIds,
+      }).lean(),
+      ctx.tx.db.Classes.find({
+        assignableInstance: instanceIds,
+      }).lean(),
+      // Sacamos el detalle de los user agent ya que lo necesitamos para enviar el email
+      ctx.tx.call("users.users.getUserAgentsInfo", {
+        userAgentIds: _.uniq(userAgentIds),
+        withCenter: true,
+        userColumns: ["id", "email", "locale"],
+      }),
+    ]);
 
   const [assignables, classes] = await Promise.all([
     ctx.tx.db.Assignables.find({
-      id: _.uniq(_.map(instances, 'assignable')),
+      id: _.uniq(_.map(instances, "assignable")),
     }).lean(),
-    ctx.tx.call('academic-portfolio.classes.classByIds', {
-      ids: _.uniq(_.map(_classes, 'class')),
+    ctx.tx.call("academic-portfolio.classes.classByIds", {
+      ids: _.uniq(_.map(_classes, "class")),
     }),
   ]);
 
-  const assets = await getAsset({ id: _.map(assignables, 'asset'), ctx });
+  const assets = await getAsset({ id: _.map(assignables, "asset"), ctx });
 
-  const assetById = _.keyBy(assets, 'id');
-  const classesById = _.keyBy(classes, 'id');
-  const instanceById = _.keyBy(instances, 'id');
-  const assignableById = _.keyBy(assignables, 'id');
+  const assetById = _.keyBy(assets, "id");
+  const classesById = _.keyBy(classes, "id");
+  const instanceById = _.keyBy(instances, "id");
+  const assignableById = _.keyBy(assignables, "id");
 
   const instanceClasses = _.reduce(
     _classes,
     (acc, { assignableInstance, class: classe }) => {
       if (!acc[assignableInstance]) acc[assignableInstance] = [];
-      if (_.map(acc[assignableInstance], 'id').indexOf(classe) === -1) {
+      if (_.map(acc[assignableInstance], "id").indexOf(classe) === -1) {
         acc[assignableInstance].push(classesById[classe]);
       }
       return acc;
@@ -249,8 +255,11 @@ async function sendWeeklyEmails({ ctx }) {
 
   const promises = _.map(userAgents, async (userAgent) => {
     const hasEvaluated =
-      evaluatedActivities[userAgent.id] && evaluatedActivities[userAgent.id].length > 0;
-    const hasNext = userAgentInstances[userAgent.id] && userAgentInstances[userAgent.id].length > 0;
+      evaluatedActivities[userAgent.id] &&
+      evaluatedActivities[userAgent.id].length > 0;
+    const hasNext =
+      userAgentInstances[userAgent.id] &&
+      userAgentInstances[userAgent.id].length > 0;
 
     if (hasNext || hasEvaluated) {
       let nextInstances = [];
@@ -278,28 +287,30 @@ async function sendWeeklyEmails({ ctx }) {
 
       if (hasNext) {
         const now = new Date();
-        const nextInstancesPromises = _.map(userAgentInstances[userAgent.id], async (instanceId) =>
-          createNextInstance({
-            assetById,
-            assignableById,
-            hostname,
-            hostnameApi,
-            instanceById,
-            instanceClasses,
-            instanceDatesByInstanceId,
-            instanceId,
-            now,
-            ctx,
-          })
+        const nextInstancesPromises = _.map(
+          userAgentInstances[userAgent.id],
+          async (instanceId) =>
+            createNextInstance({
+              assetById,
+              assignableById,
+              hostname,
+              hostnameApi,
+              instanceById,
+              instanceClasses,
+              instanceDatesByInstanceId,
+              instanceId,
+              now,
+              ctx,
+            })
         );
 
         nextInstances = await Promise.all(nextInstancesPromises);
       }
 
       await ctx.tx
-        .call('emails.email.sendAsEducationalCenter', {
+        .call("emails.email.sendAsEducationalCenter", {
           to: userAgent.user.email,
-          templateName: 'user-weekly-resume',
+          templateName: "user-weekly-resume",
           language: userAgent.user.locale,
           context: {
             evaluatedInstances,

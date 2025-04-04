@@ -4,12 +4,12 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { registerDate } = require('./registerDate');
-const { datesSchema } = require('../../models/dates');
+const { registerDate } = require("./registerDate");
+const { datesSchema } = require("../../models/dates");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -32,11 +32,11 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should create a new date', async () => {
+it("Should create a new date", async () => {
   // Arrange
-  const type = 'instance';
-  const instance = 'instance-id';
-  const name = 'start';
+  const type = "instance";
+  const instance = "instance-id";
+  const name = "start";
   const date = new Date();
   const expectedValue = {
     type,
@@ -47,7 +47,7 @@ it('Should create a new date', async () => {
 
   const ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 
@@ -60,16 +60,16 @@ it('Should create a new date', async () => {
   expect(savedDate).toEqual([expect.objectContaining(expectedValue)]);
 });
 
-it('Should throw if no required params are provided', async () => {
+it("Should throw if no required params are provided", async () => {
   // Arrange
-  const type = 'instance';
-  const instance = 'instance-id';
-  const name = 'start';
+  const type = "instance";
+  const instance = "instance-id";
+  const name = "start";
   const date = new Date();
 
   const ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 
@@ -85,15 +85,15 @@ it('Should throw if no required params are provided', async () => {
 
   // Assert
   await expect(noTypeFn).rejects.toThrowError(
-    'Cannot register date: type, instance, name and date are required'
+    "Cannot register date: type, instance, name and date are required"
   );
   await expect(noInstanceFn).rejects.toThrowError(
-    'Cannot register date: type, instance, name and date are required'
+    "Cannot register date: type, instance, name and date are required"
   );
   await expect(noNameFn).rejects.toThrowError(
-    'Cannot register date: type, instance, name and date are required'
+    "Cannot register date: type, instance, name and date are required"
   );
   await expect(noDateFn).rejects.toThrowError(
-    'Cannot register date: type, instance, name and date are required'
+    "Cannot register date: type, instance, name and date are required"
   );
 });

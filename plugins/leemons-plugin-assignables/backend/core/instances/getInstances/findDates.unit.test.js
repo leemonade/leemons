@@ -4,32 +4,32 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { findDates } = require('./findDates');
-const { datesSchema } = require('../../../models/dates');
+const { findDates } = require("./findDates");
+const { datesSchema } = require("../../../models/dates");
 
-const instanceId = 'instanceId';
+const instanceId = "instanceId";
 const date = new Date();
 const dates = [
   {
-    type: 'assignableInstance',
+    type: "assignableInstance",
     instance: instanceId,
-    name: 'deadline',
+    name: "deadline",
     date,
   },
   {
-    type: 'assignableInstance',
-    instance: 'instanceId2',
-    name: 'open',
+    type: "assignableInstance",
+    instance: "instanceId2",
+    name: "open",
     date,
   },
   {
-    type: 'otherType',
+    type: "otherType",
     instance: instanceId,
-    name: 'close',
+    name: "close",
     date,
   },
 ];
@@ -55,12 +55,12 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should call findDates correctly', async () => {
+it("Should call findDates correctly", async () => {
   // Arrange
 
   const ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 

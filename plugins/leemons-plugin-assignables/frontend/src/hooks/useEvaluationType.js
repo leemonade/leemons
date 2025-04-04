@@ -1,12 +1,12 @@
-import { useMemo } from 'react';
-import { get, isEqual } from 'lodash';
-import { unflatten } from '@common';
-import { evaluationTypes } from '@assignables/components/Assignment/components/EvaluationType';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useMemo } from "react";
+import { get, isEqual } from "lodash";
+import { unflatten } from "@common";
+import { evaluationTypes } from "@assignables/components/Assignment/components/EvaluationType";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
 
 export function useEvaluationTypeLocalizations() {
   // key is array
-  const key = 'assignables.assignmentForm.evaluation.typeInput.options';
+  const key = "assignables.assignmentForm.evaluation.typeInput.options";
   const [, translations] = useTranslateLoader(key);
 
   return useMemo(() => {
@@ -34,8 +34,12 @@ export function useEvaluationType(activity) {
 
     const [type] = Object.entries(evaluationTypes).find(([, value]) =>
       isEqual(typeValues, value)
-    ) ?? ['nonEvaluable'];
+    ) ?? ["nonEvaluable"];
 
     return type;
-  }, [!!activity?.requiresScoring, !!activity.allowFeedback, !!activity.gradable]);
+  }, [
+    !!activity?.requiresScoring,
+    !!activity.allowFeedback,
+    !!activity.gradable,
+  ]);
 }

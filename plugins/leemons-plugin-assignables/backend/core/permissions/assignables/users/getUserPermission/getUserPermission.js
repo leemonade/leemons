@@ -1,4 +1,4 @@
-const { getUserPermissions } = require('../getUserPermissions');
+const { getUserPermissions } = require("../getUserPermissions");
 
 /**
  * Retrieves the user permissions based on the assignable ID and context.
@@ -16,9 +16,12 @@ async function getUserPermission({ assignableId, ctx }) {
     })
     .lean();
 
-  const permissions = await getUserPermissions({ assignables: [assignable], ctx });
+  const permissions = await getUserPermissions({
+    assignables: [assignable],
+    ctx,
+  });
 
-  return permissions[assignableId] ?? { role: 'viewer', actions: ['view'] };
+  return permissions[assignableId] ?? { role: "viewer", actions: ["view"] };
 }
 
 module.exports = { getUserPermission };

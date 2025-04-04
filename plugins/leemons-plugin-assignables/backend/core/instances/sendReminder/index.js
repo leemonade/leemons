@@ -1,3 +1,3 @@
-const { sendReminder } = require('./sendReminder');
+const { sendReminder } = require("./sendReminder");
 
 module.exports = { sendReminder };

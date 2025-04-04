@@ -1,3 +1,3 @@
-import HeaderWithFilters from './HeaderWithFilters';
+import HeaderWithFilters from "./HeaderWithFilters";
 
 export default HeaderWithFilters;

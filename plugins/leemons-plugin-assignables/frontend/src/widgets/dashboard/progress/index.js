@@ -1,29 +1,33 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { ContextContainer, LoadingOverlay, Box } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@assignables/helpers/prefixPN';
-import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
-import { ProgressChart } from '@assignables/components/ProgressChart';
-import { useIsStudent } from '@academic-portfolio/hooks';
-import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
-import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
-import useAcademicCalendarPeriods from '@scores/components/__DEPRECATED__/ScoresPage/useAcademicCalendarPeriods';
-import { useAverageGradePerClass } from '@client-manager/hooks/useAverageGradePerClass';
+import React from "react";
+import PropTypes from "prop-types";
+import { ContextContainer, LoadingOverlay, Box } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@assignables/helpers/prefixPN";
+import useWelcome from "@dashboard/request/hooks/queries/useWelcome";
+import { ProgressChart } from "@assignables/components/ProgressChart";
+import { useIsStudent } from "@academic-portfolio/hooks";
+import useProgramEvaluationSystems from "@grades/hooks/queries/useProgramEvaluationSystem";
+import useProgramClasses from "@academic-portfolio/hooks/useProgramClasses";
+import useAcademicCalendarPeriods from "@scores/components/__DEPRECATED__/ScoresPage/useAcademicCalendarPeriods";
+import { useAverageGradePerClass } from "@client-manager/hooks/useAverageGradePerClass";
 
 export default function Progress({ program }) {
   const { data: welcomeCompleted } = useWelcome();
   const isStudent = useIsStudent();
-  const [t] = useTranslateLoader(prefixPN('progress'));
+  const [t] = useTranslateLoader(prefixPN("progress"));
 
   const { data: programEvaluationSystem } = useProgramEvaluationSystems({
     program: program.id,
     options: { enabled: !!program },
   });
 
-  const { data: classesData } = useProgramClasses(program.id, { enabled: !!program });
+  const { data: classesData } = useProgramClasses(program.id, {
+    enabled: !!program,
+  });
 
-  const periods = useAcademicCalendarPeriods({ classes: [{ program: program.id }] });
+  const periods = useAcademicCalendarPeriods({
+    classes: [{ program: program.id }],
+  });
   const period = React.useMemo(() => {
     const currentDate = new Date();
     const currentPeriod = periods.find((p) => {
@@ -62,7 +66,7 @@ export default function Progress({ program }) {
     return null;
   }
 
-  const titleKey = `dashboardTitle.main.${isStudent ? 'student' : 'teacher'}`;
+  const titleKey = `dashboardTitle.main.${isStudent ? "student" : "teacher"}`;
 
   if (!isStudent) {
     return null;

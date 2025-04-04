@@ -1,4 +1,4 @@
-const { getRoleMatchingActions } = require('./getRoleMatchingActions');
+const { getRoleMatchingActions } = require("./getRoleMatchingActions");
 
 module.exports = {
   getRoleMatchingActions,

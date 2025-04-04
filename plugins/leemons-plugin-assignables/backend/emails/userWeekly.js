@@ -435,39 +435,39 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
 
 module.exports = {
   es: activity(
-    'Aquí tienes tus actividades pendientes',
-    'Esta información puede haber cambiado, revisa siempre tus actividades en curso para no perderte nada.',
-    'Revisar mis actividades',
-    'Puedes cambiar tus preferencias de correo desde tu cuenta de usuario.',
-    'Enviado por {{it.__from}}',
-    '', // Política de privacidad
+    "Aquí tienes tus actividades pendientes",
+    "Esta información puede haber cambiado, revisa siempre tus actividades en curso para no perderte nada.",
+    "Revisar mis actividades",
+    "Puedes cambiar tus preferencias de correo desde tu cuenta de usuario.",
+    "Enviado por {{it.__from}}",
+    "", // Política de privacidad
     {
-      upcomingDeliveries: 'Próximas actividades',
-      activitiesEvaluated: 'Actividades evaluadas',
-      expStart: 'dentro de',
-      expDays: 'días',
-      expDay: 'día',
-      expHours: 'horas',
-      expHour: 'hora',
-      multiSubjects: 'Multi-Asignatura',
+      upcomingDeliveries: "Próximas actividades",
+      activitiesEvaluated: "Actividades evaluadas",
+      expStart: "dentro de",
+      expDays: "días",
+      expDay: "día",
+      expHours: "horas",
+      expHour: "hora",
+      multiSubjects: "Multi-Asignatura",
     }
   ),
   en: activity(
-    'Have a look to your pending activities',
+    "Have a look to your pending activities",
     "This information may have changed, always check your current activities so you don't miss anything.",
-    'Review my activities',
-    'You can change your email preferences from your user account',
-    'Sent to {{it.__from}}',
-    '', // Privacy policy
+    "Review my activities",
+    "You can change your email preferences from your user account",
+    "Sent to {{it.__from}}",
+    "", // Privacy policy
     {
-      upcomingDeliveries: 'Upcoming deliveries',
-      activitiesEvaluated: 'Activities evaluated',
-      expStart: 'within',
-      expDays: 'days',
-      expDay: 'day',
-      expHours: 'hours',
-      expHour: 'hour',
-      multiSubjects: 'Multi-Subject',
+      upcomingDeliveries: "Upcoming deliveries",
+      activitiesEvaluated: "Activities evaluated",
+      expStart: "within",
+      expDays: "days",
+      expDay: "day",
+      expHours: "hours",
+      expHour: "hour",
+      multiSubjects: "Multi-Subject",
     }
   ),
 };

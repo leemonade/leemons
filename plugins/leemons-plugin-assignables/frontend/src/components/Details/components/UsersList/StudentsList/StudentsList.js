@@ -1,19 +1,28 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from "react";
 
-import { Stack, Box, Button, PaginatedList, RadioGroup } from '@bubbles-ui/components';
-import { PluginComunicaIcon, SendEmailEnvelopeIcon } from '@bubbles-ui/icons/outline';
-import { useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import PropTypes from 'prop-types';
+import {
+  Stack,
+  Box,
+  Button,
+  PaginatedList,
+  RadioGroup,
+} from "@bubbles-ui/components";
+import {
+  PluginComunicaIcon,
+  SendEmailEnvelopeIcon,
+} from "@bubbles-ui/icons/outline";
+import { useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import PropTypes from "prop-types";
 
-import sendReminder from '@assignables/requests/assignableInstances/sendReminder';
+import sendReminder from "@assignables/requests/assignableInstances/sendReminder";
 
 export default function StudentsList({ labels, instance, students }) {
   const { openConfirmationModal } = useLayout();
   const [store, render] = useStore({
-    rememberType: 'open',
+    rememberType: "open",
   });
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
@@ -25,10 +34,10 @@ export default function StudentsList({ labels, instance, students }) {
           <RadioGroup
             direction="column"
             data={[
-              { label: labels?.rememberModal?.notOpen, value: 'open' },
+              { label: labels?.rememberModal?.notOpen, value: "open" },
               {
                 label: labels?.rememberModal?.notEnd,
-                value: 'end',
+                value: "end",
               },
             ]}
             fullWidth
@@ -61,26 +70,30 @@ export default function StudentsList({ labels, instance, students }) {
   const columns = useMemo(() => {
     const cols = [
       {
-        Header: labels?.studentListcolumns?.student || '',
-        accessor: 'student',
+        Header: labels?.studentListcolumns?.student || "",
+        accessor: "student",
       },
       {
-        Header: labels?.studentListcolumns?.avgTime || '',
-        accessor: 'avgTime',
+        Header: labels?.studentListcolumns?.avgTime || "",
+        accessor: "avgTime",
       },
       {
-        Header: labels?.studentListcolumns?.progress || '',
-        accessor: 'progress',
+        Header: labels?.studentListcolumns?.progress || "",
+        accessor: "progress",
       },
       {
         Header: (
           <Stack justifyContent="center" fullWidth>
-            <Button variant="link" leftIcon={<SendEmailEnvelopeIcon />} onClick={reminder}>
+            <Button
+              variant="link"
+              leftIcon={<SendEmailEnvelopeIcon />}
+              onClick={reminder}
+            >
               {labels?.studentListcolumns?.sendReminder}
             </Button>
           </Stack>
         ),
-        accessor: 'actions',
+        accessor: "actions",
         Cell: ({ value }) => (
           <Stack justifyContent="center" fullWidth>
             {value}
@@ -89,7 +102,7 @@ export default function StudentsList({ labels, instance, students }) {
       },
       {
         Header: <PluginComunicaIcon />,
-        accessor: 'unreadMessages',
+        accessor: "unreadMessages",
       },
     ];
 
@@ -117,7 +130,7 @@ export default function StudentsList({ labels, instance, students }) {
       onStyleRow={({ row, theme }) => {
         if (row.original.userAgentIsDisabled) {
           return {
-            backgroundColor: theme.other.core.color.neutral['100'],
+            backgroundColor: theme.other.core.color.neutral["100"],
           };
         }
       }}

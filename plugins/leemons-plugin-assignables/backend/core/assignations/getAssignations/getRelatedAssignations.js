@@ -23,7 +23,7 @@ async function getRelatedAssignations({ assignationsData, ctx }) {
   const relatedInstances = await ctx.tx.db.Instances.find({
     id: instances,
   })
-    .select(['id', 'relatedAssignableInstances'])
+    .select(["id", "relatedAssignableInstances"])
     .lean();
 
   const relatedInstancesByInstance = {};
@@ -36,29 +36,31 @@ async function getRelatedAssignations({ assignationsData, ctx }) {
   const relatedInstancesByAssignation = {};
   const assignationsByRelation = {};
   const assignationsToSearch = [];
-  Object.entries(assignationsPerInstance).forEach(([instance, instanceAssignations]) => {
-    const instancesRelated = relatedInstancesByInstance[instance];
+  Object.entries(assignationsPerInstance).forEach(
+    ([instance, instanceAssignations]) => {
+      const instancesRelated = relatedInstancesByInstance[instance];
 
-    instanceAssignations?.forEach?.((assignation) => {
-      const { user } = assignationsById[assignation];
-      instancesRelated.forEach(({ id: instanceId, ...props }) => {
-        if (!assignationsByRelation[`instance.${instanceId}.user.${user}`]) {
-          assignationsByRelation[`instance.${instanceId}.user.${user}`] = [
-            { ...props, assignation },
-          ];
-        } else {
-          assignationsByRelation[`instance.${instanceId}.user.${user}`].push({
-            ...props,
-            assignation,
-          });
-        }
+      instanceAssignations?.forEach?.((assignation) => {
+        const { user } = assignationsById[assignation];
+        instancesRelated.forEach(({ id: instanceId, ...props }) => {
+          if (!assignationsByRelation[`instance.${instanceId}.user.${user}`]) {
+            assignationsByRelation[`instance.${instanceId}.user.${user}`] = [
+              { ...props, assignation },
+            ];
+          } else {
+            assignationsByRelation[`instance.${instanceId}.user.${user}`].push({
+              ...props,
+              assignation,
+            });
+          }
 
-        assignationsToSearch.push({ instance: instanceId, user });
+          assignationsToSearch.push({ instance: instanceId, user });
+        });
+
+        relatedInstancesByAssignation[assignation] = instancesRelated;
       });
-
-      relatedInstancesByAssignation[assignation] = instancesRelated;
-    });
-  });
+    }
+  );
 
   if (!assignationsToSearch.length) {
     return {};
@@ -67,7 +69,7 @@ async function getRelatedAssignations({ assignationsData, ctx }) {
   const relatedAssignations = await ctx.tx.db.Assignations.find({
     $or: assignationsToSearch,
   })
-    .select(['id', 'instance', 'user'])
+    .select(["id", "instance", "user"])
     .lean();
 
   const relatedAssignationsByAssignation = {};

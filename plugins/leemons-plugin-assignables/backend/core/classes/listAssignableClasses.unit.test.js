@@ -1,9 +1,15 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { listAssignableClasses } = require('./listAssignableClasses');
-const { classesSchema } = require('../../models/classes');
+const { listAssignableClasses } = require("./listAssignableClasses");
+const { classesSchema } = require("../../models/classes");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -28,46 +34,46 @@ beforeEach(async () => {
 
 const testCases = [
   {
-    description: 'Should list one class',
+    description: "Should list one class",
     initialValues: [
       {
-        assignableInstance: 'instance-id',
-        assignable: 'assignable-id',
-        class: 'class-id',
+        assignableInstance: "instance-id",
+        assignable: "assignable-id",
+        class: "class-id",
       },
     ],
     expected: [
       {
-        instance: 'instance-id',
-        assignable: 'assignable-id',
-        class: 'class-id',
+        instance: "instance-id",
+        assignable: "assignable-id",
+        class: "class-id",
       },
     ],
   },
   {
-    description: 'Should list multiple classes',
+    description: "Should list multiple classes",
     initialValues: [
       {
-        assignableInstance: 'instance-id',
-        assignable: 'assignable-id',
-        class: 'class-id-1',
+        assignableInstance: "instance-id",
+        assignable: "assignable-id",
+        class: "class-id-1",
       },
       {
-        assignableInstance: 'instance-id',
-        assignable: 'assignable-id',
-        class: 'class-id-2',
+        assignableInstance: "instance-id",
+        assignable: "assignable-id",
+        class: "class-id-2",
       },
     ],
     expected: [
       {
-        instance: 'instance-id',
-        assignable: 'assignable-id',
-        class: 'class-id-1',
+        instance: "instance-id",
+        assignable: "assignable-id",
+        class: "class-id-1",
       },
       {
-        instance: 'instance-id',
-        assignable: 'assignable-id',
-        class: 'class-id-2',
+        instance: "instance-id",
+        assignable: "assignable-id",
+        class: "class-id-2",
       },
     ],
   },
@@ -78,14 +84,17 @@ testCases.forEach(({ description, initialValues, expected }) => {
     // Arrange
     const ctx = generateCtx({
       models: {
-        Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+        Classes: newModel(mongooseConnection, "Classes", classesSchema),
       },
     });
 
     await ctx.db.Classes.insertMany(initialValues);
 
     // Act
-    const response = await listAssignableClasses({ id: initialValues[0].assignable, ctx });
+    const response = await listAssignableClasses({
+      id: initialValues[0].assignable,
+      ctx,
+    });
 
     // Assert
     expect(response).toEqual(expect.arrayContaining(expected));

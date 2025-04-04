@@ -1,35 +1,42 @@
-import { Alert, Box, Text, createStyles } from '@bubbles-ui/components';
-import { flatMap, uniq } from 'lodash';
-import React from 'react';
-import { useWatch } from 'react-hook-form';
-import propTypes from 'prop-types';
+import { Alert, Box, Text, createStyles } from "@bubbles-ui/components";
+import { flatMap, uniq } from "lodash";
+import React from "react";
+import { useWatch } from "react-hook-form";
+import propTypes from "prop-types";
 
 const useSelectedStudentsInfoStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
 
   return {
     root: {
-      display: 'flex',
-      flexDirection: 'column',
+      display: "flex",
+      flexDirection: "column",
       gap: globalTheme.spacing.gap.md,
     },
     options: {
-      display: 'flex',
-      flexDirection: 'column',
+      display: "flex",
+      flexDirection: "column",
       gap: globalTheme.spacing.gap.md,
     },
   };
 });
 
-export default function SelectedStudentsInfo({ control, value, availableClasses, localizations }) {
-  const selectedClasses = availableClasses.filter(({ id }) => value?.raw?.classes?.includes(id));
+export default function SelectedStudentsInfo({
+  control,
+  value,
+  availableClasses,
+  localizations,
+}) {
+  const selectedClasses = availableClasses.filter(({ id }) =>
+    value?.raw?.classes?.includes(id)
+  );
 
-  const selected = uniq(flatMap(value?.value, 'students')).length;
+  const selected = uniq(flatMap(value?.value, "students")).length;
   const nonAssignableStudentsCount = uniq(
-    flatMap(selectedClasses, 'nonAssignableStudents')
+    flatMap(selectedClasses, "nonAssignableStudents")
   )?.length;
 
-  const excluded = useWatch({ control, name: 'excluded' });
+  const excluded = useWatch({ control, name: "excluded" });
   const excludedStudentsCount = excluded?.length ?? 0;
 
   const { classes } = useSelectedStudentsInfoStyles();

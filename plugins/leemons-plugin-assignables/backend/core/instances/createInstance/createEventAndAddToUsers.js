@@ -1,6 +1,6 @@
-const { map } = require('lodash');
+const { map } = require("lodash");
 
-const { registerEvent } = require('../calendar/registerEvent');
+const { registerEvent } = require("../calendar/registerEvent");
 
 async function createEventAndAddToUsers({
   assignable,
@@ -12,16 +12,25 @@ async function createEventAndAddToUsers({
   students,
   ctx,
 }) {
-  const { id: event } = await registerEvent({ assignable, classes, id, dates, isAllDay, ctx });
+  const { id: event } = await registerEvent({
+    assignable,
+    classes,
+    id,
+    dates,
+    isAllDay,
+    ctx,
+  });
 
   // Grant users to access event
   if (event && (teachers?.length || students?.length)) {
-    const userAgentIds = [...map(teachers, 'teacher'), ...students].filter(Boolean);
+    const userAgentIds = [...map(teachers, "teacher"), ...students].filter(
+      Boolean
+    );
     if (userAgentIds.length) {
-      await ctx.tx.call('calendar.calendar.grantAccessUserAgentToEvent', {
+      await ctx.tx.call("calendar.calendar.grantAccessUserAgentToEvent", {
         id: event,
         userAgentId: userAgentIds,
-        actionName: 'view',
+        actionName: "view",
       });
     }
   }

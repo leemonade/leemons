@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const TOTAL_LAYOUT_STEP_CONTAINER_WITH_ACCORDION_PROPS = {
   accordion: PropTypes.shape({

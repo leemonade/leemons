@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const NYACARD_COVER_DEFAULT_PROPS = {
   blur: 5,

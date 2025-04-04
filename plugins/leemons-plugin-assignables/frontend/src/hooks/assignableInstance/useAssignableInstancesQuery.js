@@ -1,5 +1,5 @@
-import { useQueries } from '@tanstack/react-query';
-import getAssignableInstance from '../../requests/assignableInstances/getAssignableInstance';
+import { useQueries } from "@tanstack/react-query";
+import getAssignableInstance from "../../requests/assignableInstances/getAssignableInstance";
 
 export default function useAssignableInstances({
   id,
@@ -11,7 +11,7 @@ export default function useAssignableInstances({
 
   const query = useQueries({
     queries: ids.map((_id) => ({
-      queryKey: ['assignableInstances', { id: _id, details }],
+      queryKey: ["assignableInstances", { id: _id, details }],
       queryFn: () => getAssignableInstance({ id: _id, details }),
       refetchInterval,
       enabled,

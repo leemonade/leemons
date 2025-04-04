@@ -1,10 +1,13 @@
-import { useMemo } from 'react';
-import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
-import { useSubjectDetails } from '@academic-portfolio/hooks';
-import { uniqBy } from 'lodash';
+import { useMemo } from "react";
+import useSessionClasses from "@academic-portfolio/hooks/useSessionClasses";
+import { useSubjectDetails } from "@academic-portfolio/hooks";
+import { uniqBy } from "lodash";
 
 export default function useSubjects(task, useAllSubjects = true) {
-  const { data: classes } = useSessionClasses({}, { enabled: !task?.subjects?.length });
+  const { data: classes } = useSessionClasses(
+    {},
+    { enabled: !task?.subjects?.length }
+  );
 
   const subjects = useMemo(() => {
     if (task?.subjects) {
@@ -18,7 +21,9 @@ export default function useSubjects(task, useAllSubjects = true) {
     return classes?.map((klass) => klass.subject.id) || [];
   }, [task?.subjects, classes]);
 
-  const { data: subjectDetails } = useSubjectDetails(subjects, { enabled: !!subjects });
+  const { data: subjectDetails } = useSubjectDetails(subjects, {
+    enabled: !!subjects,
+  });
 
   return useMemo(
     () =>
@@ -27,7 +32,7 @@ export default function useSubjects(task, useAllSubjects = true) {
           label: subject?.name,
           value: subject?.id,
         })),
-        'value'
+        "value"
       ) || [],
     [subjectDetails]
   );

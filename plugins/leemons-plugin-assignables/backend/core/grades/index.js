@@ -1,6 +1,6 @@
-const { getGrade } = require('./getGrade');
-const { registerGrade } = require('./registerGrade');
-const { unregisterGrade } = require('./unregisterGrade');
+const { getGrade } = require("./getGrade");
+const { registerGrade } = require("./registerGrade");
+const { unregisterGrade } = require("./unregisterGrade");
 
 module.exports = {
   getGrade,

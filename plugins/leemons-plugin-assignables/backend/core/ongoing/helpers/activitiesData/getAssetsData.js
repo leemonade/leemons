@@ -1,4 +1,4 @@
-const { uniq } = require('lodash');
+const { uniq } = require("lodash");
 
 /*
   === Assets, Assignables, Instances and Assignations fetching ===
@@ -16,7 +16,7 @@ const { uniq } = require('lodash');
 async function getAssetsData({ assets, ctx }) {
   const uniqAssets = uniq(assets);
 
-  const assetsData = await ctx.tx.call('leebrary.assets.getByIds', {
+  const assetsData = await ctx.tx.call("leebrary.assets.getByIds", {
     ids: uniqAssets,
     withTags: false,
     withCategory: false,

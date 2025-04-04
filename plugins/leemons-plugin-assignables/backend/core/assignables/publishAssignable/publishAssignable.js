@@ -1,14 +1,16 @@
-const { LeemonsError } = require('@leemons/error');
-const { pick } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { pick } = require("lodash");
 
-const discardCacheBy = require('../../../cache/discardCacheBy');
+const discardCacheBy = require("../../../cache/discardCacheBy");
 const {
   validateAssignable,
   validAssignableProperties,
-} = require('../../../validations/validateAssignable');
-const { updateAsset } = require('../../leebrary/assets');
-const { getUserPermission } = require('../../permissions/assignables/users/getUserPermission');
-const { getAssignable } = require('../getAssignable');
+} = require("../../../validations/validateAssignable");
+const { updateAsset } = require("../../leebrary/assets");
+const {
+  getUserPermission,
+} = require("../../permissions/assignables/users/getUserPermission");
+const { getAssignable } = require("../getAssignable");
 
 /**
  * Validates an assignable for publishing.
@@ -25,12 +27,12 @@ const { getAssignable } = require('../getAssignable');
 function validateAssignableForPublish({ assignable, ctx }) {
   if (assignable.isDeleted) {
     throw new LeemonsError(ctx, {
-      message: 'The assignable is deleted',
+      message: "The assignable is deleted",
       httpStatusCode: 404,
     });
   }
   validateAssignable(pick(assignable, validAssignableProperties), {
-    useRequired: ['asset', 'role', 'subjects'],
+    useRequired: ["asset", "role", "subjects"],
   });
 }
 
@@ -43,16 +45,16 @@ async function publishAssignable({ id, ctx }) {
 
     const { actions } = await getUserPermission({ assignableId: id, ctx });
 
-    if (!actions.includes('edit')) {
+    if (!actions.includes("edit")) {
       throw new LeemonsError(ctx, {
-        message: 'You do not have permissions',
+        message: "You do not have permissions",
         httpStatusCode: 403,
       });
     }
 
     await updateAsset({ asset: assignable.asset, published: true, ctx });
 
-    await ctx.tx.call('common.versionControl.publishVersion', {
+    await ctx.tx.call("common.versionControl.publishVersion", {
       id,
       publish: true,
       setAsCurrent: true,

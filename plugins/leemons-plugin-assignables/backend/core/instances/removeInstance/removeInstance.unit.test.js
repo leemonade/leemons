@@ -4,28 +4,28 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { removeInstance } = require('./removeInstance');
+const { removeInstance } = require("./removeInstance");
 
-const { instancesSchema } = require('../../../models/instances');
+const { instancesSchema } = require("../../../models/instances");
 const {
   getInstanceObject,
-} = require('../../../__fixtures__/getInstanceObject');
+} = require("../../../__fixtures__/getInstanceObject");
 
-const { unregisterClass } = require('../../classes');
-const { unregisterDates } = require('../../dates');
-const { getInstance } = require('../getInstance');
+const { unregisterClass } = require("../../classes");
+const { unregisterDates } = require("../../dates");
+const { getInstance } = require("../getInstance");
 const {
   removePermission,
-} = require('../../permissions/instances/removePermission');
+} = require("../../permissions/instances/removePermission");
 
-jest.mock('../../classes/unregisterClass');
-jest.mock('../../dates/unregisterDates');
-jest.mock('../getInstance');
-jest.mock('../../permissions/instances/removePermission');
+jest.mock("../../classes/unregisterClass");
+jest.mock("../../dates/unregisterDates");
+jest.mock("../getInstance");
+jest.mock("../../permissions/instances/removePermission");
 
 const removeEventHandler = jest.fn();
 
@@ -52,25 +52,25 @@ beforeEach(async () => {
 
   ctx = generateCtx({
     actions: {
-      'calendar.calendar.removeEvent': removeEventHandler,
+      "calendar.calendar.removeEvent": removeEventHandler,
     },
     models: {
-      Instances: newModel(mongooseConnection, 'Instances', instancesSchema),
+      Instances: newModel(mongooseConnection, "Instances", instancesSchema),
     },
   });
 });
 
-it('Should remove instance successfully', async () => {
+it("Should remove instance successfully", async () => {
   // Arrange
-  const instanceId = 'testInstanceId1';
+  const instanceId = "testInstanceId1";
   const instance = {
     ...getInstanceObject(),
     id: instanceId,
-    relatedAssignableInstances: { before: { id: 'relatedAssignableId1' } },
+    relatedAssignableInstances: { before: { id: "relatedAssignableId1" } },
   };
   const relatedInstance = {
     ...getInstanceObject(),
-    id: 'relatedAssignableId1',
+    id: "relatedAssignableId1",
     relatedAssignableInstances: {},
     event: undefined,
   };
@@ -79,7 +79,7 @@ it('Should remove instance successfully', async () => {
   getInstance
     .mockResolvedValueOnce({
       ...instance,
-      relatedAssignableInstances: ['relatedAssignableId1'],
+      relatedAssignableInstances: ["relatedAssignableId1"],
     })
     .mockResolvedValueOnce({
       ...relatedInstance,
@@ -96,7 +96,7 @@ it('Should remove instance successfully', async () => {
   expect(getInstance).toBeCalledWith({ id: instanceId, details: true, ctx });
   expect(removeEventHandler).toBeCalledWith({ id: instance.event });
   expect(unregisterDates).toBeCalledWith({
-    type: 'assignableInstance',
+    type: "assignableInstance",
     instance: instanceId,
     name: Object.keys(instance.dates),
     ctx,

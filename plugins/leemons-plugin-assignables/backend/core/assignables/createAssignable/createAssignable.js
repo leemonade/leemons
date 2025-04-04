@@ -1,10 +1,16 @@
-const { pick } = require('lodash');
-const { validateAssignable } = require('../../../validations/validateAssignable');
-const { duplicateAsset } = require('../../leebrary/assets/duplicateAsset');
-const { registerAssignablePermission } = require('../../permissions/assignables');
-const { addPermissionToUser } = require('../../permissions/assignables/users/addPermissionToUser');
-const { saveSubjects } = require('../../subjects/saveSubjects');
-const { publishAssignable } = require('../publishAssignable');
+const { pick } = require("lodash");
+const {
+  validateAssignable,
+} = require("../../../validations/validateAssignable");
+const { duplicateAsset } = require("../../leebrary/assets/duplicateAsset");
+const {
+  registerAssignablePermission,
+} = require("../../permissions/assignables");
+const {
+  addPermissionToUser,
+} = require("../../permissions/assignables/users/addPermissionToUser");
+const { saveSubjects } = require("../../subjects/saveSubjects");
+const { publishAssignable } = require("../publishAssignable");
 
 /**
  * Create an asset
@@ -20,11 +26,21 @@ const { publishAssignable } = require('../publishAssignable');
  */
 async function createAsset({ asset, role, subjects, published, ctx }) {
   const assetProgram = subjects?.length ? subjects[0].program : null;
-  const assetSubjects = subjects?.length ? subjects.map((subject) => subject.subject) : null;
+  const assetSubjects = subjects?.length
+    ? subjects.map((subject) => subject.subject)
+    : null;
 
-  return ctx.tx.call('leebrary.assets.add', {
+  return ctx.tx.call("leebrary.assets.add", {
     asset: {
-      ...pick(asset, ['cover', 'color', 'name', 'tagline', 'description', 'tags', 'indexable']),
+      ...pick(asset, [
+        "cover",
+        "color",
+        "name",
+        "tagline",
+        "description",
+        "tags",
+        "indexable",
+      ]),
       program: assetProgram,
       subjects: assetSubjects,
       category: `assignables.${role}`,
@@ -58,24 +74,47 @@ async function saveResources({ resources, leebraryResources, ctx }) {
           return id;
         }
 
-        return (await duplicateAsset({ id, preserveName: true, public: 1, indexable: 0, ctx })).id;
+        return (
+          await duplicateAsset({
+            id,
+            preserveName: true,
+            public: 1,
+            indexable: 0,
+            ctx,
+          })
+        ).id;
       })
     );
   }
 
   if (leebraryResources) {
-    const parsedAssets = Object.entries(leebraryResources).map(async ([key, value]) => {
-      if (Array.isArray(value)) {
-        return [key, (await saveResources({ resources: value, ctx })).resources];
+    const parsedAssets = Object.entries(leebraryResources).map(
+      async ([key, value]) => {
+        if (Array.isArray(value)) {
+          return [
+            key,
+            (await saveResources({ resources: value, ctx })).resources,
+          ];
+        }
+
+        return [
+          key,
+          (
+            await duplicateAsset({
+              id: value,
+              preserveName: true,
+              public: 1,
+              indexable: 0,
+              ctx,
+            })
+          ).id,
+        ];
       }
+    );
 
-      return [
-        key,
-        (await duplicateAsset({ id: value, preserveName: true, public: 1, indexable: 0, ctx })).id,
-      ];
-    });
-
-    duplicatedLeebraryResources = Object.fromEntries(await Promise.all(parsedAssets));
+    duplicatedLeebraryResources = Object.fromEntries(
+      await Promise.all(parsedAssets)
+    );
   }
 
   return {
@@ -95,7 +134,9 @@ async function saveResources({ resources, leebraryResources, ctx }) {
  */
 async function registerVersionIfNoId({ id, ctx }) {
   if (!id) {
-    const version = await ctx.tx.call('common.versionControl.register', { type: 'assignable' });
+    const version = await ctx.tx.call("common.versionControl.register", {
+      type: "assignable",
+    });
 
     return version.fullId;
   }
@@ -138,7 +179,7 @@ async function createAssignable({
     validateAssignable(assignable, { useRequired: true });
 
     // Throw error if role does not exists
-    await ctx.tx.call('assignables.roles.getRole', { role: assignable.role });
+    await ctx.tx.call("assignables.roles.getRole", { role: assignable.role });
 
     /*
           Compute the ids to save
@@ -146,18 +187,27 @@ async function createAssignable({
     const idToUse = await registerVersionIfNoId({ id, ctx });
 
     // Duplicate assets to avoid permission conflicts
-    const { resources: resourcesToSave, leebraryResources } = await saveResources({
-      resources,
-      leebraryResources: metadata?.leebrary,
-      ctx,
-    });
+    const { resources: resourcesToSave, leebraryResources } =
+      await saveResources({
+        resources,
+        leebraryResources: metadata?.leebrary,
+        ctx,
+      });
 
     /*
           Create the assignable entity
         */
     const asset = id
       ? assignableAsset
-      : (await createAsset({ asset: assignableAsset, role, subjects, published: false, ctx })).id;
+      : (
+          await createAsset({
+            asset: assignableAsset,
+            role,
+            subjects,
+            published: false,
+            ctx,
+          })
+        ).id;
 
     const assignableToCreate = {
       ...assignableObject,
@@ -173,7 +223,8 @@ async function createAssignable({
       resources: resourcesToSave ?? [],
     };
 
-    let assignableCreated = await ctx.tx.db.Assignables.create(assignableToCreate);
+    let assignableCreated =
+      await ctx.tx.db.Assignables.create(assignableToCreate);
     assignableCreated = assignableCreated.toObject();
 
     await saveSubjects({
@@ -194,7 +245,7 @@ async function createAssignable({
     await addPermissionToUser({
       id: assignableCreated.id,
       userAgents: ctx.meta.userSession.userAgents.map((user) => user.id),
-      role: 'owner',
+      role: "owner",
       ctx,
     });
 

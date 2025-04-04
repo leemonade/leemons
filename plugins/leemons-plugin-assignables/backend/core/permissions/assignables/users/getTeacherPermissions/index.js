@@ -1,4 +1,4 @@
-const { getTeacherPermissions } = require('./getTeacherPermissions');
+const { getTeacherPermissions } = require("./getTeacherPermissions");
 
 module.exports = {
   getTeacherPermissions,

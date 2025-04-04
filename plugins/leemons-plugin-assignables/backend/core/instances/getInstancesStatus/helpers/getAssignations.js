@@ -1,4 +1,4 @@
-const { keyBy } = require('lodash');
+const { keyBy } = require("lodash");
 
 async function getAssignations({ instancesIds, isStudent, ctx }) {
   const pipeline = ({ ids }) => [
@@ -13,14 +13,14 @@ async function getAssignations({ instancesIds, isStudent, ctx }) {
     },
     {
       $lookup: {
-        from: 'v1::assignables_dates',
-        localField: 'id',
-        foreignField: 'instance',
-        as: 'dates',
+        from: "v1::assignables_dates",
+        localField: "id",
+        foreignField: "instance",
+        as: "dates",
         pipeline: [
           {
             $match: {
-              type: 'assignation',
+              type: "assignation",
             },
           },
         ],
@@ -31,11 +31,11 @@ async function getAssignations({ instancesIds, isStudent, ctx }) {
         dates: {
           $arrayToObject: {
             $map: {
-              input: '$dates',
-              as: 'date',
+              input: "$dates",
+              as: "date",
               in: {
-                k: '$$date.name',
-                v: '$$date.date',
+                k: "$$date.name",
+                v: "$$date.date",
               },
             },
           },
@@ -44,14 +44,14 @@ async function getAssignations({ instancesIds, isStudent, ctx }) {
     },
     {
       $lookup: {
-        from: 'v1::assignables_grades',
-        localField: 'id',
-        foreignField: 'assignation',
-        as: 'grades',
+        from: "v1::assignables_grades",
+        localField: "id",
+        foreignField: "assignation",
+        as: "grades",
         pipeline: [
           {
             $match: {
-              type: 'main',
+              type: "main",
             },
           },
         ],
@@ -63,26 +63,28 @@ async function getAssignations({ instancesIds, isStudent, ctx }) {
         instance: 1,
         id: 1,
         user: 1,
-        timestamps: '$dates',
+        timestamps: "$dates",
         grades: {
           $map: {
-            input: '$grades',
-            as: 'grade',
-            in: '$$grade.subject',
+            input: "$grades",
+            as: "grade",
+            in: "$$grade.subject",
           },
         },
       },
     },
     {
       $group: {
-        _id: '$instance',
-        assignations: { $push: '$$ROOT' },
+        _id: "$instance",
+        assignations: { $push: "$$ROOT" },
       },
     },
   ];
-  const assignations = await ctx.tx.db.Assignations.aggregate(pipeline({ ids: instancesIds, ctx }));
+  const assignations = await ctx.tx.db.Assignations.aggregate(
+    pipeline({ ids: instancesIds, ctx })
+  );
 
-  return keyBy(assignations, '_id', 'assignations');
+  return keyBy(assignations, "_id", "assignations");
 }
 
 module.exports = getAssignations;

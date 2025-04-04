@@ -1,16 +1,16 @@
-const { beforeEach, describe, test, expect } = require('@jest/globals');
-const dayjs = require('dayjs');
+const { beforeEach, describe, test, expect } = require("@jest/globals");
+const dayjs = require("dayjs");
 
-const { generateCtx } = require('@leemons/testing');
+const { generateCtx } = require("@leemons/testing");
 
-const { filterByInstanceDates } = require('./filterByInstanceDates');
+const { filterByInstanceDates } = require("./filterByInstanceDates");
 
-const { getInstanceDates } = require('./getInstanceDates');
+const { getInstanceDates } = require("./getInstanceDates");
 
-jest.mock('./getInstanceDates');
+jest.mock("./getInstanceDates");
 
-const dateAfterNow = dayjs().add(1, 'd').toString();
-const dateBeforeNow = dayjs().subtract(1, 'd').toString();
+const dateAfterNow = dayjs().add(1, "d").toString();
+const dateBeforeNow = dayjs().subtract(1, "d").toString();
 const someDate = dayjs().toString();
 
 let ctx;
@@ -20,8 +20,8 @@ beforeEach(async () => {
   ctx = generateCtx({});
 });
 
-describe('should filter instances by deadline', () => {
-  test('when query.deadline is true', async () => {
+describe("should filter instances by deadline", () => {
+  test("when query.deadline is true", async () => {
     // Arrange
     getInstanceDates.mockResolvedValue({
       instanceId1: {
@@ -41,7 +41,7 @@ describe('should filter instances by deadline', () => {
     });
     const mockParams = {
       query: { deadline: true },
-      assignableInstancesIds: ['instanceId1', 'instanceId2', 'instanceId3'],
+      assignableInstancesIds: ["instanceId1", "instanceId2", "instanceId3"],
       ctx,
     };
 
@@ -49,10 +49,10 @@ describe('should filter instances by deadline', () => {
     const resp = await filterByInstanceDates(mockParams);
 
     // Assert
-    expect(resp).toEqual(['instanceId2', 'instanceId3']);
+    expect(resp).toEqual(["instanceId2", "instanceId3"]);
   });
 
-  test('when query.deadline is false', async () => {
+  test("when query.deadline is false", async () => {
     // Arrange
     getInstanceDates.mockResolvedValue({
       instanceId1: {
@@ -72,7 +72,7 @@ describe('should filter instances by deadline', () => {
     });
     const mockParams = {
       query: { deadline: false },
-      assignableInstancesIds: ['instanceId1', 'instanceId2', 'instanceId3'],
+      assignableInstancesIds: ["instanceId1", "instanceId2", "instanceId3"],
       ctx,
     };
 
@@ -80,10 +80,10 @@ describe('should filter instances by deadline', () => {
     const resp = await filterByInstanceDates(mockParams);
 
     // Assert
-    expect(resp).toEqual(['instanceId1', 'instanceId3']);
+    expect(resp).toEqual(["instanceId1", "instanceId3"]);
   });
-  describe('should filter instances by deadline', () => {
-    test('when query.closed is true', async () => {
+  describe("should filter instances by deadline", () => {
+    test("when query.closed is true", async () => {
       // Arrange
       getInstanceDates.mockResolvedValue({
         instanceId1: {
@@ -103,7 +103,7 @@ describe('should filter instances by deadline', () => {
       });
       const mockParams = {
         query: { closed: true },
-        assignableInstancesIds: ['instanceId1', 'instanceId2', 'instanceId3'],
+        assignableInstancesIds: ["instanceId1", "instanceId2", "instanceId3"],
         ctx,
       };
 
@@ -111,10 +111,10 @@ describe('should filter instances by deadline', () => {
       const resp = await filterByInstanceDates(mockParams);
 
       // Assert
-      expect(resp).toEqual(['instanceId2', 'instanceId3']);
+      expect(resp).toEqual(["instanceId2", "instanceId3"]);
     });
 
-    test('when query.closed is false', async () => {
+    test("when query.closed is false", async () => {
       // Arrange
       getInstanceDates.mockResolvedValue({
         instanceId1: {
@@ -134,7 +134,7 @@ describe('should filter instances by deadline', () => {
       });
       const mockParams = {
         query: { closed: false },
-        assignableInstancesIds: ['instanceId1', 'instanceId2', 'instanceId3'],
+        assignableInstancesIds: ["instanceId1", "instanceId2", "instanceId3"],
         ctx,
       };
 
@@ -142,11 +142,11 @@ describe('should filter instances by deadline', () => {
       const resp = await filterByInstanceDates(mockParams);
 
       // Assert
-      expect(resp).toEqual(['instanceId1', 'instanceId3']);
+      expect(resp).toEqual(["instanceId1", "instanceId3"]);
     });
   });
-  describe('should filter instances by opened', () => {
-    test('when query.opened is true', async () => {
+  describe("should filter instances by opened", () => {
+    test("when query.opened is true", async () => {
       // Arrange
       getInstanceDates.mockResolvedValue({
         instanceId1: {
@@ -166,7 +166,7 @@ describe('should filter instances by deadline', () => {
       });
       const mockParams = {
         query: { opened: true },
-        assignableInstancesIds: ['instanceId1', 'instanceId2', 'instanceId3'],
+        assignableInstancesIds: ["instanceId1", "instanceId2", "instanceId3"],
         ctx,
       };
 
@@ -174,10 +174,10 @@ describe('should filter instances by deadline', () => {
       const resp = await filterByInstanceDates(mockParams);
 
       // Assert
-      expect(resp).toEqual(['instanceId2', 'instanceId3']);
+      expect(resp).toEqual(["instanceId2", "instanceId3"]);
     });
 
-    test('when query.opened is false', async () => {
+    test("when query.opened is false", async () => {
       // Arrange
       getInstanceDates.mockResolvedValue({
         instanceId1: {
@@ -197,7 +197,7 @@ describe('should filter instances by deadline', () => {
       });
       const mockParams = {
         query: { opened: false },
-        assignableInstancesIds: ['instanceId1', 'instanceId2', 'instanceId3'],
+        assignableInstancesIds: ["instanceId1", "instanceId2", "instanceId3"],
         ctx,
       };
 
@@ -205,12 +205,12 @@ describe('should filter instances by deadline', () => {
       const resp = await filterByInstanceDates(mockParams);
 
       // Assert
-      expect(resp).toEqual(['instanceId1', 'instanceId3']);
+      expect(resp).toEqual(["instanceId1", "instanceId3"]);
     });
   });
 
-  describe('should filter instances by archived', () => {
-    test('when query.archived is true', async () => {
+  describe("should filter instances by archived", () => {
+    test("when query.archived is true", async () => {
       // Arrange
       getInstanceDates.mockResolvedValue({
         instanceId1: {
@@ -231,7 +231,7 @@ describe('should filter instances by deadline', () => {
 
       const mockParams = {
         query: { archived: true },
-        assignableInstancesIds: ['instanceId1', 'instanceId2', 'instanceId3'],
+        assignableInstancesIds: ["instanceId1", "instanceId2", "instanceId3"],
         ctx,
       };
 
@@ -239,10 +239,10 @@ describe('should filter instances by deadline', () => {
       const resp = await filterByInstanceDates(mockParams);
 
       // Assert
-      expect(resp).toEqual(['instanceId2']);
+      expect(resp).toEqual(["instanceId2"]);
     });
 
-    test('when query.archived is false', async () => {
+    test("when query.archived is false", async () => {
       // Arrange
       getInstanceDates.mockResolvedValue({
         instanceId1: {
@@ -263,7 +263,7 @@ describe('should filter instances by deadline', () => {
 
       const mockParams = {
         query: { archived: false },
-        assignableInstancesIds: ['instanceId1', 'instanceId2', 'instanceId3'],
+        assignableInstancesIds: ["instanceId1", "instanceId2", "instanceId3"],
         ctx,
       };
 
@@ -271,17 +271,17 @@ describe('should filter instances by deadline', () => {
       const resp = await filterByInstanceDates(mockParams);
 
       // Assert
-      expect(resp).toEqual(['instanceId1', 'instanceId3']);
+      expect(resp).toEqual(["instanceId1", "instanceId3"]);
     });
   });
 
-  describe('should filter instances by finished', () => {
-    test('when query.finished is true and finished_$gt and finished_$lt are valid dates', async () => {
+  describe("should filter instances by finished", () => {
+    test("when query.finished is true and finished_$gt and finished_$lt are valid dates", async () => {
       // Arrange
       getInstanceDates.mockResolvedValue({
         instanceId1: {
           start: someDate,
-          closed: dayjs(dateBeforeNow).subtract(1, 'd').toString(),
+          closed: dayjs(dateBeforeNow).subtract(1, "d").toString(),
           archived: someDate,
           visualization: someDate,
           deadline: dateBeforeNow,
@@ -301,7 +301,7 @@ describe('should filter instances by deadline', () => {
           finished_$gt: dateBeforeNow,
           finished_$lt: dateAfterNow,
         },
-        assignableInstancesIds: ['instanceId1', 'instanceId2', 'instanceId3'],
+        assignableInstancesIds: ["instanceId1", "instanceId2", "instanceId3"],
         ctx,
       };
 
@@ -309,10 +309,10 @@ describe('should filter instances by deadline', () => {
       const resp = await filterByInstanceDates(mockParams);
 
       // Assert
-      expect(resp).toEqual(['instanceId2']);
+      expect(resp).toEqual(["instanceId2"]);
     });
 
-    test('when query.finished is true and finished_$gt and finished_$lt are not valid dates', async () => {
+    test("when query.finished is true and finished_$gt and finished_$lt are not valid dates", async () => {
       // Arrange
       getInstanceDates.mockResolvedValue({
         instanceId1: {
@@ -336,7 +336,7 @@ describe('should filter instances by deadline', () => {
           finished_$gt: undefined,
           finished_$lt: undefined,
         },
-        assignableInstancesIds: ['instanceId1', 'instanceId2', 'instanceId3'],
+        assignableInstancesIds: ["instanceId1", "instanceId2", "instanceId3"],
         ctx,
       };
 
@@ -344,10 +344,10 @@ describe('should filter instances by deadline', () => {
       const resp = await filterByInstanceDates(mockParams);
 
       // Assert
-      expect(resp).toEqual(['instanceId1', 'instanceId2']);
+      expect(resp).toEqual(["instanceId1", "instanceId2"]);
     });
 
-    test('when query.finished is false', async () => {
+    test("when query.finished is false", async () => {
       // Arrange
       getInstanceDates.mockResolvedValue({
         instanceId1: {
@@ -368,7 +368,7 @@ describe('should filter instances by deadline', () => {
 
       const mockParams = {
         query: { finished: false },
-        assignableInstancesIds: ['instanceId1', 'instanceId2', 'instanceId3'],
+        assignableInstancesIds: ["instanceId1", "instanceId2", "instanceId3"],
         ctx,
       };
 
@@ -376,12 +376,12 @@ describe('should filter instances by deadline', () => {
       const resp = await filterByInstanceDates(mockParams);
 
       // Assert
-      expect(resp).toEqual(['instanceId1', 'instanceId2', 'instanceId3']);
+      expect(resp).toEqual(["instanceId1", "instanceId2", "instanceId3"]);
     });
   });
 
-  describe('should filter instances by visibility', () => {
-    test('when query.visible is true and instance visualization is after now', async () => {
+  describe("should filter instances by visibility", () => {
+    test("when query.visible is true and instance visualization is after now", async () => {
       // Arrange
       getInstanceDates.mockResolvedValue({
         instanceId1: {
@@ -401,7 +401,7 @@ describe('should filter instances by deadline', () => {
       });
       const mockParams = {
         query: { visible: true },
-        assignableInstancesIds: ['instanceId1', 'instanceId2', 'instanceId3'],
+        assignableInstancesIds: ["instanceId1", "instanceId2", "instanceId3"],
         ctx,
       };
 
@@ -409,10 +409,10 @@ describe('should filter instances by deadline', () => {
       const resp = await filterByInstanceDates(mockParams);
 
       // Assert
-      expect(resp).toEqual(['instanceId2', 'instanceId3']);
+      expect(resp).toEqual(["instanceId2", "instanceId3"]);
     });
 
-    test('when query.visible is true and instance is not started', async () => {
+    test("when query.visible is true and instance is not started", async () => {
       // Arrange
       getInstanceDates.mockResolvedValue({
         instanceId1: {
@@ -432,7 +432,7 @@ describe('should filter instances by deadline', () => {
       });
       const mockParams = {
         query: { visible: true },
-        assignableInstancesIds: ['instanceId1', 'instanceId2', 'instanceId3'],
+        assignableInstancesIds: ["instanceId1", "instanceId2", "instanceId3"],
         ctx,
       };
 
@@ -440,9 +440,9 @@ describe('should filter instances by deadline', () => {
       const resp = await filterByInstanceDates(mockParams);
 
       // Assert
-      expect(resp).toEqual(['instanceId2', 'instanceId3']);
+      expect(resp).toEqual(["instanceId2", "instanceId3"]);
     });
-    test('when query.visible is false and instance visualization is after now', async () => {
+    test("when query.visible is false and instance visualization is after now", async () => {
       // Arrange
       getInstanceDates.mockResolvedValue({
         instanceId1: {
@@ -462,7 +462,7 @@ describe('should filter instances by deadline', () => {
       });
       const mockParams = {
         query: { visible: false },
-        assignableInstancesIds: ['instanceId1', 'instanceId2', 'instanceId3'],
+        assignableInstancesIds: ["instanceId1", "instanceId2", "instanceId3"],
         ctx,
       };
 
@@ -470,10 +470,10 @@ describe('should filter instances by deadline', () => {
       const resp = await filterByInstanceDates(mockParams);
 
       // Assert
-      expect(resp).toEqual(['instanceId1', 'instanceId3']);
+      expect(resp).toEqual(["instanceId1", "instanceId3"]);
     });
 
-    test('when query.visible is false and instance is not started', async () => {
+    test("when query.visible is false and instance is not started", async () => {
       // Arrange
       getInstanceDates.mockResolvedValue({
         instanceId1: {
@@ -493,7 +493,7 @@ describe('should filter instances by deadline', () => {
       });
       const mockParams = {
         query: { visible: false },
-        assignableInstancesIds: ['instanceId1', 'instanceId2', 'instanceId3'],
+        assignableInstancesIds: ["instanceId1", "instanceId2", "instanceId3"],
         ctx,
       };
 
@@ -501,16 +501,16 @@ describe('should filter instances by deadline', () => {
       const resp = await filterByInstanceDates(mockParams);
 
       // Assert
-      expect(resp).toEqual(['instanceId1', 'instanceId3']);
+      expect(resp).toEqual(["instanceId1", "instanceId3"]);
     });
   });
 
-  describe('should return the same instances if no date filters are provided', () => {
-    test.skip('should return the same instances if no date filters are provided', async () => {
+  describe("should return the same instances if no date filters are provided", () => {
+    test.skip("should return the same instances if no date filters are provided", async () => {
       // Arrange
       const mockParams = {
         query: {},
-        assignableInstancesIds: ['instanceId1', 'instanceId2'],
+        assignableInstancesIds: ["instanceId1", "instanceId2"],
         ctx,
       };
 
@@ -518,7 +518,7 @@ describe('should filter instances by deadline', () => {
       const resp = await filterByInstanceDates(mockParams);
 
       // Assert
-      expect(resp).toEqual(['instanceId1', 'instanceId2']);
+      expect(resp).toEqual(["instanceId1", "instanceId2"]);
     });
   });
 });

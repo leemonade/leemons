@@ -1,30 +1,30 @@
-const { it, expect, jest: globalJest } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+const { it, expect, jest: globalJest } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-globalJest.mock('../../leebrary/assets/updateAsset');
-globalJest.mock('../../permissions/assignables/users/getUserPermission');
-globalJest.mock('../getAssignable');
+globalJest.mock("../../leebrary/assets/updateAsset");
+globalJest.mock("../../permissions/assignables/users/getUserPermission");
+globalJest.mock("../getAssignable");
 
 const {
   getAssignableObject,
-} = require('../../../__fixtures__/getAssignableObject');
-const { publishAssignable } = require('./publishAssignable');
+} = require("../../../__fixtures__/getAssignableObject");
+const { publishAssignable } = require("./publishAssignable");
 
 const {
   getUserPermission,
-} = require('../../permissions/assignables/users/getUserPermission');
-const { getAssignable } = require('../getAssignable');
+} = require("../../permissions/assignables/users/getUserPermission");
+const { getAssignable } = require("../getAssignable");
 
-it('Publishes the assignable', async () => {
+it("Publishes the assignable", async () => {
   // Arrange
   const assignable = getAssignableObject();
-  const id = 'assignable-id';
+  const id = "assignable-id";
   const actions = {
-    'common.versionControl.publishVersion': globalJest.fn(),
+    "common.versionControl.publishVersion": globalJest.fn(),
   };
 
   getAssignable.mockImplementation(() => assignable);
-  getUserPermission.mockImplementation(() => ({ actions: ['view', 'edit'] }));
+  getUserPermission.mockImplementation(() => ({ actions: ["view", "edit"] }));
 
   const ctx = generateCtx({
     actions,
@@ -35,23 +35,23 @@ it('Publishes the assignable', async () => {
 
   // Assert
   expect(response).toBe(true);
-  expect(actions['common.versionControl.publishVersion']).toHaveBeenCalledWith({
+  expect(actions["common.versionControl.publishVersion"]).toHaveBeenCalledWith({
     id,
     publish: true,
     setAsCurrent: true,
   });
 });
 
-it('Throws an error if already published', async () => {
+it("Throws an error if already published", async () => {
   const assignable = getAssignableObject();
-  const id = 'assignable-id';
+  const id = "assignable-id";
 
   getAssignable.mockImplementation(() => assignable);
-  getUserPermission.mockImplementation(() => ({ actions: ['view', 'edit'] }));
+  getUserPermission.mockImplementation(() => ({ actions: ["view", "edit"] }));
 
   const actions = {
-    'common.versionControl.publishVersion': () => {
-      throw new Error('already published');
+    "common.versionControl.publishVersion": () => {
+      throw new Error("already published");
     },
   };
 
@@ -64,19 +64,19 @@ it('Throws an error if already published', async () => {
 
   // Assert
   expect(testFn()).rejects.toThrowError(
-    'Cannot publish assignable: already published'
+    "Cannot publish assignable: already published"
   );
 });
 
-it('Throws an error if user lacks permissions', async () => {
+it("Throws an error if user lacks permissions", async () => {
   const assignable = getAssignableObject();
-  const id = 'assignable-id';
+  const id = "assignable-id";
 
   getAssignable.mockImplementation(() => assignable);
-  getUserPermission.mockImplementation(() => ({ actions: ['view'] }));
+  getUserPermission.mockImplementation(() => ({ actions: ["view"] }));
 
   const actions = {
-    'common.versionControl.publishVersion': globalJest.fn(),
+    "common.versionControl.publishVersion": globalJest.fn(),
   };
 
   const ctx = generateCtx({
@@ -87,19 +87,19 @@ it('Throws an error if user lacks permissions', async () => {
   const testFn = () => publishAssignable({ id, ctx });
 
   // Assert
-  expect(testFn()).rejects.toThrowError('You do not have permissions');
-  expect(actions['common.versionControl.publishVersion']).not.toBeCalled();
+  expect(testFn()).rejects.toThrowError("You do not have permissions");
+  expect(actions["common.versionControl.publishVersion"]).not.toBeCalled();
 });
 
-it('Throws an error if the assignable is soft-deleted', async () => {
+it("Throws an error if the assignable is soft-deleted", async () => {
   const assignable = getAssignableObject();
-  const id = 'assignable-id';
+  const id = "assignable-id";
 
   getAssignable.mockImplementation(() => ({ ...assignable, isDeleted: true }));
-  getUserPermission.mockImplementation(() => ({ actions: ['view'] }));
+  getUserPermission.mockImplementation(() => ({ actions: ["view"] }));
 
   const actions = {
-    'common.versionControl.publishVersion': globalJest.fn(),
+    "common.versionControl.publishVersion": globalJest.fn(),
   };
 
   const ctx = generateCtx({
@@ -111,7 +111,7 @@ it('Throws an error if the assignable is soft-deleted', async () => {
 
   // Assert
   expect(testFn()).rejects.toThrowError(
-    'Cannot publish assignable: The assignable is deleted'
+    "Cannot publish assignable: The assignable is deleted"
   );
-  expect(actions['common.versionControl.publishVersion']).not.toBeCalled();
+  expect(actions["common.versionControl.publishVersion"]).not.toBeCalled();
 });

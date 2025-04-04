@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -64,8 +64,16 @@ schema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
 schema.index({ asset: 1, deploymentID: 1, isDeleted: 1 });
 schema.index({ id: 1, role: 1, deploymentID: 1, isDeleted: 1 });
 schema.index({ asset: 1, role: 1, deploymentID: 1, isDeleted: 1 });
-schema.index({ 'submission.activities.activity': 1, deploymentID: 1, isDeleted: 1 });
+schema.index({
+  "submission.activities.activity": 1,
+  deploymentID: 1,
+  isDeleted: 1,
+});
 
-const assignablesModel = newModel(mongoose.connection, 'v1::assignables_Assignables', schema);
+const assignablesModel = newModel(
+  mongoose.connection,
+  "v1::assignables_Assignables",
+  schema
+);
 
 module.exports = { assignablesSchema: schema, assignablesModel };

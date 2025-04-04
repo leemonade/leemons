@@ -1,58 +1,82 @@
-import React, { useMemo } from 'react';
-import { useForm, Controller, useWatch } from 'react-hook-form';
+import React, { useMemo } from "react";
+import { useForm, Controller, useWatch } from "react-hook-form";
 
-import { Box, RadioGroup, createStyles, LoadingOverlay } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+import {
+  Box,
+  RadioGroup,
+  createStyles,
+  LoadingOverlay,
+} from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
-import { Container } from '../Container';
+import { Container } from "../Container";
 
-import { ActivityDatesPickerProvider } from './context/ActivityDatesPickerProvider';
-import useDatesPickerOptions from './hooks/useDatesPickerOptions';
+import { ActivityDatesPickerProvider } from "./context/ActivityDatesPickerProvider";
+import useDatesPickerOptions from "./hooks/useDatesPickerOptions";
 
 export const useActivityDatesPickerStyles = createStyles((theme) => ({
   root: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     // gap: theme.other.global.spacing.padding.xlg,
   },
   content: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     // gap: theme.other.global.spacing.padding.lg,
   },
   switchContainer: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     // gap: theme.other.global.spacing.gap.sm,
     marginTop: theme.other.global.spacing.gap.md,
   },
 }));
 
 function useOnChange({ control, onChange }) {
-  const { type, dates, hideFromCalendar, maxTimeToggle, maxTime, ...others } = useWatch({
-    control,
-  });
+  const { type, dates, hideFromCalendar, maxTimeToggle, maxTime, ...others } =
+    useWatch({
+      control,
+    });
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const memoizedOthers = useMemo(() => others, [JSON.stringify(others)]);
 
   React.useEffect(() => {
-    if (typeof onChange !== 'function') {
+    if (typeof onChange !== "function") {
       return;
     }
 
-    const isAlwaysAvailable = type === 'alwaysAvailable';
+    const isAlwaysAvailable = type === "alwaysAvailable";
     onChange({
       alwaysAvailable: isAlwaysAvailable,
       dates: isAlwaysAvailable
         ? null
-        : { ...dates, visualization: hideFromCalendar ? undefined : new Date() },
+        : {
+            ...dates,
+            visualization: hideFromCalendar ? undefined : new Date(),
+          },
       hideFromCalendar: !!hideFromCalendar,
       maxTime: maxTimeToggle ? maxTime : null,
       others: memoizedOthers,
-      raw: { type, dates, hideFromCalendar, maxTimeToggle, maxTime, ...memoizedOthers },
+      raw: {
+        type,
+        dates,
+        hideFromCalendar,
+        maxTimeToggle,
+        maxTime,
+        ...memoizedOthers,
+      },
     });
-  }, [type, dates, hideFromCalendar, maxTimeToggle, maxTime, onChange, memoizedOthers]);
+  }, [
+    type,
+    dates,
+    hideFromCalendar,
+    maxTimeToggle,
+    maxTime,
+    onChange,
+    memoizedOthers,
+  ]);
 }
 
 export function ActivityDatesPicker({
@@ -70,14 +94,14 @@ export function ActivityDatesPicker({
 
   const form = useForm({
     defaultValues: {
-      type: 'alwaysAvailable',
-      maxTime: '1 hours',
+      type: "alwaysAvailable",
+      maxTime: "1 hours",
       ...value?.raw,
     },
   });
   const control = form.control;
 
-  const type = useWatch({ control, name: 'type' });
+  const type = useWatch({ control, name: "type" });
   useOnChange({ onChange, control });
 
   const { classes } = useActivityDatesPickerStyles();
@@ -113,7 +137,9 @@ export function ActivityDatesPicker({
           <Controller
             name="type"
             control={control}
-            render={({ field }) => <RadioGroup {...field} minWidth data={options} />}
+            render={({ field }) => (
+              <RadioGroup {...field} minWidth data={options} />
+            )}
           />
           {type && components[type] ? <TypeComponent form={form} /> : null}
         </Box>

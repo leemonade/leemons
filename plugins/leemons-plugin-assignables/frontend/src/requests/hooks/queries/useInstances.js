@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
-import { useVariantForQueryKey } from '@common/queries';
-import getAssignableInstances from '@assignables/requests/assignableInstances/getAssignableInstances';
-import { head } from 'lodash';
-import { instancesGetKey } from '../keys/instances';
+import { useQuery } from "@tanstack/react-query";
+import { useVariantForQueryKey } from "@common/queries";
+import getAssignableInstances from "@assignables/requests/assignableInstances/getAssignableInstances";
+import { head } from "lodash";
+import { instancesGetKey } from "../keys/instances";
 
 export default function useInstances({
   id,
@@ -29,10 +29,15 @@ export default function useInstances({
           relatedInstances,
         }).then(head)
     : () =>
-        getAssignableInstances({ ids: instancesIds, details, throwOnMissing, relatedInstances });
+        getAssignableInstances({
+          ids: instancesIds,
+          details,
+          throwOnMissing,
+          relatedInstances,
+        });
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'frequently',
+    modificationTrend: "frequently",
   });
 
   return useQuery({

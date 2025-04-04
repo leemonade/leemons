@@ -384,29 +384,29 @@ function activity(title, t1, t2, t3, t4, t5, texts) {
 
 module.exports = {
   es: activity(
-    'Esta actividad finaliza pronto',
-    'Esta información puede haber cambiado, revisa siempre tus actividades en curso para no perderte nada.',
-    'Revisar mis actividades',
-    'Puedes cambiar tus preferencias de correo desde tu cuenta de usuario.',
-    'Enviado por {{it.__from}}',
-    '', // Política de privacidad
+    "Esta actividad finaliza pronto",
+    "Esta información puede haber cambiado, revisa siempre tus actividades en curso para no perderte nada.",
+    "Revisar mis actividades",
+    "Puedes cambiar tus preferencias de correo desde tu cuenta de usuario.",
+    "Enviado por {{it.__from}}",
+    "", // Política de privacidad
     {
-      delivery: 'Entrega',
-      expDays: 'Dentro de {{it.hours}} horas',
-      multiSubjects: 'Multi-Asignatura',
+      delivery: "Entrega",
+      expDays: "Dentro de {{it.hours}} horas",
+      multiSubjects: "Multi-Asignatura",
     }
   ),
   en: activity(
-    'This activity ends soon',
+    "This activity ends soon",
     "This information may have changed, always check your current activities so you don't miss anything.",
-    'Review my activities',
-    'You can change your email preferences from your user account',
-    'Sent to {{it.__from}}',
-    '', // Privacy policy
+    "Review my activities",
+    "You can change your email preferences from your user account",
+    "Sent to {{it.__from}}",
+    "", // Privacy policy
     {
-      delivery: 'Delivery',
-      expDays: 'In {{it.hours}} horas',
-      multiSubjects: 'Multi-Subject',
+      delivery: "Delivery",
+      expDays: "In {{it.hours}} horas",
+      multiSubjects: "Multi-Subject",
     }
   ),
 };

@@ -1,3 +1,3 @@
-import useParseAssignations from './useParseAssignations';
+import useParseAssignations from "./useParseAssignations";
 
 export default useParseAssignations;

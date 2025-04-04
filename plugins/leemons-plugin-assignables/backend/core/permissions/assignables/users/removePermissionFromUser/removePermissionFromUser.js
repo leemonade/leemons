@@ -1,5 +1,7 @@
-const { getPermissionName } = require('../../../assignables/helpers/getPermissionName');
-const { getUserPermission } = require('../getUserPermission');
+const {
+  getPermissionName,
+} = require("../../../assignables/helpers/getPermissionName");
+const { getUserPermission } = require("../getUserPermission");
 
 /**
  * Removes a permission from a user.
@@ -26,10 +28,14 @@ async function removePermissionFromUser({ assignable, userAgent, ctx }) {
     },
   });
 
-  await ctx.tx.call('users.permissions.removeCustomPermissionFromUserAgent', {
+  await ctx.tx.call("users.permissions.removeCustomPermissionFromUserAgent", {
     userAgentId: userAgent.id,
     data: {
-      permissionName: getPermissionName({ id: assignable.id, prefix: true, ctx }),
+      permissionName: getPermissionName({
+        id: assignable.id,
+        prefix: true,
+        ctx,
+      }),
       actionNames: actions,
     },
   });

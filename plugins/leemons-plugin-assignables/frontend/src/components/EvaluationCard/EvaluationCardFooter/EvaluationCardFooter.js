@@ -1,11 +1,11 @@
 /* eslint-disable import/prefer-default-export */
 /* eslint-disable no-unsafe-optional-chaining */
 /* eslint-disable no-nested-ternary */
-import React from 'react';
-import { Box, FileIcon, Text } from '@bubbles-ui/components';
-import { RoomItemDisplay } from '@comunica/components';
-import { EvaluationCardFooterStyles } from './EvaluationCardFooter.styles';
-import { EVALUATIONCARD_FOOTER_PROP_TYPES } from './EvaluationCardFooter.constants';
+import React from "react";
+import { Box, FileIcon, Text } from "@bubbles-ui/components";
+import { RoomItemDisplay } from "@comunica/components";
+import { EvaluationCardFooterStyles } from "./EvaluationCardFooter.styles";
+import { EVALUATIONCARD_FOOTER_PROP_TYPES } from "./EvaluationCardFooter.constants";
 
 const EvaluationCardFooter = ({
   fileType,
@@ -18,8 +18,8 @@ const EvaluationCardFooter = ({
   students,
 }) => {
   const { classes, cx } = EvaluationCardFooterStyles(
-    { size: 12, color: '#636D7D' },
-    { name: 'NYACardFooter' }
+    { size: 12, color: "#636D7D" },
+    { name: "NYACardFooter" }
   );
   const variantIconLabel =
     (variantTitle ?? fileType ?? variant)?.charAt(0)?.toUpperCase() +
@@ -33,7 +33,9 @@ const EvaluationCardFooter = ({
       {variantIcon ? (
         <Box className={classes.FileIconRoot}>
           {variantIcon}
-          {variantIconLabel && <Text className={classes.FileIconLabel}>{variantIconLabel}</Text>}
+          {variantIconLabel && (
+            <Text className={classes.FileIconLabel}>{variantIconLabel}</Text>
+          )}
         </Box>
       ) : (
         <Box className={classes.fileIconContainer}>
@@ -41,7 +43,7 @@ const EvaluationCardFooter = ({
             size={24}
             fileType={fileType || variant}
             fileExtension={fileExtension}
-            color={'#878D96'}
+            color={"#878D96"}
             hideExtension
           />
           <Text className={classes.fileLabel}>{variantIconLabel}</Text>

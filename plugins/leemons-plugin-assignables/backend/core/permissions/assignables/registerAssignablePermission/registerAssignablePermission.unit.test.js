@@ -1,18 +1,18 @@
-const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+const { it, expect } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
 const {
   registerAssignablePermission,
-} = require('./registerAssignablePermission');
+} = require("./registerAssignablePermission");
 
-it('Should register the permission', async () => {
+it("Should register the permission", async () => {
   // Arrange
-  const id = 'assignableId';
-  const role = 'assignableRole';
+  const id = "assignableId";
+  const role = "assignableRole";
 
   const ctx = generateCtx({
     actions: {
-      'users.permissions.addItem': (params) => params,
+      "users.permissions.addItem": (params) => params,
     },
   });
 
@@ -22,17 +22,17 @@ it('Should register the permission', async () => {
   // Assert
   expect(response.item).toBe(id);
   expect(response.type).toContain(role);
-  expect(response.data).toHaveProperty('permissionName');
-  expect(response.data).toHaveProperty('actionNames');
+  expect(response.data).toHaveProperty("permissionName");
+  expect(response.data).toHaveProperty("actionNames");
   expect(response.isCustomPermission).toBeTruthy();
 });
 
-it('Should throw if a required param is not provided', async () => {
+it("Should throw if a required param is not provided", async () => {
   // Arrange
-  const id = 'assignableId';
-  const role = 'assignableRole';
+  const id = "assignableId";
+  const role = "assignableRole";
   const expectedError =
-    'Error registering permission: The id and role params are required';
+    "Error registering permission: The id and role params are required";
 
   const ctx = generateCtx({});
 

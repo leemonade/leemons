@@ -1,20 +1,20 @@
-import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 
-import { Menu, Box, Text } from '@bubbles-ui/components';
-import { DeleteBinIcon, RemoveCircleIcon } from '@bubbles-ui/icons/outline';
-import { SettingMenuVerticalIcon, ArchiveIcon } from '@bubbles-ui/icons/solid';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import dayjs from 'dayjs';
-import PropTypes from 'prop-types';
+import { Menu, Box, Text } from "@bubbles-ui/components";
+import { DeleteBinIcon, RemoveCircleIcon } from "@bubbles-ui/icons/outline";
+import { SettingMenuVerticalIcon, ArchiveIcon } from "@bubbles-ui/icons/solid";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import dayjs from "dayjs";
+import PropTypes from "prop-types";
 
-import { MenuItemsStyles } from './MenuItems.styles';
+import { MenuItemsStyles } from "./MenuItems.styles";
 
-import prefixPN from '@assignables/helpers/prefixPN';
-import useMutateAssignableInstance from '@assignables/hooks/assignableInstance/useMutateAssignableInstance';
-import useDeleteInstanceMutation from '@assignables/requests/hooks/mutations/useDeleteInstance';
+import prefixPN from "@assignables/helpers/prefixPN";
+import useMutateAssignableInstance from "@assignables/hooks/assignableInstance/useMutateAssignableInstance";
+import useDeleteInstanceMutation from "@assignables/requests/hooks/mutations/useDeleteInstance";
 
 function onCloseTask({
   instance,
@@ -25,22 +25,22 @@ function onCloseTask({
 }) {
   return async () => {
     return openConfirmationModal({
-      title: t('closeModal.title'),
+      title: t("closeModal.title"),
       description: (
         <Box
           sx={(theme) => ({
-            display: 'flex',
-            flexDirection: 'column',
+            display: "flex",
+            flexDirection: "column",
             gap: theme.spacing[2],
           })}
         >
-          <Text>{t('closeModal.message1')}</Text>
-          <Text>{t('closeModal.message2')}</Text>
+          <Text>{t("closeModal.message1")}</Text>
+          <Text>{t("closeModal.message2")}</Text>
         </Box>
       ),
       labels: {
-        confirm: t('closeModal.confirm'),
-        cancel: t('closeModal.cancel'),
+        confirm: t("closeModal.confirm"),
+        cancel: t("closeModal.cancel"),
       },
       onConfirm: async () => {
         const newDates = {
@@ -52,10 +52,15 @@ function onCloseTask({
         }
 
         try {
-          await mutateAsyncAssignableInstance({ id: instance.id, dates: newDates });
-          addSuccessAlert(t('closeActionAlerts.success'));
+          await mutateAsyncAssignableInstance({
+            id: instance.id,
+            dates: newDates,
+          });
+          addSuccessAlert(t("closeActionAlerts.success"));
         } catch (e) {
-          addErrorAlert(t('closeActionAlerts.error').replace('{{error}}', e.message));
+          addErrorAlert(
+            t("closeActionAlerts.error").replace("{{error}}", e.message)
+          );
         }
       },
     })();
@@ -71,9 +76,11 @@ function archiveTask({ mutateAsyncAssignableInstance, instance, t }) {
 
     try {
       await mutateAsyncAssignableInstance({ id: instance.id, dates: newDates });
-      addSuccessAlert(t('archiveActionAlerts.success'));
+      addSuccessAlert(t("archiveActionAlerts.success"));
     } catch (e) {
-      addErrorAlert(t('archiveActionAlerts.error').replace('{{error}}', e.message));
+      addErrorAlert(
+        t("archiveActionAlerts.error").replace("{{error}}", e.message)
+      );
     }
   };
 }
@@ -91,27 +98,28 @@ function onArchiveTask({
       if (
         instance.students.some(
           (student) =>
-            student.grades.filter((grade) => grade.type === 'main').length < subjects?.length
+            student.grades.filter((grade) => grade.type === "main").length <
+            subjects?.length
         )
       ) {
         setArchived(true);
         return openConfirmationModal({
-          title: t('archiveModal.title'),
+          title: t("archiveModal.title"),
           description: (
             <Box
               sx={(theme) => ({
-                display: 'flex',
-                flexDirection: 'column',
+                display: "flex",
+                flexDirection: "column",
                 gap: theme.spacing[2],
               })}
             >
-              <Text>{t('archiveModal.message1')}</Text>
-              <Text>{t('archiveModal.message2')}</Text>
+              <Text>{t("archiveModal.message1")}</Text>
+              <Text>{t("archiveModal.message2")}</Text>
             </Box>
           ),
           labels: {
-            confirm: t('archiveModal.confirm'),
-            cancel: t('archiveModal.cancel'),
+            confirm: t("archiveModal.confirm"),
+            cancel: t("archiveModal.cancel"),
           },
           onConfirm: () => {
             archiveTask({ mutateAsyncAssignableInstance, instance, t })();
@@ -126,33 +134,41 @@ function onArchiveTask({
   };
 }
 
-function onDeleteActivity({ instance, t, openConfirmationModal, mutateAsync, onSuccess }) {
+function onDeleteActivity({
+  instance,
+  t,
+  openConfirmationModal,
+  mutateAsync,
+  onSuccess,
+}) {
   return async () => {
     return openConfirmationModal({
-      title: t('deleteModal.title'),
+      title: t("deleteModal.title"),
       description: (
         <Box
           sx={(theme) => ({
-            display: 'flex',
-            flexDirection: 'column',
+            display: "flex",
+            flexDirection: "column",
             gap: theme.spacing[2],
           })}
         >
-          <Text>{t('deleteModal.message1')}</Text>
-          <Text>{t('deleteModal.message2')}</Text>
+          <Text>{t("deleteModal.message1")}</Text>
+          <Text>{t("deleteModal.message2")}</Text>
         </Box>
       ),
       labels: {
-        confirm: t('deleteModal.confirm'),
-        cancel: t('deleteModal.cancel'),
+        confirm: t("deleteModal.confirm"),
+        cancel: t("deleteModal.cancel"),
       },
       onConfirm: async () => {
         try {
           await mutateAsync({ id: instance.id });
-          addSuccessAlert(t('deleteAction.success'));
+          addSuccessAlert(t("deleteAction.success"));
           onSuccess();
         } catch (e) {
-          addErrorAlert(t('deleteAction.error').replace('{{error}}', e.message));
+          addErrorAlert(
+            t("deleteAction.error").replace("{{error}}", e.message)
+          );
         }
       },
     })();
@@ -163,17 +179,20 @@ const MenuItems = ({ instance, hideDeleteButton, hiddenCloseButtons }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [archived, setArchived] = useState(false);
 
-  const { classes } = MenuItemsStyles({ showMenu }, { name: 'MenuItems' });
-  const [t] = useTranslateLoader(prefixPN('activity_dashboard'));
+  const { classes } = MenuItemsStyles({ showMenu }, { name: "MenuItems" });
+  const [t] = useTranslateLoader(prefixPN("activity_dashboard"));
   const { mutateAsync } = useDeleteInstanceMutation();
-  const { mutateAsync: mutateAsyncAssignableInstance } = useMutateAssignableInstance();
+  const { mutateAsync: mutateAsyncAssignableInstance } =
+    useMutateAssignableInstance();
   const { openConfirmationModal } = useLayout();
   const history = useHistory();
 
   const alwaysAvailable = !!instance?.alwaysAvailable;
   const { deadline, closed, archived: archivedDate } = instance?.dates ?? {};
   const now = dayjs();
-  const deadlinePassed = alwaysAvailable ? false : deadline && now.isAfter(deadline);
+  const deadlinePassed = alwaysAvailable
+    ? false
+    : deadline && now.isAfter(deadline);
 
   useEffect(() => {
     setArchived(!!archivedDate);
@@ -198,7 +217,7 @@ const MenuItems = ({ instance, hideDeleteButton, hiddenCloseButtons }) => {
       !archived &&
       !closed && {
         icon: <RemoveCircleIcon />,
-        children: t('close'),
+        children: t("close"),
         onClick: onCloseTask({
           instance,
           t,
@@ -227,7 +246,7 @@ const MenuItems = ({ instance, hideDeleteButton, hiddenCloseButtons }) => {
       closed &&
       (alwaysAvailable || deadlinePassed) && {
         icon: <ArchiveIcon />,
-        children: t('archive'),
+        children: t("archive"),
         onClick: onArchiveTask({
           instance,
           subjects: instance?.subjects ?? [],
@@ -240,14 +259,14 @@ const MenuItems = ({ instance, hideDeleteButton, hiddenCloseButtons }) => {
       },
     !hideDeleteButton && {
       icon: <DeleteBinIcon />,
-      children: t('delete'),
+      children: t("delete"),
       onClick: onDeleteActivity({
-          instance,
-          t,
-          openConfirmationModal,
-          mutateAsync,
-          onSuccess: () => history.push('/private/assignables/ongoing'),
-        }),
+        instance,
+        t,
+        openConfirmationModal,
+        mutateAsync,
+        onSuccess: () => history.push("/private/assignables/ongoing"),
+      }),
       className: classes.menuItem,
     },
   ];
@@ -263,8 +282,16 @@ const MenuItems = ({ instance, hideDeleteButton, hiddenCloseButtons }) => {
         withinPortal={true}
         offset={4}
         control={
-          <Box as="button" className={classes.ellipsisBox} onClick={preventPropagation}>
-            <SettingMenuVerticalIcon width={16} height={16} className={classes.menuIcon} />
+          <Box
+            as="button"
+            className={classes.ellipsisBox}
+            onClick={preventPropagation}
+          >
+            <SettingMenuVerticalIcon
+              width={16}
+              height={16}
+              className={classes.menuIcon}
+            />
           </Box>
         }
         items={menuItemsFiltered}

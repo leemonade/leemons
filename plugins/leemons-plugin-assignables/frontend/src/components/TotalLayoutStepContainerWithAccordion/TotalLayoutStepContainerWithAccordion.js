@@ -1,13 +1,13 @@
-import React from 'react';
+import React from "react";
 import {
   createStyles,
   Stack,
   TotalLayoutStepContainer,
   ActivityAccordion,
   ActivityAccordionPanel,
-} from '@bubbles-ui/components';
-import { TotalLayoutStepContainerStyles } from '@bubbles-ui/components/lib/layout/TotalLayout/TotalLayoutStepContainer/TotalLayoutStepContainer.styles';
-import { TOTAL_LAYOUT_STEP_CONTAINER_WITH_ACCORDION_PROPS } from './TotalLayoutStepContainerWithAccordion.constants';
+} from "@bubbles-ui/components";
+import { TotalLayoutStepContainerStyles } from "@bubbles-ui/components/lib/layout/TotalLayout/TotalLayoutStepContainer/TotalLayoutStepContainer.styles";
+import { TOTAL_LAYOUT_STEP_CONTAINER_WITH_ACCORDION_PROPS } from "./TotalLayoutStepContainerWithAccordion.constants";
 
 const TotalLayoutStepContainerWithAccordionStyles = createStyles((theme) => ({
   accordionContent: {
@@ -34,19 +34,25 @@ export default function TotalLayoutStepContainerWithAccordion({
   ...props
 }) {
   const { classes, cx } = TotalLayoutStepContainerStyles(props, {
-    name: 'TotalLayoutStepContainerWithAccordionWrapper',
+    name: "TotalLayoutStepContainerWithAccordionWrapper",
   });
-  const { classes: accordionClasses } = TotalLayoutStepContainerWithAccordionStyles(props, {
-    name: 'TotalLayoutStepContainerWithAccordion',
-  });
+  const { classes: accordionClasses } =
+    TotalLayoutStepContainerWithAccordionStyles(props, {
+      name: "TotalLayoutStepContainerWithAccordion",
+    });
 
   return (
-    <Stack direction="column" className={cx(classes.stepContainer)} fullWidth fullHeight>
+    <Stack
+      direction="column"
+      className={cx(classes.stepContainer)}
+      fullWidth
+      fullHeight
+    >
       {!!accordion && (
         <ActivityAccordion
           style={{
-            backgroundColor: 'white',
-            borderBottom: 'none',
+            backgroundColor: "white",
+            borderBottom: "none",
           }}
           noFlex
         >
@@ -56,7 +62,10 @@ export default function TotalLayoutStepContainerWithAccordion({
             label={accordion.title}
             icon={accordion.icon}
           >
-            <Stack direction="column" className={accordionClasses.accordionContent}>
+            <Stack
+              direction="column"
+              className={accordionClasses.accordionContent}
+            >
               {accordion.children}
             </Stack>
           </ActivityAccordionPanel>
@@ -77,4 +86,5 @@ export default function TotalLayoutStepContainerWithAccordion({
   );
 }
 
-TotalLayoutStepContainerWithAccordion.propTypes = TOTAL_LAYOUT_STEP_CONTAINER_WITH_ACCORDION_PROPS;
+TotalLayoutStepContainerWithAccordion.propTypes =
+  TOTAL_LAYOUT_STEP_CONTAINER_WITH_ACCORDION_PROPS;

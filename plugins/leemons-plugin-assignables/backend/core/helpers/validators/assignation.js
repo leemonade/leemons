@@ -1,59 +1,59 @@
-const _ = require('lodash');
-const { LeemonsValidator } = require('@leemons/validator');
+const _ = require("lodash");
+const { LeemonsValidator } = require("@leemons/validator");
 
 const assignationObject = {
-  type: 'object',
+  type: "object",
   properties: {
     instance: {
-      type: 'string',
+      type: "string",
       nullable: false,
     },
     indexable: {
-      type: 'boolean',
+      type: "boolean",
       nullable: false,
     },
     users: {
-      type: 'array',
+      type: "array",
       items: {
-        type: 'string',
+        type: "string",
         nullable: false,
       },
     },
     classes: {
-      type: 'array',
+      type: "array",
       items: {
-        type: 'string',
+        type: "string",
       },
       nullable: false,
     },
     group: {
-      type: 'string',
+      type: "string",
       nullable: true,
     },
     grades: {
-      type: 'array',
+      type: "array",
       items: {
-        type: 'object',
+        type: "object",
         properties: {
           subject: {
-            type: 'string',
+            type: "string",
             nullable: true,
           },
           type: {
-            type: 'string',
+            type: "string",
             maxLength: 255,
             nullable: false,
           },
           grade: {
-            type: 'number',
+            type: "number",
             nullable: true,
           },
           gradedBy: {
-            type: 'string',
+            type: "string",
             nullable: false,
           },
           feedback: {
-            type: 'string',
+            type: "string",
             maxLength: 16777215,
             nullable: true,
           },
@@ -61,35 +61,35 @@ const assignationObject = {
       },
     },
     timestamps: {
-      type: 'object',
+      type: "object",
       patternProperties: {
-        '^.*$': {
+        "^.*$": {
           oneOf: [
             {
-              type: 'string',
-              format: 'date-time',
+              type: "string",
+              format: "date-time",
             },
             {
-              instanceof: 'Date',
+              instanceof: "Date",
             },
             {
-              type: 'number',
+              type: "number",
             },
           ],
         },
       },
     },
     status: {
-      type: 'string',
+      type: "string",
       maxLength: 255,
     },
     metadata: {
-      type: 'object',
+      type: "object",
     },
   },
 };
 
-const assignationRequiredProperties = ['instance', 'indexable'];
+const assignationRequiredProperties = ["instance", "indexable"];
 
 function validateAssignation(assignation, { useRequired } = {}) {
   const obj = _.clone(assignationObject);

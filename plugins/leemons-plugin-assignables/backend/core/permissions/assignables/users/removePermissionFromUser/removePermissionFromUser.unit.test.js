@@ -1,11 +1,11 @@
-const { beforeEach, describe, test, expect } = require('@jest/globals');
+const { beforeEach, describe, test, expect } = require("@jest/globals");
 
-const { generateCtx } = require('@leemons/testing');
+const { generateCtx } = require("@leemons/testing");
 
-const { removePermissionFromUser } = require('./removePermissionFromUser');
-const { getUserPermission } = require('../getUserPermission');
+const { removePermissionFromUser } = require("./removePermissionFromUser");
+const { getUserPermission } = require("../getUserPermission");
 
-jest.mock('../getUserPermission');
+jest.mock("../getUserPermission");
 
 const removeCustomPermissionFromUserAgentHandler = jest.fn();
 
@@ -13,26 +13,26 @@ beforeEach(() => {
   jest.resetAllMocks();
 });
 
-describe('removePermissionFromUser function', () => {
-  test('should remove permission from user successfully', async () => {
+describe("removePermissionFromUser function", () => {
+  test("should remove permission from user successfully", async () => {
     // Arrange
-    const pluginName = 'assignables';
+    const pluginName = "assignables";
     const ctx = generateCtx({
       actions: {
-        'users.permissions.removeCustomPermissionFromUserAgent':
+        "users.permissions.removeCustomPermissionFromUserAgent":
           removeCustomPermissionFromUserAgentHandler,
       },
       pluginName,
     });
-    const actions = ['edit'];
+    const actions = ["edit"];
 
     getUserPermission.mockResolvedValue({
       actions,
     });
 
     const mockParams = {
-      assignable: { id: 'assignableId' },
-      userAgent: { id: 'userAgentId' },
+      assignable: { id: "assignableId" },
+      userAgent: { id: "userAgentId" },
       ctx,
     };
 
@@ -56,7 +56,7 @@ describe('removePermissionFromUser function', () => {
     expect(removeCustomPermissionFromUserAgentHandler).toHaveBeenCalledWith({
       userAgentId: mockParams.userAgent.id,
       data: {
-        permissionName: 'assignables.assignable.assignableId',
+        permissionName: "assignables.assignable.assignableId",
         actionNames: actions,
       },
     });

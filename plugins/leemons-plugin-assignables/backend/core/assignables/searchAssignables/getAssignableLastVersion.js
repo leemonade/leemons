@@ -1,5 +1,5 @@
-const { map, find } = require('lodash');
-const semver = require('semver');
+const { map, find } = require("lodash");
+const semver = require("semver");
 /**
  * Get the last version of an assignable
  * @function getAssignableLastVersion
@@ -11,7 +11,7 @@ function getAssignableLastVersion(groupedAssignables) {
   return map(groupedAssignables, (values) => {
     const versions = map(values, (id) => id.version);
 
-    const latest = semver.maxSatisfying(versions, '*');
+    const latest = semver.maxSatisfying(versions, "*");
 
     return find(values, (id) => id.version === latest).fullId;
   });

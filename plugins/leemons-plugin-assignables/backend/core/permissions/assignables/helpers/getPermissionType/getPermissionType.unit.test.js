@@ -1,14 +1,14 @@
-const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+const { it, expect } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { getPermissionType } = require('./getPermissionType');
+const { getPermissionType } = require("./getPermissionType");
 
-it('Should return the permission type', () => {
+it("Should return the permission type", () => {
   // Arrange
-  const role = 'roleName';
+  const role = "roleName";
 
   const ctx = generateCtx({
-    pluginName: 'testing',
+    pluginName: "testing",
   });
   const expectedValue = ctx.prefixPN(`assignable.${role}`);
 
@@ -19,17 +19,17 @@ it('Should return the permission type', () => {
   expect(response).toBe(expectedValue);
 });
 
-it('Should throw if no role is provided', () => {
+it("Should throw if no role is provided", () => {
   // Arrange
   const role = null;
 
   const ctx = generateCtx({
-    pluginName: 'testing',
+    pluginName: "testing",
   });
 
   // Act
   const testFn = () => getPermissionType({ role, ctx });
 
   // Assert
-  expect(testFn).toThrow('The role is required');
+  expect(testFn).toThrow("The role is required");
 });

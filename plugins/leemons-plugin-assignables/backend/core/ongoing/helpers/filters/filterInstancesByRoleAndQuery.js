@@ -10,7 +10,9 @@ function filterInstancesByRoleAndQuery({ instances, filters = {} }) {
   return instances.filter((instance) => {
     if (
       query &&
-      !instance?.assignable?.asset?.name.toLocaleLowerCase().includes(query.toLocaleLowerCase())
+      !instance?.assignable?.asset?.name
+        .toLocaleLowerCase()
+        .includes(query.toLocaleLowerCase())
     ) {
       return false;
     }

@@ -1,6 +1,6 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const constants = require('../../../../../config/constants');
+const constants = require("../../../../../config/constants");
 
 function getRoleMatchingActions({ actions }) {
   let { assignableInstanceRolesObject } = constants;

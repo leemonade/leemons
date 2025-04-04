@@ -1,7 +1,8 @@
-import getAssignation from '@assignables/requests/assignations/getAssignation';
+import getAssignation from "@assignables/requests/assignations/getAssignation";
 
 export default async function getNextActivityUrl(assignation) {
-  const nextActivity = assignation?.instance?.relatedAssignableInstances?.after?.[0];
+  const nextActivity =
+    assignation?.instance?.relatedAssignableInstances?.after?.[0];
 
   if (!nextActivity) {
     return null;
@@ -17,5 +18,5 @@ export default async function getNextActivityUrl(assignation) {
     return null;
   }
 
-  return role.studentDetailUrl.replace(':id', id).replace(':user', user);
+  return role.studentDetailUrl.replace(":id", id).replace(":user", user);
 }

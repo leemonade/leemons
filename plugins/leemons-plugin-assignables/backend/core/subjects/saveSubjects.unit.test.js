@@ -1,9 +1,15 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { saveSubjects } = require('./saveSubjects');
-const { subjectsSchema } = require('../../models/subjects');
+const { saveSubjects } = require("./saveSubjects");
+const { subjectsSchema } = require("../../models/subjects");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -26,19 +32,19 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should save the subjects to the assignable', async () => {
+it("Should save the subjects to the assignable", async () => {
   // Arrange
-  const assignable = 'assignable-id';
+  const assignable = "assignable-id";
   const subjects = [
     {
-      subject: 'subject-id-1',
-      program: 'program-id',
-      level: 'intermediate',
+      subject: "subject-id-1",
+      program: "program-id",
+      level: "intermediate",
     },
     {
-      subject: 'subject-id-2',
-      program: 'program',
-      level: 'intermediate',
+      subject: "subject-id-2",
+      program: "program",
+      level: "intermediate",
       curriculum: {
         anyProp: true,
       },
@@ -51,7 +57,7 @@ it('Should save the subjects to the assignable', async () => {
 
   const ctx = generateCtx({
     models: {
-      Subjects: newModel(mongooseConnection, 'Subjects', subjectsSchema),
+      Subjects: newModel(mongooseConnection, "Subjects", subjectsSchema),
     },
   });
 
@@ -72,23 +78,23 @@ it('Should save the subjects to the assignable', async () => {
   );
 });
 
-it('Should throw if no valid subject is provided', () => {
+it("Should throw if no valid subject is provided", () => {
   // Arrange
-  const assignable = 'assignable01';
+  const assignable = "assignable01";
   const subjects = [
     {
       // subject: 'subject0',
-      program: 'program',
+      program: "program",
     },
     {
-      subject: 'subject1',
+      subject: "subject1",
       // program: 'program',
     },
   ];
 
   const ctx = generateCtx({
     models: {
-      Subjects: newModel(mongooseConnection, 'Subjects', subjectsSchema),
+      Subjects: newModel(mongooseConnection, "Subjects", subjectsSchema),
     },
   });
 
@@ -109,14 +115,14 @@ it('Should throw if no valid subject is provided', () => {
   ]);
 });
 
-it('Should return empty array if subject is undefined', async () => {
+it("Should return empty array if subject is undefined", async () => {
   // Arrange
-  const assignable = 'assignable01';
+  const assignable = "assignable01";
   const subjects = undefined;
 
   const ctx = generateCtx({
     models: {
-      Subjects: newModel(mongooseConnection, 'Subjects', subjectsSchema),
+      Subjects: newModel(mongooseConnection, "Subjects", subjectsSchema),
     },
   });
 
@@ -127,14 +133,14 @@ it('Should return empty array if subject is undefined', async () => {
   expect(resp).toEqual([]);
 });
 
-it('Should return empty array if subject is empty array', async () => {
+it("Should return empty array if subject is empty array", async () => {
   // Arrange
-  const assignable = 'assignable01';
+  const assignable = "assignable01";
   const subjects = [];
 
   const ctx = generateCtx({
     models: {
-      Subjects: newModel(mongooseConnection, 'Subjects', subjectsSchema),
+      Subjects: newModel(mongooseConnection, "Subjects", subjectsSchema),
     },
   });
 

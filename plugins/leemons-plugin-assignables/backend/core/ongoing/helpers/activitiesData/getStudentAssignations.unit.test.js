@@ -4,16 +4,16 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getStudentAssignations } = require('./getStudentAssignations');
-const { assignationsSchema } = require('../../../../models/assignations');
+const { getStudentAssignations } = require("./getStudentAssignations");
+const { assignationsSchema } = require("../../../../models/assignations");
 
 // MOCKS
-jest.mock('./getInstancesData');
-const { getInstancesData } = require('./getInstancesData');
+jest.mock("./getInstancesData");
+const { getInstancesData } = require("./getInstancesData");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -36,37 +36,37 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should call getStudentAssignations correctly', async () => {
+it("Should call getStudentAssignations correctly", async () => {
   // Arrange
   const assignationOne = {
-    id: 'assignationOne',
-    instance: 'instanceOne',
+    id: "assignationOne",
+    instance: "instanceOne",
     indexable: true,
-    user: 'userOne',
-    classes: ['classOne'],
+    user: "userOne",
+    classes: ["classOne"],
   };
   const assignationTwo = {
-    id: 'assignationTwo',
-    instance: 'instanceTwo',
+    id: "assignationTwo",
+    instance: "instanceTwo",
     indexable: true,
-    user: 'userOne',
-    classes: ['classOne'],
+    user: "userOne",
+    classes: ["classOne"],
   };
   const mockInstances = {
-    instanceOne: { id: 'instanceOne' },
-    instanceTwo: { id: 'instanceTwo' },
+    instanceOne: { id: "instanceOne" },
+    instanceTwo: { id: "instanceTwo" },
   };
 
   const ctx = generateCtx({
     models: {
       Assignations: newModel(
         mongooseConnection,
-        'Assignations',
+        "Assignations",
         assignationsSchema
       ),
     },
   });
-  ctx.meta.userSession = { userAgents: [{ id: 'userOne' }] };
+  ctx.meta.userSession = { userAgents: [{ id: "userOne" }] };
 
   const assignations = [assignationOne, assignationTwo];
   await ctx.db.Assignations.create(assignations);

@@ -1,10 +1,10 @@
-const { keyBy } = require('lodash');
+const { keyBy } = require("lodash");
 
 async function getInstanceDates({ instances: instancesIds, ctx }) {
   const [assignableInstancesDates, instances] = await Promise.all([
     ctx.tx.db.Dates.find({
       instance: instancesIds,
-      type: 'assignableInstance',
+      type: "assignableInstance",
     }).lean(),
     ctx.tx.db.Instances.find({
       id: instancesIds,
@@ -13,7 +13,7 @@ async function getInstanceDates({ instances: instancesIds, ctx }) {
       .lean(),
   ]);
 
-  const instancesByKey = keyBy(instances, 'id');
+  const instancesByKey = keyBy(instances, "id");
 
   return assignableInstancesDates.reduce((acc, dateObject) => {
     const { name, date, instance } = dateObject;

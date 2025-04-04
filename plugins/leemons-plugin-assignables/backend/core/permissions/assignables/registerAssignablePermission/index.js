@@ -1,4 +1,6 @@
-const { registerAssignablePermission } = require('./registerAssignablePermission');
+const {
+  registerAssignablePermission,
+} = require("./registerAssignablePermission");
 
 module.exports = {
   registerAssignablePermission,

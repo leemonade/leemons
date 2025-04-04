@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
-import { getCookieToken } from '@users/session';
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import getAssignations from '../../../../requests/assignations/getAssignations';
-import getAssignableInstances from '../../../../requests/assignableInstances/getAssignableInstances';
+import { useEffect, useState } from "react";
+import { getCookieToken } from "@users/session";
+import { useIsTeacher } from "@academic-portfolio/hooks";
+import getAssignations from "../../../../requests/assignations/getAssignations";
+import getAssignableInstances from "../../../../requests/assignableInstances/getAssignableInstances";
 
 export default function useAssignationsByProfile(ids) {
   const [results, setResults] = useState([]);

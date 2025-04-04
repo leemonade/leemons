@@ -17,10 +17,10 @@ export default async function searchOngoingActivities(query) {
   const result = await leemons.api(
     `v1/assignables/activities/search/ongoing?${Object.entries(query)
       .map(([key, value]) => `${key}=${value}`)
-      .join('&')}`,
+      .join("&")}`,
     {
       allAgents: true,
-      method: 'GET',
+      method: "GET",
     }
   );
 

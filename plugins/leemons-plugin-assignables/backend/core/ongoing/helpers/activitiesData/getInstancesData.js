@@ -1,6 +1,6 @@
-const { uniq, map } = require('lodash');
+const { uniq, map } = require("lodash");
 
-const { getAssignablesData } = require('./getAssignablesData');
+const { getAssignablesData } = require("./getAssignablesData");
 
 async function getInstancesData({ instances, relatedInstances = false, ctx }) {
   const uniqInstances = uniq(instances);
@@ -11,21 +11,24 @@ async function getInstancesData({ instances, relatedInstances = false, ctx }) {
   })
     .select(
       [
-        'id',
-        'assignable',
-        'alwaysAvailable',
-        'gradable',
-        'requiresScoring',
-        'allowFeedback',
-        'metadata',
-        'createdAt',
-        relatedInstances && 'relatedAssignableInstances',
+        "id",
+        "assignable",
+        "alwaysAvailable",
+        "gradable",
+        "requiresScoring",
+        "allowFeedback",
+        "metadata",
+        "createdAt",
+        relatedInstances && "relatedAssignableInstances",
       ].filter(Boolean)
     )
     .lean();
 
-  const assignablesIds = map(instancesData, 'assignable');
-  const assignablesData = await getAssignablesData({ assignables: assignablesIds, ctx });
+  const assignablesIds = map(instancesData, "assignable");
+  const assignablesData = await getAssignablesData({
+    assignables: assignablesIds,
+    ctx,
+  });
 
   instancesData.forEach((instance) => {
     instancesObj[instance.id] = {
@@ -35,7 +38,8 @@ async function getInstancesData({ instances, relatedInstances = false, ctx }) {
     };
 
     if (relatedInstances) {
-      instancesObj[instance.id].relatedAssignableInstances = instance.relatedAssignableInstances;
+      instancesObj[instance.id].relatedAssignableInstances =
+        instance.relatedAssignableInstances;
     }
   });
 

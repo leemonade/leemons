@@ -1,8 +1,17 @@
-const { isNil } = require('lodash');
-const { updateAsset } = require('./updateAsset');
+const { isNil } = require("lodash");
+const { updateAsset } = require("./updateAsset");
 
-async function duplicateAsset({ id, preserveName, public: isPublic, indexable, ctx }) {
-  let asset = await ctx.tx.call('leebrary.assets.duplicate', { assetId: id, preserveName });
+async function duplicateAsset({
+  id,
+  preserveName,
+  public: isPublic,
+  indexable,
+  ctx,
+}) {
+  let asset = await ctx.tx.call("leebrary.assets.duplicate", {
+    assetId: id,
+    preserveName,
+  });
 
   if (!isNil(isPublic) || !isNil(indexable)) {
     asset = await updateAsset({

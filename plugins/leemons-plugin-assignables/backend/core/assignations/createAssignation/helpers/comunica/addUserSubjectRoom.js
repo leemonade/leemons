@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function addUserSubjectRoom({
   assignableInstanceId,
@@ -10,20 +10,22 @@ async function addUserSubjectRoom({
   teachers,
   ctx,
 }) {
-  return ctx.tx.call('comunica.room.add', {
+  return ctx.tx.call("comunica.room.add", {
     key: ctx.prefixPN(
       `subject|${classe.subject.id}.assignation|${assignation.id}.userAgent|${user}`
     ),
-    name: 'teachersOfSubject', // instance.assignable.asset.name,
+    name: "teachersOfSubject", // instance.assignable.asset.name,
     nameReplaces: {
       subjectName: classe.subject.name,
     },
     icon: instance.assignable.roleDetails.icon,
     bgColor: classe.color,
     parentRoom,
-    image: instance.assignable.asset.cover ? instance.assignable.asset.id : undefined,
+    image: instance.assignable.asset.cover
+      ? instance.assignable.asset.id
+      : undefined,
     program: classe.program,
-    type: ctx.prefixPN('assignation.user'),
+    type: ctx.prefixPN("assignation.user"),
     userAgents: user,
     adminUserAgents: _.compact(_.uniq(teachers)),
     metadata: {

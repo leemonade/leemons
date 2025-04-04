@@ -1,3 +1,3 @@
-const { search } = require('./search');
+const { search } = require("./search");
 
 module.exports = { search };

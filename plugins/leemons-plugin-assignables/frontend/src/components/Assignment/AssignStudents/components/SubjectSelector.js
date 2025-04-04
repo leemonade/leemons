@@ -1,9 +1,14 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { ContextContainer, CheckBoxGroup } from '@bubbles-ui/components';
-import { useSubjects } from '../hooks';
+import React from "react";
+import PropTypes from "prop-types";
+import { ContextContainer, CheckBoxGroup } from "@bubbles-ui/components";
+import { useSubjects } from "../hooks";
 
-export default function SubjectSelector({ labels, onChange, value, assignable }) {
+export default function SubjectSelector({
+  labels,
+  onChange,
+  value,
+  assignable,
+}) {
   const subjects = useSubjects(assignable);
 
   const subjectsProcessed = React.useMemo(
@@ -32,7 +37,11 @@ export default function SubjectSelector({ labels, onChange, value, assignable })
       }
       subtitle={labels?.subjects?.subtitle}
     >
-      <CheckBoxGroup variant="boxed" data={subjectsProcessed} onChange={onChange} />
+      <CheckBoxGroup
+        variant="boxed"
+        data={subjectsProcessed}
+        onChange={onChange}
+      />
     </ContextContainer>
   );
 }

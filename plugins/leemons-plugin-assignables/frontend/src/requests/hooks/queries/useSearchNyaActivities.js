@@ -1,23 +1,26 @@
-import { useQuery } from '@tanstack/react-query';
-import { useVariantForQueryKey } from '@common/queries';
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import searchNyaActivities from '@assignables/requests/activities/searchNyaActivities';
-import useUserAgents from '@users/hooks/useUserAgents';
-import { allNyaActivitiesSearchKey, nyaActivitiesSearchKey } from '../keys/nyaActivities';
+import { useQuery } from "@tanstack/react-query";
+import { useVariantForQueryKey } from "@common/queries";
+import { useIsTeacher } from "@academic-portfolio/hooks";
+import searchNyaActivities from "@assignables/requests/activities/searchNyaActivities";
+import useUserAgents from "@users/hooks/useUserAgents";
+import {
+  allNyaActivitiesSearchKey,
+  nyaActivitiesSearchKey,
+} from "../keys/nyaActivities";
 
 export default function useSearchNyaActivities(filters, options) {
   const userAgents = useUserAgents();
   const isTeacher = useIsTeacher();
 
   useVariantForQueryKey(allNyaActivitiesSearchKey, {
-    modificationTrend: 'frequently',
+    modificationTrend: "frequently",
   });
 
   return useQuery({
     queryKey: nyaActivitiesSearchKey({ isTeacher, userAgents, ...filters }),
     queryFn: () => searchNyaActivities({ isTeacher, ...filters }),
     enabled:
-      typeof isTeacher === 'boolean' &&
+      typeof isTeacher === "boolean" &&
       (!!options?.enabled !== false || options?.enabled === undefined),
     ...options,
   });

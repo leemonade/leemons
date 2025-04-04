@@ -2,23 +2,23 @@ const {
   it,
   expect,
   jest: { fn },
-} = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+} = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { getAssetsData } = require('./getAssetsData');
+const { getAssetsData } = require("./getAssetsData");
 
-it('Should correctly get assignable data without duplications', async () => {
+it("Should correctly get assignable data without duplications", async () => {
   // Arrange
-  const assets = ['assetIdOne', 'assetIdTwo', 'assetIdOne'];
+  const assets = ["assetIdOne", "assetIdTwo", "assetIdOne"];
   const mockAssets = [
-    { id: assets[0], name: 'Asset One' },
-    { id: assets[1], name: 'Asset Two' },
+    { id: assets[0], name: "Asset One" },
+    { id: assets[1], name: "Asset Two" },
   ];
   const getByIdsAction = fn().mockResolvedValue(mockAssets);
 
   const ctx = generateCtx({
     actions: {
-      'leebrary.assets.getByIds': getByIdsAction,
+      "leebrary.assets.getByIds": getByIdsAction,
     },
   });
 

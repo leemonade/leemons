@@ -1,13 +1,13 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { AlarmClockIcon } from '@bubbles-ui/icons/outline';
-import dayjs from 'dayjs';
-import dayjsDuration from 'dayjs/plugin/duration';
-import { Box, Text } from '@bubbles-ui/components';
-import { padStart } from 'lodash';
-import { useTimerStyles } from './Timer.styles';
-import Countdown from './components/Countdown/Countdown';
-import millisecondsToTime from './helpers/millisecondsToTime';
+import React, { useMemo } from "react";
+import PropTypes from "prop-types";
+import { AlarmClockIcon } from "@bubbles-ui/icons/outline";
+import dayjs from "dayjs";
+import dayjsDuration from "dayjs/plugin/duration";
+import { Box, Text } from "@bubbles-ui/components";
+import { padStart } from "lodash";
+import { useTimerStyles } from "./Timer.styles";
+import Countdown from "./components/Countdown/Countdown";
+import millisecondsToTime from "./helpers/millisecondsToTime";
 
 dayjs.extend(dayjsDuration);
 
@@ -17,7 +17,7 @@ function useDuration(instance) {
       return null;
     }
 
-    const [time, unit] = instance.duration.split(' ');
+    const [time, unit] = instance.duration.split(" ");
     const dur = dayjs.duration(time, unit);
 
     return {
@@ -28,7 +28,13 @@ function useDuration(instance) {
   }, [instance?.duration]);
 }
 
-export default function Timer({ assignation, instance, hidden, onTimeout, showCountdown }) {
+export default function Timer({
+  assignation,
+  instance,
+  hidden,
+  onTimeout,
+  showCountdown,
+}) {
   const startDate = dayjs(assignation?.timestamps?.start ?? null);
   const timeStarted = startDate.isValid();
   const duration = useDuration(instance);

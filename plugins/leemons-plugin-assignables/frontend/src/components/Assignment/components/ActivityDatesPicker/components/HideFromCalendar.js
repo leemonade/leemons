@@ -1,12 +1,13 @@
-import React from 'react';
-import { Controller } from 'react-hook-form';
+import React from "react";
+import { Controller } from "react-hook-form";
 
-import { Checkbox } from '@bubbles-ui/components';
+import { Checkbox } from "@bubbles-ui/components";
 
-import { useActivityDatesPickerContext } from '../context/ActivityDatesPickerProvider';
+import { useActivityDatesPickerContext } from "../context/ActivityDatesPickerProvider";
 
 export default function HideFromCalendar() {
-  const { form, localizations, hideShowInCalendar } = useActivityDatesPickerContext();
+  const { form, localizations, hideShowInCalendar } =
+    useActivityDatesPickerContext();
 
   if (hideShowInCalendar) {
     return null;
@@ -16,13 +17,14 @@ export default function HideFromCalendar() {
     <Controller
       name="hideFromCalendar"
       control={form.control}
-        shouldUnregister
-        render={({ field }) => (
-          <Checkbox
-            {...field}
-            checked={!!field.value}
-            label={localizations?.hideFromCalendar}
-          />
-        )}
-      />
-)};
+      shouldUnregister
+      render={({ field }) => (
+        <Checkbox
+          {...field}
+          checked={!!field.value}
+          label={localizations?.hideFromCalendar}
+        />
+      )}
+    />
+  );
+}

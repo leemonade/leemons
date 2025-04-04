@@ -1,19 +1,19 @@
-const { createStyles } = require('@bubbles-ui/components');
+const { createStyles } = require("@bubbles-ui/components");
 
 const useFormComponentStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
 
   return {
     root: {
-      display: 'flex',
-      flexDirection: 'row',
+      display: "flex",
+      flexDirection: "row",
       gap: globalTheme.spacing.gap.xlg, // 24
       zIndex: 0,
       paddingBottom: 10,
     },
     leftColumn: {
       width: 928 - 266 - 24 * 2, // leftColumn + rightColumn
-      '@media (min-width: 1720px)': {
+      "@media (min-width: 1720px)": {
         width: 1400 - 266 - 24 * 2,
       },
     },

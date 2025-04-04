@@ -1,12 +1,14 @@
 /** @type {import('moleculer').ServiceSchema} */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMongoDBMixin } = require("@leemons/mongodb");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
 
-const namespaces = require('../cache/namespaces');
+const namespaces = require("../cache/namespaces");
 const {
   createAssignable,
   getAssignable,
@@ -21,14 +23,17 @@ const {
   searchAssignables,
   findAssignableByAssetIds,
   getAssignablesAssets,
-} = require('../core/assignables');
-const { getUserPermission, getUserPermissions } = require('../core/permissions/assignables/users');
-const { getServiceModels } = require('../models');
+} = require("../core/assignables");
+const {
+  getUserPermission,
+  getUserPermissions,
+} = require("../core/permissions/assignables/users");
+const { getServiceModels } = require("../models");
 
-const restActions = require('./rest/assignables.rest');
+const restActions = require("./rest/assignables.rest");
 
 module.exports = {
-  name: 'assignables.assignables',
+  name: "assignables.assignables",
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),

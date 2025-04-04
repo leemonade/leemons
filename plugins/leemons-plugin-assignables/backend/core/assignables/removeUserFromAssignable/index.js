@@ -1,4 +1,4 @@
-const { removeUserFromAssignable } = require('./removeUserFromAssignable');
+const { removeUserFromAssignable } = require("./removeUserFromAssignable");
 
 module.exports = {
   removeUserFromAssignable,

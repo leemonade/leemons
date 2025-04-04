@@ -1,10 +1,12 @@
-const { it, expect } = require('@jest/globals');
+const { it, expect } = require("@jest/globals");
 
-const { getInstanceGroup } = require('./getInstanceGroup');
+const { getInstanceGroup } = require("./getInstanceGroup");
 
-const { getInstanceObject } = require('../../../__fixtures__/getInstanceObject');
+const {
+  getInstanceObject,
+} = require("../../../__fixtures__/getInstanceObject");
 
-it('Should return group if instance has not related instances', async () => {
+it("Should return group if instance has not related instances", async () => {
   // Arrange
 
   const instance = {
@@ -23,11 +25,11 @@ it('Should return group if instance has not related instances', async () => {
   expect(response).toEqual(expectedResponse);
 });
 
-it('Should return group if instance has related instances', async () => {
+it("Should return group if instance has related instances", async () => {
   // Arrange
   const afterInstance = {
     ...getInstanceObject(),
-    id: 'afterInstanceId1',
+    id: "afterInstanceId1",
   };
   const instance = {
     ...getInstanceObject(),
@@ -48,7 +50,7 @@ it('Should return group if instance has related instances', async () => {
   expect(response).toEqual(expectedResponse);
 });
 
-it('Should return null if instance is null', async () => {
+it("Should return null if instance is null", async () => {
   // Arrange
 
   // Act

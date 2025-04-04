@@ -1,14 +1,14 @@
-const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+const { it, expect } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { getPermissionType } = require('./getPermissionType');
+const { getPermissionType } = require("./getPermissionType");
 
-it('Should return the permission type', () => {
+it("Should return the permission type", () => {
   // Arrange
   const ctx = generateCtx({
-    pluginName: 'testing',
+    pluginName: "testing",
   });
-  const expectedValue = ctx.prefixPN('assignableInstance');
+  const expectedValue = ctx.prefixPN("assignableInstance");
 
   // Act
   const response = getPermissionType({ ctx });

@@ -1,11 +1,17 @@
-import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { useVariantForQueryKey } from '@common/queries';
-import { head } from 'lodash';
-import getAssignablesRequest from '@assignables/requests/assignables/getAssignables';
-import { assignablesGetKey } from '../keys/assignables';
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useVariantForQueryKey } from "@common/queries";
+import { head } from "lodash";
+import getAssignablesRequest from "@assignables/requests/assignables/getAssignables";
+import { assignablesGetKey } from "../keys/assignables";
 
-export default function useAssignables({ id, ids, withFiles, deleted, ...options }) {
+export default function useAssignables({
+  id,
+  ids,
+  withFiles,
+  deleted,
+  ...options
+}) {
   const idsToUse = id ?? ids;
 
   const queryKey = assignablesGetKey({
@@ -27,7 +33,7 @@ export default function useAssignables({ id, ids, withFiles, deleted, ...options
   }, [id, idsToUse]);
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'frequently',
+    modificationTrend: "frequently",
   });
 
   const queryData = useQuery({

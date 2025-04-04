@@ -4,16 +4,16 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getTeacherInstances } = require('./getTeacherInstances');
-const { teachersSchema } = require('../../../../models/teachers');
+const { getTeacherInstances } = require("./getTeacherInstances");
+const { teachersSchema } = require("../../../../models/teachers");
 
 // MOCKS
-jest.mock('./getInstancesData');
-const { getInstancesData } = require('./getInstancesData');
+jest.mock("./getInstancesData");
+const { getInstancesData } = require("./getInstancesData");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -37,36 +37,36 @@ beforeEach(async () => {
   jest.resetAllMocks();
 });
 
-it('Should call getTeacherInstances correctly', async () => {
+it("Should call getTeacherInstances correctly", async () => {
   // Arrange
 
   const ctx = generateCtx({
     models: {
-      Teachers: newModel(mongooseConnection, 'Teachers', teachersSchema),
+      Teachers: newModel(mongooseConnection, "Teachers", teachersSchema),
     },
   });
   ctx.meta.userSession = {
-    userAgents: [{ id: 'userAgentOne' }, { id: 'userAgentTwo' }],
+    userAgents: [{ id: "userAgentOne" }, { id: "userAgentTwo" }],
   };
-  const mockInstances = ['assignableInstanceOne', 'assignableInstanceTwo'];
+  const mockInstances = ["assignableInstanceOne", "assignableInstanceTwo"];
   const initialValues = [
     {
-      id: '1',
+      id: "1",
       teacher: ctx.meta.userSession.userAgents[0].id,
       assignableInstance: mockInstances[0],
-      type: 'main-teacher',
+      type: "main-teacher",
     },
     {
-      id: '2',
+      id: "2",
       teacher: ctx.meta.userSession.userAgents[0].id,
       assignableInstance: mockInstances[1],
-      type: 'main-teacher',
+      type: "main-teacher",
     },
   ];
   await ctx.tx.db.Teachers.create(initialValues);
   const expectedResult = [
-    'mockValueRepresentingAnInstanceObjectOne',
-    'mockValueRepresentingAnInstanceObjectTwo',
+    "mockValueRepresentingAnInstanceObjectOne",
+    "mockValueRepresentingAnInstanceObjectTwo",
   ];
 
   getInstancesData.mockResolvedValue({

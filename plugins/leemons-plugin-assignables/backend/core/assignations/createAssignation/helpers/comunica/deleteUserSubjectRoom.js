@@ -4,10 +4,10 @@ async function deleteUserSubjectRoom({ assignation, classe, ctx }) {
       `subject|${classe.subject.id}.assignation|${assignation.id}.userAgent|${assignation.user}`
     );
 
-    await ctx.tx.call('comunica.room.remove', { key });
+    await ctx.tx.call("comunica.room.remove", { key });
   } catch (error) {
     console.log(error);
-    if (!error.message.endsWith('not exists')) {
+    if (!error.message.endsWith("not exists")) {
       throw error;
     }
   }

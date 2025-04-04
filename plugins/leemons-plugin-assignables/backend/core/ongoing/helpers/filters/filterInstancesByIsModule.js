@@ -1,4 +1,4 @@
-const { filter } = require('lodash');
+const { filter } = require("lodash");
 /**
  * Filters instances by not module.
  *
@@ -9,7 +9,10 @@ const { filter } = require('lodash');
  */
 
 function filterInstancesByIsModule({ instances }) {
-  return filter(instances, (instance) => instance.metadata?.module?.type === 'module');
+  return filter(
+    instances,
+    (instance) => instance.metadata?.module?.type === "module"
+  );
 }
 
 module.exports = { filterInstancesByIsModule };

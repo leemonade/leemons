@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { EdgeTriangles } from './EdgeTriangles';
+import React from "react";
+import PropTypes from "prop-types";
+import { EdgeTriangles } from "./EdgeTriangles";
 
 const PassMarker = ({ yScale, width, passValue }) => {
   const y = yScale(passValue);

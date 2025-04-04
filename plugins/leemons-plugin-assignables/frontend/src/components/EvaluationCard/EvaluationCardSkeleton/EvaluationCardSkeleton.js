@@ -1,6 +1,6 @@
-import React from 'react';
-import { Skeleton, Box } from '@bubbles-ui/components';
-import { EvaluationCardSkeletonStyles } from './EvaluationCardSkeleton.styles';
+import React from "react";
+import { Skeleton, Box } from "@bubbles-ui/components";
+import { EvaluationCardSkeletonStyles } from "./EvaluationCardSkeleton.styles";
 
 const EvaluationCardSkeleton = () => {
   const { classes } = EvaluationCardSkeletonStyles();
@@ -13,7 +13,14 @@ const EvaluationCardSkeleton = () => {
         <Box className={classes.leftContent}>
           <Skeleton height={12} width={300} radius={100} />
           <Skeleton height={12} width={280} radius={100} mt={12} />
-          <Box style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 12 }}>
+          <Box
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              marginTop: 12,
+            }}
+          >
             <Skeleton height={24} width={24} radius={100} />
             <Box>
               <Skeleton height={12} width={72} radius={100} mt={14} />

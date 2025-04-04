@@ -1,4 +1,4 @@
-const { map, uniq } = require('lodash');
+const { map, uniq } = require("lodash");
 
 /**
  * Retrieves the assignables matching the given assignable instance IDs.
@@ -12,19 +12,21 @@ async function getAssignables({ assignableInstancesIds, ctx }) {
   const assignablesMatching = await ctx.tx.db.Instances.find({
     id: assignableInstancesIds,
   })
-    .select(['assignable', 'id'])
+    .select(["assignable", "id"])
     .lean();
 
-  const assignablesIds = uniq(map(assignablesMatching, 'assignable'));
+  const assignablesIds = uniq(map(assignablesMatching, "assignable"));
 
   const assignablesFound = await ctx.tx.db.Assignables.find({
     id: assignablesIds,
   })
-    .select(['id', 'asset', 'role'])
+    .select(["id", "asset", "role"])
     .lean();
 
   return assignablesMatching.map((instance) => ({
-    ...assignablesFound.find((assignable) => assignable.id === instance.assignable),
+    ...assignablesFound.find(
+      (assignable) => assignable.id === instance.assignable
+    ),
     ...instance,
   }));
 }

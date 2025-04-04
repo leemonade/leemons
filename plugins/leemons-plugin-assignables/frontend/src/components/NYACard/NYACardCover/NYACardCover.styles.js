@@ -1,20 +1,24 @@
 /* eslint-disable import/prefer-default-export */
-import { createStyles, getFontExpressive, pxToRem } from '@bubbles-ui/components';
+import {
+  createStyles,
+  getFontExpressive,
+  pxToRem,
+} from "@bubbles-ui/components";
 
-const spaceBetween = 'space-between';
+const spaceBetween = "space-between";
 
 export const NYACardCoverStyles = createStyles(
   (theme, { color, height, parentHovered, subjectColor, showMenu }) => {
-    const isParentHovered = parentHovered ? 'visible' : 'hidden';
+    const isParentHovered = parentHovered ? "visible" : "hidden";
     const { buttonIconCard, cardEvaluation, cardAssignments } = theme.other;
-    const focusDefaultBorder = theme.other.global.focus['default-border'];
-    const borderRadiusRoot = '4px 2px 0 0';
+    const focusDefaultBorder = theme.other.global.focus["default-border"];
+    const borderRadiusRoot = "4px 2px 0 0";
     return {
       root: {
-        ...getFontExpressive(theme.fontSizes['2']),
-        position: 'relative',
+        ...getFontExpressive(theme.fontSizes["2"]),
+        position: "relative",
         height,
-        width: '100%',
+        width: "100%",
         borderRadius: borderRadiusRoot,
       },
       titleWrapper: {
@@ -25,25 +29,25 @@ export const NYACardCoverStyles = createStyles(
         lineHeight: pxToRem(20),
       },
       overlayTransparent: {
-        display: 'flex',
-        flexDirection: 'column',
-        width: '100%',
-        height: '100%',
-        position: 'absolute',
+        display: "flex",
+        flexDirection: "column",
+        width: "100%",
+        height: "100%",
+        position: "absolute",
         zIndex: 1,
         justifyContent: spaceBetween,
-        borderRadius: '4px 0 0 0',
+        borderRadius: "4px 0 0 0",
       },
       leftContainer: {
-        width: '100%',
-        display: 'flex',
-        justifyContent: 'flex-end',
+        width: "100%",
+        display: "flex",
+        justifyContent: "flex-end",
       },
       iconRow: {
         zIndex: 3,
-        display: 'flex',
+        display: "flex",
         visibility: isParentHovered,
-        alignItems: 'center',
+        alignItems: "center",
         justifyContent: spaceBetween,
         paddingTop: pxToRem(8),
         paddingInline: pxToRem(8),
@@ -51,7 +55,7 @@ export const NYACardCoverStyles = createStyles(
       menuIcon: {
         color: buttonIconCard.content.color.primary.default,
         zIndex: 10,
-        position: 'absolute',
+        position: "absolute",
         marginBottom: 0,
         top: 3.5,
         right: 4,
@@ -59,29 +63,29 @@ export const NYACardCoverStyles = createStyles(
       },
 
       favActive: {
-        position: 'absolute',
+        position: "absolute",
         right: 0,
       },
       deadline: {
-        position: 'absolute',
+        position: "absolute",
         bottom: 0,
-        left: '50%',
+        left: "50%",
         right: 0,
         zIndex: 2,
       },
       color: {
-        width: '100%',
+        width: "100%",
         height: pxToRem(4),
-        backgroundColor: color || 'transparent',
-        transition: 'all 0.2s ease-out',
-        borderRadius: '2px 0 0 0',
+        backgroundColor: color || "transparent",
+        transition: "all 0.2s ease-out",
+        borderRadius: "2px 0 0 0",
       },
       fileIcon: {
-        height: '100%',
-        width: '100%',
-        display: 'flex',
-        justifyContent: 'flex-end',
-        alignItems: 'flex-end',
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        justifyContent: "flex-end",
+        alignItems: "flex-end",
         backgroundColor: theme.colors.interactive03h,
         padding: pxToRem(16),
         borderRadius: borderRadiusRoot,
@@ -90,14 +94,14 @@ export const NYACardCoverStyles = createStyles(
         backgroundColor: buttonIconCard.content.color.primary.default,
       },
       ellipsisBox: {
-        position: 'relative',
+        position: "relative",
         width: pxToRem(24),
         height: pxToRem(24),
-        '&::before': {
+        "&::before": {
           content: '""',
-          position: 'absolute',
-          width: '100%',
-          height: '100%',
+          position: "absolute",
+          width: "100%",
+          height: "100%",
           border: `${focusDefaultBorder.width} solid transparent`,
           backgroundColor: !showMenu
             ? buttonIconCard.background.color.primary.default
@@ -107,14 +111,14 @@ export const NYACardCoverStyles = createStyles(
             ? buttonIconCard.border.radius.md
             : `${buttonIconCard.border.radius.md} ${buttonIconCard.border.radius.md} 0px 0px`,
 
-          backdropFilter: 'blur(2px)',
+          backdropFilter: "blur(2px)",
           zIndex: -10,
         },
-        '&:hover::before': {
+        "&:hover::before": {
           backgroundColor: buttonIconCard.background.color.primary.hover,
         },
-        '&:focus-visible': {
-          outline: 'none',
+        "&:focus-visible": {
+          outline: "none",
           backgroundColor: buttonIconCard.background.color.primary.hover,
           border: `${focusDefaultBorder.width} ${focusDefaultBorder.style} ${focusDefaultBorder.color}`,
           borderRadius: buttonIconCard.border.radius.md,
@@ -126,8 +130,8 @@ export const NYACardCoverStyles = createStyles(
       },
       subject: {
         marginBottom: 8,
-        display: 'flex',
-        alignItems: 'center',
+        display: "flex",
+        alignItems: "center",
         gap: 8,
       },
       subjectIcon: {
@@ -135,46 +139,46 @@ export const NYACardCoverStyles = createStyles(
         padding: 4,
         minHeight: 20,
         minWidth: 20,
-        borderRadius: '50%',
+        borderRadius: "50%",
         img: {
-          filter: 'brightness(0) invert(1)',
+          filter: "brightness(0) invert(1)",
         },
       },
       rootTS: {
-        position: 'relative',
+        position: "relative",
         height,
-        width: '100%',
+        width: "100%",
         borderRadius: borderRadiusRoot,
         backgroundColor: cardAssignments.background.color.top,
       },
       commonContainer: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100%',
-        width: '100%',
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100%",
+        width: "100%",
         gap: pxToRem(8),
       },
       submitedNumber: {
-        ...cardEvaluation.content.typo['sm--medium'],
+        ...cardEvaluation.content.typo["sm--medium"],
         fontSize: pxToRem(48),
         fontWeight: 500,
-        lineHeight: '40px',
-        letterSpacing: '-0.96px',
+        lineHeight: "40px",
+        letterSpacing: "-0.96px",
         color: cardAssignments.content.color.subje,
       },
       separator: {
-        ...cardEvaluation.content.typo['sm--medium'],
+        ...cardEvaluation.content.typo["sm--medium"],
         fontSize: pxToRem(24),
-        fontStyle: 'normal',
+        fontStyle: "normal",
         fontWeight: 500,
-        lineHeight: '28px',
+        lineHeight: "28px",
         color: cardAssignments.content.color.subje,
       },
       pendigLabelContainer: {
         width: 100,
-        textAlign: 'center',
+        textAlign: "center",
       },
       pendingLabel: {
         ...cardEvaluation.content.typo.sm,

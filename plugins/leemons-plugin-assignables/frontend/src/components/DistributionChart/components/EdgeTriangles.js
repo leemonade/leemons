@@ -1,7 +1,14 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-function EdgeTriangles({ x, height, topOffset = 6, bottomOffset = 6, markWidth = 6, color }) {
+function EdgeTriangles({
+  x,
+  height,
+  topOffset = 6,
+  bottomOffset = 6,
+  markWidth = 6,
+  color,
+}) {
   return (
     <>
       <polygon

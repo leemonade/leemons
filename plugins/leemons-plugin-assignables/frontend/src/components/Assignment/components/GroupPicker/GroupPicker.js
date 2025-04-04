@@ -1,42 +1,49 @@
-import { useForm, useWatch } from 'react-hook-form';
+import { useForm, useWatch } from "react-hook-form";
 
-import { useAcademicProfiles } from '@academic-portfolio/hooks';
-import { Box, createStyles, Alert } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+import { useAcademicProfiles } from "@academic-portfolio/hooks";
+import { Box, createStyles, Alert } from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
-import { useGroupedClassesWithSelectedSubjects } from '../../AssignStudents/hooks';
-import { Container } from '../Container';
+import { useGroupedClassesWithSelectedSubjects } from "../../AssignStudents/hooks";
+import { Container } from "../Container";
 
-import { SelectClass } from './SelectClass';
-import { SelectCustomGroup } from './SelectCustomGroup';
-import SelectSingleStudent from './SelectSingleStudent';
+import { SelectClass } from "./SelectClass";
+import { SelectCustomGroup } from "./SelectCustomGroup";
+import SelectSingleStudent from "./SelectSingleStudent";
 
 const useGroupPickerStyles = createStyles((theme) => ({
   inline: {
-    display: 'inline-block',
+    display: "inline-block",
   },
   root: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     gap: theme.other.global.spacing.gap.lg,
   },
   classSelector: {
-    width: '50%',
+    width: "50%",
   },
 }));
 
-export function GroupPicker({ onChange, value, localizations, error, hideSectionHeaders }) {
+export function GroupPicker({
+  onChange,
+  value,
+  localizations,
+  error,
+  hideSectionHeaders,
+}) {
   const { control } = useForm({
     defaultValues: {
-      type: value?.type || 'class',
+      type: value?.type || "class",
     },
   });
 
-  const groupedClassesWithSelectedSubjects = useGroupedClassesWithSelectedSubjects();
+  const groupedClassesWithSelectedSubjects =
+    useGroupedClassesWithSelectedSubjects();
 
   const assignationType = useWatch({
     control,
-    name: 'type',
+    name: "type",
   });
 
   // const optionsData = React.useMemo(
@@ -77,7 +84,11 @@ export function GroupPicker({ onChange, value, localizations, error, hideSection
   }
 
   return (
-    <Container title={localizations?.title} description={localizations?.subtitle} required>
+    <Container
+      title={localizations?.title}
+      description={localizations?.subtitle}
+      required
+    >
       <Box className={classes.root}>
         {/* <Controller
           name="type"
@@ -89,9 +100,11 @@ export function GroupPicker({ onChange, value, localizations, error, hideSection
           )}
         /> */}
         <Box>
-          {assignationType === 'class' && (
+          {assignationType === "class" && (
             <SelectClass
-              groupedClassesWithSelectedSubjects={groupedClassesWithSelectedSubjects}
+              groupedClassesWithSelectedSubjects={
+                groupedClassesWithSelectedSubjects
+              }
               localizations={localizations?.class}
               studentProfile={studentProfile}
               error={error}
@@ -99,20 +112,24 @@ export function GroupPicker({ onChange, value, localizations, error, hideSection
               value={value}
             />
           )}
-          {assignationType === 'customGroup' && (
+          {assignationType === "customGroup" && (
             <SelectCustomGroup
               localizations={localizations?.customGroup}
-              groupedClassesWithSelectedSubjects={groupedClassesWithSelectedSubjects}
+              groupedClassesWithSelectedSubjects={
+                groupedClassesWithSelectedSubjects
+              }
               studentProfile={studentProfile}
               error={error}
               onChange={onChange}
               value={value}
             />
           )}
-          {assignationType === 'singleStudent' && (
+          {assignationType === "singleStudent" && (
             <SelectSingleStudent
               localizations={localizations?.singleStudent}
-              groupedClassesWithSelectedSubjects={groupedClassesWithSelectedSubjects}
+              groupedClassesWithSelectedSubjects={
+                groupedClassesWithSelectedSubjects
+              }
               studentProfile={studentProfile}
               error={error}
               onChange={onChange}

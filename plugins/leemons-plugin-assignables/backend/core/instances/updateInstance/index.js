@@ -1,3 +1,3 @@
-const { updateInstance } = require('./updateInstance');
+const { updateInstance } = require("./updateInstance");
 
 module.exports = { updateInstance };

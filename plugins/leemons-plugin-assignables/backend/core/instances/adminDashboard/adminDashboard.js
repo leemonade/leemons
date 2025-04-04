@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 /**
  * Admin Dashboard
@@ -12,15 +12,15 @@ const _ = require('lodash');
 // eslint-disable-next-line no-unused-vars
 async function adminDashboard({ config, ctx }) {
   const [_instances, assignables, roles] = await Promise.all([
-    ctx.tx.db.Instances.find({}).select(['id', 'assignable']).lean(),
-    ctx.tx.db.Assignables.find({}).select(['id', 'role']).lean(),
-    ctx.tx.db.Roles.find({}).select(['id', 'name', 'icon']).lean(),
+    ctx.tx.db.Instances.find({}).select(["id", "assignable"]).lean(),
+    ctx.tx.db.Assignables.find({}).select(["id", "role"]).lean(),
+    ctx.tx.db.Roles.find({}).select(["id", "name", "icon"]).lean(),
   ]);
 
   const instances = [];
 
-  const assignablesByRole = _.groupBy(assignables, 'role');
-  const instancesByAssignable = _.groupBy(_instances, 'assignable');
+  const assignablesByRole = _.groupBy(assignables, "role");
+  const instancesByAssignable = _.groupBy(_instances, "assignable");
 
   _.forEach(roles, (role) => {
     const inst = {
@@ -30,7 +30,9 @@ async function adminDashboard({ config, ctx }) {
     };
 
     _.forEach(assignablesByRole[role.name], (assignable) => {
-      inst.instances = inst.instances.concat(_.map(instancesByAssignable[assignable.id], 'id'));
+      inst.instances = inst.instances.concat(
+        _.map(instancesByAssignable[assignable.id], "id")
+      );
     });
 
     inst.instances = _.uniq(inst.instances).length;

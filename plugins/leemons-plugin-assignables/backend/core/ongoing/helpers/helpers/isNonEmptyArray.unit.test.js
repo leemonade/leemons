@@ -1,8 +1,8 @@
-const { it, expect } = require('@jest/globals');
+const { it, expect } = require("@jest/globals");
 
-const { isNonEmptyArray } = require('./isNonEmptyArray');
+const { isNonEmptyArray } = require("./isNonEmptyArray");
 
-it('Should return true for not empty arrays', () => {
+it("Should return true for not empty arrays", () => {
   // Arrange
   const value = [undefined];
 
@@ -13,7 +13,7 @@ it('Should return true for not empty arrays', () => {
   expect(response).toBe(true);
 });
 
-it('Should return false for empty arrays', () => {
+it("Should return false for empty arrays", () => {
   // Arrange
   const value = [];
 
@@ -24,10 +24,10 @@ it('Should return false for empty arrays', () => {
   expect(response).toBe(false);
 });
 
-it('Should return false for any other values', () => {
+it("Should return false for any other values", () => {
   // Arrange
-  const value = 'hello world';
-  const valueTwo = { test: 'hello world' };
+  const value = "hello world";
+  const valueTwo = { test: "hello world" };
 
   // Act
   const response = isNonEmptyArray(value);

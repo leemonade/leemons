@@ -1,14 +1,18 @@
-import React, { useMemo } from 'react';
-import _ from 'lodash';
-import dayjs from 'dayjs';
-import { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import { useLocale, unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { OpenIcon, TimeClockCircleIcon, CheckCircleIcon } from '@bubbles-ui/icons/outline';
-import useProgramEvaluationSystem from '../../../../../hooks/useProgramEvaluationSystem';
-import useClassData from '../../../../../hooks/useClassData';
-import prefixPN from '../../../../../helpers/prefixPN';
-import getStatusAsNumber from '../../UsersList/helpers/getStatusAsNumber';
+import React, { useMemo } from "react";
+import _ from "lodash";
+import dayjs from "dayjs";
+import { getFileUrl } from "@leebrary/helpers/prepareAsset";
+import { useLocale, unflatten } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import {
+  OpenIcon,
+  TimeClockCircleIcon,
+  CheckCircleIcon,
+} from "@bubbles-ui/icons/outline";
+import useProgramEvaluationSystem from "../../../../../hooks/useProgramEvaluationSystem";
+import useClassData from "../../../../../hooks/useClassData";
+import prefixPN from "../../../../../helpers/prefixPN";
+import getStatusAsNumber from "../../UsersList/helpers/getStatusAsNumber";
 
 function getGradesGraphData(evaluationSystem, students) {
   if (!students || !evaluationSystem) {
@@ -18,7 +22,9 @@ function getGradesGraphData(evaluationSystem, students) {
   const studentsWithGrades = students
     .filter((student) => student.finished)
     .map((student) => {
-      const mainGrades = student.grades.filter((grade) => grade.type === 'main');
+      const mainGrades = student.grades.filter(
+        (grade) => grade.type === "main"
+      );
       const averageObj = mainGrades.reduce(
         (acc, grade) => {
           acc.total += grade.grade;
@@ -57,33 +63,33 @@ function getStatusGraphData(students, activityStatusLabels) {
 
   const status = [
     {
-      id: 'notOpened',
+      id: "notOpened",
       label: activityStatusLabels?.notOpened,
       icon: <OpenIcon />,
 
       studentCount: students.filter((student) => student.status < 0).length,
     },
     {
-      id: 'opened',
+      id: "opened",
       label: activityStatusLabels?.opened,
       icon: <OpenIcon />,
 
       studentCount: students.filter((student) => student.status >= 0).length,
     },
     {
-      id: 'started',
+      id: "started",
       label: activityStatusLabels?.started,
       icon: <TimeClockCircleIcon />,
       studentCount: students.filter((student) => student.status >= 1).length,
     },
     {
-      id: 'submitted',
+      id: "submitted",
       label: activityStatusLabels?.submitted,
       icon: <CheckCircleIcon />,
       studentCount: students.filter((student) => student.status >= 2).length,
     },
     {
-      id: 'evaluated',
+      id: "evaluated",
       label: activityStatusLabels?.evaluated,
       icon: <CheckCircleIcon />,
       studentCount: students.filter((student) => student.status >= 3).length,
@@ -108,26 +114,30 @@ export default function useTaskOngoingInstanceParser(instanceData) {
   const locale = useLocale();
 
   const [, translations] = useTranslateLoader([
-    prefixPN('activity_deadline_header'),
-    prefixPN('multiSubject'),
-    prefixPN('dates'),
-    prefixPN('activity_status'),
+    prefixPN("activity_deadline_header"),
+    prefixPN("multiSubject"),
+    prefixPN("dates"),
+    prefixPN("activity_status"),
   ]);
 
-  const { multiSubjectLabel, deadlineHeaderLabels, datesLabels, activityStatusLabels } =
-    useMemo(() => {
-      if (translations && translations.items) {
-        const res = unflatten(translations.items);
-        return {
-          deadlineHeaderLabels: _.get(res, prefixPN('activity_deadline_header')),
-          multiSubjectLabel: _.get(res, prefixPN('multiSubject')),
-          datesLabels: _.get(res, prefixPN('dates')),
-          activityStatusLabels: _.get(res, prefixPN('activity_status')),
-        };
-      }
+  const {
+    multiSubjectLabel,
+    deadlineHeaderLabels,
+    datesLabels,
+    activityStatusLabels,
+  } = useMemo(() => {
+    if (translations && translations.items) {
+      const res = unflatten(translations.items);
+      return {
+        deadlineHeaderLabels: _.get(res, prefixPN("activity_deadline_header")),
+        multiSubjectLabel: _.get(res, prefixPN("multiSubject")),
+        datesLabels: _.get(res, prefixPN("dates")),
+        activityStatusLabels: _.get(res, prefixPN("activity_status")),
+      };
+    }
 
-      return {};
-    }, [translations]);
+    return {};
+  }, [translations]);
 
   const classData = useClassData(instance.classes, {
     multiSubject: multiSubjectLabel,
@@ -149,8 +159,12 @@ export default function useTaskOngoingInstanceParser(instanceData) {
         : classData.name,
       icon: classData.icon,
       color: classData.color,
-      startDate: instance?.dates?.start ? new Date(instance?.dates?.start) : null,
-      deadline: instance?.dates?.deadline ? new Date(instance?.dates?.deadline) : null,
+      startDate: instance?.dates?.start
+        ? new Date(instance?.dates?.start)
+        : null,
+      deadline: instance?.dates?.deadline
+        ? new Date(instance?.dates?.deadline)
+        : null,
       // TODO: UPDATE
       locale,
       // TODO: UPDATE

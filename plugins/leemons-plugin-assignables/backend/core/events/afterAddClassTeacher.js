@@ -1,24 +1,32 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { addTeachersToAssignableInstance } = require('../teachers/addTeachersToAssignableInstance');
+const {
+  addTeachersToAssignableInstance,
+} = require("../teachers/addTeachersToAssignableInstance");
 
-const canAssignTeacherRoles = ['main-teacher', 'associate-teacher'];
+const canAssignTeacherRoles = ["main-teacher", "associate-teacher"];
 
 async function afterAddClassTeacher({ class: classe, teacher, type, ctx }) {
   if (canAssignTeacherRoles.includes(type)) {
     // Sacamos todas las instancias existentes para las clases afectadas
-    const assignClasses = await ctx.tx.db.Classes.find({ class: classe }).lean();
-    const instanceIds = _.uniq(_.map(assignClasses, 'assignableInstance'));
+    const assignClasses = await ctx.tx.db.Classes.find({
+      class: classe,
+    }).lean();
+    const instanceIds = _.uniq(_.map(assignClasses, "assignableInstance"));
     // De todas las instancias, sacamos todas las asignaciones
-    const instances = await ctx.tx.db.Instances.find({ id: instanceIds }).lean();
-    const assignations = await ctx.tx.db.Assignations.find({ instance: instanceIds })
-      .select(['id', 'classes', 'user'])
+    const instances = await ctx.tx.db.Instances.find({
+      id: instanceIds,
+    }).lean();
+    const assignations = await ctx.tx.db.Assignations.find({
+      instance: instanceIds,
+    })
+      .select(["id", "classes", "user"])
       .lean();
 
     // Sacamos todas las clases que hay en las asignaciones
     const [_classe] = await ctx.tx.call(
-      'academic-portfolio.classes.classByIds',
+      "academic-portfolio.classes.classByIds",
       {
         ids: [classe],
         withTeachers: true,
@@ -40,10 +48,10 @@ async function afterAddClassTeacher({ class: classe, teacher, type, ctx }) {
         });
 
         if (instance.event) {
-          await ctx.tx.call('calendar.calendar.grantAccessUserAgentToEvent', {
+          await ctx.tx.call("calendar.calendar.grantAccessUserAgentToEvent", {
             id: instance.event,
             userAgentId: [teacher],
-            actionName: 'view',
+            actionName: "view",
           });
         }
       })
@@ -54,7 +62,7 @@ async function afterAddClassTeacher({ class: classe, teacher, type, ctx }) {
       // Para cada asignación, nos recorremos las asignaturas que tiene
 
       promises.push(
-        ctx.tx.call('comunica.room.addUserAgents', {
+        ctx.tx.call("comunica.room.addUserAgents", {
           // room, userAgent, isAdmin, ctx
           key: ctx.prefixPN(
             `subject|${_classe.subject.id}.assignation|${assignation.id}.userAgent|${assignation.user}`

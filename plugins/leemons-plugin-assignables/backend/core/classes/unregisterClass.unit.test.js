@@ -4,12 +4,12 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { unregisterClass } = require('./unregisterClass');
-const { classesSchema } = require('../../models/classes');
+const { unregisterClass } = require("./unregisterClass");
+const { classesSchema } = require("../../models/classes");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -32,16 +32,16 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should unregister the class', async () => {
+it("Should unregister the class", async () => {
   // Arrange
-  const instanceId = 'instance-id';
-  const assignableId = 'assignable-id';
-  const classId = 'class-id';
+  const instanceId = "instance-id";
+  const assignableId = "assignable-id";
+  const classId = "class-id";
   const documentCountShouldBeDeleted = 1;
 
   const ctx = generateCtx({
     models: {
-      Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+      Classes: newModel(mongooseConnection, "Classes", classesSchema),
     },
   });
 
@@ -65,16 +65,16 @@ it('Should unregister the class', async () => {
   expect(response).toBe(documentCountShouldBeDeleted);
 });
 
-it('Should unregister multiple classes', async () => {
+it("Should unregister multiple classes", async () => {
   // Arrange
-  const instanceId = 'instance-id';
-  const assignableId = 'assignable-id';
-  const classIds = ['class-id-1', 'class-id-2'];
+  const instanceId = "instance-id";
+  const assignableId = "assignable-id";
+  const classIds = ["class-id-1", "class-id-2"];
   const documentCountShouldBeDeleted = classIds.length;
 
   const ctx = generateCtx({
     models: {
-      Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+      Classes: newModel(mongooseConnection, "Classes", classesSchema),
     },
   });
 
@@ -98,15 +98,15 @@ it('Should unregister multiple classes', async () => {
   expect(response).toBe(documentCountShouldBeDeleted);
 });
 
-it('Should not unregister all the classes in the table', async () => {
+it("Should not unregister all the classes in the table", async () => {
   // Arrange
-  const instanceId = 'instance-id';
-  const assignableId = 'assignable-id';
-  const classId = 'class-id-1';
+  const instanceId = "instance-id";
+  const assignableId = "assignable-id";
+  const classId = "class-id-1";
 
   const ctx = generateCtx({
     models: {
-      Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+      Classes: newModel(mongooseConnection, "Classes", classesSchema),
     },
   });
 
@@ -119,11 +119,11 @@ it('Should not unregister all the classes in the table', async () => {
     {
       assignableInstance: instanceId,
       assignable: assignableId,
-      class: 'class-id-not-to-remove',
+      class: "class-id-not-to-remove",
     },
     {
-      assignableInstance: 'other-instance-id',
-      assignable: 'other-assignable-id',
+      assignableInstance: "other-instance-id",
+      assignable: "other-assignable-id",
       class: classId,
     },
   ];

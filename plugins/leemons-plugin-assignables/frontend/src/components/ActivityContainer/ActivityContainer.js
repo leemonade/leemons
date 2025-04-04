@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
-import { Box, useResizeObserver } from '@bubbles-ui/components';
-import { ActivityContainerStyles } from './ActivityContainer.styles';
-import { HeaderBackground, TaskDeadline, TaskHeader } from '@bubbles-ui/leemons';
-import { ACTIVITY_CONTAINER_DEFAULT_PROPS } from './ActivityContainer.constants';
+import React, { useState } from "react";
+import { Box, useResizeObserver } from "@bubbles-ui/components";
+import { ActivityContainerStyles } from "./ActivityContainer.styles";
+import {
+  HeaderBackground,
+  TaskDeadline,
+  TaskHeader,
+} from "@bubbles-ui/leemons";
+import { ACTIVITY_CONTAINER_DEFAULT_PROPS } from "./ActivityContainer.constants";
 
 const headerCollapsedHeight = 64;
 
@@ -22,7 +26,8 @@ const ActivityContainer = ({
   const [contentRef, contentRect] = useResizeObserver();
 
   const viewportHeight = window?.innerHeight;
-  const isScrollable = (headerCollapsedHeight + contentRect?.height ?? 0) > viewportHeight;
+  const isScrollable =
+    (headerCollapsedHeight + contentRect?.height ?? 0) > viewportHeight;
 
   React.useEffect(() => setIsScrolled(collapsed), [collapsed]);
   React.useEffect(() => {
@@ -34,10 +39,15 @@ const ActivityContainer = ({
   const handleScroll = (e) => {
     const { scrollTop } = e.target;
     const isCurrentlyScrolled = scrollTop > 40;
-    if (!collapsed) if (isCurrentlyScrolled !== isScrolled) setIsScrolled(isCurrentlyScrolled);
+    if (!collapsed)
+      if (isCurrentlyScrolled !== isScrolled)
+        setIsScrolled(isCurrentlyScrolled);
   };
 
-  const { classes, cx } = ActivityContainerStyles({ isScrolled }, { name: 'ActivityContainer' });
+  const { classes, cx } = ActivityContainerStyles(
+    { isScrolled },
+    { name: "ActivityContainer" }
+  );
   return (
     <Box
       ref={rootRef}
@@ -52,19 +62,19 @@ const ActivityContainer = ({
         <HeaderBackground
           image={image}
           withGradient
-          backgroundPosition={'center'}
-          styles={{ position: 'absolute', zIndex: 1 }}
+          backgroundPosition={"center"}
+          styles={{ position: "absolute", zIndex: 1 }}
         />
         <Box className={classes.taskHeaderWrapper}>
           <TaskHeader
             {...headerProps}
-            size={isScrolled ? 'sm' : 'md'}
+            size={isScrolled ? "sm" : "md"}
             className={classes.taskHeader}
           />
           {deadline && deadline.deadline ? (
             <TaskDeadline
               {...deadline}
-              size={isScrolled ? 'sm' : 'md'}
+              size={isScrolled ? "sm" : "md"}
               className={classes.deadline}
             />
           ) : null}

@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { useFormContext, useWatch } from 'react-hook-form';
-import { getProfiles } from '@tasks/request/profiles';
-import SelectClass from './SelectClass';
-import SelectCustomGroup from './SelectCustomGroup';
-import { useGroupedClassesWithSelectedSubjects } from '../hooks';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { useFormContext, useWatch } from "react-hook-form";
+import { getProfiles } from "@tasks/request/profiles";
+import SelectClass from "./SelectClass";
+import SelectCustomGroup from "./SelectCustomGroup";
+import { useGroupedClassesWithSelectedSubjects } from "../hooks";
 
 export default function AssigneeSelector({
   labels,
@@ -18,11 +18,12 @@ export default function AssigneeSelector({
   const { control } = useFormContext();
   const [profiles, setProfiles] = useState(null);
 
-  const groupedClassesWithSelectedSubjects = useGroupedClassesWithSelectedSubjects();
+  const groupedClassesWithSelectedSubjects =
+    useGroupedClassesWithSelectedSubjects();
 
   const type = useWatch({
     control,
-    name: 'type',
+    name: "type",
   });
 
   useEffect(() => {
@@ -37,7 +38,7 @@ export default function AssigneeSelector({
   }
 
   switch (type) {
-    case 'class':
+    case "class":
       return (
         <SelectClass
           labels={labels}
@@ -45,24 +46,28 @@ export default function AssigneeSelector({
           value={value}
           onChange={onChange}
           defaultValue={defaultValue?.assignmentSetup}
-          groupedClassesWithSelectedSubjects={groupedClassesWithSelectedSubjects}
+          groupedClassesWithSelectedSubjects={
+            groupedClassesWithSelectedSubjects
+          }
           showResultsCheck={showResultsCheck}
           showCorrectAnswersCheck={showCorrectAnswersCheck}
         />
       );
-    case 'customGroups':
+    case "customGroups":
       return (
         <SelectCustomGroup
           labels={labels}
           profiles={profiles}
           value={value}
           onChange={onChange}
-          groupedClassesWithSelectedSubjects={groupedClassesWithSelectedSubjects}
+          groupedClassesWithSelectedSubjects={
+            groupedClassesWithSelectedSubjects
+          }
           showResultsCheck={showResultsCheck}
           showCorrectAnswersCheck={showCorrectAnswersCheck}
         />
       );
-    case 'session':
+    case "session":
       // TODO: Implement session selector for tasks
       return null;
     default:

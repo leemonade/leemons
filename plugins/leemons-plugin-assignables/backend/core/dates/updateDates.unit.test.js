@@ -4,12 +4,12 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { updateDates } = require('./updateDates');
-const { datesSchema } = require('../../models/dates');
+const { updateDates } = require("./updateDates");
+const { datesSchema } = require("../../models/dates");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -32,18 +32,18 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should add the new dates', async () => {
+it("Should add the new dates", async () => {
   // Arrange
-  const instance = 'instance-id';
-  const type = 'type-id';
+  const instance = "instance-id";
+  const type = "type-id";
   const dates = {
-    start: new Date('2023/8/29'),
-    end: new Date('2023/10/12'),
+    start: new Date("2023/8/29"),
+    end: new Date("2023/10/12"),
   };
 
   const ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 
@@ -75,18 +75,18 @@ it('Should add the new dates', async () => {
 });
 
 // TODO: Re-enable this test once the function is checked
-it.skip('Should remove the old dates', async () => {
+it.skip("Should remove the old dates", async () => {
   // Arrange
-  const instance = 'instance-id';
-  const type = 'type-id';
+  const instance = "instance-id";
+  const type = "type-id";
   const dates = {
-    start: new Date('2023/8/29'),
-    end: new Date('2023/10/12'),
+    start: new Date("2023/8/29"),
+    end: new Date("2023/10/12"),
   };
 
   const ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 
@@ -121,20 +121,20 @@ it.skip('Should remove the old dates', async () => {
 
 it("Should update the date if it's changed", async () => {
   // Arrange
-  const instance = 'instance-id';
-  const type = 'type-id';
+  const instance = "instance-id";
+  const type = "type-id";
   const dates = {
-    start: new Date('2023/8/29'),
-    end: new Date('2023/10/12'),
+    start: new Date("2023/8/29"),
+    end: new Date("2023/10/12"),
   };
   const newDates = {
-    start: new Date('2024/8/29'),
-    end: new Date('2024/10/12'),
+    start: new Date("2024/8/29"),
+    end: new Date("2024/10/12"),
   };
 
   const ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 
@@ -174,18 +174,18 @@ it("Should update the date if it's changed", async () => {
   );
 });
 
-it('Should throw an error if no valid params areprovided', async () => {
+it("Should throw an error if no valid params areprovided", async () => {
   // Arrange
-  const instance = 'instance-id';
-  const type = 'type-id';
+  const instance = "instance-id";
+  const type = "type-id";
   const dates = {
-    start: new Date('2023/8/29'),
-    end: new Date('2023/10/12'),
+    start: new Date("2023/8/29"),
+    end: new Date("2023/10/12"),
   };
 
   const ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 
@@ -198,12 +198,12 @@ it('Should throw an error if no valid params areprovided', async () => {
 
   // Assert
   await expect(noTypeFn).rejects.toThrowError(
-    'Cannot update dates: type, instance and dates are required'
+    "Cannot update dates: type, instance and dates are required"
   );
   await expect(noInstanceFn).rejects.toThrowError(
-    'Cannot update dates: type, instance and dates are required'
+    "Cannot update dates: type, instance and dates are required"
   );
   await expect(noDatesFn).rejects.toThrowError(
-    'Cannot update dates: type, instance and dates are required'
+    "Cannot update dates: type, instance and dates are required"
   );
 });

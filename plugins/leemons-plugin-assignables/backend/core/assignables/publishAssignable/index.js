@@ -1,3 +1,3 @@
-const { publishAssignable } = require('./publishAssignable');
+const { publishAssignable } = require("./publishAssignable");
 
 module.exports = { publishAssignable };

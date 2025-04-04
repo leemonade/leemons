@@ -1,5 +1,5 @@
-const { LeemonsError } = require('@leemons/error');
-const { getInstances } = require('../getInstances');
+const { LeemonsError } = require("@leemons/error");
+const { getInstances } = require("../getInstances");
 
 /**
  * @async

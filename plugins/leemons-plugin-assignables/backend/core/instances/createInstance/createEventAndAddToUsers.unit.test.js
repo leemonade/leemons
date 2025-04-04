@@ -1,13 +1,13 @@
 // Importing required modules and functions
-const { it, beforeEach, expect } = require('@jest/globals');
-const { map } = require('lodash');
+const { it, beforeEach, expect } = require("@jest/globals");
+const { map } = require("lodash");
 
-const { generateCtx } = require('@leemons/testing');
+const { generateCtx } = require("@leemons/testing");
 
-const { createEventAndAddToUsers } = require('./createEventAndAddToUsers');
-const { registerEvent } = require('../calendar/registerEvent');
+const { createEventAndAddToUsers } = require("./createEventAndAddToUsers");
+const { registerEvent } = require("../calendar/registerEvent");
 
-jest.mock('../calendar/registerEvent');
+jest.mock("../calendar/registerEvent");
 
 const grantAccessUserAgentToEventHandler = jest.fn();
 
@@ -19,25 +19,25 @@ beforeEach(() => {
 
   ctx = generateCtx({
     actions: {
-      'calendar.calendar.grantAccessUserAgentToEvent':
+      "calendar.calendar.grantAccessUserAgentToEvent":
         grantAccessUserAgentToEventHandler,
     },
   });
-  eventId = 'eventId';
+  eventId = "eventId";
 });
 
 // Test case for createEventAndAddToUsers function
-it('Should handle createEventAndAddToUsers correctly', async () => {
+it("Should handle createEventAndAddToUsers correctly", async () => {
   // Arrange
 
   const params = {
-    assignable: 'assignableId',
-    classes: ['class1', 'class2'],
-    id: 'instanceId',
-    dates: ['2022-01-01', '2022-01-02'],
+    assignable: "assignableId",
+    classes: ["class1", "class2"],
+    id: "instanceId",
+    dates: ["2022-01-01", "2022-01-02"],
     isAllDay: true,
-    teachers: [{ teacher: 'teacher1' }, { teacher: 'teacher2' }],
-    students: ['student1', 'student2'],
+    teachers: [{ teacher: "teacher1" }, { teacher: "teacher2" }],
+    students: ["student1", "student2"],
     ctx,
   };
 
@@ -57,27 +57,27 @@ it('Should handle createEventAndAddToUsers correctly', async () => {
   });
   expect(grantAccessUserAgentToEventHandler).toHaveBeenNthCalledWith(1, {
     id: eventId,
-    userAgentId: map(params.teachers, 'teacher'),
-    actionName: 'view',
+    userAgentId: map(params.teachers, "teacher"),
+    actionName: "view",
   });
   expect(grantAccessUserAgentToEventHandler).toHaveBeenNthCalledWith(2, {
     id: eventId,
     userAgentId: params.students,
-    actionName: 'view',
+    actionName: "view",
   });
   expect(response).toBe(eventId);
 });
 
-it('Should handle createEventAndAddToUsers with no teachers', async () => {
+it("Should handle createEventAndAddToUsers with no teachers", async () => {
   // Arrange
   const params = {
-    assignable: 'assignableId',
-    classes: ['class1', 'class2'],
-    id: 'instanceId',
-    dates: ['2022-01-01', '2022-01-02'],
+    assignable: "assignableId",
+    classes: ["class1", "class2"],
+    id: "instanceId",
+    dates: ["2022-01-01", "2022-01-02"],
     isAllDay: true,
     teachers: [],
-    students: ['student1', 'student2'],
+    students: ["student1", "student2"],
     ctx,
   };
 
@@ -90,21 +90,21 @@ it('Should handle createEventAndAddToUsers with no teachers', async () => {
   expect(grantAccessUserAgentToEventHandler).toBeCalledWith({
     id: eventId,
     userAgentId: params.students,
-    actionName: 'view',
+    actionName: "view",
   });
 
   expect(response).toBe(eventId);
 });
 
-it('Should handle createEventAndAddToUsers with no students', async () => {
+it("Should handle createEventAndAddToUsers with no students", async () => {
   // Arrange
   const params = {
-    assignable: 'assignableId',
-    classes: ['class1', 'class2'],
-    id: 'instanceId',
-    dates: ['2022-01-01', '2022-01-02'],
+    assignable: "assignableId",
+    classes: ["class1", "class2"],
+    id: "instanceId",
+    dates: ["2022-01-01", "2022-01-02"],
     isAllDay: true,
-    teachers: [{ teacher: 'teacher1' }, { teacher: 'teacher2' }],
+    teachers: [{ teacher: "teacher1" }, { teacher: "teacher2" }],
     students: [],
     ctx,
   };
@@ -117,22 +117,22 @@ it('Should handle createEventAndAddToUsers with no students', async () => {
   // Assert
   expect(grantAccessUserAgentToEventHandler).toHaveBeenCalledWith({
     id: eventId,
-    userAgentId: map(params.teachers, 'teacher'),
-    actionName: 'view',
+    userAgentId: map(params.teachers, "teacher"),
+    actionName: "view",
   });
   expect(response).toBe(eventId);
 });
 
-it('Should not grant access to Event if no event is created', async () => {
+it("Should not grant access to Event if no event is created", async () => {
   // Arrange
   const params = {
-    assignable: 'assignableId',
-    classes: ['class1', 'class2'],
-    id: 'instanceId',
-    dates: ['2022-01-01', '2022-01-02'],
+    assignable: "assignableId",
+    classes: ["class1", "class2"],
+    id: "instanceId",
+    dates: ["2022-01-01", "2022-01-02"],
     isAllDay: true,
     teachers: [],
-    students: ['student1', 'student2'],
+    students: ["student1", "student2"],
     ctx,
   };
   registerEvent.mockReturnValue({ id: null });

@@ -1,18 +1,27 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable import/prefer-default-export */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
-import { ClassroomItemDisplay } from '@academic-portfolio/components';
-import { Box, Badge, Text, TextClamp, ProgressColorBar } from '@bubbles-ui/components';
-import { htmlToText } from '@common';
+import { ClassroomItemDisplay } from "@academic-portfolio/components";
+import {
+  Box,
+  Badge,
+  Text,
+  TextClamp,
+  ProgressColorBar,
+} from "@bubbles-ui/components";
+import { htmlToText } from "@common";
 
-import { getDeadlineData } from '../../../helpers/getDeadlineData';
+import { getDeadlineData } from "../../../helpers/getDeadlineData";
 
-import { NYACARD_BODY_PROP_TYPES, NYACARD_BODY_DEFAULT_PROPS } from './NYACardBody.constants';
-import { NYACardBodyStyles } from './NYACardBody.styles';
+import {
+  NYACARD_BODY_PROP_TYPES,
+  NYACARD_BODY_DEFAULT_PROPS,
+} from "./NYACardBody.constants";
+import { NYACardBodyStyles } from "./NYACardBody.styles";
 
-import getActivityType from '@assignables/helpers/getActivityType';
-import getColorByDateRange from '@assignables/helpers/getColorByDateRange';
+import getActivityType from "@assignables/helpers/getActivityType";
+import getColorByDateRange from "@assignables/helpers/getColorByDateRange";
 
 const NYACardBody = ({
   description,
@@ -35,21 +44,28 @@ const NYACardBody = ({
   isTeacherSyllabus,
   ...props
 }) => {
-  const { classes } = NYACardBodyStyles({ fullHeight }, { name: 'NYACardBody' });
+  const { classes } = NYACardBodyStyles(
+    { fullHeight },
+    { name: "NYACardBody" }
+  );
   const [calificationType, setCalificationType] = useState(null);
   const hasProgressBar = totalActivities && totalActivities > 0;
-  const activitiesPercentage = hasProgressBar && (submitedActivities / totalActivities) * 100;
+  const activitiesPercentage =
+    hasProgressBar && (submitedActivities / totalActivities) * 100;
   const getDescription = () => {
-    if (instance?.assignable?.role === 'feedback') {
+    if (instance?.assignable?.role === "feedback") {
       if (instance?.metadata?.statement) {
         return htmlToText(instance?.metadata?.statement);
       }
 
       return instance?.assignable?.instructionsForStudents
         ? htmlToText(instance?.assignable?.instructionsForStudents)
-        : description ?? htmlToText(instance?.assignable?.statement);
+        : (description ?? htmlToText(instance?.assignable?.statement));
     }
-    if (instance?.assignable?.role === 'task' || instance?.assignable?.role === 'test') {
+    if (
+      instance?.assignable?.role === "task" ||
+      instance?.assignable?.role === "test"
+    ) {
       return instance?.assignable?.statement
         ? htmlToText(instance?.assignable?.statement)
         : description;
@@ -60,7 +76,8 @@ const NYACardBody = ({
 
   const getInstanceTypeLocale = (instanceParam) => {
     const activityType = getActivityType(instanceParam);
-    const localizationType = localizations?.assignmentForm?.evaluation?.typeInput?.options;
+    const localizationType =
+      localizations?.assignmentForm?.evaluation?.typeInput?.options;
     const activityTypeLocale = {
       calificable: localizationType?.calificable,
       puntuable: localizationType?.punctuable,
@@ -73,7 +90,7 @@ const NYACardBody = ({
     getInstanceTypeLocale(instance);
   }, [instance]);
   const title = props.name ? props.name : null;
-  const isModule = instance?.assignable?.role === 'learningpaths.module';
+  const isModule = instance?.assignable?.role === "learningpaths.module";
   const newLocale = localizations?.new?.toUpperCase();
 
   const deadLineLocales = localizations?.deadline;
@@ -98,8 +115,14 @@ const NYACardBody = ({
             </Badge>
           )}
           {calificationType && !isModule && (
-            <Badge closable={false} size="xs" className={classes.calificationBadge}>
-              <Text className={classes.draftText}>{calificationType?.toUpperCase()}</Text>
+            <Badge
+              closable={false}
+              size="xs"
+              className={classes.calificationBadge}
+            >
+              <Text className={classes.draftText}>
+                {calificationType?.toUpperCase()}
+              </Text>
             </Badge>
           )}
         </Box>
@@ -121,11 +144,19 @@ const NYACardBody = ({
         )}
       </Box>
       <Box className={classes.subject}>
-        <ClassroomItemDisplay classroomIds={classroom} showSubject={showSubject} />
+        <ClassroomItemDisplay
+          classroomIds={classroom}
+          showSubject={showSubject}
+        />
       </Box>
       <Box className={classes.deadline}>
-        <Text className={classes.deadlineDate}>{`${formattedDeadline.date} - `}</Text>
-        <Text className={classes.deadlineDate} style={{ color: deadlineColors }}>
+        <Text
+          className={classes.deadlineDate}
+        >{`${formattedDeadline.date} - `}</Text>
+        <Text
+          className={classes.deadlineDate}
+          style={{ color: deadlineColors }}
+        >
           {formattedDeadline.status}
         </Text>
       </Box>
@@ -133,8 +164,8 @@ const NYACardBody = ({
         <Box className={classes.progress}>
           <ProgressColorBar
             value={activitiesPercentage}
-            size={'md'}
-            color={'#F39C12'}
+            size={"md"}
+            color={"#F39C12"}
             labelLeft={`Progreso: ${Math.floor(activitiesPercentage)}%`}
             labelRight={`(${submitedActivities}/${totalActivities} ${activitiesLocale})`}
           />

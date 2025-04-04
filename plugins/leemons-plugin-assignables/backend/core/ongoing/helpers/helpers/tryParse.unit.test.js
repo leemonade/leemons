@@ -1,7 +1,7 @@
-const { it, expect } = require('@jest/globals');
-const { tryParse } = require('./tryParse');
+const { it, expect } = require("@jest/globals");
+const { tryParse } = require("./tryParse");
 
-it('Should return parsed JSON for valid JSON strings', () => {
+it("Should return parsed JSON for valid JSON strings", () => {
   // Arrange
   const value = '{"test": "hello world"}';
 
@@ -9,16 +9,16 @@ it('Should return parsed JSON for valid JSON strings', () => {
   const response = tryParse(value);
 
   // Assert
-  expect(response).toEqual({ test: 'hello world' });
+  expect(response).toEqual({ test: "hello world" });
 });
 
-it('Should return the original value for invalid JSON strings', () => {
+it("Should return the original value for invalid JSON strings", () => {
   // Arrange
-  const value = 'foo';
+  const value = "foo";
 
   // Act
   const response = tryParse(value);
 
   // Assert
-  expect(response).toBe('foo');
+  expect(response).toBe("foo");
 });

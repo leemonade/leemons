@@ -1,7 +1,7 @@
-const { uniq, map } = require('lodash');
+const { uniq, map } = require("lodash");
 
 async function getInstanceSubjectsProgramsAndClasses({ instances, ctx }) {
-  const instancesIds = uniq(map(instances, 'id'));
+  const instancesIds = uniq(map(instances, "id"));
 
   const instanceClasses = await ctx.tx.db.Classes.find({
     assignableInstance: instancesIds,
@@ -11,15 +11,22 @@ async function getInstanceSubjectsProgramsAndClasses({ instances, ctx }) {
 
   instanceClasses.forEach((instanceClass) => {
     if (classesPerInstance[instanceClass.assignableInstance]) {
-      classesPerInstance[instanceClass.assignableInstance].push(instanceClass.class);
+      classesPerInstance[instanceClass.assignableInstance].push(
+        instanceClass.class
+      );
     } else {
-      classesPerInstance[instanceClass.assignableInstance] = [instanceClass.class];
+      classesPerInstance[instanceClass.assignableInstance] = [
+        instanceClass.class,
+      ];
     }
   });
 
-  const classesData = await ctx.tx.call('academic-portfolio.classes.classByIds', {
-    ids: uniq(map(instanceClasses, 'class')),
-  });
+  const classesData = await ctx.tx.call(
+    "academic-portfolio.classes.classByIds",
+    {
+      ids: uniq(map(instanceClasses, "class")),
+    }
+  );
 
   const subjectsPerClass = {};
   const programsPerClass = {};
@@ -48,4 +55,5 @@ async function getInstanceSubjectsProgramsAndClasses({ instances, ctx }) {
 
   return dataPerInstance;
 }
-exports.getInstanceSubjectsProgramsAndClasses = getInstanceSubjectsProgramsAndClasses;
+exports.getInstanceSubjectsProgramsAndClasses =
+  getInstanceSubjectsProgramsAndClasses;

@@ -1,4 +1,4 @@
-const { filter } = require('lodash');
+const { filter } = require("lodash");
 
 function filterInstancesByEvaluable({ instances, evaluable, calificableOnly }) {
   return filter(instances, (instance) => {

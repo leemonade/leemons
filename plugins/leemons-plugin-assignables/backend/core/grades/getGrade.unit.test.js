@@ -4,12 +4,12 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getGrade } = require('./getGrade');
-const { gradesSchema } = require('../../models/grades');
+const { getGrade } = require("./getGrade");
+const { gradesSchema } = require("../../models/grades");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -34,38 +34,38 @@ beforeEach(async () => {
 
 it("Should return all the assignation's grade", async () => {
   // Arrange
-  const assignation = 'assignation-id';
+  const assignation = "assignation-id";
 
   const ctx = generateCtx({
     models: {
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
+      Grades: newModel(mongooseConnection, "Grades", gradesSchema),
     },
   });
 
   const initialValues = [
     {
       assignation,
-      subject: 'subject-id-1',
-      type: 'main',
+      subject: "subject-id-1",
+      type: "main",
       grade: 7,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
     {
       assignation,
-      subject: 'subject-id-1',
-      type: 'effort',
+      subject: "subject-id-1",
+      type: "effort",
       grade: 9,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
     {
       assignation,
-      subject: 'subject-id-2',
-      type: 'main',
+      subject: "subject-id-2",
+      type: "main",
       grade: 7.5,
       visibleToStudent: true,
-      gradedBy: 'teacher-1',
+      gradedBy: "teacher-1",
     },
   ];
   await ctx.db.Grades.create(initialValues);
@@ -80,12 +80,12 @@ it("Should return all the assignation's grade", async () => {
 
 it("Should return the assignation's grade for the given subject", async () => {
   // Arrange
-  const assignation = 'assignation-id';
-  const subject = 'subject-id-1';
+  const assignation = "assignation-id";
+  const subject = "subject-id-1";
 
   const ctx = generateCtx({
     models: {
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
+      Grades: newModel(mongooseConnection, "Grades", gradesSchema),
     },
   });
 
@@ -93,26 +93,26 @@ it("Should return the assignation's grade for the given subject", async () => {
     {
       assignation,
       subject,
-      type: 'main',
+      type: "main",
       grade: 7,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
     {
       assignation,
       subject,
-      type: 'effort',
+      type: "effort",
       grade: 9,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
     {
       assignation,
-      subject: 'subject-id-2',
-      type: 'main',
+      subject: "subject-id-2",
+      type: "main",
       grade: 7.5,
       visibleToStudent: true,
-      gradedBy: 'teacher-1',
+      gradedBy: "teacher-1",
     },
   ];
   await ctx.db.Grades.create(initialValues);
@@ -127,13 +127,13 @@ it("Should return the assignation's grade for the given subject", async () => {
 
 it("Should return the assignation's grade for the given subject and type", async () => {
   // Arrange
-  const assignation = 'assignation-id';
-  const subject = 'subject-id-1';
-  const type = 'main';
+  const assignation = "assignation-id";
+  const subject = "subject-id-1";
+  const type = "main";
 
   const ctx = generateCtx({
     models: {
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
+      Grades: newModel(mongooseConnection, "Grades", gradesSchema),
     },
   });
 
@@ -144,23 +144,23 @@ it("Should return the assignation's grade for the given subject and type", async
       type,
       grade: 7,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
     {
       assignation,
       subject,
-      type: 'effort',
+      type: "effort",
       grade: 9,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
     {
       assignation,
-      subject: 'subject-id-2',
+      subject: "subject-id-2",
       type,
       grade: 7.5,
       visibleToStudent: true,
-      gradedBy: 'teacher-1',
+      gradedBy: "teacher-1",
     },
   ];
   await ctx.db.Grades.create(initialValues);
@@ -175,14 +175,14 @@ it("Should return the assignation's grade for the given subject and type", async
 
 it("Should return the assignation's grade for the given subject, type and visibility", async () => {
   // Arrange
-  const assignation = 'assignation-id';
-  const subject = 'subject-id-1';
-  const type = 'main';
+  const assignation = "assignation-id";
+  const subject = "subject-id-1";
+  const type = "main";
   const visibleToStudent = true;
 
   const ctx = generateCtx({
     models: {
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
+      Grades: newModel(mongooseConnection, "Grades", gradesSchema),
     },
   });
 
@@ -193,23 +193,23 @@ it("Should return the assignation's grade for the given subject, type and visibi
       type,
       grade: 7,
       visibleToStudent,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
     {
       assignation,
       subject,
-      type: 'effort',
+      type: "effort",
       grade: 9,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
     {
       assignation,
-      subject: 'subject-id-2',
+      subject: "subject-id-2",
       type,
       grade: 7.5,
       visibleToStudent: true,
-      gradedBy: 'teacher-1',
+      gradedBy: "teacher-1",
     },
   ];
   await ctx.db.Grades.create(initialValues);
@@ -238,39 +238,39 @@ it("Should return the assignation's grade for the given subject, type and visibi
 
 it("Should return the assignation's grade for the given type", async () => {
   // Arrange
-  const assignation = 'assignation-id';
-  const type = 'main';
+  const assignation = "assignation-id";
+  const type = "main";
 
   const ctx = generateCtx({
     models: {
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
+      Grades: newModel(mongooseConnection, "Grades", gradesSchema),
     },
   });
 
   const initialValues = [
     {
       assignation,
-      subject: 'subject-id-1',
+      subject: "subject-id-1",
       type,
       grade: 7,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
     {
       assignation,
-      subject: 'subject-id-1',
-      type: 'effort',
+      subject: "subject-id-1",
+      type: "effort",
       grade: 9,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
     {
       assignation,
-      subject: 'subject-id-2',
+      subject: "subject-id-2",
       type,
       grade: 7.5,
       visibleToStudent: true,
-      gradedBy: 'teacher-1',
+      gradedBy: "teacher-1",
     },
   ];
   await ctx.db.Grades.create(initialValues);
@@ -285,38 +285,38 @@ it("Should return the assignation's grade for the given type", async () => {
 
 it("Should return the assignation's grade for the given visibility", async () => {
   // Arrange
-  const assignation = 'assignation-id';
+  const assignation = "assignation-id";
 
   const ctx = generateCtx({
     models: {
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
+      Grades: newModel(mongooseConnection, "Grades", gradesSchema),
     },
   });
 
   const initialValues = [
     {
       assignation,
-      subject: 'subject-id-1',
-      type: 'main',
+      subject: "subject-id-1",
+      type: "main",
       grade: 7,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
     {
       assignation,
-      subject: 'subject-id-1',
-      type: 'effort',
+      subject: "subject-id-1",
+      type: "effort",
       grade: 9,
       visibleToStudent: false,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
     {
       assignation,
-      subject: 'subject-id-2',
-      type: 'main',
+      subject: "subject-id-2",
+      type: "main",
       grade: 7.5,
       visibleToStudent: true,
-      gradedBy: 'teacher-1',
+      gradedBy: "teacher-1",
     },
   ];
   await ctx.db.Grades.create(initialValues);
@@ -343,11 +343,11 @@ it("Should return the assignation's grade for the given visibility", async () =>
   );
 });
 
-it('Should throw when no assignation id is provided', async () => {
+it("Should throw when no assignation id is provided", async () => {
   // Arrange
   const ctx = generateCtx({
     models: {
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
+      Grades: newModel(mongooseConnection, "Grades", gradesSchema),
     },
   });
 
@@ -356,6 +356,6 @@ it('Should throw when no assignation id is provided', async () => {
 
   // Assert
   expect(testFn).rejects.toThrowError(
-    'Cannot getGrade: assignation is required'
+    "Cannot getGrade: assignation is required"
   );
 });

@@ -1,7 +1,10 @@
-import React from 'react';
-import { useTheme } from '@bubbles-ui/components';
+import React from "react";
+import { useTheme } from "@bubbles-ui/components";
 
-export default function Bar({ bar: { x, y, width, height, data }, minimumGrade }) {
+export default function Bar({
+  bar: { x, y, width, height, data },
+  minimumGrade,
+}) {
   const theme = useTheme();
   const maxY = y + height;
 
@@ -9,11 +12,11 @@ export default function Bar({ bar: { x, y, width, height, data }, minimumGrade }
 
   const color =
     (data.data.value ?? 0) < minimumGrade
-      ? theme.other.core.color.danger['100']
-      : theme.other.core.color.success['100'];
+      ? theme.other.core.color.danger["100"]
+      : theme.other.core.color.success["100"];
   const secondaryColor =
     (data.data.value ?? 0) < minimumGrade
-      ? theme.other.core.color.danger['500']
+      ? theme.other.core.color.danger["500"]
       : theme.other.global.background.color.primary.default;
 
   return (
@@ -26,16 +29,28 @@ export default function Bar({ bar: { x, y, width, height, data }, minimumGrade }
         fill={theme.other.global.border.color.line.default}
       />
 
-      <g transform={`translate(${x}, ${y > maxY - labelHeight ? maxY - labelHeight : y})`}>
+      <g
+        transform={`translate(${x}, ${y > maxY - labelHeight ? maxY - labelHeight : y})`}
+      >
         {height > 0 && (
           <g>
-            <rect y={labelHeight} width={width} height={height - labelHeight} fill={color} />
-            <rect y={0} height={labelHeight} width={width} fill={secondaryColor} />
+            <rect
+              y={labelHeight}
+              width={width}
+              height={height - labelHeight}
+              fill={color}
+            />
+            <rect
+              y={0}
+              height={labelHeight}
+              width={width}
+              fill={secondaryColor}
+            />
             <text
               x={width / 2}
               y={labelHeight / 2}
               textAnchor="middle"
-              dominantBaseline={'central'}
+              dominantBaseline={"central"}
               fill="white"
               fontWeight={600}
             >

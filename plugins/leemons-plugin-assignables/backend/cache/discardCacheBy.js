@@ -1,4 +1,4 @@
-const namespaces = require('./namespaces');
+const namespaces = require("./namespaces");
 
 module.exports = {
   assignables: {
@@ -26,7 +26,9 @@ module.exports = {
         ids.some(
           ({ id, instance, user }) =>
             (id && key.includes(`:id:${id}`)) ||
-            (instance && user && key.includes(`:instance:${instance}:user:${user}`))
+            (instance &&
+              user &&
+              key.includes(`:instance:${instance}:user:${user}`))
         )
       );
     },

@@ -1,5 +1,5 @@
-const { LeemonsError } = require('@leemons/error');
-const { uniq } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { uniq } = require("lodash");
 
 async function getRoles({ roles, ctx }) {
   const uniqRoles = uniq(roles);
@@ -13,7 +13,7 @@ async function getRoles({ roles, ctx }) {
   }
 
   throw new LeemonsError(ctx, {
-    message: 'Cannot get roles: Roles not found',
+    message: "Cannot get roles: Roles not found",
     httpStatusCode: 404,
   });
 }

@@ -5,22 +5,22 @@ const {
   afterAll,
   beforeEach,
   jest: globalJest,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-globalJest.mock('../../leebrary/assets');
-globalJest.mock('../getAssignables');
+globalJest.mock("../../leebrary/assets");
+globalJest.mock("../getAssignables");
 
-const { pick } = require('lodash');
-const { removeAssignables } = require('./removeAssignables');
-const { assignablesSchema } = require('../../../models/assignables');
+const { pick } = require("lodash");
+const { removeAssignables } = require("./removeAssignables");
+const { assignablesSchema } = require("../../../models/assignables");
 
-const { getAsset } = require('../../leebrary/assets');
-const { getAssignables } = require('../getAssignables');
+const { getAsset } = require("../../leebrary/assets");
+const { getAssignables } = require("../getAssignables");
 const {
   getAssignableObject,
-} = require('../../../__fixtures__/getAssignableObject');
+} = require("../../../__fixtures__/getAssignableObject");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -43,17 +43,17 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Removes all the requested assignables', async () => {
+it("Removes all the requested assignables", async () => {
   // Arrange
-  const ids = ['assignable-id-1', 'assignable-id-2'];
-  const assets = ['asset-id-1', 'asset-id-2'];
+  const ids = ["assignable-id-1", "assignable-id-2"];
+  const assets = ["asset-id-1", "asset-id-2"];
   const assignable = getAssignableObject();
 
   const ctx = generateCtx({
     models: {
       Assignables: newModel(
         mongooseConnection,
-        'Assignables',
+        "Assignables",
         assignablesSchema
       ),
     },
@@ -63,30 +63,30 @@ it('Removes all the requested assignables', async () => {
     {
       id: ids[0],
       ...pick(assignable, [
-        'role',
-        'gradable',
-        'center',
-        'statement',
-        'development',
-        'duration',
-        'submission',
-        'resources',
-        'metadata',
+        "role",
+        "gradable",
+        "center",
+        "statement",
+        "development",
+        "duration",
+        "submission",
+        "resources",
+        "metadata",
       ]),
       asset: assets[0],
     },
     {
       id: ids[1],
       ...pick(assignable, [
-        'role',
-        'gradable',
-        'center',
-        'statement',
-        'development',
-        'duration',
-        'submission',
-        'resources',
-        'metadata',
+        "role",
+        "gradable",
+        "center",
+        "statement",
+        "development",
+        "duration",
+        "submission",
+        "resources",
+        "metadata",
       ]),
       asset: assets[1],
     },
@@ -106,7 +106,7 @@ it('Removes all the requested assignables', async () => {
 
   // Act
   const response = await removeAssignables({ ids, ctx });
-  const dbDataAfterDeletion = await ctx.db.Assignables.find({}, '', {
+  const dbDataAfterDeletion = await ctx.db.Assignables.find({}, "", {
     excludeDeleted: false,
   }).lean();
 

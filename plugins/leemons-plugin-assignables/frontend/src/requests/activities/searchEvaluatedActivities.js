@@ -11,10 +11,10 @@ export default async function searchEvaluatedActivities(query) {
     `v1/assignables/activities/search/evaluated?${Object.entries(query)
       .filter(([, value]) => value)
       .map(([key, value]) => `${key}=${value}`)
-      .join('&')}`,
+      .join("&")}`,
     {
       allAgents: true,
-      method: 'GET',
+      method: "GET",
     }
   );
 

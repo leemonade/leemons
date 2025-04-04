@@ -1,3 +1,3 @@
-import ProgressTable from './ProgressTable';
+import ProgressTable from "./ProgressTable";
 
 export default ProgressTable;

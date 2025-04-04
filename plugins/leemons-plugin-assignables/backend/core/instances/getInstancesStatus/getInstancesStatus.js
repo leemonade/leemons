@@ -1,22 +1,22 @@
-const { LeemonsError } = require('@leemons/error');
-const { uniq } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { uniq } = require("lodash");
 
 const {
   getUserPermissionMultiple,
-} = require('../../permissions/instances/users/getUserPermissionMultiple');
+} = require("../../permissions/instances/users/getUserPermissionMultiple");
 
 const {
   getStatusForStudent,
   INSTANCE_STATUS: STUDENT_INSTANCE_STATUS,
-} = require('./getStatusForStudent');
+} = require("./getStatusForStudent");
 const {
   getStatusForTeacher,
   INSTANCE_STATUS: TEACHER_INSTANCE_STATUS,
-} = require('./getStatusForTeacher');
-const getAssignations = require('./helpers/getAssignations');
-const getClasses = require('./helpers/getClasses');
-const getInstances = require('./helpers/getInstances');
-const getInstancesById = require('./helpers/getInstancesById');
+} = require("./getStatusForTeacher");
+const getAssignations = require("./helpers/getAssignations");
+const getClasses = require("./helpers/getClasses");
+const getInstances = require("./helpers/getInstances");
+const getInstancesById = require("./helpers/getInstancesById");
 
 async function getActivitiesPermissions({ instancesIds, ctx }) {
   const permissions = await getUserPermissionMultiple({
@@ -25,12 +25,12 @@ async function getActivitiesPermissions({ instancesIds, ctx }) {
   });
 
   const canViewAllActivities = permissions.every((permission) =>
-    permission.actions.includes('view')
+    permission.actions.includes("view")
   );
 
   let canEditSomeActivities = false;
   const canEditAllActivities = permissions.every((permission) => {
-    const canEdit = permission.actions.includes('edit');
+    const canEdit = permission.actions.includes("edit");
 
     if (canEdit) {
       canEditSomeActivities = true;
@@ -47,7 +47,12 @@ async function getActivitiesPermissions({ instancesIds, ctx }) {
   };
 }
 
-function handleErrors({ canViewAllActivities, canEditSomeActivities, canEditAllActivities, ctx }) {
+function handleErrors({
+  canViewAllActivities,
+  canEditSomeActivities,
+  canEditAllActivities,
+  ctx,
+}) {
   if (!canViewAllActivities) {
     throw new LeemonsError(ctx, {
       message: `You do not have permissions to view some of the requested instances or they do not exist`,
@@ -64,8 +69,14 @@ function handleErrors({ canViewAllActivities, canEditSomeActivities, canEditAllA
 }
 
 async function getTeacherStatus({ instancesIds, ctx }) {
-  const { instances, instancesIds: allInstancesIds } = await getInstances({ instancesIds, ctx });
-  const assignations = await getAssignations({ instancesIds: allInstancesIds, ctx });
+  const { instances, instancesIds: allInstancesIds } = await getInstances({
+    instancesIds,
+    ctx,
+  });
+  const assignations = await getAssignations({
+    instancesIds: allInstancesIds,
+    ctx,
+  });
   const classes = await getClasses({ instances, ctx });
 
   const instancesById = await getInstancesById({
@@ -132,7 +143,10 @@ async function getTeacherStatus({ instancesIds, ctx }) {
 }
 
 async function getStudentStatus({ instancesIds, ctx }) {
-  const { instances, instancesIds: allInstancesIds } = await getInstances({ instancesIds, ctx });
+  const { instances, instancesIds: allInstancesIds } = await getInstances({
+    instancesIds,
+    ctx,
+  });
   const assignations = await getAssignations({
     instancesIds: allInstancesIds,
     isStudent: true,
@@ -247,7 +261,9 @@ async function getStudentStatus({ instancesIds, ctx }) {
  */
 async function getInstancesStatus({ assignableInstanceIds, ctx }) {
   const instancesIds = uniq(
-    Array.isArray(assignableInstanceIds) ? assignableInstanceIds : [assignableInstanceIds]
+    Array.isArray(assignableInstanceIds)
+      ? assignableInstanceIds
+      : [assignableInstanceIds]
   );
 
   if (!instancesIds.length) {
@@ -259,7 +275,12 @@ async function getInstancesStatus({ assignableInstanceIds, ctx }) {
 
   const isTeacher = canEditAllActivities;
 
-  handleErrors({ canViewAllActivities, canEditSomeActivities, canEditAllActivities, ctx });
+  handleErrors({
+    canViewAllActivities,
+    canEditSomeActivities,
+    canEditAllActivities,
+    ctx,
+  });
 
   if (isTeacher) {
     return getTeacherStatus({ instancesIds, ctx });

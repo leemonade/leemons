@@ -1,14 +1,14 @@
 export const allInstancesKey = [
   {
-    plugin: 'plugin.assignables',
-    scope: 'instances',
+    plugin: "plugin.assignables",
+    scope: "instances",
   },
 ];
 
 export const allInstancesGetKey = [
   {
     ...allInstancesKey[0],
-    action: 'get',
+    action: "get",
   },
 ];
 
@@ -23,7 +23,7 @@ export const instancesGetKey = (filters) => [
 export const searchInstancesKey = (filters) => [
   {
     ...allInstancesKey[0],
-    action: 'search',
+    action: "search",
     ...filters,
   },
 ];

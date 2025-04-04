@@ -1,9 +1,15 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { searchByProgram } = require('./searchByProgram');
-const { subjectsSchema } = require('../../models/subjects');
+const { searchByProgram } = require("./searchByProgram");
+const { subjectsSchema } = require("../../models/subjects");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -26,34 +32,34 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should find all the assignables', async () => {
+it("Should find all the assignables", async () => {
   // Arrange
-  const programId = 'program-id';
-  const assignables = ['assignable-id-1', 'assignable-id-2'];
+  const programId = "program-id";
+  const assignables = ["assignable-id-1", "assignable-id-2"];
   const initialValues = [
     {
       assignable: assignables[0],
       program: programId,
-      subject: 'subject-id-1',
-      level: 'intermediate',
+      subject: "subject-id-1",
+      level: "intermediate",
     },
     {
       assignable: assignables[1],
       program: programId,
-      subject: 'subject-id-2',
-      level: 'intermediate',
+      subject: "subject-id-2",
+      level: "intermediate",
     },
     {
-      assignable: 'another-assignable-id',
-      program: 'other-program-id',
-      subject: 'subject-id-1',
-      level: 'intermediate',
+      assignable: "another-assignable-id",
+      program: "other-program-id",
+      subject: "subject-id-1",
+      level: "intermediate",
     },
   ];
 
   const ctx = generateCtx({
     models: {
-      Subjects: newModel(mongooseConnection, 'Subjects', subjectsSchema),
+      Subjects: newModel(mongooseConnection, "Subjects", subjectsSchema),
     },
   });
 
@@ -66,46 +72,46 @@ it('Should find all the assignables', async () => {
   expect(response).toEqual(expect.arrayContaining(assignables));
 });
 
-it('Should find all the assignables having all the programs', async () => {
+it("Should find all the assignables having all the programs", async () => {
   // Arrange
-  const programIds = ['program-id', 'program-id-2'];
-  const assignables = ['assignable-id-1', 'assignable-id-2'];
+  const programIds = ["program-id", "program-id-2"];
+  const assignables = ["assignable-id-1", "assignable-id-2"];
   const initialValues = [
     {
       assignable: assignables[0],
       program: programIds[0],
-      subject: 'subject-id-1',
-      level: 'intermediate',
+      subject: "subject-id-1",
+      level: "intermediate",
     },
     {
       assignable: assignables[1],
       program: programIds[0],
-      subject: 'subject-id-2',
-      level: 'intermediate',
+      subject: "subject-id-2",
+      level: "intermediate",
     },
     {
       assignable: assignables[0],
       program: programIds[1],
-      subject: 'subject-id-3',
-      level: 'intermediate',
+      subject: "subject-id-3",
+      level: "intermediate",
     },
     {
       assignable: assignables[1],
       program: programIds[1],
-      subject: 'subject-id-4',
-      level: 'intermediate',
+      subject: "subject-id-4",
+      level: "intermediate",
     },
     {
-      assignable: 'another-assignable-id',
-      program: 'other-program-id',
-      subject: 'subject-id-1',
-      level: 'intermediate',
+      assignable: "another-assignable-id",
+      program: "other-program-id",
+      subject: "subject-id-1",
+      level: "intermediate",
     },
   ];
 
   const ctx = generateCtx({
     models: {
-      Subjects: newModel(mongooseConnection, 'Subjects', subjectsSchema),
+      Subjects: newModel(mongooseConnection, "Subjects", subjectsSchema),
     },
   });
 
@@ -118,40 +124,40 @@ it('Should find all the assignables having all the programs', async () => {
   expect(response).toEqual(expect.arrayContaining(assignables));
 });
 
-it('Should not the assignables not having all the programs', async () => {
+it("Should not the assignables not having all the programs", async () => {
   // Arrange
-  const programIds = ['program-id', 'program-id-2'];
-  const assignables = ['assignable-id-1', 'assignable-id-2'];
+  const programIds = ["program-id", "program-id-2"];
+  const assignables = ["assignable-id-1", "assignable-id-2"];
   const initialValues = [
     {
       assignable: assignables[0],
       program: programIds[0],
-      subject: 'subject-id-1',
-      level: 'intermediate',
+      subject: "subject-id-1",
+      level: "intermediate",
     },
     {
       assignable: assignables[1],
       program: programIds[0],
-      subject: 'subject-id-2',
-      level: 'intermediate',
+      subject: "subject-id-2",
+      level: "intermediate",
     },
     {
       assignable: assignables[0],
       program: programIds[1],
-      subject: 'subject-id-3',
-      level: 'intermediate',
+      subject: "subject-id-3",
+      level: "intermediate",
     },
     {
-      assignable: 'another-assignable-id',
-      program: 'other-program-id',
-      subject: 'subject-id-1',
-      level: 'intermediate',
+      assignable: "another-assignable-id",
+      program: "other-program-id",
+      subject: "subject-id-1",
+      level: "intermediate",
     },
   ];
 
   const ctx = generateCtx({
     models: {
-      Subjects: newModel(mongooseConnection, 'Subjects', subjectsSchema),
+      Subjects: newModel(mongooseConnection, "Subjects", subjectsSchema),
     },
   });
 
@@ -164,52 +170,52 @@ it('Should not the assignables not having all the programs', async () => {
   expect(response).toEqual([assignables[0]]);
 });
 
-it('Should include all the assignables having more than the provided programs', async () => {
+it("Should include all the assignables having more than the provided programs", async () => {
   // Arrange
-  const programIds = ['program-id', 'program-id-2'];
-  const assignables = ['assignable-id-1', 'assignable-id-2'];
+  const programIds = ["program-id", "program-id-2"];
+  const assignables = ["assignable-id-1", "assignable-id-2"];
   const initialValues = [
     {
       assignable: assignables[0],
       program: programIds[0],
-      subject: 'subject-id-1',
-      level: 'intermediate',
+      subject: "subject-id-1",
+      level: "intermediate",
     },
     {
       assignable: assignables[1],
       program: programIds[0],
-      subject: 'subject-id-2',
-      level: 'intermediate',
+      subject: "subject-id-2",
+      level: "intermediate",
     },
     {
       assignable: assignables[0],
       program: programIds[1],
-      subject: 'subject-id-3',
-      level: 'intermediate',
+      subject: "subject-id-3",
+      level: "intermediate",
     },
     {
       assignable: assignables[1],
       program: programIds[1],
-      subject: 'subject-id-4',
-      level: 'intermediate',
+      subject: "subject-id-4",
+      level: "intermediate",
     },
     {
       assignable: assignables[1],
-      program: 'another-program-to-include',
-      subject: 'subject-id-4',
-      level: 'intermediate',
+      program: "another-program-to-include",
+      subject: "subject-id-4",
+      level: "intermediate",
     },
     {
-      assignable: 'another-assignable-id',
-      program: 'other-program-id',
-      subject: 'subject-id-1',
-      level: 'intermediate',
+      assignable: "another-assignable-id",
+      program: "other-program-id",
+      subject: "subject-id-1",
+      level: "intermediate",
     },
   ];
 
   const ctx = generateCtx({
     models: {
-      Subjects: newModel(mongooseConnection, 'Subjects', subjectsSchema),
+      Subjects: newModel(mongooseConnection, "Subjects", subjectsSchema),
     },
   });
 
@@ -222,11 +228,11 @@ it('Should include all the assignables having more than the provided programs', 
   expect(response).toEqual(expect.arrayContaining(assignables));
 });
 
-it('Should throw if no required params are provided', () => {
+it("Should throw if no required params are provided", () => {
   // Arrange
   const ctx = generateCtx({
     models: {
-      Subjects: newModel(mongooseConnection, 'Subjects', subjectsSchema),
+      Subjects: newModel(mongooseConnection, "Subjects", subjectsSchema),
     },
   });
 
@@ -234,5 +240,7 @@ it('Should throw if no required params are provided', () => {
   const testFn = () => searchByProgram({ id: undefined, ctx });
 
   // Assert
-  return expect(testFn).rejects.toThrowError('Cannot search by program: id is required');
+  return expect(testFn).rejects.toThrowError(
+    "Cannot search by program: id is required"
+  );
 });

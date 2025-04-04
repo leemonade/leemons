@@ -33,12 +33,18 @@
 //   expect(response).toEqual([]);
 // });
 
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { listRoles } = require('./listRoles');
-const { rolesSchema } = require('../../models/roles');
+const { listRoles } = require("./listRoles");
+const { rolesSchema } = require("../../models/roles");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -61,25 +67,25 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should return all the roles', async () => {
+it("Should return all the roles", async () => {
   const ctx = generateCtx({
     models: {
-      Roles: newModel(mongooseConnection, 'Roles', rolesSchema),
+      Roles: newModel(mongooseConnection, "Roles", rolesSchema),
     },
   });
 
   const initialValues = [
     {
-      name: 'role-1',
-      plugin: 'leemons-testing',
+      name: "role-1",
+      plugin: "leemons-testing",
     },
     {
-      name: 'role-2',
-      plugin: 'leemons-testing',
+      name: "role-2",
+      plugin: "leemons-testing",
     },
     {
-      name: 'role-3',
-      plugin: 'leemons-testing',
+      name: "role-3",
+      plugin: "leemons-testing",
     },
   ];
   await ctx.db.Roles.create(initialValues);
@@ -92,11 +98,11 @@ it('Should return all the roles', async () => {
   expect(response).toEqual(expect.arrayContaining(expectedValues));
 });
 
-it('Should not throw if no role is found', async () => {
+it("Should not throw if no role is found", async () => {
   // Arrange
   const ctx = generateCtx({
     models: {
-      Roles: newModel(mongooseConnection, 'Roles', rolesSchema),
+      Roles: newModel(mongooseConnection, "Roles", rolesSchema),
     },
   });
 

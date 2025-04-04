@@ -1,9 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Paper } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, Paper } from "@bubbles-ui/components";
 
 function Tooltip({ value, indexValue, id, color }) {
-  if (id === 'diff') {
+  if (id === "diff") {
     return null;
   }
   return (

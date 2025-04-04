@@ -1,11 +1,11 @@
 module.exports = {
   assignables: {
-    get: 'assignables.get',
+    get: "assignables.get",
   },
   instances: {
-    get: 'instances.get',
+    get: "instances.get",
   },
   assignations: {
-    get: 'assignations.get',
+    get: "assignations.get",
   },
 };

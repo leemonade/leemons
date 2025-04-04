@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 import {
   GOTFEEDBACK_ICON_DEFAULT_PROPS,
   GOTFEEDBACK_ICON_PROP_TYPES,
-} from './GotFeedbackIcon.constants';
+} from "./GotFeedbackIcon.constants";
 
 const GotFeedbackIcon = ({ width, height, color }) => (
   <>
@@ -28,6 +28,6 @@ const GotFeedbackIcon = ({ width, height, color }) => (
 GotFeedbackIcon.defaultProps = GOTFEEDBACK_ICON_DEFAULT_PROPS;
 GotFeedbackIcon.propTypes = GOTFEEDBACK_ICON_PROP_TYPES;
 
-GotFeedbackIcon.displayName = 'GotFeedbackIcon';
+GotFeedbackIcon.displayName = "GotFeedbackIcon";
 export default GotFeedbackIcon;
 export { GotFeedbackIcon };

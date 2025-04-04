@@ -1,36 +1,42 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from "react";
 
-import { Box, createStyles, ImageLoader, Text, TextClamp } from '@bubbles-ui/components';
-import { ChevronDownIcon, ChevronUpIcon } from '@bubbles-ui/icons/outline';
-import { LocaleDate, unflatten } from '@common';
+import {
+  Box,
+  createStyles,
+  ImageLoader,
+  Text,
+  TextClamp,
+} from "@bubbles-ui/components";
+import { ChevronDownIcon, ChevronUpIcon } from "@bubbles-ui/icons/outline";
+import { LocaleDate, unflatten } from "@common";
 
-import dayjs from 'dayjs';
-import { get, mapValues, pick, noop } from 'lodash';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@assignables/helpers/prefixPN';
-import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
-import { ClassroomItemDisplay } from '@academic-portfolio/components';
+import dayjs from "dayjs";
+import { get, mapValues, pick, noop } from "lodash";
+import prepareAsset from "@leebrary/helpers/prepareAsset";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@assignables/helpers/prefixPN";
+import useRolesLocalizations from "@assignables/hooks/useRolesLocalizations";
+import { ClassroomItemDisplay } from "@academic-portfolio/components";
 
 const useActivityItemStyles = createStyles((theme, { isModuleActivity }) => ({
   root: {
-    display: 'flex',
-    flexDirection: 'row',
+    display: "flex",
+    flexDirection: "row",
     gap: theme.other.global.spacing.gap.md,
-    alignItems: 'center',
+    alignItems: "center",
     paddingLeft: isModuleActivity ? 40 : 0,
   },
   activityType: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: theme.radius.md,
 
     width: 20,
     height: 20,
   },
   activityTypeIcon: {
-    position: 'relative',
+    position: "relative",
     width: 18,
     height: 18,
     color: theme.other.global.content.color.icon.default,
@@ -50,7 +56,12 @@ const useActivityItemStyles = createStyles((theme, { isModuleActivity }) => ({
   },
 }));
 
-export function ActivityItem({ instance, onModuleClick = noop, modulesOpened = [], flattened }) {
+export function ActivityItem({
+  instance,
+  onModuleClick = noop,
+  modulesOpened = [],
+  flattened,
+}) {
   const assignable = instance?.assignable;
   const role = assignable?.role;
   const activityColor = assignable.asset.color;
@@ -67,7 +78,8 @@ export function ActivityItem({ instance, onModuleClick = noop, modulesOpened = [
 
   const { classes, theme } = useActivityItemStyles({
     activityColor,
-    isModuleActivity: !flattened && instance?.metadata?.module?.type === 'activity',
+    isModuleActivity:
+      !flattened && instance?.metadata?.module?.type === "activity",
   });
 
   return (
@@ -75,20 +87,24 @@ export function ActivityItem({ instance, onModuleClick = noop, modulesOpened = [
       <Box
         className={classes.activityType}
         onClick={(e) => {
-          if (onModuleClick && role === 'learningpaths.module') {
+          if (onModuleClick && role === "learningpaths.module") {
             onModuleClick(instance?.id);
             e.stopPropagation();
           }
         }}
       >
         <Box className={classes.activityTypeIcon}>
-          {role === 'learningpaths.module' && isOpened && (
-            <ChevronUpIcon color={theme.other.button.content.color.secondary.default} />
+          {role === "learningpaths.module" && isOpened && (
+            <ChevronUpIcon
+              color={theme.other.button.content.color.secondary.default}
+            />
           )}
-          {role === 'learningpaths.module' && !isOpened && (
-            <ChevronDownIcon color={theme.other.button.content.color.secondary.default} />
+          {role === "learningpaths.module" && !isOpened && (
+            <ChevronDownIcon
+              color={theme.other.button.content.color.secondary.default}
+            />
           )}
-          {role !== 'learningpaths.module' && (
+          {role !== "learningpaths.module" && (
             <ImageLoader src={activityTypeIcon} width={18} height={18} />
           )}
         </Box>
@@ -101,10 +117,12 @@ export function ActivityItem({ instance, onModuleClick = noop, modulesOpened = [
         )}
       </Box>
       <Box>
-        {role === 'learningpaths.module' && (
+        {role === "learningpaths.module" && (
           <Box className={classes.role}>
             <TextClamp lines={1}>
-              <Text transform="uppercase">{rolesLocalizations?.[role]?.singular}</Text>
+              <Text transform="uppercase">
+                {rolesLocalizations?.[role]?.singular}
+              </Text>
             </TextClamp>
           </Box>
         )}
@@ -117,12 +135,12 @@ export function ActivityItem({ instance, onModuleClick = noop, modulesOpened = [
 }
 
 function useStatusLocalizations() {
-  const [, translations] = useTranslateLoader(prefixPN('activity_status'));
+  const [, translations] = useTranslateLoader(prefixPN("activity_status"));
 
   return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      return get(res, prefixPN('activity_status'));
+      return get(res, prefixPN("activity_status"));
     }
 
     return {};
@@ -182,7 +200,10 @@ function parseDates(dates, keysToParse) {
   }
 
   return mapValues(datesToParse, (date) => (
-    <LocaleDate date={date} options={{ dateStyle: 'short', timeStyle: 'short' }} />
+    <LocaleDate
+      date={date}
+      options={{ dateStyle: "short", timeStyle: "short" }}
+    />
   ));
 }
 
@@ -191,12 +212,14 @@ export async function parseAssignationForCommonView(
   labels,
   { subjectFullLength, onModuleClick, modulesOpened }
 ) {
-  const parsedDates = parseDates(instance.dates, ['start', 'deadline']);
+  const parsedDates = parseDates(instance.dates, ["start", "deadline"]);
 
   return {
     id: instance.id,
     parentModule: instance.metadata?.module?.id ?? null,
-    trStyle: instance.metadata?.module?.id ? { backgroundColor: '#F8F9FB' } : null,
+    trStyle: instance.metadata?.module?.id
+      ? { backgroundColor: "#F8F9FB" }
+      : null,
     activity: (
       <ActivityItem
         instance={instance}
@@ -212,8 +235,8 @@ export async function parseAssignationForCommonView(
       />
     ),
     parsedDates: {
-      deadline: '-',
-      start: '-',
+      deadline: "-",
+      start: "-",
       ...parsedDates,
     },
     status: <Status instance={instance} />,

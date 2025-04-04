@@ -1,7 +1,8 @@
-import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
+import useAssignations from "@assignables/requests/hooks/queries/useAssignations";
 
 export default function useNextActivityUrl(assignation) {
-  const nextActivity = assignation?.instance?.relatedAssignableInstances?.after?.[0];
+  const nextActivity =
+    assignation?.instance?.relatedAssignableInstances?.after?.[0];
   const id = nextActivity?.id;
   const { user } = assignation ?? {};
 
@@ -18,5 +19,5 @@ export default function useNextActivityUrl(assignation) {
     return null;
   }
 
-  return role.studentDetailUrl.replace(':id', id).replace(':user', user);
+  return role.studentDetailUrl.replace(":id", id).replace(":user", user);
 }

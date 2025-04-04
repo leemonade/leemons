@@ -4,12 +4,12 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { registerDates } = require('./registerDates');
-const { datesSchema } = require('../../models/dates');
+const { registerDates } = require("./registerDates");
+const { datesSchema } = require("../../models/dates");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -32,19 +32,19 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should register each date', async () => {
+it("Should register each date", async () => {
   // Arrange
-  const type = 'instance';
-  const instance = 'instance-id';
+  const type = "instance";
+  const instance = "instance-id";
   const dates = {
-    start: new Date('2001/5/4'),
-    deadline: new Date('2001/5/8'),
-    correction: new Date('2001/5/9'),
+    start: new Date("2001/5/4"),
+    deadline: new Date("2001/5/8"),
+    correction: new Date("2001/5/9"),
   };
 
   const ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 
@@ -73,19 +73,19 @@ it('Should register each date', async () => {
   );
 });
 
-it('Should throw if not valid parameters are provided', async () => {
+it("Should throw if not valid parameters are provided", async () => {
   // Arrange
-  const type = 'instance';
-  const instance = 'instance-id';
+  const type = "instance";
+  const instance = "instance-id";
   const dates = {
-    start: new Date('2001/5/4'),
-    deadline: new Date('2001/5/8'),
-    correction: new Date('2001/5/9'),
+    start: new Date("2001/5/4"),
+    deadline: new Date("2001/5/8"),
+    correction: new Date("2001/5/9"),
   };
 
   const ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 
@@ -99,12 +99,12 @@ it('Should throw if not valid parameters are provided', async () => {
 
   // Assert
   await expect(noTypeFn).rejects.toThrowError(
-    'Cannot regster dates: type, instance and dates are required'
+    "Cannot regster dates: type, instance and dates are required"
   );
   await expect(noInstanceFn).rejects.toThrowError(
-    'Cannot regster dates: type, instance and dates are required'
+    "Cannot regster dates: type, instance and dates are required"
   );
   await expect(noDatesFn).rejects.toThrowError(
-    'Cannot regster dates: type, instance and dates are required'
+    "Cannot regster dates: type, instance and dates are required"
   );
 });

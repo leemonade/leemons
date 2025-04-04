@@ -1,3 +1,3 @@
-const { getInstance } = require('./getInstance');
+const { getInstance } = require("./getInstance");
 
 module.exports = { getInstance };

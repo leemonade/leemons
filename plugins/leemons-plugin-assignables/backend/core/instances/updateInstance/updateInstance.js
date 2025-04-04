@@ -1,32 +1,34 @@
-const { LeemonsError } = require('@leemons/error');
-const { keys, omit, pick, uniq, without } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { keys, omit, pick, uniq, without } = require("lodash");
 
-const discardCacheBy = require('../../../cache/discardCacheBy');
-const { updateClasses } = require('../../classes/updateClasses');
-const { updateDates } = require('../../dates/updateDates');
-const { getDiff } = require('../../helpers/getDiff');
-const { validateInstance } = require('../../helpers/validators/instance');
-const { getUserPermission } = require('../../permissions/instances/users/getUserPermission');
-const { getInstance } = require('../getInstance');
+const discardCacheBy = require("../../../cache/discardCacheBy");
+const { updateClasses } = require("../../classes/updateClasses");
+const { updateDates } = require("../../dates/updateDates");
+const { getDiff } = require("../../helpers/getDiff");
+const { validateInstance } = require("../../helpers/validators/instance");
+const {
+  getUserPermission,
+} = require("../../permissions/instances/users/getUserPermission");
+const { getInstance } = require("../getInstance");
 
-const { createRelatedInstance } = require('./createRelatedInstance');
-const { updateEmailCron } = require('./helpers/updateEmailCron');
-const { updateEventAndAddToUsers } = require('./updateEventAndAddToUsers');
+const { createRelatedInstance } = require("./createRelatedInstance");
+const { updateEmailCron } = require("./helpers/updateEmailCron");
+const { updateEventAndAddToUsers } = require("./updateEventAndAddToUsers");
 
 const updatableFields = [
-  'alwaysAvailable',
-  'dates',
-  'duration',
-  'gradable',
-  'classes',
-  'students',
-  'messageToAssignees',
-  'curriculum',
-  'metadata',
-  'addNewClassStudents',
-  'showResults',
-  'showCorrectAnsers',
-  'relatedAssignableInstances',
+  "alwaysAvailable",
+  "dates",
+  "duration",
+  "gradable",
+  "classes",
+  "students",
+  "messageToAssignees",
+  "curriculum",
+  "metadata",
+  "addNewClassStudents",
+  "showResults",
+  "showCorrectAnsers",
+  "relatedAssignableInstances",
 ];
 
 /**
@@ -41,12 +43,18 @@ const updatableFields = [
  * @throws {LeemonsError} Throws an error if no changes are detected.
  * @returns {Object} The updated assignable instance object.
  */
-async function updateInstance({ assignableInstance, propagateRelated, onlyAddDates, ctx }) {
-  const { id, relatedAssignables, ...assignableInstanceObj } = assignableInstance;
+async function updateInstance({
+  assignableInstance,
+  propagateRelated,
+  onlyAddDates,
+  ctx,
+}) {
+  const { id, relatedAssignables, ...assignableInstanceObj } =
+    assignableInstance;
 
   if (keys(omit(assignableInstanceObj, updatableFields)).length) {
     throw new LeemonsError(ctx, {
-      message: 'Some of the provided keys are not updatable',
+      message: "Some of the provided keys are not updatable",
     });
   }
 
@@ -56,21 +64,25 @@ async function updateInstance({ assignableInstance, propagateRelated, onlyAddDat
 
   const { actions } = await getUserPermission({ assignableInstance: id, ctx });
 
-  if (!actions.includes('edit')) {
+  if (!actions.includes("edit")) {
     throw new LeemonsError(ctx, {
-      message: 'You do not have permission to update this assignable instance',
+      message: "You do not have permission to update this assignable instance",
     });
   }
 
   // EN: Get the current existing assignable instance
   // ES: Obtener el asignable instance actual
-  const { relatedAssignableInstances, ...currentAssignableInstance } = await getInstance({
-    id,
-    details: true,
-    ctx,
-  });
+  const { relatedAssignableInstances, ...currentAssignableInstance } =
+    await getInstance({
+      id,
+      details: true,
+      ctx,
+    });
 
-  const { object, diff } = getDiff(assignableInstanceObj, currentAssignableInstance);
+  const { object, diff } = getDiff(
+    assignableInstanceObj,
+    currentAssignableInstance
+  );
 
   let changesDetected = false;
 
@@ -80,13 +92,13 @@ async function updateInstance({ assignableInstance, propagateRelated, onlyAddDat
 
   if (!changesDetected) {
     throw new LeemonsError(ctx, {
-      message: 'No changes detected',
+      message: "No changes detected",
     });
   }
 
   // EN: Update dates
   // ES: Actualizar las fechas
-  if (diff.includes('dates')) {
+  if (diff.includes("dates")) {
     await updateEmailCron({
       newInstance: assignableInstance,
       savedInstance: currentAssignableInstance,
@@ -95,7 +107,7 @@ async function updateInstance({ assignableInstance, propagateRelated, onlyAddDat
     });
 
     await updateDates({
-      type: 'assignableInstance',
+      type: "assignableInstance",
       instance: id,
       dates: object.dates,
       onlyAddDates,
@@ -105,7 +117,7 @@ async function updateInstance({ assignableInstance, propagateRelated, onlyAddDat
 
   // EN: Update the classes
   // ES: Actualizar las clases
-  if (diff.includes('classes')) {
+  if (diff.includes("classes")) {
     await updateClasses({
       instance: id,
       assignable: object.assignable.id,
@@ -116,15 +128,18 @@ async function updateInstance({ assignableInstance, propagateRelated, onlyAddDat
 
   // EN: Update the assignable instance
   // ES: Actualizar el asignable instance
-  const cleanObj = pick(object, without(diff, ['assignable', 'classes', 'dates']));
+  const cleanObj = pick(
+    object,
+    without(diff, ["assignable", "classes", "dates"])
+  );
 
-  if (diff.includes('relatedAssignableInstances')) {
+  if (diff.includes("relatedAssignableInstances")) {
     const before = await Promise.all(
       assignableInstance.relatedAssignableInstances?.before?.map((relation) =>
         createRelatedInstance({
           relation,
           caller: id,
-          type: 'before',
+          type: "before",
           propagate: propagateRelated,
           ctx,
         })
@@ -136,7 +151,7 @@ async function updateInstance({ assignableInstance, propagateRelated, onlyAddDat
         createRelatedInstance({
           relation,
           caller: id,
-          type: 'after',
+          type: "after",
           propagate: propagateRelated,
           ctx,
         })
@@ -166,7 +181,10 @@ async function updateInstance({ assignableInstance, propagateRelated, onlyAddDat
   const { assignable, dates, event } = object;
   await updateEventAndAddToUsers({ assignable, dates, event, id, ctx });
 
-  await discardCacheBy.instances.discardGetInstancesCacheById({ ids: [id], ctx });
+  await discardCacheBy.instances.discardGetInstancesCacheById({
+    ids: [id],
+    ctx,
+  });
 
   return {
     id,

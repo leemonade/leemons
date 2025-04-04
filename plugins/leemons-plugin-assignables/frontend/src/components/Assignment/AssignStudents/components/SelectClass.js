@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
+import React, { useEffect } from "react";
+import _ from "lodash";
+import PropTypes from "prop-types";
 import {
   CheckBoxGroup,
   Alert,
@@ -11,12 +11,12 @@ import {
   Paragraph,
   Switch,
   Box,
-} from '@bubbles-ui/components';
-import { SelectUserAgent } from '@users/components';
-import { useForm, Controller } from 'react-hook-form';
-import { getUserAgentsInfoRequest } from '@users/request';
-import { useApi } from '@common';
-import ConditionalInput from '@tasks/components/Inputs/ConditionalInput';
+} from "@bubbles-ui/components";
+import { SelectUserAgent } from "@users/components";
+import { useForm, Controller } from "react-hook-form";
+import { getUserAgentsInfoRequest } from "@users/request";
+import { useApi } from "@common";
+import ConditionalInput from "@tasks/components/Inputs/ConditionalInput";
 
 function useUserAgentsInfo(users) {
   const [data] = useApi(getUserAgentsInfoRequest, users);
@@ -33,7 +33,7 @@ function NonAssignableStudents({ users, labels }) {
 
   return (
     <Paragraph>
-      {labels?.unableToAssignStudentsMessage}:{' '}
+      {labels?.unableToAssignStudentsMessage}:{" "}
       <Stack>
         {students?.map((student) => (
           <UserDisplayItem key={student.id} {...student} size="xs" />
@@ -72,7 +72,8 @@ export default function SelectClass({
     },
   });
 
-  const { classes, nonAssignableStudents, assignableStudents } = groupedClassesWithSelectedSubjects;
+  const { classes, nonAssignableStudents, assignableStudents } =
+    groupedClassesWithSelectedSubjects;
 
   useEffect(() => {
     const handleChange = (data, { name: fieldChanged } = {}) => {
@@ -97,10 +98,13 @@ export default function SelectClass({
         .filter((c) => c.assignableStudents.length);
 
       const assignees = selectedClasses.flatMap((g) => {
-        if (g.type === 'group') {
+        if (g.type === "group") {
           return g.classes.map((c) => ({
             group: c.class.id,
-            students: _.intersection(c.assignableStudents, g.assignableStudents),
+            students: _.intersection(
+              c.assignableStudents,
+              g.assignableStudents
+            ),
           }));
         }
 
@@ -114,7 +118,9 @@ export default function SelectClass({
         if (
           !value ||
           !_.isEqual(value, assignees) ||
-          ['addNewClassStudents', 'showResults', 'showCorrectAnswers'].includes(fieldChanged)
+          ["addNewClassStudents", "showResults", "showCorrectAnswers"].includes(
+            fieldChanged
+          )
         ) {
           onChange(assignees, data);
         }
@@ -135,7 +141,13 @@ export default function SelectClass({
   }
 
   if (!assignableStudents?.length) {
-    return <Alert title={labels?.noStudentsToAssign} severity="error" closeable={false} />;
+    return (
+      <Alert
+        title={labels?.noStudentsToAssign}
+        severity="error"
+        closeable={false}
+      />
+    );
   }
 
   return (
@@ -151,7 +163,7 @@ export default function SelectClass({
               ?.map((c) => {
                 const disabled = !c.assignableStudents.length;
                 return {
-                  value: `${c.id}${disabled ? '-disabled' : ''}`,
+                  value: `${c.id}${disabled ? "-disabled" : ""}`,
                   disabled,
                   label: `${c.label} (${c.assignableStudents.length}/${c.totalStudents} ${labels?.matchingStudents})`,
                   _type: c.type,
@@ -167,7 +179,7 @@ export default function SelectClass({
                   if (a._type === b._type) {
                     return a.label > b.label ? 1 : -1;
                   }
-                  return a._type === 'group' ? -1 : 1;
+                  return a._type === "group" ? -1 : 1;
                 }
                 return a.disabled ? 1 : -1;
               })}
@@ -182,7 +194,11 @@ export default function SelectClass({
           name="addNewClassStudents"
           control={control}
           render={({ field }) => (
-            <Switch {...field} label={labels?.addNewClassStudents} checked={field.value} />
+            <Switch
+              {...field}
+              label={labels?.addNewClassStudents}
+              checked={field.value}
+            />
           )}
         />
         <Controller
@@ -216,7 +232,7 @@ export default function SelectClass({
         {showResultsCheck && (
           <Controller
             control={control}
-            name={'showResults'}
+            name={"showResults"}
             render={({ field }) => (
               <Switch
                 {...field}
@@ -230,7 +246,7 @@ export default function SelectClass({
         {showCorrectAnswersCheck && (
           <Controller
             control={control}
-            name={'showCorrectAnswers'}
+            name={"showCorrectAnswers"}
             render={({ field }) => (
               <Switch
                 {...field}

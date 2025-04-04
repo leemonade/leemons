@@ -1,5 +1,5 @@
-const { LeemonsError } = require('@leemons/error');
-const { removeAssignables } = require('../removeAssignables');
+const { LeemonsError } = require("@leemons/error");
+const { removeAssignables } = require("../removeAssignables");
 
 /**
  * Removes an assignable object based on the provided parameters.
@@ -28,7 +28,7 @@ const { removeAssignables } = require('../removeAssignables');
  * removeAssignable({assignable, removeAll: 2, ctx});
  */
 async function removeAssignable({ assignable, removeAll = 2, ctx }) {
-  const version = await ctx.tx.call('common.versionControl.getVersion', {
+  const version = await ctx.tx.call("common.versionControl.getVersion", {
     id: assignable,
   });
   const isPublished = version.published;
@@ -41,9 +41,9 @@ async function removeAssignable({ assignable, removeAll = 2, ctx }) {
   }
 
   if (removeAll === 1 || removeAll === 2) {
-    const versions = await ctx.tx.call('common.versionControl.listVersions', {
+    const versions = await ctx.tx.call("common.versionControl.listVersions", {
       id: assignable,
-      published: removeAll === 1 ? isPublished : 'all',
+      published: removeAll === 1 ? isPublished : "all",
     });
 
     const versionsIds = versions.map(({ fullId }) => fullId);
@@ -57,7 +57,8 @@ async function removeAssignable({ assignable, removeAll = 2, ctx }) {
   }
 
   throw new LeemonsError(ctx, {
-    message: 'Cannot remove assignable: invalid removeAll value, only 0, 1 or 2 are valid',
+    message:
+      "Cannot remove assignable: invalid removeAll value, only 0, 1 or 2 are valid",
     httpStatusCode: 401,
   });
 }

@@ -1,4 +1,4 @@
-const { getAssignablesAssets } = require('./getAssignablesAssets');
+const { getAssignablesAssets } = require("./getAssignablesAssets");
 
 module.exports = {
   getAssignablesAssets,

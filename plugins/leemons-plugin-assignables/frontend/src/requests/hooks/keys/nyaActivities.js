@@ -1,14 +1,14 @@
 export const allNyaActivitiesKey = [
   {
-    plugin: 'plugin.assignables',
-    scope: 'nyaActivities',
+    plugin: "plugin.assignables",
+    scope: "nyaActivities",
   },
 ];
 
 export const allNyaActivitiesSearchKey = [
   {
     ...allNyaActivitiesKey[0],
-    action: 'search',
+    action: "search",
   },
 ];
 

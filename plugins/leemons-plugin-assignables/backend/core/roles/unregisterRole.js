@@ -1,12 +1,12 @@
 // TODO: Decide what happens with the existing assignables
 
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
 // TODO: Unregister library category
 async function unregisterRole({ role, ctx }) {
   if (!role) {
     throw new LeemonsError(ctx, {
-      message: 'Role param is required',
+      message: "Role param is required",
       httpStatusCode: 400,
     });
   }

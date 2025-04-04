@@ -1,19 +1,19 @@
-const { it, expect, jest: globalJest } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+const { it, expect, jest: globalJest } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-globalJest.mock('../getAssignables');
+globalJest.mock("../getAssignables");
 
-const { getAssignable } = require('./getAssignable');
+const { getAssignable } = require("./getAssignable");
 
-const { getAssignables } = require('../getAssignables');
+const { getAssignables } = require("../getAssignables");
 
-it('Calls getAssignables and returns the first item', async () => {
+it("Calls getAssignables and returns the first item", async () => {
   // Arrange
-  const id = 'assignable-id';
+  const id = "assignable-id";
 
   const ctx = generateCtx({});
 
-  getAssignables.mockImplementation(() => ['First value']);
+  getAssignables.mockImplementation(() => ["First value"]);
 
   // Act
   const response = await getAssignable({
@@ -34,14 +34,14 @@ it('Calls getAssignables and returns the first item', async () => {
   expect(response).toBe(getAssignables()[0]);
 });
 
-it('Catches the getAssignables error and creates a new one', async () => {
+it("Catches the getAssignables error and creates a new one", async () => {
   // Arrange
-  const id = 'assignable-id';
+  const id = "assignable-id";
 
   const ctx = generateCtx({});
 
   getAssignables.mockImplementation(() => {
-    throw new Error('This error should be masked');
+    throw new Error("This error should be masked");
   });
 
   // Act

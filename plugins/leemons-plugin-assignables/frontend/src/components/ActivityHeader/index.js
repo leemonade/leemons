@@ -1,30 +1,36 @@
-import { useMemo } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { useHistory, Link } from 'react-router-dom';
+import { useMemo } from "react";
+import { FormProvider, useForm } from "react-hook-form";
+import { useHistory, Link } from "react-router-dom";
 
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import { Box, ImageLoader, TotalLayoutHeader, Stack, Button } from '@bubbles-ui/components';
-import { OpenIcon } from '@bubbles-ui/icons/outline';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { noop } from 'lodash';
+import { useIsTeacher } from "@academic-portfolio/hooks";
+import {
+  Box,
+  ImageLoader,
+  TotalLayoutHeader,
+  Stack,
+  Button,
+} from "@bubbles-ui/components";
+import { OpenIcon } from "@bubbles-ui/icons/outline";
+import prepareAsset from "@leebrary/helpers/prepareAsset";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { noop } from "lodash";
 
 import {
   ACTIVITY_HEADER_PROP_TYPES,
   ACTIVITY_HEADER_DEFAULT_PROPS,
-} from './ActivityHeader.constants';
-import ActivityTypeDisplay from './components/ActivityTypeDisplay/ActivityTypeDisplay';
-import CalificationTypeDisplay from './components/CalificationTypeDisplay/CalificationTypeDisplay';
-import { ChatDisplay } from './components/ChatDisplay/ChatDisplay';
-import ClassroomDisplay from './components/ClassroomDisplay/ClassroomDisplay';
-import DateComponent from './components/Date/Date';
-import { MenuItems } from './components/MenuItems';
-import StatusBadge from './components/StatusBadge/StatusBadge';
-import Timer from './components/Timer/Timer';
-import useTotalLayoutStyles from './index.style';
+} from "./ActivityHeader.constants";
+import ActivityTypeDisplay from "./components/ActivityTypeDisplay/ActivityTypeDisplay";
+import CalificationTypeDisplay from "./components/CalificationTypeDisplay/CalificationTypeDisplay";
+import { ChatDisplay } from "./components/ChatDisplay/ChatDisplay";
+import ClassroomDisplay from "./components/ClassroomDisplay/ClassroomDisplay";
+import DateComponent from "./components/Date/Date";
+import { MenuItems } from "./components/MenuItems";
+import StatusBadge from "./components/StatusBadge/StatusBadge";
+import Timer from "./components/Timer/Timer";
+import useTotalLayoutStyles from "./index.style";
 
-import PrefixPN from '@assignables/helpers/prefixPN';
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
+import PrefixPN from "@assignables/helpers/prefixPN";
+import useInstances from "@assignables/requests/hooks/queries/useInstances";
 
 export default function ActivityHeader({
   assignation,
@@ -48,7 +54,7 @@ export default function ActivityHeader({
 }) {
   const form = useForm();
   const history = useHistory();
-  const [t] = useTranslateLoader(PrefixPN('evaluation'));
+  const [t] = useTranslateLoader(PrefixPN("evaluation"));
   const isTeacher = useIsTeacher();
   /*
     === Activity data ===
@@ -56,11 +62,15 @@ export default function ActivityHeader({
   const assignable = instance?.assignable;
 
   const isModule = !!instance?.metadata?.module;
-  const isModuleActivity = !!isModule && instance?.metadata?.module?.type !== 'module';
-  const isModulePreview = window?.location?.href?.includes('moduleId');
-  const modulePreviewId = window?.location?.href?.split('moduleId=')[1];
+  const isModuleActivity =
+    !!isModule && instance?.metadata?.module?.type !== "module";
+  const isModulePreview = window?.location?.href?.includes("moduleId");
+  const modulePreviewId = window?.location?.href?.split("moduleId=")[1];
 
-  const { data } = useInstances({ id: instance?.metadata?.module?.id, enabled: isModuleActivity });
+  const { data } = useInstances({
+    id: instance?.metadata?.module?.id,
+    enabled: isModuleActivity,
+  });
 
   /*
     === Asset data ===
@@ -83,7 +93,7 @@ export default function ActivityHeader({
 
     if ((action || showStatusBadge) && response) {
       return (
-        <Stack alignItems="center" spacing={4} sx={{ font: 'inherit' }}>
+        <Stack alignItems="center" spacing={4} sx={{ font: "inherit" }}>
           <span>{response}</span>
           <StatusBadge instance={instance} />
         </Stack>
@@ -91,14 +101,20 @@ export default function ActivityHeader({
     }
 
     return response;
-  }, [action, data?.assignable?.asset?.name, isModuleActivity, instance, showStatusBadge]);
+  }, [
+    action,
+    data?.assignable?.asset?.name,
+    isModuleActivity,
+    instance,
+    showStatusBadge,
+  ]);
 
   const subtitle = useMemo(() => {
     const response = assignable?.asset?.name;
 
     if (!title && showStatusBadge) {
       return (
-        <Stack alignItems="center" spacing={4} sx={{ font: 'inherit' }}>
+        <Stack alignItems="center" spacing={4} sx={{ font: "inherit" }}>
           <span>{response}</span>
           <StatusBadge instance={instance} />
         </Stack>
@@ -110,12 +126,13 @@ export default function ActivityHeader({
 
   const hasChat = instance?.metadata?.createComunicaRooms;
 
-  const { classes } = useTotalLayoutStyles({}, { name: 'ActivityHeader' });
+  const { classes } = useTotalLayoutStyles({}, { name: "ActivityHeader" });
 
   const goToAssignmentDetail = () => {
     const url = (
-      instance?.assignable?.roleDetails?.dashboardUrl || '/private/assignables/details/:id'
-    ).replace(':id', instance.id);
+      instance?.assignable?.roleDetails?.dashboardUrl ||
+      "/private/assignables/details/:id"
+    ).replace(":id", instance.id);
     history.push(url);
   };
 
@@ -128,11 +145,11 @@ export default function ActivityHeader({
         icon={
           <Box
             sx={{
-              position: 'relative',
+              position: "relative",
               width: 40,
               height: 40,
               borderRadius: 4,
-              overflow: 'hidden',
+              overflow: "hidden",
             }}
           >
             <ImageLoader
@@ -148,14 +165,19 @@ export default function ActivityHeader({
       >
         <Box className={classes.root}>
           {goToModuleDashboard && isModulePreview && (
-            <Link to={`/private/learning-paths/modules/${modulePreviewId}/view`}>
-              <Button variant="outline">{t('goToModuleDashboard')}</Button>
+            <Link
+              to={`/private/learning-paths/modules/${modulePreviewId}/view`}
+            >
+              <Button variant="outline">{t("goToModuleDashboard")}</Button>
             </Link>
           )}
           <ClassroomDisplay instance={instance} hidden={!showClass} />
           <Box className={classes.activityMetadata}>
             <ActivityTypeDisplay assignable={assignable} hidden={!showRole} />
-            <CalificationTypeDisplay instance={instance} hidden={!showEvaluationType} />
+            <CalificationTypeDisplay
+              instance={instance}
+              hidden={!showEvaluationType}
+            />
             {hasChat && <ChatDisplay instance={instance} />}
             <Timer
               assignation={assignation}
@@ -173,8 +195,12 @@ export default function ActivityHeader({
             />
             {showAssignmentDetailButton && (
               <Box className={classes.viewDetailButton}>
-                <Button variant="link" rightIcon={<OpenIcon />} onClick={goToAssignmentDetail}>
-                  {t('assignationHeaderButton')}
+                <Button
+                  variant="link"
+                  rightIcon={<OpenIcon />}
+                  onClick={goToAssignmentDetail}
+                >
+                  {t("assignationHeaderButton")}
                 </Button>
               </Box>
             )}
@@ -194,4 +220,4 @@ export default function ActivityHeader({
 
 ActivityHeader.propTypes = ACTIVITY_HEADER_PROP_TYPES;
 ActivityHeader.defaultProps = ACTIVITY_HEADER_DEFAULT_PROPS;
-ActivityHeader.displayName = 'ActivityHeader';
+ActivityHeader.displayName = "ActivityHeader";

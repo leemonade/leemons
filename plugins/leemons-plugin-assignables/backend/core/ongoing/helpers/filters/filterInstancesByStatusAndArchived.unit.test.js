@@ -1,40 +1,46 @@
-const { it, expect, beforeEach } = require('@jest/globals');
+const { it, expect, beforeEach } = require("@jest/globals");
 
-const { filterInstancesByStatusAndArchived } = require('./filterInstancesByStatusAndArchived');
+const {
+  filterInstancesByStatusAndArchived,
+} = require("./filterInstancesByStatusAndArchived");
 
 // MOCKS
-jest.mock('../activitiesStatus');
-const { getInstancesStatus } = require('../activitiesStatus');
+jest.mock("../activitiesStatus");
+const { getInstancesStatus } = require("../activitiesStatus");
 
 beforeEach(() => jest.resetAllMocks());
 
-it('Should not filter when not filtering by status and isArchived are undefined', () => {
+it("Should not filter when not filtering by status and isArchived are undefined", () => {
   // Arrange
-  const instances = [{ id: 'instanceOne' }, { id: 'instanceTwo' }];
+  const instances = [{ id: "instanceOne" }, { id: "instanceTwo" }];
   const filters = {};
   const dates = { instances: { instanceOne: new Date() }, assignations: {} };
 
   // Act
-  const response = filterInstancesByStatusAndArchived({ instances, filters, dates });
+  const response = filterInstancesByStatusAndArchived({
+    instances,
+    filters,
+    dates,
+  });
 
   // Assert
   expect(response).toEqual(instances);
 });
 
-it('Should correctly filter archived instances', () => {
+it("Should correctly filter archived instances", () => {
   // Arrange
   const instanceOne = {
-    id: 'instanceOne',
+    id: "instanceOne",
     alwaysAvailable: 0,
   };
   const instanceTwo = {
-    id: 'instanceTwo',
+    id: "instanceTwo",
     alwaysAvailable: 0,
   };
   const instances = [instanceOne, instanceTwo];
   const dates = {
     instances: {
-      [instanceTwo.id]: { archived: new Date('October 31, 1993') },
+      [instanceTwo.id]: { archived: new Date("October 31, 1993") },
     },
     assignations: {},
   };
@@ -47,7 +53,7 @@ it('Should correctly filter archived instances', () => {
   });
   const responseShowArchived = filterInstancesByStatusAndArchived({
     instances,
-    filters: { isArchived: 'true' }, // It should recognize a stringified true value
+    filters: { isArchived: "true" }, // It should recognize a stringified true value
     dates,
   });
 
@@ -57,34 +63,38 @@ it('Should correctly filter archived instances', () => {
   expect(responseShowArchived).toEqual([instanceTwo]);
 });
 
-it('Should correctly filter instances by status', () => {
+it("Should correctly filter instances by status", () => {
   // Arrange
   const instanceOne = {
-    id: 'instanceOne',
+    id: "instanceOne",
     alwaysAvailable: 0,
   };
   const instanceTwo = {
-    id: 'instanceTwo',
+    id: "instanceTwo",
     alwaysAvailable: 0,
   };
   const instances = [instanceOne, instanceTwo];
-  const filters = { status: 'open' };
+  const filters = { status: "open" };
   const dates = {
     instances: {
-      [instanceOne.id]: { start: new Date('November 31, 1993') },
+      [instanceOne.id]: { start: new Date("November 31, 1993") },
       [instanceTwo.id]: {
-        start: new Date('October 31, 1993'),
-        closed: new Date('December 31, 1993'),
+        start: new Date("October 31, 1993"),
+        closed: new Date("December 31, 1993"),
       },
     },
     assignations: {},
   };
   const expectedResponse = [instanceOne];
 
-  getInstancesStatus.mockReturnValue(['open', 'closed']);
+  getInstancesStatus.mockReturnValue(["open", "closed"]);
 
   // Act
-  const response = filterInstancesByStatusAndArchived({ instances, filters, dates });
+  const response = filterInstancesByStatusAndArchived({
+    instances,
+    filters,
+    dates,
+  });
 
   // Assert
   expect(getInstancesStatus).toBeCalledWith([
@@ -102,25 +112,25 @@ it('Should correctly filter instances by status', () => {
   expect(response).toEqual(expectedResponse);
 });
 
-it('Should correctly filter instances by visibility date for students', () => {
+it("Should correctly filter instances by visibility date for students", () => {
   // Arrange
   const instanceOne = {
-    id: 'instanceOne',
+    id: "instanceOne",
     alwaysAvailable: 0,
   };
   const instanceTwo = {
-    id: 'instanceTwo',
+    id: "instanceTwo",
     alwaysAvailable: 0,
   };
   const instanceThree = {
-    id: 'instanceThree',
+    id: "instanceThree",
     alwaysAvailable: 1,
   };
   const instances = [instanceOne, instanceTwo, instanceThree];
   const dates = {
     instances: {
-      [instanceOne.id]: { start: new Date('December 31, 2099') },
-      [instanceTwo.id]: { visualization: new Date('December 31, 1993') },
+      [instanceOne.id]: { start: new Date("December 31, 2099") },
+      [instanceTwo.id]: { visualization: new Date("December 31, 1993") },
     },
     assignations: {},
   };

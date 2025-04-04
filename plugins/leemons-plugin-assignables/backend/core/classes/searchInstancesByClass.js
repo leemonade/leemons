@@ -1,4 +1,4 @@
-const { uniq, map } = require('lodash');
+const { uniq, map } = require("lodash");
 
 async function searchInstancesByClass({ id, ctx }) {
   const classes = await ctx.tx.db.Classes.find({
@@ -7,7 +7,7 @@ async function searchInstancesByClass({ id, ctx }) {
     .select({ assignableInstance: true })
     .lean();
 
-  return uniq(map(classes, 'assignableInstance'));
+  return uniq(map(classes, "assignableInstance"));
 }
 
 module.exports = { searchInstancesByClass };

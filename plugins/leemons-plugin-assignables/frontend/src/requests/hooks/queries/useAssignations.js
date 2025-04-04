@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
-import { useVariantForQueryKey } from '@common/queries';
-import { head } from 'lodash';
-import getAssignations from '@assignables/requests/assignations/getAssignations';
-import { assignationsGetKey } from '../keys/assignations';
+import { useQuery } from "@tanstack/react-query";
+import { useVariantForQueryKey } from "@common/queries";
+import { head } from "lodash";
+import getAssignations from "@assignables/requests/assignations/getAssignations";
+import { assignationsGetKey } from "../keys/assignations";
 
 /**
  * Custom hook to fetch assignations based on provided query parameters.
@@ -43,10 +43,15 @@ export default function useAssignations({
           fetchInstance,
         }).then(head)
     : () =>
-        getAssignations({ queries: assignationsQueries, details, throwOnMissing, fetchInstance });
+        getAssignations({
+          queries: assignationsQueries,
+          details,
+          throwOnMissing,
+          fetchInstance,
+        });
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'frequently',
+    modificationTrend: "frequently",
   });
 
   return useQuery({

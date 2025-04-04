@@ -1,4 +1,4 @@
-export { ActivityUnavailable } from './ActivityUnavailable';
-export { ActivityUnavailableFooter } from './ActivityUnavailableFooter';
+export { ActivityUnavailable } from "./ActivityUnavailable";
+export { ActivityUnavailableFooter } from "./ActivityUnavailableFooter";
 
-export { useActivityStates } from './hooks/useActivityStates';
+export { useActivityStates } from "./hooks/useActivityStates";

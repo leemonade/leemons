@@ -1,4 +1,4 @@
-const { getAssignations } = require('../getAssignations');
+const { getAssignations } = require("../getAssignations");
 
 async function getAssignation({ assignableInstanceId, user, ctx }) {
   const assignations = await getAssignations({

@@ -1,15 +1,19 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { useSearchParams } from '@common';
-import { useHistory } from 'react-router-dom';
-import { Stack } from '@bubbles-ui/components';
-import FinishedAlert from './FinishedAlert';
-import NotSubmittedAlert from './NotSubmittedAlert';
-import PendingEvaluationAlert from './PendingEvaluationAlert';
-import SubmittedAlert from './SubmittedAlert';
-import TimeoutAlert from './TimeoutAlert';
+import React, { useMemo } from "react";
+import PropTypes from "prop-types";
+import { useSearchParams } from "@common";
+import { useHistory } from "react-router-dom";
+import { Stack } from "@bubbles-ui/components";
+import FinishedAlert from "./FinishedAlert";
+import NotSubmittedAlert from "./NotSubmittedAlert";
+import PendingEvaluationAlert from "./PendingEvaluationAlert";
+import SubmittedAlert from "./SubmittedAlert";
+import TimeoutAlert from "./TimeoutAlert";
 
-export default function ActivityFeedbackAlertManager({ assignation, hasSubmission, isSubmitted }) {
+export default function ActivityFeedbackAlertManager({
+  assignation,
+  hasSubmission,
+  isSubmitted,
+}) {
   const params = useSearchParams();
   const history = useHistory();
 
@@ -19,27 +23,27 @@ export default function ActivityFeedbackAlertManager({ assignation, hasSubmissio
   const isEvaluable = !!instance?.requiresScoring || !!instance?.allowFeedback;
 
   const isEvaluated = useMemo(
-    () => !!assignation?.grades?.find((grade) => grade.type === 'main'),
+    () => !!assignation?.grades?.find((grade) => grade.type === "main"),
     [assignation?.grades]
   );
 
   if (hasSubmission) {
     return (
       <Stack direction="column" spacing="xl">
-        {params.has('fromTimeout') && (
+        {params.has("fromTimeout") && (
           <TimeoutAlert
             onClose={() => {
-              params.delete('fromTimeout');
+              params.delete("fromTimeout");
 
               history.replace({ search: params.toString() });
             }}
           />
         )}
 
-        {params.has('fromExecution') && isSubmitted && (
+        {params.has("fromExecution") && isSubmitted && (
           <SubmittedAlert
             onClose={() => {
-              params.delete('fromExecution');
+              params.delete("fromExecution");
               history.replace({ search: params.toString() });
             }}
           />

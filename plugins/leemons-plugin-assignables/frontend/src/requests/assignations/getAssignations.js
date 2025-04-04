@@ -16,7 +16,7 @@ export default async function getAssignations({
       return { instance, user };
     })
     .map((q) => `queries=${JSON.stringify(q)}`)
-    .join('&');
+    .join("&");
 
   let query = `details=${details}`;
 
@@ -24,13 +24,16 @@ export default async function getAssignations({
     query += `&throwOnMissing=false`;
   }
   if (fetchInstance) {
-    query += '&fetchInstance=true';
+    query += "&fetchInstance=true";
   }
 
-  const response = await leemons.api(`v1/assignables/assignations/find?&${query}&${idsQuery}`, {
-    method: 'GET',
-    allAgents: true,
-  });
+  const response = await leemons.api(
+    `v1/assignables/assignations/find?&${query}&${idsQuery}`,
+    {
+      method: "GET",
+      allAgents: true,
+    }
+  );
 
   return response.assignations;
 }

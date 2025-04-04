@@ -1,12 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   useEvaluationType,
   useEvaluationTypeLocalizations,
-} from '@assignables/hooks/useEvaluationType';
-import getEvaluationTypesIcons from '@assignables/helpers/getEvaluationTypesIcons';
-import { Box, Text } from '@bubbles-ui/components';
-import { useCalificationTypeDisplay } from './CalificationTypeDisplay.style';
+} from "@assignables/hooks/useEvaluationType";
+import getEvaluationTypesIcons from "@assignables/helpers/getEvaluationTypesIcons";
+import { Box, Text } from "@bubbles-ui/components";
+import { useCalificationTypeDisplay } from "./CalificationTypeDisplay.style";
 
 export default function CalificationTypeDisplay({ instance, hidden }) {
   const localizations = useEvaluationTypeLocalizations();

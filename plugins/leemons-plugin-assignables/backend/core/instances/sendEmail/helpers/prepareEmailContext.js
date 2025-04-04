@@ -1,7 +1,14 @@
-const { getCoverAndAvatarUrls } = require('./getCoverAndAvatarUrls');
-const { formatDate } = require('./formatDate');
+const { getCoverAndAvatarUrls } = require("./getCoverAndAvatarUrls");
+const { formatDate } = require("./formatDate");
 
-async function prepareEmailContext({ instance, userAgent, classes, hostname, hostnameApi, ctx }) {
+async function prepareEmailContext({
+  instance,
+  userAgent,
+  classes,
+  hostname,
+  hostnameApi,
+  ctx,
+}) {
   const { avatarUrl, coverUrl } = await getCoverAndAvatarUrls({
     instance,
     userSession: ctx.meta.userSession,
@@ -10,7 +17,7 @@ async function prepareEmailContext({ instance, userAgent, classes, hostname, hos
     ctx,
   });
 
-  let classColor = '#67728E';
+  let classColor = "#67728E";
   if (classes.length === 1) {
     classColor = classes[0].color;
   }
@@ -22,7 +29,7 @@ async function prepareEmailContext({ instance, userAgent, classes, hostname, hos
         ...instance.assignable,
         asset: {
           ...instance.assignable.asset,
-          color: instance.assignable.asset.color || '#D9DCE0',
+          color: instance.assignable.asset.color || "#D9DCE0",
           url: coverUrl,
         },
       },

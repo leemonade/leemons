@@ -1,4 +1,6 @@
-const { addStudentsToOpenInstancesWithClass } = require('./addStudentToOpenInstancesWithClass');
+const {
+  addStudentsToOpenInstancesWithClass,
+} = require("./addStudentToOpenInstancesWithClass");
 
 module.exports = {
   addStudentsToOpenInstancesWithClass,

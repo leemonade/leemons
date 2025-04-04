@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
-import _ from 'lodash';
+import { useEffect, useState } from "react";
+import _ from "lodash";
 
-import { listTeacherClassesRequest } from '@academic-portfolio/request';
-import getCourseName from '@academic-portfolio/helpers/getCourseName';
-import useUserAgents from '@users/hooks/useUserAgents';
+import { listTeacherClassesRequest } from "@academic-portfolio/request";
+import getCourseName from "@academic-portfolio/helpers/getCourseName";
+import useUserAgents from "@users/hooks/useUserAgents";
 
 // EN: Gets all the classes of the teacher
 // ES: Obtiene todas las clases del profesor
@@ -41,7 +41,7 @@ export default function useTeacherClasses() {
         _class.groups && _class.groups?.abbreviation,
       ]
         .filter(Boolean)
-        .join(' - '),
+        .join(" - "),
       subject: _class.subject.id,
       teachers: _class.teachers,
       c: _class,

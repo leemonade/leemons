@@ -1,3 +1,3 @@
-const { registerEvent } = require('./registerEvent');
+const { registerEvent } = require("./registerEvent");
 
 module.exports = { registerEvent };

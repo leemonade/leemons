@@ -1,7 +1,7 @@
-const _ = require('lodash');
+const _ = require("lodash");
 const {
   getUserPermissions,
-} = require('../../permissions/instances/users/getUserPermissions/getUserPermissions.js');
+} = require("../../permissions/instances/users/getUserPermissions/getUserPermissions.js");
 
 async function checkPermissions({ assignationsData, ctx }) {
   const { userSession } = ctx.meta;
@@ -10,7 +10,7 @@ async function checkPermissions({ assignationsData, ctx }) {
   const othersAssignationInstanceIds = [];
   const assignationsById = {};
 
-  const userAgents = _.map(userSession.userAgents, 'id');
+  const userAgents = _.map(userSession.userAgents, "id");
   assignationsData.forEach((assignation) => {
     if (userAgents.includes(assignation.user)) {
       ownAssignations[assignation.id] = true;
@@ -35,7 +35,9 @@ async function checkPermissions({ assignationsData, ctx }) {
       let hasPermissions = false;
       if (ownAssignations[assignation.id]) {
         hasPermissions = true;
-      } else if (instancePermissions[assignation.instance].actions.includes('edit')) {
+      } else if (
+        instancePermissions[assignation.instance].actions.includes("edit")
+      ) {
         hasPermissions = true;
       }
 

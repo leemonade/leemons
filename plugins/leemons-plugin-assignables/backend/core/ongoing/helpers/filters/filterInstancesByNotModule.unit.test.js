@@ -1,25 +1,25 @@
-const { it, expect } = require('@jest/globals');
+const { it, expect } = require("@jest/globals");
 
-const { filterInstancesByNotModule } = require('./filterInstancesByNotModule');
+const { filterInstancesByNotModule } = require("./filterInstancesByNotModule");
 
-it('Should call filterInstancesByNotModule correctly', () => {
+it("Should call filterInstancesByNotModule correctly", () => {
   // Arrange
   const instanceOne = {
-    id: 'instanceOne',
-    assignable: { asset: {}, id: 'assignableOneId', role: 'task' },
-    metadata: { module: { type: 'module' } },
+    id: "instanceOne",
+    assignable: { asset: {}, id: "assignableOneId", role: "task" },
+    metadata: { module: { type: "module" } },
   };
   const instanceTwo = {
-    id: 'instanceTwo',
+    id: "instanceTwo",
     assignable: undefined,
     metadata: {},
   };
   const query = {
-    isTeacher: 'true',
-    isArchived: 'false',
-    sort: 'assignation',
-    offset: '0',
-    limit: '10',
+    isTeacher: "true",
+    isArchived: "false",
+    sort: "assignation",
+    offset: "0",
+    limit: "10",
   };
 
   // Act
@@ -32,15 +32,15 @@ it('Should call filterInstancesByNotModule correctly', () => {
   expect(response).toEqual([instanceTwo]);
 });
 
-it('Should call filterInstancesByNotModule correctly', () => {
+it("Should call filterInstancesByNotModule correctly", () => {
   // Arrange
   const instanceOne = {
-    id: 'instanceOne',
-    assignable: { asset: {}, id: 'assignableOneId', role: 'task' },
-    metadata: { module: { type: 'module' } },
+    id: "instanceOne",
+    assignable: { asset: {}, id: "assignableOneId", role: "task" },
+    metadata: { module: { type: "module" } },
   };
   const instanceTwo = {
-    id: 'instanceTwo',
+    id: "instanceTwo",
     assignable: undefined,
     metadata: {},
   };
@@ -48,7 +48,7 @@ it('Should call filterInstancesByNotModule correctly', () => {
   // Act
   const response = filterInstancesByNotModule({
     instances: [instanceOne, instanceTwo],
-    filters: { role: 'learningpaths.module' },
+    filters: { role: "learningpaths.module" },
   });
 
   // Assert

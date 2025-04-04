@@ -1,4 +1,4 @@
-const dayjs = require('dayjs');
+const dayjs = require("dayjs");
 
 function sortByDates(instances, datesToSort) {
   // Sort by the given dates, if they are the same, use the next one.

@@ -1,1 +1,1 @@
-export { default } from './NYACard';
+export { default } from "./NYACard";

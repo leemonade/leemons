@@ -1,13 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { LoadingOverlay } from '@bubbles-ui/components';
-import { ProgressChart } from '@assignables/components/ProgressChart';
-import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
-import { DistributionChart } from '@assignables/components/DistributionChart';
-import useAcademicCalendarPeriods from '@scores/components/__DEPRECATED__/ScoresPage/useAcademicCalendarPeriods';
-import { useStudentCountPerScale } from '@client-manager/hooks/useStudentCountPerScale';
-import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
-import { useAverageGradePerClass } from '@client-manager/hooks/useAverageGradePerClass';
+import React from "react";
+import PropTypes from "prop-types";
+import { LoadingOverlay } from "@bubbles-ui/components";
+import { ProgressChart } from "@assignables/components/ProgressChart";
+import { useIsStudent, useIsTeacher } from "@academic-portfolio/hooks";
+import { DistributionChart } from "@assignables/components/DistributionChart";
+import useAcademicCalendarPeriods from "@scores/components/__DEPRECATED__/ScoresPage/useAcademicCalendarPeriods";
+import { useStudentCountPerScale } from "@client-manager/hooks/useStudentCountPerScale";
+import useProgramEvaluationSystems from "@grades/hooks/queries/useProgramEvaluationSystem";
+import { useAverageGradePerClass } from "@client-manager/hooks/useAverageGradePerClass";
 
 export default function ProgressChartWidget({ classe, roundValues }) {
   const isStudent = useIsStudent();
@@ -32,12 +32,13 @@ export default function ProgressChartWidget({ classe, roundValues }) {
     });
 
   const enabledStudentGrades = isStudent && !!periods;
-  const { data: studentGrades, isLoading: studentGradesLoading } = useAverageGradePerClass({
-    classIds: [classe.id],
-    period,
-    groupBy: 'assignation',
-    enabled: enabledStudentGrades,
-  });
+  const { data: studentGrades, isLoading: studentGradesLoading } =
+    useAverageGradePerClass({
+      classIds: [classe.id],
+      period,
+      groupBy: "assignation",
+      enabled: enabledStudentGrades,
+    });
 
   const { data: programEvaluationSystem } = useProgramEvaluationSystems({
     program: classe.program,

@@ -1,28 +1,28 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 const useActivityTypeStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
 
   return {
     root: {
-      display: 'flex',
-      flexDirection: 'row',
+      display: "flex",
+      flexDirection: "row",
       gap: globalTheme.spacing.gap.sm,
-      alignItems: 'center',
+      alignItems: "center",
     },
     icon: {
-      position: 'relative',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
+      position: "relative",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
       width: 18,
       height: 18,
-      color: '#878D96',
+      color: "#878D96",
     },
     text: {
-      fontSize: { ...globalTheme.content.typoMobile.body['sm--bold'] },
+      fontSize: { ...globalTheme.content.typoMobile.body["sm--bold"] },
       color: globalTheme.content.color.text.default,
-      textWrap: 'nowrap',
+      textWrap: "nowrap",
     },
   };
 });

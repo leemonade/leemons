@@ -1,4 +1,4 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
 /**
  *
@@ -12,7 +12,7 @@ const { LeemonsError } = require('@leemons/error');
 async function unregisterDates({ type, instance, name, ctx }) {
   if (!type || !instance || !name) {
     throw new LeemonsError(ctx, {
-      message: 'Cannot unregister dates: type, instance and name are required',
+      message: "Cannot unregister dates: type, instance and name are required",
       httpStatusCode: 400,
     });
   }

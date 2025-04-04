@@ -1,9 +1,9 @@
-import React, { useCallback } from 'react';
-import PropTypes from 'prop-types';
-import { Box, createStyles } from '@bubbles-ui/components';
-import { ZoneWidgets } from '@widgets';
-import ZoneWidgetsBoundary from '@widgets/ZoneWidgetsBoundary';
-import prefixPN from '../../../helpers/prefixPN';
+import React, { useCallback } from "react";
+import PropTypes from "prop-types";
+import { Box, createStyles } from "@bubbles-ui/components";
+import { ZoneWidgets } from "@widgets";
+import ZoneWidgetsBoundary from "@widgets/ZoneWidgetsBoundary";
+import prefixPN from "../../../helpers/prefixPN";
 
 const useStyles = createStyles((theme) => ({
   errorClassName: {
@@ -30,8 +30,10 @@ function TabOngoing(props) {
 
   return (
     <ZoneWidgets
-      zone={prefixPN('class.ongoing')}
-      ErrorBoundary={<ZoneWidgetsBoundary errorClassName={classes.errorClassName} />}
+      zone={prefixPN("class.ongoing")}
+      ErrorBoundary={
+        <ZoneWidgetsBoundary errorClassName={classes.errorClassName} />
+      }
     >
       {widgets}
     </ZoneWidgets>

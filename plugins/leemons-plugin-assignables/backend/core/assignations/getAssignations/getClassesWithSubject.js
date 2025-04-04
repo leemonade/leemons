@@ -1,19 +1,24 @@
-const { keyBy } = require('lodash');
-const _ = require('lodash');
+const { keyBy } = require("lodash");
+const _ = require("lodash");
 
 async function getClassesWithSubject({ instancesIds, ctx }) {
-  const classesFound = await ctx.tx.db.Classes.find({ assignableInstance: instancesIds })
-    .select(['assignableInstance', 'class'])
+  const classesFound = await ctx.tx.db.Classes.find({
+    assignableInstance: instancesIds,
+  })
+    .select(["assignableInstance", "class"])
     .lean();
 
-  const classesIds = _.uniq(_.map(classesFound, 'class'));
+  const classesIds = _.uniq(_.map(classesFound, "class"));
 
-  const classesInfo = await ctx.tx.call('academic-portfolio.classes.classByIds', {
-    ids: classesIds,
-    withTeachers: true,
-  });
+  const classesInfo = await ctx.tx.call(
+    "academic-portfolio.classes.classByIds",
+    {
+      ids: classesIds,
+      withTeachers: true,
+    }
+  );
 
-  const classByIds = keyBy(classesInfo, 'id');
+  const classByIds = keyBy(classesInfo, "id");
 
   const classesPerInstance = {};
   classesFound.forEach(({ class: klass, assignableInstance: instance }) => {

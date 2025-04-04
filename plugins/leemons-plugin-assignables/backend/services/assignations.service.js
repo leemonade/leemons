@@ -1,23 +1,27 @@
 /** @type {import('moleculer').ServiceSchema} */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMongoDBMixin, mongoose } = require("@leemons/mongodb");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
 
-const namespaces = require('../cache/namespaces');
-const { createAssignation } = require('../core/assignations/createAssignation');
-const { getAssignation } = require('../core/assignations/getAssignation');
-const { getAssignations } = require('../core/assignations/getAssignations');
-const { getUserDataForFundae } = require('../core/assignations/getUserDataForFundae');
-const { updateAssignation } = require('../core/assignations/updateAssignation');
-const { getServiceModels } = require('../models');
+const namespaces = require("../cache/namespaces");
+const { createAssignation } = require("../core/assignations/createAssignation");
+const { getAssignation } = require("../core/assignations/getAssignation");
+const { getAssignations } = require("../core/assignations/getAssignations");
+const {
+  getUserDataForFundae,
+} = require("../core/assignations/getUserDataForFundae");
+const { updateAssignation } = require("../core/assignations/updateAssignation");
+const { getServiceModels } = require("../models");
 
-const restActions = require('./rest/assignations.rest');
+const restActions = require("./rest/assignations.rest");
 
 module.exports = {
-  name: 'assignables.assignations',
+  name: "assignables.assignations",
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),

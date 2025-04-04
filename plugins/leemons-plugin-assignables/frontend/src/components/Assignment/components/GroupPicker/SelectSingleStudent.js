@@ -1,7 +1,7 @@
-import { SelectUserAgent } from '@users/components';
-import { intersection } from 'lodash';
-import React from 'react';
-import { useForm, useWatch, Controller } from 'react-hook-form';
+import { SelectUserAgent } from "@users/components";
+import { intersection } from "lodash";
+import React from "react";
+import { useForm, useWatch, Controller } from "react-hook-form";
 
 function useOnChange({ control, onChange, classes }) {
   const { student } = useWatch({ control });
@@ -19,10 +19,10 @@ function useOnChange({ control, onChange, classes }) {
     // EN: Get the classes selected through their groups
     // ES: Obtener las clases que seleccionaron a través de sus grupos
     const selectedClasses = selectedGroups.flatMap((group) => {
-      if (group.type === 'group') {
+      if (group.type === "group") {
         return group.classes.map((c) => ({
           group: c.class.id,
-          type: 'custom',
+          type: "custom",
           students: group.students,
           c,
         }));
@@ -30,14 +30,14 @@ function useOnChange({ control, onChange, classes }) {
 
       return {
         group: group.id,
-        type: 'custom',
+        type: "custom",
         students: group.students,
         c: group,
       };
     });
 
     onChange({
-      type: 'customGroup',
+      type: "customGroup",
       value: selectedClasses,
       raw: { student },
     });
@@ -56,9 +56,10 @@ export default function SelectSingleStudent({
     defaultValues: value?.raw,
   });
 
-  React.useEffect(() => console.log('value', value), [value]);
+  React.useEffect(() => console.log("value", value), [value]);
 
-  const { assignableStudents, classes: availableClasses } = groupedClassesWithSelectedSubjects;
+  const { assignableStudents, classes: availableClasses } =
+    groupedClassesWithSelectedSubjects;
 
   useOnChange({ control: form.control, onChange, classes: availableClasses });
 

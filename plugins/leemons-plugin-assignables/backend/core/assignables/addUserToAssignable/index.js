@@ -1,4 +1,4 @@
-const { addUserToAssignable } = require('./addUserToAssignable');
+const { addUserToAssignable } = require("./addUserToAssignable");
 
 module.exports = {
   addUserToAssignable,

@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const assignationsSchema = new mongoose.Schema(
   {
@@ -46,14 +46,19 @@ const assignationsSchema = new mongoose.Schema(
   }
 );
 
-assignationsSchema.index({ instance: 1, user: 1, deploymentID: 1, isDeleted: 1 });
+assignationsSchema.index({
+  instance: 1,
+  user: 1,
+  deploymentID: 1,
+  isDeleted: 1,
+});
 assignationsSchema.index({ instance: 1, deploymentID: 1, isDeleted: 1 });
 assignationsSchema.index({ user: 1, deploymentID: 1, isDeleted: 1 });
 assignationsSchema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
 
 const assignationsModel = newModel(
   mongoose.connection,
-  'v1::assignables_Assignations',
+  "v1::assignables_Assignations",
   assignationsSchema
 );
 

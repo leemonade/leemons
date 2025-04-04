@@ -1,8 +1,8 @@
-import React, { useCallback } from 'react';
-import PropTypes from 'prop-types';
-import { Box } from '@bubbles-ui/components';
-import { ZoneWidgets } from '@widgets';
-import prefixPN from '../../../helpers/prefixPN';
+import React, { useCallback } from "react";
+import PropTypes from "prop-types";
+import { Box } from "@bubbles-ui/components";
+import { ZoneWidgets } from "@widgets";
+import prefixPN from "../../../helpers/prefixPN";
 
 function TabProgress(props) {
   const widgets = useCallback(
@@ -19,7 +19,7 @@ function TabProgress(props) {
     [props]
   );
 
-  return <ZoneWidgets zone={prefixPN('class.progress')}>{widgets}</ZoneWidgets>;
+  return <ZoneWidgets zone={prefixPN("class.progress")}>{widgets}</ZoneWidgets>;
 }
 
 TabProgress.propTypes = {

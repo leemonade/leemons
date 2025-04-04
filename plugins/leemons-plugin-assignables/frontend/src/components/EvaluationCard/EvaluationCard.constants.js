@@ -1,9 +1,9 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const EVALUATIONCARD_DEFAULT_PROPS = {
   instance: {},
-  variantTitle: '',
-  variantIcon: '',
+  variantTitle: "",
+  variantIcon: "",
   localizations: {},
   isHovered: false,
 };

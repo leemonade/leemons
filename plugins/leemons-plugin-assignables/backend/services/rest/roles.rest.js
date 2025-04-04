@@ -1,11 +1,11 @@
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
-const { getRole, listRoles } = require('../../core/roles');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
+const { getRole, listRoles } = require("../../core/roles");
 
 module.exports = {
   getRole: {
     rest: {
-      path: '/:role',
-      method: 'GET',
+      path: "/:role",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     handler(ctx) {
@@ -14,14 +14,14 @@ module.exports = {
   },
   listRoles: {
     rest: {
-      path: '/',
-      method: 'GET',
+      path: "/",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     handler(ctx) {
       const { details } = ctx.params;
 
-      return listRoles({ ctx, details: details === 'true' });
+      return listRoles({ ctx, details: details === "true" });
     },
   },
 };

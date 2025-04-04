@@ -1,12 +1,12 @@
-const { LeemonsError } = require('@leemons/error');
-const _ = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const _ = require("lodash");
 
-const discardCacheBy = require('../../../cache/discardCacheBy');
-const { updateDates } = require('../../dates');
-const { registerGrade } = require('../../grades');
-const { getDiff } = require('../../helpers/getDiff');
-const { validateAssignation } = require('../../helpers/validators/assignation');
-const { getAssignation } = require('../getAssignation');
+const discardCacheBy = require("../../../cache/discardCacheBy");
+const { updateDates } = require("../../dates");
+const { registerGrade } = require("../../grades");
+const { getDiff } = require("../../helpers/getDiff");
+const { validateAssignation } = require("../../helpers/validators/assignation");
+const { getAssignation } = require("../getAssignation");
 
 // const updatableFields = [
 //   'indexable',
@@ -55,14 +55,14 @@ async function updateAssignation({ assignation, ctx }) {
   const { object, diff } = getDiff(assignationObj, currentAssignation);
 
   if (!diff.length) {
-    throw new LeemonsError(ctx, { message: 'No changes detected' });
+    throw new LeemonsError(ctx, { message: "No changes detected" });
   }
 
   // EN: Update dates
   // ES: Actualizar fechas
-  if (diff.includes('timestamps')) {
+  if (diff.includes("timestamps")) {
     await updateDates({
-      type: 'assignation',
+      type: "assignation",
       instance: id,
       dates: object.timestamps,
       ctx,
@@ -71,7 +71,7 @@ async function updateAssignation({ assignation, ctx }) {
 
   // EN: Update the grades
   // ES: Actualizar las notas
-  if (diff.includes('grades')) {
+  if (diff.includes("grades")) {
     await Promise.all(
       assignationObj.grades.map((grade) =>
         registerGrade({
@@ -90,11 +90,11 @@ async function updateAssignation({ assignation, ctx }) {
 
   // EN: Update the assignation
   // ES: Actualizar la asignación
-  if (_.pull(diff, 'timestamps', 'grades').length) {
+  if (_.pull(diff, "timestamps", "grades").length) {
     await ctx.tx.db.Assignations.findOneAndUpdate(
       { id },
       {
-        ..._.omit(object, ['timestamps', 'grades']),
+        ..._.omit(object, ["timestamps", "grades"]),
         classes: JSON.stringify(object.classes),
         metadata: JSON.stringify(object.metadata),
       },

@@ -1,4 +1,4 @@
-const { getAssignationsOfInstance } = require('./getAssignationsOfInstance');
+const { getAssignationsOfInstance } = require("./getAssignationsOfInstance");
 
 module.exports = {
   getAssignationsOfInstance,

@@ -1,14 +1,22 @@
-const { it, expect, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getAssignablesData } = require('./getAssignablesData');
-const { assignablesSchema } = require('../../../../models/assignables');
-const { getAssignableObject } = require('../../../../__fixtures__/getAssignableObject');
+const { getAssignablesData } = require("./getAssignablesData");
+const { assignablesSchema } = require("../../../../models/assignables");
+const {
+  getAssignableObject,
+} = require("../../../../__fixtures__/getAssignableObject");
 
 // MOCK
-jest.mock('./getAssetsData');
-const { getAssetsData } = require('./getAssetsData');
+jest.mock("./getAssetsData");
+const { getAssetsData } = require("./getAssetsData");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -33,25 +41,29 @@ beforeEach(async () => {
 
 const mockAssignableObj = getAssignableObject();
 
-it('Should correctly get assignable data without duplications', async () => {
+it("Should correctly get assignable data without duplications", async () => {
   // Arrange
-  const assignables = ['assignableOneId', 'assignableTwoId', 'assignableOneId'];
+  const assignables = ["assignableOneId", "assignableTwoId", "assignableOneId"];
 
   const ctx = generateCtx({
     models: {
-      Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+      Assignables: newModel(
+        mongooseConnection,
+        "Assignables",
+        assignablesSchema
+      ),
     },
   });
 
   const initialValues = [
-    { ...mockAssignableObj, id: assignables[0], asset: 'assetOneId' },
-    { ...mockAssignableObj, id: assignables[1], asset: 'assetTwoId' },
+    { ...mockAssignableObj, id: assignables[0], asset: "assetOneId" },
+    { ...mockAssignableObj, id: assignables[1], asset: "assetTwoId" },
   ];
   await ctx.db.Assignables.create(initialValues);
 
   const mockAssetsData = {
-    [initialValues[0].asset]: { id: 'assetOneId', name: 'Asset One' },
-    [initialValues[1].asset]: { id: 'assetTwoId', name: 'Asset Two' },
+    [initialValues[0].asset]: { id: "assetOneId", name: "Asset One" },
+    [initialValues[1].asset]: { id: "assetTwoId", name: "Asset Two" },
   };
   getAssetsData.mockResolvedValue(mockAssetsData);
 

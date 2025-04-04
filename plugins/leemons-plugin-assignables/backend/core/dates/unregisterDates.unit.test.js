@@ -4,12 +4,12 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { unregisterDates } = require('./unregisterDates');
-const { datesSchema } = require('../../models/dates');
+const { unregisterDates } = require("./unregisterDates");
+const { datesSchema } = require("../../models/dates");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -32,15 +32,15 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should remove the provided date', async () => {
+it("Should remove the provided date", async () => {
   // Arrange
-  const type = 'assignable';
-  const instance = 'assignable-id';
-  const name = 'start';
+  const type = "assignable";
+  const instance = "assignable-id";
+  const name = "start";
 
   const ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 
@@ -48,7 +48,7 @@ it('Should remove the provided date', async () => {
     type,
     instance,
     name,
-    date: new Date('2001/2/12'),
+    date: new Date("2001/2/12"),
   };
   await ctx.db.Dates.create(initialValue);
 
@@ -61,16 +61,16 @@ it('Should remove the provided date', async () => {
   expect(databaseCount).toBe(0);
 });
 
-it('Should remove only all the provided dates', async () => {
+it("Should remove only all the provided dates", async () => {
   // Arrange
-  const type = 'assignable';
-  const instance = 'assignable-id';
-  const names = ['start', 'deadline'];
-  const otherName = 'another-name';
+  const type = "assignable";
+  const instance = "assignable-id";
+  const names = ["start", "deadline"];
+  const otherName = "another-name";
 
   const ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 
@@ -79,13 +79,13 @@ it('Should remove only all the provided dates', async () => {
       type,
       instance,
       name: names[0],
-      date: new Date('2001/2/1'),
+      date: new Date("2001/2/1"),
     },
     {
       type,
       instance,
       name: names[1],
-      date: new Date('2001/2/12'),
+      date: new Date("2001/2/12"),
     },
     {
       type,
@@ -106,15 +106,15 @@ it('Should remove only all the provided dates', async () => {
   expect(notDeleted).not.toBeNull();
 });
 
-it('Should throw if no valid params are provided', async () => {
+it("Should throw if no valid params are provided", async () => {
   // Arrange
-  const type = 'assignable';
-  const instance = 'assignable-id';
-  const name = 'start';
+  const type = "assignable";
+  const instance = "assignable-id";
+  const name = "start";
 
   const ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 
@@ -122,7 +122,7 @@ it('Should throw if no valid params are provided', async () => {
     type,
     instance,
     name,
-    date: new Date('2001/2/12'),
+    date: new Date("2001/2/12"),
   };
   await ctx.db.Dates.create(initialValue);
 
@@ -136,12 +136,12 @@ it('Should throw if no valid params are provided', async () => {
 
   // Assert
   await expect(noTypeFn).rejects.toThrowError(
-    'Cannot unregister dates: type, instance and name are required'
+    "Cannot unregister dates: type, instance and name are required"
   );
   await expect(noInstanceFn).rejects.toThrowError(
-    'Cannot unregister dates: type, instance and name are required'
+    "Cannot unregister dates: type, instance and name are required"
   );
   await expect(noNameFn).rejects.toThrowError(
-    'Cannot unregister dates: type, instance and name are required'
+    "Cannot unregister dates: type, instance and name are required"
   );
 });

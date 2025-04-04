@@ -1,19 +1,22 @@
-import React from 'react';
+import React from "react";
 
-import { useClassesSubjects } from '@academic-portfolio/hooks';
-import { Text } from '@bubbles-ui/components';
-import { unflatten } from '@common';
-import UnreadMessages from '@comunica/components/UnreadMessages';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { forEach, get, uniq } from 'lodash';
+import { useClassesSubjects } from "@academic-portfolio/hooks";
+import { Text } from "@bubbles-ui/components";
+import { unflatten } from "@common";
+import UnreadMessages from "@comunica/components/UnreadMessages";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { forEach, get, uniq } from "lodash";
 
-import { parseAssignationForCommonView } from './parseAssignationForCommon';
+import { parseAssignationForCommonView } from "./parseAssignationForCommon";
 
-import prefixPN from '@assignables/helpers/prefixPN';
+import prefixPN from "@assignables/helpers/prefixPN";
 
 function Completion({ instance }) {
   const { requiresScoring } = instance;
-  const students = React.useMemo(() => instance.students || [], [instance.students]);
+  const students = React.useMemo(
+    () => instance.students || [],
+    [instance.students]
+  );
 
   const studentsCount = React.useMemo(() => students.length, [students]);
   const studentsWhoCompleted = React.useMemo(
@@ -25,7 +28,7 @@ function Completion({ instance }) {
 
   const severity = React.useMemo(() => {
     if (instance.alwaysAvailable) {
-      return 'primary';
+      return "primary";
     }
 
     const startDate = new Date(instance.dates.start);
@@ -46,46 +49,54 @@ function Completion({ instance }) {
 
     if (elapsedPercentage <= 25) {
       if (percentage >= 40) {
-        return 'success';
+        return "success";
       }
-      return 'warning';
+      return "warning";
     }
     if (elapsedPercentage <= 65) {
       if (percentage >= 70) {
-        return 'success';
+        return "success";
       }
       if (percentage >= 40) {
-        return 'warning';
+        return "warning";
       }
-      return 'error';
+      return "error";
     }
 
     if (percentage >= 90) {
-      return 'success';
+      return "success";
     }
     if (percentage >= 70) {
-      return 'warning';
+      return "warning";
     }
-    return 'error';
-  }, [percentage, instance.dates.start, instance.dates.deadline, instance.alwaysAvailable]);
+    return "error";
+  }, [
+    percentage,
+    instance.dates.start,
+    instance.dates.deadline,
+    instance.alwaysAvailable,
+  ]);
 
   // TODO: Add custom visualization
 
   if (!requiresScoring) {
-    return '-';
+    return "-";
   }
   return <Text color={severity}>{percentage}%</Text>;
 }
 
 function useEvaluatedLocalizations() {
   const [, translations] = useTranslateLoader(
-    prefixPN('assignment_form.gradeVariations.notEvaluable.label')
+    prefixPN("assignment_form.gradeVariations.notEvaluable.label")
   );
 
   return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const notEvaluable = get(res, prefixPN('assignment_form.gradeVariations.notEvaluable.label'));
+      const notEvaluable = get(
+        res,
+        prefixPN("assignment_form.gradeVariations.notEvaluable.label")
+      );
 
       return {
         notEvaluable,
@@ -98,7 +109,10 @@ function useEvaluatedLocalizations() {
 
 function Evaluated({ instance }) {
   const { requiresScoring, classes } = instance;
-  const students = React.useMemo(() => instance.students || [], [instance.students]);
+  const students = React.useMemo(
+    () => instance.students || [],
+    [instance.students]
+  );
 
   const classesSubjects = useClassesSubjects(classes);
   const subjectsCount = classesSubjects.length;
@@ -110,8 +124,8 @@ function Evaluated({ instance }) {
     () =>
       students.filter(
         (student) =>
-          student.grades?.filter((grade) => grade.type === 'main').length === subjectsCount &&
-          subjectsCount > 0
+          student.grades?.filter((grade) => grade.type === "main").length ===
+            subjectsCount && subjectsCount > 0
       ).length,
     [students]
   );
@@ -122,14 +136,21 @@ function Evaluated({ instance }) {
   return `${Math.round((studentsWithEvaluations / studentsLength) * 100)}%`;
 }
 
-export async function parseAssignationForTeacherView(instance, labels, options) {
-  const commonData = await parseAssignationForCommonView(instance, labels, options);
+export async function parseAssignationForTeacherView(
+  instance,
+  labels,
+  options
+) {
+  const commonData = await parseAssignationForCommonView(
+    instance,
+    labels,
+    options
+  );
   const studentsCount = instance?.students?.length || 0;
   const role = instance?.assignable?.roleDetails;
-  const dashboardURL = (role.dashboardUrl || '/private/assignables/details/:id').replace(
-    ':id',
-    instance.id
-  );
+  const dashboardURL = (
+    role.dashboardUrl || "/private/assignables/details/:id"
+  ).replace(":id", instance.id);
 
   let rooms = [prefixPN(`instance:${instance.id}:group`)];
   forEach(instance.students, ({ chatKeys }) => {
@@ -145,7 +166,11 @@ export async function parseAssignationForTeacherView(instance, labels, options) 
     evaluated: <Evaluated instance={instance} />,
     messages: !commonData?.parentModule && (
       <UnreadMessages
-        rooms={instance?.metadata?.createComunicaRooms && !commonData?.parentModule ? rooms : []}
+        rooms={
+          instance?.metadata?.createComunicaRooms && !commonData?.parentModule
+            ? rooms
+            : []
+        }
       />
     ),
   };

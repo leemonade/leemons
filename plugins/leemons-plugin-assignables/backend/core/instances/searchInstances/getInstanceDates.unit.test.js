@@ -4,15 +4,15 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getInstanceDates } = require('./getInstanceDates');
-const { datesSchema } = require('../../../models/dates');
-const { getDatesObject } = require('../../../__fixtures__/getDatesObject');
+const { getInstanceDates } = require("./getInstanceDates");
+const { datesSchema } = require("../../../models/dates");
+const { getDatesObject } = require("../../../__fixtures__/getDatesObject");
 
-const dates = { ...getDatesObject(), type: 'assignableInstance' };
+const dates = { ...getDatesObject(), type: "assignableInstance" };
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -37,12 +37,12 @@ beforeEach(async () => {
 
   ctx = generateCtx({
     models: {
-      Dates: newModel(mongooseConnection, 'Dates', datesSchema),
+      Dates: newModel(mongooseConnection, "Dates", datesSchema),
     },
   });
 });
 
-it('Should return dates if instances have dates', async () => {
+it("Should return dates if instances have dates", async () => {
   // Arrange
   await ctx.tx.db.Dates.create(dates);
 
@@ -53,17 +53,17 @@ it('Should return dates if instances have dates', async () => {
   };
 
   // Act
-  const response = await getInstanceDates({ instances: ['instanceId1'], ctx });
+  const response = await getInstanceDates({ instances: ["instanceId1"], ctx });
 
   // Assert
   expect(response).toEqual(expectedResponse);
 });
 
-it('Should return empty object if instances have no dates', async () => {
+it("Should return empty object if instances have no dates", async () => {
   // Arrange
 
   // Act
-  const response = await getInstanceDates({ instances: ['instanceId1'], ctx });
+  const response = await getInstanceDates({ instances: ["instanceId1"], ctx });
 
   // Assert
   expect(response).toEqual({});

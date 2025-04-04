@@ -1,26 +1,36 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Loader, TextInput, createStyles, Checkbox } from '@bubbles-ui/components';
-import { SelectUserAgent } from '@users/components';
-import { useForm, Controller, useWatch } from 'react-hook-form';
-import { intersection } from 'lodash';
+import React from "react";
+import PropTypes from "prop-types";
+import {
+  Box,
+  Loader,
+  TextInput,
+  createStyles,
+  Checkbox,
+} from "@bubbles-ui/components";
+import { SelectUserAgent } from "@users/components";
+import { useForm, Controller, useWatch } from "react-hook-form";
+import { intersection } from "lodash";
 
 export const useSelectCustomGroupStyles = createStyles((theme) => ({
   root: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     gap: theme.other.global.spacing.gap.lg,
     maxWidth: `calc(543px - ${theme.other.global.spacing.gap.lg})`,
   },
 }));
 
 function useOnChange({ control, onChange, classes }) {
-  const { name: groupName, students: selectedStudents, hideGroupName } = useWatch({ control });
+  const {
+    name: groupName,
+    students: selectedStudents,
+    hideGroupName,
+  } = useWatch({ control });
 
   React.useEffect(() => {
     if (!groupName?.length || !selectedStudents?.length) {
       onChange({
-        type: 'customGroup',
+        type: "customGroup",
         value: [],
         raw: { name: groupName, students: selectedStudents, hideGroupName },
       });
@@ -38,10 +48,10 @@ function useOnChange({ control, onChange, classes }) {
     // EN: Get the classes selected through their groups
     // ES: Obtener las clases que seleccionaron a través de sus grupos
     const selectedClasses = selectedGroups.flatMap((group) => {
-      if (group.type === 'group') {
+      if (group.type === "group") {
         return group.classes.map((c) => ({
           group: c.class.id,
-          type: 'custom',
+          type: "custom",
           students: group.students,
           c,
           name: groupName,
@@ -51,7 +61,7 @@ function useOnChange({ control, onChange, classes }) {
 
       return {
         group: group.id,
-        type: 'custom',
+        type: "custom",
         students: group.students,
         c: group,
         name: groupName,
@@ -60,7 +70,7 @@ function useOnChange({ control, onChange, classes }) {
     });
 
     onChange({
-      type: 'customGroup',
+      type: "customGroup",
       value: selectedClasses,
       raw: { name: groupName, students: selectedStudents, hideGroupName },
     });
@@ -78,7 +88,8 @@ export function SelectCustomGroup({
   const { control } = useForm({
     defaultValues: value?.raw,
   });
-  const { assignableStudents, classes: availableClasses } = groupedClassesWithSelectedSubjects;
+  const { assignableStudents, classes: availableClasses } =
+    groupedClassesWithSelectedSubjects;
 
   useOnChange({ control, onChange, classes: availableClasses });
 
@@ -98,7 +109,9 @@ export function SelectCustomGroup({
             <TextInput
               {...field}
               label={localizations?.groupName?.label}
-              error={error && !field.value?.length && localizations?.groupName?.error}
+              error={
+                error && !field.value?.length && localizations?.groupName?.error
+              }
               placeholder={localizations?.groupName?.placeholder}
             />
           )}
@@ -127,7 +140,11 @@ export function SelectCustomGroup({
         render={({ field }) => (
           <SelectUserAgent
             {...field}
-            error={error && !field.value?.length && localizations?.studentsInput?.error}
+            error={
+              error &&
+              !field.value?.length &&
+              localizations?.studentsInput?.error
+            }
             checked={field.value}
             maxSelectedValues={0}
             users={assignableStudents}

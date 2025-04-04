@@ -4,17 +4,17 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getActivitiesByProfile } = require('./getActivitiesByProfile');
-const { teachersSchema } = require('../../../models/teachers');
-const { assignationsSchema } = require('../../../models/assignations');
-const { getTeacherObject } = require('../../../__fixtures__/getTeacherObject');
+const { getActivitiesByProfile } = require("./getActivitiesByProfile");
+const { teachersSchema } = require("../../../models/teachers");
+const { assignationsSchema } = require("../../../models/assignations");
+const { getTeacherObject } = require("../../../__fixtures__/getTeacherObject");
 const {
   getAssignationObject,
-} = require('../../../__fixtures__/getAssignationObject');
+} = require("../../../__fixtures__/getAssignationObject");
 
 const teacher = getTeacherObject();
 const assignation = getAssignationObject();
@@ -42,22 +42,22 @@ beforeEach(async () => {
 
   ctx = generateCtx({
     models: {
-      Teachers: newModel(mongooseConnection, 'Teachers', teachersSchema),
+      Teachers: newModel(mongooseConnection, "Teachers", teachersSchema),
       Assignations: newModel(
         mongooseConnection,
-        'Assigntions',
+        "Assigntions",
         assignationsSchema
       ),
     },
   });
 });
 
-it('Should return instances if has teacher instances', async () => {
+it("Should return instances if has teacher instances", async () => {
   // Arrange
   await ctx.tx.db.Teachers.create(teacher);
 
   const expectedResponse = {
-    assignableInstances: ['assignableId1'],
+    assignableInstances: ["assignableId1"],
     isTeacher: true,
   };
 
@@ -68,7 +68,7 @@ it('Should return instances if has teacher instances', async () => {
   expect(response).toEqual(expectedResponse);
 });
 
-it('Should return assignations if has student assignations', async () => {
+it("Should return assignations if has student assignations", async () => {
   // Arrange
   await ctx.tx.db.Assignations.create(assignation);
 
@@ -76,11 +76,11 @@ it('Should return assignations if has student assignations', async () => {
   const resp = await getActivitiesByProfile({ ctx });
 
   // Assert
-  expect(resp.assignations[0].id).toEqual('test-id');
+  expect(resp.assignations[0].id).toEqual("test-id");
   expect(resp.isTeacher).toBe(false);
 });
 
-it('Should return empty array if no have teacher instances or student assignations', async () => {
+it("Should return empty array if no have teacher instances or student assignations", async () => {
   // Arrange
 
   // Act

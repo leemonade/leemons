@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { EdgeTriangles } from './EdgeTriangles';
+import React from "react";
+import PropTypes from "prop-types";
+import { EdgeTriangles } from "./EdgeTriangles";
 
 const PassMarker = ({ xScale, innerHeight, passValue, barWidth }) => {
   const x = xScale(passValue);
@@ -16,7 +16,12 @@ const PassMarker = ({ xScale, innerHeight, passValue, barWidth }) => {
         strokeWidth={1.5}
         strokeDasharray={4}
       />
-      <EdgeTriangles x={x} height={innerHeight} markWidth={markWidth} color="#A3A3A3" />
+      <EdgeTriangles
+        x={x}
+        height={innerHeight}
+        markWidth={markWidth}
+        color="#A3A3A3"
+      />
     </g>
   );
 };

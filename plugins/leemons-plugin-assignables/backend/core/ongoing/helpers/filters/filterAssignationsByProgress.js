@@ -1,4 +1,4 @@
-const { getAssignationsProgress } = require('../activitiesStatus');
+const { getAssignationsProgress } = require("../activitiesStatus");
 
 async function filterAssignationsByProgress({
   assignations,
@@ -10,11 +10,19 @@ async function filterAssignationsByProgress({
 }) {
   const { progress: desiredProgress } = filters;
 
-  const desiredProgresses = Array.isArray(desiredProgress) ? desiredProgress : [desiredProgress];
+  const desiredProgresses = Array.isArray(desiredProgress)
+    ? desiredProgress
+    : [desiredProgress];
   if (
     !desiredProgress ||
     !desiredProgresses.every((progress) =>
-      ['notSubmitted', 'notStarted', 'evaluated', 'finished', 'started'].includes(progress)
+      [
+        "notSubmitted",
+        "notStarted",
+        "evaluated",
+        "finished",
+        "started",
+      ].includes(progress)
     )
   ) {
     return assignations;

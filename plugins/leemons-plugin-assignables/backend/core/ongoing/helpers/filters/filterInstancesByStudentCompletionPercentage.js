@@ -1,4 +1,4 @@
-const { uniq, map, groupBy, union } = require('lodash');
+const { uniq, map, groupBy, union } = require("lodash");
 
 async function filterInstancesByStudentCompletionPercentage({
   instances,
@@ -10,37 +10,37 @@ async function filterInstancesByStudentCompletionPercentage({
   instanceSubjectsProgramsAndClasses,
   ctx,
 }) {
-  const uniqInstancesIds = uniq(map(instances, 'id'));
+  const uniqInstancesIds = uniq(map(instances, "id"));
 
   const assignations = await ctx.tx.db.Assignations.find({
     instance: uniqInstancesIds,
   })
-    .select(['id', 'instance'])
+    .select(["id", "instance"])
     .lean();
 
-  const assignationsIds = map(assignations, 'id');
+  const assignationsIds = map(assignations, "id");
 
   const [assignationsGrades, assignationsDates] = await Promise.all([
     !excludeStudentsFullyEvaluated
       ? []
       : ctx.tx.db.Grades.find({
-          type: 'main',
+          type: "main",
           assignation: assignationsIds,
         })
-          .select(['id', 'subject', 'assignation'])
+          .select(["id", "subject", "assignation"])
           .lean(),
 
     ctx.tx.db.Dates.find({
-      type: 'assignation',
+      type: "assignation",
       instance: assignationsIds,
-      name: 'end',
+      name: "end",
     })
-      .select(['id', 'instance', 'date'])
+      .select(["id", "instance", "date"])
       .lean(),
   ]);
 
-  const gradesPerAssignation = groupBy(assignationsGrades, 'assignation');
-  const datesPerAssignation = groupBy(assignationsDates, 'instance');
+  const gradesPerAssignation = groupBy(assignationsGrades, "assignation");
+  const datesPerAssignation = groupBy(assignationsDates, "instance");
   const assignationsPerInstance = {};
 
   assignations.forEach((assignation) => {
@@ -51,16 +51,20 @@ async function filterInstancesByStudentCompletionPercentage({
   });
 
   return instances.filter((instance) => {
-    const subjectsCount = instanceSubjectsProgramsAndClasses?.[instance.id]?.subjects?.length || 0;
+    const subjectsCount =
+      instanceSubjectsProgramsAndClasses?.[instance.id]?.subjects?.length || 0;
     const students = assignationsPerInstance[instance.id] ?? [];
     const studentsCount = students.length;
     const studentsWhoFinished = students
       .map((studentAssignation) => ({
         hasFinished: !!datesPerAssignation[studentAssignation],
         isFullyEvaluated:
-          gradesPerAssignation[studentAssignation]?.length === subjectsCount && subjectsCount > 0,
+          gradesPerAssignation[studentAssignation]?.length === subjectsCount &&
+          subjectsCount > 0,
       }))
-      .filter((student) => student.hasFinished && !student.isFullyEvaluated).length;
+      .filter(
+        (student) => student.hasFinished && !student.isFullyEvaluated
+      ).length;
 
     const completionPercentage = studentsWhoFinished / studentsCount;
 

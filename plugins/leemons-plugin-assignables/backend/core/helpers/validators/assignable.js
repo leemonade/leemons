@@ -1,12 +1,12 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 
-const { subjectsValidationObject } = require('./subjects');
+const { subjectsValidationObject } = require("./subjects");
 
 // AJV Validator
 const assignableValidationObject = {
-  type: 'object',
+  type: "object",
   properties: {
     /*
       name
@@ -19,93 +19,93 @@ const assignableValidationObject = {
     asset: {
       oneOf: [
         {
-          type: 'object',
+          type: "object",
           properties: {
             name: {
-              type: 'string',
+              type: "string",
               maxLength: 255,
             },
             tagline: {
-              type: 'string',
+              type: "string",
               maxLength: 255,
               nullable: true,
             },
             description: {
-              type: 'string',
+              type: "string",
               maxLength: 16777215,
               nullable: true,
             },
             tags: {
-              type: 'array',
+              type: "array",
               nullable: true,
               items: {
-                type: 'string',
+                type: "string",
                 maxLength: 255,
               },
             },
             color: {
-              type: 'string',
+              type: "string",
               nullable: true,
             },
             cover: {
-              type: ['object', 'string'],
+              type: ["object", "string"],
               nullable: true,
             },
           },
         },
         {
-          type: 'string',
+          type: "string",
         },
       ],
     },
     role: {
-      type: 'string',
+      type: "string",
       maxLength: 255,
       minLength: 1,
     },
     gradable: {
-      type: 'boolean',
+      type: "boolean",
     },
     center: {
-      type: 'string',
+      type: "string",
       nullable: true,
     },
     subjects: subjectsValidationObject,
     statement: {
-      type: 'string',
+      type: "string",
       maxLength: 16777215,
       nullable: true,
     },
     development: {
-      type: 'string',
+      type: "string",
       maxLength: 16777215,
       nullable: true,
     },
     duration: {
-      type: 'string',
+      type: "string",
       maxLength: 255,
       nullable: true,
     },
     resources: {
-      type: 'array',
+      type: "array",
       nullable: true,
     },
     submission: {
-      type: 'object',
+      type: "object",
       nullable: true,
     },
     instructionsForTeachers: {
-      type: 'string',
+      type: "string",
       maxLength: 16777215,
       nullable: true,
     },
     instructionsForStudents: {
-      type: 'string',
+      type: "string",
       maxLength: 16777215,
       nullable: true,
     },
     metadata: {
-      type: 'object',
+      type: "object",
       nullable: true,
     },
   },
@@ -113,31 +113,34 @@ const assignableValidationObject = {
 };
 
 const validAssignableProperties = [
-  'asset.name',
-  'asset.tagline',
-  'asset.description',
-  'asset.tags',
-  'asset.color',
-  'asset.cover',
-  'role',
-  'gradable',
-  'center',
-  'subjects',
+  "asset.name",
+  "asset.tagline",
+  "asset.description",
+  "asset.tags",
+  "asset.color",
+  "asset.cover",
+  "role",
+  "gradable",
+  "center",
+  "subjects",
   // 'methodology',
-  'statement',
-  'development',
+  "statement",
+  "development",
   // 'relatedAssignables',
-  'duration',
-  'resources',
-  'submission',
-  'instructionsForTeachers',
-  'instructionsForStudents',
-  'metadata',
+  "duration",
+  "resources",
+  "submission",
+  "instructionsForTeachers",
+  "instructionsForStudents",
+  "metadata",
 ];
 
-const assignableRequiredProperties = ['asset', 'role'];
+const assignableRequiredProperties = ["asset", "role"];
 
-function validateAssignable(assignable, { validationObject, useRequired = false } = {}) {
+function validateAssignable(
+  assignable,
+  { validationObject, useRequired = false } = {}
+) {
   const obj = validationObject || _.clone(assignableValidationObject);
   if (useRequired) {
     if (Array.isArray(useRequired)) {

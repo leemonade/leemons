@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { useForm } from 'react-hook-form';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import { searchUserAgentsRequest } from '@users/request';
-import _ from 'lodash';
-import { getProfiles } from '../../request/profiles';
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import { useForm } from "react-hook-form";
+import { DeleteBinIcon } from "@bubbles-ui/icons/solid";
+import { searchUserAgentsRequest } from "@users/request";
+import _ from "lodash";
+import { getProfiles } from "../../request/profiles";
 
 function Actions({ id, onDelete }) {
   return (
     <>
-      <DeleteBinIcon onClick={() => typeof onDelete === 'function' && onDelete(id)} />
+      <DeleteBinIcon
+        onClick={() => typeof onDelete === "function" && onDelete(id)}
+      />
     </>
   );
 }
@@ -44,10 +46,10 @@ export default function SelectTeachers({ role, onChange }) {
       );
 
       const ids = response.userAgents?.map(({ id }) => id);
-      const currentValue = getValues('assignee');
+      const currentValue = getValues("assignee");
       if (!_.isEqual(currentValue, ids)) {
         onChange(ids);
-        setValue('assignee', []);
+        setValue("assignee", []);
       }
     })();
   }, [profiles]);

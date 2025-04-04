@@ -1,99 +1,99 @@
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 
-const _ = require('lodash');
+const _ = require("lodash");
 
 const instanceValidationObject = {
-  type: 'object',
+  type: "object",
   properties: {
     assignable: {
-      type: 'string',
+      type: "string",
       minLength: 36,
       maxLength: 255,
     },
     isAllDay: {
-      type: 'boolean',
+      type: "boolean",
     },
     alwaysAvailable: {
-      type: 'boolean',
+      type: "boolean",
     },
     dates: {
-      type: 'object',
+      type: "object",
       patternProperties: {
-        '^.*$': {
+        "^.*$": {
           oneOf: [
             {
-              type: 'string',
-              format: 'date-time',
+              type: "string",
+              format: "date-time",
               nullable: true,
             },
             {
-              instanceof: 'Date',
+              instanceof: "Date",
             },
             {
-              type: 'number',
+              type: "number",
             },
           ],
         },
       },
     },
     duration: {
-      type: 'string',
+      type: "string",
       nullable: true,
     },
     gradable: {
-      type: 'boolean',
+      type: "boolean",
     },
     requiresScoring: {
-      type: 'boolean',
+      type: "boolean",
     },
     allowFeedback: {
-      type: 'boolean',
+      type: "boolean",
     },
     classes: {
-      type: 'array',
+      type: "array",
       items: {
-        type: 'string',
+        type: "string",
       },
     },
     sendMail: {
-      type: 'boolean',
+      type: "boolean",
       nullable: true,
     },
     messageToAssignees: {
-      type: 'string',
+      type: "string",
       nullable: true,
       maxLength: 16777215,
     },
     curriculum: {
-      type: 'object',
+      type: "object",
       properties: {
         content: {
-          type: 'boolean',
+          type: "boolean",
         },
         assessmentCriteria: {
-          type: 'boolean',
+          type: "boolean",
         },
         objectives: {
-          type: 'boolean',
+          type: "boolean",
         },
       },
     },
     addNewClassStudents: {
-      type: 'boolean',
+      type: "boolean",
     },
     metadata: {
-      type: 'object',
+      type: "object",
     },
   },
 };
 
 const instanceRequiredProperties = [
-  'assignable',
-  'alwaysAvailable',
-  'dates',
-  'gradable',
-  'requiresScoring',
-  'allowFeedback',
+  "assignable",
+  "alwaysAvailable",
+  "dates",
+  "gradable",
+  "requiresScoring",
+  "allowFeedback",
 ];
 
 function validateInstance({ assignable, useRequired = false }) {

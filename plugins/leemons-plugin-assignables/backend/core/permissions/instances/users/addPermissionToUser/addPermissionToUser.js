@@ -1,5 +1,7 @@
-const constants = require('../../../../../config/constants');
-const { getPermissionName } = require('../../../instances/helpers/getPermissionName');
+const constants = require("../../../../../config/constants");
+const {
+  getPermissionName,
+} = require("../../../instances/helpers/getPermissionName");
 
 /**
  * Add a permission to a user.
@@ -12,12 +14,23 @@ const { getPermissionName } = require('../../../instances/helpers/getPermissionN
  * @param {MoleculerContext} options.ctx - The Moleculer context.
  * @return {Object} - The added permission details.
  */
-async function addPermissionToUser({ assignableInstance, assignable, userAgents, role, ctx }) {
-  await ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
+async function addPermissionToUser({
+  assignableInstance,
+  assignable,
+  userAgents,
+  role,
+  ctx,
+}) {
+  await ctx.tx.call("users.permissions.addCustomPermissionToUserAgent", {
     userAgentId: userAgents,
     throwIfExists: false,
     data: {
-      permissionName: getPermissionName({ assignableInstance, assignable, prefix: true, ctx }),
+      permissionName: getPermissionName({
+        assignableInstance,
+        assignable,
+        prefix: true,
+        ctx,
+      }),
       actionNames: constants.assignableInstanceRolesObject[role].actions,
     },
   });

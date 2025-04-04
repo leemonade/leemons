@@ -1,41 +1,46 @@
-const { it, expect, describe, beforeEach } = require('@jest/globals');
+const { it, expect, describe, beforeEach } = require("@jest/globals");
 
-const { generateCtx } = require('@leemons/testing');
+const { generateCtx } = require("@leemons/testing");
 
-const { search } = require('./search');
+const { search } = require("./search");
 
-jest.mock('../../assignables/searchAssignables');
-jest.mock('../../assignables/getAssignablesAssets');
+jest.mock("../../assignables/searchAssignables");
+jest.mock("../../assignables/getAssignablesAssets");
 
-const { searchAssignables } = require('../../assignables/searchAssignables');
-const { getAssignablesAssets } = require('../../assignables/getAssignablesAssets');
+const { searchAssignables } = require("../../assignables/searchAssignables");
+const {
+  getAssignablesAssets,
+} = require("../../assignables/getAssignablesAssets");
 
-describe('Search Assignables', () => {
+describe("Search Assignables", () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
 
-  it('should return an array of asset IDs when valid parameters are provided', async () => {
+  it("should return an array of asset IDs when valid parameters are provided", async () => {
     // Arrange
     const params = {
       criteria: {},
       query: {},
-      category: { key: 'assignables.key' },
-      assets: ['asset1', 'asset2'],
+      category: { key: "assignables.key" },
+      assets: ["asset1", "asset2"],
       published: true,
       preferCurrent: true,
       ctx: generateCtx({}),
     };
-    searchAssignables.mockResolvedValue(['asset1', 'asset2']);
-    getAssignablesAssets.mockResolvedValue({ asset1: 'asset1', asset2: 'asset2' });
+    searchAssignables.mockResolvedValue(["asset1", "asset2"]);
+    getAssignablesAssets.mockResolvedValue({
+      asset1: "asset1",
+      asset2: "asset2",
+    });
 
     // Act
     const result = await search(params);
 
     // Assert
-    expect(result).toEqual(['asset1', 'asset2']);
+    expect(result).toEqual(["asset1", "asset2"]);
     expect(searchAssignables).toHaveBeenCalledWith({
-      roles: 'key',
+      roles: "key",
       data: {
         published: true,
         preferCurrent: true,
@@ -51,13 +56,13 @@ describe('Search Assignables', () => {
     });
   });
 
-  it('should return an empty array when no assets match the search criteria', async () => {
+  it("should return an empty array when no assets match the search criteria", async () => {
     // Arrange
     const params = {
       criteria: {},
       query: {},
-      category: { key: 'assignables.key' },
-      assets: ['asset3', 'asset4'],
+      category: { key: "assignables.key" },
+      assets: ["asset3", "asset4"],
       published: true,
       preferCurrent: true,
       ctx: generateCtx({}),
@@ -71,7 +76,7 @@ describe('Search Assignables', () => {
     // Assert
     expect(result).toEqual([]);
     expect(searchAssignables).toHaveBeenCalledWith({
-      roles: 'key',
+      roles: "key",
       data: {
         published: true,
         preferCurrent: true,

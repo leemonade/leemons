@@ -1,4 +1,4 @@
-const { getUserDataForFundae } = require('./getUserDataForFundae');
+const { getUserDataForFundae } = require("./getUserDataForFundae");
 
 module.exports = {
   getUserDataForFundae,

@@ -4,42 +4,42 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { createInstance } = require('./createInstance');
-const { instancesSchema } = require('../../../models/instances');
+const { createInstance } = require("./createInstance");
+const { instancesSchema } = require("../../../models/instances");
 const {
   getInstanceObject,
-} = require('../../../__fixtures__/getInstanceObject');
+} = require("../../../__fixtures__/getInstanceObject");
 
-const { getAssignable } = require('../../assignables/getAssignable');
+const { getAssignable } = require("../../assignables/getAssignable");
 const {
   registerPermission,
-} = require('../../permissions/instances/registerPermission');
-const { registerClass } = require('../../classes/registerClass');
-const { getTeachersOfGivenClasses } = require('./getTeachersOfGivenClasses');
+} = require("../../permissions/instances/registerPermission");
+const { registerClass } = require("../../classes/registerClass");
+const { getTeachersOfGivenClasses } = require("./getTeachersOfGivenClasses");
 const {
   addTeachersToAssignableInstance,
-} = require('../../teachers/addTeachersToAssignableInstance');
-const { createEventAndAddToUsers } = require('./createEventAndAddToUsers');
-const { registerDates } = require('../../dates/registerDates');
-const { updateInstance } = require('../updateInstance');
+} = require("../../teachers/addTeachersToAssignableInstance");
+const { createEventAndAddToUsers } = require("./createEventAndAddToUsers");
+const { registerDates } = require("../../dates/registerDates");
+const { updateInstance } = require("../updateInstance");
 const {
   addPermissionToUser,
-} = require('../../permissions/instances/users/addPermissionToUser');
+} = require("../../permissions/instances/users/addPermissionToUser");
 
-jest.mock('../../assignables/getAssignable');
-jest.mock('../../permissions/instances/registerPermission');
-jest.mock('../../classes/registerClass');
-jest.mock('./getTeachersOfGivenClasses');
-jest.mock('../../teachers/addTeachersToAssignableInstance');
-jest.mock('./createEventAndAddToUsers');
-jest.mock('../../dates/registerDates');
-jest.mock('../updateInstance');
-jest.mock('../../permissions/instances/users/addPermissionToUser');
-jest.mock('../../assignations/createAssignation');
+jest.mock("../../assignables/getAssignable");
+jest.mock("../../permissions/instances/registerPermission");
+jest.mock("../../classes/registerClass");
+jest.mock("./getTeachersOfGivenClasses");
+jest.mock("../../teachers/addTeachersToAssignableInstance");
+jest.mock("./createEventAndAddToUsers");
+jest.mock("../../dates/registerDates");
+jest.mock("../updateInstance");
+jest.mock("../../permissions/instances/users/addPermissionToUser");
+jest.mock("../../assignations/createAssignation");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -62,11 +62,11 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should create an assignable instance correctly', async () => {
+it("Should create an assignable instance correctly", async () => {
   // Arrange
-  const role = 'student';
+  const role = "student";
   const assignable = {
-    id: '123e4567-e89b-12d3-a456-426614174000',
+    id: "123e4567-e89b-12d3-a456-426614174000",
     role,
   };
   const instance = {
@@ -74,29 +74,29 @@ it('Should create an assignable instance correctly', async () => {
     assignable: assignable.id,
     dates: { deadLine: new Date() },
     classes: [
-      '123e4567-e89b-12d3-a456-426614174001',
-      '123e4567-e89b-12d3-a456-426614174002',
+      "123e4567-e89b-12d3-a456-426614174001",
+      "123e4567-e89b-12d3-a456-426614174002",
     ],
     metadata: {},
     curriculum: {},
     relatedAssignables: [],
-    students: ['student1', 'student2'],
+    students: ["student1", "student2"],
     isAllDay: true,
     sendMail: true,
   };
   const teachers = [
-    { teacher: 'teacherId1' },
-    { teacher: 'teacherId2' },
-    { teacher: 'teacherId3' },
+    { teacher: "teacherId1" },
+    { teacher: "teacherId2" },
+    { teacher: "teacherId3" },
   ];
-  const eventId = 'eventId';
+  const eventId = "eventId";
 
   const ctx = generateCtx({
     models: {
-      Instances: newModel(mongooseConnection, 'Instances', instancesSchema),
+      Instances: newModel(mongooseConnection, "Instances", instancesSchema),
     },
     events: {
-      'instance.created': () => {},
+      "instance.created": () => {},
       [`role.${role}.instance.created`]: () => {},
     },
   });
@@ -111,7 +111,7 @@ it('Should create an assignable instance correctly', async () => {
   const responseWithOutSomeParams = await createInstance({
     assignableInstance: {
       ...instance,
-      id: 'test-id2',
+      id: "test-id2",
       relatedAssignableInstances: {},
       students: [],
     },
@@ -165,7 +165,7 @@ it('Should create an assignable instance correctly', async () => {
   });
 
   expect(registerDates).toBeCalledWith({
-    type: 'assignableInstance',
+    type: "assignableInstance",
     instance: instance.id,
     dates: instance.dates,
     ctx,
@@ -198,7 +198,7 @@ it('Should create an assignable instance correctly', async () => {
   });
 
   expect(responseWithOutSomeParams).toEqual({
-    id: 'test-id2',
+    id: "test-id2",
     students: [],
     dates: instance.dates,
     classes: instance.classes,

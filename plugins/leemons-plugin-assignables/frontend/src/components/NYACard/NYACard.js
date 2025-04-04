@@ -1,28 +1,28 @@
-import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useMemo } from "react";
+import { Link } from "react-router-dom";
 
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import { Box, ImageLoader } from '@bubbles-ui/components';
-import { LocaleRelativeTime, unflatten, useApi, useLocale } from '@common';
-import { useComunica } from '@comunica/context';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import dayjs from 'dayjs';
-import _, { get } from 'lodash';
-import PropTypes from 'prop-types';
+import { useIsTeacher } from "@academic-portfolio/hooks";
+import { Box, ImageLoader } from "@bubbles-ui/components";
+import { LocaleRelativeTime, unflatten, useApi, useLocale } from "@common";
+import { useComunica } from "@comunica/context";
+import prepareAsset from "@leebrary/helpers/prepareAsset";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import dayjs from "dayjs";
+import _, { get } from "lodash";
+import PropTypes from "prop-types";
 
-import getClassData from '../../helpers/getClassData';
-import prefixPN from '../../helpers/prefixPN';
-import getStatus from '../Details/components/UsersList/helpers/getStatus';
-import { EvaluationCard } from '../EvaluationCard';
-import { EvaluationCardSkeleton } from '../EvaluationCard/EvaluationCardSkeleton/EvaluationCardSkeleton';
+import getClassData from "../../helpers/getClassData";
+import prefixPN from "../../helpers/prefixPN";
+import getStatus from "../Details/components/UsersList/helpers/getStatus";
+import { EvaluationCard } from "../EvaluationCard";
+import { EvaluationCardSkeleton } from "../EvaluationCard/EvaluationCardSkeleton/EvaluationCardSkeleton";
 
-import { NYACARD_PROP_TYPES, NYACARD_DEFAULT_PROPS } from './NYACard.constants';
-import { NYACardStyles } from './NYACard.styles';
-import { NYACardCover } from './NYACardCover';
-import { NYACardFooter } from './NYACardFooter';
-import { NYACardSkeleton } from './NYACardSkeleton';
-import { NYACardBody } from './NYCardBody';
+import { NYACARD_PROP_TYPES, NYACARD_DEFAULT_PROPS } from "./NYACard.constants";
+import { NYACardStyles } from "./NYACard.styles";
+import { NYACardCover } from "./NYACardCover";
+import { NYACardFooter } from "./NYACardFooter";
+import { NYACardSkeleton } from "./NYACardSkeleton";
+import { NYACardBody } from "./NYCardBody";
 
 function capitalizeFirstLetter(str) {
   return `${str[0].toUpperCase()}${str.substring(1)}`;
@@ -42,7 +42,9 @@ function parseAssignation({ isTeacher, instance, subject, labels }) {
     if (!students?.[0]?.started) {
       return null;
     }
-    const submission = students.filter((student) => student.timestamps.end).length;
+    const submission = students.filter(
+      (student) => student.timestamps.end
+    ).length;
 
     // EN: Avg time only including the students who have finished the assignation
     // ES: Tiempo promedio solo incluyendo a los estudiantes que han finalizado la asignación
@@ -79,7 +81,7 @@ function parseAssignation({ isTeacher, instance, subject, labels }) {
 
   const { count: gradeCount, sum: gradeSum } = (instance.grades ?? {}).reduce(
     ({ count, sum }, grade) => {
-      if (grade.type === 'main') {
+      if (grade.type === "main") {
         return {
           count: count + 1,
           sum: sum + grade.grade,
@@ -111,9 +113,10 @@ function parseAssignation({ isTeacher, instance, subject, labels }) {
     activityType: capitalizeFirstLetter(roleName),
     labels: _.omit(
       labels?.assigment,
-      [!instance?.metadata?.score && 'score', !instance.instance.requiresScoring && 'grade'].filter(
-        Boolean
-      )
+      [
+        !instance?.metadata?.score && "score",
+        !instance.instance.requiresScoring && "grade",
+      ].filter(Boolean)
     ),
   };
 }
@@ -126,8 +129,8 @@ export function parseDeadline(isTeacher, obj, labels) {
   }
 
   let main = null;
-  let severity = 'low';
-  let backgroundColor = 'default';
+  let severity = "low";
+  let backgroundColor = "default";
   let secondary = null;
   let dateToShow = null;
 
@@ -137,29 +140,31 @@ export function parseDeadline(isTeacher, obj, labels) {
   const isDeadline = deadline.isValid() && !deadline.isAfter(today);
 
   if (!isTeacher) {
-    const submission = dayjs(obj?.timestamps?.end || instance?.timestamps?.end || null);
+    const submission = dayjs(
+      obj?.timestamps?.end || instance?.timestamps?.end || null
+    );
     const status = instance.status || getStatus(obj, instance);
-    if (status === 'evaluated') {
+    if (status === "evaluated") {
       main = labels?.evaluated;
       if (deadline.isValid()) {
         secondary = labels?.submitted;
         dateToShow = submission.toDate();
       }
-    } else if (status === 'late') {
+    } else if (status === "late") {
       main = labels?.late;
       if (deadline.isValid()) {
         secondary = labels?.submission;
         dateToShow = deadline.toDate();
       }
-    } else if (status === 'submitted' || status === 'ended') {
+    } else if (status === "submitted" || status === "ended") {
       main = labels?.submitted;
       if (submission.isValid()) {
         secondary = labels?.submitted;
         dateToShow = submission.toDate();
       }
-    } else if (status === 'started' || status === 'opened') {
-      const daysUntilDeadline = deadline.diff(today, 'days');
-      const durationInSeconds = deadline.diff(today, 'seconds');
+    } else if (status === "started" || status === "opened") {
+      const daysUntilDeadline = deadline.diff(today, "days");
+      const durationInSeconds = deadline.diff(today, "seconds");
 
       if (deadline.isValid()) {
         secondary = labels?.submission;
@@ -168,13 +173,18 @@ export function parseDeadline(isTeacher, obj, labels) {
 
       if (isDeadline) {
         main = labels?.late;
-        severity = 'high';
+        severity = "high";
       } else if (daysUntilDeadline <= 5) {
-        severity = 'medium';
+        severity = "medium";
         if (daysUntilDeadline <= 2) {
-          severity = 'high';
+          severity = "high";
         }
-        main = <LocaleRelativeTime seconds={durationInSeconds} firstLetterUppercase={true} />;
+        main = (
+          <LocaleRelativeTime
+            seconds={durationInSeconds}
+            firstLetterUppercase={true}
+          />
+        );
       } else {
         main = labels?.startActivity;
       }
@@ -195,7 +205,8 @@ export function parseDeadline(isTeacher, obj, labels) {
     const isStarted =
       !isClosed &&
       !isDeadline &&
-      ((startDate.isValid() && !startDate.isAfter(today)) || !startDate.isValid());
+      ((startDate.isValid() && !startDate.isAfter(today)) ||
+        !startDate.isValid());
 
     if (isClosed) {
       // TODO: Check if it is already graded
@@ -207,41 +218,47 @@ export function parseDeadline(isTeacher, obj, labels) {
     } else if (isDeadline) {
       main = labels?.evaluate;
       if (closeDate.isValid()) {
-        const daysUntilClose = closeDate.diff(today, 'day');
-        const durationInSeconds = closeDate.diff(today, 'seconds');
+        const daysUntilClose = closeDate.diff(today, "day");
+        const durationInSeconds = closeDate.diff(today, "seconds");
 
         dateToShow = closeDate.isValid() && closeDate.toDate();
         if (daysUntilClose <= 5) {
-          severity = 'medium';
+          severity = "medium";
           if (daysUntilClose <= 2) {
-            severity = 'high';
+            severity = "high";
           }
           if (daysUntilClose < 0) {
-            backgroundColor = 'error';
+            backgroundColor = "error";
           }
           secondary = (
-            <LocaleRelativeTime seconds={durationInSeconds} firstLetterUppercase={true} />
+            <LocaleRelativeTime
+              seconds={durationInSeconds}
+              firstLetterUppercase={true}
+            />
           );
         } else if (dateToShow) {
           secondary = labels?.evaluation;
         }
       } else {
-        const daysSinceDeadline = today.diff(deadline, 'day');
-        const durationInSeconds = today.diff(deadline, 'seconds');
+        const daysSinceDeadline = today.diff(deadline, "day");
+        const durationInSeconds = today.diff(deadline, "seconds");
 
         dateToShow = deadline.isValid() && deadline.toDate();
 
         if (daysSinceDeadline >= 2) {
-          severity = 'medium';
+          severity = "medium";
           if (daysSinceDeadline >= 5) {
-            severity = 'high';
+            severity = "high";
           }
           if (daysSinceDeadline >= 7) {
-            backgroundColor = 'error';
+            backgroundColor = "error";
           }
 
           secondary = (
-            <LocaleRelativeTime seconds={durationInSeconds} firstLetterUppercase={true} />
+            <LocaleRelativeTime
+              seconds={durationInSeconds}
+              firstLetterUppercase={true}
+            />
           );
         } else if (dateToShow) {
           secondary = labels?.submission;
@@ -264,7 +281,7 @@ export function parseDeadline(isTeacher, obj, labels) {
 
   return {
     deadline: dateToShow,
-    locale: 'es',
+    locale: "es",
     severity,
     backgroundColor,
     labels: {
@@ -300,7 +317,8 @@ async function prepareInstance({ instance: object, isTeacher, query, labels }) {
   });
   const deadlineProps = parseDeadline(isTeacher, object, labels?.status);
 
-  const showSubject = query.showSubject || subjectData.name === labels.multiSubject;
+  const showSubject =
+    query.showSubject || subjectData.name === labels.multiSubject;
 
   const subject = {
     name: subjectData.name,
@@ -312,14 +330,17 @@ async function prepareInstance({ instance: object, isTeacher, query, labels }) {
 
   let url;
   if (isTeacher) {
-    url = (roleDetails.dashboardUrl || '/private/assignables/details/:id').replace(
-      ':id',
-      instance.id
-    );
+    url = (
+      roleDetails.dashboardUrl || "/private/assignables/details/:id"
+    ).replace(":id", instance.id);
   } else if (!object.finished) {
-    url = roleDetails.studentDetailUrl.replace(':id', instance.id).replace(':user', object.user);
+    url = roleDetails.studentDetailUrl
+      .replace(":id", instance.id)
+      .replace(":user", object.user);
   } else {
-    url = roleDetails.evaluationDetailUrl.replace(':id', instance.id).replace(':user', object.user);
+    url = roleDetails.evaluationDetailUrl
+      .replace(":id", instance.id)
+      .replace(":user", object.user);
   }
 
   return {
@@ -358,12 +379,12 @@ export function usePreparedInstance(instance, query, labels) {
 
 function useNYACardLocalizations(labels) {
   const [, translations] = useTranslateLoader([
-    prefixPN('roles'),
-    prefixPN('need_your_attention'),
-    prefixPN('multiSubject'),
-    prefixPN('assignmentForm'),
-    prefixPN('ongoing'),
-    prefixPN('assignment_list'),
+    prefixPN("roles"),
+    prefixPN("need_your_attention"),
+    prefixPN("multiSubject"),
+    prefixPN("assignmentForm"),
+    prefixPN("ongoing"),
+    prefixPN("assignment_list"),
   ]);
 
   return useMemo(() => {
@@ -376,12 +397,12 @@ function useNYACardLocalizations(labels) {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       return {
-        ..._.get(res, prefixPN('need_your_attention')),
-        roles: _.get(res, prefixPN('roles')),
-        multiSubject: _.get(res, prefixPN('multiSubject')),
-        assignmentForm: _.get(res, prefixPN('assignmentForm')),
-        ongoing: _.get(res, prefixPN('ongoing')),
-        assignment_list: _.get(res, prefixPN('assignment_list')),
+        ..._.get(res, prefixPN("need_your_attention")),
+        roles: _.get(res, prefixPN("roles")),
+        multiSubject: _.get(res, prefixPN("multiSubject")),
+        assignmentForm: _.get(res, prefixPN("assignmentForm")),
+        ongoing: _.get(res, prefixPN("ongoing")),
+        assignment_list: _.get(res, prefixPN("assignment_list")),
       };
     }
 
@@ -395,7 +416,7 @@ function LinkContainer({ to, disabled, children }) {
   }
 
   return (
-    <Link to={to} style={{ textDecoration: 'none' }}>
+    <Link to={to} style={{ textDecoration: "none" }}>
       {children}
     </Link>
   );
@@ -421,7 +442,7 @@ const NYACard = ({
   const locale = useLocale();
   const localizations = useNYACardLocalizations(labels);
   const { openRoom } = useComunica();
-  const { classes } = NYACardStyles({ clickable }, { name: 'NYACard' });
+  const { classes } = NYACardStyles({ clickable }, { name: "NYACard" });
   const query = useMemo(
     () => ({
       classData,
@@ -443,26 +464,28 @@ const NYACard = ({
   }
   if (isTeacher && isActivityCarousel)
     return (
-      <Link to={preparedInstance?.url} style={{ textDecoration: 'none' }}>
+      <Link to={preparedInstance?.url} style={{ textDecoration: "none" }}>
         <Box>
           <EvaluationCard
             instance={preparedInstance}
             localizations={localizations}
             variantTitle={
-              get(localizations?.roles, `${preparedInstance?.assignable?.role}.singular`) ||
-              preparedInstance?.assignable?.role
+              get(
+                localizations?.roles,
+                `${preparedInstance?.assignable?.role}.singular`
+              ) || preparedInstance?.assignable?.role
             }
             variantIcon={
               <Box
                 style={{
-                  position: 'relative',
+                  position: "relative",
                 }}
               >
                 <ImageLoader
                   style={{
                     width: 24,
                     height: 24,
-                    position: 'relative',
+                    position: "relative",
                   }}
                   width={24}
                   height={24}
@@ -480,14 +503,17 @@ const NYACard = ({
         <Box
           key={preparedInstance?.id}
           style={{
-            height: '100%',
+            height: "100%",
           }}
         >
           <Box className={classes.root}>
             <NYACardCover
               {...preparedInstance?.asset}
               variantTitle={preparedInstance?.assignable?.role}
-              topColor={preparedInstance?.subject?.color ?? preparedInstance?.asset?.color}
+              topColor={
+                preparedInstance?.subject?.color ??
+                preparedInstance?.asset?.color
+              }
               isTeacherSyllabus={isTeacherSyllabus}
               localizations={localizations}
               instance={preparedInstance}
@@ -509,20 +535,22 @@ const NYACard = ({
               {...preparedInstance?.asset}
               chatKeys={preparedInstance?.chatKeys}
               variantTitle={
-                get(localizations?.roles, `${preparedInstance?.assignable?.role}.singular`) ||
-                preparedInstance?.assignable?.role
+                get(
+                  localizations?.roles,
+                  `${preparedInstance?.assignable?.role}.singular`
+                ) || preparedInstance?.assignable?.role
               }
               variantIcon={
                 <Box
                   style={{
-                    position: 'relative',
+                    position: "relative",
                   }}
                 >
                   <ImageLoader
                     style={{
                       width: 16,
                       height: 16,
-                      position: 'relative',
+                      position: "relative",
                     }}
                     width={16}
                     height={16}

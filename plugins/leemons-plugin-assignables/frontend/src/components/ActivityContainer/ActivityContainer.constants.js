@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const ACTIVITY_CONTAINER_DEFAULT_PROPS = {
   collapsed: false,

@@ -1,17 +1,17 @@
-const { it, expect, beforeEach } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+const { it, expect, beforeEach } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const searchOngoingActivities = require('./searchOngoingActivities');
+const searchOngoingActivities = require("./searchOngoingActivities");
 
-jest.mock('./helpers/activitiesData');
-jest.mock('./helpers/filters');
-jest.mock('./helpers/sorts');
+jest.mock("./helpers/activitiesData");
+jest.mock("./helpers/filters");
+jest.mock("./helpers/sorts");
 const {
   getActivitiesDates,
   getInstanceSubjectsProgramsAndClasses,
   getStudentAssignations,
   getTeacherInstances,
-} = require('./helpers/activitiesData');
+} = require("./helpers/activitiesData");
 const {
   filterAssignationsByInstance,
   filterAssignationsByProgress,
@@ -19,50 +19,50 @@ const {
   filterInstancesByRoleAndQuery,
   filterInstancesByStatusAndArchived,
   filterInstancesByNotModule,
-} = require('./helpers/filters');
+} = require("./helpers/filters");
 const {
   applyOffsetAndLimit,
   sortInstancesByDates,
-} = require('./helpers/sorts');
+} = require("./helpers/sorts");
 
 beforeEach(() => jest.resetAllMocks());
 
-it('Should correctly return ongoing activities for a teacher', async () => {
+it("Should correctly return ongoing activities for a teacher", async () => {
   // Arrange
   const query = {
-    isTeacher: 'true',
-    isArchived: 'false',
-    sort: 'assignation',
-    offset: '0',
-    limit: '10',
+    isTeacher: "true",
+    isArchived: "false",
+    sort: "assignation",
+    offset: "0",
+    limit: "10",
   };
   const ctx = generateCtx({});
   const instanceOne = {
-    id: 'instanceOne',
-    assignable: { asset: {}, id: 'assignableOneId', role: 'task' },
-    created_at: '1990-01-01',
+    id: "instanceOne",
+    assignable: { asset: {}, id: "assignableOneId", role: "task" },
+    created_at: "1990-01-01",
   };
   const instanceTwo = {
-    id: 'instanceTwo',
+    id: "instanceTwo",
     assignable: undefined,
-    created_at: '1990-01-02',
+    created_at: "1990-01-02",
   };
   const instanceSubjectsProgramsAndClasses = {
     [instanceOne.id]: {
-      subjects: ['subjectOneId'],
-      programs: ['programA'],
-      classes: ['classOne'],
+      subjects: ["subjectOneId"],
+      programs: ["programA"],
+      classes: ["classOne"],
     },
     [instanceTwo.id]: {
-      subjects: ['subjectTwoId'],
-      programs: ['programB'],
-      classes: ['classTwoId', 'classThreeId'],
+      subjects: ["subjectTwoId"],
+      programs: ["programB"],
+      classes: ["classTwoId", "classThreeId"],
     },
   };
   const mockDates = {
     instances: {
-      [instanceOne.id]: { start: new Date('December 31, 1993') },
-      [instanceTwo.id]: { deadline: new Date('December 31, 2000') },
+      [instanceOne.id]: { start: new Date("December 31, 1993") },
+      [instanceTwo.id]: { deadline: new Date("December 31, 2000") },
     },
     assignations: {},
   };
@@ -126,55 +126,55 @@ it('Should correctly return ongoing activities for a teacher', async () => {
   expect(getStudentAssignations).not.toBeCalled();
 });
 
-it('Should correctly return ongoing activities for a student', async () => {
+it("Should correctly return ongoing activities for a student", async () => {
   // Arrange
   const query = {
-    isTeacher: 'false',
-    isArchived: 'false',
-    sort: 'assignation',
-    offset: '0',
-    limit: '10',
+    isTeacher: "false",
+    isArchived: "false",
+    sort: "assignation",
+    offset: "0",
+    limit: "10",
     programs: '["programId"]',
   };
   const ctx = generateCtx({});
   const instanceOne = {
-    id: 'instanceOne',
-    assignable: { asset: {}, id: 'assignableOneId', role: 'task' },
+    id: "instanceOne",
+    assignable: { asset: {}, id: "assignableOneId", role: "task" },
     allowFeedback: 1,
-    created_at: '1990-01-01',
+    created_at: "1990-01-01",
   };
   const instanceTwo = {
-    id: 'instanceTwo',
-    assignable: { asset: {}, id: 'assignableTwoId', role: 'task' },
+    id: "instanceTwo",
+    assignable: { asset: {}, id: "assignableTwoId", role: "task" },
     allowFeedback: 1,
-    created_at: '1990-01-02',
+    created_at: "1990-01-02",
   };
   const assignationOne = {
-    id: 'assignationOne',
+    id: "assignationOne",
     instance: instanceOne,
-    user: 'userOne',
+    user: "userOne",
   };
   const assignationTwo = {
-    id: 'assignationTwo',
+    id: "assignationTwo",
     instance: instanceTwo,
-    user: 'userOne',
+    user: "userOne",
   };
   const instanceSubjectsProgramsAndClasses = {
     [instanceOne.id]: {
-      subjects: ['subjectOneId'],
-      programs: ['programA'],
-      classes: ['classOne'],
+      subjects: ["subjectOneId"],
+      programs: ["programA"],
+      classes: ["classOne"],
     },
     [instanceTwo.id]: {
-      subjects: ['subjectTwoId'],
-      programs: ['programB'],
-      classes: ['classTwoId', 'classThreeId'],
+      subjects: ["subjectTwoId"],
+      programs: ["programB"],
+      classes: ["classTwoId", "classThreeId"],
     },
   };
   const mockDates = {
     instances: {
-      [instanceOne.id]: { start: new Date('December 31, 1993') },
-      [instanceTwo.id]: { archived: new Date('December 31, 2000') },
+      [instanceOne.id]: { start: new Date("December 31, 1993") },
+      [instanceTwo.id]: { archived: new Date("December 31, 2000") },
     },
     assignations: {},
   };

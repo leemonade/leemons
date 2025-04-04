@@ -1,15 +1,15 @@
-const { map, uniq, flattenDeep } = require('lodash');
+const { map, uniq, flattenDeep } = require("lodash");
 
 async function searchByAsset({ assignablesByAssignableInstance, query, ctx }) {
   if (!query.search) {
     return null;
   }
 
-  const roles = map(assignablesByAssignableInstance, 'role');
+  const roles = map(assignablesByAssignableInstance, "role");
 
   const searchResult = await Promise.all(
     roles.map((role) =>
-      ctx.tx.call('leebrary.search.search', {
+      ctx.tx.call("leebrary.search.search", {
         criteria: query.search,
         category: `assignables.${role}`,
         allVersions: true,
@@ -20,7 +20,7 @@ async function searchByAsset({ assignablesByAssignableInstance, query, ctx }) {
 
   const matchingAssets = flattenDeep(searchResult);
 
-  return uniq(map(matchingAssets, 'asset'));
+  return uniq(map(matchingAssets, "asset"));
 }
 
 module.exports = {

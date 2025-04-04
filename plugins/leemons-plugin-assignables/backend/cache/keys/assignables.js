@@ -1,6 +1,6 @@
-const hash = require('object-hash');
+const hash = require("object-hash");
 
-const namespaces = require('../namespaces');
+const namespaces = require("../namespaces");
 
 module.exports = {
   getAssignableKeyBuilder:

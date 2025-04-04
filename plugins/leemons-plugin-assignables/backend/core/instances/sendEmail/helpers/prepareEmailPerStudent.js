@@ -1,5 +1,5 @@
-const { canSendEmail } = require('./canSendEmail');
-const { prepareEmailContext } = require('./prepareEmailContext');
+const { canSendEmail } = require("./canSendEmail");
+const { prepareEmailContext } = require("./prepareEmailContext");
 
 async function prepareEmailPerStudent({
   instance,
@@ -13,7 +13,8 @@ async function prepareEmailPerStudent({
   ctx,
 }) {
   const canBeSent =
-    ignoreUserConfig || (await canSendEmail({ instance, userAgent, ignoreUserConfig, ctx }));
+    ignoreUserConfig ||
+    (await canSendEmail({ instance, userAgent, ignoreUserConfig, ctx }));
 
   if (!canBeSent) {
     return null;
@@ -30,7 +31,9 @@ async function prepareEmailPerStudent({
 
   return {
     to: userAgent.user.email,
-    templateName: isReminder ? 'user-assignation-remember' : 'user-create-assignation',
+    templateName: isReminder
+      ? "user-assignation-remember"
+      : "user-create-assignation",
     language: userAgent.user.locale,
     context,
     centerId: userAgent.center.id,

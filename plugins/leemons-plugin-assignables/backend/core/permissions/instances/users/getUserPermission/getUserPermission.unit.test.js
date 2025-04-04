@@ -1,11 +1,11 @@
-const { it, beforeEach, expect } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+const { it, beforeEach, expect } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { getUserPermission } = require('./getUserPermission');
+const { getUserPermission } = require("./getUserPermission");
 
-const { getTeacherPermission } = require('../getTeacherPermission');
+const { getTeacherPermission } = require("../getTeacherPermission");
 
-jest.mock('../getTeacherPermission');
+jest.mock("../getTeacherPermission");
 
 const getUserAgentPermissionsHandler = jest.fn();
 
@@ -13,24 +13,24 @@ beforeEach(() => {
   jest.resetAllMocks();
 });
 
-it('Should get User Permissions', async () => {
+it("Should get User Permissions", async () => {
   // Arrange
   const ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions':
+      "users.permissions.getUserAgentPermissions":
         getUserAgentPermissionsHandler,
     },
-    pluginName: 'assignables',
+    pluginName: "assignables",
   });
 
   const expectedValue = {
-    actions: ['view'],
-    role: 'student',
+    actions: ["view"],
+    role: "student",
   };
-  getUserAgentPermissionsHandler.mockResolvedValue([{ actionNames: ['view'] }]);
+  getUserAgentPermissionsHandler.mockResolvedValue([{ actionNames: ["view"] }]);
 
   const mockParams = {
-    assignableInstance: 'assignableInstanceId',
+    assignableInstance: "assignableInstanceId",
     ctx,
   };
 
@@ -41,30 +41,30 @@ it('Should get User Permissions', async () => {
   expect(getUserAgentPermissionsHandler).toBeCalledWith({
     userAgent: ctx.meta.userSession.userAgents,
     query: {
-      permissionName: 'assignableInstance.assignableInstanceId',
+      permissionName: "assignableInstance.assignableInstanceId",
     },
   });
   expect(getTeacherPermission).not.toBeCalled();
   expect(response).toEqual(expectedValue);
 });
 
-it('Should get teacher permissions', async () => {
+it("Should get teacher permissions", async () => {
   // Arrange
   const ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions':
+      "users.permissions.getUserAgentPermissions":
         getUserAgentPermissionsHandler,
     },
-    pluginName: 'assignables',
+    pluginName: "assignables",
   });
 
-  const expectedValue = { actions: ['edit', 'view'], role: 'teacher' };
+  const expectedValue = { actions: ["edit", "view"], role: "teacher" };
 
   getUserAgentPermissionsHandler.mockResolvedValue([]);
-  getTeacherPermission.mockResolvedValue([{ actionNames: ['edit', 'view'] }]);
+  getTeacherPermission.mockResolvedValue([{ actionNames: ["edit", "view"] }]);
 
   const mockParams = {
-    assignableInstance: 'assignableInstanceId',
+    assignableInstance: "assignableInstanceId",
     ctx,
   };
 
@@ -75,7 +75,7 @@ it('Should get teacher permissions', async () => {
   expect(getUserAgentPermissionsHandler).toBeCalledWith({
     userAgent: ctx.meta.userSession.userAgents,
     query: {
-      permissionName: 'assignableInstance.assignableInstanceId',
+      permissionName: "assignableInstance.assignableInstanceId",
     },
   });
   expect(getTeacherPermission).toBeCalledWith({
@@ -85,23 +85,23 @@ it('Should get teacher permissions', async () => {
   expect(response).toEqual(expectedValue);
 });
 
-it('Should get default permissions', async () => {
+it("Should get default permissions", async () => {
   // Arrange
   const ctx = generateCtx({
     actions: {
-      'users.permissions.getUserAgentPermissions':
+      "users.permissions.getUserAgentPermissions":
         getUserAgentPermissionsHandler,
     },
-    pluginName: 'assignables',
+    pluginName: "assignables",
   });
 
-  const expectedValue = { actions: ['view'], role: 'viewer' };
+  const expectedValue = { actions: ["view"], role: "viewer" };
 
   getUserAgentPermissionsHandler.mockResolvedValue([]);
   getTeacherPermission.mockResolvedValue([]);
 
   const mockParams = {
-    assignableInstance: 'assignableInstanceId',
+    assignableInstance: "assignableInstanceId",
     ctx,
   };
 
@@ -112,7 +112,7 @@ it('Should get default permissions', async () => {
   expect(getUserAgentPermissionsHandler).toBeCalledWith({
     userAgent: ctx.meta.userSession.userAgents,
     query: {
-      permissionName: 'assignableInstance.assignableInstanceId',
+      permissionName: "assignableInstance.assignableInstanceId",
     },
   });
   expect(getTeacherPermission).toBeCalledWith({

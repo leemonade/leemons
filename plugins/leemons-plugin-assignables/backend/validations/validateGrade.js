@@ -1,33 +1,40 @@
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 
 // AJV Validator
 const gradeValidationObject = {
-  type: 'object',
+  type: "object",
   properties: {
     assignation: {
-      type: 'string',
+      type: "string",
     },
     subject: {
-      type: 'string',
+      type: "string",
     },
     type: {
-      type: 'string',
+      type: "string",
     },
     grade: {
-      type: ['number', 'null'],
+      type: ["number", "null"],
     },
     gradedBy: {
-      type: 'string',
+      type: "string",
     },
     feedback: {
-      type: 'string',
+      type: "string",
       nullable: true,
     },
     visibleToStudent: {
-      type: 'boolean',
+      type: "boolean",
     },
   },
-  required: ['assignation', 'subject', 'type', 'grade', 'gradedBy', 'visibleToStudent'],
+  required: [
+    "assignation",
+    "subject",
+    "type",
+    "grade",
+    "gradedBy",
+    "visibleToStudent",
+  ],
   additionalProperties: false,
 };
 

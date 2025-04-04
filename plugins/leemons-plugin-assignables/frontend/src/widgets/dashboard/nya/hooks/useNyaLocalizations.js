@@ -1,14 +1,14 @@
-import React from 'react';
-import { get } from 'lodash';
-import prefixPN from '@assignables/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { unflatten } from '@common';
+import React from "react";
+import { get } from "lodash";
+import prefixPN from "@assignables/helpers/prefixPN";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { unflatten } from "@common";
 
 export default function useNyaLocalizations() {
   const localizationKeys = [
-    prefixPN('need_your_attention'),
-    prefixPN('roles'),
-    prefixPN('multiSubject'),
+    prefixPN("need_your_attention"),
+    prefixPN("roles"),
+    prefixPN("multiSubject"),
   ];
 
   const [, translations] = useTranslateLoader(localizationKeys);

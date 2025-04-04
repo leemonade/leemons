@@ -1,24 +1,24 @@
-const { it, expect, jest: globalJest } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+const { it, expect, jest: globalJest } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-globalJest.mock('../getAssignable');
-globalJest.mock('../createAssignable');
+globalJest.mock("../getAssignable");
+globalJest.mock("../createAssignable");
 
-const { cloneDeep } = require('lodash');
-const { duplicateAssignable } = require('./duplicateAssignable');
+const { cloneDeep } = require("lodash");
+const { duplicateAssignable } = require("./duplicateAssignable");
 
-const { getAssignable } = require('../getAssignable');
-const { createAssignable } = require('../createAssignable');
+const { getAssignable } = require("../getAssignable");
+const { createAssignable } = require("../createAssignable");
 const {
   getAssignableObject,
-} = require('../../../__fixtures__/getAssignableObject');
+} = require("../../../__fixtures__/getAssignableObject");
 
-it('Duplicates the assignable', async () => {
+it("Duplicates the assignable", async () => {
   // Arrange
   const assignable = getAssignableObject();
   const expectedValue = {
-    id: 'duplicated-assignable',
-    message: 'This corresponds to the duplicated assignable',
+    id: "duplicated-assignable",
+    message: "This corresponds to the duplicated assignable",
   };
 
   getAssignable.mockImplementation(() => cloneDeep(assignable));
@@ -27,7 +27,7 @@ it('Duplicates the assignable', async () => {
   const ctx = generateCtx({});
 
   // Act
-  const response = await duplicateAssignable({ id: 'assignable-id', ctx });
+  const response = await duplicateAssignable({ id: "assignable-id", ctx });
 
   // Assert
   expect(response).toEqual(expectedValue);
@@ -42,12 +42,12 @@ it('Duplicates the assignable', async () => {
   );
 });
 
-it('Duplicates the assignable in publish mode', async () => {
+it("Duplicates the assignable in publish mode", async () => {
   // Arrange
   const assignable = getAssignableObject();
   const expectedValue = {
-    id: 'duplicated-assignable',
-    message: 'This corresponds to the duplicated assignable',
+    id: "duplicated-assignable",
+    message: "This corresponds to the duplicated assignable",
   };
 
   getAssignable.mockImplementation(() => cloneDeep(assignable));
@@ -56,7 +56,7 @@ it('Duplicates the assignable in publish mode', async () => {
   const ctx = generateCtx({});
 
   // Act
-  await duplicateAssignable({ id: 'assignable-id', published: true, ctx });
+  await duplicateAssignable({ id: "assignable-id", published: true, ctx });
 
   // Assert
   expect(createAssignable).toBeCalledWith(

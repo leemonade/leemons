@@ -1,4 +1,4 @@
-const { isEqual } = require('lodash');
+const { isEqual } = require("lodash");
 
 function getActivityEvaluationType(instance) {
   const evaluationTypes = {
@@ -31,7 +31,10 @@ function getActivityEvaluationType(instance) {
   };
 
   return Object.fromEntries(
-    Object.entries(evaluationTypes).map(([key, value]) => [key, isEqual(typeValues, value)])
+    Object.entries(evaluationTypes).map(([key, value]) => [
+      key,
+      isEqual(typeValues, value),
+    ])
   );
 }
 

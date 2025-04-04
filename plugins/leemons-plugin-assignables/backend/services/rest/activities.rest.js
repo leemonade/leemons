@@ -4,28 +4,31 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
-const searchOngoingActivities = require('../../core/ongoing/searchOngoingActivities');
-const searchNyaActivities = require('../../core/ongoing/searchNyaActivities');
-const searchEvaluatedActivities = require('../../core/ongoing/searchEvaluatedActivities');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
+const searchOngoingActivities = require("../../core/ongoing/searchOngoingActivities");
+const searchNyaActivities = require("../../core/ongoing/searchNyaActivities");
+const searchEvaluatedActivities = require("../../core/ongoing/searchEvaluatedActivities");
 
 /** @type {ServiceSchema} */
 module.exports = {
   searchOngoingRest: {
     rest: {
-      method: 'GET',
-      path: '/search/ongoing',
+      method: "GET",
+      path: "/search/ongoing",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const activities = await searchOngoingActivities({ query: ctx.params, ctx });
+      const activities = await searchOngoingActivities({
+        query: ctx.params,
+        ctx,
+      });
       return { status: 200, activities };
     },
   },
   searchNyaActivitiesRest: {
     rest: {
-      method: 'GET',
-      path: '/search/nya',
+      method: "GET",
+      path: "/search/nya",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -36,12 +39,15 @@ module.exports = {
   },
   searchOngoingActivitiesRest: {
     rest: {
-      method: 'GET',
-      path: '/search/evaluated',
+      method: "GET",
+      path: "/search/evaluated",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const activities = await searchEvaluatedActivities({ query: ctx.params, ctx });
+      const activities = await searchEvaluatedActivities({
+        query: ctx.params,
+        ctx,
+      });
       return { status: 200, activities };
     },
   },

@@ -1,4 +1,6 @@
-const { getPermissionType } = require('../../../instances/helpers/getPermissionType');
+const {
+  getPermissionType,
+} = require("../../../instances/helpers/getPermissionType");
 
 /**
  * Retrieves a list of instances that the user has permission to assign.
@@ -10,7 +12,7 @@ async function listAssignableInstancesUserHasPermissionTo({ ctx }) {
   const { userSession } = ctx.meta;
 
   const items = await ctx.tx.call(
-    'users.permissions.getAllItemsForTheUserAgentHasPermissionsByType',
+    "users.permissions.getAllItemsForTheUserAgentHasPermissionsByType",
     {
       userAgentId: userSession.userAgents.map((u) => u.id),
       type: getPermissionType({ ctx }),

@@ -1,9 +1,16 @@
-import React, { useEffect } from 'react';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import { useForm, Controller } from 'react-hook-form';
-import { TextInput, Alert, Loader, ContextContainer, Switch, Box } from '@bubbles-ui/components';
-import SelectUserAgent from '@users/components/SelectUserAgent';
+import React, { useEffect } from "react";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import { useForm, Controller } from "react-hook-form";
+import {
+  TextInput,
+  Alert,
+  Loader,
+  ContextContainer,
+  Switch,
+  Box,
+} from "@bubbles-ui/components";
+import SelectUserAgent from "@users/components/SelectUserAgent";
 
 export default function SelectCustomGroup({
   labels,
@@ -16,7 +23,10 @@ export default function SelectCustomGroup({
 }) {
   const { control, watch, getValues } = useForm({
     defaultValues: {
-      showToStudents: value?.[0]?.showToStudents === undefined ? true : value?.[0]?.showToStudents,
+      showToStudents:
+        value?.[0]?.showToStudents === undefined
+          ? true
+          : value?.[0]?.showToStudents,
       showResults: true,
       showCorrectAnswers: true,
       name: value?.[0]?.name,
@@ -24,7 +34,8 @@ export default function SelectCustomGroup({
     },
   });
 
-  const { assignableStudents, subjects, classes } = groupedClassesWithSelectedSubjects;
+  const { assignableStudents, subjects, classes } =
+    groupedClassesWithSelectedSubjects;
 
   useEffect(() => {
     const handleChange = (v, { name: fieldChanged } = {}) => {
@@ -40,34 +51,36 @@ export default function SelectCustomGroup({
 
         // EN: Get the classes selected through their groups
         // ES: Obtener las clases que seleccionaron a través de sus grupos
-        const classesMatchingStudents = groupsMatchingStudents.flatMap((group) => {
-          if (group.type === 'group') {
-            return group.classes.map((c) => ({
-              group: c.class.id,
-              type: 'custom',
+        const classesMatchingStudents = groupsMatchingStudents.flatMap(
+          (group) => {
+            if (group.type === "group") {
+              return group.classes.map((c) => ({
+                group: c.class.id,
+                type: "custom",
+                students: group.students,
+                c,
+                name: v.name,
+                showToStudents: v.showToStudents,
+              }));
+            }
+
+            return {
+              group: group.id,
+              type: "custom",
               students: group.students,
-              c,
+              c: group,
               name: v.name,
               showToStudents: v.showToStudents,
-            }));
+            };
           }
-
-          return {
-            group: group.id,
-            type: 'custom',
-            students: group.students,
-            c: group,
-            name: v.name,
-            showToStudents: v.showToStudents,
-          };
-        });
+        );
 
         // EN: Do not update if same values
         // ES: No actualizar si son iguales
         if (
           !value ||
           !_.isEqual(value, classesMatchingStudents) ||
-          ['showResults', 'showCorrectAnswers'].includes(fieldChanged)
+          ["showResults", "showCorrectAnswers"].includes(fieldChanged)
         ) {
           onChange(classesMatchingStudents, {
             showResults: v.showResults,
@@ -89,7 +102,13 @@ export default function SelectCustomGroup({
     return <Loader />;
   }
   if (!assignableStudents?.length) {
-    return <Alert title={labels?.noStudentsToAssign} severity="error" closeable={false} />;
+    return (
+      <Alert
+        title={labels?.noStudentsToAssign}
+        severity="error"
+        closeable={false}
+      />
+    );
   }
   return (
     <ContextContainer>
@@ -97,7 +116,9 @@ export default function SelectCustomGroup({
         name="name"
         shouldUnregister
         control={control}
-        render={({ field }) => <TextInput {...field} label={labels?.groupName} />}
+        render={({ field }) => (
+          <TextInput {...field} label={labels?.groupName} />
+        )}
       />
       <Controller
         name="assignees"
@@ -131,7 +152,7 @@ export default function SelectCustomGroup({
         {showResultsCheck && (
           <Controller
             control={control}
-            name={'showResults'}
+            name={"showResults"}
             render={({ field }) => (
               <Switch
                 {...field}
@@ -145,7 +166,7 @@ export default function SelectCustomGroup({
         {showCorrectAnswersCheck && (
           <Controller
             control={control}
-            name={'showCorrectAnswers'}
+            name={"showCorrectAnswers"}
             render={({ field }) => (
               <Switch
                 {...field}

@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Loader } from '@bubbles-ui/components';
-import { Swiper } from '@bubbles-ui/extras';
-import { EmptyState } from '@assignables/widgets/dashboard/nya';
-import { useNyaStyles } from '../hooks';
-import EvaluationCardStudent from './EvaluationCardStudent';
+import React from "react";
+import PropTypes from "prop-types";
+import { Loader } from "@bubbles-ui/components";
+import { Swiper } from "@bubbles-ui/extras";
+import { EmptyState } from "@assignables/widgets/dashboard/nya";
+import { useNyaStyles } from "../hooks";
+import EvaluationCardStudent from "./EvaluationCardStudent";
 
 export default function EvaluationsCarousel({
   localizations,
@@ -17,7 +17,7 @@ export default function EvaluationsCarousel({
   const { theme } = useNyaStyles();
 
   const swiperProps = {
-    slidesPerView: 'auto',
+    slidesPerView: "auto",
     spaceBetween: 24,
   };
 
@@ -29,7 +29,6 @@ export default function EvaluationsCarousel({
     return <EmptyState label={localizations?.evaluationsEmptyState} />;
   }
 
-
   return (
     <Swiper {...swiperProps}>
       {activities.map((activity, i) => (
@@ -40,7 +39,6 @@ export default function EvaluationsCarousel({
           classData={classData[i]?.data}
         />
       ))}
-
     </Swiper>
   );
 }

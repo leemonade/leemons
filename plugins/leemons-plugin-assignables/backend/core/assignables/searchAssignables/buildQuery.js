@@ -1,8 +1,8 @@
-const { find, flattenDeep, uniq, intersection } = require('lodash');
+const { find, flattenDeep, uniq, intersection } = require("lodash");
 
-const { searchBySubject } = require('../../subjects/searchBySubject');
-const { searchByProgram } = require('../../subjects/searchByProgram');
-const { listRoles } = require('../../roles/listRoles');
+const { searchBySubject } = require("../../subjects/searchBySubject");
+const { searchByProgram } = require("../../subjects/searchByProgram");
+const { listRoles } = require("../../roles/listRoles");
 /**
  * Build a query for searching assignables
  * @async
@@ -17,7 +17,15 @@ const { listRoles } = require('../../roles/listRoles');
  * @param {MoleculerContext} params.ctx - The Moleculer context.
  * @returns {Promise<{query: Object, sorting: Object, assets: Array<string>}>} The query, sorting and assets for the search.
  */
-async function buildQuery({ query: _query, roles: _roles, search, sort, subjects, program, ctx }) {
+async function buildQuery({
+  query: _query,
+  roles: _roles,
+  search,
+  sort,
+  subjects,
+  program,
+  ctx,
+}) {
   const query = {
     ..._query,
   };
@@ -34,26 +42,26 @@ async function buildQuery({ query: _query, roles: _roles, search, sort, subjects
   let sorting;
 
   if (sort) {
-    sorting = sort.split(',').map((s) => {
-      const [key, direction] = s.trim().split(':');
+    sorting = sort.split(",").map((s) => {
+      const [key, direction] = s.trim().split(":");
 
       return {
         key,
-        direction: direction || 'asc',
+        direction: direction || "asc",
       };
     });
 
-    const nameSort = find(sorting, { key: 'name' });
+    const nameSort = find(sorting, { key: "name" });
 
     if (nameSort) {
       let assetsFound = await Promise.all(
         roles.map((role) =>
-          ctx.tx.call('leebrary.search.search', {
+          ctx.tx.call("leebrary.search.search", {
             criteria: search,
             category: `assignables.${role}`,
             allVersions: true,
-            published: 'all',
-            sortBy: ['name'],
+            published: "all",
+            sortBy: ["name"],
             sortDirection: nameSort.direction,
             ctx,
           })
@@ -70,11 +78,11 @@ async function buildQuery({ query: _query, roles: _roles, search, sort, subjects
     if (!assets?.length) {
       let assetsFound = await Promise.all(
         roles.map((role) =>
-          ctx.tx.call('leebrary.search.search', {
+          ctx.tx.call("leebrary.search.search", {
             criteria: search,
             category: `assignables.${role}`,
             allVersions: true,
-            published: 'all',
+            published: "all",
             showPublic: true,
             ctx,
           })

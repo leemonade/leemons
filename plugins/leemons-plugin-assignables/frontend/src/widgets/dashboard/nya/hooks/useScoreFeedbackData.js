@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { useClassesSubjects } from '@academic-portfolio/hooks';
-import PropTypes from 'prop-types';
+import { useClassesSubjects } from "@academic-portfolio/hooks";
+import PropTypes from "prop-types";
 
 export default function useScoreFeedbackData({ assignation, subject }) {
   const { instance } = assignation ?? {};
@@ -14,8 +14,9 @@ export default function useScoreFeedbackData({ assignation, subject }) {
 
   const score = useMemo(
     () =>
-      assignation?.grades?.find((grade) => grade.type === 'main' && grade.subject === subject)
-        ?.grade,
+      assignation?.grades?.find(
+        (grade) => grade.type === "main" && grade.subject === subject
+      )?.grade,
     [assignation?.grades, subject]
   );
 

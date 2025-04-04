@@ -1,33 +1,38 @@
 /** @type {import('moleculer').ServiceSchema} */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsCronJobsMixin } = require('@leemons/cronjobs');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const { LeemonsCronJobsMixin } = require("@leemons/cronjobs");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMongoDBMixin } = require("@leemons/mongodb");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
 
-const namespaces = require('../cache/namespaces');
+const namespaces = require("../cache/namespaces");
 const {
   addStudentsToOpenInstancesWithClass,
-} = require('../core/assignations/addStudentToOpenInstancesWithClass');
-const { adminDashboard } = require('../core/instances/adminDashboard');
-const { createInstance } = require('../core/instances/createInstance');
-const { getInstance } = require('../core/instances/getInstance');
-const { getInstances } = require('../core/instances/getInstances');
-const { getInstancesStatus } = require('../core/instances/getInstancesStatus');
-const { removeInstance } = require('../core/instances/removeInstance');
-const { searchInstances } = require('../core/instances/searchInstances');
-const { sendReminder } = require('../core/instances/sendReminder');
-const { updateInstance } = require('../core/instances/updateInstance');
-const { getUserPermission, getUserPermissions } = require('../core/permissions/instances/users');
-const { getServiceModels } = require('../models');
+} = require("../core/assignations/addStudentToOpenInstancesWithClass");
+const { adminDashboard } = require("../core/instances/adminDashboard");
+const { createInstance } = require("../core/instances/createInstance");
+const { getInstance } = require("../core/instances/getInstance");
+const { getInstances } = require("../core/instances/getInstances");
+const { getInstancesStatus } = require("../core/instances/getInstancesStatus");
+const { removeInstance } = require("../core/instances/removeInstance");
+const { searchInstances } = require("../core/instances/searchInstances");
+const { sendReminder } = require("../core/instances/sendReminder");
+const { updateInstance } = require("../core/instances/updateInstance");
+const {
+  getUserPermission,
+  getUserPermissions,
+} = require("../core/permissions/instances/users");
+const { getServiceModels } = require("../models");
 
-const { jobs } = require('./jobs/instances.job');
-const restActions = require('./rest/instance.rest');
+const { jobs } = require("./jobs/instances.job");
+const restActions = require("./rest/instance.rest");
 
 module.exports = {
-  name: 'assignables.assignableInstances',
+  name: "assignables.assignableInstances",
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),

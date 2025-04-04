@@ -1,1 +1,1 @@
-export { default } from './CenterAlignedSelect';
+export { default } from "./CenterAlignedSelect";

@@ -1,4 +1,4 @@
-const dayjs = require('dayjs');
+const dayjs = require("dayjs");
 
 function filterAssignationsByDaysUntilDeadline({
   assignations,
@@ -19,13 +19,15 @@ function filterAssignationsByDaysUntilDeadline({
       }
     }
 
-    const deadline = dayjs(instancesDates[assignation.instance.id]?.deadline || null);
+    const deadline = dayjs(
+      instancesDates[assignation.instance.id]?.deadline || null
+    );
     let daysUntilDeadline;
 
     if (!deadline.isValid()) {
       daysUntilDeadline = Infinity;
     } else {
-      daysUntilDeadline = deadline.diff(now, 'days', true);
+      daysUntilDeadline = deadline.diff(now, "days", true);
     }
 
     return min < daysUntilDeadline && max >= daysUntilDeadline;

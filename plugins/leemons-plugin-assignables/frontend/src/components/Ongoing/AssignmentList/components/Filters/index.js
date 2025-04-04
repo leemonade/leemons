@@ -1,5 +1,5 @@
-import FiltersComponent from './Filters';
+import FiltersComponent from "./Filters";
 
-export * from './components';
+export * from "./components";
 export const Filters = FiltersComponent;
 export default Filters;

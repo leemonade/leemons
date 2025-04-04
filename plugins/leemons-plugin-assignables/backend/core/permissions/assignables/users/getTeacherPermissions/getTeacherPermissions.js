@@ -28,13 +28,16 @@ async function getTeacherPermissions({ assignableIds, ctx }) {
     classesPermissionNames.push(`academic-portfolio.class.${klass.class}`);
   });
 
-  const permissions = await ctx.tx.call('users.permissions.getUserAgentPermissions', {
-    userAgent: ctx.meta.userSession.userAgents,
-    query: {
-      permissionName: classesPermissionNames,
-      actionName: 'edit',
-    },
-  });
+  const permissions = await ctx.tx.call(
+    "users.permissions.getUserAgentPermissions",
+    {
+      userAgent: ctx.meta.userSession.userAgents,
+      query: {
+        permissionName: classesPermissionNames,
+        actionName: "edit",
+      },
+    }
+  );
 
   const permissionsPerClass = {};
 
@@ -44,7 +47,7 @@ async function getTeacherPermissions({ assignableIds, ctx }) {
 
     // EN: If we have the edition permission, we can assume we have the view permission
     // ES: Si tenemos permisoss de edición, podemos asumir el de visualización
-    permissionsPerClass[klass] = ['view', 'edit'];
+    permissionsPerClass[klass] = ["view", "edit"];
   });
 
   return Object.fromEntries(
@@ -53,7 +56,9 @@ async function getTeacherPermissions({ assignableIds, ctx }) {
 
       return [
         assignable,
-        !!classesInAssignable?.some((klass) => permissionsPerClass[klass]?.length),
+        !!classesInAssignable?.some(
+          (klass) => permissionsPerClass[klass]?.length
+        ),
       ];
     })
   );

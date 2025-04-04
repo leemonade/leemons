@@ -1,6 +1,6 @@
-const { map } = require('lodash');
-const { updateEvent } = require('../calendar/updateEvent');
-const { listInstanceClasses } = require('../../classes');
+const { map } = require("lodash");
+const { updateEvent } = require("../calendar/updateEvent");
+const { listInstanceClasses } = require("../../classes");
 
 /**
  * Update an event and add it to users.
@@ -13,11 +13,18 @@ const { listInstanceClasses } = require('../../classes');
  * @param {MoleculerContext} options.ctx - The Moleculer context object.
  */
 async function updateEventAndAddToUsers({ assignable, event, dates, id, ctx }) {
-  const classes = map(await listInstanceClasses({ id, ctx }), 'class');
+  const classes = map(await listInstanceClasses({ id, ctx }), "class");
 
   try {
     if (event) {
-      await updateEvent({ event, assignable, classes, dates, ctx, withTX: false });
+      await updateEvent({
+        event,
+        assignable,
+        classes,
+        dates,
+        ctx,
+        withTX: false,
+      });
     }
     // TODO: Create the event and add it to the users. Needs: Users assigned and teachers
     //  else {
@@ -38,7 +45,9 @@ async function updateEventAndAddToUsers({ assignable, event, dates, id, ctx }) {
     //     );
     // }
   } catch (e) {
-    ctx.logger.error(`Error creating/updating event for assignable instance: ${e.message}`);
+    ctx.logger.error(
+      `Error creating/updating event for assignable instance: ${e.message}`
+    );
   }
 }
 

@@ -1,46 +1,58 @@
-import EmailLayout from '@leemons/emails/emails/EmailLayout.jsx';
-import { Button, Column, Container, Img, Row, Section, Text } from '@react-email/components';
-import PropTypes from 'prop-types';
+import EmailLayout from "@leemons/emails/emails/EmailLayout.jsx";
+import {
+  Button,
+  Column,
+  Container,
+  Img,
+  Row,
+  Section,
+  Text,
+} from "@react-email/components";
+import PropTypes from "prop-types";
 // biome-ignore lint/correctness/noUnusedImports: File is used on backend rendering
-import React from 'react';
+import React from "react";
 
-import ActivityCard from './ActivityCard.jsx';
+import ActivityCard from "./ActivityCard.jsx";
 
-const IS_DEV_MODE = String(process?.env?.EMAIL_DEV) === 'true';
+const IS_DEV_MODE = String(process?.env?.EMAIL_DEV) === "true";
 
 const messages = {
   en: {
-    title: 'You have new pending activities.',
+    title: "You have new pending activities.",
     actionText:
       "This information may have changed, always check your current activities so you don't miss anything.",
-    buttonText: 'Review my activities',
+    buttonText: "Review my activities",
     noActionText:
-      'If you do not wish to receive this communication, remember that you can change your email preferences from your user account.',
+      "If you do not wish to receive this communication, remember that you can change your email preferences from your user account.",
   },
   es: {
-    title: 'Tienes nuevas actividades pendientes.',
+    title: "Tienes nuevas actividades pendientes.",
     actionText:
-      'Esta información puede haber cambiado, revisa siempre tus actividades en curso para no perderte nada.',
-    buttonText: 'Revisar mis actividades',
+      "Esta información puede haber cambiado, revisa siempre tus actividades en curso para no perderte nada.",
+    buttonText: "Revisar mis actividades",
     noActionText:
-      'Si no deseas recibir esta comunicación, recuerda que puedes cambiar tus preferencias de correo electrónico desde tu cuenta de usuario.',
+      "Si no deseas recibir esta comunicación, recuerda que puedes cambiar tus preferencias de correo electrónico desde tu cuenta de usuario.",
   },
 };
 
 const UserNewAssignation = ({
-  locale = 'en',
-  ifMessage = '{{ @if (it.instance.messageToAssignees) }}',
-  ifAvatar = '{{ @if (it.userSession.avatarUrl) }}',
-  elseIf = '{{ #else }}',
-  endIf = '{{ /if }}',
-  userFullname = '{{it.userSession.name}} {{it.userSession.surnames}}',
-  avatarUrl = '{{it.userSession.avatarUrl}}',
-  messageToAssignees = '{{* it.instance.messageToAssignees}}',
+  locale = "en",
+  ifMessage = "{{ @if (it.instance.messageToAssignees) }}",
+  ifAvatar = "{{ @if (it.userSession.avatarUrl) }}",
+  elseIf = "{{ #else }}",
+  endIf = "{{ /if }}",
+  userFullname = "{{it.userSession.name}} {{it.userSession.surnames}}",
+  avatarUrl = "{{it.userSession.avatarUrl}}",
+  messageToAssignees = "{{* it.instance.messageToAssignees}}",
 } = {}) => {
   const previewText = `${messages[locale].title}`;
 
   return (
-    <EmailLayout previewText={previewText} title={messages[locale].title} locale={locale}>
+    <EmailLayout
+      previewText={previewText}
+      title={messages[locale].title}
+      locale={locale}
+    >
       <Container className="text-center">
         {ifMessage}
         <Text className="text-[14px] leading-5 mb-2">{messageToAssignees}</Text>
@@ -55,12 +67,16 @@ const UserNewAssignation = ({
                 className="rounded-full inline-block align-middle"
               />
               {endIf}
-              <Text className="inline-block ml-2 text-[16px]">{userFullname}</Text>
+              <Text className="inline-block ml-2 text-[16px]">
+                {userFullname}
+              </Text>
             </Column>
           </Row>
         </Section>
         {elseIf}
-        <Text className="text-[14px] leading-5">{messages[locale].actionText}</Text>
+        <Text className="text-[14px] leading-5">
+          {messages[locale].actionText}
+        </Text>
         {endIf}
       </Container>
 
@@ -74,33 +90,35 @@ const UserNewAssignation = ({
         </Button>
       </Container>
       <Container className="text-center">
-        <Text className="text-[14px] leading-5">{messages[locale].noActionText}</Text>
+        <Text className="text-[14px] leading-5">
+          {messages[locale].noActionText}
+        </Text>
       </Container>
     </EmailLayout>
   );
 };
 
 export const DEV_PROPS = {
-  locale: 'en',
+  locale: "en",
   ifMessage: null,
   ifAvatar: null,
   elseIf: null,
   endIf: null,
-  userFullname: 'Antonio Gonzalvez',
-  avatarUrl: 'https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50',
+  userFullname: "Antonio Gonzalvez",
+  avatarUrl: "https://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50",
   messageToAssignees:
-    'This module is about describing people in the context of an informal conversation. You will begin by listening to the audio of a conversation and answering a fill-in-the-blanks quiz. Finally, you will complete a writing exercise to practice describing people.',
+    "This module is about describing people in the context of an informal conversation. You will begin by listening to the audio of a conversation and answering a fill-in-the-blanks quiz. Finally, you will complete a writing exercise to practice describing people.",
 };
 
 export const PROD_PROPS = {
-  locale: 'en',
-  ifMessage: '{{ @if (it.instance.messageToAssignees) }}',
-  ifAvatar: '{{ @if (it.userSession.avatarUrl) }}',
-  elseIf: '{{ #else }}',
-  endIf: '{{ /if }}',
-  userFullname: '{{it.userSession.name}} {{it.userSession.surnames}}',
-  avatarUrl: '{{it.userSession.avatarUrl}}',
-  messageToAssignees: '{{* it.instance.messageToAssignees}}',
+  locale: "en",
+  ifMessage: "{{ @if (it.instance.messageToAssignees) }}",
+  ifAvatar: "{{ @if (it.userSession.avatarUrl) }}",
+  elseIf: "{{ #else }}",
+  endIf: "{{ /if }}",
+  userFullname: "{{it.userSession.name}} {{it.userSession.surnames}}",
+  avatarUrl: "{{it.userSession.avatarUrl}}",
+  messageToAssignees: "{{* it.instance.messageToAssignees}}",
 };
 
 export const PROP_TYPES = {

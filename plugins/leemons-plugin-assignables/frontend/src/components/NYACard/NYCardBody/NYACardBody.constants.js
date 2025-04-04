@@ -1,14 +1,14 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const NYACARD_BODY_DEFAULT_PROPS = {
   metadata: [],
   tags: [],
-  variant: 'media',
-  badgeColor: 'solid',
+  variant: "media",
+  badgeColor: "solid",
   truncated: true,
-  locale: 'en-GB',
+  locale: "en-GB",
   fullHeight: false,
-  role: 'teacher',
+  role: "teacher",
   isNew: false,
   localizations: {},
   isTeacherSyllabus: false,
@@ -16,7 +16,9 @@ export const NYACARD_BODY_DEFAULT_PROPS = {
 export const NYACARD_BODY_PROP_TYPES = {
   tagline: PropTypes.string,
   description: PropTypes.string,
-  metadata: PropTypes.arrayOf(PropTypes.shape({ label: PropTypes.any, value: PropTypes.any })),
+  metadata: PropTypes.arrayOf(
+    PropTypes.shape({ label: PropTypes.any, value: PropTypes.any })
+  ),
   tags: PropTypes.arrayOf(PropTypes.string),
   locale: PropTypes.string,
   isTeacherSyllabus: PropTypes.bool,

@@ -1,5 +1,5 @@
-const { getByAssetIds } = require('./getByAssetIds');
-const { search } = require('./search');
+const { getByAssetIds } = require("./getByAssetIds");
+const { search } = require("./search");
 
 module.exports = {
   getByAssetIds,

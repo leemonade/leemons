@@ -1,26 +1,26 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 const useNyaStyles = createStyles((theme) => ({
   root: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     gap: theme.spacing[4],
   },
   section: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     gap: theme.spacing[4],
   },
   sectionHeader: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'end',
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "end",
   },
   sectionTitle: {
-    fontSize: '20px',
+    fontSize: "20px",
     fontWeight: 500,
-    lineHeight: '28px',
+    lineHeight: "28px",
   },
 }));
 

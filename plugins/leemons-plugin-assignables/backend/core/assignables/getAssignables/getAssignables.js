@@ -1,12 +1,14 @@
-const { LeemonsError } = require('@leemons/error');
-const { map, difference, omit } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { map, difference, omit } = require("lodash");
 
-const { getAssignableKeyBuilder } = require('../../../cache/keys/assignables');
-const ttl = require('../../../cache/ttl');
-const { getAsset } = require('../../leebrary/assets');
-const { getUserPermissions } = require('../../permissions/assignables/users/getUserPermissions');
-const { getRoles } = require('../../roles');
-const { getSubjects } = require('../../subjects');
+const { getAssignableKeyBuilder } = require("../../../cache/keys/assignables");
+const ttl = require("../../../cache/ttl");
+const { getAsset } = require("../../leebrary/assets");
+const {
+  getUserPermissions,
+} = require("../../permissions/assignables/users/getUserPermissions");
+const { getRoles } = require("../../roles");
+const { getSubjects } = require("../../subjects");
 
 /**
  * Fetches assignables based on provided ids and showDeleted flag.
@@ -34,12 +36,12 @@ async function fetchAssignables({ ids, showDeleted, ctx }) {
     ],
   };
 
-  const assignables = await ctx.tx.db.Assignables.find(query, '', {
+  const assignables = await ctx.tx.db.Assignables.find(query, "", {
     excludeDeleted: !showDeleted,
   }).lean();
 
-  const idsFound = map(assignables, 'id');
-  const assetsFound = map(assignables, 'asset');
+  const idsFound = map(assignables, "id");
+  const assetsFound = map(assignables, "asset");
 
   return {
     assignables,
@@ -58,7 +60,7 @@ function getNoPermissionAssignables({ permissions }) {
   const noPermissionAssignables = {};
 
   Object.entries(permissions).forEach(([assignable, permission]) => {
-    if (!permission.actions.includes('view')) {
+    if (!permission.actions.includes("view")) {
       noPermissionAssignables[assignable] = true;
     }
   });
@@ -76,11 +78,13 @@ function getNoPermissionAssignables({ permissions }) {
  * @returns {Promise<Object>} The publish state of assignables.
  */
 async function getAssignablesPublishState({ ids, ctx }) {
-  const versions = await ctx.tx.call('common.versionControl.getVersion', {
+  const versions = await ctx.tx.call("common.versionControl.getVersion", {
     id: ids,
   });
 
-  return Object.fromEntries(versions.map((version) => [version.fullId, version.published]));
+  return Object.fromEntries(
+    versions.map((version) => [version.fullId, version.published])
+  );
 }
 
 /**
@@ -95,7 +99,7 @@ async function getAssignablesPublishState({ ids, ctx }) {
  * @returns {Promise<Object>} The asset data of assignables.
  */
 async function getAssetData({ ids, columns, withFiles, ctx }) {
-  if (!columns.includes('asset')) {
+  if (!columns.includes("asset")) {
     return {};
   }
 
@@ -104,7 +108,7 @@ async function getAssetData({ ids, columns, withFiles, ctx }) {
   const assetsByIds = {};
 
   assets.forEach((asset) => {
-    assetsByIds[asset.id] = omit(asset, ['providerData']);
+    assetsByIds[asset.id] = omit(asset, ["providerData"]);
   });
 
   return assetsByIds;
@@ -125,7 +129,7 @@ async function getAssetData({ ids, columns, withFiles, ctx }) {
  */
 async function getAssignables({
   ids,
-  columns = ['asset'],
+  columns = ["asset"],
   withFiles = false,
   showDeleted = true,
   throwOnMissing = true,
@@ -162,21 +166,22 @@ async function getAssignables({
     });
   } else if (Object.keys(noPermissionAssignables).length) {
     assignables = assignables.filter(({ id }) => !noPermissionAssignables[id]);
-    idsFound = map(assignables, 'id');
-    assetsFound = map(assignables, 'asset');
+    idsFound = map(assignables, "id");
+    assetsFound = map(assignables, "asset");
   }
 
   const promises = [
     getAssignablesPublishState({ ids: idsFound, ctx }),
     getRoles({
-      roles: map(assignables, 'role'),
+      roles: map(assignables, "role"),
       ctx,
     }),
     getSubjects({ assignableIds: idsFound, ctx }),
     getAssetData({ ids: assetsFound, columns, withFiles, ctx }),
   ];
 
-  const [publishState, roles, subjects, assetsData] = await Promise.all(promises);
+  const [publishState, roles, subjects, assetsData] =
+    await Promise.all(promises);
 
   return assignables.map((assignable) => ({
     ...assignable,
@@ -190,7 +195,7 @@ async function getAssignables({
 
 async function getAssignablesWithCache({
   ids,
-  columns = ['asset'],
+  columns = ["asset"],
   withFiles = false,
   showDeleted = true,
   throwOnMissing = true,
@@ -206,7 +211,9 @@ async function getAssignablesWithCache({
   });
 
   const cacheKeys = ids.map(getAssignablesCacheKeyBuilder);
-  const cachedAssignables = await ctx.cache.getMany(cacheKeys).then((r) => Object.values(r));
+  const cachedAssignables = await ctx.cache
+    .getMany(cacheKeys)
+    .then((r) => Object.values(r));
 
   const assignablesById = {};
   const assignablesByAsset = {};
@@ -234,7 +241,9 @@ async function getAssignablesWithCache({
     const keysToSave = [];
     assignables.forEach((assignable) => {
       const assignableCacheKey = getAssignablesCacheKeyBuilder(assignable.id);
-      const assetCacheKey = getAssignablesCacheKeyBuilder(assignable.asset?.id ?? assignable.asset);
+      const assetCacheKey = getAssignablesCacheKeyBuilder(
+        assignable.asset?.id ?? assignable.asset
+      );
 
       keysToSave.push(
         {

@@ -1,8 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { allAssignablesKey } from '../keys/assignables';
+import { allAssignablesKey } from "../keys/assignables";
 
-import deleteInstance from '@assignables/requests/assignableInstances/deleteInstance';
+import deleteInstance from "@assignables/requests/assignableInstances/deleteInstance";
 
 export default function useDeleteInstanceMutation() {
   const queryClient = useQueryClient();

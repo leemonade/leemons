@@ -1,7 +1,7 @@
-import { getCookieToken } from '@users/session';
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
-import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
+import { getCookieToken } from "@users/session";
+import { useIsTeacher } from "@academic-portfolio/hooks";
+import useInstances from "@assignables/requests/hooks/queries/useInstances";
+import useAssignations from "@assignables/requests/hooks/queries/useAssignations";
 
 /**
  *

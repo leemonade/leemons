@@ -3,7 +3,7 @@ function filterAssignationsByStudentDidOpen({ assignations, dates, filters }) {
 
   const assignationDates = dates.assignations;
 
-  if (typeof studentDidOpen !== 'boolean') {
+  if (typeof studentDidOpen !== "boolean") {
     return assignations;
   }
 

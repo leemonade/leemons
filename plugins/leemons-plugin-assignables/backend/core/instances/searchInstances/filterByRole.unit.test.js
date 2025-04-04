@@ -1,59 +1,59 @@
-const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+const { it, expect } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { filterByRole } = require('./filterByRole');
+const { filterByRole } = require("./filterByRole");
 
-it('Should return filtered assignables by role', () => {
+it("Should return filtered assignables by role", () => {
   const ctx = generateCtx({});
   // Arrange
   const assignables = [
     {
-      role: 'student',
-      assignable: 'assignableId1',
+      role: "student",
+      assignable: "assignableId1",
     },
     {
-      role: 'teacher',
-      assignable: 'assignableId1',
+      role: "teacher",
+      assignable: "assignableId1",
     },
     {
-      role: 'student',
-      assignable: 'assignableId2',
+      role: "student",
+      assignable: "assignableId2",
     },
     {
-      role: 'teacher',
-      assignable: 'assignableId3',
+      role: "teacher",
+      assignable: "assignableId3",
     },
   ];
   const query = {
-    role: 'student',
+    role: "student",
   };
 
   // Act
   const response = filterByRole(assignables, query, ctx);
 
   // Assert
-  expect(response).toEqual(['assignableId1', 'assignableId2']);
+  expect(response).toEqual(["assignableId1", "assignableId2"]);
 });
 
-it('should return all assignables if no role is provided in the query', () => {
+it("should return all assignables if no role is provided in the query", () => {
   const ctx = generateCtx({});
 
   const assignables = [
     {
-      role: 'student',
-      assignable: 'assignableId1',
+      role: "student",
+      assignable: "assignableId1",
     },
     {
-      role: 'teacher',
-      assignable: 'assignableId1',
+      role: "teacher",
+      assignable: "assignableId1",
     },
     {
-      role: 'student',
-      assignable: 'assignableId2',
+      role: "student",
+      assignable: "assignableId2",
     },
     {
-      role: 'teacher',
-      assignable: 'assignableId3',
+      role: "teacher",
+      assignable: "assignableId3",
     },
   ];
   const query = {};
@@ -62,5 +62,5 @@ it('should return all assignables if no role is provided in the query', () => {
   const response = filterByRole(assignables, query, ctx);
 
   // Assert
-  expect(response).toEqual(['assignableId1', 'assignableId2', 'assignableId3']);
+  expect(response).toEqual(["assignableId1", "assignableId2", "assignableId3"]);
 });

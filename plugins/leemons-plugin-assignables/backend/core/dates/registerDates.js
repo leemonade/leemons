@@ -1,5 +1,5 @@
-const { LeemonsError } = require('@leemons/error');
-const { map } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { map } = require("lodash");
 
 /**
  * Registers dates for a given type and id.
@@ -12,7 +12,7 @@ const { map } = require('lodash');
 async function registerDates({ type, instance, dates, ctx }) {
   if (!type || !instance || !dates) {
     throw new LeemonsError(ctx, {
-      message: 'Cannot regster dates: type, instance and dates are required',
+      message: "Cannot regster dates: type, instance and dates are required",
       httpStatusCode: 400,
     });
   }

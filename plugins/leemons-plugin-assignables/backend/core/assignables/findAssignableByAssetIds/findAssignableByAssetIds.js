@@ -1,5 +1,5 @@
 // const { map } = require('lodash');
-const { getAssignables } = require('../getAssignables');
+const { getAssignables } = require("../getAssignables");
 
 /**
  * Find assignables by asset ids

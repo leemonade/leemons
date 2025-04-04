@@ -1,3 +1,3 @@
-import useAssignationProgress from './useAssignationProgress';
+import useAssignationProgress from "./useAssignationProgress";
 
 export default useAssignationProgress;

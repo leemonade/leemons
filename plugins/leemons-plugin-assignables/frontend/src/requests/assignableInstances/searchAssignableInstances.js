@@ -5,15 +5,15 @@ export default async function searchAssignableInstances(query) {
         if (value === undefined) return null;
 
         if (Array.isArray(value)) {
-          return value.map((v) => `${key}=${v}`).join('&');
+          return value.map((v) => `${key}=${v}`).join("&");
         }
         return `${key}=${value}`;
       })
       .filter(Boolean)
-      .join('&')}`,
+      .join("&")}`,
     {
       allAgents: true,
-      method: 'GET',
+      method: "GET",
     }
   );
 

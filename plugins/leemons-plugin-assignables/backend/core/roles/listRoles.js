@@ -1,10 +1,10 @@
-const { pick } = require('lodash');
+const { pick } = require("lodash");
 
 async function listRoles({ ctx, details }) {
   const query = ctx.tx.db.Roles.find({});
 
   if (!details) {
-    query.select('name');
+    query.select("name");
   }
 
   const rolesList = await query.lean();
@@ -15,14 +15,14 @@ async function listRoles({ ctx, details }) {
 
   return rolesList.map((role) =>
     pick(role, [
-      'name',
-      'icon',
-      'plugin',
+      "name",
+      "icon",
+      "plugin",
 
-      'evaluationDetailUrl',
-      'previewUrl',
-      'studentDetailUrl',
-      'teacherDetailUrl',
+      "evaluationDetailUrl",
+      "previewUrl",
+      "studentDetailUrl",
+      "teacherDetailUrl",
     ])
   );
 }

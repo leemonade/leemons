@@ -1,2 +1,2 @@
-export * from './NYACardFooter';
-export * from './NYACardFooter.constants';
+export * from "./NYACardFooter";
+export * from "./NYACardFooter.constants";

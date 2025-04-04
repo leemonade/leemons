@@ -6,45 +6,45 @@ export const COLORS = (theme) => ({
 });
 
 export const STATUS_NAMES = {
-  blocked: 'blocked',
-  studentNotStarted: 'notStarted',
-  studentStarted: 'started',
-  evaluableSubmitted: 'submitted',
-  nonEvaluableSubmitted: 'ended',
-  evaluated: 'evaluated',
-  notSubmitted: 'notSubmitted',
+  blocked: "blocked",
+  studentNotStarted: "notStarted",
+  studentStarted: "started",
+  evaluableSubmitted: "submitted",
+  nonEvaluableSubmitted: "ended",
+  evaluated: "evaluated",
+  notSubmitted: "notSubmitted",
 };
 
 export const STATUS = {
   [STATUS_NAMES.blocked]: {
-    labelKey: 'blocked',
+    labelKey: "blocked",
     color: null,
   },
 
   [STATUS_NAMES.studentNotStarted]: {
-    labelKey: 'notStarted',
+    labelKey: "notStarted",
     color: null,
   },
   [STATUS_NAMES.studentStarted]: {
-    labelKey: 'started',
+    labelKey: "started",
     color: null,
   },
 
   [STATUS_NAMES.notSubmitted]: {
-    labelKey: 'notSubmitted',
-    color: 'error',
+    labelKey: "notSubmitted",
+    color: "error",
   },
   [STATUS_NAMES.evaluableSubmitted]: {
-    labelKey: 'submitted',
-    color: 'success',
+    labelKey: "submitted",
+    color: "success",
   },
   [STATUS_NAMES.nonEvaluableSubmitted]: {
-    labelKey: 'ended',
-    color: 'success',
+    labelKey: "ended",
+    color: "success",
   },
 
   [STATUS_NAMES.evaluated]: {
-    labelKey: 'evaluated',
-    color: 'success',
+    labelKey: "evaluated",
+    color: "success",
   },
 };

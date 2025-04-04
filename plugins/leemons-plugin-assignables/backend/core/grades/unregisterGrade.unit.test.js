@@ -4,12 +4,12 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { unregisterGrade } = require('./unregisterGrade');
-const { gradesSchema } = require('../../models/grades');
+const { unregisterGrade } = require("./unregisterGrade");
+const { gradesSchema } = require("../../models/grades");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -32,40 +32,40 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should unregister all the grades for an assignation', async () => {
+it("Should unregister all the grades for an assignation", async () => {
   // Arrange
-  const assignation = 'assignation-id';
+  const assignation = "assignation-id";
 
   const ctx = generateCtx({
     models: {
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
+      Grades: newModel(mongooseConnection, "Grades", gradesSchema),
     },
   });
 
   const initialValues = [
     {
       assignation,
-      subject: 'subject-id-1',
-      type: 'main',
+      subject: "subject-id-1",
+      type: "main",
       grade: 7,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
     {
       assignation,
-      subject: 'subject-id-1',
-      type: 'secondary',
+      subject: "subject-id-1",
+      type: "secondary",
       grade: 8,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
     {
       assignation,
-      subject: 'subject-id-2',
-      type: 'main',
+      subject: "subject-id-2",
+      type: "main",
       grade: 9,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
   ];
   await ctx.db.Grades.create(initialValues);
@@ -79,14 +79,14 @@ it('Should unregister all the grades for an assignation', async () => {
   expect(savedCount).toBe(0);
 });
 
-it('Should unregister all the grades for an assignation and subject', async () => {
+it("Should unregister all the grades for an assignation and subject", async () => {
   // Arrange
-  const assignation = 'assignation-id';
-  const subject = 'subject-id-1';
+  const assignation = "assignation-id";
+  const subject = "subject-id-1";
 
   const ctx = generateCtx({
     models: {
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
+      Grades: newModel(mongooseConnection, "Grades", gradesSchema),
     },
   });
 
@@ -94,26 +94,26 @@ it('Should unregister all the grades for an assignation and subject', async () =
     {
       assignation,
       subject,
-      type: 'main',
+      type: "main",
       grade: 7,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
     {
       assignation,
       subject,
-      type: 'secondary',
+      type: "secondary",
       grade: 8,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
     {
       assignation,
-      subject: 'subject-id-2',
-      type: 'main',
+      subject: "subject-id-2",
+      type: "main",
       grade: 9,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
   ];
   await ctx.db.Grades.create(initialValues);
@@ -127,41 +127,41 @@ it('Should unregister all the grades for an assignation and subject', async () =
   expect(remainingCount).toBe(0);
 });
 
-it('Should unregister all the grades for an assignation and type', async () => {
+it("Should unregister all the grades for an assignation and type", async () => {
   // Arrange
-  const assignation = 'assignation-id';
-  const type = 'main';
+  const assignation = "assignation-id";
+  const type = "main";
 
   const ctx = generateCtx({
     models: {
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
+      Grades: newModel(mongooseConnection, "Grades", gradesSchema),
     },
   });
 
   const initialValues = [
     {
       assignation,
-      subject: 'subject-id-1',
+      subject: "subject-id-1",
       type,
       grade: 7,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
     {
       assignation,
-      subject: 'subject-id-1',
-      type: 'secondary',
+      subject: "subject-id-1",
+      type: "secondary",
       grade: 8,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
     {
       assignation,
-      subject: 'subject-id-2',
+      subject: "subject-id-2",
       type,
       grade: 9,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
   ];
   await ctx.db.Grades.create(initialValues);
@@ -175,15 +175,15 @@ it('Should unregister all the grades for an assignation and type', async () => {
   expect(remainingCount).toBe(0);
 });
 
-it('Should unregister all the grades for an assignation, subject and type', async () => {
+it("Should unregister all the grades for an assignation, subject and type", async () => {
   // Arrange
-  const assignation = 'assignation-id';
-  const subject = 'subject-id-1';
-  const type = 'main';
+  const assignation = "assignation-id";
+  const subject = "subject-id-1";
+  const type = "main";
 
   const ctx = generateCtx({
     models: {
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
+      Grades: newModel(mongooseConnection, "Grades", gradesSchema),
     },
   });
 
@@ -194,23 +194,23 @@ it('Should unregister all the grades for an assignation, subject and type', asyn
       type,
       grade: 7,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
     {
       assignation,
       subject,
-      type: 'secondary',
+      type: "secondary",
       grade: 8,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
     {
       assignation,
-      subject: 'subject-id-2',
+      subject: "subject-id-2",
       type,
       grade: 9,
       visibleToStudent: true,
-      gradedBy: 'teacher-0',
+      gradedBy: "teacher-0",
     },
   ];
   await ctx.db.Grades.create(initialValues);
@@ -227,11 +227,11 @@ it('Should unregister all the grades for an assignation, subject and type', asyn
   expect(remainingCount).toBe(0);
 });
 
-it('Should throw an error if no assignation is provided', async () => {
+it("Should throw an error if no assignation is provided", async () => {
   // Arrange
   const ctx = generateCtx({
     models: {
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
+      Grades: newModel(mongooseConnection, "Grades", gradesSchema),
     },
   });
 
@@ -240,6 +240,6 @@ it('Should throw an error if no assignation is provided', async () => {
 
   // Act and Assert
   await expect(testFn).rejects.toThrowError(
-    'Cannot unregister grade: assignation is required'
+    "Cannot unregister grade: assignation is required"
   );
 });

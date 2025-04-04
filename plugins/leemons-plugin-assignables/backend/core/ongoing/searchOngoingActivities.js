@@ -1,11 +1,11 @@
-const { uniq, map } = require('lodash');
+const { uniq, map } = require("lodash");
 
 const {
   getActivitiesDates,
   getInstanceSubjectsProgramsAndClasses,
   getStudentAssignations,
   getTeacherInstances,
-} = require('./helpers/activitiesData');
+} = require("./helpers/activitiesData");
 const {
   filterAssignationsByInstance,
   filterAssignationsByProgress,
@@ -13,11 +13,18 @@ const {
   filterInstancesByRoleAndQuery,
   filterInstancesByStatusAndArchived,
   filterInstancesByNotModule,
-} = require('./helpers/filters');
-const { filterInstancesByIsModule } = require('./helpers/filters/filterInstancesByIsModule');
-const { groupInstancesInModules } = require('./helpers/filters/groupInstancesInModules');
-const { returnModulesData } = require('./helpers/filters/returnModulesData');
-const { applyOffsetAndLimit, sortInstancesByDates } = require('./helpers/sorts');
+} = require("./helpers/filters");
+const {
+  filterInstancesByIsModule,
+} = require("./helpers/filters/filterInstancesByIsModule");
+const {
+  groupInstancesInModules,
+} = require("./helpers/filters/groupInstancesInModules");
+const { returnModulesData } = require("./helpers/filters/returnModulesData");
+const {
+  applyOffsetAndLimit,
+  sortInstancesByDates,
+} = require("./helpers/sorts");
 
 /*
   === Main function ===
@@ -35,7 +42,7 @@ const { applyOffsetAndLimit, sortInstancesByDates } = require('./helpers/sorts')
 module.exports = async function searchOngoingActivities({ query, ctx }) {
   // EN: Keep in mind we are working with 2 different resources: Assignations for students and Instances for teachers.
   // ES: Ten en mente que estamos trabajando con 2 recursos: Assignations para estudiantes e Instancias para profesores.
-  const isTeacher = [true, 1, 'true'].includes(query?.isTeacher);
+  const isTeacher = [true, 1, "true"].includes(query?.isTeacher);
   /*
     === TEACHER ===
   */
@@ -47,10 +54,11 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
 
     instances = filterInstancesByRoleAndQuery({ instances, filters: query });
 
-    const instanceSubjectsProgramsAndClasses = await getInstanceSubjectsProgramsAndClasses({
-      instances,
-      ctx,
-    });
+    const instanceSubjectsProgramsAndClasses =
+      await getInstanceSubjectsProgramsAndClasses({
+        instances,
+        ctx,
+      });
 
     instances = filterInstancesByProgramAndSubjects({
       instances,
@@ -60,7 +68,11 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
 
     const dates = await getActivitiesDates({ instances, filters: query, ctx });
 
-    instances = filterInstancesByStatusAndArchived({ instances, filters: query, dates });
+    instances = filterInstancesByStatusAndArchived({
+      instances,
+      filters: query,
+      dates,
+    });
 
     const instancesGroupedInModules = groupInstancesInModules({
       instances,
@@ -85,17 +97,18 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
   let assignations = await getStudentAssignations({ ctx });
 
   let instances = filterInstancesByRoleAndQuery({
-    instances: map(assignations, 'instance'),
+    instances: map(assignations, "instance"),
     filters: query,
   });
 
   const modules = filterInstancesByIsModule({ instances });
   instances = filterInstancesByNotModule({ instances, filters: query });
 
-  const instanceSubjectsProgramsAndClasses = await getInstanceSubjectsProgramsAndClasses({
-    instances,
-    ctx,
-  });
+  const instanceSubjectsProgramsAndClasses =
+    await getInstanceSubjectsProgramsAndClasses({
+      instances,
+      ctx,
+    });
 
   instances = filterInstancesByProgramAndSubjects({
     instances,
@@ -127,7 +140,10 @@ module.exports = async function searchOngoingActivities({ query, ctx }) {
     ctx,
   });
 
-  instances = groupInstancesInModules({ instances: map(assignations, 'instance'), modules });
+  instances = groupInstancesInModules({
+    instances: map(assignations, "instance"),
+    modules,
+  });
 
   instances = sortInstancesByDates({
     instances,

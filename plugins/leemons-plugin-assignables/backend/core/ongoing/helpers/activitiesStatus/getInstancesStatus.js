@@ -1,4 +1,4 @@
-const dayjs = require('dayjs');
+const dayjs = require("dayjs");
 
 function getInstancesStatus(instances) {
   return instances.map((instance) => {
@@ -17,14 +17,14 @@ function getInstancesStatus(instances) {
     const isOpen = (isAlwaysAvailable || !isDeadline) && !isClosed;
 
     if (!isAlwaysAvailable && !isStarted) {
-      return 'scheduled';
+      return "scheduled";
     }
 
     if (isOpen) {
-      return 'open';
+      return "open";
     }
 
-    return 'closed';
+    return "closed";
   });
 }
 exports.getInstancesStatus = getInstancesStatus;

@@ -1,21 +1,29 @@
-const { map, uniq } = require('lodash');
+const { map, uniq } = require("lodash");
 
 async function filterByClasses({ query, assignableInstancesIds, ctx }) {
-  if (!(query.classes?.length || query.subjects?.length || query.programs?.length)) {
+  if (
+    !(query.classes?.length || query.subjects?.length || query.programs?.length)
+  ) {
     return assignableInstancesIds;
   }
   let classesToSearch = query.classes || [];
-  if ((query.subjects?.length || query.programs?.length) && !query.classes?.length) {
+  if (
+    (query.subjects?.length || query.programs?.length) &&
+    !query.classes?.length
+  ) {
     let classesFound = await ctx.tx.db.Classes.find({
       assignableInstance: assignableInstancesIds,
     })
-      .select(['assignableInstance', 'class'])
+      .select(["assignableInstance", "class"])
       .lean();
 
-    classesFound = uniq(map(classesFound, 'class'));
-    const classesData = await ctx.tx.call('academic-portfolio.classes.classByIds', {
-      ids: classesFound,
-    });
+    classesFound = uniq(map(classesFound, "class"));
+    const classesData = await ctx.tx.call(
+      "academic-portfolio.classes.classByIds",
+      {
+        ids: classesFound,
+      }
+    );
 
     classesFound = classesFound.map((classFound) => {
       const klass = classesData.find((c) => c.id === classFound);
@@ -33,7 +41,7 @@ async function filterByClasses({ query, assignableInstancesIds, ctx }) {
           (query.subjects?.length && query.subjects.includes(klass.subject)) ||
           (query.programs?.length && query.programs.includes(klass.program))
       ),
-      'id'
+      "id"
     );
   }
 
@@ -42,7 +50,7 @@ async function filterByClasses({ query, assignableInstancesIds, ctx }) {
     assignableInstance: assignableInstancesIds,
   }).lean();
 
-  return uniq(map(results, 'assignableInstance'));
+  return uniq(map(results, "assignableInstance"));
 }
 
 module.exports = {

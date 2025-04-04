@@ -1,25 +1,32 @@
-const { Agenda } = require('@hokify/agenda');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsEmailsMixin } = require('@leemons/emails');
-const { addMenuItemsDeploy } = require('@leemons/menu-builder');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { LeemonsMultiEventsMixin } = require('@leemons/multi-events');
-const { LeemonsMultilanguageMixin } = require('@leemons/multilanguage');
-const { addPermissionsDeploy } = require('@leemons/permissions');
-const { addWidgetZonesDeploy, addWidgetItemsDeploy } = require('@leemons/widgets');
-const _ = require('lodash');
-const path = require('path');
+const { Agenda } = require("@hokify/agenda");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsEmailsMixin } = require("@leemons/emails");
+const { addMenuItemsDeploy } = require("@leemons/menu-builder");
+const { LeemonsMongoDBMixin } = require("@leemons/mongodb");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
+const { LeemonsMultiEventsMixin } = require("@leemons/multi-events");
+const { LeemonsMultilanguageMixin } = require("@leemons/multilanguage");
+const { addPermissionsDeploy } = require("@leemons/permissions");
+const {
+  addWidgetZonesDeploy,
+  addWidgetItemsDeploy,
+} = require("@leemons/widgets");
+const _ = require("lodash");
+const path = require("path");
 
-const { menuItems, widgets, permissions } = require('../config/constants');
-const { renderEmailTemplates } = require('../core/deploy/renderEmailTemplates');
-const { afterAddClassTeacher } = require('../core/events/afterAddClassTeacher');
-const { afterRemoveClassesTeachers } = require('../core/events/afterRemoveClassesTeachers');
-const { sendRememberEmails } = require('../core/events/sendRememberEmail');
-const { sendWeeklyEmails } = require('../core/events/sendWeeklyEmail');
-const { getServiceModels } = require('../models');
+const { menuItems, widgets, permissions } = require("../config/constants");
+const { renderEmailTemplates } = require("../core/deploy/renderEmailTemplates");
+const { afterAddClassTeacher } = require("../core/events/afterAddClassTeacher");
+const {
+  afterRemoveClassesTeachers,
+} = require("../core/events/afterRemoveClassesTeachers");
+const { sendRememberEmails } = require("../core/events/sendRememberEmail");
+const { sendWeeklyEmails } = require("../core/events/sendWeeklyEmail");
+const { getServiceModels } = require("../models");
 
-const SERVICE_NAME = 'assignables.deploy';
+const SERVICE_NAME = "assignables.deploy";
 
 // TODO: Implement cron job for sending emails
 
@@ -29,7 +36,7 @@ module.exports = {
   version: 1,
   mixins: [
     LeemonsMultilanguageMixin({
-      locales: ['es', 'en'],
+      locales: ["es", "en"],
       i18nPath: path.resolve(__dirname, `../i18n/`),
     }),
     LeemonsMultiEventsMixin(),
@@ -42,43 +49,51 @@ module.exports = {
   ],
   multiEvents: [
     {
-      type: 'once-per-install',
-      events: ['menu-builder.init-main-menu', 'assignables.init-permissions'],
+      type: "once-per-install",
+      events: ["menu-builder.init-main-menu", "assignables.init-permissions"],
       handler: async (ctx) => {
         await addMenuItemsDeploy({
           keyValueModel: ctx.tx.db.KeyValue,
           item: menuItems,
           ctx,
         });
-        ctx.tx.emit('init-menu');
+        ctx.tx.emit("init-menu");
       },
     },
     {
-      type: 'once-per-install',
+      type: "once-per-install",
       events: [
-        'leebrary.init-menu',
-        'assignables.init-permissions',
-        'assignables.init-menu',
-        'assignables.init-widget-zones',
-        'assignables.init-widget-items',
+        "leebrary.init-menu",
+        "assignables.init-permissions",
+        "assignables.init-menu",
+        "assignables.init-widget-zones",
+        "assignables.init-widget-items",
       ],
       handler: async (ctx) => {
-        ctx.tx.emit('init-plugin');
+        ctx.tx.emit("init-plugin");
       },
     },
   ],
   events: {
     /* -- New Deployment or plugin installation -- */
-    'deployment-manager.install': async (ctx) => {
+    "deployment-manager.install": async (ctx) => {
       // Widgets
-      await addWidgetZonesDeploy({ keyValueModel: ctx.tx.db.KeyValue, zones: widgets.zones, ctx });
-      await addWidgetItemsDeploy({ keyValueModel: ctx.tx.db.KeyValue, items: widgets.items, ctx });
+      await addWidgetZonesDeploy({
+        keyValueModel: ctx.tx.db.KeyValue,
+        zones: widgets.zones,
+        ctx,
+      });
+      await addWidgetItemsDeploy({
+        keyValueModel: ctx.tx.db.KeyValue,
+        items: widgets.items,
+        ctx,
+      });
 
-      ctx.emit('init-widgets');
+      ctx.emit("init-widgets");
 
       // Register as a library provider
-      await ctx.tx.call('leebrary.providers.register', {
-        name: 'Library Assignables',
+      await ctx.tx.call("leebrary.providers.register", {
+        name: "Library Assignables",
         supportedMethods: {
           getByIds: true,
           search: true,
@@ -86,21 +101,21 @@ module.exports = {
       });
     },
     /* --- Academic Portfolio --- */
-    'academic-portfolio.after-add-class-teacher': async (ctx) => {
+    "academic-portfolio.after-add-class-teacher": async (ctx) => {
       await afterAddClassTeacher({ ...ctx.params, ctx });
     },
-    'academic-portfolio.after-remove-classes-teachers': async (ctx) => {
+    "academic-portfolio.after-remove-classes-teachers": async (ctx) => {
       await afterRemoveClassesTeachers({ ...ctx.params, ctx });
     },
-    'academic-portfolio.after-add-class-student': async (ctx) => {
+    "academic-portfolio.after-add-class-student": async (ctx) => {
       await ctx.call(
-        'assignables.assignableInstances.addStudentToOpenInstancesWithClass',
+        "assignables.assignableInstances.addStudentToOpenInstancesWithClass",
         ctx.params
       );
     },
 
     // Permissions
-    'users.init-permissions': async (ctx) => {
+    "users.init-permissions": async (ctx) => {
       await addPermissionsDeploy({
         keyValueModel: ctx.tx.db.KeyValue,
         permissions,
@@ -124,7 +139,7 @@ module.exports = {
     const customCall = async ({ actionName }) => {
       const r = async ({ deploymentId }) => {
         const manager = await this.broker.call(
-          'deployment-manager.getGoodActionToCall',
+          "deployment-manager.getGoodActionToCall",
           {
             actionName,
           },
@@ -135,30 +150,37 @@ module.exports = {
           {},
           {
             caller: SERVICE_NAME,
-            meta: { deploymentID: deploymentId, relationshipID: manager.relationshipID },
+            meta: {
+              deploymentID: deploymentId,
+              relationshipID: manager.relationshipID,
+            },
           }
         );
       };
-      const deploymentIds = await this.broker.call('deployment-manager.getAllDeploymentIds');
-      await Promise.allSettled(_.map(deploymentIds, (deploymentId) => r({ deploymentId })));
+      const deploymentIds = await this.broker.call(
+        "deployment-manager.getAllDeploymentIds"
+      );
+      await Promise.allSettled(
+        _.map(deploymentIds, (deploymentId) => r({ deploymentId }))
+      );
     };
 
     const agenda = new Agenda({ db: { address: process.env.MONGO_URI } });
-    agenda.define('assignables_sendRememberEmails', async () => {
-      await customCall({ actionName: 'assignables.deploy.sendRememberEmails' });
+    agenda.define("assignables_sendRememberEmails", async () => {
+      await customCall({ actionName: "assignables.deploy.sendRememberEmails" });
     });
-    agenda.define('assignables_sendWeeklyEmails', async () => {
-      await customCall({ actionName: 'assignables.deploy.sendWeeklyEmails' });
+    agenda.define("assignables_sendWeeklyEmails", async () => {
+      await customCall({ actionName: "assignables.deploy.sendWeeklyEmails" });
     });
     await agenda.start();
 
-    await agenda.every('0 * * * *', 'assignables_sendRememberEmails');
-    await agenda.every('0 10 * * *', 'assignables_sendWeeklyEmails');
+    await agenda.every("0 * * * *", "assignables_sendRememberEmails");
+    await agenda.every("0 10 * * *", "assignables_sendWeeklyEmails");
   },
   async started() {
     const emailTemplates = renderEmailTemplates();
     await this.initEmailTemplates(emailTemplates);
 
-    this.logger.debug('Email templates initialized');
+    this.logger.debug("Email templates initialized");
   },
 };

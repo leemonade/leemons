@@ -1,22 +1,24 @@
-import React from 'react';
+import React from "react";
 
-import { SelectSubject } from '@academic-portfolio/components/SelectSubject';
-import { useSessionClasses } from '@academic-portfolio/hooks';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
+import { SelectSubject } from "@academic-portfolio/components/SelectSubject";
+import { useSessionClasses } from "@academic-portfolio/hooks";
+import { unflatten } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import _ from "lodash";
+import PropTypes from "prop-types";
 
-import { getMultiClassData } from '@assignables/helpers/getClassData';
-import prefixPN from '@assignables/helpers/prefixPN';
+import { getMultiClassData } from "@assignables/helpers/getClassData";
+import prefixPN from "@assignables/helpers/prefixPN";
 
 function useSubjectGroupsLocalizations() {
-  const [, translations] = useTranslateLoader(prefixPN('assetListFilters.subjectGroups'));
+  const [, translations] = useTranslateLoader(
+    prefixPN("assetListFilters.subjectGroups")
+  );
 
   return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      return _.get(res, prefixPN('assetListFilters.subjectGroups'));
+      return _.get(res, prefixPN("assetListFilters.subjectGroups"));
     }
 
     return {};
@@ -26,11 +28,11 @@ function useSubjectGroupsLocalizations() {
 function useSubjects({ labels, program }) {
   const localizations = useSubjectGroupsLocalizations();
 
-  const selectedProgram = program ?? 'all';
+  const selectedProgram = program ?? "all";
 
   const { data: classesData } = useSessionClasses({
     showType: true,
-    program: selectedProgram === 'all' ? undefined : selectedProgram,
+    program: selectedProgram === "all" ? undefined : selectedProgram,
     type: null,
   });
   const multiClassData = getMultiClassData();
@@ -45,32 +47,32 @@ function useSubjects({ labels, program }) {
     classesData.forEach((klass) => {
       if (!subjects[klass.subject.id]) {
         subjects[klass.subject.id] = {
-          label: klass.subject.name ?? '',
+          label: klass.subject.name ?? "",
           value: klass.subject.id,
           color: klass.color,
           icon: klass.subject.icon,
           type: klass.type,
         };
       } else if (
-        subjects[klass.subject.id].type !== 'main-teacher' &&
-        klass.type === 'main-teacher'
+        subjects[klass.subject.id].type !== "main-teacher" &&
+        klass.type === "main-teacher"
       ) {
-        subjects[klass.subject.id].type = 'main-teacher';
+        subjects[klass.subject.id].type = "main-teacher";
       }
     });
 
     return [
       {
-        label: labels?.all ?? '',
-        value: 'all',
-        group: labels?.all ?? '',
+        label: labels?.all ?? "",
+        value: "all",
+        group: labels?.all ?? "",
         icon: multiClassData.icon,
         color: multiClassData.color,
       },
       ...Object.values(subjects).map((subject) => ({
         ...subject,
         group:
-          subject.type === 'main-teacher'
+          subject.type === "main-teacher"
             ? localizations?.mySubjects
             : localizations?.collaborations,
       })),
@@ -82,7 +84,12 @@ function Subject({ labels, value, onChange, program }) {
   const subjects = useSubjects({ labels: { all: labels?.seeAll }, program });
 
   return (
-    <SelectSubject label={labels?.subject} data={subjects} value={value} onChange={onChange} />
+    <SelectSubject
+      label={labels?.subject}
+      data={subjects}
+      value={value}
+      onChange={onChange}
+    />
   );
 }
 

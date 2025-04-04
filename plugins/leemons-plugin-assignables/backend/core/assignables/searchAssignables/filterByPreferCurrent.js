@@ -1,4 +1,4 @@
-const { find, forEach, groupBy, set, uniq } = require('lodash');
+const { find, forEach, groupBy, set, uniq } = require("lodash");
 /**
  * Filters assignables based on the provided parameters.
  *
@@ -11,7 +11,12 @@ const { find, forEach, groupBy, set, uniq } = require('lodash');
  * @returns {Promise<Object<string, Array<Object>>>} - A promise that resolves to an object mapping UUIDs to arrays of assignables.
  */
 
-async function filterByPreferCurrent({ assignablesIds, published, preferCurrent, ctx }) {
+async function filterByPreferCurrent({
+  assignablesIds,
+  published,
+  preferCurrent,
+  ctx,
+}) {
   const groupedAssignables = groupBy(assignablesIds, (id) => id.uuid);
 
   if (published !== false && preferCurrent) {
@@ -19,13 +24,16 @@ async function filterByPreferCurrent({ assignablesIds, published, preferCurrent,
 
     const currentVersions = await Promise.all(
       assignablesUuids.map(async (uuid) => {
-        const { current } = await ctx.tx.call('common.versionControl.getCurrentVersion', {
-          uuid,
-        });
+        const { current } = await ctx.tx.call(
+          "common.versionControl.getCurrentVersion",
+          {
+            uuid,
+          }
+        );
 
         return {
           uuid,
-          current: await ctx.tx.call('common.versionControl.stringifyId', {
+          current: await ctx.tx.call("common.versionControl.stringifyId", {
             id: uuid,
             version: current,
           }),
@@ -36,8 +44,14 @@ async function filterByPreferCurrent({ assignablesIds, published, preferCurrent,
     // EN: Get only the current versions (if not present, return all)
     // ES: Obtener solo las versiones actuales
     forEach(groupedAssignables, (values, uuid) => {
-      const currentVersion = find(currentVersions, (version) => version.uuid === uuid);
-      const current = find(values, (id) => id.fullId === currentVersion.current);
+      const currentVersion = find(
+        currentVersions,
+        (version) => version.uuid === uuid
+      );
+      const current = find(
+        values,
+        (id) => id.fullId === currentVersion.current
+      );
       if (current) {
         set(groupedAssignables, uuid, [current]);
       }

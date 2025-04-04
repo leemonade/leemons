@@ -1,12 +1,14 @@
-const { uniq, map, groupBy, difference, pick, entries } = require('lodash');
+const { uniq, map, groupBy, difference, pick, entries } = require("lodash");
 
-const { escapeRegExp } = require('lodash');
-const { getRoleMatchingActions } = require('../../helpers/getRoleMatchingActions');
-const { getTeacherPermissions } = require('../getTeacherPermissions');
+const { escapeRegExp } = require("lodash");
+const {
+  getRoleMatchingActions,
+} = require("../../helpers/getRoleMatchingActions");
+const { getTeacherPermissions } = require("../getTeacherPermissions");
 
-const { assignableActions } = require('../../../../../config/constants');
-const { getPermissionName } = require('../../helpers');
-const { getParentAssignables } = require('./getParentAssignables');
+const { assignableActions } = require("../../../../../config/constants");
+const { getPermissionName } = require("../../helpers");
+const { getParentAssignables } = require("./getParentAssignables");
 
 /**
  * Retrieves the parent permissions for a given set of IDs and context.
@@ -32,9 +34,9 @@ async function getParentPermissions({ ids, ctx }) {
  * @return {Promise<Object>} A promise that resolves to an object containing the user permissions.
  */
 async function getUserPermissions({ assignables, ctx }) {
-  const assignablesIds = uniq(map(assignables, 'id'));
-  const assetsIds = uniq(map(assignables, 'asset'));
-  const assignablesByAsset = groupBy(assignables, 'asset');
+  const assignablesIds = uniq(map(assignables, "id"));
+  const assetsIds = uniq(map(assignables, "asset"));
+  const assignablesByAsset = groupBy(assignables, "asset");
 
   if (!assignablesIds?.length) {
     return {};
@@ -51,28 +53,33 @@ async function getUserPermissions({ assignables, ctx }) {
 
   const query = {
     $or: assignablesIds.map((id) => ({
-      permissionName: { $regex: escapeRegExp(getPermissionName({ id, ctx })), $options: 'i' },
+      permissionName: {
+        $regex: escapeRegExp(getPermissionName({ id, ctx })),
+        $options: "i",
+      },
     })),
   };
 
-  const [assignablePermissions, assetsPermissions, parentPermissions] = await Promise.all([
-    ctx.tx.call('users.permissions.getUserAgentPermissions', {
-      userAgent: ctx.meta.userSession.userAgents,
-      query,
-    }),
-    ctx.tx.call('leebrary.permissions.getByAssets', {
-      assets: assetsIds,
-      showPublic: true,
-      ctx,
-    }),
-    getParentPermissions({ ids: assignablesIds, ctx }),
-  ]);
+  const [assignablePermissions, assetsPermissions, parentPermissions] =
+    await Promise.all([
+      ctx.tx.call("users.permissions.getUserAgentPermissions", {
+        userAgent: ctx.meta.userSession.userAgents,
+        query,
+      }),
+      ctx.tx.call("leebrary.permissions.getByAssets", {
+        assets: assetsIds,
+        showPublic: true,
+        ctx,
+      }),
+      getParentPermissions({ ids: assignablesIds, ctx }),
+    ]);
 
   const directPermissions = Object.fromEntries(
     // Get assignable permissions actions
     assignablePermissions
       .map(({ permissionName, actionNames }) => [
-        /\.assignable\.(?<id>[^@]+@(\d+\.){2}\d+)/.exec(permissionName).groups.id,
+        /\.assignable\.(?<id>[^@]+@(\d+\.){2}\d+)/.exec(permissionName).groups
+          .id,
         actionNames,
       ])
       // Get asset permissions actions
@@ -87,21 +94,29 @@ async function getUserPermissions({ assignables, ctx }) {
       .concat(parentPermissions)
   );
 
-  const assignablesWithoutPermissions = difference(assignablesIds, Object.keys(directPermissions));
+  const assignablesWithoutPermissions = difference(
+    assignablesIds,
+    Object.keys(directPermissions)
+  );
 
   if (!assignablesWithoutPermissions.length) {
     return Object.fromEntries(
       assignablesIds.map((id) => [
         id,
         {
-          role: getRoleMatchingActions({ actions: directPermissions[id] || [] }),
+          role: getRoleMatchingActions({
+            actions: directPermissions[id] || [],
+          }),
           actions: directPermissions[id] || [],
         },
       ])
     );
   }
 
-  const teacherPermissions = await getTeacherPermissions({ assignableIds: assignablesIds, ctx });
+  const teacherPermissions = await getTeacherPermissions({
+    assignableIds: assignablesIds,
+    ctx,
+  });
 
   return Object.fromEntries(
     assignablesIds.map((id) => {
@@ -110,7 +125,7 @@ async function getUserPermissions({ assignables, ctx }) {
       if (directPermissions[id]) {
         actions = directPermissions[id];
       } else if (teacherPermissions[id]) {
-        actions = ['edit', 'view', 'assign']; // Teacher actions
+        actions = ["edit", "view", "assign"]; // Teacher actions
       }
 
       return [

@@ -1,11 +1,11 @@
-import React from 'react';
-import { Box, TextClamp, Text } from '@bubbles-ui/components';
-import { ClassroomItemDisplay } from '@academic-portfolio/components';
-import { EvaluationCardBodyStyles } from './EvaluationCardBody.styles';
+import React from "react";
+import { Box, TextClamp, Text } from "@bubbles-ui/components";
+import { ClassroomItemDisplay } from "@academic-portfolio/components";
+import { EvaluationCardBodyStyles } from "./EvaluationCardBody.styles";
 import {
   EVALUATIONCARD_BODY_DEFAULT_PROPS,
   EVALUATIONCARD_BODY_PROP_TYPES,
-} from './EvaluationCardBody.constants';
+} from "./EvaluationCardBody.constants";
 
 const EvaluationCardBody = ({ instance, localizations }) => {
   const { classes } = EvaluationCardBodyStyles();
@@ -22,7 +22,10 @@ const EvaluationCardBody = ({ instance, localizations }) => {
         </TextClamp>
       </Box>
       <Box className={classes.classroomContainer}>
-        <ClassroomItemDisplay classroomIds={instance?.classes} showSubject={true} />
+        <ClassroomItemDisplay
+          classroomIds={instance?.classes}
+          showSubject={true}
+        />
       </Box>
       <Text className={classes.deadline}>{deadlineFormatted}</Text>
     </Box>
@@ -31,7 +34,7 @@ const EvaluationCardBody = ({ instance, localizations }) => {
 
 EvaluationCardBody.propTypes = EVALUATIONCARD_BODY_PROP_TYPES;
 EvaluationCardBody.defaultProps = EVALUATIONCARD_BODY_DEFAULT_PROPS;
-EvaluationCardBody.displayName = 'EvaluationCardBody';
+EvaluationCardBody.displayName = "EvaluationCardBody";
 
 export default EvaluationCardBody;
 export { EvaluationCardBody };

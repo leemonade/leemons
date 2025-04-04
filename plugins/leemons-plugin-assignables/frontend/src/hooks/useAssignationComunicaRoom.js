@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import RoomService from '@comunica/RoomService';
-import { noop } from 'lodash';
-import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
+import RoomService from "@comunica/RoomService";
+import { noop } from "lodash";
+import useAssignations from "@assignables/requests/hooks/queries/useAssignations";
 
 async function setRoomIfExists({ room, setRoom, else: elseFunction = noop }) {
   new RoomService(room).roomExists().then((exists) => {
@@ -19,7 +19,7 @@ export default function useAssignationComunicaRoom({ assignation, subject }) {
   const user = assignation?.user;
 
   const moduleData = assignation?.instance?.metadata?.module;
-  const isModuleActivity = moduleData?.type === 'activity';
+  const isModuleActivity = moduleData?.type === "activity";
 
   const { data: moduleAssignation } = useAssignations({
     query: {

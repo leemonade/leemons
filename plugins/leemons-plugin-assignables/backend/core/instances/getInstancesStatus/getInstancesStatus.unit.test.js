@@ -4,30 +4,30 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { getInstancesStatus } = require('./getInstancesStatus');
+const { getInstancesStatus } = require("./getInstancesStatus");
 const {
   getInstanceObject,
-} = require('../../../__fixtures__/getInstanceObject');
+} = require("../../../__fixtures__/getInstanceObject");
 const {
   getAssignationObject,
-} = require('../../../__fixtures__/getAssignationObject');
-const { getGradeObject } = require('../../../__fixtures__/getGradeObject');
+} = require("../../../__fixtures__/getAssignationObject");
+const { getGradeObject } = require("../../../__fixtures__/getGradeObject");
 
-const { instancesSchema } = require('../../../models/instances');
-const { assignationsSchema } = require('../../../models/assignations');
-const { gradesSchema } = require('../../../models/grades');
+const { instancesSchema } = require("../../../models/instances");
+const { assignationsSchema } = require("../../../models/assignations");
+const { gradesSchema } = require("../../../models/grades");
 
 const {
   getUserPermissionMultiple,
-} = require('../../permissions/instances/users/getUserPermissionMultiple');
-const { getDates } = require('../../dates');
+} = require("../../permissions/instances/users/getUserPermissionMultiple");
+const { getDates } = require("../../dates");
 
-jest.mock('../../permissions/instances/users/getUserPermissionMultiple');
-jest.mock('../../dates');
+jest.mock("../../permissions/instances/users/getUserPermissionMultiple");
+jest.mock("../../dates");
 
 const instance = getInstanceObject();
 const assignation = getAssignationObject();
@@ -59,21 +59,21 @@ beforeEach(async () => {
 
   ctx = generateCtx({
     models: {
-      Instances: newModel(mongooseConnection, 'Instances', instancesSchema),
+      Instances: newModel(mongooseConnection, "Instances", instancesSchema),
       Assignations: newModel(
         mongooseConnection,
-        'Assignations',
+        "Assignations",
         assignationsSchema
       ),
-      Grades: newModel(mongooseConnection, 'Grades', gradesSchema),
+      Grades: newModel(mongooseConnection, "Grades", gradesSchema),
     },
   });
 });
 
-it('Should return student instances status', async () => {
+it("Should return student instances status", async () => {
   // Arrange
 
-  assignableInstanceIds = ['instanceId1', 'instanceId2'];
+  assignableInstanceIds = ["instanceId1", "instanceId2"];
   instances = assignableInstanceIds.map((id) => ({ ...instance, id }));
   await ctx.tx.db.Instances.create(instances);
 
@@ -86,36 +86,36 @@ it('Should return student instances status', async () => {
     ...assignations,
     {
       ...assignations[0],
-      id: 'assignationIdinstanceId3',
-      instance: 'instanceId1',
+      id: "assignationIdinstanceId3",
+      instance: "instanceId1",
     },
   ]);
 
   const { grades } = getGradeObject();
-  await ctx.tx.db.Grades.create([...grades, { ...grades[0], id: 'grade3' }]);
+  await ctx.tx.db.Grades.create([...grades, { ...grades[0], id: "grade3" }]);
 
   const date = new Date();
   const expectedValue = [
     {
-      instance: 'instanceId1',
-      assignation: 'assignationIdinstanceId1',
-      status: 'evaluated',
+      instance: "instanceId1",
+      assignation: "assignationIdinstanceId1",
+      status: "evaluated",
       dates: { start: date, end: date },
       alwaysAvailable: true,
       timestamps: { start: date, end: date },
     },
     {
-      instance: 'instanceId1',
-      assignation: 'assignationIdinstanceId3',
-      status: 'opened',
+      instance: "instanceId1",
+      assignation: "assignationIdinstanceId3",
+      status: "opened",
       dates: { start: date, end: date },
       alwaysAvailable: true,
       timestamps: {},
     },
     {
-      instance: 'instanceId2',
-      assignation: 'assignationIdinstanceId2',
-      status: 'opened',
+      instance: "instanceId2",
+      assignation: "assignationIdinstanceId2",
+      status: "opened",
       dates: {},
       alwaysAvailable: true,
       timestamps: {},
@@ -124,12 +124,12 @@ it('Should return student instances status', async () => {
 
   getUserPermissionMultiple.mockResolvedValue([
     {
-      actions: ['view'],
-      assignableInstance: 'instanceId1',
+      actions: ["view"],
+      assignableInstance: "instanceId1",
     },
     {
-      actions: ['edit', 'view'],
-      assignableInstance: 'instanceId2',
+      actions: ["edit", "view"],
+      assignableInstance: "instanceId2",
     },
   ]);
   getDates
@@ -153,9 +153,9 @@ it('Should return student instances status', async () => {
   expect(response).toEqual(expect.arrayContaining(expectedValue));
 });
 
-it('Should return teatcher instances status', async () => {
+it("Should return teatcher instances status", async () => {
   // Arrange
-  assignableInstanceIds = ['instanceId1', 'instanceId2'];
+  assignableInstanceIds = ["instanceId1", "instanceId2"];
   instances = assignableInstanceIds.map((id) => ({ ...instance, id }));
   await ctx.tx.db.Instances.create(instances);
 
@@ -170,11 +170,11 @@ it('Should return teatcher instances status', async () => {
   //   ]);
 
   const { grades } = getGradeObject();
-  await ctx.tx.db.Grades.create([...grades, { ...grades[0], id: 'grade3' }]);
+  await ctx.tx.db.Grades.create([...grades, { ...grades[0], id: "grade3" }]);
   const date = new Date();
   const expectedValue = [
     {
-      instance: 'instanceId1',
+      instance: "instanceId1",
       assignation: null,
       status: null,
       dates: {},
@@ -185,12 +185,12 @@ it('Should return teatcher instances status', async () => {
 
   getUserPermissionMultiple.mockResolvedValue([
     {
-      actions: ['view', 'edit'],
-      assignableInstance: 'instanceId1',
+      actions: ["view", "edit"],
+      assignableInstance: "instanceId1",
     },
     {
-      actions: ['view'],
-      assignableInstance: 'instanceId2',
+      actions: ["view"],
+      assignableInstance: "instanceId2",
     },
   ]);
   getDates
@@ -213,19 +213,19 @@ it('Should return teatcher instances status', async () => {
   expect(response).toEqual(expectedValue);
 });
 
-it('Should throw Error if some instance does not have view permissions', async () => {
+it("Should throw Error if some instance does not have view permissions", async () => {
   // Arrange
 
   getUserPermissionMultiple.mockResolvedValue([
     {
-      actions: ['edit'],
-      assignableInstance: 'instanceId1',
+      actions: ["edit"],
+      assignableInstance: "instanceId1",
     },
   ]);
 
   // Act
   const testFunc = () =>
-    getInstancesStatus({ assignableInstanceIds: 'instanceId1', ctx });
+    getInstancesStatus({ assignableInstanceIds: "instanceId1", ctx });
   // Assert
 
   await expect(testFunc).rejects.toThrowError(

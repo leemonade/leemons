@@ -1,16 +1,16 @@
-import { useMemo } from 'react';
-import _ from 'lodash';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '../../../helpers/prefixPN';
+import { useMemo } from "react";
+import _ from "lodash";
+import { unflatten } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "../../../helpers/prefixPN";
 
 export default function useLevelsOfDifficulty(waitToTranslations) {
-  const [, translations] = useTranslateLoader(prefixPN('levelsOfDifficulty'));
+  const [, translations] = useTranslateLoader(prefixPN("levelsOfDifficulty"));
 
   const localizations = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN('levelsOfDifficulty'));
+      const data = _.get(res, prefixPN("levelsOfDifficulty"));
 
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
@@ -22,27 +22,27 @@ export default function useLevelsOfDifficulty(waitToTranslations) {
 
   const levels = [
     {
-      value: 'beginner',
+      value: "beginner",
       label: localizations.beginner,
     },
     {
-      value: 'elementary',
+      value: "elementary",
       label: localizations.elementary,
     },
     {
-      value: 'lowerIntermediate',
+      value: "lowerIntermediate",
       label: localizations.lowerIntermediate,
     },
     {
-      value: 'intermediate',
+      value: "intermediate",
       label: localizations.intermediate,
     },
     {
-      value: 'upperIntermediate',
+      value: "upperIntermediate",
       label: localizations.upperIntermediate,
     },
     {
-      value: 'advanced',
+      value: "advanced",
       label: localizations.advanced,
     },
   ];

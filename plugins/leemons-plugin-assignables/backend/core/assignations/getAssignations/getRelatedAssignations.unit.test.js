@@ -1,8 +1,8 @@
-const { it, expect } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const { getRelatedAssignations } = require('./getRelatedAssignations');
-const { getServiceModels } = require('../../../models');
+const { it, expect } = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const { getRelatedAssignations } = require("./getRelatedAssignations");
+const { getServiceModels } = require("../../../models");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -25,31 +25,31 @@ beforeEach(async () => {
   await mongooseConnection.dropDatabase();
 });
 
-it('Should get related assignations', async () => {
+it("Should get related assignations", async () => {
   // Arrange
   const assignationsData = [
-    { id: 'assignation1', instance: 'instance1', user: 'user1' },
-    { id: 'assignation2', instance: 'instance2', user: 'user1' },
-    { id: 'assignation3', instance: 'instance2', user: 'user1' },
+    { id: "assignation1", instance: "instance1", user: "user1" },
+    { id: "assignation2", instance: "instance2", user: "user1" },
+    { id: "assignation3", instance: "instance2", user: "user1" },
   ];
   const ctx = generateCtx({
     actions: {
-      'instances.instances.getInstance': () => ({
-        id: 'instance1',
+      "instances.instances.getInstance": () => ({
+        id: "instance1",
         relatedAssignableInstances: JSON.stringify({
-          before: [{ id: 'instance2' }],
+          before: [{ id: "instance2" }],
         }),
       }),
     },
     models: {
       Assignations: newModel(
         mongooseConnection,
-        'Assignations',
+        "Assignations",
         getServiceModels().Assignations.schema
       ),
       Instances: newModel(
         mongooseConnection,
-        'Instances',
+        "Instances",
         getServiceModels().Instances.schema
       ),
     },
@@ -57,12 +57,12 @@ it('Should get related assignations', async () => {
 
   // Add data to the Instances table
   await ctx.tx.db.Instances.create({
-    id: 'instance1',
+    id: "instance1",
     relatedAssignableInstances: JSON.stringify({
-      before: [{ id: 'instance2' }],
+      before: [{ id: "instance2" }],
     }),
-    deploymentID: 'deployment1',
-    assignable: 'assignable1',
+    deploymentID: "deployment1",
+    assignable: "assignable1",
     alwaysAvailable: true,
     gradable: false,
     requiresScoring: false,
@@ -72,12 +72,12 @@ it('Should get related assignations', async () => {
     addNewClassStudents: false,
   });
   await ctx.tx.db.Instances.create({
-    id: 'instance2',
+    id: "instance2",
     relatedAssignableInstances: JSON.stringify({
-      before: [{ id: 'instance1' }],
+      before: [{ id: "instance1" }],
     }),
-    deploymentID: 'deployment2',
-    assignable: 'assignable2',
+    deploymentID: "deployment2",
+    assignable: "assignable2",
     alwaysAvailable: true,
     gradable: false,
     requiresScoring: false,
@@ -89,10 +89,10 @@ it('Should get related assignations', async () => {
 
   // Add data to the Assignations table
   await ctx.tx.db.Assignations.create({
-    id: 'assignation1',
-    instance: 'instance1',
-    user: 'user1',
-    deploymentID: 'deployment1',
+    id: "assignation1",
+    instance: "instance1",
+    user: "user1",
+    deploymentID: "deployment1",
     indexable: true,
     classes: {},
     metadata: {},
@@ -100,10 +100,10 @@ it('Should get related assignations', async () => {
     rememberEmailSended: true,
   });
   await ctx.tx.db.Assignations.create({
-    id: 'assignation2',
-    instance: 'instance2',
-    user: 'user1',
-    deploymentID: 'deployment2',
+    id: "assignation2",
+    instance: "instance2",
+    user: "user1",
+    deploymentID: "deployment2",
     indexable: true,
     classes: {},
     metadata: {},
@@ -116,6 +116,6 @@ it('Should get related assignations', async () => {
 
   // Assert
   expect(result).toBeDefined();
-  expect(result).toHaveProperty('assignation1');
-  expect(result).toHaveProperty('assignation2');
+  expect(result).toHaveProperty("assignation1");
+  expect(result).toHaveProperty("assignation2");
 });

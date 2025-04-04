@@ -1,16 +1,16 @@
-const { it, expect } = require('@jest/globals');
+const { it, expect } = require("@jest/globals");
 
-const { generateCtx } = require('@leemons/testing');
+const { generateCtx } = require("@leemons/testing");
 
-const { getPermissionName } = require('./getPermissionName');
+const { getPermissionName } = require("./getPermissionName");
 
-it('Should return the permission name without prefix', () => {
+it("Should return the permission name without prefix", () => {
   // Arrange
-  const id = 'ThisIstheId';
+  const id = "ThisIstheId";
   const expectedValue = `assignable.${id}`;
 
   const ctx = generateCtx({
-    pluginName: 'testing',
+    pluginName: "testing",
   });
 
   // Act
@@ -20,12 +20,12 @@ it('Should return the permission name without prefix', () => {
   expect(response).toBe(expectedValue);
 });
 
-it('Should return the permission name with prefix', () => {
+it("Should return the permission name with prefix", () => {
   // Arrange
-  const id = 'ThisIstheId';
+  const id = "ThisIstheId";
 
   const ctx = generateCtx({
-    pluginName: 'testing',
+    pluginName: "testing",
   });
 
   const expectedValue = ctx.prefixPN(`assignable.${id}`);
@@ -37,17 +37,17 @@ it('Should return the permission name with prefix', () => {
   expect(response).toBe(expectedValue);
 });
 
-it('Should throw if no id is provided', () => {
+it("Should throw if no id is provided", () => {
   // Arrange
   const id = null;
 
   const ctx = generateCtx({
-    pluginName: 'testing',
+    pluginName: "testing",
   });
 
   // Act
   const testFn = () => getPermissionName({ id, prefix: true, ctx });
 
   // Assert
-  expect(testFn).toThrow('The assignable id is required');
+  expect(testFn).toThrow("The assignable id is required");
 });

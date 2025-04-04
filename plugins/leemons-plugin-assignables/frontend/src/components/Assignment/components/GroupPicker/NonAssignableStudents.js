@@ -1,12 +1,18 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, createStyles, Alert, UserDisplayItem, Badge } from '@bubbles-ui/components';
-import { useUserAgentsInfo } from '@users/hooks';
+import React from "react";
+import PropTypes from "prop-types";
+import {
+  Box,
+  createStyles,
+  Alert,
+  UserDisplayItem,
+  Badge,
+} from "@bubbles-ui/components";
+import { useUserAgentsInfo } from "@users/hooks";
 
 export const useNonAssignableStudentsStyles = createStyles((theme) => ({
   studentsContainer: {
-    display: 'flex',
-    flexWrap: 'wrap',
+    display: "flex",
+    flexWrap: "wrap",
     marginTop: theme.other.global.spacing.gap.md,
     paddingLeft: theme.other.global.spacing.gap.sm,
     gap: theme.other.global.spacing.gap.md,

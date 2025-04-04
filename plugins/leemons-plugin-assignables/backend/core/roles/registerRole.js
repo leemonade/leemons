@@ -1,7 +1,7 @@
-const { pick } = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { validateRole } = require('../../validations/validateRole');
-const { getRole } = require('./getRole');
+const { pick } = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { validateRole } = require("../../validations/validateRole");
+const { getRole } = require("./getRole");
 
 async function checkIfRoleExists({ name, ctx }) {
   try {
@@ -18,11 +18,11 @@ async function saveRoleLocalizations({ role, data, ctx }) {
   const singular = data.singularName;
 
   return Promise.all([
-    ctx.tx.call('multilanguage.common.addManyByKey', {
+    ctx.tx.call("multilanguage.common.addManyByKey", {
       key: ctx.prefixPN(`roles.${role}.plural`),
       data: plural,
     }),
-    ctx.tx.call('multilanguage.common.addManyByKey', {
+    ctx.tx.call("multilanguage.common.addManyByKey", {
       key: ctx.prefixPN(`roles.${role}.singular`),
       data: singular,
     }),
@@ -57,21 +57,21 @@ async function registerRole({ role: name, ctx, ...data }) {
     // (key === role)
     key: `assignables.${role.name}`,
     ...pick(data, [
-      'order',
-      'creatable',
-      'createUrl',
-      'listCardComponent',
-      'detailComponent',
-      'componentOwner',
-      'menu',
-      'type',
-      'pluralName',
-      'singularName',
+      "order",
+      "creatable",
+      "createUrl",
+      "listCardComponent",
+      "detailComponent",
+      "componentOwner",
+      "menu",
+      "type",
+      "pluralName",
+      "singularName",
     ]),
     // provider: data.provider ?? 'leebrary-assignables',
-    provider: data.provider ?? 'assignables',
+    provider: data.provider ?? "assignables",
   };
-  category.type = category.type || 'activity';
+  category.type = category.type || "activity";
 
   validateRole(role);
 
@@ -88,7 +88,7 @@ async function registerRole({ role: name, ctx, ...data }) {
 
   await saveRoleLocalizations({ role: role.name, data, ctx });
 
-  await ctx.tx.call('leebrary.categories.add', {
+  await ctx.tx.call("leebrary.categories.add", {
     data: {
       ...category,
       order: getOrder(category.order),

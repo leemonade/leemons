@@ -1,4 +1,4 @@
-const { map, difference } = require('lodash');
+const { map, difference } = require("lodash");
 
 /**
  * @async
@@ -14,24 +14,24 @@ const { map, difference } = require('lodash');
 async function getRelatedInstances({ instances, details, ctx }) {
   // Require inside function to avoid circular dependency
   // eslint-disable-next-line global-require
-  const { getInstances } = require('./getInstances');
+  const { getInstances } = require("./getInstances");
 
   const relatedInstancesIds = instances.flatMap((instance) => {
     const { before, after } = instance.relatedAssignableInstances;
 
     const ids = [];
     if (before?.length) {
-      ids.push(...map(before, 'id'));
+      ids.push(...map(before, "id"));
     }
 
     if (after?.length) {
-      ids.push(...map(after, 'id'));
+      ids.push(...map(after, "id"));
     }
 
     return ids;
   });
 
-  const instancesIds = map(instances, 'id');
+  const instancesIds = map(instances, "id");
   const newInstancesIds = difference(relatedInstancesIds, instancesIds);
 
   let newInstancesData = [];

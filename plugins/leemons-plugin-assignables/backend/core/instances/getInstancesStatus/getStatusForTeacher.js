@@ -1,10 +1,10 @@
-const dayjs = require('dayjs');
+const dayjs = require("dayjs");
 
 const INSTANCE_STATUS = {
-  EVALUATED: 'evaluated',
-  EVALUATING: 'started',
-  NEEDS_EVALUATION: 'opened',
-  NOT_FINISHED_BY_STUDENTS: 'assigned',
+  EVALUATED: "evaluated",
+  EVALUATING: "started",
+  NEEDS_EVALUATION: "opened",
+  NOT_FINISHED_BY_STUDENTS: "assigned",
 };
 
 function getAssignationsStatusCount({
@@ -59,7 +59,8 @@ function getAssignationsStatusCount({
 function getStatusForTeacher(instance, { requiredGradesCount }) {
   const requiresScoring = instance?.requiresScoring;
   const activityFinished =
-    !instance.alwaysAvailable && dayjs(instance?.dates?.deadline).isBefore(dayjs());
+    !instance.alwaysAvailable &&
+    dayjs(instance?.dates?.deadline).isBefore(dayjs());
   const assignationsCount = instance?.assignations?.length ?? 0;
 
   const { evaluatedCount, hasGradesCount, didNotFinished, needsEvaluation } =

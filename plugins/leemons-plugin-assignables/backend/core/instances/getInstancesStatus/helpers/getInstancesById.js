@@ -1,6 +1,11 @@
-const { uniq } = require('lodash');
+const { uniq } = require("lodash");
 
-async function getInstancesById({ instances, assignations, classes, getStatusFn }) {
+async function getInstancesById({
+  instances,
+  assignations,
+  classes,
+  getStatusFn,
+}) {
   const instancesById = {};
 
   instances.forEach((instance) => {
@@ -14,7 +19,9 @@ async function getInstancesById({ instances, assignations, classes, getStatusFn 
       assignations: assignations[instance.instance]?.assignations ?? [],
     };
 
-    const subjects = instance.classes.map((classroom) => classes[classroom]?.subject?.id);
+    const subjects = instance.classes.map(
+      (classroom) => classes[classroom]?.subject?.id
+    );
     const requiredGradesCount = uniq(subjects).length;
 
     instancesById[instance.instance] = {

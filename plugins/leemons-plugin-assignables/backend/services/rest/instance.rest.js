@@ -4,18 +4,20 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
-const _ = require('lodash');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
+const _ = require("lodash");
 
-const { getInstance } = require('../../core/instances/getInstance');
-const { getInstances } = require('../../core/instances/getInstances');
-const { removeInstance } = require('../../core/instances/removeInstance/removeInstance');
-const { searchInstances } = require('../../core/instances/searchInstances');
-const { sendReminder } = require('../../core/instances/sendReminder');
-const { updateInstance } = require('../../core/instances/updateInstance');
+const { getInstance } = require("../../core/instances/getInstance");
+const { getInstances } = require("../../core/instances/getInstances");
+const {
+  removeInstance,
+} = require("../../core/instances/removeInstance/removeInstance");
+const { searchInstances } = require("../../core/instances/searchInstances");
+const { sendReminder } = require("../../core/instances/sendReminder");
+const { updateInstance } = require("../../core/instances/updateInstance");
 
 function parseBoolean(value, checkUndefined = true) {
-  const trueValues = ['true', true, '1', 1];
+  const trueValues = ["true", true, "1", 1];
   if (checkUndefined) {
     return _.isNil(value) ? undefined : trueValues.includes(value);
   }
@@ -28,7 +30,7 @@ async function get(ctx) {
   if (id) {
     const assignableInstance = await getInstance({
       id,
-      details: details === 'true',
+      details: details === "true",
       ctx,
     });
 
@@ -39,11 +41,13 @@ async function get(ctx) {
   }
   const instances = await getInstances({
     ids: Array.isArray(ids) ? ids : [ids],
-    details: _.isBoolean(details) ? details : details === 'true',
-    throwOnMissing: _.isBoolean(throwOnMissing) ? throwOnMissing : throwOnMissing === 'true',
+    details: _.isBoolean(details) ? details : details === "true",
+    throwOnMissing: _.isBoolean(throwOnMissing)
+      ? throwOnMissing
+      : throwOnMissing === "true",
     relatedAssignableInstances: _.isBoolean(relatedInstances)
       ? relatedInstances
-      : relatedInstances === 'true',
+      : relatedInstances === "true",
     ctx,
   });
 
@@ -57,8 +61,8 @@ async function get(ctx) {
 module.exports = {
   searchRest: {
     rest: {
-      method: 'GET',
-      path: '/search',
+      method: "GET",
+      path: "/search",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -84,8 +88,8 @@ module.exports = {
   },
   getRest: {
     rest: {
-      method: 'GET',
-      path: '/find',
+      method: "GET",
+      path: "/find",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -94,8 +98,8 @@ module.exports = {
   },
   updateRest: {
     rest: {
-      method: 'PUT',
-      path: '/:id',
+      method: "PUT",
+      path: "/:id",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -117,8 +121,8 @@ module.exports = {
   },
   sendReminderRest: {
     rest: {
-      method: 'POST',
-      path: '/reminder',
+      method: "POST",
+      path: "/reminder",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -134,8 +138,8 @@ module.exports = {
   },
   getRest2: {
     rest: {
-      method: 'GET',
-      path: '/:id',
+      method: "GET",
+      path: "/:id",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -144,11 +148,11 @@ module.exports = {
   },
   deleteRest: {
     rest: {
-      method: 'DELETE',
-      path: '/:id',
+      method: "DELETE",
+      path: "/:id",
     },
     params: {
-      id: 'string',
+      id: "string",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

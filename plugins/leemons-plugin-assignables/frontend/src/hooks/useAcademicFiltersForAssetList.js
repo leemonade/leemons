@@ -1,22 +1,28 @@
-import { Select } from '@bubbles-ui/components';
-import React from 'react';
+import { Select } from "@bubbles-ui/components";
+import React from "react";
 
-import { SelectSubject, SubjectItem } from '@academic-portfolio/components/SelectSubject';
-import { useCenterPrograms, useSessionClasses } from '@academic-portfolio/hooks';
-import { getMultiClassData } from '@assignables/helpers/getClassData';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useUserCenters } from '@users/hooks';
-import _ from 'lodash';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import {
+  SelectSubject,
+  SubjectItem,
+} from "@academic-portfolio/components/SelectSubject";
+import {
+  useCenterPrograms,
+  useSessionClasses,
+} from "@academic-portfolio/hooks";
+import { getMultiClassData } from "@assignables/helpers/getClassData";
+import { unflatten } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useUserCenters } from "@users/hooks";
+import _ from "lodash";
+import { Controller, useForm, useWatch } from "react-hook-form";
 
 export function useAssignablesAssetListLocalizations() {
-  const [, translations] = useTranslateLoader('assignables.assetListFilters');
+  const [, translations] = useTranslateLoader("assignables.assetListFilters");
 
   return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, 'assignables.assetListFilters');
+      const data = _.get(res, "assignables.assetListFilters");
 
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
@@ -29,8 +35,13 @@ export function useAssignablesAssetListLocalizations() {
 
 function usePrograms({ labels }) {
   const { data: centers } = useUserCenters();
-  const centersIds = React.useMemo(() => centers?.map((center) => center.id) || [], [centers]);
-  const programsQueries = useCenterPrograms(centersIds, { enabled: !!centersIds?.length });
+  const centersIds = React.useMemo(
+    () => centers?.map((center) => center.id) || [],
+    [centers]
+  );
+  const programsQueries = useCenterPrograms(centersIds, {
+    enabled: !!centersIds?.length,
+  });
 
   const programsAreLoading = React.useMemo(
     () => programsQueries.some((queryInfo) => queryInfo.isLoading),
@@ -43,8 +54,8 @@ function usePrograms({ labels }) {
         ? []
         : [
             {
-              value: 'all',
-              label: labels?.allPrograms || '',
+              value: "all",
+              label: labels?.allPrograms || "",
             },
             ...programsQueries.flatMap((queryInfo) => {
               const centerPrograms = queryInfo.data;
@@ -58,22 +69,27 @@ function usePrograms({ labels }) {
   );
 }
 
-export function useSubjects({ labels, control, selectedProgram, useAll = true }) {
+export function useSubjects({
+  labels,
+  control,
+  selectedProgram,
+  useAll = true,
+}) {
   if (!selectedProgram) {
     // eslint-disable-next-line no-param-reassign
-    selectedProgram = useWatch({ control, name: 'program' });
+    selectedProgram = useWatch({ control, name: "program" });
   }
   const { data: classesData } = useSessionClasses({ showType: true });
   const multiClassData = getMultiClassData();
 
   return React.useMemo(() => {
-    if (selectedProgram === 'all' || !classesData?.length) {
+    if (selectedProgram === "all" || !classesData?.length) {
       return [];
     }
 
     const subjects = {};
     let goodClasses = classesData;
-    if (selectedProgram && selectedProgram !== 'all') {
+    if (selectedProgram && selectedProgram !== "all") {
       goodClasses = _.filter(goodClasses, { program: selectedProgram });
     }
 
@@ -87,10 +103,10 @@ export function useSubjects({ labels, control, selectedProgram, useAll = true })
           type: klass.type,
         };
       } else if (
-        subjects[klass.subject.id].type !== 'main-teacher' &&
-        klass.type === 'main-teacher'
+        subjects[klass.subject.id].type !== "main-teacher" &&
+        klass.type === "main-teacher"
       ) {
-        subjects[klass.subject.id].type = 'main-teacher';
+        subjects[klass.subject.id].type = "main-teacher";
       }
     });
 
@@ -98,9 +114,9 @@ export function useSubjects({ labels, control, selectedProgram, useAll = true })
 
     if (useAll) {
       result.push({
-        label: labels?.allSubjects || '',
-        value: 'all',
-        group: labels?.allSubjects || '',
+        label: labels?.allSubjects || "",
+        value: "all",
+        group: labels?.allSubjects || "",
         icon: multiClassData.icon,
         color: multiClassData.color,
       });
@@ -111,22 +127,30 @@ export function useSubjects({ labels, control, selectedProgram, useAll = true })
       ...Object.values(subjects).map((subject) => ({
         ...subject,
         group:
-          subject.type === 'main-teacher'
+          subject.type === "main-teacher"
             ? labels?.subjectGroups?.mySubjects
             : labels?.subjectGroups?.collaborations,
       })),
     ];
-  }, [classesData, selectedProgram, labels?.allSubjects, labels?.subjectGroups, multiClassData]);
+  }, [
+    classesData,
+    selectedProgram,
+    labels?.allSubjects,
+    labels?.subjectGroups,
+    multiClassData,
+  ]);
 }
 
 function useOnChange({ onChange, watch, getValues }) {
   const onSubmit = React.useCallback(
     (values) => {
-      if (typeof onChange === 'function') {
+      if (typeof onChange === "function") {
         onChange({
-          program: values.program === 'all' ? null : values.program,
+          program: values.program === "all" ? null : values.program,
           subjects:
-            values.subject && values.subject !== 'all' && values.program !== 'all'
+            values.subject &&
+            values.subject !== "all" &&
+            values.program !== "all"
               ? [values.subject]
               : undefined,
         });
@@ -145,11 +169,11 @@ function useOnChange({ onChange, watch, getValues }) {
 
 export function SelectAutoClearable({ data, value, onChange, ...props }) {
   React.useEffect(() => {
-    if (typeof onChange === 'function') {
+    if (typeof onChange === "function") {
       if (value && !data.find((item) => item.value === value)) {
         onChange(null);
-      } else if (!value && data?.length && data[0].value === 'all') {
-        onChange('all');
+      } else if (!value && data?.length && data[0].value === "all") {
+        onChange("all");
       }
     }
   }, [data]);
@@ -168,7 +192,10 @@ export function SelectAutoClearable({ data, value, onChange, ...props }) {
         />
       )}
       itemComponent={(item) => (
-        <SubjectItem {...item} subject={data.find((d) => d.value === item.value)} />
+        <SubjectItem
+          {...item}
+          subject={data.find((d) => d.value === item.value)}
+        />
       )}
       dropdownPosition="flip"
     />
@@ -178,7 +205,7 @@ export function SelectAutoClearable({ data, value, onChange, ...props }) {
 function SubjectFilters({ onChange, loading, hideProgramSelect, useLabels }) {
   const { control, watch, getValues } = useForm({
     defaultValues: {
-      program: 'all',
+      program: "all",
       subject: null,
     },
   });
@@ -199,7 +226,7 @@ function SubjectFilters({ onChange, loading, hideProgramSelect, useLabels }) {
       {!hideProgramSelect ? (
         <Controller
           control={control}
-          name={'program'}
+          name={"program"}
           render={({ field }) => (
             <Select
               {...field}
@@ -215,7 +242,7 @@ function SubjectFilters({ onChange, loading, hideProgramSelect, useLabels }) {
       ) : null}
       <Controller
         control={control}
-        name={'subject'}
+        name={"subject"}
         render={({ field }) => (
           <SelectSubject
             {...field}
@@ -231,7 +258,10 @@ function SubjectFilters({ onChange, loading, hideProgramSelect, useLabels }) {
   );
 }
 
-export function useAcademicFiltersForAssetList({ hideProgramSelect, useLabels } = {}) {
+export function useAcademicFiltersForAssetList({
+  hideProgramSelect,
+  useLabels,
+} = {}) {
   const [filters, setFilters] = React.useState(undefined);
   const onChange = React.useCallback(setFilters);
 

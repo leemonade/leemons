@@ -1,10 +1,11 @@
 /* eslint-disable import/prefer-default-export */
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
 function usePendingEvaluationsCount({ instance }) {
   const moduleTotal = useMemo(() => {
     let requireScoringCounter = 0;
-    const activitiesStatus = instance?.students?.[0]?.metadata?.moduleStatus || [];
+    const activitiesStatus =
+      instance?.students?.[0]?.metadata?.moduleStatus || [];
     if (activitiesStatus) {
       activitiesStatus.forEach((activity) => {
         if (activity.requiresScoring) {
@@ -35,9 +36,9 @@ function usePendingEvaluationsCount({ instance }) {
       });
     });
 
-    const activitiestoEvaluateIds = Object.keys(activitiesFullyEvaluated).filter(
-      (id) => activitiesCompleted[id] > activitiesFullyEvaluated[id]
-    );
+    const activitiestoEvaluateIds = Object.keys(
+      activitiesFullyEvaluated
+    ).filter((id) => activitiesCompleted[id] > activitiesFullyEvaluated[id]);
 
     return activitiestoEvaluateIds.length ?? 0;
   }, [instance?.students]);

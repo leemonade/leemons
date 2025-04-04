@@ -1,14 +1,19 @@
-const dayjs = require('dayjs');
+const dayjs = require("dayjs");
 
-const { JOBS } = require('../../../services/jobs/instances.job');
+const { JOBS } = require("../../../services/jobs/instances.job");
 
-const { prepareEmailPerStudent } = require('./helpers/prepareEmailPerStudent');
-const { sendEmail } = require('./helpers/sendMail');
+const { prepareEmailPerStudent } = require("./helpers/prepareEmailPerStudent");
+const { sendEmail } = require("./helpers/sendMail");
 
-module.exports = async function scheduleEmail({ instance, userAgents, classes, ctx }) {
+module.exports = async function scheduleEmail({
+  instance,
+  userAgents,
+  classes,
+  ctx,
+}) {
   const [hostname, hostnameAPI] = await Promise.all([
-    ctx.tx.call('users.platform.getHostname'),
-    ctx.tx.call('users.platform.getHostnameApi'),
+    ctx.tx.call("users.platform.getHostname"),
+    ctx.tx.call("users.platform.getHostnameApi"),
   ]);
 
   const { alwaysAvailable, dates } = instance;
@@ -36,12 +41,18 @@ module.exports = async function scheduleEmail({ instance, userAgents, classes, c
   }
 
   if (hasStarted) {
-    await Promise.all(contexts.map((context) => sendEmail({ ...context, ctx })));
+    await Promise.all(
+      contexts.map((context) => sendEmail({ ...context, ctx }))
+    );
   } else {
-    await ctx.cronJob.schedule(dates.start, JOBS.FREE.SEND_ACTIVITY_START_EMAIL, {
-      contexts,
-      instanceId: instance.id,
-      deploymentID: ctx.meta.deploymentID,
-    });
+    await ctx.cronJob.schedule(
+      dates.start,
+      JOBS.FREE.SEND_ACTIVITY_START_EMAIL,
+      {
+        contexts,
+        instanceId: instance.id,
+        deploymentID: ctx.meta.deploymentID,
+      }
+    );
   }
 };

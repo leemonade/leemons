@@ -1,4 +1,4 @@
-const { validateGrade } = require('../../validations/validateGrade');
+const { validateGrade } = require("../../validations/validateGrade");
 
 async function registerGrade({
   assignation,

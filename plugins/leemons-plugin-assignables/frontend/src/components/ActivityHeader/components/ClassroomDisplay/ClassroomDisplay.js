@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { ClassroomItemDisplay } from '@academic-portfolio/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { ClassroomItemDisplay } from "@academic-portfolio/components";
 
 export default function ClassroomDisplay({ instance, hidden }) {
   if (hidden) {

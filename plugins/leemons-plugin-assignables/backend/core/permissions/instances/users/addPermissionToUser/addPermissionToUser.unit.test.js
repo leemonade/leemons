@@ -1,30 +1,30 @@
-const { it, expect } = require('@jest/globals');
-const { generateCtx } = require('@leemons/testing');
+const { it, expect } = require("@jest/globals");
+const { generateCtx } = require("@leemons/testing");
 
-const { addPermissionToUser } = require('./addPermissionToUser');
+const { addPermissionToUser } = require("./addPermissionToUser");
 
 const addPermissionToUserHandler = jest.fn();
 
-it('Should add Permission to User', async () => {
+it("Should add Permission to User", async () => {
   // Arrange
   const ctx = generateCtx({
     actions: {
-      'users.permissions.addCustomPermissionToUserAgent':
+      "users.permissions.addCustomPermissionToUserAgent":
         addPermissionToUserHandler,
     },
-    pluginName: 'assignables',
+    pluginName: "assignables",
   });
 
   const expectedValue = {
-    actions: ['view', 'edit'],
-    role: 'teacher',
-    userAgents: ['userAgentId'],
+    actions: ["view", "edit"],
+    role: "teacher",
+    userAgents: ["userAgentId"],
   };
   const mockParams = {
-    assignableInstance: 'assignableInstanceId',
-    assignable: 'assignableId',
-    userAgents: ['userAgentId'],
-    role: 'teacher',
+    assignableInstance: "assignableInstanceId",
+    assignable: "assignableId",
+    userAgents: ["userAgentId"],
+    role: "teacher",
     ctx,
   };
 
@@ -36,8 +36,8 @@ it('Should add Permission to User', async () => {
     userAgentId: mockParams.userAgents,
     data: {
       permissionName:
-        'assignables.assignable.assignableId.assignableInstance.assignableInstanceId',
-      actionNames: ['view', 'edit'],
+        "assignables.assignable.assignableId.assignableInstance.assignableInstanceId",
+      actionNames: ["view", "edit"],
     },
   });
   expect(response).toEqual(expectedValue);

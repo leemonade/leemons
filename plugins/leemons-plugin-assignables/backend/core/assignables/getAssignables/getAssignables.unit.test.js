@@ -6,24 +6,28 @@ const {
   beforeEach,
   jest: globalJest,
   describe,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const { pick, omit } = require('lodash');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const { pick, omit } = require("lodash");
 
-globalJest.mock('../../permissions/assignables/users/getUserPermissions');
-globalJest.mock('../../roles');
-globalJest.mock('../../subjects');
-globalJest.mock('../../leebrary/assets');
+globalJest.mock("../../permissions/assignables/users/getUserPermissions");
+globalJest.mock("../../roles");
+globalJest.mock("../../subjects");
+globalJest.mock("../../leebrary/assets");
 
-const { getAssignables } = require('./getAssignables');
-const { assignablesSchema } = require('../../../models/assignables');
-const { getAssignableObject } = require('../../../__fixtures__/getAssignableObject');
+const { getAssignables } = require("./getAssignables");
+const { assignablesSchema } = require("../../../models/assignables");
+const {
+  getAssignableObject,
+} = require("../../../__fixtures__/getAssignableObject");
 
-const { getRoles } = require('../../roles');
-const { getSubjects } = require('../../subjects');
-const { getAsset } = require('../../leebrary/assets');
-const { getUserPermissions } = require('../../permissions/assignables/users/getUserPermissions');
+const { getRoles } = require("../../roles");
+const { getSubjects } = require("../../subjects");
+const { getAsset } = require("../../leebrary/assets");
+const {
+  getUserPermissions,
+} = require("../../permissions/assignables/users/getUserPermissions");
 
 let mongooseConnection;
 let disconnectMongoose;
@@ -61,7 +65,7 @@ function getActions({ assignable, assetIds, mock }) {
   const roleDetails = {
     [assignable.role]: {
       role: assignable.role,
-      detail: 'This object defined the role properties',
+      detail: "This object defined the role properties",
     },
   };
   const subjects = {
@@ -73,16 +77,16 @@ function getActions({ assignable, assetIds, mock }) {
       {
         id,
         name: id,
-        detail: 'This is the asset detail object',
+        detail: "This is the asset detail object",
       },
     ])
   );
 
   const actions = {
-    'common.versionControl.getVersion': ({ id }) =>
+    "common.versionControl.getVersion": ({ id }) =>
       id.map((eachId) => ({
         uuid: eachId,
-        version: '1.0.0',
+        version: "1.0.0",
         fullId: eachId,
         published: false,
       })),
@@ -90,19 +94,26 @@ function getActions({ assignable, assetIds, mock }) {
 
   if (mock.getAsset) {
     getAsset.mockImplementation(({ id: assetsIds }) =>
-      Object.values(pick(assets, Array.isArray(assetsIds) ? assetsIds : [assetsIds]))
+      Object.values(
+        pick(assets, Array.isArray(assetsIds) ? assetsIds : [assetsIds])
+      )
     );
   }
   if (mock.getRoles) {
     getRoles.mockImplementation(({ roles }) => pick(roleDetails, roles));
   }
   if (mock.getSubjects) {
-    getSubjects.mockImplementation(({ assignableIds }) => pick(subjects, assignableIds));
+    getSubjects.mockImplementation(({ assignableIds }) =>
+      pick(subjects, assignableIds)
+    );
   }
   if (mock.getUserPermissions) {
     getUserPermissions.mockImplementation(({ assignables }) =>
       Object.fromEntries(
-        assignables.map(({ id: assignableId }) => [assignableId, { actions: ['view'] }])
+        assignables.map(({ id: assignableId }) => [
+          assignableId,
+          { actions: ["view"] },
+        ])
       )
     );
   }
@@ -116,12 +127,12 @@ function getActions({ assignable, assetIds, mock }) {
   };
 }
 
-describe('Intended execution', () => {
-  it('Returns the requested assignable', async () => {
+describe("Intended execution", () => {
+  it("Returns the requested assignable", async () => {
     // Arrange
     const assignable = getAssignableObject();
-    const id = 'assignable-id@1.0.0';
-    const assetId = 'asset-id';
+    const id = "assignable-id@1.0.0";
+    const assetId = "asset-id";
 
     const { actions, assets, roleDetails } = getActions({
       assignable,
@@ -136,7 +147,7 @@ describe('Intended execution', () => {
 
     const expectedValue = {
       id,
-      ...omit(assignable, ['subjects', 'asset']),
+      ...omit(assignable, ["subjects", "asset"]),
       roleDetails: roleDetails[assignable.role],
       asset: assets[assetId],
     };
@@ -144,24 +155,28 @@ describe('Intended execution', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          "Assignables",
+          assignablesSchema
+        ),
       },
     });
 
     const initialValue = {
       id,
       ...pick(assignable, [
-        'role',
-        'gradable',
-        'center',
-        'statement',
-        'development',
-        'duration',
-        'submission',
-        'resources',
-        'metadata',
+        "role",
+        "gradable",
+        "center",
+        "statement",
+        "development",
+        "duration",
+        "submission",
+        "resources",
+        "metadata",
       ]),
-      asset: 'asset-id',
+      asset: "asset-id",
     };
     await ctx.db.Assignables.create(initialValue);
 
@@ -172,12 +187,12 @@ describe('Intended execution', () => {
     expect(response).toEqual([expect.objectContaining(expectedValue)]);
   });
 
-  it('Returns all the requested assignables', async () => {
+  it("Returns all the requested assignables", async () => {
     // Arrange
     const assignable = getAssignableObject();
-    const firstId = 'assignable-id@1.0.0';
-    const secondId = 'assignable-id@2.0.0';
-    const assetId = 'asset-id';
+    const firstId = "assignable-id@1.0.0";
+    const secondId = "assignable-id@2.0.0";
+    const assetId = "asset-id";
 
     const { actions, assets, roleDetails } = getActions({
       assignable,
@@ -193,13 +208,13 @@ describe('Intended execution', () => {
     const expectedValues = [
       {
         id: firstId,
-        ...omit(assignable, ['subjects', 'asset']),
+        ...omit(assignable, ["subjects", "asset"]),
         roleDetails: roleDetails[assignable.role],
         asset: assets[assetId],
       },
       {
         id: secondId,
-        ...omit(assignable, ['subjects', 'asset']),
+        ...omit(assignable, ["subjects", "asset"]),
         roleDetails: roleDetails[assignable.role],
         asset: assets[assetId],
       },
@@ -208,7 +223,11 @@ describe('Intended execution', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          "Assignables",
+          assignablesSchema
+        ),
       },
     });
 
@@ -216,32 +235,32 @@ describe('Intended execution', () => {
       {
         id: firstId,
         ...pick(assignable, [
-          'role',
-          'gradable',
-          'center',
-          'statement',
-          'development',
-          'duration',
-          'submission',
-          'resources',
-          'metadata',
+          "role",
+          "gradable",
+          "center",
+          "statement",
+          "development",
+          "duration",
+          "submission",
+          "resources",
+          "metadata",
         ]),
-        asset: 'asset-id',
+        asset: "asset-id",
       },
       {
         id: secondId,
         ...pick(assignable, [
-          'role',
-          'gradable',
-          'center',
-          'statement',
-          'development',
-          'duration',
-          'submission',
-          'resources',
-          'metadata',
+          "role",
+          "gradable",
+          "center",
+          "statement",
+          "development",
+          "duration",
+          "submission",
+          "resources",
+          "metadata",
         ]),
-        asset: 'asset-id',
+        asset: "asset-id",
       },
     ];
     await ctx.db.Assignables.insertMany(initialValues);
@@ -252,16 +271,18 @@ describe('Intended execution', () => {
     // Assert
     expect(response).toEqual(
       expect.arrayContaining(
-        expectedValues.map((expectedValue) => expect.objectContaining(expectedValue))
+        expectedValues.map((expectedValue) =>
+          expect.objectContaining(expectedValue)
+        )
       )
     );
   });
 
-  it('Returns the asset id if the asset field is omitted', async () => {
+  it("Returns the asset id if the asset field is omitted", async () => {
     // Arrange
     const assignable = getAssignableObject();
-    const id = 'assignable-id@1.0.0';
-    const assetId = 'asset-id';
+    const id = "assignable-id@1.0.0";
+    const assetId = "asset-id";
 
     const { actions } = getActions({
       assignable,
@@ -278,24 +299,28 @@ describe('Intended execution', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          "Assignables",
+          assignablesSchema
+        ),
       },
     });
 
     const initialValue = {
       id,
       ...pick(assignable, [
-        'role',
-        'gradable',
-        'center',
-        'statement',
-        'development',
-        'duration',
-        'submission',
-        'resources',
-        'metadata',
+        "role",
+        "gradable",
+        "center",
+        "statement",
+        "development",
+        "duration",
+        "submission",
+        "resources",
+        "metadata",
       ]),
-      asset: 'asset-id',
+      asset: "asset-id",
     };
     await ctx.db.Assignables.create(initialValue);
 
@@ -311,10 +336,10 @@ describe('Intended execution', () => {
   });
 });
 
-describe('Throw on missing property', () => {
-  it('Throws an error when not found', async () => {
+describe("Throw on missing property", () => {
+  it("Throws an error when not found", async () => {
     // Arrange
-    const id = 'assignable-id@1.0.0';
+    const id = "assignable-id@1.0.0";
 
     const { actions } = getActions({
       assignable: {},
@@ -330,7 +355,11 @@ describe('Throw on missing property', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          "Assignables",
+          assignablesSchema
+        ),
       },
     });
 
@@ -343,12 +372,12 @@ describe('Throw on missing property', () => {
     );
   });
 
-  it('Throws an error if user lacks permissions', async () => {
+  it("Throws an error if user lacks permissions", async () => {
     // Arrange
     const assignable = getAssignableObject();
-    const firstId = 'assignable-id@1.0.0';
-    const secondId = 'assignable-id@2.0.0';
-    const assetId = 'asset-id';
+    const firstId = "assignable-id@1.0.0";
+    const secondId = "assignable-id@2.0.0";
+    const assetId = "asset-id";
 
     const { actions } = getActions({
       assignable,
@@ -365,12 +394,16 @@ describe('Throw on missing property', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          "Assignables",
+          assignablesSchema
+        ),
       },
     });
 
     getUserPermissions.mockImplementation(() => ({
-      [firstId]: { actions: ['view'] },
+      [firstId]: { actions: ["view"] },
       [secondId]: { actions: [] },
     }));
 
@@ -378,32 +411,32 @@ describe('Throw on missing property', () => {
       {
         id: firstId,
         ...pick(assignable, [
-          'role',
-          'gradable',
-          'center',
-          'statement',
-          'development',
-          'duration',
-          'submission',
-          'resources',
-          'metadata',
+          "role",
+          "gradable",
+          "center",
+          "statement",
+          "development",
+          "duration",
+          "submission",
+          "resources",
+          "metadata",
         ]),
-        asset: 'asset-id',
+        asset: "asset-id",
       },
       {
         id: secondId,
         ...pick(assignable, [
-          'role',
-          'gradable',
-          'center',
-          'statement',
-          'development',
-          'duration',
-          'submission',
-          'resources',
-          'metadata',
+          "role",
+          "gradable",
+          "center",
+          "statement",
+          "development",
+          "duration",
+          "submission",
+          "resources",
+          "metadata",
         ]),
-        asset: 'asset-id',
+        asset: "asset-id",
       },
     ];
     await ctx.db.Assignables.insertMany(initialValues);
@@ -418,10 +451,10 @@ describe('Throw on missing property', () => {
   });
 });
 
-describe('Do not throw on missing property', () => {
-  it('Returns empty array when not found', async () => {
+describe("Do not throw on missing property", () => {
+  it("Returns empty array when not found", async () => {
     // Arrange
-    const id = 'assignable-id@1.0.0';
+    const id = "assignable-id@1.0.0";
 
     const { actions } = getActions({
       assignable: {},
@@ -437,7 +470,11 @@ describe('Do not throw on missing property', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          "Assignables",
+          assignablesSchema
+        ),
       },
     });
 
@@ -452,12 +489,12 @@ describe('Do not throw on missing property', () => {
     await expect(response).toEqual([]);
   });
 
-  it('Omits the not found assignable', async () => {
+  it("Omits the not found assignable", async () => {
     // Arrange
     const assignable = getAssignableObject();
-    const firstId = 'assignable-id@1.0.0';
-    const secondId = 'assignable-id@2.0.0';
-    const assetId = 'asset-id';
+    const firstId = "assignable-id@1.0.0";
+    const secondId = "assignable-id@2.0.0";
+    const assetId = "asset-id";
 
     const { actions } = getActions({
       assignable,
@@ -474,12 +511,16 @@ describe('Do not throw on missing property', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          "Assignables",
+          assignablesSchema
+        ),
       },
     });
 
     getUserPermissions.mockImplementation(() => ({
-      [firstId]: { actions: ['view'] },
+      [firstId]: { actions: ["view"] },
       [secondId]: { actions: [] },
     }));
 
@@ -487,32 +528,32 @@ describe('Do not throw on missing property', () => {
       {
         id: firstId,
         ...pick(assignable, [
-          'role',
-          'gradable',
-          'center',
-          'statement',
-          'development',
-          'duration',
-          'submission',
-          'resources',
-          'metadata',
+          "role",
+          "gradable",
+          "center",
+          "statement",
+          "development",
+          "duration",
+          "submission",
+          "resources",
+          "metadata",
         ]),
-        asset: 'asset-id',
+        asset: "asset-id",
       },
       {
         id: secondId,
         ...pick(assignable, [
-          'role',
-          'gradable',
-          'center',
-          'statement',
-          'development',
-          'duration',
-          'submission',
-          'resources',
-          'metadata',
+          "role",
+          "gradable",
+          "center",
+          "statement",
+          "development",
+          "duration",
+          "submission",
+          "resources",
+          "metadata",
         ]),
-        asset: 'asset-id',
+        asset: "asset-id",
       },
     ];
     await ctx.db.Assignables.insertMany(initialValues);
@@ -526,17 +567,17 @@ describe('Do not throw on missing property', () => {
 
     // Assert
     expect(response).toHaveLength(1);
-    expect(response[0]).toHaveProperty('id', firstId);
+    expect(response[0]).toHaveProperty("id", firstId);
   });
 });
 
-describe('ShowDeleted property', () => {
-  it('Does not return the deleted assignables', async () => {
+describe("ShowDeleted property", () => {
+  it("Does not return the deleted assignables", async () => {
     // Arrange
     const assignable = getAssignableObject();
-    const firstId = 'assignable-id@1.0.0';
-    const secondId = 'assignable-id@2.0.0';
-    const assetId = 'asset-id';
+    const firstId = "assignable-id@1.0.0";
+    const secondId = "assignable-id@2.0.0";
+    const assetId = "asset-id";
 
     const { actions } = getActions({
       assignable,
@@ -552,7 +593,11 @@ describe('ShowDeleted property', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          "Assignables",
+          assignablesSchema
+        ),
       },
     });
 
@@ -560,32 +605,32 @@ describe('ShowDeleted property', () => {
       {
         id: firstId,
         ...pick(assignable, [
-          'role',
-          'gradable',
-          'center',
-          'statement',
-          'development',
-          'duration',
-          'submission',
-          'resources',
-          'metadata',
+          "role",
+          "gradable",
+          "center",
+          "statement",
+          "development",
+          "duration",
+          "submission",
+          "resources",
+          "metadata",
         ]),
-        asset: 'asset-id',
+        asset: "asset-id",
       },
       {
         id: secondId,
         ...pick(assignable, [
-          'role',
-          'gradable',
-          'center',
-          'statement',
-          'development',
-          'duration',
-          'submission',
-          'resources',
-          'metadata',
+          "role",
+          "gradable",
+          "center",
+          "statement",
+          "development",
+          "duration",
+          "submission",
+          "resources",
+          "metadata",
         ]),
-        asset: 'asset-id',
+        asset: "asset-id",
         isDeleted: true,
       },
     ];
@@ -601,15 +646,15 @@ describe('ShowDeleted property', () => {
 
     // Assert
     expect(response).toHaveLength(1);
-    expect(response[0]).toHaveProperty('id', firstId);
+    expect(response[0]).toHaveProperty("id", firstId);
   });
 
-  it('Does return both deleted and not deleted assignables', async () => {
+  it("Does return both deleted and not deleted assignables", async () => {
     // Arrange
     const assignable = getAssignableObject();
-    const firstId = 'assignable-id@1.0.0';
-    const secondId = 'assignable-id@2.0.0';
-    const assetId = 'asset-id';
+    const firstId = "assignable-id@1.0.0";
+    const secondId = "assignable-id@2.0.0";
+    const assetId = "asset-id";
 
     const { actions } = getActions({
       assignable,
@@ -625,7 +670,11 @@ describe('ShowDeleted property', () => {
     const ctx = generateCtx({
       actions,
       models: {
-        Assignables: newModel(mongooseConnection, 'Assignables', assignablesSchema),
+        Assignables: newModel(
+          mongooseConnection,
+          "Assignables",
+          assignablesSchema
+        ),
       },
     });
 
@@ -633,32 +682,32 @@ describe('ShowDeleted property', () => {
       {
         id: firstId,
         ...pick(assignable, [
-          'role',
-          'gradable',
-          'center',
-          'statement',
-          'development',
-          'duration',
-          'submission',
-          'resources',
-          'metadata',
+          "role",
+          "gradable",
+          "center",
+          "statement",
+          "development",
+          "duration",
+          "submission",
+          "resources",
+          "metadata",
         ]),
-        asset: 'asset-id',
+        asset: "asset-id",
       },
       {
         id: secondId,
         ...pick(assignable, [
-          'role',
-          'gradable',
-          'center',
-          'statement',
-          'development',
-          'duration',
-          'submission',
-          'resources',
-          'metadata',
+          "role",
+          "gradable",
+          "center",
+          "statement",
+          "development",
+          "duration",
+          "submission",
+          "resources",
+          "metadata",
         ]),
-        asset: 'asset-id',
+        asset: "asset-id",
         isDeleted: true,
       },
     ];
@@ -674,7 +723,7 @@ describe('ShowDeleted property', () => {
 
     // Assert
     expect(response).toHaveLength(2);
-    expect(response[0]).toHaveProperty('id', firstId);
-    expect(response[1]).toHaveProperty('id', secondId);
+    expect(response[0]).toHaveProperty("id", firstId);
+    expect(response[1]).toHaveProperty("id", secondId);
   });
 });

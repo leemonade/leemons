@@ -1,24 +1,28 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { Box } from '@bubbles-ui/components';
-import { OpenIcon, TimeClockCircleIcon, CheckCircleIcon } from '@bubbles-ui/icons/outline';
-import { ResponsiveRadialBar } from '@nivo/radial-bar';
-import { useStatusGraphStyles } from './StatusGraph.styles';
+import React, { useMemo } from "react";
+import PropTypes from "prop-types";
+import { Box } from "@bubbles-ui/components";
+import {
+  OpenIcon,
+  TimeClockCircleIcon,
+  CheckCircleIcon,
+} from "@bubbles-ui/icons/outline";
+import { ResponsiveRadialBar } from "@nivo/radial-bar";
+import { useStatusGraphStyles } from "./StatusGraph.styles";
 
-const FONT_FAMILY = 'Albert Sans';
+const FONT_FAMILY = "Albert Sans";
 
 const THEME = {
   labels: {
     text: {
       fontSize: 14,
-      fill: '#1A1A1E',
+      fill: "#1A1A1E",
       fontFamily: FONT_FAMILY,
     },
   },
   legends: {
     text: {
       fontSize: 13,
-      fill: '#70707B',
+      fill: "#70707B",
       fontFamily: FONT_FAMILY,
     },
   },
@@ -34,7 +38,7 @@ function CenteredMetric({ studentCount, center }) {
       dominantBaseline="central"
       style={{
         fontSize: 18,
-        fill: '#70707B',
+        fill: "#70707B",
         fontFamily: FONT_FAMILY,
       }}
     >
@@ -70,7 +74,7 @@ export default function StatusGraph({ studentCount, status }) {
       return { x: estado.x, y: estado.y - temp[index - 1].y };
     });
 
-    return [{ id: 'status', data: newData.reverse() }];
+    return [{ id: "status", data: newData.reverse() }];
   }, [data]);
 
   return (
@@ -90,32 +94,32 @@ export default function StatusGraph({ studentCount, status }) {
         circularAxisOuter={null}
         enableLabels={true}
         animate={false}
-        colors={['#FFEA67', '#B5AFD4', '#69A5CD', '#A4D15E', '#FFAD5B']}
+        colors={["#FFEA67", "#B5AFD4", "#69A5CD", "#A4D15E", "#FFAD5B"]}
         layers={[
-          'bars',
-          'labels',
-          'legends',
+          "bars",
+          "labels",
+          "legends",
           (layer) => <CenteredMetric {...layer} studentCount={studentCount} />,
         ]}
         legends={[
           {
-            anchor: 'bottom',
-            direction: 'row',
+            anchor: "bottom",
+            direction: "row",
             justify: false,
             translateX: 0,
             translateY: -240,
             itemsSpacing: 6,
-            itemDirection: 'left-to-right',
+            itemDirection: "left-to-right",
             itemWidth: 95,
             itemHeight: 18,
-            itemTextColor: '#1A1A1E',
+            itemTextColor: "#1A1A1E",
             symbolSize: 18,
-            symbolShape: 'square',
+            symbolShape: "square",
             effects: [
               {
-                on: 'hover',
+                on: "hover",
                 style: {
-                  itemTextColor: '#000',
+                  itemTextColor: "#000",
                 },
               },
             ],
@@ -142,21 +146,21 @@ StatusGraph.defaultProps = {
   studentCount: 300,
   status: [
     {
-      id: 'opened',
-      label: 'Abierta',
+      id: "opened",
+      label: "Abierta",
       icon: <OpenIcon />,
 
       studentCount: 300,
     },
     {
-      id: 'started',
-      label: 'Empezada',
+      id: "started",
+      label: "Empezada",
       icon: <TimeClockCircleIcon />,
       studentCount: 55,
     },
     {
-      id: 'submitted',
-      label: 'Entregada',
+      id: "submitted",
+      label: "Entregada",
       icon: <CheckCircleIcon />,
       studentCount: 0,
     },

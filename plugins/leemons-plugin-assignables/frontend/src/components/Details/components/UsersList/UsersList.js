@@ -1,34 +1,34 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from "react";
 
-import { SearchInput, Box, Text } from '@bubbles-ui/components';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
+import { SearchInput, Box, Text } from "@bubbles-ui/components";
+import { unflatten } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import _ from "lodash";
+import PropTypes from "prop-types";
 
-import prefixPN from '../../../../helpers/prefixPN';
+import prefixPN from "../../../../helpers/prefixPN";
 
-import StudentsList from './StudentsList';
-import useUserListStyles from './UsersList.styles';
-import useParsedStudents from './helpers/useParseStudents';
+import StudentsList from "./StudentsList";
+import useUserListStyles from "./UsersList.styles";
+import useParsedStudents from "./helpers/useParseStudents";
 
 function useUserListLocalizations() {
   const [, translations] = useTranslateLoader([
-    prefixPN('studentsList'),
-    prefixPN('activity_status'),
-    prefixPN('activities_filters.seeAll'),
+    prefixPN("studentsList"),
+    prefixPN("activity_status"),
+    prefixPN("activities_filters.seeAll"),
   ]);
 
   const { labels, placeholders, descriptions, status, seeAll } = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = _.get(res, prefixPN('studentsList'));
+      const data = _.get(res, prefixPN("studentsList"));
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
       return {
         ...data,
-        status: _.get(res, prefixPN('activity_status')),
-        seeAll: _.get(res, prefixPN('activities_filters.seeAll')),
+        status: _.get(res, prefixPN("activity_status")),
+        seeAll: _.get(res, prefixPN("activities_filters.seeAll")),
       };
     }
     return {
@@ -36,7 +36,7 @@ function useUserListLocalizations() {
       placeholders: {},
       descriptions: {},
       status: {},
-      seeAll: '',
+      seeAll: "",
     };
   }, [translations]);
 
@@ -50,16 +50,16 @@ function useUserListLocalizations() {
 }
 
 function useFilters() {
-  const [query, setQuery] = useState('');
-  const [status, setStatus] = useState('all');
+  const [query, setQuery] = useState("");
+  const [status, setStatus] = useState("all");
 
   return [
     { query, status },
     (field, value) => {
-      if (field === 'query') {
+      if (field === "query") {
         setQuery(value);
       }
-      if (field === 'status') {
+      if (field === "status") {
         setStatus(value);
       }
     },
@@ -70,18 +70,25 @@ function useFilteredStudents({ students = [], filters }) {
   const normalize = (str) =>
     str
       .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f,]/g, '')
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f,]/g, "")
       .trim();
 
-  const normalizedQuery = useMemo(() => normalize(filters?.query), [filters?.query]);
+  const normalizedQuery = useMemo(
+    () => normalize(filters?.query),
+    [filters?.query]
+  );
 
   return useMemo(
     () =>
       students.filter(
         ({ userInfo }) =>
-          normalize(`${userInfo?.name} ${userInfo?.surnames}`)?.includes(normalizedQuery) ||
-          normalize(`${userInfo?.surnames} ${userInfo?.name}`)?.includes(normalizedQuery)
+          normalize(`${userInfo?.name} ${userInfo?.surnames}`)?.includes(
+            normalizedQuery
+          ) ||
+          normalize(`${userInfo?.surnames} ${userInfo?.name}`)?.includes(
+            normalizedQuery
+          )
       ) ?? [],
     [students, normalizedQuery]
   );
@@ -106,7 +113,7 @@ export default function UserList({ instance }) {
         <SearchInput
           placeholder={localizations?.placeholders?.searchStudent}
           value={filters?.query}
-          onChange={(value) => onFilterChange('query', value)}
+          onChange={(value) => onFilterChange("query", value)}
         />
         {/* <Select
           data={progressData}
@@ -115,7 +122,11 @@ export default function UserList({ instance }) {
           onChange={(value) => onFilterChange('status', value)}
         /> */}
       </Box>
-      <StudentsList instance={instance} labels={localizations?.labels} students={students} />
+      <StudentsList
+        instance={instance}
+        labels={localizations?.labels}
+        students={students}
+      />
     </Box>
   );
 }

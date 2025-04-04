@@ -1,6 +1,6 @@
-const { omit, uniq } = require('lodash');
+const { omit, uniq } = require("lodash");
 
-const { getInstance } = require('../getInstance');
+const { getInstance } = require("../getInstance");
 /**
  * Create a related instance.
  *
@@ -12,15 +12,21 @@ const { getInstance } = require('../getInstance');
  * @param {MoleculerContext} options.ctx - The Moleculer context object.
  * @return {object} The created or updated relation object.
  */
-async function createRelatedInstance({ caller, relation, type, propagate = true, ctx }) {
+async function createRelatedInstance({
+  caller,
+  relation,
+  type,
+  propagate = true,
+  ctx,
+}) {
   // Require inside function to avoid circular dependency
   // eslint-disable-next-line global-require
-  const { updateInstance } = require('./updateInstance');
+  const { updateInstance } = require("./updateInstance");
   // Require inside function to avoid circul∫ar dependency
   // eslint-disable-next-line global-require
-  const { createInstance } = require('../createInstance');
+  const { createInstance } = require("../createInstance");
 
-  const oppositeType = type === 'before' ? 'after' : 'before';
+  const oppositeType = type === "before" ? "after" : "before";
 
   // EN: Given instance is an id
   // ES: La instancia dada es un id
@@ -40,7 +46,8 @@ async function createRelatedInstance({ caller, relation, type, propagate = true,
             ...relatedInstance.relatedAssignableInstances,
             [type]: relatedInstance.relatedAssignableInstances?.[type] || [],
             [oppositeType]: uniq([
-              ...(relatedInstance.relatedAssignableInstances?.[oppositeType] || []),
+              ...(relatedInstance.relatedAssignableInstances?.[oppositeType] ||
+                []),
               { ...relation, id: caller },
             ]),
           },
@@ -62,7 +69,8 @@ async function createRelatedInstance({ caller, relation, type, propagate = true,
       relatedAssignableInstances: {
         [type]: relation.instance.relatedAssignableInstances?.[type] || [],
         [oppositeType]: uniq([
-          ...(relation.instance.relatedAssignableInstances?.[oppositeType] || []),
+          ...(relation.instance.relatedAssignableInstances?.[oppositeType] ||
+            []),
           caller.id,
         ]),
       },
@@ -70,7 +78,7 @@ async function createRelatedInstance({ caller, relation, type, propagate = true,
     ctx,
   });
 
-  return { ...omit(relation, ['id', 'instance']), id: createdInstance.id };
+  return { ...omit(relation, ["id", "instance"]), id: createdInstance.id };
 }
 
 module.exports = { createRelatedInstance };

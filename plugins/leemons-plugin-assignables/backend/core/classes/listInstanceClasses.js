@@ -1,4 +1,4 @@
-const { listClasses } = require('./listClasses');
+const { listClasses } = require("./listClasses");
 
 async function listInstanceClasses({ id, ctx }) {
   if (!Array.isArray(id)) {
@@ -8,7 +8,7 @@ async function listInstanceClasses({ id, ctx }) {
   const classes = await ctx.tx.db.Classes.find({
     assignableInstance: id,
   })
-    .select(['class', 'assignableInstance'])
+    .select(["class", "assignableInstance"])
     .lean();
 
   const classesPerInstance = {};

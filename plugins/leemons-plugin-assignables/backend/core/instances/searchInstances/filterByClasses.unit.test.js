@@ -4,21 +4,21 @@ const {
   beforeAll,
   afterAll,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { filterByClasses } = require('./filterByClasses');
-const { classesSchema } = require('../../../models/classes');
+const { filterByClasses } = require("./filterByClasses");
+const { classesSchema } = require("../../../models/classes");
 
 const classes = [
   {
-    class: 'class1',
-    assignableInstance: 'assignableId1',
+    class: "class1",
+    assignableInstance: "assignableId1",
   },
   {
-    class: 'class2',
-    assignableInstance: 'assignableId2',
+    class: "class2",
+    assignableInstance: "assignableId2",
   },
 ];
 
@@ -47,18 +47,18 @@ beforeEach(async () => {
 
   ctx = generateCtx({
     actions: {
-      'academic-portfolio.classes.classByIds': classesByIdsHandler,
+      "academic-portfolio.classes.classByIds": classesByIdsHandler,
     },
     models: {
-      Classes: newModel(mongooseConnection, 'Classes', classesSchema),
+      Classes: newModel(mongooseConnection, "Classes", classesSchema),
     },
   });
 });
 
-it('Should return same assignables Instances Ids if no classes, subjects or programs in query', async () => {
+it("Should return same assignables Instances Ids if no classes, subjects or programs in query", async () => {
   // Arrange
   const query = {};
-  const assignableInstancesIds = ['assignableId1', 'assignableId2'];
+  const assignableInstancesIds = ["assignableId1", "assignableId2"];
 
   // Act
   const response = await filterByClasses({
@@ -72,10 +72,10 @@ it('Should return same assignables Instances Ids if no classes, subjects or prog
   expect(response).toEqual(assignableInstancesIds);
 });
 
-it('Should return assignable Instances Ids filtered by classes', async () => {
+it("Should return assignable Instances Ids filtered by classes", async () => {
   // Arrange
-  const query = { classes: ['class1'] };
-  const assignableInstancesIds = ['assignableId1', 'assignableId2'];
+  const query = { classes: ["class1"] };
+  const assignableInstancesIds = ["assignableId1", "assignableId2"];
 
   await ctx.tx.db.Classes.create(classes);
 
@@ -88,19 +88,19 @@ it('Should return assignable Instances Ids filtered by classes', async () => {
 
   // Assert
   expect(classesByIdsHandler).not.toBeCalled();
-  expect(response).toEqual(['assignableId1']);
+  expect(response).toEqual(["assignableId1"]);
 });
 
-it('Should return assignable Instances Ids filtered by subjects and programs', async () => {
+it("Should return assignable Instances Ids filtered by subjects and programs", async () => {
   // Arrange
-  const query = { subjects: ['subjectId2'], programs: ['programId2'] };
-  const assignableInstancesIds = ['assignableId1', 'assignableId2'];
+  const query = { subjects: ["subjectId2"], programs: ["programId2"] };
+  const assignableInstancesIds = ["assignableId1", "assignableId2"];
 
   await ctx.tx.db.Classes.create(classes);
 
   classesByIdsHandler.mockReturnValue([
-    { id: 'class1', subject: { id: 'subjectId1' }, program: 'programId1' },
-    { id: 'class2', subject: { id: 'subjectId2' }, program: 'programId2' },
+    { id: "class1", subject: { id: "subjectId1" }, program: "programId1" },
+    { id: "class2", subject: { id: "subjectId2" }, program: "programId2" },
   ]);
 
   // Act
@@ -111,5 +111,5 @@ it('Should return assignable Instances Ids filtered by subjects and programs', a
   });
 
   // Assert
-  expect(response).toEqual(['assignableId2']);
+  expect(response).toEqual(["assignableId2"]);
 });
