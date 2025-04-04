@@ -1,9 +1,9 @@
-const { generateCtx } = require('./generateCTX');
+const { generateCtx } = require("./generateCTX");
 const {
   connectMongooseToMongod,
   createMongodProcess,
   createMongooseConnection,
-} = require('./connectToInMemoryMongoose');
+} = require("./connectToInMemoryMongoose");
 
 module.exports = {
   generateCtx,

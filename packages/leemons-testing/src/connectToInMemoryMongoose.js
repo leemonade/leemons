@@ -1,5 +1,5 @@
-const { MongoMemoryServer } = require('mongodb-memory-server-core');
-const mongoose = require('mongoose');
+const { MongoMemoryServer } = require("mongodb-memory-server-core");
+const mongoose = require("mongoose");
 
 async function createMongodProcess() {
   const mongod = await MongoMemoryServer.create();

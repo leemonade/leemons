@@ -1,23 +1,23 @@
-const { modifyCTX } = require('@leemons/mongodb/src/mixin');
+const { modifyCTX } = require("@leemons/mongodb/src/mixin");
 
 function generateCtx({
   actions,
   events,
   models,
-  pluginName = 'leemons-testing',
+  pluginName = "leemons-testing",
   caller,
   autoDeploymentID = true,
   autoLRN = true,
 }) {
   const actionHandler = async (actionName, props) => {
-    if (actions.hasOwnProperty(actionName)) {
+    if (actionName in actions) {
       return actions[actionName](props);
     }
     throw new Error(`The action ${actionName} was not mocked yet`);
   };
 
   const eventsHandler = async (eventName, props) => {
-    if (events.hasOwnProperty(eventName)) {
+    if (eventName in events) {
       return events[eventName](props);
     }
     throw new Error(`The event ${eventName} was not mocked yet`);
@@ -37,7 +37,7 @@ function generateCtx({
       userSession: {
         userAgents: [
           {
-            id: 'userAgentId',
+            id: "userAgentId",
           },
         ],
       },
