@@ -1,6 +1,6 @@
-import { Agenda, type IAgendaConfig, type Job } from '@hokify/agenda';
-import type { Context, ServiceSchema } from '@leemons/moleculer';
-import type { ServiceBroker } from 'moleculer';
+import { Agenda, type IAgendaConfig, type Job } from "@hokify/agenda";
+import type { Context, ServiceSchema } from "@leemons/moleculer";
+import type { ServiceBroker } from "moleculer";
 
 export interface CronJobContext extends Context {
   params: {
@@ -21,7 +21,7 @@ export interface CronJobContext extends Context {
     ) => Promise<void>;
     cancel<T extends Record<string, unknown>>(
       jobName: string,
-      params: T & { 'data.deploymentID': string }
+      params: T & { "data.deploymentID": string }
     ): Promise<number>;
   };
 }
@@ -38,11 +38,19 @@ export interface LeemonsCronJobsService {
     CronJob: Agenda;
   };
   methods: {
-    runScheduled<T extends Record<string, unknown>>(when: string, jobName: string, params: T): void;
-    runEvery<T extends Record<string, unknown>>(interval: string, jobName: string, params: T): void;
+    runScheduled<T extends Record<string, unknown>>(
+      when: string,
+      jobName: string,
+      params: T
+    ): void;
+    runEvery<T extends Record<string, unknown>>(
+      interval: string,
+      jobName: string,
+      params: T
+    ): void;
     cancel<T extends Record<string, unknown>>(
       jobName: string,
-      params: T & { 'data.deploymentID': string }
+      params: T & { "data.deploymentID": string }
     ): Promise<number>;
   };
   actions: {
@@ -103,11 +111,11 @@ export function LeemonsCronJobsMixin<T = unknown>({
       cancelJob(
         this: LeemonsCronJobsService,
         jobName: string,
-        params: Record<string, unknown> & { 'data.deploymentID': string }
+        params: Record<string, unknown> & { "data.deploymentID": string }
       ) {
-        if (!jobName || !params?.['data.deploymentID']) {
+        if (!jobName || !params?.["data.deploymentID"]) {
           this.logger.error(
-            `Missing jobName: ${jobName} or deploymentID: ${params?.['data.deploymentID']}`
+            `Missing jobName: ${jobName} or deploymentID: ${params?.["data.deploymentID"]}`
           );
           return;
         }
@@ -124,23 +132,29 @@ export function LeemonsCronJobsMixin<T = unknown>({
           return null;
         }
 
-        ctx.params = { ...jobParams, job } as CronJobContext['params'];
+        ctx.params = { ...jobParams, job } as CronJobContext["params"];
         return jobs[name]?.(ctx);
       },
     },
 
     hooks: {
       before: {
-        '*': [
+        "*": [
           function (this: LeemonsCronJobsService, ctx: Context): void {
             const { deploymentID } = ctx.meta;
 
             const CronJob = this.metadata.CronJob;
 
             (ctx as CronJobContext).cronJob = {
-              schedule: (when: string, jobName: string, params: Record<string, unknown> = {}) => {
+              schedule: (
+                when: string,
+                jobName: string,
+                params: Record<string, unknown> = {}
+              ) => {
                 if (!jobName || !when) {
-                  this.logger.error(`Missing jobName: ${jobName} or when: ${when}`);
+                  this.logger.error(
+                    `Missing jobName: ${jobName} or when: ${when}`
+                  );
                   return;
                 }
 
@@ -155,7 +169,9 @@ export function LeemonsCronJobsMixin<T = unknown>({
                 params: Record<string, unknown> = {}
               ) => {
                 if (!jobName || !interval) {
-                  this.logger.error(`Missing jobName: ${jobName} or interval: ${interval}`);
+                  this.logger.error(
+                    `Missing jobName: ${jobName} or interval: ${interval}`
+                  );
                   return;
                 }
 
@@ -169,12 +185,12 @@ export function LeemonsCronJobsMixin<T = unknown>({
               cancel: async (
                 jobName: string,
                 params: Record<string, unknown> & {
-                  'data.deploymentID': string;
+                  "data.deploymentID": string;
                 }
               ) => {
-                if (!jobName || !params?.['data.deploymentID']) {
+                if (!jobName || !params?.["data.deploymentID"]) {
                   this.logger.error(
-                    `Missing jobName: ${jobName} or deploymentID: ${params?.['data.deploymentID']}`
+                    `Missing jobName: ${jobName} or deploymentID: ${params?.["data.deploymentID"]}`
                   );
                   return 0;
                 }
@@ -192,16 +208,16 @@ export function LeemonsCronJobsMixin<T = unknown>({
     async created(this: LeemonsCronJobsService) {
       const mongoUri = process.env.MONGO_URI;
       if (!mongoUri) {
-        throw new Error('MONGO_URI environment variable is required');
+        throw new Error("MONGO_URI environment variable is required");
       }
 
       const CronJob = new Agenda({
-        db: { collection: 'agendaJobs', address: mongoUri },
+        db: { collection: "agendaJobs", address: mongoUri },
         defaultConcurrency: 1,
         maxConcurrency: 20,
         defaultLockLimit: 0,
         lockLimit: 0,
-        processEvery: '30 seconds',
+        processEvery: "30 seconds",
       } as unknown as IAgendaConfig);
 
       const { broker, fullName: caller } = this;
@@ -215,7 +231,7 @@ export function LeemonsCronJobsMixin<T = unknown>({
 
           type GetGoodActionToCallResponse = Promise<DeploymentManagerResponse>;
           const manager = await (broker.call(
-            'deployment-manager.getGoodActionToCall',
+            "deployment-manager.getGoodActionToCall",
             { actionName: `${caller}.LeemonsCronJobExecute` },
             { caller, meta: { deploymentID } }
           ) as GetGoodActionToCallResponse);
@@ -234,7 +250,7 @@ export function LeemonsCronJobsMixin<T = unknown>({
       await CronJob.start();
       this.metadata.CronJob = CronJob;
 
-      this.logger.debug('LeemonsCronJobsMixin created');
+      this.logger.debug("LeemonsCronJobsMixin created");
     },
   };
 }
