@@ -4,13 +4,13 @@
  */
 
 /** @type {ServiceSchema} */
-const { mongoose } = require('@leemons/mongodb');
+const { mongoose } = require("@leemons/mongodb");
 
 module.exports = {
   statusRest: {
     rest: {
-      method: 'GET',
-      path: '/status',
+      method: "GET",
+      path: "/status",
     },
     async handler() {
       return { status: 200, timestamp: new Date() };
@@ -18,20 +18,22 @@ module.exports = {
   },
 
   // restore Database
-  ...(process.env.TESTING || process.env.NODE_ENV === 'test' || process.env.testing
+  ...(process.env.TESTING ||
+  process.env.NODE_ENV === "test" ||
+  process.env.testing
     ? {
         dropDBRest: {
           dontCreateTransactionOnCallThisFunction: true,
           rest: {
-            method: 'POST',
-            path: '/database/drop',
+            method: "POST",
+            path: "/database/drop",
           },
           async handler(ctx) {
             try {
               await mongoose.connection.db.dropDatabase();
               return {
                 status: 200,
-                message: 'Successful Database Drop',
+                message: "Successful Database Drop",
               };
             } catch (error) {
               ctx.meta.$statusCode = 500;

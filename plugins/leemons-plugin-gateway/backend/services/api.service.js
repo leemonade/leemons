@@ -1,8 +1,11 @@
-const { LeemonsDeploymentManagerMixin, ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK } = require('@leemons/deployment-manager');
-const ApiGateway = require('moleculer-web');
-const { parse } = require('url');
+const {
+  LeemonsDeploymentManagerMixin,
+  ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK,
+} = require("@leemons/deployment-manager");
+const ApiGateway = require("moleculer-web");
+const { parse } = require("url");
 
-const restActions = require('./rest/api.rest');
+const restActions = require("./rest/api.rest");
 
 /**
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
@@ -13,13 +16,14 @@ const restActions = require('./rest/api.rest');
  */
 
 module.exports = {
-  name: 'gateway',
+  name: "gateway",
   mixins: [
     ApiGateway,
     LeemonsDeploymentManagerMixin({
       checkIfCanCallMe: false,
       getDeploymentIdInCall: true,
-      dontGetDeploymentIDOnActionCall: ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK,
+      dontGetDeploymentIDOnActionCall:
+        ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK,
     }),
   ],
 
@@ -30,30 +34,30 @@ module.exports = {
   /** @type {ApiSettingsSchema} More info about settings: https://moleculer.services/docs/0.14/moleculer-web.html */
   settings: {
     cors: {
-      origin: '*',
+      origin: "*",
     },
     // Exposed port
     port: process.env.PORT || 3000,
 
     // Exposed IP
-    ip: '0.0.0.0',
+    ip: "0.0.0.0",
 
     // Global Express middlewares. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Middlewares
     use: [],
 
     routes: [
       {
-        path: '/',
-        whitelist: ['**'],
+        path: "/",
+        whitelist: ["**"],
         use: [],
         mergeParams: true,
         authentication: false,
         authorization: false,
       },
       {
-        path: '/api',
+        path: "/api",
 
-        whitelist: ['**'],
+        whitelist: ["**"],
 
         // Route-level Express middlewares. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Middlewares
         use: [],
@@ -73,7 +77,7 @@ module.exports = {
 
         aliases: {
           // -- Gateway (Finish) --
-          'POST database/drop': 'gateway.dropDBRest',
+          "POST database/drop": "gateway.dropDBRest",
         },
 
         /**
@@ -103,13 +107,17 @@ module.exports = {
 
         onBeforeCall(ctx, route, req) {
           ctx.meta.clientIP =
-            req.headers['x-forwarded-for'] ||
+            req.headers["x-forwarded-for"] ||
             req.connection.remoteAddress ||
             req.socket.remoteAddress ||
             req.connection.socket.remoteAddress;
-          const url = req.headers.referer || req.headers.referrer || req.headers.host;
-          if (url.startsWith('localhost') && req.headers.apikey !== process.env.MANUAL_PASSWORD) {
-            ctx.meta.hostname = 'localhost';
+          const url =
+            req.headers.referer || req.headers.referrer || req.headers.host;
+          if (
+            url.startsWith("localhost") &&
+            req.headers.apikey !== process.env.MANUAL_PASSWORD
+          ) {
+            ctx.meta.hostname = "localhost";
           } else if (ctx.meta) {
             if (
               process.env.MANUAL_PASSWORD &&
@@ -133,7 +141,7 @@ module.exports = {
           if (err.data) {
             response = { ...response, ...err.data };
           }
-          res.setHeader('Content-Type', 'application/json');
+          res.setHeader("Content-Type", "application/json");
           res.writeHead(err.httpStatusCode || err.code || 500);
           res.end(JSON.stringify(response));
         },
@@ -144,16 +152,16 @@ module.exports = {
         bodyParsers: {
           json: {
             strict: false,
-            limit: '1MB',
+            limit: "1MB",
           },
           urlencoded: {
             extended: true,
-            limit: '1MB',
+            limit: "1MB",
           },
         },
 
         // Mapping policy setting. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Mapping-policy
-        mappingPolicy: 'all', // Available values: "all", "restrict"
+        mappingPolicy: "all", // Available values: "all", "restrict"
 
         // Enable/disable logging
         logging: true,
@@ -169,7 +177,7 @@ module.exports = {
 
     // Serve assets from "public" folder. More info: https://moleculer.services/docs/0.14/moleculer-web.html#Serve-static-files
     assets: {
-      folder: 'public',
+      folder: "public",
 
       // Options to `server-static` module
       options: {},
@@ -217,8 +225,8 @@ module.exports = {
       const { user } = ctx.meta;
 
       // It check the `auth` property in action schema.
-      if (req.$action.auth == 'required' && !user) {
-        throw new ApiGateway.Errors.UnAuthorizedError('NO_RIGHTS');
+      if (req.$action.auth == "required" && !user) {
+        throw new ApiGateway.Errors.UnAuthorizedError("NO_RIGHTS");
       }
     },
   },
