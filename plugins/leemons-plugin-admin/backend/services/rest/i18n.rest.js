@@ -4,15 +4,15 @@
  */
 /** @type {ServiceSchema} */
 
-const path = require('path');
-const fs = require('fs/promises');
-const { LeemonsError } = require('@leemons/error');
+const path = require("path");
+const fs = require("fs/promises");
+const { LeemonsError } = require("@leemons/error");
 
 module.exports = {
   getLangRest: {
     rest: {
-      method: 'GET',
-      path: '/:page/:lang',
+      method: "GET",
+      path: "/:page/:lang",
     },
     async handler(ctx) {
       const { page, lang } = ctx.params;
@@ -20,13 +20,16 @@ module.exports = {
       try {
         const localeData = await fs.readFile(
           path.resolve(__dirname, `../../i18n/${lang}.json`),
-          'utf8'
+          "utf8"
         );
         const locale = JSON.parse(localeData || null);
         ctx.meta.$statusCode = 200;
         return { status: 200, data: { [lang]: { [page]: locale[page] } } };
       } catch (e) {
-        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: e.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },

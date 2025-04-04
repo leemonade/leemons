@@ -1,12 +1,12 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
+import React from "react";
 
-import prefixPN from '@admin/helpers/prefixPN';
+import prefixPN from "@admin/helpers/prefixPN";
 import {
   getMailProvidersRequest,
   getPlatformEmailRequest,
   savePlatformEmailRequest,
-} from '@admin/request/mails';
+} from "@admin/request/mails";
 import {
   Alert,
   Box,
@@ -19,56 +19,58 @@ import {
   TextInput,
   Title,
   createStyles,
-} from '@bubbles-ui/components';
-import { useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert } from '@layout/alert';
-import loadable from '@loadable/component';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { flatten, map } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert } from "@layout/alert";
+import loadable from "@loadable/component";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { flatten, map } from "lodash";
+import PropTypes from "prop-types";
 
 const Styles = createStyles((theme) => ({
   providerButton: {
-    height: '70px',
-    width: '200px',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center',
+    height: "70px",
+    width: "200px",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    textAlign: "center",
     backgroundColor: theme.colors.interactive03,
     border: `1px solid ${theme.colors.interactive03}`,
-    cursor: 'pointer',
-    transition: 'all 0.2s ease-in-out',
-    '&:hover': {
+    cursor: "pointer",
+    transition: "all 0.2s ease-in-out",
+    "&:hover": {
       borderColor: theme.colors.interactive01,
     },
     img: {
-      height: '16px',
-      width: '16px',
-      objectFit: 'contain',
-      display: 'block',
+      height: "16px",
+      width: "16px",
+      objectFit: "contain",
+      display: "block",
       marginBottom: theme.spacing[2],
-      filter: 'grayscale(100%)',
-      transition: 'all 0.2s ease-in-out',
+      filter: "grayscale(100%)",
+      transition: "all 0.2s ease-in-out",
     },
   },
   providerButtonActive: {
     backgroundColor: theme.colors.mainWhite,
     borderColor: theme.colors.interactive01,
     img: {
-      filter: 'grayscale(0%)',
+      filter: "grayscale(0%)",
     },
   },
 }));
 
 function dynamicImport(pluginName) {
-  return loadable(() => import(`@app/plugins/${pluginName}/src/widgets/add-email-provider.js`));
+  return loadable(
+    () => import(`@app/plugins/${pluginName}/src/widgets/add-email-provider.js`)
+  );
 }
 
 const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
-  const [t] = useTranslateLoader(prefixPN('setup.mails'));
+  const [t] = useTranslateLoader(prefixPN("setup.mails"));
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const [store, render] = useStore({
@@ -76,7 +78,7 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
     activeProvider: null,
   });
 
-  const totalProviders = flatten(map(store.providers, 'providers')).length;
+  const totalProviders = flatten(map(store.providers, "providers")).length;
 
   const { classes: styles, cx } = Styles();
 
@@ -100,11 +102,14 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
     store.emailError = null;
     // Check if not empty
     if (!store.email) {
-      store.emailError = t('emailRequired');
+      store.emailError = t("emailRequired");
     }
     // Check if valid email
-    if (store.email && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(store.email)) {
-      store.emailError = t('emailInvalid');
+    if (
+      store.email &&
+      !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(store.email)
+    ) {
+      store.emailError = t("emailInvalid");
     }
   }
 
@@ -135,17 +140,24 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
   }, []);
 
   const Provider = React.useMemo(
-    () => (store.activeProvider ? dynamicImport(store.activeProvider.providerName) : () => null),
+    () =>
+      store.activeProvider
+        ? dynamicImport(store.activeProvider.providerName)
+        : () => null,
     [store.activeProvider]
   );
 
   return (
     <Box>
-      <ContextContainer title={t('title')} description={t('description')} divided>
+      <ContextContainer
+        title={t("title")}
+        description={t("description")}
+        divided
+      >
         <ContextContainer>
           <Box>
-            <Title order={4}>{t('defaultOrganizationEmail')}</Title>
-            <Paragraph>{t('defaultOrganizationEmailDescription')}</Paragraph>
+            <Title order={4}>{t("defaultOrganizationEmail")}</Title>
+            <Paragraph>{t("defaultOrganizationEmailDescription")}</Paragraph>
           </Box>
           <TextInput
             value={store.email}
@@ -154,12 +166,12 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
               render();
             }}
             error={store.emailError}
-            label={t('organizationEmail')}
+            label={t("organizationEmail")}
             required
           />
         </ContextContainer>
         <ContextContainer>
-          <Title order={4}>{t('chooseProvider')}</Title>
+          <Title order={4}>{t("chooseProvider")}</Title>
           {store.loading ? (
             <Loader />
           ) : store.providers.length ? (
@@ -170,12 +182,16 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
                     key={provider.providerName}
                     className={cx(
                       styles.providerButton,
-                      store.activeProvider?.providerName === provider.providerName
+                      store.activeProvider?.providerName ===
+                        provider.providerName
                         ? styles.providerButtonActive
                         : null
                     )}
                     onClick={() => {
-                      if (store.activeProvider?.providerName === provider.providerName) {
+                      if (
+                        store.activeProvider?.providerName ===
+                        provider.providerName
+                      ) {
                         store.activeProvider = null;
                       } else {
                         store.activeProvider = provider;
@@ -192,22 +208,26 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
                 <Button
                   variant="link"
                   onClick={() =>
-                    window.open('https://github.com/leemonade/leemons', 'Github', 'noopener')
+                    window.open(
+                      "https://github.com/leemonade/leemons",
+                      "Github",
+                      "noopener"
+                    )
                   }
                 >
-                  {t('github')}
+                  {t("github")}
                 </Button>
               </Box>
               <Provider {...(store.activeProvider || {})} onChange={onChange} />
               {store.dirty && !totalProviders ? (
-                <Alert title={t('error')} severity="error" closeable={false}>
-                  {t('defaultOrganizationEmailRequired')}
+                <Alert title={t("error")} severity="error" closeable={false}>
+                  {t("defaultOrganizationEmailRequired")}
                 </Alert>
               ) : null}
             </>
           ) : (
             <Alert severity="error" closeable={false}>
-              {t('noProviders')}
+              {t("noProviders")}
             </Alert>
           )}
         </ContextContainer>
@@ -222,7 +242,7 @@ const MailProviders = ({ onNextLabel, onNext = () => {} }) => {
 };
 
 MailProviders.defaultProps = {
-  onNextLabel: 'Save and continue',
+  onNextLabel: "Save and continue",
 };
 MailProviders.propTypes = {
   onNext: PropTypes.func,

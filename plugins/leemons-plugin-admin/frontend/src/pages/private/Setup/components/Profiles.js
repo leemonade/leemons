@@ -1,6 +1,6 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   ActionButton,
   Box,
@@ -9,21 +9,21 @@ import {
   Loader,
   Stack,
   Table,
-} from '@bubbles-ui/components';
-import { ViewOnIcon } from '@bubbles-ui/icons/outline';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@admin/helpers/prefixPN';
-import { useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useLayout } from '@layout/context';
-import _, { findIndex } from 'lodash';
-import { listProfilesRequest } from '@users/request';
-import { addErrorAlert } from '@layout/alert';
-import AddProfileDrawer from '@admin/pages/private/Setup/components/AddProfileDrawer';
+} from "@bubbles-ui/components";
+import { ViewOnIcon } from "@bubbles-ui/icons/outline";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@admin/helpers/prefixPN";
+import { useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { useLayout } from "@layout/context";
+import _, { findIndex } from "lodash";
+import { listProfilesRequest } from "@users/request";
+import { addErrorAlert } from "@layout/alert";
+import AddProfileDrawer from "@admin/pages/private/Setup/components/AddProfileDrawer";
 
 const Profiles = ({ onNextLabel, onNext = () => {} }) => {
-  const [t, , , tLoading] = useTranslateLoader(prefixPN('setup.profiles'));
+  const [t, , , tLoading] = useTranslateLoader(prefixPN("setup.profiles"));
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const { openDeleteConfirmationModal } = useLayout();
@@ -36,16 +36,16 @@ const Profiles = ({ onNextLabel, onNext = () => {} }) => {
   const tableHeaders = React.useMemo(
     () => [
       {
-        Header: t('name'),
-        accessor: 'name',
+        Header: t("name"),
+        accessor: "name",
       },
       {
-        Header: t('overview'),
-        accessor: 'description',
+        Header: t("overview"),
+        accessor: "description",
       },
       {
-        Header: <Box style={{ textAlign: 'right' }}>{t('actions')}</Box>,
-        accessor: 'actions',
+        Header: <Box style={{ textAlign: "right" }}>{t("actions")}</Box>,
+        accessor: "actions",
       },
     ],
     [t]
@@ -56,7 +56,7 @@ const Profiles = ({ onNextLabel, onNext = () => {} }) => {
       _.map(store.profiles, (item) => ({
         ...item,
         actions: (
-          <Box style={{ textAlign: 'right', width: '100%' }}>
+          <Box style={{ textAlign: "right", width: "100%" }}>
             <ActionButton
               onClick={() => {
                 store.selectedProfile = null;
@@ -66,7 +66,7 @@ const Profiles = ({ onNextLabel, onNext = () => {} }) => {
                   render();
                 }, 50);
               }}
-              tooltip={t('view')}
+              tooltip={t("view")}
               icon={<ViewOnIcon />}
             />
           </Box>
@@ -123,12 +123,16 @@ const Profiles = ({ onNextLabel, onNext = () => {} }) => {
         />
       ) : null}
 
-      <ContextContainer title={t('title')} description={t('description')} divided>
+      <ContextContainer
+        title={t("title")}
+        description={t("description")}
+        divided
+      >
         {store.loading ? (
           <Loader />
         ) : (
           <>
-            <ContextContainer subtitle={t('profileList')}>
+            <ContextContainer subtitle={t("profileList")}>
               <Table columns={tableHeaders} data={tableItems} />
               <Box>
                 <Button
@@ -143,7 +147,7 @@ const Profiles = ({ onNextLabel, onNext = () => {} }) => {
                     }, 50);
                   }}
                 >
-                  {t('addProfile')}
+                  {t("addProfile")}
                 </Button>
               </Box>
             </ContextContainer>
@@ -159,7 +163,7 @@ const Profiles = ({ onNextLabel, onNext = () => {} }) => {
   );
 };
 Profiles.defaultProps = {
-  onNextLabel: 'Save and continue',
+  onNextLabel: "Save and continue",
 };
 Profiles.propTypes = {
   onNext: PropTypes.func,

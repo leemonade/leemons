@@ -1,6 +1,9 @@
 /* eslint-disable no-nested-ternary */
-import prefixPN from '@admin/helpers/prefixPN';
-import { getOrganizationRequest, updateOrganizationRequest } from '@admin/request/organization';
+import prefixPN from "@admin/helpers/prefixPN";
+import {
+  getOrganizationRequest,
+  updateOrganizationRequest,
+} from "@admin/request/organization";
 import {
   Box,
   Button,
@@ -14,23 +17,23 @@ import {
   TextInput,
   Title,
   createStyles,
-} from '@bubbles-ui/components';
-import { useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import hooks from 'leemons-hooks';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { EMAIL_REGEX } from '../../../../constants';
+} from "@bubbles-ui/components";
+import { useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import hooks from "@leemons/hooks";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
+import { EMAIL_REGEX } from "../../../../constants";
 
 const Styles = createStyles((theme) => ({}));
 
 const Note = ({ t, descriptionKey }) => (
   <Box mt={2}>
-    <Title order={6}>{t('note')}</Title>
+    <Title order={6}>{t("note")}</Title>
     <Paragraph>{t(descriptionKey)}</Paragraph>
   </Box>
 );
@@ -41,7 +44,7 @@ Note.propTypes = {
 };
 
 const Organization = ({ onNextLabel, onNext = () => {} }) => {
-  const [t, , , tLoading] = useTranslateLoader(prefixPN('setup.organization'));
+  const [t, , , tLoading] = useTranslateLoader(prefixPN("setup.organization"));
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const { openDeleteConfirmationModal } = useLayout();
@@ -64,7 +67,7 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
     selectedCenter: null,
   });
 
-  const useDarkMode = watch('useDarkMode');
+  const useDarkMode = watch("useDarkMode");
 
   async function load() {
     try {
@@ -90,7 +93,7 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
       store.saving = true;
       render();
       await updateOrganizationRequest(data);
-      hooks.fireEvent('platform:theme:change');
+      hooks.fireEvent("platform:theme:change");
       onNext();
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
@@ -106,50 +109,64 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
   return (
     <Box>
       <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
-        <ContextContainer title={t('title')} description={t('description')} divided>
+        <ContextContainer
+          title={t("title")}
+          description={t("description")}
+          divided
+        >
           <ContextContainer>
             <Controller
               name="name"
               control={control}
-              rules={r('organizationNameRequired')}
+              rules={r("organizationNameRequired")}
               render={({ field }) => (
-                <TextInput label={t('organizationName')} error={errors.name} required {...field} />
+                <TextInput
+                  label={t("organizationName")}
+                  error={errors.name}
+                  required
+                  {...field}
+                />
               )}
             />
 
             <ContextContainer
-              subtitle={t('domainUrlForInstallation')}
+              subtitle={t("domainUrlForInstallation")}
               description={<Note t={t} descriptionKey="domainUrlDescription" />}
             >
               <Controller
                 name="hostname"
                 control={control}
                 rules={{
-                  required: t('hostnameRequired'),
+                  required: t("hostnameRequired"),
                   pattern: {
                     // Pattern check if start by http or https
                     value: /^(http|https):\/\//,
-                    message: t('hostnameInvalid'),
+                    message: t("hostnameInvalid"),
                   },
                 }}
                 render={({ field }) => (
-                  <TextInput label={t('hostname')} error={errors.hostname} required {...field} />
+                  <TextInput
+                    label={t("hostname")}
+                    error={errors.hostname}
+                    required
+                    {...field}
+                  />
                 )}
               />
               <Controller
                 name="hostnameApi"
                 control={control}
                 rules={{
-                  required: t('hostnameRequired'),
+                  required: t("hostnameRequired"),
                   pattern: {
                     // Pattern check if start by http or https
                     value: /^(http|https):\/\//,
-                    message: t('hostnameInvalid'),
+                    message: t("hostnameInvalid"),
                   },
                 }}
                 render={({ field }) => (
                   <TextInput
-                    label={t('hostnameApi')}
+                    label={t("hostnameApi")}
                     error={errors.hostnameApi}
                     required
                     {...field}
@@ -158,8 +175,10 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
               />
             </ContextContainer>
             <ContextContainer
-              subtitle={t('lookAndFeel')}
-              description={<Note t={t} descriptionKey="lookAndFeelDescription" />}
+              subtitle={t("lookAndFeel")}
+              description={
+                <Note t={t} descriptionKey="lookAndFeelDescription" />
+              }
             >
               <Stack fullWidth spacing={6}>
                 <Box>
@@ -170,11 +189,15 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                       rules={{
                         pattern: {
                           value: /^(http|https):\/\//,
-                          message: t('logoUrlInvalid'),
+                          message: t("logoUrlInvalid"),
                         },
                       }}
                       render={({ field }) => (
-                        <TextInput error={errors.logoUrl} label={t('logoUrl')} {...field} />
+                        <TextInput
+                          error={errors.logoUrl}
+                          label={t("logoUrl")}
+                          {...field}
+                        />
                       )}
                     />
                   </Box>
@@ -185,13 +208,13 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                       rules={{
                         pattern: {
                           value: /^(http|https):\/\//,
-                          message: t('logoUrlInvalid'),
+                          message: t("logoUrlInvalid"),
                         },
                       }}
                       render={({ field }) => (
                         <TextInput
                           error={errors.squareLogoUrl}
-                          label={t('squareLogoUrl')}
+                          label={t("squareLogoUrl")}
                           {...field}
                         />
                       )}
@@ -204,13 +227,13 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                       rules={{
                         pattern: {
                           value: /^(http|https):\/\//,
-                          message: t('logoUrlInvalid'),
+                          message: t("logoUrlInvalid"),
                         },
                       }}
                       render={({ field }) => (
                         <TextInput
                           error={errors.emailLogoUrl}
-                          label={t('emailLogoUrl')}
+                          label={t("emailLogoUrl")}
                           {...field}
                         />
                       )}
@@ -223,7 +246,7 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                       render={({ field }) => (
                         <NumberInput
                           error={errors.emailWidthLogo}
-                          label={t('emailWidthLogo')}
+                          label={t("emailWidthLogo")}
                           {...field}
                         />
                       )}
@@ -237,7 +260,7 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                     render={({ field }) => (
                       <ColorInput
                         error={errors.mainColor}
-                        label={t('mainColor')}
+                        label={t("mainColor")}
                         {...field}
                       />
                     )}
@@ -249,7 +272,11 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                   name="useDarkMode"
                   control={control}
                   render={({ field }) => (
-                    <Switch {...field} label={t('useDarkMode')} checked={!!field.value} />
+                    <Switch
+                      {...field}
+                      label={t("useDarkMode")}
+                      checked={!!field.value}
+                    />
                   )}
                 />
               </Box>
@@ -262,7 +289,7 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                       render={({ field }) => (
                         <ColorInput
                           error={errors.menuMainColor}
-                          label={t('menuMainColor')}
+                          label={t("menuMainColor")}
                           {...field}
                         />
                       )}
@@ -275,7 +302,7 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                       render={({ field }) => (
                         <ColorInput
                           error={errors.menuDrawerColor}
-                          label={t('menuDrawerColor')}
+                          label={t("menuDrawerColor")}
                           {...field}
                         />
                       )}
@@ -290,7 +317,7 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                   render={({ field }) => (
                     <Switch
                       {...field}
-                      label={t('usePicturesEmptyStates')}
+                      label={t("usePicturesEmptyStates")}
                       checked={!!field.value}
                     />
                   )}
@@ -298,23 +325,30 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
               </Box>
             </ContextContainer>
             <ContextContainer
-              subtitle={t('superAdminCredentials')}
-              description={<Note t={t} descriptionKey="superAdminCredentialsDescription" />}
+              subtitle={t("superAdminCredentials")}
+              description={
+                <Note t={t} descriptionKey="superAdminCredentialsDescription" />
+              }
             >
               <Stack fullWidth spacing={6}>
                 <Box>
                   <Controller
                     name="email"
                     rules={{
-                      required: t('emailRequired'),
+                      required: t("emailRequired"),
                       pattern: {
                         value: EMAIL_REGEX,
-                        message: t('emailInvalid'),
+                        message: t("emailInvalid"),
                       },
                     }}
                     control={control}
                     render={({ field }) => (
-                      <TextInput error={errors.email} label={t('email')} required {...field} />
+                      <TextInput
+                        error={errors.email}
+                        label={t("email")}
+                        required
+                        {...field}
+                      />
                     )}
                   />
                 </Box>
@@ -323,15 +357,19 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                     name="password"
                     control={control}
                     render={({ field }) => (
-                      <PasswordInput error={errors.password} label={t('password')} {...field} />
+                      <PasswordInput
+                        error={errors.password}
+                        label={t("password")}
+                        {...field}
+                      />
                     )}
                   />
                 </Box>
               </Stack>
             </ContextContainer>
             <ContextContainer
-              subtitle={t('administrativeContactInfo')}
-              description={t('administrativeContactInfoDescription')}
+              subtitle={t("administrativeContactInfo")}
+              description={t("administrativeContactInfoDescription")}
             >
               <Stack fullWidth spacing={6}>
                 <Box>
@@ -339,7 +377,11 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                     name="contactPhone"
                     control={control}
                     render={({ field }) => (
-                      <TextInput error={errors.contactPhone} label={t('phone')} {...field} />
+                      <TextInput
+                        error={errors.contactPhone}
+                        label={t("phone")}
+                        {...field}
+                      />
                     )}
                   />
                 </Box>
@@ -349,12 +391,16 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                     rules={{
                       pattern: {
                         value: EMAIL_REGEX,
-                        message: t('emailInvalid'),
+                        message: t("emailInvalid"),
                       },
                     }}
                     control={control}
                     render={({ field }) => (
-                      <TextInput error={errors.contactEmail} label={t('email')} {...field} />
+                      <TextInput
+                        error={errors.contactEmail}
+                        label={t("email")}
+                        {...field}
+                      />
                     )}
                   />
                 </Box>
@@ -365,7 +411,11 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
                     name="contactName"
                     control={control}
                     render={({ field }) => (
-                      <TextInput error={errors.contactName} label={t('contactName')} {...field} />
+                      <TextInput
+                        error={errors.contactName}
+                        label={t("contactName")}
+                        {...field}
+                      />
                     )}
                   />
                 </Box>
@@ -385,7 +435,7 @@ const Organization = ({ onNextLabel, onNext = () => {} }) => {
 };
 
 Organization.defaultProps = {
-  onNextLabel: 'Save and continue',
+  onNextLabel: "Save and continue",
 };
 Organization.propTypes = {
   onNext: PropTypes.func,

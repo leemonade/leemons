@@ -1,10 +1,10 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('@leemons/mongodb-helpers');
+const { getKeyValueModel } = require("@leemons/mongodb-helpers");
 
 const models = {
-  ...require('./settings'),
-  ...require('./theme'),
+  ...require("./settings"),
+  ...require("./theme"),
 };
 
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
     return {
       Settings: models.settingsModel,
       Theme: models.themeModel,
-      KeyValue: getKeyValueModel({ modelName: 'v1::admin_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: "v1::admin_KeyValue" }),
     };
   },
 };

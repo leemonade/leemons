@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Stack, createStyles } from '@bubbles-ui/components';
-import { HeroBgLayout } from '@users/layout/HeroBgLayout';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, Stack, createStyles } from "@bubbles-ui/components";
+import { HeroBgLayout } from "@users/layout/HeroBgLayout";
 
 const PageStyles = createStyles((theme) => ({
   root: {
@@ -17,7 +17,12 @@ const HeroWrapper = ({ children, quote }) => {
 
   return (
     <HeroBgLayout quote={quote} dobleQuoted={false}>
-      <Stack className={classes.root} direction="column" justifyContent="center" fullHeight>
+      <Stack
+        className={classes.root}
+        direction="column"
+        justifyContent="center"
+        fullHeight
+      >
         <Box className={classes.content}>{children}</Box>
       </Stack>
     </HeroBgLayout>

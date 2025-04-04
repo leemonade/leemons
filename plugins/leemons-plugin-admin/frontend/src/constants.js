@@ -1,7 +1,7 @@
-export const PLUGIN_NAME = 'admin';
+export const PLUGIN_NAME = "admin";
 export const LOCALES = [
-  { label: 'English', value: 'en' },
-  { label: 'Español', value: 'es' },
+  { label: "English", value: "en" },
+  { label: "Español", value: "es" },
 ];
 export const EMAIL_REGEX =
   // eslint-disable-next-line no-control-regex

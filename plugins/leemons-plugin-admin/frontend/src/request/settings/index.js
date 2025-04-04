@@ -1,4 +1,4 @@
-import { PLUGIN_NAME } from '../../constants';
+import { PLUGIN_NAME } from "../../constants";
 
 async function getSettings() {
   return leemons.api(`v1/${PLUGIN_NAME}/settings`);
@@ -8,7 +8,7 @@ async function updateSettings(values) {
   const body = values;
 
   if (values) {
-    body.configured = ['true', '1', 'on'].includes(String(body.configured));
+    body.configured = ["true", "1", "on"].includes(String(body.configured));
     delete body.created_at;
     delete body.updated_at;
     delete body.createdAt;
@@ -17,7 +17,7 @@ async function updateSettings(values) {
     delete body.id;
   }
 
-  return leemons.api(`v1/${PLUGIN_NAME}/settings`, { method: 'POST', body });
+  return leemons.api(`v1/${PLUGIN_NAME}/settings`, { method: "POST", body });
 }
 
 async function getLanguages() {
@@ -27,7 +27,10 @@ async function getLanguages() {
 async function setLanguages(langs, defaultLang) {
   const body = { langs, defaultLang };
 
-  return leemons.api(`v1/${PLUGIN_NAME}/settings/languages`, { method: 'POST', body });
+  return leemons.api(`v1/${PLUGIN_NAME}/settings/languages`, {
+    method: "POST",
+    body,
+  });
 }
 
 async function signup(values) {
@@ -37,7 +40,10 @@ async function signup(values) {
     locale: values.locale,
   };
 
-  return leemons.api(`v1/${PLUGIN_NAME}/settings/signup`, { method: 'POST', body });
+  return leemons.api(`v1/${PLUGIN_NAME}/settings/signup`, {
+    method: "POST",
+    body,
+  });
 }
 
 export {

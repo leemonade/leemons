@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import { PLUGIN_NAME } from '../../constants';
+import { PLUGIN_NAME } from "../../constants";
 
 async function getMailProviders() {
   return leemons.api(`v1/${PLUGIN_NAME}/mail/providers`);
@@ -12,7 +12,7 @@ async function getPlatformEmail() {
 async function savePlatformEmail(email) {
   return leemons.api(`v1/${PLUGIN_NAME}/mail/platform`, {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: { email },
   });
 }

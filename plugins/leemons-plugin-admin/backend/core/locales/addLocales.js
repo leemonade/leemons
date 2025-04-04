@@ -1,7 +1,7 @@
-const path = require('path');
-const { flattenDeep } = require('lodash');
-const fs = require('fs/promises');
-const { translations } = require('../translations');
+const path = require("path");
+const { flattenDeep } = require("lodash");
+const fs = require("fs/promises");
+const { translations } = require("../translations");
 
 async function addLocales({ langs, ctx }) {
   const locales = flattenDeep([langs]);
@@ -15,7 +15,7 @@ async function addLocales({ langs, ctx }) {
       const localePath = path.resolve(__dirname, `../../i18n/${locale}.json`);
       try {
         // eslint-disable-next-line no-await-in-loop
-        localesData[locale] = await fs.readFile(localePath, 'utf8');
+        localesData[locale] = await fs.readFile(localePath, "utf8");
         localesData[locale] = JSON.parse(localesData[locale] || null);
       } catch (err) {
         console.error(err);
@@ -23,7 +23,7 @@ async function addLocales({ langs, ctx }) {
       }
     }
 
-    await languageService.common.setManyByJSON(localesData, ctx.prefixPN(''));
+    await languageService.common.setManyByJSON(localesData, ctx.prefixPN(""));
   }
 }
 

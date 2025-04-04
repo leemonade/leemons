@@ -6,23 +6,23 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { LeemonsError } = require('@leemons/error');
-const organizationService = require('../../core/organization');
+} = require("@leemons/middlewares");
+const { LeemonsError } = require("@leemons/error");
+const organizationService = require("../../core/organization");
 
 /** @type {ServiceSchema} */
 module.exports = {
   getRest: {
     rest: {
-      method: 'GET',
-      path: '/',
+      method: "GET",
+      path: "/",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'permissions.setup': {
-            actions: ['admin'],
+          "permissions.setup": {
+            actions: ["admin"],
           },
         },
       }),
@@ -37,21 +37,24 @@ module.exports = {
           organization,
         };
       } catch (e) {
-        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: e.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },
   postRest: {
     rest: {
-      method: 'POST',
-      path: '/',
+      method: "POST",
+      path: "/",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'permissions.setup': {
-            actions: ['admin'],
+          "permissions.setup": {
+            actions: ["admin"],
           },
         },
       }),
@@ -66,14 +69,17 @@ module.exports = {
           status: 200,
         };
       } catch (e) {
-        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: e.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },
   getJsonThemeRest: {
     rest: {
-      method: 'GET',
-      path: '/jsonTheme',
+      method: "GET",
+      path: "/jsonTheme",
     },
     async handler(ctx) {
       try {
@@ -83,7 +89,10 @@ module.exports = {
           jsonTheme,
         };
       } catch (e) {
-        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: e.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },

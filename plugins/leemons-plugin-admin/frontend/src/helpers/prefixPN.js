@@ -1,4 +1,4 @@
-import { PLUGIN_NAME } from '../constants';
+import { PLUGIN_NAME } from "../constants";
 
 /**
  * ES:

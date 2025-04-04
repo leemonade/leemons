@@ -1,12 +1,14 @@
-import React from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
-import { LoadingOverlay } from '@bubbles-ui/components';
-import loadable from '@loadable/component';
-import pMinDelay from 'p-min-delay';
-import { LocaleContainer } from './src/components/LocaleContainer';
-import { UserRedirect } from './src/components/UserRedirect';
+import React from "react";
+import { Route, Switch, useRouteMatch } from "react-router-dom";
+import { LoadingOverlay } from "@bubbles-ui/components";
+import loadable from "@loadable/component";
+import pMinDelay from "p-min-delay";
+import { LocaleContainer } from "./src/components/LocaleContainer";
+import { UserRedirect } from "./src/components/UserRedirect";
 
-const Setup = loadable(() => pMinDelay(import('./src/pages/private/Setup'), 500));
+const Setup = loadable(() =>
+  pMinDelay(import("./src/pages/private/Setup"), 500)
+);
 
 export default function Private() {
   const { path } = useRouteMatch();

@@ -1,7 +1,7 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
 
-const findOne = require('./findOne');
+const findOne = require("./findOne");
 
 /**
  * @public
@@ -13,10 +13,10 @@ async function update({ ctx, ...settings }) {
 
   if (
     ctx.callerPlugin &&
-    (ctx.callerPlugin.startsWith('bulk-data') ||
-      ctx.callerPlugin.startsWith('admin') ||
-      ctx.callerPlugin.startsWith('client-manager') ||
-      ctx.callerPlugin.startsWith('gateway'))
+    (ctx.callerPlugin.startsWith("bulk-data") ||
+      ctx.callerPlugin.startsWith("admin") ||
+      ctx.callerPlugin.startsWith("client-manager") ||
+      ctx.callerPlugin.startsWith("gateway"))
   ) {
     allowed = true;
   }
@@ -30,13 +30,19 @@ async function update({ ctx, ...settings }) {
     const newSettings = { ...currentSettings, ...settings };
     delete newSettings.id;
 
-    return ctx.tx.db.Settings.findOneAndUpdate({ id: currentSettings.id }, newSettings, {
-      lean: true,
-      new: true,
-    });
+    return ctx.tx.db.Settings.findOneAndUpdate(
+      { id: currentSettings.id },
+      newSettings,
+      {
+        lean: true,
+        new: true,
+      }
+    );
   }
 
-  throw new LeemonsError(ctx, { message: 'This method can only be called from the admin' });
+  throw new LeemonsError(ctx, {
+    message: "This method can only be called from the admin",
+  });
 }
 
 module.exports = update;

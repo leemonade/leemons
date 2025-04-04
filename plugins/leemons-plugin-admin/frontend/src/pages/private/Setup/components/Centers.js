@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
-import prefixPN from '@admin/helpers/prefixPN';
-import AddCenterDrawer from '@admin/pages/private/Setup/components/AddCenterDrawer';
-import { getLanguagesRequest } from '@admin/request/settings';
+import prefixPN from "@admin/helpers/prefixPN";
+import AddCenterDrawer from "@admin/pages/private/Setup/components/AddCenterDrawer";
+import { getLanguagesRequest } from "@admin/request/settings";
 import {
   ActionButton,
   Box,
@@ -14,23 +14,27 @@ import {
   Table,
   Title,
   createStyles,
-} from '@bubbles-ui/components';
-import { AddCircleIcon, EditWriteIcon as EditIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import { useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { listCentersRequest, removeCenterRequest } from '@users/request';
-import _, { findIndex, forEach, map } from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
+} from "@bubbles-ui/components";
+import {
+  AddCircleIcon,
+  EditWriteIcon as EditIcon,
+  DeleteBinIcon,
+} from "@bubbles-ui/icons/solid";
+import { useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { listCentersRequest, removeCenterRequest } from "@users/request";
+import _, { findIndex, forEach, map } from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
 
 const Styles = createStyles((theme) => ({}));
 
 const Centers = ({ onNextLabel, onNext = () => {} }) => {
-  const [t, , , tLoading] = useTranslateLoader(prefixPN('setup.centers'));
-  const [tD, , , tdLoading] = useTranslateLoader(prefixPN('addCenterDrawer'));
+  const [t, , , tLoading] = useTranslateLoader(prefixPN("setup.centers"));
+  const [tD, , , tdLoading] = useTranslateLoader(prefixPN("addCenterDrawer"));
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const { openDeleteConfirmationModal } = useLayout();
@@ -66,8 +70,11 @@ const Centers = ({ onNextLabel, onNext = () => {} }) => {
       store.centers = _.map(centers, (center) => ({
         ...center,
         limits: {
-          roles: _.keyBy(_.filter(center.limits, { type: 'role' }), 'item'),
-          profiles: _.keyBy(_.filter(center.limits, { type: 'profile' }), 'item'),
+          roles: _.keyBy(_.filter(center.limits, { type: "role" }), "item"),
+          profiles: _.keyBy(
+            _.filter(center.limits, { type: "profile" }),
+            "item"
+          ),
         },
       }));
       store.loading = false;
@@ -111,24 +118,24 @@ const Centers = ({ onNextLabel, onNext = () => {} }) => {
 
   const columns = [
     {
-      Header: tD('name'),
-      accessor: 'name',
+      Header: tD("name"),
+      accessor: "name",
     },
     {
-      Header: tD('preferredLanguage'),
-      accessor: 'locale',
+      Header: tD("preferredLanguage"),
+      accessor: "locale",
     },
     {
-      Header: tD('timeZone'),
-      accessor: 'timezone',
+      Header: tD("timeZone"),
+      accessor: "timezone",
     },
     {
-      Header: tD('email'),
-      accessor: 'email',
+      Header: tD("email"),
+      accessor: "email",
     },
     {
-      Header: t('actions'),
-      accessor: 'actions',
+      Header: t("actions"),
+      accessor: "actions",
     },
   ];
 
@@ -143,7 +150,11 @@ const Centers = ({ onNextLabel, onNext = () => {} }) => {
           render();
         }}
       />
-      <ContextContainer title={t('title')} description={t('description')} divided>
+      <ContextContainer
+        title={t("title")}
+        description={t("description")}
+        divided
+      >
         {store.loading ? (
           <Loader />
         ) : store.centers?.length ? (
@@ -155,18 +166,18 @@ const Centers = ({ onNextLabel, onNext = () => {} }) => {
                     ...center,
                     locale: store.localesByCode[center.locale],
                     actions: (
-                      <Box style={{ textAlign: 'right', width: '100%' }}>
+                      <Box style={{ textAlign: "right", width: "100%" }}>
                         <ActionButton
                           onClick={() => {
                             store.selectedCenter = center;
                             render();
                           }}
-                          tooltip={t('edit')}
+                          tooltip={t("edit")}
                           icon={<EditIcon />}
                         />
                         <ActionButton
                           onClick={() => deleteCenter(center)}
-                          tooltip={t('remove')}
+                          tooltip={t("remove")}
                           icon={<DeleteBinIcon />}
                         />
                       </Box>
@@ -184,7 +195,7 @@ const Centers = ({ onNextLabel, onNext = () => {} }) => {
                     render();
                   }}
                 >
-                  {t('noCentersYetButton')}
+                  {t("noCentersYetButton")}
                 </Button>
               </Box>
             </ContextContainer>
@@ -198,11 +209,15 @@ const Centers = ({ onNextLabel, onNext = () => {} }) => {
         ) : (
           <Box>
             <Stack alignItems="center" justifyContent="center">
-              <ImageLoader src="/public/admin/no-centers.png" height={460} width={537} />
+              <ImageLoader
+                src="/public/admin/no-centers.png"
+                height={460}
+                width={537}
+              />
               <ContextContainer>
                 <Box>
-                  <Title>{t('noCentersYet')}</Title>
-                  <Paragraph>{t('noCentersYetDescription')}</Paragraph>
+                  <Title>{t("noCentersYet")}</Title>
+                  <Paragraph>{t("noCentersYetDescription")}</Paragraph>
                 </Box>
                 <Box>
                   <Button
@@ -211,7 +226,7 @@ const Centers = ({ onNextLabel, onNext = () => {} }) => {
                       render();
                     }}
                   >
-                    {t('noCentersYetButton')}
+                    {t("noCentersYetButton")}
                   </Button>
                 </Box>
               </ContextContainer>
@@ -224,7 +239,7 @@ const Centers = ({ onNextLabel, onNext = () => {} }) => {
 };
 
 Centers.defaultProps = {
-  onNextLabel: 'Save and continue',
+  onNextLabel: "Save and continue",
 };
 Centers.propTypes = {
   onNext: PropTypes.func,

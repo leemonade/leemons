@@ -1,5 +1,5 @@
 module.exports = {
   private: false,
   initOrder: 10,
-  pluginsCanUseMe: ['bulk-data'],
+  pluginsCanUseMe: ["bulk-data"],
 };

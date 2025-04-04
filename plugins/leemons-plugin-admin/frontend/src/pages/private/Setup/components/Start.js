@@ -1,4 +1,4 @@
-import prefixPN from '@admin/helpers/prefixPN';
+import prefixPN from "@admin/helpers/prefixPN";
 import {
   Box,
   Button,
@@ -6,60 +6,60 @@ import {
   createStyles,
   ImageLoader,
   Stack,
-} from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PropTypes from 'prop-types';
-import React from 'react';
+} from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
+import React from "react";
 
 const Styles = createStyles((theme) => ({
   cardsContainer: {
-    display: 'flex',
+    display: "flex",
     gap: theme.spacing[4],
-    flexWrap: 'wrap',
+    flexWrap: "wrap",
   },
   card: {
-    width: '282px',
-    borderRadius: '8px',
-    overflow: 'hidden',
-    border: '2px solid',
+    width: "282px",
+    borderRadius: "8px",
+    overflow: "hidden",
+    border: "2px solid",
     borderColor: theme.colors.ui03,
   },
   cardHeader: {
-    height: '124px',
-    width: '100%',
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'end',
-    justifyContent: 'center',
+    height: "124px",
+    width: "100%",
+    position: "relative",
+    display: "flex",
+    alignItems: "end",
+    justifyContent: "center",
   },
   cardTitle: {
-    height: '41px',
+    height: "41px",
     fontWeight: 600,
     fontSize: theme.fontSizes[3],
     color: theme.colors.text01,
   },
   cardTitleContainer: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: 'rgba(247, 248, 250, 0.8)',
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(247, 248, 250, 0.8)",
     paddingLeft: theme.spacing[3],
     paddingRight: theme.spacing[3],
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
   },
   cardNumber: {
-    position: 'absolute',
+    position: "absolute",
     left: 0,
     top: 0,
-    width: '41px',
-    height: '41px',
-    backgroundColor: 'rgba(247, 248, 250, 0.8)',
-    borderRadius: '8px 0',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: "41px",
+    height: "41px",
+    backgroundColor: "rgba(247, 248, 250, 0.8)",
+    borderRadius: "8px 0",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     color: theme.colors.text02,
-    fontSize: '32px',
+    fontSize: "32px",
   },
   cardBody: {
     padding: theme.spacing[4],
@@ -68,17 +68,39 @@ const Styles = createStyles((theme) => ({
   },
 }));
 
-function Card({ styles, headerColor, title, description, image, imageWidth, imageHeight, number }) {
+function Card({
+  styles,
+  headerColor,
+  title,
+  description,
+  image,
+  imageWidth,
+  imageHeight,
+  number,
+}) {
   return (
     <Box className={styles.card}>
-      <Box className={styles.cardHeader} style={{ backgroundColor: headerColor }}>
+      <Box
+        className={styles.cardHeader}
+        style={{ backgroundColor: headerColor }}
+      >
         <Box className={styles.cardNumber}>{number}</Box>
-        <ImageLoader src={`/public/admin/${image}`} height={imageHeight} width={imageWidth} />
+        <ImageLoader
+          src={`/public/admin/${image}`}
+          height={imageHeight}
+          width={imageWidth}
+        />
       </Box>
-      <Box className={styles.cardTitle} style={{ backgroundColor: headerColor }}>
+      <Box
+        className={styles.cardTitle}
+        style={{ backgroundColor: headerColor }}
+      >
         <Box className={styles.cardTitleContainer}>{title}</Box>
       </Box>
-      <Box className={styles.cardBody} dangerouslySetInnerHTML={{ __html: description }} />
+      <Box
+        className={styles.cardBody}
+        dangerouslySetInnerHTML={{ __html: description }}
+      />
     </Box>
   );
 }
@@ -95,7 +117,7 @@ Card.propTypes = {
 };
 
 const Start = ({ onNextLabel, zoneTranslations, zone, onNext = () => {} }) => {
-  const [t] = useTranslateLoader(prefixPN('setup.welcome'));
+  const [t] = useTranslateLoader(prefixPN("setup.welcome"));
 
   const { classes: styles, cx } = Styles();
 
@@ -107,67 +129,71 @@ const Start = ({ onNextLabel, zoneTranslations, zone, onNext = () => {} }) => {
 
   return (
     <Box>
-      <ContextContainer title={t('title')} description={t('description')} divided>
+      <ContextContainer
+        title={t("title")}
+        description={t("description")}
+        divided
+      >
         <Box className={styles.cardsContainer}>
           <Card
             styles={styles}
             headerColor="#F4E6E6"
             number="1"
-            title={t('organization')}
+            title={t("organization")}
             image="organization.png"
             imageWidth={136}
             imageHeight={102}
-            description={t('organizationDescription')}
+            description={t("organizationDescription")}
           />
           <Card
             styles={styles}
             headerColor="#D8E8FF"
             number="2"
-            title={t('mailProviders')}
+            title={t("mailProviders")}
             image="mail-provider.png"
             imageWidth={123}
             imageHeight={113}
-            description={t('mailProvidersDescription')}
+            description={t("mailProvidersDescription")}
           />
           <Card
             styles={styles}
             headerColor="#FEFBE8"
             number="3"
-            title={t('languages')}
+            title={t("languages")}
             image="languages.png"
             imageWidth={140}
             imageHeight={112}
-            description={t('languagesDescription')}
+            description={t("languagesDescription")}
           />
           <Card
             styles={styles}
             headerColor="#E3EFDE"
             number="4"
-            title={t('centers')}
+            title={t("centers")}
             image="centers.png"
             imageWidth={143}
             imageHeight={101}
-            description={t('centersDescription')}
+            description={t("centersDescription")}
           />
           <Card
             styles={styles}
             headerColor="#FEFBE8"
             number="5"
-            title={t('profiles')}
+            title={t("profiles")}
             image="profile.png"
             imageWidth={133}
             imageHeight={101}
-            description={t('profilesDescription')}
+            description={t("profilesDescription")}
           />
           <Card
             styles={styles}
             headerColor="#EEEAF7"
             number="6"
-            title={t('adminUsers')}
+            title={t("adminUsers")}
             image="admin-users.png"
             imageWidth={146}
             imageHeight={107}
-            description={t('adminUsersDescription')}
+            description={t("adminUsersDescription")}
           />
           {zone?.widgetItems.map((item, index) => (
             <Card
@@ -192,7 +218,7 @@ const Start = ({ onNextLabel, zoneTranslations, zone, onNext = () => {} }) => {
 };
 
 Start.defaultProps = {
-  onNextLabel: 'Continue',
+  onNextLabel: "Continue",
 };
 Start.propTypes = {
   onNext: PropTypes.func,

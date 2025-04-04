@@ -1,45 +1,53 @@
-import React from 'react';
-import { useHistory } from 'react-router-dom';
+import React from "react";
+import { useHistory } from "react-router-dom";
 
-import prefixPN from '@admin/helpers/prefixPN';
-import Admins from '@admin/pages/private/Setup/components/Admins';
-import Centers from '@admin/pages/private/Setup/components/Centers';
-import Finish from '@admin/pages/private/Setup/components/Finish';
-import MailProviders from '@admin/pages/private/Setup/components/MailProviders';
-import Organization from '@admin/pages/private/Setup/components/Organization';
-import Profiles from '@admin/pages/private/Setup/components/Profiles';
-import { getSettingsRequest } from '@admin/request/settings';
-import { Box, LoadingOverlay, Stack, VerticalStepperContainer } from '@bubbles-ui/components';
-import { PluginAssignmentsIcon } from '@bubbles-ui/icons/solid';
-import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { useStore } from '@common';
-import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
-import loadable from '@loadable/component';
-import { getLocalizations } from '@multilanguage/useTranslate';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { getZoneRequest } from '@widgets';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
+import prefixPN from "@admin/helpers/prefixPN";
+import Admins from "@admin/pages/private/Setup/components/Admins";
+import Centers from "@admin/pages/private/Setup/components/Centers";
+import Finish from "@admin/pages/private/Setup/components/Finish";
+import MailProviders from "@admin/pages/private/Setup/components/MailProviders";
+import Organization from "@admin/pages/private/Setup/components/Organization";
+import Profiles from "@admin/pages/private/Setup/components/Profiles";
+import { getSettingsRequest } from "@admin/request/settings";
+import {
+  Box,
+  LoadingOverlay,
+  Stack,
+  VerticalStepperContainer,
+} from "@bubbles-ui/components";
+import { PluginAssignmentsIcon } from "@bubbles-ui/icons/solid";
+import { AdminPageHeader } from "@bubbles-ui/leemons";
+import { useStore } from "@common";
+import { useDeploymentConfig } from "@deployment-manager/hooks/useDeploymentConfig";
+import loadable from "@loadable/component";
+import { getLocalizations } from "@multilanguage/useTranslate";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { getZoneRequest } from "@widgets";
+import _ from "lodash";
+import PropTypes from "prop-types";
 
-
-
-import { Locales } from './components/Locales';
-import { Start } from './components/Start';
+import { Locales } from "./components/Locales";
+import { Start } from "./components/Start";
 
 function dynamicImport(pluginName, component) {
-  return loadable(() => import(`@app/plugins/${pluginName}/src/widgets/${component}.js`));
+  return loadable(
+    () => import(`@app/plugins/${pluginName}/src/widgets/${component}.js`)
+  );
 }
 
 // Pagina a la que solo tendra acceso el super admin
 function Setup({ session }) {
-  const [t, translations] = useTranslateLoader(prefixPN('setup'));
-  const deploymentConfig = useDeploymentConfig({ pluginName: 'users', ignoreVersion: true });
+  const [t, translations] = useTranslateLoader(prefixPN("setup"));
+  const deploymentConfig = useDeploymentConfig({
+    pluginName: "users",
+    ignoreVersion: true,
+  });
   const history = useHistory();
 
   React.useEffect(() => {
     if (
       deploymentConfig?.superRedirectUrl &&
-      deploymentConfig.superRedirectUrl !== '/private/admin/setup'
+      deploymentConfig.superRedirectUrl !== "/private/admin/setup"
     ) {
       history.push(deploymentConfig?.superRedirectUrl);
     }
@@ -63,7 +71,7 @@ function Setup({ session }) {
       store.loading = true;
       render();
       const [{ zone }, { settings }] = await Promise.all([
-        getZoneRequest('admin.admin-page'),
+        getZoneRequest("admin.admin-page"),
         getSettingsRequest(),
       ]);
       const keys = [];
@@ -103,21 +111,24 @@ function Setup({ session }) {
 
   const steppers = React.useMemo(() => {
     const steps = [
-      { label: t('welcome.label'), status: 'OK' },
-      { label: t('organization.label'), status: 'OK' },
-      { label: t('mails.label'), status: 'OK' },
-      { label: t('languages.label'), status: 'OK' },
-      { label: t('centers.label'), status: 'OK' },
-      { label: t('profiles.label'), status: 'OK' },
-      { label: t('admins.label'), status: 'OK' },
+      { label: t("welcome.label"), status: "OK" },
+      { label: t("organization.label"), status: "OK" },
+      { label: t("mails.label"), status: "OK" },
+      { label: t("languages.label"), status: "OK" },
+      { label: t("centers.label"), status: "OK" },
+      { label: t("profiles.label"), status: "OK" },
+      { label: t("admins.label"), status: "OK" },
     ];
 
     _.forEach(store.zone?.widgetItems, (item) => {
-      steps.push({ label: store.zoneTranslations[item.properties?.card?.title], status: 'OK' });
+      steps.push({
+        label: store.zoneTranslations[item.properties?.card?.title],
+        status: "OK",
+      });
     });
 
     if (!store.configured) {
-      steps.push({ label: t('finish.label'), status: 'OK' });
+      steps.push({ label: t("finish.label"), status: "OK" });
     }
     return steps;
   }, [store.zone, store.configured, translations]);
@@ -138,31 +149,39 @@ function Setup({ session }) {
         onNext={handleOnNext}
         zone={store.zone}
         zoneTranslations={store.zoneTranslations}
-        onNextLabel={t('common.labels.nextButton')}
+        onNextLabel={t("common.labels.nextButton")}
       />,
       <Organization
         key="s2"
         onNext={handleOnNext}
-        onNextLabel={t('common.labels.saveAndNextButton')}
+        onNextLabel={t("common.labels.saveAndNextButton")}
       />,
       <MailProviders
         key="s3"
         onNext={handleOnNext}
-        onNextLabel={t('common.labels.saveAndNextButton')}
+        onNextLabel={t("common.labels.saveAndNextButton")}
       />,
       <Locales
         key="s4"
         configured={store.configured}
         onNext={handleOnNext}
-        onNextLabel={t('common.labels.saveAndNextButton')}
+        onNextLabel={t("common.labels.saveAndNextButton")}
       />,
-      <Centers key="s5" onNext={handleOnNext} onNextLabel={t('common.labels.saveAndNextButton')} />,
+      <Centers
+        key="s5"
+        onNext={handleOnNext}
+        onNextLabel={t("common.labels.saveAndNextButton")}
+      />,
       <Profiles
         key="s6"
         onNext={handleOnNext}
-        onNextLabel={t('common.labels.saveAndNextButton')}
+        onNextLabel={t("common.labels.saveAndNextButton")}
       />,
-      <Admins key="s7" onNext={handleOnNext} onNextLabel={t('common.labels.saveAndNextButton')} />,
+      <Admins
+        key="s7"
+        onNext={handleOnNext}
+        onNextLabel={t("common.labels.saveAndNextButton")}
+      />,
     ];
 
     _.forEach(store.zone?.widgetItems, (item) => {
@@ -172,7 +191,7 @@ function Setup({ session }) {
           key={item.id}
           configured={store.configured}
           onNext={handleOnNext}
-          onNextLabel={t('common.labels.saveAndNextButton')}
+          onNextLabel={t("common.labels.saveAndNextButton")}
         />
       );
     });
@@ -203,7 +222,7 @@ function Setup({ session }) {
     <Box sx={(theme) => ({ marginBottom: theme.spacing[8] })}>
       <Stack direction="column" fullHeight>
         <AdminPageHeader
-          values={{ title: t('title') }}
+          values={{ title: t("title") }}
           buttons={{}}
           icon={<PluginAssignmentsIcon />}
           variant="teacher"

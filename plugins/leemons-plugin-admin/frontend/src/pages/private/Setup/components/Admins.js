@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
-import { find, forEach, forIn, map } from 'lodash';
-import PropTypes from 'prop-types';
+import React from "react";
+import { find, forEach, forIn, map } from "lodash";
+import PropTypes from "prop-types";
 import {
   Alert,
   Badge,
@@ -16,30 +16,30 @@ import {
   TableInput,
   TextInput,
   useDebouncedCallback,
-} from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@admin/helpers/prefixPN';
-import usersPrefixPN from '@users/helpers/prefixPN';
-import { TagsMultiSelect, useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useLayout } from '@layout/context';
-import { useForm } from 'react-hook-form';
-import { EMAIL_REGEX } from '@admin/constants';
+} from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@admin/helpers/prefixPN";
+import usersPrefixPN from "@users/helpers/prefixPN";
+import { TagsMultiSelect, useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { useLayout } from "@layout/context";
+import { useForm } from "react-hook-form";
+import { EMAIL_REGEX } from "@admin/constants";
 import {
   addUsersBulkRequest,
   listCentersRequest,
   listProfilesRequest,
   searchUserAgentsRequest,
-} from '@users/request';
-import { addErrorAlert } from '@layout/alert';
-import deleteUserAgentById from '@users/request/deleteUserAgentById';
-import listUsers from '@users/request/listUsers';
+} from "@users/request";
+import { addErrorAlert } from "@layout/alert";
+import deleteUserAgentById from "@users/request/deleteUserAgentById";
+import listUsers from "@users/request/listUsers";
 
 const Styles = createStyles((theme) => ({}));
 
 const Admins = ({ onNextLabel, onNext = () => {} }) => {
-  const [t, tTrans, , tLoading] = useTranslateLoader(prefixPN('setup.admins'));
-  const [tU, tUtrans] = useTranslateLoader(usersPrefixPN('create_users'));
+  const [t, tTrans, , tLoading] = useTranslateLoader(prefixPN("setup.admins"));
+  const [tU, tUtrans] = useTranslateLoader(usersPrefixPN("create_users"));
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const debouncedFunction = useDebouncedCallback(500);
@@ -84,7 +84,7 @@ const Admins = ({ onNextLabel, onNext = () => {} }) => {
         });
         store.centersById[id] = name;
       });
-      store.profile = find(profiles, { sysName: 'admin' });
+      store.profile = find(profiles, { sysName: "admin" });
 
       const { userAgents } = await searchUserAgentsRequest(
         {
@@ -132,12 +132,17 @@ const Admins = ({ onNextLabel, onNext = () => {} }) => {
 
       const userAgentIdsToRemove = [];
       forEach(store.userAgents, ({ center, user, id }) => {
-        if (!usersByCenter[center.id] || !find(usersByCenter[center.id], { id: user.id })) {
+        if (
+          !usersByCenter[center.id] ||
+          !find(usersByCenter[center.id], { id: user.id })
+        ) {
           userAgentIdsToRemove.push(id);
         }
       });
 
-      await Promise.all(map(userAgentIdsToRemove, (id) => deleteUserAgentById(id)));
+      await Promise.all(
+        map(userAgentIdsToRemove, (id) => deleteUserAgentById(id))
+      );
 
       const centerIds = Object.keys(usersByCenter);
       for (let i = 0, l = centerIds.length; i < l; i++) {
@@ -177,13 +182,15 @@ const Admins = ({ onNextLabel, onNext = () => {} }) => {
     store.user = null;
     if (user) {
       store.user = user;
-      form.setValue('name', store.user.name);
-      form.setValue('gender', store.user.gender);
-      form.setValue('surnames', store.user.surnames);
-      form.setValue('secondSurname', store.user.secondSurname);
+      form.setValue("name", store.user.name);
+      form.setValue("gender", store.user.gender);
+      form.setValue("surnames", store.user.surnames);
+      form.setValue("secondSurname", store.user.secondSurname);
       form.setValue(
-        'birthdate',
-        store.user.birthdate ? new Date(store.user.birthdate) : store.user.birthdate
+        "birthdate",
+        store.user.birthdate
+          ? new Date(store.user.birthdate)
+          : store.user.birthdate
       );
     }
     forEach(store.users, (u) => {
@@ -200,7 +207,7 @@ const Admins = ({ onNextLabel, onNext = () => {} }) => {
 
   React.useEffect(() => {
     const subscription = form.watch((value, event) => {
-      if (event.name === 'email') {
+      if (event.name === "email") {
         debouncedFunction(async () => {
           checkEmail(value.email);
         });
@@ -214,87 +221,89 @@ const Admins = ({ onNextLabel, onNext = () => {} }) => {
   const data = React.useMemo(() => {
     const result = {
       pageHeader: {
-        title: tU('pageTitle'),
+        title: tU("pageTitle"),
       },
       tableColumns: [],
       tableLabels: {
-        add: tU('tableAdd'),
-        remove: tU('tableRemove'),
+        add: tU("tableAdd"),
+        remove: tU("tableRemove"),
       },
     };
     result.tableColumns.push({
-      Header: tU('emailHeader'),
-      accessor: 'email',
+      Header: tU("emailHeader"),
+      accessor: "email",
       input: {
         node: <TextInput disabled={!store.profile} required />,
         rules: {
-          required: tU('emailHeaderRequired'),
-          pattern: { value: EMAIL_REGEX, message: tU('emailHeaderNotEmail') },
+          required: tU("emailHeaderRequired"),
+          pattern: { value: EMAIL_REGEX, message: tU("emailHeaderNotEmail") },
         },
       },
       valueRender: (value) => <>{value}</>,
     });
     result.tableColumns.push({
-      Header: tU('nameHeader'),
-      accessor: 'name',
+      Header: tU("nameHeader"),
+      accessor: "name",
       input: {
         node: <TextInput disabled={!store.profile || !!store.user} required />,
-        rules: { required: tU('nameHeaderRequired') },
+        rules: { required: tU("nameHeaderRequired") },
       },
       valueRender: (value) => <>{value}</>,
     });
     result.tableColumns.push({
-      Header: tU('surnameHeader'),
-      accessor: 'surnames',
+      Header: tU("surnameHeader"),
+      accessor: "surnames",
       input: {
         node: <TextInput disabled={!store.profile || !!store.user} required />,
-        rules: { required: tU('surnameHeaderRequired') },
+        rules: { required: tU("surnameHeaderRequired") },
       },
       valueRender: (value) => <>{value}</>,
     });
     if (store.secondSurname && !store.secondSurname.disabled) {
       result.tableColumns.push({
-        Header: tU('secondSurnameHeader'),
-        accessor: 'secondSurname',
+        Header: tU("secondSurnameHeader"),
+        accessor: "secondSurname",
         input: {
-          node: <TextInput disabled={!store.profile || !!store.user} required />,
+          node: (
+            <TextInput disabled={!store.profile || !!store.user} required />
+          ),
           rules: store.secondSurname.required
-            ? { required: tU('secondSurnameHeaderRequired') }
+            ? { required: tU("secondSurnameHeaderRequired") }
             : {},
         },
         valueRender: (value) => <>{value}</>,
       });
     }
     result.tableColumns.push({
-      Header: tU('birthdayHeader'),
-      accessor: 'birthdate',
+      Header: tU("birthdayHeader"),
+      accessor: "birthdate",
       input: {
         node: <DatePicker disabled={!store.profile || !!store.user} required />,
-        rules: { required: tU('birthdayHeaderRequired') },
+        rules: { required: tU("birthdayHeaderRequired") },
       },
       valueRender: (value) => <>{new Date(value).toLocaleString()}</>,
     });
     result.tableColumns.push({
-      Header: tU('genderHeader'),
-      accessor: 'gender',
+      Header: tU("genderHeader"),
+      accessor: "gender",
       input: {
         node: (
           <Select
             data={[
-              { label: tU('male'), value: 'male' },
-              { label: tU('female'), value: 'female' },
+              { label: tU("male"), value: "male" },
+              { label: tU("female"), value: "female" },
             ]}
             disabled={!store.profile || !!store.user}
             required
           />
         ),
-        rules: { required: tU('genderHeaderRequired') },
+        rules: { required: tU("genderHeaderRequired") },
       },
       valueRender: (value) => <>{tU(value)}</>,
     });
     result.tableColumns.push({
-      Header: tU('tagsHeader'),
-      accessor: 'tags',
+      Header: tU("tagsHeader"),
+      accessor: "tags",
       input: {
         node: (
           <TagsMultiSelect
@@ -303,11 +312,12 @@ const Admins = ({ onNextLabel, onNext = () => {} }) => {
           />
         ),
       },
-      valueRender: (values) => map(values, (value, index) => `${index ? ', ' : ''}${value}`),
+      valueRender: (values) =>
+        map(values, (value, index) => `${index ? ", " : ""}${value}`),
     });
     result.tableColumns.push({
-      Header: tU('centersLabel'),
-      accessor: 'centers',
+      Header: tU("centersLabel"),
+      accessor: "centers",
       input: {
         node: (
           <MultiSelect
@@ -316,11 +326,13 @@ const Admins = ({ onNextLabel, onNext = () => {} }) => {
           />
         ),
         rules: {
-          required: tU('centersRequired'),
+          required: tU("centersRequired"),
         },
       },
       valueRender: (values) =>
-        map(values, (id) => <Badge label={store.centersById[id]} closable={false} />),
+        map(values, (id) => (
+          <Badge label={store.centersById[id]} closable={false} />
+        )),
     });
     return result;
   }, [
@@ -340,11 +352,15 @@ const Admins = ({ onNextLabel, onNext = () => {} }) => {
 
   return (
     <Box>
-      <ContextContainer title={t('title')} description={t('description')} divided>
+      <ContextContainer
+        title={t("title")}
+        description={t("description")}
+        divided
+      >
         <Box>
           {store.userEmailAlreadyAdded ? (
             <Alert severity="error" closeable={false}>
-              {tU('userEmailAlreadyAdded')}
+              {tU("userEmailAlreadyAdded")}
             </Alert>
           ) : null}
 
@@ -371,7 +387,7 @@ const Admins = ({ onNextLabel, onNext = () => {} }) => {
 };
 
 Admins.defaultProps = {
-  onNextLabel: 'Save and continue',
+  onNextLabel: "Save and continue",
 };
 Admins.propTypes = {
   onNext: PropTypes.func,

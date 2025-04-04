@@ -1,4 +1,4 @@
-const { findOne: getTheme } = require('../theme');
+const { findOne: getTheme } = require("../theme");
 
 async function getJsonTheme({ ctx }) {
   const theme = await getTheme({ ctx });

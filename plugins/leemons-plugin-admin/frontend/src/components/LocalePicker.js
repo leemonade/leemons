@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Select } from '@bubbles-ui/components';
-import { LOCALES } from '../constants';
+import React from "react";
+import PropTypes from "prop-types";
+import { Select } from "@bubbles-ui/components";
+import { LOCALES } from "../constants";
 
 const LocalePicker = ({
   label,

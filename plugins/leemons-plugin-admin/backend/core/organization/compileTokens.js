@@ -1,11 +1,17 @@
-const transformTokens = require('./transform').tokenTransformer.default;
-const { update: updateTheme } = require('../theme');
+const transformTokens = require("./transform").tokenTransformer.default;
+const { update: updateTheme } = require("../theme");
 
 /**
  * Utility functions
  */
 
-const transformTokensAndSave = async ({ tokens, sets, excludes, options, ctx }) => {
+const transformTokensAndSave = async ({
+  tokens,
+  sets,
+  excludes,
+  options,
+  ctx,
+}) => {
   const transformed = transformTokens(tokens, sets, excludes, options);
   await updateTheme({ tokens: transformed, ctx });
 };
@@ -26,7 +32,7 @@ const compileTokens = async ({ jsonRaw, ctx }) => {
 
   await transformTokensAndSave({
     tokens: jsonRaw,
-    sets: ['core', 'global', 'component'],
+    sets: ["core", "global", "component"],
     excludes: [],
     options,
     ctx,

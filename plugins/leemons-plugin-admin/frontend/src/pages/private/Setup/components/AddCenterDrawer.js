@@ -1,5 +1,5 @@
-import prefixPN from '@admin/helpers/prefixPN';
-import { getLanguagesRequest } from '@admin/request/settings';
+import prefixPN from "@admin/helpers/prefixPN";
+import { getLanguagesRequest } from "@admin/request/settings";
 import {
   Box,
   Button,
@@ -12,33 +12,37 @@ import {
   Stack,
   Switch,
   TextInput,
-} from '@bubbles-ui/components';
-import { useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { addCenterRequest, listProfilesRequest, listRolesRequest } from '@users/request';
-import { allCountries } from 'country-region-data';
-import { map } from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
+} from "@bubbles-ui/components";
+import { useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import {
+  addCenterRequest,
+  listProfilesRequest,
+  listRolesRequest,
+} from "@users/request";
+import { allCountries } from "country-region-data";
+import { map } from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
 
 const Styles = createStyles((theme) => ({
   inputContent: {
-    '>div': {
-      '&:first-child': {
-        width: '35%',
+    ">div": {
+      "&:first-child": {
+        width: "35%",
       },
-      '&:last-child': {
-        width: '65%',
+      "&:last-child": {
+        width: "65%",
       },
     },
   },
 }));
 
 const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
-  const [t, , , tLoading] = useTranslateLoader(prefixPN('addCenterDrawer'));
+  const [t, , , tLoading] = useTranslateLoader(prefixPN("addCenterDrawer"));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const { classes: styles } = Styles();
   const {
@@ -82,19 +86,22 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
     ]);
     store.roles = roles;
     store.profiles = profiles;
-    store.locales = map(locales, ({ code, name }) => ({ label: name, value: code }));
-    store.timeZones = map(Intl.supportedValuesOf('timeZone'), (item) => ({
+    store.locales = map(locales, ({ code, name }) => ({
+      label: name,
+      value: code,
+    }));
+    store.timeZones = map(Intl.supportedValuesOf("timeZone"), (item) => ({
       label: item,
       value: item,
     }));
     store.dayWeeks = [
-      { label: t('monday'), value: 1 },
-      { label: t('tuesday'), value: 2 },
-      { label: t('wednesday'), value: 3 },
-      { label: t('thursday'), value: 4 },
-      { label: t('friday'), value: 5 },
-      { label: t('saturday'), value: 6 },
-      { label: t('sunday'), value: 0 },
+      { label: t("monday"), value: 1 },
+      { label: t("tuesday"), value: 2 },
+      { label: t("wednesday"), value: 3 },
+      { label: t("thursday"), value: 4 },
+      { label: t("friday"), value: 5 },
+      { label: t("saturday"), value: 6 },
+      { label: t("sunday"), value: 0 },
     ];
     store.countries = map(allCountries, (item) => ({
       value: item[1],
@@ -124,7 +131,10 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
       if (limits.roles && Object.keys(limits.roles).length) {
         finalLimits.push(...Object.values(limits.roles));
       }
-      const { center: c } = await addCenterRequest({ ...data, limits: finalLimits });
+      const { center: c } = await addCenterRequest({
+        ...data,
+        limits: finalLimits,
+      });
       onSave({ ...c, limits });
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
@@ -150,138 +160,214 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
       <form onSubmit={handleSubmit(onSubmit)} autoComplete="off">
         <ContextContainer>
           <ContextContainer divided>
-            <ContextContainer title={t(center?.id ? 'editCenter' : 'newCenter')}>
+            <ContextContainer
+              title={t(center?.id ? "editCenter" : "newCenter")}
+            >
               {/* -- Name -- */}
-              <Stack fullWidth className={styles.inputContent} alignItems="center">
-                <InputWrapper label={`${t('name')}*`} />
+              <Stack
+                fullWidth
+                className={styles.inputContent}
+                alignItems="center"
+              >
+                <InputWrapper label={`${t("name")}*`} />
                 <Controller
                   name="name"
                   control={control}
-                  rules={r('nameRequired')}
-                  render={({ field }) => <TextInput error={errors.name} {...field} />}
+                  rules={r("nameRequired")}
+                  render={({ field }) => (
+                    <TextInput error={errors.name} {...field} />
+                  )}
                 />
               </Stack>
               {/* -- Locale -- */}
-              <Stack fullWidth className={styles.inputContent} alignItems="center">
-                <InputWrapper label={`${t('preferredLanguage')}*`} />
+              <Stack
+                fullWidth
+                className={styles.inputContent}
+                alignItems="center"
+              >
+                <InputWrapper label={`${t("preferredLanguage")}*`} />
                 <Controller
                   name="locale"
                   control={control}
-                  rules={r('preferredLanguageRequired')}
+                  rules={r("preferredLanguageRequired")}
                   render={({ field }) => (
-                    <Select data={store.locales} error={errors.locale} {...field} />
+                    <Select
+                      data={store.locales}
+                      error={errors.locale}
+                      {...field}
+                    />
                   )}
                 />
               </Stack>
               {/* -- Time zone -- */}
-              <Stack fullWidth className={styles.inputContent} alignItems="center">
-                <InputWrapper label={t('timeZone')} />
+              <Stack
+                fullWidth
+                className={styles.inputContent}
+                alignItems="center"
+              >
+                <InputWrapper label={t("timeZone")} />
                 <Controller
                   name="timezone"
                   control={control}
                   render={({ field }) => (
-                    <Select data={store.timeZones} error={errors.timeZone} {...field} />
+                    <Select
+                      data={store.timeZones}
+                      error={errors.timeZone}
+                      {...field}
+                    />
                   )}
                 />
               </Stack>
               {/* -- First day of week -- */}
-              <Stack fullWidth className={styles.inputContent} alignItems="center">
-                <InputWrapper label={`${t('firstDayOfWeek')}*`} />
+              <Stack
+                fullWidth
+                className={styles.inputContent}
+                alignItems="center"
+              >
+                <InputWrapper label={`${t("firstDayOfWeek")}*`} />
                 <Controller
                   name="firstDayOfWeek"
-                  rules={r('firstDayOfWeekRequired')}
+                  rules={r("firstDayOfWeekRequired")}
                   control={control}
                   render={({ field }) => (
-                    <Select data={store.dayWeeks} error={errors.firstDayOfWeek} {...field} />
+                    <Select
+                      data={store.dayWeeks}
+                      error={errors.firstDayOfWeek}
+                      {...field}
+                    />
                   )}
                 />
               </Stack>
             </ContextContainer>
             <ContextContainer
-              subtitle={t('emailForNotifications')}
-              description={t('emailForNotificationsDescription')}
+              subtitle={t("emailForNotifications")}
+              description={t("emailForNotificationsDescription")}
             >
               {/* -- Email -- */}
-              <Stack fullWidth className={styles.inputContent} alignItems="center">
-                <InputWrapper label={`${t('email')}*`} />
+              <Stack
+                fullWidth
+                className={styles.inputContent}
+                alignItems="center"
+              >
+                <InputWrapper label={`${t("email")}*`} />
                 <Controller
                   name="email"
                   control={control}
                   rules={{
-                    ...r('emailForNotificationsRequired'),
+                    ...r("emailForNotificationsRequired"),
                     pattern: {
                       value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                      message: t('emailForNotificationsInvalid'),
+                      message: t("emailForNotificationsInvalid"),
                     },
                   }}
-                  render={({ field }) => <TextInput error={errors.email} {...field} />}
+                  render={({ field }) => (
+                    <TextInput error={errors.email} {...field} />
+                  )}
                 />
               </Stack>
             </ContextContainer>
-            <ContextContainer subtitle={t('extraData')} divided>
+            <ContextContainer subtitle={t("extraData")} divided>
               {/* -- Country -- */}
-              <Stack fullWidth className={styles.inputContent} alignItems="center">
-                <InputWrapper label={`${t('country')}`} />
+              <Stack
+                fullWidth
+                className={styles.inputContent}
+                alignItems="center"
+              >
+                <InputWrapper label={`${t("country")}`} />
                 <Controller
                   name="country"
                   control={control}
                   render={({ field }) => (
-                    <Select data={store.countries} error={errors.country} {...field} />
+                    <Select
+                      data={store.countries}
+                      error={errors.country}
+                      {...field}
+                    />
                   )}
                 />
               </Stack>
-              <ContextContainer subtitle={t('address')}>
+              <ContextContainer subtitle={t("address")}>
                 {/* -- City -- */}
-                <Stack fullWidth className={styles.inputContent} alignItems="center">
-                  <InputWrapper label={`${t('city')}`} />
+                <Stack
+                  fullWidth
+                  className={styles.inputContent}
+                  alignItems="center"
+                >
+                  <InputWrapper label={`${t("city")}`} />
                   <Controller
                     name="city"
                     control={control}
-                    render={({ field }) => <TextInput error={errors.city} {...field} />}
+                    render={({ field }) => (
+                      <TextInput error={errors.city} {...field} />
+                    )}
                   />
                 </Stack>
                 {/* -- Postal code -- */}
-                <Stack fullWidth className={styles.inputContent} alignItems="center">
-                  <InputWrapper label={`${t('postalCode')}`} />
+                <Stack
+                  fullWidth
+                  className={styles.inputContent}
+                  alignItems="center"
+                >
+                  <InputWrapper label={`${t("postalCode")}`} />
                   <Controller
                     name="postalCode"
                     control={control}
-                    render={({ field }) => <TextInput error={errors.postalCode} {...field} />}
+                    render={({ field }) => (
+                      <TextInput error={errors.postalCode} {...field} />
+                    )}
                   />
                 </Stack>
                 {/* -- Postal code -- */}
-                <Stack fullWidth className={styles.inputContent} alignItems="center">
-                  <InputWrapper label={`${t('street')}`} />
+                <Stack
+                  fullWidth
+                  className={styles.inputContent}
+                  alignItems="center"
+                >
+                  <InputWrapper label={`${t("street")}`} />
                   <Controller
                     name="street"
                     control={control}
-                    render={({ field }) => <TextInput error={errors.street} {...field} />}
+                    render={({ field }) => (
+                      <TextInput error={errors.street} {...field} />
+                    )}
                   />
                 </Stack>
               </ContextContainer>
-              <ContextContainer subtitle={t('contactInfo')}>
+              <ContextContainer subtitle={t("contactInfo")}>
                 {/* -- Phone -- */}
-                <Stack fullWidth className={styles.inputContent} alignItems="center">
-                  <InputWrapper label={`${t('phone')}`} />
+                <Stack
+                  fullWidth
+                  className={styles.inputContent}
+                  alignItems="center"
+                >
+                  <InputWrapper label={`${t("phone")}`} />
                   <Controller
                     name="phone"
                     control={control}
-                    render={({ field }) => <TextInput error={errors.phone} {...field} />}
+                    render={({ field }) => (
+                      <TextInput error={errors.phone} {...field} />
+                    )}
                   />
                 </Stack>
                 {/* -- Email -- */}
-                <Stack fullWidth className={styles.inputContent} alignItems="center">
-                  <InputWrapper label={`${t('email')}`} />
+                <Stack
+                  fullWidth
+                  className={styles.inputContent}
+                  alignItems="center"
+                >
+                  <InputWrapper label={`${t("email")}`} />
                   <Controller
                     name="contactEmail"
                     control={control}
-                    render={({ field }) => <TextInput error={errors.contactEmail} {...field} />}
+                    render={({ field }) => (
+                      <TextInput error={errors.contactEmail} {...field} />
+                    )}
                   />
                 </Stack>
               </ContextContainer>
-              <ContextContainer subtitle={t('userLimits')}>
+              <ContextContainer subtitle={t("userLimits")}>
                 {/* -- Profiles -- */}
-                <InputWrapper label={`${t('profiles')}`} />
+                <InputWrapper label={`${t("profiles")}`} />
 
                 {store.profiles?.map((item, index) => (
                   <Stack
@@ -291,11 +377,16 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
                     alignItems="center"
                   >
                     <Box sx={(theme) => ({ paddingRight: theme.spacing[2] })}>
-                      <InputWrapper label={item.name} description={item.description} />
+                      <InputWrapper
+                        label={item.name}
+                        description={item.description}
+                      />
                     </Box>
                     <Box>
-                      <Box sx={() => ({ display: 'flex', width: '100%' })}>
-                        <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
+                      <Box sx={() => ({ display: "flex", width: "100%" })}>
+                        <Box
+                          sx={(theme) => ({ paddingRight: theme.spacing[4] })}
+                        >
                           <Controller
                             name={`limits.profiles[${item.id}].item`}
                             defaultValue={item.id}
@@ -304,7 +395,7 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
                           />
                           <Controller
                             name={`limits.profiles[${item.id}].type`}
-                            defaultValue={'profile'}
+                            defaultValue={"profile"}
                             control={control}
                             render={() => null}
                           />
@@ -313,10 +404,16 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
                             control={control}
                             render={({ field }) => (
                               <Switch
-                                label={t('unlimited')}
+                                label={t("unlimited")}
                                 onChange={(e) => {
-                                  if (!formValues?.limits?.profiles?.[item.id]?.limit) {
-                                    setValue(`limits.profiles[${item.id}].limit`, 1);
+                                  if (
+                                    !formValues?.limits?.profiles?.[item.id]
+                                      ?.limit
+                                  ) {
+                                    setValue(
+                                      `limits.profiles[${item.id}].limit`,
+                                      1
+                                    );
                                   }
                                   field.onChange(e);
                                 }}
@@ -325,7 +422,7 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
                             )}
                           />
                         </Box>
-                        <Box sx={() => ({ width: '100%' })}>
+                        <Box sx={() => ({ width: "100%" })}>
                           <Controller
                             name={`limits.profiles[${item.id}].limit`}
                             control={control}
@@ -334,7 +431,8 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
                                 min={1}
                                 {...field}
                                 disabled={
-                                  formValues?.limits?.profiles?.[item.id]?.unlimited !== false
+                                  formValues?.limits?.profiles?.[item.id]
+                                    ?.unlimited !== false
                                 }
                               />
                             )}
@@ -346,7 +444,7 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
                 ))}
 
                 {/* -- Roles -- */}
-                <InputWrapper label={`${t('roles')}`} />
+                <InputWrapper label={`${t("roles")}`} />
 
                 {store.roles?.map((item, index) => (
                   <Stack
@@ -356,11 +454,16 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
                     alignItems="center"
                   >
                     <Box sx={(theme) => ({ paddingRight: theme.spacing[2] })}>
-                      <InputWrapper label={item.name} description={item.description} />
+                      <InputWrapper
+                        label={item.name}
+                        description={item.description}
+                      />
                     </Box>
                     <Box>
-                      <Box sx={() => ({ display: 'flex', width: '100%' })}>
-                        <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
+                      <Box sx={() => ({ display: "flex", width: "100%" })}>
+                        <Box
+                          sx={(theme) => ({ paddingRight: theme.spacing[4] })}
+                        >
                           <Controller
                             name={`limits.roles[${item.id}].item`}
                             defaultValue={item.id}
@@ -369,7 +472,7 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
                           />
                           <Controller
                             name={`limits.roles[${item.id}].type`}
-                            defaultValue={'role'}
+                            defaultValue={"role"}
                             control={control}
                             render={() => null}
                           />
@@ -378,10 +481,15 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
                             control={control}
                             render={({ field }) => (
                               <Switch
-                                label={t('unlimited')}
+                                label={t("unlimited")}
                                 onChange={(e) => {
-                                  if (!formValues?.limits?.roles?.[item.id]?.limit) {
-                                    setValue(`limits.roles[${item.id}].limit`, 1);
+                                  if (
+                                    !formValues?.limits?.roles?.[item.id]?.limit
+                                  ) {
+                                    setValue(
+                                      `limits.roles[${item.id}].limit`,
+                                      1
+                                    );
                                   }
                                   field.onChange(e);
                                 }}
@@ -390,7 +498,7 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
                             )}
                           />
                         </Box>
-                        <Box sx={() => ({ width: '100%' })}>
+                        <Box sx={() => ({ width: "100%" })}>
                           <Controller
                             name={`limits.roles[${item.id}].limit`}
                             control={control}
@@ -398,7 +506,10 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
                               <NumberInput
                                 min={1}
                                 {...field}
-                                disabled={formValues?.limits?.roles?.[item.id]?.unlimited !== false}
+                                disabled={
+                                  formValues?.limits?.roles?.[item.id]
+                                    ?.unlimited !== false
+                                }
                               />
                             )}
                           />
@@ -413,7 +524,7 @@ const AddCenterDrawer = ({ opened, onClose, onSave, center = {} }) => {
           <Stack fullWidth justifyContent="end">
             <Box>
               <Button loading={store.saving} type="submit">
-                {t('save')}
+                {t("save")}
               </Button>
             </Box>
           </Stack>

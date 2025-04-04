@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const findOne = require('./findOne');
+const _ = require("lodash");
+const findOne = require("./findOne");
 
 /**
  * @public
