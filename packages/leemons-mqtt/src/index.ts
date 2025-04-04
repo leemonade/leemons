@@ -1,4 +1,4 @@
-import { mixin } from './mixin';
+import { mixin } from "./mixin";
 
 export const LeemonsMQTTMixin = mixin;
-export * from './types';
+export * from "./types";

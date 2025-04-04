@@ -1,4 +1,4 @@
-import type { Context } from '@leemons/moleculer';
+import type { Context } from "@leemons/moleculer";
 
 export interface MQTTMixinOptions {
   forceLeemonsDeploymentManagerMixinNeedToBeImported?: boolean;

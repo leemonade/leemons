@@ -1,6 +1,6 @@
-import type { Context } from '@leemons/moleculer';
+import type { Context } from "@leemons/moleculer";
 
-export type EventType = 'once' | 'once-per-install' | 'on';
+export type EventType = "once" | "once-per-install" | "on";
 
 export interface MultiEventHandler {
   (ctx: Context, ...params: any[]): Promise<void>;

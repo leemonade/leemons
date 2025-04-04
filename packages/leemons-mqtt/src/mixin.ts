@@ -1,35 +1,39 @@
-import { LeemonsError } from '@leemons/error';
-import type { Context, ServiceSchema } from '@leemons/moleculer';
-import _ from 'lodash';
-import type { EventHandlerOptions, MQTTMixinOptions } from './types';
+import { LeemonsError } from "@leemons/error";
+import type { Context, ServiceSchema } from "@leemons/moleculer";
+import _ from "lodash";
+import type { EventHandlerOptions, MQTTMixinOptions } from "./types";
 
 function modifyCTX(
   ctx: Context,
   { forceLeemonsDeploymentManagerMixinNeedToBeImported }: MQTTMixinOptions
 ): void {
   if (forceLeemonsDeploymentManagerMixinNeedToBeImported) {
-    if (!ctx.meta.deploymentID || !ctx.callerPlugin || !ctx.__leemonsDeploymentManagerCall) {
+    if (
+      !ctx.meta.deploymentID ||
+      !ctx.callerPlugin ||
+      !ctx.__leemonsDeploymentManagerCall
+    ) {
       throw new LeemonsError(ctx, {
-        message: 'LeemonsDeploymentManagerMixin need to be used',
+        message: "LeemonsDeploymentManagerMixin need to be used",
       });
     }
   }
   ctx.socket = {
     emit: (ids: string | string[], eventName: string, eventData: any) =>
-      ctx.call('mqtt-aws-iot.socket.emit', { ids, eventName, eventData }),
+      ctx.call("mqtt-aws-iot.socket.emit", { ids, eventName, eventData }),
     emitToAll: (eventName: string, eventData: any) =>
-      ctx.call('mqtt-aws-iot.socket.emitToAll', { eventName, eventData }),
+      ctx.call("mqtt-aws-iot.socket.emitToAll", { eventName, eventData }),
   };
 }
 
 export const mixin = ({
   forceLeemonsDeploymentManagerMixinNeedToBeImported = true,
 }: MQTTMixinOptions = {}): ServiceSchema => ({
-  name: '',
+  name: "",
 
   hooks: {
     before: {
-      '*': [
+      "*": [
         async function (ctx: Context) {
           modifyCTX(ctx, {
             forceLeemonsDeploymentManagerMixinNeedToBeImported,

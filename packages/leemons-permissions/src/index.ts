@@ -1,2 +1,2 @@
-export { addPermissionsDeploy } from './addPermissionsDeploy';
-export * from './types';
+export { addPermissionsDeploy } from "./addPermissionsDeploy";
+export * from "./types";

@@ -1,22 +1,25 @@
-import { getItemsHashByKey } from '@leemons/common';
-import { getKey, hasKey, setKey } from '@leemons/mongodb-helpers';
+import { getItemsHashByKey } from "@leemons/common";
+import { getKey, hasKey, setKey } from "@leemons/mongodb-helpers";
 import type {
   AddPermissionsDeployParams,
   ObjectPermissions,
   Permission,
   PermissionsHash,
   PermissionsUpdated,
-} from './types';
+} from "./types";
 
 function getPermissionsHash(permissions?: Permission[]): PermissionsHash {
   if (!permissions || !Array.isArray(permissions) || !permissions.length) {
     return {};
   }
 
-  const permissionsByName = permissions.reduce<ObjectPermissions>((acc, permission) => {
-    acc[permission.permissionName] = permission;
-    return acc;
-  }, {});
+  const permissionsByName = permissions.reduce<ObjectPermissions>(
+    (acc, permission) => {
+      acc[permission.permissionName] = permission;
+      return acc;
+    },
+    {}
+  );
 
   return getItemsHashByKey({ items: permissionsByName });
 }
@@ -36,10 +39,13 @@ function getPermissionsUpdated({
   const updatedPermissions: Permission[] = [];
   const deletedPermissions: string[] = [];
 
-  const objectPermissions = (permissions ?? []).reduce<ObjectPermissions>((acc, permission) => {
-    acc[permission.permissionName] = permission;
-    return acc;
-  }, {});
+  const objectPermissions = (permissions ?? []).reduce<ObjectPermissions>(
+    (acc, permission) => {
+      acc[permission.permissionName] = permission;
+      return acc;
+    },
+    {}
+  );
 
   Object.keys(mixedHash).forEach((key) => {
     if (!hash[key]) {
@@ -61,21 +67,25 @@ export async function addPermissionsDeploy({
 }: AddPermissionsDeployParams): Promise<void> {
   const permissionsHash = getPermissionsHash(permissions);
 
-  if (!(await hasKey(keyValueModel, 'permissions'))) {
-    await ctx.tx.call('users.permissions.addMany', permissions);
+  if (!(await hasKey(keyValueModel, "permissions"))) {
+    await ctx.tx.call("users.permissions.addMany", permissions);
   } else {
-    const currentPermissionsHash = await getKey<PermissionsHash>(keyValueModel, 'permissions');
-    const { newPermissions, /* deletedPermissions, */ updatedPermissions } = getPermissionsUpdated({
-      permissions,
-      hash: permissionsHash,
-      savedHash: currentPermissionsHash ?? {},
-    });
+    const currentPermissionsHash = await getKey<PermissionsHash>(
+      keyValueModel,
+      "permissions"
+    );
+    const { newPermissions, /* deletedPermissions, */ updatedPermissions } =
+      getPermissionsUpdated({
+        permissions,
+        hash: permissionsHash,
+        savedHash: currentPermissionsHash ?? {},
+      });
 
-    await ctx.tx.call('users.permissions.addMany', newPermissions);
+    await ctx.tx.call("users.permissions.addMany", newPermissions);
     // await ctx.tx.call('users.permissions.removeMany', deletedPermissions);
-    await ctx.tx.call('users.permissions.updateMany', updatedPermissions);
+    await ctx.tx.call("users.permissions.updateMany", updatedPermissions);
   }
 
-  await setKey(keyValueModel, 'permissions', permissionsHash);
-  ctx.tx.emit('init-permissions');
+  await setKey(keyValueModel, "permissions", permissionsHash);
+  ctx.tx.emit("init-permissions");
 }
