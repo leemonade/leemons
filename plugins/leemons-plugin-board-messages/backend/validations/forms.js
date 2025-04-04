@@ -1,4 +1,4 @@
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 const {
   stringSchema,
   arrayStringSchema,
@@ -8,10 +8,10 @@ const {
   textSchema,
   dateSchema,
   booleanSchema,
-} = require('./types');
+} = require("./types");
 
 const saveMessageSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     id: stringSchema,
     internalName: stringSchema,
@@ -19,43 +19,43 @@ const saveMessageSchema = {
     url: stringSchemaNullable,
     textUrl: stringSchemaNullable,
     status: {
-      type: 'string',
-      enum: ['published', 'programmed', 'completed', 'unpublished', 'archived'],
+      type: "string",
+      enum: ["published", "programmed", "completed", "unpublished", "archived"],
       nullable: true,
     },
     zone: {
-      type: 'string',
-      enum: ['modal', 'dashboard', 'class-dashboard'],
+      type: "string",
+      enum: ["modal", "dashboard", "class-dashboard"],
     },
     publicationType: {
-      type: 'string',
-      enum: ['immediately', 'programmed'],
+      type: "string",
+      enum: ["immediately", "programmed"],
     },
     startDate: dateSchemaNullable,
     endDate: dateSchemaNullable,
     asset: {
-      type: ['string', 'object'],
+      type: ["string", "object"],
       nullable: true,
     },
     centers: {
-      type: 'array',
+      type: "array",
       items: stringSchema,
     },
     programs: {
-      type: 'array',
+      type: "array",
       items: stringSchema,
     },
     profiles: {
-      type: 'array',
+      type: "array",
       items: stringSchema,
     },
     classes: {
-      type: 'array',
+      type: "array",
       items: stringSchema,
     },
     unpublishConflicts: booleanSchema,
   },
-  required: ['internalName', 'message', 'zone', 'publicationType', 'centers'],
+  required: ["internalName", "message", "zone", "publicationType", "centers"],
   additionalProperties: false,
 };
 

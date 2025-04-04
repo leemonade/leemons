@@ -4,12 +4,12 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 const {
   list,
   save,
@@ -17,37 +17,37 @@ const {
   getActive,
   addClick,
   addView,
-} = require('../../core/messages');
+} = require("../../core/messages");
 
 /** @type {ServiceSchema} */
 module.exports = {
   listRest: {
     rest: {
-      method: 'POST',
-      path: '/list',
+      method: "POST",
+      path: "/list",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'board-messages.board-messages': {
-            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          "board-messages.board-messages": {
+            actions: ["view", "update", "create", "delete", "admin"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
+          page: { type: ["number", "string"] },
+          size: { type: ["number", "string"] },
           filters: {
-            type: 'object',
+            type: "object",
             additionalProperties: true,
           },
         },
-        required: ['page', 'size'],
+        required: ["page", "size"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -64,15 +64,15 @@ module.exports = {
   },
   saveRest: {
     rest: {
-      method: 'POST',
-      path: '/save',
+      method: "POST",
+      path: "/save",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'board-messages.board-messages': {
-            actions: ['update', 'create', 'admin'],
+          "board-messages.board-messages": {
+            actions: ["update", "create", "admin"],
           },
         },
       }),
@@ -87,15 +87,15 @@ module.exports = {
   },
   getOverlapsRest: {
     rest: {
-      method: 'POST',
-      path: '/overlaps',
+      method: "POST",
+      path: "/overlaps",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'board-messages.board-messages': {
-            actions: ['update', 'create', 'admin'],
+          "board-messages.board-messages": {
+            actions: ["update", "create", "admin"],
           },
         },
       }),
@@ -110,8 +110,8 @@ module.exports = {
   },
   getActiveRest: {
     rest: {
-      method: 'POST',
-      path: '/active',
+      method: "POST",
+      path: "/active",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -124,8 +124,8 @@ module.exports = {
   },
   addClickRest: {
     rest: {
-      method: 'POST',
-      path: '/click',
+      method: "POST",
+      path: "/click",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -138,8 +138,8 @@ module.exports = {
   },
   addViewRest: {
     rest: {
-      method: 'POST',
-      path: '/view',
+      method: "POST",
+      path: "/view",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

@@ -1,7 +1,9 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function addView({ id, ctx }) {
-  const config = await ctx.tx.db.MessageConfig.findOne({ id }).select(['totalViews']).lean();
+  const config = await ctx.tx.db.MessageConfig.findOne({ id })
+    .select(["totalViews"])
+    .lean();
   if (!_.isNumber(config.totalViews)) {
     config.totalViews = 0;
   }

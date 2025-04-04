@@ -1,10 +1,12 @@
-const { list } = require('./list');
-const { save } = require('./save');
-const { byIds } = require('./byIds');
-const { addView } = require('./addView');
-const { addClick } = require('./addClick');
-const { getActive } = require('./getActive');
-const { getOverlapsWithOtherConfigurations } = require('./getOverlapsWithOtherConfigurations');
+const { list } = require("./list");
+const { save } = require("./save");
+const { byIds } = require("./byIds");
+const { addView } = require("./addView");
+const { addClick } = require("./addClick");
+const { getActive } = require("./getActive");
+const {
+  getOverlapsWithOtherConfigurations,
+} = require("./getOverlapsWithOtherConfigurations");
 
 module.exports = {
   list,

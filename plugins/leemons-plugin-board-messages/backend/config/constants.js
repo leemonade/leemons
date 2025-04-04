@@ -1,4 +1,4 @@
-const permissionsPrefix = 'board-messages';
+const permissionsPrefix = "board-messages";
 
 const permissionNames = {
   boardMessages: `${permissionsPrefix}.board-messages`,
@@ -7,10 +7,10 @@ const permissionNames = {
 const permissions = [
   {
     permissionName: permissionNames.boardMessages,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
+    actions: ["view", "update", "create", "delete", "admin"],
     localizationName: {
-      es: 'Tablón de anuncios',
-      en: 'Notice board',
+      es: "Tablón de anuncios",
+      en: "Notice board",
     },
   },
 ];
@@ -19,20 +19,20 @@ const menuItems = [
   // Main
   {
     item: {
-      key: 'boardMessages',
+      key: "boardMessages",
       order: 101,
-      url: '/private/board-messages/list',
-      iconSvg: '/public/board-messages/menu-icon.svg',
-      activeIconSvg: '/public/board-messages/menu-icon-active.svg',
+      url: "/private/board-messages/list",
+      iconSvg: "/public/board-messages/menu-icon.svg",
+      activeIconSvg: "/public/board-messages/menu-icon-active.svg",
       label: {
-        es: 'Tablón de anuncios',
-        en: 'Notice board',
+        es: "Tablón de anuncios",
+        en: "Notice board",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.boardMessages,
-        actionNames: ['view', 'admin'],
+        actionNames: ["view", "admin"],
       },
     ],
   },
@@ -42,9 +42,9 @@ const widgets = {
   items: [
     // ---- Dashboard
     {
-      zoneKey: 'dashboard.program.left',
+      zoneKey: "dashboard.program.left",
       key: `${permissionsPrefix}.dashboard`,
-      url: 'dashboard/index',
+      url: "dashboard/index",
       properties: {
         noPadding: true,
       },
@@ -52,7 +52,7 @@ const widgets = {
     {
       zoneKey: `assignables.class.ongoing`,
       key: `${permissionsPrefix}.class-dashboard`,
-      url: 'class-dashboard/index',
+      url: "class-dashboard/index",
       properties: {
         noPadding: true,
       },

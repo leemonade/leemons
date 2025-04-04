@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, createStyles } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, createStyles } from "@bubbles-ui/components";
 
 const EmptyStateStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
@@ -8,17 +8,17 @@ const EmptyStateStyles = createStyles((theme) => {
     root: {
       borderRadius: 8,
       height: 400,
-      width: '100%',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
+      width: "100%",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
       ...globalTheme.content.typo.body.md,
     },
   };
 });
 
 const EmptyState = ({ label }) => {
-  const { classes } = EmptyStateStyles({}, { name: 'BoardMessagesEmptyState' });
+  const { classes } = EmptyStateStyles({}, { name: "BoardMessagesEmptyState" });
   return <Box className={classes.root}>{label}</Box>;
 };
 

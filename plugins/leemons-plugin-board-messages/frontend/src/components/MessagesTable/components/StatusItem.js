@@ -1,11 +1,11 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Badge } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Badge } from "@bubbles-ui/components";
 
 const StatusItem = ({ status, labels }) => {
   const getSeverity = () => {
-    if (status === 'published') return 'success';
-    if (status === 'completed') return 'error';
+    if (status === "published") return "success";
+    if (status === "completed") return "error";
     return null;
   };
 

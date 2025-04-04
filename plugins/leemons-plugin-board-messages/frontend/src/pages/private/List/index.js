@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Box,
   Stack,
@@ -9,18 +9,20 @@ import {
   TotalLayoutHeader,
   TotalLayoutContainer,
   TotalLayoutStepContainer,
-} from '@bubbles-ui/components';
-import { useStore } from '@common';
-import { getCookieToken } from '@users/session';
-import prefixPN from '@board-messages/helpers/prefixPN';
-import useTranslateObjectLoader from '@multilanguage/useTranslateObjectLoader';
-import { DetailDrawer, MessagesTable } from '@board-messages/components';
-import { useProfiles } from '@users/hooks';
+} from "@bubbles-ui/components";
+import { useStore } from "@common";
+import { getCookieToken } from "@users/session";
+import prefixPN from "@board-messages/helpers/prefixPN";
+import useTranslateObjectLoader from "@multilanguage/useTranslateObjectLoader";
+import { DetailDrawer, MessagesTable } from "@board-messages/components";
+import { useProfiles } from "@users/hooks";
 
-const PageStyles = createStyles(() => ({ panelList: { backgroundColor: 'white' } }));
+const PageStyles = createStyles(() => ({
+  panelList: { backgroundColor: "white" },
+}));
 
 export default function Index() {
-  const labels = useTranslateObjectLoader(prefixPN('list'));
+  const labels = useTranslateObjectLoader(prefixPN("list"));
   const scrollRef = React.useRef();
   const sessionToken = getCookieToken(true);
   const { data: profiles } = useProfiles();
@@ -28,7 +30,7 @@ export default function Index() {
   const profileItemsWithoutAdmin = React.useMemo(
     () =>
       profiles
-        ?.filter((profile) => profile.sysName !== 'admin')
+        ?.filter((profile) => profile.sysName !== "admin")
         ?.map((profile) => ({ label: profile.name, value: profile.id })) ?? [],
     [profiles]
   );
@@ -88,10 +90,10 @@ export default function Index() {
 
   const centerName = React.useMemo(() => {
     const center = sessionToken?.centers?.[0];
-    return center?.name ?? '';
+    return center?.name ?? "";
   }, [sessionToken]);
 
-  const { classes } = PageStyles({}, { name: 'BoardMessagesList' });
+  const { classes } = PageStyles({}, { name: "BoardMessagesList" });
 
   return (
     <TotalLayoutContainer
@@ -101,8 +103,12 @@ export default function Index() {
           title={labels.pageTitle}
           cancelable={false}
           icon={
-            <Box sx={{ position: 'relative', width: 24, height: 24 }}>
-              <ImageLoader src="/public/board-messages/menu-icon.svg" width={18} height={18} />
+            <Box sx={{ position: "relative", width: 24, height: 24 }}>
+              <ImageLoader
+                src="/public/board-messages/menu-icon.svg"
+                width={18}
+                height={18}
+              />
             </Box>
           }
         />
@@ -112,9 +118,17 @@ export default function Index() {
         ref={scrollRef}
         justifyContent="center"
         fullWidth
-        sx={(theme) => ({ overflowY: 'auto', marginTop: theme.other.global.spacing.padding.lg })}
+        sx={(theme) => ({
+          overflowY: "auto",
+          marginTop: theme.other.global.spacing.padding.lg,
+        })}
       >
-        <TotalLayoutStepContainer clean fullWidth stepName={centerName} footerPadding={0}>
+        <TotalLayoutStepContainer
+          clean
+          fullWidth
+          stepName={centerName}
+          footerPadding={0}
+        >
           <Tabs
             panelColor="solid"
             fullWidth

@@ -1,4 +1,8 @@
-import { createStyles, getBoxShadowFromToken, getHtmlStyles } from '@bubbles-ui/components';
+import {
+  createStyles,
+  getBoxShadowFromToken,
+  getHtmlStyles,
+} from "@bubbles-ui/components";
 
 // eslint-disable-next-line import/prefer-default-export
 export const BannerMessageStyles = createStyles((theme) => {
@@ -6,25 +10,25 @@ export const BannerMessageStyles = createStyles((theme) => {
   const { root: htmlStyles } = getHtmlStyles(theme);
   return {
     root: {
-      display: 'flex',
-      flexDirection: 'column',
+      display: "flex",
+      flexDirection: "column",
       gap: 32,
     },
     messageWrapper: {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
     },
     messageRoot: {
-      minWidth: '70%',
-      display: 'flex',
+      minWidth: "70%",
+      display: "flex",
       ...getBoxShadowFromToken(globalTheme.shadow[200]),
-      border: `4px solid ${globalTheme.border.color.line['default--reverse']}`,
-      backgroundColor: 'white',
+      border: `4px solid ${globalTheme.border.color.line["default--reverse"]}`,
+      backgroundColor: "white",
     },
     contentWrapper: {
-      display: 'flex',
-      flexDirection: 'column',
+      display: "flex",
+      flexDirection: "column",
       gap: 16,
       paddingInline: 24,
       paddingBlock: 16,
@@ -38,8 +42,8 @@ export const BannerMessageStyles = createStyles((theme) => {
       ...globalTheme.content.typo.body.md,
     },
     buttonRow: {
-      display: 'flex',
-      justifyContent: 'flex-end',
+      display: "flex",
+      justifyContent: "flex-end",
     },
   };
 });

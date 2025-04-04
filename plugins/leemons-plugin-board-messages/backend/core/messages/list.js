@@ -1,7 +1,7 @@
-const _ = require('lodash');
-const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
-const { byIds } = require('./byIds');
-const { getMessageIdsByFilters } = require('./getMessageIdsByFilters');
+const _ = require("lodash");
+const { mongoDBPaginate } = require("@leemons/mongodb-helpers");
+const { byIds } = require("./byIds");
+const { getMessageIdsByFilters } = require("./getMessageIdsByFilters");
 
 async function list({ page, size, filters, ctx }) {
   const query = {};
@@ -14,21 +14,26 @@ async function list({ page, size, filters, ctx }) {
       query.zone = _.isArray(filters.zone) ? filters.zone : [filters.zone];
     }
     if (filters.status) {
-      query.status = _.isArray(filters.status) ? filters.status : [filters.status];
+      query.status = _.isArray(filters.status)
+        ? filters.status
+        : [filters.status];
     }
     if (filters.internalName) {
-      query.internalName = { $regex: _.escapeRegExp(filters.internalName), $options: 'i' };
+      query.internalName = {
+        $regex: _.escapeRegExp(filters.internalName),
+        $options: "i",
+      };
     }
   }
   const results = await mongoDBPaginate({
     model: ctx.tx.db.MessageConfig,
     page,
     size,
-    columns: ['id'],
+    columns: ["id"],
     query,
   });
 
-  results.items = await byIds({ ids: _.map(results.items, 'id'), ctx });
+  results.items = await byIds({ ids: _.map(results.items, "id"), ctx });
   return results;
 }
 

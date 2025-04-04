@@ -1,2 +1,2 @@
-export * from './DetailDrawer';
-export * from './DetailDrawer.constants';
+export * from "./DetailDrawer";
+export * from "./DetailDrawer.constants";

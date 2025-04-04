@@ -1,9 +1,11 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { validateSaveMessage } = require('../../validations/forms');
-const { byIds } = require('./byIds');
-const { calculeStatusFromDates } = require('./calculeStatusFromDates');
-const { getOverlapsWithOtherConfigurations } = require('./getOverlapsWithOtherConfigurations');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { validateSaveMessage } = require("../../validations/forms");
+const { byIds } = require("./byIds");
+const { calculeStatusFromDates } = require("./calculeStatusFromDates");
+const {
+  getOverlapsWithOtherConfigurations,
+} = require("./getOverlapsWithOtherConfigurations");
 
 async function save({ data: _data, ctx }) {
   const { userSession } = ctx.meta;
@@ -22,17 +24,17 @@ async function save({ data: _data, ctx }) {
     ...data
   } = _data;
 
-  if (!startDate || data.publicationType === 'immediately') {
+  if (!startDate || data.publicationType === "immediately") {
     startDate = new Date();
   }
-  if (!endDate || data.publicationType === 'immediately') {
-    endDate = new Date('01/01/9999');
+  if (!endDate || data.publicationType === "immediately") {
+    endDate = new Date("01/01/9999");
   }
 
   startDate = new Date(startDate);
   endDate = new Date(endDate);
 
-  if (!['archived', 'unpublished'].includes(data.status)) {
+  if (!["archived", "unpublished"].includes(data.status)) {
     const overlaps = await getOverlapsWithOtherConfigurations({
       item: { ..._data, startDate, endDate },
       ctx,
@@ -42,14 +44,14 @@ async function save({ data: _data, ctx }) {
       if (_.isBoolean(unpublishConflicts)) {
         if (unpublishConflicts) {
           await ctx.tx.db.MessageConfig.updateMany(
-            { id: _.map(overlaps, 'id') },
-            { status: 'unpublished' }
+            { id: _.map(overlaps, "id") },
+            { status: "unpublished" }
           );
         } else {
-          data.status = 'unpublished';
+          data.status = "unpublished";
         }
       } else {
-        throw new LeemonsError(ctx, { message: 'Has overlaps' });
+        throw new LeemonsError(ctx, { message: "Has overlaps" });
       }
     } else {
       data.status = calculeStatusFromDates(startDate, endDate);
@@ -62,7 +64,7 @@ async function save({ data: _data, ctx }) {
     item = await ctx.tx.db.MessageConfig.findOne({ id }).lean();
 
     if (item.userOwner !== userSession.id) {
-      throw new LeemonsError(ctx, { message: 'Only the owner can update' });
+      throw new LeemonsError(ctx, { message: "Only the owner can update" });
     }
 
     // Si hay id borramos todas las relaciones de centros/perfiles/classes/programas por que las vamos a crear de nuevo.
@@ -72,7 +74,10 @@ async function save({ data: _data, ctx }) {
       ctx.tx.db.MessageConfigProfiles.deleteMany({ messageConfig: id }),
       ctx.tx.db.MessageConfigPrograms.deleteMany({ messageConfig: id }),
     ]);
-    await ctx.tx.db.MessageConfig.updateOne({ id }, { ...data, startDate, endDate });
+    await ctx.tx.db.MessageConfig.updateOne(
+      { id },
+      { ...data, startDate, endDate }
+    );
   } else {
     item = await ctx.tx.db.MessageConfig.create({
       ...data,
@@ -91,12 +96,15 @@ async function save({ data: _data, ctx }) {
     name: item.id,
   };
   if (asset) imageData.cover = asset;
-  const assetImage = await ctx.tx.call('leebrary.assets.add', {
+  const assetImage = await ctx.tx.call("leebrary.assets.add", {
     asset: imageData,
     options: { published: true },
   });
 
-  await ctx.tx.db.MessageConfig.updateOne({ id: item.id }, { asset: assetImage.id });
+  await ctx.tx.db.MessageConfig.updateOne(
+    { id: item.id },
+    { asset: assetImage.id }
+  );
 
   const promises = [];
 
@@ -104,64 +112,72 @@ async function save({ data: _data, ctx }) {
   if (centers?.length) {
     _.forEach(centers, (center) => {
       promises.push(
-        ctx.tx.db.MessageConfigCenters.create({ messageConfig: item.id, center }).then((r) =>
-          r.toObject()
-        )
+        ctx.tx.db.MessageConfigCenters.create({
+          messageConfig: item.id,
+          center,
+        }).then((r) => r.toObject())
       );
     });
   } else {
     promises.push(
-      ctx.tx.db.MessageConfigCenters.create({ messageConfig: item.id, center: '*' }).then((r) =>
-        r.toObject()
-      )
+      ctx.tx.db.MessageConfigCenters.create({
+        messageConfig: item.id,
+        center: "*",
+      }).then((r) => r.toObject())
     );
   }
   // ----- Profiles -----
   if (profiles?.length) {
     _.forEach(profiles, (profile) => {
       promises.push(
-        ctx.tx.db.MessageConfigProfiles.create({ messageConfig: item.id, profile }).then((r) =>
-          r.toObject()
-        )
+        ctx.tx.db.MessageConfigProfiles.create({
+          messageConfig: item.id,
+          profile,
+        }).then((r) => r.toObject())
       );
     });
   } else {
     promises.push(
-      ctx.tx.db.MessageConfigProfiles.create({ messageConfig: item.id, profile: '*' }).then((r) =>
-        r.toObject()
-      )
+      ctx.tx.db.MessageConfigProfiles.create({
+        messageConfig: item.id,
+        profile: "*",
+      }).then((r) => r.toObject())
     );
   }
   // ----- Classes -----
   if (classes?.length) {
     _.forEach(classes, (classe) => {
       promises.push(
-        ctx.tx.db.MessageConfigClasses.create({ messageConfig: item.id, class: classe }).then((r) =>
-          r.toObject()
-        )
+        ctx.tx.db.MessageConfigClasses.create({
+          messageConfig: item.id,
+          class: classe,
+        }).then((r) => r.toObject())
       );
     });
   } else {
     promises.push(
-      ctx.tx.db.MessageConfigClasses.create({ messageConfig: item.id, class: '*' }).then((r) =>
-        r.toObject()
-      )
+      ctx.tx.db.MessageConfigClasses.create({
+        messageConfig: item.id,
+        class: "*",
+      }).then((r) => r.toObject())
     );
   }
   // ----- Program -----
   if (programs?.length) {
     _.forEach(programs, (program) => {
       promises.push(
-        ctx.tx.db.MessageConfigPrograms.create({ messageConfig: item.id, program }).then((r) =>
-          r.toObject()
-        )
+        ctx.tx.db.MessageConfigPrograms.create({
+          messageConfig: item.id,
+          program,
+        }).then((r) => r.toObject())
       );
     });
   } else {
     promises.push(
-      ctx.tx.db.MessageConfigPrograms.create({ messageConfig: item.id, program: '*' }).then((r) =>
-        r.toObject()
-      )
+      ctx.tx.db.MessageConfigPrograms.create({
+        messageConfig: item.id,
+        program: "*",
+      }).then((r) => r.toObject())
     );
   }
 

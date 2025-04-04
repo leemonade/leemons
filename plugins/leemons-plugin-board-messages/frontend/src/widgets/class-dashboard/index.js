@@ -1,9 +1,9 @@
-import { Box } from '@bubbles-ui/components';
-import { BannerMessage } from '@board-messages/components';
-import { getActiveRequest } from '@board-messages/request';
-import { getCentersWithToken } from '@users/session';
-import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import { Box } from "@bubbles-ui/components";
+import { BannerMessage } from "@board-messages/components";
+import { getActiveRequest } from "@board-messages/request";
+import { getCentersWithToken } from "@users/session";
+import PropTypes from "prop-types";
+import React, { useState } from "react";
 
 function ClassDashboard({ classe }) {
   const [activeMessage, setActiveMessage] = useState(null);
@@ -13,7 +13,7 @@ function ClassDashboard({ classe }) {
       center: getCentersWithToken()[0].id,
       classe: classe.id,
       program: classe.program,
-      zone: 'class-dashboard',
+      zone: "class-dashboard",
     });
     setActiveMessage(message);
   }

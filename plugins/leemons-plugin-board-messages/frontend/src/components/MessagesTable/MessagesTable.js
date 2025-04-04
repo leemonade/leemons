@@ -1,70 +1,78 @@
-import React, { useMemo, useState } from 'react';
-import { omit, noop } from 'lodash';
-import { Box, Button, ContextContainer, PaginatedList } from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import { listProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
-import { getUserPrograms } from '@academic-portfolio/request/programs';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { listProfilesRequest } from '@users/request';
-import getUserCenters from '@users/request/getUserCenters';
-import { getCentersWithToken, useSession } from '@users/session';
-import { listRequest, saveRequest } from '../../request';
-import { Filters } from '../Filters';
-import { ActionItem } from './components/ActionItem';
-import { DateItem } from './components/DateItem';
-import { EmptyState } from './components/EmptyState';
-import { NameItem } from './components/NameItem';
-import { ObjectiveItem } from './components/ObjectiveItem';
-import { StatisticsItem } from './components/StatisticsItem';
-import { StatusItem } from './components/StatusItem';
+import React, { useMemo, useState } from "react";
+import { omit, noop } from "lodash";
+import {
+  Box,
+  Button,
+  ContextContainer,
+  PaginatedList,
+} from "@bubbles-ui/components";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import { useIsTeacher } from "@academic-portfolio/hooks";
+import {
+  listProgramsRequest,
+  listSessionClassesRequest,
+} from "@academic-portfolio/request";
+import { getUserPrograms } from "@academic-portfolio/request/programs";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { listProfilesRequest } from "@users/request";
+import getUserCenters from "@users/request/getUserCenters";
+import { getCentersWithToken, useSession } from "@users/session";
+import { listRequest, saveRequest } from "../../request";
+import { Filters } from "../Filters";
+import { ActionItem } from "./components/ActionItem";
+import { DateItem } from "./components/DateItem";
+import { EmptyState } from "./components/EmptyState";
+import { NameItem } from "./components/NameItem";
+import { ObjectiveItem } from "./components/ObjectiveItem";
+import { StatisticsItem } from "./components/StatisticsItem";
+import { StatusItem } from "./components/StatusItem";
 import {
   MESSAGES_TABLES_DEFAULT_PROPS,
   MESSAGES_TABLES_PROP_TYPES,
-} from './MessagesTable.constants';
+} from "./MessagesTable.constants";
 
 const useMessagesColumns = (labels) =>
   useMemo(
     () => [
       {
-        Header: labels?.name || '',
-        accessor: 'name',
+        Header: labels?.name || "",
+        accessor: "name",
       },
       {
-        Header: labels?.objective || '',
-        accessor: 'objective',
+        Header: labels?.objective || "",
+        accessor: "objective",
       },
       {
-        Header: labels?.format || '',
-        accessor: 'format',
+        Header: labels?.format || "",
+        accessor: "format",
       },
       {
-        Header: labels?.publishDate || '',
-        accessor: 'publishDate',
+        Header: labels?.publishDate || "",
+        accessor: "publishDate",
       },
       {
-        Header: labels?.state || '',
-        accessor: 'state',
+        Header: labels?.state || "",
+        accessor: "state",
       },
       {
-        Header: labels?.statistics || '',
-        accessor: 'statistics',
+        Header: labels?.statistics || "",
+        accessor: "statistics",
       },
       {
-        Header: labels?.actions || '',
-        accessor: 'actions',
+        Header: labels?.actions || "",
+        accessor: "actions",
       },
     ],
     [labels]
   );
 
 const DEFAULT_VALUES = {
-  internalName: '',
+  internalName: "",
   centers: null,
   programs: [],
   profiles: [],
-  zone: '',
-  status: '',
+  zone: "",
+  status: "",
 };
 
 const MessagesTable = ({
@@ -110,7 +118,10 @@ const MessagesTable = ({
         ).reduce((prev, current) => [...prev, ...current.data.items], []);
       }
       if (allPrograms.length > 0) {
-        return allPrograms.map((program) => ({ label: program.name, value: program.id }));
+        return allPrograms.map((program) => ({
+          label: program.name,
+          value: program.id,
+        }));
       }
       return [];
     } catch (error) {
@@ -122,11 +133,21 @@ const MessagesTable = ({
   const getAllClasses = async (programsValue) => {
     try {
       const results = await Promise.all(
-        programsValue.map(({ value: id }) => listSessionClassesRequest({ program: id }))
+        programsValue.map(({ value: id }) =>
+          listSessionClassesRequest({ program: id })
+        )
       );
-      const allClasses = results.reduce((prev, current) => [...prev, ...current.classes], []);
+      const allClasses = results.reduce(
+        (prev, current) => [...prev, ...current.classes],
+        []
+      );
       if (allClasses.length > 0) {
-        setClasses(allClasses.map((klass) => ({ label: klass.subject.name, value: klass.id })));
+        setClasses(
+          allClasses.map((klass) => ({
+            label: klass.subject.name,
+            value: klass.id,
+          }))
+        );
       }
     } catch (error) {
       addErrorAlert(error);
@@ -149,18 +170,25 @@ const MessagesTable = ({
         page: 0,
         size: 9999,
       });
-      if (!filters.zone && isTeacher) filters.zone = 'class-dashboard';
-      if (onlyArchived) filters.status = 'archived';
+      if (!filters.zone && isTeacher) filters.zone = "class-dashboard";
+      if (onlyArchived) filters.status = "archived";
       filters.status = filters.status
         ? filters.status
-        : [('published', 'unpublished', 'completed', 'programmed')];
+        : [("published", "unpublished", "completed", "programmed")];
       const {
         data: { items: messagesResult },
       } = await listRequest({ page, size, filters });
       const allPrograms = await getAllPrograms(finalCenters);
       await getAllClasses(allPrograms);
-      setProfiles(profilesResult.map((profile) => ({ label: profile.name, value: profile.id })));
-      setCenters(finalCenters.map((center) => ({ label: center.name, value: center.id })));
+      setProfiles(
+        profilesResult.map((profile) => ({
+          label: profile.name,
+          value: profile.id,
+        }))
+      );
+      setCenters(
+        finalCenters.map((center) => ({ label: center.name, value: center.id }))
+      );
       setPrograms(allPrograms);
       setMessages(messagesResult);
       setMessagesAreSet(true);
@@ -171,33 +199,35 @@ const MessagesTable = ({
   }
 
   const archiveMessage = async (message) => {
-    const isArchiving = message.status !== 'archived';
+    const isArchiving = message.status !== "archived";
     const propsToOmit = [
-      'isUnpublished',
-      'totalClicks',
-      'totalViews',
-      'owner',
-      'userOwner',
-      'updated_at',
-      'created_at',
-      'deleted_at',
-      'updatedAt',
-      'createdAt',
-      'deletedAt',
-      'deleted',
+      "isUnpublished",
+      "totalClicks",
+      "totalViews",
+      "owner",
+      "userOwner",
+      "updated_at",
+      "created_at",
+      "deleted_at",
+      "updatedAt",
+      "createdAt",
+      "deletedAt",
+      "deleted",
     ];
 
-    if (!message.url) propsToOmit.push('url');
-    if (!message.textUrl) propsToOmit.push('textUrl');
+    if (!message.url) propsToOmit.push("url");
+    if (!message.textUrl) propsToOmit.push("textUrl");
 
     const messageToSave = omit(
-      { ...message, status: isArchiving ? 'archived' : 'unpublished' },
+      { ...message, status: isArchiving ? "archived" : "unpublished" },
       propsToOmit
     );
 
     try {
       await saveRequest(messageToSave);
-      addSuccessAlert(isArchiving ? labels.archivedSuccess : labels.unarchivedSuccess);
+      addSuccessAlert(
+        isArchiving ? labels.archivedSuccess : labels.unarchivedSuccess
+      );
       init();
     } catch (error) {
       addErrorAlert(error);
@@ -207,7 +237,11 @@ const MessagesTable = ({
   const parseMessagesData = (unparsedMessages) =>
     unparsedMessages.map((message) => {
       const name = (
-        <NameItem name={message.internalName} owner={message.owner.user} asset={message.asset} />
+        <NameItem
+          name={message.internalName}
+          owner={message.owner.user}
+          asset={message.asset}
+        />
       );
       const objective = (
         <ObjectiveItem
@@ -223,9 +257,14 @@ const MessagesTable = ({
           isTeacher={isTeacher}
         />
       );
-      const format = message.zone === 'modal' ? labels.formats.modal : labels.formats.banner;
-      const publishDate = <DateItem startDate={message.startDate} endDate={message.endDate} />;
-      const state = <StatusItem status={message.status} labels={labels.statuses} />;
+      const format =
+        message.zone === "modal" ? labels.formats.modal : labels.formats.banner;
+      const publishDate = (
+        <DateItem startDate={message.startDate} endDate={message.endDate} />
+      );
+      const state = (
+        <StatusItem status={message.status} labels={labels.statuses} />
+      );
       const statistics = (
         <StatisticsItem
           labels={labels.statistics}
@@ -245,7 +284,15 @@ const MessagesTable = ({
           isOwner={isOwner}
         />
       );
-      return { name, objective, format, publishDate, state, actions, statistics };
+      return {
+        name,
+        objective,
+        format,
+        publishDate,
+        state,
+        actions,
+        statistics,
+      };
     });
 
   React.useEffect(() => {
@@ -254,7 +301,8 @@ const MessagesTable = ({
   }, [size, page, filters, isTeacher, shouldReload]);
 
   React.useEffect(() => {
-    if (!labels || !centers.length || !profiles.length || !messagesAreSet) return;
+    if (!labels || !centers.length || !profiles.length || !messagesAreSet)
+      return;
     setLoading(true);
     const parsedMessages = parseMessagesData(messages);
     setMessagesData(parsedMessages);
@@ -262,9 +310,9 @@ const MessagesTable = ({
   }, [messages, labels, centers, profiles]);
 
   const headerStyles = {
-    position: 'sticky',
-    top: '0px',
-    backgroundColor: 'white',
+    position: "sticky",
+    top: "0px",
+    backgroundColor: "white",
     zIndex: 10,
   };
 

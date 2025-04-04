@@ -1,1 +1,1 @@
-export * from './ModalMessage';
+export * from "./ModalMessage";

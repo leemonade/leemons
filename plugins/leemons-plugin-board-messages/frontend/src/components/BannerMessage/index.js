@@ -1,1 +1,1 @@
-export * from './BannerMessage';
+export * from "./BannerMessage";

@@ -1,9 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useEffect, useMemo, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import { listProgramsRequest, listSessionClassesRequest } from '@academic-portfolio/request';
-import { getUserPrograms } from '@academic-portfolio/request/programs';
+import { useIsTeacher } from "@academic-portfolio/hooks";
+import {
+  listProgramsRequest,
+  listSessionClassesRequest,
+} from "@academic-portfolio/request";
+import { getUserPrograms } from "@academic-portfolio/request/programs";
 import {
   Box,
   Alert,
@@ -19,27 +22,27 @@ import {
   MultiSelect,
   InputWrapper,
   ContextContainer,
-} from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
-import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
-import { DatePicker } from '@common';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import ImagePicker from '@leebrary/components/ImagePicker';
-import { omit, isArray } from 'lodash';
+} from "@bubbles-ui/components";
+import { TextEditorInput } from "@bubbles-ui/editors";
+import { AlertInformationCircleIcon } from "@bubbles-ui/icons/solid";
+import { DatePicker } from "@common";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import ImagePicker from "@leebrary/components/ImagePicker";
+import { omit, isArray } from "lodash";
 
-import dashboard from '../../../public/dashboard.svg';
-import modal from '../../../public/modal.svg';
-import { getOverlapsRequest, saveRequest } from '../../request';
+import dashboard from "../../../public/dashboard.svg";
+import modal from "../../../public/modal.svg";
+import { getOverlapsRequest, saveRequest } from "../../request";
 
 import {
   DETAIL_DRAWER_DEFAULT_PROPS,
   DETAIL_DRAWER_PROP_TYPES,
   MESSAGE_ZONES,
-} from './DetailDrawer.constants';
-import { DetailDrawerStyles } from './DetailDrawer.styles';
-import { SelectItem } from './components/SelectItem';
+} from "./DetailDrawer.constants";
+import { DetailDrawerStyles } from "./DetailDrawer.styles";
+import { SelectItem } from "./components/SelectItem";
 
-const HALF_WIDTH = 'calc(50% - 10px)';
+const HALF_WIDTH = "calc(50% - 10px)";
 
 const ValueComponent = (props) => <SelectItem {...props} isValueComponent />;
 
@@ -55,18 +58,18 @@ const DetailDrawer = ({
 }) => {
   const isTeacher = useIsTeacher();
   const defaultValues = {
-    internalName: '',
-    centers: '',
+    internalName: "",
+    centers: "",
     programs: [],
     profiles: [],
-    message: '',
-    url: '',
-    textUrl: '',
+    message: "",
+    url: "",
+    textUrl: "",
     zone: isTeacher ? MESSAGE_ZONES.CLASSROOM_DASHBOARD : MESSAGE_ZONES.MODAL,
-    publicationType: 'immediately',
+    publicationType: "immediately",
     startDate: new Date(),
     endDate: null,
-    isUnpublished: currentMessage.status === 'unpublished',
+    isUnpublished: currentMessage.status === "unpublished",
     ...currentMessage,
   };
 
@@ -84,43 +87,56 @@ const DetailDrawer = ({
     formState: { errors },
   } = useForm({ defaultValues });
 
-  const publicationType = watch('publicationType');
-  const centersValue = watch('centers');
-  const programsValue = watch('programs');
-  const profilesValue = watch('profiles');
-  const startDateValue = watch('startDate');
-  const endDateValue = watch('endDate');
-  const urlValue = watch('url');
-  const textUrlValue = watch('textUrl');
-  const zoneValue = watch('zone');
+  const publicationType = watch("publicationType");
+  const centersValue = watch("centers");
+  const programsValue = watch("programs");
+  const profilesValue = watch("profiles");
+  const startDateValue = watch("startDate");
+  const endDateValue = watch("endDate");
+  const urlValue = watch("url");
+  const textUrlValue = watch("textUrl");
+  const zoneValue = watch("zone");
   const formValues = watch();
 
   const formatData = useMemo(() => {
     let data = [];
     if (!isTeacher) {
       data = [
-        { label: labels.modal, value: 'modal', image: modal },
-        { label: labels.dashboard, value: 'dashboard', image: dashboard },
+        { label: labels.modal, value: "modal", image: modal },
+        { label: labels.dashboard, value: "dashboard", image: dashboard },
       ];
-    } else data = [{ label: labels.classDashboard, value: 'class-dashboard', image: dashboard }];
+    } else
+      data = [
+        {
+          label: labels.classDashboard,
+          value: "class-dashboard",
+          image: dashboard,
+        },
+      ];
     return data;
   }, [isTeacher, labels]);
 
   const saveMessageConfig = async (values) => {
-    const fieldsToOmit = ['isUnpublished', 'totalClicks', 'totalViews', 'owner', 'userOwner'];
+    const fieldsToOmit = [
+      "isUnpublished",
+      "totalClicks",
+      "totalViews",
+      "owner",
+      "userOwner",
+    ];
     if (!isNew) {
       fieldsToOmit.push(
-        '__v',
-        '_id',
-        'updated_at',
-        'created_at',
-        'deleted_at',
-        'updatedAt',
-        'createdAt',
-        'deletedAt',
-        'deleted',
-        'isDeleted',
-        'deploymentID'
+        "__v",
+        "_id",
+        "updated_at",
+        "created_at",
+        "deleted_at",
+        "updatedAt",
+        "createdAt",
+        "deletedAt",
+        "deleted",
+        "isDeleted",
+        "deploymentID"
       );
     }
 
@@ -129,8 +145,8 @@ const DetailDrawer = ({
       centers: isArray(values.centers) ? values.centers : [values.centers],
       status:
         values.isUnpublished || (overlaps.length > 0 && !overWriteMessages)
-          ? 'unpublished'
-          : 'published',
+          ? "unpublished"
+          : "published",
       unpublishConflicts: overWriteMessages,
     };
 
@@ -163,11 +179,20 @@ const DetailDrawer = ({
       } else {
         const {
           data: { items: listResult },
-        } = await listProgramsRequest({ page: 0, size: 9999, center: centersValue });
+        } = await listProgramsRequest({
+          page: 0,
+          size: 9999,
+          center: centersValue,
+        });
         allPrograms = listResult;
       }
       if (allPrograms.length > 0) {
-        setPrograms(allPrograms.map((program) => ({ label: program.name, value: program.id })));
+        setPrograms(
+          allPrograms.map((program) => ({
+            label: program.name,
+            value: program.id,
+          }))
+        );
       }
     } catch (error) {
       addErrorAlert(error);
@@ -179,7 +204,10 @@ const DetailDrawer = ({
       const results = await Promise.all(
         programsValue.map((program) => listSessionClassesRequest({ program }))
       );
-      const allClasses = results.reduce((prev, current) => [...prev, ...current.classes], []);
+      const allClasses = results.reduce(
+        (prev, current) => [...prev, ...current.classes],
+        []
+      );
       setClasses(
         allClasses.map((klass) => ({
           label: klass.subject.name,
@@ -193,7 +221,7 @@ const DetailDrawer = ({
   };
 
   const handleTimeChange = (type, value) => {
-    const valueToChange = type === 'startDate' ? startDateValue : endDateValue;
+    const valueToChange = type === "startDate" ? startDateValue : endDateValue;
     valueToChange.setMinutes(value.getMinutes());
     valueToChange.setHours(value.getHours());
     setValue(type, valueToChange);
@@ -202,8 +230,10 @@ const DetailDrawer = ({
   const getOverlaps = async () => {
     const message = {
       ...formValues,
-      centers: isArray(formValues.centers) ? formValues.centers : [formValues.centers],
-      status: formValues.isUnpublished ? 'unpublished' : 'published',
+      centers: isArray(formValues.centers)
+        ? formValues.centers
+        : [formValues.centers],
+      status: formValues.isUnpublished ? "unpublished" : "published",
     };
     const { messages } = await getOverlapsRequest(message);
     setOverlaps(messages);
@@ -214,13 +244,15 @@ const DetailDrawer = ({
       setPrograms([]);
       return;
     }
-    if (isNew) setValue('programs', []);
+    if (isNew) setValue("programs", []);
     else if (
       (isArray(centersValue) &&
-        !defaultValues.centers.every((center) => centersValue.includes(center))) ||
+        !defaultValues.centers.every((center) =>
+          centersValue.includes(center)
+        )) ||
       (!isArray(centersValue) && defaultValues.centers[0] !== centersValue)
     ) {
-      setValue('programs', []);
+      setValue("programs", []);
     }
     getAllPrograms();
   }, [centersValue]);
@@ -230,16 +262,16 @@ const DetailDrawer = ({
       getAllClasses();
     }
     if (programsValue.length === 0) {
-      setValue('classes', []);
+      setValue("classes", []);
     }
   }, [programsValue, isTeacher]);
 
   useEffect(() => {
-    if (isNew && publicationType === 'immediately') {
-      setValue('startDate', new Date());
-      setValue('endDate', null);
+    if (isNew && publicationType === "immediately") {
+      setValue("startDate", new Date());
+      setValue("endDate", null);
     }
-    if (isNew) setValue('startDate', new Date());
+    if (isNew) setValue("startDate", new Date());
   }, [publicationType]);
 
   useEffect(() => {
@@ -265,7 +297,7 @@ const DetailDrawer = ({
     return labels.update;
   }, [isNew, overlaps.length, labels]);
 
-  const { classes: styles } = DetailDrawerStyles({}, { name: 'DetailDrawer' });
+  const { classes: styles } = DetailDrawerStyles({}, { name: "DetailDrawer" });
   return (
     <Drawer opened={open} onClose={onClose} size="xl">
       <Drawer.Header title={isNew ? labels.new : labels.edit}>
@@ -303,8 +335,8 @@ const DetailDrawer = ({
           <ContextContainer title={labels.toWho} direction="row">
             <Box
               sx={{
-                visibility: isTeacher && 'hidden',
-                position: isTeacher && 'absolute',
+                visibility: isTeacher && "hidden",
+                position: isTeacher && "absolute",
               }}
             >
               <Controller
@@ -395,7 +427,7 @@ const DetailDrawer = ({
                   <TextEditorInput
                     label={labels.message}
                     placeholder={labels.messagePlaceholder}
-                    editorStyles={{ minHeight: '96px' }}
+                    editorStyles={{ minHeight: "96px" }}
                     toolbars={{
                       style: true,
                       heading: false,
@@ -464,7 +496,7 @@ const DetailDrawer = ({
                 render={({ field }) => (
                   <RadioGroup
                     {...field}
-                    defaultValue={isTeacher ? 'class-dashboard' : 'modal'}
+                    defaultValue={isTeacher ? "class-dashboard" : "modal"}
                     data={formatData}
                     variant="image"
                     direction="column"
@@ -481,14 +513,14 @@ const DetailDrawer = ({
                 <RadioGroup
                   defaultValue="immediately"
                   data={[
-                    { label: labels.immediately, value: 'immediately' },
-                    { label: labels.programmed, value: 'programmed' },
+                    { label: labels.immediately, value: "immediately" },
+                    { label: labels.programmed, value: "programmed" },
                   ]}
                   {...field}
                 />
               )}
             />
-            {publicationType !== 'immediately' && (
+            {publicationType !== "immediately" && (
               <Stack fullWidth spacing={8}>
                 <ContextContainer direction="row">
                   <Controller
@@ -506,14 +538,14 @@ const DetailDrawer = ({
                       />
                     )}
                   />
-                  <Box noFlex sx={{ flex: '0.5 1 0% !important' }}>
+                  <Box noFlex sx={{ flex: "0.5 1 0% !important" }}>
                     <TimeInput
                       required
                       value={startDateValue}
                       label={labels.startHour}
                       placeholder={labels.startHourPlaceholder}
                       style={{ flex: 1 }}
-                      onChange={(value) => handleTimeChange('startDate', value)}
+                      onChange={(value) => handleTimeChange("startDate", value)}
                     />
                   </Box>
                 </ContextContainer>
@@ -523,7 +555,9 @@ const DetailDrawer = ({
                     control={control}
                     name="endDate"
                     rules={{
-                      required: publicationType !== 'immediately' && labels?.form?.endDateError,
+                      required:
+                        publicationType !== "immediately" &&
+                        labels?.form?.endDateError,
                     }}
                     render={({ field }) => (
                       <DatePicker
@@ -536,14 +570,14 @@ const DetailDrawer = ({
                       />
                     )}
                   />
-                  <Box noFlex sx={{ flex: '0.5 1 0% !important' }}>
+                  <Box noFlex sx={{ flex: "0.5 1 0% !important" }}>
                     <TimeInput
                       required
                       value={endDateValue}
                       label={labels.endHour}
                       placeholder={labels.endHourPlaceholder}
                       style={{ flex: 1 }}
-                      onChange={(value) => handleTimeChange('endDate', value)}
+                      onChange={(value) => handleTimeChange("endDate", value)}
                     />
                   </Box>
                 </ContextContainer>
@@ -553,7 +587,10 @@ const DetailDrawer = ({
               <Alert title={labels.existingMessageTitle} closeable={false}>
                 {overlaps.length === 1
                   ? labels.existingMessageInfoSingular
-                  : labels.existingMessageInfo?.replace('{nMessages}', overlaps.length)}
+                  : labels.existingMessageInfo?.replace(
+                      "{nMessages}",
+                      overlaps.length
+                    )}
               </Alert>
             )}
             {overlaps.length > 0 && (
@@ -588,7 +625,9 @@ const DetailDrawer = ({
           </Button>
         </Drawer.Footer.LeftActions>
         <Drawer.Footer.RightActions>
-          <Button onClick={handleSubmit(saveMessageConfig)}>{buttonLabel}</Button>
+          <Button onClick={handleSubmit(saveMessageConfig)}>
+            {buttonLabel}
+          </Button>
         </Drawer.Footer.RightActions>
       </Drawer.Footer>
     </Drawer>

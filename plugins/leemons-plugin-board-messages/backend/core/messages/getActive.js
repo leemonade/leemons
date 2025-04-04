@@ -1,6 +1,6 @@
 // const { getByIds } = require('packages/leemons-plugin-leebrary/services/assets');
-const { byIds } = require('./byIds');
-const { getMessageIdsByFilters } = require('./getMessageIdsByFilters');
+const { byIds } = require("./byIds");
+const { getMessageIdsByFilters } = require("./getMessageIdsByFilters");
 
 async function getActive({ data, userAgent: _userAgent, ids: _ids, ctx }) {
   const { userSession } = ctx.meta;
@@ -8,9 +8,9 @@ async function getActive({ data, userAgent: _userAgent, ids: _ids, ctx }) {
   let ids = _ids;
 
   if (!userAgent) {
-    [userAgent] = await ctx.tx.call('users.users.getUserAgentsInfo', {
+    [userAgent] = await ctx.tx.call("users.users.getUserAgentsInfo", {
       userAgentIds: userSession.userAgents[0].id,
-      userColumns: ['id'],
+      userColumns: ["id"],
       withProfile: true,
     });
   }
@@ -33,7 +33,7 @@ async function getActive({ data, userAgent: _userAgent, ids: _ids, ctx }) {
   const activeConfig = await ctx.tx.db.MessageConfig.findOne({
     id: ids,
     zone: data.zone,
-    status: 'published',
+    status: "published",
   }).lean();
 
   // Si hay alguno publicado comprobamos que la fecha fin no haya pasado ya
@@ -41,7 +41,10 @@ async function getActive({ data, userAgent: _userAgent, ids: _ids, ctx }) {
     const now = new Date();
     // Si ya ha pasado la fecha fin marcamos la configuración como finalizada
     if (now > activeConfig.endDate) {
-      await ctx.tx.db.MessageConfig.updateOne({ id: activeConfig.id }, { status: 'completed' });
+      await ctx.tx.db.MessageConfig.updateOne(
+        { id: activeConfig.id },
+        { status: "completed" }
+      );
       // Una vez actualizado volvemos a llamarnos para volver a pasar por todos los procesos de comprobación de si hay programada alguna configuración en la fecha actual.
       return getActive({ data, userAgent, ids, ctx });
     }
@@ -53,15 +56,18 @@ async function getActive({ data, userAgent: _userAgent, ids: _ids, ctx }) {
   let config = await ctx.tx.db.MessageConfig.findOne({
     id: ids,
     zone: data.zone,
-    status: 'programmed',
+    status: "programmed",
     startDate: { $lte: now },
     endDate: { $gt: now },
   }).lean();
 
   // Si hemos encontrado alguna configuración la marcamos como activa para que la proxima vez se haga menos logica
   if (config) {
-    config.status = 'published';
-    await ctx.tx.db.MessageConfig.updateOne({ id: config.id }, { status: 'published' });
+    config.status = "published";
+    await ctx.tx.db.MessageConfig.updateOne(
+      { id: config.id },
+      { status: "published" }
+    );
     [config] = await byIds({ ids: config.id, ctx });
   }
 

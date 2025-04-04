@@ -1,12 +1,18 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Box, SearchInput, Select, MultiSelect, Button } from '@bubbles-ui/components';
-import { useForm, Controller, useWatch } from 'react-hook-form';
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import { getUserPrograms } from '@academic-portfolio/request/programs';
-import { listProgramsRequest } from '@academic-portfolio/request';
-import { addErrorAlert } from '@layout/alert';
-import { FilterStyles } from './Filters.styles';
-import { FILTERS_PROP_TYPES, FILTERS_DEFAULT_PROPS } from './Filters.constants';
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  Box,
+  SearchInput,
+  Select,
+  MultiSelect,
+  Button,
+} from "@bubbles-ui/components";
+import { useForm, Controller, useWatch } from "react-hook-form";
+import { useIsTeacher } from "@academic-portfolio/hooks";
+import { getUserPrograms } from "@academic-portfolio/request/programs";
+import { listProgramsRequest } from "@academic-portfolio/request";
+import { addErrorAlert } from "@layout/alert";
+import { FilterStyles } from "./Filters.styles";
+import { FILTERS_PROP_TYPES, FILTERS_DEFAULT_PROPS } from "./Filters.constants";
 
 const useFormatAndStatusData = (labels, isTeacher) =>
   useMemo(() => {
@@ -18,7 +24,12 @@ const useFormatAndStatusData = (labels, isTeacher) =>
 
     const formatData = Object.keys(formatLabels).map((label) => ({
       // eslint-disable-next-line no-nested-ternary
-      value: label === 'banner' ? (isTeacher ? 'class-dashboard' : 'dashboard') : label,
+      value:
+        label === "banner"
+          ? isTeacher
+            ? "class-dashboard"
+            : "dashboard"
+          : label,
       label: labels.formats[label],
     }));
     const statusData = Object.keys(statusLabels).map((label) => ({
@@ -42,7 +53,7 @@ const Filters = ({
   const formValues = useWatch({ control });
   const [programs, setPrograms] = useState([]);
 
-  const centerValue = watch('centers');
+  const centerValue = watch("centers");
 
   const [formatData, statusData] = useFormatAndStatusData(labels, isTeacher);
 
@@ -59,11 +70,20 @@ const Filters = ({
       } else {
         const {
           data: { items: listResult },
-        } = await listProgramsRequest({ page: 0, size: 9999, center: centerValue });
+        } = await listProgramsRequest({
+          page: 0,
+          size: 9999,
+          center: centerValue,
+        });
         allPrograms = listResult;
       }
       if (allPrograms.length > 0) {
-        setPrograms(allPrograms.map((program) => ({ label: program.name, value: program.id })));
+        setPrograms(
+          allPrograms.map((program) => ({
+            label: program.name,
+            value: program.id,
+          }))
+        );
       }
     } catch (error) {
       addErrorAlert(error);
@@ -75,18 +95,18 @@ const Filters = ({
       ...formValues,
       centers: formValues.centers ? [formValues.centers] : null,
       status: !formValues.status
-        ? ['published', 'unpublished', 'completed', 'programmed']
+        ? ["published", "unpublished", "completed", "programmed"]
         : formValues.status,
     };
     setFilters(finalValues);
   }, [JSON.stringify(formValues)]);
 
   useEffect(() => {
-    setValue('program', '');
+    setValue("program", "");
     getAllPrograms();
   }, [centerValue]);
 
-  const { classes } = FilterStyles({}, { name: 'MessagesTable' });
+  const { classes } = FilterStyles({}, { name: "MessagesTable" });
   return (
     <Box className={classes.root}>
       <Controller
@@ -112,7 +132,10 @@ const Filters = ({
             {...field}
             clearable={labels.clear}
             autoSelectOneOption
-            style={{ visibility: isTeacher && 'hidden', position: isTeacher && 'absolute' }}
+            style={{
+              visibility: isTeacher && "hidden",
+              position: isTeacher && "absolute",
+            }}
           />
         )}
       />
@@ -126,7 +149,9 @@ const Filters = ({
             placeholder={labels.programPlaceholder}
             clearable={labels.clear}
             autoSelectOneOption={false}
-            disabled={isTeacher ? !programs.length : !centerValue || !programs.length}
+            disabled={
+              isTeacher ? !programs.length : !centerValue || !programs.length
+            }
             {...field}
           />
         )}

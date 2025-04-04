@@ -1,4 +1,4 @@
-import { createStyles, getHtmlStyles } from '@bubbles-ui/components';
+import { createStyles, getHtmlStyles } from "@bubbles-ui/components";
 
 // eslint-disable-next-line import/prefer-default-export
 export const ModalMessageStyles = createStyles((theme) => {
@@ -6,8 +6,8 @@ export const ModalMessageStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
   return {
     root: {
-      display: 'flex',
-      flexDirection: 'column',
+      display: "flex",
+      flexDirection: "column",
       gap: 16,
     },
     title: {
@@ -19,8 +19,8 @@ export const ModalMessageStyles = createStyles((theme) => {
       ...globalTheme.content.typo.body.md,
     },
     buttonRow: {
-      display: 'flex',
-      justifyContent: 'flex-end',
+      display: "flex",
+      justifyContent: "flex-end",
     },
   };
 });

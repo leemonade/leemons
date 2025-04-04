@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -29,7 +29,7 @@ const schema = new mongoose.Schema(
 
 const messageConfigClicksModel = newModel(
   mongoose.connection,
-  'v1::board-messages_MessageConfigClicks',
+  "v1::board-messages_MessageConfigClicks",
   schema
 );
 

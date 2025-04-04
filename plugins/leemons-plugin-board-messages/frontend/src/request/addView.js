@@ -1,7 +1,7 @@
 async function addView(id) {
   return leemons.api(`v1/board-messages/messages/view`, {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: { id },
   });
 }

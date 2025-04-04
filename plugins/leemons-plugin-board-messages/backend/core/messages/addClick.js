@@ -1,8 +1,10 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function addClick({ id, ctx }) {
   const { userSession } = ctx.meta;
-  const config = await ctx.tx.db.MessageConfig.findOne({ id }).select(['totalClicks']).lean();
+  const config = await ctx.tx.db.MessageConfig.findOne({ id })
+    .select(["totalClicks"])
+    .lean();
   if (!_.isNumber(config.totalClicks)) {
     config.totalClicks = 0;
   }

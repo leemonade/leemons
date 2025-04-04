@@ -1,14 +1,14 @@
-const _ = require('lodash');
-const { getMessageIdsByFilters } = require('./getMessageIdsByFilters');
+const _ = require("lodash");
+const { getMessageIdsByFilters } = require("./getMessageIdsByFilters");
 
 async function getOverlapsWithOtherConfigurations({ item: _item, ctx }) {
   const item = { ..._item };
 
-  if (!item.startDate || item.publicationType === 'immediately') {
+  if (!item.startDate || item.publicationType === "immediately") {
     item.startDate = new Date();
   }
-  if (!item.endDate || item.publicationType === 'immediately') {
-    item.endDate = new Date('01/01/9999');
+  if (!item.endDate || item.publicationType === "immediately") {
+    item.endDate = new Date("01/01/9999");
   }
 
   item.startDate = new Date(item.startDate);
@@ -16,8 +16,11 @@ async function getOverlapsWithOtherConfigurations({ item: _item, ctx }) {
 
   const query = {
     zone: item.zone,
-    status: ['published', 'programmed'],
-    $nor: [{ endDate: { $lt: item.startDate } }, { startDate: { $gt: item.endDate } }],
+    status: ["published", "programmed"],
+    $nor: [
+      { endDate: { $lt: item.startDate } },
+      { startDate: { $gt: item.endDate } },
+    ],
   };
   if (item.id) {
     query.id = { $ne: item.id };

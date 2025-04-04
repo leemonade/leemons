@@ -1,10 +1,10 @@
-import { Box } from '@bubbles-ui/components';
-import { BannerMessage, ModalMessage } from '@board-messages/components';
-import { addViewRequest, getActiveRequest } from '@board-messages/request';
-import { useLayout } from '@layout/context';
-import { getCentersWithToken } from '@users/session';
-import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import { Box } from "@bubbles-ui/components";
+import { BannerMessage, ModalMessage } from "@board-messages/components";
+import { addViewRequest, getActiveRequest } from "@board-messages/request";
+import { useLayout } from "@layout/context";
+import { getCentersWithToken } from "@users/session";
+import PropTypes from "prop-types";
+import React, { useState } from "react";
 
 function Dashboard({ program }) {
   const { openModal, closeModal } = useLayout();
@@ -14,7 +14,7 @@ function Dashboard({ program }) {
     const { message } = await getActiveRequest({
       center: getCentersWithToken()[0].id,
       program: program.id,
-      zone: 'dashboard',
+      zone: "dashboard",
     });
     if (message) {
       addViewRequest(message.id);
@@ -26,15 +26,19 @@ function Dashboard({ program }) {
     const { message } = await getActiveRequest({
       center: getCentersWithToken()[0].id,
       program: program.id,
-      zone: 'modal',
+      zone: "modal",
     });
     if (message) {
-      const boardMessagesModalId = window.sessionStorage.getItem('boardMessagesModalId');
+      const boardMessagesModalId = window.sessionStorage.getItem(
+        "boardMessagesModalId"
+      );
       if (boardMessagesModalId !== message.id) {
         addViewRequest(message.id);
-        window.sessionStorage.setItem('boardMessagesModalId', message.id);
+        window.sessionStorage.setItem("boardMessagesModalId", message.id);
         const id = openModal({
-          children: <ModalMessage message={message} onClose={() => closeModal(id)} />,
+          children: (
+            <ModalMessage message={message} onClose={() => closeModal(id)} />
+          ),
           size: 600,
           trapFocus: false,
         });

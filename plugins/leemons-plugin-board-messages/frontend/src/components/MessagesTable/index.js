@@ -1,2 +1,2 @@
-export * from './MessagesTable';
-export * from './MessagesTable.constants';
+export * from "./MessagesTable";
+export * from "./MessagesTable.constants";

@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, TextClamp, Text } from '@bubbles-ui/components';
-import capitalize from 'lodash/capitalize';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, TextClamp, Text } from "@bubbles-ui/components";
+import capitalize from "lodash/capitalize";
 
 const ObjectiveItem = ({
   labels,
@@ -23,24 +23,26 @@ const ObjectiveItem = ({
       classes,
     };
 
-    if (value[0] === '*') return labels.objectives[`all${capitalize(type)}`];
+    if (value[0] === "*") return labels.objectives[`all${capitalize(type)}`];
     const string = arrays[type]
       .reduce((prev, current) => {
         if (value.includes(current.value)) return [...prev, current.label];
         return prev;
       }, [])
-      .join(', ');
+      .join(", ");
     return string;
   };
 
   const getObjective = () => {
-    const centersString = getObjectiveString(messageCenters, 'centers');
-    const programsString = getObjectiveString(messagePrograms, 'programs');
-    const profilesString = getObjectiveString(messagesProfiles, 'profiles');
-    const classesString = isTeacher ? getObjectiveString(messageClasses, 'classes') : '';
+    const centersString = getObjectiveString(messageCenters, "centers");
+    const programsString = getObjectiveString(messagePrograms, "programs");
+    const profilesString = getObjectiveString(messagesProfiles, "profiles");
+    const classesString = isTeacher
+      ? getObjectiveString(messageClasses, "classes")
+      : "";
 
     const firstRow = `${centersString} - ${programsString}`;
-    const secondRow = `${profilesString} ${isTeacher ? `- ${classesString}` : ''}`;
+    const secondRow = `${profilesString} ${isTeacher ? `- ${classesString}` : ""}`;
     return [firstRow, secondRow];
   };
 
@@ -50,12 +52,12 @@ const ObjectiveItem = ({
     <Box>
       <TextClamp lines={1}>
         <Text color="primary" role="productive">
-          {firstRow || ''}
+          {firstRow || ""}
         </Text>
       </TextClamp>
       <TextClamp lines={1}>
         <Text color="primary" role="productive">
-          {secondRow || ''}
+          {secondRow || ""}
         </Text>
       </TextClamp>
     </Box>
