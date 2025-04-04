@@ -1,6 +1,6 @@
-import { isFunction } from 'lodash';
-import NodeCache from 'node-cache';
-import type { NodeCacheInstance } from '../../types';
+import { isFunction } from "lodash";
+import NodeCache from "node-cache";
+import type { NodeCacheInstance } from "../../types";
 
 const namespaces = new Map<string, boolean>();
 
@@ -9,7 +9,7 @@ function generateKey(key: string, pluginName: string): string {
 }
 
 function cleanKey(key: string, pluginName: string): string {
-  return key.replace(new RegExp(`^${pluginName}\\.`), '');
+  return key.replace(new RegExp(`^${pluginName}\\.`), "");
 }
 
 interface SetManyValue {
@@ -25,20 +25,20 @@ export function nodeCache(): NodeCacheInstance {
     has: async (key: string) => Number(cache.has(generateKey(key, pluginName))),
     set: async (key: string, value: any, ttl?: number) => {
       cache.set(generateKey(key, pluginName), value, ttl ?? 0);
-      return 'OK';
+      return "OK";
     },
     del: async (key: string) => {
       if (Array.isArray(key)) {
-        throw new Error('Delete only supports single key deletions');
+        throw new Error("Delete only supports single key deletions");
       }
       return cache.del(generateKey(key, pluginName));
     },
 
     getMany: async (keys: string[]) =>
       Object.fromEntries(
-        Object.entries(cache.mget(keys.map((key) => generateKey(key, pluginName)))).map(
-          ([key, value]) => [cleanKey(key, pluginName), value]
-        )
+        Object.entries(
+          cache.mget(keys.map((key) => generateKey(key, pluginName)))
+        ).map(([key, value]) => [cleanKey(key, pluginName), value])
       ),
     hasMany: async (keys: string[]) => {
       const hasKeys: Record<string, boolean> = {};
@@ -62,14 +62,19 @@ export function nodeCache(): NodeCacheInstance {
     },
     deleteMany: async (keys: string[]) =>
       cache.del(keys.map((key) => generateKey(key, pluginName))),
-    registerNamespace: async ({ namespace: _namespace }: { namespace: string }) => {
+    registerNamespace: async ({
+      namespace: _namespace,
+    }: { namespace: string }) => {
       const namespace = generateKey(_namespace, pluginName);
 
       if (!namespaces.has(namespace)) {
         namespaces.set(namespace, true);
       }
     },
-    deleteByNamespace: async (_namespace: string, filter?: (key: string) => boolean) => {
+    deleteByNamespace: async (
+      _namespace: string,
+      filter?: (key: string) => boolean
+    ) => {
       const namespace = generateKey(_namespace, pluginName);
 
       if (!namespaces.has(namespace)) {

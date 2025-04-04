@@ -1,4 +1,4 @@
-declare module 'node-cache' {
+declare module "node-cache" {
   interface NodeCache {
     get<T>(key: string): T | undefined;
     set<T>(key: string, value: T, ttl?: number): boolean;

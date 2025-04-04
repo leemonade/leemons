@@ -1,5 +1,5 @@
-import { isEmpty } from 'lodash';
-import { NamespaceQueries } from './Namespace';
+import { isEmpty } from "lodash";
+import { NamespaceQueries } from "./Namespace";
 
 interface SetManyValue {
   key: string;
@@ -8,7 +8,7 @@ interface SetManyValue {
 }
 
 export class Queries extends NamespaceQueries {
-  async set(key: string, value: any, ttl?: number): Promise<'OK'> {
+  async set(key: string, value: any, ttl?: number): Promise<"OK"> {
     const _key = this.generateKey({ key });
 
     await this.saveKeyToNamespace({ key: _key });
@@ -33,7 +33,7 @@ export class Queries extends NamespaceQueries {
 
   async delete(key: string): Promise<number> {
     if (Array.isArray(key)) {
-      throw new Error('Delete only supports single key deletions');
+      throw new Error("Delete only supports single key deletions");
     }
 
     if (isEmpty(key)) {
@@ -44,14 +44,16 @@ export class Queries extends NamespaceQueries {
 
     await this.deleteKeysFromNamespace({
       keys: [_key],
-      namespace: this.getNamespaceFromKey({ key: _key }) || '',
+      namespace: this.getNamespaceFromKey({ key: _key }) || "",
     });
     return this.client.del(_key);
   }
 
   // Multi functions
 
-  async setMany(values: SetManyValue[]): Promise<Array<[Error | null, any]> | null> {
+  async setMany(
+    values: SetManyValue[]
+  ): Promise<Array<[Error | null, any]> | null> {
     const trx = this.client.multi();
 
     values.forEach(({ key: _key, val, ttl }) => {
@@ -116,7 +118,7 @@ export class Queries extends NamespaceQueries {
       return 0;
     }
 
-    const namespace = this.getNamespaceFromKey({ key: _keys[0] }) || '';
+    const namespace = this.getNamespaceFromKey({ key: _keys[0] }) || "";
     await this.deleteKeysFromNamespace({ keys: _keys, namespace });
     return this.client.del(_keys);
   }

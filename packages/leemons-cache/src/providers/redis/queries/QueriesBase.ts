@@ -1,4 +1,4 @@
-import type { Redis } from 'ioredis';
+import type { Redis } from "ioredis";
 
 interface QueriesBaseConstructor {
   client: Redis;
@@ -22,6 +22,6 @@ export class QueriesBase {
   }
 
   protected cleanKey({ key }: { key: string }): string {
-    return key.replace(new RegExp(`^\\{plugin\\.${this.pluginName}\\}\\.`), '');
+    return key.replace(new RegExp(`^\\{plugin\\.${this.pluginName}\\}\\.`), "");
   }
 }
