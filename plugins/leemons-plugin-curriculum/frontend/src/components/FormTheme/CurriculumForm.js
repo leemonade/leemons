@@ -1,18 +1,25 @@
-import { Box, Loader, TabPanel, Tabs } from '@bubbles-ui/components';
-import { useStore } from '@common';
-import CurriculumGroup from '@curriculum/components/FormTheme/CurriculumGroup';
-import CurriculumList from '@curriculum/components/FormTheme/CurriculumList';
-import CurriculumTextInput from '@curriculum/components/FormTheme/CurriculumTextInput';
-import CurriculumWysiwyg from '@curriculum/components/FormTheme/CurriculumWysiwyg';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Box, Loader, TabPanel, Tabs } from "@bubbles-ui/components";
+import { useStore } from "@common";
+import CurriculumGroup from "@curriculum/components/FormTheme/CurriculumGroup";
+import CurriculumList from "@curriculum/components/FormTheme/CurriculumList";
+import CurriculumTextInput from "@curriculum/components/FormTheme/CurriculumTextInput";
+import CurriculumWysiwyg from "@curriculum/components/FormTheme/CurriculumWysiwyg";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
 
-function CurriculumForm({ id, schema, isEditMode = true, curriculum, onSave, defaultValues }) {
+function CurriculumForm({
+  id,
+  schema,
+  isEditMode = true,
+  curriculum,
+  onSave,
+  defaultValues,
+}) {
   const [store, render] = useStore({ loading: true });
-  const [t] = useTranslateLoader('multilanguage.formWithTheme');
+  const [t] = useTranslateLoader("multilanguage.formWithTheme");
   const form = useForm({ defaultValues });
 
   React.useEffect(() => {
@@ -38,7 +45,7 @@ function CurriculumForm({ id, schema, isEditMode = true, curriculum, onSave, def
 
   function onChangeItem(e, field) {
     let curValue = field.value;
-    console.log('field.value', field.value);
+    console.log("field.value", field.value);
     if (!_.isArray(curValue)) {
       curValue = [curValue];
     }
@@ -70,7 +77,7 @@ function CurriculumForm({ id, schema, isEditMode = true, curriculum, onSave, def
                 key={id}
                 id={id}
                 render={({ field }) => {
-                  if (blockData.type === 'field') {
+                  if (blockData.type === "field") {
                     return (
                       <CurriculumTextInput
                         {...field}
@@ -87,7 +94,7 @@ function CurriculumForm({ id, schema, isEditMode = true, curriculum, onSave, def
                       />
                     );
                   }
-                  if (blockData.type === 'textarea') {
+                  if (blockData.type === "textarea") {
                     return (
                       <CurriculumWysiwyg
                         {...field}
@@ -104,7 +111,7 @@ function CurriculumForm({ id, schema, isEditMode = true, curriculum, onSave, def
                       />
                     );
                   }
-                  if (blockData.type === 'list') {
+                  if (blockData.type === "list") {
                     return (
                       <CurriculumList
                         {...field}
@@ -121,7 +128,7 @@ function CurriculumForm({ id, schema, isEditMode = true, curriculum, onSave, def
                       />
                     );
                   }
-                  if (blockData.type === 'group') {
+                  if (blockData.type === "group") {
                     return (
                       <CurriculumGroup
                         {...field}

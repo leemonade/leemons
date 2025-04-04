@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
+import { Controller, useForm } from "react-hook-form";
 import {
   ActionButton,
   Alert,
@@ -9,19 +9,19 @@ import {
   Select,
   Stack,
   TextInput,
-} from '@bubbles-ui/components';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
+} from "@bubbles-ui/components";
+import { RemoveIcon } from "@bubbles-ui/icons/outline";
 
 export const NEW_BRANCH_VALUE_MESSAGES = {
-  nameLabel: 'Name',
-  subjectLabel: 'Subject',
-  namePlaceholder: 'Branch name...',
-  saveButtonLabel: 'Save config',
-  noSubjectsFound: 'No subjects found',
+  nameLabel: "Name",
+  subjectLabel: "Subject",
+  namePlaceholder: "Branch name...",
+  saveButtonLabel: "Save config",
+  noSubjectsFound: "No subjects found",
 };
 
 export const NEW_BRANCH_VALUE_ERROR_MESSAGES = {
-  nameRequired: 'Field required',
+  nameRequired: "Field required",
 };
 
 function NewBranchValue({
@@ -65,7 +65,11 @@ function NewBranchValue({
                   name="academicItem"
                   control={control}
                   render={({ field }) => (
-                    <Select label={messages.subjectLabel} data={subjectData} {...field} />
+                    <Select
+                      label={messages.subjectLabel}
+                      data={subjectData}
+                      {...field}
+                    />
                   )}
                 />
               ) : (

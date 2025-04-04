@@ -1,7 +1,7 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
-import { forEach, isNil, map, remove } from 'lodash';
-import { Controller } from 'react-hook-form';
+import React from "react";
+import { forEach, isNil, map, remove } from "lodash";
+import { Controller } from "react-hook-form";
 import {
   Box,
   Button,
@@ -15,14 +15,15 @@ import {
   Text,
   TextInput,
   Title,
-} from '@bubbles-ui/components';
-import { TAGIFY_TAG_REGEX, TagifyInput } from '@bubbles-ui/extras';
-import { EditWriteIcon } from '@bubbles-ui/icons/solid';
-import BranchBlockListCustomOrder from '@curriculum/bubbles-components/BranchBlockListCustomOrder';
+} from "@bubbles-ui/components";
+import { TAGIFY_TAG_REGEX, TagifyInput } from "@bubbles-ui/extras";
+import { EditWriteIcon } from "@bubbles-ui/icons/solid";
+import BranchBlockListCustomOrder from "@curriculum/bubbles-components/BranchBlockListCustomOrder";
 
 function makeid(length) {
-  let result = '';
-  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = "";
+  const characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   const charactersLength = characters.length;
   for (let i = 0; i < length; i++) {
     result += characters.charAt(Math.floor(Math.random() * charactersLength));
@@ -37,19 +38,19 @@ const useStyle = createStyles((theme) => ({
   },
   card: {
     border: `1px solid ${theme.colors.ui01}`,
-    borderRadius: '8px',
-    overflow: 'hidden',
+    borderRadius: "8px",
+    overflow: "hidden",
   },
   cardHeader: {
     backgroundColor: theme.colors.uiBackground04,
     padding: `${theme.spacing[4]}px ${theme.spacing[5]}px`,
-    position: 'relative',
+    position: "relative",
   },
   edit: {
-    position: 'absolute',
+    position: "absolute",
     right: 80,
-    top: '50%',
-    transform: 'translateY(-50%)',
+    top: "50%",
+    transform: "translateY(-50%)",
   },
 }));
 
@@ -70,10 +71,10 @@ function BranchBlockGroup2({ ...props }) {
     },
   } = props;
 
-  const showAs = watch('showAs');
-  const firstStepDone = watch('firstStepDone');
-  const groupListOrdered = watch('groupListOrdered');
-  const groupTypeOfContents = watch('groupTypeOfContents');
+  const showAs = watch("showAs");
+  const firstStepDone = watch("firstStepDone");
+  const groupListOrdered = watch("groupListOrdered");
+  const groupTypeOfContents = watch("groupTypeOfContents");
 
   const showAsText = React.useMemo(() => {
     let finalText = showAs;
@@ -101,7 +102,7 @@ function BranchBlockGroup2({ ...props }) {
       columns: [
         {
           Header: `${messages.fieldName} *`,
-          accessor: 'name',
+          accessor: "name",
           input: {
             node: <TextInput />,
             rules: { required: errorMessages.fieldNameRequired },
@@ -109,7 +110,7 @@ function BranchBlockGroup2({ ...props }) {
         },
         {
           Header: messages.fieldMaxLabel,
-          accessor: 'max',
+          accessor: "max",
           input: {
             node: <NumberInput min={0} />,
           },
@@ -117,10 +118,10 @@ function BranchBlockGroup2({ ...props }) {
       ],
       onChange: (e) => {
         setValue(
-          'columns',
+          "columns",
           map(e, (item) => ({
             ...item,
-            type: 'field',
+            type: "field",
             id: item.id || makeid(32),
           }))
         );
@@ -130,7 +131,7 @@ function BranchBlockGroup2({ ...props }) {
   );
 
   async function isFirstStepDone() {
-    const fieldsToRemove = ['name', 'curricularContent', 'type'];
+    const fieldsToRemove = ["name", "curricularContent", "type"];
     const fieldsToTrigger = [...props.form.control._names.mount];
     remove(fieldsToTrigger, (n) => fieldsToRemove.includes(n));
     return props.form.trigger(fieldsToTrigger);
@@ -141,7 +142,7 @@ function BranchBlockGroup2({ ...props }) {
     e.preventDefault();
     if (await isFirstStepDone()) {
       setCustomRightButton(null);
-      setValue('firstStepDone', true);
+      setValue("firstStepDone", true);
     }
   }
 
@@ -214,7 +215,7 @@ function BranchBlockGroup2({ ...props }) {
   );
 
   const elementsColumnsConfig = React.useMemo(() => {
-    const formColumns = getValues('columns');
+    const formColumns = getValues("columns");
     const columns = [];
     forEach(formColumns, (col) => {
       const rules = {
@@ -225,7 +226,7 @@ function BranchBlockGroup2({ ...props }) {
         name += ` (${col.max})`;
         rules.maxLength = {
           value: col.max,
-          message: messages.maxLength.replace('{max}', col.max),
+          message: messages.maxLength.replace("{max}", col.max),
         };
       }
       columns.push({
@@ -252,7 +253,7 @@ function BranchBlockGroup2({ ...props }) {
       columns,
       onChange: (e) => {
         setValue(
-          'elements',
+          "elements",
           map(e, (item) => ({
             ...item,
             id: item.id || makeid(32),
@@ -260,15 +261,15 @@ function BranchBlockGroup2({ ...props }) {
         );
       },
     };
-  }, [watch('columns')]);
+  }, [watch("columns")]);
 
   const whitelist = React.useMemo(
     () =>
-      (getValues('columns') || []).map((item) => ({
+      (getValues("columns") || []).map((item) => ({
         ...item,
         value: item.name,
       })),
-    [watch('columns')]
+    [watch("columns")]
   );
 
   if (firstStepDone) {
@@ -291,7 +292,7 @@ function BranchBlockGroup2({ ...props }) {
                 variant="link"
                 leftIcon={<EditWriteIcon />}
                 onClick={() => {
-                  setValue('firstStepDone', false);
+                  setValue("firstStepDone", false);
                 }}
               >
                 {messages.tableEdit}
@@ -346,7 +347,7 @@ function BranchBlockGroup2({ ...props }) {
             value={field.value}
             onChange={(e) => field.onChange(e.detail.value)}
             settings={{
-              mode: 'mix',
+              mode: "mix",
               pattern: /@/,
               editTags: false,
               whitelist,
@@ -363,7 +364,11 @@ function BranchBlockGroup2({ ...props }) {
         <Title order={5} weight={500}>
           {messages.subBlockContent}
         </Title>
-        <Stack fullWidth spacing={2} sx={(theme) => ({ marginTop: theme.spacing[2] })}>
+        <Stack
+          fullWidth
+          spacing={2}
+          sx={(theme) => ({ marginTop: theme.spacing[2] })}
+        >
           <Box>
             <Controller
               name="groupTypeOfContents"
@@ -384,16 +389,18 @@ function BranchBlockGroup2({ ...props }) {
             />
           </Box>
           <Box>
-            {groupTypeOfContents === 'list'
+            {groupTypeOfContents === "list"
               ? listTypeController
               : groupTypeOfContents
                 ? maxController
                 : null}
           </Box>
-          <Box>{groupTypeOfContents === 'list' ? maxController : null}</Box>
-          <Box>{groupTypeOfContents === 'list' ? listOrderedController : null}</Box>
+          <Box>{groupTypeOfContents === "list" ? maxController : null}</Box>
+          <Box>
+            {groupTypeOfContents === "list" ? listOrderedController : null}
+          </Box>
         </Stack>
-        {groupListOrdered === 'custom' ? (
+        {groupListOrdered === "custom" ? (
           <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
             <BranchBlockListCustomOrder
               messages={messages}
@@ -406,7 +413,7 @@ function BranchBlockGroup2({ ...props }) {
                 withSuggestions: true,
                 whitelist,
                 settings: {
-                  mode: 'mix',
+                  mode: "mix",
                   pattern: /@/,
                   editTags: false,
                   whitelist,

@@ -1,9 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { forEach, map } from 'lodash';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@curriculum/helpers/prefixPN';
-import { FolderIcon } from '@bubbles-ui/icons/outline';
+import React from "react";
+import PropTypes from "prop-types";
+import { forEach, map } from "lodash";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@curriculum/helpers/prefixPN";
+import { FolderIcon } from "@bubbles-ui/icons/outline";
 import {
   Box,
   Button,
@@ -13,16 +13,16 @@ import {
   Stack,
   Tree,
   useTree,
-} from '@bubbles-ui/components';
-import { useHistory } from 'react-router-dom';
-import { useStore } from '@common';
-import { addNodeLevelsRequest } from '../../../request';
+} from "@bubbles-ui/components";
+import { useHistory } from "react-router-dom";
+import { useStore } from "@common";
+import { addNodeLevelsRequest } from "../../../request";
 
 function AddCurriculumStep1({ curriculum, onNext }) {
-  const [t, translations] = useTranslateLoader(prefixPN('addCurriculumStep1'));
+  const [t, translations] = useTranslateLoader(prefixPN("addCurriculumStep1"));
   const defaultNodeLevels = [];
-  defaultNodeLevels[0] = 'program';
-  defaultNodeLevels[10] = 'subject';
+  defaultNodeLevels[0] = "program";
+  defaultNodeLevels[10] = "subject";
   const [store, render] = useStore({
     loading: true,
     saving: false,
@@ -55,13 +55,13 @@ function AddCurriculumStep1({ curriculum, onNext }) {
               <Box
                 sx={(theme) => ({
                   marginRight: theme.spacing[2],
-                  display: 'inline-block',
-                  verticalAlign: 'middle',
+                  display: "inline-block",
+                  verticalAlign: "middle",
                 })}
               >
                 <FolderIcon />
               </Box>
-              {t('program')}
+              {t("program")}
             </>
           }
         />
@@ -75,10 +75,10 @@ function AddCurriculumStep1({ curriculum, onNext }) {
         draggable: false,
         text: (
           <Checkbox
-            label={t('knowledges')}
-            checked={store.nodeLevels.indexOf('knowledges') >= 0}
+            label={t("knowledges")}
+            checked={store.nodeLevels.indexOf("knowledges") >= 0}
             onChange={(e) => {
-              onCheckboxChange(e, 'knowledges', 1);
+              onCheckboxChange(e, "knowledges", 1);
             }}
           />
         ),
@@ -92,10 +92,10 @@ function AddCurriculumStep1({ curriculum, onNext }) {
       draggable: false,
       text: (
         <Checkbox
-          label={t('subjectType')}
-          checked={store.nodeLevels.indexOf('subjectType') >= 0}
+          label={t("subjectType")}
+          checked={store.nodeLevels.indexOf("subjectType") >= 0}
           onChange={(e) => {
-            onCheckboxChange(e, 'subjectType', 2);
+            onCheckboxChange(e, "subjectType", 2);
           }}
         />
       ),
@@ -109,10 +109,10 @@ function AddCurriculumStep1({ curriculum, onNext }) {
         draggable: false,
         text: (
           <Checkbox
-            label={t('cycles')}
-            checked={store.nodeLevels.indexOf('cycles') >= 0}
+            label={t("cycles")}
+            checked={store.nodeLevels.indexOf("cycles") >= 0}
             onChange={(e) => {
-              onCheckboxChange(e, 'cycles', 3);
+              onCheckboxChange(e, "cycles", 3);
             }}
           />
         ),
@@ -126,10 +126,10 @@ function AddCurriculumStep1({ curriculum, onNext }) {
         draggable: false,
         text: (
           <Checkbox
-            label={t('courses')}
-            checked={store.nodeLevels.indexOf('courses') >= 0}
+            label={t("courses")}
+            checked={store.nodeLevels.indexOf("courses") >= 0}
             onChange={(e) => {
-              onCheckboxChange(e, 'courses', 4);
+              onCheckboxChange(e, "courses", 4);
             }}
           />
         ),
@@ -143,7 +143,7 @@ function AddCurriculumStep1({ curriculum, onNext }) {
       draggable: false,
       text: (
         <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
-          <InputWrapper label={t('subject')} />
+          <InputWrapper label={t("subject")} />
         </Box>
       ),
     });
@@ -162,7 +162,7 @@ function AddCurriculumStep1({ curriculum, onNext }) {
           toSend.push({
             name: t(nodeLevel),
             type: nodeLevel,
-            listType: 'not-ordered',
+            listType: "not-ordered",
             levelOrder: toSend.length,
           });
         }
@@ -177,13 +177,13 @@ function AddCurriculumStep1({ curriculum, onNext }) {
   }
 
   return (
-    <ContextContainer title={t('title')} description={t('description')} divided>
+    <ContextContainer title={t("title")} description={t("description")} divided>
       <Box>
         <ContextContainer>
           <Tree
             {...tree}
             rootId={0}
-            initialOpen={map(tree.treeData, 'id')}
+            initialOpen={map(tree.treeData, "id")}
             canToggleItems={false}
             canSelectItems={false}
           />
@@ -191,7 +191,7 @@ function AddCurriculumStep1({ curriculum, onNext }) {
       </Box>
       <Stack justifyContent="end">
         <Button onClick={save} loading={store.saving} type="submit">
-          {t('saveButtonLabel')}
+          {t("saveButtonLabel")}
         </Button>
       </Stack>
     </ContextContainer>

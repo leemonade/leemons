@@ -1,9 +1,9 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { Controller } from 'react-hook-form';
-import { forEach } from 'lodash';
-import { Box } from '@bubbles-ui/components';
-import { TagifyInput } from '@bubbles-ui/extras';
+import React, { useMemo } from "react";
+import PropTypes from "prop-types";
+import { Controller } from "react-hook-form";
+import { forEach } from "lodash";
+import { Box } from "@bubbles-ui/components";
+import { TagifyInput } from "@bubbles-ui/extras";
 
 function BranchBlockCodeAutocomposed({ ...props }) {
   const {
@@ -35,7 +35,7 @@ function BranchBlockCodeAutocomposed({ ...props }) {
   }, [selectData?.parentNodeLevels, selectData?.nodeLevelsFields]);
 
   return (
-    <Box style={{ position: 'relative' }}>
+    <Box style={{ position: "relative" }}>
       <Controller
         name="codeText"
         control={control}
@@ -50,12 +50,12 @@ function BranchBlockCodeAutocomposed({ ...props }) {
               error={errors.codeText}
               onChange={(e) => field.onChange(e.detail.value)}
               settings={{
-                mode: 'mix',
+                mode: "mix",
                 pattern: /@/,
                 editTags: false,
                 dropdown: {
                   enabled: 1,
-                  position: 'text',
+                  position: "text",
                 },
                 whitelist,
               }}

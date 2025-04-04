@@ -6,27 +6,30 @@ import {
   TabPanel,
   Tabs,
   Title,
-} from '@bubbles-ui/components';
-import { ViewOnIcon } from '@bubbles-ui/icons/outline';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
+} from "@bubbles-ui/components";
+import { ViewOnIcon } from "@bubbles-ui/icons/outline";
+import { DeleteBinIcon } from "@bubbles-ui/icons/solid";
 //TODO: import LibraryCard from '@leebrary/components/LibraryCard';
-import { AdminPageHeader, LibraryCard } from '@bubbles-ui/leemons';
-import { useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import prefixPN from '@curriculum/helpers/prefixPN';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { AdminPageHeader, LibraryCard } from "@bubbles-ui/leemons";
+import { useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import prefixPN from "@curriculum/helpers/prefixPN";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import {
   getPermissionsWithActionsIfIHaveRequest,
   getPlatformLocalesRequest,
   listCentersRequest,
-} from '@users/request';
-import { filter, isEmpty, keyBy, map } from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import { deleteCurriculumRequest, listCurriculumRequest } from '../../../request';
+} from "@users/request";
+import { filter, isEmpty, keyBy, map } from "lodash";
+import React, { useEffect, useMemo, useState } from "react";
+import { useHistory } from "react-router-dom";
+import {
+  deleteCurriculumRequest,
+  listCurriculumRequest,
+} from "../../../request";
 
 function getAsset(curriculum) {
   return {
@@ -41,8 +44,8 @@ function getAsset(curriculum) {
 }
 
 function ListCurriculum() {
-  const [t] = useTranslateLoader(prefixPN('listCurriculum'));
-  const { t: tCommon } = useCommonTranslate('page_header');
+  const [t] = useTranslateLoader(prefixPN("listCurriculum"));
+  const { t: tCommon } = useCommonTranslate("page_header");
   const [store, render] = useStore({
     canAdd: false,
   });
@@ -66,29 +69,33 @@ function ListCurriculum() {
         { locales },
         { permissions },
       ] = await Promise.all([
-        listCurriculumRequest({ page: 0, size: 999999, canListUnpublished: true }),
+        listCurriculumRequest({
+          page: 0,
+          size: 999999,
+          canListUnpublished: true,
+        }),
         listCentersRequest({ page: 0, size: 999999 }),
         getPlatformLocalesRequest(),
-        getPermissionsWithActionsIfIHaveRequest(['curriculum.curriculum']),
+        getPermissionsWithActionsIfIHaveRequest(["curriculum.curriculum"]),
       ]);
 
       if (
         permissions[0] &&
-        (permissions[0].actionNames.includes('admin') ||
-          permissions[0].actionNames.includes('create'))
+        (permissions[0].actionNames.includes("admin") ||
+          permissions[0].actionNames.includes("create"))
       ) {
         store.canAdd = true;
       }
       if (
         permissions[0] &&
-        (permissions[0].actionNames.includes('admin') ||
-          permissions[0].actionNames.includes('delete'))
+        (permissions[0].actionNames.includes("admin") ||
+          permissions[0].actionNames.includes("delete"))
       ) {
         store.canDelete = true;
       }
 
-      const localesByCode = keyBy(locales, 'code');
-      const centersById = keyBy(centers, 'id');
+      const localesByCode = keyBy(locales, "code");
+      const centersById = keyBy(centers, "id");
 
       setCurriculums(
         map(_curriculums, (curriculum) => ({
@@ -99,7 +106,7 @@ function ListCurriculum() {
       );
       setLoading(false);
     } catch (e) {
-      console.error('e', e);
+      console.error("e", e);
       setLoading(false);
     }
   };
@@ -114,15 +121,15 @@ function ListCurriculum() {
 
   const headerValues = useMemo(
     () => ({
-      title: t('page_title'),
+      title: t("page_title"),
     }),
     [t]
   );
 
   const columns = [
     {
-      Header: 'ID',
-      accessor: 'id',
+      Header: "ID",
+      accessor: "id",
     },
   ];
 
@@ -132,7 +139,7 @@ function ListCurriculum() {
         const menuItems = [
           {
             icon: <ViewOnIcon />,
-            children: t('view'),
+            children: t("view"),
             onClick: (e) => {
               e.stopPropagation();
               handleOnSelect(p.item.original);
@@ -142,14 +149,14 @@ function ListCurriculum() {
         if (store.canDelete) {
           menuItems.push({
             icon: <DeleteBinIcon />,
-            children: t('delete'),
+            children: t("delete"),
             onClick: (e) => {
               e.stopPropagation();
               openDeleteConfirmationModal({
                 onConfirm: async () => {
                   try {
                     await deleteCurriculumRequest(p.item.original.id);
-                    addSuccessAlert(t('deleted'));
+                    addSuccessAlert(t("deleted"));
                     load();
                   } catch (err) {
                     addErrorAlert(getErrorMessage(err));
@@ -160,7 +167,7 @@ function ListCurriculum() {
           });
         }
         return (
-          <Box onClick={onClick} style={{ cursor: 'pointer' }}>
+          <Box onClick={onClick} style={{ cursor: "pointer" }}>
             <LibraryCard
               {...p}
               menuItems={menuItems}
@@ -173,7 +180,7 @@ function ListCurriculum() {
       itemMinWidth: 330,
       margin: 16,
       spacing: 4,
-      paperProps: { shadow: 'none', color: 'none', padding: 0 },
+      paperProps: { shadow: "none", color: "none", padding: 0 },
     }),
     [t, store.canDelete]
   );
@@ -196,19 +203,19 @@ function ListCurriculum() {
     <ContextContainer fullHeight>
       <AdminPageHeader
         values={headerValues}
-        buttons={store.canAdd ? { new: tCommon('new') } : {}}
+        buttons={store.canAdd ? { new: tCommon("new") } : {}}
         onNew={() => history.push(`/private/curriculum/new`)}
       />
 
       <Tabs usePageLayout panelColor="solid" fullHeight fullWidth>
-        <TabPanel label={t('published')}>
+        <TabPanel label={t("published")}>
           <Box
             style={{
-              height: '100%',
-              position: 'relative',
-              display: 'flex',
+              height: "100%",
+              position: "relative",
+              display: "flex",
               flex: 1,
-              flexDirection: 'column',
+              flexDirection: "column",
             }}
           >
             <LoadingOverlay visible={loading} overlayOpacity={0} />
@@ -234,30 +241,30 @@ function ListCurriculum() {
             {!loading && isEmpty(cy) && (
               <Box
                 sx={(theme) => ({
-                  position: 'absolute',
+                  position: "absolute",
                   top: 0,
                   left: 0,
                   right: 0,
                   bottom: 0,
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
                 })}
               >
-                <Title order={3}>{t('empty')}</Title>
+                <Title order={3}>{t("empty")}</Title>
               </Box>
             )}
           </Box>
         </TabPanel>
         {store.canAdd ? (
-          <TabPanel label={t('draft')}>
+          <TabPanel label={t("draft")}>
             <Box
               style={{
-                height: '100%',
-                position: 'relative',
-                display: 'flex',
+                height: "100%",
+                position: "relative",
+                display: "flex",
                 flex: 1,
-                flexDirection: 'column',
+                flexDirection: "column",
               }}
             >
               <LoadingOverlay visible={loading} overlayOpacity={0} />
@@ -283,17 +290,17 @@ function ListCurriculum() {
               {!loading && isEmpty(cn) && (
                 <Box
                   sx={(theme) => ({
-                    position: 'absolute',
+                    position: "absolute",
                     top: 0,
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
                   })}
                 >
-                  <Title order={3}>{t('empty')}</Title>
+                  <Title order={3}>{t("empty")}</Title>
                 </Box>
               )}
             </Box>

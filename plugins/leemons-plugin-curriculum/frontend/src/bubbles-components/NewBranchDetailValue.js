@@ -1,23 +1,23 @@
-import { Box, ContextContainer, Title } from '@bubbles-ui/components';
-import { PluginSubjectsIcon } from '@bubbles-ui/icons/outline';
-import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
-import { useStore } from '@common';
-import CurriculumForm from '@curriculum/components/FormTheme/CurriculumForm';
-import { getParentNodes } from '@curriculum/helpers/getParentNodes';
-import * as _ from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { useForm } from 'react-hook-form';
+import { Box, ContextContainer, Title } from "@bubbles-ui/components";
+import { PluginSubjectsIcon } from "@bubbles-ui/icons/outline";
+import { CutStarIcon, StarIcon } from "@bubbles-ui/icons/solid";
+import { useStore } from "@common";
+import CurriculumForm from "@curriculum/components/FormTheme/CurriculumForm";
+import { getParentNodes } from "@curriculum/helpers/getParentNodes";
+import * as _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import { useForm } from "react-hook-form";
 
 export const NEW_BRANCH_DETAIL_VALUE_MESSAGES = {
-  nameLabel: 'Name',
-  subjectLabel: 'Subject',
-  namePlaceholder: 'Branch name...',
-  saveButtonLabel: 'Save config',
+  nameLabel: "Name",
+  subjectLabel: "Subject",
+  namePlaceholder: "Branch name...",
+  saveButtonLabel: "Save config",
 };
 
 export const NEW_BRANCH_DETAIL_VALUE_ERROR_MESSAGES = {
-  nameRequired: 'Field required',
+  nameRequired: "Field required",
 };
 
 function NewBranchDetailValue({
@@ -47,11 +47,11 @@ function NewBranchDetailValue({
 
   function getIcon(curricularContent) {
     switch (curricularContent) {
-      case 'knowledges':
+      case "knowledges":
         return <PluginSubjectsIcon />;
-      case 'qualifying-criteria':
+      case "qualifying-criteria":
         return <StarIcon />;
-      case 'non-qualifying-criteria':
+      case "non-qualifying-criteria":
         return <CutStarIcon />;
       default:
         return null;
@@ -63,14 +63,21 @@ function NewBranchDetailValue({
     if (response && response.jsonSchema) {
       _.forIn(response.jsonSchema.properties, (value, key) => {
         response.jsonSchema.properties[key].tabTitle = (
-          <Box sx={(theme) => ({ display: 'flex', alignItem: 'center', gap: theme.spacing[2] })}>
-            {getIcon(value.frontConfig.blockData.curricularContent)} {value.title}
+          <Box
+            sx={(theme) => ({
+              display: "flex",
+              alignItem: "center",
+              gap: theme.spacing[2],
+            })}
+          >
+            {getIcon(value.frontConfig.blockData.curricularContent)}{" "}
+            {value.title}
           </Box>
         );
         response.jsonSchema.properties[key].frontConfig.required = false;
         if (readonly) {
           if (!response.jsonUI[key]) response.jsonUI[key] = {};
-          response.jsonUI[key]['ui:readonly'] = true;
+          response.jsonUI[key]["ui:readonly"] = true;
         }
       });
     }
@@ -84,7 +91,10 @@ function NewBranchDetailValue({
         tabProps: {
           onChange: (e) => {
             store.hideSaveButton = false;
-            if (response.jsonSchema.properties[e].frontConfig.blockData.type === 'list') {
+            if (
+              response.jsonSchema.properties[e].frontConfig.blockData.type ===
+              "list"
+            ) {
               store.hideSaveButton = true;
             }
             render();
@@ -122,7 +132,7 @@ function NewBranchDetailValue({
     <ContextContainer>
       <Title order={3}>
         {!isEditMode ? parentNodes.map(({ name }) => `${name} > `) : null}
-        {watch('name')}
+        {watch("name")}
       </Title>
 
       <Box>

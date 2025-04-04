@@ -1,23 +1,31 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import * as _ from 'lodash';
-import { find, forEach, forIn, isArray, orderBy } from 'lodash';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@curriculum/helpers/prefixPN';
-import { listCentersRequest } from '@users/request';
-import { Box, Group, Text, Title, Tree, useTree, LoadingOverlay } from '@bubbles-ui/components';
-import { useParams } from 'react-router-dom';
-import { detailProgramRequest } from '@academic-portfolio/request';
-import { detailCurriculumRequest } from '../../../request';
+import React, { useEffect, useMemo, useState } from "react";
+import * as _ from "lodash";
+import { find, forEach, forIn, isArray, orderBy } from "lodash";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@curriculum/helpers/prefixPN";
+import { listCentersRequest } from "@users/request";
+import {
+  Box,
+  Group,
+  Text,
+  Title,
+  Tree,
+  useTree,
+  LoadingOverlay,
+} from "@bubbles-ui/components";
+import { useParams } from "react-router-dom";
+import { detailProgramRequest } from "@academic-portfolio/request";
+import { detailCurriculumRequest } from "../../../request";
 import NewBranchDetailValue, {
   NEW_BRANCH_DETAIL_VALUE_ERROR_MESSAGES,
   NEW_BRANCH_DETAIL_VALUE_MESSAGES,
-} from '../../../bubbles-components/NewBranchDetailValue';
+} from "../../../bubbles-components/NewBranchDetailValue";
 
 function CurriculumView() {
   const [loading, setLoading] = useState(true);
   const [activeNode, setActiveNode] = useState(null);
   const [activeRightSection, setActiveRightSection] = useState(null);
-  const [t] = useTranslateLoader(prefixPN('curriculumView'));
+  const [t] = useTranslateLoader(prefixPN("curriculumView"));
   const [curriculum, setCurriculum] = useState(null);
 
   const tree = useTree();
@@ -29,7 +37,7 @@ function CurriculumView() {
       if (schema && schema.compileJsonSchema) {
         _.forIn(schema.compileJsonSchema.properties, (value, key) => {
           if (!schema.compileJsonUI[key]) schema.compileJsonUI[key] = {};
-          schema.compileJsonUI[key]['ui:readonly'] = true;
+          schema.compileJsonUI[key]["ui:readonly"] = true;
         });
       }
       return schema;
@@ -69,7 +77,7 @@ function CurriculumView() {
 
       c.program = program;
       c.center = find(centers, { id: c.center });
-      c.nodeLevels = orderBy(c.nodeLevels, ['levelOrder'], ['asc']);
+      c.nodeLevels = orderBy(c.nodeLevels, ["levelOrder"], ["asc"]);
 
       setCurriculum(c);
       setLoading(false);
@@ -112,8 +120,11 @@ function CurriculumView() {
     setActiveRightSection(null);
     setActiveNode(null);
     setTimeout(() => {
-      setActiveNode({ ...node, nodeLevel: find(curriculum.nodeLevels, { id: node.nodeLevel }) });
-      setActiveRightSection('detail-branch-value');
+      setActiveNode({
+        ...node,
+        nodeLevel: find(curriculum.nodeLevels, { id: node.nodeLevel }),
+      });
+      setActiveRightSection("detail-branch-value");
     }, 5);
   }
 
@@ -123,7 +134,7 @@ function CurriculumView() {
     </Box>,
   ];
 
-  if (activeRightSection === 'detail-branch-value') {
+  if (activeRightSection === "detail-branch-value") {
     groupChilds.push(
       <Box key="child-2">
         <NewBranchDetailValue
@@ -160,10 +171,10 @@ function CurriculumView() {
         </Title>
       </Box>
       <Box mb={12}>
-        <Text role={'productive'}>{t('description1')}</Text>
+        <Text role={"productive"}>{t("description1")}</Text>
       </Box>
       <Box mb={16}>
-        <Text role={'productive'}>{t('description2')}</Text>
+        <Text role={"productive"}>{t("description2")}</Text>
       </Box>
 
       <Group grow align="start">

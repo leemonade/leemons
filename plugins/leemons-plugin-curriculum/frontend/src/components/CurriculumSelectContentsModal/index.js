@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   ActionButton,
   Badge,
@@ -9,14 +9,14 @@ import {
   Modal,
   Stack,
   Title,
-} from '@bubbles-ui/components';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@curriculum/helpers/prefixPN';
-import { useStore } from '@common';
-import { filter, find, forEach, forEachRight, forIn, isArray } from 'lodash';
-import { detailCurriculumRequest } from '../../request';
-import { CurriculumTab } from './components/CurriculumTab';
+} from "@bubbles-ui/components";
+import { RemoveIcon } from "@bubbles-ui/icons/outline";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@curriculum/helpers/prefixPN";
+import { useStore } from "@common";
+import { filter, find, forEach, forEachRight, forIn, isArray } from "lodash";
+import { detailCurriculumRequest } from "../../request";
+import { CurriculumTab } from "./components/CurriculumTab";
 
 // eslint-disable-next-line import/prefer-default-export
 export function CurriculumSelectContentsModal({
@@ -29,9 +29,13 @@ export function CurriculumSelectContentsModal({
   onClose,
 }) {
   // eslint-disable-next-line no-nested-ternary
-  const subjects = isArray(_subjects) ? _subjects : _subjects ? [_subjects] : _subjects;
-  const [t] = useTranslateLoader(prefixPN('selectContentModal'));
-  const [t2] = useTranslateLoader('multilanguage.formWithTheme');
+  const subjects = isArray(_subjects)
+    ? _subjects
+    : _subjects
+      ? [_subjects]
+      : _subjects;
+  const [t] = useTranslateLoader(prefixPN("selectContentModal"));
+  const [t2] = useTranslateLoader("multilanguage.formWithTheme");
   const [store, render] = useStore({ value });
 
   function getTreeData() {
@@ -40,7 +44,10 @@ export function CurriculumSelectContentsModal({
     if (isArray(store.curriculum.nodes) && store.curriculum.nodes.length) {
       const addNodes = (nodes, parent, nextDeep) => {
         forEach(nodes, (node) => {
-          const valuesInside = filter(store.value, (val) => val.indexOf(`node.${node.id}`) >= 0);
+          const valuesInside = filter(
+            store.value,
+            (val) => val.indexOf(`node.${node.id}`) >= 0
+          );
           items.push({
             id: node.id,
             parent,
@@ -49,11 +56,13 @@ export function CurriculumSelectContentsModal({
             node: {
               ...node,
               valuesInside,
-              _nodeLevel: find(store.curriculum.nodeLevels, { id: node.nodeLevel }),
+              _nodeLevel: find(store.curriculum.nodeLevels, {
+                id: node.nodeLevel,
+              }),
             },
             actions: [
               {
-                name: 'badge',
+                name: "badge",
                 icon: () =>
                   valuesInside.length ? (
                     <Badge closable={false} label={valuesInside.length} />
@@ -73,12 +82,16 @@ export function CurriculumSelectContentsModal({
 
   function changeNodeFormValues(nodes) {
     forEach(nodes, (node) => {
-      const nodeLevel = find(store.curriculum.nodeLevels, { id: node.nodeLevel });
+      const nodeLevel = find(store.curriculum.nodeLevels, {
+        id: node.nodeLevel,
+      });
       forIn(node.formValues, (formValue, key) => {
         formValue._nodeLevelId = node.nodeLevel;
         formValue._nodeId = node.id;
         formValue._blockData =
-          nodeLevel.schema.compileJsonSchema.properties[key].frontConfig.blockData;
+          nodeLevel.schema.compileJsonSchema.properties[
+            key
+          ].frontConfig.blockData;
       });
       if (node.childrens) changeNodeFormValues(node.childrens);
     });
@@ -86,20 +99,24 @@ export function CurriculumSelectContentsModal({
 
   async function init() {
     try {
-      const { curriculum } = await detailCurriculumRequest(id, { withProgram: true });
+      const { curriculum } = await detailCurriculumRequest(id, {
+        withProgram: true,
+      });
       store.curriculum = curriculum;
 
       changeNodeFormValues(store.curriculum.nodes);
 
       let course = null;
-      const subject = find(store.curriculum.program.subjects, { id: subjects[0] });
+      const subject = find(store.curriculum.program.subjects, {
+        id: subjects[0],
+      });
 
       if (subject && subject.course) {
         course = find(store.curriculum.program.courses, { id: subject.course });
       }
-      store.curriculumTitle = `${course ? `${course.index}º ` : ''}${
+      store.curriculumTitle = `${course ? `${course.index}º ` : ""}${
         store.curriculum.program.name
-      } ${subject ? `- ${subject.name}` : ''}`;
+      } ${subject ? `- ${subject.name}` : ""}`;
       store.treeData = getTreeData();
     } catch (error) {
       console.error(error);
@@ -113,7 +130,11 @@ export function CurriculumSelectContentsModal({
       : store.selectedNode.propertiesByType[0];
     forEach(properties.value, (prop) => {
       forEachRight(store.value, (str, index) => {
-        if (str.indexOf(`property.${store.selectedNode?.formValues[prop.id].id}`) >= 0) {
+        if (
+          str.indexOf(
+            `property.${store.selectedNode?.formValues[prop.id].id}`
+          ) >= 0
+        ) {
           store.value.splice(index, 1);
         }
       });
@@ -138,20 +159,34 @@ export function CurriculumSelectContentsModal({
   }, [JSON.stringify(value)]);
 
   return (
-    <Modal trapFocus={false} size={1000} withCloseButton={false} opened={opened} onClose={onClose}>
+    <Modal
+      trapFocus={false}
+      size={1000}
+      withCloseButton={false}
+      opened={opened}
+      onClose={onClose}
+    >
       <ContextContainer>
         <Stack fullWidth justifyContent="space-between">
-          <Title order={3}>{title || store.curriculum?.name || ''}</Title>
+          <Title order={3}>{title || store.curriculum?.name || ""}</Title>
           <ActionButton icon={<RemoveIcon />} onClick={onClose} />
         </Stack>
 
-        <CurriculumTab t2={t2} subjects={subjects} t={t} store={store} render={render} />
+        <CurriculumTab
+          t2={t2}
+          subjects={subjects}
+          t={t}
+          store={store}
+          render={render}
+        />
 
         <Stack justifyContent="space-between">
           <Button variant="light" onClick={unSelect}>
-            {t('unSelect')}
+            {t("unSelect")}
           </Button>
-          <Button onClick={() => onChange(store.value)}>{t('saveButtonLabel')}</Button>
+          <Button onClick={() => onChange(store.value)}>
+            {t("saveButtonLabel")}
+          </Button>
         </Stack>
       </ContextContainer>
     </Modal>

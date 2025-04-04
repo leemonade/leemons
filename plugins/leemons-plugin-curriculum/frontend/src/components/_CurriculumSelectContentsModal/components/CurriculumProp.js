@@ -1,11 +1,18 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-nested-ternary */
 
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Checkbox, InputWrapper, Paragraph, Stack, Text } from '@bubbles-ui/components';
-import { isArray, isNil } from 'lodash';
-import { RatingStarIcon } from '@bubbles-ui/icons/outline';
+import React from "react";
+import PropTypes from "prop-types";
+import {
+  Box,
+  Checkbox,
+  InputWrapper,
+  Paragraph,
+  Stack,
+  Text,
+} from "@bubbles-ui/components";
+import { isArray, isNil } from "lodash";
+import { RatingStarIcon } from "@bubbles-ui/icons/outline";
 
 function Value({ item, store, render, property, showCheckboxs }) {
   const key = `curriculum.${store.curriculum.id}|nodeLevel.${store.selectedNode.nodeLevel}|node.${store.selectedNode.id}|property.${property.id}|value.${item.id}`;
@@ -24,10 +31,15 @@ function Value({ item, store, render, property, showCheckboxs }) {
   return (
     <Stack fullWidth alignItems="start">
       {showCheckboxs ? (
-        <Checkbox checked={store.value?.indexOf(key) >= 0} onChange={onChange} />
+        <Checkbox
+          checked={store.value?.indexOf(key) >= 0}
+          onChange={onChange}
+        />
       ) : null}
       <Stack alignItems="baseline">
-        {item.metadata?.index ? <Text strong>{`${item.metadata?.index}`}</Text> : null}
+        {item.metadata?.index ? (
+          <Text strong>{`${item.metadata?.index}`}</Text>
+        ) : null}
         <Box sx={(theme) => ({ flex: 1, paddingLeft: theme.spacing[3] })}>
           <Paragraph
             dangerouslySetInnerHTML={{
@@ -56,10 +68,12 @@ export function CurriculumProp({ store, render, item, showCheckboxs = true }) {
     values = store.selectedNode?.formValues[item.id];
   }
   if (
-    store.selectedNode?.nodeLevel?.schema?.compileJsonSchema?.properties?.[item.id]?.frontConfig
-      ?.blockData?.evaluationCriteria ||
-    store.selectedNode?._nodeLevel?.schema?.compileJsonSchema?.properties?.[item.id]?.frontConfig
-      ?.blockData?.evaluationCriteria
+    store.selectedNode?.nodeLevel?.schema?.compileJsonSchema?.properties?.[
+      item.id
+    ]?.frontConfig?.blockData?.evaluationCriteria ||
+    store.selectedNode?._nodeLevel?.schema?.compileJsonSchema?.properties?.[
+      item.id
+    ]?.frontConfig?.blockData?.evaluationCriteria
   ) {
     isEvaluationCriteria = true;
   }
@@ -72,8 +86,8 @@ export function CurriculumProp({ store, render, item, showCheckboxs = true }) {
             {isEvaluationCriteria ? (
               <Box
                 sx={(theme) => ({
-                  display: 'inline-block',
-                  verticalAlign: 'center',
+                  display: "inline-block",
+                  verticalAlign: "center",
                   marginRight: theme.spacing[2],
                 })}
               >
@@ -85,7 +99,7 @@ export function CurriculumProp({ store, render, item, showCheckboxs = true }) {
         }
       >
         {isNil(values) ? (
-          '-'
+          "-"
         ) : isArray(values) ? (
           values.map((value) => (
             <Value

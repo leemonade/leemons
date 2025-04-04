@@ -1,24 +1,33 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-param-reassign */
-import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
-import { TextEditorInput } from '@bubbles-ui/editors';
-import { Box, Button, ContextContainer, createStyles, TextInput } from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { randomString, useStore } from '@common';
-import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
-import { FormContext } from './FormContext';
+import React, { useContext } from "react";
+import PropTypes from "prop-types";
+import _ from "lodash";
+import { TextEditorInput } from "@bubbles-ui/editors";
+import {
+  Box,
+  Button,
+  ContextContainer,
+  createStyles,
+  TextInput,
+} from "@bubbles-ui/components";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import { randomString, useStore } from "@common";
+import { ParentRelation } from "@curriculum/components/FormTheme/ParentRelation";
+import { FormContext } from "./FormContext";
 
 const ItemValueRender = ({ item }) => (
-  <Box sx={() => ({ width: '100%' })} dangerouslySetInnerHTML={{ __html: item.value }} />
+  <Box
+    sx={() => ({ width: "100%" })}
+    dangerouslySetInnerHTML={{ __html: item.value }}
+  />
 );
 
 const useStyle = createStyles((theme) => ({
   card: {
     border: `1px solid ${theme.colors.ui01}`,
-    borderRadius: '8px',
-    overflow: 'hidden',
+    borderRadius: "8px",
+    overflow: "hidden",
     padding: theme.spacing[4],
   },
 }));
@@ -47,7 +56,7 @@ const ListField = (props) => {
       ({
         textarea: TextEditorInput,
         field: TextInput,
-      }[blockData.listType]),
+      })[blockData.listType],
     [blockData.listType]
   );
 
@@ -79,7 +88,7 @@ const ListField = (props) => {
           <ContextContainer>
             <Field
               value={props.value}
-              label={uiSchema['ui:title'] || title}
+              label={uiSchema["ui:title"] || title}
               onChange={onFieldChange}
             />
           </ContextContainer>
@@ -88,7 +97,7 @@ const ListField = (props) => {
 
       {!store.editingItem ? (
         <Button variant="light" leftIcon={<AddCircleIcon />} onClick={onNew}>
-          {t('addNewElementToList')}
+          {t("addNewElementToList")}
         </Button>
       ) : null}
     </Box>

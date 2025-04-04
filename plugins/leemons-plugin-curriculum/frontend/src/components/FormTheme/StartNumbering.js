@@ -1,8 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, createStyles, NumberInput } from '@bubbles-ui/components';
-import { numberToEncodedLetter, useStore } from '@common';
-import { getExampleTextForListOrderedConfig } from '@curriculum/bubbles-components/BranchBlockListCustomOrderFieldOrder';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, createStyles, NumberInput } from "@bubbles-ui/components";
+import { numberToEncodedLetter, useStore } from "@common";
+import { getExampleTextForListOrderedConfig } from "@curriculum/bubbles-components/BranchBlockListCustomOrderFieldOrder";
 
 const useStyle = createStyles((theme) => ({
   root: {
@@ -31,14 +31,17 @@ const StartNumbering = ({ t, type, custom, ...props }) => {
   function getDemo() {
     if (props.value?.metadata?.initNumber) {
       if (custom) {
-        return getExampleTextForListOrderedConfig(custom, props.value.metadata.initNumber);
+        return getExampleTextForListOrderedConfig(
+          custom,
+          props.value.metadata.initNumber
+        );
       }
-      if (type === 'numbers') {
+      if (type === "numbers") {
         return `${props.value.metadata.initNumber},${props.value.metadata.initNumber + 1},${
           props.value.metadata.initNumber + 2
         }...`;
       }
-      if (type === 'vocals') {
+      if (type === "vocals") {
         return `${numberToEncodedLetter(props.value.metadata.initNumber)},${numberToEncodedLetter(
           props.value.metadata.initNumber + 1
         )},${numberToEncodedLetter(props.value.metadata.initNumber + 2)}...`;
@@ -48,11 +51,11 @@ const StartNumbering = ({ t, type, custom, ...props }) => {
 
   return (
     <Box className={classes.root}>
-      <Box style={{ display: 'flex' }}>
+      <Box style={{ display: "flex" }}>
         <Box style={{ width: 150 }}>
           <NumberInput
             min={1}
-            label={t('startAt')}
+            label={t("startAt")}
             value={props.value?.metadata?.initNumber}
             onChange={onChange}
           />

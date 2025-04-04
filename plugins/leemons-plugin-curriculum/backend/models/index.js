@@ -1,12 +1,12 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('@leemons/mongodb-helpers');
+const { getKeyValueModel } = require("@leemons/mongodb-helpers");
 
 const models = {
-  ...require('./configs'),
-  ...require('./curriculums'),
-  ...require('./nodeLevels'),
-  ...require('./nodes'),
+  ...require("./configs"),
+  ...require("./curriculums"),
+  ...require("./nodeLevels"),
+  ...require("./nodes"),
 };
 
 module.exports = {
@@ -17,7 +17,7 @@ module.exports = {
       Curriculums: models.curriculumsModel,
       NodeLevels: models.nodeLevelsModel,
       Nodes: models.nodesModel,
-      KeyValue: getKeyValueModel({ modelName: 'v1::curriculum_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: "v1::curriculum_KeyValue" }),
     };
   },
 };

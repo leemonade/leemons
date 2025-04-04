@@ -1,11 +1,11 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { LeemonsValidator } = require('@leemons/validator');
-const { LeemonsError } = require('@leemons/error');
-const { stringSchema, numberSchema, stringSchemaNullable } = require('./types');
+const { LeemonsValidator } = require("@leemons/validator");
+const { LeemonsError } = require("@leemons/error");
+const { stringSchema, numberSchema, stringSchemaNullable } = require("./types");
 
 const addCurriculumSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     name: stringSchema,
     description: stringSchema,
@@ -14,13 +14,13 @@ const addCurriculumSchema = {
     center: stringSchema,
     program: stringSchema,
     tags: {
-      type: 'array',
+      type: "array",
       items: {
-        type: 'string',
+        type: "string",
       },
     },
   },
-  required: ['name', 'country', 'locale', 'center', 'program'],
+  required: ["name", "country", "locale", "center", "program"],
   additionalProperties: false,
 };
 
@@ -35,28 +35,28 @@ function validateAddCurriculum(data) {
 }
 
 const addNodeLevelSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     curriculum: stringSchema,
     nodeLevels: {
-      type: 'array',
+      type: "array",
       items: {
-        type: 'object',
+        type: "object",
         properties: {
           name: stringSchema,
           type: stringSchema,
           listType: {
-            type: 'string',
-            enum: ['not-ordered', 'bullets', 'style-1', 'style-2', 'custom'],
+            type: "string",
+            enum: ["not-ordered", "bullets", "style-1", "style-2", "custom"],
           },
           levelOrder: numberSchema,
         },
-        required: ['name', 'type', 'listType', 'levelOrder'],
+        required: ["name", "type", "listType", "levelOrder"],
         additionalProperties: false,
       },
     },
   },
-  required: ['curriculum', 'nodeLevels'],
+  required: ["curriculum", "nodeLevels"],
   additionalProperties: false,
 };
 
@@ -67,28 +67,34 @@ async function validateAddNodeLevels({ data, ctx }) {
     throw validator.error;
   }
 
-  const existCurriculum = await ctx.tx.db.Curriculums.countDocuments({ id: data.curriculum });
-  if (!existCurriculum) throw new LeemonsError(ctx, { message: 'Curriculum not found' });
+  const existCurriculum = await ctx.tx.db.Curriculums.countDocuments({
+    id: data.curriculum,
+  });
+  if (!existCurriculum)
+    throw new LeemonsError(ctx, { message: "Curriculum not found" });
 
   // ES: Compobamos que no existan niveles repetidos
   // EN: Check that there are no duplicate levels
-  const currentLevels = await ctx.tx.db.NodeLevels.find({ curriculum: data.curriculum })
-    .select(['id', 'levelOrder'])
+  const currentLevels = await ctx.tx.db.NodeLevels.find({
+    curriculum: data.curriculum,
+  })
+    .select(["id", "levelOrder"])
     .lean();
-  let levelOrders = _.map(data.nodeLevels, 'levelOrder');
-  levelOrders = levelOrders.concat(_.map(currentLevels, 'levelOrder'));
+  let levelOrders = _.map(data.nodeLevels, "levelOrder");
+  levelOrders = levelOrders.concat(_.map(currentLevels, "levelOrder"));
   const duplicatedLevels = _.uniq(levelOrders).length !== levelOrders.length;
-  if (duplicatedLevels) throw new LeemonsError(ctx, { message: 'Duplicated order levels' });
+  if (duplicatedLevels)
+    throw new LeemonsError(ctx, { message: "Duplicated order levels" });
 }
 
 const updateNodeLevelSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     id: stringSchema,
     name: stringSchema,
     listType: stringSchema,
   },
-  required: ['id', 'name', 'listType'],
+  required: ["id", "name", "listType"],
   additionalProperties: false,
 };
 
@@ -99,12 +105,15 @@ async function validateUpdateNodeLevel({ data, ctx }) {
     throw validator.error;
   }
 
-  const existNodeLevel = await ctx.tx.db.NodeLevels.countDocuments({ id: data.id });
-  if (!existNodeLevel) throw new LeemonsError(ctx, { message: 'Node level not found' });
+  const existNodeLevel = await ctx.tx.db.NodeLevels.countDocuments({
+    id: data.id,
+  });
+  if (!existNodeLevel)
+    throw new LeemonsError(ctx, { message: "Node level not found" });
 }
 
 const addNodeSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     name: stringSchema,
     curriculum: stringSchema,
@@ -112,7 +121,7 @@ const addNodeSchema = {
     parentNode: stringSchemaNullable,
     nodeOrder: numberSchema,
   },
-  required: ['name', 'curriculum', 'nodeLevel', 'parentNode', 'nodeOrder'],
+  required: ["name", "curriculum", "nodeLevel", "parentNode", "nodeOrder"],
   additionalProperties: false,
 };
 
@@ -125,8 +134,11 @@ async function validateAddNode({ data, ctx }) {
 
   // ES: Comprobamos que el currículo existe
   // EN: Check that the curriculum exists
-  const existCurriculum = await ctx.tx.db.Curriculums.countDocuments({ id: data.curriculum });
-  if (!existCurriculum) throw new LeemonsError(ctx, { message: 'Curriculum not found' });
+  const existCurriculum = await ctx.tx.db.Curriculums.countDocuments({
+    id: data.curriculum,
+  });
+  if (!existCurriculum)
+    throw new LeemonsError(ctx, { message: "Curriculum not found" });
 
   // ES: Comprobamos que el nodeLevel exista para el curriculum
   // EN: Check that the nodeLevel exists for the curriculum
@@ -134,7 +146,8 @@ async function validateAddNode({ data, ctx }) {
     id: data.nodeLevel,
     curriculum: data.curriculum,
   });
-  if (!existNodeLevel) throw new LeemonsError(ctx, { message: 'Node level not found' });
+  if (!existNodeLevel)
+    throw new LeemonsError(ctx, { message: "Node level not found" });
 
   // ES: Comprobamos que el nodo padre exista para el curriculum si no es null
   // EN: Check that the parent node exists for the curriculum if it is not null
@@ -143,7 +156,8 @@ async function validateAddNode({ data, ctx }) {
       id: data.parentNode,
       curriculum: data.curriculum,
     });
-    if (!existParentNode) throw new LeemonsError(ctx, { message: 'Parent node not found' });
+    if (!existParentNode)
+      throw new LeemonsError(ctx, { message: "Parent node not found" });
   }
 }
 

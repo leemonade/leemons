@@ -1,19 +1,19 @@
-import { Box, Button, createStyles, Stack } from '@bubbles-ui/components';
-import { TAGIFY_TAG_REGEX, TagifyInput } from '@bubbles-ui/extras';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { forEach } from 'lodash';
-import PropTypes from 'prop-types';
-import React, { useState } from 'react';
-import { Controller } from 'react-hook-form';
+import { Box, Button, createStyles, Stack } from "@bubbles-ui/components";
+import { TAGIFY_TAG_REGEX, TagifyInput } from "@bubbles-ui/extras";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import { forEach } from "lodash";
+import PropTypes from "prop-types";
+import React, { useState } from "react";
+import { Controller } from "react-hook-form";
 import BranchBlockListCustomOrderFieldOrder, {
   getExampleTextForListOrderedConfig,
-} from './BranchBlockListCustomOrderFieldOrder';
+} from "./BranchBlockListCustomOrderFieldOrder";
 
 const useStyle = createStyles((theme) => ({
   label: {
-    width: '100%',
-    '> div:first-child': {
-      whiteSpace: 'nowrap',
+    width: "100%",
+    "> div:first-child": {
+      whiteSpace: "nowrap",
     },
   },
 }));
@@ -37,7 +37,7 @@ function BranchBlockListCustomOrder({ ...props }) {
     },
   } = props;
 
-  const listOrderedText = watch('listOrderedText');
+  const listOrderedText = watch("listOrderedText");
 
   const whitelist = React.useMemo(() => {
     const result = [];
@@ -57,8 +57,8 @@ function BranchBlockListCustomOrder({ ...props }) {
 
   function addOrderField(data) {
     setValue(
-      'listOrderedText',
-      `${getValues('listOrderedText') || ''} [[${JSON.stringify({
+      "listOrderedText",
+      `${getValues("listOrderedText") || ""} [[${JSON.stringify({
         ...data,
         value: getExampleTextForListOrderedConfig(data),
       })}]]`
@@ -69,14 +69,19 @@ function BranchBlockListCustomOrder({ ...props }) {
   if (listOrderedText) {
     let array;
     while ((array = TAGIFY_TAG_REGEX.exec(listOrderedText)) !== null) {
-      if (Object.hasOwnProperty.call(JSON.parse(array[0].slice(2, -2)), 'numberingStyle')) {
+      if (
+        Object.hasOwnProperty.call(
+          JSON.parse(array[0].slice(2, -2)),
+          "numberingStyle"
+        )
+      ) {
         canAddOrder = false;
       }
     }
   }
 
   return (
-    <Box style={{ position: 'relative' }}>
+    <Box style={{ position: "relative" }}>
       <Stack fullWidth alignItems="start" spacing={2}>
         <Controller
           name="listOrderedText"
@@ -95,12 +100,12 @@ function BranchBlockListCustomOrder({ ...props }) {
                 field.onChange(e.detail.value);
               }}
               settings={{
-                mode: 'mix',
+                mode: "mix",
                 pattern: /@/,
                 editTags: false,
                 dropdown: {
                   enabled: 1,
-                  position: 'text',
+                  position: "text",
                 },
                 whitelist,
               }}

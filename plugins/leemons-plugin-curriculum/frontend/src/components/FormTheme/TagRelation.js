@@ -1,23 +1,23 @@
-import { Badge, Box, createStyles, MultiSelect } from '@bubbles-ui/components';
-import { ellipsis, htmlToText, useStore } from '@common';
-import { getItemTitleNumberedWithParents } from '@curriculum/helpers/getItemTitleNumberedWithParents';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
+import { Badge, Box, createStyles, MultiSelect } from "@bubbles-ui/components";
+import { ellipsis, htmlToText, useStore } from "@common";
+import { getItemTitleNumberedWithParents } from "@curriculum/helpers/getItemTitleNumberedWithParents";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
 
 const useStyle = createStyles((theme) => ({
   card: {
     border: `1px solid ${theme.colors.ui01}`,
-    borderRadius: '8px',
-    overflow: 'hidden',
+    borderRadius: "8px",
+    overflow: "hidden",
     padding: theme.spacing[4],
   },
 }));
 
 export function getTagRelationSelectData(curriculum, blockData, nodeId) {
-  const nodeLevelsById = _.keyBy(curriculum.nodeLevels, 'id');
+  const nodeLevelsById = _.keyBy(curriculum.nodeLevels, "id");
   const labels = _.filter(blockData.contentRelations, {
-    typeOfRelation: 'label',
+    typeOfRelation: "label",
   });
   const selectData = [];
   const flatNodes = [];
@@ -38,7 +38,7 @@ export function getTagRelationSelectData(curriculum, blockData, nodeId) {
   }
 
   _.forEach(labels, (label) => {
-    const ids = label.relatedTo.split('|');
+    const ids = label.relatedTo.split("|");
     const nodeLevelId = ids[0];
     const formValueId = ids[1];
     const nodes = _.filter(flatNodes, { nodeLevel: nodeLevelId });
@@ -47,7 +47,8 @@ export function getTagRelationSelectData(curriculum, blockData, nodeId) {
       if (node.id !== nodeId) {
         const nodeLevel = nodeLevelsById[node.nodeLevel];
         const _blockData =
-          nodeLevel.schema.compileJsonSchema.properties[formValueId].frontConfig.blockData;
+          nodeLevel.schema.compileJsonSchema.properties[formValueId].frontConfig
+            .blockData;
         const _nodeValue = node?.formValues?.[formValueId];
 
         if (_nodeValue) {
@@ -64,13 +65,14 @@ export function getTagRelationSelectData(curriculum, blockData, nodeId) {
                   index
                 );
 
-                const rel = _.find(blockData.contentRelations, ({ relatedTo }) =>
-                  relatedTo.indexOf(_blockData.id)
+                const rel = _.find(
+                  blockData.contentRelations,
+                  ({ relatedTo }) => relatedTo.indexOf(_blockData.id)
                 );
-                let text = `${number ? `${number} ` : ''}${htmlToText(val.value)}`;
-                if (rel.showNumeration === 'numbering') {
+                let text = `${number ? `${number} ` : ""}${htmlToText(val.value)}`;
+                if (rel.showNumeration === "numbering") {
                   text = number;
-                } else if (rel.showNumeration === 'content') {
+                } else if (rel.showNumeration === "content") {
                   text = htmlToText(val.value);
                 }
                 selectData.push({
@@ -89,18 +91,22 @@ export function getTagRelationSelectData(curriculum, blockData, nodeId) {
                       node.id,
                       {
                         ...val,
-                        metadata: { ...val?.metadata, parentRelated: val?.metadata?.parentRelated },
+                        metadata: {
+                          ...val?.metadata,
+                          parentRelated: val?.metadata?.parentRelated,
+                        },
                       },
                       index,
                       item
                     );
-                    const rel = _.find(blockData.contentRelations, ({ relatedTo }) =>
-                      relatedTo.indexOf(_blockData.id)
+                    const rel = _.find(
+                      blockData.contentRelations,
+                      ({ relatedTo }) => relatedTo.indexOf(_blockData.id)
                     );
-                    let text = `${number ? `${number} ` : ''}${htmlToText(v.value)}`;
-                    if (rel.showNumeration === 'numbering') {
+                    let text = `${number ? `${number} ` : ""}${htmlToText(v.value)}`;
+                    if (rel.showNumeration === "numbering") {
                       text = number;
-                    } else if (rel.showNumeration === 'content') {
+                    } else if (rel.showNumeration === "content") {
                       text = htmlToText(v.value);
                     }
                     selectData.push({
@@ -129,7 +135,15 @@ export function getTagRelationSelectData(curriculum, blockData, nodeId) {
   return selectData;
 }
 
-const TagRelation = ({ readonly, blockData, curriculum, isShow, id, t, ...props }) => {
+const TagRelation = ({
+  readonly,
+  blockData,
+  curriculum,
+  isShow,
+  id,
+  t,
+  ...props
+}) => {
   const { classes } = useStyle();
   const [store, render] = useStore();
 
@@ -141,11 +155,11 @@ const TagRelation = ({ readonly, blockData, curriculum, isShow, id, t, ...props 
     let show = false;
     if (_.isArray(blockData.contentRelations)) {
       const labels = _.filter(blockData.contentRelations, {
-        typeOfRelation: 'label',
+        typeOfRelation: "label",
       });
       if (labels.length) {
         store.selectData = getTagRelationSelectData(curriculum, blockData, id);
-        store.selectDataByValue = _.keyBy(store.selectData, 'value');
+        store.selectDataByValue = _.keyBy(store.selectData, "value");
         if (store.selectData?.length) {
           show = true;
         }
@@ -160,8 +174,17 @@ const TagRelation = ({ readonly, blockData, curriculum, isShow, id, t, ...props 
       {props.value?.map((val) => {
         if (store.selectDataByValue?.[val]?.label) {
           return (
-            <Box sx={(theme) => ({ margin: theme.spacing[1], display: 'inline-block' })}>
-              <Badge color="stroke" closable={false} label={store.selectDataByValue[val].label} />
+            <Box
+              sx={(theme) => ({
+                margin: theme.spacing[1],
+                display: "inline-block",
+              })}
+            >
+              <Badge
+                color="stroke"
+                closable={false}
+                label={store.selectDataByValue[val].label}
+              />
             </Box>
           );
         }
@@ -175,7 +198,7 @@ const TagRelation = ({ readonly, blockData, curriculum, isShow, id, t, ...props 
             value={props.value || []}
             onChange={onChangeTags}
             data={store.selectData || []}
-            label={t('selectTag')}
+            label={t("selectTag")}
           />
         </Box>
       ) : null}

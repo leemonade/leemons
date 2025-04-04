@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import BranchBlockCodeManual from './BranchBlockCodeManual';
-import BranchBlockCodeAutocomposed from './BranchBlockCodeAutocomposed';
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
+import BranchBlockCodeManual from "./BranchBlockCodeManual";
+import BranchBlockCodeAutocomposed from "./BranchBlockCodeAutocomposed";
 
 function BranchBlockCode({ ...props }) {
   const {
@@ -12,27 +12,29 @@ function BranchBlockCode({ ...props }) {
 
   useEffect(() => {
     const subscription = watch(({ limitCharacters, codeType }, { name }) => {
-      if (name === 'codeType') {
-        if (codeType === 'manual') {
-          unregister('codeText');
-        } else if (codeType === 'autocomposed') {
-          unregister('limitCharacters');
-          unregister('min');
-          unregister('max');
+      if (name === "codeType") {
+        if (codeType === "manual") {
+          unregister("codeText");
+        } else if (codeType === "autocomposed") {
+          unregister("limitCharacters");
+          unregister("min");
+          unregister("max");
         }
       }
-      if (name === 'limitCharacters') {
+      if (name === "limitCharacters") {
         if (!limitCharacters) {
-          unregister('min');
-          unregister('max');
+          unregister("min");
+          unregister("max");
         }
       }
     });
     return () => subscription.unsubscribe();
   });
 
-  if (formData.codeType === 'manual') return <BranchBlockCodeManual {...props} />;
-  if (formData.codeType === 'autocomposed') return <BranchBlockCodeAutocomposed {...props} />;
+  if (formData.codeType === "manual")
+    return <BranchBlockCodeManual {...props} />;
+  if (formData.codeType === "autocomposed")
+    return <BranchBlockCodeAutocomposed {...props} />;
   return null;
 }
 

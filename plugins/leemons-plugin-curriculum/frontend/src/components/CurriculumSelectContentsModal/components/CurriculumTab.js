@@ -1,16 +1,23 @@
 /* eslint-disable no-param-reassign */
 
-import { TabPanel, Tabs } from '@bubbles-ui/components';
-import { PluginSubjectsIcon } from '@bubbles-ui/icons/outline';
-import { CutStarIcon, StarIcon } from '@bubbles-ui/icons/solid';
-import { getParentNodes } from '@curriculum/helpers/getParentNodes';
-import _, { filter, find, forEach, forIn, groupBy, isArray } from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { CurriculumProp } from './CurriculumProp';
+import { TabPanel, Tabs } from "@bubbles-ui/components";
+import { PluginSubjectsIcon } from "@bubbles-ui/icons/outline";
+import { CutStarIcon, StarIcon } from "@bubbles-ui/icons/solid";
+import { getParentNodes } from "@curriculum/helpers/getParentNodes";
+import _, { filter, find, forEach, forIn, groupBy, isArray } from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import { CurriculumProp } from "./CurriculumProp";
 
 // eslint-disable-next-line import/prefer-default-export
-export function CurriculumTab({ subjects, hideNoSelecteds, store, render, t, t2 }) {
+export function CurriculumTab({
+  subjects,
+  hideNoSelecteds,
+  store,
+  render,
+  t,
+  t2,
+}) {
   function onSelect({ node }) {
     // console.log(node);
     store.selectedNode = {
@@ -24,32 +31,40 @@ export function CurriculumTab({ subjects, hideNoSelecteds, store, render, t, t2 
     // Sacamos los campos del nodo seleccionado
     store.selectedNode._formProperties = [];
     if (store.selectedNode._nodeLevel?.schema?.compileJsonSchema) {
-      forIn(store.selectedNode._nodeLevel.schema.compileJsonSchema.properties, (value, key) => {
-        const parentEl = find(value.frontConfig.blockData.contentRelations, {
-          typeOfRelation: 'parent',
-        });
-        if (parentEl) parentsCantUse.push(parentEl.relatedTo.split('|')[1]);
-        store.selectedNode._formProperties.push({
-          ...value,
-          id: key,
-        });
-      });
+      forIn(
+        store.selectedNode._nodeLevel.schema.compileJsonSchema.properties,
+        (value, key) => {
+          const parentEl = find(value.frontConfig.blockData.contentRelations, {
+            typeOfRelation: "parent",
+          });
+          if (parentEl) parentsCantUse.push(parentEl.relatedTo.split("|")[1]);
+          store.selectedNode._formProperties.push({
+            ...value,
+            id: key,
+          });
+        }
+      );
     }
 
     // Sacamos todos los padres y nos los recorremos sacando tambien sus campos
-    const parentNodes = getParentNodes(store.curriculum.nodes, store.selectedNode.id);
+    const parentNodes = getParentNodes(
+      store.curriculum.nodes,
+      store.selectedNode.id
+    );
     forEach(parentNodes, (parent) => {
       store.selectedNode.formValues = {
         ...store.selectedNode.formValues,
         ...parent.formValues,
       };
-      const nodeLevel = find(store.curriculum.nodeLevels, { id: parent.nodeLevel });
+      const nodeLevel = find(store.curriculum.nodeLevels, {
+        id: parent.nodeLevel,
+      });
       if (nodeLevel?.schema?.compileJsonSchema) {
         forIn(nodeLevel.schema.compileJsonSchema.properties, (value, key) => {
           const parentEl = find(value.frontConfig.blockData.contentRelations, {
-            typeOfRelation: 'parent',
+            typeOfRelation: "parent",
           });
-          if (parentEl) parentsCantUse.push(parentEl.relatedTo.split('|')[1]);
+          if (parentEl) parentsCantUse.push(parentEl.relatedTo.split("|")[1]);
           store.selectedNode._formProperties.push({
             ...value,
             id: key,
@@ -67,7 +82,7 @@ export function CurriculumTab({ subjects, hideNoSelecteds, store, render, t, t2 
     // Agrupamos por tipo de contenido para mostrarlo en tabs
     const group = groupBy(
       store.selectedNode._formProperties,
-      'frontConfig.blockData.curricularContent'
+      "frontConfig.blockData.curricularContent"
     );
     forIn(group, (value, key) => {
       store.selectedNode.propertiesByType.push({ value, key });
@@ -75,7 +90,7 @@ export function CurriculumTab({ subjects, hideNoSelecteds, store, render, t, t2 
 
     store.selectedNode.propertiesByType = _.filter(
       store.selectedNode.propertiesByType,
-      ({ key }) => key !== 'non-qualifying-criteria'
+      ({ key }) => key !== "non-qualifying-criteria"
     );
 
     render();
@@ -105,11 +120,11 @@ export function CurriculumTab({ subjects, hideNoSelecteds, store, render, t, t2 
 
   function getIcon(curricularContent) {
     switch (curricularContent) {
-      case 'knowledges':
+      case "knowledges":
         return <PluginSubjectsIcon />;
-      case 'qualifying-criteria':
+      case "qualifying-criteria":
         return <StarIcon />;
-      case 'non-qualifying-criteria':
+      case "non-qualifying-criteria":
         return <CutStarIcon />;
       default:
         return null;
@@ -128,15 +143,28 @@ export function CurriculumTab({ subjects, hideNoSelecteds, store, render, t, t2 
           forEach(store.value, (str) => {
             if (_.isArray(store.selectedNode?.formValues[id])) {
               forEach(store.selectedNode?.formValues[id], (v, i) => {
-                if (str.indexOf(`property.${store.selectedNode?.formValues[id][i]?.id}`) >= 0)
+                if (
+                  str.indexOf(
+                    `property.${store.selectedNode?.formValues[id][i]?.id}`
+                  ) >= 0
+                )
                   count++;
               });
-            } else if (str.indexOf(`property.${store.selectedNode?.formValues[id]?.id}`) >= 0)
+            } else if (
+              str.indexOf(
+                `property.${store.selectedNode?.formValues[id]?.id}`
+              ) >= 0
+            )
               count++;
           });
         });
         return (
-          <TabPanel key={key} label={t(key)} rightIcon={getIcon(key)} notification={count || null}>
+          <TabPanel
+            key={key}
+            label={t(key)}
+            rightIcon={getIcon(key)}
+            notification={count || null}
+          >
             {value.map((prop, i) => (
               <CurriculumProp
                 hideNoSelecteds={hideNoSelecteds}

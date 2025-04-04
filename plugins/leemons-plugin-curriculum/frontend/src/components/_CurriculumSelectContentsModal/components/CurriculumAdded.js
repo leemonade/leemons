@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   Box,
   Button,
@@ -10,9 +10,9 @@ import {
   Paragraph,
   Stack,
   Title,
-} from '@bubbles-ui/components';
-import { filter, find, groupBy, isArray, map, remove, values } from 'lodash';
-import { getCurriculumSelectedContentValueByKey } from '../../../helpers/getCurriculumSelectedContentValueByKey';
+} from "@bubbles-ui/components";
+import { filter, find, groupBy, isArray, map, remove, values } from "lodash";
+import { getCurriculumSelectedContentValueByKey } from "../../../helpers/getCurriculumSelectedContentValueByKey";
 
 // eslint-disable-next-line import/prefer-default-export
 export function CurriculumAdded({ store, render, t }) {
@@ -27,7 +27,10 @@ export function CurriculumAdded({ store, render, t }) {
   }
 
   function clearSelected() {
-    store.value = remove(store.value, (val) => store.selectedToRemove.indexOf(val) < 0);
+    store.value = remove(
+      store.value,
+      (val) => store.selectedToRemove.indexOf(val) < 0
+    );
     store.selectedToRemove = [];
     render();
   }
@@ -45,7 +48,7 @@ export function CurriculumAdded({ store, render, t }) {
 
   const nodesWithValues = map(
     filter(store.treeData, (item) => item.node.valuesInside.length >= 1),
-    'node'
+    "node"
   );
 
   return (
@@ -54,26 +57,35 @@ export function CurriculumAdded({ store, render, t }) {
       <Stack>
         <Box>
           <Button variant="link" onClick={clearSelected}>
-            {t('clearSelected')}{' '}
-            {store.selectedToRemove?.length ? `(${store.selectedToRemove.length})` : null}
+            {t("clearSelected")}{" "}
+            {store.selectedToRemove?.length
+              ? `(${store.selectedToRemove.length})`
+              : null}
           </Button>
         </Box>
         <Box sx={(theme) => ({ marginLeft: theme.spacing[8] })}>
           <Button variant="link" onClick={clearAll}>
-            {t('clearAll')}
+            {t("clearAll")}
           </Button>
         </Box>
       </Stack>
-      <Box sx={(theme) => ({ marginLeft: theme.spacing[4], marginTop: theme.spacing[4] })}>
+      <Box
+        sx={(theme) => ({
+          marginLeft: theme.spacing[4],
+          marginTop: theme.spacing[4],
+        })}
+      >
         {nodesWithValues.map((node, i) => {
           const keyValues = map(node.valuesInside, (key) => getKeyValues(key));
-          const keyValuesByProperty = values(groupBy(keyValues, 'property'));
+          const keyValuesByProperty = values(groupBy(keyValues, "property"));
           return (
             <Box sx={(theme) => ({ marginTop: theme.spacing[4] })} key={i}>
               <InputWrapper label={node.fullName}>
                 {keyValuesByProperty.map((vals) => {
                   const property =
-                    node._nodeLevel.schema.compileJsonSchema.properties[vals[0].property];
+                    node._nodeLevel.schema.compileJsonSchema.properties[
+                      vals[0].property
+                    ];
                   return (
                     <Box
                       key={i}
@@ -94,14 +106,22 @@ export function CurriculumAdded({ store, render, t }) {
                           return (
                             <Stack key={x} alignItems="start">
                               <Checkbox
-                                checked={store.selectedToRemove?.indexOf(value.key) >= 0}
+                                checked={
+                                  store.selectedToRemove?.indexOf(value.key) >=
+                                  0
+                                }
                                 onChange={() => onChange(value.key)}
                               />
                               <Stack alignItems="baseline">
                                 {item.metadata?.index ? (
                                   <Paragraph>{`${item.metadata?.index}`}</Paragraph>
                                 ) : null}
-                                <Box sx={(theme) => ({ flex: 1, paddingLeft: theme.spacing[3] })}>
+                                <Box
+                                  sx={(theme) => ({
+                                    flex: 1,
+                                    paddingLeft: theme.spacing[3],
+                                  })}
+                                >
                                   <Paragraph
                                     dangerouslySetInnerHTML={{
                                       __html: item.value,

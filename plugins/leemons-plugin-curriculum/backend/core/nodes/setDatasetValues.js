@@ -1,13 +1,17 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function setDatasetValues({ node, userSession, values, ctx }) {
   const locationName = `node-level-${node.nodeLevel}`;
-  const pluginName = 'curriculum';
-  let functionName = 'addValues';
+  const pluginName = "curriculum";
+  let functionName = "addValues";
   if (
-    await ctx.tx.call('dataset.dataset.existValues', { locationName, pluginName, target: node.id })
+    await ctx.tx.call("dataset.dataset.existValues", {
+      locationName,
+      pluginName,
+      target: node.id,
+    })
   ) {
-    functionName = 'updateValues';
+    functionName = "updateValues";
   }
   return ctx.tx.call(`dataset.dataset.${functionName}`, {
     locationName,

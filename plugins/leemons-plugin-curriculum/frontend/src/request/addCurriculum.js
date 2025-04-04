@@ -1,7 +1,7 @@
 async function addCurriculum(body) {
-  return leemons.api('v1/curriculum/curriculum', {
+  return leemons.api("v1/curriculum/curriculum", {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body,
   });
 }

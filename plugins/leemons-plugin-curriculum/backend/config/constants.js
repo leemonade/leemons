@@ -1,4 +1,4 @@
-const pluginName = 'curriculum';
+const pluginName = "curriculum";
 
 const permissionNames = {
   curriculumMenu: `${pluginName}.curriculum-menu`,
@@ -8,66 +8,66 @@ const permissionNames = {
 const permissions = [
   {
     permissionName: permissionNames.curriculumMenu,
-    actions: ['view'],
-    localizationName: { es: 'Curriculum Menu', en: 'Curriculum Menu' },
+    actions: ["view"],
+    localizationName: { es: "Curriculum Menu", en: "Curriculum Menu" },
   },
   {
     permissionName: permissionNames.curriculum,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
-    localizationName: { es: 'Curriculum', en: 'Curriculum' },
+    actions: ["view", "update", "create", "delete", "admin"],
+    localizationName: { es: "Curriculum", en: "Curriculum" },
   },
 ];
 
 const menuItems = [
   {
     item: {
-      key: 'curriculum',
+      key: "curriculum",
       order: 300,
-      iconSvg: '/public/curriculum/menu-icon.svg',
-      activeIconSvg: '/public/curriculum/menu-icon.svg',
+      iconSvg: "/public/curriculum/menu-icon.svg",
+      activeIconSvg: "/public/curriculum/menu-icon.svg",
       label: {
-        en: 'Curriculum',
-        es: 'Curriculum',
+        en: "Curriculum",
+        es: "Curriculum",
       },
     },
     permissions: [
       {
         permissionName: `${pluginName}.curriculum-menu`,
-        actionNames: ['view'],
+        actionNames: ["view"],
       },
     ],
   },
   {
     item: {
-      key: 'curriculum-new',
+      key: "curriculum-new",
       parentKey: `${pluginName}.curriculum`,
-      url: '/private/curriculum/new',
+      url: "/private/curriculum/new",
       label: {
-        en: 'New curriculum',
-        es: 'Nuevo curriculum',
+        en: "New curriculum",
+        es: "Nuevo curriculum",
       },
     },
     permissions: [
       {
         permissionName: `${pluginName}.curriculum`,
-        actionNames: ['create', 'update', 'admin'],
+        actionNames: ["create", "update", "admin"],
       },
     ],
   },
   {
     item: {
-      key: 'curriculum-library',
+      key: "curriculum-library",
       parentKey: `${pluginName}.curriculum`,
-      url: '/private/curriculum/list',
+      url: "/private/curriculum/list",
       label: {
-        en: 'Library',
-        es: 'Biblioteca',
+        en: "Library",
+        es: "Biblioteca",
       },
     },
     permissions: [
       {
         permissionName: `${pluginName}.curriculum-menu`,
-        actionNames: ['view'],
+        actionNames: ["view"],
       },
     ],
   },

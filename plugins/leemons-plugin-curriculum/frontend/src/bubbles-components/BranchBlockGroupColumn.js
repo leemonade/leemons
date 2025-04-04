@@ -1,13 +1,21 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
-import { Box, Transition, Paper, Select, Group, Button, Input } from '@bubbles-ui/components';
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
+import { Controller, useForm } from "react-hook-form";
+import {
+  Box,
+  Transition,
+  Paper,
+  Select,
+  Group,
+  Button,
+  Input,
+} from "@bubbles-ui/components";
 
 const scaleY = {
-  in: { opacity: 1, transform: 'scaleY(1)' },
-  out: { opacity: 0, transform: 'scaleY(0)' },
-  common: { transformOrigin: 'top' },
-  transitionProperty: 'transform, opacity',
+  in: { opacity: 1, transform: "scaleY(1)" },
+  out: { opacity: 0, transform: "scaleY(0)" },
+  common: { transformOrigin: "top" },
+  transitionProperty: "transform, opacity",
 };
 
 function BranchBlockGroupColumn({
@@ -32,15 +40,20 @@ function BranchBlockGroupColumn({
   }, [opened]);
 
   return (
-    <Transition mounted={opened} transition={scaleY} duration={200} timingFunction="ease">
+    <Transition
+      mounted={opened}
+      transition={scaleY}
+      duration={200}
+      timingFunction="ease"
+    >
       {(styles) => (
         <Paper
           shadow="md"
           style={{
             ...styles,
             zIndex: 10,
-            position: 'absolute',
-            top: '100%',
+            position: "absolute",
+            top: "100%",
             left: 0,
             width: 300,
           }}
@@ -53,7 +66,9 @@ function BranchBlockGroupColumn({
                 rules={{
                   required: errorMessages.groupColumnNameRequired,
                 }}
-                render={({ field }) => <Input required error={errors.name} {...field} />}
+                render={({ field }) => (
+                  <Input required error={errors.name} {...field} />
+                )}
               />
             </Box>
 

@@ -1,15 +1,15 @@
-import deleteCurriculum from '@curriculum/request/deleteCurriculum';
-import publishCurriculum from '@curriculum/request/publishCurriculum';
-import addNode from './addNode';
-import saveNode from './saveNode';
-import addNodeLevels from './addNodeLevels';
-import addCurriculum from './addCurriculum';
-import getDataForKeys from './getDataForKeys';
-import listCurriculum from './listCurriculum';
-import updateNodeLevel from './updateNodeLevel';
-import detailCurriculum from './detailCurriculum';
-import generateNodesFromAcademicPortfolio from './generateNodesFromAcademicPortfolio';
-import listCurriculumsByProgram from './listCurriculumsByProgram';
+import deleteCurriculum from "@curriculum/request/deleteCurriculum";
+import publishCurriculum from "@curriculum/request/publishCurriculum";
+import addNode from "./addNode";
+import saveNode from "./saveNode";
+import addNodeLevels from "./addNodeLevels";
+import addCurriculum from "./addCurriculum";
+import getDataForKeys from "./getDataForKeys";
+import listCurriculum from "./listCurriculum";
+import updateNodeLevel from "./updateNodeLevel";
+import detailCurriculum from "./detailCurriculum";
+import generateNodesFromAcademicPortfolio from "./generateNodesFromAcademicPortfolio";
+import listCurriculumsByProgram from "./listCurriculumsByProgram";
 
 export const addNodeRequest = addNode;
 export const saveNodeRequest = saveNode;
@@ -21,5 +21,6 @@ export const updateNodeLevelRequest = updateNodeLevel;
 export const detailCurriculumRequest = detailCurriculum;
 export const deleteCurriculumRequest = deleteCurriculum;
 export const publishCurriculumRequest = publishCurriculum;
-export const generateNodesFromAcademicPortfolioRequest = generateNodesFromAcademicPortfolio;
+export const generateNodesFromAcademicPortfolioRequest =
+  generateNodesFromAcademicPortfolio;
 export const listCurriculumsByProgramRequest = listCurriculumsByProgram;

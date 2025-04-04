@@ -1,16 +1,16 @@
 async function getNodeLevelSchema({ nodeLevelId, locale, ctx }) {
   try {
     if (locale) {
-      return await ctx.call('dataset.dataset.getSchemaWithLocale', {
+      return await ctx.call("dataset.dataset.getSchemaWithLocale", {
         locationName: `node-level-${nodeLevelId}`,
-        pluginName: 'curriculum',
+        pluginName: "curriculum",
         locale,
         useDefaultLocaleCallback: false,
       });
     }
-    return await ctx.call('dataset.dataset.getSchema', {
+    return await ctx.call("dataset.dataset.getSchema", {
       locationName: `node-level-${nodeLevelId}`,
-      pluginName: 'curriculum',
+      pluginName: "curriculum",
     });
   } catch (err) {
     return null;

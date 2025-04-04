@@ -1,13 +1,20 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
-import { Box, Transition, Paper, Select, Group, Button } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Controller, useForm } from "react-hook-form";
+import {
+  Box,
+  Transition,
+  Paper,
+  Select,
+  Group,
+  Button,
+} from "@bubbles-ui/components";
 
 const scaleY = {
-  in: { opacity: 1, transform: 'scaleY(1)' },
-  out: { opacity: 0, transform: 'scaleY(0)' },
-  common: { transformOrigin: 'top' },
-  transitionProperty: 'transform, opacity',
+  in: { opacity: 1, transform: "scaleY(1)" },
+  out: { opacity: 0, transform: "scaleY(0)" },
+  common: { transformOrigin: "top" },
+  transitionProperty: "transform, opacity",
 };
 
 function BranchBlockCodeAutocomposedSelectField({
@@ -29,15 +36,20 @@ function BranchBlockCodeAutocomposedSelectField({
   const formData = watch();
 
   return (
-    <Transition mounted={opened} transition={scaleY} duration={200} timingFunction="ease">
+    <Transition
+      mounted={opened}
+      transition={scaleY}
+      duration={200}
+      timingFunction="ease"
+    >
       {(styles) => (
         <Paper
           shadow="md"
           style={{
             ...styles,
             zIndex: 10,
-            position: 'absolute',
-            top: '100%',
+            position: "absolute",
+            top: "100%",
             left: 0,
             width: 300,
           }}
@@ -73,7 +85,9 @@ function BranchBlockCodeAutocomposedSelectField({
                     <Select
                       required
                       error={errors.nodeLevelField}
-                      data={selectData.nodeLevelsFields[formData.nodeLevel] || []}
+                      data={
+                        selectData.nodeLevelsFields[formData.nodeLevel] || []
+                      }
                       {...field}
                     />
                   )}

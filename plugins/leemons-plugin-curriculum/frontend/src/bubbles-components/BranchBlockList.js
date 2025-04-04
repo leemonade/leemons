@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import BranchBlockListCustomOrder from './BranchBlockListCustomOrder';
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
+import BranchBlockListCustomOrder from "./BranchBlockListCustomOrder";
 
 function BranchBlockList({ ...props }) {
   const {
@@ -11,14 +11,15 @@ function BranchBlockList({ ...props }) {
 
   useEffect(() => {
     const subscription = watch(({ listOrdered }, { name }) => {
-      if (name === 'listOrdered' && listOrdered !== 'custom') {
-        unregister('inheritFromParent');
+      if (name === "listOrdered" && listOrdered !== "custom") {
+        unregister("inheritFromParent");
       }
     });
     return () => subscription.unsubscribe();
   });
 
-  if (formData.listOrdered === 'custom') return <BranchBlockListCustomOrder {...props} />;
+  if (formData.listOrdered === "custom")
+    return <BranchBlockListCustomOrder {...props} />;
   return null;
 }
 

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { isArray } from 'lodash';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { isArray } from "lodash";
+import { Controller, useForm } from "react-hook-form";
 import {
   Box,
   Button,
@@ -14,41 +14,41 @@ import {
   Text,
   Textarea,
   TextInput,
-} from '@bubbles-ui/components';
-import { AddCurriculumFormStyles } from './AddCurriculumForm.styles';
+} from "@bubbles-ui/components";
+import { AddCurriculumFormStyles } from "./AddCurriculumForm.styles";
 
 export const ADD_CURRICULUM_FORM_MESSAGES = {
-  nameLabel: 'Name',
-  namePlaceholder: 'Enter name...',
-  countryLabel: 'Country',
-  countryPlaceholder: 'Select...',
-  countryNothingFound: 'No data',
-  languageLabel: 'Language',
-  languagePlaceholder: 'Select...',
-  languageNothingFound: 'No data',
-  centerLabel: 'Center',
-  centerPlaceholder: 'Select...',
-  centerNothingFound: 'No data',
-  programLabel: 'Program',
-  programPlaceholder: 'Select...',
-  programNothingFound: 'No data',
-  tagsLabel: 'Tags',
-  tagsPlaceholder: 'Type a tag and press Enter',
-  tagsDescription: 'Enter tags separated by commas',
-  tagsNothingFound: 'No data',
-  tagsCreateLabel: '+ Create {{label}}',
-  descriptionLabel: 'Description',
-  descriptionPlaceholder: 'Enter description',
-  continueButtonLabel: 'Continue to setup',
-  noPrograms: 'All programs for this center used',
+  nameLabel: "Name",
+  namePlaceholder: "Enter name...",
+  countryLabel: "Country",
+  countryPlaceholder: "Select...",
+  countryNothingFound: "No data",
+  languageLabel: "Language",
+  languagePlaceholder: "Select...",
+  languageNothingFound: "No data",
+  centerLabel: "Center",
+  centerPlaceholder: "Select...",
+  centerNothingFound: "No data",
+  programLabel: "Program",
+  programPlaceholder: "Select...",
+  programNothingFound: "No data",
+  tagsLabel: "Tags",
+  tagsPlaceholder: "Type a tag and press Enter",
+  tagsDescription: "Enter tags separated by commas",
+  tagsNothingFound: "No data",
+  tagsCreateLabel: "+ Create {{label}}",
+  descriptionLabel: "Description",
+  descriptionPlaceholder: "Enter description",
+  continueButtonLabel: "Continue to setup",
+  noPrograms: "All programs for this center used",
 };
 
 export const ADD_CURRICULUM_FORM_ERROR_MESSAGES = {
-  nameRequired: 'Field required',
-  countryRequired: 'Field required',
-  languageRequired: 'Field required',
-  centerRequired: 'Field required',
-  programRequired: 'Field required',
+  nameRequired: "Field required",
+  countryRequired: "Field required",
+  languageRequired: "Field required",
+  centerRequired: "Field required",
+  programRequired: "Field required",
 };
 
 const AddCurriculumForm = ({
@@ -57,7 +57,7 @@ const AddCurriculumForm = ({
   selectData = {},
   isLoading,
   onSubmit,
-  onFormChange = () => { },
+  onFormChange = () => {},
 }) => {
   const { classes } = AddCurriculumFormStyles({});
 
@@ -72,7 +72,9 @@ const AddCurriculumForm = ({
   } = useForm();
 
   useEffect(() => {
-    const subscription = watch((value, { name, type }) => onFormChange({ value, name, type }));
+    const subscription = watch((value, { name, type }) =>
+      onFormChange({ value, name, type })
+    );
     return () => subscription.unsubscribe();
   });
 
@@ -176,7 +178,7 @@ const AddCurriculumForm = ({
                   }}
                   render={({ field }) => {
                     if (
-                      getValues('center') &&
+                      getValues("center") &&
                       isArray(selectData.program) &&
                       !selectData.program.length
                     ) {
@@ -193,7 +195,10 @@ const AddCurriculumForm = ({
                         required
                         error={errors.program}
                         data={selectData.program || []}
-                        disabled={!isArray(selectData.program) || selectData.program.length === 0}
+                        disabled={
+                          !isArray(selectData.program) ||
+                          selectData.program.length === 0
+                        }
                         nothingFound={messages.programNothingFound}
                         searchable
                         {...field}
@@ -226,11 +231,17 @@ const AddCurriculumForm = ({
                     label={messages.tagsLabel}
                     placeholder={messages.tagsPlaceholder}
                     error={errors.tags}
-                    data={selectData.tags ? [...selectData.tags, ...tags] : [...tags]}
+                    data={
+                      selectData.tags
+                        ? [...selectData.tags, ...tags]
+                        : [...tags]
+                    }
                     nothingFound={messages.tagsNothingFound}
                     searchable
                     creatable
-                    getCreateLabel={(query) => messages.tagsCreateLabel.replace('{{label}}', query)}
+                    getCreateLabel={(query) =>
+                      messages.tagsCreateLabel.replace("{{label}}", query)
+                    }
                     onCreate={(q) => setTags([...tags, q])}
                     {...field}
                   />

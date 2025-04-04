@@ -1,16 +1,16 @@
 /* eslint-disable no-param-reassign */
-import { Box, Button, Stack } from '@bubbles-ui/components';
-import { TAGIFY_TAG_REGEX } from '@bubbles-ui/extras';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { useStore } from '@common';
-import CurriculumListItem from '@curriculum/components/FormTheme/CurriculumListItem';
-import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
-import { StartNumbering } from '@curriculum/components/FormTheme/StartNumbering';
-import { getItemTitleNumberedWithParents } from '@curriculum/helpers/getItemTitleNumberedWithParents';
-import { returnFirstMetadataParent } from '@curriculum/helpers/returnFirstMetadataParent';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
+import { Box, Button, Stack } from "@bubbles-ui/components";
+import { TAGIFY_TAG_REGEX } from "@bubbles-ui/extras";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import { useStore } from "@common";
+import CurriculumListItem from "@curriculum/components/FormTheme/CurriculumListItem";
+import { ParentRelation } from "@curriculum/components/FormTheme/ParentRelation";
+import { StartNumbering } from "@curriculum/components/FormTheme/StartNumbering";
+import { getItemTitleNumberedWithParents } from "@curriculum/helpers/getItemTitleNumberedWithParents";
+import { returnFirstMetadataParent } from "@curriculum/helpers/returnFirstMetadataParent";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
 
 function CurriculumList({
   onChange: _onChange,
@@ -58,7 +58,13 @@ function CurriculumList({
   }, [_value, store.parentValue]);
 
   function getTitle(values, index) {
-    return getItemTitleNumberedWithParents(curriculum, blockData, id, values, index);
+    return getItemTitleNumberedWithParents(
+      curriculum,
+      blockData,
+      id,
+      values,
+      index
+    );
   }
 
   async function save(e) {
@@ -117,7 +123,9 @@ function CurriculumList({
     if (blockData.listOrderedText) {
       let array;
       // eslint-disable-next-line no-cond-assign
-      while ((array = TAGIFY_TAG_REGEX.exec(blockData.listOrderedText)) !== null) {
+      while (
+        (array = TAGIFY_TAG_REGEX.exec(blockData.listOrderedText)) !== null
+      ) {
         const json = JSON.parse(array[0])[0][0];
         if (json.numberingStyle) {
           result = json;
@@ -128,18 +136,18 @@ function CurriculumList({
   }, [blockData]);
 
   const useOrder = React.useMemo(() => {
-    if (blockData.listOrdered === 'style-1') {
-      return 'numbers';
+    if (blockData.listOrdered === "style-1") {
+      return "numbers";
     }
-    if (blockData.listOrdered === 'style-2') {
-      return 'vocals';
+    if (blockData.listOrdered === "style-2") {
+      return "vocals";
     }
-    if (blockData.listOrdered === 'custom' && customNumberingStyle) {
-      if (customNumberingStyle.numberingStyle === 'style-1') {
-        return 'numbers';
+    if (blockData.listOrdered === "custom" && customNumberingStyle) {
+      if (customNumberingStyle.numberingStyle === "style-1") {
+        return "numbers";
       }
-      if (customNumberingStyle.numberingStyle === 'style-2') {
-        return 'vocals';
+      if (customNumberingStyle.numberingStyle === "style-2") {
+        return "vocals";
       }
     }
     return null;
@@ -152,7 +160,10 @@ function CurriculumList({
         blockData={blockData}
         value={{
           ...(value || { value: [], metadata: {} }),
-          metadata: { ...(value?.metadata || {}), parentRelated: store.parentValue },
+          metadata: {
+            ...(value?.metadata || {}),
+            parentRelated: store.parentValue,
+          },
         }}
         isEditMode={isEditMode}
         onChange={(e) => {
@@ -214,15 +225,23 @@ function CurriculumList({
       {!store.editingItem && !store.isNewItem && isEditMode ? (
         <Box>
           <Box>
-            <Button variant="light" leftIcon={<AddCircleIcon />} onClick={onNew}>
-              {t('addNewElementToList')}
+            <Button
+              variant="light"
+              leftIcon={<AddCircleIcon />}
+              onClick={onNew}
+            >
+              {t("addNewElementToList")}
             </Button>
           </Box>
           {store.showSaveButton || useOrder ? (
             <Stack fullWidth justifyContent="end">
               <Box>
-                <Button variant="outline" loading={store.loading} onClick={() => save()}>
-                  {t('save')}
+                <Button
+                  variant="outline"
+                  loading={store.loading}
+                  onClick={() => save()}
+                >
+                  {t("save")}
                 </Button>
               </Box>
             </Stack>

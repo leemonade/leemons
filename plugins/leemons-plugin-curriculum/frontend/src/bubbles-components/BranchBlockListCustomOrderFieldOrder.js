@@ -8,34 +8,36 @@ import {
   Stack,
   Text,
   Transition,
-} from '@bubbles-ui/components';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
-import { numberToEncodedLetter } from '@common';
-import { filter } from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
+} from "@bubbles-ui/components";
+import { RemoveIcon } from "@bubbles-ui/icons/outline";
+import { numberToEncodedLetter } from "@common";
+import { filter } from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
 
 const scaleY = {
-  in: { opacity: 1, transform: 'scaleY(1)' },
-  out: { opacity: 0, transform: 'scaleY(0)' },
-  common: { transformOrigin: 'bottom' },
-  transitionProperty: 'transform, opacity',
+  in: { opacity: 1, transform: "scaleY(1)" },
+  out: { opacity: 0, transform: "scaleY(0)" },
+  common: { transformOrigin: "bottom" },
+  transitionProperty: "transform, opacity",
 };
 
 export function getExampleTextForListOrderedConfig(config, init = 1) {
   if (config && config.numberingStyle) {
-    if (config.numberingStyle === 'style-1') {
+    if (config.numberingStyle === "style-1") {
       if (config.numberingDigits) {
-        return `${init.toString().padStart(config.numberingDigits, '0')},${(init + 1)
+        return `${init.toString().padStart(config.numberingDigits, "0")},${(
+          init + 1
+        )
           .toString()
-          .padStart(config.numberingDigits, '0')},${(init + 2)
+          .padStart(config.numberingDigits, "0")},${(init + 2)
           .toString()
-          .padStart(config.numberingDigits, '0')}...`;
+          .padStart(config.numberingDigits, "0")}...`;
       }
-      return '1,2,3...';
+      return "1,2,3...";
     }
-    if (config.numberingStyle === 'style-2') {
+    if (config.numberingStyle === "style-2") {
       return `${numberToEncodedLetter(init)},${numberToEncodedLetter(
         init + 1
       )},${numberToEncodedLetter(init + 2)}...`;
@@ -64,15 +66,20 @@ function BranchBlockListCustomOrderFieldOrder({
   const formData = watch();
 
   return (
-    <Transition mounted={opened} transition={scaleY} duration={200} timingFunction="ease">
+    <Transition
+      mounted={opened}
+      transition={scaleY}
+      duration={200}
+      timingFunction="ease"
+    >
       {(styles) => (
         <Paper
           shadow="md"
           style={{
             ...styles,
             zIndex: 10,
-            position: 'absolute',
-            bottom: '100%',
+            position: "absolute",
+            bottom: "100%",
             left: 0,
             width: 300,
           }}
@@ -106,7 +113,8 @@ function BranchBlockListCustomOrderFieldOrder({
                         selectData.listOrdered
                           ? filter(
                               selectData.listOrdered,
-                              ({ value }) => ['style-1', 'style-2'].indexOf(value) >= 0
+                              ({ value }) =>
+                                ["style-1", "style-2"].indexOf(value) >= 0
                             )
                           : []
                       }
@@ -114,14 +122,16 @@ function BranchBlockListCustomOrderFieldOrder({
                     />
                   )}
                 />
-                {formData.numberingStyle === 'style-2' ? (
+                {formData.numberingStyle === "style-2" ? (
                   <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
-                    <Text role="productive">{getExampleTextForListOrderedConfig(watch())}</Text>
+                    <Text role="productive">
+                      {getExampleTextForListOrderedConfig(watch())}
+                    </Text>
                   </Box>
                 ) : null}
               </Box>
 
-              {formData.numberingStyle === 'style-1' ? (
+              {formData.numberingStyle === "style-1" ? (
                 <Box>
                   <Controller
                     name="numberingDigits"
@@ -138,7 +148,9 @@ function BranchBlockListCustomOrderFieldOrder({
                     )}
                   />
                   <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
-                    <Text role="productive">{getExampleTextForListOrderedConfig(watch())}</Text>
+                    <Text role="productive">
+                      {getExampleTextForListOrderedConfig(watch())}
+                    </Text>
                   </Box>
                 </Box>
               ) : null}

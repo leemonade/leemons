@@ -1,5 +1,5 @@
 async function updateNodeLevelSchema({ schemaData, ctx }) {
-  await ctx.tx.call('dataset.dataset.updateSchema', {
+  await ctx.tx.call("dataset.dataset.updateSchema", {
     ...schemaData,
   });
 }

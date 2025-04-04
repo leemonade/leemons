@@ -1,21 +1,21 @@
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { filter, forIn, map, sortBy } from 'lodash';
-import PropTypes from 'prop-types';
-import React, { useEffect, useMemo } from 'react';
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { filter, forIn, map, sortBy } from "lodash";
+import PropTypes from "prop-types";
+import React, { useEffect, useMemo } from "react";
 
-import { listProgramsRequest } from '@academic-portfolio/request';
-import { Box, createStyles, Title } from '@bubbles-ui/components';
+import { listProgramsRequest } from "@academic-portfolio/request";
+import { Box, createStyles, Title } from "@bubbles-ui/components";
 import {
   ADD_CURRICULUM_FORM_ERROR_MESSAGES,
   ADD_CURRICULUM_FORM_MESSAGES,
   AddCurriculumForm,
-} from '@curriculum/components/AddCurriculumForm';
-import { useStore } from '@common';
-import prefixPN from '@curriculum/helpers/prefixPN';
-import { getPlatformLocalesRequest, listCentersRequest } from '@users/request';
-import { getCentersWithToken } from '@users/session';
-import { allCountries } from 'country-region-data';
-import { addCurriculumRequest, listCurriculumRequest } from '../../../request';
+} from "@curriculum/components/AddCurriculumForm";
+import { useStore } from "@common";
+import prefixPN from "@curriculum/helpers/prefixPN";
+import { getPlatformLocalesRequest, listCentersRequest } from "@users/request";
+import { getCentersWithToken } from "@users/session";
+import { allCountries } from "country-region-data";
+import { addCurriculumRequest, listCurriculumRequest } from "../../../request";
 
 const useStyle = createStyles((theme) => ({
   title: {
@@ -25,7 +25,7 @@ const useStyle = createStyles((theme) => ({
 
 function AddCurriculumStep0({ onNext }) {
   const { classes } = useStyle();
-  const [t] = useTranslateLoader(prefixPN('addCurriculum'));
+  const [t] = useTranslateLoader(prefixPN("addCurriculum"));
   const [store, render] = useStore({
     saving: false,
     selectData: {},
@@ -59,12 +59,18 @@ function AddCurriculumStep0({ onNext }) {
           value: item[1],
           label: item[0],
         })),
-        language: map(locales, (item) => ({ value: item.code, label: item.name })),
-        center: map(getCentersWithToken(), (item) => ({ value: item.id, label: item.name })),
+        language: map(locales, (item) => ({
+          value: item.code,
+          label: item.name,
+        })),
+        center: map(getCentersWithToken(), (item) => ({
+          value: item.id,
+          label: item.name,
+        })),
       };
       render();
     } catch (e) {
-      console.error('e', e);
+      console.error("e", e);
     }
   }
 
@@ -72,12 +78,12 @@ function AddCurriculumStep0({ onNext }) {
     const {
       data: { items: programs },
     } = await listProgramsRequest({ page: 0, size: 999999, center });
-    const sortedPrograms = sortBy(programs, 'createdAt');
+    const sortedPrograms = sortBy(programs, "createdAt");
     return map(sortedPrograms, (p) => ({ value: p.id, label: p.name }));
   }
 
   async function onFormChange({ value, name }) {
-    if (name === 'center') {
+    if (name === "center") {
       const [
         program,
         {
@@ -87,11 +93,14 @@ function AddCurriculumStep0({ onNext }) {
         getProgramsListForCenter(value.center),
         listCurriculumRequest({ page: 0, size: 999999 }),
       ]);
-      const usedProgramIds = map(curriculums, 'program');
+      const usedProgramIds = map(curriculums, "program");
 
       store.selectData = {
         ...store.selectData,
-        program: filter(program, (prog) => !usedProgramIds.includes(prog.value)),
+        program: filter(
+          program,
+          (prog) => !usedProgramIds.includes(prog.value)
+        ),
       };
       render();
     }
@@ -101,7 +110,10 @@ function AddCurriculumStep0({ onNext }) {
     try {
       store.saving = true;
       render();
-      const { curriculum } = await addCurriculumRequest({ ...data, locale: language });
+      const { curriculum } = await addCurriculumRequest({
+        ...data,
+        locale: language,
+      });
       onNext({ curriculum });
     } catch (e) {
       // Nothing
@@ -117,7 +129,7 @@ function AddCurriculumStep0({ onNext }) {
   return (
     <Box>
       <Title order={3} className={classes.title}>
-        {t('basicData')}
+        {t("basicData")}
       </Title>
       <AddCurriculumForm
         messages={messages}

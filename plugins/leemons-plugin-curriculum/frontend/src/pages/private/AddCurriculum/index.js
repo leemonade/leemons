@@ -1,7 +1,7 @@
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import React, { useMemo } from 'react';
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import React, { useMemo } from "react";
 
-import { detailProgramRequest } from '@academic-portfolio/request';
+import { detailProgramRequest } from "@academic-portfolio/request";
 import {
   Box,
   createStyles,
@@ -9,17 +9,20 @@ import {
   LoadingOverlay,
   PageContainer,
   Title,
-} from '@bubbles-ui/components';
-import { useStore } from '@common';
-import prefixPN from '@curriculum/helpers/prefixPN';
-import AddCurriculumStep0 from '@curriculum/pages/private/AddCurriculumStep0';
-import AddCurriculumStep1 from '@curriculum/pages/private/AddCurriculumStep1';
-import AddCurriculumStep2 from '@curriculum/pages/private/AddCurriculumStep2';
-import AddCurriculumStep3 from '@curriculum/pages/private/AddCurriculumStep3';
-import { detailCurriculumRequest } from '@curriculum/request';
-import { getPermissionsWithActionsIfIHaveRequest, listCentersRequest } from '@users/request';
-import { find } from 'lodash';
-import { useHistory, useParams } from 'react-router-dom';
+} from "@bubbles-ui/components";
+import { useStore } from "@common";
+import prefixPN from "@curriculum/helpers/prefixPN";
+import AddCurriculumStep0 from "@curriculum/pages/private/AddCurriculumStep0";
+import AddCurriculumStep1 from "@curriculum/pages/private/AddCurriculumStep1";
+import AddCurriculumStep2 from "@curriculum/pages/private/AddCurriculumStep2";
+import AddCurriculumStep3 from "@curriculum/pages/private/AddCurriculumStep3";
+import { detailCurriculumRequest } from "@curriculum/request";
+import {
+  getPermissionsWithActionsIfIHaveRequest,
+  listCentersRequest,
+} from "@users/request";
+import { find } from "lodash";
+import { useHistory, useParams } from "react-router-dom";
 
 const useStyle = createStyles((theme) => ({
   title: {
@@ -36,7 +39,7 @@ const useStyle = createStyles((theme) => ({
 function AddCurriculum() {
   const { classes } = useStyle();
   const history = useHistory();
-  const [t, , , tLoading] = useTranslateLoader(prefixPN('addCurriculumBase'));
+  const [t, , , tLoading] = useTranslateLoader(prefixPN("addCurriculumBase"));
   const [store, render] = useStore({
     currentStep: 0,
   });
@@ -79,10 +82,11 @@ function AddCurriculum() {
       ] = await Promise.all([
         detailCurriculumRequest(id),
         listCentersRequest({ page: 0, size: 999999 }),
-        getPermissionsWithActionsIfIHaveRequest(['curriculum.curriculum']),
+        getPermissionsWithActionsIfIHaveRequest(["curriculum.curriculum"]),
       ]);
 
-      const isEditMode = actionNames.includes('admin') || actionNames.includes('edit');
+      const isEditMode =
+        actionNames.includes("admin") || actionNames.includes("edit");
 
       const { program } = await detailProgramRequest(c.program);
 
@@ -104,10 +108,10 @@ function AddCurriculum() {
       currentStep: store.currentStep,
       allowStepClick: false,
       data: [
-        { label: t('basic'), status: 'OK' },
-        { label: t('config'), status: 'OK' },
-        { label: t('contentType'), status: 'OK' },
-        { label: t('loadOfContent'), status: 'OK' },
+        { label: t("basic"), status: "OK" },
+        { label: t("config"), status: "OK" },
+        { label: t("contentType"), status: "OK" },
+        { label: t("loadOfContent"), status: "OK" },
       ],
     }),
     [tLoading, store.currentStep]
@@ -116,15 +120,23 @@ function AddCurriculum() {
   const title = React.useMemo(() => {
     if (store.curriculum)
       return `${store.curriculum.program.name} - ${store.curriculum.name} (${store.curriculum.center.name})`;
-    return t('newCurriculum');
+    return t("newCurriculum");
   }, [store.curriculum, tLoading]);
 
   const page = React.useMemo(
     () =>
       [
         <AddCurriculumStep0 key="0" onNext={onStep0} />,
-        <AddCurriculumStep1 key="1" onNext={onStep1} curriculum={store.curriculum} />,
-        <AddCurriculumStep2 key="2" onNext={onStep2} curriculum={store.curriculum} />,
+        <AddCurriculumStep1
+          key="1"
+          onNext={onStep1}
+          curriculum={store.curriculum}
+        />,
+        <AddCurriculumStep2
+          key="2"
+          onNext={onStep2}
+          curriculum={store.curriculum}
+        />,
         <AddCurriculumStep3
           key="3"
           onPrev={onPrev3}

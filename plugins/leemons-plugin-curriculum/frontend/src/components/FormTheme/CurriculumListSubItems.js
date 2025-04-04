@@ -1,12 +1,18 @@
-import { Box, Button, HtmlText, TableInput, TextInput } from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
-import { ArrowChevDownIcon, ArrowChevUpIcon } from '@bubbles-ui/icons/solid';
-import { ellipsis, useStore } from '@common';
-import { htmlToText } from '@tests/pages/private/tests/StudentInstance/helpers/htmlToText';
-import PropTypes from 'prop-types';
-import React from 'react';
+import {
+  Box,
+  Button,
+  HtmlText,
+  TableInput,
+  TextInput,
+} from "@bubbles-ui/components";
+import { TextEditorInput } from "@bubbles-ui/editors";
+import { ArrowChevDownIcon, ArrowChevUpIcon } from "@bubbles-ui/icons/solid";
+import { ellipsis, useStore } from "@common";
+import { htmlToText } from "@tests/pages/private/tests/StudentInstance/helpers/htmlToText";
+import PropTypes from "prop-types";
+import React from "react";
 
-import _ from 'lodash';
+import _ from "lodash";
 
 function CurriculumListSubItems({
   addable = false,
@@ -41,8 +47,8 @@ function CurriculumListSubItems({
 
     if (hasChilds && !store.subRow) {
       columns.push({
-        Header: ' ',
-        accessor: 'open',
+        Header: " ",
+        accessor: "open",
         editable: false,
         Cell: (e) => {
           if (!values[row.index].childrens[e.row.index]?.childrens?.length) {
@@ -63,37 +69,41 @@ function CurriculumListSubItems({
                 render();
               }}
             >
-              {store.rowsExpanded.includes(e.row.id) ? <ArrowChevUpIcon /> : <ArrowChevDownIcon />}
+              {store.rowsExpanded.includes(e.row.id) ? (
+                <ArrowChevUpIcon />
+              ) : (
+                <ArrowChevDownIcon />
+              )}
             </Box>
           );
         },
         cellStyle: {
-          width: '10px',
+          width: "10px",
         },
         style: {
-          width: '10px',
+          width: "10px",
         },
       });
     }
     columns.push({
-      Header: t('newItemOf', {
+      Header: t("newItemOf", {
         name: ellipsis(
-          `${row.values.order ? row.values.order : ''} ${htmlToText(row.values.value)}`,
+          `${row.values.order ? row.values.order : ""} ${htmlToText(row.values.value)}`,
           36
         ),
       }),
-      accessor: 'value',
+      accessor: "value",
       input: {
         node:
-          inputType === 'field' ? (
+          inputType === "field" ? (
             <TextInput required />
           ) : (
-            <TextEditorInput editorStyles={{ minHeight: '96px' }} required />
+            <TextEditorInput editorStyles={{ minHeight: "96px" }} required />
           ),
-        rules: { required: t('fieldRequired') },
+        rules: { required: t("fieldRequired") },
       },
       cellTdStyle: {
-        backgroundColor: 'transparent',
+        backgroundColor: "transparent",
       },
       valueRender: (v, element) => {
         if (store.subRow) {
@@ -102,10 +112,10 @@ function CurriculumListSubItems({
             return (
               <Box
                 sx={() => ({
-                  display: 'flex',
-                  width: '100%',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
+                  display: "flex",
+                  width: "100%",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 })}
               >
                 <HtmlText>{v}</HtmlText>
@@ -116,7 +126,7 @@ function CurriculumListSubItems({
                     _onSave();
                   }}
                 >
-                  {t('save')}
+                  {t("save")}
                 </Button>
               </Box>
             );
@@ -151,7 +161,7 @@ function CurriculumListSubItems({
         resetOnAdd
         sortable
         removable
-        rowStyles={{ backgroundColor: 'transparent!important' }}
+        rowStyles={{ backgroundColor: "transparent!important" }}
         showHeaders={row.id === selectedRow?.id}
         addable={addable}
         disabled={!!store.subRow || row.id !== selectedRow?.id || disabled}
@@ -179,11 +189,11 @@ function CurriculumListSubItems({
         )}
         columns={subColumns}
         labels={{
-          add: t('add'),
-          remove: t('remove'),
-          edit: t('edit'),
-          accept: t('accept'),
-          cancel: t('cancel'),
+          add: t("add"),
+          remove: t("remove"),
+          edit: t("edit"),
+          accept: t("accept"),
+          cancel: t("cancel"),
         }}
       />
     </Box>

@@ -4,23 +4,23 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const _ = require('lodash');
+} = require("@leemons/middlewares");
+const _ = require("lodash");
 
-const { addNodeLevels, updateNodeLevel } = require('../../core/nodeLevels');
+const { addNodeLevels, updateNodeLevel } = require("../../core/nodeLevels");
 
 // TODO [Importante]: Añadir autenticación y permisos
 /** @type {ServiceSchema} */
 module.exports = {
   postNodeLevelsRest: {
     rest: {
-      method: 'POST',
-      path: '/',
+      method: "POST",
+      path: "/",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -30,8 +30,8 @@ module.exports = {
   },
   putNodeLevelRest: {
     rest: {
-      method: 'PUT',
-      path: '/',
+      method: "PUT",
+      path: "/",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

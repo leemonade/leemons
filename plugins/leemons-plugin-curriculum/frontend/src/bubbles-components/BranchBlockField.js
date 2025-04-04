@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { Controller } from 'react-hook-form';
-import { Box, Checkbox, Group } from '@bubbles-ui/components';
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
+import { Controller } from "react-hook-form";
+import { Box, Checkbox, Group } from "@bubbles-ui/components";
 
 function BranchBlockField({
   messages,
@@ -15,10 +15,10 @@ function BranchBlockField({
 }) {
   useEffect(() => {
     const subscription = watch(({ limitCharacters }, { name }) => {
-      if (name === 'limitCharacters') {
+      if (name === "limitCharacters") {
         if (!limitCharacters) {
-          unregister('min');
-          unregister('max');
+          unregister("min");
+          unregister("max");
         }
       }
     });
@@ -33,11 +33,15 @@ function BranchBlockField({
           control={control}
           defaultValue={false}
           render={({ field }) => (
-            <Checkbox checked={field.value} label={messages.fieldLimitCharactersLabel} {...field} />
+            <Checkbox
+              checked={field.value}
+              label={messages.fieldLimitCharactersLabel}
+              {...field}
+            />
           )}
         />
       </Box>
-      {watch('limitCharacters') ? (
+      {watch("limitCharacters") ? (
         <Box>
           <Group grow align="start">
             <Box></Box>

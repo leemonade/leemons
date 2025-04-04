@@ -1,15 +1,31 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-nested-ternary */
 
-import { Badge, Box, Checkbox, InputWrapper, Stack, Text, Title } from '@bubbles-ui/components';
-import { TAGIFY_TAG_REGEX } from '@bubbles-ui/extras';
-import { htmlToText, useStore } from '@common';
-import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
-import { getTagRelationSelectData } from '@curriculum/components/FormTheme/TagRelation';
-import { getItemTitleNumberedWithParents } from '@curriculum/helpers/getItemTitleNumberedWithParents';
-import _, { forEach, forIn, isArray, isNil, isObject, isPlainObject, isString } from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
+import {
+  Badge,
+  Box,
+  Checkbox,
+  InputWrapper,
+  Stack,
+  Text,
+  Title,
+} from "@bubbles-ui/components";
+import { TAGIFY_TAG_REGEX } from "@bubbles-ui/extras";
+import { htmlToText, useStore } from "@common";
+import { ParentRelation } from "@curriculum/components/FormTheme/ParentRelation";
+import { getTagRelationSelectData } from "@curriculum/components/FormTheme/TagRelation";
+import { getItemTitleNumberedWithParents } from "@curriculum/helpers/getItemTitleNumberedWithParents";
+import _, {
+  forEach,
+  forIn,
+  isArray,
+  isNil,
+  isObject,
+  isPlainObject,
+  isString,
+} from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
 
 function NewValue({
   keyIndex,
@@ -53,7 +69,7 @@ function NewValue({
         blockData,
         store.selectedNode.id
       );
-      const tagValuesByValue = _.keyBy(tagValues, 'value');
+      const tagValuesByValue = _.keyBy(tagValues, "value");
       forEach(value.metadata.tagRelated, (tag) => {
         if (tagValuesByValue[tag]) {
           results.push(tagValuesByValue[tag].label);
@@ -61,7 +77,10 @@ function NewValue({
       });
     }
     return results.map((tag, index) => (
-      <Box key={index} sx={(theme) => ({ margin: theme.spacing[1], display: 'inline-block' })}>
+      <Box
+        key={index}
+        sx={(theme) => ({ margin: theme.spacing[1], display: "inline-block" })}
+      >
         <Badge color="stroke" closable={false} label={tag} />
       </Box>
     ));
@@ -89,7 +108,8 @@ function NewValue({
           ...va,
           metadata: {
             ...va?.metadata,
-            parentRelated: baseValue?.metadata?.parentRelated || va?.metadata?.parentRelated,
+            parentRelated:
+              baseValue?.metadata?.parentRelated || va?.metadata?.parentRelated,
           },
         },
         index,
@@ -106,7 +126,8 @@ function NewValue({
         ...va,
         metadata: {
           ...va?.metadata,
-          parentRelated: baseValue?.metadata?.parentRelated || va?.metadata?.parentRelated,
+          parentRelated:
+            baseValue?.metadata?.parentRelated || va?.metadata?.parentRelated,
         },
       },
       index,
@@ -119,11 +140,18 @@ function NewValue({
       <Box>
         <Stack fullWidth alignItems="start">
           {showCheckboxs ? (
-            <Checkbox checked={store.value?.indexOf(id) >= 0} onChange={() => onChange(id)} />
+            <Checkbox
+              checked={store.value?.indexOf(id) >= 0}
+              onChange={() => onChange(id)}
+            />
           ) : null}
           <Stack sx={() => ({ marginTop: 6 })} alignItems="center">
             {item.metadata?.index ? (
-              <Text role="productive" color="primary" strong>{`${item.metadata?.index}`}</Text>
+              <Text
+                role="productive"
+                color="primary"
+                strong
+              >{`${item.metadata?.index}`}</Text>
             ) : null}
             <Box sx={(theme) => ({ flex: 1 })}>
               <Text
@@ -216,7 +244,10 @@ function NewValue({
             if (c.length) {
               ch.push(
                 <Box
-                  sx={(theme) => ({ paddingLeft: theme.spacing[4], marginTop: theme.spacing[2] })}
+                  sx={(theme) => ({
+                    paddingLeft: theme.spacing[4],
+                    marginTop: theme.spacing[2],
+                  })}
                 >
                   <Text
                     strong
@@ -259,7 +290,7 @@ function NewValue({
                 color="primary"
                 role="productive"
                 dangerouslySetInnerHTML={{
-                  __html: `${numbering ? `${numbering} ` : ''}${htmlToText(value.value)}`,
+                  __html: `${numbering ? `${numbering} ` : ""}${htmlToText(value.value)}`,
                 }}
               />
               {ch}
@@ -273,9 +304,11 @@ function NewValue({
               `${key}|value.${value.id}`,
               value,
               undefined,
-              `${numbering ? `${numbering} ` : ''}${htmlToText(value.value)}`
+              `${numbering ? `${numbering} ` : ""}${htmlToText(value.value)}`
             )}
-            <Box sx={(theme) => ({ paddingLeft: theme.spacing[8] })}>{tags}</Box>
+            <Box sx={(theme) => ({ paddingLeft: theme.spacing[8] })}>
+              {tags}
+            </Box>
           </Box>
         );
       }
@@ -311,7 +344,10 @@ function NewValue({
             if (ch.length) {
               che.push(
                 <Box
-                  sx={(theme) => ({ paddingLeft: theme.spacing[4], marginTop: theme.spacing[2] })}
+                  sx={(theme) => ({
+                    paddingLeft: theme.spacing[4],
+                    marginTop: theme.spacing[2],
+                  })}
                 >
                   <Text
                     strong
@@ -367,7 +403,10 @@ function NewValue({
             canAdd = false;
           }
         }
-        if (canAdd) checks.push(CheckBoxComponent(`${key}|value.${val.id}`, val, getGroupTitle(k)));
+        if (canAdd)
+          checks.push(
+            CheckBoxComponent(`${key}|value.${val.id}`, val, getGroupTitle(k))
+          );
       }
       toReturn.push(
         <Box>
@@ -402,7 +441,14 @@ NewValue.propTypes = {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showCheckboxs = true }) {
+export function CurriculumProp({
+  hideNoSelecteds,
+  t2,
+  store,
+  render,
+  item,
+  showCheckboxs = true,
+}) {
   const [_store, _render] = useStore({
     parentNumber: {},
   });
@@ -571,15 +617,18 @@ export function CurriculumProp({ hideNoSelecteds, t2, store, render, item, showC
         label={
           <Title
             order={6}
-            sx={(theme) => ({ marginTop: theme.spacing[2], marginBottom: theme.spacing[2] })}
+            sx={(theme) => ({
+              marginTop: theme.spacing[2],
+              marginBottom: theme.spacing[2],
+            })}
           >
-            {parentProperty ? `${parentProperty.title} & ` : ''}
+            {parentProperty ? `${parentProperty.title} & ` : ""}
             {item.title}
           </Title>
         }
       >
         {isNil(values) ? (
-          '-'
+          "-"
         ) : (
           <>
             {arrayValues.map((val, i) => {

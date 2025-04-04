@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { TextEditorInput } from '@bubbles-ui/editors';
+import React from "react";
+import PropTypes from "prop-types";
+import { TextEditorInput } from "@bubbles-ui/editors";
 
 function WysiwygWidget(props) {
   const {
@@ -19,13 +19,16 @@ function WysiwygWidget(props) {
     rawErrors,
   } = props;
   const _onChange = (value) =>
-    onChange({ ...props.value, value: value === '' ? options.emptyValue : value });
+    onChange({
+      ...props.value,
+      value: value === "" ? options.emptyValue : value,
+    });
 
   return (
     <TextEditorInput
       id={id}
       label={label}
-      value={value?.value ? value.value : ''}
+      value={value?.value ? value.value : ""}
       error={rawErrors ? rawErrors[0] : null}
       placeholder={placeholder}
       required={required}
@@ -35,7 +38,7 @@ function WysiwygWidget(props) {
       rows={options.rows}
       onBlur={onBlur && ((event) => onBlur(id, event.target.value))}
       onFocus={onFocus && ((event) => onFocus(id, event.target.value))}
-      editorStyles={{ minHeight: '96px' }}
+      editorStyles={{ minHeight: "96px" }}
       onChange={_onChange}
     />
   );
@@ -46,7 +49,7 @@ WysiwygWidget.defaultProps = {
   options: {},
 };
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   WysiwygWidget.propTypes = {
     schema: PropTypes.object.isRequired,
     id: PropTypes.string.isRequired,

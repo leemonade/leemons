@@ -1,1 +1,1 @@
-export * from './AddCurriculumForm';
+export * from "./AddCurriculumForm";

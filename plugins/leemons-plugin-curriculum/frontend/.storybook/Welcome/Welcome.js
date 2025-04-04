@@ -1,6 +1,6 @@
-import React from 'react';
-import { Title } from '@bubbles-ui/components';
-import PackageInfo from './../../package.json';
+import React from "react";
+import { Title } from "@bubbles-ui/components";
+import PackageInfo from "./../../package.json";
 
 export const Welcome = () => {
   return (

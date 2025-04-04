@@ -1,5 +1,5 @@
-import _ from 'lodash';
-import { getFlattenNodes } from '@curriculum/helpers/getFlattenNodes';
+import _ from "lodash";
+import { getFlattenNodes } from "@curriculum/helpers/getFlattenNodes";
 
 // eslint-disable-next-line import/prefer-default-export
 export function getParentNodes(items, id) {

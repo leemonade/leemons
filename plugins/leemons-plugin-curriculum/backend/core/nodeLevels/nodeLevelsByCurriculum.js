@@ -1,13 +1,15 @@
-const _ = require('lodash');
-const { getNodeLevelSchema } = require('./getNodeLevelSchema');
+const _ = require("lodash");
+const { getNodeLevelSchema } = require("./getNodeLevelSchema");
 
 async function nodeLevelsByCurriculum({ ids, ctx }) {
   const [nodeLevels, curriculums] = await Promise.all([
-    ctx.tx.db.NodeLevels.find({ curriculum: _.isArray(ids) ? ids : [ids] }).lean(),
+    ctx.tx.db.NodeLevels.find({
+      curriculum: _.isArray(ids) ? ids : [ids],
+    }).lean(),
     ctx.tx.db.Curriculums.find({ id: _.isArray(ids) ? ids : [ids] }).lean(),
   ]);
 
-  const curriculumsById = _.keyBy(curriculums, 'id');
+  const curriculumsById = _.keyBy(curriculums, "id");
 
   const schemas = await Promise.all(
     _.map(nodeLevels, (nodeLevel) =>
@@ -19,7 +21,7 @@ async function nodeLevelsByCurriculum({ ids, ctx }) {
     )
   );
 
-  const schemasByLocationName = _.keyBy(schemas, 'locationName');
+  const schemasByLocationName = _.keyBy(schemas, "locationName");
 
   return _.map(nodeLevels, (nodeLevel) => ({
     ...nodeLevel,

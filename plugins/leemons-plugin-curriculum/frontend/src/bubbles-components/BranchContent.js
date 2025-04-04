@@ -1,15 +1,15 @@
-import { Button, ContextContainer, Stack } from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import BranchBlockPreview from '@curriculum/bubbles-components/BranchBlockPreview';
-import { values } from 'lodash';
-import PropTypes from 'prop-types';
-import React, { useState } from 'react';
-import BranchBlock from './BranchBlock';
+import { Button, ContextContainer, Stack } from "@bubbles-ui/components";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import BranchBlockPreview from "@curriculum/bubbles-components/BranchBlockPreview";
+import { values } from "lodash";
+import PropTypes from "prop-types";
+import React, { useState } from "react";
+import BranchBlock from "./BranchBlock";
 import {
   BRANCH_CONTENT_ERROR_MESSAGES,
   BRANCH_CONTENT_MESSAGES,
   BRANCH_CONTENT_SELECT_DATA,
-} from './branchContentDefaultValues';
+} from "./branchContentDefaultValues";
 
 function BranchContent({
   messages,
@@ -45,7 +45,7 @@ function BranchContent({
     setEditingBlock(null);
   }, [branch]);
 
-  if (!branch) return 'Branch required';
+  if (!branch) return "Branch required";
 
   return (
     <ContextContainer>
@@ -63,7 +63,10 @@ function BranchContent({
                   store={store}
                   defaultValues={
                     editingBlock
-                      ? { ...editingBlock.frontConfig.blockData, id: editingBlock.id }
+                      ? {
+                          ...editingBlock.frontConfig.blockData,
+                          id: editingBlock.id,
+                        }
                       : null
                   }
                   onCancel={() => {
@@ -102,7 +105,9 @@ function BranchContent({
             branch={branch}
             store={store}
             defaultValues={
-              editingBlock ? { ...editingBlock.frontConfig.blockData, id: editingBlock.id } : null
+              editingBlock
+                ? { ...editingBlock.frontConfig.blockData, id: editingBlock.id }
+                : null
             }
             onCancel={() => {
               setEditingBlock(null);
@@ -115,7 +120,11 @@ function BranchContent({
       ) : null}
       {!editingBlock && !addBlock ? (
         <Stack justifyContent="end">
-          <Button variant="light" leftIcon={<AddCircleIcon />} onClick={() => setAddBlock(true)}>
+          <Button
+            variant="light"
+            leftIcon={<AddCircleIcon />}
+            onClick={() => setAddBlock(true)}
+          >
             {messages.addContent}
           </Button>
         </Stack>

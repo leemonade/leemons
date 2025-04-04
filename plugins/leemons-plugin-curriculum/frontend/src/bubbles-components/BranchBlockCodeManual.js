@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Controller } from 'react-hook-form';
-import { Box, Group, NumberInput, Checkbox } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Controller } from "react-hook-form";
+import { Box, Group, NumberInput, Checkbox } from "@bubbles-ui/components";
 
 function BranchBlockCodeManual({
   messages,
@@ -19,10 +19,12 @@ function BranchBlockCodeManual({
           name="limitCharacters"
           control={control}
           defaultValue={false}
-          render={({ field }) => <Checkbox label={messages.fieldLimitCharactersLabel} {...field} />}
+          render={({ field }) => (
+            <Checkbox label={messages.fieldLimitCharactersLabel} {...field} />
+          )}
         />
       </Box>
-      {watch('limitCharacters') ? (
+      {watch("limitCharacters") ? (
         <Box>
           <Group grow align="start">
             <Box>

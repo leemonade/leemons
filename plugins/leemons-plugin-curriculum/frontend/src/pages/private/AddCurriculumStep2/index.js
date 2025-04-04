@@ -1,4 +1,4 @@
-import { detailProgramRequest } from '@academic-portfolio/request';
+import { detailProgramRequest } from "@academic-portfolio/request";
 import {
   Box,
   Button,
@@ -9,34 +9,46 @@ import {
   Stack,
   Tree,
   useTree,
-} from '@bubbles-ui/components';
-import { useStore } from '@common';
-import prefixPN from '@curriculum/helpers/prefixPN';
-import { removeDatasetFieldRequest, saveDatasetFieldRequest } from '@dataset/request';
-import { useLayout } from '@layout/context';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { listCentersRequest } from '@users/request';
-import _, { cloneDeep, find, findIndex, forEach, forIn, map, orderBy, take } from 'lodash';
-import PropTypes from 'prop-types';
-import React, { useEffect, useMemo } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
-import BranchContent from '../../../bubbles-components/BranchContent';
+} from "@bubbles-ui/components";
+import { useStore } from "@common";
+import prefixPN from "@curriculum/helpers/prefixPN";
+import {
+  removeDatasetFieldRequest,
+  saveDatasetFieldRequest,
+} from "@dataset/request";
+import { useLayout } from "@layout/context";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { listCentersRequest } from "@users/request";
+import _, {
+  cloneDeep,
+  find,
+  findIndex,
+  forEach,
+  forIn,
+  map,
+  orderBy,
+  take,
+} from "lodash";
+import PropTypes from "prop-types";
+import React, { useEffect, useMemo } from "react";
+import { useHistory, useParams } from "react-router-dom";
+import BranchContent from "../../../bubbles-components/BranchContent";
 import NewBranchConfig, {
   NEW_BRANCH_CONFIG_ERROR_MESSAGES,
   NEW_BRANCH_CONFIG_MESSAGES,
   NEW_BRANCH_CONFIG_ORDERED_OPTIONS,
-} from '../../../bubbles-components/NewBranchConfig';
+} from "../../../bubbles-components/NewBranchConfig";
 import {
   BRANCH_CONTENT_ERROR_MESSAGES,
   BRANCH_CONTENT_MESSAGES,
   BRANCH_CONTENT_SELECT_DATA,
-} from '../../../bubbles-components/branchContentDefaultValues';
+} from "../../../bubbles-components/branchContentDefaultValues";
 import {
   addNodeLevelsRequest,
   detailCurriculumRequest,
   generateNodesFromAcademicPortfolioRequest,
   updateNodeLevelRequest,
-} from '../../../request';
+} from "../../../request";
 
 function AddCurriculumStep2({ onNext, curriculum }) {
   const [store, render] = useStore({
@@ -46,7 +58,7 @@ function AddCurriculumStep2({ onNext, curriculum }) {
   });
 
   const { openConfirmationModal } = useLayout();
-  const [t] = useTranslateLoader(prefixPN('addCurriculumStep2'));
+  const [t] = useTranslateLoader(prefixPN("addCurriculumStep2"));
   const { openDeleteConfirmationModal } = useLayout();
   const tree = useTree();
   const history = useHistory();
@@ -120,14 +132,15 @@ function AddCurriculumStep2({ onNext, curriculum }) {
 
   const groupTypeOfContentsData = useMemo(() => {
     const result = cloneDeep(blockTypeData);
-    result.splice(findIndex(result, { value: 'group' }), 1);
+    result.splice(findIndex(result, { value: "group" }), 1);
     return result;
   }, [blockTypeData]);
 
   const listTypeData = useMemo(() => {
     const result = cloneDeep(BRANCH_CONTENT_SELECT_DATA.listType);
     forEach(result, ({ value }, key) => {
-      result[key].label = blockTypeData[findIndex(blockTypeData, { value })].label;
+      result[key].label =
+        blockTypeData[findIndex(blockTypeData, { value })].label;
     });
     return result;
   }, [blockTypeData]);
@@ -142,10 +155,13 @@ function AddCurriculumStep2({ onNext, curriculum }) {
 
   const parentNodeLevelsData = useMemo(() => {
     if (store.activeNodeLevel && store.curriculum)
-      return map(take(store.curriculum.nodeLevels, store.activeNodeLevel.levelOrder), (item) => ({
-        label: item.name,
-        value: item.id,
-      }));
+      return map(
+        take(store.curriculum.nodeLevels, store.activeNodeLevel.levelOrder),
+        (item) => ({
+          label: item.name,
+          value: item.id,
+        })
+      );
     return [];
   }, [store.activeNodeLevel, store.curriculum]);
 
@@ -155,13 +171,15 @@ function AddCurriculumStep2({ onNext, curriculum }) {
       forEach(store.curriculum.nodeLevels, (nodeLevel) => {
         result[nodeLevel.id] = [
           {
-            label: t('codeFieldNumbering'),
-            value: 'numbering',
+            label: t("codeFieldNumbering"),
+            value: "numbering",
           },
         ];
         if (nodeLevel.schema) {
           forIn(nodeLevel.schema.jsonSchema.properties, (value, key) => {
-            if (['field', 'code'].indexOf(value.frontConfig.blockData.type) >= 0) {
+            if (
+              ["field", "code"].indexOf(value.frontConfig.blockData.type) >= 0
+            ) {
               result[nodeLevel.id].push({
                 label: value.frontConfig.blockData.name,
                 value: key,
@@ -194,7 +212,7 @@ function AddCurriculumStep2({ onNext, curriculum }) {
 
       c.program = program;
       c.center = find(centers, { id: c.center });
-      c.nodeLevels = orderBy(c.nodeLevels, ['levelOrder'], ['asc']);
+      c.nodeLevels = orderBy(c.nodeLevels, ["levelOrder"], ["asc"]);
 
       store.curriculum = c;
     } catch (e) {
@@ -225,8 +243,10 @@ function AddCurriculumStep2({ onNext, curriculum }) {
   }, [store.curriculum]);
 
   function onSelect({ id: nodeLevelId }) {
-    store.activeNodeLevel = find(store.curriculum.nodeLevels, { id: nodeLevelId });
-    store.activeRightSection = 'detail-branch';
+    store.activeNodeLevel = find(store.curriculum.nodeLevels, {
+      id: nodeLevelId,
+    });
+    store.activeRightSection = "detail-branch";
     render();
   }
 
@@ -246,11 +266,13 @@ function AddCurriculumStep2({ onNext, curriculum }) {
         await addNodeLevelsRequest(store.curriculum.id, [
           {
             ...rest,
-            type: 'custom',
+            type: "custom",
             listType: ordered,
             levelOrder:
               store.curriculum.nodeLevels && store.curriculum.nodeLevels.length
-                ? store.curriculum.nodeLevels[store.curriculum.nodeLevels.length - 1].levelOrder + 1
+                ? store.curriculum.nodeLevels[
+                    store.curriculum.nodeLevels.length - 1
+                  ].levelOrder + 1
                 : 0,
           },
         ]);
@@ -277,7 +299,7 @@ function AddCurriculumStep2({ onNext, curriculum }) {
   async function onSaveBlock(data) {
     const toSave = {
       locationName: `node-level-${store.activeNodeLevel.id}`,
-      pluginName: 'curriculum',
+      pluginName: "curriculum",
       schemaConfig: {
         schema: {
           frontConfig: {
@@ -289,9 +311,9 @@ function AddCurriculumStep2({ onNext, curriculum }) {
             groupType: data.type,
           },
           permissions: {
-            '*': ['view'],
+            "*": ["view"],
           },
-          permissionsType: 'profile',
+          permissionsType: "profile",
           title: data.name,
         },
         ui: {},
@@ -309,63 +331,63 @@ function AddCurriculumStep2({ onNext, curriculum }) {
     if (data.id) toSave.schemaConfig.schema.id = data.id;
 
     switch (data.type) {
-      case 'field':
-        toSave.schemaConfig.schema.type = 'string';
-        toSave.schemaConfig.schema.frontConfig.type = 'text_field';
+      case "field":
+        toSave.schemaConfig.schema.type = "string";
+        toSave.schemaConfig.schema.frontConfig.type = "text_field";
         if (data.limitCharacters) {
           toSave.schemaConfig.schema.frontConfig.minLength = data.min;
           toSave.schemaConfig.schema.frontConfig.maxLength = data.max;
         }
         break;
-      case 'code':
-        toSave.schemaConfig.schema.type = 'string';
-        toSave.schemaConfig.schema.frontConfig.type = 'text_field';
+      case "code":
+        toSave.schemaConfig.schema.type = "string";
+        toSave.schemaConfig.schema.frontConfig.type = "text_field";
         if (data.limitCharacters) {
           toSave.schemaConfig.schema.frontConfig.minLength = data.min;
           toSave.schemaConfig.schema.frontConfig.maxLength = data.max;
         }
-        if (data.codeType === 'autocomposed') {
+        if (data.codeType === "autocomposed") {
           toSave.schemaConfig.schema.frontConfig.required = false;
         }
         break;
-      case 'textarea':
-        toSave.schemaConfig.schema.type = 'string';
-        toSave.schemaConfig.schema.frontConfig.type = 'rich_text';
-        toSave.schemaConfig.ui['ui:widget'] = 'wysiwyg';
+      case "textarea":
+        toSave.schemaConfig.schema.type = "string";
+        toSave.schemaConfig.schema.frontConfig.type = "rich_text";
+        toSave.schemaConfig.ui["ui:widget"] = "wysiwyg";
         break;
-      case 'list':
-        toSave.schemaConfig.schema.type = 'object';
+      case "list":
+        toSave.schemaConfig.schema.type = "object";
         toSave.schemaConfig.schema.properties = {
           id: {
-            type: 'string',
+            type: "string",
           },
           value: {
-            type: 'object',
+            type: "object",
             properties: {
               id: {
-                type: 'string',
+                type: "string",
               },
-              value: { type: 'string' },
+              value: { type: "string" },
               metadata: {
-                type: 'object',
+                type: "object",
                 additionalProperties: true,
               },
             },
           },
           metadata: {
-            type: 'object',
+            type: "object",
             additionalProperties: true,
           },
         };
-        toSave.schemaConfig.schema.frontConfig.type = 'list';
-        if (data.listType === 'textarea') {
-          toSave.schemaConfig.ui['ui:widget'] = 'wysiwyg';
+        toSave.schemaConfig.schema.frontConfig.type = "list";
+        if (data.listType === "textarea") {
+          toSave.schemaConfig.ui["ui:widget"] = "wysiwyg";
         }
         break;
-      case 'group':
-        toSave.schemaConfig.schema.type = 'array';
-        toSave.schemaConfig.schema.items = { type: 'string' };
-        toSave.schemaConfig.schema.frontConfig.type = 'group';
+      case "group":
+        toSave.schemaConfig.schema.type = "array";
+        toSave.schemaConfig.schema.items = { type: "string" };
+        toSave.schemaConfig.schema.frontConfig.type = "group";
         break;
       default:
         break;
@@ -382,7 +404,10 @@ function AddCurriculumStep2({ onNext, curriculum }) {
         toSave.schemaLocales,
         { useDefaultLocaleCallback: false }
       );
-      const oldDataset = _.find(store.curriculum.nodeLevels, (l) => l?.schema?.id === dataset.id);
+      const oldDataset = _.find(
+        store.curriculum.nodeLevels,
+        (l) => l?.schema?.id === dataset.id
+      );
       if (!oldDataset) {
         store.newIds.push(Object.keys(dataset.jsonSchema.properties)[0]);
       } else {
@@ -394,7 +419,9 @@ function AddCurriculumStep2({ onNext, curriculum }) {
 
       await load(true);
 
-      store.activeNodeLevel = find(store.curriculum.nodeLevels, { id: store.activeNodeLevel.id });
+      store.activeNodeLevel = find(store.curriculum.nodeLevels, {
+        id: store.activeNodeLevel.id,
+      });
       store.saving = false;
     } catch (e) {
       console.error(e);
@@ -412,7 +439,7 @@ function AddCurriculumStep2({ onNext, curriculum }) {
             render();
             await removeDatasetFieldRequest(
               `node-level-${store.activeNodeLevel.id}`,
-              'curriculum',
+              "curriculum",
               e.id
             );
             await load(true);
@@ -429,7 +456,10 @@ function AddCurriculumStep2({ onNext, curriculum }) {
 
   let rightSection;
 
-  if (store.activeRightSection === 'new-branch' || store.activeRightSection === 'edit-branch') {
+  if (
+    store.activeRightSection === "new-branch" ||
+    store.activeRightSection === "edit-branch"
+  ) {
     rightSection = (
       <Box>
         <NewBranchConfig
@@ -439,7 +469,7 @@ function AddCurriculumStep2({ onNext, curriculum }) {
           isLoading={store.saving}
           onlyCanAdd={onlyCanAdd}
           defaultValues={
-            store.activeRightSection === 'edit-branch'
+            store.activeRightSection === "edit-branch"
               ? {
                   id: store.activeNodeLevel.id,
                   name: store.activeNodeLevel.name,
@@ -454,7 +484,7 @@ function AddCurriculumStep2({ onNext, curriculum }) {
     );
   }
 
-  if (store.activeRightSection === 'detail-branch') {
+  if (store.activeRightSection === "detail-branch") {
     rightSection = (
       <Box>
         <BranchContent
@@ -504,10 +534,10 @@ function AddCurriculumStep2({ onNext, curriculum }) {
 
   async function tryGoStep3() {
     openConfirmationModal({
-      title: t('nextStep.title'),
-      description: t('nextStep.description'),
+      title: t("nextStep.title"),
+      description: t("nextStep.description"),
       labels: {
-        confirm: t('nextStep.confirm'),
+        confirm: t("nextStep.confirm"),
       },
       onConfirm: async () => {
         goStep3();
@@ -522,8 +552,8 @@ function AddCurriculumStep2({ onNext, curriculum }) {
   return (
     <ContextContainer
       sx={(theme) => ({ marginBottom: theme.spacing[6] })}
-      title={t('pageTitle')}
-      description={t('pageDescription')}
+      title={t("pageTitle")}
+      description={t("pageDescription")}
       divided
     >
       {store.removing ? <LoadingOverlay visible /> : null}
@@ -539,16 +569,16 @@ function AddCurriculumStep2({ onNext, curriculum }) {
               {...tree}
               rootId={0}
               onAdd={() => {
-                store.activeRightSection = 'new-branch';
+                store.activeRightSection = "new-branch";
                 render();
               }}
               onDelete={(node) => alert(`Delete nodeId: ${node.id}`)}
               onEdit={(node) => {
                 onSelect(node);
-                store.activeRightSection = 'edit-branch';
+                store.activeRightSection = "edit-branch";
                 render();
               }}
-              initialOpen={map(tree.treeData, 'id')}
+              initialOpen={map(tree.treeData, "id")}
               selectedNode={store.activeNodeLevel?.id}
               onSelect={onSelect}
             />
@@ -566,7 +596,7 @@ function AddCurriculumStep2({ onNext, curriculum }) {
       </Grid>
       <Stack justifyContent="end">
         <Button loading={store.generating} onClick={tryGoStep3}>
-          {t('continueButtonLabel')}
+          {t("continueButtonLabel")}
         </Button>
       </Stack>
     </ContextContainer>

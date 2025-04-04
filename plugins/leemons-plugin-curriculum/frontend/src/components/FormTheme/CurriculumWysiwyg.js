@@ -1,11 +1,11 @@
-import { Button, ContextContainer, Stack } from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
-import { useStore } from '@common';
-import { returnFirstMetadataParent } from '@curriculum/helpers/returnFirstMetadataParent';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { ParentRelation } from './ParentRelation';
+import { Button, ContextContainer, Stack } from "@bubbles-ui/components";
+import { TextEditorInput } from "@bubbles-ui/editors";
+import { useStore } from "@common";
+import { returnFirstMetadataParent } from "@curriculum/helpers/returnFirstMetadataParent";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import { ParentRelation } from "./ParentRelation";
 
 function CurriculumTextInput({
   onChange: _onChange,
@@ -64,7 +64,10 @@ function CurriculumTextInput({
         blockData={blockData}
         value={{
           ...(value || { value: null, metadata: {} }),
-          metadata: { ...(value?.metadata || {}), parentRelated: store.parentValue },
+          metadata: {
+            ...(value?.metadata || {}),
+            parentRelated: store.parentValue,
+          },
         }}
         isEditMode={isEditMode}
         onChange={(e) => {
@@ -84,12 +87,12 @@ function CurriculumTextInput({
         label={schema.title}
         value={value?.value}
         onChange={(e) => onChangeValue(e)}
-        editorStyles={{ minHeight: '96px' }}
+        editorStyles={{ minHeight: "96px" }}
       />
       {isEditMode ? (
         <Stack justifyContent="end">
           <Button variant="outline" loading={store.loading} onClick={save}>
-            {t('save')}
+            {t("save")}
           </Button>
         </Stack>
       ) : null}

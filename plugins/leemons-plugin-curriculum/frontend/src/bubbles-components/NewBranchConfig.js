@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useEffect } from "react";
+import PropTypes from "prop-types";
+import { Controller, useForm } from "react-hook-form";
 import {
   ActionButton,
   Box,
@@ -11,44 +11,44 @@ import {
   Stack,
   TextInput,
   Title,
-} from '@bubbles-ui/components';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
+} from "@bubbles-ui/components";
+import { RemoveIcon } from "@bubbles-ui/icons/outline";
 
 export const NEW_BRANCH_CONFIG_MESSAGES = {
-  title: 'Branch config',
-  nameLabel: 'New Branch Name',
-  namePlaceholder: 'Branch name...',
-  orderedLabel: 'Ordered:',
-  orderedPlaceholder: 'Select...',
-  orderedNothingFound: 'No data',
-  saveButtonLabel: 'Save config',
+  title: "Branch config",
+  nameLabel: "New Branch Name",
+  namePlaceholder: "Branch name...",
+  orderedLabel: "Ordered:",
+  orderedPlaceholder: "Select...",
+  orderedNothingFound: "No data",
+  saveButtonLabel: "Save config",
 };
 
 export const NEW_BRANCH_CONFIG_ERROR_MESSAGES = {
-  nameRequired: 'Field required',
-  orderedRequired: 'Field required',
+  nameRequired: "Field required",
+  orderedRequired: "Field required",
 };
 
 export const NEW_BRANCH_CONFIG_ORDERED_OPTIONS = [
   {
-    label: 'Not ordered',
-    value: 'not-ordered',
+    label: "Not ordered",
+    value: "not-ordered",
   },
   {
-    label: 'Only bullets',
-    value: 'bullets',
+    label: "Only bullets",
+    value: "bullets",
   },
   {
-    label: 'Numbering Style 1 (1,2,3,...)',
-    value: 'style-1',
+    label: "Numbering Style 1 (1,2,3,...)",
+    value: "style-1",
   },
   {
-    label: 'Numbering Style 2 (A,B,C,...)',
-    value: 'style-2',
+    label: "Numbering Style 2 (A,B,C,...)",
+    value: "style-2",
   },
   {
-    label: 'Custom numbering',
-    value: 'custom',
+    label: "Custom numbering",
+    value: "custom",
   },
 ];
 

@@ -4,13 +4,13 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const _ = require('lodash');
+} = require("@leemons/middlewares");
+const _ = require("lodash");
 const {
   getDataForKeys,
   addCurriculum,
@@ -19,15 +19,15 @@ const {
   publishCurriculum,
   deleteCurriculum,
   curriculumByIds,
-} = require('../../core/curriculum');
+} = require("../../core/curriculum");
 
 // TODO [Importante]: Añadir autenticación y permisos
 /** @type {ServiceSchema} */
 module.exports = {
   getDataForKeysRest: {
     rest: {
-      method: 'POST',
-      path: '/data-for-keys',
+      method: "POST",
+      path: "/data-for-keys",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -37,8 +37,8 @@ module.exports = {
   },
   postCurriculumRest: {
     rest: {
-      method: 'POST',
-      path: '/',
+      method: "POST",
+      path: "/",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -48,26 +48,26 @@ module.exports = {
   },
   listCurriculumRest: {
     rest: {
-      method: 'GET',
-      path: '/',
+      method: "GET",
+      path: "/",
     },
 
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-          canListUnpublished: { type: ['number', 'string'] },
+          page: { type: ["number", "string"] },
+          size: { type: ["number", "string"] },
+          canListUnpublished: { type: ["number", "string"] },
         },
-        required: ['page', 'size'],
+        required: ["page", "size"],
         additionalProperties: true,
       });
       if (validator.validate(ctx.params)) {
         const { page, size, canListUnpublished, ...query } = ctx.params;
         const can = _.isString(canListUnpublished)
-          ? canListUnpublished === 'true'
+          ? canListUnpublished === "true"
           : canListUnpublished;
         const data = await listCurriculums({
           page: parseInt(page, 10),
@@ -83,22 +83,23 @@ module.exports = {
   },
   generateCurriculumRest: {
     rest: {
-      method: 'POST',
-      path: '/:id/generate',
+      method: "POST",
+      path: "/:id/generate",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const curriculum = await generateCurriculumNodesFromAcademicPortfolioByNodeLevels({
-        curriculumId: ctx.params.id,
-        ctx,
-      });
+      const curriculum =
+        await generateCurriculumNodesFromAcademicPortfolioByNodeLevels({
+          curriculumId: ctx.params.id,
+          ctx,
+        });
       return { status: 200, curriculum };
     },
   },
   publishCurriculumRest: {
     rest: {
-      method: 'POST',
-      path: '/:id/publish',
+      method: "POST",
+      path: "/:id/publish",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -111,8 +112,8 @@ module.exports = {
   },
   deleteCurriculumRest: {
     rest: {
-      method: 'DELETE',
-      path: '/:id',
+      method: "DELETE",
+      path: "/:id",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -125,8 +126,8 @@ module.exports = {
   },
   getCurriculumRest: {
     rest: {
-      method: 'POST',
-      path: '/:id',
+      method: "POST",
+      path: "/:id",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

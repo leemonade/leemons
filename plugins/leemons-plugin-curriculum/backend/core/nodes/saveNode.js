@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
-const { randomString } = require('@leemons/utils');
+const _ = require("lodash");
+const { randomString } = require("@leemons/utils");
 
 /*
 const { setDatasetValues } = require('./setDatasetValues');
@@ -10,7 +10,12 @@ const {
   updateUserAgentPermissionsByUserSession,
 } = require('../configs/updateUserAgentPermissionsByUserSession');
  */
-async function saveNode({ nodeId, datasetValues: _datasetValues, ctx, ...rest }) {
+async function saveNode({
+  nodeId,
+  datasetValues: _datasetValues,
+  ctx,
+  ...rest
+}) {
   function addIds(datasetValues, value) {
     datasetValues.id = value.id || randomString();
     if (_.isArray(datasetValues.value)) {

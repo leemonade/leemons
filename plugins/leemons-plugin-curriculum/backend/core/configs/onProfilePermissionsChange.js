@@ -1,10 +1,12 @@
-const _ = require('lodash');
-const { getCanEditProfiles } = require('./getCanEditProfiles');
-const { isCanEditCurriculumInsidePermissions } = require('./isCanEditCurriculumInsidePermissions');
-const { setCanEditProfiles } = require('./setCanEditProfiles');
+const _ = require("lodash");
+const { getCanEditProfiles } = require("./getCanEditProfiles");
+const {
+  isCanEditCurriculumInsidePermissions,
+} = require("./isCanEditCurriculumInsidePermissions");
+const { setCanEditProfiles } = require("./setCanEditProfiles");
 const {
   updateAllNodeLevelFormsPermissions,
-} = require('../nodeLevels/updateAllNodeLevelFormsPermissions');
+} = require("../nodeLevels/updateAllNodeLevelFormsPermissions");
 
 async function onProfilePermissionsChange({ profile, permissions, ctx }) {
   const currentProfiles = await getCanEditProfiles({ ctx });

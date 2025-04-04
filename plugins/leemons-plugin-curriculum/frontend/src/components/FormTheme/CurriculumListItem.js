@@ -8,28 +8,28 @@ import {
   Stack,
   Text,
   TextInput,
-} from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
-import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
-import { htmlToText, useStore } from '@common';
-import { TagRelation } from '@curriculum/components/FormTheme/TagRelation';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import CurriculumListSubItems from './CurriculumListSubItems';
+} from "@bubbles-ui/components";
+import { TextEditorInput } from "@bubbles-ui/editors";
+import { DeleteBinIcon, EditWriteIcon } from "@bubbles-ui/icons/solid";
+import { htmlToText, useStore } from "@common";
+import { TagRelation } from "@curriculum/components/FormTheme/TagRelation";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
+import CurriculumListSubItems from "./CurriculumListSubItems";
 
 const useStyle = createStyles((theme) => ({
   card: {
     border: `1px solid ${theme.colors.ui01}`,
-    borderRadius: '8px',
-    overflow: 'hidden',
+    borderRadius: "8px",
+    overflow: "hidden",
     padding: theme.spacing[4],
     marginBottom: theme.spacing[4],
-    position: 'relative',
+    position: "relative",
   },
   editButton: {
-    position: 'absolute',
+    position: "absolute",
     right: theme.spacing[2],
     top: theme.spacing[2],
   },
@@ -93,14 +93,14 @@ function CurriculumListItem({
   }, []);
 
   const valueRules = {
-    required: t('fieldRequired'),
+    required: t("fieldRequired"),
   };
 
   if (blockData.max)
     valueRules.validate = (e) => {
       const text = htmlToText(e);
       if (text.length > blockData.max) {
-        return t('maxLength', { max: blockData.max });
+        return t("maxLength", { max: blockData.max });
       }
     };
 
@@ -135,23 +135,35 @@ function CurriculumListItem({
           ) : null}
           {isEditMode ? (
             <Box className={classes.editButton}>
-              <ActionButton tooltip={t('edit')} icon={<EditWriteIcon />} onClick={onEdit} />
-              <ActionButton tooltip={t('remove')} icon={<DeleteBinIcon />} onClick={onRemove} />
+              <ActionButton
+                tooltip={t("edit")}
+                icon={<EditWriteIcon />}
+                onClick={onEdit}
+              />
+              <ActionButton
+                tooltip={t("remove")}
+                icon={<DeleteBinIcon />}
+                onClick={onRemove}
+              />
             </Box>
           ) : null}
         </Box>
         {!isEditMode ? (
           <Box sx={(theme) => ({ marginBottom: theme.spacing[3] })}>{tags}</Box>
         ) : null}
-        <Box sx={() => ({ maxHeight: 200, overflow: 'auto' })}>
-          {blockData.listType === 'field' ? (
+        <Box sx={() => ({ maxHeight: 200, overflow: "auto" })}>
+          {blockData.listType === "field" ? (
             <Text color="primary" role="productive">
               {defaultValues.value}
             </Text>
           ) : null}
-          {blockData.listType === 'textarea' ? <HtmlText>{defaultValues.value}</HtmlText> : null}
+          {blockData.listType === "textarea" ? (
+            <HtmlText>{defaultValues.value}</HtmlText>
+          ) : null}
         </Box>
-        {isEditMode ? <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>{tags}</Box> : null}
+        {isEditMode ? (
+          <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>{tags}</Box>
+        ) : null}
 
         {values.childrens?.length ? (
           <CurriculumListSubItems
@@ -161,11 +173,11 @@ function CurriculumListItem({
             disabled={true}
             row={{
               values,
-              id: '1',
+              id: "1",
               index: 0,
             }}
             onChange={([e]) => {
-              form.setValue('childrens', e.childrens);
+              form.setValue("childrens", e.childrens);
             }}
           />
         ) : null}
@@ -180,11 +192,23 @@ function CurriculumListItem({
         name="value"
         rules={valueRules}
         render={({ field }) => {
-          if (blockData.listType === 'field') {
-            return <TextInput {...field} error={form.formState.errors.value} label={label} />;
+          if (blockData.listType === "field") {
+            return (
+              <TextInput
+                {...field}
+                error={form.formState.errors.value}
+                label={label}
+              />
+            );
           }
-          if (blockData.listType === 'textarea') {
-            return <TextEditorInput {...field} error={form.formState.errors.value} label={label} />;
+          if (blockData.listType === "textarea") {
+            return (
+              <TextEditorInput
+                {...field}
+                error={form.formState.errors.value}
+                label={label}
+              />
+            );
           }
         }}
       />
@@ -210,24 +234,24 @@ function CurriculumListItem({
         values={[values]}
         t={t}
         selectedRow={{
-          id: '1',
+          id: "1",
         }}
         row={{
           values,
-          id: '1',
+          id: "1",
           index: 0,
         }}
         addable={true}
         onChange={([e]) => {
-          form.setValue('childrens', e.childrens);
+          form.setValue("childrens", e.childrens);
         }}
       />
       <Stack justifyContent="space-between" fullWidth>
         <Button variant="link" onClick={onCancel} loading={store.loading}>
-          {t('cancel')}
+          {t("cancel")}
         </Button>
         <Button variant="outline" onClick={_onSave} loading={store.loading}>
-          {defaultValues?.value ? t('update') : t('add')}
+          {defaultValues?.value ? t("update") : t("add")}
         </Button>
       </Stack>
     </ContextContainer>

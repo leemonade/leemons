@@ -6,38 +6,52 @@ import {
   Stack,
   Tree,
   useTree,
-} from '@bubbles-ui/components';
-import { ChevLeftIcon, RatingStarIcon, RedoIcon } from '@bubbles-ui/icons/outline';
-import prefixPN from '@curriculum/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { listCentersRequest } from '@users/request';
-import { filter, find, findIndex, forEach, forIn, isArray, keyBy, map, orderBy } from 'lodash';
-import React, { useMemo } from 'react';
+} from "@bubbles-ui/components";
+import {
+  ChevLeftIcon,
+  RatingStarIcon,
+  RedoIcon,
+} from "@bubbles-ui/icons/outline";
+import prefixPN from "@curriculum/helpers/prefixPN";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { listCentersRequest } from "@users/request";
+import {
+  filter,
+  find,
+  findIndex,
+  forEach,
+  forIn,
+  isArray,
+  keyBy,
+  map,
+  orderBy,
+} from "lodash";
+import React, { useMemo } from "react";
 
-import { detailProgramRequest } from '@academic-portfolio/request';
-import { useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useHistory, useParams } from 'react-router-dom';
-import NewBranchDetailValue from '../../../bubbles-components/NewBranchDetailValue';
+import { detailProgramRequest } from "@academic-portfolio/request";
+import { useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useHistory, useParams } from "react-router-dom";
+import NewBranchDetailValue from "../../../bubbles-components/NewBranchDetailValue";
 import {
   NEW_BRANCH_VALUE_ERROR_MESSAGES,
   NEW_BRANCH_VALUE_MESSAGES,
-} from '../../../bubbles-components/NewBranchValue';
+} from "../../../bubbles-components/NewBranchValue";
 import {
   addNodeRequest,
   detailCurriculumRequest,
   generateNodesFromAcademicPortfolioRequest,
   publishCurriculumRequest,
   saveNodeRequest,
-} from '../../../request';
+} from "../../../request";
 
 function AddCurriculumStep3New({ onPrev, isEditMode }) {
   const [store, render] = useStore({
     loading: true,
   });
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const [t] = useTranslateLoader(prefixPN('addCurriculumStep3'));
+  const [t] = useTranslateLoader(prefixPN("addCurriculumStep3"));
 
   const history = useHistory();
   const tree = useTree();
@@ -79,7 +93,7 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
 
       c.program = program;
       c.center = find(centers, { id: c.center });
-      c.nodeLevels = orderBy(c.nodeLevels, ['levelOrder'], ['asc']);
+      c.nodeLevels = orderBy(c.nodeLevels, ["levelOrder"], ["asc"]);
 
       store.curriculum = c;
       store.loading = false;
@@ -95,7 +109,7 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
       render();
       await generateNodesFromAcademicPortfolioRequest(store.curriculum.id);
       await load();
-      addSuccessAlert(t('syncTreeDone'));
+      addSuccessAlert(t("syncTreeDone"));
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -135,7 +149,7 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
   }, [store.curriculum]);
 
   function getDataForNode() {
-    const nodeLevelsById = keyBy(store.curriculum.nodeLevels, 'id');
+    const nodeLevelsById = keyBy(store.curriculum.nodeLevels, "id");
 
     const academicItemIds = [];
 
@@ -161,10 +175,15 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
     store.activeNode = {
       ...node,
       nodeLevel: nodeLevelsById[node.nodeLevel],
-      unUsedSubjects: map(unUsedSubjects, (sub) => ({ label: sub.name, value: sub.id })),
+      unUsedSubjects: map(unUsedSubjects, (sub) => ({
+        label: sub.name,
+        value: sub.id,
+      })),
     };
-    store.activeNode.isSubject = store.activeNode.nodeLevel.type === 'subject';
-    const subject = find(store.curriculum.program.subjects, { id: node.academicItem });
+    store.activeNode.isSubject = store.activeNode.nodeLevel.type === "subject";
+    const subject = find(store.curriculum.program.subjects, {
+      id: node.academicItem,
+    });
     if (subject) {
       store.activeNode.unUsedSubjects.push({
         label: subject.name,
@@ -172,26 +191,29 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
       });
     }
 
-    forIn(store.activeNode.nodeLevel?.schema?.compileJsonSchema?.properties, (prop, index) => {
-      store.activeNode.nodeLevel.schema.compileJsonUI[index]['ui:title'] = (
-        <>
-          {prop?.frontConfig?.blockData?.evaluationCriteria ? (
-            <Box
-              sx={(theme) => ({
-                display: 'inline-block',
-                verticalAlign: 'middle',
-                marginRight: theme.spacing[2],
-              })}
-            >
-              <RatingStarIcon />
-            </Box>
-          ) : null}
-          {prop.title}
-        </>
-      );
-    });
+    forIn(
+      store.activeNode.nodeLevel?.schema?.compileJsonSchema?.properties,
+      (prop, index) => {
+        store.activeNode.nodeLevel.schema.compileJsonUI[index]["ui:title"] = (
+          <>
+            {prop?.frontConfig?.blockData?.evaluationCriteria ? (
+              <Box
+                sx={(theme) => ({
+                  display: "inline-block",
+                  verticalAlign: "middle",
+                  marginRight: theme.spacing[2],
+                })}
+              >
+                <RatingStarIcon />
+              </Box>
+            ) : null}
+            {prop.title}
+          </>
+        );
+      }
+    );
 
-    store.activeRightSection = 'detail-branch-value';
+    store.activeRightSection = "detail-branch-value";
     render();
   }
 
@@ -202,16 +224,16 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
   async function publish() {
     try {
       if (store.curriculum.published) {
-        addSuccessAlert(t('published'));
+        addSuccessAlert(t("published"));
       } else {
         store.publishing = true;
         render();
         await publishCurriculumRequest(store.curriculum.id);
-        addSuccessAlert(t('published'));
+        addSuccessAlert(t("published"));
         store.curriculum.published = true;
         render();
       }
-      history.push('/private/curriculum/list');
+      history.push("/private/curriculum/list");
     } catch (e) {}
   }
 
@@ -234,13 +256,14 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
           const parentNodeLevelIndex = findIndex(store.curriculum.nodeLevels, {
             id: store.activeNode.nodeLevel,
           });
-          toSend.nodeLevel = store.curriculum.nodeLevels[parentNodeLevelIndex + 1].id;
+          toSend.nodeLevel =
+            store.curriculum.nodeLevels[parentNodeLevelIndex + 1].id;
           toSend.parentNode = store.activeNode.id;
           toSend.nodeOrder = store.activeNode.childrens.length;
         }
         await addNodeRequest(toSend);
       } else {
-        console.log('data', data);
+        console.log("data", data);
         await saveNodeRequest(data);
       }
       await load(true);
@@ -259,7 +282,7 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
   let groupChilds = null;
 
   if (
-    store.activeRightSection === 'detail-branch-value' &&
+    store.activeRightSection === "detail-branch-value" &&
     store.activeNode.nodeLevel?.schema?.compileJsonSchema
   ) {
     groupChilds = (
@@ -357,14 +380,14 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
   return (
     <ContextContainer
       sx={(theme) => ({ marginBottom: theme.spacing[6] })}
-      title={isEditMode ? t('pageTitle') : null}
-      description={isEditMode ? t('pageDescription') : null}
+      title={isEditMode ? t("pageTitle") : null}
+      description={isEditMode ? t("pageDescription") : null}
       divided
     >
-      <Box sx={() => ({ display: 'flex' })}>
+      <Box sx={() => ({ display: "flex" })}>
         <Box
           sx={(theme) => ({
-            width: '25%',
+            width: "25%",
             paddingRight: theme.spacing[6],
             borderRight: `1px solid ${theme.colors.ui01}`,
           })}
@@ -385,14 +408,14 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
                 onClick={sync}
                 leftIcon={<RedoIcon height={20} width={20} />}
               >
-                {t('syncTree')}
+                {t("syncTree")}
               </Button>
             </Box>
           ) : null}
         </Box>
         <Box
           sx={(theme) => ({
-            width: '75%',
+            width: "75%",
             paddingLeft: theme.spacing[6],
           })}
         >
@@ -408,10 +431,10 @@ function AddCurriculumStep3New({ onPrev, isEditMode }) {
             leftIcon={<ChevLeftIcon height={20} width={20} />}
             loading={store.publishing}
           >
-            {t('back')}
+            {t("back")}
           </Button>
           <Button onClick={publish} loading={store.publishing}>
-            {t('publish')}
+            {t("publish")}
           </Button>
         </Stack>
       ) : null}

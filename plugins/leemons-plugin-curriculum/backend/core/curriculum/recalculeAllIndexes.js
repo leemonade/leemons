@@ -1,14 +1,16 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-cond-assign */
 
-const _ = require('lodash');
-const { numberToEncodedLetter } = require('@leemons/utils');
-const { curriculumByIds } = require('./curriculumByIds');
-const { setDatasetValues } = require('../nodes/setDatasetValues');
-const { updateNodeLevelFormPermissions } = require('../nodeLevels/updateNodeLevelFormPermissions');
+const _ = require("lodash");
+const { numberToEncodedLetter } = require("@leemons/utils");
+const { curriculumByIds } = require("./curriculumByIds");
+const { setDatasetValues } = require("../nodes/setDatasetValues");
+const {
+  updateNodeLevelFormPermissions,
+} = require("../nodeLevels/updateNodeLevelFormPermissions");
 const {
   updateUserAgentPermissionsByUserSession,
-} = require('../configs/updateUserAgentPermissionsByUserSession');
+} = require("../configs/updateUserAgentPermissionsByUserSession");
 
 function processResetIndexes(config) {
   _.forEach(config.resetIndexesOnFinishCurrentLoop, (key) => {
@@ -29,7 +31,8 @@ function compileTagifyText(text, config, nodeLevel, field) {
     if (confObj.nodeLevel && confObj.field) {
       finalText = finalText.replace(
         array[0],
-        config.indexes[`${confObj.nodeLevel}:${confObj.field}`] || '(Value not found)'
+        config.indexes[`${confObj.nodeLevel}:${confObj.field}`] ||
+          "(Value not found)"
       );
 
       // Listados donde hay que ir sumando los indices y estos pueden mantenerse en futura iteracciones
@@ -39,7 +42,7 @@ function compileTagifyText(text, config, nodeLevel, field) {
         config.resetIndexesOnFinishCurrentLoop.push(`${nodeLevel}:${field}`);
       }
       let numberingDigits = 0;
-      if (confObj.numberingStyle === 'style-1') {
+      if (confObj.numberingStyle === "style-1") {
         numberingDigits = confObj.numberingDigits || 0;
       }
       // Si aun no existe un valor lo creamos, siempre almacenamos el indice en formato numero, luego hacemos las transformaciones necesarias
@@ -51,38 +54,52 @@ function compileTagifyText(text, config, nodeLevel, field) {
 
       // Segun el estilo elegido generamos segun el indice actual el valor a remplazar en el texto
       const toReplace =
-        confObj.numberingStyle === 'style-2'
-          ? global.utils.numberToEncodedLetter(config.indexes[`${nodeLevel}:${field}`])
+        confObj.numberingStyle === "style-2"
+          ? global.utils.numberToEncodedLetter(
+              config.indexes[`${nodeLevel}:${field}`]
+            )
           : config.indexes[`${nodeLevel}:${field}`];
 
-      finalText = finalText.replace(array[0], toReplace.toString().padStart(numberingDigits, '0'));
+      finalText = finalText.replace(
+        array[0],
+        toReplace.toString().padStart(numberingDigits, "0")
+      );
     } else {
-      finalText = finalText.replace(array[0], '(Value not found)');
+      finalText = finalText.replace(array[0], "(Value not found)");
     }
   }
   return finalText;
 }
 
-async function recalculeItem({ nodeLevelByIds, node, nodeIndex, parents, config, ctx }) {
+async function recalculeItem({
+  nodeLevelByIds,
+  node,
+  nodeIndex,
+  parents,
+  config,
+  ctx,
+}) {
   const { userSession } = ctx.meta;
   const nodeLevel = nodeLevelByIds[node.nodeLevel];
   const nodeLevelSchema = nodeLevel.schema ? nodeLevel.schema.jsonSchema : null;
 
   switch (nodeLevel.listType) {
-    case 'style-1':
-    case 'style-2':
+    case "style-1":
+    case "style-2":
       // eslint-disable-next-line no-param-reassign
       node.nameOrder =
-        nodeLevel.listType === 'style-2' ? numberToEncodedLetter(nodeIndex + 1) : nodeIndex + 1;
+        nodeLevel.listType === "style-2"
+          ? numberToEncodedLetter(nodeIndex + 1)
+          : nodeIndex + 1;
       // eslint-disable-next-line no-param-reassign
       node.fullName = `${node.nameOrder}. ${node.name}`;
       config.indexes[`${nodeLevel.id}:numbering`] = node.nameOrder;
       break;
-    case 'custom':
+    case "custom":
       break;
     default:
       node.fullName = `${node.name}`;
-      config.indexes[`${nodeLevel.id}:numbering`] = '';
+      config.indexes[`${nodeLevel.id}:numbering`] = "";
       break;
   }
 
@@ -91,12 +108,16 @@ async function recalculeItem({ nodeLevelByIds, node, nodeIndex, parents, config,
   if (node.formValues && nodeLevelSchema) {
     _.forIn(node.formValues, (value, key) => {
       const schemaProperty = nodeLevelSchema.properties[key];
-      if (schemaProperty && schemaProperty.frontConfig && schemaProperty.frontConfig.blockData) {
+      if (
+        schemaProperty &&
+        schemaProperty.frontConfig &&
+        schemaProperty.frontConfig.blockData
+      ) {
         /* --- LIST / GROUP --- */
 
         if (
-          schemaProperty.frontConfig.type === 'list' ||
-          schemaProperty.frontConfig.type === 'group'
+          schemaProperty.frontConfig.type === "list" ||
+          schemaProperty.frontConfig.type === "group"
         ) {
           const ordered =
             schemaProperty.frontConfig.blockData.listOrdered ||
@@ -105,10 +126,13 @@ async function recalculeItem({ nodeLevelByIds, node, nodeIndex, parents, config,
             schemaProperty.frontConfig.blockData.listOrderedText ||
             schemaProperty.frontConfig.blockData.groupOrderedText;
           switch (ordered) {
-            case 'style-1':
-            case 'style-2':
+            case "style-1":
+            case "style-2":
               node.formValues[key] = _.map(value, (val, inx) => {
-                const index = ordered === 'style-2' ? numberToEncodedLetter(inx + 1) : inx + 1;
+                const index =
+                  ordered === "style-2"
+                    ? numberToEncodedLetter(inx + 1)
+                    : inx + 1;
                 return {
                   id: val.id,
                   value: val.value,
@@ -119,9 +143,14 @@ async function recalculeItem({ nodeLevelByIds, node, nodeIndex, parents, config,
                 };
               });
               break;
-            case 'custom':
+            case "custom":
               node.formValues[key] = _.map(value, (val) => {
-                const index = compileTagifyText(orderedText, config, nodeLevel.id, key);
+                const index = compileTagifyText(
+                  orderedText,
+                  config,
+                  nodeLevel.id,
+                  key
+                );
                 return {
                   id: val.id,
                   value: val.value,
@@ -138,8 +167,8 @@ async function recalculeItem({ nodeLevelByIds, node, nodeIndex, parents, config,
           }
         } else if (
           /* --- CODE --- */
-          schemaProperty.frontConfig.blockData.type === 'code' &&
-          schemaProperty.frontConfig.blockData.codeType === 'autocomposed'
+          schemaProperty.frontConfig.blockData.type === "code" &&
+          schemaProperty.frontConfig.blockData.codeType === "autocomposed"
         ) {
           const text = compileTagifyText(
             schemaProperty.frontConfig.blockData.codeText,
@@ -191,7 +220,7 @@ async function recalculeAllIndexes({ curriculumId, ctx }) {
 
   await updateUserAgentPermissionsByUserSession({ ctx });
 
-  const nodeLevelByIds = _.keyBy(curriculum.nodeLevels, 'id');
+  const nodeLevelByIds = _.keyBy(curriculum.nodeLevels, "id");
   const config = { indexes: {}, resetIndexesOnFinishCurrentLoop: [] };
   for (let i = 0, l = curriculum.nodes.length; i < l; i++) {
     // eslint-disable-next-line no-await-in-loop

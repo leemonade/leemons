@@ -1,12 +1,12 @@
 /* eslint-disable no-param-reassign */
-import { Box, Button } from '@bubbles-ui/components';
-import { useStore } from '@common';
-import CurriculumGroupItem from '@curriculum/components/FormTheme/CurriculumGroupItem';
-import { ParentRelation } from '@curriculum/components/FormTheme/ParentRelation';
-import { returnFirstMetadataParent } from '@curriculum/helpers/returnFirstMetadataParent';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
+import { Box, Button } from "@bubbles-ui/components";
+import { useStore } from "@common";
+import CurriculumGroupItem from "@curriculum/components/FormTheme/CurriculumGroupItem";
+import { ParentRelation } from "@curriculum/components/FormTheme/ParentRelation";
+import { returnFirstMetadataParent } from "@curriculum/helpers/returnFirstMetadataParent";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
 
 function CurriculumGroup({
   onChange: _onChange,
@@ -88,7 +88,10 @@ function CurriculumGroup({
         isEditMode={isEditMode}
         value={{
           ...(value || { value: {}, metadata: {} }),
-          metadata: { ...(value?.metadata || {}), parentRelated: store.parentValue },
+          metadata: {
+            ...(value?.metadata || {}),
+            parentRelated: store.parentValue,
+          },
         }}
         onChange={(e) => {
           store.parentValue = e.metadata.parentRelated;
@@ -127,8 +130,12 @@ function CurriculumGroup({
       ))}
       {store.showSaveButton && isEditMode ? (
         <Box>
-          <Button variant="outline" loading={store.loading} onClick={() => save()}>
-            {t('save')}
+          <Button
+            variant="outline"
+            loading={store.loading}
+            onClick={() => save()}
+          >
+            {t("save")}
           </Button>
         </Box>
       ) : null}

@@ -10,32 +10,36 @@ import {
   TableInput,
   Text,
   TextInput,
-} from '@bubbles-ui/components';
-import { TAGIFY_TAG_REGEX } from '@bubbles-ui/extras';
+} from "@bubbles-ui/components";
+import { TAGIFY_TAG_REGEX } from "@bubbles-ui/extras";
 
-import { TextEditorInput } from '@bubbles-ui/editors';
-import { ArrowChevDownIcon, ArrowChevUpIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
-import { htmlToText, numberToEncodedLetter, useStore } from '@common';
-import { StartNumbering } from '@curriculum/components/FormTheme/StartNumbering';
-import { TagRelation } from '@curriculum/components/FormTheme/TagRelation';
-import { getItemTitleNumberedWithParents } from '@curriculum/helpers/getItemTitleNumberedWithParents';
-import _, { forEach, isArray, isNumber } from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import CurriculumListSubItems from './CurriculumListSubItems';
+import { TextEditorInput } from "@bubbles-ui/editors";
+import {
+  ArrowChevDownIcon,
+  ArrowChevUpIcon,
+  EditWriteIcon,
+} from "@bubbles-ui/icons/solid";
+import { htmlToText, numberToEncodedLetter, useStore } from "@common";
+import { StartNumbering } from "@curriculum/components/FormTheme/StartNumbering";
+import { TagRelation } from "@curriculum/components/FormTheme/TagRelation";
+import { getItemTitleNumberedWithParents } from "@curriculum/helpers/getItemTitleNumberedWithParents";
+import _, { forEach, isArray, isNumber } from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
+import CurriculumListSubItems from "./CurriculumListSubItems";
 
 const useStyle = createStyles((theme) => ({
   card: {
     border: `1px solid ${theme.colors.ui01}`,
-    borderRadius: '8px',
-    overflow: 'hidden',
+    borderRadius: "8px",
+    overflow: "hidden",
     padding: theme.spacing[4],
     marginBottom: theme.spacing[4],
-    position: 'relative',
+    position: "relative",
   },
   editButton: {
-    position: 'absolute',
+    position: "absolute",
     right: theme.spacing[2],
     top: theme.spacing[2],
   },
@@ -61,11 +65,15 @@ function CurriculumGroupItem({
   });
   const form = useForm({ defaultValues });
   const values = form.watch();
-  const initNumber = form.watch('metadata.initNumber');
+  const initNumber = form.watch("metadata.initNumber");
 
   React.useEffect(() => {
     form.reset(defaultValues);
-  }, [JSON.stringify(preview), JSON.stringify(blockData), JSON.stringify(defaultValues)]);
+  }, [
+    JSON.stringify(preview),
+    JSON.stringify(blockData),
+    JSON.stringify(defaultValues),
+  ]);
 
   function onExit() {
     if (store.subRow) {
@@ -89,20 +97,23 @@ function CurriculumGroupItem({
     })();
   }
 
-  function getTitle(index, text = 'showAs') {
+  function getTitle(index, text = "showAs") {
     let finalText = blockData[text];
     let array;
     while ((array = TAGIFY_TAG_REGEX.exec(blockData[text])) !== null) {
       const json = JSON.parse(array[0])[0][0];
       if (json.numberingStyle && isNumber(index)) {
-        if (json.numberingStyle === 'style-1') {
+        if (json.numberingStyle === "style-1") {
           finalText = finalText.replace(
             array[0],
-            (initNumber + index).toString().padStart(json.numberingDigits, '0')
+            (initNumber + index).toString().padStart(json.numberingDigits, "0")
           );
         }
-        if (json.numberingStyle === 'style-2') {
-          finalText = finalText.replace(array[0], numberToEncodedLetter(initNumber + index));
+        if (json.numberingStyle === "style-2") {
+          finalText = finalText.replace(
+            array[0],
+            numberToEncodedLetter(initNumber + index)
+          );
         }
       } else {
         finalText = finalText.replace(array[0], item[json.id]);
@@ -116,7 +127,9 @@ function CurriculumGroupItem({
     if (blockData.listOrderedText) {
       let array;
       // eslint-disable-next-line no-cond-assign
-      while ((array = TAGIFY_TAG_REGEX.exec(blockData.listOrderedText)) !== null) {
+      while (
+        (array = TAGIFY_TAG_REGEX.exec(blockData.listOrderedText)) !== null
+      ) {
         const json = JSON.parse(array[0])[0][0];
         if (json.numberingStyle) {
           result = json;
@@ -127,30 +140,30 @@ function CurriculumGroupItem({
   }, [blockData]);
 
   const useOrder = React.useMemo(() => {
-    if (blockData.groupListOrdered === 'style-1') {
-      return 'numbers';
+    if (blockData.groupListOrdered === "style-1") {
+      return "numbers";
     }
-    if (blockData.groupListOrdered === 'style-2') {
-      return 'vocals';
+    if (blockData.groupListOrdered === "style-2") {
+      return "vocals";
     }
-    if (blockData.groupListOrdered === 'custom' && customNumberingStyle) {
-      if (customNumberingStyle.numberingStyle === 'style-1') {
-        return 'numbers';
+    if (blockData.groupListOrdered === "custom" && customNumberingStyle) {
+      if (customNumberingStyle.numberingStyle === "style-1") {
+        return "numbers";
       }
-      if (customNumberingStyle.numberingStyle === 'style-2') {
-        return 'vocals';
+      if (customNumberingStyle.numberingStyle === "style-2") {
+        return "vocals";
       }
     }
     return null;
   }, [blockData, customNumberingStyle]);
 
   const columns = React.useMemo(() => {
-    const rules = { required: t('fieldRequired') };
+    const rules = { required: t("fieldRequired") };
     if (blockData.groupMax) {
       rules.validate = (e) => {
         const text = htmlToText(e);
         if (text.length > blockData.groupMax) {
-          return t('maxLength', { max: blockData.groupMax });
+          return t("maxLength", { max: blockData.groupMax });
         }
       };
     }
@@ -165,10 +178,10 @@ function CurriculumGroupItem({
 
     if (hasChilds && !store.subRow) {
       result.push({
-        Header: ' ',
-        accessor: 'open',
+        Header: " ",
+        accessor: "open",
         Cell: (e) => {
-          const vals = form.getValues('value');
+          const vals = form.getValues("value");
           if (!vals[e.row.index]?.childrens?.length) {
             return null;
           }
@@ -187,57 +200,64 @@ function CurriculumGroupItem({
                 render();
               }}
             >
-              {store.rowsExpanded.includes(e.row.id) ? <ArrowChevUpIcon /> : <ArrowChevDownIcon />}
+              {store.rowsExpanded.includes(e.row.id) ? (
+                <ArrowChevUpIcon />
+              ) : (
+                <ArrowChevDownIcon />
+              )}
             </Box>
           );
         },
         cellStyle: {
-          width: '10px',
+          width: "10px",
         },
         style: {
-          width: '10px',
+          width: "10px",
         },
       });
     }
 
-    if (blockData.groupListOrdered && blockData.groupListOrdered !== 'not-ordered') {
+    if (
+      blockData.groupListOrdered &&
+      blockData.groupListOrdered !== "not-ordered"
+    ) {
       result.push({
-        Header: ' ',
-        accessor: 'order',
+        Header: " ",
+        accessor: "order",
         input: {
           node: <Box />,
         },
         cellStyle: {
-          width: '100px',
+          width: "100px",
         },
       });
     }
 
     result.push({
-      Header: t('newItemList'),
-      accessor: 'value',
+      Header: t("newItemList"),
+      accessor: "value",
       input: {
         node:
-          blockData.groupListType === 'field' ? (
+          blockData.groupListType === "field" ? (
             <TextInput required />
           ) : (
-            <TextEditorInput editorStyles={{ minHeight: '96px' }} required />
+            <TextEditorInput editorStyles={{ minHeight: "96px" }} required />
           ),
         rules,
       },
       valueRender: (v, element) => {
         if (store.subRow) {
-          const vals = form.getValues('value');
+          const vals = form.getValues("value");
           const _item = vals[store.subRow.index];
 
           if (_item.value === element.value) {
             return (
               <Box
                 sx={() => ({
-                  display: 'flex',
-                  width: '100%',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
+                  display: "flex",
+                  width: "100%",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 })}
               >
                 <HtmlText>{v}</HtmlText>
@@ -248,7 +268,7 @@ function CurriculumGroupItem({
                     _onSave(false);
                   }}
                 >
-                  {t('save')}
+                  {t("save")}
                 </Button>
               </Box>
             );
@@ -305,21 +325,28 @@ function CurriculumGroupItem({
           </Text>
           {isEditMode ? (
             <Box className={classes.editButton}>
-              <ActionButton tooltip={t('edit')} icon={<EditWriteIcon />} onClick={onEdit} />
+              <ActionButton
+                tooltip={t("edit")}
+                icon={<EditWriteIcon />}
+                onClick={onEdit}
+              />
             </Box>
           ) : null}
         </Box>
-        {!isEditMode ? <Box sx={(theme) => ({ marginBottom: theme.spacing[3] })}>{tag}</Box> : null}
-        <Box sx={() => ({ maxHeight: 200, overflow: 'auto' })}>
-          {blockData.groupTypeOfContents === 'field' ? (
+        {!isEditMode ? (
+          <Box sx={(theme) => ({ marginBottom: theme.spacing[3] })}>{tag}</Box>
+        ) : null}
+        <Box sx={() => ({ maxHeight: 200, overflow: "auto" })}>
+          {blockData.groupTypeOfContents === "field" ? (
             <Text color="primary" role="productive">
               {defaultValues.value}
             </Text>
           ) : null}
-          {blockData.groupTypeOfContents === 'textarea' ? (
+          {blockData.groupTypeOfContents === "textarea" ? (
             <HtmlText>{defaultValues.value}</HtmlText>
           ) : null}
-          {blockData.groupTypeOfContents === 'list' && defaultValues.value?.length ? (
+          {blockData.groupTypeOfContents === "list" &&
+          defaultValues.value?.length ? (
             <Table
               data={_.map(defaultValues.value, (v, i) => ({
                 ...v,
@@ -335,11 +362,13 @@ function CurriculumGroupItem({
                   row={row}
                 />
               )}
-              columns={columns.map((col) => ({ ...col, Header: ' ' }))}
+              columns={columns.map((col) => ({ ...col, Header: " " }))}
             />
           ) : null}
         </Box>
-        {isEditMode ? <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>{tag}</Box> : null}
+        {isEditMode ? (
+          <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>{tag}</Box>
+        ) : null}
       </Box>
     );
   }
@@ -378,16 +407,18 @@ function CurriculumGroupItem({
         control={form.control}
         name="value"
         rules={{
-          required: t('fieldRequired'),
+          required: t("fieldRequired"),
         }}
         render={({ field }) => {
-          if (blockData.groupTypeOfContents === 'field') {
+          if (blockData.groupTypeOfContents === "field") {
             return <TextInput {...field} error={form.formState.errors.value} />;
           }
-          if (blockData.groupTypeOfContents === 'textarea') {
-            return <TextEditorInput {...field} error={form.formState.errors.value} />;
+          if (blockData.groupTypeOfContents === "textarea") {
+            return (
+              <TextEditorInput {...field} error={form.formState.errors.value} />
+            );
           }
-          if (blockData.groupTypeOfContents === 'list') {
+          if (blockData.groupTypeOfContents === "list") {
             const val = isArray(field.value) ? field.value : [];
             forEach(val, (v, i) => {
               v.order = getNumbering(i);
@@ -421,11 +452,11 @@ function CurriculumGroupItem({
                   />
                 )}
                 labels={{
-                  add: t('add'),
-                  remove: t('remove'),
-                  edit: t('edit'),
-                  accept: t('accept'),
-                  cancel: t('cancel'),
+                  add: t("add"),
+                  remove: t("remove"),
+                  edit: t("edit"),
+                  accept: t("accept"),
+                  cancel: t("cancel"),
                 }}
               />
             );
@@ -451,7 +482,7 @@ function CurriculumGroupItem({
       />
       <Stack justifyContent="space-between" fullWidth>
         <Button variant="link" onClick={onCancel} loading={store.loading}>
-          {t('cancel')}
+          {t("cancel")}
         </Button>
         <Button
           variant="outline"
@@ -460,7 +491,7 @@ function CurriculumGroupItem({
           }}
           loading={store.loading}
         >
-          {defaultValues?.value ? t('update') : t('add')}
+          {defaultValues?.value ? t("update") : t("add")}
         </Button>
       </Stack>
     </ContextContainer>

@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const { validateAddCurriculum } = require('../../validations/forms');
-const { curriculumByIds } = require('./curriculumByIds');
+const _ = require("lodash");
+const { validateAddCurriculum } = require("../../validations/forms");
+const { curriculumByIds } = require("./curriculumByIds");
 
 async function addCurriculum({ data, ctx }) {
   validateAddCurriculum(data);

@@ -1,12 +1,12 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function getNodeValues({ node, ctx }) {
   try {
     return {
       id: node.id,
-      values: await ctx.tx.call('dataset.dataset.getValues', {
+      values: await ctx.tx.call("dataset.dataset.getValues", {
         locationName: `node-level-${node.nodeLevel}`,
-        pluginName: 'curriculum',
+        pluginName: "curriculum",
         userAgent: ctx.meta.userSession?.userAgents,
         target: node.id,
       }),
@@ -61,18 +61,18 @@ async function nodesTreeByCurriculum({ id, ctx }) {
     node.formValues = node.data ? JSON.parse(node.data || null) : null;
   });
 
-  const nodesByParent = _.groupBy(nodes, 'parentNode');
+  const nodesByParent = _.groupBy(nodes, "parentNode");
   _.forEach(nodes, (node) => {
     // eslint-disable-next-line no-param-reassign
     node.childrens = nodesByParent[node.id]
-      ? _.orderBy(nodesByParent[node.id], ['nodeOrder'], ['asc'])
+      ? _.orderBy(nodesByParent[node.id], ["nodeOrder"], ["asc"])
       : [];
   });
 
-  const group = _.groupBy(nodesByParent.null, 'curriculum');
+  const group = _.groupBy(nodesByParent.null, "curriculum");
 
   _.forIn(group, (g, key) => {
-    group[key] = _.orderBy(g, ['nodeOrder'], ['asc']);
+    group[key] = _.orderBy(g, ["nodeOrder"], ["asc"]);
   });
 
   return _.isArray(id) ? group : group[id];

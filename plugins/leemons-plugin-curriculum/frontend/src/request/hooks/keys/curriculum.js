@@ -1,15 +1,15 @@
 export const allCurriculumScopeKey = [
   {
-    plugin: 'plugin.curriculum',
-    scope: 'curriculum',
+    plugin: "plugin.curriculum",
+    scope: "curriculum",
   },
 ];
 
 export const allListCurriculumsByProgramKey = [
   {
     ...allCurriculumScopeKey[0],
-    action: 'getByProgram',
-    entity: 'list',
+    action: "getByProgram",
+    entity: "list",
   },
 ];
 
@@ -24,8 +24,8 @@ export const listCurriculumsByProgramKey = ({ program }) => [
 export const allCurriculumDetailKey = [
   {
     ...allCurriculumScopeKey[0],
-    action: 'get',
-    entity: 'curriculum',
+    action: "get",
+    entity: "curriculum",
   },
 ];
 

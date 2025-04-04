@@ -1,7 +1,7 @@
-import React from 'react';
-import { clone, cloneDeep, findIndex, isArray, keyBy } from 'lodash';
-import { useId, Box, InputWrapper, TextInput } from '@bubbles-ui/components';
-import { TextEditor } from '@bubbles-ui/editors';
+import React from "react";
+import { clone, cloneDeep, findIndex, isArray, keyBy } from "lodash";
+import { useId, Box, InputWrapper, TextInput } from "@bubbles-ui/components";
+import { TextEditor } from "@bubbles-ui/editors";
 
 const GroupField = (props) => {
   const {
@@ -20,14 +20,16 @@ const GroupField = (props) => {
 
   const uuid = useId();
   const regex = /(?:\[{2}\{).*?(?:\}\]{2})/g;
-  const formDataById = keyBy(formData, 'id');
+  const formDataById = keyBy(formData, "id");
   const fieldType = props.schema.frontConfig.blockData.groupTypeOfContents;
 
   function getLabel(element) {
     let array;
     let finalText = clone(props.schema.frontConfig.blockData.showAs);
 
-    while ((array = regex.exec(props.schema.frontConfig.blockData.showAs)) !== null) {
+    while (
+      (array = regex.exec(props.schema.frontConfig.blockData.showAs)) !== null
+    ) {
       const confObj = JSON.parse(array[0].slice(2, -2));
       finalText = finalText.replace(array[0], element[confObj.id]);
     }
@@ -40,7 +42,7 @@ const GroupField = (props) => {
 
   return (
     <InputWrapper
-      label={uiSchema['ui:title'] || title}
+      label={uiSchema["ui:title"] || title}
       help={options?.help}
       uuid={uuid}
       error={rawErrors ? rawErrors[0] : null}
@@ -49,9 +51,9 @@ const GroupField = (props) => {
       <Box sx={(theme) => ({ padding: theme.spacing[4] })}>
         {props.schema.frontConfig.blockData.elements.map((element) => {
           let Element = () => <></>;
-          if (fieldType === 'field') {
+          if (fieldType === "field") {
             Element = TextInput;
-          } else if (fieldType === 'textarea') {
+          } else if (fieldType === "textarea") {
             Element = TextEditor;
           }
 
