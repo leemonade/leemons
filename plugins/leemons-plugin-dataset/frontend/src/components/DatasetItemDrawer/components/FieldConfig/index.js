@@ -1,13 +1,13 @@
-import React, { useContext } from 'react';
-import { Box } from '@bubbles-ui/components';
-import { DatasetItemDrawerContext } from '../../context/DatasetItemDrawerContext';
-import { MultioptionField } from './MultioptionField';
-import { RichTextField } from './RichTextField';
-import { BooleanField } from './BooleanField';
-import { SelectField } from './SelectField';
-import { TextField } from './TextField';
-import { DateField } from './DateField';
-import { UserField } from './UserField';
+import React, { useContext } from "react";
+import { Box } from "@bubbles-ui/components";
+import { DatasetItemDrawerContext } from "../../context/DatasetItemDrawerContext";
+import { MultioptionField } from "./MultioptionField";
+import { RichTextField } from "./RichTextField";
+import { BooleanField } from "./BooleanField";
+import { SelectField } from "./SelectField";
+import { TextField } from "./TextField";
+import { DateField } from "./DateField";
+import { UserField } from "./UserField";
 
 const configFieldTypes = {
   text_field: <TextField />,
@@ -29,11 +29,13 @@ const FieldConfig = () => {
     form: { watch },
   } = useContext(DatasetItemDrawerContext);
 
-  const fieldType = watch('config.type');
+  const fieldType = watch("config.type");
 
   return (
     <Box>
-      {configFieldTypes[fieldType] ? configFieldTypes[fieldType] : configFieldTypes.default}
+      {configFieldTypes[fieldType]
+        ? configFieldTypes[fieldType]
+        : configFieldTypes.default}
     </Box>
   );
 };

@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
-import { get } from 'lodash';
-import { Controller } from 'react-hook-form';
-import { Box, TextInput } from '@bubbles-ui/components';
-import { DatasetItemDrawerContext } from '../context/DatasetItemDrawerContext';
+import React, { useContext } from "react";
+import { get } from "lodash";
+import { Controller } from "react-hook-form";
+import { Box, TextInput } from "@bubbles-ui/components";
+import { DatasetItemDrawerContext } from "../context/DatasetItemDrawerContext";
 
 const Name = () => {
   const {
@@ -24,7 +24,7 @@ const Name = () => {
         render={({ field }) => (
           <TextInput
             placeholder={messages.namePlaceholder}
-            error={get(errors, 'config.name')}
+            error={get(errors, "config.name")}
             required
             {...field}
           />

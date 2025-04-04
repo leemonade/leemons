@@ -1,6 +1,8 @@
-const { getTranslationKey } = require('@leemons/multilanguage');
-const { validateNotExistLocation } = require('../../validations/exists');
-const { validateLocationAndPluginAndLocale } = require('../../validations/datasetLocation');
+const { getTranslationKey } = require("@leemons/multilanguage");
+const { validateNotExistLocation } = require("../../validations/exists");
+const {
+  validateLocationAndPluginAndLocale,
+} = require("../../validations/datasetLocation");
 
 /** *
  *  ES:
@@ -21,30 +23,42 @@ async function getLocation({ locationName, pluginName, locale, ctx }) {
   validateLocationAndPluginAndLocale(locationName, pluginName, locale, false);
   await validateNotExistLocation({ locationName, pluginName, ctx });
 
-  const promises = [ctx.tx.db.Dataset.findOne({ locationName, pluginName }).lean()];
+  const promises = [
+    ctx.tx.db.Dataset.findOne({ locationName, pluginName }).lean(),
+  ];
 
   if (locale) {
     promises.push(
-      ctx.tx.call('multilanguage.contents.getValue', {
-        key: getTranslationKey({ locationName, pluginName, key: 'name', ctx }),
+      ctx.tx.call("multilanguage.contents.getValue", {
+        key: getTranslationKey({ locationName, pluginName, key: "name", ctx }),
         locale,
       })
     );
     promises.push(
-      ctx.tx.call('multilanguage.contents.getValue', {
-        key: getTranslationKey({ locationName, pluginName, key: 'description', ctx }),
+      ctx.tx.call("multilanguage.contents.getValue", {
+        key: getTranslationKey({
+          locationName,
+          pluginName,
+          key: "description",
+          ctx,
+        }),
         locale,
       })
     );
   } else {
     promises.push(
-      ctx.tx.call('multilanguage.contents.getLocaleValueWithKey', {
-        key: getTranslationKey({ locationName, pluginName, key: 'name', ctx }),
+      ctx.tx.call("multilanguage.contents.getLocaleValueWithKey", {
+        key: getTranslationKey({ locationName, pluginName, key: "name", ctx }),
       })
     );
     promises.push(
-      ctx.tx.call('multilanguage.contents.getLocaleValueWithKey', {
-        key: getTranslationKey({ locationName, pluginName, key: 'description', ctx }),
+      ctx.tx.call("multilanguage.contents.getLocaleValueWithKey", {
+        key: getTranslationKey({
+          locationName,
+          pluginName,
+          key: "description",
+          ctx,
+        }),
       })
     );
   }

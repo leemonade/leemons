@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
-import { Controller } from 'react-hook-form';
-import { Checkbox, Col, Grid } from '@bubbles-ui/components';
-import { DatasetItemDrawerContext } from '../../context/DatasetItemDrawerContext';
+import React, { useContext } from "react";
+import { Controller } from "react-hook-form";
+import { Checkbox, Col, Grid } from "@bubbles-ui/components";
+import { DatasetItemDrawerContext } from "../../context/DatasetItemDrawerContext";
 
 const TextField = () => {
   const {
@@ -16,7 +16,11 @@ const TextField = () => {
           name="config.required"
           control={control}
           render={({ field }) => (
-            <Checkbox checked={field.value} label={messages.textFieldRequiredLabel} {...field} />
+            <Checkbox
+              checked={field.value}
+              label={messages.textFieldRequiredLabel}
+              {...field}
+            />
           )}
         />
       </Col>
@@ -26,7 +30,11 @@ const TextField = () => {
           name="config.masked"
           control={control}
           render={({ field }) => (
-            <Checkbox checked={field.value} label={messages.textFieldMaskedLabel} {...field} />
+            <Checkbox
+              checked={field.value}
+              label={messages.textFieldMaskedLabel}
+              {...field}
+            />
           )}
         />
       </Col>

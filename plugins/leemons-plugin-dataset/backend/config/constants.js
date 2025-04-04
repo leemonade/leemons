@@ -1,10 +1,10 @@
 module.exports = {
-  pluginName: 'dataset',
+  pluginName: "dataset",
   defaultPermissions: [
     {
-      permissionName: 'dataset.dataset',
-      actions: ['view', 'update', 'create', 'delete', 'admin'],
-      localizationName: { es: 'Datasets', en: 'Datasets' },
+      permissionName: "dataset.dataset",
+      actions: ["view", "update", "create", "delete", "admin"],
+      localizationName: { es: "Datasets", en: "Datasets" },
     },
   ],
 };

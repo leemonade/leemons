@@ -1,7 +1,12 @@
-const { getTranslationKey } = require('@leemons/multilanguage');
-const { validatePluginName, validateNotExistLocation } = require('../../validations/exists');
-const { validateLocationAndPlugin } = require('../../validations/datasetLocation');
-const deleteSchema = require('../datasetSchema/deleteSchema');
+const { getTranslationKey } = require("@leemons/multilanguage");
+const {
+  validatePluginName,
+  validateNotExistLocation,
+} = require("../../validations/exists");
+const {
+  validateLocationAndPlugin,
+} = require("../../validations/datasetLocation");
+const deleteSchema = require("../datasetSchema/deleteSchema");
 
 /** *
  *  ES:
@@ -25,23 +30,33 @@ async function deleteLocation({ locationName, pluginName, deleteValues, ctx }) {
   await deleteSchema({ locationName, pluginName, deleteValues, ctx });
   const promises = [ctx.tx.db.Dataset.deleteOne({ locationName, pluginName })];
   promises.push(
-    ctx.tx.call('multilanguage.contents.deleteAll', {
-      key: getTranslationKey({ locationName, pluginName, key: 'name', ctx }),
+    ctx.tx.call("multilanguage.contents.deleteAll", {
+      key: getTranslationKey({ locationName, pluginName, key: "name", ctx }),
     })
   );
   promises.push(
-    ctx.tx.call('multilanguage.contents.deleteAll', {
-      key: getTranslationKey({ locationName, pluginName, key: 'description', ctx }),
+    ctx.tx.call("multilanguage.contents.deleteAll", {
+      key: getTranslationKey({
+        locationName,
+        pluginName,
+        key: "description",
+        ctx,
+      }),
     })
   );
   promises.push(
-    ctx.tx.call('multilanguage.contents.deleteAll', {
-      key: getTranslationKey({ locationName, pluginName, key: 'jsonSchema', ctx }),
+    ctx.tx.call("multilanguage.contents.deleteAll", {
+      key: getTranslationKey({
+        locationName,
+        pluginName,
+        key: "jsonSchema",
+        ctx,
+      }),
     })
   );
   promises.push(
-    ctx.tx.call('multilanguage.contents.deleteAll', {
-      key: getTranslationKey({ locationName, pluginName, key: 'jsonUI', ctx }),
+    ctx.tx.call("multilanguage.contents.deleteAll", {
+      key: getTranslationKey({ locationName, pluginName, key: "jsonUI", ctx }),
     })
   );
   await Promise.all(promises);

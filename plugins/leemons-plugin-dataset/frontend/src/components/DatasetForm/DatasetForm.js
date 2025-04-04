@@ -1,18 +1,21 @@
-import React, { useMemo, forwardRef, useImperativeHandle } from 'react';
+import React, { useMemo, forwardRef, useImperativeHandle } from "react";
 
-import { ContextContainer, LoadingOverlay } from '@bubbles-ui/components';
-import { getValidateSchema } from '@bubbles-ui/leemons';
-import { useLocale } from '@common/LocaleDate';
-import { useFormWithTheme } from '@common/hooks/useFormWithTheme';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert } from '@layout/alert';
-import { getSessionProfile } from '@users/session';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
+import { ContextContainer, LoadingOverlay } from "@bubbles-ui/components";
+import { getValidateSchema } from "@bubbles-ui/leemons";
+import { useLocale } from "@common/LocaleDate";
+import { useFormWithTheme } from "@common/hooks/useFormWithTheme";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert } from "@layout/alert";
+import { getSessionProfile } from "@users/session";
+import _ from "lodash";
+import PropTypes from "prop-types";
 
-import { areOptionalKeys, getRequiredKeysOnlyForMe } from '../../helpers/dataset';
-import { useSaveDatasetValues } from '../../hooks/mutations';
-import { useDatasetSchema, useDatasetValues } from '../../hooks/queries';
+import {
+  areOptionalKeys,
+  getRequiredKeysOnlyForMe,
+} from "../../helpers/dataset";
+import { useSaveDatasetValues } from "../../hooks/mutations";
+import { useDatasetSchema, useDatasetValues } from "../../hooks/queries";
 
 const DatasetForm = forwardRef(
   (
@@ -77,7 +80,7 @@ const DatasetForm = forwardRef(
             response.value = {
               ...response.value,
               [key]: {
-                value: '-',
+                value: "-",
               },
             };
             delete response.jsonUI[key];
@@ -89,8 +92,8 @@ const DatasetForm = forwardRef(
             response.jsonUI[key] = {};
           }
 
-          response.jsonUI[key]['ui:readonly'] = true;
-          response.jsonUI[key]['ui:help'] = false;
+          response.jsonUI[key]["ui:readonly"] = true;
+          response.jsonUI[key]["ui:help"] = false;
         });
 
         // Finally set the required fields to an empty array
@@ -98,7 +101,11 @@ const DatasetForm = forwardRef(
       }
 
       if (!hideReadOnly) {
-        return { schema: response.jsonSchema, ui: response.jsonUI, value: response.value };
+        return {
+          schema: response.jsonSchema,
+          ui: response.jsonUI,
+          value: response.value,
+        };
       }
 
       // ····················································
@@ -106,7 +113,9 @@ const DatasetForm = forwardRef(
 
       const { jsonSchema, jsonUI } = response;
 
-      const readOnlyKeys = Object.keys(jsonUI).filter((key) => jsonUI[key]['ui:readonly']);
+      const readOnlyKeys = Object.keys(jsonUI).filter(
+        (key) => jsonUI[key]["ui:readonly"]
+      );
 
       const properties = Object.keys(jsonSchema.properties).filter(
         (key) => !readOnlyKeys.includes(key)
@@ -133,7 +142,10 @@ const DatasetForm = forwardRef(
         ? getRequiredKeysOnlyForMe({ dataset, profileId })
         : datasetProcessed.schema?.required;
 
-      return getValidateSchema({ ...datasetProcessed.schema, required: requiredKeys });
+      return getValidateSchema({
+        ...datasetProcessed.schema,
+        required: requiredKeys,
+      });
     }, [datasetProcessed.schema, validateOnlyForMe, dataset, profileId]);
 
     const formData = useMemo(
@@ -185,7 +197,10 @@ const DatasetForm = forwardRef(
 
       let toSave = form.getValues();
 
-      const requiredOnlyForMe = getRequiredKeysOnlyForMe({ dataset, profileId });
+      const requiredOnlyForMe = getRequiredKeysOnlyForMe({
+        dataset,
+        profileId,
+      });
 
       if (requiredOnlyForMe.length === 0) {
         toSave = _.pickBy(toSave, (value) => !!value.value);
@@ -260,14 +275,17 @@ const DatasetForm = forwardRef(
     }
 
     return (
-      <ContextContainer title={!!title && showTitle ? title : undefined} level={1}>
+      <ContextContainer
+        title={!!title && showTitle ? title : undefined}
+        level={1}
+      >
         {formUI}
       </ContextContainer>
     );
   }
 );
 
-DatasetForm.displayName = '@dataset/components/DatasetForm';
+DatasetForm.displayName = "@dataset/components/DatasetForm";
 DatasetForm.propTypes = {
   locationName: PropTypes.string,
   pluginName: PropTypes.string,

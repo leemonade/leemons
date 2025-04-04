@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
-const { getTranslationKey } = require('@leemons/multilanguage');
-const getSchema = require('./getSchema');
+const _ = require("lodash");
+const { getTranslationKey } = require("@leemons/multilanguage");
+const getSchema = require("./getSchema");
 
 /** *
  *  ES:
@@ -22,8 +22,13 @@ const getSchema = require('./getSchema');
 async function recalculeEnumNames({ locationName, pluginName, ctx }) {
   const [dataset, localeSchemas] = await Promise.all([
     getSchema({ locationName, pluginName, ctx }),
-    ctx.tx.call('multilanguage.contents.getLocaleValueWithKey', {
-      key: getTranslationKey({ locationName, pluginName, key: 'jsonSchema', ctx }),
+    ctx.tx.call("multilanguage.contents.getLocaleValueWithKey", {
+      key: getTranslationKey({
+        locationName,
+        pluginName,
+        key: "jsonSchema",
+        ctx,
+      }),
     }),
     /*
         translations().contents.getLocaleValueWithKey(
@@ -35,7 +40,10 @@ async function recalculeEnumNames({ locationName, pluginName, ctx }) {
   ]);
 
   // eslint-disable-next-line no-return-assign
-  _.forIn(localeSchemas, (value, key) => (localeSchemas[key] = JSON.parse(value || null)));
+  _.forIn(
+    localeSchemas,
+    (value, key) => (localeSchemas[key] = JSON.parse(value || null))
+  );
   // _.forIn(localeUi, (value, key) => (localeUi[key] = JSON.parse(value)));
 
   _.forIn(dataset.jsonSchema.properties, (value, key) => {
@@ -47,14 +55,20 @@ async function recalculeEnumNames({ locationName, pluginName, ctx }) {
           localeSchema.properties[key].frontConfig = {};
         if (!localeSchema.properties[key].frontConfig.checkboxLabels) {
           localeSchema.properties[key].frontConfig.checkboxLabels = {};
-          _.forEach(value.frontConfig.checkboxValues, ({ key: generatedKey }) => {
-            localeSchema.properties[key].frontConfig.checkboxLabels[generatedKey] = {
-              key: generatedKey,
-              label: '',
-            };
-          });
+          _.forEach(
+            value.frontConfig.checkboxValues,
+            ({ key: generatedKey }) => {
+              localeSchema.properties[key].frontConfig.checkboxLabels[
+                generatedKey
+              ] = {
+                key: generatedKey,
+                label: "",
+              };
+            }
+          );
         }
-        if (!localeSchema.properties[key].items) localeSchema.properties[key].items = {};
+        if (!localeSchema.properties[key].items)
+          localeSchema.properties[key].items = {};
         if (!localeSchema.properties[key].items.enumNames)
           localeSchema.properties[key].items.enumNames = [];
 
@@ -66,7 +80,9 @@ async function recalculeEnumNames({ locationName, pluginName, ctx }) {
         localeSchema.properties[key].frontConfig.checkboxLabels = {};
         _.forEach(value.frontConfig.checkboxValues, (checkbox) => {
           if (localeCheckboxByKey[checkbox.key]) {
-            localeSchema.properties[key].frontConfig.checkboxLabels[checkbox.key] = {
+            localeSchema.properties[key].frontConfig.checkboxLabels[
+              checkbox.key
+            ] = {
               key: checkbox.key,
               label: localeCheckboxByKey[checkbox.key].label,
             };
@@ -74,11 +90,13 @@ async function recalculeEnumNames({ locationName, pluginName, ctx }) {
               localeCheckboxByKey[checkbox.key].label
             );
           } else {
-            localeSchema.properties[key].frontConfig.checkboxLabels[checkbox.key] = {
+            localeSchema.properties[key].frontConfig.checkboxLabels[
+              checkbox.key
+            ] = {
               key: checkbox.key,
-              label: '',
+              label: "",
             };
-            localeSchema.properties[key].items.enumNames.push('');
+            localeSchema.properties[key].items.enumNames.push("");
           }
         });
       });
@@ -86,10 +104,18 @@ async function recalculeEnumNames({ locationName, pluginName, ctx }) {
   });
 
   // eslint-disable-next-line no-return-assign
-  _.forIn(localeSchemas, (value, key) => (localeSchemas[key] = JSON.stringify(value)));
+  _.forIn(
+    localeSchemas,
+    (value, key) => (localeSchemas[key] = JSON.stringify(value))
+  );
 
-  await ctx.tx.call('multilanguage.contents.setKey', {
-    key: getTranslationKey({ locationName, pluginName, key: 'jsonSchema', ctx }),
+  await ctx.tx.call("multilanguage.contents.setKey", {
+    key: getTranslationKey({
+      locationName,
+      pluginName,
+      key: "jsonSchema",
+      ctx,
+    }),
     data: localeSchemas,
   });
   return true;

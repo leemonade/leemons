@@ -1,6 +1,9 @@
-const { getTranslationKey } = require('@leemons/multilanguage');
-const { validatePluginName, validateExistLocation } = require('../../validations/exists');
-const { validateAddLocation } = require('../../validations/datasetLocation');
+const { getTranslationKey } = require("@leemons/multilanguage");
+const {
+  validatePluginName,
+  validateExistLocation,
+} = require("../../validations/exists");
+const { validateAddLocation } = require("../../validations/datasetLocation");
 
 /** *
  *  ES:
@@ -18,7 +21,13 @@ const { validateAddLocation } = require('../../validations/datasetLocation');
  *  @param {DatasetAddLocation} data - New dataset location
  *  @return {Promise<DatasetLocation>} The new dataset location
  *  */
-async function addLocation({ name, description, locationName, pluginName, ctx }) {
+async function addLocation({
+  name,
+  description,
+  locationName,
+  pluginName,
+  ctx,
+}) {
   validateAddLocation({ name, description, locationName, pluginName });
   validatePluginName(pluginName, ctx.callerPlugin);
   await validateExistLocation({ locationName, pluginName, ctx });
@@ -31,16 +40,21 @@ async function addLocation({ name, description, locationName, pluginName, ctx })
 
   if (name) {
     promises.push(
-      ctx.tx.call('multilanguage.contents.addManyByKey', {
-        key: getTranslationKey({ locationName, pluginName, key: 'name', ctx }),
+      ctx.tx.call("multilanguage.contents.addManyByKey", {
+        key: getTranslationKey({ locationName, pluginName, key: "name", ctx }),
         data: name,
       })
     );
   }
   if (description) {
     promises.push(
-      ctx.tx.call('multilanguage.contents.addManyByKey', {
-        key: getTranslationKey({ locationName, pluginName, key: 'description', ctx }),
+      ctx.tx.call("multilanguage.contents.addManyByKey", {
+        key: getTranslationKey({
+          locationName,
+          pluginName,
+          key: "description",
+          ctx,
+        }),
         data: description,
       })
     );
@@ -48,7 +62,8 @@ async function addLocation({ name, description, locationName, pluginName, ctx })
 
   const response = await Promise.all(promises);
   if (response[1] && !response[1].warnings) response[0].name = name;
-  if (response[2] && !response[2].warnings) response[0].description = description;
+  if (response[2] && !response[2].warnings)
+    response[0].description = description;
   return response[0];
 }
 

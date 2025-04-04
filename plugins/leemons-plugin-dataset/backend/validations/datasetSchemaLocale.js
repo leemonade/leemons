@@ -1,8 +1,8 @@
-const { LeemonsValidator } = require('@leemons/validator');
-const { ajvSchema, stringSchema, localeSchema } = require('./types');
+const { LeemonsValidator } = require("@leemons/validator");
+const { ajvSchema, stringSchema, localeSchema } = require("./types");
 
 const addSchemaLocaleSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     schemaData: ajvSchema,
     uiData: ajvSchema,
@@ -10,20 +10,20 @@ const addSchemaLocaleSchema = {
     pluginName: stringSchema,
     locale: localeSchema,
   },
-  required: ['schemaData', 'uiData', 'locationName', 'pluginName', 'locale'],
+  required: ["schemaData", "uiData", "locationName", "pluginName", "locale"],
 };
 
 const existSchemaLocaleSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     key: {
-      enum: ['jsonSchema', 'jsonUI'],
+      enum: ["jsonSchema", "jsonUI"],
     },
     locationName: stringSchema,
     pluginName: stringSchema,
     locale: localeSchema,
   },
-  required: ['key', 'locationName', 'pluginName', 'locale'],
+  required: ["key", "locationName", "pluginName", "locale"],
 };
 
 function validateAddSchemaLocale(data) {

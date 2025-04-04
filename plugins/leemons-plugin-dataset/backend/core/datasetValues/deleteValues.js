@@ -1,5 +1,5 @@
-const { validateNotExistValues } = require('../../validations/exists');
-const { validatePluginName } = require('../../validations/exists');
+const { validateNotExistValues } = require("../../validations/exists");
+const { validatePluginName } = require("../../validations/exists");
 
 /** *
  *  ES:

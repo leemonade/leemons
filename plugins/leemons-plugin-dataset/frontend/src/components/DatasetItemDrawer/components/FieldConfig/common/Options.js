@@ -1,9 +1,17 @@
-import React, { useContext } from 'react';
-import { forEach, get, map } from 'lodash';
-import { Controller } from 'react-hook-form';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { Box, Button, Col, Grid, SortableList, Text, TextInput } from '@bubbles-ui/components';
-import { DatasetItemDrawerContext } from '../../../context/DatasetItemDrawerContext';
+import React, { useContext } from "react";
+import { forEach, get, map } from "lodash";
+import { Controller } from "react-hook-form";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import {
+  Box,
+  Button,
+  Col,
+  Grid,
+  SortableList,
+  Text,
+  TextInput,
+} from "@bubbles-ui/components";
+import { DatasetItemDrawerContext } from "../../../context/DatasetItemDrawerContext";
 
 const OptionItem = ({ value, onChange }) => (
   <Box
@@ -23,7 +31,13 @@ const OptionItem = ({ value, onChange }) => (
 
 const Options = ({ label, addOptionLabel }) => {
   const {
-    contextRef: { errorMessages, colOptionsSpans, gridColumn, locales, defaultLocale },
+    contextRef: {
+      errorMessages,
+      colOptionsSpans,
+      gridColumn,
+      locales,
+      defaultLocale,
+    },
     form: {
       control,
       getValues,
@@ -35,24 +49,32 @@ const Options = ({ label, addOptionLabel }) => {
   } = useContext(DatasetItemDrawerContext);
 
   function addNewOption() {
-    const values = getValues('config.checkboxValues') || [];
+    const values = getValues("config.checkboxValues") || [];
     const key = new Date().getTime();
-    values.push({ key, value: '' });
-    setValue('config.checkboxValues', values);
+    values.push({ key, value: "" });
+    setValue("config.checkboxValues", values);
     forEach(locales, ({ code }) => {
-      const config = defaultLocale === code ? { required: errorMessages.optionFieldRequired } : {};
-      register(`locales.${code}.schema.frontConfig.checkboxLabels.${key}.label`, config);
+      const config =
+        defaultLocale === code
+          ? { required: errorMessages.optionFieldRequired }
+          : {};
+      register(
+        `locales.${code}.schema.frontConfig.checkboxLabels.${key}.label`,
+        config
+      );
     });
   }
 
   function onRemove({ index }) {
-    const values = getValues('config.checkboxValues') || [];
+    const values = getValues("config.checkboxValues") || [];
     const { key } = values[index];
     values.splice(index, 1);
-    setValue('config.checkboxValues', values);
+    setValue("config.checkboxValues", values);
 
     forEach(locales, ({ code }) => {
-      unregister(`locales.${code}.schema.frontConfig.checkboxLabels.${key}.label`);
+      unregister(
+        `locales.${code}.schema.frontConfig.checkboxLabels.${key}.label`
+      );
     });
   }
 
@@ -85,12 +107,16 @@ const Options = ({ label, addOptionLabel }) => {
                   ))}
                   removable
                   sortable
-                  error={get(errors, 'config.checkboxValues')}
+                  error={get(errors, "config.checkboxValues")}
                   mapKey="key"
                   onRemove={onRemove}
                 />
                 <Box sx={(theme) => ({ marginLeft: theme.spacing[8] })}>
-                  <Button variant="link" leftIcon={<AddCircleIcon />} onClick={addNewOption}>
+                  <Button
+                    variant="link"
+                    leftIcon={<AddCircleIcon />}
+                    onClick={addNewOption}
+                  >
                     {addOptionLabel}
                   </Button>
                 </Box>

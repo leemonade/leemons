@@ -1,4 +1,6 @@
-const { validateLocationAndPlugin } = require('../../validations/datasetLocation');
+const {
+  validateLocationAndPlugin,
+} = require("../../validations/datasetLocation");
 
 /**
  * ES:
@@ -18,7 +20,10 @@ const { validateLocationAndPlugin } = require('../../validations/datasetLocation
  * */
 async function existSchema({ locationName, pluginName, ctx }) {
   validateLocationAndPlugin(locationName, pluginName);
-  const dataset = await ctx.tx.db.Dataset.findOne({ locationName, pluginName }).lean();
+  const dataset = await ctx.tx.db.Dataset.findOne({
+    locationName,
+    pluginName,
+  }).lean();
   return dataset.jsonSchema && dataset.jsonUI;
 }
 

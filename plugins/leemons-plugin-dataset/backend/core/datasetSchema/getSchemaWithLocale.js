@@ -1,21 +1,25 @@
-const _ = require('lodash');
-const { getObjectArrayKeys } = require('@leemons/utils');
-const squirrelly = require('squirrelly');
-const getSchema = require('./getSchema');
-const getSchemaLocale = require('../datasetSchemaLocale/getSchemaLocale');
+const _ = require("lodash");
+const { getObjectArrayKeys } = require("@leemons/utils");
+const squirrelly = require("squirrelly");
+const getSchema = require("./getSchema");
+const getSchemaLocale = require("../datasetSchemaLocale/getSchemaLocale");
 const {
   validateNotExistSchemaLocale,
   validateNotExistLocation,
   validateNotExistSchema,
-} = require('../../validations/exists');
-const { validateLocationAndPluginAndLocale } = require('../../validations/datasetLocation');
-const getKeysCanAction = require('../datasetValues/getKeysCanAction');
+} = require("../../validations/exists");
+const {
+  validateLocationAndPluginAndLocale,
+} = require("../../validations/datasetLocation");
+const getKeysCanAction = require("../datasetValues/getKeysCanAction");
 
-squirrelly.helpers.define('printWithOutErrors', ({ params }) => {
+squirrelly.helpers.define("printWithOutErrors", ({ params }) => {
   const it = params[0];
   const prop = params[1];
-  const value = _.get(it, prop, '');
-  return _.isArray(value) || _.isObject(value) ? `-*-*-${JSON.stringify(value)}-*-*-` : value;
+  const value = _.get(it, prop, "");
+  return _.isArray(value) || _.isObject(value)
+    ? `-*-*-${JSON.stringify(value)}-*-*-`
+    : value;
 });
 
 /** *
@@ -49,10 +53,15 @@ async function getSchemaWithLocale({
   await validateNotExistLocation({ locationName, pluginName, ctx });
   await validateNotExistSchema({ locationName, pluginName, ctx });
 
-  const defaultLocale = await ctx.tx.call('users.platform.getDefaultLocale');
+  const defaultLocale = await ctx.tx.call("users.platform.getDefaultLocale");
 
   try {
-    await validateNotExistSchemaLocale({ locationName, pluginName, locale, ctx });
+    await validateNotExistSchemaLocale({
+      locationName,
+      pluginName,
+      locale,
+      ctx,
+    });
   } catch (err) {
     if (userSession) {
       locale = defaultLocale;
@@ -67,7 +76,9 @@ async function getSchemaWithLocale({
   ];
 
   if (useDefaultLocaleCallback) {
-    promises.push(getSchemaLocale({ locationName, pluginName, locale: defaultLocale, ctx }));
+    promises.push(
+      getSchemaLocale({ locationName, pluginName, locale: defaultLocale, ctx })
+    );
   }
 
   // eslint-disable-next-line prefer-const
@@ -79,35 +90,41 @@ async function getSchemaWithLocale({
 
   if (defaultWithEmptyValues) {
     _.forEach(getObjectArrayKeys(defaultSchemaLocale.schemaData), (key) => {
-      _.set(defaultSchemaLocale.schemaData, key, '');
+      _.set(defaultSchemaLocale.schemaData, key, "");
     });
     _.forEach(getObjectArrayKeys(defaultSchemaLocale.uiData), (key) => {
-      _.set(defaultSchemaLocale.uiData, key, '');
+      _.set(defaultSchemaLocale.uiData, key, "");
     });
   }
 
-  schema.schemaData = _.merge(defaultSchemaLocale.schemaData, schemaLocale.schemaData);
+  schema.schemaData = _.merge(
+    defaultSchemaLocale.schemaData,
+    schemaLocale.schemaData
+  );
   schema.uiData = _.merge(defaultSchemaLocale.uiData, schemaLocale.uiData);
 
   schema.compileJsonSchema = squirrelly.render(
     JSON.stringify(schema.jsonSchema),
     schema.schemaData
   );
-  schema.compileJsonUI = squirrelly.render(JSON.stringify(schema.jsonUI), schema.uiData);
+  schema.compileJsonUI = squirrelly.render(
+    JSON.stringify(schema.jsonUI),
+    schema.uiData
+  );
 
   schema.compileJsonSchema = JSON.parse(
     schema.compileJsonSchema
-      .replaceAll('"-*-*-[', '[')
-      .replaceAll(']-*-*-"', ']')
-      .replaceAll('"-*-*-{', '{')
-      .replaceAll('}-*-*-"', '}')
+      .replaceAll('"-*-*-[', "[")
+      .replaceAll(']-*-*-"', "]")
+      .replaceAll('"-*-*-{', "{")
+      .replaceAll('}-*-*-"', "}")
   );
   schema.compileJsonUI = JSON.parse(
     schema.compileJsonUI
-      .replaceAll('"-*-*-[', '[')
-      .replaceAll(']-*-*-"', ']')
-      .replaceAll('"-*-*-{', '{')
-      .replaceAll('}-*-*-"', '}')
+      .replaceAll('"-*-*-[', "[")
+      .replaceAll(']-*-*-"', "]")
+      .replaceAll('"-*-*-{', "{")
+      .replaceAll('}-*-*-"', "}")
   );
 
   if (userSession) {
@@ -115,14 +132,14 @@ async function getSchemaWithLocale({
       locationName,
       pluginName,
       userAgent: userSession.userAgents,
-      actions: 'view',
+      actions: "view",
       ctx,
     });
     const { goodKeys: editKeys } = await getKeysCanAction({
       locationName,
       pluginName,
       userAgent: userSession.userAgents,
-      actions: 'edit',
+      actions: "edit",
       ctx,
     });
 
@@ -141,7 +158,7 @@ async function getSchemaWithLocale({
         if (!schema.compileJsonUI[key]) {
           schema.compileJsonUI[key] = {};
         }
-        schema.compileJsonUI[key]['ui:readonly'] = true;
+        schema.compileJsonUI[key]["ui:readonly"] = true;
       }
     });
   }

@@ -1,11 +1,11 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const getSchema = require('../datasetSchema/getSchema');
-const getKeysCanAction = require('./getKeysCanAction');
-const { validateExistValues } = require('../../validations/exists');
-const { validatePluginName } = require('../../validations/exists');
-const { getValuesForSave } = require('./getValuesForSave');
-const { validateDataForJsonSchema } = require('./validateDataForJsonSchema');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const getSchema = require("../datasetSchema/getSchema");
+const getKeysCanAction = require("./getKeysCanAction");
+const { validateExistValues } = require("../../validations/exists");
+const { validatePluginName } = require("../../validations/exists");
+const { getValuesForSave } = require("./getValuesForSave");
+const { validateDataForJsonSchema } = require("./validateDataForJsonSchema");
 
 /** *
  *  ES:
@@ -48,7 +48,7 @@ async function addValues({
     locationName,
     pluginName,
     userAgent,
-    actions: 'edit',
+    actions: "edit",
     ctx,
   });
 
@@ -66,10 +66,18 @@ async function addValues({
   // ES: Comprobamos que los datos cumplen con la validacion
   // EN: We check that the data complies with validation
   try {
-    const allowedRequiredKeys = goodKeys.filter((key) => !optionalKeys.includes(key));
-    validateDataForJsonSchema({ jsonSchema, data: formData, allowedRequiredKeys });
+    const allowedRequiredKeys = goodKeys.filter(
+      (key) => !optionalKeys.includes(key)
+    );
+    validateDataForJsonSchema({
+      jsonSchema,
+      data: formData,
+      allowedRequiredKeys,
+    });
   } catch (error) {
-    throw new LeemonsError(ctx, { message: 'Data does not comply with the schema' });
+    throw new LeemonsError(ctx, {
+      message: "Data does not comply with the schema",
+    });
   }
 
   const toSave = [];

@@ -1,15 +1,15 @@
-import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
-import { Box, Title } from '@bubbles-ui/components';
-import { TranslatorTabs } from '@bubbles-ui/leemons';
-import { DatasetItemDrawerContext } from '../../context/DatasetItemDrawerContext';
-import { FieldConfigLocaleContext } from './context/FieldConfigLocale';
-import { Label } from './common/Label';
-import { Description } from './common/Description';
-import { Help } from './common/Help';
-import { Multioption } from './Multioption';
-import { Boolean } from './Boolean';
-import { Select } from './Select';
+import React, { useContext } from "react";
+import PropTypes from "prop-types";
+import { Box, Title } from "@bubbles-ui/components";
+import { TranslatorTabs } from "@bubbles-ui/leemons";
+import { DatasetItemDrawerContext } from "../../context/DatasetItemDrawerContext";
+import { FieldConfigLocaleContext } from "./context/FieldConfigLocale";
+import { Label } from "./common/Label";
+import { Description } from "./common/Description";
+import { Help } from "./common/Help";
+import { Multioption } from "./Multioption";
+import { Boolean } from "./Boolean";
+import { Select } from "./Select";
 
 const CONFIG_FIELD_TYPES = {
   text_field: null,
@@ -31,7 +31,7 @@ const FieldConfigLocaleItem = ({ localeConfig }) => {
     form: { watch },
   } = useContext(DatasetItemDrawerContext);
 
-  const fieldType = watch('config.type');
+  const fieldType = watch("config.type");
 
   return (
     <FieldConfigLocaleContext.Provider value={localeConfig}>

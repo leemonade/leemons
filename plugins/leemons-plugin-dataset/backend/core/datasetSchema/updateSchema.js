@@ -1,18 +1,18 @@
-const _ = require('lodash');
+const _ = require("lodash");
 const {
   transformPermissionKeysToObjects,
   transformPermissionKeysToObjectsByType,
-} = require('./transformPermissionKeysToObjects');
+} = require("./transformPermissionKeysToObjects");
 const {
   getJsonSchemaProfilePermissionsKeys,
   getJsonSchemaProfilePermissionsKeysByType,
-} = require('./transformJsonOrUiSchema');
+} = require("./transformJsonOrUiSchema");
 const {
   validatePluginName,
   validateNotExistLocation,
   validateNotExistSchema,
-} = require('../../validations/exists');
-const { validateAddSchema } = require('../../validations/datasetSchema');
+} = require("../../validations/exists");
+const { validateAddSchema } = require("../../validations/datasetSchema");
 
 /** *
  *  ES:
@@ -27,7 +27,13 @@ const { validateAddSchema } = require('../../validations/datasetSchema');
  *  @param {any=} transacting - DB Transaction
  *  @return {Promise<DatasetSchema>}
  *  */
-async function updateSchema({ locationName, pluginName, jsonSchema, jsonUI, ctx }) {
+async function updateSchema({
+  locationName,
+  pluginName,
+  jsonSchema,
+  jsonUI,
+  ctx,
+}) {
   validateAddSchema({ locationName, pluginName, jsonSchema, jsonUI });
   validatePluginName({ pluginName, calledFrom: ctx.callerPlugin, ctx });
   await validateNotExistLocation({ locationName, pluginName, ctx });
@@ -66,17 +72,17 @@ async function updateSchema({ locationName, pluginName, jsonSchema, jsonUI, ctx 
   // EN: We delete all the old permissions that were added to the profile to add the new ones later.
   _.forIn(oldProfilePermissions, (permissions, profileId) => {
     removePermissionsPromises.push(
-      ctx.tx.call('users.profiles.removeCustomPermissionsByName', {
+      ctx.tx.call("users.profiles.removeCustomPermissionsByName", {
         profileId,
-        permissions: _.map(permissions, 'permissionName'),
+        permissions: _.map(permissions, "permissionName"),
       })
     );
   });
   _.forIn(oldRolesPermissions, (permissions, roleId) => {
     removePermissionsPromises.push(
-      ctx.tx.call('users.roles.removePermissionsByName', {
+      ctx.tx.call("users.roles.removePermissionsByName", {
         roleId,
-        permissionNames: _.map(permissions, 'permissionName'),
+        permissionNames: _.map(permissions, "permissionName"),
         removeCustomPermissions: true,
       })
     );
@@ -100,12 +106,21 @@ async function updateSchema({ locationName, pluginName, jsonSchema, jsonUI, ctx 
   // ES: Añadimos de nuevo los permisos despues que borraramos los antiguos
   // EN: We add the permissions again after deleting the old ones.
   _.forIn(newProfilePermissions, (permissions, profileId) => {
-    promises.push(ctx.tx.call('users.profiles.addCustomPermissions', { profileId, permissions }));
+    promises.push(
+      ctx.tx.call("users.profiles.addCustomPermissions", {
+        profileId,
+        permissions,
+      })
+    );
   });
 
   _.forIn(newRolesPermissions, (permissions, roleId) => {
     promises.push(
-      ctx.tx.call('users.roles.addPermissionMany', { roleId, permissions, isCustom: true })
+      ctx.tx.call("users.roles.addPermissionMany", {
+        roleId,
+        permissions,
+        isCustom: true,
+      })
     );
   });
 

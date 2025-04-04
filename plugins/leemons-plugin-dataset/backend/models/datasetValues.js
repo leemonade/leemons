@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -47,6 +47,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-const datasetValuesModel = newModel(mongoose.connection, 'v1::dataset_datasetValues', schema);
+const datasetValuesModel = newModel(
+  mongoose.connection,
+  "v1::dataset_datasetValues",
+  schema
+);
 
 module.exports = { datasetValuesModel };

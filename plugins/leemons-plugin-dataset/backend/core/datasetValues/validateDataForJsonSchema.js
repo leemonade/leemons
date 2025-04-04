@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
-const { LeemonsValidator } = require('@leemons/validator');
+const _ = require("lodash");
+const { LeemonsValidator } = require("@leemons/validator");
 
 // TODO ADD CUSTOM VALIDATOR FOR PHONE NUMBERS/ETZ
 
@@ -19,7 +19,7 @@ function validateDataForJsonSchema({ jsonSchema, data, allowedRequiredKeys }) {
   }
 
   const schema = {
-    type: 'object',
+    type: "object",
     additionalProperties: false,
     required,
     properties: {},
@@ -30,22 +30,22 @@ function validateDataForJsonSchema({ jsonSchema, data, allowedRequiredKeys }) {
   });
 
   _.forIn(jsonSchema.properties, (value, key) => {
-    if (value.type === 'array') {
+    if (value.type === "array") {
       schema.properties[key] = {
-        type: 'array',
+        type: "array",
         items: {
-          type: 'object',
+          type: "object",
           additionalProperties: false,
           properties: {
             id: {
-              type: 'string',
+              type: "string",
             },
             searchableValueString: {
-              type: 'string',
+              type: "string",
             },
             value: value.items,
             metadata: {
-              type: 'object',
+              type: "object",
               additionalProperties: true,
             },
           },
@@ -53,14 +53,14 @@ function validateDataForJsonSchema({ jsonSchema, data, allowedRequiredKeys }) {
       };
     } else {
       schema.properties[key] = {
-        type: 'object',
+        type: "object",
         additionalProperties: false,
         properties: {
           id: {
-            type: 'string',
+            type: "string",
           },
           searchableValueString: {
-            type: 'string',
+            type: "string",
           },
           value: {
             ...value,

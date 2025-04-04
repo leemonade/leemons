@@ -1,12 +1,12 @@
-import React, { useContext, useMemo } from 'react';
-import { isFunction } from 'lodash';
-import { Box, Paper, Title } from '@bubbles-ui/components';
-import { useFormWithTheme } from '@common/hooks/useFormWithTheme';
-import { DatasetItemDrawerContext } from '../context/DatasetItemDrawerContext';
-import { transformFormDataToSchemaAndUi } from '../help/transformFormDataToSchemaAndUi';
+import React, { useContext, useMemo } from "react";
+import { isFunction } from "lodash";
+import { Box, Paper, Title } from "@bubbles-ui/components";
+import { useFormWithTheme } from "@common/hooks/useFormWithTheme";
+import { DatasetItemDrawerContext } from "../context/DatasetItemDrawerContext";
+import { transformFormDataToSchemaAndUi } from "../help/transformFormDataToSchemaAndUi";
 
 export const Preview = () => {
-  const pName = '------------';
+  const pName = "------------";
   const {
     contextRef: { selectedLocale, formWithTheme, messages },
     classes,
@@ -16,7 +16,7 @@ export const Preview = () => {
   const state = useMemo(() => {
     const item = transformFormDataToSchemaAndUi(getValues(), selectedLocale);
     const schema = {
-      type: 'object',
+      type: "object",
       properties: {
         [pName]: item.schema,
       },
@@ -43,7 +43,7 @@ export const Preview = () => {
     <>
       <Box
         sx={(theme) => ({
-          textAlign: 'center',
+          textAlign: "center",
           marginBottom: theme.spacing[13],
           marginTop: theme.spacing[5],
         })}
@@ -54,7 +54,7 @@ export const Preview = () => {
       </Box>
       <Box
         sx={(theme) => ({
-          width: '100%',
+          width: "100%",
           padding: theme.spacing[5],
         })}
       >

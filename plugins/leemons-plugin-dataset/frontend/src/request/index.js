@@ -1,11 +1,11 @@
-import fetchDatasetValues from './fetchDatasetValues';
-import getDatasetSchema from './getDatasetSchema';
-import getDatasetSchemaFieldLocale from './getDatasetSchemaFieldLocale';
-import getDatasetSchemaLocale from './getDatasetSchemaLocale';
-import postDatasetValues from './postDatasetValues';
-import removeDatasetField from './removeDatasetField';
-import saveDatasetField from './saveDatasetField';
-import saveDatasetMultipleFields from './saveDatasetMultipleFields';
+import fetchDatasetValues from "./fetchDatasetValues";
+import getDatasetSchema from "./getDatasetSchema";
+import getDatasetSchemaFieldLocale from "./getDatasetSchemaFieldLocale";
+import getDatasetSchemaLocale from "./getDatasetSchemaLocale";
+import postDatasetValues from "./postDatasetValues";
+import removeDatasetField from "./removeDatasetField";
+import saveDatasetField from "./saveDatasetField";
+import saveDatasetMultipleFields from "./saveDatasetMultipleFields";
 
 export const getDatasetSchemaRequest = getDatasetSchema;
 export const saveDatasetFieldRequest = saveDatasetField;

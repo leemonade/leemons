@@ -1,14 +1,20 @@
-import React, { useContext } from 'react';
-import { get } from 'lodash';
-import { Controller } from 'react-hook-form';
-import { Box, Col, Grid, Text, MultiSelect } from '@bubbles-ui/components';
-import { DatasetItemDrawerContext } from '../context/DatasetItemDrawerContext';
+import React, { useContext } from "react";
+import { get } from "lodash";
+import { Controller } from "react-hook-form";
+import { Box, Col, Grid, Text, MultiSelect } from "@bubbles-ui/components";
+import { DatasetItemDrawerContext } from "../context/DatasetItemDrawerContext";
 
-const CONFIG_CENTERS = 'config.centers';
+const CONFIG_CENTERS = "config.centers";
 
 const Centers = () => {
   const {
-    contextRef: { messages, errorMessages, selectOptions, colSpans, gridColumn },
+    contextRef: {
+      messages,
+      errorMessages,
+      selectOptions,
+      colSpans,
+      gridColumn,
+    },
     form: {
       setValue,
       control,
@@ -17,14 +23,14 @@ const Centers = () => {
   } = useContext(DatasetItemDrawerContext);
 
   function onChange(newValue) {
-    const index = newValue.indexOf('*');
+    const index = newValue.indexOf("*");
     if (index > 0) {
-      setValue(CONFIG_CENTERS, ['*']);
-      setValue('config.isAllCenterMode', true);
+      setValue(CONFIG_CENTERS, ["*"]);
+      setValue("config.isAllCenterMode", true);
     } else {
       if (index === 0) newValue.splice(index, 1);
       setValue(CONFIG_CENTERS, newValue);
-      setValue('config.isAllCenterMode', false);
+      setValue("config.isAllCenterMode", false);
     }
   }
 

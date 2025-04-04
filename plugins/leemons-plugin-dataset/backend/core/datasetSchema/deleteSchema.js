@@ -1,21 +1,23 @@
-const _ = require('lodash');
-const { getTranslationKey } = require('@leemons/multilanguage');
+const _ = require("lodash");
+const { getTranslationKey } = require("@leemons/multilanguage");
 const {
   transformPermissionKeysToObjects,
   transformPermissionKeysToObjectsByType,
-} = require('./transformPermissionKeysToObjects');
+} = require("./transformPermissionKeysToObjects");
 const {
   getJsonSchemaProfilePermissionsKeys,
   getJsonSchemaProfilePermissionsKeysByType,
-} = require('./transformJsonOrUiSchema');
+} = require("./transformJsonOrUiSchema");
 const {
   validatePluginName,
   validateNotExistLocation,
   validateNotExistSchema,
-} = require('../../validations/exists');
-const { validateLocationAndPlugin } = require('../../validations/datasetLocation');
+} = require("../../validations/exists");
+const {
+  validateLocationAndPlugin,
+} = require("../../validations/datasetLocation");
 
-const deleteValues = require('../datasetValues/deleteValues');
+const deleteValues = require("../datasetValues/deleteValues");
 
 /** *
  *  ES:
@@ -31,7 +33,12 @@ const deleteValues = require('../datasetValues/deleteValues');
  *  @param {any=} transacting - DB Transaction
  *  @return {Promise<boolean>} Return true if delete is ok
  *  */
-async function deleteSchema({ locationName, pluginName, deleteValues: _deleteValues, ctx }) {
+async function deleteSchema({
+  locationName,
+  pluginName,
+  deleteValues: _deleteValues,
+  ctx,
+}) {
   validateLocationAndPlugin(locationName, pluginName);
   validatePluginName({ pluginName, calledFrom: ctx.callerPlugin, ctx });
   await validateNotExistLocation({ locationName, pluginName, ctx });
@@ -39,7 +46,10 @@ async function deleteSchema({ locationName, pluginName, deleteValues: _deleteVal
 
   // ES: Pillamos los permisos por perfil para el jsonSchema
   // EN: We set the permissions per profile for jsonSchema
-  const { jsonSchema } = await ctx.tx.db.Dataset.findOne({ locationName, pluginName }).lean();
+  const { jsonSchema } = await ctx.tx.db.Dataset.findOne({
+    locationName,
+    pluginName,
+  }).lean();
 
   const { profiles: profilePermissions, roles: rolesPermissions } =
     transformPermissionKeysToObjectsByType({
@@ -67,17 +77,17 @@ async function deleteSchema({ locationName, pluginName, deleteValues: _deleteVal
   // EN: Delete all permissions that were added to the profile for this dataset
   _.forIn(profilePermissions, (permissions, profileId) => {
     promises.push(
-      ctx.tx.call('users.profiles.removeCustomPermissionsByName', {
+      ctx.tx.call("users.profiles.removeCustomPermissionsByName", {
         profileId,
-        permissions: _.map(permissions, 'permissionName'),
+        permissions: _.map(permissions, "permissionName"),
       })
     );
   });
   _.forIn(rolesPermissions, (permissions, roleId) => {
     promises.push(
-      ctx.tx.call('users.roles.removePermissionsByName', {
+      ctx.tx.call("users.roles.removePermissionsByName", {
         roleId,
-        permissionNames: _.map(permissions, 'permissionName'),
+        permissionNames: _.map(permissions, "permissionName"),
         removeCustomPermissions: true,
       })
     );
@@ -86,13 +96,18 @@ async function deleteSchema({ locationName, pluginName, deleteValues: _deleteVal
   // ES: Borramos traducciones
   // EN: We delete translations
   promises.push(
-    ctx.tx.call('multilanguage.contents.deleteAll', {
-      key: getTranslationKey({ locationName, pluginName, key: 'jsonSchema', ctx }),
+    ctx.tx.call("multilanguage.contents.deleteAll", {
+      key: getTranslationKey({
+        locationName,
+        pluginName,
+        key: "jsonSchema",
+        ctx,
+      }),
     })
   );
   promises.push(
-    ctx.tx.call('multilanguage.contents.deleteAll', {
-      key: getTranslationKey({ locationName, pluginName, key: 'jsonUI', ctx }),
+    ctx.tx.call("multilanguage.contents.deleteAll", {
+      key: getTranslationKey({ locationName, pluginName, key: "jsonUI", ctx }),
     })
   );
 

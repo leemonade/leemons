@@ -1,14 +1,14 @@
 const allDatasetKey = [
   {
-    plugin: 'plugin.dataset',
-    scope: 'dataset',
+    plugin: "plugin.dataset",
+    scope: "dataset",
   },
 ];
 
 const getByLocationAndPluginKey = ({ locationName, pluginName, locale }) => [
   {
     ...allDatasetKey[0],
-    action: 'getSchema',
+    action: "getSchema",
     params: {
       locationName,
       pluginName,
@@ -20,7 +20,7 @@ const getByLocationAndPluginKey = ({ locationName, pluginName, locale }) => [
 const getValuesKey = ({ locationName, pluginName, targetId }) => [
   {
     ...allDatasetKey[0],
-    action: 'getValues',
+    action: "getValues",
     params: {
       locationName,
       pluginName,

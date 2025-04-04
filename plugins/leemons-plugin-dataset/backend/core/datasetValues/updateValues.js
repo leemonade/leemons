@@ -1,13 +1,13 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const getSchema = require('../datasetSchema/getSchema');
-const deleteValues = require('./deleteValues');
-const getKeysCanAction = require('./getKeysCanAction');
-const { validateNotExistValues } = require('../../validations/exists');
-const { validatePluginName } = require('../../validations/exists');
-const { getValuesForSave } = require('./getValuesForSave');
-const { validateDataForJsonSchema } = require('./validateDataForJsonSchema');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const getSchema = require("../datasetSchema/getSchema");
+const deleteValues = require("./deleteValues");
+const getKeysCanAction = require("./getKeysCanAction");
+const { validateNotExistValues } = require("../../validations/exists");
+const { validatePluginName } = require("../../validations/exists");
+const { getValuesForSave } = require("./getValuesForSave");
+const { validateDataForJsonSchema } = require("./validateDataForJsonSchema");
 
 /**
  * Updates values for a specified dataset if they exist. This function performs several checks:
@@ -43,22 +43,23 @@ async function updateValues({
   const { jsonSchema } = await getSchema({ locationName, pluginName, ctx });
 
   // EN: We take only the fields to which the user has permission to edit.
-  const [{ goodKeys, optionalKeys }, { goodKeys: viewKeys }] = await Promise.all([
-    getKeysCanAction({
-      locationName,
-      pluginName,
-      userAgent,
-      actions: 'edit',
-      ctx,
-    }),
-    getKeysCanAction({
-      locationName,
-      pluginName,
-      userAgent,
-      actions: 'view',
-      ctx,
-    }),
-  ]);
+  const [{ goodKeys, optionalKeys }, { goodKeys: viewKeys }] =
+    await Promise.all([
+      getKeysCanAction({
+        locationName,
+        pluginName,
+        userAgent,
+        actions: "edit",
+        ctx,
+      }),
+      getKeysCanAction({
+        locationName,
+        pluginName,
+        userAgent,
+        actions: "view",
+        ctx,
+      }),
+    ]);
 
   const formData = {};
 
@@ -72,10 +73,18 @@ async function updateValues({
   });
 
   try {
-    const allowedRequiredKeys = goodKeys.filter((key) => !optionalKeys.includes(key));
-    validateDataForJsonSchema({ jsonSchema, data: formData, allowedRequiredKeys });
+    const allowedRequiredKeys = goodKeys.filter(
+      (key) => !optionalKeys.includes(key)
+    );
+    validateDataForJsonSchema({
+      jsonSchema,
+      data: formData,
+      allowedRequiredKeys,
+    });
   } catch (error) {
-    throw new LeemonsError(ctx, { message: 'Data does not comply with the schema' });
+    throw new LeemonsError(ctx, {
+      message: "Data does not comply with the schema",
+    });
   }
 
   const toSave = [];
@@ -95,9 +104,12 @@ async function updateValues({
     if (_formData[key]) {
       const data = { locationName, pluginName, key };
       if (target) data.target = target;
-      _.forEach(getValuesForSave({ jsonSchema, key, value: _formData[key] }), (val) => {
-        toSave.push({ ...data, ...val });
-      });
+      _.forEach(
+        getValuesForSave({ jsonSchema, key, value: _formData[key] }),
+        (val) => {
+          toSave.push({ ...data, ...val });
+        }
+      );
     }
   });
 

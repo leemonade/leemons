@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
-import { get } from 'lodash';
-import { Controller } from 'react-hook-form';
-import { Box, Col, Grid, Text, NumberInput } from '@bubbles-ui/components';
-import { DatasetItemDrawerContext } from '../../../context/DatasetItemDrawerContext';
+import React, { useContext } from "react";
+import { get } from "lodash";
+import { Controller } from "react-hook-form";
+import { Box, Col, Grid, Text, NumberInput } from "@bubbles-ui/components";
+import { DatasetItemDrawerContext } from "../../../context/DatasetItemDrawerContext";
 
 const MinMax = ({ label, minLabel, maxLabel, min, max, children }) => {
   const {
@@ -35,7 +35,9 @@ const MinMax = ({ label, minLabel, maxLabel, min, max, children }) => {
                   <Controller
                     name={min}
                     control={control}
-                    render={({ field }) => <NumberInput error={get(errors, min)} {...field} />}
+                    render={({ field }) => (
+                      <NumberInput error={get(errors, min)} {...field} />
+                    )}
                   />
                 </Col>
               </Grid>
@@ -51,7 +53,9 @@ const MinMax = ({ label, minLabel, maxLabel, min, max, children }) => {
                   <Controller
                     name={max}
                     control={control}
-                    render={({ field }) => <NumberInput error={get(errors, max)} {...field} />}
+                    render={({ field }) => (
+                      <NumberInput error={get(errors, max)} {...field} />
+                    )}
                   />
                 </Col>
               </Grid>

@@ -1,13 +1,19 @@
-import React, { useContext } from 'react';
-import { get } from 'lodash';
-import { Controller } from 'react-hook-form';
-import { Box, Col, Grid, Text, TextInput } from '@bubbles-ui/components';
-import { DatasetItemDrawerContext } from '../../context/DatasetItemDrawerContext';
-import { FieldConfigLocaleContext } from './context/FieldConfigLocale';
+import React, { useContext } from "react";
+import { get } from "lodash";
+import { Controller } from "react-hook-form";
+import { Box, Col, Grid, Text, TextInput } from "@bubbles-ui/components";
+import { DatasetItemDrawerContext } from "../../context/DatasetItemDrawerContext";
+import { FieldConfigLocaleContext } from "./context/FieldConfigLocale";
 
 const Boolean = () => {
   const {
-    contextRef: { messages, errorMessages, selectOptions, gridColumn, colSpans },
+    contextRef: {
+      messages,
+      errorMessages,
+      selectOptions,
+      gridColumn,
+      colSpans,
+    },
     form: {
       control,
       watch,
@@ -19,11 +25,11 @@ const Boolean = () => {
     currentLocale: { code },
   } = useContext(FieldConfigLocaleContext);
 
-  const uiType = watch('config.uiType');
+  const uiType = watch("config.uiType");
 
   let item = null;
 
-  if (uiType !== 'radio') {
+  if (uiType !== "radio") {
     item = (
       <Grid columns={gridColumn} align="center">
         <Col span={colSpans[0]}>
@@ -31,7 +37,9 @@ const Boolean = () => {
             {messages.localeBooleanOptionLabel}
           </Text>
           <br />
-          <Text role="productive">{messages.localeBooleanOptionDescription}</Text>
+          <Text role="productive">
+            {messages.localeBooleanOptionDescription}
+          </Text>
         </Col>
 
         <Col span={colSpans[1] + colSpans[2]}>
@@ -39,7 +47,10 @@ const Boolean = () => {
             name={`locales.${code}.schema.optionLabel`}
             control={control}
             render={({ field }) => (
-              <TextInput error={get(errors, `locales.${code}.schema.optionLabel`)} {...field} />
+              <TextInput
+                error={get(errors, `locales.${code}.schema.optionLabel`)}
+                {...field}
+              />
             )}
           />
         </Col>

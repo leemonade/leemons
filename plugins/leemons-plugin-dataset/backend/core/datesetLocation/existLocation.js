@@ -1,4 +1,6 @@
-const { validateLocationAndPlugin } = require('../../validations/datasetLocation');
+const {
+  validateLocationAndPlugin,
+} = require("../../validations/datasetLocation");
 
 /**
  * ES:
@@ -18,7 +20,10 @@ const { validateLocationAndPlugin } = require('../../validations/datasetLocation
  * */
 async function existLocation({ locationName, pluginName, ctx }) {
   validateLocationAndPlugin(locationName, pluginName);
-  const result = await ctx.tx.db.Dataset.countDocuments({ locationName, pluginName });
+  const result = await ctx.tx.db.Dataset.countDocuments({
+    locationName,
+    pluginName,
+  });
   return !!result;
 }
 

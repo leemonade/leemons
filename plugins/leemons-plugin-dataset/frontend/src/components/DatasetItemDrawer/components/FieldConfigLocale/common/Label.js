@@ -1,9 +1,9 @@
-import React, { useContext } from 'react';
-import { get } from 'lodash';
-import { Controller } from 'react-hook-form';
-import { Box, Col, Grid, Text, TextInput } from '@bubbles-ui/components';
-import { DatasetItemDrawerContext } from '../../../context/DatasetItemDrawerContext';
-import { FieldConfigLocaleContext } from '../context/FieldConfigLocale';
+import React, { useContext } from "react";
+import { get } from "lodash";
+import { Controller } from "react-hook-form";
+import { Box, Col, Grid, Text, TextInput } from "@bubbles-ui/components";
+import { DatasetItemDrawerContext } from "../../../context/DatasetItemDrawerContext";
+import { FieldConfigLocaleContext } from "../context/FieldConfigLocale";
 
 const Label = () => {
   const {

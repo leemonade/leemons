@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const getSchema = require('../datasetSchema/getSchema');
+const _ = require("lodash");
+const getSchema = require("../datasetSchema/getSchema");
 
 /** *
  *  ES:
@@ -19,15 +19,23 @@ const getSchema = require('../datasetSchema/getSchema');
  *  @return {any} Keys with permits
  *  */
 
-async function getKeysCanAction({ locationName, pluginName, userAgent, actions: _actions, ctx }) {
+async function getKeysCanAction({
+  locationName,
+  pluginName,
+  userAgent,
+  actions: _actions,
+  ctx,
+}) {
   const actions = _.isArray(_actions) ? _actions : [_actions];
   const promises = [getSchema({ locationName, pluginName, ctx })];
   const currentRoles = _.flatten([userAgent])?.map((ua) => ua.role);
 
   if (userAgent) {
-    const permissionNameTemplate = _.escapeRegExp(ctx.prefixPN(`${locationName}.${pluginName}`));
+    const permissionNameTemplate = _.escapeRegExp(
+      ctx.prefixPN(`${locationName}.${pluginName}`)
+    );
     promises.push(
-      ctx.tx.call('users.permissions.getUserAgentPermissions', {
+      ctx.tx.call("users.permissions.getUserAgentPermissions", {
         userAgent,
         query: {
           permissionName: {
@@ -46,7 +54,7 @@ async function getKeysCanAction({ locationName, pluginName, userAgent, actions: 
   if (userPermissions) {
     _.forEach(userPermissions, ({ permissionName, actionNames }) => {
       if (actionNames.some((r) => actions.indexOf(r) >= 0)) {
-        goodKeys.push(_.last(_.split(permissionName, '.')));
+        goodKeys.push(_.last(_.split(permissionName, ".")));
       }
     });
   }
@@ -54,10 +62,12 @@ async function getKeysCanAction({ locationName, pluginName, userAgent, actions: 
   _.forIn(jsonSchema.properties, (value, key) => {
     const { permissions, frontConfig = {} } = value;
 
-    if (actions.includes('edit')) {
+    if (actions.includes("edit")) {
       const { permissions: config = [] } = frontConfig;
       const additionalRoles = config.filter((permission) => {
-        const additionalRole = permission.roles.some((role) => !currentRoles.includes(role.id));
+        const additionalRole = permission.roles.some(
+          (role) => !currentRoles.includes(role.id)
+        );
         return permission.edit && additionalRole;
       });
 
@@ -66,7 +76,7 @@ async function getKeysCanAction({ locationName, pluginName, userAgent, actions: 
       }
     }
 
-    if (permissions?.['*']?.some((r) => actions.indexOf(r) >= 0)) {
+    if (permissions?.["*"]?.some((r) => actions.indexOf(r) >= 0)) {
       goodKeys.push(key);
     }
   });

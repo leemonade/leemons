@@ -1,6 +1,6 @@
-import React, { useContext, useEffect } from 'react';
-import { forEach, get, isArray, isEqual } from 'lodash';
-import { Controller } from 'react-hook-form';
+import React, { useContext, useEffect } from "react";
+import { forEach, get, isArray, isEqual } from "lodash";
+import { Controller } from "react-hook-form";
 import {
   Box,
   Col,
@@ -13,9 +13,9 @@ import {
   IconError,
   IconSuccess,
   IconWarning,
-} from '@bubbles-ui/components';
-import { DatasetItemDrawerContext } from '../../../context/DatasetItemDrawerContext';
-import { FieldConfigLocaleContext } from '../context/FieldConfigLocale';
+} from "@bubbles-ui/components";
+import { DatasetItemDrawerContext } from "../../../context/DatasetItemDrawerContext";
+import { FieldConfigLocaleContext } from "../context/FieldConfigLocale";
 
 const TranslateOptions = () => {
   const {
@@ -42,7 +42,7 @@ const TranslateOptions = () => {
   const hasErrors = !!get(errors, labelsKey);
   const hasWarnings = currentLocaleIsDefaultLocale;
 
-  const checkboxValues = watch('config.checkboxValues');
+  const checkboxValues = watch("config.checkboxValues");
 
   const opened = translateOptionsModalOpened[code];
 
@@ -57,13 +57,16 @@ const TranslateOptions = () => {
       const checkLabels = {};
       forEach(checkboxValues, ({ key }) => {
         if (!checkboxLabels || !checkboxLabels[key]) {
-          checkLabels[key] = { key, label: '' };
+          checkLabels[key] = { key, label: "" };
         } else {
           checkLabels[key] = checkboxLabels[key];
         }
       });
       if (!isEqual(checkLabels, checkboxLabels)) {
-        setValue(`locales.${code}.schema.frontConfig.checkboxLabels`, checkLabels);
+        setValue(
+          `locales.${code}.schema.frontConfig.checkboxLabels`,
+          checkLabels
+        );
       }
     }
   }, [JSON.stringify(checkboxValues)]);
@@ -90,17 +93,27 @@ const TranslateOptions = () => {
       <Drawer opened={opened} onClose={() => setOpened(false)} size="lg">
         <Drawer.Header title={messages.translateOptionsModalTitle} />
         <Drawer.Content>
-          <Box sx={(theme) => ({ marginTop: theme.spacing[4], marginBottom: theme.spacing[4] })}>
+          <Box
+            sx={(theme) => ({
+              marginTop: theme.spacing[4],
+              marginBottom: theme.spacing[4],
+            })}
+          >
             <Text>{messages.translateOptionsModalDescription}</Text>
           </Box>
           <Box sx={(theme) => ({ marginBottom: theme.spacing[4] })}>
             <Grid columns={100}>
               <Col span={35}>
-                <Text color="primary">{messages.translateOptionsValueColLabel}</Text>
+                <Text color="primary">
+                  {messages.translateOptionsValueColLabel}
+                </Text>
               </Col>
               <Col span={65}>
                 <Text color="primary">
-                  {messages.translateOptionsTranslationColLabel.replace('{code}', label)}
+                  {messages.translateOptionsTranslationColLabel.replace(
+                    "{code}",
+                    label
+                  )}
                 </Text>
               </Col>
             </Grid>

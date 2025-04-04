@@ -1,11 +1,13 @@
-const { getTranslationKey } = require('@leemons/multilanguage');
+const { getTranslationKey } = require("@leemons/multilanguage");
 const {
   validateExistSchemaLocale,
   validateNotExistSchema,
   validateNotExistLocation,
   validatePluginName,
-} = require('../../validations/exists');
-const { validateAddSchemaLocale } = require('../../validations/datasetSchemaLocale');
+} = require("../../validations/exists");
+const {
+  validateAddSchemaLocale,
+} = require("../../validations/datasetSchemaLocale");
 
 /** *
  *  ES:
@@ -20,21 +22,39 @@ const { validateAddSchemaLocale } = require('../../validations/datasetSchemaLoca
  *  @param {any=} transacting - DB Transaction
  *  @return {Promise<{schemaData, uiData}>} The json data passed
  *  */
-async function addSchemaLocale({ locationName, pluginName, schemaData, uiData, locale, ctx }) {
-  validateAddSchemaLocale({ locationName, pluginName, schemaData, uiData, locale });
+async function addSchemaLocale({
+  locationName,
+  pluginName,
+  schemaData,
+  uiData,
+  locale,
+  ctx,
+}) {
+  validateAddSchemaLocale({
+    locationName,
+    pluginName,
+    schemaData,
+    uiData,
+    locale,
+  });
   validatePluginName({ pluginName, calledFrom: ctx.callerPlugin, ctx });
   await validateNotExistLocation({ locationName, pluginName, ctx });
   await validateNotExistSchema({ locationName, pluginName, ctx });
   await validateExistSchemaLocale({ locationName, pluginName, locale, ctx });
 
   await Promise.all([
-    ctx.tx.call('multilanguage.contents.add', {
-      key: getTranslationKey({ locationName, pluginName, key: 'jsonSchema', ctx }),
+    ctx.tx.call("multilanguage.contents.add", {
+      key: getTranslationKey({
+        locationName,
+        pluginName,
+        key: "jsonSchema",
+        ctx,
+      }),
       locale,
       value: JSON.stringify(schemaData),
     }),
-    ctx.tx.call('multilanguage.contents.add', {
-      key: getTranslationKey({ locationName, pluginName, key: 'jsonUI', ctx }),
+    ctx.tx.call("multilanguage.contents.add", {
+      key: getTranslationKey({ locationName, pluginName, key: "jsonUI", ctx }),
       locale,
       value: JSON.stringify(uiData),
     }),

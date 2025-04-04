@@ -1,8 +1,15 @@
-const addValues = require('./addValues');
-const existValues = require('./existValues');
-const updateValues = require('./updateValues');
+const addValues = require("./addValues");
+const existValues = require("./existValues");
+const updateValues = require("./updateValues");
 
-async function setValues({ locationName, pluginName, values, userAgent, target, ctx }) {
+async function setValues({
+  locationName,
+  pluginName,
+  values,
+  userAgent,
+  target,
+  ctx,
+}) {
   if (!values) {
     return {};
   }

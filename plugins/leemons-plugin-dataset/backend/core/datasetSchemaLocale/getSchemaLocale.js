@@ -1,12 +1,14 @@
-const { getTranslationKey } = require('@leemons/multilanguage');
+const { getTranslationKey } = require("@leemons/multilanguage");
 
-const { validateLocationAndPluginAndLocale } = require('../../validations/datasetLocation');
+const {
+  validateLocationAndPluginAndLocale,
+} = require("../../validations/datasetLocation");
 const {
   validateNotExistSchemaLocale,
   validateNotExistSchema,
   validateNotExistLocation,
   validatePluginName,
-} = require('../../validations/exists');
+} = require("../../validations/exists");
 
 /** *
  *  ES:
@@ -32,12 +34,17 @@ async function getSchemaLocale({ locationName, pluginName, locale, ctx }) {
   await validateNotExistSchemaLocale({ locationName, pluginName, locale, ctx });
 
   const [schemaData, uiData] = await Promise.all([
-    ctx.tx.call('multilanguage.contents.getValue', {
-      key: getTranslationKey({ locationName, pluginName, key: 'jsonSchema', ctx }),
+    ctx.tx.call("multilanguage.contents.getValue", {
+      key: getTranslationKey({
+        locationName,
+        pluginName,
+        key: "jsonSchema",
+        ctx,
+      }),
       locale,
     }),
-    ctx.tx.call('multilanguage.contents.getValue', {
-      key: getTranslationKey({ locationName, pluginName, key: 'jsonUI', ctx }),
+    ctx.tx.call("multilanguage.contents.getValue", {
+      key: getTranslationKey({ locationName, pluginName, key: "jsonUI", ctx }),
       locale,
     }),
   ]);

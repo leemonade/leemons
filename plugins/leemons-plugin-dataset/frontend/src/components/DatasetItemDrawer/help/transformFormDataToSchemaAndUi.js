@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-import { cloneDeep, forEach, merge } from 'lodash';
-import { DATASET_DATA_TYPES } from '../DatasetItemDrawer.constants';
+import { cloneDeep, forEach, merge } from "lodash";
+import { DATASET_DATA_TYPES } from "../DatasetItemDrawer.constants";
 
 const handleTextLength = ({ frontConfig, schema }) => {
   if (frontConfig.minLength) {
@@ -14,46 +14,46 @@ const handleTextLength = ({ frontConfig, schema }) => {
 };
 
 const handleTextField = ({ frontConfig, schema, ui }) => {
-  schema.type = 'string';
+  schema.type = "string";
 
   if (frontConfig.masked) {
-    ui['ui:widget'] = 'password';
+    ui["ui:widget"] = "password";
   }
 
   if (frontConfig.onlyNumbers) {
-    schema.format = 'numbers';
+    schema.format = "numbers";
   }
 
   handleTextLength({ frontConfig, schema });
 };
 
 const handleRichTextField = ({ frontConfig, schema, ui }) => {
-  schema.type = 'string';
-  ui['ui:widget'] = 'textarea';
+  schema.type = "string";
+  ui["ui:widget"] = "textarea";
 
   handleTextLength({ frontConfig, schema });
 };
 
 const handleNumberField = ({ schema }) => {
-  schema.type = 'number';
+  schema.type = "number";
 };
 
 const handleBooleanField = ({ frontConfig, schema, ui }) => {
-  schema.type = 'boolean';
-  if (frontConfig.initialStatus === 'yes') schema.default = true;
-  if (frontConfig.initialStatus === 'no') schema.default = false;
-  if (frontConfig.uiType === 'radio') {
-    ui['ui:widget'] = 'radio';
+  schema.type = "boolean";
+  if (frontConfig.initialStatus === "yes") schema.default = true;
+  if (frontConfig.initialStatus === "no") schema.default = false;
+  if (frontConfig.uiType === "radio") {
+    ui["ui:widget"] = "radio";
     schema.enumNames = [frontConfig.yesOptionLabel, frontConfig.noOptionLabel];
   }
-  if (frontConfig.uiType === 'switcher') {
-    ui['ui:widget'] = 'toggle';
+  if (frontConfig.uiType === "switcher") {
+    ui["ui:widget"] = "toggle";
   }
 };
 
 const handleDateField = ({ frontConfig, schema }) => {
-  schema.type = 'string';
-  schema.format = 'date';
+  schema.type = "string";
+  schema.format = "date";
   if (frontConfig.minDate) {
     schema.minDate = new Date(frontConfig.minDate);
     schema.frontConfig.minDate = new Date(frontConfig.minDate);
@@ -65,7 +65,7 @@ const handleDateField = ({ frontConfig, schema }) => {
 };
 
 const handleMultioptionField = ({ frontConfig, schema, ui }) => {
-  if (frontConfig.uiType !== 'radio') {
+  if (frontConfig.uiType !== "radio") {
     if (frontConfig.minItems) {
       schema.minItems = parseInt(frontConfig.minItems);
       schema.frontConfig.minItems = parseInt(frontConfig.minItems);
@@ -74,41 +74,41 @@ const handleMultioptionField = ({ frontConfig, schema, ui }) => {
       schema.maxItems = parseInt(frontConfig.maxItems);
       schema.frontConfig.maxItems = parseInt(frontConfig.maxItems);
     }
-    if (frontConfig.uiType === 'checkboxs') ui['ui:widget'] = 'checkboxes';
+    if (frontConfig.uiType === "checkboxs") ui["ui:widget"] = "checkboxes";
   } else {
-    ui['ui:widget'] = 'radio';
+    ui["ui:widget"] = "radio";
   }
 };
 
 const handlePhoneField = ({ schema }) => {
-  schema.type = 'string';
-  schema.format = 'phone';
+  schema.type = "string";
+  schema.format = "phone";
 };
 
 const handleEmailField = ({ schema }) => {
-  schema.type = 'string';
-  schema.format = 'email';
+  schema.type = "string";
+  schema.format = "email";
 };
 
 const handleUrlField = ({ schema }) => {
-  schema.type = 'string';
-  schema.format = 'uri';
+  schema.type = "string";
+  schema.format = "uri";
 };
 
 const handleUserField = ({ schema }) => {
-  schema.type = 'string';
+  schema.type = "string";
 };
 
 const handleFileField = ({ schema }) => {
-  schema.type = 'string';
-  schema.format = 'data-url';
+  schema.type = "string";
+  schema.format = "data-url";
 };
 
 const updateMultioptionField = ({ schema, frontConfig, localeSchema }) => {
-  schema.type = 'array';
+  schema.type = "array";
   schema.uniqueItems = true;
   schema.items = {
-    type: 'string',
+    type: "string",
     enum: [],
     enumNames: [],
   };
@@ -119,11 +119,13 @@ const updateMultioptionField = ({ schema, frontConfig, localeSchema }) => {
     const checkLocalesByKey = localeSchema.frontConfig.checkboxLabels;
     forEach(schema.frontConfig.checkboxValues, ({ key, value }) => {
       schema.items.enum.push(value);
-      schema.items.enumNames.push(checkLocalesByKey[key] ? checkLocalesByKey[key].label : ' ');
+      schema.items.enumNames.push(
+        checkLocalesByKey[key] ? checkLocalesByKey[key].label : " "
+      );
     });
   }
-  if (frontConfig.uiType === 'radio') {
-    schema.type = 'string';
+  if (frontConfig.uiType === "radio") {
+    schema.type = "string";
     schema.enum = schema.items.enum;
     schema.enumNames = schema.items.enumNames;
     delete schema.items;
@@ -131,21 +133,26 @@ const updateMultioptionField = ({ schema, frontConfig, localeSchema }) => {
 };
 
 const updateSelectField = ({ schema, localeSchema }) => {
-  schema.type = 'string';
+  schema.type = "string";
   schema.enum = [];
   schema.enumNames = [];
   if (localeSchema?.frontConfig) {
     const checkLocalesByKey = localeSchema.frontConfig.checkboxLabels;
     forEach(schema.frontConfig.checkboxValues, ({ key, value }) => {
       schema.enum.push(value);
-      schema.enumNames.push(checkLocalesByKey[key] ? checkLocalesByKey[key].label : ' ');
+      schema.enumNames.push(
+        checkLocalesByKey[key] ? checkLocalesByKey[key].label : " "
+      );
     });
   }
 };
 
 const updateBooleanField = ({ schema, frontConfig, localeSchema }) => {
-  if (localeSchema && frontConfig.uiType === 'radio') {
-    schema.enumNames = [localeSchema.yesOptionLabel, localeSchema.noOptionLabel];
+  if (localeSchema && frontConfig.uiType === "radio") {
+    schema.enumNames = [
+      localeSchema.yesOptionLabel,
+      localeSchema.noOptionLabel,
+    ];
   }
 };
 

@@ -1,9 +1,9 @@
-import React, { useContext, useEffect } from 'react';
-import { Box, Divider } from '@bubbles-ui/components';
-import { DatasetItemDrawerContext } from '../../context/DatasetItemDrawerContext';
-import { Options } from './common/Options';
-import { ShowAs } from './common/ShowAs';
-import { MinMax } from './common/MinMax';
+import React, { useContext, useEffect } from "react";
+import { Box, Divider } from "@bubbles-ui/components";
+import { DatasetItemDrawerContext } from "../../context/DatasetItemDrawerContext";
+import { Options } from "./common/Options";
+import { ShowAs } from "./common/ShowAs";
+import { MinMax } from "./common/MinMax";
 
 const MultioptionField = () => {
   const {
@@ -11,13 +11,13 @@ const MultioptionField = () => {
     form: { watch, unregister },
   } = useContext(DatasetItemDrawerContext);
 
-  const uiType = watch('config.uiType');
+  const uiType = watch("config.uiType");
 
   useEffect(() => {
     const subscription = watch(({ config: { uiType } }, { name }) => {
-      if (name === 'config.uiType' && uiType === 'radio') {
-        unregister('config.minItems');
-        unregister('config.maxItems');
+      if (name === "config.uiType" && uiType === "radio") {
+        unregister("config.minItems");
+        unregister("config.maxItems");
       }
     });
     return () => subscription.unsubscribe();
@@ -31,7 +31,7 @@ const MultioptionField = () => {
         data={selectOptions.fieldMultioptionShowAs}
         placeholder={messages.fieldMultioptionShowAsPlaceholder}
       />
-      {uiType && uiType !== 'radio' ? (
+      {uiType && uiType !== "radio" ? (
         <MinMax
           label={messages.fieldMultioptionLimitsLabel}
           minLabel={messages.fieldMultioptionLimitsMinLabel}

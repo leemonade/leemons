@@ -1,5 +1,7 @@
-const { getTranslationKey } = require('@leemons/multilanguage');
-const { validateExistSchemaLocaleData } = require('../../validations/datasetSchemaLocale');
+const { getTranslationKey } = require("@leemons/multilanguage");
+const {
+  validateExistSchemaLocaleData,
+} = require("../../validations/datasetSchemaLocale");
 
 /**
  * ES:
@@ -19,9 +21,15 @@ const { validateExistSchemaLocaleData } = require('../../validations/datasetSche
  * existLocation('users-dataset', 'users');
  * @return {Promise<boolean>}
  * */
-async function _existSchemaLocale({ locationName, pluginName, key, locale, ctx }) {
+async function _existSchemaLocale({
+  locationName,
+  pluginName,
+  key,
+  locale,
+  ctx,
+}) {
   validateExistSchemaLocaleData({ locationName, pluginName, key, locale });
-  return ctx.tx.call('multilanguage.contents.has', {
+  return ctx.tx.call("multilanguage.contents.has", {
     key: getTranslationKey({ locationName, pluginName, key, ctx }),
     locale,
   });
@@ -29,8 +37,20 @@ async function _existSchemaLocale({ locationName, pluginName, key, locale, ctx }
 
 async function existSchemaLocale({ locationName, pluginName, locale, ctx }) {
   const responses = await Promise.all([
-    _existSchemaLocale({ locationName, pluginName, key: 'jsonSchema', locale, ctx }),
-    _existSchemaLocale({ locationName, pluginName, key: 'jsonUI', locale, ctx }),
+    _existSchemaLocale({
+      locationName,
+      pluginName,
+      key: "jsonSchema",
+      locale,
+      ctx,
+    }),
+    _existSchemaLocale({
+      locationName,
+      pluginName,
+      key: "jsonUI",
+      locale,
+      ctx,
+    }),
   ]);
   return responses[0] && responses[1];
 }

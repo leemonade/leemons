@@ -1,19 +1,26 @@
-import React, { useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { Box, Stack, Button, Divider, BaseDrawer, LoadingOverlay } from '@bubbles-ui/components';
-import { Name } from './components/Name';
-import { Preview } from './components/Preview';
-import { Centers } from './components/Centers';
-import { FieldType } from './components/FieldType';
-import { Permissions } from './components/Permissions';
-import { FieldConfig } from './components/FieldConfig';
-import { FieldConfigLocale } from './components/FieldConfigLocale';
-import { DatasetItemDrawerContext } from './context/DatasetItemDrawerContext';
-import { DatasetItemDrawerStyles } from './DatasetItemDrawer.styles';
+import React, { useRef, useState } from "react";
+import { useForm } from "react-hook-form";
+import {
+  Box,
+  Stack,
+  Button,
+  Divider,
+  BaseDrawer,
+  LoadingOverlay,
+} from "@bubbles-ui/components";
+import { Name } from "./components/Name";
+import { Preview } from "./components/Preview";
+import { Centers } from "./components/Centers";
+import { FieldType } from "./components/FieldType";
+import { Permissions } from "./components/Permissions";
+import { FieldConfig } from "./components/FieldConfig";
+import { FieldConfigLocale } from "./components/FieldConfigLocale";
+import { DatasetItemDrawerContext } from "./context/DatasetItemDrawerContext";
+import { DatasetItemDrawerStyles } from "./DatasetItemDrawer.styles";
 import {
   DATASET_ITEM_DRAWER_DEFAULT_PROPS,
   DATASET_ITEM_DRAWER_PROP_TYPES,
-} from './DatasetItemDrawer.constants';
+} from "./DatasetItemDrawer.constants";
 
 const DatasetItemDrawer = ({
   loading,
@@ -69,7 +76,15 @@ const DatasetItemDrawer = ({
       contextRef.current.selectedLocale = defaultLocale;
     }
     render();
-  }, [messages, errorMessages, selectOptions, locales, defaultLocale, profiles, formWithTheme]);
+  }, [
+    messages,
+    errorMessages,
+    selectOptions,
+    locales,
+    defaultLocale,
+    profiles,
+    formWithTheme,
+  ]);
 
   const contextValue = React.useMemo(
     () => ({
@@ -84,7 +99,13 @@ const DatasetItemDrawer = ({
 
   return (
     <DatasetItemDrawerContext.Provider value={contextValue}>
-      <BaseDrawer position={position} opened={opened} size={size} onClose={onClose} empty>
+      <BaseDrawer
+        position={position}
+        opened={opened}
+        size={size}
+        onClose={onClose}
+        empty
+      >
         {loading ? (
           <LoadingOverlay visible />
         ) : (

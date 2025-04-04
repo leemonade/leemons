@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
-import { get } from 'lodash';
-import { Controller } from 'react-hook-form';
-import { Col, Grid, Text, Select } from '@bubbles-ui/components';
-import { DatasetItemDrawerContext } from '../../../context/DatasetItemDrawerContext';
+import React, { useContext } from "react";
+import { get } from "lodash";
+import { Controller } from "react-hook-form";
+import { Col, Grid, Text, Select } from "@bubbles-ui/components";
+import { DatasetItemDrawerContext } from "../../../context/DatasetItemDrawerContext";
 
 const ShowAs = ({ label, required, data, placeholder }) => {
   const {
@@ -32,7 +32,7 @@ const ShowAs = ({ label, required, data, placeholder }) => {
             <Select
               {...field}
               required
-              error={get(errors, 'config.uiType')}
+              error={get(errors, "config.uiType")}
               data={data}
               placeholder={placeholder}
             />

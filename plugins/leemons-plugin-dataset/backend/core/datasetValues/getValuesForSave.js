@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 function getValuesForSave({ jsonSchema, key, value }) {
   if (!value)
@@ -14,9 +14,9 @@ function getValuesForSave({ jsonSchema, key, value }) {
   const config = jsonSchema.properties[key];
   if (config?.frontConfig) {
     if (
-      (config.frontConfig.type === 'multioption' ||
-        config.frontConfig.type === 'list' ||
-        config.frontConfig.type === 'group') &&
+      (config.frontConfig.type === "multioption" ||
+        config.frontConfig.type === "list" ||
+        config.frontConfig.type === "group") &&
       _.isArray(value)
     ) {
       return _.map(value, (val, index) => ({
@@ -28,7 +28,10 @@ function getValuesForSave({ jsonSchema, key, value }) {
           : JSON.stringify({ path: `[${index}]` }),
       }));
     }
-    if (config.frontConfig.type === 'text_field' && config.frontConfig.onlyNumbers) {
+    if (
+      config.frontConfig.type === "text_field" &&
+      config.frontConfig.onlyNumbers
+    ) {
       return [
         {
           id: value?.id || undefined,

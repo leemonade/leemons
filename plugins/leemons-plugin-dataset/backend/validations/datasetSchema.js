@@ -1,15 +1,15 @@
-const { LeemonsValidator } = require('@leemons/validator');
-const { ajvSchema, stringSchema } = require('./types');
+const { LeemonsValidator } = require("@leemons/validator");
+const { ajvSchema, stringSchema } = require("./types");
 
 const addSchemaSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     jsonUI: ajvSchema,
     jsonSchema: ajvSchema,
     locationName: stringSchema,
     pluginName: stringSchema,
   },
-  required: ['jsonUI', 'jsonSchema', 'locationName', 'pluginName'],
+  required: ["jsonUI", "jsonSchema", "locationName", "pluginName"],
 };
 
 function validateAddSchema(data) {

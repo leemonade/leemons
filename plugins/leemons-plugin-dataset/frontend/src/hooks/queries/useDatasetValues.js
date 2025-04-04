@@ -1,8 +1,8 @@
-import { useVariantForQueryKey } from '@common/queries';
-import { useQuery } from '@tanstack/react-query';
+import { useVariantForQueryKey } from "@common/queries";
+import { useQuery } from "@tanstack/react-query";
 
-import { fetchDatasetValuesRequest } from '../../request';
-import { getValuesKey } from '../keys/datasetKeys';
+import { fetchDatasetValuesRequest } from "../../request";
+import { getValuesKey } from "../keys/datasetKeys";
 
 function useDatasetValues({ locationName, pluginName, targetId, options }) {
   const queryKey = getValuesKey({ locationName, pluginName, targetId });
@@ -18,7 +18,7 @@ function useDatasetValues({ locationName, pluginName, targetId, options }) {
   };
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'frequently',
+    modificationTrend: "frequently",
   });
 
   return useQuery({

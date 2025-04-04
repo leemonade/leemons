@@ -1,18 +1,22 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
-const existSchema = require('../core/datasetSchema/existSchema');
-const existSchemaLocale = require('../core/datasetSchemaLocale/existSchemaLocale');
-const existValues = require('../core/datasetValues/existValues');
-const existLocation = require('../core/datesetLocation/existLocation');
+const existSchema = require("../core/datasetSchema/existSchema");
+const existSchemaLocale = require("../core/datasetSchemaLocale/existSchemaLocale");
+const existValues = require("../core/datasetValues/existValues");
+const existLocation = require("../core/datesetLocation/existLocation");
 
 async function validateExistLocation({ locationName, pluginName, ctx }) {
   if (await existLocation({ locationName, pluginName, ctx }))
-    throw new LeemonsError(ctx, { message: `The '${locationName}' location already exist` });
+    throw new LeemonsError(ctx, {
+      message: `The '${locationName}' location already exist`,
+    });
 }
 
 async function validateNotExistLocation({ locationName, pluginName, ctx }) {
   if (!(await existLocation({ locationName, pluginName, ctx })))
-    throw new LeemonsError(ctx, { message: `The '${locationName}' location not exist` });
+    throw new LeemonsError(ctx, {
+      message: `The '${locationName}' location not exist`,
+    });
 }
 async function validateExistSchema({ locationName, pluginName, ctx }) {
   if (await existSchema({ locationName, pluginName, ctx }))
@@ -30,14 +34,24 @@ async function validateNotExistSchema({ locationName, pluginName, ctx }) {
     });
 }
 
-async function validateExistSchemaLocale({ locationName, pluginName, locale, ctx }) {
+async function validateExistSchemaLocale({
+  locationName,
+  pluginName,
+  locale,
+  ctx,
+}) {
   if (await existSchemaLocale({ locationName, pluginName, locale, ctx }))
     throw new LeemonsError(ctx, {
       message: `"${locale}" language data for "${locationName}" localization already exists.`,
     });
 }
 
-async function validateNotExistSchemaLocale({ locationName, pluginName, locale, ctx }) {
+async function validateNotExistSchemaLocale({
+  locationName,
+  pluginName,
+  locale,
+  ctx,
+}) {
   if (!(await existSchemaLocale({ locationName, pluginName, locale, ctx })))
     throw new LeemonsError(ctx, {
       message: `"${locale}" language data for "${locationName}" localization not exists.`,
@@ -58,23 +72,32 @@ async function validateExistValues({ locationName, pluginName, target, ctx }) {
   }
 }
 
-async function validateNotExistValues({ locationName, pluginName, target, ctx }) {
+async function validateNotExistValues({
+  locationName,
+  pluginName,
+  target,
+  ctx,
+}) {
   if (!(await existValues({ locationName, pluginName, target, ctx }))) {
     if (target)
       throw new LeemonsError(ctx, {
         message: `Values not exist for the dataset ${locationName} and the target ${target}`,
       });
-    throw new LeemonsError(ctx, { message: `Values not exist for the dataset ${locationName}` });
+    throw new LeemonsError(ctx, {
+      message: `Values not exist for the dataset ${locationName}`,
+    });
   }
 }
 
 function validatePluginName({ pluginName, calledFrom, ctx }) {
-  if (['users', 'sessions'].includes(calledFrom)) {
+  if (["users", "sessions"].includes(calledFrom)) {
     return;
   }
 
   if (pluginName !== calledFrom)
-    throw new LeemonsError(ctx, { message: `The plugin name must be ${calledFrom}` });
+    throw new LeemonsError(ctx, {
+      message: `The plugin name must be ${calledFrom}`,
+    });
 }
 
 module.exports = {

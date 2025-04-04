@@ -1,13 +1,19 @@
-import React, { useContext, useMemo } from 'react';
-import { cloneDeep, findIndex, get } from 'lodash';
-import { Controller } from 'react-hook-form';
-import { Box, Col, Grid, Text, Select } from '@bubbles-ui/components';
-import { DatasetItemDrawerContext } from '../../context/DatasetItemDrawerContext';
-import { ShowAs } from './common/ShowAs';
+import React, { useContext, useMemo } from "react";
+import { cloneDeep, findIndex, get } from "lodash";
+import { Controller } from "react-hook-form";
+import { Box, Col, Grid, Text, Select } from "@bubbles-ui/components";
+import { DatasetItemDrawerContext } from "../../context/DatasetItemDrawerContext";
+import { ShowAs } from "./common/ShowAs";
 
 const BooleanField = () => {
   const {
-    contextRef: { messages, errorMessages, selectOptions, gridColumn, colSpans },
+    contextRef: {
+      messages,
+      errorMessages,
+      selectOptions,
+      gridColumn,
+      colSpans,
+    },
     form: {
       control,
       watch,
@@ -15,14 +21,14 @@ const BooleanField = () => {
     },
   } = useContext(DatasetItemDrawerContext);
 
-  const uiType = watch('config.uiType');
+  const uiType = watch("config.uiType");
 
   const initialStateData = useMemo(() => {
     let result = [];
     if (uiType) {
       result = cloneDeep(selectOptions.fieldBooleanInitialState);
-      if (uiType !== 'radio') {
-        const index = findIndex(result, { value: '-' });
+      if (uiType !== "radio") {
+        const index = findIndex(result, { value: "-" });
         if (index > -1) {
           result.splice(index, 1);
         }
@@ -57,7 +63,7 @@ const BooleanField = () => {
               <Select
                 {...field}
                 required
-                error={get(errors, 'config.initialStatus')}
+                error={get(errors, "config.initialStatus")}
                 data={initialStateData}
                 placeholder={messages.booleanInitialStateLabelPlaceholder}
               />

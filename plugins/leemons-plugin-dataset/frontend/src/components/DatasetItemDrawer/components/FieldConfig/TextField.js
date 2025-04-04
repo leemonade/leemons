@@ -1,8 +1,8 @@
-import React, { useContext } from 'react';
-import { Controller } from 'react-hook-form';
-import { Box, Checkbox } from '@bubbles-ui/components';
-import { DatasetItemDrawerContext } from '../../context/DatasetItemDrawerContext';
-import { MinMax } from './common/MinMax';
+import React, { useContext } from "react";
+import { Controller } from "react-hook-form";
+import { Box, Checkbox } from "@bubbles-ui/components";
+import { DatasetItemDrawerContext } from "../../context/DatasetItemDrawerContext";
+import { MinMax } from "./common/MinMax";
 
 const TextField = () => {
   const {

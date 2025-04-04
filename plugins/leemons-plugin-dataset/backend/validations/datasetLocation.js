@@ -1,36 +1,36 @@
-const _ = require('lodash');
-const { LeemonsValidator } = require('@leemons/validator');
+const _ = require("lodash");
+const { LeemonsValidator } = require("@leemons/validator");
 
-const { localeSchema, localeObjectSchema, stringSchema } = require('./types');
+const { localeSchema, localeObjectSchema, stringSchema } = require("./types");
 
 const addLocationSchema = () => ({
-  type: 'object',
+  type: "object",
   properties: {
     name: localeObjectSchema(),
     description: localeObjectSchema(),
     locationName: stringSchema,
     pluginName: stringSchema,
   },
-  required: ['name', 'locationName', 'pluginName'],
+  required: ["name", "locationName", "pluginName"],
 });
 
 const locationPluginSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     locationName: stringSchema,
     pluginName: stringSchema,
   },
-  required: ['locationName', 'pluginName'],
+  required: ["locationName", "pluginName"],
 };
 
 const locationPluginLocaleSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     locationName: stringSchema,
     pluginName: stringSchema,
     locale: localeSchema,
   },
-  required: ['locationName', 'pluginName'],
+  required: ["locationName", "pluginName"],
 };
 
 function validateAddLocation(data) {
@@ -48,10 +48,15 @@ function validateLocationAndPlugin(locationName, pluginName) {
   }
 }
 
-function validateLocationAndPluginAndLocale(locationName, pluginName, locale, localeRequired) {
+function validateLocationAndPluginAndLocale(
+  locationName,
+  pluginName,
+  locale,
+  localeRequired
+) {
   const schema = _.cloneDeep(locationPluginLocaleSchema);
   if (localeRequired) {
-    schema.required.push('locale');
+    schema.required.push("locale");
   }
   const validator = new LeemonsValidator(schema);
   if (!validator.validate({ locationName, pluginName, locale })) {

@@ -1,8 +1,8 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const existValues = require('./existValues');
-const getKeysCanAction = require('./getKeysCanAction');
-const { getValuesForReturn } = require('./getValuesForReturn');
+const existValues = require("./existValues");
+const getKeysCanAction = require("./getKeysCanAction");
+const { getValuesForReturn } = require("./getValuesForReturn");
 
 /** *
  *  ES:
@@ -21,7 +21,14 @@ const { getValuesForReturn } = require('./getValuesForReturn');
  *  @param {string=} target Any string to differentiate what you want, for example a user id.
  *  @return {Promise<any>} Passed formData
  *  */
-async function getValues({ locationName, pluginName, userAgent, target, keys, ctx }) {
+async function getValues({
+  locationName,
+  pluginName,
+  userAgent,
+  target,
+  keys,
+  ctx,
+}) {
   const exist = await existValues({ locationName, pluginName, target, ctx });
   if (!exist) {
     return null;
@@ -35,7 +42,7 @@ async function getValues({ locationName, pluginName, userAgent, target, keys, ct
   if (_keys) query.key = _keys;
 
   const response = await ctx.tx.db.DatasetValues.find(query).lean();
-  const valuesByKey = _.groupBy(response, 'key');
+  const valuesByKey = _.groupBy(response, "key");
 
   const data = response.reduce((acc, value) => {
     acc[value.key] = getValuesForReturn(valuesByKey[value.key]);
@@ -46,7 +53,7 @@ async function getValues({ locationName, pluginName, userAgent, target, keys, ct
     locationName,
     pluginName,
     userAgent,
-    actions: ['view', 'edit'],
+    actions: ["view", "edit"],
     ctx,
   });
 

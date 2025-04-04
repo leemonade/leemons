@@ -1,10 +1,10 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('@leemons/mongodb-helpers');
+const { getKeyValueModel } = require("@leemons/mongodb-helpers");
 
 const models = {
-  ...require('./datasetValues'),
-  ...require('./dataset'),
+  ...require("./datasetValues"),
+  ...require("./dataset"),
 };
 
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
     return {
       DatasetValues: models.datasetValuesModel,
       Dataset: models.datasetModel,
-      KeyValue: getKeyValueModel({ modelName: 'v1::dataset_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: "v1::dataset_KeyValue" }),
     };
   },
 };

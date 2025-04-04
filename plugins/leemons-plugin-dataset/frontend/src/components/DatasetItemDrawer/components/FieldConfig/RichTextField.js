@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
-import { Box } from '@bubbles-ui/components';
-import { DatasetItemDrawerContext } from '../../context/DatasetItemDrawerContext';
-import { MinMax } from './common/MinMax';
+import React, { useContext } from "react";
+import { Box } from "@bubbles-ui/components";
+import { DatasetItemDrawerContext } from "../../context/DatasetItemDrawerContext";
+import { MinMax } from "./common/MinMax";
 
 const RichTextField = () => {
   const {

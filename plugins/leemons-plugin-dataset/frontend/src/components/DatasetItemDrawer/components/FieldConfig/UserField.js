@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
-import { Controller } from 'react-hook-form';
-import { Box, Col, Grid, Text, MultiSelect } from '@bubbles-ui/components';
-import { DatasetItemDrawerContext } from '../../context/DatasetItemDrawerContext';
+import React, { useContext } from "react";
+import { Controller } from "react-hook-form";
+import { Box, Col, Grid, Text, MultiSelect } from "@bubbles-ui/components";
+import { DatasetItemDrawerContext } from "../../context/DatasetItemDrawerContext";
 
 const UserField = () => {
   const {
@@ -10,7 +10,7 @@ const UserField = () => {
   } = useContext(DatasetItemDrawerContext);
 
   function onChange(newValue, onchange) {
-    const index = newValue.indexOf('*');
+    const index = newValue.indexOf("*");
     if (index > 0) {
       onchange([]);
     } else {
@@ -37,7 +37,7 @@ const UserField = () => {
             render={({ field: { value, ...field } }) => (
               <MultiSelect
                 {...field}
-                value={!value || value.length === 0 ? ['*'] : value}
+                value={!value || value.length === 0 ? ["*"] : value}
                 required
                 data={selectOptions.userCenters}
                 onChange={(e) => onChange(e, field.onChange)}
@@ -63,7 +63,7 @@ const UserField = () => {
             render={({ field: { value, ...field } }) => (
               <MultiSelect
                 {...field}
-                value={!value || value.length === 0 ? ['*'] : value}
+                value={!value || value.length === 0 ? ["*"] : value}
                 required
                 data={selectOptions.userProfiles}
                 onChange={(e) => onChange(e, field.onChange)}

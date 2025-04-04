@@ -1,12 +1,16 @@
-const _ = require('lodash');
-const { transformPermissionKeysToObjectsByType } = require('./transformPermissionKeysToObjects');
-const { getJsonSchemaProfilePermissionsKeysByType } = require('./transformJsonOrUiSchema');
+const _ = require("lodash");
+const {
+  transformPermissionKeysToObjectsByType,
+} = require("./transformPermissionKeysToObjects");
+const {
+  getJsonSchemaProfilePermissionsKeysByType,
+} = require("./transformJsonOrUiSchema");
 const {
   validatePluginName,
   validateNotExistLocation,
   validateExistSchema,
-} = require('../../validations/exists');
-const { validateAddSchema } = require('../../validations/datasetSchema');
+} = require("../../validations/exists");
+const { validateAddSchema } = require("../../validations/datasetSchema");
 
 /** *
  *  ES:
@@ -23,7 +27,13 @@ const { validateAddSchema } = require('../../validations/datasetSchema');
  *  @param {any=} transacting - DB Transaction
  *  @return {Promise<DatasetSchema>} The new dataset location
  *  */
-async function addSchema({ locationName, pluginName, jsonSchema, jsonUI, ctx }) {
+async function addSchema({
+  locationName,
+  pluginName,
+  jsonSchema,
+  jsonUI,
+  ctx,
+}) {
   validateAddSchema({ locationName, pluginName, jsonSchema, jsonUI });
   validatePluginName({ pluginName, calledFrom: ctx.callerPlugin, ctx });
   await validateNotExistLocation({ locationName, pluginName, ctx });
@@ -32,7 +42,10 @@ async function addSchema({ locationName, pluginName, jsonSchema, jsonUI, ctx }) 
   const { profiles: profilePermissions, roles: rolesPermissions } =
     transformPermissionKeysToObjectsByType({
       jsonSchema,
-      keysByType: getJsonSchemaProfilePermissionsKeysByType({ jsonSchema, ctx }),
+      keysByType: getJsonSchemaProfilePermissionsKeysByType({
+        jsonSchema,
+        ctx,
+      }),
       prefix: `${locationName}.${pluginName}`,
       ctx,
     });
@@ -49,12 +62,21 @@ async function addSchema({ locationName, pluginName, jsonSchema, jsonUI, ctx }) 
   ];
 
   _.forIn(profilePermissions, (permissions, profileId) => {
-    promises.push(ctx.tx.call('users.profiles.addCustomPermissions', { profileId, permissions }));
+    promises.push(
+      ctx.tx.call("users.profiles.addCustomPermissions", {
+        profileId,
+        permissions,
+      })
+    );
   });
 
   _.forIn(rolesPermissions, (permissions, roleId) => {
     promises.push(
-      ctx.tx.call('users.roles.addPermissionMany', { roleId, permissions, isCustom: true })
+      ctx.tx.call("users.roles.addPermissionMany", {
+        roleId,
+        permissions,
+        isCustom: true,
+      })
     );
   });
 

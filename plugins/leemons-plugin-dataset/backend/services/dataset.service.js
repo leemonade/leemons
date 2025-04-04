@@ -3,11 +3,13 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMongoDBMixin } = require("@leemons/mongodb");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
 
 const {
   getSchema,
@@ -18,14 +20,14 @@ const {
   getSchemaWithLocale,
   transformJsonSchema,
   transformUiSchema,
-} = require('../core/datasetSchema');
+} = require("../core/datasetSchema");
 const {
   getSchemaLocale,
   addSchemaLocale,
   updateSchemaLocale,
   deleteSchemaLocale,
   existSchemaLocale,
-} = require('../core/datasetSchemaLocale');
+} = require("../core/datasetSchemaLocale");
 const {
   validateDataForJsonSchema,
   existValues,
@@ -34,20 +36,20 @@ const {
   addValues,
   getValues,
   setValues,
-} = require('../core/datasetValues');
+} = require("../core/datasetValues");
 const {
   getLocation,
   updateLocation,
   deleteLocation,
   existLocation,
-} = require('../core/datesetLocation');
-const addLocation = require('../core/datesetLocation/addLocation');
-const { getServiceModels } = require('../models');
+} = require("../core/datesetLocation");
+const addLocation = require("../core/datesetLocation/addLocation");
+const { getServiceModels } = require("../models");
 
-const restActions = require('./rest/dataset.rest');
+const restActions = require("./rest/dataset.rest");
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'dataset.dataset',
+  name: "dataset.dataset",
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),

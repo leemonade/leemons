@@ -1,15 +1,18 @@
-const _ = require('lodash');
-const { randomString } = require('@leemons/utils');
-const { validateNotExistLocation } = require('../../validations/exists');
-const getSchema = require('./getSchema');
-const addSchema = require('./addSchema');
-const { transformJsonSchema, transformUiSchema } = require('./transformJsonOrUiSchema');
-const addSchemaLocale = require('../datasetSchemaLocale/addSchemaLocale');
-const existSchemaLocale = require('../datasetSchemaLocale/existSchemaLocale');
-const updateSchemaLocale = require('../datasetSchemaLocale/updateSchemaLocale');
-const updateSchema = require('./updateSchema');
-const getSchemaWithLocale = require('./getSchemaWithLocale');
-const recalculeEnumNames = require('./recalculeEnumNames');
+const _ = require("lodash");
+const { randomString } = require("@leemons/utils");
+const { validateNotExistLocation } = require("../../validations/exists");
+const getSchema = require("./getSchema");
+const addSchema = require("./addSchema");
+const {
+  transformJsonSchema,
+  transformUiSchema,
+} = require("./transformJsonOrUiSchema");
+const addSchemaLocale = require("../datasetSchemaLocale/addSchemaLocale");
+const existSchemaLocale = require("../datasetSchemaLocale/existSchemaLocale");
+const updateSchemaLocale = require("../datasetSchemaLocale/updateSchemaLocale");
+const updateSchema = require("./updateSchema");
+const getSchemaWithLocale = require("./getSchemaWithLocale");
+const recalculeEnumNames = require("./recalculeEnumNames");
 
 async function saveLocale({
   locale,
@@ -51,7 +54,7 @@ async function saveLocale({
     });
   }
   const jsonSchema = {
-    type: 'object',
+    type: "object",
     properties: {
       [id]: schema,
     },
@@ -119,7 +122,9 @@ async function saveField({
       }
     });
 
-    dataset.jsonSchema = transformJsonSchema({ jsonSchema: dataset.jsonSchema }).json;
+    dataset.jsonSchema = transformJsonSchema({
+      jsonSchema: dataset.jsonSchema,
+    }).json;
     dataset.jsonUI = transformUiSchema(dataset.jsonUI).json;
 
     dataset = await updateSchema({
@@ -137,7 +142,7 @@ async function saveField({
       // ES: Creamos el schema por que aun no existe
       id = randomString();
       let jsonSchema = {
-        type: 'object',
+        type: "object",
         properties: {
           [id]: schemaConfig.schema,
         },
@@ -191,7 +196,7 @@ async function saveField({
   // Vamos coger el schema tocho, que tiene que tener los checkboxs guays y recorrernos todas las traducciones calculando el enumNames
   await recalculeEnumNames({ locationName, pluginName, ctx });
 
-  await ctx.emit('save-field', {
+  await ctx.emit("save-field", {
     locationName,
     pluginName,
   });

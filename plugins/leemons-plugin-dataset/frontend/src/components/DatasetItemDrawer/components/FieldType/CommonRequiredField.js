@@ -1,7 +1,7 @@
-import React, { useContext } from 'react';
-import { Controller } from 'react-hook-form';
-import { Checkbox, Col, Grid } from '@bubbles-ui/components';
-import { DatasetItemDrawerContext } from '../../context/DatasetItemDrawerContext';
+import React, { useContext } from "react";
+import { Controller } from "react-hook-form";
+import { Checkbox, Col, Grid } from "@bubbles-ui/components";
+import { DatasetItemDrawerContext } from "../../context/DatasetItemDrawerContext";
 
 const CommonRequiredField = () => {
   const {
@@ -16,7 +16,11 @@ const CommonRequiredField = () => {
           name="config.required"
           control={control}
           render={({ field }) => (
-            <Checkbox checked={field.value} label={messages.textFieldRequiredLabel} {...field} />
+            <Checkbox
+              checked={field.value}
+              label={messages.textFieldRequiredLabel}
+              {...field}
+            />
           )}
         />
       </Col>

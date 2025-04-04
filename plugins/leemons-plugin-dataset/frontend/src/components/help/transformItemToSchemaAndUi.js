@@ -1,5 +1,6 @@
-import { transformFormDataToSchemaAndUi } from '@bubbles-ui/leemons';
+import { transformFormDataToSchemaAndUi } from "@bubbles-ui/leemons";
 
-const transformItemToSchemaAndUi = (item, locale) => transformFormDataToSchemaAndUi(item, locale);
+const transformItemToSchemaAndUi = (item, locale) =>
+  transformFormDataToSchemaAndUi(item, locale);
 
 export default transformItemToSchemaAndUi;

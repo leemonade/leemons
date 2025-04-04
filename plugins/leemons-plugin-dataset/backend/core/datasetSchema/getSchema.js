@@ -1,5 +1,10 @@
-const { validateNotExistSchema, validateNotExistLocation } = require('../../validations/exists');
-const { validateLocationAndPlugin } = require('../../validations/datasetLocation');
+const {
+  validateNotExistSchema,
+  validateNotExistLocation,
+} = require("../../validations/exists");
+const {
+  validateLocationAndPlugin,
+} = require("../../validations/datasetLocation");
 
 /** *
  *  ES:
@@ -20,7 +25,10 @@ async function getSchema({ locationName, pluginName, ctx }) {
   await validateNotExistLocation({ locationName, pluginName, ctx });
   await validateNotExistSchema({ locationName, pluginName, ctx });
 
-  const dataset = await ctx.tx.db.Dataset.findOne({ locationName, pluginName }).lean();
+  const dataset = await ctx.tx.db.Dataset.findOne({
+    locationName,
+    pluginName,
+  }).lean();
 
   dataset.jsonSchema = JSON.parse(dataset.jsonSchema || null);
   dataset.jsonUI = JSON.parse(dataset.jsonUI || null);

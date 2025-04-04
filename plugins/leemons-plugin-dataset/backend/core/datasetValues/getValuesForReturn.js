@@ -1,11 +1,11 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 function getValuesForReturn(items) {
   if (items) {
     const r = { r: undefined };
     _.forEach(items, (item) => {
       const toAdd = { value: JSON.parse(item.value || null), id: item.id };
-      let path = '';
+      let path = "";
       if (item.metadata) {
         const metadata = JSON.parse(item.metadata || null);
         const { path: p, ...restMetadata } = metadata;

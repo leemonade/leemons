@@ -1,12 +1,12 @@
-const _ = require('lodash');
-const { getObjectArrayKeys } = require('@leemons/utils');
+const _ = require("lodash");
+const { getObjectArrayKeys } = require("@leemons/utils");
 
 function arrKeys(object) {
   return getObjectArrayKeys(object);
 }
 
 function removeArrayPropFromString(string) {
-  return string.replace(/\[(.*)\]/g, '');
+  return string.replace(/\[(.*)\]/g, "");
 }
 
 /** *
@@ -30,8 +30,8 @@ function transformJsonOrUiSchema({ jsonSchema, saveKeys, replaces }) {
 
   let keys = [];
   _.forEach(arrKeys(schema), (key) => {
-    const props = _.split(key, '.');
-    let path = '';
+    const props = _.split(key, ".");
+    let path = "";
     _.forEach(props, (prop) => {
       const p = removeArrayPropFromString(prop);
       if (saveKeys.indexOf(p) >= 0) {
@@ -44,9 +44,9 @@ function transformJsonOrUiSchema({ jsonSchema, saveKeys, replaces }) {
 
   keys = _.uniq(keys);
   const keysProp = _.map(keys, (value) => {
-    const k = _.split(value, '.');
+    const k = _.split(value, ".");
     return {
-      key: _.join(_.take(k, k.length - 1), '.'),
+      key: _.join(_.take(k, k.length - 1), "."),
       property: _.last(k),
     };
   });
@@ -72,7 +72,8 @@ function transformJsonOrUiSchema({ jsonSchema, saveKeys, replaces }) {
     }
     if (value.key) {
       obj = _.get(schema, value.key);
-      obj[value.property] = `{{@printWithOutErrors(it, '${value.key}.${property}')/}}`;
+      obj[value.property] =
+        `{{@printWithOutErrors(it, '${value.key}.${property}')/}}`;
     } else {
       schema[value.property] = `{{@printWithOutErrors(it, '${property}')/}}`;
     }
@@ -87,12 +88,12 @@ function transformJsonOrUiSchema({ jsonSchema, saveKeys, replaces }) {
 function getJsonSchemaProfilePermissionsKeys({ jsonSchema }) {
   const keys = [];
   _.forEach(arrKeys(jsonSchema), (key) => {
-    if (key.indexOf('.permissions.') >= 0) {
-      const k = _.split(key, '.');
+    if (key.indexOf(".permissions.") >= 0) {
+      const k = _.split(key, ".");
       const prop = removeArrayPropFromString(k[k.length - 1]);
-      if (prop !== '*') {
+      if (prop !== "*") {
         k[k.length - 1] = prop;
-        keys.push(_.join(k, '.'));
+        keys.push(_.join(k, "."));
       }
     }
   });
@@ -115,9 +116,9 @@ module.exports = {
     profiles.properties = {};
     roles.properties = {};
     _.forIn(jsonSchema.properties, (value, key) => {
-      if (value.permissionsType === 'profile') {
+      if (value.permissionsType === "profile") {
         profiles.properties[key] = _.cloneDeep(value);
-      } else if (value.permissionsType === 'role') {
+      } else if (value.permissionsType === "role") {
         roles.properties[key] = _.cloneDeep(value);
       }
     });
@@ -128,15 +129,15 @@ module.exports = {
   },
   transformJsonSchema({ jsonSchema, ignoreKeys = [] }) {
     const keys = [
-      'title',
-      'description',
-      'default',
-      'enumNames',
-      'checkboxLabels',
-      'selectPlaceholder',
-      'optionLabel',
-      'yesOptionLabel',
-      'noOptionLabel',
+      "title",
+      "description",
+      "default",
+      "enumNames",
+      "checkboxLabels",
+      "selectPlaceholder",
+      "optionLabel",
+      "yesOptionLabel",
+      "noOptionLabel",
     ];
     _.forEach(ignoreKeys, (k) => {
       const index = keys.indexOf(k);
@@ -149,8 +150,8 @@ module.exports = {
   transformUiSchema(uiSchema) {
     return transformJsonOrUiSchema({
       jsonSchema: uiSchema,
-      saveKeys: ['ui:title', 'ui:description', 'ui:help'],
-      replaces: ['ui_title', 'ui_description', 'ui_help'],
+      saveKeys: ["ui:title", "ui:description", "ui:help"],
+      replaces: ["ui_title", "ui_description", "ui_help"],
     });
   },
 };
