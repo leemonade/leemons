@@ -1,4 +1,4 @@
-import { getSettings, updateSettings, enableMenuItem } from './settings';
+import { getSettings, updateSettings, enableMenuItem } from "./settings";
 
 export const getSettingsRequest = getSettings;
 export const updateSettingsRequest = updateSettings;

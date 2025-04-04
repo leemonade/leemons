@@ -1,5 +1,5 @@
-const deleteBreaks = require('./breakes/delete');
-const get = require('./get');
+const deleteBreaks = require("./breakes/delete");
+const get = require("./get");
 
 module.exports = async function deleteConfig({ entitiesObj, ctx }) {
   // Get the config object

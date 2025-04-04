@@ -1,6 +1,6 @@
-import React from 'react';
-import { ContextContainer } from '@bubbles-ui/components';
-import { ScheduleInput } from '@timetable/components';
+import React from "react";
+import { ContextContainer } from "@bubbles-ui/components";
+import { ScheduleInput } from "@timetable/components";
 
 export default function TestPage() {
   return (
@@ -12,8 +12,12 @@ export default function TestPage() {
       direction="row"
       fullWidth={false}
     >
-      <ScheduleInput locale={'en'} onChange={(e) => console.log(e)} />
-      <ScheduleInput locale={'en'} label={false} onChange={(e) => console.log(e)} />
+      <ScheduleInput locale={"en"} onChange={(e) => console.log(e)} />
+      <ScheduleInput
+        locale={"en"}
+        label={false}
+        onChange={(e) => console.log(e)}
+      />
     </ContextContainer>
   );
 }

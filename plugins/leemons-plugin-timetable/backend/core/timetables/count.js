@@ -1,4 +1,4 @@
-const timeFiltersQuery = require('../helpers/timetable/timeFiltersQuery');
+const timeFiltersQuery = require("../helpers/timetable/timeFiltersQuery");
 
 module.exports = async function count({
   classId,

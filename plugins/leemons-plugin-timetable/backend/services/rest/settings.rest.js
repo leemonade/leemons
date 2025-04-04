@@ -7,24 +7,24 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 
-const { LeemonsValidator } = require('@leemons/validator');
-const { findOne, update } = require('../../core/settings');
+const { LeemonsValidator } = require("@leemons/validator");
+const { findOne, update } = require("../../core/settings");
 
 /** @type {ServiceSchema} */
 module.exports = {
   findOneRest: {
     rest: {
-      method: 'GET',
-      path: '/',
+      method: "GET",
+      path: "/",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'timetable.config': {
-            actions: ['admin', 'view'],
+          "timetable.config": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -39,36 +39,36 @@ module.exports = {
   },
   updateRest: {
     rest: {
-      method: 'POST',
-      path: '/',
+      method: "POST",
+      path: "/",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'timetable.config': {
-            actions: ['admin', 'edit'],
+          "timetable.config": {
+            actions: ["admin", "edit"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          type: 'object',
+          type: "object",
           properties: {
             hideWelcome: {
-              type: 'boolean',
+              type: "boolean",
             },
             configured: {
-              type: 'boolean',
+              type: "boolean",
             },
           },
           required: [],
           additionalProperties: false,
         },
-        required: ['page', 'size', 'program'],
+        required: ["page", "size", "program"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -83,27 +83,27 @@ module.exports = {
   },
   enableMenuItemRest: {
     rest: {
-      method: 'POST',
-      path: '/enable-menu-item',
+      method: "POST",
+      path: "/enable-menu-item",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'timetable.config': {
-            actions: ['admin', 'edit'],
+          "timetable.config": {
+            actions: ["admin", "edit"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
-        properties: { key: { type: 'string' } },
-        required: ['key'],
+        type: "object",
+        properties: { key: { type: "string" } },
+        required: ["key"],
       });
       if (validator.validate(ctx.params)) {
-        const item = await ctx.tx.call('menu-builder.menuItem.enable', {
+        const item = await ctx.tx.call("menu-builder.menuItem.enable", {
           key: ctx.prefixPN(ctx.params.key),
         });
         return { status: 200, item };

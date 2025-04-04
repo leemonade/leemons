@@ -1,7 +1,7 @@
-import { LRN } from '@leemons/lrn';
-import { ClassID } from 'leemons-plugin-academic-portfolio';
+import { LRN } from "@leemons/lrn";
+import { ClassID } from "leemons-plugin-academic-portfolio";
 
-export type TimetableID = LRN<'timetable', 'Timetable'>;
+export type TimetableID = LRN<"timetable", "Timetable">;
 
 /**
  * @file plugins/leemons-plugin-timetable/backend/models/timetable.js
@@ -12,7 +12,14 @@ export interface Timetable {
 
   // ref: 'plugins_academic-portfolio::class'
   class: ClassID;
-  day: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+  day:
+    | "monday"
+    | "tuesday"
+    | "wednesday"
+    | "thursday"
+    | "friday"
+    | "saturday"
+    | "sunday";
   dayWeek: 1 | 2 | 3 | 4 | 5 | 6 | 7;
   // Hour of day (eg: '08:00')
   start: string;

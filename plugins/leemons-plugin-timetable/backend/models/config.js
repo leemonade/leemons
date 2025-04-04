@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -50,6 +50,10 @@ const schema = new mongoose.Schema(
     minimize: false,
   }
 );
-const configModel = newModel(mongoose.connection, 'v1::timetable_Config', schema);
+const configModel = newModel(
+  mongoose.connection,
+  "v1::timetable_Config",
+  schema
+);
 
 module.exports = { configModel };

@@ -1,4 +1,4 @@
-const pluginName = 'timetable';
+const pluginName = "timetable";
 
 const permissionNames = {
   config: `${pluginName}.config`,
@@ -8,13 +8,16 @@ const permissionNames = {
 const permissions = [
   {
     permissionName: permissionNames.config,
-    actions: ['create', 'view', 'update', 'delete', 'admin'],
-    localizationName: { en: 'Timetable - Config', es: 'Horario - Configuración' },
+    actions: ["create", "view", "update", "delete", "admin"],
+    localizationName: {
+      en: "Timetable - Config",
+      es: "Horario - Configuración",
+    },
   },
   {
     permissionName: permissionNames.timetable,
-    actions: ['create', 'view', 'update', 'delete', 'admin'],
-    localizationName: { en: 'Timetable - Timetable', es: 'Horario - Horario' },
+    actions: ["create", "view", "update", "delete", "admin"],
+    localizationName: { en: "Timetable - Timetable", es: "Horario - Horario" },
   },
 ];
 
@@ -22,13 +25,13 @@ const menuItems = [
   // Main
   {
     item: {
-      key: 'timetable',
+      key: "timetable",
       // TODO: Move icons to the plugin's folder
-      iconSvg: '/public/assets/svgs/timetable.svg',
-      activeIconSvg: '/public/assets/svgs/timetableActive.svg',
+      iconSvg: "/public/assets/svgs/timetable.svg",
+      activeIconSvg: "/public/assets/svgs/timetableActive.svg",
       label: {
-        en: 'Timetable',
-        es: 'Horario',
+        en: "Timetable",
+        es: "Horario",
       },
     },
   },

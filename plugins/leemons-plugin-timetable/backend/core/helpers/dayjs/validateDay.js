@@ -1,4 +1,4 @@
-const weekDays = require('./weekDays');
+const weekDays = require("./weekDays");
 
 module.exports = function validateDay(days) {
   // Check if day is an array
@@ -7,7 +7,7 @@ module.exports = function validateDay(days) {
   }
 
   // Check if day is a string
-  if (typeof days === 'string') {
+  if (typeof days === "string") {
     return weekDays.includes(days);
   }
 

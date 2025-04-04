@@ -1,6 +1,13 @@
-const timeFiltersQuery = require('../helpers/timetable/timeFiltersQuery');
+const timeFiltersQuery = require("../helpers/timetable/timeFiltersQuery");
 
-module.exports = async function get({ classId, start, startBetween, end, endBetween, ctx }) {
+module.exports = async function get({
+  classId,
+  start,
+  startBetween,
+  end,
+  endBetween,
+  ctx,
+}) {
   const query = {
     class: classId,
   };

@@ -1,16 +1,16 @@
-import React, { forwardRef, useEffect, useState, useMemo } from 'react';
+import React, { forwardRef, useEffect, useState, useMemo } from "react";
 
-import { SchedulePicker } from '@bubbles-ui/leemons';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { isArray, isNil, isString } from 'lodash';
-import PropTypes from 'prop-types';
+import { SchedulePicker } from "@bubbles-ui/leemons";
+import { unflatten } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { isArray, isNil, isString } from "lodash";
+import PropTypes from "prop-types";
 
-import { prefixPN } from '../../helpers';
+import { prefixPN } from "../../helpers";
 
 const ScheduleInput = forwardRef(({ label, ...props }, ref) => {
   const [pickerProps, setPickerProps] = useState(null);
-  const [, translations] = useTranslateLoader(prefixPN('schedule_picker'));
+  const [, translations] = useTranslateLoader(prefixPN("schedule_picker"));
 
   function handleTranslations() {
     if (translations && translations.items) {
@@ -18,7 +18,7 @@ const ScheduleInput = forwardRef(({ label, ...props }, ref) => {
       const data = res.timetable.schedule_picker;
 
       if (!isNil(data.labels)) {
-        data.labels.input = isString(label) ? label : '';
+        data.labels.input = isString(label) ? label : "";
         setPickerProps(data);
       }
     }
@@ -47,11 +47,16 @@ const ScheduleInput = forwardRef(({ label, ...props }, ref) => {
   }, [props.value, sortedDays]);
 
   return !isNil(pickerProps) ? (
-    <SchedulePicker {...pickerProps} {...props} ref={ref} value={internalValue} />
+    <SchedulePicker
+      {...pickerProps}
+      {...props}
+      ref={ref}
+      value={internalValue}
+    />
   ) : null;
 });
 
-ScheduleInput.displayName = '@timetable/components/ScheduleInput';
+ScheduleInput.displayName = "@timetable/components/ScheduleInput";
 ScheduleInput.defaultProps = {
   label: true,
 };

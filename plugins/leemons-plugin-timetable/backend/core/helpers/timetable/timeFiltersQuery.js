@@ -1,4 +1,9 @@
-module.exports = function timeFiltersQuery({ end, start, endBetween, startBetween } = {}) {
+module.exports = function timeFiltersQuery({
+  end,
+  start,
+  endBetween,
+  startBetween,
+} = {}) {
   let startQuery = {};
 
   // Start time query

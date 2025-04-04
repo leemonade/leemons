@@ -1,4 +1,4 @@
-const getWeekdays = require('./getWeekdays');
+const getWeekdays = require("./getWeekdays");
 
 const WEEK_DAYS = getWeekdays();
 

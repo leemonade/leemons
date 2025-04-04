@@ -1,9 +1,9 @@
-const { LeemonsError } = require('@leemons/error');
-const timeToDayjs = require('../helpers/dayjs/timeToDayjs');
-const weekDays = require('../helpers/dayjs/weekDays');
-const has = require('./has');
-const createBreaks = require('./breakes/create');
-const entitiesFormat = require('../helpers/config/entitiesFormat');
+const { LeemonsError } = require("@leemons/error");
+const timeToDayjs = require("../helpers/dayjs/timeToDayjs");
+const weekDays = require("../helpers/dayjs/weekDays");
+const has = require("./has");
+const createBreaks = require("./breakes/create");
+const entitiesFormat = require("../helpers/config/entitiesFormat");
 
 module.exports = async function create({
   entities: entitiesObj,
@@ -16,44 +16,50 @@ module.exports = async function create({
 }) {
   // Validate data types
   if (!entitiesObj || !start || !end || !days || !breaks || !slot) {
-    throw new LeemonsError(ctx, { message: 'Missing parameters' });
+    throw new LeemonsError(ctx, { message: "Missing parameters" });
   }
 
   if (!Array.isArray(days)) {
-    throw new LeemonsError(ctx, { message: 'Days must be an array' });
+    throw new LeemonsError(ctx, { message: "Days must be an array" });
   }
 
-  if (typeof slot !== 'number') {
-    throw new LeemonsError(ctx, { message: 'Slot must be a number' });
+  if (typeof slot !== "number") {
+    throw new LeemonsError(ctx, { message: "Slot must be a number" });
   }
 
   if (slot <= 0) {
-    throw new LeemonsError(ctx, { message: 'Slot must be a positive number' });
+    throw new LeemonsError(ctx, { message: "Slot must be a positive number" });
   }
 
   if (slot % 1 !== 0) {
-    throw new LeemonsError(ctx, { message: 'Slot must be an integer' });
+    throw new LeemonsError(ctx, { message: "Slot must be an integer" });
   }
 
   const startTime = timeToDayjs(start);
   const endTime = timeToDayjs(end);
 
   if (!startTime) {
-    throw new LeemonsError(ctx, { message: 'Start time is invalid, must be HH:mm' });
+    throw new LeemonsError(ctx, {
+      message: "Start time is invalid, must be HH:mm",
+    });
   }
 
   if (!endTime) {
-    throw new LeemonsError(ctx, { message: 'End time is invalid, must be HH:mm' });
+    throw new LeemonsError(ctx, {
+      message: "End time is invalid, must be HH:mm",
+    });
   }
 
   if (startTime.isAfter(endTime)) {
-    throw new LeemonsError(ctx, { message: 'Start time must be before end time' });
+    throw new LeemonsError(ctx, {
+      message: "Start time must be before end time",
+    });
   }
 
   const lowercasedDays = [...new Set(days.map((day) => day.toLowerCase()))];
 
   if (lowercasedDays.some((day) => !weekDays.includes(day))) {
-    throw new LeemonsError(ctx, { message: 'Invalid day' });
+    throw new LeemonsError(ctx, { message: "Invalid day" });
   }
 
   // Validate entities
@@ -61,7 +67,7 @@ module.exports = async function create({
 
   // Check if the timetable config already exists.
   if (await has({ entitiesObj, ctx })) {
-    throw new LeemonsError(ctx, { message: 'Timetable config already exists' });
+    throw new LeemonsError(ctx, { message: "Timetable config already exists" });
   }
 
   // Create config
@@ -70,7 +76,7 @@ module.exports = async function create({
     entities,
     start,
     end,
-    days: lowercasedDays.join(','),
+    days: lowercasedDays.join(","),
     slot,
   });
   config = config.toObject();

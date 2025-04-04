@@ -7,27 +7,27 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 
-const create = require('../../core/timetables/create');
-const get = require('../../core/timetables/get');
-const count = require('../../core/timetables/count');
-const update = require('../../core/timetables/update');
-const deleteOne = require('../../core/timetables/delete');
+const create = require("../../core/timetables/create");
+const get = require("../../core/timetables/get");
+const count = require("../../core/timetables/count");
+const update = require("../../core/timetables/update");
+const deleteOne = require("../../core/timetables/delete");
 
 /** @type {ServiceSchema} */
 module.exports = {
   createRest: {
     rest: {
-      method: 'POST',
-      path: '/',
+      method: "POST",
+      path: "/",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'timetable.timetable': {
-            actions: ['admin', 'create'],
+          "timetable.timetable": {
+            actions: ["admin", "create"],
           },
         },
       }),
@@ -42,15 +42,15 @@ module.exports = {
   },
   getRest: {
     rest: {
-      method: 'GET',
-      path: '/:id',
+      method: "GET",
+      path: "/:id",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'timetable.timetable': {
-            actions: ['admin', 'view'],
+          "timetable.timetable": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -77,15 +77,15 @@ module.exports = {
   },
   countRest: {
     rest: {
-      method: 'GET',
-      path: '/count/:id',
+      method: "GET",
+      path: "/count/:id",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'timetable.timetable': {
-            actions: ['admin', 'view'],
+          "timetable.timetable": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -115,15 +115,15 @@ module.exports = {
   },
   updateRest: {
     rest: {
-      method: 'PUT',
-      path: '/:id',
+      method: "PUT",
+      path: "/:id",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'timetable.timetable': {
-            actions: ['admin', 'update'],
+          "timetable.timetable": {
+            actions: ["admin", "update"],
           },
         },
       }),
@@ -148,15 +148,15 @@ module.exports = {
   },
   deleteRest: {
     rest: {
-      method: 'DELETE',
-      path: '/:id',
+      method: "DELETE",
+      path: "/:id",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'timetable.timetable': {
-            actions: ['admin', 'delete'],
+          "timetable.timetable": {
+            actions: ["admin", "delete"],
           },
         },
       }),

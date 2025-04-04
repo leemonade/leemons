@@ -1,12 +1,12 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('@leemons/mongodb-helpers');
+const { getKeyValueModel } = require("@leemons/mongodb-helpers");
 
 const models = {
-  ...require('./breaks'),
-  ...require('./config'),
-  ...require('./settings'),
-  ...require('./timetable'),
+  ...require("./breaks"),
+  ...require("./config"),
+  ...require("./settings"),
+  ...require("./timetable"),
 };
 
 module.exports = {
@@ -17,7 +17,7 @@ module.exports = {
       Config: models.configModel,
       Settings: models.settingsModel,
       Timetable: models.timetableModel,
-      KeyValue: getKeyValueModel({ modelName: 'v1::timetable_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: "v1::timetable_KeyValue" }),
     };
   },
 };

@@ -1,11 +1,11 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const entitiesFormat = require('../helpers/config/entitiesFormat');
-const timeToDayjs = require('../helpers/dayjs/timeToDayjs');
-const weekDays = require('../helpers/dayjs/weekDays');
-const createBreaks = require('./breakes/create');
-const deleteBreaks = require('./breakes/delete');
-const get = require('./get');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const entitiesFormat = require("../helpers/config/entitiesFormat");
+const timeToDayjs = require("../helpers/dayjs/timeToDayjs");
+const weekDays = require("../helpers/dayjs/weekDays");
+const createBreaks = require("./breakes/create");
+const deleteBreaks = require("./breakes/delete");
+const get = require("./get");
 
 module.exports = async function update({
   entities: entitiesObj,
@@ -23,7 +23,7 @@ module.exports = async function update({
 
   // Check if the config exists
   if (!config) {
-    throw new LeemonsError(ctx, { message: 'Config not found' });
+    throw new LeemonsError(ctx, { message: "Config not found" });
   }
 
   let startTime;
@@ -34,10 +34,10 @@ module.exports = async function update({
     startTime = timeToDayjs(start);
 
     if (!startTime) {
-      throw new LeemonsError(ctx, { message: 'Invalid start time' });
+      throw new LeemonsError(ctx, { message: "Invalid start time" });
     }
 
-    data.start = startTime.format('HH:mm');
+    data.start = startTime.format("HH:mm");
   } else {
     startTime = timeToDayjs(config.start);
   }
@@ -47,21 +47,23 @@ module.exports = async function update({
     endTime = timeToDayjs(end);
 
     if (!endTime) {
-      throw new LeemonsError(ctx, { message: 'Invalid end time' });
+      throw new LeemonsError(ctx, { message: "Invalid end time" });
     }
 
     if (endTime.isBefore(startTime)) {
-      throw new LeemonsError(ctx, { message: 'End time must be after start time' });
+      throw new LeemonsError(ctx, {
+        message: "End time must be after start time",
+      });
     }
 
-    data.end = endTime.format('HH:mm');
+    data.end = endTime.format("HH:mm");
   }
 
   // If slot is set, validate it
   if (slot && slot !== config.slot) {
     // Check if slot is an integer.
     if (!Number.isInteger(slot)) {
-      throw new LeemonsError(ctx, { message: 'Slot must be an integer.' });
+      throw new LeemonsError(ctx, { message: "Slot must be an integer." });
     }
     data.slot = slot;
   }
@@ -70,17 +72,17 @@ module.exports = async function update({
   if (days) {
     // Check if days is an array.
     if (!Array.isArray(days)) {
-      throw new LeemonsError(ctx, { message: 'Days must be an array.' });
+      throw new LeemonsError(ctx, { message: "Days must be an array." });
     }
 
     const lowercasedDays = days.map((day) => day.toLowerCase());
     // Check if days are in the weekdays.
     if (lowercasedDays.some((day) => !weekDays.includes(day))) {
-      throw new LeemonsError(ctx, { message: 'Days must be valid weekdays.' });
+      throw new LeemonsError(ctx, { message: "Days must be valid weekdays." });
     }
 
     if (lowercasedDays.some((day) => !config.days.includes(day))) {
-      data.days = lowercasedDays.join(',');
+      data.days = lowercasedDays.join(",");
     }
   }
 
@@ -89,12 +91,12 @@ module.exports = async function update({
   if (breaks && !_.isEqual(breaks, config.breaks)) {
     // Check if breaks is an array.
     if (!Array.isArray(breaks)) {
-      throw new LeemonsError(ctx, { message: 'Breaks must be an array.' });
+      throw new LeemonsError(ctx, { message: "Breaks must be an array." });
     }
 
     // Check breaks names.
-    if (breaks.some(({ name }) => typeof name !== 'string' || !name)) {
-      throw new LeemonsError(ctx, { message: 'Breaks names must be strings.' });
+    if (breaks.some(({ name }) => typeof name !== "string" || !name)) {
+      throw new LeemonsError(ctx, { message: "Breaks names must be strings." });
     }
 
     // Check if breaks are valid.
@@ -111,7 +113,7 @@ module.exports = async function update({
       })
     ) {
       throw new LeemonsError(ctx, {
-        message: 'Breaks end time must be after start time and in class hours.',
+        message: "Breaks end time must be after start time and in class hours.",
       });
     }
 
@@ -125,10 +127,14 @@ module.exports = async function update({
   // Update the entity only if there is something to update
   if (!_.isEqual(data, {})) {
     const { entities, entityTypes } = entitiesFormat({ entitiesObj, ctx });
-    const newConfig = await ctx.tx.db.Config.findOneAndUpdate({ entities, entityTypes }, data, {
-      lean: true,
-      new: true,
-    });
+    const newConfig = await ctx.tx.db.Config.findOneAndUpdate(
+      { entities, entityTypes },
+      data,
+      {
+        lean: true,
+        new: true,
+      }
+    );
     return { ...newConfig, breaks: breaks || config.breaks };
   }
   return config;
