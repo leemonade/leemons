@@ -1,8 +1,13 @@
-const { LeemonsValidator } = require('@leemons/validator');
-const { stringSchema, numberSchema, booleanSchema, localeObjectSchema } = require('./types');
+const { LeemonsValidator } = require("@leemons/validator");
+const {
+  stringSchema,
+  numberSchema,
+  booleanSchema,
+  localeObjectSchema,
+} = require("./types");
 
 const addMenuItemSchema = () => ({
-  type: 'object',
+  type: "object",
   properties: {
     menuKey: stringSchema,
     key: stringSchema,
@@ -21,19 +26,19 @@ const addMenuItemSchema = () => ({
     label: localeObjectSchema(),
     description: localeObjectSchema(),
   },
-  required: ['menuKey', 'key', 'pluginName', 'label'],
+  required: ["menuKey", "key", "pluginName", "label"],
   additionalProperties: false,
 });
 
 const updateMenuItemSchema = () => ({
-  type: 'object',
+  type: "object",
   properties: addMenuItemSchema().properties,
-  required: ['menuKey', 'key', 'pluginName'],
+  required: ["menuKey", "key", "pluginName"],
   additionalProperties: false,
 });
 
 const addMenuItemFromUserSchema = () => ({
-  type: 'object',
+  type: "object",
   properties: {
     menuKey: stringSchema,
     key: stringSchema,
@@ -52,42 +57,42 @@ const addMenuItemFromUserSchema = () => ({
     label: stringSchema,
     description: stringSchema,
   },
-  required: ['menuKey', 'key', 'parentKey', 'pluginName', 'label', 'url'],
+  required: ["menuKey", "key", "parentKey", "pluginName", "label", "url"],
   additionalProperties: false,
 });
 
 const removeMenuItemFromUserSchema = () => ({
-  type: 'object',
+  type: "object",
   properties: {
     menuKey: stringSchema,
     key: stringSchema,
   },
-  required: ['menuKey', 'key'],
+  required: ["menuKey", "key"],
   additionalProperties: false,
 });
 
 const updateMenuItemFromUserSchema = () => ({
-  type: 'object',
+  type: "object",
   properties: {
     menuKey: stringSchema,
     key: stringSchema,
     label: stringSchema,
   },
-  required: ['menuKey', 'key', 'label'],
+  required: ["menuKey", "key", "label"],
   additionalProperties: false,
 });
 
 const reOrderSchema = () => ({
-  type: 'object',
+  type: "object",
   properties: {
     menuKey: stringSchema,
     parentKey: stringSchema,
     orderedIds: {
-      type: 'array',
+      type: "array",
       items: stringSchema,
     },
   },
-  required: ['menuKey', 'orderedIds', 'parentKey'],
+  required: ["menuKey", "orderedIds", "parentKey"],
   additionalProperties: false,
 });
 

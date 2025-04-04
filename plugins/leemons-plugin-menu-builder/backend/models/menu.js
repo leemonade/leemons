@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -25,6 +25,10 @@ const schema = new mongoose.Schema(
 
 schema.index({ deploymentID: 1, key: 1 }, { unique: true });
 
-const menuModel = newModel(mongoose.connection, 'v1::menu-builder_menu', schema);
+const menuModel = newModel(
+  mongoose.connection,
+  "v1::menu-builder_menu",
+  schema
+);
 
 module.exports = { menuModel };

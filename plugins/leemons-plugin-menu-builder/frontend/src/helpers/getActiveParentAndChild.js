@@ -1,9 +1,9 @@
-import * as _ from 'lodash';
-import { getMenu } from '@menu-builder/helpers';
+import * as _ from "lodash";
+import { getMenu } from "@menu-builder/helpers";
 
 async function getActiveParentAndChild(_key) {
   let key = _key;
-  if (_.isNil(key)) key = 'menu-builder.main';
+  if (_.isNil(key)) key = "menu-builder.main";
   const menu = await getMenu(key);
   const url = window.location.pathname;
   const result = {

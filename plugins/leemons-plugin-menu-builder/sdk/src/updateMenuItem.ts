@@ -1,6 +1,6 @@
-import type { Context } from '@leemons/moleculer';
-import { isArray, map } from 'lodash';
-import type { MenuItem, MenuItemConfig } from './types';
+import type { Context } from "@leemons/moleculer";
+import { isArray, map } from "lodash";
+import type { MenuItem, MenuItemConfig } from "./types";
 
 interface ExecParams {
   item: MenuItemConfig;
@@ -21,12 +21,12 @@ async function exec({
   ctx,
 }: ExecParams): Promise<MenuItem | null> {
   if (
-    await ctx.tx.call('menu-builder.menuItem.exist', {
+    await ctx.tx.call("menu-builder.menuItem.exist", {
       menuKey,
       key: ctx.prefixPN(item.key),
     })
   ) {
-    const result = (await ctx.tx.call('menu-builder.menuItem.update', {
+    const result = (await ctx.tx.call("menu-builder.menuItem.update", {
       ...item,
       menuKey,
       key: ctx.prefixPN(item.key),
@@ -41,7 +41,7 @@ async function exec({
 
 export async function updateMenuItem({
   item,
-  menuKey = 'menu-builder.main',
+  menuKey = "menu-builder.main",
   shouldWait = false,
   ctx,
 }: UpdateMenuItemParams): Promise<(MenuItem | null)[]> {

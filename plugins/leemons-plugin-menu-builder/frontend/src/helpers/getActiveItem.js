@@ -1,5 +1,5 @@
 /* eslint-disable consistent-return */
-import { forEach } from 'lodash';
+import { forEach } from "lodash";
 
 export const getActiveItem = (menuData) => {
   let activeItem = null;

@@ -1,5 +1,5 @@
-const { validateNotExistMenuItem } = require('../../validations/exists');
-const { validateKeyPrefix } = require('../../validations/exists');
+const { validateNotExistMenuItem } = require("../../validations/exists");
+const { validateKeyPrefix } = require("../../validations/exists");
 
 /**
  * Remove a menu item
@@ -20,7 +20,7 @@ async function remove({ menuKey, key, ctx }) {
     // Delete item
     ctx.tx.db.MenuItem.deleteOne({ key }),
     // Delete item permissions
-    ctx.tx.call('users.permissions.removeItems', {
+    ctx.tx.call("users.permissions.removeItems", {
       query: {
         type: ctx.prefixPN(`${menuKey}.menu-item`),
         item: key,
@@ -30,7 +30,7 @@ async function remove({ menuKey, key, ctx }) {
 
   // Delete item translations
   promises.push(
-    ctx.tx.call('multilanguage.contents.deleteKeyStartsWith', {
+    ctx.tx.call("multilanguage.contents.deleteKeyStartsWith", {
       key: ctx.prefixPN(`${menuKey}.${key}.`),
     })
   );

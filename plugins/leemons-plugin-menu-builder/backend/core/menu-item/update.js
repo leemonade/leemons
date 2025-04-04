@@ -1,8 +1,8 @@
-const _ = require('lodash');
-const { validateNotExistMenuItem } = require('../../validations/exists');
-const { validateKeyPrefix } = require('../../validations/exists');
-const { validateUpdateMenuItem } = require('../../validations/menu-item');
-const { validateNotExistMenu } = require('../../validations/exists');
+const _ = require("lodash");
+const { validateNotExistMenuItem } = require("../../validations/exists");
+const { validateKeyPrefix } = require("../../validations/exists");
+const { validateUpdateMenuItem } = require("../../validations/menu-item");
+const { validateNotExistMenu } = require("../../validations/exists");
 
 /**
  * Update a Menu Item
@@ -15,7 +15,15 @@ const { validateNotExistMenu } = require('../../validations/exists');
  * @param {any=} transacting DB transaction
  * @return {Promise<MenuItem>} Created / Updated menuItem
  * */
-async function update({ menuKey, key, label, description, permissions, ctx, ...data }) {
+async function update({
+  menuKey,
+  key,
+  label,
+  description,
+  permissions,
+  ctx,
+  ...data
+}) {
   const _order = data.order;
   const _fixed = data.fixed;
   const _disabled = data.disabled;
@@ -63,18 +71,24 @@ async function update({ menuKey, key, label, description, permissions, ctx, ...d
 
   // Create the MENU ITEM
   const promises = [
-    ctx.tx.db.MenuItem.findOneAndUpdate({ menuKey, key }, data, { new: true, lean: true }),
+    ctx.tx.db.MenuItem.findOneAndUpdate({ menuKey, key }, data, {
+      new: true,
+      lean: true,
+    }),
   ];
 
   // ES: Si la clave o el menu quieren ser actualizados tenemos que borrar de la tabla de traducciones y de permisos los registros, ya que dejan de existir
-  if ((data.key && data.key !== key) || (data.menuKey && data.menuKey !== menuKey)) {
+  if (
+    (data.key && data.key !== key) ||
+    (data.menuKey && data.menuKey !== menuKey)
+  ) {
     promises.push(
-      ctx.tx.call('multilanguage.contents.deleteKeyStartsWith', {
+      ctx.tx.call("multilanguage.contents.deleteKeyStartsWith", {
         key: ctx.prefixPN(`${menuKey}.${key}.`),
       })
     );
     promises.push(
-      ctx.tx.call('users.permissions.removeItems', {
+      ctx.tx.call("users.permissions.removeItems", {
         query: {
           type: ctx.prefixPN(`${menuKey}.menu-item`),
           item: key,
@@ -86,7 +100,7 @@ async function update({ menuKey, key, label, description, permissions, ctx, ...d
   // Create LABEL & DESCRIPTIONS in locales
   if (label) {
     promises.push(
-      ctx.tx.call('multilanguage.contents.setKey', {
+      ctx.tx.call("multilanguage.contents.setKey", {
         key: ctx.prefixPN(`${data.menuKey}.${data.key}.label`),
         data: label,
       })
@@ -95,7 +109,7 @@ async function update({ menuKey, key, label, description, permissions, ctx, ...d
 
   if (description) {
     promises.push(
-      ctx.tx.call('multilanguage.contents.setKey', {
+      ctx.tx.call("multilanguage.contents.setKey", {
         key: ctx.prefixPN(`${data.menuKey}.${data.key}.description`),
         data: description,
       })
@@ -104,7 +118,7 @@ async function update({ menuKey, key, label, description, permissions, ctx, ...d
 
   // Add the necessary permissions to view the item
   if (_.isArray(permissions)) {
-    await ctx.tx.call('users.permissions.removeItems', {
+    await ctx.tx.call("users.permissions.removeItems", {
       query: {
         type: ctx.prefixPN(`${menuKey}.menu-item`),
         item: key,
@@ -112,7 +126,7 @@ async function update({ menuKey, key, label, description, permissions, ctx, ...d
     });
 
     if (permissions.length) {
-      await ctx.tx.call('users.permissions.addItem', {
+      await ctx.tx.call("users.permissions.addItem", {
         item: data.key,
         type: ctx.prefixPN(`${data.menuKey}.menu-item`),
         data: permissions,
@@ -121,7 +135,7 @@ async function update({ menuKey, key, label, description, permissions, ctx, ...d
   }
 
   promises.push(
-    await ctx.tx.call('users.permissions.addItemBasicIfNeed', {
+    await ctx.tx.call("users.permissions.addItemBasicIfNeed", {
       item: data.key,
       type: ctx.prefixPN(`${data.menuKey}.menu-item`),
     })

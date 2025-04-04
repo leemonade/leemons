@@ -1,3 +1,3 @@
-import { NavItem } from './NavItem';
+import { NavItem } from "./NavItem";
 
 export { NavItem };

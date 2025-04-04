@@ -1,17 +1,17 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const NAV_ITEM_DEFAULT_PROPS = {
-  label: '',
+  label: "",
   childrenCollection: [],
   useRouter: false,
-  activeIconSvg: '',
-  iconSvg: '',
-  iconAlt: '',
+  activeIconSvg: "",
+  iconSvg: "",
+  iconAlt: "",
   active: false,
-  url: '',
-  id: '',
+  url: "",
+  id: "",
   isCollapsed: false,
-  expandedItem: '',
+  expandedItem: "",
   onOpen: () => {},
   isNew: false,
 };

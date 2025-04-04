@@ -1,18 +1,22 @@
 /* eslint-disable no-await-in-loop */
-const { isArray } = require('lodash');
-const constants = require('../../config/constants');
-const { add: addItem } = require('./add');
-const { exist: existItem } = require('./exist');
-const { remove: removeItem } = require('./remove');
+const { isArray } = require("lodash");
+const constants = require("../../config/constants");
+const { add: addItem } = require("./add");
+const { exist: existItem } = require("./exist");
+const { remove: removeItem } = require("./remove");
 
 async function addMenuItem({ menuKey, removed, item, permissions, ctx }) {
-  if (!(await existItem({ menuKey, key: `${ctx.callerPlugin}.${item.key}`, ctx }))) {
+  if (
+    !(await existItem({ menuKey, key: `${ctx.callerPlugin}.${item.key}`, ctx }))
+  ) {
     if (!removed) {
       return addItem({
         ...item,
         menuKey,
         key: `${ctx.callerPlugin}.${item.key}`,
-        parentKey: item.parentKey ? `${ctx.callerPlugin}.${item.parentKey}` : undefined,
+        parentKey: item.parentKey
+          ? `${ctx.callerPlugin}.${item.parentKey}`
+          : undefined,
         permissions,
         ctx,
       });
@@ -48,7 +52,9 @@ async function addItemsFromPlugin({
     return menuItems;
   }
 
-  return Promise.all(items.map((item) => addMenuItem({ ...item, menuKey, ctx })));
+  return Promise.all(
+    items.map((item) => addMenuItem({ ...item, menuKey, ctx }))
+  );
 }
 
 module.exports = { addItemsFromPlugin };

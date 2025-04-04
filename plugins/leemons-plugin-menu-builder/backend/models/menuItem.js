@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -55,7 +55,7 @@ const schema = new mongoose.Schema(
     // SELF, BLANK, MODAL
     window: {
       type: String,
-      default: 'SELF',
+      default: "SELF",
     },
     disabled: {
       type: Boolean,
@@ -72,6 +72,10 @@ schema.index({ deploymentID: 1, key: 1 }, { unique: true });
 schema.index({ menuKey: 1, deploymentID: 1, isDeleted: 1 });
 schema.index({ menuKey: 1, key: 1, deploymentID: 1, isDeleted: 1 });
 
-const menuItemModel = newModel(mongoose.connection, 'v1::menu-builder_menuItem', schema);
+const menuItemModel = newModel(
+  mongoose.connection,
+  "v1::menu-builder_menuItem",
+  schema
+);
 
 module.exports = { menuItemModel };

@@ -1,11 +1,11 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('@leemons/mongodb-helpers');
+const { getKeyValueModel } = require("@leemons/mongodb-helpers");
 
 const models = {
-  ...require('./knowHowToUse'),
-  ...require('./menuItem'),
-  ...require('./menu'),
+  ...require("./knowHowToUse"),
+  ...require("./menuItem"),
+  ...require("./menu"),
 };
 
 module.exports = {
@@ -15,7 +15,7 @@ module.exports = {
       KnowHowToUse: models.knowHowToUseModel,
       MenuItem: models.menuItemModel,
       Menu: models.menuModel,
-      KeyValue: getKeyValueModel({ modelName: 'v1::menu-builder_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: "v1::menu-builder_KeyValue" }),
     };
   },
 };

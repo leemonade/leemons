@@ -1,6 +1,9 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { validateNotExistMenu, validateNotExistMenuItem } = require('../../validations/exists');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const {
+  validateNotExistMenu,
+  validateNotExistMenuItem,
+} = require("../../validations/exists");
 
 /**
  * Remove custom Menu Item
@@ -14,7 +17,9 @@ const { validateNotExistMenu, validateNotExistMenuItem } = require('../../valida
  * */
 async function removeCustomForUser({ menuKey, key, ctx }) {
   if (!key.startsWith(ctx.prefixPN(`user.${ctx.meta.userSession.id}.`))) {
-    throw new LeemonsError(ctx, { message: 'You can only delete your own custom items' });
+    throw new LeemonsError(ctx, {
+      message: "You can only delete your own custom items",
+    });
   }
 
   // Check for required params
@@ -28,14 +33,14 @@ async function removeCustomForUser({ menuKey, key, ctx }) {
 
   // Remove LABEL & DESCRIPTIONS in locales
   promises.push(
-    ctx.tx.call('multilanguage.contents.deleteKeyStartsWith', {
+    ctx.tx.call("multilanguage.contents.deleteKeyStartsWith", {
       key: ctx.prefixPN(`${menuKey}.${key}`),
     })
   );
 
   // Remove permissions for item
   promises.push(
-    ctx.tx.call('users.permissions.removeItems', {
+    ctx.tx.call("users.permissions.removeItems", {
       query: {
         type: ctx.prefixPN(`${menuKey}.menu-item.custom`),
         item: key,
@@ -45,8 +50,8 @@ async function removeCustomForUser({ menuKey, key, ctx }) {
 
   // Remove de custom permission
   promises.push(
-    ctx.tx.call('users.users.removeCustomUserAgentPermission', {
-      userAgentId: _.map(ctx.meta.userSession.userAgents, 'id'),
+    ctx.tx.call("users.users.removeCustomUserAgentPermission", {
+      userAgentId: _.map(ctx.meta.userSession.userAgents, "id"),
       data: {
         permissionName: key,
       },

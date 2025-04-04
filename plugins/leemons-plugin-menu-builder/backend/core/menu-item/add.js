@@ -1,10 +1,10 @@
-const _ = require('lodash');
-const { CORE_PLUGINS } = require('../../config/constants');
-const { validateNotExistMenuItem } = require('../../validations/exists');
-const { validateKeyPrefix } = require('../../validations/exists');
-const { validateExistMenuItem } = require('../../validations/exists');
-const { validateAddMenuItem } = require('../../validations/menu-item');
-const { validateNotExistMenu } = require('../../validations/exists');
+const _ = require("lodash");
+const { CORE_PLUGINS } = require("../../config/constants");
+const { validateNotExistMenuItem } = require("../../validations/exists");
+const { validateKeyPrefix } = require("../../validations/exists");
+const { validateExistMenuItem } = require("../../validations/exists");
+const { validateAddMenuItem } = require("../../validations/menu-item");
+const { validateNotExistMenu } = require("../../validations/exists");
 
 /**
  * Create a Menu Item
@@ -71,7 +71,7 @@ async function add({
     // Check for required params
     await validateNotExistMenu({ key: menuKey, ctx });
   } catch (e) {
-    console.log('Error adding menu item for key - ', key);
+    console.log("Error adding menu item for key - ", key);
     throw e;
   }
 
@@ -119,7 +119,7 @@ async function add({
 
   // Create LABEL & DESCRIPTIONS in locales
   promises.push(
-    ctx.tx.call('multilanguage.contents.addManyByKey', {
+    ctx.tx.call("multilanguage.contents.addManyByKey", {
       key: ctx.prefixPN(`${menuKey}.${key}.label`),
       data: label,
     })
@@ -127,7 +127,7 @@ async function add({
 
   if (description) {
     promises.push(
-      ctx.tx.call('multilanguage.contents.addManyByKey', {
+      ctx.tx.call("multilanguage.contents.addManyByKey", {
         key: ctx.prefixPN(`${menuKey}.${key}.description`),
         data: description,
       })
@@ -137,7 +137,7 @@ async function add({
   // Add the necessary permissions to view the item
   if (_.isArray(permissions) && permissions.length) {
     promises.push(
-      ctx.tx.call('users.permissions.addItem', {
+      ctx.tx.call("users.permissions.addItem", {
         item: key,
         type: ctx.prefixPN(`${menuKey}.menu-item`),
         data: permissions,
@@ -146,7 +146,7 @@ async function add({
     );
   } else {
     promises.push(
-      ctx.tx.call('users.permissions.addItemBasicIfNeed', {
+      ctx.tx.call("users.permissions.addItemBasicIfNeed", {
         item: key,
         type: ctx.prefixPN(`${menuKey}.menu-item`),
       })

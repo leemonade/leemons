@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const { validateKeyPrefix } = require('../../validations/exists');
-const { validateExistMenu } = require('../../validations/exists');
+const _ = require("lodash");
+const { validateKeyPrefix } = require("../../validations/exists");
+const { validateExistMenu } = require("../../validations/exists");
 
 /**
  * Create a Menu
@@ -20,9 +20,9 @@ async function add({ key, permissions, ctx }) {
 
   // Add the necessary permissions to view the item
   if (_.isArray(permissions) && permissions.length) {
-    await ctx.tx.call('users.permissions.addItem', {
+    await ctx.tx.call("users.permissions.addItem", {
       item: key,
-      type: ctx.prefixPN('menu'),
+      type: ctx.prefixPN("menu"),
       data: permissions,
     });
   }

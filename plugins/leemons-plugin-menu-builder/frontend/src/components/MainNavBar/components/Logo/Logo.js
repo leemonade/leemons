@@ -1,11 +1,11 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { LogoStyles } from './Logo.styles';
+import React from "react";
+import PropTypes from "prop-types";
+import { LogoStyles } from "./Logo.styles";
 
-export const LOGO_VARIANTS = ['positive', 'negative'];
+export const LOGO_VARIANTS = ["positive", "negative"];
 
 export const Logo = ({ variant = LOGO_VARIANTS[0], isotype, className }) => {
-  const width = isotype ? '32' : '200';
+  const width = isotype ? "32" : "200";
   const { classes, cx } = LogoStyles();
 
   return (

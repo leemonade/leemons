@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
 
 /**
  * Reorder user custom menu items
@@ -25,11 +25,17 @@ async function reOrderCustomUserItems({ menuKey, parentKey, ids, ctx }) {
     },
   });
   if (count !== ids.length)
-    throw new LeemonsError('The user does not have access to any of the following items');
+    throw new LeemonsError(
+      "The user does not have access to any of the following items"
+    );
 
   return Promise.all(
     _.map(ids, (id, order) =>
-      ctx.tx.db.MenuItem.findOneAndUpdate({ id }, { order }, { new: true, lean: true })
+      ctx.tx.db.MenuItem.findOneAndUpdate(
+        { id },
+        { order },
+        { new: true, lean: true }
+      )
     )
   );
 }

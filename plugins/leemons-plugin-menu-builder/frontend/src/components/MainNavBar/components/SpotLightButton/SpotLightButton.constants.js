@@ -1,10 +1,10 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const SPOTLIGHT_BUTTON_DEFAULT_PROPS = {
   onClick: () => {},
   isCollapsed: false,
   ligthMode: false,
-  spotlightLabel: 'Buscar en el menu',
+  spotlightLabel: "Buscar en el menu",
 };
 
 export const SPOTLIGHT_BUTTON_PROP_TYPES = {

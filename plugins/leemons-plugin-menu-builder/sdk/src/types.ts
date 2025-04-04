@@ -1,5 +1,5 @@
-import type { Context } from '@leemons/moleculer';
-import type { Model } from '@leemons/mongodb';
+import type { Context } from "@leemons/moleculer";
+import type { Model } from "@leemons/mongodb";
 
 export interface GetKeyValueModel {
   id: string;

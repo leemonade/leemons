@@ -1,7 +1,7 @@
-const constants = require('../../config/constants');
-const { validateNotExistMenuItem } = require('../../validations/exists');
-const { validateKeyPrefix } = require('../../validations/exists');
-const { validateNotExistMenu } = require('../../validations/exists');
+const constants = require("../../config/constants");
+const { validateNotExistMenuItem } = require("../../validations/exists");
+const { validateKeyPrefix } = require("../../validations/exists");
+const { validateNotExistMenu } = require("../../validations/exists");
 
 /**
  * Update a Menu Item
@@ -17,11 +17,13 @@ const { validateNotExistMenu } = require('../../validations/exists');
 async function enable({ menuKey = constants.mainMenuKey, key, ctx }) {
   validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
 
-  const config = await ctx.tx.call('deployment-manager.getConfigRest', { allConfig: true });
+  const config = await ctx.tx.call("deployment-manager.getConfigRest", {
+    allConfig: true,
+  });
 
   const disableMenuKeys = config[ctx.callerPluginV]?.deny?.menu;
   let toRemove = false;
-  if (disableMenuKeys?.indexOf(key.replace(`${ctx.callerPlugin}.`, '')) >= 0) {
+  if (disableMenuKeys?.indexOf(key.replace(`${ctx.callerPlugin}.`, "")) >= 0) {
     toRemove = true;
   }
   if (!toRemove) {

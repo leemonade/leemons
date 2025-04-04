@@ -1,8 +1,8 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const USER_BUTTON_DEFAULT_PROPS = {
-  name: '',
-  surnames: '',
+  name: "",
+  surnames: "",
   isCollapsed: false,
   session: {},
   sessionMenu: {},

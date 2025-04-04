@@ -1,9 +1,9 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const LINK_WRAPPER_DEFAULT_PROPS = {
   useRouter: false,
-  url: '',
-  id: '',
+  url: "",
+  id: "",
   children: [],
 };
 

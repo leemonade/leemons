@@ -1,16 +1,16 @@
-const mockCSSRoute = '<rootDir>/___mocks___/css-mock.js';
+const mockCSSRoute = "<rootDir>/___mocks___/css-mock.js";
 
 /** @type {import('jest').Config} */
 module.exports = {
-  testEnvironment: 'jsdom',
+  testEnvironment: "jsdom",
   transform: {
-    '\\.(css|less|scss|sass)$': mockCSSRoute,
-    '^.+\\.js?$': 'babel-jest',
+    "\\.(css|less|scss|sass)$": mockCSSRoute,
+    "^.+\\.js?$": "babel-jest",
   },
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
-  transformIgnorePatterns: ['/node_modules/(?!swiper|ssr-window|dom7)'],
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
+  transformIgnorePatterns: ["/node_modules/(?!swiper|ssr-window|dom7)"],
   moduleNameMapper: {
-    '\\.(css|less|scss|sass)$': mockCSSRoute,
-    uuid: require.resolve('uuid'),
+    "\\.(css|less|scss|sass)$": mockCSSRoute,
+    uuid: require.resolve("uuid"),
   },
 };

@@ -1,6 +1,6 @@
-const { escapeRegExp } = require('lodash');
+const { escapeRegExp } = require("lodash");
 
-const { validateKeyPrefix } = require('../../validations/exists');
+const { validateKeyPrefix } = require("../../validations/exists");
 
 /**
  * Remove a menu item
@@ -17,11 +17,11 @@ async function removeAll({ menuKey, ctx }) {
     // Delete item
     ctx.tx.db.MenuItem.deleteMany({ menuKey }),
     // Delete permissions of all items
-    ctx.tx.call('users.permissions.removeItems', {
+    ctx.tx.call("users.permissions.removeItems", {
       query: {
         type: {
           $regex: `^${escapeRegExp(ctx.prefixPN(menuKey))}`,
-          $options: 'i',
+          $options: "i",
         },
       },
     }),
@@ -29,7 +29,9 @@ async function removeAll({ menuKey, ctx }) {
 
   // Delete translations of all items
   promises.push(
-    ctx.tx.call('multilanguage.contents.deleteKeyStartsWith', { key: ctx.prefixPN(`${menuKey}`) })
+    ctx.tx.call("multilanguage.contents.deleteKeyStartsWith", {
+      key: ctx.prefixPN(`${menuKey}`),
+    })
   );
 
   await Promise.all(promises);

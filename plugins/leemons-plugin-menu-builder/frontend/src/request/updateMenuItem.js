@@ -1,7 +1,7 @@
 async function updateMenuItem(menuKey, key, body) {
   return leemons.api(`v1/menu-builder/menu/${menuKey}/${key}`, {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body,
   });
 }

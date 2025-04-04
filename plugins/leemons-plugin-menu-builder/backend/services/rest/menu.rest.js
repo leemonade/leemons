@@ -4,28 +4,28 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
 
-const { getIfHasPermission } = require('../../core/menu');
+const { getIfHasPermission } = require("../../core/menu");
 const {
   addCustomForUser,
   reOrderCustomUserItems,
   removeCustomForUser,
   updateCustomForUser,
-} = require('../../core/menu-item');
+} = require("../../core/menu-item");
 const {
   validateAddMenuItemFromUser,
   validateReOrder,
   validateRemoveMenuItemFromUser,
   validateUpdateMenuItemFromUser,
-} = require('../../validations/menu-item');
+} = require("../../validations/menu-item");
 
 /** @type {ServiceSchema} */
 module.exports = {
   getIfKnowHowToUseRest: {
     rest: {
-      method: 'GET',
-      path: '/know-how-to-use',
+      method: "GET",
+      path: "/know-how-to-use",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -37,8 +37,8 @@ module.exports = {
   },
   setKnowHowToUseRest: {
     rest: {
-      method: 'POST',
-      path: '/know-how-to-use',
+      method: "POST",
+      path: "/know-how-to-use",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -50,8 +50,8 @@ module.exports = {
   },
   getIfHasPermissionRest: {
     rest: {
-      method: 'GET',
-      path: '/:menuKey',
+      method: "GET",
+      path: "/:menuKey",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -61,13 +61,13 @@ module.exports = {
   },
   addCustomForUserRest: {
     rest: {
-      method: 'POST',
-      path: '/:menuKey/add-item',
+      method: "POST",
+      path: "/:menuKey/add-item",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       ctx.params.key = ctx.params.menuKey;
-      ctx.params.pluginName = ctx.prefixPN('');
+      ctx.params.pluginName = ctx.prefixPN("");
       validateAddMenuItemFromUser(ctx.params);
       const menuItem = await addCustomForUser({ ...ctx.params, ctx });
       return { status: 201, menuItem };
@@ -75,8 +75,8 @@ module.exports = {
   },
   reOrderCustomUserItemsRest: {
     rest: {
-      method: 'POST',
-      path: '/:menuKey/re-order',
+      method: "POST",
+      path: "/:menuKey/re-order",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -90,8 +90,8 @@ module.exports = {
   },
   removeCustomForUserRest: {
     rest: {
-      method: 'DELETE',
-      path: '/:menuKey/:key',
+      method: "DELETE",
+      path: "/:menuKey/:key",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -102,8 +102,8 @@ module.exports = {
   },
   updateCustomForUserRest: {
     rest: {
-      method: 'POST',
-      path: '/:menuKey/:key',
+      method: "POST",
+      path: "/:menuKey/:key",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

@@ -1,3 +1,3 @@
-import _getMenu from './getMenu';
+import _getMenu from "./getMenu";
 
 export const getMenu = _getMenu;

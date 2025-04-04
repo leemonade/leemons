@@ -1,6 +1,6 @@
-const removeAll = require('../menu-item/removeAll');
-const { validateNotExistMenu } = require('../../validations/exists');
-const { validateKeyPrefix } = require('../../validations/exists');
+const removeAll = require("../menu-item/removeAll");
+const { validateNotExistMenu } = require("../../validations/exists");
+const { validateKeyPrefix } = require("../../validations/exists");
 
 /**
  * Create a Menu
@@ -16,9 +16,9 @@ async function remove({ key, ctx }) {
 
   await Promise.all([
     ctx.tx.db.Menu.deleteOne({ key }),
-    ctx.tx.call('users.permissions.removeItems', {
+    ctx.tx.call("users.permissions.removeItems", {
       query: {
-        type: ctx.prefixPN('menu'),
+        type: ctx.prefixPN("menu"),
         item: key,
       },
     }),

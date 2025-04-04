@@ -1,21 +1,21 @@
-import { getMenuRequest } from '@menu-builder/request';
-import hooks from 'leemons-hooks';
+import hooks from "@leemons/hooks";
+import { getMenuRequest } from "@menu-builder/request";
 
 let menuCache = {};
 let hooksActionsInit = false;
 
 function resetMenu() {
   menuCache = {};
-  hooks.fireEvent('menu-builder:reload-menu');
+  hooks.fireEvent("menu-builder:reload-menu");
 }
 
 async function getMenu(key, force) {
   if (!hooksActionsInit) {
-    hooks.addAction('menu-builder:reset-menu', resetMenu);
-    hooks.addAction('user:change:profile', resetMenu);
-    hooks.addAction('user:update:permissions', resetMenu);
-    hooks.addAction('menu-builder:user:addCustomItem', resetMenu);
-    hooks.addAction('menu-builder:user:updateItem', resetMenu);
+    hooks.addAction("menu-builder:reset-menu", resetMenu);
+    hooks.addAction("user:change:profile", resetMenu);
+    hooks.addAction("user:update:permissions", resetMenu);
+    hooks.addAction("menu-builder:user:addCustomItem", resetMenu);
+    hooks.addAction("menu-builder:user:updateItem", resetMenu);
     hooksActionsInit = true;
   }
   if (!menuCache[key] || force) {

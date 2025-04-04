@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 import {
   UnstyledButton,
@@ -8,16 +8,19 @@ import {
   Box,
   Collapse,
   TextClamp,
-} from '@bubbles-ui/components';
-import { ChevUpIcon, OpenIcon } from '@bubbles-ui/icons/outline';
-import SocketIoService from '@mqtt-socket-io/service';
-import { AnimatePresence, motion } from 'framer-motion';
+} from "@bubbles-ui/components";
+import { ChevUpIcon, OpenIcon } from "@bubbles-ui/icons/outline";
+import SocketIoService from "@mqtt-socket-io/service";
+import { AnimatePresence, motion } from "framer-motion";
 
-import { navTitleVariants } from '../../MainNavBar.constants';
-import { LinkWrapper } from '../LinkWrapper';
+import { navTitleVariants } from "../../MainNavBar.constants";
+import { LinkWrapper } from "../LinkWrapper";
 
-import { USER_BUTTON_PROP_TYPES, USER_BUTTON_DEFAULT_PROPS } from './UserButton.constants';
-import { UserButttonStyles } from './UserButton.styles';
+import {
+  USER_BUTTON_PROP_TYPES,
+  USER_BUTTON_DEFAULT_PROPS,
+} from "./UserButton.constants";
+import { UserButttonStyles } from "./UserButton.styles";
 
 function UserButton({
   name,
@@ -35,32 +38,38 @@ function UserButton({
   const [avatar, setAvatar] = useState(session?.avatar);
 
   const hasChildren = sessionMenu?.children.length > 0;
-  const items = (hasChildren ? sessionMenu.children : []).map((child, index) => {
-    const isChildrenActive = child.id === subItemActive?.id;
-    const hasOpenIcon = child.window === 'BLANK' || child.window === 'NEW';
-    return (
-      <LinkWrapper
-        useRouter={useRouter}
-        url={child.url}
-        window={child.window}
-        id={child.id}
-        key={`itemLink--${index}`}
-      >
-        <Box
-          className={isChildrenActive ? classes.childrenContainerActive : classes.childrenContainer}
+  const items = (hasChildren ? sessionMenu.children : []).map(
+    (child, index) => {
+      const isChildrenActive = child.id === subItemActive?.id;
+      const hasOpenIcon = child.window === "BLANK" || child.window === "NEW";
+      return (
+        <LinkWrapper
+          useRouter={useRouter}
+          url={child.url}
+          window={child.window}
+          id={child.id}
+          key={`itemLink--${index}`}
         >
-          <TextClamp lines={1}>
-            <Text className={classes.link}>{child.label}</Text>
-          </TextClamp>
-          {hasOpenIcon && <OpenIcon className={classes.openIcon} />}
-        </Box>
-      </LinkWrapper>
-    );
-  });
+          <Box
+            className={
+              isChildrenActive
+                ? classes.childrenContainerActive
+                : classes.childrenContainer
+            }
+          >
+            <TextClamp lines={1}>
+              <Text className={classes.link}>{child.label}</Text>
+            </TextClamp>
+            {hasOpenIcon && <OpenIcon className={classes.openIcon} />}
+          </Box>
+        </LinkWrapper>
+      );
+    }
+  );
 
-  SocketIoService.useOn('USER_CHANGE_AVATAR', (val, param) => {
+  SocketIoService.useOn("USER_CHANGE_AVATAR", (val, param) => {
     const newUrl = new URL(param?.url);
-    newUrl.searchParams.set('t', new Date().getMilliseconds());
+    newUrl.searchParams.set("t", new Date().getMilliseconds());
     setAvatar(newUrl.href);
   });
 
@@ -81,7 +90,10 @@ function UserButton({
   return (
     <AnimatePresence>
       <Group key="groupKey">
-        <UnstyledButton className={classes.control} onClick={() => handleOpenChildren()}>
+        <UnstyledButton
+          className={classes.control}
+          onClick={() => handleOpenChildren()}
+        >
           <Group className={classes.itemWrapper}>
             <Avatar
               src={avatar}
@@ -89,15 +101,17 @@ function UserButton({
               size="sm"
               image={avatar}
               fullName={session ? `${surnames}, ${name}` : null}
-              alt={session ? `${surnames}, ${name}` : 'user avatar'}
+              alt={session ? `${surnames}, ${name}` : "user avatar"}
             />
             <motion.div
-              initial={{ opacity: '0' }}
-              animate={isCollapsed ? 'closed' : 'open'}
+              initial={{ opacity: "0" }}
+              animate={isCollapsed ? "closed" : "open"}
               variants={navTitleVariants}
             >
               <TextClamp lines={1}>
-                <Text className={classes.nameContainer}>{`${surnames}, ${name}`}</Text>
+                <Text
+                  className={classes.nameContainer}
+                >{`${surnames}, ${name}`}</Text>
               </TextClamp>
             </motion.div>
           </Group>
@@ -105,7 +119,9 @@ function UserButton({
             <ChevUpIcon
               className={classes.chevron}
               style={{
-                transform: opened ? `rotate(${theme.dir === 'rtl' ? 90 : 180}deg)` : 'none',
+                transform: opened
+                  ? `rotate(${theme.dir === "rtl" ? 90 : 180}deg)`
+                  : "none",
               }}
             />
           </Box>

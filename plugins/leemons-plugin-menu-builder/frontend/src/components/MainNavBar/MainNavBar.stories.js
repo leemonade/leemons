@@ -1,21 +1,21 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable react/prop-types */
-import React from 'react';
-import { Box, Spotlight } from '@bubbles-ui/components';
-import { BrowserRouter } from 'react-router-dom';
+import React from "react";
+import { Box, Spotlight } from "@bubbles-ui/components";
+import { BrowserRouter } from "react-router-dom";
 // import { within, userEvent } from '@storybook/testing-library';
 // import { expect } from '@storybook/jest';
-import { MainNavBar } from './MainNavBar';
-import { menuData, session, sessionMenu } from './mock/menuData';
-import { MAIN_NAV_BAR_DEFAULT_PROPS } from './MainNavBar.constants';
+import { MainNavBar } from "./MainNavBar";
+import { menuData, session, sessionMenu } from "./mock/menuData";
+import { MAIN_NAV_BAR_DEFAULT_PROPS } from "./MainNavBar.constants";
 
 export default {
-  title: 'leemons/MainNavBar',
+  title: "leemons/MainNavBar",
   parameters: {
     component: MainNavBar,
     design: {
-      type: 'figma',
-      url: 'https://www.figma.com/file/OMMWWv7my6KCmpVwmZ6QcW/Bubbles---Components-(Copy)?node-id=1330%3A19227&mode=dev',
+      type: "figma",
+      url: "https://www.figma.com/file/OMMWWv7my6KCmpVwmZ6QcW/Bubbles---Components-(Copy)?node-id=1330%3A19227&mode=dev",
     },
   },
   argTypes: {},
@@ -39,7 +39,7 @@ const Template = ({ testAdminNavTitle, testUseAdminNavTitle, ...props }) => {
     props.navTitle = testAdminNavTitle;
   }
   return (
-    <Box style={{ margin: '-1rem' }}>
+    <Box style={{ margin: "-1rem" }}>
       <Spotlight>
         <BrowserRouter>
           <MainNavBar {...props} />
@@ -57,5 +57,5 @@ Playground.args = {
   sessionMenu,
   session,
   testUseAdminNavTitle: false,
-  testAdminNavTitle: '',
+  testAdminNavTitle: "",
 };

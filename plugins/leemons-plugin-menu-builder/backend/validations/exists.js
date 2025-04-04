@@ -1,15 +1,19 @@
-const { LeemonsError } = require('@leemons/error');
-const { exist: existMenu } = require('../core/menu/exist');
-const { exist: existMenuItem } = require('../core/menu-item/exist');
+const { LeemonsError } = require("@leemons/error");
+const { exist: existMenu } = require("../core/menu/exist");
+const { exist: existMenuItem } = require("../core/menu-item/exist");
 
 async function validateExistMenu({ key, ctx }) {
   if (await existMenu({ key, ctx }))
-    throw new LeemonsError(ctx, { message: `Menu with key '${key}' already exists` });
+    throw new LeemonsError(ctx, {
+      message: `Menu with key '${key}' already exists`,
+    });
 }
 
 async function validateNotExistMenu({ key, ctx }) {
   if (!(await existMenu({ key, ctx })))
-    throw new LeemonsError(ctx, { message: `Menu with key '${key}' not exists` });
+    throw new LeemonsError(ctx, {
+      message: `Menu with key '${key}' not exists`,
+    });
 }
 
 async function validateExistMenuItem({ menuKey, key, ctx }) {
@@ -28,7 +32,9 @@ async function validateNotExistMenuItem({ menuKey, key, ctx }) {
 
 function validateKeyPrefix({ key, calledFrom, ctx }) {
   if (!key.startsWith(calledFrom))
-    throw new LeemonsError(ctx, { message: `The key name must begin with ${calledFrom}` });
+    throw new LeemonsError(ctx, {
+      message: `The key name must begin with ${calledFrom}`,
+    });
 }
 
 module.exports = {

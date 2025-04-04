@@ -1,10 +1,10 @@
 export default function getInnerText(obj) {
-  let buf = '';
+  let buf = "";
   if (obj) {
     const type = typeof obj;
-    if (type === 'string' || type === 'number') {
+    if (type === "string" || type === "number") {
       buf += obj;
-    } else if (type === 'object') {
+    } else if (type === "object") {
       let children = null;
       if (Array.isArray(obj)) {
         children = obj;

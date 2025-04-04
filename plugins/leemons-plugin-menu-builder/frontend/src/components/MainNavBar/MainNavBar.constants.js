@@ -1,11 +1,11 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const MAIN_NAV_BAR_DEFAULT_PROPS = {
   isLoading: false,
   useSpotlight: true,
-  logoUrl: '',
-  navTitle: 'Leemons LXP',
-  spotlightLabel: 'Search',
+  logoUrl: "",
+  navTitle: "Leemons LXP",
+  spotlightLabel: "Search",
   session: null,
   sessionMenu: null,
   menuData: [],

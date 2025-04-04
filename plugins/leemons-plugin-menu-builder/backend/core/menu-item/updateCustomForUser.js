@@ -1,6 +1,9 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { validateNotExistMenu, validateNotExistMenuItem } = require('../../validations/exists');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const {
+  validateNotExistMenu,
+  validateNotExistMenuItem,
+} = require("../../validations/exists");
 
 /**
  * Update custom Menu Item
@@ -13,9 +16,16 @@ const { validateNotExistMenu, validateNotExistMenuItem } = require('../../valida
  * @param {any=} transacting DB transaction
  * @return {Promise<MenuItem>} Created / Updated menuItem
  * */
-async function updateCustomForUser({ menuKey, key, label, description, ctx, ...data }) {
+async function updateCustomForUser({
+  menuKey,
+  key,
+  label,
+  description,
+  ctx,
+  ...data
+}) {
   if (!key.startsWith(ctx.prefixPN(`user.${ctx.meta.userSession.id}.`))) {
-    throw new LeemonsError('You can only update your own custom items');
+    throw new LeemonsError("You can only update your own custom items");
   }
 
   // Check for required params
@@ -29,14 +39,17 @@ async function updateCustomForUser({ menuKey, key, label, description, ctx, ...d
 
   if (!_.isEmpty(data)) {
     promises.push(
-      ctx.tx.db.MenuItem.findOneAndUpdate({ menuKey, key }, data, { new: true, lean: true })
+      ctx.tx.db.MenuItem.findOneAndUpdate({ menuKey, key }, data, {
+        new: true,
+        lean: true,
+      })
     );
   }
 
   // Update LABEL & DESCRIPTIONS in locales
   if (label) {
     promises.push(
-      ctx.tx.call('multilanguage.contents.setValue', {
+      ctx.tx.call("multilanguage.contents.setValue", {
         key: ctx.prefixPN(`${menuKey}.${key}.label`),
         locale: ctx.meta.userSession.locale,
         value: label,
@@ -46,7 +59,7 @@ async function updateCustomForUser({ menuKey, key, label, description, ctx, ...d
 
   if (description) {
     promises.push(
-      ctx.tx.call('multilanguage.contents.setValue', {
+      ctx.tx.call("multilanguage.contents.setValue", {
         key: ctx.prefixPN(`${menuKey}.${key}.description`),
         locale: ctx.meta.userSession.locale,
         value: description,

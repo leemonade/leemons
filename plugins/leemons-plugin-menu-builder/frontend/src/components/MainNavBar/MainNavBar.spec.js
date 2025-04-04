@@ -1,15 +1,15 @@
-import React from 'react';
-import { render } from '@testing-library/react';
+import React from "react";
+import { render } from "@testing-library/react";
 // import { axe } from 'jest-axe';
 // import { MainNavBar } from './MainNavBar';
 
-describe('MainNavBar', () => {
+describe("MainNavBar", () => {
   // it('should have no axe violations', async () => {
   //   const { container } = await render(<MainNavBar />);
   //   const results = await axe(container);
   //   expect(results).toHaveNoViolations();
   // });
-  it('MainNavBar renders properly', () => {
+  it("MainNavBar renders properly", () => {
     // render(
     //   <MainNavBar
     //     menuData={[]}
@@ -33,7 +33,7 @@ describe('MainNavBar', () => {
     // render(<TestComponent />);
     // render(<Logo isotype />);
   });
-  it('testing jest', () => {
+  it("testing jest", () => {
     render(<div>Hello</div>);
     expect(1).toBe(1);
   });
