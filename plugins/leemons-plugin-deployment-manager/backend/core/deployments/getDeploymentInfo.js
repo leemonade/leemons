@@ -1,10 +1,10 @@
-const { deploymentModel } = require('../../models/deployment');
+const { deploymentModel } = require("../../models/deployment");
 
 async function getDeploymentInfo({ id }) {
   const query = id?.length ? { id } : {};
   const deployment = await deploymentModel.find(query).lean();
   if (deployment) {
-    deployment.type = deployment.type ?? 'free';
+    deployment.type = deployment.type ?? "free";
   }
   return deployment;
 }

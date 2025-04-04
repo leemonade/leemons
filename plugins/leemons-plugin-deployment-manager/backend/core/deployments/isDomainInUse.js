@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function isDomainInUse({ ctx, domain }) {
   const count = await ctx.db.deployment.countDocuments({

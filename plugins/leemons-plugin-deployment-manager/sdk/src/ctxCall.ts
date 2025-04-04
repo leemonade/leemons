@@ -1,7 +1,7 @@
-import type { Context } from '@leemons/moleculer';
-import _ from 'lodash';
-import type { CallingOptions } from 'moleculer';
-import { getDeploymentID } from './getDeploymentID';
+import type { Context } from "@leemons/moleculer";
+import _ from "lodash";
+import type { CallingOptions } from "moleculer";
+import { getDeploymentID } from "./getDeploymentID";
 
 interface ActionCallCacheItem {
   actionToCall: string;
@@ -26,30 +26,49 @@ export async function ctxCall(
   _actionName: string | { action: { name: string } },
   params: Record<string, any> | null = null,
   opts: CallingOptions | null = null,
-  { getDeploymentIdInCall, dontGetDeploymentIDOnActionCall }: CtxCallOptions = {}
+  {
+    getDeploymentIdInCall,
+    dontGetDeploymentIDOnActionCall,
+  }: CtxCallOptions = {}
 ): Promise<any> {
-  if (_.isObject(params) && Object.prototype.hasOwnProperty.call(params, 'ctx')) {
+  if (
+    _.isObject(params) &&
+    Object.prototype.hasOwnProperty.call(params, "ctx")
+  ) {
     delete (params as any).ctx;
   }
 
-  const actionName = typeof _actionName === 'string' ? _actionName : _actionName.action.name;
+  const actionName =
+    typeof _actionName === "string" ? _actionName : _actionName.action.name;
 
-  if (getDeploymentIdInCall && !dontGetDeploymentIDOnActionCall?.includes(actionName)) {
+  if (
+    getDeploymentIdInCall &&
+    !dontGetDeploymentIDOnActionCall?.includes(actionName)
+  ) {
     await getDeploymentID(ctx);
   }
 
   if (
-    actionName.startsWith('deployment-manager.') ||
-    actionName.startsWith('gateway.') ||
-    ctx.action?.name.startsWith('gateway.')
+    actionName.startsWith("deployment-manager.") ||
+    actionName.startsWith("gateway.") ||
+    ctx.action?.name.startsWith("gateway.")
   ) {
     if (ctx.__leemonsDeploymentManagerCall) {
-      return ctx.__leemonsDeploymentManagerCall(actionName, params, opts || undefined);
+      return ctx.__leemonsDeploymentManagerCall(
+        actionName,
+        params,
+        opts || undefined
+      );
     }
     return ctx.call(actionName, params, opts || undefined);
   }
 
-  if (!Object.prototype.hasOwnProperty.call(actionCallCache, ctx.meta.deploymentID)) {
+  if (
+    !Object.prototype.hasOwnProperty.call(
+      actionCallCache,
+      ctx.meta.deploymentID
+    )
+  ) {
     actionCallCache[ctx.meta.deploymentID] = {};
   }
 
@@ -61,11 +80,14 @@ export async function ctxCall(
   } else {
     const hasTransaction = Boolean(ctx.meta.transactionID);
     if (ctx.__leemonsDeploymentManagerCall) {
-      manager = await ctx.__leemonsDeploymentManagerCall('deployment-manager.getGoodActionToCall', {
-        actionName,
-      });
+      manager = await ctx.__leemonsDeploymentManagerCall(
+        "deployment-manager.getGoodActionToCall",
+        {
+          actionName,
+        }
+      );
     } else {
-      manager = await ctx.call('deployment-manager.getGoodActionToCall', {
+      manager = await ctx.call("deployment-manager.getGoodActionToCall", {
         actionName,
       });
     }
@@ -75,8 +97,10 @@ export async function ctxCall(
     actionCallCache[ctx.meta.deploymentID][cacheKey] = manager;
   }
 
-  if (process.env.DEBUG === 'true') {
-    console.log(`CALL from "${ctx.action?.name || ctx.eventName}" to "${manager.actionToCall}"`);
+  if (process.env.DEBUG === "true") {
+    console.log(
+      `CALL from "${ctx.action?.name || ctx.eventName}" to "${manager.actionToCall}"`
+    );
   }
 
   try {
@@ -89,7 +113,11 @@ export async function ctxCall(
     };
 
     if (ctx.__leemonsDeploymentManagerCall) {
-      return await ctx.__leemonsDeploymentManagerCall(manager.actionToCall, params, callOpts);
+      return await ctx.__leemonsDeploymentManagerCall(
+        manager.actionToCall,
+        params,
+        callOpts
+      );
     }
     return await ctx.call(manager.actionToCall, params, callOpts);
   } catch (e) {

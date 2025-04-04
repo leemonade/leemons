@@ -1,13 +1,13 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
 const {
   getPluginNameFromServiceName,
   getActionWithOutVersion,
-} = require('@leemons/service-name-parser');
+} = require("@leemons/service-name-parser");
 
 async function getGoodServiceActionToCall(ctx) {
   if (!ctx.params || !ctx.params?.actionName) {
-    throw new LeemonsError(ctx, { message: 'actionName is required' });
+    throw new LeemonsError(ctx, { message: "actionName is required" });
   }
   // TODO [!!!] Asegurar que el caller es quien dice ser
   const fromPluginName = getPluginNameFromServiceName(ctx.caller);

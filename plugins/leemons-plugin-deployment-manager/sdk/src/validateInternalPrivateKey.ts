@@ -1,5 +1,5 @@
-import { LeemonsError } from '@leemons/error';
-import type { Context } from '@leemons/moleculer';
+import { LeemonsError } from "@leemons/error";
+import type { Context } from "@leemons/moleculer";
 
 interface ValidateParams {
   manualPassword?: string;
@@ -15,16 +15,19 @@ export function validateInternalPrivateKey({
 }): void {
   if (!process.env.MANUAL_PASSWORD) {
     throw new LeemonsError(ctx, {
-      message: 'Disabled by default specify process.env.MANUAL_PASSWORD to be able to use it.',
+      message:
+        "Disabled by default specify process.env.MANUAL_PASSWORD to be able to use it.",
     });
   }
   if (
-    ![ctx.params.manualPassword, ctx.params.internalPrivateKey, ctx.params.privateKey].includes(
-      process.env.MANUAL_PASSWORD
-    )
+    ![
+      ctx.params.manualPassword,
+      ctx.params.internalPrivateKey,
+      ctx.params.privateKey,
+    ].includes(process.env.MANUAL_PASSWORD)
   ) {
     throw new LeemonsError(ctx, {
-      message: 'Invalid Internal Private Key',
+      message: "Invalid Internal Private Key",
     });
   }
 

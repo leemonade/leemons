@@ -1,6 +1,8 @@
-const { isCoreService } = require('@leemons/deployment-manager');
-const { getPluginNameFromServiceName } = require('@leemons/service-name-parser');
-const _ = require('lodash');
+const { isCoreService } = require("@leemons/deployment-manager");
+const {
+  getPluginNameFromServiceName,
+} = require("@leemons/service-name-parser");
+const _ = require("lodash");
 
 /**
  * @typedef {import('moleculer').ServiceBroker} ServiceBroker
@@ -70,14 +72,17 @@ async function getAllPluginsAndRelations(broker) {
           });
 
           _.forIn(toService.events, (value, key) => {
-            if (!key.includes('*')) {
+            if (!key.includes("*")) {
               events.push(key);
             } else {
-              console.warn('Wilcards in events not allowed');
+              console.warn("Wilcards in events not allowed");
             }
           });
 
-          let index = _.findIndex(relationship, { fromPluginName, toPluginName });
+          let index = _.findIndex(relationship, {
+            fromPluginName,
+            toPluginName,
+          });
 
           if (index < 0) {
             relationship.push({

@@ -1,4 +1,4 @@
-import type { CallingOptions, ServiceBroker } from 'moleculer';
+import type { CallingOptions, ServiceBroker } from "moleculer";
 
 interface CustomCallParams {
   broker: ServiceBroker;
@@ -36,7 +36,7 @@ export async function customCall({
   };
 
   const manager = await broker.call<ActionCallResponse, { actionName: string }>(
-    'deployment-manager.getGoodActionToCall',
+    "deployment-manager.getGoodActionToCall",
     { actionName },
     callOpts
   );
@@ -49,5 +49,9 @@ export async function customCall({
     },
   };
 
-  return broker.call<any, Record<string, any>>(manager.actionToCall, payload, finalCallOpts);
+  return broker.call<any, Record<string, any>>(
+    manager.actionToCall,
+    payload,
+    finalCallOpts
+  );
 }

@@ -1,21 +1,21 @@
-import _ from 'lodash';
-import { useQuery } from '@tanstack/react-query';
-import { useVariantForQueryKey } from '@common/queries';
+import _ from "lodash";
+import { useQuery } from "@tanstack/react-query";
+import { useVariantForQueryKey } from "@common/queries";
 
 function useDeploymentConfig({ pluginName, ignoreVersion, ...options }) {
   const queryKey = [
     {
-      plugin: 'plugin.deployment-manager',
-      scope: 'deploymentConfig',
-      action: 'get',
+      plugin: "plugin.deployment-manager",
+      scope: "deploymentConfig",
+      action: "get",
       pluginName,
       ignoreVersion,
     },
   ];
 
   const queryFn = async () => {
-    const data = await leemons.api('deployment-manager/config?allConfig=true', {
-      method: 'GET',
+    const data = await leemons.api("deployment-manager/config?allConfig=true", {
+      method: "GET",
       allAgents: true,
     });
 
@@ -24,7 +24,7 @@ function useDeploymentConfig({ pluginName, ignoreVersion, ...options }) {
       let result = null;
       _.forEach(keys, (key) => {
         if (ignoreVersion) {
-          if (key.split('.')[1] === pluginName) {
+          if (key.split(".")[1] === pluginName) {
             result = data[key];
           }
         } else if (key === pluginName) {
@@ -38,7 +38,7 @@ function useDeploymentConfig({ pluginName, ignoreVersion, ...options }) {
   };
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'frequently',
+    modificationTrend: "frequently",
   });
 
   const { data, isLoading } = useQuery({

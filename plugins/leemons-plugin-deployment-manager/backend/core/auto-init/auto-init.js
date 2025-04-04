@@ -1,6 +1,8 @@
-const { getAutoDeploymentIDIfCanIFNotThrowError } = require('@leemons/deployment-manager');
+const {
+  getAutoDeploymentIDIfCanIFNotThrowError,
+} = require("@leemons/deployment-manager");
 
-const { getAllPluginsAndRelations } = require('./getAllPluginsAndRelations');
+const { getAllPluginsAndRelations } = require("./getAllPluginsAndRelations");
 
 /**
  * @param {import('moleculer').ServiceBroker} broker
@@ -10,14 +12,14 @@ async function autoInit(broker) {
   const deploymentID = getAutoDeploymentIDIfCanIFNotThrowError();
   const pluginsAndRelations = await getAllPluginsAndRelations(broker);
 
-  console.log('- Auto init - Pre InitDeployment');
+  console.log("- Auto init - Pre InitDeployment");
 
   // We emulate that the external "service-catalog" tells us to start this deploymentID.
-  await broker.call('deployment-manager.initDeployment', pluginsAndRelations, {
+  await broker.call("deployment-manager.initDeployment", pluginsAndRelations, {
     meta: { deploymentID },
   });
 
-  console.log('- Auto init - Post InitDeployment');
+  console.log("- Auto init - Post InitDeployment");
 }
 
 module.exports = { autoInit };

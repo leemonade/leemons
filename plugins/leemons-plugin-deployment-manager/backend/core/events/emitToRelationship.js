@@ -1,4 +1,6 @@
-const { getActionsToCallFromRelationship } = require('./getActionsToCallFromRelationship');
+const {
+  getActionsToCallFromRelationship,
+} = require("./getActionsToCallFromRelationship");
 
 /**
  * @typedef {import('@leemons/deployment-manager').Context} Context
@@ -20,7 +22,8 @@ async function emitToRelationship({ ctx, relationship, event, params }) {
 
   return Promise.all(
     actions.map((action) => {
-      if (process.env.DEBUG === 'true') console.log(`-- Event send to: ${action}`);
+      if (process.env.DEBUG === "true")
+        console.log(`-- Event send to: ${action}`);
       return ctx.tx.call(
         action,
         { caller: relationship.fromPluginName, event, params },

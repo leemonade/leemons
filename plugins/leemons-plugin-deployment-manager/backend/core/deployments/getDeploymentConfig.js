@@ -1,22 +1,24 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { getPluginNameWithVersionIfHaveFromServiceName } = require('@leemons/service-name-parser');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const {
+  getPluginNameWithVersionIfHaveFromServiceName,
+} = require("@leemons/service-name-parser");
 
 const TEST_CONFIG = {
-  'v1.curriculum': {
+  "v1.curriculum": {
     deny: {
-      menu: ['curriculum', 'curriculum-new', 'curriculum-library'],
+      menu: ["curriculum", "curriculum-new", "curriculum-library"],
     },
   },
-  'v1.academic-portfolio': {
+  "v1.academic-portfolio": {
     deny: {
-      menu: ['welcome', 'profiles', 'programs'],
+      menu: ["welcome", "profiles", "programs"],
       others: [
-        'subjectType',
-        'classSeats',
-        'treeProgramForm',
-        'treeClassNameAndTypeFromForm',
-        'treeClassSecondTeacherAndImageFromForm',
+        "subjectType",
+        "classSeats",
+        "treeProgramForm",
+        "treeClassNameAndTypeFromForm",
+        "treeClassSecondTeacherAndImageFromForm",
       ],
     },
     limits: {
@@ -26,29 +28,29 @@ const TEST_CONFIG = {
       classSeats: 50,
     },
   },
-  'v1.academic-calendar': {
+  "v1.academic-calendar": {
     deny: {
-      others: ['addRegionalCalendar'],
+      others: ["addRegionalCalendar"],
     },
   },
-  'v1.fundae': {
+  "v1.fundae": {
     deny: {
-      menu: ['fundae', 'fundae-list'],
+      menu: ["fundae", "fundae-list"],
     },
   },
-  'v1.users': {
+  "v1.users": {
     deny: {
-      menu: ['roles-list', 'profile-list', 'user-data'],
+      menu: ["roles-list", "profile-list", "user-data"],
     },
   },
-  'v1.families': {
+  "v1.families": {
     deny: {
-      menu: ['families', 'families-data'],
+      menu: ["families", "families-data"],
     },
   },
-  'v1.grades': {
+  "v1.grades": {
     deny: {
-      menu: ['rules', 'welcome', 'evaluations', 'promotions', 'dependencies'],
+      menu: ["rules", "welcome", "evaluations", "promotions", "dependencies"],
     },
   },
 };
@@ -60,12 +62,18 @@ const TEST_CONFIG = {
  * @returns {Object} The deployment config
  */
 async function getDeploymentConfigFromDB(ctx) {
-  const deployment = await ctx.db.Deployment.findOne({ id: ctx.meta.deploymentID }, undefined, {
-    disableAutoDeploy: true,
-  }).lean();
+  const deployment = await ctx.db.Deployment.findOne(
+    { id: ctx.meta.deploymentID },
+    undefined,
+    {
+      disableAutoDeploy: true,
+    }
+  ).lean();
 
-  if (!deployment && process.env.DISABLE_AUTO_INIT === 'true') {
-    throw new LeemonsError(ctx, { message: 'Deployment not found at get config' });
+  if (!deployment && process.env.DISABLE_AUTO_INIT === "true") {
+    throw new LeemonsError(ctx, {
+      message: "Deployment not found at get config",
+    });
   }
 
   const { config = {}, type } = deployment;
@@ -81,8 +89,8 @@ async function getDeploymentConfigFromDB(ctx) {
  */
 async function getConfigBasedOnEnvironment(ctx) {
   if (
-    ctx.meta.deploymentID === 'auto-deployment-id' &&
-    process.env.TEST_DEPLOYMENT_CONFIG === 'true'
+    ctx.meta.deploymentID === "auto-deployment-id" &&
+    process.env.TEST_DEPLOYMENT_CONFIG === "true"
   ) {
     return TEST_CONFIG;
   }
@@ -103,7 +111,7 @@ function getResultForPlugin({ config, callerPlugin, ignoreVersion }) {
   let result = null;
   _.forEach(keys, (key) => {
     if (ignoreVersion) {
-      if (key.split('.')[1] === callerPlugin.split('.')[1]) {
+      if (key.split(".")[1] === callerPlugin.split(".")[1]) {
         result = config[key];
       }
     } else if (key === callerPlugin) {
@@ -125,13 +133,18 @@ function getResultForPlugin({ config, callerPlugin, ignoreVersion }) {
 async function getDeploymentConfig({ allConfig, ignoreVersion, ctx }) {
   const config = await getConfigBasedOnEnvironment(ctx);
 
-  const callerPlugin = getPluginNameWithVersionIfHaveFromServiceName(ctx.caller);
+  const callerPlugin = getPluginNameWithVersionIfHaveFromServiceName(
+    ctx.caller
+  );
 
   if (config && !allConfig) {
     return getResultForPlugin({ config, callerPlugin, ignoreVersion });
   }
 
-  if (!config.helpdeskUrl && String(process.env.HELPDESK_URL).startsWith('http')) {
+  if (
+    !config.helpdeskUrl &&
+    String(process.env.HELPDESK_URL).startsWith("http")
+  ) {
     config.helpdeskUrl = process.env.HELPDESK_URL;
   }
 

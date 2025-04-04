@@ -1,21 +1,33 @@
-const { LeemonsError } = require('@leemons/error');
-const { newTransaction, addTransactionState } = require('@leemons/transactions');
+const { LeemonsError } = require("@leemons/error");
+const {
+  newTransaction,
+  addTransactionState,
+} = require("@leemons/transactions");
 
-const { getAllPluginsAndRelations } = require('../auto-init/getAllPluginsAndRelations');
-const { getDeploymentPlugins } = require('../deployment-plugins/getDeploymentPlugins');
+const {
+  getAllPluginsAndRelations,
+} = require("../auto-init/getAllPluginsAndRelations");
+const {
+  getDeploymentPlugins,
+} = require("../deployment-plugins/getDeploymentPlugins");
 
-const { getDeploymentInfo } = require('./getDeploymentInfo');
+const { getDeploymentInfo } = require("./getDeploymentInfo");
 
 /**
  * @typedef {import('../auto-init/getAllPluginsAndRelations').PluginRelations} PluginRelations
  * @typedef {import('../auto-init/getAllPluginsAndRelations').PluginRelationship} PluginRelationship
  */
 
-async function addPluginsToDeployment({ ctx, broker, id, plugins: newPlugins }) {
+async function addPluginsToDeployment({
+  ctx,
+  broker,
+  id,
+  plugins: newPlugins,
+}) {
   const deployment = await getDeploymentInfo({ id });
 
   if (!deployment) {
-    throw new LeemonsError(ctx, { message: 'Deployment not found' });
+    throw new LeemonsError(ctx, { message: "Deployment not found" });
   }
 
   /** @type PluginRelations */
@@ -31,7 +43,7 @@ async function addPluginsToDeployment({ ctx, broker, id, plugins: newPlugins }) 
   );
 
   if (pluginsToAdd.length === 0) {
-    throw new LeemonsError(ctx, { message: 'Plugins not found' });
+    throw new LeemonsError(ctx, { message: "Plugins not found" });
   }
 
   // Add pluginsToAdd to the installedPluginsSet
@@ -40,24 +52,29 @@ async function addPluginsToDeployment({ ctx, broker, id, plugins: newPlugins }) 
   /** @type PluginRelationship[] */
   let relationshipToAdd = relationship.filter(
     (relation) =>
-      pluginsToAdd.includes(relation.fromPluginName) || pluginsToAdd.includes(relation.toPluginName)
+      pluginsToAdd.includes(relation.fromPluginName) ||
+      pluginsToAdd.includes(relation.toPluginName)
   );
 
-  relationshipToAdd = relationshipToAdd.filter((relation) => installedPluginsSet.has(relation.fromPluginName) && installedPluginsSet.has(relation.toPluginName));
+  relationshipToAdd = relationshipToAdd.filter(
+    (relation) =>
+      installedPluginsSet.has(relation.fromPluginName) &&
+      installedPluginsSet.has(relation.toPluginName)
+  );
 
   ctx.meta.deploymentID = id;
   ctx.meta.transactionID = await newTransaction(ctx);
 
   await addTransactionState(ctx, {
-    action: 'leemonsMongoDBRollback',
+    action: "leemonsMongoDBRollback",
     payload: {
-      modelKey: 'Deployment',
-      action: 'removeMany',
+      modelKey: "Deployment",
+      action: "removeMany",
       data: [id],
     },
   });
 
-  await ctx.tx.call('deployment-manager.initDeployment', {
+  await ctx.tx.call("deployment-manager.initDeployment", {
     pluginNames: pluginsToAdd,
     relationship: relationshipToAdd,
   });

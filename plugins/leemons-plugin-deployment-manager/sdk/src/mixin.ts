@@ -1,14 +1,14 @@
-import { LeemonsError } from '@leemons/error';
-import type { Context, ServiceSchema } from '@leemons/moleculer';
+import { LeemonsError } from "@leemons/error";
+import type { Context, ServiceSchema } from "@leemons/moleculer";
 import {
   getPluginNameFromServiceName,
   getPluginNameWithVersionIfHaveFromServiceName,
-} from '@leemons/service-name-parser';
-import _ from 'lodash';
-import type { Endpoint, GenericObject } from 'moleculer';
-import { ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK } from './contants';
-import { ctxCall } from './ctxCall';
-import { getDeploymentID } from './getDeploymentID';
+} from "@leemons/service-name-parser";
+import _ from "lodash";
+import type { Endpoint, GenericObject } from "moleculer";
+import { ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK } from "./contants";
+import { ctxCall } from "./ctxCall";
+import { getDeploymentID } from "./getDeploymentID";
 
 const actionCanCache: Record<string, string[]> = {};
 
@@ -18,14 +18,18 @@ async function modifyCTX(
   ctx: Context,
   {
     getDeploymentIdInCall = false,
-    dontGetDeploymentIDOnActionCall = [...ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK],
+    dontGetDeploymentIDOnActionCall = [
+      ...ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK,
+    ],
   } = {}
 ): Promise<void> {
   // ES: Cuando un usuario llama a gateway no existe caller y el siguiente codigo peta, por eso hacemos esta comprobación
   // EN: When a user calls gateway, there is no caller and the following code crashes, so we do this check
-  if (ctx.service?.name !== 'gateway' && ctx.caller) {
+  if (ctx.service?.name !== "gateway" && ctx.caller) {
     ctx.callerPlugin = getPluginNameFromServiceName(ctx.caller);
-    ctx.callerPluginV = getPluginNameWithVersionIfHaveFromServiceName(ctx.caller);
+    ctx.callerPluginV = getPluginNameWithVersionIfHaveFromServiceName(
+      ctx.caller
+    );
   }
 
   ctx.__leemonsDeploymentManagerCall = ctx.call;
@@ -39,28 +43,32 @@ async function modifyCTX(
     ...console,
     fatal: console.error, // Add missing fatal method
     debug: (...params: any[]) => {
-      if (process.env.DEBUG === 'true') {
+      if (process.env.DEBUG === "true") {
         console.debug(...params);
       }
     },
   };
 
   ctx.prefixPN = function (string?: string): string {
-    return `${getPluginNameFromServiceName(ctx.service.name)}${string ? '.' : ''}${string || ''}`;
+    return `${getPluginNameFromServiceName(ctx.service.name)}${string ? "." : ""}${string || ""}`;
   };
 
   ctx.prefixPNV = function (string?: string): string {
     return `${getPluginNameWithVersionIfHaveFromServiceName(ctx.service.fullName)}${
-      string ? '.' : ''
-    }${string || ''}`;
+      string ? "." : ""
+    }${string || ""}`;
   };
 
-  ctx.emit = async function (event: string, params?: any, opts?: any): Promise<any> {
+  ctx.emit = async function (
+    event: string,
+    params?: any,
+    opts?: any
+  ): Promise<any> {
     if (getDeploymentIdInCall) {
       await getDeploymentID(ctx);
     }
     return ctx.__leemonsDeploymentManagerCall(
-      'deployment-manager.emit',
+      "deployment-manager.emit",
       {
         event: ctx.prefixPN(event),
         params,
@@ -69,7 +77,11 @@ async function modifyCTX(
     );
   };
 
-  ctx.call = async function (_actionName: string, params?: any, opts?: any): Promise<any> {
+  ctx.call = async function (
+    _actionName: string,
+    params?: any,
+    opts?: any
+  ): Promise<any> {
     return ctxCall(ctx, _actionName, params, opts, {
       getDeploymentIdInCall,
       dontGetDeploymentIDOnActionCall,
@@ -85,15 +97,17 @@ interface EventHandlerOptions {
 export function LeemonsDeploymentManagerMixin({
   checkIfCanCallMe = true,
   getDeploymentIdInCall = false,
-  dontGetDeploymentIDOnActionCall = [...ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK],
+  dontGetDeploymentIDOnActionCall = [
+    ...ACTION_CALLS_EXCLUDED_ON_DEPLOYMENT_CHECK,
+  ],
 } = {}): ServiceSchema<Context> {
   return {
-    name: '',
+    name: "",
     actions: {
       leemonsDeploymentManagerEvent: {
         async handler(ctx: Context) {
           if (!ctx.params?.event) {
-            throw new LeemonsError(ctx, { message: 'event param required' });
+            throw new LeemonsError(ctx, { message: "event param required" });
           }
           if (this.events && this.events[ctx.params.event]) {
             // Llamamos al evento el cual a sido machado por el nuestro en el created()
@@ -107,7 +121,7 @@ export function LeemonsDeploymentManagerMixin({
     },
     hooks: {
       after: {
-        '*': function afterHook(ctx: Context, res: any) {
+        "*": function afterHook(ctx: Context, res: any) {
           if (
             ctx.meta.$statusCode === undefined ||
             !CONTROLLED_HTTP_STATUS_CODE.includes(ctx.meta.$statusCode)
@@ -118,7 +132,7 @@ export function LeemonsDeploymentManagerMixin({
         } as any,
       },
       before: {
-        '*': [
+        "*": [
           async function beforeHook(ctx: Context): Promise<void> {
             await modifyCTX(ctx, {
               getDeploymentIdInCall,
@@ -130,29 +144,38 @@ export function LeemonsDeploymentManagerMixin({
             if (
               checkIfCanCallMe &&
               ctx.action?.name &&
-              !ctx.action.name.includes('leemonsDeploymentManagerEvent') &&
-              !ctx.action.name.includes('leemonsMongoDBRollback') &&
-              !ctx.action.name.startsWith('gateway.') &&
-              !ctx.callerPlugin.startsWith('gateway')
+              !ctx.action.name.includes("leemonsDeploymentManagerEvent") &&
+              !ctx.action.name.includes("leemonsMongoDBRollback") &&
+              !ctx.action.name.startsWith("gateway.") &&
+              !ctx.callerPlugin.startsWith("gateway")
             ) {
               if (!ctx.meta.relationshipID) {
                 throw new LeemonsError(ctx, {
-                  message: 'relationshipID is required',
+                  message: "relationshipID is required",
                 });
               }
 
-              if (!Object.prototype.hasOwnProperty.call(actionCanCache, ctx.meta.deploymentID)) {
+              if (
+                !Object.prototype.hasOwnProperty.call(
+                  actionCanCache,
+                  ctx.meta.deploymentID
+                )
+              ) {
                 actionCanCache[ctx.meta.deploymentID] = [];
               }
 
-              const cacheKey = ctx.caller + ctx.action.name + ctx.meta.relationshipID;
+              const cacheKey =
+                ctx.caller + ctx.action.name + ctx.meta.relationshipID;
               if (!actionCanCache[ctx.meta.deploymentID].includes(cacheKey)) {
                 const hasTransaction = Boolean(ctx.meta.transactionID);
-                await ctx.__leemonsDeploymentManagerCall('deployment-manager.canCallMe', {
-                  fromService: ctx.caller,
-                  toAction: ctx.action.name,
-                  relationshipID: ctx.meta.relationshipID,
-                });
+                await ctx.__leemonsDeploymentManagerCall(
+                  "deployment-manager.canCallMe",
+                  {
+                    fromService: ctx.caller,
+                    toAction: ctx.action.name,
+                    relationshipID: ctx.meta.relationshipID,
+                  }
+                );
                 if (ctx.meta.transactionID && !hasTransaction) {
                   delete ctx.meta.transactionID;
                 }
@@ -186,10 +209,15 @@ export function LeemonsDeploymentManagerMixin({
               local: true,
               state: true,
             };
-            ctx = this.broker.ContextFactory.create(this.broker, ep, params, opts || {}) as Context;
+            ctx = this.broker.ContextFactory.create(
+              this.broker,
+              ep,
+              params,
+              opts || {}
+            ) as Context;
           }
           ctx.eventName = key;
-          ctx.eventType = 'emit';
+          ctx.eventType = "emit";
           ctx.eventGroups = [innerEvent.group || this.name];
           ctx.locals = {} as GenericObject;
 
@@ -205,11 +233,14 @@ export function LeemonsDeploymentManagerMixin({
               await afterModifyCTX(ctx);
             }
 
-            await ctx.__leemonsDeploymentManagerCall('deployment-manager.canCallMe', {
-              fromService: getPluginNameFromServiceName(key),
-              toEvent: key,
-              relationshipID: ctx.meta.relationshipID,
-            });
+            await ctx.__leemonsDeploymentManagerCall(
+              "deployment-manager.canCallMe",
+              {
+                fromService: getPluginNameFromServiceName(key),
+                toEvent: key,
+                relationshipID: ctx.meta.relationshipID,
+              }
+            );
 
             return await innerEvent.handler(ctx).then(async (data: any) => {
               if (data?.err && _.isFunction(onError)) {

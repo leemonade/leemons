@@ -1,6 +1,6 @@
-import { LeemonsError } from '@leemons/error';
-import type { Context } from '@leemons/moleculer';
-import { getDeploymentIDFromCTX } from './getDeploymentIDFromCTX';
+import { LeemonsError } from "@leemons/error";
+import type { Context } from "@leemons/moleculer";
+import { getDeploymentIDFromCTX } from "./getDeploymentIDFromCTX";
 
 interface RequestParams {
   req?: {
@@ -13,7 +13,9 @@ interface RequestParams {
   [key: string]: any;
 }
 
-export async function getDeploymentID(ctx: Context & { params?: RequestParams }): Promise<void> {
+export async function getDeploymentID(
+  ctx: Context & { params?: RequestParams }
+): Promise<void> {
   try {
     ctx.meta.deploymentID = getDeploymentIDFromCTX(ctx);
   } catch (e) {
@@ -25,7 +27,7 @@ export async function getDeploymentID(ctx: Context & { params?: RequestParams })
     } else {
       // Si llega un error es que no se encontrado ningun deploymentID, comprobamos la ultima opcion (el dominio)
       ctx.meta.deploymentID = await ctx.__leemonsDeploymentManagerCall(
-        'deployment-manager.getDeploymentIDByDomain'
+        "deployment-manager.getDeploymentIDByDomain"
       );
     }
 

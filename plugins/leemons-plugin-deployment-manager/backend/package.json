@@ -9,10 +9,7 @@
     "test": "jest --coverage",
     "lint": "eslint services"
   },
-  "keywords": [
-    "microservices",
-    "moleculer"
-  ],
+  "keywords": ["microservices", "moleculer"],
   "author": "",
   "devDependencies": {
     "jest": "29.7.0",
@@ -38,8 +35,6 @@
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
     "rootDir": "./services",
-    "roots": [
-      "../test"
-    ]
+    "roots": ["../test"]
   }
 }

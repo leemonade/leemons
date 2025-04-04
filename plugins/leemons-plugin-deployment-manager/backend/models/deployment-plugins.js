@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const deploymentPluginsSchema = new mongoose.Schema(
   {
@@ -26,13 +26,19 @@ const deploymentPluginsSchema = new mongoose.Schema(
   }
 );
 
-deploymentPluginsSchema.index({ deploymentID: 1, pluginName: 1 }, { unique: true });
+deploymentPluginsSchema.index(
+  { deploymentID: 1, pluginName: 1 },
+  { unique: true }
+);
 
-deploymentPluginsSchema.index({ deploymentID: 1, pluginName: 1, isDeleted: 1 }, { unique: true });
+deploymentPluginsSchema.index(
+  { deploymentID: 1, pluginName: 1, isDeleted: 1 },
+  { unique: true }
+);
 
 const deploymentPluginsModel = newModel(
   mongoose.connection,
-  'package-manager_DeploymentPlugins',
+  "package-manager_DeploymentPlugins",
   deploymentPluginsSchema
 );
 

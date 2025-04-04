@@ -1,5 +1,5 @@
-const { LeemonsError } = require('@leemons/error');
-const _ = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const _ = require("lodash");
 
 /**
  * @typedef {import('../auto-init/getAllPluginsAndRelations').PluginRelationship} PluginRelationship
@@ -70,7 +70,8 @@ async function savePluginsRelationshipsToDeployment(ctx, relationships) {
 
   if (nPlugins !== pluginNames.length) {
     throw new LeemonsError(ctx, {
-      message: 'One of the plugins you are trying to link is not installed within the deployment.',
+      message:
+        "One of the plugins you are trying to link is not installed within the deployment.",
     });
   }
   await ctx.tx.db.DeploymentPluginsRelationship.deleteMany({

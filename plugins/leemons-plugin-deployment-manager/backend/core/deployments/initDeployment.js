@@ -1,6 +1,6 @@
-const { newTransaction } = require('@leemons/transactions');
-const { randomString } = require('@leemons/utils');
-const _ = require('lodash');
+const { newTransaction } = require("@leemons/transactions");
+const { randomString } = require("@leemons/utils");
+const _ = require("lodash");
 
 /**
  * Initializes a new deployment in the Leemons application.
@@ -36,14 +36,16 @@ const _ = require('lodash');
  * });
  */
 async function initDeployment({ pluginNames, relationship, ctx }) {
-  ctx.meta.transactionID = ctx.meta.transactionID ?? (await newTransaction(ctx));
-  ctx.meta.initDeploymentProcessNumber = ctx.meta.initDeploymentProcessNumber ?? randomString();
+  ctx.meta.transactionID =
+    ctx.meta.transactionID ?? (await newTransaction(ctx));
+  ctx.meta.initDeploymentProcessNumber =
+    ctx.meta.initDeploymentProcessNumber ?? randomString();
   ctx.logger = ctx.logger ?? console;
 
   if (pluginNames) {
-    ctx.logger.info('- Init Deployment - SavePlugins');
+    ctx.logger.info("- Init Deployment - SavePlugins");
     await ctx.tx.call(
-      'deployment-manager.savePlugins',
+      "deployment-manager.savePlugins",
       _.uniq(pluginNames).map((pluginName) => ({
         pluginName,
         pluginVersion: 1,
@@ -52,16 +54,19 @@ async function initDeployment({ pluginNames, relationship, ctx }) {
   }
 
   if (relationship) {
-    ctx.logger.info('- Init Deployment - SavePluginsRelationships');
-    await ctx.tx.call('deployment-manager.savePluginsRelationships', relationship);
+    ctx.logger.info("- Init Deployment - SavePluginsRelationships");
+    await ctx.tx.call(
+      "deployment-manager.savePluginsRelationships",
+      relationship
+    );
   }
 
-  await ctx.call('deployment-manager.emit', {
-    event: 'deployment-manager.install',
+  await ctx.call("deployment-manager.emit", {
+    event: "deployment-manager.install",
   });
 
-  await ctx.call('deployment-manager.emit', {
-    event: 'deployment-manager.finish',
+  await ctx.call("deployment-manager.emit", {
+    event: "deployment-manager.finish",
   });
 }
 

@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function isInstalled({ pluginName, ctx }) {
   const pluginNames = _.flatten([pluginName]);

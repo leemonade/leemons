@@ -1,9 +1,9 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 function getActionsToCallFromRelationship(relationship) {
   return _.filter(
     relationship.actions,
-    (action) => action.indexOf('leemonsDeploymentManagerEvent') >= 0
+    (action) => action.indexOf("leemonsDeploymentManagerEvent") >= 0
   );
 }
 

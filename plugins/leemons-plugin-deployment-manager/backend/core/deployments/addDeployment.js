@@ -1,16 +1,19 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 const {
   mongoose: {
     mongo: { ObjectId },
   },
-} = require('@leemons/mongodb');
+} = require("@leemons/mongodb");
 const {
   getPluginNameWithVersionIfHaveFromServiceName,
   getPluginNameFromServiceName,
   getPluginVersionFromServiceName,
-} = require('@leemons/service-name-parser');
-const { newTransaction, addTransactionState } = require('@leemons/transactions');
-const _ = require('lodash');
+} = require("@leemons/service-name-parser");
+const {
+  newTransaction,
+  addTransactionState,
+} = require("@leemons/transactions");
+const _ = require("lodash");
 
 /**
  * @typedef {import('moleculer').Context} MoleculerContext
@@ -64,20 +67,29 @@ const _ = require('lodash');
  *   config: { theme: 'dark', language: 'en' }
  * });
  */
-async function addDeployment({ ctx, broker, domains: _domains, plugins, type, name, config }) {
+async function addDeployment({
+  ctx,
+  broker,
+  domains: _domains,
+  plugins,
+  type,
+  name,
+  config,
+}) {
   const domains = _.map(_domains, (domain) => new URL(domain).hostname);
 
-  const servicesRaw = await broker.call('$node.services', {
+  const servicesRaw = await broker.call("$node.services", {
     withActions: true,
     withEvents: true,
   });
   const servicesByVersionAndName = {};
   _.forEach(servicesRaw, (serviceRaw) => {
-    const serviceNameWithVersionIfHave = getPluginNameWithVersionIfHaveFromServiceName(
-      serviceRaw.fullName
-    );
+    const serviceNameWithVersionIfHave =
+      getPluginNameWithVersionIfHaveFromServiceName(serviceRaw.fullName);
     // eslint-disable-next-line no-prototype-builtins
-    if (!servicesByVersionAndName.hasOwnProperty(serviceNameWithVersionIfHave)) {
+    if (
+      !servicesByVersionAndName.hasOwnProperty(serviceNameWithVersionIfHave)
+    ) {
       servicesByVersionAndName[serviceNameWithVersionIfHave] = {
         actions: [],
         events: [],
@@ -124,10 +136,12 @@ async function addDeployment({ ctx, broker, domains: _domains, plugins, type, na
     undefined,
     { disableAutoDeploy: true }
   )
-    .select(['id'])
+    .select(["id"])
     .lean();
   if (domainAlreadyUsed)
-    throw new LeemonsError(ctx, { message: 'One of this domains already in use' });
+    throw new LeemonsError(ctx, {
+      message: "One of this domains already in use",
+    });
 
   let [deployment] = await ctx.db.Deployment.create(
     [
@@ -147,15 +161,18 @@ async function addDeployment({ ctx, broker, domains: _domains, plugins, type, na
   ctx.meta.transactionID = await newTransaction(ctx);
 
   await addTransactionState(ctx, {
-    action: 'leemonsMongoDBRollback',
+    action: "leemonsMongoDBRollback",
     payload: {
-      modelKey: 'Deployment',
-      action: 'removeMany',
+      modelKey: "Deployment",
+      action: "removeMany",
       data: [deployment.id],
     },
   });
 
-  await ctx.tx.call('deployment-manager.initDeployment', { pluginNames, relationship });
+  await ctx.tx.call("deployment-manager.initDeployment", {
+    pluginNames,
+    relationship,
+  });
 
   return { deployment };
 }

@@ -1,8 +1,10 @@
-const { LeemonsError } = require('@leemons/error');
-const { getPluginNameFromServiceName } = require('@leemons/service-name-parser');
-const _ = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const {
+  getPluginNameFromServiceName,
+} = require("@leemons/service-name-parser");
+const _ = require("lodash");
 
-const { emitToRelationship } = require('./emitToRelationship');
+const { emitToRelationship } = require("./emitToRelationship");
 
 /**
  * @typedef {import('@leemons/deployment-manager').Context} Context
@@ -44,7 +46,7 @@ const { emitToRelationship } = require('./emitToRelationship');
  */
 async function emit(ctx) {
   if (!ctx.params || !ctx.params?.event) {
-    throw new LeemonsError(ctx, { message: 'event is required' });
+    throw new LeemonsError(ctx, { message: "event is required" });
   }
   // TODO [!!!] Asegurar que el caller es quien dice ser
   const fromPluginName = getPluginNameFromServiceName(ctx.caller);
@@ -52,7 +54,7 @@ async function emit(ctx) {
 
   if (fromPluginName !== eventPluginName) {
     throw new LeemonsError(ctx, {
-      message: 'Only the owner of the plugin can trigger events on its behalf.',
+      message: "Only the owner of the plugin can trigger events on its behalf.",
     });
   }
 
@@ -61,10 +63,11 @@ async function emit(ctx) {
     fromPluginName,
     events: ctx.params.event,
   })
-    .select(['id', 'fromPluginName', 'toPluginName', 'actions'])
+    .select(["id", "fromPluginName", "toPluginName", "actions"])
     .lean();
 
-  if (process.env.DEBUG === 'true') console.log(`- Event emit: ${ctx.params.event}[${ctx.caller}]`);
+  if (process.env.DEBUG === "true")
+    console.log(`- Event emit: ${ctx.params.event}[${ctx.caller}]`);
 
   if (Array.isArray(ctx.params.targets) && ctx.params.targets.length) {
     relationships = relationships.filter((relationship) =>

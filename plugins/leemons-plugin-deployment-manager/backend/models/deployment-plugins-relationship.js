@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const deploymentPluginsRelationshipSchema = new mongoose.Schema(
   {
@@ -33,7 +33,11 @@ deploymentPluginsRelationshipSchema.index(
   { unique: true }
 );
 
-deploymentPluginsRelationshipSchema.index({ pluginName: 1, deploymentID: 1, isDeleted: 1 });
+deploymentPluginsRelationshipSchema.index({
+  pluginName: 1,
+  deploymentID: 1,
+  isDeleted: 1,
+});
 deploymentPluginsRelationshipSchema.index({
   fromPluginName: 1,
   toPluginName: 1,
@@ -48,7 +52,7 @@ deploymentPluginsRelationshipSchema.index({
 
 const deploymentPluginsRelationshipModel = newModel(
   mongoose.connection,
-  'package-manager_DeploymentPluginsRelationship',
+  "package-manager_DeploymentPluginsRelationship",
   deploymentPluginsRelationshipSchema
 );
 

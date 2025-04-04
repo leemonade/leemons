@@ -1,11 +1,16 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { deploymentModel } = require('../../models/deployment');
-const { deploymentPluginsModel } = require('../../models/deployment-plugins');
+const { deploymentModel } = require("../../models/deployment");
+const { deploymentPluginsModel } = require("../../models/deployment-plugins");
 
-const { getAllPluginsAndRelations } = require('./getAllPluginsAndRelations');
+const { getAllPluginsAndRelations } = require("./getAllPluginsAndRelations");
 
-async function reloadAllDeployments({ broker, ids = [], reloadRelations, includeAllPlugins }) {
+async function reloadAllDeployments({
+  broker,
+  ids = [],
+  reloadRelations,
+  includeAllPlugins,
+}) {
   const query = ids.length ? { id: ids } : {};
   const deployments = await deploymentModel.find(query).lean();
   let allPluginsAndRelations = {};
@@ -20,7 +25,7 @@ async function reloadAllDeployments({ broker, ids = [], reloadRelations, include
     const installedPlugins = await deploymentPluginsModel
       .find({ deploymentID: { $in: deployments.map((d) => d.id) } })
       .lean();
-    installedPluginsByDeployment = _.groupBy(installedPlugins, 'deploymentID');
+    installedPluginsByDeployment = _.groupBy(installedPlugins, "deploymentID");
   }
 
   for (let i = 0, l = deployments.length; i < l; i++) {
@@ -28,20 +33,28 @@ async function reloadAllDeployments({ broker, ids = [], reloadRelations, include
     let pluginsAndRelations = allPluginsAndRelations;
 
     if (reloadRelations && !includeAllPlugins) {
-      const pluginNames = installedPluginsByDeployment[deployment.id].map((p) => p.pluginName);
+      const pluginNames = installedPluginsByDeployment[deployment.id].map(
+        (p) => p.pluginName
+      );
       pluginsAndRelations = {
         pluginNames,
         relationship: allPluginsAndRelations.relationship.filter(
-          (r) => pluginNames.includes(r.fromPluginName) && pluginNames.includes(r.toPluginName)
+          (r) =>
+            pluginNames.includes(r.fromPluginName) &&
+            pluginNames.includes(r.toPluginName)
         ),
       };
     }
 
     // We simulate that the external "service-catalog" tells us to start this deploymentID.
     // eslint-disable-next-line no-await-in-loop
-    await broker.call('deployment-manager.initDeployment', pluginsAndRelations, {
-      meta: { deploymentID: deployment.id },
-    });
+    await broker.call(
+      "deployment-manager.initDeployment",
+      pluginsAndRelations,
+      {
+        meta: { deploymentID: deployment.id },
+      }
+    );
   }
 
   return deployments.length;

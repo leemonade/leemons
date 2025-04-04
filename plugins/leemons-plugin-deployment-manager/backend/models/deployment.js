@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const deploymentSchema = new mongoose.Schema(
   {
@@ -21,7 +21,7 @@ const deploymentSchema = new mongoose.Schema(
     type: {
       type: String,
       required: true,
-      default: 'free',
+      default: "free",
     },
   },
   {
@@ -35,7 +35,7 @@ deploymentSchema.index({ domains: 1, isDeleted: 1 });
 
 const deploymentModel = newModel(
   mongoose.connection,
-  'package-manager_Deployment',
+  "package-manager_Deployment",
   deploymentSchema
 );
 

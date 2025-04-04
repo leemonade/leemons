@@ -2,7 +2,9 @@
  * @typedef {import('moleculer').Context} MoleculerContext
  */
 
-const { removePluginsFromDeployment } = require('./removePluginsFromDeployment');
+const {
+  removePluginsFromDeployment,
+} = require("./removePluginsFromDeployment");
 
 /**
  * @typedef {Object} Plugin
