@@ -1,5 +1,8 @@
-const _ = require('lodash');
-const { validateLocaleCode, validateLocaleCodeArray } = require('../../validations/locale');
+const _ = require("lodash");
+const {
+  validateLocaleCode,
+  validateLocaleCodeArray,
+} = require("../../validations/locale");
 
 /**
  * Gets the given locale info from the database
@@ -16,7 +19,7 @@ async function get({ code, ctx }) {
     return await ctx.tx.db.Locales.findOne({ code: _code }).lean();
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while getting the locale');
+    throw new Error("An error occurred while getting the locale");
   }
 }
 
@@ -35,7 +38,7 @@ async function getMany({ codes, ctx }) {
     return await ctx.tx.db.Locales.find({ code: _codes }).lean();
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while getting the locales');
+    throw new Error("An error occurred while getting the locales");
   }
 }
 
@@ -50,7 +53,7 @@ async function getAll({ ctx }) {
     return await ctx.tx.db.Locales.find({ code: { $ne: null } }).lean();
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while getting all the locales');
+    throw new Error("An error occurred while getting all the locales");
   }
 }
 
@@ -67,10 +70,11 @@ async function resolveLocales({ locales, ctx }) {
   }
   if (ctx.meta.userSession) {
     // User locale
-    if (ctx.meta.userSession.locale) finalLocales.push(ctx.meta.userSession.locale);
+    if (ctx.meta.userSession.locale)
+      finalLocales.push(ctx.meta.userSession.locale);
     // Center locale
     if (ctx.meta.userSession.userAgents) {
-      const centers = await ctx.tx.call('users.users.getUserAgentCenter', {
+      const centers = await ctx.tx.call("users.users.getUserAgentCenter", {
         userAgent: ctx.meta.userSession.userAgents,
       });
       _.forEach(centers, ({ locale }) => {
@@ -79,7 +83,7 @@ async function resolveLocales({ locales, ctx }) {
     }
   }
   // Platform locale
-  const platformLocale = await ctx.tx.call('users.platform.getDefaultLocale');
+  const platformLocale = await ctx.tx.call("users.platform.getDefaultLocale");
   if (platformLocale) {
     finalLocales.push(platformLocale);
   }

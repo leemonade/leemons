@@ -1,4 +1,4 @@
-const { clone } = require('lodash');
+const { clone } = require("lodash");
 
 /**
  * Parses a localization key into its constituent parts.
@@ -17,7 +17,7 @@ const { clone } = require('lodash');
  */
 
 function parseLocalizationsKey(key) {
-  const splittedKey = key.split('.');
+  const splittedKey = key.split(".");
   const plugin = splittedKey.shift();
 
   const parentSplittedKey = clone(splittedKey);
@@ -26,8 +26,8 @@ function parseLocalizationsKey(key) {
   return {
     plugin,
     original: key,
-    keyPath: splittedKey.join('.'),
-    parentKey: parentSplittedKey.length ? parentSplittedKey.join('.') : null,
+    keyPath: splittedKey.join("."),
+    parentKey: parentSplittedKey.length ? parentSplittedKey.join(".") : null,
     key: splittedKey[splittedKey.length - 1],
   };
 }

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Controller } from 'react-hook-form';
+import React from "react";
+import { Controller } from "react-hook-form";
 
 import {
   Text,
@@ -8,18 +8,18 @@ import {
   createStyles,
   Box,
   Stack,
-} from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
 const useLanguageTabContentStyles = createStyles(() => ({
   root: {},
   columnBox: {
-    width: '50%',
+    width: "50%",
   },
   headerRow: {
     minHeight: 20,
-    alignItems: 'center',
-    padding: '8px 0px',
+    alignItems: "center",
+    padding: "8px 0px",
   },
 }));
 
@@ -33,7 +33,11 @@ const Row = ({ copyLabel, copyKey, classes, t, form, language }) => (
         control={form.control}
         name={`${language.key}.${copyKey}`}
         render={({ field }) => (
-          <TextInput placeholder={t('translationPlaceholder')} fullWidth {...field} />
+          <TextInput
+            placeholder={t("translationPlaceholder")}
+            fullWidth
+            {...field}
+          />
         )}
       />
     </Box>
@@ -48,12 +52,12 @@ const LanguageTabContent = ({ copies = {}, t, form, language }) => {
       <Stack className={classes.headerRow}>
         <Box className={classes.columnBox}>
           <Text stronger role="productive">
-            {t('text')}
+            {t("text")}
           </Text>
         </Box>
         <Box className={classes.columnBox}>
           <Text stronger role="productive">
-            {t('translation')}
+            {t("translation")}
           </Text>
         </Box>
       </Stack>

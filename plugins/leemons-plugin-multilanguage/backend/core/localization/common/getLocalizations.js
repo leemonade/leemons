@@ -1,8 +1,8 @@
-const { LeemonsValidator } = require('@leemons/validator');
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { getManyWithLocale, getKeyStartsWith } = require('..');
-const { getCommonCacheKey } = require('../../../helpers/cacheKeys');
+const { LeemonsValidator } = require("@leemons/validator");
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { getManyWithLocale, getKeyStartsWith } = require("..");
+const { getCommonCacheKey } = require("../../../helpers/cacheKeys");
 
 async function getLocalizations({ ctx }) {
   const { keys = null, keysStartsWith = null, locale } = ctx.params;
@@ -14,55 +14,55 @@ async function getLocalizations({ ctx }) {
    * locale is a string
    */
   const validator = new LeemonsValidator({
-    type: 'object',
+    type: "object",
     properties: {
       keys: {
         oneOf: [
           {
-            type: 'array',
+            type: "array",
             items: {
-              type: 'string',
+              type: "string",
             },
           },
           {
-            type: 'null',
+            type: "null",
           },
         ],
       },
       keysStartsWith: {
         oneOf: [
           {
-            type: 'array',
+            type: "array",
             items: {
-              type: 'string',
+              type: "string",
             },
           },
           {
-            type: 'null',
+            type: "null",
           },
         ],
       },
       locale: {
         oneOf: [
           {
-            type: 'string',
+            type: "string",
           },
           {
-            type: 'array',
+            type: "array",
             items: {
-              type: 'string',
+              type: "string",
             },
           },
         ],
       },
     },
-    required: ['locale'],
+    required: ["locale"],
     anyOf: [
       {
-        required: ['keys'],
+        required: ["keys"],
       },
       {
-        required: ['keysStartsWith'],
+        required: ["keysStartsWith"],
       },
     ],
   });
@@ -106,7 +106,12 @@ async function getLocalizations({ ctx }) {
           ctx,
         }).then((_localizations) =>
           // Return in object format: { key: 'value' }
-          _.fromPairs(_localizations.map((localization) => [localization.key, localization.value]))
+          _.fromPairs(
+            _localizations.map((localization) => [
+              localization.key,
+              localization.value,
+            ])
+          )
         )
       )
     );
@@ -115,7 +120,7 @@ async function getLocalizations({ ctx }) {
   // Merge all the received objects
   const resolvedLocalizations = _.merge(
     ...(await Promise.allSettled(localizations))
-      .filter((localization) => localization.status === 'fulfilled')
+      .filter((localization) => localization.status === "fulfilled")
       .map((localization) => localization.value)
   );
 

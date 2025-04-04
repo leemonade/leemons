@@ -1,9 +1,9 @@
-const _ = require('lodash');
-const { validateLocaleCode } = require('../../validations/locale');
-const { Validator } = require('../../validations/localization');
+const _ = require("lodash");
+const { validateLocaleCode } = require("../../validations/locale");
+const { Validator } = require("../../validations/localization");
 const {
   getLocalizationModelFromCTXAndIsPrivate,
-} = require('./getLocalizationModelFromCTXAndIsPrivate');
+} = require("./getLocalizationModelFromCTXAndIsPrivate");
 
 function mergeTranslations(translations) {
   const keys = [];
@@ -32,7 +32,10 @@ async function get({ key, locale, ctx, isPrivate }) {
   const locales = _.isArray(locale) ? locale : [locale];
   // Validates the tuple and lowercase it
   const validator = new Validator(ctx.callerPlugin);
-  const tuple = validator.validateLocalizationTuple({ key, locales }, isPrivate);
+  const tuple = validator.validateLocalizationTuple(
+    { key, locales },
+    isPrivate
+  );
 
   try {
     const response = await getLocalizationModelFromCTXAndIsPrivate({
@@ -44,7 +47,7 @@ async function get({ key, locale, ctx, isPrivate }) {
         locale: tuple.locales,
       })
       .lean();
-    const responseByLocale = _.keyBy(response, 'locale');
+    const responseByLocale = _.keyBy(response, "locale");
     let result = null;
     _.forEach(locales, (l) => {
       if (responseByLocale[l]) {
@@ -55,7 +58,7 @@ async function get({ key, locale, ctx, isPrivate }) {
     return result;
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while getting the localization');
+    throw new Error("An error occurred while getting the localization");
   }
 }
 
@@ -98,7 +101,7 @@ async function getManyWithKeys({ keys, isPrivate, ctx }) {
       .find({ key: _keys })
       .lean();
 
-    const localizationsByKey = _.groupBy(foundLocalizations, 'key');
+    const localizationsByKey = _.groupBy(foundLocalizations, "key");
 
     return Object.keys(localizationsByKey).reduce((acc, key) => {
       acc[key] = {};
@@ -109,7 +112,7 @@ async function getManyWithKeys({ keys, isPrivate, ctx }) {
     }, {});
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error ocurred while getting the localizations');
+    throw new Error("An error ocurred while getting the localizations");
   }
 }
 
@@ -145,11 +148,14 @@ async function getManyWithLocale({ keys, locale, isPrivate, ctx }) {
     const foundLocalizations = mergeTranslations(responses);
 
     return _.fromPairs(
-      foundLocalizations.map((localization) => [localization.key, localization.value])
+      foundLocalizations.map((localization) => [
+        localization.key,
+        localization.value,
+      ])
     );
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error ocurred while getting the localizations');
+    throw new Error("An error ocurred while getting the localizations");
   }
 }
 
@@ -175,7 +181,7 @@ async function getWithKey({ key, isPrivate, ctx }) {
       .lean();
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while getting the localizations');
+    throw new Error("An error occurred while getting the localizations");
   }
 }
 
@@ -217,7 +223,10 @@ async function getWithLocale({ locale, isPrivate, ctx }) {
   };
 
   if (isPrivate) {
-    query.key = { $regex: `^${_.escapeRegExp(ctx.callerPlugin)}`, $options: 'i' };
+    query.key = {
+      $regex: `^${_.escapeRegExp(ctx.callerPlugin)}`,
+      $options: "i",
+    };
   }
 
   try {
@@ -229,7 +238,7 @@ async function getWithLocale({ locale, isPrivate, ctx }) {
       .lean();
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while getting the localizations');
+    throw new Error("An error occurred while getting the localizations");
   }
 }
 
@@ -255,7 +264,7 @@ async function getKeyValueWithLocale({ locale, isPrivate, ctx }) {
     }, null);
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while getting the localizations');
+    throw new Error("An error occurred while getting the localizations");
   }
 }
 
@@ -272,7 +281,10 @@ async function getKeyStartsWith({ key, locale, isPrivate, ctx }) {
   const locales = _.isArray(locale) ? locale : [locale];
   // Validate the tuple and lowercase it
   const validator = new Validator(ctx.callerPlugin);
-  const tuple = validator.validateLocalizationTuple({ key, locales }, isPrivate);
+  const tuple = validator.validateLocalizationTuple(
+    { key, locales },
+    isPrivate
+  );
 
   try {
     const responses = await Promise.all(
@@ -281,7 +293,7 @@ async function getKeyStartsWith({ key, locale, isPrivate, ctx }) {
           isPrivate,
           ctx,
         }).find({
-          key: { $regex: `^${_.escapeRegExp(tuple.key)}`, $options: 'i' },
+          key: { $regex: `^${_.escapeRegExp(tuple.key)}`, $options: "i" },
           locale: _locale,
         })
       )
@@ -289,7 +301,7 @@ async function getKeyStartsWith({ key, locale, isPrivate, ctx }) {
     return mergeTranslations(responses);
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while getting the localization');
+    throw new Error("An error occurred while getting the localization");
   }
 }
 
@@ -304,7 +316,12 @@ async function getKeyStartsWith({ key, locale, isPrivate, ctx }) {
  */
 async function getKeyValueStartsWith({ key, locale, isPrivate, ctx }) {
   try {
-    const localizations = await getKeyStartsWith({ key, locale, isPrivate, ctx });
+    const localizations = await getKeyStartsWith({
+      key,
+      locale,
+      isPrivate,
+      ctx,
+    });
 
     // Return null if no localization is found
     return localizations.reduce((result, { key: lKey, value }) => {
@@ -316,7 +333,7 @@ async function getKeyValueStartsWith({ key, locale, isPrivate, ctx }) {
     }, null);
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while getting the localization');
+    throw new Error("An error occurred while getting the localization");
   }
 }
 

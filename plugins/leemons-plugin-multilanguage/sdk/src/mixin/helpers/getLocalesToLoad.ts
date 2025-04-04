@@ -1,5 +1,5 @@
-import { areLocalesHashesSaved } from './areLocalesHashesSaved';
-import type { GetLocalesToLoadParams } from './types';
+import { areLocalesHashesSaved } from "./areLocalesHashesSaved";
+import type { GetLocalesToLoadParams } from "./types";
 
 /**
  * Determines which locales need to be loaded based on the provided hash per locale.
@@ -10,7 +10,10 @@ export async function getLocalesToLoad({
   hashPerLocale,
   KeyValuesModel,
 }: GetLocalesToLoadParams): Promise<string[]> {
-  const localesSaved = await areLocalesHashesSaved({ KeyValuesModel, hashPerLocale });
+  const localesSaved = await areLocalesHashesSaved({
+    KeyValuesModel,
+    hashPerLocale,
+  });
 
   return Object.entries(localesSaved)
     .filter(([_, saved]) => !saved)

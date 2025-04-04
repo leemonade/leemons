@@ -1,5 +1,5 @@
-import type { Context } from '@leemons/moleculer';
-import { getPluginNameFromCTX } from '@leemons/service-name-parser';
+import type { Context } from "@leemons/moleculer";
+import { getPluginNameFromCTX } from "@leemons/service-name-parser";
 
 interface GetTranslationKeyParams {
   locationName: string;

@@ -1,7 +1,7 @@
 export const allLocalizationsKey = [
   {
-    plugin: 'plugin.multilanguage',
-    scope: 'localizations',
+    plugin: "plugin.multilanguage",
+    scope: "localizations",
   },
 ];
 

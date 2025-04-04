@@ -1,1 +1,1 @@
-export * from './TranslatorModal';
+export * from "./TranslatorModal";

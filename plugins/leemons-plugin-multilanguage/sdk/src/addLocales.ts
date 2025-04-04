@@ -1,6 +1,6 @@
-import type { Context } from '@leemons/moleculer';
-import { flattenDeep } from 'lodash';
-import type { LocalizationObject } from './mixin/helpers/types';
+import type { Context } from "@leemons/moleculer";
+import { flattenDeep } from "lodash";
+import type { LocalizationObject } from "./mixin/helpers/types";
 
 interface AddLocalesParams {
   locales: string | string[];
@@ -42,7 +42,7 @@ export async function addLocales({
     }
   }
 
-  return ctx.tx.call('multilanguage.common.setManyByJSON', {
+  return ctx.tx.call("multilanguage.common.setManyByJSON", {
     data: localesData,
   }) as Promise<AddLocalesResponse>;
 }

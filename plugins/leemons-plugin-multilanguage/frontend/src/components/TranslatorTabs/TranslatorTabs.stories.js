@@ -1,21 +1,24 @@
-import React from 'react';
-import { TranslatorTabs, TRANSLATOR_TABS_DEFAULT_PROPS } from './TranslatorTabs';
-import { TRANSLATOR_TABS_DATA } from './mocks/data';
+import React from "react";
+import {
+  TranslatorTabs,
+  TRANSLATOR_TABS_DEFAULT_PROPS,
+} from "./TranslatorTabs";
+import { TRANSLATOR_TABS_DATA } from "./mocks/data";
 
 export default {
-  title: 'Leemons/Multilanguage/TranslatorTabs',
+  title: "Leemons/Multilanguage/TranslatorTabs",
   parameters: {
     component: TranslatorTabs,
     design: {
-      type: 'figma',
+      type: "figma",
       // url: 'https://www.figma.com/file/kcSXz3QZFByFDTumNgzPpV/?node-id=2962%3A31342',
     },
   },
   argTypes: {
-    onLocaleChange: { action: 'Locale has changed' },
+    onLocaleChange: { action: "Locale has changed" },
     defaultLocale: {
       options: TRANSLATOR_TABS_DATA.locales.map((locale) => locale.code),
-      control: { type: 'select' },
+      control: { type: "select" },
     },
   },
 };

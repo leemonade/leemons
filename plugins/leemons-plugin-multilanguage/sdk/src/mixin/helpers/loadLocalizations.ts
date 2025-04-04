@@ -1,12 +1,12 @@
-import type { ServiceSchema } from '@leemons/moleculer';
-import { pick } from 'lodash';
-import { getLocalesToLoad } from './getLocalesToLoad';
-import { getLocalizationHashByLocale } from './getLocalizationHashByLocale';
-import { getLocalizationsObjects } from './getLocalizationsObjects';
-import { acquireLock } from './lock/acquireLock';
-import { releaseLock } from './lock/releaseLock';
-import { saveHash } from './saveHash';
-import type { LocalizationsMap, LocalizationsParams } from './types';
+import type { ServiceSchema } from "@leemons/moleculer";
+import { pick } from "lodash";
+import { getLocalesToLoad } from "./getLocalesToLoad";
+import { getLocalizationHashByLocale } from "./getLocalizationHashByLocale";
+import { getLocalizationsObjects } from "./getLocalizationsObjects";
+import { acquireLock } from "./lock/acquireLock";
+import { releaseLock } from "./lock/releaseLock";
+import { saveHash } from "./saveHash";
+import type { LocalizationsMap, LocalizationsParams } from "./types";
 
 /**
  * Loads localizations from files and updates the database accordingly.
@@ -36,11 +36,11 @@ export async function loadLocalizations(
     return;
   }
 
-  await this.broker?.waitForServices('v1.multilanguage.global');
+  await this.broker?.waitForServices("v1.multilanguage.global");
 
   const isLockAcquired = await acquireLock({
     KeyValueModel: KeyValuesModel,
-    lockName: 'loadLocalizations',
+    lockName: "loadLocalizations",
   });
 
   if (!isLockAcquired) {
@@ -49,15 +49,15 @@ export async function loadLocalizations(
 
   try {
     const savedSuccessfully = await this.broker?.call(
-      'v1.multilanguage.global.loadLocalizations',
+      "v1.multilanguage.global.loadLocalizations",
       {
         localizations: pick(localizations, localesToSave) as LocalizationsMap,
-        plugin: this.name.split('.')[0],
+        plugin: this.name.split(".")[0],
         version: this.version ?? null,
       },
       {
         meta: {
-          deploymentID: 'global',
+          deploymentID: "global",
         },
       }
     );
@@ -69,11 +69,11 @@ export async function loadLocalizations(
       });
     }
   } catch (e) {
-    this.logger?.error('Error while loading localizations', e as Error);
+    this.logger?.error("Error while loading localizations", e as Error);
   } finally {
     await releaseLock({
       KeyValueModel: KeyValuesModel,
-      lockName: 'loadLocalizations',
+      lockName: "loadLocalizations",
     });
   }
 }

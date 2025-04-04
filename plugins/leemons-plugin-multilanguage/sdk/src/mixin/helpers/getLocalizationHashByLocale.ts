@@ -1,5 +1,5 @@
-import { sha1 } from 'object-hash';
-import type { GetLocalizationHashByLocaleParams, HashPerLocale } from './types';
+import { sha1 } from "object-hash";
+import type { GetLocalizationHashByLocaleParams, HashPerLocale } from "./types";
 
 /**
  * Generates a hash for each locale's localizations.

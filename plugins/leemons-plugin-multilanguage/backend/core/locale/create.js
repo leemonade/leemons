@@ -1,6 +1,9 @@
-const { LeemonsError } = require('@leemons/error');
-const { validateLocale, validateLocalesArray } = require('../../validations/locale');
-const { has, hasMany } = require('./has');
+const { LeemonsError } = require("@leemons/error");
+const {
+  validateLocale,
+  validateLocalesArray,
+} = require("../../validations/locale");
+const { has, hasMany } = require("./has");
 
 /**
  * Adds one locale to the database if it does not exist
@@ -21,14 +24,16 @@ async function add({ code, name, ctx }) {
     if (!(await has({ code: locale.code, ctx }))) {
       const dbLocaleDoc = await ctx.tx.db.Locales.create(locale);
       const dbLocale = dbLocaleDoc.toObject();
-      await ctx.tx.emit('newLocale', dbLocale);
+      await ctx.tx.emit("newLocale", dbLocale);
       return dbLocale;
     }
     // If already exists, return null
     return null;
   } catch (e) {
     ctx.logger.error(e.message);
-    throw new LeemonsError(ctx, { message: 'An error occurred while creating the locale' });
+    throw new LeemonsError(ctx, {
+      message: "An error occurred while creating the locale",
+    });
   }
 }
 
@@ -55,7 +60,9 @@ async function addMany({ ctx, locales }) {
 
   // Check for duplicated codes
   if (codes.length > [...new Set(codes)].length) {
-    throw new LeemonsError(ctx, { message: 'The inserted locale codes should be unique' });
+    throw new LeemonsError(ctx, {
+      message: "The inserted locale codes should be unique",
+    });
   }
 
   try {
@@ -63,7 +70,9 @@ async function addMany({ ctx, locales }) {
     const existingLocales = await hasMany({ codes, ctx });
 
     // Get the locales not present in the database
-    const newLocales = _locales.filter((locale) => !existingLocales[locale.code]);
+    const newLocales = _locales.filter(
+      (locale) => !existingLocales[locale.code]
+    );
 
     // If not newLocales, return an empty array
     if (newLocales.length === 0) {
@@ -76,12 +85,14 @@ async function addMany({ ctx, locales }) {
     ctx.logger.debug(
       `New locales added: ${newLocales
         .map((locale) => `${locale.code} | ${locale.name}`)
-        .join(', ')}`
+        .join(", ")}`
     );
     return addedLocales;
   } catch (e) {
     ctx.logger.error(e.message);
-    throw new LeemonsError(ctx, { message: 'An error occurred while creating the locales' });
+    throw new LeemonsError(ctx, {
+      message: "An error occurred while creating the locales",
+    });
   }
 }
 

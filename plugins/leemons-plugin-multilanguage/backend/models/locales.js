@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const localesSchema = new mongoose.Schema(
   {
@@ -30,6 +30,10 @@ const localesSchema = new mongoose.Schema(
 
 localesSchema.index({ deploymentID: 1, code: 1 }, { unique: true });
 
-const localesModel = newModel(mongoose.connection, 'v1::multilanguage_Locales', localesSchema);
+const localesModel = newModel(
+  mongoose.connection,
+  "v1::multilanguage_Locales",
+  localesSchema
+);
 
 module.exports = { localesModel };

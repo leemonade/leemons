@@ -4,36 +4,42 @@
  */
 /** @type {ServiceSchema} */
 
-const { LeemonsError } = require('@leemons/error');
-const { getAll, add } = require('../../core/locale');
+const { LeemonsError } = require("@leemons/error");
+const { getAll, add } = require("../../core/locale");
 
 module.exports = {
   addRest: {
     rest: {
-      method: 'POST',
-      path: '/',
+      method: "POST",
+      path: "/",
     },
     async handler(ctx) {
       try {
         const locale = await add({ ...ctx.params, ctx });
         if (locale) return { locale };
-        return { message: 'Locale already exists' };
+        return { message: "Locale already exists" };
       } catch (e) {
-        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: e.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },
   listRest: {
     rest: {
-      method: 'GET',
-      path: '/',
+      method: "GET",
+      path: "/",
     },
     async handler(ctx) {
       try {
         const locales = await getAll({ ctx });
         return { locales };
       } catch (e) {
-        throw new LeemonsError(ctx, { message: e.message, httpStatusCode: 400 });
+        throw new LeemonsError(ctx, {
+          message: e.message,
+          httpStatusCode: 400,
+        });
       }
     },
   },

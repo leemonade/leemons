@@ -1,11 +1,11 @@
-const { escapeRegExp } = require('lodash');
+const { escapeRegExp } = require("lodash");
 
-const { validateLocaleCode } = require('../../validations/locale');
-const { Validator } = require('../../validations/localization');
+const { validateLocaleCode } = require("../../validations/locale");
+const { Validator } = require("../../validations/localization");
 const {
   getLocalizationModelFromCTXAndIsPrivate,
-} = require('./getLocalizationModelFromCTXAndIsPrivate');
-const { commonNamespace } = require('../../helpers/cacheKeys');
+} = require("./getLocalizationModelFromCTXAndIsPrivate");
+const { commonNamespace } = require("../../helpers/cacheKeys");
 
 /**
  * Deletes the localization that matches the tuple [key, locale]
@@ -32,7 +32,7 @@ async function _delete({ key, locale, isPrivate, ctx }) {
     );
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while deleting the localization');
+    throw new Error("An error occurred while deleting the localization");
   }
 }
 
@@ -54,7 +54,7 @@ async function deleteKeyStartsWith({ key, locale = null, isPrivate, ctx }) {
     // Validate key and get it lowercased
     key: {
       $regex: `^${escapeRegExp(validator.validateLocalizationKey(key, true))}`,
-      $options: 'i',
+      $options: "i",
     },
   };
 
@@ -72,7 +72,7 @@ async function deleteKeyStartsWith({ key, locale = null, isPrivate, ctx }) {
     ).deletedCount;
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while deleting the localizations');
+    throw new Error("An error occurred while deleting the localizations");
   }
 }
 
@@ -87,7 +87,10 @@ async function deleteKeyStartsWith({ key, locale = null, isPrivate, ctx }) {
 async function deleteMany({ localizations, isPrivate, ctx }) {
   // Validates the input and returns an array of LocalizationTuples ([{key, locale}])
   const validator = new Validator(ctx.callerPlugin);
-  const _localizations = validator.validateLocalizationTupleArray(localizations, true);
+  const _localizations = validator.validateLocalizationTupleArray(
+    localizations,
+    true
+  );
 
   try {
     return (
@@ -98,7 +101,7 @@ async function deleteMany({ localizations, isPrivate, ctx }) {
     ).deletedCount;
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while deleting the localizations');
+    throw new Error("An error occurred while deleting the localizations");
   }
 }
 
@@ -119,12 +122,12 @@ async function deleteAll({ key = null, locale = null, isPrivate, ctx }) {
     query.key = validator.validateLocalizationKey(key, true);
   }
   if (locale) {
-    query.key = { $regex: `^${escapeRegExp(ctx.callerPlugin)}`, $options: 'i' };
+    query.key = { $regex: `^${escapeRegExp(ctx.callerPlugin)}`, $options: "i" };
     query.locale = validateLocaleCode(locale);
   }
 
   if (!query.key && !query.locale) {
-    throw new Error('At least one parameter should be provided');
+    throw new Error("At least one parameter should be provided");
   }
 
   try {
@@ -140,8 +143,13 @@ async function deleteAll({ key = null, locale = null, isPrivate, ctx }) {
     ).deletedCount;
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while deleting the localizations');
+    throw new Error("An error occurred while deleting the localizations");
   }
 }
 
-module.exports = { delete: _delete, deleteKeyStartsWith, deleteMany, deleteAll };
+module.exports = {
+  delete: _delete,
+  deleteKeyStartsWith,
+  deleteMany,
+  deleteAll,
+};

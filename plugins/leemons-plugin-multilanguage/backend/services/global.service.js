@@ -3,14 +3,16 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { getServiceModels } = require('../models');
-const { loadLocalizations } = require('../core/localization/global/loadLocalization');
+const { LeemonsMongoDBMixin } = require("@leemons/mongodb");
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const { getServiceModels } = require("../models");
+const {
+  loadLocalizations,
+} = require("../core/localization/global/loadLocalization");
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
-  name: 'multilanguage.global',
+  name: "multilanguage.global",
   version: 1,
   mixins: [
     LeemonsCacheMixin(),

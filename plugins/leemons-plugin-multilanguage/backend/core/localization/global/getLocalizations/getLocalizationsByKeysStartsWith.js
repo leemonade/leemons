@@ -1,6 +1,6 @@
-const { map, uniq, get, isString, pick } = require('lodash');
-const { flatten } = require('flat');
-const { parseLocalizationsKey } = require('./parseLocalizationsKey');
+const { map, uniq, get, isString, pick } = require("lodash");
+const { flatten } = require("flat");
+const { parseLocalizationsKey } = require("./parseLocalizationsKey");
 
 /**
  * Retrieves localizations for keys that start with specified patterns and a given locale.
@@ -14,20 +14,30 @@ const { parseLocalizationsKey } = require('./parseLocalizationsKey');
  * @returns {Promise<{[key: string]: string}>} A promise that resolves to an object containing the fetched localizations mapped to the flatten keys.
  */
 
-async function getLocalizationsByKeysStartsWith({ keysStartsWith, locale, ctx }) {
+async function getLocalizationsByKeysStartsWith({
+  keysStartsWith,
+  locale,
+  ctx,
+}) {
   const parsedKeys = keysStartsWith.map(parseLocalizationsKey);
-  const plugins = uniq(map(parsedKeys, 'plugin'));
+  const plugins = uniq(map(parsedKeys, "plugin"));
   const keyPaths = parsedKeys
     .filter(({ key }) => key)
     .map(({ parentKey, key }) => `value.${parentKey ?? key}`);
 
   const filteredKeyPaths = keyPaths.filter(
     (keyPath) =>
-      !keyPaths.some((otherKeyPath) => otherKeyPath !== keyPath && keyPath.startsWith(otherKeyPath))
+      !keyPaths.some(
+        (otherKeyPath) =>
+          otherKeyPath !== keyPath && keyPath.startsWith(otherKeyPath)
+      )
   );
 
-  const keysFound = await ctx.db.Globals.find({ plugin: { $in: plugins }, locale })
-    .select(['plugin', ...filteredKeyPaths])
+  const keysFound = await ctx.db.Globals.find({
+    plugin: { $in: plugins },
+    locale,
+  })
+    .select(["plugin", ...filteredKeyPaths])
     .lean();
 
   const keysFoundByPlugin = {};
@@ -65,7 +75,9 @@ async function getLocalizationsByKeysStartsWith({ keysStartsWith, locale, ctx })
 
     const keys = Object.keys(flat);
 
-    const keysMatching = keys.filter((key) => key.startsWith(parsedKey.original));
+    const keysMatching = keys.filter((key) =>
+      key.startsWith(parsedKey.original)
+    );
 
     const matchingLocalizations = pick(flat, keysMatching);
 

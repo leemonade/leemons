@@ -1,4 +1,4 @@
-import type { GetHashKeyParams } from './types';
+import type { GetHashKeyParams } from "./types";
 
 /**
  * Generates a hash key based on the provided locale and hash.

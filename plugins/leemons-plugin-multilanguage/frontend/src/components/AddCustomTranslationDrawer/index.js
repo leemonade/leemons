@@ -1,21 +1,28 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
 
-import { Drawer, Button, Tabs, TabPanel, Text, Box } from '@bubbles-ui/components';
-import { PassportIcon } from '@bubbles-ui/icons/solid';
-import { useLocale } from '@common/LocaleDate';
-import { isEmpty } from 'lodash';
-import PropTypes from 'prop-types';
+import {
+  Drawer,
+  Button,
+  Tabs,
+  TabPanel,
+  Text,
+  Box,
+} from "@bubbles-ui/components";
+import { PassportIcon } from "@bubbles-ui/icons/solid";
+import { useLocale } from "@common/LocaleDate";
+import { isEmpty } from "lodash";
+import PropTypes from "prop-types";
 
-import LanguageTabContent from './LanguageTabContent';
+import LanguageTabContent from "./LanguageTabContent";
 
-import { useGetLocales } from '@multilanguage/helpers/getLocales';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import { useGetLocales } from "@multilanguage/helpers/getLocales";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
 
 const AddCustomTranslationDrawer = ({
-  size = 'md',
+  size = "md",
   keys = {},
-  buttonVariant = 'link',
+  buttonVariant = "link",
   ButtonIcon,
   hideButtonIcon,
   buttonLabel,
@@ -24,7 +31,7 @@ const AddCustomTranslationDrawer = ({
   data, // Each plugin is responsible for providing the data to be edited
   loading,
 }) => {
-  const { t } = useCommonTranslate('customTranslationsDrawer');
+  const { t } = useCommonTranslate("customTranslationsDrawer");
 
   const [open, setOpen] = useState(false);
   const form = useForm();
@@ -55,9 +62,11 @@ const AddCustomTranslationDrawer = ({
   useEffect(() => {
     if (!isEmpty(data)) {
       languages.forEach((language) => {
-        Object.entries(data?.[language.key] ?? {}).forEach(([copyKey, value]) => {
-          form.setValue(`${language.key}.${copyKey}`, value);
-        });
+        Object.entries(data?.[language.key] ?? {}).forEach(
+          ([copyKey, value]) => {
+            form.setValue(`${language.key}.${copyKey}`, value);
+          }
+        );
       });
     }
   }, [data, languages, form]);
@@ -65,15 +74,20 @@ const AddCustomTranslationDrawer = ({
   // HANDLERS ------------------------------------------------------------------------- ||
 
   const onSubmit = (formData) => {
-    const filteredData = Object.entries(formData).reduce((acc, [lang, translations]) => {
-      const filteredTranslations = Object.fromEntries(
-        Object.entries(translations).filter(([_, value]) => value !== undefined)
-      );
-      if (Object.keys(filteredTranslations).length > 0) {
-        acc[lang] = filteredTranslations;
-      }
-      return acc;
-    }, {});
+    const filteredData = Object.entries(formData).reduce(
+      (acc, [lang, translations]) => {
+        const filteredTranslations = Object.fromEntries(
+          Object.entries(translations).filter(
+            ([_, value]) => value !== undefined
+          )
+        );
+        if (Object.keys(filteredTranslations).length > 0) {
+          acc[lang] = filteredTranslations;
+        }
+        return acc;
+      },
+      {}
+    );
 
     const dataWithUserLocale = {
       ...filteredData,
@@ -91,7 +105,7 @@ const AddCustomTranslationDrawer = ({
 
   return (
     <>
-      <Box style={{ textAlign: 'left' }}>
+      <Box style={{ textAlign: "left" }}>
         <Button
           variant={buttonVariant}
           onClick={() => setOpen(true)}
@@ -104,34 +118,42 @@ const AddCustomTranslationDrawer = ({
           }
           disabled={disabled || isEmpty(keys)}
         >
-          {buttonLabel || t('title')}
+          {buttonLabel || t("title")}
         </Button>
       </Box>
 
       <Drawer size={size} opened={open} onClose={onCancel}>
-        <Drawer.Header title={t('title')} />
+        <Drawer.Header title={t("title")} />
         <Drawer.Content>
           {languages?.length ? (
             <Tabs>
               {sortedLanguages.map((language) => (
                 <TabPanel key={language.key} label={language.name}>
-                  <LanguageTabContent t={t} form={form} language={language} copies={keys} />
+                  <LanguageTabContent
+                    t={t}
+                    form={form}
+                    language={language}
+                    copies={keys}
+                  />
                 </TabPanel>
               ))}
             </Tabs>
           ) : (
-            <Text>{t('noLanguages')}</Text>
+            <Text>{t("noLanguages")}</Text>
           )}
         </Drawer.Content>
         <Drawer.Footer>
           <Drawer.Footer.LeftActions>
             <Button variant="outline" onClick={onCancel} disabled={loading}>
-              {t('cancel')}
+              {t("cancel")}
             </Button>
           </Drawer.Footer.LeftActions>
           <Drawer.Footer.RightActions>
-            <Button onClick={form.handleSubmit(onSubmit)} disabled={!languages?.length || loading}>
-              {t('save')}
+            <Button
+              onClick={form.handleSubmit(onSubmit)}
+              disabled={!languages?.length || loading}
+            >
+              {t("save")}
             </Button>
           </Drawer.Footer.RightActions>
         </Drawer.Footer>

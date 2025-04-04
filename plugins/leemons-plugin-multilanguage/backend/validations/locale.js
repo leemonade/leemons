@@ -1,11 +1,15 @@
-const { LeemonsValidator, localeRegex, localeRegexString } = require('@leemons/validator');
+const {
+  LeemonsValidator,
+  localeRegex,
+  localeRegexString,
+} = require("@leemons/validator");
 
 /**
  * String with format localeCode (xx or xx-yy)
  */
 const codeSchema = {
-  type: 'string',
-  format: 'localeCode',
+  type: "string",
+  format: "localeCode",
   minLength: 2,
   maxLength: 12,
 };
@@ -13,7 +17,7 @@ const codeSchema = {
  * An array of strings with the localeCode format (xx or xx-yy)
  */
 const codeArraySchema = {
-  type: 'array',
+  type: "array",
   items: codeSchema,
 };
 
@@ -21,7 +25,7 @@ const codeArraySchema = {
  * A string with 1 <= length <= 255
  */
 const nameSchema = {
-  type: 'string',
+  type: "string",
   minLength: 1,
   maxLength: 255,
 };
@@ -32,12 +36,12 @@ const nameSchema = {
  *   @property name: a string with 1 <= length <= 25
  */
 const localesSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     code: codeSchema,
     name: nameSchema,
   },
-  required: ['code', 'name'],
+  required: ["code", "name"],
 };
 
 /**
@@ -46,12 +50,12 @@ const localesSchema = {
  *   @property 1: a string with 1 <= length <= 25
  */
 const arrayLocalesArraySchema = {
-  type: 'array',
+  type: "array",
   items: {
-    type: 'array',
+    type: "array",
     items: [
       {
-        type: 'string',
+        type: "string",
         minLength: 2,
         maxLength: 12,
       },
@@ -68,7 +72,7 @@ const arrayLocalesArraySchema = {
  *   @property name: a string with 1 <= length <= 25
  */
 const arrayLocalesSchema = {
-  type: 'array',
+  type: "array",
   items: localesSchema,
 };
 
@@ -90,7 +94,7 @@ const arrayLocalesSchema = {
  */
 function validateLocaleCode(code) {
   // Always save locale in lowercase
-  const _code = typeof code === 'string' ? code.toLowerCase() : null;
+  const _code = typeof code === "string" ? code.toLowerCase() : null;
 
   const validator = new LeemonsValidator(codeSchema);
 
@@ -123,7 +127,9 @@ function isValidLocaleCode(code) {
  */
 function validateLocaleCodeArray(codes) {
   // Lowercase the codes if is an array, else set _codes to null
-  const _codes = Array.isArray(codes) ? codes.map((code) => code.toLowerCase()) : null;
+  const _codes = Array.isArray(codes)
+    ? codes.map((code) => code.toLowerCase())
+    : null;
 
   const validator = new LeemonsValidator(codeArraySchema);
 
@@ -142,7 +148,7 @@ function validateLocaleCodeArray(codes) {
  */
 function validateLocale({ code, name }) {
   // Always save locale in lowercase
-  const _code = typeof code === 'string' ? code.toLowerCase() : null;
+  const _code = typeof code === "string" ? code.toLowerCase() : null;
 
   const validator = new LeemonsValidator(localesSchema);
 

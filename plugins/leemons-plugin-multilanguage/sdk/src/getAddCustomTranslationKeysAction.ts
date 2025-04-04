@@ -1,7 +1,7 @@
-import { LeemonsError } from '@leemons/error';
-import type { ActionSchema, Context } from '@leemons/moleculer';
-import { LeemonsValidator } from '@leemons/validator';
-import { cloneDeep, isString } from 'lodash';
+import { LeemonsError } from "@leemons/error";
+import type { ActionSchema, Context } from "@leemons/moleculer";
+import { LeemonsValidator } from "@leemons/validator";
+import { cloneDeep, isString } from "lodash";
 
 interface AddCustomTranslationKeysParams {
   id: string;
@@ -14,7 +14,7 @@ interface AddCustomTranslationKeysParams {
 }
 
 interface GetAddCustomTranslationKeysActionParams {
-  middlewares?: ActionSchema['middlewares'];
+  middlewares?: ActionSchema["middlewares"];
 }
 
 interface AddCustomTranslationKeysResponse {
@@ -33,30 +33,30 @@ export function getAddCustomTranslationKeysAction({
   return {
     addCustomTranslationKeys: {
       rest: {
-        method: 'POST',
-        path: '/custom-keys',
+        method: "POST",
+        path: "/custom-keys",
       },
       middlewares,
       async handler(ctx: Context): Promise<AddCustomTranslationKeysResponse> {
         const validator = new LeemonsValidator({
-          type: 'object',
+          type: "object",
           properties: {
             id: {
-              type: 'string',
+              type: "string",
             },
             prefix: {
-              type: 'string',
+              type: "string",
             },
             localizations: {
-              type: 'object',
+              type: "object",
               properties: {
-                en: { type: 'object', additionalProperties: true }, // { key1: 'value1', key2: 'value2' }
-                es: { type: 'object', additionalProperties: true }, // { key1: 'value1', key2: 'value2' }
+                en: { type: "object", additionalProperties: true }, // { key1: 'value1', key2: 'value2' }
+                es: { type: "object", additionalProperties: true }, // { key1: 'value1', key2: 'value2' }
               },
               additionalProperties: true,
             },
           },
-          required: ['localizations', 'id', 'prefix'],
+          required: ["localizations", "id", "prefix"],
           additionalProperties: false,
         });
 
@@ -68,20 +68,26 @@ export function getAddCustomTranslationKeysAction({
           Object.keys(localizationsToSave).forEach((language) => {
             Object.keys(localizationsToSave[language]).forEach((key) => {
               const newKey = `${prefix}.${id}.${key}`;
-              localizationsToSave[language][newKey] = localizationsToSave[language][key];
+              localizationsToSave[language][newKey] =
+                localizationsToSave[language][key];
               delete localizationsToSave[language][key];
             });
           });
 
-          const data = await ctx.tx.call('multilanguage.contents.setManyByJSON', {
-            data: localizationsToSave,
-          });
+          const data = await ctx.tx.call(
+            "multilanguage.contents.setManyByJSON",
+            {
+              data: localizationsToSave,
+            }
+          );
 
           return { status: 200, data };
         }
 
         throw new LeemonsError(ctx, {
-          message: isString(validator.error) ? validator.error : 'Validation failed',
+          message: isString(validator.error)
+            ? validator.error
+            : "Validation failed",
           httpStatusCode: 400,
         });
       },

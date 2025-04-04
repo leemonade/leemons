@@ -1,5 +1,5 @@
-import tLoader from './tLoader';
-import useTranslate from '../useTranslate';
+import tLoader from "./tLoader";
+import useTranslate from "../useTranslate";
 
 function useCommonTranslate(_key) {
   const key = `multilanguage.${_key}`;

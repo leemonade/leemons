@@ -1,10 +1,14 @@
-const { merge, cloneDeep, isEqual } = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { LeemonsValidator } = require('@leemons/validator');
-const { getLocalizations: getCommonLocalizations } = require('../../common/getLocalizations');
-const { getLocalizationsByKeys } = require('./getLocalizationsByKeys');
-const { getLocalizationsByKeysStartsWith } = require('./getLocalizationsByKeysStartsWith');
-const { getGlobalCacheKey } = require('../../../../helpers/cacheKeys');
+const { merge, cloneDeep, isEqual } = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { LeemonsValidator } = require("@leemons/validator");
+const {
+  getLocalizations: getCommonLocalizations,
+} = require("../../common/getLocalizations");
+const { getLocalizationsByKeys } = require("./getLocalizationsByKeys");
+const {
+  getLocalizationsByKeysStartsWith,
+} = require("./getLocalizationsByKeysStartsWith");
+const { getGlobalCacheKey } = require("../../../../helpers/cacheKeys");
 
 /**
  * Retrieves localizations based on provided keys or key patterns and locale.
@@ -22,7 +26,7 @@ const { getGlobalCacheKey } = require('../../../../helpers/cacheKeys');
 
 async function getLocalizations({ keys, keysStartsWith, locale, ctx }) {
   const globalCTX = cloneDeep(ctx);
-  globalCTX.meta.deploymentID = 'global';
+  globalCTX.meta.deploymentID = "global";
   globalCTX.db = ctx.service.metadata.LeemonsMongoDBMixin.models({
     ctx: globalCTX,
     autoTransaction: false,
@@ -37,55 +41,55 @@ async function getLocalizations({ keys, keysStartsWith, locale, ctx }) {
    * locale is a string
    */
   const validator = new LeemonsValidator({
-    type: 'object',
+    type: "object",
     properties: {
       keys: {
         oneOf: [
           {
-            type: 'array',
+            type: "array",
             items: {
-              type: 'string',
+              type: "string",
             },
           },
           {
-            type: 'null',
+            type: "null",
           },
         ],
       },
       keysStartsWith: {
         oneOf: [
           {
-            type: 'array',
+            type: "array",
             items: {
-              type: 'string',
+              type: "string",
             },
           },
           {
-            type: 'null',
+            type: "null",
           },
         ],
       },
       locale: {
         oneOf: [
           {
-            type: 'string',
+            type: "string",
           },
           {
-            type: 'array',
+            type: "array",
             items: {
-              type: 'string',
+              type: "string",
             },
           },
         ],
       },
     },
-    required: ['locale'],
+    required: ["locale"],
     anyOf: [
       {
-        required: ['keys'],
+        required: ["keys"],
       },
       {
-        required: ['keysStartsWith'],
+        required: ["keysStartsWith"],
       },
     ],
   });
@@ -109,10 +113,12 @@ async function getLocalizations({ keys, keysStartsWith, locale, ctx }) {
       promises.push(cacheResult);
     } else {
       promises.push(
-        getLocalizationsByKeys({ keys, locale, ctx: globalCTX }).then((result) => {
-          ctx.cache.set(cacheKey, result);
-          return result;
-        })
+        getLocalizationsByKeys({ keys, locale, ctx: globalCTX }).then(
+          (result) => {
+            ctx.cache.set(cacheKey, result);
+            return result;
+          }
+        )
       );
     }
   }
@@ -126,17 +132,19 @@ async function getLocalizations({ keys, keysStartsWith, locale, ctx }) {
       promises.push(cacheResult);
     } else {
       promises.push(
-        getLocalizationsByKeysStartsWith({ keysStartsWith, locale, ctx: globalCTX }).then(
-          (result) => {
-            ctx.cache.set(cacheKey, result);
-            return result;
-          }
-        )
+        getLocalizationsByKeysStartsWith({
+          keysStartsWith,
+          locale,
+          ctx: globalCTX,
+        }).then((result) => {
+          ctx.cache.set(cacheKey, result);
+          return result;
+        })
       );
     }
   }
 
-  const span = ctx.startSpan('getCommonLocalizations', {
+  const span = ctx.startSpan("getCommonLocalizations", {
     tags: {
       keys,
       keysStartsWith,
@@ -159,7 +167,7 @@ async function getLocalizations({ keys, keysStartsWith, locale, ctx }) {
 
   const items = merge(
     ...(await Promise.allSettled(promises))
-      .filter((result) => result.status === 'fulfilled')
+      .filter((result) => result.status === "fulfilled")
       .map((result) => result.value)
   );
 

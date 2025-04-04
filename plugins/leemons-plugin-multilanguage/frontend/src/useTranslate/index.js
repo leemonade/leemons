@@ -1,9 +1,13 @@
-import SocketIoService from '@mqtt-socket-io/service';
-import useLocalizations from '@multilanguage/requests/hooks/queries/useLocalizations';
-import _ from 'lodash';
-import React, { useMemo } from 'react';
+import SocketIoService from "@mqtt-socket-io/service";
+import useLocalizations from "@multilanguage/requests/hooks/queries/useLocalizations";
+import _ from "lodash";
+import React, { useMemo } from "react";
 
-function _getLocalizations({ keys = null, keysStartsWith = null, locale } = {}) {
+function _getLocalizations({
+  keys = null,
+  keysStartsWith = null,
+  locale,
+} = {}) {
   // Get deduplicated keys
   let _keys = null;
   if (Array.isArray(keys)) {
@@ -20,15 +24,15 @@ function _getLocalizations({ keys = null, keysStartsWith = null, locale } = {}) 
     _keysStartsWith = [...new Set([keysStartsWith])];
   }
 
-  let url = 'v1/multilanguage/common';
+  let url = "v1/multilanguage/common";
 
   if (!locale) {
-    url = 'v1/multilanguage/common/logged';
+    url = "v1/multilanguage/common/logged";
   }
   // Get the desired localizations from the api
   return () =>
     leemons.api(url, {
-      method: 'POST',
+      method: "POST",
       cache: {
         ttl: 1000 * 60 * 60, // 1h
       },
@@ -62,7 +66,7 @@ export function getLocalizationsByArrayOfItems(items, reducer, locale) {
 function useUserLocale() {
   const [userLocale, setUserLocale] = React.useState(null);
 
-  SocketIoService.useOn('USER_CHANGE_LOCALE', (e, event) => {
+  SocketIoService.useOn("USER_CHANGE_LOCALE", (e, event) => {
     setUserLocale(event.new);
   });
 

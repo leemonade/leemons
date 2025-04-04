@@ -1,8 +1,8 @@
-const _ = require('lodash');
-const { Validator } = require('../../validations/localization');
+const _ = require("lodash");
+const { Validator } = require("../../validations/localization");
 const {
   getLocalizationModelFromCTXAndIsPrivate,
-} = require('./getLocalizationModelFromCTXAndIsPrivate');
+} = require("./getLocalizationModelFromCTXAndIsPrivate");
 /**
  * Checks if the given localization tuple exists
  * @param {Object} params
@@ -18,12 +18,16 @@ async function has({ key, locale, isPrivate, ctx }) {
 
   try {
     return (
-      (await getLocalizationModelFromCTXAndIsPrivate({ isPrivate, ctx }).countDocuments(tuple)) ===
-      1
+      (await getLocalizationModelFromCTXAndIsPrivate({
+        isPrivate,
+        ctx,
+      }).countDocuments(tuple)) === 1
     );
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while checking if the localization exists');
+    throw new Error(
+      "An error occurred while checking if the localization exists"
+    );
   }
 }
 
@@ -38,12 +42,17 @@ async function has({ key, locale, isPrivate, ctx }) {
 async function hasMany({ localizations, isPrivate, ctx }) {
   // Validates the localizations and lowercase each tuple
   const validator = new Validator(ctx.callerPlugin);
-  const _localizations = validator.validateLocalizationTupleArray(localizations, isPrivate);
+  const _localizations = validator.validateLocalizationTupleArray(
+    localizations,
+    isPrivate
+  );
 
   try {
-    const existingLocalizations = await getLocalizationModelFromCTXAndIsPrivate({ isPrivate, ctx })
+    const existingLocalizations = await getLocalizationModelFromCTXAndIsPrivate(
+      { isPrivate, ctx }
+    )
       .find({ $or: _localizations })
-      .select(['id', 'key', 'locale'])
+      .select(["id", "key", "locale"])
       .lean();
 
     const result = {};
@@ -69,7 +78,7 @@ async function hasMany({ localizations, isPrivate, ctx }) {
     return result;
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while deleting the locales');
+    throw new Error("An error occurred while deleting the locales");
   }
 }
 

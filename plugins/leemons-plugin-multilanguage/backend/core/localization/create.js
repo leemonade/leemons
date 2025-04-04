@@ -1,15 +1,15 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
 
-const { getObjectArrayKeys } = require('@leemons/utils');
-const localesFunctions = require('../locale');
-const { Validator } = require('../../validations/localization');
-const { has } = require('./has');
+const { getObjectArrayKeys } = require("@leemons/utils");
+const localesFunctions = require("../locale");
+const { Validator } = require("../../validations/localization");
+const { has } = require("./has");
 const {
   getLocalizationModelFromCTXAndIsPrivate,
-} = require('./getLocalizationModelFromCTXAndIsPrivate');
-const { hasMany } = require('./has');
-const { commonNamespace } = require('../../helpers/cacheKeys');
+} = require("./getLocalizationModelFromCTXAndIsPrivate");
+const { hasMany } = require("./has");
+const { commonNamespace } = require("../../helpers/cacheKeys");
 
 /**
  * Adds one locale
@@ -38,30 +38,33 @@ async function add({ key, locale, value, isPrivate, ctx }) {
     if (!(await has({ key: _key, locale: _locale, isPrivate, ctx }))) {
       // Check if the locale exists
       const localeChecked = await localesFunctions.has({ code: _locale, ctx });
-      if (localeChecked || ['es', 'en'].includes(_locale)) {
+      if (localeChecked || ["es", "en"].includes(_locale)) {
         // Create the new localization
-        const newLocalizationDoc = await getLocalizationModelFromCTXAndIsPrivate({
-          isPrivate,
-          ctx,
-        }).create({
-          key: _key,
-          locale: _locale,
-          value,
-        });
+        const newLocalizationDoc =
+          await getLocalizationModelFromCTXAndIsPrivate({
+            isPrivate,
+            ctx,
+          }).create({
+            key: _key,
+            locale: _locale,
+            value,
+          });
         return newLocalizationDoc.toObject();
       }
 
       // The given locale does not exists
-      throw new LeemonsError(ctx, { message: 'Invalid locale' });
+      throw new LeemonsError(ctx, { message: "Invalid locale" });
     }
     // No localization created (already exists)
     return null;
   } catch (e) {
-    if (e.message === 'Invalid locale') {
+    if (e.message === "Invalid locale") {
       throw e;
     }
     ctx.logger.debug(e.message);
-    throw new LeemonsError(ctx, { message: 'An error occurred while creating the localization' });
+    throw new LeemonsError(ctx, {
+      message: "An error occurred while creating the localization",
+    });
   }
 }
 
@@ -81,10 +84,12 @@ async function addMany({ data, isPrivate, ctx }) {
   const locales = Object.keys(data);
 
   // Get the existing locales
-  const existingLocales = Object.entries(await localesFunctions.hasMany({ codes: locales, ctx }))
+  const existingLocales = Object.entries(
+    await localesFunctions.hasMany({ codes: locales, ctx })
+  )
     .filter(([, exists]) => exists)
     .map(([locale]) => locale)
-    .concat(['es', 'en']);
+    .concat(["es", "en"]);
 
   // Get the localizations for the existing locales (flat array)
   let localizations = _.flatten(
@@ -118,20 +123,25 @@ async function addMany({ data, isPrivate, ctx }) {
     // #region Define Warning object
 
     // Get an array of the non existing locales
-    const nonExistingLocales = locales.filter((locale) => !existingLocales.includes(locale));
+    const nonExistingLocales = locales.filter(
+      (locale) => !existingLocales.includes(locale)
+    );
     // Get an object with the existing keys: { en: ['key.1', 'key.2'] }, if no existing key: null
-    const existingKeys = Object.entries(existingLocalizations).reduce((result, [locale, keys]) => {
-      const _result = result === null ? {} : result;
-      const _keys = Object.entries(keys)
-        .filter(([, exists]) => exists)
-        .map(([_key]) => _key);
+    const existingKeys = Object.entries(existingLocalizations).reduce(
+      (result, [locale, keys]) => {
+        const _result = result === null ? {} : result;
+        const _keys = Object.entries(keys)
+          .filter(([, exists]) => exists)
+          .map(([_key]) => _key);
 
-      if (!_keys.length) {
-        return result;
-      }
-      _result[locale] = _keys;
-      return _result;
-    }, null);
+        if (!_keys.length) {
+          return result;
+        }
+        _result[locale] = _keys;
+        return _result;
+      },
+      null
+    );
 
     let hasWarnings = false;
     let warnings = {};
@@ -160,7 +170,9 @@ async function addMany({ data, isPrivate, ctx }) {
     };
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new LeemonsError(ctx, { message: 'An error occurred while creating the localizations' });
+    throw new LeemonsError(ctx, {
+      message: "An error occurred while creating the localizations",
+    });
   }
 }
 
@@ -204,10 +216,12 @@ async function addManyByKey({ key, data, ctx, isPrivate }) {
   const locales = Object.keys(_data);
 
   // Get the existing locales
-  const existingLocales = Object.entries(await localesFunctions.hasMany({ codes: locales, ctx }))
+  const existingLocales = Object.entries(
+    await localesFunctions.hasMany({ codes: locales, ctx })
+  )
     .filter(([, exists]) => exists)
     .map(([locale]) => locale)
-    .concat(['es', 'en']);
+    .concat(["es", "en"]);
 
   // Get the localizations for the existing locales (flat array)
   const localizations = _.flatten(
@@ -219,7 +233,10 @@ async function addManyByKey({ key, data, ctx, isPrivate }) {
   );
 
   const existingLocalizations = await hasMany({
-    localizations: localizations.map(({ key: __key, locale }) => [__key, locale]),
+    localizations: localizations.map(({ key: __key, locale }) => [
+      __key,
+      locale,
+    ]),
     isPrivate,
     ctx,
   });
@@ -237,7 +254,9 @@ async function addManyByKey({ key, data, ctx, isPrivate }) {
     // #region Define Warning object
 
     // Get an array of the non existing locales
-    const nonExistingLocales = locales.filter((locale) => !existingLocales.includes(locale));
+    const nonExistingLocales = locales.filter(
+      (locale) => !existingLocales.includes(locale)
+    );
     // Get an array with the existing localized locales: ['en', 'es']
     const _existingLocalizations = Object.entries(existingLocalizations)
       .filter(([, keys]) => Object.values(keys)[0])
@@ -274,7 +293,9 @@ async function addManyByKey({ key, data, ctx, isPrivate }) {
     };
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new LeemonsError(ctx, { message: 'An error occurred while creating the localizations' });
+    throw new LeemonsError(ctx, {
+      message: "An error occurred while creating the localizations",
+    });
   }
 }
 

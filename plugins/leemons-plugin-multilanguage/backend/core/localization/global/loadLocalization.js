@@ -12,7 +12,7 @@
  * @returns {Promise<boolean>} A promise that resolves to true when the operation completes.
  */
 
-const { globalNamespace } = require('../../../helpers/cacheKeys');
+const { globalNamespace } = require("../../../helpers/cacheKeys");
 
 async function loadLocalizations({ localizations, plugin, ctx }) {
   const locales = Object.keys(localizations);

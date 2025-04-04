@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const commonSchema = new mongoose.Schema(
   {
@@ -32,6 +32,10 @@ const commonSchema = new mongoose.Schema(
 
 commonSchema.index({ key: 1, locale: 1, deploymentID: 1, isDeleted: 1 });
 
-const commonModel = newModel(mongoose.connection, 'v1::multilanguage_Common', commonSchema);
+const commonModel = newModel(
+  mongoose.connection,
+  "v1::multilanguage_Common",
+  commonSchema
+);
 
 module.exports = { commonModel };

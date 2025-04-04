@@ -1,5 +1,5 @@
-const { map, uniq, get, isString } = require('lodash');
-const { parseLocalizationsKey } = require('./parseLocalizationsKey');
+const { map, uniq, get, isString } = require("lodash");
+const { parseLocalizationsKey } = require("./parseLocalizationsKey");
 
 /**
  * Retrieves localizations for the specified keys and locale.
@@ -16,18 +16,24 @@ const { parseLocalizationsKey } = require('./parseLocalizationsKey');
 
 async function getLocalizationsByKeys({ keys, locale, ctx }) {
   const parsedKeys = keys.map(parseLocalizationsKey);
-  const plugins = uniq(map(parsedKeys, 'plugin'));
+  const plugins = uniq(map(parsedKeys, "plugin"));
   const keyPaths = parsedKeys
     .filter(({ keyPath }) => keyPath)
     .map(({ keyPath }) => `value.${keyPath}`);
 
   const filteredKeyPaths = keyPaths.filter(
     (keyPath) =>
-      !keyPaths.some((otherKeyPath) => otherKeyPath !== keyPath && keyPath.startsWith(otherKeyPath))
+      !keyPaths.some(
+        (otherKeyPath) =>
+          otherKeyPath !== keyPath && keyPath.startsWith(otherKeyPath)
+      )
   );
 
-  const keysFound = await ctx.db.Globals.find({ plugin: { $in: plugins }, locale })
-    .select(['plugin', ...filteredKeyPaths])
+  const keysFound = await ctx.db.Globals.find({
+    plugin: { $in: plugins },
+    locale,
+  })
+    .select(["plugin", ...filteredKeyPaths])
     .lean();
 
   const keysFoundByPlugin = {};
@@ -43,7 +49,11 @@ async function getLocalizationsByKeys({ keys, locale, ctx }) {
   const localizations = {};
 
   parsedKeys.forEach((parsedKey) => {
-    const value = get(keysFoundByPlugin, `${parsedKey.plugin}.value.${parsedKey.keyPath}`, null);
+    const value = get(
+      keysFoundByPlugin,
+      `${parsedKey.plugin}.value.${parsedKey.keyPath}`,
+      null
+    );
 
     if (isString(value)) {
       localizations[parsedKey.original] = value;

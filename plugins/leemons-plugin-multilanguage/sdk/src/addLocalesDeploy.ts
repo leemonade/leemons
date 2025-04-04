@@ -1,9 +1,9 @@
-import type { Context } from '@leemons/moleculer';
-import type { Model } from '@leemons/mongodb';
-import { hasKey, setKey } from '@leemons/mongodb-helpers';
-import type { GetKeyValueModel } from '@leemons/mongodb-helpers';
-import { isArray, map } from 'lodash';
-import { addLocales } from './addLocales';
+import type { Context } from "@leemons/moleculer";
+import type { Model } from "@leemons/mongodb";
+import { hasKey, setKey } from "@leemons/mongodb-helpers";
+import type { GetKeyValueModel } from "@leemons/mongodb-helpers";
+import { isArray, map } from "lodash";
+import { addLocales } from "./addLocales";
 
 interface AddLocalesDeployParams {
   keyValueModel: Model<GetKeyValueModel>;
@@ -25,7 +25,7 @@ async function exec({
 }: AddLocalesDeployParams): Promise<void> {
   if (
     !(await hasKey(keyValueModel, `locale-${locale}-configured`)) ||
-    process.env.RELOAD_I18N_ON_EVERY_INSTALL === 'true'
+    process.env.RELOAD_I18N_ON_EVERY_INSTALL === "true"
   ) {
     const { count } = await addLocales({
       ctx,
@@ -51,5 +51,7 @@ export async function addLocalesDeploy({
 }: AddLocalesDeployParams): Promise<void> {
   const locales = isArray(locale) ? locale : [locale];
 
-  await Promise.all(map(locales, (l) => exec({ keyValueModel, locale: l, i18nPath, ctx })));
+  await Promise.all(
+    map(locales, (l) => exec({ keyValueModel, locale: l, i18nPath, ctx }))
+  );
 }

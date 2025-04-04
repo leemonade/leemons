@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const globalsSchema = new mongoose.Schema(
   {
@@ -36,6 +36,10 @@ const globalsSchema = new mongoose.Schema(
 
 globalsSchema.index({ plugin: 1, locale: 1, isDeleted: 1 });
 
-const globalsModel = newModel(mongoose.connection, 'v1::multilanguage_Globals', globalsSchema);
+const globalsModel = newModel(
+  mongoose.connection,
+  "v1::multilanguage_Globals",
+  globalsSchema
+);
 
 module.exports = { globalsModel };

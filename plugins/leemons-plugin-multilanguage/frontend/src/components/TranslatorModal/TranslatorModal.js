@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
 import {
   Box,
   Group,
@@ -11,12 +11,12 @@ import {
   Button,
   Text,
   BaseDrawer,
-} from '@bubbles-ui/components';
-import { isString, isFunction } from 'lodash';
-import { TranslatorModalStyles } from './TranslatorModal.styles';
+} from "@bubbles-ui/components";
+import { isString, isFunction } from "lodash";
+import { TranslatorModalStyles } from "./TranslatorModal.styles";
 
 export const TRANSLATOR_MODAL_DEFAULT_PROPS = {
-  labels: { title: '', trigger: '', help: '', close: '', save: '', cancel: '' },
+  labels: { title: "", trigger: "", help: "", close: "", save: "", cancel: "" },
   error: false,
   warning: false,
   alert: null,
@@ -91,16 +91,22 @@ const TranslatorModal = ({
   return (
     <Box>
       <Stack alignItems="baseline" spacing={4}>
-        {isString(labels.trigger) && labels.trigger !== '' && (
+        {isString(labels.trigger) && labels.trigger !== "" && (
           <Stack alignItems="center">
             <Button variant="link" onClick={() => setOpened(true)}>
               {labels.trigger}
             </Button>
 
-            {error ? <IconError /> : warning ? <IconWarning /> : <IconSuccess />}
+            {error ? (
+              <IconError />
+            ) : warning ? (
+              <IconWarning />
+            ) : (
+              <IconSuccess />
+            )}
           </Stack>
         )}
-        {isString(labels.help) && labels.help !== '' && (
+        {isString(labels.help) && labels.help !== "" && (
           <Text role="productive" size="xs">
             {labels.help}
           </Text>
@@ -109,8 +115,18 @@ const TranslatorModal = ({
 
       {alert}
 
-      <BaseDrawer opened={opened} onClose={handleClose} size={725} close={labels.close} noOverlay>
-        <ContextContainer title={labels.title} description={labels.description} divided>
+      <BaseDrawer
+        opened={opened}
+        onClose={handleClose}
+        size={725}
+        close={labels.close}
+        noOverlay
+      >
+        <ContextContainer
+          title={labels.title}
+          description={labels.description}
+          divided
+        >
           {children}
           {/* ACTION BUTTONS */}
           {editMode && (

@@ -1,5 +1,5 @@
-import type { AcquireLockParams, Lock } from '../types';
-import { getLockName } from './getLockName';
+import type { AcquireLockParams, Lock } from "../types";
+import { getLockName } from "./getLockName";
 
 const DUPLICATED_INDEX_ERROR_CODE = 11000;
 
@@ -12,7 +12,7 @@ const DUPLICATED_INDEX_ERROR_CODE = 11000;
  */
 export async function acquireLock({
   KeyValueModel,
-  lockName = 'default',
+  lockName = "default",
   timeout = 300000 /* 5 minutes */,
 }: AcquireLockParams): Promise<boolean> {
   const lockKey = getLockName(lockName);
@@ -22,7 +22,10 @@ export async function acquireLock({
     const lock = (await KeyValueModel.findOneAndUpdate(
       {
         key: lockKey,
-        $or: [{ 'value.acquired': { $ne: true } }, { 'value.expiration': { $lt: new Date() } }],
+        $or: [
+          { "value.acquired": { $ne: true } },
+          { "value.expiration": { $lt: new Date() } },
+        ],
       },
       { key: lockKey, value: { acquired: true, expiration: expirationDate } },
       { upsert: true, new: true }

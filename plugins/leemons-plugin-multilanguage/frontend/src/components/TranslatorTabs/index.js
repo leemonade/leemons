@@ -1,1 +1,1 @@
-export * from './TranslatorTabs';
+export * from "./TranslatorTabs";

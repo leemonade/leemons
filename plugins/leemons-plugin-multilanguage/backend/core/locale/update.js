@@ -1,5 +1,5 @@
-const { LeemonsError } = require('@leemons/error');
-const { validateLocale } = require('../../validations/locale');
+const { LeemonsError } = require("@leemons/error");
+const { validateLocale } = require("../../validations/locale");
 
 /**
  * Sets the given name to the locale that matches the code
@@ -22,7 +22,9 @@ async function setName({ code, name, ctx }) {
     );
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new LeemonsError(ctx, { message: 'An error occurred while setting the locale' });
+    throw new LeemonsError(ctx, {
+      message: "An error occurred while setting the locale",
+    });
   }
 }
 

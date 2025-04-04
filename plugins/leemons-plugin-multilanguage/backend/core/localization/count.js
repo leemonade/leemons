@@ -1,9 +1,9 @@
-const { escapeRegExp } = require('lodash');
+const { escapeRegExp } = require("lodash");
 
-const { Validator } = require('../../validations/localization');
+const { Validator } = require("../../validations/localization");
 const {
   getLocalizationModelFromCTXAndIsPrivate,
-} = require('./getLocalizationModelFromCTXAndIsPrivate');
+} = require("./getLocalizationModelFromCTXAndIsPrivate");
 
 /**
  * Counts how many keys starts with the given key for the given locale
@@ -21,13 +21,16 @@ async function countKeyStartsWith({ ctx, key, locale, isPrivate }) {
 
   try {
     // Get the count of localizations in the given locale starting with the given tuple
-    return await getLocalizationModelFromCTXAndIsPrivate({ ctx, isPrivate }).countDocuments({
-      key: { $regex: `^${escapeRegExp(tuple.key)}`, $options: 'i' },
+    return await getLocalizationModelFromCTXAndIsPrivate({
+      ctx,
+      isPrivate,
+    }).countDocuments({
+      key: { $regex: `^${escapeRegExp(tuple.key)}`, $options: "i" },
       locale: tuple.locale,
     });
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while counting the localizations');
+    throw new Error("An error occurred while counting the localizations");
   }
 }
 
@@ -45,12 +48,15 @@ async function countLocalesWithKey({ ctx, key, isPrivate } = {}) {
   const _key = validator.validateLocalizationKey(key, isPrivate);
 
   try {
-    return await getLocalizationModelFromCTXAndIsPrivate({ isPrivate, ctx }).countDocuments({
+    return await getLocalizationModelFromCTXAndIsPrivate({
+      isPrivate,
+      ctx,
+    }).countDocuments({
       key: _key,
     });
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while counting the localizations');
+    throw new Error("An error occurred while counting the localizations");
   }
 }
 

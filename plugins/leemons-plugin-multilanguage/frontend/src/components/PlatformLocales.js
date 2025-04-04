@@ -1,10 +1,13 @@
-import React, { useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { findIndex } from 'lodash';
-import { useAsync } from '@common/useAsync';
-import { TranslatorTabs } from '../components/TranslatorTabs';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { getDefaultPlatformLocaleRequest, getPlatformLocalesRequest } from '@users/request';
+import React, { useMemo, useState } from "react";
+import PropTypes from "prop-types";
+import { findIndex } from "lodash";
+import { useAsync } from "@common/useAsync";
+import { TranslatorTabs } from "../components/TranslatorTabs";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import {
+  getDefaultPlatformLocaleRequest,
+  getPlatformLocalesRequest,
+} from "@users/request";
 
 export default function PlatformLocales({
   onLocaleChange = () => {},
@@ -59,7 +62,10 @@ export default function PlatformLocales({
   // ······························································································
   // TRANSLATOR TAB PROPS
 
-  const langs = useMemo(() => locales.map(({ name, code }) => ({ code, label: name })), [locales]);
+  const langs = useMemo(
+    () => locales.map(({ name, code }) => ({ code, label: name })),
+    [locales]
+  );
 
   const errors = useMemo(() => {
     const result = [];

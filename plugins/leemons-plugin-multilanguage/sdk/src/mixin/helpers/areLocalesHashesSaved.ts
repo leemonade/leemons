@@ -1,7 +1,7 @@
-import { get } from 'lodash';
-import { HASH_DOCUMENT_KEY } from '../constants';
-import { getHashKey } from './getHashKey';
-import type { AreLocalesHashesSavedParams, LocalesSaved } from './types';
+import { get } from "lodash";
+import { HASH_DOCUMENT_KEY } from "../constants";
+import { getHashKey } from "./getHashKey";
+import type { AreLocalesHashesSavedParams, LocalesSaved } from "./types";
 
 /**
  * Checks if the hashes for the given locales are already saved in the database.
@@ -13,7 +13,9 @@ export async function areLocalesHashesSaved({
   hashPerLocale,
 }: AreLocalesHashesSavedParams): Promise<LocalesSaved> {
   const locales = Object.keys(hashPerLocale);
-  const keys = locales.map((locale) => getHashKey({ locale, hash: hashPerLocale[locale] }));
+  const keys = locales.map((locale) =>
+    getHashKey({ locale, hash: hashPerLocale[locale] })
+  );
 
   const hashesSaved =
     (await KeyValuesModel.findOne({

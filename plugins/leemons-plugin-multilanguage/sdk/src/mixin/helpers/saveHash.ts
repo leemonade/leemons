@@ -1,6 +1,6 @@
-import { HASH_DOCUMENT_KEY } from '../constants';
-import { getHashKey } from './getHashKey';
-import type { SaveHashParams } from './types';
+import { HASH_DOCUMENT_KEY } from "../constants";
+import { getHashKey } from "./getHashKey";
+import type { SaveHashParams } from "./types";
 
 /**
  * Saves the hash for each locale in the database.
@@ -10,7 +10,10 @@ import type { SaveHashParams } from './types';
  * @param {SaveHashParams} params - The parameters for saving the hash.
  * @returns {Promise<void>} A promise that resolves when the hash is saved.
  */
-export async function saveHash({ KeyValuesModel, hashPerLocale }: SaveHashParams): Promise<void> {
+export async function saveHash({
+  KeyValuesModel,
+  hashPerLocale,
+}: SaveHashParams): Promise<void> {
   const locales = Object.keys(hashPerLocale);
 
   const hashDocumentExists = await KeyValuesModel.countDocuments({
@@ -31,7 +34,7 @@ export async function saveHash({ KeyValuesModel, hashPerLocale }: SaveHashParams
   } else {
     const $set: Record<string, boolean | Record<string, boolean>> = {};
 
-    if (process.env.FORCE_RELOAD_I18N === 'true') {
+    if (process.env.FORCE_RELOAD_I18N === "true") {
       locales.forEach((locale) => {
         $set[`value.${locale}`] = { [hashPerLocale[locale]]: true };
       });

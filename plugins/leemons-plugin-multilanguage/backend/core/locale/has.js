@@ -1,5 +1,8 @@
-const _ = require('lodash');
-const { validateLocaleCode, validateLocaleCodeArray } = require('../../validations/locale');
+const _ = require("lodash");
+const {
+  validateLocaleCode,
+  validateLocaleCodeArray,
+} = require("../../validations/locale");
 
 /**
  * Checks if the given locale exists
@@ -18,7 +21,7 @@ async function has({ code, ctx }) {
     return (await ctx.tx.db.Locales.countDocuments({ code: _code })) > 0;
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while creating the locale');
+    throw new Error("An error occurred while creating the locale");
   }
 }
 
@@ -38,18 +41,20 @@ async function hasMany({ codes, ctx }) {
     // Find the locales that exists in the database
 
     let existingLocales = await ctx.tx.db.Locales.find({ code: _codes })
-      .select(['id', 'code'])
+      .select(["id", "code"])
       .lean();
 
     existingLocales = existingLocales.map((locale) => locale.code);
 
     // Generate an object of {locale: boolean}
-    const result = _.fromPairs(_codes.map((code) => [code, existingLocales.includes(code)]));
+    const result = _.fromPairs(
+      _codes.map((code) => [code, existingLocales.includes(code)])
+    );
 
     return { ...result };
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while deleting the locales');
+    throw new Error("An error occurred while deleting the locales");
   }
 }
 

@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _ from "lodash";
 
 function tLoader(prefix, translations) {
   return (key, replaces, returnFullKey, callback) => {
@@ -17,7 +17,7 @@ function tLoader(prefix, translations) {
       }
       return item;
     }
-    return callback || '';
+    return callback || "";
   };
 }
 

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import Item from './item';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import Item from "./item";
 
 export default function LocalePicker({
   locales,
@@ -25,7 +25,7 @@ export default function LocalePicker({
         <button
           type="button"
           className={`relative w-full bg-white border border-gray-300 ${
-            expanded ? 'rounded-t-md' : 'rounded-md'
+            expanded ? "rounded-t-md" : "rounded-md"
           } shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
           aria-haspopup="listbox"
           aria-expanded="true"
@@ -34,7 +34,9 @@ export default function LocalePicker({
         >
           <span className="flex items-center">
             <span className="ml-3 block truncate text-black">
-              {selected === null ? 'Select a locale' : `${selected.name} (${selected.code})`}
+              {selected === null
+                ? "Select a locale"
+                : `${selected.name} (${selected.code})`}
             </span>
           </span>
           <span className="ml-3 absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
@@ -57,7 +59,7 @@ export default function LocalePicker({
 
         <ul
           className={`${
-            expanded ? null : 'hidden'
+            expanded ? null : "hidden"
           } absolute z-10 w-full bg-white shadow-lg max-h-56 rounded-b-md text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm`}
           tabIndex="-1"
           role="listbox"

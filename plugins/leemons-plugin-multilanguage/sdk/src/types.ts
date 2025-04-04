@@ -1,6 +1,6 @@
-import type { Context } from '@leemons/moleculer';
-import type { Model } from '@leemons/mongodb';
-import type { GetKeyValueModel } from '@leemons/mongodb-helpers';
+import type { Context } from "@leemons/moleculer";
+import type { Model } from "@leemons/mongodb";
+import type { GetKeyValueModel } from "@leemons/mongodb-helpers";
 
 export interface MultilanguageOptions {
   /** The name of the key-value model to use for storing translations. Defaults to 'KeyValue' */

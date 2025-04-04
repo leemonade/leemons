@@ -1,16 +1,20 @@
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
-const { resolveLocales } = require('../../core/locale');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
+const { resolveLocales } = require("../../core/locale");
 const {
   getLocalizations,
-} = require('../../core/localization/global/getLocalizations/getLocalizations');
+} = require("../../core/localization/global/getLocalizations/getLocalizations");
 
 module.exports = {
   getLoggedRest: {
     rest: {
-      method: 'POST',
-      path: '/logged',
+      method: "POST",
+      path: "/logged",
     },
-    middlewares: [LeemonsMiddlewareAuthenticated({ continueEvenThoughYouAreNotLoggedIn: true })],
+    middlewares: [
+      LeemonsMiddlewareAuthenticated({
+        continueEvenThoughYouAreNotLoggedIn: true,
+      }),
+    ],
     async handler(ctx) {
       const { keys, keysStartsWith } = ctx.params;
       const [locale] = await resolveLocales({ ctx });
@@ -20,8 +24,8 @@ module.exports = {
   },
   getRest: {
     rest: {
-      method: 'POST',
-      path: '/',
+      method: "POST",
+      path: "/",
     },
     async handler(ctx) {
       const { keys, keysStartsWith, locale } = ctx.params;

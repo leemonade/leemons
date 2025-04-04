@@ -3,17 +3,19 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getServiceModels } = require('../models');
-const localization = require('../core/localization');
+const { LeemonsMongoDBMixin, mongoose } = require("@leemons/mongodb");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
+const { getServiceModels } = require("../models");
+const localization = require("../core/localization");
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
-  name: 'multilanguage.contents',
+  name: "multilanguage.contents",
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
@@ -28,12 +30,20 @@ module.exports = () => ({
   actions: {
     countKeyStartsWith: {
       handler(ctx) {
-        return localization.countKeyStartsWith({ ...ctx.params, isPrivate: true, ctx });
+        return localization.countKeyStartsWith({
+          ...ctx.params,
+          isPrivate: true,
+          ctx,
+        });
       },
     },
     countLocalesWithKey: {
       handler(ctx) {
-        return localization.countLocalesWithKey({ ...ctx.params, isPrivate: true, ctx });
+        return localization.countLocalesWithKey({
+          ...ctx.params,
+          isPrivate: true,
+          ctx,
+        });
       },
     },
     add: {
@@ -48,12 +58,20 @@ module.exports = () => ({
     },
     addManyByJSON: {
       handler(ctx) {
-        return localization.addManyByJSON({ ...ctx.params, isPrivate: true, ctx });
+        return localization.addManyByJSON({
+          ...ctx.params,
+          isPrivate: true,
+          ctx,
+        });
       },
     },
     addManyByKey: {
       handler(ctx) {
-        return localization.addManyByKey({ ...ctx.params, isPrivate: true, ctx });
+        return localization.addManyByKey({
+          ...ctx.params,
+          isPrivate: true,
+          ctx,
+        });
       },
     },
     delete: {
@@ -63,7 +81,11 @@ module.exports = () => ({
     },
     deleteKeyStartsWith: {
       handler(ctx) {
-        return localization.deleteKeyStartsWith({ ...ctx.params, isPrivate: true, ctx });
+        return localization.deleteKeyStartsWith({
+          ...ctx.params,
+          isPrivate: true,
+          ctx,
+        });
       },
     },
     deleteMany: {
@@ -98,12 +120,20 @@ module.exports = () => ({
     },
     getManyWithKeys: {
       handler(ctx) {
-        return localization.getManyWithKeys({ ...ctx.params, isPrivate: true, ctx });
+        return localization.getManyWithKeys({
+          ...ctx.params,
+          isPrivate: true,
+          ctx,
+        });
       },
     },
     getManyWithLocale: {
       handler(ctx) {
-        return localization.getManyWithLocale({ ...ctx.params, isPrivate: true, ctx });
+        return localization.getManyWithLocale({
+          ...ctx.params,
+          isPrivate: true,
+          ctx,
+        });
       },
     },
     getWithKey: {
@@ -113,27 +143,47 @@ module.exports = () => ({
     },
     getLocaleValueWithKey: {
       handler(ctx) {
-        return localization.getLocaleValueWithKey({ ...ctx.params, isPrivate: true, ctx });
+        return localization.getLocaleValueWithKey({
+          ...ctx.params,
+          isPrivate: true,
+          ctx,
+        });
       },
     },
     getWithLocale: {
       handler(ctx) {
-        return localization.getWithLocale({ ...ctx.params, isPrivate: true, ctx });
+        return localization.getWithLocale({
+          ...ctx.params,
+          isPrivate: true,
+          ctx,
+        });
       },
     },
     getKeyValueWithLocale: {
       handler(ctx) {
-        return localization.getKeyValueWithLocale({ ...ctx.params, isPrivate: true, ctx });
+        return localization.getKeyValueWithLocale({
+          ...ctx.params,
+          isPrivate: true,
+          ctx,
+        });
       },
     },
     getKeyStartsWith: {
       handler(ctx) {
-        return localization.getKeyStartsWith({ ...ctx.params, isPrivate: true, ctx });
+        return localization.getKeyStartsWith({
+          ...ctx.params,
+          isPrivate: true,
+          ctx,
+        });
       },
     },
     getKeyValueStartsWith: {
       handler(ctx) {
-        return localization.getKeyValueStartsWith({ ...ctx.params, isPrivate: true, ctx });
+        return localization.getKeyValueStartsWith({
+          ...ctx.params,
+          isPrivate: true,
+          ctx,
+        });
       },
     },
     setValue: {
@@ -153,12 +203,20 @@ module.exports = () => ({
     },
     setManyByKey: {
       handler(ctx) {
-        return localization.setManyByKey({ ...ctx.params, isPrivate: true, ctx });
+        return localization.setManyByKey({
+          ...ctx.params,
+          isPrivate: true,
+          ctx,
+        });
       },
     },
     setManyByJSON: {
       handler(ctx) {
-        return localization.setManyByJSON({ ...ctx.params, isPrivate: true, ctx });
+        return localization.setManyByJSON({
+          ...ctx.params,
+          isPrivate: true,
+          ctx,
+        });
       },
     },
   },

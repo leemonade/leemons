@@ -1,4 +1,7 @@
-const { validateLocaleCode, validateLocaleCodeArray } = require('../../validations/locale');
+const {
+  validateLocaleCode,
+  validateLocaleCodeArray,
+} = require("../../validations/locale");
 /**
  * Deletes the locale that matches the code
  * @param {Object} params
@@ -15,7 +18,7 @@ async function _delete({ code, ctx }) {
     return !!(await ctx.tx.db.Locales.deleteOne({ code: _code })).deletedCount;
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while deleting the locale');
+    throw new Error("An error occurred while deleting the locale");
   }
 }
 
@@ -36,7 +39,7 @@ async function deleteMany({ codes, ctx }) {
     // Delete the given codes an return the deleted count
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new Error('An error occurred while deleting the locales');
+    throw new Error("An error occurred while deleting the locales");
   }
 }
 

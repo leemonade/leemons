@@ -1,12 +1,12 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { getObjectArrayKeys } = require('@leemons/utils');
-const { Validator } = require('../../validations/localization');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { getObjectArrayKeys } = require("@leemons/utils");
+const { Validator } = require("../../validations/localization");
 const {
   getLocalizationModelFromCTXAndIsPrivate,
-} = require('./getLocalizationModelFromCTXAndIsPrivate');
-const localesFunctions = require('../locale');
-const { commonNamespace } = require('../../helpers/cacheKeys');
+} = require("./getLocalizationModelFromCTXAndIsPrivate");
+const localesFunctions = require("../locale");
+const { commonNamespace } = require("../../helpers/cacheKeys");
 /**
  * Sets the value of a locale, if this does not exists, it creates it
  * @param {Object} params
@@ -26,7 +26,7 @@ async function setValue({ key, locale, value, isPrivate, ctx }) {
   );
   try {
     if (!(await localesFunctions.has({ code: _locale, ctx }))) {
-      throw new Error('Invalid locale');
+      throw new Error("Invalid locale");
     }
     return await getLocalizationModelFromCTXAndIsPrivate({
       isPrivate,
@@ -37,12 +37,14 @@ async function setValue({ key, locale, value, isPrivate, ctx }) {
       { upsert: true, lean: true, new: true }
     );
   } catch (e) {
-    if (e.message === 'Invalid locale') {
+    if (e.message === "Invalid locale") {
       throw e;
     }
 
     ctx.logger.debug(e.message);
-    throw new LeemonsError(ctx, { message: 'An error occurred while updating the localization' });
+    throw new LeemonsError(ctx, {
+      message: "An error occurred while updating the localization",
+    });
   }
 }
 
@@ -65,7 +67,9 @@ async function setKey({ key, data, isPrivate, ctx }) {
   const locales = Object.keys(_data);
 
   // Get the existing locales
-  const existingLocales = Object.entries(await localesFunctions.hasMany({ codes: locales, ctx }))
+  const existingLocales = Object.entries(
+    await localesFunctions.hasMany({ codes: locales, ctx })
+  )
     .filter(([, exists]) => exists)
     .map(([locale]) => locale);
 
@@ -86,14 +90,20 @@ async function setKey({ key, data, isPrivate, ctx }) {
         return getLocalizationModelFromCTXAndIsPrivate({
           isPrivate,
           ctx,
-        }).findOneAndUpdate(query, { ...query, value }, { upsert: true, lean: true, new: true });
+        }).findOneAndUpdate(
+          query,
+          { ...query, value },
+          { upsert: true, lean: true, new: true }
+        );
       })
     );
 
     // #region Define Warning object
 
     // Get an array of the non existing locales
-    const nonExistingLocales = locales.filter((locale) => !existingLocales.includes(locale));
+    const nonExistingLocales = locales.filter(
+      (locale) => !existingLocales.includes(locale)
+    );
 
     let warnings = null;
 
@@ -115,7 +125,9 @@ async function setKey({ key, data, isPrivate, ctx }) {
     };
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new LeemonsError(ctx, { message: 'An error occurred while creating the localizations' });
+    throw new LeemonsError(ctx, {
+      message: "An error occurred while creating the localizations",
+    });
   }
 }
 
@@ -135,7 +147,9 @@ async function setMany({ data, isPrivate, ctx }) {
   const locales = Object.keys(data);
 
   // Get the existing locales
-  const existingLocales = Object.entries(await localesFunctions.hasMany({ codes: locales, ctx }))
+  const existingLocales = Object.entries(
+    await localesFunctions.hasMany({ codes: locales, ctx })
+  )
     .filter(([, exists]) => exists)
     .map(([locale]) => locale);
 
@@ -167,7 +181,11 @@ async function setMany({ data, isPrivate, ctx }) {
         return getLocalizationModelFromCTXAndIsPrivate({
           isPrivate,
           ctx,
-        }).findOneAndUpdate(query, { ...query, value }, { upsert: true, lean: true, new: true });
+        }).findOneAndUpdate(
+          query,
+          { ...query, value },
+          { upsert: true, lean: true, new: true }
+        );
       })
     );
 
@@ -193,7 +211,9 @@ async function setMany({ data, isPrivate, ctx }) {
     };
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new LeemonsError(ctx, { message: 'An error occurred while creating the localizations' });
+    throw new LeemonsError(ctx, {
+      message: "An error occurred while creating the localizations",
+    });
   }
 }
 
@@ -207,7 +227,9 @@ async function setManyByKey({ key, data, isPrivate, ctx }) {
   const locales = Object.keys(_data);
 
   // Get the existing locales
-  const existingLocales = Object.entries(await localesFunctions.hasMany({ codes: locales, ctx }))
+  const existingLocales = Object.entries(
+    await localesFunctions.hasMany({ codes: locales, ctx })
+  )
     .filter(([, exists]) => exists)
     .map(([locale]) => locale);
 
@@ -220,10 +242,12 @@ async function setManyByKey({ key, data, isPrivate, ctx }) {
     }))
   );
 
-  const newLocalizations = localizations.map(({ key: __key, locale, value }) => ({
-    query: { key: __key, locale },
-    item: { value },
-  }));
+  const newLocalizations = localizations.map(
+    ({ key: __key, locale, value }) => ({
+      query: { key: __key, locale },
+      item: { value },
+    })
+  );
 
   try {
     const addedLocalizations = await Promise.all(
@@ -245,7 +269,9 @@ async function setManyByKey({ key, data, isPrivate, ctx }) {
     // #region Define Warning object
 
     // Get an array of the non existing locales
-    const nonExistingLocales = locales.filter((locale) => !existingLocales.includes(locale));
+    const nonExistingLocales = locales.filter(
+      (locale) => !existingLocales.includes(locale)
+    );
 
     let hasWarnings = false;
     let warnings = {};
@@ -268,7 +294,9 @@ async function setManyByKey({ key, data, isPrivate, ctx }) {
     };
   } catch (e) {
     ctx.logger.debug(e.message);
-    throw new LeemonsError(ctx, { message: 'An error occurred while creating the localizations' });
+    throw new LeemonsError(ctx, {
+      message: "An error occurred while creating the localizations",
+    });
   }
 }
 

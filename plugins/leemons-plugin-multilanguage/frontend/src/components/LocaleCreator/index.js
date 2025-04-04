@@ -1,18 +1,21 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import PropTypes from 'prop-types';
+import React from "react";
+import { useForm } from "react-hook-form";
+import PropTypes from "prop-types";
 
 export default function LocaleCreator({ addLocale }) {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = async (data) => {
-    const response = await fetch(`${leemons.apiUrl}/api/v1/multilanguage/locale`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    }).then((r) => r.json());
+    const response = await fetch(
+      `${leemons.apiUrl}/api/v1/multilanguage/locale`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      }
+    ).then((r) => r.json());
 
     if (response.locale) {
       addLocale(response.locale);
@@ -20,7 +23,12 @@ export default function LocaleCreator({ addLocale }) {
   };
 
   return (
-    <form className="space-y-6" onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off">
+    <form
+      className="space-y-6"
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate
+      autoComplete="off"
+    >
       <div className="rounded-md shadow-sm flex">
         <label htmlFor="locale-code" className="sr-only">
           Email address
@@ -33,7 +41,7 @@ export default function LocaleCreator({ addLocale }) {
           required
           className="appearance-none rounded-none relative inline-block w-16 pl-3 pr-2 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-l-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
           placeholder="code"
-          {...register('code', { required: true, minLength: 2, maxLength: 5 })}
+          {...register("code", { required: true, minLength: 2, maxLength: 5 })}
         />
         <label htmlFor="locale-name" className="sr-only">
           Password
@@ -46,7 +54,7 @@ export default function LocaleCreator({ addLocale }) {
           required
           className="appearance-none rounded-none w-full relative inline-block px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-r-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
           placeholder="name"
-          {...register('name', {
+          {...register("name", {
             required: true,
           })}
         />

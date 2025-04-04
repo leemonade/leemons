@@ -1,4 +1,4 @@
-import { LOCK_NAME } from '../../constants';
+import { LOCK_NAME } from "../../constants";
 
 /**
  * Returns the lock name for the given name.
