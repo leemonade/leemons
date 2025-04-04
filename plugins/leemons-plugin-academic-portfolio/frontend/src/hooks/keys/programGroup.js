@@ -1,7 +1,7 @@
 export const allGroupDetailKeys = [
   {
-    plugin: 'plugin.academic-portfolio',
-    scope: 'group-detail',
+    plugin: "plugin.academic-portfolio",
+    scope: "group-detail",
   },
 ];
 

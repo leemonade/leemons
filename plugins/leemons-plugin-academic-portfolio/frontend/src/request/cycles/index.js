@@ -1,7 +1,7 @@
 async function updateCycle(body) {
-  return leemons.api('v1/academic-portfolio/cycle', {
+  return leemons.api("v1/academic-portfolio/cycle", {
     allAgents: true,
-    method: 'PUT',
+    method: "PUT",
     body,
   });
 }

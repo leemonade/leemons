@@ -4,16 +4,19 @@ import {
   removeProgramRequest,
   updateProgramConfigurationRequest,
   updateProgramRequest,
-} from '@academic-portfolio/request';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getCenterProgramsKey } from '../keys/centerPrograms';
+} from "@academic-portfolio/request";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getCenterProgramsKey } from "../keys/centerPrograms";
 
 export function useUpdateProgram() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (props) => updateProgramRequest(props),
     onSuccess: (data) => {
-      queryClient.invalidateQueries(['programDetail', { program: data.program.id }]);
+      queryClient.invalidateQueries([
+        "programDetail",
+        { program: data.program.id },
+      ]);
     },
   });
 }
@@ -23,7 +26,10 @@ export function useUpdateProgramConfiguration() {
   return useMutation({
     mutationFn: async (props) => updateProgramConfigurationRequest(props),
     onSuccess: (data) => {
-      queryClient.invalidateQueries(['programDetail', { program: data.program.id }]);
+      queryClient.invalidateQueries([
+        "programDetail",
+        { program: data.program.id },
+      ]);
     },
   });
 }

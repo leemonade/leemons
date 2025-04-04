@@ -1,14 +1,16 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function add({ student, teachers, classe, ctx }) {
-  const key = ctx.prefixPN(`room.class.${classe.id}.student.${student.student}.teachers`);
-  const roomExists = await ctx.tx.call('comunica.room.exists', {
+  const key = ctx.prefixPN(
+    `room.class.${classe.id}.student.${student.student}.teachers`
+  );
+  const roomExists = await ctx.tx.call("comunica.room.exists", {
     key,
   });
   if (!roomExists) {
     const roomData = {
       name: `roomCard.teachers`,
-      type: ctx.prefixPN('class.student-teachers'),
+      type: ctx.prefixPN("class.student-teachers"),
       bgColor: classe.subject.color,
       image: null,
       icon: null,
@@ -19,15 +21,15 @@ async function add({ student, teachers, classe, ctx }) {
       program: classe.program.id,
     };
 
-    await ctx.tx.call('comunica.room.add', {
+    await ctx.tx.call("comunica.room.add", {
       key,
       ...roomData,
     });
   }
 
-  await ctx.tx.call('comunica.room.addUserAgents', {
+  await ctx.tx.call("comunica.room.addUserAgents", {
     key,
-    userAgents: _.map(teachers, 'teacher').concat([student.student]),
+    userAgents: _.map(teachers, "teacher").concat([student.student]),
   });
 }
 
@@ -37,7 +39,9 @@ async function addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx }) {
     ctx.tx.db.ClassTeacher.find({ class: classe.id }).lean(),
   ]);
 
-  return Promise.all(_.map(students, (student) => add({ student, teachers, classe, ctx })));
+  return Promise.all(
+    _.map(students, (student) => add({ student, teachers, classe, ctx }))
+  );
 }
 
 module.exports = { addComunicaRoomsBetweenStudentsAndTeachers };

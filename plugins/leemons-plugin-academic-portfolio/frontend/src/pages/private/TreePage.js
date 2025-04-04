@@ -1,7 +1,7 @@
-import ProgramTreeType from '@academic-portfolio/components/ProgramTreeType';
-import { TreeCycleDetail } from '@academic-portfolio/components/Tree/TreeCycleDetail';
-import { getCycleTreeTypeTranslation } from '@academic-portfolio/helpers/getCycleTreeTypeTranslation';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import ProgramTreeType from "@academic-portfolio/components/ProgramTreeType";
+import { TreeCycleDetail } from "@academic-portfolio/components/Tree/TreeCycleDetail";
+import { getCycleTreeTypeTranslation } from "@academic-portfolio/helpers/getCycleTreeTypeTranslation";
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
 import {
   ActionButton,
   Box,
@@ -14,40 +14,53 @@ import {
   Tree,
   useResizeObserver,
   useTree,
-} from '@bubbles-ui/components';
-import { DuplicateIcon, PluginSettingsIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
+} from "@bubbles-ui/components";
+import {
+  DuplicateIcon,
+  PluginSettingsIcon,
+  RemoveIcon,
+} from "@bubbles-ui/icons/outline";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
 // TODO: import from @common plugin
 
-import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { useQuery, useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { SelectCenter } from '@users/components/SelectCenter';
-import SelectUserAgent from '@users/components/SelectUserAgent';
-import { cloneDeep, find, forEach, isArray, isNil, isUndefined, map, omitBy } from 'lodash';
-import React, { useEffect, useMemo } from 'react';
-import SelectProgram from '../../components/Selectors/SelectProgram';
-import SelectSubjectsByTable from '../../components/Selectors/SelectSubjectsByTable';
-import { TreeClassDetail } from '../../components/Tree/TreeClassDetail';
-import { TreeCourseDetail } from '../../components/Tree/TreeCourseDetail';
-import { TreeGroupDetail } from '../../components/Tree/TreeGroupDetail';
-import { TreeKnowledgeDetail } from '../../components/Tree/TreeKnowledgeDetail';
-import { TreeNewSubjectDetail } from '../../components/Tree/TreeNewSubjectDetail';
-import { TreeProgramDetail } from '../../components/Tree/TreeProgramDetail';
-import { TreeSubjectTypeDetail } from '../../components/Tree/TreeSubjectTypeDetail';
-import getCourseName from '../../helpers/getCourseName';
-import { getSubjectsTranslation } from '../../helpers/getSubjectsTranslation';
-import { getTableActionsTranslation } from '../../helpers/getTableActionsTranslation';
-import { getTreeAddUsersComponentTranslation } from '../../helpers/getTreeAddUsersComponentTranslation';
-import { getTreeClassDetailTranslation } from '../../helpers/getTreeClassDetailTranslation';
-import { getTreeCourseDetailTranslation } from '../../helpers/getTreeCourseDetailTranslation';
-import { getTreeGroupDetailTranslation } from '../../helpers/getTreeGroupDetailTranslation';
-import { getTreeKnowledgeDetailTranslation } from '../../helpers/getTreeKnowledgeDetailTranslation';
-import { getTreeProgramDetailTranslation } from '../../helpers/getTreeProgramDetailTranslation';
-import { getTreeSubjectTypeDetailTranslation } from '../../helpers/getTreeSubjectTypeDetailTranslation';
+import { AdminPageHeader } from "@bubbles-ui/leemons";
+import { useQuery, useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { SelectCenter } from "@users/components/SelectCenter";
+import SelectUserAgent from "@users/components/SelectUserAgent";
+import {
+  cloneDeep,
+  find,
+  forEach,
+  isArray,
+  isNil,
+  isUndefined,
+  map,
+  omitBy,
+} from "lodash";
+import React, { useEffect, useMemo } from "react";
+import SelectProgram from "../../components/Selectors/SelectProgram";
+import SelectSubjectsByTable from "../../components/Selectors/SelectSubjectsByTable";
+import { TreeClassDetail } from "../../components/Tree/TreeClassDetail";
+import { TreeCourseDetail } from "../../components/Tree/TreeCourseDetail";
+import { TreeGroupDetail } from "../../components/Tree/TreeGroupDetail";
+import { TreeKnowledgeDetail } from "../../components/Tree/TreeKnowledgeDetail";
+import { TreeNewSubjectDetail } from "../../components/Tree/TreeNewSubjectDetail";
+import { TreeProgramDetail } from "../../components/Tree/TreeProgramDetail";
+import { TreeSubjectTypeDetail } from "../../components/Tree/TreeSubjectTypeDetail";
+import getCourseName from "../../helpers/getCourseName";
+import { getSubjectsTranslation } from "../../helpers/getSubjectsTranslation";
+import { getTableActionsTranslation } from "../../helpers/getTableActionsTranslation";
+import { getTreeAddUsersComponentTranslation } from "../../helpers/getTreeAddUsersComponentTranslation";
+import { getTreeClassDetailTranslation } from "../../helpers/getTreeClassDetailTranslation";
+import { getTreeCourseDetailTranslation } from "../../helpers/getTreeCourseDetailTranslation";
+import { getTreeGroupDetailTranslation } from "../../helpers/getTreeGroupDetailTranslation";
+import { getTreeKnowledgeDetailTranslation } from "../../helpers/getTreeKnowledgeDetailTranslation";
+import { getTreeProgramDetailTranslation } from "../../helpers/getTreeProgramDetailTranslation";
+import { getTreeSubjectTypeDetailTranslation } from "../../helpers/getTreeSubjectTypeDetailTranslation";
 import {
   addStudentsToClassesUnderNodeTreeRequest,
   createClassRequest,
@@ -72,11 +85,11 @@ import {
   updateProgramRequest,
   updateSubjectRequest,
   updateSubjectTypeRequest,
-} from '../../request';
+} from "../../request";
 
 export default function TreePage() {
-  const [t, , , tLoading] = useTranslateLoader(prefixPN('tree_page'));
-  const [ts, , , tsLoading] = useTranslateLoader(prefixPN('subject_page'));
+  const [t, , , tLoading] = useTranslateLoader(prefixPN("tree_page"));
+  const [ts, , , tsLoading] = useTranslateLoader(prefixPN("subject_page"));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [store, render] = useStore({
     scroll: 0,
@@ -97,11 +110,11 @@ export default function TreePage() {
   }
 
   React.useEffect(() => {
-    layoutState.contentRef.current?.addEventListener('scroll', onScroll);
+    layoutState.contentRef.current?.addEventListener("scroll", onScroll);
 
     // cleanup this component
     return () => {
-      layoutState.contentRef.current?.removeEventListener('scroll', onScroll);
+      layoutState.contentRef.current?.removeEventListener("scroll", onScroll);
     };
   }, [layoutState.contentRef.current]);
 
@@ -119,9 +132,9 @@ export default function TreePage() {
 
   function setAgainActiveTree() {
     let key = null;
-    if (store.editingItem) key = 'editingItem';
-    if (store.newItem) key = 'newItem';
-    if (store.duplicateItem) key = 'duplicateItem';
+    if (store.editingItem) key = "editingItem";
+    if (store.newItem) key = "newItem";
+    if (store.duplicateItem) key = "duplicateItem";
     if (key) {
       const treeItem = getTreeItemByTreeId(store[key].treeId);
       if (treeItem) store[key] = treeItem;
@@ -148,10 +161,10 @@ export default function TreePage() {
     openDeleteConfirmationModal({
       onConfirm: async () => {
         try {
-          if (item.nodeType === 'groups') {
+          if (item.nodeType === "groups") {
             await removeGroupFromClassesRequest(item.value.id);
           }
-          if (item.nodeType === 'class') {
+          if (item.nodeType === "class") {
             await removeClassRequest(item.value.id);
           }
 
@@ -179,51 +192,54 @@ export default function TreePage() {
     store.editingItem = null;
     store.duplicateItem = null;
     store.showTreeType = null;
-    store.newItem = { ...item, nodeType: 'subject' };
+    store.newItem = { ...item, nodeType: "subject" };
     render();
   }
 
   async function getProgramTree() {
     setLoading(true);
     try {
-      const [{ tree }, { subjectCredits }, { program }, { profiles }] = await Promise.all([
-        getProgramTreeRequest(store.programId),
-        listSubjectCreditsForProgramRequest(store.programId),
-        detailProgramRequest(store.programId),
-        getProfilesRequest(),
-      ]);
+      const [{ tree }, { subjectCredits }, { program }, { profiles }] =
+        await Promise.all([
+          getProgramTreeRequest(store.programId),
+          listSubjectCreditsForProgramRequest(store.programId),
+          detailProgramRequest(store.programId),
+          getProfilesRequest(),
+        ]);
 
       const classesBySubject = {};
       const result = [];
       const newSubjects = [];
 
-      const editLabel = t('treeEdit');
-      const removeLabel = t('treeRemove');
-      const duplicateLabel = t('treeDuplicate');
+      const editLabel = t("treeEdit");
+      const removeLabel = t("treeRemove");
+      const duplicateLabel = t("treeDuplicate");
 
       // eslint-disable-next-line no-inner-declarations
       function processItem(item, parents) {
         let text = item.value.name;
-        if (item.nodeType === 'courses') {
+        if (item.nodeType === "courses") {
           text = getCourseName(item.value);
         }
-        if (item.nodeType === 'class') {
+        if (item.nodeType === "class") {
           const classSubjectCredits = find(subjectCredits, {
             subject: item.value.subject.id,
           });
-          const course = find(parents, { nodeType: 'courses' });
-          const groups = find(parents, { nodeType: 'groups' });
-          const courseName = course ? course.value.index : '';
+          const course = find(parents, { nodeType: "courses" });
+          const groups = find(parents, { nodeType: "groups" });
+          const courseName = course ? course.value.index : "";
           const substageName =
             item.value.substages && item.value.substages.abbreviation
               ? ` - ${item.value.substages.abbreviation}`
-              : '';
-          let groupName = '';
+              : "";
+          let groupName = "";
           if (!groups) {
             groupName =
-              item.value.groups && !item.value.groups.isAlone && item.value.groups.abbreviation
+              item.value.groups &&
+              !item.value.groups.isAlone &&
+              item.value.groups.abbreviation
                 ? ` - ${item.value.groups.abbreviation}`
-                : '';
+                : "";
           }
           text = `${courseName}${classSubjectCredits?.internalId} ${item.value.subject.name}${groupName}${substageName}`;
           if (!isArray(classesBySubject[item.value.subject?.id]))
@@ -237,25 +253,25 @@ export default function TreePage() {
 
         const actions = [
           {
-            name: 'edit',
+            name: "edit",
             tooltip: editLabel,
             showOnHover: true,
             handler: () => onEdit({ ...item }),
           },
         ];
 
-        if (item.nodeType === 'groups') {
+        if (item.nodeType === "groups") {
           actions.push({
-            name: 'delete',
+            name: "delete",
             tooltip: removeLabel,
             showOnHover: true,
             handler: () => onRemove({ ...item, parents }),
           });
         }
 
-        if (item.nodeType === 'groups') {
+        if (item.nodeType === "groups") {
           actions.push({
-            name: 'duplicate',
+            name: "duplicate",
             tooltip: duplicateLabel,
             showOnHover: true,
             icon: () => <DuplicateIcon />,
@@ -276,13 +292,13 @@ export default function TreePage() {
          */
 
         if (
-          item.nodeType !== 'program' &&
-          item.nodeType !== 'class' &&
-          item.nodeType !== 'courses' &&
-          item.nodeType !== 'cycles'
+          item.nodeType !== "program" &&
+          item.nodeType !== "class" &&
+          item.nodeType !== "courses" &&
+          item.nodeType !== "cycles"
         ) {
           actions.push({
-            name: 'new',
+            name: "new",
             tooltip: t(`new${item.nodeType}`),
             showOnHover: true,
             icon: () => <AddCircleIcon />,
@@ -301,7 +317,9 @@ export default function TreePage() {
           handler: () => onEdit({ ...item }),
         });
         if (item.childrens && item.childrens.length) {
-          item.childrens.forEach((child) => processItem(child, [...parents, item]));
+          item.childrens.forEach((child) =>
+            processItem(child, [...parents, item])
+          );
         } else {
           const id = `add-button-${parents[parents.length - 1]?.treeId || 0}`;
           const exists = find(newSubjects, { id });
@@ -309,12 +327,12 @@ export default function TreePage() {
             newSubjects.push({
               id,
               parent,
-              text: t('newsubject'),
-              type: 'button',
+              text: t("newsubject"),
+              type: "button",
               draggable: false,
               node: null,
               data: {
-                action: 'add',
+                action: "add",
               },
               handler: () => onNewSubject({ ...item, parents }),
             });
@@ -350,8 +368,8 @@ export default function TreePage() {
   const messages = useMemo(
     () => ({
       header: {
-        title: t('page_title'),
-        description: t('page_description'),
+        title: t("page_title"),
+        description: t("page_description"),
       },
       addUsers: getTreeAddUsersComponentTranslation(t),
       treeProgram: getTreeProgramDetailTranslation(t),
@@ -410,7 +428,7 @@ export default function TreePage() {
       await updateCycleRequest({ id, name, managers });
       store.tree = await getProgramTree();
       setAgainActiveTree();
-      addSuccessAlert(t('cycleUpdated'));
+      addSuccessAlert(t("cycleUpdated"));
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -418,15 +436,22 @@ export default function TreePage() {
     render();
   }
 
-  async function onSaveProgram({ id, name, abbreviation, credits, students, managers }) {
+  async function onSaveProgram({
+    id,
+    name,
+    abbreviation,
+    credits,
+    students,
+    managers,
+  }) {
     try {
       store.saving = true;
       render();
       await updateProgramRequest({ id, name, abbreviation, credits, managers });
-      await addStudentIfNeed(students, id, 'program');
+      await addStudentIfNeed(students, id, "program");
       store.tree = await getProgramTree();
       setAgainActiveTree();
-      addSuccessAlert(t('programUpdated'));
+      addSuccessAlert(t("programUpdated"));
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -438,11 +463,17 @@ export default function TreePage() {
     try {
       store.saving = true;
       render();
-      await updateCourseRequest({ id, name, abbreviation: name, number: credits, managers });
-      await addStudentIfNeed(students, id, 'courses');
+      await updateCourseRequest({
+        id,
+        name,
+        abbreviation: name,
+        number: credits,
+        managers,
+      });
+      await addStudentIfNeed(students, id, "courses");
       store.tree = await getProgramTree();
       setAgainActiveTree();
-      addSuccessAlert(t('courseUpdated'));
+      addSuccessAlert(t("courseUpdated"));
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -455,11 +486,11 @@ export default function TreePage() {
       store.saving = true;
       render();
       await updateGroupRequest({ id, name, abbreviation, managers });
-      await addStudentIfNeed(students, id, 'groups');
+      await addStudentIfNeed(students, id, "groups");
 
       store.tree = await getProgramTree();
       setAgainActiveTree();
-      addSuccessAlert(t('groupUpdated'));
+      addSuccessAlert(t("groupUpdated"));
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -487,10 +518,10 @@ export default function TreePage() {
         credits_program,
         managers,
       });
-      await addStudentIfNeed(students, id, 'subjectType');
+      await addStudentIfNeed(students, id, "subjectType");
       store.tree = await getProgramTree();
       setAgainActiveTree();
-      addSuccessAlert(t('subjectTypeUpdated'));
+      addSuccessAlert(t("subjectTypeUpdated"));
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -519,12 +550,12 @@ export default function TreePage() {
         credits_course,
         credits_program,
         managers,
-        icon: ' ',
+        icon: " ",
       });
-      await addStudentIfNeed(students, id, 'knowledges');
+      await addStudentIfNeed(students, id, "knowledges");
       store.tree = await getProgramTree();
       setAgainActiveTree();
-      addSuccessAlert(t('knowledgeUpdated'));
+      addSuccessAlert(t("knowledgeUpdated"));
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -560,7 +591,7 @@ export default function TreePage() {
       await updateSubjectRequest(body);
       store.tree = await getProgramTree();
       setAgainActiveTree();
-      addSuccessAlert(t('subjectUpdated'));
+      addSuccessAlert(t("subjectUpdated"));
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -570,10 +601,10 @@ export default function TreePage() {
 
   async function removeSubject(id) {
     openDeleteConfirmationModal({
-      title: t('class.attention'),
-      description: t('class.removeSubjectDescription'),
+      title: t("class.attention"),
+      description: t("class.removeSubjectDescription"),
       labels: {
-        confirm: t('class.removeSubjectButton'),
+        confirm: t("class.removeSubjectButton"),
       },
       onConfirm: async () => {
         try {
@@ -586,7 +617,7 @@ export default function TreePage() {
           store.newItem = null;
           store.tree = await getProgramTree();
           setAgainActiveTree();
-          addSuccessAlert(t('subjectRemoved'));
+          addSuccessAlert(t("subjectRemoved"));
         } catch (err) {
           addErrorAlert(getErrorMessage(err));
         }
@@ -598,10 +629,10 @@ export default function TreePage() {
 
   async function removeClass(id) {
     openDeleteConfirmationModal({
-      title: t('class.attention'),
-      description: t('class.removeClassDescription'),
+      title: t("class.attention"),
+      description: t("class.removeClassDescription"),
       labels: {
-        confirm: t('class.removeSubjectButton'),
+        confirm: t("class.removeSubjectButton"),
       },
       onConfirm: async () => {
         try {
@@ -614,7 +645,7 @@ export default function TreePage() {
           store.newItem = null;
           store.tree = await getProgramTree();
           setAgainActiveTree();
-          addSuccessAlert(t('subjectRemoved'));
+          addSuccessAlert(t("subjectRemoved"));
         } catch (err) {
           addErrorAlert(getErrorMessage(err));
         }
@@ -647,7 +678,7 @@ export default function TreePage() {
         abbreviation,
         program: store.program.id,
       });
-      addSuccessAlert(t('groupCreated'));
+      addSuccessAlert(t("groupCreated"));
       return group;
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
@@ -655,7 +686,14 @@ export default function TreePage() {
     return null;
   }
 
-  async function onSaveClass({ schedule, teacher, associateTeachers, group, isNewGroup, ...data }) {
+  async function onSaveClass({
+    schedule,
+    teacher,
+    associateTeachers,
+    group,
+    isNewGroup,
+    ...data
+  }) {
     try {
       store.saving = true;
       render();
@@ -666,18 +704,18 @@ export default function TreePage() {
         group = g.id;
       }
       if (teacher) {
-        teachers.push({ type: 'main-teacher', teacher });
+        teachers.push({ type: "main-teacher", teacher });
       }
       if (associateTeachers) {
         forEach(associateTeachers, (tea) => {
-          teachers.push({ type: 'associate-teacher', teacher: tea });
+          teachers.push({ type: "associate-teacher", teacher: tea });
         });
       }
       let subjectType = null;
       let course = null;
       if (store.newItem?.value?.courses) {
         if (isArray(store.newItem.value.courses)) {
-          course = map(store.newItem.value.courses, 'id');
+          course = map(store.newItem.value.courses, "id");
         } else {
           course = store.newItem.value.courses.id;
         }
@@ -692,7 +730,7 @@ export default function TreePage() {
           teachers,
           schedule: schedule ? schedule.days : [],
         });
-        alert = ts('classUpdated');
+        alert = ts("classUpdated");
       } else {
         const {
           class: { id },
@@ -711,7 +749,7 @@ export default function TreePage() {
         store.editingItem = { ...store.newItem };
         store.newItem = null;
         store.showTreeType = null;
-        alert = ts('classCreated');
+        alert = ts("classCreated");
       }
       store.tree = await getProgramTree();
       setAgainActiveTree();
@@ -732,10 +770,10 @@ export default function TreePage() {
       const aditionalData = {};
       if (data.subjects) {
         const types = {
-          groups: 'group',
-          courses: 'course',
-          knowledges: 'knowledge',
-          subjectType: 'subjectType',
+          groups: "group",
+          courses: "course",
+          knowledges: "knowledge",
+          subjectType: "subjectType",
         };
         forEach(store.newItem.parents, (parent) => {
           if (types[parent.nodeType]) {
@@ -750,7 +788,7 @@ export default function TreePage() {
       });
       store.tree = await getProgramTree();
       store.newItem = null;
-      addSuccessAlert(t('groupCreated'));
+      addSuccessAlert(t("groupCreated"));
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -765,7 +803,7 @@ export default function TreePage() {
       await duplicateGroupRequest({ id, name, abbreviation, students });
       store.tree = await getProgramTree();
       store.duplicateItem = null;
-      addSuccessAlert(t('groupDuplicated'));
+      addSuccessAlert(t("groupDuplicated"));
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -784,7 +822,7 @@ export default function TreePage() {
       });
       store.tree = await getProgramTree();
       store.newItem = null;
-      addSuccessAlert(t('subjectTypeCreated'));
+      addSuccessAlert(t("subjectTypeCreated"));
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -802,7 +840,7 @@ export default function TreePage() {
       });
       store.tree = await getProgramTree();
       store.newItem = null;
-      addSuccessAlert(t('knowledgeCreated'));
+      addSuccessAlert(t("knowledgeCreated"));
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -819,11 +857,13 @@ export default function TreePage() {
         program: store.program.id,
         credits,
       });
-      addSuccessAlert(ts('subjectCreated'));
+      addSuccessAlert(ts("subjectCreated"));
       return subject;
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
-      store.program.classes = isArray(store.program.classes) ? [...store.program.classes] : [];
+      store.program.classes = isArray(store.program.classes)
+        ? [...store.program.classes]
+        : [];
       store.program = { ...store.program };
       store.saving = false;
       render();
@@ -851,7 +891,7 @@ export default function TreePage() {
         program: store.program.id,
         group: groups,
         schedule: schedule ? schedule.days : [],
-        teachers: teacher ? [{ teacher, type: 'main-teacher' }] : [],
+        teachers: teacher ? [{ teacher, type: "main-teacher" }] : [],
       });
       return c;
     } catch (err) {
@@ -879,7 +919,7 @@ export default function TreePage() {
         await addNewClass(data);
         store.tree = await getProgramTree();
         store.newItem = null;
-        addSuccessAlert(ts('classCreated'));
+        addSuccessAlert(ts("classCreated"));
         store.saving = false;
         render();
         return true;
@@ -898,7 +938,7 @@ export default function TreePage() {
     try {
       store.saving = true;
       render();
-      await addStudentIfNeed(students, id, 'class');
+      await addStudentIfNeed(students, id, "class");
       store.tree = await getProgramTree();
       setAgainActiveTree();
       addSuccessAlert(messages.treeClass.studentsAddedSuccessfully);
@@ -914,7 +954,10 @@ export default function TreePage() {
       openDeleteConfirmationModal({
         onConfirm: async () => {
           try {
-            await removeStudentFromClassRequest({ classId: id, studentId: student }); // update
+            await removeStudentFromClassRequest({
+              classId: id,
+              studentId: student,
+            }); // update
             store.tree = await getProgramTree();
             setAgainActiveTree();
             resolve();
@@ -978,7 +1021,7 @@ export default function TreePage() {
                   <Box
                     style={{
                       width: `${container.width}px`,
-                      position: 'fixed',
+                      position: "fixed",
                       top: `${top}px`,
                       height: `calc(100vh - ${top + correctBottom}px)`,
                     }}
@@ -990,7 +1033,7 @@ export default function TreePage() {
                             <Col span={6}>
                               <SelectCenter
                                 firstSelected
-                                label={t('centerLabel')}
+                                label={t("centerLabel")}
                                 onChange={onSelectCenter}
                                 value={store.centerId}
                               />
@@ -998,7 +1041,7 @@ export default function TreePage() {
                             <Col span={6}>
                               <SelectProgram
                                 firstSelected
-                                label={t('programLabel')}
+                                label={t("programLabel")}
                                 onChange={onSelectProgram}
                                 center={store.centerId}
                                 value={store.programId}
@@ -1022,14 +1065,14 @@ export default function TreePage() {
                               leftIcon={<PluginSettingsIcon />}
                               variant="link"
                             >
-                              {t('configTreeView')}
+                              {t("configTreeView")}
                             </Button>
                           </Box>
                         </Box>
                         {store.tree ? (
                           <Box
                             sx={(theme) => ({
-                              flex: 'none!important',
+                              flex: "none!important",
                               marginLeft: -theme.spacing[5],
                               marginRight: -theme.spacing[5],
                               paddingLeft: theme.spacing[5],
@@ -1037,13 +1080,17 @@ export default function TreePage() {
                             })}
                             style={{
                               height: `calc(100vh - ${top + correctBottom + 150}px)`,
-                              overflowY: 'auto',
+                              overflowY: "auto",
                             }}
                           >
                             <Tree
                               {...treeProps}
                               rootId={0}
-                              selectedNode={store.editingItem ? store.editingItem.treeId : null}
+                              selectedNode={
+                                store.editingItem
+                                  ? store.editingItem.treeId
+                                  : null
+                              }
                               allowDragParents={false}
                               allowMultipleOpen
                               onAdd={(a) => {
@@ -1063,10 +1110,10 @@ export default function TreePage() {
               {/* CONTENT ----------------------------------------- */}
               <Col span={7}>
                 {store.showTreeType ? (
-                  <Paper style={{ position: 'relative' }} fullWidth padding={5}>
+                  <Paper style={{ position: "relative" }} fullWidth padding={5}>
                     <Box
                       sx={(theme) => ({
-                        position: 'absolute',
+                        position: "absolute",
                         right: theme.spacing[3],
                         top: theme.spacing[3],
                       })}
@@ -1079,15 +1126,22 @@ export default function TreePage() {
                         }}
                       />
                     </Box>
-                    <ProgramTreeType program={store.program} onChange={onProgramTreeTypeChange} />
+                    <ProgramTreeType
+                      program={store.program}
+                      onChange={onProgramTreeTypeChange}
+                    />
                   </Paper>
                 ) : (
                   <>
                     {store.editingItem ? (
-                      <Paper style={{ position: 'relative' }} fullWidth padding={5}>
+                      <Paper
+                        style={{ position: "relative" }}
+                        fullWidth
+                        padding={5}
+                      >
                         <Box
                           sx={(theme) => ({
-                            position: 'absolute',
+                            position: "absolute",
                             right: theme.spacing[3],
                             top: theme.spacing[3],
                           })}
@@ -1100,7 +1154,7 @@ export default function TreePage() {
                             }}
                           />
                         </Box>
-                        {store.editingItem.nodeType === 'program' ? (
+                        {store.editingItem.nodeType === "program" ? (
                           <TreeProgramDetail
                             onSave={onSaveProgram}
                             program={store.editingItem.value}
@@ -1117,7 +1171,7 @@ export default function TreePage() {
                             }
                           />
                         ) : null}
-                        {store.editingItem.nodeType === 'cycles' ? (
+                        {store.editingItem.nodeType === "cycles" ? (
                           <TreeCycleDetail
                             onSave={onSaveCycle}
                             item={store.editingItem}
@@ -1132,7 +1186,7 @@ export default function TreePage() {
                             }
                           />
                         ) : null}
-                        {store.editingItem.nodeType === 'courses' ? (
+                        {store.editingItem.nodeType === "courses" ? (
                           <TreeCourseDetail
                             onSave={onSaveCourse}
                             course={store.editingItem.value}
@@ -1149,7 +1203,7 @@ export default function TreePage() {
                             }
                           />
                         ) : null}
-                        {store.editingItem.nodeType === 'groups' ? (
+                        {store.editingItem.nodeType === "groups" ? (
                           <TreeGroupDetail
                             onSave={onSaveGroup}
                             program={store.program}
@@ -1167,7 +1221,7 @@ export default function TreePage() {
                             }
                           />
                         ) : null}
-                        {store.editingItem.nodeType === 'subjectType' ? (
+                        {store.editingItem.nodeType === "subjectType" ? (
                           <TreeSubjectTypeDetail
                             onSave={onSaveSubjectType}
                             subjectType={store.editingItem.value}
@@ -1184,7 +1238,7 @@ export default function TreePage() {
                             }
                           />
                         ) : null}
-                        {store.editingItem.nodeType === 'knowledges' ? (
+                        {store.editingItem.nodeType === "knowledges" ? (
                           <TreeKnowledgeDetail
                             onSave={onSaveKnowledge}
                             program={store.program}
@@ -1202,7 +1256,7 @@ export default function TreePage() {
                             }
                           />
                         ) : null}
-                        {store.editingItem.nodeType === 'class' ? (
+                        {store.editingItem.nodeType === "class" ? (
                           <TreeClassDetail
                             onNew={onNew}
                             onSaveSubject={onSaveSubject}
@@ -1218,7 +1272,11 @@ export default function TreePage() {
                             messagesAddUsers={messages.addUsers}
                             classe={store.editingItem.value}
                             item={store.editingItem}
-                            classes={store.classesBySubject[store.editingItem.value.subject?.id]}
+                            classes={
+                              store.classesBySubject[
+                                store.editingItem.value.subject?.id
+                              ]
+                            }
                             messages={messages.treeClass}
                             saving={store.saving}
                             teacherSelect={
@@ -1232,10 +1290,14 @@ export default function TreePage() {
                       </Paper>
                     ) : null}
                     {store.newItem ? (
-                      <Paper style={{ position: 'relative' }} fullWidth padding={5}>
+                      <Paper
+                        style={{ position: "relative" }}
+                        fullWidth
+                        padding={5}
+                      >
                         <Box
                           sx={(theme) => ({
-                            position: 'absolute',
+                            position: "absolute",
                             right: theme.spacing[3],
                             top: theme.spacing[3],
                           })}
@@ -1248,7 +1310,7 @@ export default function TreePage() {
                             }}
                           />
                         </Box>
-                        {store.newItem.nodeType === 'groups' ? (
+                        {store.newItem.nodeType === "groups" ? (
                           <TreeGroupDetail
                             onSave={onNewGroup}
                             program={store.program}
@@ -1256,7 +1318,9 @@ export default function TreePage() {
                             messages={messages.treeGroup}
                             saving={store.saving}
                             messagesAddUsers={messages.addUsers}
-                            selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
+                            selectSubjectsNode={
+                              <SelectSubjectsByTable program={store.program} />
+                            }
                             managersSelect={
                               <SelectAgent
                                 profiles={store.profiles.teacher}
@@ -1265,14 +1329,16 @@ export default function TreePage() {
                             }
                           />
                         ) : null}
-                        {store.newItem.nodeType === 'subjectType' ? (
+                        {store.newItem.nodeType === "subjectType" ? (
                           <TreeSubjectTypeDetail
                             onSave={onNewSubjectType}
                             item={store.newItem}
                             messagesAddUsers={messages.addUsers}
                             messages={messages.treeSubjectType}
                             saving={store.saving}
-                            selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
+                            selectSubjectsNode={
+                              <SelectSubjectsByTable program={store.program} />
+                            }
                             managersSelect={
                               <SelectAgent
                                 profiles={store.profiles.teacher}
@@ -1281,7 +1347,7 @@ export default function TreePage() {
                             }
                           />
                         ) : null}
-                        {store.newItem.nodeType === 'knowledges' ? (
+                        {store.newItem.nodeType === "knowledges" ? (
                           <TreeKnowledgeDetail
                             onSave={onNewKnowledge}
                             program={store.program}
@@ -1289,7 +1355,9 @@ export default function TreePage() {
                             messagesAddUsers={messages.addUsers}
                             messages={messages.treeKnowledge}
                             saving={store.saving}
-                            selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
+                            selectSubjectsNode={
+                              <SelectSubjectsByTable program={store.program} />
+                            }
                             managersSelect={
                               <SelectAgent
                                 profiles={store.profiles.teacher}
@@ -1298,7 +1366,7 @@ export default function TreePage() {
                             }
                           />
                         ) : null}
-                        {store.newItem.nodeType === 'subject' ? (
+                        {store.newItem.nodeType === "subject" ? (
                           <TreeNewSubjectDetail
                             onSave={onNewSubjectSave}
                             item={store.newItem}
@@ -1323,7 +1391,7 @@ export default function TreePage() {
                             }
                           />
                         ) : null}
-                        {store.newItem.nodeType === 'class' ? (
+                        {store.newItem.nodeType === "class" ? (
                           <TreeClassDetail
                             onNew={onNew}
                             onSaveSubject={onSaveSubject}
@@ -1336,7 +1404,11 @@ export default function TreePage() {
                             removeSubject={removeSubject}
                             removing={store.removing}
                             classe={store.newItem.value}
-                            classes={store.classesBySubject[store.newItem.value.subject?.id]}
+                            classes={
+                              store.classesBySubject[
+                                store.newItem.value.subject?.id
+                              ]
+                            }
                             messages={messages.treeClass}
                             saving={store.saving}
                             createMode={true}
@@ -1351,10 +1423,14 @@ export default function TreePage() {
                       </Paper>
                     ) : null}
                     {store.duplicateItem ? (
-                      <Paper style={{ position: 'relative' }} fullWidth padding={5}>
+                      <Paper
+                        style={{ position: "relative" }}
+                        fullWidth
+                        padding={5}
+                      >
                         <Box
                           sx={(theme) => ({
-                            position: 'absolute',
+                            position: "absolute",
                             right: theme.spacing[3],
                             top: theme.spacing[3],
                           })}
@@ -1367,7 +1443,7 @@ export default function TreePage() {
                             }}
                           />
                         </Box>
-                        {store.duplicateItem.nodeType === 'groups' ? (
+                        {store.duplicateItem.nodeType === "groups" ? (
                           <TreeGroupDetail
                             onSave={onDuplicateGroup}
                             group={store.duplicateItem.value}
@@ -1377,7 +1453,9 @@ export default function TreePage() {
                             saving={store.saving}
                             duplicateMode={true}
                             messagesAddUsers={messages.addUsers}
-                            selectSubjectsNode={<SelectSubjectsByTable program={store.program} />}
+                            selectSubjectsNode={
+                              <SelectSubjectsByTable program={store.program} />
+                            }
                           />
                         ) : null}
                       </Paper>

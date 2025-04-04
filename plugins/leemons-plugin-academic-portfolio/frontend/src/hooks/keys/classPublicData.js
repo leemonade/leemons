@@ -1,7 +1,7 @@
 export const allClassPublicDataManyKeys = [
   {
-    plugin: 'plugin.academic-portfolio',
-    scope: 'class-public-data-many',
+    plugin: "plugin.academic-portfolio",
+    scope: "class-public-data-many",
   },
 ];
 
@@ -16,7 +16,7 @@ export const getClassPublicDataManyKey = (ids) => [
 export const getClassDashboardDataKey = (classId) => [
   {
     ...allClassPublicDataManyKeys[0],
-    scope: 'class-dashboard-data',
+    scope: "class-dashboard-data",
     classId,
   },
 ];

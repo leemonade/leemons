@@ -1,24 +1,24 @@
-import type { Asset, AssetID } from '@leemons/library';
-import type { LRN } from '@leemons/lrn';
-import type { LeemonsSchema } from '@leemons/mongodb';
-import type { UserAgentID } from '@leemons/users';
+import type { Asset, AssetID } from "@leemons/library";
+import type { LRN } from "@leemons/lrn";
+import type { LeemonsSchema } from "@leemons/mongodb";
+import type { UserAgentID } from "@leemons/users";
 
-type TPlugin = 'academic-portfolio';
-export type ClassID = LRN<TPlugin, 'Class'>;
-export type ClassTeacherID = LRN<TPlugin, 'ClassTeacher'>;
-export type ClassStudentID = LRN<TPlugin, 'ClassStudent'>;
-export type ProgramID = LRN<TPlugin, 'Programs'>;
-export type SubjectID = LRN<TPlugin, 'Subjects'>;
-export type CourseID = LRN<TPlugin, 'Groups'>;
-export type BlockID = LRN<TPlugin, 'Blocks'>;
+type TPlugin = "academic-portfolio";
+export type ClassID = LRN<TPlugin, "Class">;
+export type ClassTeacherID = LRN<TPlugin, "ClassTeacher">;
+export type ClassStudentID = LRN<TPlugin, "ClassStudent">;
+export type ProgramID = LRN<TPlugin, "Programs">;
+export type SubjectID = LRN<TPlugin, "Subjects">;
+export type CourseID = LRN<TPlugin, "Groups">;
+export type BlockID = LRN<TPlugin, "Blocks">;
 
 /**
  * @file plugins/leemons-plugin-academic-portfolio/backend/models/class-teacher.js
  */
-export interface ClassTeacher extends Omit<LeemonsSchema, 'id'> {
+export interface ClassTeacher extends Omit<LeemonsSchema, "id"> {
   id: ClassTeacherID;
 
-  type: 'main-teacher' | 'associate-teacher';
+  type: "main-teacher" | "associate-teacher";
   // ref: 'plugins_academic-portfolio::class'
   class: ClassID;
   // ref: 'plugins_users::user-agent'
@@ -28,7 +28,7 @@ export interface ClassTeacher extends Omit<LeemonsSchema, 'id'> {
 /**
  * @file plugins/leemons-plugin-academic-portfolio/backend/models/class-student.js
  */
-export interface ClassStudent extends Omit<LeemonsSchema, 'id'> {
+export interface ClassStudent extends Omit<LeemonsSchema, "id"> {
   id: ClassStudentID;
 
   // ref: 'plugins_academic-portfolio::class'
@@ -37,7 +37,7 @@ export interface ClassStudent extends Omit<LeemonsSchema, 'id'> {
   student: UserAgentID;
 }
 
-export interface Subject extends Omit<LeemonsSchema, 'id'> {
+export interface Subject extends Omit<LeemonsSchema, "id"> {
   id: SubjectID;
   name: string;
   program: ProgramID;
@@ -57,7 +57,7 @@ export type ProgramNomenclature = {
  * TODO: Non exhaustive definition. Review and improve.
  * @file plugins/leemons-plugin-academic-portfolio/backend/models/programs.js
  */
-export interface Program extends Omit<LeemonsSchema, 'id'> {
+export interface Program extends Omit<LeemonsSchema, "id"> {
   id: ProgramID;
   name: string;
   abbreviation: string;
@@ -70,7 +70,7 @@ export interface Program extends Omit<LeemonsSchema, 'id'> {
  * TODO: Non exhaustive definition. Review and improve.
  * @file plugins/leemons-plugin-academic-portfolio/backend/models/courses.js
  */
-export interface Course extends Omit<LeemonsSchema, 'id'> {
+export interface Course extends Omit<LeemonsSchema, "id"> {
   id: CourseID;
   name: string;
   index?: string;
@@ -86,13 +86,13 @@ export type ScheduleItem = {
  * TODO: Non exhaustive definition. Review and improve.
  * @file plugins/leemons-plugin-academic-portfolio/backend/models/class.js
  */
-export interface Class extends Omit<LeemonsSchema, 'id'> {
+export interface Class extends Omit<LeemonsSchema, "id"> {
   id: ClassID;
   classroomId: string;
   program: Program;
   subject: Subject;
   courses: Course[];
-  teachers: Pick<ClassTeacher, 'teacher' | 'type'>[];
+  teachers: Pick<ClassTeacher, "teacher" | "type">[];
   students: UserAgentID[];
   schedule?: ScheduleItem[];
 }
@@ -129,13 +129,16 @@ export type BeforeRemoveStudentsFromClassEventParams = {
 };
 
 export type ProgramStaffRole =
-  | 'program-director'
-  | 'program-coordinator'
-  | 'lead-instructor'
-  | 'academic-advisor'
-  | 'external-evaluator';
+  | "program-director"
+  | "program-coordinator"
+  | "lead-instructor"
+  | "academic-advisor"
+  | "external-evaluator";
 
-export type ClassData<WithTeachers extends boolean, WithProgram extends boolean> = {
+export type ClassData<
+  WithTeachers extends boolean,
+  WithProgram extends boolean,
+> = {
   id?: ClassID;
   deploymentID?: string;
   program: WithProgram extends true

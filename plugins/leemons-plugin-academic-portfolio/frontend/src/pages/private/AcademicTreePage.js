@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   Select,
@@ -9,35 +9,37 @@ import {
   ImageLoader,
   Box,
   LoadingOverlay,
-} from '@bubbles-ui/components';
-import { OpenIcon } from '@bubbles-ui/icons/outline';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useUserCenters } from '@users/hooks';
-import { cloneDeep, sortBy } from 'lodash';
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import { v4 as uuidv4 } from 'uuid';
+} from "@bubbles-ui/components";
+import { OpenIcon } from "@bubbles-ui/icons/outline";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useUserCenters } from "@users/hooks";
+import { cloneDeep, sortBy } from "lodash";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { v4 as uuidv4 } from "uuid";
 
-import { GroupView } from '../../components/AcademicTree/GroupView/GroupView';
-import SubjectView from '../../components/AcademicTree/SubjectView/SubjectView';
+import { GroupView } from "../../components/AcademicTree/GroupView/GroupView";
+import SubjectView from "../../components/AcademicTree/SubjectView/SubjectView";
 
-import { CourseView } from '@academic-portfolio/components/AcademicTree/CourseView/CourseView';
-import EnrollmentDrawer from '@academic-portfolio/components/AcademicTree/EnrollmentDrawer/EnrollmentDrawer';
-import { KnowledgeView } from '@academic-portfolio/components/AcademicTree/KnowledgeView/KnowledgeView';
-import TreeBox from '@academic-portfolio/components/AcademicTree/TreeBox';
-import { EmptyState } from '@academic-portfolio/components/EmptyState';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
-import useProgramAcademicTree from '@academic-portfolio/hooks/queries/useProgramAcademicTree';
+import { CourseView } from "@academic-portfolio/components/AcademicTree/CourseView/CourseView";
+import EnrollmentDrawer from "@academic-portfolio/components/AcademicTree/EnrollmentDrawer/EnrollmentDrawer";
+import { KnowledgeView } from "@academic-portfolio/components/AcademicTree/KnowledgeView/KnowledgeView";
+import TreeBox from "@academic-portfolio/components/AcademicTree/TreeBox";
+import { EmptyState } from "@academic-portfolio/components/EmptyState";
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
+import useProgramsByCenter from "@academic-portfolio/hooks/queries/useCenterPrograms";
+import useProgramAcademicTree from "@academic-portfolio/hooks/queries/useProgramAcademicTree";
 
 const AcademicTreePage = () => {
-  const [selectedCenter, setSelectedCenter] = useState('');
-  const [selectedProgram, setSelectedProgram] = useState('');
+  const [selectedCenter, setSelectedCenter] = useState("");
+  const [selectedProgram, setSelectedProgram] = useState("");
   const [selectedTreeNode, setSelectedTreeNode] = useState(null);
   const [enrollmentDrawerIsOpen, setEnrollmentDrawerIsOpen] = useState(false);
 
-  const [t] = useTranslateLoader(prefixPN('tree_page'));
-  const [enrolllmentDrawerOpenedFromClassroom, setEnrolllmentDrawerOpenedFromClassroom] =
-    useState(null);
+  const [t] = useTranslateLoader(prefixPN("tree_page"));
+  const [
+    enrolllmentDrawerOpenedFromClassroom,
+    setEnrolllmentDrawerOpenedFromClassroom,
+  ] = useState(null);
   const { data: userCenters, isLoading: areCentersLoading } = useUserCenters({
     refetchOnWindowFocus: false,
   });
@@ -51,32 +53,44 @@ const AcademicTreePage = () => {
 
   // SET UP ------------------------------------------------------------------------------------------------ ||
   const centersData = useMemo(
-    () => userCenters?.map((center) => ({ value: center?.id, label: center?.name })),
+    () =>
+      userCenters?.map((center) => ({
+        value: center?.id,
+        label: center?.name,
+      })),
     [userCenters]
   );
 
-  const { data: centerProgramsQuery, isLoading: areCenterProgramsLoading } = useProgramsByCenter({
-    center: selectedCenter,
-    filters: { onlyActive: true },
-    options: {
-      enabled: selectedCenter?.length > 0,
-    },
-  });
+  const { data: centerProgramsQuery, isLoading: areCenterProgramsLoading } =
+    useProgramsByCenter({
+      center: selectedCenter,
+      filters: { onlyActive: true },
+      options: {
+        enabled: selectedCenter?.length > 0,
+      },
+    });
 
   const programSelectData = useMemo(() => {
     if (centerProgramsQuery?.length) {
-      const sortedCenterProgramsQuery = sortBy(centerProgramsQuery, 'createdAt');
+      const sortedCenterProgramsQuery = sortBy(
+        centerProgramsQuery,
+        "createdAt"
+      );
       return [
-        ...sortedCenterProgramsQuery.map((program) => ({ value: program.id, label: program.name })),
+        ...sortedCenterProgramsQuery.map((program) => ({
+          value: program.id,
+          label: program.name,
+        })),
       ];
     }
     return [];
   }, [centerProgramsQuery]);
 
-  const { data: academicTreeQuery, isLoading: isAcademicTreeLoading } = useProgramAcademicTree({
-    programId: selectedProgram,
-    options: { enabled: selectedProgram?.length > 0 },
-  });
+  const { data: academicTreeQuery, isLoading: isAcademicTreeLoading } =
+    useProgramAcademicTree({
+      programId: selectedProgram,
+      options: { enabled: selectedProgram?.length > 0 },
+    });
 
   const isLoading = useMemo(
     () =>
@@ -90,13 +104,21 @@ const AcademicTreePage = () => {
 
   const parseAcademicTreeData = (academicTreeData) => {
     const trees = [];
-    const processNode = (node, parentId = 0, parentElementId = 0, isRoot = false) => {
+    const processNode = (
+      node,
+      parentId = 0,
+      parentElementId = 0,
+      isRoot = false
+    ) => {
       const guid = generateGUID();
       const treeNode = {
         id: guid,
         parent: parentId,
         nodeId: guid,
-        text: node.type === 'course' ? `${t('courseTranslation')} ${node.index}` : node.name,
+        text:
+          node.type === "course"
+            ? `${t("courseTranslation")} ${node.index}`
+            : node.name,
         type: node.type,
         droppable: !!node.children && node.children.length > 0,
         parentItemId: parentElementId,
@@ -110,7 +132,9 @@ const AcademicTreePage = () => {
 
       if (node.children && node.children.length > 0) {
         node.children.forEach((child) => {
-          processedNodes.push(...processNode(child, isRoot ? 0 : guid, isRoot ? 0 : node.id));
+          processedNodes.push(
+            ...processNode(child, isRoot ? 0 : guid, isRoot ? 0 : node.id)
+          );
         });
       }
 
@@ -118,7 +142,7 @@ const AcademicTreePage = () => {
     };
 
     academicTreeData.forEach((rootNode) => {
-      if (rootNode.type === 'cycle') {
+      if (rootNode.type === "cycle") {
         const tree = {
           header: rootNode,
           treeData: rootNode.children ? processNode(rootNode, 0, 0, true) : [],
@@ -166,7 +190,10 @@ const AcademicTreePage = () => {
       return { ...node, parentNodeType: parentType }; // Add parentNodeType property
     }
     if (node.children) {
-      return node.children.reduce((acc, child) => acc || findNodeById(child, id, node.type), null); // Pass current node's type as parentType for the next level
+      return node.children.reduce(
+        (acc, child) => acc || findNodeById(child, id, node.type),
+        null
+      ); // Pass current node's type as parentType for the next level
     }
     return null;
   };
@@ -182,7 +209,7 @@ const AcademicTreePage = () => {
   const searchForGroupType = useCallback(
     (nodes) =>
       nodes.some((node) => {
-        if (node.type === 'group') return true;
+        if (node.type === "group") return true;
         if (node.children) return searchForGroupType(node.children);
         return false;
       }),
@@ -200,47 +227,60 @@ const AcademicTreePage = () => {
 
   const viewToRender = useMemo(() => {
     switch (selectedTreeNode?.type) {
-      case 'course':
+      case "course":
         return (
           <CourseView
             scrollRef={scrollRef}
             openEnrollmentDrawer={toggleEnrollmentDrawer}
             courseTreeNode={cloneDeep(selectedTreeNode)}
-            program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
+            program={centerProgramsQuery?.find(
+              (item) => item.id === selectedProgram
+            )}
             programHasReferenceGroups={programHasReferenceGroups}
           />
         );
-      case 'group':
+      case "group":
         return (
           <GroupView
             scrollRef={scrollRef}
             openEnrollmentDrawer={toggleEnrollmentDrawer}
             groupTreeNode={cloneDeep(selectedTreeNode)}
-            program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
+            program={centerProgramsQuery?.find(
+              (item) => item.id === selectedProgram
+            )}
           />
         );
-      case 'knowledgeArea':
+      case "knowledgeArea":
         return (
           <KnowledgeView
             scrollRef={scrollRef}
             openEnrollmentDrawer={toggleEnrollmentDrawer}
             knowledgeTreeNode={cloneDeep(selectedTreeNode)}
-            program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
+            program={centerProgramsQuery?.find(
+              (item) => item.id === selectedProgram
+            )}
           />
         );
-      case 'subject':
+      case "subject":
         return (
           <SubjectView
             scrollRef={scrollRef}
             openEnrollmentDrawer={toggleEnrollmentDrawer}
             subjectTreeNode={cloneDeep(selectedTreeNode)}
-            program={centerProgramsQuery?.find((item) => item.id === selectedProgram)}
+            program={centerProgramsQuery?.find(
+              (item) => item.id === selectedProgram
+            )}
           />
         );
       default:
         return null;
     }
-  }, [selectedTreeNode, centerProgramsQuery, selectedProgram, programHasReferenceGroups]);
+  }, [
+    selectedTreeNode,
+    centerProgramsQuery,
+    selectedProgram,
+    programHasReferenceGroups,
+  ]);
 
   const TreeBoxMemo = useMemo(
     () => (
@@ -260,14 +300,14 @@ const AcademicTreePage = () => {
         scrollRef={scrollRef}
         Header={
           <TotalLayoutHeader
-            title={t('enrollmentAndManagement').toUpperCase()}
+            title={t("enrollmentAndManagement").toUpperCase()}
             onCancel={() => history.goBack()}
-            mainActionLabel={t('cancelHeaderButton')}
+            mainActionLabel={t("cancelHeaderButton")}
             compact
             icon={
               <Stack justifyContent="center" alignItems="center">
                 <ImageLoader
-                  style={{ position: 'relative' }}
+                  style={{ position: "relative" }}
                   src="/public/academic-portfolio/menu-icon.svg"
                   width={18}
                   height={18}
@@ -278,7 +318,7 @@ const AcademicTreePage = () => {
             <Stack spacing={4}>
               <Select
                 data={centersData}
-                placeholder={t('centerPlaceholder')}
+                placeholder={t("centerPlaceholder")}
                 onChange={(value) => {
                   setSelectedCenter(value);
                   setSelectedTreeNode(null);
@@ -288,7 +328,7 @@ const AcademicTreePage = () => {
               />
               <Select
                 data={programSelectData}
-                placeholder={t('programPlaceholder')}
+                placeholder={t("programPlaceholder")}
                 onChange={(value) => {
                   setSelectedProgram(value);
                   setSelectedTreeNode(null);
@@ -304,16 +344,18 @@ const AcademicTreePage = () => {
           <Stack
             justifyContent="center"
             ref={scrollRef}
-            style={{ overflow: 'auto' }}
+            style={{ overflow: "auto" }}
             fullWidth
             fullHeight
           >
             <TotalLayoutStepContainer scrollRef={scrollRef}>
               <EmptyState
-                description={t('noProgramEmptyStateDescription')}
-                actionLabel={t('noProgramEmptyStateAction')}
+                description={t("noProgramEmptyStateDescription")}
+                actionLabel={t("noProgramEmptyStateAction")}
                 Icon={<OpenIcon />}
-                onClick={() => history.push('/private/academic-portfolio/programs')}
+                onClick={() =>
+                  history.push("/private/academic-portfolio/programs")
+                }
               />
             </TotalLayoutStepContainer>
           </Stack>
@@ -322,18 +364,22 @@ const AcademicTreePage = () => {
             ref={scrollRef}
             spacing={4}
             sx={{
-              overflowY: 'auto',
-              backgroundColor: '#f8f9fb',
-              width: '100%',
+              overflowY: "auto",
+              backgroundColor: "#f8f9fb",
+              width: "100%",
               maxWidth: 1400,
-              margin: 'auto',
+              margin: "auto",
               paddingTop: 24,
               paddingInline: 24,
             }}
           >
             {TreeBoxMemo}
             <Box sx={{ width: 192 }}></Box>
-            <Stack direction="column" sx={{ width: 'calc(100% - 192px)' }} ref={viewRef}>
+            <Stack
+              direction="column"
+              sx={{ width: "calc(100% - 192px)" }}
+              ref={viewRef}
+            >
               {viewToRender}
             </Stack>
           </Stack>
@@ -344,7 +390,10 @@ const AcademicTreePage = () => {
         isOpen={enrollmentDrawerIsOpen}
         closeDrawer={toggleEnrollmentDrawer}
         selectedNode={selectedNodeObject}
-        centerId={centerProgramsQuery?.find((item) => item.id === selectedProgram)?.center}
+        centerId={
+          centerProgramsQuery?.find((item) => item.id === selectedProgram)
+            ?.center
+        }
         opensFromClasroom={enrolllmentDrawerOpenedFromClassroom} // classroomId (string)
       />
     </>

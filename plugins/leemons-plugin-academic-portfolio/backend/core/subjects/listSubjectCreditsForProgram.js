@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function listSubjectCreditsForProgram({ program, ctx }) {
   return ctx.tx.db.ProgramSubjectsCredits.find({

@@ -1,15 +1,15 @@
 async function createGroup(body) {
-  return leemons.api('v1/academic-portfolio/groups', {
+  return leemons.api("v1/academic-portfolio/groups", {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body,
   });
 }
 
 async function updateGroup(body) {
-  return leemons.api('v1/academic-portfolio/groups', {
+  return leemons.api("v1/academic-portfolio/groups", {
     allAgents: true,
-    method: 'PUT',
+    method: "PUT",
     body,
   });
 }
@@ -17,7 +17,7 @@ async function updateGroup(body) {
 async function getGroupById(groupId) {
   return leemons.api(`v1/academic-portfolio/groups/${groupId}`, {
     allAgents: true,
-    method: 'GET',
+    method: "GET",
   });
 }
 
@@ -26,7 +26,7 @@ async function removeGroupFromClasses(groupId) {
     `v1/academic-portfolio/groups/group-from-classes-under-node-tree?group=${groupId}`,
     {
       allAgents: true,
-      method: 'DELETE',
+      method: "DELETE",
     }
   );
 }
@@ -34,9 +34,15 @@ async function removeGroupFromClasses(groupId) {
 async function duplicateGroup(body) {
   return leemons.api(`v1/academic-portfolio/groups/duplicate`, {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body,
   });
 }
 
-export { createGroup, updateGroup, getGroupById, removeGroupFromClasses, duplicateGroup };
+export {
+  createGroup,
+  updateGroup,
+  getGroupById,
+  removeGroupFromClasses,
+  duplicateGroup,
+};

@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -57,12 +57,35 @@ const schema = new mongoose.Schema(
 );
 
 schema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
-schema.index({ program: 1, type: 1, isAlone: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({
+  program: 1,
+  type: 1,
+  isAlone: 1,
+  deploymentID: 1,
+  isDeleted: 1,
+});
 schema.index({ program: 1, type: 1, deploymentID: 1, isDeleted: 1 });
-schema.index({ program: 1, type: 1, abbreviation: 1, deploymentID: 1, isDeleted: 1 });
-schema.index({ id: 1, program: 1, type: 1, abbreviation: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({
+  program: 1,
+  type: 1,
+  abbreviation: 1,
+  deploymentID: 1,
+  isDeleted: 1,
+});
+schema.index({
+  id: 1,
+  program: 1,
+  type: 1,
+  abbreviation: 1,
+  deploymentID: 1,
+  isDeleted: 1,
+});
 schema.index({ id: 1, type: 1, deploymentID: 1, isDeleted: 1 });
 
-const groupsModel = newModel(mongoose.connection, 'v1::academic-portfolio_Groups', schema);
+const groupsModel = newModel(
+  mongoose.connection,
+  "v1::academic-portfolio_Groups",
+  schema
+);
 
 module.exports = { groupsModel };

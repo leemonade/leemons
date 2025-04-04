@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useEffect, useMemo } from "react";
+import PropTypes from "prop-types";
+import { Controller, useForm } from "react-hook-form";
 import {
   TextInput,
   InputWrapper,
@@ -10,8 +10,8 @@ import {
   Text,
   Select,
   Title,
-} from '@bubbles-ui/components';
-import { isEmpty } from 'lodash';
+} from "@bubbles-ui/components";
+import { isEmpty } from "lodash";
 
 /*
  referenceGroups: {
@@ -40,10 +40,10 @@ const ReferenceGroupsSetup = ({
     () => [
       {
         label: formLabels?.nameFormatOptions?.alphabetical,
-        value: 'alphabetical',
+        value: "alphabetical",
       },
-      { label: formLabels?.nameFormatOptions?.numerical, value: 'numerical' },
-      { label: formLabels?.nameFormatOptions?.custom, value: 'custom' },
+      { label: formLabels?.nameFormatOptions?.numerical, value: "numerical" },
+      { label: formLabels?.nameFormatOptions?.custom, value: "custom" },
     ],
     [formLabels]
   );
@@ -52,20 +52,21 @@ const ReferenceGroupsSetup = ({
 
   // FUNCTIONS & HANDLERS ·······································································································||
 
-  const getNameExamples = (format, groupsAmount, prefixWhenCustom = '') => {
-    if (format === 'alphabetical') {
+  const getNameExamples = (format, groupsAmount, prefixWhenCustom = "") => {
+    if (format === "alphabetical") {
       return `(${Array.from(
         { length: groupsAmount },
         (_, i) => `${prefixWhenCustom}${String.fromCharCode(65 + i)}`
-      ).join(', ')})`;
+      ).join(", ")})`;
     }
-    if (format === 'numerical') {
+    if (format === "numerical") {
       return `(${Array.from(
         { length: groupsAmount },
-        (_, i) => `${prefixWhenCustom}${(i + 1).toString().padStart(digits || 0, '0')}`
-      ).join(', ')})`;
+        (_, i) =>
+          `${prefixWhenCustom}${(i + 1).toString().padStart(digits || 0, "0")}`
+      ).join(", ")})`;
     }
-    if (format === 'custom') {
+    if (format === "custom") {
       return getNameExamples(customNameFormat, groupsAmount, prefix);
     }
     return null;
@@ -75,8 +76,9 @@ const ReferenceGroupsSetup = ({
     const allValues = form.getValues();
 
     const needsDigits =
-      allValues?.nameFormat === 'numerical' ||
-      (allValues?.nameFormat === 'custom' && allValues.customNameFormat === 'numerical');
+      allValues?.nameFormat === "numerical" ||
+      (allValues?.nameFormat === "custom" &&
+        allValues.customNameFormat === "numerical");
 
     if (needsDigits) {
       allValues.digits = allValues.digits || 1;
@@ -84,7 +86,7 @@ const ReferenceGroupsSetup = ({
       allValues.digits = null;
     }
 
-    if (allValues.nameFormat !== 'custom') {
+    if (allValues.nameFormat !== "custom") {
       allValues.customNameFormat = null;
       allValues.prefix = null;
     }
@@ -94,7 +96,7 @@ const ReferenceGroupsSetup = ({
 
   const handleDefaultValues = (courses) => {
     const defaultValues = {
-      nameFormat: 'alphabetical',
+      nameFormat: "alphabetical",
       prefix: null,
       digits: null,
       customNameFormat: null,
@@ -128,9 +130,10 @@ const ReferenceGroupsSetup = ({
   useEffect(() => {
     if (programCourses?.length && !isEmpty(value)) {
       const courseGroupsKeys = Object.keys(value).filter((key) =>
-        key?.startsWith('groupsForCourse')
+        key?.startsWith("groupsForCourse")
       );
-      const programsDifference = programCourses.length - courseGroupsKeys.length;
+      const programsDifference =
+        programCourses.length - courseGroupsKeys.length;
       const updateObject = { ...value };
       // Adds groups to a new course set by the user when courses are sequential
       if (programsDifference > 0 && coursesAreSequential) {
@@ -144,7 +147,11 @@ const ReferenceGroupsSetup = ({
         onChange(updateObject);
       } else if (programsDifference < 0) {
         courseGroupsKeys.forEach((key) => {
-          if (!programCourses.some(({ index }) => `groupsForCourse${index}` === key)) {
+          if (
+            !programCourses.some(
+              ({ index }) => `groupsForCourse${index}` === key
+            )
+          ) {
             delete updateObject[key];
           }
         });
@@ -154,8 +161,8 @@ const ReferenceGroupsSetup = ({
   }, [programCourses, value]);
 
   useEffect(() => {
-    form.setValue('digits', 1);
-    form.setValue('customNameFormat', null);
+    form.setValue("digits", 1);
+    form.setValue("customNameFormat", null);
   }, [nameFormat]);
 
   return (
@@ -169,15 +176,15 @@ const ReferenceGroupsSetup = ({
               {...field}
               label={formLabels?.nameFormat}
               data={nameFormatData}
-              sx={{ width: nameFormat === 'custom' ? 280 + 8 : 216 }}
+              sx={{ width: nameFormat === "custom" ? 280 + 8 : 216 }}
               onChange={(val) => {
-                form.setValue('nameFormat', val);
+                form.setValue("nameFormat", val);
                 handleOnChange();
               }}
             />
           )}
         />
-        {nameFormat === 'custom' && (
+        {nameFormat === "custom" && (
           <InputWrapper label={formLabels?.prefix}>
             <Stack spacing={2}>
               <Controller
@@ -189,7 +196,7 @@ const ReferenceGroupsSetup = ({
                     placeholder={formLabels?.prefixPlaceholder}
                     sx={{ width: 100 }}
                     onChange={(val) => {
-                      form.setValue('prefix', val);
+                      form.setValue("prefix", val);
                       handleOnChange();
                     }}
                   />
@@ -201,11 +208,13 @@ const ReferenceGroupsSetup = ({
                 render={({ field }) => (
                   <Select
                     {...field}
-                    data={nameFormatData.filter((item) => item.value !== 'custom')}
+                    data={nameFormatData.filter(
+                      (item) => item.value !== "custom"
+                    )}
                     placeholder={formLabels?.nameFormatPlaceholder}
                     sx={{ width: 180 }}
                     onChange={(val) => {
-                      form.setValue('customNameFormat', val);
+                      form.setValue("customNameFormat", val);
                       handleOnChange();
                     }}
                   />
@@ -214,7 +223,7 @@ const ReferenceGroupsSetup = ({
             </Stack>
           </InputWrapper>
         )}
-        {(nameFormat === 'numerical' || customNameFormat === 'numerical') && (
+        {(nameFormat === "numerical" || customNameFormat === "numerical") && (
           <Controller
             control={form.control}
             name="digits"
@@ -227,7 +236,7 @@ const ReferenceGroupsSetup = ({
                 customDesign
                 sx={{ width: 120 }}
                 onChange={(val) => {
-                  form.setValue('digits', val);
+                  form.setValue("digits", val);
                   handleOnChange();
                 }}
               />
@@ -236,11 +245,17 @@ const ReferenceGroupsSetup = ({
         )}
       </Stack>
       <ContextContainer>
-        <Title sx={(theme) => theme.other.score.content.typo.lg}>{formLabels?.offeredGroups}</Title>
+        <Title sx={(theme) => theme.other.score.content.typo.lg}>
+          {formLabels?.offeredGroups}
+        </Title>
         {coursesAreSequential &&
           programCourses?.length > 0 &&
           programCourses?.map(({ index }) => (
-            <Stack key={`groupsForCourse${index}`} alignItems="center" spacing={4}>
+            <Stack
+              key={`groupsForCourse${index}`}
+              alignItems="center"
+              spacing={4}
+            >
               <Text sx={{ width: 86 }}>{`${formLabels?.course} ${index}`}</Text>
               <Controller
                 control={form.control}
@@ -259,14 +274,19 @@ const ReferenceGroupsSetup = ({
                   />
                 )}
               />
-              <Text>{getNameExamples(nameFormat, form.getValues(`groupsForCourse${index}`))}</Text>
+              <Text>
+                {getNameExamples(
+                  nameFormat,
+                  form.getValues(`groupsForCourse${index}`)
+                )}
+              </Text>
             </Stack>
           ))}
         {(!programCourses || !coursesAreSequential) && (
           <Stack alignItems="center" spacing={4}>
             <Controller
               control={form.control}
-              name={'groupsForCourse1'}
+              name={"groupsForCourse1"}
               render={({ field }) => (
                 <NumberInput
                   {...field}
@@ -275,13 +295,15 @@ const ReferenceGroupsSetup = ({
                   customDesign
                   sx={{ width: 120 }}
                   onChange={(val) => {
-                    form.setValue('groupsForCourse1', val);
+                    form.setValue("groupsForCourse1", val);
                     handleOnChange();
                   }}
                 />
               )}
             />
-            <Text>{getNameExamples(nameFormat, form.getValues('groupsForCourse1'))}</Text>
+            <Text>
+              {getNameExamples(nameFormat, form.getValues("groupsForCourse1"))}
+            </Text>
           </Stack>
         )}
       </ContextContainer>

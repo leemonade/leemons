@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useMemo } from "react";
+import { Link } from "react-router-dom";
 import {
   Box,
   Button,
@@ -9,19 +9,26 @@ import {
   ImageLoader,
   PageContainer,
   Paper,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 // TODO: import from @common plugin
 
-import { AdminPageHeader } from '@bubbles-ui/leemons';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { getSettingsRequest, updateSettingsRequest } from '@academic-portfolio/request';
-import { useStore } from '@common';
-import { activeMenuItemPrograms } from '../../helpers/activeMenuItemPrograms';
-import { activeMenuItemSubjects } from '../../helpers/activeMenuItemSubjects';
-import { haveClassesRequest, haveProgramsRequest, isConfigProfilesRequest } from '../../request';
-import { activeMenuItemProfiles } from '../../helpers/activeMenuItemProfiles';
-import { activeMenuItemTree } from '../../helpers/activeMenuItemTree';
+import { AdminPageHeader } from "@bubbles-ui/leemons";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
+import {
+  getSettingsRequest,
+  updateSettingsRequest,
+} from "@academic-portfolio/request";
+import { useStore } from "@common";
+import { activeMenuItemPrograms } from "../../helpers/activeMenuItemPrograms";
+import { activeMenuItemSubjects } from "../../helpers/activeMenuItemSubjects";
+import {
+  haveClassesRequest,
+  haveProgramsRequest,
+  isConfigProfilesRequest,
+} from "../../request";
+import { activeMenuItemProfiles } from "../../helpers/activeMenuItemProfiles";
+import { activeMenuItemTree } from "../../helpers/activeMenuItemTree";
 
 // eslint-disable-next-line react/prop-types
 function StepCard({ t, step, disabled, to, onClick }) {
@@ -29,9 +36,18 @@ function StepCard({ t, step, disabled, to, onClick }) {
     <Paper>
       <ContextContainer>
         <ImageLoader src="" withPlaceholder height={100} noFlex />
-        <ContextContainer title={t(`${step}.title`)} description={t(`${step}.description`)}>
+        <ContextContainer
+          title={t(`${step}.title`)}
+          description={t(`${step}.description`)}
+        >
           <Box noFlex>
-            <Button as={Link} to={to} fullWidth onClick={onClick} disabled={disabled}>
+            <Button
+              as={Link}
+              to={to}
+              fullWidth
+              onClick={onClick}
+              disabled={disabled}
+            >
               {t(`${step}.btn`)}
             </Button>
           </Box>
@@ -42,7 +58,7 @@ function StepCard({ t, step, disabled, to, onClick }) {
 }
 
 export default function WelcomePage() {
-  const [t] = useTranslateLoader(prefixPN('welcome_page'));
+  const [t] = useTranslateLoader(prefixPN("welcome_page"));
 
   // ----------------------------------------------------------------------
   // SETTINGS
@@ -58,13 +74,17 @@ export default function WelcomePage() {
   // INIT DATA LOAD
 
   async function init() {
-    const [settingsResponse, haveProgramsResponse, profilesResponse, haveClassesResponse] =
-      await Promise.all([
-        getSettingsRequest(),
-        haveProgramsRequest(),
-        isConfigProfilesRequest(),
-        haveClassesRequest(),
-      ]);
+    const [
+      settingsResponse,
+      haveProgramsResponse,
+      profilesResponse,
+      haveClassesResponse,
+    ] = await Promise.all([
+      getSettingsRequest(),
+      haveProgramsRequest(),
+      isConfigProfilesRequest(),
+      haveClassesRequest(),
+    ]);
     store.settings = settingsResponse.settings;
     store.profilesConfig = profilesResponse.isConfig;
     store.havePrograms = haveProgramsResponse.have;
@@ -80,7 +100,10 @@ export default function WelcomePage() {
   // UI CONTROLS
 
   const handleOnHideHelp = () => {
-    const newSettings = { ...store.settings, hideWelcome: !store.settings?.hideWelcome };
+    const newSettings = {
+      ...store.settings,
+      hideWelcome: !store.settings?.hideWelcome,
+    };
     updateSettings(newSettings);
   };
 
@@ -102,8 +125,8 @@ export default function WelcomePage() {
 
   const headerValues = useMemo(
     () => ({
-      title: t('page_title'),
-      description: t('page_description'),
+      title: t("page_title"),
+      description: t("page_description"),
     }),
     [t]
   );
@@ -116,7 +139,7 @@ export default function WelcomePage() {
       </PageContainer>
       <PageContainer noFlex>
         <Checkbox
-          label={t('hide_info_label')}
+          label={t("hide_info_label")}
           onChange={handleOnHideHelp}
           checked={store.settings?.hideWelcome === 1}
           value={store.settings?.hideWelcome === 1}

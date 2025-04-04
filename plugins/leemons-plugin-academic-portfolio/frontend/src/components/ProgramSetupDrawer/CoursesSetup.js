@@ -1,12 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useMemo, useState } from "react";
+import PropTypes from "prop-types";
 import {
   ContextContainer,
   NumberInput,
   TableInput,
   useDebouncedValue,
-} from '@bubbles-ui/components';
-import { Controller, useForm } from 'react-hook-form';
+} from "@bubbles-ui/components";
+import { Controller, useForm } from "react-hook-form";
 
 // * Nuevo formato de coursos para el backend, un array de cursos
 // maxCourses === courses.length
@@ -35,11 +35,14 @@ const CoursesSetup = ({
     if (value?.length > 0) {
       const orderedCourses = [...value].sort((a, b) => a.index - b.index);
       setCoursesData(orderedCourses);
-      if (form.getValues('coursesAmount') !== orderedCourses?.length) {
-        form.setValue('coursesAmount', orderedCourses.length);
+      if (form.getValues("coursesAmount") !== orderedCourses?.length) {
+        form.setValue("coursesAmount", orderedCourses.length);
       }
     } else {
-      const defaultValues = Array.from({ length: 2 }, (_, i) => ({ index: i + 1, ...blankCourse }));
+      const defaultValues = Array.from({ length: 2 }, (_, i) => ({
+        index: i + 1,
+        ...blankCourse,
+      }));
       onChange(defaultValues);
     }
   }, [value, onChange]);
@@ -75,29 +78,39 @@ const CoursesSetup = ({
     () => [
       {
         Header: formLabels?.course,
-        accessor: 'index',
+        accessor: "index",
         style: { width: 140, paddingLeft: 10 },
         editable: false,
         valueRender: (indexValue) => `${formLabels?.course} ${indexValue}`,
       },
       {
         Header: formLabels?.minCredits,
-        accessor: 'minCredits',
+        accessor: "minCredits",
         input: {
           node: <NumberInput />,
         },
-        valueRender: (minCreditsValue) => (!showCredits ? '--' : minCreditsValue),
-        style: { width: 270, paddingLeft: 10, display: !showCredits && 'hidden' },
+        valueRender: (minCreditsValue) =>
+          !showCredits ? "--" : minCreditsValue,
+        style: {
+          width: 270,
+          paddingLeft: 10,
+          display: !showCredits && "hidden",
+        },
       },
       {
         Header: formLabels?.maxCredits,
-        accessor: 'maxCredits',
+        accessor: "maxCredits",
         input: {
           node: <NumberInput />,
           rules: { validate: (fieldValue) => fieldValue <= maxNumberOfCredits },
         },
-        style: { width: 270, paddingLeft: 10, display: !showCredits && 'hidden' },
-        valueRender: (maxCreditsValue) => (!showCredits ? '--' : maxCreditsValue),
+        style: {
+          width: 270,
+          paddingLeft: 10,
+          display: !showCredits && "hidden",
+        },
+        valueRender: (maxCreditsValue) =>
+          !showCredits ? "--" : maxCreditsValue,
       },
     ],
     [localizations, maxNumberOfCredits, showCredits]
@@ -114,11 +127,11 @@ const CoursesSetup = ({
             sx={{ width: 120 }}
             onChange={(fieldValue) => {
               if (fieldValue >= 2) {
-                form.clearErrors('coursesAmount');
+                form.clearErrors("coursesAmount");
                 handleCoursesAmountChange(fieldValue);
               } else {
-                form.setError('coursesAmount', {
-                  type: 'manual',
+                form.setError("coursesAmount", {
+                  type: "manual",
                   message: formLabels?.mustHaveAtLeastTwoCourses,
                 });
               }

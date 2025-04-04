@@ -1,6 +1,6 @@
-import React from 'react';
-import { isBoolean } from 'lodash';
-import PropTypes from 'prop-types';
+import React from "react";
+import { isBoolean } from "lodash";
+import PropTypes from "prop-types";
 
 import {
   ContextContainer,
@@ -11,17 +11,17 @@ import {
   Button,
   TotalLayoutStepContainer,
   TotalLayoutContainer,
-} from '@bubbles-ui/components';
-import { Controller, useForm } from 'react-hook-form';
-import { Header } from '@leebrary/components/AssetPickerDrawer/components/Header';
-import FooterContainer from './FooterContainer';
+} from "@bubbles-ui/components";
+import { Controller, useForm } from "react-hook-form";
+import { Header } from "@leebrary/components/AssetPickerDrawer/components/Header";
+import FooterContainer from "./FooterContainer";
 
 const useFormSetupStyles = createStyles((theme) => ({
   title: {
     ...theme.other.global.content.typo.heading.md,
   },
   sectionTitle: {
-    ...theme.other.global.content.typo.heading['xsm--semiBold'],
+    ...theme.other.global.content.typo.heading["xsm--semiBold"],
   },
   nestedQuestions: {
     paddingLeft: 40,
@@ -51,8 +51,8 @@ const FormSetup = ({ scrollRef, onCancel, onSetup, localizations }) => {
         ref={scrollRef}
         sx={{
           padding: 24,
-          overflowY: 'auto',
-          overflowX: 'hidden',
+          overflowY: "auto",
+          overflowX: "hidden",
           marginBottom: 100,
         }}
       >
@@ -65,24 +65,36 @@ const FormSetup = ({ scrollRef, onCancel, onSetup, localizations }) => {
                 </Title>
                 <ContextContainer noFlex alignItems="start">
                   <Title className={classes.sectionTitle}>
-                    {localizations?.programDrawer?.wizardForm?.temporalStructure}
+                    {
+                      localizations?.programDrawer?.wizardForm
+                        ?.temporalStructure
+                    }
                   </Title>
                   <Controller
                     name="moreThanOneCourse"
                     control={control}
                     rules={{
                       validate: (value) =>
-                        isBoolean(value) || localizations?.programDrawer?.requiredField,
+                        isBoolean(value) ||
+                        localizations?.programDrawer?.requiredField,
                     }}
                     render={({ field }) => (
                       <RadioGroup
                         {...field}
                         label={
-                          localizations?.programDrawer?.wizardForm?.doesItHaveMoreThanOneCourse
+                          localizations?.programDrawer?.wizardForm
+                            ?.doesItHaveMoreThanOneCourse
                         }
                         data={[
-                          { label: localizations?.programDrawer?.wizardForm?.yes, value: true },
-                          { label: localizations?.programDrawer?.wizardForm?.no, value: false },
+                          {
+                            label:
+                              localizations?.programDrawer?.wizardForm?.yes,
+                            value: true,
+                          },
+                          {
+                            label: localizations?.programDrawer?.wizardForm?.no,
+                            value: false,
+                          },
                         ]}
                         error={formState.errors.moreThanOneCourse}
                       />
@@ -95,17 +107,27 @@ const FormSetup = ({ scrollRef, onCancel, onSetup, localizations }) => {
                         control={control}
                         rules={{
                           validate: (value) =>
-                            isBoolean(value) || localizations?.programDrawer?.requiredField,
+                            isBoolean(value) ||
+                            localizations?.programDrawer?.requiredField,
                         }}
                         render={({ field }) => (
                           <RadioGroup
                             {...field}
                             label={
-                              localizations?.programDrawer?.wizardForm?.doesItHaveSequentialCourses
+                              localizations?.programDrawer?.wizardForm
+                                ?.doesItHaveSequentialCourses
                             }
                             data={[
-                              { label: localizations?.programDrawer?.wizardForm?.yes, value: true },
-                              { label: localizations?.programDrawer?.wizardForm?.no, value: false },
+                              {
+                                label:
+                                  localizations?.programDrawer?.wizardForm?.yes,
+                                value: true,
+                              },
+                              {
+                                label:
+                                  localizations?.programDrawer?.wizardForm?.no,
+                                value: false,
+                              },
                             ]}
                             error={formState.errors.sequentialCourses}
                           />
@@ -120,15 +142,27 @@ const FormSetup = ({ scrollRef, onCancel, onSetup, localizations }) => {
                         control={control}
                         rules={{
                           validate: (value) =>
-                            isBoolean(value) || localizations?.programDrawer?.requiredField,
+                            isBoolean(value) ||
+                            localizations?.programDrawer?.requiredField,
                         }}
                         render={({ field }) => (
                           <RadioGroup
                             {...field}
-                            label={localizations?.programDrawer?.wizardForm?.doesItHaveCycles}
+                            label={
+                              localizations?.programDrawer?.wizardForm
+                                ?.doesItHaveCycles
+                            }
                             data={[
-                              { label: localizations?.programDrawer?.wizardForm?.yes, value: true },
-                              { label: localizations?.programDrawer?.wizardForm?.no, value: false },
+                              {
+                                label:
+                                  localizations?.programDrawer?.wizardForm?.yes,
+                                value: true,
+                              },
+                              {
+                                label:
+                                  localizations?.programDrawer?.wizardForm?.no,
+                                value: false,
+                              },
                             ]}
                             error={formState.errors.hasCycles}
                           />
@@ -141,15 +175,26 @@ const FormSetup = ({ scrollRef, onCancel, onSetup, localizations }) => {
                     control={control}
                     rules={{
                       validate: (value) =>
-                        isBoolean(value) || localizations?.programDrawer?.requiredField,
+                        isBoolean(value) ||
+                        localizations?.programDrawer?.requiredField,
                     }}
                     render={({ field }) => (
                       <RadioGroup
                         {...field}
-                        label={localizations?.programDrawer?.wizardForm?.doesItHaveSubstages}
+                        label={
+                          localizations?.programDrawer?.wizardForm
+                            ?.doesItHaveSubstages
+                        }
                         data={[
-                          { label: localizations?.programDrawer?.wizardForm?.yes, value: true },
-                          { label: localizations?.programDrawer?.wizardForm?.no, value: false },
+                          {
+                            label:
+                              localizations?.programDrawer?.wizardForm?.yes,
+                            value: true,
+                          },
+                          {
+                            label: localizations?.programDrawer?.wizardForm?.no,
+                            value: false,
+                          },
                         ]}
                         error={formState.errors.hasSubstagesPerCourse}
                       />
@@ -165,15 +210,26 @@ const FormSetup = ({ scrollRef, onCancel, onSetup, localizations }) => {
                     control={control}
                     rules={{
                       validate: (value) =>
-                        isBoolean(value) || localizations?.programDrawer?.requiredField,
+                        isBoolean(value) ||
+                        localizations?.programDrawer?.requiredField,
                     }}
                     render={({ field }) => (
                       <RadioGroup
                         {...field}
-                        label={localizations?.programDrawer?.wizardForm?.doesItHaveKnowledgeAreas}
+                        label={
+                          localizations?.programDrawer?.wizardForm
+                            ?.doesItHaveKnowledgeAreas
+                        }
                         data={[
-                          { label: localizations?.programDrawer?.wizardForm?.yes, value: true },
-                          { label: localizations?.programDrawer?.wizardForm?.no, value: false },
+                          {
+                            label:
+                              localizations?.programDrawer?.wizardForm?.yes,
+                            value: true,
+                          },
+                          {
+                            label: localizations?.programDrawer?.wizardForm?.no,
+                            value: false,
+                          },
                         ]}
                         error={formState.errors.knowledgeAreas}
                       />
@@ -184,15 +240,26 @@ const FormSetup = ({ scrollRef, onCancel, onSetup, localizations }) => {
                     control={control}
                     rules={{
                       validate: (value) =>
-                        isBoolean(value) || localizations?.programDrawer?.requiredField,
+                        isBoolean(value) ||
+                        localizations?.programDrawer?.requiredField,
                     }}
                     render={({ field }) => (
                       <RadioGroup
                         {...field}
-                        label={localizations?.programDrawer?.wizardForm?.doesItHaveSubjectTypes}
+                        label={
+                          localizations?.programDrawer?.wizardForm
+                            ?.doesItHaveSubjectTypes
+                        }
                         data={[
-                          { label: localizations?.programDrawer?.wizardForm?.yes, value: true },
-                          { label: localizations?.programDrawer?.wizardForm?.no, value: false },
+                          {
+                            label:
+                              localizations?.programDrawer?.wizardForm?.yes,
+                            value: true,
+                          },
+                          {
+                            label: localizations?.programDrawer?.wizardForm?.no,
+                            value: false,
+                          },
                         ]}
                         error={formState.errors.subjectTypes}
                       />
@@ -203,17 +270,26 @@ const FormSetup = ({ scrollRef, onCancel, onSetup, localizations }) => {
                     control={control}
                     rules={{
                       validate: (value) =>
-                        isBoolean(value) || localizations?.programDrawer?.requiredField,
+                        isBoolean(value) ||
+                        localizations?.programDrawer?.requiredField,
                     }}
                     render={({ field }) => (
                       <RadioGroup
                         {...field}
                         label={
-                          localizations?.programDrawer?.wizardForm?.doItsSubjectsHaveAnUniqueId
+                          localizations?.programDrawer?.wizardForm
+                            ?.doItsSubjectsHaveAnUniqueId
                         }
                         data={[
-                          { label: localizations?.programDrawer?.wizardForm?.yes, value: true },
-                          { label: localizations?.programDrawer?.wizardForm?.no, value: false },
+                          {
+                            label:
+                              localizations?.programDrawer?.wizardForm?.yes,
+                            value: true,
+                          },
+                          {
+                            label: localizations?.programDrawer?.wizardForm?.no,
+                            value: false,
+                          },
                         ]}
                         error={formState.errors.customSubjectIds}
                       />
@@ -224,15 +300,26 @@ const FormSetup = ({ scrollRef, onCancel, onSetup, localizations }) => {
                     control={control}
                     rules={{
                       validate: (value) =>
-                        isBoolean(value) || localizations?.programDrawer?.requiredField,
+                        isBoolean(value) ||
+                        localizations?.programDrawer?.requiredField,
                     }}
                     render={({ field }) => (
                       <RadioGroup
                         {...field}
-                        label={localizations?.programDrawer?.wizardForm?.doesItHaveReferenceGroups}
+                        label={
+                          localizations?.programDrawer?.wizardForm
+                            ?.doesItHaveReferenceGroups
+                        }
                         data={[
-                          { label: localizations?.programDrawer?.wizardForm?.yes, value: true },
-                          { label: localizations?.programDrawer?.wizardForm?.no, value: false },
+                          {
+                            label:
+                              localizations?.programDrawer?.wizardForm?.yes,
+                            value: true,
+                          },
+                          {
+                            label: localizations?.programDrawer?.wizardForm?.no,
+                            value: false,
+                          },
                         ]}
                         error={formState.errors.referenceGroups}
                       />
@@ -248,15 +335,26 @@ const FormSetup = ({ scrollRef, onCancel, onSetup, localizations }) => {
                     control={control}
                     rules={{
                       validate: (value) =>
-                        isBoolean(value) || localizations?.programDrawer?.requiredField,
+                        isBoolean(value) ||
+                        localizations?.programDrawer?.requiredField,
                     }}
                     render={({ field }) => (
                       <RadioGroup
                         {...field}
-                        label={localizations?.programDrawer?.wizardForm?.doesItHaveOfficialCredits}
+                        label={
+                          localizations?.programDrawer?.wizardForm
+                            ?.doesItHaveOfficialCredits
+                        }
                         data={[
-                          { label: localizations?.programDrawer?.wizardForm?.yes, value: true },
-                          { label: localizations?.programDrawer?.wizardForm?.no, value: false },
+                          {
+                            label:
+                              localizations?.programDrawer?.wizardForm?.yes,
+                            value: true,
+                          },
+                          {
+                            label: localizations?.programDrawer?.wizardForm?.no,
+                            value: false,
+                          },
                         ]}
                         error={formState.errors.creditsSystem}
                       />
@@ -268,7 +366,8 @@ const FormSetup = ({ scrollRef, onCancel, onSetup, localizations }) => {
                       control={control}
                       rules={{
                         validate: (value) =>
-                          isBoolean(value) || localizations?.programDrawer?.requiredField,
+                          isBoolean(value) ||
+                          localizations?.programDrawer?.requiredField,
                       }}
                       render={({ field }) => (
                         <RadioGroup
@@ -278,8 +377,16 @@ const FormSetup = ({ scrollRef, onCancel, onSetup, localizations }) => {
                               ?.doesItHaveADefinedAmountOfHours
                           }
                           data={[
-                            { label: localizations?.programDrawer?.wizardForm?.yes, value: true },
-                            { label: localizations?.programDrawer?.wizardForm?.no, value: false },
+                            {
+                              label:
+                                localizations?.programDrawer?.wizardForm?.yes,
+                              value: true,
+                            },
+                            {
+                              label:
+                                localizations?.programDrawer?.wizardForm?.no,
+                              value: false,
+                            },
                           ]}
                           error={formState.errors.durationInHours}
                         />
@@ -288,11 +395,13 @@ const FormSetup = ({ scrollRef, onCancel, onSetup, localizations }) => {
                   )}
                 </ContextContainer>
                 <FooterContainer scrollRef={scrollRef}>
-                  <Stack justifyContent={'space-between'} fullWidth>
+                  <Stack justifyContent={"space-between"} fullWidth>
                     <Button variant="outline" type="button" onClick={onCancel}>
                       {localizations?.labels.cancel}
                     </Button>
-                    <Button type="submit">{localizations?.programDrawer?.save}</Button>
+                    <Button type="submit">
+                      {localizations?.programDrawer?.save}
+                    </Button>
                   </Stack>
                 </FooterContainer>
               </ContextContainer>

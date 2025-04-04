@@ -1,14 +1,14 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
-import SubjectTypesEmptyState from '@academic-portfolio/components/SubjectTypesEmptyState';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import SubjectTypesEmptyState from "@academic-portfolio/components/SubjectTypesEmptyState";
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
 import {
   useCreateSubjectType,
   useDeleteSubjectType,
   useUpdateSubjectType,
-} from '@academic-portfolio/hooks/mutations/useMutateSubjectType';
-import useSubjectTypes from '@academic-portfolio/hooks/useSubjectTypes';
+} from "@academic-portfolio/hooks/mutations/useMutateSubjectType";
+import useSubjectTypes from "@academic-portfolio/hooks/useSubjectTypes";
 import {
   Select,
   TableInput,
@@ -22,41 +22,50 @@ import {
   InputWrapper,
   Stack,
   Box,
-} from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useQueryClient } from '@tanstack/react-query';
-import { useUserCenters } from '@users/hooks';
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+} from "@bubbles-ui/components";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useQueryClient } from "@tanstack/react-query";
+import { useUserCenters } from "@users/hooks";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const SubjectTypesPage = () => {
-  const [t, , , tLoading] = useTranslateLoader(prefixPN('subjectTypes_page'));
+  const [t, , , tLoading] = useTranslateLoader(prefixPN("subjectTypes_page"));
   const [subjectTypes, setSubjectTypes] = useState([]);
-  const [selectedCenter, setSelectedCenter] = useState('');
+  const [selectedCenter, setSelectedCenter] = useState("");
   const [showEmptyState, setShowEmptyState] = useState(false);
   const history = useHistory();
   const queryClient = useQueryClient();
   const { data: userCenters, isLoading: centersLoading } = useUserCenters();
-  const { mutate: createSubjectType, isLoading: isCreateLoading } = useCreateSubjectType();
-  const { mutate: updateSubjectType, isLoading: isUpdateLoading } = useUpdateSubjectType();
-  const { mutate: deleteSubjectType, isLoading: isDeleteLoading } = useDeleteSubjectType();
+  const { mutate: createSubjectType, isLoading: isCreateLoading } =
+    useCreateSubjectType();
+  const { mutate: updateSubjectType, isLoading: isUpdateLoading } =
+    useUpdateSubjectType();
+  const { mutate: deleteSubjectType, isLoading: isDeleteLoading } =
+    useDeleteSubjectType();
   const scrollRef = useRef();
   const [dataFetched, setDataFetched] = useState(false); // Flag to be sure when we should show the empty state
 
   // INIT & EFFECTS ------------------------------------------------------------------------------------------------ ||
 
   const centersData = useMemo(
-    () => userCenters?.map((center) => ({ value: center?.id, label: center?.name })),
+    () =>
+      userCenters?.map((center) => ({
+        value: center?.id,
+        label: center?.name,
+      })),
     [userCenters]
   );
-  const { data: subjectTypesQuery, isLoading: subjectTypesLoading } = useSubjectTypes({
-    center: selectedCenter,
-    options: { enabled: selectedCenter?.length > 0 },
-  });
+  const { data: subjectTypesQuery, isLoading: subjectTypesLoading } =
+    useSubjectTypes({
+      center: selectedCenter,
+      options: { enabled: selectedCenter?.length > 0 },
+    });
 
   const isLoading = useMemo(() => {
-    const waitForSubjectTypesList = selectedCenter?.length > 0 && subjectTypesLoading;
+    const waitForSubjectTypesList =
+      selectedCenter?.length > 0 && subjectTypesLoading;
     return (
       tLoading ||
       centersLoading ||
@@ -104,17 +113,17 @@ const SubjectTypesPage = () => {
   const tableInputColumns = useMemo(
     () => [
       {
-        Header: t('labels.type'),
-        accessor: 'name',
+        Header: t("labels.type"),
+        accessor: "name",
         input: {
           node: <TextInput required />,
-          rules: { required: t('errors.requiredField') },
+          rules: { required: t("errors.requiredField") },
         },
         style: { paddingLeft: 10, width: 232 },
       },
       {
-        Header: t('labels.description'),
-        accessor: 'description',
+        Header: t("labels.description"),
+        accessor: "description",
         input: {
           node: <TextInput />,
         },
@@ -139,7 +148,7 @@ const SubjectTypesPage = () => {
       },
       {
         onSuccess: () => {
-          addSuccessAlert(t('alerts.success.add'));
+          addSuccessAlert(t("alerts.success.add"));
           form.reset();
         },
         onError: (e) => {
@@ -159,7 +168,7 @@ const SubjectTypesPage = () => {
     };
     updateSubjectType(mutationObject, {
       onSuccess: () => {
-        addSuccessAlert(t('alerts.success.update'));
+        addSuccessAlert(t("alerts.success.update"));
       },
       onError: (e) => {
         addErrorAlert(e);
@@ -173,7 +182,7 @@ const SubjectTypesPage = () => {
       { center: selectedCenter, subjectTypeId: itemToRemove?.id, soft: false },
       {
         onSuccess: () => {
-          addSuccessAlert(t('alerts.success.delete'));
+          addSuccessAlert(t("alerts.success.delete"));
           queryClient.invalidateQueries(selectedCenter);
         },
         onError: (e) => {
@@ -190,14 +199,14 @@ const SubjectTypesPage = () => {
         scrollRef={scrollRef}
         Header={
           <TotalLayoutHeader
-            title={t('header.title')}
+            title={t("header.title")}
             onCancel={() => history.goBack()}
-            mainActionLabel={t('header.cancel')}
+            mainActionLabel={t("header.cancel")}
           >
             <Select
               sx={{ width: 262 }}
               data={centersData}
-              placeholder={t('header.centerSelectPlaceholder')}
+              placeholder={t("header.centerSelectPlaceholder")}
               onChange={(value) => {
                 setSelectedCenter(value);
               }}
@@ -210,7 +219,7 @@ const SubjectTypesPage = () => {
           ref={scrollRef}
           justifyContent="center"
           fullwidth
-          sx={{ overflowY: 'auto', backgroundColor: '#f8f9fb' }}
+          sx={{ overflowY: "auto", backgroundColor: "#f8f9fb" }}
         >
           {selectedCenter?.length > 0 && (
             <TotalLayoutStepContainer>
@@ -221,17 +230,17 @@ const SubjectTypesPage = () => {
                       <Controller
                         control={form.control}
                         name="name"
-                        rules={{ required: t('errors.requiredField') }}
+                        rules={{ required: t("errors.requiredField") }}
                         render={({ field }) => (
                           <TextInput
                             {...field}
                             onBlur={() => {
-                              form.clearErrors('name');
+                              form.clearErrors("name");
                             }}
                             required
-                            label={t('labels.name')}
+                            label={t("labels.name")}
                             error={form.formState.errors.name}
-                            placeholder={t('placeholders.name')}
+                            placeholder={t("placeholders.name")}
                           />
                         )}
                       />
@@ -243,15 +252,19 @@ const SubjectTypesPage = () => {
                         render={({ field }) => (
                           <TextInput
                             {...field}
-                            label={t('labels.description')}
-                            placeholder={t('placeholders.description')}
+                            label={t("labels.description")}
+                            placeholder={t("placeholders.description")}
                           />
                         )}
                       />
                     </Box>
                     <InputWrapper showEmptyLabel>
-                      <Button variant="link" leftIcon={<AddCircleIcon />} type="submit">
-                        {t('labels.add')}
+                      <Button
+                        variant="link"
+                        leftIcon={<AddCircleIcon />}
+                        type="submit"
+                      >
+                        {t("labels.add")}
                       </Button>
                     </InputWrapper>
                   </ContextContainer>
@@ -262,12 +275,12 @@ const SubjectTypesPage = () => {
                     <TableInput
                       columns={tableInputColumns}
                       labels={{
-                        add: t('labels.add'),
-                        remove: t('labels.remove'),
-                        edit: t('labels.edit'),
-                        accept: t('labels.accept'),
-                        cancel: t('labels.cancel'),
-                        actionHeader: t('labels.actions'),
+                        add: t("labels.add"),
+                        remove: t("labels.remove"),
+                        edit: t("labels.edit"),
+                        accept: t("labels.accept"),
+                        cancel: t("labels.cancel"),
+                        actionHeader: t("labels.actions"),
                       }}
                       canAdd={false}
                       editable
@@ -280,9 +293,12 @@ const SubjectTypesPage = () => {
                     />
                   </Box>
                 ) : (
-                  <Box sx={{ justifySelf: 'center' }}>
+                  <Box sx={{ justifySelf: "center" }}>
                     <SubjectTypesEmptyState
-                      labels={{ text: t('emptyState.text'), altText: t('emptyState.altText') }}
+                      labels={{
+                        text: t("emptyState.text"),
+                        altText: t("emptyState.altText"),
+                      }}
                     />
                   </Box>
                 )}

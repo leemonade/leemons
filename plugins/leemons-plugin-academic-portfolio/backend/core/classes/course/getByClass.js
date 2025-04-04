@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function getByClass({ returnCourse, class: _class, showArchived, ctx }) {
   const queryOptions = showArchived ? { excludeDeleted: false } : {};
@@ -6,10 +6,10 @@ async function getByClass({ returnCourse, class: _class, showArchived, ctx }) {
     {
       class: _.isArray(_class) ? _class : [_class],
     },
-    '',
+    "",
     queryOptions
   ).lean();
-  if (returnCourse) return _.map(classCourses, 'course');
+  if (returnCourse) return _.map(classCourses, "course");
   return classCourses;
 }
 

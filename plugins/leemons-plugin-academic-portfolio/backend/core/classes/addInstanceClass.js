@@ -1,16 +1,17 @@
-const { LeemonsError } = require('@leemons/error');
-const { validateAddInstanceClass } = require('../../validations/forms');
-const { add: addCourse } = require('./course/add');
-const { add: addGroup } = require('./group/add');
-const { existCourseInProgram } = require('../courses/existCourseInProgram');
-const { existGroupInProgram } = require('../groups/existGroupInProgram');
-const { classByIds } = require('./classByIds');
-const { setSubjectCredits } = require('../subjects/setSubjectCredits');
-const { setSubjectInternalId } = require('../subjects/setSubjectInternalId');
+const { LeemonsError } = require("@leemons/error");
+const { validateAddInstanceClass } = require("../../validations/forms");
+const { add: addCourse } = require("./course/add");
+const { add: addGroup } = require("./group/add");
+const { existCourseInProgram } = require("../courses/existCourseInProgram");
+const { existGroupInProgram } = require("../groups/existGroupInProgram");
+const { classByIds } = require("./classByIds");
+const { setSubjectCredits } = require("../subjects/setSubjectCredits");
+const { setSubjectInternalId } = require("../subjects/setSubjectInternalId");
 
 async function addInstanceClass({ data, ctx }) {
   await validateAddInstanceClass({ data, ctx });
-  const { internalIdCourse, internalId, credits, course, group, ...rest } = data;
+  const { internalIdCourse, internalId, credits, course, group, ...rest } =
+    data;
   // ES: Creamos la clase
   const nClassDoc = await ctx.tx.db.Class.create(rest);
   const nClass = nClassDoc.toObject();
@@ -29,15 +30,23 @@ async function addInstanceClass({ data, ctx }) {
   // ES: Añadimos todas las relaciones de la clase
   if (course) {
     // ES: Comprobamos que todos los cursos existen y pertenecen al programa
-    if (!(await existCourseInProgram({ id: course, program: nClass.program, ctx }))) {
-      throw new LeemonsError(ctx, { message: 'course not in program' });
+    if (
+      !(await existCourseInProgram({
+        id: course,
+        program: nClass.program,
+        ctx,
+      }))
+    ) {
+      throw new LeemonsError(ctx, { message: "course not in program" });
     }
     await addCourse({ class: nClass.id, course, ctx });
   }
   if (group) {
     // ES: Comprobamos que todos los cursos existen y pertenecen al programa
-    if (!(await existGroupInProgram({ id: group, program: nClass.program, ctx }))) {
-      throw new LeemonsError(ctx, { message: 'group not in program' });
+    if (
+      !(await existGroupInProgram({ id: group, program: nClass.program, ctx }))
+    ) {
+      throw new LeemonsError(ctx, { message: "group not in program" });
     }
     await addGroup({ class: nClass.id, group, ctx });
   }

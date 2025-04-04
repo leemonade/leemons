@@ -1,4 +1,4 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 export const SetupStyles = createStyles((theme, {}) => {
   return {

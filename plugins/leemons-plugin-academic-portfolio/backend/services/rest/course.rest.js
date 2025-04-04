@@ -3,27 +3,31 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 
-const { updateCourse, listCourses, getCourseById } = require('../../core/courses');
+const {
+  updateCourse,
+  listCourses,
+  getCourseById,
+} = require("../../core/courses");
 
 /** @type {ServiceSchema} */
 module.exports = {
   postCourseRest: {
     rest: {
-      path: '/',
-      method: 'POST',
+      path: "/",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'create'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "create"],
           },
         },
       }),
@@ -33,20 +37,20 @@ module.exports = {
       const course = await courseService.addCourse(ctx.params;
       return { status: 200, course };
       */
-      return { status: 400, message: 'Course creation disabled' };
+      return { status: 400, message: "Course creation disabled" };
     },
   },
   putCourseRest: {
     rest: {
-      path: '/',
-      method: 'PUT',
+      path: "/",
+      method: "PUT",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'update'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "update"],
           },
         },
       }),
@@ -58,28 +62,28 @@ module.exports = {
   },
   listCourseRest: {
     rest: {
-      path: '/',
-      method: 'GET',
+      path: "/",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "view"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-          program: { type: 'string' },
+          page: { type: ["number", "string"] },
+          size: { type: ["number", "string"] },
+          program: { type: "string" },
         },
-        required: ['page', 'size', 'program'],
+        required: ["page", "size", "program"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -97,15 +101,15 @@ module.exports = {
   },
   getCourseDetails: {
     rest: {
-      path: '/:id',
-      method: 'GET',
+      path: "/:id",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "view"],
           },
         },
       }),

@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -34,7 +34,7 @@ schema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
 
 const classCourseModel = newModel(
   mongoose.connection,
-  'v1::academic-portfolio_ClassCourse',
+  "v1::academic-portfolio_ClassCourse",
   schema
 );
 

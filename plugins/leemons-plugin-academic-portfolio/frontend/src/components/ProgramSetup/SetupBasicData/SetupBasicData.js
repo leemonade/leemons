@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { isFunction } from 'lodash';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { isFunction } from "lodash";
+import { Controller, useForm } from "react-hook-form";
 import {
   Box,
   Button,
@@ -14,9 +14,9 @@ import {
   Stack,
   Switch,
   TextInput,
-} from '@bubbles-ui/components';
-import { ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { SetupBasicDataStyles } from './SetupBasicData.styles';
+} from "@bubbles-ui/components";
+import { ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { SetupBasicDataStyles } from "./SetupBasicData.styles";
 
 export const SETUP_BASIC_DATA_DEFAULT_PROPS = {
   sharedData: {},
@@ -48,7 +48,7 @@ const SetupBasicData = ({
   ImagePicker,
   ...props
 }) => {
-  const { classes, cx } = SetupBasicDataStyles({}, { name: 'APBasicData' });
+  const { classes, cx } = SetupBasicDataStyles({}, { name: "APBasicData" });
 
   const options = {};
   if (sharedData && sharedData.credits) {
@@ -56,9 +56,9 @@ const SetupBasicData = ({
   }
 
   const defaultValues = {
-    name: '',
-    abbreviation: '',
-    color: '',
+    name: "",
+    abbreviation: "",
+    color: "",
     credits: 0,
     maxGroupAbbreviation: 2,
     maxGroupAbbreviationIsOnlyNumbers: false,
@@ -66,15 +66,19 @@ const SetupBasicData = ({
     oneStudentGroup: false,
     useCreditSystem: false,
     useOneStudentGroup: false,
-    evaluationSystem: '',
+    evaluationSystem: "",
     totalHours: 0,
     hideStudentsToStudents: false,
     ...sharedData,
     ...options,
   };
 
-  const [creditSystem, setCreditSystem] = useState(defaultValues.useCreditSystem);
-  const [oneStudentGroup, setOneStudentGroup] = useState(defaultValues.useOneStudentGroup);
+  const [creditSystem, setCreditSystem] = useState(
+    defaultValues.useCreditSystem
+  );
+  const [oneStudentGroup, setOneStudentGroup] = useState(
+    defaultValues.useOneStudentGroup
+  );
 
   const {
     reset,
@@ -104,7 +108,9 @@ const SetupBasicData = ({
                 <Controller
                   control={control}
                   name="name"
-                  rules={{ required: errorMessages.name?.required || 'Required Field' }}
+                  rules={{
+                    required: errorMessages.name?.required || "Required Field",
+                  }}
                   render={({ field }) => (
                     <TextInput
                       label={labels.name}
@@ -122,7 +128,8 @@ const SetupBasicData = ({
                   control={control}
                   name="abbreviation"
                   rules={{
-                    required: errorMessages.abbreviation?.required || 'Required Field',
+                    required:
+                      errorMessages.abbreviation?.required || "Required Field",
                     maxLength: 8,
                     minLength: 1,
                   }}
@@ -159,7 +166,9 @@ const SetupBasicData = ({
               <Controller
                 control={control}
                 name="color"
-                render={({ field }) => <ColorInput label={labels.color} {...field} />}
+                render={({ field }) => (
+                  <ColorInput label={labels.color} {...field} />
+                )}
               />
             </Box>
           </ContextContainer>
@@ -169,7 +178,9 @@ const SetupBasicData = ({
                 name="evaluationSystem"
                 control={control}
                 rules={{
-                  required: errorMessages.evaluationSystem?.required || 'Required Field',
+                  required:
+                    errorMessages.evaluationSystem?.required ||
+                    "Required Field",
                 }}
                 render={({ field }) =>
                   React.cloneElement(evaluationSystemSelect, {
@@ -189,7 +200,12 @@ const SetupBasicData = ({
                 name="totalHours"
                 control={control}
                 render={({ field }) => (
-                  <NumberInput defaultValue={0} min={0} label={labels.totalHours} {...field} />
+                  <NumberInput
+                    defaultValue={0}
+                    min={0}
+                    label={labels.totalHours}
+                    {...field}
+                  />
                 )}
               />
               <Box></Box>
@@ -257,7 +273,9 @@ const SetupBasicData = ({
                   name="maxGroupAbbreviation"
                   control={control}
                   rules={{
-                    required: errorMessages.maxGroupAbbreviation?.required || 'Required Field',
+                    required:
+                      errorMessages.maxGroupAbbreviation?.required ||
+                      "Required Field",
                     min: 2,
                   }}
                   render={({ field }) => (
@@ -296,13 +314,20 @@ const SetupBasicData = ({
               name="hideStudentsToStudents"
               control={control}
               render={({ field: { value, ref, ...field } }) => (
-                <Switch label={labels.hideStudentsToStudents} checked={value || false} {...field} />
+                <Switch
+                  label={labels.hideStudentsToStudents}
+                  checked={value || false}
+                  {...field}
+                />
               )}
             />
           </ContextContainer>
 
           <Stack fullWidth justifyContent="end">
-            <Button type="submit" rightIcon={<ChevRightIcon height={20} width={20} />}>
+            <Button
+              type="submit"
+              rightIcon={<ChevRightIcon height={20} width={20} />}
+            >
               {labels.buttonNext}
             </Button>
           </Stack>

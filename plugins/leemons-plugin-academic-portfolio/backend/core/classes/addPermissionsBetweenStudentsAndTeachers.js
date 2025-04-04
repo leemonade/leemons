@@ -1,4 +1,4 @@
-const { map } = require('lodash');
+const { map } = require("lodash");
 
 async function addPermissionsBetweenStudentsAndTeachers({ classId, ctx }) {
   const [students, teachers] = await Promise.all([
@@ -6,11 +6,11 @@ async function addPermissionsBetweenStudentsAndTeachers({ classId, ctx }) {
     ctx.tx.db.ClassTeacher.find({ class: classId }).lean(),
   ]);
 
-  const studentsIds = map(students, 'student');
-  const teachersIds = map(teachers, 'teacher');
+  const studentsIds = map(students, "student");
+  const teachersIds = map(teachers, "teacher");
   const allIds = studentsIds.concat(teachersIds);
 
-  return ctx.tx.call('users.users.addUserAgentContacts', {
+  return ctx.tx.call("users.users.addUserAgentContacts", {
     fromUserAgent: allIds,
     toUserAgent: allIds,
     target: classId,

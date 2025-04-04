@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useEffect, useMemo, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 import {
   Select,
@@ -9,10 +9,10 @@ import {
   Stack,
   InputWrapper,
   Button,
-} from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { cloneDeep } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import { cloneDeep } from "lodash";
+import PropTypes from "prop-types";
 
 const ReferenceGroupsClassroomsSetup = ({
   onChange,
@@ -41,14 +41,14 @@ const ReferenceGroupsClassroomsSetup = ({
     () => [
       {
         Header: formLabels?.referenceGroup,
-        accessor: 'referenceGroup',
+        accessor: "referenceGroup",
         style: { width: 196 },
-        valueRender: (val) => val?.split('::')[0],
+        valueRender: (val) => val?.split("::")[0],
         editable: false,
       },
       {
         Header: formLabels?.classroomId,
-        accessor: 'classroomId',
+        accessor: "classroomId",
         style: { width: 240 },
       },
     ],
@@ -67,9 +67,14 @@ const ReferenceGroupsClassroomsSetup = ({
       }
       return groups
         .filter((group) =>
-          selectedCourses.some((course) => course.index === group?.metadata?.course)
+          selectedCourses.some(
+            (course) => course.index === group?.metadata?.course
+          )
         )
-        .map((item) => ({ label: item.name, value: `${item.name}::${item.id}` }))
+        .map((item) => ({
+          label: item.name,
+          value: `${item.name}::${item.id}`,
+        }))
         .sort((a, b) => a.label.localeCompare(b.label));
     }
     return [];
@@ -77,7 +82,7 @@ const ReferenceGroupsClassroomsSetup = ({
 
   useEffect(() => {
     if (groupsSelectData?.length) {
-      form.setValue('referenceGroup', groupsSelectData[0].value);
+      form.setValue("referenceGroup", groupsSelectData[0].value);
     }
   }, [groupsSelectData]);
 
@@ -111,8 +116,8 @@ const ReferenceGroupsClassroomsSetup = ({
         (item) => item.referenceGroup === newItem.referenceGroup
       );
       if (isReferenceGroupUsed) {
-        form.setError('referenceGroup', {
-          type: 'manual',
+        form.setError("referenceGroup", {
+          type: "manual",
           message: formLabels?.validation?.referenceGroupAlreadyInUse,
         });
       } else {
@@ -163,7 +168,11 @@ const ReferenceGroupsClassroomsSetup = ({
           )}
         />
         <InputWrapper showEmptyLabel>
-          <Button variant="link" leftIcon={<AddCircleIcon />} onClick={handleOnAdd}>
+          <Button
+            variant="link"
+            leftIcon={<AddCircleIcon />}
+            onClick={handleOnAdd}
+          >
             {formLabels?.labels?.add}
           </Button>
         </InputWrapper>

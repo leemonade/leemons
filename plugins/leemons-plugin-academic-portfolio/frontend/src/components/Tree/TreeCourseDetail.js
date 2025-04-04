@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import React from "react";
+import PropTypes from "prop-types";
+import { Controller, useForm } from "react-hook-form";
 import {
   Box,
   Button,
@@ -10,8 +10,8 @@ import {
   Stack,
   TextInput,
   Title,
-} from '@bubbles-ui/components';
-import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
+} from "@bubbles-ui/components";
+import { SelectUsersForAddToClasses } from "./SelectUsersForAddToClasses";
 
 const TreeCourseDetail = ({
   item,
@@ -26,14 +26,16 @@ const TreeCourseDetail = ({
 }) => {
   const [disableSave, setDisabledSave] = React.useState(false);
 
-  const { reset, control, setValue, handleSubmit } = useForm({ defaultValues: course });
+  const { reset, control, setValue, handleSubmit } = useForm({
+    defaultValues: course,
+  });
 
   React.useEffect(() => {
     reset(course);
   }, [course]);
 
   function onChangeAddUsers(e) {
-    setValue('students', e);
+    setValue("students", e);
   }
 
   function onDisableSave(e) {
@@ -46,14 +48,22 @@ const TreeCourseDetail = ({
         <ContextContainer direction="column" fullWidth>
           <Title order={4}>{messages.title}</Title>
           <Box>
-            <TextInput disabled label={messages.numberLabel} value={course.index.toString()} />
+            <TextInput
+              disabled
+              label={messages.numberLabel}
+              value={course.index.toString()}
+            />
           </Box>
           <Box>
             <Controller
               control={control}
               name="name"
               render={({ field }) => (
-                <TextInput label={messages.nameLabel} help={messages.nameHelper} {...field} />
+                <TextInput
+                  label={messages.nameLabel}
+                  help={messages.nameHelper}
+                  {...field}
+                />
               )}
             />
           </Box>
@@ -77,7 +87,12 @@ const TreeCourseDetail = ({
               name="number"
               control={control}
               render={({ field }) => (
-                <NumberInput defaultValue={0} min={0} label={messages.creditsLabel} {...field} />
+                <NumberInput
+                  defaultValue={0}
+                  min={0}
+                  label={messages.creditsLabel}
+                  {...field}
+                />
               )}
             />
           </Box>

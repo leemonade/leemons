@@ -1,26 +1,32 @@
-import { useMemo, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useMemo, useRef, useState } from "react";
+import { useHistory } from "react-router-dom";
 
-import { PivotTable } from '@analytics/components/PivotTable';
-import { Box, TLayout, Stack, ImageLoader, Button } from '@bubbles-ui/components';
-import { ChevronLeftIcon } from '@bubbles-ui/icons/outline';
-import { LocaleDate } from '@common/LocaleDate';
-import { ChipsContainer } from '@common/components';
-import { useLayout } from '@layout/context';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { isEmpty } from 'lodash';
+import { PivotTable } from "@analytics/components/PivotTable";
+import {
+  Box,
+  TLayout,
+  Stack,
+  ImageLoader,
+  Button,
+} from "@bubbles-ui/components";
+import { ChevronLeftIcon } from "@bubbles-ui/icons/outline";
+import { LocaleDate } from "@common/LocaleDate";
+import { ChipsContainer } from "@common/components";
+import { useLayout } from "@layout/context";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { isEmpty } from "lodash";
 
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { useReportColumns } from '@academic-portfolio/hooks/queries/useReportColumns';
-import { useReportData } from '@academic-portfolio/hooks/queries/useReportData';
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
+import { useReportColumns } from "@academic-portfolio/hooks/queries/useReportColumns";
+import { useReportData } from "@academic-portfolio/hooks/queries/useReportData";
 
-const PLUGIN_NAME = 'academic-portfolio';
+const PLUGIN_NAME = "academic-portfolio";
 
 export default function Reports() {
   const [hasReport, setHasReport] = useState(false);
   const [canGenerate, setCanGenerate] = useState(false);
   const tableRef = useRef(null);
-  const [t] = useTranslateLoader(prefixPN('reportsPage'));
+  const [t] = useTranslateLoader(prefixPN("reportsPage"));
   const history = useHistory();
   const { openConfirmationModal } = useLayout();
   const { data: columnsData } = useReportColumns({});
@@ -39,11 +45,15 @@ export default function Reports() {
         cell: ({ getValue }) => {
           const value = getValue();
 
-          if (column.toLowerCase().endsWith('date')) {
-            return isEmpty(value) ? '-' : <LocaleDate date={value} />;
-          } else if (column.toLowerCase().endsWith('dataset')) {
-            return <ChipsContainer items={value.map((item) => `${item.label}: ${item.value}`)} />;
-          } else if (column.toLowerCase().endsWith('tags')) {
+          if (column.toLowerCase().endsWith("date")) {
+            return isEmpty(value) ? "-" : <LocaleDate date={value} />;
+          } else if (column.toLowerCase().endsWith("dataset")) {
+            return (
+              <ChipsContainer
+                items={value.map((item) => `${item.label}: ${item.value}`)}
+              />
+            );
+          } else if (column.toLowerCase().endsWith("tags")) {
             return <ChipsContainer items={value} />;
           }
 
@@ -79,8 +89,8 @@ export default function Reports() {
   function handleOnBack() {
     if (hasReport) {
       openConfirmationModal({
-        title: t('backConfirmationModal.title'),
-        description: t('backConfirmationModal.description'),
+        title: t("backConfirmationModal.title"),
+        description: t("backConfirmationModal.description"),
         onConfirm: () => {
           history.push(`/private/${PLUGIN_NAME}/programs`);
         },
@@ -100,12 +110,12 @@ export default function Reports() {
   return (
     <TLayout>
       <TLayout.Header
-        title={t('title')}
+        title={t("title")}
         cancelable={false}
         icon={
           <Stack justifyContent="center" alignItems="center">
             <ImageLoader
-              style={{ position: 'relative' }}
+              style={{ position: "relative" }}
               src={`/public/${PLUGIN_NAME}/menu-icon.svg`}
               width={18}
               height={18}
@@ -115,7 +125,7 @@ export default function Reports() {
       ></TLayout.Header>
       <TLayout.Content
         fullWidth
-        title={t('reports')}
+        title={t("reports")}
         TopZone={
           <Box sx={(theme) => ({ paddingBlock: theme.spacing[4] })}>
             <Button
@@ -123,7 +133,7 @@ export default function Reports() {
               leftIcon={<ChevronLeftIcon style={{ width: 12, height: 12 }} />}
               onClick={handleOnBack}
             >
-              {t('back')}
+              {t("back")}
             </Button>
           </Box>
         }
@@ -139,8 +149,11 @@ export default function Reports() {
 
         <TLayout.Footer fullWidth>
           <TLayout.Footer.RightActions>
-            <Button onClick={handleOnDownload} disabled={!tableRef.current || data.length === 0}>
-              {t('downloadReport')}
+            <Button
+              onClick={handleOnDownload}
+              disabled={!tableRef.current || data.length === 0}
+            >
+              {t("downloadReport")}
             </Button>
           </TLayout.Footer.RightActions>
         </TLayout.Footer>

@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useEffect, useMemo } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 import {
   ActionButton,
@@ -10,21 +10,28 @@ import {
   Select,
   Table,
   ContextContainer,
-} from '@bubbles-ui/components';
-import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import { useLayout } from '@layout/context';
-import { updateSessionConfig } from '@users/session';
-import { findIndex, isString, noop, sortBy, uniq } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { AddCircleIcon, DeleteBinIcon } from "@bubbles-ui/icons/solid";
+import { useLayout } from "@layout/context";
+import { updateSessionConfig } from "@users/session";
+import { findIndex, isString, noop, sortBy, uniq } from "lodash";
+import PropTypes from "prop-types";
 
-import { useSubjectPickerStyles } from './SubjectPicker.styles';
-import { useDataForSubjectPicker } from './hooks/useDataForSubjectPicker';
+import { useSubjectPickerStyles } from "./SubjectPicker.styles";
+import { useDataForSubjectPicker } from "./hooks/useDataForSubjectPicker";
 
-function useSelectInitialSubjects({ selectInitialSubjects, assignable, form, onChange }) {
+function useSelectInitialSubjects({
+  selectInitialSubjects,
+  assignable,
+  form,
+  onChange,
+}) {
   const subjects = assignable?.subjects;
   const subjectsIds = useMemo(() => {
     if (subjects?.length) {
-      return subjects?.map((subject) => (isString(subject) ? subject : subject.subject));
+      return subjects?.map((subject) =>
+        isString(subject) ? subject : subject.subject
+      );
     }
     return [];
   });
@@ -33,10 +40,10 @@ function useSelectInitialSubjects({ selectInitialSubjects, assignable, form, onC
     if (
       selectInitialSubjects &&
       subjectsIds.length &&
-      !form.getValues('selectedSubjects')?.length &&
+      !form.getValues("selectedSubjects")?.length &&
       !form.formState.isDirty
     ) {
-      form.setValue('selectedSubjects', subjectsIds, { shouldDirty: true });
+      form.setValue("selectedSubjects", subjectsIds, { shouldDirty: true });
       onChange(subjectsIds);
     }
   }, [subjectsIds]);
@@ -51,7 +58,7 @@ export function SubjectPicker({
   error,
   onlyOneSubject,
   selectInitialSubjects,
-  teacherType = ['main-teacher', 'associate-teacher'],
+  teacherType = ["main-teacher", "associate-teacher"],
 }) {
   const { openConfirmationModal } = useLayout();
 
@@ -64,19 +71,25 @@ export function SubjectPicker({
     },
   });
 
-  const { programs, courses, subjects, selectedSubjects } = useDataForSubjectPicker({
-    subjects: assignable?.subjects,
-    control: form.control,
-    teacherType,
+  const { programs, courses, subjects, selectedSubjects } =
+    useDataForSubjectPicker({
+      subjects: assignable?.subjects,
+      control: form.control,
+      teacherType,
+    });
+
+  const sortedPrograms = sortBy(programs, "createdAt");
+  const sortedSubjects = sortBy(subjects, "createdAt");
+
+  useSelectInitialSubjects({
+    selectInitialSubjects,
+    assignable,
+    form,
+    onChange,
   });
 
-  const sortedPrograms = sortBy(programs, 'createdAt');
-  const sortedSubjects = sortBy(subjects, 'createdAt');
-
-  useSelectInitialSubjects({ selectInitialSubjects, assignable, form, onChange });
-
   useEffect(() => {
-    form.setValue('selectedSubjects', value || []);
+    form.setValue("selectedSubjects", value || []);
     onChange(value || []);
   }, [JSON.stringify(value)]);
 
@@ -84,7 +97,7 @@ export function SubjectPicker({
     onChangeRaw(selectedSubjects);
   }, [JSON.stringify(selectedSubjects)]);
 
-  const { classes } = useSubjectPickerStyles({}, { name: 'SubjectPicker' });
+  const { classes } = useSubjectPickerStyles({}, { name: "SubjectPicker" });
 
   const isDisabled = useMemo(() => {
     if (onlyOneSubject) {
@@ -98,21 +111,21 @@ export function SubjectPicker({
       return null;
     }
     const newSelectedSubjects = [newSubject?.subject ?? [], ...data];
-    form.setValue('selectedSubjects', uniq(newSelectedSubjects));
+    form.setValue("selectedSubjects", uniq(newSelectedSubjects));
     onChange(newSelectedSubjects);
 
     return false;
   };
 
   const onRemove = ({ id }) => {
-    const selSubjects = form.getValues('selectedSubjects');
+    const selSubjects = form.getValues("selectedSubjects");
 
     const index = findIndex(selSubjects, (subject) => subject === id);
 
     if (index >= 0) {
       const newSelectedSubjects = [...selSubjects];
       newSelectedSubjects.splice(index, 1);
-      form.setValue('selectedSubjects', newSelectedSubjects);
+      form.setValue("selectedSubjects", newSelectedSubjects);
       onChange(newSelectedSubjects);
     }
   };
@@ -120,36 +133,36 @@ export function SubjectPicker({
   const columns = React.useMemo(() => {
     const result = [
       {
-        Header: '',
-        accessor: 'program',
+        Header: "",
+        accessor: "program",
         style: {
-          width: courses ? '30%' : '45%',
+          width: courses ? "30%" : "45%",
         },
       },
     ];
     if (courses) {
       result.push({
-        Header: '',
-        accessor: 'course',
+        Header: "",
+        accessor: "course",
         style: {
-          width: '30%',
+          width: "30%",
         },
       });
     }
 
     result.push(
       {
-        Header: '',
-        accessor: 'subject',
+        Header: "",
+        accessor: "subject",
         style: {
-          width: courses ? '30%' : '45%',
+          width: courses ? "30%" : "45%",
         },
       },
       {
-        Header: '',
-        accessor: 'action',
+        Header: "",
+        accessor: "action",
         style: {
-          width: '10%',
+          width: "10%",
         },
       }
     );
@@ -168,15 +181,20 @@ export function SubjectPicker({
                 <Select
                   {...field}
                   onChange={(program) => {
-                    const prevProgram = form.getValues('program');
-                    const pickedSubjects = form.getValues('selectedSubjects');
+                    const prevProgram = form.getValues("program");
+                    const pickedSubjects = form.getValues("selectedSubjects");
 
-                    if (program && program !== prevProgram && pickedSubjects.length) {
+                    if (
+                      program &&
+                      program !== prevProgram &&
+                      pickedSubjects.length
+                    ) {
                       return openConfirmationModal({
                         title: localizations?.programChangeModal?.title,
-                        description: localizations?.programChangeModal?.description,
+                        description:
+                          localizations?.programChangeModal?.description,
                         onConfirm: async () => {
-                          form.setValue('selectedSubjects', []);
+                          form.setValue("selectedSubjects", []);
                           onChange([]);
 
                           updateSessionConfig({ program });
@@ -251,7 +269,7 @@ export function SubjectPicker({
           <Table
             data={selectedSubjects.map((subject) => ({
               ...subject,
-              course: subject?.course ?? '-',
+              course: subject?.course ?? "-",
               action: (
                 <ActionButton
                   icon={<DeleteBinIcon width={18} height={18} />}

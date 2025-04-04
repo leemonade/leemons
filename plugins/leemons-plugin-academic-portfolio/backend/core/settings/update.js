@@ -1,6 +1,6 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const findOne = require('./findOne');
+const findOne = require("./findOne");
 
 /**
  * @public
@@ -19,10 +19,14 @@ async function update({ settings, ctx }) {
   const newSettings = { ...currentSettings, ...settings };
   delete newSettings.id;
 
-  return ctx.tx.db.Settings.findOneAndUpdate({ id: currentSettings.id }, newSettings, {
-    new: true,
-    lean: true,
-  });
+  return ctx.tx.db.Settings.findOneAndUpdate(
+    { id: currentSettings.id },
+    newSettings,
+    {
+      new: true,
+      lean: true,
+    }
+  );
 }
 
 module.exports = update;

@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useEffect, useMemo, useState } from "react";
+import PropTypes from "prop-types";
+import { Controller, useForm } from "react-hook-form";
 import {
   TextInput,
   Button,
@@ -8,8 +8,8 @@ import {
   Box,
   TableInput,
   InputWrapper,
-} from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
+} from "@bubbles-ui/components";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
 
 const SubstagesSetup = ({ onChange, localizations = {}, value }) => {
   const [substages, setSubstages] = useState([]);
@@ -39,8 +39,8 @@ const SubstagesSetup = ({ onChange, localizations = {}, value }) => {
   const onAdd = async () => {
     const isValid = await form.trigger();
     if (isValid) {
-      const name = form.getValues('substageName');
-      const abbreviation = form.getValues('substageAbbreviation');
+      const name = form.getValues("substageName");
+      const abbreviation = form.getValues("substageAbbreviation");
       const index = substages.length + 1;
       onChange([...substages, { name, abbreviation, index }]);
     }
@@ -49,18 +49,18 @@ const SubstagesSetup = ({ onChange, localizations = {}, value }) => {
   const tableInputColumns = useMemo(
     () => [
       {
-        accessor: 'index',
+        accessor: "index",
         editable: false,
       },
       {
-        accessor: 'name',
+        accessor: "name",
         input: {
           node: <TextInput required />,
           rules: { required: localizations?.programDrawer?.requiredField },
         },
       },
       {
-        accessor: 'abbreviation',
+        accessor: "abbreviation",
         input: {
           node: <TextInput />,
         },
@@ -126,7 +126,10 @@ const SubstagesSetup = ({ onChange, localizations = {}, value }) => {
             data={substages}
             showHeaders={false}
             onChange={(data) => {
-              const updateObject = [...data].map((item, i) => ({ ...item, index: i + 1 }));
+              const updateObject = [...data].map((item, i) => ({
+                ...item,
+                index: i + 1,
+              }));
 
               onChange(updateObject);
             }}

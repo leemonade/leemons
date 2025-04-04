@@ -1,8 +1,8 @@
-import { useVariantForQueryKey } from '@common/queries';
-import { useQuery } from '@tanstack/react-query';
+import { useVariantForQueryKey } from "@common/queries";
+import { useQuery } from "@tanstack/react-query";
 
-import { fetchReportColumns } from '../../request/reports/fetchReportColumns';
-import { getColumnsKey } from '../keys/reportKeys';
+import { fetchReportColumns } from "../../request/reports/fetchReportColumns";
+import { getColumnsKey } from "../keys/reportKeys";
 
 function useReportColumns({ options }) {
   const queryKey = getColumnsKey();
@@ -13,7 +13,7 @@ function useReportColumns({ options }) {
   };
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'frequently',
+    modificationTrend: "frequently",
   });
 
   return useQuery({

@@ -1,21 +1,21 @@
-const { LeemonsError } = require('@leemons/error');
-const _ = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const _ = require("lodash");
 
-const { SOCKET_EVENTS } = require('../../config/constants');
-const { validateAddClassStudents } = require('../../validations/forms');
+const { SOCKET_EVENTS } = require("../../config/constants");
+const { validateAddClassStudents } = require("../../validations/forms");
 
 const {
   addComunicaRoomsBetweenStudentsAndTeachers,
-} = require('./addComunicaRoomsBetweenStudentsAndTeachers');
-const { classByIds } = require('./classByIds');
-const { add: addStudent } = require('./student/add');
-const { emitUpdateClassEvent } = require('./updateClass');
+} = require("./addComunicaRoomsBetweenStudentsAndTeachers");
+const { classByIds } = require("./classByIds");
+const { add: addStudent } = require("./student/add");
+const { emitUpdateClassEvent } = require("./updateClass");
 
 function emitUpdateEnrollmentEvent({
   class: classData,
   ctx,
   message,
-  status = 'updating',
+  status = "updating",
   error = null,
 }) {
   emitUpdateClassEvent({
@@ -50,13 +50,13 @@ async function addClassStudents({ data, ctx }) {
 
   // Check if there are seats left in the class
   if (_.isNil(seats)) {
-    const errorMessage = 'There are no seats available in the class';
+    const errorMessage = "There are no seats available in the class";
 
     emitUpdateEnrollmentEvent({
       class: classData,
       ctx,
-      message: 'ENROLLMENT_UPDATE_ERROR',
-      status: 'error',
+      message: "ENROLLMENT_UPDATE_ERROR",
+      status: "error",
       error: errorMessage,
     });
 
@@ -69,17 +69,18 @@ async function addClassStudents({ data, ctx }) {
 
   const studentsToAdd = data.students;
   const totalStudentsToAdd = studentsToAdd.length;
-  const totalStudentsInClass = classData.students.length + classData.parentStudents.length;
+  const totalStudentsInClass =
+    classData.students.length + classData.parentStudents.length;
 
   // Check if there are seats left in the class
   if (seats <= totalStudentsInClass + totalStudentsToAdd) {
-    const errorMessage = 'There are not seats available to enrol everyone.';
+    const errorMessage = "There are not seats available to enrol everyone.";
 
     emitUpdateEnrollmentEvent({
       class: classData,
       ctx,
-      message: 'ENROLLMENT_UPDATE_ERROR',
-      status: 'error',
+      message: "ENROLLMENT_UPDATE_ERROR",
+      status: "error",
       error: errorMessage,
     });
 
@@ -90,7 +91,11 @@ async function addClassStudents({ data, ctx }) {
     });
   }
 
-  emitUpdateEnrollmentEvent({ class: classData, ctx, message: 'ENROLLMENT_UPDATE_STUDENTS' });
+  emitUpdateEnrollmentEvent({
+    class: classData,
+    ctx,
+    message: "ENROLLMENT_UPDATE_STUDENTS",
+  });
 
   const promises = [];
   const allStudents = [...classData.students, ...classData.parentStudents];
@@ -106,7 +111,11 @@ async function addClassStudents({ data, ctx }) {
 
   await Promise.all(promises);
 
-  emitUpdateEnrollmentEvent({ class: classData, ctx, message: 'ENROLLMENT_UPDATE_COMMUNICA' });
+  emitUpdateEnrollmentEvent({
+    class: classData,
+    ctx,
+    message: "ENROLLMENT_UPDATE_COMMUNICA",
+  });
 
   const classe = await getClass({ classId, ctx });
   await addComunicaRoomsBetweenStudentsAndTeachers({ classe, ctx });
@@ -114,8 +123,8 @@ async function addClassStudents({ data, ctx }) {
   emitUpdateEnrollmentEvent({
     class: classe,
     ctx,
-    message: 'ENROLLMENT_UPDATE_SUCCESS',
-    status: 'completed',
+    message: "ENROLLMENT_UPDATE_SUCCESS",
+    status: "completed",
   });
 
   return getClass({ classId, ctx });

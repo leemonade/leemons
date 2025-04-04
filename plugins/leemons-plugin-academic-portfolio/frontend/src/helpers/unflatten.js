@@ -4,7 +4,7 @@ export default function unflatten(data) {
   const resultholder = {};
   Object.keys(data).forEach((p) => {
     let cur = resultholder;
-    let prop = '';
+    let prop = "";
     let m;
     // eslint-disable-next-line no-cond-assign
     while ((m = regex.exec(p))) {
@@ -14,5 +14,5 @@ export default function unflatten(data) {
     cur[prop] = data[p];
   });
 
-  return resultholder[''] || resultholder;
+  return resultholder[""] || resultholder;
 }

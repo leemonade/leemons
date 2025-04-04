@@ -1,7 +1,7 @@
 export const allSubjectBlocksKeys = [
   {
-    plugin: 'plugin.academic-portfolio',
-    scope: 'subject-blocks',
+    plugin: "plugin.academic-portfolio",
+    scope: "subject-blocks",
   },
 ];
 

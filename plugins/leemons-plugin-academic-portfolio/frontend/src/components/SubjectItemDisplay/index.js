@@ -1,1 +1,1 @@
-export * from './SubjectItemDisplay';
+export * from "./SubjectItemDisplay";

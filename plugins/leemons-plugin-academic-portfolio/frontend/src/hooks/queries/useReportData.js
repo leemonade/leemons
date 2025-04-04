@@ -1,9 +1,9 @@
-import { useLocale } from '@common/LocaleDate';
-import { useVariantForQueryKey } from '@common/queries';
-import { useQuery } from '@tanstack/react-query';
+import { useLocale } from "@common/LocaleDate";
+import { useVariantForQueryKey } from "@common/queries";
+import { useQuery } from "@tanstack/react-query";
 
-import { fetchReportData } from '../../request/reports/fetchReportData';
-import { getDataKey } from '../keys/reportKeys';
+import { fetchReportData } from "../../request/reports/fetchReportData";
+import { getDataKey } from "../keys/reportKeys";
 
 function useReportData({ options }) {
   const queryKey = getDataKey();
@@ -15,7 +15,7 @@ function useReportData({ options }) {
   };
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'frequently',
+    modificationTrend: "frequently",
   });
 
   return useQuery({

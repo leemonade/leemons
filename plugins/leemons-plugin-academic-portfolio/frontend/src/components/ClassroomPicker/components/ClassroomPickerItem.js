@@ -1,11 +1,11 @@
-import React from 'react';
-import propTypes from 'prop-types';
-import { isString, noop } from 'lodash';
-import { Box, AvatarSubject, Text, ActionButton } from '@bubbles-ui/components';
-import { ChipsContainer } from '@common';
-import { BlockIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import { ClassroomPickerItemStyles } from './ClassroomPickerItem.styles';
+import React from "react";
+import propTypes from "prop-types";
+import { isString, noop } from "lodash";
+import { Box, AvatarSubject, Text, ActionButton } from "@bubbles-ui/components";
+import { ChipsContainer } from "@common";
+import { BlockIcon, DeleteBinIcon } from "@bubbles-ui/icons/solid";
+import { getFileUrl } from "@leebrary/helpers/prepareAsset";
+import { ClassroomPickerItemStyles } from "./ClassroomPickerItem.styles";
 
 const ClassroomPickerItem = ({
   schedule,
@@ -18,7 +18,7 @@ const ClassroomPickerItem = ({
 }) => {
   const { classes } = ClassroomPickerItemStyles(
     { canRemove, isCollisionDetected },
-    { name: 'ClassroomPickerItem' }
+    { name: "ClassroomPickerItem" }
   );
 
   function getIconURL(icon) {
@@ -49,7 +49,10 @@ const ClassroomPickerItem = ({
         />
         {isCollisionDetected && <BlockIcon className={classes.collisionIcon} />}
         {canRemove && (
-          <ActionButton onClick={onRemove} icon={<DeleteBinIcon width={18} height={18} />} />
+          <ActionButton
+            onClick={onRemove}
+            icon={<DeleteBinIcon width={18} height={18} />}
+          />
         )}
       </Box>
     </Box>

@@ -1,7 +1,7 @@
 export const allProgramTreeKeys = [
   {
-    plugin: 'plugin.academic-portfolio',
-    scope: 'program-tree',
+    plugin: "plugin.academic-portfolio",
+    scope: "program-tree",
   },
 ];
 

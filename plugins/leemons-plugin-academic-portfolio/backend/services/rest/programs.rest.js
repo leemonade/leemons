@@ -4,13 +4,13 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 const {
   LeemonsMiddlewareNecessaryPermits,
   LeemonsMiddlewareAuthenticated,
-} = require('@leemons/middlewares');
-const { LeemonsValidator } = require('@leemons/validator');
-const _ = require('lodash');
+} = require("@leemons/middlewares");
+const { LeemonsValidator } = require("@leemons/validator");
+const _ = require("lodash");
 
 const {
   getProgramTree,
@@ -31,21 +31,21 @@ const {
   getAcademicTree,
   getProgramCustomNomenclature,
   validateStaffChange,
-} = require('../../core/programs');
+} = require("../../core/programs");
 
 /** @type {ServiceSchema} */
 module.exports = {
   getProgramTreeRest: {
     rest: {
-      path: '/:id/tree',
-      method: 'GET',
+      path: "/:id/tree",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -57,15 +57,15 @@ module.exports = {
   },
   haveProgramsRest: {
     rest: {
-      path: '/have',
-      method: 'GET',
+      path: "/have",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -77,15 +77,15 @@ module.exports = {
   },
   postProgramRest: {
     rest: {
-      path: '/',
-      method: 'POST',
+      path: "/",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'create'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "create"],
           },
         },
       }),
@@ -101,15 +101,15 @@ module.exports = {
   },
   putProgramRest: {
     rest: {
-      path: '/',
-      method: 'PUT',
+      path: "/",
+      method: "PUT",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'update'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "update"],
           },
         },
       }),
@@ -121,39 +121,42 @@ module.exports = {
   },
   updateProgramConfiguration: {
     rest: {
-      path: '/config',
-      method: 'PUT',
+      path: "/config",
+      method: "PUT",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'update'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "update"],
           },
         },
       }),
     ],
     async handler(ctx) {
-      const program = await updateProgramConfiguration({ data: ctx.params, ctx });
+      const program = await updateProgramConfiguration({
+        data: ctx.params,
+        ctx,
+      });
       return { status: 200, program };
     },
   },
   listProgramRest: {
     rest: {
-      path: '/',
-      method: 'GET',
+      path: "/",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-          center: { type: ['string'] },
+          page: { type: ["number", "string"] },
+          size: { type: ["number", "string"] },
+          center: { type: ["string"] },
         },
-        required: ['page', 'size'],
+        required: ["page", "size"],
         additionalProperties: true,
       });
 
@@ -161,7 +164,7 @@ module.exports = {
         const { page, size, center, teacherTypeFilter } = ctx.params;
         let _onlyArchived = false;
 
-        if ('archived' in ctx.params) {
+        if ("archived" in ctx.params) {
           _onlyArchived = true;
         }
 
@@ -181,24 +184,26 @@ module.exports = {
   },
   detailProgramRest: {
     rest: {
-      path: '/:id',
-      method: 'GET',
+      path: "/:id",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "view"],
           },
         },
       }),
     ],
     async handler(ctx) {
-      const truthyValues = ['true', true, '1'];
+      const truthyValues = ["true", true, "1"];
       const _withClasses = truthyValues.includes(ctx.params.withClasses);
       const _showArchived = truthyValues.includes(ctx.params.showArchived);
-      const _withStudentsAndTeachers = truthyValues.includes(ctx.params.withStudentsAndTeachers);
+      const _withStudentsAndTeachers = truthyValues.includes(
+        ctx.params.withStudentsAndTeachers
+      );
 
       const [program] = await programsByIds({
         ids: ctx.params.id,
@@ -207,14 +212,15 @@ module.exports = {
         withStudentsAndTeachers: _withStudentsAndTeachers,
         ctx,
       });
-      if (!program) throw new LeemonsError(ctx, { message: 'Program not found' });
+      if (!program)
+        throw new LeemonsError(ctx, { message: "Program not found" });
       return { status: 200, program };
     },
   },
   publicInfo: {
     rest: {
-      path: '/publicInfo',
-      method: 'POST',
+      path: "/publicInfo",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -237,15 +243,15 @@ module.exports = {
   },
   programHasCoursesRest: {
     rest: {
-      path: '/:id/has/courses',
-      method: 'GET',
+      path: "/:id/has/courses",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -257,15 +263,15 @@ module.exports = {
   },
   programHasGroupsRest: {
     rest: {
-      path: '/:id/has/groups',
-      method: 'GET',
+      path: "/:id/has/groups",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -277,15 +283,15 @@ module.exports = {
   },
   programHasSubstagesRest: {
     rest: {
-      path: '/:id/has/substages',
-      method: 'GET',
+      path: "/:id/has/substages",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -297,15 +303,15 @@ module.exports = {
   },
   programCoursesRest: {
     rest: {
-      path: '/:id/courses',
-      method: 'GET',
+      path: "/:id/courses",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -317,15 +323,15 @@ module.exports = {
   },
   programGroupsRest: {
     rest: {
-      path: '/:id/groups',
-      method: 'GET',
+      path: "/:id/groups",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -337,15 +343,15 @@ module.exports = {
   },
   programSubstagesRest: {
     rest: {
-      path: '/:id/substages',
-      method: 'GET',
+      path: "/:id/substages",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -357,39 +363,46 @@ module.exports = {
   },
   hasProgramSubjectHistory: {
     rest: {
-      path: '/:id/has-subject-history',
-      method: 'GET',
+      path: "/:id/has-subject-history",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "view"],
           },
         },
       }),
     ],
     async handler(ctx) {
-      const program = await programsByIds({ ids: ctx.params.id, showArchived: true, ctx });
+      const program = await programsByIds({
+        ids: ctx.params.id,
+        showArchived: true,
+        ctx,
+      });
       if (program?.length) {
         const { subjects } = program[0];
         return { status: 200, data: subjects?.length > 0 };
       }
-      throw new LeemonsError(ctx, { message: 'Program not found', httpStatusCode: 404 });
+      throw new LeemonsError(ctx, {
+        message: "Program not found",
+        httpStatusCode: 404,
+      });
     },
   },
   deleteProgramRest: {
     rest: {
-      path: '/:id',
-      method: 'DELETE',
+      path: "/:id",
+      method: "DELETE",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'delete'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "delete"],
           },
         },
       }),
@@ -397,7 +410,7 @@ module.exports = {
     async handler(ctx) {
       const result = await removeProgramByIds({
         ids: ctx.params.id,
-        soft: ctx.params.soft === 'true',
+        soft: ctx.params.soft === "true",
         ctx,
       });
       return { status: 200, result };
@@ -405,15 +418,15 @@ module.exports = {
   },
   duplicateProgramRest: {
     rest: {
-      path: '/:id/duplicate',
-      method: 'POST',
+      path: "/:id/duplicate",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'create'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "create"],
           },
         },
       }),
@@ -429,15 +442,15 @@ module.exports = {
   },
   addStudentsToClassesUnderNodeTreeRest: {
     rest: {
-      path: '/add-students-to-classes-under-node-tree',
-      method: 'POST',
+      path: "/add-students-to-classes-under-node-tree",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'update'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "update"],
           },
         },
       }),
@@ -452,8 +465,8 @@ module.exports = {
   },
   getUserProgramsRest: {
     rest: {
-      path: '/user',
-      method: 'GET',
+      path: "/user",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -463,26 +476,29 @@ module.exports = {
   },
   getProgramEvaluationSystemRest: {
     rest: {
-      path: '/:id/evaluation-system',
-      method: 'GET',
+      path: "/:id/evaluation-system",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const evaluationSystem = await getProgramEvaluationSystem({ id: ctx.params.id, ctx });
+      const evaluationSystem = await getProgramEvaluationSystem({
+        id: ctx.params.id,
+        ctx,
+      });
       return { status: 200, evaluationSystem };
     },
   },
   getProgramAcademicTree: {
     rest: {
-      path: '/:id/academic-tree',
-      method: 'GET',
+      path: "/:id/academic-tree",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -494,12 +510,13 @@ module.exports = {
   },
   getProgramNomenclature: {
     rest: {
-      path: '/:id/nomenclature',
-      method: 'GET',
+      path: "/:id/nomenclature",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const allLocales = ctx.params.allLocales === 'true' || ctx.params.allLocales === '1';
+      const allLocales =
+        ctx.params.allLocales === "true" || ctx.params.allLocales === "1";
       const nomenclature = await getProgramCustomNomenclature({
         ids: [ctx.params.id],
         allLocales,
@@ -510,8 +527,8 @@ module.exports = {
   },
   validateStaffChange: {
     rest: {
-      path: '/validate-staff-change',
-      method: 'POST',
+      path: "/validate-staff-change",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

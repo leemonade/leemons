@@ -1,7 +1,7 @@
 export const allKnowledgeAreaKeys = [
   {
-    plugin: 'plugin.academic-portfolio',
-    scope: 'knowledge-areas',
+    plugin: "plugin.academic-portfolio",
+    scope: "knowledge-areas",
   },
 ];
 

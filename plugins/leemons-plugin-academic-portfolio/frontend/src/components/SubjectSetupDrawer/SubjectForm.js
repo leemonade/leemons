@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useEffect, useMemo, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 import {
   ContextContainer,
@@ -15,26 +15,26 @@ import {
   Select,
   Switch,
   LoadingOverlay,
-} from '@bubbles-ui/components';
-import ImagePicker from '@leebrary/components/ImagePicker';
-import { cloneDeep, isArray, isEmpty } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import ImagePicker from "@leebrary/components/ImagePicker";
+import { cloneDeep, isArray, isEmpty } from "lodash";
+import PropTypes from "prop-types";
 
-import FooterContainer from '../ProgramSetupDrawer/FooterContainer';
-import ReadOnlyField from '../common/ReadOnlyField';
+import FooterContainer from "../ProgramSetupDrawer/FooterContainer";
+import ReadOnlyField from "../common/ReadOnlyField";
 
-import ClassroomsSetup from './ClassroomsSetup';
-import ReferenceGroupsClassroomsSetup from './ReferenceGroupsClassroomsSetup';
+import ClassroomsSetup from "./ClassroomsSetup";
+import ReferenceGroupsClassroomsSetup from "./ReferenceGroupsClassroomsSetup";
 
-import useKnowledgeAreas from '@academic-portfolio/hooks/useKnowledgeAreas';
-import useSubjectTypes from '@academic-portfolio/hooks/useSubjectTypes';
+import useKnowledgeAreas from "@academic-portfolio/hooks/useKnowledgeAreas";
+import useSubjectTypes from "@academic-portfolio/hooks/useSubjectTypes";
 
 const useSubjectFormStyles = createStyles((theme) => ({
   title: {
     ...theme.other.global.content.typo.heading.md,
   },
   sectionTitle: {
-    ...theme.other.global.content.typo.heading['xsm--semiBold'],
+    ...theme.other.global.content.typo.heading["xsm--semiBold"],
   },
   horizontalInputsContainer: {
     gap: 16,
@@ -56,7 +56,7 @@ const SubjectForm = ({
   const { control, formState } = form;
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [disableReferenceGroups, setDisableReferenceGroups] = useState(false);
-  const coursesFormValue = form.watch('courses');
+  const coursesFormValue = form.watch("courses");
 
   const subjectWithPeopleEnrolled = useMemo(() => {
     if (!isEmpty(subject)) {
@@ -98,13 +98,15 @@ const SubjectForm = ({
       }));
     }
     setDisableReferenceGroups(true);
-    return classesData.map(({ classroomId, seats, alias, id, classWithoutGroupId }) => ({
-      classroomId,
-      classWithoutGroupId,
-      seats,
-      alias,
-      id,
-    }));
+    return classesData.map(
+      ({ classroomId, seats, alias, id, classWithoutGroupId }) => ({
+        classroomId,
+        classWithoutGroupId,
+        seats,
+        alias,
+        id,
+      })
+    );
   }
 
   const classroomsDataForReadOnlyTable = useMemo(() => {
@@ -114,9 +116,12 @@ const SubjectForm = ({
       columns = [
         {
           Header: formLabels?.classroomsSetup?.referenceGroup,
-          accessor: 'referenceGroup',
+          accessor: "referenceGroup",
         },
-        { Header: formLabels?.classroomsSetup?.classroomId, accessor: 'classroomId' },
+        {
+          Header: formLabels?.classroomsSetup?.classroomId,
+          accessor: "classroomId",
+        },
       ];
       data = subject.classes.map((item) => ({
         referenceGroup: `${item.groups?.name}`,
@@ -124,10 +129,16 @@ const SubjectForm = ({
       }));
     } else if (subject?.classes?.every((cls) => !cls.groups)) {
       columns = [
-        { Header: formLabels?.classroomsSetup?.classroom, accessor: 'classWithoutGroupId' },
-        { Header: formLabels?.classroomsSetup?.alias, accessor: 'alias' },
-        { Header: formLabels?.classroomsSetup?.classroomId, accessor: 'classroomId' },
-        { Header: formLabels?.classroomsSetup?.seats, accessor: 'seats' },
+        {
+          Header: formLabels?.classroomsSetup?.classroom,
+          accessor: "classWithoutGroupId",
+        },
+        { Header: formLabels?.classroomsSetup?.alias, accessor: "alias" },
+        {
+          Header: formLabels?.classroomsSetup?.classroomId,
+          accessor: "classroomId",
+        },
+        { Header: formLabels?.classroomsSetup?.seats, accessor: "seats" },
       ];
       data = subject?.classes.map((item) => ({
         classWithoutGroupId: item?.classWithoutGroupId,
@@ -142,10 +153,11 @@ const SubjectForm = ({
   // DATA FOR SELECT INPUTS ---------------------------------------------------------------------------------||
 
   // Knowledge Areas select
-  const { data: knowledgeAreasQuery, isLoading: areKnowledgeAreasLoading } = useKnowledgeAreas({
-    center: program?.centers[0],
-    options: { enabled: program?.centers[0]?.length > 0 },
-  });
+  const { data: knowledgeAreasQuery, isLoading: areKnowledgeAreasLoading } =
+    useKnowledgeAreas({
+      center: program?.centers[0],
+      options: { enabled: program?.centers[0]?.length > 0 },
+    });
 
   const knowledgeAreasSelectData = useMemo(() => {
     if (knowledgeAreasQuery?.length) {
@@ -159,10 +171,11 @@ const SubjectForm = ({
   }, [knowledgeAreasQuery]);
 
   // SubjectTypes select
-  const { data: subjectTypesQuery, isLoading: areSubjectTypesLoading } = useSubjectTypes({
-    center: program?.centers[0],
-    options: { enabled: program?.centers[0]?.length > 0 },
-  });
+  const { data: subjectTypesQuery, isLoading: areSubjectTypesLoading } =
+    useSubjectTypes({
+      center: program?.centers[0],
+      options: { enabled: program?.centers[0]?.length > 0 },
+    });
 
   const subjectTypesSelectData = useMemo(() => {
     if (subjectTypesQuery?.length) {
@@ -189,7 +202,10 @@ const SubjectForm = ({
   // Substages Select
   const substagesSelectData = useMemo(() => {
     if (!isEmpty(program)) {
-      return program.substages.map((item) => ({ label: item.name, value: item.id }));
+      return program.substages.map((item) => ({
+        label: item.name,
+        value: item.id,
+      }));
     }
     return [];
   }, [program]);
@@ -202,31 +218,41 @@ const SubjectForm = ({
   // Effects ---------------------------------------------------------------------------------||
   useEffect(() => {
     if (coursesFormValue?.length) {
-      const newValue = program.courses.filter((course) => coursesFormValue.includes(course.id));
+      const newValue = program.courses.filter((course) =>
+        coursesFormValue.includes(course.id)
+      );
       setSelectedCourses(cloneDeep(newValue));
     }
   }, [coursesFormValue]);
 
   useEffect(() => {
     if (isEditing && subject) {
-      const fields = ['name', 'internalId', 'color', 'image', 'icon', 'substage', 'credits'];
+      const fields = [
+        "name",
+        "internalId",
+        "color",
+        "image",
+        "icon",
+        "substage",
+        "credits",
+      ];
       fields.forEach((field) => {
         form.setValue(field, subject[field]);
       });
 
-      form.setValue('subjectType', subject.subjectType?.id);
-      form.setValue('knowledgeArea', subject.knowledgeArea?.id);
+      form.setValue("subjectType", subject.subjectType?.id);
+      form.setValue("knowledgeArea", subject.knowledgeArea?.id);
 
       const classrooms = transformClassesData(subject.classes);
-      form.setValue('classrooms', classrooms);
+      form.setValue("classrooms", classrooms);
 
       if (Array.isArray(subject.courses)) {
         form.setValue(
-          'courses',
+          "courses",
           subject.courses.map((course) => course.id)
         );
       } else if (subject.courses) {
-        form.setValue('courses', subject.courses.id);
+        form.setValue("courses", subject.courses.id);
       }
     }
   }, [isEditing, subject]);
@@ -235,11 +261,19 @@ const SubjectForm = ({
     <>
       <LoadingOverlay visible={isLoading} />
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <ContextContainer sx={{ marginBottom: 100 }} direction="column" spacing={8}>
-          <Title className={classes.title}>{formLabels?.basicData?.title}</Title>
+        <ContextContainer
+          sx={{ marginBottom: 100 }}
+          direction="column"
+          spacing={8}
+        >
+          <Title className={classes.title}>
+            {formLabels?.basicData?.title}
+          </Title>
 
           <ContextContainer noFlex spacing={4}>
-            <Title className={classes.sectionTitle}>{formLabels?.basicData?.presentation}</Title>
+            <Title className={classes.sectionTitle}>
+              {formLabels?.basicData?.presentation}
+            </Title>
             <Stack className={classes.horizontalInputsContainer}>
               <Controller
                 name="name"
@@ -288,7 +322,7 @@ const SubjectForm = ({
                   <ColorInput
                     {...field}
                     label={formLabels?.basicData?.color}
-                    placeholder={'#000000'}
+                    placeholder={"#000000"}
                     compact={false}
                     manual={false}
                     contentStyle={{ width: 200 }}
@@ -314,16 +348,20 @@ const SubjectForm = ({
                   <ImagePicker
                     {...field}
                     objectFit="contain"
-                    acceptedFileTypes={['image/svg+xml']}
+                    acceptedFileTypes={["image/svg+xml"]}
                   />
                 </InputWrapper>
               )}
             />
           </ContextContainer>
 
-          {(program?.hasKnowledgeAreas || program?.hasSubjectTypes || program?.credits) && (
+          {(program?.hasKnowledgeAreas ||
+            program?.hasSubjectTypes ||
+            program?.credits) && (
             <ContextContainer noFlex spacing={4}>
-              <Title className={classes.sectionTitle}>{formLabels?.features?.title}</Title>
+              <Title className={classes.sectionTitle}>
+                {formLabels?.features?.title}
+              </Title>
               <Stack className={classes.horizontalInputsContainer}>
                 {program?.hasKnowledgeAreas && (
                   <Controller
@@ -338,7 +376,9 @@ const SubjectForm = ({
                         data={knowledgeAreasSelectData}
                         label={formLabels?.features?.knowledgeArea}
                         sx={{ width: 216 }}
-                        placeholder={formLabels?.features?.knowledgeAreaPlaceholder}
+                        placeholder={
+                          formLabels?.features?.knowledgeAreaPlaceholder
+                        }
                         error={fieldState.error}
                         required
                       />
@@ -378,7 +418,9 @@ const SubjectForm = ({
                         label={formLabels?.features?.numberOfCredits}
                         min={0}
                         sx={{ width: 216 }}
-                        placeholder={formLabels?.features?.numberOfCreditsPlaceholder}
+                        placeholder={
+                          formLabels?.features?.numberOfCreditsPlaceholder
+                        }
                         error={fieldState.error}
                         required
                       />
@@ -390,7 +432,9 @@ const SubjectForm = ({
           )}
 
           <ContextContainer noFlex spacing={4}>
-            <Title className={classes.sectionTitle}>{formLabels?.offer?.title}</Title>
+            <Title className={classes.sectionTitle}>
+              {formLabels?.offer?.title}
+            </Title>
             <Stack className={classes.horizontalInputsContainer}>
               {allowStructuralEdition ? (
                 <>
@@ -408,7 +452,10 @@ const SubjectForm = ({
                             label={formLabels?.offer?.coursesWhereItIsOffered}
                             data={coursesSelectData}
                             sx={{ width: 216 }}
-                            placeholder={formLabels?.offer?.coursesWhereItIsOfferedPlaceholder}
+                            placeholder={
+                              formLabels?.offer
+                                ?.coursesWhereItIsOfferedPlaceholder
+                            }
                             error={fieldState.error}
                             required
                             autoSelectOneOption
@@ -421,7 +468,10 @@ const SubjectForm = ({
                           label={formLabels?.offer?.coursesWhereItIsOffered}
                           data={coursesSelectData}
                           sx={{ width: 216 }}
-                          placeholder={formLabels?.offer?.coursesWhereItIsOfferedPlaceholder}
+                          placeholder={
+                            formLabels?.offer
+                              ?.coursesWhereItIsOfferedPlaceholder
+                          }
                           error={fieldState.error}
                           required
                         />
@@ -439,14 +489,19 @@ const SubjectForm = ({
                         {...field}
                         label={formLabels?.offer?.substageWhereItIsOffered}
                         data={[
-                          { label: localizations?.labels?.noSubstages, value: 'all' },
+                          {
+                            label: localizations?.labels?.noSubstages,
+                            value: "all",
+                          },
                           ...substagesSelectData,
                         ]}
                         sx={{ width: 216 }}
                         error={fieldState.error}
                         required
                         autoSelectOneOption
-                        placeholder={formLabels?.offer?.substageWhereItIsOfferedPlaceholder}
+                        placeholder={
+                          formLabels?.offer?.substageWhereItIsOfferedPlaceholder
+                        }
                       />
                     )}
                   />
@@ -455,14 +510,18 @@ const SubjectForm = ({
                 <Stack direction="column">
                   <ReadOnlyField
                     label={formLabels?.offer?.coursesWhereItIsOffered}
-                    value={subject?.courses?.map((crs) => `${crs.index ?? ''}º`)?.join(', ')}
+                    value={subject?.courses
+                      ?.map((crs) => `${crs.index ?? ""}º`)
+                      ?.join(", ")}
                   />
                   <ReadOnlyField
                     label={formLabels?.offer?.substageWhereItIsOffered}
                     value={
-                      subject?.substage === 'all'
+                      subject?.substage === "all"
                         ? localizations?.labels?.noSubstages
-                        : substagesSelectData.find((ss) => ss.value === subject.substage)?.label
+                        : substagesSelectData.find(
+                            (ss) => ss.value === subject.substage
+                          )?.label
                     }
                   />
                 </Stack>
@@ -471,7 +530,9 @@ const SubjectForm = ({
           </ContextContainer>
 
           <ContextContainer noFlex spacing={4}>
-            <Title className={classes.sectionTitle}>{formLabels?.classroomsSetup?.title}</Title>
+            <Title className={classes.sectionTitle}>
+              {formLabels?.classroomsSetup?.title}
+            </Title>
             {allowStructuralEdition ? (
               <Controller
                 name="classrooms"
@@ -486,9 +547,11 @@ const SubjectForm = ({
                     {programReferenceGroups?.length ? (
                       <Stack direction="column" spacing={4}>
                         <Switch
-                          label={formLabels?.classroomsSetup?.disableReferenceGroups}
+                          label={
+                            formLabels?.classroomsSetup?.disableReferenceGroups
+                          }
                           onChange={(val) => {
-                            form.setValue('classrooms', []);
+                            form.setValue("classrooms", []);
                             setDisableReferenceGroups(val);
                           }}
                           checked={disableReferenceGroups}
@@ -554,7 +617,9 @@ const SubjectForm = ({
                       <ReferenceGroupsClassroomsSetup
                         {...field}
                         groups={programReferenceGroups}
-                        usedGroups={subject?.classes?.map((cls) => cls.groups?.id)}
+                        usedGroups={subject?.classes?.map(
+                          (cls) => cls.groups?.id
+                        )}
                         selectedCourses={selectedCourses}
                         isMultiCourse={!program?.sequentialCourses}
                         refGroupdisabled={!coursesFormValue?.length}
@@ -573,7 +638,7 @@ const SubjectForm = ({
           </ContextContainer>
         </ContextContainer>
         <FooterContainer scrollRef={scrollRef}>
-          <Stack justifyContent={'space-between'} fullWidth>
+          <Stack justifyContent={"space-between"} fullWidth>
             <Button variant="outline" type="button" onClick={onCancel}>
               {formLabels?.cancel}
             </Button>

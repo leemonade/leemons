@@ -1,10 +1,12 @@
-import { useMemo } from 'react';
-import { useUserProfile } from '@users/hooks';
-import useAcademicProfiles from './useAcademicProfiles';
+import { useMemo } from "react";
+import { useUserProfile } from "@users/hooks";
+import useAcademicProfiles from "./useAcademicProfiles";
 
 export default function useIsAcademicProfile() {
-  const { isLoading: academicProfilesAreLoading, ...profiles } = useAcademicProfiles();
-  const { data: userProfile, isLoading: userProfileIsLoading } = useUserProfile();
+  const { isLoading: academicProfilesAreLoading, ...profiles } =
+    useAcademicProfiles();
+  const { data: userProfile, isLoading: userProfileIsLoading } =
+    useUserProfile();
 
   const profilesValues = useMemo(() => Object.values(profiles), [profiles]);
 
@@ -14,5 +16,10 @@ export default function useIsAcademicProfile() {
     }
 
     return profilesValues.includes(userProfile);
-  }, [profilesValues, userProfile, academicProfilesAreLoading, userProfileIsLoading]);
+  }, [
+    profilesValues,
+    userProfile,
+    academicProfilesAreLoading,
+    userProfileIsLoading,
+  ]);
 }

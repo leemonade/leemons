@@ -1,4 +1,4 @@
-import propTypes from 'prop-types';
+import propTypes from "prop-types";
 
 export const NODE_RENDERER_PROP_TYPES = {
   node: propTypes.object.isRequired,

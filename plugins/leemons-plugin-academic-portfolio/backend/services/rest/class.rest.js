@@ -7,49 +7,60 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { LeemonsValidator } = require('@leemons/validator');
+} = require("@leemons/middlewares");
+const { LeemonsValidator } = require("@leemons/validator");
 
-const { getUserEnrollments, getClassPublicData } = require('../../core/classes');
-const { addClass } = require('../../core/classes/addClass');
-const { emitUpdateEnrollmentEvent } = require('../../core/classes/addClassStudents');
+const {
+  getUserEnrollments,
+  getClassPublicData,
+} = require("../../core/classes");
+const { addClass } = require("../../core/classes/addClass");
+const {
+  emitUpdateEnrollmentEvent,
+} = require("../../core/classes/addClassStudents");
 const {
   addClassStudentsMany,
   prepareAddClassStudentsMany,
-} = require('../../core/classes/addClassStudentsMany');
-const { addClassTeachersMany } = require('../../core/classes/addClassTeachersMany');
-const { addInstanceClass } = require('../../core/classes/addInstanceClass');
-const { classByIds } = require('../../core/classes/classByIds');
-const { classDetailForDashboard } = require('../../core/classes/classDetailForDashboard');
-const { haveClasses } = require('../../core/classes/haveClasses');
-const { listClasses } = require('../../core/classes/listClasses');
-const { listSessionClasses } = require('../../core/classes/listSessionClasses');
-const { listStudentClasses } = require('../../core/classes/listStudentClasses');
-const { listSubjectClasses } = require('../../core/classes/listSubjectClasses');
-const { listTeacherClasses } = require('../../core/classes/listTeacherClasses');
-const { removeClassesByIds } = require('../../core/classes/removeClassesByIds');
-const { remove: removeStudentFromClass } = require('../../core/classes/student/remove');
+} = require("../../core/classes/addClassStudentsMany");
+const {
+  addClassTeachersMany,
+} = require("../../core/classes/addClassTeachersMany");
+const { addInstanceClass } = require("../../core/classes/addInstanceClass");
+const { classByIds } = require("../../core/classes/classByIds");
+const {
+  classDetailForDashboard,
+} = require("../../core/classes/classDetailForDashboard");
+const { haveClasses } = require("../../core/classes/haveClasses");
+const { listClasses } = require("../../core/classes/listClasses");
+const { listSessionClasses } = require("../../core/classes/listSessionClasses");
+const { listStudentClasses } = require("../../core/classes/listStudentClasses");
+const { listSubjectClasses } = require("../../core/classes/listSubjectClasses");
+const { listTeacherClasses } = require("../../core/classes/listTeacherClasses");
+const { removeClassesByIds } = require("../../core/classes/removeClassesByIds");
+const {
+  remove: removeStudentFromClass,
+} = require("../../core/classes/student/remove");
 const {
   prepareUpdateClass,
   executeUpdateClass,
   emitUpdateClassEvent,
-} = require('../../core/classes/updateClass');
-const { updateClassMany } = require('../../core/classes/updateClassMany');
-const { validateUpdateClass } = require('../../validations/forms');
+} = require("../../core/classes/updateClass");
+const { updateClassMany } = require("../../core/classes/updateClassMany");
+const { validateUpdateClass } = require("../../validations/forms");
 
 /** @type {ServiceSchema} */
 module.exports = {
   haveClassesRest: {
     rest: {
-      path: '/have',
-      method: 'GET',
+      path: "/have",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -61,15 +72,15 @@ module.exports = {
   },
   postClassRest: {
     rest: {
-      path: '/',
-      method: 'POST',
+      path: "/",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'create'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "create"],
           },
         },
       }),
@@ -81,15 +92,15 @@ module.exports = {
   },
   putClassRest: {
     rest: {
-      path: '/',
-      method: 'PUT',
+      path: "/",
+      method: "PUT",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'create', 'update'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),
@@ -97,14 +108,22 @@ module.exports = {
     async handler(ctx) {
       await validateUpdateClass({ data: ctx.params, ctx });
 
-      const { nClass, program } = await prepareUpdateClass({ data: ctx.params, ctx });
+      const { nClass, program } = await prepareUpdateClass({
+        data: ctx.params,
+        ctx,
+      });
 
-      executeUpdateClass({ data: ctx.params, class: nClass, program, ctx }).catch((error) => {
+      executeUpdateClass({
+        data: ctx.params,
+        class: nClass,
+        program,
+        ctx,
+      }).catch((error) => {
         emitUpdateClassEvent({
           class: nClass,
           ctx,
-          message: 'CLASS_UPDATE_ERROR',
-          status: 'error',
+          message: "CLASS_UPDATE_ERROR",
+          status: "error",
           error,
         });
       });
@@ -114,15 +133,15 @@ module.exports = {
   },
   putClassManyRest: {
     rest: {
-      path: '/many',
-      method: 'PUT',
+      path: "/many",
+      method: "PUT",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'create', 'update'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),
@@ -135,15 +154,15 @@ module.exports = {
   },
   postClassInstanceRest: {
     rest: {
-      path: '/instance',
-      method: 'POST',
+      path: "/instance",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'create', 'update'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),
@@ -155,28 +174,28 @@ module.exports = {
   },
   listClassRest: {
     rest: {
-      path: '/',
-      method: 'GET',
+      path: "/",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "view"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-          program: { type: 'string' },
+          page: { type: ["number", "string"] },
+          size: { type: ["number", "string"] },
+          program: { type: "string" },
         },
-        required: ['page', 'size', 'program'],
+        required: ["page", "size", "program"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -195,28 +214,28 @@ module.exports = {
   },
   listSubjectClassesRest: {
     rest: {
-      path: '/subjects/class',
-      method: 'GET',
+      path: "/subjects/class",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "view"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-          subject: { type: 'string' },
+          page: { type: ["number", "string"] },
+          size: { type: ["number", "string"] },
+          subject: { type: "string" },
         },
-        required: ['page', 'size', 'subject'],
+        required: ["page", "size", "subject"],
         additionalProperties: false,
       });
 
@@ -236,28 +255,28 @@ module.exports = {
   },
   listMultipleSubjectsClassesRest: {
     rest: {
-      path: '/subjects/multiple',
-      method: 'POST',
+      path: "/subjects/multiple",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "view"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-          subjects: { type: 'array' },
+          page: { type: ["number", "string"] },
+          size: { type: ["number", "string"] },
+          subjects: { type: "array" },
         },
-        required: ['page', 'size', 'subjects'],
+        required: ["page", "size", "subjects"],
         additionalProperties: false,
       });
 
@@ -277,15 +296,15 @@ module.exports = {
   },
   postClassStudentsRest: {
     rest: {
-      path: '/students',
-      method: 'POST',
+      path: "/students",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'create', 'update'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),
@@ -298,15 +317,15 @@ module.exports = {
   },
   postClassTeachersRest: {
     rest: {
-      path: '/teachers',
-      method: 'POST',
+      path: "/teachers",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'create', 'update'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),
@@ -318,27 +337,27 @@ module.exports = {
   },
   listStudentClassesRest: {
     rest: {
-      path: '/student/:id',
-      method: 'GET',
+      path: "/student/:id",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "view"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
+          page: { type: ["number", "string"] },
+          size: { type: ["number", "string"] },
         },
-        required: ['page', 'size'],
+        required: ["page", "size"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.param)) {
@@ -356,28 +375,28 @@ module.exports = {
   },
   listTeacherClassesRest: {
     rest: {
-      path: '/teacher/:id',
-      method: 'GET',
+      path: "/teacher/:id",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "view"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          id: { type: 'string' },
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
+          id: { type: "string" },
+          page: { type: ["number", "string"] },
+          size: { type: ["number", "string"] },
         },
-        required: ['page', 'size', 'id'],
+        required: ["page", "size", "id"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -395,35 +414,39 @@ module.exports = {
   },
   removeClassRest: {
     rest: {
-      path: '/:id',
-      method: 'DELETE',
+      path: "/:id",
+      method: "DELETE",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'update'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "update"],
           },
         },
       }),
     ],
     async handler(ctx) {
-      const data = await removeClassesByIds({ ids: ctx.params.id, soft: true, ctx });
+      const data = await removeClassesByIds({
+        ids: ctx.params.id,
+        soft: true,
+        ctx,
+      });
       return { status: 200, data };
     },
   },
   removeStudentRest: {
     rest: {
-      path: '/remove/students',
-      method: 'POST',
+      path: "/remove/students",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'delete'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "delete"],
           },
         },
       }),
@@ -439,8 +462,8 @@ module.exports = {
   },
   listSessionClassesRest: {
     rest: {
-      path: '/session',
-      method: 'POST',
+      path: "/session",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -450,14 +473,16 @@ module.exports = {
   },
   classDetailForDashboardRest: {
     rest: {
-      path: '/dashboard/:id',
-      method: 'GET',
+      path: "/dashboard/:id",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const data = await classDetailForDashboard({
         classId: ctx.params.id,
-        teacherType: ctx.params.teacherType ? JSON.parse(ctx.params.teacherType) : undefined,
+        teacherType: ctx.params.teacherType
+          ? JSON.parse(ctx.params.teacherType)
+          : undefined,
         ctx,
       });
       return { status: 200, ...data };
@@ -466,8 +491,8 @@ module.exports = {
   classByIdsRest: {
     rest: {
       // raw porque a diferencia del get a '/' no utiliza mongoDBPaginate();
-      path: '/raw-list',
-      method: 'GET',
+      path: "/raw-list",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -483,33 +508,38 @@ module.exports = {
   },
   getUserEnrollments: {
     rest: {
-      path: '/user-enrollments',
-      method: 'POST',
+      path: "/user-enrollments",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "view"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          userAgentIds: { type: 'array' },
-          centerId: { type: 'string' },
-          contactUserAgentId: { type: 'string' },
+          userAgentIds: { type: "array" },
+          centerId: { type: "string" },
+          contactUserAgentId: { type: "string" },
         },
-        required: ['userAgentIds', 'centerId'],
+        required: ["userAgentIds", "centerId"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
         const { userAgentIds, centerId, contactUserAgentId } = ctx.params;
-        const data = await getUserEnrollments({ userAgentIds, centerId, contactUserAgentId, ctx });
+        const data = await getUserEnrollments({
+          userAgentIds,
+          centerId,
+          contactUserAgentId,
+          ctx,
+        });
         return { status: 200, data };
       }
       throw validator.error;
@@ -517,8 +547,8 @@ module.exports = {
   },
   classPublicDataRest: {
     rest: {
-      path: '/:id/public-data',
-      method: 'GET',
+      path: "/:id/public-data",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -528,8 +558,8 @@ module.exports = {
   },
   classPublicDataManyRest: {
     rest: {
-      path: '/public-data',
-      method: 'POST',
+      path: "/public-data",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

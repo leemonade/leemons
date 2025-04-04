@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import React from "react";
+import PropTypes from "prop-types";
+import { Controller, useForm } from "react-hook-form";
 import {
   Alert,
   Box,
@@ -10,8 +10,8 @@ import {
   Stack,
   TextInput,
   Title,
-} from '@bubbles-ui/components';
-import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
+} from "@bubbles-ui/components";
+import { SelectUsersForAddToClasses } from "./SelectUsersForAddToClasses";
 
 const TreeGroupDetail = ({
   duplicateMode,
@@ -41,7 +41,7 @@ const TreeGroupDetail = ({
   }, [group]);
 
   function onChangeAddUsers(e) {
-    setValue('students', e);
+    setValue("students", e);
   }
 
   function onDisableSave(e) {
@@ -54,9 +54,15 @@ const TreeGroupDetail = ({
         <ContextContainer direction="column" fullWidth>
           <Title order={4}>
             {/* eslint-disable-next-line no-nested-ternary */}
-            {duplicateMode ? messages.duplicateTitle : group ? messages.title : messages.titleNew}
+            {duplicateMode
+              ? messages.duplicateTitle
+              : group
+                ? messages.title
+                : messages.titleNew}
           </Title>
-          {duplicateMode ? <Alert closeable={false}>{messages.duplicateWarning}</Alert> : null}
+          {duplicateMode ? (
+            <Alert closeable={false}>{messages.duplicateWarning}</Alert>
+          ) : null}
 
           <Box>
             <Controller
@@ -66,17 +72,17 @@ const TreeGroupDetail = ({
                 required: (program.maxGroupAbbreviationIsOnlyNumbers
                   ? messages.groupNumbers
                   : messages.groupAny
-                ).replace('{max}', program.maxGroupAbbreviation),
+                ).replace("{max}", program.maxGroupAbbreviation),
                 pattern: {
                   message: (program.maxGroupAbbreviationIsOnlyNumbers
                     ? messages.groupNumbers
                     : messages.groupAny
-                  ).replace('{max}', program.maxGroupAbbreviation),
+                  ).replace("{max}", program.maxGroupAbbreviation),
                   value: new RegExp(
-                    `^${program.maxGroupAbbreviationIsOnlyNumbers ? '[0-9]' : `\\S`}{${
+                    `^${program.maxGroupAbbreviationIsOnlyNumbers ? "[0-9]" : `\\S`}{${
                       program.maxGroupAbbreviation
                     }}$`,
-                    'g'
+                    "g"
                   ),
                 },
               }}
@@ -150,7 +156,9 @@ const TreeGroupDetail = ({
                 <Controller
                   control={control}
                   name="subjects"
-                  render={({ field }) => React.cloneElement(selectSubjectsNode, { ...field })}
+                  render={({ field }) =>
+                    React.cloneElement(selectSubjectsNode, { ...field })
+                  }
                 />
               </Box>
             </>

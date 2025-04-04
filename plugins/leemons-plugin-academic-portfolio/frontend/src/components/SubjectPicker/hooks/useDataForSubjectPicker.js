@@ -1,15 +1,15 @@
-import { useMemo } from 'react';
-import { useWatch } from 'react-hook-form';
+import { useMemo } from "react";
+import { useWatch } from "react-hook-form";
 
-import { filter, find, map, uniq } from 'lodash';
+import { filter, find, map, uniq } from "lodash";
 
-import { useProgramsForSubjectPicker } from './useProgramsForSubjectPicker';
-import { useSubjectsForSubjectPicker } from './useSubjectsForSubjectPicker';
+import { useProgramsForSubjectPicker } from "./useProgramsForSubjectPicker";
+import { useSubjectsForSubjectPicker } from "./useSubjectsForSubjectPicker";
 
 export function useDataForSubjectPicker({
   subjects,
   control,
-  teacherType = ['main-teacher', 'associate-teacher'],
+  teacherType = ["main-teacher", "associate-teacher"],
 }) {
   const subjectsData = useSubjectsForSubjectPicker({
     subjects,
@@ -17,7 +17,7 @@ export function useDataForSubjectPicker({
   });
 
   const programsData = useProgramsForSubjectPicker({
-    programIds: uniq(map(subjectsData, 'program')),
+    programIds: uniq(map(subjectsData, "program")),
   });
 
   /*
@@ -26,7 +26,7 @@ export function useDataForSubjectPicker({
 
   const [program, course, selectedSubjects] = useWatch({
     control,
-    name: ['program', 'course', 'selectedSubjects'],
+    name: ["program", "course", "selectedSubjects"],
   });
 
   const selectedProgram = useMemo(
@@ -40,11 +40,13 @@ export function useDataForSubjectPicker({
 
   const subjectsDataOmittingSelected = useMemo(() => {
     const selectedSubjectsIds = new Set(selectedSubjects);
-    return subjectsData.filter((subjectData) => !selectedSubjectsIds.has(subjectData.id));
+    return subjectsData.filter(
+      (subjectData) => !selectedSubjectsIds.has(subjectData.id)
+    );
   }, [subjectsData, selectedSubjects]);
 
   const programsHavingAvailableSubject = useMemo(
-    () => new Set(map(subjectsDataOmittingSelected, 'program')),
+    () => new Set(map(subjectsDataOmittingSelected, "program")),
     [subjectsDataOmittingSelected]
   );
 
@@ -64,7 +66,9 @@ export function useDataForSubjectPicker({
   const programs = useMemo(
     () =>
       map(
-        filter(programsData, (programData) => programsHavingAvailableSubject.has(programData.id)),
+        filter(programsData, (programData) =>
+          programsHavingAvailableSubject.has(programData.id)
+        ),
         (p) => ({ label: p.name, value: p.id })
       ),
     [programsData, programsHavingAvailableSubject]
@@ -87,7 +91,9 @@ export function useDataForSubjectPicker({
       (subject) => subject?.program === program
     );
     if (selectedProgram?.hasCourses) {
-      subjectsFiltered = subjectsFiltered.filter((subject) => subject?.courses?.includes(course));
+      subjectsFiltered = subjectsFiltered.filter((subject) =>
+        subject?.courses?.includes(course)
+      );
     }
 
     return map(subjectsFiltered, (subject) => ({

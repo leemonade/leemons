@@ -3,9 +3,9 @@ import {
   duplicateSubjectRequest,
   removeSubjectRequest,
   updateSubjectRequest,
-} from '@academic-portfolio/request';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getProgramSubjectsKey } from '../keys/programSubjects';
+} from "@academic-portfolio/request";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getProgramSubjectsKey } from "../keys/programSubjects";
 
 export function useUpdateSubject() {
   const queryClient = useQueryClient();

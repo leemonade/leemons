@@ -1,12 +1,19 @@
-import { Box, NumberInput, Switch, TableInput, TextInput, Title } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
-import React, { forwardRef } from 'react';
+import {
+  Box,
+  NumberInput,
+  Switch,
+  TableInput,
+  TextInput,
+  Title,
+} from "@bubbles-ui/components";
+import PropTypes from "prop-types";
+import React, { forwardRef } from "react";
 
 const SwitchInput = forwardRef(({ label, value, ...props }, ref) => (
   <Switch {...props} ref={ref} checked={!!value} label={label} />
 ));
 
-SwitchInput.displayName = '@academic-portfolio/components/SwitchInput';
+SwitchInput.displayName = "@academic-portfolio/components/SwitchInput";
 SwitchInput.propTypes = {
   value: PropTypes.bool,
   label: PropTypes.string,
@@ -22,7 +29,7 @@ function SubjectTypesTable({
   const columns = [];
   columns.push({
     Header: messages.name,
-    accessor: 'name',
+    accessor: "name",
     input: {
       node: <TextInput required />,
       rules: { required: messages.nameRequired },
@@ -31,14 +38,14 @@ function SubjectTypesTable({
   if (program.credits) {
     columns.push({
       Header: messages.creditsCourse,
-      accessor: 'credits_course',
+      accessor: "credits_course",
       input: {
         node: <NumberInput />,
       },
     });
     columns.push({
       Header: messages.creditsProgram,
-      accessor: 'credits_program',
+      accessor: "credits_program",
       input: {
         node: <NumberInput />,
       },
@@ -47,7 +54,7 @@ function SubjectTypesTable({
 
   columns.push({
     Header: messages.groupVisibility,
-    accessor: 'groupVisibility',
+    accessor: "groupVisibility",
     input: {
       node: <SwitchInput label={messages.groupVisibilityLabel} />,
     },

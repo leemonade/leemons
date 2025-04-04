@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function getByClassAndUserAgent({ class: _class, userAgent, ctx }) {
   return ctx.tx.db.ClassStudent.find({

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 import {
   Avatar,
@@ -8,30 +8,34 @@ import {
   Title,
   Stack,
   ActionButton,
-} from '@bubbles-ui/components';
-import { ViewOnIcon, PluginComunicaIcon } from '@bubbles-ui/icons/outline';
-import { LocaleDate } from '@common';
-import { useComunica } from '@comunica/context';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { USER_DETAIL_VIEWS } from '@users/components/UserDetail';
-import { UserDetailDrawer } from '@users/components/UserDetailDrawer';
-import { compareBySurnamesAndName } from '@users/helpers/compareUsers';
-import getUserFullName from '@users/helpers/getUserFullName';
-import { useUserAgentsInfo } from '@users/hooks';
-import { getSessionCenter, getSessionProfile, getSessionUserAgent } from '@users/session';
-import { forEach } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { ViewOnIcon, PluginComunicaIcon } from "@bubbles-ui/icons/outline";
+import { LocaleDate } from "@common";
+import { useComunica } from "@comunica/context";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { USER_DETAIL_VIEWS } from "@users/components/UserDetail";
+import { UserDetailDrawer } from "@users/components/UserDetailDrawer";
+import { compareBySurnamesAndName } from "@users/helpers/compareUsers";
+import getUserFullName from "@users/helpers/getUserFullName";
+import { useUserAgentsInfo } from "@users/hooks";
+import {
+  getSessionCenter,
+  getSessionProfile,
+  getSessionUserAgent,
+} from "@users/session";
+import { forEach } from "lodash";
+import PropTypes from "prop-types";
 
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
 
 function getViewMode(profile) {
-  if (profile?.sysName === 'teacher') return USER_DETAIL_VIEWS.TEACHER;
-  if (profile?.sysName === 'admin') return USER_DETAIL_VIEWS.ADMIN;
+  if (profile?.sysName === "teacher") return USER_DETAIL_VIEWS.TEACHER;
+  if (profile?.sysName === "admin") return USER_DETAIL_VIEWS.ADMIN;
   return USER_DETAIL_VIEWS.STUDENT;
 }
 
 function ClassDetailWidget({ classe }) {
-  const [t] = useTranslateLoader(prefixPN('classDetailWidget'));
+  const [t] = useTranslateLoader(prefixPN("classDetailWidget"));
   const center = getSessionCenter();
   const profile = getSessionProfile();
   const userAgentId = getSessionUserAgent();
@@ -41,9 +45,12 @@ function ClassDetailWidget({ classe }) {
 
   const { openUserRoom, isChatEnabled } = useComunica();
 
-  const { data: userInfo, isLoading: userInfoLoading } = useUserAgentsInfo([userAgentId], {
-    enabled: !!userAgentId,
-  });
+  const { data: userInfo, isLoading: userInfoLoading } = useUserAgentsInfo(
+    [userAgentId],
+    {
+      enabled: !!userAgentId,
+    }
+  );
 
   const { user } = userInfo?.[0] ?? {};
 
@@ -62,21 +69,21 @@ function ClassDetailWidget({ classe }) {
 
   const tableHeaders = [
     {
-      Header: ' ',
-      accessor: 'avatar',
+      Header: " ",
+      accessor: "avatar",
       style: {
         width: 80,
       },
     },
     {
-      Header: t('surnameHeader'),
-      accessor: 'surnames',
-      className: 'text-left',
+      Header: t("surnameHeader"),
+      accessor: "surnames",
+      className: "text-left",
     },
     {
-      Header: t('nameHeader'),
-      accessor: 'name',
-      className: 'text-left',
+      Header: t("nameHeader"),
+      accessor: "name",
+      className: "text-left",
     },
     /*
     {
@@ -86,13 +93,13 @@ function ClassDetailWidget({ classe }) {
     },
     */
     {
-      Header: t('emailHeader'),
-      accessor: 'email',
-      className: 'text-left',
+      Header: t("emailHeader"),
+      accessor: "email",
+      className: "text-left",
     },
     {
-      Header: '',
-      accessor: 'actions',
+      Header: "",
+      accessor: "actions",
       style: {
         width: 20,
       },
@@ -114,7 +121,9 @@ function ClassDetailWidget({ classe }) {
         avatar: (
           <Avatar
             image={teacher.teacher.user.avatar}
-            fullName={getUserFullName(teacher.teacher.user, { singleSurname: true })}
+            fullName={getUserFullName(teacher.teacher.user, {
+              singleSurname: true,
+            })}
           />
         ),
         birthdate: <LocaleDate date={teacher.teacher.user.birthdate} />,
@@ -123,17 +132,19 @@ function ClassDetailWidget({ classe }) {
             <ActionButton
               icon={<ViewOnIcon width={18} height={18} />}
               onClick={() => {
-                handleOnClickRow(teacher.teacher.user.id, 'teacher');
+                handleOnClickRow(teacher.teacher.user.id, "teacher");
               }}
             />
-            {isChatEnabled && !userInfoLoading && user?.id !== teacher.teacher.user.id && (
-              <ActionButton
-                icon={<PluginComunicaIcon width={18} height={18} />}
-                onClick={() => {
-                  openUserRoom(teacher.teacher.id);
-                }}
-              />
-            )}
+            {isChatEnabled &&
+              !userInfoLoading &&
+              user?.id !== teacher.teacher.user.id && (
+                <ActionButton
+                  icon={<PluginComunicaIcon width={18} height={18} />}
+                  onClick={() => {
+                    openUserRoom(teacher.teacher.id);
+                  }}
+                />
+              )}
           </Stack>
         ),
       });
@@ -154,17 +165,19 @@ function ClassDetailWidget({ classe }) {
             <ActionButton
               icon={<ViewOnIcon width={18} height={18} />}
               onClick={() => {
-                handleOnClickRow(student.user.id, 'student');
+                handleOnClickRow(student.user.id, "student");
               }}
             />
-            {isChatEnabled && !userInfoLoading && user?.id !== student.user.id && (
-              <ActionButton
-                icon={<PluginComunicaIcon width={18} height={18} />}
-                onClick={() => {
-                  openUserRoom(student.id);
-                }}
-              />
-            )}
+            {isChatEnabled &&
+              !userInfoLoading &&
+              user?.id !== student.user.id && (
+                <ActionButton
+                  icon={<PluginComunicaIcon width={18} height={18} />}
+                  onClick={() => {
+                    openUserRoom(student.id);
+                  }}
+                />
+              )}
           </Stack>
         ),
       });
@@ -188,12 +201,12 @@ function ClassDetailWidget({ classe }) {
           viewMode={getViewMode(profile)}
         />
         <Box>
-          <Title order={4}>{t('teachers')}</Title>
+          <Title order={4}>{t("teachers")}</Title>
           <Box
             sx={(theme) => ({
               marginTop: theme.spacing[4],
               padding: theme.spacing[6],
-              backgroundColor: 'white',
+              backgroundColor: "white",
               borderRadius: 4,
             })}
           >
@@ -201,12 +214,12 @@ function ClassDetailWidget({ classe }) {
           </Box>
         </Box>
         <Box>
-          <Title order={4}>{t('students')}</Title>
+          <Title order={4}>{t("students")}</Title>
           <Box
             sx={(theme) => ({
               marginTop: theme.spacing[4],
               padding: theme.spacing[6],
-              backgroundColor: 'white',
+              backgroundColor: "white",
               borderRadius: 4,
             })}
           >

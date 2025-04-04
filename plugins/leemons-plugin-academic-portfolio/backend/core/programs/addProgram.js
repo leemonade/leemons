@@ -1,16 +1,19 @@
-const { LeemonsError } = require('@leemons/error');
-const _ = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const _ = require("lodash");
 
-const { validateAddProgram, validateSubstagesFormat } = require('../../validations/forms');
-const { addCourse } = require('../courses/addCourse');
-const { addNextCourseIndex } = require('../courses/addNextCourseIndex');
-const { addCycle } = require('../cycle/addCycle');
-const { addNextGroupIndex } = require('../groups');
-const { addGroup } = require('../groups/addGroup');
-const { addSubstage } = require('../substages/addSubstage');
+const {
+  validateAddProgram,
+  validateSubstagesFormat,
+} = require("../../validations/forms");
+const { addCourse } = require("../courses/addCourse");
+const { addNextCourseIndex } = require("../courses/addNextCourseIndex");
+const { addCycle } = require("../cycle/addCycle");
+const { addNextGroupIndex } = require("../groups");
+const { addGroup } = require("../groups/addGroup");
+const { addSubstage } = require("../substages/addSubstage");
 
-const { programsByIds } = require('./programsByIds');
-const { setProgramStaff } = require('./setProgramStaff');
+const { programsByIds } = require("./programsByIds");
+const { setProgramStaff } = require("./setProgramStaff");
 
 function getReferenceGroupsNames(
   format,
@@ -18,35 +21,44 @@ function getReferenceGroupsNames(
   digits,
   customNameFormat,
   ctx,
-  prefixWhenCustom = ''
+  prefixWhenCustom = ""
 ) {
   // Validate the format to ensure it's one of the allowed values
-  if (format !== 'alphabetical' && format !== 'numerical' && format !== 'custom') {
-    throw new LeemonsError(ctx, { message: 'Invalid format name in Reference Groups creation.' });
+  if (
+    format !== "alphabetical" &&
+    format !== "numerical" &&
+    format !== "custom"
+  ) {
+    throw new LeemonsError(ctx, {
+      message: "Invalid format name in Reference Groups creation.",
+    });
   }
   const names = [];
-  if (format === 'alphabetical') {
+  if (format === "alphabetical") {
     for (let i = 0; i < groupsAmount; i++) {
       const letter = String.fromCharCode(65 + (i % 26));
       const repeats = Math.floor(i / 26);
-      names.push(`${prefixWhenCustom}${'A'.repeat(repeats)}${letter}`);
+      names.push(`${prefixWhenCustom}${"A".repeat(repeats)}${letter}`);
     }
-  } else if (format === 'numerical') {
+  } else if (format === "numerical") {
     for (let i = 1; i <= groupsAmount; i++) {
-      names.push(`${prefixWhenCustom}${i.toString().padStart(digits, '0')}`);
+      names.push(`${prefixWhenCustom}${i.toString().padStart(digits, "0")}`);
     }
-  } else if (format === 'custom') {
+  } else if (format === "custom") {
     // Ensure it's safe for the function to call itself
-    if (customNameFormat !== 'alphabetical' && customNameFormat !== 'numerical') {
+    if (
+      customNameFormat !== "alphabetical" &&
+      customNameFormat !== "numerical"
+    ) {
       throw new LeemonsError(ctx, {
-        message: 'Invalid custom name format in Reference Groups creation.',
+        message: "Invalid custom name format in Reference Groups creation.",
       });
     }
     return getReferenceGroupsNames(
       customNameFormat,
       groupsAmount,
       digits,
-      '',
+      "",
       ctx,
       prefixWhenCustom
     );
@@ -70,7 +82,7 @@ async function handleReferenceGroups(programData, program, ctx) {
       digits,
       customNameFormat,
       ctx,
-      prefix || ''
+      prefix || ""
     );
     for (let i = 0; i < groupsPerCourse.groupsForAllCourses; i++) {
       index++;
@@ -90,14 +102,14 @@ async function handleReferenceGroups(programData, program, ctx) {
   } else {
     Object.keys(groupsPerCourse).forEach((key) => {
       const groupsAmount = groupsPerCourse[key];
-      const groupsCourse = parseInt(key.replace('groupsForCourse', ''));
+      const groupsCourse = parseInt(key.replace("groupsForCourse", ""));
       const groupsNames = getReferenceGroupsNames(
         nameFormat,
         groupsAmount,
         digits,
         customNameFormat,
         ctx,
-        prefix || ''
+        prefix || ""
       );
       for (let i = 0; i < groupsAmount; i++) {
         index++;
@@ -153,7 +165,7 @@ async function addProgram({ data, userSession, ctx }) {
       programData.maxSubstageAbbreviation = 5;
       programData.maxSubstageAbbreviationIsOnlyNumbers = false;
       for (let i = 0, l = programData.numberOfSubstages; i < l; i++) {
-        const index = (i + 1).toString().padStart(4, '0');
+        const index = (i + 1).toString().padStart(4, "0");
         substages.push({
           name: `${programData.substagesFrequency[0]}${index}`,
           abbreviation: `${programData.substagesFrequency[0]}${index}`,
@@ -179,7 +191,7 @@ async function addProgram({ data, userSession, ctx }) {
   };
   if (image) imageData.cover = image;
 
-  const assetImage = await ctx.tx.call('leebrary.assets.add', {
+  const assetImage = await ctx.tx.call("leebrary.assets.add", {
     asset: imageData,
     published: true,
   });
@@ -188,7 +200,9 @@ async function addProgram({ data, userSession, ctx }) {
     { id: program.id },
     {
       image: assetImage.id,
-      imageUrl: await ctx.tx.call('leebrary.assets.getCoverUrl', { assetId: assetImage.id }),
+      imageUrl: await ctx.tx.call("leebrary.assets.getCoverUrl", {
+        assetId: assetImage.id,
+      }),
     },
     { new: true, lean: true }
   );
@@ -224,7 +238,9 @@ async function addProgram({ data, userSession, ctx }) {
           data: {
             program: program.id,
             // number: data.courseCredits ? data.courseCredits : 0,
-            name: coursesName ? `${coursesName} ${courseIndex}` : `${courseIndex}º`,
+            name: coursesName
+              ? `${coursesName} ${courseIndex}`
+              : `${courseIndex}º`,
             metadata: { minCredits, maxCredits, seats },
           },
           index: courseIndex,
@@ -274,7 +290,7 @@ async function addProgram({ data, userSession, ctx }) {
   const _program = (await programsByIds({ ids: [program.id], ctx }))[0];
 
   if (cycles?.length && _program.courses?.length) {
-    const coursesByIndex = _.keyBy(_program.courses, 'index');
+    const coursesByIndex = _.keyBy(_program.courses, "index");
     const cyclePromises = [];
 
     _.forEach(cycles, (cycle) => {
@@ -307,14 +323,18 @@ async function addProgram({ data, userSession, ctx }) {
     });
   }
 
-  await ctx.tx.emit('after-add-program', {
+  await ctx.tx.emit("after-add-program", {
     program: _program,
     userSession,
   });
 
   await Promise.all([
-    ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('programs') }),
-    ctx.tx.call('menu-builder.menuItem.enable', { key: ctx.prefixPN('subjects') }),
+    ctx.tx.call("menu-builder.menuItem.enable", {
+      key: ctx.prefixPN("programs"),
+    }),
+    ctx.tx.call("menu-builder.menuItem.enable", {
+      key: ctx.prefixPN("subjects"),
+    }),
   ]);
   return _program;
 }

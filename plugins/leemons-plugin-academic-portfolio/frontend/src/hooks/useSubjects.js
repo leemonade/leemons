@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
-import _ from 'lodash';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
-import { getSubjectDetails, getSubjectsCredits } from '../request/subjects';
+import { useQuery } from "@tanstack/react-query";
+import _ from "lodash";
+import prepareAsset from "@leebrary/helpers/prepareAsset";
+import { getSubjectDetails, getSubjectsCredits } from "../request/subjects";
 
 const fetchSubjectsData = async (subjectsIds) => {
   if (!subjectsIds?.length) {
@@ -30,12 +30,13 @@ const mapSubjectsData = (subjectsData, creditsData) =>
     course: subjectData.course,
     icon: prepareAsset(subjectData?.icon)?.cover,
     image: prepareAsset(subjectData?.image)?.cover,
-    internalId: creditsData.find((credit) => credit.subject === subjectData.id)?.compiledInternalId,
+    internalId: creditsData.find((credit) => credit.subject === subjectData.id)
+      ?.compiledInternalId,
   }));
 
 export default function useSubjects(subjectsIds, options) {
   const { data, isLoading } = useQuery(
-    ['subjects', subjectsIds],
+    ["subjects", subjectsIds],
     async () => {
       const subjectsData = await fetchSubjectsData(subjectsIds);
       const creditsData = await fetchSubjectsCredits(subjectsData);

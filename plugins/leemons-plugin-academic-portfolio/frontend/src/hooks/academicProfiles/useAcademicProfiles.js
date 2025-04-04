@@ -1,10 +1,14 @@
-import { useQuery } from '@tanstack/react-query';
-import { getProfiles } from '@academic-portfolio/request/settings';
+import { useQuery } from "@tanstack/react-query";
+import { getProfiles } from "@academic-portfolio/request/settings";
 
 export default function useAcademicProfiles() {
-  const { data, isLoading } = useQuery(['academic-portfolio.profiles'], getProfiles, {
-    staleTime: 5 * 60 * 1000,
-  });
+  const { data, isLoading } = useQuery(
+    ["academic-portfolio.profiles"],
+    getProfiles,
+    {
+      staleTime: 5 * 60 * 1000,
+    }
+  );
 
   const profiles = isLoading ? null : data?.profiles;
 

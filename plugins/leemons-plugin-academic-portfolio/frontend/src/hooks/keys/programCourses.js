@@ -1,7 +1,7 @@
 export const allProgramCoursesKeys = [
   {
-    plugin: 'plugin.academic-portfolio',
-    scope: 'program-courses',
+    plugin: "plugin.academic-portfolio",
+    scope: "program-courses",
   },
 ];
 

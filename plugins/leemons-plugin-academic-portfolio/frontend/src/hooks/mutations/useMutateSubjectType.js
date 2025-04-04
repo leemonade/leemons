@@ -2,9 +2,9 @@ import {
   createSubjectTypeRequest,
   deleteSubjectTypeRequest,
   updateSubjectTypeRequest,
-} from '@academic-portfolio/request';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getSubjectTypesKey } from '../keys/subjectTypes';
+} from "@academic-portfolio/request";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getSubjectTypesKey } from "../keys/subjectTypes";
 
 export function useUpdateSubjectType() {
   const queryClient = useQueryClient();

@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
 import {
   Box,
   ContextContainer,
@@ -7,28 +7,28 @@ import {
   PageContainer,
   Paper,
   Select,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 // TODO: import from @common plugin
-import { AdminPageHeader } from '@bubbles-ui/leemons';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useStore } from '@common/useStore';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { SelectCenter } from '@users/components/SelectCenter';
-import SelectUserAgent from '@users/components/SelectUserAgent';
-import _, { find, isArray, map } from 'lodash';
-import React, { useMemo } from 'react';
-import { useHistory } from 'react-router-dom';
-import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
-import { KnowledgeTable } from '../../../components/KnowledgeTable';
-import { SubjectTypesTable } from '../../../components/SubjectTypesTable';
-import { SubjectsTable } from '../../../components/SubjectsTable';
-import { activeMenuItemTree } from '../../../helpers/activeMenuItemTree';
-import { getKnowledgesTranslation } from '../../../helpers/getKnowledgesTranslation';
-import { getProgramTreeTypeTranslation } from '../../../helpers/getProgramTreeTypeTranslation';
-import { getSubjectTypesTranslation } from '../../../helpers/getSubjectTypesTranslation';
-import { getSubjectsTranslation } from '../../../helpers/getSubjectsTranslation';
-import { getTableActionsTranslation } from '../../../helpers/getTableActionsTranslation';
+import { AdminPageHeader } from "@bubbles-ui/leemons";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { useStore } from "@common/useStore";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { SelectCenter } from "@users/components/SelectCenter";
+import SelectUserAgent from "@users/components/SelectUserAgent";
+import _, { find, isArray, map } from "lodash";
+import React, { useMemo } from "react";
+import { useHistory } from "react-router-dom";
+import { useDeploymentConfig } from "@deployment-manager/hooks/useDeploymentConfig";
+import { KnowledgeTable } from "../../../components/KnowledgeTable";
+import { SubjectTypesTable } from "../../../components/SubjectTypesTable";
+import { SubjectsTable } from "../../../components/SubjectsTable";
+import { activeMenuItemTree } from "../../../helpers/activeMenuItemTree";
+import { getKnowledgesTranslation } from "../../../helpers/getKnowledgesTranslation";
+import { getProgramTreeTypeTranslation } from "../../../helpers/getProgramTreeTypeTranslation";
+import { getSubjectTypesTranslation } from "../../../helpers/getSubjectTypesTranslation";
+import { getSubjectsTranslation } from "../../../helpers/getSubjectsTranslation";
+import { getTableActionsTranslation } from "../../../helpers/getTableActionsTranslation";
 import {
   createClassRequest,
   createGroupRequest,
@@ -43,14 +43,14 @@ import {
   updateClassRequest,
   updateSubjectRequest,
   updateSubjectTypeRequest,
-} from '../../../request';
+} from "../../../request";
 
 export default function SubjectList() {
-  const [t] = useTranslateLoader(prefixPN('subject_page'));
+  const [t] = useTranslateLoader(prefixPN("subject_page"));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const history = useHistory();
   const deploymentConfig = useDeploymentConfig({
-    pluginName: 'academic-portfolio',
+    pluginName: "academic-portfolio",
     ignoreVersion: true,
   });
 
@@ -65,8 +65,8 @@ export default function SubjectList() {
   const messages = useMemo(
     () => ({
       header: {
-        title: t('page_title'),
-        description: t('page_description'),
+        title: t("page_title"),
+        description: t("page_description"),
       },
       knowledge: getKnowledgesTranslation(t),
       subjectTypes: getSubjectTypesTranslation(t),
@@ -80,7 +80,11 @@ export default function SubjectList() {
   async function getProgramClasses() {
     const {
       data: { items },
-    } = await listClassesRequest({ page: 0, size: 9999, program: store.selectProgram });
+    } = await listClassesRequest({
+      page: 0,
+      size: 9999,
+      program: store.selectProgram,
+    });
     return items;
   }
 
@@ -98,7 +102,7 @@ export default function SubjectList() {
       classe.credits = classSubjectCredits?.credits;
       classe.internalId = classSubjectCredits?.internalId;
       classe.schedule = { days: classe.schedule };
-      classe.teacher = find(classe.teachers, { type: 'main-teacher' })?.teacher;
+      classe.teacher = find(classe.teachers, { type: "main-teacher" })?.teacher;
     });
     return { ...program, classes, subjectCredits };
   }
@@ -115,7 +119,10 @@ export default function SubjectList() {
 
   async function onProgramChange(programId) {
     store.selectProgram = programId;
-    const [program, { profiles }] = await Promise.all([getProgramDetail(), getProfilesRequest()]);
+    const [program, { profiles }] = await Promise.all([
+      getProgramDetail(),
+      getProfilesRequest(),
+    ]);
     store.program = program;
     store.profiles = profiles;
     render();
@@ -126,10 +133,10 @@ export default function SubjectList() {
       const response = await createKnowledgeRequest({
         ...knowledge,
         program: store.program.id,
-        icon: '-',
+        icon: "-",
       });
       store.program.knowledges.push(response.knowledge);
-      addSuccessAlert(t('addKnowledgeDone'));
+      addSuccessAlert(t("addKnowledgeDone"));
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -144,7 +151,7 @@ export default function SubjectList() {
         program: store.program.id,
       });
       store.program.subjectTypes.push(response.subjectType);
-      addSuccessAlert(t('addSubjectTypeDone'));
+      addSuccessAlert(t("addSubjectTypeDone"));
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -181,7 +188,7 @@ export default function SubjectList() {
         abbreviation,
         program: store.program.id,
       });
-      addSuccessAlert(t('groupCreated'));
+      addSuccessAlert(t("groupCreated"));
       return group;
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
@@ -198,7 +205,7 @@ export default function SubjectList() {
         program: store.program.id,
         credits,
       });
-      addSuccessAlert(t('subjectCreated'));
+      addSuccessAlert(t("subjectCreated"));
       return subject;
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
@@ -248,7 +255,7 @@ export default function SubjectList() {
         program: store.program.id,
         group: groups,
         schedule: schedule ? schedule.days : [],
-        teachers: teacher ? [{ teacher, type: 'main-teacher' }] : [],
+        teachers: teacher ? [{ teacher, type: "main-teacher" }] : [],
       });
       return c;
     } catch (err) {
@@ -280,7 +287,7 @@ export default function SubjectList() {
         substage: substages,
         group: groups,
         schedule: schedule ? schedule.days : [],
-        teachers: teacher ? [{ teacher, type: 'main-teacher' }] : [],
+        teachers: teacher ? [{ teacher, type: "main-teacher" }] : [],
       });
       return c;
     } catch (err) {
@@ -333,7 +340,8 @@ export default function SubjectList() {
         await activeMenuItemTree();
       }
 
-      if (classe) addSuccessAlert(isUpdate ? t('classUpdated') : t('classCreated'));
+      if (classe)
+        addSuccessAlert(isUpdate ? t("classUpdated") : t("classCreated"));
       store.program = await getProgramDetail();
       render();
       return true;
@@ -351,11 +359,11 @@ export default function SubjectList() {
       {store.loading ? (
         <Box
           style={{
-            position: 'fixed',
+            position: "fixed",
             top: 0,
             right: 0,
-            width: '100vw',
-            height: '100vh',
+            width: "100vw",
+            height: "100vh",
             zIndex: 5,
           }}
         >
@@ -372,8 +380,8 @@ export default function SubjectList() {
                 <ContextContainer direction="row">
                   <Box skipFlex>
                     <SelectCenter
-                      label={t('centerLabel')}
-                      placeholder={t('centerPlaceholder')}
+                      label={t("centerLabel")}
+                      placeholder={t("centerPlaceholder")}
                       onChange={onCenterChange}
                       firstSelected
                     />
@@ -382,8 +390,8 @@ export default function SubjectList() {
                     <Select
                       data={store.programs || []}
                       disabled={!store.programs}
-                      label={t('programLabel')}
-                      placeholder={t('programPlaceholder')}
+                      label={t("programLabel")}
+                      placeholder={t("programPlaceholder")}
                       onChange={onProgramChange}
                       value={store.selectProgram}
                       autoSelectOneOption
@@ -404,7 +412,11 @@ export default function SubjectList() {
                       ) : null}
                       {store.program
                         ? [
-                            !(deploymentConfig?.deny?.others?.indexOf('subjectType') >= 0) ? (
+                            !(
+                              deploymentConfig?.deny?.others?.indexOf(
+                                "subjectType"
+                              ) >= 0
+                            ) ? (
                               <SubjectTypesTable
                                 key="1"
                                 messages={messages.subjectTypes}
@@ -427,7 +439,9 @@ export default function SubjectList() {
                                   centers={store.center}
                                 />
                               }
-                              onlyNewSubject={!!store.program?.useOneStudentGroup}
+                              onlyNewSubject={
+                                !!store.program?.useOneStudentGroup
+                              }
                             />,
                           ]
                         : null}

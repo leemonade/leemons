@@ -4,33 +4,33 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 
 const {
   updateSubjectType,
   addSubjectType,
   listSubjectType,
   removeSubjectType,
-} = require('../../core/subject-type');
-const { permissions } = require('../../config/constants');
+} = require("../../core/subject-type");
+const { permissions } = require("../../config/constants");
 
 /** @type {ServiceSchema} */
 module.exports = {
   postSubjectTypeRest: {
     rest: {
-      path: '/',
-      method: 'POST',
+      path: "/",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
           [permissions.names.programs]: {
-            actions: ['admin', 'create'],
+            actions: ["admin", "create"],
           },
         },
       }),
@@ -42,15 +42,15 @@ module.exports = {
   },
   putSubjectTypeRest: {
     rest: {
-      path: '/',
-      method: 'PUT',
+      path: "/",
+      method: "PUT",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
           [permissions.names.programs]: {
-            actions: ['admin', 'update'],
+            actions: ["admin", "update"],
           },
         },
       }),
@@ -62,28 +62,28 @@ module.exports = {
   },
   listSubjectTypeRest: {
     rest: {
-      path: '/',
-      method: 'GET',
+      path: "/",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
           [permissions.names.programs]: {
-            actions: ['admin', 'view'],
+            actions: ["admin", "view"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-          center: { type: 'string' },
+          page: { type: ["number", "string"] },
+          size: { type: ["number", "string"] },
+          center: { type: "string" },
         },
-        required: ['page', 'size', 'center'],
+        required: ["page", "size", "center"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -101,15 +101,15 @@ module.exports = {
   },
   deleteSubjectTypeRest: {
     rest: {
-      path: '/:id',
-      method: 'DELETE',
+      path: "/:id",
+      method: "DELETE",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
           [permissions.names.programs]: {
-            actions: ['admin', 'delete'],
+            actions: ["admin", "delete"],
           },
         },
       }),

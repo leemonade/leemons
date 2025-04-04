@@ -1,1 +1,1 @@
-export * from './SetupCourses';
+export * from "./SetupCourses";

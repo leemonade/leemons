@@ -1,9 +1,9 @@
-import { forwardRef, useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState } from "react";
 
-import { Select } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+import { Select } from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
-import { listCoursesRequest } from '../../request';
+import { listCoursesRequest } from "../../request";
 
 const SelectCourse = forwardRef(
   ({ program, value: userValue, onChange, disabled, ...props }, ref) => {
@@ -20,7 +20,7 @@ const SelectCourse = forwardRef(
 
         // EN: Notify the parent component about the change
         // ES: Notificar al componente padre sobre el cambio
-        if (typeof onChange === 'function') {
+        if (typeof onChange === "function") {
           onChange(newValue);
         }
       }
@@ -46,7 +46,10 @@ const SelectCourse = forwardRef(
           setData(
             items
               .sort((a, b) => a.index - b.index)
-              .map(({ id, name, index }) => ({ value: id, label: name || index }))
+              .map(({ id, name, index }) => ({
+                value: id,
+                label: name || index,
+              }))
           );
         }
       })();
@@ -67,7 +70,7 @@ const SelectCourse = forwardRef(
   }
 );
 
-SelectCourse.displayName = '@academic-portfolio/components/SelectCourse';
+SelectCourse.displayName = "@academic-portfolio/components/SelectCourse";
 SelectCourse.propTypes = {
   program: PropTypes.string,
   value: PropTypes.string,

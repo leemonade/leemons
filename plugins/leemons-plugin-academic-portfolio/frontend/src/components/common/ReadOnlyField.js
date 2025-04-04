@@ -1,12 +1,16 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-import { Stack, Text } from '@bubbles-ui/components';
+import { Stack, Text } from "@bubbles-ui/components";
 
 const ReadOnlyField = ({ value, label }) => (
   <Stack spacing={1}>
-    {label && <Text sx={(theme) => theme.other.badge.content.typo['md--bold']}>{`${label}:`}</Text>}
-    <Text sx={(theme) => theme.other.badge.content.typo.md}>{value ?? ''}</Text>
+    {label && (
+      <Text
+        sx={(theme) => theme.other.badge.content.typo["md--bold"]}
+      >{`${label}:`}</Text>
+    )}
+    <Text sx={(theme) => theme.other.badge.content.typo.md}>{value ?? ""}</Text>
   </Stack>
 );
 

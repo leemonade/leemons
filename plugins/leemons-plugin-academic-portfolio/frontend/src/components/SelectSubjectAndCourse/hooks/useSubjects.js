@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { useSessionClasses } from '@academic-portfolio/hooks';
-import { map, uniqBy } from 'lodash';
+import { useSessionClasses } from "@academic-portfolio/hooks";
+import { map, uniqBy } from "lodash";
 
 export default function useSubjects({ program }) {
   const { data: classes } = useSessionClasses({ program, withProgram: true });
@@ -10,7 +10,7 @@ export default function useSubjects({ program }) {
     () =>
       uniqBy(
         map(classes, (klass) => klass.subject),
-        'id'
+        "id"
       ),
     [classes]
   );

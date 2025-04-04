@@ -1,14 +1,16 @@
-const _ = require('lodash');
-const { getProgramCourses } = require('../programs/getProgramCourses');
-const { getProgramGroups } = require('../programs/getProgramGroups');
-const { listClasses } = require('../classes/listClasses');
-const { getProgramSubstages } = require('../programs/getProgramSubstages');
-const { getProgramKnowledges } = require('../programs/getProgramKnowledges');
-const { getProgramSubjects } = require('../programs/getProgramSubjects');
-const { getProgramSubjectTypes } = require('../programs/getProgramSubjectTypes');
-const { getManagers } = require('../managers/getManagers');
-const { getProgramCycles } = require('../programs/getProgramCycles');
-const { getClassesProgramInfo } = require('../classes/listSessionClasses');
+const _ = require("lodash");
+const { getProgramCourses } = require("../programs/getProgramCourses");
+const { getProgramGroups } = require("../programs/getProgramGroups");
+const { listClasses } = require("../classes/listClasses");
+const { getProgramSubstages } = require("../programs/getProgramSubstages");
+const { getProgramKnowledges } = require("../programs/getProgramKnowledges");
+const { getProgramSubjects } = require("../programs/getProgramSubjects");
+const {
+  getProgramSubjectTypes,
+} = require("../programs/getProgramSubjectTypes");
+const { getManagers } = require("../managers/getManagers");
+const { getProgramCycles } = require("../programs/getProgramCycles");
+const { getClassesProgramInfo } = require("../classes/listSessionClasses");
 
 async function getTree({ nodeTypes, program, ctx }) {
   const query = {};
@@ -17,7 +19,7 @@ async function getTree({ nodeTypes, program, ctx }) {
   }
 
   const programCenter = await ctx.tx.db.ProgramCenter.find(query).lean();
-  const programIds = _.map(programCenter, 'program');
+  const programIds = _.map(programCenter, "program");
   const [
     programs,
     centers,
@@ -31,7 +33,7 @@ async function getTree({ nodeTypes, program, ctx }) {
     cycles,
   ] = await Promise.all([
     ctx.tx.db.Programs.find({ id: programIds }).lean(),
-    ctx.tx.call('users.centers.list', {
+    ctx.tx.call("users.centers.list", {
       page: 0,
       size: 9999,
     }),
@@ -61,23 +63,27 @@ async function getTree({ nodeTypes, program, ctx }) {
   }
 
   let managerIds = [];
-  managerIds = managerIds.concat(_.map(programs, 'id'));
-  managerIds = managerIds.concat(_.map(courses, 'id'));
-  managerIds = managerIds.concat(_.map(groups, 'id'));
-  managerIds = managerIds.concat(_.map(substages, 'id'));
-  managerIds = managerIds.concat(_.map(knowledges, 'id'));
-  managerIds = managerIds.concat(_.map(subjects, 'id'));
-  managerIds = managerIds.concat(_.map(subjectTypes, 'id'));
-  managerIds = managerIds.concat(_.map(cycles, 'id'));
+  managerIds = managerIds.concat(_.map(programs, "id"));
+  managerIds = managerIds.concat(_.map(courses, "id"));
+  managerIds = managerIds.concat(_.map(groups, "id"));
+  managerIds = managerIds.concat(_.map(substages, "id"));
+  managerIds = managerIds.concat(_.map(knowledges, "id"));
+  managerIds = managerIds.concat(_.map(subjects, "id"));
+  managerIds = managerIds.concat(_.map(subjectTypes, "id"));
+  managerIds = managerIds.concat(_.map(cycles, "id"));
 
-  const managers = await getManagers({ relationships: managerIds, returnAgents: false, ctx });
-  const managersByRelationship = _.groupBy(managers, 'relationship');
+  const managers = await getManagers({
+    relationships: managerIds,
+    returnAgents: false,
+    ctx,
+  });
+  const managersByRelationship = _.groupBy(managers, "relationship");
 
   function process(items) {
     _.forEach(items, (item) => {
       // eslint-disable-next-line no-param-reassign
       item.managers = managersByRelationship[item.id]
-        ? _.map(managersByRelationship[item.id], 'userAgent')
+        ? _.map(managersByRelationship[item.id], "userAgent")
         : [];
     });
   }
@@ -95,48 +101,66 @@ async function getTree({ nodeTypes, program, ctx }) {
     _.map(classes, (classe) => {
       if (classe.courses) {
         if (_.isArray(classe.courses)) {
-          return _.map(classe.courses, 'id');
+          return _.map(classe.courses, "id");
         }
         return classe.courses.id;
       }
       return undefined;
     })
   );
-  const classGroupsIds = _.map(classes, 'groups.id');
-  const classSubstagesIds = _.map(classes, 'substages.id');
-  const classKnowledgesIds = _.map(classes, 'knowledges.id');
-  const classSubjectIds = _.map(classes, 'subject.id');
-  const classSubjectTypeIds = _.map(classes, 'subjectType.id');
+  const classGroupsIds = _.map(classes, "groups.id");
+  const classSubstagesIds = _.map(classes, "substages.id");
+  const classKnowledgesIds = _.map(classes, "knowledges.id");
+  const classSubjectIds = _.map(classes, "subject.id");
+  const classSubjectTypeIds = _.map(classes, "subjectType.id");
 
   // ES: Cogemos los nodos sin usar en las clases para posteriormente ponerlos al nivel del programa
-  const groupsUnused = _.filter(groups, ({ id }) => classGroupsIds.indexOf(id) < 0);
-  const coursesUnused = _.filter(courses, ({ id }) => classCoursesIds.indexOf(id) < 0);
-  const substagesUnused = _.filter(substages, ({ id }) => classSubstagesIds.indexOf(id) < 0);
-  const knowledgesUnused = _.filter(knowledges, ({ id }) => classKnowledgesIds.indexOf(id) < 0);
-  const subjectsUnused = _.filter(subjects, ({ id }) => classSubjectIds.indexOf(id) < 0);
-  const subjectTypeUnused = _.filter(subjectTypes, ({ id }) => classSubjectTypeIds.indexOf(id) < 0);
+  const groupsUnused = _.filter(
+    groups,
+    ({ id }) => classGroupsIds.indexOf(id) < 0
+  );
+  const coursesUnused = _.filter(
+    courses,
+    ({ id }) => classCoursesIds.indexOf(id) < 0
+  );
+  const substagesUnused = _.filter(
+    substages,
+    ({ id }) => classSubstagesIds.indexOf(id) < 0
+  );
+  const knowledgesUnused = _.filter(
+    knowledges,
+    ({ id }) => classKnowledgesIds.indexOf(id) < 0
+  );
+  const subjectsUnused = _.filter(
+    subjects,
+    ({ id }) => classSubjectIds.indexOf(id) < 0
+  );
+  const subjectTypeUnused = _.filter(
+    subjectTypes,
+    ({ id }) => classSubjectTypeIds.indexOf(id) < 0
+  );
 
   const unusedNodesByProgram = {
-    courses: _.groupBy(coursesUnused, 'program'),
-    groups: _.groupBy(groupsUnused, 'program'),
-    substage: _.groupBy(substagesUnused, 'program'),
-    knowledges: _.groupBy(knowledgesUnused, 'program'),
-    subjectType: _.groupBy(subjectTypeUnused, 'program'),
-    subject: _.groupBy(subjectsUnused, 'program'),
+    courses: _.groupBy(coursesUnused, "program"),
+    groups: _.groupBy(groupsUnused, "program"),
+    substage: _.groupBy(substagesUnused, "program"),
+    knowledges: _.groupBy(knowledgesUnused, "program"),
+    subjectType: _.groupBy(subjectTypeUnused, "program"),
+    subject: _.groupBy(subjectsUnused, "program"),
   };
 
-  const centersByProgram = _.groupBy(programCenter, 'program');
+  const centersByProgram = _.groupBy(programCenter, "program");
 
   const nodesByIds = {
-    center: _.keyBy(centers.items, 'id'),
-    program: _.keyBy(programs, 'id'),
-    courses: _.keyBy(courses, 'id'),
-    groups: _.keyBy(groups, 'id'),
-    substage: _.keyBy(substages, 'id'),
-    knowledges: _.keyBy(knowledges, 'id'),
-    subjectType: _.keyBy(subjectTypes, 'id'),
-    subject: _.keyBy(subjects, 'id'),
-    cycles: _.keyBy(cycles, 'id'),
+    center: _.keyBy(centers.items, "id"),
+    program: _.keyBy(programs, "id"),
+    courses: _.keyBy(courses, "id"),
+    groups: _.keyBy(groups, "id"),
+    substage: _.keyBy(substages, "id"),
+    knowledges: _.keyBy(knowledges, "id"),
+    subjectType: _.keyBy(subjectTypes, "id"),
+    subject: _.keyBy(subjects, "id"),
+    cycles: _.keyBy(cycles, "id"),
   };
 
   function getCycleByCourse(courseId) {
@@ -168,16 +192,18 @@ async function getTree({ nodeTypes, program, ctx }) {
     const nodes = [];
     nodeTypes.forEach((nodeType, index) => {
       if (classroom[nodeType]) {
-        const id = _.isString(classroom[nodeType]) ? classroom[nodeType] : classroom[nodeType].id;
-        if (nodeType === 'courses') {
+        const id = _.isString(classroom[nodeType])
+          ? classroom[nodeType]
+          : classroom[nodeType].id;
+        if (nodeType === "courses") {
           if (nodesByIds.courses[id]) {
             const proId = nodesByIds.courses[id].program;
             const proCourses = _.filter(courses, { program: proId });
-            if (proCourses.length > 1 && nodeTypes[index - 1] === 'cycles') {
+            if (proCourses.length > 1 && nodeTypes[index - 1] === "cycles") {
               const cycle = getCycleByCourse(id);
               if (cycle) {
                 nodes.push({
-                  type: 'cycles',
+                  type: "cycles",
                   id: cycle.id,
                 });
               }
@@ -189,7 +215,7 @@ async function getTree({ nodeTypes, program, ctx }) {
               });
             }
           }
-        } else if (nodeType === 'groups') {
+        } else if (nodeType === "groups") {
           const pro = nodesByIds.program[nodesByIds.groups[id].program];
           if (!pro.useOneStudentGroup) {
             nodes.push({
@@ -224,10 +250,11 @@ async function getTree({ nodeTypes, program, ctx }) {
   const getNodeObjectKeysAsArray = (node, parentNodeType, parentNodeId) => {
     let nodes = [];
     _.forIn(node, (value, key) => {
-      if (key === 'classrooms') {
-        if (value.length > 0) nodes = _.map(value, (v) => ({ nodeType: 'class', value: v }));
+      if (key === "classrooms") {
+        if (value.length > 0)
+          nodes = _.map(value, (v) => ({ nodeType: "class", value: v }));
       } else {
-        const keyParse = key.split('|');
+        const keyParse = key.split("|");
         const nodeType = keyParse[0];
         const nodeId = keyParse[1];
         nodes.push({
@@ -241,8 +268,8 @@ async function getTree({ nodeTypes, program, ctx }) {
     if (
       parentNodeType &&
       parentNodeId &&
-      nodeTypes.indexOf('program') >= 0 &&
-      parentNodeType === 'program'
+      nodeTypes.indexOf("program") >= 0 &&
+      parentNodeType === "program"
     ) {
       _.forEach(nodeTypes, (nodeType) => {
         if (
@@ -270,13 +297,13 @@ async function getTree({ nodeTypes, program, ctx }) {
   function setTreeIds(nodes, parentId) {
     _.forEach(nodes, (node, i) => {
       // eslint-disable-next-line no-param-reassign
-      node.treeId = `${parentId ? `${parentId}.` : ''}${i}|${node.nodeType}|${node.value.id}`;
+      node.treeId = `${parentId ? `${parentId}.` : ""}${i}|${node.nodeType}|${node.value.id}`;
       if (node.childrens) {
         // eslint-disable-next-line no-param-reassign
         node.childrens = _.orderBy(
           node.childrens,
-          ['value.subject.internalId', 'value.subject.name', 'value.name'],
-          ['asc', 'asc', 'asc']
+          ["value.subject.internalId", "value.subject.name", "value.name"],
+          ["asc", "asc", "asc"]
         );
         setTreeIds(node.childrens, node.treeId);
       }

@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useForm } from "react-hook-form";
 
-import { useSetItemCustomPeriod } from '@academic-calendar/hooks/mutations/useSetItemCustomPeriod';
+import { useSetItemCustomPeriod } from "@academic-calendar/hooks/mutations/useSetItemCustomPeriod";
 import {
   TotalLayoutStepContainer,
   Tabs,
@@ -10,27 +10,32 @@ import {
   Box,
   TotalLayoutFooterContainer,
   ContextContainer,
-} from '@bubbles-ui/components';
-import { useNotifications } from '@bubbles-ui/notifications';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useQueryClient } from '@tanstack/react-query';
-import { cloneDeep, isArray, isEmpty } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { useNotifications } from "@bubbles-ui/notifications";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useQueryClient } from "@tanstack/react-query";
+import { cloneDeep, isArray, isEmpty } from "lodash";
+import PropTypes from "prop-types";
 
-import CustomPeriod from './CustomPeriod';
-import EnrollmentTab from './EnrollmentTab';
-import InfoTab from './InfoTab';
+import CustomPeriod from "./CustomPeriod";
+import EnrollmentTab from "./EnrollmentTab";
+import InfoTab from "./InfoTab";
 
-import { SOCKET_EVENTS } from '@academic-portfolio/config/constants';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { useSubjectDetails } from '@academic-portfolio/hooks';
-import { useUpdateClass } from '@academic-portfolio/hooks/mutations/useMutateClass';
+import { SOCKET_EVENTS } from "@academic-portfolio/config/constants";
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
+import { useSubjectDetails } from "@academic-portfolio/hooks";
+import { useUpdateClass } from "@academic-portfolio/hooks/mutations/useMutateClass";
 
-const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer }) => {
-  const [t] = useTranslateLoader(prefixPN('tree_page'));
-  const [tSocket] = useTranslateLoader(prefixPN('socketEvents'));
-  const [activeTab, setActiveTab] = useState('0');
+const SubjectView = ({
+  subjectTreeNode,
+  program,
+  scrollRef,
+  openEnrollmentDrawer,
+}) => {
+  const [t] = useTranslateLoader(prefixPN("tree_page"));
+  const [tSocket] = useTranslateLoader(prefixPN("socketEvents"));
+  const [activeTab, setActiveTab] = useState("0");
   const [dirtyForm, setDirtyForm] = useState(false);
   const [tabsKey, setTabsKey] = useState(0);
   const queryClient = useQueryClient();
@@ -60,12 +65,14 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
   }, [subjectTreeNode, activeTab]);
 
   useEffect(() => {
-    setActiveTab('0');
+    setActiveTab("0");
   }, [subjectTreeNode]);
 
   // For cases when the subject is the child of a reference group
   const singleClassToShow = useMemo(() => {
-    const subjectParentNodeIsGroup = subjectDetails?.classes?.every((cls) => cls.groups);
+    const subjectParentNodeIsGroup = subjectDetails?.classes?.every(
+      (cls) => cls.groups
+    );
     if (subjectParentNodeIsGroup) {
       return subjectDetails?.classes?.find(
         (cls) => cls.groups?.id === subjectTreeNode?.parentItemId
@@ -77,7 +84,7 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
   const EnrollmentTabs = useMemo(() => {
     if (singleClassToShow) {
       return (
-        <TabPanel key={singleClassToShow.id} label={t('enrollTitle')}>
+        <TabPanel key={singleClassToShow.id} label={t("enrollTitle")}>
           <EnrollmentTab
             classData={cloneDeep(singleClassToShow)}
             openEnrollmentDrawer={openEnrollmentDrawer}
@@ -120,10 +127,10 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
   // HANDLERS
 
   const handleSubjectCustomPeriodUpdate = () => {
-    const subjectCustomPeriod = updateForm.getValues('subjectCustomPeriod');
+    const subjectCustomPeriod = updateForm.getValues("subjectCustomPeriod");
     const data = {
       item: subjectTreeNode?.itemId,
-      type: 'subject',
+      type: "subject",
       startDate: subjectCustomPeriod.startDate,
       endDate: subjectCustomPeriod.endDate,
     };
@@ -131,15 +138,19 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
     setItemCustomPeriod(data, {
       onSuccess: () => {
         const queryKey = [
-          'subjectDetail',
-          { subject: subjectDetails.id, withClasses: true, showArchived: false },
+          "subjectDetail",
+          {
+            subject: subjectDetails.id,
+            withClasses: true,
+            showArchived: false,
+          },
         ];
         queryClient.invalidateQueries({ queryKey });
-        addSuccessAlert(t('subject.customPeriod.success'));
+        addSuccessAlert(t("subject.customPeriod.success"));
         setDirtyForm(false);
       },
       onError: () => {
-        addErrorAlert(t('subject.customPeriod.error'));
+        addErrorAlert(t("subject.customPeriod.error"));
       },
     });
   };
@@ -153,13 +164,16 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
 
     requestBody.teachers = [];
     if (requestBody.mainTeacher?.length) {
-      requestBody.teachers.push({ teacher: requestBody.mainTeacher, type: 'main-teacher' });
+      requestBody.teachers.push({
+        teacher: requestBody.mainTeacher,
+        type: "main-teacher",
+      });
     }
     if (requestBody.associateTeachers?.length) {
       requestBody.teachers.push(
         ...requestBody.associateTeachers.map((teacher) => ({
           teacher,
-          type: 'associate-teacher',
+          type: "associate-teacher",
         }))
       );
     }
@@ -179,28 +193,28 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
           selectedClass?.alias ??
           selectedClass?.classWithoutGroupId ??
           selectedClass?.classroomId ??
-          '-';
+          "-";
         const notificationId = `${SOCKET_EVENTS.CLASS_UPDATE}:${requestBody.id}`;
 
         notifications.showNotification({
           id: notificationId,
-          severity: 'info',
+          severity: "info",
           loading: true,
-          title: tSocket('title.CLASS_UPDATE', { className }),
-          message: tSocket('message.PROCESSING'),
+          title: tSocket("title.CLASS_UPDATE", { className }),
+          message: tSocket("message.PROCESSING"),
           autoClose: false,
           disallowClose: true,
         });
       },
       onError: (e) => {
         console.error(e);
-        addErrorAlert(t('updateClassError'));
+        addErrorAlert(t("updateClassError"));
       },
     });
   };
 
   const handleSaveChanges = async () => {
-    if (activeTab === '0') {
+    if (activeTab === "0") {
       handleSubjectCustomPeriodUpdate();
     } else {
       handleUpdateClass();
@@ -210,7 +224,9 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
   return (
     <TotalLayoutStepContainer
       stepName={
-        subjectTreeNode?.text ? `${program?.name} - ${subjectTreeNode?.text}` : program?.name ?? ''
+        subjectTreeNode?.text
+          ? `${program?.name} - ${subjectTreeNode?.text}`
+          : (program?.name ?? "")
       }
       clean
       fullWidth
@@ -222,11 +238,11 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
           rectRef={stackRef}
           rightZone={
             <Button
-              disabled={!dirtyForm || selectedClass?.status === 'updating'}
+              disabled={!dirtyForm || selectedClass?.status === "updating"}
               onClick={handleSaveChanges}
               loading={isMutatingClass || isSettingItemCustomPeriod}
             >
-              {t('saveChanges')}
+              {t("saveChanges")}
             </Button>
           }
         />
@@ -235,17 +251,17 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
       <Box ref={stackRef}>
         <Tabs
           key={tabsKey}
-          tabPanelListStyle={{ backgroundColor: 'white' }}
+          tabPanelListStyle={{ backgroundColor: "white" }}
           fullHeight
           forceRender
           onChange={(val) => {
             setActiveTab(val);
-            updateForm.setValue('customPeriod', undefined);
-            updateForm.setValue('subjectCustomPeriod', undefined);
+            updateForm.setValue("customPeriod", undefined);
+            updateForm.setValue("subjectCustomPeriod", undefined);
           }}
           activeKey={activeTab}
         >
-          <TabPanel label={t('info')}>
+          <TabPanel label={t("info")}>
             <ContextContainer sx={{ padding: 24 }}>
               <InfoTab
                 subjectDetails={subjectDetails}
@@ -259,8 +275,10 @@ const SubjectView = ({ subjectTreeNode, program, scrollRef, openEnrollmentDrawer
                 programId={subjectDetails?.program}
                 customPeriod={subjectDetails?.customPeriod}
                 onChange={(value) => {
-                  updateForm.setValue('subjectCustomPeriod', value.value);
-                  setDirtyForm(value.areValuesValid && value.areValuesDifferent);
+                  updateForm.setValue("subjectCustomPeriod", value.value);
+                  setDirtyForm(
+                    value.areValuesValid && value.areValuesDifferent
+                  );
                 }}
                 academicKey="subject"
                 courseId={

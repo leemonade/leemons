@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import React from "react";
+import PropTypes from "prop-types";
+import { Controller, useForm } from "react-hook-form";
 import {
   Box,
   Button,
@@ -10,9 +10,9 @@ import {
   Stack,
   TextInput,
   Title,
-} from '@bubbles-ui/components';
-import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
-import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
+} from "@bubbles-ui/components";
+import { useDeploymentConfig } from "@deployment-manager/hooks/useDeploymentConfig";
+import { SelectUsersForAddToClasses } from "./SelectUsersForAddToClasses";
 
 const TreeProgramDetail = ({
   item,
@@ -27,7 +27,7 @@ const TreeProgramDetail = ({
 }) => {
   const [disableSave, setDisabledSave] = React.useState(false);
   const deploymentConfig = useDeploymentConfig({
-    pluginName: 'academic-portfolio',
+    pluginName: "academic-portfolio",
     ignoreVersion: true,
   });
 
@@ -44,7 +44,7 @@ const TreeProgramDetail = ({
   }, [program]);
 
   function onChangeAddUsers(e) {
-    setValue('students', e);
+    setValue("students", e);
   }
 
   function onDisableSave(e) {
@@ -56,7 +56,9 @@ const TreeProgramDetail = ({
       <form onSubmit={handleSubmit(onSave)} autoComplete="off">
         <ContextContainer direction="column" fullWidth>
           <Title order={4}>{messages.title}</Title>
-          {!(deploymentConfig?.deny?.others?.indexOf('treeProgramForm') >= 0) ? (
+          {!(
+            deploymentConfig?.deny?.others?.indexOf("treeProgramForm") >= 0
+          ) ? (
             <>
               <Box>
                 <Controller
@@ -64,7 +66,12 @@ const TreeProgramDetail = ({
                   name="name"
                   rules={{ required: messages.nameRequired }}
                   render={({ field }) => (
-                    <TextInput label={messages.nameLabel} error={errors.name} required {...field} />
+                    <TextInput
+                      label={messages.nameLabel}
+                      error={errors.name}
+                      required
+                      {...field}
+                    />
                   )}
                 />
               </Box>

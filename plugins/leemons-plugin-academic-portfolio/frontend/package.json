@@ -21,7 +21,7 @@
     "@minoru/react-dnd-treeview": "^3.4.4",
     "@tanstack/react-query": "^4.35.3",
     "dayjs": "^1.11.2",
-    "leemons-hooks": "0.0.33",
+    "@leemons/hooks": "0.0.1",
     "lodash": "^4.17.21",
     "p-min-delay": "^4.0.2",
     "prop-types": "^15.8.1",

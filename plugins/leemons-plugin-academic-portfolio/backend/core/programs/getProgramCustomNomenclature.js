@@ -1,6 +1,9 @@
-const { isEmpty } = require('lodash');
+const { isEmpty } = require("lodash");
 
-const { CUSTOMIZABLE_TRANSLATION_KEYS, pluginName } = require('../../config/constants');
+const {
+  CUSTOMIZABLE_TRANSLATION_KEYS,
+  pluginName,
+} = require("../../config/constants");
 
 function getKeys(programId) {
   return Object.values(CUSTOMIZABLE_TRANSLATION_KEYS).map(
@@ -9,8 +12,11 @@ function getKeys(programId) {
 }
 
 async function fetchCopies({ ctx, ids, locale }) {
-  const allKeys = ids.reduce((acc, programId) => [...acc, ...getKeys(programId)], []);
-  return ctx.tx.call('multilanguage.contents.getManyWithLocale', {
+  const allKeys = ids.reduce(
+    (acc, programId) => [...acc, ...getKeys(programId)],
+    []
+  );
+  return ctx.tx.call("multilanguage.contents.getManyWithLocale", {
     keys: allKeys,
     locale,
     isPrivate: true,
@@ -21,7 +27,7 @@ function formatSingleLocaleResult(copies) {
   if (!copies || isEmpty(copies)) return {};
 
   return Object.entries(copies).reduce((result, [key, value]) => {
-    const segments = key.split('.');
+    const segments = key.split(".");
     const programId = segments[2];
     const propertyName = segments[segments.length - 1];
 
@@ -48,7 +54,7 @@ function formatMultiLocaleResult({ ids, localeCodes, allCopies }) {
       });
 
       localeAcc[localeCode] = programCopies.reduce((copyAcc, copy) => {
-        const propertyName = copy.key.split('.').pop();
+        const propertyName = copy.key.split(".").pop();
         copyAcc[propertyName] = copy.value;
         return copyAcc;
       }, {});
@@ -58,23 +64,37 @@ function formatMultiLocaleResult({ ids, localeCodes, allCopies }) {
   }, {});
 }
 
-async function getProgramCustomNomenclature({ ids, ctx, allLocales: bringAllLocales }) {
+async function getProgramCustomNomenclature({
+  ids,
+  ctx,
+  allLocales: bringAllLocales,
+}) {
   const normalizedIds = Array.isArray(ids) ? ids : [ids];
 
   if (!bringAllLocales) {
     const userLocale = ctx.meta.userSession.locale;
-    const copies = await fetchCopies({ ctx, ids: normalizedIds, locale: userLocale });
+    const copies = await fetchCopies({
+      ctx,
+      ids: normalizedIds,
+      locale: userLocale,
+    });
     return formatSingleLocaleResult(copies);
   }
 
-  const allLocales = await ctx.tx.call('multilanguage.locales.getAll', { ctx });
+  const allLocales = await ctx.tx.call("multilanguage.locales.getAll", { ctx });
   const localeCodes = allLocales.map((locale) => locale.code);
 
   const allCopies = await Promise.all(
-    localeCodes.map((locale) => fetchCopies({ ctx, ids: normalizedIds, locale }))
+    localeCodes.map((locale) =>
+      fetchCopies({ ctx, ids: normalizedIds, locale })
+    )
   );
 
-  return formatMultiLocaleResult({ ids: normalizedIds, localeCodes, allCopies });
+  return formatMultiLocaleResult({
+    ids: normalizedIds,
+    localeCodes,
+    allCopies,
+  });
 }
 
 module.exports = {

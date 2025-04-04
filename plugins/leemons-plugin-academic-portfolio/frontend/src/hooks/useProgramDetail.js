@@ -1,5 +1,5 @@
-import { detailProgramRequest } from '@academic-portfolio/request';
-import { useQueries } from '@tanstack/react-query';
+import { detailProgramRequest } from "@academic-portfolio/request";
+import { useQueries } from "@tanstack/react-query";
 
 export default function useProgramDetail(
   programId,
@@ -13,7 +13,7 @@ export default function useProgramDetail(
   const queries = useQueries({
     queries: programIds.map((id) => ({
       queryKey: [
-        'programDetail',
+        "programDetail",
         { program: id, withClasses, showArchived, withStudentsAndTeachers },
       ],
       queryFn: async () => {

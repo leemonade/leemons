@@ -7,26 +7,31 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { LeemonsValidator } = require('@leemons/validator');
+} = require("@leemons/middlewares");
+const { LeemonsValidator } = require("@leemons/validator");
 
-const { permissions } = require('../../config/constants');
-const { addBlock, updateBlock, listSubjectBlocks, removeBlock } = require('../../core/blocks');
-const { getProgramCustomNomenclature } = require('../../core/programs');
+const { permissions } = require("../../config/constants");
+const {
+  addBlock,
+  updateBlock,
+  listSubjectBlocks,
+  removeBlock,
+} = require("../../core/blocks");
+const { getProgramCustomNomenclature } = require("../../core/programs");
 
 /** @type {ServiceSchema} */
 module.exports = {
   postBlockRest: {
     rest: {
-      path: '/',
-      method: 'POST',
+      path: "/",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
           [permissions.names.subjects]: {
-            actions: ['admin', 'create'],
+            actions: ["admin", "create"],
           },
         },
       }),
@@ -38,15 +43,15 @@ module.exports = {
   },
   putBlockRest: {
     rest: {
-      path: '/',
-      method: 'PUT',
+      path: "/",
+      method: "PUT",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
           [permissions.names.subjects]: {
-            actions: ['admin', 'update'],
+            actions: ["admin", "update"],
           },
         },
       }),
@@ -58,28 +63,28 @@ module.exports = {
   },
   listSubjectBlocksRest: {
     rest: {
-      path: '/by-subject/:subjectId',
-      method: 'GET',
+      path: "/by-subject/:subjectId",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
           [permissions.names.subjects]: {
-            actions: ['admin', 'view'],
+            actions: ["admin", "view"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-          subjectId: { type: 'string' },
+          page: { type: ["number", "string"] },
+          size: { type: ["number", "string"] },
+          subjectId: { type: "string" },
         },
-        required: ['page', 'size', 'subjectId'],
+        required: ["page", "size", "subjectId"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -99,15 +104,15 @@ module.exports = {
   },
   removeBlockRest: {
     rest: {
-      path: '/:id',
-      method: 'DELETE',
+      path: "/:id",
+      method: "DELETE",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
           [permissions.names.subjects]: {
-            actions: ['admin', 'delete'],
+            actions: ["admin", "delete"],
           },
         },
       }),

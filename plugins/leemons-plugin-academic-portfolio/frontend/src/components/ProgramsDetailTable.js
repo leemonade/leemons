@@ -1,12 +1,17 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from "react";
 
-import { Table, Stack, ActionButton, LoadingOverlay } from '@bubbles-ui/components';
-import { ArchiveIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
-import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
-import { isEmpty } from 'lodash';
-import PropTypes from 'prop-types';
+import {
+  Table,
+  Stack,
+  ActionButton,
+  LoadingOverlay,
+} from "@bubbles-ui/components";
+import { ArchiveIcon, EditWriteIcon } from "@bubbles-ui/icons/solid";
+import { DuplicateIcon } from "@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon";
+import { isEmpty } from "lodash";
+import PropTypes from "prop-types";
 
-import { useProgramDetail } from '@academic-portfolio/hooks';
+import { useProgramDetail } from "@academic-portfolio/hooks";
 
 const ProgramsDetailTable = ({
   programsIds,
@@ -28,28 +33,28 @@ const ProgramsDetailTable = ({
     () => [
       {
         Header: labels?.program,
-        accessor: 'name',
+        accessor: "name",
       },
       {
         Header: labels?.cycles,
-        accessor: 'cycles',
+        accessor: "cycles",
       },
       {
         Header: labels?.substages,
-        accessor: 'substages',
+        accessor: "substages",
       },
       {
         Header: labels?.subjects,
-        accessor: 'subjects',
+        accessor: "subjects",
       },
       {
         Header: labels?.students,
-        accessor: 'students',
+        accessor: "students",
       },
       {
         Header: labels?.actions,
-        accessor: 'actions',
-        style: { width: 100, textAlign: 'center' },
+        accessor: "actions",
+        style: { width: 100, textAlign: "center" },
       },
     ],
     [labels]
@@ -86,8 +91,16 @@ const ProgramsDetailTable = ({
             )}
             {!isShowingArchivedPrograms && (
               <ActionButton
-                tooltip={isShowingArchivedPrograms ? labels?.restore : labels?.archive}
-                icon={<ArchiveIcon width={18} height={18} onClick={() => onArchive(program)} />}
+                tooltip={
+                  isShowingArchivedPrograms ? labels?.restore : labels?.archive
+                }
+                icon={
+                  <ArchiveIcon
+                    width={18}
+                    height={18}
+                    onClick={() => onArchive(program)}
+                  />
+                }
               />
             )}
           </Stack>
@@ -97,10 +110,13 @@ const ProgramsDetailTable = ({
     return [];
   }, [programsQueries, isShowingArchivedPrograms, labels]);
 
-  if (isLoading || isEmpty(labels)) return <LoadingOverlay visible={isLoading} />;
+  if (isLoading || isEmpty(labels))
+    return <LoadingOverlay visible={isLoading} />;
   return (
     <Table
-      columns={isShowingArchivedPrograms ? tableColumns.slice(0, -1) : tableColumns}
+      columns={
+        isShowingArchivedPrograms ? tableColumns.slice(0, -1) : tableColumns
+      }
       data={programsData}
     />
   );

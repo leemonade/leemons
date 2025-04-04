@@ -8,8 +8,8 @@
  * */
 async function getProfiles({ ctx }) {
   const [teacher, student] = await Promise.all([
-    ctx.tx.call('users.profiles.detailBySysName', { sysName: 'teacher' }),
-    ctx.tx.call('users.profiles.detailBySysName', { sysName: 'student' }),
+    ctx.tx.call("users.profiles.detailBySysName", { sysName: "teacher" }),
+    ctx.tx.call("users.profiles.detailBySysName", { sysName: "student" }),
   ]);
   return {
     teacher: teacher.id,

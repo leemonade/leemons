@@ -1,9 +1,23 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
-import { Box, Button, ContextContainer, Stack, TextInput, Title } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Controller, useForm } from "react-hook-form";
+import {
+  Box,
+  Button,
+  ContextContainer,
+  Stack,
+  TextInput,
+  Title,
+} from "@bubbles-ui/components";
 
-const TreeCycleDetail = ({ item, messages, onSave, managersSelect, messagesAddUsers, saving }) => {
+const TreeCycleDetail = ({
+  item,
+  messages,
+  onSave,
+  managersSelect,
+  messagesAddUsers,
+  saving,
+}) => {
   const {
     reset,
     control,
@@ -26,7 +40,12 @@ const TreeCycleDetail = ({ item, messages, onSave, managersSelect, messagesAddUs
               name="name"
               rules={{ required: messages.nameRequired }}
               render={({ field }) => (
-                <TextInput label={messages.name} error={errors.name} required {...field} />
+                <TextInput
+                  label={messages.name}
+                  error={errors.name}
+                  required
+                  {...field}
+                />
               )}
             />
           </Box>

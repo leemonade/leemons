@@ -1,6 +1,6 @@
 function getTranslationKeyPrefixes() {
   return {
-    PROGRAM: 'program',
+    PROGRAM: "program",
   };
 }
 

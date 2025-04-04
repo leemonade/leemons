@@ -1,4 +1,4 @@
-const { subjectByIds } = require('../subjectByIds');
+const { subjectByIds } = require("../subjectByIds");
 
 async function isMainTeacherInSubject({ subjectIds, ctx }) {
   if (!subjectIds?.length) return false;
@@ -10,11 +10,16 @@ async function isMainTeacherInSubject({ subjectIds, ctx }) {
   const [teacherUserAgent] = ctx.meta.userSession.userAgents;
 
   const allMainTeachers = subjectDetails.reduce((acc, subject) => {
-    const mainTeachersInSubject = subject.classes.reduce((accClasses, { teachers }) => {
-      const mainTeachers = teachers.filter((teacher) => teacher.type === 'main-teacher');
-      accClasses.push(...mainTeachers.map((teacher) => teacher.teacher));
-      return accClasses;
-    }, []);
+    const mainTeachersInSubject = subject.classes.reduce(
+      (accClasses, { teachers }) => {
+        const mainTeachers = teachers.filter(
+          (teacher) => teacher.type === "main-teacher"
+        );
+        accClasses.push(...mainTeachers.map((teacher) => teacher.teacher));
+        return accClasses;
+      },
+      []
+    );
     acc.push(...mainTeachersInSubject);
     return acc;
   }, []);

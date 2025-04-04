@@ -1,13 +1,17 @@
-import { Box, Stack, Text } from '@bubbles-ui/components';
-import { HoverCard } from '@mantine/core';
-import propTypes from 'prop-types';
+import { Box, Stack, Text } from "@bubbles-ui/components";
+import { HoverCard } from "@mantine/core";
+import propTypes from "prop-types";
 
-import useSubjectItemListStyles from './SubjectItemList.styles';
+import useSubjectItemListStyles from "./SubjectItemList.styles";
 
-import { SubjectItemDisplay } from '@academic-portfolio/components/SubjectItemDisplay';
-import useSubjectDetails from '@academic-portfolio/hooks/useSubjectDetails';
+import { SubjectItemDisplay } from "@academic-portfolio/components/SubjectItemDisplay";
+import useSubjectDetails from "@academic-portfolio/hooks/useSubjectDetails";
 
-export default function SubjectItemList({ subjects = [], maxVisibleSubjects = 3, itemWidth = 88 }) {
+export default function SubjectItemList({
+  subjects = [],
+  maxVisibleSubjects = 3,
+  itemWidth = 88,
+}) {
   const { classes } = useSubjectItemListStyles({ itemWidth });
   const visibleSubjects = [...subjects].slice(0, maxVisibleSubjects);
   const hiddenSubjects = [...subjects].slice(maxVisibleSubjects);
@@ -27,7 +31,9 @@ export default function SubjectItemList({ subjects = [], maxVisibleSubjects = 3,
       {remainingCount > 0 && hiddenSubjectsDetails?.length > 0 && (
         <HoverCard withArrow position="top">
           <HoverCard.Target>
-            <Text className={classes.moreChip}>{`+${remainingCount} more`}</Text>
+            <Text
+              className={classes.moreChip}
+            >{`+${remainingCount} more`}</Text>
           </HoverCard.Target>
           <HoverCard.Dropdown className={classes.dropdown}>
             {hiddenSubjectsDetails?.map((subject) => (

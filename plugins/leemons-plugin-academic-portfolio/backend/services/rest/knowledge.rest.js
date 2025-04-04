@@ -4,34 +4,38 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 
 const {
   addKnowledgeArea,
   updateKnowledgeArea,
   listKnowledgeAreas,
-} = require('../../core/knowledges');
-const { removeKnowledgeArea } = require('../../core/knowledges/removeKnowledgeArea');
-const { getKnowledgeAreaById } = require('../../core/knowledges/getKnowledgeAreaById');
-const { permissions } = require('../../config/constants');
+} = require("../../core/knowledges");
+const {
+  removeKnowledgeArea,
+} = require("../../core/knowledges/removeKnowledgeArea");
+const {
+  getKnowledgeAreaById,
+} = require("../../core/knowledges/getKnowledgeAreaById");
+const { permissions } = require("../../config/constants");
 
 /** @type {ServiceSchema} */
 module.exports = {
   postKnowledgeRest: {
     rest: {
-      path: '/',
-      method: 'POST',
+      path: "/",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
           [permissions.names.programs]: {
-            actions: ['admin', 'create'],
+            actions: ["admin", "create"],
           },
         },
       }),
@@ -43,15 +47,15 @@ module.exports = {
   },
   putKnowledgeRest: {
     rest: {
-      path: '/',
-      method: 'PUT',
+      path: "/",
+      method: "PUT",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
           [permissions.names.programs]: {
-            actions: ['admin', 'update'],
+            actions: ["admin", "update"],
           },
         },
       }),
@@ -63,29 +67,29 @@ module.exports = {
   },
   listKnowledgeRest: {
     rest: {
-      path: '/',
-      method: 'GET',
+      path: "/",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
           [permissions.names.programs]: {
-            actions: ['admin', 'view'],
+            actions: ["admin", "view"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-          program: { type: 'string' },
-          center: { type: 'string' },
+          page: { type: ["number", "string"] },
+          size: { type: ["number", "string"] },
+          program: { type: "string" },
+          center: { type: "string" },
         },
-        required: ['page', 'size'],
+        required: ["page", "size"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -103,15 +107,15 @@ module.exports = {
   },
   deleteSubjectTypeRest: {
     rest: {
-      path: '/:id',
-      method: 'DELETE',
+      path: "/:id",
+      method: "DELETE",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
           [permissions.names.programs]: {
-            actions: ['admin', 'delete'],
+            actions: ["admin", "delete"],
           },
         },
       }),
@@ -124,15 +128,15 @@ module.exports = {
   },
   getKnowledgeAreaDetails: {
     rest: {
-      path: '/:id',
-      method: 'GET',
+      path: "/:id",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
           [permissions.names.programs]: {
-            actions: ['admin', 'view'],
+            actions: ["admin", "view"],
           },
         },
       }),

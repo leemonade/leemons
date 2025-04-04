@@ -1,10 +1,10 @@
-import { forwardRef, useCallback, useEffect, useState } from 'react';
+import { forwardRef, useCallback, useEffect, useState } from "react";
 
-import { Select } from '@bubbles-ui/components';
-import { debounce } from 'lodash';
-import PropTypes from 'prop-types';
+import { Select } from "@bubbles-ui/components";
+import { debounce } from "lodash";
+import PropTypes from "prop-types";
 
-import { listClassesRequest, listSessionClassesRequest } from '../../request';
+import { listClassesRequest, listSessionClassesRequest } from "../../request";
 
 const isThereMoreThanOneClassPerSubject = (classesData) => {
   let result = false;
@@ -14,7 +14,10 @@ const isThereMoreThanOneClassPerSubject = (classesData) => {
   classesData.forEach((classItem) => {
     const subjectId = classItem.subject?.id;
     if (subjectId) {
-      subjectClassCount.set(subjectId, (subjectClassCount.get(subjectId) || 0) + 1);
+      subjectClassCount.set(
+        subjectId,
+        (subjectClassCount.get(subjectId) || 0) + 1
+      );
     }
   });
 
@@ -55,7 +58,7 @@ const SelectClass = forwardRef(
 
         // EN: Notify the parent component about the change
         // ES: Notificar al componente padre sobre el cambio
-        if (typeof onChange === 'function') {
+        if (typeof onChange === "function") {
           onChange(newValue);
         }
       }
@@ -98,13 +101,14 @@ const SelectClass = forwardRef(
                 classData.classroomId ||
                 classData.classWithoutGroupId;
 
-              let mergedName = '';
+              let mergedName = "";
               if (mergeSubjectNameWithClass) {
-                let suffix = '';
-                const separator = ' - ';
-                const classIdentifierForMergedName = isThereMoreThanOneClassPerSubject(_classes)
-                  ? classIdentifier
-                  : '';
+                let suffix = "";
+                const separator = " - ";
+                const classIdentifierForMergedName =
+                  isThereMoreThanOneClassPerSubject(_classes)
+                    ? classIdentifier
+                    : "";
 
                 // We only add the course for classes that belong to programs with sequential courses: with max one course per class.
                 // It arrives as an object -or as an array one more than one course- and when not filtering by course
@@ -188,7 +192,7 @@ const SelectClass = forwardRef(
   }
 );
 
-SelectClass.displayName = '@academic-portfolio/components/SelectClass';
+SelectClass.displayName = "@academic-portfolio/components/SelectClass";
 SelectClass.propTypes = {
   customOptions: PropTypes.any,
   onlyClassesWhichIBelong: PropTypes.bool,

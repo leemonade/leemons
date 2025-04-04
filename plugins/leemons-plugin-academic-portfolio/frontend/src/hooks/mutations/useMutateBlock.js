@@ -2,11 +2,11 @@ import {
   createBlockRequest,
   updateBlockRequest,
   removeBlockRequest,
-} from '@academic-portfolio/request';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+} from "@academic-portfolio/request";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { getSubjectBlocksKey } from '../keys/subjectBlocks';
+import { getSubjectBlocksKey } from "../keys/subjectBlocks";
 
 export function useCreateBlock({ successMessage, successFollowUp }) {
   const queryClient = useQueryClient();

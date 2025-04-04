@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function getProgramTreeTypes({ programId, ctx }) {
   let program = null;
@@ -11,7 +11,7 @@ async function getProgramTreeTypes({ programId, ctx }) {
 
   const [haveCycles, deploymentConfig] = await Promise.all([
     ctx.tx.db.Cycles.countDocuments({ program: program.id }),
-    ctx.tx.call('deployment-manager.getConfigRest'),
+    ctx.tx.call("deployment-manager.getConfigRest"),
   ]);
 
   // subject
@@ -20,37 +20,74 @@ async function getProgramTreeTypes({ programId, ctx }) {
   // Determine the program tree types based on the program's treeType value.
   switch (program.treeType) {
     case 2:
-      result = ['center', 'program', 'courses', 'groups', 'knowledges', 'subjectType'];
+      result = [
+        "center",
+        "program",
+        "courses",
+        "groups",
+        "knowledges",
+        "subjectType",
+      ];
       if (haveCycles) {
-        result = ['center', 'program', 'cycles', 'courses', 'groups', 'knowledges', 'subjectType'];
+        result = [
+          "center",
+          "program",
+          "cycles",
+          "courses",
+          "groups",
+          "knowledges",
+          "subjectType",
+        ];
       }
       break;
     case 3:
-      result = ['center', 'program', 'courses', 'subjectType', 'knowledges'];
+      result = ["center", "program", "courses", "subjectType", "knowledges"];
       if (haveCycles) {
-        result = ['center', 'program', 'cycles', 'courses', 'subjectType', 'knowledges'];
+        result = [
+          "center",
+          "program",
+          "cycles",
+          "courses",
+          "subjectType",
+          "knowledges",
+        ];
       }
       break;
     case 4:
-      result = ['center', 'program', 'subjectType', 'knowledges'];
+      result = ["center", "program", "subjectType", "knowledges"];
       break;
     default:
-      result = ['center', 'program', 'courses', 'groups', 'subjectType', 'knowledges'];
+      result = [
+        "center",
+        "program",
+        "courses",
+        "groups",
+        "subjectType",
+        "knowledges",
+      ];
       if (haveCycles) {
-        result = ['center', 'program', 'cycles', 'courses', 'groups', 'subjectType', 'knowledges'];
+        result = [
+          "center",
+          "program",
+          "cycles",
+          "courses",
+          "groups",
+          "subjectType",
+          "knowledges",
+        ];
       }
       break;
   }
 
   // If the program lasts more than one academic year, remove 'courses' from the tree types.
   if (program.moreThanOneAcademicYear) {
-    const index = result.indexOf('courses');
+    const index = result.indexOf("courses");
     if (index >= 0) {
       result.splice(index, 1);
     }
   }
-  if (deploymentConfig?.deny?.others?.includes('subjectType')) {
-    const index = result.indexOf('subjectType');
+  if (deploymentConfig?.deny?.others?.includes("subjectType")) {
+    const index = result.indexOf("subjectType");
     if (index >= 0) {
       result.splice(index, 1);
     }

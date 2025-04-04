@@ -1,8 +1,8 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { validateAddClassStudentsMany } = require('../../validations/forms');
+const { validateAddClassStudentsMany } = require("../../validations/forms");
 
-const { addClassStudents } = require('./addClassStudents');
+const { addClassStudents } = require("./addClassStudents");
 
 async function addClassStudentsMany({ data, ctx }) {
   const classes = [data.class].flat();
@@ -10,7 +10,10 @@ async function addClassStudentsMany({ data, ctx }) {
 
   return Promise.all(
     _.map(classes, (_class) =>
-      addClassStudents({ data: { class: _class, students: data.students }, ctx })
+      addClassStudents({
+        data: { class: _class, students: data.students },
+        ctx,
+      })
     )
   );
 }

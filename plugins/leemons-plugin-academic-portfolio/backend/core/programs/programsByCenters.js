@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { programsByIds } = require('./programsByIds');
+const _ = require("lodash");
+const { programsByIds } = require("./programsByIds");
 
 async function programsByCenters({
   centerIds,
@@ -11,12 +11,16 @@ async function programsByCenters({
   const programCenters = await ctx.tx.db.ProgramCenter.find({
     center: _.isArray(centerIds) ? centerIds : [centerIds],
   }).lean();
-  const programIds = _.map(programCenters, 'program');
+  const programIds = _.map(programCenters, "program");
 
   // ES: Si returnIds es falso sacamos los programas y se los seteamos a programCenters
   if (!returnIds) {
-    const programs = await programsByIds({ ids: programIds, shouldPrepareAssets, ctx });
-    const programsById = _.keyBy(programs, 'id');
+    const programs = await programsByIds({
+      ids: programIds,
+      shouldPrepareAssets,
+      ctx,
+    });
+    const programsById = _.keyBy(programs, "id");
     _.forEach(programCenters, (programCenter, index) => {
       programCenters[index].program = programsById[programCenter.program];
     });
@@ -29,7 +33,7 @@ async function programsByCenters({
   if (returnIds) return programIds;
 
   // ES: Si no se especifica nada devolvemos todos los programas
-  return _.map(programCenters, 'program');
+  return _.map(programCenters, "program");
 }
 
 module.exports = { programsByCenters };

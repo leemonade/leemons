@@ -3,11 +3,11 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 
 const {
   getProfiles,
@@ -15,15 +15,15 @@ const {
   isProfilesConfig,
   findOne,
   update,
-} = require('../../core/settings');
-const settingsSchema = require('../../models/settings');
+} = require("../../core/settings");
+const settingsSchema = require("../../models/settings");
 
 /** @type {ServiceSchema} */
 module.exports = {
   getProfilesRest: {
     rest: {
-      path: '/profiles',
-      method: 'GET',
+      path: "/profiles",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -33,15 +33,15 @@ module.exports = {
   },
   setProfilesRest: {
     rest: {
-      path: '/profiles',
-      method: 'PUT',
+      path: "/profiles",
+      method: "PUT",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.profiles': {
-            actions: ['admin', 'create', 'update'],
+          "academic-portfolio.profiles": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),
@@ -53,15 +53,15 @@ module.exports = {
   },
   isProfilesConfigRest: {
     rest: {
-      path: '/profiles/is-config',
-      method: 'GET',
+      path: "/profiles/is-config",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.profiles': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.profiles": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -73,15 +73,15 @@ module.exports = {
   },
   findOneRest: {
     rest: {
-      path: '/',
-      method: 'GET',
+      path: "/",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.portfolio': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.portfolio": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -93,22 +93,22 @@ module.exports = {
   },
   updateRest: {
     rest: {
-      path: '/',
-      method: 'POST',
+      path: "/",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.portfolio': {
-            actions: ['admin', 'edit'],
+          "academic-portfolio.portfolio": {
+            actions: ["admin", "edit"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: { ...settingsSchema.attributes },
         required: [],
         additionalProperties: false,
@@ -123,27 +123,27 @@ module.exports = {
   // TODO Verificar que esto se va a usar
   enableMenuItemRest: {
     rest: {
-      path: '/enable-menu-item',
-      method: 'POST',
+      path: "/enable-menu-item",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.portfolio': {
-            actions: ['admin', 'edit'],
+          "academic-portfolio.portfolio": {
+            actions: ["admin", "edit"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
-        properties: { key: { type: 'string' } },
-        required: ['key'],
+        type: "object",
+        properties: { key: { type: "string" } },
+        required: ["key"],
       });
       if (validator.validate(ctx.params)) {
-        const item = await ctx.tx.call('menu-builder.menuItem.enable', {
+        const item = await ctx.tx.call("menu-builder.menuItem.enable", {
           key: ctx.prefixPN(ctx.params.key),
         });
         return { status: 200, item };

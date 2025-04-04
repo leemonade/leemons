@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { useSessionClasses } from '@academic-portfolio/hooks';
-import { filter, flatMap, sortBy, uniqBy } from 'lodash';
+import { useSessionClasses } from "@academic-portfolio/hooks";
+import { filter, flatMap, sortBy, uniqBy } from "lodash";
 
 export default function useCourses({ program, subject }) {
   const { data: classes } = useSessionClasses({ program, withProgram: true });
@@ -10,10 +10,13 @@ export default function useCourses({ program, subject }) {
     () =>
       sortBy(
         uniqBy(
-          flatMap(filter(classes, { subject: { subject } }), (klass) => klass.courses),
-          'id'
+          flatMap(
+            filter(classes, { subject: { subject } }),
+            (klass) => klass.courses
+          ),
+          "id"
         ),
-        'index'
+        "index"
       ),
     [classes, subject]
   );

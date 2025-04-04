@@ -1,7 +1,7 @@
 export const allClassStudents = [
   {
-    plugin: 'plugin.academic-portfolio',
-    scope: 'course-detail',
+    plugin: "plugin.academic-portfolio",
+    scope: "course-detail",
   },
 ];
 

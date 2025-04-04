@@ -1,9 +1,23 @@
-const { getProgramTreeTypes } = require('./getProgramTreeTypes');
-const { addStudentsClassesUnderNodeTree } = require('../common/addStudentsToClassesUnderNodeTree');
+const { getProgramTreeTypes } = require("./getProgramTreeTypes");
+const {
+  addStudentsClassesUnderNodeTree,
+} = require("../common/addStudentsToClassesUnderNodeTree");
 
-async function addStudentsToClassesUnderNodeTree({ program, nodeType, nodeId, students, ctx }) {
+async function addStudentsToClassesUnderNodeTree({
+  program,
+  nodeType,
+  nodeId,
+  students,
+  ctx,
+}) {
   const nodeTypes = await getProgramTreeTypes({ programId: program, ctx });
-  return addStudentsClassesUnderNodeTree({ nodeTypes, nodeType, nodeId, students, ctx });
+  return addStudentsClassesUnderNodeTree({
+    nodeTypes,
+    nodeType,
+    nodeId,
+    students,
+    ctx,
+  });
 }
 
 module.exports = { addStudentsToClassesUnderNodeTree };

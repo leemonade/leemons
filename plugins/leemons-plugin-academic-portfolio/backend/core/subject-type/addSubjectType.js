@@ -1,7 +1,7 @@
-const { map } = require('lodash');
-const { validateAddSubjectType } = require('../../validations/forms');
-const { updateClassMany } = require('../classes/updateClassMany');
-const { saveManagers } = require('../managers/saveManagers');
+const { map } = require("lodash");
+const { validateAddSubjectType } = require("../../validations/forms");
+const { updateClassMany } = require("../classes/updateClassMany");
+const { saveManagers } = require("../managers/saveManagers");
 
 async function addSubjectType({ data: _data, ctx }) {
   await validateAddSubjectType({ data: _data, ctx });
@@ -10,7 +10,7 @@ async function addSubjectType({ data: _data, ctx }) {
   const subjectType = subjectTypeDoc.toObject();
   await saveManagers({
     userAgents: managers,
-    type: 'subject-type',
+    type: "subject-type",
     relationship: subjectType.id,
     ctx,
   });
@@ -21,7 +21,7 @@ async function addSubjectType({ data: _data, ctx }) {
     }).lean();
     await updateClassMany({
       data: {
-        ids: map(classes, 'id'),
+        ids: map(classes, "id"),
         subjectType: subjectType.id,
       },
       ctx,

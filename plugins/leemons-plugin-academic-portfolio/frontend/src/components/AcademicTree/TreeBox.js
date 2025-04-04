@@ -1,15 +1,21 @@
-import React, { useEffect, useState, useRef } from 'react';
-import PropTypes from 'prop-types';
-import { DndProvider } from 'react-dnd';
-import { Tree, MultiBackend, getBackendOptions } from '@minoru/react-dnd-treeview';
+import React, { useEffect, useState, useRef } from "react";
+import PropTypes from "prop-types";
+import { DndProvider } from "react-dnd";
+import {
+  Tree,
+  MultiBackend,
+  getBackendOptions,
+} from "@minoru/react-dnd-treeview";
 
-import { Box } from '@bubbles-ui/components';
+import { Box } from "@bubbles-ui/components";
 
-import { NodeRenderer } from './NodeRenderer/NodeRenderer';
-import { TreeHeader } from './TreeHeader/TreeHeader';
+import { NodeRenderer } from "./NodeRenderer/NodeRenderer";
+import { TreeHeader } from "./TreeHeader/TreeHeader";
 
 const TreeBox = ({ treeStructures, selectedTreeNode, handleNodeClick }) => {
-  const [openedNodes, setOpenedNodes] = useState(treeStructures.map(() => ({})));
+  const [openedNodes, setOpenedNodes] = useState(
+    treeStructures.map(() => ({}))
+  );
   const treeRefs = useRef(treeStructures.map(() => React.createRef()));
 
   useEffect(() => {
@@ -42,13 +48,15 @@ const TreeBox = ({ treeStructures, selectedTreeNode, handleNodeClick }) => {
   };
 
   return (
-    <Box style={{ width: 192, position: 'fixed' }}>
+    <Box style={{ width: 192, position: "fixed" }}>
       {treeStructures.map((treeStructure, index) => (
         <Box
           key={`${index}-${treeStructure?.header?.name}`}
           style={index > 0 ? { marginTop: 24 } : {}}
         >
-          {treeStructure.header && <TreeHeader name={treeStructure.header.name} />}
+          {treeStructure.header && (
+            <TreeHeader name={treeStructure.header.name} />
+          )}
           <DndProvider backend={MultiBackend} options={getBackendOptions()}>
             <Tree
               ref={treeRefs.current[index]}
@@ -90,7 +98,10 @@ const TreeBox = ({ treeStructures, selectedTreeNode, handleNodeClick }) => {
 };
 
 TreeBox.propTypes = {
-  viewRef: PropTypes.oneOfType([PropTypes.func, PropTypes.shape({ current: PropTypes.any })]),
+  viewRef: PropTypes.oneOfType([
+    PropTypes.func,
+    PropTypes.shape({ current: PropTypes.any }),
+  ]),
   treeStructures: PropTypes.arrayOf(
     PropTypes.shape({
       header: PropTypes.shape({

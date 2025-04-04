@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 import {
   SelectCourse,
   SelectProgram,
   SelectSubject,
-} from '@academic-portfolio/components/Selectors';
-import { listCoursesRequest } from '@academic-portfolio/request';
-import { Box, Stack } from '@bubbles-ui/components';
-import { SelectCenter } from '@users/components';
-import noop from 'lodash/noop';
-import PropTypes from 'prop-types';
+} from "@academic-portfolio/components/Selectors";
+import { listCoursesRequest } from "@academic-portfolio/request";
+import { Box, Stack } from "@bubbles-ui/components";
+import { SelectCenter } from "@users/components";
+import noop from "lodash/noop";
+import PropTypes from "prop-types";
 
 function Filters({ onChange = noop }) {
   const [centerId, setCenterId] = useState(null);
@@ -57,10 +57,15 @@ function Filters({ onChange = noop }) {
   return (
     <Stack spacing={2}>
       <SelectCenter onChange={onSelectCenter} value={centerId} />
-      <SelectProgram firstSelected onChange={onSelectProgram} center={centerId} value={programId} />
+      <SelectProgram
+        firstSelected
+        onChange={onSelectProgram}
+        center={centerId}
+        value={programId}
+      />
 
       {hasCourses && (
-        <Box sx={{ display: coursesCount > 1 ? 'flex' : 'none' }}>
+        <Box sx={{ display: coursesCount > 1 ? "flex" : "none" }}>
           <SelectCourse
             firstSelected
             onChange={onSelectCourse}

@@ -1,7 +1,7 @@
-import { listKnowledgeAreasRequest } from '@academic-portfolio/request';
-import { useVariantForQueryKey } from '@common/queries';
-import { useQuery } from '@tanstack/react-query';
-import { getKnowledgeAreasKey } from './keys/knowledgeAreas';
+import { listKnowledgeAreasRequest } from "@academic-portfolio/request";
+import { useVariantForQueryKey } from "@common/queries";
+import { useQuery } from "@tanstack/react-query";
+import { getKnowledgeAreasKey } from "./keys/knowledgeAreas";
 
 // TODO: HANDLE PAGINATION
 export default function useKnowledgeAreas({ center, options }) {
@@ -13,7 +13,7 @@ export default function useKnowledgeAreas({ center, options }) {
     );
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'frequently',
+    modificationTrend: "frequently",
   });
 
   return useQuery({

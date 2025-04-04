@@ -1,7 +1,7 @@
-const { LeemonsError } = require('@leemons/error');
-const { flatten } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { flatten } = require("lodash");
 
-const { validateValidateStaffChange } = require('../../validations/forms');
+const { validateValidateStaffChange } = require("../../validations/forms");
 
 /**
  * Validates if a staff change is allowed by emitting a validation event and checking responses
@@ -19,7 +19,7 @@ async function validateStaffChange({ data, ctx }) {
 
   //! Expected response: { status: 'ko' || 'ok', error: { message: 'Error message in user locale' } };
   //! This event cannot be handled by a multi-event listener
-  allResults = await ctx.tx.emit('validate-staff-change', {
+  allResults = await ctx.tx.emit("validate-staff-change", {
     data,
   });
 
@@ -27,10 +27,10 @@ async function validateStaffChange({ data, ctx }) {
 
   if (responses.length > 0) {
     responses.forEach((response) => {
-      if (response.status === 'ko') {
+      if (response.status === "ko") {
         throw new LeemonsError(ctx, {
           message: response.error.message,
-          customCode: 'VALIDATE_STAFF_CHANGE_DENIED',
+          customCode: "VALIDATE_STAFF_CHANGE_DENIED",
         });
       }
     });

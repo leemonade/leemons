@@ -1,7 +1,7 @@
 export const allCenterPrograms = [
   {
-    plugin: 'plugin.academic-portfolio',
-    scope: 'center-programs',
+    plugin: "plugin.academic-portfolio",
+    scope: "center-programs",
   },
 ];
 

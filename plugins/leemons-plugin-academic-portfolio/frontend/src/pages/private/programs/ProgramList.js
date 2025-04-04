@@ -1,10 +1,10 @@
-import { ProgramItem } from '@academic-portfolio/components';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import { ProgramItem } from "@academic-portfolio/components";
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
 import {
   createProgramRequest,
   listProgramsRequest,
   updateProgramRequest,
-} from '@academic-portfolio/request';
+} from "@academic-portfolio/request";
 import {
   Alert,
   Anchor,
@@ -17,34 +17,36 @@ import {
   Tree,
   useResizeObserver,
   useTree,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 // TODO: import from @common plugin
 
-import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { AdminPageHeader } from "@bubbles-ui/leemons";
 import {
   AcademicProgramSetup,
   AcademicProgramSetupBasicData,
   AcademicProgramSetupCourses,
   AcademicProgramSetupSubjects,
-} from '@academic-portfolio/components/ProgramSetup';
-import { unflatten, useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { EvaluationsSelect } from '@grades/components/EvaluationsSelect';
-import { listGradesRequest } from '@grades/request';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import { LayoutContext } from '@layout/context/layout';
-import ImagePicker from '@leebrary/components/ImagePicker';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { SelectCenter } from '@users/components/SelectCenter';
-import { cloneDeep, isArray, isEmpty, isNil, keyBy, map } from 'lodash';
-import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { activeMenuItemSubjects } from '../../../helpers/activeMenuItemSubjects';
-import { detailProgramRequest } from '../../../request';
+} from "@academic-portfolio/components/ProgramSetup";
+import { unflatten, useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { EvaluationsSelect } from "@grades/components/EvaluationsSelect";
+import { listGradesRequest } from "@grades/request";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import { LayoutContext } from "@layout/context/layout";
+import ImagePicker from "@leebrary/components/ImagePicker";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { SelectCenter } from "@users/components/SelectCenter";
+import { cloneDeep, isArray, isEmpty, isNil, keyBy, map } from "lodash";
+import React, { useContext, useEffect, useMemo, useState } from "react";
+import { Link, useHistory } from "react-router-dom";
+import { activeMenuItemSubjects } from "../../../helpers/activeMenuItemSubjects";
+import { detailProgramRequest } from "../../../request";
 
 export default function ProgramList() {
-  const [t, translations, , loading] = useTranslateLoader(prefixPN('programs_page'));
+  const [t, translations, , loading] = useTranslateLoader(
+    prefixPN("programs_page")
+  );
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
   const [errorNoEvaluation, setErrorNoEvaluation] = useState(false);
@@ -81,13 +83,13 @@ export default function ProgramList() {
   const loadTree = (data) => {
     if (isArray(data) && t) {
       const ADD_PROGRAM = {
-        id: 'PROGRAM-ADD',
+        id: "PROGRAM-ADD",
         parent: 0,
-        text: t('common.add_program'),
-        type: 'button',
+        text: t("common.add_program"),
+        type: "button",
         draggable: false,
         data: {
-          action: 'add',
+          action: "add",
         },
       };
 
@@ -115,7 +117,11 @@ export default function ProgramList() {
 
   const loadPrograms = async (center) => {
     try {
-      const response = await listProgramsRequest({ page: 0, size: 9999, center });
+      const response = await listProgramsRequest({
+        page: 0,
+        size: 9999,
+        center,
+      });
       const data = response.data?.items || [];
       store.programs = data;
       loadTree(data);
@@ -129,11 +135,18 @@ export default function ProgramList() {
       setLoading(true);
       let body = { ...values, centers: [centerId] };
       let apiCall = createProgramRequest;
-      let messageKey = 'common.create_done';
+      let messageKey = "common.create_done";
 
       if (!isEmpty(store.currentProgram)) {
-        const { name, abbreviation, credits, image, color, totalHours, hideStudentsToStudents } =
-          values;
+        const {
+          name,
+          abbreviation,
+          credits,
+          image,
+          color,
+          totalHours,
+          hideStudentsToStudents,
+        } = values;
         body = {
           id: store.currentProgram.id,
           name,
@@ -145,7 +158,7 @@ export default function ProgramList() {
           hideStudentsToStudents: !!hideStudentsToStudents,
         };
         apiCall = updateProgramRequest;
-        messageKey = 'common.update_done';
+        messageKey = "common.update_done";
       }
 
       const response = await apiCall(body);
@@ -164,7 +177,7 @@ export default function ProgramList() {
   useEffect(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const data = res['academic-portfolio'].programs_page.setup;
+      const data = res["academic-portfolio"].programs_page.setup;
       setSetupLabels(data);
     }
   }, [translations]);
@@ -235,7 +248,8 @@ export default function ProgramList() {
     handleShowDetail(async () => {
       const { program } = await detailProgramRequest(e.program.id);
       store.currentProgram = program;
-      store.currentProgram.allSubjectsSameDuration = !store.currentProgram.customSubstages?.length;
+      store.currentProgram.allSubjectsSameDuration =
+        !store.currentProgram.customSubstages?.length;
       treeProps.setSelectedNode(e.id);
     });
   };
@@ -253,16 +267,23 @@ export default function ProgramList() {
 
   const headerValues = useMemo(
     () => ({
-      title: t('page_title'),
-      description: t('page_description'),
+      title: t("page_title"),
+      description: t("page_description"),
     }),
     [t]
   );
 
   const setupProps = useMemo(() => {
     if (!isNil(setupLabels)) {
-      const { title, editTitle, basicData, coursesData, subjectsData, frequencies, firstDigits } =
-        setupLabels;
+      const {
+        title,
+        editTitle,
+        basicData,
+        coursesData,
+        subjectsData,
+        frequencies,
+        firstDigits,
+      } = setupLabels;
       const firstDigitOptions = Object.keys(firstDigits).map((key) => ({
         label: firstDigits[key],
         value: key,
@@ -272,12 +293,17 @@ export default function ProgramList() {
         value: key,
       }));
 
-      const values = store.currentProgram ? cloneDeep(store.currentProgram) : {};
+      const values = store.currentProgram
+        ? cloneDeep(store.currentProgram)
+        : {};
       if (values.cycles) {
-        const coursesById = keyBy(values.courses, 'id');
+        const coursesById = keyBy(values.courses, "id");
         values.cycles = map(values.cycles, (cycle) => ({
           ...cycle,
-          courses: map(cycle.courses, (courseId) => coursesById[courseId]?.index),
+          courses: map(
+            cycle.courses,
+            (courseId) => coursesById[courseId]?.index
+          ),
         }));
       }
 
@@ -303,7 +329,10 @@ export default function ProgramList() {
           {
             label: coursesData.step_label,
             content: (
-              <AcademicProgramSetupCourses {...coursesData} frequencyOptions={frequencyOptions} />
+              <AcademicProgramSetupCourses
+                {...coursesData}
+                frequencyOptions={frequencyOptions}
+              />
             ),
           },
           {
@@ -328,11 +357,11 @@ export default function ProgramList() {
   }
 
   React.useEffect(() => {
-    layoutState.contentRef.current?.addEventListener('scroll', onScroll);
+    layoutState.contentRef.current?.addEventListener("scroll", onScroll);
 
     // cleanup this component
     return () => {
-      layoutState.contentRef.current?.removeEventListener('scroll', onScroll);
+      layoutState.contentRef.current?.removeEventListener("scroll", onScroll);
     };
   }, [layoutState.contentRef.current]);
 
@@ -364,7 +393,7 @@ export default function ProgramList() {
                   <Box
                     style={{
                       width: `${container.width}px`,
-                      position: 'fixed',
+                      position: "fixed",
                       top: `${top}px`,
                       height: `calc(100vh - ${top + correctBottom}px)`,
                     }}
@@ -373,7 +402,7 @@ export default function ProgramList() {
                       <ContextContainer divided>
                         <Box>
                           <SelectCenter
-                            label={t('common.select_center')}
+                            label={t("common.select_center")}
                             onChange={handleOnSelectCenter}
                             firstSelected
                           />
@@ -381,16 +410,22 @@ export default function ProgramList() {
                         {errorNoEvaluation ? (
                           <Box>
                             <Alert severity="error" closeable={false}>
-                              {t('errorNoEvaluationSystems')}
-                              <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
+                              {t("errorNoEvaluationSystems")}
+                              <Box
+                                sx={(theme) => ({
+                                  marginTop: theme.spacing[2],
+                                })}
+                              >
                                 <Anchor
                                   component={Link}
                                   onClick={() =>
-                                    history.push(`/private/grades/evaluations?center=${centerId}`)
+                                    history.push(
+                                      `/private/grades/evaluations?center=${centerId}`
+                                    )
                                   }
                                   to={`/private/grades/evaluations?center=${centerId}`}
                                 >
-                                  {t('errorNoEvaluationSystemsGoTo')}
+                                  {t("errorNoEvaluationSystemsGoTo")}
                                 </Anchor>
                               </Box>
                             </Alert>

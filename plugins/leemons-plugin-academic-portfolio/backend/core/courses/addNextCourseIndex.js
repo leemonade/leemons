@@ -1,4 +1,4 @@
-const { getNextCourseIndex } = require('./getNextCourseIndex');
+const { getNextCourseIndex } = require("./getNextCourseIndex");
 
 async function addNextCourseIndex({ program, index, ctx }) {
   let goodIndex = index;

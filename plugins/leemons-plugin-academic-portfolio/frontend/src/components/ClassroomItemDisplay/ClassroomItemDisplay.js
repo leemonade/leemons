@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 
-import { AvatarSubject, Box, Text, TextClamp } from '@bubbles-ui/components';
-import { isArray } from 'lodash';
+import { AvatarSubject, Box, Text, TextClamp } from "@bubbles-ui/components";
+import { isArray } from "lodash";
 
 import {
   CLASSROOMTITEMSDISPLAY_DEFAULT_PROPS,
   CLASSROOMTITEMSDISPLAY_PROP_TYPES,
-} from './ClassroomItemDisplay.constants';
-import { ClassroomItemDisplayStyles } from './ClassroomItemDisplay.styles';
-import { ClassroomItemDisplaySkeleton } from './ClassroomItemDisplaySkeleton';
+} from "./ClassroomItemDisplay.constants";
+import { ClassroomItemDisplayStyles } from "./ClassroomItemDisplay.styles";
+import { ClassroomItemDisplaySkeleton } from "./ClassroomItemDisplaySkeleton";
 
-import { useClassroomsData } from '@academic-portfolio/hooks/useClassroomsData';
+import { useClassroomsData } from "@academic-portfolio/hooks/useClassroomsData";
 
 const ClassroomItemDisplay = ({ classroomIds, compact, showSubject }) => {
   const [programNames, setProgramNames] = useState(null);
@@ -18,17 +18,17 @@ const ClassroomItemDisplay = ({ classroomIds, compact, showSubject }) => {
   const { data: classData, isLoading } = useClassroomsData(classroomIds);
 
   const handleCourses = (data) => {
-    let allCoursesStrigyfied = '';
+    let allCoursesStrigyfied = "";
     if (isArray(data) && data.length === 1) {
       return setProgramNames(`Grupo ${data[0]?.name}`);
     }
     if (isArray(data)) {
       data.forEach((course, index) => {
-        allCoursesStrigyfied += `${course?.name}${index < data.length - 1 ? ',' : ''}`;
+        allCoursesStrigyfied += `${course?.name}${index < data.length - 1 ? "," : ""}`;
       });
     }
     if (!allCoursesStrigyfied) {
-      return setProgramNames('');
+      return setProgramNames("");
     }
     return setProgramNames(`Grupos (${allCoursesStrigyfied})`);
   };
@@ -51,14 +51,18 @@ const ClassroomItemDisplay = ({ classroomIds, compact, showSubject }) => {
     <Box className={classes.root}>
       <AvatarSubject
         color={classData?.color}
-        size={'md'}
+        size={"md"}
         isMultiSubject={isMultiSubjectCase}
         icon={classData?.icon ?? undefined}
         name={classData?.subjectName}
       />
       <Box className={classes.textWrapper}>
         <TextClamp lines={1}>
-          <Text color={compact ? 'primary' : 'muted'} role="productive" size="xs">
+          <Text
+            color={compact ? "primary" : "muted"}
+            role="productive"
+            size="xs"
+          >
             {classData?.subjectName}
             {!!compact &&
               (classData?.groupName || programNames) &&
@@ -67,7 +71,9 @@ const ClassroomItemDisplay = ({ classroomIds, compact, showSubject }) => {
         </TextClamp>
         {!compact && (
           <TextClamp lines={1}>
-            <Text className={classes.programName}>{`${classData?.groupName} ${programNames}`}</Text>
+            <Text
+              className={classes.programName}
+            >{`${classData?.groupName} ${programNames}`}</Text>
           </TextClamp>
         )}
       </Box>

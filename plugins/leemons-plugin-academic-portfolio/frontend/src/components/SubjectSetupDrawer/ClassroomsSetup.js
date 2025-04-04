@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 import {
   ContextContainer,
@@ -7,36 +7,41 @@ import {
   TextInput,
   NumberInput,
   Text,
-} from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
 const useStyles = createStyles(() => ({
   table: {
-    width: '100%',
-    borderCollapse: 'collapse',
+    width: "100%",
+    borderCollapse: "collapse",
     marginTop: 8,
   },
   th: {
-    textAlign: 'start',
+    textAlign: "start",
     width: 120,
   },
   aulaTh: {
-    textAlign: 'start',
+    textAlign: "start",
     width: 72,
   },
   td: {
-    padding: '8px 12px 8px 0',
-    borderBottom: '1px solid rgba(0, 0, 0, 0.05)',
-    textAlign: 'start',
+    padding: "8px 12px 8px 0",
+    borderBottom: "1px solid rgba(0, 0, 0, 0.05)",
+    textAlign: "start",
   },
 }));
 
-const ClassroomsSetup = ({ onChange, value, formLabels, existentClassroomsAmount }) => {
+const ClassroomsSetup = ({
+  onChange,
+  value,
+  formLabels,
+  existentClassroomsAmount,
+}) => {
   const { classes } = useStyles();
   const form = useForm({
     defaultValues: { classroomsAmount: 0 },
   });
-  const classroomsAmount = form.watch('classroomsAmount');
+  const classroomsAmount = form.watch("classroomsAmount");
 
   useEffect(() => {
     if (value?.length) {
@@ -44,12 +49,12 @@ const ClassroomsSetup = ({ onChange, value, formLabels, existentClassroomsAmount
         a.classWithoutGroupId?.localeCompare(b.classWithoutGroupId)
       );
 
-      const currentClassrooms = form.getValues('classrooms');
+      const currentClassrooms = form.getValues("classrooms");
       if (JSON.stringify(value) !== JSON.stringify(currentClassrooms)) {
-        form.setValue('classrooms', sortedClassrooms);
+        form.setValue("classrooms", sortedClassrooms);
       }
       if (classroomsAmount !== value.length) {
-        form.setValue('classroomsAmount', value.length);
+        form.setValue("classroomsAmount", value.length);
       }
     }
   }, [value]);
@@ -63,7 +68,7 @@ const ClassroomsSetup = ({ onChange, value, formLabels, existentClassroomsAmount
       return true;
     }
     form.setError(fieldName, {
-      type: 'manual',
+      type: "manual",
       message: formLabels?.validation?.requiredField,
     });
     return false;
@@ -73,9 +78,10 @@ const ClassroomsSetup = ({ onChange, value, formLabels, existentClassroomsAmount
     const validClassroom = await validate(index);
 
     if (validClassroom) {
-      const formClassrooms = form.getValues('classrooms');
+      const formClassrooms = form.getValues("classrooms");
       if (formClassrooms[index]) {
-        formClassrooms[index].classWithoutGroupId = `${(index + 1).toString().padStart(3, '0')}`;
+        formClassrooms[index].classWithoutGroupId =
+          `${(index + 1).toString().padStart(3, "0")}`;
       }
       onChange([...formClassrooms]);
     }
@@ -84,7 +90,7 @@ const ClassroomsSetup = ({ onChange, value, formLabels, existentClassroomsAmount
   return (
     <ContextContainer>
       <Controller
-        name={'classroomsAmount'}
+        name={"classroomsAmount"}
         control={form.control}
         render={({ field }) => (
           <NumberInput
@@ -95,9 +101,9 @@ const ClassroomsSetup = ({ onChange, value, formLabels, existentClassroomsAmount
             sx={{ width: 120 }}
             onChange={(val) => {
               if (val < classroomsAmount) {
-                const currentClassrooms = form.getValues('classrooms');
+                const currentClassrooms = form.getValues("classrooms");
                 currentClassrooms.pop();
-                form.setValue('classrooms', currentClassrooms);
+                form.setValue("classrooms", currentClassrooms);
                 field.onChange(val);
                 handleOnChange();
               }
@@ -118,7 +124,7 @@ const ClassroomsSetup = ({ onChange, value, formLabels, existentClassroomsAmount
               </th>
               <th className={classes.th}>
                 <Text size="xs" role="productive" color="primary" strong>
-                  {`${formLabels?.seats || ''}*`}
+                  {`${formLabels?.seats || ""}*`}
                 </Text>
               </th>
               <th className={classes.th}>
@@ -138,8 +144,9 @@ const ClassroomsSetup = ({ onChange, value, formLabels, existentClassroomsAmount
               <tr key={`classrom-${index}`}>
                 <td className={classes.td}>
                   <Text>
-                    {form.getValues(`classrooms.${index}.classWithoutGroupId`) ||
-                      `${(index + 1).toString().padStart(3, '0')}`}
+                    {form.getValues(
+                      `classrooms.${index}.classWithoutGroupId`
+                    ) || `${(index + 1).toString().padStart(3, "0")}`}
                   </Text>
                 </td>
                 <Controller
@@ -147,7 +154,8 @@ const ClassroomsSetup = ({ onChange, value, formLabels, existentClassroomsAmount
                   control={form.control}
                   rules={{
                     required: formLabels?.validation?.requiredField,
-                    validate: (val) => val >= 1 || formLabels?.validation?.atLeastOneSeat,
+                    validate: (val) =>
+                      val >= 1 || formLabels?.validation?.atLeastOneSeat,
                   }}
                   render={({ field, fieldState }) => (
                     <td className={classes.td}>

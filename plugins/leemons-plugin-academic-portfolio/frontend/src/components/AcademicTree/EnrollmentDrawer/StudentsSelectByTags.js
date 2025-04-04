@@ -1,15 +1,20 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from "react";
 
-import { ContextContainer, Stack, Checkbox, Text } from '@bubbles-ui/components';
-import { SearchIcon } from '@bubbles-ui/icons/outline';
-import { TagsAutocomplete } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PropTypes from 'prop-types';
+import {
+  ContextContainer,
+  Stack,
+  Checkbox,
+  Text,
+} from "@bubbles-ui/components";
+import { SearchIcon } from "@bubbles-ui/icons/outline";
+import { TagsAutocomplete } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
 
-import StudentsTable from '../SubjectView/StudentsTable';
+import StudentsTable from "../SubjectView/StudentsTable";
 
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { getStudentsByTagsRequest } from '@academic-portfolio/request';
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
+import { getStudentsByTagsRequest } from "@academic-portfolio/request";
 
 const StudentsSelectByTags = ({
   centerId,
@@ -20,7 +25,7 @@ const StudentsSelectByTags = ({
   const [tags, setTags] = useState();
   const [studentsFound, setStudentsFound] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [t] = useTranslateLoader(prefixPN('tree_page.enrrollmentDrawer'));
+  const [t] = useTranslateLoader(prefixPN("tree_page.enrrollmentDrawer"));
 
   const checkBoxColumn = useMemo(
     () => ({
@@ -38,14 +43,17 @@ const StudentsSelectByTags = ({
           }}
         />
       ),
-      accessor: 'checked',
+      accessor: "checked",
       valueRender: (checkedValue) => (
         <Checkbox
           checked={checkedValue.checked}
           onChange={(val) => {
             const updatedStudents = studentsFound.map((student) => {
               if (student.userAgent === checkedValue.userAgent) {
-                return { ...student, checked: { ...student.checked, checked: val } };
+                return {
+                  ...student,
+                  checked: { ...student.checked, checked: val },
+                };
               }
               return student;
             });
@@ -100,19 +108,19 @@ const StudentsSelectByTags = ({
 
   const TableEmptyStates = useMemo(() => {
     if (!tags?.length && !studentsFound?.length) {
-      return <Text strong>{t('noTagsSelected')}</Text>;
+      return <Text strong>{t("noTagsSelected")}</Text>;
     } else if (tags?.length && !studentsFound?.length) {
       if (tags?.length === 1) {
-        return <Text strong>{t('noStudentsFoundSingular')}</Text>;
+        return <Text strong>{t("noStudentsFoundSingular")}</Text>;
       }
-      return <Text strong>{t('noStudentsFoundPlural')}</Text>;
+      return <Text strong>{t("noStudentsFoundPlural")}</Text>;
     }
     return null;
   }, [tags, studentsFound, localizations]);
 
   return (
     <Stack direction="column">
-      <ContextContainer sx={{ padding: '24px' }}>
+      <ContextContainer sx={{ padding: "24px" }}>
         <TagsAutocomplete
           onChange={onTagsChange}
           pluginName="users"
@@ -121,7 +129,12 @@ const StudentsSelectByTags = ({
           ButtonLeftIcon={<SearchIcon width={24} height={24} />}
         />
         {!studentsFound?.length ? (
-          <Stack alignItems="center" justifyContent="center" fullWidth mt={tags?.length ? 34 : 72}>
+          <Stack
+            alignItems="center"
+            justifyContent="center"
+            fullWidth
+            mt={tags?.length ? 34 : 72}
+          >
             {TableEmptyStates}
           </Stack>
         ) : (

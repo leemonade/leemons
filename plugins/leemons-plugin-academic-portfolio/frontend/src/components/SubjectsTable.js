@@ -11,10 +11,10 @@ import {
   TableInput,
   TextInput,
   Title,
-} from '@bubbles-ui/components';
-import { AddIcon, EditIcon } from '@bubbles-ui/icons/outline';
-import { useLocale, useStore } from '@common';
-import { ScheduleInput } from '@timetable/components';
+} from "@bubbles-ui/components";
+import { AddIcon, EditIcon } from "@bubbles-ui/icons/outline";
+import { useLocale, useStore } from "@common";
+import { ScheduleInput } from "@timetable/components";
 import _, {
   cloneDeep,
   filter,
@@ -26,13 +26,13 @@ import _, {
   isObjectLike,
   map,
   set,
-} from 'lodash';
-import { forEachRight } from 'lodash/collection';
-import PropTypes from 'prop-types';
-import React, { forwardRef, useEffect, useMemo } from 'react';
-import { useForm } from 'react-hook-form';
-import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
-import { SubjectsDrawer } from './SubjectsDrawer';
+} from "lodash";
+import { forEachRight } from "lodash/collection";
+import PropTypes from "prop-types";
+import React, { forwardRef, useEffect, useMemo } from "react";
+import { useForm } from "react-hook-form";
+import { useDeploymentConfig } from "@deployment-manager/hooks/useDeploymentConfig";
+import { SubjectsDrawer } from "./SubjectsDrawer";
 
 function getGroups({ program, selectGroups, subject }) {
   const classes = filter(program.classes, (cl) => cl.subject.id === subject);
@@ -51,16 +51,27 @@ function getGroups({ program, selectGroups, subject }) {
 }
 
 // eslint-disable-next-line react/prop-types
-function Group({ selectGroups, program, onCreateGroup, onlyNewSubject, messages, ...props }) {
+function Group({
+  selectGroups,
+  program,
+  onCreateGroup,
+  onlyNewSubject,
+  messages,
+  ...props
+}) {
   let subject = null;
-  if (props.name === 'groups') {
+  if (props.name === "groups") {
     subject = props.formValues.subject;
   } else {
-    const nameS = props.name.split('.');
+    const nameS = props.name.split(".");
     subject = get(props.form.getValues(), `${nameS[0]}.subject.id`);
   }
   return (
-    <EnableIfFormPropHasValue {...props} property="subject" onCreate={onCreateGroup}>
+    <EnableIfFormPropHasValue
+      {...props}
+      property="subject"
+      onCreate={onCreateGroup}
+    >
       <Select
         data={getGroups({ program, selectGroups, subject })}
         required
@@ -88,7 +99,11 @@ const EnableIfFormPropHasValue = forwardRef(
     }
 
     // eslint-disable-next-line no-nested-ternary
-    const properties = property ? (isArray(property) ? property : [property]) : [];
+    const properties = property
+      ? isArray(property)
+        ? property
+        : [property]
+      : [];
     let disabled = false;
     forEach(properties, (p) => {
       if (formValues && !formValues[p]) {
@@ -99,7 +114,10 @@ const EnableIfFormPropHasValue = forwardRef(
     function _onCreate(val) {
       const toSend = { ...formValues };
       set(toSend, props.name, val);
-      onCreate({ formValues, onCreateFieldName: props.name, value: val }, props);
+      onCreate(
+        { formValues, onCreateFieldName: props.name, value: val },
+        props
+      );
     }
 
     return React.cloneElement(children, {
@@ -112,7 +130,8 @@ const EnableIfFormPropHasValue = forwardRef(
   }
 );
 
-EnableIfFormPropHasValue.displayName = '@academic-portfolio/components/EnableIfFormPropHasValue';
+EnableIfFormPropHasValue.displayName =
+  "@academic-portfolio/components/EnableIfFormPropHasValue";
 EnableIfFormPropHasValue.propTypes = {
   name: PropTypes.string,
   value: PropTypes.any,
@@ -133,7 +152,7 @@ function SubjectsTable({
 }) {
   const locale = useLocale();
   const deploymentConfig = useDeploymentConfig({
-    pluginName: 'academic-portfolio',
+    pluginName: "academic-portfolio",
     ignoreVersion: true,
   });
   const [store, render] = useStore({
@@ -142,47 +161,61 @@ function SubjectsTable({
   });
 
   const groupErrorMessage = (
-    program.maxGroupAbbreviationIsOnlyNumbers ? messages.groupNumbers : messages.groupAny
-  ).replace('{max}', program.maxGroupAbbreviation);
+    program.maxGroupAbbreviationIsOnlyNumbers
+      ? messages.groupNumbers
+      : messages.groupAny
+  ).replace("{max}", program.maxGroupAbbreviation);
   const groupRegex = new RegExp(
-    `^(${program.maxGroupAbbreviationIsOnlyNumbers ? '[0-9]' : `\\S`}{${
+    `^(${program.maxGroupAbbreviationIsOnlyNumbers ? "[0-9]" : `\\S`}{${
       program.maxGroupAbbreviation
     }}|.{36})$`,
-    'g'
+    "g"
   );
 
   const form = useForm();
 
   function onChangeRow(v, { name }, evForm) {
-    let prefix = '';
-    const n = name.split('.');
+    let prefix = "";
+    const n = name.split(".");
     let value = v;
     if (n.length > 1) {
       prefix = `${n[0]}.`;
       value = v[n[0]];
     }
-    if (n[n.length - 1] === 'subject') {
-      const tempSubjectsValues = map(store.tempSubjects, 'value');
+    if (n[n.length - 1] === "subject") {
+      const tempSubjectsValues = map(store.tempSubjects, "value");
       if (tempSubjectsValues.indexOf(value.subject) < 0) {
         const subjectCredit = find(program.subjectCredits, {
           subject: value.subject,
         });
-        const classe = find(program.classes, (cl) => cl.subject.id === value.subject);
+        const classe = find(
+          program.classes,
+          (cl) => cl.subject.id === value.subject
+        );
 
         if (program.maxNumberOfCourses > 0) {
           if (program.moreThanOneAcademicYear) {
             evForm.setValue(
               `${prefix}courses`,
-              isArray(classe?.courses) ? map(classe?.courses, 'id') : []
+              isArray(classe?.courses) ? map(classe?.courses, "id") : []
             );
           } else {
             evForm.setValue(`${prefix}courses`, classe?.courses?.id || null);
           }
         }
 
-        evForm.setValue(`${prefix}internalId`, subjectCredit?.internalId || null);
-        evForm.setValue(`${prefix}credits`, subjectCredit?.credits || undefined);
-        evForm.setValue(`${prefix}subjectType`, classe?.subjectType?.id || null);
+        evForm.setValue(
+          `${prefix}internalId`,
+          subjectCredit?.internalId || null
+        );
+        evForm.setValue(
+          `${prefix}credits`,
+          subjectCredit?.credits || undefined
+        );
+        evForm.setValue(
+          `${prefix}subjectType`,
+          classe?.subjectType?.id || null
+        );
         evForm.setValue(`${prefix}knowledges`, classe?.knowledges?.id || null);
       }
     }
@@ -214,7 +247,7 @@ function SubjectsTable({
         value: id,
       })),
       substages: map(program.substages, ({ name, abbreviation, id }) => ({
-        label: `${name}${abbreviation ? ` [${abbreviation}]` : ''}`,
+        label: `${name}${abbreviation ? ` [${abbreviation}]` : ""}`,
         value: id,
       })),
       subjects: map(program.subjects, ({ name, id }) => ({
@@ -264,7 +297,7 @@ function SubjectsTable({
   columns.push({
     Header: messages.subject,
     showOnTable: true,
-    accessor: 'subject',
+    accessor: "subject",
     input: {
       node: (
         <EnableIfFormPropHasValue onCreate={onCreateSubject}>
@@ -285,26 +318,26 @@ function SubjectsTable({
       paddingLeft: 0,
     },
     valueRender: (value, formValues) => (
-      <Box style={{ display: 'flex', gap: '3px' }}>
+      <Box style={{ display: "flex", gap: "3px" }}>
         <Box
           sx={(theme) => ({ marginRight: theme.spacing[2] })}
           style={{
             background: formValues.color,
-            width: '18px',
-            height: '18px',
-            borderRadius: '50%',
+            width: "18px",
+            height: "18px",
+            borderRadius: "50%",
           }}
         />
-        <Box>{value?.name}</Box>{' '}
+        <Box>{value?.name}</Box>{" "}
         {formValues.courses || formValues.internalId ? (
           <>
-            -{' '}
-            {program.subjectsFirstDigit === 'course' &&
+            -{" "}
+            {program.subjectsFirstDigit === "course" &&
             formValues.courses &&
             !_.isArray(formValues.courses)
               ? formValues.courses.index
-              : ''}
-            {formValues.internalId ? formValues.internalId : ''}
+              : ""}
+            {formValues.internalId ? formValues.internalId : ""}
           </>
         ) : null}
       </Box>
@@ -315,7 +348,7 @@ function SubjectsTable({
     columns.push({
       Header: messages.course,
       showOnTable: true,
-      accessor: 'courses',
+      accessor: "courses",
       input: {
         node: (
           <EnableIfFormPropHasValue property="subject">
@@ -337,7 +370,7 @@ function SubjectsTable({
         return map(
           values,
           (value, index) =>
-            `${index ? ', ' : ''}${
+            `${index ? ", " : ""}${
               value.name ? `${value.name} (${value.index}º)` : `${value.index}º`
             }`
         );
@@ -348,7 +381,7 @@ function SubjectsTable({
   // SUBJECT ID
   columns.push({
     Header: messages.id,
-    accessor: 'internalId',
+    accessor: "internalId",
     cellStyle: {
       paddingLeft: 0,
     },
@@ -361,8 +394,11 @@ function SubjectsTable({
       rules: {
         required: messages.idRequired,
         pattern: {
-          message: messages.maxInternalIdLength.replace('{max}', program.subjectsDigits),
-          value: new RegExp(`^[0-9]{${program.subjectsDigits}}$`, 'g'),
+          message: messages.maxInternalIdLength.replace(
+            "{max}",
+            program.subjectsDigits
+          ),
+          value: new RegExp(`^[0-9]{${program.subjectsDigits}}$`, "g"),
         },
       },
     },
@@ -372,7 +408,7 @@ function SubjectsTable({
   if (program.haveKnowledge) {
     columns.push({
       Header: messages.knowledge,
-      accessor: 'knowledges',
+      accessor: "knowledges",
       input: {
         node: (
           <EnableIfFormPropHasValue>
@@ -388,11 +424,11 @@ function SubjectsTable({
     });
   }
 
-  if (!(deploymentConfig?.deny?.others?.indexOf('subjectType') >= 0)) {
+  if (!(deploymentConfig?.deny?.others?.indexOf("subjectType") >= 0)) {
     // SUBJECT TYPE
     columns.push({
       Header: messages.subjectType,
-      accessor: 'subjectType',
+      accessor: "subjectType",
       showOnTable: true,
       input: {
         node: (
@@ -413,7 +449,7 @@ function SubjectsTable({
   if (program.credits) {
     columns.push({
       Header: messages.credits,
-      accessor: 'credits',
+      accessor: "credits",
       input: {
         node: (
           <EnableIfFormPropHasValue property="subject">
@@ -431,7 +467,7 @@ function SubjectsTable({
   // COLORS
   columns.push({
     Header: messages.color,
-    accessor: 'color',
+    accessor: "color",
     input: {
       node: <ColorInput required />,
       rules: { required: messages.colorRequired },
@@ -443,7 +479,12 @@ function SubjectsTable({
       <>
         <Box
           sx={(theme) => ({ marginRight: theme.spacing[2] })}
-          style={{ background: val, width: '18px', height: '18px', borderRadius: '50%' }}
+          style={{
+            background: val,
+            width: "18px",
+            height: "18px",
+            borderRadius: "50%",
+          }}
         />
         {val}
       </>
@@ -454,7 +495,7 @@ function SubjectsTable({
     columns.push({
       Header: messages.group,
       showOnTable: true,
-      accessor: 'groups',
+      accessor: "groups",
       input: {
         rules: {
           pattern: {
@@ -493,7 +534,7 @@ function SubjectsTable({
     columns.push({
       Header: messages.substage,
       showOnTable: true,
-      accessor: 'substages',
+      accessor: "substages",
       input: {
         node: (
           <EnableIfFormPropHasValue>
@@ -519,10 +560,10 @@ function SubjectsTable({
     });
   }
 
-  if (!(deploymentConfig?.deny?.others?.indexOf('classSeats') >= 0)) {
+  if (!(deploymentConfig?.deny?.others?.indexOf("classSeats") >= 0)) {
     columns.push({
       Header: messages.seats,
-      accessor: 'seats',
+      accessor: "seats",
       input: {
         node: <NumberInput />,
       },
@@ -534,10 +575,12 @@ function SubjectsTable({
 
   columns.push({
     Header: messages.teacher,
-    accessor: 'teacher',
+    accessor: "teacher",
     showOnTable: true,
     input: {
-      node: <EnableIfFormPropHasValue>{teacherSelect}</EnableIfFormPropHasValue>,
+      node: (
+        <EnableIfFormPropHasValue>{teacherSelect}</EnableIfFormPropHasValue>
+      ),
     },
     cellStyle: {
       paddingLeft: 0,
@@ -554,7 +597,7 @@ function SubjectsTable({
 
   columns.push({
     Header: messages.schedule,
-    accessor: 'schedule',
+    accessor: "schedule",
     input: {
       node: <ScheduleInput locale={locale} label={false} />,
     },
@@ -562,15 +605,20 @@ function SubjectsTable({
       paddingLeft: 0,
     },
     valueRender: (value) => (
-      <ScheduleInput locale={locale} label={false} value={value} readOnly={true} />
+      <ScheduleInput
+        locale={locale}
+        label={false}
+        value={value}
+        readOnly={true}
+      />
     ),
   });
 
   async function _onAdd({ tableInputRowId, ...formData }) {
     store.subjectSaving = true;
     render();
-    const tempSubjectsValues = map(store.tempSubjects, 'value');
-    const tempGroupsValues = map(store.tempGroups, 'value');
+    const tempSubjectsValues = map(store.tempSubjects, "value");
+    const tempGroupsValues = map(store.tempGroups, "value");
     const isNewSubject = tempSubjectsValues.indexOf(formData.subject) >= 0;
     const isNewGroup = tempGroupsValues.indexOf(formData.groups) >= 0;
     const good = await onAdd(formData, { isNewSubject, isNewGroup });
@@ -587,14 +635,20 @@ function SubjectsTable({
   async function _onUpdate({ oldItem, newItem }) {
     store.subjectSaving = true;
     render();
-    const tempSubjectsValues = map(store.tempSubjects, 'value');
-    const tempGroupsValues = map(store.tempGroups, 'value');
-    const subject = isObject(newItem.subject) ? newItem.subject.id : newItem.subject;
-    const groups = isObject(newItem.groups) ? newItem.groups.id : newItem.groups;
+    const tempSubjectsValues = map(store.tempSubjects, "value");
+    const tempGroupsValues = map(store.tempGroups, "value");
+    const subject = isObject(newItem.subject)
+      ? newItem.subject.id
+      : newItem.subject;
+    const groups = isObject(newItem.groups)
+      ? newItem.groups.id
+      : newItem.groups;
     const isNewSubject = tempSubjectsValues.indexOf(subject) >= 0;
     const isNewGroup = tempGroupsValues.indexOf(groups) >= 0;
     if (newItem.substages) {
-      const substages = _.isArray(newItem.substages) ? newItem.substages : [newItem.substages];
+      const substages = _.isArray(newItem.substages)
+        ? newItem.substages
+        : [newItem.substages];
       newItem.substages = [];
       _.forEach(substages, (substage) => {
         if (isObject(substage)) {
@@ -608,10 +662,16 @@ function SubjectsTable({
       {
         id: oldItem.id,
         ...newItem,
-        courses: isObject(newItem.courses) ? newItem.courses.id : newItem.courses,
-        knowledges: isObject(newItem.knowledges) ? newItem.knowledges.id : newItem.knowledges,
+        courses: isObject(newItem.courses)
+          ? newItem.courses.id
+          : newItem.courses,
+        knowledges: isObject(newItem.knowledges)
+          ? newItem.knowledges.id
+          : newItem.knowledges,
         subject,
-        subjectType: isObject(newItem.subjectType) ? newItem.subjectType.id : newItem.subjectType,
+        subjectType: isObject(newItem.subjectType)
+          ? newItem.subjectType.id
+          : newItem.subjectType,
         groups,
       },
       { isNewSubject, isNewGroup }
@@ -635,8 +695,16 @@ function SubjectsTable({
 
   return (
     <ContextContainer direction="column" fullWidth>
-      <Title order={4}>{onlyNewSubject ? messages.newTitle : messages.title}</Title>
-      <Box sx={(theme) => ({ paddingBottom: theme.spacing[3], width: '100%', overflow: 'auto' })}>
+      <Title order={4}>
+        {onlyNewSubject ? messages.newTitle : messages.title}
+      </Title>
+      <Box
+        sx={(theme) => ({
+          paddingBottom: theme.spacing[3],
+          width: "100%",
+          overflow: "auto",
+        })}
+      >
         {!deploymentConfig?.limits?.maxSubjects ||
         deploymentConfig?.limits?.maxSubjects > program.classes.length ? (
           <Box sx={(theme) => ({ paddingBottom: theme.spacing[3] })}>
@@ -655,11 +723,14 @@ function SubjectsTable({
             columns={[
               ..._.filter(columns, { showOnTable: true }),
               {
-                Header: '',
-                accessor: 'actions',
+                Header: "",
+                accessor: "actions",
                 valueRender: (value, formValues) => (
                   <Box>
-                    <ActionButton onClick={() => edit(formValues)} icon={<EditIcon />} />
+                    <ActionButton
+                      onClick={() => edit(formValues)}
+                      icon={<EditIcon />}
+                    />
                   </Box>
                 ),
               },

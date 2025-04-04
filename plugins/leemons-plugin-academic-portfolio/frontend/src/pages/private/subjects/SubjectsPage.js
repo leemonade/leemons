@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
   Select,
@@ -11,33 +11,35 @@ import {
   ContextContainer,
   Button,
   ImageLoader,
-} from '@bubbles-ui/components';
-import { AddCircleIcon, RedirectIcon } from '@bubbles-ui/icons/solid';
-import { unflatten } from '@common';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useQueryClient } from '@tanstack/react-query';
-import { useUserCenters } from '@users/hooks';
-import { cloneDeep, sortBy } from 'lodash';
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+} from "@bubbles-ui/components";
+import { AddCircleIcon, RedirectIcon } from "@bubbles-ui/icons/solid";
+import { unflatten } from "@common";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useQueryClient } from "@tanstack/react-query";
+import { useUserCenters } from "@users/hooks";
+import { cloneDeep, sortBy } from "lodash";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-import { EmptyState } from '@academic-portfolio/components/EmptyState';
-import SubjectSetupDrawer from '@academic-portfolio/components/SubjectSetupDrawer/SubjectSetupDrawer';
-import SubjectsDetailTable from '@academic-portfolio/components/SubjectsDetailTable';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { getProgramSubjectsKey } from '@academic-portfolio/hooks/keys/programSubjects';
+import { EmptyState } from "@academic-portfolio/components/EmptyState";
+import SubjectSetupDrawer from "@academic-portfolio/components/SubjectSetupDrawer/SubjectSetupDrawer";
+import SubjectsDetailTable from "@academic-portfolio/components/SubjectsDetailTable";
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
+import { getProgramSubjectsKey } from "@academic-portfolio/hooks/keys/programSubjects";
 import {
   useDeleteSubject,
   useDuplicateSubject,
-} from '@academic-portfolio/hooks/mutations/useMutateSubject';
-import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
-import useProgramSubjects from '@academic-portfolio/hooks/queries/useProgramSubjects';
+} from "@academic-portfolio/hooks/mutations/useMutateSubject";
+import useProgramsByCenter from "@academic-portfolio/hooks/queries/useCenterPrograms";
+import useProgramSubjects from "@academic-portfolio/hooks/queries/useProgramSubjects";
 
 const SubjectPage = () => {
-  const [t, translations, , tLoading] = useTranslateLoader(prefixPN('newSubjectsPage'));
-  const [selectedCenter, setSelectedCenter] = useState('');
-  const [selectedProgram, setSelectedProgram] = useState('');
+  const [t, translations, , tLoading] = useTranslateLoader(
+    prefixPN("newSubjectsPage")
+  );
+  const [selectedCenter, setSelectedCenter] = useState("");
+  const [selectedProgram, setSelectedProgram] = useState("");
   const [showEmptyState, setShowEmptyState] = useState(false);
   const [addDrawerIsOpen, setAddDrawerIsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -55,36 +57,50 @@ const SubjectPage = () => {
   const localizations = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      return res['academic-portfolio']?.newSubjectsPage;
+      return res["academic-portfolio"]?.newSubjectsPage;
     }
 
     return {};
   }, [translations]);
 
   const centersData = useMemo(
-    () => userCenters?.map((center) => ({ value: center?.id, label: center?.name })),
+    () =>
+      userCenters?.map((center) => ({
+        value: center?.id,
+        label: center?.name,
+      })),
     [userCenters]
   );
 
-  const { data: centerProgramsQuery, isLoading: areCenterProgramsLoading } = useProgramsByCenter({
-    center: selectedCenter,
-    filters: { onlyActive: true },
-    options: {
-      enabled: selectedCenter?.length > 0,
-    },
-  });
+  const { data: centerProgramsQuery, isLoading: areCenterProgramsLoading } =
+    useProgramsByCenter({
+      center: selectedCenter,
+      filters: { onlyActive: true },
+      options: {
+        enabled: selectedCenter?.length > 0,
+      },
+    });
 
   const programSelectData = useMemo(() => {
     if (centerProgramsQuery?.length) {
-      const sortedCenterProgramsQuery = sortBy(centerProgramsQuery, 'createdAt');
+      const sortedCenterProgramsQuery = sortBy(
+        centerProgramsQuery,
+        "createdAt"
+      );
       return [
-        ...sortedCenterProgramsQuery.map((program) => ({ value: program.id, label: program.name })),
+        ...sortedCenterProgramsQuery.map((program) => ({
+          value: program.id,
+          label: program.name,
+        })),
       ];
     }
     return [];
   }, [centerProgramsQuery]);
 
-  const noProgramsCreated = useMemo(() => !centerProgramsQuery?.length, [centerProgramsQuery]);
+  const noProgramsCreated = useMemo(
+    () => !centerProgramsQuery?.length,
+    [centerProgramsQuery]
+  );
 
   const { data: subjectsQuery } = useProgramSubjects({
     program: selectedProgram,
@@ -109,7 +125,10 @@ const SubjectPage = () => {
   useEffect(() => {
     if (subjectsQuery?.length) {
       setShowEmptyState(false);
-    } else if ((!subjectsQuery?.length || !centerProgramsQuery?.length) && dataFetched) {
+    } else if (
+      (!subjectsQuery?.length || !centerProgramsQuery?.length) &&
+      dataFetched
+    ) {
       setShowEmptyState(true);
     }
   }, [centerProgramsQuery, programSelectData, subjectsQuery, dataFetched]);
@@ -155,20 +174,20 @@ const SubjectPage = () => {
           onSuccess: () => {
             const queryKey = getProgramSubjectsKey(subject.program);
             queryClient.invalidateQueries(queryKey);
-            addSuccessAlert(t('alerts.success.delete'));
+            addSuccessAlert(t("alerts.success.delete"));
           },
           onError: (e) => {
             console.error(e);
-            addErrorAlert(t('alerts.failure.delete'));
+            addErrorAlert(t("alerts.failure.delete"));
           },
         }
       );
 
     openConfirmationModal({
-      title: t('deleteModal.title'),
-      description: t('deleteModal.description', { subjectName: subject.name }),
+      title: t("deleteModal.title"),
+      description: t("deleteModal.description", { subjectName: subject.name }),
       labels: {
-        confirm: t('deleteModal.confirm'),
+        confirm: t("deleteModal.confirm"),
         cancel: localizations?.labels?.cancel,
       },
       onConfirm,
@@ -179,19 +198,21 @@ const SubjectPage = () => {
     const onConfirm = () =>
       duplicateSubject(subject.id, {
         onSuccess: () => {
-          addSuccessAlert(t('alerts.success.duplicate'));
+          addSuccessAlert(t("alerts.success.duplicate"));
         },
         onError: (e) => {
           console.error(e);
-          addErrorAlert(t('alerts.failure.duplicate'));
+          addErrorAlert(t("alerts.failure.duplicate"));
         },
       });
 
     openConfirmationModal({
-      title: t('duplicateModal.title'),
-      description: t('duplicateModal.description', { subjectName: subject.name }),
+      title: t("duplicateModal.title"),
+      description: t("duplicateModal.description", {
+        subjectName: subject.name,
+      }),
       labels: {
-        confirm: t('duplicateModal.confirm'),
+        confirm: t("duplicateModal.confirm"),
         cancel: localizations?.labels?.cancel,
       },
       onConfirm,
@@ -202,7 +223,7 @@ const SubjectPage = () => {
     if (noProgramsCreated) {
       return (
         <EmptyState
-          onClick={() => history.push('/private/academic-portfolio/programs')}
+          onClick={() => history.push("/private/academic-portfolio/programs")}
           Icon={<RedirectIcon />}
           actionLabel={localizations?.emptyStates?.createProgram}
           description={localizations?.emptyStates?.noProgramsCreated}
@@ -218,7 +239,13 @@ const SubjectPage = () => {
         description={localizations?.emptyStates?.noSubjectsCreated}
       />
     );
-  }, [selectedCenter, selectedProgram, noProgramsCreated, handleOnAdd, localizations]);
+  }, [
+    selectedCenter,
+    selectedProgram,
+    noProgramsCreated,
+    handleOnAdd,
+    localizations,
+  ]);
 
   return (
     <>
@@ -227,14 +254,14 @@ const SubjectPage = () => {
         scrollRef={scrollRef}
         Header={
           <TotalLayoutHeader
-            title={t('title')}
+            title={t("title")}
             onCancel={() => history.goBack()}
-            mainActionLabel={t('labels.cancel')}
+            mainActionLabel={t("labels.cancel")}
             compact
             icon={
               <Stack justifyContent="center" alignItems="center">
                 <ImageLoader
-                  style={{ position: 'relative' }}
+                  style={{ position: "relative" }}
                   src="/public/academic-portfolio/menu-icon.svg"
                   width={18}
                   height={18}
@@ -268,16 +295,26 @@ const SubjectPage = () => {
           ref={scrollRef}
           justifyContent="center"
           fullwidth
-          sx={{ overflowY: 'auto', backgroundColor: '#f8f9fb', paddingTop: 24 }}
+          sx={{ overflowY: "auto", backgroundColor: "#f8f9fb", paddingTop: 24 }}
         >
           <TotalLayoutStepContainer
-            stepName={centerProgramsQuery?.find((item) => item.id === selectedProgram)?.name}
+            stepName={
+              centerProgramsQuery?.find((item) => item.id === selectedProgram)
+                ?.name
+            }
           >
             {!showEmptyState ? (
               <ContextContainer>
-                <Box noFlex sx={{ justifySelf: 'start', width: 160, height: 40 }}>
-                  <Button variant="link" leftIcon={<AddCircleIcon />} onClick={handleOnAdd}>
-                    {t('labels.addNewSubject')}
+                <Box
+                  noFlex
+                  sx={{ justifySelf: "start", width: 160, height: 40 }}
+                >
+                  <Button
+                    variant="link"
+                    leftIcon={<AddCircleIcon />}
+                    onClick={handleOnAdd}
+                  >
+                    {t("labels.addNewSubject")}
                   </Button>
                 </Box>
                 {

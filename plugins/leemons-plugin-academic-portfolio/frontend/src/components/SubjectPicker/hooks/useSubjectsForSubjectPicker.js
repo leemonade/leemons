@@ -1,13 +1,13 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { isString, map, pick, uniqBy } from 'lodash';
+import { isString, map, pick, uniqBy } from "lodash";
 
-import { useSubjectDetails } from '@academic-portfolio/hooks';
-import useUserAgentSubjects from '@academic-portfolio/hooks/queries/useUserAgentSubjects';
+import { useSubjectDetails } from "@academic-portfolio/hooks";
+import useUserAgentSubjects from "@academic-portfolio/hooks/queries/useUserAgentSubjects";
 
 export function useSubjectsForSubjectPicker({
   subjects,
-  type = ['main-teacher', 'associate-teacher'],
+  type = ["main-teacher", "associate-teacher"],
 }) {
   const { data: userAgentSubjects } = useUserAgentSubjects({
     teacherTypeFilter: type,
@@ -16,7 +16,9 @@ export function useSubjectsForSubjectPicker({
 
   const subjectsIds = useMemo(() => {
     if (subjects?.length) {
-      return subjects?.map((subject) => (isString(subject) ? subject : subject.subject));
+      return subjects?.map((subject) =>
+        isString(subject) ? subject : subject.subject
+      );
     }
 
     return userAgentSubjects?.map((subject) => subject.id) || [];
@@ -30,9 +32,9 @@ export function useSubjectsForSubjectPicker({
     () =>
       uniqBy(
         map(fetchedSubjectDetails, (subject) =>
-          pick(subject, ['id', 'name', 'program', 'courses', 'color'])
+          pick(subject, ["id", "name", "program", "courses", "color"])
         ),
-        'id'
+        "id"
       ) || [],
     [fetchedSubjectDetails]
   );

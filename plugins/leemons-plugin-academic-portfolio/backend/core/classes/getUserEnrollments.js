@@ -1,10 +1,10 @@
-const { omit } = require('lodash');
+const { omit } = require("lodash");
 
-const { LeemonsError } = require('@leemons/error');
-const { filterProgramsByCenter, programsByIds } = require('../programs');
-const { getUserProgramIds } = require('../programs/getUserProgramIds');
-const { classByIds } = require('./classByIds');
-const { subjectByIds } = require('../subjects');
+const { LeemonsError } = require("@leemons/error");
+const { filterProgramsByCenter, programsByIds } = require("../programs");
+const { getUserProgramIds } = require("../programs/getUserProgramIds");
+const { classByIds } = require("./classByIds");
+const { subjectByIds } = require("../subjects");
 
 async function fetchSubjectsAndClassrooms({ programIds, userAgentIds, ctx }) {
   const enrollments = await Promise.all(
@@ -26,8 +26,10 @@ async function fetchSubjectsAndClassrooms({ programIds, userAgentIds, ctx }) {
             return null;
           }
 
-          const enrollmentType = isStudent ? 'student' : 'teacher';
-          const subject = await ctx.tx.db.Subjects.findOne({ id: classroom.subject }).lean();
+          const enrollmentType = isStudent ? "student" : "teacher";
+          const subject = await ctx.tx.db.Subjects.findOne({
+            id: classroom.subject,
+          }).lean();
 
           return {
             programId,
@@ -45,11 +47,17 @@ async function fetchSubjectsAndClassrooms({ programIds, userAgentIds, ctx }) {
 
 async function structureResponse({ enrollments, ctx }) {
   const structuredPrograms = [];
-  const programsIds = [...new Set(enrollments.map((enrollment) => enrollment.programId))];
+  const programsIds = [
+    ...new Set(enrollments.map((enrollment) => enrollment.programId)),
+  ];
   const detailedPrograms = await programsByIds({ ids: programsIds, ctx });
-  const subjectIds = [...new Set(enrollments.map((enrollment) => enrollment.subject.id))];
+  const subjectIds = [
+    ...new Set(enrollments.map((enrollment) => enrollment.subject.id)),
+  ];
   const detailedSubjects = await subjectByIds({ ids: subjectIds, ctx });
-  const classroomsIds = [...new Set(enrollments.map((enrollment) => enrollment.classroom.id))];
+  const classroomsIds = [
+    ...new Set(enrollments.map((enrollment) => enrollment.classroom.id)),
+  ];
   const detailedClasses = await classByIds({ ids: classroomsIds, ctx });
 
   enrollments.forEach(({ programId, subject, classroom, ...otherInfo }) => {
@@ -59,23 +67,23 @@ async function structureResponse({ enrollments, ctx }) {
         ...omit(
           detailedPrograms.find((p) => p.id === programId),
           [
-            'treeTypeNodes',
-            'subjects',
-            'maxGroupAbbreviation',
-            'maxGroupAbbreviationIsOnlyNumbers',
-            'useOneStudentGroup',
-            'courseCredits',
-            'hideCoursesInTree',
-            'moreThanOneAcademicYear',
-            'haveSubstagesPerCourse',
-            'subjectsFirstDigit',
-            'subjectsDigits',
-            'treeType',
-            'haveKnowledge',
-            'maxKnowledgeAbbreviation',
-            'maxKnowledgeAbbreviationIsOnlyNumbers',
-            'maxSubstageAbbreviationIsOnlyNumbers',
-            'customSubstages',
+            "treeTypeNodes",
+            "subjects",
+            "maxGroupAbbreviation",
+            "maxGroupAbbreviationIsOnlyNumbers",
+            "useOneStudentGroup",
+            "courseCredits",
+            "hideCoursesInTree",
+            "moreThanOneAcademicYear",
+            "haveSubstagesPerCourse",
+            "subjectsFirstDigit",
+            "subjectsDigits",
+            "treeType",
+            "haveKnowledge",
+            "maxKnowledgeAbbreviation",
+            "maxKnowledgeAbbreviationIsOnlyNumbers",
+            "maxSubstageAbbreviationIsOnlyNumbers",
+            "customSubstages",
           ]
         ),
         subjects: [],
@@ -98,7 +106,7 @@ async function structureResponse({ enrollments, ctx }) {
     const classroomEntry = {
       ...omit(
         detailedClasses.find((c) => c.id === classroom.id),
-        'subject'
+        "subject"
       ),
       ...otherInfo,
     };
@@ -124,21 +132,32 @@ async function structureResponse({ enrollments, ctx }) {
  *                              and `sharedWithContactWhereContactIs` (if applicable) to indicate the contact's enrollment type
  *                              in shared classes.
  */
-async function getUserEnrollments({ userAgentIds, centerId, contactUserAgentId = '', ctx }) {
-  const userInfo = await ctx.tx.call('users.users.getUserAgentsInfo', {
+async function getUserEnrollments({
+  userAgentIds,
+  centerId,
+  contactUserAgentId = "",
+  ctx,
+}) {
+  const userInfo = await ctx.tx.call("users.users.getUserAgentsInfo", {
     userAgentIds,
   });
   const userIds = userInfo.map((info) => info.user.id);
   const uniqueUserIds = [...new Set(userIds)];
   if (uniqueUserIds.length > 1) {
-    throw new LeemonsError(ctx, { message: 'User agent ids must belong to the same user.' });
+    throw new LeemonsError(ctx, {
+      message: "User agent ids must belong to the same user.",
+    });
   }
 
   const programIds = await getUserProgramIds({
     ctx: { ...ctx, userSession: { userAgents: [{ id: userAgentIds }] } },
   });
 
-  const filteredProgramIds = await filterProgramsByCenter({ programIds, centerId, ctx });
+  const filteredProgramIds = await filterProgramsByCenter({
+    programIds,
+    centerId,
+    ctx,
+  });
   let userEnrollments = await fetchSubjectsAndClassrooms({
     programIds: filteredProgramIds,
     userAgentIds,
@@ -147,7 +166,10 @@ async function getUserEnrollments({ userAgentIds, centerId, contactUserAgentId =
 
   if (contactUserAgentId) {
     const contactProgramIds = await getUserProgramIds({
-      ctx: { ...ctx, userSession: { userAgents: [{ id: contactUserAgentId }] } },
+      ctx: {
+        ...ctx,
+        userSession: { userAgents: [{ id: contactUserAgentId }] },
+      },
     });
     const contactFilteredProgramIds = await filterProgramsByCenter({
       programIds: contactProgramIds,
@@ -162,7 +184,9 @@ async function getUserEnrollments({ userAgentIds, centerId, contactUserAgentId =
 
     userEnrollments = userEnrollments.map((enrollment) => {
       const sharedEnrollment = contactEnrollments.find(
-        (ce) => ce.programId === enrollment.programId && ce.classroom.id === enrollment.classroom.id
+        (ce) =>
+          ce.programId === enrollment.programId &&
+          ce.classroom.id === enrollment.classroom.id
       );
       if (sharedEnrollment) {
         return {

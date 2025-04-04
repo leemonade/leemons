@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from "react";
 
 import {
   Box,
@@ -10,26 +10,26 @@ import {
   ActionButton,
   LoadingOverlay,
   ContextContainer,
-} from '@bubbles-ui/components';
-import { DeleteBinIcon, AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useQueryClient } from '@tanstack/react-query';
-import { ScheduleInput } from '@timetable/components';
-import { SelectUserAgent } from '@users/components';
-import { compareBySurnamesAndName } from '@users/helpers/compareUsers';
-import { useUserAgentsInfo } from '@users/hooks';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { DeleteBinIcon, AddCircleIcon } from "@bubbles-ui/icons/solid";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useQueryClient } from "@tanstack/react-query";
+import { ScheduleInput } from "@timetable/components";
+import { SelectUserAgent } from "@users/components";
+import { compareBySurnamesAndName } from "@users/helpers/compareUsers";
+import { useUserAgentsInfo } from "@users/hooks";
+import PropTypes from "prop-types";
 
-import CustomPeriod from './CustomPeriod';
-import { EnrollmentTabStyles } from './EnrollmentTab.styles';
-import StudentsTable from './StudentsTable';
+import CustomPeriod from "./CustomPeriod";
+import { EnrollmentTabStyles } from "./EnrollmentTab.styles";
+import StudentsTable from "./StudentsTable";
 
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { getClassStudentsKey } from '@academic-portfolio/hooks/keys/classStudents';
-import { useRemoveStudentFromClass } from '@academic-portfolio/hooks/mutations/useMutateClass';
-import useClassStudents from '@academic-portfolio/hooks/queries/useClassStudents';
-import { getProfilesRequest } from '@academic-portfolio/request';
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
+import { getClassStudentsKey } from "@academic-portfolio/hooks/keys/classStudents";
+import { useRemoveStudentFromClass } from "@academic-portfolio/hooks/mutations/useMutateClass";
+import useClassStudents from "@academic-portfolio/hooks/queries/useClassStudents";
+import { getProfilesRequest } from "@academic-portfolio/request";
 
 const EnrollmentTab = ({
   classData,
@@ -39,7 +39,7 @@ const EnrollmentTab = ({
   updateForm,
   setDirtyForm,
 }) => {
-  const [t] = useTranslateLoader(prefixPN('tree_page'));
+  const [t] = useTranslateLoader(prefixPN("tree_page"));
   const { classes } = EnrollmentTabStyles();
   const queryClient = useQueryClient();
   const [teacherProfile, setTeacherProfile] = useState();
@@ -49,17 +49,18 @@ const EnrollmentTab = ({
   const [customPeriod, setCustomPeriod] = useState(null);
   const [address, setAddress] = useState(null);
   const [schedule, setSchedule] = useState(null);
-  const { mutate: removeStudentFromClass, isLoading: removeStudentFromClassLoading } =
-    useRemoveStudentFromClass();
-  const { data: classStudents, isLoading: classStudentsLoading } = useClassStudents({
-    classId: classData?.id,
-  });
-  const { data: userAgentsInfo, isLoading: userAgentsInfoLoading } = useUserAgentsInfo(
-    classStudents || [],
-    {
+  const {
+    mutate: removeStudentFromClass,
+    isLoading: removeStudentFromClassLoading,
+  } = useRemoveStudentFromClass();
+  const { data: classStudents, isLoading: classStudentsLoading } =
+    useClassStudents({
+      classId: classData?.id,
+    });
+  const { data: userAgentsInfo, isLoading: userAgentsInfoLoading } =
+    useUserAgentsInfo(classStudents || [], {
       enabled: classStudents?.length > 0,
-    }
-  );
+    });
 
   const aliasOrClassroomId = classData?.alias ?? classData?.classroomId;
 
@@ -76,10 +77,11 @@ const EnrollmentTab = ({
     if (classData) {
       // For simplicity we use local states to show the right info in the input fields but still use updateForm to store the values to save
       const formerValues = {
-        mainTeacher: classData.teachers?.find((teacher) => teacher.type === 'main-teacher')
-          ?.teacher,
+        mainTeacher: classData.teachers?.find(
+          (teacher) => teacher.type === "main-teacher"
+        )?.teacher,
         associateTeachers: classData.teachers
-          ?.filter((teacher) => teacher.type === 'associate-teacher')
+          ?.filter((teacher) => teacher.type === "associate-teacher")
           ?.map((teacher) => teacher.teacher),
         virtualUrl: classData.virtualUrl,
         address: classData.address,
@@ -105,11 +107,11 @@ const EnrollmentTab = ({
           if (result) {
             const classStudentsKey = getClassStudentsKey(classData.id);
             queryClient.invalidateQueries(classStudentsKey);
-            addSuccessAlert(t('deletedStudentSuccess'));
+            addSuccessAlert(t("deletedStudentSuccess"));
           }
         },
         onError: () => {
-          addErrorAlert(t('deletedStudentError'));
+          addErrorAlert(t("deletedStudentError"));
         },
       }
     );
@@ -128,14 +130,17 @@ const EnrollmentTab = ({
 
     const initialFormValues = {
       mainTeacher:
-        classData.teachers?.find((teacher) => teacher.type === 'main-teacher')?.teacher ?? null,
+        classData.teachers?.find((teacher) => teacher.type === "main-teacher")
+          ?.teacher ?? null,
       virtualUrl: classData.virtualUrl ?? null,
       address: classData.address ?? null,
       schedule: { days: classData.schedule ?? [] },
       customPeriod: classData.customPeriod ?? null,
     };
 
-    return JSON.stringify(currentFormValues) !== JSON.stringify(initialFormValues);
+    return (
+      JSON.stringify(currentFormValues) !== JSON.stringify(initialFormValues)
+    );
   };
 
   const studentsTableData = useMemo(() => {
@@ -147,7 +152,7 @@ const EnrollmentTab = ({
           actions: (
             <ActionButton
               onClick={() => handleRemoveStudentFromClass(userAgent.id)}
-              tooltip={t('treeRemove')}
+              tooltip={t("treeRemove")}
               icon={<DeleteBinIcon width={18} height={18} />}
             />
           ),
@@ -162,13 +167,13 @@ const EnrollmentTab = ({
       return (
         <SelectUserAgent
           value={mainTeacher}
-          label={t('class.teacherLabel')}
+          label={t("class.teacherLabel")}
           profiles={teacherProfile}
           centers={center}
           onChange={(onChangeValue) => {
             setMainTeacher(onChangeValue);
-            updateForm.setValue('mainTeacher', onChangeValue);
-            const isFormDirty = checkIsFormDirty('mainTeacher', onChangeValue);
+            updateForm.setValue("mainTeacher", onChangeValue);
+            const isFormDirty = checkIsFormDirty("mainTeacher", onChangeValue);
             setDirtyForm(isFormDirty);
           }}
         />
@@ -182,14 +187,17 @@ const EnrollmentTab = ({
       return (
         <SelectUserAgent
           value={associateTeachers}
-          label={t('class.associateTeachersLabel')}
+          label={t("class.associateTeachersLabel")}
           profiles={teacherProfile}
           centers={center}
           maxSelectedValues={20}
           onChange={(onChangeValue) => {
             setAssociateTeachers(onChangeValue);
-            updateForm.setValue('associateTeachers', onChangeValue);
-            const isFormDirty = checkIsFormDirty('associateTeachers', onChangeValue);
+            updateForm.setValue("associateTeachers", onChangeValue);
+            const isFormDirty = checkIsFormDirty(
+              "associateTeachers",
+              onChangeValue
+            );
             setDirtyForm(isFormDirty);
           }}
           omitUsers={mainTeacher}
@@ -207,15 +215,17 @@ const EnrollmentTab = ({
     );
   }
 
-  if (classData?.status === 'updating') {
+  if (classData?.status === "updating") {
     return <LoadingOverlay visible />;
   }
 
   return (
-    <ContextContainer sx={{ position: 'relative', paddingInline: 24, padingTop: 0 }}>
+    <ContextContainer
+      sx={{ position: "relative", paddingInline: 24, padingTop: 0 }}
+    >
       <ContextContainer>
         <Title order={1}>{aliasOrClassroomId}</Title>
-        <Title order={2}>{t('class.teachersLabel')}</Title>
+        <Title order={2}>{t("class.teachersLabel")}</Title>
         <Stack spacing={4}>
           {teacherProfile && center?.length > 0 && (
             <Box className={classes.mainTeacher}>{TeacherSelect}</Box>
@@ -227,18 +237,21 @@ const EnrollmentTab = ({
       </ContextContainer>
 
       <ContextContainer>
-        <Title order={2}>{t('scheduleAndPlace')}</Title>
+        <Title order={2}>{t("scheduleAndPlace")}</Title>
         <Stack spacing={4} fullWidth>
           <Box className={classes.inlineInputs}>
             <TextInput
               value={virtualUrl}
               onChange={(onChangeValue) => {
                 setVirtualUrl(onChangeValue);
-                updateForm.setValue('virtualUrl', onChangeValue);
-                const isFormDirty = checkIsFormDirty('virtualUrl', onChangeValue);
+                updateForm.setValue("virtualUrl", onChangeValue);
+                const isFormDirty = checkIsFormDirty(
+                  "virtualUrl",
+                  onChangeValue
+                );
                 setDirtyForm(isFormDirty);
               }}
-              label={t('virtualClassroom')}
+              label={t("virtualClassroom")}
             />
           </Box>
           <Box className={classes.inlineInputs}>
@@ -246,21 +259,21 @@ const EnrollmentTab = ({
               value={address}
               onChange={(onChangeValue) => {
                 setAddress(onChangeValue);
-                updateForm.setValue('address', onChangeValue);
-                const isFormDirty = checkIsFormDirty('address', onChangeValue);
+                updateForm.setValue("address", onChangeValue);
+                const isFormDirty = checkIsFormDirty("address", onChangeValue);
                 setDirtyForm(isFormDirty);
               }}
-              label={t('classroomAdress')}
+              label={t("classroomAdress")}
             />
           </Box>
         </Stack>
         <ScheduleInput
-          label={t('lessonSchedule')}
+          label={t("lessonSchedule")}
           value={schedule}
           onChange={(onChangeValue) => {
             setSchedule(onChangeValue);
-            updateForm.setValue('schedule', onChangeValue);
-            const isFormDirty = checkIsFormDirty('schedule', onChangeValue);
+            updateForm.setValue("schedule", onChangeValue);
+            const isFormDirty = checkIsFormDirty("schedule", onChangeValue);
             setDirtyForm(isFormDirty);
           }}
         />
@@ -270,12 +283,14 @@ const EnrollmentTab = ({
           customPeriod={classData?.customPeriod}
           academicKey="class"
           courseId={
-            Array.isArray(classData?.courses) ? classData?.courses[0]?.id : classData?.courses?.id
+            Array.isArray(classData?.courses)
+              ? classData?.courses[0]?.id
+              : classData?.courses?.id
           }
           onChange={(value) => {
             setCustomPeriod(value.value);
-            updateForm.setValue('customPeriod', value.value);
-            const isFormDirty = checkIsFormDirty('customPeriod', value.value);
+            updateForm.setValue("customPeriod", value.value);
+            const isFormDirty = checkIsFormDirty("customPeriod", value.value);
 
             const validResult = value.areValuesDifferent
               ? isFormDirty && value.areValuesValid
@@ -286,7 +301,9 @@ const EnrollmentTab = ({
         />
       </ContextContainer>
       <ContextContainer>
-        <Title order={2}>{`${t('actualEnrollment')} (${classData?.students?.length} / ${
+        <Title
+          order={2}
+        >{`${t("actualEnrollment")} (${classData?.students?.length} / ${
           classData?.seats
         })`}</Title>
         <Box>
@@ -295,7 +312,7 @@ const EnrollmentTab = ({
             variant="link"
             leftIcon={<AddCircleIcon />}
           >
-            {t('enrollButton')}
+            {t("enrollButton")}
           </Button>
         </Box>
         {classStudents?.length > 0 && (
@@ -303,7 +320,9 @@ const EnrollmentTab = ({
             data={studentsTableData}
             showSearchBar
             isLoading={
-              userAgentsInfoLoading || classStudentsLoading || removeStudentFromClassLoading
+              userAgentsInfoLoading ||
+              classStudentsLoading ||
+              removeStudentFromClassLoading
             }
           />
         )}

@@ -1,14 +1,19 @@
-import React, { useEffect, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { Select } from '@bubbles-ui/components';
-import useCenterEvaluationSystems from '@grades/hooks/queries/useCenterEvaluationSystems';
-import { noop } from 'lodash';
+import React, { useEffect, useMemo } from "react";
+import PropTypes from "prop-types";
+import { Select } from "@bubbles-ui/components";
+import useCenterEvaluationSystems from "@grades/hooks/queries/useCenterEvaluationSystems";
+import { noop } from "lodash";
 
-const EvaluationSystemsSelect = ({ centerId, setLoadingEvaluationSystems = noop, ...props }) => {
-  const { data: evaluationSystemsQuery, isLoading } = useCenterEvaluationSystems({
-    center: centerId,
-    options: { enabled: centerId?.length > 0 },
-  });
+const EvaluationSystemsSelect = ({
+  centerId,
+  setLoadingEvaluationSystems = noop,
+  ...props
+}) => {
+  const { data: evaluationSystemsQuery, isLoading } =
+    useCenterEvaluationSystems({
+      center: centerId,
+      options: { enabled: centerId?.length > 0 },
+    });
 
   useEffect(() => {
     setLoadingEvaluationSystems(isLoading);
@@ -16,7 +21,10 @@ const EvaluationSystemsSelect = ({ centerId, setLoadingEvaluationSystems = noop,
 
   const selectData = useMemo(() => {
     if (evaluationSystemsQuery?.length) {
-      return evaluationSystemsQuery?.map((item) => ({ label: item.name, value: item.id }));
+      return evaluationSystemsQuery?.map((item) => ({
+        label: item.name,
+        value: item.id,
+      }));
     }
     return [];
   }, [evaluationSystemsQuery]);

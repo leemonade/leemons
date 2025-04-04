@@ -1,10 +1,23 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
-import { ContextContainer, Text, Stack, Title, NumberInput, Switch } from '@bubbles-ui/components';
-import { isEmpty } from 'lodash';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import PropTypes from "prop-types";
+import { Controller, useForm } from "react-hook-form";
+import {
+  ContextContainer,
+  Text,
+  Stack,
+  Title,
+  NumberInput,
+  Switch,
+} from "@bubbles-ui/components";
+import { isEmpty } from "lodash";
 
-const SeatsPerCourseSetup = ({ courses, onChange, value, localizations, sequentialCourses }) => {
+const SeatsPerCourseSetup = ({
+  courses,
+  onChange,
+  value,
+  localizations,
+  sequentialCourses,
+}) => {
   const [differentSeatsPerCourse, setDifferentSeatsPerCourse] = useState(false);
   const form = useForm();
 
@@ -57,7 +70,9 @@ const SeatsPerCourseSetup = ({ courses, onChange, value, localizations, sequenti
   // Handle course addition or removal
   useEffect(() => {
     if (courses?.length && !isEmpty(value) && differentSeatsPerCourse) {
-      const coursesSeatsKeys = Object.keys(value).filter((key) => key !== 'all');
+      const coursesSeatsKeys = Object.keys(value).filter(
+        (key) => key !== "all"
+      );
       const coursesSeatsDifference = courses.length - coursesSeatsKeys.length;
       const updateObject = { ...value };
 
@@ -82,7 +97,9 @@ const SeatsPerCourseSetup = ({ courses, onChange, value, localizations, sequenti
 
   return (
     <ContextContainer spacing={4}>
-      <Title sx={(theme) => theme.other.score.content.typo.lg}>{formLabels?.offeredSeats}</Title>
+      <Title sx={(theme) => theme.other.score.content.typo.lg}>
+        {formLabels?.offeredSeats}
+      </Title>
       {courses?.length > 1 && sequentialCourses && (
         <>
           <Switch
@@ -96,12 +113,20 @@ const SeatsPerCourseSetup = ({ courses, onChange, value, localizations, sequenti
 
           {differentSeatsPerCourse &&
             courses?.map((course) => (
-              <Stack key={`course-${course.index}-seats`} alignItems="center" spacing={4}>
-                <Text sx={{ width: 100 }}>{`${formLabels?.course} ${course.index}`}</Text>
+              <Stack
+                key={`course-${course.index}-seats`}
+                alignItems="center"
+                spacing={4}
+              >
+                <Text
+                  sx={{ width: 100 }}
+                >{`${formLabels?.course} ${course.index}`}</Text>
                 <Controller
                   name={`${course.index}`}
                   defaultValue={1}
-                  rules={{ required: localizations?.programDrawer?.requiredField }}
+                  rules={{
+                    required: localizations?.programDrawer?.requiredField,
+                  }}
                   control={form.control}
                   render={({ field, fieldState }) => (
                     <NumberInput
@@ -139,7 +164,7 @@ const SeatsPerCourseSetup = ({ courses, onChange, value, localizations, sequenti
                 sx={{ width: 120 }}
                 onChange={(val) => {
                   field.onChange();
-                  handleOnChange('all', val);
+                  handleOnChange("all", val);
                 }}
               />
             )}

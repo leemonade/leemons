@@ -1,8 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { isArray } from 'lodash';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { isArray } from "lodash";
 
-import { getClassStudentsKey } from '../keys/classStudents';
-import { getProgramSubjectsKey } from '../keys/programSubjects';
+import { getClassStudentsKey } from "../keys/classStudents";
+import { getProgramSubjectsKey } from "../keys/programSubjects";
 
 import {
   addStudentsToClassRequest,
@@ -10,7 +10,7 @@ import {
   removeClassRequest,
   removeStudentFromClassRequest,
   updateClassRequest,
-} from '@academic-portfolio/request';
+} from "@academic-portfolio/request";
 
 export function useUpdateClass({ invalidateOnSuccess = true } = {}) {
   const queryClient = useQueryClient();
@@ -19,8 +19,12 @@ export function useUpdateClass({ invalidateOnSuccess = true } = {}) {
     mutationFn: async ({ subject, ...props }) => updateClassRequest(props),
     onMutate: async (newClassData) => {
       const subjectKey = [
-        'subjectDetail',
-        { subject: newClassData.subject, withClasses: true, showArchived: false },
+        "subjectDetail",
+        {
+          subject: newClassData.subject,
+          withClasses: true,
+          showArchived: false,
+        },
       ];
 
       // Cancel any outgoing refetches to avoid overwriting our optimistic update
@@ -37,7 +41,9 @@ export function useUpdateClass({ invalidateOnSuccess = true } = {}) {
           ...old,
           classes:
             old.classes?.map((cls) =>
-              cls.id === newClassData.id ? { ...cls, ...newClassData, status: 'updating' } : cls
+              cls.id === newClassData.id
+                ? { ...cls, ...newClassData, status: "updating" }
+                : cls
             ) || [],
         };
       });
@@ -46,11 +52,15 @@ export function useUpdateClass({ invalidateOnSuccess = true } = {}) {
       return { previousSubjectData };
     },
     onError: (err, newClassData, context) => {
-      console.error('err', err);
+      console.error("err", err);
 
       const subjectKey = [
-        'subjectDetail',
-        { subject: newClassData.subject, withClasses: true, showArchived: false },
+        "subjectDetail",
+        {
+          subject: newClassData.subject,
+          withClasses: true,
+          showArchived: false,
+        },
       ];
 
       // If the mutation fails, use the context returned from onMutate to roll back
@@ -62,7 +72,7 @@ export function useUpdateClass({ invalidateOnSuccess = true } = {}) {
           data.class?.program?.id ?? data.class?.program
         );
         const subjectKey = [
-          'subjectDetail',
+          "subjectDetail",
           { subject: data.class.subject?.id ?? data.class.subject },
         ];
 
@@ -91,7 +101,9 @@ export function useDeleteClass() {
   });
 }
 
-export function useEnrollStudentsToClasses({ invalidateOnSuccess = true } = {}) {
+export function useEnrollStudentsToClasses({
+  invalidateOnSuccess = true,
+} = {}) {
   const queryClient = useQueryClient();
 
   return useMutation({

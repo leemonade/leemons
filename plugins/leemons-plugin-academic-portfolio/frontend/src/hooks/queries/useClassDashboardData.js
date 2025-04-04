@@ -1,9 +1,9 @@
-import { useVariantForQueryKey } from '@common/queries';
-import { useQuery } from '@tanstack/react-query';
+import { useVariantForQueryKey } from "@common/queries";
+import { useQuery } from "@tanstack/react-query";
 
-import { getClassDashboardDataKey } from '../keys/classPublicData';
+import { getClassDashboardDataKey } from "../keys/classPublicData";
 
-import { classDetailForDashboardRequest } from '@academic-portfolio/request';
+import { classDetailForDashboardRequest } from "@academic-portfolio/request";
 
 function useClassDashboardData({ classId, options }) {
   const queryKey = getClassDashboardDataKey(classId);
@@ -14,7 +14,7 @@ function useClassDashboardData({ classId, options }) {
   };
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'frequently',
+    modificationTrend: "frequently",
   });
 
   return useQuery({

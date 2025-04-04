@@ -1,6 +1,6 @@
-const { isEmpty } = require('lodash');
-const { addGroup } = require('./addGroup');
-const { listGroups } = require('./listGroups');
+const { isEmpty } = require("lodash");
+const { addGroup } = require("./addGroup");
+const { listGroups } = require("./listGroups");
 
 async function addGroupIfNotExists({ group, ctx }) {
   const { id, abbreviation, program } = group || {};
@@ -13,7 +13,13 @@ async function addGroupIfNotExists({ group, ctx }) {
   }
 
   if (!isEmpty(query)) {
-    const groups = await listGroups({ page: 0, size: 99999, program, query, ctx });
+    const groups = await listGroups({
+      page: 0,
+      size: 99999,
+      program,
+      query,
+      ctx,
+    });
 
     if (groups.count > 0) {
       return groups.items[0];

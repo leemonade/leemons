@@ -1,20 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { noop } from 'lodash';
-import { useLocale } from '@common';
-import { Box, Text, Popover, InputWrapper, UnstyledButton } from '@bubbles-ui/components';
-import { AlertWarningTriangleIcon, CheckIcon } from '@bubbles-ui/icons/solid';
-import { ChevronDownIcon } from '@bubbles-ui/icons/outline';
-import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '../../helpers/prefixPN';
+import React, { useEffect, useState } from "react";
+import { noop } from "lodash";
+import { useLocale } from "@common";
+import {
+  Box,
+  Text,
+  Popover,
+  InputWrapper,
+  UnstyledButton,
+} from "@bubbles-ui/components";
+import { AlertWarningTriangleIcon, CheckIcon } from "@bubbles-ui/icons/solid";
+import { ChevronDownIcon } from "@bubbles-ui/icons/outline";
+import useProgramClasses from "@academic-portfolio/hooks/useProgramClasses";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "../../helpers/prefixPN";
 import {
   CLASSROOM_PICKER_DEFAULT_PROPS,
   CLASSROOM_PICKER_PROP_TYPES,
-} from './ClassroomPicker.constants';
-import { ClassroomPickerItem } from './components/ClassroomPickerItem';
-import { ClassroomPickerList } from '../ClassroomPickerList';
-import { ClassroomPickerStyles } from './ClassroomPicker.styles';
-import { transformData } from './helpers';
+} from "./ClassroomPicker.constants";
+import { ClassroomPickerItem } from "./components/ClassroomPickerItem";
+import { ClassroomPickerList } from "../ClassroomPickerList";
+import { ClassroomPickerStyles } from "./ClassroomPicker.styles";
+import { transformData } from "./helpers";
 
 const ClassroomPicker = ({
   label,
@@ -31,10 +37,15 @@ const ClassroomPicker = ({
   const [isOpen, setIsOpen] = useState(false);
   const [hasCollisions, setHasCollisions] = useState(false);
   const [collisionError, setCollisionError] = useState(false);
-  const { classes, cx } = ClassroomPickerStyles({ isOpen }, { name: 'ClassroomPicker' });
+  const { classes, cx } = ClassroomPickerStyles(
+    { isOpen },
+    { name: "ClassroomPicker" }
+  );
   const locale = useLocale();
-  const [t] = useTranslateLoader(prefixPN('classroomPicker'));
-  const { data: classesData } = useProgramClasses(programId, { enabled: !data && !!programId });
+  const [t] = useTranslateLoader(prefixPN("classroomPicker"));
+  const { data: classesData } = useProgramClasses(programId, {
+    enabled: !data && !!programId,
+  });
 
   useEffect(() => {
     if (subjectsList.some((item) => item.collideWith.length > 0)) {
@@ -55,13 +66,17 @@ const ClassroomPicker = ({
 
   useEffect(() => {
     setSubjects(transformedData.filter((item) => !value.includes(item.value)));
-    setSubjectsList(transformedData.filter((item) => value.includes(item.value)));
+    setSubjectsList(
+      transformedData.filter((item) => value.includes(item.value))
+    );
   }, [transformedData, value]);
 
   const handleSelectSubject = (subject) => {
     const newSubjectsList = [...subjectsList, subject];
     setSubjectsList(newSubjectsList);
-    setSubjects((prevState) => prevState.filter((item) => item.value !== subject.value));
+    setSubjects((prevState) =>
+      prevState.filter((item) => item.value !== subject.value)
+    );
     setIsOpen(false);
     onChange(newSubjectsList.map((item) => item.value));
   };
@@ -74,7 +89,9 @@ const ClassroomPicker = ({
   };
   const handleRemoveSubjectFromList = (subject) => {
     const newSubjects = [...subjects, subject];
-    const newSubjectsList = subjectsList.filter((item) => item.value !== subject.value);
+    const newSubjectsList = subjectsList.filter(
+      (item) => item.value !== subject.value
+    );
     setSubjects(newSubjects);
     setSubjectsList(newSubjectsList);
     onChange(newSubjectsList.map((item) => item.value));
@@ -95,9 +112,13 @@ const ClassroomPicker = ({
             })}
           >
             <Text className={classes.popoverButtonText}>
-              {subjects.length > 0 ? `${t('selectSubject')} ` : t('noMore')}
+              {subjects.length > 0 ? `${t("selectSubject")} ` : t("noMore")}
             </Text>
-            <ChevronDownIcon height={8} width={8} className={classes.chevronIcon} />
+            <ChevronDownIcon
+              height={8}
+              width={8}
+              className={classes.chevronIcon}
+            />
           </UnstyledButton>
         }
         closeOnEscape
@@ -113,27 +134,32 @@ const ClassroomPicker = ({
             {!allowCollisions && collisionError && (
               <Box className={classes.collisionContainer}>
                 <AlertWarningTriangleIcon className={classes.collisionIcon} />
-                <Text className={classes.collisionLabel}>{t('collision')}</Text>
+                <Text className={classes.collisionLabel}>{t("collision")}</Text>
               </Box>
             )}
             {!hasCollisions && subjects?.length > 1 && (
               <UnstyledButton
-                className={cx(classes.unstyledButton, classes.allSubjectsContainer)}
+                className={cx(
+                  classes.unstyledButton,
+                  classes.allSubjectsContainer
+                )}
                 onClick={() => handleSelectAllSubjects()}
               >
                 <Box className={classes.allSubjectsCircle}>
                   <CheckIcon width={12} height={12} />
                 </Box>
-                <Text className={classes.allSubjectsLabel}>{`${t('allSubjects')} (${
-                  subjects?.length
-                })`}</Text>
+                <Text
+                  className={classes.allSubjectsLabel}
+                >{`${t("allSubjects")} (${subjects?.length})`}</Text>
               </UnstyledButton>
             )}
             {subjects.map((subject) => {
               const collisionDetected =
                 !allowCollisions &&
                 hasCollisions &&
-                subjectsList.some((listItem) => subject?.collideWith?.includes(listItem.value));
+                subjectsList.some((listItem) =>
+                  subject?.collideWith?.includes(listItem.value)
+                );
               return (
                 <UnstyledButton
                   disabled={collisionDetected}
@@ -141,9 +167,14 @@ const ClassroomPicker = ({
                     [classes.simpleDisabled]: collisionDetected,
                   })}
                   key={subject.value}
-                  onClick={() => !collisionDetected && handleSelectSubject(subject)}
+                  onClick={() =>
+                    !collisionDetected && handleSelectSubject(subject)
+                  }
                 >
-                  <ClassroomPickerItem {...subject} isCollisionDetected={collisionDetected} />
+                  <ClassroomPickerItem
+                    {...subject}
+                    isCollisionDetected={collisionDetected}
+                  />
                 </UnstyledButton>
               );
             })}
@@ -151,7 +182,10 @@ const ClassroomPicker = ({
         )}
       </Popover>
       <Box mt={8}>
-        <ClassroomPickerList subjects={subjectsList} onRemove={handleRemoveSubjectFromList} />
+        <ClassroomPickerList
+          subjects={subjectsList}
+          onRemove={handleRemoveSubjectFromList}
+        />
       </Box>
     </InputWrapper>
   );

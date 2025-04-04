@@ -1,4 +1,4 @@
-const { validateAddCycle } = require('../../validations/forms');
+const { validateAddCycle } = require("../../validations/forms");
 
 async function addCycle({ data, ctx }) {
   validateAddCycle(data);

@@ -1,8 +1,8 @@
-import { useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { useApi } from '@common';
-import { uniqBy, map } from 'lodash';
-import { classByIdsRequest } from '../request';
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useApi } from "@common";
+import { uniqBy, map } from "lodash";
+import { classByIdsRequest } from "../request";
 
 async function getClasses(classes) {
   const request = await classByIdsRequest(classes);
@@ -15,15 +15,15 @@ export default function useClassesSubjects(classes) {
     data: classesData,
     error,
     isLoading,
-  } = useQuery(['classes', { classes }], () => getClasses(classes));
+  } = useQuery(["classes", { classes }], () => getClasses(classes));
   const defaultValue = useMemo(() => [], []);
 
   const value = useMemo(() => {
     if (!classesData?.length) {
       return defaultValue;
     }
-    const subjects = map(classesData, 'subject');
-    return uniqBy(subjects, 'id');
+    const subjects = map(classesData, "subject");
+    return uniqBy(subjects, "id");
   }, [classesData, defaultValue]);
 
   if (isLoading) {

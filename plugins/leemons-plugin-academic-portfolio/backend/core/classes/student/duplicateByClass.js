@@ -1,15 +1,19 @@
-const _ = require('lodash');
+const _ = require("lodash");
 const {
   addPermissionsBetweenStudentsAndTeachers,
-} = require('../addPermissionsBetweenStudentsAndTeachers');
-const { getProfiles } = require('../../settings/getProfiles');
+} = require("../addPermissionsBetweenStudentsAndTeachers");
+const { getProfiles } = require("../../settings/getProfiles");
 
-async function duplicateByClass({ classIds, duplications: dup = {}, ctx } = {}) {
+async function duplicateByClass({
+  classIds,
+  duplications: dup = {},
+  ctx,
+} = {}) {
   const duplications = dup;
   const classStudents = await ctx.tx.db.ClassStudent.find({
     class: _.isArray(classIds) ? classIds : [classIds],
   }).lean();
-  await ctx.tx.emit('before-duplicate-classes-students', {
+  await ctx.tx.emit("before-duplicate-classes-students", {
     classStudents,
   });
 
@@ -31,7 +35,7 @@ async function duplicateByClass({ classIds, duplications: dup = {}, ctx } = {}) 
 
   await Promise.all(
     _.map(classStudents, ({ student, ...item }) =>
-      ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
+      ctx.tx.call("users.permissions.addCustomPermissionToUserAgent", {
         userAgentId: student,
         data: {
           permissionName: `academic-portfolio.class.${
@@ -39,7 +43,7 @@ async function duplicateByClass({ classIds, duplications: dup = {}, ctx } = {}) 
               ? duplications.classes[item.class].id
               : item.class
           }`,
-          actionNames: ['view'],
+          actionNames: ["view"],
         },
       })
     )
@@ -49,7 +53,7 @@ async function duplicateByClass({ classIds, duplications: dup = {}, ctx } = {}) 
 
   await Promise.all(
     _.map(classStudents, ({ student, ...item }) =>
-      ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
+      ctx.tx.call("users.permissions.addCustomPermissionToUserAgent", {
         userAgentId: student,
         data: {
           permissionName: `academic-portfolio.class-profile.${
@@ -57,7 +61,7 @@ async function duplicateByClass({ classIds, duplications: dup = {}, ctx } = {}) 
               ? duplications.classes[item.class].id
               : item.class
           }.${studentProfileId}`,
-          actionNames: ['view'],
+          actionNames: ["view"],
         },
       })
     )
@@ -71,10 +75,12 @@ async function duplicateByClass({ classIds, duplications: dup = {}, ctx } = {}) 
   });
 
   await Promise.all(
-    _.map(classIds, (_class) => addPermissionsBetweenStudentsAndTeachers({ classId: _class, ctx }))
+    _.map(classIds, (_class) =>
+      addPermissionsBetweenStudentsAndTeachers({ classId: _class, ctx })
+    )
   );
 
-  await ctx.tx.emit('after-duplicate-classes-students', {
+  await ctx.tx.emit("after-duplicate-classes-students", {
     classStudents,
     duplications: duplications.classStudents,
   });

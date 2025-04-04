@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
-import useUserAgents from '@users/hooks/useUserAgents';
+import { useQuery } from "@tanstack/react-query";
+import useUserAgents from "@users/hooks/useUserAgents";
 
-import { listSessionClassesRequest } from '../request';
+import { listSessionClassesRequest } from "../request";
 
 /**
  *
@@ -10,12 +10,17 @@ import { listSessionClassesRequest } from '../request';
  * @returns
  */
 export default function useSessionClasses(
-  { program, type = ['main-teacher', 'associate-teacher'], showType, withProgram } = {},
+  {
+    program,
+    type = ["main-teacher", "associate-teacher"],
+    showType,
+    withProgram,
+  } = {},
   queryOptions = { cacheTime: Infinity }
 ) {
   const userAgents = useUserAgents();
 
-  const queryKey = ['sessionClasses', { program, type, withProgram, showType }];
+  const queryKey = ["sessionClasses", { program, type, withProgram, showType }];
 
   const query = useQuery(
     queryKey,
@@ -40,7 +45,9 @@ export default function useSessionClasses(
 
   if (showType && query.isSuccess) {
     queryInfo.data = queryInfo.data.map((klass) => {
-      const teacher = klass.teachers.find((t) => userAgents.includes(t.teacher));
+      const teacher = klass.teachers.find((t) =>
+        userAgents.includes(t.teacher)
+      );
       const teacherType = teacher?.type;
 
       if (teacherType) {

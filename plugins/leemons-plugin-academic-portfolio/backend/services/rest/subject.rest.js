@@ -4,15 +4,17 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { LeemonsValidator } = require('@leemons/validator');
-const _ = require('lodash');
+} = require("@leemons/middlewares");
+const { LeemonsValidator } = require("@leemons/validator");
+const _ = require("lodash");
 
-const { duplicateClassesByIds } = require('../../core/classes/duplicateClassesByIds');
+const {
+  duplicateClassesByIds,
+} = require("../../core/classes/duplicateClassesByIds");
 const {
   addSubject,
   updateSubject,
@@ -25,28 +27,30 @@ const {
   subjectByIds,
   isMainTeacherInSubject,
   getUserSubjects,
-} = require('../../core/subjects');
-const { duplicateSubjectByIds } = require('../../core/subjects/duplicateSubjectByIds');
+} = require("../../core/subjects");
+const {
+  duplicateSubjectByIds,
+} = require("../../core/subjects/duplicateSubjectByIds");
 const {
   validatePutSubjectCredits,
   validateGetSubjectCredits,
   validateGetSubjectCreditsProgram,
   validateGetSubjectsCredits,
-} = require('../../validations/forms');
+} = require("../../validations/forms");
 
 /** @type {ServiceSchema} */
 module.exports = {
   postSubjectRest: {
     rest: {
-      path: '/subject',
-      method: 'POST',
+      path: "/subject",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'create'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "create"],
           },
         },
       }),
@@ -58,15 +62,15 @@ module.exports = {
   },
   putSubjectRest: {
     rest: {
-      path: '/subject',
-      method: 'PUT',
+      path: "/subject",
+      method: "PUT",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'update'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "update"],
           },
         },
       }),
@@ -78,15 +82,15 @@ module.exports = {
   },
   deleteSubjectRest: {
     rest: {
-      path: '/:id',
-      method: 'DELETE',
+      path: "/:id",
+      method: "DELETE",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'delete'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "delete"],
           },
         },
       }),
@@ -100,15 +104,15 @@ module.exports = {
   },
   putSubjectCreditsRest: {
     rest: {
-      path: '/credits',
-      method: 'PUT',
+      path: "/credits",
+      method: "PUT",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'update'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "update"],
           },
         },
       }),
@@ -116,14 +120,19 @@ module.exports = {
     async handler(ctx) {
       validatePutSubjectCredits(ctx.params);
       const { subject, program, credits } = ctx.params;
-      const subjectCredits = await setSubjectCredits({ subject, program, credits, ctx });
+      const subjectCredits = await setSubjectCredits({
+        subject,
+        program,
+        credits,
+        ctx,
+      });
       return { status: 200, subjectCredits };
     },
   },
   getSubjectCreditsRest: {
     rest: {
-      path: '/credits',
-      method: 'GET',
+      path: "/credits",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -142,15 +151,15 @@ module.exports = {
   },
   listSubjectCreditsForProgramRest: {
     rest: {
-      path: '/credits/list',
-      method: 'GET',
+      path: "/credits/list",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -158,21 +167,24 @@ module.exports = {
     async handler(ctx) {
       validateGetSubjectCreditsProgram(ctx.params);
       const { program } = ctx.params;
-      const subjectCredits = await listSubjectCreditsForProgram({ program, ctx });
+      const subjectCredits = await listSubjectCreditsForProgram({
+        program,
+        ctx,
+      });
       return { status: 200, subjectCredits };
     },
   },
   listSubjectRest: {
     rest: {
-      path: '/subject',
-      method: 'GET',
+      path: "/subject",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -180,29 +192,30 @@ module.exports = {
 
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: ['number', 'string'] },
-          size: { type: ['number', 'string'] },
-          program: { type: 'string' },
-          course: { type: 'string' }, // Stringified array, even for one
-          onlyArchived: { type: 'string' },
-          teacherTypeFilter: { type: 'string' },
+          page: { type: ["number", "string"] },
+          size: { type: ["number", "string"] },
+          program: { type: "string" },
+          course: { type: "string" }, // Stringified array, even for one
+          onlyArchived: { type: "string" },
+          teacherTypeFilter: { type: "string" },
         },
-        required: ['page', 'size'],
+        required: ["page", "size"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
-        const { page, size, program, course, onlyArchived, teacherTypeFilter } = ctx.params;
-        const truthyValues = ['true', true, '1'];
+        const { page, size, program, course, onlyArchived, teacherTypeFilter } =
+          ctx.params;
+        const truthyValues = ["true", true, "1"];
         const _onlyArchived = truthyValues.includes(onlyArchived);
 
         let _course;
         try {
-          _course = JSON.parse(course || 'null');
+          _course = JSON.parse(course || "null");
         } catch (error) {
           throw new LeemonsError(ctx, {
-            message: 'Course must be a valid JSON array',
+            message: "Course must be a valid JSON array",
             statusCode: 400,
           });
         }
@@ -223,8 +236,8 @@ module.exports = {
   },
   subjectsByIdsRest: {
     rest: {
-      path: '/',
-      method: 'GET',
+      path: "/",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -233,7 +246,7 @@ module.exports = {
         const { ids } = ctx.params;
         id = JSON.parse(ids || null);
       }
-      const truthyValues = ['true', true, '1'];
+      const truthyValues = ["true", true, "1"];
       const _withClasses = truthyValues.includes(ctx.params.withClasses);
       const _showArchived = truthyValues.includes(ctx.params.showArchived);
       const data = await subjectByIds({
@@ -250,15 +263,15 @@ module.exports = {
   },
   duplicateSubjectById: {
     rest: {
-      path: '/:id/duplicate',
-      method: 'POST',
+      path: "/:id/duplicate",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'create'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "create"],
           },
         },
       }),
@@ -266,12 +279,12 @@ module.exports = {
 
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          id: { type: 'string' },
-          course: { type: 'string' },
+          id: { type: "string" },
+          course: { type: "string" },
         },
-        required: ['id'],
+        required: ["id"],
         additionalProperties: true,
       });
       if (validator.validate(ctx.params)) {
@@ -284,7 +297,7 @@ module.exports = {
         });
         const classes = await ctx.tx.db.Class.find({ subject: id }).lean();
         await duplicateClassesByIds({
-          ids: _.map(classes, 'id'),
+          ids: _.map(classes, "id"),
           duplications,
           students: false,
           teachers: false,
@@ -307,15 +320,18 @@ module.exports = {
   },
   isMainTeacherInSubjectRest: {
     rest: {
-      path: '/is-main-teacher-in-subject',
-      method: 'GET',
+      path: "/is-main-teacher-in-subject",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const { subjectIds } = ctx.params;
-      const parsedSubjectIds = JSON.parse(subjectIds || '[]');
+      const parsedSubjectIds = JSON.parse(subjectIds || "[]");
 
-      const isMainTeacher = await isMainTeacherInSubject({ subjectIds: parsedSubjectIds, ctx });
+      const isMainTeacher = await isMainTeacherInSubject({
+        subjectIds: parsedSubjectIds,
+        ctx,
+      });
       return {
         status: 200,
         isMainTeacher,
@@ -324,16 +340,19 @@ module.exports = {
   },
   getUserSubjectsRest: {
     rest: {
-      path: '/user',
-      method: 'GET',
+      path: "/user",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const { teacherTypeFilter } = ctx.params;
       const teacherTypeFilterProcessed = teacherTypeFilter
-        ? teacherTypeFilter.split(',')
+        ? teacherTypeFilter.split(",")
         : undefined;
-      const data = await getUserSubjects({ ctx, teacherTypeFilter: teacherTypeFilterProcessed });
+      const data = await getUserSubjects({
+        ctx,
+        teacherTypeFilter: teacherTypeFilterProcessed,
+      });
       return { status: 200, data };
     },
   },

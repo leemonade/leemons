@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
 import {
   Box,
@@ -14,66 +14,72 @@ import {
   ImageLoader,
   InputWrapper,
   ContextContainer,
-} from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { addSuccessAlert } from '@layout/alert';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useQueryClient } from '@tanstack/react-query';
+} from "@bubbles-ui/components";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import { addSuccessAlert } from "@layout/alert";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useQueryClient } from "@tanstack/react-query";
 
-import { useBlockPageStyles } from './Blocks.styles';
-import { Filters } from './Filters';
+import { useBlockPageStyles } from "./Blocks.styles";
+import { Filters } from "./Filters";
 
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { useSubjectDetails } from '@academic-portfolio/hooks';
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
+import { useSubjectDetails } from "@academic-portfolio/hooks";
 import {
   useCreateBlock,
   useUpdateBlock,
   useDeleteBlock,
-} from '@academic-portfolio/hooks/mutations/useMutateBlock';
-import { useUpdateSubject } from '@academic-portfolio/hooks/mutations/useMutateSubject';
-import useSubjectBlocks from '@academic-portfolio/hooks/queries/useSubjectBlocks';
+} from "@academic-portfolio/hooks/mutations/useMutateBlock";
+import { useUpdateSubject } from "@academic-portfolio/hooks/mutations/useMutateSubject";
+import useSubjectBlocks from "@academic-portfolio/hooks/queries/useSubjectBlocks";
 
 const Blocks = () => {
   const { classes } = useBlockPageStyles();
-  const [t, , , tLoading] = useTranslateLoader(prefixPN('blocksPage'));
+  const [t, , , tLoading] = useTranslateLoader(prefixPN("blocksPage"));
   const queryClient = useQueryClient();
-  const [selectedSubject, setSelectedSubject] = useState('');
+  const [selectedSubject, setSelectedSubject] = useState("");
   const [showEmptyState, setShowEmptyState] = useState(false);
-  const { t: tCommon } = useCommonTranslate('formWithTheme');
+  const { t: tCommon } = useCommonTranslate("formWithTheme");
 
   const scrollRef = useRef();
 
   const form = useForm();
 
-  const { mutateAsync: updateSubjectAsync, isLoading: isUpdateSubjectLoading } = useUpdateSubject();
-  const { mutate: createBlock, isLoading: isCreateBlockLoading } = useCreateBlock({
-    successMessage: t('alerts.success.add'),
-    successFollowUp: () => form.reset(),
-  });
-  const { mutate: updateBlock, isLoading: isUpdateBlockLoading } = useUpdateBlock({
-    successMessage: t('alerts.success.update'),
-  });
-  const { mutate: deleteBlock, isLoading: isDeleteBlockLoading } = useDeleteBlock({
-    successMessage: t('alerts.success.delete'),
-  });
+  const { mutateAsync: updateSubjectAsync, isLoading: isUpdateSubjectLoading } =
+    useUpdateSubject();
+  const { mutate: createBlock, isLoading: isCreateBlockLoading } =
+    useCreateBlock({
+      successMessage: t("alerts.success.add"),
+      successFollowUp: () => form.reset(),
+    });
+  const { mutate: updateBlock, isLoading: isUpdateBlockLoading } =
+    useUpdateBlock({
+      successMessage: t("alerts.success.update"),
+    });
+  const { mutate: deleteBlock, isLoading: isDeleteBlockLoading } =
+    useDeleteBlock({
+      successMessage: t("alerts.success.delete"),
+    });
 
   // INIT & EFFECTS ------------------------------------------------------------------------------------------------ ||
 
-  const { data: subjectData, isLoading: subjectDataLoading } = useSubjectDetails(selectedSubject, {
-    enabled: selectedSubject?.length > 0,
-    refetchOnWindowFocus: false,
-  });
-
-  const { data: blocksDataFetched, isLoading: blocksDataLoading } = useSubjectBlocks({
-    subjectId: selectedSubject,
-    page: 0,
-    size: 9999,
-    options: {
+  const { data: subjectData, isLoading: subjectDataLoading } =
+    useSubjectDetails(selectedSubject, {
       enabled: selectedSubject?.length > 0,
       refetchOnWindowFocus: false,
-    },
-  });
+    });
+
+  const { data: blocksDataFetched, isLoading: blocksDataLoading } =
+    useSubjectBlocks({
+      subjectId: selectedSubject,
+      page: 0,
+      size: 9999,
+      options: {
+        enabled: selectedSubject?.length > 0,
+        refetchOnWindowFocus: false,
+      },
+    });
 
   const blocksData = useMemo(() => {
     return blocksDataFetched?.items
@@ -125,17 +131,17 @@ const Blocks = () => {
   const tableInputColumns = useMemo(
     () => [
       {
-        Header: t('labels.abbreviation'),
-        accessor: 'abbreviation',
+        Header: t("labels.abbreviation"),
+        accessor: "abbreviation",
         input: {
           node: <TextInput required />,
-          rules: { required: t('errors.requiredField') },
+          rules: { required: t("errors.requiredField") },
         },
         className: classes.abbreviationInput,
       },
       {
-        Header: t('labels.name'),
-        accessor: 'name',
+        Header: t("labels.name"),
+        accessor: "name",
         input: {
           node: <TextInput />,
         },
@@ -195,24 +201,24 @@ const Blocks = () => {
     });
 
     queryClient.invalidateQueries([
-      'subjectDetail',
+      "subjectDetail",
       { subject: selectedSubject, withClasses: false, showArchived: false },
     ]);
   };
 
   function handleOnSave() {
-    addSuccessAlert(t('alerts.success.save'));
+    addSuccessAlert(t("alerts.success.save"));
   }
 
   return (
     <TLayout scrollRef={scrollRef}>
       <TLayout.Header
-        title={t('header.title')}
+        title={t("header.title")}
         cancelable={false}
         icon={
           <Stack justifyContent="center" alignItems="center">
             <ImageLoader
-              style={{ position: 'relative' }}
+              style={{ position: "relative" }}
               src="/public/academic-portfolio/menu-icon.svg"
               width={18}
               height={18}
@@ -220,13 +226,18 @@ const Blocks = () => {
           </Stack>
         }
       >
-        <Filters onChange={(payload) => setSelectedSubject(payload.subjectId)} />
+        <Filters
+          onChange={(payload) => setSelectedSubject(payload.subjectId)}
+        />
       </TLayout.Header>
 
       {selectedSubject?.length > 0 ? (
-        <TLayout.Content title={t('labels.configureBlocks')} loading={isLoading}>
+        <TLayout.Content
+          title={t("labels.configureBlocks")}
+          loading={isLoading}
+        >
           <Switch
-            label={t('labels.activateBlocks')}
+            label={t("labels.activateBlocks")}
             checked={useBlocks}
             onChange={(value) => handleOnActivateSubjectBlocks(value)}
             disabled={isLoading}
@@ -239,17 +250,17 @@ const Blocks = () => {
                     <Controller
                       control={form.control}
                       name="abbreviation"
-                      rules={{ required: t('errors.requiredField') }}
+                      rules={{ required: t("errors.requiredField") }}
                       render={({ field }) => (
                         <TextInput
                           {...field}
                           onBlur={() => {
-                            form.clearErrors('abbreviation');
+                            form.clearErrors("abbreviation");
                           }}
                           required
-                          label={t('labels.abbreviation')}
+                          label={t("labels.abbreviation")}
                           error={form.formState.errors.abbreviation}
-                          placeholder={t('placeholders.abbreviation')}
+                          placeholder={t("placeholders.abbreviation")}
                         />
                       )}
                     />
@@ -261,15 +272,19 @@ const Blocks = () => {
                       render={({ field }) => (
                         <TextInput
                           {...field}
-                          label={t('labels.name')}
-                          placeholder={t('placeholders.name')}
+                          label={t("labels.name")}
+                          placeholder={t("placeholders.name")}
                         />
                       )}
                     />
                   </Box>
                   <InputWrapper showEmptyLabel>
-                    <Button variant="link" leftIcon={<AddCircleIcon />} type="submit">
-                      {t('labels.add')}
+                    <Button
+                      variant="link"
+                      leftIcon={<AddCircleIcon />}
+                      type="submit"
+                    >
+                      {t("labels.add")}
                     </Button>
                   </InputWrapper>
                 </ContextContainer>
@@ -277,19 +292,19 @@ const Blocks = () => {
 
               {showEmptyState ? (
                 <Stack justifyContent="center" alignItems="center" fullHeight>
-                  <Text order={1}>{t('emptyState.text')}</Text>
+                  <Text order={1}>{t("emptyState.text")}</Text>
                 </Stack>
               ) : (
                 <Box>
                   <TableInput
                     columns={tableInputColumns}
                     labels={{
-                      add: t('labels.add'),
-                      remove: t('labels.remove'),
-                      edit: t('labels.edit'),
-                      accept: t('labels.accept'),
-                      cancel: t('labels.cancel'),
-                      actionHeader: t('labels.actions'),
+                      add: t("labels.add"),
+                      remove: t("labels.remove"),
+                      edit: t("labels.edit"),
+                      accept: t("labels.accept"),
+                      cancel: t("labels.cancel"),
+                      actionHeader: t("labels.actions"),
                     }}
                     canAdd={false}
                     editable
@@ -311,11 +326,11 @@ const Blocks = () => {
               <TLayout.Footer.RightActions>
                 <Stack spacing={4}>
                   <Button
-                    variant={'filled'}
+                    variant={"filled"}
                     onClick={handleOnSave}
                     disabled={blocksData.length === 0}
                   >
-                    {tCommon('save')}
+                    {tCommon("save")}
                   </Button>
                 </Stack>
               </TLayout.Footer.RightActions>
@@ -325,7 +340,7 @@ const Blocks = () => {
       ) : (
         <TLayout.Content clean>
           <Stack justifyContent="center" alignItems="center">
-            <Title order={3}>{t('emptyFilters')} ☝️</Title>
+            <Title order={3}>{t("emptyFilters")} ☝️</Title>
           </Stack>
         </TLayout.Content>
       )}

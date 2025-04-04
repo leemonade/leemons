@@ -1,1 +1,1 @@
-export * from './ProgramBarSelector';
+export * from "./ProgramBarSelector";

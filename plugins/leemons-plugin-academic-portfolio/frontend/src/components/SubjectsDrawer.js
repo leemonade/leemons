@@ -1,19 +1,25 @@
 /* eslint-disable no-param-reassign */
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { Box, Button, ContextContainer, BaseDrawer, Title } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
+import {
+  Box,
+  Button,
+  ContextContainer,
+  BaseDrawer,
+  Title,
+} from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useDeploymentConfig } from "@deployment-manager/hooks/useDeploymentConfig";
 
 function SubjectsDrawer({ saving, opened, onClose, value, columns, onSave }) {
-  const [t] = useTranslateLoader(prefixPN('subjectsDrawer'));
+  const [t] = useTranslateLoader(prefixPN("subjectsDrawer"));
   const [reload, setReload] = React.useState(false);
   const form = useForm();
   const deploymentConfig = useDeploymentConfig({
-    pluginName: 'academic-portfolio',
+    pluginName: "academic-portfolio",
     ignoreVersion: true,
   });
   const {
@@ -76,7 +82,10 @@ function SubjectsDrawer({ saving, opened, onClose, value, columns, onSave }) {
       _.forEach(columns, (column) => {
         v[column.accessor] = data[column.accessor];
       });
-      if (!v.hasOwnProperty('seats') && deploymentConfig?.defaults?.classSeats) {
+      if (
+        !v.hasOwnProperty("seats") &&
+        deploymentConfig?.defaults?.classSeats
+      ) {
         v.seats = deploymentConfig?.defaults?.classSeats;
       }
       onSave(v);
@@ -90,10 +99,14 @@ function SubjectsDrawer({ saving, opened, onClose, value, columns, onSave }) {
       size={360}
       header={
         <Title
-          sx={(theme) => ({ paddingLeft: theme.spacing[4], width: '100%', alignSelf: 'center' })}
+          sx={(theme) => ({
+            paddingLeft: theme.spacing[4],
+            width: "100%",
+            alignSelf: "center",
+          })}
           order={4}
         >
-          {t(value?.id ? 'edit' : 'add')}
+          {t(value?.id ? "edit" : "add")}
         </Title>
       }
     >
@@ -106,9 +119,9 @@ function SubjectsDrawer({ saving, opened, onClose, value, columns, onSave }) {
           </>
         )}
 
-        <Box style={{ textAlign: 'right' }}>
+        <Box style={{ textAlign: "right" }}>
           <Button loading={saving} onClick={save}>
-            {t('save')}
+            {t("save")}
           </Button>
         </Box>
       </ContextContainer>

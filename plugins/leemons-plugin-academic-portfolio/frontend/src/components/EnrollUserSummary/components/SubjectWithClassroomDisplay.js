@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { compact, noop } from 'lodash';
-import { AvatarSubject, Text, Stack } from '@bubbles-ui/components';
-import { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import React from "react";
+import PropTypes from "prop-types";
+import { compact, noop } from "lodash";
+import { AvatarSubject, Text, Stack } from "@bubbles-ui/components";
+import { getFileUrl } from "@leebrary/helpers/prepareAsset";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
 
 function getIconUrl(subject, classroom) {
   const fileId =
@@ -19,27 +19,27 @@ function getIconUrl(subject, classroom) {
 }
 
 function getClassroomName(classroom, course, t = noop) {
-  const parts = [(course?.name ?? '').replace('undefined 1', '').trim()];
-  const groupTranslation = t('subjects.group') ?? 'Group';
+  const parts = [(course?.name ?? "").replace("undefined 1", "").trim()];
+  const groupTranslation = t("subjects.group") ?? "Group";
   if (classroom?.groups?.length) {
     parts.push(groupTranslation, classroom.groups[0]);
   } else if (classroom?.classWithoutGroupId) {
     parts.push(groupTranslation, classroom.classWithoutGroupId);
   }
-  return compact(parts).join(' ');
+  return compact(parts).join(" ");
 }
 
 function SubjectWithClassroomDisplay({ subject, course, classroom }) {
-  const [t] = useTranslateLoader(prefixPN('subject_page'));
+  const [t] = useTranslateLoader(prefixPN("subject_page"));
   return (
     <Stack alignItems="center" spacing={2}>
       <AvatarSubject
         color={classroom?.color ?? subject?.color}
-        size={'md'}
+        size={"md"}
         icon={getIconUrl(subject, classroom)}
       />
       <Text strong color="primary">
-        {subject.name ?? ''}
+        {subject.name ?? ""}
       </Text>
       <Text>{getClassroomName(classroom, course, t)}</Text>
     </Stack>

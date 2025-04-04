@@ -1,8 +1,8 @@
-const { pick } = require('lodash');
+const { pick } = require("lodash");
 
-const { getProgramCustomNomenclature } = require('../programs');
+const { getProgramCustomNomenclature } = require("../programs");
 
-const { classByIds } = require('./classByIds');
+const { classByIds } = require("./classByIds");
 
 async function getClassPublicData({ ctx, ids }) {
   const classesData = await classByIds({ ids, withProgram: true, ctx });
@@ -19,7 +19,7 @@ async function getClassPublicData({ ctx, ids }) {
     groupAbreviation: cls.groups?.abbreviation ?? null,
     courses: Array.isArray(cls.courses)
       ? cls.courses.map(({ id, index }) => ({ id, index }))
-      : [pick(cls.courses, ['id', 'index'])],
+      : [pick(cls.courses, ["id", "index"])],
     program: {
       name: cls.program?.name,
       id: cls.program?.id,

@@ -1,9 +1,9 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function isUsedInSubject({ subject, group, classe, ctx }) {
-  const classes = await ctx.tx.db.Class.find({ subject }).select(['id']).lean();
+  const classes = await ctx.tx.db.Class.find({ subject }).select(["id"]).lean();
   const query = {
-    class: _.map(classes, 'id'),
+    class: _.map(classes, "id"),
     group,
   };
   if (classe) {

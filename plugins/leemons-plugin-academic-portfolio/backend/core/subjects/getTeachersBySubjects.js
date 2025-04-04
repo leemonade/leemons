@@ -1,16 +1,21 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-async function getTeachersBySubjects({ subjectId, type, returnBySubject, ctx }) {
+async function getTeachersBySubjects({
+  subjectId,
+  type,
+  returnBySubject,
+  ctx,
+}) {
   const classes = await ctx.tx.db.Class.find({
     subject: _.isArray(subjectId) ? subjectId : [subjectId],
   })
-    .select(['id', 'subject'])
+    .select(["id", "subject"])
     .lean();
 
-  const classesBySubject = _.groupBy(classes, 'subject');
+  const classesBySubject = _.groupBy(classes, "subject");
 
   const query = {
-    class: _.map(classes, 'id'),
+    class: _.map(classes, "id"),
   };
 
   if (type) {
@@ -18,7 +23,7 @@ async function getTeachersBySubjects({ subjectId, type, returnBySubject, ctx }) 
   }
 
   const classTeachers = await ctx.tx.db.ClassTeacher.find(query)
-    .select(['teacher', 'type', 'class'])
+    .select(["teacher", "type", "class"])
     .lean();
 
   if (returnBySubject) {
@@ -27,7 +32,7 @@ async function getTeachersBySubjects({ subjectId, type, returnBySubject, ctx }) 
       if (!response[key]) {
         response[key] = [];
       }
-      const classIds = _.map(value, 'id');
+      const classIds = _.map(value, "id");
       response[key] = response[key].concat(
         _.filter(classTeachers, ({ class: c }) => classIds.includes(c))
       );

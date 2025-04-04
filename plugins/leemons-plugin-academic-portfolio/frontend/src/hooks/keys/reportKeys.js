@@ -1,23 +1,23 @@
-import { PLUGIN_NAME } from '@academic-portfolio/config/constants';
+import { PLUGIN_NAME } from "@academic-portfolio/config/constants";
 
 const allReportsKey = [
   {
     plugin: `plugin.${PLUGIN_NAME}`,
-    scope: 'reports',
+    scope: "reports",
   },
 ];
 
 const getColumnsKey = () => [
   {
     ...allReportsKey[0],
-    action: 'getColumns',
+    action: "getColumns",
   },
 ];
 
 const getDataKey = () => [
   {
     ...allReportsKey[0],
-    action: 'getData',
+    action: "getData",
   },
 ];
 

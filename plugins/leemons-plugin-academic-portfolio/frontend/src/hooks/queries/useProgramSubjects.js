@@ -1,7 +1,7 @@
-import { listSubjectsRequest } from '@academic-portfolio/request';
-import { useVariantForQueryKey } from '@common/queries';
-import { useQuery } from '@tanstack/react-query';
-import { getProgramSubjectsKey } from '../keys/programSubjects';
+import { listSubjectsRequest } from "@academic-portfolio/request";
+import { useVariantForQueryKey } from "@common/queries";
+import { useQuery } from "@tanstack/react-query";
+import { getProgramSubjectsKey } from "../keys/programSubjects";
 
 // TODO: HANDLE PAGINATION
 export default function useProgramSubjects({ program, filters, options }) {
@@ -13,7 +13,7 @@ export default function useProgramSubjects({ program, filters, options }) {
     );
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'frequently',
+    modificationTrend: "frequently",
   });
 
   return useQuery({

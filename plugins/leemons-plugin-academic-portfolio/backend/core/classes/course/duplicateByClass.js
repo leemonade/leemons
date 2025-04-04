@@ -1,11 +1,11 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function duplicateByClass({ classIds, duplications: dup = {}, ctx }) {
   const duplications = dup;
   const classCourses = await ctx.tx.db.ClassCourse.find({
     class: _.isArray(classIds) ? classIds : [classIds],
   }).lean();
-  await ctx.tx.emit('before-duplicate-classes-courses', {
+  await ctx.tx.emit("before-duplicate-classes-courses", {
     classCourses,
   });
 
@@ -34,7 +34,7 @@ async function duplicateByClass({ classIds, duplications: dup = {}, ctx }) {
     duplications.classCourses[id] = newItems[index];
   });
 
-  await ctx.tx.emit('after-duplicate-classes-courses', {
+  await ctx.tx.emit("after-duplicate-classes-courses", {
     classCourses,
     duplications: duplications.classCourses,
   });

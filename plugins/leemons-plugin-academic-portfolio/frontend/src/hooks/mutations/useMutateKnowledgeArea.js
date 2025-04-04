@@ -2,9 +2,12 @@ import {
   createKnowledgeAreaRequest,
   deleteKnowledgeAreaRequest,
   updateKnowledgeAreaRequest,
-} from '@academic-portfolio/request';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { allKnowledgeAreaKeys, getKnowledgeAreasKey } from '../keys/knowledgeAreas';
+} from "@academic-portfolio/request";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  allKnowledgeAreaKeys,
+  getKnowledgeAreasKey,
+} from "../keys/knowledgeAreas";
 
 export function useCreateKnowledgeArea() {
   const queryClient = useQueryClient();

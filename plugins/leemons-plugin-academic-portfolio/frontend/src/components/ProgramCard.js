@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Paper, Title } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Paper, Title } from "@bubbles-ui/components";
 
 function ProgramCard({ program, onClick = () => {} }) {
   return (

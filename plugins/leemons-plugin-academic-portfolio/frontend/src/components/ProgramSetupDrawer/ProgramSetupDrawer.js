@@ -1,21 +1,21 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { BaseDrawer } from '@bubbles-ui/components';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { cloneDeep, isBoolean, isEmpty, omit } from 'lodash';
-import PropTypes from 'prop-types';
+import { BaseDrawer } from "@bubbles-ui/components";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { cloneDeep, isBoolean, isEmpty, omit } from "lodash";
+import PropTypes from "prop-types";
 
-import FormSetup from './AddFormSetup';
-import AddProgramForm from './AddProgramForm';
-import UpdateProgramForm from './UpdateProgramForm';
+import FormSetup from "./AddFormSetup";
+import AddProgramForm from "./AddProgramForm";
+import UpdateProgramForm from "./UpdateProgramForm";
 
-import getTranslationKeyPrefixes from '@academic-portfolio/helpers/getTranslationKeyPrefixes';
+import getTranslationKeyPrefixes from "@academic-portfolio/helpers/getTranslationKeyPrefixes";
 import {
   useCreateProgram,
   useUpdateProgram,
   useUpdateProgramConfiguration,
-} from '@academic-portfolio/hooks/mutations/useMutateProgram';
-import useSetProgramCustomTranslationKeys from '@academic-portfolio/hooks/mutations/useSetProgramCustomTranslationKeys';
+} from "@academic-portfolio/hooks/mutations/useMutateProgram";
+import useSetProgramCustomTranslationKeys from "@academic-portfolio/hooks/mutations/useSetProgramCustomTranslationKeys";
 
 const ProgramSetupDrawer = ({
   isOpen,
@@ -29,14 +29,20 @@ const ProgramSetupDrawer = ({
   const [activeComponent, setActiveComponent] = useState(0);
   const [setupData, setSetupData] = useState(null);
   const [nomenclature, setNomenclature] = useState(null);
-  const { mutate: createProgram, isLoading: isCreateProgramLoading } = useCreateProgram();
-  const { mutate: updateProgram, isLoading: isUpdateProgramLoading } = useUpdateProgram();
-  const { mutate: updateProgramConfiguration, isLoading: isUpdateProgramConfigurationLoading } =
-    useUpdateProgramConfiguration();
-  const { mutate: setProgramCustomTranslationKeys } = useSetProgramCustomTranslationKeys({
-    successMessage:
-      localizations?.programDrawer?.addProgramForm?.formLabels?.nomenclature?.success?.set,
-  });
+  const { mutate: createProgram, isLoading: isCreateProgramLoading } =
+    useCreateProgram();
+  const { mutate: updateProgram, isLoading: isUpdateProgramLoading } =
+    useUpdateProgram();
+  const {
+    mutate: updateProgramConfiguration,
+    isLoading: isUpdateProgramConfigurationLoading,
+  } = useUpdateProgramConfiguration();
+  const { mutate: setProgramCustomTranslationKeys } =
+    useSetProgramCustomTranslationKeys({
+      successMessage:
+        localizations?.programDrawer?.addProgramForm?.formLabels?.nomenclature
+          ?.success?.set,
+    });
   const scrollRef = useRef();
 
   // HANDLERS & FUNCTIONS ······································································||
@@ -60,7 +66,7 @@ const ProgramSetupDrawer = ({
         const groups = formData.referenceGroups;
         if (!setupData.sequentialCourses && setupData.moreThanOneCourse) {
           body.referenceGroups = {
-            ...omit(groups, ['groupsForCourse1']),
+            ...omit(groups, ["groupsForCourse1"]),
             groupsForAllCourses: groups.groupsForCourse1,
           };
         } else {
@@ -74,15 +80,19 @@ const ProgramSetupDrawer = ({
 
   const handleStaff = useCallback(
     (formData, _body) => {
-      const cleanObject = Object.entries(formData.staff).reduce((acc, [key, value]) => {
-        const valueHasChangedOnEdition = isEditing && program?.staff?.[key] !== value;
-        const valueIsNotEmptyOnCreation = !isEditing && value?.length;
+      const cleanObject = Object.entries(formData.staff).reduce(
+        (acc, [key, value]) => {
+          const valueHasChangedOnEdition =
+            isEditing && program?.staff?.[key] !== value;
+          const valueIsNotEmptyOnCreation = !isEditing && value?.length;
 
-        if (valueHasChangedOnEdition || valueIsNotEmptyOnCreation) {
-          acc[key] = value;
-        }
-        return acc;
-      }, {});
+          if (valueHasChangedOnEdition || valueIsNotEmptyOnCreation) {
+            acc[key] = value;
+          }
+          return acc;
+        },
+        {}
+      );
 
       if (!isEmpty(cleanObject)) {
         const body = cloneDeep(_body);
@@ -100,7 +110,8 @@ const ProgramSetupDrawer = ({
     if (formData.credits || _program?.credits) {
       body.credits = formData.credits;
       body.hoursPerCredit = formData.hoursPerCredit;
-      body.totalHours = parseInt(formData.credits) * parseInt(formData.hoursPerCredit);
+      body.totalHours =
+        parseInt(formData.credits) * parseInt(formData.hoursPerCredit);
     } else {
       body.credits = null;
       body.hoursPerCredit = null;
@@ -117,9 +128,13 @@ const ProgramSetupDrawer = ({
       if (courses?.length) {
         body.courses = courses.map((course) => ({
           ...course,
-          seats: sameSeatsAllCourses ? seatsPerCourse.all : seatsPerCourse?.[course.index],
+          seats: sameSeatsAllCourses
+            ? seatsPerCourse.all
+            : seatsPerCourse?.[course.index],
         }));
-        body.seatsForAllCourses = sameSeatsAllCourses ? seatsPerCourse.all : null;
+        body.seatsForAllCourses = sameSeatsAllCourses
+          ? seatsPerCourse.all
+          : null;
       } else {
         // default course for programs with only one course
         body.courses = [{ index: 1, minCredits: null, maxCredits: null }];
@@ -156,7 +171,11 @@ const ProgramSetupDrawer = ({
       body = handleReferenceGroups(formData, body);
       body = handleStaff(formData, body);
       body.cycles = formData.cycles?.length
-        ? formData.cycles.map(({ name, courses, index }) => ({ name, courses, index }))
+        ? formData.cycles.map(({ name, courses, index }) => ({
+            name,
+            courses,
+            index,
+          }))
         : [];
 
       if (!isEditingConfig) {
@@ -211,7 +230,7 @@ const ProgramSetupDrawer = ({
   const handleOnSimpleEdit = useCallback(
     (formData) => {
       let body = {
-        ...omit(formData, 'autoAssignment', 'nomenclature', 'staff'),
+        ...omit(formData, "autoAssignment", "nomenclature", "staff"),
         id: program.id,
         useAutoAssignment: formData.autoAssignment,
       };
@@ -229,14 +248,22 @@ const ProgramSetupDrawer = ({
         },
       });
     },
-    [updateProgram, handleCredits, handleStaff, localizations?.alerts, handleOnCancel, program]
+    [
+      updateProgram,
+      handleCredits,
+      handleStaff,
+      localizations?.alerts,
+      handleOnCancel,
+      program,
+    ]
   );
 
   const handleOnConfigurationEdit = useCallback(
     (formData) => {
       const getSubstagesToRemove = (substages) =>
         program.substages?.filter(
-          (originalSubstage) => !substages.some((substage) => substage.id === originalSubstage.id)
+          (originalSubstage) =>
+            !substages.some((substage) => substage.id === originalSubstage.id)
         ) || [];
 
       const body = {
@@ -282,7 +309,9 @@ const ProgramSetupDrawer = ({
         setupData={setupData}
         centerId={centerId}
         onSubmit={handleOnAdd}
-        drawerIsLoading={isCreateProgramLoading || isUpdateProgramConfigurationLoading}
+        drawerIsLoading={
+          isCreateProgramLoading || isUpdateProgramConfigurationLoading
+        }
         localizations={localizations}
         programBeingEdited={isEditing ? program : null}
         onUpdate={handleOnConfigurationEdit}
@@ -333,7 +362,9 @@ const ProgramSetupDrawer = ({
           drawerIsLoading={isUpdateProgramLoading}
           localizations={localizations}
           onCancel={handleOnCancel}
-          setNomenclature={(nomenclature) => setNomenclature(cloneDeep(nomenclature))}
+          setNomenclature={(nomenclature) =>
+            setNomenclature(cloneDeep(nomenclature))
+          }
         />
       )}
     </BaseDrawer>

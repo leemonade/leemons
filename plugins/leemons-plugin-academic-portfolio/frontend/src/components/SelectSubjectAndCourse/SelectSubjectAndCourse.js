@@ -1,22 +1,22 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-import { Select, Stack } from '@bubbles-ui/components';
-import { noop } from 'lodash';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import { Select, Stack } from "@bubbles-ui/components";
+import { noop } from "lodash";
+import { Controller, useForm, useWatch } from "react-hook-form";
 
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import getCourseName from '@academic-portfolio/helpers/getCourseName';
-import useSubjects from './hooks/useSubjects';
-import useCourses from './hooks/useCourses';
-import useOnChange from './hooks/useOnChange';
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
+import getCourseName from "@academic-portfolio/helpers/getCourseName";
+import useSubjects from "./hooks/useSubjects";
+import useCourses from "./hooks/useCourses";
+import useOnChange from "./hooks/useOnChange";
 
 export default function SelectSubjectAndCourse({ program, onChange = noop }) {
-  const [t] = useTranslateLoader(prefixPN('selectSubjectAndCourse'));
+  const [t] = useTranslateLoader(prefixPN("selectSubjectAndCourse"));
   const form = useForm({});
 
-  const subject = useWatch({ name: 'subject', control: form.control });
+  const subject = useWatch({ name: "subject", control: form.control });
 
   const { subjects } = useSubjects({ program });
   const { courses } = useCourses({ program, subject });
@@ -37,7 +37,7 @@ export default function SelectSubjectAndCourse({ program, onChange = noop }) {
               value: id,
               label: name,
             }))}
-            placeholder={t('subject')}
+            placeholder={t("subject")}
             autoSelectOneOption
             cleanOnMissingValue
           />
@@ -56,7 +56,7 @@ export default function SelectSubjectAndCourse({ program, onChange = noop }) {
                 value: course.id,
                 label: getCourseName(course),
               }))}
-              placeholder={t('course')}
+              placeholder={t("course")}
               autoSelectOneOption
               cleanOnMissingValue
               sx={{ width: 100 }}

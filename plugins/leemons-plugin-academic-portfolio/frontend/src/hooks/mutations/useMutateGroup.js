@@ -1,6 +1,6 @@
-import { updateGroupRequest } from '@academic-portfolio/request';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getGroupDetailKey } from '../keys/programGroup';
+import { updateGroupRequest } from "@academic-portfolio/request";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getGroupDetailKey } from "../keys/programGroup";
 
 function useUpdateGroup() {
   const queryClient = useQueryClient();

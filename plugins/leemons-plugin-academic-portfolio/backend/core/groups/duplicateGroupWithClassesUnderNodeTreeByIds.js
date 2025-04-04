@@ -1,6 +1,8 @@
-const _ = require('lodash');
-const { getClassesUnderNodeTree } = require('../common/getClassesUnderNodeTree');
-const { duplicateClassesByIds } = require('../classes/duplicateClassesByIds');
+const _ = require("lodash");
+const {
+  getClassesUnderNodeTree,
+} = require("../common/getClassesUnderNodeTree");
+const { duplicateClassesByIds } = require("../classes/duplicateClassesByIds");
 
 async function duplicateGroupWithClassesUnderNodeTreeByIds({
   nodeTypes,
@@ -13,15 +15,15 @@ async function duplicateGroupWithClassesUnderNodeTreeByIds({
 }) {
   const groups = await ctx.tx.db.Groups.find({
     id: _.isArray(ids) ? ids : [ids],
-    type: 'group',
+    type: "group",
   }).lean();
   const classes = await getClassesUnderNodeTree({
     nodeTypes,
-    nodeType: 'groups',
-    nodeId: _.map(groups, 'id'),
+    nodeType: "groups",
+    nodeId: _.map(groups, "id"),
     ctx,
   });
-  await ctx.tx.emit('before-duplicate-groups-with-classes', { groups });
+  await ctx.tx.emit("before-duplicate-groups-with-classes", { groups });
 
   const duplications = {};
 
@@ -45,7 +47,7 @@ async function duplicateGroupWithClassesUnderNodeTreeByIds({
   });
 
   await duplicateClassesByIds({
-    ids: _.map(classes, 'id'),
+    ids: _.map(classes, "id"),
     duplications,
     students,
     teachers,
@@ -56,7 +58,7 @@ async function duplicateGroupWithClassesUnderNodeTreeByIds({
     ctx,
   });
 
-  await ctx.tx.emit('after-duplicate-groups-with-classes', {
+  await ctx.tx.emit("after-duplicate-groups-with-classes", {
     groups,
     duplications: duplications.groups,
   });

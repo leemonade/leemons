@@ -1,23 +1,28 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function adminDashboard({ config, ctx }) {
   const { userSession } = ctx.meta;
   let centers = [];
-  if (config.center && config.center !== 'undefined') {
+  if (config.center && config.center !== "undefined") {
     centers.push({ id: config.center });
   }
   if (!centers.length) {
-    centers = await ctx.tx.call('users.users.getUserCenters', { user: userSession.id });
+    centers = await ctx.tx.call("users.users.getUserCenters", {
+      user: userSession.id,
+    });
   }
-  const programCenter = await ctx.tx.db.ProgramCenter.find({ center: _.map(centers, 'id') }).lean();
-  const [programs, classStudents, classTeachers, classes, subjects, groups] = await Promise.all([
-    ctx.tx.db.Programs.find({ id: _.map(programCenter, 'program') }).lean(),
-    ctx.tx.db.ClassStudent.find({}).lean(),
-    ctx.tx.db.ClassTeacher.find({}).lean(),
-    ctx.tx.db.Class.find({}).select(['id', 'program']).lean(),
-    ctx.tx.db.Subjects.find({}).select(['id', 'program']).lean(),
-    ctx.tx.db.Groups.find({}).select(['id', 'type', 'program']).lean(),
-  ]);
+  const programCenter = await ctx.tx.db.ProgramCenter.find({
+    center: _.map(centers, "id"),
+  }).lean();
+  const [programs, classStudents, classTeachers, classes, subjects, groups] =
+    await Promise.all([
+      ctx.tx.db.Programs.find({ id: _.map(programCenter, "program") }).lean(),
+      ctx.tx.db.ClassStudent.find({}).lean(),
+      ctx.tx.db.ClassTeacher.find({}).lean(),
+      ctx.tx.db.Class.find({}).select(["id", "program"]).lean(),
+      ctx.tx.db.Subjects.find({}).select(["id", "program"]).lean(),
+      ctx.tx.db.Groups.find({}).select(["id", "type", "program"]).lean(),
+    ]);
 
   const results = {
     programs: [],
@@ -25,11 +30,11 @@ async function adminDashboard({ config, ctx }) {
     totalTeachers: [],
   };
 
-  const classesByProgram = _.groupBy(classes, 'program');
-  const subjectsByProgram = _.groupBy(subjects, 'program');
-  const groupsByProgram = _.groupBy(groups, 'program');
-  const classStudentsByClass = _.groupBy(classStudents, 'class');
-  const classTeachersByClass = _.groupBy(classTeachers, 'class');
+  const classesByProgram = _.groupBy(classes, "program");
+  const subjectsByProgram = _.groupBy(subjects, "program");
+  const groupsByProgram = _.groupBy(groups, "program");
+  const classStudentsByClass = _.groupBy(classStudents, "class");
+  const classTeachersByClass = _.groupBy(classTeachers, "class");
 
   _.forEach(programs, (program) => {
     const r = {
@@ -42,15 +47,19 @@ async function adminDashboard({ config, ctx }) {
       substages: [],
       classes: [],
     };
-    const groupsByType = _.groupBy(groupsByProgram[program.id], 'type');
-    r.groups = _.map(groupsByType.group, 'id');
-    r.courses = _.map(groupsByType.course, 'id');
-    r.substages = _.map(groupsByType.substage, 'id');
-    r.classes = _.map(classesByProgram[program.id], 'id');
-    r.subjects = _.map(subjectsByProgram[program.id], 'id');
+    const groupsByType = _.groupBy(groupsByProgram[program.id], "type");
+    r.groups = _.map(groupsByType.group, "id");
+    r.courses = _.map(groupsByType.course, "id");
+    r.substages = _.map(groupsByType.substage, "id");
+    r.classes = _.map(classesByProgram[program.id], "id");
+    r.subjects = _.map(subjectsByProgram[program.id], "id");
     _.forEach(r.classes, (id) => {
-      r.students = r.students.concat(_.map(classStudentsByClass[id], 'student'));
-      r.teachers = r.teachers.concat(_.map(classTeachersByClass[id], 'teacher'));
+      r.students = r.students.concat(
+        _.map(classStudentsByClass[id], "student")
+      );
+      r.teachers = r.teachers.concat(
+        _.map(classTeachersByClass[id], "teacher")
+      );
     });
 
     results.totalStudents = results.totalStudents.concat(r.students);

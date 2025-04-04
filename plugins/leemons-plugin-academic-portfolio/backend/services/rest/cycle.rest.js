@@ -7,23 +7,23 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 
-const { updateCycle } = require('../../core/cycle');
+const { updateCycle } = require("../../core/cycle");
 
 /** @type {ServiceSchema} */
 module.exports = {
   putCycleRest: {
     rest: {
-      path: '/',
-      method: 'PUT',
+      path: "/",
+      method: "PUT",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin', 'create', 'update'],
+          "academic-portfolio.programs": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),

@@ -1,9 +1,15 @@
-import React from 'react';
+import React from "react";
 
-import { Box, Select, Text, AvatarSubject, TextClamp } from '@bubbles-ui/components';
-import propTypes from 'prop-types';
+import {
+  Box,
+  Select,
+  Text,
+  AvatarSubject,
+  TextClamp,
+} from "@bubbles-ui/components";
+import propTypes from "prop-types";
 
-import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
+import { getClassIcon } from "@academic-portfolio/helpers/getClassIcon";
 
 export function SubjectItem({ subject, isValueComponent, label, ...props }) {
   if (!subject) {
@@ -13,18 +19,22 @@ export function SubjectItem({ subject, isValueComponent, label, ...props }) {
     <Box {...props}>
       <Box
         sx={(theme) => ({
-          display: 'flex',
-          flexDirection: 'row',
+          display: "flex",
+          flexDirection: "row",
           gap: theme.spacing[2],
-          alignItems: 'center',
-          height: '100%',
-          width: isValueComponent && '22ch',
+          alignItems: "center",
+          height: "100%",
+          width: isValueComponent && "22ch",
         })}
       >
         <AvatarSubject
           color={subject?.color}
-          icon={typeof subject?.icon === 'string' ? subject.icon : getClassIcon({ subject })}
-          size={'md'}
+          icon={
+            typeof subject?.icon === "string"
+              ? subject.icon
+              : getClassIcon({ subject })
+          }
+          size={"md"}
           altText={subject?.label}
         />
         <Box>
@@ -43,11 +53,11 @@ export function SubjectItem({ subject, isValueComponent, label, ...props }) {
 }
 export function SelectSubject({ data, value, onChange, ...props }) {
   React.useEffect(() => {
-    if (typeof onChange === 'function') {
+    if (typeof onChange === "function") {
       if (value && !data.find((item) => item.value === value)) {
         onChange(null);
-      } else if (!value && data?.length && data[0].value === 'all') {
-        onChange('all');
+      } else if (!value && data?.length && data[0].value === "all") {
+        onChange("all");
       }
     }
   }, [data]);
@@ -66,7 +76,10 @@ export function SelectSubject({ data, value, onChange, ...props }) {
         />
       )}
       itemComponent={(item) => (
-        <SubjectItem {...item} subject={data.find((d) => d.value === item.value)} />
+        <SubjectItem
+          {...item}
+          subject={data.find((d) => d.value === item.value)}
+        />
       )}
     />
   );

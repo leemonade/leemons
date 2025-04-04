@@ -1,6 +1,6 @@
-import { updateCourseRequest } from '@academic-portfolio/request';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getCourseDetailKey } from '../keys/programCourse';
+import { updateCourseRequest } from "@academic-portfolio/request";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getCourseDetailKey } from "../keys/programCourse";
 
 function useUpdateCourse() {
   const queryClient = useQueryClient();

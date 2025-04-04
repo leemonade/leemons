@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 import {
   Alert,
@@ -10,16 +10,16 @@ import {
   Stack,
   Table,
   Title,
-} from '@bubbles-ui/components';
-import { AlertWarningTriangleIcon, BlockIcon } from '@bubbles-ui/icons/solid';
-import { LocaleDate, TagsAutocomplete, useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert } from '@layout/alert';
-import getUserFullName from '@users/helpers/getUserFullName';
-import { cloneDeep, difference, forEach, isNil, map } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { AlertWarningTriangleIcon, BlockIcon } from "@bubbles-ui/icons/solid";
+import { LocaleDate, TagsAutocomplete, useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert } from "@layout/alert";
+import getUserFullName from "@users/helpers/getUserFullName";
+import { cloneDeep, difference, forEach, isNil, map } from "lodash";
+import PropTypes from "prop-types";
 
-import { getStudentsByTagsRequest } from '../../../request';
+import { getStudentsByTagsRequest } from "../../../request";
 
 const ByTag = ({ classes, center, messages, onChange, disableSave }) => {
   const [store, render] = useStore({
@@ -38,7 +38,10 @@ const ByTag = ({ classes, center, messages, onChange, disableSave }) => {
     const _classes = cloneDeep(classes);
     forEach(userAgents, (student) => {
       forEach(_classes, (classe) => {
-        if (classe.students.indexOf(student) < 0 && classe.parentStudents.indexOf(student) < 0) {
+        if (
+          classe.students.indexOf(student) < 0 &&
+          classe.parentStudents.indexOf(student) < 0
+        ) {
           classe.students.push(student);
         }
       });
@@ -54,7 +57,8 @@ const ByTag = ({ classes, center, messages, onChange, disableSave }) => {
           seats: isNil(classe.seats)
             ? 0
             : classe.seats -
-              (classes[index].students.length + classes[index].parentStudents.length),
+              (classes[index].students.length +
+                classes[index].parentStudents.length),
         });
       }
     });
@@ -81,7 +85,7 @@ const ByTag = ({ classes, center, messages, onChange, disableSave }) => {
               ? false
               : store.allChecked || store.userAgentsChecked.includes(student.id)
           }
-          disabled={student.classStatus === 'all-used'}
+          disabled={student.classStatus === "all-used"}
           onChange={(ev) => {
             if (!ev) {
               store.allChecked = false;
@@ -124,13 +128,13 @@ const ByTag = ({ classes, center, messages, onChange, disableSave }) => {
               count++;
             }
           });
-          let classStatus = 'un-used';
+          let classStatus = "un-used";
 
           if (count === classes.length) {
-            classStatus = 'all-used';
+            classStatus = "all-used";
             store.allUsedUserAgents.push(student.id);
           } else if (count > 0) {
-            classStatus = 'used';
+            classStatus = "used";
             store.usedUserAgents.push(student.id);
           }
 
@@ -140,20 +144,25 @@ const ByTag = ({ classes, center, messages, onChange, disableSave }) => {
             avatar: (
               <Avatar
                 image={student.user.avatar}
-                fullName={getUserFullName(student.user, { singleSurname: true })}
+                fullName={getUserFullName(student.user, {
+                  singleSurname: true,
+                })}
               />
             ),
             classStatusDom: (
               <Stack alignItems="center">
-                {classStatus === 'used' ? (
+                {classStatus === "used" ? (
                   <AlertWarningTriangleIcon style={{ color: COLORS.fatic03 }} />
                 ) : null}
-                {classStatus === 'all-used' ? (
+                {classStatus === "all-used" ? (
                   <BlockIcon style={{ color: COLORS.fatic01 }} />
                 ) : null}
               </Stack>
             ),
-            user: { ...student.user, birthdate: <LocaleDate date={student.user.birthdate} /> },
+            user: {
+              ...student.user,
+              birthdate: <LocaleDate date={student.user.birthdate} />,
+            },
           };
         });
         processUsers();
@@ -189,7 +198,7 @@ const ByTag = ({ classes, center, messages, onChange, disableSave }) => {
             if (!store.allChecked) {
               store.userAgentsChecked = [];
             } else {
-              store.userAgentsChecked = map(store.students, 'id');
+              store.userAgentsChecked = map(store.students, "id");
             }
             processUsers();
             emit();
@@ -197,44 +206,44 @@ const ByTag = ({ classes, center, messages, onChange, disableSave }) => {
           }}
         />
       ),
-      accessor: 'checked',
-      className: 'text-left',
+      accessor: "checked",
+      className: "text-left",
     },
   ];
 
   if (store.allUsedUserAgents?.length || store.usedUserAgents?.length) {
     tableHeaders.push({
-      Header: ' ',
-      accessor: 'classStatusDom',
-      className: 'text-left',
+      Header: " ",
+      accessor: "classStatusDom",
+      className: "text-left",
     });
   }
 
   tableHeaders = tableHeaders.concat([
     {
-      Header: ' ',
-      accessor: 'avatar',
-      className: 'text-left',
+      Header: " ",
+      accessor: "avatar",
+      className: "text-left",
     },
     {
       Header: messages.emailHeader,
-      accessor: 'user.email',
-      className: 'text-left',
+      accessor: "user.email",
+      className: "text-left",
     },
     {
       Header: messages.nameHeader,
-      accessor: 'user.name',
-      className: 'text-left',
+      accessor: "user.name",
+      className: "text-left",
     },
     {
       Header: messages.surnameHeader,
-      accessor: 'user.surnames',
-      className: 'text-left',
+      accessor: "user.surnames",
+      className: "text-left",
     },
     {
       Header: messages.birthdayHeader,
-      accessor: 'user.birthdate',
-      className: 'text-left',
+      accessor: "user.birthdate",
+      className: "text-left",
     },
   ]);
 
@@ -251,7 +260,10 @@ const ByTag = ({ classes, center, messages, onChange, disableSave }) => {
         <ContextContainer>
           <Stack>
             <Title order={6} color="tertiary">
-              {messages.studentsFound.replace('{{count}}', store.students.length)}
+              {messages.studentsFound.replace(
+                "{{count}}",
+                store.students.length
+              )}
             </Title>
           </Stack>
           {store.students.length ? (
@@ -263,8 +275,8 @@ const ByTag = ({ classes, center, messages, onChange, disableSave }) => {
                   {store.classesExceed.map((classe) => (
                     <>
                       {messages.seatsClassError
-                        .replace('{{className}}', classe.classe.name)
-                        .replace('{{seats}}', classe.seats)}
+                        .replace("{{className}}", classe.classe.name)
+                        .replace("{{seats}}", classe.seats)}
                       <br />
                     </>
                   ))}
@@ -273,18 +285,27 @@ const ByTag = ({ classes, center, messages, onChange, disableSave }) => {
               ) : null}
               {store.allUsedUserAgents.length ? (
                 <Alert severity="error" closeable={false}>
-                  {messages.studentsError.replace('{{count}}', store.allUsedUserAgents.length)}
+                  {messages.studentsError.replace(
+                    "{{count}}",
+                    store.allUsedUserAgents.length
+                  )}
                 </Alert>
               ) : null}
 
               {store.usedUserAgents.length ? (
                 <Alert severity="warning" closeable={false}>
-                  {messages.studentsWarning.replace('{{count}}', store.usedUserAgents.length)}
+                  {messages.studentsWarning.replace(
+                    "{{count}}",
+                    store.usedUserAgents.length
+                  )}
                 </Alert>
               ) : null}
 
               <Paragraph>
-                {messages.selected.replace('{{count}}', getSelectedUserAgents().length)}
+                {messages.selected.replace(
+                  "{{count}}",
+                  getSelectedUserAgents().length
+                )}
               </Paragraph>
 
               <Table columns={tableHeaders} data={store.students} />

@@ -1,4 +1,4 @@
-const { groupBy } = require('lodash');
+const { groupBy } = require("lodash");
 /**
  * Retrieves block(s) by their class ID(s) from the database.
  *
@@ -10,14 +10,20 @@ const { groupBy } = require('lodash');
  * or an object when searching multiple subjects and groupBySubjectsWhenMultiple is true. For the latter cases, keys are the subject IDs and values are
  * the blocks found as an array.
  */
-async function getRawBlocksBySubject({ subjectId, groupBySubjectsWhenMultiple = true, ctx }) {
+async function getRawBlocksBySubject({
+  subjectId,
+  groupBySubjectsWhenMultiple = true,
+  ctx,
+}) {
   const multipleSubjects = Array.isArray(subjectId);
   const normalizedId = multipleSubjects ? subjectId : [subjectId];
 
-  const results = await ctx.tx.db.Blocks.find({ subject: { $in: normalizedId } }).lean();
+  const results = await ctx.tx.db.Blocks.find({
+    subject: { $in: normalizedId },
+  }).lean();
 
   if (multipleSubjects && groupBySubjectsWhenMultiple) {
-    return groupBy(results, 'subject');
+    return groupBy(results, "subject");
   }
 
   return results;

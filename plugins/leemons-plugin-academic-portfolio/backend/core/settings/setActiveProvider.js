@@ -1,4 +1,4 @@
-const update = require('./update');
+const update = require("./update");
 
 async function setActiveProvider({ pluginName, type, ctx }) {
   const settings = await update({ settings: {}, ctx });

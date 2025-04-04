@@ -1,26 +1,33 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import {Alert, Box, Radio, Stack, TabPanel, Tabs} from '@bubbles-ui/components';
-import {forEach, map} from 'lodash';
-import {ByTag} from './ByTag';
-import {ByData} from './ByData';
+import React from "react";
+import PropTypes from "prop-types";
+import {
+  Alert,
+  Box,
+  Radio,
+  Stack,
+  TabPanel,
+  Tabs,
+} from "@bubbles-ui/components";
+import { forEach, map } from "lodash";
+import { ByTag } from "./ByTag";
+import { ByData } from "./ByData";
 
 const SelectUsersForAddToClasses = ({
-                                      showMessages = true,
-                                      tree,
-                                      radioMode,
-                                      center,
-                                      messages,
-                                      onChange,
-                                      disableSave,
-                                      ignoreAddedUsers,
-                                    }) => {
+  showMessages = true,
+  tree,
+  radioMode,
+  center,
+  messages,
+  onChange,
+  disableSave,
+  ignoreAddedUsers,
+}) => {
   const [activeTab, setActiveTab] = React.useState(1);
 
   const _classes = React.useMemo(() => {
     const getClasses = (item) => {
       let classes = [];
-      if (item.nodeType === 'class') {
+      if (item.nodeType === "class") {
         classes.push(item.value);
       }
       if (item.childrens) {
@@ -29,7 +36,7 @@ const SelectUsersForAddToClasses = ({
         });
       }
       if (ignoreAddedUsers) {
-        return map(classes, ({students, ..._class}) => ({
+        return map(classes, ({ students, ..._class }) => ({
           ..._class,
           students: [],
         }));
@@ -44,7 +51,12 @@ const SelectUsersForAddToClasses = ({
     <Box>
       {showMessages ? (
         <Box>
-          <Alert severity="info" variant="block" title={messages.title} closeable={false}>
+          <Alert
+            severity="info"
+            variant="block"
+            title={messages.title}
+            closeable={false}
+          >
             <Stack direction="column" fullWidth spacing={4}>
               <Box>{messages.description}</Box>
               <Box>
@@ -125,4 +137,4 @@ SelectUsersForAddToClasses.propTypes = {
 };
 
 // eslint-disable-next-line import/prefer-default-export
-export {SelectUsersForAddToClasses};
+export { SelectUsersForAddToClasses };

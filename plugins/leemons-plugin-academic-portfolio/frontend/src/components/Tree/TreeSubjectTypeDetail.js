@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import React from "react";
+import PropTypes from "prop-types";
+import { Controller, useForm } from "react-hook-form";
 import {
   Box,
   Button,
@@ -11,8 +11,8 @@ import {
   Switch,
   TextInput,
   Title,
-} from '@bubbles-ui/components';
-import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
+} from "@bubbles-ui/components";
+import { SelectUsersForAddToClasses } from "./SelectUsersForAddToClasses";
 
 const TreeSubjectTypeDetail = ({
   item,
@@ -40,7 +40,7 @@ const TreeSubjectTypeDetail = ({
   }, [subjectType]);
 
   function onChangeAddUsers(e) {
-    setValue('students', e);
+    setValue("students", e);
   }
 
   function onDisableSave(e) {
@@ -51,13 +51,17 @@ const TreeSubjectTypeDetail = ({
     <Box>
       <form onSubmit={handleSubmit(onSave)} autoComplete="off">
         <ContextContainer direction="column" fullWidth>
-          <Title order={4}>{subjectType ? messages.title : messages.titleNew}</Title>
+          <Title order={4}>
+            {subjectType ? messages.title : messages.titleNew}
+          </Title>
           <Box>
             <Controller
               control={control}
               name="name"
               rules={{ required: messages.nameRequired }}
-              render={({ field }) => <TextInput required label={messages.nameLabel} {...field} />}
+              render={({ field }) => (
+                <TextInput required label={messages.nameLabel} {...field} />
+              )}
             />
           </Box>
           {managersSelect ? (
@@ -79,14 +83,18 @@ const TreeSubjectTypeDetail = ({
             <Controller
               control={control}
               name="credits_course"
-              render={({ field }) => <NumberInput label={messages.crCourse} {...field} />}
+              render={({ field }) => (
+                <NumberInput label={messages.crCourse} {...field} />
+              )}
             />
           </Box>
           <Box>
             <Controller
               control={control}
               name="credits_program"
-              render={({ field }) => <NumberInput label={messages.crProgram} {...field} />}
+              render={({ field }) => (
+                <NumberInput label={messages.crProgram} {...field} />
+              )}
             />
           </Box>
           <Box>
@@ -94,7 +102,11 @@ const TreeSubjectTypeDetail = ({
               control={control}
               name="groupVisibility"
               render={({ field }) => (
-                <Switch {...field} label={messages.nested} checked={!!field.value} />
+                <Switch
+                  {...field}
+                  label={messages.nested}
+                  checked={!!field.value}
+                />
               )}
             />
           </Box>
@@ -110,7 +122,9 @@ const TreeSubjectTypeDetail = ({
                 <Controller
                   control={control}
                   name="subjects"
-                  render={({ field }) => React.cloneElement(selectSubjectsNode, { ...field })}
+                  render={({ field }) =>
+                    React.cloneElement(selectSubjectsNode, { ...field })
+                  }
                 />
               </Box>
             </>

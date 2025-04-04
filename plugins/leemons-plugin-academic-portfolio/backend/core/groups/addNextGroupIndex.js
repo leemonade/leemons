@@ -1,4 +1,4 @@
-const { getNextGroupIndex } = require('./getNextGroupIndex');
+const { getNextGroupIndex } = require("./getNextGroupIndex");
 
 async function addNextGroupIndex({ program, index, ctx }) {
   let goodIndex = index;

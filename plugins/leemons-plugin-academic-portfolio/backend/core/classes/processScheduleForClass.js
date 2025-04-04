@@ -1,26 +1,32 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function processScheduleForClass({ schedule, classId, ctx }) {
-  const timetables = await ctx.tx.call('timetable.timetable.get', { classId });
+  const timetables = await ctx.tx.call("timetable.timetable.get", { classId });
 
-  const existentTimetableIds = _.map(timetables, 'id');
+  const existentTimetableIds = _.map(timetables, "id");
   const toCreate = _.filter(schedule, ({ id }) => !id);
-  const toUpdate = _.filter(schedule, ({ id }) => id && existentTimetableIds.includes(id));
-  const toUpdateIds = _.map(toUpdate, 'id');
-  const toDelete = _.filter(existentTimetableIds, (id) => !toUpdateIds.includes(id));
+  const toUpdate = _.filter(
+    schedule,
+    ({ id }) => id && existentTimetableIds.includes(id)
+  );
+  const toUpdateIds = _.map(toUpdate, "id");
+  const toDelete = _.filter(
+    existentTimetableIds,
+    (id) => !toUpdateIds.includes(id)
+  );
 
   return Promise.all([
     // Create
     Promise.all(
       _.map(toCreate, (item) =>
-        ctx.tx.call('timetable.timetable.create', { class: classId, ...item })
+        ctx.tx.call("timetable.timetable.create", { class: classId, ...item })
       )
     ),
 
     // Update
     Promise.all(
       _.map(toUpdate, ({ id, ...item }) =>
-        ctx.tx.call('timetable.timetable.update', {
+        ctx.tx.call("timetable.timetable.update", {
           timetableId: id,
           ...item,
         })
@@ -30,7 +36,7 @@ async function processScheduleForClass({ schedule, classId, ctx }) {
     // Delete
     Promise.all(
       _.map(toDelete, (id) =>
-        ctx.tx.call('timetable.timetable.delete', {
+        ctx.tx.call("timetable.timetable.delete", {
           timetableId: id,
           ctx,
         })

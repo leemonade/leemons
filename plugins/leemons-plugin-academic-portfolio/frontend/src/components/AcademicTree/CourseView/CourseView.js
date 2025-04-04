@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 
 import {
   Box,
@@ -12,19 +12,19 @@ import {
   Alert,
   Loader,
   Button,
-} from '@bubbles-ui/components';
-import { AddCircleIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { SelectUserAgent } from '@users/components';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { AddCircleIcon, RemoveIcon } from "@bubbles-ui/icons/outline";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { SelectUserAgent } from "@users/components";
+import PropTypes from "prop-types";
 
-import { CourseViewStyles } from './CourseView.styles';
+import { CourseViewStyles } from "./CourseView.styles";
 
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { useCourseDetail } from '@academic-portfolio/hooks';
-import useUpdateCourse from '@academic-portfolio/hooks/mutations/useMutateCourse';
-import { getProfilesRequest } from '@academic-portfolio/request';
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
+import { useCourseDetail } from "@academic-portfolio/hooks";
+import useUpdateCourse from "@academic-portfolio/hooks/mutations/useMutateCourse";
+import { getProfilesRequest } from "@academic-portfolio/request";
 
 const CourseView = ({
   program,
@@ -33,16 +33,18 @@ const CourseView = ({
   openEnrollmentDrawer,
   programHasReferenceGroups,
 }) => {
-  const [t] = useTranslateLoader(prefixPN('tree_page'));
+  const [t] = useTranslateLoader(prefixPN("tree_page"));
   const [teacherProfile, setTeacherProfile] = useState();
   const [hasResponsableChanged, setHasResponsableChanged] = useState(false);
   const { classes } = CourseViewStyles();
 
-  const { mutate: mutateCourse, isLoading: mutateCourseLoading } = useUpdateCourse();
-  const { data: courseDetail, isLoading: courseDetailLoading } = useCourseDetail(
-    { courseId: courseTreeNode?.itemId },
-    { enabled: !!courseTreeNode?.itemId }
-  );
+  const { mutate: mutateCourse, isLoading: mutateCourseLoading } =
+    useUpdateCourse();
+  const { data: courseDetail, isLoading: courseDetailLoading } =
+    useCourseDetail(
+      { courseId: courseTreeNode?.itemId },
+      { enabled: !!courseTreeNode?.itemId }
+    );
   const stackRef = useRef();
   const centerId = program?.centers?.[0];
 
@@ -69,10 +71,10 @@ const CourseView = ({
     const values = getValues();
     mutateCourse(values, {
       onSuccess: () => {
-        addSuccessAlert(t('assignManagerSuccess'));
+        addSuccessAlert(t("assignManagerSuccess"));
       },
       onError: () => {
-        addErrorAlert(t('assignManagerError'));
+        addErrorAlert(t("assignManagerError"));
       },
     });
   };
@@ -93,7 +95,9 @@ const CourseView = ({
   return (
     <TotalLayoutStepContainer
       stepName={
-        courseTreeNode?.text ? `${program?.name} - ${courseTreeNode?.text}` : program?.name ?? ''
+        courseTreeNode?.text
+          ? `${program?.name} - ${courseTreeNode?.text}`
+          : (program?.name ?? "")
       }
       clean
       fullWidth
@@ -109,7 +113,7 @@ const CourseView = ({
               onClick={() => handleAssignManager()}
               loading={mutateCourseLoading}
             >
-              {t('saveChanges')}
+              {t("saveChanges")}
             </Button>
           }
           leftZone={
@@ -117,35 +121,40 @@ const CourseView = ({
               variant="outline"
               leftIcon={<RemoveIcon />}
               onClick={() => {
-                setValue('managers', null);
+                setValue("managers", null);
               }}
             >
-              {t('cancelHeaderButton')}
+              {t("cancelHeaderButton")}
             </Button>
           }
         />
       }
     >
-      <Stack direction="column" spacing={3} className={classes.content} ref={stackRef}>
+      <Stack
+        direction="column"
+        spacing={3}
+        className={classes.content}
+        ref={stackRef}
+      >
         {isLoading ? (
           <Stack fullHeight>
             <Loader padded={true} />
           </Stack>
         ) : (
           <>
-            <Title order={2}>{t('basicDataTitle')}</Title>
+            <Title order={2}>{t("basicDataTitle")}</Title>
             <Stack spacing={5} className={classes.courseData}>
               <Box>
-                <Text strong>{t('courseNumber')} </Text>
+                <Text strong>{t("courseNumber")} </Text>
                 <Text>{courseDetail?.index} </Text>
               </Box>
               <Box>
-                <Text strong>{t('courseAlias')} </Text>
+                <Text strong>{t("courseAlias")} </Text>
                 <Text>{`${courseDetail?.index}º`} </Text>
               </Box>
               {!!program?.courseCredits && (
                 <Box>
-                  <Text strong>{t('minimumCredits')} </Text>
+                  <Text strong>{t("minimumCredits")} </Text>
                   <Text>{program.courseCredits} </Text>
                 </Box>
               )}
@@ -158,7 +167,7 @@ const CourseView = ({
                   render={({ field }) => (
                     <SelectUserAgent
                       {...field}
-                      label={t('responsableLabel')}
+                      label={t("responsableLabel")}
                       profiles={teacherProfile}
                       centers={centerId}
                       returnItem
@@ -166,10 +175,10 @@ const CourseView = ({
                       onChange={(user) => {
                         if (!user) {
                           field.onChange(user);
-                          setValue('managers', []);
+                          setValue("managers", []);
                         } else {
                           field.onChange(user);
-                          setValue('managers', [user.value]);
+                          setValue("managers", [user.value]);
                         }
                         setHasResponsableChanged(true);
                       }}
@@ -179,25 +188,29 @@ const CourseView = ({
               </Box>
             )}
             <Box className={classes.responsableContainer}>
-              <Text>{t('responsableMoreConfig')} </Text>
+              <Text>{t("responsableMoreConfig")} </Text>
               <Box className={classes.responsableLink}>
-                <Link to={'/private/academic-portfolio/programs'}>
-                  <Text strong>{t('responsablePrograms')}</Text>
+                <Link to={"/private/academic-portfolio/programs"}>
+                  <Text strong>{t("responsablePrograms")}</Text>
                 </Link>
               </Box>
             </Box>
             {!programHasReferenceGroups && (
               <>
                 <Box className={classes.titleContainer}>
-                  <Title order={2}>{t('enrollTitle')}</Title>
+                  <Title order={2}>{t("enrollTitle")}</Title>
                 </Box>
 
                 <Box>
-                  <Alert title={t('AlertTitle')} variant="block" closeable={false}>
+                  <Alert
+                    title={t("AlertTitle")}
+                    variant="block"
+                    closeable={false}
+                  >
                     <Box>
-                      <Text>{t('AlertDescription')} </Text>
+                      <Text>{t("AlertDescription")} </Text>
                     </Box>
-                    <Text>{t('AlertNote')} </Text>
+                    <Text>{t("AlertNote")} </Text>
                   </Alert>
                   <Box className={classes.enrollButton}>
                     <Button
@@ -205,7 +218,7 @@ const CourseView = ({
                       leftIcon={<AddCircleIcon />}
                       onClick={() => openEnrollmentDrawer()}
                     >
-                      {t('enrollButton')}
+                      {t("enrollButton")}
                     </Button>
                   </Box>
                 </Box>

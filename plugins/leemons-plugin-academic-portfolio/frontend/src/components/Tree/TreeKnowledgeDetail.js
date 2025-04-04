@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import React from "react";
+import PropTypes from "prop-types";
+import { Controller, useForm } from "react-hook-form";
 import {
   Box,
   Button,
@@ -11,8 +11,8 @@ import {
   Stack,
   TextInput,
   Title,
-} from '@bubbles-ui/components';
-import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
+} from "@bubbles-ui/components";
+import { SelectUsersForAddToClasses } from "./SelectUsersForAddToClasses";
 
 const TreeKnowledgeDetail = ({
   item,
@@ -44,12 +44,15 @@ const TreeKnowledgeDetail = ({
     required: messages.abbreviationRequired,
     maxLength: {
       value: program.maxKnowledgeAbbreviation,
-      message: messages.maxLength.replace('{max}', program.maxKnowledgeAbbreviation),
+      message: messages.maxLength.replace(
+        "{max}",
+        program.maxKnowledgeAbbreviation
+      ),
     },
   };
 
   function onChangeAddUsers(e) {
-    setValue('students', e);
+    setValue("students", e);
   }
 
   function onDisableSave(e) {
@@ -60,14 +63,21 @@ const TreeKnowledgeDetail = ({
     <Box>
       <form onSubmit={handleSubmit(onSave)} autoComplete="off">
         <ContextContainer direction="column" fullWidth>
-          <Title order={4}>{knowledge ? messages.title : messages.titleNew}</Title>
+          <Title order={4}>
+            {knowledge ? messages.title : messages.titleNew}
+          </Title>
           <Box>
             <Controller
               control={control}
               name="name"
               rules={{ required: messages.nameRequired }}
               render={({ field }) => (
-                <TextInput {...field} label={messages.nameLabel} error={errors.name} required />
+                <TextInput
+                  {...field}
+                  label={messages.nameLabel}
+                  error={errors.name}
+                  required
+                />
               )}
             />
           </Box>
@@ -96,7 +106,7 @@ const TreeKnowledgeDetail = ({
                   {...field}
                   label={messages.abbreviationLabel}
                   help={messages.abbreviationHelper.replace(
-                    '{max}',
+                    "{max}",
                     program.maxKnowledgeAbbreviation
                   )}
                   error={errors.abbreviation}
@@ -113,7 +123,12 @@ const TreeKnowledgeDetail = ({
                 required: messages.colorRequired,
               }}
               render={({ field }) => (
-                <ColorInput {...field} label={messages.colorLabel} error={errors.color} required />
+                <ColorInput
+                  {...field}
+                  label={messages.colorLabel}
+                  error={errors.color}
+                  required
+                />
               )}
             />
           </Box>
@@ -121,14 +136,18 @@ const TreeKnowledgeDetail = ({
             <Controller
               control={control}
               name="credits_course"
-              render={({ field }) => <NumberInput label={messages.crCourse} {...field} />}
+              render={({ field }) => (
+                <NumberInput label={messages.crCourse} {...field} />
+              )}
             />
           </Box>
           <Box>
             <Controller
               control={control}
               name="credits_program"
-              render={({ field }) => <NumberInput label={messages.crProgram} {...field} />}
+              render={({ field }) => (
+                <NumberInput label={messages.crProgram} {...field} />
+              )}
             />
           </Box>
 
@@ -143,7 +162,9 @@ const TreeKnowledgeDetail = ({
                 <Controller
                   control={control}
                   name="subjects"
-                  render={({ field }) => React.cloneElement(selectSubjectsNode, { ...field })}
+                  render={({ field }) =>
+                    React.cloneElement(selectSubjectsNode, { ...field })
+                  }
                 />
               </Box>
             </>

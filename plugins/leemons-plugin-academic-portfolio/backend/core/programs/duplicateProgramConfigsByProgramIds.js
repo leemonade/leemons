@@ -1,14 +1,21 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-async function duplicateProgramConfigsByProgramIds({ programIds, duplications: dup = {}, ctx }) {
+async function duplicateProgramConfigsByProgramIds({
+  programIds,
+  duplications: dup = {},
+  ctx,
+}) {
   const duplications = dup;
 
   const configs = await ctx.tx.db.Configs.find({
-    $or: _.map(_.isArray(programIds) ? programIds : [programIds], (programId) => ({
-      key: { $regex: `^program-${_.escapeRegExp(programId)}`, $options: 'i' },
-    })),
+    $or: _.map(
+      _.isArray(programIds) ? programIds : [programIds],
+      (programId) => ({
+        key: { $regex: `^program-${_.escapeRegExp(programId)}`, $options: "i" },
+      })
+    ),
   }).lean();
-  await ctx.tx.emit('before-duplicate-program-configs', {
+  await ctx.tx.emit("before-duplicate-program-configs", {
     configs,
   });
 
@@ -16,7 +23,7 @@ async function duplicateProgramConfigsByProgramIds({ programIds, duplications: d
   // EN: Start the duplication of the items
   const newConfigs = await Promise.all(
     _.map(configs, ({ id, _id, __v, updatedAt, createdAt, ...item }) => {
-      let key = item.key.split('course');
+      let key = item.key.split("course");
       if (duplications.programs) {
         _.forIn(duplications.programs, (value, oldID) => {
           key[0] = key[0].replace(oldID, value.id);
@@ -27,7 +34,7 @@ async function duplicateProgramConfigsByProgramIds({ programIds, duplications: d
           key[1] = key[1].replace(oldID, value.id);
         });
       }
-      key = key.join('course');
+      key = key.join("course");
 
       return ctx.tx.db.Configs.create({
         ...item,
@@ -43,7 +50,7 @@ async function duplicateProgramConfigsByProgramIds({ programIds, duplications: d
     duplications.configs[id] = newConfigs[index];
   });
 
-  await ctx.tx.emit('after-duplicate-program-configs', {
+  await ctx.tx.emit("after-duplicate-program-configs", {
     configs,
     duplications: duplications.configs,
   });

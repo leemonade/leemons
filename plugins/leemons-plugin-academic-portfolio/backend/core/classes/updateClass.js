@@ -1,35 +1,45 @@
-const { LeemonsError } = require('@leemons/error');
-const _ = require('lodash');
-const { isArray, map, pick } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const _ = require("lodash");
+const { isArray, map, pick } = require("lodash");
 
-const { SOCKET_EVENTS } = require('../../config/constants');
-const { validateUpdateClass } = require('../../validations/forms');
-const { existCourseInProgram } = require('../courses/existCourseInProgram');
-const { existGroupInProgram } = require('../groups/existGroupInProgram');
-const { existSubstageInProgram } = require('../substages/existSubstageInProgram');
+const { SOCKET_EVENTS } = require("../../config/constants");
+const { validateUpdateClass } = require("../../validations/forms");
+const { existCourseInProgram } = require("../courses/existCourseInProgram");
+const { existGroupInProgram } = require("../groups/existGroupInProgram");
+const {
+  existSubstageInProgram,
+} = require("../substages/existSubstageInProgram");
 
 const {
   addComunicaRoomsBetweenStudentsAndTeachers,
-} = require('./addComunicaRoomsBetweenStudentsAndTeachers');
-const { classByIds } = require('./classByIds');
-const { add: addCourse } = require('./course/add');
-const { removeByClass: removeCourseByClass } = require('./course/removeByClass');
-const { setToAllClassesWithSubject } = require('./course/setToAllClassesWithSubject');
-const { add: addGroup } = require('./group/add');
-const { isUsedInSubject } = require('./group/isUsedInSubject');
-const { removeByClass: removeGroupByClass } = require('./group/removeByClass');
-const { getClassesProgramInfo } = require('./listSessionClasses');
-const { processScheduleForClass } = require('./processScheduleForClass');
-const { add: addSubstage } = require('./substage/add');
-const { removeByClass: removeSubstageByClass } = require('./substage/removeByClass');
-const { add: addTeacher } = require('./teacher/add');
-const { removeByClass: removeTeachersByClass } = require('./teacher/removeByClass');
+} = require("./addComunicaRoomsBetweenStudentsAndTeachers");
+const { classByIds } = require("./classByIds");
+const { add: addCourse } = require("./course/add");
+const {
+  removeByClass: removeCourseByClass,
+} = require("./course/removeByClass");
+const {
+  setToAllClassesWithSubject,
+} = require("./course/setToAllClassesWithSubject");
+const { add: addGroup } = require("./group/add");
+const { isUsedInSubject } = require("./group/isUsedInSubject");
+const { removeByClass: removeGroupByClass } = require("./group/removeByClass");
+const { getClassesProgramInfo } = require("./listSessionClasses");
+const { processScheduleForClass } = require("./processScheduleForClass");
+const { add: addSubstage } = require("./substage/add");
+const {
+  removeByClass: removeSubstageByClass,
+} = require("./substage/removeByClass");
+const { add: addTeacher } = require("./teacher/add");
+const {
+  removeByClass: removeTeachersByClass,
+} = require("./teacher/removeByClass");
 
 function emitUpdateClassEvent({
   class: classData,
   ctx,
   message,
-  status = 'updating',
+  status = "updating",
   error = null,
   eventName = SOCKET_EVENTS.CLASS_UPDATE,
 }) {
@@ -38,12 +48,12 @@ function emitUpdateClassEvent({
   if (userAgent?.id) {
     ctx.socket.emit(userAgent.id, eventName, {
       class: pick(classData, [
-        'id',
-        'alias',
-        'classroomId',
-        'classWithoutGroupId',
-        'subject',
-        'program',
+        "id",
+        "alias",
+        "classroomId",
+        "classWithoutGroupId",
+        "subject",
+        "program",
       ]),
       status,
       message,
@@ -54,19 +64,30 @@ function emitUpdateClassEvent({
 
 async function prepareUpdateClass({ data, ctx }) {
   const cClass = await ctx.tx.db.Class.findOne({ id: data.id })
-    .select(['program', 'status'])
+    .select(["program", "status"])
     .lean();
 
   const program = await ctx.tx.db.Programs.findOne({ id: cClass.program })
-    .select(['id', 'name', 'useOneStudentGroup'])
+    .select(["id", "name", "useOneStudentGroup"])
     .lean();
 
-  const { id, course, group, knowledge, substage, teachers, schedule, icon, image, ...rest } = data;
+  const {
+    id,
+    course,
+    group,
+    knowledge,
+    substage,
+    teachers,
+    schedule,
+    icon,
+    image,
+    ...rest
+  } = data;
 
   // Update class status to updating
   const nClass = await ctx.tx.db.Class.findOneAndUpdate(
     { id },
-    { ...rest, status: 'updating' },
+    { ...rest, status: "updating" },
     { new: true, lean: true }
   );
 
@@ -74,7 +95,8 @@ async function prepareUpdateClass({ data, ctx }) {
 }
 
 async function executeUpdateClass({ data, class: nClass, program, ctx }) {
-  const { course, group, substage, teachers, schedule, image, customPeriod } = data;
+  const { course, group, substage, teachers, schedule, image, customPeriod } =
+    data;
 
   try {
     // ··············································
@@ -87,7 +109,7 @@ async function executeUpdateClass({ data, class: nClass, program, ctx }) {
     };
 
     if (image) imageData.cover = image;
-    const assetImage = await ctx.tx.call('leebrary.assets.update', {
+    const assetImage = await ctx.tx.call("leebrary.assets.update", {
       data: { id: nClass.image, ...imageData },
       published: true,
     });
@@ -105,13 +127,26 @@ async function executeUpdateClass({ data, class: nClass, program, ctx }) {
     // ··············································
     // HANDLING SUBSTAGES
 
-    if (_.isNull(substage) || substage) await removeSubstageByClass({ classIds: nClass.id, ctx });
+    if (_.isNull(substage) || substage)
+      await removeSubstageByClass({ classIds: nClass.id, ctx });
     if (substage) {
-      emitUpdateClassEvent({ class: nClass, ctx, message: 'CLASS_UPDATE_SUBSTAGES' });
+      emitUpdateClassEvent({
+        class: nClass,
+        ctx,
+        message: "CLASS_UPDATE_SUBSTAGES",
+      });
 
       // Check if all substages exist and belong to the program
-      if (!(await existSubstageInProgram({ id: substage, program: nClass.program, ctx }))) {
-        throw new LeemonsError(ctx, { message: 'One of substage not in program' });
+      if (
+        !(await existSubstageInProgram({
+          id: substage,
+          program: nClass.program,
+          ctx,
+        }))
+      ) {
+        throw new LeemonsError(ctx, {
+          message: "One of substage not in program",
+        });
       }
 
       const substages = _.isArray(substage) ? substage : [substage];
@@ -126,22 +161,42 @@ async function executeUpdateClass({ data, class: nClass, program, ctx }) {
     if (_.isNull(course) || course) {
       await Promise.all([
         removeCourseByClass({ classIds: nClass.id, ctx }),
-        setToAllClassesWithSubject({ subject: nClass.subject, course: [], ctx }),
+        setToAllClassesWithSubject({
+          subject: nClass.subject,
+          course: [],
+          ctx,
+        }),
       ]);
     }
 
     if (course) {
-      emitUpdateClassEvent({ class: nClass, ctx, message: 'CLASS_UPDATE_COURSES' });
+      emitUpdateClassEvent({
+        class: nClass,
+        ctx,
+        message: "CLASS_UPDATE_COURSES",
+      });
 
       // Check if all courses exist and belong to the program
-      if (!(await existCourseInProgram({ id: course, program: nClass.program, ctx }))) {
-        throw new LeemonsError(ctx, { message: 'course not in program' });
+      if (
+        !(await existCourseInProgram({
+          id: course,
+          program: nClass.program,
+          ctx,
+        }))
+      ) {
+        throw new LeemonsError(ctx, { message: "course not in program" });
       }
       const courses = isArray(course) ? course : [course];
       promises.push(
         Promise.all([
-          Promise.all(map(courses, (c) => addCourse({ class: nClass.id, course: c, ctx }))),
-          setToAllClassesWithSubject({ subject: nClass.subject, course: courses, ctx }),
+          Promise.all(
+            map(courses, (c) => addCourse({ class: nClass.id, course: c, ctx }))
+          ),
+          setToAllClassesWithSubject({
+            subject: nClass.subject,
+            course: courses,
+            ctx,
+          }),
         ])
       );
     }
@@ -149,16 +204,36 @@ async function executeUpdateClass({ data, class: nClass, program, ctx }) {
     // ··············································
     // HANDLING GROUPS
 
-    if (_.isNull(group) || group) await removeGroupByClass({ classIds: nClass.id, ctx });
+    if (_.isNull(group) || group)
+      await removeGroupByClass({ classIds: nClass.id, ctx });
     if (group) {
-      emitUpdateClassEvent({ class: nClass, ctx, message: 'CLASS_UPDATE_GROUPS' });
+      emitUpdateClassEvent({
+        class: nClass,
+        ctx,
+        message: "CLASS_UPDATE_GROUPS",
+      });
 
       // Check if all groups exist and belong to the program
-      if (!(await existGroupInProgram({ id: group, program: nClass.program, ctx }))) {
-        throw new LeemonsError(ctx, { message: 'group not in program' });
+      if (
+        !(await existGroupInProgram({
+          id: group,
+          program: nClass.program,
+          ctx,
+        }))
+      ) {
+        throw new LeemonsError(ctx, { message: "group not in program" });
       }
-      if (await isUsedInSubject({ subject: nClass.subject, group, classe: nClass.id, ctx })) {
-        throw new LeemonsError(ctx, { message: 'group is already used in subject' });
+      if (
+        await isUsedInSubject({
+          subject: nClass.subject,
+          group,
+          classe: nClass.id,
+          ctx,
+        })
+      ) {
+        throw new LeemonsError(ctx, {
+          message: "group is already used in subject",
+        });
       }
       promises.push(addGroup({ class: nClass.id, group, ctx }));
     }
@@ -167,7 +242,11 @@ async function executeUpdateClass({ data, class: nClass, program, ctx }) {
     // HANDLING TEACHERS
 
     if (teachers) {
-      emitUpdateClassEvent({ class: nClass, ctx, message: 'CLASS_UPDATE_TEACHERS' });
+      emitUpdateClassEvent({
+        class: nClass,
+        ctx,
+        message: "CLASS_UPDATE_TEACHERS",
+      });
     }
 
     if (_.isNull(group) || teachers) {
@@ -176,24 +255,32 @@ async function executeUpdateClass({ data, class: nClass, program, ctx }) {
 
     if (teachers) {
       await Promise.all(
-        _.map(teachers, ({ teacher, type }) => addTeacher({ class: nClass.id, teacher, type, ctx }))
+        _.map(teachers, ({ teacher, type }) =>
+          addTeacher({ class: nClass.id, teacher, type, ctx })
+        )
       );
     }
 
     // ··············································
     // HANDLING SCHEDULE
 
-    emitUpdateClassEvent({ class: nClass, ctx, message: 'CLASS_UPDATE_SCHEDULE' });
+    emitUpdateClassEvent({
+      class: nClass,
+      ctx,
+      message: "CLASS_UPDATE_SCHEDULE",
+    });
 
-    promises.push(await processScheduleForClass({ schedule, classId: nClass.id, ctx }));
+    promises.push(
+      await processScheduleForClass({ schedule, classId: nClass.id, ctx })
+    );
 
     // ··············································
     // HANDLING CUSTOM PERIODS
 
     if (customPeriod) {
-      await ctx.tx.call('academic-calendar.custom-period.setItem', {
+      await ctx.tx.call("academic-calendar.custom-period.setItem", {
         item: nClass.id,
-        type: 'class',
+        type: "class",
         ...customPeriod,
       });
     }
@@ -204,7 +291,10 @@ async function executeUpdateClass({ data, class: nClass, program, ctx }) {
     await Promise.all(promises);
 
     // Update class status to ready
-    await ctx.tx.db.Class.updateOne({ id: nClass.id }, { $set: { status: 'ready' } });
+    await ctx.tx.db.Class.updateOne(
+      { id: nClass.id },
+      { $set: { status: "ready" } }
+    );
 
     let classe = (await classByIds({ ids: nClass.id, ctx }))[0];
     [classe] = await getClassesProgramInfo({
@@ -216,11 +306,11 @@ async function executeUpdateClass({ data, class: nClass, program, ctx }) {
     emitUpdateClassEvent({
       ctx,
       class: nClass,
-      message: 'CLASS_UPDATE_SUCCESS',
-      status: 'completed',
+      message: "CLASS_UPDATE_SUCCESS",
+      status: "completed",
     });
 
-    await ctx.tx.emit('after-update-class', classe);
+    await ctx.tx.emit("after-update-class", classe);
 
     // ················��·····························
     // HANDLING COMUNICA ROOMS
@@ -234,11 +324,11 @@ async function executeUpdateClass({ data, class: nClass, program, ctx }) {
       }
       const roomData = {
         name: `${classe.subject.name}`,
-        type: ctx.prefixPN('class.group'),
+        type: ctx.prefixPN("class.group"),
         // subName,
         bgColor: classe.subject.color,
         image: null,
-        icon: '/public/academic-portfolio/subject-icon.svg',
+        icon: "/public/academic-portfolio/subject-icon.svg",
         program: data.program,
         metadata: {
           iconIsUrl: true,
@@ -258,13 +348,13 @@ async function executeUpdateClass({ data, class: nClass, program, ctx }) {
         roomData.image = assetImage.id;
       }
 
-      let action = 'add';
+      let action = "add";
       if (
-        await ctx.tx.call('comunica.room.exists', {
+        await ctx.tx.call("comunica.room.exists", {
           key: ctx.prefixPN(`room.class.group.${nClass.id}`),
         })
       ) {
-        action = 'update';
+        action = "update";
       }
 
       await ctx.tx.call(`comunica.room.${action}`, {
@@ -272,21 +362,21 @@ async function executeUpdateClass({ data, class: nClass, program, ctx }) {
         ...roomData,
       });
 
-      action = 'add';
+      action = "add";
       if (
-        await ctx.tx.call('comunica.room.exists', {
+        await ctx.tx.call("comunica.room.exists", {
           key: ctx.prefixPN(`room.class.${nClass.id}`),
         })
       ) {
-        action = 'update';
+        action = "update";
       }
 
       await ctx.tx.call(`comunica.room.${action}`, {
         ...roomData,
-        type: ctx.prefixPN('class'),
+        type: ctx.prefixPN("class"),
         key: ctx.prefixPN(`room.class.${nClass.id}`),
         parentRoom: ctx.prefixPN(`room.class.group.${nClass.id}`),
-        name: 'roomCard.class',
+        name: "roomCard.class",
         subName: roomData.name,
         // icon: '/public/academic-portfolio/class-icon.svg',
       });
@@ -299,7 +389,10 @@ async function executeUpdateClass({ data, class: nClass, program, ctx }) {
 
     return classe;
   } catch (error) {
-    await ctx.tx.db.Class.updateOne({ id: nClass.id }, { $set: { status: 'ready' } });
+    await ctx.tx.db.Class.updateOne(
+      { id: nClass.id },
+      { $set: { status: "ready" } }
+    );
     throw error;
   }
 }
@@ -308,14 +401,14 @@ async function updateClass({ data, ctx }) {
   await validateUpdateClass({ data, ctx });
 
   const cClass = await ctx.tx.db.Class.findOne({ id: data.id })
-    .select(['program', 'status'])
+    .select(["program", "status"])
     .lean();
 
-  if (cClass?.status === 'updating') {
+  if (cClass?.status === "updating") {
     throw new LeemonsError(ctx, {
       httpStatusCode: 400,
-      customCode: 'CLASS_STATUS_ALREADY_UPDATING',
-      message: 'Class is already updating. Try again later.',
+      customCode: "CLASS_STATUS_ALREADY_UPDATING",
+      message: "Class is already updating. Try again later.",
     });
   }
 
@@ -324,4 +417,9 @@ async function updateClass({ data, ctx }) {
   return executeUpdateClass({ data, class: nClass, program, ctx });
 }
 
-module.exports = { updateClass, executeUpdateClass, prepareUpdateClass, emitUpdateClassEvent };
+module.exports = {
+  updateClass,
+  executeUpdateClass,
+  prepareUpdateClass,
+  emitUpdateClassEvent,
+};

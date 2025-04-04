@@ -1,22 +1,32 @@
-const { keyBy, isEmpty } = require('lodash');
+const { keyBy, isEmpty } = require("lodash");
 
-const { validateUpdateProgramConfiguration } = require('../../validations/forms');
-const { addCourse } = require('../courses/addCourse');
-const { addNextCourseIndex } = require('../courses/addNextCourseIndex');
-const { addCycle } = require('../cycle/addCycle');
-const { saveManagers } = require('../managers/saveManagers');
-const { addSubstage } = require('../substages/addSubstage');
+const {
+  validateUpdateProgramConfiguration,
+} = require("../../validations/forms");
+const { addCourse } = require("../courses/addCourse");
+const { addNextCourseIndex } = require("../courses/addNextCourseIndex");
+const { addCycle } = require("../cycle/addCycle");
+const { saveManagers } = require("../managers/saveManagers");
+const { addSubstage } = require("../substages/addSubstage");
 
-const { handleReferenceGroups } = require('./addProgram');
-const { programsByIds } = require('./programsByIds');
-const { setProgramStaff } = require('./setProgramStaff');
+const { handleReferenceGroups } = require("./addProgram");
+const { programsByIds } = require("./programsByIds");
+const { setProgramStaff } = require("./setProgramStaff");
 
 async function updateBasicData({ data, ctx }) {
   const { id, image, managers, ...programData } = data;
 
   let [program] = await Promise.all([
-    ctx.tx.db.Programs.findOneAndUpdate({ id }, programData, { new: true, lean: true }),
-    saveManagers({ userAgents: managers, type: 'program', relationship: id, ctx }),
+    ctx.tx.db.Programs.findOneAndUpdate({ id }, programData, {
+      new: true,
+      lean: true,
+    }),
+    saveManagers({
+      userAgents: managers,
+      type: "program",
+      relationship: id,
+      ctx,
+    }),
   ]);
 
   const imageData = {
@@ -26,7 +36,7 @@ async function updateBasicData({ data, ctx }) {
   };
   if (image) imageData.cover = image;
 
-  const assetImage = await ctx.tx.call('leebrary.assets.update', {
+  const assetImage = await ctx.tx.call("leebrary.assets.update", {
     data: { id: program.image, ...imageData },
     published: true,
   });
@@ -35,7 +45,9 @@ async function updateBasicData({ data, ctx }) {
     { id: program.id },
     {
       image: assetImage.id,
-      imageUrl: await ctx.tx.call('leebrary.assets.getCoverUrl', { assetId: assetImage.id }),
+      imageUrl: await ctx.tx.call("leebrary.assets.getCoverUrl", {
+        assetId: assetImage.id,
+      }),
     },
     {
       new: true,
@@ -60,12 +72,17 @@ async function updateProgramConfiguration({ data, ctx }) {
 
   // BASIC DATA ·············································································||
 
-  let program = await updateBasicData({ data: { ...basicDataAndManagers }, ctx });
+  let program = await updateBasicData({
+    data: { ...basicDataAndManagers },
+    ctx,
+  });
 
   // MANAGE SUBSTAGES ·············································································||
 
   if (substagesToRemove?.length) {
-    await ctx.tx.db.Groups.deleteMany({ id: substagesToRemove.map((item) => item.id) });
+    await ctx.tx.db.Groups.deleteMany({
+      id: substagesToRemove.map((item) => item.id),
+    });
   }
   const substageCreationAndUpdates = [];
   substages.forEach(({ id, name, abbreviation, index }) => {
@@ -79,7 +96,14 @@ async function updateProgramConfiguration({ data, ctx }) {
       );
     } else {
       substageCreationAndUpdates.push(
-        addSubstage({ name, abbreviation, index, program: program.id, type: 'substage', ctx })
+        addSubstage({
+          name,
+          abbreviation,
+          index,
+          program: program.id,
+          type: "substage",
+          ctx,
+        })
       );
     }
   });
@@ -148,10 +172,12 @@ async function updateProgramConfiguration({ data, ctx }) {
   await ctx.tx.db.Cycles.deleteMany({ id: oldCycles.map((item) => item.id) });
 
   if (_program.courses?.length && cycles?.length) {
-    const coursesByIndex = keyBy(_program.courses, 'index');
+    const coursesByIndex = keyBy(_program.courses, "index");
     const cyclePromises = [];
     cycles.forEach((cycle) => {
-      const courseIds = cycle.courses.map((courseIndex) => coursesByIndex[courseIndex].id);
+      const courseIds = cycle.courses.map(
+        (courseIndex) => coursesByIndex[courseIndex].id
+      );
 
       cyclePromises.push(
         addCycle({
@@ -168,7 +194,7 @@ async function updateProgramConfiguration({ data, ctx }) {
     await Promise.all(cyclePromises);
   }
 
-  await ctx.tx.emit('after-update-program', { program: _program });
+  await ctx.tx.emit("after-update-program", { program: _program });
   return _program;
 }
 

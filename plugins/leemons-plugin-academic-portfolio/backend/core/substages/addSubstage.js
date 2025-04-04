@@ -1,4 +1,12 @@
-async function addSubstage({ name, abbreviation, number, program, frequency, index, ctx }) {
+async function addSubstage({
+  name,
+  abbreviation,
+  number,
+  program,
+  frequency,
+  index,
+  ctx,
+}) {
   const substageGroupDoc = await ctx.tx.db.Groups.create({
     name,
     abbreviation,
@@ -6,7 +14,7 @@ async function addSubstage({ name, abbreviation, number, program, frequency, ind
     program,
     frequency,
     index,
-    type: 'substage',
+    type: "substage",
   });
   return substageGroupDoc.toObject();
 }

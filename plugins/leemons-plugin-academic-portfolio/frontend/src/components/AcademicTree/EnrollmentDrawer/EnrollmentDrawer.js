@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from "react";
 
 import {
   BaseDrawer,
@@ -8,22 +8,22 @@ import {
   Button,
   RadioGroup,
   ContextContainer,
-} from '@bubbles-ui/components';
-import { useNotifications } from '@bubbles-ui/notifications';
-import { addErrorAlert } from '@layout/alert';
-import { Header } from '@leebrary/components/AssetPickerDrawer/components/Header';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { useNotifications } from "@bubbles-ui/notifications";
+import { addErrorAlert } from "@layout/alert";
+import { Header } from "@leebrary/components/AssetPickerDrawer/components/Header";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
 
-import StudentsSelectByTags from './StudentsSelectByTags';
-import StudentsSelectByUserData from './StudentsSelectByUserData';
+import StudentsSelectByTags from "./StudentsSelectByTags";
+import StudentsSelectByUserData from "./StudentsSelectByUserData";
 
-import FooterContainer from '@academic-portfolio/components/ProgramSetupDrawer/FooterContainer';
-import { SOCKET_EVENTS } from '@academic-portfolio/config/constants';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { useEnrollStudentsToClasses } from '@academic-portfolio/hooks/mutations/useMutateClass';
-import useSubjectClasses from '@academic-portfolio/hooks/useSubjectClasses';
-import { getProfilesRequest } from '@academic-portfolio/request';
+import FooterContainer from "@academic-portfolio/components/ProgramSetupDrawer/FooterContainer";
+import { SOCKET_EVENTS } from "@academic-portfolio/config/constants";
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
+import { useEnrollStudentsToClasses } from "@academic-portfolio/hooks/mutations/useMutateClass";
+import useSubjectClasses from "@academic-portfolio/hooks/useSubjectClasses";
+import { getProfilesRequest } from "@academic-portfolio/request";
 
 function distributeStudentsToClasses(classes, selectedStudents) {
   const cannotEnrollClasses = [];
@@ -69,7 +69,9 @@ function distributeStudentsToClasses(classes, selectedStudents) {
       const subjectData = subjectsClassesMap[subjectId];
       subjectData.attemptedEnrollments += 1;
       if (subjectData.enrolledStudents < subjectData.totalSeats) {
-        const classToEnroll = subjectData.classes.find((cls) => cls.availableSeats > 0);
+        const classToEnroll = subjectData.classes.find(
+          (cls) => cls.availableSeats > 0
+        );
         if (classToEnroll) {
           if (!studentsToEnrollByClass.has(classToEnroll.id)) {
             studentsToEnrollByClass.set(classToEnroll.id, []);
@@ -102,13 +104,17 @@ const EnrollmentDrawer = ({
   selectedNode,
   opensFromClasroom = null, // only for cases where it opens form subject view
 }) => {
-  const [t] = useTranslateLoader(prefixPN('tree_page.enrrollmentDrawer'));
-  const [tSocket] = useTranslateLoader(prefixPN('socket'));
-  const [searchBy, setSearchBy] = useState('userData');
+  const [t] = useTranslateLoader(prefixPN("tree_page.enrrollmentDrawer"));
+  const [tSocket] = useTranslateLoader(prefixPN("socket"));
+  const [searchBy, setSearchBy] = useState("userData");
   const [selectedStudents, setSelectedStudents] = useState([]);
-  const [previouslyEnrolledStudents, setPreviouslyEnrolledStudents] = useState([]);
-  const { mutateAsync: addStudentsToClassesAsync, isLoading: isAddStudentsToClassesLoading } =
-    useEnrollStudentsToClasses({ invalidateOnSuccess: false });
+  const [previouslyEnrolledStudents, setPreviouslyEnrolledStudents] = useState(
+    []
+  );
+  const {
+    mutateAsync: addStudentsToClassesAsync,
+    isLoading: isAddStudentsToClassesLoading,
+  } = useEnrollStudentsToClasses({ invalidateOnSuccess: false });
 
   const [studentProfile, setStudentProfile] = useState(null);
   const notifications = useNotifications();
@@ -117,21 +123,24 @@ const EnrollmentDrawer = ({
 
   const extractSubjectIds = (nodes) =>
     nodes.reduce((acc, node) => {
-      if (node.type === 'subject') {
+      if (node.type === "subject") {
         acc.push(node.id);
-      } else if (node.children && (node.type === 'group' || node.type === 'knowledgeArea')) {
+      } else if (
+        node.children &&
+        (node.type === "group" || node.type === "knowledgeArea")
+      ) {
         acc.push(...extractSubjectIds(node.children));
       }
       return acc;
     }, []);
 
   const subjects = useMemo(() => {
-    const higherLevelNodeTypes = ['group', 'knowledgeArea', 'course'];
+    const higherLevelNodeTypes = ["group", "knowledgeArea", "course"];
 
     if (higherLevelNodeTypes.includes(selectedNode?.type)) {
       return extractSubjectIds(selectedNode?.children || []);
     }
-    if (selectedNode?.type === 'subject') {
+    if (selectedNode?.type === "subject") {
       return [selectedNode.id];
     }
     return [];
@@ -149,8 +158,10 @@ const EnrollmentDrawer = ({
       return allSubjectClasses?.filter((cls) => cls.id === opensFromClasroom);
     }
 
-    if (selectedNode.type === 'group') {
-      return allSubjectClasses?.filter((cls) => cls.groups?.id === selectedNode?.id);
+    if (selectedNode.type === "group") {
+      return allSubjectClasses?.filter(
+        (cls) => cls.groups?.id === selectedNode?.id
+      );
     }
 
     // If it opens from a knowledgeArea or from a course with no groups we can return all classes
@@ -159,15 +170,15 @@ const EnrollmentDrawer = ({
 
   const radioGroupData = useMemo(
     () => [
-      { label: t('searchUsersByData'), value: 'userData' },
-      { label: t('searchUsersByTag'), value: 'tags' },
+      { label: t("searchUsersByData"), value: "userData" },
+      { label: t("searchUsersByTag"), value: "tags" },
     ],
     [t]
   );
 
   const localizations = useMemo(
     () => ({
-      remove: t('remove'),
+      remove: t("remove"),
     }),
     [t]
   );
@@ -186,11 +197,13 @@ const EnrollmentDrawer = ({
   useEffect(() => {
     // For simplicity, we filter already enrolled students from the UserAgentSelect only when enrolling from a subject node (when it opens from a classroom)
     // If this is not the case, removal of duplicated students is handled elsewhere
-    if (isOpen && classes?.length && selectedNode?.type === 'subject') {
+    if (isOpen && classes?.length && selectedNode?.type === "subject") {
       const studentsAlreadyEnrolled = [];
       classes.forEach((cls) =>
         studentsAlreadyEnrolled.push(
-          ...cls.students.map((studentUserAgent) => ({ value: studentUserAgent }))
+          ...cls.students.map((studentUserAgent) => ({
+            value: studentUserAgent,
+          }))
         )
       );
       setPreviouslyEnrolledStudents(studentsAlreadyEnrolled);
@@ -211,7 +224,7 @@ const EnrollmentDrawer = ({
     const cannotEnrollClasses = [];
     const studentsToEnrollByClass = new Map();
 
-    if (selectedNode?.type === 'subject' && opensFromClasroom) {
+    if (selectedNode?.type === "subject" && opensFromClasroom) {
       const [_class] = classes;
       const availableSeats = _class.seats - _class.students.length;
       if (selectedStudents.length > availableSeats) {
@@ -225,14 +238,19 @@ const EnrollmentDrawer = ({
     }
 
     // Handle multi-class enrollment by group, ignore duplications but abort when classes are full and there are no dups
-    if (selectedNode?.type === 'group') {
+    if (selectedNode?.type === "group") {
       classes.forEach((cls) => {
         const studentsToEnroll = selectedStudents
           ?.map((st) => st.value)
-          ?.filter((studentUserAgent) => !cls.students.includes(studentUserAgent));
+          ?.filter(
+            (studentUserAgent) => !cls.students.includes(studentUserAgent)
+          );
         const availableSeats = cls.seats - cls.students.length;
 
-        if (studentsToEnroll.length && studentsToEnroll.length <= availableSeats) {
+        if (
+          studentsToEnroll.length &&
+          studentsToEnroll.length <= availableSeats
+        ) {
           studentsToEnrollByClass.set(cls.id, studentsToEnroll);
         } else if (studentsToEnroll.length > availableSeats) {
           cannotEnrollClasses.push(cls);
@@ -242,7 +260,10 @@ const EnrollmentDrawer = ({
     }
 
     // Handle multi-class enrollment when there are no groups and multiple classrooms by subject are possible at the same time
-    if (selectedNode?.type === 'knowledgeArea' || selectedNode?.type === 'course') {
+    if (
+      selectedNode?.type === "knowledgeArea" ||
+      selectedNode?.type === "course"
+    ) {
       return distributeStudentsToClasses(classes, selectedStudents);
     }
 
@@ -251,15 +272,16 @@ const EnrollmentDrawer = ({
   };
 
   const handleStudentEnrollment = async () => {
-    const { cannotEnrollClasses, studentsToEnrollByClass } = getStudentsToEnrollByClass();
+    const { cannotEnrollClasses, studentsToEnrollByClass } =
+      getStudentsToEnrollByClass();
 
     if (cannotEnrollClasses?.length) {
-      addErrorAlert(t('enrollmentSeatsError'));
+      addErrorAlert(t("enrollmentSeatsError"));
     } else {
       const enrollmentRequests = [];
       const classesWithTheSameStudents = new Map();
       studentsToEnrollByClass.forEach((students, classId) => {
-        const key = students.join(',');
+        const key = students.join(",");
         if (classesWithTheSameStudents.has(key)) {
           const existing = classesWithTheSameStudents.get(key);
           existing.push(classId);
@@ -270,7 +292,7 @@ const EnrollmentDrawer = ({
       });
 
       classesWithTheSameStudents.forEach((classIds, studentsKey) => {
-        const students = studentsKey.split(',');
+        const students = studentsKey.split(",");
         if (classIds.length === 1) {
           enrollmentRequests.push({ class: classIds[0], students });
         } else {
@@ -280,16 +302,18 @@ const EnrollmentDrawer = ({
 
       try {
         enrollmentRequests.forEach(async (requestBody) => {
-          const currentClass = classes.find((cls) => cls.id === requestBody.class);
+          const currentClass = classes.find(
+            (cls) => cls.id === requestBody.class
+          );
           const className = currentClass?.alias ?? currentClass?.classroomId;
           const notificationId = `${SOCKET_EVENTS.ENROLLMENT_UPDATE}:${requestBody.class}`;
 
           notifications.showNotification({
             id: notificationId,
-            severity: 'info',
+            severity: "info",
             loading: true,
-            title: tSocket('title.ENROLLMENT_UPDATE', { className }),
-            message: tSocket('message.PROCESSING'),
+            title: tSocket("title.ENROLLMENT_UPDATE", { className }),
+            message: tSocket("message.PROCESSING"),
             autoClose: false,
             disallowClose: true,
           });
@@ -298,7 +322,7 @@ const EnrollmentDrawer = ({
         });
         handleOnCancel();
       } catch (error) {
-        addErrorAlert(t('enrollmentError'));
+        addErrorAlert(t("enrollmentError"));
         console.error(error);
       }
     }
@@ -312,24 +336,26 @@ const EnrollmentDrawer = ({
         Header={
           <Header
             localizations={{
-              title: t('enrollStudents'),
+              title: t("enrollStudents"),
             }}
             onClose={handleOnCancel}
           />
         }
         Footer={
           <FooterContainer scrollRef={scrollRef}>
-            <Stack justifyContent={'space-between'} fullWidth>
+            <Stack justifyContent={"space-between"} fullWidth>
               <Button variant="outline" type="button" onClick={handleOnCancel}>
-                {t('cancel')}
+                {t("cancel")}
               </Button>
               <Button
                 onClick={handleStudentEnrollment}
                 type="button"
                 loading={isLoading}
-                disabled={!selectedStudents?.length || isAddStudentsToClassesLoading}
+                disabled={
+                  !selectedStudents?.length || isAddStudentsToClassesLoading
+                }
               >
-                {t('enrollStudents')}
+                {t("enrollStudents")}
               </Button>
             </Stack>
           </FooterContainer>
@@ -337,7 +363,12 @@ const EnrollmentDrawer = ({
       >
         <Stack
           ref={scrollRef}
-          sx={{ padding: 24, overflowY: 'auto', overflowX: 'hidden', marginBottom: 50 }}
+          sx={{
+            padding: 24,
+            overflowY: "auto",
+            overflowX: "hidden",
+            marginBottom: 50,
+          }}
         >
           <TotalLayoutStepContainer clean>
             <RadioGroup
@@ -349,7 +380,7 @@ const EnrollmentDrawer = ({
               }}
             />
             <ContextContainer>
-              {searchBy === 'userData' ? (
+              {searchBy === "userData" ? (
                 <StudentsSelectByUserData
                   studentProfile={studentProfile}
                   centerId={centerId}
@@ -365,7 +396,7 @@ const EnrollmentDrawer = ({
                   setSelectedStudents={setSelectedStudents}
                   selectedStudents={selectedStudents}
                   previouslyEnrolledStudents={previouslyEnrolledStudents}
-                  localizations={{ search: t('search') }}
+                  localizations={{ search: t("search") }}
                 />
               )}
             </ContextContainer>

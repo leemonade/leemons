@@ -1,21 +1,21 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 const GroupViewStyles = createStyles((theme) => ({
   root: {},
-  content: { backgroundColor: 'white', padding: '24px 24px 0px 24px' },
+  content: { backgroundColor: "white", padding: "24px 24px 0px 24px" },
   courseData: {
     marginBottom: 16,
   },
   responsable: {
-    width: '50%',
+    width: "50%",
   },
   responsableLink: {
-    color: 'black',
+    color: "black",
     marginLeft: 8,
   },
   responsableContainer: {
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
     gap: 0,
   },
   titleContainer: {

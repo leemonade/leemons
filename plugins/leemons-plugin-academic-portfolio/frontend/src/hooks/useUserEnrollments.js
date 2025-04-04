@@ -1,6 +1,6 @@
-import { userEnrollmentsRequest } from '@academic-portfolio/request';
-import { useVariantForQueryKey } from '@common/queries';
-import { useQuery } from '@tanstack/react-query';
+import { userEnrollmentsRequest } from "@academic-portfolio/request";
+import { useVariantForQueryKey } from "@common/queries";
+import { useQuery } from "@tanstack/react-query";
 
 export default function useUserEnrollments({
   centerId,
@@ -10,8 +10,8 @@ export default function useUserEnrollments({
 }) {
   const queryKey = [
     {
-      plugin: 'plugin.academic-portfolio',
-      scope: 'user-enrollments',
+      plugin: "plugin.academic-portfolio",
+      scope: "user-enrollments",
       centerId,
       userAgentIds,
       contactUserAgentId,
@@ -19,15 +19,17 @@ export default function useUserEnrollments({
   ];
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'occasionally',
+    modificationTrend: "occasionally",
   });
 
   return useQuery({
     ...options,
     queryKey,
     queryFn: () =>
-      userEnrollmentsRequest({ centerId, userAgentIds, contactUserAgentId }).then(
-        (res) => res.data
-      ),
+      userEnrollmentsRequest({
+        centerId,
+        userAgentIds,
+        contactUserAgentId,
+      }).then((res) => res.data),
   });
 }

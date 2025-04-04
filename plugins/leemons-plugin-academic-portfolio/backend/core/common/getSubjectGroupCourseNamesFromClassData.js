@@ -15,7 +15,7 @@ const getGroup = (classData) => {
   if (classData?.classWithoutGroupId) {
     return classData.classWithoutGroupId;
   }
-  return '';
+  return "";
 };
 
 const getCourse = (classData) => {
@@ -23,22 +23,23 @@ const getCourse = (classData) => {
     return classData?.courses?.index;
   }
   // cuando es un array de cursos, no lo pintamos
-  return '';
+  return "";
 };
 
 const getSubjectGroupCourseNamesFromClassData = (classData) => {
   // Orden curso - customId si hay - alias
   const data = {
-    subject: '',
-    group: '',
-    displayNameforClass: '',
-    course: '',
-    courseAndGroupParsed: '',
+    subject: "",
+    group: "",
+    displayNameforClass: "",
+    course: "",
+    courseAndGroupParsed: "",
   };
   const subjectName = classData?.subject?.name;
-  const subjectId = classData?.subject?.internalId && `- ${classData?.subject?.internalId}`;
+  const subjectId =
+    classData?.subject?.internalId && `- ${classData?.subject?.internalId}`;
 
-  data.subject = `${subjectName} ${subjectId || ''}`;
+  data.subject = `${subjectName} ${subjectId || ""}`;
 
   const hasGroup = !!classData?.groups;
   if (hasGroup) {
@@ -51,7 +52,7 @@ const getSubjectGroupCourseNamesFromClassData = (classData) => {
   data.course = `${courseData}`;
 
   data.courseAndGroupParsed = `${data?.course} ${
-    data?.group || (data?.displayNameforClass && data?.course) ? '-' : ''
+    data?.group || (data?.displayNameforClass && data?.course) ? "-" : ""
   } ${data?.group || data?.displayNameforClass}`;
 
   return data;

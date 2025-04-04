@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -30,6 +30,10 @@ schema.index({ class: 1, group: 1, deploymentID: 1, isDeleted: 1 });
 schema.index({ class: 1, deploymentID: 1, isDeleted: 1 });
 schema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
 
-const classGroupModel = newModel(mongoose.connection, 'v1::academic-portfolio_ClassGroup', schema);
+const classGroupModel = newModel(
+  mongoose.connection,
+  "v1::academic-portfolio_ClassGroup",
+  schema
+);
 
 module.exports = { classGroupModel };

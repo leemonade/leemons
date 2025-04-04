@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function getByClass({ class: classe, type, returnIds, ctx }) {
   const classes = _.compact([classe].flat());
@@ -14,7 +14,7 @@ async function getByClass({ class: classe, type, returnIds, ctx }) {
   }
   const classStudents = await ctx.tx.db.ClassStudent.find(query).lean();
 
-  return returnIds ? _.uniq(_.map(classStudents, 'student')) : classStudents;
+  return returnIds ? _.uniq(_.map(classStudents, "student")) : classStudents;
 }
 
 module.exports = { getByClass };

@@ -1,8 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { isFunction } from 'lodash';
-import { Stack, Stepper, Box, HorizontalStepper, Title } from '@bubbles-ui/components';
-import { SetupStyles } from './Setup.styles';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { isFunction } from "lodash";
+import {
+  Stack,
+  Stepper,
+  Box,
+  HorizontalStepper,
+  Title,
+} from "@bubbles-ui/components";
+import { SetupStyles } from "./Setup.styles";
 
 export const SETUP_DEFAULT_PROPS = {
   labels: {},
@@ -25,12 +31,21 @@ export const SETUP_PROP_TYPES = {
   onSave: PropTypes.func,
 };
 
-const Setup = ({ labels, data, values, editable, onNext, onPrev, onSave, ...props }) => {
+const Setup = ({
+  labels,
+  data,
+  values,
+  editable,
+  onNext,
+  onPrev,
+  onSave,
+  ...props
+}) => {
   const [sharedData, setSharedData] = useState(values);
   const [active, setActive] = useState(0);
   const [callOnSave, setCallOnSave] = useState(false);
 
-  const { classes, cx } = SetupStyles({}, { name: 'APSetup' });
+  const { classes, cx } = SetupStyles({}, { name: "APSetup" });
 
   useEffect(() => {
     if (callOnSave) {

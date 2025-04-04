@@ -1,33 +1,36 @@
-import { useRef } from 'react';
+import { useRef } from "react";
 
 import {
   BaseDrawer,
   Stack,
   TotalLayoutStepContainer,
   TotalLayoutContainer,
-} from '@bubbles-ui/components';
-import { useNotifications } from '@bubbles-ui/notifications';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { Header } from '@leebrary/components/AssetPickerDrawer/components/Header';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useQueryClient } from '@tanstack/react-query';
-import { cloneDeep, isArray } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { useNotifications } from "@bubbles-ui/notifications";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { Header } from "@leebrary/components/AssetPickerDrawer/components/Header";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useQueryClient } from "@tanstack/react-query";
+import { cloneDeep, isArray } from "lodash";
+import PropTypes from "prop-types";
 
-import SubjectForm from './SubjectForm';
+import SubjectForm from "./SubjectForm";
 
-import { SOCKET_EVENTS } from '@academic-portfolio/config/constants';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { useProgramDetail } from '@academic-portfolio/hooks';
-import { getProgramSubjectsKey } from '@academic-portfolio/hooks/keys/programSubjects';
+import { SOCKET_EVENTS } from "@academic-portfolio/config/constants";
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
+import { useProgramDetail } from "@academic-portfolio/hooks";
+import { getProgramSubjectsKey } from "@academic-portfolio/hooks/keys/programSubjects";
 import {
   useCreateClass,
   useDeleteClass,
   useUpdateClass,
-} from '@academic-portfolio/hooks/mutations/useMutateClass';
-import { createSubjectRequest, updateSubjectRequest } from '@academic-portfolio/request';
+} from "@academic-portfolio/hooks/mutations/useMutateClass";
+import {
+  createSubjectRequest,
+  updateSubjectRequest,
+} from "@academic-portfolio/request";
 
-const INTERNAL_ID_IN_USE = 'INTERNAL_ID_IN_USE';
+const INTERNAL_ID_IN_USE = "INTERNAL_ID_IN_USE";
 
 const SubjectSetupDrawer = ({
   isOpen,
@@ -39,17 +42,19 @@ const SubjectSetupDrawer = ({
   localizations,
   allSubjectIds, // temporary for us to be able to reset the details query when updating a subject... for all subjects, shouldn't be like that. TODO: Update hook
 }) => {
-  const [tSocket] = useTranslateLoader(prefixPN('socket'));
+  const [tSocket] = useTranslateLoader(prefixPN("socket"));
   const notifications = useNotifications();
 
   const { data: programDetail } = useProgramDetail(programId, {
     enabled: programId?.length > 0,
   });
 
-  const { mutateAsync: createClassAsync, isLoading: isCreateClassLoading } = useCreateClass();
-  const { mutateAsync: updateClassAsync, isLoading: isUpdateClassLoading } = useUpdateClass({
-    invalidateOnSuccess: false,
-  });
+  const { mutateAsync: createClassAsync, isLoading: isCreateClassLoading } =
+    useCreateClass();
+  const { mutateAsync: updateClassAsync, isLoading: isUpdateClassLoading } =
+    useUpdateClass({
+      invalidateOnSuccess: false,
+    });
   const { mutateAsync: deleteClassAsync } = useDeleteClass();
 
   const queryClient = useQueryClient();
@@ -65,7 +70,8 @@ const SubjectSetupDrawer = ({
     const classesToCreate = [];
     const classesToRemove =
       subject.classes?.filter(
-        (originalClass) => !classrooms.some((classroom) => classroom.id === originalClass.id)
+        (originalClass) =>
+          !classrooms.some((classroom) => classroom.id === originalClass.id)
       ) || [];
 
     classrooms.forEach((classroom) => {
@@ -73,15 +79,19 @@ const SubjectSetupDrawer = ({
 
       if (originalClass) {
         const hasChanges =
-          ['seats', 'classroomId', 'alias', 'id'].some(
+          ["seats", "classroomId", "alias", "id"].some(
             (field) => classroom[field] !== originalClass[field]
-          ) || classroom.referenceGroup?.split('::')[1] !== originalClass.groups?.id;
+          ) ||
+          classroom.referenceGroup?.split("::")[1] !== originalClass.groups?.id;
 
-        let originalCourses = subject.classes?.find((c) => c.id === classroom.id)?.courses;
+        let originalCourses = subject.classes?.find(
+          (c) => c.id === classroom.id
+        )?.courses;
         if (!isArray(originalCourses)) originalCourses = [originalCourses];
         originalCourses = originalCourses.map((course) => course.id);
         const coursesHaveChanged =
-          JSON.stringify(originalCourses.sort()) !== JSON.stringify(courses.sort());
+          JSON.stringify(originalCourses.sort()) !==
+          JSON.stringify(courses.sort());
 
         if (hasChanges || coursesHaveChanged) {
           const updateClassroom = { ...classroom };
@@ -107,8 +117,10 @@ const SubjectSetupDrawer = ({
 
     body.id = subject.id;
     delete body.program;
-    if (_subject.knowledgeArea?.id !== knowledgeArea) body.knowledgeArea = knowledgeArea;
-    if (_subject.subjectType?.id !== subjectType) body.subjectType = subjectType;
+    if (_subject.knowledgeArea?.id !== knowledgeArea)
+      body.knowledgeArea = knowledgeArea;
+    if (_subject.subjectType?.id !== subjectType)
+      body.subjectType = subjectType;
 
     // Currently all subject classes use only and relate to a single substage
     const currentSubstage =
@@ -126,7 +138,7 @@ const SubjectSetupDrawer = ({
       ({ seats, classroomId, referenceGroup, alias, id, substage, course }) => {
         const classBody = {
           id,
-          group: referenceGroup ? referenceGroup.split('::')[1] : null,
+          group: referenceGroup ? referenceGroup.split("::")[1] : null,
           seats,
           alias: referenceGroup ? null : alias,
           classroomId: classroomId ?? null,
@@ -142,15 +154,15 @@ const SubjectSetupDrawer = ({
         classToUpdate?.alias ??
         classToUpdate?.classWithoutGroupId ??
         classToUpdate?.classroomId ??
-        '-';
+        "-";
       const notificationId = `${SOCKET_EVENTS.CLASS_UPDATE}:${classToUpdate.id}`;
 
       notifications.showNotification({
         id: notificationId,
-        severity: 'info',
+        severity: "info",
         loading: true,
-        title: tSocket('title.CLASS_UPDATE', { className }),
-        message: tSocket('message.PROCESSING'),
+        title: tSocket("title.CLASS_UPDATE", { className }),
+        message: tSocket("message.PROCESSING"),
         autoClose: false,
         disallowClose: true,
       });
@@ -191,7 +203,7 @@ const SubjectSetupDrawer = ({
       image: subjectImage,
       color: subjectColor,
     };
-    if (substage && substage !== 'all') commonBody.substage = substage;
+    if (substage && substage !== "all") commonBody.substage = substage;
 
     const getClassSeats = () => {
       if (programDetail?.seatsForAllCourses) {
@@ -200,13 +212,14 @@ const SubjectSetupDrawer = ({
         // This information can be found in seatsForAllCourses - The course metadata will also contain the number of seats.
         return programDetail.seatsForAllCourses;
       }
-      return programDetail.courses.find((c) => c.id === courses[0])?.metadata?.seats;
+      return programDetail.courses.find((c) => c.id === courses[0])?.metadata
+        ?.seats;
     };
 
     const finalBodyArray = classrooms.map(
       ({ classroomId, referenceGroup, alias, seats, classWithoutGroupId }) => ({
         ...commonBody,
-        group: referenceGroup ? referenceGroup.split('::')[1] : null,
+        group: referenceGroup ? referenceGroup.split("::")[1] : null,
         alias: referenceGroup || !alias?.length ? null : alias,
         seats: referenceGroup ? getClassSeats() : seats,
         classroomId: classroomId || null,
@@ -257,10 +270,14 @@ const SubjectSetupDrawer = ({
         substage,
       });
     }
-    const classesChanges = isEditing ? getClassChanges(classrooms, courseArray) : {};
+    const classesChanges = isEditing
+      ? getClassChanges(classrooms, courseArray)
+      : {};
 
     try {
-      const subjectRequest = isEditing ? updateSubjectRequest : createSubjectRequest;
+      const subjectRequest = isEditing
+        ? updateSubjectRequest
+        : createSubjectRequest;
       const subjectResponse = await subjectRequest(subjectsBody);
 
       if (isEditing && classesChanges?.classesToRemove?.length) {
@@ -270,7 +287,9 @@ const SubjectSetupDrawer = ({
         await handleClassesUpdate(classesChanges.classesToUpdate);
       }
 
-      const classesToCreate = isEditing ? classesChanges.classesToCreate : classrooms;
+      const classesToCreate = isEditing
+        ? classesChanges.classesToCreate
+        : classrooms;
 
       if (classesToCreate?.length && subjectResponse?.subject?.id) {
         await handleClassesCreation({
@@ -287,18 +306,23 @@ const SubjectSetupDrawer = ({
       }
 
       addSuccessAlert(
-        !isEditing ? localizations?.alerts?.success?.add : localizations?.alerts?.success?.update
+        !isEditing
+          ? localizations?.alerts?.success?.add
+          : localizations?.alerts?.success?.update
       );
       setIsOpen(false);
 
       if (isEditing) {
         setIsEditing(false);
-        queryClient.invalidateQueries(['subjectDetail', { subject: allSubjectIds }]);
+        queryClient.invalidateQueries([
+          "subjectDetail",
+          { subject: allSubjectIds },
+        ]);
       }
       const programSubjectsQueryKey = getProgramSubjectsKey(programId);
       queryClient.invalidateQueries(programSubjectsQueryKey);
     } catch (error) {
-      let errorToAppend = '';
+      let errorToAppend = "";
 
       if (error?.code === INTERNAL_ID_IN_USE) {
         errorToAppend = `: ${localizations?.alerts.failure.internalIdInUse}`;
@@ -319,14 +343,19 @@ const SubjectSetupDrawer = ({
         Header={
           <Header
             localizations={{
-              title: isEditing ? localizations?.drawer?.updateTitle : localizations?.drawer?.title,
+              title: isEditing
+                ? localizations?.drawer?.updateTitle
+                : localizations?.drawer?.title,
               close: localizations?.drawer?.cancel,
             }}
             onClose={handleOnCancel}
           />
         }
       >
-        <Stack ref={scrollRef} sx={{ padding: 24, overflowY: 'auto', overflowX: 'hidden' }}>
+        <Stack
+          ref={scrollRef}
+          sx={{ padding: 24, overflowY: "auto", overflowX: "hidden" }}
+        >
           <TotalLayoutStepContainer clean>
             {!isEditing ? (
               <SubjectForm

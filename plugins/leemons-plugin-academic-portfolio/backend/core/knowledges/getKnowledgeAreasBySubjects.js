@@ -3,7 +3,7 @@
 
 async function getKnowledgeAreasBySubjects({ subjectIds, ctx }) {
   const classes = await ctx.tx.db.Class.find({ subject: subjectIds })
-    .select(['id', 'subject'])
+    .select(["id", "subject"])
     .lean();
 
   // Reduce classes to unique subject-class mappings a subject classes will share the same KA

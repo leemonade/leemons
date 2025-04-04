@@ -1,10 +1,9 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function getProgramSubjectDigits({ program, ctx }) {
-  const { subjectsDigits } = await ctx.tx.db.Programs.findOne({ id: program }).select([
-    'id',
-    'subjectsDigits',
-  ]);
+  const { subjectsDigits } = await ctx.tx.db.Programs.findOne({
+    id: program,
+  }).select(["id", "subjectsDigits"]);
   return subjectsDigits;
 }
 

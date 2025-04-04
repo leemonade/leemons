@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 import {
   ActionButton,
@@ -11,16 +11,16 @@ import {
   Table,
   TextInput,
   Title,
-} from '@bubbles-ui/components';
-import { SearchIcon } from '@bubbles-ui/icons/outline';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import { LocaleDate, useStore } from '@common';
-import getUserFullName from '@users/helpers/getUserFullName';
-import { getUserAgentsInfoRequest } from '@users/request';
-import { filter, map, sortBy } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { SearchIcon } from "@bubbles-ui/icons/outline";
+import { DeleteBinIcon } from "@bubbles-ui/icons/solid";
+import { LocaleDate, useStore } from "@common";
+import getUserFullName from "@users/helpers/getUserFullName";
+import { getUserAgentsInfoRequest } from "@users/request";
+import { filter, map, sortBy } from "lodash";
+import PropTypes from "prop-types";
 
-import { SelectUsersForAddToClasses } from './SelectUsersForAddToClasses';
+import { SelectUsersForAddToClasses } from "./SelectUsersForAddToClasses";
 
 const TreeClassroomUsersDetail = ({
   messagesAddUsers,
@@ -35,7 +35,11 @@ const TreeClassroomUsersDetail = ({
   item,
   teacherSelect,
 }) => {
-  const [store, render] = useStore({ pagination: { size: 10 }, students: [], studentsToAdd: [] });
+  const [store, render] = useStore({
+    pagination: { size: 10 },
+    students: [],
+    studentsToAdd: [],
+  });
 
   function removeUserAgent(userAgentId) {
     removeUserFromClass(userAgentId, classe.id)
@@ -48,17 +52,27 @@ const TreeClassroomUsersDetail = ({
       store.studentsFiltered = filter(
         store.students,
         (student) =>
-          student.user.name?.toLowerCase().includes(store.studentsFilter.toLowerCase()) ||
-          student.user.surnames?.toLowerCase().includes(store.studentsFilter.toLowerCase()) ||
-          student.user.secondSurname?.toLowerCase().includes(store.studentsFilter.toLowerCase()) ||
-          student.user.email?.toLowerCase().includes(store.studentsFilter.toLowerCase())
+          student.user.name
+            ?.toLowerCase()
+            .includes(store.studentsFilter.toLowerCase()) ||
+          student.user.surnames
+            ?.toLowerCase()
+            .includes(store.studentsFilter.toLowerCase()) ||
+          student.user.secondSurname
+            ?.toLowerCase()
+            .includes(store.studentsFilter.toLowerCase()) ||
+          student.user.email
+            ?.toLowerCase()
+            .includes(store.studentsFilter.toLowerCase())
       );
     } else {
       store.studentsFiltered = store.students;
     }
     const init = store.pagination.page * store.pagination.size;
     const end = init + store.pagination.size;
-    store.pagination.totalPages = Math.ceil(store.studentsFiltered.length / store.pagination.size);
+    store.pagination.totalPages = Math.ceil(
+      store.studentsFiltered.length / store.pagination.size
+    );
     store.studentsFiltered = store.studentsFiltered.slice(init, end);
   }
 
@@ -75,13 +89,15 @@ const TreeClassroomUsersDetail = ({
           avatar: (
             <Avatar
               image={userAgent.user.avatar}
-              fullName={getUserFullName(userAgent.user, { singleSurname: true })}
+              fullName={getUserFullName(userAgent.user, {
+                singleSurname: true,
+              })}
             />
           ),
           birthdate: <LocaleDate date={userAgent.user.birthdate} />,
         },
         actions: (
-          <Box style={{ textAlign: 'right', width: '100%' }}>
+          <Box style={{ textAlign: "right", width: "100%" }}>
             <ActionButton
               onClick={() => removeUserAgent(userAgent.id)}
               tooltip={messages.removeUser}
@@ -90,11 +106,13 @@ const TreeClassroomUsersDetail = ({
           </Box>
         ),
       })),
-      ['user.surnames', 'user.name', 'user.email']
+      ["user.surnames", "user.name", "user.email"]
     );
     store.pagination.page = 0;
-    store.pagination.totalPages = Math.ceil(store.students.length / store.pagination.size);
-    store.studentsFilter = '';
+    store.pagination.totalPages = Math.ceil(
+      store.students.length / store.pagination.size
+    );
+    store.studentsFilter = "";
     filterStudents();
     render();
   }
@@ -105,35 +123,37 @@ const TreeClassroomUsersDetail = ({
 
   const tableColumns = [
     {
-      Header: ' ',
-      accessor: 'user.avatar',
-      className: 'text-left',
+      Header: " ",
+      accessor: "user.avatar",
+      className: "text-left",
     },
     {
       Header: messagesAddUsers.surnameHeader,
-      accessor: 'user.surnames',
-      className: 'text-left',
+      accessor: "user.surnames",
+      className: "text-left",
     },
     {
       Header: messagesAddUsers.nameHeader,
-      accessor: 'user.name',
-      className: 'text-left',
+      accessor: "user.name",
+      className: "text-left",
     },
     {
       Header: messagesAddUsers.emailHeader,
-      accessor: 'user.email',
-      className: 'text-left',
-      valueRender: (value) => <Box style={{ wordWrap: 'break-word' }}>{value}</Box>,
+      accessor: "user.email",
+      className: "text-left",
+      valueRender: (value) => (
+        <Box style={{ wordWrap: "break-word" }}>{value}</Box>
+      ),
     },
     {
       Header: messagesAddUsers.birthdayHeader,
-      accessor: 'user.birthdate',
-      className: 'text-left',
+      accessor: "user.birthdate",
+      className: "text-left",
     },
     {
-      Header: ' ',
-      accessor: 'actions',
-      className: 'text-left',
+      Header: " ",
+      accessor: "actions",
+      className: "text-left",
     },
   ];
 

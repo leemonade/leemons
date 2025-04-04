@@ -1,7 +1,7 @@
-import React from 'react';
-import { Box } from '@bubbles-ui/components';
-import propTypes from 'prop-types';
-import { ClassroomPickerItem } from '../ClassroomPicker/components/ClassroomPickerItem';
+import React from "react";
+import { Box } from "@bubbles-ui/components";
+import propTypes from "prop-types";
+import { ClassroomPickerItem } from "../ClassroomPicker/components/ClassroomPickerItem";
 
 const ClassroomPickerList = ({ subjects, onRemove }) => (
   <Box>

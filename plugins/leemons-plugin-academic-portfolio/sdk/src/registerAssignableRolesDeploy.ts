@@ -1,8 +1,8 @@
-import type { Context } from '@leemons/moleculer';
-import type { Model } from '@leemons/mongodb';
-import { hasKey, setKey } from '@leemons/mongodb-helpers';
-import type { GetKeyValueModel } from '@leemons/mongodb-helpers';
-import { map } from 'lodash';
+import type { Context } from "@leemons/moleculer";
+import type { Model } from "@leemons/mongodb";
+import { hasKey, setKey } from "@leemons/mongodb-helpers";
+import type { GetKeyValueModel } from "@leemons/mongodb-helpers";
+import { map } from "lodash";
 
 interface AssignableRole {
   role: string;
@@ -20,15 +20,15 @@ export async function registerAssignableRolesDeploy({
   assignableRoles,
   ctx,
 }: RegisterAssignableRolesDeployParams): Promise<void> {
-  if (!(await hasKey(keyValueModel, 'init-assignables'))) {
+  if (!(await hasKey(keyValueModel, "init-assignables"))) {
     await Promise.allSettled(
       map(assignableRoles, (role) =>
-        ctx.tx.call('assignables.roles.registerRole', {
+        ctx.tx.call("assignables.roles.registerRole", {
           role: role.role,
           ...role.options,
         })
       )
     );
-    await setKey(keyValueModel, 'init-assignables');
+    await setKey(keyValueModel, "init-assignables");
   }
 }

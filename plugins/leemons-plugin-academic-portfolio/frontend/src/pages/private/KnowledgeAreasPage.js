@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
-import { Controller, useForm } from 'react-hook-form';
-import { useQueryClient } from '@tanstack/react-query';
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import { Controller, useForm } from "react-hook-form";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Select,
   TableInput,
@@ -15,47 +15,56 @@ import {
   Stack,
   Box,
   InputWrapper,
-} from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useUserCenters } from '@users/hooks';
+} from "@bubbles-ui/components";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useUserCenters } from "@users/hooks";
 import {
   useCreateKnowledgeArea,
   useDeleteKnowledgeArea,
   useUpdateKnowledgeArea,
-} from '@academic-portfolio/hooks/mutations/useMutateKnowledgeArea';
-import useKnowledgeAreas from '@academic-portfolio/hooks/useKnowledgeAreas';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import SubjectTypesEmptyState from '@academic-portfolio/components/SubjectTypesEmptyState';
+} from "@academic-portfolio/hooks/mutations/useMutateKnowledgeArea";
+import useKnowledgeAreas from "@academic-portfolio/hooks/useKnowledgeAreas";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
+import SubjectTypesEmptyState from "@academic-portfolio/components/SubjectTypesEmptyState";
 
 const KnowledgeAreasPage = () => {
-  const [t, , , tLoading] = useTranslateLoader(prefixPN('knowledgeAreas_page'));
+  const [t, , , tLoading] = useTranslateLoader(prefixPN("knowledgeAreas_page"));
   const [knowledgeAreas, setKnowledgeAreas] = useState([]);
-  const [selectedCenter, setSelectedCenter] = useState('');
+  const [selectedCenter, setSelectedCenter] = useState("");
   const [showEmptyState, setShowEmptyState] = useState(false);
   const history = useHistory();
   const queryClient = useQueryClient();
   const { data: userCenters, isLoading: areCentersLoading } = useUserCenters();
-  const { mutate: createKnowledgeArea, isLoading: isCreateLoading } = useCreateKnowledgeArea();
-  const { mutate: updateKnowledgeArea, isLoading: isUpdateLoading } = useUpdateKnowledgeArea();
-  const { mutate: deleteKnowledgeArea, isLoading: isDeleteLoading } = useDeleteKnowledgeArea();
+  const { mutate: createKnowledgeArea, isLoading: isCreateLoading } =
+    useCreateKnowledgeArea();
+  const { mutate: updateKnowledgeArea, isLoading: isUpdateLoading } =
+    useUpdateKnowledgeArea();
+  const { mutate: deleteKnowledgeArea, isLoading: isDeleteLoading } =
+    useDeleteKnowledgeArea();
   const scrollRef = useRef();
   const [dataFetched, setDataFetched] = useState(false); // Flag to be sure when we should show the empty state
 
   // INIT & EFFECTS ------------------------------------------------------------------------------------------------ ||
 
   const centersData = useMemo(
-    () => userCenters?.map((center) => ({ value: center?.id, label: center?.name })),
+    () =>
+      userCenters?.map((center) => ({
+        value: center?.id,
+        label: center?.name,
+      })),
     [userCenters]
   );
-  const { data: knowledgeAreasQuery, isLoading: knowledgeAreasLoading } = useKnowledgeAreas({
-    center: selectedCenter,
-    options: { enabled: selectedCenter?.length > 0 },
-  });
+  const { data: knowledgeAreasQuery, isLoading: knowledgeAreasLoading } =
+    useKnowledgeAreas({
+      center: selectedCenter,
+      options: { enabled: selectedCenter?.length > 0 },
+    });
 
   const isLoading = useMemo(() => {
-    const waitForKnowledgeAreasList = selectedCenter?.length > 0 && knowledgeAreasLoading;
+    const waitForKnowledgeAreasList =
+      selectedCenter?.length > 0 && knowledgeAreasLoading;
     return (
       tLoading ||
       areCentersLoading ||
@@ -103,20 +112,20 @@ const KnowledgeAreasPage = () => {
   const tableInputColumns = useMemo(
     () => [
       {
-        Header: t('labels.name'),
-        accessor: 'name',
+        Header: t("labels.name"),
+        accessor: "name",
         input: {
           node: <TextInput required />,
-          rules: { required: t('errors.requiredField') },
+          rules: { required: t("errors.requiredField") },
         },
         style: { paddingLeft: 10, width: 232 },
       },
       {
-        Header: t('labels.abbreviation'),
-        accessor: 'abbreviation',
+        Header: t("labels.abbreviation"),
+        accessor: "abbreviation",
         input: {
           node: <TextInput required />,
-          rules: { required: t('errors.requiredField') },
+          rules: { required: t("errors.requiredField") },
         },
         style: { paddingLeft: 10 },
       },
@@ -139,7 +148,7 @@ const KnowledgeAreasPage = () => {
       },
       {
         onSuccess: () => {
-          addSuccessAlert(t('alerts.success.add'));
+          addSuccessAlert(t("alerts.success.add"));
           form.reset();
         },
         onError: (e) => {
@@ -159,7 +168,7 @@ const KnowledgeAreasPage = () => {
     };
     updateKnowledgeArea(mutationObject, {
       onSuccess: () => {
-        addSuccessAlert(t('alerts.success.update'));
+        addSuccessAlert(t("alerts.success.update"));
       },
       onError: (e) => {
         addErrorAlert(e);
@@ -170,10 +179,14 @@ const KnowledgeAreasPage = () => {
   const handleOnRemove = async (index) => {
     const itemToRemove = knowledgeAreas[index];
     deleteKnowledgeArea(
-      { center: selectedCenter, knowledgeAreaId: itemToRemove?.id, soft: false },
+      {
+        center: selectedCenter,
+        knowledgeAreaId: itemToRemove?.id,
+        soft: false,
+      },
       {
         onSuccess: () => {
-          addSuccessAlert(t('alerts.success.delete'));
+          addSuccessAlert(t("alerts.success.delete"));
           queryClient.invalidateQueries(selectedCenter);
         },
         onError: (e) => {
@@ -190,13 +203,13 @@ const KnowledgeAreasPage = () => {
         scrollRef={scrollRef}
         Header={
           <TotalLayoutHeader
-            title={t('header.title')}
+            title={t("header.title")}
             onCancel={() => history.goBack()}
-            mainActionLabel={t('header.cancel')}
+            mainActionLabel={t("header.cancel")}
           >
             <Select
               data={centersData}
-              placeholder={t('header.centerSelectPlaceholder')}
+              placeholder={t("header.centerSelectPlaceholder")}
               onChange={(value) => {
                 setSelectedCenter(value);
               }}
@@ -210,7 +223,7 @@ const KnowledgeAreasPage = () => {
           ref={scrollRef}
           justifyContent="center"
           fullwidth
-          sx={{ overflowY: 'auto', backgroundColor: '#f8f9fb' }}
+          sx={{ overflowY: "auto", backgroundColor: "#f8f9fb" }}
         >
           {selectedCenter?.length > 0 && (
             <TotalLayoutStepContainer>
@@ -222,18 +235,18 @@ const KnowledgeAreasPage = () => {
                         control={form.control}
                         name="name"
                         rules={{
-                          required: t('errors.requiredField'),
+                          required: t("errors.requiredField"),
                         }}
                         render={({ field }) => (
                           <TextInput
                             {...field}
                             required
-                            label={t('labels.name')}
+                            label={t("labels.name")}
                             error={form.formState.errors.name}
                             onBlur={() => {
-                              form.clearErrors('name');
+                              form.clearErrors("name");
                             }}
-                            placeholder={t('placeholders.name')}
+                            placeholder={t("placeholders.name")}
                           />
                         )}
                       />
@@ -243,25 +256,29 @@ const KnowledgeAreasPage = () => {
                         control={form.control}
                         name="abbreviation"
                         rules={{
-                          required: t('errors.requiredField'),
+                          required: t("errors.requiredField"),
                         }}
                         render={({ field }) => (
                           <TextInput
                             {...field}
                             required
-                            label={t('labels.abbreviation')}
+                            label={t("labels.abbreviation")}
                             error={form.formState.errors.abbreviation}
                             onBlur={() => {
-                              form.clearErrors('abbreviation');
+                              form.clearErrors("abbreviation");
                             }}
-                            placeholder={t('placeholders.abbreviation')}
+                            placeholder={t("placeholders.abbreviation")}
                           />
                         )}
                       />
                     </Box>
                     <InputWrapper showEmptyLabel>
-                      <Button variant="link" leftIcon={<AddCircleIcon />} type="submit">
-                        {t('labels.add')}
+                      <Button
+                        variant="link"
+                        leftIcon={<AddCircleIcon />}
+                        type="submit"
+                      >
+                        {t("labels.add")}
                       </Button>
                     </InputWrapper>
                   </ContextContainer>
@@ -272,12 +289,12 @@ const KnowledgeAreasPage = () => {
                     <TableInput
                       columns={tableInputColumns}
                       labels={{
-                        add: t('labels.add'),
-                        remove: t('labels.remove'),
-                        edit: t('labels.edit'),
-                        accept: t('labels.accept'),
-                        cancel: t('labels.cancel'),
-                        actionHeader: t('labels.actions'),
+                        add: t("labels.add"),
+                        remove: t("labels.remove"),
+                        edit: t("labels.edit"),
+                        accept: t("labels.accept"),
+                        cancel: t("labels.cancel"),
+                        actionHeader: t("labels.actions"),
                       }}
                       canAdd={false}
                       editable
@@ -290,9 +307,12 @@ const KnowledgeAreasPage = () => {
                     />
                   </Box>
                 ) : (
-                  <Box sx={{ justifySelf: 'center' }}>
+                  <Box sx={{ justifySelf: "center" }}>
                     <SubjectTypesEmptyState
-                      labels={{ text: t('emptyState.text'), altText: t('emptyState.altText') }}
+                      labels={{
+                        text: t("emptyState.text"),
+                        altText: t("emptyState.altText"),
+                      }}
                     />
                   </Box>
                 )}

@@ -1,5 +1,5 @@
-const findOne = require('./findOne');
-const { getProvider } = require('./getProvider');
+const findOne = require("./findOne");
+const { getProvider } = require("./getProvider");
 
 async function getActiveProvider({ type, ctx }) {
   const settings = await findOne({ ctx });

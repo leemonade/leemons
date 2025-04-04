@@ -1,4 +1,4 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 const useBlockPageStyles = createStyles((theme) => ({
   root: {},

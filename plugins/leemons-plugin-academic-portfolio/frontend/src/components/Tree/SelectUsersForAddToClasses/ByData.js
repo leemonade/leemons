@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 import {
   ActionButton,
@@ -11,21 +11,23 @@ import {
   Stack,
   Table,
   UserDisplayItem,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 import {
   AlertWarningTriangleIcon,
   BlockIcon,
   DeleteBinIcon,
   AddCircleIcon,
-} from '@bubbles-ui/icons/solid';
-import { LocaleDate, useStore } from '@common';
-import { addErrorAlert } from '@layout/alert';
-import SelectUserAgent, { SelectUserAgentValueComponent } from '@users/components/SelectUserAgent';
-import getUserFullName from '@users/helpers/getUserFullName';
-import { cloneDeep, filter, findIndex, forEach, isNil, map } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/icons/solid";
+import { LocaleDate, useStore } from "@common";
+import { addErrorAlert } from "@layout/alert";
+import SelectUserAgent, {
+  SelectUserAgentValueComponent,
+} from "@users/components/SelectUserAgent";
+import getUserFullName from "@users/helpers/getUserFullName";
+import { cloneDeep, filter, findIndex, forEach, isNil, map } from "lodash";
+import PropTypes from "prop-types";
 
-import { getProfilesRequest } from '../../../request';
+import { getProfilesRequest } from "../../../request";
 
 function getSeverity(classes, value) {
   let count = 0;
@@ -36,9 +38,9 @@ function getSeverity(classes, value) {
   });
   let severity = null;
   if (count === classes.length) {
-    severity = 'error';
+    severity = "error";
   } else if (count > 0) {
-    severity = 'warning';
+    severity = "warning";
   }
   return severity;
 }
@@ -49,7 +51,7 @@ const ItemComponent = ({ classes, onMouseDown, ...props }) => {
     <UserDisplayItem
       {...props}
       onMouseDown={(e) => {
-        if (severity !== 'error') onMouseDown(e);
+        if (severity !== "error") onMouseDown(e);
       }}
       severity={severity}
     />
@@ -84,7 +86,7 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
   }
 
   function getSelectedUserAgentsIds() {
-    return map(getSelectedUserAgents(), 'value');
+    return map(getSelectedUserAgents(), "value");
   }
 
   function getClassesThatExceedSeatLimit() {
@@ -92,7 +94,10 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
     const _classes = cloneDeep(classes);
     forEach(userAgents, (student) => {
       forEach(_classes, (classe) => {
-        if (classe.students.indexOf(student) < 0 && classe.parentStudents.indexOf(student) < 0) {
+        if (
+          classe.students.indexOf(student) < 0 &&
+          classe.parentStudents.indexOf(student) < 0
+        ) {
           classe.students.push(student);
         }
       });
@@ -108,7 +113,8 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
           seats: isNil(classe.seats)
             ? 0
             : classe.seats -
-              (classes[index].students.length + classes[index].parentStudents.length),
+              (classes[index].students.length +
+                classes[index].parentStudents.length),
         });
       }
     });
@@ -148,36 +154,36 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
 
   let tableHeaders = [];
 
-  const warnings = filter(store.userAgentsChecked, { severity: 'warning' });
+  const warnings = filter(store.userAgentsChecked, { severity: "warning" });
 
   if (warnings.length) {
     tableHeaders.push({
-      Header: ' ',
-      accessor: 'classStatusDom',
-      className: 'text-left',
+      Header: " ",
+      accessor: "classStatusDom",
+      className: "text-left",
     });
   }
 
   tableHeaders = tableHeaders.concat([
     {
-      Header: ' ',
-      accessor: 'avatar',
-      className: 'text-left',
+      Header: " ",
+      accessor: "avatar",
+      className: "text-left",
     },
     {
       Header: messages.surnameHeader,
-      accessor: 'surnames',
-      className: 'text-left',
+      accessor: "surnames",
+      className: "text-left",
     },
     {
       Header: messages.nameHeader,
-      accessor: 'name',
-      className: 'text-left',
+      accessor: "name",
+      className: "text-left",
     },
     {
       Header: messages.emailHeader,
-      accessor: 'email',
-      className: 'text-left',
+      accessor: "email",
+      className: "text-left",
     },
     /*
     {
@@ -187,9 +193,9 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
     },
     */
     {
-      Header: ' ',
-      accessor: 'actions',
-      className: 'text-left',
+      Header: " ",
+      accessor: "actions",
+      className: "text-left",
     },
   ]);
 
@@ -227,21 +233,25 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
       avatar: (
         <Avatar
           image={store.selectUserAgent.avatar}
-          fullName={getUserFullName(store.selectUserAgent, { singleSurname: true })}
+          fullName={getUserFullName(store.selectUserAgent, {
+            singleSurname: true,
+          })}
         />
       ),
       severity,
       birthdate: <LocaleDate date={store.selectUserAgent.birthdate} />,
       classStatusDom: (
         <Stack alignItems="center">
-          {severity === 'warning' ? (
+          {severity === "warning" ? (
             <AlertWarningTriangleIcon style={{ color: COLORS.fatic03 }} />
           ) : null}
-          {severity === 'error' ? <BlockIcon style={{ color: COLORS.fatic01 }} /> : null}
+          {severity === "error" ? (
+            <BlockIcon style={{ color: COLORS.fatic01 }} />
+          ) : null}
         </Stack>
       ),
       actions: (
-        <Box style={{ textAlign: 'right', width: '100%' }}>
+        <Box style={{ textAlign: "right", width: "100%" }}>
           <ActionButton
             onClick={() => removeUserAgent(userAgent.value)}
             tooltip={messages.removeUser}
@@ -256,7 +266,10 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
   }
 
   return (
-    <ContextContainer fullWidth sx={(theme) => ({ paddingTop: theme.spacing[4] })}>
+    <ContextContainer
+      fullWidth
+      sx={(theme) => ({ paddingTop: theme.spacing[4] })}
+    >
       <Stack fullWidth spacing={1}>
         <Box>
           <SelectUserAgent
@@ -271,7 +284,12 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
           />
         </Box>
         <Box skipFlex>
-          <Button variant="light" size="sm" leftIcon={<AddCircleIcon />} onClick={addUserAgent}>
+          <Button
+            variant="light"
+            size="sm"
+            leftIcon={<AddCircleIcon />}
+            onClick={addUserAgent}
+          >
             {messages.addStudent}
           </Button>
         </Box>
@@ -284,8 +302,8 @@ const ByData = ({ classes, center, messages, onChange, disableSave }) => {
           {store.classesExceed.map((classe) => (
             <>
               {messages.seatsClassError
-                .replace('{{className}}', classe.classe.name)
-                .replace('{{seats}}', classe.seats)}
+                .replace("{{className}}", classe.classe.name)
+                .replace("{{seats}}", classe.seats)}
               <br />
             </>
           ))}

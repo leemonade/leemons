@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
 import {
   Select,
@@ -13,33 +19,39 @@ import {
   ContextContainer,
   Button,
   ImageLoader,
-} from '@bubbles-ui/components';
-import { AddCircleIcon, RedirectIcon, ReportPageIcon } from '@bubbles-ui/icons/solid';
-import { unflatten } from '@common';
-import useCenterEvaluationSystems from '@grades/hooks/queries/useCenterEvaluationSystems';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useQueryClient } from '@tanstack/react-query';
-import { useUserCenters } from '@users/hooks';
-import { cloneDeep } from 'lodash';
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+} from "@bubbles-ui/components";
+import {
+  AddCircleIcon,
+  RedirectIcon,
+  ReportPageIcon,
+} from "@bubbles-ui/icons/solid";
+import { unflatten } from "@common";
+import useCenterEvaluationSystems from "@grades/hooks/queries/useCenterEvaluationSystems";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useQueryClient } from "@tanstack/react-query";
+import { useUserCenters } from "@users/hooks";
+import { cloneDeep } from "lodash";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
-import { EmptyState } from '@academic-portfolio/components/EmptyState';
-import ProgramSetupDrawer from '@academic-portfolio/components/ProgramSetupDrawer/ProgramSetupDrawer';
-import ProgramsDetailTable from '@academic-portfolio/components/ProgramsDetailTable';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { getCenterProgramsKey } from '@academic-portfolio/hooks/keys/centerPrograms';
+import { EmptyState } from "@academic-portfolio/components/EmptyState";
+import ProgramSetupDrawer from "@academic-portfolio/components/ProgramSetupDrawer/ProgramSetupDrawer";
+import ProgramsDetailTable from "@academic-portfolio/components/ProgramsDetailTable";
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
+import { getCenterProgramsKey } from "@academic-portfolio/hooks/keys/centerPrograms";
 import {
   useArchiveProgram,
   useDuplicateProgram,
-} from '@academic-portfolio/hooks/mutations/useMutateProgram';
-import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
+} from "@academic-portfolio/hooks/mutations/useMutateProgram";
+import useProgramsByCenter from "@academic-portfolio/hooks/queries/useCenterPrograms";
 
 const ProgramsPage = () => {
-  const [t, translations, , tLoading] = useTranslateLoader(prefixPN('programs_page'));
-  const [selectedCenter, setSelectedCenter] = useState('');
-  const [activeTab, setActiveTab] = useState('0');
+  const [t, translations, , tLoading] = useTranslateLoader(
+    prefixPN("programs_page")
+  );
+  const [selectedCenter, setSelectedCenter] = useState("");
+  const [activeTab, setActiveTab] = useState("0");
   const [showEmptyState, setShowEmptyState] = useState(false);
   const [addDrawerIsOpen, setAddDrawerIsOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -49,8 +61,10 @@ const ProgramsPage = () => {
   const { data: centersQuery, isLoading: areCentersLoading } = useUserCenters({
     refetchOnWindowFocus: false,
   });
-  const { mutate: archiveProgram, isLoading: archiveProgramLoading } = useArchiveProgram();
-  const { mutate: duplicateProgram, isLoading: duplicateProgramLoading } = useDuplicateProgram();
+  const { mutate: archiveProgram, isLoading: archiveProgramLoading } =
+    useArchiveProgram();
+  const { mutate: duplicateProgram, isLoading: duplicateProgramLoading } =
+    useDuplicateProgram();
   const queryClient = useQueryClient();
   const scrollRef = useRef();
   const [dataFetched, setDataFetched] = useState(false); // Flag to be sure when we should show the empty state
@@ -67,25 +81,30 @@ const ProgramsPage = () => {
   );
 
   const centersData = useMemo(
-    () => centersQuery?.map((center) => ({ value: center?.id, label: center?.name })),
+    () =>
+      centersQuery?.map((center) => ({
+        value: center?.id,
+        label: center?.name,
+      })),
     [centersQuery]
   );
 
   const queryFilters = useMemo(() => {
-    if (activeTab === '1') {
+    if (activeTab === "1") {
       return { onlyArchived: true };
     }
     return {};
   }, [activeTab]);
 
-  const { data: programsQuery, isLoading: areProgramsLoading } = useProgramsByCenter({
-    center: selectedCenter,
-    filters: queryFilters,
-    options: {
-      enabled: selectedCenter?.length > 0,
-      refetchOnWindowFocus: false,
-    },
-  });
+  const { data: programsQuery, isLoading: areProgramsLoading } =
+    useProgramsByCenter({
+      center: selectedCenter,
+      filters: queryFilters,
+      options: {
+        enabled: selectedCenter?.length > 0,
+        refetchOnWindowFocus: false,
+      },
+    });
 
   const isLoading = useMemo(
     () =>
@@ -113,7 +132,7 @@ const ProgramsPage = () => {
   const localizations = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      return res['academic-portfolio']?.programs_page;
+      return res["academic-portfolio"]?.programs_page;
     }
 
     return {};
@@ -168,27 +187,36 @@ const ProgramsPage = () => {
             onSuccess: () => {
               const queryKey = getCenterProgramsKey(selectedCenter);
               queryClient.invalidateQueries(queryKey);
-              addSuccessAlert(t('alerts.success.delete'));
-              setActiveTab('1');
+              addSuccessAlert(t("alerts.success.delete"));
+              setActiveTab("1");
             },
             onError: (e) => {
               console.error(e);
-              addErrorAlert(t('alerts.failure.delete'));
+              addErrorAlert(t("alerts.failure.delete"));
             },
           }
         );
 
       openConfirmationModal({
-        title: t('archiveModal.title'),
-        description: t('archiveModal.description', { programName: program.name }),
+        title: t("archiveModal.title"),
+        description: t("archiveModal.description", {
+          programName: program.name,
+        }),
         labels: {
-          confirm: t('archiveModal.confirm'),
+          confirm: t("archiveModal.confirm"),
           cancel: localizations?.labels?.cancel,
         },
         onConfirm,
       })();
     },
-    [archiveProgram, t, selectedCenter, queryClient, openConfirmationModal, localizations]
+    [
+      archiveProgram,
+      t,
+      selectedCenter,
+      queryClient,
+      openConfirmationModal,
+      localizations,
+    ]
   );
 
   const handleDuplicate = useCallback(
@@ -198,20 +226,22 @@ const ProgramsPage = () => {
           { programId: program.id },
           {
             onSuccess: () => {
-              addSuccessAlert(t('alerts.success.duplicate'));
+              addSuccessAlert(t("alerts.success.duplicate"));
             },
             onError: (e) => {
               console.error(e);
-              addErrorAlert(t('alerts.failure.duplicate'));
+              addErrorAlert(t("alerts.failure.duplicate"));
             },
           }
         );
 
       openConfirmationModal({
-        title: t('duplicateModal.title'),
-        description: t('duplicateModal.description', { programName: program.name }),
+        title: t("duplicateModal.title"),
+        description: t("duplicateModal.description", {
+          programName: program.name,
+        }),
         labels: {
-          confirm: t('duplicateModal.confirm'),
+          confirm: t("duplicateModal.confirm"),
           cancel: localizations?.labels?.cancel,
         },
         onConfirm,
@@ -225,7 +255,7 @@ const ProgramsPage = () => {
   }
 
   const ProgramsDetailTableToRender = useMemo(() => {
-    const key = activeTab === '0' ? 'active' : 'archived';
+    const key = activeTab === "0" ? "active" : "archived";
     return (
       <ProgramsDetailTable
         key={key}
@@ -233,18 +263,25 @@ const ProgramsPage = () => {
         onEdit={handleOnEdit}
         onArchive={handleArchive}
         onDuplicate={handleDuplicate}
-        isShowingArchivedPrograms={activeTab === '1'}
+        isShowingArchivedPrograms={activeTab === "1"}
         labels={localizations?.labels}
       />
     );
-  }, [activeTab, programsIds, handleOnEdit, handleArchive, handleDuplicate, localizations]);
+  }, [
+    activeTab,
+    programsIds,
+    handleOnEdit,
+    handleArchive,
+    handleDuplicate,
+    localizations,
+  ]);
 
   const emtpyStateToRender = useMemo(() => {
-    if (activeTab === '0') {
+    if (activeTab === "0") {
       if (noEvaluationSystems) {
         return (
           <EmptyState
-            onClick={() => history.push('/private/grades/evaluations')}
+            onClick={() => history.push("/private/grades/evaluations")}
             Icon={<RedirectIcon />}
             actionLabel={localizations?.emptyStates?.createAcademicRules}
             description={localizations?.emptyStates?.noAcademicRules}
@@ -261,7 +298,12 @@ const ProgramsPage = () => {
         />
       );
     }
-    return <EmptyState description={localizations?.emptyStates?.noProgramsArchived} noAction />;
+    return (
+      <EmptyState
+        description={localizations?.emptyStates?.noProgramsArchived}
+        noAction
+      />
+    );
   }, [noEvaluationSystems, activeTab, handleOnAdd, localizations, history]);
 
   if (!translations) return null;
@@ -272,14 +314,14 @@ const ProgramsPage = () => {
         scrollRef={scrollRef}
         Header={
           <TotalLayoutHeader
-            title={t('page_title')}
+            title={t("page_title")}
             cancelable={false}
-            mainActionLabel={t('labels.cancel')}
+            mainActionLabel={t("labels.cancel")}
             compact
             icon={
               <Stack justifyContent="center" alignItems="center">
                 <ImageLoader
-                  style={{ position: 'relative' }}
+                  style={{ position: "relative" }}
                   src="/public/academic-portfolio/menu-icon.svg"
                   width={18}
                   height={18}
@@ -288,22 +330,22 @@ const ProgramsPage = () => {
             }
           >
             <Stack fullWidth justifyContent="space-between">
-            <Select
-              data={centersData}
-              placeholder={t('common.select_center')}
-              onChange={(value) => {
-                setSelectedCenter(value);
-              }}
-              value={selectedCenter}
-              sx={{ width: 262 }}
-            />
-            <Button
-            variant="link"
-            leftIcon={<ReportPageIcon />}
-            onClick={handleOnReports}
-          >
-            {t('reports')}
-          </Button>
+              <Select
+                data={centersData}
+                placeholder={t("common.select_center")}
+                onChange={(value) => {
+                  setSelectedCenter(value);
+                }}
+                value={selectedCenter}
+                sx={{ width: 262 }}
+              />
+              <Button
+                variant="link"
+                leftIcon={<ReportPageIcon />}
+                onClick={handleOnReports}
+              >
+                {t("reports")}
+              </Button>
             </Stack>
           </TotalLayoutHeader>
         }
@@ -312,41 +354,47 @@ const ProgramsPage = () => {
           ref={scrollRef}
           justifyContent="center"
           fullwidth
-          sx={{ overflowY: 'auto', backgroundColor: '#f8f9fb', paddingTop: 24 }}
+          sx={{ overflowY: "auto", backgroundColor: "#f8f9fb", paddingTop: 24 }}
         >
           <TotalLayoutStepContainer
-            stepName={centersQuery?.find((item) => item.id === selectedCenter)?.name}
+            stepName={
+              centersQuery?.find((item) => item.id === selectedCenter)?.name
+            }
             clean
           >
             <Tabs
-              tabPanelListStyle={{ backgroundColor: 'white' }}
+              tabPanelListStyle={{ backgroundColor: "white" }}
               fullHeight
               onChange={(activeT) => setActiveTab(activeT)}
               activeKey={activeTab}
             >
-              <TabPanel label={t('labels.publishedPrograms')}>
+              <TabPanel label={t("labels.publishedPrograms")}>
                 {!showEmptyState ? (
-                  <ContextContainer sx={{ padding: '24px 24px' }}>
-                    <Box sx={{ justifySelf: 'start', width: 160, height: 40 }}>
-                      <Button variant="link" leftIcon={<AddCircleIcon />} onClick={handleOnAdd}>
-                        {t('labels.addNewProgram')}
+                  <ContextContainer sx={{ padding: "24px 24px" }}>
+                    <Box sx={{ justifySelf: "start", width: 160, height: 40 }}>
+                      <Button
+                        variant="link"
+                        leftIcon={<AddCircleIcon />}
+                        onClick={handleOnAdd}
+                      >
+                        {t("labels.addNewProgram")}
                       </Button>
                     </Box>
                     {ProgramsDetailTableToRender}
                   </ContextContainer>
                 ) : (
-                  <ContextContainer sx={{ padding: '24px 24px' }}>
+                  <ContextContainer sx={{ padding: "24px 24px" }}>
                     {emtpyStateToRender}
                   </ContextContainer>
                 )}
               </TabPanel>
-              <TabPanel label={t('labels.archivedPrograms')}>
+              <TabPanel label={t("labels.archivedPrograms")}>
                 {!showEmptyState ? (
-                  <ContextContainer sx={{ padding: '24px 24px' }}>
+                  <ContextContainer sx={{ padding: "24px 24px" }}>
                     {ProgramsDetailTableToRender}
                   </ContextContainer>
                 ) : (
-                  <ContextContainer sx={{ padding: '24px 24px' }}>
+                  <ContextContainer sx={{ padding: "24px 24px" }}>
                     {emtpyStateToRender}
                   </ContextContainer>
                 )}

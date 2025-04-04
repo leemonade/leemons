@@ -6,24 +6,24 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 
-const { getColumns } = require('../../core/reports/getColumns');
-const { getData } = require('../../core/reports/getData');
+const { getColumns } = require("../../core/reports/getColumns");
+const { getData } = require("../../core/reports/getData");
 
 /** @type {ServiceSchema} */
 module.exports = {
   getColumnsRest: {
     rest: {
-      path: '/columns',
-      method: 'GET',
+      path: "/columns",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin'],
+          "academic-portfolio.programs": {
+            actions: ["admin"],
           },
         },
       }),
@@ -35,12 +35,12 @@ module.exports = {
   },
   getDataRest: {
     rest: {
-      path: '/data',
-      method: 'GET',
+      path: "/data",
+      method: "GET",
     },
     params: {
       locale: {
-        type: 'string',
+        type: "string",
         optional: true,
       },
     },
@@ -48,8 +48,8 @@ module.exports = {
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.programs': {
-            actions: ['admin'],
+          "academic-portfolio.programs": {
+            actions: ["admin"],
           },
         },
       }),
@@ -57,7 +57,7 @@ module.exports = {
     async handler(ctx) {
       const data = await getData({
         ...ctx.params,
-        ctx
+        ctx,
       });
       return { status: 200, data };
     },

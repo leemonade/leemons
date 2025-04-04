@@ -1,10 +1,10 @@
-import { forwardRef, useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState } from "react";
 
-import { MultiSelect, Select } from '@bubbles-ui/components';
-import { noop, sortBy } from 'lodash';
-import PropTypes from 'prop-types';
+import { MultiSelect, Select } from "@bubbles-ui/components";
+import { noop, sortBy } from "lodash";
+import PropTypes from "prop-types";
 
-import useProgramsByCenter from '@academic-portfolio/hooks/queries/useCenterPrograms';
+import useProgramsByCenter from "@academic-portfolio/hooks/queries/useCenterPrograms";
 
 const SelectProgram = forwardRef(
   (
@@ -31,8 +31,11 @@ const SelectProgram = forwardRef(
       teacherTypeFilter,
       options: {
         select: (programs) => {
-          const sortedPrograms = sortBy(programs, 'createdAt');
-          return sortedPrograms.map(({ id, name }) => ({ label: name, value: id }));
+          const sortedPrograms = sortBy(programs, "createdAt");
+          return sortedPrograms.map(({ id, name }) => ({
+            label: name,
+            value: id,
+          }));
         },
       },
     });
@@ -47,7 +50,7 @@ const SelectProgram = forwardRef(
 
         // EN: Notify the parent component about the change
         // ES: Notificar al componente padre sobre el cambio
-        if (typeof onChange === 'function') {
+        if (typeof onChange === "function") {
           onChange(newValue);
         }
       }
@@ -113,7 +116,7 @@ const SelectProgram = forwardRef(
   }
 );
 
-SelectProgram.displayName = '@academic-portfolio/components/SelectProgram';
+SelectProgram.displayName = "@academic-portfolio/components/SelectProgram";
 SelectProgram.propTypes = {
   center: PropTypes.string,
   value: PropTypes.string,

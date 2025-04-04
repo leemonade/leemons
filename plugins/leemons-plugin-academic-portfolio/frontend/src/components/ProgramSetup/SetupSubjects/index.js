@@ -1,1 +1,1 @@
-export * from './SetupSubjects';
+export * from "./SetupSubjects";

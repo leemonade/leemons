@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import React from "react";
+import PropTypes from "prop-types";
+import { Controller, useForm } from "react-hook-form";
 import {
   Box,
   Button,
@@ -15,15 +15,15 @@ import {
   Tabs,
   TextInput,
   Title,
-} from '@bubbles-ui/components';
-import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import ImagePicker from '@leebrary/components/ImagePicker';
-import { useStore } from '@common';
-import { forEach, isArray, isString, map } from 'lodash';
-import { useLayout } from '@layout/context';
-import { TreeClassroomUsersDetail } from '@academic-portfolio/components/Tree/TreeClassroomUsersDetail';
-import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
-import { TreeClassroomDetail } from './TreeClassroomDetail';
+} from "@bubbles-ui/components";
+import { AddCircleIcon, DeleteBinIcon } from "@bubbles-ui/icons/solid";
+import ImagePicker from "@leebrary/components/ImagePicker";
+import { useStore } from "@common";
+import { forEach, isArray, isString, map } from "lodash";
+import { useLayout } from "@layout/context";
+import { TreeClassroomUsersDetail } from "@academic-portfolio/components/Tree/TreeClassroomUsersDetail";
+import { useDeploymentConfig } from "@deployment-manager/hooks/useDeploymentConfig";
+import { TreeClassroomDetail } from "./TreeClassroomDetail";
 
 const TreeClassDetail = ({
   messagesAddUsers,
@@ -49,10 +49,10 @@ const TreeClassDetail = ({
   const { openConfirmationModal } = useLayout();
   const [store, render] = useStore({
     createMode,
-    page: createMode ? '2' : '1',
+    page: createMode ? "2" : "1",
   });
   const deploymentConfig = useDeploymentConfig({
-    pluginName: 'academic-portfolio',
+    pluginName: "academic-portfolio",
     ignoreVersion: true,
   });
   const {
@@ -70,7 +70,9 @@ const TreeClassDetail = ({
         subjectType = item.subjectType.id;
       }
       if (knowledge == null && item.knowledges) {
-        knowledge = isString(item.knowledges) ? item.knowledges : item.knowledges.id;
+        knowledge = isString(item.knowledges)
+          ? item.knowledges
+          : item.knowledges.id;
       }
     });
 
@@ -79,7 +81,7 @@ const TreeClassDetail = ({
       // eslint-disable-next-line no-nested-ternary
       course: classes?.[0]
         ? isArray(classes[0].courses)
-          ? map(classes[0].courses, 'id')
+          ? map(classes[0].courses, "id")
           : classes[0].courses?.id
         : null,
       color: classes?.[0] ? classes[0].color : null,
@@ -133,7 +135,7 @@ const TreeClassDetail = ({
     // eslint-disable-next-line no-nested-ternary
     const intialCourse = classes[0]
       ? isArray(classes[0].courses)
-        ? map(classes[0].courses, 'id')
+        ? map(classes[0].courses, "id")
         : classes[0].courses.id
       : null;
     if (data.course !== intialCourse) {
@@ -158,12 +160,12 @@ const TreeClassDetail = ({
       <RadioGroup
         variant="icon"
         data={[
-          { label: messages.basicInformation, value: '1' },
+          { label: messages.basicInformation, value: "1" },
           {
             label: messages.groupsOfClasse,
-            value: '2',
+            value: "2",
           },
-          { label: messages.studentsEnrolled, value: '3' },
+          { label: messages.studentsEnrolled, value: "3" },
         ]}
         fullWidth
         onChange={(page) => {
@@ -172,10 +174,14 @@ const TreeClassDetail = ({
         }}
         value={store.page}
       />
-      {store.page === '1' ? (
+      {store.page === "1" ? (
         <form onSubmit={handleSubmit(onBeforeSaveSubject)} autoComplete="off">
           <ContextContainer direction="column" fullWidth>
-            {!(deploymentConfig?.deny?.others?.indexOf('treeClassNameAndTypeFromForm') >= 0) ? (
+            {!(
+              deploymentConfig?.deny?.others?.indexOf(
+                "treeClassNameAndTypeFromForm"
+              ) >= 0
+            ) ? (
               <>
                 <Box>
                   <Controller
@@ -183,7 +189,11 @@ const TreeClassDetail = ({
                     name="name"
                     rules={{ required: messages.subjectNameRequired }}
                     render={({ field }) => (
-                      <TextInput error={errors.name} label={messages.subjectNameLabel} {...field} />
+                      <TextInput
+                        error={errors.name}
+                        label={messages.subjectNameLabel}
+                        {...field}
+                      />
                     )}
                   />
                 </Box>
@@ -221,7 +231,11 @@ const TreeClassDetail = ({
                       );
                     }
                     return (
-                      <Select data={selects.courses} label={messages.courseLabel} {...field} />
+                      <Select
+                        data={selects.courses}
+                        label={messages.courseLabel}
+                        {...field}
+                      />
                     );
                   }}
                 />
@@ -274,7 +288,9 @@ const TreeClassDetail = ({
               <Controller
                 control={control}
                 name="color"
-                render={({ field }) => <ColorInput label={messages.colorLabel} {...field} />}
+                render={({ field }) => (
+                  <ColorInput label={messages.colorLabel} {...field} />
+                )}
               />
             </Box>
 
@@ -294,7 +310,7 @@ const TreeClassDetail = ({
           </ContextContainer>
         </form>
       ) : null}
-      {store.page === '2' ? (
+      {store.page === "2" ? (
         <Box>
           {!program.useOneStudentGroup && (
             <Box>
@@ -327,13 +343,20 @@ const TreeClassDetail = ({
               teacherSelect={teacherSelect}
             />
           ) : (
-            <Tabs activeKey={store.createMode ? 'newItem' : classe.id} onTabClick={selectClass}>
+            <Tabs
+              activeKey={store.createMode ? "newItem" : classe.id}
+              onTabClick={selectClass}
+            >
               {tabs}
               {classes?.map((item) => (
                 <TabPanel
                   disabled={store.createMode}
                   key={item.id}
-                  label={item.groups?.abbreviation || item.groups?.name || item.treeName}
+                  label={
+                    item.groups?.abbreviation ||
+                    item.groups?.name ||
+                    item.treeName
+                  }
                 >
                   <TreeClassroomDetail
                     messagesAddUsers={messagesAddUsers}
@@ -357,7 +380,7 @@ const TreeClassDetail = ({
         </Box>
       ) : null}
 
-      {store.page === '3' ? (
+      {store.page === "3" ? (
         <Box>
           {program.useOneStudentGroup ? (
             <TreeClassroomUsersDetail
@@ -381,7 +404,11 @@ const TreeClassDetail = ({
                 <TabPanel
                   disabled={store.createMode}
                   key={item.id}
-                  label={item.groups?.abbreviation || item.groups?.name || item.treeName}
+                  label={
+                    item.groups?.abbreviation ||
+                    item.groups?.name ||
+                    item.treeName
+                  }
                 >
                   <TreeClassroomUsersDetail
                     messagesAddUsers={messagesAddUsers}

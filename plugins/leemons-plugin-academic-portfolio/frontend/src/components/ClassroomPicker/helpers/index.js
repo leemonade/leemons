@@ -1,8 +1,8 @@
-import { capitalize } from 'lodash';
+import { capitalize } from "lodash";
 
 function convertTimeToMinutes(time) {
   if (!time) return 0;
-  const [hours, minutes] = time.split(':').map(Number);
+  const [hours, minutes] = time.split(":").map(Number);
   return hours * 60 + minutes;
 }
 
@@ -19,13 +19,13 @@ function checkCollision(schedule1, schedule2) {
 
 const localeWeekDaysCache = {};
 
-function getLocaleWeekDays(locale = 'en') {
+function getLocaleWeekDays(locale = "en") {
   if (localeWeekDaysCache[locale]) {
     return localeWeekDaysCache[locale];
   }
 
   const localeDays = [...Array(7).keys()].map((dayIndex) =>
-    new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(
+    new Intl.DateTimeFormat(locale, { weekday: "short" }).format(
       new Date(Date.UTC(2021, 5, dayIndex + 6))
     )
   );
@@ -41,7 +41,7 @@ function getLocaleWeekDays(locale = 'en') {
   return result;
 }
 
-function getScheduleMap(schedule, weekDaysLocalized, locale = 'en') {
+function getScheduleMap(schedule, weekDaysLocalized, locale = "en") {
   let weekDays = weekDaysLocalized;
 
   if (!weekDays) {
@@ -65,11 +65,12 @@ function getScheduleArray(
   schedule,
   weekDaysLocalized,
   weekDaysAbbreviationsLocalized,
-  locale = 'en'
+  locale = "en"
 ) {
   const weekDays = weekDaysLocalized || getLocaleWeekDays(locale).weekDays;
   const weekDaysAbbreviations =
-    weekDaysAbbreviationsLocalized || getLocaleWeekDays(locale).weekDaysAbbreviations;
+    weekDaysAbbreviationsLocalized ||
+    getLocaleWeekDays(locale).weekDaysAbbreviations;
 
   const scheduleMap = getScheduleMap(schedule, weekDays, locale);
 
@@ -81,11 +82,13 @@ function getScheduleArray(
   };
 
   return Object.entries(scheduleMap).map(([key, days]) => {
-    const [start, end] = key.split('-');
-    const sortedDays = days.sort((a, b) => weekDays.indexOf(a) - weekDays.indexOf(b));
+    const [start, end] = key.split("-");
+    const sortedDays = days.sort(
+      (a, b) => weekDays.indexOf(a) - weekDays.indexOf(b)
+    );
     const daysAbbreviated = sortedDays.map((day) => weekDaysAbbreviations[day]);
 
-    let daysStr = '';
+    let daysStr = "";
     let lastDayIndex = -2;
     let tempArray = [];
 
@@ -106,13 +109,13 @@ function getScheduleArray(
       daysStr += formatDaysString(tempArray);
     }
 
-    daysStr = daysStr.endsWith(', ') ? daysStr.slice(0, -2) : daysStr;
+    daysStr = daysStr.endsWith(", ") ? daysStr.slice(0, -2) : daysStr;
 
     return `${daysStr}, ${start}-${end}`;
   });
 }
 
-const transformData = (dataClasses, locale = 'en') => {
+const transformData = (dataClasses, locale = "en") => {
   let hasCollisions = false;
   const { weekDays, weekDaysAbbreviations } = getLocaleWeekDays(locale);
 
@@ -133,7 +136,12 @@ const transformData = (dataClasses, locale = 'en') => {
 
   const data = dataClasses.map((item, index, array) => {
     const collideWith = getCollisions(array, item, index);
-    const scheduleArray = getScheduleArray(item.schedule, weekDays, weekDaysAbbreviations, locale);
+    const scheduleArray = getScheduleArray(
+      item.schedule,
+      weekDays,
+      weekDaysAbbreviations,
+      locale
+    );
 
     return {
       value: item?.id,

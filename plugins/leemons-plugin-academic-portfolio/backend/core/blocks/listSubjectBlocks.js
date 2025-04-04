@@ -1,6 +1,6 @@
-const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
+const { mongoDBPaginate } = require("@leemons/mongodb-helpers");
 
-const { getProgramCustomNomenclature } = require('../programs');
+const { getProgramCustomNomenclature } = require("../programs");
 
 async function listSubjectBlocks({ page, size, subjectId, ctx }) {
   const dbData = await mongoDBPaginate({

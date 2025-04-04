@@ -2,29 +2,34 @@ async function listBlocksBySubjectRequest({ subjectId, page, size }) {
   return leemons.api(
     `v1/academic-portfolio/block/by-subject/${subjectId}?page=${page}&size=${size}`,
     {
-      method: 'GET',
+      method: "GET",
     }
   );
 }
 
 async function createBlockRequest(body) {
-  return leemons.api('v1/academic-portfolio/block', {
-    method: 'POST',
+  return leemons.api("v1/academic-portfolio/block", {
+    method: "POST",
     body,
   });
 }
 
 async function updateBlockRequest(body) {
-  return leemons.api('v1/academic-portfolio/block', {
-    method: 'PUT',
+  return leemons.api("v1/academic-portfolio/block", {
+    method: "PUT",
     body,
   });
 }
 
 async function removeBlockRequest(id) {
   return leemons.api(`v1/academic-portfolio/block/${id}`, {
-    method: 'DELETE',
+    method: "DELETE",
   });
 }
 
-export { listBlocksBySubjectRequest, createBlockRequest, updateBlockRequest, removeBlockRequest };
+export {
+  listBlocksBySubjectRequest,
+  createBlockRequest,
+  updateBlockRequest,
+  removeBlockRequest,
+};

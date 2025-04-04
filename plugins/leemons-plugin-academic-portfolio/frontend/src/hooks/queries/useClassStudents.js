@@ -1,7 +1,7 @@
-import { classByIdsRequest } from '@academic-portfolio/request';
-import { useVariantForQueryKey } from '@common/queries';
-import { useQuery } from '@tanstack/react-query';
-import { getClassStudentsKey } from '../keys/classStudents';
+import { classByIdsRequest } from "@academic-portfolio/request";
+import { useVariantForQueryKey } from "@common/queries";
+import { useQuery } from "@tanstack/react-query";
+import { getClassStudentsKey } from "../keys/classStudents";
 
 // TODO: Implement function to only get students from a class in backend, this is a temporary solution as changes in backend must be avoided right now
 export default function useClassStudents({ classId, options }) {
@@ -14,7 +14,7 @@ export default function useClassStudents({ classId, options }) {
   };
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'frequently',
+    modificationTrend: "frequently",
   });
 
   return useQuery({

@@ -3,27 +3,29 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMongoDBMixin, mongoose } = require("@leemons/mongodb");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
 
 const {
   setProfiles,
   getProfiles,
   setActiveProvider,
   getActiveProvider,
-} = require('../core/settings');
-const { getServiceModels } = require('../models');
+} = require("../core/settings");
+const { getServiceModels } = require("../models");
 
-const restActions = require('./rest/settings.rest');
+const restActions = require("./rest/settings.rest");
 
-const menuBuilderEnableMenuItem = 'menu-builder.menuItem.enable';
+const menuBuilderEnableMenuItem = "menu-builder.menuItem.enable";
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'academic-portfolio.settings',
+  name: "academic-portfolio.settings",
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
@@ -49,10 +51,16 @@ module.exports = {
     enableAllMenuItems: {
       handler(ctx) {
         return Promise.all([
-          ctx.tx.call(menuBuilderEnableMenuItem, { key: ctx.prefixPN('programs') }),
-          ctx.tx.call(menuBuilderEnableMenuItem, { key: ctx.prefixPN('profiles') }),
-          ctx.tx.call(menuBuilderEnableMenuItem, { key: ctx.prefixPN('subjects') }),
-          ctx.tx.call(menuBuilderEnableMenuItem, { key: ctx.prefixPN('tree') }),
+          ctx.tx.call(menuBuilderEnableMenuItem, {
+            key: ctx.prefixPN("programs"),
+          }),
+          ctx.tx.call(menuBuilderEnableMenuItem, {
+            key: ctx.prefixPN("profiles"),
+          }),
+          ctx.tx.call(menuBuilderEnableMenuItem, {
+            key: ctx.prefixPN("subjects"),
+          }),
+          ctx.tx.call(menuBuilderEnableMenuItem, { key: ctx.prefixPN("tree") }),
         ]);
       },
     },

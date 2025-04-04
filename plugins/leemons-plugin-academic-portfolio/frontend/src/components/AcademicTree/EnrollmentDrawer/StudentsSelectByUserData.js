@@ -1,9 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Stack, Box, ActionButton } from '@bubbles-ui/components';
-import { SelectUserAgent } from '@users/components';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import StudentsTable from '../SubjectView/StudentsTable';
+import React from "react";
+import PropTypes from "prop-types";
+import { Stack, Box, ActionButton } from "@bubbles-ui/components";
+import { SelectUserAgent } from "@users/components";
+import { DeleteBinIcon } from "@bubbles-ui/icons/solid";
+import StudentsTable from "../SubjectView/StudentsTable";
 
 const StudentsSelectByUserData = ({
   centerId,
@@ -38,18 +38,22 @@ const StudentsSelectByUserData = ({
 
   return (
     <Stack direction="column">
-      <Box sx={{ padding: '24px' }}>
+      <Box sx={{ padding: "24px" }}>
         <SelectUserAgent
           centers={centerId}
           profiles={studentProfile}
           selectedUserAgents={[
-            ...previouslyEnrolledStudents.concat(selectedStudents).map(({ value }) => value),
+            ...previouslyEnrolledStudents
+              .concat(selectedStudents)
+              .map(({ value }) => value),
           ]}
           onChange={(studentToAdd) => handleOnAddStudent(studentToAdd)}
           returnItem
         />
       </Box>
-      {selectedStudents?.length > 0 && <StudentsTable data={selectedStudents} />}
+      {selectedStudents?.length > 0 && (
+        <StudentsTable data={selectedStudents} />
+      )}
     </Stack>
   );
 };

@@ -1,24 +1,30 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from "react";
 
-import { Table, Avatar, Stack, SearchInput, Loader } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import getUserFullName from '@users/helpers/getUserFullName';
-import { isEmpty } from 'lodash';
-import PropTypes from 'prop-types';
+import {
+  Table,
+  Avatar,
+  Stack,
+  SearchInput,
+  Loader,
+} from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import getUserFullName from "@users/helpers/getUserFullName";
+import { isEmpty } from "lodash";
+import PropTypes from "prop-types";
 
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
 
 function useFilters() {
-  const [query, setQuery] = useState('');
-  const [status, setStatus] = useState('all');
+  const [query, setQuery] = useState("");
+  const [status, setStatus] = useState("all");
 
   return [
     { query, status },
     (field, value) => {
-      if (field === 'query') {
+      if (field === "query") {
         setQuery(value);
       }
-      if (field === 'status') {
+      if (field === "status") {
         setStatus(value);
       }
     },
@@ -29,10 +35,13 @@ function useFilteredStudents({ students = [], filters }) {
   const normalize = (str) =>
     str
       ?.toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '');
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
 
-  const normalizedQuery = useMemo(() => normalize(filters?.query), [filters?.query]);
+  const normalizedQuery = useMemo(
+    () => normalize(filters?.query),
+    [filters?.query]
+  );
 
   return useMemo(
     () =>
@@ -48,31 +57,33 @@ function useFilteredStudents({ students = [], filters }) {
 
 // Data should contain actions ;)
 const StudentsTable = ({ data, showSearchBar, checkBoxColumn, isLoading }) => {
-  const [t] = useTranslateLoader(prefixPN('tree_page.studentsTable'));
+  const [t] = useTranslateLoader(prefixPN("tree_page.studentsTable"));
   const [filters, onFilterChange] = useFilters();
   const filteredStudents = useFilteredStudents({ students: data, filters });
 
   const tableColumns = useMemo(() => {
     let columns = [
       {
-        Header: ' ',
-        accessor: 'avatar',
+        Header: " ",
+        accessor: "avatar",
         Cell: ({ value, row }) => {
-          const fullName = getUserFullName(row.original, { singleSurname: true });
+          const fullName = getUserFullName(row.original, {
+            singleSurname: true,
+          });
           return <Avatar image={value} fullName={fullName} />;
         },
       },
       {
-        Header: t('surnames'),
-        accessor: 'surnames',
+        Header: t("surnames"),
+        accessor: "surnames",
       },
       {
-        Header: t('name'),
-        accessor: 'name',
+        Header: t("name"),
+        accessor: "name",
       },
       {
-        Header: t('email'),
-        accessor: 'email',
+        Header: t("email"),
+        accessor: "email",
       },
       /*
       {
@@ -83,8 +94,8 @@ const StudentsTable = ({ data, showSearchBar, checkBoxColumn, isLoading }) => {
       },
       */
       {
-        Header: ' ',
-        accessor: 'actions',
+        Header: " ",
+        accessor: "actions",
       },
     ];
     if (!isEmpty(checkBoxColumn)) {
@@ -98,9 +109,9 @@ const StudentsTable = ({ data, showSearchBar, checkBoxColumn, isLoading }) => {
     <Stack direction="column" spacing={4}>
       {showSearchBar && (
         <SearchInput
-          placeholder={t('searchBarPlaceholder')}
+          placeholder={t("searchBarPlaceholder")}
           value={filters?.query}
-          onChange={(value) => onFilterChange('query', value)}
+          onChange={(value) => onFilterChange("query", value)}
         />
       )}
       <Table columns={tableColumns} data={filteredStudents} />

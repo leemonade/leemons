@@ -1,7 +1,7 @@
-import React, { useCallback, useState } from 'react';
-import PropTypes from 'prop-types';
-import { cloneDeep, find, findIndex, isFunction } from 'lodash';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useCallback, useState } from "react";
+import PropTypes from "prop-types";
+import { cloneDeep, find, findIndex, isFunction } from "lodash";
+import { Controller, useForm } from "react-hook-form";
 import {
   Box,
   Button,
@@ -15,9 +15,9 @@ import {
   TableInput,
   Text,
   TextInput,
-} from '@bubbles-ui/components';
-import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import { SetupSubjectsStyles } from './SetupSubjects.styles';
+} from "@bubbles-ui/components";
+import { ChevLeftIcon } from "@bubbles-ui/icons/outline";
+import { SetupSubjectsStyles } from "./SetupSubjects.styles";
 
 export const SETUP_SUBJECTS_DEFAULT_PROPS = {
   sharedData: {},
@@ -54,7 +54,7 @@ const SetupSubjects = ({
   let firstDigitOptions = cloneDeep(_firstDigitOptions);
 
   if (sharedData.maxNumberOfCourses <= 1) {
-    const index = findIndex(firstDigitOptions, { value: 'course' });
+    const index = findIndex(firstDigitOptions, { value: "course" });
     if (index >= 0) {
       firstDigitOptions.splice(index, 1);
     }
@@ -71,32 +71,46 @@ const SetupSubjects = ({
     ...sharedData,
   };
 
-  const [subjectsFirstDigit, setSubjectsFirstDigit] = useState(defaultValues.subjectsFirstDigit);
-  const [subjectsDigits, setSubjectsDigits] = useState(defaultValues.subjectsDigits);
+  const [subjectsFirstDigit, setSubjectsFirstDigit] = useState(
+    defaultValues.subjectsFirstDigit
+  );
+  const [subjectsDigits, setSubjectsDigits] = useState(
+    defaultValues.subjectsDigits
+  );
   const [allSubjectsSameDuration, setAllSubjectsSameDuration] = useState(
     defaultValues.allSubjectsSameDuration
   );
-  const [haveKnowledge, setHaveKnowledge] = useState(defaultValues.haveKnowledge);
-  const [customSubstages, setCustomSubstages] = useState(defaultValues.customSubstages);
+  const [haveKnowledge, setHaveKnowledge] = useState(
+    defaultValues.haveKnowledge
+  );
+  const [customSubstages, setCustomSubstages] = useState(
+    defaultValues.customSubstages
+  );
 
   const { classes, cx } = SetupSubjectsStyles({});
 
   const generateSubjectsID = useCallback(() => {
-    if (!subjectsDigits) return '';
+    if (!subjectsDigits) return "";
     const subjectsID = [];
     const numberOfCourses = sharedData?.maxNumberOfCourses;
 
-    for (let currentNumber = 1; currentNumber <= numberOfCourses; currentNumber++) {
-      const firstNumber = subjectsFirstDigit !== 'none' ? currentNumber : '';
+    for (
+      let currentNumber = 1;
+      currentNumber <= numberOfCourses;
+      currentNumber++
+    ) {
+      const firstNumber = subjectsFirstDigit !== "none" ? currentNumber : "";
       subjectsID.push(
         <Box key={`k-${currentNumber}`} className={classes.subjectID}>
-          <Text size="md">{`${firstNumber}${'0'.repeat(
+          <Text size="md">{`${firstNumber}${"0".repeat(
             subjectsDigits - 1
-          )}1-${firstNumber}${'9'.repeat(subjectsDigits)}`}</Text>
+          )}1-${firstNumber}${"9".repeat(subjectsDigits)}`}</Text>
         </Box>
       );
       if (currentNumber < numberOfCourses) {
-        subjectsID.push(<Divider key={`d-${currentNumber}`} orientation="vertical" />);
+        subjectsID.push(
+          <Divider key={`d-${currentNumber}`} orientation="vertical" />
+        );
       }
     }
     return subjectsID;
@@ -109,7 +123,7 @@ const SetupSubjects = ({
     formState: { errors },
   } = useForm({ defaultValues });
 
-  const haveSubstagesPerCourse = watch('haveSubstagesPerCourse');
+  const haveSubstagesPerCourse = watch("haveSubstagesPerCourse");
 
   const handleOnNext = (e) => {
     const data = { ...sharedData, ...e, customSubstages };
@@ -123,7 +137,10 @@ const SetupSubjects = ({
         {false ? (
           <>
             {!!haveSubstagesPerCourse && (
-              <ContextContainer title={labels.title} subtitle={labels.standardDuration}>
+              <ContextContainer
+                title={labels.title}
+                subtitle={labels.standardDuration}
+              >
                 <Controller
                   name="allSubjectsSameDuration"
                   control={control}
@@ -148,32 +165,37 @@ const SetupSubjects = ({
                     columns={[
                       {
                         Header: labels.periodName,
-                        accessor: 'name',
+                        accessor: "name",
                         input: {
                           node: <TextInput />,
                           rules: {
-                            required: errorMessages?.periodName?.required || 'Required field',
+                            required:
+                              errorMessages?.periodName?.required ||
+                              "Required field",
                           },
                         },
                       },
                       {
                         Header: labels.numOfPeriods,
-                        accessor: 'number',
+                        accessor: "number",
                         input: {
                           node: <NumberInput />,
                           rules: {
-                            required: errorMessages?.numOfPeriods?.required || 'Required field',
+                            required:
+                              errorMessages?.numOfPeriods?.required ||
+                              "Required field",
                           },
                         },
                       },
                       {
                         Header: labels.substagesFrequency,
-                        accessor: 'frequency',
+                        accessor: "frequency",
                         input: {
                           node: <Select />,
                           rules: {
                             required:
-                              errorMessages?.substagesFrequency?.required || 'Required field',
+                              errorMessages?.substagesFrequency?.required ||
+                              "Required field",
                           },
                           data: frequencyOptions,
                         },
@@ -267,7 +289,7 @@ const SetupSubjects = ({
               )}
             />
             <Box className={classes.mathSymbol}>
-              <Text color={'primary'} size={'xl'}>
+              <Text color={"primary"} size={"xl"}>
                 +
               </Text>
             </Box>
@@ -290,7 +312,7 @@ const SetupSubjects = ({
               )}
             />
             <Box className={classes.mathSymbol}>
-              <Text color={'primary'} size={'xl'}>
+              <Text color={"primary"} size={"xl"}>
                 =
               </Text>
             </Box>

@@ -3,40 +3,43 @@ async function listKnowledgeAreas({ page, size, center }) {
 
   return leemons.api(`v1/academic-portfolio/knowledges?${queryParams}`, {
     allAgents: true,
-    method: 'GET',
+    method: "GET",
   });
 }
 
 async function createKnowledgeArea(body) {
-  return leemons.api('v1/academic-portfolio/knowledges', {
+  return leemons.api("v1/academic-portfolio/knowledges", {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body,
   });
 }
 
 async function updateKnowledgeArea(body) {
-  return leemons.api('v1/academic-portfolio/knowledges', {
+  return leemons.api("v1/academic-portfolio/knowledges", {
     allAgents: true,
-    method: 'PUT',
+    method: "PUT",
     body,
   });
 }
 
 async function deleteKnowledgeArea({ knowledgeAreaId, soft }) {
   const queryParams = new URLSearchParams();
-  if (soft) queryParams.append('soft', 'true');
+  if (soft) queryParams.append("soft", "true");
 
-  return leemons.api(`v1/academic-portfolio/knowledges/${knowledgeAreaId}?${queryParams}`, {
-    allAgents: true,
-    method: 'DELETE',
-  });
+  return leemons.api(
+    `v1/academic-portfolio/knowledges/${knowledgeAreaId}?${queryParams}`,
+    {
+      allAgents: true,
+      method: "DELETE",
+    }
+  );
 }
 
 async function getKnowledgeArea(knowledgeAreaId) {
   return leemons.api(`v1/academic-portfolio/knowledges/${knowledgeAreaId}`, {
     allAgents: true,
-    method: 'GET',
+    method: "GET",
   });
 }
 export {

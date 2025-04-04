@@ -1,9 +1,11 @@
-import { useUserProfile } from '@users/hooks';
-import useAcademicProfiles from './useAcademicProfiles';
+import { useUserProfile } from "@users/hooks";
+import useAcademicProfiles from "./useAcademicProfiles";
 
 export default function useIsTeacher() {
-  const { teacher, isLoading: academicProfilesAreLoading } = useAcademicProfiles();
-  const { data: userProfile, isLoading: userProfileIsLoading } = useUserProfile();
+  const { teacher, isLoading: academicProfilesAreLoading } =
+    useAcademicProfiles();
+  const { data: userProfile, isLoading: userProfileIsLoading } =
+    useUserProfile();
 
   if (academicProfilesAreLoading || userProfileIsLoading) {
     return null;

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { capitalize, flatten, forEach, isArray, map, noop } from 'lodash';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { capitalize, flatten, forEach, isArray, map, noop } from "lodash";
+import { Controller, useForm } from "react-hook-form";
 import {
   Badge,
   Box,
@@ -15,9 +15,9 @@ import {
   Switch,
   TableInput,
   TextInput,
-} from '@bubbles-ui/components';
-import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { SetupCoursesStyles } from './SetupCourses.styles';
+} from "@bubbles-ui/components";
+import { ChevLeftIcon, ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { SetupCoursesStyles } from "./SetupCourses.styles";
 
 export const SETUP_COURSES_DEFAULT_PROPS = {
   sharedData: {},
@@ -37,18 +37,18 @@ export const SETUP_COURSES_PROP_TYPES = {
 
 const resets = {
   haveSubstagesPerCourse: [
-    'substagesFrequency',
-    'numberOfSubstages',
-    'useDefaultSubstagesName',
-    'maxSubstageAbbreviation',
-    'maxSubstageAbbreviationIsOnlyNumbers',
-    'customSubstages',
-    'substages',
+    "substagesFrequency",
+    "numberOfSubstages",
+    "useDefaultSubstagesName",
+    "maxSubstageAbbreviation",
+    "maxSubstageAbbreviationIsOnlyNumbers",
+    "customSubstages",
+    "substages",
   ],
   useDefaultSubstagesName: [
-    'maxSubstageAbbreviation',
-    'maxSubstageAbbreviationIsOnlyNumbers',
-    'substages',
+    "maxSubstageAbbreviation",
+    "maxSubstageAbbreviationIsOnlyNumbers",
+    "substages",
   ],
 };
 
@@ -86,13 +86,16 @@ const SetupCourses = ({
   const [maxSubstageAbbreviation, setMaxSubstageAbbreviation] = useState(
     defaultValues.maxSubstageAbbreviation
   );
-  const [maxSubstageAbbreviationIsOnlyNumbers, setMaxSubstageAbbreviationIsOnlyNumbers] = useState(
-    defaultValues.maxSubstageAbbreviationIsOnlyNumbers
-  );
+  const [
+    maxSubstageAbbreviationIsOnlyNumbers,
+    setMaxSubstageAbbreviationIsOnlyNumbers,
+  ] = useState(defaultValues.maxSubstageAbbreviationIsOnlyNumbers);
   const [substagesFrequencyLabel, setSubstagesFrequencyLabel] = useState(
     frequencyOptions[0]?.label
   );
-  const [numberOfSubstages, setNumberOfSubstages] = useState(defaultValues.numberOfSubstages);
+  const [numberOfSubstages, setNumberOfSubstages] = useState(
+    defaultValues.numberOfSubstages
+  );
 
   const {
     watch,
@@ -103,15 +106,18 @@ const SetupCourses = ({
     setValue,
   } = useForm({ defaultValues });
 
-  const onlyOneCourse = watch('onlyOneCourse');
-  const maxNumberOfCourses = watch('maxNumberOfCourses') || 2;
-  const haveSubstagesPerCourse = watch('haveSubstagesPerCourse');
-  const abbrevationOnlyNumbers = watch('maxSubstageAbbreviationIsOnlyNumbers');
-  const haveCycles = watch('haveCycles');
-  const cycles = watch('cycles');
-  const substagesFrequencyValue = watch('substagesFrequency');
+  const onlyOneCourse = watch("onlyOneCourse");
+  const maxNumberOfCourses = watch("maxNumberOfCourses") || 2;
+  const haveSubstagesPerCourse = watch("haveSubstagesPerCourse");
+  const abbrevationOnlyNumbers = watch("maxSubstageAbbreviationIsOnlyNumbers");
+  const haveCycles = watch("haveCycles");
+  const cycles = watch("cycles");
+  const substagesFrequencyValue = watch("substagesFrequency");
 
-  const { classes } = SetupCoursesStyles({ onlyOneCourse }, { name: 'SetupCourses' });
+  const { classes } = SetupCoursesStyles(
+    { onlyOneCourse },
+    { name: "SetupCourses" }
+  );
 
   function getArrayOfNumbersCourses() {
     return map([...Array(maxNumberOfCourses).keys()], (a) => a + 1);
@@ -136,12 +142,12 @@ const SetupCourses = ({
           });
         }
       });
-      setValue('cycles', finalCycles);
+      setValue("cycles", finalCycles);
     }
   }, [maxNumberOfCourses]);
 
   const coursesData = React.useMemo(() => {
-    const usedCourses = flatten(map(cycles, 'courses'));
+    const usedCourses = flatten(map(cycles, "courses"));
     const result = [];
     forEach(getArrayOfNumbersCourses(), (index) => {
       if (!usedCourses.includes(index)) {
@@ -156,12 +162,18 @@ const SetupCourses = ({
 
   useEffect(() => {
     const subscription = watch((formData, event) => {
-      if (event.name === 'haveSubstagesPerCourse' && !formData.haveSubstagesPerCourse) {
+      if (
+        event.name === "haveSubstagesPerCourse" &&
+        !formData.haveSubstagesPerCourse
+      ) {
         forEach(resets.haveSubstagesPerCourse, (reset) => {
           unregister(reset);
         });
       }
-      if (event.name === 'useDefaultSubstagesName' && formData.useDefaultSubstagesName) {
+      if (
+        event.name === "useDefaultSubstagesName" &&
+        formData.useDefaultSubstagesName
+      ) {
         forEach(resets.useDefaultSubstagesName, (reset) => {
           unregister(reset);
         });
@@ -173,12 +185,14 @@ const SetupCourses = ({
   const getSubstageAbbr = (currentSubstage) => {
     let substageAbbr = `${currentSubstage}`;
     substageAbbr = substageAbbr.padStart(
-      maxSubstageAbbreviationIsOnlyNumbers ? maxSubstageAbbreviation : maxSubstageAbbreviation - 1,
-      '0'
+      maxSubstageAbbreviationIsOnlyNumbers
+        ? maxSubstageAbbreviation
+        : maxSubstageAbbreviation - 1,
+      "0"
     );
     substageAbbr =
       (maxSubstageAbbreviationIsOnlyNumbers
-        ? ''
+        ? ""
         : substagesFrequencyValue.charAt(0).toUpperCase()) + substageAbbr;
 
     return substageAbbr;
@@ -186,7 +200,11 @@ const SetupCourses = ({
 
   function getSubstages() {
     const substages = [];
-    for (let currentSubstage = 0; currentSubstage < numberOfSubstages; currentSubstage++) {
+    for (
+      let currentSubstage = 0;
+      currentSubstage < numberOfSubstages;
+      currentSubstage++
+    ) {
       const defaultValue = getSubstageAbbr(currentSubstage + 1);
       // const substageName = `${capitalize(substagesFrequency)} ${currentSubstage + 1}`;
       const substageKey = `substages.${currentSubstage}`;
@@ -199,12 +217,18 @@ const SetupCourses = ({
             name={substageName}
             control={control}
             rules={{
-              required: errorMessages.useDefaultSubstagesName?.required || 'Required Field',
+              required:
+                errorMessages.useDefaultSubstagesName?.required ||
+                "Required Field",
             }}
             render={({ field }) => (
               <TextInput
                 label={`${capitalize(substagesFrequencyLabel)}`}
-                error={isArray(errors.substages) ? errors.substages[currentSubstage]?.name : null}
+                error={
+                  isArray(errors.substages)
+                    ? errors.substages[currentSubstage]?.name
+                    : null
+                }
                 required
                 disabled={!editable}
                 {...field}
@@ -217,13 +241,16 @@ const SetupCourses = ({
             rules={{
               validate: (value) => {
                 if (abbrevationOnlyNumbers && !/^\d+$/.test(value)) {
-                  return errorMessages.abbrevationOnlyNumbers || 'Only numbers allowed';
+                  return (
+                    errorMessages.abbrevationOnlyNumbers ||
+                    "Only numbers allowed"
+                  );
                 }
 
                 if (value.length > maxSubstageAbbreviation) {
                   return errorMessages.maximunSubstageAbbreviation
                     ? errorMessages.maximunSubstageAbbreviation.replace(
-                        '{n}',
+                        "{n}",
                         maxSubstageAbbreviation
                       )
                     : `Maximum ${maxSubstageAbbreviation} characters`;
@@ -239,7 +266,9 @@ const SetupCourses = ({
                 value={value}
                 onChange={onChange}
                 error={
-                  isArray(errors.substages) ? errors.substages[currentSubstage]?.abbreviation : null
+                  isArray(errors.substages)
+                    ? errors.substages[currentSubstage]?.abbreviation
+                    : null
                 }
                 required
                 disabled={!editable}
@@ -271,7 +300,7 @@ const SetupCourses = ({
 
   useEffect(() => {
     if (maxNumberOfCourses === 1 && !onlyOneCourse) {
-      setValue('onlyOneCourse', true);
+      setValue("onlyOneCourse", true);
     }
   }, [maxNumberOfCourses, onlyOneCourse]);
 
@@ -280,7 +309,7 @@ const SetupCourses = ({
       columns: [
         {
           Header: labels.cycleName,
-          accessor: 'name',
+          accessor: "name",
           input: {
             node: <TextInput required />,
             rules: { required: labels.cycleNameRequired },
@@ -288,7 +317,7 @@ const SetupCourses = ({
         },
         {
           Header: labels.cycleCourses,
-          accessor: 'courses',
+          accessor: "courses",
           input: {
             node: <MultiSelect data={coursesData} />,
             rules: { required: labels.cycleCoursesRequired },
@@ -329,11 +358,11 @@ const SetupCourses = ({
                   checked={value}
                   onChange={(e) => {
                     onChange(e);
-                    setValue('maxNumberOfCourses', e ? 1 : 2);
-                    setValue('courseCredits', 0);
-                    setValue('moreThanOneAcademicYear', false);
-                    setValue('haveCycles', false);
-                    setValue('cycles', []);
+                    setValue("maxNumberOfCourses", e ? 1 : 2);
+                    setValue("courseCredits", 0);
+                    setValue("moreThanOneAcademicYear", false);
+                    setValue("haveCycles", false);
+                    setValue("cycles", []);
                   }}
                   disabled={!editable}
                   {...field}
@@ -453,9 +482,9 @@ const SetupCourses = ({
                 onChange={() => {
                   field.onChange(!field.value);
                   if (field.value) {
-                    setValue('customSubstages', []);
-                    setValue('numberOfSubstages', 1);
-                    setValue('substagesFrequency', frequencyOptions[0]?.value);
+                    setValue("customSubstages", []);
+                    setValue("numberOfSubstages", 1);
+                    setValue("substagesFrequency", frequencyOptions[0]?.value);
                     setNumberOfSubstages(1);
                   }
                 }}
@@ -471,7 +500,9 @@ const SetupCourses = ({
                 <Controller
                   name="substagesFrequency"
                   control={control}
-                  rules={{ required: errorMessages.substagesFrequency?.required }}
+                  rules={{
+                    required: errorMessages.substagesFrequency?.required,
+                  }}
                   render={({ field: { onChange, value, ...field } }) => (
                     <Select
                       label={labels.substagesFrequency}
@@ -480,7 +511,8 @@ const SetupCourses = ({
                       onChange={(e) => {
                         onChange(e);
                         setSubstagesFrequencyLabel(
-                          frequencyOptions.find((option) => option.value === e).label
+                          frequencyOptions.find((option) => option.value === e)
+                            .label
                         );
                       }}
                       required
@@ -493,7 +525,9 @@ const SetupCourses = ({
                 <Controller
                   name="numberOfSubstages"
                   control={control}
-                  rules={{ required: errorMessages.numberOfSubstages?.required }}
+                  rules={{
+                    required: errorMessages.numberOfSubstages?.required,
+                  }}
                   render={({ field: { onChange, value, ...field } }) => (
                     <NumberInput
                       label={labels.numberOfSubstages}
@@ -553,10 +587,16 @@ const SetupCourses = ({
                             name="maxSubstageAbbreviationIsOnlyNumbers"
                             control={control}
                             render={({
-                              field: { onChange: onFieldChange, value: fieldValue, ...fieldProps },
+                              field: {
+                                onChange: onFieldChange,
+                                value: fieldValue,
+                                ...fieldProps
+                              },
                             }) => (
                               <Checkbox
-                                label={labels.maxSubstageAbbreviationIsOnlyNumbers}
+                                label={
+                                  labels.maxSubstageAbbreviationIsOnlyNumbers
+                                }
                                 {...fieldProps}
                                 onChange={(e) => {
                                   onFieldChange(e);
@@ -591,7 +631,10 @@ const SetupCourses = ({
             </Button>
           </Box>
           <Box>
-            <Button type="submit" rightIcon={<ChevRightIcon height={20} width={20} />}>
+            <Button
+              type="submit"
+              rightIcon={<ChevRightIcon height={20} width={20} />}
+            >
               {labels.buttonNext}
             </Button>
           </Box>

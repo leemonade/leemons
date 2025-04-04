@@ -1,27 +1,37 @@
-import { Controller } from 'react-hook-form';
+import { Controller } from "react-hook-form";
 
-import { ContextContainer, Stack } from '@bubbles-ui/components';
-import { addErrorAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import { SelectUserAgent } from '@users/components';
-import PropTypes from 'prop-types';
+import { ContextContainer, Stack } from "@bubbles-ui/components";
+import { addErrorAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import { SelectUserAgent } from "@users/components";
+import PropTypes from "prop-types";
 
-import { PROGRAM_STAFF_ROLES } from '@academic-portfolio/config/constants';
-import { useAcademicProfiles } from '@academic-portfolio/hooks';
-import { validateStaffChangeRequest } from '@academic-portfolio/request';
+import { PROGRAM_STAFF_ROLES } from "@academic-portfolio/config/constants";
+import { useAcademicProfiles } from "@academic-portfolio/hooks";
+import { validateStaffChangeRequest } from "@academic-portfolio/request";
 
 const activeRoles = [PROGRAM_STAFF_ROLES.PROGRAM_COORDINATOR];
 
-const ProgramStaff = ({ control, localizations, isEditing, programId, loading, setLoading }) => {
+const ProgramStaff = ({
+  control,
+  localizations,
+  isEditing,
+  programId,
+  loading,
+  setLoading,
+}) => {
   const profiles = useAcademicProfiles();
 
   const { openConfirmationModal } = useLayout();
 
   async function handleStaffChangeValidation(role, value) {
     try {
-      await validateStaffChangeRequest({ program: programId, staff: { [role]: value } });
+      await validateStaffChangeRequest({
+        program: programId,
+        staff: { [role]: value },
+      });
     } catch (error) {
-      if (error.code === 'VALIDATE_STAFF_CHANGE_DENIED') {
+      if (error.code === "VALIDATE_STAFF_CHANGE_DENIED") {
         addErrorAlert(`${localizations?.staffChangeDenied}: ${error.message}`);
         return false;
       }
@@ -62,7 +72,7 @@ const ProgramStaff = ({ control, localizations, isEditing, programId, loading, s
             control={control}
             render={({ field }) => (
               <SelectUserAgent
-                label={localizations?.roles?.[role] || ''}
+                label={localizations?.roles?.[role] || ""}
                 {...field}
                 profiles={[profiles.teacher]}
                 maxSelectedValues={1}

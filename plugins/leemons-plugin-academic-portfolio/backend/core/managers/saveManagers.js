@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function saveManagers({ userAgents, type, relationship, ctx }) {
   await ctx.tx.db.Managers.deleteMany({ type, relationship });

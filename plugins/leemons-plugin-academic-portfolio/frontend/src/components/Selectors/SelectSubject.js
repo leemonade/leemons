@@ -1,9 +1,9 @@
-import { useState, useEffect, forwardRef } from 'react';
+import { useState, useEffect, forwardRef } from "react";
 
-import { Select } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+import { Select } from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
-import { listSubjectsRequest } from '../../request';
+import { listSubjectsRequest } from "../../request";
 
 const SelectSubject = forwardRef(
   (
@@ -25,7 +25,7 @@ const SelectSubject = forwardRef(
     const [value, setValue] = useState(userValue);
 
     useEffect(() => {
-      if (typeof onData === 'function') {
+      if (typeof onData === "function") {
         onData(data);
       }
     }, [data]);
@@ -40,7 +40,7 @@ const SelectSubject = forwardRef(
 
         // EN: Notify the parent component about the change
         // ES: Notificar al componente padre sobre el cambio
-        if (typeof onChange === 'function') {
+        if (typeof onChange === "function") {
           onChange(newValue);
         }
       }
@@ -102,7 +102,7 @@ const SelectSubject = forwardRef(
   }
 );
 
-SelectSubject.displayName = '@academic-portfolio/components/SelectSubject';
+SelectSubject.displayName = "@academic-portfolio/components/SelectSubject";
 SelectSubject.propTypes = {
   program: PropTypes.string,
   course: PropTypes.string,

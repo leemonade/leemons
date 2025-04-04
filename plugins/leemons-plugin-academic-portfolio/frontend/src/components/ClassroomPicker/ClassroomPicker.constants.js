@@ -1,4 +1,4 @@
-import propTypes from 'prop-types';
+import propTypes from "prop-types";
 
 export const CLASSROOM_PICKER_PROP_TYPES = {
   programId: propTypes.string,
@@ -10,7 +10,7 @@ export const CLASSROOM_PICKER_PROP_TYPES = {
 };
 
 export const CLASSROOM_PICKER_DEFAULT_PROPS = {
-  programId: '',
+  programId: "",
   value: [],
   data: null,
   allowCollisions: false,

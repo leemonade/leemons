@@ -1,30 +1,30 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('@leemons/mongodb-helpers');
+const { getKeyValueModel } = require("@leemons/mongodb-helpers");
 
-const { subjectsModel } = require('./subjects');
+const { subjectsModel } = require("./subjects");
 
 const models = {
   subjectsModel,
-  ...require('./class-course'),
-  ...require('./class-group'),
-  ...require('./class-knowledges'),
-  ...require('./class-student'),
-  ...require('./class-substage'),
-  ...require('./class-teacher'),
-  ...require('./class'),
-  ...require('./configs'),
-  ...require('./cycles'),
-  ...require('./groups'),
-  ...require('./knowledgeAreas'),
-  ...require('./managers'),
-  ...require('./program-center'),
-  ...require('./program-subjects-credits'),
-  ...require('./programs'),
-  ...require('./settings'),
-  ...require('./subject-types'),
-  ...require('./blocks'),
-  ...require('./program-staff'),
+  ...require("./class-course"),
+  ...require("./class-group"),
+  ...require("./class-knowledges"),
+  ...require("./class-student"),
+  ...require("./class-substage"),
+  ...require("./class-teacher"),
+  ...require("./class"),
+  ...require("./configs"),
+  ...require("./cycles"),
+  ...require("./groups"),
+  ...require("./knowledgeAreas"),
+  ...require("./managers"),
+  ...require("./program-center"),
+  ...require("./program-subjects-credits"),
+  ...require("./programs"),
+  ...require("./settings"),
+  ...require("./subject-types"),
+  ...require("./blocks"),
+  ...require("./program-staff"),
 };
 
 module.exports = {
@@ -51,7 +51,9 @@ module.exports = {
       Subjects: models.subjectsModel,
       Blocks: models.blocksModel,
       ProgramStaff: models.programStaffModel,
-      KeyValue: getKeyValueModel({ modelName: 'v1::academic-portfolio_KeyValue' }),
+      KeyValue: getKeyValueModel({
+        modelName: "v1::academic-portfolio_KeyValue",
+      }),
     };
   },
 };

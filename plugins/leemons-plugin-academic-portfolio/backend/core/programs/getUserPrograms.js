@@ -1,19 +1,22 @@
-const { keyBy, map } = require('lodash');
+const { keyBy, map } = require("lodash");
 
-const { getUserProgramIds } = require('./getUserProgramIds');
+const { getUserProgramIds } = require("./getUserProgramIds");
 
 async function getUserPrograms({ ctx }) {
   const programIds = await getUserProgramIds({ ctx });
   const programs = await ctx.tx.db.Programs.find({ id: programIds }).lean();
 
-  const images = await ctx.tx.call('leebrary.assets.getByIds', {
-    ids: map(programs, 'image'),
+  const images = await ctx.tx.call("leebrary.assets.getByIds", {
+    ids: map(programs, "image"),
     withFiles: true,
   });
 
-  const imagesById = keyBy(images, 'id');
+  const imagesById = keyBy(images, "id");
 
-  return programs.map((program) => ({ ...program, image: imagesById[program.image] }));
+  return programs.map((program) => ({
+    ...program,
+    image: imagesById[program.image],
+  }));
 }
 
 module.exports = { getUserPrograms };

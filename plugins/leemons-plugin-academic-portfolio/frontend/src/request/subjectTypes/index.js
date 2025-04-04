@@ -3,33 +3,41 @@ async function listSubjectTypes({ page, size, center }) {
 
   return leemons.api(`v1/academic-portfolio/subjectType?${queryParams}`, {
     allAgents: true,
-    method: 'GET',
+    method: "GET",
   });
 }
 
 async function createSubjectType(body) {
-  return leemons.api('v1/academic-portfolio/subjectType', {
+  return leemons.api("v1/academic-portfolio/subjectType", {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body,
   });
 }
 
 async function updateSubjectType(body) {
-  return leemons.api('v1/academic-portfolio/subjectType', {
+  return leemons.api("v1/academic-portfolio/subjectType", {
     allAgents: true,
-    method: 'PUT',
+    method: "PUT",
     body,
   });
 }
 
 async function deleteSubjectType({ subjectTypeId, soft }) {
   const queryParams = new URLSearchParams();
-  if (soft) queryParams.append('soft', 'true');
+  if (soft) queryParams.append("soft", "true");
 
-  return leemons.api(`v1/academic-portfolio/subjectType/${subjectTypeId}?${queryParams}`, {
-    allAgents: true,
-    method: 'DELETE',
-  });
+  return leemons.api(
+    `v1/academic-portfolio/subjectType/${subjectTypeId}?${queryParams}`,
+    {
+      allAgents: true,
+      method: "DELETE",
+    }
+  );
 }
-export { listSubjectTypes, createSubjectType, updateSubjectType, deleteSubjectType };
+export {
+  listSubjectTypes,
+  createSubjectType,
+  updateSubjectType,
+  deleteSubjectType,
+};

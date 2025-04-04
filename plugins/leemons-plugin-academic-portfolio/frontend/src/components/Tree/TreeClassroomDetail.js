@@ -9,16 +9,16 @@ import {
   Stack,
   TextInput,
   Title,
-} from '@bubbles-ui/components';
-import { DeleteBinIcon } from '@bubbles-ui/icons/outline';
-import { isValidHttpUrl, useStore } from '@common';
-import ImagePicker from '@leebrary/components/ImagePicker';
-import { ScheduleInput } from '@timetable/components';
-import { filter, find, map } from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
+} from "@bubbles-ui/components";
+import { DeleteBinIcon } from "@bubbles-ui/icons/outline";
+import { isValidHttpUrl, useStore } from "@common";
+import ImagePicker from "@leebrary/components/ImagePicker";
+import { ScheduleInput } from "@timetable/components";
+import { filter, find, map } from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useDeploymentConfig } from "@deployment-manager/hooks/useDeploymentConfig";
 
 const TreeClassroomDetail = ({
   messagesAddUsers,
@@ -38,7 +38,7 @@ const TreeClassroomDetail = ({
 }) => {
   const [store, render] = useStore({ students: [], tempGroups: [] });
   const deploymentConfig = useDeploymentConfig({
-    pluginName: 'academic-portfolio',
+    pluginName: "academic-portfolio",
     ignoreVersion: true,
   });
   const selects = React.useMemo(
@@ -53,7 +53,7 @@ const TreeClassroomDetail = ({
       })).concat(store.tempGroups),
 
       substages: map(program.substages, ({ name, abbreviation, id }) => ({
-        label: `${name}${abbreviation ? ` [${abbreviation}]` : ''}`,
+        label: `${name}${abbreviation ? ` [${abbreviation}]` : ""}`,
         value: id,
       })),
     }),
@@ -61,13 +61,17 @@ const TreeClassroomDetail = ({
   );
 
   function classForForm() {
-    const teacher = find(classe?.teachers, { type: 'main-teacher' });
-    const associateTeachers = filter(classe?.teachers, { type: 'associate-teacher' });
+    const teacher = find(classe?.teachers, { type: "main-teacher" });
+    const associateTeachers = filter(classe?.teachers, {
+      type: "associate-teacher",
+    });
     return {
       id: classe?.id,
-      course: program.moreThanOneAcademicYear ? map(classe?.courses, 'id') : classe?.courses?.id,
+      course: program.moreThanOneAcademicYear
+        ? map(classe?.courses, "id")
+        : classe?.courses?.id,
       knowledge: classe?.knowledges?.id,
-      substage: map(classe?.substages, 'id'),
+      substage: map(classe?.substages, "id"),
       group: classe?.groups?.id,
       color: classe?.color,
       seats: classe?.seats,
@@ -75,7 +79,9 @@ const TreeClassroomDetail = ({
       virtualUrl: classe?.virtualUrl,
       schedule: classe?.schedule ? { days: classe.schedule } : { days: [] },
       teacher: teacher ? teacher.teacher : null,
-      associateTeachers: associateTeachers ? map(associateTeachers, 'teacher') : null,
+      associateTeachers: associateTeachers
+        ? map(associateTeachers, "teacher")
+        : null,
     };
   }
 
@@ -102,7 +108,7 @@ const TreeClassroomDetail = ({
   }, [classe]);
 
   function beforeSave(data) {
-    const tempGroupsValues = map(store.tempGroups, 'value');
+    const tempGroupsValues = map(store.tempGroups, "value");
     const isNewGroup = tempGroupsValues.indexOf(data.group) >= 0;
     onSave({ ...data, isNewGroup });
   }
@@ -124,12 +130,12 @@ const TreeClassroomDetail = ({
                       message: (program.maxGroupAbbreviationIsOnlyNumbers
                         ? messages.groupNumbers
                         : messages.groupAny
-                      ).replace('{max}', program.maxGroupAbbreviation),
+                      ).replace("{max}", program.maxGroupAbbreviation),
                       value: new RegExp(
-                        `^(${program.maxGroupAbbreviationIsOnlyNumbers ? '[0-9]' : `\\S`}{${
+                        `^(${program.maxGroupAbbreviationIsOnlyNumbers ? "[0-9]" : `\\S`}{${
                           program.maxGroupAbbreviation
                         }}|lrn:.*)$`,
-                        'g'
+                        "g"
                       ),
                     },
                   }}
@@ -148,12 +154,14 @@ const TreeClassroomDetail = ({
                 />
               </Box>
             )}
-            {!(deploymentConfig?.deny?.others?.indexOf('classSeats') >= 0) ? (
+            {!(deploymentConfig?.deny?.others?.indexOf("classSeats") >= 0) ? (
               <Box>
                 <Controller
                   control={control}
                   name="seats"
-                  render={({ field }) => <NumberInput label={messages.seatsLabel} {...field} />}
+                  render={({ field }) => (
+                    <NumberInput label={messages.seatsLabel} {...field} />
+                  )}
                 />
               </Box>
             ) : null}
@@ -200,14 +208,19 @@ const TreeClassroomDetail = ({
                 control={control}
                 name="teacher"
                 render={({ field }) =>
-                  React.cloneElement(teacherSelect, { label: messages.teacherLabel, ...field })
+                  React.cloneElement(teacherSelect, {
+                    label: messages.teacherLabel,
+                    ...field,
+                  })
                 }
               />
             </Box>
           </Stack>
 
           {!(
-            deploymentConfig?.deny?.others?.indexOf('treeClassSecondTeacherAndImageFromForm') >= 0
+            deploymentConfig?.deny?.others?.indexOf(
+              "treeClassSecondTeacherAndImageFromForm"
+            ) >= 0
           ) ? (
             <>
               <Box>
@@ -245,7 +258,9 @@ const TreeClassroomDetail = ({
                 rules={{
                   validate: (value) => {
                     if (value) {
-                      return isValidHttpUrl(value) ? true : messages.notValidUrl;
+                      return isValidHttpUrl(value)
+                        ? true
+                        : messages.notValidUrl;
                     }
                     return true;
                   },
@@ -264,7 +279,9 @@ const TreeClassroomDetail = ({
               <Controller
                 control={control}
                 name="address"
-                render={({ field }) => <TextInput label={messages.addressLabel} {...field} />}
+                render={({ field }) => (
+                  <TextInput label={messages.addressLabel} {...field} />
+                )}
               />
             </Box>
           </Stack>
@@ -273,7 +290,9 @@ const TreeClassroomDetail = ({
             <Controller
               control={control}
               name="schedule"
-              render={({ field }) => <ScheduleInput label={messages.scheduleLabel} {...field} />}
+              render={({ field }) => (
+                <ScheduleInput label={messages.scheduleLabel} {...field} />
+              )}
             />
           </Box>
 
@@ -284,7 +303,9 @@ const TreeClassroomDetail = ({
               loading={removing}
               onClick={() => onRemoveClass(classe?.id)}
             >
-              {createMode ? messages.cancelClassroomButton : messages.removeClassroom}
+              {createMode
+                ? messages.cancelClassroomButton
+                : messages.removeClassroom}
             </Button>
             <Button loading={saving} type="submit">
               {messages.saveChanges}

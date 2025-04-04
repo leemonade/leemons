@@ -1,19 +1,26 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box } from '@bubbles-ui/components';
-import { HeaderDropdown } from '@bubbles-ui/leemons';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box } from "@bubbles-ui/components";
+import { HeaderDropdown } from "@bubbles-ui/leemons";
 
-import { useStore } from '@common';
-import _, { find, isNil, map, noop, sortBy } from 'lodash';
-import { getCentersWithToken, getSessionConfig, updateSessionConfig } from '@users/session';
-import { getUserProgramsRequest, listProgramsRequest } from '@academic-portfolio/request';
-import { useProgramBarSelectorStyles } from './ProgramBarSelector.styles';
+import { useStore } from "@common";
+import _, { find, isNil, map, noop, sortBy } from "lodash";
+import {
+  getCentersWithToken,
+  getSessionConfig,
+  updateSessionConfig,
+} from "@users/session";
+import {
+  getUserProgramsRequest,
+  listProgramsRequest,
+} from "@academic-portfolio/request";
+import { useProgramBarSelectorStyles } from "./ProgramBarSelector.styles";
 
 function prepareImageUrl(url) {
   if (!url) {
     return null;
   }
-  if (url.startsWith('http')) {
+  if (url.startsWith("http")) {
     return url;
   }
   return `${leemons.apiUrl}${url}`;
@@ -27,7 +34,10 @@ export function ProgramBarSelector({
   hideIcon = false,
   ...props
 }) {
-  const { classes } = useProgramBarSelectorStyles({}, { name: 'ProgramBarSelector' });
+  const { classes } = useProgramBarSelectorStyles(
+    {},
+    { name: "ProgramBarSelector" }
+  );
   const [store, render] = useStore({
     loading: true,
   });
@@ -49,7 +59,11 @@ export function ProgramBarSelector({
     let _programs = [];
     if (isAdmin) {
       const centers = getCentersWithToken();
-      const response = await listProgramsRequest({ page: 0, size: 9999, center: centers[0]?.id });
+      const response = await listProgramsRequest({
+        page: 0,
+        size: 9999,
+        center: centers[0]?.id,
+      });
       _programs = response.data?.items || [];
     } else {
       const { programs } = await getUserProgramsRequest();
@@ -86,7 +100,7 @@ export function ProgramBarSelector({
     store.loading = false;
     render();
   }
-  const programsSortedByCreation = sortBy(store.programsSelect, 'createdAt');
+  const programsSortedByCreation = sortBy(store.programsSelect, "createdAt");
 
   React.useEffect(() => {
     init();
@@ -110,7 +124,7 @@ export function ProgramBarSelector({
 
   return (
     <Box className={classes.root}>
-      <Box style={{ maxWidth: 320, flex: 'none' }}>
+      <Box style={{ maxWidth: 320, flex: "none" }}>
         <HeaderDropdown
           value={store.selectedProgram}
           data={programsSortedByCreation}

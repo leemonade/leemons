@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -49,11 +49,17 @@ const schema = new mongoose.Schema(
 schema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
 schema.index({ program: 1, deploymentID: 1, isDeleted: 1 });
 schema.index({ abbreviation: 1, program: 1, deploymentID: 1, isDeleted: 1 });
-schema.index({ id: 1, abbreviation: 1, program: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({
+  id: 1,
+  abbreviation: 1,
+  program: 1,
+  deploymentID: 1,
+  isDeleted: 1,
+});
 
 const knowledgeAreasModel = newModel(
   mongoose.connection,
-  'v1::academic-portfolio_KnowledgeAreas',
+  "v1::academic-portfolio_KnowledgeAreas",
   schema
 );
 

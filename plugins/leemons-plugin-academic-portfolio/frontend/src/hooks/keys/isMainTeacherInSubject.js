@@ -1,7 +1,7 @@
 export const allIsMainTeacherInSubjectKeys = [
   {
-    plugin: 'plugin.academic-portfolio',
-    scope: 'is-main-teacher-in-subject',
+    plugin: "plugin.academic-portfolio",
+    scope: "is-main-teacher-in-subject",
   },
 ];
 

@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function duplicateSubjectTypeByIds({ ids, duplications: dup = {}, ctx }) {
   const duplications = dup;
@@ -6,7 +6,7 @@ async function duplicateSubjectTypeByIds({ ids, duplications: dup = {}, ctx }) {
   const subjectTypes = await ctx.tx.db.SubjectTypes.find({
     id: _.isArray(ids) ? ids : [ids],
   }).lean();
-  await ctx.tx.emit('before-duplicate-subject-types', { subjectTypes });
+  await ctx.tx.emit("before-duplicate-subject-types", { subjectTypes });
   // ES: Empezamos la duplicación de los items
   // EN: Start the duplication of the items
   const newSubjectTypes = await Promise.all(
@@ -27,7 +27,7 @@ async function duplicateSubjectTypeByIds({ ids, duplications: dup = {}, ctx }) {
   _.forEach(subjectTypes, ({ id }, index) => {
     duplications.subjectTypes[id] = newSubjectTypes[index];
   });
-  await ctx.tx.emit('after-duplicate-subject-types', {
+  await ctx.tx.emit("after-duplicate-subject-types", {
     subjectTypes,
     duplications: duplications.subjectTypes,
   });

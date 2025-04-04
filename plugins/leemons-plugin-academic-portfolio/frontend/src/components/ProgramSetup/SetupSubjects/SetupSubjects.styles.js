@@ -1,4 +1,4 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 export const SetupSubjectsStyles = createStyles((theme, {}) => {
   return {
@@ -7,11 +7,11 @@ export const SetupSubjectsStyles = createStyles((theme, {}) => {
       paddingTop: theme.spacing[3],
     },
     subjectID: {
-      whiteSpace: 'nowrap',
+      whiteSpace: "nowrap",
     },
     subjectsID: {
-      display: 'flex',
-      flexWrap: 'wrap',
+      display: "flex",
+      flexWrap: "wrap",
       gap: theme.spacing[2],
       paddingTop: theme.spacing[4],
     },

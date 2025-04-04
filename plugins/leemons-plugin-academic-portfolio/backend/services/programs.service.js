@@ -3,33 +3,37 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
 const {
   LeemonsMiddlewaresMixin,
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getAddCustomTranslationKeysAction } = require('@leemons/multilanguage');
+} = require("@leemons/middlewares");
+const { LeemonsMongoDBMixin, mongoose } = require("@leemons/mongodb");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
+const { getAddCustomTranslationKeysAction } = require("@leemons/multilanguage");
 
-const { addProgram } = require('../core/programs/addProgram');
-const { getProgramCenters } = require('../core/programs/getProgramCenters');
-const { getProgramEvaluationSystem } = require('../core/programs/getProgramEvaluationSystem');
-const { getUserPrograms } = require('../core/programs/getUserPrograms');
-const { getUsersInProgram } = require('../core/programs/getUsersInProgram');
-const { isUserInsideProgram } = require('../core/programs/isUserInsideProgram');
-const { listPrograms } = require('../core/programs/listPrograms');
-const { programsByCenters } = require('../core/programs/programsByCenters');
-const { programsByIds } = require('../core/programs/programsByIds');
-const { getServiceModels } = require('../models');
+const { addProgram } = require("../core/programs/addProgram");
+const { getProgramCenters } = require("../core/programs/getProgramCenters");
+const {
+  getProgramEvaluationSystem,
+} = require("../core/programs/getProgramEvaluationSystem");
+const { getUserPrograms } = require("../core/programs/getUserPrograms");
+const { getUsersInProgram } = require("../core/programs/getUsersInProgram");
+const { isUserInsideProgram } = require("../core/programs/isUserInsideProgram");
+const { listPrograms } = require("../core/programs/listPrograms");
+const { programsByCenters } = require("../core/programs/programsByCenters");
+const { programsByIds } = require("../core/programs/programsByIds");
+const { getServiceModels } = require("../models");
 
-const restActions = require('./rest/programs.rest');
+const restActions = require("./rest/programs.rest");
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'academic-portfolio.programs',
+  name: "academic-portfolio.programs",
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
@@ -47,8 +51,8 @@ module.exports = {
         LeemonsMiddlewareAuthenticated(),
         LeemonsMiddlewareNecessaryPermits({
           allowedPermissions: {
-            'academic-portfolio.programs': {
-              actions: ['admin', 'create', 'update'],
+            "academic-portfolio.programs": {
+              actions: ["admin", "create", "update"],
             },
           },
         }),

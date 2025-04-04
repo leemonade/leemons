@@ -1,16 +1,21 @@
-const { addSubject } = require('./addSubject');
-const { deleteSubjectWithClasses } = require('./deleteSubjectWithClasses');
-const { getSubjectCredits, getSubjectsCredits } = require('./getSubjectCredits');
-const { getTeachersBySubjects } = require('./getTeachersBySubjects');
-const { getUserSubjectIds } = require('./getUserSubjectIds');
-const { getUserSubjects } = require('./getUserSubjects');
-const { listSubjectCreditsForProgram } = require('./listSubjectCreditsForProgram');
-const { listSubjects } = require('./listSubjects');
-const { setSubjectCredits } = require('./setSubjectCredits');
-const { subjectByIds } = require('./subjectByIds');
-const { subjectNeedCourseForAdd } = require('./subjectNeedCourseForAdd');
-const teacherFunctions = require('./teacher');
-const { updateSubject } = require('./updateSubject');
+const { addSubject } = require("./addSubject");
+const { deleteSubjectWithClasses } = require("./deleteSubjectWithClasses");
+const {
+  getSubjectCredits,
+  getSubjectsCredits,
+} = require("./getSubjectCredits");
+const { getTeachersBySubjects } = require("./getTeachersBySubjects");
+const { getUserSubjectIds } = require("./getUserSubjectIds");
+const { getUserSubjects } = require("./getUserSubjects");
+const {
+  listSubjectCreditsForProgram,
+} = require("./listSubjectCreditsForProgram");
+const { listSubjects } = require("./listSubjects");
+const { setSubjectCredits } = require("./setSubjectCredits");
+const { subjectByIds } = require("./subjectByIds");
+const { subjectNeedCourseForAdd } = require("./subjectNeedCourseForAdd");
+const teacherFunctions = require("./teacher");
+const { updateSubject } = require("./updateSubject");
 
 module.exports = {
   addSubject,

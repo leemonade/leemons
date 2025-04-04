@@ -1,9 +1,11 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function duplicateKnowledgeByIds({ ids, duplications: dup = {}, ctx }) {
   const duplications = dup;
-  const knowledges = await ctx.tx.db.KnowledgeAreas.find({ id: _.isArray(ids) ? ids : [ids] }).lean();
-  await ctx.tx.emit('before-duplicate-knowledges', { knowledges });
+  const knowledges = await ctx.tx.db.KnowledgeAreas.find({
+    id: _.isArray(ids) ? ids : [ids],
+  }).lean();
+  await ctx.tx.emit("before-duplicate-knowledges", { knowledges });
 
   // ES: Empezamos la duplicación de los items
   // EN: Start the duplication of the items
@@ -25,7 +27,7 @@ async function duplicateKnowledgeByIds({ ids, duplications: dup = {}, ctx }) {
   _.forEach(knowledges, ({ id }, index) => {
     duplications.knowledges[id] = newKnowledges[index];
   });
-  await ctx.tx.emit('after-duplicate-knowledges', {
+  await ctx.tx.emit("after-duplicate-knowledges", {
     knowledges,
     duplications: duplications.knowledges,
   });

@@ -1,4 +1,4 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 const EnrollmentTabStyles = createStyles((theme) => ({
   root: {},
@@ -6,10 +6,10 @@ const EnrollmentTabStyles = createStyles((theme) => ({
     // gap: 25,
   },
   mainTeacher: {
-    width: '30%',
+    width: "30%",
   },
   inlineInputs: {
-    width: '50%',
+    width: "50%",
   },
 }));
 

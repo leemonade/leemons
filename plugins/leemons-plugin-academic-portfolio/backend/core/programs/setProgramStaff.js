@@ -11,7 +11,9 @@
 async function setProgramStaff({ programId, staff, ctx }) {
   const deletePromises = Object.entries(staff)
     .filter(([, value]) => value === null)
-    .map(([role]) => ctx.tx.db.ProgramStaff.deleteOne({ program: programId, role }));
+    .map(([role]) =>
+      ctx.tx.db.ProgramStaff.deleteOne({ program: programId, role })
+    );
 
   const updatePromises = Object.entries(staff)
     .filter(([, value]) => value)
@@ -40,7 +42,7 @@ async function setProgramStaff({ programId, staff, ctx }) {
     {}
   );
 
-  await ctx.tx.emit('after-set-program-staff', {
+  await ctx.tx.emit("after-set-program-staff", {
     programId,
     staff: staffByRoles,
   });

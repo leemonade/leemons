@@ -1,5 +1,7 @@
 async function changeClassSubstageBySubject({ subjectId, substage, ctx }) {
-  const classes = await ctx.tx.db.Class.find({ subject: subjectId }).select(['id']).lean();
+  const classes = await ctx.tx.db.Class.find({ subject: subjectId })
+    .select(["id"])
+    .lean();
 
   const updatePromises = [];
   classes.forEach((c) => {

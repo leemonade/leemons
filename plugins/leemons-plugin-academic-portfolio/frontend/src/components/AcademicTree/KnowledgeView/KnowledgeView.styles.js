@@ -1,21 +1,21 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 const KnowledgeViewStyles = createStyles((theme) => ({
   root: {},
-  content: { backgroundColor: 'white', padding: 24 },
+  content: { backgroundColor: "white", padding: 24 },
   courseData: {
     marginBottom: 16,
   },
   responsable: {
-    width: '50%',
+    width: "50%",
   },
   responsableLink: {
-    color: 'black',
+    color: "black",
     marginLeft: 8,
   },
   responsableContainer: {
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
     gap: 0,
   },
   titleContainer: {

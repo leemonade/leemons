@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { compact, isString, uniq } from 'lodash';
+import React from "react";
+import PropTypes from "prop-types";
+import { compact, isString, uniq } from "lodash";
 import {
   Box,
   Tabs,
@@ -9,14 +9,14 @@ import {
   TabPanel,
   LoadingOverlay,
   ContextContainer,
-} from '@bubbles-ui/components';
-import useUserDetails from '@users/hooks/useUserDetails';
-import useUserEnrollments from '@academic-portfolio/hooks/useUserEnrollments';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { useUserAgentsInfo } from '@users/hooks';
-import { USER_DETAIL_VIEWS } from '@users/components/UserDetail';
-import { SubjectWithClassroomDisplay } from './components/SubjectWithClassroomDisplay';
+} from "@bubbles-ui/components";
+import useUserDetails from "@users/hooks/useUserDetails";
+import useUserEnrollments from "@academic-portfolio/hooks/useUserEnrollments";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
+import { useUserAgentsInfo } from "@users/hooks";
+import { USER_DETAIL_VIEWS } from "@users/components/UserDetail";
+import { SubjectWithClassroomDisplay } from "./components/SubjectWithClassroomDisplay";
 
 function filterUserAgentIds(userAgents, sysProfileFilter) {
   return userAgents
@@ -31,10 +31,10 @@ function getTeacherFullname(teacherId, teachers) {
   const parts = compact([item?.user?.surnames, item?.user?.name]);
 
   if (parts.length > 1) {
-    return parts.join(', ');
+    return parts.join(", ");
   }
 
-  return parts.length === 1 ? parts[0] : '';
+  return parts.length === 1 ? parts[0] : "";
 }
 
 function getTeachersIds(enrollments = []) {
@@ -56,8 +56,8 @@ function EnrollUserSummary({
   viewMode,
   isMyProfile,
 }) {
-  const [t] = useTranslateLoader(prefixPN('subject_page'));
-  const [tCommon] = useTranslateLoader(prefixPN('common'));
+  const [t] = useTranslateLoader(prefixPN("subject_page"));
+  const [tCommon] = useTranslateLoader(prefixPN("common"));
 
   const enableUserDetails = !!userId;
   const { data: userDetails, isLoading: userDetailsLoading } = useUserDetails({
@@ -66,12 +66,18 @@ function EnrollUserSummary({
   });
 
   const enableEnrollments = !!center?.id && !!userDetails?.userAgents?.length;
-  const { data: enrollments, isLoading: enrollmentsLoading } = useUserEnrollments({
-    centerId: center?.id,
-    userAgentIds: filterUserAgentIds(userDetails?.userAgents ?? [], sysProfileFilter),
-    contactUserAgentId: isString(contactUserAgentId) ? contactUserAgentId : undefined,
-    enabled: enableEnrollments,
-  });
+  const { data: enrollments, isLoading: enrollmentsLoading } =
+    useUserEnrollments({
+      centerId: center?.id,
+      userAgentIds: filterUserAgentIds(
+        userDetails?.userAgents ?? [],
+        sysProfileFilter
+      ),
+      contactUserAgentId: isString(contactUserAgentId)
+        ? contactUserAgentId
+        : undefined,
+      enabled: enableEnrollments,
+    });
 
   const enableTeachersInfo = enrollments?.length > 0;
   const { data: teachers, isLoading: teachersInfoLoading } = useUserAgentsInfo(
@@ -96,7 +102,9 @@ function EnrollUserSummary({
   if (
     isStudent &&
     contactUserAgentId &&
-    userDetails?.userAgents?.map((userAgent) => userAgent.id).includes(contactUserAgentId)
+    userDetails?.userAgents
+      ?.map((userAgent) => userAgent.id)
+      .includes(contactUserAgentId)
   ) {
     return null;
   }
@@ -106,24 +114,28 @@ function EnrollUserSummary({
   }
 
   return (
-    <ContextContainer title={isTeacher ? tCommon('classes') : tCommon('enrollments')}>
+    <ContextContainer
+      title={isTeacher ? tCommon("classes") : tCommon("enrollments")}
+    >
       <Tabs>
         {enrollments?.map((program) => (
           <TabPanel key={program.id} label={program.name}>
             <Stack direction="column" spacing={4} fullWidth>
               <Stack
                 justifyContent="space-between"
-                sx={(theme) => ({ marginTop: theme?.other?.global?.spacing?.gap?.lg })}
+                sx={(theme) => ({
+                  marginTop: theme?.other?.global?.spacing?.gap?.lg,
+                })}
               >
                 <Stack spacing={2}>
                   <Text strong color="primary">
-                    {t('subjects.subject')}
+                    {t("subjects.subject")}
                   </Text>
-                  <Text>{t('subjects.group')}</Text>
+                  <Text>{t("subjects.group")}</Text>
                 </Stack>
                 {!isStudent && !isTeacherSelfProfileView && (
                   <Text strong color="primary">
-                    {t('subjects.teacher')}
+                    {t("subjects.teacher")}
                   </Text>
                 )}
               </Stack>
@@ -137,7 +149,10 @@ function EnrollUserSummary({
                   <Box>
                     {!isStudent && !isTeacherSelfProfileView && (
                       <Text>
-                        {getTeacherFullname(subject.classes[0]?.teachers[0]?.teacher, teachers)}
+                        {getTeacherFullname(
+                          subject.classes[0]?.teachers[0]?.teacher,
+                          teachers
+                        )}
                       </Text>
                     )}
                   </Box>

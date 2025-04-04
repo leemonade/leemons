@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useEffect, useMemo, useState } from "react";
+import PropTypes from "prop-types";
+import { Controller, useForm } from "react-hook-form";
 import {
   TextInput,
   Button,
@@ -9,8 +9,8 @@ import {
   TableInput,
   MultiSelect,
   InputWrapper,
-} from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
+} from "@bubbles-ui/components";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
 
 // HELPERS
 const areCoursesAdjacent = (selectedCourses) => {
@@ -26,7 +26,12 @@ const areCoursesAdjacent = (selectedCourses) => {
 // * Cycles shape: { courses, name }
 // En el backend cycles espera un array de ciclos con un valor courses: un array de strings indicando el indíce del curs
 
-const CyclesSetup = ({ onChange, value, programCourses = [], localizations = {} }) => {
+const CyclesSetup = ({
+  onChange,
+  value,
+  programCourses = [],
+  localizations = {},
+}) => {
   const [cyclesData, setCyclesData] = useState([]);
 
   const formLabels = useMemo(() => {
@@ -44,19 +49,19 @@ const CyclesSetup = ({ onChange, value, programCourses = [], localizations = {} 
   );
 
   const form = useForm({
-    mode: 'onChange',
+    mode: "onChange",
     resolver: async (data) => {
       const errors = {};
       const values = {};
 
       if (!Array.isArray(data.cycleCourses) || !data.cycleCourses.length) {
         errors.cycleCourses = {
-          type: 'required',
+          type: "required",
           message: formLabels?.coursesRequired,
         };
       } else if (!areCoursesAdjacent(data.cycleCourses)) {
         errors.cycleCourses = {
-          type: 'adjacency',
+          type: "adjacency",
           message: formLabels?.coursesMustBeAdjacent,
         };
       } else {
@@ -65,7 +70,7 @@ const CyclesSetup = ({ onChange, value, programCourses = [], localizations = {} 
 
       if (!data.cycleName) {
         errors.cycleName = {
-          type: 'required',
+          type: "required",
           message: `${formLabels?.cycleName} es requerido`,
         };
       } else {
@@ -104,7 +109,9 @@ const CyclesSetup = ({ onChange, value, programCourses = [], localizations = {} 
       const updatedCyclesData = cyclesData
         .map((cycle) => {
           const updatedCourses = cycle?.courses?.filter((courseIndex) =>
-            programCourses.some((programCourse) => programCourse.index === courseIndex)
+            programCourses.some(
+              (programCourse) => programCourse.index === courseIndex
+            )
           );
           return { ...cycle, courses: updatedCourses };
         })
@@ -119,8 +126,8 @@ const CyclesSetup = ({ onChange, value, programCourses = [], localizations = {} 
   const onAdd = async () => {
     const isValid = await form.trigger();
     if (isValid) {
-      const name = form.getValues('cycleName');
-      let courses = form.getValues('cycleCourses');
+      const name = form.getValues("cycleName");
+      let courses = form.getValues("cycleCourses");
       const index = cyclesData.length + 1;
       courses = courses.sort((a, b) => a - b);
 
@@ -130,14 +137,15 @@ const CyclesSetup = ({ onChange, value, programCourses = [], localizations = {} 
 
   const tableInputColumns = [
     {
-      accessor: 'index',
+      accessor: "index",
     },
     {
-      accessor: 'name',
+      accessor: "name",
     },
     {
-      accessor: 'courses',
-      valueRender: (coursesValue) => coursesValue?.map((index) => `${index}º`).join(', '),
+      accessor: "courses",
+      valueRender: (coursesValue) =>
+        coursesValue?.map((index) => `${index}º`).join(", "),
     },
   ];
 
@@ -154,7 +162,9 @@ const CyclesSetup = ({ onChange, value, programCourses = [], localizations = {} 
                 required
                 label={formLabels?.cycleName}
                 error={
-                  fieldState.error ? fieldState.error.message : form.formState.errors.cycleName
+                  fieldState.error
+                    ? fieldState.error.message
+                    : form.formState.errors.cycleName
                 }
                 placeholder={formLabels?.addTextPlaceholder}
               />
@@ -173,7 +183,9 @@ const CyclesSetup = ({ onChange, value, programCourses = [], localizations = {} 
                 placeholder={formLabels?.selectCoursesPlacehodler}
                 data={coursesData}
                 error={
-                  fieldState.error ? fieldState.error.message : form.formState.errors.cycleCourses
+                  fieldState.error
+                    ? fieldState.error.message
+                    : form.formState.errors.cycleCourses
                 }
               />
             )}
@@ -202,7 +214,10 @@ const CyclesSetup = ({ onChange, value, programCourses = [], localizations = {} 
             data={cyclesData}
             showHeaders={false}
             onChange={(data) => {
-              const updateObject = [...data].map((item, i) => ({ ...item, index: i + 1 }));
+              const updateObject = [...data].map((item, i) => ({
+                ...item,
+                index: i + 1,
+              }));
               onChange(updateObject);
             }}
             // onRemove={onRemove}

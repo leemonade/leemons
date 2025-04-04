@@ -1,6 +1,6 @@
-const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
-const _ = require('lodash');
-const { classByIds } = require('./classByIds');
+const { mongoDBPaginate } = require("@leemons/mongodb-helpers");
+const _ = require("lodash");
+const { classByIds } = require("./classByIds");
 
 async function listClasses({ page, size, program, query, options, ctx }) {
   const response = await mongoDBPaginate({
@@ -11,10 +11,10 @@ async function listClasses({ page, size, program, query, options, ctx }) {
     options,
   });
 
-  response.items = await classByIds({ ids: _.map(response.items, 'id'), ctx });
+  response.items = await classByIds({ ids: _.map(response.items, "id"), ctx });
 
   // Order by createdAt
-  response.items = _.orderBy(response.items, ['createdAt'], ['desc']);
+  response.items = _.orderBy(response.items, ["createdAt"], ["desc"]);
 
   return response;
 }

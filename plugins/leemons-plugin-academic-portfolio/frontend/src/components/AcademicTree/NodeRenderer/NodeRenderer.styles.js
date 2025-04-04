@@ -1,4 +1,4 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 const NodeRendererStyles = createStyles((theme, { depth, isActive }) => {
   const nodeActive = {
@@ -6,12 +6,12 @@ const NodeRendererStyles = createStyles((theme, { depth, isActive }) => {
     borderLeft: `2px solid ${theme.other.button.background.color.primary.default}`,
   };
   const nodeInactive = {
-    backgroundColor: 'transparent',
-    borderLeft: '2px solid transparent',
+    backgroundColor: "transparent",
+    borderLeft: "2px solid transparent",
   };
   return {
     node: {
-      display: 'flex',
+      display: "flex",
       paddingTop: 4,
       paddingBottom: 4,
       paddingRight: 8,
@@ -20,11 +20,11 @@ const NodeRendererStyles = createStyles((theme, { depth, isActive }) => {
       ...(isActive ? nodeActive : nodeInactive),
     },
     nodeText: {
-      cursor: 'pointer',
+      cursor: "pointer",
       ...theme.other.tree.content.typo,
     },
     icon: {
-      cursor: 'pointer',
+      cursor: "pointer",
       marginTop: 4,
     },
   };

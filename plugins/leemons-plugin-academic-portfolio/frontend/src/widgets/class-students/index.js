@@ -1,15 +1,20 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Title, UserDisplayItem } from '@bubbles-ui/components';
-import { getLocalizations } from '@multilanguage/useTranslate';
-import { UserDetailDrawer } from '@users/components/UserDetailDrawer';
-import { getZoneRequest, ZoneWidgets } from '@widgets';
-import { USER_DETAIL_VIEWS } from '@users/components/UserDetail';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, Title, UserDisplayItem } from "@bubbles-ui/components";
+import { getLocalizations } from "@multilanguage/useTranslate";
+import { UserDetailDrawer } from "@users/components/UserDetailDrawer";
+import { getZoneRequest, ZoneWidgets } from "@widgets";
+import { USER_DETAIL_VIEWS } from "@users/components/UserDetail";
 
-const zoneKey = 'academic-portfolio.class.students';
+const zoneKey = "academic-portfolio.class.students";
 
-function ClassStudentsWidget({ classe, session, label: _label, widgetsLength }) {
+function ClassStudentsWidget({
+  classe,
+  session,
+  label: _label,
+  widgetsLength,
+}) {
   const [openedStudent, setOpenedStudent] = React.useState();
   const [label, setLabel] = React.useState();
   const [zone, setZone] = React.useState();
@@ -52,14 +57,16 @@ function ClassStudentsWidget({ classe, session, label: _label, widgetsLength }) 
       {widgetsLength === 1 && !!label && (
         <Box
           sx={(theme) => ({
-            display: 'flex',
+            display: "flex",
             paddingBottom: theme.spacing[4],
-            alignItems: 'center',
-            justifyContent: 'space-between',
+            alignItems: "center",
+            justifyContent: "space-between",
           })}
         >
           <Title order={4}>{label}</Title>
-          {zone?.widgetItems.length === 1 && <ZoneWidgets zone={zoneKey}>{widgets}</ZoneWidgets>}
+          {zone?.widgetItems.length === 1 && (
+            <ZoneWidgets zone={zoneKey}>{widgets}</ZoneWidgets>
+          )}
         </Box>
       )}
       {(zone?.widgetItems.length > 1 || widgetsLength > 1) && (
@@ -74,7 +81,7 @@ function ClassStudentsWidget({ classe, session, label: _label, widgetsLength }) 
       />
       {classe?.students.map((student) => (
         <UserDisplayItem
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: "pointer" }}
           onClick={() => openStudent(student.user.id)}
           key={student.id}
           {...student.user}

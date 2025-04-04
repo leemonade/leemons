@@ -1,4 +1,4 @@
-import { getFileUrl } from '@leebrary/helpers/prepareAsset';
+import { getFileUrl } from "@leebrary/helpers/prepareAsset";
 
 export function getClassImage(classe) {
   if (classe?.image?.cover) {

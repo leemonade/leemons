@@ -1,4 +1,4 @@
-const { isMainTeacherInSubject } = require('./isMainTeacherInSubject');
+const { isMainTeacherInSubject } = require("./isMainTeacherInSubject");
 
 module.exports = {
   isMainTeacherInSubject,

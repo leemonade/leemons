@@ -1,12 +1,16 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-async function duplicateSubjectCreditsBySubjectsIds({ subjectIds, duplications: dup = {}, ctx }) {
+async function duplicateSubjectCreditsBySubjectsIds({
+  subjectIds,
+  duplications: dup = {},
+  ctx,
+}) {
   const duplications = dup;
 
   const programSubjectCredits = await ctx.tx.db.ProgramSubjectsCredits.find({
     subject: subjectIds,
   }).lean();
-  await ctx.tx.emit('before-duplicate-program-subject-credits', {
+  await ctx.tx.emit("before-duplicate-program-subject-credits", {
     programSubjectCredits,
   });
 
@@ -15,7 +19,16 @@ async function duplicateSubjectCreditsBySubjectsIds({ subjectIds, duplications: 
   const newSubjectCredits = await Promise.all(
     _.map(
       programSubjectCredits,
-      ({ id, _id, __v, updatedAt, createdAt, internalId, compiledInternalId, ...item }) =>
+      ({
+        id,
+        _id,
+        __v,
+        updatedAt,
+        createdAt,
+        internalId,
+        compiledInternalId,
+        ...item
+      }) =>
         ctx.tx.db.ProgramSubjectsCredits.create({
           ...item,
           program: duplications.programs?.[item.program]
@@ -33,11 +46,12 @@ async function duplicateSubjectCreditsBySubjectsIds({ subjectIds, duplications: 
 
   // ES: Añadimos los items duplicados de tal forma que el indice es el id original y el valor es el nuevo item duplicado
   // EN: Add the duplicated items in such a way that the index is the original id and the value is the new duplicated item
-  if (!_.isObject(duplications.subjectCredits)) duplications.subjectCredits = {};
+  if (!_.isObject(duplications.subjectCredits))
+    duplications.subjectCredits = {};
   _.forEach(programSubjectCredits, ({ id }, index) => {
     duplications.subjectCredits[id] = newSubjectCredits[index];
   });
-  await ctx.tx.emit('after-duplicate-program-subject-credits', {
+  await ctx.tx.emit("after-duplicate-program-subject-credits", {
     programSubjectCredits,
     duplications: duplications.subjectCredits,
   });

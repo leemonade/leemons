@@ -1,6 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Stack, Title, Progress, createStyles } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import {
+  Box,
+  Stack,
+  Title,
+  Progress,
+  createStyles,
+} from "@bubbles-ui/components";
 
 const useProgressBarStyles = createStyles((theme) => ({
   bar: {
@@ -13,12 +19,12 @@ const useProgressBarStyles = createStyles((theme) => ({
 
 const useStyles = createStyles((theme) => ({
   container: {
-    width: '100%',
+    width: "100%",
     heigth: 250,
     padding: 10,
   },
   title: {
-    ...theme.other.global.content.typo.heading['xsm--semiBold'],
+    ...theme.other.global.content.typo.heading["xsm--semiBold"],
   },
   progressBox: {
     width: 284,
@@ -30,12 +36,23 @@ const LoadingFormState = ({ description, progress }) => {
   const { classes } = useStyles();
 
   return (
-    <Stack direction="column" fullWidth fullHeigth alignItems="center" justifyContent="center">
+    <Stack
+      direction="column"
+      fullWidth
+      fullHeigth
+      alignItems="center"
+      justifyContent="center"
+    >
       <Box noFlex classNames={classes.container}>
         <Stack direction="column" spacing={2} alignItems="center">
-          <Title className={classes.title}>{description || ''}</Title>
+          <Title className={classes.title}>{description || ""}</Title>
           <Box className={classes.progressBox}>
-            <Progress classNames={progressBarClasses} value={progress} size="xl" radius="xl" />
+            <Progress
+              classNames={progressBarClasses}
+              value={progress}
+              size="xl"
+              radius="xl"
+            />
           </Box>
         </Stack>
       </Box>

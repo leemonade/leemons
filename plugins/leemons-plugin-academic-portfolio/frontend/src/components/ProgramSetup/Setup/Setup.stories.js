@@ -1,25 +1,30 @@
-import React from 'react';
-import { Box } from '@bubbles-ui/components';
-import { Setup, SETUP_DEFAULT_PROPS } from './Setup';
+import React from "react";
+import { Box } from "@bubbles-ui/components";
+import { Setup, SETUP_DEFAULT_PROPS } from "./Setup";
 import {
   AcademicProgramSetupBasicData,
   AcademicProgramSetupCourses,
   AcademicProgramSetupSubjects,
-} from '../';
-import { BASIC_DATA, COURSES_DATA, INIT_VALUES, SUBJECTS_DATA } from '../mocks/data';
+} from "../";
+import {
+  BASIC_DATA,
+  COURSES_DATA,
+  INIT_VALUES,
+  SUBJECTS_DATA,
+} from "../mocks/data";
 
 export default {
-  title: 'leemons/AcademicPortfolio',
+  title: "leemons/AcademicPortfolio",
   parameters: {
     component: Setup,
     design: {
-      type: 'figma',
+      type: "figma",
     },
   },
   argTypes: {
-    onNext: { action: 'next' },
-    onPrev: { action: 'previous' },
-    onSave: { action: 'save' },
+    onNext: { action: "next" },
+    onPrev: { action: "previous" },
+    onSave: { action: "save" },
   },
 };
 
@@ -35,18 +40,18 @@ export const Playground = Template.bind({});
 
 Playground.args = {
   ...SETUP_DEFAULT_PROPS,
-  labels: { title: 'Setup', buttonSave: 'Save changes' },
+  labels: { title: "Setup", buttonSave: "Save changes" },
   data: [
     {
-      label: 'Basic data',
+      label: "Basic data",
       content: <AcademicProgramSetupBasicData {...BASIC_DATA} />,
     },
     {
-      label: 'Courses',
+      label: "Courses",
       content: <AcademicProgramSetupCourses {...COURSES_DATA} />,
     },
     {
-      label: 'Subjects',
+      label: "Subjects",
       content: <AcademicProgramSetupSubjects {...SUBJECTS_DATA} />,
     },
   ],

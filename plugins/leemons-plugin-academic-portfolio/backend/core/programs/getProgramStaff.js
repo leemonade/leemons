@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function getProgramStaffMany({ ids, ctx }) {
   const normalizedIds = Array.isArray(ids) ? ids : [ids];
@@ -19,4 +19,8 @@ const organizeProgramStaffByRoles = (programStaff) =>
     {}
   ) || {};
 
-module.exports = { getProgramStaff, getProgramStaffMany, organizeProgramStaffByRoles };
+module.exports = {
+  getProgramStaff,
+  getProgramStaffMany,
+  organizeProgramStaffByRoles,
+};

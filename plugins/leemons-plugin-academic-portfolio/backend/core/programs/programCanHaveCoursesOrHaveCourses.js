@@ -1,8 +1,8 @@
-const { getProgramCourses } = require('./getProgramCourses');
+const { getProgramCourses } = require("./getProgramCourses");
 
 async function programCanHaveCoursesOrHaveCourses({ id, ctx }) {
   const program = await ctx.tx.db.Programs.findOne({ id })
-    .select(['id', 'maxNumberOfCourses'])
+    .select(["id", "maxNumberOfCourses"])
     .lean();
   if (program.maxNumberOfCourses > 1) {
     return true;

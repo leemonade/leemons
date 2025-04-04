@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
 import {
   Box,
@@ -9,21 +9,23 @@ import {
   Loader,
   ImageLoader,
   ContextContainer,
-} from '@bubbles-ui/components';
-import { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { isArray } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { getFileUrl } from "@leebrary/helpers/prepareAsset";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { isArray } from "lodash";
+import PropTypes from "prop-types";
 
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
 
 const InfoTab = ({ subjectDetails }) => {
-  const [t] = useTranslateLoader(prefixPN('tree_page'));
+  const [t] = useTranslateLoader(prefixPN("tree_page"));
 
   const subjectHeaderData = useMemo(() => {
     const subjectData = {};
     const courses = isArray(subjectDetails?.classes[0]?.courses)
-      ? subjectDetails?.classes[0]?.courses.map((crs) => `${crs.index}º`).join(', ')
+      ? subjectDetails?.classes[0]?.courses
+          .map((crs) => `${crs.index}º`)
+          .join(", ")
       : `${subjectDetails?.classes[0]?.courses?.index}º`;
 
     subjectData.courses = courses;
@@ -35,7 +37,7 @@ const InfoTab = ({ subjectDetails }) => {
     if (groups?.length === 0) {
       groups = null;
     } else {
-      groups = groups?.sort().join(', ');
+      groups = groups?.sort().join(", ");
     }
     subjectData.groups = groups;
 
@@ -65,39 +67,39 @@ const InfoTab = ({ subjectDetails }) => {
   return (
     <>
       <ContextContainer>
-        <Title order={2}>{t('basicDataTitle')}</Title>
+        <Title order={2}>{t("basicDataTitle")}</Title>
         <Stack spacing={4}>
           {subjectDetails?.internalId && (
             <Box>
-              <Text strong>{`${t('idLabel')}: `}</Text>
+              <Text strong>{`${t("idLabel")}: `}</Text>
               <Text>{subjectDetails?.internalId}</Text>
             </Box>
           )}
           <Box>
-            <Text strong>{`${t('courseLabel')}: `}</Text>
+            <Text strong>{`${t("courseLabel")}: `}</Text>
             <Text>{subjectHeaderData?.courses}</Text>
           </Box>
           {subjectHeaderData?.groups && (
             <Box>
-              <Text strong>{`${t('groupLabel')}: `}</Text>
+              <Text strong>{`${t("groupLabel")}: `}</Text>
               <Text>{subjectHeaderData?.groups}</Text>
             </Box>
           )}
           {subjectHeaderData?.knowledgeAreas && (
             <Box>
-              <Text strong>{`${t('knowledgeLabel')}: `}</Text>
+              <Text strong>{`${t("knowledgeLabel")}: `}</Text>
               <Text>{subjectHeaderData?.knowledgeAreas}</Text>
             </Box>
           )}
           {subjectHeaderData?.subjectType?.length && (
             <Box>
-              <Text strong>{`${t('subjectTypeLabel')}: `}</Text>
+              <Text strong>{`${t("subjectTypeLabel")}: `}</Text>
               <Text>{subjectHeaderData?.subjectType}</Text>
             </Box>
           )}
           {subjectDetails?.credits && (
             <Box>
-              <Text strong>{`${t('creditsLabel')}: `}</Text>
+              <Text strong>{`${t("creditsLabel")}: `}</Text>
               <Text>{subjectDetails?.credits}</Text>
             </Box>
           )}
@@ -106,8 +108,8 @@ const InfoTab = ({ subjectDetails }) => {
 
       {subjectIcon && (
         <ContextContainer>
-          <Title>{t('icon')}</Title>
-          <Text>{t('iconDescription')}</Text>
+          <Title>{t("icon")}</Title>
+          <Text>{t("iconDescription")}</Text>
           <Stack>
             <Paper
               shadow="none"
@@ -115,21 +117,21 @@ const InfoTab = ({ subjectDetails }) => {
               style={{
                 minWidth: 282,
                 maxHeight: 108,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
               }}
             >
-              <Box style={{ display: 'flex', justifyContent: 'center' }}>
+              <Box style={{ display: "flex", justifyContent: "center" }}>
                 <Box
                   style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
                     backgroundColor: subjectDetails?.color,
                     width: 48,
                     height: 48,
-                    borderRadius: '50%',
+                    borderRadius: "50%",
                   }}
                 >
                   <ImageLoader src={subjectIcon} width={32} height={32} />
@@ -145,15 +147,15 @@ const InfoTab = ({ subjectDetails }) => {
 
       {cover && (
         <ContextContainer>
-          <Title>{t('image')}</Title>
-          <Text>{t('image')}</Text>
+          <Title>{t("image")}</Title>
+          <Text>{t("image")}</Text>
           <Stack>
             <Box
               style={{
                 borderRadius: 12,
                 backgroundImage: `url(${cover})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
+                backgroundSize: "cover",
+                backgroundPosition: "center",
                 width: 282,
                 height: 108,
               }}

@@ -1,29 +1,37 @@
-import { useNotifications } from '@bubbles-ui/notifications';
-import { SocketIoService } from '@mqtt-socket-io/service';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useQueryClient } from '@tanstack/react-query';
-import PropTypes from 'prop-types';
+import { useNotifications } from "@bubbles-ui/notifications";
+import { SocketIoService } from "@mqtt-socket-io/service";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useQueryClient } from "@tanstack/react-query";
+import PropTypes from "prop-types";
 
-import { SOCKET_EVENTS } from '@academic-portfolio/config/constants';
-import { GlobalContext, GlobalProvider } from '@academic-portfolio/context/global';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { getClassStudentsKey } from '@academic-portfolio/hooks/keys/classStudents';
-import { getProgramSubjectsKey } from '@academic-portfolio/hooks/keys/programSubjects';
+import { SOCKET_EVENTS } from "@academic-portfolio/config/constants";
+import {
+  GlobalContext,
+  GlobalProvider,
+} from "@academic-portfolio/context/global";
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
+import { getClassStudentsKey } from "@academic-portfolio/hooks/keys/classStudents";
+import { getProgramSubjectsKey } from "@academic-portfolio/hooks/keys/programSubjects";
 
 function getSeverity(status) {
-  if (status === 'completed') {
-    return 'success';
+  if (status === "completed") {
+    return "success";
   }
 
-  if (status === 'error') {
-    return 'error';
+  if (status === "error") {
+    return "error";
   }
 
-  return 'info';
+  return "info";
 }
 
 function getClassName(classData) {
-  return classData?.alias ?? classData?.classWithoutGroupId ?? classData?.classroomId ?? '-';
+  return (
+    classData?.alias ??
+    classData?.classWithoutGroupId ??
+    classData?.classroomId ??
+    "-"
+  );
 }
 
 function processNotification({
@@ -47,14 +55,14 @@ function processNotification({
     severity,
     loading: !isCompleted,
     title: t(titleKey, { className }),
-    message: severity === 'error' ? error : t(messageKey),
+    message: severity === "error" ? error : t(messageKey),
     autoClose: isCompleted ? 3000 : false,
     disallowClose: !isCompleted,
   });
 }
 
 export function Provider({ children }) {
-  const [t] = useTranslateLoader(prefixPN('socketEvents'));
+  const [t] = useTranslateLoader(prefixPN("socketEvents"));
   const notifications = useNotifications();
   const queryClient = useQueryClient();
 
@@ -65,7 +73,7 @@ export function Provider({ children }) {
     const { class: classData, status, message, error } = data ?? {};
 
     if (classData?.id) {
-      const isCompleted = status === 'completed';
+      const isCompleted = status === "completed";
 
       processNotification({
         t,
@@ -75,7 +83,7 @@ export function Provider({ children }) {
         isCompleted,
         notifications,
         class: classData,
-        eventName: 'CLASS_UPDATE',
+        eventName: "CLASS_UPDATE",
       });
 
       if (isCompleted) {
@@ -85,7 +93,7 @@ export function Provider({ children }) {
         queryClient.invalidateQueries(programSubjectsKey);
 
         const subjectDetailKey = [
-          'subjectDetail',
+          "subjectDetail",
           { subject: classData.subject?.id ?? classData.subject },
         ];
         queryClient.invalidateQueries(subjectDetailKey);
@@ -97,7 +105,7 @@ export function Provider({ children }) {
     const { class: classData, status, message, error } = data ?? {};
 
     if (classData?.id) {
-      const isCompleted = status === 'completed';
+      const isCompleted = status === "completed";
 
       processNotification({
         t,
@@ -107,7 +115,7 @@ export function Provider({ children }) {
         isCompleted,
         notifications,
         class: classData,
-        eventName: 'ENROLLMENT_UPDATE',
+        eventName: "ENROLLMENT_UPDATE",
       });
 
       if (isCompleted) {

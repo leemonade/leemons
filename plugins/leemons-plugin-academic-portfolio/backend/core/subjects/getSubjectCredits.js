@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function getSubjectCredits({ subject, program, ctx }) {
   const response = await ctx.tx.db.ProgramSubjectsCredits.find({
@@ -12,7 +12,9 @@ async function getSubjectsCredits({ subjects, ctx }) {
   if (subjects.length === 0) {
     return [];
   }
-  const query = subjects.map((subject) => _.pick(subject, ['subject', 'program']));
+  const query = subjects.map((subject) =>
+    _.pick(subject, ["subject", "program"])
+  );
   return ctx.tx.db.ProgramSubjectsCredits.find({ $or: query }).lean();
 }
 

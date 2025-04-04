@@ -1,6 +1,6 @@
-const { validateAddCourse } = require('../../validations/forms');
-const { getNextCourseIndex } = require('./getNextCourseIndex');
-const { addNextCourseIndex } = require('./addNextCourseIndex');
+const { validateAddCourse } = require("../../validations/forms");
+const { getNextCourseIndex } = require("./getNextCourseIndex");
+const { addNextCourseIndex } = require("./addNextCourseIndex");
 
 async function addCourse({ data, index: _index, ctx }) {
   await validateAddCourse({ data, ctx });
@@ -9,7 +9,11 @@ async function addCourse({ data, index: _index, ctx }) {
     index = await getNextCourseIndex({ program: data.program, ctx });
     await addNextCourseIndex({ program: data.program, index, ctx });
   }
-  const groupDoc = await ctx.tx.db.Groups.create({ ...data, index, type: 'course' });
+  const groupDoc = await ctx.tx.db.Groups.create({
+    ...data,
+    index,
+    type: "course",
+  });
   return groupDoc.toObject();
 }
 

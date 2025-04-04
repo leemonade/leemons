@@ -1,12 +1,12 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function duplicateCourseByIds({ ids, duplications: dup = {}, ctx }) {
   const duplications = dup;
   const courses = await ctx.tx.db.Groups.find({
     id: _.isArray(ids) ? ids : [ids],
-    type: 'course',
+    type: "course",
   }).lean();
-  await ctx.tx.emit('before-duplicate-courses', { courses });
+  await ctx.tx.emit("before-duplicate-courses", { courses });
 
   // ES: Empezamos la duplicación de los items
   // EN: Start the duplication of the items
@@ -29,7 +29,7 @@ async function duplicateCourseByIds({ ids, duplications: dup = {}, ctx }) {
     duplications.courses[id] = newCourses[index];
   });
 
-  await ctx.tx.emit('after-duplicate-courses', {
+  await ctx.tx.emit("after-duplicate-courses", {
     courses,
     duplications: duplications.courses,
   });

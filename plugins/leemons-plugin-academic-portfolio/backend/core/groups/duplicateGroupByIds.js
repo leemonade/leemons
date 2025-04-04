@@ -1,13 +1,13 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function duplicateGroupByIds({ ids, duplications: dup = {}, ctx }) {
   const duplications = dup;
 
   const groups = await ctx.tx.db.Groups.find({
     id: _.isArray(ids) ? ids : [ids],
-    type: 'group',
+    type: "group",
   }).lean();
-  await ctx.tx.emit('before-duplicate-groups', { groups });
+  await ctx.tx.emit("before-duplicate-groups", { groups });
 
   // ES: Empezamos la duplicación de los items
   // EN: Start the duplication of the items
@@ -30,7 +30,7 @@ async function duplicateGroupByIds({ ids, duplications: dup = {}, ctx }) {
     duplications.groups[id] = newGroups[index];
   });
 
-  await ctx.tx.emit('after-duplicate-groups', {
+  await ctx.tx.emit("after-duplicate-groups", {
     groups,
     duplications: duplications.groups,
   });

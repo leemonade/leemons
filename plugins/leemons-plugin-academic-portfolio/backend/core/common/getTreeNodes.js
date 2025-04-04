@@ -1,9 +1,9 @@
-const { LeemonsError } = require('@leemons/error');
-const _ = require('lodash');
-const { getTree } = require('./getTree');
+const { LeemonsError } = require("@leemons/error");
+const _ = require("lodash");
+const { getTree } = require("./getTree");
 
 async function getTreeNodes({ nodeTypes, nodeType, nodeId, program, ctx }) {
-  if (ctx.callerPlugin !== 'gateway' && ctx.callerPlugin !== 'curriculum')
+  if (ctx.callerPlugin !== "gateway" && ctx.callerPlugin !== "curriculum")
     throw new LeemonsError(ctx, {
       message: `getTreeNodes only can be called by curriculum plugin (calledFrom: ${ctx.callerPlugin})`,
     });
@@ -16,7 +16,8 @@ async function getTreeNodes({ nodeTypes, nodeType, nodeId, program, ctx }) {
     _.forEach(nodes, (node) => {
       if (
         node.nodeType === nodeType &&
-        (nodeIds.indexOf(node.value?.id) >= 0 || nodeIds.indexOf(node.treeId) >= 0)
+        (nodeIds.indexOf(node.value?.id) >= 0 ||
+          nodeIds.indexOf(node.treeId) >= 0)
       ) {
         pNodes.push(node);
       } else {

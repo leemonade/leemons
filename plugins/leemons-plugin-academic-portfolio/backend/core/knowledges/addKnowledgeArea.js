@@ -1,7 +1,7 @@
-const { map } = require('lodash');
-const { validateAddKnowledgeArea } = require('../../validations/forms');
-const { updateClassMany } = require('../classes/updateClassMany');
-const { saveManagers } = require('../managers/saveManagers');
+const { map } = require("lodash");
+const { validateAddKnowledgeArea } = require("../../validations/forms");
+const { updateClassMany } = require("../classes/updateClassMany");
+const { saveManagers } = require("../managers/saveManagers");
 
 async function addKnowledgeArea({ data: _data, ctx }) {
   await validateAddKnowledgeArea({ data: _data, ctx });
@@ -10,7 +10,7 @@ async function addKnowledgeArea({ data: _data, ctx }) {
   const knowledgeArea = knowledgeAreaDoc.toObject();
   await saveManagers({
     userAgents: managers,
-    type: 'knowledge',
+    type: "knowledge",
     relationship: knowledgeArea.id,
     ctx,
   });
@@ -21,7 +21,7 @@ async function addKnowledgeArea({ data: _data, ctx }) {
     }).lean();
     await updateClassMany({
       data: {
-        ids: map(classes, 'id'),
+        ids: map(classes, "id"),
         knowledge: knowledgeArea.id,
       },
       ctx,

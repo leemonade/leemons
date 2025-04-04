@@ -1,35 +1,48 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { isArray, isEmpty, omit } from 'lodash';
-import { Table, Stack, ActionButton, Tooltip, LoadingOverlay } from '@bubbles-ui/components';
-import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
+import React, { useMemo } from "react";
+import PropTypes from "prop-types";
+import { isArray, isEmpty, omit } from "lodash";
+import {
+  Table,
+  Stack,
+  ActionButton,
+  Tooltip,
+  LoadingOverlay,
+} from "@bubbles-ui/components";
+import { DeleteBinIcon, EditWriteIcon } from "@bubbles-ui/icons/solid";
 
-import { DuplicateIcon } from '@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon';
-import { useSubjectDetails } from '@academic-portfolio/hooks';
+import { DuplicateIcon } from "@leebrary/components/LibraryDetailToolbar/icons/DuplicateIcon";
+import { useSubjectDetails } from "@academic-portfolio/hooks";
 
-const SubjectsDetailTable = ({ subjectIds, labels, onEdit, onDuplicate, onDelete }) => {
-  const { data: subjectsDetailQuery, isLoading: isSubjectsDetailLoading } = useSubjectDetails(
-    subjectIds,
-    { enabled: subjectIds?.length > 0 },
-    true
-  );
+const SubjectsDetailTable = ({
+  subjectIds,
+  labels,
+  onEdit,
+  onDuplicate,
+  onDelete,
+}) => {
+  const { data: subjectsDetailQuery, isLoading: isSubjectsDetailLoading } =
+    useSubjectDetails(subjectIds, { enabled: subjectIds?.length > 0 }, true);
 
   const getSubjectClassesString = (classes) => {
-    const subjectWithReferenceGroups = classes?.some((classItem) => !isEmpty(classItem.groups));
+    const subjectWithReferenceGroups = classes?.some(
+      (classItem) => !isEmpty(classItem.groups)
+    );
     if (subjectWithReferenceGroups) {
       return classes
         ?.map((classItem) => classItem.groups?.abbreviation)
         .sort()
-        .join(', ');
+        .join(", ");
     }
-    return classes?.map((_, index) => String(index + 1).padStart(3, '0')).join(', ');
+    return classes
+      ?.map((_, index) => String(index + 1).padStart(3, "0"))
+      .join(", ");
   };
 
   const getCoursesTextToShow = (courses) => {
-    let coursesText = '';
+    let coursesText = "";
     if (isArray(courses)) {
       const sortedCourses = [...courses].sort((a, b) => a.index - b.index);
-      coursesText = sortedCourses.map(({ index }) => `${index}º`).join(', ');
+      coursesText = sortedCourses.map(({ index }) => `${index}º`).join(", ");
     } else if (courses?.index !== undefined) {
       coursesText = `${courses.index}º`;
     }
@@ -61,9 +74,18 @@ const SubjectsDetailTable = ({ subjectIds, labels, onEdit, onDuplicate, onDelete
         const allClassesCourses = [];
         classes.forEach((_class) => addUniqueCourse(_class, allClassesCourses));
 
-        const knowledgeArea = classes?.reduce((acc, curr) => curr.knowledges || acc, null);
-        const subjectType = classes?.reduce((acc, curr) => curr.subjectType || acc, null);
-        const substage = classes?.reduce((acc, curr) => curr.substages || acc, null);
+        const knowledgeArea = classes?.reduce(
+          (acc, curr) => curr.knowledges || acc,
+          null
+        );
+        const subjectType = classes?.reduce(
+          (acc, curr) => curr.subjectType || acc,
+          null
+        );
+        const substage = classes?.reduce(
+          (acc, curr) => curr.substages || acc,
+          null
+        );
 
         processedSubjects[_subject.id] = {
           ..._subject,
@@ -81,8 +103,8 @@ const SubjectsDetailTable = ({ subjectIds, labels, onEdit, onDuplicate, onDelete
 
   const handleOnEdit = (item) => {
     const subjectAndItsClassesForSubjectForm = {
-      ...omit(item, ['course', 'substages']),
-      substage: item.substage?.length ? item.substage[0].id : 'all',
+      ...omit(item, ["course", "substages"]),
+      substage: item.substage?.length ? item.substage[0].id : "all",
       image: item.image || null,
       icon: item.icon || null,
     };
@@ -95,7 +117,8 @@ const SubjectsDetailTable = ({ subjectIds, labels, onEdit, onDuplicate, onDelete
       return subjectClassesData?.map((item) => {
         let subjectsHasPeopleEnrolled = false;
         item.classes?.forEach((c) => {
-          if (c.students?.length || c.teachers?.length) subjectsHasPeopleEnrolled = true;
+          if (c.students?.length || c.teachers?.length)
+            subjectsHasPeopleEnrolled = true;
         });
         return {
           ...item,
@@ -123,7 +146,13 @@ const SubjectsDetailTable = ({ subjectIds, labels, onEdit, onDuplicate, onDelete
                   <ActionButton
                     tooltip={labels?.remove}
                     disabled={subjectsHasPeopleEnrolled}
-                    icon={<DeleteBinIcon width={18} height={18} onClick={() => onDelete(item)} />}
+                    icon={
+                      <DeleteBinIcon
+                        width={18}
+                        height={18}
+                        onClick={() => onDelete(item)}
+                      />
+                    }
                   />
                 </Stack>
               </Tooltip>
@@ -139,39 +168,40 @@ const SubjectsDetailTable = ({ subjectIds, labels, onEdit, onDuplicate, onDelete
     () => [
       {
         Header: labels?.subject,
-        accessor: 'name',
+        accessor: "name",
       },
       {
         Header: labels?.courses,
-        accessor: 'courses',
+        accessor: "courses",
         valueRender: (coursesValue) => getCoursesTextToShow(coursesValue),
       },
       {
         Header: labels?.substages,
-        accessor: 'substage',
+        accessor: "substage",
         valueRender: (substagesValue) =>
           substagesValue?.length ? substagesValue[0].name : labels.noSubstages, // Only one substage per subject currently
       },
       {
         Header: labels?.classrooms,
-        accessor: 'classes',
+        accessor: "classes",
         valueRender: (classesValue) => getSubjectClassesString(classesValue),
       },
       {
         Header: labels?.type,
-        accessor: 'subjectType',
-        valueRender: (subjectTypeValue) => subjectTypeValue?.name ?? '',
+        accessor: "subjectType",
+        valueRender: (subjectTypeValue) => subjectTypeValue?.name ?? "",
       },
       {
         Header: labels?.actions,
-        accessor: 'actions',
-        style: { width: 100, textAlign: 'center' },
+        accessor: "actions",
+        style: { width: 100, textAlign: "center" },
       },
     ],
     [labels]
   );
 
-  if (isSubjectsDetailLoading) return <LoadingOverlay visible={isSubjectsDetailLoading} />;
+  if (isSubjectsDetailLoading)
+    return <LoadingOverlay visible={isSubjectsDetailLoading} />;
   return <Table columns={tableColumns} data={tableData} />;
 };
 

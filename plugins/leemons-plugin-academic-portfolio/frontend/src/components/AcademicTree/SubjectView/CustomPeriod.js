@@ -1,7 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useForm, Controller } from "react-hook-form";
 
-import { useAcademicCalendarConfig, useCustomPeriodsByItem } from '@academic-calendar/hooks';
+import {
+  useAcademicCalendarConfig,
+  useCustomPeriodsByItem,
+} from "@academic-calendar/hooks";
 import {
   Text,
   Alert,
@@ -11,15 +14,15 @@ import {
   Box,
   Loader,
   Anchor,
-} from '@bubbles-ui/components';
-import { useLocale } from '@common';
-import { LocaleDate } from '@common/LocaleDate';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { get } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { useLocale } from "@common";
+import { LocaleDate } from "@common/LocaleDate";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { get } from "lodash";
+import PropTypes from "prop-types";
 
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
 
 const ensureDate = (date) => {
   if (!date) return null;
@@ -33,12 +36,14 @@ function CustomPeriod({
   childrenPeriods,
   customPeriod,
   onChange,
-  academicKey = 'subject',
+  academicKey = "subject",
 }) {
-  const [t, , , tLoading] = useTranslateLoader(prefixPN(`tree_page.${academicKey}.customPeriod`));
+  const [t, , , tLoading] = useTranslateLoader(
+    prefixPN(`tree_page.${academicKey}.customPeriod`)
+  );
   const [hasCustomPeriod, setHasCustomPeriod] = useState(!!customPeriod);
 
-  const { t: tCommon } = useCommonTranslate('forms');
+  const { t: tCommon } = useCommonTranslate("forms");
   const locale = useLocale();
 
   const form = useForm({
@@ -48,12 +53,10 @@ function CustomPeriod({
     },
   });
 
-  const { data: academicCalendar, isLoading: academicCalendarLoading } = useAcademicCalendarConfig(
-    programId,
-    {
+  const { data: academicCalendar, isLoading: academicCalendarLoading } =
+    useAcademicCalendarConfig(programId, {
       enabled: !!programId,
-    }
-  );
+    });
 
   const { data: parentCustomPeriod } = useCustomPeriodsByItem(parentPeriod, {
     enabled: !!parentPeriod,
@@ -67,16 +70,21 @@ function CustomPeriod({
   const parentPeriodDates = useMemo(() => {
     if (parentCustomPeriod) {
       return parentCustomPeriod?.startDate && parentCustomPeriod?.endDate
-        ? { startDate: parentCustomPeriod.startDate, endDate: parentCustomPeriod.endDate }
+        ? {
+            startDate: parentCustomPeriod.startDate,
+            endDate: parentCustomPeriod.endDate,
+          }
         : null;
     }
     return null;
   }, [parentCustomPeriod]);
 
   const childrenHaveDifferentPeriods = useMemo(() => {
-    if (academicKey === 'subject' && childrenPeriods?.length) {
+    if (academicKey === "subject" && childrenPeriods?.length) {
       if (!customPeriod) {
-        return childrenPeriods.some((childPeriod) => childPeriod.startDate || childPeriod.endDate);
+        return childrenPeriods.some(
+          (childPeriod) => childPeriod.startDate || childPeriod.endDate
+        );
       }
 
       return childrenPeriods.some(
@@ -88,15 +96,15 @@ function CustomPeriod({
     return false;
   }, [childrenPeriods, customPeriod, academicKey]);
 
-  const customStartDate = form.watch('startDate');
-  const customEndDate = form.watch('endDate');
+  const customStartDate = form.watch("startDate");
+  const customEndDate = form.watch("endDate");
   const formErrors = form.formState.errors;
 
   useEffect(() => {
     setHasCustomPeriod(!!customPeriod);
     if (customPeriod) {
-      form.setValue('startDate', customPeriod.startDate);
-      form.setValue('endDate', customPeriod.endDate);
+      form.setValue("startDate", customPeriod.startDate);
+      form.setValue("endDate", customPeriod.endDate);
     }
   }, [customPeriod, form]);
 
@@ -104,16 +112,23 @@ function CustomPeriod({
     (startDate, endDate) => {
       let areValuesValid = !!(startDate && endDate);
       let areValuesDifferent =
-        startDate !== customPeriod?.startDate || endDate !== customPeriod?.endDate;
+        startDate !== customPeriod?.startDate ||
+        endDate !== customPeriod?.endDate;
 
       if (!customPeriod && !startDate && !endDate) areValuesDifferent = false;
       if (customPeriod && !startDate && !endDate) areValuesValid = true;
 
       if (startDate && !endDate) {
-        form.setError('endDate', { type: 'manual', message: tCommon('required') });
+        form.setError("endDate", {
+          type: "manual",
+          message: tCommon("required"),
+        });
       }
       if (!startDate && endDate) {
-        form.setError('startDate', { type: 'manual', message: tCommon('required') });
+        form.setError("startDate", {
+          type: "manual",
+          message: tCommon("required"),
+        });
       }
 
       if (areValuesValid || !startDate) {
@@ -141,25 +156,25 @@ function CustomPeriod({
 
   const handleSwitchChange = (value) => {
     if (!value) {
-      form.setValue('startDate', null);
-      form.setValue('endDate', null);
+      form.setValue("startDate", null);
+      form.setValue("endDate", null);
     } else {
-      form.setValue('startDate', customPeriod?.startDate ?? null);
-      form.setValue('endDate', customPeriod?.endDate ?? null);
+      form.setValue("startDate", customPeriod?.startDate ?? null);
+      form.setValue("endDate", customPeriod?.endDate ?? null);
     }
     setHasCustomPeriod(value);
     handleOnChange();
   };
 
   const ParentPeriodInfoAlert = useMemo(() => {
-    const entitiesWithParentPeriods = ['class'];
+    const entitiesWithParentPeriods = ["class"];
     if (!entitiesWithParentPeriods.includes(academicKey)) return null;
 
     if (parentPeriodDates?.startDate && parentPeriodDates?.endDate) {
       return (
         <Alert variant="info" closeable={false}>
           <Stack spacing={2}>
-            <Text>{t('info.parentPeriod')}</Text>
+            <Text>{t("info.parentPeriod")}</Text>
             <LocaleDate date={parentPeriodDates?.startDate} />
             <Text>→</Text>
             <LocaleDate date={parentPeriodDates?.endDate} />
@@ -170,7 +185,7 @@ function CustomPeriod({
 
     return (
       <Alert variant="info" closeable={false}>
-        <Text>{t('info.noParentPeriod')}</Text>
+        <Text>{t("info.noParentPeriod")}</Text>
       </Alert>
     );
   }, [parentPeriodDates, academicKey, t]);
@@ -185,12 +200,12 @@ function CustomPeriod({
     <Box>
       <Stack direction="column" spacing={2}>
         <Box>
-          <Text strong>{t('title')}</Text>
+          <Text strong>{t("title")}</Text>
         </Box>
         {courseDates ? (
           <>
             <Switch
-              label={t('label')}
+              label={t("label")}
               checked={hasCustomPeriod}
               onChange={(value) => handleSwitchChange(value)}
             />
@@ -199,7 +214,7 @@ function CustomPeriod({
                 <Alert variant="info" closeable={false}>
                   <Stack spacing={2}>
                     <>
-                      <Text>{t('info.academicPeriod')}</Text>
+                      <Text>{t("info.academicPeriod")}</Text>
                       <LocaleDate date={courseDates?.startDate} />
                       <Text>→</Text>
                       <LocaleDate date={courseDates?.endDate} />
@@ -211,7 +226,7 @@ function CustomPeriod({
 
                 {childrenHaveDifferentPeriods && (
                   <Alert variant="info" closeable={false}>
-                    <Text>{t('info.childrenDifferentPeriods')}</Text>
+                    <Text>{t("info.childrenDifferentPeriods")}</Text>
                   </Alert>
                 )}
 
@@ -219,24 +234,27 @@ function CustomPeriod({
                   <Controller
                     name={`startDate`}
                     control={form.control}
-                    rules={{ required: tCommon('required') }}
+                    rules={{ required: tCommon("required") }}
                     render={({ field }) => (
                       <DatePicker
                         {...field}
                         value={ensureDate(field.value)}
                         locale={locale}
-                        label={t('startDate')}
+                        label={t("startDate")}
                         minDate={ensureDate(courseDates?.startDate)}
                         maxDate={
                           customEndDate
-                            ? Math.min(new Date(customEndDate), new Date(courseDates?.endDate))
+                            ? Math.min(
+                                new Date(customEndDate),
+                                new Date(courseDates?.endDate)
+                              )
                             : ensureDate(courseDates?.endDate)
                         }
                         required
                         error={get(formErrors, `startDate`)}
                         onChange={(value) => {
                           if (!value) {
-                            form.setValue('endDate', null);
+                            form.setValue("endDate", null);
                           }
                           field.onChange(value);
                           handleOnChange();
@@ -247,18 +265,20 @@ function CustomPeriod({
                   <Controller
                     name={`endDate`}
                     control={form.control}
-                    rules={{ required: tCommon('required') }}
+                    rules={{ required: tCommon("required") }}
                     render={({ field }) => (
                       <DatePicker
                         {...field}
                         value={ensureDate(field.value)}
-                        minDate={ensureDate(customStartDate || courseDates?.startDate)}
+                        minDate={ensureDate(
+                          customStartDate || courseDates?.startDate
+                        )}
                         maxDate={ensureDate(courseDates?.endDate)}
                         locale={locale}
-                        label={t('endDate')}
+                        label={t("endDate")}
                         onChange={(value) => {
                           if (!value) {
-                            form.setValue('endDate', null);
+                            form.setValue("endDate", null);
                           }
                           field.onChange(value);
                           handleOnChange();
@@ -276,9 +296,9 @@ function CustomPeriod({
         ) : (
           <Alert variant="info" closeable={false}>
             <Stack spacing={1}>
-              <Text>{`${t('info.noAcademicPeriod')}`}</Text>
-              <Anchor href={'/private/academic-calendar/program-calendars'}>
-                {t('defineAcademicPeriod')}
+              <Text>{`${t("info.noAcademicPeriod")}`}</Text>
+              <Anchor href={"/private/academic-calendar/program-calendars"}>
+                {t("defineAcademicPeriod")}
               </Anchor>
             </Stack>
           </Alert>
@@ -295,7 +315,7 @@ CustomPeriod.propTypes = {
   childrenPeriods: PropTypes.array,
   customPeriod: PropTypes.object,
   onChange: PropTypes.func,
-  academicKey: PropTypes.oneOf(['subject', 'class']),
+  academicKey: PropTypes.oneOf(["subject", "class"]),
 };
 
 export default CustomPeriod;

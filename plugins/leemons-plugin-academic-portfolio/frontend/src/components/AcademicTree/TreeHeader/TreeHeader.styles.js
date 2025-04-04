@@ -1,4 +1,4 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 const TreeHeaderStyles = createStyles((theme) => ({
   header: {
@@ -6,8 +6,8 @@ const TreeHeaderStyles = createStyles((theme) => ({
   },
   headerText: {
     ...theme.other.tree.content.typo,
-    color: theme.other.tree.border.color['hover-alt'],
-    textTransform: 'uppercase',
+    color: theme.other.tree.border.color["hover-alt"],
+    textTransform: "uppercase",
   },
 }));
 

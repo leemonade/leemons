@@ -1,12 +1,16 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-async function duplicateProgramCentersByProgramIds({ programIds, duplications: dup = {}, ctx }) {
+async function duplicateProgramCentersByProgramIds({
+  programIds,
+  duplications: dup = {},
+  ctx,
+}) {
   const duplications = dup;
 
   const programCenter = await ctx.tx.db.ProgramCenter.find({
     program: _.isArray(programIds) ? programIds : [programIds],
   }).lean();
-  await ctx.tx.emit('before-duplicate-program-center', {
+  await ctx.tx.emit("before-duplicate-program-center", {
     programCenter,
   });
 
@@ -26,12 +30,13 @@ async function duplicateProgramCentersByProgramIds({ programIds, duplications: d
 
   // ES: Añadimos los items duplicados de tal forma que el indice es el id original y el valor es el nuevo item duplicado
   // EN: Add the duplicated items in such a way that the index is the original id and the value is the new duplicated item
-  if (!_.isObject(duplications.programCenters)) duplications.programCenters = {};
+  if (!_.isObject(duplications.programCenters))
+    duplications.programCenters = {};
   _.forEach(programCenter, ({ id }, index) => {
     duplications.programCenters[id] = newProgramCenters[index];
   });
 
-  await ctx.tx.emit('after-duplicate-program-center', {
+  await ctx.tx.emit("after-duplicate-program-center", {
     programCenter,
     duplications: duplications.programCenters,
   });

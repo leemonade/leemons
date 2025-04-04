@@ -1,12 +1,12 @@
-import { getProgramTreeTypeTranslation } from '@academic-portfolio/helpers/getProgramTreeTypeTranslation';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { Box, Paragraph, RadioGroup, Title } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PropTypes from 'prop-types';
-import React, { forwardRef } from 'react';
+import { getProgramTreeTypeTranslation } from "@academic-portfolio/helpers/getProgramTreeTypeTranslation";
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
+import { Box, Paragraph, RadioGroup, Title } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
+import React, { forwardRef } from "react";
 
 const ProgramTreeType = forwardRef(({ program, onChange }, ref) => {
-  const [t] = useTranslateLoader(prefixPN('subject_page'));
+  const [t] = useTranslateLoader(prefixPN("subject_page"));
   const messages = React.useMemo(
     () => ({
       programTreeType: getProgramTreeTypeTranslation(t),
@@ -44,31 +44,33 @@ const ProgramTreeType = forwardRef(({ program, onChange }, ref) => {
       value: 1,
       label: messages.programTreeType.opt1Label,
       help: help1,
-      helpPosition: 'bottom',
+      helpPosition: "bottom",
     },
     {
       value: 2,
       label: messages.programTreeType.opt2Label,
       help: help2,
-      helpPosition: 'bottom',
+      helpPosition: "bottom",
     },
     {
       value: 3,
       label: messages.programTreeType.opt3Label,
       help: help3,
-      helpPosition: 'bottom',
+      helpPosition: "bottom",
     },
     {
       value: 4,
       label: messages.programTreeType.opt4Label,
       help: messages.programTreeType.opt4Description,
-      helpPosition: 'bottom',
+      helpPosition: "bottom",
     },
   ];
 
   return (
     <Box>
-      <Title order={4}>{messages.programTreeType.title.replace('{name}', program.name)}</Title>
+      <Title order={4}>
+        {messages.programTreeType.title.replace("{name}", program.name)}
+      </Title>
       <Paragraph>{messages.programTreeType.description1}</Paragraph>
       <Paragraph>
         <strong>{messages.programTreeType.note}</strong>
@@ -85,7 +87,7 @@ const ProgramTreeType = forwardRef(({ program, onChange }, ref) => {
   );
 });
 
-ProgramTreeType.displayName = '@academic-portfolio/components/ProgramTreeType';
+ProgramTreeType.displayName = "@academic-portfolio/components/ProgramTreeType";
 ProgramTreeType.propTypes = {
   program: PropTypes.object,
   onChange: PropTypes.func,

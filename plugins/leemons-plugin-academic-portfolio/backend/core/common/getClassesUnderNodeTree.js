@@ -1,11 +1,17 @@
-const _ = require('lodash');
-const { getTreeNodes } = require('./getTreeNodes');
+const _ = require("lodash");
+const { getTreeNodes } = require("./getTreeNodes");
 
-async function getClassesUnderNodeTree({ nodeTypes, nodeType, nodeId, program, ctx }) {
+async function getClassesUnderNodeTree({
+  nodeTypes,
+  nodeType,
+  nodeId,
+  program,
+  ctx,
+}) {
   const getClassNodes = (nodes) => {
     let pNodes = [];
     _.forEach(nodes, (node) => {
-      if (node.nodeType === 'class') {
+      if (node.nodeType === "class") {
         pNodes.push(node.value);
       } else {
         pNodes = pNodes.concat(getClassNodes(node.childrens));
@@ -14,7 +20,13 @@ async function getClassesUnderNodeTree({ nodeTypes, nodeType, nodeId, program, c
     return pNodes;
   };
 
-  const treeNodes = await getTreeNodes({ nodeTypes, nodeType, nodeId, program, ctx });
+  const treeNodes = await getTreeNodes({
+    nodeTypes,
+    nodeType,
+    nodeId,
+    program,
+    ctx,
+  });
 
   return getClassNodes(treeNodes);
 }

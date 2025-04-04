@@ -1,12 +1,18 @@
-const _ = require('lodash');
-const { programsByIds } = require('./programsByIds');
-const { duplicateCourseByIds } = require('../courses/duplicateCourseByIds');
-const { duplicateSubjectByIds } = require('../subjects/duplicateSubjectByIds');
-const { duplicateGroupByIds } = require('../groups/duplicateGroupByIds');
-const { duplicateSubstageByIds } = require('../substages/duplicateSubstageByIds');
-const { duplicateProgramCentersByProgramIds } = require('./duplicateProgramCentersByProgramIds');
-const { duplicateProgramConfigsByProgramIds } = require('./duplicateProgramConfigsByProgramIds');
-const { duplicateClassesByIds } = require('../classes/duplicateClassesByIds');
+const _ = require("lodash");
+const { programsByIds } = require("./programsByIds");
+const { duplicateCourseByIds } = require("../courses/duplicateCourseByIds");
+const { duplicateSubjectByIds } = require("../subjects/duplicateSubjectByIds");
+const { duplicateGroupByIds } = require("../groups/duplicateGroupByIds");
+const {
+  duplicateSubstageByIds,
+} = require("../substages/duplicateSubstageByIds");
+const {
+  duplicateProgramCentersByProgramIds,
+} = require("./duplicateProgramCentersByProgramIds");
+const {
+  duplicateProgramConfigsByProgramIds,
+} = require("./duplicateProgramConfigsByProgramIds");
+const { duplicateClassesByIds } = require("../classes/duplicateClassesByIds");
 
 async function duplicateProgramByIds({ ids, preserveName = false, ctx }) {
   const [rawPrograms, programs, classes] = await Promise.all([
@@ -14,7 +20,7 @@ async function duplicateProgramByIds({ ids, preserveName = false, ctx }) {
     programsByIds({ ids: _.isArray(ids) ? ids : [ids], ctx }),
     ctx.tx.db.Class.find({ program: _.isArray(ids) ? ids : [ids] }).lean(),
   ]);
-  await ctx.tx.emit('before-duplicate-programs', { programs });
+  await ctx.tx.emit("before-duplicate-programs", { programs });
 
   let groups = [];
   let courses = [];
@@ -51,29 +57,33 @@ async function duplicateProgramByIds({ ids, preserveName = false, ctx }) {
   //* Old: no need to duplicate the subject type or knowledge area as it is defined at center level
   // await duplicateSubjectTypeByIds({ ids: _.map(subjectTypes, 'id'), duplications, ctx });
   // await duplicateKnowledgeByIds({ ids: _.map(knowledges, 'id'), duplications, ctx });
-  await duplicateSubstageByIds({ ids: _.map(substages, 'id'), duplications, ctx });
-  await duplicateGroupByIds({ ids: _.map(groups, 'id'), duplications, ctx });
-  await duplicateCourseByIds({ ids: _.map(courses, 'id'), duplications, ctx });
+  await duplicateSubstageByIds({
+    ids: _.map(substages, "id"),
+    duplications,
+    ctx,
+  });
+  await duplicateGroupByIds({ ids: _.map(groups, "id"), duplications, ctx });
+  await duplicateCourseByIds({ ids: _.map(courses, "id"), duplications, ctx });
   await duplicateSubjectByIds({
-    ids: _.map(subjects, 'id'),
+    ids: _.map(subjects, "id"),
     duplications,
     preserveName: true,
     ctx,
   });
 
   await duplicateProgramCentersByProgramIds({
-    programIds: _.map(programs, 'id'),
+    programIds: _.map(programs, "id"),
     duplications,
     ctx,
   });
   await duplicateProgramConfigsByProgramIds({
-    programIds: _.map(programs, 'id'),
+    programIds: _.map(programs, "id"),
     duplications,
     ctx,
   });
 
   await duplicateClassesByIds({
-    ids: _.map(classes, 'id'),
+    ids: _.map(classes, "id"),
     duplications,
     students: false,
     teachers: false,
@@ -87,7 +97,7 @@ async function duplicateProgramByIds({ ids, preserveName = false, ctx }) {
   const afterAddProgramPromises = [];
   Object.keys(duplications.programs).forEach((programKey) =>
     afterAddProgramPromises.push(
-      ctx.tx.emit('after-add-program', {
+      ctx.tx.emit("after-add-program", {
         program: duplications.programs[programKey],
         userSession: ctx.meta.userSession,
       })

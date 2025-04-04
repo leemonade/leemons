@@ -1,21 +1,27 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { Box, ContextContainer, Select, Table, TextInput } from '@bubbles-ui/components';
-import { SearchIcon } from '@bubbles-ui/icons/outline';
-import { useStore } from '@common';
-import { Controller, useForm } from 'react-hook-form';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@academic-portfolio/helpers/prefixPN';
-import { filter, findIndex, forEach, isObject, keyBy, map } from 'lodash';
-import { cloneDeep } from 'lodash/lang';
+import React, { useMemo } from "react";
+import PropTypes from "prop-types";
+import {
+  Box,
+  ContextContainer,
+  Select,
+  Table,
+  TextInput,
+} from "@bubbles-ui/components";
+import { SearchIcon } from "@bubbles-ui/icons/outline";
+import { useStore } from "@common";
+import { Controller, useForm } from "react-hook-form";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@academic-portfolio/helpers/prefixPN";
+import { filter, findIndex, forEach, isObject, keyBy, map } from "lodash";
+import { cloneDeep } from "lodash/lang";
 import {
   detailProgramRequest,
   listClassesRequest,
   listSubjectCreditsForProgramRequest,
-} from '../../request';
+} from "../../request";
 
 export default function SelectSubjectsByTable({ program, value, onChange }) {
-  const [t] = useTranslateLoader(prefixPN('selectSubjectsByTable'));
+  const [t] = useTranslateLoader(prefixPN("selectSubjectsByTable"));
   const [store, render] = useStore({
     loading: true,
   });
@@ -48,7 +54,10 @@ export default function SelectSubjectsByTable({ program, value, onChange }) {
 
     store.filteredSubjects = map(store.filteredSubjects, (s) => ({
       ...s,
-      selected: { type: 'checkbox', checked: value ? value.indexOf(s.id) !== -1 : false },
+      selected: {
+        type: "checkbox",
+        checked: value ? value.indexOf(s.id) !== -1 : false,
+      },
     }));
 
     render();
@@ -77,7 +86,7 @@ export default function SelectSubjectsByTable({ program, value, onChange }) {
       listSubjectCreditsForProgramRequest(store.program.id),
     ]);
 
-    const subjectCreditsBySubject = keyBy(subjectCredits, 'subject');
+    const subjectCreditsBySubject = keyBy(subjectCredits, "subject");
 
     store.classes = classes;
     store.subjects = map(store.program.subjects, (subject) => {
@@ -101,7 +110,10 @@ export default function SelectSubjectsByTable({ program, value, onChange }) {
       filter(
         store.program.knowledges,
         (knowledge) =>
-          findIndex(store.subjects, (subject) => subject.knowledge?.id === knowledge.id) !== -1
+          findIndex(
+            store.subjects,
+            (subject) => subject.knowledge?.id === knowledge.id
+          ) !== -1
       ),
       ({ id, name }) => ({ label: name, value: id })
     );
@@ -109,7 +121,10 @@ export default function SelectSubjectsByTable({ program, value, onChange }) {
       filter(
         store.program.subjectTypes,
         (subjectType) =>
-          findIndex(store.subjects, (subject) => subject.subjectType?.id === subjectType.id) !== -1
+          findIndex(
+            store.subjects,
+            (subject) => subject.subjectType?.id === subjectType.id
+          ) !== -1
       ),
       ({ id, name }) => ({ label: name, value: id })
     );
@@ -134,24 +149,24 @@ export default function SelectSubjectsByTable({ program, value, onChange }) {
   const tableHeaders = useMemo(
     () => [
       {
-        Header: ' ',
-        accessor: 'selected',
+        Header: " ",
+        accessor: "selected",
       },
       {
-        Header: t('tableId'),
-        accessor: 'internalId',
+        Header: t("tableId"),
+        accessor: "internalId",
       },
       {
-        Header: t('tableName'),
-        accessor: 'name',
+        Header: t("tableName"),
+        accessor: "name",
       },
       {
-        Header: t('tableKnowledge'),
-        accessor: 'knowledge.name',
+        Header: t("tableKnowledge"),
+        accessor: "knowledge.name",
       },
       {
-        Header: t('tableType'),
-        accessor: 'subjectType.name',
+        Header: t("tableType"),
+        accessor: "subjectType.name",
       },
     ],
     [t]
@@ -179,7 +194,11 @@ export default function SelectSubjectsByTable({ program, value, onChange }) {
                 control={control}
                 name="subjectType"
                 render={({ field }) => (
-                  <Select data={store.subjectTypes} label={t('subjectTypeLabel')} {...field} />
+                  <Select
+                    data={store.subjectTypes}
+                    label={t("subjectTypeLabel")}
+                    {...field}
+                  />
                 )}
               />
             </Box>
@@ -190,7 +209,11 @@ export default function SelectSubjectsByTable({ program, value, onChange }) {
                 control={control}
                 name="knowledge"
                 render={({ field }) => (
-                  <Select data={store.knowledges} label={t('knowledgeLabel')} {...field} />
+                  <Select
+                    data={store.knowledges}
+                    label={t("knowledgeLabel")}
+                    {...field}
+                  />
                 )}
               />
             </Box>
@@ -200,13 +223,21 @@ export default function SelectSubjectsByTable({ program, value, onChange }) {
               control={control}
               name="name"
               render={({ field }) => (
-                <TextInput label={t('subjectLabel')} {...field} rightSection={<SearchIcon />} />
+                <TextInput
+                  label={t("subjectLabel")}
+                  {...field}
+                  rightSection={<SearchIcon />}
+                />
               )}
             />
           </Box>
         </ContextContainer>
         <Box>
-          <Table columns={tableHeaders} data={store.filteredSubjects} onChangeData={onChangeData} />
+          <Table
+            columns={tableHeaders}
+            data={store.filteredSubjects}
+            onChangeData={onChangeData}
+          />
         </Box>
       </ContextContainer>
     </Box>

@@ -18,16 +18,16 @@ import {
   userEnrollments,
   classPublicData,
   classPublicDataMany,
-} from './classes';
-import { getStudentsByTags } from './common';
-import { updateCycle } from './cycles';
+} from "./classes";
+import { getStudentsByTags } from "./common";
+import { updateCycle } from "./cycles";
 import {
   createKnowledgeArea,
   listKnowledgeAreas,
   updateKnowledgeArea,
   deleteKnowledgeArea,
   getKnowledgeArea,
-} from './knowledges';
+} from "./knowledges";
 import {
   addStudentsToClassesUnderNodeTree,
   createProgram,
@@ -47,7 +47,7 @@ import {
   setProgramCustomTranslationKeys,
   getProgramNomenclature,
   validateStaffChange,
-} from './programs';
+} from "./programs";
 import {
   enableMenuItem,
   getProfiles,
@@ -55,13 +55,13 @@ import {
   isConfigProfiles,
   setProfiles,
   updateSettings,
-} from './settings';
+} from "./settings";
 import {
   createSubjectType,
   listSubjectTypes,
   updateSubjectType,
   deleteSubjectType,
-} from './subjectTypes';
+} from "./subjectTypes";
 import {
   createSubject,
   getSubjectCredits,
@@ -73,13 +73,13 @@ import {
   updateSubjectCredits,
   isMainTeacherInSubject,
   getUserSubjects,
-} from './subjects';
+} from "./subjects";
 
 export {
   listCourses as listCoursesRequest,
   updateCourse as updateCourseRequest,
   getCourseById as getCourseByIdRequest,
-} from './courses';
+} from "./courses";
 
 export {
   createGroup as createGroupRequest,
@@ -87,14 +87,14 @@ export {
   duplicateGroup as duplicateGroupRequest,
   getGroupById as getGroupByIdRequest,
   removeGroupFromClasses as removeGroupFromClassesRequest,
-} from './groups';
+} from "./groups";
 
 export {
   listBlocksBySubjectRequest,
   createBlockRequest,
   updateBlockRequest,
   removeBlockRequest,
-} from './blocks';
+} from "./blocks";
 
 export const updateCycleRequest = updateCycle;
 export const listSubjectsRequest = listSubjects;
@@ -157,7 +157,8 @@ export const getUserProgramsRequest = getUserPrograms;
 export const getProgramsPublicInfoRequest = getProgramsPublicInfo;
 export const removeProgramRequest = removeProgram;
 
-export const setProgramCustomTranslationKeysRequest = setProgramCustomTranslationKeys;
+export const setProgramCustomTranslationKeysRequest =
+  setProgramCustomTranslationKeys;
 export const getProgramNomenclatureRequest = getProgramNomenclature;
 export const validateStaffChangeRequest = validateStaffChange;
 export const getSettingsRequest = getSettings;
@@ -166,7 +167,8 @@ export const enableMenuItemRequest = enableMenuItem;
 export const isConfigProfilesRequest = isConfigProfiles;
 export const getProfilesRequest = getProfiles;
 export const setProfilesRequest = setProfiles;
-export const addStudentsToClassesUnderNodeTreeRequest = addStudentsToClassesUnderNodeTree;
+export const addStudentsToClassesUnderNodeTreeRequest =
+  addStudentsToClassesUnderNodeTree;
 
 export const getStudentsByTagsRequest = getStudentsByTags;
 export const isMainTeacherInSubjectRequest = isMainTeacherInSubject;

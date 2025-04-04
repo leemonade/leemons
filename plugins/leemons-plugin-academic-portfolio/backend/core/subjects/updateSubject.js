@@ -1,30 +1,43 @@
 /* eslint-disable prefer-const */
-const _ = require('lodash');
-const { isArray } = require('lodash');
+const _ = require("lodash");
+const { isArray } = require("lodash");
 
-const { validateUpdateSubject } = require('../../validations/forms');
-const { classByIds } = require('../classes/classByIds');
-const { setToAllClassesWithSubject } = require('../classes/course/setToAllClassesWithSubject');
-const { changeBySubject: changeClassesBySubject } = require('../classes/knowledge/changeBySubject');
+const { validateUpdateSubject } = require("../../validations/forms");
+const { classByIds } = require("../classes/classByIds");
+const {
+  setToAllClassesWithSubject,
+} = require("../classes/course/setToAllClassesWithSubject");
+const {
+  changeBySubject: changeClassesBySubject,
+} = require("../classes/knowledge/changeBySubject");
 const {
   changeClassSubstageBySubject,
-} = require('../classes/substage/changeClassSubstageBySubject');
-const { removeByClass } = require('../classes/substage/removeByClass');
-const { getProgramCourses } = require('../programs/getProgramCourses');
+} = require("../classes/substage/changeClassSubstageBySubject");
+const { removeByClass } = require("../classes/substage/removeByClass");
+const { getProgramCourses } = require("../programs/getProgramCourses");
 
-const { setSubjectCredits } = require('./setSubjectCredits');
-const { setSubjectInternalId } = require('./setSubjectInternalId');
+const { setSubjectCredits } = require("./setSubjectCredits");
+const { setSubjectInternalId } = require("./setSubjectInternalId");
 
-async function processRoom({ subject, color, assetImage, classe, assetIcon, ctx }) {
+async function processRoom({
+  subject,
+  color,
+  assetImage,
+  classe,
+  assetIcon,
+  ctx,
+}) {
   const roomKey = ctx.prefixPN(`room.class.${classe.id}`);
 
-  const roomExists = await ctx.tx.call('comunica.room.exists', { key: roomKey });
+  const roomExists = await ctx.tx.call("comunica.room.exists", {
+    key: roomKey,
+  });
 
   const roomData = {
     name: subject.name,
     bgColor: color,
     image: null,
-    icon: '/public/academic-portfolio/subject-icon.svg',
+    icon: "/public/academic-portfolio/subject-icon.svg",
     metadata: {
       iconIsUrl: true,
     },
@@ -40,15 +53,24 @@ async function processRoom({ subject, color, assetImage, classe, assetIcon, ctx 
     delete roomData.metadata.iconIsUrl;
   }
   if (roomExists) {
-    return ctx.tx.call('comunica.room.update', { key: roomKey, ...roomData });
+    return ctx.tx.call("comunica.room.update", { key: roomKey, ...roomData });
   }
-  return ctx.tx.call('comunica.room.add', { key: roomKey, ...roomData });
+  return ctx.tx.call("comunica.room.add", { key: roomKey, ...roomData });
 }
 
-async function processRoomGroup({ subject, color, assetImage, classe, assetIcon, ctx }) {
+async function processRoomGroup({
+  subject,
+  color,
+  assetImage,
+  classe,
+  assetIcon,
+  ctx,
+}) {
   const roomKey = ctx.prefixPN(`room.class.group.${classe.id}`);
 
-  const roomExists = await ctx.tx.call('comunica.room.exists', { key: roomKey });
+  const roomExists = await ctx.tx.call("comunica.room.exists", {
+    key: roomKey,
+  });
 
   let subName = classe.program.name;
   if (classe.groups?.abbreviation) {
@@ -58,7 +80,7 @@ async function processRoomGroup({ subject, color, assetImage, classe, assetIcon,
     name: `${subject.name} ${subName}`,
     bgColor: color,
     image: null,
-    icon: '/public/academic-portfolio/subject-icon.svg',
+    icon: "/public/academic-portfolio/subject-icon.svg",
     metadata: {
       iconIsUrl: true,
     },
@@ -74,9 +96,9 @@ async function processRoomGroup({ subject, color, assetImage, classe, assetIcon,
     delete roomData.metadata.iconIsUrl;
   }
   if (roomExists) {
-    return ctx.tx.call('comunica.room.update', { key: roomKey, ...roomData });
+    return ctx.tx.call("comunica.room.update", { key: roomKey, ...roomData });
   }
-  return ctx.tx.call('comunica.room.add', { key: roomKey, ...roomData });
+  return ctx.tx.call("comunica.room.add", { key: roomKey, ...roomData });
 }
 
 async function updateSubject({ data, ctx }) {
@@ -112,11 +134,11 @@ async function updateSubject({ data, ctx }) {
   if (icon) iconData.cover = icon;
 
   const [assetImage, assetIcon] = await Promise.all([
-    ctx.tx.call('leebrary.assets.update', {
+    ctx.tx.call("leebrary.assets.update", {
       data: { id: subject.image, ...imageData },
       published: true,
     }),
-    ctx.tx.call('leebrary.assets.update', {
+    ctx.tx.call("leebrary.assets.update", {
       data: { id: subject.icon, ...iconData },
       published: true,
     }),
@@ -134,10 +156,10 @@ async function updateSubject({ data, ctx }) {
   await ctx.tx.db.Class.updateMany({ subject: subject.id }, { color });
 
   const classesWithSubject = await ctx.tx.db.Class.find({ subject: subject.id })
-    .select(['id'])
+    .select(["id"])
     .lean();
   const classes = await classByIds({
-    ids: _.map(classesWithSubject, 'id'),
+    ids: _.map(classesWithSubject, "id"),
     withProgram: true,
     ctx,
   });
@@ -178,24 +200,44 @@ async function updateSubject({ data, ctx }) {
   // await setToAllClassesWithSubject({ subject: subject.id, course: courses, ctx });
 
   if (!_.isUndefined(subjectType)) {
-    promises.push(ctx.tx.db.Class.updateMany({ subject: subject.id }, { subjectType }));
+    promises.push(
+      ctx.tx.db.Class.updateMany({ subject: subject.id }, { subjectType })
+    );
   }
 
   if (!_.isUndefined(knowledgeArea)) {
-    promises.push(changeClassesBySubject({ subjectId: subject.id, knowledge: knowledgeArea, ctx }));
+    promises.push(
+      changeClassesBySubject({
+        subjectId: subject.id,
+        knowledge: knowledgeArea,
+        ctx,
+      })
+    );
   }
 
   if (substage?.length) {
-    if (substage === 'all') {
-      promises.push(removeByClass({ classIds: classesWithSubject.map((item) => item.id), ctx }));
+    if (substage === "all") {
+      promises.push(
+        removeByClass({
+          classIds: classesWithSubject.map((item) => item.id),
+          ctx,
+        })
+      );
     } else {
-      promises.push(changeClassSubstageBySubject({ subjectId: subject.id, substage, ctx }));
+      promises.push(
+        changeClassSubstageBySubject({ subjectId: subject.id, substage, ctx })
+      );
     }
   }
 
   if (credits)
     promises.push(
-      setSubjectCredits({ subject: subject.id, program: subject.program, credits, ctx })
+      setSubjectCredits({
+        subject: subject.id,
+        program: subject.program,
+        credits,
+        ctx,
+      })
     );
   if (internalId)
     promises.push(

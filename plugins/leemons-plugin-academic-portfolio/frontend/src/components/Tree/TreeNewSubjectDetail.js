@@ -1,13 +1,19 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, ContextContainer, Title } from '@bubbles-ui/components';
-import { SubjectsTable } from '../SubjectsTable';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, ContextContainer, Title } from "@bubbles-ui/components";
+import { SubjectsTable } from "../SubjectsTable";
 
-const TreeNewSubjectDetail = ({ program, messages, onSave, saving, selectUserAgent }) => (
+const TreeNewSubjectDetail = ({
+  program,
+  messages,
+  onSave,
+  saving,
+  selectUserAgent,
+}) => (
   <Box>
     <ContextContainer direction="column" fullWidth>
       <Title order={4}>{messages.title}</Title>
-      <Box style={{ maxWidth: '100%', overflow: 'auto' }}>
+      <Box style={{ maxWidth: "100%", overflow: "auto" }}>
         <SubjectsTable
           key="2"
           messages={messages.subjects}

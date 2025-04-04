@@ -1,11 +1,11 @@
-import { LRN } from '@leemons/lrn';
-import { Timetable } from 'leemons-plugin-timetable';
-import { UserAgentID } from 'leemons-plugin-users';
+import { LRN } from "@leemons/lrn";
+import { Timetable } from "leemons-plugin-timetable";
+import { UserAgentID } from "leemons-plugin-users";
 
-type TPlugin = 'academic-portfolio';
-export type ClassID = LRN<TPlugin, 'Class'>;
-export type ClassTeacherID = LRN<TPlugin, 'ClassTeacher'>;
-export type ClassStudentID = LRN<TPlugin, 'ClassStudent'>;
+type TPlugin = "academic-portfolio";
+export type ClassID = LRN<TPlugin, "Class">;
+export type ClassTeacherID = LRN<TPlugin, "ClassTeacher">;
+export type ClassStudentID = LRN<TPlugin, "ClassStudent">;
 
 /**
  * @file plugins/leemons-plugin-academic-portfolio/backend/models/class-teacher.js
@@ -14,7 +14,7 @@ export interface ClassTeacher {
   id: ClassTeacherID;
   deploymentID: string;
 
-  type: 'main-teacher' | 'associate-teacher';
+  type: "main-teacher" | "associate-teacher";
   // ref: 'plugins_academic-portfolio::class'
   class: ClassID;
   // ref: 'plugins_users::user-agent'
@@ -86,7 +86,7 @@ export interface Class {
   program: Program;
   subject: Subject;
   courses: Course[];
-  teachers: Pick<ClassTeacher, 'teacher' | 'type'>[];
+  teachers: Pick<ClassTeacher, "teacher" | "type">[];
   students: UserAgentID[];
   schedule: Timetable[];
 

@@ -4,52 +4,59 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const _ = require('lodash');
-const { LeemonsValidator } = require('@leemons/validator');
+const _ = require("lodash");
+const { LeemonsValidator } = require("@leemons/validator");
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 
-const { listClassesSubjects } = require('../../core/common/listClassesSubjects');
+const {
+  listClassesSubjects,
+} = require("../../core/common/listClassesSubjects");
 const {
   getTree,
   getClassesUnderNodeTree,
   addTeachersClassesUnderNodeTree,
   getStudentsByTags,
-} = require('../../core/common');
+} = require("../../core/common");
 
 /** @type {ServiceSchema} */
 module.exports = {
   listClassSubjectsRest: {
     rest: {
-      path: '/class-subjects',
-      method: 'GET',
+      path: "/class-subjects",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "view"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          program: { type: 'string' },
-          course: { type: 'string' },
-          group: { type: 'string' },
+          program: { type: "string" },
+          course: { type: "string" },
+          group: { type: "string" },
         },
-        required: ['program'],
+        required: ["program"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
         const { program, course, group } = ctx.params;
-        const { classes, subjects } = await listClassesSubjects({ program, course, group, ctx });
+        const { classes, subjects } = await listClassesSubjects({
+          program,
+          course,
+          group,
+          ctx,
+        });
         return { status: 200, classes, subjects };
       }
       throw validator.error;
@@ -57,15 +64,15 @@ module.exports = {
   },
   getTreeRest: {
     rest: {
-      path: '/tree',
-      method: 'GET',
+      path: "/tree",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.tree': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.tree": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -73,14 +80,14 @@ module.exports = {
     async handler(ctx) {
       const { program } = ctx.params;
       let { nodeTypes } = ctx.params;
-      if (typeof nodeTypes === 'string') {
+      if (typeof nodeTypes === "string") {
         nodeTypes = ctx.params.nodeTypes
-          .replace('[', '')
-          .replace(']', '')
-          .replaceAll("'", '')
-          .replaceAll('"', '')
-          .replaceAll(' ', '')
-          .split(',');
+          .replace("[", "")
+          .replace("]", "")
+          .replaceAll("'", "")
+          .replaceAll('"', "")
+          .replaceAll(" ", "")
+          .split(",");
       }
       const tree = await getTree({ nodeTypes, program, ctx });
       return { status: 200, tree };
@@ -88,15 +95,15 @@ module.exports = {
   },
   getClassesUnderNodeTreeRest: {
     rest: {
-      path: '/classes-under-node-tree',
-      method: 'GET',
+      path: "/classes-under-node-tree",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.tree': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.tree": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -104,30 +111,35 @@ module.exports = {
     async handler(ctx) {
       const { nodeType, nodeId } = ctx.params;
       let { nodeTypes } = ctx.params;
-      if (typeof nodeTypes === 'string') {
+      if (typeof nodeTypes === "string") {
         nodeTypes = ctx.params.nodeTypes
-          .replace('[', '')
-          .replace(']', '')
-          .replaceAll("'", '')
-          .replaceAll('"', '')
-          .replaceAll(' ', '')
-          .split(',');
+          .replace("[", "")
+          .replace("]", "")
+          .replaceAll("'", "")
+          .replaceAll('"', "")
+          .replaceAll(" ", "")
+          .split(",");
       }
-      const classes = await getClassesUnderNodeTree({ nodeTypes, nodeType, nodeId, ctx });
+      const classes = await getClassesUnderNodeTree({
+        nodeTypes,
+        nodeType,
+        nodeId,
+        ctx,
+      });
       return { status: 200, classes };
     },
   },
   addStudentsToClassesUnderNodeTreeRest: {
     rest: {
-      path: '/add-students-to-classes-under-node-tree',
-      method: 'POST',
+      path: "/add-students-to-classes-under-node-tree",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'update'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "update"],
           },
         },
       }),
@@ -135,30 +147,35 @@ module.exports = {
     async handler(ctx) {
       const { nodeType, nodeId } = ctx.params;
       let { nodeTypes } = ctx.params;
-      if (typeof nodeTypes === 'string') {
+      if (typeof nodeTypes === "string") {
         nodeTypes = ctx.params.nodeTypes
-          .replace('[', '')
-          .replace(']', '')
-          .replaceAll("'", '')
-          .replaceAll('"', '')
-          .replaceAll(' ', '')
-          .split(',');
+          .replace("[", "")
+          .replace("]", "")
+          .replaceAll("'", "")
+          .replaceAll('"', "")
+          .replaceAll(" ", "")
+          .split(",");
       }
-      const classes = await getClassesUnderNodeTree({ nodeTypes, nodeType, nodeId, ctx });
+      const classes = await getClassesUnderNodeTree({
+        nodeTypes,
+        nodeType,
+        nodeId,
+        ctx,
+      });
       return { status: 200, classes };
     },
   },
   addTeachersToClassesUnderNodeTreeRest: {
     rest: {
-      path: '/add-teachers-to-classes-under-node-tree',
-      method: 'POST',
+      path: "/add-teachers-to-classes-under-node-tree",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'update'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "update"],
           },
         },
       }),
@@ -176,15 +193,15 @@ module.exports = {
   },
   getStudentsByTagsRest: {
     rest: {
-      path: '/students/by/tags',
-      method: 'POST',
+      path: "/students/by/tags",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-portfolio.subjects': {
-            actions: ['admin', 'view'],
+          "academic-portfolio.subjects": {
+            actions: ["admin", "view"],
           },
         },
       }),

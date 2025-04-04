@@ -1,4 +1,4 @@
-const { getProfiles } = require('./getProfiles');
+const { getProfiles } = require("./getProfiles");
 
 /**
  * @public

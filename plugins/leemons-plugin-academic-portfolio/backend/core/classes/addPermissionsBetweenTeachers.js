@@ -1,17 +1,19 @@
-const { map, isArray, uniq } = require('lodash');
+const { map, isArray, uniq } = require("lodash");
 
 async function addPermissionsBetweenTeachers({ programId, ctx }) {
   const classes = await ctx.tx.db.Class.find({
     program: isArray(programId) ? programId : [programId],
   })
-    .select(['id'])
+    .select(["id"])
     .lean();
-  const teachers = await ctx.tx.db.ClassTeacher.find({ class: uniq(map(classes, 'id')) })
-    .select(['teacher'])
+  const teachers = await ctx.tx.db.ClassTeacher.find({
+    class: uniq(map(classes, "id")),
+  })
+    .select(["teacher"])
     .lean();
-  const teachersIds = uniq(map(teachers, 'teacher'));
+  const teachersIds = uniq(map(teachers, "teacher"));
 
-  return ctx.tx.call('users.users.addUserAgentContacts', {
+  return ctx.tx.call("users.users.addUserAgentContacts", {
     fromUserAgent: teachersIds,
     toUserAgent: teachersIds,
     target: programId,

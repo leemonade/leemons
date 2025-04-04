@@ -1,14 +1,15 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { getProfiles } = require('../../settings/getProfiles');
-const { getClassProgram } = require('../getClassProgram');
+const { getProfiles } = require("../../settings/getProfiles");
+const { getClassProgram } = require("../getClassProgram");
 
-const { removeCustomPermissions } = require('./removeCustomPermissions');
+const { removeCustomPermissions } = require("./removeCustomPermissions");
 
-const REMOVE_CUSTOM_PERMISSION_USER_AGENT = 'users.permissions.removeCustomUserAgentPermission';
+const REMOVE_CUSTOM_PERMISSION_USER_AGENT =
+  "users.permissions.removeCustomUserAgentPermission";
 
 async function runIfComunicaRoomExists(key, callback, ctx) {
-  const exists = await ctx.tx.call('comunica.room.exists', { key });
+  const exists = await ctx.tx.call("comunica.room.exists", { key });
   if (exists) {
     return callback();
   }
@@ -28,7 +29,7 @@ async function removeByClass({
   );
 
   const teacherQuery = {
-    ...(removeInvitedTeachers ? {} : { type: { $ne: 'invited-teacher' } }), // Default behavior
+    ...(removeInvitedTeachers ? {} : { type: { $ne: "invited-teacher" } }), // Default behavior
     ...(teachersFilter ?? {}), // Target specific teachers by UserAgent or/and override default behavior
   };
 
@@ -45,7 +46,10 @@ async function removeByClass({
 
   // Remove users from class room
   _.forEach(classeIds, (classId) => {
-    const userIds = _.map(_.filter(classTeachers, { class: classId }), 'teacher');
+    const userIds = _.map(
+      _.filter(classTeachers, { class: classId }),
+      "teacher"
+    );
     const classRoomKey = ctx.prefixPN(`room.class.${classId}`);
     const classGroupRoomKey = ctx.prefixPN(`room.class.group.${classId}`);
 
@@ -53,7 +57,7 @@ async function removeByClass({
       runIfComunicaRoomExists(
         classRoomKey,
         () =>
-          ctx.tx.call('comunica.room.removeUserAgents', {
+          ctx.tx.call("comunica.room.removeUserAgents", {
             key: classRoomKey,
             userAgents: userIds,
           }),
@@ -65,7 +69,7 @@ async function removeByClass({
       runIfComunicaRoomExists(
         classGroupRoomKey,
         () =>
-          ctx.tx.call('comunica.room.removeUserAgents', {
+          ctx.tx.call("comunica.room.removeUserAgents", {
             key: classGroupRoomKey,
             userAgents: userIds,
           }),
@@ -76,7 +80,10 @@ async function removeByClass({
 
   if (classStudents?.length) {
     _.forEach(classeIds, (classId) => {
-      const studentIds = _.map(_.filter(classStudents, { class: classId }), 'student');
+      const studentIds = _.map(
+        _.filter(classStudents, { class: classId }),
+        "student"
+      );
 
       _.forEach(studentIds, (studentId) => {
         const studentTeacherRoomKey = ctx.prefixPN(
@@ -86,7 +93,7 @@ async function removeByClass({
           runIfComunicaRoomExists(
             studentTeacherRoomKey,
             () =>
-              ctx.tx.call('comunica.room.removeAllUserAgents', {
+              ctx.tx.call("comunica.room.removeAllUserAgents", {
                 key: studentTeacherRoomKey,
               }),
             ctx
@@ -99,30 +106,37 @@ async function removeByClass({
   try {
     await Promise.all(promisesRemoveUserAgentsFromRooms);
   } catch (error) {
-    if (error.message.includes('not exists')) {
+    if (error.message.includes("not exists")) {
       console.warn(`Could not remove user agents from rooms: ${error}`);
     } else {
       throw error;
     }
   }
 
-  const programIds = _.uniq(_.map(programs, 'id'));
+  const programIds = _.uniq(_.map(programs, "id"));
 
   await Promise.all(
     _.map(programIds, (programId) =>
       Promise.all(
         _.map(classTeachers, (classStudent) =>
-          removeCustomPermissions({ teacherId: classStudent.teacher, programId, ctx })
+          removeCustomPermissions({
+            teacherId: classStudent.teacher,
+            programId,
+            ctx,
+          })
         )
       )
     )
   );
 
-  await ctx.tx.emit('before-remove-classes-teachers', {
+  await ctx.tx.emit("before-remove-classes-teachers", {
     classTeachers,
     soft,
   });
-  await ctx.tx.db.ClassTeacher.deleteMany({ id: _.map(classTeachers, 'id') }, { soft });
+  await ctx.tx.db.ClassTeacher.deleteMany(
+    { id: _.map(classTeachers, "id") },
+    { soft }
+  );
 
   const { teacher: teacherProfileId } = await getProfiles({ ctx });
 
@@ -164,19 +178,19 @@ async function removeByClass({
     )
   );
 
-  const teacherIds = _.map(classTeachers, 'teacher');
+  const teacherIds = _.map(classTeachers, "teacher");
   const promises = [];
   _.forEach(classeIds, (classId) => {
     promises.push(
-      ctx.tx.call('users.users.removeUserAgentContacts', {
+      ctx.tx.call("users.users.removeUserAgentContacts", {
         fromUserAgent: teacherIds,
-        toUserAgent: '*',
+        toUserAgent: "*",
         target: classId,
       })
     );
     promises.push(
-      ctx.tx.call('users.users.removeUserAgentContacts', {
-        fromUserAgent: '*',
+      ctx.tx.call("users.users.removeUserAgentContacts", {
+        fromUserAgent: "*",
         toUserAgent: teacherIds,
         target: classId,
       })
@@ -184,7 +198,7 @@ async function removeByClass({
   });
   await Promise.all(promises);
 
-  await ctx.tx.emit('after-remove-classes-teachers', {
+  await ctx.tx.emit("after-remove-classes-teachers", {
     classTeachers,
     classIds: classeIds,
     soft,

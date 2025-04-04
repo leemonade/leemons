@@ -1,16 +1,19 @@
-import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
-import { getSubjectCredits, getSubjectsCredits } from '@academic-portfolio/request/subjects';
+import { getClassIcon } from "@academic-portfolio/helpers/getClassIcon";
+import {
+  getSubjectCredits,
+  getSubjectsCredits,
+} from "@academic-portfolio/request/subjects";
 
-const { classByIdsRequest } = require('@academic-portfolio/request');
+const { classByIdsRequest } = require("@academic-portfolio/request");
 
 export function getMultiClassData(labels) {
   return {
-    id: 'multiSubject',
+    id: "multiSubject",
     subjectName: labels?.multiSubject,
     groupName: labels?.groupName || labels?.multiSubject,
     name: labels?.groupName || labels?.multiSubject,
-    icon: '/public/academic-portfolio/module-three.svg',
-    color: '#67728E',
+    icon: "/public/academic-portfolio/module-three.svg",
+    color: "#67728E",
   };
 }
 
@@ -26,7 +29,7 @@ async function getMultipleClassData(classes) {
 
   return classesById?.map((klass, i) => ({
     id: klass?.id,
-    name: `${klass?.subject?.name}${klass?.groups?.isAlone ? '' : ` - ${klass?.groups?.name}`}`,
+    name: `${klass?.subject?.name}${klass?.groups?.isAlone ? "" : ` - ${klass?.groups?.name}`}`,
     subjectName: klass?.subject?.name,
     icon: getClassIcon(klass),
     color: klass?.color,
@@ -38,7 +41,7 @@ async function getMultipleClassData(classes) {
 export default async function getClassData(
   classes,
   multiSubject,
-  labels = { multiSubject: 'Multi-Subject' }
+  labels = { multiSubject: "Multi-Subject" }
 ) {
   if (multiSubject) {
     return getMultipleClassData(classes);
@@ -62,7 +65,7 @@ export default async function getClassData(
 
   if (!name) {
     if (data?.groups?.isAlone) {
-      name = '';
+      name = "";
     } else if (data?.groups?.name) {
       name = `${data?.subject?.name} - ${data?.groups?.name}`;
     } else {
@@ -74,7 +77,8 @@ export default async function getClassData(
     id: klass,
     name,
     subjectName: data?.subject?.name,
-    groupName: labels?.groupName || data?.groups?.isAlone ? '' : data?.groups?.name,
+    groupName:
+      labels?.groupName || data?.groups?.isAlone ? "" : data?.groups?.name,
     icon: getClassIcon(data),
     color: data?.color,
     customGroup: !!labels?.groupName,
