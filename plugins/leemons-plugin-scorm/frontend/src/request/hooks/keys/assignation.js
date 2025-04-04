@@ -1,14 +1,14 @@
 export const allAssignationsKey = [
   {
-    plugin: 'plugin.scorm',
-    scope: 'assignation',
+    plugin: "plugin.scorm",
+    scope: "assignation",
   },
 ];
 
 export const getAssignationKey = ({ instance, user }) => [
   {
     ...allAssignationsKey,
-    action: 'get',
+    action: "get",
     instance,
     user,
   },

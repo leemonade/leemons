@@ -1,1 +1,1 @@
-export * from './AssetMetadataScorm';
+export * from "./AssetMetadataScorm";

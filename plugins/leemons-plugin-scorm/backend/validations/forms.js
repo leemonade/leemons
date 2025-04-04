@@ -1,15 +1,15 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 const {
   stringSchema,
   booleanSchema,
   stringSchemaNullable,
   textSchemaNullable,
-} = require('./types');
-const { LeemonsValidator } = require('@leemons/validator');
+} = require("./types");
+const { LeemonsValidator } = require("@leemons/validator");
 
 const savePackageSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     id: stringSchemaNullable,
     name: stringSchema,
@@ -17,40 +17,40 @@ const savePackageSchema = {
     description: textSchemaNullable,
     color: stringSchemaNullable,
     tags: {
-      type: 'array',
+      type: "array",
       items: stringSchema,
     },
     cover: {
-      type: ['object', 'string'],
+      type: ["object", "string"],
       nullable: true,
     },
     file: {
-      type: ['string'],
+      type: ["string"],
       nullable: false,
     },
     version: {
-      type: ['string'],
+      type: ["string"],
       nullable: false,
     },
     launchUrl: {
-      type: ['string'],
+      type: ["string"],
       nullable: false,
     },
     metadata: {
-      type: ['object'],
+      type: ["object"],
       nullable: true,
     },
     gradable: booleanSchema,
     packageAsset: stringSchemaNullable,
     program: stringSchemaNullable,
     subjects: {
-      type: 'array',
+      type: "array",
       items: stringSchema,
       nullable: true,
     },
     published: booleanSchema,
   },
-  required: ['name', 'file', 'version', 'launchUrl'],
+  required: ["name", "file", "version", "launchUrl"],
   additionalProperties: false,
 };
 

@@ -7,7 +7,7 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 const {
   savePackage,
   duplicatePackage,
@@ -15,22 +15,22 @@ const {
   sharePackage,
   getPackage,
   deletePackage,
-} = require('../../core/package');
-const { supportedVersions } = require('../../config/constants');
+} = require("../../core/package");
+const { supportedVersions } = require("../../config/constants");
 
 /** @type {ServiceSchema} */
 module.exports = {
   savePackageRest: {
     rest: {
-      method: 'POST',
-      path: '/',
+      method: "POST",
+      path: "/",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'scorm.creator': {
-            actions: ['admin', 'create', 'update'],
+          "scorm.creator": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),
@@ -48,15 +48,15 @@ module.exports = {
   },
   duplicatePackageRest: {
     rest: {
-      method: 'POST',
-      path: '/duplicate',
+      method: "POST",
+      path: "/duplicate",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'scorm.creator': {
-            actions: ['admin', 'create', 'update'],
+          "scorm.creator": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),
@@ -74,15 +74,15 @@ module.exports = {
   },
   assignPackageRest: {
     rest: {
-      method: 'POST',
-      path: '/assign',
+      method: "POST",
+      path: "/assign",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'scorm.creator': {
-            actions: ['admin', 'create', 'update'],
+          "scorm.creator": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),
@@ -100,8 +100,8 @@ module.exports = {
   },
   sharePackageRest: {
     rest: {
-      method: 'POST',
-      path: '/share',
+      method: "POST",
+      path: "/share",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -118,8 +118,8 @@ module.exports = {
   },
   getSupportedVersionsRest: {
     rest: {
-      method: 'GET',
-      path: '/supported-versions',
+      method: "GET",
+      path: "/supported-versions",
     },
     async handler(ctx) {
       return {
@@ -130,8 +130,8 @@ module.exports = {
   },
   getPackageRest: {
     rest: {
-      method: 'GET',
-      path: '/:id',
+      method: "GET",
+      path: "/:id",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -147,15 +147,15 @@ module.exports = {
   },
   deletePackageRest: {
     rest: {
-      method: 'DELETE',
-      path: '/:id',
+      method: "DELETE",
+      path: "/:id",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'scorm.creator': {
-            actions: ['admin', 'delete'],
+          "scorm.creator": {
+            actions: ["admin", "delete"],
           },
         },
       }),

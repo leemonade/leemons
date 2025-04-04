@@ -1,4 +1,4 @@
-import { XMLParser } from 'fast-xml-parser';
+import { XMLParser } from "fast-xml-parser";
 
 export const SECONDS_PER_SECOND = 1.0;
 export const SECONDS_PER_MINUTE = 60;
@@ -6,10 +6,10 @@ export const SECONDS_PER_HOUR = 60 * SECONDS_PER_MINUTE;
 export const SECONDS_PER_DAY = 24 * SECONDS_PER_HOUR;
 
 const designations = [
-  ['D', SECONDS_PER_DAY],
-  ['H', SECONDS_PER_HOUR],
-  ['M', SECONDS_PER_MINUTE],
-  ['S', SECONDS_PER_SECOND],
+  ["D", SECONDS_PER_DAY],
+  ["H", SECONDS_PER_HOUR],
+  ["M", SECONDS_PER_MINUTE],
+  ["S", SECONDS_PER_SECOND],
 ];
 
 /**
@@ -21,7 +21,7 @@ const designations = [
 export function getSecondsAsHHMMSS(totalSeconds) {
   // SCORM spec does not deal with negative durations, give zero back
   if (!totalSeconds || totalSeconds <= 0) {
-    return '00:00:00';
+    return "00:00:00";
   }
 
   const hours = Math.floor(totalSeconds / SECONDS_PER_HOUR);
@@ -31,17 +31,17 @@ export function getSecondsAsHHMMSS(totalSeconds) {
   // make sure we add any possible decimal value
   const seconds = dateObj.getSeconds();
   const ms = totalSeconds % 1.0;
-  let msStr = '';
+  let msStr = "";
   if (countDecimals(ms) > 0) {
     if (countDecimals(ms) > 2) {
       msStr = ms.toFixed(2);
     } else {
       msStr = String(ms);
     }
-    msStr = `.${msStr.split('.')[1]}`;
+    msStr = `.${msStr.split(".")[1]}`;
   }
 
-  return `${hours}:${minutes}:${seconds}`.replace(/\b\d\b/g, '0$&') + msStr;
+  return `${hours}:${minutes}:${seconds}`.replace(/\b\d\b/g, "0$&") + msStr;
 }
 
 /**
@@ -53,10 +53,10 @@ export function getSecondsAsHHMMSS(totalSeconds) {
 export function getSecondsAsISODuration(seconds) {
   // SCORM spec does not deal with negative durations, give zero back
   if (!seconds || seconds <= 0) {
-    return 'PT0S';
+    return "PT0S";
   }
 
-  let duration = 'P';
+  let duration = "P";
   let remainder = seconds;
 
   designations.forEach(([sign, current_seconds]) => {
@@ -68,16 +68,19 @@ export function getSecondsAsISODuration(seconds) {
     }
     // If we have anything left in the remainder, and we're currently adding
     // seconds to the duration, go ahead and add the decimal to the seconds
-    if (sign === 'S' && remainder > 0) {
+    if (sign === "S" && remainder > 0) {
       value += remainder;
     }
 
     if (value) {
       if (
-        (duration.indexOf('D') > 0 || sign === 'H' || sign === 'M' || sign === 'S') &&
-        duration.indexOf('T') === -1
+        (duration.indexOf("D") > 0 ||
+          sign === "H" ||
+          sign === "M" ||
+          sign === "S") &&
+        duration.indexOf("T") === -1
       ) {
-        duration += 'T';
+        duration += "T";
       }
       duration += `${value}${sign}`;
     }
@@ -94,10 +97,14 @@ export function getSecondsAsISODuration(seconds) {
  * @return {number}
  */
 export function getTimeAsSeconds(timeString, timeRegex) {
-  if (!timeString || typeof timeString !== 'string' || !timeString.match(timeRegex)) {
+  if (
+    !timeString ||
+    typeof timeString !== "string" ||
+    !timeString.match(timeRegex)
+  ) {
     return 0;
   }
-  const parts = timeString.split(':');
+  const parts = timeString.split(":");
   const hours = Number(parts[0]);
   const minutes = Number(parts[1]);
   const seconds = Number(parts[2]);
@@ -140,7 +147,8 @@ export function getDurationAsSeconds(duration, durationRegex) {
  */
 export function addTwoDurations(first, second, durationRegex) {
   return getSecondsAsISODuration(
-    getDurationAsSeconds(first, durationRegex) + getDurationAsSeconds(second, durationRegex)
+    getDurationAsSeconds(first, durationRegex) +
+      getDurationAsSeconds(second, durationRegex)
   );
 }
 
@@ -191,7 +199,7 @@ export function flatten(data) {
     }
   }
 
-  recurse(data, '');
+  recurse(data, "");
   return result;
 }
 
@@ -207,7 +215,7 @@ export function unflatten(data) {
   for (const p in data) {
     if ({}.hasOwnProperty.call(data, p)) {
       let cur = result;
-      let prop = '';
+      let prop = "";
       let m = regex.exec(p);
       while (m) {
         cur = cur[prop] || (cur[prop] = m[2] ? [] : {});
@@ -217,7 +225,7 @@ export function unflatten(data) {
       cur[prop] = data[p];
     }
   }
-  return result[''] || result;
+  return result[""] || result;
 }
 
 /**
@@ -226,14 +234,17 @@ export function unflatten(data) {
  * @return {number}
  */
 export function countDecimals(num) {
-  if (Math.floor(num) === num || String(num).indexOf('.') < 0) return 0;
-  const parts = num.toString().split('.')[1];
+  if (Math.floor(num) === num || String(num).indexOf(".") < 0) return 0;
+  const parts = num.toString().split(".")[1];
   return parts.length || 0;
 }
 
 export function xml2json(
   xmlString,
-  alwaysArray = ['manifest.organizations.organization', 'manifest.resources.resource']
+  alwaysArray = [
+    "manifest.organizations.organization",
+    "manifest.resources.resource",
+  ]
 ) {
   const result = new XMLParser({
     ignoreAttributes: false,
@@ -242,25 +253,25 @@ export function xml2json(
   return result;
 }
 
-export function getVersionFromMetadata(schemaVersion = '', values = []) {
-  if (schemaVersion.indexOf('1.2') > -1) {
-    return values.find((item) => item.value === 'scorm12');
+export function getVersionFromMetadata(schemaVersion = "", values = []) {
+  if (schemaVersion.indexOf("1.2") > -1) {
+    return values.find((item) => item.value === "scorm12");
   }
 
-  if (schemaVersion.indexOf('2004') > -1 || schemaVersion.indexOf('CAM') > -1) {
-    return values.find((item) => item.value === 'scorm2004');
+  if (schemaVersion.indexOf("2004") > -1 || schemaVersion.indexOf("CAM") > -1) {
+    return values.find((item) => item.value === "scorm2004");
   }
 
-  return values.find((item) => item.value === 'aicc');
+  return values.find((item) => item.value === "aicc");
 }
 
 export function getDefaultOrganization(manifestObj) {
   const { organizations } = manifestObj;
   if (organizations?.organization) {
-    const defaultOrg = organizations['@_default'];
+    const defaultOrg = organizations["@_default"];
     if (defaultOrg) {
       const organization = organizations.organization.find(
-        (item) => item['@_identifier'] === defaultOrg
+        (item) => item["@_identifier"] === defaultOrg
       );
       if (organization) {
         return organization;
@@ -281,12 +292,14 @@ export function getLaunchURL(manifestObj) {
     const organization = getDefaultOrganization(manifestObj);
     if (organization) {
       let idRef = null;
-      idRef = organization.item['@_identifierref'];
+      idRef = organization.item["@_identifierref"];
 
       if (idRef) {
-        const resource = resources.resource.find((item) => item['@_identifier'] === idRef);
+        const resource = resources.resource.find(
+          (item) => item["@_identifier"] === idRef
+        );
         if (resource) {
-          launchUrl = resource['@_href'];
+          launchUrl = resource["@_href"];
         }
       }
     }
@@ -295,10 +308,10 @@ export function getLaunchURL(manifestObj) {
   if (!launchUrl && Array.isArray(resources?.resource)) {
     const resource = resources.resource.find(
       (item) =>
-        item['@_type'] === 'webcontent' &&
-        String(item['@_href']).split('.').reverse()[0].toLowerCase() === 'html'
+        item["@_type"] === "webcontent" &&
+        String(item["@_href"]).split(".").reverse()[0].toLowerCase() === "html"
     );
-    launchUrl = resource['@_href'];
+    launchUrl = resource["@_href"];
   }
 
   return launchUrl;

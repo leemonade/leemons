@@ -1,1 +1,1 @@
-export * from './ScormCardIcon';
+export * from "./ScormCardIcon";

@@ -1,17 +1,20 @@
 const CONTEXT = {
-  scope: 'scorm',
-  parent: 'parent',
-  player: 'player',
+  scope: "scorm",
+  parent: "parent",
+  player: "player",
 };
 
 const EVENTS = {
-  loaded: 'loaded',
-  initialData: 'initialData',
-  commit: 'commit',
+  loaded: "loaded",
+  initialData: "initialData",
+  commit: "commit",
 };
 
 function sendMessage(msg) {
-  window.parent.postMessage({ ...msg, scope: CONTEXT.scope, caller: CONTEXT.player }, '*');
+  window.parent.postMessage(
+    { ...msg, scope: CONTEXT.scope, caller: CONTEXT.player },
+    "*"
+  );
 }
 
 function onSetValue() {
@@ -42,25 +45,25 @@ function initializeScorm({ scormPackage, state, launchUrl }) {
   }
 
   // SCORM 1.2
-  else if (scormVersion.indexOf('scorm') > -1) {
+  else if (scormVersion.indexOf("scorm") > -1) {
     const scorm = new Scorm12API(settings);
     window.API = scorm;
   }
 
   if (state) {
-    window.API.loadFromJSON(state, '');
+    window.API.loadFromJSON(state, "");
   }
 
-  window.API.on('SetValue.cmi.*', onSetValue);
-  window.API.on('LMSSetValue.cmi.*', onSetValue);
+  window.API.on("SetValue.cmi.*", onSetValue);
+  window.API.on("LMSSetValue.cmi.*", onSetValue);
 
-  window.API.on('Initialize', () => sendMessage({ event: 'initialize' }));
-  window.API.on('LMSInitialize', () => sendMessage({ event: 'initialize' }));
+  window.API.on("Initialize", () => sendMessage({ event: "initialize" }));
+  window.API.on("LMSInitialize", () => sendMessage({ event: "initialize" }));
 
-  window.API.on('Terminated', () => sendMessage({ event: 'terminate' }));
-  window.API.on('LMSFinish', () => sendMessage({ event: 'terminate' }));
+  window.API.on("Terminated", () => sendMessage({ event: "terminate" }));
+  window.API.on("LMSFinish", () => sendMessage({ event: "terminate" }));
 
-  const body = document.querySelector('body');
+  const body = document.querySelector("body");
   body.innerHTML = `<iframe allow="*" src="${launchUrl}"></iframe>`;
 }
 
@@ -77,7 +80,7 @@ function onMessage(msg) {
   }
 }
 
-window.addEventListener('message', (event) => {
+window.addEventListener("message", (event) => {
   const msg = event.data;
   if (msg?.scope === CONTEXT.scope && msg?.caller === CONTEXT.parent) {
     onMessage(msg);

@@ -1,17 +1,17 @@
-import React from 'react';
-import { Box, Button, LoadingOverlay } from '@bubbles-ui/components';
+import React from "react";
+import { Box, Button, LoadingOverlay } from "@bubbles-ui/components";
 // TODO: import from @feedback plugin maybe?
-import { ActivityContainer } from '@assignables/components/ActivityContainer';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scorm/helpers';
-import { useLocale } from '@common';
-import { useParams } from 'react-router-dom';
-import useAssignableInstances from '@assignables/hooks/assignableInstance/useAssignableInstancesQuery';
-import usePackage from '@scorm/request/hooks/queries/usePackage';
-import useClassData from '@assignables/hooks/useClassDataQuery';
-import { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import ScormRender from '@scorm/components/ScormRender';
-import { useViewStyles } from '../View';
+import { ActivityContainer } from "@assignables/components/ActivityContainer";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { prefixPN } from "@scorm/helpers";
+import { useLocale } from "@common";
+import { useParams } from "react-router-dom";
+import useAssignableInstances from "@assignables/hooks/assignableInstance/useAssignableInstancesQuery";
+import usePackage from "@scorm/request/hooks/queries/usePackage";
+import useClassData from "@assignables/hooks/useClassDataQuery";
+import { getFileUrl } from "@leebrary/helpers/prepareAsset";
+import ScormRender from "@scorm/components/ScormRender";
+import { useViewStyles } from "../View";
 
 function useData({ id }) {
   const { data: scormPackage, isLoading: scormIsLoading } = usePackage({
@@ -20,7 +20,8 @@ function useData({ id }) {
   });
 
   const coverUrl = React.useMemo(
-    () => getFileUrl(scormPackage?.asset?.cover?.id ?? scormPackage?.asset?.cover),
+    () =>
+      getFileUrl(scormPackage?.asset?.cover?.id ?? scormPackage?.asset?.cover),
     [scormPackage?.asset?.cover]
   );
 
@@ -33,7 +34,7 @@ function useData({ id }) {
 }
 
 export default function Preview() {
-  const [t, , , tLoading] = useTranslateLoader(prefixPN('scormView'));
+  const [t, , , tLoading] = useTranslateLoader(prefixPN("scormView"));
   const locale = useLocale();
   const { classes } = useViewStyles();
 
@@ -48,14 +49,14 @@ export default function Preview() {
   return (
     <Box
       sx={{
-        'div div:nth-child(2)': {
-          overflow: 'hidden',
+        "div div:nth-child(2)": {
+          overflow: "hidden",
         },
       }}
     >
       <ActivityContainer
         header={{
-          title: scormPackage?.asset?.name ?? 'name',
+          title: scormPackage?.asset?.name ?? "name",
           image: coverUrl,
         }}
         collapsed
@@ -63,7 +64,7 @@ export default function Preview() {
         <ScormRender scormPackage={scormPackage} />
       </ActivityContainer>
       <Box className={classes.buttonContainer}>
-        <Button disabled>{t('markAsFinish')}</Button>
+        <Button disabled>{t("markAsFinish")}</Button>
       </Box>
     </Box>
   );

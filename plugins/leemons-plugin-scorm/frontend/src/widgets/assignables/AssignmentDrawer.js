@@ -1,15 +1,15 @@
-import React, { useCallback } from 'react';
-import PropTypes from 'prop-types';
+import React, { useCallback } from "react";
+import PropTypes from "prop-types";
 
-import { Box, Button } from '@bubbles-ui/components';
-import { Controller, FormProvider, useForm } from 'react-hook-form';
+import { Box, Button } from "@bubbles-ui/components";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 
 import {
   EvaluationType,
   evaluationTypes,
-} from '@assignables/components/Assignment/components/EvaluationType';
-import { Layout } from '@assignables/components/Assignment/components/Layout';
-import { useFormLocalizations } from '@assignables/components/Assignment/Form';
+} from "@assignables/components/Assignment/components/EvaluationType";
+import { Layout } from "@assignables/components/Assignment/components/Layout";
+import { useFormLocalizations } from "@assignables/components/Assignment/Form";
 
 export default function AssignmentDrawer({ assignable, value, onSave }) {
   const form = useForm({ defaultValues: value });
@@ -42,7 +42,9 @@ export default function AssignmentDrawer({ assignable, value, onSave }) {
             <EvaluationType
               {...field}
               assignable={assignable}
-              evaluationTypes={isGradable ? ['calificable', 'punctuable'] : ['nonEvaluable']}
+              evaluationTypes={
+                isGradable ? ["calificable", "punctuable"] : ["nonEvaluable"]
+              }
               localizations={localizations?.evaluation}
               hideDivider
             />
@@ -54,7 +56,9 @@ export default function AssignmentDrawer({ assignable, value, onSave }) {
 }
 
 AssignmentDrawer.defaultValues = (activity) =>
-  activity.gradable ? evaluationTypes.calificable : evaluationTypes.nonEvaluable;
+  activity.gradable
+    ? evaluationTypes.calificable
+    : evaluationTypes.nonEvaluable;
 
 AssignmentDrawer.propTypes = {
   assignable: PropTypes.object,

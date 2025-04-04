@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
-import { getPackageRequest } from '@scorm/request';
-import { getPackageKey } from '../keys/packages';
+import { useQuery } from "@tanstack/react-query";
+import { getPackageRequest } from "@scorm/request";
+import { getPackageKey } from "../keys/packages";
 
 export default function usePackage({ id, isNew, ...options }) {
   if (isNew) {

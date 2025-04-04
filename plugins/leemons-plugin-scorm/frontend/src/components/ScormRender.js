@@ -1,12 +1,12 @@
-import React, { useEffect } from 'react';
-import { Box } from '@bubbles-ui/components';
-import { getPublicFileUrl } from '@leebrary/helpers/prepareAsset';
+import React, { useEffect } from "react";
+import { Box } from "@bubbles-ui/components";
+import { getPublicFileUrl } from "@leebrary/helpers/prepareAsset";
 
 function sendMessageToPlayer({ source, origin }, msg) {
   source.postMessage(
     {
-      scope: 'scorm',
-      caller: 'parent',
+      scope: "scorm",
+      caller: "parent",
       ...msg,
     },
     origin
@@ -15,12 +15,15 @@ function sendMessageToPlayer({ source, origin }, msg) {
 
 function onMessageHandler({ scormPackage, state }) {
   return ({ msg, ...event }) => {
-    if (msg.event === 'loaded') {
+    if (msg.event === "loaded") {
       sendMessageToPlayer(event, {
         scormPackage,
-        launchUrl: getPublicFileUrl(scormPackage.file.id, scormPackage.launchUrl),
+        launchUrl: getPublicFileUrl(
+          scormPackage.file.id,
+          scormPackage.launchUrl
+        ),
         state,
-        event: 'initialData',
+        event: "initialData",
       });
     }
   };
@@ -33,13 +36,13 @@ export function ScormRender({ marginTop, scormPackage, state }) {
     const onMessage = onMessageHandler({ scormPackage, state });
 
     const handler = ({ data: msg, source, origin }) => {
-      if (msg?.scope === 'scorm' && msg?.caller === 'player') {
+      if (msg?.scope === "scorm" && msg?.caller === "player") {
         onMessage({ msg, source, origin });
       }
     };
-    window.addEventListener('message', handler);
+    window.addEventListener("message", handler);
 
-    return () => window.removeEventListener('message', handler);
+    return () => window.removeEventListener("message", handler);
   }, [scormPackage, state]);
 
   return (
@@ -47,7 +50,7 @@ export function ScormRender({ marginTop, scormPackage, state }) {
       <iframe
         title="scorm"
         src={`${leemons.apiUrl}/api/v1/scorm/public/index.html`}
-        style={{ width: '100%', height: '100%', border: 'none' }}
+        style={{ width: "100%", height: "100%", border: "none" }}
         scrolling="no"
         frameBorder={0}
       />

@@ -1,51 +1,55 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { useHistory } from 'react-router-dom';
+import React from "react";
+import PropTypes from "prop-types";
+import { useHistory } from "react-router-dom";
 // TODO: import from @library plugin maybe?
-import { LibraryDetail } from '@leebrary/components/LibraryDetail';
-import { ViewOnIcon } from '@bubbles-ui/icons/outline';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useLayout } from '@layout/context';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { prefixPN } from '@scorm/helpers';
-import { deletePackageRequest, duplicatePackageRequest } from '@scorm/request';
-import { CardVariantIcon } from '@scorm/components/icons';
-import { AssetMetadataScorm } from '@scorm/components/AssetMetadataScorm';
+import { LibraryDetail } from "@leebrary/components/LibraryDetail";
+import { ViewOnIcon } from "@bubbles-ui/icons/outline";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useLayout } from "@layout/context";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { prefixPN } from "@scorm/helpers";
+import { deletePackageRequest, duplicatePackageRequest } from "@scorm/request";
+import { CardVariantIcon } from "@scorm/components/icons";
+import { AssetMetadataScorm } from "@scorm/components/AssetMetadataScorm";
 
 const ScormDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
   const history = useHistory();
-  const [t] = useTranslateLoader(prefixPN('scormCard'));
+  const [t] = useTranslateLoader(prefixPN("scormCard"));
   const {
     openConfirmationModal,
     openDeleteConfirmationModal,
     setLoading: setAppLoading,
   } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const toolbarItems = { toggle: t('toggle'), open: t('open'), view: t('view') };
+  const toolbarItems = {
+    toggle: t("toggle"),
+    open: t("open"),
+    view: t("view"),
+  };
 
   // ·········································································
   // HANDLERS
 
   if (asset?.id) {
     if (asset.editable) {
-      toolbarItems.edit = t('edit');
+      toolbarItems.edit = t("edit");
     }
     if (asset.deleteable) {
-      toolbarItems.delete = t('delete');
+      toolbarItems.delete = t("delete");
     }
     if (asset.providerData?.published) {
-      toolbarItems.assign = t('assign');
+      toolbarItems.assign = t("assign");
     }
     if (asset.duplicable) {
-      toolbarItems.duplicate = t('duplicate');
+      toolbarItems.duplicate = t("duplicate");
     }
     if (asset.pinneable) {
       if (asset.pinned === false) {
-        toolbarItems.pin = t('pin');
+        toolbarItems.pin = t("pin");
       }
       if (asset.pinned === true) {
-        toolbarItems.unpin = t('unpin');
+        toolbarItems.unpin = t("unpin");
       }
     }
     // if (asset.shareable) {
@@ -75,7 +79,7 @@ const ScormDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
         try {
           setAppLoading(true);
           await deletePackageRequest(asset.providerData.id);
-          addSuccessAlert(t('deleted'));
+          addSuccessAlert(t("deleted"));
           onRefresh();
         } catch (err) {
           addErrorAlert(getErrorMessage(err));
@@ -90,8 +94,11 @@ const ScormDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
       onConfirm: async () => {
         try {
           setAppLoading(true);
-          await duplicatePackageRequest(asset.providerData.id, asset.providerData.published);
-          addSuccessAlert(t('duplicated'));
+          await duplicatePackageRequest(
+            asset.providerData.id,
+            asset.providerData.published
+          );
+          addSuccessAlert(t("duplicated"));
           onRefresh();
         } catch (err) {
           addErrorAlert(getErrorMessage(err));
@@ -116,15 +123,15 @@ const ScormDetail = ({ asset, onRefresh, onPin, onUnpin, ...props }) => {
       }}
       metadataComponent={<AssetMetadataScorm metadata={asset} />}
       variant="document"
-      variantTitle={t('document')}
+      variantTitle={t("document")}
       variantIcon={CardVariantIcon}
       toolbarItems={toolbarItems}
       titleActionButton={
         asset?.providerData?.published
           ? {
-            icon: <ViewOnIcon height={16} width={16} />,
-            onClick: handleView,
-          }
+              icon: <ViewOnIcon height={16} width={16} />,
+              onClick: handleView,
+            }
           : null
       }
       onView={handleView}

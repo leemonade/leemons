@@ -1,8 +1,12 @@
-const { map, toArray, uniqBy } = require('lodash');
-const { LeemonsError } = require('@leemons/error');
+const { map, toArray, uniqBy } = require("lodash");
+const { LeemonsError } = require("@leemons/error");
 
 function getScormGrade({ state, numberOfQuestions }) {
-  if (state?.cmi?.score?.raw && state?.cmi?.score?.min && state?.cmi?.score?.max) {
+  if (
+    state?.cmi?.score?.raw &&
+    state?.cmi?.score?.min &&
+    state?.cmi?.score?.max
+  ) {
     const raw = parseInt(state?.cmi?.score?.raw, 10);
     const min = parseInt(state?.cmi?.score?.min, 10);
     const max = parseInt(state?.cmi?.score?.max, 10);
@@ -18,7 +22,8 @@ function getScormGrade({ state, numberOfQuestions }) {
   }
   if (state?.cmi?.interactions && Object.keys(state.cmi.interactions)?.length) {
     const interactions = toArray(state?.cmi?.interactions);
-    const questionsLength = numberOfQuestions ?? uniqBy(interactions, 'id')?.length;
+    const questionsLength =
+      numberOfQuestions ?? uniqBy(interactions, "id")?.length;
     const attemptsUsed = Math.floor(interactions.length / questionsLength);
 
     const firstQuestion = (attemptsUsed - 1) * questionsLength;
@@ -28,7 +33,7 @@ function getScormGrade({ state, numberOfQuestions }) {
 
     let correctAnswers = 0;
     interactionsToCheck.forEach((interaction) => {
-      if (interaction.result === 'correct') {
+      if (interaction.result === "correct") {
         correctAnswers++;
       }
     });
@@ -92,7 +97,7 @@ function getScaledGrade({ grade, evaluationSystem }) {
 }
 
 function getLeemonsScormObject({ assignable, state }) {
-  if (assignable?.metadata?.version === 'scorm2004') {
+  if (assignable?.metadata?.version === "scorm2004") {
     return {
       cmi: {
         interactions: state?.cmi?.interaction,
@@ -100,7 +105,7 @@ function getLeemonsScormObject({ assignable, state }) {
       },
     };
   }
-  if (assignable?.metadata?.version === 'scorm12') {
+  if (assignable?.metadata?.version === "scorm12") {
     return {
       cmi: {
         interactions: state?.cmi?.interactions,
@@ -112,31 +117,44 @@ function getLeemonsScormObject({ assignable, state }) {
   return {};
 }
 
-module.exports = async function updateStatus({ instance: instanceId, user, state, ctx }) {
-  const userAgentIds = map(ctx.meta.userSession.userAgents, 'id');
+module.exports = async function updateStatus({
+  instance: instanceId,
+  user,
+  state,
+  ctx,
+}) {
+  const userAgentIds = map(ctx.meta.userSession.userAgents, "id");
   const isUser = userAgentIds.includes(user);
 
   if (!isUser) {
     throw new LeemonsError(ctx, {
-      message: 'Only the assignation student can update the scorm status',
+      message: "Only the assignation student can update the scorm status",
     });
   }
 
-  const instance = await ctx.tx.call('assignables.assignableInstances.getAssignableInstance', {
-    id: instanceId,
-    details: true,
+  const instance = await ctx.tx.call(
+    "assignables.assignableInstances.getAssignableInstance",
+    {
+      id: instanceId,
+      details: true,
+    }
+  );
+
+  const leemonsScormState = getLeemonsScormObject({
+    assignable: instance?.assignable,
+    state,
   });
 
-  const leemonsScormState = getLeemonsScormObject({ assignable: instance?.assignable, state });
-
-  if (instance.assignable.role !== 'scorm') {
-    throw new LeemonsError(ctx, { message: 'This service can only update scorm grades' });
+  if (instance.assignable.role !== "scorm") {
+    throw new LeemonsError(ctx, {
+      message: "This service can only update scorm grades",
+    });
   }
 
   const classes = instance?.subjects;
   const program = classes?.[0]?.program;
   const evaluationSystem = await ctx.tx.call(
-    'academic-portfolio.programs.getProgramEvaluationSystem',
+    "academic-portfolio.programs.getProgramEvaluationSystem",
     { id: program }
   );
 
@@ -157,15 +175,15 @@ module.exports = async function updateStatus({ instance: instanceId, user, state
         upsert: true,
       }
     ),
-    ctx.tx.call('assignables.assignations.updateAssignation', {
+    ctx.tx.call("assignables.assignations.updateAssignation", {
       assignation: {
         assignableInstance: instanceId,
         user,
         grades: classes.map((klass) => ({
           subject: klass.subject,
-          type: 'main',
+          type: "main",
           grade: scaledGrade,
-          gradedBy: 'auto-graded',
+          gradedBy: "auto-graded",
         })),
       },
     }),

@@ -1,9 +1,14 @@
-import React from 'react';
-import { Box } from '@bubbles-ui/components';
+import React from "react";
+import { Box } from "@bubbles-ui/components";
 
 const CardVariantIcon = (
-  <Box style={{ position: 'relative', width: 14, height: 14 }}>
-    <svg strokeWidth="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <Box style={{ position: "relative", width: 14, height: 14 }}>
+    <svg
+      strokeWidth="1.5"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
         d="M16.875,23.248H3.447a.819.819,0,0,1-.822-.815V1.727A.983.983,0,0,1,3.612.748H20.388a.983.983,0,0,1,.987.979V4.5"
         fill="none"

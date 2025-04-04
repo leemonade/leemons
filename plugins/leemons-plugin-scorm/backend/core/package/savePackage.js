@@ -1,7 +1,10 @@
-const { LeemonsError } = require('@leemons/error');
-const _ = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const _ = require("lodash");
 
-const { validateSavePackage, savePackageSchema } = require('../../validations/forms');
+const {
+  validateSavePackage,
+  savePackageSchema,
+} = require("../../validations/forms");
 
 /**
  * Saves a package.
@@ -17,7 +20,9 @@ async function savePackage({ scormData, ctx }) {
 
   // Check is userSession is provided
   if (!ctx.meta.userSession)
-    throw new LeemonsError(ctx, { message: 'User session is required (savePackage)' });
+    throw new LeemonsError(ctx, {
+      message: "User session is required (savePackage)",
+    });
 
   // Clean data to allowed properties
   if (!savePackageSchema.additionalProperties) {
@@ -44,8 +49,8 @@ async function savePackage({ scormData, ctx }) {
       indexable: true,
       public: true, // TODO Cambiar a false despues de la demo
     },
-    role: 'scorm',
-    statement: '',
+    role: "scorm",
+    statement: "",
     subjects: _.map(data.subjects, (subject) => ({
       subject,
       program: data.program,
@@ -66,7 +71,7 @@ async function savePackage({ scormData, ctx }) {
   const packageAssetProps = {
     name: `${data.name} [Scorm file]`,
     file: data.file,
-    description: '',
+    description: "",
     indexable: false,
     public: true,
   };
@@ -76,7 +81,7 @@ async function savePackage({ scormData, ctx }) {
   // Check if it is an editing scenario and both file and packageAsset are present
   if (isEditing && data.file && data.packageAsset) {
     // Update the existing package asset
-    packageAsset = await ctx.tx.call('leebrary.assets.update', {
+    packageAsset = await ctx.tx.call("leebrary.assets.update", {
       data: {
         ...packageAssetProps,
         id: data.packageAsset,
@@ -85,7 +90,7 @@ async function savePackage({ scormData, ctx }) {
     });
   } else if (data.file) {
     // Create a new package asset
-    packageAsset = await ctx.tx.call('leebrary.assets.add', {
+    packageAsset = await ctx.tx.call("leebrary.assets.add", {
       asset: packageAssetProps,
       options: {
         published: data.published,
@@ -104,12 +109,12 @@ async function savePackage({ scormData, ctx }) {
   if (isEditing) {
     // In editing scenario, update the existing assignable
     delete toSave.role;
-    assignable = await ctx.tx.call('assignables.assignables.updateAssignable', {
+    assignable = await ctx.tx.call("assignables.assignables.updateAssignable", {
       assignable: { id: data.id, ...toSave },
       published: data.published,
     });
   } else {
-    assignable = await ctx.tx.call('assignables.assignables.createAssignable', {
+    assignable = await ctx.tx.call("assignables.assignables.createAssignable", {
       assignable: toSave,
       published: data.published,
     });

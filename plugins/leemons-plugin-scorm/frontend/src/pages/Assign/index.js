@@ -1,15 +1,15 @@
-import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
-import { Button, Stack, Loader } from '@bubbles-ui/components';
-import { useStore } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import Form from '@assignables/components/Assignment/Form';
-import { prefixPN } from '@scorm/helpers';
-import { assignPackageRequest, getPackageRequest } from '@scorm/request';
+import React from "react";
+import { useHistory, useParams } from "react-router-dom";
+import { Button, Stack, Loader } from "@bubbles-ui/components";
+import { useStore } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import Form from "@assignables/components/Assignment/Form";
+import { prefixPN } from "@scorm/helpers";
+import { assignPackageRequest, getPackageRequest } from "@scorm/request";
 
 export default function Assign() {
-  const [t] = useTranslateLoader(prefixPN('scormAssign'));
+  const [t] = useTranslateLoader(prefixPN("scormAssign"));
 
   const [store, render] = useStore({
     loading: false,
@@ -31,8 +31,8 @@ export default function Assign() {
     try {
       await assignPackageRequest(params.id, taskInstanceData);
 
-      addSuccessAlert(t('assignDone'));
-      history.push('/private/assignables/ongoing');
+      addSuccessAlert(t("assignDone"));
+      history.push("/private/assignables/ongoing");
     } catch (e) {
       addErrorAlert(e.message);
     }
@@ -63,8 +63,10 @@ export default function Assign() {
   return (
     <Form
       assignable={store.package}
-      evaluationType={isGradable ? 'auto' : 'none'}
-      evaluationTypes={isGradable ? ['calificable', 'punctuable'] : ['nonEvaluable']}
+      evaluationType={isGradable ? "auto" : "none"}
+      evaluationTypes={
+        isGradable ? ["calificable", "punctuable"] : ["nonEvaluable"]
+      }
       hideMaxTime
       onSubmit={send}
       showEvaluation={isGradable}

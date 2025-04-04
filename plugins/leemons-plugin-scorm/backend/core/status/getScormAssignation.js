@@ -1,6 +1,6 @@
 module.exports = async function getScormAssignation({ instance, user, ctx }) {
   const [assignation, scormStatus] = await Promise.all([
-    ctx.tx.call('assignables.assignations.getAssignation', {
+    ctx.tx.call("assignables.assignations.getAssignation", {
       assignableInstanceId: instance,
       user,
     }),

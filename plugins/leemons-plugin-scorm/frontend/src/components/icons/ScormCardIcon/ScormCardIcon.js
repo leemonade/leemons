@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 import {
   SCORM_CARD_ICON_PROP_TYPES,
   SCORM_CARD_ICON_DEFAULT_PROPS,
-} from './ScormCardIcon.constants';
+} from "./ScormCardIcon.constants";
 
 const ScormCardIcon = ({ width, height, color }) => (
   <svg
@@ -26,6 +26,6 @@ const ScormCardIcon = ({ width, height, color }) => (
 ScormCardIcon.defaultProps = SCORM_CARD_ICON_DEFAULT_PROPS;
 ScormCardIcon.propTypes = SCORM_CARD_ICON_PROP_TYPES;
 
-ScormCardIcon.displayName = 'ScormCardIcon';
+ScormCardIcon.displayName = "ScormCardIcon";
 export default ScormCardIcon;
 export { ScormCardIcon };

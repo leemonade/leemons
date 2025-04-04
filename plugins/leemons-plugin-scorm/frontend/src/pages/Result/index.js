@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useParams, useHistory, Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, useHistory, useParams } from "react-router-dom";
 
 import {
   ActivityAccordion,
@@ -8,7 +8,6 @@ import {
   Box,
   Button,
   ContextContainer,
-  createStyles,
   ImageLoader,
   Loader,
   ScoreFeedback,
@@ -16,30 +15,34 @@ import {
   Table,
   Text,
   Title,
-} from '@bubbles-ui/components';
-import { CutStarIcon, PluginComunicaIcon, StarIcon } from '@bubbles-ui/icons/solid';
-import { LocaleDuration } from '@common';
-import hooks from 'leemons-hooks';
+  createStyles,
+} from "@bubbles-ui/components";
+import {
+  CutStarIcon,
+  PluginComunicaIcon,
+  StarIcon,
+} from "@bubbles-ui/icons/solid";
+import { LocaleDuration } from "@common";
+import hooks from "@leemons/hooks";
 
-import { ChatDrawer } from '@comunica/components';
-import { getNearestScale } from '@scorm/helpers/getNearestScale';
-import { getScormDuration } from '@scorm/helpers/getScormDuration';
-import { getScormProgress } from '@scorm/helpers/getScormProgress';
-import { isNumber } from 'lodash';
-import { prefixPN } from '@scorm/helpers';
+import { useIsStudent, useIsTeacher } from "@academic-portfolio/hooks";
+import AssignableUserNavigator from "@assignables/components/AssignableUserNavigator";
 import {
   useEvaluationType,
   useEvaluationTypeLocalizations,
-} from '@assignables/hooks/useEvaluationType';
-import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
-import { useScormQuestions } from '@scorm/hooks/useScormQuestions';
-import AssignableUserNavigator from '@assignables/components/AssignableUserNavigator';
-import ChatButton from '@comunica/components/ChatButton';
-import useAssignation from '@scorm/request/hooks/queries/useAssignation';
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
-import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+} from "@assignables/hooks/useEvaluationType";
+import useProgramEvaluationSystem from "@assignables/hooks/useProgramEvaluationSystem";
+import useRolesLocalizations from "@assignables/hooks/useRolesLocalizations";
+import useInstances from "@assignables/requests/hooks/queries/useInstances";
+import { ChatDrawer } from "@comunica/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { prefixPN } from "@scorm/helpers";
+import { getNearestScale } from "@scorm/helpers/getNearestScale";
+import { getScormDuration } from "@scorm/helpers/getScormDuration";
+import { getScormProgress } from "@scorm/helpers/getScormProgress";
+import { useScormQuestions } from "@scorm/hooks/useScormQuestions";
+import useAssignation from "@scorm/request/hooks/queries/useAssignation";
+import { isNumber } from "lodash";
 
 const useResultStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
@@ -48,32 +51,32 @@ const useResultStyles = createStyles((theme) => {
     root: {
       backgroundColor: theme.colors.uiBackground02,
       paddingBottom: theme.spacing[12],
-      overflow: 'auto',
+      overflow: "auto",
     },
     container: {
-      width: '100%',
-      display: 'flex',
+      width: "100%",
+      display: "flex",
       gap: theme.spacing[10],
     },
 
     studentSelector: {
-      width: '332px',
+      width: "332px",
       marginTop: theme.spacing[6],
     },
     rightContent: {
-      width: '100%',
+      width: "100%",
     },
     rightContentTeacher: {
-      width: 'calc(100% - 332px)',
+      width: "calc(100% - 332px)",
     },
     header: {
-      textAlign: 'center',
+      textAlign: "center",
       paddingTop: theme.spacing[6],
       paddingBottom: theme.spacing[6],
     },
     content: {
-      display: 'flex',
-      flexDirection: 'column',
+      display: "flex",
+      flexDirection: "column",
       gap: theme.spacing[2],
     },
     firstTableHeader: {
@@ -94,11 +97,11 @@ const useResultStyles = createStyles((theme) => {
     showTestBar: {
       backgroundColor: theme.colors.uiBackground01,
       padding: theme.spacing[4],
-      display: 'flex',
-      justifyContent: 'end',
+      display: "flex",
+      justifyContent: "end",
     },
     feedbackUser: {
-      border: '1px solid',
+      border: "1px solid",
       borderColor: theme.colors.ui01,
       borderRadius: theme.spacing[1],
       padding: theme.spacing[4],
@@ -119,39 +122,50 @@ export default function Result() {
   /*
     --- Localizations ---
   */
-  const { scorm: scormLabel } = useRolesLocalizations(['scorm']);
-  const [t] = useTranslateLoader(prefixPN('scormCorrection'));
+  const { scorm: scormLabel } = useRolesLocalizations(["scorm"]);
+  const [t] = useTranslateLoader(prefixPN("scormCorrection"));
   const evaluationTypeLocalizations = useEvaluationTypeLocalizations();
 
   /*
     --- Data fetching ---
   */
-  const { data: instance, isLoading: instanceIsLoading } = useInstances({ id, enabled: !!id });
-  const evaluationSystem = useProgramEvaluationSystem(instance, { enabled: !!instance });
-  const { data: { assignation, scormStatus: state } = {}, isLoading: assignationIsLoading } =
-    useAssignation({
-      instance: id,
-      user,
-      enabled: !!id && !!user,
-    });
+  const { data: instance, isLoading: instanceIsLoading } = useInstances({
+    id,
+    enabled: !!id,
+  });
+  const evaluationSystem = useProgramEvaluationSystem(instance, {
+    enabled: !!instance,
+  });
+  const {
+    data: { assignation, scormStatus: state } = {},
+    isLoading: assignationIsLoading,
+  } = useAssignation({
+    instance: id,
+    user,
+    enabled: !!id && !!user,
+  });
 
   /*
     --- Parsed data --
   */
   const evaluationType = useEvaluationType(instance ?? {});
-  const evaluationTypeLocalzation = evaluationTypeLocalizations?.[evaluationType];
+  const evaluationTypeLocalzation =
+    evaluationTypeLocalizations?.[evaluationType];
 
-  const questions = useScormQuestions({ state, assignable: instance?.assignable });
+  const questions = useScormQuestions({
+    state,
+    assignable: instance?.assignable,
+  });
   const tableHeaders = React.useMemo(
     () => [
       {
-        Header: t('question'),
-        accessor: 'question',
+        Header: t("question"),
+        accessor: "question",
         className: cx(classes.tableHeader, classes.firstTableHeader),
       },
       {
-        Header: t('result'),
-        accessor: 'result',
+        Header: t("result"),
+        accessor: "result",
         className: classes.tableHeader,
       },
     ],
@@ -170,24 +184,26 @@ export default function Result() {
             </Box>
           ),
           result: isAnswered ? (
-            <Box style={{ minWidth: '100px' }} className={classes.tableCell}>
-              <Box style={{ width: '20px', height: '20px', position: 'relative' }}>
+            <Box style={{ minWidth: "100px" }} className={classes.tableCell}>
+              <Box
+                style={{ width: "20px", height: "20px", position: "relative" }}
+              >
                 <ImageLoader
                   src={
                     isCorrect
-                      ? '/public/tests/question-done.svg'
-                      : '/public/tests/question-error.svg'
+                      ? "/public/tests/question-done.svg"
+                      : "/public/tests/question-error.svg"
                   }
                 />
               </Box>
             </Box>
           ) : (
-            <Box style={{ minWidth: '100px' }} className={classes.tableCell}>
+            <Box style={{ minWidth: "100px" }} className={classes.tableCell}>
               <Box
                 sx={(theme) => ({
-                  width: '20px',
-                  height: '20px',
-                  borderRadius: '50%',
+                  width: "20px",
+                  height: "20px",
+                  borderRadius: "50%",
                   backgroundColor: theme.colors.ui01,
                 })}
               />
@@ -198,7 +214,7 @@ export default function Result() {
     [questions]
   );
 
-  const grade = assignation?.grades?.find((g) => g.type === 'main')?.grade;
+  const grade = assignation?.grades?.find((g) => g.type === "main")?.grade;
   const scale = getNearestScale({
     grade,
     evaluationSystem,
@@ -209,7 +225,7 @@ export default function Result() {
   */
   const [room, setRoom] = useState(null);
   const [chatOpened, setChatOpened] = useState(null);
-  const [accordionState, setAccordionState] = React.useState(['questions']);
+  const [accordionState, setAccordionState] = React.useState(["questions"]);
 
   const progress = getScormProgress({ state });
   const duration = getScormDuration({ state, assignation });
@@ -233,7 +249,7 @@ export default function Result() {
     <ContextContainer className={classes.root} fullHeight fullWidth>
       <Box
         sx={(theme) => ({
-          width: '100%',
+          width: "100%",
           maxWidth: theme.breakpoints.lg,
           paddingLeft: isTeacher ? 0 : theme.spacing[8],
           paddingRight: theme.spacing[5],
@@ -242,14 +258,23 @@ export default function Result() {
         <Box className={classes.container}>
           {!!isTeacher && (
             <Box className={classes.studentSelector}>
-              <AssignableUserNavigator onChange={onUserChange} value={user} instance={instance} />
+              <AssignableUserNavigator
+                onChange={onUserChange}
+                value={user}
+                instance={instance}
+              />
             </Box>
           )}
           {!!user && !assignationIsLoading && (
-            <Box className={cx(classes.rightContent, { [classes.rightContentTeacher]: isTeacher })}>
+            <Box
+              className={cx(classes.rightContent, {
+                [classes.rightContentTeacher]: isTeacher,
+              })}
+            >
               <Box className={classes.header}>
                 <Text role="productive">
-                  {evaluationTypeLocalzation} {instance.gradable ? <StarIcon /> : <CutStarIcon />}
+                  {evaluationTypeLocalzation}{" "}
+                  {instance.gradable ? <StarIcon /> : <CutStarIcon />}
                 </Text>
               </Box>
               <Box className={classes.content}>
@@ -276,14 +301,14 @@ export default function Result() {
                     <Title order={3}>{instance.assignable.asset.name}</Title>
                     <Box
                       sx={(theme) => ({
-                        display: 'flex',
-                        flexDirection: 'row',
+                        display: "flex",
+                        flexDirection: "row",
                         gap: theme.other.global.spacing.gap.sm,
                       })}
                     >
                       {isNumber(progress) && (
                         <Text role="productive">
-                          {progress}% {t('completed')}
+                          {progress}% {t("completed")}
                         </Text>
                       )}
                       {!!duration && (
@@ -295,21 +320,25 @@ export default function Result() {
                       {!instance?.gradable && isStudent && (
                         <Link
                           to={instance?.assignable?.roleDetails?.studentDetailUrl
-                            ?.replace(':id', id)
-                            ?.replace(':user', user)}
+                            ?.replace(":id", id)
+                            ?.replace(":user", user)}
                         >
-                          {t('repeat')}
+                          {t("repeat")}
                         </Link>
                       )}
                     </Box>
                   </Stack>
                 </ScoreFeedback>
                 {!!questions.questions.length && (
-                  <ActivityAccordion multiple value={accordionState} onChange={setAccordionState}>
+                  <ActivityAccordion
+                    multiple
+                    value={accordionState}
+                    onChange={setAccordionState}
+                  >
                     <ActivityAccordionPanel
                       key={1}
                       itemValue="questions"
-                      label={t('questions')}
+                      label={t("questions")}
                       rightSection={
                         <Box>
                           <Badge
@@ -321,10 +350,16 @@ export default function Result() {
                         </Box>
                       }
                       icon={
-                        <Box style={{ position: 'relative', width: '22px', height: '24px' }}>
+                        <Box
+                          style={{
+                            position: "relative",
+                            width: "22px",
+                            height: "24px",
+                          }}
+                        >
                           <ImageLoader
                             className="stroke-current"
-                            src={'/public/tests/questions-icon.svg'}
+                            src={"/public/tests/questions-icon.svg"}
                           />
                         </Box>
                       }
@@ -339,18 +374,22 @@ export default function Result() {
               <Box sx={(theme) => ({ marginTop: theme.spacing[10] })}>
                 <ContextContainer alignItems="center">
                   <Text size="md" color="primary" strong>
-                    {isTeacher ? t('chatTeacherDescription') : t('chatDescription')}
+                    {isTeacher
+                      ? t("chatTeacherDescription")
+                      : t("chatDescription")}
                   </Text>
                   <Box>
                     <Button
                       rounded
                       rightIcon={<PluginComunicaIcon />}
                       onClick={() => {
-                        hooks.fireEvent('chat:onRoomOpened', room);
+                        hooks.fireEvent("chat:onRoomOpened", room);
                         setChatOpened(true);
                       }}
                     >
-                      {isTeacher ? t('chatButtonStudent') : t('chatButtonTeacher')}
+                      {isTeacher
+                        ? t("chatButtonStudent")
+                        : t("chatButtonTeacher")}
                     </Button>
                   </Box>
                 </ContextContainer>
@@ -364,7 +403,7 @@ export default function Result() {
         <>
           <ChatDrawer
             onClose={() => {
-              hooks.fireEvent('chat:closeDrawer');
+              hooks.fireEvent("chat:closeDrawer");
               setChatOpened(false);
             }}
             opened={chatOpened}

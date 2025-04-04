@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { savePackageRequest } from '../../index';
-import { getPackageKey } from '../keys/packages';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { savePackageRequest } from "../../index";
+import { getPackageKey } from "../keys/packages";
 
 export default function useMutatePackage() {
   const queryClient = useQueryClient();

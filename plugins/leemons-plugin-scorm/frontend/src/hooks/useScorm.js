@@ -1,26 +1,26 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 export function useScorm({ onInitialize, onTerminate, onSetValue }) {
   useEffect(() => {
     const handler = ({ data: msg }) => {
-      if (msg.scope === 'scorm' && msg.caller === 'player') {
+      if (msg.scope === "scorm" && msg.caller === "player") {
         switch (msg.event) {
-          case 'commit':
+          case "commit":
             onSetValue?.(msg.commit);
             break;
-          case 'terminate':
+          case "terminate":
             onTerminate?.();
             break;
-          case 'initialize':
+          case "initialize":
             onInitialize?.();
             break;
           default:
         }
       }
     };
-    window.addEventListener('message', handler);
+    window.addEventListener("message", handler);
 
-    return () => window.removeEventListener('message', handler);
+    return () => window.removeEventListener("message", handler);
   }, [onInitialize, onTerminate, onSetValue]);
 }
 

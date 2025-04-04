@@ -3,18 +3,20 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const { LeemonsMongoDBMixin, mongoose } = require("@leemons/mongodb");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
 
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getServiceModels } = require('../models');
-const restActions = require('./rest/package.rest');
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
+const { getServiceModels } = require("../models");
+const restActions = require("./rest/package.rest");
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'scorm.package',
+  name: "scorm.package",
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),

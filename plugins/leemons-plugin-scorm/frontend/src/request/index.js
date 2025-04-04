@@ -6,9 +6,9 @@ export {
   assignPackage as assignPackageRequest,
   duplicatePackage as duplicatePackageRequest,
   getSupportedVersions as getSupportedVersionsRequest,
-} from './packages';
+} from "./packages";
 
 export {
   getScormAssignation as getScormAssignationRequest,
   updateStatus as updateStatusRequest,
-} from './assignation';
+} from "./assignation";

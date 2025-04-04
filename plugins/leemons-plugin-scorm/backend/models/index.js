@@ -1,9 +1,9 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('@leemons/mongodb-helpers');
+const { getKeyValueModel } = require("@leemons/mongodb-helpers");
 
 const models = {
-  ...require('./scorm-progress'),
+  ...require("./scorm-progress"),
 };
 
 module.exports = {
@@ -12,7 +12,7 @@ module.exports = {
     return {
       ScormProgress: models.scormProgressModel,
       //
-      KeyValue: getKeyValueModel({ modelName: 'v1::scorm_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: "v1::scorm_KeyValue" }),
     };
   },
 };
