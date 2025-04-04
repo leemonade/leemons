@@ -1,4 +1,4 @@
-const { getS3AndConfig } = require('./getS3AndConfig');
+const { getS3AndConfig } = require("./getS3AndConfig");
 
 /**
  * This function uploads a file to AWS S3.
@@ -18,7 +18,7 @@ async function upload({ item, buffer, ctx } = {}) {
       Bucket: config.bucket,
       Key,
       Body: buffer,
-      ACL: 'private',
+      ACL: "private",
       ContentType: item.type,
     })
     .promise();

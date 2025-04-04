@@ -8,11 +8,7 @@
     "test": "jest --watch --coverage",
     "lint": "eslint services"
   },
-  "keywords": [
-    "microservices",
-    "moleculer",
-    "leemons"
-  ],
+  "keywords": ["microservices", "moleculer", "leemons"],
   "author": "",
   "devDependencies": {
     "jest": "^27.5.1",

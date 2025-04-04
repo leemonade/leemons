@@ -1,14 +1,21 @@
-const { it, expect, beforeAll, afterAll, describe, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  beforeAll,
+  afterAll,
+  describe,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { removeConfig } = require('./removeConfig');
-const { configSchema } = require('../../models/config');
+const { removeConfig } = require("./removeConfig");
+const { configSchema } = require("../../models/config");
 
 let mongooseConnection;
 let disconnectMongoose;
 
-describe('Remove Provider Config', () => {
+describe("Remove Provider Config", () => {
   beforeAll(async () => {
     const { mongoose, disconnect } = await createMongooseConnection();
 
@@ -27,22 +34,22 @@ describe('Remove Provider Config', () => {
     await mongooseConnection.dropDatabase();
   });
 
-  it('Should correctly remove a config and return null', async () => {
+  it("Should correctly remove a config and return null", async () => {
     // Arrange
     const ctx = generateCtx({
       models: {
-        Config: newModel(mongooseConnection, 'Config', configSchema),
+        Config: newModel(mongooseConnection, "Config", configSchema),
       },
     });
 
     // Populate the database with a config
     const configData = {
-      id: 'testId',
-      deploymentID: 'testDeploymentId',
-      bucket: 'testBucket',
-      region: 'testRegion',
-      accessKey: 'testAccessKey',
-      secretAccessKey: 'testSecretAccessKey',
+      id: "testId",
+      deploymentID: "testDeploymentId",
+      bucket: "testBucket",
+      region: "testRegion",
+      accessKey: "testAccessKey",
+      secretAccessKey: "testSecretAccessKey",
     };
     await ctx.tx.db.Config.create({ ...configData });
 
@@ -53,15 +60,17 @@ describe('Remove Provider Config', () => {
     expect(response).toBeNull();
 
     // Check if the record is removed
-    const removedConfig = await ctx.tx.db.Config.findOne({ id: configData.id }).lean();
+    const removedConfig = await ctx.tx.db.Config.findOne({
+      id: configData.id,
+    }).lean();
     expect(removedConfig).toBeNull();
   });
 
-  it('Should return null if no config is found', async () => {
+  it("Should return null if no config is found", async () => {
     // Arrange
     const ctx = generateCtx({
       models: {
-        Config: newModel(mongooseConnection, 'Config', configSchema),
+        Config: newModel(mongooseConnection, "Config", configSchema),
       },
     });
 

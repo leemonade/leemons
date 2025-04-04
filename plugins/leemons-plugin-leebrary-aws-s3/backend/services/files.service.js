@@ -2,12 +2,14 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMongoDBMixin, mongoose } = require("@leemons/mongodb");
 
-const { pluginName } = require('../config/constants');
+const { pluginName } = require("../config/constants");
 const {
   uploadMultipartChunk,
   abortMultipart,
@@ -17,9 +19,9 @@ const {
   upload,
   remove,
   clone,
-} = require('../core/provider');
-const { getUploadChunkUrls } = require('../core/provider/getUploadChunkUrls');
-const { getServiceModels } = require('../models');
+} = require("../core/provider");
+const { getUploadChunkUrls } = require("../core/provider/getUploadChunkUrls");
+const { getServiceModels } = require("../models");
 
 /** @type {ServiceSchema} */
 module.exports = {

@@ -1,19 +1,26 @@
-const { it, expect, describe, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  describe,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { newMultipart } = require('./newMultipart');
-const { getS3AndConfig } = require('./getS3AndConfig');
-const { multipartEtagSchema } = require('../../models/multipart-etag');
-const { multipartUploadsSchema } = require('../../models/multipart-uploads');
-const getFiles = require('../../__fixtures__/getFile');
+const { newMultipart } = require("./newMultipart");
+const { getS3AndConfig } = require("./getS3AndConfig");
+const { multipartEtagSchema } = require("../../models/multipart-etag");
+const { multipartUploadsSchema } = require("../../models/multipart-uploads");
+const getFiles = require("../../__fixtures__/getFile");
 
-jest.mock('./getS3AndConfig');
+jest.mock("./getS3AndConfig");
 
 let mongooseConnection;
 let disconnectMongoose;
 
-describe('New S3 Multipart upload', () => {
+describe("New S3 Multipart upload", () => {
   beforeAll(async () => {
     const { mongoose, disconnect } = await createMongooseConnection();
 
@@ -29,11 +36,11 @@ describe('New S3 Multipart upload', () => {
           promise: () => Promise.resolve(true),
         }),
         createMultipartUpload: jest.fn().mockReturnValue({
-          promise: () => Promise.resolve({ UploadId: 'mock UploadId' }),
+          promise: () => Promise.resolve({ UploadId: "mock UploadId" }),
         }),
       },
       config: {
-        bucket: 'mockBucket',
+        bucket: "mockBucket",
       },
     }));
   });
@@ -49,7 +56,7 @@ describe('New S3 Multipart upload', () => {
     await mongooseConnection.dropDatabase();
   });
 
-  it('Should correctly create a multipart upload for a file and return the key', async () => {
+  it("Should correctly create a multipart upload for a file and return the key", async () => {
     // Arrange
     const {
       file: { id: fileId, isFolder: fileIsFolder, extension: fileExtension },
@@ -58,8 +65,16 @@ describe('New S3 Multipart upload', () => {
 
     const ctx = generateCtx({
       models: {
-        MultipartUploads: newModel(mongooseConnection, 'MultipartUploads', multipartUploadsSchema),
-        MultipartEtag: newModel(mongooseConnection, 'MultipartEtag', multipartEtagSchema),
+        MultipartUploads: newModel(
+          mongooseConnection,
+          "MultipartUploads",
+          multipartUploadsSchema
+        ),
+        MultipartEtag: newModel(
+          mongooseConnection,
+          "MultipartEtag",
+          multipartEtagSchema
+        ),
       },
     });
 
@@ -70,14 +85,16 @@ describe('New S3 Multipart upload', () => {
       ctx,
     });
 
-    const foundAsset = await ctx.tx.db.MultipartUploads.findOne({ fileId }).lean();
+    const foundAsset = await ctx.tx.db.MultipartUploads.findOne({
+      fileId,
+    }).lean();
 
     // Assert
     expect(fileId).toEqual(foundAsset.fileId);
     expect(response).toEqual(`leemons/leebrary/${fileId}.${fileExtension}`);
   });
 
-  it('Should correctly create multipart uploads for a folder and return the key', async () => {
+  it("Should correctly create multipart uploads for a folder and return the key", async () => {
     // Arrange
     const {
       folder: { id: folderId, isFolder: folderIsFolder },
@@ -86,8 +103,16 @@ describe('New S3 Multipart upload', () => {
 
     const ctx = generateCtx({
       models: {
-        MultipartUploads: newModel(mongooseConnection, 'MultipartUploads', multipartUploadsSchema),
-        MultipartEtag: newModel(mongooseConnection, 'MultipartEtag', multipartEtagSchema),
+        MultipartUploads: newModel(
+          mongooseConnection,
+          "MultipartUploads",
+          multipartUploadsSchema
+        ),
+        MultipartEtag: newModel(
+          mongooseConnection,
+          "MultipartEtag",
+          multipartEtagSchema
+        ),
       },
     });
 

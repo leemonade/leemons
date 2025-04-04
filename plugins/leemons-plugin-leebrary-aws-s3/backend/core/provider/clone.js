@@ -1,4 +1,4 @@
-const { getS3AndConfig } = require('./getS3AndConfig');
+const { getS3AndConfig } = require("./getS3AndConfig");
 
 /**
  * This function clones an item from an AWS S3 bucket to another location within the same bucket.
@@ -10,7 +10,7 @@ const { getS3AndConfig } = require('./getS3AndConfig');
  * @param {MoleculerContext} params.ctx - The Moleculer context, used to interact with the database.
  * @returns {Promise<String>} The key of the cloned item in the S3 bucket.
  */
-async function clone({ itemFrom, itemTo, ctx, toFolder = 'leebrary' } = {}) {
+async function clone({ itemFrom, itemTo, ctx, toFolder = "leebrary" } = {}) {
   const { s3, config } = await getS3AndConfig({ ctx });
 
   const Key = `leemons/${ctx.meta.deploymentID}/${toFolder}/${itemTo.id}.${itemTo.extension}`;

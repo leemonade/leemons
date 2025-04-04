@@ -1,12 +1,12 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('@leemons/mongodb-helpers');
-const { pluginName } = require('../config/constants');
+const { getKeyValueModel } = require("@leemons/mongodb-helpers");
+const { pluginName } = require("../config/constants");
 
 const models = {
-  ...require('./config'),
-  ...require('./multipart-etag'),
-  ...require('./multipart-uploads'),
+  ...require("./config"),
+  ...require("./multipart-etag"),
+  ...require("./multipart-uploads"),
 };
 
 module.exports = {

@@ -1,3 +1,3 @@
 module.exports = {
-  pluginName: 'leebrary-aws-s3',
+  pluginName: "leebrary-aws-s3",
 };

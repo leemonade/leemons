@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { getS3AndConfig } = require('./getS3AndConfig');
+const _ = require("lodash");
+const { getS3AndConfig } = require("./getS3AndConfig");
 
 /**
  * This function aborts a multipart upload in AWS S3.
@@ -18,7 +18,7 @@ async function abortMultipart({ file, ctx } = {}) {
   }).lean();
 
   if (!multipartConfig.length) {
-    throw new Error('No started multipart upload for this file');
+    throw new Error("No started multipart upload for this file");
   }
 
   const { s3, config } = await getS3AndConfig({ ctx });

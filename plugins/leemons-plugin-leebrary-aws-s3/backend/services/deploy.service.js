@@ -2,13 +2,15 @@
  * @typedef {import('moleculer').ServiceSchema} ServiceSchema Moleculer's Service Schema
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
-const { LeemonsMultilanguageMixin } = require('@leemons/multilanguage');
-const path = require('path');
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMongoDBMixin } = require("@leemons/mongodb");
+const { LeemonsMultilanguageMixin } = require("@leemons/multilanguage");
+const path = require("path");
 
-const { pluginName } = require('../config/constants');
-const { getServiceModels } = require('../models');
+const { pluginName } = require("../config/constants");
+const { getServiceModels } = require("../models");
 
 /** @type {ServiceSchema} */
 module.exports = () => ({
@@ -16,7 +18,7 @@ module.exports = () => ({
   version: 1,
   mixins: [
     LeemonsMultilanguageMixin({
-      locales: ['es', 'en'],
+      locales: ["es", "en"],
       i18nPath: path.resolve(__dirname, `../i18n/`),
     }),
     LeemonsMongoDBMixin({
@@ -25,12 +27,12 @@ module.exports = () => ({
     LeemonsDeploymentManagerMixin(),
   ],
   events: {
-    'deployment-manager.install': async (ctx) => {
+    "deployment-manager.install": async (ctx) => {
       // Register as a library provider
-      await ctx.tx.call('leebrary.providers.register', {
-        name: 'Amazon S3',
-        image: 'https://cdn.worldvectorlogo.com/logos/aws-glacier.svg',
-        type: 'storage',
+      await ctx.tx.call("leebrary.providers.register", {
+        name: "Amazon S3",
+        image: "https://cdn.worldvectorlogo.com/logos/aws-glacier.svg",
+        type: "storage",
         supportedMethods: {
           uploadMultipartChunk: true,
           getUploadChunkUrls: true,

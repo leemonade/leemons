@@ -1,6 +1,12 @@
-const { getS3AndConfig } = require('./getS3AndConfig');
+const { getS3AndConfig } = require("./getS3AndConfig");
 
-async function getUploadChunkUrls({ file, nChunks, partNumber, path, ctx } = {}) {
+async function getUploadChunkUrls({
+  file,
+  nChunks,
+  partNumber,
+  path,
+  ctx,
+} = {}) {
   let Key = file.uri;
   const query = { fileId: file.id };
 
@@ -9,15 +15,16 @@ async function getUploadChunkUrls({ file, nChunks, partNumber, path, ctx } = {})
     Key += `/${path}`;
   }
 
-  const multipartConfig = await ctx.tx.db.MultipartUploads.findOne(query).lean();
+  const multipartConfig =
+    await ctx.tx.db.MultipartUploads.findOne(query).lean();
   if (!multipartConfig) {
-    throw new Error('No started multipart upload for this file');
+    throw new Error("No started multipart upload for this file");
   }
 
   const { s3, config } = await getS3AndConfig({ ctx });
 
   if (partNumber) {
-    const url = await s3.getSignedUrlPromise('uploadPart', {
+    const url = await s3.getSignedUrlPromise("uploadPart", {
       Bucket: config.bucket,
       Key,
       PartNumber: partNumber,
@@ -32,7 +39,7 @@ async function getUploadChunkUrls({ file, nChunks, partNumber, path, ctx } = {})
 
   return Promise.all(
     partNumbers.map((partNumber) =>
-      s3.getSignedUrlPromise('uploadPart', {
+      s3.getSignedUrlPromise("uploadPart", {
         Bucket: config.bucket,
         Key,
         PartNumber: partNumber + 1,

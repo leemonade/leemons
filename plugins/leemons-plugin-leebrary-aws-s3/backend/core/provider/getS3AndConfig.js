@@ -1,6 +1,6 @@
-const aws = require('aws-sdk');
+const aws = require("aws-sdk");
 
-const { getConfig } = require('./getConfig');
+const { getConfig } = require("./getConfig");
 
 /**
  * Retrieves the configuration for the AWS S3 service and initializes an S3 instance.
@@ -14,7 +14,7 @@ async function getS3AndConfig({ ctx } = {}) {
   if (config) {
     return {
       s3: new aws.S3({
-        apiVersion: '2010-12-01',
+        apiVersion: "2010-12-01",
         accessKeyId: config.accessKey.trim(),
         secretAccessKey: config.secretAccessKey.trim(),
         sessionToken: config.sessionToken,

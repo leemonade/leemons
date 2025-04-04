@@ -4,16 +4,16 @@ import {
   PasswordInput,
   TableInput,
   TextInput,
-} from '@bubbles-ui/components';
-import { useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert } from '@layout/alert';
-import prefixPN from '@leebrary-aws-s3/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import React from 'react';
+} from "@bubbles-ui/components";
+import { useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert } from "@layout/alert";
+import prefixPN from "@leebrary-aws-s3/helpers/prefixPN";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import React from "react";
 
 export default function AddLeebraryProvider() {
-  const [t] = useTranslateLoader(prefixPN('provider'));
+  const [t] = useTranslateLoader(prefixPN("provider"));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [store, render] = useStore({
     providers: [],
@@ -23,9 +23,9 @@ export default function AddLeebraryProvider() {
     try {
       const { config } = await leemons.api(`v1/leebrary-aws-s3/config`, {
         allAgents: true,
-        method: 'GET',
+        method: "GET",
       });
-      console.log('config', config);
+      console.log("config", config);
       if (config) {
         store.providers = [config];
       }
@@ -40,9 +40,9 @@ export default function AddLeebraryProvider() {
     try {
       await leemons.api(`v1/leebrary/providers/config`, {
         allAgents: true,
-        method: 'POST',
+        method: "POST",
         body: {
-          provider: 'leebrary-aws-s3',
+          provider: "leebrary-aws-s3",
           config,
         },
       });
@@ -59,9 +59,9 @@ export default function AddLeebraryProvider() {
     try {
       await leemons.api(`v1/leebrary/providers/config`, {
         allAgents: true,
-        method: 'POST',
+        method: "POST",
         body: {
-          provider: 'leebrary-aws-s3',
+          provider: "leebrary-aws-s3",
           config: newItem,
         },
       });
@@ -76,9 +76,9 @@ export default function AddLeebraryProvider() {
     try {
       await leemons.api(`v1/leebrary/providers/config/delete`, {
         allAgents: true,
-        method: 'POST',
+        method: "POST",
         body: {
-          provider: 'leebrary-aws-s3',
+          provider: "leebrary-aws-s3",
         },
       });
       store.providers = [];
@@ -92,37 +92,37 @@ export default function AddLeebraryProvider() {
 
   const columns = [
     {
-      Header: t('bucket'),
-      accessor: 'bucket',
+      Header: t("bucket"),
+      accessor: "bucket",
       input: {
         node: <TextInput required />,
-        rules: { required: t('fieldRequired') },
+        rules: { required: t("fieldRequired") },
       },
     },
     {
-      Header: t('region'),
-      accessor: 'region',
+      Header: t("region"),
+      accessor: "region",
       input: {
         node: <TextInput required />,
-        rules: { required: t('fieldRequired') },
+        rules: { required: t("fieldRequired") },
       },
     },
     {
-      Header: t('accessKey'),
-      accessor: 'accessKey',
+      Header: t("accessKey"),
+      accessor: "accessKey",
       input: {
         node: <TextInput required />,
-        rules: { required: t('fieldRequired') },
+        rules: { required: t("fieldRequired") },
       },
     },
     {
-      Header: t('secretAccessKey'),
-      accessor: 'secretAccessKey',
+      Header: t("secretAccessKey"),
+      accessor: "secretAccessKey",
       input: {
         node: <PasswordInput required />,
-        rules: { required: t('fieldRequired') },
+        rules: { required: t("fieldRequired") },
       },
-      valueRender: () => '***********',
+      valueRender: () => "***********",
     },
   ];
 
@@ -131,8 +131,11 @@ export default function AddLeebraryProvider() {
   }, []);
 
   return (
-    <Paper shadow="none" sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02 })}>
-      <ContextContainer title={t('title')} description={t('description')}>
+    <Paper
+      shadow="none"
+      sx={(theme) => ({ backgroundColor: theme.colors.uiBackground02 })}
+    >
+      <ContextContainer title={t("title")} description={t("description")}>
         <TableInput
           data={store.providers}
           columns={columns}
@@ -144,9 +147,9 @@ export default function AddLeebraryProvider() {
           editable={true}
           removable={true}
           labels={{
-            add: t('tableAdd'),
-            edit: t('tableEdit'),
-            remove: t('tableRemove'),
+            add: t("tableAdd"),
+            edit: t("tableEdit"),
+            remove: t("tableRemove"),
           }}
         />
       </ContextContainer>

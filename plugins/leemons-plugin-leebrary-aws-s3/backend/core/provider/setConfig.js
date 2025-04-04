@@ -1,6 +1,6 @@
-const aws = require('aws-sdk');
-const { getAWSCredentials } = require('@leemons/aws');
-const { hasPermissions } = require('./hasPermissions');
+const aws = require("aws-sdk");
+const { getAWSCredentials } = require("@leemons/aws");
+const { hasPermissions } = require("./hasPermissions");
 
 /**
  * This function sets the configuration for AWS S3 and returns the updated configuration object.
@@ -12,11 +12,12 @@ const { hasPermissions } = require('./hasPermissions');
  */
 async function setConfig({ config, ctx } = {}) {
   const configs = await ctx.tx.db.Config.find({}).lean();
-  const credentials = await getAWSCredentials({ prefix: 'S3', ctx });
+  const credentials = await getAWSCredentials({ prefix: "S3", ctx });
 
   const options = {
     accessKeyId: credentials.accessKeyId || config.accessKey.trim(),
-    secretAccessKey: credentials.secretAccessKey || config.secretAccessKey.trim(),
+    secretAccessKey:
+      credentials.secretAccessKey || config.secretAccessKey.trim(),
     sessionToken: credentials.sessionToken || config.sessionToken?.trim(),
     region: credentials.region || config.region.trim(),
   };
@@ -38,7 +39,7 @@ async function setConfig({ config, ctx } = {}) {
     }
   } catch (e) {
     throw new Error(
-      'The bucket does not exist or there are no permissions to upload/read/delete files.'
+      "The bucket does not exist or there are no permissions to upload/read/delete files."
     );
   }
 
@@ -50,10 +51,14 @@ async function setConfig({ config, ctx } = {}) {
   };
 
   if (configs.length > 0) {
-    return ctx.tx.db.Config.findOneAndUpdate({ id: configs[0].id }, configToSave, {
-      new: true,
-      lean: true,
-    });
+    return ctx.tx.db.Config.findOneAndUpdate(
+      { id: configs[0].id },
+      configToSave,
+      {
+        new: true,
+        lean: true,
+      }
+    );
   }
 
   const result = await ctx.tx.db.Config.create(configToSave);

@@ -6,21 +6,21 @@ const {
   describe,
   afterEach,
   beforeEach,
-} = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const { setConfig } = require('./setConfig');
-const { configSchema } = require('../../models/config');
-const { hasPermissions } = require('./hasPermissions');
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const { setConfig } = require("./setConfig");
+const { configSchema } = require("../../models/config");
+const { hasPermissions } = require("./hasPermissions");
 
 let mongooseConnection;
 let disconnectMongoose;
 
-jest.mock('./hasPermissions', () => ({
+jest.mock("./hasPermissions", () => ({
   hasPermissions: jest.fn(),
 }));
 
-describe('Updates Provider Config', () => {
+describe("Updates Provider Config", () => {
   beforeAll(async () => {
     const { mongoose, disconnect } = await createMongooseConnection();
 
@@ -45,18 +45,18 @@ describe('Updates Provider Config', () => {
     jest.restoreAllMocks();
   });
 
-  it('Should correctly set the configuration and return it as a plain object', async () => {
+  it("Should correctly set the configuration and return it as a plain object", async () => {
     // Arrange
     const newConfig = {
-      accessKey: 'testAccessKey',
-      secretAccessKey: 'testSecretAccessKey',
-      region: 'testRegion',
-      bucket: 'testBucket',
+      accessKey: "testAccessKey",
+      secretAccessKey: "testSecretAccessKey",
+      region: "testRegion",
+      bucket: "testBucket",
     };
 
     const ctx = generateCtx({
       models: {
-        Config: newModel(mongooseConnection, 'Config', configSchema),
+        Config: newModel(mongooseConnection, "Config", configSchema),
       },
     });
 

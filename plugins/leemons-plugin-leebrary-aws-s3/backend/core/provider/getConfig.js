@@ -1,4 +1,4 @@
-const { getAWSCredentials } = require('@leemons/aws');
+const { getAWSCredentials } = require("@leemons/aws");
 
 /**
  * This function retrieves the first configuration object from the database.
@@ -11,12 +11,12 @@ const { getAWSCredentials } = require('@leemons/aws');
 async function getConfig({ ctx } = {}) {
   let configs = [];
 
-  const credentials = await getAWSCredentials({ prefix: 'S3', ctx });
+  const credentials = await getAWSCredentials({ prefix: "S3", ctx });
 
   if (credentials) {
     configs = [
       {
-        id: 'leebrary-aws-s3',
+        id: "leebrary-aws-s3",
         deploymentID: ctx.meta.deploymentID,
         bucket: process.env.AWS_S3_BUCKET,
         region: credentials.region,
@@ -26,9 +26,9 @@ async function getConfig({ ctx } = {}) {
       },
     ];
   } else {
-    console.error('=============================================');
-    console.error('[AWS S3] No credentials found in @leemons/aws');
-    console.error('=============================================');
+    console.error("=============================================");
+    console.error("[AWS S3] No credentials found in @leemons/aws");
+    console.error("=============================================");
 
     configs = await ctx.tx.db.Config.find({}).lean();
   }

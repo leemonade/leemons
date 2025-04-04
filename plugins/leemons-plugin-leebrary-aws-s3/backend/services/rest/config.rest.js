@@ -4,18 +4,18 @@
  */
 /** @type {ServiceSchema} */
 
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
-const { getConfig } = require('../../core/provider');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
+const { getConfig } = require("../../core/provider");
 
 module.exports = {
   getConfigRest: {
     rest: {
-      method: 'GET',
-      path: '/',
+      method: "GET",
+      path: "/",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const isSuperAdmin = await ctx.tx.call('users.users.isSuperAdmin', {
+      const isSuperAdmin = await ctx.tx.call("users.users.isSuperAdmin", {
         userId: ctx.meta.userSession.id,
       });
 
@@ -25,7 +25,7 @@ module.exports = {
       }
       return {
         status: 400,
-        error: 'Only can super admin',
+        error: "Only can super admin",
       };
     },
   },

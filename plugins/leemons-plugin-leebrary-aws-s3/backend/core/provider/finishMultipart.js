@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { getS3AndConfig } = require('./getS3AndConfig');
+const _ = require("lodash");
+const { getS3AndConfig } = require("./getS3AndConfig");
 
 /**
  * This function completes a multipart upload to an AWS S3 bucket.
@@ -30,10 +30,10 @@ async function finishMultipart({ file, path, etags: _etags, ctx } = {}) {
   }
 
   if (!multipartConfig) {
-    throw new Error('No started multipart upload for this file');
+    throw new Error("No started multipart upload for this file");
   }
   if (etags.length < 1) {
-    throw new Error('No part files sends yet');
+    throw new Error("No part files sends yet");
   }
 
   const { s3, config } = await getS3AndConfig({ ctx });

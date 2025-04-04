@@ -1,15 +1,15 @@
 module.exports = function getFile() {
   const file = {
-    id: 'file-id',
-    url: '/file/id',
-    extension: 'png',
+    id: "file-id",
+    url: "/file/id",
+    extension: "png",
     isFolder: false,
   };
 
   const folder = {
-    id: 'file-id',
-    url: '/file/id',
-    extension: 'zip',
+    id: "file-id",
+    url: "/file/id",
+    extension: "zip",
     isFolder: true,
   };
 

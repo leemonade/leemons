@@ -1,5 +1,5 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
-const { pluginName } = require('../config/constants');
+const { mongoose, newModel } = require("@leemons/mongodb");
+const { pluginName } = require("../config/constants");
 
 const configSchema = new mongoose.Schema(
   {
@@ -38,6 +38,10 @@ const configSchema = new mongoose.Schema(
   }
 );
 
-const configModel = newModel(mongoose.connection, `v1::${pluginName}_Config`, configSchema);
+const configModel = newModel(
+  mongoose.connection,
+  `v1::${pluginName}_Config`,
+  configSchema
+);
 
 module.exports = { configSchema, configModel };

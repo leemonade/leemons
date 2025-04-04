@@ -1,10 +1,10 @@
-const { it, expect, describe, beforeEach } = require('@jest/globals');
-const { clone } = require('./clone');
-const { getS3AndConfig } = require('./getS3AndConfig');
+const { it, expect, describe, beforeEach } = require("@jest/globals");
+const { clone } = require("./clone");
+const { getS3AndConfig } = require("./getS3AndConfig");
 
-jest.mock('./getS3AndConfig');
+jest.mock("./getS3AndConfig");
 
-describe('Clone S3 File', () => {
+describe("Clone S3 File", () => {
   let mockS3;
   let mockConfig;
   let mockItemFrom;
@@ -17,15 +17,15 @@ describe('Clone S3 File', () => {
       }),
     };
     mockConfig = {
-      bucket: 'testBucket',
+      bucket: "testBucket",
     };
     mockItemFrom = {
-      id: '123',
-      extension: 'jpg',
+      id: "123",
+      extension: "jpg",
     };
     mockItemTo = {
-      id: '456',
-      extension: 'png',
+      id: "456",
+      extension: "png",
     };
 
     getS3AndConfig.mockResolvedValue({
@@ -34,7 +34,7 @@ describe('Clone S3 File', () => {
     });
   });
 
-  it('should call getS3AndConfig with correct parameters', async () => {
+  it("should call getS3AndConfig with correct parameters", async () => {
     // Arrange
     const ctx = {};
     const expectedParams = { ctx };
@@ -46,7 +46,7 @@ describe('Clone S3 File', () => {
     expect(getS3AndConfig).toHaveBeenCalledWith(expectedParams);
   });
 
-  it('should call copyObject with correct parameters', async () => {
+  it("should call copyObject with correct parameters", async () => {
     // Arrange
     const ctx = {};
     const expectedParams = {
@@ -62,13 +62,17 @@ describe('Clone S3 File', () => {
     expect(mockS3.copyObject).toHaveBeenCalledWith(expectedParams);
   });
 
-  it('should return the correct key', async () => {
+  it("should return the correct key", async () => {
     // Arrange
     const ctx = {};
     const expectedKey = `leemons/leebrary/${mockItemTo.id}.${mockItemTo.extension}`;
 
     // Act
-    const result = await clone({ itemFrom: mockItemFrom, itemTo: mockItemTo, ctx });
+    const result = await clone({
+      itemFrom: mockItemFrom,
+      itemTo: mockItemTo,
+      ctx,
+    });
 
     // Assert
     expect(result).toEqual(expectedKey);

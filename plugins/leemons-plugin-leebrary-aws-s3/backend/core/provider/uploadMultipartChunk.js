@@ -1,6 +1,12 @@
-const { getS3AndConfig } = require('./getS3AndConfig');
+const { getS3AndConfig } = require("./getS3AndConfig");
 
-async function uploadMultipartChunk({ file, partNumber, buffer: _buffer, path, ctx } = {}) {
+async function uploadMultipartChunk({
+  file,
+  partNumber,
+  buffer: _buffer,
+  path,
+  ctx,
+} = {}) {
   let Key = file.uri;
   const query = { fileId: file.id };
 
@@ -9,12 +15,13 @@ async function uploadMultipartChunk({ file, partNumber, buffer: _buffer, path, c
     Key += `/${path}`;
   }
 
-  const multipartConfig = await ctx.tx.db.MultipartUploads.findOne(query).lean();
+  const multipartConfig =
+    await ctx.tx.db.MultipartUploads.findOne(query).lean();
   if (!multipartConfig) {
-    throw new Error('No started multipart upload for this file');
+    throw new Error("No started multipart upload for this file");
   }
 
-  const buffer = _buffer?.type === 'Buffer' ? Buffer.from(_buffer) : _buffer;
+  const buffer = _buffer?.type === "Buffer" ? Buffer.from(_buffer) : _buffer;
 
   const { s3, config } = await getS3AndConfig({ ctx });
 

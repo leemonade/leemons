@@ -1,4 +1,4 @@
-const { getS3AndConfig } = require('./getS3AndConfig');
+const { getS3AndConfig } = require("./getS3AndConfig");
 
 /**
  * This function removes a file from AWS S3.
@@ -22,7 +22,7 @@ async function remove({ key: Key, ctx } = {}) {
     return true;
   } catch (e) {
     console.error(e);
-    throw new Error('Failed to remove file from S3', { cause: e });
+    throw new Error("Failed to remove file from S3", { cause: e });
   }
 }
 

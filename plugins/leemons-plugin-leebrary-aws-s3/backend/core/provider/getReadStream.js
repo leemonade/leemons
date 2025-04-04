@@ -1,4 +1,4 @@
-const { getS3AndConfig } = require('./getS3AndConfig');
+const { getS3AndConfig } = require("./getS3AndConfig");
 
 /**
  * This function is used to get a read stream from an S3 bucket.
@@ -37,12 +37,13 @@ async function getReadStream({
 
   // Generate a presigned URL for the S3 object. Defaults to 24 hours
   const expirationTimeFromContext = ctx?.meta?.leebrary?.signedURLExpireSeconds;
-  const signedUrlExpireSeconds = expirationTime ?? expirationTimeFromContext ?? 24 * 60 * 60;
+  const signedUrlExpireSeconds =
+    expirationTime ?? expirationTimeFromContext ?? 24 * 60 * 60;
 
-  return s3.getSignedUrl('getObject', {
+  return s3.getSignedUrl("getObject", {
     ...params,
     Expires: signedUrlExpireSeconds,
-    ResponseContentDisposition: `attachment; filename="${Key.split('/').pop()}"`,
+    ResponseContentDisposition: `attachment; filename="${Key.split("/").pop()}"`,
   });
 }
 

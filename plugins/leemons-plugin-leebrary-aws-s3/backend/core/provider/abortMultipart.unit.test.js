@@ -1,20 +1,27 @@
-const { it, expect, describe, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
+const {
+  it,
+  expect,
+  describe,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
 
-const { abortMultipart } = require('./abortMultipart');
-const { getS3AndConfig } = require('./getS3AndConfig');
-const { multipartEtagSchema } = require('../../models/multipart-etag');
-const { multipartUploadsSchema } = require('../../models/multipart-uploads');
-const getMultiparts = require('../../__fixtures__/getMultiparts');
-const getFile = require('../../__fixtures__/getFile');
+const { abortMultipart } = require("./abortMultipart");
+const { getS3AndConfig } = require("./getS3AndConfig");
+const { multipartEtagSchema } = require("../../models/multipart-etag");
+const { multipartUploadsSchema } = require("../../models/multipart-uploads");
+const getMultiparts = require("../../__fixtures__/getMultiparts");
+const getFile = require("../../__fixtures__/getFile");
 
-jest.mock('./getS3AndConfig');
+jest.mock("./getS3AndConfig");
 
 let mongooseConnection;
 let disconnectMongoose;
 
-describe('Abort S3 Multipart upload', () => {
+describe("Abort S3 Multipart upload", () => {
   beforeAll(async () => {
     const { mongoose, disconnect } = await createMongooseConnection();
 
@@ -24,11 +31,11 @@ describe('Abort S3 Multipart upload', () => {
     getS3AndConfig.mockImplementation(() => ({
       s3: {
         abortMultipartUpload: jest.fn().mockReturnValue({
-          promise: () => Promise.resolve({ UploadId: 'mock UploadId' }),
+          promise: () => Promise.resolve({ UploadId: "mock UploadId" }),
         }),
       },
       config: {
-        bucket: 'mockBucket',
+        bucket: "mockBucket",
       },
     }));
   });
@@ -44,15 +51,23 @@ describe('Abort S3 Multipart upload', () => {
     await mongooseConnection.dropDatabase();
   });
 
-  it('Should correctly abort a multipart upload and return true', async () => {
+  it("Should correctly abort a multipart upload and return true", async () => {
     // Arrange
     const { multipartUploadModel, multipartEtagModel } = getMultiparts();
     const { file } = getFile();
 
     const ctx = generateCtx({
       models: {
-        MultipartUploads: newModel(mongooseConnection, 'MultipartUploads', multipartUploadsSchema),
-        MultipartEtag: newModel(mongooseConnection, 'MultipartEtag', multipartEtagSchema),
+        MultipartUploads: newModel(
+          mongooseConnection,
+          "MultipartUploads",
+          multipartUploadsSchema
+        ),
+        MultipartEtag: newModel(
+          mongooseConnection,
+          "MultipartEtag",
+          multipartEtagSchema
+        ),
       },
     });
 
@@ -79,22 +94,30 @@ describe('Abort S3 Multipart upload', () => {
     expect(foundMultipartEtag).toBeNull();
   });
 
-  it('Should throw an error when no multipart upload is found for the given file', async () => {
+  it("Should throw an error when no multipart upload is found for the given file", async () => {
     // Arrange
     const ctx = generateCtx({
       models: {
-        MultipartUploads: newModel(mongooseConnection, 'MultipartUploads', multipartUploadsSchema),
-        MultipartEtag: newModel(mongooseConnection, 'MultipartEtag', multipartEtagSchema),
+        MultipartUploads: newModel(
+          mongooseConnection,
+          "MultipartUploads",
+          multipartUploadsSchema
+        ),
+        MultipartEtag: newModel(
+          mongooseConnection,
+          "MultipartEtag",
+          multipartEtagSchema
+        ),
       },
     });
 
     const file = {
-      id: 'nonexistent',
+      id: "nonexistent",
     };
 
     // Act and Assert
     await expect(abortMultipart({ file, ctx })).rejects.toThrow(
-      'No started multipart upload for this file'
+      "No started multipart upload for this file"
     );
   });
 });

@@ -1,13 +1,20 @@
-const { it, expect, describe, beforeAll, afterAll, beforeEach } = require('@jest/globals');
-const { generateCtx, createMongooseConnection } = require('@leemons/testing');
-const { newModel } = require('@leemons/mongodb');
-const { getConfig } = require('./getConfig');
-const { configSchema } = require('../../models/config');
+const {
+  it,
+  expect,
+  describe,
+  beforeAll,
+  afterAll,
+  beforeEach,
+} = require("@jest/globals");
+const { generateCtx, createMongooseConnection } = require("@leemons/testing");
+const { newModel } = require("@leemons/mongodb");
+const { getConfig } = require("./getConfig");
+const { configSchema } = require("../../models/config");
 
 let mongooseConnection;
 let disconnectMongoose;
 
-describe('Get Provider Config', () => {
+describe("Get Provider Config", () => {
   beforeAll(async () => {
     const { mongoose, disconnect } = await createMongooseConnection();
 
@@ -26,11 +33,11 @@ describe('Get Provider Config', () => {
     await mongooseConnection.dropDatabase();
   });
 
-  it('Should return null if no configurations are found in the database', async () => {
+  it("Should return null if no configurations are found in the database", async () => {
     // Arrange
     const ctx = generateCtx({
       models: {
-        Config: newModel(mongooseConnection, 'Config', configSchema),
+        Config: newModel(mongooseConnection, "Config", configSchema),
       },
     });
 
@@ -41,20 +48,20 @@ describe('Get Provider Config', () => {
     expect(response).toBeNull();
   });
 
-  it('Should return the first configuration object from the database if configurations are found', async () => {
+  it("Should return the first configuration object from the database if configurations are found", async () => {
     // Arrange
     const ctx = generateCtx({
       models: {
-        Config: newModel(mongooseConnection, 'Config', configSchema),
+        Config: newModel(mongooseConnection, "Config", configSchema),
       },
     });
 
     const configData = {
-      deploymentID: 'testDeploymentId',
-      bucket: 'testBucket',
-      region: 'testRegion',
-      accessKey: 'testAccessKey',
-      secretAccessKey: 'testSecretAccessKey',
+      deploymentID: "testDeploymentId",
+      bucket: "testBucket",
+      region: "testRegion",
+      accessKey: "testAccessKey",
+      secretAccessKey: "testSecretAccessKey",
     };
 
     await ctx.tx.db.Config.create(configData);

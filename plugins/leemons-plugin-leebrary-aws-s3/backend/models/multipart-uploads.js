@@ -1,5 +1,5 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
-const { pluginName } = require('../config/constants');
+const { mongoose, newModel } = require("@leemons/mongodb");
+const { pluginName } = require("../config/constants");
 
 const multipartUploadsSchema = new mongoose.Schema(
   {

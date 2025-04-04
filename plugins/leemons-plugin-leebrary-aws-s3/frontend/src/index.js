@@ -1,3 +1,3 @@
 module.exports = () => {
-  console.log('provider amazon s3 was loaded');
+  console.log("provider amazon s3 was loaded");
 };
