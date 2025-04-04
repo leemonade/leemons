@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 /**
  * Return family members
@@ -9,13 +9,17 @@ const _ = require('lodash');
  * @return {Promise<any>}
  * */
 async function getMembers({ familyId, ctx }) {
-  const members = await ctx.tx.db.FamilyMembers.find({ family: familyId }).lean();
-  const users = await ctx.tx.call('users.users.detail', { userId: _.map(members, 'user') });
-  const usersById = _.keyBy(users, 'id');
+  const members = await ctx.tx.db.FamilyMembers.find({
+    family: familyId,
+  }).lean();
+  const users = await ctx.tx.call("users.users.detail", {
+    userId: _.map(members, "user"),
+  });
+  const usersById = _.keyBy(users, "id");
   const guardians = [];
   const students = [];
   _.forEach(members, ({ user, memberType, family, ...rest }) => {
-    if (memberType === 'student') {
+    if (memberType === "student") {
       students.push({
         ...rest,
         ...usersById[user],

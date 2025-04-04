@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
+const _ = require("lodash");
+const { mongoDBPaginate } = require("@leemons/mongodb-helpers");
 
 async function list({ page, size, query, ctx }) {
   return mongoDBPaginate({

@@ -1,5 +1,5 @@
-const { validateExistMemberInFamily } = require('../../validations/exists');
-const { getProfiles } = require('../profiles-config/getProfiles');
+const { validateExistMemberInFamily } = require("../../validations/exists");
+const { getProfiles } = require("../profiles-config/getProfiles");
 
 /**
  * Add family member
@@ -12,23 +12,26 @@ const { getProfiles } = require('../profiles-config/getProfiles');
 async function addMember({ family, user, memberType, ctx }) {
   await validateExistMemberInFamily({ family, user, ctx });
   const [member, profiles] = await Promise.all([
-    ctx.tx.db.FamilyMembers.create({ family, user, memberType }).then((r) => r.toObject()),
+    ctx.tx.db.FamilyMembers.create({ family, user, memberType }).then((r) =>
+      r.toObject()
+    ),
     getProfiles({ ctx }),
   ]);
 
-  const profile = memberType === 'student' ? profiles.student : profiles.guardian;
+  const profile =
+    memberType === "student" ? profiles.student : profiles.guardian;
 
-  await ctx.tx.call('users.permissions.addCustomPermissionToUserProfile', {
+  await ctx.tx.call("users.permissions.addCustomPermissionToUserProfile", {
     user,
     profile,
     permissions: [
       {
-        permissionName: 'families.user-families',
-        actionNames: ['view'],
+        permissionName: "families.user-families",
+        actionNames: ["view"],
       },
       {
         permissionName: `families.family-${family}`,
-        actionNames: ['view'],
+        actionNames: ["view"],
       },
     ],
   });

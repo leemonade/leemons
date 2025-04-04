@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useHistory, useParams } from 'react-router-dom';
+import { useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useHistory, useParams } from "react-router-dom";
 
 import {
   Alert,
@@ -15,23 +15,24 @@ import {
   Stack,
   Table,
   Text,
-  Textarea,
   TextInput,
+  Textarea,
   UserDisplayItem,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 
 // TODO: fix this import from @common plugin
-import { FamilyChildIcon, SingleActionsGraduateMaleIcon } from '@bubbles-ui/icons/outline';
-import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { useFormWithTheme } from '@common/hooks/useFormWithTheme';
-import { useAsync } from '@common/useAsync';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { PackageManagerService } from '@package-manager/services';
-import RelationSelect from '@families/components/relationSelect';
-import loadable from '@loadable/component';
-import { SearchUserDrawer, UserListBox } from '@families/components/';
-import { constants } from '@families/constants';
-import prefixPN from '@families/helpers/prefixPN';
+import {
+  FamilyChildIcon,
+  SingleActionsGraduateMaleIcon,
+} from "@bubbles-ui/icons/outline";
+import { AdminPageHeader } from "@bubbles-ui/leemons";
+import { useFormWithTheme } from "@common/hooks/useFormWithTheme";
+import { useAsync } from "@common/useAsync";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { SearchUserDrawer, UserListBox } from "@families/components/";
+import RelationSelect from "@families/components/relationSelect";
+import { constants } from "@families/constants";
+import prefixPN from "@families/helpers/prefixPN";
 import {
   addFamilyRequest,
   detailFamilyRequest,
@@ -39,41 +40,44 @@ import {
   removeFamilyRequest,
   searchUsersRequest,
   updateFamilyRequest,
-} from '@families/request';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
-import hooks from 'leemons-hooks';
-import * as _ from 'lodash';
-import moment from 'moment';
+} from "@families/request";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import hooks from "@leemons/hooks";
+import loadable from "@loadable/component";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { PackageManagerService } from "@package-manager/services";
+import { getPermissionsWithActionsIfIHaveRequest } from "@users/request";
+import * as _ from "lodash";
+import moment from "moment";
 
 function dynamicImport(component) {
-  return loadable(() =>
-    import(
-      /* webpackInclude: /(families-emergency-numbers.+)\.js/ */ `@app/plugins${component}.js`
-    )
+  return loadable(
+    () =>
+      import(
+        /* webpackInclude: /(families-emergency-numbers.+)\.js/ */ `@app/plugins${component}.js`
+      )
   );
 }
 
 function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = _.noop }) {
-  const { t: tCommonForm } = useCommonTranslate('forms');
-  const [selectedFilter, setSelectedFilter] = useState('name');
+  const { t: tCommonForm } = useCommonTranslate("forms");
+  const [selectedFilter, setSelectedFilter] = useState("name");
   const [loading, setLoading] = useState(false);
   const [error, setError, ErrorAlert] = useRequestErrorMessage();
   const [users, setUsers] = useState();
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [inputValueRequired, setInputValueRequired] = useState(false);
   const [selectedUser, setSelectedUser] = useState();
-  const [selectedRelation, setSelectedRelation] = useState('...');
-  const [otherRelationValue, setOtherRelationValue] = useState('');
+  const [selectedRelation, setSelectedRelation] = useState("...");
+  const [otherRelationValue, setOtherRelationValue] = useState("");
   const [relationError, setRelationError] = useState();
   const [dirty, setDirty] = useState(false);
 
   const tableHeaders = useMemo(
     () => [
       {
-        Header: ' ',
+        Header: " ",
         accessor: (currentUser) => (
           <Radio
             name="searchUserModalUser"
@@ -84,20 +88,20 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = _.noop }) {
         ),
       },
       {
-        Header: t('table.email'),
+        Header: t("table.email"),
         accessor: (field) => <UserDisplayItem {...field} variant="email" />,
       },
       {
-        Header: t('table.name'),
+        Header: t("table.name"),
         accessor: ({ name }) => <Text>{name}</Text>,
       },
       {
-        Header: t('table.surname'),
+        Header: t("table.surname"),
         accessor: ({ surnames }) => <Text>{surnames}</Text>,
       },
       {
-        Header: t('table.created_at'),
-        accessor: ({ createdAt }) => moment(createdAt).format('L'),
+        Header: t("table.created_at"),
+        accessor: ({ createdAt }) => moment(createdAt).format("L"),
       },
     ],
     [t, selectedUser]
@@ -106,16 +110,17 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = _.noop }) {
   const add = async () => {
     setDirty(true);
     const value = {};
-    if (type === 'guardian') {
-      if (!selectedRelation || selectedRelation === '...') {
-        setRelationError('need-relation');
+    if (type === "guardian") {
+      if (!selectedRelation || selectedRelation === "...") {
+        setRelationError("need-relation");
         return;
       }
-      if (selectedRelation === 'other' && !otherRelationValue) {
-        setRelationError('need-other-relation');
+      if (selectedRelation === "other" && !otherRelationValue) {
+        setRelationError("need-other-relation");
         return;
       }
-      value.memberType = selectedRelation === 'other' ? otherRelationValue : selectedRelation;
+      value.memberType =
+        selectedRelation === "other" ? otherRelationValue : selectedRelation;
     }
     if (selectedUser) {
       onAdd({ ...selectedUser, ...value });
@@ -131,15 +136,15 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = _.noop }) {
       }
       setLoading(true);
       const query = {
-        ignoreUserIds: _.map(alreadyExistingMembers, 'id'),
+        ignoreUserIds: _.map(alreadyExistingMembers, "id"),
       };
-      if (selectedFilter === 'name') {
+      if (selectedFilter === "name") {
         query.user = {
           name: inputValue,
           surnames: inputValue,
         };
       }
-      if (selectedFilter === 'email') {
+      if (selectedFilter === "email") {
         query.user = {
           email: inputValue,
         };
@@ -157,24 +162,24 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = _.noop }) {
     return (
       <Stack direction="column" spacing={2}>
         <RadioGroup
-          label={t('search_user_to_add')}
+          label={t("search_user_to_add")}
           name="searchUsersFilter"
           data={[
-            { value: 'name', label: t('search_by_name') },
-            { value: 'email', label: t('search_by_email') },
+            { value: "name", label: t("search_by_name") },
+            { value: "email", label: t("search_by_email") },
           ]}
           onChange={setSelectedFilter}
         />
         <TextInput
           placeholder={t(`enter_${selectedFilter}`)}
-          error={inputValueRequired ? tCommonForm('required') : ''}
+          error={inputValueRequired ? tCommonForm("required") : ""}
           value={inputValue}
           onChange={setInputValue}
         />
-        {users && <Alert severity="error">{t('no_users_to_add')}</Alert>}
+        {users && <Alert severity="error">{t("no_users_to_add")}</Alert>}
         <Box>
           <Button loading={loading} onClick={search}>
-            {t('search')}
+            {t("search")}
           </Button>
         </Box>
       </Stack>
@@ -187,21 +192,27 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = _.noop }) {
         formError={!selectedUser && dirty ? { message: tCommonForm('required') } : null}
       > */}
       <Table columns={tableHeaders} data={users} />
-      {type === 'guardian' ? (
+      {type === "guardian" ? (
         <Stack spacing={4}>
           <RelationSelect
-            label={t('guardian_relation')}
-            error={relationError === 'need-relation' ? tCommonForm('required') : ''}
+            label={t("guardian_relation")}
+            error={
+              relationError === "need-relation" ? tCommonForm("required") : ""
+            }
             value={selectedRelation}
             onChange={(e) => {
               setRelationError(null);
               setSelectedRelation(e);
             }}
           />
-          {selectedRelation === 'other' && (
+          {selectedRelation === "other" && (
             <TextInput
-              label={t('specify_relation')}
-              error={relationError === 'need-other-relation' ? tCommonForm('required') : ''}
+              label={t("specify_relation")}
+              error={
+                relationError === "need-other-relation"
+                  ? tCommonForm("required")
+                  : ""
+              }
               value={otherRelationValue}
               onChange={(e) => {
                 setRelationError(null);
@@ -213,7 +224,7 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = _.noop }) {
       ) : null}
       <Box>
         <Button color="primary" loading={loading} onClick={add}>
-          {t('add')}
+          {t("add")}
         </Button>
       </Box>
     </Box>
@@ -221,9 +232,9 @@ function SearchUsersModal({ t, type, alreadyExistingMembers, onAdd = _.noop }) {
 }
 
 function Detail() {
-  const [t] = useTranslateLoader(prefixPN('detail_page'));
-  const { t: tCommonHeader } = useCommonTranslate('page_header');
-  const { t: tCommonForm } = useCommonTranslate('forms');
+  const [t] = useTranslateLoader(prefixPN("detail_page"));
+  const { t: tCommonHeader } = useCommonTranslate("page_header");
+  const { t: tCommonForm } = useCommonTranslate("forms");
 
   const history = useHistory();
   const params = useParams();
@@ -241,12 +252,14 @@ function Detail() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [datasetConfig, setDatasetConfig] = useState(false);
   const [datasetData, setDatasetData] = useState(false);
-  const [emergencyNumberIsInstalled, setEmergencyNumberIsInstalled] = useState(false);
+  const [emergencyNumberIsInstalled, setEmergencyNumberIsInstalled] =
+    useState(false);
   const [family, setFamily] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
   const [_permissions, setPermissions] = useState([]);
-  const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
+  const [error, setError, ErrorAlert, getErrorMessage] =
+    useRequestErrorMessage();
   const [removeModalOpened, setRemoveModalOpened] = useState(false);
   const [modalOpened, setModalOpened] = useState(false);
 
@@ -257,12 +270,12 @@ function Detail() {
       guardiansInfo: { view: false, update: false },
       studentsInfo: { view: false, update: false },
     };
-    const permissionsByName = _.keyBy(_permissions, 'permissionName');
+    const permissionsByName = _.keyBy(_permissions, "permissionName");
     _.forIn(response, (value, key) => {
       const info = permissionsByName[constants?.permissions[key]];
       if (info) {
-        if (info.actionNames.indexOf('view') >= 0) value.view = true;
-        if (info.actionNames.indexOf('update') >= 0) value.update = true;
+        if (info.actionNames.indexOf("view") >= 0) value.view = true;
+        if (info.actionNames.indexOf("update") >= 0) value.update = true;
       }
     });
     return response;
@@ -274,13 +287,16 @@ function Detail() {
       if (response && response.jsonSchema) {
         _.forIn(response.jsonSchema.properties, (value, key) => {
           if (!response.jsonUI[key]) response.jsonUI[key] = {};
-          response.jsonUI[key]['ui:readonly'] = true;
+          response.jsonUI[key]["ui:readonly"] = true;
         });
       }
     }
     return response;
   }, [datasetConfig, isEditMode]);
-  const datasetProps = useMemo(() => ({ formData: datasetData }), [datasetData]);
+  const datasetProps = useMemo(
+    () => ({ formData: datasetData }),
+    [datasetData]
+  );
 
   const [form, formActions] = useFormWithTheme(
     goodDatasetConfig?.jsonSchema,
@@ -289,8 +305,8 @@ function Detail() {
     datasetProps
   );
 
-  const guardians = watch('guardian') || [];
-  const students = watch('student') || [];
+  const guardians = watch("guardian") || [];
+  const students = watch("student") || [];
   const members = guardians.concat(students);
 
   const load = useMemo(
@@ -304,7 +320,7 @@ function Detail() {
       let familyDatasetForm = null;
       try {
         const { jsonSchema, jsonUI } = await getDatasetFormRequest();
-        jsonUI['ui:className'] = 'grid grid-cols-3 gap-6';
+        jsonUI["ui:className"] = "grid grid-cols-3 gap-6";
         familyDatasetForm = { jsonSchema, jsonUI };
       } catch (e) {}
       const [{ permissions }, phoneNumbersInstalled] = await Promise.all([
@@ -314,7 +330,9 @@ function Detail() {
           constants?.permissions.guardiansInfo,
           constants?.permissions.studentsInfo,
         ]),
-        PackageManagerService.isPluginInstalled('leemons-plugin-families-emergency-numbers'),
+        PackageManagerService.isPluginInstalled(
+          "leemons-plugin-families-emergency-numbers"
+        ),
       ]);
 
       return { family, familyDatasetForm, permissions, phoneNumbersInstalled };
@@ -325,18 +343,23 @@ function Detail() {
   const onSuccess = useMemo(
     () => (data) => {
       if (data) {
-        const { family, familyDatasetForm, permissions, phoneNumbersInstalled } = data;
+        const {
+          family,
+          familyDatasetForm,
+          permissions,
+          phoneNumbersInstalled,
+        } = data;
         if (family) {
-          setValue('name', family.name);
-          setValue('maritalStatus', family.maritalStatus);
-          setValue('guardian', family.guardians);
-          setValue('student', family.students);
-          setValue('emergencyPhoneNumbers', family.emergencyPhoneNumbers);
+          setValue("name", family.name);
+          setValue("maritalStatus", family.maritalStatus);
+          setValue("guardian", family.guardians);
+          setValue("student", family.students);
+          setValue("emergencyPhoneNumbers", family.emergencyPhoneNumbers);
           setDatasetData(family.datasetValues);
           setFamily(family);
           setIsEditMode(false);
         } else {
-          setValue('maritalStatus', '...');
+          setValue("maritalStatus", "...");
           setIsEditMode(true);
         }
         if (familyDatasetForm) setDatasetConfig(familyDatasetForm);
@@ -364,7 +387,9 @@ function Detail() {
   const EmergencyNumbers = useMemo(
     () =>
       emergencyNumberIsInstalled
-        ? dynamicImport('/families-emergency-numbers/src/components/phoneNumbers')
+        ? dynamicImport(
+            "/families-emergency-numbers/src/components/phoneNumbers"
+          )
         : null,
     [emergencyNumberIsInstalled]
   );
@@ -384,7 +409,7 @@ function Detail() {
       if (_.isArray(dataToSend.student)) {
         dataToSend.students = _.map(dataToSend.student, (g) => ({
           user: g.id,
-          memberType: 'student',
+          memberType: "student",
         }));
         delete dataToSend.student;
       }
@@ -395,14 +420,14 @@ function Detail() {
           ...dataToSend,
           id: family.id,
         });
-        addSuccessAlert(t('update_done'));
+        addSuccessAlert(t("update_done"));
       } else {
         response = await addFamilyRequest(dataToSend);
-        addSuccessAlert(t('save_done'));
+        addSuccessAlert(t("save_done"));
       }
 
       setSaveLoading(false);
-      await hooks.fireEvent('menu-builder:reset-menu');
+      await hooks.fireEvent("menu-builder:reset-menu");
       await history.push(`/private/families/detail/${response.family.id}`);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
@@ -413,8 +438,8 @@ function Detail() {
   const deleteFamily = async () => {
     try {
       await removeFamilyRequest(family.id);
-      addSuccessAlert(t('deleted_done'));
-      await hooks.fireEvent('menu-builder:reset-menu');
+      addSuccessAlert(t("deleted_done"));
+      await hooks.fireEvent("menu-builder:reset-menu");
       await history.push(`/private/families/list`);
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
@@ -442,7 +467,7 @@ function Detail() {
     if (family.id) {
       setIsEditMode(false);
     } else {
-      history.push('/private/families/list');
+      history.push("/private/families/list");
     }
   };
 
@@ -451,12 +476,12 @@ function Detail() {
   };
 
   const onAddGuardian = () => {
-    setAddType('guardian');
+    setAddType("guardian");
     setModalOpened(true);
   };
 
   const onAddStudent = () => {
-    setAddType('student');
+    setAddType("student");
     setModalOpened(true);
   };
 
@@ -475,7 +500,7 @@ function Detail() {
   };
 
   const onChangePhoneNumbers = (e) => {
-    setValue('emergencyPhoneNumbers', e);
+    setValue("emergencyPhoneNumbers", e);
   };
 
   return (
@@ -485,12 +510,14 @@ function Detail() {
           <Modal
             opened={removeModalOpened}
             onClose={() => setRemoveModalOpened(false)}
-            title={t('remove_modal.title')}
+            title={t("remove_modal.title")}
           >
             <Stack direction="column" spacing={4}>
-              <Text>{t('remove_modal.message')}</Text>
+              <Text>{t("remove_modal.message")}</Text>
               <Stack justifyContent="space-between" spacing={4}>
-                <Button onClick={() => setRemoveModalOpened(false)}>Cancel</Button>
+                <Button onClick={() => setRemoveModalOpened(false)}>
+                  Cancel
+                </Button>
                 <Button onClick={deleteFamily}>Remove</Button>
               </Stack>
             </Stack>
@@ -517,8 +544,8 @@ function Detail() {
             onAdd={addMember}
           />
           <AdminPageHeader
-            values={{ title: watch('name') }}
-            placeholders={{ title: t('title_placeholder') }}
+            values={{ title: watch("name") }}
+            placeholders={{ title: t("title_placeholder") }}
             editMode={isEditMode}
             loading={saveLoading}
             // registerFormTitle={
@@ -532,30 +559,32 @@ function Detail() {
             // titlePlaceholder={t('title_placeholder')}
             // saveButtonLoading={saveLoading}
             buttons={{
-              new: isEditMode ? tCommonHeader('save') : '',
+              new: isEditMode ? tCommonHeader("save") : "",
               edit: isEditMode
-                ? tCommonHeader('cancel')
+                ? tCommonHeader("cancel")
                 : family?.id
-                ? tCommonHeader('delete')
-                : '',
-              cancel: isEditMode ? '' : tCommonHeader('edit'),
+                  ? tCommonHeader("delete")
+                  : "",
+              cancel: isEditMode ? "" : tCommonHeader("edit"),
             }}
-            onSave={() => (formActions.isLoaded() ? formActions.submit() : null)}
+            onSave={() =>
+              formActions.isLoaded() ? formActions.submit() : null
+            }
             onCancel={isEditMode ? onCancelButton : onDeleteButton}
             onEdit={onEditButton}
             fullWidth
           />
           <form onSubmit={handleSubmit(onSubmit)}>
             <PageContainer fullWidth>
-              <Stack spacing={10} style={{ marginTop: 36, width: '100%' }}>
+              <Stack spacing={10} style={{ marginTop: 36, width: "100%" }}>
                 <Stack direction="column" spacing={6}>
                   {permissions.guardiansInfo.view && (
                     <UserListBox
-                      title={t('guardians')}
+                      title={t("guardians")}
                       icon={<FamilyChildIcon height={32} width={32} />}
                       label="No tutors yet"
                       // relationship={'Married'}
-                      type={'guardian'}
+                      type={"guardian"}
                       isEditing={isEditMode}
                       data={guardians}
                       onClick={onAddGuardian}
@@ -634,11 +663,13 @@ function Detail() {
                         */}
                   {permissions.studentsInfo.view && (
                     <UserListBox
-                      title={t('students')}
-                      icon={<SingleActionsGraduateMaleIcon height={32} width={32} />}
+                      title={t("students")}
+                      icon={
+                        <SingleActionsGraduateMaleIcon height={32} width={32} />
+                      }
                       label="No students yet"
                       // relationship={'Married'}
-                      type={'student'}
+                      type={"student"}
                       isEditing={isEditMode}
                       data={students}
                       onClick={onAddStudent}
@@ -675,11 +706,11 @@ function Detail() {
                 </Stack>
                 <Stack direction="column" spacing={6} fullWidth>
                   <UserListBox
-                    title={'Emergency Phone numbers'}
+                    title={"Emergency Phone numbers"}
                     icon={<FamilyChildIcon height={32} width={32} />}
                     label="No Emergency Numbers"
                     // relationship={'Married'}
-                    type={'phones'}
+                    type={"phones"}
                     isEditing={isEditMode}
                     data={students}
                     onClick={onAddStudent}
@@ -689,7 +720,7 @@ function Detail() {
                     fullWidth
                   />
                   {permissions.customInfo.view && (
-                    <ContextContainer title={t('other_information')}>
+                    <ContextContainer title={t("other_information")}>
                       <TextInput
                         label="CRM Old ID"
                         placeholder="Placeholder"
@@ -718,7 +749,7 @@ function Detail() {
                       />
                     </ContextContainer>
                   )}
-                  <ContextContainer title={'Permissions'}></ContextContainer>
+                  <ContextContainer title={"Permissions"}></ContextContainer>
                 </Stack>
               </Stack>
             </PageContainer>

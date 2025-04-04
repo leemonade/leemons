@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 /**
  * Return true if the specific user session is family member of the specific family
@@ -12,7 +12,9 @@ const _ = require('lodash');
 async function isFamilyMember({ familyId, ctx }) {
   const count = await ctx.tx.db.FamilyMembers.countDocuments({
     family: familyId,
-    user: _.isString(ctx.meta.userSession) ? ctx.meta.userSession : ctx.meta.userSession.id,
+    user: _.isString(ctx.meta.userSession)
+      ? ctx.meta.userSession
+      : ctx.meta.userSession.id,
   });
   return !!count;
 }

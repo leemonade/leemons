@@ -6,7 +6,9 @@
  * @return {Promise<any>}
  * */
 async function getStudentProfile({ ctx }) {
-  const response = await ctx.tx.db.ProfilesConfig.findOne({ type: 'student' }).lean();
+  const response = await ctx.tx.db.ProfilesConfig.findOne({
+    type: "student",
+  }).lean();
   if (response) return response.profile;
   return null;
 }

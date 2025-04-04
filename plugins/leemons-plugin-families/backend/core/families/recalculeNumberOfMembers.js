@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 /**
  * Recalcule the nStudents, nGuardians, nMembers values of the family
  * @public
@@ -9,8 +9,11 @@ const _ = require('lodash');
  * */
 async function recalculeNumberOfMembers({ family, ctx }) {
   const [nStudents, nGuardians] = await Promise.all([
-    ctx.tx.db.FamilyMembers.countDocuments({ family, memberType: 'student' }),
-    ctx.tx.db.FamilyMembers.countDocuments({ family, memberType: { $ne: 'student' } }),
+    ctx.tx.db.FamilyMembers.countDocuments({ family, memberType: "student" }),
+    ctx.tx.db.FamilyMembers.countDocuments({
+      family,
+      memberType: { $ne: "student" },
+    }),
   ]);
   return ctx.tx.db.Families.findOneAndUpdate(
     { id: family },

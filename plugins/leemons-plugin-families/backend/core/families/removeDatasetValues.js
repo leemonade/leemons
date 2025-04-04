@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 /**
  * Remove the family dataset values
@@ -9,13 +9,23 @@ const _ = require('lodash');
  * @return {Promise<any>}
  * */
 async function removeDatasetValues({ family, ctx, tx = true }) {
-  const locationName = 'families-data';
-  const pluginName = 'families';
+  const locationName = "families-data";
+  const pluginName = "families";
 
   const call = tx ? ctx.tx.call : ctx.call;
 
-  if (await call('dataset.dataset.existValues', { locationName, pluginName, target: family })) {
-    return call('dataset.dataset.deleteValues', { locationName, pluginName, target: family });
+  if (
+    await call("dataset.dataset.existValues", {
+      locationName,
+      pluginName,
+      target: family,
+    })
+  ) {
+    return call("dataset.dataset.deleteValues", {
+      locationName,
+      pluginName,
+      target: family,
+    });
   }
   return null;
 }

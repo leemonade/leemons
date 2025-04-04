@@ -1,12 +1,14 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { addMenuItemsDeploy } = require('@leemons/menu-builder');
-const { getSessionFamilyPermissions } = require('../users/getSessionFamilyPermissions');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { addMenuItemsDeploy } = require("@leemons/menu-builder");
+const {
+  getSessionFamilyPermissions,
+} = require("../users/getSessionFamilyPermissions");
 
-const { addMember } = require('../family-members/addMember');
-const { setDatasetValues } = require('./setDatasetValues');
-const { recalculeNumberOfMembers } = require('./recalculeNumberOfMembers');
-const { getFamilyMenuBuilderData } = require('./getFamilyMenuBuilderData');
+const { addMember } = require("../family-members/addMember");
+const { setDatasetValues } = require("./setDatasetValues");
+const { recalculeNumberOfMembers } = require("./recalculeNumberOfMembers");
+const { getFamilyMenuBuilderData } = require("./getFamilyMenuBuilderData");
 
 /**
  * ES: Crea una nueva familia solo si tiene los permisos para hacerlo, es posible que solo cree
@@ -41,7 +43,7 @@ async function add({
         message: "You don't have the necessary permissions.",
         allowedPermissions: {
           permissionName: permissions.permissionsNames.basicInfo,
-          actions: ['update'],
+          actions: ["update"],
         },
       });
   }
@@ -82,27 +84,37 @@ async function add({
   // Add students if have permission
   if (fromBulk || permissions.studentsInfo.update) {
     _.forEach(students, ({ user }) => {
-      promises.push(addMember({ user, memberType: 'student', family: family.id, ctx }));
+      promises.push(
+        addMember({ user, memberType: "student", family: family.id, ctx })
+      );
     });
   }
   // Add datasetvalues if have permission and have data
-  if ((fromBulk && datasetValues) || (permissions?.customInfo.update && datasetValues)) {
-    promises.push(setDatasetValues({ family: family.id, values: datasetValues, ctx }));
+  if (
+    (fromBulk && datasetValues) ||
+    (permissions?.customInfo.update && datasetValues)
+  ) {
+    promises.push(
+      setDatasetValues({ family: family.id, values: datasetValues, ctx })
+    );
   }
 
   // Add phone numbers if plugin installed
   // The plugin validate if user have access to save phones
   const isFamilyEmergencyNumbersInstalled = await ctx.tx.call(
-    'deployment-manager.pluginIsInstalled',
-    { pluginName: 'families-emergency-numbers' }
+    "deployment-manager.pluginIsInstalled",
+    { pluginName: "families-emergency-numbers" }
   );
   if (emergencyPhoneNumbers && isFamilyEmergencyNumbersInstalled) {
     promises.push(
-      ctx.tx.call('families-emergency-numbers.emergencyPhones.saveFamilyPhones', {
-        family: family.id,
-        phones: emergencyPhoneNumbers,
-        fromBulk,
-      })
+      ctx.tx.call(
+        "families-emergency-numbers.emergencyPhones.saveFamilyPhones",
+        {
+          family: family.id,
+          phones: emergencyPhoneNumbers,
+          fromBulk,
+        }
+      )
     );
   }
 

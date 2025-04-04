@@ -8,9 +8,9 @@
  * */
 async function setStudentProfile({ profile, ctx }) {
   return ctx.tx.db.ProfilesConfig.findOneAndUpdate(
-    { type: 'student' },
+    { type: "student" },
     {
-      type: 'student',
+      type: "student",
       profile,
     },
     { upsert: true, new: true, lean: true }

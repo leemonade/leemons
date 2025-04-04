@@ -1,10 +1,10 @@
 async function getFamilyMenuBuilderData({ family, familyName, ctx }) {
-  const locale = await ctx.tx.call('users.platform.getDefaultLocale');
+  const locale = await ctx.tx.call("users.platform.getDefaultLocale");
   return {
     item: {
       key: `family-${family}`,
       pluginName: ctx.prefixPN(),
-      parentKey: ctx.prefixPN('user-families'),
+      parentKey: ctx.prefixPN("user-families"),
       url: `/families/private/detail/${family}`,
       label: {
         [locale]: familyName,
@@ -13,7 +13,7 @@ async function getFamilyMenuBuilderData({ family, familyName, ctx }) {
     permissions: [
       {
         permissionName: `families.family-${family}`,
-        actionNames: ['view', 'admin'],
+        actionNames: ["view", "admin"],
       },
     ],
     isCustomPermission: true,

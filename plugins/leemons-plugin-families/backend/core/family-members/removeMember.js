@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const { validateNotExistMemberInFamily } = require('../../validations/exists');
-const { getProfiles } = require('../profiles-config/getProfiles');
+const _ = require("lodash");
+const { validateNotExistMemberInFamily } = require("../../validations/exists");
+const { getProfiles } = require("../profiles-config/getProfiles");
 
 /**
  * Remove family member
@@ -19,7 +19,7 @@ async function removeMember({ family, user, ctx }) {
     ctx.tx.db.FamilyMembers.deleteOne({ family, user }),
   ]);
 
-  const isStudent = member.memberType === 'student';
+  const isStudent = member.memberType === "student";
   const profile = isStudent ? profiles.student : profiles.guardian;
   // ES: Borramos el permiso de ver a la familia, asi ya no le sale en el menu
   // EN: We delete the permission to see the family, so it does not appear in the menu.
@@ -31,18 +31,18 @@ async function removeMember({ family, user, ctx }) {
   // family we remove the permission for the family menu item to appear.
   const query = { user };
   if (isStudent) {
-    query.memberType = 'student';
+    query.memberType = "student";
   } else {
     query.memberType = {
-      $ne: 'student',
+      $ne: "student",
     };
   }
   const inAnyFamily = await ctx.tx.db.FamilyMembers.countDocuments(query);
   if (!inAnyFamily) {
-    permissionsToRemove.push('families.user-families');
+    permissionsToRemove.push("families.user-families");
   }
 
-  await ctx.tx.call('users.permissions.removeCustomPermissionToUserProfile', {
+  await ctx.tx.call("users.permissions.removeCustomPermissionToUserProfile", {
     user,
     profile,
     permissions: permissionsToRemove,

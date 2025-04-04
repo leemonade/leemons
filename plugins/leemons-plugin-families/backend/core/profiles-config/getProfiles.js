@@ -1,5 +1,5 @@
-const { getGuardianProfile } = require('./getGuardianProfile');
-const { getStudentProfile } = require('./getStudentProfile');
+const { getGuardianProfile } = require("./getGuardianProfile");
+const { getStudentProfile } = require("./getStudentProfile");
 
 /**
  * Returns which platform profile corresponds to guardian

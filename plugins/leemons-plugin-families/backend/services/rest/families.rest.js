@@ -7,48 +7,55 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { LeemonsValidator } = require('@leemons/validator');
-const { searchUsers } = require('../../core/users');
-const { add, update, detail, remove, list, listDetailPage } = require('../../core/families');
+} = require("@leemons/middlewares");
+const { LeemonsValidator } = require("@leemons/validator");
+const { searchUsers } = require("../../core/users");
+const {
+  add,
+  update,
+  detail,
+  remove,
+  list,
+  listDetailPage,
+} = require("../../core/families");
 
 const memberValidation = {
-  type: 'array',
+  type: "array",
   items: {
-    type: 'object',
+    type: "object",
     properties: {
-      user: { type: 'string' },
-      memberType: { type: 'string' },
+      user: { type: "string" },
+      memberType: { type: "string" },
     },
-    required: ['user', 'memberType'],
+    required: ["user", "memberType"],
     additionalProperties: false,
   },
 };
 
 const addUpdateFamilySchema = {
-  name: { type: 'string' },
+  name: { type: "string" },
   guardians: memberValidation,
   students: memberValidation,
-  maritalStatus: { type: 'string' },
+  maritalStatus: { type: "string" },
   datasetValues: {
-    type: 'object',
+    type: "object",
     additionalProperties: true,
   },
   emergencyPhoneNumbers: {
-    type: 'array',
+    type: "array",
     items: {
-      type: 'object',
+      type: "object",
       properties: {
-        id: { type: 'string' },
-        name: { type: 'string' },
-        phone: { type: 'string' },
-        relation: { type: 'string' },
+        id: { type: "string" },
+        name: { type: "string" },
+        phone: { type: "string" },
+        relation: { type: "string" },
         dataset: {
-          type: ['object', 'null'],
+          type: ["object", "null"],
           additionalProperties: true,
         },
       },
-      required: ['name', 'phone', 'relation'],
+      required: ["name", "phone", "relation"],
       additionalProperties: false,
     },
   },
@@ -58,30 +65,30 @@ const addUpdateFamilySchema = {
 module.exports = {
   searchUsersRest: {
     rest: {
-      method: 'POST',
-      path: '/search-users',
+      method: "POST",
+      path: "/search-users",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'families.families': {
-            actions: ['admin', 'update', 'create'],
+          "families.families": {
+            actions: ["admin", "update", "create"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          profileType: { type: 'string', enum: ['student', 'guardian'] },
+          profileType: { type: "string", enum: ["student", "guardian"] },
           query: {
-            type: 'object',
+            type: "object",
             additionalProperties: true,
           },
         },
-        required: ['profileType'],
+        required: ["profileType"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -93,51 +100,55 @@ module.exports = {
   },
   getDatasetFormRest: {
     rest: {
-      method: 'GET',
-      path: '/dataset-form',
+      method: "GET",
+      path: "/dataset-form",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'families.families': {
-            actions: ['view', 'update', 'create', 'create'],
+          "families.families": {
+            actions: ["view", "update", "create", "create"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const { compileJsonSchema, compileJsonUI } = await ctx.tx.call(
-        'dataset.dataset.getSchemaWithLocale',
+        "dataset.dataset.getSchemaWithLocale",
         {
           locationName: `families-data`,
-          pluginName: 'families',
+          pluginName: "families",
           locale: ctx.meta.userSession.locale,
         }
       );
-      return { status: 200, jsonSchema: compileJsonSchema, jsonUI: compileJsonUI };
+      return {
+        status: 200,
+        jsonSchema: compileJsonSchema,
+        jsonUI: compileJsonUI,
+      };
     },
   },
   addRest: {
     rest: {
-      method: 'POST',
-      path: '/add',
+      method: "POST",
+      path: "/add",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'families.families': {
-            actions: ['admin', 'create'],
+          "families.families": {
+            actions: ["admin", "create"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: addUpdateFamilySchema,
-        required: ['name'],
+        required: ["name"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -149,18 +160,18 @@ module.exports = {
   },
   updateRest: {
     rest: {
-      method: 'POST',
-      path: '/update',
+      method: "POST",
+      path: "/update",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
           ...addUpdateFamilySchema,
-          id: { type: 'string' },
+          id: { type: "string" },
         },
-        required: ['id', 'name'],
+        required: ["id", "name"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -172,17 +183,17 @@ module.exports = {
   },
   detailRest: {
     rest: {
-      method: 'GET',
-      path: '/detail/:id',
+      method: "GET",
+      path: "/detail/:id",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          id: { type: 'string' },
+          id: { type: "string" },
         },
-        required: ['id'],
+        required: ["id"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -194,26 +205,26 @@ module.exports = {
   },
   removeRest: {
     rest: {
-      method: 'DELETE',
-      path: '/remove/:id',
+      method: "DELETE",
+      path: "/remove/:id",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'families.families': {
-            actions: ['admin', 'delete'],
+          "families.families": {
+            actions: ["admin", "delete"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          id: { type: 'string' },
+          id: { type: "string" },
         },
-        required: ['id'],
+        required: ["id"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -225,28 +236,28 @@ module.exports = {
   },
   listRest: {
     rest: {
-      method: 'POST',
-      path: '/list',
+      method: "POST",
+      path: "/list",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'families.families': {
-            actions: ['admin', 'view'],
+          "families.families": {
+            actions: ["admin", "view"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: 'number' },
-          size: { type: 'number' },
-          query: { type: 'object', additionalProperties: true },
+          page: { type: "number" },
+          size: { type: "number" },
+          query: { type: "object", additionalProperties: true },
         },
-        required: ['page', 'size'],
+        required: ["page", "size"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -258,15 +269,15 @@ module.exports = {
   },
   listDetailPageRest: {
     rest: {
-      method: 'GET',
-      path: '/list/detail/page/:user',
+      method: "GET",
+      path: "/list/detail/page/:user",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.users': {
-            actions: ['admin', 'view', 'update', 'create', 'delete'],
+          "users.users": {
+            actions: ["admin", "view", "update", "create", "delete"],
           },
         },
       }),

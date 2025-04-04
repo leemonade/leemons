@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { getGuardianProfile, getStudentProfile } = require('../profiles-config');
+const _ = require("lodash");
+const { getGuardianProfile, getStudentProfile } = require("../profiles-config");
 
 /**
  * Returns user agent for specipif filters
@@ -12,9 +12,9 @@ const { getGuardianProfile, getStudentProfile } = require('../profiles-config');
  * */
 async function searchUsers({ profileType, query, ctx }) {
   let profile = null;
-  if (profileType === 'guardian') profile = await getGuardianProfile({ ctx });
-  if (profileType === 'student') profile = await getStudentProfile({ ctx });
-  const userAgents = await ctx.tx.call('users.users.searchUserAgents', {
+  if (profileType === "guardian") profile = await getGuardianProfile({ ctx });
+  if (profileType === "student") profile = await getStudentProfile({ ctx });
+  const userAgents = await ctx.tx.call("users.users.searchUserAgents", {
     ...query,
     profile,
   });

@@ -9,14 +9,18 @@
  * @return {Promise<any>}
  * */
 async function setDatasetValues({ family, values, ctx }) {
-  const locationName = 'families-data';
-  const pluginName = 'families';
-  let functionName = 'addValues';
+  const locationName = "families-data";
+  const pluginName = "families";
+  let functionName = "addValues";
 
   if (
-    await ctx.tx.call('dataset.dataset.existValues', { locationName, pluginName, target: family })
+    await ctx.tx.call("dataset.dataset.existValues", {
+      locationName,
+      pluginName,
+      target: family,
+    })
   ) {
-    functionName = 'updateValues';
+    functionName = "updateValues";
   }
   return ctx.tx.call(`dataset.dataset.${functionName}`, {
     locationName,

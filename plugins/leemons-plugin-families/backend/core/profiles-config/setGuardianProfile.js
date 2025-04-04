@@ -8,9 +8,9 @@
  * */
 async function setGuardianProfile({ profile, ctx }) {
   return ctx.tx.db.ProfilesConfig.findOneAndUpdate(
-    { type: 'guardian' },
+    { type: "guardian" },
     {
-      type: 'guardian',
+      type: "guardian",
       profile,
     },
     { upsert: true, new: true, lean: true }

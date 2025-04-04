@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { isFamilyMember } = require('./isFamilyMember');
+const _ = require("lodash");
+const { isFamilyMember } = require("./isFamilyMember");
 
 /**
  * Return true if the specific user session have permits to update the specific family
@@ -13,13 +13,16 @@ const { isFamilyMember } = require('./isFamilyMember');
 async function canUpdateFamily({ familyId, ctx }) {
   // TODO Añadir que devuelva true a aquellas personas que tengan el permiso de ver esta familia en la tabla de users:item-permissions
   if (await isFamilyMember({ familyId, ctx })) return true;
-  const permissions = await ctx.tx.call('users.permissions.getUserAgentPermissions', {
-    userAgent: ctx.meta.userSession.userAgents,
-    query: {
-      permissionName: 'families.families',
-      actionName: ['update', 'admin'],
-    },
-  });
+  const permissions = await ctx.tx.call(
+    "users.permissions.getUserAgentPermissions",
+    {
+      userAgent: ctx.meta.userSession.userAgents,
+      query: {
+        permissionName: "families.families",
+        actionName: ["update", "admin"],
+      },
+    }
+  );
   return !!permissions.length;
 }
 

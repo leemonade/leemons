@@ -1,8 +1,8 @@
-const _ = require('lodash');
-const { mainMenuKey } = require('@leemons/menu-builder');
-const { getMembers } = require('./getMembers');
-const { removeMember } = require('../family-members/removeMember');
-const { removeDatasetValues } = require('./removeDatasetValues');
+const _ = require("lodash");
+const { mainMenuKey } = require("@leemons/menu-builder");
+const { getMembers } = require("./getMembers");
+const { removeMember } = require("../family-members/removeMember");
+const { removeDatasetValues } = require("./removeDatasetValues");
 
 /**
  * Remove the family
@@ -18,7 +18,7 @@ async function remove({ family, ctx }) {
   const promises = [];
 
   try {
-    await ctx.call('menu-builder.menuItem.remove', {
+    await ctx.call("menu-builder.menuItem.remove", {
       menuKey: mainMenuKey,
       key: ctx.prefixPN(`family-${family}`),
     });
@@ -39,12 +39,15 @@ async function remove({ family, ctx }) {
     promises.push(removeMember({ family, user: student.id, ctx }));
   });
   const isFamilyEmergencyNumbersInstalled = await ctx.tx.call(
-    'deployment-manager.pluginIsInstalled',
-    { pluginName: 'families-emergency-numbers' }
+    "deployment-manager.pluginIsInstalled",
+    { pluginName: "families-emergency-numbers" }
   );
   if (isFamilyEmergencyNumbersInstalled) {
     promises.push(
-      ctx.tx.call('families-emergency-numbers.emergencyPhones.removeFamilyPhones', { family })
+      ctx.tx.call(
+        "families-emergency-numbers.emergencyPhones.removeFamilyPhones",
+        { family }
+      )
     );
   }
 

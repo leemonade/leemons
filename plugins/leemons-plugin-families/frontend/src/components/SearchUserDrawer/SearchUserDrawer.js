@@ -1,6 +1,6 @@
-import * as _ from 'lodash';
-import React, { useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
+import * as _ from "lodash";
+import React, { useMemo, useState } from "react";
+import PropTypes from "prop-types";
 import {
   Alert,
   Box,
@@ -15,34 +15,44 @@ import {
   TextInput,
   Title,
   UserDisplayItem,
-} from '@bubbles-ui/components';
-import moment from 'moment';
-import RelationSelect from '@families/components/relationSelect';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import { StarIcon } from '@bubbles-ui/icons/solid';
-import { searchUsersRequest } from '@families/request';
-import { useRequestErrorMessage } from '@common';
-import { FamilyChildIcon, SingleActionsGraduateMaleIcon } from '@bubbles-ui/icons/outline';
-import { SearchUserDrawerStyles } from './SearchUserDrawer.styles';
+} from "@bubbles-ui/components";
+import moment from "moment";
+import RelationSelect from "@families/components/relationSelect";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import { StarIcon } from "@bubbles-ui/icons/solid";
+import { searchUsersRequest } from "@families/request";
+import { useRequestErrorMessage } from "@common";
+import {
+  FamilyChildIcon,
+  SingleActionsGraduateMaleIcon,
+} from "@bubbles-ui/icons/outline";
+import { SearchUserDrawerStyles } from "./SearchUserDrawer.styles";
 
-const SearchUserDrawer = ({ opened, t, type, alreadyExistingMembers, onAdd, ...props }) => {
-  const { t: tCommonForm } = useCommonTranslate('forms');
-  const [selectedFilter, setSelectedFilter] = useState('name');
+const SearchUserDrawer = ({
+  opened,
+  t,
+  type,
+  alreadyExistingMembers,
+  onAdd,
+  ...props
+}) => {
+  const { t: tCommonForm } = useCommonTranslate("forms");
+  const [selectedFilter, setSelectedFilter] = useState("name");
   const [loading, setLoading] = useState(false);
   const [error, setError, ErrorAlert] = useRequestErrorMessage();
   const [users, setUsers] = useState();
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [inputValueRequired, setInputValueRequired] = useState(false);
   const [selectedUser, setSelectedUser] = useState();
-  const [selectedRelation, setSelectedRelation] = useState('...');
-  const [otherRelationValue, setOtherRelationValue] = useState('');
+  const [selectedRelation, setSelectedRelation] = useState("...");
+  const [otherRelationValue, setOtherRelationValue] = useState("");
   const [relationError, setRelationError] = useState();
   const [dirty, setDirty] = useState(false);
 
   const tableHeaders = useMemo(
     () => [
       {
-        Header: ' ',
+        Header: " ",
         accessor: (currentUser) => (
           <Radio
             name="searchUserModalUser"
@@ -53,20 +63,20 @@ const SearchUserDrawer = ({ opened, t, type, alreadyExistingMembers, onAdd, ...p
         ),
       },
       {
-        Header: t('table.email'),
+        Header: t("table.email"),
         accessor: (field) => <UserDisplayItem {...field} variant="email" />,
       },
       {
-        Header: t('table.name'),
+        Header: t("table.name"),
         accessor: ({ name }) => <Text>{name}</Text>,
       },
       {
-        Header: t('table.surname'),
+        Header: t("table.surname"),
         accessor: ({ surnames }) => <Text>{surnames}</Text>,
       },
       {
-        Header: t('table.created_at'),
-        accessor: ({ createdAt }) => moment(createdAt).format('L'),
+        Header: t("table.created_at"),
+        accessor: ({ createdAt }) => moment(createdAt).format("L"),
       },
     ],
     [t, selectedUser]
@@ -75,16 +85,17 @@ const SearchUserDrawer = ({ opened, t, type, alreadyExistingMembers, onAdd, ...p
   const add = async () => {
     setDirty(true);
     const value = {};
-    if (type === 'guardian') {
-      if (!selectedRelation || selectedRelation === '...') {
-        setRelationError('need-relation');
+    if (type === "guardian") {
+      if (!selectedRelation || selectedRelation === "...") {
+        setRelationError("need-relation");
         return;
       }
-      if (selectedRelation === 'other' && !otherRelationValue) {
-        setRelationError('need-other-relation');
+      if (selectedRelation === "other" && !otherRelationValue) {
+        setRelationError("need-other-relation");
         return;
       }
-      value.memberType = selectedRelation === 'other' ? otherRelationValue : selectedRelation;
+      value.memberType =
+        selectedRelation === "other" ? otherRelationValue : selectedRelation;
     }
     if (selectedUser) {
       onAdd({ ...selectedUser, ...value });
@@ -100,15 +111,15 @@ const SearchUserDrawer = ({ opened, t, type, alreadyExistingMembers, onAdd, ...p
       }
       setLoading(true);
       const query = {
-        ignoreUserIds: _.map(alreadyExistingMembers, 'id'),
+        ignoreUserIds: _.map(alreadyExistingMembers, "id"),
       };
-      if (selectedFilter === 'name') {
+      if (selectedFilter === "name") {
         query.user = {
           name: inputValue,
           surnames: inputValue,
         };
       }
-      if (selectedFilter === 'email') {
+      if (selectedFilter === "email") {
         query.user = {
           email: inputValue,
         };
@@ -121,7 +132,7 @@ const SearchUserDrawer = ({ opened, t, type, alreadyExistingMembers, onAdd, ...p
     setLoading(false);
   };
 
-  const { classes } = SearchUserDrawerStyles({}, { name: 'SearchUserDrawer' });
+  const { classes } = SearchUserDrawerStyles({}, { name: "SearchUserDrawer" });
   const noUsers = !users || !users.length;
   return (
     <BaseDrawer opened={opened} size={725} {...props} back="Back">
@@ -133,21 +144,23 @@ const SearchUserDrawer = ({ opened, t, type, alreadyExistingMembers, onAdd, ...p
         {noUsers && (
           <>
             <Stack direction="column" spacing={3} style={{ marginTop: 24 }}>
-              <Title order={3}>{'Select a profile'}</Title>
+              <Title order={3}>{"Select a profile"}</Title>
               <RadioGroup
                 fullWidth
                 variant="icon"
                 value={type}
                 data={[
                   {
-                    value: 'guardian',
-                    label: 'Add tutor',
+                    value: "guardian",
+                    label: "Add tutor",
                     icon: <FamilyChildIcon height={32} width={32} />,
                   },
                   {
-                    value: 'student',
-                    label: 'Add student',
-                    icon: <SingleActionsGraduateMaleIcon height={32} width={32} />,
+                    value: "student",
+                    label: "Add student",
+                    icon: (
+                      <SingleActionsGraduateMaleIcon height={32} width={32} />
+                    ),
                   },
                 ]}
               />
@@ -156,26 +169,26 @@ const SearchUserDrawer = ({ opened, t, type, alreadyExistingMembers, onAdd, ...p
               // label={t('search_user_to_add')}
               name="searchUsersFilter"
               data={[
-                { value: 'name', label: t('search_by_name') },
-                { value: 'email', label: t('search_by_email') },
+                { value: "name", label: t("search_by_name") },
+                { value: "email", label: t("search_by_email") },
               ]}
               onChange={setSelectedFilter}
             />
             <Stack spacing={6} alignItems="center">
               <TextInput
                 placeholder={t(`enter_${selectedFilter}`)}
-                error={inputValueRequired ? tCommonForm('required') : ''}
+                error={inputValueRequired ? tCommonForm("required") : ""}
                 value={inputValue}
                 onChange={setInputValue}
                 style={{ flex: 1 }}
               />
               <Button loading={loading} onClick={search}>
-                {t('search')}
+                {t("search")}
               </Button>
             </Stack>
             {users && (
               <Alert severity="error" closeable={false}>
-                {t('no_users_to_add')}
+                {t("no_users_to_add")}
               </Alert>
             )}
           </>
@@ -190,28 +203,36 @@ const SearchUserDrawer = ({ opened, t, type, alreadyExistingMembers, onAdd, ...p
               <Table columns={tableHeaders} data={users} />
             </Paper>
             <Stack
-              justifyContent={type === 'guardian' ? 'space-between' : 'flex-end'}
+              justifyContent={
+                type === "guardian" ? "space-between" : "flex-end"
+              }
               alignItems="flex-end"
               style={{ marginTop: 36 }}
               fullWidth
             >
               <Stack spacing={4} skipFlex>
-                {type === 'guardian' && (
+                {type === "guardian" && (
                   <Stack spacing={4}>
                     <RelationSelect
-                      label={t('guardian_relation')}
-                      error={relationError === 'need-relation' ? tCommonForm('required') : ''}
+                      label={t("guardian_relation")}
+                      error={
+                        relationError === "need-relation"
+                          ? tCommonForm("required")
+                          : ""
+                      }
                       value={selectedRelation}
                       onChange={(e) => {
                         setRelationError(null);
                         setSelectedRelation(e);
                       }}
                     />
-                    {selectedRelation === 'other' && (
+                    {selectedRelation === "other" && (
                       <TextInput
-                        label={t('specify_relation')}
+                        label={t("specify_relation")}
                         error={
-                          relationError === 'need-other-relation' ? tCommonForm('required') : ''
+                          relationError === "need-other-relation"
+                            ? tCommonForm("required")
+                            : ""
                         }
                         value={otherRelationValue}
                         onChange={(e) => {

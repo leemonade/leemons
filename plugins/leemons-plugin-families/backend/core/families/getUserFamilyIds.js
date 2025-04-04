@@ -1,8 +1,8 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function getUserFamilyIds({ user, ctx }) {
   const familyMembers = await ctx.tx.db.FamilyMembers.find({ user }).lean();
-  const familyIds = _.map(familyMembers, 'family');
+  const familyIds = _.map(familyMembers, "family");
   return _.uniq(familyIds);
 }
 

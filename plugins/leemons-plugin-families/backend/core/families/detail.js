@@ -1,8 +1,10 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { getSessionFamilyPermissions } = require('../users/getSessionFamilyPermissions');
-const { canViewFamily } = require('../users/canViewFamily');
-const { getMembers } = require('./getMembers');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const {
+  getSessionFamilyPermissions,
+} = require("../users/getSessionFamilyPermissions");
+const { canViewFamily } = require("../users/canViewFamily");
+const { getMembers } = require("./getMembers");
 
 /**
  * Return family detail if have permission
@@ -15,25 +17,26 @@ const { getMembers } = require('./getMembers');
  * */
 async function detail({ familyId, ctx }) {
   const havePermissions = await canViewFamily({ familyId, ctx });
-  if (!havePermissions) throw new LeemonsError(ctx, { message: 'You don`t have permission' });
+  if (!havePermissions)
+    throw new LeemonsError(ctx, { message: "You don`t have permission" });
   const [family, members, datasetValues, permissions] = await Promise.all([
     ctx.tx.db.Families.findOne({ id: familyId }).lean(),
     getMembers({ familyId, ctx }),
-    ctx.tx.call('dataset.dataset.getValues', {
-      locationName: 'families-data',
-      pluginName: 'families',
+    ctx.tx.call("dataset.dataset.getValues", {
+      locationName: "families-data",
+      pluginName: "families",
       userAgent: ctx.meta.userSession.userAgents,
       target: familyId,
     }),
     getSessionFamilyPermissions({ ctx }),
   ]);
   const isFamilyEmergencyNumbersInstalled = await ctx.tx.call(
-    'deployment-manager.pluginIsInstalled',
-    { pluginName: 'families-emergency-numbers' }
+    "deployment-manager.pluginIsInstalled",
+    { pluginName: "families-emergency-numbers" }
   );
   if (isFamilyEmergencyNumbersInstalled) {
     family.emergencyPhoneNumbers = await ctx.tx.call(
-      'families-emergency-numbers.emergencyPhones.getFamilyPhones',
+      "families-emergency-numbers.emergencyPhones.getFamilyPhones",
       {
         family: family.id,
       }

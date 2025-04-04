@@ -6,7 +6,9 @@
  * @return {Promise<any>}
  * */
 async function getGuardianProfile({ ctx }) {
-  const response = await ctx.tx.db.ProfilesConfig.findOne({ type: 'guardian' }).lean();
+  const response = await ctx.tx.db.ProfilesConfig.findOne({
+    type: "guardian",
+  }).lean();
   if (response) return response.profile;
   return null;
 }

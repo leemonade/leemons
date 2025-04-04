@@ -1,14 +1,16 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { updateMenuItem } = require('@leemons/menu-builder');
-const { getSessionFamilyPermissions } = require('../users/getSessionFamilyPermissions');
-const { canUpdateFamily } = require('../users/canUpdateFamily');
-const { getMembers } = require('./getMembers');
-const { recalculeNumberOfMembers } = require('./recalculeNumberOfMembers');
-const { setDatasetValues } = require('./setDatasetValues');
-const { addMember } = require('../family-members/addMember');
-const { removeMember } = require('../family-members/removeMember');
-const { getFamilyMenuBuilderData } = require('./getFamilyMenuBuilderData');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { updateMenuItem } = require("@leemons/menu-builder");
+const {
+  getSessionFamilyPermissions,
+} = require("../users/getSessionFamilyPermissions");
+const { canUpdateFamily } = require("../users/canUpdateFamily");
+const { getMembers } = require("./getMembers");
+const { recalculeNumberOfMembers } = require("./recalculeNumberOfMembers");
+const { setDatasetValues } = require("./setDatasetValues");
+const { addMember } = require("../family-members/addMember");
+const { removeMember } = require("../family-members/removeMember");
+const { getFamilyMenuBuilderData } = require("./getFamilyMenuBuilderData");
 
 /**
  * ES: Crea una nueva familia solo si tiene los permisos para hacerlo, es posible que solo cree
@@ -41,15 +43,17 @@ async function update({
   // so even though he/she is a member of the family and does not have the permission to edit families
   // we allow him/her to pass this if
   const havePermissions = await canUpdateFamily({ familyId: id, ctx });
-  if (!havePermissions) throw new LeemonsError(ctx, { message: 'You don`t have permission' });
+  if (!havePermissions)
+    throw new LeemonsError(ctx, { message: "You don`t have permission" });
   // ES: Primero sacamos los permisos para comprobar a que tiene acceso y a que no
   // EN: First we pull the permissions to check what you have access to and what you do not have access to.
   const permissions = await getSessionFamilyPermissions({ ctx });
 
-  const { guardians: currentGuardians, students: currentStudents } = await getMembers({
-    familyId: id,
-    ctx,
-  });
+  const { guardians: currentGuardians, students: currentStudents } =
+    await getMembers({
+      familyId: id,
+      ctx,
+    });
 
   const newFamilyData = {};
   if (permissions.basicInfo.update && name) {
@@ -60,8 +64,8 @@ async function update({
   const removeGuardians = [];
   const addGuardians = [];
   if (permissions.guardiansInfo.update) {
-    const currentGuardiansById = _.keyBy(currentGuardians, 'id');
-    const guardiansById = _.keyBy(guardians, 'user');
+    const currentGuardiansById = _.keyBy(currentGuardians, "id");
+    const guardiansById = _.keyBy(guardians, "user");
     _.forEach(currentGuardians, (currentGuardian) => {
       if (!guardiansById[currentGuardian.id]) {
         removeGuardians.push(currentGuardian);
@@ -81,8 +85,8 @@ async function update({
   const removeStudents = [];
   const addStudents = [];
   if (permissions.studentsInfo.update) {
-    const currentStudentsById = _.keyBy(currentStudents, 'id');
-    const studentsById = _.keyBy(students, 'user');
+    const currentStudentsById = _.keyBy(currentStudents, "id");
+    const studentsById = _.keyBy(students, "user");
     _.forEach(currentStudents, (currentStudent) => {
       if (!studentsById[currentStudent.id]) {
         removeStudents.push(currentStudent);
@@ -95,10 +99,14 @@ async function update({
     });
   }
 
-  const family = await ctx.tx.db.Families.findOneAndUpdate({ id }, newFamilyData, {
-    new: true,
-    lean: true,
-  });
+  const family = await ctx.tx.db.Families.findOneAndUpdate(
+    { id },
+    newFamilyData,
+    {
+      new: true,
+      lean: true,
+    }
+  );
 
   const menuItemConfig = await getFamilyMenuBuilderData({
     family: family.id,
@@ -127,7 +135,9 @@ async function update({
   }
   if (addStudents.length) {
     _.forEach(addStudents, ({ user }) => {
-      addPromises.push(addMember({ family: id, user, memberType: 'student', ctx }));
+      addPromises.push(
+        addMember({ family: id, user, memberType: "student", ctx })
+      );
     });
   }
   await Promise.all(addPromises);
@@ -140,14 +150,17 @@ async function update({
   // Add phone numbers if plugin installed
   // The plugin validate if user have access to save phones
   const isFamilyEmergencyNumbersInstalled = await ctx.tx.call(
-    'deployment-manager.pluginIsInstalled',
-    { pluginName: 'families-emergency-numbers' }
+    "deployment-manager.pluginIsInstalled",
+    { pluginName: "families-emergency-numbers" }
   );
   if (emergencyPhoneNumbers && isFamilyEmergencyNumbersInstalled) {
-    await ctx.tx.call('families-emergency-numbers.emergencyPhones.saveFamilyPhones', {
-      family: family.id,
-      phones: emergencyPhoneNumbers,
-    });
+    await ctx.tx.call(
+      "families-emergency-numbers.emergencyPhones.saveFamilyPhones",
+      {
+        family: family.id,
+        phones: emergencyPhoneNumbers,
+      }
+    );
   }
 
   await recalculeNumberOfMembers({ family: id, ctx });

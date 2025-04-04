@@ -1,7 +1,7 @@
 async function listFamilies(body) {
-  return leemons.api('v1/families/families/list', {
+  return leemons.api("v1/families/families/list", {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body,
   });
 }

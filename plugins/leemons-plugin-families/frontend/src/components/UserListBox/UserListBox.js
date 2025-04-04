@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
+import React from "react";
+import PropTypes from "prop-types";
+import { AddCircleIcon, DeleteBinIcon } from "@bubbles-ui/icons/solid";
 import {
   Box,
   Title,
@@ -10,9 +10,9 @@ import {
   UserDisplayItem,
   Select,
   Table,
-} from '@bubbles-ui/components';
-import { isFunction } from 'lodash';
-import { UserListBoxStyles } from './UserListBox.styles';
+} from "@bubbles-ui/components";
+import { isFunction } from "lodash";
+import { UserListBoxStyles } from "./UserListBox.styles";
 
 const UserListBox = ({
   title,
@@ -29,11 +29,14 @@ const UserListBox = ({
   fullWidth,
 }) => {
   const isEmpty = data.length < 1;
-  const { classes } = UserListBoxStyles({ isEmpty, fullWidth }, { name: 'UserListBox' });
+  const { classes } = UserListBoxStyles(
+    { isEmpty, fullWidth },
+    { name: "UserListBox" }
+  );
 
   const renderData = () =>
     data.map((user) => {
-      if (type !== 'phones')
+      if (type !== "phones")
         return (
           <Box key={user.id} className={classes.userWrapper}>
             <UserDisplayItem {...user} variant="block" />
@@ -82,40 +85,53 @@ const UserListBox = ({
       >
         {data.length < 1 && (
           <Stack direction="column" alignItems="center">
-            <Stack direction="column" alignItems="center" spacing={2} style={{ marginBottom: 24 }}>
+            <Stack
+              direction="column"
+              alignItems="center"
+              spacing={2}
+              style={{ marginBottom: 24 }}
+            >
               <Box className={classes.iconWrapper}>{icon}</Box>
               <Text color="soft">{label}</Text>
             </Stack>
-            <AddCircleIcon height={24} width={24} className={classes.iconWrapper} />
+            <AddCircleIcon
+              height={24}
+              width={24}
+              className={classes.iconWrapper}
+            />
           </Stack>
         )}
         {data.length > 0 && (
           <Box className={classes.userList}>
             {renderData()}
-            {type === 'guardian' && data.length >= 2 && (
+            {type === "guardian" && data.length >= 2 && (
               <Select
-                label={t('guardian_relation')}
-                placeholder={t('maritalStatus.select_marital_status')}
+                label={t("guardian_relation")}
+                placeholder={t("maritalStatus.select_marital_status")}
                 data={[
                   {
-                    value: t('maritalStatus.married', undefined, true),
-                    label: t('maritalStatus.married'),
+                    value: t("maritalStatus.married", undefined, true),
+                    label: t("maritalStatus.married"),
                   },
                   {
-                    value: t('maritalStatus.divorced', undefined, true),
-                    label: t('maritalStatus.divorced'),
+                    value: t("maritalStatus.divorced", undefined, true),
+                    label: t("maritalStatus.divorced"),
                   },
                   {
-                    value: t('maritalStatus.domestic_partners', undefined, true),
-                    label: t('maritalStatus.domestic_partners'),
+                    value: t(
+                      "maritalStatus.domestic_partners",
+                      undefined,
+                      true
+                    ),
+                    label: t("maritalStatus.domestic_partners"),
                   },
                   {
-                    value: t('maritalStatus.cohabitants', undefined, true),
-                    label: t('maritalStatus.cohabitants'),
+                    value: t("maritalStatus.cohabitants", undefined, true),
+                    label: t("maritalStatus.cohabitants"),
                   },
                   {
-                    value: t('maritalStatus.separated', undefined, true),
-                    label: t('maritalStatus.separated'),
+                    value: t("maritalStatus.separated", undefined, true),
+                    label: t("maritalStatus.separated"),
                   },
                 ]}
                 disabled={!permissions.guardiansInfo.update}
