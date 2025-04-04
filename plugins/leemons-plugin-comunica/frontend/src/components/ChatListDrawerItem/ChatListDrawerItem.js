@@ -1,15 +1,15 @@
-import React from 'react';
-import { Box, Text } from '@bubbles-ui/components';
-import { CommentIcon, VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
-import PropTypes from 'prop-types';
-import { RoomAvatar } from '@comunica/components/RoomAvatar/RoomAvatar';
-import getRoomParsed from '@comunica/helpers/getRoomParsed';
-import { ChatListDrawerItemStyles } from './ChatListDrawerItem.styles';
+import React from "react";
+import { Box, Text } from "@bubbles-ui/components";
+import { CommentIcon, VolumeControlOffIcon } from "@bubbles-ui/icons/solid";
+import PropTypes from "prop-types";
+import { RoomAvatar } from "@comunica/components/RoomAvatar/RoomAvatar";
+import getRoomParsed from "@comunica/helpers/getRoomParsed";
+import { ChatListDrawerItemStyles } from "./ChatListDrawerItem.styles";
 
 function ChatListDrawerItem({ room: _room, t, onClick = () => {} }) {
   const { classes } = ChatListDrawerItemStyles(
     { type: _room.type },
-    { name: 'ChatListDrawerItem' }
+    { name: "ChatListDrawerItem" }
   );
 
   const room = React.useMemo(() => getRoomParsed(_room), [_room]);
@@ -20,8 +20,14 @@ function ChatListDrawerItem({ room: _room, t, onClick = () => {} }) {
       <Box className={classes.itemContent}>
         <Box className={classes.itemTitleContainer}>
           {room.name ? (
-            <Box style={{ lineHeight: '1.2rem' }}>
-              <Text size="md" role="productive" transform="capitalize" color="tertiary" strong>
+            <Box style={{ lineHeight: "1.2rem" }}>
+              <Text
+                size="md"
+                role="productive"
+                transform="capitalize"
+                color="tertiary"
+                strong
+              >
                 {t(room.name, room.nameReplaces, false, room.name)}
               </Text>
             </Box>
@@ -30,7 +36,7 @@ function ChatListDrawerItem({ room: _room, t, onClick = () => {} }) {
           {room.subName ? (
             <Box className={classes.subName}>
               <Text
-                truncated={_room.type === 'group'}
+                truncated={_room.type === "group"}
                 role="productive"
                 transform="capitalize"
                 color="soft"

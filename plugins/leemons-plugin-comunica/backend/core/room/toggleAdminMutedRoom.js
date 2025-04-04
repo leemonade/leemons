@@ -1,10 +1,10 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
 const {
   validateKeyPrefix,
   validateNotExistRoomKey,
   validateNotExistUserAgentInRoomKey,
-} = require('../../validations/exists');
+} = require("../../validations/exists");
 
 async function toggleAdminMutedRoom({ key, userAgent, userAgentAdmin, ctx }) {
   validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
@@ -21,7 +21,7 @@ async function toggleAdminMutedRoom({ key, userAgent, userAgentAdmin, ctx }) {
       room: key,
       userAgent: userAgentAdmin,
     })
-      .select(['isAdmin'])
+      .select(["isAdmin"])
       .lean(),
     ctx.tx.db.UserAgentInRoom.findOne({
       room: key,
@@ -31,7 +31,7 @@ async function toggleAdminMutedRoom({ key, userAgent, userAgentAdmin, ctx }) {
 
   if (!userAgentAdminRoom.isAdmin)
     throw new LeemonsError(ctx, {
-      message: 'You don`t have permissions for mute users in this room',
+      message: "You don`t have permissions for mute users in this room",
     });
 
   userAgentRoom = await ctx.tx.db.UserAgentInRoom.findOneAndUpdate(
@@ -44,10 +44,14 @@ async function toggleAdminMutedRoom({ key, userAgent, userAgentAdmin, ctx }) {
     room: key,
     isAdmin: true,
   })
-    .select(['userAgent'])
+    .select(["userAgent"])
     .lean();
 
-  ctx.socket.emit(_.map(adminUserAgents, 'userAgent'), `COMUNICA:ROOM:ADMIN_MUTED`, userAgentRoom);
+  ctx.socket.emit(
+    _.map(adminUserAgents, "userAgent"),
+    `COMUNICA:ROOM:ADMIN_MUTED`,
+    userAgentRoom
+  );
 
   ctx.socket.emit(userAgent, `COMUNICA:CONFIG:ROOM`, userAgentRoom);
 

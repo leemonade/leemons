@@ -1,14 +1,14 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('@leemons/mongodb-helpers');
+const { getKeyValueModel } = require("@leemons/mongodb-helpers");
 
 const models = {
-  ...require('./config'),
-  ...require('./message'),
-  ...require('./room'),
-  ...require('./roomMessagesUnRead'),
-  ...require('./userAgentConfig'),
-  ...require('./userAgentInRoom'),
+  ...require("./config"),
+  ...require("./message"),
+  ...require("./room"),
+  ...require("./roomMessagesUnRead"),
+  ...require("./userAgentConfig"),
+  ...require("./userAgentInRoom"),
 };
 
 module.exports = {
@@ -21,7 +21,7 @@ module.exports = {
       RoomMessagesUnRead: models.roomMessagesUnReadModel,
       UserAgentConfig: models.userAgentConfigModel,
       UserAgentInRoom: models.userAgentInRoomModel,
-      KeyValue: getKeyValueModel({ modelName: 'v1::comunica_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: "v1::comunica_KeyValue" }),
     };
   },
 };

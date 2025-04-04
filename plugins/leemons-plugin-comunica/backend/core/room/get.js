@@ -1,9 +1,9 @@
-const _ = require('lodash');
+const _ = require("lodash");
 const {
   validateKeyPrefix,
   validateNotExistRoomKey,
   validateNotExistUserAgentInRoomKey,
-} = require('../../validations/exists');
+} = require("../../validations/exists");
 
 async function get({ key, userAgent, returnUserAgents = true, ctx }) {
   validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
@@ -13,15 +13,20 @@ async function get({ key, userAgent, returnUserAgents = true, ctx }) {
     await validateNotExistUserAgentInRoomKey({ key, userAgent, ctx });
   } catch (error) {
     // Si el usuario no esta en la sala, comprobamos si tiene permisos para ver el item
-    const hasPermission = await ctx.tx.call('users.permissions.userAgentHasPermissionToItem', {
-      userAgentId: userAgent,
-      item: key,
-    });
+    const hasPermission = await ctx.tx.call(
+      "users.permissions.userAgentHasPermissionToItem",
+      {
+        userAgentId: userAgent,
+        item: key,
+      }
+    );
     if (!hasPermission) throw error;
   }
   const [room, userAgents, nMessages, messagesUnread] = await Promise.all([
     ctx.tx.db.Room.findOne({ key }).lean(),
-    ctx.tx.db.UserAgentInRoom.find({ room: key }, undefined, { excludeDeleted: false }).lean(),
+    ctx.tx.db.UserAgentInRoom.find({ room: key }, undefined, {
+      excludeDeleted: false,
+    }).lean(),
     ctx.tx.db.Message.countDocuments({ room: key }),
     ctx.tx.db.RoomMessagesUnRead.findOne({
       room: key,
@@ -38,12 +43,12 @@ async function get({ key, userAgent, returnUserAgents = true, ctx }) {
   }));
 
   if (returnUserAgents) {
-    const userAgen = await ctx.tx.call('users.users.getUserAgentsInfo', {
-      userAgentIds: _.map(userAgents, 'userAgent'),
+    const userAgen = await ctx.tx.call("users.users.getUserAgentsInfo", {
+      userAgentIds: _.map(userAgents, "userAgent"),
       withProfile: true,
     });
 
-    const userAgentsById = _.keyBy(userAgen, 'id');
+    const userAgentsById = _.keyBy(userAgen, "id");
     room.userAgents = _.map(userAgents, (a) => ({
       userAgent: userAgentsById[a.userAgent],
       adminMuted: a.adminMuted,

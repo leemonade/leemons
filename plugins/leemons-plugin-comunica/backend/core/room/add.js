@@ -1,6 +1,9 @@
-const _ = require('lodash');
-const { validateKeyPrefix, validateExistRoomKey } = require('../../validations/exists');
-const { addUserAgents } = require('./addUserAgents');
+const _ = require("lodash");
+const {
+  validateKeyPrefix,
+  validateExistRoomKey,
+} = require("../../validations/exists");
+const { addUserAgents } = require("./addUserAgents");
 
 async function add({
   key,
@@ -29,9 +32,12 @@ async function add({
   let center = _center;
 
   if (program && !center) {
-    [center] = await ctx.tx.call('academic-portfolio.programs.getProgramCenters', {
-      programId: program,
-    });
+    [center] = await ctx.tx.call(
+      "academic-portfolio.programs.getProgramCenters",
+      {
+        programId: program,
+      }
+    );
   }
 
   let room = await ctx.tx.db.Room.create({
@@ -53,9 +59,9 @@ async function add({
   room = room.toObject();
 
   if (viewPermissions) {
-    await ctx.tx.call('users.permissions.addItem', {
+    await ctx.tx.call("users.permissions.addItem", {
       item: key,
-      type: 'comunica.room.view',
+      type: "comunica.room.view",
       data: viewPermissions,
       isCustomPermission: true,
     });

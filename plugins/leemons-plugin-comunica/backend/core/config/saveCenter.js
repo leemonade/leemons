@@ -1,8 +1,8 @@
 async function saveCenter({ center, config, ctx }) {
   await ctx.tx.db.Config.updateOne(
-    { type: 'center', typeId: center },
+    { type: "center", typeId: center },
     {
-      type: 'center',
+      type: "center",
       typeId: center,
       config: JSON.stringify(config),
     },

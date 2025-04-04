@@ -1,10 +1,10 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
+const _ = require("lodash");
 const {
   validateKeyPrefix,
   validateNotExistRoomKey,
   validateNotExistUserAgentInRoomKey,
-} = require('../../validations/exists');
+} = require("../../validations/exists");
 
 function validatePermissionsInAllRooms({ keys, userAgent, ctx }) {
   return Promise.all(
@@ -16,10 +16,13 @@ function validatePermissionsInAllRooms({ keys, userAgent, ctx }) {
         await validateNotExistUserAgentInRoomKey({ key, userAgent, ctx });
       } catch (error) {
         // Si el usuario no esta en la sala, comprobamos si tiene permisos para ver el item
-        const hasPermission = await ctx.tx.call('users.permissions.userAgentHasPermissionToItem', {
-          userAgentId: userAgent,
-          item: key,
-        });
+        const hasPermission = await ctx.tx.call(
+          "users.permissions.userAgentHasPermissionToItem",
+          {
+            userAgentId: userAgent,
+            item: key,
+          }
+        );
         if (!hasPermission) throw error;
       }
     })

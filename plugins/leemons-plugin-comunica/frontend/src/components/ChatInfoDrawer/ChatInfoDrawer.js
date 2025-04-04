@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
+import React from "react";
+import PropTypes from "prop-types";
+import _ from "lodash";
 import {
   ActionButton,
   Box,
@@ -13,20 +13,29 @@ import {
   TotalLayoutContainer,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
-} from '@bubbles-ui/components';
-import { ChevDownIcon, ChevronLeftIcon, ChevUpIcon, RemoveIcon } from '@bubbles-ui/icons/outline';
-import { AddCircleIcon, DeleteBinIcon, VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
-import { useStore } from '@common';
-import ChatAddUsersDrawer from '@comunica/components/ChatAddUsersDrawer/ChatAddUsersDrawer';
-import RoomHeader from '@comunica/components/RoomHeader/RoomHeader';
-import prefixPN from '@comunica/helpers/prefixPN';
-import RoomService from '@comunica/RoomService';
-import getBase64 from '@leebrary/helpers/getBase64';
-import SocketIoService from '@mqtt-socket-io/service';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import getUserAgentsInfo from '@users/request/getUserAgentsInfo';
-import { getCentersWithToken } from '@users/session';
-import { ChatInfoDrawerStyles } from './ChatInfoDrawer.styles';
+} from "@bubbles-ui/components";
+import {
+  ChevDownIcon,
+  ChevronLeftIcon,
+  ChevUpIcon,
+  RemoveIcon,
+} from "@bubbles-ui/icons/outline";
+import {
+  AddCircleIcon,
+  DeleteBinIcon,
+  VolumeControlOffIcon,
+} from "@bubbles-ui/icons/solid";
+import { useStore } from "@common";
+import ChatAddUsersDrawer from "@comunica/components/ChatAddUsersDrawer/ChatAddUsersDrawer";
+import RoomHeader from "@comunica/components/RoomHeader/RoomHeader";
+import prefixPN from "@comunica/helpers/prefixPN";
+import RoomService from "@comunica/RoomService";
+import getBase64 from "@leebrary/helpers/getBase64";
+import SocketIoService from "@mqtt-socket-io/service";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import getUserAgentsInfo from "@users/request/getUserAgentsInfo";
+import { getCentersWithToken } from "@users/session";
+import { ChatInfoDrawerStyles } from "./ChatInfoDrawer.styles";
 
 const usersToShow = 7;
 
@@ -38,8 +47,8 @@ function ChatInfoDrawer({
   onReturn = () => {},
   onClose = () => {},
 }) {
-  const { classes } = ChatInfoDrawerStyles({}, { name: 'ChatDrawer' });
-  const [t] = useTranslateLoader(prefixPN('chatListDrawer'));
+  const { classes } = ChatInfoDrawerStyles({}, { name: "ChatDrawer" });
+  const [t] = useTranslateLoader(prefixPN("chatListDrawer"));
   const scrollRef = React.useRef();
 
   const [store, render] = useStore({
@@ -149,8 +158,8 @@ function ChatInfoDrawer({
       room: { key },
     } = await RoomService.createRoom({
       name: store.name,
-      type: 'group',
-      userAgents: _.map(store.createUserAgents, 'id'),
+      type: "group",
+      userAgents: _.map(store.createUserAgents, "id"),
     });
     if (store.adminDisableMessages) RoomService.adminDisableMessages(key);
     if (store.attached) RoomService.toggleRoomAttached(key);
@@ -173,7 +182,9 @@ function ChatInfoDrawer({
   async function load() {
     const {
       userAgents: [item],
-    } = await getUserAgentsInfo(getCentersWithToken()[0].userAgentId, { withProfile: true });
+    } = await getUserAgentsInfo(getCentersWithToken()[0].userAgentId, {
+      withProfile: true,
+    });
     store.me = item;
     render();
   }
@@ -226,8 +237,8 @@ function ChatInfoDrawer({
   let headerRoom = room;
   if (!room) {
     headerRoom = {
-      name: store.name || t('newGroupName'),
-      type: 'group',
+      name: store.name || t("newGroupName"),
+      type: "group",
       imageIsUrl: true,
       image: store.createFile,
       userAgents: _.map(store.createUserAgents, (item) => ({
@@ -252,17 +263,18 @@ function ChatInfoDrawer({
     }
   }
 
-  let saveDisabled = store.name === room?.name || store.nameError || !store.name;
+  let saveDisabled =
+    store.name === room?.name || store.nameError || !store.name;
   if (!room && headerRoom.userAgents.length < 2) saveDisabled = true;
 
   SocketIoService.useOnAny((event, data) => {
-    if (event === 'COMUNICA:CONFIG:PROGRAM' && room?.program === data.program) {
+    if (event === "COMUNICA:CONFIG:PROGRAM" && room?.program === data.program) {
       store.programConfig = data.config;
       render();
     }
   });
 
-  const showFooter = !room || (room?.isAdmin && room?.type === 'group');
+  const showFooter = !room || (room?.isAdmin && room?.type === "group");
 
   return (
     <>
@@ -278,17 +290,29 @@ function ChatInfoDrawer({
                   onClick={beforeReturn}
                   leftIcon={<ChevronLeftIcon width={12} height={12} />}
                 >
-                  {t('return')}
+                  {t("return")}
                 </Button>
-                <ActionButton onClick={onClose} icon={<RemoveIcon width={16} height={16} />} />
+                <ActionButton
+                  onClick={onClose}
+                  icon={<RemoveIcon width={16} height={16} />}
+                />
               </Box>
               <Box sx={(theme) => ({ paddingBottom: theme.spacing[2] })}>
-                <RoomHeader onImageChange={onImageChange} t={t} room={headerRoom} />
+                <RoomHeader
+                  onImageChange={onImageChange}
+                  t={t}
+                  room={headerRoom}
+                />
               </Box>
             </Box>
           }
         >
-          <Stack ref={scrollRef} fullWidth fullHeight style={{ overflowY: 'auto' }}>
+          <Stack
+            ref={scrollRef}
+            fullWidth
+            fullHeight
+            style={{ overflowY: "auto" }}
+          >
             <TotalLayoutStepContainer
               fullWidth
               clean
@@ -304,13 +328,16 @@ function ChatInfoDrawer({
                     leftZone={
                       !!room && (
                         <Button onClick={removeRoom} variant="link">
-                          {t('remove')}
+                          {t("remove")}
                         </Button>
                       )
                     }
                     rightZone={
-                      <Button disabled={saveDisabled} onClick={room ? updateName : createGroup}>
-                        {t('save')}
+                      <Button
+                        disabled={saveDisabled}
+                        onClick={room ? updateName : createGroup}
+                      >
+                        {t("save")}
                       </Button>
                     }
                   />
@@ -318,38 +345,48 @@ function ChatInfoDrawer({
               }
             >
               <Box className={classes.content}>
-                {!room || (room?.isAdmin && room?.type === 'group') ? (
+                {!room || (room?.isAdmin && room?.type === "group") ? (
                   <Box className={classes.name}>
                     <TextInput
                       required
-                      label={t('groupName')}
-                      error={store.nameError ? t('nameRequired') : null}
+                      label={t("groupName")}
+                      error={store.nameError ? t("nameRequired") : null}
                       value={store.name}
                       onChange={onNameChange}
                     />
                   </Box>
                 ) : null}
 
-                <Switch checked={!!store.attached} onChange={toggleAttached} label={t('setRoom')} />
-                <Switch checked={!!store.muted} onChange={toggleMute} label={t('muteRoom')} />
+                <Switch
+                  checked={!!store.attached}
+                  onChange={toggleAttached}
+                  label={t("setRoom")}
+                />
+                <Switch
+                  checked={!!store.muted}
+                  onChange={toggleMute}
+                  label={t("muteRoom")}
+                />
                 {store.programConfig?.teachersCanDisableSubjectsRooms &&
-                room?.type === 'academic-portfolio.class' &&
+                room?.type === "academic-portfolio.class" &&
                 room?.isAdmin ? (
                   <Switch
                     checked={!!store.adminDisableMessages}
                     onChange={toggleAdminDisableMessages}
-                    label={t('adminDisableMessages')}
+                    label={t("adminDisableMessages")}
                   />
                 ) : null}
 
                 <Box className={classes.participants}>
-                  {t('participants')} ({store.nNoDeletedAgents})
+                  {t("participants")} ({store.nNoDeletedAgents})
                 </Box>
                 {store.userAgents?.map((item) => (
                   <Box key={item.userAgent.id} className={classes.userInfo}>
                     <UserDisplayItem {...item.userAgent.user} size="xs" />
 
-                    {item.isAdmin && <Box className={classes.userAdmin}>{t('admin')}</Box>}
+                    {item.isAdmin && (
+                      <Box className={classes.userAdmin}>{t("admin")}</Box>
+                    )}
                     {!item.isAdmin && (!room || room?.isAdmin) && (
                       <Box className={classes.adminIcons}>
                         {!!room &&
@@ -358,17 +395,26 @@ function ChatInfoDrawer({
                             store.programConfig.teachersCanMuteStudents) && (
                             <Box
                               className={
-                                item.adminMuted ? classes.userMuteIconActive : classes.userMuteIcon
+                                item.adminMuted
+                                  ? classes.userMuteIconActive
+                                  : classes.userMuteIcon
                               }
                             >
                               <ActionButton
-                                onClick={() => muteAdminUserFromRoom(item.userAgent)}
-                                icon={<VolumeControlOffIcon width={16} height={16} />}
+                                onClick={() =>
+                                  muteAdminUserFromRoom(item.userAgent)
+                                }
+                                icon={
+                                  <VolumeControlOffIcon
+                                    width={16}
+                                    height={16}
+                                  />
+                                }
                               />
                             </Box>
                           )}
 
-                        {(!room || room?.type === 'group') && (
+                        {(!room || room?.type === "group") && (
                           <Box className={classes.userRemove}>
                             <ActionButton
                               color="phatic"
@@ -382,27 +428,30 @@ function ChatInfoDrawer({
                   </Box>
                 ))}
                 {headerRoom?.userAgents.length > usersToShow ? (
-                  <Box onClick={toggleShowAllMembers} className={classes.showAll}>
+                  <Box
+                    onClick={toggleShowAllMembers}
+                    className={classes.showAll}
+                  >
                     {store.showAllMembers ? (
                       <>
-                        <ChevUpIcon /> {t('showLess')}
+                        <ChevUpIcon /> {t("showLess")}
                       </>
                     ) : (
                       <>
-                        <ChevDownIcon /> {t('showAll')}
+                        <ChevDownIcon /> {t("showAll")}
                       </>
                     )}
                   </Box>
                 ) : null}
 
-                {!room || (room?.isAdmin && room?.type === 'group') ? (
+                {!room || (room?.isAdmin && room?.type === "group") ? (
                   <Box mt={10}>
                     <Button
                       variant="link"
                       onClick={openAddUsers}
                       leftIcon={<AddCircleIcon width={16} height={16} />}
                     >
-                      {t('addNewUsers')}
+                      {t("addNewUsers")}
                     </Button>
                   </Box>
                 ) : null}

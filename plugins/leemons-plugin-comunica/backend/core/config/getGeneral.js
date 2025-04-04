@@ -1,5 +1,5 @@
 async function getGeneral({ ctx }) {
-  const item = await ctx.tx.db.Config.findOne({ type: 'general' }).lean();
+  const item = await ctx.tx.db.Config.findOne({ type: "general" }).lean();
   let config = {
     enabled: true,
   };

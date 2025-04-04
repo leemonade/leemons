@@ -1,4 +1,4 @@
-import getAdminConfigRequest from './getAdminConfig';
-import saveAdminConfigRequest from './saveAdminConfig';
+import getAdminConfigRequest from "./getAdminConfig";
+import saveAdminConfigRequest from "./saveAdminConfig";
 
 export { getAdminConfigRequest, saveAdminConfigRequest };

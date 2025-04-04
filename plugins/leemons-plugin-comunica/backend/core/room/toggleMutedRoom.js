@@ -1,9 +1,9 @@
-const _ = require('lodash');
+const _ = require("lodash");
 const {
   validateKeyPrefix,
   validateNotExistRoomKey,
   validateNotExistUserAgentInRoomKey,
-} = require('../../validations/exists');
+} = require("../../validations/exists");
 
 async function toggleMutedRoom({ key, userAgent, ctx }) {
   validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });

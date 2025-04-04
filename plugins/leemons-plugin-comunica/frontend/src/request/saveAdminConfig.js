@@ -3,7 +3,7 @@ async function saveAdminConfig(center, data) {
     `v1/comunica/config/admin/config/${center}`,
     {
       allAgents: true,
-      method: 'POST',
+      method: "POST",
       body: data,
     }
   );

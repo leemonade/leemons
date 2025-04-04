@@ -3,13 +3,15 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getServiceModels } = require('../models');
-const restActions = require('./rest/room.rest');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const { LeemonsMongoDBMixin, mongoose } = require("@leemons/mongodb");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
+const { getServiceModels } = require("../models");
+const restActions = require("./rest/room.rest");
 const {
   add,
   get,
@@ -22,11 +24,11 @@ const {
   getUserAgentRooms,
   getRoomsMessageCount,
   getUnreadMessages,
-} = require('../core/room');
+} = require("../core/room");
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'comunica.room',
+  name: "comunica.room",
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),

@@ -1,11 +1,15 @@
-import _ from 'lodash';
-import getRoomChildrens from '@comunica/helpers/getRoomChildrens';
-import getTotalUnreadMessages from '@comunica/helpers/getTotalUnreadMessages';
-import getRoomParsed from '@comunica/helpers/getRoomParsed';
+import _ from "lodash";
+import getRoomChildrens from "@comunica/helpers/getRoomChildrens";
+import getTotalUnreadMessages from "@comunica/helpers/getTotalUnreadMessages";
+import getRoomParsed from "@comunica/helpers/getRoomParsed";
 
 export function getRoomsByParent(rooms, parent, types) {
   // eslint-disable-next-line no-nested-ternary
-  const parentKey = parent ? (_.isString(parent) ? parent : parent.key) : parent;
+  const parentKey = parent
+    ? _.isString(parent)
+      ? parent
+      : parent.key
+    : parent;
   const results = _.filter(rooms, (room) => {
     if (!room.parentRoom && !parentKey) {
       if (types) return types.includes(room.type);

@@ -1,5 +1,5 @@
-import _ from 'lodash';
-import getRoomChildrens from '@comunica/helpers/getRoomChildrens';
+import _ from "lodash";
+import getRoomChildrens from "@comunica/helpers/getRoomChildrens";
 
 export function getTotalUnreadMessages(rooms, allRooms) {
   let total = 0;

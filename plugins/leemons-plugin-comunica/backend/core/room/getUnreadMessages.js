@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
-const { validateKeyPrefix } = require('../../validations/exists');
+const _ = require("lodash");
+const { validateKeyPrefix } = require("../../validations/exists");
 
 async function getUnreadMessages({ keys, userAgent, ctx }) {
   validateKeyPrefix({ key: keys, calledFrom: ctx.callerPlugin, ctx });

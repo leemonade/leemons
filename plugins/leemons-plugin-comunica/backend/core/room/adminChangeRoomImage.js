@@ -1,10 +1,10 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
 const {
   validateKeyPrefix,
   validateNotExistRoomKey,
   validateNotExistUserAgentInRoomKey,
-} = require('../../validations/exists');
+} = require("../../validations/exists");
 
 async function adminChangeRoomImage({ key, avatar, ctx }) {
   const { userSession } = ctx.meta;
@@ -18,7 +18,9 @@ async function adminChangeRoomImage({ key, avatar, ctx }) {
   }).lean();
 
   if (!admin.isAdmin)
-    throw new LeemonsError(ctx, { message: 'You don`t have permissions for update room image' });
+    throw new LeemonsError(ctx, {
+      message: "You don`t have permissions for update room image",
+    });
 
   const room = await ctx.tx.db.Room.findOne({ key }).lean();
 
@@ -30,12 +32,12 @@ async function adminChangeRoomImage({ key, avatar, ctx }) {
   if (avatar) assetData.cover = avatar;
   let asset;
   if (room.image) {
-    asset = await ctx.tx.call('leebrary.assets.update', {
+    asset = await ctx.tx.call("leebrary.assets.update", {
       data: { ...assetData, id: room.image },
       published: true,
     });
   } else {
-    asset = await ctx.tx.call('leebrary.assets.add', {
+    asset = await ctx.tx.call("leebrary.assets.add", {
       asset: assetData,
       options: {
         published: true,
@@ -45,10 +47,14 @@ async function adminChangeRoomImage({ key, avatar, ctx }) {
   await ctx.tx.db.Room.updateOne({ id: room.id }, { image: asset.id });
 
   const userAgents = await ctx.tx.db.UserAgentInRoom.find({ room: key }).lean();
-  ctx.socket.emit(_.map(userAgents, 'userAgent'), `COMUNICA:ROOM:UPDATE:IMAGE`, {
-    key,
-    image: asset.id,
-  });
+  ctx.socket.emit(
+    _.map(userAgents, "userAgent"),
+    `COMUNICA:ROOM:UPDATE:IMAGE`,
+    {
+      key,
+      image: asset.id,
+    }
+  );
 
   return {
     ...room,

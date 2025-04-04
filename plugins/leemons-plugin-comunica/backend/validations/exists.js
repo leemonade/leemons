@@ -1,14 +1,16 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { exist: existRoom } = require('../core/room/exist');
-const { existUserAgent } = require('../core/room/existUserAgent');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { exist: existRoom } = require("../core/room/exist");
+const { existUserAgent } = require("../core/room/existUserAgent");
 
 function validateKeyPrefix({ key: _key, calledFrom, ctx }) {
-  if (calledFrom && calledFrom !== 'gateway') {
+  if (calledFrom && calledFrom !== "gateway") {
     const keys = _.isArray(_key) ? _key : [_key];
     _.forEach(keys, (key) => {
-      if (!key.startsWith(calledFrom) && calledFrom !== 'fundae')
-        throw new LeemonsError(ctx, { message: `The key must begin with ${calledFrom}` });
+      if (!key.startsWith(calledFrom) && calledFrom !== "fundae")
+        throw new LeemonsError(ctx, {
+          message: `The key must begin with ${calledFrom}`,
+        });
     });
   }
 }

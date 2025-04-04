@@ -1,36 +1,46 @@
-import { Avatar, Box, ImageLoader } from '@bubbles-ui/components';
-import { VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
-import { RoomAvatar } from '@comunica/components';
-import RoomInstanceView from '@comunica/components/RoomInstanceView/RoomInstanceView';
-import { getName } from '@comunica/helpers/getRoomParsed';
-import isTeacherByRoom from '@comunica/helpers/isTeacherByRoom';
-import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { RoomHeaderStyles } from './RoomHeader.styles';
+import { Avatar, Box, ImageLoader } from "@bubbles-ui/components";
+import { VolumeControlOffIcon } from "@bubbles-ui/icons/solid";
+import { RoomAvatar } from "@comunica/components";
+import RoomInstanceView from "@comunica/components/RoomInstanceView/RoomInstanceView";
+import { getName } from "@comunica/helpers/getRoomParsed";
+import isTeacherByRoom from "@comunica/helpers/isTeacherByRoom";
+import { getAssetUrl } from "@leebrary/helpers/prepareAsset";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import { RoomHeaderStyles } from "./RoomHeader.styles";
 
-const noNUsersTypes = ['assignables.assignation', 'assignables.assignation.subject', 'chat'];
+const noNUsersTypes = [
+  "assignables.assignation",
+  "assignables.assignation.subject",
+  "chat",
+];
 
-const showViewTypes = ['assignables.assignation', 'assignables.assignation.user'];
+const showViewTypes = [
+  "assignables.assignation",
+  "assignables.assignation.user",
+];
 
 function RoomHeader({ room, t, onImageChange }) {
-  const { classes } = RoomHeaderStyles({ type: room.type }, { name: 'RoomHeader' });
+  const { classes } = RoomHeaderStyles(
+    { type: room.type },
+    { name: "RoomHeader" }
+  );
 
   const nUsers = _.filter(room.userAgents, (e) => !e.deleted).length;
 
   const subNameIcon = React.useMemo(() => {
     if (
       [
-        'assignables.assignation.subject',
-        'assignables.assignation.user',
-        'assignables.assignation.group',
-        'assignables.assignation',
+        "assignables.assignation.subject",
+        "assignables.assignation.user",
+        "assignables.assignation.group",
+        "assignables.assignation",
       ].includes(room.type)
     ) {
-      if (room.subName === 'multisubjects') {
+      if (room.subName === "multisubjects") {
         return (
-          <Box className={classes.icon} style={{ backgroundColor: '#67728E' }}>
+          <Box className={classes.icon} style={{ backgroundColor: "#67728E" }}>
             <ImageLoader
               forceImage
               src="/public/assignables/module-three.svg"
@@ -42,18 +52,24 @@ function RoomHeader({ room, t, onImageChange }) {
       }
 
       const isTeacher = isTeacherByRoom(room);
-      if (isTeacher && room.type === 'assignables.assignation.user') {
+      if (isTeacher && room.type === "assignables.assignation.user") {
         const student = _.find(
-          _.map(room.userAgents, 'userAgent'),
-          (userAgent) => userAgent?.profile?.sysName === 'student'
+          _.map(room.userAgents, "userAgent"),
+          (userAgent) => userAgent?.profile?.sysName === "student"
         );
-        return <Avatar image={room.image} fullName={getName(student)} size="xs" />;
+        return (
+          <Avatar image={room.image} fullName={getName(student)} size="xs" />
+        );
       }
       return (
         <Box className={classes.icon} style={{ backgroundColor: room.bgColor }}>
           <ImageLoader
             forceImage
-            src={room.iconIsUrl || room.metadata?.iconIsUrl ? room.icon : getAssetUrl(room.icon)}
+            src={
+              room.iconIsUrl || room.metadata?.iconIsUrl
+                ? room.icon
+                : getAssetUrl(room.icon)
+            }
             width={14}
             height={14}
           />
@@ -87,10 +103,10 @@ function RoomHeader({ room, t, onImageChange }) {
                   room.metadata?.headerSubNameReplaces || {},
                   false,
                   room.metadata?.headerSubName || room.subName
-                )}{' '}
-                {room.type !== 'group' ? ` (${nUsers})` : null}
+                )}{" "}
+                {room.type !== "group" ? ` (${nUsers})` : null}
               </Box>
-              {room.type === 'group' ? (
+              {room.type === "group" ? (
                 <Box className={classes.nsubName}>
                   {!noNUsersTypes.includes(room.type) ? `(${nUsers})` : null}
                 </Box>

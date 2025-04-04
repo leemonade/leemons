@@ -1,8 +1,8 @@
 async function saveProgram({ program, config, ctx }) {
   await ctx.tx.db.Config.updateOne(
-    { type: 'program', typeId: program },
+    { type: "program", typeId: program },
     {
-      type: 'program',
+      type: "program",
       typeId: program,
       config: JSON.stringify(config),
     },

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Box,
   Button,
@@ -10,20 +10,20 @@ import {
   TabPanel,
   Tabs,
   Textarea,
-} from '@bubbles-ui/components';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@comunica/helpers/prefixPN';
-import { useStore } from '@common';
-import { ConfigPageStyles } from '@comunica/pages/private/ConfigPage/index.styles';
-import { Controller, useForm } from 'react-hook-form';
-import { SelectCenter } from '@users/components';
-import { listProgramsRequest } from '@academic-portfolio/request';
-import RoomService from '@comunica/RoomService';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
+} from "@bubbles-ui/components";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@comunica/helpers/prefixPN";
+import { useStore } from "@common";
+import { ConfigPageStyles } from "@comunica/pages/private/ConfigPage/index.styles";
+import { Controller, useForm } from "react-hook-form";
+import { SelectCenter } from "@users/components";
+import { listProgramsRequest } from "@academic-portfolio/request";
+import RoomService from "@comunica/RoomService";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
 
 export default function ConfigPage() {
-  const [t] = useTranslateLoader(prefixPN('config'));
+  const [t] = useTranslateLoader(prefixPN("config"));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const { classes } = ConfigPageStyles();
   const [store, render] = useStore({
@@ -64,7 +64,7 @@ export default function ConfigPage() {
       render();
       const data = form.getValues();
       await RoomService.saveAdminConfig(store.center, data);
-      addSuccessAlert(t('saveDone'));
+      addSuccessAlert(t("saveDone"));
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
     }
@@ -80,57 +80,69 @@ export default function ConfigPage() {
     <ContextContainer fullHeight>
       <PageHeader
         values={{
-          title: t('title'),
-          description: t('description'),
+          title: t("title"),
+          description: t("description"),
         }}
         fullWidth
       />
       <Paper color="solid" shadow="none" padding="none">
         <PageContainer noFlex>
-          <Box className={classes.subTitle}>{t('permissions')}</Box>
+          <Box className={classes.subTitle}>{t("permissions")}</Box>
           <Paper fullWidth padding={5}>
             <ContextContainer divided>
               <Controller
                 name="enabled"
                 control={form.control}
                 render={({ field: { value, ...field } }) => (
-                  <Switch {...field} label={t('enableChat')} checked={value} />
+                  <Switch {...field} label={t("enableChat")} checked={value} />
                 )}
               />
-              <ContextContainer subtitle={t('center')}>
-                <Box style={{ maxWidth: '260px' }}>
-                  <SelectCenter firstSelected onChange={selectCenter} value={store.center} />
+              <ContextContainer subtitle={t("center")}>
+                <Box style={{ maxWidth: "260px" }}>
+                  <SelectCenter
+                    firstSelected
+                    onChange={selectCenter}
+                    value={store.center}
+                  />
                 </Box>
                 <Box>
                   <Controller
                     name="enableSecureWords"
                     control={form.control}
                     render={({ field: { value, ...field } }) => (
-                      <Switch {...field} label={t('secureWords')} checked={value} />
+                      <Switch
+                        {...field}
+                        label={t("secureWords")}
+                        checked={value}
+                      />
                     )}
                   />
                   <Controller
                     name="secureWords"
                     control={form.control}
                     render={({ field }) => (
-                      <Box style={{ maxWidth: '600px' }}>
+                      <Box style={{ maxWidth: "600px" }}>
                         <Textarea
                           {...field}
                           disabled={!values.enableSecureWords}
-                          placeholder={t('wordsByCommas')}
+                          placeholder={t("wordsByCommas")}
                         />
                       </Box>
                     )}
                   />
                 </Box>
 
-                <ContextContainer subtitle={t('students')}>
+                <ContextContainer subtitle={t("students")}>
                   <Box>
                     <Controller
                       name="enableStudentsChats"
                       control={form.control}
                       render={({ field: { value, ...field } }) => (
-                        <Switch {...field} label={t('enableStudentsChats')} checked={value} />
+                        <Switch
+                          {...field}
+                          label={t("enableStudentsChats")}
+                          checked={value}
+                        />
                       )}
                     />
 
@@ -140,7 +152,7 @@ export default function ConfigPage() {
                       render={({ field: { value, ...field } }) => (
                         <Switch
                           {...field}
-                          label={t('enableStudentsCreateGroups')}
+                          label={t("enableStudentsCreateGroups")}
                           checked={value}
                         />
                       )}
@@ -151,7 +163,7 @@ export default function ConfigPage() {
                       render={({ field: { value, ...field } }) => (
                         <Switch
                           {...field}
-                          label={t('disableChatsBetweenStudentsAndTeachers')}
+                          label={t("disableChatsBetweenStudentsAndTeachers")}
                           checked={value}
                         />
                       )}
@@ -162,7 +174,7 @@ export default function ConfigPage() {
                       render={({ field: { value, ...field } }) => (
                         <Switch
                           {...field}
-                          label={t('studentsCanAddTeachersToGroups')}
+                          label={t("studentsCanAddTeachersToGroups")}
                           checked={value}
                         />
                       )}
@@ -170,21 +182,25 @@ export default function ConfigPage() {
                   </Box>
                 </ContextContainer>
               </ContextContainer>
-              <ContextContainer subtitle={t('programs')}>
+              <ContextContainer subtitle={t("programs")}>
                 <Tabs usePageLayout={false}>
                   {store.programs.map((program) => (
                     <TabPanel key={program.id} label={program.name}>
                       <ContextContainer padded divided>
-                        <ContextContainer subtitle={t('general')}>
+                        <ContextContainer subtitle={t("general")}>
                           <Controller
                             name={`program[${program.id}].enableSubjectsRoom`}
                             control={form.control}
                             render={({ field: { value, ...field } }) => (
-                              <Switch {...field} label={t('enableSubjectsRoom')} checked={value} />
+                              <Switch
+                                {...field}
+                                label={t("enableSubjectsRoom")}
+                                checked={value}
+                              />
                             )}
                           />
                         </ContextContainer>
-                        <ContextContainer subtitle={t('teachers')}>
+                        <ContextContainer subtitle={t("teachers")}>
                           <Box>
                             <Controller
                               name={`program[${program.id}].teachersCanDisableSubjectsRooms`}
@@ -192,7 +208,7 @@ export default function ConfigPage() {
                               render={({ field: { value, ...field } }) => (
                                 <Switch
                                   {...field}
-                                  label={t('teachersCanDisableSubjectsRooms')}
+                                  label={t("teachersCanDisableSubjectsRooms")}
                                   checked={value}
                                 />
                               )}
@@ -203,7 +219,7 @@ export default function ConfigPage() {
                               render={({ field: { value, ...field } }) => (
                                 <Switch
                                   {...field}
-                                  label={t('teachersCanMuteStudents')}
+                                  label={t("teachersCanMuteStudents")}
                                   checked={value}
                                 />
                               )}
@@ -214,7 +230,9 @@ export default function ConfigPage() {
                               render={({ field: { value, ...field } }) => (
                                 <Switch
                                   {...field}
-                                  label={t('onlyTeachersCanWriteInSubjectsRooms')}
+                                  label={t(
+                                    "onlyTeachersCanWriteInSubjectsRooms"
+                                  )}
                                   checked={value}
                                 />
                               )}
@@ -229,7 +247,7 @@ export default function ConfigPage() {
             </ContextContainer>
             <Box className={classes.saveContainer}>
               <Button loading={store.saving} onClick={save}>
-                {t('save')}
+                {t("save")}
               </Button>
             </Box>
           </Paper>

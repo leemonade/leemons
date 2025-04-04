@@ -1,29 +1,32 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function getUserAgentRoomsList({ userAgent, ctx }) {
   const uair = await ctx.tx.db.UserAgentInRoom.find({ userAgent }).lean();
-  const roomKeys = _.map(uair, 'room');
+  const roomKeys = _.map(uair, "room");
   const [rooms, unreadMessages, userAgents] = await Promise.all([
     ctx.tx.db.Room.find({ key: roomKeys }).lean(),
     ctx.tx.db.RoomMessagesUnRead.find({
       room: roomKeys,
       userAgent,
     }).lean(),
-    ctx.tx.db.UserAgentInRoom.find({ room: roomKeys }, { excludeDeleted: false }).lean(),
+    ctx.tx.db.UserAgentInRoom.find(
+      { room: roomKeys },
+      { excludeDeleted: false }
+    ).lean(),
   ]);
 
-  const userAgentsByRoom = _.groupBy(userAgents, 'room');
+  const userAgentsByRoom = _.groupBy(userAgents, "room");
 
-  const userAgen = await ctx.tx.call('users.users.getUserAgentsInfo', {
-    userAgentIds: _.map(userAgents, 'userAgent'),
+  const userAgen = await ctx.tx.call("users.users.getUserAgentsInfo", {
+    userAgentIds: _.map(userAgents, "userAgent"),
     withProfile: true,
   });
 
-  const userAgentsById = _.keyBy(userAgen, 'id');
+  const userAgentsById = _.keyBy(userAgen, "id");
 
   const result = [];
-  const unreadMessagesByRoom = _.keyBy(unreadMessages, 'room');
-  const uairByRoom = _.keyBy(uair, 'room');
+  const unreadMessagesByRoom = _.keyBy(unreadMessages, "room");
+  const uairByRoom = _.keyBy(uair, "room");
   _.forEach(rooms, (room) => {
     result.push({
       ...room,

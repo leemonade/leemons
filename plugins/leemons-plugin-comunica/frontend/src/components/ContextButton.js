@@ -4,31 +4,31 @@ import {
   getBoxShadowFromToken,
   getFocusDefaultBorder,
   useDebouncedCallback,
-} from '@bubbles-ui/components';
-import { CommentIcon, VolumeControlOffIcon } from '@bubbles-ui/icons/solid';
-import { useNotifications } from '@bubbles-ui/notifications';
-import { useStore } from '@common';
-import { ChatListDrawer, RoomAvatar } from '@comunica/components';
-import getRoomParsed from '@comunica/helpers/getRoomParsed';
-import getRoomsByParent from '@comunica/helpers/getRoomsByParent';
-import isStudentTeacherChatRoom from '@comunica/helpers/isStudentTeacherChatRoom';
-import isStudentsChatRoom from '@comunica/helpers/isStudentsChatRoom';
-import prefixPN from '@comunica/helpers/prefixPN';
-import SocketIoService from '@mqtt-socket-io/service';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { getCentersWithToken } from '@users/session';
-import hooks from 'leemons-hooks';
-import _ from 'lodash';
-import React from 'react';
-import { RoomService } from '../RoomService';
+} from "@bubbles-ui/components";
+import { CommentIcon, VolumeControlOffIcon } from "@bubbles-ui/icons/solid";
+import { useNotifications } from "@bubbles-ui/notifications";
+import { useStore } from "@common";
+import { ChatListDrawer, RoomAvatar } from "@comunica/components";
+import getRoomParsed from "@comunica/helpers/getRoomParsed";
+import getRoomsByParent from "@comunica/helpers/getRoomsByParent";
+import isStudentTeacherChatRoom from "@comunica/helpers/isStudentTeacherChatRoom";
+import isStudentsChatRoom from "@comunica/helpers/isStudentsChatRoom";
+import prefixPN from "@comunica/helpers/prefixPN";
+import hooks from "@leemons/hooks";
+import SocketIoService from "@mqtt-socket-io/service";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { getCentersWithToken } from "@users/session";
+import _ from "lodash";
+import React from "react";
+import { RoomService } from "../RoomService";
 
 export const ContextButtonStyles = createStyles((theme) => ({
   root: {
-    position: 'fixed',
+    position: "fixed",
     zIndex: 55,
     bottom: 85, // hasFooter ? 16 : 16
     right: 14,
-    '@media (min-width: 1280px)': {
+    "@media (min-width: 1280px)": {
       bottom: 16,
       right: 14,
     },
@@ -37,47 +37,47 @@ export const ContextButtonStyles = createStyles((theme) => ({
     width: 44,
     height: 44,
     backgroundColor: theme.other.global.background.color.primary.default,
-    borderRadius: '50%',
-    cursor: 'pointer',
-    '&:focus-visible': {
+    borderRadius: "50%",
+    cursor: "pointer",
+    "&:focus-visible": {
       backgroundColor: theme.other.button.background.color.primary.hover,
       ...getFocusDefaultBorder(theme),
-      outline: 'none',
+      outline: "none",
     },
-    '&:hover': {
+    "&:hover": {
       backgroundColor: theme.other.button.background.color.primary.hover,
       ...getBoxShadowFromToken(theme.other.button.shadow.hover),
     },
-    '&:active': {
+    "&:active": {
       backgroundColor: theme.other.button.background.color.primary.pressed,
-      boxShadow: 'none',
+      boxShadow: "none",
     },
   },
   chatIcon: {
-    position: 'absolute',
-    left: '50%',
-    top: '50%',
+    position: "absolute",
+    left: "50%",
+    top: "50%",
     width: 24,
     height: 24,
     color: theme.other.button.content.color.primary.default,
-    transform: 'translate(-50%, -50%)',
+    transform: "translate(-50%, -50%)",
   },
   unreadMessages: {
-    position: 'absolute',
-    left: '50%',
-    top: '50%',
-    transform: 'translate(-50%, -50%)',
-    textAlign: 'center',
-    display: 'inline-flex',
-    color: 'white',
-    ...theme.other.global.content.typoMobile.body['lg--bold'],
-    '&:after': {
-      position: 'absolute',
-      left: '50%',
-      top: '50%',
-      transform: 'translate(-50%, -50%)',
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    transform: "translate(-50%, -50%)",
+    textAlign: "center",
+    display: "inline-flex",
+    color: "white",
+    ...theme.other.global.content.typoMobile.body["lg--bold"],
+    "&:after": {
+      position: "absolute",
+      left: "50%",
+      top: "50%",
+      transform: "translate(-50%, -50%)",
       backgroundColor: theme.other.button.content.color.primary.default,
-      display: 'block',
+      display: "block",
       content: '""',
       width: 22,
       height: 22,
@@ -91,9 +91,9 @@ function ContextButton({ onShowDrawerChange }) {
   const debouncedFunction = useDebouncedCallback(100);
   const debouncedFunction2 = useDebouncedCallback(300);
   const [store, render] = useStore();
-  const [t] = useTranslateLoader(prefixPN('chatListDrawer'));
-  const notifications = useNotifications('chat');
-  const { classes } = ContextButtonStyles({}, { name: 'ContextButton' });
+  const [t] = useTranslateLoader(prefixPN("chatListDrawer"));
+  const notifications = useNotifications("chat");
+  const { classes } = ContextButtonStyles({}, { name: "ContextButton" });
 
   function isOnParentRooms(parentKey) {
     const room = _.find(store.originalRooms, { key: parentKey });
@@ -115,16 +115,26 @@ function ContextButton({ onShowDrawerChange }) {
   }
 
   function recalcule() {
-    store.parentRooms = _.orderBy(getRoomsByParent(store.originalRooms), ['attached'], ['asc']);
+    store.parentRooms = _.orderBy(
+      getRoomsByParent(store.originalRooms),
+      ["attached"],
+      ["asc"]
+    );
     if (!store.centerConfig?.enableStudentsChats) {
-      store.parentRooms = _.filter(store.parentRooms, (room) => !isStudentsChatRoom(room));
+      store.parentRooms = _.filter(
+        store.parentRooms,
+        (room) => !isStudentsChatRoom(room)
+      );
     }
     if (store.centerConfig?.disableChatsBetweenStudentsAndTeachers) {
-      store.parentRooms = _.filter(store.parentRooms, (room) => !isStudentTeacherChatRoom(room));
+      store.parentRooms = _.filter(
+        store.parentRooms,
+        (room) => !isStudentTeacherChatRoom(room)
+      );
     }
     store.parentRooms = _.filter(store.parentRooms, (room) => {
       if (
-        room.type === 'academic-portfolio.class' &&
+        room.type === "academic-portfolio.class" &&
         !store.programConfig[room.program]?.enableSubjectsRoom
       ) {
         return false;
@@ -141,7 +151,7 @@ function ContextButton({ onShowDrawerChange }) {
       RoomService.getRoomsList(),
       RoomService.getConfig(),
     ]);
-    const programIds = _.uniq(_.map(originalRooms, 'program'));
+    const programIds = _.uniq(_.map(originalRooms, "program"));
     const programConfigs = await Promise.all(
       _.map(programIds, (programId) => RoomService.getProgramConfig(programId))
     );
@@ -186,16 +196,16 @@ function ContextButton({ onShowDrawerChange }) {
   }, []);
 
   React.useEffect(() => {
-    hooks.addAction('chat:onRoomOpened', _onRoomOpened);
-    hooks.addAction('chat:closeDrawer', _closeDrawer);
+    hooks.addAction("chat:onRoomOpened", _onRoomOpened);
+    hooks.addAction("chat:closeDrawer", _closeDrawer);
     return () => {
-      hooks.removeAction('chat:onRoomOpened', _onRoomOpened);
-      hooks.removeAction('chat:closeDrawer', _closeDrawer);
+      hooks.removeAction("chat:onRoomOpened", _onRoomOpened);
+      hooks.removeAction("chat:closeDrawer", _closeDrawer);
     };
   }, []);
 
   SocketIoService.useOnAny((event, data) => {
-    if (event === 'COMUNICA:CONFIG:CENTER') {
+    if (event === "COMUNICA:CONFIG:CENTER") {
       if (data.center === getCentersWithToken()[0].id) {
         store.centerConfig = data.config;
         recalcule();
@@ -203,7 +213,7 @@ function ContextButton({ onShowDrawerChange }) {
       }
       return;
     }
-    if (event === 'COMUNICA:CONFIG:PROGRAM') {
+    if (event === "COMUNICA:CONFIG:PROGRAM") {
       if (store.programConfig[data.program]) {
         store.programConfig[data.program] = data.config;
         recalcule();
@@ -211,22 +221,22 @@ function ContextButton({ onShowDrawerChange }) {
       }
       return;
     }
-    if (event === 'COMUNICA:CONFIG') {
+    if (event === "COMUNICA:CONFIG") {
       store.config = data;
       render();
       return;
     }
-    if (event === 'COMUNICA:CONFIG:ROOM') {
+    if (event === "COMUNICA:CONFIG:ROOM") {
       const index = _.findIndex(store.originalRooms, { key: data.room });
       store.originalRooms[index].muted = !!data.muted;
       render();
       return;
     }
-    if (event === 'COMUNICA:ROOM:ADDED') {
+    if (event === "COMUNICA:ROOM:ADDED") {
       debouncedFunction(load);
       return;
     }
-    if (event === 'COMUNICA:ROOM:USER_ADDED') {
+    if (event === "COMUNICA:ROOM:USER_ADDED") {
       debouncedFunction2(load);
       return;
     }
@@ -238,14 +248,18 @@ function ContextButton({ onShowDrawerChange }) {
           !store.config?.muted &&
           store.roomOpened?.id !== room.id
         ) {
-          if (data.message?.type === 'text') {
+          if (data.message?.type === "text") {
             notifications.showNotification({
               onClick: (e, notification) => {
                 let node = e.target;
-                if (e.target.nodeName === 'svg') {
+                if (e.target.nodeName === "svg") {
                   node = e.target.parentNode;
                 }
-                if (!node.className.includes('mantine-Notification_chat-closeButton')) {
+                if (
+                  !node.className.includes(
+                    "mantine-Notification_chat-closeButton"
+                  )
+                ) {
                   store.openRoom = room;
                   notifications.hideNotification(notification.id);
                   render();
@@ -280,7 +294,7 @@ function ContextButton({ onShowDrawerChange }) {
           )}
           {store.unreadMessages && !store.config?.muted ? (
             <Box className={classes.unreadMessages}>
-              {store.unreadMessages > 99 ? '+99' : store.unreadMessages}
+              {store.unreadMessages > 99 ? "+99" : store.unreadMessages}
             </Box>
           ) : null}
           {store.config?.muted ? (

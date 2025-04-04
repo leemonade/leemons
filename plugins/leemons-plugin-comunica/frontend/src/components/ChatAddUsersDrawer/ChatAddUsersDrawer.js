@@ -1,6 +1,6 @@
-import React from 'react';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
+import React from "react";
+import _ from "lodash";
+import PropTypes from "prop-types";
 import {
   ActionButton,
   Box,
@@ -10,16 +10,20 @@ import {
   TextInput,
   useDebouncedCallback,
   UserDisplayItem,
-} from '@bubbles-ui/components';
-import { ChevronLeftIcon, RemoveIcon, SearchIcon } from '@bubbles-ui/icons/outline';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import { useStore } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@comunica/helpers/prefixPN';
-import { searchUserAgentsRequest } from '@users/request';
-import { getCentersWithToken } from '@users/session';
-import RoomService from '@comunica/RoomService';
-import { ChatAddUsersDrawerStyles } from './ChatAddUsersDrawer.styles';
+} from "@bubbles-ui/components";
+import {
+  ChevronLeftIcon,
+  RemoveIcon,
+  SearchIcon,
+} from "@bubbles-ui/icons/outline";
+import { DeleteBinIcon } from "@bubbles-ui/icons/solid";
+import { useStore } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@comunica/helpers/prefixPN";
+import { searchUserAgentsRequest } from "@users/request";
+import { getCentersWithToken } from "@users/session";
+import RoomService from "@comunica/RoomService";
+import { ChatAddUsersDrawerStyles } from "./ChatAddUsersDrawer.styles";
 
 function ChatAddUsersDrawer({
   room,
@@ -30,15 +34,19 @@ function ChatAddUsersDrawer({
   onReturn = () => {},
   onClose = () => {},
 }) {
-  const { classes } = ChatAddUsersDrawerStyles({}, { name: 'ChatDrawer' });
-  const [t] = useTranslateLoader(prefixPN('chatListDrawer'));
+  const { classes } = ChatAddUsersDrawerStyles({}, { name: "ChatDrawer" });
+  const [t] = useTranslateLoader(prefixPN("chatListDrawer"));
 
   const debouncedFunction = useDebouncedCallback(300);
-  const [store, render] = useStore({ usersToAddIds: [], usersToAdd: [], userAgents: [] });
+  const [store, render] = useStore({
+    usersToAddIds: [],
+    usersToAdd: [],
+    userAgents: [],
+  });
 
   function deleteUser(index) {
     store.usersToAdd.splice(index, 1);
-    store.usersToAddIds = _.map(store.usersToAdd, 'id');
+    store.usersToAddIds = _.map(store.usersToAdd, "id");
     render();
   }
 
@@ -74,7 +82,7 @@ function ChatAddUsersDrawer({
     store.usersToAdd = [];
     store.usersToAddIds = [];
     store.userAgents = [];
-    store.nameFilter = '';
+    store.nameFilter = "";
     store.profileFilter = null;
     search();
   }
@@ -107,7 +115,7 @@ function ChatAddUsersDrawer({
     } else {
       store.usersToAdd.push(userAgent);
     }
-    store.usersToAddIds = _.map(store.usersToAdd, 'id');
+    store.usersToAddIds = _.map(store.usersToAdd, "id");
     render();
   }
 
@@ -140,7 +148,7 @@ function ChatAddUsersDrawer({
         }
       });
     }
-    store.usersToAddIds = _.map(store.usersToAdd, 'id');
+    store.usersToAddIds = _.map(store.usersToAdd, "id");
     render();
   }
 
@@ -150,10 +158,13 @@ function ChatAddUsersDrawer({
 
   const currentUserIds = _.map(
     _.filter(room.userAgents, (e) => !e.deleted),
-    'userAgent.id'
+    "userAgent.id"
   );
 
-  store.userAgents = _.filter(store.allUserAgents, ({ id }) => !currentUserIds.includes(id));
+  store.userAgents = _.filter(
+    store.allUserAgents,
+    ({ id }) => !currentUserIds.includes(id)
+  );
 
   return (
     <BaseDrawer opened={opened} size={400} close={false} empty>
@@ -165,18 +176,21 @@ function ChatAddUsersDrawer({
             onClick={onReturn}
             leftIcon={<ChevronLeftIcon width={12} height={12} />}
           >
-            {t('return')}
+            {t("return")}
           </Button>
-          <ActionButton onClick={onClose} icon={<RemoveIcon width={16} height={16} />} />
+          <ActionButton
+            onClick={onClose}
+            icon={<RemoveIcon width={16} height={16} />}
+          />
         </Box>
         <Box className={classes.content}>
           <Box className={classes.title}>
-            {newChatMode ? t('newPrivateChat') : t('addNewUsers')}
+            {newChatMode ? t("newPrivateChat") : t("addNewUsers")}
           </Box>
           {store.usersToAdd?.length ? (
             <Box>
               <Box className={classes.participants}>
-                {t('participants')} ({store.usersToAdd.length})
+                {t("participants")} ({store.usersToAdd.length})
               </Box>
               {store.usersToAdd?.map((item, index) => (
                 <Box key={item.id} className={classes.userInfo}>
@@ -193,28 +207,31 @@ function ChatAddUsersDrawer({
                 </Box>
               ))}
               <Box
-                sx={(theme) => ({ marginTop: theme.spacing[3], marginBottom: theme.spacing[5] })}
+                sx={(theme) => ({
+                  marginTop: theme.spacing[3],
+                  marginBottom: theme.spacing[5],
+                })}
               >
                 <Box className={classes.line} />
               </Box>
             </Box>
           ) : null}
-          <Box className={classes.searchTitle}>{t('searchTitle')}</Box>
+          <Box className={classes.searchTitle}>{t("searchTitle")}</Box>
           <TextInput
             value={store.nameFilter}
             onChange={onNameFilterChange}
-            placeholder={t('search')}
+            placeholder={t("search")}
             icon={<SearchIcon width={16} height={16} />}
           />
           <Box className={classes.results}>
-            {t('searchResults')}({store.userAgents.length})
+            {t("searchResults")}({store.userAgents.length})
           </Box>
           {!newChatMode ? (
             <Box>
               <Checkbox
                 checked={allAgentsSelected()}
                 onChange={selectAllAgents}
-                label={t('selectAll')}
+                label={t("selectAll")}
               />
             </Box>
           ) : null}
@@ -227,7 +244,9 @@ function ChatAddUsersDrawer({
                 className={classes.userAgentItem}
               >
                 {!newChatMode ? (
-                  <Checkbox checked={store.usersToAddIds.includes(userAgent.id)} />
+                  <Checkbox
+                    checked={store.usersToAddIds.includes(userAgent.id)}
+                  />
                 ) : null}
 
                 <UserDisplayItem
@@ -243,7 +262,7 @@ function ChatAddUsersDrawer({
         </Box>
         {!newChatMode ? (
           <Box className={classes.buttonActions}>
-            <Button onClick={save}>{t('add')}</Button>
+            <Button onClick={save}>{t("add")}</Button>
           </Box>
         ) : null}
       </Box>

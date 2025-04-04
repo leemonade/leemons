@@ -1,13 +1,16 @@
-const _ = require('lodash');
-const { getGeneral } = require('./getGeneral');
-const { getCenter } = require('./getCenter');
-const { getProgram } = require('./getProgram');
+const _ = require("lodash");
+const { getGeneral } = require("./getGeneral");
+const { getCenter } = require("./getCenter");
+const { getProgram } = require("./getProgram");
 
 async function getFullByCenter({ center, ctx }) {
-  const programIds = await ctx.tx.call('academic-portfolio.programs.programsByCenters', {
-    centerIds: center,
-    returnIds: true,
-  });
+  const programIds = await ctx.tx.call(
+    "academic-portfolio.programs.programsByCenters",
+    {
+      centerIds: center,
+      returnIds: true,
+    }
+  );
   const results = await Promise.all([
     getGeneral({ ctx }),
     getCenter({ center, ctx }),

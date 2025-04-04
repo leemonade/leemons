@@ -1,5 +1,8 @@
-const _ = require('lodash');
-const { validateKeyPrefix, validateNotExistRoomKey } = require('../../validations/exists');
+const _ = require("lodash");
+const {
+  validateKeyPrefix,
+  validateNotExistRoomKey,
+} = require("../../validations/exists");
 
 async function update({
   key,
@@ -27,9 +30,12 @@ async function update({
   if (program) {
     toUpdate.program = program;
     if (!center) {
-      [center] = await ctx.tx.call('academic-portfolio.programs.getProgramCenters', {
-        programId: program,
-      });
+      [center] = await ctx.tx.call(
+        "academic-portfolio.programs.getProgramCenters",
+        {
+          programId: program,
+        }
+      );
     }
   }
   if (center) toUpdate.center = center;
@@ -41,25 +47,39 @@ async function update({
   if (subName) toUpdate.subName = subName;
   if (initDate) toUpdate.initDate = initDate;
   if (metadata) toUpdate.metadata = JSON.stringify(metadata);
-  if (parentRoom) toUpdate.parentRoom = _.isArray(parentRoom) ? parentRoom[0] : parentRoom;
+  if (parentRoom)
+    toUpdate.parentRoom = _.isArray(parentRoom) ? parentRoom[0] : parentRoom;
   if (nameReplaces) toUpdate.nameReplaces = JSON.stringify(nameReplaces);
 
-  const room = await ctx.tx.db.Room.findOneAndUpdate({ key }, toUpdate, { new: true, lean: true });
+  const room = await ctx.tx.db.Room.findOneAndUpdate({ key }, toUpdate, {
+    new: true,
+    lean: true,
+  });
   let userAgents = [];
   if (image || icon) {
-    userAgents = await ctx.tx.db.UserAgentInRoom.find({ room: key }).select(['userAgent']).lean();
+    userAgents = await ctx.tx.db.UserAgentInRoom.find({ room: key })
+      .select(["userAgent"])
+      .lean();
   }
   if (image) {
-    ctx.socket.emit(_.map(userAgents, 'userAgent'), `COMUNICA:ROOM:UPDATE:IMAGE`, {
-      key,
-      image,
-    });
+    ctx.socket.emit(
+      _.map(userAgents, "userAgent"),
+      `COMUNICA:ROOM:UPDATE:IMAGE`,
+      {
+        key,
+        image,
+      }
+    );
   }
   if (icon) {
-    ctx.socket.emit(_.map(userAgents, 'userAgent'), `COMUNICA:ROOM:UPDATE:ICON`, {
-      key,
-      image,
-    });
+    ctx.socket.emit(
+      _.map(userAgents, "userAgent"),
+      `COMUNICA:ROOM:UPDATE:ICON`,
+      {
+        key,
+        image,
+      }
+    );
   }
   return room;
 }

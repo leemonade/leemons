@@ -4,12 +4,12 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const _ = require('lodash');
-const { LeemonsValidator } = require('@leemons/validator');
+const _ = require("lodash");
+const { LeemonsValidator } = require("@leemons/validator");
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 const {
   getGeneral,
   getCenter,
@@ -18,15 +18,15 @@ const {
   save,
   getFullByCenter,
   saveFullByCenter,
-} = require('../../core/config');
+} = require("../../core/config");
 
 // TODO AÑADIR PERMISOS
 /** @type {ServiceSchema} */
 module.exports = {
   getGeneralConfigRest: {
     rest: {
-      path: '/general',
-      method: 'GET',
+      path: "/general",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -36,8 +36,8 @@ module.exports = {
   },
   getCenterConfigRest: {
     rest: {
-      path: '/center/:center',
-      method: 'GET',
+      path: "/center/:center",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -47,8 +47,8 @@ module.exports = {
   },
   getProgramConfigRest: {
     rest: {
-      path: '/program/:program',
-      method: 'GET',
+      path: "/program/:program",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -58,19 +58,22 @@ module.exports = {
   },
   getRest: {
     rest: {
-      path: '/',
-      method: 'GET',
+      path: "/",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const config = await get({ userAgent: ctx.meta.userSession.userAgents[0].id, ctx });
+      const config = await get({
+        userAgent: ctx.meta.userSession.userAgents[0].id,
+        ctx,
+      });
       return { status: 200, config };
     },
   },
   saveRest: {
     rest: {
-      path: '/',
-      method: 'POST',
+      path: "/",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -84,15 +87,15 @@ module.exports = {
   },
   getAdminConfigRest: {
     rest: {
-      path: '/admin/config/:center',
-      method: 'GET',
+      path: "/admin/config/:center",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'comunica.config': {
-            actions: ['admin', 'view'],
+          "comunica.config": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -107,15 +110,15 @@ module.exports = {
   },
   saveAdminConfigRest: {
     rest: {
-      path: '/admin/config/:center',
-      method: 'POST',
+      path: "/admin/config/:center",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'comunica.config': {
-            actions: ['admin', 'create', 'update'],
+          "comunica.config": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),

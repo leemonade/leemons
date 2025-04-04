@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-const { validateKeyPrefix } = require('../../validations/exists');
+const { validateKeyPrefix } = require("../../validations/exists");
 
 async function markAsRead({ key, userAgentId, ctx }) {
   validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });

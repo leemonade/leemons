@@ -1,5 +1,5 @@
-import _ from 'lodash';
-import { getCentersWithToken } from '@users/session';
+import _ from "lodash";
+import { getCentersWithToken } from "@users/session";
 
 export function getChatUserAgent(userAgents) {
   const agentId = getCentersWithToken()[0].userAgentId;

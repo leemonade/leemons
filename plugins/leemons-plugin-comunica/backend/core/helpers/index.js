@@ -1,4 +1,4 @@
 module.exports = {
-  ...require('./encrypt'),
-  ...require('./decrypt'),
+  ...require("./encrypt"),
+  ...require("./decrypt"),
 };

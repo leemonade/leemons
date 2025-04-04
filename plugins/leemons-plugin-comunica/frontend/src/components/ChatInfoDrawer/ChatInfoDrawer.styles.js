@@ -1,22 +1,22 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 // eslint-disable-next-line import/prefer-default-export
 export const ChatInfoDrawerStyles = createStyles((theme) => ({
   wrapper: {
-    position: 'relative',
+    position: "relative",
     zIndex: 9999,
-    display: 'flex',
-    height: '100%',
-    justifyContent: 'start',
+    display: "flex",
+    height: "100%",
+    justifyContent: "start",
     borderLeft: `1px solid ${theme.colors.ui01}`,
     width: 400,
-    flexDirection: 'column',
+    flexDirection: "column",
   },
   header: {
     padding: `${theme.spacing[2]}px ${theme.spacing[4]}px`,
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
     backgroundColor: theme.colors.mainWhite,
     zIndex: 2,
     button: {
@@ -25,7 +25,7 @@ export const ChatInfoDrawerStyles = createStyles((theme) => ({
     minHeight: 72,
   },
   headerWrapper: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     paddingBottom: theme.spacing[3],
   },
   content: {
@@ -34,26 +34,26 @@ export const ChatInfoDrawerStyles = createStyles((theme) => ({
   participants: {
     marginTop: theme.spacing[5],
     marginBottom: theme.spacing[2],
-    ...theme.other.global.content.typo.body['lg--bold'],
+    ...theme.other.global.content.typo.body["lg--bold"],
     color: theme.other.global.content.color.text.default,
   },
   showAll: {
     ...theme.other.button.content.typo,
     color: theme.other.link.content.color.default,
     marginTop: theme.spacing[3],
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'end',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "end",
     gap: theme.spacing[1],
-    cursor: 'pointer',
+    cursor: "pointer",
   },
   userInfo: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   userInfoIcons: {
-    display: 'flex',
+    display: "flex",
     gap: theme.spacing[2],
   },
   userAdmin: {
@@ -74,15 +74,15 @@ export const ChatInfoDrawerStyles = createStyles((theme) => ({
     },
   },
   adminIcons: {
-    display: 'flex',
+    display: "flex",
   },
   name: {
     marginBottom: theme.spacing[5],
   },
   buttonActions: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'end',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "end",
     gap: theme.spacing[2],
     padding: `${theme.spacing[3]}px ${theme.spacing[6]}px`,
     borderTop: `1px solid ${theme.other.global.border.color.line.muted}`,

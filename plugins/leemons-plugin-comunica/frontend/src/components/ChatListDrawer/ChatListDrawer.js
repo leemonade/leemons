@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import _ from 'lodash';
-import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
+import React from "react";
+import PropTypes from "prop-types";
+import _ from "lodash";
+import { useIsStudent, useIsTeacher } from "@academic-portfolio/hooks";
 import {
   ActionButton,
   Box,
@@ -16,33 +16,38 @@ import {
   Title,
   useDebouncedCallback,
   TotalLayoutContainer,
-} from '@bubbles-ui/components';
-import { FilterIcon, RemoveIcon, SearchIcon } from '@bubbles-ui/icons/outline';
-import { SettingMenuVerticalIcon } from '@bubbles-ui/icons/solid';
-import { useStore } from '@common';
-import ChatAddUsersDrawer from '@comunica/components/ChatAddUsersDrawer/ChatAddUsersDrawer';
-import ChatInfoDrawer from '@comunica/components/ChatInfoDrawer/ChatInfoDrawer';
-import ChatListDrawerIntermediate from '@comunica/components/ChatListDrawerIntermediate/ChatListDrawerIntermediate';
-import ChatListDrawerItem from '@comunica/components/ChatListDrawerItem/ChatListDrawerItem';
-import getChatUserAgent from '@comunica/helpers/getChatUserAgent';
-import getRoomChildrens from '@comunica/helpers/getRoomChildrens';
-import getRoomsByParent from '@comunica/helpers/getRoomsByParent';
-import getTotalUnreadMessages from '@comunica/helpers/getTotalUnreadMessages';
-import isStudentsChatRoom from '@comunica/helpers/isStudentsChatRoom';
-import isStudentTeacherChatRoom from '@comunica/helpers/isStudentTeacherChatRoom';
-import prefixPN from '@comunica/helpers/prefixPN';
-import SocketIoService from '@mqtt-socket-io/service';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { getCentersWithToken } from '@users/session';
-import { RoomService } from '../../RoomService';
-import { ChatDrawer } from '../ChatDrawer/ChatDrawer';
-import { ChatListDrawerStyles } from './ChatListDrawer.styles';
+} from "@bubbles-ui/components";
+import { FilterIcon, RemoveIcon, SearchIcon } from "@bubbles-ui/icons/outline";
+import { SettingMenuVerticalIcon } from "@bubbles-ui/icons/solid";
+import { useStore } from "@common";
+import ChatAddUsersDrawer from "@comunica/components/ChatAddUsersDrawer/ChatAddUsersDrawer";
+import ChatInfoDrawer from "@comunica/components/ChatInfoDrawer/ChatInfoDrawer";
+import ChatListDrawerIntermediate from "@comunica/components/ChatListDrawerIntermediate/ChatListDrawerIntermediate";
+import ChatListDrawerItem from "@comunica/components/ChatListDrawerItem/ChatListDrawerItem";
+import getChatUserAgent from "@comunica/helpers/getChatUserAgent";
+import getRoomChildrens from "@comunica/helpers/getRoomChildrens";
+import getRoomsByParent from "@comunica/helpers/getRoomsByParent";
+import getTotalUnreadMessages from "@comunica/helpers/getTotalUnreadMessages";
+import isStudentsChatRoom from "@comunica/helpers/isStudentsChatRoom";
+import isStudentTeacherChatRoom from "@comunica/helpers/isStudentTeacherChatRoom";
+import prefixPN from "@comunica/helpers/prefixPN";
+import SocketIoService from "@mqtt-socket-io/service";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { getCentersWithToken } from "@users/session";
+import { RoomService } from "../../RoomService";
+import { ChatDrawer } from "../ChatDrawer/ChatDrawer";
+import { ChatListDrawerStyles } from "./ChatListDrawer.styles";
 
-function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = () => {} }) {
+function ChatListDrawer({
+  opened,
+  openRoom,
+  onRoomOpened = () => {},
+  onClose = () => {},
+}) {
   const debouncedFunction = useDebouncedCallback(100);
   const debouncedFunction2 = useDebouncedCallback(100);
-  const { classes } = ChatListDrawerStyles({}, { name: 'ChatListDrawer' });
-  const [t] = useTranslateLoader(prefixPN('chatListDrawer'));
+  const { classes } = ChatListDrawerStyles({}, { name: "ChatListDrawer" });
+  const [t] = useTranslateLoader(prefixPN("chatListDrawer"));
   const [store, render] = useStore({ rooms: [], intermediateRooms: [] });
   const isStudent = useIsStudent();
   const isTeacher = useIsTeacher();
@@ -55,25 +60,32 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
   }
 
   function recalcule() {
-    store.rooms = _.orderBy(getRoomsByParent(store.originalRooms), ['attached'], ['asc']);
+    store.rooms = _.orderBy(
+      getRoomsByParent(store.originalRooms),
+      ["attached"],
+      ["asc"]
+    );
     if (!store.centerConfig?.enableStudentsChats) {
       store.rooms = _.filter(store.rooms, (room) => !isStudentsChatRoom(room));
     }
     if (store.centerConfig?.disableChatsBetweenStudentsAndTeachers) {
-      store.rooms = _.filter(store.rooms, (room) => !isStudentTeacherChatRoom(room));
+      store.rooms = _.filter(
+        store.rooms,
+        (room) => !isStudentTeacherChatRoom(room)
+      );
     }
     store.rooms = _.filter(store.rooms, (room) => {
       if (
-        room.type === 'academic-portfolio.class' &&
+        room.type === "academic-portfolio.class" &&
         !store.programConfig[room.program]?.enableSubjectsRoom
       ) {
         return false;
       }
-      if (room.type === 'group') {
+      if (room.type === "group") {
         if (!store.centerConfig?.enableStudentsCreateGroups) {
           let oneAdminIsStudent = false;
           _.forEach(room.userAgents, (item) => {
-            if (item.isAdmin && item.userAgent.profile.sysName === 'student') {
+            if (item.isAdmin && item.userAgent.profile.sysName === "student") {
               oneAdminIsStudent = true;
               return false;
             }
@@ -84,7 +96,7 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
       return true;
     });
 
-    store.roomTypes = _.uniq(_.map(store.rooms, 'type'));
+    store.roomTypes = _.uniq(_.map(store.rooms, "type"));
     if (store.intermediateRooms?.length) {
       const interm = [];
       _.forEach(store.intermediateRooms, (room) => {
@@ -92,13 +104,18 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
         interm.push({
           ...r,
           childrens: getRoomChildrens(store.originalRooms, room),
-          unreadMessages: getTotalUnreadMessages(room.childrens, store.originalRooms),
+          unreadMessages: getTotalUnreadMessages(
+            room.childrens,
+            store.originalRooms
+          ),
         });
       });
       store.intermediateRooms = interm;
     }
     if (store.typeFilters?.length) {
-      store.rooms = _.filter(store.rooms, (room) => store.typeFilters.includes(room.type));
+      store.rooms = _.filter(store.rooms, (room) =>
+        store.typeFilters.includes(room.type)
+      );
     }
     if (store.nameFilter?.length) {
       store.rooms = _.filter(store.rooms, (room) => {
@@ -153,7 +170,7 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
       RoomService.getRoomsList(),
       RoomService.getConfig(),
     ]);
-    const programIds = _.uniq(_.map(originalRooms, 'program'));
+    const programIds = _.uniq(_.map(originalRooms, "program"));
     const programConfigs = await Promise.all(
       _.map(programIds, (programId) => RoomService.getProgramConfig(programId))
     );
@@ -234,7 +251,7 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
   }
 
   function onBeforeNewGroup() {
-    store.openNextAddedRoomType = 'group';
+    store.openNextAddedRoomType = "group";
   }
 
   function hideCreate() {
@@ -247,19 +264,19 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
   }
 
   function newChat() {
-    store.createType = 'chat';
+    store.createType = "chat";
     render();
   }
 
   function newGroup() {
-    store.createType = 'group';
+    store.createType = "group";
     render();
   }
 
   async function onNewChat(e) {
-    store.openNextAddedRoomType = 'chat';
+    store.openNextAddedRoomType = "chat";
     await RoomService.createRoom({
-      type: 'chat',
+      type: "chat",
       userAgents: [e.id, getCentersWithToken()[0].userAgentId],
     });
     hideCreate();
@@ -272,10 +289,13 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
   const disabledProfilesForNewChat = React.useMemo(() => {
     const profiles = [];
     if (!store.centerConfig?.enableStudentsChats && isStudent) {
-      profiles.push('student');
+      profiles.push("student");
     }
-    if (store.centerConfig?.disableChatsBetweenStudentsAndTeachers && (isStudent || isTeacher)) {
-      profiles.push(isStudent ? 'teacher' : 'student');
+    if (
+      store.centerConfig?.disableChatsBetweenStudentsAndTeachers &&
+      (isStudent || isTeacher)
+    ) {
+      profiles.push(isStudent ? "teacher" : "student");
     }
     return profiles;
   }, [store.centerConfig, isStudent, isTeacher]);
@@ -283,13 +303,13 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
   const disabledProfilesForNewGroup = React.useMemo(() => {
     const profiles = [...disabledProfilesForNewChat];
     if (isStudent && !store.centerConfig?.studentsCanAddTeachersToGroups) {
-      profiles.push('teacher');
+      profiles.push("teacher");
     }
     return profiles;
   }, [disabledProfilesForNewChat]);
 
   SocketIoService.useOnAny((event, data) => {
-    if (event === 'COMUNICA:CONFIG:CENTER') {
+    if (event === "COMUNICA:CONFIG:CENTER") {
       if (data.center === getCentersWithToken()[0].id) {
         store.centerConfig = data.config;
         recalcule();
@@ -297,7 +317,7 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
       }
       return;
     }
-    if (event === 'COMUNICA:CONFIG:PROGRAM') {
+    if (event === "COMUNICA:CONFIG:PROGRAM") {
       if (store.programConfig?.[data.program]) {
         store.programConfig[data.program] = data.config;
         recalcule();
@@ -305,10 +325,14 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
       }
       return;
     }
-    if (event === 'COMUNICA:ROOM:ADDED') {
+    if (event === "COMUNICA:ROOM:ADDED") {
       console.log(store.openNextAddedRoomType);
       if (store.openNextAddedRoomType) {
-        if (data.room.includes(`leemons.comunica.room.${store.openNextAddedRoomType}`)) {
+        if (
+          data.room.includes(
+            `leemons.comunica.room.${store.openNextAddedRoomType}`
+          )
+        ) {
           store.openAfterLoad = data.room;
         }
       }
@@ -316,7 +340,7 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
       debouncedFunction(load);
       return;
     }
-    if (event === 'COMUNICA:ROOM:USER_ADDED') {
+    if (event === "COMUNICA:ROOM:USER_ADDED") {
       const index = _.findIndex(store.originalRooms, { key: data.key });
       if (index >= 0) {
         const i = _.findIndex(
@@ -335,7 +359,7 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
       }
       return;
     }
-    if (event === 'COMUNICA:CONFIG:ROOM') {
+    if (event === "COMUNICA:CONFIG:ROOM") {
       const index = _.findIndex(store.originalRooms, { key: data.room });
       if (index >= 0) {
         store.originalRooms[index].muted = !!data.muted;
@@ -345,7 +369,7 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
       }
       return;
     }
-    if (event === 'COMUNICA:ROOM:REMOVE') {
+    if (event === "COMUNICA:ROOM:REMOVE") {
       const index = _.findIndex(store.originalRooms, { key: data.key });
       if (index >= 0) {
         store.originalRooms.splice(index, 1);
@@ -354,7 +378,7 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
       }
       return;
     }
-    if (event === 'COMUNICA:ROOM:USERS_REMOVED') {
+    if (event === "COMUNICA:ROOM:USERS_REMOVED") {
       const index = _.findIndex(store.originalRooms, { key: data.room });
       if (index >= 0) {
         store.originalRooms[index].userAgents = _.map(
@@ -373,7 +397,7 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
       }
       return;
     }
-    if (event === 'COMUNICA:ROOM:UPDATE:NAME') {
+    if (event === "COMUNICA:ROOM:UPDATE:NAME") {
       const index = _.findIndex(store.originalRooms, { key: data.key });
       if (index >= 0) {
         store.originalRooms[index].name = data.name;
@@ -382,11 +406,12 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
       }
       return;
     }
-    if (event === 'COMUNICA:ROOM:UPDATE:IMAGE') {
+    if (event === "COMUNICA:ROOM:UPDATE:IMAGE") {
       const index = _.findIndex(store.originalRooms, { key: data.key });
       if (index >= 0) {
         store.originalRooms[index].image = data.image;
-        if (!store.originalRooms[index].imageSeed) store.originalRooms[index].imageSeed = 0;
+        if (!store.originalRooms[index].imageSeed)
+          store.originalRooms[index].imageSeed = 0;
         store.originalRooms[index].imageSeed++;
         recalcule();
         render();
@@ -418,7 +443,7 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
   store.roomNewChat = React.useMemo(() => {
     const agents = [];
     _.forEach(store.originalRooms, (room) => {
-      if (room.type === 'chat') {
+      if (room.type === "chat") {
         agents.push(getChatUserAgent(room.userAgents));
       }
     });
@@ -444,13 +469,13 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
   const menuItems = React.useMemo(() => {
     const m = [
       {
-        children: t('newChat'),
+        children: t("newChat"),
         onClick: newChat,
       },
     ];
     if (canAddGroup) {
       m.push({
-        children: t('newGroup'),
+        children: t("newGroup"),
         onClick: newGroup,
       });
     }
@@ -478,23 +503,30 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
             <Box className={classes.headerWrapper}>
               <Box className={classes.header}>
                 <Box>
-                  <Title order={3}>{t('myConversations')}</Title>
+                  <Title order={3}>{t("myConversations")}</Title>
                 </Box>
                 <Box className={classes.headerRight}>
                   <Switch
-                    label={t('focus')}
+                    label={t("focus")}
                     checked={store.config?.muted}
                     onChange={onMutedChanged}
                   />
                   <Menu
                     width={180}
                     control={
-                      <ActionButton icon={<SettingMenuVerticalIcon width={16} height={16} />} />
+                      <ActionButton
+                        icon={
+                          <SettingMenuVerticalIcon width={16} height={16} />
+                        }
+                      />
                     }
                     items={menuItems}
                   />
 
-                  <ActionButton onClick={onClose} icon={<RemoveIcon width={16} height={16} />} />
+                  <ActionButton
+                    onClick={onClose}
+                    icon={<RemoveIcon width={16} height={16} />}
+                  />
                 </Box>
               </Box>
 
@@ -502,12 +534,16 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
                 <TextInput
                   value={store.nameFilter}
                   onChange={onChangeNameFilter}
-                  placeholder={t('search')}
+                  placeholder={t("search")}
                   icon={<SearchIcon width={16} height={16} />}
                   rightSection={
                     store.roomTypes ? (
                       <Popover
-                        target={<ActionButton icon={<FilterIcon width={16} height={16} />} />}
+                        target={
+                          <ActionButton
+                            icon={<FilterIcon width={16} height={16} />}
+                          />
+                        }
                       >
                         <Box className={classes.filterContainer}>
                           <CheckBoxGroup
@@ -515,15 +551,20 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
                             direction="column"
                             onChange={onChangeTypeFilters}
                             data={store.roomTypes.map((type) => ({
-                              label: t(type?.replace(/\./g, '_')),
+                              label: t(type?.replace(/\./g, "_")),
                               value: type,
                               checked: store.typeFilters?.includes(type),
                             }))}
                           />
                         </Box>
                         <Box className={classes.filterClean}>
-                          <Button variant="outline" onClick={cleanTypesFilter} fullWidth size="sm">
-                            {t('clean')}
+                          <Button
+                            variant="outline"
+                            onClick={cleanTypesFilter}
+                            fullWidth
+                            size="sm"
+                          >
+                            {t("clean")}
                           </Button>
                         </Box>
                       </Popover>
@@ -534,7 +575,12 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
             </Box>
           }
         >
-          <Stack ref={scrollRef} fullWidth fullHeight style={{ overflowY: 'auto' }}>
+          <Stack
+            ref={scrollRef}
+            fullWidth
+            fullHeight
+            style={{ overflowY: "auto" }}
+          >
             <Box className={classes.listItems}>
               {store.rooms.map((room) => (
                 <ChatListDrawerItem
@@ -576,7 +622,7 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
         opened={!!store.selectedRoom}
       />
       <ChatInfoDrawer
-        opened={store.createType === 'group' && canAddGroup}
+        opened={store.createType === "group" && canAddGroup}
         disabledProfiles={disabledProfilesForNewGroup}
         onBeforeNewGroup={onBeforeNewGroup}
         onReturn={hideCreate}
@@ -586,7 +632,7 @@ function ChatListDrawer({ opened, openRoom, onRoomOpened = () => {}, onClose = (
         newChatMode
         disabledProfiles={disabledProfilesForNewChat}
         room={store.roomNewChat}
-        opened={store.createType === 'chat'}
+        opened={store.createType === "chat"}
         onSave={onNewChat}
         onReturn={hideCreate}
         onClose={closeCreate}

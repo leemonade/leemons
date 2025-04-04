@@ -1,6 +1,6 @@
-import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
-import SocketIoService from '@mqtt-socket-io/service';
-import _ from 'lodash';
+import uploadFileAsMultipart from "@leebrary/helpers/uploadFileAsMultipart";
+import SocketIoService from "@mqtt-socket-io/service";
+import _ from "lodash";
 
 class RoomService {
   constructor(room) {
@@ -63,7 +63,7 @@ class RoomService {
     const image = await uploadFileAsMultipart(file, { name: file.name });
     return leemons.api(`v1/comunica/room/${key}/admin/image`, {
       allAgents: true,
-      method: 'POST',
+      method: "POST",
       body: { image },
     });
   }
@@ -71,7 +71,7 @@ class RoomService {
   static createRoom(body) {
     return leemons.api(`v1/comunica/room/create`, {
       allAgents: true,
-      method: 'POST',
+      method: "POST",
       body,
     });
   }
@@ -79,14 +79,14 @@ class RoomService {
   static adminRemoveRoom(key) {
     return leemons.api(`v1/comunica/room/${key}/admin/remove`, {
       allAgents: true,
-      method: 'POST',
+      method: "POST",
     });
   }
 
   static adminAddUsersToRoom(key, userAgents) {
     return leemons.api(`v1/comunica/room/${key}/admin/users`, {
       allAgents: true,
-      method: 'POST',
+      method: "POST",
       body: {
         userAgents,
       },
@@ -96,7 +96,7 @@ class RoomService {
   static adminUpdateRoomName(key, name) {
     return leemons.api(`v1/comunica/room/${key}/admin/name`, {
       allAgents: true,
-      method: 'POST',
+      method: "POST",
       body: {
         name,
       },
@@ -106,7 +106,7 @@ class RoomService {
   static adminRemoveUserAgentFromRoom(key, userAgent) {
     return leemons.api(`v1/comunica/room/${key}/admin/remove/user-agent`, {
       allAgents: true,
-      method: 'POST',
+      method: "POST",
       body: {
         userAgent,
       },
@@ -116,7 +116,7 @@ class RoomService {
   static toggleAdminRoomMute(key, userAgent) {
     return leemons.api(`v1/comunica/room/${key}/admin/mute`, {
       allAgents: true,
-      method: 'POST',
+      method: "POST",
       body: {
         userAgent,
       },
@@ -126,21 +126,21 @@ class RoomService {
   static toggleRoomAttached(key) {
     return leemons.api(`v1/comunica/room/${key}/attach`, {
       allAgents: true,
-      method: 'POST',
+      method: "POST",
     });
   }
 
   static adminDisableMessages(key) {
     return leemons.api(`v1/comunica/room/${key}/admin/disable`, {
       allAgents: true,
-      method: 'POST',
+      method: "POST",
     });
   }
 
   static toggleRoomMute(key) {
     return leemons.api(`v1/comunica/room/${key}/mute`, {
       allAgents: true,
-      method: 'POST',
+      method: "POST",
     });
   }
 
@@ -155,7 +155,7 @@ class RoomService {
     k = _.map(k, (key) => `COMUNICA:ROOM:${key}`);
     return SocketIoService.useOnAny((event, data) => {
       if (k.indexOf(event) !== -1) {
-        callback(event.replace('COMUNICA:ROOM:', ''), data);
+        callback(event.replace("COMUNICA:ROOM:", ""), data);
       }
     });
   }
@@ -165,7 +165,7 @@ class RoomService {
     k = _.map(k, (key) => `COMUNICA:ROOM:READED:${key}`);
     return SocketIoService.useOnAny((event, data) => {
       if (k.indexOf(event) !== -1) {
-        callback(event.replace('COMUNICA:ROOM:READED:', ''), data);
+        callback(event.replace("COMUNICA:ROOM:READED:", ""), data);
       }
     });
   }
@@ -173,7 +173,7 @@ class RoomService {
   static sendMessageToRoom(key, message) {
     return leemons.api(`v1/comunica/room/${key}/messages`, {
       allAgents: true,
-      method: 'POST',
+      method: "POST",
       body: {
         message,
       },
@@ -183,23 +183,26 @@ class RoomService {
   static async getRoomMessages(key) {
     const { messages } = await leemons.api(`v1/comunica/room/${key}/messages`, {
       allAgents: true,
-      method: 'GET',
+      method: "GET",
     });
     return messages;
   }
 
   static async markRoomMessagesAsRead(key) {
-    const { messages } = await leemons.api(`v1/comunica/room/${key}/messages/read`, {
-      allAgents: true,
-      method: 'POST',
-    });
+    const { messages } = await leemons.api(
+      `v1/comunica/room/${key}/messages/read`,
+      {
+        allAgents: true,
+        method: "POST",
+      }
+    );
     return messages;
   }
 
   static async getRoom(key) {
     const { room } = await leemons.api(`v1/comunica/room/${key}`, {
       allAgents: true,
-      method: 'GET',
+      method: "GET",
     });
     return room;
   }
@@ -207,7 +210,7 @@ class RoomService {
   static async getUnreadMessages(keys) {
     const { count } = await leemons.api(`v1/comunica/room/messages/unread`, {
       allAgents: true,
-      method: 'POST',
+      method: "POST",
       body: {
         keys,
       },
@@ -218,7 +221,7 @@ class RoomService {
   static async getMessagesCount(keys) {
     const { count } = await leemons.api(`v1/comunica/room/messages/count`, {
       allAgents: true,
-      method: 'POST',
+      method: "POST",
       body: {
         keys,
       },
@@ -230,7 +233,7 @@ class RoomService {
   static async getRoomsList() {
     const { rooms } = await leemons.api(`v1/comunica/room/list`, {
       allAgents: true,
-      method: 'GET',
+      method: "GET",
     });
 
     return rooms;
@@ -239,7 +242,7 @@ class RoomService {
   static async getConfig() {
     const { config } = await leemons.api(`v1/comunica/config`, {
       allAgents: true,
-      method: 'GET',
+      method: "GET",
     });
 
     return config;
@@ -248,7 +251,7 @@ class RoomService {
   static async saveConfig(body) {
     const { config } = await leemons.api(`v1/comunica/config`, {
       allAgents: true,
-      method: 'POST',
+      method: "POST",
       body,
     });
 
@@ -256,17 +259,22 @@ class RoomService {
   }
 
   static async getAdminConfig(center) {
-    const { config } = await leemons.api(`v1/comunica/config/admin/config/${center}`);
+    const { config } = await leemons.api(
+      `v1/comunica/config/admin/config/${center}`
+    );
 
     return config;
   }
 
   static async saveAdminConfig(center, data) {
-    const { config } = await leemons.api(`v1/comunica/config/admin/config/${center}`, {
-      allAgents: true,
-      method: 'POST',
-      body: data,
-    });
+    const { config } = await leemons.api(
+      `v1/comunica/config/admin/config/${center}`,
+      {
+        allAgents: true,
+        method: "POST",
+        body: data,
+      }
+    );
 
     return config;
   }
@@ -282,7 +290,9 @@ class RoomService {
   }
 
   static async getProgramConfig(program) {
-    const { config } = await leemons.api(`v1/comunica/config/program/${program}`);
+    const { config } = await leemons.api(
+      `v1/comunica/config/program/${program}`
+    );
     return config;
   }
 }

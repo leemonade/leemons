@@ -1,5 +1,5 @@
-import { useQuery } from '@tanstack/react-query';
-import RoomService from '@comunica/RoomService';
+import { useQuery } from "@tanstack/react-query";
+import RoomService from "@comunica/RoomService";
 
 const useRoomsMessageCountQuery = (rooms) => {
   const fetchMessages = async () => {
@@ -16,7 +16,7 @@ const useRoomsMessageCountQuery = (rooms) => {
     isLoading,
     isError,
     refetch,
-  } = useQuery(['roomsMessageCount', rooms], fetchMessages, {
+  } = useQuery(["roomsMessageCount", rooms], fetchMessages, {
     enabled: !!rooms,
     refetchOnWindowFocus: false,
   });

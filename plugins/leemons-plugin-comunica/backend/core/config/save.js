@@ -1,4 +1,4 @@
-const { get } = require('./get');
+const { get } = require("./get");
 
 async function save({ userAgent, config, ctx }) {
   const result = await ctx.tx.db.UserAgentConfig.findOneAndUpdate(

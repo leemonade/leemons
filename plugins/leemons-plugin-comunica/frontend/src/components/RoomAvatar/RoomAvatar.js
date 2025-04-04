@@ -1,27 +1,27 @@
-import { Avatar, Box, ImageLoader } from '@bubbles-ui/components';
-import { getAssetUrl } from '@leebrary/helpers/prepareAsset';
-import selectFile from '@leebrary/helpers/selectFile';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { RoomAvatarStyles } from './RoomAvatar.styles';
+import { Avatar, Box, ImageLoader } from "@bubbles-ui/components";
+import { getAssetUrl } from "@leebrary/helpers/prepareAsset";
+import selectFile from "@leebrary/helpers/selectFile";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import { RoomAvatarStyles } from "./RoomAvatar.styles";
 
 function RoomAvatar({ room, isHeader, onImageChange, size = 56 }) {
   const { classes } = RoomAvatarStyles(
     {
       imageSquare: [
-        isHeader ? 'assignables.assignation.user' : null,
-        isHeader ? 'assignables.assignation.group' : null,
-        isHeader ? 'assignables.assignation.subject' : null,
-        'assignables.assignation',
+        isHeader ? "assignables.assignation.user" : null,
+        isHeader ? "assignables.assignation.group" : null,
+        isHeader ? "assignables.assignation.subject" : null,
+        "assignables.assignation",
       ].includes(room.type),
       size,
     },
-    { name: 'RoomAvatar' }
+    { name: "RoomAvatar" }
   );
 
   async function click() {
-    if (_.isFunction(onImageChange) && room.type === 'group') {
+    if (_.isFunction(onImageChange) && room.type === "group") {
       const file = await selectFile();
       onImageChange(file[0]);
     }
@@ -40,17 +40,21 @@ function RoomAvatar({ room, isHeader, onImageChange, size = 56 }) {
       bgColor = room.metadata.headerBgColor;
     }
     // eslint-disable-next-line no-prototype-builtins
-    if (isHeader && room.metadata?.hasOwnProperty('headerImageIsUser')) {
+    if (isHeader && room.metadata?.hasOwnProperty("headerImageIsUser")) {
       imageIsUser = room.metadata.headerImageIsUser;
     }
     // eslint-disable-next-line no-prototype-builtins
-    if (isHeader && room.metadata?.hasOwnProperty('headerImageIsUrl')) {
+    if (isHeader && room.metadata?.hasOwnProperty("headerImageIsUrl")) {
       imageIsUrl = room.metadata.headerImageIsUrl;
     }
     if (image) {
       if (imageIsUser) {
         result.image = (
-          <Avatar image={image} fullName={room.name} size={size === 56 ? 'lg' : 'md'} />
+          <Avatar
+            image={image}
+            fullName={room.name}
+            size={size === 56 ? "lg" : "md"}
+          />
         );
       } else {
         result.image = (
@@ -64,7 +68,7 @@ function RoomAvatar({ room, isHeader, onImageChange, size = 56 }) {
                 color="#D3D5D9"
                 radius={false}
                 fullName={room.name}
-                size={size === 56 ? 'lg' : 'md'}
+                size={size === 56 ? "lg" : "md"}
               />
             }
             width={size}
@@ -84,7 +88,7 @@ function RoomAvatar({ room, isHeader, onImageChange, size = 56 }) {
               color="#D3D5D9"
               radius={false}
               fullName={room.name}
-              size={size === 56 ? 'lg' : 'md'}
+              size={size === 56 ? "lg" : "md"}
             />
           }
           width={result.image ? size * 0.2142 : size * 0.4642}
@@ -94,7 +98,11 @@ function RoomAvatar({ room, isHeader, onImageChange, size = 56 }) {
     }
     if (!image && !icon) {
       result.image = (
-        <Avatar color="#D3D5D9" fullName={room.name} size={size === 56 ? 'lg' : 'md'} />
+        <Avatar
+          color="#D3D5D9"
+          fullName={room.name}
+          size={size === 56 ? "lg" : "md"}
+        />
       );
     }
     if (room.attached) {
@@ -111,7 +119,14 @@ function RoomAvatar({ room, isHeader, onImageChange, size = 56 }) {
       result.color = bgColor;
     }
     return result;
-  }, [room.icon, room.attached, room.image, room.metadata, room.bgColor, room.imageSeed]);
+  }, [
+    room.icon,
+    room.attached,
+    room.image,
+    room.metadata,
+    room.bgColor,
+    room.imageSeed,
+  ]);
 
   return (
     <Box className={classes.itemImage}>
@@ -120,16 +135,23 @@ function RoomAvatar({ room, isHeader, onImageChange, size = 56 }) {
         {!!avatar.image && (
           <>
             {avatar.image}
-            {!!avatar.attached && <Box className={classes.attachedIcon}>{avatar.attached}</Box>}
+            {!!avatar.attached && (
+              <Box className={classes.attachedIcon}>{avatar.attached}</Box>
+            )}
           </>
         )}
         {!avatar.image && !!avatar.icon && (
           <>
-            {'Adios'}
-            <Box style={{ backgroundColor: avatar.color }} className={classes.itemIconContainer}>
+            {"Adios"}
+            <Box
+              style={{ backgroundColor: avatar.color }}
+              className={classes.itemIconContainer}
+            >
               {avatar.icon}
             </Box>
-            {avatar.attached ? <Box className={classes.attachedIcon}>{avatar.attached}</Box> : null}
+            {avatar.attached ? (
+              <Box className={classes.attachedIcon}>{avatar.attached}</Box>
+            ) : null}
           </>
         )}
       </Box>

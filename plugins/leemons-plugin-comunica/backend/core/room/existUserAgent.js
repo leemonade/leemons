@@ -7,7 +7,10 @@
  * @return {Promise<any>}
  * */
 async function existUserAgent({ room, userAgent, ctx }) {
-  const count = await ctx.tx.db.UserAgentInRoom.countDocuments({ room, userAgent });
+  const count = await ctx.tx.db.UserAgentInRoom.countDocuments({
+    room,
+    userAgent,
+  });
   return !!count;
 }
 

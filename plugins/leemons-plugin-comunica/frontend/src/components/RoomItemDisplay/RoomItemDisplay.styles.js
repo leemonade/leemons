@@ -1,11 +1,11 @@
-import { createStyles, pxToRem } from '@bubbles-ui/components';
+import { createStyles, pxToRem } from "@bubbles-ui/components";
 
 export const RoomItemDisplayStyles = createStyles((theme) => ({
   comunica: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexWrap: 'nowrap',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexWrap: "nowrap",
     gap: pxToRem(8),
   },
   comunicaText: {

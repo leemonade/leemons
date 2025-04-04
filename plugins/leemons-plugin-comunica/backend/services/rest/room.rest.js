@@ -4,14 +4,14 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const _ = require('lodash');
-const { LeemonsValidator } = require('@leemons/validator');
+const _ = require("lodash");
+const { LeemonsValidator } = require("@leemons/validator");
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { randomString } = require('@leemons/utils');
-const { LeemonsError } = require('@leemons/error');
+} = require("@leemons/middlewares");
+const { randomString } = require("@leemons/utils");
+const { LeemonsError } = require("@leemons/error");
 const {
   getUserAgentRoomsList,
   getMessages,
@@ -30,14 +30,14 @@ const {
   toggleAttachedRoom,
   getUnreadMessages,
   getRoomsMessageCount,
-} = require('../../core/room');
+} = require("../../core/room");
 
 /** @type {ServiceSchema} */
 module.exports = {
   getRoomListRest: {
     rest: {
-      path: '/list',
-      method: 'GET',
+      path: "/list",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -50,8 +50,8 @@ module.exports = {
   },
   getMessagesRest: {
     rest: {
-      path: '/:key/messages',
-      method: 'GET',
+      path: "/:key/messages",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -65,8 +65,8 @@ module.exports = {
   },
   sendMessageRest: {
     rest: {
-      path: '/:key/messages',
-      method: 'POST',
+      path: "/:key/messages",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -80,8 +80,8 @@ module.exports = {
   },
   markMessagesAsReadRest: {
     rest: {
-      path: '/:key/messages/read',
-      method: 'POST',
+      path: "/:key/messages/read",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -95,8 +95,8 @@ module.exports = {
   },
   getRoomRest: {
     rest: {
-      path: '/:key',
-      method: 'GET',
+      path: "/:key",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -110,8 +110,8 @@ module.exports = {
   },
   toggleMutedRoomRest: {
     rest: {
-      path: '/:key/mute',
-      method: 'POST',
+      path: "/:key/mute",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -125,8 +125,8 @@ module.exports = {
   },
   toggleAdminMutedRoomRest: {
     rest: {
-      path: '/:key/admin/mute',
-      method: 'POST',
+      path: "/:key/admin/mute",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -140,8 +140,8 @@ module.exports = {
   },
   toggleAdminDisableRoomRest: {
     rest: {
-      path: '/:key/admin/disable',
-      method: 'POST',
+      path: "/:key/admin/disable",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -155,8 +155,8 @@ module.exports = {
   },
   adminRemoveUserAgentRest: {
     rest: {
-      path: '/:key/admin/remove',
-      method: 'POST',
+      path: "/:key/admin/remove",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -171,8 +171,8 @@ module.exports = {
   },
   adminUpdateRoomNameRest: {
     rest: {
-      path: '/:key/admin/name',
-      method: 'POST',
+      path: "/:key/admin/name",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -186,8 +186,8 @@ module.exports = {
   },
   adminAddUsersToRoomRest: {
     rest: {
-      path: '/:key/admin/users',
-      method: 'POST',
+      path: "/:key/admin/users",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -201,8 +201,8 @@ module.exports = {
   },
   adminRemoveRoomRest: {
     rest: {
-      path: '/:key/admin/remove',
-      method: 'POST',
+      path: "/:key/admin/remove",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -216,23 +216,26 @@ module.exports = {
   },
   createRoomRest: {
     rest: {
-      path: '/create',
-      method: 'POST',
+      path: "/create",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       let key = null;
-      if (ctx.params.type === 'group') {
+      if (ctx.params.type === "group") {
         key = `leemons.comunica.room.group.${randomString()}`;
-      } else if (ctx.params.type === 'chat') {
+      } else if (ctx.params.type === "chat") {
         key = `leemons.comunica.room.chat.${randomString()}`;
       } else {
-        throw new LeemonsError(ctx, { message: 'Type not allowed' });
+        throw new LeemonsError(ctx, { message: "Type not allowed" });
       }
       const room = await add({
         ...ctx.params,
         key,
-        adminUserAgents: ctx.params.type === 'chat' ? [] : ctx.meta.userSession.userAgents[0].id,
+        adminUserAgents:
+          ctx.params.type === "chat"
+            ? []
+            : ctx.meta.userSession.userAgents[0].id,
         ctx,
       });
 
@@ -241,8 +244,8 @@ module.exports = {
   },
   adminChangeRoomImageRest: {
     rest: {
-      path: '/:key/admin/image',
-      method: 'POST',
+      path: "/:key/admin/image",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -257,8 +260,8 @@ module.exports = {
   },
   toggleAttachedRoomRest: {
     rest: {
-      path: '/:key/attach',
-      method: 'POST',
+      path: "/:key/attach",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -272,8 +275,8 @@ module.exports = {
   },
   getUnreadMessagesRest: {
     rest: {
-      path: '/messages/unread',
-      method: 'POST',
+      path: "/messages/unread",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -287,8 +290,8 @@ module.exports = {
   },
   getRoomsMessageCountRest: {
     rest: {
-      path: '/messages/count',
-      method: 'POST',
+      path: "/messages/count",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

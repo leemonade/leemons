@@ -1,4 +1,4 @@
-const permissionsPrefix = 'comunica';
+const permissionsPrefix = "comunica";
 
 const permissionNames = {
   config: `${permissionsPrefix}.config`,
@@ -7,8 +7,8 @@ const permissionNames = {
 const permissions = [
   {
     permissionName: permissionNames.config,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
-    localizationName: { es: 'Configuración comunica', en: 'Comunica config' },
+    actions: ["view", "update", "create", "delete", "admin"],
+    localizationName: { es: "Configuración comunica", en: "Comunica config" },
   },
 ];
 
@@ -16,19 +16,19 @@ const permissionsBundles = {
   config: {
     create: {
       permission: permissionNames.config,
-      actions: ['create', 'admin'],
+      actions: ["create", "admin"],
     },
     view: {
       permission: permissionNames.config,
-      actions: ['view', 'admin'],
+      actions: ["view", "admin"],
     },
     update: {
       permission: permissionNames.config,
-      actions: ['update', 'admin'],
+      actions: ["update", "admin"],
     },
     delete: {
       permission: permissionNames.config,
-      actions: ['delete', 'admin'],
+      actions: ["delete", "admin"],
     },
   },
 };
@@ -38,16 +38,16 @@ const menuItems = [
   {
     item: {
       order: 102,
-      key: 'comunica',
-      iconSvg: '/public/comunica/menu-icon.svg',
-      url: '/private/comunica/config',
-      activeIconSvg: '/public/comunica/menu-icon-active.svg',
-      label: { es: 'Configuración comunica', en: 'Comunica config' },
+      key: "comunica",
+      iconSvg: "/public/comunica/menu-icon.svg",
+      url: "/private/comunica/config",
+      activeIconSvg: "/public/comunica/menu-icon-active.svg",
+      label: { es: "Configuración comunica", en: "Comunica config" },
     },
     permissions: [
       {
         permissionName: permissionNames.config,
-        actionNames: ['admin'],
+        actionNames: ["admin"],
       },
     ],
   },

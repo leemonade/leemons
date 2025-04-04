@@ -1,8 +1,13 @@
-import { useCallback, useEffect, useState } from 'react';
-import RoomService from '@comunica/RoomService';
+import { useCallback, useEffect, useState } from "react";
+import RoomService from "@comunica/RoomService";
 
 const useRoomsMessageCount = (rooms) => {
-  const [messages, setMessages] = useState({ unread: 0, count: 0, read: 0, room: null });
+  const [messages, setMessages] = useState({
+    unread: 0,
+    count: 0,
+    read: 0,
+    room: null,
+  });
   const getNewMessages = useCallback(
     async (chatKeys) => {
       if (!chatKeys?.length) {

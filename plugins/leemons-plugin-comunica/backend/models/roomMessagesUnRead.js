@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -47,7 +47,7 @@ schema.index({ room: 1, userAgent: 1, deploymentID: 1, isDeleted: 1 });
 
 const roomMessagesUnReadModel = newModel(
   mongoose.connection,
-  'v1::comunica_RoomMessagesUnRead',
+  "v1::comunica_RoomMessagesUnRead",
   schema
 );
 

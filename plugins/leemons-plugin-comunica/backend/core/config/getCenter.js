@@ -1,5 +1,8 @@
 async function getCenter({ center, ctx }) {
-  const item = await ctx.tx.db.Config.findOne({ type: 'center', typeId: center }).lean();
+  const item = await ctx.tx.db.Config.findOne({
+    type: "center",
+    typeId: center,
+  }).lean();
   let config = {
     studentsCanAddTeachersToGroups: true,
   };

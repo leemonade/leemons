@@ -1,6 +1,9 @@
-const _ = require('lodash');
-const { randomString } = require('@leemons/utils');
-const { validateKeyPrefix, validateNotExistRoomKey } = require('../../validations/exists');
+const _ = require("lodash");
+const { randomString } = require("@leemons/utils");
+const {
+  validateKeyPrefix,
+  validateNotExistRoomKey,
+} = require("../../validations/exists");
 
 async function add({ room, userAgent, isAdmin, ctx }) {
   const response = await ctx.tx.db.UserAgentInRoom.findOne(
@@ -73,32 +76,43 @@ async function add({ room, userAgent, isAdmin, ctx }) {
   };
 }
 
-async function addUserAgents({ key, userAgents: _userAgents, isAdmin, ignoreCalledFrom, ctx }) {
-  if (!ignoreCalledFrom) validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
+async function addUserAgents({
+  key,
+  userAgents: _userAgents,
+  isAdmin,
+  ignoreCalledFrom,
+  ctx,
+}) {
+  if (!ignoreCalledFrom)
+    validateKeyPrefix({ key, calledFrom: ctx.callerPlugin, ctx });
 
   const userAgents = _.isArray(_userAgents) ? _userAgents : [_userAgents];
 
   await validateNotExistRoomKey({ key, ctx });
 
-  const currentUserAgentsInRoom = await ctx.tx.db.UserAgentInRoom.find({ room: key }).lean();
+  const currentUserAgentsInRoom = await ctx.tx.db.UserAgentInRoom.find({
+    room: key,
+  }).lean();
 
   const results = await Promise.all(
-    _.map(userAgents, (userAgent) => add({ room: key, userAgent, isAdmin, ctx }))
+    _.map(userAgents, (userAgent) =>
+      add({ room: key, userAgent, isAdmin, ctx })
+    )
   );
 
   const responsesAdded = _.filter(results, { added: true });
 
   // Informamos a los usuarios añadidos de que han sido añadidos
-  ctx.socket.emit(_.map(responsesAdded, 'userAgent'), `COMUNICA:ROOM:ADDED`, {
+  ctx.socket.emit(_.map(responsesAdded, "userAgent"), `COMUNICA:ROOM:ADDED`, {
     room: key,
   });
 
   // Vamos a sacar los usuarios añadidos para enviarle a todas los usuarios de antes los nuevos usuarios
-  const userAgen = await ctx.tx.call('users.users.getUserAgentsInfo', {
-    userAgentIds: _.map(responsesAdded, 'userAgent'),
+  const userAgen = await ctx.tx.call("users.users.getUserAgentsInfo", {
+    userAgentIds: _.map(responsesAdded, "userAgent"),
     withProfile: true,
   });
-  const userAgentsById = _.keyBy(userAgen, 'id');
+  const userAgentsById = _.keyBy(userAgen, "id");
   const userAgentsAddedGood = _.map(responsesAdded, (a) => ({
     userAgent: userAgentsById[a.userAgent],
     adminMuted: a.result.adminMuted,
@@ -108,13 +122,17 @@ async function addUserAgents({ key, userAgents: _userAgents, isAdmin, ignoreCall
   }));
 
   _.forEach(userAgentsAddedGood, (data) => {
-    ctx.socket.emit(_.map(currentUserAgentsInRoom, 'userAgent'), `COMUNICA:ROOM:USER_ADDED`, {
-      key,
-      userAgent: data,
-    });
+    ctx.socket.emit(
+      _.map(currentUserAgentsInRoom, "userAgent"),
+      `COMUNICA:ROOM:USER_ADDED`,
+      {
+        key,
+        userAgent: data,
+      }
+    );
   });
 
-  const responses = _.map(results, 'result');
+  const responses = _.map(results, "result");
   _.forEach(responses, (response) => {
     delete response.encryptKey;
   });

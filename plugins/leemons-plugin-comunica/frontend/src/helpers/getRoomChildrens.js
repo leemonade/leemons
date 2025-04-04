@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _ from "lodash";
 
 export function getRoomChildrens(rooms, room) {
   const roomKey = _.isString(room) ? room : room.key;

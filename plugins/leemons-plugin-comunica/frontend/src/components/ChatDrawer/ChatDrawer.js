@@ -13,32 +13,32 @@ import {
   TotalLayoutContainer,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 import {
   ChevronLeftIcon,
   PluginSettingsIcon,
   RemoveIcon,
   SendMessageIcon,
-} from '@bubbles-ui/icons/outline';
-import { SettingMenuVerticalIcon } from '@bubbles-ui/icons/solid';
-import { useLocale, useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import ChatInfoDrawer from '@comunica/components/ChatInfoDrawer/ChatInfoDrawer';
-import RoomHeader from '@comunica/components/RoomHeader/RoomHeader';
-import getRoomParsed from '@comunica/helpers/getRoomParsed';
-import isStudentsChatRoom from '@comunica/helpers/isStudentsChatRoom';
-import isStudentTeacherChatRoom from '@comunica/helpers/isStudentTeacherChatRoom';
-import isTeacherByRoom from '@comunica/helpers/isTeacherByRoom';
-import prefixPN from '@comunica/helpers/prefixPN';
-import RoomService from '@comunica/RoomService';
-import { addErrorAlert } from '@layout/alert';
-import SocketIoService from '@mqtt-socket-io/service';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { getCentersWithToken } from '@users/session';
-import _, { map, orderBy } from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { ChatDrawerStyles } from './ChatDrawer.styles';
+} from "@bubbles-ui/icons/outline";
+import { SettingMenuVerticalIcon } from "@bubbles-ui/icons/solid";
+import { useLocale, useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import ChatInfoDrawer from "@comunica/components/ChatInfoDrawer/ChatInfoDrawer";
+import RoomHeader from "@comunica/components/RoomHeader/RoomHeader";
+import getRoomParsed from "@comunica/helpers/getRoomParsed";
+import isStudentsChatRoom from "@comunica/helpers/isStudentsChatRoom";
+import isStudentTeacherChatRoom from "@comunica/helpers/isStudentTeacherChatRoom";
+import isTeacherByRoom from "@comunica/helpers/isTeacherByRoom";
+import prefixPN from "@comunica/helpers/prefixPN";
+import RoomService from "@comunica/RoomService";
+import { addErrorAlert } from "@layout/alert";
+import SocketIoService from "@mqtt-socket-io/service";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { getCentersWithToken } from "@users/session";
+import _, { map, orderBy } from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import { ChatDrawerStyles } from "./ChatDrawer.styles";
 
 function ChatDrawer({
   room,
@@ -49,9 +49,9 @@ function ChatDrawer({
   onRoomLoad = () => {},
   onMessagesMarkAsRead = () => {},
 }) {
-  const { classes } = ChatDrawerStyles({}, { name: 'ChatDrawer' });
-  const [t] = useTranslateLoader(prefixPN('chatDrawer'));
-  const [td] = useTranslateLoader(prefixPN('chatListDrawer'));
+  const { classes } = ChatDrawerStyles({}, { name: "ChatDrawer" });
+  const [t] = useTranslateLoader(prefixPN("chatDrawer"));
+  const [td] = useTranslateLoader(prefixPN("chatListDrawer"));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const locale = useLocale();
   const debouncedFunction = useDebouncedCallback(300);
@@ -61,7 +61,8 @@ function ChatDrawer({
   });
 
   function scrollToBottom() {
-    if (scrollRef.current) scrollRef.current.scrollTo(0, scrollRef.current.scrollHeight);
+    if (scrollRef.current)
+      scrollRef.current.scrollTo(0, scrollRef.current.scrollHeight);
   }
 
   async function load() {
@@ -69,15 +70,20 @@ function ChatDrawer({
     store.room = getRoomParsed(await store.service.getRoom());
     store.programConfig = null;
     if (store.room?.program) {
-      store.programConfig = await RoomService.getProgramConfig(store.room.program);
+      store.programConfig = await RoomService.getProgramConfig(
+        store.room.program
+      );
     }
     store.messages = await store.service.getRoomMessages();
-    store.messages = orderBy(store.messages, 'createdAt', 'asc');
+    store.messages = orderBy(store.messages, "createdAt", "asc");
     store.messages = map(store.messages, (message) => ({
       ...message,
       createdAt: new Date(message.createdAt),
     }));
-    store.userAgentsById = _.keyBy(_.map(store.room.userAgents, 'userAgent'), 'id');
+    store.userAgentsById = _.keyBy(
+      _.map(store.room.userAgents, "userAgent"),
+      "id"
+    );
 
     render();
     onRoomLoad(store.room);
@@ -118,10 +124,10 @@ function ChatDrawer({
       if (store.newMessage && !store.sendingMessage) {
         store.sendingMessage = true;
         await store.service.sendMessageToRoom({
-          type: 'text',
+          type: "text",
           content: store.newMessage,
         });
-        store.newMessage = '';
+        store.newMessage = "";
         render();
       }
     } catch (err) {
@@ -150,7 +156,8 @@ function ChatDrawer({
   RoomService.watchRoom(room, (data) => {
     let _scrollToBottom = false;
     if (scrollRef.current) {
-      const scrolled = scrollRef.current.scrollTop + scrollRef.current.clientHeight;
+      const scrolled =
+        scrollRef.current.scrollTop + scrollRef.current.clientHeight;
       if (scrolled > scrollRef.current.scrollHeight - 50) {
         _scrollToBottom = true;
       }
@@ -172,7 +179,7 @@ function ChatDrawer({
         if (scrollRef.current)
           scrollRef.current.scrollTo({
             top: scrollRef.current.scrollHeight,
-            behavior: 'smooth',
+            behavior: "smooth",
           });
       }, 10);
     }
@@ -187,7 +194,7 @@ function ChatDrawer({
   }
 
   SocketIoService.useOnAny((event, data) => {
-    if (event === 'COMUNICA:CONFIG:CENTER') {
+    if (event === "COMUNICA:CONFIG:CENTER") {
       if (data.center === getCentersWithToken()[0].id && store.room) {
         if (!data.config.enableStudentsChats) {
           if (isStudentsChatRoom(store.room)) {
@@ -202,24 +209,27 @@ function ChatDrawer({
       }
       return;
     }
-    if (event === 'COMUNICA:CONFIG:PROGRAM') {
+    if (event === "COMUNICA:CONFIG:PROGRAM") {
       if (store.room?.program === data.program) {
         store.programConfig = data.config;
       }
-      if (store.room?.type === 'academic-portfolio.class' && store.room?.program === data.program) {
+      if (
+        store.room?.type === "academic-portfolio.class" &&
+        store.room?.program === data.program
+      ) {
         if (!data.config.enableSubjectsRoom) {
           returnOrClose();
         }
       }
       return;
     }
-    if (event === 'COMUNICA:CONFIG:ROOM' && store.room?.key === data.room) {
+    if (event === "COMUNICA:CONFIG:ROOM" && store.room?.key === data.room) {
       store.room.muted = !!data.muted;
       store.room.attached = data.attached;
       store.room.adminMuted = data.adminMuted;
       render();
     }
-    if (event === 'COMUNICA:ROOM:REMOVE' && store.room?.key === data.key) {
+    if (event === "COMUNICA:ROOM:REMOVE" && store.room?.key === data.key) {
       store.room = null;
       if (_.isFunction(onReturn)) {
         onReturn();
@@ -228,7 +238,7 @@ function ChatDrawer({
       }
       return;
     }
-    if (event === 'COMUNICA:ROOM:USER_ADDED' && store.room?.key === data.key) {
+    if (event === "COMUNICA:ROOM:USER_ADDED" && store.room?.key === data.key) {
       const index = _.findIndex(
         store.room.userAgents,
         (item) => item.userAgent.id === data.userAgent.userAgent.id
@@ -242,7 +252,10 @@ function ChatDrawer({
       debouncedFunction(render);
       return;
     }
-    if (event === 'COMUNICA:ROOM:USERS_REMOVED' && store.room?.key === data.key) {
+    if (
+      event === "COMUNICA:ROOM:USERS_REMOVED" &&
+      store.room?.key === data.key
+    ) {
       store.room.userAgents = _.map(store.room.userAgents, (item) => {
         let { deleted } = item;
         if (data.userAgents.includes(item.userAgent.id)) deleted = true;
@@ -255,19 +268,25 @@ function ChatDrawer({
       render();
       return;
     }
-    if (event === 'COMUNICA:ROOM:UPDATE:IMAGE' && store.room?.key === data.key) {
+    if (
+      event === "COMUNICA:ROOM:UPDATE:IMAGE" &&
+      store.room?.key === data.key
+    ) {
       store.room.image = data.image;
       if (!store.room.imageSeed) store.room.imageSeed = 0;
       store.room.imageSeed++;
       render();
       return;
     }
-    if (event === 'COMUNICA:ROOM:UPDATE:NAME' && store.room?.key === data.key) {
+    if (event === "COMUNICA:ROOM:UPDATE:NAME" && store.room?.key === data.key) {
       store.room.name = data.name;
       render();
       return;
     }
-    if (event === 'COMUNICA:ROOM:ADMIN_MUTED' && store.room?.key === data.room) {
+    if (
+      event === "COMUNICA:ROOM:ADMIN_MUTED" &&
+      store.room?.key === data.room
+    ) {
       const index = _.findIndex(
         store.room.userAgents,
         (item) => item.userAgent.id === data.userAgent
@@ -278,7 +297,10 @@ function ChatDrawer({
         render();
       }
     }
-    if (event === 'COMUNICA:ROOM:ADMIN_DISABLE_MESSAGES' && store.room?.key === data.room) {
+    if (
+      event === "COMUNICA:ROOM:ADMIN_DISABLE_MESSAGES" &&
+      store.room?.key === data.room
+    ) {
       store.room.adminDisableMessages = data.adminDisableMessages;
       render();
     }
@@ -287,7 +309,7 @@ function ChatDrawer({
   let canWrite = !store.room?.adminMuted;
   if (
     canWrite &&
-    store.room?.type === 'academic-portfolio.class' &&
+    store.room?.type === "academic-portfolio.class" &&
     store.programConfig?.onlyTeachersCanWriteInSubjectsRooms
   ) {
     canWrite = isTeacherByRoom(store.room);
@@ -299,15 +321,15 @@ function ChatDrawer({
   const menuItems = React.useMemo(() => {
     const m = [
       {
-        children: store.room?.muted ? t('unmuteRoom') : t('muteRoom'),
+        children: store.room?.muted ? t("unmuteRoom") : t("muteRoom"),
         onClick: toggleMute,
       },
       {
-        children: store.room?.attached ? t('unsetRoom') : t('setRoom'),
+        children: store.room?.attached ? t("unsetRoom") : t("setRoom"),
         onClick: toggleAttached,
       },
       {
-        children: t('information'),
+        children: t("information"),
         onClick: toggleInfo,
       },
     ];
@@ -331,7 +353,7 @@ function ChatDrawer({
                     }}
                     leftIcon={<ChevronLeftIcon width={12} height={12} />}
                   >
-                    {td('return')}
+                    {td("return")}
                   </Button>
                 ) : (
                   <Box></Box>
@@ -341,12 +363,19 @@ function ChatDrawer({
                   <Menu
                     width={140}
                     control={
-                      <ActionButton icon={<SettingMenuVerticalIcon width={16} height={16} />} />
+                      <ActionButton
+                        icon={
+                          <SettingMenuVerticalIcon width={16} height={16} />
+                        }
+                      />
                     }
                     items={menuItems}
                   ></Menu>
 
-                  <ActionButton onClick={onClose} icon={<RemoveIcon width={16} height={16} />} />
+                  <ActionButton
+                    onClick={onClose}
+                    icon={<RemoveIcon width={16} height={16} />}
+                  />
                 </Box>
               </Box>
               {store.room ? (
@@ -357,7 +386,12 @@ function ChatDrawer({
             </Box>
           }
         >
-          <Stack ref={scrollRef} fullWidth fullHeight style={{ overflowY: 'auto' }}>
+          <Stack
+            ref={scrollRef}
+            fullWidth
+            fullHeight
+            style={{ overflowY: "auto" }}
+          >
             <TotalLayoutStepContainer
               fullWidth
               clean
@@ -377,11 +411,11 @@ function ChatDrawer({
                         value={store.newMessage}
                         autosize={false}
                         name="message"
-                        placeholder={t('writeNewMessage')}
+                        placeholder={t("writeNewMessage")}
                         className={classes.textarea}
                         textareaStyles={{ height: 40 }}
                         onKeyPress={(e) => {
-                          if (e.code === 'Enter' || e.charCode === 13) {
+                          if (e.code === "Enter" || e.charCode === 13) {
                             sendMessage();
                             e.stopPropagation();
                             e.preventDefault();
@@ -406,12 +440,15 @@ function ChatDrawer({
                 {store.messages?.map((message, index) => {
                   const comp = [];
                   let forceUserImage = false;
-                  const day = new Date(message.createdAt).toLocaleDateString(locale, {
-                    weekday: 'short',
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                  });
+                  const day = new Date(message.createdAt).toLocaleDateString(
+                    locale,
+                    {
+                      weekday: "short",
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    }
+                  );
                   if (index === 0 || store.lastDay !== day) {
                     store.lastDay = day;
                     forceUserImage = true;
@@ -426,7 +463,9 @@ function ChatDrawer({
                       key={message.id}
                       sx={(theme) => ({
                         marginTop:
-                          index !== 0 && store.messages[index - 1].userAgent !== message.userAgent
+                          index !== 0 &&
+                          store.messages[index - 1].userAgent !==
+                            message.userAgent
                             ? theme.spacing[4]
                             : 0,
                       })}
@@ -435,17 +474,23 @@ function ChatDrawer({
                         showUser={
                           forceUserImage || index === 0
                             ? true
-                            : store.messages[index - 1].userAgent !== message.userAgent
+                            : store.messages[index - 1].userAgent !==
+                              message.userAgent
                         }
                         isTeacher={
-                          store.userAgentsById?.[message.userAgent]?.profile?.sysName === 'teacher'
+                          store.userAgentsById?.[message.userAgent]?.profile
+                            ?.sysName === "teacher"
                         }
                         isAdmin={
-                          store.userAgentsById?.[message.userAgent]?.profile?.sysName === 'admin'
+                          store.userAgentsById?.[message.userAgent]?.profile
+                            ?.sysName === "admin"
                         }
                         isOwn={message.userAgent === store.userAgent}
                         user={store.userAgentsById?.[message.userAgent]?.user}
-                        message={{ ...message.message, date: message.createdAt }}
+                        message={{
+                          ...message.message,
+                          date: message.createdAt,
+                        }}
                       />
                     </Box>
                   );
