@@ -1,4 +1,4 @@
-import type { BrokerOptions } from 'moleculer';
+import type { BrokerOptions } from "moleculer";
 
 /**
  * Generate a moleculer config. Suitable for defining `moleculer.config.js`'s content in plugins.
@@ -26,12 +26,12 @@ function generateMoleculerConfig(
   overrides: Partial<BrokerOptions> = {}
 ): BrokerOptions {
   if (!name) {
-    throw new Error('Name is required');
+    throw new Error("Name is required");
   }
 
   return {
     // Namespace of nodes to segment your nodes on the same network.
-    namespace: '',
+    namespace: "",
     // Unique node identifier. Must be unique in a namespace.
     nodeID: null,
     // Custom metadata store. Store here what you want. Accessing: `this.broker.metadata`
@@ -40,14 +40,14 @@ function generateMoleculerConfig(
     // Enable/disable logging or use custom logger. More info: https://moleculer.services/docs/0.14/logging.html
     // Available logger types: "Console", "File", "Pino", "Winston", "Bunyan", "debug", "Log4js", "Datadog"
     logger: {
-      type: 'Console',
+      type: "Console",
       options: {
         // Using colors on the output
         colors: true,
         // Print module names with different colors (like docker-compose for containers)
         moduleColors: false,
         // Line formatter. It can be "json", "short", "simple", "full", a `Function` or a template string like "{timestamp} {level} {nodeID}/{mod}: {msg}"
-        formatter: 'full',
+        formatter: "full",
         // Custom object printer. If not defined, it uses the `util.inspect` method.
         objectPrinter: null,
         // Auto-padding the module name in order to messages begin at the same column.
@@ -56,7 +56,7 @@ function generateMoleculerConfig(
     },
     // Default log level for built-in console logger. It can be overwritten in logger options above.
     // Available values: trace, debug, info, warn, error, fatal
-    logLevel: 'info',
+    logLevel: "info",
 
     // Define transporter.
     // More info: https://moleculer.services/docs/0.14/networking.html
@@ -71,7 +71,7 @@ function generateMoleculerConfig(
     // Define a serializer.
     // Available values: "JSON", "Avro", "ProtoBuf", "MsgPack", "Notepack", "Thrift".
     // More info: https://moleculer.services/docs/0.14/networking.html#Serialization
-    serializer: 'JSON',
+    serializer: "JSON",
 
     // Number of milliseconds to wait before reject a request with a RequestTimeout error. Disabled: 0
     requestTimeout: 2 * 60 * 1000,
@@ -118,7 +118,7 @@ function generateMoleculerConfig(
     registry: {
       // Define balancing strategy. More info: https://moleculer.services/docs/0.14/balancing.html
       // Available values: "RoundRobin", "Random", "CpuUsage", "Latency", "Shard"
-      strategy: 'RoundRobin',
+      strategy: "RoundRobin",
       // Enable local action call preferring. Always call the local action instance if available.
       preferLocal: true,
     },
@@ -158,12 +158,14 @@ function generateMoleculerConfig(
     metrics: {
       enabled: false,
       reporter: {
-        type: 'Prometheus',
+        type: "Prometheus",
         options: {
           port: 3030,
-          path: '/metrics',
+          path: "/metrics",
           metricNamePrefix: `${name}.`,
-          defaultLabels: (registry: { broker: { namespace: string; nodeID: string } }) => ({
+          defaultLabels: (registry: {
+            broker: { namespace: string; nodeID: string };
+          }) => ({
             namespace: registry.broker.namespace,
             nodeID: registry.broker.nodeID,
           }),
@@ -175,13 +177,13 @@ function generateMoleculerConfig(
     tracing: {
       enabled: !!(process.env.JAEGER_ENDPOINT || process.env.JAEGER_HOST),
       exporter: {
-        type: 'Jaeger',
+        type: "Jaeger",
         options: {
           endpoint: process.env.JAEGER_ENDPOINT ?? null,
           host: process.env.JAEGER_HOST ?? null,
           port: process.env.JAEGER_PORT ?? null,
           sampler: {
-            type: 'const',
+            type: "const",
             options: {},
           },
           tracerOptions: {},
