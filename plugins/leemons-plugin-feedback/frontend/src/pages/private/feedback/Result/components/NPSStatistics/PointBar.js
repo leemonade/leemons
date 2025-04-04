@@ -1,11 +1,19 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Text } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, Text } from "@bubbles-ui/components";
 
-function PointBar({ classes, cx, percentage, total, color, bottomText, label }) {
+function PointBar({
+  classes,
+  cx,
+  percentage,
+  total,
+  color,
+  bottomText,
+  label,
+}) {
   return (
     <Box>
-      <Box sx={() => ({ textAlign: 'center' })}>
+      <Box sx={() => ({ textAlign: "center" })}>
         <Text strong color="primary">
           {percentage}%
         </Text>
@@ -17,13 +25,13 @@ function PointBar({ classes, cx, percentage, total, color, bottomText, label }) 
               backgroundColor: color,
             })}
           />
-          <Box sx={() => ({ position: 'relative' })}>
+          <Box sx={() => ({ position: "relative" })}>
             <Text strong size="sm" color="quartiary">
               {total}
             </Text>
           </Box>
         </Box>
-        <Box sx={(theme) => ({ marginTop: '8px' })}>
+        <Box sx={(theme) => ({ marginTop: "8px" })}>
           <Text size="xs" color="secondary" strong>
             {bottomText}
           </Text>

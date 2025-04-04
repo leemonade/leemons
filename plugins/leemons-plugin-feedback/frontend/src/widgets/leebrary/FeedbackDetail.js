@@ -1,56 +1,66 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { LibraryDetail } from '@leebrary/components';
-import { useHistory } from 'react-router-dom';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@feedback/helpers/prefixPN';
-import { useLayout } from '@layout/context';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { ViewOnIcon } from '@bubbles-ui/icons/outline';
-import { deleteFeedbackRequest, duplicateFeedbackRequest } from '@feedback/request';
-import { AssetMetadataFeedback } from '../../components/AssetMetadataFeedback';
+import React from "react";
+import PropTypes from "prop-types";
+import { LibraryDetail } from "@leebrary/components";
+import { useHistory } from "react-router-dom";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@feedback/helpers/prefixPN";
+import { useLayout } from "@layout/context";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { ViewOnIcon } from "@bubbles-ui/icons/outline";
+import {
+  deleteFeedbackRequest,
+  duplicateFeedbackRequest,
+} from "@feedback/request";
+import { AssetMetadataFeedback } from "../../components/AssetMetadataFeedback";
 
-const FeedbackDetail = ({ asset, onRefresh, onPin, onUnpin, onShare, ...props }) => {
+const FeedbackDetail = ({
+  asset,
+  onRefresh,
+  onPin,
+  onUnpin,
+  onShare,
+  ...props
+}) => {
   const history = useHistory();
-  const [t] = useTranslateLoader(prefixPN('feedbackCard'));
+  const [t] = useTranslateLoader(prefixPN("feedbackCard"));
   const {
     openConfirmationModal,
     openDeleteConfirmationModal,
     setLoading: setAppLoading,
   } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const toolbarItems = { toggle: t('toggle'), open: t('open') };
+  const toolbarItems = { toggle: t("toggle"), open: t("open") };
 
   // ·········································································
   // HANDLERS
 
   if (asset?.id) {
     if (asset.editable) {
-      toolbarItems.edit = t('edit');
+      toolbarItems.edit = t("edit");
     }
     if (asset.shareable) {
-      toolbarItems.share = t('share');
+      toolbarItems.share = t("share");
     }
     if (asset.deleteable) {
-      toolbarItems.delete = t('delete');
+      toolbarItems.delete = t("delete");
     }
     if (asset.providerData?.published) {
-      toolbarItems.assign = t('assign');
+      toolbarItems.assign = t("assign");
     }
     if (asset.duplicable) {
-      toolbarItems.duplicate = t('duplicate');
+      toolbarItems.duplicate = t("duplicate");
     }
     if (asset.pinneable) {
       if (asset.pinned === false) {
-        toolbarItems.pin = t('pin');
+        toolbarItems.pin = t("pin");
       }
       if (asset.pinned === true) {
-        toolbarItems.unpin = t('unpin');
+        toolbarItems.unpin = t("unpin");
       }
     }
     if (asset.shareable) {
-      toolbarItems.share = t('share');
+      toolbarItems.share = t("share");
     }
   }
 
@@ -75,7 +85,7 @@ const FeedbackDetail = ({ asset, onRefresh, onPin, onUnpin, onShare, ...props })
         try {
           setAppLoading(true);
           await deleteFeedbackRequest(asset.providerData.id);
-          addSuccessAlert(t('deleted'));
+          addSuccessAlert(t("deleted"));
           onRefresh();
         } catch (err) {
           addErrorAlert(getErrorMessage(err));
@@ -90,8 +100,11 @@ const FeedbackDetail = ({ asset, onRefresh, onPin, onUnpin, onShare, ...props })
       onConfirm: async () => {
         try {
           setAppLoading(true);
-          await duplicateFeedbackRequest(asset.providerData.id, asset.providerData.published);
-          addSuccessAlert(t('duplicated'));
+          await duplicateFeedbackRequest(
+            asset.providerData.id,
+            asset.providerData.published
+          );
+          addSuccessAlert(t("duplicated"));
           onRefresh();
         } catch (err) {
           addErrorAlert(getErrorMessage(err));
@@ -115,7 +128,10 @@ const FeedbackDetail = ({ asset, onRefresh, onPin, onUnpin, onShare, ...props })
   const metadata = [];
 
   if (asset?.providerData?.metadata?.questions) {
-    metadata.push({ label: t('questions'), value: asset.providerData.metadata.questions });
+    metadata.push({
+      label: t("questions"),
+      value: asset.providerData.metadata.questions,
+    });
   }
 
   return (
@@ -134,7 +150,7 @@ const FeedbackDetail = ({ asset, onRefresh, onPin, onUnpin, onShare, ...props })
         />
       }
       variant="feedback"
-      variantTitle={t('feedback')}
+      variantTitle={t("feedback")}
       toolbarItems={toolbarItems}
       titleActionButton={
         asset?.providerData?.published

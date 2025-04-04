@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef } from "react";
 import {
   ActionButton,
   ActivityAccordion,
@@ -16,18 +16,18 @@ import {
   TotalLayoutStepContainer,
   TotalLayoutHeader,
   AssetFeedbackIcon,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 // TODO: fix this import from @common plugin
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@feedback/helpers/prefixPN';
-import { getQuestionForTable } from '@feedback/helpers/getQuestionForTable';
-import { useStore } from '@common';
-import { useHistory, useParams } from 'react-router-dom';
-import { addErrorAlert } from '@layout/alert';
-import { ChevronRightIcon, EditIcon } from '@bubbles-ui/icons/outline';
-import { getFeedbackRequest } from '@feedback/request';
-import { map } from 'lodash';
-import QuestionsCard from '@feedback/pages/private/feedback/StudentInstance/components/QuestionsCard';
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@feedback/helpers/prefixPN";
+import { getQuestionForTable } from "@feedback/helpers/getQuestionForTable";
+import { useStore } from "@common";
+import { useHistory, useParams } from "react-router-dom";
+import { addErrorAlert } from "@layout/alert";
+import { ChevronRightIcon, EditIcon } from "@bubbles-ui/icons/outline";
+import { getFeedbackRequest } from "@feedback/request";
+import { map } from "lodash";
+import QuestionsCard from "@feedback/pages/private/feedback/StudentInstance/components/QuestionsCard";
 
 const PreviewPageStyles = createStyles((theme, { viewMode }) => ({
   firstTableHeader: {
@@ -48,20 +48,20 @@ const PreviewPageStyles = createStyles((theme, { viewMode }) => ({
   showTestBar: {
     backgroundColor: theme.colors.uiBackground01,
     padding: theme.spacing[4],
-    display: 'flex',
-    justifyContent: 'end',
+    display: "flex",
+    justifyContent: "end",
   },
   returnToTable: {
-    display: 'flex',
-    alignItems: 'center',
-    cursor: 'pointer',
+    display: "flex",
+    alignItems: "center",
+    cursor: "pointer",
   },
 }));
 
 export default function Preview() {
-  const [tP, t1V] = useTranslateLoader(prefixPN('feedbackPreview'));
-  const [tD, t2V] = useTranslateLoader(prefixPN('feedbackDetail'));
-  const { classes, cx } = PreviewPageStyles({}, { name: 'FeedbackPreview' });
+  const [tP, t1V] = useTranslateLoader(prefixPN("feedbackPreview"));
+  const [tD, t2V] = useTranslateLoader(prefixPN("feedbackDetail"));
+  const { classes, cx } = PreviewPageStyles({}, { name: "FeedbackPreview" });
   const scrollRef = useRef();
 
   const [store, render] = useStore({
@@ -74,23 +74,23 @@ export default function Preview() {
 
   const tableHeaders = [
     {
-      Header: tD('questionLabel'),
-      accessor: 'question',
+      Header: tD("questionLabel"),
+      accessor: "question",
       className: cx(classes.tableHeader, classes.firstTableHeader),
     },
     {
-      Header: tD('responsesLabel'),
-      accessor: 'responses',
+      Header: tD("responsesLabel"),
+      accessor: "responses",
       className: classes.tableHeader,
     },
     {
-      Header: tD('typeLabel'),
-      accessor: 'type',
+      Header: tD("typeLabel"),
+      accessor: "type",
       className: classes.tableHeader,
     },
     {
-      Header: tD('actionsHeader'),
-      accessor: 'actions',
+      Header: tD("actionsHeader"),
+      accessor: "actions",
       className: classes.tableHeader,
     },
   ];
@@ -156,7 +156,7 @@ export default function Preview() {
     try {
       store.currentId = params.id;
       const { feedback } = await getFeedbackRequest(params.id);
-      console.log('feedback', feedback);
+      console.log("feedback", feedback);
       store.feedback = feedback;
       // const { evaluationSystem } = await getProgramEvaluationSystemRequest(test.program);
       // // console.log(test);
@@ -198,7 +198,13 @@ export default function Preview() {
   }
 
   React.useEffect(() => {
-    if (params?.id && (!store.currentId || store.currentId !== params.id) && t1V && t2V) init();
+    if (
+      params?.id &&
+      (!store.currentId || store.currentId !== params.id) &&
+      t1V &&
+      t2V
+    )
+      init();
   }, [params, t1V, t2V]);
 
   const editQuestion = () => {
@@ -215,12 +221,12 @@ export default function Preview() {
           icon={<AssetFeedbackIcon />}
           direction="row"
         >
-          <Box style={{ display: 'flex', gap: 16 }}>
+          <Box style={{ display: "flex", gap: 16 }}>
             <Button variant="outline" onClick={() => goEditPage()}>
-              {tP('edit')}
+              {tP("edit")}
             </Button>
             <Button variant="primary" onClick={() => goAssignPage()}>
-              {tP('assign')}
+              {tP("assign")}
             </Button>
           </Box>
         </TotalLayoutHeader>
@@ -229,7 +235,7 @@ export default function Preview() {
       <Stack
         justifyContent="center"
         ref={scrollRef}
-        style={{ overflow: 'auto' }}
+        style={{ overflow: "auto" }}
         fullWidth
         fullHeight
       >
@@ -238,7 +244,7 @@ export default function Preview() {
             sx={(theme) => ({
               // backgroundColor: theme.colors.uiBackground02,
               paddingBottom: theme.spacing[12],
-              overflow: 'auto',
+              overflow: "auto",
             })}
             fullHeight
             fullWidth
@@ -266,7 +272,7 @@ export default function Preview() {
                   }}
                 >
                   <ActivityAccordionPanel
-                    label={tP('questions')}
+                    label={tP("questions")}
                     rightSection={
                       <Box>
                         <Badge
@@ -278,10 +284,16 @@ export default function Preview() {
                       </Box>
                     }
                     icon={
-                      <Box style={{ position: 'relative', width: '22px', height: '24px' }}>
+                      <Box
+                        style={{
+                          position: "relative",
+                          width: "22px",
+                          height: "24px",
+                        }}
+                      >
                         <ImageLoader
                           className="stroke-current"
-                          src={'/public/feedback/questions-icon.svg'}
+                          src={"/public/feedback/questions-icon.svg"}
                         />
                       </Box>
                     }
@@ -304,19 +316,25 @@ export default function Preview() {
                               rightIcon={<ChevronRightIcon />}
                               onClick={toggleQuestionMode}
                             >
-                              {tP('showPreview')}
+                              {tP("showPreview")}
                             </Button>
                           </Box>
                           <Table
                             columns={tableHeaders}
-                            data={map(store.feedback?.questions, (question) => ({
-                              ...getQuestionForTable(question, tD),
-                              actions: (
-                                <Stack justifyContent="end" fullWidth>
-                                  <ActionButton icon={<EditIcon />} onClick={editQuestion} />
-                                </Stack>
-                              ),
-                            }))}
+                            data={map(
+                              store.feedback?.questions,
+                              (question) => ({
+                                ...getQuestionForTable(question, tD),
+                                actions: (
+                                  <Stack justifyContent="end" fullWidth>
+                                    <ActionButton
+                                      icon={<EditIcon />}
+                                      onClick={editQuestion}
+                                    />
+                                  </Stack>
+                                ),
+                              })
+                            )}
                           />
                         </>
                       )}

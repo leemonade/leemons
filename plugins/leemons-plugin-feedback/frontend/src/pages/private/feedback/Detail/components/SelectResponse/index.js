@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { forEach } from 'lodash';
+import React from "react";
+import PropTypes from "prop-types";
+import { forEach } from "lodash";
 import {
   Box,
   Button,
@@ -10,22 +10,22 @@ import {
   ListItem,
   NumberInput,
   Stack,
-} from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { Controller } from 'react-hook-form';
-import { ListInputRender } from './components/ListInputRender';
-import { ListItemValueRender } from './components/ListItemValueRender';
+} from "@bubbles-ui/components";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import { Controller } from "react-hook-form";
+import { ListInputRender } from "./components/ListInputRender";
+import { ListItemValueRender } from "./components/ListItemValueRender";
 
 // eslint-disable-next-line import/prefer-default-export
 export function SelectResponse({ form, t, multi }) {
-  const responses = form.watch('properties.responses') || [];
-  const withImages = form.watch('properties.withImages');
-  const maxResponses = form.watch('properties.maxResponses');
-  const minResponses = form.watch('properties.minResponses');
+  const responses = form.watch("properties.responses") || [];
+  const withImages = form.watch("properties.withImages");
+  const maxResponses = form.watch("properties.maxResponses");
+  const minResponses = form.watch("properties.minResponses");
   const [showInput, setShowInput] = React.useState(false);
 
   return (
-    <ContextContainer title={`${t('responsesLabel')} *`}>
+    <ContextContainer title={`${t("responsesLabel")} *`}>
       <Box>
         <Controller
           control={form.control}
@@ -37,7 +37,7 @@ export function SelectResponse({ form, t, multi }) {
               checked={field.value}
               disabled={responses?.length}
               error={form.formState.errors.properties?.withImages}
-              label={t('withImagesLabel')}
+              label={t("withImagesLabel")}
             />
           )}
         />
@@ -49,7 +49,7 @@ export function SelectResponse({ form, t, multi }) {
           name="properties.responses"
           shouldUnregister
           rules={{
-            required: t('responsesRequired'),
+            required: t("responsesRequired"),
             validate: (a) => {
               if (withImages) {
                 let needImages = false;
@@ -58,7 +58,7 @@ export function SelectResponse({ form, t, multi }) {
                     needImages = true;
                   }
                 });
-                if (needImages) return t('needImages');
+                if (needImages) return t("needImages");
               } else {
                 let error = false;
                 forEach(a, ({ value: { response } }) => {
@@ -66,7 +66,7 @@ export function SelectResponse({ form, t, multi }) {
                     error = true;
                   }
                 });
-                if (error) return t('needResponse');
+                if (error) return t("needResponse");
               }
               return true;
             },
@@ -93,13 +93,18 @@ export function SelectResponse({ form, t, multi }) {
                 withItemBorder
                 listRender={
                   <ListItem
-                    labels={{ cancel: t('cancel'), saveChanges: t('saveChanges') }}
+                    labels={{
+                      cancel: t("cancel"),
+                      saveChanges: t("saveChanges"),
+                    }}
                     itemContainerRender={({ children }) => (
                       <Stack alignItems="center" fullWidth>
                         {children}
                       </Stack>
                     )}
-                    itemValueRender={<ListItemValueRender t={t} withImages={withImages} />}
+                    itemValueRender={
+                      <ListItemValueRender t={t} withImages={withImages} />
+                    }
                   />
                 }
                 hideAddButton
@@ -111,7 +116,7 @@ export function SelectResponse({ form, t, multi }) {
                   onClick={() => setShowInput(true)}
                   leftIcon={<AddCircleIcon />}
                 >
-                  {t('addResponse')}
+                  {t("addResponse")}
                 </Button>
               ) : null}
             </>
@@ -125,15 +130,15 @@ export function SelectResponse({ form, t, multi }) {
               control={form.control}
               shouldUnregister
               name="properties.minResponses"
-              rules={{ required: t('minResponsesRequired') }}
+              rules={{ required: t("minResponsesRequired") }}
               render={({ field }) => (
-                <Box style={{ width: '100%' }}>
+                <Box style={{ width: "100%" }}>
                   <NumberInput
                     required
                     disabled={!responses.length}
                     min={1}
                     max={maxResponses || responses.length}
-                    label={t('minResponses')}
+                    label={t("minResponses")}
                     error={form.formState.errors.properties?.minResponses}
                     {...field}
                   />
@@ -145,15 +150,15 @@ export function SelectResponse({ form, t, multi }) {
               control={form.control}
               name="properties.maxResponses"
               shouldUnregister
-              rules={{ required: t('maxResponsesRequired') }}
+              rules={{ required: t("maxResponsesRequired") }}
               render={({ field }) => (
-                <Box style={{ width: '100%' }}>
+                <Box style={{ width: "100%" }}>
                   <NumberInput
                     required
                     disabled={!responses.length}
                     min={minResponses || 1}
                     max={responses.length}
-                    label={t('maxResponses')}
+                    label={t("maxResponses")}
                     error={form.formState.errors.properties?.maxResponses}
                     {...field}
                   />

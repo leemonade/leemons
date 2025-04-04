@@ -1,34 +1,37 @@
-import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 
-import ActivityHeader from '@assignables/components/ActivityHeader';
+import ActivityHeader from "@assignables/components/ActivityHeader";
 import {
   ActivityUnavailable,
   useActivityStates,
-} from '@assignables/components/ActivityUnavailable';
-import getNextActivityUrl from '@assignables/helpers/getNextActivityUrl';
-import getAssignableInstance from '@assignables/requests/assignableInstances/getAssignableInstance';
-import getAssignation from '@assignables/requests/assignations/getAssignation';
+} from "@assignables/components/ActivityUnavailable";
+import getNextActivityUrl from "@assignables/helpers/getNextActivityUrl";
+import getAssignableInstance from "@assignables/requests/assignableInstances/getAssignableInstance";
+import getAssignation from "@assignables/requests/assignations/getAssignation";
 import {
   LoadingOverlay,
   VerticalStepperContainer,
   TotalLayoutContainer,
-} from '@bubbles-ui/components';
-import { useStore } from '@common';
-import { addErrorAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { getCentersWithToken } from '@users/session';
+} from "@bubbles-ui/components";
+import { useStore } from "@common";
+import { addErrorAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { getCentersWithToken } from "@users/session";
 
-import IntroductionStep from './components/IntroductionStep';
-import QuestionsStep from './components/QuestionsStep';
+import IntroductionStep from "./components/IntroductionStep";
+import QuestionsStep from "./components/QuestionsStep";
 
-import prefixPN from '@feedback/helpers/prefixPN';
-import { getFeedbackRequest, getUserAssignableResponsesRequest } from '@feedback/request';
-import { setInstanceTimestamp } from '@feedback/request/feedback';
+import prefixPN from "@feedback/helpers/prefixPN";
+import {
+  getFeedbackRequest,
+  getUserAssignableResponsesRequest,
+} from "@feedback/request";
+import { setInstanceTimestamp } from "@feedback/request/feedback";
 
 const STEPS = {
-  INTRODUCTION: 'introduction',
-  QUESTIONS: 'questions',
+  INTRODUCTION: "introduction",
+  QUESTIONS: "questions",
 };
 
 const STEPS_INDEX = {
@@ -37,11 +40,11 @@ const STEPS_INDEX = {
 };
 
 const StudentInstance = () => {
-  const [t] = useTranslateLoader(prefixPN('studentInstance'));
+  const [t] = useTranslateLoader(prefixPN("studentInstance"));
   const [step, setStep] = useState(STEPS.INTRODUCTION);
   const [store, render] = useStore({
     loading: true,
-    idLoaded: '',
+    idLoaded: "",
     showingWelcome: true,
     modalMode: 0,
   });
@@ -60,7 +63,7 @@ const StudentInstance = () => {
   });
 
   const advanceToQuestions = () => {
-    setInstanceTimestamp(params.id, 'start', getUserId());
+    setInstanceTimestamp(params.id, "start", getUserId());
     setStep(STEPS.QUESTIONS);
   };
 
@@ -78,7 +81,7 @@ const StudentInstance = () => {
         getAssignableInstance({ id: params.id }),
         getAssignation({ id: params.id, user: getUserId() }),
         getUserAssignableResponsesRequest(params.id),
-        setInstanceTimestamp(params.id, 'open', getUserId()),
+        setInstanceTimestamp(params.id, "open", getUserId()),
       ]);
 
       let canStart = true;
@@ -94,12 +97,14 @@ const StudentInstance = () => {
 
       store.nextActivityUrl = await getNextActivityUrl(store.assignation);
       const hasNextActivity =
-        store.assignation?.instance?.relatedAssignableInstances?.after?.length > 0 &&
-        store.nextActivityUrl;
+        store.assignation?.instance?.relatedAssignableInstances?.after?.length >
+          0 && store.nextActivityUrl;
       store.modalMode = getModalMode(showResults, hasNextActivity);
 
       store.canStart = canStart;
-      store.feedback = (await getFeedbackRequest(store.instance.assignable.id)).feedback;
+      store.feedback = (
+        await getFeedbackRequest(store.instance.assignable.id)
+      ).feedback;
       store.idLoaded = params.id;
       store.loading = false;
 
@@ -138,12 +143,16 @@ const StudentInstance = () => {
         scrollRef={scrollRef}
         currentStep={STEPS_INDEX[step]}
         data={[
-          { label: t('feedbackIntroductoryText'), status: 'OK' },
-          { label: t('questions'), status: 'OK', isBlocked: isUnavailable },
+          { label: t("feedbackIntroductoryText"), status: "OK" },
+          { label: t("questions"), status: "OK", isBlocked: isUnavailable },
         ]}
       >
         {isUnavailable && (
-          <ActivityUnavailable instance={store.instance} user={getUserId()} scrollRef={scrollRef} />
+          <ActivityUnavailable
+            instance={store.instance}
+            user={getUserId()}
+            scrollRef={scrollRef}
+          />
         )}
         {!isUnavailable && step === STEPS.INTRODUCTION && (
           <IntroductionStep

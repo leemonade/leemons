@@ -1,14 +1,14 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function createFeedbackQuestion({ data, published, ctx }) {
   const { tags, clues, properties, ...props } = data;
 
-  if (data.type === 'singleResponse' || data.type === 'multiResponse') {
+  if (data.type === "singleResponse" || data.type === "multiResponse") {
     if (properties.withImages) {
       const promises = [];
       _.forEach(properties.responses, (response, index) => {
         promises.push(
-          ctx.tx.call('leebrary.assets.add', {
+          ctx.tx.call("leebrary.assets.add", {
             asset: {
               name: `Image question Response ${index}`,
               cover: response.value.image,

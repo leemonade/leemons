@@ -1,10 +1,16 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { validateSaveFeedback } = require('../../validations/forms');
-const { updateFeedbackQuestion } = require('../feedback-questions/updateFeedbackQuestion');
-const { createFeedbackQuestion } = require('../feedback-questions/createFeedbackQuestion');
-const { deleteFeedbackQuestions } = require('../feedback-questions/deleteFeedbackQuestions');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { validateSaveFeedback } = require("../../validations/forms");
+const {
+  updateFeedbackQuestion,
+} = require("../feedback-questions/updateFeedbackQuestion");
+const {
+  createFeedbackQuestion,
+} = require("../feedback-questions/createFeedbackQuestion");
+const {
+  deleteFeedbackQuestions,
+} = require("../feedback-questions/deleteFeedbackQuestions");
 
 async function saveFeedback({ data: _data, ctx }) {
   const { userSession } = ctx.meta;
@@ -27,7 +33,9 @@ async function saveFeedback({ data: _data, ctx }) {
   });
   // Check is userSession is provided
   if (!userSession)
-    throw new LeemonsError(ctx, { message: 'User session is required (saveFeedback)' });
+    throw new LeemonsError(ctx, {
+      message: "User session is required (saveFeedback)",
+    });
   validateSaveFeedback(data);
   const { questions, published } = data;
 
@@ -42,7 +50,7 @@ async function saveFeedback({ data: _data, ctx }) {
       indexable: true,
       public: true, // TODO Cambiar a false despues de la demo
     },
-    role: 'feedback',
+    role: "feedback",
     statement: data.introductoryText,
     subjects: _.map(data.subjects, ({ level, subject }) => ({
       level,
@@ -60,7 +68,7 @@ async function saveFeedback({ data: _data, ctx }) {
 
   if (data.id) {
     delete toSave.role;
-    assignable = await ctx.tx.call('assignables.assignables.updateAssignable', {
+    assignable = await ctx.tx.call("assignables.assignables.updateAssignable", {
       assignable: { id: data.id, ...toSave },
     });
 
@@ -70,7 +78,7 @@ async function saveFeedback({ data: _data, ctx }) {
       });
     }
   } else {
-    assignable = await ctx.tx.call('assignables.assignables.createAssignable', {
+    assignable = await ctx.tx.call("assignables.assignables.createAssignable", {
       assignable: toSave,
       published: data.published,
     });
@@ -79,28 +87,28 @@ async function saveFeedback({ data: _data, ctx }) {
   let featuredImage = null;
   if (assignable.metadata.featuredImage) {
     if (data.featuredImage) {
-      featuredImage = await ctx.tx.call('leebrary.assets.update', {
+      featuredImage = await ctx.tx.call("leebrary.assets.update", {
         data: {
           id: assignable.metadata.featuredImage,
           name: `Image feedback - ${assignable.id}`,
           cover: data.featuredImage,
-          description: '',
+          description: "",
           indexable: false,
           public: true,
         },
         published,
       });
     } else {
-      await ctx.tx.call('leebrary.assets.remove', {
+      await ctx.tx.call("leebrary.assets.remove", {
         id: assignable.metadata.featuredImage,
       });
     }
   } else if (data.featuredImage) {
-    featuredImage = await ctx.tx.call('leebrary.assets.add', {
+    featuredImage = await ctx.tx.call("leebrary.assets.add", {
       asset: {
         name: `Image feedback - ${assignable.id}`,
         cover: data.featuredImage,
-        description: '',
+        description: "",
         indexable: false,
         public: true,
       },
@@ -109,17 +117,19 @@ async function saveFeedback({ data: _data, ctx }) {
   }
 
   toSave.metadata.featuredImage = featuredImage?.id;
-  assignable = await ctx.tx.call('assignables.assignables.updateAssignable', {
+  assignable = await ctx.tx.call("assignables.assignables.updateAssignable", {
     assignable: { id: assignable.id, ...toSave },
     published: data.published,
   });
 
-  const currentQuestions = await ctx.tx.db.FeedbackQuestions.find({ assignable: assignable.id })
-    .select(['id'])
+  const currentQuestions = await ctx.tx.db.FeedbackQuestions.find({
+    assignable: assignable.id,
+  })
+    .select(["id"])
     .lean();
 
   // -- Questions --
-  const currentQuestionsIds = _.map(currentQuestions, 'id');
+  const currentQuestionsIds = _.map(currentQuestions, "id");
   const questionsToCreate = [];
   const questionsToUpdate = [];
   const questionsToDelete = [];

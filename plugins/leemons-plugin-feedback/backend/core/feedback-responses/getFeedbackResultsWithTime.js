@@ -1,7 +1,9 @@
-const { forEach, groupBy, map } = require('lodash');
+const { forEach, groupBy, map } = require("lodash");
 
 async function getFeedbackResultsWithTime({ instanceId, ctx }) {
-  const feedbackDates = await ctx.tx.db.FeedbackDates.find({ instance: instanceId }).lean();
+  const feedbackDates = await ctx.tx.db.FeedbackDates.find({
+    instance: instanceId,
+  }).lean();
 
   const datesObject = {};
   forEach(feedbackDates, (feedbackDate) => {
@@ -19,7 +21,7 @@ async function getFeedbackResultsWithTime({ instanceId, ctx }) {
       ...value,
       response: JSON.parse(value.response || null),
     })),
-    'userAgent'
+    "userAgent"
   );
 
   forEach(Object.entries(datesObject), ([key, value]) => {

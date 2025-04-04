@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { Box, Stack, Text } from '@bubbles-ui/components';
-import NetPromoterScoreResponseStyles from './NetPromoterScoreResponse.styles';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { Box, Stack, Text } from "@bubbles-ui/components";
+import NetPromoterScoreResponseStyles from "./NetPromoterScoreResponse.styles";
 
 const NetPromoterScoreResponse = (props) => {
   const { question, defaultValue } = props;
-  const [selectedValue, setSelectedValue] = useState('');
-  const { classes } = NetPromoterScoreResponseStyles({}, { name: 'NetPromoterScoreResponse' });
+  const [selectedValue, setSelectedValue] = useState("");
+  const { classes } = NetPromoterScoreResponseStyles(
+    {},
+    { name: "NetPromoterScoreResponse" }
+  );
 
   const handleSelectValue = (value) => {
     if (value !== selectedValue) setSelectedValue(value);
@@ -20,7 +23,9 @@ const NetPromoterScoreResponse = (props) => {
       numberElements.push(
         <Box>
           <Box
-            className={isSelected ? classes.selectedNumberElement : classes.numberElement}
+            className={
+              isSelected ? classes.selectedNumberElement : classes.numberElement
+            }
             sx={(theme) =>
               i === selectedValue
                 ? {

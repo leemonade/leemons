@@ -1,17 +1,23 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { ContextContainer, Text, TextInput, Stack, Alert } from '@bubbles-ui/components';
-import { Controller } from 'react-hook-form';
+import React from "react";
+import PropTypes from "prop-types";
+import {
+  ContextContainer,
+  Text,
+  TextInput,
+  Stack,
+  Alert,
+} from "@bubbles-ui/components";
+import { Controller } from "react-hook-form";
 
 // eslint-disable-next-line import/prefer-default-export
 export function NetPromoterScore({ form, t }) {
   return (
     <ContextContainer style={{ marginTop: 32 }}>
       <Text color="primary" role="productive" stronger size="md">
-        {t('npsSettings')}
+        {t("npsSettings")}
       </Text>
       <Alert severity="info" closeable={false} title="Info">
-        {t('npsInfo')}
+        {t("npsInfo")}
       </Alert>
       <Stack spacing={2} direction="column" style={{ marginBottom: 40 }}>
         <Controller
@@ -20,9 +26,9 @@ export function NetPromoterScore({ form, t }) {
           name="properties.notLikely"
           render={({ field }) => (
             <TextInput
-              label={'1'}
+              label={"1"}
               orientation="horizontal"
-              headerStyle={{ justifyContent: 'center', width: 20 }}
+              headerStyle={{ justifyContent: "center", width: 20 }}
               contentStyle={{ maxWidth: 370 }}
               {...field}
             />
@@ -34,9 +40,9 @@ export function NetPromoterScore({ form, t }) {
           name="properties.veryLikely"
           render={({ field }) => (
             <TextInput
-              label={'10'}
+              label={"10"}
               orientation="horizontal"
-              headerStyle={{ justifyContent: 'center', width: 20 }}
+              headerStyle={{ justifyContent: "center", width: 20 }}
               contentStyle={{ maxWidth: 370 }}
               {...field}
             />

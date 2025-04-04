@@ -1,11 +1,17 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { ContextContainer, Text, TextInput, NumberInput, Stack } from '@bubbles-ui/components';
-import { Controller } from 'react-hook-form';
+import React from "react";
+import PropTypes from "prop-types";
+import {
+  ContextContainer,
+  Text,
+  TextInput,
+  NumberInput,
+  Stack,
+} from "@bubbles-ui/components";
+import { Controller } from "react-hook-form";
 
 // eslint-disable-next-line import/prefer-default-export
 export function LikertScale({ form, t }) {
-  const maxLabels = form.watch('properties.maxLabels');
+  const maxLabels = form.watch("properties.maxLabels");
 
   const renderLabelInputs = () => {
     const labelInputs = [];
@@ -19,8 +25,8 @@ export function LikertScale({ form, t }) {
             <TextInput
               label={`${i + 1}`}
               orientation="horizontal"
-              placeholder={t('labelsPlaceholder')}
-              headerStyle={{ justifyContent: 'center', width: 20 }}
+              placeholder={t("labelsPlaceholder")}
+              headerStyle={{ justifyContent: "center", width: 20 }}
               contentStyle={{ maxWidth: 370 }}
               {...field}
             />
@@ -34,17 +40,17 @@ export function LikertScale({ form, t }) {
   return (
     <ContextContainer style={{ marginTop: 32 }}>
       <Text color="primary" role="productive" stronger size="md">
-        {t('likertSettings')}
+        {t("likertSettings")}
       </Text>
       <Stack spacing={4}>
         <NumberInput
-          label={t('maxLabelsFrom')}
+          label={t("maxLabelsFrom")}
           orientation="horizontal"
           value={1}
           min={1}
           max={1}
           disabled
-          headerStyle={{ justifyContent: 'center', width: 'auto' }}
+          headerStyle={{ justifyContent: "center", width: "auto" }}
           contentStyle={{ width: 60 }}
         />
         <Controller
@@ -53,12 +59,12 @@ export function LikertScale({ form, t }) {
           name="properties.maxLabels"
           render={({ field }) => (
             <NumberInput
-              label={t('maxLabelsTo')}
+              label={t("maxLabelsTo")}
               orientation="horizontal"
               step={2}
               min={3}
               max={7}
-              headerStyle={{ justifyContent: 'center', width: 'auto' }}
+              headerStyle={{ justifyContent: "center", width: "auto" }}
               contentStyle={{ width: 60 }}
               {...field}
             />

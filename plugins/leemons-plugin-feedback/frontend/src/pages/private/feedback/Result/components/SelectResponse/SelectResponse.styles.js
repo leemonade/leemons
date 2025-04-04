@@ -1,19 +1,19 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 const SelectResponseStyles = createStyles((theme) => ({
   root: {
     backgroundColor: theme.colors.interactive03,
-    height: '100vh',
+    height: "100vh",
   },
   container: {
     paddingBottom: 24,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderBottomRightRadius: 8,
     borderBottomLeftRadius: 8,
   },
   question: {
-    display: 'flex',
-    alignItems: 'flex-end',
+    display: "flex",
+    alignItems: "flex-end",
   },
   questionImage: {
     height: 50,
@@ -28,8 +28,8 @@ const SelectResponseStyles = createStyles((theme) => ({
     borderRadius: 4,
   },
   percentageBar: {
-    height: '100%',
-    backgroundColor: '#76CEC1',
+    height: "100%",
+    backgroundColor: "#76CEC1",
     borderRadius: 4,
   },
 }));

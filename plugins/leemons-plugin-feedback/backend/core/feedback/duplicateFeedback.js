@@ -1,20 +1,24 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
+const _ = require("lodash");
 
-const getQuestionsByFeedbackIds = require('../feedback-questions/getQuestionsByFeedbackIds');
+const getQuestionsByFeedbackIds = require("../feedback-questions/getQuestionsByFeedbackIds");
 
 async function duplicateFeedback({ id, published, ctx }) {
-  const newAssignable = await ctx.tx.call('assignables.assignables.duplicateAssignable', {
-    assignableId: id,
-    published: false, // forced to false to avoid the creation of different versions of the assignable when updating later in this function
-  });
+  const newAssignable = await ctx.tx.call(
+    "assignables.assignables.duplicateAssignable",
+    {
+      assignableId: id,
+      published: false, // forced to false to avoid the creation of different versions of the assignable when updating later in this function
+    }
+  );
 
   const questions = await getQuestionsByFeedbackIds({ id, ctx });
 
   const assetIds = [];
   _.forEach(questions, (question) => {
     if (
-      (question.type === 'singleResponse' || question.type === 'multiResponse') &&
+      (question.type === "singleResponse" ||
+        question.type === "multiResponse") &&
       question.properties.withImages
     ) {
       _.forEach(question.properties.responses, ({ value }) => {
@@ -26,7 +30,7 @@ async function duplicateFeedback({ id, published, ctx }) {
   const promises = [];
   _.forEach(assetIds, (assetId) => {
     promises.push(
-      ctx.tx.call('leebrary.assets.duplicate', {
+      ctx.tx.call("leebrary.assets.duplicate", {
         assetId,
         preserveName: true,
       })
@@ -39,7 +43,8 @@ async function duplicateFeedback({ id, published, ctx }) {
     delete question._id;
     question.assignable = newAssignable.id;
     if (
-      (question.type === 'singleResponse' || question.type === 'multiResponse') &&
+      (question.type === "singleResponse" ||
+        question.type === "multiResponse") &&
       question.properties.withImages
     ) {
       _.forEach(question.properties.responses, ({ value }, index) => {
@@ -53,12 +58,12 @@ async function duplicateFeedback({ id, published, ctx }) {
   await ctx.tx.db.FeedbackQuestions.insertMany(newQuestions);
 
   if (newAssignable.metadata.featuredImage) {
-    const newFeaturedImage = await ctx.tx.call('leebrary.assets.duplicate', {
+    const newFeaturedImage = await ctx.tx.call("leebrary.assets.duplicate", {
       assetId: newAssignable.metadata.featuredImage,
       preserveName: true,
     });
     newAssignable.metadata.featuredImage = newFeaturedImage.id;
-    await ctx.tx.call('assignables.assignables.updateAssignable', {
+    await ctx.tx.call("assignables.assignables.updateAssignable", {
       assignable: newAssignable,
       published,
     });

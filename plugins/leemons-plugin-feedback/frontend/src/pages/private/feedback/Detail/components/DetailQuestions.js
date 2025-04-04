@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { map, noop } from 'lodash';
-import { Controller } from 'react-hook-form';
+import React from "react";
+import PropTypes from "prop-types";
+import { map, noop } from "lodash";
+import { Controller } from "react-hook-form";
 import {
   ActionButton,
   Alert,
@@ -15,15 +15,19 @@ import {
   DropdownButton,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
-} from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
-import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import { AddCircleIcon, EditWriteIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import { useStore } from '@common';
-import { getQuestionForTable } from '@feedback/helpers/getQuestionForTable';
-import DetailQuestionForm from '@feedback/pages/private/feedback/Detail/components/DetailQuestionForm';
-import { useLayout } from '@layout/context';
-import ImagePicker from '@leebrary/components/ImagePicker';
+} from "@bubbles-ui/components";
+import { TextEditorInput } from "@bubbles-ui/editors";
+import { ChevLeftIcon } from "@bubbles-ui/icons/outline";
+import {
+  AddCircleIcon,
+  EditWriteIcon,
+  DeleteBinIcon,
+} from "@bubbles-ui/icons/solid";
+import { useStore } from "@common";
+import { getQuestionForTable } from "@feedback/helpers/getQuestionForTable";
+import DetailQuestionForm from "@feedback/pages/private/feedback/Detail/components/DetailQuestionForm";
+import { useLayout } from "@layout/context";
+import ImagePicker from "@leebrary/components/ImagePicker";
 
 export default function DetailQuestions({
   t,
@@ -61,13 +65,13 @@ export default function DetailQuestions({
   }
 
   function onSaveQuestion(question) {
-    const currentQuestions = form.getValues('questions') || [];
+    const currentQuestions = form.getValues("questions") || [];
     if (qStore.questionIndex !== null && qStore.questionIndex >= 0) {
       currentQuestions[qStore.questionIndex] = question;
     } else {
       currentQuestions.push(question);
     }
-    form.setValue('questions', currentQuestions);
+    form.setValue("questions", currentQuestions);
     qStore.questionChanged++;
     qRender();
     onCancel();
@@ -76,16 +80,16 @@ export default function DetailQuestions({
   function editQuestion(index) {
     qStore.questionIndex = index;
     qStore.questionChanged++;
-    qStore.question = (form.getValues('questions') || [])[index];
+    qStore.question = (form.getValues("questions") || [])[index];
     qRender();
   }
 
   function deleteQuestion(index) {
     openDeleteConfirmationModal({
       onConfirm: async () => {
-        const newQuestions = form.getValues('questions') || [];
+        const newQuestions = form.getValues("questions") || [];
         newQuestions.splice(index, 1);
-        form.setValue('questions', newQuestions);
+        form.setValue("questions", newQuestions);
         qStore.questionChanged++;
         qRender();
       },
@@ -140,26 +144,26 @@ export default function DetailQuestions({
 
   const tableHeaders = [
     {
-      Header: t('questionLabel'),
-      accessor: 'question',
-      className: 'text-left',
+      Header: t("questionLabel"),
+      accessor: "question",
+      className: "text-left",
       editable: false,
     },
     {
-      Header: t('responsesLabel'),
-      accessor: 'responses',
-      className: 'text-left',
+      Header: t("responsesLabel"),
+      accessor: "responses",
+      className: "text-left",
       editable: false,
     },
     {
-      Header: t('typeLabel'),
-      accessor: 'type',
-      className: 'text-left',
+      Header: t("typeLabel"),
+      accessor: "type",
+      className: "text-left",
       editable: false,
     },
     {
-      Header: t('actionsHeader'),
-      accessor: 'actions',
+      Header: t("actionsHeader"),
+      accessor: "actions",
       editable: false,
     },
   ];
@@ -177,7 +181,7 @@ export default function DetailQuestions({
               leftIcon={<ChevLeftIcon height={20} width={20} />}
               onClick={onPrev}
             >
-              {t('previous')}
+              {t("previous")}
             </Button>
           }
           rightZone={
@@ -187,35 +191,42 @@ export default function DetailQuestions({
                   variant="link"
                   onClick={() => tryHandler(onSave)}
                   disabled={store.saving}
-                  loading={store.saving === 'draft'}
+                  loading={store.saving === "draft"}
                 >
-                  {t('saveDraft')}
+                  {t("saveDraft")}
                 </Button>
               ) : null}
               <DropdownButton
                 chevronUp
                 width="auto"
                 data={[
-                  { label: t('publish'), onClick: () => tryHandler(onPublish) },
-                  { label: t('publishAndAssign'), onClick: () => tryHandler(onAssign) },
+                  { label: t("publish"), onClick: () => tryHandler(onPublish) },
+                  {
+                    label: t("publishAndAssign"),
+                    onClick: () => tryHandler(onAssign),
+                  },
                 ]}
-                loading={store.saving === 'publish'}
+                loading={store.saving === "publish"}
                 disabled={store.saving}
               >
-                {t('finish')}
+                {t("finish")}
               </DropdownButton>
             </>
           }
         />
       }
     >
-      <ContextContainer title={t('questions')}>
+      <ContextContainer title={t("questions")}>
         <Controller
           control={form.control}
           name="featuredImage"
           render={({ field }) => (
-            <InputWrapper label={t('featuredImage')}>
-              <ImagePicker required error={form.formState.errors.featuredImage} {...field} />
+            <InputWrapper label={t("featuredImage")}>
+              <ImagePicker
+                required
+                error={form.formState.errors.featuredImage}
+                {...field}
+              />
             </InputWrapper>
           )}
         />
@@ -223,13 +234,15 @@ export default function DetailQuestions({
         <Controller
           control={form.control}
           name="introductoryText"
-          rules={{ required: t('introductoryTextRequired') }}
+          rules={{ required: t("introductoryTextRequired") }}
           render={({ field }) => (
             <TextEditorInput
               required
-              error={qStore.isDirty ? form.formState.errors.introductoryText : null}
-              editorStyles={{ minHeight: '96px' }}
-              label={t('introductoryText')}
+              error={
+                qStore.isDirty ? form.formState.errors.introductoryText : null
+              }
+              editorStyles={{ minHeight: "96px" }}
+              label={t("introductoryText")}
               {...field}
             />
           )}
@@ -238,13 +251,15 @@ export default function DetailQuestions({
         <Controller
           control={form.control}
           name="thanksMessage"
-          rules={{ required: t('thanksMessageRequired') }}
+          rules={{ required: t("thanksMessageRequired") }}
           render={({ field }) => (
             <Textarea
               required
-              error={qStore.isDirty ? form.formState.errors.thanksMessage : null}
+              error={
+                qStore.isDirty ? form.formState.errors.thanksMessage : null
+              }
               minRows={3}
-              label={t('thanksMessage')}
+              label={t("thanksMessage")}
               {...field}
             />
           )}
@@ -259,13 +274,17 @@ export default function DetailQuestions({
             columns={tableHeaders}
             data={questionsForTable}
             onChange={(data) => {
-              form.setValue('questions', map(data, 'goodQuestion'));
+              form.setValue("questions", map(data, "goodQuestion"));
             }}
           />
         ) : null}
         <Box>
-          <Button variant="link" leftIcon={<AddCircleIcon />} onClick={addQuestion}>
-            {t('addQuestion')}
+          <Button
+            variant="link"
+            leftIcon={<AddCircleIcon />}
+            onClick={addQuestion}
+          >
+            {t("addQuestion")}
           </Button>
         </Box>
         {qStore.trySend && form.formState.errors.questions ? (

@@ -1,16 +1,27 @@
-import { useEffect, useCallback } from 'react';
-import { useForm, FormProvider, Controller } from 'react-hook-form';
+import { useEffect, useCallback } from "react";
+import { useForm, FormProvider, Controller } from "react-hook-form";
 
-import { useFormLocalizations } from '@assignables/components/Assignment/Form';
-import { OtherOptions } from '@assignables/components/Assignment/components/OtherOptions';
-import { Box, Button, TotalLayoutFooterContainer, ContextContainer } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+import { useFormLocalizations } from "@assignables/components/Assignment/Form";
+import { OtherOptions } from "@assignables/components/Assignment/components/OtherOptions";
+import {
+  Box,
+  Button,
+  TotalLayoutFooterContainer,
+  ContextContainer,
+} from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
-export default function AssignmentDrawer({ assignable, value, onSave, onClose, scrollRef }) {
+export default function AssignmentDrawer({
+  assignable,
+  value,
+  onSave,
+  onClose,
+  scrollRef,
+}) {
   const form = useForm({ defaultValues: value });
   const localizations = useFormLocalizations();
 
-  useEffect(() => form.setValue('dates.alwaysAvailable', true));
+  useEffect(() => form.setValue("dates.alwaysAvailable", true));
 
   const onSubmit = useCallback(
     form.handleSubmit((values) =>
@@ -50,7 +61,9 @@ export default function AssignmentDrawer({ assignable, value, onSave, onClose, s
           style={{ right: 0 }}
           scrollRef={scrollRef}
           width={728}
-          rightZone={<Button onClick={onSubmit}>{localizations?.buttons?.save}</Button>}
+          rightZone={
+            <Button onClick={onSubmit}>{localizations?.buttons?.save}</Button>
+          }
           leftZone={
             <Button variant="link" onClick={onClose}>
               {localizations?.buttons?.cancel}

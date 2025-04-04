@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 import {
   FEEDBACK_CARD_ICON_PROP_TYPES,
   FEEDBACK_CARD_ICON_DEFAULT_PROPS,
-} from './FeedbackCardIcon.constants';
+} from "./FeedbackCardIcon.constants";
 
 const FeedbackCardIcon = ({ width, height, color }) => (
   <svg
@@ -26,6 +26,6 @@ const FeedbackCardIcon = ({ width, height, color }) => (
 FeedbackCardIcon.defaultProps = FEEDBACK_CARD_ICON_DEFAULT_PROPS;
 FeedbackCardIcon.propTypes = FEEDBACK_CARD_ICON_PROP_TYPES;
 
-FeedbackCardIcon.displayName = 'FeedbackCardIcon';
+FeedbackCardIcon.displayName = "FeedbackCardIcon";
 export default FeedbackCardIcon;
 export { FeedbackCardIcon };

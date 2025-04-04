@@ -4,13 +4,13 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator } = require('@leemons/validator');
-const _ = require('lodash');
+const { LeemonsValidator } = require("@leemons/validator");
+const _ = require("lodash");
 
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 const {
   saveFeedback,
   getFeedback,
@@ -18,27 +18,27 @@ const {
   duplicateFeedback,
   assignFeedback,
   setInstanceTimestamp,
-} = require('../../core/feedback');
+} = require("../../core/feedback");
 const {
   setQuestionResponse,
   getUserAssignableResponses,
   getFeedbackResults,
   getFeedbackResultsWithTime,
-} = require('../../core/feedback-responses');
+} = require("../../core/feedback-responses");
 
 /** @type {ServiceSchema} */
 module.exports = {
   saveFeedbackRest: {
     rest: {
-      method: 'POST',
-      path: '/',
+      method: "POST",
+      path: "/",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'feedback.feedback': {
-            actions: ['admin', 'create', 'update'],
+          "feedback.feedback": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),
@@ -53,8 +53,8 @@ module.exports = {
   },
   getFeedbackRest: {
     rest: {
-      method: 'GET',
-      path: '/:id',
+      method: "GET",
+      path: "/:id",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -67,15 +67,15 @@ module.exports = {
   },
   deleteFeedbackRest: {
     rest: {
-      method: 'DELETE',
-      path: '/:id',
+      method: "DELETE",
+      path: "/:id",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'feedback.feedback': {
-            actions: ['admin', 'delete'],
+          "feedback.feedback": {
+            actions: ["admin", "delete"],
           },
         },
       }),
@@ -90,15 +90,15 @@ module.exports = {
   },
   duplicateFeedbackRest: {
     rest: {
-      method: 'POST',
-      path: '/duplicate',
+      method: "POST",
+      path: "/duplicate",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'feedback.feedback': {
-            actions: ['admin', 'create', 'update'],
+          "feedback.feedback": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),
@@ -113,15 +113,15 @@ module.exports = {
   },
   assignFeedbackRest: {
     rest: {
-      method: 'POST',
-      path: '/assign',
+      method: "POST",
+      path: "/assign",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'feedback.feedback': {
-            actions: ['admin', 'create', 'update'],
+          "feedback.feedback": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),
@@ -136,8 +136,8 @@ module.exports = {
   },
   setInstanceTimestampRest: {
     rest: {
-      method: 'POST',
-      path: '/instance/timestamp',
+      method: "POST",
+      path: "/instance/timestamp",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -152,8 +152,8 @@ module.exports = {
   },
   setQuestionResponseRest: {
     rest: {
-      method: 'POST',
-      path: '/instance/question/response',
+      method: "POST",
+      path: "/instance/question/response",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -166,8 +166,8 @@ module.exports = {
   },
   getUserAssignableResponsesRest: {
     rest: {
-      method: 'GET',
-      path: '/instance/responses/:id',
+      method: "GET",
+      path: "/instance/responses/:id",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -180,8 +180,8 @@ module.exports = {
   },
   getFeedbackResultsRest: {
     rest: {
-      method: 'GET',
-      path: '/results/:id',
+      method: "GET",
+      path: "/results/:id",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -194,8 +194,8 @@ module.exports = {
   },
   getFeedbackResultsWithTimeRest: {
     rest: {
-      method: 'GET',
-      path: '/results/time/:id',
+      method: "GET",
+      path: "/results/time/:id",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

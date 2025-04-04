@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   Box,
   Button,
@@ -7,10 +7,10 @@ import {
   Stack,
   InputWrapper,
   TextInput,
-} from '@bubbles-ui/components';
-import { useStore } from '@common';
-import ImagePicker from '@leebrary/components/ImagePicker';
-import { noop } from 'lodash';
+} from "@bubbles-ui/components";
+import { useStore } from "@common";
+import ImagePicker from "@leebrary/components/ImagePicker";
+import { noop } from "lodash";
 
 // eslint-disable-next-line import/prefer-default-export
 export function ListInputRender({
@@ -26,7 +26,9 @@ export function ListInputRender({
   const [useButton, setUseButton] = React.useState(!value);
   const inputRef = React.useRef(null);
   React.useEffect(() => {
-    const isValueSaved = responsesSaved?.some((response) => response.value === value);
+    const isValueSaved = responsesSaved?.some(
+      (response) => response.value === value
+    );
     setUseButton(!isValueSaved);
   }, []);
 
@@ -97,13 +99,13 @@ export function ListInputRender({
         <ContextContainer>
           <Stack fullWidth spacing={4}>
             <Box>
-              <InputWrapper label={`${t('imageLabel')} *`}>
+              <InputWrapper label={`${t("imageLabel")} *`}>
                 <ImagePicker value={store.image} onChange={onChangeImage} />
               </InputWrapper>
             </Box>
             <Box>
               <TextInput
-                label={t('caption')}
+                label={t("caption")}
                 value={store.imageDescription}
                 onChange={onChangeImageDescription}
               />
@@ -112,10 +114,10 @@ export function ListInputRender({
           {useButton ? (
             <Stack justifyContent="end" spacing={4}>
               <Button variant="link" onClick={onCancel}>
-                {t('cancel')}
+                {t("cancel")}
               </Button>
               <Button variant="outline" onClick={add}>
-                {t('saveResponse')}
+                {t("saveResponse")}
               </Button>
             </Stack>
           ) : null}
@@ -130,12 +132,14 @@ export function ListInputRender({
         <Box>
           <TextInput
             value={store.response}
-            label={t('responseLabel')}
+            label={t("responseLabel")}
             onChange={onChangeResponse}
-            error={store.dirty && !store.response ? t('responseRequired') : null}
+            error={
+              store.dirty && !store.response ? t("responseRequired") : null
+            }
             ref={inputRef}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && useButton) {
+              if (e.key === "Enter" && useButton) {
                 add();
               }
             }}
@@ -144,10 +148,10 @@ export function ListInputRender({
         {useButton ? (
           <Stack justifyContent="end" spacing={4}>
             <Button variant="link" onClick={onCancel}>
-              {t('cancel')}
+              {t("cancel")}
             </Button>
             <Button variant="outline" onClick={add}>
-              {t('saveResponse')}
+              {t("saveResponse")}
             </Button>
           </Stack>
         ) : null}

@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { Box, Stack, Text } from '@bubbles-ui/components';
-import LikertResponseStyles from './LikertResponse.styles';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { Box, Stack, Text } from "@bubbles-ui/components";
+import LikertResponseStyles from "./LikertResponse.styles";
 
 const LikertResponse = (props) => {
   const { question, defaultValue } = props;
   const [selectedValue, setSelectedValue] = useState(null);
-  const { classes } = LikertResponseStyles({}, { name: 'LikertResponse' });
+  const { classes } = LikertResponseStyles({}, { name: "LikertResponse" });
 
   const getLabelPosition = (index, maxLabels) => {
-    if (index === 0) return 'flex-start';
-    if (index === maxLabels - 1) return 'flex-end';
-    return 'center';
+    if (index === 0) return "flex-start";
+    if (index === maxLabels - 1) return "flex-end";
+    return "center";
   };
 
   const handleSelectValue = (value) => {
@@ -27,7 +27,9 @@ const LikertResponse = (props) => {
       numberElements.push(
         <Box>
           <Box
-            className={isSelected ? classes.selectedNumberElement : classes.numberElement}
+            className={
+              isSelected ? classes.selectedNumberElement : classes.numberElement
+            }
             sx={(theme) =>
               i === selectedValue
                 ? {
@@ -42,8 +44,16 @@ const LikertResponse = (props) => {
               {i + 1}
             </Text>
           </Box>
-          <Stack style={{ marginTop: 6 }} fullWidth justifyContent={getLabelPosition(i, maxLabels)}>
-            <Text color="primary" role="productive" className={classes.likertLabel}>
+          <Stack
+            style={{ marginTop: 6 }}
+            fullWidth
+            justifyContent={getLabelPosition(i, maxLabels)}
+          >
+            <Text
+              color="primary"
+              role="productive"
+              className={classes.likertLabel}
+            >
               {question.properties[`likertLabel${i}`]}
             </Text>
           </Stack>

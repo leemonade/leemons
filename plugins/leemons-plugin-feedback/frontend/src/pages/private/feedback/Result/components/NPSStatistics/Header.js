@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Text } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, Text } from "@bubbles-ui/components";
 
 function Header({ classes, className, cx, title, avg, total, color }) {
   return (
@@ -8,9 +8,9 @@ function Header({ classes, className, cx, title, avg, total, color }) {
       <Box>
         <Text
           sx={(theme) => ({
-            ...theme.other.global.content.typo.heading['xsm--semiBold'],
-            fontSize: '12px',
-            lineHeight: '16px',
+            ...theme.other.global.content.typo.heading["xsm--semiBold"],
+            fontSize: "12px",
+            lineHeight: "16px",
           })}
         >
           {title}
@@ -19,9 +19,9 @@ function Header({ classes, className, cx, title, avg, total, color }) {
       <Box>
         <Text
           sx={(theme) => ({
-            ...theme.other.global.content.typo.heading['xsm--semiBold'],
-            fontSize: '12px',
-            lineHeight: '16px',
+            ...theme.other.global.content.typo.heading["xsm--semiBold"],
+            fontSize: "12px",
+            lineHeight: "16px",
           })}
         >
           {Math.trunc(avg)}%
@@ -29,9 +29,9 @@ function Header({ classes, className, cx, title, avg, total, color }) {
         &nbsp;
         <Text
           sx={(theme) => ({
-            ...theme.other.global.content.typo.heading['xsm--semiBold'],
-            fontSize: '12px',
-            lineHeight: '16px',
+            ...theme.other.global.content.typo.heading["xsm--semiBold"],
+            fontSize: "12px",
+            lineHeight: "16px",
           })}
         >
           ({total})

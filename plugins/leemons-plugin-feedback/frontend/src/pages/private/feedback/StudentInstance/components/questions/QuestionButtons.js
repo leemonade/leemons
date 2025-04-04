@@ -1,12 +1,21 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { isNil } from 'lodash';
-import { Box, Button, Stack } from '@bubbles-ui/components';
-import { ChevronLeftIcon, ChevronRightIcon } from '@bubbles-ui/icons/outline';
+import React from "react";
+import PropTypes from "prop-types";
+import { isNil } from "lodash";
+import { Box, Button, Stack } from "@bubbles-ui/components";
+import { ChevronLeftIcon, ChevronRightIcon } from "@bubbles-ui/icons/outline";
 
-function QuestionButtons({ t, viewMode, feedback, question, value, currentIndex, onNext, onPrev }) {
+function QuestionButtons({
+  t,
+  viewMode,
+  feedback,
+  question,
+  value,
+  currentIndex,
+  onNext,
+  onPrev,
+}) {
   const hasValue = React.useMemo(() => {
-    if (question.type === 'multiResponse') {
+    if (question.type === "multiResponse") {
       return value.length >= question.properties.minResponses;
     }
     return !isNil(value);
@@ -18,10 +27,10 @@ function QuestionButtons({ t, viewMode, feedback, question, value, currentIndex,
   );
 
   const nextText = React.useMemo(() => {
-    if (isLast) return t('sendFeedback');
-    if (question.required) return t('next');
-    if (hasValue) return t('next');
-    return t('skip');
+    if (isLast) return t("sendFeedback");
+    if (question.required) return t("next");
+    if (hasValue) return t("next");
+    return t("skip");
   }, [question, hasValue, isLast]);
 
   const disabled = question.required && !hasValue;
@@ -41,7 +50,7 @@ function QuestionButtons({ t, viewMode, feedback, question, value, currentIndex,
           compact
           onClick={onPrev}
         >
-          {t('back')}
+          {t("back")}
         </Button>
       ) : (
         <Box />
@@ -53,7 +62,7 @@ function QuestionButtons({ t, viewMode, feedback, question, value, currentIndex,
           rightIcon={<ChevronRightIcon />}
           rounded
           compact
-          variant={!isLast ? 'outline' : null}
+          variant={!isLast ? "outline" : null}
           onClick={() => {
             if (!disabled) onNext(hasValue ? value : undefined);
           }}

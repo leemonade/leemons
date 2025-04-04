@@ -1,14 +1,19 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { ContextContainer, Text, NumberInput, Stack } from '@bubbles-ui/components';
-import { Controller } from 'react-hook-form';
+import React from "react";
+import PropTypes from "prop-types";
+import {
+  ContextContainer,
+  Text,
+  NumberInput,
+  Stack,
+} from "@bubbles-ui/components";
+import { Controller } from "react-hook-form";
 
 // eslint-disable-next-line import/prefer-default-export
 export function OpenResponse({ form, t }) {
   return (
     <ContextContainer style={{ marginTop: 32 }}>
       <Text color="primary" role="productive" stronger size="md">
-        {t('openResponseSettings')}
+        {t("openResponseSettings")}
       </Text>
       <Stack spacing={2} direction="column" style={{ marginBottom: 40 }}>
         <Controller
@@ -17,10 +22,10 @@ export function OpenResponse({ form, t }) {
           name="properties.maxCharacters"
           render={({ field }) => (
             <NumberInput
-              label={t('maxCharacters')}
+              label={t("maxCharacters")}
               orientation="horizontal"
               max={2000}
-              headerStyle={{ justifyContent: 'center', width: 'auto' }}
+              headerStyle={{ justifyContent: "center", width: "auto" }}
               contentStyle={{ maxWidth: 100 }}
               {...field}
             />

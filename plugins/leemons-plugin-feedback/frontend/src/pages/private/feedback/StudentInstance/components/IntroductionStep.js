@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 import {
   Button,
@@ -7,15 +7,15 @@ import {
   TotalLayoutFooterContainer,
   ContextContainer,
   Box,
-} from '@bubbles-ui/components';
-import { ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { LeebraryImage } from '@leebrary/components';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { LeebraryImage } from "@leebrary/components";
+import PropTypes from "prop-types";
 
 const featuredImageStyle = {
-  width: '100%',
-  height: 'auto',
-  objectFit: 'contain',
+  width: "100%",
+  height: "auto",
+  objectFit: "contain",
 };
 
 const IntroductionStep = ({ feedback, instance, t, onNext, scrollRef }) => {
@@ -30,8 +30,12 @@ const IntroductionStep = ({ feedback, instance, t, onNext, scrollRef }) => {
           fixed
           scrollRef={scrollRef}
           rightZone={
-            <Button variant="outline" rightIcon={<ChevRightIcon />} onClick={handleOnNext}>
-              {t('next')}
+            <Button
+              variant="outline"
+              rightIcon={<ChevRightIcon />}
+              onClick={handleOnNext}
+            >
+              {t("next")}
             </Button>
           }
         />
@@ -40,15 +44,21 @@ const IntroductionStep = ({ feedback, instance, t, onNext, scrollRef }) => {
       <Box>
         <ContextContainer>
           {!!instance?.metadata?.statement && (
-            <ContextContainer title={t('instructions')} justifyContent="start">
+            <ContextContainer title={t("instructions")} justifyContent="start">
               <HtmlText>{instance.metadata?.statement}</HtmlText>
             </ContextContainer>
           )}
-          <ContextContainer title={t('feedbackIntroductoryText')} justifyContent="start">
+          <ContextContainer
+            title={t("feedbackIntroductoryText")}
+            justifyContent="start"
+          >
             <HtmlText>{feedback.introductoryText}</HtmlText>
 
             {feedback.featuredImage ? (
-              <LeebraryImage src={feedback.featuredImage.id} style={featuredImageStyle} />
+              <LeebraryImage
+                src={feedback.featuredImage.id}
+                style={featuredImageStyle}
+              />
             ) : null}
           </ContextContainer>
         </ContextContainer>

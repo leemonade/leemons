@@ -1,13 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   Button,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
-} from '@bubbles-ui/components';
-import { ChevRightIcon } from '@bubbles-ui/icons/outline';
-import AssetFormInput from '@leebrary/components/AssetFormInput';
-import { noop } from 'lodash';
+} from "@bubbles-ui/components";
+import { ChevRightIcon } from "@bubbles-ui/icons/outline";
+import AssetFormInput from "@leebrary/components/AssetFormInput";
+import { noop } from "lodash";
 
 export default function DetailBasic({
   t,
@@ -20,7 +20,7 @@ export default function DetailBasic({
   advancedConfig,
 }) {
   const formValues = form.watch();
-  const validate = async () => form.trigger(['name']);
+  const validate = async () => form.trigger(["name"]);
 
   const handleOnNext = async () => {
     if (await validate()) {
@@ -48,9 +48,9 @@ export default function DetailBasic({
                   variant="link"
                   onClick={handleOnSave}
                   disabled={store.saving}
-                  loading={store.saving === 'draft'}
+                  loading={store.saving === "draft"}
                 >
-                  {t('saveDraft')}
+                  {t("saveDraft")}
                 </Button>
               ) : null}
 
@@ -58,9 +58,9 @@ export default function DetailBasic({
                 rightIcon={<ChevRightIcon height={20} width={20} />}
                 onClick={handleOnNext}
                 disabled={store.saving}
-                loading={store.saving === 'publish'}
+                loading={store.saving === "publish"}
               >
-                {t('continue')}
+                {t("continue")}
               </Button>
             </>
           }

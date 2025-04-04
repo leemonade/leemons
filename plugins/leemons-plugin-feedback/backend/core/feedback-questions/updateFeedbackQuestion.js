@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function updateFeedbackQuestion({ data, published, ctx }) {
   const { id, properties, ...props } = data;
@@ -7,7 +7,7 @@ async function updateFeedbackQuestion({ data, published, ctx }) {
 
   // Si el tipo es mapa, comprobamos si ya existia un asset, si ya existia lo actualizamos, si no existia lo creamos.
 
-  if (data.type === 'singleResponse' || data.type === 'multiResponse') {
+  if (data.type === "singleResponse" || data.type === "multiResponse") {
     const toRemove = [];
     _.forEach(question.properties.responses, (response) => {
       if (response.value.image) {
@@ -19,7 +19,7 @@ async function updateFeedbackQuestion({ data, published, ctx }) {
       const promises = [];
       _.forEach(properties.responses, (response, index) => {
         promises.push(
-          ctx.tx.call('leebrary.assets.add', {
+          ctx.tx.call("leebrary.assets.add", {
             asset: {
               name: `Image question Response ${index}`,
               cover: response.value.image,
@@ -38,7 +38,9 @@ async function updateFeedbackQuestion({ data, published, ctx }) {
     }
 
     if (toRemove.length) {
-      await Promise.all(_.map(toRemove, (r) => ctx.tx.call('leebrary.assets.remove', { id: r })));
+      await Promise.all(
+        _.map(toRemove, (r) => ctx.tx.call("leebrary.assets.remove", { id: r }))
+      );
     }
   }
 

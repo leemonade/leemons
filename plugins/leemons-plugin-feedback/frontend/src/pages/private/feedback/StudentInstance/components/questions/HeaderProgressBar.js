@@ -1,31 +1,31 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, createStyles, Text } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, createStyles, Text } from "@bubbles-ui/components";
 
 export const Styles = createStyles((theme) => ({
   questionStep: {
-    width: '210px',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
+    width: "210px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
   questionStepBar: {
-    width: '100%',
-    height: '8px',
+    width: "100%",
+    height: "8px",
     backgroundColor: theme.colors.uiBackground02,
     borderRadius: 8,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   questionStepBaInner: {
-    height: '8px',
+    height: "8px",
     backgroundColor: theme.colors.mainBlack,
   },
   questionStepNumbers: {
     paddingLeft: theme.spacing[3],
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 'none',
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    flex: "none",
   },
 }));
 

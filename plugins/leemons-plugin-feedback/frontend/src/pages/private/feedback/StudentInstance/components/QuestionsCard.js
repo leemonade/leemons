@@ -5,35 +5,35 @@ import {
   ProgressBottomBar,
   TotalLayoutFooterContainer,
   TotalLayoutStepContainer,
-} from '@bubbles-ui/components';
-import { ChevronLeftIcon, ChevronRightIcon } from '@bubbles-ui/icons/outline';
-import { useStore } from '@common';
-import prefixPN from '@feedback/helpers/prefixPN';
-import QuestionTitle from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionTitle';
-import SelectResponseQuestion from '@feedback/pages/private/feedback/StudentInstance/components/questions/SelectResponseQuestion';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PropTypes from 'prop-types';
-import React from 'react';
+} from "@bubbles-ui/components";
+import { ChevronLeftIcon, ChevronRightIcon } from "@bubbles-ui/icons/outline";
+import { useStore } from "@common";
+import prefixPN from "@feedback/helpers/prefixPN";
+import QuestionTitle from "@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionTitle";
+import SelectResponseQuestion from "@feedback/pages/private/feedback/StudentInstance/components/questions/SelectResponseQuestion";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
+import React from "react";
 
-import { setInstanceTimestamp } from '@feedback/request/feedback';
-import LikertResponse from './LikertResponse';
-import NetPromoterScoreResponse from './NetPromoterScoreResponse';
-import OpenResponse from './OpenResponse';
+import { setInstanceTimestamp } from "@feedback/request/feedback";
+import LikertResponse from "./LikertResponse";
+import NetPromoterScoreResponse from "./NetPromoterScoreResponse";
+import OpenResponse from "./OpenResponse";
 
 export const Styles = createStyles((theme, { viewMode }) => ({
   container: {
-    maxWidth: viewMode ? '100%' : 768,
-    width: '100%',
-    margin: '0px auto',
+    maxWidth: viewMode ? "100%" : 768,
+    width: "100%",
+    margin: "0px auto",
     marginTop: 45,
   },
   header: {
     height: 56,
     borderRadius: 4,
     backgroundColor: theme.colors.uiBackground01,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingLeft: theme.spacing[5],
     paddingRight: theme.spacing[5],
     marginBottom: theme.spacing[2],
@@ -65,7 +65,9 @@ function QuestionsCard({
   setShowIntroduction,
 }) {
   const { classes } = Styles({ viewMode });
-  const [t, translations] = useTranslateLoader(prefixPN('feedbackResponseQuestion'));
+  const [t, translations] = useTranslateLoader(
+    prefixPN("feedbackResponseQuestion")
+  );
   const [store, render] = useStore({
     maxIndex: 0,
     currentIndex: 0,
@@ -87,7 +89,7 @@ function QuestionsCard({
       if (store.currentIndex > store.maxIndex) {
         store.maxIndex = store.currentIndex;
       }
-    } else if (!viewMode) setInstanceTimestamp(instanceId, 'end', userId);
+    } else if (!viewMode) setInstanceTimestamp(instanceId, "end", userId);
 
     render();
   }
@@ -107,26 +109,42 @@ function QuestionsCard({
         <TotalLayoutFooterContainer
           scrollRef={scrollRef}
           rightZone={
-            <Box sx={{ minWidth: '120px' }}>
+            <Box sx={{ minWidth: "120px" }}>
               {!isLast && (
-                <Button variant="outline" rightIcon={<ChevronRightIcon />} onClick={onNext}>
-                  {t('next')}
+                <Button
+                  variant="outline"
+                  rightIcon={<ChevronRightIcon />}
+                  onClick={onNext}
+                >
+                  {t("next")}
                 </Button>
               )}
             </Box>
           }
           leftZone={
-            <Button variant="outline" leftIcon={<ChevronLeftIcon />} onClick={onPrev}>
-              {t('back')}
+            <Button
+              variant="outline"
+              leftIcon={<ChevronLeftIcon />}
+              onClick={onPrev}
+            >
+              {t("back")}
             </Button>
           }
         >
-          <Box sx={() => ({ display: 'flex', justifyContent: 'center', marginLeft: '24px' })}>
-            <Box sx={() => ({ maxWidth: '280px', width: '100%' })}>
+          <Box
+            sx={() => ({
+              display: "flex",
+              justifyContent: "center",
+              marginLeft: "24px",
+            })}
+          >
+            <Box sx={() => ({ maxWidth: "280px", width: "100%" })}>
               <ProgressBottomBar
                 size="md"
                 labelTop={`${store.currentIndex + 1} / ${feedback.questions.length}`}
-                value={((store.currentIndex + 1) / feedback.questions.length) * 100}
+                value={
+                  ((store.currentIndex + 1) / feedback.questions.length) * 100
+                }
               />
             </Box>
           </Box>

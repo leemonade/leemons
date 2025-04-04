@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState } from "react";
 import {
   Box,
   Button,
@@ -8,17 +8,17 @@ import {
   TotalLayoutHeader,
   AssetFeedbackIcon,
   VerticalStepperContainer,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 // TODO: fix this import from @common plugin
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@feedback/helpers/prefixPN';
-import { useStore } from '@common';
-import { useHistory, useParams, Link } from 'react-router-dom';
-import { addErrorAlert } from '@layout/alert';
-import { ChevRightIcon, EditIcon } from '@bubbles-ui/icons/outline';
-import { getFeedbackRequest } from '@feedback/request';
-import QuestionsCard from '@feedback/pages/private/feedback/StudentInstance/components/QuestionsCard';
-import IntroductionStep from '../StudentInstance/components/IntroductionStep';
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@feedback/helpers/prefixPN";
+import { useStore } from "@common";
+import { useHistory, useParams, Link } from "react-router-dom";
+import { addErrorAlert } from "@layout/alert";
+import { ChevRightIcon, EditIcon } from "@bubbles-ui/icons/outline";
+import { getFeedbackRequest } from "@feedback/request";
+import QuestionsCard from "@feedback/pages/private/feedback/StudentInstance/components/QuestionsCard";
+import IntroductionStep from "../StudentInstance/components/IntroductionStep";
 
 const PreviewPageStyles = createStyles((theme) => ({
   firstTableHeader: {
@@ -38,24 +38,24 @@ const PreviewPageStyles = createStyles((theme) => ({
   showTestBar: {
     backgroundColor: theme.colors.uiBackground01,
     padding: theme.spacing[4],
-    display: 'flex',
-    justifyContent: 'end',
+    display: "flex",
+    justifyContent: "end",
   },
   returnToTable: {
-    display: 'flex',
-    alignItems: 'center',
-    cursor: 'pointer',
+    display: "flex",
+    alignItems: "center",
+    cursor: "pointer",
   },
 }));
 
 export default function Preview() {
-  const [tP, t1V] = useTranslateLoader(prefixPN('feedbackPreview'));
-  const [tD, t2V] = useTranslateLoader(prefixPN('feedbackDetail'));
-  const { classes, cx } = PreviewPageStyles({}, { name: 'FeedbackPreview' });
+  const [tP, t1V] = useTranslateLoader(prefixPN("feedbackPreview"));
+  const [tD, t2V] = useTranslateLoader(prefixPN("feedbackDetail"));
+  const { classes, cx } = PreviewPageStyles({}, { name: "FeedbackPreview" });
   const scrollRef = useRef();
   const [showIntroduction, setShowIntroduction] = useState(true);
-  const isModulePreview = window?.location?.href?.includes('moduleId');
-  const moduleId = window?.location?.href?.split('moduleId=')[1];
+  const isModulePreview = window?.location?.href?.includes("moduleId");
+  const moduleId = window?.location?.href?.split("moduleId=")[1];
 
   const [store, render] = useStore({
     loading: true,
@@ -148,7 +148,13 @@ export default function Preview() {
   }
 
   React.useEffect(() => {
-    if (params?.id && (!store.currentId || store.currentId !== params.id) && t1V && t2V) init();
+    if (
+      params?.id &&
+      (!store.currentId || store.currentId !== params.id) &&
+      t1V &&
+      t2V
+    )
+      init();
   }, [params, t1V, t2V]);
 
   const advanceToQuestions = () => {
@@ -167,15 +173,17 @@ export default function Preview() {
         >
           {isModulePreview ? (
             <Link to={`/private/learning-paths/modules/${moduleId}/view`}>
-              <Button variant="outline">{tP('goBackToDashboardPreview')}</Button>
+              <Button variant="outline">
+                {tP("goBackToDashboardPreview")}
+              </Button>
             </Link>
           ) : (
-            <Box style={{ display: 'flex', gap: 16 }}>
+            <Box style={{ display: "flex", gap: 16 }}>
               <Button variant="outline" onClick={() => goEditPage()}>
-                {tP('edit')}
+                {tP("edit")}
               </Button>
               <Button variant="primary" onClick={() => goAssignPage()}>
-                {tP('assign')}
+                {tP("assign")}
               </Button>
             </Box>
           )}
@@ -185,7 +193,7 @@ export default function Preview() {
       <Stack
         justifyContent="center"
         ref={scrollRef}
-        style={{ overflow: 'auto' }}
+        style={{ overflow: "auto" }}
         fullWidth
         fullHeight
       >
@@ -193,8 +201,8 @@ export default function Preview() {
           scrollRef={scrollRef}
           currentStep={showIntroduction ? 0 : 1}
           data={[
-            { label: 'Introduction', status: 'OK' },
-            { label: 'Questions', status: 'OK' },
+            { label: "Introduction", status: "OK" },
+            { label: "Questions", status: "OK" },
           ]}
         >
           {showIntroduction ? (

@@ -1,4 +1,4 @@
-const permissionsPrefix = 'feedback';
+const permissionsPrefix = "feedback";
 
 const permissionNames = {
   feedback: `${permissionsPrefix}.feedback`,
@@ -7,10 +7,10 @@ const permissionNames = {
 const permissions = [
   {
     permissionName: permissionNames.feedback,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
+    actions: ["view", "update", "create", "delete", "admin"],
     localizationName: {
-      es: 'Feedback',
-      en: 'Feedback',
+      es: "Feedback",
+      en: "Feedback",
     },
   },
 ];
@@ -20,19 +20,19 @@ const menuItems = [
   {
     removed: true,
     item: {
-      key: 'feedback',
+      key: "feedback",
       order: 305,
-      iconSvg: '/public/feedback/menu-icon-active.svg',
-      activeIconSvg: '/public/feedback/menu-icon-active.svg',
+      iconSvg: "/public/feedback/menu-icon-active.svg",
+      activeIconSvg: "/public/feedback/menu-icon-active.svg",
       label: {
-        en: 'Surveys',
-        es: 'Encuestas',
+        en: "Surveys",
+        es: "Encuestas",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.feedback,
-        actionNames: ['view', 'admin'],
+        actionNames: ["view", "admin"],
       },
     ],
   },
@@ -40,19 +40,19 @@ const menuItems = [
   {
     removed: true,
     item: {
-      key: 'feedback-list',
+      key: "feedback-list",
       order: 2,
       parentKey: `${permissionsPrefix}.feedback`,
-      url: '/private/feedback',
+      url: "/private/feedback",
       label: {
-        en: 'Feedback library',
-        es: 'Biblioteca de encuestas',
+        en: "Feedback library",
+        es: "Biblioteca de encuestas",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.feedback,
-        actionNames: ['view', 'admin'],
+        actionNames: ["view", "admin"],
       },
     ],
   },
@@ -60,19 +60,19 @@ const menuItems = [
   {
     removed: true,
     item: {
-      key: 'feedback-new',
+      key: "feedback-new",
       order: 3,
       parentKey: `${permissionsPrefix}.feedback`,
-      url: '/private/feedback/new',
+      url: "/private/feedback/new",
       label: {
-        en: 'New survey',
-        es: 'Nueva encuesta',
+        en: "New survey",
+        es: "Nueva encuesta",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.feedback,
-        actionNames: ['create', 'admin'],
+        actionNames: ["create", "admin"],
       },
     ],
   },
@@ -80,40 +80,40 @@ const menuItems = [
 
 const assignableRoles = [
   {
-    role: 'feedback',
+    role: "feedback",
     options: {
-      teacherDetailUrl: '/private/feedback/detail/:id',
-      studentDetailUrl: '/private/feedback/student/:id/:user',
-      evaluationDetailUrl: '/private/feedback/result/:id/:user',
-      dashboardUrl: '/private/feedback/result/:id',
-      previewUrl: '/private/feedback/preview/:id',
+      teacherDetailUrl: "/private/feedback/detail/:id",
+      studentDetailUrl: "/private/feedback/student/:id/:user",
+      evaluationDetailUrl: "/private/feedback/result/:id/:user",
+      dashboardUrl: "/private/feedback/result/:id",
+      previewUrl: "/private/feedback/preview/:id",
       creatable: true,
-      createUrl: '/private/feedback/new',
+      createUrl: "/private/feedback/new",
       canUse: [], // Assignables le calza 'calledFrom ('tasks')' y 'assignables'
-      pluralName: { en: 'surveys', es: 'encuestas' },
-      singularName: { en: 'survey', es: 'encuesta' },
+      pluralName: { en: "surveys", es: "encuestas" },
+      singularName: { en: "survey", es: "encuesta" },
       order: 5,
       menu: {
         item: {
-          iconSvg: '/public/feedback/menu-icon.svg',
-          activeIconSvg: '/public/feedback/menu-icon-active.svg',
+          iconSvg: "/public/feedback/menu-icon.svg",
+          activeIconSvg: "/public/feedback/menu-icon-active.svg",
           label: {
-            en: 'Surveys',
-            es: 'Encuestas',
+            en: "Surveys",
+            es: "Encuestas",
           },
         },
         permissions: [
           {
             permissionName: permissionNames.feedback,
-            actionNames: ['view', 'admin'],
+            actionNames: ["view", "admin"],
           },
         ],
       },
 
-      componentOwner: 'feedback',
-      listCardComponent: 'FeedbackListCard',
-      detailComponent: 'FeedbackDetail',
-      type: 'activity',
+      componentOwner: "feedback",
+      listCardComponent: "FeedbackListCard",
+      detailComponent: "FeedbackDetail",
+      type: "activity",
     },
   },
 ];

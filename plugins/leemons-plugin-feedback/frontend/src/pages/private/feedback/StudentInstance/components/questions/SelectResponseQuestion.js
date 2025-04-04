@@ -1,64 +1,64 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, createStyles, Text } from '@bubbles-ui/components';
-import { useStore } from '@common';
-import QuestionButtons from '@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionButtons';
-import { LeebraryImage } from '@leebrary/components';
-import { isArray, isNil } from 'lodash';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, createStyles, Text } from "@bubbles-ui/components";
+import { useStore } from "@common";
+import QuestionButtons from "@feedback/pages/private/feedback/StudentInstance/components/questions/QuestionButtons";
+import { LeebraryImage } from "@leebrary/components";
+import { isArray, isNil } from "lodash";
 
 export const Styles = createStyles((theme) => ({
   response: {
-    cursor: 'pointer',
+    cursor: "pointer",
     padding: `${theme.spacing[4]}px ${theme.spacing[5]}px`,
     border: `1px solid ${theme.colors.ui01}`,
     marginBottom: theme.spacing[2],
     borderRadius: 4,
-    '&:hover': {
-      borderColor: theme.other.core.color.neutral['300'],
-      backgroundColor: theme.other.core.color.primary['100'],
+    "&:hover": {
+      borderColor: theme.other.core.color.neutral["300"],
+      backgroundColor: theme.other.core.color.primary["100"],
     },
-    '&:last-child': {
+    "&:last-child": {
       marginBottom: 0,
     },
   },
   responseActive: {
-    borderColor: theme.other.core.color.neutral['300'],
-    backgroundColor: `${theme.other.core.color.primary['200']} !important`,
+    borderColor: theme.other.core.color.neutral["300"],
+    backgroundColor: `${theme.other.core.color.primary["200"]} !important`,
   },
   questionResponseImageContainer: {
-    border: '1px solid',
+    border: "1px solid",
     borderColor: theme.colors.ui01,
     borderRadius: 4,
-    overflow: 'hidden',
-    cursor: 'pointer',
+    overflow: "hidden",
+    cursor: "pointer",
     padding: theme.spacing[3],
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%',
-    position: 'relative',
+    display: "flex",
+    flexDirection: "column",
+    width: "100%",
+    position: "relative",
   },
   questionResponseImageTextContent: {
     paddingTop: theme.spacing[3],
   },
   questionResponseImageContent: {
-    width: '100%',
-    position: 'relative',
-    paddingBottom: '100%',
+    width: "100%",
+    position: "relative",
+    paddingBottom: "100%",
   },
   questionResponseImage: {
-    width: '100%',
-    height: '100%',
-    display: 'block',
-    position: 'absolute',
+    width: "100%",
+    height: "100%",
+    display: "block",
+    position: "absolute",
     left: 0,
     top: 0,
-    objectFit: 'contain',
+    objectFit: "contain",
   },
   questionResponsesContainerImages: {
-    display: 'grid',
-    flexDirection: 'row',
-    gridTemplateColumns: 'repeat(4, 1fr)',
+    display: "grid",
+    flexDirection: "row",
+    gridTemplateColumns: "repeat(4, 1fr)",
     gap: theme.spacing[3],
   },
 }));
@@ -90,7 +90,11 @@ function SelectResponseQuestion(props) {
   }
 
   React.useEffect(() => {
-    store.value = isNil(defaultValue) ? [] : isArray(defaultValue) ? defaultValue : [defaultValue];
+    store.value = isNil(defaultValue)
+      ? []
+      : isArray(defaultValue)
+        ? defaultValue
+        : [defaultValue];
     render();
   }, [defaultValue, question]);
 
@@ -101,7 +105,11 @@ function SelectResponseQuestion(props) {
   return (
     <Box>
       <Box
-        className={question.properties.withImages ? classes.questionResponsesContainerImages : null}
+        className={
+          question.properties.withImages
+            ? classes.questionResponsesContainerImages
+            : null
+        }
       >
         {question.properties.responses.map(({ value }, index) => {
           if (question.properties.withImages) {
@@ -117,7 +125,10 @@ function SelectResponseQuestion(props) {
                 }}
               >
                 <Box className={classes.questionResponseImageContent}>
-                  <LeebraryImage className={classes.questionResponseImage} src={value.image} />
+                  <LeebraryImage
+                    className={classes.questionResponseImage}
+                    src={value.image}
+                  />
                 </Box>
                 {value.imageDescription ? (
                   <Box className={classes.questionResponseImageTextContent}>

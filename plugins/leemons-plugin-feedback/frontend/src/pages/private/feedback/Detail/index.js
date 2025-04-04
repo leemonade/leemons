@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
-import React from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import React from "react";
+import { useHistory, useParams } from "react-router-dom";
 import {
   LoadingOverlay,
   TotalLayoutContainer,
@@ -8,20 +8,20 @@ import {
   useDebouncedCallback,
   VerticalStepperContainer,
   AssetFeedbackIcon,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 // TODO: fix this import from @common plugin
-import { useStore } from '@common';
-import prefixPN from '@feedback/helpers/prefixPN';
-import { getFeedbackRequest, saveFeedbackRequest } from '@feedback/request';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useStore } from "@common";
+import prefixPN from "@feedback/helpers/prefixPN";
+import { getFeedbackRequest, saveFeedbackRequest } from "@feedback/request";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
 
-import DetailBasic from '@feedback/pages/private/feedback/Detail/components/DetailBasic';
-import DetailQuestions from '@feedback/pages/private/feedback/Detail/components/DetailQuestions';
-import { useForm } from 'react-hook-form';
+import DetailBasic from "@feedback/pages/private/feedback/Detail/components/DetailBasic";
+import DetailQuestions from "@feedback/pages/private/feedback/Detail/components/DetailQuestions";
+import { useForm } from "react-hook-form";
 
 export default function Index() {
-  const [t] = useTranslateLoader(prefixPN('feedbackDetail'));
+  const [t] = useTranslateLoader(prefixPN("feedbackDetail"));
 
   // ----------------------------------------------------------------------
   // SETTINGS
@@ -45,7 +45,7 @@ export default function Index() {
 
   async function saveAsDraft() {
     try {
-      store.saving = 'draft';
+      store.saving = "draft";
       render();
       const body = { ...formValues };
       // Only for drafts allow missing required properties
@@ -54,8 +54,11 @@ export default function Index() {
 
       delete body.roleDetails;
 
-      const { feedback } = await saveFeedbackRequest({ ...body, published: false });
-      addSuccessAlert(t('savedAsDraft'));
+      const { feedback } = await saveFeedbackRequest({
+        ...body,
+        published: false,
+      });
+      addSuccessAlert(t("savedAsDraft"));
       history.replace(`/private/feedback/${feedback.id}`);
     } catch (error) {
       addErrorAlert(error);
@@ -66,16 +69,19 @@ export default function Index() {
 
   async function saveAsPublish(goAssign) {
     try {
-      store.saving = 'publish';
+      store.saving = "publish";
       render();
       const body = formValues;
       delete body.roleDetails;
-      const { feedback } = await saveFeedbackRequest({ ...body, published: true });
-      addSuccessAlert(t('published'));
+      const { feedback } = await saveFeedbackRequest({
+        ...body,
+        published: true,
+      });
+      addSuccessAlert(t("published"));
       if (goAssign) {
         history.push(`/private/feedback/assign/${feedback.id}`);
       } else {
-        history.push('/private/feedback');
+        history.push("/private/feedback");
       }
     } catch (error) {
       addErrorAlert(error);
@@ -90,7 +96,7 @@ export default function Index() {
   async function init() {
     try {
       store.loading = true;
-      store.isNew = params.id === 'new';
+      store.isNew = params.id === "new";
       render();
       if (!store.isNew) {
         const {
@@ -132,11 +138,11 @@ export default function Index() {
     if (params?.id && store.idLoaded !== params?.id) init();
   }, [params]);
 
-  form.register('questions', {
-    required: t('questionRequired'),
+  form.register("questions", {
+    required: t("questionRequired"),
     validate: (value) => {
       if (!value?.length) {
-        return t('questionRequired');
+        return t("questionRequired");
       }
       return undefined;
     },
@@ -154,8 +160,8 @@ export default function Index() {
   }, []);
 
   const getTitle = () => {
-    if (store.isNew) return t('pageTitleNew');
-    return t('pageTitle');
+    if (store.isNew) return t("pageTitleNew");
+    return t("pageTitle");
   };
 
   // ························································
@@ -172,9 +178,11 @@ export default function Index() {
         <TotalLayoutHeader
           icon={<AssetFeedbackIcon />}
           title={getTitle()}
-          formTitlePlaceholder={formValues.name ? formValues.name : t('pageSubHeaderPlaceholder')}
+          formTitlePlaceholder={
+            formValues.name ? formValues.name : t("pageSubHeaderPlaceholder")
+          }
           onCancel={() => history.goBack()}
-          mainActionLabel={t('cancel')}
+          mainActionLabel={t("cancel")}
         />
       }
     >
@@ -182,8 +190,8 @@ export default function Index() {
         scrollRef={scrollRef}
         currentStep={store.currentStep}
         data={[
-          { label: t('basic'), status: 'OK' },
-          { label: t('questions'), status: 'OK' },
+          { label: t("basic"), status: "OK" },
+          { label: t("questions"), status: "OK" },
         ]}
       >
         {store.currentStep === 0 && (
@@ -191,7 +199,7 @@ export default function Index() {
             t={t}
             form={form}
             store={store}
-            stepName={t('basic')}
+            stepName={t("basic")}
             scrollRef={scrollRef}
             onSave={saveAsDraft}
             onNext={() => setStep(1)}
@@ -202,7 +210,7 @@ export default function Index() {
             t={t}
             form={form}
             store={store}
-            stepName={t('questions')}
+            stepName={t("questions")}
             scrollRef={scrollRef}
             onSave={saveAsDraft}
             onPublish={saveAsPublish}

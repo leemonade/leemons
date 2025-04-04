@@ -1,1 +1,1 @@
-export * from './AssetMetadataFeedback';
+export * from "./AssetMetadataFeedback";

@@ -1,5 +1,5 @@
-import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
-import { cloneDeep, forEach, isString, merge, set } from 'lodash';
+import uploadFileAsMultipart from "@leebrary/helpers/uploadFileAsMultipart";
+import { cloneDeep, forEach, isString, merge, set } from "lodash";
 
 async function saveFeedback(_body) {
   const body = cloneDeep(_body);
@@ -40,7 +40,9 @@ async function saveFeedback(_body) {
       } else if (_body.cover.id) {
         data.cover = _body.cover.id;
       } else {
-        form.cover = await uploadFileAsMultipart(_body.cover, { name: _body.cover.name });
+        form.cover = await uploadFileAsMultipart(_body.cover, {
+          name: _body.cover.name,
+        });
       }
     }
     if (_body.featuredImage) {
@@ -56,10 +58,13 @@ async function saveFeedback(_body) {
         });
       }
     }
-    const uploadQuestionFilesPromises = questionsFiles.map(({ index, name, file }) =>
-      uploadFileAsMultipart(file, { name: file.name }).then((uploadedFile) => {
-        set(form, `questions[${index}].${name}`, uploadedFile);
-      })
+    const uploadQuestionFilesPromises = questionsFiles.map(
+      ({ index, name, file }) =>
+        uploadFileAsMultipart(file, { name: file.name }).then(
+          (uploadedFile) => {
+            set(form, `questions[${index}].${name}`, uploadedFile);
+          }
+        )
     );
     await Promise.all(uploadQuestionFilesPromises);
     form = merge(data, form);
@@ -67,9 +72,9 @@ async function saveFeedback(_body) {
     form = merge(body, form);
   }
 
-  return leemons.api('v1/feedback/feedback', {
+  return leemons.api("v1/feedback/feedback", {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: form,
   });
 }
@@ -77,21 +82,21 @@ async function saveFeedback(_body) {
 async function getFeedback(id) {
   return leemons.api(`v1/feedback/feedback/${id}`, {
     allAgents: true,
-    method: 'GET',
+    method: "GET",
   });
 }
 
 async function deleteFeedback(id) {
   return leemons.api(`v1/feedback/feedback/${id}`, {
     allAgents: true,
-    method: 'DELETE',
+    method: "DELETE",
   });
 }
 
 async function duplicateFeedback(id, published) {
   return leemons.api(`v1/feedback/feedback/duplicate`, {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: {
       id,
       published,
@@ -102,7 +107,7 @@ async function duplicateFeedback(id, published) {
 async function assignFeedback(id, data) {
   return leemons.api(`v1/feedback/feedback/assign`, {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: {
       id,
       data,
@@ -113,7 +118,7 @@ async function assignFeedback(id, data) {
 async function setQuestionResponse(questionId, instanceId, value) {
   return leemons.api(`v1/feedback/feedback/instance/question/response`, {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: {
       questionId,
       instanceId,
@@ -125,7 +130,7 @@ async function setQuestionResponse(questionId, instanceId, value) {
 async function setInstanceTimestamp(instance, timeKey, user) {
   return leemons.api(`v1/feedback/feedback/instance/timestamp`, {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: {
       instance,
       timeKey,
@@ -135,26 +140,32 @@ async function setInstanceTimestamp(instance, timeKey, user) {
 }
 
 async function getUserAssignableResponses(instanceId) {
-  const { responses } = await leemons.api(`v1/feedback/feedback/instance/responses/${instanceId}`, {
-    allAgents: true,
-    method: 'GET',
-  });
+  const { responses } = await leemons.api(
+    `v1/feedback/feedback/instance/responses/${instanceId}`,
+    {
+      allAgents: true,
+      method: "GET",
+    }
+  );
   return responses;
 }
 
 async function getFeedbackResults(id) {
   const { results } = await leemons.api(`v1/feedback/feedback/results/${id}`, {
     allAgents: true,
-    method: 'GET',
+    method: "GET",
   });
   return results;
 }
 
 async function getFeedbackResultsWithTime(id) {
-  const { results } = await leemons.api(`v1/feedback/feedback/results/time/${id}`, {
-    allAgents: true,
-    method: 'GET',
-  });
+  const { results } = await leemons.api(
+    `v1/feedback/feedback/results/time/${id}`,
+    {
+      allAgents: true,
+      method: "GET",
+    }
+  );
   return results;
 }
 

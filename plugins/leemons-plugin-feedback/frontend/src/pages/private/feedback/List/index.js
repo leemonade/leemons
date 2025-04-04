@@ -1,29 +1,35 @@
-import React from 'react';
-import { Box, ContextContainer, createStyles, TabPanel, Tabs } from '@bubbles-ui/components';
+import React from "react";
+import {
+  Box,
+  ContextContainer,
+  createStyles,
+  TabPanel,
+  Tabs,
+} from "@bubbles-ui/components";
 // TODO: fix this import from @common plugin
-import { AdminPageHeader } from '@bubbles-ui/leemons';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@feedback/helpers/prefixPN';
-import { useStore } from '@common';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import { useHistory } from 'react-router-dom';
-import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
-import AssetList from '@leebrary/components/AssetList';
-import { prepareAsset } from '@leebrary/helpers/prepareAsset';
+import { AdminPageHeader } from "@bubbles-ui/leemons";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@feedback/helpers/prefixPN";
+import { useStore } from "@common";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import { useHistory } from "react-router-dom";
+import { getPermissionsWithActionsIfIHaveRequest } from "@users/request";
+import AssetList from "@leebrary/components/AssetList";
+import { prepareAsset } from "@leebrary/helpers/prepareAsset";
 
 const ListPageStyles = createStyles((theme) => ({
   tabPane: {
-    display: 'flex',
+    display: "flex",
     flex: 1,
-    height: '100%',
+    height: "100%",
     paddingTop: theme.spacing[5],
     paddingBottom: theme.spacing[5],
   },
 }));
 
 export default function List() {
-  const [t] = useTranslateLoader(prefixPN('feedbackList'));
-  const { t: tCommon } = useCommonTranslate('page_header');
+  const [t] = useTranslateLoader(prefixPN("feedbackList"));
+  const { t: tCommon } = useCommonTranslate("page_header");
   const [currentAsset, setCurrentAsset] = React.useState(null);
 
   const history = useHistory();
@@ -37,17 +43,19 @@ export default function List() {
   });
 
   async function getPermissions() {
-    const { permissions } = await getPermissionsWithActionsIfIHaveRequest(['feedback.feedback']);
+    const { permissions } = await getPermissionsWithActionsIfIHaveRequest([
+      "feedback.feedback",
+    ]);
     if (permissions[0]) {
       store.canAdd =
-        permissions[0].actionNames.includes('create') ||
-        permissions[0].actionNames.includes('admin');
+        permissions[0].actionNames.includes("create") ||
+        permissions[0].actionNames.includes("admin");
       render();
     }
   }
 
   function goCreatePage() {
-    history.push('/private/feedback/new');
+    history.push("/private/feedback/new");
   }
 
   function goDetailPage(asset) {
@@ -66,9 +74,9 @@ export default function List() {
     <ContextContainer fullHeight>
       <AdminPageHeader
         values={{
-          title: t('pageTitle'),
+          title: t("pageTitle"),
         }}
-        buttons={store.canAdd ? { new: tCommon('new') } : {}}
+        buttons={store.canAdd ? { new: tCommon("new") } : {}}
         onNew={() => goCreatePage()}
         fullWidth
       />
@@ -79,7 +87,7 @@ export default function List() {
         fullWidth
         onTabClick={() => setCurrentAsset(null)}
       >
-        <TabPanel label={t('published')}>
+        <TabPanel label={t("published")}>
           <Box className={classes.tabPane}>
             <AssetList
               canShowPublicToggle={false}
@@ -89,11 +97,11 @@ export default function List() {
               variant="embedded"
               category="assignables.feedback"
               onSelectItem={goDetailPage}
-              roles={['owner']}
+              roles={["owner"]}
             />
           </Box>
         </TabPanel>
-        <TabPanel label={t('draft')}>
+        <TabPanel label={t("draft")}>
           <Box className={classes.tabPane}>
             <AssetList
               canShowPublicToggle={false}
@@ -103,7 +111,7 @@ export default function List() {
               variant="embedded"
               category="assignables.feedback"
               onSelectItem={goDetailPage}
-              roles={['owner']}
+              roles={["owner"]}
             />
           </Box>
         </TabPanel>

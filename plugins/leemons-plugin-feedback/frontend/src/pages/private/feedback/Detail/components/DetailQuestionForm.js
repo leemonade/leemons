@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { forIn, noop } from 'lodash';
-import { Controller, useForm } from 'react-hook-form';
+import React from "react";
+import PropTypes from "prop-types";
+import { forIn, noop } from "lodash";
+import { Controller, useForm } from "react-hook-form";
 import {
   Box,
   Button,
@@ -12,13 +12,13 @@ import {
   Switch,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
-} from '@bubbles-ui/components';
-import { TextEditorInput } from '@bubbles-ui/editors';
-import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import { SelectResponse } from './SelectResponse';
-import { LikertScale } from './LikertScale';
-import { NetPromoterScore } from './NetPromoterScore';
-import { OpenResponse } from './OpenResponse';
+} from "@bubbles-ui/components";
+import { TextEditorInput } from "@bubbles-ui/editors";
+import { ChevLeftIcon } from "@bubbles-ui/icons/outline";
+import { SelectResponse } from "./SelectResponse";
+import { LikertScale } from "./LikertScale";
+import { NetPromoterScore } from "./NetPromoterScore";
+import { OpenResponse } from "./OpenResponse";
 
 const questionComponents = {
   singleResponse: <SelectResponse />,
@@ -45,7 +45,7 @@ export default function DetailQuestionForm({
   });
 
   const form = useForm({ defaultValues });
-  const type = form.watch('type');
+  const type = form.watch("type");
 
   function handleOnSaveQuestion() {
     form.handleSubmit((data) => {
@@ -60,13 +60,13 @@ export default function DetailQuestionForm({
   }
 
   React.useEffect(() => {
-    if (type === 'netPromoterScore') {
-      form.setValue('question', t('npsStatement'));
-      form.setValue('properties.maxLabels', 3);
-      form.setValue('properties.veryLikely', t('npsVeryLikely'));
-      form.setValue('properties.notLikely', t('npsNotLikely'));
-      form.setValue('properties.minResponses', 1);
-      form.setValue('properties.maxResponses', 1);
+    if (type === "netPromoterScore") {
+      form.setValue("question", t("npsStatement"));
+      form.setValue("properties.maxLabels", 3);
+      form.setValue("properties.veryLikely", t("npsVeryLikely"));
+      form.setValue("properties.notLikely", t("npsNotLikely"));
+      form.setValue("properties.minResponses", 1);
+      form.setValue("properties.maxResponses", 1);
     }
   }, [type]);
 
@@ -92,7 +92,7 @@ export default function DetailQuestionForm({
               leftIcon={<ChevLeftIcon height={20} width={20} />}
               onClick={onCancel}
             >
-              {t('returnToList')}
+              {t("returnToList")}
             </Button>
           }
           rightZone={
@@ -102,13 +102,17 @@ export default function DetailQuestionForm({
                   variant="link"
                   onClick={handleOnSave}
                   disabled={store.saving || !type}
-                  loading={store.saving === 'draft'}
+                  loading={store.saving === "draft"}
                 >
-                  {t('saveDraft')}
+                  {t("saveDraft")}
                 </Button>
               ) : null}
-              <Button variant="outline" disabled={!type} onClick={handleOnSaveQuestion}>
-                {t('saveQuestion')}
+              <Button
+                variant="outline"
+                disabled={!type}
+                onClick={handleOnSaveQuestion}
+              >
+                {t("saveQuestion")}
               </Button>
             </>
           }
@@ -116,21 +120,21 @@ export default function DetailQuestionForm({
       }
     >
       <Box style={{ marginBottom: 20 }}>
-        <ContextContainer title={t('questionDetail')}>
+        <ContextContainer title={t("questionDetail")}>
           <Box>
             <ContextContainer fullWidth direction="row">
               <Stack alignItems="end" spacing={6}>
                 <Controller
                   control={form.control}
                   name="type"
-                  rules={{ required: t('typeRequired') }}
+                  rules={{ required: t("typeRequired") }}
                   render={({ field }) => (
-                    <Box style={{ width: '230px' }}>
+                    <Box style={{ width: "230px" }}>
                       <Select
                         required
                         data={questionTypes}
                         error={form.formState.errors.type}
-                        label={t('typeLabel')}
+                        label={t("typeLabel")}
                         {...field}
                       />
                     </Box>
@@ -144,7 +148,7 @@ export default function DetailQuestionForm({
                     <Switch
                       checked={field.value}
                       orientation="horizontal"
-                      label={t('requiredQuestionLabel')}
+                      label={t("requiredQuestionLabel")}
                       {...field}
                     />
                   )}
@@ -157,14 +161,16 @@ export default function DetailQuestionForm({
               <Controller
                 control={form.control}
                 name="question"
-                rules={{ required: t('questionRequired') }}
+                rules={{ required: t("questionRequired") }}
                 render={({ field }) => (
                   <TextEditorInput
                     required
-                    placeholder={type === 'likertScale' ? t('likertScalePlaceholder') : ''}
+                    placeholder={
+                      type === "likertScale" ? t("likertScalePlaceholder") : ""
+                    }
                     error={form.formState.errors.question}
-                    label={t('questionLabel')}
-                    editorStyles={{ minHeight: '96px' }}
+                    label={t("questionLabel")}
+                    editorStyles={{ minHeight: "96px" }}
                     {...field}
                   />
                 )}

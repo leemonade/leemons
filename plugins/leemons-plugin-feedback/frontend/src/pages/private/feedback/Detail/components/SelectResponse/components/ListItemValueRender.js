@@ -1,13 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Text, Stack, ImageLoader } from '@bubbles-ui/components';
-import ImagePicker from '@leebrary/components/ImagePicker';
-import { getFileUrl } from '@leebrary/helpers/prepareAsset';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, Text, Stack, ImageLoader } from "@bubbles-ui/components";
+import ImagePicker from "@leebrary/components/ImagePicker";
+import { getFileUrl } from "@leebrary/helpers/prepareAsset";
 
 // eslint-disable-next-line import/prefer-default-export
 export function ListItemValueRender({ item, t, withImages }) {
   return (
-    <Box sx={() => ({ width: '100%' })}>
+    <Box sx={() => ({ width: "100%" })}>
       <Stack fullWidth alignItems="center">
         <Box>
           {withImages && item.image ? (

@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useMemo } from "react";
+import { useHistory } from "react-router-dom";
 
 import {
   Box,
@@ -8,39 +8,36 @@ import {
   ContextContainer,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
-} from '@bubbles-ui/components';
-import {
-  ChevRightIcon,
-  ChevLeftIcon,
-} from '@bubbles-ui/icons/outline';
-import { useStore } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { isNil } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { ChevRightIcon, ChevLeftIcon } from "@bubbles-ui/icons/outline";
+import { useStore } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { isNil } from "lodash";
+import PropTypes from "prop-types";
 
-import LikertResponse from './LikertResponse';
-import NetPromoterScoreResponse from './NetPromoterScoreResponse';
-import OpenResponse from './OpenResponse';
+import LikertResponse from "./LikertResponse";
+import NetPromoterScoreResponse from "./NetPromoterScoreResponse";
+import OpenResponse from "./OpenResponse";
 
-import prefixPN from '@feedback/helpers/prefixPN';
-import SelectResponseQuestion from '@feedback/pages/private/feedback/StudentInstance/components/questions/SelectResponseQuestion';
-import { setQuestionResponseRequest } from '@feedback/request';
-import { setInstanceTimestamp } from '@feedback/request/feedback';
+import prefixPN from "@feedback/helpers/prefixPN";
+import SelectResponseQuestion from "@feedback/pages/private/feedback/StudentInstance/components/questions/SelectResponseQuestion";
+import { setQuestionResponseRequest } from "@feedback/request";
+import { setInstanceTimestamp } from "@feedback/request/feedback";
 
 export const Styles = createStyles((theme, { viewMode }) => ({
   container: {
-    maxWidth: viewMode ? '100%' : 768,
-    width: '100%',
-    margin: '0px auto',
+    maxWidth: viewMode ? "100%" : 768,
+    width: "100%",
+    margin: "0px auto",
     marginTop: 45,
   },
   header: {
     height: 56,
     borderRadius: 4,
     backgroundColor: theme.colors.uiBackground01,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
     paddingLeft: theme.spacing[5],
     paddingRight: theme.spacing[5],
     marginBottom: theme.spacing[2],
@@ -75,7 +72,9 @@ function QuestionsStep({
   setShowIntroduction,
 }) {
   const { classes } = Styles({ viewMode });
-  const [t, translations] = useTranslateLoader(prefixPN('feedbackResponseQuestion'));
+  const [t, translations] = useTranslateLoader(
+    prefixPN("feedbackResponseQuestion")
+  );
   const [store, render] = useStore({
     maxIndex: 0,
     currentIndex: 0,
@@ -96,12 +95,17 @@ function QuestionsStep({
   );
 
   const goToOnGoing = (e, openInNewTab = false) => {
-    if (openInNewTab) window.open('/private/assignables/ongoing', 'AssignablesOngoing', 'noopener');
-    history.push('/private/assignables/ongoing');
+    if (openInNewTab)
+      window.open(
+        "/private/assignables/ongoing",
+        "AssignablesOngoing",
+        "noopener"
+      );
+    history.push("/private/assignables/ongoing");
   };
 
   const gotToModuleDashboard = (e, openInNewTab = false) => {
-    if (openInNewTab) window.open(moduleDashboardUrl, 'Dashboard', 'noopener');
+    if (openInNewTab) window.open(moduleDashboardUrl, "Dashboard", "noopener");
     history.push(moduleDashboardUrl);
   };
 
@@ -109,13 +113,14 @@ function QuestionsStep({
     if (openInNewTab)
       window.open(
         `/private/feedback/result/${instanceId}?fromExecution`,
-        'FeedbackResult',
-        'noopener'
+        "FeedbackResult",
+        "noopener"
       );
-    if (!viewMode) history.push(`/private/feedback/result/${instanceId}?fromExecution`);
+    if (!viewMode)
+      history.push(`/private/feedback/result/${instanceId}?fromExecution`);
   };
 
-  async function onNext(value, goTo = 'goToResults') {
+  async function onNext(value, goTo = "goToResults") {
     store.values[question.id] = value;
     if (!viewMode) setQuestionResponseRequest(question.id, instanceId, value);
 
@@ -125,7 +130,7 @@ function QuestionsStep({
         store.maxIndex = store.currentIndex;
       }
     } else {
-      if (!viewMode) setInstanceTimestamp(instanceId, 'end', userId);
+      if (!viewMode) setInstanceTimestamp(instanceId, "end", userId);
 
       if (instance.showResults) {
         goToResults();
@@ -150,53 +155,60 @@ function QuestionsStep({
 
   const questionName = useMemo(() => {
     const plainText = question?.question
-      ? new DOMParser().parseFromString(question.question, 'text/html').body.textContent
-      : '';
+      ? new DOMParser().parseFromString(question.question, "text/html").body
+          .textContent
+      : "";
     return `${store.currentIndex + 1}. ${plainText}`;
   }, [question, store.currentIndex]);
 
   const hasValue = React.useMemo(() => {
-    if (question?.type === 'multiResponse') {
+    if (question?.type === "multiResponse") {
       return store?.currentValue?.length >= question?.properties?.minResponses;
     }
-    if (question?.type === 'likertScale') {
+    if (question?.type === "likertScale") {
       return !isNil(store.currentValue);
     }
-    if (question?.type === 'netPromoterScore') {
+    if (question?.type === "netPromoterScore") {
       return !isNil(store.currentValue);
     }
     return store.currentValue?.length > 0;
   }, [question, JSON.stringify(store.currentValue)]);
 
   const nextText = useMemo(() => {
-    if (isLast) return t('finish');
-    if (question?.required) return t('next');
-    if (hasValue) return t('next');
-    return t('skip');
+    if (isLast) return t("finish");
+    if (question?.required) return t("next");
+    if (hasValue) return t("next");
+    return t("skip");
   }, [question, hasValue, isLast, t]);
 
-  const disableNext = useMemo(() => question?.required && !hasValue, [question, hasValue]);
-  const showModuleFinalDropdown = useMemo(() => isModule && isLast, [isModule, isLast]);
+  const disableNext = useMemo(
+    () => question?.required && !hasValue,
+    [question, hasValue]
+  );
+  const showModuleFinalDropdown = useMemo(
+    () => isModule && isLast,
+    [isModule, isLast]
+  );
 
   const footerFinalActionsAndLabels = useMemo(() => {
     const result = [
       {
-        label: t('viewResults'),
-        onClick: () => onNext(store.currentValue, 'goToResults'),
+        label: t("viewResults"),
+        onClick: () => onNext(store.currentValue, "goToResults"),
       },
     ];
 
     // Modulo no tiene siguiente actividad
     if (modalMode === 1) {
       result.push({
-        label: t('moduleDashboard'),
-        onClick: () => onNext(store.currentValue, 'goToModuleDashboard'),
+        label: t("moduleDashboard"),
+        onClick: () => onNext(store.currentValue, "goToModuleDashboard"),
       });
     } else if (modalMode === 2) {
       // Modulo tiene siguiente actividad
       result.push({
-        label: t('nextActivity'),
-        onClick: () => onNext(store.currentValue, 'goToNextActivity'),
+        label: t("nextActivity"),
+        onClick: () => onNext(store.currentValue, "goToNextActivity"),
       });
     }
     return result;
@@ -210,14 +222,18 @@ function QuestionsStep({
           fixed
           scrollRef={scrollRef}
           leftZone={
-            <Button variant="outline" leftIcon={<ChevLeftIcon />} onClick={onPrev}>
-              {t('back')}
+            <Button
+              variant="outline"
+              leftIcon={<ChevLeftIcon />}
+              onClick={onPrev}
+            >
+              {t("back")}
             </Button>
           }
           rightZone={
             !showModuleFinalDropdown ? (
               <Button
-                variant={isLast ? 'filled' : 'outline'}
+                variant={isLast ? "filled" : "outline"}
                 rightIcon={!isLast && <ChevRightIcon />}
                 onClick={() => onNext(store.currentValue)}
                 disabled={disableNext}
@@ -226,10 +242,10 @@ function QuestionsStep({
               </Button>
             ) : (
               <Button
-                onClick={() => onNext(store.currentValue, 'goToResults')}
+                onClick={() => onNext(store.currentValue, "goToResults")}
                 disabled={disableNext}
               >
-                {t('finish')}
+                {t("finish")}
               </Button>
             )
           }

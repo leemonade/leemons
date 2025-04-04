@@ -1,10 +1,10 @@
 /* eslint-disable no-nested-ternary */
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Badge, Box, Col, Grid, Text } from '@bubbles-ui/components';
-import { PointBar } from '@feedback/pages/private/feedback/Result/components/NPSStatistics/PointBar';
+import React from "react";
+import PropTypes from "prop-types";
+import { Badge, Box, Col, Grid, Text } from "@bubbles-ui/components";
+import { PointBar } from "@feedback/pages/private/feedback/Result/components/NPSStatistics/PointBar";
 
-import LikertStatisticsStyles from './styles';
+import LikertStatisticsStyles from "./styles";
 
 function LikertStatistics({ question, responses, t }) {
   const { classes, cx } = LikertStatisticsStyles();
@@ -15,16 +15,16 @@ function LikertStatistics({ question, responses, t }) {
       <Box className={classes.header}>
         <Text
           sx={(theme) => ({
-            ...theme.other.global.content.typo.heading['xsm--semiBold'],
-            fontSize: '12px',
-            lineHeight: '16px',
+            ...theme.other.global.content.typo.heading["xsm--semiBold"],
+            fontSize: "12px",
+            lineHeight: "16px",
           })}
         >
-          {t('responses', { n: responses.totalValues || 0 })}
+          {t("responses", { n: responses.totalValues || 0 })}
         </Text>
         <Badge size="xs" closable={false} className={classes.badge}>
           <Text size="xs" className={classes.badgeText}>
-            {t('average').toUpperCase()}
+            {t("average").toUpperCase()}
           </Text>
           &nbsp;
           <Text size="xs" className={classes.badgeText}>

@@ -1,23 +1,23 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { Box, createStyles, Title } from '@bubbles-ui/components';
+import React, { useMemo } from "react";
+import PropTypes from "prop-types";
+import { Box, createStyles, Title } from "@bubbles-ui/components";
 
 export const Styles = createStyles((theme) => ({
   questionStep: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
     paddingTop: theme.spacing[4],
     paddingBottom: theme.spacing[4],
     paddingRight: theme.spacing[5],
-    backgroundColor: 'transparent',
+    backgroundColor: "transparent",
   },
   questionTitleText: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'start',
-    flexDirection: 'column',
+    width: "100%",
+    display: "flex",
+    justifyContent: "start",
+    flexDirection: "column",
     gap: theme.spacing[3],
   },
 }));
@@ -26,8 +26,9 @@ function QuestionTitle({ viewMode, question }) {
   const { classes } = Styles({ viewMode });
   const questionName = useMemo(() => {
     const plainText = question?.question
-      ? new DOMParser().parseFromString(question.question, 'text/html').body.textContent
-      : '';
+      ? new DOMParser().parseFromString(question.question, "text/html").body
+          .textContent
+      : "";
     return `${question.order + 1}. ${plainText}`;
   }, [question]);
 

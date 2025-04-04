@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { Box, Textarea } from '@bubbles-ui/components';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { Box, Textarea } from "@bubbles-ui/components";
 
 const OpenResponse = (props) => {
   const { t, question, defaultValue } = props;
-  const [responseValue, setResponseValue] = useState('');
+  const [responseValue, setResponseValue] = useState("");
 
   React.useEffect(() => {
     setResponseValue(defaultValue);
@@ -17,9 +17,9 @@ const OpenResponse = (props) => {
   return (
     <Box>
       <Textarea
-        placeholder={t('openResponsePlaceholder')}
+        placeholder={t("openResponsePlaceholder")}
         maxLength={question.properties.maxCharacters}
-        counter={'char'}
+        counter={"char"}
         showCounter
         counterLabels={{}}
         minRows={5}

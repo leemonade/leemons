@@ -1,12 +1,12 @@
 /* eslint-disable import/prefer-default-export */
-import { htmlToText } from '@common';
-import { Workbook } from 'exceljs';
-import { groupBy, forEach } from 'lodash';
+import { htmlToText } from "@common";
+import { Workbook } from "exceljs";
+import { groupBy, forEach } from "lodash";
 
-import { getFeedbackResultsWithTime } from '@feedback/request/feedback';
+import { getFeedbackResultsWithTime } from "@feedback/request/feedback";
 
 function downloadURL(url, name) {
-  const link = document.createElement('a');
+  const link = document.createElement("a");
   link.download = name;
   link.href = url;
   document.body.appendChild(link);
@@ -16,17 +16,24 @@ function downloadURL(url, name) {
 
 function downloadFile(data, name) {
   const blob = new Blob([data], {
-    type: name.endsWith('.xlsx')
-      ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      : '.csv',
+    type: name.endsWith(".xlsx")
+      ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      : ".csv",
   });
   const url = window.URL.createObjectURL(blob);
   downloadURL(url, name);
 }
 
-export const createDatasheet = async (title, questions, instanceId, format, labels) => {
+export const createDatasheet = async (
+  title,
+  questions,
+  instanceId,
+  format,
+  labels
+) => {
   const wb = new Workbook();
-  const feedbackResponsesWithTime = await getFeedbackResultsWithTime(instanceId);
+  const feedbackResponsesWithTime =
+    await getFeedbackResultsWithTime(instanceId);
 
   forEach(questions, (question) => {
     forEach(Object.values(feedbackResponsesWithTime), (value) => {
@@ -37,11 +44,11 @@ export const createDatasheet = async (title, questions, instanceId, format, labe
     });
   });
 
-  wb.creator = 'Leemons EdTech Solutions';
+  wb.creator = "Leemons EdTech Solutions";
   wb.title = title;
 
-  const workSheet = wb.addWorksheet('Feedback responses');
-  workSheet.views = [{ state: 'frozen', xSplit: 0, ySplit: 1 }];
+  const workSheet = wb.addWorksheet("Feedback responses");
+  workSheet.views = [{ state: "frozen", xSplit: 0, ySplit: 1 }];
 
   const firstCell = workSheet.getCell(1, 1);
   const firstColumn = workSheet.getColumn(1);
@@ -52,13 +59,14 @@ export const createDatasheet = async (title, questions, instanceId, format, labe
     const cell = workSheet.getCell(1, index + 2);
     const column = workSheet.getColumn(index + 2);
     cell.value = htmlToText(question.question);
-    column.width = cell.value.toString().length > 14 ? cell.value.toString().length : 14;
+    column.width =
+      cell.value.toString().length > 14 ? cell.value.toString().length : 14;
   });
 
   const initialRow = 2;
   const initialCol = 1;
 
-  const questionsById = groupBy(questions, 'id');
+  const questionsById = groupBy(questions, "id");
 
   Object.entries(feedbackResponsesWithTime)
     .sort(([aKey], [bKey]) => new Date(aKey) - new Date(bKey))
@@ -75,39 +83,46 @@ export const createDatasheet = async (title, questions, instanceId, format, labe
           type,
           properties: { responses, withImages },
         } = questionsById[questionKey][0];
-        const property = withImages ? 'imageDescription' : 'response';
+        const property = withImages ? "imageDescription" : "response";
 
-        if (type === 'openResponse' || type === 'netPromoterScore')
-          contentArray.push(questionValue?.toString() || '');
-        else if (type === 'likertScale') {
+        if (type === "openResponse" || type === "netPromoterScore")
+          contentArray.push(questionValue?.toString() || "");
+        else if (type === "likertScale") {
           const numericValue = Number(questionValue);
-          contentArray.push(Number.isNaN(numericValue) ? '' : `${numericValue + 1}`);
-        } else if (type === 'singleResponse') {
+          contentArray.push(
+            Number.isNaN(numericValue) ? "" : `${numericValue + 1}`
+          );
+        } else if (type === "singleResponse") {
           const responseValue =
-            responses[questionValue]?.value[property] || `${labels.option} ${index + 1}`; // it might be better to specify no response with the label
+            responses[questionValue]?.value[property] ||
+            `${labels.option} ${index + 1}`; // it might be better to specify no response with the label
           contentArray.push(responseValue);
-        } else if (type === 'multiResponse') {
+        } else if (type === "multiResponse") {
           const sortedValues = (questionValue || []).sort((a, b) => a - b);
           contentArray.push(
             sortedValues
               .map(
                 (selectedValue, i) =>
-                  responses[selectedValue]?.value[property] || `${labels.option} ${i + 1}` // it might be better to specify no response with the label
+                  responses[selectedValue]?.value[property] ||
+                  `${labels.option} ${i + 1}` // it might be better to specify no response with the label
               )
-              .join(', ')
+              .join(", ")
           );
-        } else contentArray.push('');
+        } else contentArray.push("");
       });
       contentArray.forEach((contentValue, contentIndex) => {
-        const cell = workSheet.getCell(initialRow + index, initialCol + contentIndex);
+        const cell = workSheet.getCell(
+          initialRow + index,
+          initialCol + contentIndex
+        );
         cell.value = contentValue;
       });
     });
 
-  if (format === 'xls') {
+  if (format === "xls") {
     const buffer = await wb.xlsx.writeBuffer();
     downloadFile(buffer, `${wb.title}.xlsx`);
-  } else if (format === 'csv') {
+  } else if (format === "csv") {
     const buffer = await wb.csv.writeBuffer();
     downloadFile(buffer, `${wb.title}.csv`);
   }

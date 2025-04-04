@@ -1,1 +1,1 @@
-export * from './FeedbackCardIcon';
+export * from "./FeedbackCardIcon";
