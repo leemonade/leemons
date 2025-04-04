@@ -1,3 +1,3 @@
-import Weighting from './Weighting';
+import Weighting from "./Weighting";
 
 export default Weighting;

@@ -1,31 +1,42 @@
-import React, { useMemo } from 'react';
-import _ from 'lodash';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
-import { addAction, fireEvent, removeAction } from 'leemons-hooks';
-import generateExcel from '@scores/components/ExcelExport/finalEvaluationWB';
-import { getFile } from '@scores/components/ExcelExport/helpers/workbook';
+import { unflatten } from "@common";
+import { addAction, fireEvent, removeAction } from "@leemons/hooks";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import generateExcel from "@scores/components/ExcelExport/finalEvaluationWB";
+import { getFile } from "@scores/components/ExcelExport/helpers/workbook";
+import { prefixPN } from "@scores/helpers";
+import _ from "lodash";
+import React, { useMemo } from "react";
 
 function useExcelLabels() {
-  const [, translations] = useTranslateLoader(prefixPN('excel'));
+  const [, translations] = useTranslateLoader(prefixPN("excel"));
 
   const excelLabels = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      return _.get(res, prefixPN('excel'));
+      return _.get(res, prefixPN("excel"));
     }
 
     return {};
   }, [translations]);
   return excelLabels;
 }
-export function useExcelDownloadHandler({ classes, students, filters, grades, periods }) {
+export function useExcelDownloadHandler({
+  classes,
+  students,
+  filters,
+  grades,
+  periods,
+}) {
   const excelLabels = useExcelLabels();
 
-  const programName = React.useMemo(() => filters?.program?.name, [filters?.program]);
+  const programName = React.useMemo(
+    () => filters?.program?.name,
+    [filters?.program]
+  );
   const courseName = React.useMemo(() => {
-    const course = filters?.program?.courses?.find((c) => c.id === filters.course);
+    const course = filters?.program?.courses?.find(
+      (c) => c.id === filters.course
+    );
 
     return course?.isAlone ? null : course?.name;
   }, [filters?.program, filters?.course]);
@@ -41,16 +52,17 @@ export function useExcelDownloadHandler({ classes, students, filters, grades, pe
       return null;
     }
 
-    return filters?.periods?.find((period) => period.id === filters?.period)?.name;
+    return filters?.periods?.find((period) => period.id === filters?.period)
+      ?.name;
   }, [filters?.period, filters?.periods]);
 
   React.useEffect(() => {
     const onDownload = ({ args: [format] }) => {
-      fireEvent('scores::downloaded-intercepted');
+      fireEvent("scores::downloaded-intercepted");
 
       try {
         const wb = generateExcel({
-          headerShown: format === 'xlsx',
+          headerShown: format === "xlsx",
           tableData: { classes, students },
           filters: {
             startDate: filters.startDate,
@@ -63,17 +75,25 @@ export function useExcelDownloadHandler({ classes, students, filters, grades, pe
           labels: excelLabels,
         });
         getFile(wb, format);
-        fireEvent('scores::downloaded');
+        fireEvent("scores::downloaded");
       } catch (e) {
         console.error(e);
-        fireEvent('scores::download-scores-error', e);
+        fireEvent("scores::download-scores-error", e);
         // removeAction('scores::download-scores', onDownload);
       }
     };
 
-    addAction('scores::download-scores', onDownload);
-    return () => removeAction('scores::download-scores', onDownload);
-  }, [classes, students, grades, programName, courseName, groupName, periodName]);
+    addAction("scores::download-scores", onDownload);
+    return () => removeAction("scores::download-scores", onDownload);
+  }, [
+    classes,
+    students,
+    grades,
+    programName,
+    courseName,
+    groupName,
+    periodName,
+  ]);
 }
 
 export default useExcelDownloadHandler;

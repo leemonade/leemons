@@ -1,1 +1,1 @@
-export * from './ScoresFooter';
+export * from "./ScoresFooter";

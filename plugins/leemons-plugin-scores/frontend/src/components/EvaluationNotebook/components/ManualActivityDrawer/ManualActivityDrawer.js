@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 
-import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
+import useRolesLocalizations from "@assignables/hooks/useRolesLocalizations";
 import {
   Drawer,
   Button,
@@ -12,15 +12,15 @@ import {
   Box,
   Text,
   Select,
-} from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { capitalize } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { capitalize } from "lodash";
+import PropTypes from "prop-types";
 
-import { prefixPN } from '@scores/helpers';
-import useWeights from '@scores/requests/hooks/queries/useWeights';
+import { prefixPN } from "@scores/helpers";
+import useWeights from "@scores/requests/hooks/queries/useWeights";
 
-const defaultValues = { date: null, name: '', description: '' };
+const defaultValues = { date: null, name: "", description: "" };
 
 export function ManualActivityDrawer({
   isOpen,
@@ -30,15 +30,16 @@ export function ManualActivityDrawer({
   minDate,
   maxDate,
 }) {
-  const [t] = useTranslateLoader(prefixPN('manualActivityDrawer'));
-  const [weightT] = useTranslateLoader(prefixPN('weightingTypes'));
+  const [t] = useTranslateLoader(prefixPN("manualActivityDrawer"));
+  const [weightT] = useTranslateLoader(prefixPN("weightingTypes"));
   const form = useForm({ defaultValues });
   const [isLoading, setIsLoading] = useState(false);
 
   const { data: weights } = useWeights({ classId });
-  const isRolesOrActivitiesWeight = weights?.type === 'roles' || weights?.type === 'activities';
+  const isRolesOrActivitiesWeight =
+    weights?.type === "roles" || weights?.type === "activities";
 
-  const rolesLocalizations = useRolesLocalizations(['task', 'test']);
+  const rolesLocalizations = useRolesLocalizations(["task", "test"]);
 
   const onClose = () => {
     _onClose();
@@ -56,19 +57,19 @@ export function ManualActivityDrawer({
 
   return (
     <Drawer opened={isOpen} onClose={onClose}>
-      <Drawer.Header title={t('title')} />
+      <Drawer.Header title={t("title")} />
 
       <Drawer.Content>
-        <ContextContainer title={t('config')}>
+        <ContextContainer title={t("config")}>
           <Controller
             control={form.control}
             name="date"
-            rules={{ required: t('date.error') }}
+            rules={{ required: t("date.error") }}
             render={({ field, fieldState }) => (
-              <Box sx={{ width: '50%' }}>
+              <Box sx={{ width: "50%" }}>
                 <DatePicker
                   {...field}
-                  label={t('date.label')}
+                  label={t("date.label")}
                   error={fieldState.error?.message}
                   required
                   minDate={minDate}
@@ -81,12 +82,12 @@ export function ManualActivityDrawer({
           <Controller
             control={form.control}
             name="name"
-            rules={{ required: t('name.error') }}
+            rules={{ required: t("name.error") }}
             render={({ field, fieldState }) => (
-              <Box sx={{ width: '50%' }}>
+              <Box sx={{ width: "50%" }}>
                 <TextInput
                   {...field}
-                  label={t('name.label')}
+                  label={t("name.label")}
                   error={fieldState.error?.message}
                   required
                 />
@@ -98,37 +99,39 @@ export function ManualActivityDrawer({
             control={form.control}
             name="description"
             render={({ field }) => (
-              <Box sx={{ width: '75%' }}>
-                <Textarea {...field} label={t('description.label')} />
+              <Box sx={{ width: "75%" }}>
+                <Textarea {...field} label={t("description.label")} />
               </Box>
             )}
           />
         </ContextContainer>
 
-        <ContextContainer title={t('weightType.title')}>
+        <ContextContainer title={t("weightType.title")}>
           <Text>
-            {t('weightType.weightingBy')}{' '}
-            <b style={{ textDecoration: 'underline' }}>{weightT(weights?.type ?? 'averages')}</b>,{' '}
-            {t(`weightType.${weights?.type ?? 'averages'}`)}
+            {t("weightType.weightingBy")}{" "}
+            <b style={{ textDecoration: "underline" }}>
+              {weightT(weights?.type ?? "averages")}
+            </b>
+            , {t(`weightType.${weights?.type ?? "averages"}`)}
           </Text>
 
           <Controller
             control={form.control}
             name="role"
-            defaultValue={'task'}
+            defaultValue={"task"}
             render={({ field }) =>
               isRolesOrActivitiesWeight && (
-                <Box sx={{ width: '50%' }}>
+                <Box sx={{ width: "50%" }}>
                   <Select
                     {...field}
-                    label={t('roles')}
+                    label={t("roles")}
                     data={[
                       {
-                        value: 'task',
+                        value: "task",
                         label: capitalize(rolesLocalizations.task.singular),
                       },
                       {
-                        value: 'tests',
+                        value: "tests",
                         label: capitalize(rolesLocalizations.tests.singular),
                       },
                     ]}
@@ -143,12 +146,12 @@ export function ManualActivityDrawer({
       <Drawer.Footer>
         <Drawer.Footer.LeftActions>
           <Button variant="link" onClick={onClose}>
-            {t('cancel')}
+            {t("cancel")}
           </Button>
         </Drawer.Footer.LeftActions>
         <Drawer.Footer.RightActions>
           <Button onClick={handleSubmit} loading={isLoading}>
-            {t('save')}
+            {t("save")}
           </Button>
         </Drawer.Footer.RightActions>
       </Drawer.Footer>

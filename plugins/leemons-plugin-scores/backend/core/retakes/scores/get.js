@@ -1,4 +1,11 @@
-async function getRetakeScores({ retakeId, retakeIndex, class: classId, period, user, ctx }) {
+async function getRetakeScores({
+  retakeId,
+  retakeIndex,
+  class: classId,
+  period,
+  user,
+  ctx,
+}) {
   const query = {
     class: classId,
     period,

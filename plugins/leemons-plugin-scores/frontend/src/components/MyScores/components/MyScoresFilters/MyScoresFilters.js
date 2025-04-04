@@ -1,19 +1,24 @@
-import { useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
 
-import { SelectSubject } from '@academic-portfolio/components/SelectSubject';
-import { SearchInput, Stack, Switch } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PropTypes from 'prop-types';
+import { SelectSubject } from "@academic-portfolio/components/SelectSubject";
+import { SearchInput, Stack, Switch } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
 
+import useMyScoresSubjects from "./hooks/useMyScoresSubjects";
+import useOnChange from "./hooks/useOnChange";
 
-import useMyScoresSubjects from './hooks/useMyScoresSubjects';
-import useOnChange from './hooks/useOnChange';
+import { prefixPN } from "@scores/helpers";
 
-import { prefixPN } from '@scores/helpers';
-
-export default function MyScoresFilters({ filters, onChange, value, hideActivitySearch,hideSeeNonEvaluable }) {
-  const [t] = useTranslateLoader(prefixPN('myScores.localFilters'));
+export default function MyScoresFilters({
+  filters,
+  onChange,
+  value,
+  hideActivitySearch,
+  hideSeeNonEvaluable,
+}) {
+  const [t] = useTranslateLoader(prefixPN("myScores.localFilters"));
   const form = useForm();
   const { getValues, setValue } = form;
 
@@ -22,12 +27,12 @@ export default function MyScoresFilters({ filters, onChange, value, hideActivity
   useOnChange({ control: form.control, onChange });
 
   useEffect(() => {
-    if (value.subject && getValues('subject') !== value.subject) {
-      setValue('subject', value.subject);
+    if (value.subject && getValues("subject") !== value.subject) {
+      setValue("subject", value.subject);
     }
 
-    if (value.search && getValues('search') !== value.search) {
-      setValue('search', value.search);
+    if (value.search && getValues("search") !== value.search) {
+      setValue("search", value.search);
     }
   }, [value, setValue, getValues]);
 
@@ -46,7 +51,7 @@ export default function MyScoresFilters({ filters, onChange, value, hideActivity
                 value: subject.id,
               }))}
               disabled={subjects.length === 0}
-              placeholder={t('subject')}
+              placeholder={t("subject")}
             />
           )}
         />
@@ -55,18 +60,26 @@ export default function MyScoresFilters({ filters, onChange, value, hideActivity
             name="search"
             control={form.control}
             render={({ field }) => (
-              <SearchInput {...field} sx={{ width: 220 }} placeholder={t('search')} />
+              <SearchInput
+                {...field}
+                sx={{ width: 220 }}
+                placeholder={t("search")}
+              />
             )}
           />
         )}
       </Stack>
 
-      {!hideSeeNonEvaluable && <Controller
-        name="showNonEvaluable"
-        control={form.control}
-        defaultValue={false}
-        render={({ field }) => <Switch {...field} label={t('seeNonEvaluable')} />}
-      />}
+      {!hideSeeNonEvaluable && (
+        <Controller
+          name="showNonEvaluable"
+          control={form.control}
+          defaultValue={false}
+          render={({ field }) => (
+            <Switch {...field} label={t("seeNonEvaluable")} />
+          )}
+        />
+      )}
     </Stack>
   );
 }

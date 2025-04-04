@@ -1,13 +1,23 @@
-import React from 'react';
-import { Box, Text, TextClamp, useHover, Stack, ImageLoader } from '@bubbles-ui/components';
-import { SubjectHeaderStyles } from './SubjectHeader.styles';
-import { SUBJECT_HEADER_DEFAULT_PROPS, SUBJECT_HEADER_PROP_TYPES } from './SubjectHeader.constants';
+import React from "react";
+import {
+  Box,
+  Text,
+  TextClamp,
+  useHover,
+  Stack,
+  ImageLoader,
+} from "@bubbles-ui/components";
+import { SubjectHeaderStyles } from "./SubjectHeader.styles";
+import {
+  SUBJECT_HEADER_DEFAULT_PROPS,
+  SUBJECT_HEADER_PROP_TYPES,
+} from "./SubjectHeader.constants";
 
 const SubjectHeader = ({ id, name, group, icon, color, isFirst, isLast }) => {
   const { ref, hovered } = useHover();
   const { classes } = SubjectHeaderStyles(
     { hovered, color, isFirst, isLast },
-    { name: 'SubjectHeader' }
+    { name: "SubjectHeader" }
   );
 
   return (

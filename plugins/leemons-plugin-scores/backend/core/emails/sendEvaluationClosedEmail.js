@@ -1,43 +1,50 @@
-const { keyBy } = require('lodash');
+const { keyBy } = require("lodash");
 
 async function sendEvaluationClosedEmail({ scores, ctx }) {
   const periodId = scores[0].period;
   const classId = scores[0].class;
   const studentIds = scores.map((score) => score.student);
 
-  const classData = await ctx.tx.call('academic-portfolio.classes.classByIds', {
+  const classData = await ctx.tx.call("academic-portfolio.classes.classByIds", {
     ids: [classId],
     withProgram: true,
   });
 
   const programId = classData[0].program.id;
-  const periodData = classData[0].program.substages.find((s) => s.id === periodId);
+  const periodData = classData[0].program.substages.find(
+    (s) => s.id === periodId
+  );
 
-  const [evaluationSystem, subjectIconUrl, userAgentsInfo, hostname] = await Promise.all([
-    ctx.tx.call('academic-portfolio.programs.getProgramEvaluationSystem', {
-      id: programId,
-    }),
-    ctx.tx.call('leebrary.assets.getCoverUrl', {
-      assetId: classData[0].subject.icon.id,
-    }),
-    ctx.tx
-      .call('users.users.getUserAgentsInfo', {
-        userAgentIds: studentIds,
-        userColumns: ['id', 'locale', 'email'],
-      })
-      .then((res) => keyBy(res, 'id')),
-    ctx.tx.call('users.platform.getHostname'),
-  ]);
+  const [evaluationSystem, subjectIconUrl, userAgentsInfo, hostname] =
+    await Promise.all([
+      ctx.tx.call("academic-portfolio.programs.getProgramEvaluationSystem", {
+        id: programId,
+      }),
+      ctx.tx.call("leebrary.assets.getCoverUrl", {
+        assetId: classData[0].subject.icon.id,
+      }),
+      ctx.tx
+        .call("users.users.getUserAgentsInfo", {
+          userAgentIds: studentIds,
+          userColumns: ["id", "locale", "email"],
+        })
+        .then((res) => keyBy(res, "id")),
+      ctx.tx.call("users.platform.getHostname"),
+    ]);
 
   const promises = scores.map((score) => {
-    const scoreGradeRoundedTo2Decimals = Number(Number.parseFloat(score.grade).toFixed(2));
+    const scoreGradeRoundedTo2Decimals = Number(
+      Number.parseFloat(score.grade).toFixed(2)
+    );
 
     const scale = evaluationSystem.scales.find((s) => {
       // Only round score.grade if s.number is an integer
       const isInteger = Number.isInteger(s.number);
       return (
         s.number ===
-        (isInteger ? Math.floor(scoreGradeRoundedTo2Decimals) : scoreGradeRoundedTo2Decimals)
+        (isInteger
+          ? Math.floor(scoreGradeRoundedTo2Decimals)
+          : scoreGradeRoundedTo2Decimals)
       );
     }) ?? {
       letter: null,
@@ -49,22 +56,26 @@ async function sendEvaluationClosedEmail({ scores, ctx }) {
 
     const context = {
       date: new Date().toLocaleDateString(locale, {
-        year: '2-digit',
-        month: '2-digit',
-        day: '2-digit',
+        year: "2-digit",
+        month: "2-digit",
+        day: "2-digit",
       }),
       // TODO: If periodData is null, we need to get the period name from the AcademicCalendar start and end dates. Example: "2024 - 2025"
-      periodName: periodId === 'final' ? 'Final' : periodData?.name ?? '',
+      periodName: periodId === "final" ? "Final" : (periodData?.name ?? ""),
       subjectName: classData[0].subject.name,
       subjectIconUrl: subjectIconUrl ?? null,
       subjectColor: classData[0].subject.color ?? null,
 
       gradeLetter: scale.letter ?? null,
-      gradeInt: !scale.letter ? Math.floor(scoreGradeRoundedTo2Decimals).toString() : null,
+      gradeInt: !scale.letter
+        ? Math.floor(scoreGradeRoundedTo2Decimals).toString()
+        : null,
       gradeDecimals:
         !scale.letter && scoreGradeRoundedTo2Decimals % 1 !== 0
           ? Math.round(
-              (scoreGradeRoundedTo2Decimals - Math.floor(scoreGradeRoundedTo2Decimals)) * 100
+              (scoreGradeRoundedTo2Decimals -
+                Math.floor(scoreGradeRoundedTo2Decimals)) *
+                100
             ).toString()
           : null,
       gradeLabel: scale.description,
@@ -73,9 +84,9 @@ async function sendEvaluationClosedEmail({ scores, ctx }) {
       preferencesUrl: `${hostname}/private/emails/preference`,
     };
 
-    return ctx.tx.call('emails.email.sendAsEducationalCenter', {
+    return ctx.tx.call("emails.email.sendAsEducationalCenter", {
       to: userAgentsInfo[score.student].user.email,
-      templateName: 'evaluation-closed',
+      templateName: "evaluation-closed",
       language: locale,
       context,
       centerId: classData[0].program.centers[0].id,

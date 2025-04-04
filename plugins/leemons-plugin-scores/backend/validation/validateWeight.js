@@ -1,45 +1,45 @@
-const { LeemonsError } = require('@leemons/error');
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsError } = require("@leemons/error");
+const { LeemonsValidator } = require("@leemons/validator");
 
 const weightValidationObject = {
-  type: 'object',
+  type: "object",
   properties: {
     type: {
-      type: 'string',
-      enum: ['averages', 'roles', 'modules', 'activities'],
+      type: "string",
+      enum: ["averages", "roles", "modules", "activities"],
     },
     class: {
-      type: 'string',
+      type: "string",
     },
 
     weights: {
-      type: 'array',
+      type: "array",
       items: {
-        type: 'object',
+        type: "object",
         additionalProperties: false,
         properties: {
           id: {
-            type: 'string',
+            type: "string",
           },
           weight: {
-            type: 'number',
+            type: "number",
             minimum: 0,
             maximum: 1,
           },
           isLocked: {
-            type: 'boolean',
+            type: "boolean",
           },
         },
-        required: ['id', 'weight'],
+        required: ["id", "weight"],
       },
     },
 
     applySameValue: {
-      type: 'boolean',
+      type: "boolean",
     },
 
     explanation: {
-      type: 'string',
+      type: "string",
     },
   },
 
@@ -47,7 +47,7 @@ const weightValidationObject = {
     {
       if: {
         properties: {
-          type: { const: 'averages' },
+          type: { const: "averages" },
         },
       },
       then: {
@@ -58,12 +58,12 @@ const weightValidationObject = {
         },
       },
       else: {
-        required: ['weights'],
+        required: ["weights"],
       },
     },
   ],
   additionalProperties: false,
-  required: ['type', 'class'],
+  required: ["type", "class"],
 };
 
 function validateWeight({ weight, ctx }) {

@@ -1,13 +1,15 @@
 /* eslint-disable no-param-reassign */
 
-import { arrayToContent } from '../../../helpers';
-import addConditionalFormatting from './addConditionalFormatting';
-import getStyle from './getStyle';
+import { arrayToContent } from "../../../helpers";
+import addConditionalFormatting from "./addConditionalFormatting";
+import getStyle from "./getStyle";
 
 function getStudentRows({ tableData, labels }) {
   return tableData.value.map((student) => {
     const activities = tableData.activities.map((activity) => {
-      const studentActivity = student.activities.find((sa) => sa.id === activity.id);
+      const studentActivity = student.activities.find(
+        (sa) => sa.id === activity.id
+      );
 
       // const scale = tableData.grades.find(
       //   (grade) => grade.number === studentActivity?.score
@@ -21,10 +23,16 @@ function getStudentRows({ tableData, labels }) {
       };
     });
 
-    const customScoreScale = tableData.grades.find((grade) => grade.number === student.customScore);
+    const customScoreScale = tableData.grades.find(
+      (grade) => grade.number === student.customScore
+    );
 
     const calculatedScore = activities.reduce((avg, activity) => {
-      if (activity.activity?.weight && activity.grade && activity.activity?.type === 'evaluable') {
+      if (
+        activity.activity?.weight &&
+        activity.grade &&
+        activity.activity?.type === "evaluable"
+      ) {
         return avg + activity.grade * activity.activity.weight;
       }
       return avg;
@@ -39,7 +47,7 @@ function getStudentRows({ tableData, labels }) {
           return labels.notSubmitted;
         }
         // TODO: Use letter scales
-        return activity.grade ?? '-';
+        return activity.grade ?? "-";
         // activity.scale
         //   ? activity.scale.letter || activity.scale.number
         // : '-';
@@ -56,7 +64,12 @@ function getStudentRows({ tableData, labels }) {
  * ws: import("exceljs").Worksheet,
  * }} param0
  */
-export default function writeStudentsWithActivities({ ws, tableData, labels, initialPosition }) {
+export default function writeStudentsWithActivities({
+  ws,
+  tableData,
+  labels,
+  initialPosition,
+}) {
   const studentRows = getStudentRows({ tableData, labels });
   const contentArray = [[labels.surname, labels.name], ...studentRows];
 

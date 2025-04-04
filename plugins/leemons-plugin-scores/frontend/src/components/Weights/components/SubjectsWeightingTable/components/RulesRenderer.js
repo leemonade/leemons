@@ -1,12 +1,12 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
+import React, { useMemo } from "react";
+import PropTypes from "prop-types";
 
-import { Badge, Stack, useTheme } from '@bubbles-ui/components';
-import { AlertWarningTriangleIcon } from '@bubbles-ui/icons/solid';
+import { Badge, Stack, useTheme } from "@bubbles-ui/components";
+import { AlertWarningTriangleIcon } from "@bubbles-ui/icons/solid";
 
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
-import useModulesData from '../../WeightConfigDrawer/components/Weighting/hooks/useModulesData';
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { prefixPN } from "@scores/helpers";
+import useModulesData from "../../WeightConfigDrawer/components/Weighting/hooks/useModulesData";
 
 export default function RulesRenderer({
   value: weights = {},
@@ -16,12 +16,14 @@ export default function RulesRenderer({
 }) {
   const { type, applySameValue } = weights;
 
-  const [typesT] = useTranslateLoader(prefixPN('weightingTypes'));
+  const [typesT] = useTranslateLoader(prefixPN("weightingTypes"));
   const theme = useTheme();
 
-  const isModuleTypes = type === 'modules';
+  const isModuleTypes = type === "modules";
 
-  const { data: modules } = useModulesData({ class: isModuleTypes ? id : null });
+  const { data: modules } = useModulesData({
+    class: isModuleTypes ? id : null,
+  });
 
   const hasNewModules = useMemo(() => {
     if (!isModuleTypes) {
@@ -33,7 +35,7 @@ export default function RulesRenderer({
 
   return (
     <Stack spacing={3} alignItems="center">
-      <Badge closable={false}>{typesT(type ?? 'averages')}</Badge>
+      <Badge closable={false}>{typesT(type ?? "averages")}</Badge>
       {!!hasNewModules && (
         <AlertWarningTriangleIcon
           color={theme.other.banner.content.color.error}

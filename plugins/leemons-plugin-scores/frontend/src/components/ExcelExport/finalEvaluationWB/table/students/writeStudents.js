@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
 
-import { arrayToContent } from '../../../helpers';
-import addConditionalFormatting from './addConditionalFormatting';
-import getStyle from './getStyle';
+import { arrayToContent } from "../../../helpers";
+import addConditionalFormatting from "./addConditionalFormatting";
+import getStyle from "./getStyle";
 
 function getStudentRows({ tableData }) {
   return tableData.students.map((student) => {
@@ -13,24 +13,30 @@ function getStudentRows({ tableData }) {
         const subject = student.subjects?.find((s) => s.id === klass.id);
         const periodScore = subject?.periodScores?.find((p) => p.id === period);
 
-        if (period === 'final') {
+        if (period === "final") {
           return periodScore?.score;
         }
 
-        return periodScore?.score ?? '-';
+        return periodScore?.score ?? "-";
       });
 
       const popped = grades.pop();
 
       const finalGrade =
-        popped ?? Math.round(grades.reduce((sum, g) => sum + (g === '-' ? 0 : g)) / grades.length);
+        popped ??
+        Math.round(
+          grades.reduce((sum, g) => sum + (g === "-" ? 0 : g)) / grades.length
+        );
 
       periodScores.push(finalGrade);
 
-      return [...grades, { value: finalGrade, isCustom: !!popped }].filter((g) => g !== undefined);
+      return [...grades, { value: finalGrade, isCustom: !!popped }].filter(
+        (g) => g !== undefined
+      );
     });
 
-    const avgScore = periodScores.reduce((sum, s) => sum + s) / periodScores.length;
+    const avgScore =
+      periodScores.reduce((sum, s) => sum + s) / periodScores.length;
     return [
       student.surname,
       student.name,
@@ -47,7 +53,12 @@ function getStudentRows({ tableData }) {
  * ws: import("exceljs").Worksheet,
  * }} param0
  */
-export default function writeStudentsWithActivities({ ws, tableData, labels, initialPosition }) {
+export default function writeStudentsWithActivities({
+  ws,
+  tableData,
+  labels,
+  initialPosition,
+}) {
   const studentRows = getStudentRows({ tableData, labels });
   const contentArray = [[labels.surname, labels.name], ...studentRows];
 

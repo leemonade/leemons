@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign */
-import { cellToIndexes } from '../cellPositioning';
+import { cellToIndexes } from "../cellPositioning";
 
 const global = window;
 
@@ -50,7 +50,12 @@ export function getCustomName({ ws, name: _name }) {
   return global.customNames[name];
 }
 
-export function getCustomNamesRange({ ws, name: _name, colFixed, rowFixed } = {}) {
+export function getCustomNamesRange({
+  ws,
+  name: _name,
+  colFixed,
+  rowFixed,
+} = {}) {
   const id = ws._customNamesId;
   const name = `${id}__${_name}`;
 
@@ -65,7 +70,7 @@ export function getCustomNamesRange({ ws, name: _name, colFixed, rowFixed } = {}
   const firstCell = cellToIndexes(cells[0].address);
   const lastCell = cellToIndexes(cells[cells.length - 1].address);
 
-  return `${colFixed ? '$' : ''}${firstCell.column}${rowFixed ? '$' : ''}${firstCell.row}:${
-    colFixed ? '$' : ''
-  }${lastCell.column}${rowFixed ? '$' : ''}${lastCell.row}`;
+  return `${colFixed ? "$" : ""}${firstCell.column}${rowFixed ? "$" : ""}${firstCell.row}:${
+    colFixed ? "$" : ""
+  }${lastCell.column}${rowFixed ? "$" : ""}${lastCell.row}`;
 }

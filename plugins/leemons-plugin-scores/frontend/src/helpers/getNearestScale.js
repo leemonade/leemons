@@ -1,17 +1,24 @@
-import { orderBy } from 'lodash';
+import { orderBy } from "lodash";
 
 export function getNearestScale({ grade, evaluationSystem }) {
   const numericGrade = parseFloat(grade);
-  const orderedScales = orderBy(evaluationSystem?.scales, ['number'], ['asc']);
+  const orderedScales = orderBy(evaluationSystem?.scales, ["number"], ["asc"]);
   let nearestScale = null;
 
   const isBelow = numericGrade < evaluationSystem?.minScale?.number;
   const isAbove = numericGrade > evaluationSystem?.maxScale?.number;
 
   if (isBelow || isAbove || !grade) {
-    nearestScale = isBelow || !grade ? evaluationSystem?.minScale : evaluationSystem?.maxScale;
+    nearestScale =
+      isBelow || !grade
+        ? evaluationSystem?.minScale
+        : evaluationSystem?.maxScale;
   } else {
-    for (let i = 0, scalesLength = orderedScales?.length ?? 0; i < scalesLength; i++) {
+    for (
+      let i = 0, scalesLength = orderedScales?.length ?? 0;
+      i < scalesLength;
+      i++
+    ) {
       const scale = orderedScales?.[i];
 
       if (numericGrade >= scale?.number) {
@@ -30,7 +37,8 @@ export function getNearestScale({ grade, evaluationSystem }) {
 
   return {
     ...nearestScale,
-    grade: isBelow || isAbove || !grade ? nearestScale?.number : numericGrade ?? 0,
+    grade:
+      isBelow || isAbove || !grade ? nearestScale?.number : (numericGrade ?? 0),
   };
 }
 

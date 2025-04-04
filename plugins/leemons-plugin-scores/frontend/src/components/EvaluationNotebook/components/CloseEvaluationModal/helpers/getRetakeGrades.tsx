@@ -1,10 +1,10 @@
-import type { TableData, StudentScores, GradedRetake } from '../types';
+import type { TableData, StudentScores, GradedRetake } from "../types";
 
 export function getRetakeGrades({
   student,
   default: defaultGrade,
 }: {
-  student: TableData['activitiesData']['value'][number];
+  student: TableData["activitiesData"]["value"][number];
   default?: number;
 }) {
   let maxGradedRetake: GradedRetake | null = defaultGrade
@@ -23,7 +23,7 @@ export function getRetakeGrades({
   }
 
   const retakeGrades = student.retakeScores.reduce<
-    Record<string, StudentScores['retakes'][number]>
+    Record<string, StudentScores["retakes"][number]>
   >((acc, retake) => {
     if (!maxGradedRetake || retake.grade > maxGradedRetake.grade) {
       maxGradedRetake = {
@@ -33,7 +33,7 @@ export function getRetakeGrades({
       };
     }
 
-    acc[retake.retakeId ?? '0'] = {
+    acc[retake.retakeId ?? "0"] = {
       id: retake.retakeId,
       order: retake.retakeIndex,
       grade: retake.grade,

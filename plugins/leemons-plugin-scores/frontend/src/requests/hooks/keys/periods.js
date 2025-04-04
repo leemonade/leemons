@@ -1,19 +1,25 @@
 export const allPeriodsKey = [
   {
-    plugin: 'plugin.scores',
-    scope: 'periods',
+    plugin: "plugin.scores",
+    scope: "periods",
   },
 ];
 
 export const allPaginatedPeriodsListsKey = [
   {
     ...allPeriodsKey[0],
-    action: 'paginate',
-    entity: 'list',
+    action: "paginate",
+    entity: "list",
   },
 ];
 
-export const paginatePeriodsListKey = ({ page, size, query, sort, userAgents }) => [
+export const paginatePeriodsListKey = ({
+  page,
+  size,
+  query,
+  sort,
+  userAgents,
+}) => [
   {
     ...allPaginatedPeriodsListsKey[0],
 

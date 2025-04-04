@@ -1,7 +1,7 @@
 export const allRetakesKey = [
   {
-    plugin: 'plugin.scores',
-    scope: 'retakes',
+    plugin: "plugin.scores",
+    scope: "retakes",
   },
 ];
 
@@ -15,8 +15,8 @@ export const getRetakesKey = ({ classId, period }) => [
 
 export const allRetakeScoresKey = [
   {
-    plugin: 'plugin.scores',
-    scope: 'retakes.scores',
+    plugin: "plugin.scores",
+    scope: "retakes.scores",
   },
 ];
 

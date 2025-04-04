@@ -1,5 +1,5 @@
-import { arrayToContent } from '../../helpers';
-import { getStyle } from './style';
+import { arrayToContent } from "../../helpers";
+import { getStyle } from "./style";
 
 /**
  *
@@ -14,13 +14,13 @@ export default function writeHeader(
   labels
 ) {
   const contentArray = [
-    ['', ''],
+    ["", ""],
     [labels.period, period],
     [labels.startDate, new Date(startDate)],
     [labels.endDate, new Date(endDate)],
     [labels.program, program],
     [labels.subject, subject],
-    ['', ''],
+    ["", ""],
   ];
 
   const content = arrayToContent({

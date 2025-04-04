@@ -1,1 +1,1 @@
-export { default as writeTableHeader } from './writeTableHeader';
+export { default as writeTableHeader } from "./writeTableHeader";

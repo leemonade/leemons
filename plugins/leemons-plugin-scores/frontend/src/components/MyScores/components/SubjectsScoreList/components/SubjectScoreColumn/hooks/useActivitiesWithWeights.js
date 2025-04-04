@@ -1,15 +1,18 @@
-import { filter, keyBy, groupBy } from 'lodash';
+import { filter, keyBy, groupBy } from "lodash";
 
-import useActivities from './useActivities';
+import useActivities from "./useActivities";
 
-import getApplySameValueWeightForUnlocked from '@scores/components/EvaluationNotebook/ScoresTable/helpers/getApplySameValueWeightForUnlocked';
+import getApplySameValueWeightForUnlocked from "@scores/components/EvaluationNotebook/ScoresTable/helpers/getApplySameValueWeightForUnlocked";
 
 function getActivitiesWeightsByModules({ weights, activities }) {
-  const evaluableActivities = filter(activities, 'instance.gradable');
+  const evaluableActivities = filter(activities, "instance.gradable");
 
   const { applySameValue } = weights;
-  const weightsPerModuleId = keyBy(weights.weights, 'id');
-  const modulesCount = Math.max(evaluableActivities.length, weights.weights.length);
+  const weightsPerModuleId = keyBy(weights.weights, "id");
+  const modulesCount = Math.max(
+    evaluableActivities.length,
+    weights.weights.length
+  );
 
   return activities.map((activity) => {
     const weight = weightsPerModuleId[activity.instance.id];
@@ -29,24 +32,33 @@ function getActivitiesWeightsByModules({ weights, activities }) {
 }
 
 function getActivitiesWeightsByRoles({ weights, activities }) {
-  const evaluableActivities = filter(activities, 'instance.gradable');
+  const evaluableActivities = filter(activities, "instance.gradable");
 
   const { applySameValue } = weights;
-  const weightsPerType = keyBy(weights.weights, 'id');
+  const weightsPerType = keyBy(weights.weights, "id");
 
-  const roles = groupBy(evaluableActivities, 'instance.assignable.role');
-  const rolesCount = Math.max(Object.keys(roles).length, weights.weights.length);
+  const roles = groupBy(evaluableActivities, "instance.assignable.role");
+  const rolesCount = Math.max(
+    Object.keys(roles).length,
+    weights.weights.length
+  );
 
   return activities.map((activity) => {
     const { role } = activity.instance.assignable;
     const roleWeight = weightsPerType[role];
     let weightValue = roleWeight?.weight;
 
-    if (!roleWeight?.isLocked && applySameValue && activity?.instance?.gradable) {
+    if (
+      !roleWeight?.isLocked &&
+      applySameValue &&
+      activity?.instance?.gradable
+    ) {
       weightValue = getApplySameValueWeightForUnlocked(weights, rolesCount);
     }
 
-    const weight = !roles[role] ? 0 : Number((weightValue / roles[role].length).toFixed(4));
+    const weight = !roles[role]
+      ? 0
+      : Number((weightValue / roles[role].length).toFixed(4));
 
     return {
       ...activity,
@@ -56,7 +68,7 @@ function getActivitiesWeightsByRoles({ weights, activities }) {
 }
 
 function getActivitiesWeightsWithSameValue({ activities }) {
-  const evaluableActivities = filter(activities, 'instance.gradable');
+  const evaluableActivities = filter(activities, "instance.gradable");
   const activitiesCount = evaluableActivities?.length;
   const weightPerActivity = Number((1 / activitiesCount).toFixed(4));
 
@@ -83,10 +95,16 @@ export default function useActivitiesWithWeights({
 
   let activitiesWithWeights;
 
-  if (weights?.type === 'modules') {
-    activitiesWithWeights = getActivitiesWeightsByModules({ weights, activities });
-  } else if (weights?.type === 'roles') {
-    activitiesWithWeights = getActivitiesWeightsByRoles({ weights, activities });
+  if (weights?.type === "modules") {
+    activitiesWithWeights = getActivitiesWeightsByModules({
+      weights,
+      activities,
+    });
+  } else if (weights?.type === "roles") {
+    activitiesWithWeights = getActivitiesWeightsByRoles({
+      weights,
+      activities,
+    });
   } else {
     activitiesWithWeights = getActivitiesWeightsWithSameValue({ activities });
   }

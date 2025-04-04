@@ -1,15 +1,15 @@
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { findNearestFloorScore } from '@learning-paths/components/ModuleDashboard/components/DashboardCard/components/ScoreFeedback';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { sortBy } from 'lodash';
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { findNearestFloorScore } from "@learning-paths/components/ModuleDashboard/components/DashboardCard/components/ScoreFeedback";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { sortBy } from "lodash";
 
-import { prefixPN } from '@scores/helpers';
-import { useScoresMutation } from '@scores/requests/hooks/mutations';
-import { useSetRetakeScoreMutation } from '@scores/requests/hooks/mutations/useSetRetakeScore';
+import { prefixPN } from "@scores/helpers";
+import { useScoresMutation } from "@scores/requests/hooks/mutations";
+import { useSetRetakeScoreMutation } from "@scores/requests/hooks/mutations/useSetRetakeScore";
 
 export default function useCloseEvaluation() {
   const { mutateAsync } = useScoresMutation();
-  const [t] = useTranslateLoader(prefixPN('evaluationNotebook'));
+  const [t] = useTranslateLoader(prefixPN("evaluationNotebook"));
 
   const { mutate: setRetakeScore } = useSetRetakeScoreMutation();
 
@@ -27,8 +27,8 @@ export default function useCloseEvaluation() {
       return acc;
     }, {});
 
-    const minScore = sortBy(grades, 'number')[0].number;
-    const maxScore = sortBy(grades, 'number').reverse()[0].number;
+    const minScore = sortBy(grades, "number")[0].number;
+    const maxScore = sortBy(grades, "number").reverse()[0].number;
 
     const scores = students.map((student) => {
       const retakeHigherScore =
@@ -41,7 +41,10 @@ export default function useCloseEvaluation() {
         retakeHigherScore ??
         student.activities.reduce((acc, activity) => {
           const weight = weightPerActivity[activity.id];
-          const score = Math.max(Math.min(maxScore, activity.score ?? minScore), minScore);
+          const score = Math.max(
+            Math.min(maxScore, activity.score ?? minScore),
+            minScore
+          );
 
           return acc + score * (weight ?? 0);
         }, 0);
@@ -70,9 +73,11 @@ export default function useCloseEvaluation() {
     });
 
     return mutateAsync({ scores })
-      .then(() => addSuccessAlert(t('closedEvaluationSuccess', { period: period.name })))
+      .then(() =>
+        addSuccessAlert(t("closedEvaluationSuccess", { period: period.name }))
+      )
       .catch((e) => {
-        addErrorAlert(t('closedEvaluationError'), e.message);
+        addErrorAlert(t("closedEvaluationError"), e.message);
       });
   };
 }

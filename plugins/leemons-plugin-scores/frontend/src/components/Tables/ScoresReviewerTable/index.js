@@ -1,2 +1,2 @@
-export * from './ScoresReviewerTable';
-export * from './ScoresReviewerTable.constants';
+export * from "./ScoresReviewerTable";
+export * from "./ScoresReviewerTable.constants";

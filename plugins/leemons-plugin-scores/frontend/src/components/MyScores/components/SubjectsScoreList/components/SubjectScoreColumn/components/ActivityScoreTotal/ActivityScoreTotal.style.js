@@ -1,4 +1,4 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 const useActivityScoreTotalStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
@@ -7,7 +7,7 @@ const useActivityScoreTotalStyles = createStyles((theme) => {
     root: {
       padding: globalTheme.spacing.padding.xsm,
       height: 78,
-      background: '#F2F4F8',
+      background: "#F2F4F8",
       borderBottom: `${globalTheme.border.width.sm} solid ${globalTheme.border.color.line.subtle}`,
       borderTop: `${globalTheme.border.width.sm} solid ${globalTheme.border.color.line.subtle}`,
     },
@@ -22,8 +22,8 @@ const useActivityScoreTotalStyles = createStyles((theme) => {
       fontFamily: theme.other.table.content.typo.md.fontFamily,
       fontWeight: 600,
       fontSize: 10,
-      fontHeight: '14px',
-      letterSpacing: '0.04em',
+      fontHeight: "14px",
+      letterSpacing: "0.04em",
     },
     scaleDescription: {
       ...theme.other.table.content.typo.md,
@@ -34,8 +34,8 @@ const useActivityScoreTotalStyles = createStyles((theme) => {
     },
     retake: {
       ...globalTheme.content.typoMobile.heading.xxsm,
-      whiteSpace: 'nowrap',
-      textAlign: 'left',
+      whiteSpace: "nowrap",
+      textAlign: "left",
       fontWeight: 600,
     },
   };

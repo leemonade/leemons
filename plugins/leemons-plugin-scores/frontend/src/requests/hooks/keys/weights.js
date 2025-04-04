@@ -1,14 +1,14 @@
 export const allWeightsKey = [
   {
-    plugin: 'plugin.scores',
-    scope: 'weights',
+    plugin: "plugin.scores",
+    scope: "weights",
   },
 ];
 
 export const allGetWeightsKey = [
   {
     ...allWeightsKey[0],
-    action: 'get',
+    action: "get",
   },
 ];
 

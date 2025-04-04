@@ -1,51 +1,51 @@
 const manualActivitySchema = {
-  type: 'object',
+  type: "object",
   properties: {
     name: {
-      type: 'string',
+      type: "string",
       minLength: 1,
     },
     description: {
-      type: 'string',
+      type: "string",
     },
     date: {
-      type: 'string',
-      format: 'date-time',
+      type: "string",
+      format: "date-time",
     },
     role: {
-      type: 'string',
+      type: "string",
       minLength: 1,
       // enum: ['task', 'test'], // This comes from assignables, so we don't check it, once assignables exposes it, we can check it
     },
     classId: {
-      type: 'string',
-      format: 'lrn',
+      type: "string",
+      format: "lrn",
     },
   },
-  required: ['name', 'date', 'role', 'classId'],
+  required: ["name", "date", "role", "classId"],
   additionalProperties: false,
 };
 
 const scoresSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     user: {
-      type: 'string',
-      format: 'lrn',
+      type: "string",
+      format: "lrn",
     },
     activity: {
-      type: 'string',
-      format: 'lrn',
+      type: "string",
+      format: "lrn",
     },
     grade: {
-      type: 'number',
+      type: "number",
     },
     class: {
-      type: 'string',
-      format: 'lrn',
+      type: "string",
+      format: "lrn",
     },
   },
-  required: ['user', 'activity', 'grade', 'class'],
+  required: ["user", "activity", "grade", "class"],
   additionalProperties: false,
 };
 

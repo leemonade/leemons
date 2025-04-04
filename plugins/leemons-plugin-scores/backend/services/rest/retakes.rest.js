@@ -1,21 +1,21 @@
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
 
-const addRetake = require('../../core/retakes/add');
-const deleteRetake = require('../../core/retakes/delete');
-const getRetakes = require('../../core/retakes/get');
-const getRetakeScores = require('../../core/retakes/scores/get');
-const setRetakeScore = require('../../core/retakes/scores/set');
+const addRetake = require("../../core/retakes/add");
+const deleteRetake = require("../../core/retakes/delete");
+const getRetakes = require("../../core/retakes/get");
+const getRetakeScores = require("../../core/retakes/scores/get");
+const setRetakeScore = require("../../core/retakes/scores/set");
 
 /** @type {import('moleculer').ServiceActionsSchema} */
 const restActions = {
   addRetake: {
     rest: {
-      path: '/:classId/:period',
-      method: 'POST',
+      path: "/:classId/:period",
+      method: "POST",
     },
     params: {
-      classId: { type: 'string' },
-      period: { type: 'string' },
+      classId: { type: "string" },
+      period: { type: "string" },
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -37,12 +37,12 @@ const restActions = {
   },
   getRetakes: {
     rest: {
-      path: '/:classId/:period',
-      method: 'GET',
+      path: "/:classId/:period",
+      method: "GET",
     },
     params: {
-      classId: { type: 'string' },
-      period: { type: 'string' },
+      classId: { type: "string" },
+      period: { type: "string" },
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -62,11 +62,11 @@ const restActions = {
   },
   deleteRetake: {
     rest: {
-      path: '/:retakeId',
-      method: 'DELETE',
+      path: "/:retakeId",
+      method: "DELETE",
     },
     params: {
-      retakeId: { type: 'string' },
+      retakeId: { type: "string" },
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -86,20 +86,21 @@ const restActions = {
 
   gradeRetake: {
     rest: {
-      path: '/grades/:classId/:period',
-      method: 'PUT',
+      path: "/grades/:classId/:period",
+      method: "PUT",
     },
     params: {
-      classId: { type: 'string' },
-      period: { type: 'string' },
-      retakeId: { type: 'string', optional: true },
-      retakeIndex: { type: 'number' },
-      user: { type: 'string' },
-      grade: { type: 'number' },
+      classId: { type: "string" },
+      period: { type: "string" },
+      retakeId: { type: "string", optional: true },
+      retakeIndex: { type: "number" },
+      user: { type: "string" },
+      grade: { type: "number" },
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const { classId, period, retakeId, retakeIndex, user, grade } = ctx.params;
+      const { classId, period, retakeId, retakeIndex, user, grade } =
+        ctx.params;
 
       const modified = await setRetakeScore({
         retakeScore: {
@@ -121,14 +122,14 @@ const restActions = {
   },
   getRetakeGrades: {
     rest: {
-      path: '/grades/:classId/:period',
-      method: 'GET',
+      path: "/grades/:classId/:period",
+      method: "GET",
     },
     params: {
-      classId: { type: 'string' },
-      period: { type: 'string' },
-      retakeId: { type: 'string', optional: true },
-      retakeIndex: { type: 'number', optional: true, convert: true },
+      classId: { type: "string" },
+      period: { type: "string" },
+      retakeId: { type: "string", optional: true },
+      retakeIndex: { type: "number", optional: true, convert: true },
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

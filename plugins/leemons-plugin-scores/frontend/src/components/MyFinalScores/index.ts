@@ -1,1 +1,1 @@
-export * from './MyFinalScores';
+export * from "./MyFinalScores";

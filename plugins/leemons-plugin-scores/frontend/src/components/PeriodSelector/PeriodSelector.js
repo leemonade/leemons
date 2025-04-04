@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
+import React, { useMemo } from "react";
+import PropTypes from "prop-types";
 import {
   Box,
   createStyles,
@@ -8,24 +8,24 @@ import {
   Loader,
   Paragraph,
   Text,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 
-import { PluginScoresBasicIcon } from '@bubbles-ui/icons/outline';
-import { useUserCenters } from '@users/hooks';
-import { useCenterPrograms, useProgramDetail } from '@academic-portfolio/hooks';
-import { getCentersWithToken } from '@users/session';
+import { PluginScoresBasicIcon } from "@bubbles-ui/icons/outline";
+import { useUserCenters } from "@users/hooks";
+import { useCenterPrograms, useProgramDetail } from "@academic-portfolio/hooks";
+import { getCentersWithToken } from "@users/session";
 
-import _, { isFunction, uniqBy, sortBy } from 'lodash';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
-import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
-import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
-import { ScoresPeriodForm } from '../ScoresPeriodForm';
+import _, { isFunction, uniqBy, sortBy } from "lodash";
+import { unflatten } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { prefixPN } from "@scores/helpers";
+import useSessionClasses from "@academic-portfolio/hooks/useSessionClasses";
+import { getClassIcon } from "@academic-portfolio/helpers/getClassIcon";
+import { ScoresPeriodForm } from "../ScoresPeriodForm";
 
 const useStyle = createStyles((theme, { isOpened }) => ({
   drawer: {
-    height: '100vh',
+    height: "100vh",
     padding: isOpened && theme.spacing[7],
     paddingLeft: isOpened && theme.spacing[10],
     borderRight: isOpened && `1px solid ${theme.colors.ui01}`,
@@ -33,13 +33,13 @@ const useStyle = createStyles((theme, { isOpened }) => ({
   },
   drawerTitle: {
     marginBottom: theme.spacing[7],
-    '*': {
+    "*": {
       color: theme.colors.text04,
     },
   },
   titleTop: {
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
     gap: theme.spacing[2],
   },
   drawerText: {
@@ -47,7 +47,7 @@ const useStyle = createStyles((theme, { isOpened }) => ({
   },
 
   formTitle: {
-    display: 'block',
+    display: "block",
     marginBottom: theme.spacing[5],
   },
   form: {
@@ -78,9 +78,9 @@ function getMostSpecificPeriod(filters, periods) {
       return { ...period, specificity };
     });
 
-  const mostSpecificPeriod = _.maxBy(periodsWithSpecificity, 'specificity');
+  const mostSpecificPeriod = _.maxBy(periodsWithSpecificity, "specificity");
 
-  return _.omit(mostSpecificPeriod, 'specificity');
+  return _.omit(mostSpecificPeriod, "specificity");
 }
 
 function ClassItem({ class: klass, ...props }) {
@@ -88,29 +88,29 @@ function ClassItem({ class: klass, ...props }) {
     <Box {...props}>
       <Box
         sx={(theme) => ({
-          display: 'flex',
-          flexDirection: 'row',
+          display: "flex",
+          flexDirection: "row",
           gap: theme.spacing[2],
-          alignItems: 'center',
+          alignItems: "center",
         })}
       >
         <Box
           sx={() => ({
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             minWidth: 26,
             minHeight: 26,
             maxWidth: 26,
             maxHeight: 26,
-            borderRadius: '50%',
+            borderRadius: "50%",
             backgroundColor: klass?.color,
           })}
         >
           <ImageLoader
             sx={() => ({
               borderRadius: 0,
-              filter: 'brightness(0) invert(1)',
+              filter: "brightness(0) invert(1)",
             })}
             forceImage
             width={16}
@@ -119,7 +119,7 @@ function ClassItem({ class: klass, ...props }) {
           />
         </Box>
         <Text>{`${klass.subject.name}${
-          klass?.groups?.name ? ` - ${klass.groups.name}` : ''
+          klass?.groups?.name ? ` - ${klass.groups.name}` : ""
         }`}</Text>
       </Box>
     </Box>
@@ -154,9 +154,9 @@ export default function PeriodSelector({
   const [periodSelected, setPeriodSelected] = React.useState(null);
 
   const [, translations] = useTranslateLoader([
-    prefixPN('periods.periodForm'),
-    prefixPN('periods.periodFormErrorMessages'),
-    prefixPN(allowCreate ? 'periods.adminDrawer' : 'periods.teacherDrawer'),
+    prefixPN("periods.periodForm"),
+    prefixPN("periods.periodFormErrorMessages"),
+    prefixPN(allowCreate ? "periods.adminDrawer" : "periods.teacherDrawer"),
   ]);
 
   const { errorMessages, ...labels } = useMemo(() => {
@@ -164,9 +164,14 @@ export default function PeriodSelector({
       const res = unflatten(translations.items);
 
       return {
-        form: _.get(res, prefixPN('periods.periodForm')),
-        drawer: _.get(res, prefixPN(allowCreate ? 'periods.adminDrawer' : 'periods.teacherDrawer')),
-        errorMessages: _.get(res, prefixPN('periods.periodFormErrorMessages')),
+        form: _.get(res, prefixPN("periods.periodForm")),
+        drawer: _.get(
+          res,
+          prefixPN(
+            allowCreate ? "periods.adminDrawer" : "periods.teacherDrawer"
+          )
+        ),
+        errorMessages: _.get(res, prefixPN("periods.periodFormErrorMessages")),
       };
     }
 
@@ -174,19 +179,22 @@ export default function PeriodSelector({
   }, [translations]);
 
   const { data: centers, isLoading: isLoadingCenters } = useUserCenters({
-    enabled: fields.center === 'all',
+    enabled: fields.center === "all",
   });
 
-  const { data: programs } = useCenterPrograms(center, { enabled: fields.program && !!center });
+  const { data: programs } = useCenterPrograms(center, {
+    enabled: fields.program && !!center,
+  });
   const { data: programData } = useProgramDetail(program, {
     enabled: (fields.course || fields.subject) && !!program,
   });
-  const { data: teacherClasses } = useSessionClasses({ program }, { enabled: !!program });
-
-  const { data: allTeacherClasses, isLoading: isLoadingTeacherClasses } = useSessionClasses(
-    {},
-    { enabled: !!fields?.class }
+  const { data: teacherClasses } = useSessionClasses(
+    { program },
+    { enabled: !!program }
   );
+
+  const { data: allTeacherClasses, isLoading: isLoadingTeacherClasses } =
+    useSessionClasses({}, { enabled: !!fields?.class });
 
   const fieldsToUse = useMemo(() => {
     const fieldsToReturn = [];
@@ -195,14 +203,20 @@ export default function PeriodSelector({
       // The class field excludes the other fields
       return [
         {
-          name: 'class',
+          name: "class",
           label: labels?.form?.class?.label,
           placeholder: labels?.form?.class?.placeholder,
           itemComponent: (item) => (
-            <ClassItem class={allTeacherClasses.find((c) => c.id === item.value)} {...item} />
+            <ClassItem
+              class={allTeacherClasses.find((c) => c.id === item.value)}
+              {...item}
+            />
           ),
           valueComponent: (item) => (
-            <ClassItem class={allTeacherClasses.find((c) => c.id === item.value)} {...item} />
+            <ClassItem
+              class={allTeacherClasses.find((c) => c.id === item.value)}
+              {...item}
+            />
           ),
           data:
             allTeacherClasses?.map((klass) => ({
@@ -213,26 +227,34 @@ export default function PeriodSelector({
       ];
     }
 
-    if (fields.center === 'all') {
+    if (fields.center === "all") {
       fieldsToReturn.push({
-        name: 'center',
+        name: "center",
         label: labels?.form?.center?.label,
         placeholder: labels?.form?.center?.placeholder,
         disabled: !centers?.length,
-        data: (centers || []).map(({ id, name }) => ({ label: name, value: id })),
-        required: requiredFields.includes('center') && labels?.form?.center?.error,
+        data: (centers || []).map(({ id, name }) => ({
+          label: name,
+          value: id,
+        })),
+        required:
+          requiredFields.includes("center") && labels?.form?.center?.error,
       });
       setAllowCenterChange(true);
     } else if (fields.center) {
       const centersWithToken = getCentersWithToken();
       if (centersWithToken.length > 1) {
         fieldsToReturn.push({
-          name: 'center',
+          name: "center",
           label: labels?.form?.center?.label,
           placeholder: labels?.form?.center?.placeholder,
           disabled: !centersWithToken.length,
-          data: centersWithToken.map(({ id, name }) => ({ label: name, value: id })),
-          required: requiredFields.includes('center') && labels?.form?.center?.error,
+          data: centersWithToken.map(({ id, name }) => ({
+            label: name,
+            value: id,
+          })),
+          required:
+            requiredFields.includes("center") && labels?.form?.center?.error,
         });
         setAllowCenterChange(true);
       } else if (centersWithToken[0].id !== center) {
@@ -242,9 +264,9 @@ export default function PeriodSelector({
     }
 
     if (fields.program) {
-      const sortedPrograms = sortBy(programs, 'createdAt');
+      const sortedPrograms = sortBy(programs, "createdAt");
       fieldsToReturn.push({
-        name: 'program',
+        name: "program",
         label: labels?.form?.program?.label,
         placeholder: labels?.form?.program?.placeholder,
         disabled: !center || !sortedPrograms?.length,
@@ -252,7 +274,8 @@ export default function PeriodSelector({
           label: name,
           value: id,
         })),
-        required: requiredFields.includes('program') && labels?.form?.program?.error,
+        required:
+          requiredFields.includes("program") && labels?.form?.program?.error,
       });
     }
 
@@ -260,12 +283,15 @@ export default function PeriodSelector({
     // ES: MoreThanOneAcademicYear es cuando una asignatura puede estudiarse en varios cursos.
     const courseIsRequired =
       programData?.maxNumberOfCourses > 1 &&
-      requiredFields.includes('course') &&
+      requiredFields.includes("course") &&
       !programData?.moreThanOneAcademicYear;
 
-    if (programData?.maxNumberOfCourses > 1 && (fields.course || courseIsRequired)) {
+    if (
+      programData?.maxNumberOfCourses > 1 &&
+      (fields.course || courseIsRequired)
+    ) {
       fieldsToReturn.push({
-        name: 'course',
+        name: "course",
         label: labels?.form?.course?.label,
         placeholder: labels?.form?.course?.placeholder,
         disabled: !program || !programData?.courses?.length,
@@ -280,43 +306,53 @@ export default function PeriodSelector({
     const subjects = uniqBy(
       (teacherClasses || [])
         .map((d) => d.subject)
-        .filter(({ course: subjectCourse }) => subjectCourse === course || !course)
+        .filter(
+          ({ course: subjectCourse }) => subjectCourse === course || !course
+        )
         .map(({ name, id, subject: sid }) => ({
           label: name,
           value: sid || id,
         })),
-      'value'
+      "value"
     );
 
     if (fields.subject) {
       fieldsToReturn.push({
-        name: 'subject',
+        name: "subject",
         label: labels?.form?.subject?.label,
         placeholder: labels?.form?.subject?.placeholder,
         disabled: (courseIsRequired && !course) || !subjects?.length,
         data: subjects,
-        required: requiredFields.includes('subject') && labels?.form?.subject?.error,
+        required:
+          requiredFields.includes("subject") && labels?.form?.subject?.error,
       });
     }
 
     if (fields.group) {
       const groups = uniqBy(
         (teacherClasses || [])
-          .filter((d) => d.subject.id === subject || d.subject.subject === subject)
+          .filter(
+            (d) => d.subject.id === subject || d.subject.subject === subject
+          )
           .map(({ groups: g }) => ({
             label: g.name,
             value: g.id,
           })),
-        'value'
+        "value"
       );
 
       fieldsToReturn.push({
-        name: 'group',
+        name: "group",
         label: labels?.form?.group?.label,
         placeholder: labels?.form?.group?.placeholder,
-        disabled: !subject || !groups?.length || (!course && courseIsRequired) || !subjects?.length,
+        disabled:
+          !subject ||
+          !groups?.length ||
+          (!course && courseIsRequired) ||
+          !subjects?.length,
         data: groups,
-        required: requiredFields.includes('group') && labels?.form?.group?.error,
+        required:
+          requiredFields.includes("group") && labels?.form?.group?.error,
       });
     }
 
@@ -333,7 +369,10 @@ export default function PeriodSelector({
     allTeacherClasses,
   ]);
 
-  if ((fields?.class && isLoadingTeacherClasses) || (fields?.center && isLoadingCenters)) {
+  if (
+    (fields?.class && isLoadingTeacherClasses) ||
+    (fields?.center && isLoadingCenters)
+  ) {
     return <Loader />;
   }
 
@@ -346,7 +385,9 @@ export default function PeriodSelector({
             <Text size="lg">{labels?.drawer?.title}</Text>
           </Box>
         </Box>
-        <Paragraph className={classes.drawerText}>{labels?.drawer?.description}</Paragraph>
+        <Paragraph className={classes.drawerText}>
+          {labels?.drawer?.description}
+        </Paragraph>
 
         {allowCreate && (
           <Text
@@ -367,7 +408,10 @@ export default function PeriodSelector({
             fields={fieldsToUse}
             allowCreate={allowCreate}
             periods={periods?.filter((period) => {
-              if ((fields.center && period.center !== center) || period.program !== program) {
+              if (
+                (fields.center && period.center !== center) ||
+                period.program !== program
+              ) {
                 return false;
               }
 
@@ -415,7 +459,9 @@ export default function PeriodSelector({
                   }
                 } else {
                   const vClassId = _.isArray(v.class) ? v.class[0] : v.class;
-                  const c = allTeacherClasses.find((klass) => klass.id === vClassId);
+                  const c = allTeacherClasses.find(
+                    (klass) => klass.id === vClassId
+                  );
 
                   onPeriodChange({
                     ...v,
@@ -488,7 +534,9 @@ export default function PeriodSelector({
               let period;
               if (v.class) {
                 const vClassId = _.isArray(v.class) ? v.class[0] : v.class;
-                const c = allTeacherClasses.find((klass) => klass.id === vClassId);
+                const c = allTeacherClasses.find(
+                  (klass) => klass.id === vClassId
+                );
 
                 const classValues = {
                   ...v,

@@ -49,8 +49,8 @@ export interface TableData {
 }
 
 export interface GradedRetake {
-  id: Retake['id'];
-  order: Retake['index'];
+  id: Retake["id"];
+  order: Retake["index"];
   grade: number;
 }
 
@@ -61,11 +61,11 @@ export interface StudentScores {
     avatar: string | null;
   };
   retakes: Record<string, GradedRetake>;
-  final: Retake['id'];
+  final: Retake["id"];
 }
 
 export interface StudentEvaluationData {
   meanGrade: number;
-  final: Retake['id'];
+  final: Retake["id"];
   finalGrade: number;
 }

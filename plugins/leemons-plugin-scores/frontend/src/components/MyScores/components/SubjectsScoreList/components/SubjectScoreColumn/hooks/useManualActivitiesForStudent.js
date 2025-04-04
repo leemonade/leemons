@@ -1,9 +1,9 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { getCookieToken } from '@users/session';
+import { getCookieToken } from "@users/session";
 
-import { useManualActivities } from '@scores/requests/hooks/queries/useManualActivities';
-import { useMyManualActivitiesScores } from '@scores/requests/hooks/queries/useMyManualActivitiesScores';
+import { useManualActivities } from "@scores/requests/hooks/queries/useManualActivities";
+import { useMyManualActivitiesScores } from "@scores/requests/hooks/queries/useMyManualActivitiesScores";
 
 function parseActivity({ activity, user, subject, scores }) {
   return {
@@ -11,7 +11,7 @@ function parseActivity({ activity, user, subject, scores }) {
     grades: scores
       ? [
           {
-            type: 'main',
+            type: "main",
             subject,
             grade: scores?.grade ?? null,
             feedback: scores?.feedback ?? null,
@@ -33,7 +33,7 @@ function parseActivity({ activity, user, subject, scores }) {
       },
       gradable: true,
     },
-    source: 'manualActivities',
+    source: "manualActivities",
   };
 }
 
@@ -43,13 +43,14 @@ export function useManualActivitiesForStudent({ klass, period, search }) {
   const token = getCookieToken(true);
   const user = token.centers[0].userAgentId;
 
-  const { data: manualActivities, isLoading: manualActivitiesLoading } = useManualActivities({
-    search: search ?? undefined,
-    classId: klass?.id,
-    startDate: period?.startDate,
-    endDate: period?.endDate,
-    enabled: hasAllData,
-  });
+  const { data: manualActivities, isLoading: manualActivitiesLoading } =
+    useManualActivities({
+      search: search ?? undefined,
+      classId: klass?.id,
+      startDate: period?.startDate,
+      endDate: period?.endDate,
+      enabled: hasAllData,
+    });
 
   const { data: manualActivitiesScores } = useMyManualActivitiesScores({
     classId: klass?.id,

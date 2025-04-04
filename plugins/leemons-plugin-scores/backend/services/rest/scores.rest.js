@@ -1,14 +1,14 @@
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
 
-const getScores = require('../../core/scores/getScores');
-const removeScores = require('../../core/scores/removeScores');
-const setScores = require('../../core/scores/setScores');
+const getScores = require("../../core/scores/getScores");
+const removeScores = require("../../core/scores/removeScores");
+const setScores = require("../../core/scores/setScores");
 
 module.exports = {
   getRest: {
     rest: {
-      method: 'GET',
-      path: '/',
+      method: "GET",
+      path: "/",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -18,7 +18,7 @@ module.exports = {
         classes: query.classes ? JSON.parse(query.classes) : undefined,
         gradedBy: query.gradedBy ? JSON.parse(query.gradedBy) : undefined,
         periods: query.periods ? JSON.parse(query.periods) : undefined,
-        published: query.published ? query.published === 'true' : undefined,
+        published: query.published ? query.published === "true" : undefined,
         ctx,
       });
       return { status: 200, scores };
@@ -26,8 +26,8 @@ module.exports = {
   },
   setRest: {
     rest: {
-      method: 'PATCH',
-      path: '/',
+      method: "PATCH",
+      path: "/",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -41,13 +41,13 @@ module.exports = {
         retake: score.retake || null,
       }));
       await setScores({ scores, instances: ctx.params.instances, ctx });
-      return { status: 200, message: 'Scores set' };
+      return { status: 200, message: "Scores set" };
     },
   },
   removeRest: {
     rest: {
-      method: 'DELETE',
-      path: '/',
+      method: "DELETE",
+      path: "/",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -57,10 +57,10 @@ module.exports = {
         classes: query.classes ? JSON.parse(query.classes) : undefined,
         gradedBy: query.gradedBy ? JSON.parse(query.gradedBy) : undefined,
         periods: query.periods ? JSON.parse(query.periods) : undefined,
-        published: query.published ? query.published === 'true' : undefined,
+        published: query.published ? query.published === "true" : undefined,
         ctx,
       });
-      return { status: 200, message: 'Scores removed' };
+      return { status: 200, message: "Scores removed" };
     },
   },
 };

@@ -1,4 +1,4 @@
-import { addCustomName, indexesToCell } from '../../../helpers';
+import { addCustomName, indexesToCell } from "../../../helpers";
 
 /* eslint-disable no-param-reassign */
 export default function getStyle({ tableData, ws }) {
@@ -8,7 +8,10 @@ export default function getStyle({ tableData, ws }) {
   let index = 0;
   let subjectIndex = 0;
   let indexesForRow = 0;
-  return (cell, { relRow: row, relCol: col, row: absoluteRow, col: absoluteCol }) => {
+  return (
+    cell,
+    { relRow: row, relCol: col, row: absoluteRow, col: absoluteCol }
+  ) => {
     const border = {};
 
     const headersHeight = 4;
@@ -20,7 +23,8 @@ export default function getStyle({ tableData, ws }) {
     const isLastStudentDataCol = col === studentDataLength - 1;
     const isStudentDataCol = col < studentDataLength;
 
-    const isScoreCol = !isStudentDataCol && col < scoresColLength + studentDataLength;
+    const isScoreCol =
+      !isStudentDataCol && col < scoresColLength + studentDataLength;
 
     const isCalculatedScoreCel = col === scoresColLength + studentDataLength;
     const isCustomScoreCel = col === scoresColLength + studentDataLength + 1;
@@ -45,17 +49,17 @@ export default function getStyle({ tableData, ws }) {
 
     if (isLastStudentDataCol) {
       border.right = {
-        style: 'medium',
+        style: "medium",
         color: {
-          argb: '3C84C6',
+          argb: "3C84C6",
         },
       };
     }
     if (isFirstRow) {
       border.top = {
-        style: 'medium',
+        style: "medium",
         color: {
-          argb: '3C84C6',
+          argb: "3C84C6",
         },
       };
     }
@@ -78,28 +82,28 @@ export default function getStyle({ tableData, ws }) {
     if (isScoreCol) {
       if (isFirstRow) {
         const upperCell = ws.getCell(absoluteRow - 1, absoluteCol);
-        addCustomName({ ws, name: 'scores', cell: upperCell });
+        addCustomName({ ws, name: "scores", cell: upperCell });
       }
 
-      cell.numFmt = '0.00';
+      cell.numFmt = "0.00";
 
-      addCustomName({ ws, name: 'scores', cell });
+      addCustomName({ ws, name: "scores", cell });
       addCustomName({ ws, name: `scores_${row}`, cell });
     }
 
     if (!isStudentDataCol && isFirstScoreRow) {
       const upperCell = ws.getCell(absoluteRow - 1, absoluteCol);
       upperCell.fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: 'F1F9FE' },
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "F1F9FE" },
       };
     }
 
     if (!isStudentDataCol) {
       cell.alignment = {
-        vertical: 'middle',
-        horizontal: 'center',
+        vertical: "middle",
+        horizontal: "center",
       };
     }
 
@@ -109,9 +113,9 @@ export default function getStyle({ tableData, ws }) {
         result: cell.value || 0,
       };
 
-      cell.numFmt = '0.00';
+      cell.numFmt = "0.00";
 
-      addCustomName({ ws, name: 'avgScores', cell });
+      addCustomName({ ws, name: "avgScores", cell });
     }
 
     if (isCustomScoreCel) {
@@ -123,7 +127,7 @@ export default function getStyle({ tableData, ws }) {
         };
       }
 
-      addCustomName({ ws, name: 'customScores', cell });
+      addCustomName({ ws, name: "customScores", cell });
     }
 
     if (isLastCurrentSubjectCol && isFirstScoreRow) {
@@ -141,9 +145,9 @@ export default function getStyle({ tableData, ws }) {
       subjectIndex++;
 
       border.right = {
-        style: 'medium',
+        style: "medium",
         color: {
-          argb: '000000',
+          argb: "000000",
         },
       };
 

@@ -5,7 +5,7 @@
  */
 export async function removeRetake(retakeId) {
   const { deleted } = await leemons.api(`v1/scores/retakes/${retakeId}`, {
-    method: 'DELETE',
+    method: "DELETE",
   });
 
   return deleted;

@@ -1,9 +1,14 @@
-import React from 'react';
-import _ from 'lodash';
-import { stringMatch, useCache } from '@common';
-import { useScores } from '@scores/requests/hooks/queries';
+import React from "react";
+import _ from "lodash";
+import { stringMatch, useCache } from "@common";
+import { useScores } from "@scores/requests/hooks/queries";
 
-function parseStudentsData({ studentsData, values: _values, scores, isSubmitted }) {
+function parseStudentsData({
+  studentsData,
+  values: _values,
+  scores,
+  isSubmitted,
+}) {
   const values = _.cloneDeep(_values);
 
   studentsData.forEach((student) => {
@@ -12,8 +17,8 @@ function parseStudentsData({ studentsData, values: _values, scores, isSubmitted 
     values[student.id] = {
       activities: values[student.id]?.activities || [],
       id: student.id,
-      name: student.user.name || '',
-      surname: student.user.surnames || '',
+      name: student.user.name || "",
+      surname: student.user.surnames || "",
       image: student.user.avatar,
       allowCustomChange: !isSubmitted,
       customScore: customScore !== undefined ? customScore : null,
@@ -26,7 +31,9 @@ function parseStudentsData({ studentsData, values: _values, scores, isSubmitted 
 function parseStudentsGrades({ assignableInstances, filters }) {
   return assignableInstances.reduce((studentsValues, activity) => {
     activity.students?.forEach((student) => {
-      const grade = student.grades.find((g) => g.type === 'main' && g.subject === filters.subject);
+      const grade = student.grades.find(
+        (g) => g.type === "main" && g.subject === filters.subject
+      );
 
       // eslint-disable-next-line no-param-reassign
       studentsValues[student.user] = {
@@ -62,9 +69,11 @@ export function sortByStudentName(values) {
 }
 
 export function filterStudentsByLocalFilters({ filters, values }) {
-  if (filters.filterBy === 'student' && filters.search?.length) {
+  if (filters.filterBy === "student" && filters.search?.length) {
     return values.filter((student) =>
-      stringMatch(`${student.name} ${student.surname}`, filters.search, { partial: true })
+      stringMatch(`${student.name} ${student.surname}`, filters.search, {
+        partial: true,
+      })
     );
   }
   return values;
@@ -88,7 +97,12 @@ export function useParsedActivities(
   const isPeriodSubmitted = scores?.length && !scores.some((s) => !s.published);
 
   return React.useMemo(() => {
-    if (isLoading || isLoadingScores || !studentsData?.length || !activities?.length) {
+    if (
+      isLoading ||
+      isLoadingScores ||
+      !studentsData?.length ||
+      !activities?.length
+    ) {
       return {};
     }
 
@@ -100,18 +114,26 @@ export function useParsedActivities(
       filters,
     });
 
-    values = parseStudentsData({ studentsData, values, scores, isSubmitted: isPeriodSubmitted });
+    values = parseStudentsData({
+      studentsData,
+      values,
+      scores,
+      isSubmitted: isPeriodSubmitted,
+    });
 
     values = sortByStudentName(values);
 
     values = filterStudentsByLocalFilters({ filters: localFilters, values });
 
-    const calificableInstancesCount = assignableInstances.reduce((count, activity) => {
-      if (activity.gradable) {
-        return count + 1;
-      }
-      return count;
-    }, 0);
+    const calificableInstancesCount = assignableInstances.reduce(
+      (count, activity) => {
+        if (activity.gradable) {
+          return count + 1;
+        }
+        return count;
+      },
+      0
+    );
 
     const tableData = {
       activities: filteredAssignableInstances.map((activity) => ({
@@ -119,8 +141,9 @@ export function useParsedActivities(
         name: activity.assignable.asset.name,
         deadline: activity.dates.deadline || activity.dates.closed,
         weight: activity.gradable ? 1 / calificableInstancesCount : 0,
-        allowChange: !isPeriodSubmitted && activity.metadata.evaluationType !== 'auto',
-        type: activity.gradable ? 'calificable' : 'evaluable',
+        allowChange:
+          !isPeriodSubmitted && activity.metadata.evaluationType !== "auto",
+        type: activity.gradable ? "calificable" : "evaluable",
         activity,
       })),
       value: values,
@@ -128,7 +151,7 @@ export function useParsedActivities(
       hideCustom: !!filters.period.isCustom,
     };
 
-    return cache('tableData', tableData);
+    return cache("tableData", tableData);
   }, [assignableInstances, studentsData, localFilters, filters, scores]);
 }
 

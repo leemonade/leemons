@@ -1,15 +1,19 @@
-const { sqlDatetime } = require('@leemons/utils');
+const { sqlDatetime } = require("@leemons/utils");
 
-const { sendEvaluationClosedEmail } = require('../emails/sendEvaluationClosedEmail');
+const {
+  sendEvaluationClosedEmail,
+} = require("../emails/sendEvaluationClosedEmail");
 
-const removeScores = require('./removeScores');
+const removeScores = require("./removeScores");
 
 function removeScoresQuery(scores) {
   return scores.reduce(
     (acc, score) => ({
       students: score.student ? [...acc.students, score.student] : acc.students,
       classes: score.class ? [...acc.classes, score.class] : acc.classes,
-      instances: score.instance ? [...acc.instances, score.instance] : acc.instances,
+      instances: score.instance
+        ? [...acc.instances, score.instance]
+        : acc.instances,
       periods: score.period ? [...acc.periods, `${score.period}`] : acc.periods,
     }),
     {
@@ -30,7 +34,7 @@ module.exports = async function setScores({ scores, instances, ctx }) {
   if (isPublishing) {
     const date = new Date();
     const promises = instances?.map((instance) =>
-      ctx.tx.call('assignables.assignableInstances.updateAssignableInstance', {
+      ctx.tx.call("assignables.assignableInstances.updateAssignableInstance", {
         assignableInstance: {
           id: instance,
           dates: { evaluationClosed: date },

@@ -1,7 +1,7 @@
-const { LeemonsError } = require('@leemons/error');
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsError } = require("@leemons/error");
+const { LeemonsValidator } = require("@leemons/validator");
 
-const { retakeScoreSchema } = require('./schema');
+const { retakeScoreSchema } = require("./schema");
 
 function validateRetakeScore({ retakeScore, ctx }) {
   const validator = new LeemonsValidator(retakeScoreSchema);
@@ -10,7 +10,7 @@ function validateRetakeScore({ retakeScore, ctx }) {
     throw new LeemonsError(ctx, {
       message: validator.errorMessage,
       httpStatusCode: 400,
-      customCode: 'INVALID_RETAKE_SCORE',
+      customCode: "INVALID_RETAKE_SCORE",
     });
   }
 }

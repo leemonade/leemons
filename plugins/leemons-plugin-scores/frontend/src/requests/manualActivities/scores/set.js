@@ -7,8 +7,8 @@
  * @param {string} scores.class
  */
 export function setManualActivityScores(scores) {
-  return leemons.api('v1/scores/manualActivities/scores', {
-    method: 'PUT',
+  return leemons.api("v1/scores/manualActivities/scores", {
+    method: "PUT",
     body: scores,
   });
 }

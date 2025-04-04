@@ -1,3 +1,3 @@
-import ActivityScoreDisplay from './ActivityScoreDisplay';
+import ActivityScoreDisplay from "./ActivityScoreDisplay";
 
 export default ActivityScoreDisplay;

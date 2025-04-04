@@ -1,21 +1,21 @@
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
 
-const addManualActivity = require('../../core/manualActivities/add');
-const listManualActivitiesForClassAndPeriod = require('../../core/manualActivities/list');
-const removeManualActivity = require('../../core/manualActivities/remove');
-const getScores = require('../../core/manualActivities/scores/get');
-const getMyScores = require('../../core/manualActivities/scores/myScores');
-const setScores = require('../../core/manualActivities/scores/set');
-const updateManualActivity = require('../../core/manualActivities/upate');
+const addManualActivity = require("../../core/manualActivities/add");
+const listManualActivitiesForClassAndPeriod = require("../../core/manualActivities/list");
+const removeManualActivity = require("../../core/manualActivities/remove");
+const getScores = require("../../core/manualActivities/scores/get");
+const getMyScores = require("../../core/manualActivities/scores/myScores");
+const setScores = require("../../core/manualActivities/scores/set");
+const updateManualActivity = require("../../core/manualActivities/upate");
 
 const restActions = {
   add: {
     rest: {
-      method: 'POST',
-      path: '/',
+      method: "POST",
+      path: "/",
     },
     params: {
-      manualActivity: 'object',
+      manualActivity: "object",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -31,11 +31,11 @@ const restActions = {
   },
   listForClassAndPeriod: {
     rest: {
-      method: 'GET',
-      path: '/class/:classId',
+      method: "GET",
+      path: "/class/:classId",
     },
     params: {
-      classId: 'string',
+      classId: "string",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -56,12 +56,12 @@ const restActions = {
   },
   update: {
     rest: {
-      method: 'PUT',
-      path: '/:id',
+      method: "PUT",
+      path: "/:id",
     },
     params: {
-      id: 'string',
-      manualActivity: 'object',
+      id: "string",
+      manualActivity: "object",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -77,11 +77,11 @@ const restActions = {
   },
   remove: {
     rest: {
-      method: 'DELETE',
-      path: '/:id',
+      method: "DELETE",
+      path: "/:id",
     },
     params: {
-      id: 'string',
+      id: "string",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -97,11 +97,11 @@ const restActions = {
 
   setScores: {
     rest: {
-      method: 'PUT',
-      path: '/scores',
+      method: "PUT",
+      path: "/scores",
     },
     params: {
-      scores: 'array',
+      scores: "array",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -116,11 +116,11 @@ const restActions = {
   },
   getScores: {
     rest: {
-      method: 'GET',
-      path: '/scores/class/:classId',
+      method: "GET",
+      path: "/scores/class/:classId",
     },
     params: {
-      classId: 'string',
+      classId: "string",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -135,11 +135,11 @@ const restActions = {
   },
   getMyScores: {
     rest: {
-      method: 'GET',
-      path: '/scores/class/:classId/user/me',
+      method: "GET",
+      path: "/scores/class/:classId/user/me",
     },
     params: {
-      classId: 'string',
+      classId: "string",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

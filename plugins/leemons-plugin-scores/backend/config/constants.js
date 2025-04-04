@@ -1,4 +1,4 @@
-const PLUGIN_NAME = 'scores';
+const PLUGIN_NAME = "scores";
 const VERSION = 1;
 
 const permissionNames = {
@@ -13,50 +13,50 @@ const permissionNames = {
 const permissions = [
   {
     permissionName: permissionNames.periods,
-    actions: ['view', 'create', 'update', 'delete', 'admin'],
+    actions: ["view", "create", "update", "delete", "admin"],
     localizationName: {
-      es: 'Periodos',
-      en: 'Periods',
+      es: "Periodos",
+      en: "Periods",
     },
   },
   {
     permissionName: permissionNames.noteBook,
-    actions: ['view', 'create', 'update', 'delete', 'admin'],
+    actions: ["view", "create", "update", "delete", "admin"],
     localizationName: {
-      es: 'Cuaderno de evaluación',
-      en: 'Evaluation notebook',
+      es: "Cuaderno de evaluación",
+      en: "Evaluation notebook",
     },
   },
   {
     permissionName: permissionNames.scores,
-    actions: ['view'],
+    actions: ["view"],
     localizationName: {
-      es: 'Mis Evaluaciones',
-      en: 'My Evaluations',
+      es: "Mis Evaluaciones",
+      en: "My Evaluations",
     },
   },
   {
     permissionName: permissionNames.scoresMenu,
-    actions: ['view'],
+    actions: ["view"],
     localizationName: {
-      es: 'Evaluaciones (menú)',
-      en: 'Evaluations (menu)',
+      es: "Evaluaciones (menú)",
+      en: "Evaluations (menu)",
     },
   },
   {
     permissionName: permissionNames.reviewer,
-    actions: ['view', 'admin'],
+    actions: ["view", "admin"],
     localizationName: {
-      es: 'Notas finales',
-      en: 'Final grades',
+      es: "Notas finales",
+      en: "Final grades",
     },
   },
   {
     permissionName: permissionNames.weights,
-    actions: ['view', 'update', 'admin'],
+    actions: ["view", "update", "admin"],
     localizationName: {
-      es: 'Ponderaciones',
-      en: 'Weights',
+      es: "Ponderaciones",
+      en: "Weights",
     },
   },
 ];
@@ -67,104 +67,109 @@ const permissions = [
 const menuItems = [
   {
     item: {
-      key: 'scores',
+      key: "scores",
       order: 203,
-      iconSvg: '/public/scores/menu-icon.svg',
-      activeIconSvg: '/public/scores/menu-icon.svg',
+      iconSvg: "/public/scores/menu-icon.svg",
+      activeIconSvg: "/public/scores/menu-icon.svg",
       label: {
-        en: 'Evaluations',
-        es: 'Evaluaciones',
+        en: "Evaluations",
+        es: "Evaluaciones",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.scoresMenu,
-        actionNames: ['view'],
+        actionNames: ["view"],
       },
     ],
   },
   {
     item: {
-      key: 'scores.periods',
+      key: "scores.periods",
       order: 1,
-      parentKey: 'scores.scores',
-      url: '/private/scores/periods',
+      parentKey: "scores.scores",
+      url: "/private/scores/periods",
       label: {
-        en: 'Periods',
-        es: 'Periodos',
+        en: "Periods",
+        es: "Periodos",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.periods,
-        actionNames: ['create', 'update', 'delete', 'admin'],
+        actionNames: ["create", "update", "delete", "admin"],
       },
     ],
   },
   {
     item: {
-      key: 'scores.notebook',
+      key: "scores.notebook",
       order: 2,
-      parentKey: 'scores.scores',
-      url: '/private/scores/notebook',
+      parentKey: "scores.scores",
+      url: "/private/scores/notebook",
       label: {
-        en: 'Evaluation Notebook',
-        es: 'Cuaderno de evaluación',
+        en: "Evaluation Notebook",
+        es: "Cuaderno de evaluación",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.noteBook,
-        actionNames: ['view', 'admin'],
+        actionNames: ["view", "admin"],
       },
     ],
   },
   {
     item: {
-      key: 'scores.review',
+      key: "scores.review",
       order: 3,
-      parentKey: 'scores.scores',
-      url: '/private/scores/notebook/review',
+      parentKey: "scores.scores",
+      url: "/private/scores/notebook/review",
       label: {
-        en: 'Final scores',
-        es: 'Notas finales',
+        en: "Final scores",
+        es: "Notas finales",
       },
     },
-    permissions: [{ permissionName: permissionNames.reviewer, actionNames: ['view', 'admin'] }],
+    permissions: [
+      {
+        permissionName: permissionNames.reviewer,
+        actionNames: ["view", "admin"],
+      },
+    ],
   },
   {
     item: {
-      key: 'scores.scores',
+      key: "scores.scores",
       order: 4,
-      parentKey: 'scores.scores',
-      url: '/private/scores/scores',
+      parentKey: "scores.scores",
+      url: "/private/scores/scores",
       label: {
-        en: 'Scores',
-        es: 'Notas',
+        en: "Scores",
+        es: "Notas",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.scores,
-        actionNames: ['view'],
+        actionNames: ["view"],
       },
     ],
   },
   {
     item: {
-      key: 'scores.weights',
+      key: "scores.weights",
       order: 5,
-      parentKey: 'scores.scores',
-      url: '/private/scores/weights',
+      parentKey: "scores.scores",
+      url: "/private/scores/weights",
       label: {
-        en: 'Weighting rules',
-        es: 'Reglas de ponderación',
+        en: "Weighting rules",
+        es: "Reglas de ponderación",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.weights,
-        actionNames: ['update', 'admin'],
+        actionNames: ["update", "admin"],
       },
     ],
   },

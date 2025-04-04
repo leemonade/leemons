@@ -1,42 +1,49 @@
-import { forwardRef, useEffect, useMemo } from 'react';
+import { forwardRef, useEffect, useMemo } from "react";
 
-import { useAcademicCalendarConfig } from '@academic-calendar/hooks';
-import { Box, Stack, Text, Logo, ImageLoader, Title } from '@bubbles-ui/components';
-import { useLocale } from '@common/LocaleDate';
-import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
-import { useLayout } from '@layout/context';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { useAcademicCalendarConfig } from "@academic-calendar/hooks";
+import {
+  Box,
+  Stack,
+  Text,
+  Logo,
+  ImageLoader,
+  Title,
+} from "@bubbles-ui/components";
+import { useLocale } from "@common/LocaleDate";
+import useProgramEvaluationSystems from "@grades/hooks/queries/useProgramEvaluationSystem";
+import { useLayout } from "@layout/context";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
-} from '@tanstack/react-table';
-import getUserFullName from '@users/helpers/getUserFullName';
-import { useUserAgentsInfo, useUserDatasets } from '@users/hooks';
-import useUserAgents from '@users/hooks/useUserAgents';
-import { isEmpty, keyBy, noop } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@tanstack/react-table";
+import getUserFullName from "@users/helpers/getUserFullName";
+import { useUserAgentsInfo, useUserDatasets } from "@users/hooks";
+import useUserAgents from "@users/hooks/useUserAgents";
+import { isEmpty, keyBy, noop } from "lodash";
+import PropTypes from "prop-types";
 
-import { ContentToPrintStyles } from './ContentToPrint.styles';
+import { ContentToPrintStyles } from "./ContentToPrint.styles";
 
-import { prefixPN } from '@scores/helpers';
-import getNearestScale from '@scores/helpers/getNearestScale';
-import useMyScoresStore from '@scores/stores/myScoresStore';
+import { prefixPN } from "@scores/helpers";
+import getNearestScale from "@scores/helpers/getNearestScale";
+import useMyScoresStore from "@scores/stores/myScoresStore";
 
 const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
-  const { classes } = ContentToPrintStyles({}, { name: 'ContentToPrint' });
-  const [t] = useTranslateLoader(prefixPN('myScores'));
-  const [tNotebook] = useTranslateLoader(prefixPN('notebook'));
+  const { classes } = ContentToPrintStyles({}, { name: "ContentToPrint" });
+  const [t] = useTranslateLoader(prefixPN("myScores"));
+  const [tNotebook] = useTranslateLoader(prefixPN("notebook"));
   const { theme } = useLayout();
   const locale = useLocale();
 
   const finalScores = useMyScoresStore((store) => store.finalScores);
   const filters = useMyScoresStore((store) => store.filters);
-  const classrooms = useMyScoresStore((store) => keyBy(store.classes, 'id'));
+  const classrooms = useMyScoresStore((store) => keyBy(store.classes, "id"));
 
-  console.log('finalScores:', finalScores);
-  console.log('classrooms:', classrooms);
+  console.log("finalScores:", finalScores);
+  console.log("classrooms:", classrooms);
 
   // USER DATA ·······················
   const userAgents = useUserAgents();
@@ -86,24 +93,30 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
     return programData.courses.find((course) => course.id === filters?.course);
   }, [filters?.course, programData]);
 
-  const { data: academicCalendar } = useAcademicCalendarConfig(filters?.program, {
-    enabled: !!filters?.program,
-  });
+  const { data: academicCalendar } = useAcademicCalendarConfig(
+    filters?.program,
+    {
+      enabled: !!filters?.program,
+    }
+  );
 
   // EVALUATION SYSTEM ·······················
-  const { data: evaluationSystem, isLoading: isLoadingProgramEvaluationSystems } =
-    useProgramEvaluationSystems({
-      program: filters?.program,
-      options: {
-        enabled: !!filters?.program,
-      },
-    });
+  const {
+    data: evaluationSystem,
+    isLoading: isLoadingProgramEvaluationSystems,
+  } = useProgramEvaluationSystems({
+    program: filters?.program,
+    options: {
+      enabled: !!filters?.program,
+    },
+  });
 
   // USER DATASET ·······················
-  const { data: userDatasets, isLoading: isLoadingUserDatasets } = useUserDatasets({
-    userIds: [userId],
-    enabled: userId?.length > 0,
-  });
+  const { data: userDatasets, isLoading: isLoadingUserDatasets } =
+    useUserDatasets({
+      userIds: [userId],
+      enabled: userId?.length > 0,
+    });
 
   const userDataset = useMemo(() => {
     const data = userDatasets?.[0]?.data ?? {};
@@ -135,17 +148,19 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
 
   const programTitle = useMemo(() => {
     if (!programData) {
-      return '';
+      return "";
     }
 
-    return [programData.abbreviation, programData.name].filter(Boolean).join(' - ');
+    return [programData.abbreviation, programData.name]
+      .filter(Boolean)
+      .join(" - ");
   }, [programData]);
 
   const courseTitle = useMemo(() => {
     if (!courseData) {
-      return '';
+      return "";
     }
-    let yearTitle = '';
+    let yearTitle = "";
     const courseDates = academicCalendar?.courseDates?.[courseData.id];
 
     if (courseDates) {
@@ -154,7 +169,7 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
       yearTitle = startYear === endYear ? startYear : `${startYear}-${endYear}`;
     }
 
-    return [t('filters.course'), yearTitle].filter(Boolean).join(' ');
+    return [t("filters.course"), yearTitle].filter(Boolean).join(" ");
   }, [courseData, academicCalendar, t]);
 
   const averageScore = useMemo(() => {
@@ -171,9 +186,14 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
       return 0;
     }
 
-    const result = validScores.reduce((acc, score) => acc + score.grade, 0) / validScores.length;
+    const result =
+      validScores.reduce((acc, score) => acc + score.grade, 0) /
+      validScores.length;
 
-    return result.toLocaleString(locale, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return result.toLocaleString(locale, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
   }, [finalScoresFromClassrooms, locale]);
 
   const totalCredits = useMemo(() => {
@@ -195,52 +215,54 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
   // RECORDS TABLE
 
   const showSubjectTypeColumn = useMemo(() => {
-    return Object.values(classrooms).some((classroom) => classroom.subjectType?.name);
+    return Object.values(classrooms).some(
+      (classroom) => classroom.subjectType?.name
+    );
   }, [classrooms]);
 
   const columnHelper = createColumnHelper();
 
   const columns = useMemo(() => {
     const baseColumns = [
-      columnHelper.accessor('code', {
-        header: t('reportCardTable.code'),
+      columnHelper.accessor("code", {
+        header: t("reportCardTable.code"),
         cell: (info) => <Text>{info.getValue()}</Text>,
       }),
-      columnHelper.accessor('subject', {
-        header: t('reportCardTable.subject'),
+      columnHelper.accessor("subject", {
+        header: t("reportCardTable.subject"),
         cell: (info) => <Text>{info.getValue()}</Text>,
       }),
     ];
 
     if (showSubjectTypeColumn) {
       baseColumns.push(
-        columnHelper.accessor('type', {
-          header: t('reportCardTable.subjectType'),
+        columnHelper.accessor("type", {
+          header: t("reportCardTable.subjectType"),
           cell: (info) => <Text>{info.getValue()}</Text>,
         })
       );
     }
 
     baseColumns.push(
-      columnHelper.accessor('credits', {
-        header: t('reportCardTable.credits'),
+      columnHelper.accessor("credits", {
+        header: t("reportCardTable.credits"),
         cell: (info) => <Text>{info.getValue()}</Text>,
       }),
-      columnHelper.accessor('retake', {
-        header: t('reportCardTable.retake'),
+      columnHelper.accessor("retake", {
+        header: t("reportCardTable.retake"),
         cell: (info) => {
           if (info.getValue() !== null) {
             return (
               <Text>
-                {t('retake')} {info.getValue()}
+                {t("retake")} {info.getValue()}
               </Text>
             );
           }
           return <Text>-</Text>;
         },
       }),
-      columnHelper.accessor('score', {
-        header: t('reportCardTable.score'),
+      columnHelper.accessor("score", {
+        header: t("reportCardTable.score"),
         cell: (info) => <Text>{info.getValue()}</Text>,
       })
     );
@@ -254,25 +276,30 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
     return Object.values(classrooms).map((classroom) => {
       const scoreData = finalScoresFromClassrooms.get(classroom.id);
       const grade = scoreData?.grade ?? null;
-      const retakeIndex = scoreData?.retakeIndex > -1 ? scoreData?.retakeIndex + 1 : null;
-      const nearestScale = grade !== null ? getNearestScale({ grade, evaluationSystem }) : null;
+      const retakeIndex =
+        scoreData?.retakeIndex > -1 ? scoreData?.retakeIndex + 1 : null;
+      const nearestScale =
+        grade !== null ? getNearestScale({ grade, evaluationSystem }) : null;
       const scaleToPromote = evaluationSystem?.minScaleToPromote?.number ?? 0;
       const formattedGrade =
         grade !== null
-          ? grade.toLocaleString(locale, { minimumFractionDigits: 0, maximumFractionDigits: 2 })
-          : '-';
+          ? grade.toLocaleString(locale, {
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 2,
+            })
+          : "-";
 
       return {
-        code: classroom.subject?.internalId ?? '',
-        subject: classroom.subject?.name ?? '',
+        code: classroom.subject?.internalId ?? "",
+        subject: classroom.subject?.name ?? "",
         type: classroom.subjectType?.description
           ? classroom.subjectType?.description
-          : classroom.subjectType?.name ?? '',
+          : (classroom.subjectType?.name ?? ""),
         credits: grade >= scaleToPromote ? classroom.subject?.credits : 0,
         retake: retakeIndex,
         score: nearestScale?.description
           ? `${nearestScale.description.toUpperCase()} (${formattedGrade})`
-          : formattedGrade ?? `(${t('pendingEvaluation')})`,
+          : (formattedGrade ?? `(${t("pendingEvaluation")})`),
       };
     });
   }, [classrooms, t, finalScoresFromClassrooms, evaluationSystem, locale]);
@@ -292,12 +319,17 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
       <Stack justifyContent="space-between" alignItems="start">
         <Box noFlex>
           {!isEmpty(theme?.logoUrl) ? (
-            <ImageLoader src={theme?.logoUrl} forceImage className={classes.logo} height="auto" />
+            <ImageLoader
+              src={theme?.logoUrl}
+              forceImage
+              className={classes.logo}
+              height="auto"
+            />
           ) : (
             <Logo className={classes.logo} />
           )}
         </Box>
-        <Title order={2}>{t('reportCard')}</Title>
+        <Title order={2}>{t("reportCard")}</Title>
       </Stack>
 
       {/* User Info */}
@@ -335,7 +367,8 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
           </Box>
           <Box>
             <Text>
-              <strong>{courseTitle}</strong> ({courseData.name}) - {currentPeriod.name}
+              <strong>{courseTitle}</strong> ({courseData.name}) -{" "}
+              {currentPeriod.name}
             </Text>
           </Box>
         </Box>
@@ -344,11 +377,11 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
       {/* Credits data */}
       <Stack spacing={2}>
         <Text>
-          {t('promotedCredits')}: <strong>{totalCreditsWithPromotion}</strong>
+          {t("promotedCredits")}: <strong>{totalCreditsWithPromotion}</strong>
         </Text>
         <Text>/</Text>
         <Text>
-          {t('totalCredits')}: <strong>{totalCredits}</strong>
+          {t("totalCredits")}: <strong>{totalCredits}</strong>
         </Text>
       </Stack>
 
@@ -356,7 +389,8 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
       {finalScoresFromClassrooms && (
         <Box>
           <Text>
-            {tNotebook('students.averageScore')}: <strong>{averageScore}</strong>
+            {tNotebook("students.averageScore")}:{" "}
+            <strong>{averageScore}</strong>
           </Text>
         </Box>
       )}
@@ -369,7 +403,10 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <th key={header.id}>
-                    {flexRender(header.column.columnDef.header, header.getContext())}
+                    {flexRender(
+                      header.column.columnDef.header,
+                      header.getContext()
+                    )}
                   </th>
                 ))}
               </tr>
@@ -379,7 +416,9 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
             {table.getRowModel().rows.map((row) => (
               <tr key={row.id}>
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+                  <td key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
                 ))}
               </tr>
             ))}
@@ -390,7 +429,7 @@ const ReportCard = forwardRef(({ onLoading = noop }, ref) => {
   );
 });
 
-ReportCard.displayName = 'ReportCard';
+ReportCard.displayName = "ReportCard";
 
 ReportCard.propTypes = {
   onLoading: PropTypes.func,

@@ -1,9 +1,9 @@
-import { Box } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+import { Box } from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
-import { getWeightedAvgScore } from '../../../helpers/getWeightedAvgScore';
+import { getWeightedAvgScore } from "../../../helpers/getWeightedAvgScore";
 
-import { StudentRow } from './StudentRow';
+import { StudentRow } from "./StudentRow";
 
 export function RightContentBody({
   studentsData,
@@ -44,7 +44,12 @@ export function RightContentBody({
   });
 
   return (
-    <Box sx={(theme) => ({ borderLeft: `4px solid ${theme.colors.ui03}`, paddingRight: 2 })}>
+    <Box
+      sx={(theme) => ({
+        borderLeft: `4px solid ${theme.colors.ui03}`,
+        paddingRight: 2,
+      })}
+    >
       {studentsRows}
     </Box>
   );

@@ -1,4 +1,4 @@
-import { addErrorAlert } from '@layout/alert';
+import { addErrorAlert } from "@layout/alert";
 
 export default function handleOpen({ rowId, columnId, activities, labels }) {
   const activityObj = activities?.find((a) => a.id === columnId);
@@ -18,5 +18,9 @@ export default function handleOpen({ rowId, columnId, activities, labels }) {
 
   const url = activity.assignable.roleDetails.evaluationDetailUrl;
 
-  window.open(url.replace(':id', columnId).replace(':user', rowId), '_blank', 'noopener');
+  window.open(
+    url.replace(":id", columnId).replace(":user", rowId),
+    "_blank",
+    "noopener"
+  );
 }

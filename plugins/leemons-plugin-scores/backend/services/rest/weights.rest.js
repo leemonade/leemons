@@ -1,24 +1,24 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 
-const getWeights = require('../../core/weights/getWeights');
-const { setWeight } = require('../../core/weights');
-const { permissionNames } = require('../../config/constants');
+const getWeights = require("../../core/weights/getWeights");
+const { setWeight } = require("../../core/weights");
+const { permissionNames } = require("../../config/constants");
 
 module.exports = {
   getRest: {
     rest: {
-      method: 'GET',
-      path: '/',
+      method: "GET",
+      path: "/",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
           [permissionNames.weights]: {
-            actions: ['view', 'admin'],
+            actions: ["view", "admin"],
           },
         },
       }),
@@ -33,15 +33,15 @@ module.exports = {
   },
   setRest: {
     rest: {
-      method: 'PUT',
-      path: '/',
+      method: "PUT",
+      path: "/",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
           [permissionNames.weights]: {
-            actions: ['update', 'admin'],
+            actions: ["update", "admin"],
           },
         },
       }),
@@ -49,7 +49,10 @@ module.exports = {
     async handler(ctx) {
       const { weight: weightData, class: classId } = ctx.params;
 
-      const weight = await setWeight({ weight: { ...weightData, class: classId }, ctx });
+      const weight = await setWeight({
+        weight: { ...weightData, class: classId },
+        ctx,
+      });
 
       return { status: 201, weight };
     },

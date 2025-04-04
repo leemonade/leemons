@@ -1,19 +1,22 @@
-import { useCallback } from 'react';
+import { useCallback } from "react";
 
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
 
-import { StudentEvaluationData, TableData } from '../../CloseEvaluationModal/types';
+import {
+  StudentEvaluationData,
+  TableData,
+} from "../../CloseEvaluationModal/types";
 
-import { prefixPN } from '@scores/helpers';
-import { useScoresMutation } from '@scores/requests/hooks/mutations';
-import { useSetRetakeScoreMutation } from '@scores/requests/hooks/mutations/useSetRetakeScore';
+import { prefixPN } from "@scores/helpers";
+import { useScoresMutation } from "@scores/requests/hooks/mutations";
+import { useSetRetakeScoreMutation } from "@scores/requests/hooks/mutations/useSetRetakeScore";
 
 export function useCloseEvaluation(tableData: TableData) {
   const { mutateAsync: setRetakeScore } = useSetRetakeScoreMutation();
   const { mutateAsync: setFinalScores } = useScoresMutation();
 
-  const [t] = useTranslateLoader(prefixPN('evaluationNotebook'));
+  const [t] = useTranslateLoader(prefixPN("evaluationNotebook"));
 
   const students = tableData?.activitiesData?.value;
   const klass = tableData?.class;
@@ -26,7 +29,7 @@ export function useCloseEvaluation(tableData: TableData) {
       const finalScores = students.map((student) => {
         const hasFirstRetakeScore = student.retakeScores?.[0]?.grade;
 
-        if (!hasFirstRetakeScore && period.id !== 'final') {
+        if (!hasFirstRetakeScore && period.id !== "final") {
           promises.push(
             setRetakeScore({
               classId: klass.id,
@@ -53,10 +56,12 @@ export function useCloseEvaluation(tableData: TableData) {
 
       return Promise.all(promises)
         .then(() => {
-          addSuccessAlert(t('closedEvaluationSuccess', { period: period.name }));
+          addSuccessAlert(
+            t("closedEvaluationSuccess", { period: period.name })
+          );
         })
         .catch((e) => {
-          addErrorAlert(t('closedEvaluationError'), e.message);
+          addErrorAlert(t("closedEvaluationError"), e.message);
         });
     },
     [students, klass, period, t, setRetakeScore, setFinalScores]

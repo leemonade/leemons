@@ -1,5 +1,7 @@
 async function getScores({ classId, ctx }) {
-  const scores = await ctx.tx.db.ManualActivityScores.find({ class: classId }).lean();
+  const scores = await ctx.tx.db.ManualActivityScores.find({
+    class: classId,
+  }).lean();
 
   const response = {};
 

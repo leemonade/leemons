@@ -17,7 +17,7 @@ export async function getRetakeScores({ classId, period, ...query }) {
   const { data: scores } = await leemons.api(
     `v1/scores/retakes/grades/${classId}/${period}?${URLParams.toString()}`,
     {
-      method: 'GET',
+      method: "GET",
     }
   );
 

@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { useUserAgentsInfo } from '@users/hooks';
-import { keyBy } from 'lodash';
+import { useUserAgentsInfo } from "@users/hooks";
+import { keyBy } from "lodash";
 
-import { useScores } from '@scores/requests/hooks/queries';
-import { useRetakesScores } from '@scores/requests/hooks/queries/useRetakesScores';
+import { useScores } from "@scores/requests/hooks/queries";
+import { useRetakesScores } from "@scores/requests/hooks/queries/useRetakesScores";
 
 export default function useStudents({
   activities,
@@ -12,9 +12,12 @@ export default function useStudents({
   filters: { searchType, search },
   period,
 }) {
-  const { data: students, isLoading: userAgentsLoading } = useUserAgentsInfo(klass?.students, {
-    enabled: !!klass?.students?.length,
-  });
+  const { data: students, isLoading: userAgentsLoading } = useUserAgentsInfo(
+    klass?.students,
+    {
+      enabled: !!klass?.students?.length,
+    }
+  );
 
   const { data: retakeScores } = useRetakesScores({
     classId: klass?.id,
@@ -29,7 +32,7 @@ export default function useStudents({
       periods: [period],
     },
     {
-      select: (result) => keyBy(result, 'student'),
+      select: (result) => keyBy(result, "student"),
     }
   );
 
@@ -40,24 +43,27 @@ export default function useStudents({
 
     let filteredStudents = students;
 
-    if (searchType === 'student' && search) {
+    if (searchType === "student" && search) {
       filteredStudents = students.filter(({ user: { name, surnames } }) => {
         const fullName = `${name} ${surnames}`
           .toLowerCase()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '');
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
 
         const fullNameReverse = `${surnames} ${name}`
           .toLowerCase()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '');
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
 
         const normalizedSearch = search
           .toLowerCase()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '');
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
 
-        return fullName.includes(normalizedSearch) || fullNameReverse.includes(normalizedSearch);
+        return (
+          fullName.includes(normalizedSearch) ||
+          fullNameReverse.includes(normalizedSearch)
+        );
       });
     }
 
@@ -67,10 +73,12 @@ export default function useStudents({
       surname: user.surnames,
       image: user.avatar,
       activities: activities?.map((activity) => {
-        const studentData = activity.students.find((assignation) => id === assignation.user);
+        const studentData = activity.students.find(
+          (assignation) => id === assignation.user
+        );
 
         const mainGrade = studentData?.grades?.find(
-          (grade) => grade.type === 'main' && grade.subject === klass.subject.id
+          (grade) => grade.type === "main" && grade.subject === klass.subject.id
         );
 
         return {
@@ -86,7 +94,15 @@ export default function useStudents({
       customScoreRetake: scores?.[id]?.retake ?? null,
       allowCustomChange: !scores?.[id]?.published,
     }));
-  }, [students, activities, search, searchType, klass?.subject?.id, scores, retakeScores]);
+  }, [
+    students,
+    activities,
+    search,
+    searchType,
+    klass?.subject?.id,
+    scores,
+    retakeScores,
+  ]);
 
   return {
     data: studentsData,

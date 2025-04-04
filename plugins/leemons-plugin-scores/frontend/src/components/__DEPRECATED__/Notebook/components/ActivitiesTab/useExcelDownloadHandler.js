@@ -1,20 +1,20 @@
-import React, { useMemo } from 'react';
-import _ from 'lodash';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
-import { addAction, fireEvent, removeAction } from 'leemons-hooks';
-import generateExcel from '@scores/components/ExcelExport/evaluationWB';
-import { getFile } from '@scores/components/ExcelExport/helpers/workbook';
-import { useRoles } from '@assignables/components/Ongoing/AssignmentList/components/Filters/components/Type/Type';
+import { useRoles } from "@assignables/components/Ongoing/AssignmentList/components/Filters/components/Type/Type";
+import { unflatten } from "@common";
+import { addAction, fireEvent, removeAction } from "@leemons/hooks";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import generateExcel from "@scores/components/ExcelExport/evaluationWB";
+import { getFile } from "@scores/components/ExcelExport/helpers/workbook";
+import { prefixPN } from "@scores/helpers";
+import _ from "lodash";
+import React, { useMemo } from "react";
 
 function useExcelLabels() {
-  const [, translations] = useTranslateLoader(prefixPN('excel'));
+  const [, translations] = useTranslateLoader(prefixPN("excel"));
 
   return useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      return _.get(res, prefixPN('excel'));
+      return _.get(res, prefixPN("excel"));
     }
 
     return {};
@@ -43,13 +43,13 @@ export function useExcelDownloadHandler({
 
   React.useEffect(() => {
     const onDownload = ({ args: [format] }) => {
-      fireEvent('scores::downloaded-intercepted');
+      fireEvent("scores::downloaded-intercepted");
 
       const { activities, ...activitiesDataWithoutActivities } = activitiesData;
 
       try {
         const wb = generateExcel({
-          headerShown: format === 'xlsx',
+          headerShown: format === "xlsx",
           tableData: {
             ...activitiesDataWithoutActivities,
             activities: activities.map((activity) => ({
@@ -59,7 +59,7 @@ export function useExcelDownloadHandler({
             grades,
           },
           period: {
-            period: filters.period?.period?.name ?? filters.period?.name ?? '-',
+            period: filters.period?.period?.name ?? filters.period?.name ?? "-",
             startDate: new Date(filters.startDate),
             endDate: new Date(filters.endDate),
             program: programData?.name,
@@ -69,15 +69,23 @@ export function useExcelDownloadHandler({
           labels: excelLabels,
         });
         getFile(wb, format);
-        fireEvent('scores::downloaded');
+        fireEvent("scores::downloaded");
       } catch (e) {
-        fireEvent('scores::download-scores-error', e);
+        fireEvent("scores::download-scores-error", e);
       }
     };
 
-    addAction('scores::download-scores', onDownload);
-    return () => removeAction('scores::download-scores', onDownload);
-  }, [activitiesData, grades, roleNames, excelLabels, filters, programData, subjectData]);
+    addAction("scores::download-scores", onDownload);
+    return () => removeAction("scores::download-scores", onDownload);
+  }, [
+    activitiesData,
+    grades,
+    roleNames,
+    excelLabels,
+    filters,
+    programData,
+    subjectData,
+  ]);
 }
 
 export default useExcelDownloadHandler;

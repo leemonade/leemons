@@ -1,14 +1,14 @@
-import React from 'react';
-import { Box, createStyles, Select, Title } from '@bubbles-ui/components';
-import { Controller, useForm, useWatch } from 'react-hook-form';
-import { useCenterPrograms, useProgramDetail } from '@academic-portfolio/hooks';
-import _, { sortBy } from 'lodash';
-import { unflatten, useCache } from '@common';
-import { getCentersWithToken } from '@users/session';
-import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
-import { prefixPN } from '@scores/helpers';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useMatchingAcademicCalendarPeriods } from '../FinalNotebook/FinalScores';
+import React from "react";
+import { Box, createStyles, Select, Title } from "@bubbles-ui/components";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import { useCenterPrograms, useProgramDetail } from "@academic-portfolio/hooks";
+import _, { sortBy } from "lodash";
+import { unflatten, useCache } from "@common";
+import { getCentersWithToken } from "@users/session";
+import useProgramClasses from "@academic-portfolio/hooks/useProgramClasses";
+import { prefixPN } from "@scores/helpers";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useMatchingAcademicCalendarPeriods } from "../FinalNotebook/FinalScores";
 
 const useFiltersStyles = createStyles((theme) => ({
   root: {
@@ -20,12 +20,12 @@ const useFiltersStyles = createStyles((theme) => ({
   },
   inputs: {
     width: 750,
-    display: 'flex',
-    flexDirection: 'row',
+    display: "flex",
+    flexDirection: "row",
     marginTop: theme.spacing[1],
     gap: theme.spacing[5],
-    alignItems: 'center',
-    '& > *': {
+    alignItems: "center",
+    "& > *": {
       maxWidth: `calc(50% - ${theme.spacing[5] / 2}px)`, // 50% - inputs.gap
       flexGrow: 1,
     },
@@ -34,16 +34,16 @@ const useFiltersStyles = createStyles((theme) => ({
 
 function useFiltersLocalizations() {
   const [, translations] = useTranslateLoader([
-    prefixPN('reviewPage.filters'),
-    prefixPN('scoresPage.filters.period.final'),
+    prefixPN("reviewPage.filters"),
+    prefixPN("scoresPage.filters.period.final"),
   ]);
 
   return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       return {
-        ..._.get(res, prefixPN('reviewPage.filters')),
-        finalPeriod: _.get(res, prefixPN('scoresPage.filters.period.final')),
+        ..._.get(res, prefixPN("reviewPage.filters")),
+        finalPeriod: _.get(res, prefixPN("scoresPage.filters.period.final")),
       };
     }
 
@@ -53,51 +53,61 @@ function useFiltersLocalizations() {
 
 function useFiltersData({ control }) {
   const selectedProgram = useWatch({
-    name: 'program',
+    name: "program",
     control,
     defaultValue: null,
   });
 
   const selectedCourse = useWatch({
-    name: 'course',
+    name: "course",
     control,
     defaultValue: null,
   });
 
   const cache = useCache();
   const centersData = getCentersWithToken();
-  const centers = React.useMemo(() => cache('centers', _.map(centersData, 'id')), [centersData]);
+  const centers = React.useMemo(
+    () => cache("centers", _.map(centersData, "id")),
+    [centersData]
+  );
 
   const programsQueries = useCenterPrograms(centers);
 
   const programs = React.useMemo(() => {
-    const isLoadingProgramsQueries = programsQueries.some((query) => query.isLoading);
+    const isLoadingProgramsQueries = programsQueries.some(
+      (query) => query.isLoading
+    );
 
     if (isLoadingProgramsQueries) {
-      return cache('programs', []);
+      return cache("programs", []);
     }
 
-    return cache('programs', _.flatMap(programsQueries, 'data'));
+    return cache("programs", _.flatMap(programsQueries, "data"));
   }, [programsQueries]);
 
   const { data: selectedProgramDetails } = useProgramDetail(selectedProgram, {
     enabled: !!selectedProgram,
   });
-  const { data: classes } = useProgramClasses(selectedProgram, { enabled: !!selectedProgram });
+  const { data: classes } = useProgramClasses(selectedProgram, {
+    enabled: !!selectedProgram,
+  });
 
-  const courses = React.useMemo(() => selectedProgramDetails?.courses, [selectedProgramDetails]);
+  const courses = React.useMemo(
+    () => selectedProgramDetails?.courses,
+    [selectedProgramDetails]
+  );
   const groups = React.useMemo(() => {
     if (!selectedCourse || !classes?.length) {
-      return cache('groups', []);
+      return cache("groups", []);
     }
 
     return cache(
-      'groups',
+      "groups",
       _.uniqBy(
         classes
           .map((klass) => ({ ...klass.groups, course: klass.courses.id }))
           .filter((group) => group.course === selectedCourse),
-        'id'
+        "id"
       )
     );
   }, [classes, selectedCourse]);
@@ -117,7 +127,7 @@ function useFiltersData({ control }) {
 
 function useParsedData({ programs, courses, groups, periods, localizations }) {
   const _programs = React.useMemo(() => {
-    const sortedPrograms = _.sortBy(programs, 'createdAt');
+    const sortedPrograms = _.sortBy(programs, "createdAt");
     return (
       sortedPrograms
         ?.map((program) => ({
@@ -144,10 +154,10 @@ function useParsedData({ programs, courses, groups, periods, localizations }) {
       return [];
     }
 
-    const sortedGroups = sortBy(groups, 'index');
+    const sortedGroups = sortBy(groups, "index");
     return [
       {
-        value: 'all',
+        value: "all",
         label: localizations?.group?.all,
       },
       ...sortedGroups
@@ -167,7 +177,7 @@ function useParsedData({ programs, courses, groups, periods, localizations }) {
     return [
       {
         label: localizations?.period?.all,
-        value: 'all',
+        value: "all",
       },
       ...periods
         .map((period) => ({
@@ -175,7 +185,7 @@ function useParsedData({ programs, courses, groups, periods, localizations }) {
           value: period.id,
         }))
         .filter((period) => period.value && period.label),
-      { label: localizations?.finalPeriod, value: 'final' },
+      { label: localizations?.finalPeriod, value: "final" },
     ];
   });
 
@@ -191,12 +201,12 @@ function useEmitOnChange({ control, onChange }) {
   const { program, course, group, period } = useWatch({ control });
 
   React.useEffect(() => {
-    if (program && course && typeof onChange === 'function') {
+    if (program && course && typeof onChange === "function") {
       onChange({
         program,
         course,
-        group: group === 'all' ? undefined : group,
-        period: period === 'all' ? undefined : period,
+        group: group === "all" ? undefined : group,
+        period: period === "all" ? undefined : period,
       });
     }
   }, [program, course, group, period]);
@@ -210,7 +220,10 @@ export default function Filters({ onChange }) {
   const { control } = useForm();
 
   const filtersData = useFiltersData({ control });
-  const { programs, courses, groups, periods } = useParsedData({ ...filtersData, localizations });
+  const { programs, courses, groups, periods } = useParsedData({
+    ...filtersData,
+    localizations,
+  });
 
   useEmitOnChange({ control, onChange });
 
@@ -219,7 +232,7 @@ export default function Filters({ onChange }) {
       <Box className={classes.inputs}>
         <Controller
           control={control}
-          name={'program'}
+          name={"program"}
           render={({ field }) => (
             <Select
               {...field}
@@ -233,9 +246,12 @@ export default function Filters({ onChange }) {
         />
         <Controller
           control={control}
-          name={'course'}
+          name={"course"}
           render={({ field }) => {
-            if (field.value && !courses?.find((course) => course.value === field.value)) {
+            if (
+              field.value &&
+              !courses?.find((course) => course.value === field.value)
+            ) {
               field.onChange(null);
             }
 
@@ -253,9 +269,12 @@ export default function Filters({ onChange }) {
         />
         <Controller
           control={control}
-          name={'group'}
+          name={"group"}
           render={({ field }) => {
-            if (field.value && !groups?.find((group) => group.value === field.value)) {
+            if (
+              field.value &&
+              !groups?.find((group) => group.value === field.value)
+            ) {
               field.onChange(null);
             }
 
@@ -273,7 +292,7 @@ export default function Filters({ onChange }) {
         />
         <Controller
           control={control}
-          name={'period'}
+          name={"period"}
           render={({ field }) => (
             <Select
               {...field}

@@ -1,10 +1,13 @@
-import { useScores } from '@scores/requests/hooks/queries';
-import { useUserAgentsInfo } from '@users/hooks';
-import React from 'react';
-import _ from 'lodash';
-import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import { useCache } from '@common';
-import { filterStudentsByLocalFilters, sortByStudentName } from './useParsedActivities';
+import { useScores } from "@scores/requests/hooks/queries";
+import { useUserAgentsInfo } from "@users/hooks";
+import React from "react";
+import _ from "lodash";
+import useProgramEvaluationSystem from "@assignables/hooks/useProgramEvaluationSystem";
+import { useCache } from "@common";
+import {
+  filterStudentsByLocalFilters,
+  sortByStudentName,
+} from "./useParsedActivities";
 
 function useStudents(students) {
   const { data, isLoading } = useUserAgentsInfo(students, {
@@ -30,7 +33,7 @@ function usePeriods({ class: klass, period }) {
   const course = klass.courses.id;
 
   return period.periods.map((p) => ({
-    ..._.pick(p, ['startDate', 'endDate', 'name']),
+    ..._.pick(p, ["startDate", "endDate", "name"]),
     id: p.periods[program][course],
   }));
 }
@@ -42,7 +45,7 @@ function getActivitiesFromPeriods({ periods }) {
     deadline: period.endDate,
     weight: 1 / periods.length,
     allowChange: false,
-    type: 'calificable',
+    type: "calificable",
   }));
 }
 
@@ -65,12 +68,14 @@ function getValues({
     ...student,
     activities: periods.map((period) => ({
       id: period.id,
-      score: scores?.find((score) => score.student === student.id && score.period === period.id)
-        ?.grade,
+      score: scores?.find(
+        (score) => score.student === student.id && score.period === period.id
+      )?.grade,
       isSubmitted: true,
     })),
     allowCustomChange: !periodIsSubmitted,
-    customScore: finalScores?.find((score) => score.student === student.id)?.grade || null,
+    customScore:
+      finalScores?.find((score) => score.student === student.id)?.grade || null,
   }));
 }
 
@@ -79,7 +84,7 @@ function useGrades(klass) {
 
   const cache = useCache();
   return cache(
-    'grades',
+    "grades",
     React.useMemo(
       () => evaluationSystem?.scales?.sort((a, b) => a.number - b.number),
       [evaluationSystem?.scales]
@@ -94,17 +99,20 @@ export default function useFinalData({ filters, localFilters }) {
 
   const { students } = klass;
 
-  const { students: studentsData, isLoading: studentsAreLoading } = useStudents(students);
+  const { students: studentsData, isLoading: studentsAreLoading } =
+    useStudents(students);
   const periods = usePeriods({ class: klass, period });
-  const { data: periodsScores, isLoading: periodsScoresAreLoading } = useScores({
-    class: [klass.id],
-    periods: _.map(periods, 'id'),
-    published: true,
-  });
+  const { data: periodsScores, isLoading: periodsScoresAreLoading } = useScores(
+    {
+      class: [klass.id],
+      periods: _.map(periods, "id"),
+      published: true,
+    }
+  );
 
   const { data: finalScores, isLoading: finalScoresAreLoading } = useScores({
     class: [klass.id],
-    periods: ['final'],
+    periods: ["final"],
   });
 
   const isPeriodSubmitted = React.useMemo(
@@ -128,8 +136,11 @@ export default function useFinalData({ filters, localFilters }) {
 
   return {
     isLoading:
-      studentsAreLoading || periodsScoresAreLoading || finalScoresAreLoading || !grades?.length,
-    activitiesData: cache('activitiesData', {
+      studentsAreLoading ||
+      periodsScoresAreLoading ||
+      finalScoresAreLoading ||
+      !grades?.length,
+    activitiesData: cache("activitiesData", {
       activities,
       value: values,
       isPeriodSubmitted,

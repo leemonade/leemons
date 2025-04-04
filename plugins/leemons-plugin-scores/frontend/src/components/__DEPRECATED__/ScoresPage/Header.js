@@ -1,10 +1,10 @@
-import { TotalLayoutHeader } from '@bubbles-ui/components';
-import { unflatten } from '@common';
-import propTypes from 'prop-types';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN as _prefixPN } from '@scores/helpers';
-import _ from 'lodash';
-import React, { useMemo } from 'react';
+import { TotalLayoutHeader } from "@bubbles-ui/components";
+import { unflatten } from "@common";
+import propTypes from "prop-types";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { prefixPN as _prefixPN } from "@scores/helpers";
+import _ from "lodash";
+import React, { useMemo } from "react";
 
 function useHeaderLocalizations({ prefixPN, variant }) {
   const prefix = prefixPN || _prefixPN;

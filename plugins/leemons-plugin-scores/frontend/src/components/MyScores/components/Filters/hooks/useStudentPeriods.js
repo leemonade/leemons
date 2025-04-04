@@ -1,26 +1,30 @@
-import { useMemo } from 'react';
-import { useWatch } from 'react-hook-form';
+import { useMemo } from "react";
+import { useWatch } from "react-hook-form";
 
-import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import useProgramClasses from "@academic-portfolio/hooks/useProgramClasses";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
 
-import { useMatchingAcademicCalendarPeriods } from '@scores/components/__DEPRECATED__/FinalNotebook/FinalScores';
-import useAcademicCalendarDates from '@scores/components/__DEPRECATED__/ScoresPage/Filters/hooks/useAcademicCalendarDates';
-import { prefixPN } from '@scores/helpers';
+import { useMatchingAcademicCalendarPeriods } from "@scores/components/__DEPRECATED__/FinalNotebook/FinalScores";
+import useAcademicCalendarDates from "@scores/components/__DEPRECATED__/ScoresPage/Filters/hooks/useAcademicCalendarDates";
+import { prefixPN } from "@scores/helpers";
 
 export default function useStudentPeriods({ control }) {
-  const program = useWatch({ name: 'program', control });
-  const course = useWatch({ name: 'course', control });
+  const program = useWatch({ name: "program", control });
+  const course = useWatch({ name: "course", control });
 
-  const [t] = useTranslateLoader(prefixPN('scoresPage.filters.period'));
+  const [t] = useTranslateLoader(prefixPN("scoresPage.filters.period"));
 
-  const { data: classesData, isLoading: classesLoading } = useProgramClasses(program, {
-    enabled: !!program,
-  });
-  const { periods, isLoading: periodsLoading } = useMatchingAcademicCalendarPeriods({
-    classes: classesData,
-    filters: { program, course },
-  });
+  const { data: classesData, isLoading: classesLoading } = useProgramClasses(
+    program,
+    {
+      enabled: !!program,
+    }
+  );
+  const { periods, isLoading: periodsLoading } =
+    useMatchingAcademicCalendarPeriods({
+      classes: classesData,
+      filters: { program, course },
+    });
 
   const { startDate, endDate } = useAcademicCalendarDates({
     control,
@@ -40,8 +44,8 @@ export default function useStudentPeriods({ control }) {
         {
           startDate: new Date(startDate).toISOString(),
           endDate: new Date(endDate).toISOString(),
-          id: 'final',
-          name: t('final'),
+          id: "final",
+          name: t("final"),
         },
       ];
     }
@@ -50,8 +54,8 @@ export default function useStudentPeriods({ control }) {
       {
         startDate: new Date(startDate).toISOString(),
         endDate: new Date(endDate).toISOString(),
-        id: 'fullCourse',
-        name: t('fullCourse'),
+        id: "fullCourse",
+        name: t("fullCourse"),
       },
     ];
   }, [periods, startDate, endDate, t]);

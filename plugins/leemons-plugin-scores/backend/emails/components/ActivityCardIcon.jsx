@@ -1,16 +1,16 @@
-import { Container, Img, Section, Text } from '@react-email/components';
-import PropTypes from 'prop-types';
+import { Container, Img, Section, Text } from "@react-email/components";
+import PropTypes from "prop-types";
 // biome-ignore lint/correctness/noUnusedImports: File is used on backend rendering
-import React from 'react';
+import React from "react";
 
-const IS_DEV_MODE = String(process?.env?.EMAIL_DEV) === 'true';
+const IS_DEV_MODE = String(process?.env?.EMAIL_DEV) === "true";
 
 export default function ActivityCardIcon({
   subjectColor,
   subjectIcon,
   subjectName,
-  ifSubjectIcon = '{{ @if (it.subjectIconUrl) }}',
-  endIf = '{{ /if }}',
+  ifSubjectIcon = "{{ @if (it.subjectIconUrl) }}",
+  endIf = "{{ /if }}",
 }) {
   return (
     <Section>
@@ -24,7 +24,7 @@ export default function ActivityCardIcon({
           width="13px"
           height="13px"
           className="mx-auto"
-          style={{ filter: 'brightness(0) invert(1)' }}
+          style={{ filter: "brightness(0) invert(1)" }}
         />
         {endIf}
       </Container>
@@ -38,14 +38,15 @@ export default function ActivityCardIcon({
 }
 
 const DEV_PROPS = {
-  locale: 'es',
-  subjectColor: '#FABADA',
-  subjectIcon: 'https://s3.eu-west-1.amazonaws.com/global-assets.leemons.io/PHYSICS_7529c954d8.svg',
-  subjectName: 'Educación cívica',
-  ifSubjectIcon: '',
-  ifSingleSubject: '',
-  endIf: '',
-  elseIf: '',
+  locale: "es",
+  subjectColor: "#FABADA",
+  subjectIcon:
+    "https://s3.eu-west-1.amazonaws.com/global-assets.leemons.io/PHYSICS_7529c954d8.svg",
+  subjectName: "Educación cívica",
+  ifSubjectIcon: "",
+  ifSingleSubject: "",
+  endIf: "",
+  elseIf: "",
 };
 
 if (IS_DEV_MODE) {

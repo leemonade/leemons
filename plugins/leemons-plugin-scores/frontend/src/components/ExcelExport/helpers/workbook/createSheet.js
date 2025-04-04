@@ -1,6 +1,6 @@
-import { Workbook } from 'exceljs';
+import { Workbook } from "exceljs";
 // TODO: import from @common plugin maybe?
-import { uuidv4 } from '@bubbles-ui/leemons';
+import { uuidv4 } from "@bubbles-ui/leemons";
 
 /**
  *

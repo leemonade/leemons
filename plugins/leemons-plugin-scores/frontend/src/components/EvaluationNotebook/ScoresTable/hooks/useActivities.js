@@ -1,28 +1,28 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
-import useRolesList from '@assignables/requests/hooks/queries/useRolesList';
-import useSearchAssignableInstances from '@assignables/requests/hooks/queries/useSearchAssignableInstancesQuery';
-import dayjs from 'dayjs';
-import { map, without } from 'lodash';
+import useInstances from "@assignables/requests/hooks/queries/useInstances";
+import useRolesList from "@assignables/requests/hooks/queries/useRolesList";
+import useSearchAssignableInstances from "@assignables/requests/hooks/queries/useSearchAssignableInstancesQuery";
+import dayjs from "dayjs";
+import { map, without } from "lodash";
 
 export function getNextDayFirstMillisecond(date) {
   return dayjs(date)
-    .set('hour', 0)
-    .set('minute', 0)
-    .set('second', 0)
-    .set('millisecond', 0)
-    .add(1, 'day')
+    .set("hour", 0)
+    .set("minute", 0)
+    .set("second", 0)
+    .set("millisecond", 0)
+    .add(1, "day")
     .toDate();
 }
 
 export function getPreviousDayLastMillisecond(date) {
   return dayjs(date)
-    .set('hour', 23)
-    .set('minute', 59)
-    .set('second', 59)
-    .set('millisecond', 999)
-    .subtract(1, 'day')
+    .set("hour", 23)
+    .set("minute", 59)
+    .set("second", 59)
+    .set("millisecond", 999)
+    .subtract(1, "day")
     .toDate();
 }
 
@@ -35,17 +35,19 @@ export default function useActivities({
 }) {
   const { data: roles } = useRolesList({
     details: false,
-    select: (result) => without(result, 'learningpaths.module'),
+    select: (result) => without(result, "learningpaths.module"),
   });
 
   const query = useMemo(
     () => ({
-      query: searchType === 'activity' ? search : undefined,
+      query: searchType === "activity" ? search : undefined,
       finished: true,
-      finished_$gt: getPreviousDayLastMillisecond(period?.startDate).toISOString(),
+      finished_$gt: getPreviousDayLastMillisecond(
+        period?.startDate
+      ).toISOString(),
       finished_$lt: getNextDayFirstMillisecond(period?.endDate).toISOString(),
 
-      role: weights?.type === 'modules' ? 'learningpaths.module' : roles,
+      role: weights?.type === "modules" ? "learningpaths.module" : roles,
       programs: program,
       classes: klass?.id,
 
@@ -66,10 +68,11 @@ export default function useActivities({
     ]
   );
 
-  const { data: instancesIds, isLoading: instancesIdsLoading } = useSearchAssignableInstances({
-    query,
-    select: (result) => result.items,
-  });
+  const { data: instancesIds, isLoading: instancesIdsLoading } =
+    useSearchAssignableInstances({
+      query,
+      select: (result) => result.items,
+    });
 
   const { data: instances, isLoading: instancesLoading } = useInstances({
     ids: instancesIds,
@@ -83,10 +86,10 @@ export default function useActivities({
         name: instance.assignable.asset.name,
         deadline: instance.alwaysAvailable ? null : instance.dates.deadline,
         expandable: false,
-        allowChange: instance.metadata.evaluationType !== 'auto',
-        type: instance.gradable ? 'evaluable' : 'non-evaluable',
+        allowChange: instance.metadata.evaluationType !== "auto",
+        type: instance.gradable ? "evaluable" : "non-evaluable",
 
-        source: 'assignables',
+        source: "assignables",
 
         role: instance.assignable.role,
         roleIcon: instance.assignable.roleDetails.icon,
@@ -100,6 +103,7 @@ export default function useActivities({
 
   return {
     activities,
-    isLoading: instancesIdsLoading || (instancesIds?.length && instancesLoading),
+    isLoading:
+      instancesIdsLoading || (instancesIds?.length && instancesLoading),
   };
 }

@@ -1,11 +1,11 @@
-import { ContextContainer } from '@bubbles-ui/components';
+import { ContextContainer } from "@bubbles-ui/components";
 
-import MyScoresFilters from '../MyScores/components/MyScoresFilters/MyScoresFilters';
+import MyScoresFilters from "../MyScores/components/MyScoresFilters/MyScoresFilters";
 
-import { SubjectsScoreList } from './components/SubjectsScoreList';
+import { SubjectsScoreList } from "./components/SubjectsScoreList";
 
-import useMyScoresViewTitle from '@scores/components/MyScores/hooks/useMyScoresViewTitle';
-import useMyScoresStore from '@scores/stores/myScoresStore';
+import useMyScoresViewTitle from "@scores/components/MyScores/hooks/useMyScoresViewTitle";
+import useMyScoresStore from "@scores/stores/myScoresStore";
 
 export function MyFinalScores() {
   const filters = useMyScoresStore((state) => state.filters);

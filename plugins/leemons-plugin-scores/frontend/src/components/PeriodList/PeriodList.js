@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
-import _, { isFunction, map, uniq, sortBy } from 'lodash';
-import { Controller, useForm } from 'react-hook-form';
+import React, { useMemo } from "react";
+import PropTypes from "prop-types";
+import _, { isFunction, map, uniq, sortBy } from "lodash";
+import { Controller, useForm } from "react-hook-form";
 import {
   Box,
   Button,
@@ -9,37 +9,37 @@ import {
   PaginatedList,
   SearchInput,
   Select,
-} from '@bubbles-ui/components';
-import { LocaleDate, unflatten } from '@common';
-import { useUserCenters } from '@users/hooks';
-import { useCenterPrograms, useProgramDetail } from '@academic-portfolio/hooks';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import { usePeriods } from '@scores/requests/hooks/queries';
+} from "@bubbles-ui/components";
+import { LocaleDate, unflatten } from "@common";
+import { useUserCenters } from "@users/hooks";
+import { useCenterPrograms, useProgramDetail } from "@academic-portfolio/hooks";
+import { DeleteBinIcon } from "@bubbles-ui/icons/solid";
+import { usePeriods } from "@scores/requests/hooks/queries";
 
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
-import getCourseName from '@academic-portfolio/helpers/getCourseName';
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { prefixPN } from "@scores/helpers";
+import getCourseName from "@academic-portfolio/helpers/getCourseName";
 
 const useStyle = createStyles((theme) => ({
   paginatedList: {
-    width: '100%',
+    width: "100%",
     marginTop: theme.spacing[5],
     marginRight: theme.spacing[13],
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     gap: theme.spacing[7],
   },
   filters: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     gap: theme.spacing[7],
   },
   filtersTop: {
     width: 613,
   },
   filtersBot: {
-    display: 'flex',
-    flexDirection: 'row',
+    display: "flex",
+    flexDirection: "row",
     gap: theme.spacing[7],
   },
 }));
@@ -51,13 +51,13 @@ function CenterAlignedSelect(props) {
       {...props}
       orientation="horizontal"
       style={{
-        display: 'flex',
-        flexDirecton: 'row',
-        alignItems: 'center',
+        display: "flex",
+        flexDirecton: "row",
+        alignItems: "center",
         gap: theme.spacing[4],
       }}
       headerStyle={{
-        width: 'auto',
+        width: "auto",
       }}
     />
   );
@@ -69,21 +69,23 @@ function PeriodFilters({ centers, programs, onChange }) {
                                           */
   const { control, watch } = useForm({
     defaultValues: {
-      search: '',
+      search: "",
       center: null,
       program: null,
       course: null,
     },
   });
 
-  const [, translations] = useTranslateLoader(prefixPN('periods.periodListFilters'));
+  const [, translations] = useTranslateLoader(
+    prefixPN("periods.periodListFilters")
+  );
 
   const labels = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
-      return _.get(res, prefixPN('periods.periodListFilters'), {});
+      return _.get(res, prefixPN("periods.periodListFilters"), {});
     }
 
     return {};
@@ -119,7 +121,11 @@ function PeriodFilters({ centers, programs, onChange }) {
           control={control}
           name="search"
           render={({ field }) => (
-            <SearchInput placeholder={labels?.search} variant="filled" {...field} />
+            <SearchInput
+              placeholder={labels?.search}
+              variant="filled"
+              {...field}
+            />
           )}
         />
       </Box>
@@ -127,20 +133,29 @@ function PeriodFilters({ centers, programs, onChange }) {
         <Controller
           name="center"
           control={control}
-          render={({ field }) => <CenterSelect field={field} centers={centers} labels={labels} />}
+          render={({ field }) => (
+            <CenterSelect field={field} centers={centers} labels={labels} />
+          )}
         />
         <Controller
           name="program"
           control={control}
           render={({ field }) => (
-            <ProgramSelect field={field} labels={labels} programs={programs} watch={watch} />
+            <ProgramSelect
+              field={field}
+              labels={labels}
+              programs={programs}
+              watch={watch}
+            />
           )}
         />
 
         <Controller
           name="course"
           control={control}
-          render={({ field }) => <CourseSelect field={field} watch={watch} labels={labels} />}
+          render={({ field }) => (
+            <CourseSelect field={field} watch={watch} labels={labels} />
+          )}
         />
       </Box>
     </Box>
@@ -197,13 +212,16 @@ function CenterSelect({ field, centers, labels }) {
 }
 
 function ProgramSelect({ field, watch, programs, labels }) {
-  const center = watch('center');
+  const center = watch("center");
 
   const programsMatchingCenter = React.useMemo(
-    () => (!center ? programs : programs.filter((program) => program.centers.includes(center))),
+    () =>
+      !center
+        ? programs
+        : programs.filter((program) => program.centers.includes(center)),
     [center, programs]
   );
-  const sortedPrograms = sortBy(programsMatchingCenter, 'createdAt');
+  const sortedPrograms = sortBy(programsMatchingCenter, "createdAt");
 
   const data = React.useMemo(
     () =>
@@ -233,9 +251,11 @@ function ProgramSelect({ field, watch, programs, labels }) {
 }
 
 function CourseSelect({ field, watch, labels }) {
-  const program = watch('program');
+  const program = watch("program");
 
-  const { data: programObj } = useProgramDetail(program, { enabled: !!program });
+  const { data: programObj } = useProgramDetail(program, {
+    enabled: !!program,
+  });
 
   const courses = React.useMemo(
     () =>
@@ -247,7 +267,10 @@ function CourseSelect({ field, watch, labels }) {
   );
 
   React.useEffect(() => {
-    if (field.value && !courses?.some((course) => course.value === field.value)) {
+    if (
+      field.value &&
+      !courses?.some((course) => course.value === field.value)
+    ) {
       field.onChange(null);
     }
   }, [courses]);
@@ -280,14 +303,16 @@ export default function PeriodList({ onRemove, className }) {
                                             --- Table ---
                                           */
 
-  const [, translations] = useTranslateLoader(prefixPN('periods.periodListColumns'));
+  const [, translations] = useTranslateLoader(
+    prefixPN("periods.periodListColumns")
+  );
 
   const columnLabels = useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       // EN: Modify the data object here
       // ES: Modifica el objeto data aquí
-      return _.get(res, prefixPN('periods.periodListColumns'), {});
+      return _.get(res, prefixPN("periods.periodListColumns"), {});
     }
 
     return {};
@@ -296,32 +321,32 @@ export default function PeriodList({ onRemove, className }) {
   const columns = React.useMemo(
     () => [
       {
-        Header: columnLabels?.center || '',
-        accessor: 'center',
+        Header: columnLabels?.center || "",
+        accessor: "center",
       },
       {
-        Header: columnLabels?.program || '',
-        accessor: 'program',
+        Header: columnLabels?.program || "",
+        accessor: "program",
       },
       {
-        Header: columnLabels?.course || '',
-        accessor: 'course',
+        Header: columnLabels?.course || "",
+        accessor: "course",
       },
       {
-        Header: columnLabels?.name || '',
-        accessor: 'name',
+        Header: columnLabels?.name || "",
+        accessor: "name",
       },
       {
-        Header: columnLabels?.startDate || '',
-        accessor: 'startDate',
+        Header: columnLabels?.startDate || "",
+        accessor: "startDate",
       },
       {
-        Header: columnLabels?.endDate || '',
-        accessor: 'endDate',
+        Header: columnLabels?.endDate || "",
+        accessor: "endDate",
       },
       {
-        Header: '',
-        accessor: 'actions',
+        Header: "",
+        accessor: "actions",
       },
     ],
     [columnLabels]
@@ -332,9 +357,9 @@ export default function PeriodList({ onRemove, className }) {
                                           */
 
   const { data: centers } = useUserCenters();
-  const programsByCenter = useCenterPrograms(map(centers, 'id'));
+  const programsByCenter = useCenterPrograms(map(centers, "id"));
   const programs = React.useMemo(() => {
-    const data = map(programsByCenter, 'data').filter(Boolean);
+    const data = map(programsByCenter, "data").filter(Boolean);
 
     return data.flat();
   }, [programsByCenter]);
@@ -342,11 +367,11 @@ export default function PeriodList({ onRemove, className }) {
   const { data: periods } = usePeriods({
     page: page - 1,
     size,
-    sort: 'center,program,course,startDate,endDate,name,id',
+    sort: "center,program,course,startDate,endDate,name,id",
     query: {
       $and: JSON.stringify([
         { center: filters.center || undefined },
-        { center: map(centers, 'id') },
+        { center: map(centers, "id") },
       ]),
       program: filters.program || undefined,
       course: filters.course || undefined,
@@ -355,7 +380,7 @@ export default function PeriodList({ onRemove, className }) {
   });
 
   const programsToFetchDetails = React.useMemo(
-    () => uniq(map(periods?.items || [], 'program')),
+    () => uniq(map(periods?.items || [], "program")),
     [periods?.items]
   );
   const programDetails = useProgramDetail(programsToFetchDetails, {
@@ -363,8 +388,8 @@ export default function PeriodList({ onRemove, className }) {
   });
 
   const courses = React.useMemo(() => {
-    const programsData = map(programDetails, 'data').filter(Boolean);
-    return map(programsData, 'courses').flat();
+    const programsData = map(programDetails, "data").filter(Boolean);
+    return map(programsData, "courses").flat();
   }, [programDetails]);
 
   /*
@@ -381,7 +406,7 @@ export default function PeriodList({ onRemove, className }) {
           ...period,
           center: center?.name,
           program: program?.name,
-          course: course ? getCourseName(course) : '-',
+          course: course ? getCourseName(course) : "-",
           startDate: <LocaleDate date={period.startDate} />,
           endDate: <LocaleDate date={period.endDate} />,
           actions: <PeriodActions period={period} onRemove={onRemove} />,
@@ -400,7 +425,11 @@ export default function PeriodList({ onRemove, className }) {
                                           */
   return (
     <Box className={cx(classes.paginatedList, className)}>
-      <PeriodFilters centers={centers} programs={programs} onChange={setFilters} />
+      <PeriodFilters
+        centers={centers}
+        programs={programs}
+        onChange={setFilters}
+      />
       <PaginatedList
         items={items}
         columns={columns}

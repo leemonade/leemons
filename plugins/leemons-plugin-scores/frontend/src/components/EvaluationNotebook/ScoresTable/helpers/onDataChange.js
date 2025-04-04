@@ -1,6 +1,6 @@
-import _ from 'lodash';
+import _ from "lodash";
 
-import { printErrorMessage, printSuccessMessage } from './printMessages';
+import { printErrorMessage, printSuccessMessage } from "./printMessages";
 
 export default function onDataChange({
   assignationScoreMutate,
@@ -21,24 +21,32 @@ export default function onDataChange({
 
     const grade = {
       ...(scales.find(
-        (g) => g.number === Number.parseInt(value.value, 10) || g.letter === value.value
+        (g) =>
+          g.number === Number.parseInt(value.value, 10) ||
+          g.letter === value.value
       ) ?? {}),
     };
 
     if (!_.isNumber(grade?.number)) {
-      throw new Error('Invalid grade');
+      throw new Error("Invalid grade");
     }
 
     if (!isLetter) {
-      const maxScore = scales.reduce((max, current) => Math.max(max, current.number), 0);
-      const minScore = scales.reduce((min, current) => Math.min(min, current.number), maxScore);
+      const maxScore = scales.reduce(
+        (max, current) => Math.max(max, current.number),
+        0
+      );
+      const minScore = scales.reduce(
+        (min, current) => Math.min(min, current.number),
+        maxScore
+      );
       grade.number = Math.min(Math.max(score, minScore), maxScore);
     }
 
     const student = students.find((s) => s.id === value.rowId);
     const activity = activities.find((a) => a.id === value.columnId);
 
-    if (value.columnId === 'customScore') {
+    if (value.columnId === "customScore") {
       const studentId = value.rowId;
       const periodId = period?.period?.id;
 
@@ -48,7 +56,7 @@ export default function onDataChange({
           student,
           activity: period?.period?.name,
           score: grade,
-          error: new Error('No period'),
+          error: new Error("No period"),
         });
       }
 
@@ -82,16 +90,19 @@ export default function onDataChange({
         );
     }
 
-    if (value.columnId.startsWith('retake-')) {
-      const [, retakeId] = value.columnId.split('-');
-      const retake = retakeId === 'null' ? retakes[0] : retakes.find((r) => r.id === retakeId);
+    if (value.columnId.startsWith("retake-")) {
+      const [, retakeId] = value.columnId.split("-");
+      const retake =
+        retakeId === "null"
+          ? retakes[0]
+          : retakes.find((r) => r.id === retakeId);
 
       return retakeScoreMutate({
         classId: klass.id,
         period: period?.period?.id,
         user: student.id,
         grade: grade.number,
-        retakeId: retakeId === 'null' ? null : retakeId,
+        retakeId: retakeId === "null" ? null : retakeId,
         retakeIndex: retake.index,
       })
         .then(() =>
@@ -113,7 +124,7 @@ export default function onDataChange({
         );
     }
 
-    if (activity.source === 'manualActivities') {
+    if (activity.source === "manualActivities") {
       return manualActivityScoreMutate({
         scores: [
           {
@@ -124,30 +135,56 @@ export default function onDataChange({
           },
         ],
       })
-        .then(() => printSuccessMessage({ labels, student, activity: activity.name, score: grade }))
+        .then(() =>
+          printSuccessMessage({
+            labels,
+            student,
+            activity: activity.name,
+            score: grade,
+          })
+        )
         .catch((e) =>
-          printErrorMessage({ labels, student, activity: activity.name, score: grade, error: e })
+          printErrorMessage({
+            labels,
+            student,
+            activity: activity.name,
+            score: grade,
+            error: e,
+          })
         );
     }
 
-    if (activity.source === 'assignables') {
+    if (activity.source === "assignables") {
       return assignationScoreMutate({
         instance: value.columnId,
         student: value.rowId,
         grades: [
           {
-            type: 'main',
+            type: "main",
             grade: grade.number,
             subject: klass.subject.id,
           },
         ],
       })
-        .then(() => printSuccessMessage({ labels, student, activity: activity.name, score: grade }))
+        .then(() =>
+          printSuccessMessage({
+            labels,
+            student,
+            activity: activity.name,
+            score: grade,
+          })
+        )
         .catch((e) =>
-          printErrorMessage({ labels, student, activity: activity.name, score: grade, error: e })
+          printErrorMessage({
+            labels,
+            student,
+            activity: activity.name,
+            score: grade,
+            error: e,
+          })
         );
     }
 
-    throw new Error('Invalid activity source');
+    throw new Error("Invalid activity source");
   };
 }

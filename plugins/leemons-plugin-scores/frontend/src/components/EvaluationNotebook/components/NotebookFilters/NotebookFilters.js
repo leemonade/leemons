@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import { useEffect, useState } from "react";
+import { Controller, useForm, useWatch } from "react-hook-form";
 
 import {
   Box,
@@ -9,32 +9,43 @@ import {
   Stack,
   Switch,
   DropdownButton,
-} from '@bubbles-ui/components';
-import { CalculatorIcon } from '@bubbles-ui/icons/solid';
-import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { CalculatorIcon } from "@bubbles-ui/icons/solid";
+import { useDeploymentConfig } from "@deployment-manager/hooks/useDeploymentConfig";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
 
-import { ManualActivityDrawer } from '../ManualActivityDrawer';
+import { ManualActivityDrawer } from "../ManualActivityDrawer";
 
-import useOnChange from './hooks/useOnChange';
-import useSearchTypes from './hooks/useSearchTypes';
+import useOnChange from "./hooks/useOnChange";
+import useSearchTypes from "./hooks/useSearchTypes";
 
-import { WeightConfigDrawer } from '@scores/components/Weights/components/WeightConfigDrawer';
-import { prefixPN } from '@scores/helpers';
-import { useAddRetakeMutation } from '@scores/requests/hooks/mutations/useAddRetake';
-import { useCreateManualActivityMutation } from '@scores/requests/hooks/mutations/useCreateManualActivityMutation';
-import { useRetakes } from '@scores/requests/hooks/queries/useRetakes';
-import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
+import { WeightConfigDrawer } from "@scores/components/Weights/components/WeightConfigDrawer";
+import { prefixPN } from "@scores/helpers";
+import { useAddRetakeMutation } from "@scores/requests/hooks/mutations/useAddRetake";
+import { useCreateManualActivityMutation } from "@scores/requests/hooks/mutations/useCreateManualActivityMutation";
+import { useRetakes } from "@scores/requests/hooks/queries/useRetakes";
+import useEvaluationNotebookStore from "@scores/stores/evaluationNotebookStore";
 
-export default function NotebookFilters({ filters, onChange, value, hasActivities }) {
-  const [t] = useTranslateLoader(prefixPN('evaluationNotebook.filters'));
+export default function NotebookFilters({
+  filters,
+  onChange,
+  value,
+  hasActivities,
+}) {
+  const [t] = useTranslateLoader(prefixPN("evaluationNotebook.filters"));
   const [weightDrawerIsOpen, setWeightDrawerIsOpen] = useState(false);
-  const [manualActivityDrawerIsOpen, setManualActivityDrawerIsOpen] = useState(false);
-  const deploymentConfig = useDeploymentConfig({ pluginName: 'scores', ignoreVersion: true });
-  const hideWeighting = deploymentConfig?.deny?.menu?.includes('scores.weights');
-  const { mutateAsync: createManualActivity } = useCreateManualActivityMutation();
+  const [manualActivityDrawerIsOpen, setManualActivityDrawerIsOpen] =
+    useState(false);
+  const deploymentConfig = useDeploymentConfig({
+    pluginName: "scores",
+    ignoreVersion: true,
+  });
+  const hideWeighting =
+    deploymentConfig?.deny?.menu?.includes("scores.weights");
+  const { mutateAsync: createManualActivity } =
+    useCreateManualActivityMutation();
   const { mutateAsync: addRetake } = useAddRetakeMutation();
   const { data: retakesCount } = useRetakes({
     classId: filters?.class?.id,
@@ -43,16 +54,18 @@ export default function NotebookFilters({ filters, onChange, value, hasActivitie
     select: (retakes) => retakes.length,
   });
 
-  const isPeriodPublished = useEvaluationNotebookStore((state) => state.isPeriodPublished);
+  const isPeriodPublished = useEvaluationNotebookStore(
+    (state) => state.isPeriodPublished
+  );
 
   const form = useForm({
     defaultValues: {
-      searchType: 'student',
+      searchType: "student",
     },
   });
   const { setValue, getValues } = form;
 
-  const searchType = useWatch({ control: form.control, name: 'searchType' });
+  const searchType = useWatch({ control: form.control, name: "searchType" });
 
   const searchTypes = useSearchTypes();
 
@@ -61,15 +74,18 @@ export default function NotebookFilters({ filters, onChange, value, hasActivitie
       const values = getValues();
 
       if (value.search && value.search !== values.search) {
-        setValue('search', value.search);
+        setValue("search", value.search);
       }
 
       if (value.searchType && value.searchType !== values.searchType) {
-        setValue('searchType', value.searchType);
+        setValue("searchType", value.searchType);
       }
 
-      if (value.showNonEvaluable && value.showNonEvaluable !== values.showNonEvaluable) {
-        setValue('showNonEvaluable', value.showNonEvaluable);
+      if (
+        value.showNonEvaluable &&
+        value.showNonEvaluable !== values.showNonEvaluable
+      ) {
+        setValue("showNonEvaluable", value.showNonEvaluable);
       }
     }
   }, [value, setValue, getValues]);
@@ -94,9 +110,9 @@ export default function NotebookFilters({ filters, onChange, value, hasActivitie
               ...data,
               classId: filters.class.id,
             });
-            addSuccessAlert(t('manualActivityCreated'));
+            addSuccessAlert(t("manualActivityCreated"));
           } catch (e) {
-            addErrorAlert(t('manualActivityError'), e.message);
+            addErrorAlert(t("manualActivityError"), e.message);
             throw e;
           }
         }}
@@ -116,7 +132,9 @@ export default function NotebookFilters({ filters, onChange, value, hasActivitie
             render={({ field }) => (
               <SearchInput
                 {...field}
-                placeholder={t('search', { type: t(`searchTypes.${searchType}`).toLowerCase() })}
+                placeholder={t("search", {
+                  type: t(`searchTypes.${searchType}`).toLowerCase(),
+                })}
                 sx={{ width: 220 }}
               />
             )}
@@ -128,7 +146,11 @@ export default function NotebookFilters({ filters, onChange, value, hasActivitie
             control={form.control}
             defaultValue={false}
             render={({ field }) => (
-              <Switch {...field} checked={field.value} label={t('showNonEvaluable')} />
+              <Switch
+                {...field}
+                checked={field.value}
+                label={t("showNonEvaluable")}
+              />
             )}
           />
           <Box>
@@ -138,22 +160,27 @@ export default function NotebookFilters({ filters, onChange, value, hasActivitie
                 leftIcon={<CalculatorIcon />}
                 onClick={() => setWeightDrawerIsOpen(true)}
               >
-                {t('goToWeighting')}
+                {t("goToWeighting")}
               </Button>
             )}
           </Box>
           <DropdownButton
-            disabled={retakesCount > 1 || filters?.period?.isCustom || isPeriodPublished}
+            disabled={
+              retakesCount > 1 || filters?.period?.isCustom || isPeriodPublished
+            }
             data={[
               {
-                label: t('manualActivity'),
+                label: t("manualActivity"),
                 onClick: () => setManualActivityDrawerIsOpen(true),
                 disabled: isPeriodPublished,
               },
               {
-                label: t('retake'),
+                label: t("retake"),
                 onClick: () =>
-                  addRetake({ classId: filters?.class?.id, period: filters?.period?.period.id }),
+                  addRetake({
+                    classId: filters?.class?.id,
+                    period: filters?.period?.period.id,
+                  }),
                 disabled:
                   retakesCount > 1 ||
                   filters?.period?.isCustom ||
@@ -162,7 +189,7 @@ export default function NotebookFilters({ filters, onChange, value, hasActivitie
               },
             ]}
           >
-            {t('add')}
+            {t("add")}
           </DropdownButton>
         </Stack>
       </Stack>

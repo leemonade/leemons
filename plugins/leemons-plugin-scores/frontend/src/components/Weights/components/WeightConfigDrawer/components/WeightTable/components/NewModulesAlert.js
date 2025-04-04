@@ -1,14 +1,14 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
+import React, { useMemo } from "react";
+import PropTypes from "prop-types";
 
-import { Alert } from '@bubbles-ui/components';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { Alert } from "@bubbles-ui/components";
+import { useFormContext, useWatch } from "react-hook-form";
 
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { prefixPN } from "@scores/helpers";
 
 export default function NewModulesAlert({ type, data }) {
-  const [t] = useTranslateLoader(prefixPN('weightingAlerts'));
+  const [t] = useTranslateLoader(prefixPN("weightingAlerts"));
 
   const form = useFormContext();
   const { touchedFields } = form.formState;
@@ -26,10 +26,10 @@ export default function NewModulesAlert({ type, data }) {
     [data.weights, JSON.stringify(touchedFields.weights), weights]
   );
 
-  if (type === 'modules' && hasNewModules) {
+  if (type === "modules" && hasNewModules) {
     return (
       <Alert severity="warning" closeable={false}>
-        {t('newModulesWarning')}
+        {t("newModulesWarning")}
       </Alert>
     );
   }

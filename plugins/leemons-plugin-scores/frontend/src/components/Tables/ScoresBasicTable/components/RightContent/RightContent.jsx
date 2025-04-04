@@ -1,19 +1,19 @@
-import { Box, createStyles } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+import { Box, createStyles } from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
-import { RightContentBody } from './components/Body';
-import { RightContentHeader } from './components/Header';
+import { RightContentBody } from "./components/Body";
+import { RightContentHeader } from "./components/Header";
 
 const useRightContentStyles = createStyles((theme, { overFlowRight }) => ({
   root: {
-    position: 'sticky',
+    position: "sticky",
     right: 0,
     backgroundColor: theme.colors.mainWhite,
-    minWidth: '300px',
+    minWidth: "300px",
     boxShadow:
       overFlowRight &&
-      '-16px 0px 16px rgba(35, 43, 60, 0.05), -50px 0px 30px rgba(51, 63, 86, 0.03)',
-    transition: 'box-shadow 0.2s ease-in-out',
+      "-16px 0px 16px rgba(35, 43, 60, 0.05), -50px 0px 30px rgba(51, 63, 86, 0.03)",
+    transition: "box-shadow 0.2s ease-in-out",
   },
 }));
 
@@ -34,7 +34,7 @@ export function RightContent({
 }) {
   const { classes } = useRightContentStyles(
     { overFlowRight },
-    { name: 'ScoresBasicTableRightContent' }
+    { name: "ScoresBasicTableRightContent" }
   );
   return (
     <Box className={classes.root}>

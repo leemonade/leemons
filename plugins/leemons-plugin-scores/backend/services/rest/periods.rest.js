@@ -1,25 +1,25 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 
-const { escapeRegExp } = require('lodash');
-const addPeriod = require('../../core/periods/addPeriod');
-const listPeriods = require('../../core/periods/listPeriods');
-const removePeriod = require('../../core/periods/removePeriod');
+const { escapeRegExp } = require("lodash");
+const addPeriod = require("../../core/periods/addPeriod");
+const listPeriods = require("../../core/periods/listPeriods");
+const removePeriod = require("../../core/periods/removePeriod");
 
 module.exports = {
   addRest: {
     rest: {
-      method: 'POST',
-      path: '/',
+      method: "POST",
+      path: "/",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'scores.periods': {
-            actions: ['admin', 'create'],
+          "scores.periods": {
+            actions: ["admin", "create"],
           },
         },
       }),
@@ -31,15 +31,15 @@ module.exports = {
   },
   listRest: {
     rest: {
-      method: 'GET',
-      path: '/',
+      method: "GET",
+      path: "/",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'scores.periods': {
-            actions: ['admin', 'view'],
+          "scores.periods": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -57,8 +57,11 @@ module.exports = {
         })
       );
       // eslint-disable-next-line no-prototype-builtins
-      if (q.hasOwnProperty('name_$contains')) {
-        q.name = { $regex: `.*${escapeRegExp(q.name_$contains)}.*`, $options: 'i' };
+      if (q.hasOwnProperty("name_$contains")) {
+        q.name = {
+          $regex: `.*${escapeRegExp(q.name_$contains)}.*`,
+          $options: "i",
+        };
         delete q.name_$contains;
       }
       const periods = await listPeriods({ ...q, ctx });
@@ -67,21 +70,24 @@ module.exports = {
   },
   removeRest: {
     rest: {
-      method: 'DELETE',
-      path: '/:id',
+      method: "DELETE",
+      path: "/:id",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'scores.periods': {
-            actions: ['admin', 'delete'],
+          "scores.periods": {
+            actions: ["admin", "delete"],
           },
         },
       }),
     ],
     async handler(ctx) {
-      const period = await removePeriod({ periodId: parseInt(ctx.params.id, 10), ctx });
+      const period = await removePeriod({
+        periodId: parseInt(ctx.params.id, 10),
+        ctx,
+      });
       return { status: 200, period };
     },
   },

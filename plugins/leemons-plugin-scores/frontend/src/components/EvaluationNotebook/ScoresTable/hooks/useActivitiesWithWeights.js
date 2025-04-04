@@ -1,20 +1,23 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { filter, groupBy, keyBy, sortBy } from 'lodash';
+import { filter, groupBy, keyBy, sortBy } from "lodash";
 
-import getApplySameValueWeightForUnlocked from '../helpers/getApplySameValueWeightForUnlocked';
+import getApplySameValueWeightForUnlocked from "../helpers/getApplySameValueWeightForUnlocked";
 
-import useActivities from './useActivities';
-import { useManualActivitesForNotebook } from './useManualActivitesForNotebook';
+import useActivities from "./useActivities";
+import { useManualActivitesForNotebook } from "./useManualActivitesForNotebook";
 
-import useWeights from '@scores/requests/hooks/queries/useWeights';
+import useWeights from "@scores/requests/hooks/queries/useWeights";
 
 function getActivitiesWeightsByModules({ weights, activities }) {
-  const evaluableActivities = filter(activities, 'isEvaluable');
+  const evaluableActivities = filter(activities, "isEvaluable");
 
   const { applySameValue } = weights;
-  const weightsPerModuleId = keyBy(weights.weights, 'id');
-  const modulesCount = Math.max(evaluableActivities.length, weights.weights.length);
+  const weightsPerModuleId = keyBy(weights.weights, "id");
+  const modulesCount = Math.max(
+    evaluableActivities.length,
+    weights.weights.length
+  );
 
   return activities.map((activity) => {
     const weight = weightsPerModuleId[activity.id];
@@ -33,13 +36,16 @@ function getActivitiesWeightsByModules({ weights, activities }) {
 }
 
 function getActivitiesWeightsByRoles({ weights, activities }) {
-  const evaluableActivities = filter(activities, 'isEvaluable');
+  const evaluableActivities = filter(activities, "isEvaluable");
 
   const { applySameValue } = weights;
-  const weightsPerType = keyBy(weights.weights, 'id');
+  const weightsPerType = keyBy(weights.weights, "id");
 
-  const roles = groupBy(evaluableActivities, 'role');
-  const rolesCount = Math.max(Object.keys(roles).length, weights.weights.length);
+  const roles = groupBy(evaluableActivities, "role");
+  const rolesCount = Math.max(
+    Object.keys(roles).length,
+    weights.weights.length
+  );
 
   return activities.map((activity) => {
     const roleWeight = weightsPerType[activity.role];
@@ -61,18 +67,26 @@ function getActivitiesWeightsByRoles({ weights, activities }) {
 }
 
 function getActivitiesWeightsByActivities({ weights, activities }) {
-  const evaluableActivities = filter(activities, 'isEvaluable');
+  const evaluableActivities = filter(activities, "isEvaluable");
   const activitiesCount = evaluableActivities?.length;
 
   const { applySameValue } = weights;
-  const weightsPerActivity = keyBy(weights.weights, 'id');
+  const weightsPerActivity = keyBy(weights.weights, "id");
 
   return activities.map((activity) => {
     const weight = weightsPerActivity[activity.id];
     let weightValue = weight?.weight;
 
-    if (!weight?.isLocked && applySameValue && activity.isEvaluable && !activity.isLocked) {
-      weightValue = getApplySameValueWeightForUnlocked(weights, activitiesCount);
+    if (
+      !weight?.isLocked &&
+      applySameValue &&
+      activity.isEvaluable &&
+      !activity.isLocked
+    ) {
+      weightValue = getApplySameValueWeightForUnlocked(
+        weights,
+        activitiesCount
+      );
     }
 
     return {
@@ -82,9 +96,8 @@ function getActivitiesWeightsByActivities({ weights, activities }) {
   });
 }
 
-
 function getActivitiesWeightsWithSameValue({ activities }) {
-  const evaluableActivities = filter(activities, 'isEvaluable');
+  const evaluableActivities = filter(activities, "isEvaluable");
   const activitiesCount = evaluableActivities?.length;
   const weightPerActivity = Number((1 / activitiesCount).toFixed(4));
 
@@ -94,36 +107,54 @@ function getActivitiesWeightsWithSameValue({ activities }) {
   }));
 }
 
-export default function useActivitiesWithWeights({ program, class: klass, period, filters }) {
-  const { data: weights, isLoading: weightsLoading } = useWeights({ classId: klass?.id });
-
-  const { activities: assignablesActivities, isLoading: activitiesLoading } = useActivities({
-    program,
-    class: klass,
-    period,
-    filters,
-    weights,
+export default function useActivitiesWithWeights({
+  program,
+  class: klass,
+  period,
+  filters,
+}) {
+  const { data: weights, isLoading: weightsLoading } = useWeights({
+    classId: klass?.id,
   });
 
-  const { manualActivities, isLoading: manualActivitiesLoading } = useManualActivitesForNotebook({
-    klass,
-    filters,
-    period,
-  });
+  const { activities: assignablesActivities, isLoading: activitiesLoading } =
+    useActivities({
+      program,
+      class: klass,
+      period,
+      filters,
+      weights,
+    });
+
+  const { manualActivities, isLoading: manualActivitiesLoading } =
+    useManualActivitesForNotebook({
+      klass,
+      filters,
+      period,
+    });
 
   const activities = useMemo(
-    () => sortBy([...assignablesActivities, ...manualActivities], 'deadline'),
+    () => sortBy([...assignablesActivities, ...manualActivities], "deadline"),
     [assignablesActivities, manualActivities]
   );
 
   let activitiesWithWeights;
 
-  if (weights?.type === 'modules') {
-    activitiesWithWeights = getActivitiesWeightsByModules({ weights, activities });
-  } else if (weights?.type === 'roles') {
-    activitiesWithWeights = getActivitiesWeightsByRoles({ weights, activities });
-  } else if (weights?.type === 'activities') {
-    activitiesWithWeights = getActivitiesWeightsByActivities({ weights, activities });
+  if (weights?.type === "modules") {
+    activitiesWithWeights = getActivitiesWeightsByModules({
+      weights,
+      activities,
+    });
+  } else if (weights?.type === "roles") {
+    activitiesWithWeights = getActivitiesWeightsByRoles({
+      weights,
+      activities,
+    });
+  } else if (weights?.type === "activities") {
+    activitiesWithWeights = getActivitiesWeightsByActivities({
+      weights,
+      activities,
+    });
   } else {
     activitiesWithWeights = getActivitiesWeightsWithSameValue({ activities });
   }

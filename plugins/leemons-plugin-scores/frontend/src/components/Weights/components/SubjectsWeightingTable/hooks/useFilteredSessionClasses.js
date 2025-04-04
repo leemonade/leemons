@@ -1,14 +1,16 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { filter } from 'lodash';
+import { filter } from "lodash";
 
-import { useSessionClasses } from '@academic-portfolio/hooks';
+import { useSessionClasses } from "@academic-portfolio/hooks";
 
-export default function useFilteredSessionClasses({ program, subject, course }) {
-  const { data: sessionClasses, isLoading: isLoadingSessionClasses } = useSessionClasses(
-    { program },
-    { enabled: !!program }
-  );
+export default function useFilteredSessionClasses({
+  program,
+  subject,
+  course,
+}) {
+  const { data: sessionClasses, isLoading: isLoadingSessionClasses } =
+    useSessionClasses({ program }, { enabled: !!program });
 
   const filteredSessionClasses = useMemo(
     () =>
@@ -18,7 +20,9 @@ export default function useFilteredSessionClasses({ program, subject, course }) 
         }
 
         if (course) {
-          return [klass.courses].flat().some((_course) => _course.id === course);
+          return [klass.courses]
+            .flat()
+            .some((_course) => _course.id === course);
         }
 
         return true;

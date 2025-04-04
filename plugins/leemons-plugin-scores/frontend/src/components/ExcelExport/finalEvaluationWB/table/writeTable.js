@@ -1,6 +1,6 @@
-import { cellToIndexes, indexesToCell } from '../../helpers';
-import { writeTableHeader } from './header';
-import { writeStudents } from './students';
+import { cellToIndexes, indexesToCell } from "../../helpers";
+import { writeTableHeader } from "./header";
+import { writeStudents } from "./students";
 
 /**
  *

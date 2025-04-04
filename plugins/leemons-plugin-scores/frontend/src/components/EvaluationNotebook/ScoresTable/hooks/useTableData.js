@@ -1,17 +1,24 @@
-import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
+import useProgramEvaluationSystems from "@grades/hooks/queries/useProgramEvaluationSystem";
 
-import useActivitiesWithWeights from './useActivitiesWithWeights';
-import useStudents from './useStudents';
+import useActivitiesWithWeights from "./useActivitiesWithWeights";
+import useStudents from "./useStudents";
 
-import { useRetakes } from '@scores/requests/hooks/queries/useRetakes';
+import { useRetakes } from "@scores/requests/hooks/queries/useRetakes";
 
-export default function useTableData({ program, class: klass, period, filters }) {
-  const { activities, isLoading: activitiesLoading } = useActivitiesWithWeights({
-    program,
-    class: klass,
-    period,
-    filters,
-  });
+export default function useTableData({
+  program,
+  class: klass,
+  period,
+  filters,
+}) {
+  const { activities, isLoading: activitiesLoading } = useActivitiesWithWeights(
+    {
+      program,
+      class: klass,
+      period,
+      filters,
+    }
+  );
 
   const { data: studentsData, isLoading: studentsLoading } = useStudents({
     activities,
@@ -20,8 +27,10 @@ export default function useTableData({ program, class: klass, period, filters })
     period: period?.period?.id,
   });
 
-  const { data: programEvaluationSystem, isLoading: programEvaluationSystemLoading } =
-    useProgramEvaluationSystems({ program });
+  const {
+    data: programEvaluationSystem,
+    isLoading: programEvaluationSystemLoading,
+  } = useProgramEvaluationSystems({ program });
 
   const enableRetakesQuery = !!klass?.id && !!period?.period?.id;
   const { data: retakes, isLoading: retakesLoading } = useRetakes({

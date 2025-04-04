@@ -1,18 +1,24 @@
 export const allScoresKey = [
   {
-    plugin: 'plugin.scores',
-    scope: 'scores',
+    plugin: "plugin.scores",
+    scope: "scores",
   },
 ];
 
 export const allScoresSearchKey = [
   {
     ...allScoresKey[0],
-    action: 'search',
+    action: "search",
   },
 ];
 
-export const scoresSearchKey = ({ students, classes, gradedBy, periods, published }) => [
+export const scoresSearchKey = ({
+  students,
+  classes,
+  gradedBy,
+  periods,
+  published,
+}) => [
   {
     ...allScoresSearchKey[0],
 

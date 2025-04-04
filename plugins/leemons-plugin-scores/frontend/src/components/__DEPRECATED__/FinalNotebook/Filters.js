@@ -1,21 +1,29 @@
-import React from 'react';
+import React from "react";
 
-import { createStyles, SearchInput, Select, Stack, Switch } from '@bubbles-ui/components';
-import { unflatten } from '@common';
-import _ from 'lodash';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import {
+  createStyles,
+  SearchInput,
+  Select,
+  Stack,
+  Switch,
+} from "@bubbles-ui/components";
+import { unflatten } from "@common";
+import _ from "lodash";
+import { Controller, useForm, useWatch } from "react-hook-form";
 
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
-import { useFilterByLength } from '../Notebook/components/ActivitiesTab/Filters';
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { prefixPN } from "@scores/helpers";
+import { useFilterByLength } from "../Notebook/components/ActivitiesTab/Filters";
 
 function useFiltersLocalizations() {
-  const [, translations] = useTranslateLoader(prefixPN('finalNotebook.filters'));
+  const [, translations] = useTranslateLoader(
+    prefixPN("finalNotebook.filters")
+  );
 
   return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      return _.get(res, prefixPN('finalNotebook.filters'));
+      return _.get(res, prefixPN("finalNotebook.filters"));
     }
 
     return {};
@@ -30,7 +38,7 @@ function useSearchByData({ localizations, filters }) {
 
     const filterBy = !filters?.group
       ? localizations?.filterBy
-      : _.omit(localizations?.filterBy, ['group']);
+      : _.omit(localizations?.filterBy, ["group"]);
 
     return Object.entries(filterBy)?.map(([value, label]) => ({
       value,
@@ -43,7 +51,7 @@ function useEmitOnChange({ control, onChange }) {
   const data = useWatch({ control });
 
   React.useEffect(() => {
-    if (typeof onChange === 'function') {
+    if (typeof onChange === "function") {
       onChange(data);
     }
   }, [data, onChange]);
@@ -53,8 +61,8 @@ export function Filters({ onChange }) {
 
   const { control, watch } = useForm({
     defaultValues: {
-      filterBy: 'student',
-      search: '',
+      filterBy: "student",
+      search: "",
       futureEvaluations: true,
     },
   });
@@ -68,7 +76,7 @@ export function Filters({ onChange }) {
       <Stack spacing={3}>
         <Controller
           control={control}
-          name={'filterBy'}
+          name={"filterBy"}
           render={({ field }) => (
             <Select
               {...field}
@@ -76,7 +84,7 @@ export function Filters({ onChange }) {
               style={{
                 width: `${filterByLength + 5}ch`,
                 fontSize: 14,
-                fontFamily: 'Inter, sans-serif',
+                fontFamily: "Inter, sans-serif",
               }}
             />
           )}
@@ -84,22 +92,24 @@ export function Filters({ onChange }) {
 
         <Controller
           control={control}
-          name={'search'}
+          name={"search"}
           render={({ field }) => {
-            const searchBy = watch('filterBy');
+            const searchBy = watch("filterBy");
             const placeholder = localizations?.searchBy?.replace(
-              '{{noun}}',
+              "{{noun}}",
               localizations?.filterBy[searchBy]
             );
 
-            return <SearchInput {...field} placeholder={placeholder} wait={300} />;
+            return (
+              <SearchInput {...field} placeholder={placeholder} wait={300} />
+            );
           }}
         />
       </Stack>
 
       <Controller
         control={control}
-        name={'futureEvaluations'}
+        name={"futureEvaluations"}
         render={({ field }) => (
           <Switch
             {...field}

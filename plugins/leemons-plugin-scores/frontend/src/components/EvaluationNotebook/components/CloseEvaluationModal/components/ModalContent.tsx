@@ -1,13 +1,20 @@
-import { Box, Button, createStyles, Paper, Text, useClickOutside } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import {
+  Box,
+  Button,
+  createStyles,
+  Paper,
+  Text,
+  useClickOutside,
+} from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
 
-import { useEvaluationData } from '../hooks/useEvaluationData';
-import { useOnCloseEvaluation } from '../hooks/useOnCloseEvaluation';
-import { StudentEvaluationData, TableData } from '../types';
+import { useEvaluationData } from "../hooks/useEvaluationData";
+import { useOnCloseEvaluation } from "../hooks/useOnCloseEvaluation";
+import { StudentEvaluationData, TableData } from "../types";
 
-import { PickRetakeTable } from './PickRetakeTable';
+import { PickRetakeTable } from "./PickRetakeTable";
 
-import { prefixPN } from '@scores/helpers';
+import { prefixPN } from "@scores/helpers";
 
 type Props = {
   tableData: TableData;
@@ -20,49 +27,49 @@ const useStyles = createStyles((theme) => {
 
   return {
     root: {
-      position: 'absolute',
+      position: "absolute",
       top: 0,
       left: 0,
-      width: '100%',
-      height: '100%',
+      width: "100%",
+      height: "100%",
       zIndex: 1000,
     },
     backdrop: {
-      position: 'absolute',
+      position: "absolute",
       top: 0,
       left: 0,
-      width: '100%',
-      height: '100%',
+      width: "100%",
+      height: "100%",
       backgroundColor: globalTheme.content.color.text.emphasis,
       opacity: 0.24,
     },
     content: {
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      display: 'flex',
-      flexDirection: 'column',
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      display: "flex",
+      flexDirection: "column",
       gap: 16,
       padding: 16,
-      maxHeight: '75%',
-      overflowY: 'auto',
+      maxHeight: "75%",
+      overflowY: "auto",
     },
     topBar: {
-      display: 'flex',
-      flexDirection: 'column',
+      display: "flex",
+      flexDirection: "column",
       gap: 16,
     },
     body: {
-      display: 'flex',
-      flexDirection: 'column',
+      display: "flex",
+      flexDirection: "column",
       gap: 16,
     },
     footer: {
-      display: 'flex',
-      flexDirection: 'row',
+      display: "flex",
+      flexDirection: "row",
       gap: 16,
-      justifyContent: 'flex-end',
+      justifyContent: "flex-end",
     },
     title: {
       ...globalTheme.content.typo.heading.md,
@@ -70,10 +77,14 @@ const useStyles = createStyles((theme) => {
   };
 });
 
-export default function ModalContent({ tableData, onCancel, onConfirm }: Props) {
-  const { classes } = useStyles(null, { name: 'CloseEvaluationModalContent' });
+export default function ModalContent({
+  tableData,
+  onCancel,
+  onConfirm,
+}: Props) {
+  const { classes } = useStyles(null, { name: "CloseEvaluationModalContent" });
   const ref = useClickOutside(onCancel);
-  const [t] = useTranslateLoader(prefixPN('pickRetakeTable'));
+  const [t] = useTranslateLoader(prefixPN("pickRetakeTable"));
 
   const { students, retakes } = useEvaluationData(tableData);
 
@@ -86,9 +97,9 @@ export default function ModalContent({ tableData, onCancel, onConfirm }: Props) 
       <Paper className={classes.content} ref={ref}>
         <Box className={classes.topBar}>
           <Text color="tertiary" className={classes.title}>
-            {t('title')}
+            {t("title")}
           </Text>
-          <Text>{t('description')}</Text>
+          <Text>{t("description")}</Text>
         </Box>
 
         <Box className={classes.body}>
@@ -97,9 +108,9 @@ export default function ModalContent({ tableData, onCancel, onConfirm }: Props) 
 
         <Box className={classes.footer}>
           <Button variant="link" onClick={onCancel}>
-            {t('cancel')}
+            {t("cancel")}
           </Button>
-          <Button onClick={onSubmit}>{t('confirm')}</Button>
+          <Button onClick={onSubmit}>{t("confirm")}</Button>
         </Box>
       </Paper>
     </Box>

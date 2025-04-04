@@ -1,55 +1,55 @@
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 
 const periodValidationObject = {
-  type: 'object',
+  type: "object",
   properties: {
     center: {
-      type: 'string',
+      type: "string",
     },
     program: {
-      type: 'string',
+      type: "string",
     },
     course: {
-      type: 'string',
+      type: "string",
       nullable: true,
     },
     name: {
-      type: 'string',
+      type: "string",
       minLength: 1,
       maxLength: 255,
     },
     startDate: {
       oneOf: [
         {
-          type: 'string',
-          format: 'date-time',
+          type: "string",
+          format: "date-time",
           nullable: true,
         },
         {
-          instanceof: 'Date',
+          instanceof: "Date",
         },
         {
-          type: 'number',
+          type: "number",
         },
       ],
     },
     endDate: {
       oneOf: [
         {
-          type: 'string',
-          format: 'date-time',
+          type: "string",
+          format: "date-time",
           nullable: true,
         },
         {
-          instanceof: 'Date',
+          instanceof: "Date",
         },
         {
-          type: 'number',
+          type: "number",
         },
       ],
     },
   },
-  required: ['center', 'program', 'name', 'startDate', 'endDate'],
+  required: ["center", "program", "name", "startDate", "endDate"],
 };
 
 function validatePeriod(period) {

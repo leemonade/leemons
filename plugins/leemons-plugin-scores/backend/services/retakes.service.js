@@ -1,11 +1,13 @@
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMongoDBMixin } = require("@leemons/mongodb");
 
-const { PLUGIN_NAME, VERSION } = require('../config/constants');
-const { getServiceModels } = require('../models');
+const { PLUGIN_NAME, VERSION } = require("../config/constants");
+const { getServiceModels } = require("../models");
 
-const restActions = require('./rest/retakes.rest');
+const restActions = require("./rest/retakes.rest");
 
 /** @type {import('moleculer').ServiceSchema} */
 const retakesService = {

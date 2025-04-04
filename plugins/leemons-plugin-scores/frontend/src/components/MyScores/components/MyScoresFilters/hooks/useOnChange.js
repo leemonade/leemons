@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { useWatch } from 'react-hook-form';
+import { useWatch } from "react-hook-form";
 
 export default function useOnChange({ control, onChange }) {
   const values = useWatch({ control });

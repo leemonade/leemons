@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
 
 module.exports = async function removeScores({
   students,
@@ -33,7 +33,7 @@ module.exports = async function removeScores({
     query.published = published;
   }
 
-  if (!Object.keys(_.omit(query, ['published'])).length) {
+  if (!Object.keys(_.omit(query, ["published"])).length) {
     throw new LeemonsError(ctx, {
       message: `Error removing scores: at least one of: students, classes, instances, periods or gradedBy is required`,
     });

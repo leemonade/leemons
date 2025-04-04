@@ -1,16 +1,16 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { useCache } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import _, { intersection } from 'lodash';
+import { useCache } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import _, { intersection } from "lodash";
 
-import { useAcademicCalendarPeriods } from '../../useAcademicCalendarPeriods';
+import { useAcademicCalendarPeriods } from "../../useAcademicCalendarPeriods";
 
-import useAcademicCalendarDates from './useAcademicCalendarDates';
-import usePeriodTypes from './usePeriodTypes';
+import useAcademicCalendarDates from "./useAcademicCalendarDates";
+import usePeriodTypes from "./usePeriodTypes";
 
-import { prefixPN } from '@scores/helpers';
-import { usePeriods as usePeriodsRequest } from '@scores/requests/hooks/queries';
+import { prefixPN } from "@scores/helpers";
+import { usePeriods as usePeriodsRequest } from "@scores/requests/hooks/queries";
 
 export default function usePeriods({ selectedClass, classes }) {
   const periodTypes = usePeriodTypes();
@@ -24,9 +24,9 @@ export default function usePeriods({ selectedClass, classes }) {
   const adminPeriods = useMemo(
     () =>
       cache(
-        'adminPeriods',
+        "adminPeriods",
         periodsResponse?.items?.map((period) => ({
-          ..._.omit(period, ['program', 'course']),
+          ..._.omit(period, ["program", "course"]),
           programs: [period.program].filter(Boolean),
           courses: [period.course].filter(Boolean),
         })) || []
@@ -38,9 +38,12 @@ export default function usePeriods({ selectedClass, classes }) {
 
   const periods = useMemo(() => {
     const allPeriods = [
-      ...(adminPeriods?.map((p) => ({ ...p, group: periodTypes?.custom })) || []),
-      ...(academicCalendarPeriods?.map((p) => ({ ...p, group: periodTypes?.academicCalendar })) ||
+      ...(adminPeriods?.map((p) => ({ ...p, group: periodTypes?.custom })) ||
         []),
+      ...(academicCalendarPeriods?.map((p) => ({
+        ...p,
+        group: periodTypes?.academicCalendar,
+      })) || []),
     ];
 
     if (!allPeriods.length) {
@@ -64,7 +67,9 @@ export default function usePeriods({ selectedClass, classes }) {
             if (
               !selectedClassCourses?.some((course) =>
                 substageIds.some(
-                  (substage) => period?.periods?.[selectedClass.program]?.[course] === substage
+                  (substage) =>
+                    period?.periods?.[selectedClass.program]?.[course] ===
+                    substage
                 )
               )
             ) {
@@ -99,7 +104,8 @@ export default function usePeriods({ selectedClass, classes }) {
         }
 
         return (
-          (new Date(a.startDate).getTime() - new Date(b.startDate).getTime()) * 100 +
+          (new Date(a.startDate).getTime() - new Date(b.startDate).getTime()) *
+            100 +
           (new Date(a.endDate).getTime() - new Date(b.endDate).getTime()) * 10 +
           a.name.localeCompare(b.name)
         );
@@ -107,7 +113,7 @@ export default function usePeriods({ selectedClass, classes }) {
   }, [adminPeriods, academicCalendarPeriods, selectedClass, periodTypes]);
 
   const { startDate, endDate } = useAcademicCalendarDates({ selectedClass });
-  const [t] = useTranslateLoader(prefixPN('scoresPage.filters.period'));
+  const [t] = useTranslateLoader(prefixPN("scoresPage.filters.period"));
 
   const finalPeriods = useMemo(() => {
     if (!selectedClass || !startDate || !endDate) {
@@ -127,13 +133,13 @@ export default function usePeriods({ selectedClass, classes }) {
       programs: [selectedClass.program],
       periods: {
         [selectedClass.program]: {
-          [selectedClass.courses.id]: 'fullCourse',
+          [selectedClass.courses.id]: "fullCourse",
         },
       },
       startDate,
       endDate,
-      name: t('fullCourse'),
-      id: 'fullCourse',
+      name: t("fullCourse"),
+      id: "fullCourse",
     };
 
     return [customPeriod, ...periods];

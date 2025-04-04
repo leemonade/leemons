@@ -1,15 +1,15 @@
-import React from 'react';
+import React from "react";
 
-import useSessionClasses from '@academic-portfolio/hooks/useSessionClasses';
-import useSearchAssignableInstances from '@assignables/hooks/assignableInstance/useSearchAssignableInstancesQuery';
-import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
-import { useCache } from '@common';
-import { useUserAgentsInfo } from '@users/hooks';
-import { map, uniq } from 'lodash';
+import useSessionClasses from "@academic-portfolio/hooks/useSessionClasses";
+import useSearchAssignableInstances from "@assignables/hooks/assignableInstance/useSearchAssignableInstancesQuery";
+import useProgramEvaluationSystem from "@assignables/hooks/useProgramEvaluationSystem";
+import useInstances from "@assignables/requests/hooks/queries/useInstances";
+import { useCache } from "@common";
+import { useUserAgentsInfo } from "@users/hooks";
+import { map, uniq } from "lodash";
 
-import useFinalData from './useFinalData';
-import { useParsedActivities } from './useParsedActivities';
+import useFinalData from "./useFinalData";
+import { useParsedActivities } from "./useParsedActivities";
 
 function useSelectedClasses(filters) {
   const { data: sessionClasses } = useSessionClasses(
@@ -25,7 +25,8 @@ function useSelectedClasses(filters) {
     return sessionClasses
       .filter(
         (klass) =>
-          (klass.subject.subject === filters.subject || klass.subject.id === filters.subject) &&
+          (klass.subject.subject === filters.subject ||
+            klass.subject.id === filters.subject) &&
           (!filters.group || klass.groups.id === filters.group)
       )
       .map((klass) => klass.id);
@@ -60,8 +61,10 @@ function useActivities(activities) {
 
 function useStudents(assignableInstances) {
   const students = React.useMemo(() => {
-    const stdnts = assignableInstances.flatMap((assignableInstance) => assignableInstance.students);
-    return uniq(map(stdnts, 'user'));
+    const stdnts = assignableInstances.flatMap(
+      (assignableInstance) => assignableInstance.students
+    );
+    return uniq(map(stdnts, "user"));
   }, [assignableInstances]);
 
   const { data, isLoading } = useUserAgentsInfo(students, {
@@ -78,14 +81,14 @@ function useFilteredAssignableInstances({ assignableInstances, filters }) {
   return assignableInstances.filter(
     (assignableInstance) =>
       !(
-        (filters.filterBy === 'activity' &&
+        (filters.filterBy === "activity" &&
           filters.search?.length &&
           !assignableInstance.assignable.asset.name
             .toLowerCase()
             .includes(filters.search.toLowerCase())) ||
         !assignableInstance.gradable ||
         (!filters.showNonCalificables && !assignableInstance.gradable) ||
-        assignableInstance?.metadata?.module?.type === 'module'
+        assignableInstance?.metadata?.module?.type === "module"
       )
   );
 }
@@ -106,7 +109,7 @@ function useGrades(assignableInstances) {
   return React.useMemo(
     () =>
       cache(
-        'grades',
+        "grades",
         evaluationSystem?.scales.sort((a, b) => a.number - b.number)
       ),
     [evaluationSystem?.scales]
@@ -127,7 +130,8 @@ function usePeriodData({ filters, localFilters }) {
       { enabled: !!selectedClasses.length }
     );
 
-  const hasActivities = !isLoadingSearchAssignableInstances && activities.length;
+  const hasActivities =
+    !isLoadingSearchAssignableInstances && activities.length;
 
   const { assignableInstances, isLoading: assignableInstancesAreLoading } =
     useActivities(activities);
@@ -162,14 +166,16 @@ function usePeriodData({ filters, localFilters }) {
   const cache = useCache();
 
   return {
-    isLoading: isLoading ? isLoadingSearchAssignableInstances && !activities?.length : false,
-    activitiesData: cache('activitiesData', activitiesData),
+    isLoading: isLoading
+      ? isLoadingSearchAssignableInstances && !activities?.length
+      : false,
+    activitiesData: cache("activitiesData", activitiesData),
     grades,
   };
 }
 
 export function useTableData({ filters, localFilters }) {
-  if (filters.period?.period?.id === 'final') {
+  if (filters.period?.period?.id === "final") {
     return useFinalData({ filters, localFilters });
   }
 

@@ -1,4 +1,6 @@
-const { validateManualActivity } = require('./validations/validateManualActivity');
+const {
+  validateManualActivity,
+} = require("./validations/validateManualActivity");
 
 async function addManualActivity({ manualActivity, ctx }) {
   validateManualActivity({ manualActivity, ctx });

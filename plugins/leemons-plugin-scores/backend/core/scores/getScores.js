@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
 
 module.exports = async function getScores({
   students,
@@ -33,7 +33,7 @@ module.exports = async function getScores({
     query.published = published;
   }
 
-  if (!Object.keys(_.omit(query, ['published'])).length) {
+  if (!Object.keys(_.omit(query, ["published"])).length) {
     throw new LeemonsError(ctx, {
       message: `Error getting scores: at least one of: students, classes, instances, periods or gradedBy is required`,
     });
@@ -41,5 +41,8 @@ module.exports = async function getScores({
 
   const scoresFound = await ctx.tx.db.Scores.find(query).lean();
 
-  return scoresFound.map((score) => ({ ...score, grade: parseFloat(score.grade) }));
+  return scoresFound.map((score) => ({
+    ...score,
+    grade: parseFloat(score.grade),
+  }));
 };

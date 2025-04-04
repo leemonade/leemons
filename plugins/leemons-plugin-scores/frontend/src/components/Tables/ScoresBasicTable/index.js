@@ -1,2 +1,2 @@
-export * from './ScoresBasicTable';
-export * from './ScoresBasicTable.constants';
+export * from "./ScoresBasicTable";
+export * from "./ScoresBasicTable.constants";

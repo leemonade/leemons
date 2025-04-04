@@ -1,1 +1,1 @@
-export * from './PickRetakeTable';
+export * from "./PickRetakeTable";

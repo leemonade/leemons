@@ -1,38 +1,44 @@
-import React from 'react';
+import React from "react";
 
-import { Box, Loader } from '@bubbles-ui/components';
-import { unflatten, useCache, useLocale } from '@common';
-import _ from 'lodash';
+import { Box, Loader } from "@bubbles-ui/components";
+import { unflatten, useCache, useLocale } from "@common";
+import _ from "lodash";
 
-import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
-import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
-import { useScoresMutation } from '@scores/requests/hooks/mutations';
-import { useScores } from '@scores/requests/hooks/queries';
-import { useUserAgentsInfo } from '@users/hooks';
-import { ScoresReviewerTable } from '../../Tables/ScoresReviewerTable';
-import { EmptyState } from '../Notebook/components/ActivitiesTab/EmptyState';
-import { filterStudentsByLocalFilters } from '../Notebook/components/ActivitiesTab/useParsedActivities';
-import { useAcademicCalendarPeriods } from '../ScoresPage/useAcademicCalendarPeriods';
-import { onDataChange } from './onDataChange';
-import { useClassesManagers } from './useClassesManagers';
-import { useLocalFilters } from './useLocalFilters';
-import { useParsedData } from './useParsedData';
+import useProgramClasses from "@academic-portfolio/hooks/useProgramClasses";
+import useProgramEvaluationSystem from "@assignables/hooks/useProgramEvaluationSystem";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { prefixPN } from "@scores/helpers";
+import { useScoresMutation } from "@scores/requests/hooks/mutations";
+import { useScores } from "@scores/requests/hooks/queries";
+import { useUserAgentsInfo } from "@users/hooks";
+import { ScoresReviewerTable } from "../../Tables/ScoresReviewerTable";
+import { EmptyState } from "../Notebook/components/ActivitiesTab/EmptyState";
+import { filterStudentsByLocalFilters } from "../Notebook/components/ActivitiesTab/useParsedActivities";
+import { useAcademicCalendarPeriods } from "../ScoresPage/useAcademicCalendarPeriods";
+import { onDataChange } from "./onDataChange";
+import { useClassesManagers } from "./useClassesManagers";
+import { useLocalFilters } from "./useLocalFilters";
+import { useParsedData } from "./useParsedData";
 
 export function useMatchingClasses({ filters }) {
   const cache = useCache();
 
-  let { data: programClasses, isLoading } = useProgramClasses(filters?.program, {
-    enabled: !!filters?.program,
-  });
+  let { data: programClasses, isLoading } = useProgramClasses(
+    filters?.program,
+    {
+      enabled: !!filters?.program,
+    }
+  );
 
-  programClasses = React.useMemo(() => cache('programClasses', programClasses), [programClasses]);
+  programClasses = React.useMemo(
+    () => cache("programClasses", programClasses),
+    [programClasses]
+  );
 
   const courseClasses = React.useMemo(
     () =>
       cache(
-        'courseClasses',
+        "courseClasses",
         programClasses?.filter((klass) => klass.courses.id === filters.course)
       ),
     [programClasses, filters?.course]
@@ -43,13 +49,22 @@ export function useMatchingClasses({ filters }) {
       return courseClasses;
     }
 
-    return courseClasses?.filter((klass) => klass.groups?.id === filters?.group);
+    return courseClasses?.filter(
+      (klass) => klass.groups?.id === filters?.group
+    );
   }, [courseClasses, filters?.group]);
 
-  const classesManagers = useClassesManagers({ filters, classes: groupClasses });
+  const classesManagers = useClassesManagers({
+    filters,
+    classes: groupClasses,
+  });
 
   const managers = React.useMemo(
-    () => classesManagers.reduce((obj, klass) => ({ ...obj, [klass.id]: klass.managers }), {}),
+    () =>
+      classesManagers.reduce(
+        (obj, klass) => ({ ...obj, [klass.id]: klass.managers }),
+        {}
+      ),
     [classesManagers]
   );
 
@@ -58,7 +73,10 @@ export function useMatchingClasses({ filters }) {
       return groupClasses;
     }
 
-    return groupClasses.map((klass) => ({ ...klass, managers: managers[klass.id] }));
+    return groupClasses.map((klass) => ({
+      ...klass,
+      managers: managers[klass.id],
+    }));
   }, [groupClasses, managers, classesManagers?.length]);
 
   return { classes: classesWithManagers, isLoading };
@@ -68,7 +86,7 @@ function useStudents({ classes, filters }) {
   const cache = useCache();
 
   const students = React.useMemo(
-    () => cache('students', _.uniq(_.flatMap(classes, 'students'))),
+    () => cache("students", _.uniq(_.flatMap(classes, "students"))),
     [classes]
   );
 
@@ -77,7 +95,7 @@ function useStudents({ classes, filters }) {
   const studentsData = React.useMemo(
     () =>
       cache(
-        'studentsData',
+        "studentsData",
         data?.map((student) => ({
           id: student.id,
           name: student.user.name,
@@ -89,12 +107,12 @@ function useStudents({ classes, filters }) {
   );
 
   const filteredStudents = React.useMemo(() => {
-    if (filters?.filterBy !== 'student' || !filters?.search?.length) {
+    if (filters?.filterBy !== "student" || !filters?.search?.length) {
       return studentsData;
     }
 
     return cache(
-      'filteredStudents',
+      "filteredStudents",
       filterStudentsByLocalFilters({ filters, values: studentsData })
     );
   }, [filters?.filterBy, filters?.search, data]);
@@ -108,14 +126,14 @@ export function useMatchingAcademicCalendarPeriods({ classes, filters }) {
 
   const parsedPeriods = React.useMemo(() => {
     if (!(filters?.program && filters?.course && periods?.length)) {
-      return cache('periods', []);
+      return cache("periods", []);
     }
 
     return cache(
-      'periods',
+      "periods",
       periods
         .map((period) => ({
-          ..._.pick(period, ['startDate', 'endDate', 'name']),
+          ..._.pick(period, ["startDate", "endDate", "name"]),
           id: period.periods[filters?.program]?.[filters?.course],
         }))
         .filter((period) => period.id)
@@ -135,7 +153,7 @@ function useGrades({ filters }) {
   const scales = evaluationSystem?.scales;
 
   const grades = cache(
-    'grades',
+    "grades",
     React.useMemo(() => scales?.sort((a, b) => a.number - b.number), [scales])
   );
 
@@ -144,18 +162,18 @@ function useGrades({ filters }) {
 
 function useFinalScoresLocalization() {
   const [, translations] = useTranslateLoader([
-    prefixPN('finalNotebook.reviewerTable'),
-    prefixPN('scoresPage.filters.period.final'),
-    prefixPN('finalNotebook.update'),
+    prefixPN("finalNotebook.reviewerTable"),
+    prefixPN("scoresPage.filters.period.final"),
+    prefixPN("finalNotebook.update"),
   ]);
 
   return React.useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
       return {
-        ..._.get(res, prefixPN('finalNotebook.reviewerTable')),
-        final: _.get(res, prefixPN('scoresPage.filters.period.final')),
-        update: _.get(res, prefixPN('finalNotebook.update')),
+        ..._.get(res, prefixPN("finalNotebook.reviewerTable")),
+        final: _.get(res, prefixPN("scoresPage.filters.period.final")),
+        update: _.get(res, prefixPN("finalNotebook.update")),
       };
     }
 
@@ -164,12 +182,18 @@ function useFinalScoresLocalization() {
 }
 
 export function FinalScores({ filters, localFilters }) {
-  let { classes, isLoading: classesAreLoading } = useMatchingClasses({ filters });
-  let { students, isLoading: studentsAreLoading } = useStudents({ classes, filters: localFilters });
-  let { periods, isLoading: periodsAreLoading } = useMatchingAcademicCalendarPeriods({
-    classes,
+  let { classes, isLoading: classesAreLoading } = useMatchingClasses({
     filters,
   });
+  let { students, isLoading: studentsAreLoading } = useStudents({
+    classes,
+    filters: localFilters,
+  });
+  let { periods, isLoading: periodsAreLoading } =
+    useMatchingAcademicCalendarPeriods({
+      classes,
+      filters,
+    });
 
   const { grades, isLoading: gradesAreLoading } = useGrades({ filters });
   const locale = useLocale();
@@ -177,16 +201,16 @@ export function FinalScores({ filters, localFilters }) {
   const { mutateAsync: mutateScore } = useScoresMutation();
 
   const { data: scores, isLoading: scoresAreLoading } = useScores({
-    students: _.map(students, 'id'),
-    classes: _.map(classes, 'id'),
-    periods: [..._.map(periods, 'id'), 'final'],
+    students: _.map(students, "id"),
+    classes: _.map(classes, "id"),
+    periods: [..._.map(periods, "id"), "final"],
     published: true,
   });
 
   const { data: courseScores, isLoading: courseScoresAreLoading } = useScores({
-    students: _.map(students, 'id'),
+    students: _.map(students, "id"),
     classes: [`${filters.program}.${filters.course}`],
-    periods: ['course'],
+    periods: ["course"],
   });
 
   const periodsWithFinal = React.useMemo(() => {
@@ -201,7 +225,7 @@ export function FinalScores({ filters, localFilters }) {
     return [
       ..._.map(periods),
       {
-        id: 'final',
+        id: "final",
         name: localizations?.final,
         startDate: greatestDate,
         endDate: greatestDate,
@@ -256,7 +280,7 @@ export function FinalScores({ filters, localFilters }) {
 
   return (
     <ScoresReviewerTable
-      key={`${_.map(classesForTable, 'id')?.join('.')}-${_.map(periods, 'id')?.join('.')}`}
+      key={`${_.map(classesForTable, "id")?.join(".")}-${_.map(periods, "id")?.join(".")}`}
       grades={grades}
       locale={locale}
       subjects={classesForTable}

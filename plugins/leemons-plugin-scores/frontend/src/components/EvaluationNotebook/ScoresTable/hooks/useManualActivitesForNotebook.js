@@ -1,13 +1,20 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import useClassStudents from '@academic-portfolio/hooks/queries/useClassStudents';
-import useRolesList from '@assignables/requests/hooks/queries/useRolesList';
-import { keyBy } from 'lodash';
+import useClassStudents from "@academic-portfolio/hooks/queries/useClassStudents";
+import useRolesList from "@assignables/requests/hooks/queries/useRolesList";
+import { keyBy } from "lodash";
 
-import { useManualActivities } from '@scores/requests/hooks/queries/useManualActivities';
-import { useManualActivitiesScores } from '@scores/requests/hooks/queries/useManualActivitiesScores';
+import { useManualActivities } from "@scores/requests/hooks/queries/useManualActivities";
+import { useManualActivitiesScores } from "@scores/requests/hooks/queries/useManualActivitiesScores";
 
-function parseActivity({ activity, roles, students, subject, scores, classId }) {
+function parseActivity({
+  activity,
+  roles,
+  students,
+  subject,
+  scores,
+  classId,
+}) {
   return {
     id: activity.id,
     name: activity.name,
@@ -17,7 +24,7 @@ function parseActivity({ activity, roles, students, subject, scores, classId }) 
 
     allowChange: true,
     expandable: false,
-    type: 'evaluable',
+    type: "evaluable",
     isEvaluable: true,
 
     instance: null,
@@ -36,7 +43,7 @@ function parseActivity({ activity, roles, students, subject, scores, classId }) 
       grades: scores[activity.id]?.[student]
         ? [
             {
-              type: 'main',
+              type: "main",
               subject,
               grade: scores[activity.id]?.[student]?.grade,
             },
@@ -45,23 +52,30 @@ function parseActivity({ activity, roles, students, subject, scores, classId }) 
     })),
     classId,
 
-    source: 'manualActivities',
+    source: "manualActivities",
   };
 }
 
 export function useManualActivitesForNotebook({ klass, period, filters }) {
   const hasAllData = !!klass?.id && !!period?.startDate && !!period?.endDate;
-  const { data: roles } = useRolesList({ details: true, select: (data) => keyBy(data, 'name') });
+  const { data: roles } = useRolesList({
+    details: true,
+    select: (data) => keyBy(data, "name"),
+  });
 
   const { data: classStudents } = useClassStudents({ classId: klass?.id });
 
-  const { data: manualActivities, isLoading: manualActivitiesLoading } = useManualActivities({
-    search: filters?.searchType === 'activity' && filters?.search ? filters?.search : undefined,
-    classId: klass?.id,
-    startDate: period?.startDate,
-    endDate: period?.endDate,
-    enabled: hasAllData,
-  });
+  const { data: manualActivities, isLoading: manualActivitiesLoading } =
+    useManualActivities({
+      search:
+        filters?.searchType === "activity" && filters?.search
+          ? filters?.search
+          : undefined,
+      classId: klass?.id,
+      startDate: period?.startDate,
+      endDate: period?.endDate,
+      enabled: hasAllData,
+    });
   const { data: manualActivitiesScores } = useManualActivitiesScores({
     classId: klass?.id,
     enabled: hasAllData,
@@ -79,8 +93,18 @@ export function useManualActivitesForNotebook({ klass, period, filters }) {
           classId: klass?.id,
         })
       ),
-    [manualActivities, roles, classStudents, filters?.subject, manualActivitiesScores, klass?.id]
+    [
+      manualActivities,
+      roles,
+      classStudents,
+      filters?.subject,
+      manualActivitiesScores,
+      klass?.id,
+    ]
   );
 
-  return { manualActivities: parsedActivities ?? [], isLoading: manualActivitiesLoading };
+  return {
+    manualActivities: parsedActivities ?? [],
+    isLoading: manualActivitiesLoading,
+  };
 }

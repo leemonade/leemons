@@ -9,10 +9,13 @@
  * @param {number} retake.grade - The grade
  */
 export async function setRetakeScore({ classId, period, ...retake }) {
-  const { modified } = await leemons.api(`v1/scores/retakes/grades/${classId}/${period}`, {
-    method: 'PUT',
-    body: retake,
-  });
+  const { modified } = await leemons.api(
+    `v1/scores/retakes/grades/${classId}/${period}`,
+    {
+      method: "PUT",
+      body: retake,
+    }
+  );
 
   return modified;
 }

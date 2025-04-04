@@ -1,6 +1,6 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
-import { useSearchParams } from '@common';
+import { useSearchParams } from "@common";
 
 export default function useUpdateEditingClass({
   isLoading,
@@ -12,12 +12,12 @@ export default function useUpdateEditingClass({
   const lastClassId = useRef(null);
 
   useEffect(() => {
-    const classId = queryParams.get('class');
+    const classId = queryParams.get("class");
     if (isLoading || lastClassId.current === classId) {
       return;
     }
 
-    if (queryParams.has('class') && classId !== editingClass?.id) {
+    if (queryParams.has("class") && classId !== editingClass?.id) {
       const klass = sessionClasses?.find(({ id }) => id === classId);
       if (klass) {
         lastClassId.current = classId;
@@ -26,5 +26,11 @@ export default function useUpdateEditingClass({
     } else if (classId === editingClass?.id) {
       lastClassId.current = classId;
     }
-  }, [queryParams, sessionClasses, isLoading, setEditingClass, editingClass?.id]);
+  }, [
+    queryParams,
+    sessionClasses,
+    isLoading,
+    setEditingClass,
+    editingClass?.id,
+  ]);
 }

@@ -1,5 +1,5 @@
-const getLatestRetake = require('./getLatest');
-const validateRetake = require('./validations/validateRetake');
+const getLatestRetake = require("./getLatest");
+const validateRetake = require("./validations/validateRetake");
 
 async function addRetake({ retake, ctx }) {
   validateRetake({ retake, ctx });

@@ -1,5 +1,5 @@
-import getCourseName from '@academic-portfolio/helpers/getCourseName';
-import { useCourseDetail } from '@academic-portfolio/hooks';
+import getCourseName from "@academic-portfolio/helpers/getCourseName";
+import { useCourseDetail } from "@academic-portfolio/hooks";
 
 export default function useMyScoresViewTitle({ course, period } = {}) {
   const { data: courseData } = useCourseDetail({

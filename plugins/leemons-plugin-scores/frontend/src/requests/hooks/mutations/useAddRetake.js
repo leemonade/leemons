@@ -1,8 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { getRetakesKey } from '../keys/retakes';
+import { getRetakesKey } from "../keys/retakes";
 
-import { addRetake } from '@scores/requests/retakes/add';
+import { addRetake } from "@scores/requests/retakes/add";
 
 export function useAddRetakeMutation() {
   const queryClient = useQueryClient();

@@ -1,7 +1,7 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from "react";
 
-import { createStore, useStore } from 'zustand';
-import { immer } from 'zustand/middleware/immer';
+import { createStore, useStore } from "zustand";
+import { immer } from "zustand/middleware/immer";
 
 interface State {
   students: Record<
@@ -13,7 +13,11 @@ interface State {
 }
 
 interface Actions {
-  pickRetake: (studentId: string, retakeId: string | null, order: number) => void;
+  pickRetake: (
+    studentId: string,
+    retakeId: string | null,
+    order: number
+  ) => void;
 }
 
 export const createPickRetakeStore = () =>
@@ -37,7 +41,9 @@ type RetakePickerStore = ReturnType<typeof createPickRetakeStore>;
 
 export const Context = createContext<RetakePickerStore | null>(null);
 
-export function RetakePickerProvider({ children }: { children: React.ReactNode }) {
+export function RetakePickerProvider({
+  children,
+}: { children: React.ReactNode }) {
   const [store] = useState(() => createPickRetakeStore());
 
   return <Context.Provider value={store}>{children}</Context.Provider>;
@@ -47,7 +53,7 @@ export function useRetakePicker<T>(selector?: (state: State & Actions) => T) {
   const store = useContext(Context);
 
   if (!store) {
-    throw new Error('RetakePickerProvider not found');
+    throw new Error("RetakePickerProvider not found");
   }
 
   return useStore(store, selector);

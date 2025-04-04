@@ -1,4 +1,4 @@
-import { addCustomName } from '../../../helpers';
+import { addCustomName } from "../../../helpers";
 
 /* eslint-disable no-param-reassign */
 export function getStyle({ ws, contentArray }) {
@@ -15,19 +15,19 @@ export function getStyle({ ws, contentArray }) {
     const isEvaluationRow = row === 2;
 
     if (isLastRow) {
-      border.bottom = { style: 'medium', color: { argb: '3C84C6' } };
+      border.bottom = { style: "medium", color: { argb: "3C84C6" } };
     }
 
     if (isFirstCol) {
-      border.right = { style: 'medium', color: { argb: '3C84C6' } };
+      border.right = { style: "medium", color: { argb: "3C84C6" } };
       cell.alignment = {
-        vertical: 'middle',
-        horizontal: 'right',
+        vertical: "middle",
+        horizontal: "right",
       };
     } else {
       cell.alignment = {
-        horizontal: 'center',
-        vertical: 'middle',
+        horizontal: "center",
+        vertical: "middle",
         wrapText: true,
       };
     }
@@ -40,20 +40,20 @@ export function getStyle({ ws, contentArray }) {
 
     if (isTypesRow && isContentCol) {
       cell.dataValidation = {
-        type: 'list',
+        type: "list",
         allowBlank: false,
         formulae: [`"partial, final"`],
         showErrorMessage: true,
       };
-      addCustomName({ ws, name: 'types', cell });
+      addCustomName({ ws, name: "types", cell });
     } else if (isEvaluationRow && isContentCol) {
-      addCustomName({ ws, name: 'evaluations', cell });
+      addCustomName({ ws, name: "evaluations", cell });
     }
 
     cell.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: 'F1F9FE' },
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "F1F9FE" },
     };
 
     cell.border = border;

@@ -1,11 +1,14 @@
-import { map } from 'lodash';
-import { arrayToContent } from '../../../helpers';
-import { getStyle } from './getStyle';
+import { map } from "lodash";
+import { arrayToContent } from "../../../helpers";
+import { getStyle } from "./getStyle";
 
 function parseActivities({ activities, labels }) {
   return activities.map((activity) => ({
     type: activity?.activity?.assignable?.role,
-    evaluation: activity?.type === 'evaluable' ? labels.calificable : labels.noCalificable,
+    evaluation:
+      activity?.type === "evaluable"
+        ? labels.calificable
+        : labels.noCalificable,
     name: activity.name,
     deadline: new Date(activity.deadline),
     weight: activity.weight,
@@ -18,17 +21,28 @@ function parseActivities({ activities, labels }) {
  * ws: import("exceljs").Worksheet
  * }} param0
  */
-export default function writeHeader({ ws, activities, labels, types, initialPosition }) {
+export default function writeHeader({
+  ws,
+  activities,
+  labels,
+  types,
+  initialPosition,
+}) {
   const parsedactivities = parseActivities({ activities, labels });
 
   const contentArray = [
-    [labels.type, ...parsedactivities.map((activity) => types[activity.type]), '', ''],
-    [labels.evaluation, ...map(parsedactivities, 'evaluation'), '', ''],
-    [labels.activity, ...map(parsedactivities, 'name'), '', ''],
-    [labels.deadline, ...map(parsedactivities, 'deadline'), '', ''],
+    [
+      labels.type,
+      ...parsedactivities.map((activity) => types[activity.type]),
+      "",
+      "",
+    ],
+    [labels.evaluation, ...map(parsedactivities, "evaluation"), "", ""],
+    [labels.activity, ...map(parsedactivities, "name"), "", ""],
+    [labels.deadline, ...map(parsedactivities, "deadline"), "", ""],
     [
       labels.weight,
-      ...map(parsedactivities, 'weight'),
+      ...map(parsedactivities, "weight"),
       labels.avg.toLocaleUpperCase(),
       labels.custom.toLocaleUpperCase(),
     ],

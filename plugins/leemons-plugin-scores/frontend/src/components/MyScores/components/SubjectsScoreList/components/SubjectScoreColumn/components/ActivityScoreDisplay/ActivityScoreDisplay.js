@@ -1,35 +1,45 @@
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
-import { Badge, Box, Stack, Text, TextClamp } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import getNearestScale from '@scorm/helpers/getNearestScale';
-import PropTypes from 'prop-types';
+import useRolesLocalizations from "@assignables/hooks/useRolesLocalizations";
+import { Badge, Box, Stack, Text, TextClamp } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import getNearestScale from "@scorm/helpers/getNearestScale";
+import PropTypes from "prop-types";
 
-import useActivityScoreDisplayStyles from './ActivityScoreDisplay.styles';
+import useActivityScoreDisplayStyles from "./ActivityScoreDisplay.styles";
 
-import { prefixPN } from '@scores/helpers';
+import { prefixPN } from "@scores/helpers";
 
-export default function ActivityScoreDisplay({ activity = {}, evaluationSystem }) {
-  const [t] = useTranslateLoader(prefixPN('myScores'));
+export default function ActivityScoreDisplay({
+  activity = {},
+  evaluationSystem,
+}) {
+  const [t] = useTranslateLoader(prefixPN("myScores"));
   const { instance, mainGrade } = activity;
   const { assignable } = instance ?? {};
   const { role, roleDetails } = assignable ?? {};
-  const evaluationTypeIsAuto = instance?.metadata?.evaluationType === 'auto';
+  const evaluationTypeIsAuto = instance?.metadata?.evaluationType === "auto";
 
   const roleLocalizations = useRolesLocalizations([role]);
   const evaluationDetailUrl = roleDetails.evaluationDetailUrl
-    ?.replace(':id', activity.instance.id)
-    .replace(':user', activity.user);
+    ?.replace(":id", activity.instance.id)
+    .replace(":user", activity.user);
 
   const scale = getNearestScale({ grade: mainGrade, evaluationSystem });
   const displayedGrade =
-    (mainGrade || evaluationTypeIsAuto ? scale?.letter ?? mainGrade ?? scale?.number : null) ?? '-';
+    (mainGrade || evaluationTypeIsAuto
+      ? (scale?.letter ?? mainGrade ?? scale?.number)
+      : null) ?? "-";
 
   const { classes } = useActivityScoreDisplayStyles();
 
   const body = (
-    <Stack className={classes.root} justifyContent="space-between" alignItems="center" fullWidth>
+    <Stack
+      className={classes.root}
+      justifyContent="space-between"
+      alignItems="center"
+      fullWidth
+    >
       {/*
         === Left side ===
       */}
@@ -40,19 +50,26 @@ export default function ActivityScoreDisplay({ activity = {}, evaluationSystem }
           </Text>
           {!activity.instance.gradable && (
             <Text className={classes.nonScoringActivity} color="warning">
-              {t('noEvaluable')}
+              {t("noEvaluable")}
             </Text>
           )}
         </Stack>
         <TextClamp lines={1}>
-          <Text className={classes.activityName}>{assignable?.asset?.name}</Text>
+          <Text className={classes.activityName}>
+            {assignable?.asset?.name}
+          </Text>
         </TextClamp>
       </Stack>
 
       {/*
         === Right side ===
       */}
-      <Stack direction="column" spacing={1} className={classes.rightSide} alignItems="center">
+      <Stack
+        direction="column"
+        spacing={1}
+        className={classes.rightSide}
+        alignItems="center"
+      >
         <Box className={classes.badge}>
           {!activity.hasNoWeight && activity.instance.gradable && (
             <Badge closable={false} color="stroke">
@@ -61,7 +78,7 @@ export default function ActivityScoreDisplay({ activity = {}, evaluationSystem }
           )}
         </Box>
         <Text className={classes.score}>
-          {typeof displayedGrade === 'number'
+          {typeof displayedGrade === "number"
             ? parseFloat(displayedGrade.toFixed(2))
             : displayedGrade}
         </Text>

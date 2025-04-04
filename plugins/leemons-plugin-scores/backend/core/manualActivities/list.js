@@ -1,6 +1,12 @@
-const { escapeRegExp } = require('lodash');
+const { escapeRegExp } = require("lodash");
 
-async function listManualActivitiesForClassAndPeriod({ classId, startDate, endDate, search, ctx }) {
+async function listManualActivitiesForClassAndPeriod({
+  classId,
+  startDate,
+  endDate,
+  search,
+  ctx,
+}) {
   const query = {
     classId,
     date: {
@@ -19,7 +25,7 @@ async function listManualActivitiesForClassAndPeriod({ classId, startDate, endDa
   if (search) {
     query.name = {
       $regex: escapeRegExp(search.trim()),
-      $options: 'i',
+      $options: "i",
     };
   }
 

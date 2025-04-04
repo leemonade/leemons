@@ -1,17 +1,23 @@
-import React from 'react';
+import React from "react";
 
-import { useCache } from '@common';
+import { useCache } from "@common";
 
-import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
-import usePermissions from '@users/hooks/usePermissions';
+import { getClassIcon } from "@academic-portfolio/helpers/getClassIcon";
+import usePermissions from "@users/hooks/usePermissions";
 
-export function useParsedData({ classes, periods, students, scores, courseScores }) {
-  const { data: permissions } = usePermissions({ name: 'scores.reviewer' });
-  const isScoresAdmin = !!permissions?.actionNames?.includes('admin');
+export function useParsedData({
+  classes,
+  periods,
+  students,
+  scores,
+  courseScores,
+}) {
+  const { data: permissions } = usePermissions({ name: "scores.reviewer" });
+  const isScoresAdmin = !!permissions?.actionNames?.includes("admin");
 
   const cache = useCache();
   const parsedClasses = cache(
-    'parsedClasses',
+    "parsedClasses",
     React.useMemo(
       () =>
         classes?.map((klass) => ({
@@ -31,7 +37,7 @@ export function useParsedData({ classes, periods, students, scores, courseScores
   );
 
   const parsedStudents = cache(
-    'parsedStudents',
+    "parsedStudents",
     React.useMemo(
       () =>
         students?.map((student) => ({
@@ -55,7 +61,9 @@ export function useParsedData({ classes, periods, students, scores, courseScores
               };
             }),
           })),
-          customScore: courseScores?.find((score) => score.student === student.id)?.grade,
+          customScore: courseScores?.find(
+            (score) => score.student === student.id
+          )?.grade,
           allowCustomChange: isScoresAdmin,
         })),
       [students, classes, periods, isScoresAdmin, courseScores, scores]

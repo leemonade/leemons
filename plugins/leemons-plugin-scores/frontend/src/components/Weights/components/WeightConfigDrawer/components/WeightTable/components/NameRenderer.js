@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-import { Stack, Text, Box, TextClamp } from '@bubbles-ui/components';
+import { Stack, Text, Box, TextClamp } from "@bubbles-ui/components";
 
 export default function NameRenderer({
   value,
@@ -12,7 +12,7 @@ export default function NameRenderer({
   return (
     <Stack spacing={2} alignItems="center">
       {!!icon && (
-        <Box sx={{ position: 'relative', width: 18, height: 18 }}>
+        <Box sx={{ position: "relative", width: 18, height: 18 }}>
           {React.cloneElement(icon, { width: 18, height: 18 })}
         </Box>
       )}

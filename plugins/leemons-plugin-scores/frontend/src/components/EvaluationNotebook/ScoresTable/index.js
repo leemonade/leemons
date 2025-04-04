@@ -1,3 +1,3 @@
-import ScoresTable from './ScoresTable';
+import ScoresTable from "./ScoresTable";
 
 export { ScoresTable };

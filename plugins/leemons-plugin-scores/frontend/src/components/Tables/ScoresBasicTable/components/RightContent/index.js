@@ -1,1 +1,1 @@
-export { RightContent } from './RightContent';
+export { RightContent } from "./RightContent";

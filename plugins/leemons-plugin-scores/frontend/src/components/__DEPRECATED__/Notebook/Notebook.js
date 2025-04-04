@@ -1,23 +1,23 @@
-import React, { useMemo } from 'react';
-import { Box, createStyles } from '@bubbles-ui/components';
-import propTypes from 'prop-types';
-import _, { isEmpty } from 'lodash';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
-import { Header } from './components/Header';
-import ActivitiesTab from './components/ActivitiesTab';
-import { EmptyState } from './EmptyState';
-import StudentActivities from '../StudentScoresPage/StudentActivities';
+import React, { useMemo } from "react";
+import { Box, createStyles } from "@bubbles-ui/components";
+import propTypes from "prop-types";
+import _, { isEmpty } from "lodash";
+import { unflatten } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { prefixPN } from "@scores/helpers";
+import { Header } from "./components/Header";
+import ActivitiesTab from "./components/ActivitiesTab";
+import { EmptyState } from "./EmptyState";
+import StudentActivities from "../StudentScoresPage/StudentActivities";
 
 const useNotebookStyles = createStyles(() => ({
   root: {
-    width: '100%',
-    boxSizing: 'border-box',
-    transition: 'width 0.3s ease-in-out',
+    width: "100%",
+    boxSizing: "border-box",
+    transition: "width 0.3s ease-in-out",
     flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
   },
   tabHeader: {
     flex: 1,
@@ -48,7 +48,7 @@ export default function Notebook({
 }) {
   const { classes } = useNotebookStyles();
 
-  const key = isStudent ? 'notebook.students' : 'notebook.tabs';
+  const key = isStudent ? "notebook.students" : "notebook.tabs";
   const labels = useNotebookLocalizations(key);
 
   if (isEmpty(filters)) {
@@ -57,12 +57,21 @@ export default function Notebook({
 
   return (
     <Box className={classes.root}>
-      <Header filters={filters} variant="notebook" allowDownload isStudent={isStudent} />
+      <Header
+        filters={filters}
+        variant="notebook"
+        allowDownload
+        isStudent={isStudent}
+      />
       {isStudent ? (
-        <StudentActivities klasses={klasses} filters={filters} labels={labels} />
+        <StudentActivities
+          klasses={klasses}
+          filters={filters}
+          labels={labels}
+        />
       ) : (
         <ActivitiesTab
-          key={filters?.period?.period?.id === 'final' ? 'final' : 'evaluation'}
+          key={filters?.period?.period?.id === "final" ? "final" : "evaluation"}
           filters={filters}
           labels={labels.activities}
           localFilters={localFilters}

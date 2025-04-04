@@ -1,4 +1,6 @@
-const { validateManualActivityScore } = require('../validations/validateManualActivityScore');
+const {
+  validateManualActivityScore,
+} = require("../validations/validateManualActivityScore");
 
 /**
  *

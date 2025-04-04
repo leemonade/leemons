@@ -1,10 +1,10 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
+import useProgramEvaluationSystems from "@grades/hooks/queries/useProgramEvaluationSystem";
 
-import { useAcademicCalendarPeriods } from '../../__DEPRECATED__/ScoresPage/useAcademicCalendarPeriods';
+import { useAcademicCalendarPeriods } from "../../__DEPRECATED__/ScoresPage/useAcademicCalendarPeriods";
 
-import useStudents from './useStudents';
+import useStudents from "./useStudents";
 
 export default function useTableData({ class: klass, program, filters }) {
   const periods = useAcademicCalendarPeriods({
@@ -17,19 +17,26 @@ export default function useTableData({ class: klass, program, filters }) {
       (klass.substages.length
         ? klass.substages
             .map((s) => s.id)
-            .includes(period.periods?.[program]?.[klass.courses.id ?? klass.courses[0].id])
+            .includes(
+              period.periods?.[program]?.[
+                klass.courses.id ?? klass.courses[0].id
+              ]
+            )
         : true)
   );
 
   const activities = useMemo(
     () =>
       filteredPeriods.map((period) => ({
-        id: period.periods?.[program]?.[klass.courses.id ?? klass.courses[0].id] ?? '',
+        id:
+          period.periods?.[program]?.[
+            klass.courses.id ?? klass.courses[0].id
+          ] ?? "",
         name: period.name,
         deadline: period.endDate,
         expandable: false,
         allowChange: false,
-        type: 'evaluable',
+        type: "evaluable",
         weight: 1 / (filteredPeriods?.length || 1),
       })),
     [filteredPeriods, klass, program]
@@ -41,8 +48,10 @@ export default function useTableData({ class: klass, program, filters }) {
     periods,
   });
 
-  const { data: programEvaluationSystem, isLoading: programEvaluationSystemLoading } =
-    useProgramEvaluationSystems({ program });
+  const {
+    data: programEvaluationSystem,
+    isLoading: programEvaluationSystemLoading,
+  } = useProgramEvaluationSystems({ program });
 
   return {
     scales: programEvaluationSystem?.scales,

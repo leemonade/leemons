@@ -1,14 +1,18 @@
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import { Route, Switch, useRouteMatch } from "react-router-dom";
 
-import loadable from '@loadable/component';
-import { goLoginPage } from '@users/navigate';
-import { useSession } from '@users/session';
+import loadable from "@loadable/component";
+import { goLoginPage } from "@users/navigate";
+import { useSession } from "@users/session";
 
-const EvaluationNotebookPage = loadable(() => import('@scores/pages/EvaluationNotebookPage'));
-const PeriodsPage = loadable(() => import('@scores/pages/PeriodsPage'));
-const WeightsPage = loadable(() => import('@scores/pages/WeightsPage'));
-const ReviewerPage = loadable(() => import('@scores/pages/__DEPRECATED__/ReviewerPage'));
-const MyScores = loadable(() => import('@scores/pages/MyScoresPage'));
+const EvaluationNotebookPage = loadable(
+  () => import("@scores/pages/EvaluationNotebookPage")
+);
+const PeriodsPage = loadable(() => import("@scores/pages/PeriodsPage"));
+const WeightsPage = loadable(() => import("@scores/pages/WeightsPage"));
+const ReviewerPage = loadable(
+  () => import("@scores/pages/__DEPRECATED__/ReviewerPage")
+);
+const MyScores = loadable(() => import("@scores/pages/MyScoresPage"));
 
 export default function Private() {
   const { path } = useRouteMatch();

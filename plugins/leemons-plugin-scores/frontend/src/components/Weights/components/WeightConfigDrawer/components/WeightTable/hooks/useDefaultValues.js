@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { forEach, set } from 'lodash';
+import { forEach, set } from "lodash";
 
 export default function useDefaultValues(data) {
   return useMemo(() => {
@@ -11,7 +11,10 @@ export default function useDefaultValues(data) {
     };
 
     forEach(data.weights, ({ id, weight, isLocked }) => {
-      set(result, `weights.${id}`, { weight: weight ?? 0, isLocked: !!isLocked });
+      set(result, `weights.${id}`, {
+        weight: weight ?? 0,
+        isLocked: !!isLocked,
+      });
     });
 
     return result;

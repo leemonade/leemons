@@ -1,35 +1,37 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { ContextContainer, LoadingOverlay } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { ContextContainer, LoadingOverlay } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
 
 import {
   printErrorMessage,
   printSuccessMessage,
-} from '../EvaluationNotebook/ScoresTable/helpers/printMessages';
-import useScoresTableTitle from '../EvaluationNotebook/hooks/useScoresTableTitle';
-import { ScoresBasicTable } from '../Tables/ScoresBasicTable';
+} from "../EvaluationNotebook/ScoresTable/helpers/printMessages";
+import useScoresTableTitle from "../EvaluationNotebook/hooks/useScoresTableTitle";
+import { ScoresBasicTable } from "../Tables/ScoresBasicTable";
 
-import Filters from './components/Filters';
-import useTableData from './hooks/useTableData';
+import Filters from "./components/Filters";
+import useTableData from "./hooks/useTableData";
 
-import { prefixPN } from '@scores/helpers';
-import { useScoresMutation } from '@scores/requests/hooks/mutations';
-import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
+import { prefixPN } from "@scores/helpers";
+import { useScoresMutation } from "@scores/requests/hooks/mutations";
+import useEvaluationNotebookStore from "@scores/stores/evaluationNotebookStore";
 
 function useOnDataChange({ classId, students, scales }) {
   const { mutateAsync: updateScore } = useScoresMutation();
 
-  const [t] = useTranslateLoader(prefixPN('evaluationNotebook'));
+  const [t] = useTranslateLoader(prefixPN("evaluationNotebook"));
 
   const labels = {
-    updatedSuccess: t('updatedSuccess'),
-    updatedError: t('updatedError'),
+    updatedSuccess: t("updatedSuccess"),
+    updatedError: t("updatedError"),
   };
 
   return ({ rowId: studentId, value: score }) => {
     const nearestGrade =
-      scales.find((g) => g.number === Number.parseInt(score, 10) || g.letter === score) ?? {};
+      scales.find(
+        (g) => g.number === Number.parseInt(score, 10) || g.letter === score
+      ) ?? {};
     const grade = { ...nearestGrade, number: Number.parseFloat(score) };
 
     const student = students.find((s) => s.id === studentId);
@@ -39,7 +41,7 @@ function useOnDataChange({ classId, students, scales }) {
         {
           student: studentId,
           class: classId,
-          period: 'final',
+          period: "final",
           published: false,
           grade: grade.number,
         },
@@ -49,7 +51,7 @@ function useOnDataChange({ classId, students, scales }) {
         printSuccessMessage({
           labels,
           student,
-          activity: t('final'),
+          activity: t("final"),
           score: grade,
         })
       )
@@ -57,7 +59,7 @@ function useOnDataChange({ classId, students, scales }) {
         printErrorMessage({
           labels,
           student,
-          activity: t('final'),
+          activity: t("final"),
           score: grade,
           error: e,
         })
@@ -68,37 +70,44 @@ function useOnDataChange({ classId, students, scales }) {
 export default function FinalEvaluationNotebook() {
   const filters = useEvaluationNotebookStore((store) => store.filters);
   const setFilters = useEvaluationNotebookStore((store) => store.setFilters);
-  const setTableData = useEvaluationNotebookStore((store) => store.setTableData);
+  const setTableData = useEvaluationNotebookStore(
+    (store) => store.setTableData
+  );
   const { period, class: klass, program } = filters;
 
-  const [t] = useTranslateLoader(prefixPN('evaluationNotebook'));
+  const [t] = useTranslateLoader(prefixPN("evaluationNotebook"));
   const labels = {
-    students: t('scoresTable.students'),
-    noActivity: t('scoresTable.noActivity'),
-    avgScore: t('scoresTable.avgScore'),
-    gradingTasks: t('scoresTable.calculated'),
-    customScore: t('scoresTable.custom'),
-    attendance: t('scoresTable.attendance'),
+    students: t("scoresTable.students"),
+    noActivity: t("scoresTable.noActivity"),
+    avgScore: t("scoresTable.avgScore"),
+    gradingTasks: t("scoresTable.calculated"),
+    customScore: t("scoresTable.custom"),
+    attendance: t("scoresTable.attendance"),
 
-    unableToOpen: t('unableToOpen'),
-    noEvaluationPage: t('noEvaluationPage'),
-    updatedSuccess: t('updatedSuccess'),
-    updatedError: t('updatedError'),
+    unableToOpen: t("unableToOpen"),
+    noEvaluationPage: t("noEvaluationPage"),
+    updatedSuccess: t("updatedSuccess"),
+    updatedError: t("updatedError"),
   };
 
   const title = useScoresTableTitle(filters);
 
-  const { activities, students, scales, usePercentage, isLoading } = useTableData({
-    class: klass,
-    program,
-    filters,
-  });
+  const { activities, students, scales, usePercentage, isLoading } =
+    useTableData({
+      class: klass,
+      program,
+      filters,
+    });
 
   useEffect(() => {
     setTableData({
       activitiesData: { activities, value: students },
       grades: scales,
-      filters: { startDate: period?.startDate, endDate: period?.endDate, period },
+      filters: {
+        startDate: period?.startDate,
+        endDate: period?.endDate,
+        period,
+      },
       programData: program,
       subjectData: klass?.subject,
       class: klass,

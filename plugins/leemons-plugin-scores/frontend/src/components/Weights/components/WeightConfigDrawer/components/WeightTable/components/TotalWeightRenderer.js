@@ -1,9 +1,9 @@
-import { useMemo } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { useMemo } from "react";
+import { useFormContext, useWatch } from "react-hook-form";
 
-import { Stack, Text, Box } from '@bubbles-ui/components';
-import { trimEnd } from 'lodash';
-import PropTypes from 'prop-types';
+import { Stack, Text, Box } from "@bubbles-ui/components";
+import { trimEnd } from "lodash";
+import PropTypes from "prop-types";
 
 export default function TotalWeightRenderer({ lockable }) {
   const form = useFormContext();
@@ -31,11 +31,11 @@ export default function TotalWeightRenderer({ lockable }) {
   }, [values]);
 
   if (totalWeight > 1 && values.weightExceed !== 1) {
-    form.setValue('weightExceed', 1);
+    form.setValue("weightExceed", 1);
   } else if (totalWeight < 1 && values.weightExceed !== -1) {
-    form.setValue('weightExceed', -1);
+    form.setValue("weightExceed", -1);
   } else if (totalWeight === 1.0 && values.weightExceed !== 0) {
-    form.setValue('weightExceed', 0);
+    form.setValue("weightExceed", 0);
   }
 
   return (
@@ -45,13 +45,13 @@ export default function TotalWeightRenderer({ lockable }) {
         sx={{
           width: 85,
           height: 40,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
-        <Text color={totalWeight !== 1 && 'error'}>
-          {trimEnd(trimEnd((totalWeight * 100).toFixed(2), '0'), '.')}%
+        <Text color={totalWeight !== 1 && "error"}>
+          {trimEnd(trimEnd((totalWeight * 100).toFixed(2), "0"), ".")}%
         </Text>
       </Box>
     </Stack>

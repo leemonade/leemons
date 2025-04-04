@@ -1,13 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { useWatch } from 'react-hook-form';
+import { useWatch } from "react-hook-form";
 
-import applySameValue from '../helpers/applySameValue';
-import areValuesDifferent from '../helpers/areValuesDifferent';
+import applySameValue from "../helpers/applySameValue";
+import areValuesDifferent from "../helpers/areValuesDifferent";
 
 export default function useApplySameValue({ control, setValue, getValues }) {
-  const items = useWatch({ control, name: 'weights' });
-  const isApplySameValueActive = !!useWatch({ control, name: 'applySameValue' });
+  const items = useWatch({ control, name: "weights" });
+  const isApplySameValueActive = !!useWatch({
+    control,
+    name: "applySameValue",
+  });
 
   useEffect(() => {
     if (isApplySameValueActive) {
@@ -16,8 +19,11 @@ export default function useApplySameValue({ control, setValue, getValues }) {
   }, [isApplySameValueActive, getValues, setValue]);
 
   useEffect(() => {
-    if (isApplySameValueActive && areValuesDifferent({ getValues, excludeLocked: true })) {
-      setValue('applySameValue', false);
+    if (
+      isApplySameValueActive &&
+      areValuesDifferent({ getValues, excludeLocked: true })
+    ) {
+      setValue("applySameValue", false);
     }
   }, [items, getValues, setValue, isApplySameValueActive]);
 }

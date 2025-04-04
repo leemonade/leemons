@@ -1,2 +1,2 @@
-export * from './ScoresPeriodForm';
-export * from './ScoresPeriodForm.constants';
+export * from "./ScoresPeriodForm";
+export * from "./ScoresPeriodForm.constants";

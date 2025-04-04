@@ -1,12 +1,12 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { ContextContainer } from '@bubbles-ui/components';
+import { ContextContainer } from "@bubbles-ui/components";
 
-import { ScoresTable } from './ScoresTable';
-import { NotebookFilters } from './components/NotebookFilters';
-import useScoresTableTitle from './hooks/useScoresTableTitle';
+import { ScoresTable } from "./ScoresTable";
+import { NotebookFilters } from "./components/NotebookFilters";
+import useScoresTableTitle from "./hooks/useScoresTableTitle";
 
-import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
+import useEvaluationNotebookStore from "@scores/stores/evaluationNotebookStore";
 
 export default function EvaluationNotebook() {
   const filters = useEvaluationNotebookStore((state) => state.filters);

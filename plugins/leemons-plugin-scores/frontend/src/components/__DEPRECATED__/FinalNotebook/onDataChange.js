@@ -1,35 +1,48 @@
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
 
 function printSuccessMessage({ studentName, className, score, localizations }) {
   addSuccessAlert(
     localizations?.success
-      ?.replace('{{student}}', studentName)
-      ?.replace('{{subject}}', className)
-      ?.replace('{{score}}', score)
+      ?.replace("{{student}}", studentName)
+      ?.replace("{{subject}}", className)
+      ?.replace("{{score}}", score)
   );
 }
-function printFailMessage({ studentName, className, score, error, localizations }) {
+function printFailMessage({
+  studentName,
+  className,
+  score,
+  error,
+  localizations,
+}) {
   addErrorAlert(
     localizations?.fail
-      ?.replace('{{student}}', studentName)
-      ?.replace('{{subject}}', className)
-      ?.replace('{{score}}', score),
+      ?.replace("{{student}}", studentName)
+      ?.replace("{{subject}}", className)
+      ?.replace("{{score}}", score),
     error.message
   );
 }
-export function onDataChange({ mutateScore, periods, classes, students, filters, localizations }) {
+export function onDataChange({
+  mutateScore,
+  periods,
+  classes,
+  students,
+  filters,
+  localizations,
+}) {
   const { program, course } = filters;
   return ({ rowId, columnId, value }) => {
     const student = students?.find((s) => s.id === rowId);
     const studentName = `${student.name} ${student.surname}`;
 
-    if (columnId === 'customScore') {
+    if (columnId === "customScore") {
       mutateScore({
         scores: [
           {
             student: rowId,
             class: `${program}.${course}`,
-            period: 'course',
+            period: "course",
             grade: value,
             published: true,
           },
@@ -64,7 +77,7 @@ export function onDataChange({ mutateScore, periods, classes, students, filters,
           studentName,
           score: value,
           localizations,
-          error: new Error('No period was found'),
+          error: new Error("No period was found"),
         });
         return;
       }

@@ -1,49 +1,66 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from "react";
 
-import { Alert, LoadingOverlay, Stack } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
-import PropTypes from 'prop-types';
+import { Alert, LoadingOverlay, Stack } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import useStudentAssignationMutation from "@tasks/hooks/student/useStudentAssignationMutation";
+import PropTypes from "prop-types";
 
-import EmptyState from './components/EmptyState';
-import WeightTypeBadge from './components/WeightTypeBadge';
-import handleOpen from './helpers/handleOpen';
-import onDataChange from './helpers/onDataChange';
-import useTableData from './hooks/useTableData';
+import EmptyState from "./components/EmptyState";
+import WeightTypeBadge from "./components/WeightTypeBadge";
+import handleOpen from "./helpers/handleOpen";
+import onDataChange from "./helpers/onDataChange";
+import useTableData from "./hooks/useTableData";
 
-import { ScoresBasicTable } from '@scores/components/Tables/ScoresBasicTable';
-import { prefixPN } from '@scores/helpers';
-import { useScoresMutation } from '@scores/requests/hooks/mutations';
-import { useSetManualActivityScoresMutation } from '@scores/requests/hooks/mutations/useSetManualActivityScoresMutation';
-import { useSetRetakeScoreMutation } from '@scores/requests/hooks/mutations/useSetRetakeScore';
-import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
+import { ScoresBasicTable } from "@scores/components/Tables/ScoresBasicTable";
+import { prefixPN } from "@scores/helpers";
+import { useScoresMutation } from "@scores/requests/hooks/mutations";
+import { useSetManualActivityScoresMutation } from "@scores/requests/hooks/mutations/useSetManualActivityScoresMutation";
+import { useSetRetakeScoreMutation } from "@scores/requests/hooks/mutations/useSetRetakeScore";
+import useEvaluationNotebookStore from "@scores/stores/evaluationNotebookStore";
 
-export default function ScoresTable({ program, class: klass, period, filters, setHasActivities }) {
-  const [t] = useTranslateLoader(prefixPN('evaluationNotebook'));
+export default function ScoresTable({
+  program,
+  class: klass,
+  period,
+  filters,
+  setHasActivities,
+}) {
+  const [t] = useTranslateLoader(prefixPN("evaluationNotebook"));
   const labels = {
-    students: t('scoresTable.students'),
-    noActivity: t('scoresTable.noActivity'),
-    submitted: t('scoresTable.submitted'),
-    avgScore: t('scoresTable.avgScore'),
-    gradingTasks: t('scoresTable.calculated'),
-    customScore: t('scoresTable.custom'),
-    retake: t('scoresTable.retake'),
-    attendance: t('scoresTable.attendance'),
+    students: t("scoresTable.students"),
+    noActivity: t("scoresTable.noActivity"),
+    submitted: t("scoresTable.submitted"),
+    avgScore: t("scoresTable.avgScore"),
+    gradingTasks: t("scoresTable.calculated"),
+    customScore: t("scoresTable.custom"),
+    retake: t("scoresTable.retake"),
+    attendance: t("scoresTable.attendance"),
 
-    retakeName: t('retake'),
-    unableToOpen: t('unableToOpen'),
-    noEvaluationPage: t('noEvaluationPage'),
-    updatedSuccess: t('updatedSuccess'),
-    updatedError: t('updatedError'),
+    retakeName: t("retake"),
+    unableToOpen: t("unableToOpen"),
+    noEvaluationPage: t("noEvaluationPage"),
+    updatedSuccess: t("updatedSuccess"),
+    updatedError: t("updatedError"),
   };
 
-  const setTableData = useEvaluationNotebookStore((state) => state.setTableData);
-  const { mutateAsync: assignationScoreMutate } = useStudentAssignationMutation();
+  const setTableData = useEvaluationNotebookStore(
+    (state) => state.setTableData
+  );
+  const { mutateAsync: assignationScoreMutate } =
+    useStudentAssignationMutation();
   const { mutateAsync: customScoreMutate } = useScoresMutation();
-  const { mutateAsync: manualActivityScoreMutate } = useSetManualActivityScoresMutation();
+  const { mutateAsync: manualActivityScoreMutate } =
+    useSetManualActivityScoresMutation();
   const { mutateAsync: retakeScoreMutate } = useSetRetakeScoreMutation();
 
-  const { scales, usePercentage, activities, studentsData, isLoading, retakes } = useTableData({
+  const {
+    scales,
+    usePercentage,
+    activities,
+    studentsData,
+    isLoading,
+    retakes,
+  } = useTableData({
     program,
     class: klass,
     period,
@@ -67,13 +84,26 @@ export default function ScoresTable({ program, class: klass, period, filters, se
     setTableData({
       activitiesData: { activities, value: studentsData },
       grades: scales,
-      filters: { startDate: period?.startDate, endDate: period?.endDate, period },
+      filters: {
+        startDate: period?.startDate,
+        endDate: period?.endDate,
+        period,
+      },
       programData: program,
       subjectData: klass?.subject,
       class: klass,
       retakes,
     });
-  }, [activities, studentsData, scales, period, program, klass, setTableData, retakes]);
+  }, [
+    activities,
+    studentsData,
+    scales,
+    period,
+    program,
+    klass,
+    setTableData,
+    retakes,
+  ]);
 
   if (isLoading) {
     return <LoadingOverlay visible />;
@@ -87,7 +117,7 @@ export default function ScoresTable({ program, class: klass, period, filters, se
     <Stack direction="column" spacing={4}>
       {activities?.some((activity) => activity.hasNoWeight) && (
         <Alert severity="warning" closeable={false}>
-          {t('newModule')}
+          {t("newModule")}
         </Alert>
       )}
       <ScoresBasicTable
@@ -100,7 +130,9 @@ export default function ScoresTable({ program, class: klass, period, filters, se
         to={period?.endDate}
         labels={labels}
         retakes={retakes}
-        onOpen={({ rowId, columnId }) => handleOpen({ rowId, columnId, activities, labels })}
+        onOpen={({ rowId, columnId }) =>
+          handleOpen({ rowId, columnId, activities, labels })
+        }
         onDataChange={onDataChange({
           assignationScoreMutate,
           customScoreMutate,

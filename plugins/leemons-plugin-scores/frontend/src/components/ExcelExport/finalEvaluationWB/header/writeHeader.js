@@ -1,5 +1,5 @@
-import { arrayToContent } from '../../helpers';
-import { getStyle } from './style';
+import { arrayToContent } from "../../helpers";
+import { getStyle } from "./style";
 
 /**
  *
@@ -14,16 +14,22 @@ export default function writeHeader(
   labels
 ) {
   const contentArray = [
-    ['', ''],
+    ["", ""],
     // eslint-disable-next-line eqeqeq
-    [labels.startDate, new Date(startDate) == 'Invalid Date' ? '-' : new Date(startDate)],
+    [
+      labels.startDate,
+      new Date(startDate) == "Invalid Date" ? "-" : new Date(startDate),
+    ],
     // eslint-disable-next-line eqeqeq
-    [labels.endDate, new Date(endDate) == 'Invalid Date' ? '-' : new Date(endDate)],
+    [
+      labels.endDate,
+      new Date(endDate) == "Invalid Date" ? "-" : new Date(endDate),
+    ],
     period && [labels.period, period],
     [labels.program, program],
     [labels.course, course],
     group && [labels.group, group],
-    ['', ''],
+    ["", ""],
   ].filter(Boolean);
 
   const content = arrayToContent({

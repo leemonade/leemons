@@ -1,29 +1,38 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { useUserAgentsInfo } from '@users/hooks';
-import { keyBy, map } from 'lodash';
+import { useUserAgentsInfo } from "@users/hooks";
+import { keyBy, map } from "lodash";
 
-import { useScores } from '@scores/requests/hooks/queries';
+import { useScores } from "@scores/requests/hooks/queries";
 
-export default function useStudents({ class: klass, filters: { search }, periods }) {
-  const { data: students, isLoading: userAgentsLoading } = useUserAgentsInfo(klass?.students, {
-    enabled: !!klass?.students?.length,
-  });
+export default function useStudents({
+  class: klass,
+  filters: { search },
+  periods,
+}) {
+  const { data: students, isLoading: userAgentsLoading } = useUserAgentsInfo(
+    klass?.students,
+    {
+      enabled: !!klass?.students?.length,
+    }
+  );
 
   const periodsIds = map(
     periods,
-    (period) => period.periods[klass.program][klass.courses.id ?? klass.courses[0].id]
+    (period) =>
+      period.periods[klass.program][klass.courses.id ?? klass.courses[0].id]
   );
 
   const { data: scores, isLoading: scoresLoading } = useScores(
     {
       students: klass?.students,
       classes: [klass?.id],
-      periods: [...periodsIds, 'final'],
+      periods: [...periodsIds, "final"],
       published: true,
     },
     {
-      select: (result) => keyBy(result, (score) => `${score.student}|${score.period}`),
+      select: (result) =>
+        keyBy(result, (score) => `${score.student}|${score.period}`),
     }
   );
 
@@ -31,7 +40,7 @@ export default function useStudents({ class: klass, filters: { search }, periods
     {
       students: klass?.students,
       classes: [klass?.id],
-      periods: ['final'],
+      periods: ["final"],
     },
     {
       select: (result) => keyBy(result, (score) => score.student),
@@ -49,20 +58,23 @@ export default function useStudents({ class: klass, filters: { search }, periods
       filteredStudents = students.filter(({ user: { name, surnames } }) => {
         const fullName = `${name} ${surnames}`
           .toLowerCase()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '');
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
 
         const fullNameReverse = `${surnames} ${name}`
           .toLowerCase()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '');
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
 
         const normalizedSearch = search
           .toLowerCase()
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '');
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
 
-        return fullName.includes(normalizedSearch) || fullNameReverse.includes(normalizedSearch);
+        return (
+          fullName.includes(normalizedSearch) ||
+          fullNameReverse.includes(normalizedSearch)
+        );
       });
     }
 
@@ -85,7 +97,7 @@ export default function useStudents({ class: klass, filters: { search }, periods
           ? []
           : [
               {
-                retakeId: '0',
+                retakeId: "0",
                 retakeIndex: 0,
                 grade: score?.grade ?? null,
               },

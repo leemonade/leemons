@@ -1,8 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { getRetakeScoresKey } from '../keys/retakes';
+import { getRetakeScoresKey } from "../keys/retakes";
 
-import { setRetakeScore } from '@scores/requests/retakes/scores/set';
+import { setRetakeScore } from "@scores/requests/retakes/scores/set";
 
 export function useSetRetakeScoreMutation() {
   const queryClient = useQueryClient();

@@ -1,8 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
-import { listPeriodsRequest } from '@scores/requests';
-import { useVariantForQueryKey } from '@common/queries';
-import useUserAgents from '@users/hooks/useUserAgents';
-import { allPaginatedPeriodsListsKey, paginatePeriodsListKey } from '../keys/periods';
+import { useQuery } from "@tanstack/react-query";
+import { listPeriodsRequest } from "@scores/requests";
+import { useVariantForQueryKey } from "@common/queries";
+import useUserAgents from "@users/hooks/useUserAgents";
+import {
+  allPaginatedPeriodsListsKey,
+  paginatePeriodsListKey,
+} from "../keys/periods";
 
 async function queryFn({ queryKey: [{ page, size, query, sort }] }) {
   const response = await listPeriodsRequest({ page, size, query, sort });
@@ -22,9 +25,15 @@ export default function usePeriods({ page, size, query, sort }, options) {
   const userAgents = useUserAgents();
 
   useVariantForQueryKey(allPaginatedPeriodsListsKey, {
-    modificationTrend: 'lazy',
+    modificationTrend: "lazy",
   });
-  const queryKey = paginatePeriodsListKey({ page, size, query, sort, userAgents });
+  const queryKey = paginatePeriodsListKey({
+    page,
+    size,
+    query,
+    sort,
+    userAgents,
+  });
 
   return useQuery({
     ...options,

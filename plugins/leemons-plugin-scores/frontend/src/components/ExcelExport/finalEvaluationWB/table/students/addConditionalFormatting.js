@@ -1,71 +1,71 @@
-import { getCustomNamesRange } from '../../../helpers';
+import { getCustomNamesRange } from "../../../helpers";
 
 export default function addConditionalFormatting(ws) {
   const scoresRules = [
     {
-      type: 'expression',
+      type: "expression",
       formulae: [
-        `${getCustomNamesRange({ ws, name: 'types', rowFixed: true }).split(':')[0]}="final"`,
+        `${getCustomNamesRange({ ws, name: "types", rowFixed: true }).split(":")[0]}="final"`,
       ],
       style: {
         fill: {
-          type: 'pattern',
+          type: "pattern",
           bgColor: {
-            argb: 'F7CAAC',
+            argb: "F7CAAC",
           },
         },
       },
     },
     {
-      type: 'cellIs',
-      operator: 'lessThan',
+      type: "cellIs",
+      operator: "lessThan",
       formulae: [5],
       style: {
         fill: {
-          type: 'pattern',
+          type: "pattern",
           bgColor: {
-            argb: 'FFFFFF',
+            argb: "FFFFFF",
           },
         },
         font: {
           color: {
-            argb: 'CD0201',
+            argb: "CD0201",
           },
         },
       },
     },
     {
-      type: 'cellIs',
-      operator: 'equal',
+      type: "cellIs",
+      operator: "equal",
       formulae: [5],
       style: {
         fill: {
-          type: 'pattern',
+          type: "pattern",
           bgColor: {
-            argb: 'FFFFFF',
+            argb: "FFFFFF",
           },
         },
         font: {
           color: {
-            argb: '000000',
+            argb: "000000",
           },
         },
       },
     },
     {
-      type: 'cellIs',
-      operator: 'greaterThan',
+      type: "cellIs",
+      operator: "greaterThan",
       formulae: [5],
       style: {
         fill: {
-          type: 'pattern',
+          type: "pattern",
           bgColor: {
-            argb: 'FFFFFF',
+            argb: "FFFFFF",
           },
         },
         font: {
           color: {
-            argb: '000000',
+            argb: "000000",
           },
         },
       },
@@ -73,7 +73,7 @@ export default function addConditionalFormatting(ws) {
   ];
 
   ws.addConditionalFormatting({
-    ref: getCustomNamesRange({ ws, name: 'scores' }),
+    ref: getCustomNamesRange({ ws, name: "scores" }),
     rules: scoresRules,
   });
 
@@ -82,21 +82,21 @@ export default function addConditionalFormatting(ws) {
     style: {
       ...rule.style,
       fill: {
-        type: 'pattern',
+        type: "pattern",
         bgColor: {
-          argb: 'F1F9FE',
+          argb: "F1F9FE",
         },
       },
     },
   }));
 
   ws.addConditionalFormatting({
-    ref: getCustomNamesRange({ ws, name: 'avgScores' }),
+    ref: getCustomNamesRange({ ws, name: "avgScores" }),
     rules: avgScoresRules,
   });
 
   ws.addConditionalFormatting({
-    ref: getCustomNamesRange({ ws, name: 'customScores' }),
+    ref: getCustomNamesRange({ ws, name: "customScores" }),
     rules: avgScoresRules,
   });
 }

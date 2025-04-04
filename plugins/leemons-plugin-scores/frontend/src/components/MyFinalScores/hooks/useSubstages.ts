@@ -1,12 +1,14 @@
-import { useUserAgents } from '@users/hooks';
-import { keyBy } from 'lodash';
+import { useUserAgents } from "@users/hooks";
+import { keyBy } from "lodash";
 
-import { Class } from '../types/class';
+import { Class } from "../types/class";
 
-import { useScores } from '@scores/requests/hooks/queries';
+import { useScores } from "@scores/requests/hooks/queries";
 
 export function useSubstages(classData: Class) {
-  const substages = classData.substages.length ? classData.substages : classData.program.substages;
+  const substages = classData.substages.length
+    ? classData.substages
+    : classData.program.substages;
   const student = useUserAgents();
 
   const substagesIds = substages?.map((substage) => substage.id);
@@ -19,7 +21,7 @@ export function useSubstages(classData: Class) {
       published: true,
     },
     {
-      select: (scores) => keyBy(scores, 'period'),
+      select: (scores) => keyBy(scores, "period"),
     }
   );
 

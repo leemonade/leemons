@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 
-import { getRetakesKey } from '../keys/retakes';
+import { getRetakesKey } from "../keys/retakes";
 
-import { getRetakes } from '@scores/requests/retakes/get';
+import { getRetakes } from "@scores/requests/retakes/get";
 
 /**
  * Hook to get the retakes of a class

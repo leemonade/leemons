@@ -1,4 +1,4 @@
-const { createStyles } = require('@bubbles-ui/components');
+const { createStyles } = require("@bubbles-ui/components");
 
 const useSubjectScoreColumnStyles = createStyles((theme, { color }) => {
   const globalTheme = theme.other.global;
@@ -10,14 +10,14 @@ const useSubjectScoreColumnStyles = createStyles((theme, { color }) => {
       borderTop: `${globalTheme.border.width.lg} solid ${color}`,
       padding: globalTheme.spacing.padding.md,
       paddingTop: globalTheme.spacing.padding.xmsm,
-      position: 'relative',
+      position: "relative",
     },
 
     opener: {
-      position: 'absolute',
+      position: "absolute",
       top: 20,
       right: 10,
-      cursor: 'pointer',
+      cursor: "pointer",
     },
   };
 });

@@ -1,18 +1,18 @@
-import { createStyles, Text } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { isNumber } from 'lodash';
+import { createStyles, Text } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { isNumber } from "lodash";
 
-import { GradedRetake } from '../../../types';
+import { GradedRetake } from "../../../types";
 
-import { prefixPN } from '@scores/helpers';
-import { useRetakePicker } from '@scores/stores/retakePickerStore';
+import { prefixPN } from "@scores/helpers";
+import { useRetakePicker } from "@scores/stores/retakePickerStore";
 
 const useStyles = createStyles(() => ({
   cell: {
-    boxShadow: '0px 1px 0px 0px #F2F2F2',
-    verticalAlign: 'middle',
-    textAlign: 'center',
-    padding: '0 32px',
+    boxShadow: "0px 1px 0px 0px #F2F2F2",
+    verticalAlign: "middle",
+    textAlign: "center",
+    padding: "0 32px",
   },
 }));
 
@@ -23,21 +23,27 @@ interface Props {
   singleRetake: boolean;
 }
 
-export function FinalGradeCell({ retakeId: _retakeId, retakes, studentId, singleRetake }: Props) {
+export function FinalGradeCell({
+  retakeId: _retakeId,
+  retakes,
+  studentId,
+  singleRetake,
+}: Props) {
   const retakeId =
-    useRetakePicker((s) => s.students?.[studentId]?.selectedRetake ?? null) ?? _retakeId;
+    useRetakePicker((s) => s.students?.[studentId]?.selectedRetake ?? null) ??
+    _retakeId;
   const { classes } = useStyles();
-  const [t] = useTranslateLoader(prefixPN('pickRetakeTable'));
+  const [t] = useTranslateLoader(prefixPN("pickRetakeTable"));
 
   const retakeGrade = retakes[retakeId]?.grade ?? 0;
   const retakeIndex = retakes[retakeId]?.order ?? 0;
 
-  let retakeLabel = '-';
+  let retakeLabel = "-";
 
   if (isNumber(retakeGrade)) {
     retakeLabel = singleRetake
       ? `${retakeGrade.toFixed(2)}`
-      : `${retakeGrade.toFixed(2)} (${t('table.retake').toLowerCase()} ${retakeIndex + 1})`;
+      : `${retakeGrade.toFixed(2)} (${t("table.retake").toLowerCase()} ${retakeIndex + 1})`;
   }
 
   return (

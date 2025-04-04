@@ -1,14 +1,14 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { LoadingOverlay, Stack } from '@bubbles-ui/components';
+import { LoadingOverlay, Stack } from "@bubbles-ui/components";
 
-import { Class } from '../types/class';
+import { Class } from "../types/class";
 
-import { SubjectFinalScoreColumn } from './SubjectFinalScoreColumn';
+import { SubjectFinalScoreColumn } from "./SubjectFinalScoreColumn";
 
-import EmptyState from '@scores/components/MyScores/components/SubjectsScoreList/components/EmptyState';
-import useClassesMatchingFilters from '@scores/components/MyScores/components/SubjectsScoreList/hooks/useClassesMatchingFilters';
-import useMyScoresStore from '@scores/stores/myScoresStore';
+import EmptyState from "@scores/components/MyScores/components/SubjectsScoreList/components/EmptyState";
+import useClassesMatchingFilters from "@scores/components/MyScores/components/SubjectsScoreList/hooks/useClassesMatchingFilters";
+import useMyScoresStore from "@scores/stores/myScoresStore";
 
 export function SubjectsScoreList({ filters }: { filters: any }) {
   const { classes, isLoading } = useClassesMatchingFilters(filters);
@@ -31,9 +31,13 @@ export function SubjectsScoreList({ filters }: { filters: any }) {
     <>
       {noResultsInChildren && <EmptyState />}
 
-      <Stack spacing={3} sx={{ overflowX: 'auto' }}>
+      <Stack spacing={3} sx={{ overflowX: "auto" }}>
         {classes?.map((classData: Class) => (
-          <SubjectFinalScoreColumn {...filters} key={classData.id} classData={classData} />
+          <SubjectFinalScoreColumn
+            {...filters}
+            key={classData.id}
+            classData={classData}
+          />
         ))}
       </Stack>
     </>

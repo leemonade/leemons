@@ -1,10 +1,10 @@
-import { useVariantForQueryKey } from '@common/queries';
-import { useQuery } from '@tanstack/react-query';
-import { useUserAgents } from '@users/hooks';
+import { useVariantForQueryKey } from "@common/queries";
+import { useQuery } from "@tanstack/react-query";
+import { useUserAgents } from "@users/hooks";
 
-import { manualActivityScoresKey } from '../keys/manualActivities';
+import { manualActivityScoresKey } from "../keys/manualActivities";
 
-import { getMyManualActivityScores } from '@scores/requests/manualActivities/scores/myScores';
+import { getMyManualActivityScores } from "@scores/requests/manualActivities/scores/myScores";
 
 /**
  * Hook to search for manual activities of the current user
@@ -20,7 +20,7 @@ export function useMyManualActivitiesScores({ classId, ...options }) {
   const queryFn = () => getMyManualActivityScores(classId);
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'lazy',
+    modificationTrend: "lazy",
   });
 
   return useQuery({

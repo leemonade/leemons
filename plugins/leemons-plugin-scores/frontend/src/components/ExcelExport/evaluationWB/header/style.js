@@ -9,26 +9,26 @@ export function getStyle(contentArray) {
     const isLastCol = col === contentArray[row].length - 1;
 
     if (isFirstRow) {
-      border.top = { style: 'medium' };
+      border.top = { style: "medium" };
     }
 
     if (isLastRow) {
-      border.bottom = { style: 'medium' };
+      border.bottom = { style: "medium" };
     }
 
     if (isFirstCol) {
-      border.left = { style: 'medium' };
+      border.left = { style: "medium" };
     }
 
     if (isLastCol) {
-      border.right = { style: 'medium' };
+      border.right = { style: "medium" };
     }
 
     cell.border = border;
     cell.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: isFirstCol ? 'EFEFEF' : 'FFFFFF' },
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: isFirstCol ? "EFEFEF" : "FFFFFF" },
     };
   };
 }

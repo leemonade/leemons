@@ -1,20 +1,21 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
-import useRole from '@assignables/requests/hooks/queries/useRole';
-import useSearchOngoingActivities from '@assignables/requests/hooks/queries/useSearchOngoingActivities';
-import { ImageLoader } from '@bubbles-ui/components';
+import useInstances from "@assignables/requests/hooks/queries/useInstances";
+import useRole from "@assignables/requests/hooks/queries/useRole";
+import useSearchOngoingActivities from "@assignables/requests/hooks/queries/useSearchOngoingActivities";
+import { ImageLoader } from "@bubbles-ui/components";
 
-import { useManualActivities } from '@scores/requests/hooks/queries/useManualActivities';
-import useWeights from '@scores/requests/hooks/queries/useWeights';
+import { useManualActivities } from "@scores/requests/hooks/queries/useManualActivities";
+import useWeights from "@scores/requests/hooks/queries/useWeights";
 
-const MODULES_ROLE = 'learningpaths.module';
+const MODULES_ROLE = "learningpaths.module";
 
 function useManualActivitiesAsInstances({ class: klass }) {
-  const { data: manualActivities, isLoading: manualActivitiesLoading } = useManualActivities({
-    classId: klass,
-    enabled: !!klass,
-  });
+  const { data: manualActivities, isLoading: manualActivitiesLoading } =
+    useManualActivities({
+      classId: klass,
+      enabled: !!klass,
+    });
 
   const instances = manualActivities?.map((activity) => ({
     id: activity.id,
@@ -32,27 +33,35 @@ function useManualActivitiesAsInstances({ class: klass }) {
 }
 
 export default function useModulesData({ class: klass }) {
-  const { data: role, isLoading: roleLoading } = useRole({ role: MODULES_ROLE });
+  const { data: role, isLoading: roleLoading } = useRole({
+    role: MODULES_ROLE,
+  });
   const { data: weights, isLoading: weightsLoading } = useWeights({
     classId: klass,
     enabled: !!klass,
   });
 
-  const { data: modules, isLoading: modulesLoading } = useSearchOngoingActivities({
-    role: MODULES_ROLE,
-    classes: JSON.stringify([klass]),
-    limit: Infinity,
-    enabled: !!klass,
-  });
-  const { data: moduleInstances, isLoading: moduleInstancesLoading } = useInstances({
-    ids: modules?.items,
-    enabled: !!modules?.items?.length,
-  });
+  const { data: modules, isLoading: modulesLoading } =
+    useSearchOngoingActivities({
+      role: MODULES_ROLE,
+      classes: JSON.stringify([klass]),
+      limit: Infinity,
+      enabled: !!klass,
+    });
+  const { data: moduleInstances, isLoading: moduleInstancesLoading } =
+    useInstances({
+      ids: modules?.items,
+      enabled: !!modules?.items?.length,
+    });
 
-  const { data: manualActivitiesInstances, isLoading: manualActivitiesInstancesLoading } =
-    useManualActivitiesAsInstances({ class: klass });
+  const {
+    data: manualActivitiesInstances,
+    isLoading: manualActivitiesInstancesLoading,
+  } = useManualActivitiesAsInstances({ class: klass });
 
-  const instances = (moduleInstances ?? [])?.concat(manualActivitiesInstances ?? []);
+  const instances = (moduleInstances ?? [])?.concat(
+    manualActivitiesInstances ?? []
+  );
 
   const data = useMemo(() => {
     if (!instances?.length) return [];
@@ -77,7 +86,9 @@ export default function useModulesData({ class: klass }) {
       weightsLoading ||
       modulesLoading ||
       manualActivitiesInstancesLoading ||
-      (moduleInstancesLoading && !!instances?.length && !!modules?.items?.length),
+      (moduleInstancesLoading &&
+        !!instances?.length &&
+        !!modules?.items?.length),
     data,
   };
 }

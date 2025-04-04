@@ -1,1 +1,1 @@
-export * from './ManualActivityDrawer';
+export * from "./ManualActivityDrawer";

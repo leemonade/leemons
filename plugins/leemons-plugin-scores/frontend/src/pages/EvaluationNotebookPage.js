@@ -1,23 +1,31 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { Box, ContextContainer, Stack, Text, TLayout } from '@bubbles-ui/components';
-import { EvaluatedIcon } from '@learning-paths/components/ModuleDashboard/components/DashboardCard/components/EvaluationStateDisplay/icons/EvaluatedIcon';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import {
+  Box,
+  ContextContainer,
+  Stack,
+  Text,
+  TLayout,
+} from "@bubbles-ui/components";
+import { EvaluatedIcon } from "@learning-paths/components/ModuleDashboard/components/DashboardCard/components/EvaluationStateDisplay/icons/EvaluatedIcon";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
 
-import EvaluationNotebook from '@scores/components/EvaluationNotebook/EvaluationNotebook';
-import PageFooter from '@scores/components/EvaluationNotebook/components/PageFooter/PageFooter';
-import FinalEvaluationNotebook from '@scores/components/FinalEvaluationNotebook/FinalEvaluationNotebook';
-import Filters from '@scores/components/__DEPRECATED__/ScoresPage/Filters/Filters';
-import { prefixPN } from '@scores/helpers';
-import useEvaluationNotebookStore from '@scores/stores/evaluationNotebookStore';
+import EvaluationNotebook from "@scores/components/EvaluationNotebook/EvaluationNotebook";
+import PageFooter from "@scores/components/EvaluationNotebook/components/PageFooter/PageFooter";
+import FinalEvaluationNotebook from "@scores/components/FinalEvaluationNotebook/FinalEvaluationNotebook";
+import Filters from "@scores/components/__DEPRECATED__/ScoresPage/Filters/Filters";
+import { prefixPN } from "@scores/helpers";
+import useEvaluationNotebookStore from "@scores/stores/evaluationNotebookStore";
 
 function EmptyState() {
-  const [t] = useTranslateLoader(prefixPN('evaluationNotebook.emptyState.noFilters'));
+  const [t] = useTranslateLoader(
+    prefixPN("evaluationNotebook.emptyState.noFilters")
+  );
   return (
     <Stack justifyContent="center" alignItems="center" fullWidth fullHeight>
       <Box sx={{ maxWidth: 400 }}>
-        <ContextContainer title={t('title')}>
-          <Text>{t('description')}</Text>
+        <ContextContainer title={t("title")}>
+          <Text>{t("description")}</Text>
         </ContextContainer>
       </Box>
     </Stack>
@@ -25,7 +33,7 @@ function EmptyState() {
 }
 
 export default function EvaluationNotebookPage() {
-  const [t] = useTranslateLoader(prefixPN('evaluationNotebook'));
+  const [t] = useTranslateLoader(prefixPN("evaluationNotebook"));
 
   const filters = useEvaluationNotebookStore((state) => state.filters);
   const setFilters = useEvaluationNotebookStore((state) => state.setFilters);
@@ -36,7 +44,7 @@ export default function EvaluationNotebookPage() {
   return (
     <TLayout>
       <TLayout.Header
-        title={t('title')}
+        title={t("title")}
         icon={<EvaluatedIcon width={24} height={24} color="#000" />}
         cancelable={false}
       >
@@ -45,13 +53,19 @@ export default function EvaluationNotebookPage() {
           showProgramSelect
           onChange={setFilters}
           value={filters}
-          teacherTypeFilter={['main-teacher', 'associate-teacher', 'invited-teacher']}
+          teacherTypeFilter={[
+            "main-teacher",
+            "associate-teacher",
+            "invited-teacher",
+          ]}
         />
       </TLayout.Header>
       <TLayout.Content fullWidth>
         {!filters && <EmptyState />}
-        {filters && filters?.period?.selected !== 'final' && <EvaluationNotebook />}
-        {filters && filters?.period?.selected === 'final' && (
+        {filters && filters?.period?.selected !== "final" && (
+          <EvaluationNotebook />
+        )}
+        {filters && filters?.period?.selected === "final" && (
           <FinalEvaluationNotebook filters={filters} />
         )}
       </TLayout.Content>
@@ -59,7 +73,7 @@ export default function EvaluationNotebookPage() {
         <TLayout.Footer.RightActions>
           <PageFooter
             isCustom={!!filters?.period?.isCustom}
-            disableReports={filters?.period?.selected === 'final'}
+            disableReports={filters?.period?.selected === "final"}
           />
         </TLayout.Footer.RightActions>
       </TLayout.Footer>

@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useMemo } from "react";
+import { useForm, Controller } from "react-hook-form";
 import {
   Box,
   createStyles,
@@ -9,28 +9,28 @@ import {
   Text,
   TotalLayoutFooterContainer,
   Stack,
-} from '@bubbles-ui/components';
-import _, { isFunction } from 'lodash';
-import propTypes from 'prop-types';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
-import { useLayout } from '@layout/context';
-import { ScoresFooter } from '@scores/components/__DEPRECATED__/ScoresFooter';
+} from "@bubbles-ui/components";
+import _, { isFunction } from "lodash";
+import propTypes from "prop-types";
+import { unflatten } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { prefixPN } from "@scores/helpers";
+import { useLayout } from "@layout/context";
+import { ScoresFooter } from "@scores/components/__DEPRECATED__/ScoresFooter";
 
 const useStyles = createStyles((theme) => ({
   filters: {
     backgroundColor: theme.colors.interactive03,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
     padding: theme.spacing[4],
-    width: '100%',
+    width: "100%",
   },
   leftFilters: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
     gap: theme.spacing[4],
   },
   leftFiltersGroup: {
@@ -40,8 +40,8 @@ const useStyles = createStyles((theme) => ({
 
 const useEvaluationReportModalStyles = createStyles((theme) => ({
   body: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     gap: theme.spacing[4],
   },
 }));
@@ -52,7 +52,10 @@ export function useFilterByLength(filterBy, labels) {
       (maxLength, filter) => Math.max(maxLength, filter.label.length),
       0
     );
-    return Math.max(valuesMaxLength, labels?.filterBy?.placeholder?.length || 0);
+    return Math.max(
+      valuesMaxLength,
+      labels?.filterBy?.placeholder?.length || 0
+    );
   }, [filterBy]);
 }
 
@@ -74,11 +77,11 @@ function useFilterByOptions(labels) {
     () => [
       {
         label: labels?.filterBy?.activity,
-        value: 'activity',
+        value: "activity",
       },
       {
         label: labels?.filterBy?.student,
-        value: 'student',
+        value: "student",
       },
     ],
     []
@@ -87,15 +90,21 @@ function useFilterByOptions(labels) {
 
 function useFiltersLocalizations() {
   const [, translations] = useTranslateLoader([
-    prefixPN('notebook.tabs.activities.filters.evaluationReport'),
-    prefixPN('notebook.tabs.activities.filters.finalReport'),
+    prefixPN("notebook.tabs.activities.filters.evaluationReport"),
+    prefixPN("notebook.tabs.activities.filters.finalReport"),
   ]);
 
   return useMemo(() => {
     if (translations && translations.items) {
       const res = unflatten(translations.items);
-      const evaluation = _.get(res, prefixPN('notebook.tabs.activities.filters.evaluationReport'));
-      const final = _.get(res, prefixPN('notebook.tabs.activities.filters.finalReport'));
+      const evaluation = _.get(
+        res,
+        prefixPN("notebook.tabs.activities.filters.evaluationReport")
+      );
+      const final = _.get(
+        res,
+        prefixPN("notebook.tabs.activities.filters.finalReport")
+      );
 
       return {
         evaluation,
@@ -144,8 +153,8 @@ export function Filters({
   const { classes, theme, cx } = useStyles();
   const { control, watch, setValue } = useForm({
     defaultValues: {
-      search: '',
-      filterBy: 'student',
+      search: "",
+      filterBy: "student",
       showNonCalificables: false,
     },
   });
@@ -155,11 +164,11 @@ export function Filters({
   const evaluationType = React.useMemo(() => {
     const id = period?.period?.id;
 
-    if (id === 'final') {
-      return 'final';
+    if (id === "final") {
+      return "final";
     }
 
-    return 'evaluation';
+    return "evaluation";
   }, [period?.period?.id]);
 
   const evaluationReportLabels = useFiltersLocalizations();
@@ -167,17 +176,17 @@ export function Filters({
     labels: evaluationReportLabels?.evaluation,
     onConfirm: onSubmitEvaluationReport,
   });
-  const isFinalEvaluation = evaluationType === 'final';
+  const isFinalEvaluation = evaluationType === "final";
 
   const filterBy = useFilterByOptions(labels);
   const filterByLength = useFilterByLength(filterBy, labels);
 
   const showEvaluationReport = React.useMemo(
-    () => !isPeriodSubmitted && period?.period?.type === 'academic-calendar',
+    () => !isPeriodSubmitted && period?.period?.type === "academic-calendar",
     [period, isPeriodSubmitted]
   );
 
-  React.useEffect(() => setValue('filterBy', 'student'), [isFinalEvaluation]);
+  React.useEffect(() => setValue("filterBy", "student"), [isFinalEvaluation]);
 
   return (
     <Stack direction="column">
@@ -205,18 +214,21 @@ export function Filters({
               control={control}
               name="search"
               render={({ field }) => {
-                const filterByValue = watch('filterBy');
+                const filterByValue = watch("filterBy");
                 return (
                   <SearchInput
                     wait={300}
                     placeholder={labels?.search
                       ?.replace(
-                        '{{filterBy}}',
-                        filterBy.find((item) => item.value === filterByValue).label
+                        "{{filterBy}}",
+                        filterBy.find((item) => item.value === filterByValue)
+                          .label
                       )
                       ?.replace(
-                        '{{filterBy.toLowerCase}}',
-                        filterBy.find((item) => item.value === filterByValue).label.toLowerCase()
+                        "{{filterBy.toLowerCase}}",
+                        filterBy
+                          .find((item) => item.value === filterByValue)
+                          .label.toLowerCase()
                       )}
                     {...field}
                   />

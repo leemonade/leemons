@@ -1,21 +1,27 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useTable, useFlexLayout } from 'react-table';
-import { useSticky } from 'react-table-sticky';
+import { useEffect, useMemo, useState } from "react";
+import { useTable, useFlexLayout } from "react-table";
+import { useSticky } from "react-table-sticky";
 
-import { Box, Text, UserDisplayItem, useElementSize, Stack } from '@bubbles-ui/components';
-import { motion } from 'framer-motion';
-import { isFunction } from 'lodash';
+import {
+  Box,
+  Text,
+  UserDisplayItem,
+  useElementSize,
+  Stack,
+} from "@bubbles-ui/components";
+import { motion } from "framer-motion";
+import { isFunction } from "lodash";
 
-import { CommonTableStyles } from '../CommonTable.styles';
+import { CommonTableStyles } from "../CommonTable.styles";
 
-import { ActivityHeader } from './ActivityHeader';
-import { ScoreCell } from './ScoreCell';
+import { ActivityHeader } from "./ActivityHeader";
+import { ScoreCell } from "./ScoreCell";
 import {
   SCORES_BASIC_TABLE_DEFAULT_PROPS,
   SCORES_BASIC_TABLE_PROP_TYPES,
-} from './ScoresBasicTable.constants';
-import { ScoresBasicTableStyles } from './ScoresBasicTable.styles';
-import { RightContent } from './components/RightContent';
+} from "./ScoresBasicTable.constants";
+import { ScoresBasicTableStyles } from "./ScoresBasicTable.styles";
+import { RightContent } from "./components/RightContent";
 
 const ScoresBasicTable = ({
   grades,
@@ -49,9 +55,12 @@ const ScoresBasicTable = ({
 
   const { classes: commonClasses } = CommonTableStyles(
     { overFlowLeft, overFlowRight, hideCustom },
-    { name: 'CommonTable' }
+    { name: "CommonTable" }
   );
-  const { classes: basicClasses, cx } = ScoresBasicTableStyles({}, { name: 'ScoresBasicTable' });
+  const { classes: basicClasses, cx } = ScoresBasicTableStyles(
+    {},
+    { name: "ScoresBasicTable" }
+  );
   const classes = { ...commonClasses, ...basicClasses };
 
   const onColumnExpandHandler = (columnId) => {
@@ -96,7 +105,9 @@ const ScoresBasicTable = ({
   const getActivities = (studentActivities, studentId) => {
     const activitiesObject = {};
     activities.forEach(({ id, source }) => {
-      const activity = studentActivities.find((studentActivity) => studentActivity?.id === id);
+      const activity = studentActivities.find(
+        (studentActivity) => studentActivity?.id === id
+      );
       activitiesObject[id] = {
         score: useNumbers ? activity?.score : findGradeLetter(activity?.score),
         isSubmitted: activity?.isSubmitted,
@@ -107,7 +118,9 @@ const ScoresBasicTable = ({
       (student) => student.id === studentId
     )?.activities;
     expandedData?.activities?.forEach(({ id, source }) => {
-      const activity = expandedActivities.find((expandedActivity) => expandedActivity?.id === id);
+      const activity = expandedActivities.find(
+        (expandedActivity) => expandedActivity?.id === id
+      );
       activitiesObject[id] = {
         score: useNumbers ? activity?.score : findGradeLetter(activity?.score),
         isSubmitted: activity?.isSubmitted,
@@ -120,9 +133,9 @@ const ScoresBasicTable = ({
   const getColumns = () => {
     const columns = [];
     columns.push({
-      accessor: 'student',
+      accessor: "student",
       width: 220,
-      sticky: 'left',
+      sticky: "left",
       Header: (
         <Stack
           direction="column"
@@ -194,11 +207,14 @@ const ScoresBasicTable = ({
           ...expandedData.activities.map((expandedActivity, index) => {
             const position =
               index === 0
-                ? 'first'
+                ? "first"
                 : index === expandedData.activities.length - 1
-                ? 'last'
-                : 'between';
-            const completionPercentage = getCompletionPercentage(expandedActivity.id, true);
+                  ? "last"
+                  : "between";
+            const completionPercentage = getCompletionPercentage(
+              expandedActivity.id,
+              true
+            );
             return {
               accessor: expandedActivity.id,
               width: 148,
@@ -213,9 +229,9 @@ const ScoresBasicTable = ({
                 />
               ),
               style:
-                position === 'last'
-                  ? { boxShadow: 'inset -10px 0px 6px -6px rgba(0,0,0,0.10)' }
-                  : { boxShadow: 'none' },
+                position === "last"
+                  ? { boxShadow: "inset -10px 0px 6px -6px rgba(0,0,0,0.10)" }
+                  : { boxShadow: "none" },
               Cell: ({ value, row, column }) => (
                 <ScoreCell
                   value={value.score}
@@ -257,20 +273,37 @@ const ScoresBasicTable = ({
 
   const columns = useMemo(
     () => getColumns(),
-    [value, activities, labels, locale, useNumbers, expandedData, expandedColumn]
+    [
+      value,
+      activities,
+      labels,
+      locale,
+      useNumbers,
+      expandedData,
+      expandedColumn,
+    ]
   );
   const data = useMemo(
     () => getData(),
-    [value, activities, labels, locale, useNumbers, expandedData, expandedColumn]
+    [
+      value,
+      activities,
+      labels,
+      locale,
+      useNumbers,
+      expandedData,
+      expandedColumn,
+    ]
   );
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
-    {
-      columns,
-      data,
-    },
-    useFlexLayout,
-    useSticky
-  );
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+    useTable(
+      {
+        columns,
+        data,
+      },
+      useFlexLayout,
+      useSticky
+    );
 
   useEffect(() => {
     setValue(_value);
@@ -282,7 +315,8 @@ const ScoresBasicTable = ({
 
   useEffect(() => {
     if (!tableRef.current) return;
-    const isOverflowing = tableRef.current.scrollWidth > tableRef.current.clientWidth;
+    const isOverflowing =
+      tableRef.current.scrollWidth > tableRef.current.clientWidth;
     if (isOverflowing && isOverflowing !== overFlowRight) {
       setOverFlowRight(true);
     } else if (isOverflowing !== overFlowRight) {
@@ -295,7 +329,7 @@ const ScoresBasicTable = ({
   }, [_expandedColumn]);
 
   const spring = {
-    type: 'spring',
+    type: "spring",
     stiffness: 100,
     damping: 18,
   };
@@ -303,11 +337,19 @@ const ScoresBasicTable = ({
   return (
     <Box className={classes.root}>
       <Box className={classes.shadowBox} />
-      <Box ref={tableRef} {...getTableProps()} className={classes.table} onScroll={onScrollHandler}>
+      <Box
+        ref={tableRef}
+        {...getTableProps()}
+        className={classes.table}
+        onScroll={onScrollHandler}
+      >
         <Box style={{ flex: 1 }}>
           <Box className={classes.tableHeader}>
             {headerGroups.map((headerGroup) => (
-              <Box {...headerGroup.getHeaderGroupProps()} className={classes.tableHeaderRow}>
+              <Box
+                {...headerGroup.getHeaderGroupProps()}
+                className={classes.tableHeaderRow}
+              >
                 {headerGroup.headers.map((column) => (
                   <motion.div
                     layout
@@ -315,7 +357,7 @@ const ScoresBasicTable = ({
                     {...column.getHeaderProps([{ style: column.style }])}
                     className={classes.tableHeaderCell}
                   >
-                    {column.render('Header')}
+                    {column.render("Header")}
                   </motion.div>
                 ))}
               </Box>
@@ -331,11 +373,13 @@ const ScoresBasicTable = ({
                       layout
                       transition={spring}
                       {...cell.getCellProps([
-                        { style: { ...cell.column.style, background: 'white' } },
+                        {
+                          style: { ...cell.column.style, background: "white" },
+                        },
                       ])}
                       className={classes.bodyCell}
                     >
-                      {cell.render('Cell')}
+                      {cell.render("Cell")}
                     </motion.div>
                   ))}
                 </Box>

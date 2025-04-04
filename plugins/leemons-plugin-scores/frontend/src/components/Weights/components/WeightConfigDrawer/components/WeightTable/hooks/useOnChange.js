@@ -1,12 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { useWatch } from 'react-hook-form';
-import { noop } from 'lodash';
+import { useWatch } from "react-hook-form";
+import { noop } from "lodash";
 
 export default function useOnChange({ control }, onChange = noop) {
   const [values, data, applySameValue] = useWatch({
     control,
-    name: ['weights', 'data', 'applySameValue'],
+    name: ["weights", "data", "applySameValue"],
   });
 
   useEffect(() => {

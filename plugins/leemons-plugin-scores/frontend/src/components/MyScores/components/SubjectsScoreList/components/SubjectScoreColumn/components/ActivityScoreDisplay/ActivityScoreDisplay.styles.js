@@ -1,4 +1,4 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 const useActivityScoreDisplayStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
@@ -10,8 +10,8 @@ const useActivityScoreDisplayStyles = createStyles((theme) => {
       borderBottom: `${globalTheme.border.width.sm} solid ${globalTheme.border.color.line.subtle}`,
     },
     noLink: {
-      textDecoration: 'none',
-      '&:hover': {
+      textDecoration: "none",
+      "&:hover": {
         background: theme.other.button.content.color.terciary.default,
       },
     },
@@ -35,14 +35,14 @@ const useActivityScoreDisplayStyles = createStyles((theme) => {
       fontFamily: theme.other.table.content.typo.md.fontFamily,
       fontWeight: 600,
       fontSize: 10,
-      fontHeight: '14px',
-      letterSpacing: '0.04em',
+      fontHeight: "14px",
+      letterSpacing: "0.04em",
     },
 
     score: {
       ...globalTheme.content.typo.body.lg,
       color: theme.other.cardAssignments.content.color.muted,
-      textAlign: 'center',
+      textAlign: "center",
     },
     badge: {
       minHeight: 6,

@@ -1,6 +1,6 @@
-const { leemonsSchemaFields, mongoose, newModel } = require('@leemons/mongodb');
+const { leemonsSchemaFields, mongoose, newModel } = require("@leemons/mongodb");
 
-const { PLUGIN_NAME, VERSION } = require('../config/constants');
+const { PLUGIN_NAME, VERSION } = require("../config/constants");
 
 const schema = new mongoose.Schema({
   ...leemonsSchemaFields,
@@ -18,7 +18,11 @@ const schema = new mongoose.Schema({
   },
 });
 
-const retakesModel = newModel(mongoose.connection, `v${VERSION}::${PLUGIN_NAME}_Retakes`, schema);
+const retakesModel = newModel(
+  mongoose.connection,
+  `v${VERSION}::${PLUGIN_NAME}_Retakes`,
+  schema
+);
 
 module.exports = {
   retakesModel,

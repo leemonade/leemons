@@ -1,5 +1,5 @@
 export default function areValuesDifferent({ getValues, excludeLocked }) {
-  let values = Object.values(getValues('weights'));
+  let values = Object.values(getValues("weights"));
 
   if (excludeLocked) {
     values = values.filter((value) => !value.isLocked);

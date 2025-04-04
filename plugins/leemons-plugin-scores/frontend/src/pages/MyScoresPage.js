@@ -1,23 +1,29 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
-import { Box, ContextContainer, Stack, Text, TLayout } from '@bubbles-ui/components';
-import { EvaluatedIcon } from '@learning-paths/components/ModuleDashboard/components/DashboardCard/components/EvaluationStateDisplay/icons/EvaluatedIcon';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { MyFinalScores } from '@scores/components/MyFinalScores';
+import {
+  Box,
+  ContextContainer,
+  Stack,
+  Text,
+  TLayout,
+} from "@bubbles-ui/components";
+import { EvaluatedIcon } from "@learning-paths/components/ModuleDashboard/components/DashboardCard/components/EvaluationStateDisplay/icons/EvaluatedIcon";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { MyFinalScores } from "@scores/components/MyFinalScores";
 
-import MyScores from '@scores/components/MyScores/MyScores';
-import Filters from '@scores/components/MyScores/components/Filters/Filters';
-import Footer from '@scores/components/MyScores/components/PageFooter/PageFooter';
-import { prefixPN } from '@scores/helpers';
-import useMyScoresStore from '@scores/stores/myScoresStore';
+import MyScores from "@scores/components/MyScores/MyScores";
+import Filters from "@scores/components/MyScores/components/Filters/Filters";
+import Footer from "@scores/components/MyScores/components/PageFooter/PageFooter";
+import { prefixPN } from "@scores/helpers";
+import useMyScoresStore from "@scores/stores/myScoresStore";
 
 function EmptyState() {
-  const [t] = useTranslateLoader(prefixPN('myScores.emptyStates.noFilters'));
+  const [t] = useTranslateLoader(prefixPN("myScores.emptyStates.noFilters"));
   return (
     <Stack justifyContent="center" alignItems="center" fullWidth fullHeight>
       <Box sx={{ maxWidth: 400 }}>
-        <ContextContainer title={t('title')}>
-          <Text>{t('description')}</Text>
+        <ContextContainer title={t("title")}>
+          <Text>{t("description")}</Text>
         </ContextContainer>
       </Box>
     </Stack>
@@ -25,7 +31,7 @@ function EmptyState() {
 }
 
 export default function MyScoresPage() {
-  const [t] = useTranslateLoader(prefixPN('myScores'));
+  const [t] = useTranslateLoader(prefixPN("myScores"));
 
   const filters = useMyScoresStore((state) => state.filters);
   const setFilters = useMyScoresStore((state) => state.setFilters);
@@ -37,7 +43,7 @@ export default function MyScoresPage() {
   return (
     <TLayout>
       <TLayout.Header
-        title={t('title')}
+        title={t("title")}
         icon={<EvaluatedIcon width={24} height={24} color="#000" />}
         cancelable={false}
       >
@@ -45,8 +51,8 @@ export default function MyScoresPage() {
       </TLayout.Header>
       <TLayout.Content>
         {!filters && <EmptyState />}
-        {filters && filters?.period?.id === 'final' && <MyFinalScores />}
-        {filters && filters?.period?.id !== 'final' && <MyScores />}
+        {filters && filters?.period?.id === "final" && <MyFinalScores />}
+        {filters && filters?.period?.id !== "final" && <MyScores />}
       </TLayout.Content>
       {hasData && (
         <TLayout.Footer>

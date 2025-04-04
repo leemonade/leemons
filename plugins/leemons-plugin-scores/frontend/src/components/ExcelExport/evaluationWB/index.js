@@ -1,15 +1,33 @@
-import getCourseName from '@academic-portfolio/helpers/getCourseName';
-import { createWorkbook, createSheet, cellToIndexes, indexesToCell } from '../helpers';
-import { writeHeader } from './header';
-import { writeTable } from './table';
+import getCourseName from "@academic-portfolio/helpers/getCourseName";
+import {
+  createWorkbook,
+  createSheet,
+  cellToIndexes,
+  indexesToCell,
+} from "../helpers";
+import { writeHeader } from "./header";
+import { writeTable } from "./table";
 
-function generateEvaluationWS({ sheetName, headerShown, tableData, labels, period, types, wb }) {
+function generateEvaluationWS({
+  sheetName,
+  headerShown,
+  tableData,
+  labels,
+  period,
+  types,
+  wb,
+}) {
   const ws = createSheet(wb, sheetName);
 
-  let renderPosition = 'B2';
+  let renderPosition = "B2";
 
   if (headerShown) {
-    const { lastPosition } = writeHeader(ws, renderPosition, period, labels.period);
+    const { lastPosition } = writeHeader(
+      ws,
+      renderPosition,
+      period,
+      labels.period
+    );
 
     const { row, columnIndex } = cellToIndexes(lastPosition);
     renderPosition = indexesToCell(row, columnIndex + 1);
@@ -27,11 +45,11 @@ function generateEvaluationWS({ sheetName, headerShown, tableData, labels, perio
 
 function getWSName(klass, index) {
   if (!klass?.subject) {
-    return index ? `Notebook (${index})` : 'Notebook';
+    return index ? `Notebook (${index})` : "Notebook";
   }
 
   let name = `${klass.subject.name} - ${getCourseName(klass.courses)} ${
-    klass.groups?.abbreviation ?? ''
+    klass.groups?.abbreviation ?? ""
   }`.substring(0, 31);
 
   if (index) {

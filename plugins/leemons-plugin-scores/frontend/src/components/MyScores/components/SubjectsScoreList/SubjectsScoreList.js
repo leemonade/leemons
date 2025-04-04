@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 
-import { LoadingOverlay, Stack } from '@bubbles-ui/components';
+import { LoadingOverlay, Stack } from "@bubbles-ui/components";
 
-import useMyScoresStore from '@scores/stores/myScoresStore';
-import useClassesMatchingFilters from './hooks/useClassesMatchingFilters';
-import SubjectScoreColumn from './components/SubjectScoreColumn/SubjectScoreColumn';
-import EmptyState from './components/EmptyState';
+import useMyScoresStore from "@scores/stores/myScoresStore";
+import useClassesMatchingFilters from "./hooks/useClassesMatchingFilters";
+import SubjectScoreColumn from "./components/SubjectScoreColumn/SubjectScoreColumn";
+import EmptyState from "./components/EmptyState";
 
 export default function SubjectsScoreList(filters) {
   const { classes, isLoading } = useClassesMatchingFilters(filters);
@@ -28,7 +28,7 @@ export default function SubjectsScoreList(filters) {
     <>
       {noResultsInChildren && <EmptyState />}
 
-      <Stack spacing={3} sx={{ overflowX: 'auto' }}>
+      <Stack spacing={3} sx={{ overflowX: "auto" }}>
         {classes.map((klass) => (
           <SubjectScoreColumn {...filters} key={klass.id} class={klass} />
         ))}

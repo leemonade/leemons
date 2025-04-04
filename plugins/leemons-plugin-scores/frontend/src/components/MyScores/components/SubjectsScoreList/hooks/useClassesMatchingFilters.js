@@ -1,15 +1,23 @@
-const { useMemo } = require('react');
+const { useMemo } = require("react");
 
-const { useSessionClasses } = require('@academic-portfolio/hooks');
+const { useSessionClasses } = require("@academic-portfolio/hooks");
 
-export default function useClassesMatchingFilters({ program, course, subject }) {
-  const { data: classes, isLoading } = useSessionClasses({ program, withProgram: true });
+export default function useClassesMatchingFilters({
+  program,
+  course,
+  subject,
+}) {
+  const { data: classes, isLoading } = useSessionClasses({
+    program,
+    withProgram: true,
+  });
 
   const filteredClasses = useMemo(() => {
     if (classes && (course || subject)) {
       return classes?.filter(
         (klass) =>
-          (!course || klass.courses.id === course) && (!subject || klass.subject.id === subject)
+          (!course || klass.courses.id === course) &&
+          (!subject || klass.subject.id === subject)
       );
     }
 

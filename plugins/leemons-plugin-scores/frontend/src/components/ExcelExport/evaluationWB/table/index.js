@@ -1,1 +1,1 @@
-export { default as writeTable } from './writeTable';
+export { default as writeTable } from "./writeTable";

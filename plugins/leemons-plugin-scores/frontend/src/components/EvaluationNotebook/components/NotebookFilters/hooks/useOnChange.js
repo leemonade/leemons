@@ -1,7 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
-import { useWatch } from 'react-hook-form';
-import { noop } from 'lodash';
+import { useWatch } from "react-hook-form";
+import { noop } from "lodash";
 
 export default function useOnChange({ onChange = noop, control }) {
   const isFirstRender = useRef(true);

@@ -1,6 +1,6 @@
-const { leemonsSchemaFields, mongoose, newModel } = require('@leemons/mongodb');
+const { leemonsSchemaFields, mongoose, newModel } = require("@leemons/mongodb");
 
-const { PLUGIN_NAME, VERSION } = require('../config/constants');
+const { PLUGIN_NAME, VERSION } = require("../config/constants");
 
 const schema = new mongoose.Schema({
   ...leemonsSchemaFields,

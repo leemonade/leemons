@@ -1,31 +1,38 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from "react";
 
-import { SelectSubject } from '@academic-portfolio/components/SelectSubject';
-import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
-import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
-import { useRoles } from '@assignables/components/Ongoing/AssignmentList/components/Filters/components/Type/Type';
-import useSearchAssignableInstances from '@assignables/hooks/assignableInstance/useSearchAssignableInstancesQuery';
-import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import useAssignations from '@assignables/requests/hooks/queries/useAssignations';
-import { Box, Loader, ScoreFronstage, Select, Switch, createStyles } from '@bubbles-ui/components';
-import getNearestScale from '@scorm/helpers/getNearestScale';
-import useUserAgents from '@users/hooks/useUserAgents';
-import { map } from 'lodash';
-import PropTypes from 'prop-types';
+import { SelectSubject } from "@academic-portfolio/components/SelectSubject";
+import { getClassIcon } from "@academic-portfolio/helpers/getClassIcon";
+import { getClassImage } from "@academic-portfolio/helpers/getClassImage";
+import { useRoles } from "@assignables/components/Ongoing/AssignmentList/components/Filters/components/Type/Type";
+import useSearchAssignableInstances from "@assignables/hooks/assignableInstance/useSearchAssignableInstancesQuery";
+import useProgramEvaluationSystem from "@assignables/hooks/useProgramEvaluationSystem";
+import useAssignations from "@assignables/requests/hooks/queries/useAssignations";
+import {
+  Box,
+  Loader,
+  ScoreFronstage,
+  Select,
+  Switch,
+  createStyles,
+} from "@bubbles-ui/components";
+import getNearestScale from "@scorm/helpers/getNearestScale";
+import useUserAgents from "@users/hooks/useUserAgents";
+import { map } from "lodash";
+import PropTypes from "prop-types";
 
-import { EmptyState } from '../Notebook/components/ActivitiesTab/EmptyState';
+import { EmptyState } from "../Notebook/components/ActivitiesTab/EmptyState";
 
-import { useScores } from '@scores/requests/hooks/queries';
+import { useScores } from "@scores/requests/hooks/queries";
 
 function LoadingState() {
   return (
     <Box
       sx={(theme) => ({
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         flex: 1,
-        width: '100%',
+        width: "100%",
         backgroundColor: theme.white,
       })}
     >
@@ -36,56 +43,61 @@ function LoadingState() {
 
 const StudentActivitiesStyles = createStyles(() => ({
   root: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     flex: 1,
   },
   filters: {
-    display: 'flex',
-    alignItems: 'end',
+    display: "flex",
+    alignItems: "end",
     gap: 24,
     // backgroundColor: theme.other.global.background.color.surface.subtle,
     paddingInline: 48,
     paddingBlock: 16,
   },
   scoreContainer: {
-    display: 'flex',
+    display: "flex",
     paddingBlock: 24,
     paddingInline: 48,
     gap: 40,
     flex: 1,
-    maxHeight: '100vh',
-    overflowY: 'hidden',
-    overflowX: 'auto',
+    maxHeight: "100vh",
+    overflowY: "hidden",
+    overflowX: "auto",
   },
   switchContainer: {
-    height: '40px',
+    height: "40px",
   },
 }));
 
 export default function StudentActivities({ klasses, filters, labels }) {
   const [localFilters, setLocalFilters] = React.useState({
-    subject: '',
-    type: '',
+    subject: "",
+    type: "",
     seeNonCalificable: false,
   });
   const [renderedScores, setRenderedScores] = React.useState([]);
-  const { classes } = StudentActivitiesStyles({}, { name: 'StudentActivities' });
-  const roles = useRoles().filter((role) => role.value !== 'feedback');
+  const { classes } = StudentActivitiesStyles(
+    {},
+    { name: "StudentActivities" }
+  );
+  const roles = useRoles().filter((role) => role.value !== "feedback");
   const user = useUserAgents()[0];
-  const { data, isLoading: searchAssignableLoading } = useSearchAssignableInstances({
-    finished: true,
-    finished_$gt: filters.startDate,
-    finished_$lt: filters.endDate,
-    visible: true,
-  });
-  const { isLoading: assignationsAreLoading, data: assignationsData } = useAssignations({
-    queries: data ? data.map((instance) => ({ instance, user })) : [],
-    details: true,
-    fetchInstance: true,
-    enabled: !!data?.length,
-    placeholderData: [],
-  });
+  const { data, isLoading: searchAssignableLoading } =
+    useSearchAssignableInstances({
+      finished: true,
+      finished_$gt: filters.startDate,
+      finished_$lt: filters.endDate,
+      visible: true,
+    });
+  const { isLoading: assignationsAreLoading, data: assignationsData } =
+    useAssignations({
+      queries: data ? data.map((instance) => ({ instance, user })) : [],
+      details: true,
+      fetchInstance: true,
+      enabled: !!data?.length,
+      placeholderData: [],
+    });
 
   const activities = useMemo(
     () =>
@@ -98,11 +110,14 @@ export default function StudentActivities({ klasses, filters, labels }) {
   const evaluationSystem = useProgramEvaluationSystem(filters.program, {
     enabled: assignationsData?.length > 0,
   });
-  const useLetterScore = useMemo(() => evaluationSystem?.type !== 'numeric', [evaluationSystem]);
+  const useLetterScore = useMemo(
+    () => evaluationSystem?.type !== "numeric",
+    [evaluationSystem]
+  );
 
   const { data: scores, isLoading: scoresIsLoading } = useScores({
     students: [user],
-    classes: map(klasses, 'id'),
+    classes: map(klasses, "id"),
     periods: filters.period.isCustom ? [] : [filters.period.period.id],
     published: true,
   });
@@ -116,10 +131,12 @@ export default function StudentActivities({ klasses, filters, labels }) {
 
   const getAverageScore = (klass, classActivities) => {
     const periodScore = scores.find((score) => score.class === klass.id)?.grade;
-    if (periodScore) return { number: periodScore, letter: getLetterScore(periodScore) };
+    if (periodScore)
+      return { number: periodScore, letter: getLetterScore(periodScore) };
     const averageScore =
       classActivities.reduce(
-        (total, next) => total + (next?.score?.number ?? evaluationSystem.minScale.number),
+        (total, next) =>
+          total + (next?.score?.number ?? evaluationSystem.minScale.number),
         0
       ) / classActivities.length || 0;
     return { number: averageScore, letter: getLetterScore(averageScore) };
@@ -134,8 +151,9 @@ export default function StudentActivities({ klasses, filters, labels }) {
       ? new Date(activityAssignation.timestamps.end)
       : labels?.notDelivered;
     const grade =
-      activityAssignation.grades.find((assignationGrade) => assignationGrade.subject === klassId)
-        ?.grade || 0;
+      activityAssignation.grades.find(
+        (assignationGrade) => assignationGrade.subject === klassId
+      )?.grade || 0;
     return { activityScore: grade, activityDate: date };
   };
 
@@ -149,7 +167,8 @@ export default function StudentActivities({ klasses, filters, labels }) {
     const classesIds = [];
     const filteredActivities = [];
     activities?.forEach((activity) => {
-      if (!activity.gradable || activity?.metadata?.module?.type === 'module') return;
+      if (!activity.gradable || activity?.metadata?.module?.type === "module")
+        return;
 
       // Filters non-calificable activities except when the filter is set to TRUE
       // If type is selected, filters activities matching type
@@ -172,12 +191,15 @@ export default function StudentActivities({ klasses, filters, labels }) {
     return classActivitiesRaw
       .map((activity) => {
         const percentage = (100 / classActivitiesRaw.length)?.toFixed(0);
-        const { activityScore, activityDate } = getActivityScoreAndDate(activity, klass.subject.id);
+        const { activityScore, activityDate } = getActivityScoreAndDate(
+          activity,
+          klass.subject.id
+        );
 
         const gotDeadline =
           activityDate instanceof Date
             ? activityDate
-            : activity?.dates?.closed ?? activity?.dates?.deadline;
+            : (activity?.dates?.closed ?? activity?.dates?.deadline);
         if (!!gotDeadline && new Date(gotDeadline) > new Date()) return null;
 
         let score = activityScore;
@@ -189,8 +211,8 @@ export default function StudentActivities({ klasses, filters, labels }) {
         }
 
         const activityURL = activity.assignable.roleDetails.evaluationDetailUrl
-          .replace(':id', activity.id)
-          .replace(':user', user);
+          .replace(":id", activity.id)
+          .replace(":user", user);
         return {
           id: activity.id,
           title: activity.assignable.asset.name,
@@ -198,7 +220,7 @@ export default function StudentActivities({ klasses, filters, labels }) {
           percentage,
           date: activityDate,
           nonCalificable: !activity.gradable,
-          onClick: () => window.open(activityURL, '_blank', 'noopener'),
+          onClick: () => window.open(activityURL, "_blank", "noopener"),
         };
       })
       .filter(Boolean);
@@ -219,14 +241,19 @@ export default function StudentActivities({ klasses, filters, labels }) {
     const uniqueClassesIds = [...new Set(classesIds)];
     const filteredClasses = klasses?.filter((klass) =>
       localFilters.subject
-        ? localFilters.subject === klass.id && uniqueClassesIds.includes(klass.id)
+        ? localFilters.subject === klass.id &&
+          uniqueClassesIds.includes(klass.id)
         : uniqueClassesIds.includes(klass.id)
     );
 
     setRenderedScores(
       filteredClasses && filteredClasses.length ? (
         filteredClasses.map((klass) => {
-          const classActivities = getClassActivities(filteredActivities, klass, evaluationSystem);
+          const classActivities = getClassActivities(
+            filteredActivities,
+            klass,
+            evaluationSystem
+          );
           const averageScore = getAverageScore(klass, classActivities);
 
           return (
@@ -284,21 +311,23 @@ export default function StudentActivities({ klasses, filters, labels }) {
             }) ?? []
           }
           value={localFilters.subject}
-          onChange={(value) => handleFilterOnChange('subject', value)}
+          onChange={(value) => handleFilterOnChange("subject", value)}
           clearable={labels?.type?.clear}
         />
         <Select
           placeholder={labels?.type?.placeholder}
           data={roles}
           value={localFilters.type}
-          onChange={(value) => handleFilterOnChange('type', value)}
+          onChange={(value) => handleFilterOnChange("type", value)}
           clearable={labels?.type?.clear}
         />
         <Box className={classes.switchContainer}>
           <Switch
             label={labels?.seeNonCalificable}
             value={localFilters.seeNonCalificable}
-            onChange={(value) => handleFilterOnChange('seeNonCalificable', value)}
+            onChange={(value) =>
+              handleFilterOnChange("seeNonCalificable", value)
+            }
           />
         </Box>
       </Box>

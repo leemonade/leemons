@@ -1,7 +1,7 @@
-const { LeemonsError } = require('@leemons/error');
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsError } = require("@leemons/error");
+const { LeemonsValidator } = require("@leemons/validator");
 
-const { retakeSchema } = require('./schema');
+const { retakeSchema } = require("./schema");
 
 function validateRetake({ ctx, retake }) {
   const validator = new LeemonsValidator(retakeSchema);
@@ -10,7 +10,7 @@ function validateRetake({ ctx, retake }) {
     throw new LeemonsError(ctx, {
       message: validator.errorMessage,
       httpStatusCode: 400,
-      customCode: 'INVALID_RETAKE',
+      customCode: "INVALID_RETAKE",
     });
   }
 }

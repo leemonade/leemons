@@ -1,1 +1,1 @@
-export * from './CloseEvaluationModal';
+export * from "./CloseEvaluationModal";

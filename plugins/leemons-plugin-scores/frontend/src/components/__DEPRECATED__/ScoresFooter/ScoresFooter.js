@@ -1,16 +1,14 @@
-/* eslint-disable prettier/prettier */
-import React from 'react';
-import { Box, Button, createStyles, Tooltip } from '@bubbles-ui/components';
-import propTypes from 'prop-types';
-import { addAction, fireEvent, removeAction } from 'leemons-hooks';
-import { addErrorAlert } from '@layout/alert';
-import { useIsStudent } from '@academic-portfolio/hooks';
-import { DownloadIcon, ListEditIcon } from '@bubbles-ui/icons/outline';
+import { useIsStudent } from "@academic-portfolio/hooks";
+import { Box, Button, createStyles } from "@bubbles-ui/components";
+import { DownloadIcon, ListEditIcon } from "@bubbles-ui/icons/outline";
+import { addErrorAlert } from "@layout/alert";
+import { addAction, fireEvent, removeAction } from "@leemons/hooks";
+import propTypes from "prop-types";
 
 const useStyles = createStyles((theme, { isStudent }) => ({
   root: {
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
     gap: theme.spacing[2],
     // padding: isStudent ? '16px 48px' : `${theme.spacing[3]}px ${theme.spacing[5]}px`,
   },
@@ -27,11 +25,11 @@ const useStyles = createStyles((theme, { isStudent }) => ({
 
 export function onScoresDownload(extension) {
   let timer;
-  const downloadScoresError = 'scores::download-scores-error';
+  const downloadScoresError = "scores::download-scores-error";
   const onClearTimer = () => {
     clearTimeout(timer);
 
-    removeAction('scores::downloaded-intercepted', onClearTimer);
+    removeAction("scores::downloaded-intercepted", onClearTimer);
   };
 
   const onError = ({ args: [e] }) => {
@@ -40,12 +38,12 @@ export function onScoresDownload(extension) {
     removeAction(downloadScoresError, onError);
   };
 
-  addAction('scores::downloaded-intercepted', onClearTimer);
+  addAction("scores::downloaded-intercepted", onClearTimer);
   addAction(downloadScoresError, onError);
 
-  fireEvent('scores::download-scores', extension);
+  fireEvent("scores::download-scores", extension);
   timer = setTimeout(() => {
-    fireEvent(downloadScoresError, new Error('timeout'));
+    fireEvent(downloadScoresError, new Error("timeout"));
   }, 1000);
 }
 const ScoresFooter = ({
@@ -68,7 +66,7 @@ const ScoresFooter = ({
             size="sm"
             position="center"
             leftIcon={<DownloadIcon />}
-            onClick={() => onScoresDownload('xlsx')}
+            onClick={() => onScoresDownload("xlsx")}
           >
             Excel
           </Button>
@@ -77,14 +75,18 @@ const ScoresFooter = ({
             size="sm"
             position="center"
             leftIcon={<DownloadIcon />}
-            onClick={() => onScoresDownload('csv')}
+            onClick={() => onScoresDownload("csv")}
           >
             CSV
           </Button>
         </>
       )}
       {!!showEvaluationReport && (
-        <Button size="sm" rightIcon={<ListEditIcon />} onClick={showEvaluationReportModal}>
+        <Button
+          size="sm"
+          rightIcon={<ListEditIcon />}
+          onClick={showEvaluationReportModal}
+        >
           {evaluationReportLabels?.[evaluationType]?.label}
         </Button>
       )}

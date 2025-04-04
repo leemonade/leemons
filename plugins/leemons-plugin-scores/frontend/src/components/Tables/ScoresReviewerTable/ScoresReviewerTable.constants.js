@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const SCORES_REVIEWER_TABLE_VALUE = PropTypes.shape({
   id: PropTypes.string,

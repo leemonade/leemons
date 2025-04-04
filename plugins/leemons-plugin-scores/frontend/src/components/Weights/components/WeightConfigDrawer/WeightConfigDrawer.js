@@ -1,31 +1,38 @@
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm } from "react-hook-form";
 
-import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
-import { Drawer, Button } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { noop } from 'lodash';
-import PropTypes from 'prop-types';
+import getSubjectGroupCourseNamesFromClassData from "@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData";
+import { Drawer, Button } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { noop } from "lodash";
+import PropTypes from "prop-types";
 
-import Explanation from './components/Explanation';
-import PreWeightingAlerts from './components/PreWeightingAlerts';
-import SelectType from './components/SelectType';
-import Weighting from './components/Weighting';
-import useIsTotalValue100Percent from './hooks/useIsTotalValue100Percent';
-import useResetFormOnClassDataChange from './hooks/useResetFormOnClassDataChange';
+import Explanation from "./components/Explanation";
+import PreWeightingAlerts from "./components/PreWeightingAlerts";
+import SelectType from "./components/SelectType";
+import Weighting from "./components/Weighting";
+import useIsTotalValue100Percent from "./hooks/useIsTotalValue100Percent";
+import useResetFormOnClassDataChange from "./hooks/useResetFormOnClassDataChange";
 
-import { prefixPN } from '@scores/helpers';
-import useWeightMutation from '@scores/requests/hooks/mutations/useWeightMutation';
-import useWeights from '@scores/requests/hooks/queries/useWeights';
+import { prefixPN } from "@scores/helpers";
+import useWeightMutation from "@scores/requests/hooks/mutations/useWeightMutation";
+import useWeights from "@scores/requests/hooks/queries/useWeights";
 
 export default function WeightConfigDrawer({ class: klass, onClose = noop }) {
-  const [t] = useTranslateLoader(prefixPN('weightingDrawer'));
+  const [t] = useTranslateLoader(prefixPN("weightingDrawer"));
   const form = useForm();
 
-  const { data: weightValue, isLoading } = useWeights({ classId: klass?.id, enabled: !!klass?.id });
-  const { mutateAsync: setWeight, isLoading: isRunningMutation } = useWeightMutation();
+  const { data: weightValue, isLoading } = useWeights({
+    classId: klass?.id,
+    enabled: !!klass?.id,
+  });
+  const { mutateAsync: setWeight, isLoading: isRunningMutation } =
+    useWeightMutation();
 
-  const isTotalValue100Percent = useIsTotalValue100Percent({ control: form.control });
-  const { subject, courseAndGroupParsed } = getSubjectGroupCourseNamesFromClassData(klass);
+  const isTotalValue100Percent = useIsTotalValue100Percent({
+    control: form.control,
+  });
+  const { subject, courseAndGroupParsed } =
+    getSubjectGroupCourseNamesFromClassData(klass);
 
   const className = `${subject} - ${courseAndGroupParsed}`;
 
@@ -36,7 +43,7 @@ export default function WeightConfigDrawer({ class: klass, onClose = noop }) {
       type: data.type,
     };
 
-    if (data.type !== 'averages') {
+    if (data.type !== "averages") {
       dataToSend.weights = data.weights.weight;
       dataToSend.applySameValue = data.weights.applySameValue;
       dataToSend.explanation = data.explanation;
@@ -66,7 +73,7 @@ export default function WeightConfigDrawer({ class: klass, onClose = noop }) {
       <Drawer.Footer>
         <Drawer.Footer.LeftActions>
           <Button variant="link" onClick={onClose}>
-            {t('cancel')}
+            {t("cancel")}
           </Button>
         </Drawer.Footer.LeftActions>
         <Drawer.Footer.RightActions>
@@ -75,7 +82,7 @@ export default function WeightConfigDrawer({ class: klass, onClose = noop }) {
             loading={isRunningMutation}
             disabled={!isTotalValue100Percent}
           >
-            {t('save')}
+            {t("save")}
           </Button>
         </Drawer.Footer.RightActions>
       </Drawer.Footer>

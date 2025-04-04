@@ -1,13 +1,26 @@
-import { Controller, useFormContext, useWatch } from 'react-hook-form';
+import { Controller, useFormContext, useWatch } from "react-hook-form";
 
-import { Stack, Text, NumberInput, Box, useTheme } from '@bubbles-ui/components';
-import { UnlockIcon, LockIcon, AlertWarningTriangleIcon } from '@bubbles-ui/icons/solid';
-import { trimEnd } from 'lodash';
-import PropTypes from 'prop-types';
+import {
+  Stack,
+  Text,
+  NumberInput,
+  Box,
+  useTheme,
+} from "@bubbles-ui/components";
+import {
+  UnlockIcon,
+  LockIcon,
+  AlertWarningTriangleIcon,
+} from "@bubbles-ui/icons/solid";
+import { trimEnd } from "lodash";
+import PropTypes from "prop-types";
 
 function useIsNew({ isNew, id }) {
   const form = useFormContext();
-  const weight = useWatch({ name: `weights.${id}.weight`, control: form.control });
+  const weight = useWatch({
+    name: `weights.${id}.weight`,
+    control: form.control,
+  });
 
   const { touchedFields } = form.formState;
   const isTouched = touchedFields?.weights?.[id]?.weight;
@@ -24,7 +37,10 @@ export default function WeightRenderer({
   const theme = useTheme();
 
   const form = useFormContext();
-  const isLocked = useWatch({ name: `weights.${id}.isLocked`, control: form.control });
+  const isLocked = useWatch({
+    name: `weights.${id}.isLocked`,
+    control: form.control,
+  });
 
   const isNew = useIsNew({ isNew: _isNew, id });
 
@@ -49,14 +65,14 @@ export default function WeightRenderer({
                 <LockIcon
                   width={18}
                   height={18}
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: "pointer" }}
                   onClick={() => onChange(false)}
                 />
               ) : (
                 <UnlockIcon
                   width={18}
                   height={18}
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: "pointer" }}
                   onClick={() => onChange(true)}
                 />
               )
@@ -73,14 +89,17 @@ export default function WeightRenderer({
               sx={{
                 width: 85,
                 height: 40,
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
               }}
             >
               <Text>
                 {((field.value ?? 0) * 100).toFixed(
-                  trimEnd(((field.value ?? 0) * 100).toString().split('.')[1] || '', '0').length
+                  trimEnd(
+                    ((field.value ?? 0) * 100).toString().split(".")[1] || "",
+                    "0"
+                  ).length
                 )}
                 %
               </Text>
@@ -94,30 +113,37 @@ export default function WeightRenderer({
               rightIcon="%"
               formatter={(userInput) => {
                 let _value = userInput;
-                const precision = trimEnd(_value.toString().split('.')[1] || '', '0').length;
+                const precision = trimEnd(
+                  _value.toString().split(".")[1] || "",
+                  "0"
+                ).length;
 
-                if (_value.endsWith('.')) {
+                if (_value.endsWith(".")) {
                   return `% ${_value}`;
                 }
 
-                if (_value.startsWith('0') && !_value.startsWith('0.')) {
-                  _value = _value.replace('^0', '');
+                if (_value.startsWith("0") && !_value.startsWith("0.")) {
+                  _value = _value.replace("^0", "");
                 }
 
                 return `% ${(_value * 1 || 0).toFixed(precision)}`;
               }}
-              parser={(_value) => _value.replace(/[% ]/g, '').replace(/,/g, '.').trim()}
+              parser={(_value) =>
+                _value.replace(/[% ]/g, "").replace(/,/g, ".").trim()
+              }
               precision={2}
               styles={{
                 input: {
-                  paddingRight: '8px !important',
-                  textAlign: 'center',
-                  width: '100%',
+                  paddingRight: "8px !important",
+                  textAlign: "center",
+                  width: "100%",
                 },
               }}
               sx={{ width: 85 }}
               value={(field.value ?? 0) * 100}
-              onChange={(_value) => field.onChange(Number(((_value ?? 0) / 100).toFixed(4)))}
+              onChange={(_value) =>
+                field.onChange(Number(((_value ?? 0) / 100).toFixed(4)))
+              }
             />
           )
         }

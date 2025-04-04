@@ -1,4 +1,4 @@
-import { cellToIndexes } from '../cellPositioning';
+import { cellToIndexes } from "../cellPositioning";
 
 /**
  *
@@ -6,7 +6,12 @@ import { cellToIndexes } from '../cellPositioning';
  * @param {*} array
  * @param {*} initialPosition
  */
-export default function arrayToContent({ ws, array, initialPosition, getStyle }) {
+export default function arrayToContent({
+  ws,
+  array,
+  initialPosition,
+  getStyle,
+}) {
   const { columnIndex, row } = cellToIndexes(initialPosition);
 
   const rowLength = array.length;
@@ -17,7 +22,7 @@ export default function arrayToContent({ ws, array, initialPosition, getStyle })
       const cell = ws.getCell(row + i, columnIndex + j);
       cell.value = array[i][j];
 
-      if (typeof getStyle === 'function') {
+      if (typeof getStyle === "function") {
         getStyle(cell, {
           col: columnIndex + j,
           row: row + i,
@@ -28,7 +33,10 @@ export default function arrayToContent({ ws, array, initialPosition, getStyle })
     }
   }
 
-  const lastCell = ws.getCell(row + rowLength - 1, columnIndex + columnLength - 1);
+  const lastCell = ws.getCell(
+    row + rowLength - 1,
+    columnIndex + columnLength - 1
+  );
 
   return {
     initialPosition,

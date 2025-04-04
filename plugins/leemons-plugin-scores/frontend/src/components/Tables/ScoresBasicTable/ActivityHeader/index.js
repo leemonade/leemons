@@ -1,1 +1,1 @@
-export * from './ActivityHeader';
+export * from "./ActivityHeader";

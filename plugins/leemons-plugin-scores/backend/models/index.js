@@ -1,15 +1,15 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('@leemons/mongodb-helpers');
+const { getKeyValueModel } = require("@leemons/mongodb-helpers");
 
 const models = {
-  ...require('./periods'),
-  ...require('./scores'),
-  ...require('./weights'),
-  ...require('./manualActivities'),
-  ...require('./manualActivityScores'),
-  ...require('./retakes'),
-  ...require('./retakeScores'),
+  ...require("./periods"),
+  ...require("./scores"),
+  ...require("./weights"),
+  ...require("./manualActivities"),
+  ...require("./manualActivityScores"),
+  ...require("./retakes"),
+  ...require("./retakeScores"),
 };
 
 module.exports = {
@@ -23,7 +23,7 @@ module.exports = {
       ManualActivityScores: models.manualActivityScoresModel,
       Retakes: models.retakesModel,
       RetakeScores: models.retakeScoresModel,
-      KeyValue: getKeyValueModel({ modelName: 'v1::scores_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: "v1::scores_KeyValue" }),
     };
   },
 };

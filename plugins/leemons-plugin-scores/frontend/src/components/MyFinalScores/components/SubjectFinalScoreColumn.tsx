@@ -1,19 +1,19 @@
-import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
-import { Box, Stack, LoadingOverlay } from '@bubbles-ui/components';
-import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
-import useProgramEvaluationSystems from '@grades/hooks/queries/useProgramEvaluationSystem';
+import { Box, Stack, LoadingOverlay } from "@bubbles-ui/components";
+import { ExpandDiagonalIcon } from "@bubbles-ui/icons/outline";
+import useProgramEvaluationSystems from "@grades/hooks/queries/useProgramEvaluationSystem";
 
-import { useSubstages } from '../hooks/useSubstages';
-import { Class } from '../types/class';
+import { useSubstages } from "../hooks/useSubstages";
+import { Class } from "../types/class";
 
-import { EvaluationScoreDisplay } from './EvaluationScoreDisplay';
-import { FinalScoreTotal } from './FinalScoreTotal';
+import { EvaluationScoreDisplay } from "./EvaluationScoreDisplay";
+import { FinalScoreTotal } from "./FinalScoreTotal";
 
-import useSubjectScoreColumnStyles from '@scores/components/MyScores/components/SubjectsScoreList/components/SubjectScoreColumn/SubjectsScoreColumn.styles';
-import Header from '@scores/components/MyScores/components/SubjectsScoreList/components/SubjectScoreColumn/components/Header';
-import useMyScoresStore from '@scores/stores/myScoresStore';
+import useSubjectScoreColumnStyles from "@scores/components/MyScores/components/SubjectsScoreList/components/SubjectScoreColumn/SubjectsScoreColumn.styles";
+import Header from "@scores/components/MyScores/components/SubjectsScoreList/components/SubjectScoreColumn/components/Header";
+import useMyScoresStore from "@scores/stores/myScoresStore";
 
 interface Props {
   classData: Class;
@@ -34,7 +34,10 @@ export function SubjectFinalScoreColumn({ classData }: Props) {
     }
   }, [addColumn, removeColumn, classData.id, substages]);
 
-  useEffect(() => () => removeColumn(classData.id), [removeColumn, classData.id]);
+  useEffect(
+    () => () => removeColumn(classData.id),
+    [removeColumn, classData.id]
+  );
 
   const { data: evaluationSystem, isLoading: evaluationSystemLoading } =
     useProgramEvaluationSystems({ program: classData.program.id });
@@ -51,7 +54,10 @@ export function SubjectFinalScoreColumn({ classData }: Props) {
 
   return (
     <Stack className={classes.root} direction="column" spacing={4}>
-      <Link className={classes.opener} to={`/private/dashboard/class/${classData.id}`}>
+      <Link
+        className={classes.opener}
+        to={`/private/dashboard/class/${classData.id}`}
+      >
         <ExpandDiagonalIcon width={18} height={18} color="#2F463F" />
       </Link>
       <Box>

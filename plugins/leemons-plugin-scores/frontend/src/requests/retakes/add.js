@@ -9,7 +9,7 @@ export async function addRetake(retake) {
   const { data: createdRetake } = await leemons.api(
     `v1/scores/retakes/${retake.classId}/${retake.period}`,
     {
-      method: 'POST',
+      method: "POST",
     }
   );
 

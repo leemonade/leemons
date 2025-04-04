@@ -5,23 +5,32 @@ function convertObjectToURLQuery(query) {
         return `${key}=${JSON.stringify(value)}`;
       }
 
-      if (typeof value === 'boolean') {
+      if (typeof value === "boolean") {
         return `${key}=${value}`;
       }
 
       return null;
     })
     .filter(Boolean)
-    .join('&');
+    .join("&");
 }
 
-export default async function getScores({ students, classes, gradedBy, periods, published } = {}) {
+export default async function getScores({
+  students,
+  classes,
+  gradedBy,
+  periods,
+  published,
+} = {}) {
   const query = { students, classes, gradedBy, periods, published };
 
   try {
-    const response = await leemons.api(`v1/scores/scores?${convertObjectToURLQuery(query)}`, {
-      method: 'GET',
-    });
+    const response = await leemons.api(
+      `v1/scores/scores?${convertObjectToURLQuery(query)}`,
+      {
+        method: "GET",
+      }
+    );
 
     return response?.scores;
   } catch (e) {

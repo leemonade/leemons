@@ -8,8 +8,8 @@
  * @param {string} manualActivity.classId - The class ID in LRN format
  */
 export async function createManualActivity(manualActivity) {
-  const { id } = await leemons.api('v1/scores/manualActivities', {
-    method: 'POST',
+  const { id } = await leemons.api("v1/scores/manualActivities", {
+    method: "POST",
     body: { manualActivity },
   });
 

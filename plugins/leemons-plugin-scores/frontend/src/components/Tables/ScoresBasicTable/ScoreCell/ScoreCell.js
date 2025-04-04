@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useState } from 'react';
+import { forwardRef, useEffect, useState } from "react";
 
 import {
   Box,
@@ -7,13 +7,13 @@ import {
   IconButton,
   useClickOutside,
   NumberInput,
-} from '@bubbles-ui/components';
-import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
-import { isFunction, isNil } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { ExpandDiagonalIcon } from "@bubbles-ui/icons/outline";
+import { isFunction, isNil } from "lodash";
+import PropTypes from "prop-types";
 
-import { SCORES_CELL_DEFAULT_PROPS } from './ScoreCell.constants';
-import { ScoreCellStyles } from './ScoreCell.styles';
+import { SCORES_CELL_DEFAULT_PROPS } from "./ScoreCell.constants";
+import { ScoreCellStyles } from "./ScoreCell.styles";
 
 const SelectScore = forwardRef(({ value, onChange, onClose, grades }, ref) => {
   const isLetterTypes = grades.some((grade) => grade.letter);
@@ -38,7 +38,10 @@ const SelectScore = forwardRef(({ value, onChange, onClose, grades }, ref) => {
       value={value}
       onChange={(_value) =>
         onChange(
-          Math.max(grades[0].number, Math.min(grades[grades.length - 1].number, _value ?? null))
+          Math.max(
+            grades[0].number,
+            Math.min(grades[grades.length - 1].number, _value ?? null)
+          )
         )
       }
       onBlur={onClose}
@@ -52,7 +55,7 @@ const SelectScore = forwardRef(({ value, onChange, onClose, grades }, ref) => {
   );
 });
 
-SelectScore.displayName = 'SelectScore';
+SelectScore.displayName = "SelectScore";
 SelectScore.propTypes = {
   value: PropTypes.number,
   onChange: PropTypes.func,
@@ -82,7 +85,7 @@ const ScoreCell = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value ?? null); // Before the grade[0].number was used if the value is undefined
 
-  const isAssignable = source === 'assignables';
+  const isAssignable = source === "assignables";
 
   useEffect(() => {
     if (value !== editValue) {
@@ -92,9 +95,11 @@ const ScoreCell = ({
 
   const useNumbers = !grades.some((grade) => grade.letter);
   const [inputContainer, setInputContainer] = useState();
-  const selectRef = useClickOutside(() => setTimeout(() => setIsEditing(false), 100), null, [
-    inputContainer,
-  ]);
+  const selectRef = useClickOutside(
+    () => setTimeout(() => setIsEditing(false), 100),
+    null,
+    [inputContainer]
+  );
 
   const renderValue = (_value) => {
     const hasGrade = _value !== undefined && _value !== null;
@@ -102,7 +107,7 @@ const ScoreCell = ({
     // Use minimum grade if no grade and the activity is not submitted and is closed
     if (!hasGrade && !isSubmitted && isClosed) {
       return `${grades[0].letter ?? grades[0].number}${
-        usePercentage ? '%' : ''
+        usePercentage ? "%" : ""
       } (${noActivityLabel})`;
     }
 
@@ -116,22 +121,24 @@ const ScoreCell = ({
     }
 
     if (!hasGrade) {
-      return '-';
+      return "-";
     }
 
     let render = _value;
 
-    if (typeof _value !== 'string') {
+    if (typeof _value !== "string") {
       render = _value % 1 === 0 ? _value : _value.toFixed(2);
     }
 
     if (!isSubmitted) {
-      return `${render}${usePercentage ? '%' : ''} (${noActivityLabel})`;
+      return `${render}${usePercentage ? "%" : ""} (${noActivityLabel})`;
     }
 
-    const retakeRender = !isNil(retake) ? ` (${labels.retake} ${retake + 1})` : '';
+    const retakeRender = !isNil(retake)
+      ? ` (${labels.retake} ${retake + 1})`
+      : "";
 
-    return `${render}${usePercentage ? '%' : ''}${retakeRender}`;
+    return `${render}${usePercentage ? "%" : ""}${retakeRender}`;
   };
 
   const onClickHandler = () => {
@@ -166,7 +173,8 @@ const ScoreCell = ({
             return { ...student, activities: newStudentActivities };
           })
         );
-      isFunction(onDataChange) && onDataChange({ rowId, columnId, value: score });
+      isFunction(onDataChange) &&
+        onDataChange({ rowId, columnId, value: score });
     }
 
     setIsEditing(false);
@@ -182,7 +190,11 @@ const ScoreCell = ({
     }
 
     return (
-      <Box className={classes.inputContainer} ref={setInputContainer} onClick={onClickHandler}>
+      <Box
+        className={classes.inputContainer}
+        ref={setInputContainer}
+        onClick={onClickHandler}
+      >
         <Box className={classes.score}>
           {!!allowChange && !!isEditing && (
             <SelectScore
@@ -196,7 +208,11 @@ const ScoreCell = ({
             />
           )}
           {(!isEditing || !allowChange) && (
-            <Text color={isSubmitted ? 'primary' : 'error'} role="productive" style={{ flex: 1 }}>
+            <Text
+              color={isSubmitted ? "primary" : "error"}
+              role="productive"
+              style={{ flex: 1 }}
+            >
               {renderValue(value)}
             </Text>
           )}
@@ -218,7 +234,10 @@ const ScoreCell = ({
     if (selectRef.current) selectRef.current.click();
   }, [isEditing, selectRef]);
 
-  const { classes } = ScoreCellStyles({ isEditing, allowChange }, { name: 'ScoreCell' });
+  const { classes } = ScoreCellStyles(
+    { isEditing, allowChange },
+    { name: "ScoreCell" }
+  );
   return <Box className={classes.root}>{renderInputCell()}</Box>;
 };
 

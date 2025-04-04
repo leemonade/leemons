@@ -1,9 +1,9 @@
-import { Box, createStyles, Text } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+import { Box, createStyles, Text } from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
-import { getActivitiesPeriod } from '../../../helpers/getActivitiesPeriod';
+import { getActivitiesPeriod } from "../../../helpers/getActivitiesPeriod";
 
-import ColumnHeader from './ColumnHeader';
+import ColumnHeader from "./ColumnHeader";
 
 const useRightContentHeaderStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
@@ -11,43 +11,51 @@ const useRightContentHeaderStyles = createStyles((theme) => {
   return {
     root: {
       height: 120,
-      borderBottom: '2px solid #F2F2F2',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'space-around',
+      borderBottom: "2px solid #F2F2F2",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "space-around",
       paddingTop: globalTheme.spacing.padding.xlslg,
       paddingLeft: globalTheme.spacing.padding.xsm,
       paddingRight: globalTheme.spacing.padding.xsm,
     },
     topPart: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
       gap: globalTheme.spacing.gap.sm,
     },
     bottomPart: {
-      display: 'flex',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
       gap: globalTheme.spacing.gap.sm,
-      minWidth: '100%',
-      '> *': {
+      minWidth: "100%",
+      "> *": {
         flex: 1,
-        textAlign: 'center',
+        textAlign: "center",
       },
     },
   };
 });
 
-export function RightContentHeader({ labels, periodName, from, to, locale, hideCustom, retakes }) {
+export function RightContentHeader({
+  labels,
+  periodName,
+  from,
+  to,
+  locale,
+  hideCustom,
+  retakes,
+}) {
   const onlyShowRetakes = retakes?.length === 1;
 
   const { classes } = useRightContentHeaderStyles(
     {},
-    { name: 'ScoresBasicTableRightContentHeader' }
+    { name: "ScoresBasicTableRightContentHeader" }
   );
 
   return (
@@ -66,10 +74,16 @@ export function RightContentHeader({ labels, periodName, from, to, locale, hideC
           retakes.map((retake) => (
             <ColumnHeader
               key={retake.id}
-              label={onlyShowRetakes ? labels.customScore : `${labels.retake} ${retake.index + 1}`}
+              label={
+                onlyShowRetakes
+                  ? labels.customScore
+                  : `${labels.retake} ${retake.index + 1}`
+              }
             />
           ))}
-        {!hideCustom && !onlyShowRetakes && <ColumnHeader label={labels.customScore} big />}
+        {!hideCustom && !onlyShowRetakes && (
+          <ColumnHeader label={labels.customScore} big />
+        )}
       </Box>
     </Box>
   );

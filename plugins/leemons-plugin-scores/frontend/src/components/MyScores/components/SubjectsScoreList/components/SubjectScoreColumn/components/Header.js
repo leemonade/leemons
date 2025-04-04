@@ -1,5 +1,4 @@
-
-import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
+import { getClassIcon } from "@academic-portfolio/helpers/getClassIcon";
 import {
   ImageLoader,
   Stack,
@@ -7,11 +6,11 @@ import {
   TextClamp,
   Tooltip,
   AvatarSubject,
-} from '@bubbles-ui/components';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import prepareAsset from "@leebrary/helpers/prepareAsset";
+import PropTypes from "prop-types";
 
-import WeightTypeBadge from '@scores/components/EvaluationNotebook/ScoresTable/components/WeightTypeBadge';
+import WeightTypeBadge from "@scores/components/EvaluationNotebook/ScoresTable/components/WeightTypeBadge";
 
 export default function Header({ class: klass, weights }) {
   const { subject, groups } = klass;
@@ -19,7 +18,13 @@ export default function Header({ class: klass, weights }) {
   const subjectImage = prepareAsset(subject.image).cover;
   const className = groups ? `${subject.name} (${groups.name})` : subject.name;
   return (
-    <Stack direction="column" spacing={2} justifyContent="center" alignItems="center" fullWidth>
+    <Stack
+      direction="column"
+      spacing={2}
+      justifyContent="center"
+      alignItems="center"
+      fullWidth
+    >
       {subjectImage ? (
         <ImageLoader src={subjectImage} height={56} width={56} radius="50%" />
       ) : (
@@ -28,7 +33,7 @@ export default function Header({ class: klass, weights }) {
           color={klass.subject.color}
           icon={getClassIcon(klass)}
           size="xlg"
-          style={{ transform: 'scale(1.15)' }}
+          style={{ transform: "scale(1.15)" }}
         />
       )}
       <TextClamp lines={2}>

@@ -1,6 +1,6 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
-const validateRetakeScore = require('../validations/validateRetakeScore');
+const validateRetakeScore = require("../validations/validateRetakeScore");
 
 async function validateRetakeReference({
   retakeScore: { class: classId, period, retakeIndex: index, retakeId: id },
@@ -26,8 +26,9 @@ async function setRetakeScore({ retakeScore, ctx }) {
   if (!(await validateRetakeReference({ retakeScore, ctx }))) {
     throw new LeemonsError(ctx, {
       httpStatusCode: 400,
-      code: 'INVALID_RETAKE_REFERENCE',
-      message: 'Invalid retake reference, the retake index and id must match the same retake',
+      code: "INVALID_RETAKE_REFERENCE",
+      message:
+        "Invalid retake reference, the retake index and id must match the same retake",
     });
   }
 
@@ -36,7 +37,13 @@ async function setRetakeScore({ retakeScore, ctx }) {
   const { retakeId, retakeIndex, class: classId, period, user } = retakeScore;
 
   const response = await ctx.tx.db.RetakeScores.updateOne(
-    { class: classId, period, user, retakeIndex, $or: [{ retakeId: null }, { retakeId }] },
+    {
+      class: classId,
+      period,
+      user,
+      retakeIndex,
+      $or: [{ retakeId: null }, { retakeId }],
+    },
     { $set: { ...retakeScore, gradedBy: userAgentId } },
     {
       upsert: true,

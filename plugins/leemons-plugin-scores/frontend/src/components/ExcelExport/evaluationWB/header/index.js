@@ -1,2 +1,2 @@
-export { getStyle } from './style';
-export { default as writeHeader } from './writeHeader';
+export { getStyle } from "./style";
+export { default as writeHeader } from "./writeHeader";

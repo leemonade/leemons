@@ -1,18 +1,21 @@
-import React from 'react';
-import _ from 'lodash';
-import { useCache } from '@common';
-import { useAcademicCalendarConfig } from '@academic-calendar/hooks';
-import { useProgramDetail } from '@academic-portfolio/hooks';
+import React from "react";
+import _ from "lodash";
+import { useCache } from "@common";
+import { useAcademicCalendarConfig } from "@academic-calendar/hooks";
+import { useProgramDetail } from "@academic-portfolio/hooks";
 
 export function useAcademicCalendarPeriods({ classes }) {
   const cache = useCache();
-  const programsIds = React.useMemo(() => _.uniq(_.map(classes, 'program')), [classes]);
+  const programsIds = React.useMemo(
+    () => _.uniq(_.map(classes, "program")),
+    [classes]
+  );
 
   const programsQueries = useProgramDetail(programsIds);
   const configQueries = useAcademicCalendarConfig(programsIds);
 
   const programs = React.useMemo(
-    () => cache('programs', _.map(programsQueries, 'data').filter(Boolean)),
+    () => cache("programs", _.map(programsQueries, "data").filter(Boolean)),
     [programsQueries]
   );
 
@@ -47,7 +50,11 @@ export function useAcademicCalendarPeriods({ classes }) {
   );
 
   const configs = React.useMemo(
-    () => cache('config', _.map(configQueries, 'data.substagesDates').filter(Boolean)),
+    () =>
+      cache(
+        "config",
+        _.map(configQueries, "data.substagesDates").filter(Boolean)
+      ),
     [configQueries]
   );
 
@@ -80,16 +87,16 @@ export function useAcademicCalendarPeriods({ classes }) {
   );
 
   return React.useMemo(() => {
-    const ids = _.map(formattedPeriods, 'id');
+    const ids = _.map(formattedPeriods, "id");
 
     return _.uniq(ids).map((id) => {
       const equalPeriods = formattedPeriods.filter((p) => p.id === id);
       const firstEqualPeriod = equalPeriods[0];
 
       return {
-        ..._.omit(firstEqualPeriod, ['program', 'course', 'periodId']),
-        programs: _.uniq(_.map(equalPeriods, 'program')),
-        courses: _.uniq(_.map(equalPeriods, 'course')),
+        ..._.omit(firstEqualPeriod, ["program", "course", "periodId"]),
+        programs: _.uniq(_.map(equalPeriods, "program")),
+        courses: _.uniq(_.map(equalPeriods, "course")),
         periods: equalPeriods.reduce(
           (result, period) => ({
             ...result,

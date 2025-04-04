@@ -1,25 +1,25 @@
-import React, { useRef } from 'react';
-import Notebook from '@scores/components/__DEPRECATED__/Notebook';
+import React, { useRef } from "react";
+import Notebook from "@scores/components/__DEPRECATED__/Notebook";
 import {
   Box,
   createStyles,
   TotalLayoutContainer,
   Stack,
   TotalLayoutStepContainer,
-} from '@bubbles-ui/components';
-import { Filters } from '../../components/__DEPRECATED__/StudentScoresPage/Filters';
-import { Header } from '../../components/__DEPRECATED__/StudentScoresPage/Header';
+} from "@bubbles-ui/components";
+import { Filters } from "../../components/__DEPRECATED__/StudentScoresPage/Filters";
+import { Header } from "../../components/__DEPRECATED__/StudentScoresPage/Header";
 
 const useStyles = createStyles((theme) => ({
   root: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     gap: theme.spacing[5],
-    height: '100%',
+    height: "100%",
   },
   headerContainer: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     gap: theme.spacing[5],
   },
 }));
@@ -43,7 +43,7 @@ export default function ScoresPage() {
       <Stack
         justifyContent="center"
         ref={scrollRef}
-        style={{ overflow: 'auto', position: 'relative' }}
+        style={{ overflow: "auto", position: "relative" }}
       >
         <TotalLayoutStepContainer fullWidth>
           <Box className={classes.root}>

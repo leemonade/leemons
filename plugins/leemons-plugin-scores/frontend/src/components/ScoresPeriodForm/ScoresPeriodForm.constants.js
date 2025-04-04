@@ -1,33 +1,39 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const SCORES_PERIOD_FORM_DEFAULT_PROPS = {
   labels: {
-    startDate: '',
-    endDate: '',
-    submit: '',
-    newPeriod: '',
-    addPeriod: '',
-    shareWithTeachers: '',
-    saveButton: '',
+    startDate: "",
+    endDate: "",
+    submit: "",
+    newPeriod: "",
+    addPeriod: "",
+    shareWithTeachers: "",
+    saveButton: "",
   },
   errorMessages: {
-    startDate: '',
-    endDate: '',
-    validateStartDate: '',
-    validateEndDate: '',
+    startDate: "",
+    endDate: "",
+    validateStartDate: "",
+    validateEndDate: "",
   },
   fields: [],
   allowCreate: false,
   periods: [],
-  locale: 'en-US',
+  locale: "en-US",
 };
 export const SCORES_PERIOD_FORM_PROP_TYPES = {
   value: PropTypes.shape({
     program: PropTypes.any,
     course: PropTypes.any,
     subject: PropTypes.any,
-    startDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
-    endDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
+    startDate: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.instanceOf(Date),
+    ]),
+    endDate: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.instanceOf(Date),
+    ]),
   }),
   fields: PropTypes.arrayOf(
     PropTypes.shape({
@@ -59,8 +65,14 @@ export const SCORES_PERIOD_FORM_PROP_TYPES = {
   periods: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string,
-      startDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
-      endDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
+      startDate: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.instanceOf(Date),
+      ]),
+      endDate: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.instanceOf(Date),
+      ]),
       name: PropTypes.string,
     })
   ),
@@ -71,8 +83,14 @@ export const PERIODS_PROP_TYPES = {
   periods: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string,
-      startDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
-      endDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
+      startDate: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.instanceOf(Date),
+      ]),
+      endDate: PropTypes.oneOfType([
+        PropTypes.string,
+        PropTypes.instanceOf(Date),
+      ]),
       name: PropTypes.string,
     })
   ),

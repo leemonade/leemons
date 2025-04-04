@@ -1,10 +1,10 @@
-import React from 'react';
-import { useWatch } from 'react-hook-form';
+import React from "react";
+import { useWatch } from "react-hook-form";
 
 export default function useSelectedClass({ classes, control, classID }) {
   const selectedClass = useWatch({
     control,
-    name: 'class',
+    name: "class",
     defaultValue: null,
   });
 

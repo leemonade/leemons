@@ -1,34 +1,34 @@
-import { useProgramDetail } from '@academic-portfolio/hooks';
-import useProgramClasses from '@academic-portfolio/hooks/useProgramClasses';
-import { Box, createStyles, Select } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@scores/helpers';
-import { getSessionConfig } from '@users/session';
-import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
-import { useMatchingAcademicCalendarPeriods } from '../FinalNotebook/FinalScores';
-import useSelectedPeriod from '../ScoresPage/Filters/hooks/useSelectedPeriod';
-import PickDate from '../ScoresPage/Filters/components/PickDate';
-import useAcademicCalendarDates from '../ScoresPage/Filters/hooks/useAcademicCalendarDates';
-import SelectPeriod from '../ScoresPage/Filters/components/SelectPeriod';
+import { useProgramDetail } from "@academic-portfolio/hooks";
+import useProgramClasses from "@academic-portfolio/hooks/useProgramClasses";
+import { Box, createStyles, Select } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { prefixPN } from "@scores/helpers";
+import { getSessionConfig } from "@users/session";
+import React from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useMatchingAcademicCalendarPeriods } from "../FinalNotebook/FinalScores";
+import useSelectedPeriod from "../ScoresPage/Filters/hooks/useSelectedPeriod";
+import PickDate from "../ScoresPage/Filters/components/PickDate";
+import useAcademicCalendarDates from "../ScoresPage/Filters/hooks/useAcademicCalendarDates";
+import SelectPeriod from "../ScoresPage/Filters/components/SelectPeriod";
 
 const useFiltersStyles = createStyles((theme) => ({
   root: {
     paddingInline: 48,
   },
   inputsContainer: {
-    display: 'flex',
-    flexDirection: 'row',
+    display: "flex",
+    flexDirection: "row",
     gap: theme.spacing[5],
   },
   inputs: {
-    display: 'flex',
-    flexDirection: 'row',
+    display: "flex",
+    flexDirection: "row",
     marginTop: theme.spacing[1],
     gap: theme.spacing[5],
-    alignItems: 'center',
+    alignItems: "center",
     minWidth: 200,
-    '& > *': {
+    "& > *": {
       flexGrow: 1,
     },
   },
@@ -36,22 +36,28 @@ const useFiltersStyles = createStyles((theme) => ({
 
 export function Filters({ onChange, setKlasses }) {
   const { classes } = useFiltersStyles();
-  const [t] = useTranslateLoader(prefixPN('studentScoresPage.filters'));
+  const [t] = useTranslateLoader(prefixPN("studentScoresPage.filters"));
   const { program } = getSessionConfig();
   const { data: programDetails } = useProgramDetail(program, {
     enabled: !!program,
   });
-  const { data: classesData } = useProgramClasses(program, { enabled: !!program });
+  const { data: classesData } = useProgramClasses(program, {
+    enabled: !!program,
+  });
 
   const courses = React.useMemo(
-    () => programDetails?.courses.map((course) => ({ value: course.id, label: course.name })),
+    () =>
+      programDetails?.courses.map((course) => ({
+        value: course.id,
+        label: course.name,
+      })),
     [programDetails]
   );
 
   const form = useForm({});
   const { control, watch } = form;
 
-  const selectedCourse = watch('class');
+  const selectedCourse = watch("class");
 
   const { periods } = useMatchingAcademicCalendarPeriods({
     classes: classesData,
@@ -62,7 +68,7 @@ export function Filters({ onChange, setKlasses }) {
     control,
     program,
     selectedCourse,
-    finalLabel: t('period.final'),
+    finalLabel: t("period.final"),
   });
 
   const { startDate, endDate } = useAcademicCalendarDates({
@@ -116,7 +122,7 @@ export function Filters({ onChange, setKlasses }) {
 
               return (
                 <Select
-                  placeholder={t('course.placeholder')}
+                  placeholder={t("course.placeholder")}
                   data={courses}
                   autoSelectOneOption
                   {...field}
@@ -129,11 +135,16 @@ export function Filters({ onChange, setKlasses }) {
             control={control}
             name="period"
             render={({ field }) => (
-              <SelectPeriod {...field} periods={periods} t={t} disabled={!selectedCourse} />
+              <SelectPeriod
+                {...field}
+                periods={periods}
+                t={t}
+                disabled={!selectedCourse}
+              />
             )}
           />
         </Box>
-        {selectedPeriod.selected === 'custom' &&
+        {selectedPeriod.selected === "custom" &&
           startDate !== undefined &&
           endDate !== undefined && (
             <Box className={classes.inputs}>

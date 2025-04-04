@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const ACTIVIY_HEADER_DEFAULT_PROPS = {};
 export const ACTIVIY_HEADER_PROP_TYPES = {

@@ -1,15 +1,19 @@
-import { useQuery } from '@tanstack/react-query';
-import getWeights from '@scores/requests/weights/getWeights';
-import { useVariantForQueryKey } from '@common/queries';
-import useUserAgents from '@users/hooks/useUserAgents';
-import { getWeightsKey } from '../keys/weights';
+import { useQuery } from "@tanstack/react-query";
+import getWeights from "@scores/requests/weights/getWeights";
+import { useVariantForQueryKey } from "@common/queries";
+import useUserAgents from "@users/hooks/useUserAgents";
+import { getWeightsKey } from "../keys/weights";
 
 export default function useWeights({ classId, classIds, ...options }) {
   const userAgents = useUserAgents();
-  const queryKey = getWeightsKey({ class: classId, classes: classIds, userAgents });
+  const queryKey = getWeightsKey({
+    class: classId,
+    classes: classIds,
+    userAgents,
+  });
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'occasionally',
+    modificationTrend: "occasionally",
   });
 
   const queryFn = async () => {
@@ -19,7 +23,7 @@ export default function useWeights({ classId, classIds, ...options }) {
       weights = [weights];
     }
 
-    return classId ? weights[0] ?? null : weights;
+    return classId ? (weights[0] ?? null) : weights;
   };
 
   return useQuery({
