@@ -1,23 +1,23 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Box, createStyles, Stack, Text } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@common/helpers/prefixPN';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { Box, createStyles, Stack, Text } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@common/helpers/prefixPN";
 
 const useStyles = createStyles((theme) => ({
   root: {
-    padding: '70px 56px',
+    padding: "70px 56px",
     backgroundColor: theme.other.global.background.color.surface.muted,
     borderRadius: theme.other.global.border.radius.md,
   },
   text: {
     ...theme.other.cardAssignments.content.typo.md,
-    color: '#5D6A6C',
+    color: "#5D6A6C",
   },
 }));
 
 function ErrorBoundaryMessage({ className }) {
-  const [t] = useTranslateLoader(prefixPN('errorBoundaryMessage'));
+  const [t] = useTranslateLoader(prefixPN("errorBoundaryMessage"));
   const { classes } = useStyles();
 
   return (

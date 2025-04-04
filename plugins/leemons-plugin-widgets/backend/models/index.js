@@ -1,11 +1,11 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('@leemons/mongodb-helpers');
+const { getKeyValueModel } = require("@leemons/mongodb-helpers");
 
 const models = {
-  ...require('./widgetItem'),
-  ...require('./widgetItemProfiles'),
-  ...require('./widgetZone'),
+  ...require("./widgetItem"),
+  ...require("./widgetItemProfiles"),
+  ...require("./widgetZone"),
 };
 
 module.exports = {
@@ -15,7 +15,7 @@ module.exports = {
       WidgetItem: models.widgetItemModel,
       WidgetItemProfiles: models.widgetItemProfilesModel,
       WidgetZone: models.widgetZoneModel,
-      KeyValue: getKeyValueModel({ modelName: 'v1::widgets_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: "v1::widgets_KeyValue" }),
     };
   },
 };

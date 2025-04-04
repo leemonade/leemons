@@ -1,8 +1,18 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { validatePrefix } = require('../validation/validate');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { validatePrefix } = require("../validation/validate");
 
-async function update({ zoneKey, key, url, name, description, properties, path, profiles, ctx }) {
+async function update({
+  zoneKey,
+  key,
+  url,
+  name,
+  description,
+  properties,
+  path,
+  profiles,
+  ctx,
+}) {
   validatePrefix({ type: key, calledFrom: ctx.callerPlugin, ctx });
 
   const toUpdate = {
@@ -12,17 +22,23 @@ async function update({ zoneKey, key, url, name, description, properties, path, 
   if (!_.isUndefined(name)) toUpdate.name = name;
   if (!_.isUndefined(description)) toUpdate.description = description;
   if (!_.isUndefined(path)) toUpdate.path = path;
-  if (!_.isUndefined(properties)) toUpdate.properties = JSON.stringify(properties);
+  if (!_.isUndefined(properties))
+    toUpdate.properties = JSON.stringify(properties);
   if (_.isArray(profiles)) {
     await ctx.tx.db.WidgetItemProfiles.deleteMany({ key });
   }
   const promises = [
-    ctx.tx.db.WidgetItem.findOneAndUpdate({ key }, toUpdate, { new: true, lean: true }),
+    ctx.tx.db.WidgetItem.findOneAndUpdate({ key }, toUpdate, {
+      new: true,
+      lean: true,
+    }),
   ];
   if (_.isArray(profiles) && profiles.length > 0) {
-    const existsProfiles = await ctx.tx.call('users.profiles.existMany', { ids: profiles });
+    const existsProfiles = await ctx.tx.call("users.profiles.existMany", {
+      ids: profiles,
+    });
     if (!existsProfiles) {
-      throw new LeemonsError(ctx, { message: 'Profiles does not exist' });
+      throw new LeemonsError(ctx, { message: "Profiles does not exist" });
     }
 
     _.forEach(profiles, (profile) => {

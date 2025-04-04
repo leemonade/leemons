@@ -1,7 +1,7 @@
-import { getZoneRequest } from '@widgets/getZone';
-import { useVariantForQueryKey } from '@common/queries';
-import { useQuery } from '@tanstack/react-query';
-import { getZoneKey } from '../keys/zones';
+import { getZoneRequest } from "@widgets/getZone";
+import { useVariantForQueryKey } from "@common/queries";
+import { useQuery } from "@tanstack/react-query";
+import { getZoneKey } from "../keys/zones";
 
 export default function useZone({ id, ...options }) {
   const queryKey = getZoneKey(id);
@@ -11,7 +11,7 @@ export default function useZone({ id, ...options }) {
   };
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'standard',
+    modificationTrend: "standard",
   });
 
   return useQuery({

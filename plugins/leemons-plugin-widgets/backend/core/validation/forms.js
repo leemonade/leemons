@@ -1,18 +1,18 @@
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 
 const updateItemOrdersSchema = {
-  type: 'array',
+  type: "array",
   items: {
-    type: 'object',
+    type: "object",
     properties: {
       id: {
-        type: 'string',
+        type: "string",
       },
       order: {
-        type: 'number',
+        type: "number",
       },
     },
-    required: ['id', 'order'],
+    required: ["id", "order"],
     additionalProperties: false,
   },
 };
@@ -26,24 +26,24 @@ function validateUpdateItemOrders(data) {
 }
 
 const updateItemProfilesSchema = {
-  type: 'array',
+  type: "array",
   items: {
-    type: 'object',
+    type: "object",
     properties: {
       zoneKey: {
-        type: 'string',
+        type: "string",
       },
       key: {
-        type: 'string',
+        type: "string",
       },
       profiles: {
-        type: 'array',
+        type: "array",
         items: {
-          type: 'string',
+          type: "string",
         },
       },
     },
-    required: ['zoneKey', 'key', 'profiles'],
+    required: ["zoneKey", "key", "profiles"],
     additionalProperties: false,
   },
 };

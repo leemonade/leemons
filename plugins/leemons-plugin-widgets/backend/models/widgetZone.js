@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -31,6 +31,10 @@ const schema = new mongoose.Schema(
 
 schema.index({ deploymentID: 1, key: 1 }, { unique: true });
 
-const widgetZoneModel = newModel(mongoose.connection, 'v1::widgets_widgetZone', schema);
+const widgetZoneModel = newModel(
+  mongoose.connection,
+  "v1::widgets_widgetZone",
+  schema
+);
 
 module.exports = { widgetZoneModel };

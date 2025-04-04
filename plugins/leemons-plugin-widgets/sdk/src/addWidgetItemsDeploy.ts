@@ -1,10 +1,10 @@
-import { LeemonsError } from '@leemons/error';
-import type { Context } from '@leemons/moleculer';
-import type { Model } from '@leemons/mongodb';
-import { hasKey, setKey } from '@leemons/mongodb-helpers';
-import type { GetKeyValueModel } from '@leemons/mongodb-helpers';
-import type { Profile } from '@leemons/users';
-import _ from 'lodash';
+import { LeemonsError } from "@leemons/error";
+import type { Context } from "@leemons/moleculer";
+import type { Model } from "@leemons/mongodb";
+import { hasKey, setKey } from "@leemons/mongodb-helpers";
+import type { GetKeyValueModel } from "@leemons/mongodb-helpers";
+import type { Profile } from "@leemons/users";
+import _ from "lodash";
 
 interface WidgetItemConfig {
   zoneKey: string;
@@ -65,7 +65,7 @@ async function setItemToZone({
       data.profiles!.push(profilesBySysName[sysName].id);
     });
   }
-  return ctx.tx.call('widgets.widgets.setItemToZone', data);
+  return ctx.tx.call("widgets.widgets.setItemToZone", data);
 }
 
 /**
@@ -78,13 +78,13 @@ export async function addWidgetItemsDeploy({
 }: AddWidgetItemsDeployParams): Promise<void> {
   if (
     !(await hasKey(keyValueModel, `widgets-items-zones`)) ||
-    process.env.RELOAD_WIDGETS_ON_EVERY_INSTALL === 'true'
+    process.env.RELOAD_WIDGETS_ON_EVERY_INSTALL === "true"
   ) {
-    const { items: profiles } = (await ctx.tx.call('users.profiles.list', {
+    const { items: profiles } = (await ctx.tx.call("users.profiles.list", {
       page: 0,
       size: 10000,
     })) as ProfilesResponse;
-    const profilesBySysName = _.keyBy(profiles, 'sysName');
+    const profilesBySysName = _.keyBy(profiles, "sysName");
     await Promise.allSettled(
       _.map(items, (config) =>
         setItemToZone({
@@ -96,5 +96,5 @@ export async function addWidgetItemsDeploy({
     );
     await setKey(keyValueModel, `widgets-items-zones`);
   }
-  ctx.tx.emit('init-widget-items');
+  ctx.tx.emit("init-widget-items");
 }

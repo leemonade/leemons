@@ -1,15 +1,15 @@
-import React, { cloneElement, useEffect, useMemo } from 'react';
+import React, { cloneElement, useEffect, useMemo } from "react";
 
-import { Box } from '@bubbles-ui/components';
-import loadable from '@loadable/component';
-import { isFunction, noop } from 'lodash';
-import PropTypes from 'prop-types';
+import { Box } from "@bubbles-ui/components";
+import loadable from "@loadable/component";
+import { isFunction, noop } from "lodash";
+import PropTypes from "prop-types";
 
-import ZoneWidgetsBoundary from './ZoneWidgetsBoundary';
-import useZone from './requests/hooks/queries/useZone';
+import ZoneWidgetsBoundary from "./ZoneWidgetsBoundary";
+import useZone from "./requests/hooks/queries/useZone";
 
-function dynamicImport(pluginName, component, path = 'src/widgets') {
-  const normalizedPath = path.replace(/^dist\//, 'src/');
+function dynamicImport(pluginName, component, path = "src/widgets") {
+  const normalizedPath = path.replace(/^dist\//, "src/");
 
   return loadable(async () => {
     try {
@@ -24,7 +24,11 @@ function dynamicImport(pluginName, component, path = 'src/widgets') {
   });
 }
 
-export function useWidgetItemsRenderer({ renderer, widgetItems = [], ErrorBoundary }) {
+export function useWidgetItemsRenderer({
+  renderer,
+  widgetItems = [],
+  ErrorBoundary,
+}) {
   const importedWidgets = useMemo(
     () =>
       new Map(
@@ -47,7 +51,9 @@ export function useWidgetItemsRenderer({ renderer, widgetItems = [], ErrorBounda
             properties: item.properties,
           };
 
-          const widget = isFunction(renderer) ? renderer(props) : cloneElement(renderer, props);
+          const widget = isFunction(renderer)
+            ? renderer(props)
+            : cloneElement(renderer, props);
 
           if (widget) {
             return cloneElement(ErrorBoundary, {

@@ -1,14 +1,14 @@
 export const allZonesKeys = [
   {
-    plugin: 'plugin.widgets',
-    scope: 'zones',
+    plugin: "plugin.widgets",
+    scope: "zones",
   },
 ];
 
 export const getZoneKey = (id) => [
   {
     ...allZonesKeys[0],
-    action: 'get',
+    action: "get",
     id,
   },
 ];

@@ -1,4 +1,4 @@
-const { add, exists, update } = require('.');
+const { add, exists, update } = require(".");
 
 async function set({ key, name, description, ctx }) {
   const existsFlag = await exists({ key, ctx });

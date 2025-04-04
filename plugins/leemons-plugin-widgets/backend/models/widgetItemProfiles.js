@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -37,7 +37,7 @@ schema.index({ zoneKey: 1, key: 1, deploymentID: 1, isDeleted: 1 });
 
 const widgetItemProfilesModel = newModel(
   mongoose.connection,
-  'v1::widgets_WidgetItemProfiles',
+  "v1::widgets_WidgetItemProfiles",
   schema
 );
 

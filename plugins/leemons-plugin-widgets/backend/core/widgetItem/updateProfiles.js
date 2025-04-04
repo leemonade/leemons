@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
 
 async function updateProfiles({ items, ctx }) {
   let profiles = [];
@@ -8,9 +8,11 @@ async function updateProfiles({ items, ctx }) {
   });
   // ES: Comprobamos que existan los perfiles
   if (_.isArray(profiles) && profiles.length > 0) {
-    const existsProfiles = await ctx.tx.call('users.profiles.existMany', { ids: _.uniq(profiles) });
+    const existsProfiles = await ctx.tx.call("users.profiles.existMany", {
+      ids: _.uniq(profiles),
+    });
     if (!existsProfiles) {
-      throw new LeemonsError(ctx, { message: 'Profiles does not exist' });
+      throw new LeemonsError(ctx, { message: "Profiles does not exist" });
     }
   }
 

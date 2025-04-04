@@ -3,22 +3,24 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const { LeemonsMongoDBMixin } = require("@leemons/mongodb");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
 
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getServiceModels } = require('../models');
-const restActions = require('./rest/widgets.rest');
-const zoneServices = require('../core/widgetZone');
-const { set: setZone } = require('../core/widgetZone/set');
-const itemServices = require('../core/widgetItem');
-const { set: setItem } = require('../core/widgetItem/set');
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
+const { getServiceModels } = require("../models");
+const restActions = require("./rest/widgets.rest");
+const zoneServices = require("../core/widgetZone");
+const { set: setZone } = require("../core/widgetZone/set");
+const itemServices = require("../core/widgetItem");
+const { set: setItem } = require("../core/widgetItem/set");
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'widgets.widgets',
+  name: "widgets.widgets",
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),

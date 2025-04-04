@@ -1,2 +1,2 @@
-export * from './ZoneWidgets';
-export * from './getZone';
+export * from "./ZoneWidgets";
+export * from "./getZone";

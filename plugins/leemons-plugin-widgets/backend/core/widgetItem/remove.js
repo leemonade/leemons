@@ -1,4 +1,4 @@
-const { validatePrefix } = require('../validation/validate');
+const { validatePrefix } = require("../validation/validate");
 
 async function remove({ zoneKey, key, ctx }) {
   validatePrefix({ type: key, calledFrom: ctx.callerPlugin, ctx });

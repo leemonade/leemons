@@ -3,15 +3,15 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
 
-const { get } = require('../../core/widgetZone');
+const { get } = require("../../core/widgetZone");
 
 module.exports = {
   getZoneRest: {
     rest: {
-      path: '/zone/:key',
-      method: 'GET',
+      path: "/zone/:key",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
