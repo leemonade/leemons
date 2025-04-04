@@ -1,21 +1,21 @@
 /* eslint-disable react/prop-types */
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
-import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
-import { Box, Text, ImageLoader, Button } from '@bubbles-ui/components';
-import { LockIcon } from '@bubbles-ui/icons/solid';
-import dayjs from 'dayjs';
-import durationPlugin from 'dayjs/plugin/duration';
-import { capitalize } from 'lodash';
-import PropTypes from 'prop-types';
+import { useIsStudent, useIsTeacher } from "@academic-portfolio/hooks";
+import { Box, Text, ImageLoader, Button } from "@bubbles-ui/components";
+import { LockIcon } from "@bubbles-ui/icons/solid";
+import dayjs from "dayjs";
+import durationPlugin from "dayjs/plugin/duration";
+import { capitalize } from "lodash";
+import PropTypes from "prop-types";
 
-import { EvaluationStateDisplay } from '../EvaluationStateDisplay';
+import { EvaluationStateDisplay } from "../EvaluationStateDisplay";
 
 import {
   DASHBOARD_CARD_FOOTER_DEFAULT_PROPS,
   DASHBOARD_CARD_FOOTER_PROP_TYPES,
-} from './DashboardCardFooter.constants';
-import { useDashboardCardFooterStyles } from './DashboardCardFooter.styles';
+} from "./DashboardCardFooter.constants";
+import { useDashboardCardFooterStyles } from "./DashboardCardFooter.styles";
 
 dayjs.extend(durationPlugin);
 
@@ -24,9 +24,15 @@ export function useStudentState({ assignation = {} }) {
     return {};
   }
 
-  const { instance, timestamps: { start = null, end = null } = {}, grades } = assignation;
-  const { alwaysAvailable, dates: { deadline: _deadline = null, closed = null } = {} } =
-    instance || {};
+  const {
+    instance,
+    timestamps: { start = null, end = null } = {},
+    grades,
+  } = assignation;
+  const {
+    alwaysAvailable,
+    dates: { deadline: _deadline = null, closed = null } = {},
+  } = instance || {};
 
   const now = dayjs();
   const deadline = dayjs(_deadline);
@@ -39,7 +45,8 @@ export function useStudentState({ assignation = {} }) {
     endTimestamp.isValid() ||
     (deadline.isValid() && !deadline.isAfter(now));
 
-  const isStartedByStudent = startTimestamp.isValid() && !startTimestamp.isAfter(now);
+  const isStartedByStudent =
+    startTimestamp.isValid() && !startTimestamp.isAfter(now);
   const isFinishedButNotGraded = isFinished && grades?.length === 0;
   const isFinishedAndGraded = isFinished && grades?.length > 0;
 
@@ -56,10 +63,10 @@ function PreviewActions({ activity, localizations }) {
   const { classes } = useDashboardCardFooterStyles();
   const currentUrl = window.location.href;
   const moduleIdMatch = currentUrl.match(/modules\/(.*?)\/view/);
-  const moduleId = moduleIdMatch ? moduleIdMatch[1] : '';
+  const moduleId = moduleIdMatch ? moduleIdMatch[1] : "";
   const url =
     roleDetails?.previewUrl &&
-    `${roleDetails?.previewUrl?.replace(':id', id)}?moduleId=${moduleId}`;
+    `${roleDetails?.previewUrl?.replace(":id", id)}?moduleId=${moduleId}`;
   if (!url) {
     return null;
   }
@@ -85,12 +92,11 @@ function TeacherActions({ activity, localizations, evaluationInfo }) {
   const { roleDetails } = assignable ?? {};
   const { classes } = useDashboardCardFooterStyles();
   const isNoEvaluable = !activity.requiresScoring;
-  const assignablesURL = (roleDetails?.dashboardURL || '/private/assignables/details/:id').replace(
-    ':id',
-    id
-  );
+  const assignablesURL = (
+    roleDetails?.dashboardURL || "/private/assignables/details/:id"
+  ).replace(":id", id);
 
-  if (evaluationInfo?.state === 'allEvaluated') {
+  if (evaluationInfo?.state === "allEvaluated") {
     return (
       <Box className={classes.buttonFull}>
         <Link to={assignablesURL}>
@@ -103,8 +109,9 @@ function TeacherActions({ activity, localizations, evaluationInfo }) {
   }
 
   if (
-    evaluationInfo?.state === 'someDeliveredButNotAll' &&
-    evaluationInfo.totalStudentsFinished > evaluationInfo.totalStudentsEvaluated &&
+    evaluationInfo?.state === "someDeliveredButNotAll" &&
+    evaluationInfo.totalStudentsFinished >
+      evaluationInfo.totalStudentsEvaluated &&
     !isNoEvaluable
   ) {
     return (
@@ -115,7 +122,7 @@ function TeacherActions({ activity, localizations, evaluationInfo }) {
       </Box>
     );
   }
-  if (evaluationInfo?.state === 'openedButNotStarted') {
+  if (evaluationInfo?.state === "openedButNotStarted") {
     return (
       <Box className={classes.buttonFull}>
         <Link to={assignablesURL}>
@@ -130,7 +137,7 @@ function TeacherActions({ activity, localizations, evaluationInfo }) {
   return (
     <Box className={classes.buttonFull}>
       <Link to={assignablesURL}>
-        <Button fullWidth variant={isNoEvaluable ? 'outline' : 'primary'}>
+        <Button fullWidth variant={isNoEvaluable ? "outline" : "primary"}>
           {localizations?.buttons?.review}
         </Button>
       </Link>
@@ -149,18 +156,22 @@ function StudentActions({ isBlocked, activity, assignation, localizations }) {
   const { assignable, id, requiresScoring, allowFeedback } = activity;
   const { roleDetails } = assignable ?? {};
 
-  const { isFinished, isStartedByStudent, isFinishedButNotGraded, isFinishedAndGraded } =
-    useStudentState({
-      assignation,
-    });
+  const {
+    isFinished,
+    isStartedByStudent,
+    isFinishedButNotGraded,
+    isFinishedAndGraded,
+  } = useStudentState({
+    assignation,
+  });
 
   const activityUrl = roleDetails?.studentDetailUrl
-    ?.replace(':id', id)
-    ?.replace(':user', assignation?.user);
+    ?.replace(":id", id)
+    ?.replace(":user", assignation?.user);
 
   const evaluationUrl = roleDetails?.evaluationDetailUrl
-    ?.replace(':id', id)
-    ?.replace(':user', assignation?.user);
+    ?.replace(":id", id)
+    ?.replace(":user", assignation?.user);
 
   if (isFinished) {
     if (isBlocked) {
@@ -175,7 +186,10 @@ function StudentActions({ isBlocked, activity, assignation, localizations }) {
         <Box className={classes.buttonContainer}>
           <EvaluationStateDisplay assignation={assignation} />
           <Link to={activityUrl}>
-            <Button variant="outline" style={{ paddingLeft: '40px', paddingRight: '40px' }}>
+            <Button
+              variant="outline"
+              style={{ paddingLeft: "40px", paddingRight: "40px" }}
+            >
               {localizations?.buttons?.review}
             </Button>
           </Link>
@@ -187,7 +201,10 @@ function StudentActions({ isBlocked, activity, assignation, localizations }) {
         <Box className={classes.buttonContainer}>
           <EvaluationStateDisplay assignation={assignation} />
           <Link to={activityUrl}>
-            <Button variant="outline" style={{ paddingLeft: '40px', paddingRight: '40px' }}>
+            <Button
+              variant="outline"
+              style={{ paddingLeft: "40px", paddingRight: "40px" }}
+            >
               {localizations?.buttons?.review}
             </Button>
           </Link>
@@ -228,7 +245,9 @@ function StudentActions({ isBlocked, activity, assignation, localizations }) {
     <Box className={classes.buttonFull}>
       <Link to={activityUrl}>
         <Button fullWidth>
-          {isStartedByStudent ? localizations?.buttons?.continue : localizations?.buttons?.start}
+          {isStartedByStudent
+            ? localizations?.buttons?.continue
+            : localizations?.buttons?.start}
         </Button>
       </Link>
     </Box>
@@ -242,7 +261,14 @@ StudentActions.propTypes = {
   localizations: PropTypes.object,
 };
 
-function Actions({ isBlocked, activity, assignation, localizations, preview, evaluationInfo }) {
+function Actions({
+  isBlocked,
+  activity,
+  assignation,
+  localizations,
+  preview,
+  evaluationInfo,
+}) {
   const isTeacher = useIsTeacher();
   const isStudent = useIsStudent();
 
@@ -304,8 +330,10 @@ const DashboardCardFooter = ({
       <Box className={classes.root}>
         <Box className={classes.buttonFull}>
           <Link to={introductionLink}>
-            <Button style={{ width: '100%' }}>
-              {preview ? localizations?.buttons?.preview : localizations?.buttons?.review}
+            <Button style={{ width: "100%" }}>
+              {preview
+                ? localizations?.buttons?.preview
+                : localizations?.buttons?.review}
             </Button>
           </Link>
         </Box>
@@ -319,7 +347,9 @@ const DashboardCardFooter = ({
           <Box className={classes.icon}>
             <ImageLoader src={roleDetails?.icon} width={16} height={16} />
           </Box>
-          <Text className={classes.type}>{capitalize(rolesLocalizations?.[role]?.singular)}</Text>
+          <Text className={classes.type}>
+            {capitalize(rolesLocalizations?.[role]?.singular)}
+          </Text>
         </Box>
         <Box className={classes.actionsContainer}>
           <Actions

@@ -1,11 +1,15 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { ActionButton, Stack } from '@bubbles-ui/components';
-import { DeleteBinIcon } from '@bubbles-ui/icons/outline';
+import { ActionButton, Stack } from "@bubbles-ui/components";
+import { DeleteBinIcon } from "@bubbles-ui/icons/outline";
 
-import { ResourceRenderer } from '../components/ResourceRenderer';
+import { ResourceRenderer } from "../components/ResourceRenderer";
 
-export default function useParseActivities({ activities, localizations, onRemove }) {
+export default function useParseActivities({
+  activities,
+  localizations,
+  onRemove,
+}) {
   return useMemo(
     () =>
       activities?.map(({ activity, id, original }) => ({

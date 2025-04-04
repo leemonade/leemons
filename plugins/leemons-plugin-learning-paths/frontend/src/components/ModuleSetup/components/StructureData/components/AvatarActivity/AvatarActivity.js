@@ -1,10 +1,10 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 
-import { Box, ImageLoader, CardEmptyCover } from '@bubbles-ui/components';
+import { Box, ImageLoader, CardEmptyCover } from "@bubbles-ui/components";
 
-import prepareAsset from '@leebrary/helpers/prepareAsset';
-import { useAvatarActivityStyles } from './AvatarActivity.styles';
+import prepareAsset from "@leebrary/helpers/prepareAsset";
+import { useAvatarActivityStyles } from "./AvatarActivity.styles";
 
 // eslint-disable-next-line import/prefer-default-export
 export function AvatarActivity({ activity }) {
@@ -16,10 +16,19 @@ export function AvatarActivity({ activity }) {
   return (
     <Box className={classes.cover}>
       {preparedAsset?.cover ? (
-        <ImageLoader src={preparedAsset?.cover} height={48} width={72} radius={4} />
+        <ImageLoader
+          src={preparedAsset?.cover}
+          height={48}
+          width={72}
+          radius={4}
+        />
       ) : (
         <Box style={{ width: 72, height: 48 }}>
-          <CardEmptyCover icon={''} fileType={preparedAsset?.fileType ?? 'test'} height={48} />
+          <CardEmptyCover
+            icon={""}
+            fileType={preparedAsset?.fileType ?? "test"}
+            height={48}
+          />
         </Box>
       )}
     </Box>

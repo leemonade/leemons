@@ -1,4 +1,4 @@
-import propTypes from 'prop-types';
+import propTypes from "prop-types";
 
 export const DASHBOARD_CARD_BODY_PROP_TYPES = {
   activity: propTypes.object,

@@ -7,8 +7,8 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const _ = require('lodash');
+} = require("@leemons/middlewares");
+const _ = require("lodash");
 
 const {
   createModule,
@@ -17,21 +17,21 @@ const {
   removeModule,
   publishModule,
   assignModule,
-} = require('../../core/modules');
+} = require("../../core/modules");
 
 /** @type {ServiceSchema} */
 module.exports = {
   createRest: {
     rest: {
-      method: 'POST',
-      path: '/',
+      method: "POST",
+      path: "/",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'learning-paths.modules': {
-            actions: ['admin', 'create'],
+          "learning-paths.modules": {
+            actions: ["admin", "create"],
           },
         },
       }),
@@ -44,15 +44,15 @@ module.exports = {
   },
   updateRest: {
     rest: {
-      method: 'PUT',
-      path: '/:id',
+      method: "PUT",
+      path: "/:id",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'learning-paths.modules': {
-            actions: ['admin', 'update'],
+          "learning-paths.modules": {
+            actions: ["admin", "update"],
           },
         },
       }),
@@ -65,15 +65,15 @@ module.exports = {
   },
   duplicateRest: {
     rest: {
-      method: 'POST',
-      path: '/:id/duplicate',
+      method: "POST",
+      path: "/:id/duplicate",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'learning-paths.modules': {
-            actions: ['admin', 'create'],
+          "learning-paths.modules": {
+            actions: ["admin", "create"],
           },
         },
       }),
@@ -82,7 +82,7 @@ module.exports = {
       const { id, published } = ctx.params;
       const duplicatedModule = await duplicateModule({
         id,
-        published: _.isBoolean(published) ? published : published === 'true',
+        published: _.isBoolean(published) ? published : published === "true",
         ctx,
       });
       return { status: 200, module: duplicatedModule };
@@ -90,15 +90,15 @@ module.exports = {
   },
   removeRest: {
     rest: {
-      method: 'DELETE',
-      path: '/:id',
+      method: "DELETE",
+      path: "/:id",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'learning-paths.modules': {
-            actions: ['admin', 'delete'],
+          "learning-paths.modules": {
+            actions: ["admin", "delete"],
           },
         },
       }),
@@ -114,15 +114,15 @@ module.exports = {
   },
   publishRest: {
     rest: {
-      method: 'POST',
-      path: '/:id/publish',
+      method: "POST",
+      path: "/:id/publish",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'learning-paths.modules': {
-            actions: ['admin', 'update'],
+          "learning-paths.modules": {
+            actions: ["admin", "update"],
           },
         },
       }),
@@ -138,15 +138,15 @@ module.exports = {
   },
   assignRest: {
     rest: {
-      method: 'POST',
-      path: '/:id/assign',
+      method: "POST",
+      path: "/:id/assign",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'learning-paths.modules': {
-            actions: ['admin', 'assign'],
+          "learning-paths.modules": {
+            actions: ["admin", "assign"],
           },
         },
       }),

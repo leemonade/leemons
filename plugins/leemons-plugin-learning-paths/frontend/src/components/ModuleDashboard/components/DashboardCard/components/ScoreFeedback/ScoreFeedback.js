@@ -1,19 +1,22 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState } from "react";
 
-import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import { Box, Text, Badge, TextClamp } from '@bubbles-ui/components';
-import { unflatten } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import _, { isNil, sortBy } from 'lodash';
+import useProgramEvaluationSystem from "@assignables/hooks/useProgramEvaluationSystem";
+import { Box, Text, Badge, TextClamp } from "@bubbles-ui/components";
+import { unflatten } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import _, { isNil, sortBy } from "lodash";
 
-import prefixPN from '../../../../../../helpers/prefixPN';
+import prefixPN from "../../../../../../helpers/prefixPN";
 
-import { GotFeedbackIcon } from './GotFeedbackIcon';
-import { SCOREFEEDBACK_DEFAULT_PROPS, SCOREFEEDBACK_PROP_TYPES } from './ScoreFeedback.constants';
-import { useScoreFeedbackStyles } from './ScoreFeedback.styles';
+import { GotFeedbackIcon } from "./GotFeedbackIcon";
+import {
+  SCOREFEEDBACK_DEFAULT_PROPS,
+  SCOREFEEDBACK_PROP_TYPES,
+} from "./ScoreFeedback.constants";
+import { useScoreFeedbackStyles } from "./ScoreFeedback.styles";
 
 export function findNearestFloorScore(score, scales) {
-  const sortedScales = sortBy(scales, 'number');
+  const sortedScales = sortBy(scales, "number");
   let nearestScore = null;
   let distance = Infinity;
   const { length } = sortedScales;
@@ -40,18 +43,22 @@ export function findNearestFloorScore(score, scales) {
 const ScoreFeedback = ({ score, program, instance, isFeedback }) => {
   const evaluationSystem = useProgramEvaluationSystem(program);
   const { minScaleToPromote, scales, type } = evaluationSystem || {};
-  const [, translations] = useTranslateLoader([prefixPN('assignmentForm'), prefixPN('ongoing')]);
+  const [, translations] = useTranslateLoader([
+    prefixPN("assignmentForm"),
+    prefixPN("ongoing"),
+  ]);
   const localizations = useMemo(() => {
     const res = unflatten(translations?.items);
     return {
-      assignmentForm: _.get(res, prefixPN('assignmentForm')),
-      ongoing: _.get(res, prefixPN('ongoing')),
+      assignmentForm: _.get(res, prefixPN("assignmentForm")),
+      ongoing: _.get(res, prefixPN("ongoing")),
     };
   }, [translations]);
-  const isLetterType = type === 'letter';
+  const isLetterType = type === "letter";
 
   const [calificationType, setCalificationType] = useState(null);
-  const localizationType = localizations?.assignmentForm?.evaluation?.typeInput?.options;
+  const localizationType =
+    localizations?.assignmentForm?.evaluation?.typeInput?.options;
 
   const grade = React.useMemo(() => {
     if (isLetterType) {
@@ -61,8 +68,8 @@ const ScoreFeedback = ({ score, program, instance, isFeedback }) => {
       };
     }
     const isInteger = score % 1 === 0;
-    const integerPart = !isInteger && score.toFixed(2).split('.')[0];
-    const decimalsPart = !isInteger && score.toFixed(2).split('.')[1];
+    const integerPart = !isInteger && score.toFixed(2).split(".")[0];
+    const decimalsPart = !isInteger && score.toFixed(2).split(".")[1];
     if (isInteger) {
       return {
         integer: score,
@@ -83,7 +90,9 @@ const ScoreFeedback = ({ score, program, instance, isFeedback }) => {
     <Box className={classes.root}>
       {calificationType && (
         <Badge closable={false} size="xs" className={classes.calificationBadge}>
-          <Text className={classes.badgeText}>{calificationType?.toUpperCase()}</Text>
+          <Text className={classes.badgeText}>
+            {calificationType?.toUpperCase()}
+          </Text>
         </Badge>
       )}
       {!isNil(score) && !isFeedback ? (
@@ -95,25 +104,37 @@ const ScoreFeedback = ({ score, program, instance, isFeedback }) => {
               </Text>
               {grade.decimals && (
                 <TextClamp lines={2}>
-                  <Text className={classes.gradeDecimals}>{`.${grade.decimals}`}</Text>
+                  <Text
+                    className={classes.gradeDecimals}
+                  >{`.${grade.decimals}`}</Text>
                 </TextClamp>
               )}
               {/* <Box className={classes.containerArrow}>
                 <ArrowComponent state={'better'} />
               </Box> */}
             </Box>
-            <Text className={classes.descriptionGrade}>{grade?.description?.toUpperCase()}</Text>
+            <Text className={classes.descriptionGrade}>
+              {grade?.description?.toUpperCase()}
+            </Text>
           </Box>
         </>
       ) : (
         <>
-          <Badge closable={false} size="xs" className={classes.calificationBadge}>
-            <Text className={classes.badgeText}>{localizationType?.feedback?.toUpperCase()}</Text>
+          <Badge
+            closable={false}
+            size="xs"
+            className={classes.calificationBadge}
+          >
+            <Text className={classes.badgeText}>
+              {localizationType?.feedback?.toUpperCase()}
+            </Text>
           </Badge>
           <Box className={classes.containerGrade} style={{ marginTop: 0 }}>
             <Box className={classes.containerFeedback}>
               <GotFeedbackIcon />
-              <Text className={classes.textFeedback}>{localizationType?.feedbackAvailable}</Text>
+              <Text className={classes.textFeedback}>
+                {localizationType?.feedbackAvailable}
+              </Text>
             </Box>
           </Box>
         </>

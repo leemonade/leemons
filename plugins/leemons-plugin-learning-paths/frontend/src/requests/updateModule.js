@@ -1,6 +1,10 @@
-export default async function updateModuleRequest(id, newModule, { published = false } = {}) {
+export default async function updateModuleRequest(
+  id,
+  newModule,
+  { published = false } = {}
+) {
   const updatedModule = await leemons.api(`v1/learning-paths/modules/${id}`, {
-    method: 'PUT',
+    method: "PUT",
     body: { ...newModule, published: !!published },
   });
 

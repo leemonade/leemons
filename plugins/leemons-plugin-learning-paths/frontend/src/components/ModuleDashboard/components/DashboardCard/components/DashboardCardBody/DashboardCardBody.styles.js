@@ -1,4 +1,4 @@
-import { createStyles, pxToRem } from '@bubbles-ui/components';
+import { createStyles, pxToRem } from "@bubbles-ui/components";
 
 const useDashboardCardBodyStyles = createStyles((theme) => {
   const { cardModule } = theme.other;
@@ -18,23 +18,23 @@ const useDashboardCardBodyStyles = createStyles((theme) => {
       marginTop: pxToRem(4),
     },
     draftText: {
-      color: '#4D5358',
-      fontSize: '10px',
+      color: "#4D5358",
+      fontSize: "10px",
     },
     calificationBadge: {
-      '& > div': {
-        backgroundColor: '#F2F4F8',
-        border: '1px solid #878D96',
+      "& > div": {
+        backgroundColor: "#F2F4F8",
+        border: "1px solid #878D96",
         borderRadius: 4,
         fontSize: pxToRem(10),
         fontWeight: 500,
 
-        '&:hover': {
-          backgroundColor: '#F2F4F8',
-          color: '#4D5358',
+        "&:hover": {
+          backgroundColor: "#F2F4F8",
+          color: "#4D5358",
         },
-        '& > span': {
-          color: '#4D5358',
+        "& > span": {
+          color: "#4D5358",
         },
       },
     },

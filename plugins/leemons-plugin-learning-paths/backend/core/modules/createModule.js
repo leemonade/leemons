@@ -1,4 +1,8 @@
-const { createAssetsAssignables, ASSET_TYPE, ACTIVITY_TYPE } = require('./createAssetsAssignables');
+const {
+  createAssetsAssignables,
+  ASSET_TYPE,
+  ACTIVITY_TYPE,
+} = require("./createAssetsAssignables");
 
 module.exports = async function createModule({ module, published, ctx }) {
   /*
@@ -8,22 +12,24 @@ module.exports = async function createModule({ module, published, ctx }) {
     activities array with the new id, and change the type back to activitiy
   */
   const assignablesByAsset = await createAssetsAssignables({ module, ctx });
-  const activitiesWithAssignablesReplaced = module.submission.activities.map((activity) => {
-    if (activity.type === ASSET_TYPE) {
-      return {
-        ...activity,
-        activity: assignablesByAsset[activity.id],
-        type: ACTIVITY_TYPE,
-      };
+  const activitiesWithAssignablesReplaced = module.submission.activities.map(
+    (activity) => {
+      if (activity.type === ASSET_TYPE) {
+        return {
+          ...activity,
+          activity: assignablesByAsset[activity.id],
+          type: ACTIVITY_TYPE,
+        };
+      }
+
+      return activity;
     }
+  );
 
-    return activity;
-  });
-
-  return ctx.tx.call('assignables.assignables.createAssignable', {
+  return ctx.tx.call("assignables.assignables.createAssignable", {
     assignable: {
       ...module,
-      role: 'learningpaths.module',
+      role: "learningpaths.module",
       submission: {
         activities: activitiesWithAssignablesReplaced,
       },

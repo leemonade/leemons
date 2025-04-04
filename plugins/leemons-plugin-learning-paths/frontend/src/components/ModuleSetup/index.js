@@ -1,1 +1,1 @@
-export * from './ModuleSetup';
+export * from "./ModuleSetup";

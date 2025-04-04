@@ -1,16 +1,21 @@
-const { omit, clone } = require('lodash');
+const { omit, clone } = require("lodash");
 
 module.exports = async function assignModule({ moduleId, config, ctx }) {
-  const moduleAssignable = await ctx.tx.call('assignables.assignables.getAssignable', {
-    id: moduleId,
-  });
+  const moduleAssignable = await ctx.tx.call(
+    "assignables.assignables.getAssignable",
+    {
+      id: moduleId,
+    }
+  );
 
   const unsortedActivities = moduleAssignable.submission.activities?.filter(
     (activity) => !config.activities[activity.id]?.state?.deleted
   );
 
   const activities = config.order
-    ? unsortedActivities?.sort((a, b) => config.order[a.id] - config.order[b.id])
+    ? unsortedActivities?.sort(
+        (a, b) => config.order[a.id] - config.order[b.id]
+      )
     : unsortedActivities;
 
   const activitiesInstanceIds = [];
@@ -18,14 +23,14 @@ module.exports = async function assignModule({ moduleId, config, ctx }) {
 
   const activitiesCommonConfig = {
     ...omit(config.assignationForm, [
-      'duration',
-      'gradable',
-      'requiresScoring',
-      'allowFeedback',
-      'curriculum',
-      'sendMail',
-      'messageToAssignees',
-      'metadata',
+      "duration",
+      "gradable",
+      "requiresScoring",
+      "allowFeedback",
+      "curriculum",
+      "sendMail",
+      "messageToAssignees",
+      "metadata",
     ]),
     gradable: false,
     requiresScoring: false,
@@ -36,14 +41,14 @@ module.exports = async function assignModule({ moduleId, config, ctx }) {
   };
 
   const moduleInstance = await ctx.tx.call(
-    'assignables.assignableInstances.createAssignableInstance',
+    "assignables.assignableInstances.createAssignableInstance",
     {
       assignableInstance: {
         ...config.assignationForm,
         metadata: {
           ...config.assignationForm.metadata,
           module: {
-            type: 'module',
+            type: "module",
             activities: [],
           },
         },
@@ -70,7 +75,7 @@ module.exports = async function assignModule({ moduleId, config, ctx }) {
           // The internal module activity id
           activity: id,
           requirement: activityConfig?.state?.requirement,
-          type: 'activity',
+          type: "activity",
         },
       },
       relatedAssignableInstances: {
@@ -79,7 +84,8 @@ module.exports = async function assignModule({ moduleId, config, ctx }) {
           : [
               {
                 id: previousActivityId,
-                required: previousActivityConfig?.state?.requirement === 'blocking',
+                required:
+                  previousActivityConfig?.state?.requirement === "blocking",
               },
             ],
         blocking: clone(blockingActivities),
@@ -90,23 +96,26 @@ module.exports = async function assignModule({ moduleId, config, ctx }) {
 
     if (activityConfig?.config?.metadata?.isAsset) {
       // eslint-disable-next-line no-await-in-loop
-      const assignable = await ctx.tx.call('leebrary.assignables.updateForModules', {
-        instance: instanceConfig,
-      });
+      const assignable = await ctx.tx.call(
+        "leebrary.assignables.updateForModules",
+        {
+          instance: instanceConfig,
+        }
+      );
 
       instanceConfig.assignable = assignable.id;
     }
 
     // eslint-disable-next-line no-await-in-loop
     const instanceCreated = await ctx.tx.call(
-      'assignables.assignableInstances.createAssignableInstance',
+      "assignables.assignableInstances.createAssignableInstance",
       {
         assignableInstance: instanceConfig,
         createEvent: false,
       }
     );
 
-    if (activityConfig?.state?.requirement === 'blocking') {
+    if (activityConfig?.state?.requirement === "blocking") {
       blockingActivities.push(instanceCreated.id);
     }
 
@@ -120,21 +129,24 @@ module.exports = async function assignModule({ moduleId, config, ctx }) {
                   */
   }
 
-  await ctx.tx.call('assignables.assignableInstances.updateAssignableInstance', {
-    assignableInstance: {
-      ...moduleInstance,
-      metadata: {
-        ...moduleInstance.metadata,
-        module: {
-          type: 'module',
-          activities: activities.map((activity, i) => ({
-            id: activitiesInstanceIds[i],
-            requirement: config.activities[activity.id]?.state?.requirement,
-          })),
+  await ctx.tx.call(
+    "assignables.assignableInstances.updateAssignableInstance",
+    {
+      assignableInstance: {
+        ...moduleInstance,
+        metadata: {
+          ...moduleInstance.metadata,
+          module: {
+            type: "module",
+            activities: activities.map((activity, i) => ({
+              id: activitiesInstanceIds[i],
+              requirement: config.activities[activity.id]?.state?.requirement,
+            })),
+          },
         },
       },
-    },
-  });
+    }
+  );
 
   return {
     module: moduleInstance.id,

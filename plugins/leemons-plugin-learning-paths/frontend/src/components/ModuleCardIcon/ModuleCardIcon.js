@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 import {
   MODULE_CARD_ICON_PROP_TYPES,
   MODULE_CARD_ICON_DEFAULT_PROPS,
-} from './ModuleCardIcon.constants';
+} from "./ModuleCardIcon.constants";
 
 const ModuleCardIcon = ({ width, height, color }) => (
   <svg
@@ -26,6 +26,6 @@ const ModuleCardIcon = ({ width, height, color }) => (
 ModuleCardIcon.defaultProps = MODULE_CARD_ICON_DEFAULT_PROPS;
 ModuleCardIcon.propTypes = MODULE_CARD_ICON_PROP_TYPES;
 
-ModuleCardIcon.displayName = 'ModuleCardIcon';
+ModuleCardIcon.displayName = "ModuleCardIcon";
 export default ModuleCardIcon;
 export { ModuleCardIcon };

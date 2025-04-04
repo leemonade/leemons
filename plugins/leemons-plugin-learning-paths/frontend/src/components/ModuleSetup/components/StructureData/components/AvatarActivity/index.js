@@ -1,2 +1,2 @@
-export * from './AvatarActivity';
-export * from './AvatarActivity.styles';
+export * from "./AvatarActivity";
+export * from "./AvatarActivity.styles";

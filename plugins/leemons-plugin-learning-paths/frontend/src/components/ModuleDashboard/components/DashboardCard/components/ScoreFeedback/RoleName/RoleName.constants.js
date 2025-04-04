@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const ROLENAMES_PROP_TYPES = {
   role: PropTypes.shape({
@@ -9,7 +9,7 @@ export const ROLENAMES_PROP_TYPES = {
 
 export const ROLENAMES_DEFAULT_PROPS = {
   role: {
-    name: '',
-    icon: '',
+    name: "",
+    icon: "",
   },
 };

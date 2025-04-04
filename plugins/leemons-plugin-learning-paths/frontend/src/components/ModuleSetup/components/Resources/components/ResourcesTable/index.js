@@ -1,1 +1,1 @@
-export * from './ResourcesTable';
+export * from "./ResourcesTable";

@@ -1,5 +1,8 @@
-import React from 'react';
-import { DELIVERED_ICON_PROP_TYPES, DELIVERED_ICON_DEFAULT_PROPS } from './DeliveredIcon.constants';
+import React from "react";
+import {
+  DELIVERED_ICON_PROP_TYPES,
+  DELIVERED_ICON_DEFAULT_PROPS,
+} from "./DeliveredIcon.constants";
 
 const DeliveredIcon = ({ width, height, color }) => (
   <svg
@@ -23,6 +26,6 @@ const DeliveredIcon = ({ width, height, color }) => (
 DeliveredIcon.defaultProps = DELIVERED_ICON_DEFAULT_PROPS;
 DeliveredIcon.propTypes = DELIVERED_ICON_PROP_TYPES;
 
-DeliveredIcon.displayName = 'DeliveredIcon';
+DeliveredIcon.displayName = "DeliveredIcon";
 export default DeliveredIcon;
 export { DeliveredIcon };

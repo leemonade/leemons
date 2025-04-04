@@ -1,6 +1,12 @@
-import React, { createContext, useCallback, useContext, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
-import { isFunction } from 'lodash';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useRef,
+  useState,
+} from "react";
+import PropTypes from "prop-types";
+import { isFunction } from "lodash";
 
 export const ModuleSetupContext = createContext();
 export const useModuleSetupContext = () => useContext(ModuleSetupContext);

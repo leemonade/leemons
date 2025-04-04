@@ -1,8 +1,8 @@
-import { ActionButton } from '@bubbles-ui/components';
-import { PluginSettingsIcon } from '@bubbles-ui/icons/outline';
-import PropTypes from 'prop-types';
+import { ActionButton } from "@bubbles-ui/components";
+import { PluginSettingsIcon } from "@bubbles-ui/icons/outline";
+import PropTypes from "prop-types";
 
-import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
+import { useModuleAssignContext } from "@learning-paths/contexts/ModuleAssignContext";
 
 export function ConfigAction({ onConfig, activity, id }) {
   const { useWatch } = useModuleAssignContext();

@@ -1,1 +1,1 @@
-export * from './ModuleCardIcon';
+export * from "./ModuleCardIcon";

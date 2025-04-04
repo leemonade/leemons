@@ -1,4 +1,4 @@
-import propTypes from 'prop-types';
+import propTypes from "prop-types";
 
 export const DASHBOARD_CARD_FOOTER_PROP_TYPES = {
   isBlocked: propTypes.bool,
@@ -27,9 +27,9 @@ export const DASHBOARD_CARD_FOOTER_DEFAULT_PROPS = {
   assignation: {},
   localizations: {},
   preview: false,
-  role: '',
+  role: "",
   roleDetails: {},
   rolesLocalizations: {},
-  buttonLink: '',
+  buttonLink: "",
   evaluationInfo: {},
 };

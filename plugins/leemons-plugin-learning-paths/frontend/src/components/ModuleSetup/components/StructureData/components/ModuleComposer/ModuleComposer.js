@@ -1,33 +1,33 @@
-import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
+import React, { useMemo } from "react";
+import PropTypes from "prop-types";
 
-import { Box, Button, Table, ContextContainer } from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
+import { Box, Button, Table, ContextContainer } from "@bubbles-ui/components";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
 
-import { filter, get, head, keyBy, map, uniq } from 'lodash';
+import { filter, get, head, keyBy, map, uniq } from "lodash";
 
-import { useModuleSetupContext } from '@learning-paths/contexts/ModuleSetupContext';
-import { useCache } from '@common';
-import { useQueries } from '@tanstack/react-query';
-import getAssignablesRequest from '@assignables/requests/assignables/getAssignables';
-import { assignablesGetKey } from '@assignables/requests/hooks/keys/assignables';
-import useAssets from '@leebrary/request/hooks/queries/useAssets';
-import useRole from '@assignables/requests/hooks/queries/useRole';
-import { useParseActivities } from './hooks';
+import { useModuleSetupContext } from "@learning-paths/contexts/ModuleSetupContext";
+import { useCache } from "@common";
+import { useQueries } from "@tanstack/react-query";
+import getAssignablesRequest from "@assignables/requests/assignables/getAssignables";
+import { assignablesGetKey } from "@assignables/requests/hooks/keys/assignables";
+import useAssets from "@leebrary/request/hooks/queries/useAssets";
+import useRole from "@assignables/requests/hooks/queries/useRole";
+import { useParseActivities } from "./hooks";
 
-const ACTIVITY_TYPE = 'activity';
-const ASSET_TYPE = 'asset';
+const ACTIVITY_TYPE = "activity";
+const ASSET_TYPE = "asset";
 
 export function useColumns({ localizations }) {
   return useMemo(
     () => [
       {
-        Header: localizations?.resource ?? '',
-        accessor: 'resource',
+        Header: localizations?.resource ?? "",
+        accessor: "resource",
       },
       {
-        Header: localizations?.actions ?? '',
-        accessor: 'actions',
+        Header: localizations?.actions ?? "",
+        accessor: "actions",
       },
     ],
     [localizations]
@@ -43,7 +43,7 @@ function useAssignables(ids) {
     })),
   });
 
-  return map(queries, 'data').filter(Boolean);
+  return map(queries, "data").filter(Boolean);
 }
 
 function useAssetsAsAssignable(ids) {
@@ -52,7 +52,7 @@ function useAssetsAsAssignable(ids) {
     keepPreviousData: true,
     timeout: 1,
   });
-  const { data: role } = useRole({ role: 'leebrary.asset' });
+  const { data: role } = useRole({ role: "leebrary.asset" });
 
   if (!assets || !role) {
     return [];
@@ -72,44 +72,46 @@ function useSelectedActivities() {
   const [sharedData] = useModuleSetupContext();
 
   const cache = useCache();
-  const activitiesPicked = get(sharedData, 'state.activities', []);
+  const activitiesPicked = get(sharedData, "state.activities", []);
 
   const activitiesIds = useMemo(() => {
     const ids = uniq(
       map(
         filter(activitiesPicked, ({ type }) => type === ACTIVITY_TYPE || !type),
-        'activity'
+        "activity"
       )
     );
 
-    return cache('activitiesIds', ids);
+    return cache("activitiesIds", ids);
   }, [activitiesPicked, cache]);
 
   const assetsIds = useMemo(() => {
     const ids = uniq(
       map(
         filter(activitiesPicked, ({ type }) => type === ASSET_TYPE || !type),
-        'activity'
+        "activity"
       )
     );
 
-    return cache('assetIds', ids);
+    return cache("assetIds", ids);
   }, [activitiesPicked, cache]);
 
   const activities = useAssignables(activitiesIds);
   const assets = useAssetsAsAssignable(assetsIds);
 
-  const activitiesById = keyBy(activities, 'id');
-  const assetsById = keyBy(assets, 'id');
+  const activitiesById = keyBy(activities, "id");
+  const assetsById = keyBy(assets, "id");
 
   return cache(
-    'activities',
+    "activities",
     useMemo(
       () =>
         activitiesPicked
           .map((activity) => ({
             ...activity,
-            activity: activitiesById[activity.activity] ?? assetsById[activity.activity],
+            activity:
+              activitiesById[activity.activity] ??
+              assetsById[activity.activity],
             original: activity,
           }))
           .filter((activity) => !!activity.activity),
@@ -118,7 +120,12 @@ function useSelectedActivities() {
   );
 }
 
-export function ModuleComposer({ localizations, onSelectAsset, onRemoveAsset, onActivityChange }) {
+export function ModuleComposer({
+  localizations,
+  onSelectAsset,
+  onRemoveAsset,
+  onActivityChange,
+}) {
   const columns = useColumns({
     localizations: localizations?.steps?.resources?.moduleComposer?.columns,
   });
@@ -132,19 +139,25 @@ export function ModuleComposer({ localizations, onSelectAsset, onRemoveAsset, on
 
   return (
     <ContextContainer title={localizations?.moduleComposer?.title}>
-      <Box sx={() => ({ width: '50%', minWidth: 550 })}>
+      <Box sx={() => ({ width: "50%", minWidth: 550 })}>
         <Table
           columns={columns}
           data={parsedActivities}
           sortable={parsedActivities?.length > 1}
-          labels={{ add: '' }}
-          headerStyles={{ display: 'none' }}
+          labels={{ add: "" }}
+          headerStyles={{ display: "none" }}
           isAssetList
-          onChangeData={({ newData }) => onActivityChange(map(newData, 'original'))}
+          onChangeData={({ newData }) =>
+            onActivityChange(map(newData, "original"))
+          }
         />
       </Box>
       <Box>
-        <Button variant="link" leftIcon={<AddCircleIcon />} onClick={onSelectAsset}>
+        <Button
+          variant="link"
+          leftIcon={<AddCircleIcon />}
+          onClick={onSelectAsset}
+        >
           {localizations?.buttons?.new}
         </Button>
       </Box>

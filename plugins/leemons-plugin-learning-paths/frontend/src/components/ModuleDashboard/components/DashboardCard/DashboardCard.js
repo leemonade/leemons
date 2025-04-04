@@ -1,17 +1,17 @@
-import React from 'react';
+import React from "react";
 
-import { useIsTeacher, useClassesSubjects } from '@academic-portfolio/hooks';
-import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
-import { Box } from '@bubbles-ui/components';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
-import PropTypes from 'prop-types';
+import { useIsTeacher, useClassesSubjects } from "@academic-portfolio/hooks";
+import useRolesLocalizations from "@assignables/hooks/useRolesLocalizations";
+import { Box } from "@bubbles-ui/components";
+import prepareAsset from "@leebrary/helpers/prepareAsset";
+import PropTypes from "prop-types";
 
-import { getOngoingInfo } from '../../helpers/getOngoingInfo';
+import { getOngoingInfo } from "../../helpers/getOngoingInfo";
 
-import { useDashboardCardStyles } from './DashboardCard.styles';
-import { DashboardCardBody } from './components/DashboardCardBody';
-import { DashboardCardCover } from './components/DashboardCardCover';
-import { DashboardCardFooter } from './components/DashboardCardFooter';
+import { useDashboardCardStyles } from "./DashboardCard.styles";
+import { DashboardCardBody } from "./components/DashboardCardBody";
+import { DashboardCardCover } from "./components/DashboardCardCover";
+import { DashboardCardFooter } from "./components/DashboardCardFooter";
 
 const DashboardCard = ({
   activity,
@@ -44,7 +44,10 @@ const DashboardCard = ({
             introductionCard={introductionCard}
           />
           <Box className={classes.content}>
-            <DashboardCardBody statement={statement} assetNumber={assetNumber} />
+            <DashboardCardBody
+              statement={statement}
+              assetNumber={assetNumber}
+            />
             <DashboardCardFooter
               localizations={localizations}
               introductionLink={introductionLink}
@@ -70,7 +73,7 @@ const DashboardCard = ({
       return null;
     }
 
-    const grades = assignation.grades.filter((grade) => grade.type === 'main');
+    const grades = assignation.grades.filter((grade) => grade.type === "main");
     const sum = grades.reduce((s, grade) => grade.grade + s, 0);
     return sum / grades.length;
   }, [assignation?.grades, activity?.requiresScoring]);

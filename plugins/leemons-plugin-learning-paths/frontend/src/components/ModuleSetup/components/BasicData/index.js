@@ -1,1 +1,1 @@
-export * from './BasicData';
+export * from "./BasicData";

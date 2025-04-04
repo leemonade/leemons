@@ -1,8 +1,8 @@
-import { TimeInput } from '@bubbles-ui/components';
-import { TimeClockCircleIcon } from '@bubbles-ui/icons/outline';
-import PropTypes from 'prop-types';
+import { TimeInput } from "@bubbles-ui/components";
+import { TimeClockCircleIcon } from "@bubbles-ui/icons/outline";
+import PropTypes from "prop-types";
 
-import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
+import { useModuleAssignContext } from "@learning-paths/contexts/ModuleAssignContext";
 
 export function Duration({ id, timeState, setValue }) {
   const { useWatch } = useModuleAssignContext();

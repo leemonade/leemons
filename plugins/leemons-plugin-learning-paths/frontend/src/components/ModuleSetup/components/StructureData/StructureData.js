@@ -1,33 +1,33 @@
-import PropTypes from 'prop-types';
-import React, { useEffect, useMemo, useState } from 'react';
+import PropTypes from "prop-types";
+import { useEffect, useMemo, useState } from "react";
 
+import { useRoles } from "@assignables/components/Ongoing/AssignmentList/components/Filters/components/Type/Type";
 import {
   Box,
   Button,
   Tooltip,
-  TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
-} from '@bubbles-ui/components';
-import { ChevLeftIcon, ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { v4 as uuidv4 } from 'uuid';
-import { fireEvent } from 'leemons-hooks';
-import { cloneDeep, get, noop, set, without } from 'lodash';
-import { useRoles } from '@assignables/components/Ongoing/AssignmentList/components/Filters/components/Type/Type';
-import addAction from '@learning-paths/components/ModuleSetup/helpers/addAction';
-import { useModuleSetupContext } from '@learning-paths/contexts/ModuleSetupContext';
-import { AssetPickerDrawer } from '@leebrary/components/AssetPickerDrawer';
-import { EmptyState } from './components/EmptyState';
-import { ModuleComposer } from './components/ModuleComposer';
-import { EVENT_BASE, ACTIVITIES_KEY } from '../../constants';
+  TotalLayoutStepContainer,
+} from "@bubbles-ui/components";
+import { ChevLeftIcon, ChevRightIcon } from "@bubbles-ui/icons/outline";
+import addAction from "@learning-paths/components/ModuleSetup/helpers/addAction";
+import { useModuleSetupContext } from "@learning-paths/contexts/ModuleSetupContext";
+import { AssetPickerDrawer } from "@leebrary/components/AssetPickerDrawer";
+import { fireEvent } from "@leemons/hooks";
+import { cloneDeep, get, noop, set, without } from "lodash";
+import { v4 as uuidv4 } from "uuid";
+import { ACTIVITIES_KEY, EVENT_BASE } from "../../constants";
+import { EmptyState } from "./components/EmptyState";
+import { ModuleComposer } from "./components/ModuleComposer";
 
-const MEDIA_FILES_CATEGORY = 'media-files';
-const BOOKMARKS_CATEGORY = 'bookmarks';
+const MEDIA_FILES_CATEGORY = "media-files";
+const BOOKMARKS_CATEGORY = "bookmarks";
 
-const ACTIVITY_TYPE = 'activity';
-const ASSET_TYPE = 'asset';
+const ACTIVITY_TYPE = "activity";
+const ASSET_TYPE = "asset";
 
 function useOnSave() {
-  const eventBase = 'plugin.learning-paths.modules.edit';
+  const eventBase = "plugin.learning-paths.modules.edit";
   useEffect(
     () =>
       addAction(`${eventBase}.onSave`, () => {
@@ -72,7 +72,7 @@ export function StructureData({
     () => [
       ...without(
         assignablesRoles?.map((role) => `assignables.${role?.value}`) ?? [],
-        'assignables.learningpaths.module'
+        "assignables.learningpaths.module"
       ),
       MEDIA_FILES_CATEGORY,
       BOOKMARKS_CATEGORY,
@@ -88,7 +88,11 @@ export function StructureData({
           scrollRef={scrollRef}
           fixed
           leftZone={
-            <Button variant="outline" leftIcon={<ChevLeftIcon />} onClick={onPrevStep}>
+            <Button
+              variant="outline"
+              leftIcon={<ChevLeftIcon />}
+              onClick={onPrevStep}
+            >
               {_localizations?.buttons?.previous}
             </Button>
           }
@@ -105,7 +109,10 @@ export function StructureData({
                   <Button
                     onClick={() => onNextStep()}
                     rightIcon={<ChevRightIcon />}
-                    disabled={isLoading || get(sharedData, ACTIVITIES_KEY, [])?.length < 2}
+                    disabled={
+                      isLoading ||
+                      get(sharedData, ACTIVITIES_KEY, [])?.length < 2
+                    }
                     loading={isLoading}
                   >
                     {_localizations?.buttons?.next}
@@ -134,7 +141,7 @@ export function StructureData({
                 {
                   activity: providerData?.id ?? asset?.id,
                   default: {
-                    type: 'mandatory',
+                    type: "mandatory",
                   },
                   id: uuidv4(),
                   type,
@@ -147,12 +154,16 @@ export function StructureData({
         {get(sharedData, ACTIVITIES_KEY, [])?.length ? (
           <ModuleComposer
             onActivityChange={(newActivities) =>
-              setSharedData((data) => set(cloneDeep(data), ACTIVITIES_KEY, newActivities))
+              setSharedData((data) =>
+                set(cloneDeep(data), ACTIVITIES_KEY, newActivities)
+              )
             }
             onSelectAsset={() => setShowAssetDrawer(1)}
             onRemoveAsset={(id) =>
               setSharedData((data) => {
-                const index = data.state.activities.findIndex((value) => value.id === id);
+                const index = data.state.activities.findIndex(
+                  (value) => value.id === id
+                );
                 const newData = cloneDeep(data);
 
                 newData.state.activities.splice(index, 1);
@@ -163,7 +174,10 @@ export function StructureData({
             localizations={localizations}
           />
         ) : (
-          <EmptyState onSelectAsset={() => setShowAssetDrawer(1)} localizations={localizations} />
+          <EmptyState
+            onSelectAsset={() => setShowAssetDrawer(1)}
+            localizations={localizations}
+          />
         )}
       </Box>
     </TotalLayoutStepContainer>

@@ -1,11 +1,14 @@
-import React from 'react';
-import prefixPN from '@assignables/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { get } from 'lodash';
-import { unflatten } from '@common';
-import { Box, Text, ImageLoader } from '@bubbles-ui/components';
-import { ROLENAMES_DEFAULT_PROPS, ROLENAMES_PROP_TYPES } from './RoleName.constants';
-import { useRoleNameStyles } from './RoleName.styles';
+import React from "react";
+import prefixPN from "@assignables/helpers/prefixPN";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { get } from "lodash";
+import { unflatten } from "@common";
+import { Box, Text, ImageLoader } from "@bubbles-ui/components";
+import {
+  ROLENAMES_DEFAULT_PROPS,
+  ROLENAMES_PROP_TYPES,
+} from "./RoleName.constants";
+import { useRoleNameStyles } from "./RoleName.styles";
 
 function useRoleLocalization(role) {
   const localizationKey = prefixPN(`roles.${role}.singular`);
@@ -14,7 +17,7 @@ function useRoleLocalization(role) {
 
   return React.useMemo(() => {
     if (!translations?.items) {
-      return '';
+      return "";
     }
 
     const res = unflatten(translations.items);

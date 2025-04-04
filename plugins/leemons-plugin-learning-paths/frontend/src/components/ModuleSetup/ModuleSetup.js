@@ -1,38 +1,47 @@
-import React, { cloneElement, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  cloneElement,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
-import { VerticalStepperContainer, TotalLayoutContainer } from '@bubbles-ui/components';
+import {
+  TotalLayoutContainer,
+  VerticalStepperContainer,
+} from "@bubbles-ui/components";
 
-import { fireEvent } from 'leemons-hooks';
-import { get, isFunction, omit } from 'lodash';
+import { fireEvent } from "@leemons/hooks";
+import { get, isFunction, omit } from "lodash";
 
-import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
-import { unflatten } from '@common';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useModuleSetupContext } from '@learning-paths/contexts/ModuleSetupContext';
-import { prefixPN } from '@learning-paths/helpers';
-import createModuleRequest from '@learning-paths/requests/createModule';
-import updateModuleRequest from '@learning-paths/requests/updateModule';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useHistory, useParams } from 'react-router-dom';
-import { BasicData } from './components/BasicData/BasicData';
-import { Header } from './components/Header';
-import { StructureData } from './components/StructureData/StructureData';
-import addAction from './helpers/addAction';
-import { Resources } from './components/Resources';
+import useAssignables from "@assignables/requests/hooks/queries/useAssignables";
+import { unflatten } from "@common";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useModuleSetupContext } from "@learning-paths/contexts/ModuleSetupContext";
+import { prefixPN } from "@learning-paths/helpers";
+import createModuleRequest from "@learning-paths/requests/createModule";
+import updateModuleRequest from "@learning-paths/requests/updateModule";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useHistory, useParams } from "react-router-dom";
+import { BasicData } from "./components/BasicData/BasicData";
+import { Header } from "./components/Header";
+import { Resources } from "./components/Resources";
+import { StructureData } from "./components/StructureData/StructureData";
+import addAction from "./helpers/addAction";
 
 export function useTabs({ localizations }) {
   return useMemo(
     () => [
       {
-        id: 'basicData',
+        id: "basicData",
         label: localizations?.basicData,
       },
       {
-        id: 'structure',
+        id: "structure",
         label: localizations?.structure,
       },
       {
-        id: 'resources',
+        id: "resources",
         label: localizations?.resources,
       },
     ],
@@ -41,7 +50,7 @@ export function useTabs({ localizations }) {
 }
 
 export function useModuleSetupLocalizations() {
-  const key = prefixPN('moduleSetup');
+  const key = prefixPN("moduleSetup");
   const [, translations] = useTranslateLoader(key);
 
   return useMemo(() => {
@@ -61,7 +70,7 @@ const stepsRenderers = {
   resources: <Resources />,
 };
 
-const eventBase = 'plugin.learning-paths.modules.edit';
+const eventBase = "plugin.learning-paths.modules.edit";
 
 async function handleOnSaveEvent() {
   const actions = [];
@@ -95,27 +104,29 @@ async function handleOnSaveEvent() {
 function prepareAssignable(sharedData) {
   return {
     asset: {
-      ...omit(get(sharedData, 'basicData'), 'subjects', 'program'),
-      cover: get(sharedData, 'basicData.cover.id') || get(sharedData, 'basicData.cover'),
+      ...omit(get(sharedData, "basicData"), "subjects", "program"),
+      cover:
+        get(sharedData, "basicData.cover.id") ||
+        get(sharedData, "basicData.cover"),
     },
     gradable: true,
     // TODO: Add center
     center: null,
-    subjects: get(sharedData, 'basicData.subjects', []).map((subject) => ({
+    subjects: get(sharedData, "basicData.subjects", []).map((subject) => ({
       subject: subject?.subject ?? subject,
-      program: get(sharedData, 'basicData.program', null),
+      program: get(sharedData, "basicData.program", null),
     })),
     submission: {
-      activities: get(sharedData, 'state.activities', []).map((activity) => ({
+      activities: get(sharedData, "state.activities", []).map((activity) => ({
         activity: activity.activity,
         id: activity.id,
         type: activity.type,
       })),
     },
-    resources: get(sharedData, 'state.resources', []),
+    resources: get(sharedData, "state.resources", []),
     // EN: It's required
     // ES: Es requerido
-    statement: 'Module',
+    statement: "Module",
   };
 }
 
@@ -123,7 +134,7 @@ function prepareSharedData(moduleData) {
   return {
     id: moduleData.id,
     basicData: {
-      ...omit(moduleData.asset, 'file'),
+      ...omit(moduleData.asset, "file"),
       subjects: moduleData?.subjects,
       program: moduleData?.subjects?.[0]?.program,
     },
@@ -146,15 +157,19 @@ function onSaveDraft({ sharedDataRef, history, localizations }) {
             published: false,
           });
         } else {
-          module = await updateModuleRequest(sharedData.id, prepareAssignable(sharedData), {
-            published: false,
-          });
+          module = await updateModuleRequest(
+            sharedData.id,
+            prepareAssignable(sharedData),
+            {
+              published: false,
+            }
+          );
         }
 
         addSuccessAlert(localizations?.alert?.saveSuccess);
 
         history.replace(
-          `/private/learning-paths/modules/${module.id}/edit${sharedData?.id ? '' : '?fromNew'}`
+          `/private/learning-paths/modules/${module.id}/edit${sharedData?.id ? "" : "?fromNew"}`
         );
       })
       .catch((e) => {
@@ -173,15 +188,22 @@ function onSaveAndPublish({ sharedDataRef, localizations }) {
         const sharedData = sharedDataRef.current;
 
         if (!sharedData.id) {
-          const { id } = await createModuleRequest(prepareAssignable(sharedData), {
-            published: true,
-          });
+          const { id } = await createModuleRequest(
+            prepareAssignable(sharedData),
+            {
+              published: true,
+            }
+          );
 
           sharedData.id = id;
         } else {
-          const { id } = await updateModuleRequest(sharedData.id, prepareAssignable(sharedData), {
-            published: true,
-          });
+          const { id } = await updateModuleRequest(
+            sharedData.id,
+            prepareAssignable(sharedData),
+            {
+              published: true,
+            }
+          );
 
           sharedData.id = id;
         }
@@ -292,7 +314,9 @@ export function ModuleSetup() {
   return (
     <TotalLayoutContainer
       scrollRef={scrollRef}
-      Header={<Header localizations={localizations?.header} onCancel={onCancel} />}
+      Header={
+        <Header localizations={localizations?.header} onCancel={onCancel} />
+      }
     >
       <VerticalStepperContainer
         data={tabs}

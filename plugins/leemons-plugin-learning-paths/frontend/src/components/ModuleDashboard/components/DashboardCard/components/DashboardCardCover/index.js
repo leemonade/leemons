@@ -1,1 +1,1 @@
-export * from './DashboardCardCover';
+export * from "./DashboardCardCover";

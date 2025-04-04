@@ -1,15 +1,17 @@
-import useAssignationProgress from '@assignables/hooks/useAssignationProgress';
-import { STATUS_NAMES } from '@assignables/hooks/useAssignationProgress/constants';
-import { Box, Text } from '@bubbles-ui/components';
-import { ClockIcon } from '@bubbles-ui/icons/solid';
+import useAssignationProgress from "@assignables/hooks/useAssignationProgress";
+import { STATUS_NAMES } from "@assignables/hooks/useAssignationProgress/constants";
+import { Box, Text } from "@bubbles-ui/components";
+import { ClockIcon } from "@bubbles-ui/icons/solid";
 
-import { EVALUATION_STATE_DISPLAY_PROP_TYPES } from './EvaluationStateDisplay.constants';
-import { useEvaluationStateDisplayStyles } from './EvaluationStateDisplay.styles';
-import { DeliveredIcon } from './icons/DeliveredIcon';
-import { EvaluatedIcon } from './icons/EvaluatedIcon';
+import { EVALUATION_STATE_DISPLAY_PROP_TYPES } from "./EvaluationStateDisplay.constants";
+import { useEvaluationStateDisplayStyles } from "./EvaluationStateDisplay.styles";
+import { DeliveredIcon } from "./icons/DeliveredIcon";
+import { EvaluatedIcon } from "./icons/EvaluatedIcon";
 
 const EvaluationStateDisplay = ({ assignation }) => {
-  const { statusName, label, color, hexColor } = useAssignationProgress({ assignation });
+  const { statusName, label, color, hexColor } = useAssignationProgress({
+    assignation,
+  });
 
   const isEvaluated = statusName === STATUS_NAMES.evaluated;
   const isSubmitted =
@@ -36,7 +38,7 @@ const EvaluationStateDisplay = ({ assignation }) => {
 };
 
 EvaluationStateDisplay.propTypes = EVALUATION_STATE_DISPLAY_PROP_TYPES;
-EvaluationStateDisplay.displayName = 'EvaluationStateDisplay';
+EvaluationStateDisplay.displayName = "EvaluationStateDisplay";
 
 export default EvaluationStateDisplay;
 export { EvaluationStateDisplay };

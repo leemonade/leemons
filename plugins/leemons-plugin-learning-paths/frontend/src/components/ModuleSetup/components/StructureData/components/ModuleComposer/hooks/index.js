@@ -1,1 +1,1 @@
-export { default as useParseActivities } from './useParseActivities';
+export { default as useParseActivities } from "./useParseActivities";

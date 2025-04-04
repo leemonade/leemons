@@ -1,9 +1,9 @@
-import { ActionButton } from '@bubbles-ui/components';
-import { DeleteBinIcon } from '@bubbles-ui/icons/outline';
-import { UndeleteIcon } from '@bubbles-ui/icons/solid';
-import PropTypes from 'prop-types';
+import { ActionButton } from "@bubbles-ui/components";
+import { DeleteBinIcon } from "@bubbles-ui/icons/outline";
+import { UndeleteIcon } from "@bubbles-ui/icons/solid";
+import PropTypes from "prop-types";
 
-import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
+import { useModuleAssignContext } from "@learning-paths/contexts/ModuleAssignContext";
 
 export function DeleteAction({ id }) {
   const { useWatch, setValue } = useModuleAssignContext();

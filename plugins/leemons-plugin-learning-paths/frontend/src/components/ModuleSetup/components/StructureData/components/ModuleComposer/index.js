@@ -1,1 +1,1 @@
-export * from './ModuleComposer';
+export * from "./ModuleComposer";

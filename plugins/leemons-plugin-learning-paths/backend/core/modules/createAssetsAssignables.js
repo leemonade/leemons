@@ -1,9 +1,11 @@
-const ACTIVITY_TYPE = 'activity';
-const ASSET_TYPE = 'asset';
-const ASSET_ROLE = 'leebrary.asset';
+const ACTIVITY_TYPE = "activity";
+const ASSET_TYPE = "asset";
+const ASSET_ROLE = "leebrary.asset";
 
 async function createAssetsAssignables({ module, ctx }) {
-  const activities = module.submission.activities.filter(({ type }) => type === ASSET_TYPE);
+  const activities = module.submission.activities.filter(
+    ({ type }) => type === ASSET_TYPE
+  );
 
   const createdAssignablesByAsset = new Map();
 
@@ -27,7 +29,10 @@ async function createAssetsAssignables({ module, ctx }) {
           },
         };
 
-        const createdAssignable = await ctx.tx.call('leebrary.assignables.create', { assignable });
+        const createdAssignable = await ctx.tx.call(
+          "leebrary.assignables.create",
+          { assignable }
+        );
 
         createdAssignablesByAsset.set(asset, createdAssignable.id);
 

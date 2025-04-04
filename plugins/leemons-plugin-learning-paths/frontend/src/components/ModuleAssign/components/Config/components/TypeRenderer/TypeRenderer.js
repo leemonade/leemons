@@ -1,16 +1,19 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect } from "react";
 
-import { Switch } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+import { Switch } from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
-import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
+import { useModuleAssignContext } from "@learning-paths/contexts/ModuleAssignContext";
 
 export function TypeRenderer({ id, localizations, defaultValue }) {
   const { useWatch, setValue } = useModuleAssignContext();
   const value = useWatch({ name: `state.type.${id}` });
   const isDeleted = useWatch({ name: `state.deleted.${id}` });
 
-  const onChange = useCallback((newValue) => setValue(`state.type.${id}`, newValue), [setValue]);
+  const onChange = useCallback(
+    (newValue) => setValue(`state.type.${id}`, newValue),
+    [setValue]
+  );
 
   useEffect(() => {
     if (!value) {
@@ -25,9 +28,9 @@ export function TypeRenderer({ id, localizations, defaultValue }) {
   return (
     <Switch
       label={localizations?.mandatory}
-      checked={value === 'blocking'}
+      checked={value === "blocking"}
       onChange={(checked) => {
-        onChange(checked ? 'blocking' : 'optional');
+        onChange(checked ? "blocking" : "optional");
       }}
     />
   );

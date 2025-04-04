@@ -1,1 +1,1 @@
-export * from './ConfigModal';
+export * from "./ConfigModal";

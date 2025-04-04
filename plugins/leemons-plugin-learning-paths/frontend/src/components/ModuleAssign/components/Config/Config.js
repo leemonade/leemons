@@ -1,29 +1,29 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from "react";
 
-import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
-import { Box, createStyles, Stack, Table } from '@bubbles-ui/components';
-import { unflatten } from '@common';
-import loadable from '@loadable/component';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { get, isFunction, map, uniqBy } from 'lodash';
-import PropTypes from 'prop-types';
+import useAssignables from "@assignables/requests/hooks/queries/useAssignables";
+import { Box, createStyles, Stack, Table } from "@bubbles-ui/components";
+import { unflatten } from "@common";
+import loadable from "@loadable/component";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { get, isFunction, map, uniqBy } from "lodash";
+import PropTypes from "prop-types";
 
-import { ResourceRenderer } from '../../../ModuleSetup/components/StructureData/components/ModuleComposer/components/ResourceRenderer';
-import { ConfigModal } from '../ConfigModal';
+import { ResourceRenderer } from "../../../ModuleSetup/components/StructureData/components/ModuleComposer/components/ResourceRenderer";
+import { ConfigModal } from "../ConfigModal";
 
-import { ConfigAction } from './components/ConfigAction';
-import { DeleteAction } from './components/DeleteAction';
-import { Duration } from './components/Duration';
+import { ConfigAction } from "./components/ConfigAction";
+import { DeleteAction } from "./components/DeleteAction";
+import { Duration } from "./components/Duration";
 
-import { TypeRenderer } from '@learning-paths/components/ModuleAssign/components/Config/components/TypeRenderer';
-import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
-import { prefixPN } from '@learning-paths/helpers';
+import { TypeRenderer } from "@learning-paths/components/ModuleAssign/components/Config/components/TypeRenderer";
+import { useModuleAssignContext } from "@learning-paths/contexts/ModuleAssignContext";
+import { prefixPN } from "@learning-paths/helpers";
 
 export function useConfigLocalizations(parentLocalizations) {
   // key is string
   const keys = [
-    prefixPN('moduleSetup.steps.structureData.moduleComposer.columns'),
-    prefixPN('moduleSetup.steps.structureData.moduleComposer.lastUpdate'),
+    prefixPN("moduleSetup.steps.structureData.moduleComposer.columns"),
+    prefixPN("moduleSetup.steps.structureData.moduleComposer.lastUpdate"),
   ];
   const [, translations] = useTranslateLoader(keys);
 
@@ -34,7 +34,7 @@ export function useConfigLocalizations(parentLocalizations) {
       return {
         ...parentLocalizations,
         columns: get(res, keys[0], {}),
-        lastUpdate: get(res, keys[1], ''),
+        lastUpdate: get(res, keys[1], ""),
       };
     }
 
@@ -54,7 +54,7 @@ export const useConfigStyles = createStyles((theme) => {
 
 function useActivities(assignable) {
   const activitiesIds = useMemo(
-    () => map(assignable?.submission?.activities, 'activity'),
+    () => map(assignable?.submission?.activities, "activity"),
     [assignable?.submission?.activities]
   );
 
@@ -67,7 +67,12 @@ function useActivities(assignable) {
 
   const assignablesById = useMemo(
     () =>
-      Object.fromEntries(assignables?.map((assignableData) => [assignableData.id, assignableData])),
+      Object.fromEntries(
+        assignables?.map((assignableData) => [
+          assignableData.id,
+          assignableData,
+        ])
+      ),
     [assignables]
   );
   const activitiesData = useMemo(
@@ -87,10 +92,15 @@ function useActivities(assignable) {
   };
 }
 
-function useParsedActivities({ activities, components, localizations, onConfig }) {
+function useParsedActivities({
+  activities,
+  components,
+  localizations,
+  onConfig,
+}) {
   const { useWatch, setValue } = useModuleAssignContext();
-  const timeState = useWatch({ name: 'state.time' });
-  const order = useWatch({ name: 'state.order' });
+  const timeState = useWatch({ name: "state.time" });
+  const order = useWatch({ name: "state.order" });
 
   return useMemo(() => {
     const sortedActivities = order
@@ -111,13 +121,19 @@ function useParsedActivities({ activities, components, localizations, onConfig }
         <TypeRenderer
           id={id}
           localizations={localizations?.structureData?.types}
-          defaultValue={'mandatory'}
+          defaultValue={"mandatory"}
         />
       ),
       time: <Duration id={id} setValue={setValue} timeState={timeState} />,
       actions:
-        components[activity.role] && !components[activity.role].disabled?.(activity) ? (
-          <Stack sx={{ cursor: 'pointer' }} spacing={2} justifyContent="flex-end" fullWidth>
+        components[activity.role] &&
+        !components[activity.role].disabled?.(activity) ? (
+          <Stack
+            sx={{ cursor: "pointer" }}
+            spacing={2}
+            justifyContent="flex-end"
+            fullWidth
+          >
             <ConfigAction onConfig={onConfig} activity={activity} id={id} />
             <DeleteAction id={id} />
           </Stack>
@@ -125,27 +141,35 @@ function useParsedActivities({ activities, components, localizations, onConfig }
           <></>
         ),
     }));
-  }, [activities, components, localizations, onConfig, setValue, timeState, order]);
+  }, [
+    activities,
+    components,
+    localizations,
+    onConfig,
+    setValue,
+    timeState,
+    order,
+  ]);
 }
 
 function useColumns({ localizations }) {
   return useMemo(
     () => [
       {
-        Header: localizations?.resource || '',
-        accessor: 'resource',
+        Header: localizations?.resource || "",
+        accessor: "resource",
       },
       {
-        Header: localizations?.type || '',
-        accessor: 'type',
+        Header: localizations?.type || "",
+        accessor: "type",
       },
       {
-        Header: localizations?.time || '',
-        accessor: 'time',
+        Header: localizations?.time || "",
+        accessor: "time",
       },
       {
-        Header: localizations?.actions || '',
-        accessor: 'actions',
+        Header: localizations?.actions || "",
+        accessor: "actions",
       },
     ],
     [localizations]
@@ -160,7 +184,7 @@ function useLoadRolesComponents(activities) {
     () =>
       uniqBy(
         activities.map(({ activity }) => activity.roleDetails),
-        'name'
+        "name"
       ),
     [activities]
   );
@@ -267,7 +291,7 @@ export function Config({ assignable, localizations: parentLocalizations }) {
             order[id] = index;
           });
 
-          setValue('state.order', order);
+          setValue("state.order", order);
         }}
       />
     </Box>

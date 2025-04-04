@@ -1,1 +1,1 @@
-export * from './AssetMetadataModule';
+export * from "./AssetMetadataModule";

@@ -1,1 +1,1 @@
-export * from './Duration';
+export * from "./Duration";

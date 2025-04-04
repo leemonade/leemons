@@ -1,30 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { cloneDeep, get, set, uniq } from 'lodash';
-import { useHistory } from 'react-router-dom';
 import {
   Box,
   Button,
   DropdownButton,
-  createStyles,
-  TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
-} from '@bubbles-ui/components';
-import { fireEvent } from 'leemons-hooks';
-import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import { useModuleSetupContext } from '@learning-paths/contexts/ModuleSetupContext';
-import { AssetPickerDrawer } from '@leebrary/components/AssetPickerDrawer';
-import { EmptyState } from '../StructureData/components/EmptyState';
-import { ResourcesTable } from './components/ResourcesTable';
-import addAction from '../../helpers/addAction';
-import { EVENT_BASE, ACTIVITIES_KEY, RESOURCES_KEY } from '../../constants';
+  TotalLayoutStepContainer,
+  createStyles,
+} from "@bubbles-ui/components";
+import { ChevLeftIcon } from "@bubbles-ui/icons/outline";
+import { useModuleSetupContext } from "@learning-paths/contexts/ModuleSetupContext";
+import { AssetPickerDrawer } from "@leebrary/components/AssetPickerDrawer";
+import { fireEvent } from "@leemons/hooks";
+import { cloneDeep, get, set, uniq } from "lodash";
+import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
+import { ACTIVITIES_KEY, EVENT_BASE, RESOURCES_KEY } from "../../constants";
+import addAction from "../../helpers/addAction";
+import { EmptyState } from "../StructureData/components/EmptyState";
+import { ResourcesTable } from "./components/ResourcesTable";
 
 export const useResourcesStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
 
   return {
     root: {
-      display: 'flex',
+      display: "flex",
     },
     content: {
       paddingLeft: globalTheme.spacing.padding.xlg,
@@ -32,9 +32,9 @@ export const useResourcesStyles = createStyles((theme) => {
       paddingTop: globalTheme.spacing.padding.xlg,
     },
     buttons: {
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'space-between',
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "space-between",
 
       borderTop: `1px solid ${globalTheme.border.color.line.muted}`,
       marginTop: globalTheme.spacing.padding.xlg,
@@ -75,7 +75,11 @@ export function Resources({ localizations, onPrevStep, scrollRef, onSave }) {
           scrollRef={scrollRef}
           fixed
           leftZone={
-            <Button variant="outline" leftIcon={<ChevLeftIcon />} onClick={onPrevStep}>
+            <Button
+              variant="outline"
+              leftIcon={<ChevLeftIcon />}
+              onClick={onPrevStep}
+            >
               {localizations?.buttons?.previous}
             </Button>
           }
@@ -88,27 +92,35 @@ export function Resources({ localizations, onPrevStep, scrollRef, onSave }) {
               <DropdownButton
                 chevronUp
                 width="auto"
-                disabled={isLoading || get(sharedData, ACTIVITIES_KEY, [])?.length < 2}
+                disabled={
+                  isLoading || get(sharedData, ACTIVITIES_KEY, [])?.length < 2
+                }
                 loading={isLoading}
                 data={[
                   {
                     label: localizations?.buttons?.publish,
                     onClick: () =>
-                      fireEvent('plugin.learning-paths.modules.edit.onSave&Publish', () =>
-                        history.push(
-                          '/private/leebrary/assignables.learningpaths.module/list?activeTab=published'
-                        )
+                      fireEvent(
+                        "plugin.learning-paths.modules.edit.onSave&Publish",
+                        () =>
+                          history.push(
+                            "/private/leebrary/assignables.learningpaths.module/list?activeTab=published"
+                          )
                       ),
                   },
                   {
                     label: localizations?.buttons?.publishAndAssign,
                     onClick: () =>
-                      fireEvent('plugin.learning-paths.modules.edit.onSave&Publish', ({ id }) =>
-                        history.push(`/private/learning-paths/modules/${id}/assign`)
+                      fireEvent(
+                        "plugin.learning-paths.modules.edit.onSave&Publish",
+                        ({ id }) =>
+                          history.push(
+                            `/private/learning-paths/modules/${id}/assign`
+                          )
                       ),
                   },
                 ]}
-                sx={{ '&[data-disabled]': { pointerEvents: 'all' } }}
+                sx={{ "&[data-disabled]": { pointerEvents: "all" } }}
               >
                 {localizations?.buttons?.finish}
               </DropdownButton>
@@ -120,11 +132,16 @@ export function Resources({ localizations, onPrevStep, scrollRef, onSave }) {
       <Box>
         <AssetPickerDrawer
           layout="rows"
-          categories={['media-files', 'bookmarks', 'assignables.content-creator']}
+          categories={[
+            "media-files",
+            "bookmarks",
+            "assignables.content-creator",
+          ]}
           creatable
           onClose={() => setShowAssetDrawer(false)}
           onSelect={(asset) => {
-            const isContentCreator = asset?.providerData?.role === 'content-creator';
+            const isContentCreator =
+              asset?.providerData?.role === "content-creator";
 
             setSharedData((data) =>
               set(
@@ -132,7 +149,9 @@ export function Resources({ localizations, onPrevStep, scrollRef, onSave }) {
                 RESOURCES_KEY,
                 uniq([
                   ...get(data, RESOURCES_KEY, []),
-                  isContentCreator ? { id: asset.id, duplicate: false } : asset.id,
+                  isContentCreator
+                    ? { id: asset.id, duplicate: false }
+                    : asset.id,
                 ])
               )
             );
@@ -144,12 +163,16 @@ export function Resources({ localizations, onPrevStep, scrollRef, onSave }) {
         {get(sharedData, RESOURCES_KEY, [])?.length ? (
           <ResourcesTable
             onAssetChange={(newAssets) => {
-              setSharedData((data) => set(cloneDeep(data), RESOURCES_KEY, newAssets));
+              setSharedData((data) =>
+                set(cloneDeep(data), RESOURCES_KEY, newAssets)
+              );
             }}
             onSelectAsset={() => setShowAssetDrawer(1)}
             onRemoveAsset={(id) =>
               setSharedData((data) => {
-                const index = data.state.resources.findIndex((value) => value === id);
+                const index = data.state.resources.findIndex(
+                  (value) => value === id
+                );
                 const newData = cloneDeep(data);
 
                 newData.state.resources.splice(index, 1);

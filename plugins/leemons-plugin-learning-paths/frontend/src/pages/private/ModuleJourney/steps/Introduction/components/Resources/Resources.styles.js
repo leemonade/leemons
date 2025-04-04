@@ -1,4 +1,4 @@
-import { createStyles, pxToRem } from '@bubbles-ui/components';
+import { createStyles, pxToRem } from "@bubbles-ui/components";
 
 const resourceStyles = createStyles(() => ({
   root: {

@@ -1,1 +1,1 @@
-export * from './TypeRenderer';
+export * from "./TypeRenderer";

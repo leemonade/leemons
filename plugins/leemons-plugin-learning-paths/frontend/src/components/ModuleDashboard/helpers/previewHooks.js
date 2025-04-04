@@ -1,12 +1,15 @@
-import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
-import { useClassesSubjects, useSubjectDetails } from '@academic-portfolio/hooks';
-import { getMultiClassData } from '@assignables/helpers/getClassData';
-import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
-import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
-import { addErrorAlert } from '@layout/alert';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
-import { capitalize, get, keyBy, map, mapValues } from 'lodash';
-import { useEffect, useMemo } from 'react';
+import { getClassIcon } from "@academic-portfolio/helpers/getClassIcon";
+import {
+  useClassesSubjects,
+  useSubjectDetails,
+} from "@academic-portfolio/hooks";
+import { getMultiClassData } from "@assignables/helpers/getClassData";
+import useRolesLocalizations from "@assignables/hooks/useRolesLocalizations";
+import useAssignables from "@assignables/requests/hooks/queries/useAssignables";
+import { addErrorAlert } from "@layout/alert";
+import prepareAsset from "@leebrary/helpers/prepareAsset";
+import { capitalize, get, keyBy, map, mapValues } from "lodash";
+import { useEffect, useMemo } from "react";
 
 function useSubjectsData(module) {
   const subjects = useClassesSubjects(module?.classes);
@@ -35,10 +38,13 @@ export function useModuleDataForPreview(id) {
   } = useAssignables({ id, enabled: !!id });
 
   const activitiesIds = useMemo(
-    () => map(module?.submission?.activities, 'activity'),
+    () => map(module?.submission?.activities, "activity"),
     [module?.submission?.activities]
   );
-  const subjectsIds = useMemo(() => map(module?.subjects, 'subject'), [module?.subjects]);
+  const subjectsIds = useMemo(
+    () => map(module?.subjects, "subject"),
+    [module?.subjects]
+  );
   const { data: subjectsData } = useSubjectDetails(subjectsIds);
 
   const {
@@ -49,7 +55,7 @@ export function useModuleDataForPreview(id) {
   } = useAssignables({
     ids: activitiesIds,
     enabled: !!activitiesIds?.length,
-    select: (data) => keyBy(data, 'id'),
+    select: (data) => keyBy(data, "id"),
   });
 
   useEffect(() => {
@@ -85,7 +91,9 @@ export function useModuleDataForPreview(id) {
     subjectsData,
     activitiesById,
     activities:
-      module?.submission?.activities?.map((activity) => ({ id: activity.activity })) ?? [],
+      module?.submission?.activities?.map((activity) => ({
+        id: activity.activity,
+      })) ?? [],
     assignationsById: {},
 
     isLoading: isLoadingActivities || isLoadingModule,
@@ -109,8 +117,9 @@ export function useHeaderDataForPreview(module) {
     header: {
       title: name,
 
-      icon: subjectsData?.length > 1 ? icon : subjectsData?.[0]?.icon ?? icon,
-      color: subjectsData?.length > 1 ? color : subjectsData?.[0]?.color ?? color,
+      icon: subjectsData?.length > 1 ? icon : (subjectsData?.[0]?.icon ?? icon),
+      color:
+        subjectsData?.length > 1 ? color : (subjectsData?.[0]?.color ?? color),
       image: preparedAsset?.cover ?? null,
       subjects: subjectsData,
       activityType: {

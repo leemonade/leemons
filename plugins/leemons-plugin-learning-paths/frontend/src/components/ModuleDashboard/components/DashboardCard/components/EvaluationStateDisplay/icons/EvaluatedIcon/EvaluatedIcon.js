@@ -1,5 +1,8 @@
-import React from 'react';
-import { EVALUATED_ICON_PROP_TYPES, EVALUATED_ICON_DEFAULT_PROPS } from './EvaluatedIcon.constants';
+import React from "react";
+import {
+  EVALUATED_ICON_PROP_TYPES,
+  EVALUATED_ICON_DEFAULT_PROPS,
+} from "./EvaluatedIcon.constants";
 
 const EvaluatedIcon = ({ width, height, color }) => (
   <svg
@@ -51,6 +54,6 @@ const EvaluatedIcon = ({ width, height, color }) => (
 EvaluatedIcon.defaultProps = EVALUATED_ICON_DEFAULT_PROPS;
 EvaluatedIcon.propTypes = EVALUATED_ICON_PROP_TYPES;
 
-EvaluatedIcon.displayName = 'EvaluatedIcon';
+EvaluatedIcon.displayName = "EvaluatedIcon";
 export default EvaluatedIcon;
 export { EvaluatedIcon };

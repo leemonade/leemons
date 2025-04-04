@@ -1,23 +1,23 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import useSearchOngoingActivities from '@assignables/requests/hooks/queries/useSearchOngoingActivities';
-import { useIsTeacher } from '@academic-portfolio/hooks';
-import { Box, createStyles } from '@bubbles-ui/components';
-import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
-import NYACard from '@assignables/components/NYACard';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@learning-paths/helpers/prefixPN';
+import React from "react";
+import PropTypes from "prop-types";
+import useSearchOngoingActivities from "@assignables/requests/hooks/queries/useSearchOngoingActivities";
+import { useIsTeacher } from "@academic-portfolio/hooks";
+import { Box, createStyles } from "@bubbles-ui/components";
+import useAssignationsByProfile from "@assignables/hooks/assignations/useAssignationsByProfile";
+import NYACard from "@assignables/components/NYACard";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@learning-paths/helpers/prefixPN";
 
 function useUserModules({ class: klass, program }) {
   const isTeacher = useIsTeacher();
 
   const { data: activities } = useSearchOngoingActivities({
     isTeacher,
-    role: 'learningpaths.module',
+    role: "learningpaths.module",
     programs: JSON.stringify([program]),
     classes: JSON.stringify([klass]),
     isArchived: false,
-    sort: 'assignation',
+    sort: "assignation",
     offset: 0,
     limit: 10,
   });
@@ -32,18 +32,18 @@ export const useModulesTabStyles = createStyles((theme) => {
 
   return {
     root: {
-      display: 'flex',
-      flexDirection: 'column',
+      display: "flex",
+      flexDirection: "column",
       gap: globalTheme.spacing.gap.xlg,
 
-      padding: globalTheme.spacing.padding['3xlg'],
+      padding: globalTheme.spacing.padding["3xlg"],
       paddingTop: globalTheme.spacing.padding.xlg,
     },
     activitiesList: {
-      display: 'flex',
-      flexDirection: 'row',
+      display: "flex",
+      flexDirection: "row",
       gap: globalTheme.spacing.gap.xlg,
-      flexWrap: 'wrap',
+      flexWrap: "wrap",
     },
     activity: {
       minWidth: 329,
@@ -52,8 +52,11 @@ export const useModulesTabStyles = createStyles((theme) => {
 });
 
 export default function ModulesTab({ classe: { id: klass, program } }) {
-  const [t] = useTranslateLoader(prefixPN('emptyState'));
-  const { data: modules, isLoading } = useUserModules({ class: klass, program });
+  const [t] = useTranslateLoader(prefixPN("emptyState"));
+  const { data: modules, isLoading } = useUserModules({
+    class: klass,
+    program,
+  });
   const { classes } = useModulesTabStyles();
   const isTeacher = useIsTeacher();
 
@@ -61,13 +64,13 @@ export default function ModulesTab({ classe: { id: klass, program } }) {
     return (
       <Box
         style={{
-          height: '100%',
-          width: '100%',
-          display: 'grid',
-          placeContent: 'center',
+          height: "100%",
+          width: "100%",
+          display: "grid",
+          placeContent: "center",
         }}
       >
-        {t('description')}
+        {t("description")}
       </Box>
     );
   }

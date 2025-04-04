@@ -1,4 +1,4 @@
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 
 const getOngoingStatusAsNumber = (student) => {
   const finishDate = dayjs(student?.timestamps?.end || null);
@@ -31,12 +31,14 @@ const getOngoingStatusAsNumber = (student) => {
 const getEvaluatedCounter = ({ students, subjects, allStatuses }) => {
   const totalStudents = students?.length;
 
-  const totalStudentsFinished = allStatuses.filter((status) => status === 0).length;
+  const totalStudentsFinished = allStatuses.filter(
+    (status) => status === 0
+  ).length;
 
   const totalStudentsEvaluated = students.filter((student) => {
     const { grades } = student;
 
-    const mainGrades = grades.filter((grade) => grade.type === 'main');
+    const mainGrades = grades.filter((grade) => grade.type === "main");
     return mainGrades?.length >= subjects?.length;
   }).length;
   return { totalStudents, totalStudentsEvaluated, totalStudentsFinished };
@@ -49,29 +51,33 @@ const getOngoingState = ({ students, subjects }) => {
     allStatuses.push(student.status);
   });
 
-  const evaluatedCount = getEvaluatedCounter({ students, subjects, allStatuses });
+  const evaluatedCount = getEvaluatedCounter({
+    students,
+    subjects,
+    allStatuses,
+  });
 
   if (
     evaluatedCount.totalStudentsFinished > 0 &&
     evaluatedCount.totalStudentsFinished < evaluatedCount.totalStudents
   ) {
-    return { state: 'someDeliveredButNotAll', ...evaluatedCount };
+    return { state: "someDeliveredButNotAll", ...evaluatedCount };
   }
 
   if (evaluatedCount.totalStudentsEvaluated >= evaluatedCount.totalStudents) {
-    return { state: 'allEvaluated', ...evaluatedCount };
+    return { state: "allEvaluated", ...evaluatedCount };
   }
 
   if (evaluatedCount.totalStudentsEvaluated > 0) {
-    return { state: 'someEvaluated', ...evaluatedCount };
+    return { state: "someEvaluated", ...evaluatedCount };
   }
 
   if (allStatuses.some((status) => status === 2)) {
-    return { state: 'openedButNotStarted' };
+    return { state: "openedButNotStarted" };
   }
 
   if (evaluatedCount.totalStudentsFinished === evaluatedCount.totalStudents) {
-    return { state: 'allFinished', ...evaluatedCount };
+    return { state: "allFinished", ...evaluatedCount };
   }
 
   return null;

@@ -1,4 +1,4 @@
-import propTypes from 'prop-types';
+import propTypes from "prop-types";
 
 export const INTRODUCTION_DEFAULT_PROPS = {
   instance: {},

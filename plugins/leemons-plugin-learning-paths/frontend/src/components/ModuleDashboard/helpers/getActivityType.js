@@ -2,18 +2,18 @@ function getActivityType(instance) {
   const { gradable, allowFeedback, requiresScoring } = instance;
 
   if (gradable) {
-    return 'calificable';
+    return "calificable";
   }
   if (!gradable && requiresScoring) {
-    return 'puntuable';
+    return "puntuable";
   }
   if (allowFeedback && !requiresScoring) {
-    return 'no_evaluable';
+    return "no_evaluable";
   }
   if (allowFeedback && !requiresScoring && !gradable) {
-    return 'feedback';
+    return "feedback";
   }
-  return '';
+  return "";
 }
 
 export default getActivityType;

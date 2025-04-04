@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useMemo, useState } from "react";
+import PropTypes from "prop-types";
 import {
   Box,
   Alert,
@@ -10,10 +10,10 @@ import {
   createStyles,
   TotalLayoutContainer,
   Stack,
-} from '@bubbles-ui/components';
-import useRolesLocalizations from '@assignables/hooks/useRolesLocalizations';
-import { useModuleAssignContext } from '@learning-paths/contexts/ModuleAssignContext';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
+} from "@bubbles-ui/components";
+import useRolesLocalizations from "@assignables/hooks/useRolesLocalizations";
+import { useModuleAssignContext } from "@learning-paths/contexts/ModuleAssignContext";
+import { RemoveIcon } from "@bubbles-ui/icons/outline";
 
 // useLocalizations
 
@@ -54,7 +54,13 @@ export class ConfigModalErrorBoundary extends React.Component {
   }
 }
 
-export function ConfigModal({ assignable, components, localizations, activityId, onClose }) {
+export function ConfigModal({
+  assignable,
+  components,
+  localizations,
+  activityId,
+  onClose,
+}) {
   const { role } = assignable;
   const [opened, setOpened] = useState(false);
   const { setValue, useWatch } = useModuleAssignContext();
@@ -113,7 +119,7 @@ export function ConfigModal({ assignable, components, localizations, activityId,
             }}
           >
             <Title order={3}>{`${localizations?.steps?.setup?.action}: ${
-              roleLocalizations[role]?.singular || ''
+              roleLocalizations[role]?.singular || ""
             }`}</Title>
             <Box>
               <ActionButton icon={<RemoveIcon />} onClick={onClose} />
@@ -121,7 +127,12 @@ export function ConfigModal({ assignable, components, localizations, activityId,
           </Stack>
         }
       >
-        <Stack ref={scrollRef} fullWidth fullHeight style={{ overflowY: 'auto' }}>
+        <Stack
+          ref={scrollRef}
+          fullWidth
+          fullHeight
+          style={{ overflowY: "auto" }}
+        >
           <ConfigModalErrorBoundary>
             <Component
               fallback={<LoadingOverlay />}

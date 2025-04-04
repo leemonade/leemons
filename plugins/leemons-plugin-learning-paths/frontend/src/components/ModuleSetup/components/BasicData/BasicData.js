@@ -1,19 +1,19 @@
-import React, { useCallback, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import {
   Button,
   Loader,
-  createStyles,
-  TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
-} from '@bubbles-ui/components';
-import { ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { noop } from 'lodash';
-import { fireEvent } from 'leemons-hooks';
-import { useForm, useWatch } from 'react-hook-form';
-import { useModuleSetupContext } from '@learning-paths/contexts/ModuleSetupContext';
-import { AssetFormInput } from '@leebrary/components';
-import addAction from '../../helpers/addAction';
+  TotalLayoutStepContainer,
+  createStyles,
+} from "@bubbles-ui/components";
+import { ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { useModuleSetupContext } from "@learning-paths/contexts/ModuleSetupContext";
+import { AssetFormInput } from "@leebrary/components";
+import { fireEvent } from "@leemons/hooks";
+import { noop } from "lodash";
+import PropTypes from "prop-types";
+import { useCallback, useEffect } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import addAction from "../../helpers/addAction";
 
 const advancedConfig = {
   alwaysOpen: true,
@@ -24,7 +24,7 @@ const advancedConfig = {
 };
 
 function useOnSave({ onSubmit }) {
-  const eventBase = 'plugin.learning-paths.modules.edit';
+  const eventBase = "plugin.learning-paths.modules.edit";
   useEffect(
     () =>
       addAction(`${eventBase}.onSave`, () => {
@@ -33,7 +33,9 @@ function useOnSave({ onSubmit }) {
         onSubmit()
           .then(() => fireEvent(`${eventBase}.onSave.succeed`))
           // TRANSLATE
-          .catch(() => fireEvent(`${eventBase}.onSave.failed`, 'Reason: validation failed'));
+          .catch(() =>
+            fireEvent(`${eventBase}.onSave.failed`, "Reason: validation failed")
+          );
       }),
     [onSubmit]
   );
@@ -60,7 +62,7 @@ function useOnSubmit({ handleSubmit }) {
 function useEmitTitle({ control }) {
   const [, setSharedData] = useModuleSetupContext();
 
-  const name = useWatch({ control, name: 'name' });
+  const name = useWatch({ control, name: "name" });
 
   useEffect(() => {
     setSharedData((sharedData) => ({
@@ -83,9 +85,9 @@ export const useBasicDataStyles = createStyles((theme) => {
       paddingTop: globalTheme.spacing.padding.xlg,
     },
     buttons: {
-      display: 'flex',
-      flexDirection: 'row',
-      justifyContent: 'end',
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "end",
 
       borderTop: `1px solid ${globalTheme.border.color.line.muted}`,
       marginTop: globalTheme.spacing.padding.xlg,
@@ -98,7 +100,12 @@ export const useBasicDataStyles = createStyles((theme) => {
   };
 });
 
-export function BasicData({ localizations, scrollRef, onNextStep = noop, onSave = noop }) {
+export function BasicData({
+  localizations,
+  scrollRef,
+  onNextStep = noop,
+  onSave = noop,
+}) {
   const [sharedData] = useModuleSetupContext();
   const form = useForm({ defaultValues: sharedData?.basicData ?? {} });
 

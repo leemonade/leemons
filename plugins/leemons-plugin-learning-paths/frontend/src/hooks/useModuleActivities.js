@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import useAssignables from '@assignables/requests/hooks/queries/useAssignables';
+import { useMemo } from "react";
+import useAssignables from "@assignables/requests/hooks/queries/useAssignables";
 
 export const useModuleActivities = ({ module }) => {
   if (!module) return [];
@@ -18,6 +18,9 @@ export const useModuleActivities = ({ module }) => {
     return object;
   }, [data]);
 
-  return useMemo(() => activitiesIds.map((id) => activities[id]), [activitiesIds, data]);
+  return useMemo(
+    () => activitiesIds.map((id) => activities[id]),
+    [activitiesIds, data]
+  );
 };
 export default useModuleActivities;

@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from "react";
 
-import { useIsStudent, useIsTeacher } from '@academic-portfolio/hooks';
-import ActivityHeader from '@assignables/components/ActivityHeader';
-import { ProgressChart } from '@assignables/components/ProgressChart';
-import useAssignationsByProfile from '@assignables/hooks/assignations/useAssignationsByProfile';
-import useProgramEvaluationSystem from '@assignables/hooks/useProgramEvaluationSystem';
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
+import { useIsStudent, useIsTeacher } from "@academic-portfolio/hooks";
+import ActivityHeader from "@assignables/components/ActivityHeader";
+import { ProgressChart } from "@assignables/components/ProgressChart";
+import useAssignationsByProfile from "@assignables/hooks/assignations/useAssignationsByProfile";
+import useProgramEvaluationSystem from "@assignables/hooks/useProgramEvaluationSystem";
+import useInstances from "@assignables/requests/hooks/queries/useInstances";
 import {
   Box,
   createStyles,
@@ -15,25 +15,25 @@ import {
   TotalLayoutContainer,
   ContextContainer,
   Paper,
-} from '@bubbles-ui/components';
-import { unflatten } from '@common';
-import { addErrorAlert } from '@layout/alert';
-import { AssetEmbedList } from '@leebrary/components/AssetEmbedList';
-import prepareAsset from '@leebrary/helpers/prepareAsset';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
-import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
-import { get, head, map, sortBy, tail } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { unflatten } from "@common";
+import { addErrorAlert } from "@layout/alert";
+import { AssetEmbedList } from "@leebrary/components/AssetEmbedList";
+import prepareAsset from "@leebrary/helpers/prepareAsset";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useUpdateTimestamps } from "@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps";
+import useStudentAssignationMutation from "@tasks/hooks/student/useStudentAssignationMutation";
+import { get, head, map, sortBy, tail } from "lodash";
+import PropTypes from "prop-types";
 
-import { DashboardCard } from './components/DashboardCard';
-import { useModuleDataForPreview } from './helpers/previewHooks';
+import { DashboardCard } from "./components/DashboardCard";
+import { useModuleDataForPreview } from "./helpers/previewHooks";
 
-import { prefixPN } from '@learning-paths/helpers';
+import { prefixPN } from "@learning-paths/helpers";
 
 export function useModuleDashboardLocalizations() {
   // key is string
-  const key = prefixPN('dashboard');
+  const key = prefixPN("dashboard");
   const [, translations] = useTranslateLoader(key);
 
   return useMemo(() => {
@@ -51,31 +51,31 @@ export const useModuleDashboardStyles = createStyles((theme) => {
 
   return {
     root: {
-      minHeight: '100vh',
+      minHeight: "100vh",
       background: globalTheme.background.color.surface.subtle,
     },
     rootContainer: {
-      display: 'flex',
-      flexDirection: 'column',
+      display: "flex",
+      flexDirection: "column",
       gap: globalTheme.spacing.padding.xlg,
 
       paddingTop: globalTheme.spacing.padding.xlg,
       paddingBottom: globalTheme.spacing.padding.xlg,
-      paddingLeft: globalTheme.spacing.padding['3xlg'],
-      paddingRight: globalTheme.spacing.padding['3xlg'],
+      paddingLeft: globalTheme.spacing.padding["3xlg"],
+      paddingRight: globalTheme.spacing.padding["3xlg"],
     },
     sectionHeader: {
       ...globalTheme.content.typo.heading.sm,
       color: globalTheme.content.color.text.default,
     },
     activitiesList: {
-      display: 'flex',
-      flexDirection: 'row',
+      display: "flex",
+      flexDirection: "row",
       gap: globalTheme.spacing.gap.xlg,
-      flexWrap: 'wrap',
+      flexWrap: "wrap",
     },
     body: {
-      display: 'flex',
+      display: "flex",
     },
   };
 });
@@ -90,7 +90,7 @@ export function useModuleData(id) {
   } = useInstances({ id });
 
   const activitiesIds = useMemo(() => {
-    const ids = map(module?.metadata?.module?.activities, 'id');
+    const ids = map(module?.metadata?.module?.activities, "id");
     if (isStudent && module?.id) {
       ids.unshift(module.id);
     }
@@ -103,7 +103,9 @@ export function useModuleData(id) {
     isLoading: isLoadingActivities,
     error: activitiesError,
     isError: isActivitiesError,
-  } = useAssignationsByProfile(activitiesIds, { enabled: !!activitiesIds?.length });
+  } = useAssignationsByProfile(activitiesIds, {
+    enabled: !!activitiesIds?.length,
+  });
 
   const {
     module: moduleAssignation,
@@ -114,7 +116,7 @@ export function useModuleData(id) {
       return {
         module: head(activitiesByProfile),
         assignations: tail(activitiesByProfile),
-        activities: map(tail(activitiesByProfile), 'instance'),
+        activities: map(tail(activitiesByProfile), "instance"),
       };
     }
 
@@ -180,13 +182,17 @@ function useBlockedActivities({ activities, assignationsById }) {
 
     const blockedActivities = [];
 
-    for (let i = 0, { length } = activities, blocking = false; i < length; i++) {
+    for (
+      let i = 0, { length } = activities, blocking = false;
+      i < length;
+      i++
+    ) {
       const { id, requirement } = activities[i];
       const assignation = assignationsById[id];
 
       if (blocking) {
         blockedActivities[id] = true;
-      } else if (requirement === 'blocking' && !assignation?.finished) {
+      } else if (requirement === "blocking" && !assignation?.finished) {
         blocking = true;
       }
     }
@@ -204,17 +210,23 @@ export function ModuleDashboardBody({
   module,
   preview,
 }) {
-  const [t] = useTranslateLoader(prefixPN('moduleJourney'));
-  const blockedActivities = useBlockedActivities({ activities, activitiesById, assignationsById });
+  const [t] = useTranslateLoader(prefixPN("moduleJourney"));
+  const blockedActivities = useBlockedActivities({
+    activities,
+    activitiesById,
+    assignationsById,
+  });
   const introductionLink = `/private/learning-paths/modules/journey/${module?.id}`;
   const preparedAsset = prepareAsset(module?.assignable?.asset);
   return (
     <Box className={classes.activitiesList}>
-      {!!(module?.metadata?.statement || module?.assignable?.resources?.length) && (
+      {!!(
+        module?.metadata?.statement || module?.assignable?.resources?.length
+      ) && (
         <DashboardCard
           introductionCard
           asset={preparedAsset}
-          assetNumber={t('introduction')}
+          assetNumber={t("introduction")}
           statement={module?.metadata?.statement}
           cover={module?.assignable?.asset?.cover}
           localizations={localizations}
@@ -239,7 +251,7 @@ export function ModuleDashboardBody({
           ),
           createdAt: activitiesById[activity?.id]?.createdAt,
         })),
-        'createdAt'
+        "createdAt"
       ).map((a) => a.comp)}
     </Box>
   );
@@ -275,7 +287,11 @@ function useStudentsGradesGraphData({ moduleAssignation, activitiesById }) {
   }, [moduleAssignation, activitiesById, isStudent]);
 }
 
-function useTeachersGradesGraphData({ module, activitiesById, programEvaluationSystem }) {
+function useTeachersGradesGraphData({
+  module,
+  activitiesById,
+  programEvaluationSystem,
+}) {
   const isTeacher = useIsTeacher();
   const minScale = programEvaluationSystem?.minScale?.number ?? 0;
 
@@ -291,7 +307,9 @@ function useTeachersGradesGraphData({ module, activitiesById, programEvaluationS
 
         const averageGrade =
           students.reduce((acc, student) => {
-            const mainGrade = student.grades.find((grade) => grade.type === 'main');
+            const mainGrade = student.grades.find(
+              (grade) => grade.type === "main"
+            );
 
             return acc + (mainGrade?.grade ?? minScale);
           }, 0) / students.length;
@@ -307,11 +325,20 @@ function useTeachersGradesGraphData({ module, activitiesById, programEvaluationS
 }
 
 export function ModuleDashboard({ id, preview }) {
-  const { module, moduleAssignation, activities, activitiesById, assignationsById, isLoading } =
-    preview ? useModuleDataForPreview(id) : useModuleData(id);
+  const {
+    module,
+    moduleAssignation,
+    activities,
+    activitiesById,
+    assignationsById,
+    isLoading,
+  } = preview ? useModuleDataForPreview(id) : useModuleData(id);
 
   const programEvaluationSystem = useProgramEvaluationSystem(module);
-  const studentsGradesGraphData = useStudentsGradesGraphData({ moduleAssignation, activitiesById });
+  const studentsGradesGraphData = useStudentsGradesGraphData({
+    moduleAssignation,
+    activitiesById,
+  });
   const teachersGradesGraphData = useTeachersGradesGraphData({
     module,
     activitiesById,
@@ -334,17 +361,20 @@ export function ModuleDashboard({ id, preview }) {
 
       const hasAllGrades = assignations
         .filter((assignation) => assignation?.instance?.requiresScoring)
-        .every((assignation) => assignation.grades.length >= assignation.instance.subjects.length);
+        .every(
+          (assignation) =>
+            assignation.grades.length >= assignation.instance.subjects.length
+        );
 
       if (hasAllGrades) {
-        updateTimestamps('gradesViewed');
+        updateTimestamps("gradesViewed");
       }
     }
   }, [assignationsById, isStudent, updateTimestamps]);
 
   useEffect(() => {
     if (isStudent && moduleAssignation?.id) {
-      updateTimestamps('open');
+      updateTimestamps("open");
     }
   }, [moduleAssignation?.id, updateTimestamps, isStudent]);
 
@@ -367,10 +397,10 @@ export function ModuleDashboard({ id, preview }) {
         />
       }
     >
-      <Box sx={{ overflow: 'auto' }}>
+      <Box sx={{ overflow: "auto" }}>
         <Tabs fullHeight fullWidth usePaddedLayout>
           <TabPanel label={localizations?.activities}>
-            <Box sx={{ padding: '30px 0 30px 0' }}>
+            <Box sx={{ padding: "30px 0 30px 0" }}>
               <ModuleDashboardBody
                 activities={activities}
                 activitiesById={activitiesById}
@@ -384,30 +414,41 @@ export function ModuleDashboard({ id, preview }) {
           </TabPanel>
           {!!module?.assignable?.resources?.length && (
             <TabPanel label={localizations?.resources}>
-              <ContextContainer sx={{ padding: '30px 0 30px 0' }}>
+              <ContextContainer sx={{ padding: "30px 0 30px 0" }}>
                 <Box>
-                  <Paper sx={{ padding: '36px', width: '100%' }} shadow="none">
-                    <AssetEmbedList assets={module?.assignable?.resources} width={720} />
+                  <Paper sx={{ padding: "36px", width: "100%" }} shadow="none">
+                    <AssetEmbedList
+                      assets={module?.assignable?.resources}
+                      width={720}
+                    />
                   </Paper>
                 </Box>
               </ContextContainer>
             </TabPanel>
           )}
-          <TabPanel label={localizations?.progress ?? 'Progreso'}>
-            <ContextContainer sx={{ padding: '30px 0 30px 0' }}>
-              <Paper sx={{ width: '100%' }} shadow="none">
+          <TabPanel label={localizations?.progress ?? "Progreso"}>
+            <ContextContainer sx={{ padding: "30px 0 30px 0" }}>
+              <Paper sx={{ width: "100%" }} shadow="none">
                 <ContextContainer
                   title={
                     isStudent
-                      ? localizations?.studentProgressTitle ?? 'Notas del módulo'
-                      : localizations?.teacherProgressTitle ?? 'Notas medias del módulo'
+                      ? (localizations?.studentProgressTitle ??
+                        "Notas del módulo")
+                      : (localizations?.teacherProgressTitle ??
+                        "Notas medias del módulo")
                   }
                 >
                   <Box pt={10}>
                     <ProgressChart
-                      data={isStudent ? studentsGradesGraphData : teachersGradesGraphData}
+                      data={
+                        isStudent
+                          ? studentsGradesGraphData
+                          : teachersGradesGraphData
+                      }
                       maxValue={programEvaluationSystem?.maxScale?.number}
-                      passValue={programEvaluationSystem?.minScaleToPromote?.number}
+                      passValue={
+                        programEvaluationSystem?.minScaleToPromote?.number
+                      }
                       height={390}
                     />
                   </Box>

@@ -1,1 +1,1 @@
-export * from './ResourceRenderer';
+export * from "./ResourceRenderer";

@@ -1,1 +1,1 @@
-export { default as prefixPN } from './prefixPN';
+export { default as prefixPN } from "./prefixPN";

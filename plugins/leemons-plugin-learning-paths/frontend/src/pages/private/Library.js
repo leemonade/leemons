@@ -1,22 +1,28 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState } from "react";
 
-import { Box, ContextContainer, createStyles, TabPanel, Tabs } from '@bubbles-ui/components';
+import {
+  Box,
+  ContextContainer,
+  createStyles,
+  TabPanel,
+  Tabs,
+} from "@bubbles-ui/components";
 // TODO: import from @common plugin
-import { AdminPageHeader } from '@bubbles-ui/leemons';
+import { AdminPageHeader } from "@bubbles-ui/leemons";
 
-import { get } from 'lodash';
-import { useHistory } from 'react-router-dom';
+import { get } from "lodash";
+import { useHistory } from "react-router-dom";
 
-import useAcademicFiltersForAssetList from '@assignables/hooks/useAcademicFiltersForAssetList';
-import { unflatten, useQuery as useQueryParams } from '@common';
-import { prefixPN } from '@learning-paths/helpers';
-import AssetList from '@leebrary/components/AssetList';
-import { prepareAsset } from '@leebrary/helpers/prepareAsset';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import useAcademicFiltersForAssetList from "@assignables/hooks/useAcademicFiltersForAssetList";
+import { unflatten, useQuery as useQueryParams } from "@common";
+import { prefixPN } from "@learning-paths/helpers";
+import AssetList from "@leebrary/components/AssetList";
+import { prepareAsset } from "@leebrary/helpers/prepareAsset";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
 
 export function useLibraryPageLocalizations() {
   // key is string
-  const key = prefixPN('libraryPage');
+  const key = prefixPN("libraryPage");
   const [, translations] = useTranslateLoader(key);
 
   return useMemo(() => {
@@ -32,16 +38,16 @@ export function useLibraryPageLocalizations() {
 
 const useLibraryStyles = createStyles((theme) => ({
   pageContainer: {
-    display: 'flex',
+    display: "flex",
   },
   tabs: {
-    display: 'flex',
+    display: "flex",
     flex: 1,
   },
   tabPane: {
-    display: 'flex',
+    display: "flex",
     flex: 1,
-    height: '100%',
+    height: "100%",
     paddingTop: theme.spacing[5],
     paddingBottom: theme.spacing[5],
   },
@@ -56,7 +62,7 @@ export default function LibraryPage() {
   const [currentAsset, setCurrentAsset] = useState(null);
 
   const handleOnNewModule = () => {
-    history.push('/private/learning-paths/modules/new');
+    history.push("/private/learning-paths/modules/new");
   };
   const handleOnSelectModule = (item) => {
     if (currentAsset?.id !== item?.id) {
@@ -98,7 +104,7 @@ export default function LibraryPage() {
               variant="embedded"
               category="assignables.learningpaths.module"
               onSelectItem={handleOnSelectModule}
-              roles={['owner', 'assigner']}
+              roles={["owner", "assigner"]}
             />
           </Box>
         </TabPanel>
@@ -113,7 +119,7 @@ export default function LibraryPage() {
               variant="embedded"
               category="assignables.learningpaths.module"
               onSelectItem={handleOnSelectModule}
-              roles={['owner', 'assigner']}
+              roles={["owner", "assigner"]}
             />
           </Box>
         </TabPanel>
