@@ -1,8 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { share, useBeforeUnload, useIdle, useStore } from '@common';
-import { getSessionConfig } from '@users/session';
-import { XAPI } from '@xapi';
+import React from "react";
+import PropTypes from "prop-types";
+import { share, useBeforeUnload, useIdle, useStore } from "@common";
+import { getSessionConfig } from "@users/session";
+import { XAPI } from "@xapi";
 
 export function Provider({ children }) {
   const [store] = useStore();
@@ -12,15 +12,15 @@ export function Provider({ children }) {
     XAPI.addLogStatement({
       verb: XAPI.VERBS.INITIALIZED,
       object: {
-        objectType: 'Activity',
-        id: '{hostname}/api/view/program',
+        objectType: "Activity",
+        id: "{hostname}/api/view/program",
         definition: {
           extensions: {
             id: program,
-            ip: '{ip}',
+            ip: "{ip}",
           },
           description: {
-            'en-US': 'Start to view Program',
+            "en-US": "Start to view Program",
           },
         },
       },
@@ -31,15 +31,15 @@ export function Provider({ children }) {
     XAPI.addLogStatement({
       verb: XAPI.VERBS.TERMINATED,
       object: {
-        objectType: 'Activity',
-        id: '{hostname}/api/view/program',
+        objectType: "Activity",
+        id: "{hostname}/api/view/program",
         definition: {
           extensions: {
             id: program,
-            ip: '{ip}',
+            ip: "{ip}",
           },
           description: {
-            'en-US': 'End to view Program',
+            "en-US": "End to view Program",
           },
         },
       },
@@ -87,9 +87,9 @@ export function Provider({ children }) {
   }, []);
 
   React.useEffect(() => {
-    share('xapi', 'addLogStatement', XAPI.addLogStatement);
-    share('xapi', 'addLearningStatement', XAPI.addLearningStatement);
-    share('xapi', 'verbs', XAPI.VERBS);
+    share("xapi", "addLogStatement", XAPI.addLogStatement);
+    share("xapi", "addLearningStatement", XAPI.addLearningStatement);
+    share("xapi", "verbs", XAPI.VERBS);
   }, []);
 
   return <>{children}</>;

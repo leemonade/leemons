@@ -1,3 +1,3 @@
-import { XAPI } from './helpers/XAPI';
+import { XAPI } from "./helpers/XAPI";
 
 export { XAPI };

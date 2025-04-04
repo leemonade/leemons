@@ -1,4 +1,4 @@
-const statement = require('./statement');
+const statement = require("./statement");
 
 module.exports = {
   statement,

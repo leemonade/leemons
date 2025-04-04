@@ -1,9 +1,9 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('@leemons/mongodb-helpers');
+const { getKeyValueModel } = require("@leemons/mongodb-helpers");
 
 const models = {
-  ...require('./statement'),
+  ...require("./statement"),
 };
 
 module.exports = {
@@ -12,7 +12,7 @@ module.exports = {
     return {
       Statement: models.statementModel,
       //
-      KeyValue: getKeyValueModel({ modelName: 'v1::xapi_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: "v1::xapi_KeyValue" }),
     };
   },
 };

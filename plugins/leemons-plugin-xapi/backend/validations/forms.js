@@ -1,22 +1,22 @@
-const { LeemonsValidator } = require('@leemons/validator');
-const { stringSchema, arrayStringRequiredSchema } = require('./types');
+const { LeemonsValidator } = require("@leemons/validator");
+const { stringSchema, arrayStringRequiredSchema } = require("./types");
 
 const addStatementSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     actor: {
       oneOf: [stringSchema, arrayStringRequiredSchema],
     },
     verb: {
-      type: 'object',
+      type: "object",
       additionalProperties: true,
     },
     object: {
-      type: 'object',
+      type: "object",
       additionalProperties: true,
     },
   },
-  required: ['actor', 'verb', 'object'],
+  required: ["actor", "verb", "object"],
   additionalProperties: true,
 };
 

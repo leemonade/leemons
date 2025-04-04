@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -32,6 +32,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-const statementModel = newModel(mongoose.connection, 'v1::xapi_Statement', schema);
+const statementModel = newModel(
+  mongoose.connection,
+  "v1::xapi_Statement",
+  schema
+);
 
 module.exports = { statementModel };

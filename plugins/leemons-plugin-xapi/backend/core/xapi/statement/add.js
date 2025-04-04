@@ -1,13 +1,17 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { validateAddStatement } = require('../../../validations/forms');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { validateAddStatement } = require("../../../validations/forms");
 
 function getUserAgentActor(userAgent, hostname) {
   return {
-    objectType: 'Agent',
-    name: [userAgent.user.name, userAgent.user.surnames, userAgent.user.secondSurname]
+    objectType: "Agent",
+    name: [
+      userAgent.user.name,
+      userAgent.user.surnames,
+      userAgent.user.secondSurname,
+    ]
       .filter((item) => !_.isEmpty(item))
-      .join(' '),
+      .join(" "),
     mbox: `mailto:${userAgent.user.email}`,
     openid: `${hostname}/api/users/user-agent/${userAgent.id}/detail/page`,
     account: {
@@ -39,7 +43,7 @@ async function add({
   context,
   result,
   attachments,
-  type = 'learning',
+  type = "learning",
   ip,
   ctx,
 }) {
@@ -50,28 +54,35 @@ async function add({
   const isMultipleActors = _.isArray(actor);
 
   const promises = [
-    ctx.tx.call('users.users.getUserAgentsInfo', {
+    ctx.tx.call("users.users.getUserAgentsInfo", {
       userAgentIds: isMultipleActors ? actor : [actor],
     }),
-    ctx.tx.call('users.platform.getHostname'),
+    ctx.tx.call("users.platform.getHostname"),
   ];
 
   if (!_.isEmpty(userSession?.userAgents)) {
-    promises.push(ctx.tx.call('users.users.detail', { userId: userSession.id }));
+    promises.push(
+      ctx.tx.call("users.users.detail", { userId: userSession.id })
+    );
   }
 
   const [userAgents, hostname, authority] = await Promise.all(promises);
 
   if (!userAgents.length) {
-    throw new LeemonsError(ctx, { httpStatusCode: 400, message: 'User not found' });
+    throw new LeemonsError(ctx, {
+      httpStatusCode: 400,
+      message: "User not found",
+    });
   }
 
   let actorStatement = {};
 
   if (isMultipleActors) {
     actorStatement = {
-      objectType: 'Group',
-      member: _.map(userAgents, (userAgent) => getUserAgentActor(userAgent, hostname)),
+      objectType: "Group",
+      member: _.map(userAgents, (userAgent) =>
+        getUserAgentActor(userAgent, hostname)
+      ),
     };
   } else {
     actorStatement = getUserAgentActor(userAgents[0], hostname);
@@ -85,7 +96,7 @@ async function add({
         .replace(/{hostname}/g, hostname)
         .replace(/{ip}/g, ip)
     ),
-    version: '1.0.0',
+    version: "1.0.0",
     timestamp: new Date().toISOString(),
   };
 
@@ -113,8 +124,8 @@ async function add({
       mbox: `mailto:${authority.email}`,
       name: [authority.name, authority.surnames, authority.secondSurname]
         .filter((item) => !_.isEmpty(item))
-        .join(' '),
-      objectType: 'Agent',
+        .join(" "),
+      objectType: "Agent",
     };
   }
 
