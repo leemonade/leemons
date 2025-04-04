@@ -1,7 +1,7 @@
-const { isEmpty } = require('lodash');
+const { isEmpty } = require("lodash");
 const {
   getRoleForRelationshipProfileCenter,
-} = require('../profiles/getRoleForRelationshipProfileCenter');
+} = require("../profiles/getRoleForRelationshipProfileCenter");
 
 /**
  * Return the user agent by userID, center and profile
@@ -10,15 +10,27 @@ const {
  * @param {any=} transacting - DB Transaction
  * @return {Promise<UserAgent>}
  * */
-async function getUserAgentByCenterProfile({ userId, centerId, profileId, ctx }) {
+async function getUserAgentByCenterProfile({
+  userId,
+  centerId,
+  profileId,
+  ctx,
+}) {
   if (!isEmpty(profileId) && !isEmpty(centerId)) {
-    const role = await getRoleForRelationshipProfileCenter({ profileId, centerId, ctx });
+    const role = await getRoleForRelationshipProfileCenter({
+      profileId,
+      centerId,
+      ctx,
+    });
 
     if (!isEmpty(role) && role.id) {
-      return ctx.tx.db.UserAgent.findOne({ role: role.id, user: userId }).lean();
+      return ctx.tx.db.UserAgent.findOne({
+        role: role.id,
+        user: userId,
+      }).lean();
     }
   } else {
-    ctx.logger.error('getUserAgentByCenterProfile > Missing params');
+    ctx.logger.error("getUserAgentByCenterProfile > Missing params");
   }
 
   return null;

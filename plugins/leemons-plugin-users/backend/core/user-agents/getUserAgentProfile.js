@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 /**
  * Return the user agent/s center/s
  * @public
@@ -10,10 +10,14 @@ const _ = require('lodash');
 async function getUserAgentProfile({ userAgent, ctx }) {
   const isArray = _.isArray(userAgent);
   const userAgents = isArray ? userAgent : [userAgent];
-  const roleProfiles = await ctx.tx.db.ProfileRole.find({ role: _.map(userAgents, 'role') })
-    .select(['profile'])
+  const roleProfiles = await ctx.tx.db.ProfileRole.find({
+    role: _.map(userAgents, "role"),
+  })
+    .select(["profile"])
     .lean();
-  const profiles = await ctx.tx.db.Profiles.find({ id: _.map(roleProfiles, 'profile') }).lean();
+  const profiles = await ctx.tx.db.Profiles.find({
+    id: _.map(roleProfiles, "profile"),
+  }).lean();
   return isArray ? profiles : profiles[0];
 }
 

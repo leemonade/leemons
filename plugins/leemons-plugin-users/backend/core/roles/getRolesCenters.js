@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 /**
  * Retrieves the centers associated with given role IDs. It can return either raw data about the role-center associations or just the center IDs based on the `raw` flag.
@@ -11,10 +11,10 @@ const _ = require('lodash');
  */
 async function getRolesCenters({ roleIds, raw, ctx }) {
   const centerRoles = await ctx.tx.db.RoleCenter.find({ role: roleIds })
-    .select(['id', 'center', 'role'])
+    .select(["id", "center", "role"])
     .lean();
   if (raw) return centerRoles;
-  return _.map(centerRoles, 'center');
+  return _.map(centerRoles, "center");
 }
 
 module.exports = { getRolesCenters };

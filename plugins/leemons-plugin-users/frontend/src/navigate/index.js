@@ -1,45 +1,45 @@
 export function goBasePage(history, returnUrl) {
-  const uri = '/users';
+  const uri = "/users";
   return returnUrl === true ? uri : history.push(uri);
 }
 
 export function goLoginPage(history, returnUrl) {
-  const uri = '/users/login';
+  const uri = "/users/login";
   return returnUrl === true ? uri : history.push(uri);
 }
 
 export function goResetPage(history, returnUrl) {
-  const uri = '/users/reset';
+  const uri = "/users/reset";
   return returnUrl === true ? uri : history.push(uri);
 }
 
 export function goRecoverPage(history, returnUrl) {
-  const uri = '/users/recover';
+  const uri = "/users/recover";
   return returnUrl === true ? uri : history.push(uri);
 }
 
 export function goRegisterPage(history, returnUrl) {
-  const uri = '/users/register';
+  const uri = "/users/register";
   return returnUrl === true ? uri : history.push(uri);
 }
 
 export function goSelectProfilePage(history, returnUrl) {
-  const uri = '/protected/users/select-profile';
+  const uri = "/protected/users/select-profile";
   return returnUrl === true ? uri : history.push(uri);
 }
 
 export function goListUsersPage(history, returnUrl) {
-  const uri = '/private/users/list';
+  const uri = "/private/users/list";
   return returnUrl === true ? uri : history.push(uri);
 }
 
 export function goDetailUserPage(history, returnUrl) {
-  const uri = '/private/users/detail';
-  return returnUrl === true ? '/users' : history.push('');
+  const uri = "/private/users/detail";
+  return returnUrl === true ? "/users" : history.push("");
 }
 
 export function goListProfilesPage(history, returnUrl) {
-  const uri = '/private/users/profiles/list';
+  const uri = "/private/users/profiles/list";
   return returnUrl === true ? uri : history.push(uri);
 }
 
@@ -49,6 +49,6 @@ export function goDetailProfilePage(history, uri, returnUrl) {
       ? `/private/users/profiles/detail/${uri}`
       : history.push(`/private/users/profiles/detail/${uri}`);
   return returnUrl === true
-    ? '/private/users/profiles/detail'
-    : history.push('/private/users/profiles/detail');
+    ? "/private/users/profiles/detail"
+    : history.push("/private/users/profiles/detail");
 }

@@ -1,7 +1,7 @@
-const _ = require('lodash');
+const _ = require("lodash");
 const {
   userSessionUserAgentNeedUpdateDataset,
-} = require('../user-agents/userAgentNeedUpdateDataset');
+} = require("../user-agents/userAgentNeedUpdateDataset");
 
 /**
  * Checks if the user agent's dataset is up-to-date and updates it if necessary.
@@ -32,7 +32,10 @@ async function checkUserAgentDataset({ userAgent, ctx }) {
       },
     });
     if (!needUpdate) {
-      await ctx.tx.db.UserAgent.updateOne({ id: userAgent.id }, { datasetIsGood: true });
+      await ctx.tx.db.UserAgent.updateOne(
+        { id: userAgent.id },
+        { datasetIsGood: true }
+      );
     } else {
       good = false;
     }
@@ -51,7 +54,9 @@ async function userSessionCheckUserAgentDatasets({ ctx }) {
   let good = true;
   if (ctx.meta.userSession?.userAgents?.length) {
     const results = await Promise.all(
-      ctx.meta.userSession.userAgents.map((userAgent) => checkUserAgentDataset({ userAgent, ctx }))
+      ctx.meta.userSession.userAgents.map((userAgent) =>
+        checkUserAgentDataset({ userAgent, ctx })
+      )
     );
     _.forEach(results, (result) => {
       if (!result) {

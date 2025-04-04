@@ -6,7 +6,9 @@
  * @return {Promise<string | null>} locale
  * */
 async function getEmail({ ctx }) {
-  const config = await ctx.tx.db.Config.findOne({ key: 'platform-email' }).lean();
+  const config = await ctx.tx.db.Config.findOne({
+    key: "platform-email",
+  }).lean();
   return config ? config.value : null;
 }
 

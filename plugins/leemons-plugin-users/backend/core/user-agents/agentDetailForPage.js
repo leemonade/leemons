@@ -1,8 +1,8 @@
 async function agentDetailForPage({ userAgentId, ctx }) {
   const [[tags], userAgent] = await Promise.all([
-    ctx.tx.call('common.tags.getValuesTags', {
+    ctx.tx.call("common.tags.getValuesTags", {
       values: userAgentId,
-      type: 'users.user-agent',
+      type: "users.user-agent",
     }),
     ctx.tx.db.UserAgent.findOne({ id: userAgentId }).lean(),
   ]);

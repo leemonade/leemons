@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 
 import {
   Box,
@@ -11,24 +11,24 @@ import {
   InputWrapper,
   ContextContainer,
   TotalLayoutFooterContainer,
-} from '@bubbles-ui/components';
-import { ChevLeftIcon, DownloadIcon } from '@bubbles-ui/icons/outline';
-import { useStore } from '@common';
-import { useLocale } from '@common/LocaleDate';
-import { useDatasetSchema } from '@dataset/hooks/queries';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { ChevLeftIcon, DownloadIcon } from "@bubbles-ui/icons/outline";
+import { useStore } from "@common";
+import { useLocale } from "@common/LocaleDate";
+import { useDatasetSchema } from "@dataset/hooks/queries";
+import _ from "lodash";
+import PropTypes from "prop-types";
 
 import {
   downloadTemplate,
   getTemplateIndexs,
   getTemplateIndexsLabels,
-} from '../helpers/downloadTemplate';
-import { readExcel } from '../helpers/readExcel';
+} from "../helpers/downloadTemplate";
+import { readExcel } from "../helpers/readExcel";
 
-import { XlsxTable } from './xlsxTable';
+import { XlsxTable } from "./xlsxTable";
 
-import { useUserList } from '@users/hooks/queries/useUserList';
+import { useUserList } from "@users/hooks/queries/useUserList";
 
 export function UploadFile({ t, center, profile, scrollRef }) {
   const [store, render] = useStore();
@@ -37,14 +37,14 @@ export function UploadFile({ t, center, profile, scrollRef }) {
   const locale = useLocale();
 
   const { data: userDatasetSchema } = useDatasetSchema({
-    locationName: 'user-data',
-    pluginName: 'users',
+    locationName: "user-data",
+    pluginName: "users",
     locale,
   });
 
   const { data: profileDataset } = useDatasetSchema({
     locationName: `profile.${profile}`,
-    pluginName: 'users',
+    pluginName: "users",
     locale,
     options: { enabled: !!profile },
   });
@@ -69,7 +69,7 @@ export function UploadFile({ t, center, profile, scrollRef }) {
     store.generalDatasetEdit = [];
     _.forIn(compileJsonSchema?.properties ?? {}, (value, key) => {
       const ui = jsonUI[key];
-      if (!ui?.['ui:readonly']) {
+      if (!ui?.["ui:readonly"]) {
         store.generalDatasetEdit.push({
           value: `dataset-common.${key}`,
           label: value.title,
@@ -90,7 +90,9 @@ export function UploadFile({ t, center, profile, scrollRef }) {
 
       store.fileIsTemplate = false;
       store.initRow = 1;
-      store.templateIndexs = getTemplateIndexs({ extraFields: store.generalDatasetEdit });
+      store.templateIndexs = getTemplateIndexs({
+        extraFields: store.generalDatasetEdit,
+      });
       store.templateIndexsLabels = getTemplateIndexsLabels(t, {
         extraFields: store.generalDatasetEdit,
       });
@@ -101,7 +103,9 @@ export function UploadFile({ t, center, profile, scrollRef }) {
           value,
         });
       });
-      if (JSON.stringify(store.file[0]) === JSON.stringify(store.templateIndexs)) {
+      if (
+        JSON.stringify(store.file[0]) === JSON.stringify(store.templateIndexs)
+      ) {
         store.fileIsTemplate = true;
         store.initRow = 3;
       }
@@ -117,7 +121,7 @@ export function UploadFile({ t, center, profile, scrollRef }) {
   }
 
   function goToUsersList() {
-    history.push('/private/users/list');
+    history.push("/private/users/list");
   }
 
   async function onSave() {
@@ -133,11 +137,11 @@ export function UploadFile({ t, center, profile, scrollRef }) {
   }, [userDatasetSchema]);
 
   return (
-    <ContextContainer title={t('uploadLabel')}>
+    <ContextContainer title={t("uploadLabel")}>
       {!store.file && (
         <Stack direction="column" spacing={2}>
           <Checkbox
-            label={t('updateExistingUsers')}
+            label={t("updateExistingUsers")}
             checked={includeData}
             onChange={(value) => setIncludeData(value)}
           />
@@ -157,21 +161,23 @@ export function UploadFile({ t, center, profile, scrollRef }) {
               disabled={enabledUserList && isLoadingUserList}
               loading={enabledUserList && isLoadingUserList}
             >
-              {t('downloadTemplate')}
+              {t("downloadTemplate")}
             </Button>
           </Box>
         </Stack>
       )}
       {!store.file ? (
         <>
-          <InputWrapper label={t('uploadFile')}>
+          <InputWrapper label={t("uploadFile")}>
             <FileUpload
               icon={<DownloadIcon height={32} width={32} />}
-              title={t('browseFile')}
-              subtitle={t('dropFile')}
+              title={t("browseFile")}
+              subtitle={t("dropFile")}
               hideUploadButton
               single
-              accept={['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']}
+              accept={[
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+              ]}
               onChange={onSelectFile}
               loading={store.loading}
               disabled={store.loading}
@@ -181,8 +187,12 @@ export function UploadFile({ t, center, profile, scrollRef }) {
             fixed
             fullWidth
             leftZone={
-              <Button variant="link" onClick={goToUsersList} leftIcon={<ChevLeftIcon />}>
-                {t('backToUsers')}
+              <Button
+                variant="link"
+                onClick={goToUsersList}
+                leftIcon={<ChevLeftIcon />}
+              >
+                {t("backToUsers")}
               </Button>
             }
           />
@@ -198,7 +208,7 @@ export function UploadFile({ t, center, profile, scrollRef }) {
                 store.initRow = e;
                 render();
               }}
-              label={t('rowStart')}
+              label={t("rowStart")}
             />
           ) : null}
 

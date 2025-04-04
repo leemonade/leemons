@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
-const { getJWTPrivateKey } = require('./getJWTPrivateKey');
+const jwt = require("jsonwebtoken");
+const { getJWTPrivateKey } = require("./getJWTPrivateKey");
 
 /**
  * Generate the jwt token of passed data

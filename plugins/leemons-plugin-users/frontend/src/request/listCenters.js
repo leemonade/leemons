@@ -1,8 +1,8 @@
 async function listCenters(body) {
-  return leemons.api('v1/users/centers', {
+  return leemons.api("v1/users/centers", {
     waitToFinish: true,
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body,
   });
 }

@@ -1,7 +1,7 @@
-const { LeemonsError } = require('@leemons/error');
-const _ = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const _ = require("lodash");
 
-const { getUserAgentsInfo } = require('./getUserAgentsInfo');
+const { getUserAgentsInfo } = require("./getUserAgentsInfo");
 
 /**
  * Searches for user agents based on various criteria.
@@ -58,9 +58,9 @@ async function searchUserAgents({
     centerRoles = await ctx.tx.db.RoleCenter.find({
       center: _.isArray(center) ? center : [center],
     })
-      .select(['role'])
+      .select(["role"])
       .lean();
-    centerRoles = _.map(centerRoles, 'role');
+    centerRoles = _.map(centerRoles, "role");
   }
 
   // If we get a profile, we extract all the roles of the profile and pass them as a query to
@@ -69,21 +69,23 @@ async function searchUserAgents({
     profileRoles = await ctx.tx.db.ProfileRole.find({
       profile: _.isArray(profile) ? profile : [profile],
     })
-      .select(['role'])
+      .select(["role"])
       .lean();
-    profileRoles = _.map(profileRoles, 'role');
+    profileRoles = _.map(profileRoles, "role");
   }
 
   if (onlyContacts) {
     if (!userSession) {
-      throw new LeemonsError(ctx, { message: 'User session is required to get contacts' });
+      throw new LeemonsError(ctx, {
+        message: "User session is required to get contacts",
+      });
     }
     // eslint-disable-next-line global-require
-    const { getUserAgentContacts } = require('./contacts/getUserAgentContacts');
+    const { getUserAgentContacts } = require("./contacts/getUserAgentContacts");
 
     // ES: Si solo queremos los contactos de un usuario, lo buscamos y lo añadimos a la query
     const userAgentContacts = await getUserAgentContacts({
-      fromUserAgent: _.map(userSession.userAgents, 'id'),
+      fromUserAgent: _.map(userSession.userAgents, "id"),
       ctx,
     });
 
@@ -97,7 +99,8 @@ async function searchUserAgents({
   if (profile || center) {
     if (profile) queryRoles = profileRoles;
     if (center) queryRoles = centerRoles;
-    if (profile && center) queryRoles = _.intersection(centerRoles, profileRoles);
+    if (profile && center)
+      queryRoles = _.intersection(centerRoles, profileRoles);
     finalQuery.role = queryRoles;
   }
 
@@ -106,34 +109,50 @@ async function searchUserAgents({
   if (user && (user.name || user.surnames || user.email)) {
     const query = { $or: [] };
     if (queryWithContains) {
-      if (user.name) query.$or.push({ name: { $regex: _.escapeRegExp(user.name), $options: 'i' } });
+      if (user.name)
+        query.$or.push({
+          name: { $regex: _.escapeRegExp(user.name), $options: "i" },
+        });
       if (user.surnames)
-        query.$or.push({ surnames: { $regex: _.escapeRegExp(user.surnames), $options: 'i' } });
+        query.$or.push({
+          surnames: { $regex: _.escapeRegExp(user.surnames), $options: "i" },
+        });
       if (user.email)
-        query.$or.push({ email: { $regex: _.escapeRegExp(user.email), $options: 'i' } });
+        query.$or.push({
+          email: { $regex: _.escapeRegExp(user.email), $options: "i" },
+        });
       if (user.secondSurname)
         query.$or.push({
-          secondSurname: { $regex: _.escapeRegExp(user.secondSurname), $options: 'i' },
+          secondSurname: {
+            $regex: _.escapeRegExp(user.secondSurname),
+            $options: "i",
+          },
         });
     } else {
       if (user.name) query.$or.push({ name: user.name });
       if (user.surnames) query.$or.push({ surnames: user.surnames });
       if (user.email) query.$or.push({ email: user.email });
-      if (user.secondSurname) query.$or.push({ secondSurname: user.secondSurname });
+      if (user.secondSurname)
+        query.$or.push({ secondSurname: user.secondSurname });
     }
-    const users = await ctx.tx.db.Users.find(query).select(['id']).lean();
-    userIds = userIds.concat(_.map(users, 'id'));
+    const users = await ctx.tx.db.Users.find(query).select(["id"]).lean();
+    userIds = userIds.concat(_.map(users, "id"));
     addUserIdsToQuery = true;
   }
 
   // If emails array is provided, limit the search to those emails
   if (emails && emails.length > 0) {
-    const emailRegexes = emails.map((email) => new RegExp(`^${_.escapeRegExp(email)}$`, 'i'));
-    const emailUsers = await ctx.tx.db.Users.find({ email: { $in: emailRegexes } })
-      .select(['id'])
+    const emailRegexes = emails.map(
+      (email) => new RegExp(`^${_.escapeRegExp(email)}$`, "i")
+    );
+    const emailUsers = await ctx.tx.db.Users.find({
+      email: { $in: emailRegexes },
+    })
+      .select(["id"])
       .lean();
-    const emailUserIds = _.map(emailUsers, 'id');
-    userIds = userIds.length > 0 ? _.intersection(userIds, emailUserIds) : emailUserIds;
+    const emailUserIds = _.map(emailUsers, "id");
+    userIds =
+      userIds.length > 0 ? _.intersection(userIds, emailUserIds) : emailUserIds;
     addUserIdsToQuery = true;
   }
 
@@ -153,15 +172,19 @@ async function searchUserAgents({
   }
 
   // Finally, the agents and their corresponding users according to the filters
-  let userAgents = await ctx.tx.db.UserAgent.find(finalQuery).select(['id']).lean();
+  let userAgents = await ctx.tx.db.UserAgent.find(finalQuery)
+    .select(["id"])
+    .lean();
 
   if (program) {
     const usersAgentIdsInProgram = await ctx.tx.call(
-      'academic-portfolio.programs.getUsersInProgram',
+      "academic-portfolio.programs.getUsersInProgram",
       { program, course }
     );
 
-    userAgents = _.filter(userAgents, (userAgent) => usersAgentIdsInProgram.includes(userAgent.id));
+    userAgents = _.filter(userAgents, (userAgent) =>
+      usersAgentIdsInProgram.includes(userAgent.id)
+    );
   }
 
   let _classes = null;
@@ -173,11 +196,11 @@ async function searchUserAgents({
 
   if (_.isArray(_classes)) {
     const [students, teachers] = await Promise.all([
-      ctx.tx.call('academic-portfolio.classes.studentGetByClass', {
+      ctx.tx.call("academic-portfolio.classes.studentGetByClass", {
         class: _classes,
         returnIds: true,
       }),
-      ctx.tx.call('academic-portfolio.classes.teacherGetByClass', {
+      ctx.tx.call("academic-portfolio.classes.teacherGetByClass", {
         class: _classes,
         returnIds: true,
       }),
@@ -187,7 +210,7 @@ async function searchUserAgents({
   }
 
   return getUserAgentsInfo({
-    userAgentIds: _.map(userAgents, 'id'),
+    userAgentIds: _.map(userAgents, "id"),
     withProfile,
     withCenter,
     userColumns,

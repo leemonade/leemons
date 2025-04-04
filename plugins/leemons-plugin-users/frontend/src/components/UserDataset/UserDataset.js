@@ -1,11 +1,11 @@
-import React, { useMemo } from 'react';
-import _, { noop } from 'lodash';
-import PropTypes from 'prop-types';
-import { Title, Box } from '@bubbles-ui/components';
-import { getValidateSchema } from '@bubbles-ui/leemons';
-import { getSessionProfile } from '@users/session';
-import { useFormWithTheme } from '@common/hooks/useFormWithTheme';
-import { getRequiredKeysOnlyForMe } from '@users/helpers/dataset';
+import React, { useMemo } from "react";
+import _, { noop } from "lodash";
+import PropTypes from "prop-types";
+import { Title, Box } from "@bubbles-ui/components";
+import { getValidateSchema } from "@bubbles-ui/leemons";
+import { getSessionProfile } from "@users/session";
+import { useFormWithTheme } from "@common/hooks/useFormWithTheme";
+import { getRequiredKeysOnlyForMe } from "@users/helpers/dataset";
 
 function UserDataset({
   dataset,
@@ -34,7 +34,7 @@ function UserDataset({
           response.value = {
             ...response.value,
             [key]: {
-              value: '-',
+              value: "-",
             },
           };
           delete response.jsonUI[key];
@@ -46,8 +46,8 @@ function UserDataset({
           response.jsonUI[key] = {};
         }
 
-        response.jsonUI[key]['ui:readonly'] = true;
-        response.jsonUI[key]['ui:help'] = false;
+        response.jsonUI[key]["ui:readonly"] = true;
+        response.jsonUI[key]["ui:help"] = false;
       });
 
       // Finally set the required fields to an empty array
@@ -55,7 +55,11 @@ function UserDataset({
     }
 
     if (!hideReadOnly) {
-      return { schema: response.jsonSchema, ui: response.jsonUI, value: response.value };
+      return {
+        schema: response.jsonSchema,
+        ui: response.jsonUI,
+        value: response.value,
+      };
     }
 
     // ····················································
@@ -63,7 +67,9 @@ function UserDataset({
 
     const { jsonSchema, jsonUI } = response;
 
-    const readOnlyKeys = Object.keys(jsonUI).filter((key) => jsonUI[key]['ui:readonly']);
+    const readOnlyKeys = Object.keys(jsonUI).filter(
+      (key) => jsonUI[key]["ui:readonly"]
+    );
 
     const properties = Object.keys(jsonSchema.properties).filter(
       (key) => !readOnlyKeys.includes(key)
@@ -90,7 +96,10 @@ function UserDataset({
       ? getRequiredKeysOnlyForMe({ dataset, profileId })
       : datasetProcessed.schema.required;
 
-    return getValidateSchema({ ...datasetProcessed.schema, required: requiredKeys });
+    return getValidateSchema({
+      ...datasetProcessed.schema,
+      required: requiredKeys,
+    });
   }, [datasetProcessed.schema, validateOnlyForMe, dataset, profileId]);
 
   const formData = useMemo(

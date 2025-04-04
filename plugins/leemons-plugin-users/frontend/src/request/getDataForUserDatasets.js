@@ -1,11 +1,11 @@
 async function getDataForUserDatasets(userId) {
-  let params = '';
+  let params = "";
 
   if (userId) {
     params = `?userId=${userId}`;
   }
   return leemons.api(`v1/users/users/get-data-for-user-datasets${params}`, {
-    method: 'GET',
+    method: "GET",
     allAgents: true,
   });
 }

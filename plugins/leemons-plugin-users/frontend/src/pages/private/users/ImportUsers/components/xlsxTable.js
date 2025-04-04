@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 import {
   Box,
@@ -10,28 +10,28 @@ import {
   Tooltip,
   useDebouncedCallback,
   TotalLayoutFooterContainer,
-} from '@bubbles-ui/components';
-import { AlertWarningTriangleIcon } from '@bubbles-ui/icons/solid';
-import { LocaleDate, useLocale, useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import Ajv from 'ajv';
-import _, { noop } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { AlertWarningTriangleIcon } from "@bubbles-ui/icons/solid";
+import { LocaleDate, useLocale, useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import Ajv from "ajv";
+import _, { noop } from "lodash";
+import PropTypes from "prop-types";
 
-import { transformErrorsFromAjv } from '../helpers/transformErrorsFromAjv';
+import { transformErrorsFromAjv } from "../helpers/transformErrorsFromAjv";
 
-import { EMAIL_REGEX } from '@users/components/LoginForm';
-import { addUsersBulkRequest } from '@users/request';
+import { EMAIL_REGEX } from "@users/components/LoginForm";
+import { addUsersBulkRequest } from "@users/request";
 
-const datasetArraySplitKey = '|';
+const datasetArraySplitKey = "|";
 
 const ajv = new Ajv({
   allErrors: true,
   multipleOfPrecision: 8,
-  schemaId: 'auto',
-  unknownFormats: 'ignore',
+  schemaId: "auto",
+  unknownFormats: "ignore",
 });
 
 function getValue(value, type) {
@@ -42,70 +42,84 @@ function getValue(value, type) {
     if (_.isObject(value)) {
       return value.text;
     }
-    if (type === 'tags') {
-      return value.split(',').map((tag) => <Badge key={tag} label={tag} closable={false} />);
+    if (type === "tags") {
+      return value
+        .split(",")
+        .map((tag) => <Badge key={tag} label={tag} closable={false} />);
     }
     return value.toString();
   }
   return value;
 }
 
-function getValueErrorMessage({ value, t, tForm, headerValue, generalDataset }) {
-  if (headerValue?.startsWith('dataset-common')) {
-    const key = headerValue.split('.')[1];
+function getValueErrorMessage({
+  value,
+  t,
+  tForm,
+  headerValue,
+  generalDataset,
+}) {
+  if (headerValue?.startsWith("dataset-common")) {
+    const key = headerValue.split(".")[1];
     const property = generalDataset.jsonSchema.properties[key];
     if (property) {
       const isRequired = generalDataset.jsonSchema.required.indexOf(key) !== -1;
       const schema = {
-        type: 'object',
+        type: "object",
         additionalProperties: false,
         required: isRequired ? [key] : [],
         properties: {},
       };
       let isArray = false;
-      if (property.type === 'array') {
+      if (property.type === "array") {
         isArray = true;
         schema.properties[key] = {
-          type: 'array',
+          type: "array",
           items: property.items,
         };
       } else {
         schema.properties[key] = property;
       }
       const validate = ajv.compile(schema);
-      const processedValue = isArray && value ? value.split(datasetArraySplitKey) : value;
+      const processedValue =
+        isArray && value ? value.split(datasetArraySplitKey) : value;
       const isValid = validate({ [key]: processedValue });
       if (!isValid) {
         return transformErrorsFromAjv(validate.errors, tForm)[0].message;
       }
     }
-  } else if (headerValue === 'email') {
+  } else if (headerValue === "email") {
     if (value) {
       let val = value;
       if (_.isObject(value)) {
         val = value.text;
       }
       if (!val.match(EMAIL_REGEX)) {
-        return t('emailInvalid');
+        return t("emailInvalid");
       }
     } else {
-      return t('emailRequired');
+      return t("emailRequired");
     }
-  } else if (headerValue === 'birthdate') {
+  } else if (headerValue === "birthdate") {
     if (value) {
-      if (!(Object.prototype.toString.call(value) === '[object Date]' || Number.isFinite(value))) {
-        return t('birthdateInvalid');
+      if (
+        !(
+          Object.prototype.toString.call(value) === "[object Date]" ||
+          Number.isFinite(value)
+        )
+      ) {
+        return t("birthdateInvalid");
       }
     } else {
-      return t('birthdateRequired');
+      return t("birthdateRequired");
     }
-  } else if (headerValue === 'gender') {
+  } else if (headerValue === "gender") {
     if (value) {
-      if (!['male', 'female', 'other'].includes(value)) {
-        return t('genderInvalid');
+      if (!["male", "female", "other"].includes(value)) {
+        return t("genderInvalid");
       }
     } else {
-      return t('genderRequired');
+      return t("genderRequired");
     }
   }
   return null;
@@ -125,7 +139,7 @@ export function XlsxTable({
   scrollRef,
 }) {
   const [store, render] = useStore();
-  const [tForm, tFormTrans] = useTranslateLoader('multilanguage.formWithTheme');
+  const [tForm, tFormTrans] = useTranslateLoader("multilanguage.formWithTheme");
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const locale = useLocale();
   const callback = useDebouncedCallback(100);
@@ -142,23 +156,25 @@ export function XlsxTable({
 
   function checkSaveErrors() {
     store.errors = [];
-    if (!store.headerValues.includes('email')) {
-      store.errors.push(t('colEmailRequired'));
+    if (!store.headerValues.includes("email")) {
+      store.errors.push(t("colEmailRequired"));
     }
-    if (!store.headerValues.includes('name')) {
-      store.errors.push(t('colNameRequired'));
+    if (!store.headerValues.includes("name")) {
+      store.errors.push(t("colNameRequired"));
     }
-    if (!store.headerValues.includes('birthdate')) {
-      store.errors.push(t('colBirthdateRequired'));
+    if (!store.headerValues.includes("birthdate")) {
+      store.errors.push(t("colBirthdateRequired"));
     }
-    if (!store.headerValues.includes('gender')) {
-      store.errors.push(t('colGenderRequired'));
+    if (!store.headerValues.includes("gender")) {
+      store.errors.push(t("colGenderRequired"));
     }
     if (generalDataset?.jsonSchema?.required) {
       _.forEach(generalDataset.jsonSchema.required, (key) => {
         if (!store.headerValues.includes(`dataset-common.${key}`)) {
           store.errors.push(
-            t('colRequired', { name: generalDataset.jsonSchema.properties[key].title })
+            t("colRequired", {
+              name: generalDataset.jsonSchema.properties[key].title,
+            })
           );
         }
       });
@@ -178,14 +194,16 @@ export function XlsxTable({
           const selectData = _.filter(
             _.cloneDeep(headerSelects),
             ({ value: val }) =>
-              !store.headerValues.includes(val) || val === 'tags' || val === store.headerValues[key]
+              !store.headerValues.includes(val) ||
+              val === "tags" ||
+              val === store.headerValues[key]
           );
 
           store.columns.push({
             Header: (
               <Box>
                 <Select
-                  data={[...selectData, { label: '-', value: '-' }]}
+                  data={[...selectData, { label: "-", value: "-" }]}
                   value={store.headerValues[key]}
                   onChange={(e) => {
                     store.headerValues[key] = e;
@@ -212,15 +230,19 @@ export function XlsxTable({
               return (
                 <Box
                   sx={(theme) => ({
-                    display: 'flex',
-                    alignItems: 'center',
+                    display: "flex",
+                    alignItems: "center",
                     gap: theme.spacing[2],
                   })}
                 >
                   {getValue(val, store.headerValues[key])}
                   {errorMessage ? (
                     <Tooltip label={errorMessage}>
-                      <Box sx={(theme) => ({ color: theme.other.core.color.danger[500] })}>
+                      <Box
+                        sx={(theme) => ({
+                          color: theme.other.core.color.danger[500],
+                        })}
+                      >
                         <AlertWarningTriangleIcon />
                       </Box>
                     </Tooltip>
@@ -241,29 +263,32 @@ export function XlsxTable({
     _.forEach(store.data, (data) => {
       const user = {};
       _.forEach(store.headerValues, (key, index) => {
-        if (key && key !== '-') {
-          if (key.startsWith('dataset-common')) {
+        if (key && key !== "-") {
+          if (key.startsWith("dataset-common")) {
             if (!_.isObject(user.dataset)) user.dataset = {};
-            const propKey = key.split('.')[1];
-            const isArray = generalDataset.jsonSchema.properties[propKey].type === 'array';
+            const propKey = key.split(".")[1];
+            const isArray =
+              generalDataset.jsonSchema.properties[propKey].type === "array";
 
             if (isArray) {
               user.dataset[propKey] = {
-                value: data[index] ? data[index].split(datasetArraySplitKey) : [],
+                value: data[index]
+                  ? data[index].split(datasetArraySplitKey)
+                  : [],
               };
             } else {
               user.dataset[propKey] = {
                 value: data[index],
               };
             }
-          } else if (key === 'tags') {
+          } else if (key === "tags") {
             if (!_.isArray(user.tags)) user.tags = [];
             if (_.isString(data[index])) {
-              user.tags.push(...data[index].split(','));
+              user.tags.push(...data[index].split(","));
             }
           } else {
             user[key] = data[index];
-            if (key === 'birthdate') {
+            if (key === "birthdate") {
               user[key] = new Date(user[key]);
             }
             if (_.isPlainObject(user[key])) {
@@ -325,7 +350,7 @@ export function XlsxTable({
 
       {store.dirty && store.hasErrors ? (
         <Alert severity="error" closeable={false}>
-          {t('fieldsWithErrors')}
+          {t("fieldsWithErrors")}
         </Alert>
       ) : null}
 
@@ -335,12 +360,12 @@ export function XlsxTable({
         scrollRef={scrollRef}
         leftZone={
           <Button variant="outline" onClick={onCancel}>
-            {t('cancel')}
+            {t("cancel")}
           </Button>
         }
         rightZone={
           <Button onClick={save} loading={store.loading}>
-            {t('save')}
+            {t("save")}
           </Button>
         }
       />

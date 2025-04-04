@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle } from 'react';
+import React, { forwardRef, useImperativeHandle } from "react";
 
 import {
   ContextContainer,
@@ -6,35 +6,35 @@ import {
   createStyles,
   Button,
   LoadingOverlay,
-} from '@bubbles-ui/components';
-import { EditIcon } from '@bubbles-ui/icons/solid';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { noop } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { EditIcon } from "@bubbles-ui/icons/solid";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { noop } from "lodash";
+import PropTypes from "prop-types";
 
-import { UserDataset } from './UserDataset';
+import { UserDataset } from "./UserDataset";
 
-import { checkForms } from '@users/helpers/dataset';
-import prefixPN from '@users/helpers/prefixPN';
-import { useUserDatasets } from '@users/hooks';
-import { useSaveUserAgentsDatasets } from '@users/hooks/mutations/useSaveUserAgentsDatasets';
-import { useSaveUserDatasets } from '@users/hooks/mutations/useSaveUserDatasets';
-import { useUserAgentsDatasets } from '@users/hooks/queries/useUserAgentsDatasets';
-import { getSessionProfile } from '@users/session';
+import { checkForms } from "@users/helpers/dataset";
+import prefixPN from "@users/helpers/prefixPN";
+import { useUserDatasets } from "@users/hooks";
+import { useSaveUserAgentsDatasets } from "@users/hooks/mutations/useSaveUserAgentsDatasets";
+import { useSaveUserDatasets } from "@users/hooks/mutations/useSaveUserDatasets";
+import { useUserAgentsDatasets } from "@users/hooks/queries/useUserAgentsDatasets";
+import { getSessionProfile } from "@users/session";
 
 const DatasetStyles = createStyles((theme) => ({
   container: {
-    '& .mantine-InputWrapper-header label': {
+    "& .mantine-InputWrapper-header label": {
       color: theme.colors.text01,
       fontWeight: 500,
     },
-    '& .form-group.field .mantine-InputWrapper-root': {
-      gap: '2px',
+    "& .form-group.field .mantine-InputWrapper-root": {
+      gap: "2px",
     },
-    '& .form-group .section-content-wrapper': {
-      gap: '8px',
+    "& .form-group .section-content-wrapper": {
+      gap: "8px",
     },
   },
 }));
@@ -55,8 +55,8 @@ const UserDatasets = forwardRef(
     },
     ref
   ) => {
-    const [t] = useTranslateLoader(prefixPN('userDataDatasetPage'));
-    const { classes } = DatasetStyles({}, { name: 'UserDatasets' });
+    const [t] = useTranslateLoader(prefixPN("userDataDatasetPage"));
+    const { classes } = DatasetStyles({}, { name: "UserDatasets" });
     const formActions = React.useRef([]);
     const [, , , getErrorMessage] = useRequestErrorMessage();
     const profileId = getSessionProfile();
@@ -65,11 +65,14 @@ const UserDatasets = forwardRef(
         userAgentIds,
         enabled: userAgentIds?.length > 0,
       });
-    const { data: userDatasets, isLoading: isLoadingUserDatasets } = useUserDatasets({
-      userIds: [userId],
-      enabled: userId?.length > 0,
+    const { data: userDatasets, isLoading: isLoadingUserDatasets } =
+      useUserDatasets({
+        userIds: [userId],
+        enabled: userId?.length > 0,
+      });
+    const saveUserAgentsDatasetsMutation = useSaveUserAgentsDatasets({
+      userAgentIds,
     });
-    const saveUserAgentsDatasetsMutation = useSaveUserAgentsDatasets({ userAgentIds });
     const saveUserDatasetsMutation = useSaveUserDatasets({ userIds: [userId] });
 
     const datasets = React.useMemo(() => {
@@ -89,7 +92,9 @@ const UserDatasets = forwardRef(
       }
 
       return datasets?.some((dataset) =>
-        Object.values(dataset.data.jsonUI).some((field) => !field['ui:readonly'])
+        Object.values(dataset.data.jsonUI).some(
+          (field) => !field["ui:readonly"]
+        )
       );
     }, [datasets, canHandleEdit]);
 
@@ -111,7 +116,7 @@ const UserDatasets = forwardRef(
             locationName: dataset.locationName,
           };
 
-          if (dataset.locationName === 'user-data') {
+          if (dataset.locationName === "user-data") {
             userDataToSave.push({
               ...toSave,
               userId: dataset.userId,
@@ -163,13 +168,17 @@ const UserDatasets = forwardRef(
 
     return (
       <ContextContainer
-        title={showTitle ? t('additionalInfo') : null}
+        title={showTitle ? t("additionalInfo") : null}
         className={classes.container}
         titleRightZone={
           showTitle &&
           canEdit &&
           !preferEditMode && (
-            <Button variant="link" leftIcon={<EditIcon width={18} height={18} />} onClick={onEdit}>
+            <Button
+              variant="link"
+              leftIcon={<EditIcon width={18} height={18} />}
+              onClick={onEdit}
+            >
               Editar
             </Button>
           )
@@ -199,7 +208,7 @@ const UserDatasets = forwardRef(
   }
 );
 
-UserDatasets.displayName = 'UserDatasets';
+UserDatasets.displayName = "UserDatasets";
 UserDatasets.propTypes = {
   userAgentIds: PropTypes.arrayOf(PropTypes.string),
   userId: PropTypes.string,

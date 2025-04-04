@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -33,6 +33,10 @@ schema.index({ center: 1, role: 1, deploymentID: 1, isDeleted: 1 });
 schema.index({ role: 1, deploymentID: 1, isDeleted: 1 });
 schema.index({ id: 1, deploymentID: 1, isDeleted: 1 });
 
-const roleCenterModel = newModel(mongoose.connection, 'v1::users_RoleCenter', schema);
+const roleCenterModel = newModel(
+  mongoose.connection,
+  "v1::users_RoleCenter",
+  schema
+);
 
 module.exports = { roleCenterModel };

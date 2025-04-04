@@ -1,11 +1,14 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import useGetProfileSysName from '@users/helpers/useGetProfileSysName';
+import useGetProfileSysName from "@users/helpers/useGetProfileSysName";
 
 function useIsContentDeveloper() {
   const profileSysName = useGetProfileSysName();
 
-  return useMemo(() => profileSysName === 'content-developer', [profileSysName]);
+  return useMemo(
+    () => profileSysName === "content-developer",
+    [profileSysName]
+  );
 }
 
 export { useIsContentDeveloper };

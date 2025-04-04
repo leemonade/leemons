@@ -3,24 +3,31 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
+const { LeemonsCacheMixin } = require("@leemons/cache");
 const {
   LeemonsDeploymentManagerMixin,
   validateInternalPrivateKey,
-} = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMongoDBMixin } = require("@leemons/mongodb");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
 
-const { add, list, detail, existName, existsById, getByIds } = require('../core/centers');
-const { setLimits } = require('../core/centers/setLimits');
-const { getServiceModels } = require('../models');
+const {
+  add,
+  list,
+  detail,
+  existName,
+  existsById,
+  getByIds,
+} = require("../core/centers");
+const { setLimits } = require("../core/centers/setLimits");
+const { getServiceModels } = require("../models");
 
-const restActions = require('./rest/centers.rest');
+const restActions = require("./rest/centers.rest");
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'users.centers',
+  name: "users.centers",
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),

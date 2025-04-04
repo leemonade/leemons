@@ -1,9 +1,9 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const slugify = require('slugify');
-const existName = require('./existName');
-const createNecessaryRolesForProfilesAccordingToCenters = require('../profiles/createNecessaryRolesForProfilesAccordingToCenters');
-const { setLimits } = require('./setLimits');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const slugify = require("slugify");
+const existName = require("./existName");
+const createNecessaryRolesForProfilesAccordingToCenters = require("../profiles/createNecessaryRolesForProfilesAccordingToCenters");
+const { setLimits } = require("./setLimits");
 
 /**
  * Create one center
@@ -20,10 +20,14 @@ const { setLimits } = require('./setLimits');
  * */
 async function add({ id, name, locale, limits, ctx, ...centerData }) {
   if (await existName({ name, id, ctx }))
-    throw new LeemonsError(ctx, { message: `Center with name '${name}' already exists` });
+    throw new LeemonsError(ctx, {
+      message: `Center with name '${name}' already exists`,
+    });
 
-  if (!(await ctx.tx.call('multilanguage.locales.has', { code: locale }))) {
-    throw new LeemonsError(ctx, { message: `The locale '${locale}' not exists` });
+  if (!(await ctx.tx.call("multilanguage.locales.has", { code: locale }))) {
+    throw new LeemonsError(ctx, {
+      message: `The locale '${locale}' not exists`,
+    });
   }
 
   let center = null;
@@ -38,7 +42,7 @@ async function add({ id, name, locale, limits, ctx, ...centerData }) {
       },
       { lean: true, new: true }
     );
-    await ctx.tx.emit('didUpdateCenter');
+    await ctx.tx.emit("didUpdateCenter");
   } else {
     center = await ctx.tx.db.Centers.create({
       ...centerData,
@@ -52,7 +56,7 @@ async function add({ id, name, locale, limits, ctx, ...centerData }) {
       centerIds: center.id,
       ctx,
     });
-    await ctx.tx.emit('didCreateCenter');
+    await ctx.tx.emit("didCreateCenter");
   }
 
   if (limits) {

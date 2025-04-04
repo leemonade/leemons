@@ -1,13 +1,15 @@
-const _ = require('lodash');
-const { exist } = require('../exist');
-const { add } = require('../add');
-const { getRole } = require('../getRole');
-const { validatePermissionName } = require('../../../validations/exists');
-const { addPermissionMany, removePermissionsByName } = require('../../roles');
+const _ = require("lodash");
+const { exist } = require("../exist");
+const { add } = require("../add");
+const { getRole } = require("../getRole");
+const { validatePermissionName } = require("../../../validations/exists");
+const { addPermissionMany, removePermissionsByName } = require("../../roles");
 const {
   markAllUserAgentsForUserProfileToReloadPermissions,
-} = require('./markAllUserAgentsForUserProfileToReloadPermissions');
-const { removeAllItemsCache } = require('../../item-permissions/removeAllItemsCache');
+} = require("./markAllUserAgentsForUserProfileToReloadPermissions");
+const {
+  removeAllItemsCache,
+} = require("../../item-permissions/removeAllItemsCache");
 
 /**
  *
@@ -19,7 +21,12 @@ const { removeAllItemsCache } = require('../../item-permissions/removeAllItemsCa
  * @param {any} _transacting - DB transaction
  * @return {Promise<Permission>} Created permission
  * */
-async function addCustomPermissionToUserProfile({ user, profile, permissions: _permissions, ctx }) {
+async function addCustomPermissionToUserProfile({
+  user,
+  profile,
+  permissions: _permissions,
+  ctx,
+}) {
   let permissions = _permissions;
   if (!_.isArray(permissions)) permissions = [permissions];
   _.forEach(permissions, (permission) => {
@@ -33,7 +40,7 @@ async function addCustomPermissionToUserProfile({ user, profile, permissions: _p
   // EN: We delete the permissions, in case any of them already existed before they will be added later.
   await removePermissionsByName({
     roleId: role,
-    permissionNames: _.map(permissions, 'permissionName'),
+    permissionNames: _.map(permissions, "permissionName"),
     removeCustomPermissions: true,
     ctx,
   });

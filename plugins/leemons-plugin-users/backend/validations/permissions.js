@@ -1,25 +1,25 @@
-const { LeemonsValidator, validateSchema } = require('@leemons/validator');
+const { LeemonsValidator, validateSchema } = require("@leemons/validator");
 
 const userAddCustomPermissionSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     permissionName: validateSchema.string,
     actionNames: validateSchema.arrayStringRequired,
     target: validateSchema.string,
     center: validateSchema.string,
   },
-  required: ['permissionName', 'actionNames'],
+  required: ["permissionName", "actionNames"],
   additionalProperties: false,
 };
 
 const userRemoveCustomPermissionSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     permissionName: validateSchema.string,
     actionNames: validateSchema.arrayStringRequired,
     target: validateSchema.string,
   },
-  required: ['permissionName'],
+  required: ["permissionName"],
   additionalProperties: false,
 };
 

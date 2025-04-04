@@ -1,6 +1,8 @@
-const { LeemonsError } = require('@leemons/error');
-const { transformArrayToObject } = require('../permissions/transformArrayToObject');
-const { detail: roleDetail } = require('../roles/detail');
+const { LeemonsError } = require("@leemons/error");
+const {
+  transformArrayToObject,
+} = require("../permissions/transformArrayToObject");
+const { detail: roleDetail } = require("../roles/detail");
 
 /**
  * Retrieves a profile by its sysName.

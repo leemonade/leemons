@@ -1,15 +1,18 @@
-import React, { useMemo, useState } from 'react';
-import PropTypes from 'prop-types';
-import { Button, PageContainer, Table } from '@bubbles-ui/components';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useDatasetItemDrawer } from '@dataset/hooks/useDatasetItemDrawer';
-import { getDatasetSchemaRequest, removeDatasetFieldRequest } from '@dataset/request';
-import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
-import { useAsync } from '@common/useAsync';
-import { PlusIcon } from '@heroicons/react/outline';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
+import React, { useMemo, useState } from "react";
+import PropTypes from "prop-types";
+import { Button, PageContainer, Table } from "@bubbles-ui/components";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { useDatasetItemDrawer } from "@dataset/hooks/useDatasetItemDrawer";
+import {
+  getDatasetSchemaRequest,
+  removeDatasetFieldRequest,
+} from "@dataset/request";
+import getDatasetAsArrayOfProperties from "@dataset/helpers/getDatasetAsArrayOfProperties";
+import { useAsync } from "@common/useAsync";
+import { PlusIcon } from "@heroicons/react/outline";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
 
 const DatasetTab = ({ profile, t, isEditMode }) => {
   const [loading, setLoading] = useState(true);
@@ -17,8 +20,9 @@ const DatasetTab = ({ profile, t, isEditMode }) => {
   const [item, setItem] = useState(null);
   const [itemToRemove, setItemToRemove] = useState(null);
   const [toggle, DatasetItemDrawer] = useDatasetItemDrawer();
-  const { t: tCommonTypes } = useCommonTranslate('form_field_types');
-  const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
+  const { t: tCommonTypes } = useCommonTranslate("form_field_types");
+  const [error, setError, ErrorAlert, getErrorMessage] =
+    useRequestErrorMessage();
   const { openDeleteConfirmationModal } = useLayout();
 
   function newItem() {
@@ -31,7 +35,10 @@ const DatasetTab = ({ profile, t, isEditMode }) => {
     toggle();
   }
 
-  const load = useMemo(() => () => getDatasetSchemaRequest(`profile.${profile.id}`, 'users'), []);
+  const load = useMemo(
+    () => () => getDatasetSchemaRequest(`profile.${profile.id}`, "users"),
+    []
+  );
 
   const onSuccess = useMemo(
     () =>
@@ -69,16 +76,20 @@ const DatasetTab = ({ profile, t, isEditMode }) => {
   }
 
   const toggleModal = openDeleteConfirmationModal({
-    title: t('remove_modal.title'),
-    description: t('remove_modal.message'),
+    title: t("remove_modal.title"),
+    description: t("remove_modal.message"),
     labels: {
-      confirm: t('remove_modal.action'),
-      cancel: t('remove_modal.cancel'),
+      confirm: t("remove_modal.action"),
+      cancel: t("remove_modal.cancel"),
     },
     onConfirm: async () => {
       try {
-        await removeDatasetFieldRequest(`profile.${profile.id}`, 'users', itemToRemove.id);
-        addSuccessAlert(t('dataset_tab.deleted_done'));
+        await removeDatasetFieldRequest(
+          `profile.${profile.id}`,
+          "users",
+          itemToRemove.id
+        );
+        addSuccessAlert(t("dataset_tab.deleted_done"));
         reload();
       } catch (e) {
         addErrorAlert(getErrorMessage(e));
@@ -94,41 +105,44 @@ const DatasetTab = ({ profile, t, isEditMode }) => {
   const tableHeaders = useMemo(() => {
     const result = [
       {
-        Header: t('dataset_tab.table.name'),
+        Header: t("dataset_tab.table.name"),
         accessor: (field) => (
           <div className="text-left">
-            {field.schema.frontConfig.name} {field.schema.frontConfig.required ? '*' : ''}
+            {field.schema.frontConfig.name}{" "}
+            {field.schema.frontConfig.required ? "*" : ""}
           </div>
         ),
-        className: 'text-left',
+        className: "text-left",
       },
       {
-        Header: t('dataset_tab.table.description'),
-        accessor: 'description',
-        className: 'text-left',
+        Header: t("dataset_tab.table.description"),
+        accessor: "description",
+        className: "text-left",
       },
       {
-        Header: t('dataset_tab.table.type'),
+        Header: t("dataset_tab.table.type"),
         accessor: (field) => (
-          <div className="text-center">{tCommonTypes(field.schema.frontConfig.type)}</div>
+          <div className="text-center">
+            {tCommonTypes(field.schema.frontConfig.type)}
+          </div>
         ),
-        className: 'text-center',
+        className: "text-center",
       },
     ];
     if (isEditMode) {
       result.push({
-        Header: t('dataset_tab.table.actions'),
+        Header: t("dataset_tab.table.actions"),
         accessor: (field) => (
           <div className="text-center">
             <Button color="primary" text onClick={() => openItem(field)}>
-              {t('dataset_tab.table.edit')}
+              {t("dataset_tab.table.edit")}
             </Button>
             <Button color="primary" text onClick={() => removeItem(field)}>
-              {t('dataset_tab.table.delete')}
+              {t("dataset_tab.table.delete")}
             </Button>
           </div>
         ),
-        className: 'text-center',
+        className: "text-center",
       });
     }
     return result;
@@ -141,11 +155,13 @@ const DatasetTab = ({ profile, t, isEditMode }) => {
           <ErrorAlert />
           {!loading && !error ? (
             <div className="pt-6 mb-6 flex flex-row justify-between items-center">
-              <div className="text-base text-secondary">{t(`dataset_tab.description`)}</div>
+              <div className="text-base text-secondary">
+                {t(`dataset_tab.description`)}
+              </div>
               {isEditMode ? (
                 <Button color="secondary" onClick={newItem}>
                   <PlusIcon className="w-6 h-6 mr-1" />
-                  {t('dataset_tab.add_field')}
+                  {t("dataset_tab.add_field")}
                 </Button>
               ) : null}
 
@@ -166,7 +182,9 @@ const DatasetTab = ({ profile, t, isEditMode }) => {
               {tableItems && tableItems.length ? (
                 <Table columns={tableHeaders} data={tableItems} />
               ) : (
-                <div className="text-center">{t('dataset_tab.no_data_in_table')}</div>
+                <div className="text-center">
+                  {t("dataset_tab.no_data_in_table")}
+                </div>
               )}
             </div>
           </div>

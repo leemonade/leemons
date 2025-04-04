@@ -1,15 +1,18 @@
-const _ = require('lodash');
-const { update } = require('./update');
+const _ = require("lodash");
+const { update } = require("./update");
 
 async function addAllPermissionsToAllProfiles({ ctx }) {
   const [profiles, permissionActions] = await Promise.all([
     ctx.tx.db.Profiles.find().lean(),
     ctx.tx.db.PermissionAction.find().lean(),
   ]);
-  const permissionByName = _.groupBy(permissionActions, 'permissionName');
+  const permissionByName = _.groupBy(permissionActions, "permissionName");
   const permissions = [];
   _.forIn(permissionByName, (value, key) => {
-    permissions.push({ permissionName: key, actionNames: _.map(value, 'actionName') });
+    permissions.push({
+      permissionName: key,
+      actionNames: _.map(value, "actionName"),
+    });
   });
 
   return Promise.all(

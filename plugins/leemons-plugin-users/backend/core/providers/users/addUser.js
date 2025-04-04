@@ -1,4 +1,4 @@
-const { getProvider } = require('../getProvider');
+const { getProvider } = require("../getProvider");
 
 /**
  * @typedef {object} User

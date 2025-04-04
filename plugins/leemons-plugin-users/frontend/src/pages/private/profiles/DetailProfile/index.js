@@ -1,7 +1,3 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { forIn } from 'lodash';
-import { useForm } from 'react-hook-form';
-import { useHistory, useParams } from 'react-router-dom';
 import {
   Alert,
   Box,
@@ -11,29 +7,39 @@ import {
   Paper,
   TabPanel,
   Tabs,
-} from '@bubbles-ui/components';
-import { AdminPageHeader } from '@bubbles-ui/leemons';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import PlatformLocales from '@multilanguage/components/PlatformLocales';
-import PlatformLocalesModal from '@multilanguage/components/PlatformLocalesModal';
-import tLoader from '@multilanguage/helpers/tLoader';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import useTranslate from '@multilanguage/useTranslate';
-import prefixPN from '@users/helpers/prefixPN';
-import { goDetailProfilePage, goListProfilesPage } from '@users/navigate';
-import { addProfileRequest, getProfileRequest, updateProfileRequest } from '@users/request';
-import hooks from 'leemons-hooks';
+} from "@bubbles-ui/components";
+import { AdminPageHeader } from "@bubbles-ui/leemons";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import hooks from "@leemons/hooks";
+import PlatformLocales from "@multilanguage/components/PlatformLocales";
+import PlatformLocalesModal from "@multilanguage/components/PlatformLocalesModal";
+import tLoader from "@multilanguage/helpers/tLoader";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import useTranslate from "@multilanguage/useTranslate";
+import prefixPN from "@users/helpers/prefixPN";
+import { goDetailProfilePage, goListProfilesPage } from "@users/navigate";
+import {
+  addProfileRequest,
+  getProfileRequest,
+  updateProfileRequest,
+} from "@users/request";
+import { forIn } from "lodash";
+import { useEffect, useMemo, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useHistory, useParams } from "react-router-dom";
 
-import { DatasetTab } from './DatasetTab';
-import { LocaleTab } from './LocaleTab';
-import { PermissionsTab } from './PermissionsTab';
+import { DatasetTab } from "./DatasetTab";
+import { LocaleTab } from "./LocaleTab";
+import { PermissionsTab } from "./PermissionsTab";
 
 function ProfileDetail() {
-  const [translations] = useTranslate({ keysStartsWith: prefixPN('detail_profile') });
-  const t = tLoader(prefixPN('detail_profile'), translations);
-  const { t: tCommonHeader } = useCommonTranslate('page_header');
-  const { t: tCommonForm } = useCommonTranslate('forms');
+  const [translations] = useTranslate({
+    keysStartsWith: prefixPN("detail_profile"),
+  });
+  const t = tLoader(prefixPN("detail_profile"), translations);
+  const { t: tCommonHeader } = useCommonTranslate("page_header");
+  const { t: tCommonForm } = useCommonTranslate("forms");
 
   const history = useHistory();
   const { uri } = useParams();
@@ -43,7 +49,8 @@ function ProfileDetail() {
   const [permissions, setPermissions] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
-  const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
+  const [error, setError, ErrorAlert, getErrorMessage] =
+    useRequestErrorMessage();
 
   const localesForm = useForm();
 
@@ -67,12 +74,17 @@ function ProfileDetail() {
           permissions,
         };
         response = await updateProfileRequest(body);
-        addSuccessAlert(t('update_done'));
+        addSuccessAlert(t("update_done"));
       } else {
-        response = await addProfileRequest({ ...profile, name, description, permissions });
-        addSuccessAlert(t('save_done'));
+        response = await addProfileRequest({
+          ...profile,
+          name,
+          description,
+          permissions,
+        });
+        addSuccessAlert(t("save_done"));
       }
-      await hooks.fireEvent('user:update:permissions', profile);
+      await hooks.fireEvent("user:update:permissions", profile);
       setSaveLoading(false);
       setEditMode(false);
       goDetailProfilePage(history, response.profile.uri);
@@ -163,33 +175,33 @@ function ProfileDetail() {
 
   const headerValues = useMemo(
     () => ({
-      title: profile?.name || '',
-      description: profile?.description || '',
+      title: profile?.name || "",
+      description: profile?.description || "",
     }),
     [profile]
   );
 
   const headerPlaceholders = useMemo(
     () => ({
-      title: t('profile_name'),
-      description: t('description'),
+      title: t("profile_name"),
+      description: t("description"),
     }),
     [t]
   );
 
   const headerLabels = useMemo(
     () => ({
-      title: t('profile_name'),
-      description: t('description'),
+      title: t("profile_name"),
+      description: t("description"),
     }),
     [t]
   );
 
   const headerButtons = useMemo(
     () => ({
-      save: editMode ? tCommonHeader('save') : null,
-      cancel: editMode ? tCommonHeader('cancel') : null,
-      edit: !editMode ? tCommonHeader('edit') : null,
+      save: editMode ? tCommonHeader("save") : null,
+      cancel: editMode ? tCommonHeader("cancel") : null,
+      edit: !editMode ? tCommonHeader("edit") : null,
     }),
     [tCommonHeader]
   );
@@ -209,7 +221,7 @@ function ProfileDetail() {
             onCancel={handleOnCancel}
             onEdit={handleOnEdit}
             onSave={handleOnSave}
-            loading={saveLoading && 'save'}
+            loading={saveLoading && "save"}
           />
 
           <PageContainer noFlex>
@@ -219,12 +231,15 @@ function ProfileDetail() {
           <PageContainer noFlex>
             <PlatformLocalesModal
               editMode={editMode}
-              error={localesForm.formState.errors && localesForm.formState.errors.length}
+              error={
+                localesForm.formState.errors &&
+                localesForm.formState.errors.length
+              }
               warning={showDefaultLocaleWarning}
               alert={
                 localesForm.formState.isDirty ? (
                   <Alert severity="warning" closeable={false}>
-                    {t('translations_warning')}
+                    {t("translations_warning")}
                   </Alert>
                 ) : null
               }
@@ -248,7 +263,7 @@ function ProfileDetail() {
           </PageContainer>
           <Box style={{ flex: 1 }}>
             <Tabs usePageLayout={true} panelColor="solid" fullHeight>
-              <TabPanel label={t('permissions')}>
+              <TabPanel label={t("permissions")}>
                 <Paper padding={2} mt={20} mb={20} fullWidth>
                   <PermissionsTab
                     t={t}
@@ -258,7 +273,7 @@ function ProfileDetail() {
                   />
                 </Paper>
               </TabPanel>
-              <TabPanel label={t('dataset')}>
+              <TabPanel label={t("dataset")}>
                 <Paper padding={2} mt={20} mb={20} fullWidth>
                   <DatasetTab t={t} profile={profile} isEditMode={editMode} />
                 </Paper>

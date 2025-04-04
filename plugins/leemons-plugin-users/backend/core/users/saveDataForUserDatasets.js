@@ -1,9 +1,9 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function saveData({ value, locationName, userId, ctx }) {
-  const response = await ctx.tx.call('dataset.dataset.setValues', {
+  const response = await ctx.tx.call("dataset.dataset.setValues", {
     locationName,
-    pluginName: 'users',
+    pluginName: "users",
     values: value,
     userAgent: ctx.meta.userSession.userAgents,
     target: userId,

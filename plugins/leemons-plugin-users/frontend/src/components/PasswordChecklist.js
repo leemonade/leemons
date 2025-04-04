@@ -1,8 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, createStyles } from '@bubbles-ui/components';
-import ReactPasswordChecklist from 'react-password-checklist';
-import { noop } from 'lodash';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, createStyles } from "@bubbles-ui/components";
+import ReactPasswordChecklist from "react-password-checklist";
+import { noop } from "lodash";
 
 export const PASSWORD_POLICIES = {
   MIN_LENGTH: 8,
@@ -10,7 +10,13 @@ export const PASSWORD_POLICIES = {
 
 const InvalidIcon = (
   <Box style={{ paddingTop: 2, paddingRight: 6 }}>
-    <svg viewBox="0 0 16 16" fill="#B52A2A" aria-hidden="true" width="1em" height="1em">
+    <svg
+      viewBox="0 0 16 16"
+      fill="#B52A2A"
+      aria-hidden="true"
+      width="1em"
+      height="1em"
+    >
       <path d="M15.82 13.519 9.534.947a1.714 1.714 0 0 0-3.068 0L.181 13.52A1.714 1.714 0 0 0 1.714 16h12.572a1.714 1.714 0 0 0 1.534-2.481ZM7.143 5.714a.857.857 0 0 1 1.714 0v3.429a.857.857 0 0 1-1.714 0V5.714Zm.857 8a1.143 1.143 0 1 1 0-2.285 1.143 1.143 0 0 1 0 2.285Z"></path>
     </svg>
   </Box>
@@ -18,7 +24,13 @@ const InvalidIcon = (
 
 const ValidIcon = (
   <Box style={{ paddingTop: 2, paddingRight: 6 }}>
-    <svg width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width="14"
+      height="12"
+      viewBox="0 0 14 12"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -35,12 +47,17 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-const PasswordChecklist = ({ value, valueAgain, onChange = noop, labels = {} }) => {
-  const { classes } = useStyles({}, { name: 'PasswordChecklist' });
+const PasswordChecklist = ({
+  value,
+  valueAgain,
+  onChange = noop,
+  labels = {},
+}) => {
+  const { classes } = useStyles({}, { name: "PasswordChecklist" });
 
   return (
     <ReactPasswordChecklist
-      rules={['minLength', 'specialChar', 'number', 'capital']}
+      rules={["minLength", "specialChar", "number", "capital"]}
       className={classes.passwordChecklist}
       minLength={PASSWORD_POLICIES.MIN_LENGTH}
       value={value}
@@ -50,7 +67,10 @@ const PasswordChecklist = ({ value, valueAgain, onChange = noop, labels = {} }) 
         ValidIcon,
       }}
       messages={{
-        minLength: labels.minLength?.replace('{n}', PASSWORD_POLICIES.MIN_LENGTH),
+        minLength: labels.minLength?.replace(
+          "{n}",
+          PASSWORD_POLICIES.MIN_LENGTH
+        ),
         specialChar: labels.specialChar,
         number: labels.number,
         capital: labels.capital,

@@ -8,11 +8,11 @@
  * @return {Promise<any>}
  * */
 async function removeLocale({ locale, ctx }) {
-  const exists = await ctx.tx.call('multilanguage.locales.has', {
+  const exists = await ctx.tx.call("multilanguage.locales.has", {
     code: locale,
   });
   if (exists) {
-    await ctx.tx.call('multilanguage.locales.delete', {
+    await ctx.tx.call("multilanguage.locales.delete", {
       code: locale,
     });
     return true;

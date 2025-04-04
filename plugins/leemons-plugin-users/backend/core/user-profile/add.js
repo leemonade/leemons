@@ -1,5 +1,5 @@
-const { LeemonsError } = require('@leemons/error');
-const { exist } = require('./exist');
+const { LeemonsError } = require("@leemons/error");
+const { exist } = require("./exist");
 
 /**
  * Add new user profile
@@ -12,7 +12,7 @@ const { exist } = require('./exist');
  * */
 async function add({ user, profile, ctx }) {
   if (await exist({ user, profile, ctx }))
-    throw new LeemonsError(ctx, { message: 'The user profile already exists' });
+    throw new LeemonsError(ctx, { message: "The user profile already exists" });
 
   let userProfile = await ctx.tx.db.UserProfile.create({
     user,
@@ -20,9 +20,9 @@ async function add({ user, profile, ctx }) {
   });
   userProfile = userProfile.toObject();
 
-  const role = await ctx.tx.call('users.roles.add', {
+  const role = await ctx.tx.call("users.roles.add", {
     name: `user-profile:${userProfile.id}:role`,
-    type: ctx.prefixPN('user-profile-role'),
+    type: ctx.prefixPN("user-profile-role"),
     permissions: [],
   });
 

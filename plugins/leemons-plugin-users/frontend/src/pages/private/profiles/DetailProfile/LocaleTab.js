@@ -1,15 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { get, isNil, keysIn } from 'lodash';
-import { Controller } from 'react-hook-form';
-import { ContextContainer, TextInput, Textarea, Loader } from '@bubbles-ui/components';
-import getProfileTranslations from '@users/request/getProfileTranslations';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { get, isNil, keysIn } from "lodash";
+import { Controller } from "react-hook-form";
+import {
+  ContextContainer,
+  TextInput,
+  Textarea,
+  Loader,
+} from "@bubbles-ui/components";
+import getProfileTranslations from "@users/request/getProfileTranslations";
 
 // eslint-disable-next-line import/prefer-default-export
-export const LocaleTab = ({ localeConfig, form, tCommonForm, t, profile, isEditMode }) => {
+export const LocaleTab = ({
+  localeConfig,
+  form,
+  tCommonForm,
+  t,
+  profile,
+  isEditMode,
+}) => {
   const [values, setValues] = useState({});
   const [loading, setLoading] = useState(false);
-  const [formKeys, setFormKeys] = useState({ name: 'name', description: 'description' });
+  const [formKeys, setFormKeys] = useState({
+    name: "name",
+    description: "description",
+  });
   const [nameRules, setNameRules] = useState({});
 
   useEffect(() => {
@@ -27,9 +42,9 @@ export const LocaleTab = ({ localeConfig, form, tCommonForm, t, profile, isEditM
           if (localeConfig.currentLocaleIsDefaultLocale) {
             result.name = profile.name;
             result.description = profile.description;
-            nameKey = 'name';
-            descriptionKey = 'description';
-            setNameRules({ ...nameRules, required: tCommonForm('required') });
+            nameKey = "name";
+            descriptionKey = "description";
+            setNameRules({ ...nameRules, required: tCommonForm("required") });
           }
 
           setValues(result);
@@ -38,7 +53,10 @@ export const LocaleTab = ({ localeConfig, form, tCommonForm, t, profile, isEditM
           if (!isNil(form)) {
             // Prioritize translations saved in the profile
             form.setValue(nameKey, get(profile, nameKey) || result.name);
-            form.setValue(descriptionKey, get(profile, descriptionKey) || result.description);
+            form.setValue(
+              descriptionKey,
+              get(profile, descriptionKey) || result.description
+            );
           }
         }
       }
@@ -60,8 +78,8 @@ export const LocaleTab = ({ localeConfig, form, tCommonForm, t, profile, isEditM
             rules={{ ...nameRules }}
             render={({ field }) => (
               <TextInput
-                label={t('options_modal.profile_name')}
-                placeholder={t('options_modal.profile_name')}
+                label={t("options_modal.profile_name")}
+                placeholder={t("options_modal.profile_name")}
                 orientation="horizontal"
                 error={get(form.formState.errors, formKeys.name)}
                 readOnly={!isEditMode}
@@ -76,8 +94,8 @@ export const LocaleTab = ({ localeConfig, form, tCommonForm, t, profile, isEditM
             defaultValue={values.description}
             render={({ field }) => (
               <Textarea
-                label={t('options_modal.profile_description')}
-                placeholder={t('options_modal.profile_description')}
+                label={t("options_modal.profile_description")}
+                placeholder={t("options_modal.profile_description")}
                 orientation="horizontal"
                 error={get(form.formState.errors, formKeys.description)}
                 readOnly={!isEditMode}

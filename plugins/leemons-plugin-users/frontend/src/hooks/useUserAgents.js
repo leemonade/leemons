@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { getCentersWithToken } from '@users/session';
+import { getCentersWithToken } from "@users/session";
 
 // EN: Gets the user agents of the current user
 // ES: Obtiene los user agents del usuario actual
@@ -12,6 +12,6 @@ export default function useUserAgents() {
       return [];
     }
     return centers.map((agent) => agent.userAgentId);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(centers)]);
 }

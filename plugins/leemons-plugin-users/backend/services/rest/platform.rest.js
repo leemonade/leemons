@@ -4,13 +4,18 @@
  */
 /** @type {ServiceSchema} */
 
-const { getTheme, getLocales, getDefaultLocale, getName } = require('../../core/platform');
+const {
+  getTheme,
+  getLocales,
+  getDefaultLocale,
+  getName,
+} = require("../../core/platform");
 
 module.exports = {
   getPlatformNameRest: {
     rest: {
-      path: '/name',
-      method: 'GET',
+      path: "/name",
+      method: "GET",
     },
     async handler(ctx) {
       const name = await getName({ ctx });
@@ -19,8 +24,8 @@ module.exports = {
   },
   getThemeRest: {
     rest: {
-      path: '/theme',
-      method: 'GET',
+      path: "/theme",
+      method: "GET",
     },
     async handler(ctx) {
       const theme = await getTheme({ ctx });
@@ -29,8 +34,8 @@ module.exports = {
   },
   getLocalesRest: {
     rest: {
-      path: '/locales',
-      method: 'GET',
+      path: "/locales",
+      method: "GET",
     },
     async handler(ctx) {
       const locales = await getLocales({ ctx });
@@ -39,8 +44,8 @@ module.exports = {
   },
   getDefaultLocaleRest: {
     rest: {
-      path: '/default-locale',
-      method: 'GET',
+      path: "/default-locale",
+      method: "GET",
     },
     async handler(ctx) {
       const locale = await getDefaultLocale({ ctx });

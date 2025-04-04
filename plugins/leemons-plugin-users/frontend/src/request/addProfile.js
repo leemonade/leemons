@@ -1,7 +1,7 @@
 async function addProfile(body) {
-  return leemons.api('v1/users/profiles/add', {
+  return leemons.api("v1/users/profiles/add", {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body,
   });
 }

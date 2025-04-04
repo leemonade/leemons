@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const { forEach, forIn } = require('lodash');
-const { getUserAgentsInfo } = require('../user-agents/getUserAgentsInfo');
+const _ = require("lodash");
+const { forEach, forIn } = require("lodash");
+const { getUserAgentsInfo } = require("../user-agents/getUserAgentsInfo");
 
 /**
  * Return centers for active user
@@ -15,10 +15,10 @@ async function centers({ user, ctx }) {
     user,
     $or: [{ disabled: null }, { disabled: false }],
   })
-    .select(['id'])
+    .select(["id"])
     .lean();
   const userAgents = await getUserAgentsInfo({
-    userAgentIds: _.map(userAgentsIds, 'id'),
+    userAgentIds: _.map(userAgentsIds, "id"),
     withProfile: true,
     withCenter: true,
     ctx,

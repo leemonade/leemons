@@ -1,11 +1,11 @@
-import type { AssetID } from '@leemons/library';
-import type { LRN } from '@leemons/lrn';
+import type { AssetID } from "@leemons/library";
+import type { LRN } from "@leemons/lrn";
 
-type TPlugin = 'users';
-export type UserAgentID = LRN<TPlugin, 'UserAgent'>;
-export type UserID = LRN<TPlugin, 'User'>;
-export type CenterID = LRN<TPlugin, 'Center'>;
-export type ProfileID = LRN<TPlugin, 'Profile'>;
+type TPlugin = "users";
+export type UserAgentID = LRN<TPlugin, "UserAgent">;
+export type UserID = LRN<TPlugin, "User">;
+export type CenterID = LRN<TPlugin, "Center">;
+export type ProfileID = LRN<TPlugin, "Profile">;
 
 export interface Center {
   id: CenterID;
@@ -47,7 +47,7 @@ export interface UserAgent {
   user: User;
 }
 
-export interface UserSession extends Omit<User, 'id'> {
+export interface UserSession extends Omit<User, "id"> {
   id: string;
   userAgents: UserAgent[];
   deploymentID?: string;
@@ -67,7 +67,7 @@ export type Profile = {
   /** If the profile is indexable */
   indexable: boolean;
   /** System name of the profile */
-  sysName?: 'teacher' | 'student' | 'admin' | 'parent' | 'content-developer';
+  sysName?: "teacher" | "student" | "admin" | "parent" | "content-developer";
   permissions?: any[];
   targetPermissions?: any[];
 };

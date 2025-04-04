@@ -1,8 +1,8 @@
-const _ = require('lodash');
+const _ = require("lodash");
 const {
   searchUsersWithRoleAndMarkAsReloadPermissions,
-} = require('./searchUsersWithRoleAndMarkAsReloadPermissions');
-const { validatePermissionName } = require('../../validations/exists');
+} = require("./searchUsersWithRoleAndMarkAsReloadPermissions");
+const { validatePermissionName } = require("../../validations/exists");
 
 /**
  * Update the provided role
@@ -16,7 +16,8 @@ const { validatePermissionName } = require('../../validations/exists');
  * */
 async function addPermissionMany({ roleId, permissions, isCustom, ctx }) {
   const roleExist = await ctx.tx.db.Roles.countDocuments({ id: roleId });
-  if (!roleExist) throw new Error('The role with the specified id does not exist');
+  if (!roleExist)
+    throw new Error("The role with the specified id does not exist");
   const items = [];
   _.forEach(permissions, (permission) => {
     _.forEach(permission.actionNames, (actionName) => {

@@ -9,7 +9,7 @@
  * */
 async function existUserAgent({ query, throwErrorIfNotExists, ctx }) {
   const count = await ctx.tx.db.UserAgent.countDocuments(query);
-  if (throwErrorIfNotExists && !count) throw new Error('User auth not found');
+  if (throwErrorIfNotExists && !count) throw new Error("User auth not found");
   return !!count;
 }
 

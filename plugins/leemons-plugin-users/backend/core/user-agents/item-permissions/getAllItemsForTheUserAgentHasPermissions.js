@@ -1,14 +1,19 @@
-const _ = require('lodash');
-const { getBaseAllPermissionsQuery } = require('./getBaseAllPermissionsQuery');
-const { find } = require('../../item-permissions/find');
-const { getAllItemsForTheUserAgentHasPermissionsCacheKey } = require('../../../helpers/cacheKeys');
+const _ = require("lodash");
+const { getBaseAllPermissionsQuery } = require("./getBaseAllPermissionsQuery");
+const { find } = require("../../item-permissions/find");
+const {
+  getAllItemsForTheUserAgentHasPermissionsCacheKey,
+} = require("../../../helpers/cacheKeys");
 
 async function getAllItemsForTheUserAgentHasPermissions({
   userAgentId: _userAgentId,
   returnAllItemPermission,
   ctx,
 }) {
-  const query = await getBaseAllPermissionsQuery({ userAgentId: _userAgentId, ctx });
+  const query = await getBaseAllPermissionsQuery({
+    userAgentId: _userAgentId,
+    ctx,
+  });
 
   const _userAgents = _.isArray(_userAgentId) ? _userAgentId : [_userAgentId];
 
@@ -25,7 +30,7 @@ async function getAllItemsForTheUserAgentHasPermissions({
     if (returnAllItemPermission) {
       return cache[Object.keys(cache)[0]];
     }
-    return _.uniq(_.map(cache[Object.keys(cache)[0]], 'item'));
+    return _.uniq(_.map(cache[Object.keys(cache)[0]], "item"));
   }
 
   const items = await find({ params: query, ctx });
@@ -39,7 +44,7 @@ async function getAllItemsForTheUserAgentHasPermissions({
 
   if (returnAllItemPermission) return items;
 
-  return _.uniq(_.map(items, 'item'));
+  return _.uniq(_.map(items, "item"));
 }
 
 module.exports = {

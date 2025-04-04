@@ -1,2 +1,2 @@
-export * from './UserDetailModal';
-export * from './UserDetailModal.constants';
+export * from "./UserDetailModal";
+export * from "./UserDetailModal.constants";

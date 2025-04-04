@@ -3,12 +3,14 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const { LeemonsMongoDBMixin, mongoose } = require("@leemons/mongodb");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
 
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
 const {
   add,
   update,
@@ -26,7 +28,7 @@ const {
   findUserAgentsWithPermission,
   removeCustomPermissionForAllUserAgents,
   manyPermissionsHasManyActions,
-} = require('../core/permissions');
+} = require("../core/permissions");
 const {
   permissions: {
     getUserAgentPermissions,
@@ -40,18 +42,18 @@ const {
     userAgentHasPermissionToItem,
     getAllItemsForTheUserAgentHasPermissionsByType,
   },
-} = require('../core/user-agents');
-const itemPermissions = require('../core/item-permissions');
-const { getServiceModels } = require('../models');
+} = require("../core/user-agents");
+const itemPermissions = require("../core/item-permissions");
+const { getServiceModels } = require("../models");
 const {
   addCustomPermissionToUserProfile,
   removeCustomPermissionToUserProfile,
-} = require('../core/user-profile');
-const restActions = require('./rest/permissions.rest');
+} = require("../core/user-profile");
+const restActions = require("./rest/permissions.rest");
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'users.permissions',
+  name: "users.permissions",
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
@@ -191,7 +193,10 @@ module.exports = {
     },
     getAllItemsForTheUserAgentHasPermissionsByType: {
       handler(ctx) {
-        return getAllItemsForTheUserAgentHasPermissionsByType({ ...ctx.params, ctx });
+        return getAllItemsForTheUserAgentHasPermissionsByType({
+          ...ctx.params,
+          ctx,
+        });
       },
     },
 
@@ -233,7 +238,10 @@ module.exports = {
     },
     getUserAgentsWithPermissionsForItem: {
       handler(ctx) {
-        return itemPermissions.getUserAgentsWithPermissionsForItem({ ...ctx.params, ctx });
+        return itemPermissions.getUserAgentsWithPermissionsForItem({
+          ...ctx.params,
+          ctx,
+        });
       },
     },
 

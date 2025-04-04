@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const constants = require('../../../config/constants');
+const _ = require("lodash");
+const constants = require("../../../config/constants");
 
 /**
  * Check if user the permission
@@ -10,7 +10,13 @@ const constants = require('../../../config/constants');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
-async function userAgentHasPermission({ userAgentId, permissionName, actionNames, target, ctx }) {
+async function userAgentHasPermission({
+  userAgentId,
+  permissionName,
+  actionNames,
+  target,
+  ctx,
+}) {
   if (constants.basicPermission.permissionName === permissionName) {
     return actionNames.indexOf(constants.basicPermission.actionName) >= 0;
   }

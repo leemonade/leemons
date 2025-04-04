@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -27,8 +27,17 @@ const schema = new mongoose.Schema(
 );
 
 schema.index({ permissionName: 1, deploymentID: 1, isDeleted: 1 });
-schema.index({ permissionName: 1, pluginName: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({
+  permissionName: 1,
+  pluginName: 1,
+  deploymentID: 1,
+  isDeleted: 1,
+});
 
-const permissionsModel = newModel(mongoose.connection, 'v1::users_Permissions', schema);
+const permissionsModel = newModel(
+  mongoose.connection,
+  "v1::users_Permissions",
+  schema
+);
 
 module.exports = { permissionsModel };

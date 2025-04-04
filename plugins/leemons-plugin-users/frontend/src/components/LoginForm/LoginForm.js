@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   Alert,
   Box,
@@ -7,28 +7,28 @@ import {
   ContextContainer,
   PasswordInput,
   TextInput,
-} from '@bubbles-ui/components';
-import { Link } from 'react-router-dom';
-import { ChevronRightIcon } from '@bubbles-ui/icons/outline';
-import { Controller, useForm, useWatch } from 'react-hook-form';
-import { LoginFormStyles } from './LoginForm.styles';
+} from "@bubbles-ui/components";
+import { Link } from "react-router-dom";
+import { ChevronRightIcon } from "@bubbles-ui/icons/outline";
+import { Controller, useForm, useWatch } from "react-hook-form";
+import { LoginFormStyles } from "./LoginForm.styles";
 
 export const LOGIN_FORM_DEFAULT_PROPS = {
   labels: {
-    title: '',
-    username: '',
-    password: '',
-    remember: '',
-    login: '',
-    signup: '',
+    title: "",
+    username: "",
+    password: "",
+    remember: "",
+    login: "",
+    signup: "",
   },
   placeholders: {
-    username: '',
-    password: '',
+    username: "",
+    password: "",
   },
-  recoverUrl: '#',
+  recoverUrl: "#",
   loading: false,
-  formError: '',
+  formError: "",
   showSignup: false,
 };
 
@@ -52,8 +52,8 @@ const LoginForm = ({
   const { classes, cx } = LoginFormStyles({});
 
   const defaultValues = {
-    email: '',
-    password: '',
+    email: "",
+    password: "",
   };
 
   const {
@@ -64,16 +64,16 @@ const LoginForm = ({
 
   const email = useWatch({
     control,
-    name: 'email',
+    name: "email",
   });
 
   const recoveryProps = {};
   if (useRouter) {
     recoveryProps.as = Link;
-    recoveryProps.to = recoverUrl + (email ? `?email=${email}` : '');
+    recoveryProps.to = recoverUrl + (email ? `?email=${email}` : "");
   } else {
-    recoveryProps.as = 'a';
-    recoveryProps.href = recoverUrl + (email ? `?email=${email}` : '');
+    recoveryProps.as = "a";
+    recoveryProps.href = recoverUrl + (email ? `?email=${email}` : "");
   }
   const handleFormSubmit = (data) => {
     const dataParsed = {
@@ -85,7 +85,11 @@ const LoginForm = ({
 
   return (
     <form onSubmit={handleSubmit(handleFormSubmit)}>
-      <ContextContainer title={labels.title} {...props} data-cypress-id="loginForm">
+      <ContextContainer
+        title={labels.title}
+        {...props}
+        data-cypress-id="loginForm"
+      >
         {formError && (
           <Alert severity="error" closeable={false}>
             {formError}
@@ -174,7 +178,12 @@ const LoginForm = ({
         </Box>
         {showSignup && (
           <Box>
-            <Button variant="light" rightIcon={<ChevronRightIcon />} type="button" fullWidth>
+            <Button
+              variant="light"
+              rightIcon={<ChevronRightIcon />}
+              type="button"
+              fullWidth
+            >
               {labels.signup}
             </Button>
           </Box>

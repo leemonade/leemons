@@ -11,10 +11,7 @@
     "lint": "eslint services",
     "email:dev": "EMAIL_DEV=true email dev"
   },
-  "keywords": [
-    "microservices",
-    "moleculer"
-  ],
+  "keywords": ["microservices", "moleculer"],
   "author": "",
   "devDependencies": {
     "jest": "29.7.0",

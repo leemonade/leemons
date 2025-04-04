@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { addActionMany } = require('./addActionMany');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { addActionMany } = require("./addActionMany");
 
 /**
  * Update the permit only if the permissionName is already exist
@@ -19,12 +19,20 @@ async function update({ ctx, ...data }) {
       message: `Permission '${data.permissionName}' for plugin '${ctx.callerPlugin}' not exists`,
     });
 
-  ctx.logger.debug(`Updating permission '${data.permissionName}' for plugin '${ctx.callerPlugin}'`);
-  await ctx.tx.db.PermissionAction.deleteMany({ permissionName: data.permissionName });
+  ctx.logger.debug(
+    `Updating permission '${data.permissionName}' for plugin '${ctx.callerPlugin}'`
+  );
+  await ctx.tx.db.PermissionAction.deleteMany({
+    permissionName: data.permissionName,
+  });
 
-  await addActionMany({ permissionName: data.permissionName, actionNames: data.actions, ctx });
+  await addActionMany({
+    permissionName: data.permissionName,
+    actionNames: data.actions,
+    ctx,
+  });
 
-  await ctx.tx.call('multilanguage.common.setKey', {
+  await ctx.tx.call("multilanguage.common.setKey", {
     key: `users.${data.permissionName}.name`,
     data: data.localizationName,
   });

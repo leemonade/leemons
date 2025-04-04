@@ -1,11 +1,11 @@
-const { LeemonsError } = require('@leemons/error');
-const slugify = require('slugify');
-const getProfileRole = require('./getProfileRole');
-const { existName } = require('./existName');
+const { LeemonsError } = require("@leemons/error");
+const slugify = require("slugify");
+const getProfileRole = require("./getProfileRole");
+const { existName } = require("./existName");
 const {
   markAllUsersWithProfileToReloadPermissions,
-} = require('./permissions/markAllUsersWithProfileToReloadPermissions');
-const { updateProfileTranslations } = require('./updateProfileTranslations');
+} = require("./permissions/markAllUsersWithProfileToReloadPermissions");
+const { updateProfileTranslations } = require("./updateProfileTranslations");
 
 async function update({ ctx, ...data }) {
   const exist = await existName({
@@ -32,21 +32,28 @@ async function update({ ctx, ...data }) {
   ]);
 
   if (data.translations) {
-    await updateProfileTranslations({ profile, translations: data.translations, ctx });
+    await updateProfileTranslations({
+      profile,
+      translations: data.translations,
+      ctx,
+    });
   }
 
   const profileRole = await getProfileRole({ profileId: profile.id, ctx });
 
   // Formato: data.permissions
   // [{ permissionName, actionNames }]
-  await ctx.tx.call('users.roles.update', {
+  await ctx.tx.call("users.roles.update", {
     id: profileRole,
     name: `profile:${profile.id}:role`,
-    type: ctx.prefixPN('profile-role'),
+    type: ctx.prefixPN("profile-role"),
     permissions: data.permissions,
   });
 
-  ctx.tx.emit('profile-permissions-change', { profile, permissions: data.permissions });
+  ctx.tx.emit("profile-permissions-change", {
+    profile,
+    permissions: data.permissions,
+  });
 
   return profile;
 }

@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { getSuperAdminUserIds } = require('./getSuperAdminUserIds');
+const _ = require("lodash");
+const { getSuperAdminUserIds } = require("./getSuperAdminUserIds");
 
 /**
  * Return if user is super admin

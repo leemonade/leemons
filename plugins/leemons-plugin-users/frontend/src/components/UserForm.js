@@ -1,5 +1,5 @@
-import React from 'react';
-import { Controller, useFormContext } from 'react-hook-form';
+import React from "react";
+import { Controller, useFormContext } from "react-hook-form";
 
 import {
   Box,
@@ -12,24 +12,40 @@ import {
   LoadingOverlay,
   ContextContainer,
   ImageProfilePicker,
-} from '@bubbles-ui/components';
-import { useLocale } from '@common';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { noop, trim } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { useLocale } from "@common";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { noop, trim } from "lodash";
+import PropTypes from "prop-types";
 
-import { SetPasswordModal } from './SetPasswordModal';
+import { SetPasswordModal } from "./SetPasswordModal";
 
-import { EMAIL_REGEX } from '@users/components/LoginForm';
-import prefixPN from '@users/helpers/prefixPN';
-import useUserDetails from '@users/hooks/useUserDetails';
-import { activateUserRequest, sendWelcomeEmailToUserRequest } from '@users/request';
-import useProvider from '@users/request/hooks/queries/useProvider';
+import { EMAIL_REGEX } from "@users/components/LoginForm";
+import prefixPN from "@users/helpers/prefixPN";
+import useUserDetails from "@users/hooks/useUserDetails";
+import {
+  activateUserRequest,
+  sendWelcomeEmailToUserRequest,
+} from "@users/request";
+import useProvider from "@users/request/hooks/queries/useProvider";
 
-const USER_FIELDS = ['email', 'name', 'surnames', 'secondSurname', 'gender', 'birthdate', 'avatar'];
+const USER_FIELDS = [
+  "email",
+  "name",
+  "surnames",
+  "secondSurname",
+  "gender",
+  "birthdate",
+  "avatar",
+];
 
-function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser = noop }) {
+function UserForm({
+  user,
+  isAdminFirstTime,
+  onCheckEmail = noop,
+  onActivateUser = noop,
+}) {
   const [reload, setReload] = React.useState(false);
   const [activeModalOpened, setActiveModalOpened] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -48,9 +64,11 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
   });
 
   const form = useFormContext();
-  const [t, , , tLoading] = useTranslateLoader(prefixPN('userForm'));
+  const [t, , , tLoading] = useTranslateLoader(prefixPN("userForm"));
 
-  const avatarUrl = userDetails?.user?.avatarAsset?.cover ? userDetails.user.avatar : null;
+  const avatarUrl = userDetails?.user?.avatarAsset?.cover
+    ? userDetails.user.avatar
+    : null;
 
   // ····················································
   // INITIAL DATA
@@ -64,8 +82,8 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
       });
 
       if (isAdminFirstTime) {
-        form.setValue('birthdate', null);
-        form.setValue('gender', null);
+        form.setValue("birthdate", null);
+        form.setValue("gender", null);
       }
 
       setTimeout(() => {
@@ -76,7 +94,7 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
 
   React.useEffect(() => {
     if (!user) {
-      const classes = form.getValues('classes');
+      const classes = form.getValues("classes");
       form.reset({ classes });
     }
   }, [JSON.stringify(user)]);
@@ -89,10 +107,10 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
     formState: { errors },
   } = form;
 
-  const email = watch('email');
-  const name = watch('name');
-  const surnames = watch('surnames');
-  const fullName = trim(`${name ?? ''} ${surnames ?? ''}`);
+  const email = watch("email");
+  const name = watch("name");
+  const surnames = watch("surnames");
+  const fullName = trim(`${name ?? ""} ${surnames ?? ""}`);
 
   function r(n) {
     return { required: t(n) };
@@ -108,7 +126,7 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
   const sendActivationEmail = () => {
     try {
       sendWelcomeEmailToUserRequest({ user: userDetails.user });
-      addSuccessAlert(t('activationEmailSent'));
+      addSuccessAlert(t("activationEmailSent"));
     } catch (err) {
       addErrorAlert(err);
     }
@@ -122,7 +140,7 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
         password: data.password,
       });
 
-      addSuccessAlert(t('activatedUser'));
+      addSuccessAlert(t("activatedUser"));
       toggleModal();
       onActivateUser(true);
       updateUserDetails();
@@ -139,7 +157,7 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
 
   if (reload || (enableUserDetails && isLoading) || tLoading) {
     return (
-      <Box style={{ position: 'relative', height: 600 }}>
+      <Box style={{ position: "relative", height: 600 }}>
         <LoadingOverlay visible />
       </Box>
     );
@@ -150,24 +168,24 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
   return (
     <>
       <Stack direction="column" spacing={userNeedsActivation ? 4 : 6}>
-        <ContextContainer title={t('accessInfo')} spacing={2}>
+        <ContextContainer title={t("accessInfo")} spacing={2}>
           <Stack fullWidth spacing={4}>
             <Box>
               <Controller
                 name="email"
                 control={control}
                 rules={{
-                  ...r('emailRequired'),
+                  ...r("emailRequired"),
                   pattern: {
                     value: EMAIL_REGEX,
-                    message: t('invalidEmail'),
+                    message: t("invalidEmail"),
                   },
                 }}
                 render={({ field }) => (
                   <TextInput
                     {...field}
                     required
-                    label={t('email')}
+                    label={t("email")}
                     error={errors.email}
                     disabled={!!userDetails?.user?.id}
                     onBlur={() => onCheckEmail(email)}
@@ -182,10 +200,10 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
                   name="repeatEmail"
                   control={control}
                   rules={{
-                    ...r('teacherEmailRequired'),
+                    ...r("teacherEmailRequired"),
                     validate: (value) => {
                       if (value !== email) {
-                        return t('emailNotMatch');
+                        return t("emailNotMatch");
                       }
                       return true;
                     },
@@ -195,7 +213,7 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
                     <TextInput
                       {...field}
                       required
-                      label={t('repeatEmail')}
+                      label={t("repeatEmail")}
                       error={errors.repeatEmail}
                       onPaste={(e) => e.preventDefault()}
                       onChange={(e) => field.onChange(e?.toLowerCase()?.trim())}
@@ -205,27 +223,33 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
               </Box>
             )}
           </Stack>
-          {(!provider || provider?.supportedMethods?.recoverPassword) && userNeedsActivation && (
-            <Stack fullWidth direction="row">
-              <Button variant="link" onClick={sendActivationEmail}>
-                {t('sendActivationEmail')}
-              </Button>
-              <Button variant="link" onClick={toggleModal} loading={loading}>
-                {t('manualActivation')}
-              </Button>
-            </Stack>
-          )}
+          {(!provider || provider?.supportedMethods?.recoverPassword) &&
+            userNeedsActivation && (
+              <Stack fullWidth direction="row">
+                <Button variant="link" onClick={sendActivationEmail}>
+                  {t("sendActivationEmail")}
+                </Button>
+                <Button variant="link" onClick={toggleModal} loading={loading}>
+                  {t("manualActivation")}
+                </Button>
+              </Stack>
+            )}
         </ContextContainer>
 
-        <ContextContainer title={t('personalInfo')}>
+        <ContextContainer title={t("personalInfo")}>
           <Stack fullWidth spacing={4}>
             <Box>
               <Controller
                 name="name"
                 control={control}
-                rules={r('nameRequired')}
+                rules={r("nameRequired")}
                 render={({ field }) => (
-                  <TextInput {...field} required label={t('name')} error={errors.name} />
+                  <TextInput
+                    {...field}
+                    required
+                    label={t("name")}
+                    error={errors.name}
+                  />
                 )}
               />
             </Box>
@@ -233,9 +257,14 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
               <Controller
                 name="surnames"
                 control={control}
-                rules={r('surnameRequired')}
+                rules={r("surnameRequired")}
                 render={({ field }) => (
-                  <TextInput {...field} required label={t('surname')} error={errors.surnames} />
+                  <TextInput
+                    {...field}
+                    required
+                    label={t("surname")}
+                    error={errors.surnames}
+                  />
                 )}
               />
             </Box>
@@ -245,7 +274,9 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
             <Controller
               name="secondSurname"
               control={control}
-              render={({ field }) => <TextInput {...field} label={t('secondSurname')} />}
+              render={({ field }) => (
+                <TextInput {...field} label={t("secondSurname")} />
+              )}
             />
           </Box>
           <Stack fullWidth spacing={4}>
@@ -253,14 +284,14 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
               <Controller
                 name="birthdate"
                 control={control}
-                rules={r('birthdayRequired')}
+                rules={r("birthdayRequired")}
                 render={({ field }) => (
                   <DatePicker
                     {...field}
                     value={field.value ? new Date(field.value) : null}
                     required
                     error={errors.birthdate}
-                    label={t('birthday')}
+                    label={t("birthday")}
                     locale={locale}
                   />
                 )}
@@ -270,17 +301,17 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
               <Controller
                 name="gender"
                 control={control}
-                rules={r('genderRequired')}
+                rules={r("genderRequired")}
                 render={({ field }) => (
                   <Select
                     {...field}
                     data={[
-                      { label: t('male'), value: 'male' },
-                      { label: t('female'), value: 'female' },
-                      { label: t('other'), value: 'other' },
+                      { label: t("male"), value: "male" },
+                      { label: t("female"), value: "female" },
+                      { label: t("other"), value: "other" },
                     ]}
                     error={errors.gender}
-                    label={t('gender')}
+                    label={t("gender")}
                     required
                   />
                 )}
@@ -289,7 +320,7 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
           </Stack>
 
           <Box>
-            <InputWrapper label={t('profilePicture')}>
+            <InputWrapper label={t("profilePicture")}>
               <Controller
                 name="avatar"
                 control={control}
@@ -300,11 +331,11 @@ function UserForm({ user, isAdminFirstTime, onCheckEmail = noop, onActivateUser 
                     url={avatarUrl}
                     fullName={fullName}
                     labels={{
-                      uploadImage: t('uploadImage'),
-                      changeImage: t('changeImage'),
-                      delete: t('delete'),
-                      cancel: t('cancel'),
-                      accept: t('accept'),
+                      uploadImage: t("uploadImage"),
+                      changeImage: t("changeImage"),
+                      delete: t("delete"),
+                      cancel: t("cancel"),
+                      accept: t("accept"),
                     }}
                   />
                 )}

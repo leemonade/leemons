@@ -1,10 +1,12 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const slugify = require('slugify');
-const existByName = require('./existByName');
-const { validateRoleType } = require('../../validations/exists');
-const { manyPermissionsHasManyActions } = require('../permissions/manyPermissionsHasManyActions');
-const { addPermissionMany } = require('./addPermissionMany');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const slugify = require("slugify");
+const existByName = require("./existByName");
+const { validateRoleType } = require("../../validations/exists");
+const {
+  manyPermissionsHasManyActions,
+} = require("../permissions/manyPermissionsHasManyActions");
+const { addPermissionMany } = require("./addPermissionMany");
 
 /**
  * A "role" in the leemons context represents a collection of permissions and responsibilities designated to a user or a group of users.
@@ -34,11 +36,19 @@ const { addPermissionMany } = require('./addPermissionMany');
  * @param {Array<Object>} params.permissions - Permissions
  * @return {Promise<Role>} Created / Updated role
  * */
-async function add({ name, type, description, center, profile, permissions, ctx }) {
+async function add({
+  name,
+  type,
+  description,
+  center,
+  profile,
+  permissions,
+  ctx,
+}) {
   validateRoleType(type, ctx.callerPlugin);
   if (await existByName({ name, type, center, ctx })) {
     const error = `Role with name '${name}' and type '${type}' already exists${
-      center ? ` in center ${center}` : ''
+      center ? ` in center ${center}` : ""
     }`;
     throw new LeemonsError(ctx, { message: error });
   }
@@ -48,8 +58,15 @@ async function add({ name, type, description, center, profile, permissions, ctx 
     permission.actionNames,
   ]);
 
-  if (!(await manyPermissionsHasManyActions({ data: dataToCheckPermissions, ctx })))
-    throw new LeemonsError(ctx, { message: `One or more permissions or his actions not exist` });
+  if (
+    !(await manyPermissionsHasManyActions({
+      data: dataToCheckPermissions,
+      ctx,
+    }))
+  )
+    throw new LeemonsError(ctx, {
+      message: `One or more permissions or his actions not exist`,
+    });
 
   ctx.logger.debug(`Creating role '${name}'`);
 

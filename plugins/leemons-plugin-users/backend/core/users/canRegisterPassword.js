@@ -1,4 +1,4 @@
-const { getRegisterPasswordConfig } = require('./getRegisterPasswordConfig');
+const { getRegisterPasswordConfig } = require("./getRegisterPasswordConfig");
 
 async function canRegisterPassword({ token, ctx }) {
   try {

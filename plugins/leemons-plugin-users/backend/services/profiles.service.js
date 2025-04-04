@@ -3,11 +3,13 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMongoDBMixin } = require("@leemons/mongodb");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
 
 const {
   add,
@@ -24,15 +26,17 @@ const {
   removeCustomPermissionsByName,
   getRoleForRelationshipProfileCenter,
   existMany,
-} = require('../core/profiles');
-const { getProfileByUserAgent } = require('../core/profiles/getProfileByUserAgent');
-const { getServiceModels } = require('../models');
+} = require("../core/profiles");
+const {
+  getProfileByUserAgent,
+} = require("../core/profiles/getProfileByUserAgent");
+const { getServiceModels } = require("../models");
 
-const restActions = require('./rest/profiles.rest');
+const restActions = require("./rest/profiles.rest");
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'users.profiles',
+  name: "users.profiles",
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),

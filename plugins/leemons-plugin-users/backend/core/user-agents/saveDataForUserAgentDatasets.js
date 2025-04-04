@@ -1,9 +1,9 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function saveData({ value, locationName, userAgentId, ctx }) {
-  const response = await ctx.tx.call('dataset.dataset.setValues', {
+  const response = await ctx.tx.call("dataset.dataset.setValues", {
     locationName,
-    pluginName: 'users',
+    pluginName: "users",
     values: value,
     userAgent: ctx.meta.userSession.userAgents,
     target: userAgentId,
@@ -11,7 +11,10 @@ async function saveData({ value, locationName, userAgentId, ctx }) {
 
   const { formData, completed } = response ?? {};
 
-  await ctx.tx.db.UserAgent.updateOne({ id: userAgentId }, { datasetIsGood: completed });
+  await ctx.tx.db.UserAgent.updateOne(
+    { id: userAgentId },
+    { datasetIsGood: completed }
+  );
   return formData;
 }
 

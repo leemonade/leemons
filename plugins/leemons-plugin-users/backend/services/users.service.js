@@ -3,51 +3,63 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsCronJobsMixin } = require('@leemons/cronjobs');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMongoDBMixin } = require('@leemons/mongodb');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const _ = require('lodash');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const { LeemonsCronJobsMixin } = require("@leemons/cronjobs");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMongoDBMixin } = require("@leemons/mongodb");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
+const _ = require("lodash");
 
-const { PLUGIN_NAME, VERSION } = require('../config/constants');
+const { PLUGIN_NAME, VERSION } = require("../config/constants");
 const {
   getUserAgentPermissions,
   userAgentHasCustomPermission,
   addCustomPermissionToUserAgent,
-} = require('../core/permissions');
-const { getProvider } = require('../core/providers/getProvider');
+} = require("../core/permissions");
+const { getProvider } = require("../core/providers/getProvider");
 const {
   getUserAgentsInfo,
   searchUserAgents,
   filterUserAgentsByProfileAndCenter,
   getUserAgentByCenterProfile,
   getUserAgentCenter,
-} = require('../core/user-agents');
-const { addUserAgentContacts } = require('../core/user-agents/contacts/addUserAgentContacts');
-const { getUserAgentContactIds } = require('../core/user-agents/contacts/getUserAgentContactIds');
-const { getUserAgentContacts } = require('../core/user-agents/contacts/getUserAgentContacts');
-const { removeUserAgentContacts } = require('../core/user-agents/contacts/removeUserAgentContacts');
-const { userAgentsAreContacts } = require('../core/user-agents/contacts/userAgentsAreContacts');
+} = require("../core/user-agents");
+const {
+  addUserAgentContacts,
+} = require("../core/user-agents/contacts/addUserAgentContacts");
+const {
+  getUserAgentContactIds,
+} = require("../core/user-agents/contacts/getUserAgentContactIds");
+const {
+  getUserAgentContacts,
+} = require("../core/user-agents/contacts/getUserAgentContacts");
+const {
+  removeUserAgentContacts,
+} = require("../core/user-agents/contacts/removeUserAgentContacts");
+const {
+  userAgentsAreContacts,
+} = require("../core/user-agents/contacts/userAgentsAreContacts");
 const {
   getAllItemsForTheUserAgentHasPermissions,
-} = require('../core/user-agents/item-permissions/getAllItemsForTheUserAgentHasPermissions');
+} = require("../core/user-agents/item-permissions/getAllItemsForTheUserAgentHasPermissions");
 const {
   getAllItemsForTheUserAgentHasPermissionsByType,
-} = require('../core/user-agents/item-permissions/getAllItemsForTheUserAgentHasPermissionsByType');
+} = require("../core/user-agents/item-permissions/getAllItemsForTheUserAgentHasPermissionsByType");
 const {
   userAgentHasPermissionToItem,
-} = require('../core/user-agents/item-permissions/userAgentHasPermissionToItem');
+} = require("../core/user-agents/item-permissions/userAgentHasPermissionToItem");
 const {
   removeCustomUserAgentPermission,
-} = require('../core/user-agents/permissions/removeCustomUserAgentPermission');
+} = require("../core/user-agents/permissions/removeCustomUserAgentPermission");
 const {
   updateUserAgentPermissions,
-} = require('../core/user-agents/permissions/updateUserAgentPermissions');
+} = require("../core/user-agents/permissions/updateUserAgentPermissions");
 const {
   userAgentHasPermission,
-} = require('../core/user-agents/permissions/userAgentHasPermission');
+} = require("../core/user-agents/permissions/userAgentHasPermission");
 const {
   add,
   detail,
@@ -59,13 +71,13 @@ const {
   list: listUsers,
   userSessionCheckUserAgentDatasets,
   getSuperAdminUserIds,
-} = require('../core/users');
-const getUserLocale = require('../core/users/getUserLocale');
-const { loginWithProvider } = require('../core/users/loginWithProvider');
-const { getServiceModels } = require('../models');
+} = require("../core/users");
+const getUserLocale = require("../core/users/getUserLocale");
+const { loginWithProvider } = require("../core/users/loginWithProvider");
+const { getServiceModels } = require("../models");
 
-const { jobs } = require('./jobs/users.jobs');
-const restActions = require('./rest/users.rest');
+const { jobs } = require("./jobs/users.jobs");
+const restActions = require("./rest/users.rest");
 
 /** @type {ServiceSchema} */
 module.exports = {
@@ -89,8 +101,26 @@ module.exports = {
         const response = [];
         _.forEach(
           _.isArray(users) ? users : [users],
-          ({ id, email, name, surnames, secondSurname, avatar, locale, createdAt }) => {
-            response.push({ id, email, name, surnames, secondSurname, avatar, locale, createdAt });
+          ({
+            id,
+            email,
+            name,
+            surnames,
+            secondSurname,
+            avatar,
+            locale,
+            createdAt,
+          }) => {
+            response.push({
+              id,
+              email,
+              name,
+              surnames,
+              secondSurname,
+              avatar,
+              locale,
+              createdAt,
+            });
           }
         );
         return _.isArray(users) ? response : response[0];
@@ -137,7 +167,7 @@ module.exports = {
 
         if (
           ctx.callerPlugin &&
-          [provider, 'bulk-data'].filter(Boolean).includes(ctx.callerPlugin)
+          [provider, "bulk-data"].filter(Boolean).includes(ctx.callerPlugin)
         ) {
           return listUsers({ ...ctx.params, ctx });
         }
@@ -241,7 +271,10 @@ module.exports = {
     },
     getAllItemsForTheUserAgentHasPermissionsByType: {
       async handler(ctx) {
-        return getAllItemsForTheUserAgentHasPermissionsByType({ ...ctx.params, ctx });
+        return getAllItemsForTheUserAgentHasPermissionsByType({
+          ...ctx.params,
+          ctx,
+        });
       },
     },
     loginWithProvider: {

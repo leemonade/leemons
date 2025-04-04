@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { isArray, isFunction, map, noop } from 'lodash';
-import { MultiSelect, Select } from '@bubbles-ui/components';
-import { listCentersRequest } from '@users/request';
-import { getCentersWithToken } from '@users/session';
+import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
+import { isArray, isFunction, map, noop } from "lodash";
+import { MultiSelect, Select } from "@bubbles-ui/components";
+import { listCentersRequest } from "@users/request";
+import { getCentersWithToken } from "@users/session";
 
 function SelectCenter({
   multiple = false,

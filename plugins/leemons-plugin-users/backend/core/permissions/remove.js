@@ -1,4 +1,4 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
 /**
  * Delete the permit only if the permissionName is already exist
@@ -17,14 +17,16 @@ async function remove({ permissionName, ctx }) {
       message: `Permission '${permissionName}' for plugin '${ctx.callerPlugin}' not exists`,
     });
 
-  ctx.logger.debug(`Deleting permission '${permissionName}' for plugin '${ctx.callerPlugin}'`);
+  ctx.logger.debug(
+    `Deleting permission '${permissionName}' for plugin '${ctx.callerPlugin}'`
+  );
   const promises = [
     ctx.tx.db.Permissions.deleteOne({
       permissionName,
       pluginName: ctx.callerPlugin,
     }),
     ctx.tx.db.PermissionAction.deleteMany({ permissionName }),
-    ctx.tx.call('multilanguage.common.deleteAll', {
+    ctx.tx.call("multilanguage.common.deleteAll", {
       key: `users.${permissionName}.name`,
     }),
   ];

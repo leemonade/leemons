@@ -1,14 +1,14 @@
 const allUsersKey = [
   {
-    plugin: 'plugin.users',
-    scope: 'users',
+    plugin: "plugin.users",
+    scope: "users",
   },
 ];
 
 const getUserListKey = (params) => [
   {
     ...allUsersKey[0],
-    action: 'getUserList',
+    action: "getUserList",
     params,
   },
 ];

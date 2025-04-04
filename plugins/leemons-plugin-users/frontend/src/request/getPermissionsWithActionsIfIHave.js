@@ -1,10 +1,10 @@
-import _ from 'lodash';
+import _ from "lodash";
 
 async function getPermissionsWithActionsIfIHave(permissionNames) {
   const arr = _.isArray(permissionNames) ? permissionNames : [permissionNames];
-  const data = await leemons.api('v1/users/permissions/get-if-have', {
+  const data = await leemons.api("v1/users/permissions/get-if-have", {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: { permissionNames: arr },
   });
 

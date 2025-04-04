@@ -1,4 +1,4 @@
-const { getPluginProvider } = require('@leemons/providers');
+const { getPluginProvider } = require("@leemons/providers");
 
 /**
  *
@@ -36,7 +36,10 @@ async function getProvider({ ctx }) {
     return null;
   }
 
-  return { ...providerEntry.value.params, pluginName: providerEntry.value.pluginName };
+  return {
+    ...providerEntry.value.params,
+    pluginName: providerEntry.value.pluginName,
+  };
 }
 
 module.exports = { getProvider };

@@ -1,6 +1,6 @@
-const slugify = require('slugify');
-const { LeemonsError } = require('@leemons/error');
-const { add } = require('../roles');
+const slugify = require("slugify");
+const { LeemonsError } = require("@leemons/error");
+const { add } = require("../roles");
 /**
  * Create new group if name and type not in use
  * @public
@@ -12,14 +12,16 @@ const { add } = require('../roles');
 async function addWithRole({ name, description, permissions, indexable, ctx }) {
   let group = await ctx.tx.db.Groups.findOne({
     $or: [{ name }, { uri: slugify(name, { lower: true }) }],
-    type: 'role',
+    type: "role",
   }).lean();
   if (group)
-    throw new LeemonsError(ctx, { message: 'There is already a group with this name and type' });
+    throw new LeemonsError(ctx, {
+      message: "There is already a group with this name and type",
+    });
 
   group = await ctx.tx.db.Groups.create({
     name,
-    type: 'role',
+    type: "role",
     description,
     uri: slugify(name, { lower: true }),
     indexable,
@@ -28,11 +30,11 @@ async function addWithRole({ name, description, permissions, indexable, ctx }) {
 
   const role = await add({
     name: `group:${group.id}:role`,
-    type: ctx.prefixPN('group-role'),
+    type: ctx.prefixPN("group-role"),
     permissions,
     ctx: {
       ...ctx,
-      callerPlugin: ctx.prefixPN(''),
+      callerPlugin: ctx.prefixPN(""),
     },
   });
 

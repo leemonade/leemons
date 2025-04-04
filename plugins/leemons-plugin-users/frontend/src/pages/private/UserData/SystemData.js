@@ -1,5 +1,5 @@
-import React, { useMemo } from 'react';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import React, { useMemo } from "react";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
 import {
   Box,
   Button,
@@ -9,16 +9,16 @@ import {
   Paragraph,
   Stack,
   Table,
-} from '@bubbles-ui/components';
-import { useStore } from '@common';
-import PropTypes from 'prop-types';
-import { map } from 'lodash';
+} from "@bubbles-ui/components";
+import { useStore } from "@common";
+import PropTypes from "prop-types";
+import { map } from "lodash";
 import {
   getSystemDataFieldsConfigRequest,
   saveSystemDataFieldsConfigRequest,
-} from '../../../request';
+} from "../../../request";
 
-const SystemDataTable1 = ['email', 'password', 'name', 'surname', 'birthday'];
+const SystemDataTable1 = ["email", "password", "name", "surname", "birthday"];
 
 function SystemData({ t, getErrorMessage }) {
   const [store, render] = useStore({
@@ -41,19 +41,19 @@ function SystemData({ t, getErrorMessage }) {
     () => ({
       c1: [
         {
-          Header: t('systemData.table.name'),
-          accessor: 'name',
-          className: 'text-left',
+          Header: t("systemData.table.name"),
+          accessor: "name",
+          className: "text-left",
         },
         {
-          Header: t('systemData.table.description'),
-          accessor: 'description',
-          className: 'text-left',
+          Header: t("systemData.table.description"),
+          accessor: "description",
+          className: "text-left",
         },
         {
-          Header: t('systemData.table.type'),
-          accessor: 'type',
-          className: 'text-left',
+          Header: t("systemData.table.type"),
+          accessor: "type",
+          className: "text-left",
         },
       ],
       c1Data: map(SystemDataTable1, (item) => ({
@@ -63,24 +63,24 @@ function SystemData({ t, getErrorMessage }) {
       })),
       c2: [
         {
-          Header: t('systemData.table.name'),
-          accessor: 'name',
-          className: 'text-left',
+          Header: t("systemData.table.name"),
+          accessor: "name",
+          className: "text-left",
         },
         {
-          Header: t('systemData.table.description'),
-          accessor: 'description',
-          className: 'text-left',
+          Header: t("systemData.table.description"),
+          accessor: "description",
+          className: "text-left",
         },
         {
-          Header: t('systemData.table.type'),
-          accessor: 'type',
-          className: 'text-left',
+          Header: t("systemData.table.type"),
+          accessor: "type",
+          className: "text-left",
         },
         {
-          Header: t('systemData.table.actions'),
-          accessor: 'actions',
-          className: 'text-left',
+          Header: t("systemData.table.actions"),
+          accessor: "actions",
+          className: "text-left",
         },
       ],
       c2Data: [
@@ -91,16 +91,20 @@ function SystemData({ t, getErrorMessage }) {
           actions: (
             <Box>
               <Checkbox
-                label={t('systemData.table.makeMandatory')}
+                label={t("systemData.table.makeMandatory")}
                 disabled={store.secondSurname.disabled}
-                checked={store.secondSurname.disabled ? false : store.secondSurname.required}
+                checked={
+                  store.secondSurname.disabled
+                    ? false
+                    : store.secondSurname.required
+                }
                 onChange={() => {
                   store.secondSurname.required = !store.secondSurname.required;
                   render();
                 }}
               />
               <Checkbox
-                label={t('systemData.table.disableField')}
+                label={t("systemData.table.disableField")}
                 checked={store.secondSurname.disabled}
                 onChange={() => {
                   store.secondSurname.disabled = !store.secondSurname.disabled;
@@ -117,7 +121,7 @@ function SystemData({ t, getErrorMessage }) {
           actions: (
             <Box>
               <Checkbox
-                label={t('systemData.table.makeMandatory')}
+                label={t("systemData.table.makeMandatory")}
                 disabled={store.avatar.disabled}
                 checked={store.avatar.disabled ? false : store.avatar.required}
                 onChange={() => {
@@ -126,7 +130,7 @@ function SystemData({ t, getErrorMessage }) {
                 }}
               />
               <Checkbox
-                label={t('systemData.table.disableField')}
+                label={t("systemData.table.disableField")}
                 checked={store.avatar.disabled}
                 onChange={() => {
                   store.avatar.disabled = !store.avatar.disabled;
@@ -149,7 +153,7 @@ function SystemData({ t, getErrorMessage }) {
         avatar: store.avatar,
         secondSurname: store.secondSurname,
       });
-      addSuccessAlert(t('systemData.saveSuccess'));
+      addSuccessAlert(t("systemData.saveSuccess"));
     } catch (err) {
       addErrorAlert(getErrorMessage(err));
     }
@@ -159,19 +163,22 @@ function SystemData({ t, getErrorMessage }) {
 
   return (
     <ContextContainer
-      sx={(theme) => ({ paddingTop: theme.spacing[4], paddingBottom: theme.spacing[4] })}
+      sx={(theme) => ({
+        paddingTop: theme.spacing[4],
+        paddingBottom: theme.spacing[4],
+      })}
     >
-      <Paragraph>{t('systemData.description1')}</Paragraph>
+      <Paragraph>{t("systemData.description1")}</Paragraph>
       <Paper>
         <Table columns={table.c1} data={table.c1Data} />
       </Paper>
-      <Paragraph>{t('systemData.description2')}</Paragraph>
+      <Paragraph>{t("systemData.description2")}</Paragraph>
       <Paper>
         <Table columns={table.c2} data={table.c2Data} />
       </Paper>
       <Stack fullWidth justifyContent="right">
         <Button onClick={save} loading={store.loading}>
-          {t('systemData.save')}
+          {t("systemData.save")}
         </Button>
       </Stack>
     </ContextContainer>

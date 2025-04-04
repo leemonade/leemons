@@ -1,7 +1,7 @@
 async function updateSessionConfig(body) {
-  return leemons.api('v1/users/users/session/config', {
+  return leemons.api("v1/users/users/session/config", {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body,
   });
 }

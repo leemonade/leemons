@@ -1,4 +1,4 @@
-const slugify = require('slugify');
+const slugify = require("slugify");
 
 async function existName({ name, id, ctx }) {
   const query = {

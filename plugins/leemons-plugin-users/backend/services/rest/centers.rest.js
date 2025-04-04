@@ -6,47 +6,49 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { LeemonsValidator } = require('@leemons/validator');
-const { list, add, remove } = require('../../core/centers');
+} = require("@leemons/middlewares");
+const { LeemonsValidator } = require("@leemons/validator");
+const { list, add, remove } = require("../../core/centers");
 
 module.exports = {
   listRest: {
     rest: {
-      path: '/',
-      method: 'POST',
+      path: "/",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.centers': {
-            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          "users.centers": {
+            actions: ["view", "update", "create", "delete", "admin"],
           },
-          'admin.setup': {
-            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          "admin.setup": {
+            actions: ["view", "update", "create", "delete", "admin"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: 'number' },
-          size: { type: 'number' },
+          page: { type: "number" },
+          size: { type: "number" },
           withRoles: {
             anyOf: [
-              { type: 'boolean' },
+              { type: "boolean" },
               {
-                type: 'object',
-                properties: { columns: { type: 'array', items: { type: 'string' } } },
+                type: "object",
+                properties: {
+                  columns: { type: "array", items: { type: "string" } },
+                },
               },
             ],
           },
-          withLimits: { type: 'boolean' },
+          withLimits: { type: "boolean" },
         },
-        required: ['page', 'size'],
+        required: ["page", "size"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -59,19 +61,19 @@ module.exports = {
   },
   addRest: {
     rest: {
-      path: '/add',
-      method: 'POST',
+      path: "/add",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
           allowedPermissions: {
-            'users.centers': {
-              actions: ['update', 'create', 'delete', 'admin'],
+            "users.centers": {
+              actions: ["update", "create", "delete", "admin"],
             },
-            'admin.setup': {
-              actions: ['update', 'create', 'delete', 'admin'],
+            "admin.setup": {
+              actions: ["update", "create", "delete", "admin"],
             },
           },
         },
@@ -84,18 +86,18 @@ module.exports = {
   },
   removeRest: {
     rest: {
-      path: '/remove',
-      method: 'POST',
+      path: "/remove",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.centers': {
-            actions: ['delete', 'admin'],
+          "users.centers": {
+            actions: ["delete", "admin"],
           },
-          'admin.setup': {
-            actions: ['delete', 'admin'],
+          "admin.setup": {
+            actions: ["delete", "admin"],
           },
         },
       }),

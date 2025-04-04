@@ -1,7 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useMemo } from "react";
 
-
-import { useForm } from 'react-hook-form';
+import { useForm } from "react-hook-form";
 
 import {
   Alert,
@@ -16,28 +15,28 @@ import {
   TableInput,
   TextInput,
   useDebouncedCallback,
-} from '@bubbles-ui/components';
-import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { TagsMultiSelect, useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { forEach, map, uniq } from 'lodash';
+} from "@bubbles-ui/components";
+import { AdminPageHeader } from "@bubbles-ui/leemons";
+import { TagsMultiSelect, useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { forEach, map, uniq } from "lodash";
 
-import { SelectCenter } from '../../../../components/SelectCenter';
-import { SelectProfile } from '../../../../components/SelectProfile';
-import getUserFullName from '../../../../helpers/getUserFullName';
+import { SelectCenter } from "../../../../components/SelectCenter";
+import { SelectProfile } from "../../../../components/SelectProfile";
+import getUserFullName from "../../../../helpers/getUserFullName";
 import {
   addUsersBulkRequest,
   getSystemDataFieldsConfigRequest,
   searchUserAgentsRequest,
-} from '../../../../request';
+} from "../../../../request";
 
-import { EMAIL_REGEX } from '@users/components/LoginForm';
-import prefixPN from '@users/helpers/prefixPN';
+import { EMAIL_REGEX } from "@users/components/LoginForm";
+import prefixPN from "@users/helpers/prefixPN";
 
 function CreateUsers() {
-  const [t] = useTranslateLoader(prefixPN('create_users'));
+  const [t] = useTranslateLoader(prefixPN("create_users"));
   const [store, render] = useStore({ tags: [] });
   const [, , , getErrorMessage] = useRequestErrorMessage();
 
@@ -70,18 +69,23 @@ function CreateUsers() {
     store.user = null;
     if (userAgents.length) {
       store.user = userAgents[0].user;
-      form.setValue('name', store.user.name);
-      form.setValue('gender', store.user.gender);
-      form.setValue('surnames', store.user.surnames);
-      form.setValue('secondSurname', store.user.secondSurname);
+      form.setValue("name", store.user.name);
+      form.setValue("gender", store.user.gender);
+      form.setValue("surnames", store.user.surnames);
+      form.setValue("secondSurname", store.user.secondSurname);
       form.setValue(
-        'birthdate',
-        store.user.birthdate ? new Date(store.user.birthdate) : store.user.birthdate
+        "birthdate",
+        store.user.birthdate
+          ? new Date(store.user.birthdate)
+          : store.user.birthdate
       );
 
-      form.setValue('avatar', store.user.avatar);
+      form.setValue("avatar", store.user.avatar);
       forEach(userAgents, (userAgent) => {
-        if (userAgent.center.id === store.center && userAgent.profile.id === store.profile) {
+        if (
+          userAgent.center.id === store.center &&
+          userAgent.profile.id === store.profile
+        ) {
           store.userAlreadyHaveThisConfig = true;
         }
       });
@@ -99,7 +103,7 @@ function CreateUsers() {
   }, []);
 
   React.useEffect(() => {
-    const email = form.getValues('email');
+    const email = form.getValues("email");
     if (store.center && store.profile && email) {
       checkEmail(email);
     }
@@ -107,7 +111,7 @@ function CreateUsers() {
 
   React.useEffect(() => {
     const subscription = form.watch((value, event) => {
-      if (event.name === 'email') {
+      if (event.name === "email") {
         debouncedFunction(async () => {
           checkEmail(value.email);
         });
@@ -119,101 +123,130 @@ function CreateUsers() {
   const data = useMemo(() => {
     const result = {
       pageHeader: {
-        title: t('pageTitle'),
+        title: t("pageTitle"),
       },
       tableColumns: [],
       tableLabels: {
-        add: t('tableAdd'),
-        remove: t('tableRemove'),
+        add: t("tableAdd"),
+        remove: t("tableRemove"),
       },
     };
     result.tableColumns.push({
-      Header: t('emailHeader'),
-      accessor: 'email',
-      className: 'text-left',
+      Header: t("emailHeader"),
+      accessor: "email",
+      className: "text-left",
       input: {
         node: <TextInput disabled={!store.center || !store.profile} required />,
         rules: {
-          required: t('emailHeaderRequired'),
-          pattern: { value: EMAIL_REGEX, message: t('emailHeaderNotEmail') },
+          required: t("emailHeaderRequired"),
+          pattern: { value: EMAIL_REGEX, message: t("emailHeaderNotEmail") },
         },
       },
       valueRender: (value) => <>{value}</>,
     });
     result.tableColumns.push({
-      Header: t('nameHeader'),
-      accessor: 'name',
-      className: 'text-left',
+      Header: t("nameHeader"),
+      accessor: "name",
+      className: "text-left",
       input: {
-        node: <TextInput disabled={!store.center || !store.profile || !!store.user} required />,
-        rules: { required: t('nameHeaderRequired') },
+        node: (
+          <TextInput
+            disabled={!store.center || !store.profile || !!store.user}
+            required
+          />
+        ),
+        rules: { required: t("nameHeaderRequired") },
       },
       valueRender: (value) => <>{value}</>,
     });
     result.tableColumns.push({
-      Header: t('surnameHeader'),
-      accessor: 'surnames',
-      className: 'text-left',
+      Header: t("surnameHeader"),
+      accessor: "surnames",
+      className: "text-left",
       input: {
-        node: <TextInput disabled={!store.center || !store.profile || !!store.user} required />,
-        rules: { required: t('surnameHeaderRequired') },
+        node: (
+          <TextInput
+            disabled={!store.center || !store.profile || !!store.user}
+            required
+          />
+        ),
+        rules: { required: t("surnameHeaderRequired") },
       },
       valueRender: (value) => <>{value}</>,
     });
     if (store.secondSurname && !store.secondSurname.disabled) {
       result.tableColumns.push({
-        Header: t('secondSurnameHeader'),
-        accessor: 'secondSurname',
-        className: 'text-left',
+        Header: t("secondSurnameHeader"),
+        accessor: "secondSurname",
+        className: "text-left",
         input: {
-          node: <TextInput disabled={!store.center || !store.profile || !!store.user} required />,
-          rules: store.secondSurname.required ? { required: t('secondSurnameHeaderRequired') } : {},
+          node: (
+            <TextInput
+              disabled={!store.center || !store.profile || !!store.user}
+              required
+            />
+          ),
+          rules: store.secondSurname.required
+            ? { required: t("secondSurnameHeaderRequired") }
+            : {},
         },
         valueRender: (value) => <>{value}</>,
       });
     }
     result.tableColumns.push({
-      Header: t('birthdayHeader'),
-      accessor: 'birthdate',
-      className: 'text-left',
+      Header: t("birthdayHeader"),
+      accessor: "birthdate",
+      className: "text-left",
       input: {
-        node: <DatePicker disabled={!store.center || !store.profile || !!store.user} required />,
-        rules: { required: t('birthdayHeaderRequired') },
+        node: (
+          <DatePicker
+            disabled={!store.center || !store.profile || !!store.user}
+            required
+          />
+        ),
+        rules: { required: t("birthdayHeaderRequired") },
       },
       valueRender: (value) => <>{new Date(value).toLocaleString()}</>,
     });
     result.tableColumns.push({
-      Header: t('genderHeader'),
-      accessor: 'gender',
-      className: 'text-left',
+      Header: t("genderHeader"),
+      accessor: "gender",
+      className: "text-left",
       input: {
         node: (
           <Select
             data={[
-              { label: t('male'), value: 'male' },
-              { label: t('female'), value: 'female' },
+              { label: t("male"), value: "male" },
+              { label: t("female"), value: "female" },
             ]}
             disabled={!store.center || !store.profile || !!store.user}
             required
           />
         ),
-        rules: { required: t('genderHeaderRequired') },
+        rules: { required: t("genderHeaderRequired") },
       },
       valueRender: (value) => <>{t(value)}</>,
     });
     if (store.avatar && !store.avatar.disabled) {
       result.tableColumns.push({
-        Header: t('avatarHeader'),
-        accessor: 'avatar',
-        className: 'text-left',
+        Header: t("avatarHeader"),
+        accessor: "avatar",
+        className: "text-left",
         input: {
           node: (
             <TextInput
-              disabled={!store.center || !store.profile || !!store.user || !store.avatar.required}
+              disabled={
+                !store.center ||
+                !store.profile ||
+                !!store.user ||
+                !store.avatar.required
+              }
               required
             />
           ),
-          rules: store.avatar.required ? { required: t('avatarHeaderRequired') } : {},
+          rules: store.avatar.required
+            ? { required: t("avatarHeaderRequired") }
+            : {},
         },
         valueRender: (v, row) => (
           <>
@@ -229,9 +262,9 @@ function CreateUsers() {
       });
     }
     result.tableColumns.push({
-      Header: t('tagsHeader'),
-      accessor: 'tags',
-      className: 'text-left',
+      Header: t("tagsHeader"),
+      accessor: "tags",
+      className: "text-left",
       input: {
         node: (
           <TagsMultiSelect
@@ -245,7 +278,8 @@ function CreateUsers() {
           />
         ),
       },
-      valueRender: (values) => map(values, (value, index) => `${index ? ', ' : ''}${value}`),
+      valueRender: (values) =>
+        map(values, (value, index) => `${index ? ", " : ""}${value}`),
     });
     return result;
   }, [
@@ -305,13 +339,13 @@ function CreateUsers() {
         <ContextContainer sx={(theme) => ({ marginTop: theme.spacing[4] })}>
           <ContextContainer direction="row">
             <SelectCenter
-              label={t('centerLabel')}
+              label={t("centerLabel")}
               value={store.center}
               disabled={!!store.usersToCreate?.length}
               onChange={centerChange}
             />
             <SelectProfile
-              label={t('profileLabel')}
+              label={t("profileLabel")}
               value={store.profile}
               disabled={!!store.usersToCreate?.length}
               onChange={profileChange}
@@ -320,13 +354,13 @@ function CreateUsers() {
 
           {store.userAlreadyHaveThisConfig ? (
             <Alert severity="error" closeable={false}>
-              {t('userAlreadyHaveThisConfig')}
+              {t("userAlreadyHaveThisConfig")}
             </Alert>
           ) : null}
 
           {store.userEmailAlreadyAdded ? (
             <Alert severity="error" closeable={false}>
-              {t('userEmailAlreadyAdded')}
+              {t("userEmailAlreadyAdded")}
             </Alert>
           ) : null}
 
@@ -347,7 +381,7 @@ function CreateUsers() {
           />
 
           <TagsMultiSelect
-            label={t('tagsForAllUsers')}
+            label={t("tagsForAllUsers")}
             pluginName="users"
             value={store.tags}
             onChange={(e) => {
@@ -358,8 +392,12 @@ function CreateUsers() {
           />
 
           <Box>
-            <Button onClick={save} loading={store.loading} disabled={!store.usersToCreate?.length}>
-              {t('save')}
+            <Button
+              onClick={save}
+              loading={store.loading}
+              disabled={!store.usersToCreate?.length}
+            >
+              {t("save")}
             </Button>
           </Box>
         </ContextContainer>

@@ -1,9 +1,9 @@
-const _ = require('lodash');
+const _ = require("lodash");
 const {
   updateUserAgentPermissions,
-} = require('../user-agents/permissions/updateUserAgentPermissions');
-const { isSuperAdmin } = require('./isSuperAdmin');
-const constants = require('../../config/constants');
+} = require("../user-agents/permissions/updateUserAgentPermissions");
+const { isSuperAdmin } = require("./isSuperAdmin");
+const constants = require("../../config/constants");
 
 /**
  * Checks if the user has 1 or more of the specified permissions.
@@ -33,10 +33,12 @@ async function hasPermissionCTX({ allowedPermissions, ctx }) {
   _.forIn(allowedPermissions, (value, permissionName) => {
     // We check the default permission of all users
     if (constants.basicPermission.permissionName === permissionName) {
-      promises.push(value.actions.indexOf(constants.basicPermission.actionName) >= 0 ? 1 : 0);
+      promises.push(
+        value.actions.indexOf(constants.basicPermission.actionName) >= 0 ? 1 : 0
+      );
     } else {
       query = {
-        userAgent: _.map(userSession.userAgents, 'id'),
+        userAgent: _.map(userSession.userAgents, "id"),
         permissionName,
         actionName: value.actions,
       };

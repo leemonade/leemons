@@ -1,6 +1,6 @@
-import React from 'react';
-import { map } from 'lodash';
-import PropTypes from 'prop-types';
+import React from "react";
+import { map } from "lodash";
+import PropTypes from "prop-types";
 import {
   Button,
   ContextContainer,
@@ -11,19 +11,25 @@ import {
   TotalLayoutFooterContainer,
   TotalLayoutHeader,
   TotalLayoutStepContainer,
-} from '@bubbles-ui/components';
-import { SettingsIcon } from '@bubbles-ui/icons/solid';
-import { useStore } from '@common';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import SocketIoService from '@mqtt-socket-io/service';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@users/helpers/prefixPN';
-import { getPlatformLocalesRequest, updateUserRequest } from '@users/request';
-import { useHistory } from 'react-router-dom';
+} from "@bubbles-ui/components";
+import { SettingsIcon } from "@bubbles-ui/icons/solid";
+import { useStore } from "@common";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import SocketIoService from "@mqtt-socket-io/service";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@users/helpers/prefixPN";
+import { getPlatformLocalesRequest, updateUserRequest } from "@users/request";
+import { useHistory } from "react-router-dom";
 
 function HeaderIcon() {
   return (
-    <svg width="24" height="24" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
         fillRule="evenodd"
         clipRule="evenodd"
@@ -41,7 +47,7 @@ function HeaderIcon() {
 }
 
 export default function ChangeLanguage({ session }) {
-  const [t, translations] = useTranslateLoader(prefixPN('changeLanguage'));
+  const [t, translations] = useTranslateLoader(prefixPN("changeLanguage"));
   const [store, render] = useStore({
     loading: false,
     locales: [],
@@ -51,7 +57,10 @@ export default function ChangeLanguage({ session }) {
 
   async function load() {
     const { locales } = await getPlatformLocalesRequest();
-    store.locales = map(locales, (locale) => ({ label: locale.name, value: locale.code }));
+    store.locales = map(locales, (locale) => ({
+      label: locale.name,
+      value: locale.code,
+    }));
     render();
   }
 
@@ -61,18 +70,18 @@ export default function ChangeLanguage({ session }) {
 
   React.useEffect(() => {
     if (store.nextRenderAlert) {
-      addSuccessAlert(t('success'));
+      addSuccessAlert(t("success"));
       store.nextRenderAlert = false;
     }
   }, [JSON.stringify(translations)]);
 
-  SocketIoService.useOn('USER_CHANGE_LOCALE', () => {
+  SocketIoService.useOn("USER_CHANGE_LOCALE", () => {
     store.nextRenderAlert = true;
   });
 
   async function save() {
     await updateUserRequest(session.id, { locale: store.locale }).catch((e) =>
-      addErrorAlert(t('error', { error: e?.message ?? e }))
+      addErrorAlert(t("error", { error: e?.message ?? e }))
     );
   }
 
@@ -80,24 +89,26 @@ export default function ChangeLanguage({ session }) {
     <TotalLayoutContainer
       Header={
         <TotalLayoutHeader
-          title={t('title')}
+          title={t("title")}
           onCancel={() => history.goBack()}
           icon={<HeaderIcon />}
-          mainActionLabel={t('cancel')}
+          mainActionLabel={t("cancel")}
         />
       }
     >
       <Stack justifyContent="center">
         <TotalLayoutStepContainer
           Footer={
-            <TotalLayoutFooterContainer rightZone={<Button onClick={save}>{t('save')}</Button>} />
+            <TotalLayoutFooterContainer
+              rightZone={<Button onClick={save}>{t("save")}</Button>}
+            />
           }
         >
           <Box>
-            <ContextContainer title={t('interface')}>
+            <ContextContainer title={t("interface")}>
               <Box style={{ maxWidth: 300 }}>
                 <Select
-                  label={t('selectLocale')}
+                  label={t("selectLocale")}
                   data={store.locales}
                   value={store.locale}
                   onChange={(e) => {

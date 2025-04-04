@@ -1,9 +1,9 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const USER_DETAIL_MODAL_DEFAULT_PROPS = {
   labels: {
-    personalInformation: '',
-    badges: '',
+    personalInformation: "",
+    badges: "",
   },
 };
 export const USER_DETAIL_MODAL_PROP_TYPES = {
@@ -14,7 +14,10 @@ export const USER_DETAIL_MODAL_PROP_TYPES = {
     rol: PropTypes.string,
     email: PropTypes.string,
     number: PropTypes.string,
-    birthday: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]),
+    birthday: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.instanceOf(Date),
+    ]),
   }),
   labels: PropTypes.shape({
     personalInformation: PropTypes.string,

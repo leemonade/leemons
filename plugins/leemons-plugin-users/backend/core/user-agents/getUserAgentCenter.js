@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 /**
  * Return the user agent/s center/s
@@ -11,10 +11,14 @@ const _ = require('lodash');
 async function getUserAgentCenter({ userAgent, ctx }) {
   const isArray = _.isArray(userAgent);
   const userAgents = isArray ? userAgent : [userAgent];
-  const roleCenters = await ctx.tx.db.RoleCenter.find({ role: _.map(userAgents, 'role') })
-    .select(['center'])
+  const roleCenters = await ctx.tx.db.RoleCenter.find({
+    role: _.map(userAgents, "role"),
+  })
+    .select(["center"])
     .lean();
-  const centers = await ctx.tx.db.Centers.find({ id: _.map(roleCenters, 'center') }).lean();
+  const centers = await ctx.tx.db.Centers.find({
+    id: _.map(roleCenters, "center"),
+  }).lean();
   return isArray ? centers : centers[0];
 }
 

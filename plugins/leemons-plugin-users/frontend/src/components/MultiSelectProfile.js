@@ -1,9 +1,9 @@
-import React, { forwardRef, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { isArray, map, noop } from 'lodash';
-import { MultiSelect } from '@bubbles-ui/components';
-import { useStore } from '@common';
-import { listProfilesRequest } from '../request';
+import React, { forwardRef, useEffect } from "react";
+import PropTypes from "prop-types";
+import { isArray, map, noop } from "lodash";
+import { MultiSelect } from "@bubbles-ui/components";
+import { useStore } from "@common";
+import { listProfilesRequest } from "../request";
 
 const MultiSelectProfile = forwardRef(({ onChange = noop, ...props }, ref) => {
   const [store, render] = useStore({
@@ -37,10 +37,17 @@ const MultiSelectProfile = forwardRef(({ onChange = noop, ...props }, ref) => {
     init();
   }, []);
 
-  return <MultiSelect {...props} ref={ref} data={store.data} onChange={handleOnChange} />;
+  return (
+    <MultiSelect
+      {...props}
+      ref={ref}
+      data={store.data}
+      onChange={handleOnChange}
+    />
+  );
 });
 
-MultiSelectProfile.displayName = '@users/components/MultiSelectProfile';
+MultiSelectProfile.displayName = "@users/components/MultiSelectProfile";
 MultiSelectProfile.propTypes = {
   firstSelected: PropTypes.bool,
   onChange: PropTypes.func,

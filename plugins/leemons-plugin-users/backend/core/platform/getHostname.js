@@ -1,4 +1,4 @@
-const { last } = require('lodash');
+const { last } = require("lodash");
 
 /**
  * Return default hostname por platform
@@ -9,11 +9,11 @@ const { last } = require('lodash');
  * */
 async function getHostname({ ctx }) {
   const [config, deployment] = await Promise.all([
-    ctx.tx.db.Config.findOne({ key: 'platform-hostname' }).lean(),
-    ctx.tx.call('deployment-manager.getDeployment'),
+    ctx.tx.db.Config.findOne({ key: "platform-hostname" }).lean(),
+    ctx.tx.call("deployment-manager.getDeployment"),
   ]);
   const hostname = config?.value;
-  const protocol = hostname?.startsWith('https://') ? 'https://' : 'http://';
+  const protocol = hostname?.startsWith("https://") ? "https://" : "http://";
   // Use the last domain of the deployment instead of the deprecated hostname
   return `${protocol}${last(deployment.domains)}`;
 }

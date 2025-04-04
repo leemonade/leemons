@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
-const { verifyJWTToken } = require('./verifyJWTToken');
-const { generateJWTToken } = require('./generateJWTToken');
+const _ = require("lodash");
+const { verifyJWTToken } = require("./verifyJWTToken");
+const { generateJWTToken } = require("./generateJWTToken");
 
 async function addSessionConfigToToken({ token, sessionConfig = {}, ctx }) {
   const tokens = _.isArray(token) ? token : [token];
@@ -12,7 +12,10 @@ async function addSessionConfigToToken({ token, sessionConfig = {}, ctx }) {
   const promises = [];
   _.forEach(tokenValues, (tokenValue) => {
     if (!_.isObject(tokenValue.sessionConfig)) tokenValue.sessionConfig = {};
-    tokenValue.sessionConfig = { ...tokenValue.sessionConfig, ...sessionConfig };
+    tokenValue.sessionConfig = {
+      ...tokenValue.sessionConfig,
+      ...sessionConfig,
+    };
     delete tokenValue.iat;
     delete tokenValue.exp;
     promises.push(generateJWTToken({ payload: tokenValue, ctx }));

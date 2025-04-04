@@ -1,21 +1,21 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
-const { getUserFullName } = require('@leemons/users');
+const { getUserFullName } = require("@leemons/users");
 
-const { generateJWTToken } = require('./jwt/generateJWTToken');
+const { generateJWTToken } = require("./jwt/generateJWTToken");
 
 async function addXapiStatement({ user, ctx }) {
-  await ctx.tx.call('xapi.xapi.addLogStatement', {
+  await ctx.tx.call("xapi.xapi.addLogStatement", {
     statement: {
       actor: ctx.meta.userSession.userAgents[0].id,
       verb: {
-        id: 'https://adlnet.gov/expapi/verbs/impersonated',
+        id: "https://adlnet.gov/expapi/verbs/impersonated",
         display: {
-          'en-US': 'impersonated',
+          "en-US": "impersonated",
         },
       },
       object: {
-        objectType: 'Agent',
+        objectType: "Agent",
         name: getUserFullName({ userSession: user }),
         mbox: `mailto:${user.email}`,
         openid: `${ctx.meta.hostname}/api/users/users/${user.id}/detail/page`,
@@ -33,8 +33,8 @@ async function impersonateUser({ id, ctx }) {
 
   if (!user) {
     throw new LeemonsError(ctx, {
-      message: 'User not found',
-      customCode: 'USER_NOT_FOUND',
+      message: "User not found",
+      customCode: "USER_NOT_FOUND",
       httpStatusCode: 404,
     });
   }

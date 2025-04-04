@@ -1,4 +1,4 @@
-import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
+import uploadFileAsMultipart from "@leebrary/helpers/uploadFileAsMultipart";
 
 async function updateUserImage(user, file, setUploadingFileInfo = () => {}) {
   let image = null;
@@ -12,7 +12,7 @@ async function updateUserImage(user, file, setUploadingFileInfo = () => {}) {
 
   return leemons.api(`v1/users/users/${user}/update-avatar`, {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body,
   });
 }

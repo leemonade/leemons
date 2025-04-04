@@ -1,6 +1,6 @@
-const fetch = require('node-fetch');
-const { LeemonsError } = require('@leemons/error');
-const { encryptPassword } = require('./bcrypt/encryptPassword');
+const fetch = require("node-fetch");
+const { LeemonsError } = require("@leemons/error");
+const { encryptPassword } = require("./bcrypt/encryptPassword");
 
 async function updatePassword({ id, password, ctx }) {
   let user = await ctx.tx.db.Users.findOne({ id }).lean();
@@ -12,18 +12,21 @@ async function updatePassword({ id, password, ctx }) {
   if (process.env.EXTERNAL_IDENTITY_URL) {
     try {
       // Is no error its done
-      const r = await fetch(`${process.env.EXTERNAL_IDENTITY_URL}/change-password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: user.email,
-          password,
-          deploymentID: ctx.meta.deploymentID,
-          manualPassword: process.env.MANUAL_PASSWORD,
-        }),
-      });
+      const r = await fetch(
+        `${process.env.EXTERNAL_IDENTITY_URL}/change-password`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: user.email,
+            password,
+            deploymentID: ctx.meta.deploymentID,
+            manualPassword: process.env.MANUAL_PASSWORD,
+          }),
+        }
+      );
 
       const response = await r.json();
       if (!r.ok) {

@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 
-import { compact } from 'lodash';
-import PropTypes from 'prop-types';
+import { compact } from "lodash";
+import PropTypes from "prop-types";
 
-import { UserDatasetDrawer } from './UserDatasetDrawer';
-import { UserDatasets } from './UserDatasets';
+import { UserDatasetDrawer } from "./UserDatasetDrawer";
+import { UserDatasets } from "./UserDatasets";
 
 function UserDatasetSummary({
   userId,

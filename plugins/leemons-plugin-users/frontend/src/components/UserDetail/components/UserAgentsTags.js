@@ -1,8 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { uniq } from 'lodash';
-import { ContextContainer, Stack, Badge } from '@bubbles-ui/components';
-import { getUserAgentDetailForPageRequest } from '@users/request';
+import React from "react";
+import PropTypes from "prop-types";
+import { uniq } from "lodash";
+import { ContextContainer, Stack, Badge } from "@bubbles-ui/components";
+import { getUserAgentDetailForPageRequest } from "@users/request";
 
 function UserAgentsTags({ title, userAgentIds }) {
   const [tags, setTags] = React.useState([]);
@@ -14,7 +14,9 @@ function UserAgentsTags({ title, userAgentIds }) {
     if (!userAgentIds?.length) return;
 
     const results = await Promise.all(
-      userAgentIds.map((userAgentId) => getUserAgentDetailForPageRequest(userAgentId))
+      userAgentIds.map((userAgentId) =>
+        getUserAgentDetailForPageRequest(userAgentId)
+      )
     );
 
     setTags(uniq(results.map((result) => result.data.tags).flat()));

@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Controller, useForm } from 'react-hook-form';
-import _ from 'lodash';
+import React from "react";
+import PropTypes from "prop-types";
+import { Controller, useForm } from "react-hook-form";
+import _ from "lodash";
 import {
   Box,
   Button,
@@ -10,11 +10,11 @@ import {
   Paragraph,
   RadioGroup,
   Select,
-} from '@bubbles-ui/components';
-import { LoginProfileSelectorStyles } from './LoginProfileSelector.styles';
+} from "@bubbles-ui/components";
+import { LoginProfileSelectorStyles } from "./LoginProfileSelector.styles";
 
 export const LOGIN_PROFILE_SELECTOR_DEFAULT_PROPS = {
-  labels: { title: '', description: '', help: '', remember: '', login: '' },
+  labels: { title: "", description: "", help: "", remember: "", login: "" },
   errorMessages: {},
   loading: false,
   profiles: [],
@@ -36,7 +36,7 @@ export const LOGIN_PROFILE_SELECTOR_PROP_TYPES = {
   className: PropTypes.string,
 };
 
-const PROFILES_ORDER = ['teacher', 'admin', 'super'];
+const PROFILES_ORDER = ["teacher", "admin", "super"];
 
 const LoginProfileSelector = ({
   labels,
@@ -49,20 +49,26 @@ const LoginProfileSelector = ({
   ...props
 }) => {
   const [profileCenters, setProfileCenters] = React.useState([]);
-  const { classes, cx } = LoginProfileSelectorStyles({}, { name: 'LoginProfileSelector' });
+  const { classes, cx } = LoginProfileSelectorStyles(
+    {},
+    { name: "LoginProfileSelector" }
+  );
 
   function getProfiles() {
     const profiles = [];
     _.forEach(centers, (center) => {
       profiles.push(...center.profiles);
     });
-    return _.uniqBy(profiles, 'id');
+    return _.uniqBy(profiles, "id");
   }
 
   const profiles = getProfiles();
 
   function getProfileCenters(profileId) {
-    const _centers = _.filter(centers, (center) => !!_.find(center.profiles, { id: profileId }));
+    const _centers = _.filter(
+      centers,
+      (center) => !!_.find(center.profiles, { id: profileId })
+    );
     return _centers.map((center) => ({
       value: center.id,
       label: center.name,
@@ -93,7 +99,11 @@ const LoginProfileSelector = ({
   const profilesData = React.useMemo(
     () =>
       profiles
-        .sort((a, b) => PROFILES_ORDER.indexOf(a.sysName) - PROFILES_ORDER.indexOf(b.sysName))
+        .sort(
+          (a, b) =>
+            PROFILES_ORDER.indexOf(a.sysName) -
+            PROFILES_ORDER.indexOf(b.sysName)
+        )
         .reverse()
         .map((profile) => ({
           value: profile.id,
@@ -102,7 +112,7 @@ const LoginProfileSelector = ({
     [profiles]
   );
 
-  const selectedProfile = _.find(profiles, { id: watch('profile') });
+  const selectedProfile = _.find(profiles, { id: watch("profile") });
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -130,7 +140,7 @@ const LoginProfileSelector = ({
                 onChange={(e) => {
                   const _centers = getProfileCenters(e);
                   if (_centers.length < 2) {
-                    setValue('center', _centers[0].value);
+                    setValue("center", _centers[0].value);
                   }
                   setProfileCenters(_centers);
                   onChange(e);
@@ -142,7 +152,9 @@ const LoginProfileSelector = ({
           />
         ) : null}
 
-        {profileCenters.length > 1 && selectedProfile && selectedProfile.sysName !== 'admin' ? (
+        {profileCenters.length > 1 &&
+        selectedProfile &&
+        selectedProfile.sysName !== "admin" ? (
           <Controller
             name="center"
             control={control}
@@ -183,7 +195,12 @@ const LoginProfileSelector = ({
           {labels.help}
         </Paragraph>
         <Box>
-          <Button type="submit" fullWidth loading={loading} loaderPosition="right">
+          <Button
+            type="submit"
+            fullWidth
+            loading={loading}
+            loaderPosition="right"
+          >
             {labels.login}
           </Button>
         </Box>

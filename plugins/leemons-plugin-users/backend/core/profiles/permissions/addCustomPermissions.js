@@ -1,13 +1,13 @@
-const _ = require('lodash');
-const getProfileRole = require('../getProfileRole');
-const { validatePermissionName } = require('../../../validations/exists');
+const _ = require("lodash");
+const getProfileRole = require("../getProfileRole");
+const { validatePermissionName } = require("../../../validations/exists");
 const {
   markAllUsersWithProfileToReloadPermissions,
-} = require('./markAllUsersWithProfileToReloadPermissions');
-const { addPermissionMany } = require('../../roles');
+} = require("./markAllUsersWithProfileToReloadPermissions");
+const { addPermissionMany } = require("../../roles");
 const {
   removePermissionsByNameAndTarget,
-} = require('../../roles/permissions/removePermissionsByNameAndTarget');
+} = require("../../roles/permissions/removePermissionsByNameAndTarget");
 
 /**
  * Update the provided role
@@ -18,7 +18,11 @@ const {
  * @param {any} transacting - DB Transaction
  * @return {Promise<any>} Created permissions-roles
  * */
-async function addCustomPermissions({ profileId, permissions: _permissions, ctx }) {
+async function addCustomPermissions({
+  profileId,
+  permissions: _permissions,
+  ctx,
+}) {
   let permissions = _permissions;
   if (!_.isArray(permissions)) permissions = [permissions];
   _.forEach(permissions, (permission) => {

@@ -1,22 +1,22 @@
-import { SessionContext } from '@users/context/session';
-import { updateSessionConfigRequest } from '@users/request';
-import Cookies from 'js-cookie';
-import hooks from 'leemons-hooks';
-import * as _ from 'lodash';
-import { keyBy } from 'lodash';
-import { useContext, useEffect, useMemo } from 'react';
-import { useHistory } from 'react-router-dom';
-import useSWR from 'swr';
-import { apiSessionMiddleware } from './helpers/apiSessionMiddleware';
+import hooks from "@leemons/hooks";
+import { SessionContext } from "@users/context/session";
+import { updateSessionConfigRequest } from "@users/request";
+import Cookies from "js-cookie";
+import * as _ from "lodash";
+import { keyBy } from "lodash";
+import { useContext, useEffect, useMemo } from "react";
+import { useHistory } from "react-router-dom";
+import useSWR from "swr";
+import { apiSessionMiddleware } from "./helpers/apiSessionMiddleware";
 
 function getJWTToken() {
   const params = new URLSearchParams(window.location.search);
-  return params.get('jwtToken');
+  return params.get("jwtToken");
 }
 
 const jwtToken = getJWTToken();
 if (jwtToken) {
-  Cookies.set('token', jwtToken);
+  Cookies.set("token", jwtToken);
 }
 
 /**
@@ -27,9 +27,9 @@ if (jwtToken) {
 function getAppCookies(req) {
   const parsedItems = {};
   if (req.headers.cookie) {
-    const cookiesItems = req.headers.cookie.split('; ');
+    const cookiesItems = req.headers.cookie.split("; ");
     cookiesItems.forEach((cookies) => {
-      const parsedItem = cookies.split('=');
+      const parsedItem = cookies.split("=");
       parsedItems[parsedItem[0]] = decodeURI(parsedItem[1]);
     });
   }
@@ -45,7 +45,7 @@ export async function getSession({ req }) {
   try {
     const { token } = getAppCookies(req);
     if (token) {
-      const response = await leemons.api('v1/users/users', {
+      const response = await leemons.api("v1/users/users", {
         headers: { Authorization: token },
       });
       return response.user;
@@ -57,7 +57,7 @@ export async function getSession({ req }) {
 }
 
 const fetcher = () => async () => {
-  const result = await leemons.api('v1/users/users');
+  const result = await leemons.api("v1/users/users");
   if (!result.user?.avatar?.startsWith(leemons.apiUrl)) {
     result.user.avatar = `${leemons.apiUrl}${result.user.avatar}`;
   }
@@ -81,17 +81,17 @@ export function getCookieToken(onlyCookie) {
   if (_jwtToken) {
     token = _jwtToken;
   } else {
-    token = Cookies.get('token');
+    token = Cookies.get("token");
   }
 
   const domain = /:\/\/([^/]+)/.exec(window.location.href)[1];
-  const subdomain = domain.split('.')[0];
-  const domainWithOutSubdomain = domain.split('.').slice(1).join('.');
+  const subdomain = domain.split(".")[0];
+  const domainWithOutSubdomain = domain.split(".").slice(1).join(".");
   if (!token) {
     token = Cookies.get(`token_${subdomain}`);
 
     if (token) {
-      Cookies.set('token', token);
+      Cookies.set("token", token);
     }
   }
 
@@ -113,7 +113,7 @@ export function currentProfileIsSuperAdmin() {
   const data = getCookieToken(true);
   if (data?.profile) {
     const profile = _.find(data.profiles, { id: data.profile });
-    return profile?.sysName === 'super';
+    return profile?.sysName === "super";
   }
   return false;
 }
@@ -124,7 +124,7 @@ export function currentProfileIsAdmin() {
     const profile = _.find(data.profiles, {
       id: _.isString(data.profile) ? data.profile : data.profile?.id,
     });
-    return profile?.sysName === 'admin';
+    return profile?.sysName === "admin";
   }
   return false;
 }
@@ -138,8 +138,9 @@ export function getSessionCenter() {
     return token?.centers[0];
   }
   return (
-    token?.centers?.find((c) => c.profiles?.map(({ id }) => id).includes(token?.profile)) ??
-    token?.centers?.[0]
+    token?.centers?.find((c) =>
+      c.profiles?.map(({ id }) => id).includes(token?.profile)
+    ) ?? token?.centers?.[0]
   );
 }
 
@@ -171,7 +172,7 @@ export function getSessionConfig() {
 export async function updateSessionConfig(config) {
   const { data } = await updateSessionConfigRequest(config);
   const cookieToken = getCookieToken(true) ?? {};
-  const dataByOld = keyBy(data, 'old');
+  const dataByOld = keyBy(data, "old");
   if (!_.isObject(cookieToken?.sessionConfig)) {
     cookieToken.sessionConfig = {};
   }
@@ -183,12 +184,12 @@ export async function updateSessionConfig(config) {
       }
     });
   }
-  Cookies.set('token', cookieToken);
+  Cookies.set("token", cookieToken);
 }
 
 export function getAuthorizationTokenForAllCenters() {
   const centers = getCentersWithToken();
-  return centers ? JSON.stringify(_.map(centers, 'token')) : null;
+  return centers ? JSON.stringify(_.map(centers, "token")) : null;
 }
 
 function useContextToken() {
@@ -273,8 +274,8 @@ export function useSession({ redirectTo, redirectIfFound } = {}) {
 }
 
 export function logoutSession(history, redirectTo) {
-  Cookies.remove('token');
+  Cookies.remove("token");
   history.push(redirectTo);
-  hooks.fireEvent('user:cookie:session:change');
+  hooks.fireEvent("user:cookie:session:change");
   // history.push(`/users/public/auth/logout?redirectTo=${redirectTo}`);
 }

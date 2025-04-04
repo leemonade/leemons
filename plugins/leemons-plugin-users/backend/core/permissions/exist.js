@@ -1,4 +1,4 @@
-const constants = require('../../config/constants');
+const constants = require("../../config/constants");
 
 /**
  * Check if permission exists
@@ -10,7 +10,9 @@ const constants = require('../../config/constants');
  * */
 async function exist({ permissionName, ctx }) {
   if (constants.basicPermission.permissionName === permissionName) return true;
-  const response = await ctx.tx.db.Permissions.countDocuments({ permissionName });
+  const response = await ctx.tx.db.Permissions.countDocuments({
+    permissionName,
+  });
   return !!response;
 }
 

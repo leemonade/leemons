@@ -1,39 +1,41 @@
-import React, { useMemo } from 'react';
-import { useSession } from '@users/session';
-import constants from '@users/constants';
-import { goLoginPage, goRecoverPage } from '@users/navigate';
-import { useHistory } from 'react-router-dom';
-import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import { Alert, Box, Button, ContextContainer } from '@bubbles-ui/components';
-import { RegisterPasswordForm } from '@users/components/RegisterPasswordForm';
-import useTranslate from '@multilanguage/useTranslate';
-import prefixPN from '@users/helpers/prefixPN';
-import tLoader from '@multilanguage/helpers/tLoader';
-import { useStore } from '@common';
-import { canResetRequest, resetRequest } from '@users/request';
-import { useNotifications } from '@bubbles-ui/notifications';
-import { AuthLayout } from '@users/layout/AuthLayout';
-import { AuthContainer } from '@users/components/AuthContainer';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
+import React, { useMemo } from "react";
+import { useSession } from "@users/session";
+import constants from "@users/constants";
+import { goLoginPage, goRecoverPage } from "@users/navigate";
+import { useHistory } from "react-router-dom";
+import { ChevLeftIcon } from "@bubbles-ui/icons/outline";
+import { Alert, Box, Button, ContextContainer } from "@bubbles-ui/components";
+import { RegisterPasswordForm } from "@users/components/RegisterPasswordForm";
+import useTranslate from "@multilanguage/useTranslate";
+import prefixPN from "@users/helpers/prefixPN";
+import tLoader from "@multilanguage/helpers/tLoader";
+import { useStore } from "@common";
+import { canResetRequest, resetRequest } from "@users/request";
+import { useNotifications } from "@bubbles-ui/notifications";
+import { AuthLayout } from "@users/layout/AuthLayout";
+import { AuthContainer } from "@users/components/AuthContainer";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
 
 export default function Reset() {
   useSession({ redirectTo: constants.base, redirectIfFound: true });
 
   const [store, render] = useStore({});
 
-  const [translations] = useTranslate({ keysStartsWith: prefixPN('reset') });
-  const t = tLoader(prefixPN('reset'), translations);
+  const [translations] = useTranslate({ keysStartsWith: prefixPN("reset") });
+  const t = tLoader(prefixPN("reset"), translations);
 
-  const [rpTranslations] = useTranslate({ keysStartsWith: prefixPN('registerPassword') });
-  const trp = tLoader(prefixPN('registerPassword'), rpTranslations);
-  const { t: tCommon } = useCommonTranslate('forms');
+  const [rpTranslations] = useTranslate({
+    keysStartsWith: prefixPN("registerPassword"),
+  });
+  const trp = tLoader(prefixPN("registerPassword"), rpTranslations);
+  const { t: tCommon } = useCommonTranslate("forms");
 
   const history = useHistory();
   const notifications = useNotifications();
 
   function getToken() {
     const query = new URLSearchParams(window.location.search);
-    return query.get('token');
+    return query.get("token");
   }
 
   async function canReset() {
@@ -67,8 +69,8 @@ export default function Reset() {
 
       notifications.showNotification({
         id: new Date().getTime(),
-        title: t('passwordSet'),
-        severity: 'success',
+        title: t("passwordSet"),
+        severity: "success",
         autoClose: 5000,
       });
 
@@ -87,16 +89,16 @@ export default function Reset() {
 
   const labels = useMemo(
     () => ({
-      title: t('title'),
-      password: trp('password'),
-      repeatPassword: trp('repeatPassword'),
-      setPassword: t('resetPassword'),
+      title: t("title"),
+      password: trp("password"),
+      repeatPassword: trp("repeatPassword"),
+      setPassword: t("resetPassword"),
       checkList: {
-        minLength: trp('checkList.minLength'),
-        specialChar: trp('checkList.specialChar'),
-        number: trp('checkList.number'),
-        capital: trp('checkList.capital'),
-        match: trp('checkList.match'),
+        minLength: trp("checkList.minLength"),
+        specialChar: trp("checkList.specialChar"),
+        number: trp("checkList.number"),
+        capital: trp("checkList.capital"),
+        match: trp("checkList.match"),
       },
     }),
     [t, trp]
@@ -104,17 +106,17 @@ export default function Reset() {
 
   const placeholders = useMemo(
     () => ({
-      repeatPassword: trp('repeatPasswordPlaceholder'),
-      password: trp('passwordPlaceholder'),
+      repeatPassword: trp("repeatPasswordPlaceholder"),
+      password: trp("passwordPlaceholder"),
     }),
     [trp]
   );
 
   const errorMessages = useMemo(
     () => ({
-      repeatPassword: { required: tCommon('required') },
-      password: { required: tCommon('required') },
-      passwordMatch: trp('passwordMatch'),
+      repeatPassword: { required: tCommon("required") },
+      password: { required: tCommon("required") },
+      passwordMatch: trp("passwordMatch"),
     }),
     [tCommon, trp]
   );
@@ -124,7 +126,7 @@ export default function Reset() {
       <AuthContainer>
         {store.cantReset ? (
           <Alert severity="error" closeable={false}>
-            {t('tokenNoValid')}
+            {t("tokenNoValid")}
           </Alert>
         ) : (
           <ContextContainer>
@@ -143,7 +145,7 @@ export default function Reset() {
                 variant="link"
                 onClick={() => goLoginPage(history)}
               >
-                {t('returnLogin')}
+                {t("returnLogin")}
               </Button>
             </Box>
           </ContextContainer>

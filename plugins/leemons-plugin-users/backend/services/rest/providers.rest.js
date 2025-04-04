@@ -1,14 +1,14 @@
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
 
-const { getProvider } = require('../../core/providers/getProvider');
-const { listProviders } = require('../../core/providers/listProviders');
-const { useProvider } = require('../../core/providers/useProvider');
+const { getProvider } = require("../../core/providers/getProvider");
+const { listProviders } = require("../../core/providers/listProviders");
+const { useProvider } = require("../../core/providers/useProvider");
 
 module.exports = {
   useProviderRest: {
     rest: {
-      method: 'POST',
-      path: '/',
+      method: "POST",
+      path: "/",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     handler: async (ctx) => {
@@ -21,8 +21,8 @@ module.exports = {
   },
   getProviderRest: {
     rest: {
-      method: 'GET',
-      path: '/',
+      method: "GET",
+      path: "/",
     },
     handler: async (ctx) => {
       const provider = await getProvider({ ctx });
@@ -32,8 +32,8 @@ module.exports = {
   },
   listProvidersRest: {
     rest: {
-      method: 'GET',
-      path: '/list',
+      method: "GET",
+      path: "/list",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     handler: async (ctx) => {

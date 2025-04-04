@@ -1,6 +1,6 @@
-const { validateExistPermission } = require('../../validations/exists');
-const { validatePermissionName } = require('../../validations/exists');
-const { addActionMany } = require('./addActionMany');
+const { validateExistPermission } = require("../../validations/exists");
+const { validatePermissionName } = require("../../validations/exists");
+const { addActionMany } = require("./addActionMany");
 
 /**
  * Create the permit only if the permissionName does not already exist.
@@ -14,20 +14,26 @@ async function add({ ctx, ...data }) {
 
   await validateExistPermission({ permissionName: data.permissionName, ctx });
 
-  ctx.logger.debug(`Adding permission '${data.permissionName}' for plugin '${ctx.callerPlugin}'`);
+  ctx.logger.debug(
+    `Adding permission '${data.permissionName}' for plugin '${ctx.callerPlugin}'`
+  );
 
   const values = await Promise.all([
     ctx.tx.db.Permissions.create({
       permissionName: data.permissionName,
       pluginName: ctx.callerPlugin,
     }).then((mongooseDoc) => mongooseDoc.toObject()),
-    ctx.tx.call('multilanguage.common.addManyByKey', {
+    ctx.tx.call("multilanguage.common.addManyByKey", {
       key: `users.${data.permissionName}.name`,
       data: data.localizationName,
     }),
   ]);
 
-  await addActionMany({ permissionName: data.permissionName, actionNames: data.actions, ctx });
+  await addActionMany({
+    permissionName: data.permissionName,
+    actionNames: data.actions,
+    ctx,
+  });
 
   return values[0];
 }

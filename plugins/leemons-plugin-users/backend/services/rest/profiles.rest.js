@@ -3,11 +3,11 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 /** @type {ServiceSchema} */
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 const {
   list,
   add,
@@ -15,20 +15,20 @@ const {
   update,
   getProfileSysName,
   addAllPermissionsToAllProfiles,
-} = require('../../core/profiles');
+} = require("../../core/profiles");
 
 const permissionsValidation = {
-  type: 'array',
+  type: "array",
   items: {
-    type: 'object',
+    type: "object",
     properties: {
       permissionName: {
-        type: 'string',
+        type: "string",
       },
       actionNames: {
-        type: 'array',
+        type: "array",
         items: {
-          type: 'string',
+          type: "string",
         },
       },
     },
@@ -36,15 +36,15 @@ const permissionsValidation = {
 };
 
 const translationsValidations = {
-  type: 'object',
+  type: "object",
   properties: {
     name: {
-      type: 'object',
+      type: "object",
       properties: {},
       additionalProperties: true,
     },
     description: {
-      type: 'object',
+      type: "object",
       properties: {},
       additionalProperties: true,
     },
@@ -54,37 +54,39 @@ const translationsValidations = {
 module.exports = {
   listRest: {
     rest: {
-      path: '/list',
-      method: 'POST',
+      path: "/list",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.profiles': {
-            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          "users.profiles": {
+            actions: ["view", "update", "create", "delete", "admin"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: 'number' },
-          size: { type: 'number' },
+          page: { type: "number" },
+          size: { type: "number" },
           withRoles: {
             anyOf: [
-              { type: 'boolean' },
+              { type: "boolean" },
               {
-                type: 'object',
-                properties: { columns: { type: 'array', items: { type: 'string' } } },
+                type: "object",
+                properties: {
+                  columns: { type: "array", items: { type: "string" } },
+                },
               },
             ],
           },
-          forceAll: { type: 'boolean' },
+          forceAll: { type: "boolean" },
         },
-        required: ['page', 'size'],
+        required: ["page", "size"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -97,29 +99,29 @@ module.exports = {
   },
   addRest: {
     rest: {
-      path: '/add',
-      method: 'POST',
+      path: "/add",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.profiles': {
-            actions: ['create', 'admin'],
+          "users.profiles": {
+            actions: ["create", "admin"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          name: { type: 'string' },
-          description: { type: 'string' },
+          name: { type: "string" },
+          description: { type: "string" },
           permissions: permissionsValidation,
           translations: translationsValidations,
         },
-        required: ['name', 'description', 'permissions'],
+        required: ["name", "description", "permissions"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -131,26 +133,26 @@ module.exports = {
   },
   detailRest: {
     rest: {
-      path: '/detail/:uri',
-      method: 'GET',
+      path: "/detail/:uri",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.profiles': {
-            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          "users.profiles": {
+            actions: ["view", "update", "create", "delete", "admin"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          uri: { type: 'string' },
+          uri: { type: "string" },
         },
-        required: ['uri'],
+        required: ["uri"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -162,30 +164,30 @@ module.exports = {
   },
   updateRest: {
     rest: {
-      path: '/update',
-      method: 'POST',
+      path: "/update",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.profiles': {
-            actions: ['update', 'admin'],
+          "users.profiles": {
+            actions: ["update", "admin"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          id: { type: 'string' },
-          name: { type: 'string' },
-          description: { type: 'string' },
+          id: { type: "string" },
+          name: { type: "string" },
+          description: { type: "string" },
           permissions: permissionsValidation,
           translations: translationsValidations,
         },
-        required: ['id', 'name', 'description', 'permissions'],
+        required: ["id", "name", "description", "permissions"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -197,8 +199,8 @@ module.exports = {
   },
   getProfileSysNameRest: {
     rest: {
-      path: '/sysName',
-      method: 'GET',
+      path: "/sysName",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -208,16 +210,16 @@ module.exports = {
   },
   addAllPermissionsToAllProfilesRest: {
     rest: {
-      path: '/add-all-permissions-to-all-profiles',
-      method: 'POST',
+      path: "/add-all-permissions-to-all-profiles",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      if (process.env.NODE_ENV !== 'production') {
+      if (process.env.NODE_ENV !== "production") {
         const profile = await addAllPermissionsToAllProfiles({ ctx });
         return { status: 200, profile };
       }
-      return { status: 200, message: 'Disabled in production' };
+      return { status: 200, message: "Disabled in production" };
     },
   },
 };

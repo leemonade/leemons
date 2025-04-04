@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 import {
   Badge,
@@ -10,23 +10,23 @@ import {
   LoadingOverlay,
   ContextContainer,
   ImageProfilePicker,
-} from '@bubbles-ui/components';
-import { CommentIcon } from '@bubbles-ui/icons/solid';
-import { useComunica } from '@comunica/context';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { compact, noop } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { CommentIcon } from "@bubbles-ui/icons/solid";
+import { useComunica } from "@comunica/context";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { compact, noop } from "lodash";
+import PropTypes from "prop-types";
 
-import { UserAgentsTags } from './components/UserAgentsTags';
+import { UserAgentsTags } from "./components/UserAgentsTags";
 
-import prefixPN from '@users/helpers/prefixPN';
-import useUserDetails from '@users/hooks/useUserDetails';
-import { getSessionUserAgent } from '@users/session';
+import prefixPN from "@users/helpers/prefixPN";
+import useUserDetails from "@users/hooks/useUserDetails";
+import { getSessionUserAgent } from "@users/session";
 
 export const USER_DETAIL_VIEWS = {
-  ADMIN: 'admin',
-  STUDENT: 'student',
-  TEACHER: 'teacher',
+  ADMIN: "admin",
+  STUDENT: "student",
+  TEACHER: "teacher",
 };
 
 function UserDetail({
@@ -45,8 +45,8 @@ function UserDetail({
     userId,
     enabled: enableUserDetails,
   });
-  const [t] = useTranslateLoader(prefixPN('user_detail'));
-  const [tForm] = useTranslateLoader(prefixPN('userForm'));
+  const [t] = useTranslateLoader(prefixPN("user_detail"));
+  const [tForm] = useTranslateLoader(prefixPN("userForm"));
   const [avatar, setAvatar] = React.useState(userDetails?.user?.avatar);
   const userAgentId = getSessionUserAgent();
   const { openUserRoom, isChatEnabled } = useComunica();
@@ -72,14 +72,16 @@ function UserDetail({
   }
 
   const { user, userAgents } = userDetails;
-  const fullName = `${compact([user.surnames, user.secondSurname]).join(' ')}, ${user.name}`;
+  const fullName = `${compact([user.surnames, user.secondSurname]).join(" ")}, ${user.name}`;
   const avatarFullName = `${user.name} ${user.surnames}`;
   const avatarUrl = user.avatar;
   const profiles = compact(
     userAgents
       .filter((ua) => !ua.disabled)
       .map(({ profile }) => profile)
-      .filter((profile) => (sysProfileFilter ? sysProfileFilter === profile.sysName : true))
+      .filter((profile) =>
+        sysProfileFilter ? sysProfileFilter === profile.sysName : true
+      )
   );
 
   const isSelfView = userAgents.some((ua) => ua.id === userAgentId);
@@ -105,17 +107,22 @@ function UserDetail({
             url={avatarUrl}
             fullName={avatarFullName}
             labels={{
-              uploadImage: tForm('uploadImage'),
-              changeImage: tForm('changeImage'),
-              delete: tForm('delete'),
-              cancel: tForm('cancel'),
-              accept: tForm('accept'),
+              uploadImage: tForm("uploadImage"),
+              changeImage: tForm("changeImage"),
+              delete: tForm("delete"),
+              cancel: tForm("cancel"),
+              accept: tForm("accept"),
             }}
           />
         )}
         <Stack spacing={2}>
           {profiles.map((profile) => (
-            <Badge key={profile.id} label={profile.name} radius="default" closable={false} />
+            <Badge
+              key={profile.id}
+              label={profile.name}
+              radius="default"
+              closable={false}
+            />
           ))}
         </Stack>
         <Title order={3}>{fullName}</Title>
@@ -126,9 +133,15 @@ function UserDetail({
         </Box>
         */}
       </Stack>
-      {!hideTags && [USER_DETAIL_VIEWS.ADMIN, USER_DETAIL_VIEWS.TEACHER].includes(viewMode) && (
-        <UserAgentsTags title={t('tagsTitle')} userAgentIds={userAgents.map(({ id }) => id)} />
-      )}
+      {!hideTags &&
+        [USER_DETAIL_VIEWS.ADMIN, USER_DETAIL_VIEWS.TEACHER].includes(
+          viewMode
+        ) && (
+          <UserAgentsTags
+            title={t("tagsTitle")}
+            userAgentIds={userAgents.map(({ id }) => id)}
+          />
+        )}
       {!isSelfView && isChatEnabled && (
         <Stack justifyContent="center">
           <Button
@@ -136,7 +149,7 @@ function UserDetail({
             onClick={handleOpenChat}
             rightIcon={<CommentIcon width={18} height={18} />}
           >
-            {t('chatButton')}
+            {t("chatButton")}
           </Button>
         </Stack>
       )}

@@ -1,7 +1,7 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { getRolesProfiles } = require('../roles/getRolesProfiles');
-const { getRolesCenters } = require('../roles/getRolesCenters');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { getRolesProfiles } = require("../roles/getRolesProfiles");
+const { getRolesCenters } = require("../roles/getRolesCenters");
 
 /**
  * Checks if it is possible to create a number of user agents in a specific role profile.
@@ -23,7 +23,7 @@ async function check({ nUserAgents, limit, rolesProfiles, ctx }) {
     });
     if (totalUserAgentsForRole + nUserAgents > limit.limit) {
       throw new LeemonsError(ctx, {
-        message: 'Cannot add the user exceeds the maximum limit.',
+        message: "Cannot add the user exceeds the maximum limit.",
         httpStatusCode: 400,
       });
     }
@@ -41,18 +41,32 @@ async function check({ nUserAgents, limit, rolesProfiles, ctx }) {
  * @param {MoleculerContext} params.ctx - The context object.
  * @throws {LeemonsError} If the user agent cannot be created.
  */
-async function checkIfCanCreateNUserAgentsInRoleProfiles({ nUserAgents, role, ctx }) {
+async function checkIfCanCreateNUserAgentsInRoleProfiles({
+  nUserAgents,
+  role,
+  ctx,
+}) {
   const _roles = _.isArray(role) ? role : [role];
-  const rolesProfiles = await getRolesProfiles({ roleIds: _roles, raw: true, ctx });
-  const rolesCenters = await getRolesCenters({ roleIds: _roles, raw: true, ctx });
-
-  const limits = await ctx.tx.db.CenterLimits.find({
-    center: _.map(rolesCenters, 'center'),
-    item: _.map(rolesProfiles, 'profile'),
-    type: 'profile',
+  const rolesProfiles = await getRolesProfiles({
+    roleIds: _roles,
+    raw: true,
+    ctx,
+  });
+  const rolesCenters = await getRolesCenters({
+    roleIds: _roles,
+    raw: true,
+    ctx,
   });
 
-  await Promise.all(_.map(limits, (limit) => check({ nUserAgents, limit, rolesProfiles, ctx })));
+  const limits = await ctx.tx.db.CenterLimits.find({
+    center: _.map(rolesCenters, "center"),
+    item: _.map(rolesProfiles, "profile"),
+    type: "profile",
+  });
+
+  await Promise.all(
+    _.map(limits, (limit) => check({ nUserAgents, limit, rolesProfiles, ctx }))
+  );
 }
 
 module.exports = { checkIfCanCreateNUserAgentsInRoleProfiles };

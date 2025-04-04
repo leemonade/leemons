@@ -1,4 +1,4 @@
-const URL = require('url');
+const URL = require("url");
 /**
  * Set default hostname por platform
  * @public
@@ -11,9 +11,9 @@ async function setHostname({ value, ctx }) {
   // TODO @askJaime: He cambiado en la línea de abajo hostname a value, bien?
   const url = URL.parse(value, true);
   return ctx.tx.db.Config.findOneAndUpdate(
-    { key: 'platform-hostname' },
+    { key: "platform-hostname" },
     {
-      key: 'platform-hostname',
+      key: "platform-hostname",
       value: `${url.protocol}//${url.host}`,
     },
     {

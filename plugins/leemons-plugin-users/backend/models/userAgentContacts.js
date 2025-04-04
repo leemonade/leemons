@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -77,6 +77,10 @@ schema.index({
   isDeleted: 1,
 });
 
-const userAgentContactsModel = newModel(mongoose.connection, 'v1::users_UserAgentContacts', schema);
+const userAgentContactsModel = newModel(
+  mongoose.connection,
+  "v1::users_UserAgentContacts",
+  schema
+);
 
 module.exports = { userAgentContactsModel };

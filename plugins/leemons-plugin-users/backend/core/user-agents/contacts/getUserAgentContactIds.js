@@ -1,12 +1,12 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function getUserAgentContactIds({ fromUserAgent, ctx }) {
   const response = await ctx.tx.db.UserAgentContacts.find({
     fromUserAgent,
   })
-    .select(['toUserAgent'])
+    .select(["toUserAgent"])
     .lean();
-  return _.uniq(_.map(response, 'toUserAgent'));
+  return _.uniq(_.map(response, "toUserAgent"));
 }
 
 module.exports = { getUserAgentContactIds };

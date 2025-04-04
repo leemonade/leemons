@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 /**
  * Return all permits with his actions in bbdd
@@ -18,7 +18,7 @@ async function list({ ctx }) {
       _.filter(permissionActions, {
         permissionName: permission.permissionName,
       }),
-      'actionName'
+      "actionName"
     );
   });
 

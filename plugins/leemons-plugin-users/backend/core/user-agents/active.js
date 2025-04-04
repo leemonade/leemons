@@ -1,10 +1,10 @@
-const _ = require('lodash');
+const _ = require("lodash");
 const {
   checkIfCanCreateNUserAgentsInRoleProfiles,
-} = require('../users/checkIfCanCreateNUserAgentsInRoleProfiles');
+} = require("../users/checkIfCanCreateNUserAgentsInRoleProfiles");
 const {
   checkIfCanCreateUserAgentInGroup,
-} = require('../groups/checkIfCanCreateNUserAgentsInGroup');
+} = require("../groups/checkIfCanCreateNUserAgentsInGroup");
 
 /**
  * Activates a user agent by setting its `disabled` flag to `false`. This process involves several checks
@@ -32,18 +32,29 @@ const {
 async function active({ id, ctx }) {
   const [userAgent, groups] = await Promise.all([
     ctx.tx.db.UserAgent.findOne({ id }).lean(),
-    ctx.tx.db.GroupUserAgent.find({ userAgent: id }).select(['id']).lean(),
+    ctx.tx.db.GroupUserAgent.find({ userAgent: id }).select(["id"]).lean(),
   ]);
   // From all the groups the user is in, we will determine which ones are of type 'role'
-  const roleGroups = await ctx.tx.db.Groups.find({ type: 'role', id: _.map(groups, 'id') })
-    .select(['id'])
+  const roleGroups = await ctx.tx.db.Groups.find({
+    type: "role",
+    id: _.map(groups, "id"),
+  })
+    .select(["id"])
     .lean();
 
   await Promise.all([
-    checkIfCanCreateNUserAgentsInRoleProfiles({ nUserAgents: 1, role: userAgent.role, ctx }),
+    checkIfCanCreateNUserAgentsInRoleProfiles({
+      nUserAgents: 1,
+      role: userAgent.role,
+      ctx,
+    }),
     Promise.all(
       _.map(roleGroups, (group) =>
-        checkIfCanCreateUserAgentInGroup({ userAgentId: id, groupId: group.id, ctx })
+        checkIfCanCreateUserAgentInGroup({
+          userAgentId: id,
+          groupId: group.id,
+          ctx,
+        })
       )
     ),
   ]);

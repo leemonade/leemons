@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const { settledResponseToManyResponse } = require('@leemons/utils');
-const { add } = require('./add');
+const _ = require("lodash");
+const { settledResponseToManyResponse } = require("@leemons/utils");
+const { add } = require("./add");
 
 /**
  * Create multiple actions
@@ -12,7 +12,9 @@ const { add } = require('./add');
  * @return {Promise<ManyResponse>} Created actions
  * */
 async function addMany({ data, ctx }) {
-  const response = await Promise.allSettled(_.map(data, (d) => add({ ...d, ctx })));
+  const response = await Promise.allSettled(
+    _.map(data, (d) => add({ ...d, ctx }))
+  );
   return settledResponseToManyResponse(response);
 }
 

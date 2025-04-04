@@ -1,10 +1,14 @@
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 
-const { transformArrayToObject } = require('../permissions/transformArrayToObject');
-const { detail: roleDetail } = require('../roles/detail');
+const {
+  transformArrayToObject,
+} = require("../permissions/transformArrayToObject");
+const { detail: roleDetail } = require("../roles/detail");
 
 async function detailByUri({ uri, ctx }) {
-  const profile = await ctx.tx.db.Profiles.findOne({ $or: [{ uri }, { id: uri }] }).lean();
+  const profile = await ctx.tx.db.Profiles.findOne({
+    $or: [{ uri }, { id: uri }],
+  }).lean();
   if (!profile) {
     throw new LeemonsError(ctx, {
       httpStatusCode: 404,

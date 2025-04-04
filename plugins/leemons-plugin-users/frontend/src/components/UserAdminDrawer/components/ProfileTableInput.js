@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 import {
   Box,
@@ -8,18 +8,22 @@ import {
   Select,
   ActionButton,
   ContextContainer,
-} from '@bubbles-ui/components';
-import { UserWarningIcon, ViewOffIcon, ViewOnIcon } from '@bubbles-ui/icons/outline';
-import { AddCircleIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { compact, noop } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import {
+  UserWarningIcon,
+  ViewOffIcon,
+  ViewOnIcon,
+} from "@bubbles-ui/icons/outline";
+import { AddCircleIcon, DeleteBinIcon } from "@bubbles-ui/icons/solid";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { compact, noop } from "lodash";
+import PropTypes from "prop-types";
 
-import prefixPN from '@users/helpers/prefixPN';
-import { useProfiles, useUserAgentsInfo } from '@users/hooks';
-import useUserDetails from '@users/hooks/useUserDetails';
-import { getSessionUserAgent } from '@users/session';
+import prefixPN from "@users/helpers/prefixPN";
+import { useProfiles, useUserAgentsInfo } from "@users/hooks";
+import useUserDetails from "@users/hooks/useUserDetails";
+import { getSessionUserAgent } from "@users/session";
 
 function ProfileTableInput({
   userAgents = [],
@@ -28,9 +32,9 @@ function ProfileTableInput({
   onChange = noop,
 }) {
   const [profileSelected, setProfileSelected] = React.useState(null);
-  const { t: tCommon } = useCommonTranslate('formWithTheme');
-  const [tEnableUser] = useTranslateLoader(prefixPN('enableUserModal'));
-  const [tDisableUser] = useTranslateLoader(prefixPN('disableUserModal'));
+  const { t: tCommon } = useCommonTranslate("formWithTheme");
+  const [tEnableUser] = useTranslateLoader(prefixPN("enableUserModal"));
+  const [tDisableUser] = useTranslateLoader(prefixPN("disableUserModal"));
 
   const userAgentId = getSessionUserAgent();
 
@@ -47,7 +51,9 @@ function ProfileTableInput({
   });
 
   const isSuperAdmin = React.useMemo(() => {
-    const superAdmin = userDetails?.userAgents?.find((ua) => ua.profile?.sysName === 'super');
+    const superAdmin = userDetails?.userAgents?.find(
+      (ua) => ua.profile?.sysName === "super"
+    );
     return !!superAdmin;
   }, [userDetails]);
 
@@ -65,7 +71,9 @@ function ProfileTableInput({
 
   function handleRemove(userAgent) {
     // If not userAgent, its mean that the userAgent has not been saved yet, so we remove the userAgent from the list
-    onChange(userAgents?.filter((item) => item.profile.id !== userAgent.profile.id));
+    onChange(
+      userAgents?.filter((item) => item.profile.id !== userAgent.profile.id)
+    );
   }
 
   const getActionButton = React.useCallback(
@@ -77,7 +85,7 @@ function ProfileTableInput({
       if (!userAgent.id) {
         return (
           <ActionButton
-            tooltip={tCommon('remove')}
+            tooltip={tCommon("remove")}
             icon={<DeleteBinIcon {...commonProps} />}
             onClick={() => handleRemove(userAgent)}
           />
@@ -86,7 +94,7 @@ function ProfileTableInput({
       if (userAgent.id && !userAgent.disabled) {
         return (
           <ActionButton
-            tooltip={tDisableUser('titleProfile')}
+            tooltip={tDisableUser("titleProfile")}
             icon={<ViewOffIcon {...commonProps} />}
             onClick={() => onDisable(userAgent)}
           />
@@ -94,7 +102,7 @@ function ProfileTableInput({
       }
       return (
         <ActionButton
-          tooltip={tEnableUser('titleProfile')}
+          tooltip={tEnableUser("titleProfile")}
           icon={<ViewOnIcon {...commonProps} />}
           onClick={() => onEnable(userAgent)}
         />
@@ -120,14 +128,14 @@ function ProfileTableInput({
 
   const columns = [
     {
-      Header: '',
-      accessor: 'name',
+      Header: "",
+      accessor: "name",
     },
     {
-      Header: '',
-      accessor: 'action',
+      Header: "",
+      accessor: "action",
       style: {
-        width: '10%',
+        width: "10%",
       },
     },
   ];
@@ -136,17 +144,21 @@ function ProfileTableInput({
     () =>
       userAgents
         ?.map((userAgent) => {
-          if (userAgent.profile?.sysName === 'admin' && !isSuperAdmin) {
+          if (userAgent.profile?.sysName === "admin" && !isSuperAdmin) {
             return null;
           }
 
-          const profileData = profilesData.find((p) => p.value === userAgent?.profile?.id);
+          const profileData = profilesData.find(
+            (p) => p.value === userAgent?.profile?.id
+          );
           return {
             name: (
               <Stack
                 spacing={1}
                 sx={(theme) => ({
-                  color: userAgent.disabled && theme.other.global.content.color.text.muted,
+                  color:
+                    userAgent.disabled &&
+                    theme.other.global.content.color.text.muted,
                 })}
               >
                 {userAgent.disabled && <UserWarningIcon />}
@@ -163,10 +175,18 @@ function ProfileTableInput({
   return (
     <Box>
       <ContextContainer direction="row" spacing={2}>
-        <Select data={profilesData} value={profileSelected} onChange={setProfileSelected} />
+        <Select
+          data={profilesData}
+          value={profileSelected}
+          onChange={setProfileSelected}
+        />
         <Box noFlex>
-          <Button variant="link" leftIcon={<AddCircleIcon />} onClick={handleOnAdd}>
-            {tCommon('add')}
+          <Button
+            variant="link"
+            leftIcon={<AddCircleIcon />}
+            onClick={handleOnAdd}
+          >
+            {tCommon("add")}
           </Button>
         </Box>
       </ContextContainer>

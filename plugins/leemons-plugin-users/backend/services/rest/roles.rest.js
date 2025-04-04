@@ -6,22 +6,22 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { LeemonsValidator } = require('@leemons/validator');
-const groupsService = require('../../core/groups');
+} = require("@leemons/middlewares");
+const { LeemonsValidator } = require("@leemons/validator");
+const groupsService = require("../../core/groups");
 
 const permissionsValidation = {
-  type: 'array',
+  type: "array",
   items: {
-    type: 'object',
+    type: "object",
     properties: {
       permissionName: {
-        type: 'string',
+        type: "string",
       },
       actionNames: {
-        type: 'array',
+        type: "array",
         items: {
-          type: 'string',
+          type: "string",
         },
       },
     },
@@ -31,27 +31,27 @@ const permissionsValidation = {
 module.exports = {
   listRest: {
     rest: {
-      path: '/list',
-      method: 'POST',
+      path: "/list",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.roles': {
-            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          "users.roles": {
+            actions: ["view", "update", "create", "delete", "admin"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: 'number' },
-          size: { type: 'number' },
+          page: { type: "number" },
+          size: { type: "number" },
         },
-        required: ['page', 'size'],
+        required: ["page", "size"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -64,30 +64,33 @@ module.exports = {
   },
   detailRest: {
     rest: {
-      path: '/detail/:uri',
-      method: 'GET',
+      path: "/detail/:uri",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.roles': {
-            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          "users.roles": {
+            actions: ["view", "update", "create", "delete", "admin"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          uri: { type: 'string' },
+          uri: { type: "string" },
         },
-        required: ['uri'],
+        required: ["uri"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
-        const role = await groupsService.detailByUri({ uri: ctx.params.uri, ctx });
+        const role = await groupsService.detailByUri({
+          uri: ctx.params.uri,
+          ctx,
+        });
         return { status: 200, role };
       }
       throw validator.error;
@@ -95,28 +98,28 @@ module.exports = {
   },
   addRest: {
     rest: {
-      path: '/add',
-      method: 'POST',
+      path: "/add",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.roles': {
-            actions: ['create', 'admin'],
+          "users.roles": {
+            actions: ["create", "admin"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          name: { type: 'string' },
-          description: { type: 'string' },
+          name: { type: "string" },
+          description: { type: "string" },
           permissions: permissionsValidation,
         },
-        required: ['name', 'description', 'permissions'],
+        required: ["name", "description", "permissions"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -128,30 +131,30 @@ module.exports = {
   },
   updateRest: {
     rest: {
-      path: '/update',
-      method: 'POST',
+      path: "/update",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.roles': {
-            actions: ['update', 'admin'],
+          "users.roles": {
+            actions: ["update", "admin"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          id: { type: 'string' },
-          name: { type: 'string' },
-          description: { type: 'string' },
+          id: { type: "string" },
+          name: { type: "string" },
+          description: { type: "string" },
           permissions: permissionsValidation,
-          userAgents: { type: 'array', items: { type: 'string' } },
+          userAgents: { type: "array", items: { type: "string" } },
         },
-        required: ['id', 'name', 'description', 'permissions'],
+        required: ["id", "name", "description", "permissions"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {

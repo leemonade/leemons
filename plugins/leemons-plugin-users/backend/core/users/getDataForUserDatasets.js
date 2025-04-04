@@ -1,27 +1,28 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function getData({ locationName, userId, ctx }) {
   const promises = [
-    ctx.tx.call('dataset.dataset.getSchemaWithLocale', {
+    ctx.tx.call("dataset.dataset.getSchemaWithLocale", {
       locationName,
-      pluginName: 'users',
+      pluginName: "users",
       locale: ctx.meta.userSession.locale,
     }),
-    ctx.tx.call('dataset.dataset.getValues', {
+    ctx.tx.call("dataset.dataset.getValues", {
       locationName,
-      pluginName: 'users',
+      pluginName: "users",
       userAgent: ctx.meta.userSession.userAgents,
       target: userId,
     }),
   ];
 
-  const [{ compileJsonSchema, compileJsonUI }, value] = await Promise.all(promises);
+  const [{ compileJsonSchema, compileJsonUI }, value] =
+    await Promise.all(promises);
 
   return { jsonSchema: compileJsonSchema, jsonUI: compileJsonUI, value };
 }
 
 async function getDataForUserDatasets({ userIds, ctx }) {
-  const locationName = 'user-data';
+  const locationName = "user-data";
 
   return Promise.allSettled(
     _.map(userIds, async (userId) => {
@@ -38,7 +39,9 @@ async function getDataForUserDatasets({ userIds, ctx }) {
       };
     })
   ).then((results) =>
-    results.filter((result) => result.status === 'fulfilled').map((result) => result.value)
+    results
+      .filter((result) => result.status === "fulfilled")
+      .map((result) => result.value)
   );
 }
 

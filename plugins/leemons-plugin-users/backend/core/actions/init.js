@@ -1,5 +1,5 @@
-const constants = require('../../config/constants');
-const { addMany } = require('./addMany');
+const constants = require("../../config/constants");
+const { addMany } = require("./addMany");
 
 /**
  * Creates the default actions that come with the leemons app

@@ -1,12 +1,12 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { randomString } = require('@leemons/utils');
-const moment = require('moment');
-const constants = require('../../config/constants');
-const { generateJWTToken } = require('./jwt/generateJWTToken');
-const getHostname = require('../platform/getHostname');
-const { setUserForRegisterPassword } = require('./setUserForRegisterPassword');
-const { sendWelcomeEmailToUser } = require('./sendWelcomeEmailToUser');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { randomString } = require("@leemons/utils");
+const moment = require("moment");
+const constants = require("../../config/constants");
+const { generateJWTToken } = require("./jwt/generateJWTToken");
+const getHostname = require("../platform/getHostname");
+const { setUserForRegisterPassword } = require("./setUserForRegisterPassword");
+const { sendWelcomeEmailToUser } = require("./sendWelcomeEmailToUser");
 
 /**
  * If there is a user with that email we check if there is already a recovery in progress, if
@@ -20,24 +20,30 @@ const { sendWelcomeEmailToUser } = require('./sendWelcomeEmailToUser');
  * */
 async function recover({ email, ctx }) {
   const user = await ctx.tx.db.Users.findOne({ email })
-    .select(['id', 'locale', 'name', 'email', 'active'])
+    .select(["id", "locale", "name", "email", "active"])
     .lean();
-  if (!user) throw new LeemonsError(ctx, { message: 'Email not found', httpStatusCode: 401 });
+  if (!user)
+    throw new LeemonsError(ctx, {
+      message: "Email not found",
+      httpStatusCode: 401,
+    });
 
   if (!user.active) {
     await setUserForRegisterPassword({ userId: user.id, ctx });
     await sendWelcomeEmailToUser({ user, ctx });
     throw new LeemonsError(ctx, {
-      message: 'User not active',
+      message: "User not active",
       httpStatusCode: 400,
       customCode: 1001,
     });
   }
-  let recovery = await ctx.tx.db.UserRecoverPassword.findOne({ user: user.id }).lean();
+  let recovery = await ctx.tx.db.UserRecoverPassword.findOne({
+    user: user.id,
+  }).lean();
   if (recovery) {
     const now = moment(_.now());
     const updatedAt = moment(recovery.updated_at);
-    if (now.diff(updatedAt, 'minutes') >= constants.timeForRecoverPassword) {
+    if (now.diff(updatedAt, "minutes") >= constants.timeForRecoverPassword) {
       recovery = await ctx.tx.db.UserRecoverPassword.findOneAndUpdate(
         { id: recovery.id },
         { code: randomString(12) },
@@ -53,9 +59,9 @@ async function recover({ email, ctx }) {
   }
   const hostname = await getHostname({ ctx });
 
-  await ctx.tx.call('emails.email.sendAsEducationalCenter', {
+  await ctx.tx.call("emails.email.sendAsEducationalCenter", {
     to: email,
-    templateName: 'user-recover-password',
+    templateName: "user-recover-password",
     language: user.locale,
     context: {
       name: user.name,

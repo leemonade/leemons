@@ -1,5 +1,5 @@
 const constants = {
-  base: 'users/login',
+  base: "users/login",
 };
 
 export default constants;

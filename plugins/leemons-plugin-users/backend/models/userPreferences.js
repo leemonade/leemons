@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -34,6 +34,10 @@ const schema = new mongoose.Schema(
 
 schema.index({ user: 1, deploymentID: 1, isDeleted: 1 });
 
-const userPreferencesModel = newModel(mongoose.connection, 'v1::users_UserPreferences', schema);
+const userPreferencesModel = newModel(
+  mongoose.connection,
+  "v1::users_UserPreferences",
+  schema
+);
 
 module.exports = { userPreferencesModel };

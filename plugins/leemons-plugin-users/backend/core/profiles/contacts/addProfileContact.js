@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 /**
  * ES: Añade que un perfil tiene acceso a los user agent de otro perfil
@@ -9,7 +9,11 @@ const _ = require('lodash');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
-async function addProfileContact({ fromProfile: _fromProfile, toProfile: _toProfile, ctx }) {
+async function addProfileContact({
+  fromProfile: _fromProfile,
+  toProfile: _toProfile,
+  ctx,
+}) {
   const fromProfiles = _.isArray(_fromProfile) ? _fromProfile : [_fromProfile];
   const toProfiles = _.isArray(_toProfile) ? _toProfile : [_toProfile];
 

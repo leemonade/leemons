@@ -1,36 +1,52 @@
-import React from 'react';
-import { FormProvider, useForm, Controller } from 'react-hook-form';
+import React from "react";
+import { FormProvider, useForm, Controller } from "react-hook-form";
 
-import { Box, Button, Drawer, ContextContainer, InputWrapper } from '@bubbles-ui/components';
-import { TagsAutocomplete, getRequestErrorMessage, randomString } from '@common';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import { UploadingFileModal } from '@leebrary/components';
-import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useQueryClient } from '@tanstack/react-query';
-import { compact, groupBy, noop, pick, uniq } from 'lodash';
-import PropTypes from 'prop-types';
+import {
+  Box,
+  Button,
+  Drawer,
+  ContextContainer,
+  InputWrapper,
+} from "@bubbles-ui/components";
+import {
+  TagsAutocomplete,
+  getRequestErrorMessage,
+  randomString,
+} from "@common";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import { UploadingFileModal } from "@leebrary/components";
+import uploadFileAsMultipart from "@leebrary/helpers/uploadFileAsMultipart";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useQueryClient } from "@tanstack/react-query";
+import { compact, groupBy, noop, pick, uniq } from "lodash";
+import PropTypes from "prop-types";
 
-import { UserDatasets } from '../UserDataset/UserDatasets';
-import { UserForm, USER_FIELDS } from '../UserForm';
+import { UserDatasets } from "../UserDataset/UserDatasets";
+import { UserForm, USER_FIELDS } from "../UserForm";
 
-import { ProfileTableInput } from './components/ProfileTableInput';
+import { ProfileTableInput } from "./components/ProfileTableInput";
 
-import prefixPN from '@users/helpers/prefixPN';
+import prefixPN from "@users/helpers/prefixPN";
 import {
   searchUserAgentsRequest,
   addUsersBulkRequest,
   updateUserRequest,
   updateUserAgentRequest,
   getUserAgentDetailForPageRequest,
-} from '@users/request';
-import activeUserAgentRequest from '@users/request/activeUserAgent';
-import disableUserAgentRequest from '@users/request/disableUserAgent';
-import useImpersonateUser from '@users/request/hooks/mutations/useImpersonateUser';
+} from "@users/request";
+import activeUserAgentRequest from "@users/request/activeUserAgent";
+import disableUserAgentRequest from "@users/request/disableUserAgent";
+import useImpersonateUser from "@users/request/hooks/mutations/useImpersonateUser";
 
-function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave = noop }) {
+function UserAdminDrawer({
+  user: value,
+  center,
+  opened,
+  onClose = noop,
+  onSave = noop,
+}) {
   const [user, setUser] = React.useState(value);
   const [uploadingFileInfo, setUploadingFileInfo] = React.useState(null);
   const [isAdminFirstTime, setIsAdminFirstTime] = React.useState(false);
@@ -38,11 +54,11 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
   const [saving, setSaving] = React.useState(false);
   const { openConfirmationModal } = useLayout();
 
-  const [t] = useTranslateLoader(prefixPN('create_users'));
-  const [tList] = useTranslateLoader(prefixPN('list_users'));
-  const { t: tCommon } = useCommonTranslate('formWithTheme');
-  const [tEnableUser] = useTranslateLoader(prefixPN('enableUserModal'));
-  const [tDisableUser] = useTranslateLoader(prefixPN('disableUserModal'));
+  const [t] = useTranslateLoader(prefixPN("create_users"));
+  const [tList] = useTranslateLoader(prefixPN("list_users"));
+  const { t: tCommon } = useCommonTranslate("formWithTheme");
+  const [tEnableUser] = useTranslateLoader(prefixPN("enableUserModal"));
+  const [tDisableUser] = useTranslateLoader(prefixPN("disableUserModal"));
   const queryClient = useQueryClient();
   const userDatasetsRef = React.useRef();
 
@@ -72,16 +88,20 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
   }
 
   async function saveUser(data) {
-    const body = pick(data, [...USER_FIELDS, 'id', 'active', 'tags']);
+    const body = pick(data, [...USER_FIELDS, "id", "active", "tags"]);
 
     // Create only the userAgents that has not `id`
     let profilesToCreate = compact(
-      userAgents.filter((userAgent) => !userAgent.id).map((userAgent) => userAgent.profile?.id)
+      userAgents
+        .filter((userAgent) => !userAgent.id)
+        .map((userAgent) => userAgent.profile?.id)
     );
 
     // Update only the userAgents that has `id`
     const userAgentsToUpdate = compact(
-      userAgents.filter((userAgent) => userAgent.id).map((userAgent) => userAgent.id)
+      userAgents
+        .filter((userAgent) => userAgent.id)
+        .map((userAgent) => userAgent.id)
     );
 
     // If the user is not being updated, we create the user with the first profile
@@ -135,17 +155,17 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
 
     if (userData?.id) {
       userData.userAgents = userAgentsInfo?.filter((item) =>
-        ['teacher', 'student'].includes(item.profile?.sysName)
+        ["teacher", "student"].includes(item.profile?.sysName)
       );
     }
 
     setUser(userData);
 
     // If there is only one profile and it's the admin profile, we set the isAdminFirstTime to true
-    const profilesGrouped = pick(groupBy(userAgentsInfo, 'profile.sysName'), [
-      'admin',
-      'teacher',
-      'student',
+    const profilesGrouped = pick(groupBy(userAgentsInfo, "profile.sysName"), [
+      "admin",
+      "teacher",
+      "student",
     ]);
     if (profilesGrouped?.admin && Object.keys(profilesGrouped).length === 1) {
       setIsAdminFirstTime(true);
@@ -168,15 +188,17 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
         .map((userAgent) => getUserAgentDetailForPageRequest(userAgent.id))
     );
     const tags = uniq(result?.map((item) => item.data.tags).flat() ?? []);
-    const previousTags = form.getValues('tags') ?? [];
-    form.setValue('tags', uniq([...previousTags, ...tags]));
+    const previousTags = form.getValues("tags") ?? [];
+    form.setValue("tags", uniq([...previousTags, ...tags]));
   }
 
   async function disableUserAgent(userAgent) {
     try {
       await disableUserAgentRequest(userAgent.id);
       refreshUserAgents(true);
-      addSuccessAlert(t('disableProfileSuccess', { profile: userAgent?.profile?.name }));
+      addSuccessAlert(
+        t("disableProfileSuccess", { profile: userAgent?.profile?.name })
+      );
     } catch (e) {
       addErrorAlert(getRequestErrorMessage(e));
     }
@@ -186,7 +208,9 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
     try {
       await activeUserAgentRequest(userAgent.id);
       refreshUserAgents(true);
-      addSuccessAlert(t('enableProfileSuccess', { profile: userAgent?.profile?.name }));
+      addSuccessAlert(
+        t("enableProfileSuccess", { profile: userAgent?.profile?.name })
+      );
     } catch (e) {
       addErrorAlert(getRequestErrorMessage(e));
     }
@@ -206,7 +230,7 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
     if (userAgents?.length) {
       refreshTags();
       form.setValue(
-        'profiles',
+        "profiles",
         userAgents.map((item) => item?.profile?.id)
       );
     }
@@ -217,7 +241,7 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
 
   function handleOnClose(reload) {
     form.reset({});
-    queryClient.invalidateQueries(['userDetails', { userId: value?.id }]);
+    queryClient.invalidateQueries(["userDetails", { userId: value?.id }]);
     setUserAgents(null);
     setUser(null);
     setIsAdminFirstTime(false);
@@ -228,7 +252,7 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
     setSaving(true);
     try {
       await saveUser(data);
-      addSuccessAlert(t('usersAddedSuccessfully'));
+      addSuccessAlert(t("usersAddedSuccessfully"));
       handleOnClose(true);
     } catch (e) {
       addErrorAlert(getRequestErrorMessage(e));
@@ -246,7 +270,7 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
     }
 
     handleSubmit(async (data) => {
-      const payload = pick(data, [...USER_FIELDS, 'tags']);
+      const payload = pick(data, [...USER_FIELDS, "tags"]);
 
       if (user?.id) {
         payload.id = user.id;
@@ -269,13 +293,13 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
 
   async function handleDisableUserAgent(userAgent) {
     openConfirmationModal({
-      title: tDisableUser('titleProfile'),
-      description: tDisableUser('descriptionProfile', {
+      title: tDisableUser("titleProfile"),
+      description: tDisableUser("descriptionProfile", {
         profileName: `<strong>${userAgent?.profile?.name}</strong>`,
         centerName: `<strong>${center?.name}</strong>`,
       }),
       labels: {
-        confirm: tDisableUser('confirm'),
+        confirm: tDisableUser("confirm"),
       },
       onConfirm: async () => {
         disableUserAgent(userAgent);
@@ -285,13 +309,13 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
 
   async function handleEnableUserAgent(userAgent) {
     openConfirmationModal({
-      title: tEnableUser('titleProfile'),
-      description: tEnableUser('descriptionProfile', {
+      title: tEnableUser("titleProfile"),
+      description: tEnableUser("descriptionProfile", {
         profileName: `<strong>${userAgent?.profile?.name}</strong>`,
         centerName: `<strong>${center?.name}</strong>`,
       }),
       labels: {
-        confirm: tEnableUser('confirm'),
+        confirm: tEnableUser("confirm"),
       },
       onConfirm: async () => {
         enableUserAgent(userAgent);
@@ -304,18 +328,18 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
 
   return (
     <Drawer opened={opened} onClose={handleOnClose}>
-      <Drawer.Header title={tList(user?.id ? 'edit' : 'new')} />
+      <Drawer.Header title={tList(user?.id ? "edit" : "new")} />
       <Drawer.Content>
         <FormProvider {...form}>
           <Box>
             <Button variant="outline" onClick={() => impersonateUser(user)}>
-              {t('impersonate')}
+              {t("impersonate")}
             </Button>
           </Box>
-          <ContextContainer title={t('profileLabel')}>
+          <ContextContainer title={t("profileLabel")}>
             <Controller
               name="profiles"
-              rules={{ required: t('profileRequired') }}
+              rules={{ required: t("profileRequired") }}
               render={() => (
                 <InputWrapper error={form.formState.errors.profiles?.message}>
                   <ProfileTableInput
@@ -323,7 +347,7 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
                     onChange={(val) => {
                       setUserAgents(val);
                       form.setValue(
-                        'profiles',
+                        "profiles",
                         val.map((item) => item?.profile?.id),
                         { shouldValidate: form.formState.isSubmitted }
                       );
@@ -343,15 +367,22 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
             onActivateUser={handleActivateUser}
           />
 
-          <ContextContainer title={t('tagsHeader')}>
+          <ContextContainer title={t("tagsHeader")}>
             <Controller
               name="tags"
               render={({ field }) => (
-                <TagsAutocomplete {...field} label={t('tagsHeader')} pluginName="users" />
+                <TagsAutocomplete
+                  {...field}
+                  label={t("tagsHeader")}
+                  pluginName="users"
+                />
               )}
             />
           </ContextContainer>
-          <UploadingFileModal opened={uploadingFileInfo !== null} info={uploadingFileInfo} />
+          <UploadingFileModal
+            opened={uploadingFileInfo !== null}
+            info={uploadingFileInfo}
+          />
           <UserDatasets
             ref={userDatasetsRef}
             userAgentIds={userAgents?.map((item) => item.id)}
@@ -365,12 +396,12 @@ function UserAdminDrawer({ user: value, center, opened, onClose = noop, onSave =
       <Drawer.Footer>
         <Drawer.Footer.LeftActions>
           <Button variant="link" onClick={handleOnClose} disabled={saving}>
-            {tCommon('cancel')}
+            {tCommon("cancel")}
           </Button>
         </Drawer.Footer.LeftActions>
         <Drawer.Footer.RightActions>
           <Button onClick={handleOnSave} disabled={saving} loading={saving}>
-            {t(user?.id ? 'save' : 'create')}
+            {t(user?.id ? "save" : "create")}
           </Button>
         </Drawer.Footer.RightActions>
       </Drawer.Footer>

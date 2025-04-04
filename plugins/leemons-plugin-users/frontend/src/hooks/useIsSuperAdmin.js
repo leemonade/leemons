@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 
-import { useUserAgentsInfo } from '@users/hooks';
-import useUserDetails from '@users/hooks/useUserDetails';
-import { getSessionUserAgent } from '@users/session';
+import { useUserAgentsInfo } from "@users/hooks";
+import useUserDetails from "@users/hooks/useUserDetails";
+import { getSessionUserAgent } from "@users/session";
 
 function useIsSuperAdmin() {
   const userAgentId = getSessionUserAgent();
@@ -20,7 +20,9 @@ function useIsSuperAdmin() {
   });
 
   return React.useMemo(() => {
-    const superAdmin = userDetails?.userAgents?.find((ua) => ua.profile?.sysName === 'super');
+    const superAdmin = userDetails?.userAgents?.find(
+      (ua) => ua.profile?.sysName === "super"
+    );
     return !!superAdmin;
   }, [userDetails]);
 }

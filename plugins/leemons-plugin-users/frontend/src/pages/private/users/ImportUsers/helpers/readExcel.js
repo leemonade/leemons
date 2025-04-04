@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-import { Workbook } from 'exceljs';
-import { compact } from 'lodash';
+import { Workbook } from "exceljs";
+import { compact } from "lodash";
 
 function fileToBuffer(file) {
   return new Promise((resolve) => {
@@ -9,7 +9,7 @@ function fileToBuffer(file) {
       resolve(reader.result);
     };
 
-    reader.addEventListener('load', readFile);
+    reader.addEventListener("load", readFile);
     reader.readAsArrayBuffer(file);
   });
 }
@@ -17,7 +17,7 @@ function fileToBuffer(file) {
 export async function readExcel(file) {
   const wb = new Workbook();
   await wb.xlsx.load(await fileToBuffer(file));
-  if (wb.worksheets.length < 1) throw new Error('No work sheet detected');
+  if (wb.worksheets.length < 1) throw new Error("No work sheet detected");
   const ws = wb.worksheets[0];
   const wsProfileDataset = wb.worksheets[1];
 

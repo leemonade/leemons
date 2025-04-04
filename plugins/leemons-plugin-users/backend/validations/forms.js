@@ -1,29 +1,29 @@
-const { LeemonsValidator, validateSchema } = require('@leemons/validator');
+const { LeemonsValidator, validateSchema } = require("@leemons/validator");
 
 const addUsersBulkSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     center: validateSchema.string,
     profile: validateSchema.string,
     users: {
-      type: 'array',
+      type: "array",
       items: {
-        type: 'object',
+        type: "object",
         properties: {
           email: validateSchema.string,
           tags: {
-            type: 'array',
+            type: "array",
             items: {
-              type: 'string',
+              type: "string",
             },
           },
         },
-        required: ['email'],
+        required: ["email"],
         additionalProperties: true,
       },
     },
   },
-  required: ['center', 'profile', 'users'],
+  required: ["center", "profile", "users"],
   additionalProperties: false,
 };
 

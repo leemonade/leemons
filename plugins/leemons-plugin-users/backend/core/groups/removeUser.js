@@ -1,5 +1,5 @@
-const { existUserAgent } = require('../user-agents/existUserAgent');
-const { exist: groupExist } = require('./exist');
+const { existUserAgent } = require("../user-agents/existUserAgent");
+const { exist: groupExist } = require("./exist");
 
 /**
  * Remove one user from group
@@ -13,7 +13,11 @@ async function removeUser({ groupId, userAgentId, checksDisabled, ctx } = {}) {
   if (!checksDisabled) {
     await Promise.all([
       groupExist({ query: { id: groupId }, throwErrorIfNotExists: true, ctx }),
-      existUserAgent({ query: { id: userAgentId }, throwErrorIfNotExists: true, ctx }),
+      existUserAgent({
+        query: { id: userAgentId },
+        throwErrorIfNotExists: true,
+        ctx,
+      }),
     ]);
   }
 
@@ -23,8 +27,13 @@ async function removeUser({ groupId, userAgentId, checksDisabled, ctx } = {}) {
   });
   if (groupUserAgent) {
     const values = await Promise.all([
-      ctx.tx.db.GroupUserAgent.deleteOne({ group: groupId, userAgent: userAgentId }),
-      ctx.tx.db.UserAgent.findByIdAndUpdate(userAgentId, { reloadPermissions: true }),
+      ctx.tx.db.GroupUserAgent.deleteOne({
+        group: groupId,
+        userAgent: userAgentId,
+      }),
+      ctx.tx.db.UserAgent.findByIdAndUpdate(userAgentId, {
+        reloadPermissions: true,
+      }),
     ]);
     return values[0];
   }

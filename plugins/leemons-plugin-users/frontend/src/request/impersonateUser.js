@@ -1,6 +1,6 @@
 async function impersonateUser(userId) {
   const response = await leemons.api(`v1/users/users/impersonate/${userId}`, {
-    method: 'POST',
+    method: "POST",
     allAgents: true,
   });
 

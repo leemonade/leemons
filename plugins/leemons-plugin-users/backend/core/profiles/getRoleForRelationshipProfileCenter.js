@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
 
 /**
  * Retrieves the role associated with a specific profile and center combination.
@@ -18,15 +18,22 @@ const { LeemonsError } = require('@leemons/error');
  * 3. If no matching role is found, throws a LeemonsError indicating a consistency error, suggesting that every profile should have an associated role within a given center.
  * 4. If a matching role is found, retrieves the complete role details from the Roles database table using the role ID found in step 2.
  */
-async function getRoleForRelationshipProfileCenter({ profileId, centerId, ctx }) {
-  const profileRoles = await ctx.tx.db.ProfileRole.find({ profile: profileId }).lean();
+async function getRoleForRelationshipProfileCenter({
+  profileId,
+  centerId,
+  ctx,
+}) {
+  const profileRoles = await ctx.tx.db.ProfileRole.find({
+    profile: profileId,
+  }).lean();
   const centerRole = await ctx.tx.db.RoleCenter.findOne({
     center: centerId,
-    role: _.map(profileRoles, 'role'),
+    role: _.map(profileRoles, "role"),
   }).lean();
   if (!centerRole)
     throw new LeemonsError(ctx, {
-      message: 'Consistency error, a Role must always be associsted to a center given a Profile',
+      message:
+        "Consistency error, a Role must always be associsted to a center given a Profile",
     });
   return ctx.tx.db.Roles.findOne({ id: centerRole.role }).lean();
 }

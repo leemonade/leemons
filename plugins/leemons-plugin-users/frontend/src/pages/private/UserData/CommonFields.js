@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+import React, { useMemo, useState } from "react";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
 import {
   ActionButton,
   Button,
@@ -9,25 +9,29 @@ import {
   Stack,
   Table,
   Box,
-} from '@bubbles-ui/components';
-import { DeleteBinIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
-import { AddIcon } from '@bubbles-ui/icons/outline';
-import { useDatasetItemDrawer } from '@dataset/hooks/useDatasetItemDrawer';
-import { useAsync } from '@common/useAsync';
+} from "@bubbles-ui/components";
+import { DeleteBinIcon, EditWriteIcon } from "@bubbles-ui/icons/solid";
+import { AddIcon } from "@bubbles-ui/icons/outline";
+import { useDatasetItemDrawer } from "@dataset/hooks/useDatasetItemDrawer";
+import { useAsync } from "@common/useAsync";
 import {
   getDatasetSchemaLocaleRequest,
   getDatasetSchemaRequest,
   removeDatasetFieldRequest,
-} from '@dataset/request';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import getDatasetAsArrayOfProperties from '@dataset/helpers/getDatasetAsArrayOfProperties';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import { useFormWithTheme } from '@common/hooks/useFormWithTheme';
-import PropTypes from 'prop-types';
-import { useLayout } from '@layout/context';
+} from "@dataset/request";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import getDatasetAsArrayOfProperties from "@dataset/helpers/getDatasetAsArrayOfProperties";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import { useFormWithTheme } from "@common/hooks/useFormWithTheme";
+import PropTypes from "prop-types";
+import { useLayout } from "@layout/context";
 
 function TabDescription({ t, type, className }) {
-  return <div className={`page-description ${className}`}>{t(`${type}.description`)}</div>;
+  return (
+    <div className={`page-description ${className}`}>
+      {t(`${type}.description`)}
+    </div>
+  );
 }
 
 TabDescription.propTypes = {
@@ -43,11 +47,15 @@ function CommonFields({ t }) {
   const [tableItems, setTableItems] = useState([]);
   const [item, setItem] = useState(null);
   const [toggle, DatasetItemDrawer] = useDatasetItemDrawer();
-  const { t: tCommonTypes } = useCommonTranslate('form_field_types');
-  const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
+  const { t: tCommonTypes } = useCommonTranslate("form_field_types");
+  const [error, setError, ErrorAlert, getErrorMessage] =
+    useRequestErrorMessage();
   const { openDeleteConfirmationModal } = useLayout();
 
-  const load = useMemo(() => () => getDatasetSchemaRequest('user-data', 'users'), []);
+  const load = useMemo(
+    () => () => getDatasetSchemaRequest("user-data", "users"),
+    []
+  );
 
   const onSuccess = useMemo(
     () =>
@@ -70,7 +78,10 @@ function CommonFields({ t }) {
 
   useAsync(load, onSuccess, onError);
 
-  const load2 = useMemo(() => () => getDatasetSchemaLocaleRequest('user-data', 'users'), []);
+  const load2 = useMemo(
+    () => () => getDatasetSchemaLocaleRequest("user-data", "users"),
+    []
+  );
 
   const onSuccess2 = useMemo(
     () =>
@@ -94,7 +105,10 @@ function CommonFields({ t }) {
 
   useAsync(load2, onSuccess2, onError2);
 
-  const [form] = useFormWithTheme(dataTest?.compileJsonSchema, dataTest?.compileJsonUI);
+  const [form] = useFormWithTheme(
+    dataTest?.compileJsonSchema,
+    dataTest?.compileJsonUI
+  );
 
   async function reload() {
     try {
@@ -122,12 +136,12 @@ function CommonFields({ t }) {
 
   function removeItem(_item) {
     openDeleteConfirmationModal({
-      title: t('remove_modal.title'),
-      description: t('remove_modal.message'),
+      title: t("remove_modal.title"),
+      description: t("remove_modal.message"),
       onConfirm: async () => {
         try {
-          await removeDatasetFieldRequest('user-data', 'users', _item.id);
-          addSuccessAlert(t('dataset.deleted_done'));
+          await removeDatasetFieldRequest("user-data", "users", _item.id);
+          addSuccessAlert(t("dataset.deleted_done"));
           await reload();
         } catch (e) {
           addErrorAlert(getErrorMessage(e));
@@ -139,43 +153,46 @@ function CommonFields({ t }) {
   const tableHeaders = useMemo(
     () => [
       {
-        Header: t('basic.table.name'),
+        Header: t("basic.table.name"),
         accessor: (field) => (
           <div className="text-left">
-            {field.schema.frontConfig.name} {field.schema.frontConfig.required ? '*' : ''}
+            {field.schema.frontConfig.name}{" "}
+            {field.schema.frontConfig.required ? "*" : ""}
           </div>
         ),
-        className: 'text-left',
+        className: "text-left",
       },
       {
-        Header: t('basic.table.description'),
-        accessor: 'description',
-        className: 'text-left',
+        Header: t("basic.table.description"),
+        accessor: "description",
+        className: "text-left",
       },
       {
-        Header: t('basic.table.type'),
+        Header: t("basic.table.type"),
         accessor: (field) => (
-          <div className="text-center">{tCommonTypes(field.schema.frontConfig.type)}</div>
+          <div className="text-center">
+            {tCommonTypes(field.schema.frontConfig.type)}
+          </div>
         ),
-        className: 'text-center',
+        className: "text-center",
       },
       {
-        Header: t('basic.table.actions'),
+        Header: t("basic.table.actions"),
         accessor: (field) => (
           <div className="text-center">
             <ActionButton
-              tooltip={t('basic.edit')}
+              tooltip={t("basic.edit")}
               icon={<EditWriteIcon />}
               onClick={() => openItem(field)}
             />
             <ActionButton
-              tooltip={t('basic.delete')}
+              tooltip={t("basic.delete")}
               icon={<DeleteBinIcon />}
               onClick={() => removeItem(field)}
             />
           </div>
         ),
-        className: 'text-center',
+        className: "text-center",
       },
     ],
     [t, tCommonTypes]
@@ -183,17 +200,25 @@ function CommonFields({ t }) {
 
   return (
     <>
-      <DatasetItemDrawer locationName="user-data" pluginName="users" item={item} onSave={onSave} />
+      <DatasetItemDrawer
+        locationName="user-data"
+        pluginName="users"
+        item={item}
+        onSave={onSave}
+      />
       <ContextContainer
-        sx={(theme) => ({ paddingTop: theme.spacing[4], paddingBottom: theme.spacing[4] })}
+        sx={(theme) => ({
+          paddingTop: theme.spacing[4],
+          paddingBottom: theme.spacing[4],
+        })}
       >
         <ErrorAlert />
         {!loading && !error ? (
           <>
             <Stack alignItems="center" justifyContent="space-between">
-              <Paragraph>{t('basic.description')}</Paragraph>
+              <Paragraph>{t("basic.description")}</Paragraph>
               <Button leftIcon={<AddIcon />} onClick={newItem}>
-                {t('dataset.add_field')}
+                {t("dataset.add_field")}
               </Button>
             </Stack>
             <Paper>
@@ -201,7 +226,7 @@ function CommonFields({ t }) {
             </Paper>
             {tableItems && tableItems.length ? (
               <Paper>
-                <Box style={{ width: '50%' }}>{form}</Box>
+                <Box style={{ width: "50%" }}>{form}</Box>
               </Paper>
             ) : null}
           </>

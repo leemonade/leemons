@@ -1,7 +1,7 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { validateTypePrefix } = require('../../validations/exists');
-const { removeAllItemsCache } = require('./removeAllItemsCache');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { validateTypePrefix } = require("../../validations/exists");
+const { removeAllItemsCache } = require("./removeAllItemsCache");
 
 /**
  * ES:
@@ -19,13 +19,14 @@ const { removeAllItemsCache } = require('./removeAllItemsCache');
 async function remove({ query, ctx }) {
   let typeKey = null;
   let typeArray = false;
-  if (_.isString(query.type)) typeKey = 'type';
+  if (_.isString(query.type)) typeKey = "type";
   if (_.isArray(query.type)) {
-    typeKey = 'type';
+    typeKey = "type";
     typeArray = true;
   }
-  if (_.isRegExp(query.type)) typeKey = 'type';
-  if (!typeKey) throw new LeemonsError(ctx, { message: 'type param is required' });
+  if (_.isRegExp(query.type)) typeKey = "type";
+  if (!typeKey)
+    throw new LeemonsError(ctx, { message: "type param is required" });
 
   if (typeArray) {
     _.forEach(query[typeKey], (key) => {

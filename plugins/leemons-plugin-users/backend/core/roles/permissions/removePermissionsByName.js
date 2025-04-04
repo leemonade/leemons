@@ -1,8 +1,8 @@
-const _ = require('lodash');
-const { validatePermissionName } = require('../../../validations/exists');
+const _ = require("lodash");
+const { validatePermissionName } = require("../../../validations/exists");
 const {
   searchUsersWithRoleAndMarkAsReloadPermissions,
-} = require('../searchUsersWithRoleAndMarkAsReloadPermissions');
+} = require("../searchUsersWithRoleAndMarkAsReloadPermissions");
 
 /**
  * Remove all permissions of role
@@ -14,7 +14,12 @@ const {
  * @param {any} transacting - DB Transaction
  * @return {Promise<Role>} Created / Updated role
  * */
-async function removePermissionsByName({ roleId, permissionNames, removeCustomPermissions, ctx }) {
+async function removePermissionsByName({
+  roleId,
+  permissionNames,
+  removeCustomPermissions,
+  ctx,
+}) {
   _.forEach(permissionNames, (permissionName) => {
     validatePermissionName(permissionName, ctx.callerPlugin);
   });

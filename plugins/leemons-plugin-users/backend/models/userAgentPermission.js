@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -45,7 +45,13 @@ const schema = new mongoose.Schema(
 schema.index({ actionName: 1, deploymentID: 1, isDeleted: 1 });
 schema.index({ userAgent: 1, deploymentID: 1, isDeleted: 1 });
 schema.index({ userAgent: 1, role: 1, deploymentID: 1, isDeleted: 1 });
-schema.index({ permissionName: 1, userAgent: 1, role: 1, deploymentID: 1, isDeleted: 1 });
+schema.index({
+  permissionName: 1,
+  userAgent: 1,
+  role: 1,
+  deploymentID: 1,
+  isDeleted: 1,
+});
 schema.index({
   permissionName: 1,
   userAgent: 1,
@@ -65,7 +71,7 @@ schema.index({
 
 const userAgentPermissionModel = newModel(
   mongoose.connection,
-  'v1::users_UserAgentPermission',
+  "v1::users_UserAgentPermission",
   schema
 );
 

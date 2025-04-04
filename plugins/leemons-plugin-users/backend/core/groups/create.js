@@ -1,5 +1,5 @@
-const slugify = require('slugify');
-const { LeemonsError } = require('@leemons/error');
+const slugify = require("slugify");
+const { LeemonsError } = require("@leemons/error");
 
 /**
  * Create new group if name and type not in use
@@ -15,7 +15,9 @@ async function create({ name, type, ctx }) {
     type,
   }).lean();
   if (group)
-    throw new LeemonsError(ctx, { message: 'There is already a group with this name and type' });
+    throw new LeemonsError(ctx, {
+      message: "There is already a group with this name and type",
+    });
   const createdGroupDoc = await ctx.tx.db.Groups.create({ name, type });
   return createdGroupDoc.toObject();
 }

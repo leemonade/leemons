@@ -1,7 +1,13 @@
-const { SYS_PROFILE_NAMES, CENTER_ASSETS_PERMISSION_PREFIX } = require('../../config/constants');
+const {
+  SYS_PROFILE_NAMES,
+  CENTER_ASSETS_PERMISSION_PREFIX,
+} = require("../../config/constants");
 
-async function addCenterAssetsPermissionToCenterAdminUserAgent({ userAgent, ctx }) {
-  const [userAgentInfo] = await ctx.tx.call('users.users.getUserAgentsInfo', {
+async function addCenterAssetsPermissionToCenterAdminUserAgent({
+  userAgent,
+  ctx,
+}) {
+  const [userAgentInfo] = await ctx.tx.call("users.users.getUserAgentsInfo", {
     userAgentIds: [userAgent.id],
     withCenter: true,
     withProfile: true,
@@ -12,11 +18,11 @@ async function addCenterAssetsPermissionToCenterAdminUserAgent({ userAgent, ctx 
     const centerId = userAgentInfo.center.id;
     const centerAssetPermissionName = `${CENTER_ASSETS_PERMISSION_PREFIX}.${centerId}`;
 
-    return ctx.tx.call('users.permissions.addCustomPermissionToUserAgent', {
+    return ctx.tx.call("users.permissions.addCustomPermissionToUserAgent", {
       userAgentId: userAgentInfo.id,
       data: {
         permissionName: centerAssetPermissionName,
-        actionNames: ['admin'],
+        actionNames: ["admin"],
       },
     });
   }

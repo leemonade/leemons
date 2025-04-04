@@ -1,14 +1,14 @@
 const allUserDatasetsKey = [
   {
-    plugin: 'plugin.users',
-    scope: 'datasets',
+    plugin: "plugin.users",
+    scope: "datasets",
   },
 ];
 
 const getUserDatasetsKey = (userId) => [
   {
     ...allUserDatasetsKey[0],
-    action: 'getUserDatasets',
+    action: "getUserDatasets",
     params: {
       userId,
     },
@@ -18,7 +18,7 @@ const getUserDatasetsKey = (userId) => [
 const getUserAgentsDatasetsKey = (userAgentId) => [
   {
     ...allUserDatasetsKey[0],
-    action: 'getUserAgentsDatasets',
+    action: "getUserAgentsDatasets",
     params: {
       userAgentId,
     },

@@ -1,4 +1,4 @@
-const { VERSION, PLUGIN_NAME } = require('../../config/constants');
+const { VERSION, PLUGIN_NAME } = require("../../config/constants");
 
 const JOBS = {
   FREE: {
@@ -8,7 +8,7 @@ const JOBS = {
   },
 };
 
-const SEND_EMAIL_SERVICE = 'emails.email.sendAsPlatform';
+const SEND_EMAIL_SERVICE = "emails.email.sendAsPlatform";
 
 // -----------------------------------------------
 // JOBS DEFINITIONS
@@ -19,8 +19,8 @@ const jobs = {
 
     const payload = {
       to,
-      templateName: 'teacher-first-steps-guide-free',
-      language: language ?? 'en',
+      templateName: "teacher-first-steps-guide-free",
+      language: language ?? "en",
       context: {
         loginUrl: platformUrl,
       },
@@ -33,8 +33,8 @@ const jobs = {
 
     const payload = {
       to,
-      templateName: 'teacher-assignments-guide-free',
-      language: language ?? 'en',
+      templateName: "teacher-assignments-guide-free",
+      language: language ?? "en",
       context: {
         loginUrl: platformUrl,
       },
@@ -47,8 +47,8 @@ const jobs = {
 
     const payload = {
       to,
-      templateName: 'teacher-evaluation-guide-free',
-      language: language ?? 'en',
+      templateName: "teacher-evaluation-guide-free",
+      language: language ?? "en",
       context: {
         loginUrl: platformUrl,
       },

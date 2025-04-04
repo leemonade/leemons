@@ -1,7 +1,7 @@
-const { validateTypePrefix } = require('../../validations/exists');
-const { basicPermission } = require('../../config/constants');
-const { add } = require('./add');
-const { exist } = require('./exist');
+const { validateTypePrefix } = require("../../validations/exists");
+const { basicPermission } = require("../../config/constants");
+const { add } = require("./add");
+const { exist } = require("./exist");
 
 /**
  * ES:

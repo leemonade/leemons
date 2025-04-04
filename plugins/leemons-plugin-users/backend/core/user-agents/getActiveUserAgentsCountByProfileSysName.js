@@ -1,5 +1,5 @@
-const { LeemonsError } = require('@leemons/error');
-const { detailBySysName } = require('../profiles');
+const { LeemonsError } = require("@leemons/error");
+const { detailBySysName } = require("../profiles");
 
 /**
  * Get the count of active user agents for a given profile sys name
@@ -13,11 +13,14 @@ async function getActiveUserAgentsCountByProfileSysName({ sysName, ctx }) {
   const profile = await detailBySysName({ sysName, ctx });
 
   if (!profile) {
-    throw new LeemonsError(ctx, { message: 'Profile not found', httpStatusCode: 404 });
+    throw new LeemonsError(ctx, {
+      message: "Profile not found",
+      httpStatusCode: 404,
+    });
   }
 
   const { role } = await ctx.tx.db.ProfileRole.findOne({ profile: profile.id })
-    .select(['role'])
+    .select(["role"])
     .lean();
 
   return ctx.tx.db.UserAgent.countDocuments({

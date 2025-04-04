@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { verifyJWTToken } = require('./verifyJWTToken');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { verifyJWTToken } = require("./verifyJWTToken");
 
 /**
  * Return the user for the id provided
@@ -13,23 +13,40 @@ const { verifyJWTToken } = require('./verifyJWTToken');
  * @param {boolean} forceOnlyUserAgent
  * @return {Promise<User>}
  * */
-async function detailForJWT({ jwtToken, forceOnlyUser, forceOnlyUserAgent, ctx }) {
+async function detailForJWT({
+  jwtToken,
+  forceOnlyUser,
+  forceOnlyUserAgent,
+  ctx,
+}) {
   const payload = await verifyJWTToken({ token: jwtToken, ctx });
   let result;
   if (payload.userAgent) {
-    const userAgent = await ctx.tx.db.UserAgent.findOne({ id: payload.userAgent }).lean();
-    if (userAgent.disabled) throw new LeemonsError(ctx, { message: 'User agent is disabled' });
+    const userAgent = await ctx.tx.db.UserAgent.findOne({
+      id: payload.userAgent,
+    }).lean();
+    if (userAgent.disabled)
+      throw new LeemonsError(ctx, { message: "User agent is disabled" });
     if (!userAgent)
-      throw new LeemonsError(ctx, { message: 'No user auth found for the id provided' });
+      throw new LeemonsError(ctx, {
+        message: "No user auth found for the id provided",
+      });
     if (forceOnlyUserAgent) return userAgent;
     const user = await ctx.tx.db.Users.findOne({ id: userAgent.user }).lean();
-    if (!user) throw new LeemonsError(ctx, { message: 'No user found for the id provided' });
-    if (forceOnlyUser) return { ...user, sessionConfig: payload.sessionConfig || {} };
+    if (!user)
+      throw new LeemonsError(ctx, {
+        message: "No user found for the id provided",
+      });
+    if (forceOnlyUser)
+      return { ...user, sessionConfig: payload.sessionConfig || {} };
     result = user;
     result.userAgents = [userAgent];
   } else {
     const user = await ctx.tx.db.Users.findOne({ id: payload.id }).lean();
-    if (!user) throw new LeemonsError(ctx, { message: 'No user found for the id provided' });
+    if (!user)
+      throw new LeemonsError(ctx, {
+        message: "No user found for the id provided",
+      });
     result = user;
     result.userAgents = [];
   }

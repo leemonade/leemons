@@ -3,16 +3,16 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 /** @type {ServiceSchema} */
-const { LeemonsValidator } = require('@leemons/validator');
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
-const { list } = require('../../core/permissions/list');
-const { getUserAgentPermissions } = require('../../core/permissions');
+const { LeemonsValidator } = require("@leemons/validator");
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
+const { list } = require("../../core/permissions/list");
+const { getUserAgentPermissions } = require("../../core/permissions");
 
 module.exports = {
   listRest: {
     rest: {
-      path: '/list',
-      method: 'GET',
+      path: "/list",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -22,22 +22,22 @@ module.exports = {
   },
   getPermissionsWithActionsIfIHaveRest: {
     rest: {
-      path: '/get-if-have', // rename to exist ?
-      method: 'POST',
+      path: "/get-if-have", // rename to exist ?
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
           permissionNames: {
-            type: 'array',
+            type: "array",
             items: {
-              type: 'string',
+              type: "string",
             },
           },
         },
-        required: ['permissionNames'],
+        required: ["permissionNames"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {

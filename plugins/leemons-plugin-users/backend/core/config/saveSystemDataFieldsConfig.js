@@ -1,12 +1,14 @@
-const getSystemDataFieldsConfig = require('./getSystemDataFieldsConfig');
-const { validateSaveSystemDataFieldsConfig } = require('../../validations/item-permissions');
+const getSystemDataFieldsConfig = require("./getSystemDataFieldsConfig");
+const {
+  validateSaveSystemDataFieldsConfig,
+} = require("../../validations/item-permissions");
 
 async function saveSystemDataFieldsConfig({ ctx, ...data }) {
   validateSaveSystemDataFieldsConfig(data);
   await ctx.tx.db.Config.updateOne(
-    { key: 'SystemDataFields' },
+    { key: "SystemDataFields" },
     {
-      key: 'SystemDataFields',
+      key: "SystemDataFields",
       value: JSON.stringify(data),
     },
     { upsert: true }

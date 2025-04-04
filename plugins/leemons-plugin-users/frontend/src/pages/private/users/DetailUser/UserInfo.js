@@ -1,29 +1,42 @@
-import React from 'react';
+import React from "react";
 
-import { EnrollUserSummary } from '@academic-portfolio/components/EnrollUserSummary';
-import { TLayout, Box, Stack, ImageLoader, ContextContainer } from '@bubbles-ui/components';
-import { useRequestErrorMessage, useQuery as useQueryParams } from '@common';
-import { addErrorAlert } from '@layout/alert';
-import compressImage from '@leebrary/helpers/compressImage';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PropTypes from 'prop-types';
+import { EnrollUserSummary } from "@academic-portfolio/components/EnrollUserSummary";
+import {
+  TLayout,
+  Box,
+  Stack,
+  ImageLoader,
+  ContextContainer,
+} from "@bubbles-ui/components";
+import { useRequestErrorMessage, useQuery as useQueryParams } from "@common";
+import { addErrorAlert } from "@layout/alert";
+import compressImage from "@leebrary/helpers/compressImage";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
 
-import { UserDatasetSummary } from '@users/components/UserDataset/UserDatasetSummary';
-import { USER_DETAIL_VIEWS, UserDetail as UserDetailSummary } from '@users/components/UserDetail';
-import { UserAgentsTags } from '@users/components/UserDetail/components/UserAgentsTags';
-import prefixPN from '@users/helpers/prefixPN';
-import { updateUserImageRequest } from '@users/request';
-import { getSessionCenter, getSessionProfile, getSessionUserAgent } from '@users/session';
+import { UserDatasetSummary } from "@users/components/UserDataset/UserDatasetSummary";
+import {
+  USER_DETAIL_VIEWS,
+  UserDetail as UserDetailSummary,
+} from "@users/components/UserDetail";
+import { UserAgentsTags } from "@users/components/UserDetail/components/UserAgentsTags";
+import prefixPN from "@users/helpers/prefixPN";
+import { updateUserImageRequest } from "@users/request";
+import {
+  getSessionCenter,
+  getSessionProfile,
+  getSessionUserAgent,
+} from "@users/session";
 
 function getViewMode(profile) {
-  if (profile?.sysName === 'teacher') return USER_DETAIL_VIEWS.TEACHER;
-  if (profile?.sysName === 'admin') return USER_DETAIL_VIEWS.ADMIN;
+  if (profile?.sysName === "teacher") return USER_DETAIL_VIEWS.TEACHER;
+  if (profile?.sysName === "admin") return USER_DETAIL_VIEWS.ADMIN;
   return USER_DETAIL_VIEWS.STUDENT;
 }
 
 function UserInfo({ session }) {
-  const [t] = useTranslateLoader(prefixPN('detailUser'));
-  const [tUser] = useTranslateLoader(prefixPN('user_detail'));
+  const [t] = useTranslateLoader(prefixPN("detailUser"));
+  const [tUser] = useTranslateLoader(prefixPN("user_detail"));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [userAgents, setUserAgents] = React.useState([]);
   const center = getSessionCenter();
@@ -58,12 +71,12 @@ function UserInfo({ session }) {
   return (
     <TLayout>
       <TLayout.Header
-        title={t('title')}
+        title={t("title")}
         cancelable={false}
         icon={
           <Stack justifyContent="center" alignItems="center">
             <ImageLoader
-              style={{ position: 'relative' }}
+              style={{ position: "relative" }}
               src="/public/users/menu-icon.svg"
               width={18}
               height={18}
@@ -73,7 +86,7 @@ function UserInfo({ session }) {
       ></TLayout.Header>
       <TLayout.Content>
         <Stack spacing={10}>
-          <Box sx={{ width: '40%' }}>
+          <Box sx={{ width: "40%" }}>
             <UserDetailSummary
               userId={userId}
               center={center}
@@ -84,12 +97,14 @@ function UserInfo({ session }) {
               hideTags
             />
           </Box>
-          <Box sx={{ width: '60%' }}>
+          <Box sx={{ width: "60%" }}>
             {userAgents?.length > 0 && (
               <ContextContainer>
-                {[USER_DETAIL_VIEWS.ADMIN, USER_DETAIL_VIEWS.TEACHER].includes(viewMode) && (
+                {[USER_DETAIL_VIEWS.ADMIN, USER_DETAIL_VIEWS.TEACHER].includes(
+                  viewMode
+                ) && (
                   <UserAgentsTags
-                    title={tUser('tagsTitle')}
+                    title={tUser("tagsTitle")}
                     userAgentIds={userAgents.map(({ id }) => id)}
                   />
                 )}

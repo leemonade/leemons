@@ -1,1 +1,1 @@
-export * from './LoginBg';
+export * from "./LoginBg";

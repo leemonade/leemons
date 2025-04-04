@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 /**
  * Establishes access relationships between user agents, allowing a set of user agents (_fromUserAgent)
@@ -27,31 +27,41 @@ async function addUserAgentContacts({
   target = null,
   ctx,
 }) {
-  const fromUserAgents = _.isArray(_fromUserAgent) ? _fromUserAgent : [_fromUserAgent];
+  const fromUserAgents = _.isArray(_fromUserAgent)
+    ? _fromUserAgent
+    : [_fromUserAgent];
   const toUserAgents = _.isArray(_toUserAgent) ? _toUserAgent : [_toUserAgent];
   const pluginName = ctx.callerPlugin;
   const allUserAgentIds = fromUserAgents.concat(toUserAgents);
   const userAgents = await ctx.tx.db.UserAgent.find({ id: allUserAgentIds })
-    .select(['role', 'id'])
+    .select(["role", "id"])
     .lean();
-  const userAgentRoles = _.map(userAgents, 'role');
+  const userAgentRoles = _.map(userAgents, "role");
   const [roleCenter, roleProfile] = await Promise.all([
-    ctx.tx.db.RoleCenter.find({ role: userAgentRoles }).select(['id', 'role', 'center']).lean(),
-    ctx.tx.db.ProfileRole.find({ role: userAgentRoles }).select(['id', 'role', 'profile']).lean(),
+    ctx.tx.db.RoleCenter.find({ role: userAgentRoles })
+      .select(["id", "role", "center"])
+      .lean(),
+    ctx.tx.db.ProfileRole.find({ role: userAgentRoles })
+      .select(["id", "role", "profile"])
+      .lean(),
   ]);
-  const roleCenterByRole = _.keyBy(roleCenter, 'role');
-  const roleProfileByRole = _.keyBy(roleProfile, 'role');
-  const userAgentsById = _.keyBy(userAgents, 'id');
+  const roleCenterByRole = _.keyBy(roleCenter, "role");
+  const roleProfileByRole = _.keyBy(roleProfile, "role");
+  const userAgentsById = _.keyBy(userAgents, "id");
 
   await fromUserAgents.reduce(async (prevPromise, fromUserAgent) => {
     await prevPromise;
-    const fromCenter = roleCenterByRole[userAgentsById[fromUserAgent].role].center;
-    const fromProfile = roleProfileByRole[userAgentsById[fromUserAgent].role].profile;
+    const fromCenter =
+      roleCenterByRole[userAgentsById[fromUserAgent].role].center;
+    const fromProfile =
+      roleProfileByRole[userAgentsById[fromUserAgent].role].profile;
 
     return toUserAgents.reduce(async (innerPrevPromise, toUserAgent) => {
       await innerPrevPromise;
-      const toCenter = roleCenterByRole[userAgentsById[toUserAgent].role].center;
-      const toProfile = roleProfileByRole[userAgentsById[toUserAgent].role].profile;
+      const toCenter =
+        roleCenterByRole[userAgentsById[toUserAgent].role].center;
+      const toProfile =
+        roleProfileByRole[userAgentsById[toUserAgent].role].profile;
 
       await ctx.tx.db.UserAgentContacts.updateOne(
         {

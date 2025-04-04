@@ -1,9 +1,9 @@
-const fetch = require('node-fetch');
-const { last } = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { encryptPassword } = require('./bcrypt/encryptPassword');
-const { getResetConfig } = require('./getResetConfig');
-const getHostname = require('../platform/getHostname');
+const fetch = require("node-fetch");
+const { last } = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { encryptPassword } = require("./bcrypt/encryptPassword");
+const { getResetConfig } = require("./getResetConfig");
+const getHostname = require("../platform/getHostname");
 
 /**
  * If there is a user with that email we check if there is already a recovery in progress, if
@@ -28,18 +28,21 @@ async function reset({ token, password, ctx }) {
   if (process.env.EXTERNAL_IDENTITY_URL) {
     try {
       // Is no error its done
-      const r = await fetch(`${process.env.EXTERNAL_IDENTITY_URL}/change-password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: user.email,
-          password,
-          deploymentID: ctx.meta.deploymentID,
-          manualPassword: process.env.MANUAL_PASSWORD,
-        }),
-      });
+      const r = await fetch(
+        `${process.env.EXTERNAL_IDENTITY_URL}/change-password`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: user.email,
+            password,
+            deploymentID: ctx.meta.deploymentID,
+            manualPassword: process.env.MANUAL_PASSWORD,
+          }),
+        }
+      );
 
       const response = await r.json();
 
@@ -63,20 +66,23 @@ async function reset({ token, password, ctx }) {
   }
 
   const values = await Promise.all([
-    ctx.tx.db.Users.findOneAndUpdate({ id: config.user.id }, toUpdate, { new: true, lean: true }),
+    ctx.tx.db.Users.findOneAndUpdate({ id: config.user.id }, toUpdate, {
+      new: true,
+      lean: true,
+    }),
     ctx.tx.db.UserRecoverPassword.deleteOne({ id: config.recoveryId }),
   ]);
 
   if (
-    await ctx.tx.call('deployment-manager.pluginIsInstalled', {
-      pluginName: 'emails',
+    await ctx.tx.call("deployment-manager.pluginIsInstalled", {
+      pluginName: "emails",
     })
   ) {
     const hostname = await getHostname({ ctx });
 
-    await ctx.tx.call('emails.email.sendAsEducationalCenter', {
+    await ctx.tx.call("emails.email.sendAsEducationalCenter", {
       to: config.user.email,
-      templateName: 'user-reset-password',
+      templateName: "user-reset-password",
       language: config.user.locale,
       context: {
         name: config.user.name,

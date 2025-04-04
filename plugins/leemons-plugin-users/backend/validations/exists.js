@@ -1,5 +1,7 @@
-const { exist: existItemPermission } = require('../core/item-permissions/exist');
-const { exist: existPermission } = require('../core/permissions/exist');
+const {
+  exist: existItemPermission,
+} = require("../core/item-permissions/exist");
+const { exist: existPermission } = require("../core/permissions/exist");
 
 async function validateExistPermission({ permissionName, ctx }) {
   if (await existPermission({ permissionName, ctx }))
@@ -28,12 +30,16 @@ function validateTypePrefix(type, calledFrom) {
 
 function validatePermissionName(permissionName, calledFrom) {
   if (!permissionName.startsWith(calledFrom))
-    throw new Error(`The permission name (${permissionName}) must begin with ${calledFrom}`);
+    throw new Error(
+      `The permission name (${permissionName}) must begin with ${calledFrom}`
+    );
 }
 
 function validateRoleType(permissionName, calledFrom) {
   if (!permissionName.startsWith(calledFrom))
-    throw new Error(`The role type (${permissionName}) must begin with ${calledFrom} `);
+    throw new Error(
+      `The role type (${permissionName}) must begin with ${calledFrom} `
+    );
 }
 
 module.exports = {

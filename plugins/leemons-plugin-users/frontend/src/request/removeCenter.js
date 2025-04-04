@@ -1,7 +1,7 @@
 async function removeCenter(id) {
-  return leemons.api('v1/users/centers/remove', {
+  return leemons.api("v1/users/centers/remove", {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: { id },
   });
 }

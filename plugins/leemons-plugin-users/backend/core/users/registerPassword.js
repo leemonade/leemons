@@ -1,9 +1,11 @@
-const fetch = require('node-fetch');
-const { LeemonsError } = require('@leemons/error');
-const { encryptPassword } = require('./bcrypt/encryptPassword');
-const { getRegisterPasswordConfig } = require('./getRegisterPasswordConfig');
-const { sendActivationEmailsByProfileToUser } = require('./sendActivationEmailsByProfileToUser');
-const { profiles: getUserProfiles } = require('./profiles');
+const fetch = require("node-fetch");
+const { LeemonsError } = require("@leemons/error");
+const { encryptPassword } = require("./bcrypt/encryptPassword");
+const { getRegisterPasswordConfig } = require("./getRegisterPasswordConfig");
+const {
+  sendActivationEmailsByProfileToUser,
+} = require("./sendActivationEmailsByProfileToUser");
+const { profiles: getUserProfiles } = require("./profiles");
 
 async function registerPassword({ token, password, ctx }) {
   const config = await getRegisterPasswordConfig({ token, ctx });
@@ -17,18 +19,21 @@ async function registerPassword({ token, password, ctx }) {
   if (process.env.EXTERNAL_IDENTITY_URL) {
     try {
       // Is no error its done
-      const r = await fetch(`${process.env.EXTERNAL_IDENTITY_URL}/change-password`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: user.email,
-          password,
-          deploymentID: ctx.meta.deploymentID,
-          manualPassword: process.env.MANUAL_PASSWORD,
-        }),
-      });
+      const r = await fetch(
+        `${process.env.EXTERNAL_IDENTITY_URL}/change-password`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: user.email,
+            password,
+            deploymentID: ctx.meta.deploymentID,
+            manualPassword: process.env.MANUAL_PASSWORD,
+          }),
+        }
+      );
 
       const response = await r.json();
       if (!r.ok) {
@@ -43,7 +48,7 @@ async function registerPassword({ token, password, ctx }) {
   }
 
   const toUpdate = {
-    status: 'password-registered',
+    status: "password-registered",
     active: true,
   };
 
@@ -51,16 +56,22 @@ async function registerPassword({ token, password, ctx }) {
     toUpdate.password = await encryptPassword(password);
   }
 
-  user = await ctx.tx.db.Users.findOneAndUpdate({ id: config.user.id }, toUpdate, {
-    new: true,
-    lean: true,
-  });
+  user = await ctx.tx.db.Users.findOneAndUpdate(
+    { id: config.user.id },
+    toUpdate,
+    {
+      new: true,
+      lean: true,
+    }
+  );
 
   await ctx.tx.db.UserRegisterPassword.deleteOne({ id: config.recoveryId });
 
   if (setPassword) {
     const profiles = await getUserProfiles({ user: user.id, ctx });
-    profiles.map((profile) => sendActivationEmailsByProfileToUser({ user, profile, ctx }));
+    profiles.map((profile) =>
+      sendActivationEmailsByProfileToUser({ user, profile, ctx })
+    );
   }
 
   return user;

@@ -1,9 +1,9 @@
-import { Select } from '@bubbles-ui/components';
-import { useStore } from '@common';
-import { isArray, map, noop } from 'lodash';
-import PropTypes from 'prop-types';
-import React, { forwardRef, useEffect } from 'react';
-import { listProfilesRequest } from '../request';
+import { Select } from "@bubbles-ui/components";
+import { useStore } from "@common";
+import { isArray, map, noop } from "lodash";
+import PropTypes from "prop-types";
+import React, { forwardRef, useEffect } from "react";
+import { listProfilesRequest } from "../request";
 
 const SelectProfile = forwardRef(
   ({ firstSelected, showAll = true, onChange = noop, ...props }, ref) => {
@@ -43,11 +43,18 @@ const SelectProfile = forwardRef(
       init();
     }, []);
 
-    return <Select {...props} ref={ref} data={store.data} onChange={handleOnChange} />;
+    return (
+      <Select
+        {...props}
+        ref={ref}
+        data={store.data}
+        onChange={handleOnChange}
+      />
+    );
   }
 );
 
-SelectProfile.displayName = '@users/components/SelectProfile';
+SelectProfile.displayName = "@users/components/SelectProfile";
 SelectProfile.propTypes = {
   firstSelected: PropTypes.bool,
   onChange: PropTypes.func,

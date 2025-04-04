@@ -1,4 +1,4 @@
-const { getResetConfig } = require('./getResetConfig');
+const { getResetConfig } = require("./getResetConfig");
 
 /**
  * Return if canReset password with the provided token

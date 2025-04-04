@@ -1,5 +1,5 @@
-const { update } = require('./update');
-const { add } = require('./add');
+const { update } = require("./update");
+const { add } = require("./add");
 
 async function saveBySysName({ sysName, ctx, ...data }) {
   let profile = await ctx.tx.db.Profiles.findOne({

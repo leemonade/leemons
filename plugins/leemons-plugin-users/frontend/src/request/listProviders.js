@@ -1,5 +1,5 @@
 export async function listProviders() {
-  const { providers } = await leemons.api('v1/users/providers/list');
+  const { providers } = await leemons.api("v1/users/providers/list");
 
   return providers;
 }

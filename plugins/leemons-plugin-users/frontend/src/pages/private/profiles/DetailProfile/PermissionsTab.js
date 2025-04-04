@@ -1,12 +1,25 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
-import { Box, Select, Stack, Table, createStyles, useDebouncedValue } from '@bubbles-ui/components';
-import { CheckCircleIcon } from '@bubbles-ui/icons/outline';
-import { useAsync } from '@common/useAsync';
-import { getLocalizationsByArrayOfItems } from '@multilanguage/useTranslate';
-import { getTranslationKey as getTranslationKeyActions } from '@users/actions/getTranslationKey';
-import { getTranslationKey as getTranslationKeyPermissions } from '@users/permissions/getTranslationKey';
-import { listActionsRequest, listPermissionsRequest } from '@users/request';
+import {
+  Box,
+  Select,
+  Stack,
+  Table,
+  createStyles,
+  useDebouncedValue,
+} from "@bubbles-ui/components";
+import { CheckCircleIcon } from "@bubbles-ui/icons/outline";
+import { useAsync } from "@common/useAsync";
+import { getLocalizationsByArrayOfItems } from "@multilanguage/useTranslate";
+import { getTranslationKey as getTranslationKeyActions } from "@users/actions/getTranslationKey";
+import { getTranslationKey as getTranslationKeyPermissions } from "@users/permissions/getTranslationKey";
+import { listActionsRequest, listPermissionsRequest } from "@users/request";
 import {
   filter,
   find,
@@ -18,13 +31,13 @@ import {
   map,
   orderBy,
   uniqBy,
-} from 'lodash';
-import PropTypes from 'prop-types';
+} from "lodash";
+import PropTypes from "prop-types";
 
 const PermissionsTabStyles = createStyles((theme) => ({
   icon: {
     color: theme.colors.interactive01h,
-    margin: '0 auto',
+    margin: "0 auto",
   },
 }));
 
@@ -38,7 +51,7 @@ export const PermissionsTab = ({
 }) => {
   const dataTable = useRef([]);
   const initialArrayPermissions = useRef([]);
-  const [selectedPermission, setSelectedPermission] = useState('all');
+  const [selectedPermission, setSelectedPermission] = useState("all");
   const [selectPermissions, setSelectPermissions] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [actions, setActions] = useState(null);
@@ -70,7 +83,9 @@ export const PermissionsTab = ({
   const getPermissionsForTable = (editMode) =>
     permissions.map((permission) => {
       const response = {
-        name: permissionT[getTranslationKeyPermissions(permission.permissionName, 'name')],
+        name: permissionT[
+          getTranslationKeyPermissions(permission.permissionName, "name")
+        ],
         permissionName: permission.permissionName,
       };
       actions.map(({ actionName }) => {
@@ -83,12 +98,14 @@ export const PermissionsTab = ({
           }
           if (editMode) {
             response[actionName] = {
-              type: 'checkbox',
+              type: "checkbox",
               // eslint-disable-next-line no-nested-ternary
               checked: cPermission
                 ? cPermission[actionName].checked
                 : profile && profile.permissions[permission.permissionName]
-                  ? profile.permissions[permission.permissionName].indexOf(actionName) >= 0
+                  ? profile.permissions[permission.permissionName].indexOf(
+                      actionName
+                    ) >= 0
                   : false,
             };
           } else {
@@ -97,11 +114,13 @@ export const PermissionsTab = ({
               const checked = cPermission
                 ? cPermission[actionName].checked
                 : profile && profile.permissions[permission.permissionName]
-                  ? profile.permissions[permission.permissionName].indexOf(actionName) >= 0
+                  ? profile.permissions[permission.permissionName].indexOf(
+                      actionName
+                    ) >= 0
                   : false;
               if (checked)
                 return (
-                  <Box style={{ textAlign: 'center' }}>
+                  <Box style={{ textAlign: "center" }}>
                     <CheckCircleIcon className={classes.icon} />
                   </Box>
                 );
@@ -118,7 +137,9 @@ export const PermissionsTab = ({
     setTableData(e);
 
     forEach(e, (d) => {
-      const index = findIndex(dataTable.current, { permissionName: d.permissionName });
+      const index = findIndex(dataTable.current, {
+        permissionName: d.permissionName,
+      });
       if (index >= 0) {
         dataTable.current[index] = d;
       }
@@ -126,7 +147,7 @@ export const PermissionsTab = ({
   }
 
   async function updateSelectPermissions() {
-    const perms = uniqBy(initialArrayPermissions.current, 'pluginName');
+    const perms = uniqBy(initialArrayPermissions.current, "pluginName");
     setSelectPermissions(
       map(perms, ({ pluginName }) => ({
         pluginName,
@@ -139,8 +160,12 @@ export const PermissionsTab = ({
   // EFFECTS
 
   useEffect(() => {
-    if (selectedPermission !== 'all') {
-      setPermissions(filter(initialArrayPermissions.current, { pluginName: selectedPermission }));
+    if (selectedPermission !== "all") {
+      setPermissions(
+        filter(initialArrayPermissions.current, {
+          pluginName: selectedPermission,
+        })
+      );
     } else {
       setPermissions(initialArrayPermissions.current);
     }
@@ -167,13 +192,14 @@ export const PermissionsTab = ({
     const permissionsResponse = await listPermissionsRequest();
     const permissionsTranslate = await getLocalizationsByArrayOfItems(
       permissionsResponse.permissions,
-      (permission) => getTranslationKeyPermissions(permission.permissionName, 'name')
+      (permission) =>
+        getTranslationKeyPermissions(permission.permissionName, "name")
     );
 
     const actionsResponse = await listActionsRequest();
     const actionsTranslate = await getLocalizationsByArrayOfItems(
       actionsResponse.actions,
-      (action) => getTranslationKeyActions(action.actionName, 'name')
+      (action) => getTranslationKeyActions(action.actionName, "name")
     );
 
     return {
@@ -182,15 +208,20 @@ export const PermissionsTab = ({
     };
   }, []);
 
-  const onDataLoadSuccess = useCallback(({ permissions: _permissions, actions: _actions }) => {
-    initialArrayPermissions.current = orderBy(_permissions.permissions, ['permissionName']);
-    setPermissionT(_permissions.translate.items);
-    setPermissions(initialArrayPermissions.current);
-    updateSelectPermissions();
+  const onDataLoadSuccess = useCallback(
+    ({ permissions: _permissions, actions: _actions }) => {
+      initialArrayPermissions.current = orderBy(_permissions.permissions, [
+        "permissionName",
+      ]);
+      setPermissionT(_permissions.translate.items);
+      setPermissions(initialArrayPermissions.current);
+      updateSelectPermissions();
 
-    setActionT(_actions.translate.items);
-    setActions(_actions.actions);
-  }, []);
+      setActionT(_actions.translate.items);
+      setActions(_actions.actions);
+    },
+    []
+  );
   const onDataLoadError = useCallback(() => {}, []);
 
   useAsync(initDataLoad, onDataLoadSuccess, onDataLoadError);
@@ -201,19 +232,22 @@ export const PermissionsTab = ({
   const tableHeaders = useMemo(() => {
     const result = [
       {
-        Header: t('leemon'),
-        accessor: 'name',
+        Header: t("leemon"),
+        accessor: "name",
         // className: 'text-left',
       },
     ];
     if (actions && actionT) {
       forIn(actions, (action) => {
-        const key = getTranslationKeyActions(action.actionName, 'name');
+        const key = getTranslationKeyActions(action.actionName, "name");
         result.push({
-          Header: actionT[key] || '',
+          Header: actionT[key] || "",
           accessor: action.actionName,
           // className: 'text-center',
-          style: { textAlign: 'center', width: `${Math.round(60 / actions.length)}%` },
+          style: {
+            textAlign: "center",
+            width: `${Math.round(60 / actions.length)}%`,
+          },
         });
       });
     }
@@ -222,7 +256,7 @@ export const PermissionsTab = ({
 
   const permissionOptions = useMemo(
     () => [
-      { label: t('permissions_all'), value: 'all' },
+      { label: t("permissions_all"), value: "all" },
       ...selectPermissions.map(({ pluginName, name }) => ({
         label: name,
         value: pluginName,
@@ -233,10 +267,10 @@ export const PermissionsTab = ({
 
   return (
     <Stack direction="column" fullWidth>
-      <Box style={{ width: embedded ? '100%' : '70%', padding: 12 }}>
+      <Box style={{ width: embedded ? "100%" : "70%", padding: 12 }}>
         <Select
-          label={t('permissions')}
-          description={t('select_permissions')}
+          label={t("permissions")}
+          description={t("select_permissions")}
           orientation="horizontal"
           data={permissionOptions}
           value={selectedPermission}
@@ -252,7 +286,9 @@ export const PermissionsTab = ({
           <Table
             columns={tableHeaders}
             data={tableData}
-            onChangeData={(val) => (isEditMode ? updateTableData(val.newData) : null)}
+            onChangeData={(val) =>
+              isEditMode ? updateTableData(val.newData) : null
+            }
           />
         ) : null}
       </Box>

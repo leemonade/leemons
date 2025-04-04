@@ -1,24 +1,24 @@
-import { useVariantForQueryKey } from '@common/queries';
-import { useQuery } from '@tanstack/react-query';
+import { useVariantForQueryKey } from "@common/queries";
+import { useQuery } from "@tanstack/react-query";
 
 function useActiveUserAgentsCount(sysName, options = {}) {
   const queryKey = [
     {
-      plugin: 'plugin.users',
-      scope: 'activeUserAgentsCount',
-      action: 'get',
+      plugin: "plugin.users",
+      scope: "activeUserAgentsCount",
+      action: "get",
       sysName,
     },
   ];
 
   const queryFn = () =>
     leemons.api(`v1/users/users/user-agents/active-count/${sysName}`, {
-      method: 'GET',
+      method: "GET",
       allAgents: true,
     });
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'frequently',
+    modificationTrend: "frequently",
   });
 
   return useQuery({

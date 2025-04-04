@@ -1,5 +1,5 @@
-const { mongoDBPaginate } = require('@leemons/mongodb-helpers');
-const _ = require('lodash');
+const { mongoDBPaginate } = require("@leemons/mongodb-helpers");
+const _ = require("lodash");
 
 async function queryCenterRoles({ centers, ctx }) {
   const query = {};
@@ -8,21 +8,25 @@ async function queryCenterRoles({ centers, ctx }) {
     query.center = _.isArray(centers) ? centers : [centers];
   }
 
-  const centerRoles = await ctx.tx.db.RoleCenter.find(query).select(['id', 'role']).lean();
-  let roles = _.map(centerRoles, 'role');
+  const centerRoles = await ctx.tx.db.RoleCenter.find(query)
+    .select(["id", "role"])
+    .lean();
+  let roles = _.map(centerRoles, "role");
 
   // Remove the admin profile from the list if the deployment is not advanced or enterprise
-  const deployment = await ctx.tx.call('deployment-manager.getDeployment');
-  if (!['basic', 'advanced', 'enterprise'].includes(deployment.type)) {
-    const adminProfiles = await ctx.tx.db.Profiles.find({ sysName: ['admin', 'super'] })
-      .select(['id'])
+  const deployment = await ctx.tx.call("deployment-manager.getDeployment");
+  if (!["basic", "advanced", "enterprise"].includes(deployment.type)) {
+    const adminProfiles = await ctx.tx.db.Profiles.find({
+      sysName: ["admin", "super"],
+    })
+      .select(["id"])
       .lean();
     const adminProfilesRoles = await ctx.tx.db.ProfileRole.find({
-      profile: _.map(adminProfiles, 'id'),
+      profile: _.map(adminProfiles, "id"),
     })
-      .select(['id', 'role'])
+      .select(["id", "role"])
       .lean();
-    const adminRoles = _.map(adminProfilesRoles, 'role');
+    const adminRoles = _.map(adminProfilesRoles, "role");
     roles = _.filter(roles, (role) => !adminRoles.includes(role));
   }
 
@@ -36,7 +40,7 @@ async function queryProfileRoles({ profiles, excludeProfiles, ctx }) {
   return ctx.tx.db.ProfileRole.find({
     profile: queryProfiles,
   })
-    .select(['id', 'role'])
+    .select(["id", "role"])
     .lean();
 }
 
@@ -53,13 +57,13 @@ async function queryUserAgents({ roles, disabled, ctx }) {
     }
   }
   const userAgents = await ctx.tx.db.UserAgent.find(q)
-    .select(['id', 'user', 'role', 'disabled'])
+    .select(["id", "user", "role", "disabled"])
     .lean();
 
   const profilesByUserAgents = await ctx.tx.db.ProfileRole.find({
-    role: _.map(userAgents, 'role'),
+    role: _.map(userAgents, "role"),
   })
-    .select(['id', 'profile', 'role'])
+    .select(["id", "profile", "role"])
     .lean();
 
   return _.map(userAgents, (userAgent) => ({
@@ -85,24 +89,34 @@ async function list({
   const query = Object.fromEntries(
     Object.entries(queries)
       .filter(([prop]) =>
-        ['id', 'ids', 'name', 'surnames', 'secondSurname', 'email', 'phone', 'search'].includes(
-          prop
-        )
+        [
+          "id",
+          "ids",
+          "name",
+          "surnames",
+          "secondSurname",
+          "email",
+          "phone",
+          "search",
+        ].includes(prop)
       )
       .map(([prop, value]) => {
-        if (prop === 'ids') {
+        if (prop === "ids") {
           // If value is array and not empty, use $in operator
           if (Array.isArray(value) && value.length) {
-            return ['id', { $in: value }];
+            return ["id", { $in: value }];
           }
           // If single value, use direct match
-          return ['id', value];
+          return ["id", value];
         }
 
-        if (prop === 'search') {
-          const searchValue = { $regex: _.escapeRegExp(value.toLowerCase()), $options: 'i' };
+        if (prop === "search") {
+          const searchValue = {
+            $regex: _.escapeRegExp(value.toLowerCase()),
+            $options: "i",
+          };
           return [
-            '$or',
+            "$or",
             [
               { name: searchValue },
               { surnames: searchValue },
@@ -112,7 +126,7 @@ async function list({
             ],
           ];
         }
-        return [prop, { $regex: value, $options: 'i' }];
+        return [prop, { $regex: value, $options: "i" }];
       })
   );
 
@@ -123,18 +137,22 @@ async function list({
   }
 
   if (profiles) {
-    const profileRoles = await queryProfileRoles({ profiles, excludeProfiles: [], ctx });
+    const profileRoles = await queryProfileRoles({
+      profiles,
+      excludeProfiles: [],
+      ctx,
+    });
     if (_.isArray(roles)) {
-      roles = _.intersection(roles, _.map(profileRoles, 'role'));
+      roles = _.intersection(roles, _.map(profileRoles, "role"));
     } else {
-      roles = _.map(profileRoles, 'role');
+      roles = _.map(profileRoles, "role");
     }
   }
 
   let userAgents = null;
   if (_.isArray(roles) || _.isBoolean(disabled) || listUserAgents) {
     userAgents = await queryUserAgents({ roles, disabled, ctx });
-    !queries.ids && (query.id = _.map(userAgents, 'user'));
+    !queries.ids && (query.id = _.map(userAgents, "user"));
   }
 
   const result = await mongoDBPaginate({
@@ -149,43 +167,46 @@ async function list({
   result.userAgents = userAgents;
 
   if (userAgents) {
-    const userAgentsByUser = _.keyBy(userAgents, 'user');
-    const userAgentIds = _.map(result.items, (user) => userAgentsByUser[user.id].id);
+    const userAgentsByUser = _.keyBy(userAgents, "user");
+    const userAgentIds = _.map(
+      result.items,
+      (user) => userAgentsByUser[user.id].id
+    );
     let connections = [];
 
     const [tags, hasAdminPermission] = await Promise.all([
-      ctx.tx.call('common.tags.getValuesTags', {
-        type: 'users.user-agent',
+      ctx.tx.call("common.tags.getValuesTags", {
+        type: "users.user-agent",
         values: userAgentIds,
       }),
       // Check if the user has the "admin" permission and if so, add the "last connection" field
-      ctx.tx.call('users.auth.hasPermissionCTX', {
+      ctx.tx.call("users.auth.hasPermissionCTX", {
         allowedPermissions: {
-          'users.users': {
-            actions: ['admin'],
+          "users.users": {
+            actions: ["admin"],
           },
         },
       }),
     ]);
 
     if (hasAdminPermission) {
-      connections = await ctx.tx.call('xapi.xapi.aggregate', {
+      connections = await ctx.tx.call("xapi.xapi.aggregate", {
         pipeline: [
           {
             $match: {
-              type: 'log',
-              'statement.actor.account.name': { $in: userAgentIds },
-              'statement.object.id': { $regex: /^.*\/api\/view\/program$/ },
+              type: "log",
+              "statement.actor.account.name": { $in: userAgentIds },
+              "statement.object.id": { $regex: /^.*\/api\/view\/program$/ },
             },
           },
           { $sort: { createdAt: -1 } },
           {
             $group: {
-              _id: '$statement.actor.account.name',
-              latestLog: { $first: '$$ROOT' },
+              _id: "$statement.actor.account.name",
+              latestLog: { $first: "$$ROOT" },
             },
           },
-          { $replaceRoot: { newRoot: '$latestLog' } },
+          { $replaceRoot: { newRoot: "$latestLog" } },
         ],
       });
     }
@@ -212,9 +233,9 @@ async function list({
     // Get dataset values
     const userDatasetsValues = await Promise.allSettled(
       userIds.map((userId) =>
-        ctx.call('dataset.dataset.getValues', {
-          locationName: 'user-data',
-          pluginName: 'users',
+        ctx.call("dataset.dataset.getValues", {
+          locationName: "user-data",
+          pluginName: "users",
           target: userId,
           userAgent,
         })
@@ -224,7 +245,7 @@ async function list({
     result.items = result.items.map((user) => {
       const index = userIds.indexOf(user.id);
       let dataset = null;
-      if (userDatasetsValues[index].status === 'fulfilled') {
+      if (userDatasetsValues[index].status === "fulfilled") {
         dataset = userDatasetsValues[index].value;
       }
 

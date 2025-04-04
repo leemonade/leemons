@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const constants = require('../../../config/constants');
+const _ = require("lodash");
+const constants = require("../../../config/constants");
 
 /**
  * Check if user the permission

@@ -1,15 +1,15 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function getData({ userAgent, locationName, ctx }) {
   const [{ compileJsonSchema, compileJsonUI }, value] = await Promise.all([
-    ctx.tx.call('dataset.dataset.getSchemaWithLocale', {
+    ctx.tx.call("dataset.dataset.getSchemaWithLocale", {
       locationName,
-      pluginName: 'users',
+      pluginName: "users",
       locale: ctx.meta.userSession.locale,
     }),
-    ctx.tx.call('dataset.dataset.getValues', {
+    ctx.tx.call("dataset.dataset.getValues", {
       locationName,
-      pluginName: 'users',
+      pluginName: "users",
       userAgent: [userAgent],
       target: userAgent.id,
     }),
@@ -19,11 +19,13 @@ async function getData({ userAgent, locationName, ctx }) {
 }
 
 async function getUserDatasetInfo({ userAgent, ctx }) {
-  const locationNames = ['user-data'];
+  const locationNames = ["user-data"];
 
   // Get the Profile based on the userAgent Role
-  const profileRoles = await ctx.tx.db.ProfileRole.find({ role: userAgent.role })
-    .select(['id', 'profile'])
+  const profileRoles = await ctx.tx.db.ProfileRole.find({
+    role: userAgent.role,
+  })
+    .select(["id", "profile"])
     .lean();
 
   profileRoles.forEach((profileRole) => {
@@ -44,7 +46,9 @@ async function getUserDatasetInfo({ userAgent, ctx }) {
       };
     })
   ).then((results) =>
-    results.filter((result) => result.status === 'fulfilled').map((result) => result.value)
+    results
+      .filter((result) => result.status === "fulfilled")
+      .map((result) => result.value)
   );
 }
 

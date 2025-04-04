@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { getUserAgentCalendarKey } = require('@leemons/users');
+const _ = require("lodash");
+const { getUserAgentCalendarKey } = require("@leemons/users");
 
 /**
  * Adds a calendar to the specified user agent.
@@ -14,22 +14,22 @@ async function addCalendarToUserAgent({ userAgent, ctx }) {
   const calendarKey = getUserAgentCalendarKey({ userAgent });
   // ES: Añadimos calendario del agente
   // EN: Add user agent calendar
-  const calendar = await ctx.tx.call('calendar.calendar.add', {
+  const calendar = await ctx.tx.call("calendar.calendar.add", {
     key: calendarKey,
     config: {
       name: userAgent,
-      bgColor: '#3C72C2',
-      borderColor: '#4F96FF',
-      section: ctx.prefixPN('calendar.user_section'),
+      bgColor: "#3C72C2",
+      borderColor: "#4F96FF",
+      section: ctx.prefixPN("calendar.user_section"),
     },
   });
 
   // ES: Añadimos acceso de owner al user agent a su propio calendario
   // EN: Add owner access to the user agent to its own calendar
-  await ctx.tx.call('calendar.calendar.grantAccessUserAgentToCalendar', {
+  await ctx.tx.call("calendar.calendar.grantAccessUserAgentToCalendar", {
     key: calendarKey,
     userAgentId: userAgent,
-    actionName: 'owner',
+    actionName: "owner",
   });
 
   return {
@@ -53,7 +53,7 @@ async function addCalendarToUserAgentsIfNeedByUser({ user, ctx }) {
 
   const exists = await Promise.all(
     _.map(userAgents, ({ id }) =>
-      ctx.tx.call('calendar.calendar.existByKey', {
+      ctx.tx.call("calendar.calendar.existByKey", {
         key: getUserAgentCalendarKey({ userAgent: id }),
       })
     )

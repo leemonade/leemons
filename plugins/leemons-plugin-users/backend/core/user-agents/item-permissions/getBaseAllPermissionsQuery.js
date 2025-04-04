@@ -1,12 +1,19 @@
-const _ = require('lodash');
-const { getUserAgentPermissions } = require('../permissions/getUserAgentPermissions');
+const _ = require("lodash");
+const {
+  getUserAgentPermissions,
+} = require("../permissions/getUserAgentPermissions");
 
 async function getBaseAllPermissionsQuery({ userAgentId: _userAgentId, ctx }) {
   const _userAgentIds = _.isArray(_userAgentId) ? _userAgentId : [_userAgentId];
-  const userAgentIds = _.map(_userAgentIds, (uai) => (_.isString(uai) ? uai : uai.id));
+  const userAgentIds = _.map(_userAgentIds, (uai) =>
+    _.isString(uai) ? uai : uai.id
+  );
   const userAgents = await ctx.tx.db.UserAgent.find({ id: userAgentIds });
 
-  const permissions = await getUserAgentPermissions({ userAgent: userAgents, ctx });
+  const permissions = await getUserAgentPermissions({
+    userAgent: userAgents,
+    ctx,
+  });
 
   const query = {
     $or: [],

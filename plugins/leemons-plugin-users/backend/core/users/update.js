@@ -1,9 +1,17 @@
-const _ = require('lodash');
-const { setUserDatasetInfo } = require('../user-agents/setUserDatasetInfo');
-const { setPreferences } = require('../user-preferences/setPreferences');
-const { addUserAvatar } = require('./addUserAvatar');
+const _ = require("lodash");
+const { setUserDatasetInfo } = require("../user-agents/setUserDatasetInfo");
+const { setPreferences } = require("../user-preferences/setPreferences");
+const { addUserAvatar } = require("./addUserAvatar");
 
-async function update({ userId, dataset, birthdate, preferences, avatar, ctx, ...data }) {
+async function update({
+  userId,
+  dataset,
+  birthdate,
+  preferences,
+  avatar,
+  ctx,
+  ...data
+}) {
   const oldUser = await ctx.tx.db.Users.findOne({ id: userId }).lean();
   const user = await ctx.tx.db.Users.findOneAndUpdate(
     { id: userId },
@@ -17,7 +25,7 @@ async function update({ userId, dataset, birthdate, preferences, avatar, ctx, ..
   if (dataset) await setUserDatasetInfo({ userId, value: dataset, ctx });
 
   if (oldUser.locale !== user.locale) {
-    ctx.socket.emit(userId, 'USER_CHANGE_LOCALE', {
+    ctx.socket.emit(userId, "USER_CHANGE_LOCALE", {
       old: oldUser.locale,
       new: user.locale,
     });
@@ -25,9 +33,13 @@ async function update({ userId, dataset, birthdate, preferences, avatar, ctx, ..
 
   if (!_.isUndefined(avatar)) {
     const userAgents = await ctx.tx.db.UserAgent.find({ user: user.id }).lean();
-    const { avatar: url } = await addUserAvatar({ user: { ...user, userAgents }, avatar, ctx });
+    const { avatar: url } = await addUserAvatar({
+      user: { ...user, userAgents },
+      avatar,
+      ctx,
+    });
     // TODO migration: socket, por definir ctx.socket...
-    ctx.socket.emitToAll('USER_CHANGE_AVATAR', { url });
+    ctx.socket.emitToAll("USER_CHANGE_AVATAR", { url });
   }
 
   if (preferences) {

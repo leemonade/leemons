@@ -1,11 +1,11 @@
 const SYS_PROFILE_NAMES = {
-  TEACHER: 'teacher',
-  STUDENT: 'student',
-  PARENT: 'parent',
-  ADMIN: 'admin',
-  CONTENT_DEVELOPER: 'content-developer',
+  TEACHER: "teacher",
+  STUDENT: "student",
+  PARENT: "parent",
+  ADMIN: "admin",
+  CONTENT_DEVELOPER: "content-developer",
 };
-const PLUGIN_NAME = 'users';
+const PLUGIN_NAME = "users";
 const PLUGIN_VERSION = 1;
 const PUBLIC_ROUTE = `public/${PLUGIN_NAME}`;
 const PRIVATE_ROUTE = `private/${PLUGIN_NAME}`;
@@ -19,74 +19,98 @@ module.exports = {
   // All users always have this permission
   basicPermission: {
     permissionName: `${PLUGIN_NAME}.any`,
-    actionName: 'view',
+    actionName: "view",
   },
   defaultPermissions: [
     {
       permissionName: `${PLUGIN_NAME}.centers`,
-      actions: ['view', 'update', 'create', 'delete', 'admin'],
-      localizationName: { es: 'Centros', en: 'Centers' },
+      actions: ["view", "update", "create", "delete", "admin"],
+      localizationName: { es: "Centros", en: "Centers" },
     },
     {
       permissionName: `${PLUGIN_NAME}.user-data`,
-      actions: ['view', 'update', 'delete', 'admin'],
-      localizationName: { es: 'Datos del usuario', en: 'User data' },
+      actions: ["view", "update", "delete", "admin"],
+      localizationName: { es: "Datos del usuario", en: "User data" },
     },
     {
       permissionName: USERS_PERMISSION_NAME,
-      actions: ['view', 'update', 'create', 'delete', 'admin'],
-      localizationName: { es: 'Usuarios', en: 'Users' },
+      actions: ["view", "update", "create", "delete", "admin"],
+      localizationName: { es: "Usuarios", en: "Users" },
     },
     {
       permissionName: `${PLUGIN_NAME}.profiles`,
-      actions: ['view', 'update', 'create', 'delete', 'admin'],
-      localizationName: { es: 'Perfiles', en: 'Profiles' },
+      actions: ["view", "update", "create", "delete", "admin"],
+      localizationName: { es: "Perfiles", en: "Profiles" },
     },
     {
       permissionName: `${PLUGIN_NAME}.import`,
-      actions: ['view', 'update', 'admin'],
-      localizationName: { es: 'Importar', en: 'Import' },
+      actions: ["view", "update", "admin"],
+      localizationName: { es: "Importar", en: "Import" },
     },
     {
       permissionName: `${PLUGIN_NAME}.roles`,
-      actions: ['view', 'update', 'create', 'delete', 'admin'],
-      localizationName: { es: 'Roles', en: 'Roles' },
+      actions: ["view", "update", "create", "delete", "admin"],
+      localizationName: { es: "Roles", en: "Roles" },
     },
     {
       permissionName: `${PLUGIN_NAME}.enabledisable`,
-      actions: ['create', 'delete', 'admin'],
-      localizationName: { es: 'Activar/Desactivar', en: 'Enable/Disable' },
+      actions: ["create", "delete", "admin"],
+      localizationName: { es: "Activar/Desactivar", en: "Enable/Disable" },
     },
     {
       permissionName: `${PLUGIN_NAME}.impersonate`,
-      actions: ['admin'],
-      localizationName: { es: 'Impersonación', en: 'Impersonation' },
+      actions: ["admin"],
+      localizationName: { es: "Impersonación", en: "Impersonation" },
     },
   ],
   defaultActions: [
-    { order: 1, actionName: 'view', localizationName: { es: 'Ver', en: 'View' } },
-    { order: 11, actionName: 'update', localizationName: { es: 'Actualizar', en: 'Update' } },
-    { order: 21, actionName: 'create', localizationName: { es: 'Crear', en: 'Create' } },
-    { order: 31, actionName: 'delete', localizationName: { es: 'Borrar', en: 'Delete' } },
-    { order: 41, actionName: 'assign', localizationName: { es: 'Asignar', en: 'Assign' } },
-    { order: 51, actionName: 'admin', localizationName: { es: 'Administrador', en: 'Admin' } },
+    {
+      order: 1,
+      actionName: "view",
+      localizationName: { es: "Ver", en: "View" },
+    },
+    {
+      order: 11,
+      actionName: "update",
+      localizationName: { es: "Actualizar", en: "Update" },
+    },
+    {
+      order: 21,
+      actionName: "create",
+      localizationName: { es: "Crear", en: "Create" },
+    },
+    {
+      order: 31,
+      actionName: "delete",
+      localizationName: { es: "Borrar", en: "Delete" },
+    },
+    {
+      order: 41,
+      actionName: "assign",
+      localizationName: { es: "Asignar", en: "Assign" },
+    },
+    {
+      order: 51,
+      actionName: "admin",
+      localizationName: { es: "Administrador", en: "Admin" },
+    },
   ],
   defaultDatasetLocations: [
     {
       name: {
-        es: 'Datos del usuarios',
-        en: 'User data',
+        es: "Datos del usuarios",
+        en: "User data",
       },
       description: {
-        es: 'Añade datos adicionales comunes a todos los usuarios',
-        en: 'Adds additional data common to all users',
+        es: "Añade datos adicionales comunes a todos los usuarios",
+        en: "Adds additional data common to all users",
       },
-      locationName: 'user-data',
+      locationName: "user-data",
       pluginName: PLUGIN_NAME,
     },
   ],
   url: {
-    base: 'users',
+    base: "users",
     frontend: {
       login: `${PUBLIC_ROUTE}/login`,
       reset: `${PUBLIC_ROUTE}/reset`,
@@ -106,91 +130,91 @@ module.exports = {
   menuItems: [
     {
       item: {
-        key: 'users',
+        key: "users",
         order: 100,
         iconSvg: `/${PUBLIC_ROUTE}/menu-icon.svg`,
         activeIconSvg: `/${PUBLIC_ROUTE}/menu-icon.svg`,
         label: {
-          en: 'Users',
-          es: 'Usuarios',
+          en: "Users",
+          es: "Usuarios",
         },
       },
       permissions: [
         {
           permissionName: USERS_PERMISSION_NAME,
-          actionNames: ['admin'],
+          actionNames: ["admin"],
         },
       ],
     },
     {
       item: {
-        key: 'roles-list',
+        key: "roles-list",
         order: 1,
         parentKey: USERS_PERMISSION_NAME,
         url: `/${PRIVATE_ROUTE}/roles/list`,
         label: {
-          en: 'Roles',
-          es: 'Roles',
+          en: "Roles",
+          es: "Roles",
         },
       },
       permissions: [
         {
           permissionName: `${PLUGIN_NAME}.roles`,
-          actionNames: ['view', 'admin'],
+          actionNames: ["view", "admin"],
         },
       ],
     },
     {
       item: {
-        key: 'profile-list',
+        key: "profile-list",
         order: 1,
         parentKey: USERS_PERMISSION_NAME,
         url: `/${PRIVATE_ROUTE}/profiles/list`,
         label: {
-          en: 'Profiles',
-          es: 'Perfiles',
+          en: "Profiles",
+          es: "Perfiles",
         },
       },
       permissions: [
         {
           permissionName: `${PLUGIN_NAME}.profiles`,
-          actionNames: ['view', 'admin'],
+          actionNames: ["view", "admin"],
         },
       ],
     },
     {
       item: {
-        key: 'user-data',
+        key: "user-data",
         parentKey: USERS_PERMISSION_NAME,
         order: 2,
         url: `/${PRIVATE_ROUTE}/user-data`,
         label: {
-          en: 'User data',
-          es: 'Datos del usuario',
+          en: "User data",
+          es: "Datos del usuario",
         },
       },
       permissions: [
         {
           permissionName: `${PLUGIN_NAME}.user-data`,
-          actionNames: ['view', 'admin'],
+          actionNames: ["view", "admin"],
         },
       ],
     },
     {
       item: {
-        key: 'users-list',
+        key: "users-list",
         order: 3,
         parentKey: USERS_PERMISSION_NAME,
         url: `/${PRIVATE_ROUTE}/list`,
         label: {
-          en: 'Users list',
-          es: 'Listado de usuarios',
+          en: "Users list",
+          es: "Listado de usuarios",
         },
       },
       permissions: [
         {
           permissionName: USERS_PERMISSION_NAME,
-          actionNames: ['admin'],
+          actionNames: ["admin"],
         },
       ],
     },

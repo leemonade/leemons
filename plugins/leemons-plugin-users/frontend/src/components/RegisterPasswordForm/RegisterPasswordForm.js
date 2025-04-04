@@ -1,25 +1,31 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
-import { Alert, Box, Button, ContextContainer, PasswordInput } from '@bubbles-ui/components';
-import { Controller, useForm } from 'react-hook-form';
-import { PASSWORD_POLICIES, PasswordChecklist } from '../PasswordChecklist';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import { isEmpty } from "lodash";
+import {
+  Alert,
+  Box,
+  Button,
+  ContextContainer,
+  PasswordInput,
+} from "@bubbles-ui/components";
+import { Controller, useForm } from "react-hook-form";
+import { PASSWORD_POLICIES, PasswordChecklist } from "../PasswordChecklist";
 
 export const REGISTER_PASSWORD_FORM_DEFAULT_PROPS = {
   labels: {
-    title: '',
-    username: '',
-    password: '',
-    remember: '',
-    login: '',
-    signup: '',
+    title: "",
+    username: "",
+    password: "",
+    remember: "",
+    login: "",
+    signup: "",
   },
   placeholders: {
-    username: '',
-    password: '',
+    username: "",
+    password: "",
   },
   loading: false,
-  formError: '',
+  formError: "",
 };
 
 const RegisterPasswordForm = ({
@@ -41,8 +47,8 @@ const RegisterPasswordForm = ({
     formState: { errors, isSubmitted },
   } = useForm();
 
-  const password = watch('password');
-  const repeatPassword = watch('repeatPassword');
+  const password = watch("password");
+  const repeatPassword = watch("repeatPassword");
 
   return (
     <form
@@ -88,11 +94,16 @@ const RegisterPasswordForm = ({
                 }
               />
               {(!isEmpty(field.value) || !!errors.password) && (
-                <Box style={{ marginTop: 10, display: passwordIsValid ? 'none' : 'block' }}>
+                <Box
+                  style={{
+                    marginTop: 10,
+                    display: passwordIsValid ? "none" : "block",
+                  }}
+                >
                   <PasswordChecklist
                     labels={labels.checkList}
                     value={field.value}
-                    valueAgain={watch('confirmPassword')}
+                    valueAgain={watch("confirmPassword")}
                     onChange={setPasswordIsValid}
                   />
                 </Box>

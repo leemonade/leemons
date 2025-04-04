@@ -1,18 +1,18 @@
-import { useVariantForQueryKey } from '@common/queries';
-import { useQuery } from '@tanstack/react-query';
-import { listProfilesRequest } from '@users/request';
+import { useVariantForQueryKey } from "@common/queries";
+import { useQuery } from "@tanstack/react-query";
+import { listProfilesRequest } from "@users/request";
 
 export default function useProfiles({ forceAll, ...options } = {}) {
   const queryKey = [
     {
-      plugin: 'plugin.users',
-      scope: 'profiles',
+      plugin: "plugin.users",
+      scope: "profiles",
       forceAll,
     },
   ];
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'occasionally',
+    modificationTrend: "occasionally",
   });
 
   return useQuery({

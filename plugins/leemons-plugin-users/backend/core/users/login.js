@@ -7,25 +7,28 @@
  * @return {Promise<User>} Created / Updated role
  * */
 
-const { LeemonsError } = require('@leemons/error');
-const fetch = require('node-fetch');
-const { generateJWTToken } = require('./jwt/generateJWTToken');
-const { comparePassword } = require('./bcrypt/comparePassword');
+const { LeemonsError } = require("@leemons/error");
+const fetch = require("node-fetch");
+const { generateJWTToken } = require("./jwt/generateJWTToken");
+const { comparePassword } = require("./bcrypt/comparePassword");
 
-const { isSuperAdmin } = require('./isSuperAdmin');
+const { isSuperAdmin } = require("./isSuperAdmin");
 
 async function login({ email, password, ctx }) {
   const userP = await ctx.tx.db.Users.findOne({ email, active: true })
-    .select(['id', 'password'])
+    .select(["id", "password"])
     .lean();
   if (!userP)
-    throw new LeemonsError(ctx, { message: 'Credentials do not match', httpStatusCode: 401 });
+    throw new LeemonsError(ctx, {
+      message: "Credentials do not match",
+      httpStatusCode: 401,
+    });
 
   const userAgents = await ctx.tx.db.UserAgent.find({
     user: userP.id,
     $or: [{ disabled: null }, { disabled: false }],
   })
-    .select(['id'])
+    .select(["id"])
     .lean();
 
   if (!userP.password) {
@@ -33,9 +36,9 @@ async function login({ email, password, ctx }) {
       try {
         // Is no error its done
         const r = await fetch(`${process.env.EXTERNAL_IDENTITY_URL}/login`, {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             email,
@@ -52,28 +55,31 @@ async function login({ email, password, ctx }) {
           });
         }
       } catch (e) {
-        if (e.message === 'invalid-credentials') {
+        if (e.message === "invalid-credentials") {
           throw new LeemonsError(ctx, {
-            message: 'Credentials do not match',
+            message: "Credentials do not match",
             httpStatusCode: 401,
           });
         }
 
         throw new LeemonsError(ctx, {
-          message: 'Cannot connect to external identity',
+          message: "Cannot connect to external identity",
           httpStatusCode: 500,
         });
       }
     } else {
       throw new LeemonsError(ctx, {
-        message: 'Credentials do not match',
+        message: "Credentials do not match",
         httpStatusCode: 401,
       });
     }
   } else {
     const areEquals = await comparePassword(password, userP.password);
     if (!areEquals)
-      throw new LeemonsError(ctx, { message: 'Credentials do not match', httpStatusCode: 401 });
+      throw new LeemonsError(ctx, {
+        message: "Credentials do not match",
+        httpStatusCode: 401,
+      });
   }
 
   const [user, token] = await Promise.all([
@@ -84,7 +90,10 @@ async function login({ email, password, ctx }) {
   if (user && user.id) {
     user.isSuperAdmin = await isSuperAdmin({ userId: user.id, ctx });
     if (!userAgents.length && user.isSuperAdmin) {
-      throw new LeemonsError(ctx, { message: 'No user agents to connect', httpStatusCode: 401 });
+      throw new LeemonsError(ctx, {
+        message: "No user agents to connect",
+        httpStatusCode: 401,
+      });
     }
   }
 

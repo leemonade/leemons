@@ -1,6 +1,6 @@
 async function login(body) {
-  return leemons.api('v1/users/users/login', {
-    method: 'POST',
+  return leemons.api("v1/users/users/login", {
+    method: "POST",
     body,
   });
 }

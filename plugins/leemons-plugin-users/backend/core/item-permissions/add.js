@@ -1,11 +1,15 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { validateTypePrefix } = require('../../validations/exists');
-const { manyPermissionsHasManyActions } = require('../permissions/manyPermissionsHasManyActions');
-const { validateExistItemPermissions } = require('../../validations/exists');
-const { validateItemPermission } = require('../../validations/item-permissions');
-const { existMany } = require('../permissions/existMany');
-const { removeAllItemsCache } = require('./removeAllItemsCache');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { validateTypePrefix } = require("../../validations/exists");
+const {
+  manyPermissionsHasManyActions,
+} = require("../permissions/manyPermissionsHasManyActions");
+const { validateExistItemPermissions } = require("../../validations/exists");
+const {
+  validateItemPermission,
+} = require("../../validations/item-permissions");
+const { existMany } = require("../permissions/existMany");
+const { removeAllItemsCache } = require("./removeAllItemsCache");
 
 /**
  * ES:
@@ -46,19 +50,27 @@ async function add({ item, type, data, isCustomPermission, ctx }) {
   validateTypePrefix(type, ctx.callerPlugin);
 
   if (!isCustomPermission) {
-    if (!(await existMany({ permissionNames: _.map(_data, 'permissionName'), ctx }))) {
-      throw new LeemonsError(ctx, {
-        message: `The specified permit does not exist: ${_.map(_data, 'permissionName')}`,
-      });
-    }
     if (
-      !(await manyPermissionsHasManyActions({
-        data: _.map(_data, ({ permissionName, actionNames }) => [permissionName, actionNames]),
+      !(await existMany({
+        permissionNames: _.map(_data, "permissionName"),
         ctx,
       }))
     ) {
       throw new LeemonsError(ctx, {
-        message: 'Some of the actions do not exist for the specified permit',
+        message: `The specified permit does not exist: ${_.map(_data, "permissionName")}`,
+      });
+    }
+    if (
+      !(await manyPermissionsHasManyActions({
+        data: _.map(_data, ({ permissionName, actionNames }) => [
+          permissionName,
+          actionNames,
+        ]),
+        ctx,
+      }))
+    ) {
+      throw new LeemonsError(ctx, {
+        message: "Some of the actions do not exist for the specified permit",
       });
     }
   }

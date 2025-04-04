@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { getItemPermissionsCacheKey } = require('../../helpers/cacheKeys');
+const _ = require("lodash");
+const { getItemPermissionsCacheKey } = require("../../helpers/cacheKeys");
 
 async function getItemPermissions({ item, type, returnRaw, ctx }) {
   const items = _.isArray(item) ? item : [item];

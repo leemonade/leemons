@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { hasActionMany } = require('./hasActionMany');
+const _ = require("lodash");
+const { hasActionMany } = require("./hasActionMany");
 
 /**
  * Check if the many permission has many actions
@@ -12,7 +12,9 @@ const { hasActionMany } = require('./hasActionMany');
 async function manyPermissionsHasManyActions({ data, ctx }) {
   if (data.length === 0) return true;
   const response = await Promise.all(
-    _.map(data, (d) => hasActionMany({ permissionName: d[0], actionNames: d[1], ctx }))
+    _.map(data, (d) =>
+      hasActionMany({ permissionName: d[0], actionNames: d[1], ctx })
+    )
   );
   const result = _.uniq(response);
   return result.length > 1 ? false : result[0];

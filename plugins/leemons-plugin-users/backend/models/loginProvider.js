@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema({
   id: {
@@ -18,6 +18,10 @@ const schema = new mongoose.Schema({
   },
 });
 
-const loginProviderModel = newModel(mongoose.connection, 'v1::users_LoginProviders', schema);
+const loginProviderModel = newModel(
+  mongoose.connection,
+  "v1::users_LoginProviders",
+  schema
+);
 
 module.exports = { loginProviderModel };

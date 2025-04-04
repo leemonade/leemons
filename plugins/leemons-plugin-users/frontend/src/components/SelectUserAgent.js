@@ -1,11 +1,17 @@
 /* eslint-disable no-unreachable */
 // eslint-disable-next-line unused-imports/no-unused-imports
-import React, { forwardRef, useEffect, useMemo, useState } from 'react';
+import React, { forwardRef, useEffect, useMemo, useState } from "react";
 
-import { ActionButton, Box, MultiSelect, Stack, UserDisplayItem } from '@bubbles-ui/components';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
-import { useRequestErrorMessage, useStore } from '@common';
-import { addErrorAlert } from '@layout/alert';
+import {
+  ActionButton,
+  Box,
+  MultiSelect,
+  Stack,
+  UserDisplayItem,
+} from "@bubbles-ui/components";
+import { RemoveIcon } from "@bubbles-ui/icons/outline";
+import { useRequestErrorMessage, useStore } from "@common";
+import { addErrorAlert } from "@layout/alert";
 import {
   cloneDeep,
   filter,
@@ -17,21 +23,29 @@ import {
   isNil,
   map,
   uniq,
-} from 'lodash';
-import PropTypes from 'prop-types';
+} from "lodash";
+import PropTypes from "prop-types";
 
-import { compareBySurnamesAndName } from '../helpers/compareUsers';
-import { getUserAgentsInfoRequest, searchUserAgentsRequest } from '../request';
+import { compareBySurnamesAndName } from "../helpers/compareUsers";
+import { getUserAgentsInfoRequest, searchUserAgentsRequest } from "../request";
 
 // EN: The Component for MultiSelect selected values component
 // ES: El componente para el componente MultiSelect de valores seleccionados
-export function SelectUserAgentValueComponent({ onRemove, value, clearable, ...props }) {
+export function SelectUserAgentValueComponent({
+  onRemove,
+  value,
+  clearable,
+  ...props
+}) {
   return (
     <Stack sx={(theme) => ({ paddingRight: theme.spacing[1] })}>
       <UserDisplayItem {...props} variant="inline" />
       {onRemove && clearable ? (
         <Box>
-          <ActionButton icon={<RemoveIcon />} onClick={(event) => onRemove(event, value)} />
+          <ActionButton
+            icon={<RemoveIcon />}
+            onClick={(event) => onRemove(event, value)}
+          />
         </Box>
       ) : null}
     </Stack>
@@ -51,8 +65,12 @@ const SelectUserAgent = forwardRef(
       users,
       onlyContacts,
       returnItem,
-      itemRenderProps = { variant: 'rol', style: { cursor: 'pointer' } },
-      valueRenderProps = { variant: 'inline', size: 'xs', style: { padding: 0 } },
+      itemRenderProps = { variant: "rol", style: { cursor: "pointer" } },
+      valueRenderProps = {
+        variant: "inline",
+        size: "xs",
+        style: { padding: 0 },
+      },
       itemComponent: ItemComponent = UserDisplayItem,
       valueComponent: ValueComponent = SelectUserAgentValueComponent,
       value: inputValue = [],
@@ -106,11 +124,11 @@ const SelectUserAgent = forwardRef(
 
         const data = map(response.userAgents, (item) => ({
           ...item.user,
-          variant: 'rol',
+          variant: "rol",
           rol: item.profile?.name,
           center: item.center?.name,
           value: item.id,
-          label: `${item.user?.name}${item.user?.surnames ? ` ${item.user?.surnames}` : ''}`,
+          label: `${item.user?.name}${item.user?.surnames ? ` ${item.user?.surnames}` : ""}`,
         }));
 
         store.data = data;
@@ -144,7 +162,10 @@ const SelectUserAgent = forwardRef(
       }
 
       values = maxSelectedValues === 1 ? values[0] || null : values;
-      const userAgent = maxSelectedValues === 1 ? find(store.data, { value: values }) : undefined;
+      const userAgent =
+        maxSelectedValues === 1
+          ? find(store.data, { value: values })
+          : undefined;
       onChange(values, userAgent);
     }
 
@@ -186,12 +207,14 @@ const SelectUserAgent = forwardRef(
               if (userAgents[0]) {
                 return {
                   ...userAgents[0].user,
-                  variant: 'rol',
+                  variant: "rol",
                   rol: userAgents[0].profile?.name,
                   center: userAgents[0].center?.name,
                   value: userAgents[0].id,
                   label: `${userAgents[0].user?.name}${
-                    userAgents[0].user?.surnames ? ` ${userAgents[0].user?.surnames}` : ''
+                    userAgents[0].user?.surnames
+                      ? ` ${userAgents[0].user?.surnames}`
+                      : ""
                   }`,
                 };
               }
@@ -229,11 +252,11 @@ const SelectUserAgent = forwardRef(
 
             data = data.userAgents.map((item) => ({
               ...item.user,
-              variant: 'rol',
+              variant: "rol",
               rol: item.profile?.name,
               center: item.center?.name,
               value: item.id,
-              label: `${item.user?.name}${item.user?.surnames ? ` ${item.user?.surnames}` : ''}`,
+              label: `${item.user?.name}${item.user?.surnames ? ` ${item.user?.surnames}` : ""}`,
             }));
 
             setUsersData(data);
@@ -248,12 +271,12 @@ const SelectUserAgent = forwardRef(
     // ES: Búsqueda inicial para la primera renderización
     useEffect(() => {
       if (!store.data?.length && !users) {
-        search('');
+        search("");
       }
     }, [profiles]);
 
     useEffect(() => {
-      search('');
+      search("");
     }, [courses, programs]);
 
     // EN: Concat the selected values with the data array
@@ -297,7 +320,10 @@ const SelectUserAgent = forwardRef(
       toData = filter(toData, ({ id }) => !selectedUsers.includes(id));
     }
     if (selectedUserAgents) {
-      toData = filter(toData, ({ value }) => !selectedUserAgents.includes(value));
+      toData = filter(
+        toData,
+        ({ value }) => !selectedUserAgents.includes(value)
+      );
     }
 
     if (omitUsers) {
@@ -326,15 +352,30 @@ const SelectUserAgent = forwardRef(
   }
 );
 
-SelectUserAgent.displayName = 'SelectUserAgent';
+SelectUserAgent.displayName = "SelectUserAgent";
 SelectUserAgent.propTypes = {
   onChange: PropTypes.func,
   users: PropTypes.array,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
-  profiles: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
-  centers: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
-  programs: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
-  courses: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
+  profiles: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
+  centers: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
+  programs: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
+  courses: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.arrayOf(PropTypes.string),
+  ]),
   maxSelectedValues: PropTypes.number,
   onlyContacts: PropTypes.bool,
   returnItem: PropTypes.bool,

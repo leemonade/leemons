@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, Stack, createStyles } from '@bubbles-ui/components';
-import { HeroBgLayout } from './HeroBgLayout';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, Stack, createStyles } from "@bubbles-ui/components";
+import { HeroBgLayout } from "./HeroBgLayout";
 
 const PageStyles = createStyles((theme) => ({
   content: {

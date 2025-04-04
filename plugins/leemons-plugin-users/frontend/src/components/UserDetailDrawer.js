@@ -1,18 +1,18 @@
-import React from 'react';
+import React from "react";
 
-import { EnrollUserSummary } from '@academic-portfolio/components/EnrollUserSummary';
-import { Drawer, Button } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { noop } from 'lodash';
-import PropTypes from 'prop-types';
+import { EnrollUserSummary } from "@academic-portfolio/components/EnrollUserSummary";
+import { Drawer, Button } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { noop } from "lodash";
+import PropTypes from "prop-types";
 
-import { UserAdminDrawer } from './UserAdminDrawer';
-import { UserDatasetSummary } from './UserDataset/UserDatasetSummary';
-import { UserDetail, USER_DETAIL_VIEWS } from './UserDetail';
+import { UserAdminDrawer } from "./UserAdminDrawer";
+import { UserDatasetSummary } from "./UserDataset/UserDatasetSummary";
+import { UserDetail, USER_DETAIL_VIEWS } from "./UserDetail";
 
-import prefixPN from '@users/helpers/prefixPN';
-import usePermissions from '@users/hooks/usePermissions';
-import { getSessionCenter, getSessionUserAgent } from '@users/session';
+import prefixPN from "@users/helpers/prefixPN";
+import usePermissions from "@users/hooks/usePermissions";
+import { getSessionCenter, getSessionUserAgent } from "@users/session";
 
 function UserDetailDrawer({
   userId,
@@ -28,7 +28,7 @@ function UserDetailDrawer({
   const [selfOpen, setSelfOpen] = React.useState(opened);
   const [user, setUser] = React.useState(null);
   const [userAgents, setUserAgents] = React.useState([]);
-  const [t] = useTranslateLoader(prefixPN('user_detail'));
+  const [t] = useTranslateLoader(prefixPN("user_detail"));
   const center = centerProp ?? getSessionCenter();
   const userAgentId = getSessionUserAgent();
 
@@ -37,7 +37,7 @@ function UserDetailDrawer({
     isLoading: permissionsLoading,
     refetch: refetchPermissions,
   } = usePermissions({
-    name: 'users.users',
+    name: "users.users",
     enabled: opened,
   });
 
@@ -53,7 +53,8 @@ function UserDetailDrawer({
 
   async function handlePermissions() {
     setCanEdit(
-      permissions.actionNames.includes('create') || permissions.actionNames.includes('admin')
+      permissions.actionNames.includes("create") ||
+        permissions.actionNames.includes("admin")
     );
   }
 
@@ -71,7 +72,7 @@ function UserDetailDrawer({
       return t(`title.${sysProfileFilter}`);
     }
 
-    return t('title.default');
+    return t("title.default");
   }
 
   // ····················································
@@ -116,7 +117,7 @@ function UserDetailDrawer({
     // Or if the user is a teacher and is viewing its own dataset or the dataset of a student
     if (
       viewMode === USER_DETAIL_VIEWS.STUDENT ||
-      (viewMode === USER_DETAIL_VIEWS.TEACHER && sysProfileFilter === 'teacher')
+      (viewMode === USER_DETAIL_VIEWS.TEACHER && sysProfileFilter === "teacher")
     ) {
       return userAgents.some((userAgent) => userAgent.id === userAgentId);
     }

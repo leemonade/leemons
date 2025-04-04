@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo } from 'react';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect, useMemo } from "react";
+import { useHistory } from "react-router-dom";
 
 import {
   Badge,
@@ -16,40 +16,40 @@ import {
   SearchInput,
   ActionButton,
   ContextContainer,
-} from '@bubbles-ui/components';
-import { ExpandDiagonalIcon } from '@bubbles-ui/icons/outline';
-import { CloudUploadIcon, DeleteBinIcon } from '@bubbles-ui/icons/solid';
-import { LocaleDate, useStore } from '@common';
-import { ListEmptyState } from '@common/components/ListEmptyState';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import _, { isBoolean, isFunction } from 'lodash';
+} from "@bubbles-ui/components";
+import { ExpandDiagonalIcon } from "@bubbles-ui/icons/outline";
+import { CloudUploadIcon, DeleteBinIcon } from "@bubbles-ui/icons/solid";
+import { LocaleDate, useStore } from "@common";
+import { ListEmptyState } from "@common/components/ListEmptyState";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import _, { isBoolean, isFunction } from "lodash";
 
 import {
   listUsersRequest,
   activateUserRequest,
   getPermissionsWithActionsIfIHaveRequest,
-} from '../../../../request';
+} from "../../../../request";
 
-import { BulkActionModal } from './components/BulkActionModal';
+import { BulkActionModal } from "./components/BulkActionModal";
 
-import DisableUsersModal from '@users/components/DisableUsersModal';
-import EnableUsersModal from '@users/components/EnableUsersModal';
-import { SelectCenter } from '@users/components/SelectCenter';
-import { SelectProfile } from '@users/components/SelectProfile';
-import { SetPasswordModal } from '@users/components/SetPasswordModal';
-import { UserAdminDrawer } from '@users/components/UserAdminDrawer';
-import UserDetailDrawer from '@users/components/UserDetailDrawer';
-import prefixPN from '@users/helpers/prefixPN';
-import { useIsSuperAdmin } from '@users/hooks';
-import activeUserAgent from '@users/request/activeUserAgent';
-import disableUserAgent from '@users/request/disableUserAgent';
-import useProvider from '@users/request/hooks/queries/useProvider';
+import DisableUsersModal from "@users/components/DisableUsersModal";
+import EnableUsersModal from "@users/components/EnableUsersModal";
+import { SelectCenter } from "@users/components/SelectCenter";
+import { SelectProfile } from "@users/components/SelectProfile";
+import { SetPasswordModal } from "@users/components/SetPasswordModal";
+import { UserAdminDrawer } from "@users/components/UserAdminDrawer";
+import UserDetailDrawer from "@users/components/UserDetailDrawer";
+import prefixPN from "@users/helpers/prefixPN";
+import { useIsSuperAdmin } from "@users/hooks";
+import activeUserAgent from "@users/request/activeUserAgent";
+import disableUserAgent from "@users/request/disableUserAgent";
+import useProvider from "@users/request/hooks/queries/useProvider";
 
 function ListUsers() {
-  const [t] = useTranslateLoader(prefixPN('list_users'));
-  const lang = (navigator.language || navigator.userLanguage).split('-')[0];
+  const [t] = useTranslateLoader(prefixPN("list_users"));
+  const lang = (navigator.language || navigator.userLanguage).split("-")[0];
   const [store, render] = useStore({
     page: 0,
     size: 10,
@@ -69,7 +69,7 @@ function ListUsers() {
 
   async function listUsers(searchQuery) {
     const query = {};
-    if (typeof searchQuery === 'string') {
+    if (typeof searchQuery === "string") {
       query.search = searchQuery;
     }
     if (store.profile) {
@@ -80,7 +80,7 @@ function ListUsers() {
     }
     if (store.state) {
       query.disabled = true;
-      if (store.state === 'active') {
+      if (store.state === "active") {
         query.disabled = false;
       }
     }
@@ -111,19 +111,21 @@ function ListUsers() {
   }
 
   async function getPermissions() {
-    const [{ permissions: addPermission }, { permissions: importPermission }] = await Promise.all([
-      getPermissionsWithActionsIfIHaveRequest('users.users'),
-      getPermissionsWithActionsIfIHaveRequest('users.import'),
-    ]);
+    const [{ permissions: addPermission }, { permissions: importPermission }] =
+      await Promise.all([
+        getPermissionsWithActionsIfIHaveRequest("users.users"),
+        getPermissionsWithActionsIfIHaveRequest("users.import"),
+      ]);
     if (addPermission) {
       store.canAdd =
-        addPermission.actionNames.includes('create') || addPermission.actionNames.includes('admin');
+        addPermission.actionNames.includes("create") ||
+        addPermission.actionNames.includes("admin");
     }
     if (importPermission) {
       store.canImport =
-        importPermission.actionNames.includes('view') ||
-        importPermission.actionNames.includes('update') ||
-        importPermission.actionNames.includes('admin');
+        importPermission.actionNames.includes("view") ||
+        importPermission.actionNames.includes("update") ||
+        importPermission.actionNames.includes("admin");
     }
     render();
   }
@@ -136,16 +138,16 @@ function ListUsers() {
   // METHODS
 
   function getUserStateKey(status) {
-    if (status === 'disabled') {
-      return 'disable';
+    if (status === "disabled") {
+      return "disable";
     }
-    if (status === 'created') {
-      return 'statePending';
+    if (status === "created") {
+      return "statePending";
     }
-    if (status === 'password-registered') {
-      return 'stateVerified';
+    if (status === "password-registered") {
+      return "stateVerified";
     }
-    return 'active';
+    return "active";
   }
 
   function filterSelectedUserAgentsByProfiles(profiles) {
@@ -157,7 +159,7 @@ function ListUsers() {
   }
 
   function goImportPage() {
-    history.push('/private/users/import');
+    history.push("/private/users/import");
   }
 
   function makeAction(action) {
@@ -171,14 +173,14 @@ function ListUsers() {
     if (isFunction(changeStateFunc) && userAgentsToChange.length > 0) {
       let current = 0;
       const total = userAgentsToChange.length;
-      setBulkActionInfo({ state: 'init', current, total, completed: 0 });
+      setBulkActionInfo({ state: "init", current, total, completed: 0 });
 
       // Process each userAgent sequentially
       await userAgentsToChange.reduce(async (promise, userAgentId) => {
         await promise;
         current++;
         const completed = (current / total) * 100;
-        setBulkActionInfo({ state: 'processing', current, total, completed });
+        setBulkActionInfo({ state: "processing", current, total, completed });
         return changeStateFunc(userAgentId);
       }, Promise.resolve());
 
@@ -192,11 +194,19 @@ function ListUsers() {
       store.loading = true;
       store.actionModal = null;
       render();
-      const updatedCount = await changeSelectedUserAgentState(profiles, disableUserAgent);
+      const updatedCount = await changeSelectedUserAgentState(
+        profiles,
+        disableUserAgent
+      );
       addSuccessAlert(
-        t(updatedCount === 1 ? 'disableSingleUserSuccess' : 'disableUserSuccess', {
-          n: updatedCount,
-        })
+        t(
+          updatedCount === 1
+            ? "disableSingleUserSuccess"
+            : "disableUserSuccess",
+          {
+            n: updatedCount,
+          }
+        )
       );
       store.checkeds = [];
       await load();
@@ -212,11 +222,17 @@ function ListUsers() {
       store.loading = true;
       store.actionModal = null;
       render();
-      const updatedCount = await changeSelectedUserAgentState(profiles, activeUserAgent);
+      const updatedCount = await changeSelectedUserAgentState(
+        profiles,
+        activeUserAgent
+      );
       addSuccessAlert(
-        t(updatedCount === 1 ? 'enableSingleUserSuccess' : 'enableUserSuccess', {
-          n: updatedCount,
-        })
+        t(
+          updatedCount === 1 ? "enableSingleUserSuccess" : "enableUserSuccess",
+          {
+            n: updatedCount,
+          }
+        )
       );
       store.checkeds = [];
       await load();
@@ -230,14 +246,14 @@ function ListUsers() {
   async function activateUserManually(data) {
     let current = 0;
     const total = store.checkeds.length;
-    setBulkActionInfo({ state: 'init', current, total, completed: 0 });
+    setBulkActionInfo({ state: "init", current, total, completed: 0 });
 
     // Process each userAgent sequentially
     await store.checkeds.reduce(async (promise, userId) => {
       await promise;
       current++;
       const completed = (current / total) * 100;
-      setBulkActionInfo({ state: 'processing', current, total, completed });
+      setBulkActionInfo({ state: "processing", current, total, completed });
       return activateUserRequest({
         id: userId,
         password: data.password,
@@ -336,52 +352,52 @@ function ListUsers() {
     () => [
       {
         Header: () => (
-          <Box style={{ width: '30px' }}>
+          <Box style={{ width: "30px" }}>
             <Checkbox
               checked={store.checkeds.length === store.pagination?.items.length}
               onChange={() => {
                 if (store.checkeds.length === store.pagination?.items.length) {
                   store.checkeds = [];
                 } else {
-                  store.checkeds = _.map(store.pagination?.items, 'id');
+                  store.checkeds = _.map(store.pagination?.items, "id");
                 }
                 render();
               }}
             />
           </Box>
         ),
-        accessor: 'checked',
-        className: 'text-left',
+        accessor: "checked",
+        className: "text-left",
       },
       {
-        Header: t('surnameHeader'),
-        accessor: 'surnames',
-        className: 'text-left',
+        Header: t("surnameHeader"),
+        accessor: "surnames",
+        className: "text-left",
       },
       {
-        Header: t('nameHeader'),
-        accessor: 'name',
-        className: 'text-left',
+        Header: t("nameHeader"),
+        accessor: "name",
+        className: "text-left",
       },
       {
-        Header: t('emailHeader'),
-        accessor: 'email',
-        className: 'text-left',
+        Header: t("emailHeader"),
+        accessor: "email",
+        className: "text-left",
       },
       {
-        Header: t('lastConnectionHeader'),
-        accessor: 'lastConnection',
-        className: 'text-left',
+        Header: t("lastConnectionHeader"),
+        accessor: "lastConnection",
+        className: "text-left",
       },
       {
-        Header: t('tagsHeader'),
-        accessor: 'tags',
-        className: 'text-left',
+        Header: t("tagsHeader"),
+        accessor: "tags",
+        className: "text-left",
       },
       {
-        Header: '',
-        accessor: 'actions',
-        className: 'text-right',
+        Header: "",
+        accessor: "actions",
+        className: "text-right",
       },
     ],
     [t, store.pagination, JSON.stringify(store.checkeds)]
@@ -392,7 +408,7 @@ function ListUsers() {
       _.map(store.pagination?.items ?? [], (item) => ({
         ...item,
         checked: (
-          <Box style={{ width: '30px' }}>
+          <Box style={{ width: "30px" }}>
             <Checkbox
               checked={store.checkeds.includes(item.id)}
               onChange={() => {
@@ -410,7 +426,7 @@ function ListUsers() {
         lastConnection: item.lastConnection ? (
           <LocaleDate
             date={item.lastConnection}
-            options={{ dateStyle: 'medium', timeStyle: 'short' }}
+            options={{ dateStyle: "medium", timeStyle: "short" }}
           />
         ) : (
           <Text>-</Text>
@@ -423,13 +439,13 @@ function ListUsers() {
           </Stack>
         ),
         actions: (
-          <Box style={{ textAlign: 'right', width: '100%' }}>
+          <Box style={{ textAlign: "right", width: "100%" }}>
             <ActionButton
               onClick={() => {
                 store.openUser = item;
                 handleOpenUserDrawer();
               }}
-              tooltip={t('view')}
+              tooltip={t("view")}
               icon={<ExpandDiagonalIcon />}
             />
           </Box>
@@ -442,51 +458,55 @@ function ListUsers() {
     <>
       <TLayout>
         <TLayout.Header
-          title={t('pageTitle')}
+          title={t("pageTitle")}
           cancelable={false}
           icon={
-            <Box sx={{ position: 'relative', width: 24, height: 24 }}>
-              <ImageLoader src="/public/users/menu-icon.svg" width={18} height={18} />
+            <Box sx={{ position: "relative", width: 24, height: 24 }}>
+              <ImageLoader
+                src="/public/users/menu-icon.svg"
+                width={18}
+                height={18}
+              />
             </Box>
           }
         />
         <TLayout.Content fullWidth loading={store.loading}>
           <Box>
-            <ContextContainer title={t('searchTitle')}>
+            <ContextContainer title={t("searchTitle")}>
               <ContextContainer direction="row">
                 <SelectCenter
                   required
-                  clearable={t('clearFilter')}
-                  label={t('centerLabel')}
-                  placeholder={t('selectPlaceholder')}
+                  clearable={t("clearFilter")}
+                  label={t("centerLabel")}
+                  placeholder={t("selectPlaceholder")}
                   value={store.centerId}
                   onChange={handleCenterChange}
                   onLoadCenters={handleOnLoadCenters}
                 />
                 <SelectProfile
-                  clearable={t('clearFilter')}
+                  clearable={t("clearFilter")}
                   firstSelected={false}
-                  placeholder={t('viewAll')}
-                  label={t('profileLabel')}
+                  placeholder={t("viewAll")}
+                  label={t("profileLabel")}
                   value={store.profile}
                   onChange={handleProfileChange}
                   showAll={isSuperAdmin}
                 />
                 <Select
-                  clearable={t('clearFilter')}
-                  label={t('stateLabel')}
-                  placeholder={t('viewAll')}
+                  clearable={t("clearFilter")}
+                  label={t("stateLabel")}
+                  placeholder={t("viewAll")}
                   data={[
-                    { label: t('stateActive'), value: 'active' },
-                    { label: t('stateDisabled'), value: 'disabled' },
+                    { label: t("stateActive"), value: "active" },
+                    { label: t("stateDisabled"), value: "disabled" },
                   ]}
                   value={store.state}
                   onChange={handleStateChange}
                 />
                 <SearchInput
-                  label={t('searchLabel')}
+                  label={t("searchLabel")}
                   value={store.search}
-                  placeholder={t('searchPlaceholder')}
+                  placeholder={t("searchPlaceholder")}
                   onChange={handleSearchChange}
                   onKeyPress={(e) => {
                     if (e.charCode === 13 && store.centerId) {
@@ -495,8 +515,12 @@ function ListUsers() {
                   }}
                 />
                 <Stack noFlex alignItems="end" spacing={2}>
-                  <Button variant="link" leftIcon={<DeleteBinIcon />} onClick={handleClearFilters}>
-                    {t('clearFilter')}
+                  <Button
+                    variant="link"
+                    leftIcon={<DeleteBinIcon />}
+                    onClick={handleClearFilters}
+                  >
+                    {t("clearFilter")}
                   </Button>
                 </Stack>
               </ContextContainer>
@@ -505,16 +529,17 @@ function ListUsers() {
                 <Box>
                   {store.checkeds.length > 0 && (
                     <>
-                      <Box style={{ width: '20%' }}>
+                      <Box style={{ width: "20%" }}>
                         <Select
-                          label={t('bulkActions')}
+                          label={t("bulkActions")}
                           disabled={!store.checkeds.length}
                           data={[
-                            { label: t('activateUsers'), value: 'active' },
-                            { label: t('disableUsers'), value: 'disable' },
-                            (!provider || provider?.supportedMethods?.recoverPassword) && {
-                              label: t('activateUserManually'),
-                              value: 'activate-manually',
+                            { label: t("activateUsers"), value: "active" },
+                            { label: t("disableUsers"), value: "disable" },
+                            (!provider ||
+                              provider?.supportedMethods?.recoverPassword) && {
+                              label: t("activateUserManually"),
+                              value: "activate-manually",
                             },
                           ].filter((action) => !!action)}
                           value={null}
@@ -522,16 +547,20 @@ function ListUsers() {
                         />
                       </Box>
                       <Box sx={(theme) => ({ marginTop: theme.spacing[2] })}>
-                        {t('selectedUsers', { n: store.checkeds.length })}
+                        {t("selectedUsers", { n: store.checkeds.length })}
                       </Box>
                     </>
                   )}
 
-                  {tableItems?.length > 0 && <Table columns={tableHeaders} data={tableItems} />}
+                  {tableItems?.length > 0 && (
+                    <Table columns={tableHeaders} data={tableItems} />
+                  )}
                   {tableItems?.length === 0 && store.canAdd && (
                     <ListEmptyState
-                      description={t(store.isSearching ? 'noResults' : 'emptyState')}
-                      buttonLabel={t('new')}
+                      description={t(
+                        store.isSearching ? "noResults" : "emptyState"
+                      )}
+                      buttonLabel={t("new")}
                       onClick={handleOpenUserDrawer}
                     />
                   )}
@@ -547,8 +576,8 @@ function ListUsers() {
                     onChange={(val) => handleOnPageChange(val - 1)}
                     onSizeChange={handleOnPageSizeChange}
                     labels={{
-                      show: t('show'),
-                      goTo: t('goTo'),
+                      show: t("show"),
+                      goTo: t("goTo"),
                     }}
                   />
                 </Stack>
@@ -559,11 +588,17 @@ function ListUsers() {
         <TLayout.Footer fullWidth>
           <TLayout.Footer.RightActions>
             {store.canImport && (
-              <Button variant="outline" onClick={goImportPage} leftIcon={<CloudUploadIcon />}>
-                {t('import')}
+              <Button
+                variant="outline"
+                onClick={goImportPage}
+                leftIcon={<CloudUploadIcon />}
+              >
+                {t("import")}
               </Button>
             )}
-            {store.canAdd && <Button onClick={handleOpenUserDrawer}>{t('new')}</Button>}
+            {store.canAdd && (
+              <Button onClick={handleOpenUserDrawer}>{t("new")}</Button>
+            )}
           </TLayout.Footer.RightActions>
         </TLayout.Footer>
       </TLayout>
@@ -573,7 +608,9 @@ function ListUsers() {
           <DisableUsersModal
             users={store.checkeds}
             center={store.center}
-            opened={store.actionModal === 'disable' && store.checkeds.length > 0}
+            opened={
+              store.actionModal === "disable" && store.checkeds.length > 0
+            }
             onClose={() => {
               store.actionModal = null;
               render();
@@ -584,7 +621,7 @@ function ListUsers() {
           <EnableUsersModal
             users={store.checkeds}
             center={store.center}
-            opened={store.actionModal === 'active' && store.checkeds.length > 0}
+            opened={store.actionModal === "active" && store.checkeds.length > 0}
             onClose={() => {
               store.actionModal = null;
               render();
@@ -593,7 +630,10 @@ function ListUsers() {
           />
 
           <SetPasswordModal
-            opened={store.actionModal === 'activate-manually' && store.checkeds.length > 0}
+            opened={
+              store.actionModal === "activate-manually" &&
+              store.checkeds.length > 0
+            }
             onClose={() => {
               store.actionModal = null;
               render();
@@ -615,7 +655,10 @@ function ListUsers() {
             onClose={handleCloseUserDrawer}
           />
 
-          <BulkActionModal opened={bulkActionInfo !== null} info={bulkActionInfo} />
+          <BulkActionModal
+            opened={bulkActionInfo !== null}
+            info={bulkActionInfo}
+          />
         </>
       )}
     </>

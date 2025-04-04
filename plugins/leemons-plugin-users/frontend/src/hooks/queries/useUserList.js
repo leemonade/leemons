@@ -1,9 +1,9 @@
-import { useVariantForQueryKey } from '@common/queries';
-import { useQuery } from '@tanstack/react-query';
+import { useVariantForQueryKey } from "@common/queries";
+import { useQuery } from "@tanstack/react-query";
 
-import { getUserListKey } from '../keys/usersKeys';
+import { getUserListKey } from "../keys/usersKeys";
 
-import { listUsersRequest } from '@users/request';
+import { listUsersRequest } from "@users/request";
 
 function useUserList({ params, options = {} } = {}) {
   const queryKey = getUserListKey(params);
@@ -14,7 +14,7 @@ function useUserList({ params, options = {} } = {}) {
   };
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'frequently',
+    modificationTrend: "frequently",
   });
 
   return useQuery({

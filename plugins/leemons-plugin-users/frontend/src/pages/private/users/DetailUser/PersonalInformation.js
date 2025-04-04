@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { get } from 'lodash';
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import { get } from "lodash";
 import {
   Box,
   Button,
@@ -14,16 +14,28 @@ import {
   PasswordInput,
   Modal,
   Title,
-} from '@bubbles-ui/components';
-import { EMAIL_REGEX } from '@users/components/LoginForm';
-import { Controller, useForm } from 'react-hook-form';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@users/helpers/prefixPN';
-import { activateUserRequest, sendWelcomeEmailToUserRequest, recoverRequest } from '@users/request';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
+} from "@bubbles-ui/components";
+import { EMAIL_REGEX } from "@users/components/LoginForm";
+import { Controller, useForm } from "react-hook-form";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@users/helpers/prefixPN";
+import {
+  activateUserRequest,
+  sendWelcomeEmailToUserRequest,
+  recoverRequest,
+} from "@users/request";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
 
-function PersonalInformation({ t, user, form, config, isEditMode, store, render }) {
-  const [tp] = useTranslateLoader(prefixPN('create_users'));
+function PersonalInformation({
+  t,
+  user,
+  form,
+  config,
+  isEditMode,
+  store,
+  render,
+}) {
+  const [tp] = useTranslateLoader(prefixPN("create_users"));
   const [activeModalOpened, setActiveModalOpened] = useState(false);
   const [loading, setLoading] = useState(false);
   const {
@@ -33,8 +45,8 @@ function PersonalInformation({ t, user, form, config, isEditMode, store, render 
     formState: { errors },
   } = useForm();
 
-  const password = watch('password');
-  const repeatPassword = watch('repeatPassword');
+  const password = watch("password");
+  const repeatPassword = watch("repeatPassword");
 
   const toggleModal = () => {
     setActiveModalOpened(!activeModalOpened);
@@ -43,7 +55,7 @@ function PersonalInformation({ t, user, form, config, isEditMode, store, render 
   const sendActivationEmail = () => {
     try {
       sendWelcomeEmailToUserRequest({ user: store.user });
-      addSuccessAlert(t('activationEmailSent'));
+      addSuccessAlert(t("activationEmailSent"));
     } catch (err) {
       addErrorAlert(err);
     }
@@ -52,7 +64,7 @@ function PersonalInformation({ t, user, form, config, isEditMode, store, render 
   const sendRecoveryLink = () => {
     try {
       recoverRequest({ email: store.user.email });
-      addSuccessAlert(t('recoveryEmailSent'));
+      addSuccessAlert(t("recoveryEmailSent"));
     } catch (err) {
       addErrorAlert(err);
     }
@@ -63,7 +75,7 @@ function PersonalInformation({ t, user, form, config, isEditMode, store, render 
       setLoading(true);
       try {
         await activateUserRequest({ id: user.id, password: userPassword });
-        addSuccessAlert(t('activatedUser'));
+        addSuccessAlert(t("activatedUser"));
         toggleModal();
         setLoading(false);
         store.isActived = true;
@@ -78,7 +90,7 @@ function PersonalInformation({ t, user, form, config, isEditMode, store, render 
   return (
     <Grid columns={100}>
       <Col span={35}>
-        <Title order={3}>{t('personalInformationLabel')}</Title>
+        <Title order={3}>{t("personalInformationLabel")}</Title>
       </Col>
       <Col span={65}>
         <ContextContainer>
@@ -86,47 +98,59 @@ function PersonalInformation({ t, user, form, config, isEditMode, store, render 
             name="user.email"
             control={form.control}
             rules={{
-              required: tp('emailHeaderRequired'),
-              pattern: { value: EMAIL_REGEX, message: tp('emailHeaderNotEmail') },
+              required: tp("emailHeaderRequired"),
+              pattern: {
+                value: EMAIL_REGEX,
+                message: tp("emailHeaderNotEmail"),
+              },
             }}
             render={({ field }) => (
               <TextInput
                 {...field}
-                error={get(form.formState.errors, 'user.email')}
-                label={tp('emailHeader')}
+                error={get(form.formState.errors, "user.email")}
+                label={tp("emailHeader")}
                 disabled={!isEditMode}
                 required
               />
             )}
           />
           <Box>
-            <TextInput label={tp('passwordHeader')} disabled={true} />
+            <TextInput label={tp("passwordHeader")} disabled={true} />
             <Stack fullWidth direction="column" alignItems="flex-end">
               {store.isActived && (
                 <Button variant="link" onClick={sendRecoveryLink}>
-                  {t('recoveryLink')}
+                  {t("recoveryLink")}
                 </Button>
               )}
               {!store.isActived && (
                 <Stack direction="column" alignItems="flex-end">
                   <Button variant="link" onClick={sendActivationEmail}>
-                    {t('sendActivationEmail')}
+                    {t("sendActivationEmail")}
                   </Button>
-                  <Button variant="link" onClick={toggleModal} loading={loading}>
-                    {t('manualActivation')}
+                  <Button
+                    variant="link"
+                    onClick={toggleModal}
+                    loading={loading}
+                  >
+                    {t("manualActivation")}
                   </Button>
                 </Stack>
               )}
             </Stack>
-            <Modal opened={activeModalOpened} onClose={toggleModal} withCloseButton={false}>
+            <Modal
+              opened={activeModalOpened}
+              onClose={toggleModal}
+              withCloseButton={false}
+            >
               <Stack fullWidth direction="column" spacing={4}>
                 <Controller
                   name="password"
                   control={control}
                   rules={{
-                    required: t('requiredPassword'),
+                    required: t("requiredPassword"),
                     validate: () => {
-                      if (password !== repeatPassword) return t('passwordNotMatch');
+                      if (password !== repeatPassword)
+                        return t("passwordNotMatch");
                       return true;
                     },
                   }}
@@ -134,7 +158,7 @@ function PersonalInformation({ t, user, form, config, isEditMode, store, render 
                   render={({ field }) => (
                     <PasswordInput
                       {...field}
-                      label={t('provisionalPassword')}
+                      label={t("provisionalPassword")}
                       error={errors.password}
                     />
                   )}
@@ -143,9 +167,10 @@ function PersonalInformation({ t, user, form, config, isEditMode, store, render 
                   name="repeatPassword"
                   control={control}
                   rules={{
-                    required: t('requiredPassword'),
+                    required: t("requiredPassword"),
                     validate: () => {
-                      if (password !== repeatPassword) return t('passwordNotMatch');
+                      if (password !== repeatPassword)
+                        return t("passwordNotMatch");
                       return true;
                     },
                   }}
@@ -153,15 +178,20 @@ function PersonalInformation({ t, user, form, config, isEditMode, store, render 
                   render={({ field }) => (
                     <PasswordInput
                       {...field}
-                      label={t('repeatPassword')}
+                      label={t("repeatPassword")}
                       error={errors.repeatPassword}
                     />
                   )}
                 />
               </Stack>
-              <Stack fullWidth spacing={6} style={{ marginTop: 16 }} justifyContent="space-between">
-                <Button onClick={toggleModal}>{t('cancel')}</Button>
-                <Button onClick={activeUserManually}>{t('activeUser')}</Button>
+              <Stack
+                fullWidth
+                spacing={6}
+                style={{ marginTop: 16 }}
+                justifyContent="space-between"
+              >
+                <Button onClick={toggleModal}>{t("cancel")}</Button>
+                <Button onClick={activeUserManually}>{t("activeUser")}</Button>
               </Stack>
             </Modal>
           </Box>
@@ -169,13 +199,13 @@ function PersonalInformation({ t, user, form, config, isEditMode, store, render 
             name="user.name"
             control={form.control}
             rules={{
-              required: tp('nameHeaderRequired'),
+              required: tp("nameHeaderRequired"),
             }}
             render={({ field }) => (
               <TextInput
                 {...field}
-                error={get(form.formState.errors, 'user.name')}
-                label={tp('nameHeader')}
+                error={get(form.formState.errors, "user.name")}
+                label={tp("nameHeader")}
                 disabled={!isEditMode}
                 required
               />
@@ -185,13 +215,13 @@ function PersonalInformation({ t, user, form, config, isEditMode, store, render 
             name="user.surnames"
             control={form.control}
             rules={{
-              required: tp('surnameHeaderRequired'),
+              required: tp("surnameHeaderRequired"),
             }}
             render={({ field }) => (
               <TextInput
                 {...field}
-                error={get(form.formState.errors, 'user.surnames')}
-                label={tp('surnameHeader')}
+                error={get(form.formState.errors, "user.surnames")}
+                label={tp("surnameHeader")}
                 disabled={!isEditMode}
                 required
               />
@@ -202,13 +232,15 @@ function PersonalInformation({ t, user, form, config, isEditMode, store, render 
               name="user.secondSurname"
               control={form.control}
               rules={
-                config.secondSurname.required ? { required: tp('secondSurnameHeaderRequired') } : {}
+                config.secondSurname.required
+                  ? { required: tp("secondSurnameHeaderRequired") }
+                  : {}
               }
               render={({ field }) => (
                 <TextInput
                   {...field}
-                  error={get(form.formState.errors, 'user.secondSurname')}
-                  label={tp('secondSurnameHeader')}
+                  error={get(form.formState.errors, "user.secondSurname")}
+                  label={tp("secondSurnameHeader")}
                   disabled={!isEditMode}
                   required={config.secondSurname.required}
                 />
@@ -219,13 +251,13 @@ function PersonalInformation({ t, user, form, config, isEditMode, store, render 
             name="user.birthdate"
             control={form.control}
             rules={{
-              required: tp('birthdayHeaderRequired'),
+              required: tp("birthdayHeaderRequired"),
             }}
             render={({ field }) => (
               <DatePicker
                 {...field}
-                error={get(form.formState.errors, 'user.birthdate')}
-                label={tp('birthdayHeader')}
+                error={get(form.formState.errors, "user.birthdate")}
+                label={tp("birthdayHeader")}
                 disabled={!isEditMode}
                 required
               />
@@ -235,17 +267,17 @@ function PersonalInformation({ t, user, form, config, isEditMode, store, render 
             name="user.gender"
             control={form.control}
             rules={{
-              required: tp('genderHeaderRequired'),
+              required: tp("genderHeaderRequired"),
             }}
             render={({ field }) => (
               <Select
                 {...field}
-                error={get(form.formState.errors, 'user.gender')}
+                error={get(form.formState.errors, "user.gender")}
                 data={[
-                  { label: tp('male'), value: 'male' },
-                  { label: tp('female'), value: 'female' },
+                  { label: tp("male"), value: "male" },
+                  { label: tp("female"), value: "female" },
                 ]}
-                label={tp('genderHeader')}
+                label={tp("genderHeader")}
                 disabled={!isEditMode}
                 required
               />

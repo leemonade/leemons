@@ -1,7 +1,7 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 
-import getProvider from '@users/request/getProvider';
-import { getProviderKey } from '../keys/providers';
+import getProvider from "@users/request/getProvider";
+import { getProviderKey } from "../keys/providers";
 
 /**
  * @typedef {object} Provider

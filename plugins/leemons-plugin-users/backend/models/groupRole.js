@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -31,6 +31,10 @@ const schema = new mongoose.Schema(
 schema.index({ group: 1, deploymentID: 1, isDeleted: 1 });
 schema.index({ role: 1, deploymentID: 1, isDeleted: 1 });
 
-const groupRoleModel = newModel(mongoose.connection, 'v1::users_GroupRole', schema);
+const groupRoleModel = newModel(
+  mongoose.connection,
+  "v1::users_GroupRole",
+  schema
+);
 
 module.exports = { groupRoleModel };

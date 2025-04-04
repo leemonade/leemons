@@ -1,15 +1,18 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { LoadingOverlay } from '@bubbles-ui/components';
-import { UserDetailModal as UserDetailModalBubbles } from '@users/components/UserModal';
-import { useStore } from '@common';
-import { find } from 'lodash';
-import prefixPN from '@users/helpers/prefixPN';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { getUserAgentDetailForPageRequest, getUserDetailForPageRequest } from '../request';
+import React from "react";
+import PropTypes from "prop-types";
+import { LoadingOverlay } from "@bubbles-ui/components";
+import { UserDetailModal as UserDetailModalBubbles } from "@users/components/UserModal";
+import { useStore } from "@common";
+import { find } from "lodash";
+import prefixPN from "@users/helpers/prefixPN";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import {
+  getUserAgentDetailForPageRequest,
+  getUserDetailForPageRequest,
+} from "../request";
 
 function UserDetailModal({ userAgent, opened, onClose = () => {} }) {
-  const [t] = useTranslateLoader(prefixPN('userDetailModal'));
+  const [t] = useTranslateLoader(prefixPN("userDetailModal"));
   const [store, render] = useStore({
     opened: false,
     loading: false,
@@ -60,14 +63,14 @@ function UserDetailModal({ userAgent, opened, onClose = () => {} }) {
       <UserDetailModalBubbles
         {...store.data}
         labels={{
-          personalInformation: t('personalInformation'),
-          badges: t('badges'),
-          email: t('email'),
-          name: t('name'),
-          surnames: t('surnames'),
-          rol: t('rol'),
-          birthday: t('birthday'),
-          gender: t('gender'),
+          personalInformation: t("personalInformation"),
+          badges: t("badges"),
+          email: t("email"),
+          name: t("name"),
+          surnames: t("surnames"),
+          rol: t("rol"),
+          birthday: t("birthday"),
+          gender: t("gender"),
         }}
         opened={store.opened}
         onClose={onClose}

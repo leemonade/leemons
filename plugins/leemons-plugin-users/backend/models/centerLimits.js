@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -21,7 +21,7 @@ const schema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ['group', 'profile'],
+      enum: ["group", "profile"],
     },
     item: {
       type: String,
@@ -39,6 +39,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-const centerLimitsModel = newModel(mongoose.connection, 'v1::users_CenterLimits', schema);
+const centerLimitsModel = newModel(
+  mongoose.connection,
+  "v1::users_CenterLimits",
+  schema
+);
 
 module.exports = { centerLimitsModel };

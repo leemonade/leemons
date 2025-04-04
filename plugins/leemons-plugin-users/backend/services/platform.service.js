@@ -3,18 +3,20 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getServiceModels } = require('../models');
-const restActions = require('./rest/platform.rest');
-const platformService = require('../core/platform');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const { LeemonsMongoDBMixin, mongoose } = require("@leemons/mongodb");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
+const { getServiceModels } = require("../models");
+const restActions = require("./rest/platform.rest");
+const platformService = require("../core/platform");
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'users.platform',
+  name: "users.platform",
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),
@@ -190,7 +192,10 @@ module.exports = {
     },
     setAppearanceMenuMainColor: {
       async handler(ctx) {
-        return platformService.setAppearanceMenuMainColor({ ...ctx.params, ctx });
+        return platformService.setAppearanceMenuMainColor({
+          ...ctx.params,
+          ctx,
+        });
       },
     },
     getAppearanceMenuMainColor: {
@@ -200,7 +205,10 @@ module.exports = {
     },
     setAppearanceMenuDrawerColor: {
       async handler(ctx) {
-        return platformService.setAppearanceMenuDrawerColor({ ...ctx.params, ctx });
+        return platformService.setAppearanceMenuDrawerColor({
+          ...ctx.params,
+          ctx,
+        });
       },
     },
     getAppearanceMenuDrawerColor: {

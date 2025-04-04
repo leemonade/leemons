@@ -1,7 +1,7 @@
-const { LeemonsValidator, validateSchema } = require('@leemons/validator');
+const { LeemonsValidator, validateSchema } = require("@leemons/validator");
 
 const itemPermissionSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     permissionName: validateSchema.text,
     actionNames: validateSchema.arrayStringRequired,
@@ -10,12 +10,12 @@ const itemPermissionSchema = {
     item: validateSchema.string,
     center: validateSchema.text,
   },
-  required: ['permissionName', 'actionNames', 'type', 'item'],
+  required: ["permissionName", "actionNames", "type", "item"],
   additionalProperties: false,
 };
 
 const findItemPermissionSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     permissionName: validateSchema.text,
     actionNames: validateSchema.arrayStringRequired,
@@ -23,7 +23,7 @@ const findItemPermissionSchema = {
     type: validateSchema.string,
     center: validateSchema.text,
   },
-  required: ['permissionName', 'actionNames', 'type'],
+  required: ["permissionName", "actionNames", "type"],
   additionalProperties: false,
 };
 
@@ -44,28 +44,28 @@ function validateFindItemPermission(data) {
 }
 
 const saveSystemDataFieldsConfigSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     secondSurname: {
-      type: 'object',
+      type: "object",
       properties: {
-        required: { type: 'boolean' },
-        disabled: { type: 'boolean' },
+        required: { type: "boolean" },
+        disabled: { type: "boolean" },
       },
-      required: ['required', 'disabled'],
+      required: ["required", "disabled"],
       additionalProperties: false,
     },
     avatar: {
-      type: 'object',
+      type: "object",
       properties: {
-        required: { type: 'boolean' },
-        disabled: { type: 'boolean' },
+        required: { type: "boolean" },
+        disabled: { type: "boolean" },
       },
-      required: ['required', 'disabled'],
+      required: ["required", "disabled"],
       additionalProperties: false,
     },
   },
-  required: ['secondSurname', 'avatar'],
+  required: ["secondSurname", "avatar"],
   additionalProperties: false,
 };
 

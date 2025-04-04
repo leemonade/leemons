@@ -1,15 +1,15 @@
 export const getProviderKey = [
   {
-    plugin: 'plugin.users',
-    scope: 'providers',
+    plugin: "plugin.users",
+    scope: "providers",
   },
 ];
 
 export const listProvidersKey = [
   {
-    plugin: 'plugin.users',
-    scope: 'providers',
-    action: 'list',
+    plugin: "plugin.users",
+    scope: "providers",
+    action: "list",
   },
 ];
 

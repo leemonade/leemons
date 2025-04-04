@@ -2,8 +2,8 @@ async function update({ userAgentId, tags, ctx }) {
   const promises = [];
   if (tags)
     promises.push(
-      ctx.tx.call('common.tags.setTagsToValues', {
-        type: 'users.user-agent',
+      ctx.tx.call("common.tags.setTagsToValues", {
+        type: "users.user-agent",
         tags,
         values: userAgentId,
       })

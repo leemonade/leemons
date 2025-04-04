@@ -1,6 +1,6 @@
 const {
   searchUsersWithRoleAndMarkAsReloadPermissions,
-} = require('../searchUsersWithRoleAndMarkAsReloadPermissions');
+} = require("../searchUsersWithRoleAndMarkAsReloadPermissions");
 
 /**
  * Remove all permissions of role

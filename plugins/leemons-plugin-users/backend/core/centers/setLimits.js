@@ -1,5 +1,5 @@
-const { LeemonsValidator } = require('@leemons/validator');
-const _ = require('lodash');
+const { LeemonsValidator } = require("@leemons/validator");
+const _ = require("lodash");
 
 /**
  * Set limits for a center
@@ -12,12 +12,12 @@ const _ = require('lodash');
  */
 async function setLimits({ limits, centerId, ctx }) {
   const validator = new LeemonsValidator({
-    type: 'object',
+    type: "object",
     properties: {
-      limits: { type: 'array' },
-      centerId: { type: 'string' },
+      limits: { type: "array" },
+      centerId: { type: "string" },
     },
-    required: ['limits', 'centerId'],
+    required: ["limits", "centerId"],
     additionalProperties: false,
   });
 
@@ -26,18 +26,20 @@ async function setLimits({ limits, centerId, ctx }) {
   }
 
   return Promise.all(
-    _.map(limits, ({ id: limitId, createdAt, updatedAt, deletedAt, ...limit }) =>
-      ctx.tx.db.CenterLimits.findOneAndUpdate(
-        {
-          item: limit.item,
-          center: centerId,
-        },
-        {
-          ...limit,
-          center: centerId,
-        },
-        { upsert: true, new: true, lean: true }
-      )
+    _.map(
+      limits,
+      ({ id: limitId, createdAt, updatedAt, deletedAt, ...limit }) =>
+        ctx.tx.db.CenterLimits.findOneAndUpdate(
+          {
+            item: limit.item,
+            center: centerId,
+          },
+          {
+            ...limit,
+            center: centerId,
+          },
+          { upsert: true, new: true, lean: true }
+        )
     )
   );
 }

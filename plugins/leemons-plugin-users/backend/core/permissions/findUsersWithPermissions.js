@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-const { isArray, forEach, uniq, map, uniqBy } = require('lodash');
-const { getUserAgentsInfo } = require('../user-agents/getUserAgentsInfo');
+const { isArray, forEach, uniq, map, uniqBy } = require("lodash");
+const { getUserAgentsInfo } = require("../user-agents/getUserAgentsInfo");
 
 /**
  * Find the users with the provided permissions
@@ -27,16 +27,20 @@ async function findUsersWithPermissions({ permissions, returnRaw, ctx }) {
 
   if (returnRaw) return response;
 
-  const userAgentIds = uniq(map(response, 'userAgent'));
+  const userAgentIds = uniq(map(response, "userAgent"));
   const userAgents = await getUserAgentsInfo({ userAgentIds, ctx });
   const users = uniqBy(
     map(userAgents, (userAgent) => userAgent.user),
-    'id'
+    "id"
   );
   return map(users, (user) => {
-    user.userAgentIds = userAgents.filter((ua) => ua.user.id === user.id).map((ua) => ua.id);
+    user.userAgentIds = userAgents
+      .filter((ua) => ua.user.id === user.id)
+      .map((ua) => ua.id);
     user.permissions = uniq(
-      response.filter((p) => user.userAgentIds.includes(p.userAgent)).map((p) => p.actionName)
+      response
+        .filter((p) => user.userAgentIds.includes(p.userAgent))
+        .map((p) => p.actionName)
     );
     return user;
   });

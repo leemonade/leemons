@@ -4,9 +4,9 @@ async function validateSchemas(schemas, ctx, index = 0) {
 
   const [locationName, schema] = entries[index];
   if (Object.keys(schema?.compileJsonSchema?.properties ?? {}).length) {
-    const values = await ctx.tx.call('dataset.dataset.getValues', {
+    const values = await ctx.tx.call("dataset.dataset.getValues", {
       locationName,
-      pluginName: 'users',
+      pluginName: "users",
       userAgent: ctx.meta.userSession.userAgents,
       target: ctx.meta.userSession.userAgents[0].id,
     });
@@ -17,7 +17,7 @@ async function validateSchemas(schemas, ctx, index = 0) {
     );
 
     try {
-      await ctx.tx.call('dataset.dataset.validateDataForJsonSchema', {
+      await ctx.tx.call("dataset.dataset.validateDataForJsonSchema", {
         jsonSchema: schema.compileJsonSchema,
         data: goodValues,
       });
@@ -42,12 +42,14 @@ async function validateSchemas(schemas, ctx, index = 0) {
  * @returns {Promise<Boolean>} - Returns `true` if the dataset needs an update, otherwise `false`.
  */
 async function userSessionUserAgentNeedUpdateDataset({ ctx }) {
-  const locationNames = ['user-data'];
+  const locationNames = ["user-data"];
 
   // Get the Profile based on the userAgent Role
   const [userAgent] = ctx.meta.userSession.userAgents;
-  const profileRoles = await ctx.tx.db.ProfileRole.find({ role: userAgent.role })
-    .select(['id', 'profile'])
+  const profileRoles = await ctx.tx.db.ProfileRole.find({
+    role: userAgent.role,
+  })
+    .select(["id", "profile"])
     .lean();
 
   profileRoles.forEach((profileRole) => {
@@ -58,9 +60,9 @@ async function userSessionUserAgentNeedUpdateDataset({ ctx }) {
 
   const schemaPromises = locationNames.map((locationName) =>
     ctx.tx
-      .call('dataset.dataset.getSchemaWithLocale', {
+      .call("dataset.dataset.getSchemaWithLocale", {
         locationName,
-        pluginName: 'users',
+        pluginName: "users",
         locale: ctx.meta.userSession.locale,
       })
       .then((schema) => ({ locationName, schema }))

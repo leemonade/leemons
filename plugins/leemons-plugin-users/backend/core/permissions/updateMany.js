@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const { settledResponseToManyResponse } = require('@leemons/utils');
-const { update } = require('./update');
+const _ = require("lodash");
+const { settledResponseToManyResponse } = require("@leemons/utils");
+const { update } = require("./update");
 
 /**
  * Update multiple permissions
@@ -10,7 +10,9 @@ const { update } = require('./update');
  * @return {Promise<ManyResponse>} Updated permissions
  * */
 async function updateMany({ ctx, ...data }) {
-  const response = await Promise.allSettled(_.map(data, (d) => update({ ...d, ctx })));
+  const response = await Promise.allSettled(
+    _.map(data, (d) => update({ ...d, ctx }))
+  );
   return settledResponseToManyResponse(response);
 }
 

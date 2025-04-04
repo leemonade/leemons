@@ -1,8 +1,10 @@
-const _ = require('lodash');
-const { getUserAgentsInfo } = require('../getUserAgentsInfo');
-const { getUserAgentProfile } = require('../getUserAgentProfile');
-const { getProfileContacts } = require('../../profiles/contacts/getProfileContacts');
-const { searchUserAgents } = require('../searchUserAgents');
+const _ = require("lodash");
+const { getUserAgentsInfo } = require("../getUserAgentsInfo");
+const { getUserAgentProfile } = require("../getUserAgentProfile");
+const {
+  getProfileContacts,
+} = require("../../profiles/contacts/getProfileContacts");
+const { searchUserAgents } = require("../searchUserAgents");
 
 /**
  * Retrieves the contacts associated with a given user agent or agents.
@@ -45,22 +47,27 @@ async function getUserAgentContacts({
   withCenter = false,
   ctx,
 }) {
-  const userColumns = ['id', 'name', 'surnames'];
+  const userColumns = ["id", "name", "surnames"];
   const isArray = _.isArray(_fromUserAgent);
   const fromUserAgents = isArray ? _fromUserAgent : [_fromUserAgent];
 
   const userAgents = await ctx.tx.db.UserAgent.find({ id: fromUserAgents })
-    .select(['id', 'role'])
+    .select(["id", "role"])
     .lean();
-  const userAgentsProfiles = await getUserAgentProfile({ userAgent: userAgents, ctx });
+  const userAgentsProfiles = await getUserAgentProfile({
+    userAgent: userAgents,
+    ctx,
+  });
   let profileContacts = await getProfileContacts({
-    fromProfile: _.map(userAgentsProfiles, 'id'),
+    fromProfile: _.map(userAgentsProfiles, "id"),
     ctx,
   });
   profileContacts = _.uniq(_.flatten(profileContacts));
 
   const userAgentsForProfiles = await searchUserAgents({
-    profile: toProfile ? _.intersection(profileContacts, toProfile) : profileContacts,
+    profile: toProfile
+      ? _.intersection(profileContacts, toProfile)
+      : profileContacts,
     center: toCenter,
     withProfile,
     withCenter,
@@ -85,18 +92,18 @@ async function getUserAgentContacts({
 
   let response = await ctx.tx.db.UserAgentContacts.find(query).lean();
 
-  response = _.uniqBy(response, 'toUserAgent');
+  response = _.uniqBy(response, "toUserAgent");
 
   let userAgentsById = null;
   if (returnAgent) {
     const _userAgents = await getUserAgentsInfo({
-      userAgentIds: _.map(response, 'toUserAgent'),
+      userAgentIds: _.map(response, "toUserAgent"),
       withProfile,
       withCenter,
       userColumns,
       ctx,
     });
-    userAgentsById = _.keyBy(_userAgents, 'id');
+    userAgentsById = _.keyBy(_userAgents, "id");
   }
 
   let toReturn = _.map(response, ({ toUserAgent }) => {
@@ -112,7 +119,7 @@ async function getUserAgentContacts({
   );
 
   if (userAgentsById) {
-    toReturn = _.uniqBy(toReturn, 'id');
+    toReturn = _.uniqBy(toReturn, "id");
   } else {
     toReturn = _.uniq(toReturn);
   }

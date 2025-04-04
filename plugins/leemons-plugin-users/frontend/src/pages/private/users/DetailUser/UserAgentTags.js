@@ -1,14 +1,14 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Col, Grid, Title, TagsInput } from '@bubbles-ui/components';
-import { Controller } from 'react-hook-form';
-import { getUserAgentDetailForPageRequest } from '../../../../request';
+import React from "react";
+import PropTypes from "prop-types";
+import { Col, Grid, Title, TagsInput } from "@bubbles-ui/components";
+import { Controller } from "react-hook-form";
+import { getUserAgentDetailForPageRequest } from "../../../../request";
 
 // Pagina a la que solo tendra acceso el super admin o los usuarios con el permiso de crear usuarios
 function UserAgentTags({ t, userAgent, form, isEditMode }) {
   async function init() {
     const { data } = await getUserAgentDetailForPageRequest(userAgent.id);
-    form.setValue('tags', data.tags);
+    form.setValue("tags", data.tags);
   }
 
   React.useEffect(() => {
@@ -18,14 +18,18 @@ function UserAgentTags({ t, userAgent, form, isEditMode }) {
   return (
     <Grid columns={100}>
       <Col span={35}>
-        <Title order={3}>{t('tags')}</Title>
+        <Title order={3}>{t("tags")}</Title>
       </Col>
       <Col span={65}>
         <Controller
           name="tags"
           control={form.control}
           render={({ field }) => (
-            <TagsInput {...field} disabled={!isEditMode} labels={{ addButton: t('addTag') }} />
+            <TagsInput
+              {...field}
+              disabled={!isEditMode}
+              labels={{ addButton: t("addTag") }}
+            />
           )}
         />
       </Col>

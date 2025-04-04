@@ -6,21 +6,24 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { getSystemDataFieldsConfig, saveSystemDataFieldsConfig } = require('../../core/config');
+} = require("@leemons/middlewares");
+const {
+  getSystemDataFieldsConfig,
+  saveSystemDataFieldsConfig,
+} = require("../../core/config");
 
 module.exports = {
   getSystemDataFieldsConfigRest: {
     rest: {
-      path: '/system-data-fields',
-      method: 'GET',
+      path: "/system-data-fields",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.users': {
-            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          "users.users": {
+            actions: ["view", "update", "create", "delete", "admin"],
           },
         },
       }),
@@ -32,15 +35,15 @@ module.exports = {
   },
   saveSystemDataFieldsConfigRest: {
     rest: {
-      path: '/system-data-fields',
-      method: 'POST',
+      path: "/system-data-fields",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.users': {
-            actions: ['update', 'create', 'delete', 'admin'],
+          "users.users": {
+            actions: ["update", "create", "delete", "admin"],
           },
         },
       }),

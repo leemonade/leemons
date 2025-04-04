@@ -4,15 +4,15 @@
  */
 /** @type {ServiceSchema} */
 
-const { LeemonsError } = require('@leemons/error');
+const { LeemonsError } = require("@leemons/error");
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { LeemonsValidator } = require('@leemons/validator');
-const _ = require('lodash');
+} = require("@leemons/middlewares");
+const { LeemonsValidator } = require("@leemons/validator");
+const _ = require("lodash");
 
-const { detailBySysName } = require('../../core/profiles');
+const { detailBySysName } = require("../../core/profiles");
 const {
   update,
   active,
@@ -24,30 +24,40 @@ const {
   getDataForUserAgentDatasets,
   saveDataForUserAgentDatasets,
   getActiveUserAgentsCountByProfileSysName,
-} = require('../../core/user-agents');
-const { getUserAgentContacts } = require('../../core/user-agents/contacts/getUserAgentContacts');
-const { userAgentsAreContacts } = require('../../core/user-agents/contacts/userAgentsAreContacts');
-const { getDataForUserDatasets, saveDataForUserDatasets } = require('../../core/users');
-const usersService = require('../../core/users');
-const { impersonateUser } = require('../../core/users/impersonateUser');
+} = require("../../core/user-agents");
+const {
+  getUserAgentContacts,
+} = require("../../core/user-agents/contacts/getUserAgentContacts");
+const {
+  userAgentsAreContacts,
+} = require("../../core/user-agents/contacts/userAgentsAreContacts");
+const {
+  getDataForUserDatasets,
+  saveDataForUserDatasets,
+} = require("../../core/users");
+const usersService = require("../../core/users");
+const { impersonateUser } = require("../../core/users/impersonateUser");
 
 module.exports = {
   canResetRest: {
     rest: {
-      path: '/can/reset',
-      method: 'POST',
+      path: "/can/reset",
+      method: "POST",
     },
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          token: { type: 'string' },
+          token: { type: "string" },
         },
-        required: ['token'],
+        required: ["token"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
-        const can = await usersService.canReset({ token: ctx.params.token, ctx });
+        const can = await usersService.canReset({
+          token: ctx.params.token,
+          ctx,
+        });
         return { status: 200, can };
       }
       throw validator.error;
@@ -55,20 +65,23 @@ module.exports = {
   },
   canRegisterPasswordRest: {
     rest: {
-      path: '/can/register-password',
-      method: 'POST',
+      path: "/can/register-password",
+      method: "POST",
     },
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          token: { type: 'string' },
+          token: { type: "string" },
         },
-        required: ['token'],
+        required: ["token"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
-        const can = await usersService.canRegisterPassword({ token: ctx.params.token, ctx });
+        const can = await usersService.canRegisterPassword({
+          token: ctx.params.token,
+          ctx,
+        });
         return { status: 200, can };
       }
       throw validator.error;
@@ -76,17 +89,17 @@ module.exports = {
   },
   resetRest: {
     rest: {
-      path: '/reset',
-      method: 'POST',
+      path: "/reset",
+      method: "POST",
     },
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          token: { type: 'string' },
-          password: { type: 'string' },
+          token: { type: "string" },
+          password: { type: "string" },
         },
-        required: ['token', 'password'],
+        required: ["token", "password"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -104,17 +117,17 @@ module.exports = {
   },
   registerPasswordRest: {
     rest: {
-      path: '/register-password',
-      method: 'POST',
+      path: "/register-password",
+      method: "POST",
     },
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          token: { type: 'string' },
-          password: { type: 'string' },
+          token: { type: "string" },
+          password: { type: "string" },
         },
-        required: ['token', 'password'],
+        required: ["token", "password"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -131,16 +144,16 @@ module.exports = {
   },
   recoverRest: {
     rest: {
-      path: '/recover',
-      method: 'POST',
+      path: "/recover",
+      method: "POST",
     },
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          email: { type: 'string', format: 'email' },
+          email: { type: "string", format: "email" },
         },
-        required: ['email'],
+        required: ["email"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -151,26 +164,26 @@ module.exports = {
         }
 
         ctx.meta.$statusCode = 200;
-        return { status: 200, message: 'Email sent' };
+        return { status: 200, message: "Email sent" };
       }
       throw validator.error;
     },
   },
   loginRest: {
     rest: {
-      path: '/login',
-      method: 'POST',
+      path: "/login",
+      method: "POST",
     },
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          email: { type: 'string', format: 'email' },
+          email: { type: "string", format: "email" },
           password: {
-            type: 'string',
+            type: "string",
           },
         },
-        required: ['email', 'password'],
+        required: ["email", "password"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -186,45 +199,56 @@ module.exports = {
   },
   detailRest: {
     rest: {
-      method: 'GET',
-      path: '/',
+      method: "GET",
+      path: "/",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const user = await usersService.detail({ userId: ctx.meta.userSession.id, ctx });
+      const user = await usersService.detail({
+        userId: ctx.meta.userSession.id,
+        ctx,
+      });
       return { status: 200, user };
     },
   },
   detailForPageRest: {
     rest: {
-      path: '/:id/detail/page',
-      method: 'GET',
+      path: "/:id/detail/page",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const allowedPermissions = {
-        'users.users': {
-          actions: ['view', 'update', 'create', 'delete', 'admin'],
+        "users.users": {
+          actions: ["view", "update", "create", "delete", "admin"],
         },
       };
       let hasPermission = ctx.params.id === ctx.meta.userSession.id;
 
       if (!hasPermission) {
-        hasPermission = await usersService.hasPermissionCTX({ allowedPermissions, ctx });
+        hasPermission = await usersService.hasPermissionCTX({
+          allowedPermissions,
+          ctx,
+        });
       }
 
-      const user = await usersService.detailForPage({ userId: ctx.params.id, ctx });
+      const user = await usersService.detailForPage({
+        userId: ctx.params.id,
+        ctx,
+      });
       const data = {
         ...(user ?? {}),
-        user: _.omit(user?.user, ['password', 'token', '__v']),
-        userAgents: user?.userAgents?.map((userAgent) => _.omit(userAgent, ['user'])),
+        user: _.omit(user?.user, ["password", "token", "__v"]),
+        userAgents: user?.userAgents?.map((userAgent) =>
+          _.omit(userAgent, ["user"])
+        ),
       };
 
       // Comprobamos si se tienen como contactos
       if (!hasPermission) {
         hasPermission = await userAgentsAreContacts({
-          fromUserAgent: _.map(ctx.meta.userSession.userAgents, 'id'),
-          toUserAgent: _.map(data.userAgents, 'id'),
+          fromUserAgent: _.map(ctx.meta.userSession.userAgents, "id"),
+          toUserAgent: _.map(data.userAgents, "id"),
           ctx,
         });
       }
@@ -238,7 +262,7 @@ module.exports = {
       });
       throw new LeemonsError(ctx, {
         message: `You do not have permissions. Allowed permissions: ${rAllowedPermissions.join(
-          ', '
+          ", "
         )}.`,
         httpStatusCode: 401,
       });
@@ -246,33 +270,39 @@ module.exports = {
   },
   agentDetailForPageRest: {
     rest: {
-      path: '/user-agent/:id/detail/page',
-      method: 'GET',
+      path: "/user-agent/:id/detail/page",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const allowedPermissions = {
-        'users.users': {
-          actions: ['view', 'update', 'create', 'delete', 'admin'],
+        "users.users": {
+          actions: ["view", "update", "create", "delete", "admin"],
         },
       };
       let hasPermission = ctx.params.id === ctx.meta.userSession.id;
 
       if (!hasPermission) {
-        hasPermission = await usersService.hasPermissionCTX({ allowedPermissions, ctx });
+        hasPermission = await usersService.hasPermissionCTX({
+          allowedPermissions,
+          ctx,
+        });
       }
 
       // Comprobamos si se tienen como contactos
       if (!hasPermission) {
         hasPermission = await userAgentsAreContacts({
-          fromUserAgent: _.map(ctx.meta.userSession.userAgents, 'id'),
+          fromUserAgent: _.map(ctx.meta.userSession.userAgents, "id"),
           toUserAgent: ctx.params.id,
           ctx,
         });
       }
 
       if (hasPermission) {
-        const data = await agentDetailForPage({ userAgentId: ctx.params.id, ctx });
+        const data = await agentDetailForPage({
+          userAgentId: ctx.params.id,
+          ctx,
+        });
         return { status: 200, data };
       }
       const rAllowedPermissions = [];
@@ -281,7 +311,7 @@ module.exports = {
       });
       throw new LeemonsError(ctx, {
         message: `You do not have permissions. Allowed permissions: ${rAllowedPermissions.join(
-          ', '
+          ", "
         )}.`,
         httpStatusCode: 401,
       });
@@ -289,30 +319,36 @@ module.exports = {
   },
   profilesRest: {
     rest: {
-      path: '/profile',
-      method: 'GET',
+      path: "/profile",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const profiles = await usersService.profiles({ user: ctx.meta.userSession.id, ctx });
+      const profiles = await usersService.profiles({
+        user: ctx.meta.userSession.id,
+        ctx,
+      });
       return { status: 200, profiles };
     },
   },
   centersRest: {
     rest: {
-      path: '/centers',
-      method: 'GET',
+      path: "/centers",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const centers = await usersService.centers({ user: ctx.meta.userSession.id, ctx });
+      const centers = await usersService.centers({
+        user: ctx.meta.userSession.id,
+        ctx,
+      });
       return { status: 200, centers };
     },
   },
   profileTokenRest: {
     rest: {
-      path: '/profile/:id/token',
-      method: 'GET',
+      path: "/profile/:id/token",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -326,8 +362,8 @@ module.exports = {
   },
   centerProfileTokenRest: {
     rest: {
-      path: '/center/:centerId/profile/:profileId/token',
-      method: 'GET',
+      path: "/center/:centerId/profile/:profileId/token",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -342,15 +378,15 @@ module.exports = {
   },
   impersonateRest: {
     rest: {
-      path: '/impersonate/:userId',
-      method: 'POST',
+      path: "/impersonate/:userId",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.impersonate': {
-            actions: ['admin'],
+          "users.impersonate": {
+            actions: ["admin"],
           },
         },
       }),
@@ -363,18 +399,25 @@ module.exports = {
   },
   setRememberLoginRest: {
     rest: {
-      path: '/remember/login',
-      method: 'POST',
+      path: "/remember/login",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const centers = await usersService.centers({ user: ctx.meta.userSession.id, ctx });
+      const centers = await usersService.centers({
+        user: ctx.meta.userSession.id,
+        ctx,
+      });
       const centerI = _.findIndex(centers, { id: ctx.params.center });
       const isSuperAdminProfile =
-        centerI < 0 && (await detailBySysName({ sysName: 'super', ctx })).id === ctx.params.profile;
+        centerI < 0 &&
+        (await detailBySysName({ sysName: "super", ctx })).id ===
+          ctx.params.profile;
 
       if (centerI >= 0 || isSuperAdminProfile) {
-        const profileI = _.findIndex(centers[centerI]?.profiles, { id: ctx.params.profile });
+        const profileI = _.findIndex(centers[centerI]?.profiles, {
+          id: ctx.params.profile,
+        });
         if (profileI >= 0 || isSuperAdminProfile) {
           await ctx.tx.db.UserRememberLogin.updateOne(
             { user: ctx.meta.userSession.id },
@@ -393,16 +436,20 @@ module.exports = {
             center: isSuperAdminProfile ? null : centers[centerI],
           };
         }
-        throw new LeemonsError(ctx, { message: 'You do not have access to the specified profile' });
+        throw new LeemonsError(ctx, {
+          message: "You do not have access to the specified profile",
+        });
       } else {
-        throw new LeemonsError(ctx, { message: 'You do not have access to the specified center' });
+        throw new LeemonsError(ctx, {
+          message: "You do not have access to the specified center",
+        });
       }
     },
   },
   removeRememberLoginRest: {
     rest: {
-      path: '/remember/login',
-      method: 'DELETE',
+      path: "/remember/login",
+      method: "DELETE",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -411,15 +458,17 @@ module.exports = {
       }).lean();
 
       if (remember) {
-        await ctx.tx.db.UserRememberLogin.deleteOne({ user: ctx.meta.userSession.id });
+        await ctx.tx.db.UserRememberLogin.deleteOne({
+          user: ctx.meta.userSession.id,
+        });
       }
       return { status: 200 };
     },
   },
   getRememberLoginRest: {
     rest: {
-      path: '/remember/login',
-      method: 'GET',
+      path: "/remember/login",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -427,14 +476,21 @@ module.exports = {
         user: ctx.meta.userSession.id,
       }).lean();
       if (remember) {
-        const centers = await usersService.centers({ user: ctx.meta.userSession.id, ctx });
+        const centers = await usersService.centers({
+          user: ctx.meta.userSession.id,
+          ctx,
+        });
         const centerI = _.findIndex(centers, { id: remember.center });
 
-        const superAdminProfile = centerI < 0 && (await detailBySysName({ sysName: 'super', ctx }));
-        const isSuperAdminProfile = centerI < 0 && superAdminProfile.id === remember.profile;
+        const superAdminProfile =
+          centerI < 0 && (await detailBySysName({ sysName: "super", ctx }));
+        const isSuperAdminProfile =
+          centerI < 0 && superAdminProfile.id === remember.profile;
 
         if (centerI >= 0 || isSuperAdminProfile) {
-          const profileI = _.findIndex(centers[centerI]?.profiles, { id: remember.profile });
+          const profileI = _.findIndex(centers[centerI]?.profiles, {
+            id: remember.profile,
+          });
           if (profileI >= 0) {
             return {
               status: 200,
@@ -454,18 +510,18 @@ module.exports = {
   },
   createBulkRest: {
     rest: {
-      path: '/create/bulk',
-      method: 'POST',
+      path: "/create/bulk",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.users': {
-            actions: ['create', 'admin'],
+          "users.users": {
+            actions: ["create", "admin"],
           },
-          'admin.setup': {
-            actions: ['update', 'create', 'admin'],
+          "admin.setup": {
+            actions: ["update", "create", "admin"],
           },
         },
       }),
@@ -477,18 +533,18 @@ module.exports = {
   },
   deleteUserAgentRest: {
     rest: {
-      path: '/user-agent/:id',
-      method: 'DELETE',
+      path: "/user-agent/:id",
+      method: "DELETE",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.centers': {
-            actions: ['delete', 'admin'],
+          "users.centers": {
+            actions: ["delete", "admin"],
           },
-          'admin.setup': {
-            actions: ['delete', 'admin'],
+          "admin.setup": {
+            actions: ["delete", "admin"],
           },
         },
       }),
@@ -500,30 +556,30 @@ module.exports = {
   },
   listRest: {
     rest: {
-      path: '/list',
-      method: 'POST',
+      path: "/list",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.users': {
-            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          "users.users": {
+            actions: ["view", "update", "create", "delete", "admin"],
           },
         },
       }),
     ],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          page: { type: 'number' },
-          size: { type: 'number' },
-          query: { type: 'object', additionalProperties: true },
-          sort: { type: 'object', additionalProperties: true },
-          collation: { type: 'object', additionalProperties: true },
+          page: { type: "number" },
+          size: { type: "number" },
+          query: { type: "object", additionalProperties: true },
+          sort: { type: "object", additionalProperties: true },
+          collation: { type: "object", additionalProperties: true },
         },
-        required: ['page', 'size'],
+        required: ["page", "size"],
         additionalProperties: false,
       });
       if (validator.validate(ctx.params)) {
@@ -542,15 +598,15 @@ module.exports = {
   },
   getUserAgentsInfoRest: {
     rest: {
-      path: '/user-agents/info',
-      method: 'POST',
+      path: "/user-agents/info",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.users': {
-            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          "users.users": {
+            actions: ["view", "update", "create", "delete", "admin"],
           },
         },
       }),
@@ -566,15 +622,15 @@ module.exports = {
   },
   searchUserAgentsRest: {
     rest: {
-      path: '/user-agents/search',
-      method: 'POST',
+      path: "/user-agents/search",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.users': {
-            actions: ['view', 'update', 'create', 'delete', 'admin'],
+          "users.users": {
+            actions: ["view", "update", "create", "delete", "admin"],
           },
         },
       }),
@@ -590,13 +646,13 @@ module.exports = {
   },
   contactsRest: {
     rest: {
-      path: '/contacts',
-      method: 'POST',
+      path: "/contacts",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const userAgents = await getUserAgentContacts({
-        fromUserAgent: _.map(ctx.meta.userSession.userAgents, 'id'),
+        fromUserAgent: _.map(ctx.meta.userSession.userAgents, "id"),
         ...ctx.params,
         returnAgent: true,
       });
@@ -605,16 +661,16 @@ module.exports = {
   },
   createSuperAdminRest: {
     rest: {
-      path: '/super-admin',
-      method: 'POST',
+      path: "/super-admin",
+      method: "POST",
     },
     async handler(ctx) {
       return usersService.addFirstSuperAdminUser({
-        name: 'Jaime',
-        surnames: 'Gómez Cimarro',
-        email: 'jaime@leemons.io',
-        password: 'testing',
-        locale: 'es-ES',
+        name: "Jaime",
+        surnames: "Gómez Cimarro",
+        email: "jaime@leemons.io",
+        password: "testing",
+        locale: "es-ES",
         ctx,
       });
     },
@@ -622,20 +678,23 @@ module.exports = {
   // TODO: Hacer un middleware de dataset que refleje: disableUserAgentDatasetCheck: true,
   getDataForUserAgentDatasetsRest: {
     rest: {
-      path: '/get-data-for-user-agent-datasets',
-      method: 'GET',
+      path: "/get-data-for-user-agent-datasets",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const data = await getDataForUserAgentDatasets({ userAgentId: ctx.params?.userAgentId, ctx });
+      const data = await getDataForUserAgentDatasets({
+        userAgentId: ctx.params?.userAgentId,
+        ctx,
+      });
       return { status: 200, data };
     },
   },
 
   saveDataForUserAgentDatasetsRest: {
     rest: {
-      path: '/save-data-for-user-agent-datasets',
-      method: 'POST',
+      path: "/save-data-for-user-agent-datasets",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -648,20 +707,23 @@ module.exports = {
   },
   getDataForUserDatasetsRest: {
     rest: {
-      path: '/get-data-for-user-datasets',
-      method: 'GET',
+      path: "/get-data-for-user-datasets",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const data = await getDataForUserDatasets({ userIds: [ctx.params?.userId], ctx });
+      const data = await getDataForUserDatasets({
+        userIds: [ctx.params?.userId],
+        ctx,
+      });
       return { status: 200, data };
     },
   },
 
   saveDataForUserDatasetsRest: {
     rest: {
-      path: '/save-data-for-user-datasets',
-      method: 'POST',
+      path: "/save-data-for-user-datasets",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -674,24 +736,31 @@ module.exports = {
   },
   updateUserRest: {
     rest: {
-      path: '/:id/update',
-      method: 'POST',
+      path: "/:id/update",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const allowedPermissions = {
-        'users.users': {
-          actions: ['update', 'admin'],
+        "users.users": {
+          actions: ["update", "admin"],
         },
       };
       let hasPermission = ctx.params.id === ctx.meta.userSession.id;
 
       if (!hasPermission) {
-        hasPermission = await usersService.hasPermissionCTX({ allowedPermissions, ctx });
+        hasPermission = await usersService.hasPermissionCTX({
+          allowedPermissions,
+          ctx,
+        });
       }
 
       if (hasPermission) {
-        const data = await usersService.update({ userId: ctx.params.id, ...ctx.params, ctx });
+        const data = await usersService.update({
+          userId: ctx.params.id,
+          ...ctx.params,
+          ctx,
+        });
         return { status: 200, data };
       }
       const rAllowedPermissions = [];
@@ -700,7 +769,7 @@ module.exports = {
       });
       throw new LeemonsError(ctx, {
         message: `You do not have permissions. Allowed permissions: ${rAllowedPermissions.join(
-          ', '
+          ", "
         )}.`,
         httpStatusCode: 401,
       });
@@ -708,20 +777,23 @@ module.exports = {
   },
   updateUserAvatarRest: {
     rest: {
-      path: '/:id/update-avatar',
-      method: 'POST',
+      path: "/:id/update-avatar",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const allowedPermissions = {
-        'users.users': {
-          actions: ['update', 'admin'],
+        "users.users": {
+          actions: ["update", "admin"],
         },
       };
       let hasPermission = ctx.params.id === ctx.meta.userSession.id;
 
       if (!hasPermission) {
-        hasPermission = await usersService.hasPermissionCTX({ allowedPermissions, ctx });
+        hasPermission = await usersService.hasPermissionCTX({
+          allowedPermissions,
+          ctx,
+        });
       }
 
       if (hasPermission) {
@@ -738,7 +810,7 @@ module.exports = {
       });
       throw new LeemonsError(ctx, {
         message: `You do not have permissions. Allowed permissions: ${rAllowedPermissions.join(
-          ', '
+          ", "
         )}.`,
         httpStatusCode: 401,
       });
@@ -746,20 +818,23 @@ module.exports = {
   },
   updateUserAgentRest: {
     rest: {
-      path: '/user-agent/:id/update',
-      method: 'POST',
+      path: "/user-agent/:id/update",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const allowedPermissions = {
-        'users.users': {
-          actions: ['update', 'admin'],
+        "users.users": {
+          actions: ["update", "admin"],
         },
       };
       let hasPermission = ctx.params.id === ctx.meta.userSession.id;
 
       if (!hasPermission) {
-        hasPermission = await usersService.hasPermissionCTX({ allowedPermissions, ctx });
+        hasPermission = await usersService.hasPermissionCTX({
+          allowedPermissions,
+          ctx,
+        });
       }
 
       if (hasPermission) {
@@ -776,7 +851,7 @@ module.exports = {
       });
       throw new LeemonsError(ctx, {
         message: `You do not have permissions. Allowed permissions: ${rAllowedPermissions.join(
-          ', '
+          ", "
         )}.`,
         httpStatusCode: 401,
       });
@@ -784,8 +859,8 @@ module.exports = {
   },
   updateSessionConfigRest: {
     rest: {
-      path: '/session/config',
-      method: 'POST',
+      path: "/session/config",
+      method: "POST",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -795,15 +870,15 @@ module.exports = {
   },
   activateUserRest: {
     rest: {
-      path: '/activate-user',
-      method: 'POST',
+      path: "/activate-user",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.users': {
-            actions: ['admin'],
+          "users.users": {
+            actions: ["admin"],
           },
         },
       }),
@@ -819,15 +894,15 @@ module.exports = {
   },
   sendWelcomeEmailToUserRest: {
     rest: {
-      path: '/activation-mail',
-      method: 'POST',
+      path: "/activation-mail",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.users': {
-            actions: ['admin'],
+          "users.users": {
+            actions: ["admin"],
           },
         },
       }),
@@ -840,21 +915,21 @@ module.exports = {
         });
         return { status: 200, email };
       } catch (e) {
-        return { status: 200, code: e.code, message: 'Email sent' };
+        return { status: 200, code: e.code, message: "Email sent" };
       }
     },
   },
   disableUserAgentRest: {
     rest: {
-      path: '/user-agents/disable',
-      method: 'POST',
+      path: "/user-agents/disable",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.enabledisable': {
-            actions: ['delete', 'admin'],
+          "users.enabledisable": {
+            actions: ["delete", "admin"],
           },
         },
       }),
@@ -866,15 +941,15 @@ module.exports = {
   },
   activeUserAgentRest: {
     rest: {
-      path: '/user-agents/active',
-      method: 'POST',
+      path: "/user-agents/active",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.enabledisable': {
-            actions: ['create', 'admin'],
+          "users.enabledisable": {
+            actions: ["create", "admin"],
           },
         },
       }),
@@ -886,15 +961,15 @@ module.exports = {
   },
   getActiveUserAgentsCountByProfileSysNameRest: {
     rest: {
-      path: '/user-agents/active-count/:sysName',
-      method: 'GET',
+      path: "/user-agents/active-count/:sysName",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'users.users': {
-            actions: ['admin'],
+          "users.users": {
+            actions: ["admin"],
           },
         },
       }),
@@ -910,15 +985,17 @@ module.exports = {
   },
   checkUserAgentDatasetsRest: {
     rest: {
-      path: '/user-agents/check-datasets',
-      method: 'GET',
+      path: "/user-agents/check-datasets",
+      method: "GET",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      const isGood = await usersService.userSessionCheckUserAgentDatasets({ ctx });
+      const isGood = await usersService.userSessionCheckUserAgentDatasets({
+        ctx,
+      });
       if (!isGood) {
         const userAgent = ctx.meta.userSession.userAgents[0].id;
-        ctx.socket.emit(userAgent, 'USER_AGENT_NEED_UPDATE_DATASET');
+        ctx.socket.emit(userAgent, "USER_AGENT_NEED_UPDATE_DATASET");
       }
       return { isGood };
     },

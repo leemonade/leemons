@@ -1,19 +1,19 @@
-import React from 'react';
+import React from "react";
 
-import { Drawer, Stack, Button } from '@bubbles-ui/components';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { noop } from 'lodash';
-import PropTypes from 'prop-types';
+import { Drawer, Stack, Button } from "@bubbles-ui/components";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { noop } from "lodash";
+import PropTypes from "prop-types";
 
-import { UserDatasets } from './UserDatasets';
+import { UserDatasets } from "./UserDatasets";
 
-import prefixPN from '@users/helpers/prefixPN';
-import { getSessionUserAgent } from '@users/session';
+import prefixPN from "@users/helpers/prefixPN";
+import { getSessionUserAgent } from "@users/session";
 
 function UserDatasetDrawer({ userId, userAgentIds, isOpen, onClose = noop }) {
-  const [t] = useTranslateLoader(prefixPN('userDataDatasetPage'));
+  const [t] = useTranslateLoader(prefixPN("userDataDatasetPage"));
   const [saving, setSaving] = React.useState(false);
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const userAgentId = getSessionUserAgent();
@@ -27,7 +27,7 @@ function UserDatasetDrawer({ userId, userAgentIds, isOpen, onClose = noop }) {
     try {
       const success = await userDatasetsRef.current.checkFormsAndSave();
       if (success) {
-        addSuccessAlert(t('saveSuccess'));
+        addSuccessAlert(t("saveSuccess"));
         onClose();
       }
     } catch (error) {
@@ -42,7 +42,7 @@ function UserDatasetDrawer({ userId, userAgentIds, isOpen, onClose = noop }) {
 
   return (
     <Drawer size="sm" opened={isOpen} onClose={onClose}>
-      <Drawer.Header title={t('additionalInfo')} />
+      <Drawer.Header title={t("additionalInfo")} />
       <Drawer.Content>
         <UserDatasets
           ref={userDatasetsRef}
@@ -55,10 +55,10 @@ function UserDatasetDrawer({ userId, userAgentIds, isOpen, onClose = noop }) {
       <Drawer.Footer>
         <Stack fullWidth justifyContent="space-between">
           <Button type="button" variant="link" compact onClick={onClose}>
-            {t('cancel')}
+            {t("cancel")}
           </Button>
           <Button onClick={handleSave} loading={saving}>
-            {t('save')}
+            {t("save")}
           </Button>
         </Stack>
       </Drawer.Footer>

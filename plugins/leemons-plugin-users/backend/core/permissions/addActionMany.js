@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const { settledResponseToManyResponse } = require('@leemons/utils');
-const { addAction } = require('./addAction');
+const _ = require("lodash");
+const { settledResponseToManyResponse } = require("@leemons/utils");
+const { addAction } = require("./addAction");
 
 /**
  * Create multiple permissions

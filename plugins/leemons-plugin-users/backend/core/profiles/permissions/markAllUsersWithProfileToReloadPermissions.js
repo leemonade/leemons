@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 /**
  * Update the provided role
@@ -10,10 +10,10 @@ const _ = require('lodash');
  * */
 async function markAllUsersWithProfileToReloadPermissions({ profileId, ctx }) {
   const profileRoles = await ctx.tx.db.ProfileRole.find({ profile: profileId })
-    .select(['id', 'role'])
+    .select(["id", "role"])
     .lean();
   return ctx.tx.db.UserAgent.updateMany(
-    { role: _.map(profileRoles, 'role') },
+    { role: _.map(profileRoles, "role") },
     { reloadPermissions: true }
   );
 }

@@ -1,10 +1,10 @@
-const { LeemonsError } = require('@leemons/error');
-const { escapeRegExp } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { escapeRegExp } = require("lodash");
 
-const { getProvider } = require('../providers/getProvider');
+const { getProvider } = require("../providers/getProvider");
 
-const { isSuperAdmin } = require('./isSuperAdmin');
-const { generateJWTToken } = require('./jwt/generateJWTToken');
+const { isSuperAdmin } = require("./isSuperAdmin");
+const { generateJWTToken } = require("./jwt/generateJWTToken");
 
 /**
  *
@@ -16,9 +16,9 @@ async function verifyIsCallingFromProvider({ ctx }) {
 
   if (ctx.callerPlugin !== provider.pluginName) {
     throw new LeemonsError(ctx, {
-      message: 'You are not authorized to call this endpoint',
+      message: "You are not authorized to call this endpoint",
       httpStatusCode: 403,
-      customCode: 'UNAUTHORIZED',
+      customCode: "UNAUTHORIZED",
     });
   }
 
@@ -35,7 +35,7 @@ async function loginWithProvider({ email, ctx }) {
   await verifyIsCallingFromProvider({ ctx });
 
   const user = await ctx.tx.db.Users.findOne({
-    email: new RegExp(`^${escapeRegExp(email)}$`, 'i'),
+    email: new RegExp(`^${escapeRegExp(email)}$`, "i"),
   }).lean();
 
   const [token, userAgents] = await Promise.all([
@@ -47,14 +47,17 @@ async function loginWithProvider({ email, ctx }) {
       user: user.id,
       $or: [{ disabled: null }, { disabled: false }],
     })
-      .select(['id'])
+      .select(["id"])
       .lean(),
   ]);
 
   if (user && user.id) {
     user.isSuperAdmin = await isSuperAdmin({ userId: user.id, ctx });
     if (!userAgents.length && user.isSuperAdmin) {
-      throw new LeemonsError(ctx, { message: 'No user agents to connect', httpStatusCode: 401 });
+      throw new LeemonsError(ctx, {
+        message: "No user agents to connect",
+        httpStatusCode: 401,
+      });
     }
   }
 

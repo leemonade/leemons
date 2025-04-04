@@ -1,7 +1,7 @@
-import { useVariantForQueryKey } from '@common/queries';
-import { useQuery } from '@tanstack/react-query';
-import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
-import { getCookieToken } from '@users/session';
+import { useVariantForQueryKey } from "@common/queries";
+import { useQuery } from "@tanstack/react-query";
+import { getPermissionsWithActionsIfIHaveRequest } from "@users/request";
+import { getCookieToken } from "@users/session";
 
 export default function usePermissions({ name, ...options } = {}) {
   const token = getCookieToken(true);
@@ -9,15 +9,15 @@ export default function usePermissions({ name, ...options } = {}) {
 
   const queryKey = [
     {
-      plugin: 'plugin.users',
-      scope: 'permissions',
+      plugin: "plugin.users",
+      scope: "permissions",
       permission: name,
       userAgents,
     },
   ];
 
   useVariantForQueryKey(queryKey, {
-    modificationTrend: 'frequently',
+    modificationTrend: "frequently",
   });
 
   return useQuery({

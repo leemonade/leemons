@@ -1,5 +1,5 @@
-import { getLocalizations } from '@multilanguage/useTranslate';
-import prefixPN from '@users/helpers/prefixPN';
+import { getLocalizations } from "@multilanguage/useTranslate";
+import prefixPN from "@users/helpers/prefixPN";
 
 async function getProfileTranslations(profileId, locale) {
   const name = prefixPN(`profile.${profileId}.name`);
@@ -9,8 +9,8 @@ async function getProfileTranslations(profileId, locale) {
     locale,
   });
   return {
-    name: items[name] || '',
-    description: items[description] || '',
+    name: items[name] || "",
+    description: items[description] || "",
   };
 }
 

@@ -1,31 +1,35 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { validateAddUsersBulkForm } = require('../../validations/forms');
-const getDefaultLocale = require('../platform/getDefaultLocale');
+const { validateAddUsersBulkForm } = require("../../validations/forms");
+const getDefaultLocale = require("../platform/getDefaultLocale");
 const {
   getRoleForRelationshipProfileCenter,
-} = require('../profiles/getRoleForRelationshipProfileCenter');
-const addUserInProvider = require('../providers/users/addUser');
+} = require("../profiles/getRoleForRelationshipProfileCenter");
+const addUserInProvider = require("../providers/users/addUser");
 const {
   addCenterAssetsPermissionToCenterAdminUserAgent,
-} = require('../user-agents/addCenterAssetsPermissionToCenterAdminUserAgent');
+} = require("../user-agents/addCenterAssetsPermissionToCenterAdminUserAgent");
 const {
   addCenterProfilePermissionToUserAgents,
-} = require('../user-agents/addCenterProfilePermissionToUserAgents');
+} = require("../user-agents/addCenterProfilePermissionToUserAgents");
 const {
   addCalendarToUserAgentsIfNeedByUser,
-} = require('../user-agents/calendar/addCalendarToUserAgentsIfNeedByUser');
-const { setUserDatasetInfo } = require('../user-agents/setUserDatasetInfo');
+} = require("../user-agents/calendar/addCalendarToUserAgentsIfNeedByUser");
+const { setUserDatasetInfo } = require("../user-agents/setUserDatasetInfo");
 
-const { addUserAvatar } = require('./addUserAvatar');
-const { encryptPassword } = require('./bcrypt/encryptPassword');
+const { addUserAvatar } = require("./addUserAvatar");
+const { encryptPassword } = require("./bcrypt/encryptPassword");
 const {
   checkIfCanCreateNUserAgentsInRoleProfiles,
-} = require('./checkIfCanCreateNUserAgentsInRoleProfiles');
-const { sendActivationEmailsByProfileToUser } = require('./sendActivationEmailsByProfileToUser');
-const { sendNewProfileAddedEmailToUser } = require('./sendNewProfileAddedEmailToUser');
-const { sendWelcomeEmailToUser } = require('./sendWelcomeEmailToUser');
-const { setUserForRegisterPassword } = require('./setUserForRegisterPassword');
+} = require("./checkIfCanCreateNUserAgentsInRoleProfiles");
+const {
+  sendActivationEmailsByProfileToUser,
+} = require("./sendActivationEmailsByProfileToUser");
+const {
+  sendNewProfileAddedEmailToUser,
+} = require("./sendNewProfileAddedEmailToUser");
+const { sendWelcomeEmailToUser } = require("./sendWelcomeEmailToUser");
+const { setUserForRegisterPassword } = require("./setUserForRegisterPassword");
 
 /**
  * Function to handle the creation or update of a user.
@@ -38,9 +42,15 @@ const { setUserForRegisterPassword } = require('./setUserForRegisterPassword');
  * @param {MoleculerContext} params.ctx - The Moleculer's context.
  * @returns {Promise<User>} An object containing the user and a flag indicating if it's a new user.
  */
-async function handleUserCreationOrUpdate({ id, userData, birthdate, password, ctx }) {
+async function handleUserCreationOrUpdate({
+  id,
+  userData,
+  birthdate,
+  password,
+  ctx,
+}) {
   let { email } = userData;
-  if (email?.indexOf('@')) {
+  if (email?.indexOf("@")) {
     email = email.toLowerCase().trim();
   }
   let user = null;
@@ -110,14 +120,21 @@ async function handleUserAgent({ user, role, isNewUser, profile, ctx }) {
   ).lean();
 
   if (!userAgent) {
-    await checkIfCanCreateNUserAgentsInRoleProfiles({ nUserAgents: 1, role, ctx });
+    await checkIfCanCreateNUserAgentsInRoleProfiles({
+      nUserAgents: 1,
+      role,
+      ctx,
+    });
     userAgent = await ctx.tx.db.UserAgent.create({
       role,
       user: user.id,
       reloadPermissions: true,
     });
     userAgent = userAgent.toObject();
-    await addCenterProfilePermissionToUserAgents({ userAgentIds: userAgent.id, ctx });
+    await addCenterProfilePermissionToUserAgents({
+      userAgentIds: userAgent.id,
+      ctx,
+    });
     await addCenterAssetsPermissionToCenterAdminUserAgent({ userAgent, ctx });
 
     // If the user didn't have the profile and it's not a new user, we send the email
@@ -137,7 +154,7 @@ async function handleUserAgent({ user, role, isNewUser, profile, ctx }) {
       },
       { new: true, lean: true }
     );
-    await ctx.tx.emit('user-agent.restore', { userAgent });
+    await ctx.tx.emit("user-agent.restore", { userAgent });
   }
   return userAgent;
 }
@@ -173,7 +190,7 @@ async function addUser({
 }) {
   const { user, isNewUser } = await handleUserCreationOrUpdate({
     id,
-    userData: _.omit(userData, ['created_at']),
+    userData: _.omit(userData, ["created_at"]),
     birthdate,
     password,
     ctx,
@@ -183,31 +200,47 @@ async function addUser({
     await setUserDatasetInfo({ userId: user.id, value: dataset, ctx });
   }
 
-  const userAgent = await handleUserAgent({ user, role, isNewUser, profile, ctx });
+  const userAgent = await handleUserAgent({
+    user,
+    role,
+    isNewUser,
+    profile,
+    ctx,
+  });
 
   if (isNewUser) {
-    await addUserAvatar({ user: { ...user, userAgents: [userAgent] }, avatar, ctx });
+    await addUserAvatar({
+      user: { ...user, userAgents: [userAgent] },
+      avatar,
+      ctx,
+    });
     await setUserForRegisterPassword({ userId: user.id, ctx });
     await sendWelcomeEmailToUser({ user, ctx });
   }
 
   if (tags && _.isArray(tags) && tags.length) {
-    await ctx.tx.call('common.tags.setTagsToValues', {
-      type: 'users.user-agent',
+    await ctx.tx.call("common.tags.setTagsToValues", {
+      type: "users.user-agent",
       tags,
       values: userAgent.id,
     });
   }
 
-  const calendarPluginExists = await ctx.tx.call('deployment-manager.pluginIsInstalled', {
-    pluginName: 'calendar',
-  });
+  const calendarPluginExists = await ctx.tx.call(
+    "deployment-manager.pluginIsInstalled",
+    {
+      pluginName: "calendar",
+    }
+  );
 
   if (userAgent && calendarPluginExists) {
     await addCalendarToUserAgentsIfNeedByUser({ user: user.id, ctx });
   }
 
-  await addUserInProvider({ user: { id: user.id, email: user.email, password }, ctx });
+  await addUserInProvider({
+    user: { id: user.id, email: user.email, password },
+    ctx,
+  });
 
   return user;
 }
@@ -231,7 +264,11 @@ async function addBulk({ data, ctx }) {
   const { center, profile, users } = data;
   validateAddUsersBulkForm(data);
   const [role, locale, _profile, _center] = await Promise.all([
-    getRoleForRelationshipProfileCenter({ profileId: profile, centerId: center, ctx }),
+    getRoleForRelationshipProfileCenter({
+      profileId: profile,
+      centerId: center,
+      ctx,
+    }),
     getDefaultLocale({ ctx }),
     ctx.tx.db.Profiles.findOne({ id: profile }).lean(),
     ctx.tx.db.Centers.findOne({ id: center }).lean(),
@@ -243,7 +280,7 @@ async function addBulk({ data, ctx }) {
         role: role.id,
         ...user,
         locale: user.locale || _center.locale || locale,
-        status: 'created',
+        status: "created",
         active: user.active || false,
         profile: _profile,
         ctx,

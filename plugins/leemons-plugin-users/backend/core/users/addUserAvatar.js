@@ -1,5 +1,5 @@
 async function addUserAvatar({ user, avatar, ctx }) {
-  if (avatar?.startsWith('http')) {
+  if (avatar?.startsWith("http")) {
     return {
       ...user,
       avatar,
@@ -20,7 +20,7 @@ async function addUserAvatar({ user, avatar, ctx }) {
   let asset;
   if (user.avatarAsset) {
     asset = await ctx.tx.call(
-      'leebrary.assets.update',
+      "leebrary.assets.update",
       {
         data: { ...assetData, id: user.avatarAsset },
         published: true,
@@ -29,7 +29,7 @@ async function addUserAvatar({ user, avatar, ctx }) {
     );
   } else {
     asset = await ctx.tx.call(
-      'leebrary.assets.add',
+      "leebrary.assets.add",
       {
         asset: assetData,
         published: true,
@@ -38,7 +38,9 @@ async function addUserAvatar({ user, avatar, ctx }) {
     );
   }
 
-  const coverUrl = await ctx.tx.call('leebrary.assets.getCoverUrl', { assetId: asset.id });
+  const coverUrl = await ctx.tx.call("leebrary.assets.getCoverUrl", {
+    assetId: asset.id,
+  });
 
   const u = await ctx.tx.db.Users.findOneAndUpdate(
     { id: user.id },

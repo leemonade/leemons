@@ -1,4 +1,4 @@
-import { isArray } from 'lodash';
+import { isArray } from "lodash";
 
 const transformErrorsFromAjv = (errors) => {
   if (!isArray(errors)) {
@@ -7,7 +7,7 @@ const transformErrorsFromAjv = (errors) => {
 
   return errors.map((e) => {
     const { dataPath, keyword, message, params, schemaPath } = e;
-    const property = `${dataPath.split('.')[1]}`;
+    const property = `${dataPath.split(".")[1]}`;
 
     // put data in expected format
     return {

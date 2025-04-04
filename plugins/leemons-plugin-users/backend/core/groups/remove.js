@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { exist } = require('./exist');
+const _ = require("lodash");
+const { exist } = require("./exist");
 
 /**
  * Remove group
@@ -10,14 +10,19 @@ const { exist } = require('./exist');
  * */
 async function remove({ groupId, ctx }) {
   await exist({ query: { id: groupId }, throwErrorIfNotExists: true, ctx });
-  const groupUserAgents = await ctx.tx.db.GroupUserAgent.find({ group: groupId })
-    .select(['id', 'user'])
+  const groupUserAgents = await ctx.tx.db.GroupUserAgent.find({
+    group: groupId,
+  })
+    .select(["id", "user"])
     .lean();
-  const userAgentIdsInGroup = _.map(groupUserAgents, 'userAgent');
+  const userAgentIdsInGroup = _.map(groupUserAgents, "userAgent");
   const values = await Promise.all([
     ctx.tx.db.Group.findByIdAndDelete(groupId),
     ctx.tx.db.GroupUserAgent.deleteMany({ group: groupId }),
-    ctx.tx.db.UserAgent.updateMany({ id: userAgentIdsInGroup }, { reloadPermissions: true }),
+    ctx.tx.db.UserAgent.updateMany(
+      { id: userAgentIdsInGroup },
+      { reloadPermissions: true }
+    ),
   ]);
   return values[0];
 }

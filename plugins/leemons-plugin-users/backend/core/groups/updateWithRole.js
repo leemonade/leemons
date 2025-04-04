@@ -1,10 +1,12 @@
 /* eslint-disable no-await-in-loop */
-const _ = require('lodash');
-const slugify = require('slugify');
+const _ = require("lodash");
+const slugify = require("slugify");
 const {
   markAllUsersInGroupToReloadPermissions,
-} = require('./markAllUsersInGroupToReloadPermissions');
-const { checkIfCanCreateUserAgentInGroup } = require('./checkIfCanCreateNUserAgentsInGroup');
+} = require("./markAllUsersInGroupToReloadPermissions");
+const {
+  checkIfCanCreateUserAgentInGroup,
+} = require("./checkIfCanCreateNUserAgentsInGroup");
 /**
  * Create new group if name and type not in use
  * @public
@@ -16,10 +18,11 @@ const { checkIfCanCreateUserAgentInGroup } = require('./checkIfCanCreateNUserAge
 async function updateWithRole({ ctx, ...data }) {
   let group = await ctx.tx.db.Groups.findOne({
     $or: [{ name: data.name }, { uri: slugify(data.name, { lower: true }) }],
-    type: 'role',
+    type: "role",
     id: { $ne: data.id },
   }).lean();
-  if (group) throw new Error('There is already a group with this name and type');
+  if (group)
+    throw new Error("There is already a group with this name and type");
 
   const [_group, groupUserAgents] = await Promise.all([
     ctx.tx.db.Groups.findByIdAndUpdate(
@@ -31,25 +34,32 @@ async function updateWithRole({ ctx, ...data }) {
       },
       { new: true }
     ),
-    ctx.tx.db.GroupUserAgent.find({ group: data.id }).select(['userAgent']).lean(),
+    ctx.tx.db.GroupUserAgent.find({ group: data.id })
+      .select(["userAgent"])
+      .lean(),
     markAllUsersInGroupToReloadPermissions({ groupId: data.id, ctx }),
   ]);
   group = _group;
 
-  const groupRole = (await ctx.tx.db.GroupRole.find({ group: group.id }).lean())[0];
+  const groupRole = (
+    await ctx.tx.db.GroupRole.find({ group: group.id }).lean()
+  )[0];
 
   // Formato: data.permissions
   // [{ permissionName, actionNames }]
-  await ctx.tx.call('users.roles.update', {
+  await ctx.tx.call("users.roles.update", {
     id: groupRole.role,
     name: `group:${group.id.toString()}:role`,
-    type: ctx.prefixPN('group-role'),
+    type: ctx.prefixPN("group-role"),
     permissions: data.permissions,
   });
 
   if (_.isArray(data.userAgents)) {
-    const groupUserAgentIds = _.map(groupUserAgents, 'userAgent');
-    const userAgentIdsToRemove = _.without(groupUserAgentIds, ...data.userAgents);
+    const groupUserAgentIds = _.map(groupUserAgents, "userAgent");
+    const userAgentIdsToRemove = _.without(
+      groupUserAgentIds,
+      ...data.userAgents
+    );
     const userAgentIdsToAdd = _.without(data.userAgents, ...groupUserAgentIds);
     const userAgentsToReloadPermissions = [];
 
@@ -69,7 +79,10 @@ async function updateWithRole({ ctx, ...data }) {
           groupId: data.id,
           ctx,
         });
-        await ctx.tx.db.GroupUserAgent.create({ group: data.id, userAgent: userAgentIdsToAdd[i] });
+        await ctx.tx.db.GroupUserAgent.create({
+          group: data.id,
+          userAgent: userAgentIdsToAdd[i],
+        });
       }
     }
     if (userAgentsToReloadPermissions?.length) {

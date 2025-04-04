@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -35,6 +35,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-const userRememberLoginModel = newModel(mongoose.connection, 'v1::users_UserRememberLogin', schema);
+const userRememberLoginModel = newModel(
+  mongoose.connection,
+  "v1::users_UserRememberLogin",
+  schema
+);
 
 module.exports = { userRememberLoginModel };

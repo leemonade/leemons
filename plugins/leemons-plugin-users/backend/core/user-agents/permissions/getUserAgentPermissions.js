@@ -1,8 +1,10 @@
 /* eslint-disable camelcase */
-const _ = require('lodash');
-const constants = require('../../../config/constants');
-const { updateUserAgentPermissions } = require('./updateUserAgentPermissions');
-const { getUserAgentPermissionsCacheKey } = require('../../../helpers/cacheKeys');
+const _ = require("lodash");
+const constants = require("../../../config/constants");
+const { updateUserAgentPermissions } = require("./updateUserAgentPermissions");
+const {
+  getUserAgentPermissionsCacheKey,
+} = require("../../../helpers/cacheKeys");
 
 /**
  * Return all user auth permissions
@@ -29,7 +31,11 @@ async function getUserAgentPermissions({ userAgent, query: _query, ctx }) {
   }
 
   const cacheKeys = _.map(_userAgents, (_userAgent) =>
-    getUserAgentPermissionsCacheKey({ ctx, userAgent: _userAgent?.id ?? _userAgent, query: _query })
+    getUserAgentPermissionsCacheKey({
+      ctx,
+      userAgent: _userAgent?.id ?? _userAgent,
+      query: _query,
+    })
   );
   const cache = await ctx.cache.getMany(cacheKeys);
 
@@ -37,7 +43,7 @@ async function getUserAgentPermissions({ userAgent, query: _query, ctx }) {
     return Object.keys(cache).reduce((acc, key) => [...acc, ...cache[key]], []);
   }
 
-  const query = { ..._query, userAgent: _.map(_userAgents, 'id') };
+  const query = { ..._query, userAgent: _.map(_userAgents, "id") };
 
   const results = await ctx.tx.db.UserAgentPermission.find(query).lean();
 
@@ -60,7 +66,7 @@ async function getUserAgentPermissions({ userAgent, query: _query, ctx }) {
   _.forIn(group, (values) => {
     responses.push({
       ...values[0],
-      actionNames: _.map(values, 'actionName'),
+      actionNames: _.map(values, "actionName"),
     });
   });
 

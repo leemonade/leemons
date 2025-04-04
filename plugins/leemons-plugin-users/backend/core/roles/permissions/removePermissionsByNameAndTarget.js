@@ -1,8 +1,8 @@
-const _ = require('lodash');
-const { validatePermissionName } = require('../../../validations/exists');
+const _ = require("lodash");
+const { validatePermissionName } = require("../../../validations/exists");
 const {
   searchUsersWithRoleAndMarkAsReloadPermissions,
-} = require('../searchUsersWithRoleAndMarkAsReloadPermissions');
+} = require("../searchUsersWithRoleAndMarkAsReloadPermissions");
 
 /**
  * Remove all permissions of role

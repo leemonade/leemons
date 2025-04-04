@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 /**
  *
@@ -15,7 +15,9 @@ async function removeUserAgentContacts({
   target = null,
   ctx,
 }) {
-  const fromUserAgents = _.isArray(_fromUserAgent) ? _fromUserAgent : [_fromUserAgent];
+  const fromUserAgents = _.isArray(_fromUserAgent)
+    ? _fromUserAgent
+    : [_fromUserAgent];
   const toUserAgents = _.isArray(_toUserAgent) ? _toUserAgent : [_toUserAgent];
   const query = {
     fromUserAgent: fromUserAgents,
@@ -24,10 +26,10 @@ async function removeUserAgentContacts({
     target,
   };
 
-  if (_fromUserAgent === '*') {
+  if (_fromUserAgent === "*") {
     delete query.fromUserAgent;
   }
-  if (_toUserAgent === '*') {
+  if (_toUserAgent === "*") {
     delete query.toUserAgent;
   }
 

@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -25,6 +25,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-const superAdminUserModel = newModel(mongoose.connection, 'v1::users_SuperAdminUser', schema);
+const superAdminUserModel = newModel(
+  mongoose.connection,
+  "v1::users_SuperAdminUser",
+  schema
+);
 
 module.exports = { superAdminUserModel };

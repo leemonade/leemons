@@ -11,9 +11,9 @@ async function getContacts({
   } else {
     params.allAgents = true;
   }
-  return leemons.api('v1/users/users/contacts', {
+  return leemons.api("v1/users/users/contacts", {
     ...params,
-    method: 'POST',
+    method: "POST",
     body: { toProfile, toCenter, withCenter, withProfile },
   });
 }

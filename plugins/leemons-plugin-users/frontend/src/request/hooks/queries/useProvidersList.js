@@ -1,8 +1,8 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 
-import { listProvidersKey } from '../keys/providers';
+import { listProvidersKey } from "../keys/providers";
 
-import listProviders from '@users/request/listProviders';
+import listProviders from "@users/request/listProviders";
 
 /**
  * @typedef {object} Provider

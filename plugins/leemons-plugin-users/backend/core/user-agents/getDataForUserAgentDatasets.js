@@ -1,23 +1,24 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { getUserAgentsInfo } = require('./getUserAgentsInfo');
+const { getUserAgentsInfo } = require("./getUserAgentsInfo");
 
 async function getData({ locationName, userAgentId, ctx }) {
   const promises = [
-    ctx.tx.call('dataset.dataset.getSchemaWithLocale', {
+    ctx.tx.call("dataset.dataset.getSchemaWithLocale", {
       locationName,
-      pluginName: 'users',
+      pluginName: "users",
       locale: ctx.meta.userSession.locale,
     }),
-    ctx.tx.call('dataset.dataset.getValues', {
+    ctx.tx.call("dataset.dataset.getValues", {
       locationName,
-      pluginName: 'users',
+      pluginName: "users",
       userAgent: ctx.meta.userSession.userAgents,
       target: userAgentId,
     }),
   ];
 
-  const [{ compileJsonSchema, compileJsonUI }, value] = await Promise.all(promises);
+  const [{ compileJsonSchema, compileJsonUI }, value] =
+    await Promise.all(promises);
 
   return { jsonSchema: compileJsonSchema, jsonUI: compileJsonUI, value };
 }
@@ -37,15 +38,19 @@ async function getDataForUserAgentDatasets({ userAgentId, ctx }) {
 
   // Get the Profile based on the userAgent Role
   const [userAgent] = userAgents;
-  const profileRoles = await ctx.tx.db.ProfileRole.find({ role: userAgent.role })
-    .select(['id', 'profile'])
+  const profileRoles = await ctx.tx.db.ProfileRole.find({
+    role: userAgent.role,
+  })
+    .select(["id", "profile"])
     .lean();
 
   profileRoles.forEach((profileRole) => {
     locationNames.push(`profile.${profileRole.profile}`);
   });
 
-  const profiles = await ctx.db.Profiles.find({ id: _.map(profileRoles, 'profile') }).lean();
+  const profiles = await ctx.db.Profiles.find({
+    id: _.map(profileRoles, "profile"),
+  }).lean();
 
   // map profiles to an object with the locationName as key
   const profilesMap = {};
@@ -69,7 +74,9 @@ async function getDataForUserAgentDatasets({ userAgentId, ctx }) {
       };
     })
   ).then((results) =>
-    results.filter((result) => result.status === 'fulfilled').map((result) => result.value)
+    results
+      .filter((result) => result.status === "fulfilled")
+      .map((result) => result.value)
   );
 }
 

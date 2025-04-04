@@ -1,10 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from "@tanstack/react-query";
 
-import listCenters from '../../listCenters';
+import listCenters from "../../listCenters";
 
 function useListCentersRequest(body, options = {}) {
   return useQuery({
-    queryKey: ['listCenters', body],
+    queryKey: ["listCenters", body],
     queryFn: () => listCenters(body),
     ...options,
   });

@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const { settledResponseToManyResponse } = require('@leemons/utils');
-const { add } = require('./add');
+const _ = require("lodash");
+const { settledResponseToManyResponse } = require("@leemons/utils");
+const { add } = require("./add");
 
 /**
  * Create multiple permissions
@@ -10,7 +10,9 @@ const { add } = require('./add');
  * @return {Promise<ManyResponse>} Created permissions
  * */
 async function addMany({ ctx, ...data }) {
-  const response = await Promise.allSettled(_.map(data, (d) => add({ ...d, ctx })));
+  const response = await Promise.allSettled(
+    _.map(data, (d) => add({ ...d, ctx }))
+  );
   return settledResponseToManyResponse(response);
 }
 

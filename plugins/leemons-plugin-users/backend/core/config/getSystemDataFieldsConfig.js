@@ -1,5 +1,5 @@
 async function getSystemDataFieldsConfig({ ctx }) {
-  const data = await ctx.tx.db.Config.findOne({ key: 'SystemDataFields' });
+  const data = await ctx.tx.db.Config.findOne({ key: "SystemDataFields" });
   const result = {
     avatar: { required: false, disabled: false },
     secondSurname: { required: false, disabled: false },

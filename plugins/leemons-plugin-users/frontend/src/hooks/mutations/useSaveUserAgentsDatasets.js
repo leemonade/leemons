@@ -1,8 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { getUserAgentsDatasetsKey } from '../keys/userDatasetsKeys';
+import { getUserAgentsDatasetsKey } from "../keys/userDatasetsKeys";
 
-import { saveDataForUserAgentDatasetsRequest } from '@users/request';
+import { saveDataForUserAgentDatasetsRequest } from "@users/request";
 
 function useSaveUserAgentsDatasets({ userAgentIds }) {
   const queryClient = useQueryClient();

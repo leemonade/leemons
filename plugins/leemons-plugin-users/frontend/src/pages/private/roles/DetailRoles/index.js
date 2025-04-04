@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import React, { useEffect, useMemo, useState } from "react";
+import { useHistory, useParams } from "react-router-dom";
 
 import {
   ActionButton,
@@ -10,34 +10,40 @@ import {
   TabPanel,
   Table,
   Tabs,
-} from '@bubbles-ui/components';
-import { DeleteBinIcon } from '@bubbles-ui/icons/solid';
+} from "@bubbles-ui/components";
+import { DeleteBinIcon } from "@bubbles-ui/icons/solid";
 
 // TODO: import from @common plugin
 
-import { AdminPageHeader } from '@bubbles-ui/leemons';
-import { LocaleDate } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import tLoader from '@multilanguage/helpers/tLoader';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import useTranslate from '@multilanguage/useTranslate';
-import hooks from 'leemons-hooks';
-import _, { forIn } from 'lodash';
+import { AdminPageHeader } from "@bubbles-ui/leemons";
+import { LocaleDate } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import hooks from "@leemons/hooks";
+import tLoader from "@multilanguage/helpers/tLoader";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import useTranslate from "@multilanguage/useTranslate";
+import _, { forIn } from "lodash";
 
 // import MainMenuDropItem from '@menu-builder/components/mainMenu/mainMenuDropItem';
 
-import { PermissionsTab } from '../../profiles/DetailProfile/PermissionsTab';
+import { PermissionsTab } from "../../profiles/DetailProfile/PermissionsTab";
 
-import { SelectUserAgent } from '@users/components';
-import getUserFullName from '@users/helpers/getUserFullName';
-import prefixPN from '@users/helpers/prefixPN';
-import { addRoleRequest, getRoleRequest, updateRoleRequest } from '@users/request';
+import { SelectUserAgent } from "@users/components";
+import getUserFullName from "@users/helpers/getUserFullName";
+import prefixPN from "@users/helpers/prefixPN";
+import {
+  addRoleRequest,
+  getRoleRequest,
+  updateRoleRequest,
+} from "@users/request";
 
 function RoleDetail() {
-  const [translations] = useTranslate({ keysStartsWith: prefixPN('detail_roles') });
-  const t = tLoader(prefixPN('detail_roles'), translations);
-  const { t: tCommonHeader } = useCommonTranslate('page_header');
+  const [translations] = useTranslate({
+    keysStartsWith: prefixPN("detail_roles"),
+  });
+  const t = tLoader(prefixPN("detail_roles"), translations);
+  const { t: tCommonHeader } = useCommonTranslate("page_header");
 
   const history = useHistory();
   const { uri } = useParams();
@@ -48,7 +54,8 @@ function RoleDetail() {
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
   const [users, setUsers] = useState([]);
-  const [error, setError, ErrorAlert, getErrorMessage] = useRequestErrorMessage();
+  const [error, setError, ErrorAlert, getErrorMessage] =
+    useRequestErrorMessage();
 
   useEffect(() => {
     if (!uri) {
@@ -70,12 +77,17 @@ function RoleDetail() {
           userAgents,
         };
         response = await updateRoleRequest(body);
-        addSuccessAlert(t('update_done'));
+        addSuccessAlert(t("update_done"));
       } else {
-        response = await addRoleRequest({ ...role, name, description, permissions });
-        addSuccessAlert(t('save_done'));
+        response = await addRoleRequest({
+          ...role,
+          name,
+          description,
+          permissions,
+        });
+        addSuccessAlert(t("save_done"));
       }
-      await hooks.fireEvent('user:update:permissions', role);
+      await hooks.fireEvent("user:update:permissions", role);
       setSaveLoading(false);
       setEditMode(false);
       history.push(`/private/users/roles/detail/${response.role.uri}`);
@@ -96,11 +108,11 @@ function RoleDetail() {
 
       const _users = _.map(response.role.userAgents, (item) => ({
         ...item.user,
-        variant: 'rol',
+        variant: "rol",
         rol: item.profile?.name,
         center: item.center?.name,
         value: item.id,
-        label: `${item.user?.name}${item.user?.surnames ? ` ${item.user?.surnames}` : ''}`,
+        label: `${item.user?.name}${item.user?.surnames ? ` ${item.user?.surnames}` : ""}`,
       }));
       setUsers(_users);
       setPermissions(perms);
@@ -127,7 +139,7 @@ function RoleDetail() {
     saveRole({
       name: data.title,
       description: data.description,
-      userAgents: _.map(users, 'value'),
+      userAgents: _.map(users, "value"),
     });
   };
 
@@ -139,7 +151,7 @@ function RoleDetail() {
     if (role?.id) {
       setEditMode(false);
     } else {
-      history.push('/private/users/roles/list');
+      history.push("/private/users/roles/list");
     }
   };
 
@@ -148,33 +160,33 @@ function RoleDetail() {
 
   const headerValues = useMemo(
     () => ({
-      title: role?.name || '',
-      description: role?.description || ' ',
+      title: role?.name || "",
+      description: role?.description || " ",
     }),
     [role]
   );
 
   const headerPlaceholders = useMemo(
     () => ({
-      title: t('role_name'),
-      description: t('description'),
+      title: t("role_name"),
+      description: t("description"),
     }),
     [t]
   );
 
   const headerLabels = useMemo(
     () => ({
-      title: t('role_name'),
-      description: t('description'),
+      title: t("role_name"),
+      description: t("description"),
     }),
     [t]
   );
 
   const headerButtons = useMemo(
     () => ({
-      save: editMode ? tCommonHeader('save') : null,
-      cancel: editMode ? tCommonHeader('cancel') : null,
-      edit: !editMode ? tCommonHeader('edit') : null,
+      save: editMode ? tCommonHeader("save") : null,
+      cancel: editMode ? tCommonHeader("cancel") : null,
+      edit: !editMode ? tCommonHeader("edit") : null,
     }),
     [tCommonHeader]
   );
@@ -182,34 +194,34 @@ function RoleDetail() {
   const tableHeaders = useMemo(
     () => [
       {
-        Header: ' ',
-        accessor: 'avatar',
-        className: 'text-left',
+        Header: " ",
+        accessor: "avatar",
+        className: "text-left",
       },
       {
-        Header: t('surnameHeader'),
-        accessor: 'surnames',
-        className: 'text-left',
+        Header: t("surnameHeader"),
+        accessor: "surnames",
+        className: "text-left",
       },
       {
-        Header: t('nameHeader'),
-        accessor: 'name',
-        className: 'text-left',
+        Header: t("nameHeader"),
+        accessor: "name",
+        className: "text-left",
       },
       {
-        Header: t('emailHeader'),
-        accessor: 'email',
-        className: 'text-left',
+        Header: t("emailHeader"),
+        accessor: "email",
+        className: "text-left",
       },
       {
-        Header: t('profileHeader'),
-        accessor: 'rol',
-        className: 'text-left',
+        Header: t("profileHeader"),
+        accessor: "rol",
+        className: "text-left",
       },
       {
-        Header: t('centerHeader'),
-        accessor: 'center',
-        className: 'text-left',
+        Header: t("centerHeader"),
+        accessor: "center",
+        className: "text-left",
       },
       /*
       {
@@ -219,9 +231,9 @@ function RoleDetail() {
       },
       */
       {
-        Header: ' ',
-        accessor: 'actions',
-        className: 'text-left',
+        Header: " ",
+        accessor: "actions",
+        className: "text-left",
       },
     ],
     [translations]
@@ -234,14 +246,14 @@ function RoleDetail() {
         avatar: <Avatar image={user.avatar} fullName={getUserFullName(user)} />,
         birthdate: <LocaleDate date={user.birthdate} />,
         actions: (
-          <Box style={{ textAlign: 'right', width: '100%' }}>
+          <Box style={{ textAlign: "right", width: "100%" }}>
             <ActionButton
               disabled={!editMode}
               onClick={() => {
                 users.splice(index, 1);
                 setUsers([...users]);
               }}
-              tooltip={t('removeUser')}
+              tooltip={t("removeUser")}
               icon={<DeleteBinIcon />}
             />
           </Box>
@@ -263,12 +275,12 @@ function RoleDetail() {
             onCancel={handleOnCancel}
             onEdit={handleOnEdit}
             onSave={handleOnSave}
-            loading={saveLoading && 'save'}
+            loading={saveLoading && "save"}
           />
 
           <Box style={{ flex: 1 }}>
             <Tabs usePageLayout={true} panelColor="solid" fullHeight>
-              <TabPanel label={t('permissions')}>
+              <TabPanel label={t("permissions")}>
                 <Paper padding={2} mt={20} mb={20} fullWidth>
                   <PermissionsTab
                     t={t}
@@ -278,18 +290,18 @@ function RoleDetail() {
                   />
                 </Paper>
               </TabPanel>
-              <TabPanel disabled={!role?.id} label={t('users')}>
+              <TabPanel disabled={!role?.id} label={t("users")}>
                 <Paper padding={2} mt={20} mb={20} fullWidth>
                   <Box sx={() => ({ maxWidth: 600 })}>
                     <SelectUserAgent
                       disabled={!editMode}
-                      selectedUserAgents={_.map(users, 'value')}
+                      selectedUserAgents={_.map(users, "value")}
                       returnItem
                       onChange={(e) => {
                         users.push(e);
                         setUsers([...users]);
                       }}
-                      label={t('addUsers')}
+                      label={t("addUsers")}
                     />
                   </Box>
                   {usersForTable?.length ? (

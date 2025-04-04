@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 /**
  * Create all roles for profiles por all centers in platform
@@ -11,7 +11,11 @@ const _ = require('lodash');
  * @param {any} _transacting - DB Transaction
  * @return {Promise<any>} Created permissions-roles
  * */
-async function createNecessaryRolesForProfilesAccordingToCenters({ profileIds, centerIds, ctx }) {
+async function createNecessaryRolesForProfilesAccordingToCenters({
+  profileIds,
+  centerIds,
+  ctx,
+}) {
   // ES: Si no vienen ids de perfiles sacamos todos los perfiles si vienen solo sacamos esos
   const queryProfile = {};
   if (profileIds) {
@@ -22,16 +26,16 @@ async function createNecessaryRolesForProfilesAccordingToCenters({ profileIds, c
     queryCenters.id = _.isArray(centerIds) ? centerIds : [centerIds];
   }
   const [profiles, centers] = await Promise.all([
-    ctx.tx.db.Profiles.find(queryProfile).select(['id']).lean(),
-    ctx.tx.db.Centers.find(queryCenters).select(['id']).lean(),
+    ctx.tx.db.Profiles.find(queryProfile).select(["id"]).lean(),
+    ctx.tx.db.Centers.find(queryCenters).select(["id"]).lean(),
   ]);
 
   const [centerRoles, profileRoles] = await Promise.all([
-    ctx.tx.db.RoleCenter.find({ center: _.map(centers, 'id') }).lean(),
-    ctx.tx.db.ProfileRole.find({ profile: _.map(profiles, 'id') }).lean(),
+    ctx.tx.db.RoleCenter.find({ center: _.map(centers, "id") }).lean(),
+    ctx.tx.db.ProfileRole.find({ profile: _.map(profiles, "id") }).lean(),
   ]);
 
-  const profileRolesByProfile = _.groupBy(profileRoles, 'profile');
+  const profileRolesByProfile = _.groupBy(profileRoles, "profile");
 
   const needToCreate = [];
   _.forEach(profiles, (profile) => {
@@ -64,9 +68,9 @@ async function createNecessaryRolesForProfilesAccordingToCenters({ profileIds, c
 
   await Promise.all(
     _.map(needToCreate, ({ profile, center }) =>
-      ctx.tx.call('users.roles.add', {
+      ctx.tx.call("users.roles.add", {
         name: `${profile}:${center}`,
-        type: ctx.prefixPN('profile'),
+        type: ctx.prefixPN("profile"),
         center,
         profile,
       })

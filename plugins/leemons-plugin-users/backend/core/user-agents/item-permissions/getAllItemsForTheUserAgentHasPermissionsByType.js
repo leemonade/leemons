@@ -1,10 +1,10 @@
 /* eslint-disable camelcase */
-const _ = require('lodash');
-const { getBaseAllPermissionsQuery } = require('./getBaseAllPermissionsQuery');
-const { find } = require('../../item-permissions/find');
+const _ = require("lodash");
+const { getBaseAllPermissionsQuery } = require("./getBaseAllPermissionsQuery");
+const { find } = require("../../item-permissions/find");
 const {
   getAllItemsForTheUserAgentHasPermissionsByTypeCacheKey,
-} = require('../../../helpers/cacheKeys');
+} = require("../../../helpers/cacheKeys");
 
 async function getAllItemsForTheUserAgentHasPermissionsByType({
   userAgentId: _userAgentId,
@@ -16,7 +16,10 @@ async function getAllItemsForTheUserAgentHasPermissionsByType({
   item,
   ctx,
 }) {
-  const query = await getBaseAllPermissionsQuery({ userAgentId: _userAgentId, ctx });
+  const query = await getBaseAllPermissionsQuery({
+    userAgentId: _userAgentId,
+    ctx,
+  });
 
   // eslint-disable-next-line camelcase
   if (type_$startssWith) {
@@ -54,7 +57,7 @@ async function getAllItemsForTheUserAgentHasPermissionsByType({
     if (returnAllItemPermission) {
       return cache[Object.keys(cache)[0]];
     }
-    return _.uniq(_.map(cache[Object.keys(cache)[0]], 'item'));
+    return _.uniq(_.map(cache[Object.keys(cache)[0]], "item"));
   }
 
   const items = await find({ params: query, ctx });
@@ -68,7 +71,7 @@ async function getAllItemsForTheUserAgentHasPermissionsByType({
 
   if (returnAllItemPermission) return items;
 
-  return _.uniq(_.map(items, 'item'));
+  return _.uniq(_.map(items, "item"));
 }
 
 module.exports = {

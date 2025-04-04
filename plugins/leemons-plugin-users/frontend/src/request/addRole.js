@@ -1,7 +1,7 @@
 async function addRole(body) {
-  return leemons.api('v1/users/roles/add', {
+  return leemons.api("v1/users/roles/add", {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body,
   });
 }

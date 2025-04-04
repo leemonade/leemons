@@ -1,8 +1,8 @@
-import { ContextContainer, InputWrapper, Select } from '@bubbles-ui/components';
-import { useStore } from '@common';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { Controller } from 'react-hook-form';
+import { ContextContainer, InputWrapper, Select } from "@bubbles-ui/components";
+import { useStore } from "@common";
+import PropTypes from "prop-types";
+import React from "react";
+import { Controller } from "react-hook-form";
 
 function UserPreferredGender({ t, user, session, form, isEditMode }) {
   const [store, render] = useStore({
@@ -13,7 +13,12 @@ function UserPreferredGender({ t, user, session, form, isEditMode }) {
       ? [{ label: user.preferences?.pronoun, value: user.preferences?.pronoun }]
       : [],
     pluralPronouns: user.preferences?.pluralPronoun
-      ? [{ label: user.preferences?.pluralPronoun, value: user.preferences?.pluralPronoun }]
+      ? [
+          {
+            label: user.preferences?.pluralPronoun,
+            value: user.preferences?.pluralPronoun,
+          },
+        ]
       : [],
   });
 
@@ -23,7 +28,7 @@ function UserPreferredGender({ t, user, session, form, isEditMode }) {
   }
 
   return (
-    <InputWrapper label={t('preferredGenderLabel')}>
+    <InputWrapper label={t("preferredGenderLabel")}>
       <ContextContainer direction="row">
         <Controller
           name="preferences.gender"
@@ -37,8 +42,8 @@ function UserPreferredGender({ t, user, session, form, isEditMode }) {
               creatable
               disabled={!isEditMode}
               getCreateLabel={(value) => `+ ${value}`}
-              onCreate={(e) => addData('genders', e)}
-              nothingFound={t('noResults')}
+              onCreate={(e) => addData("genders", e)}
+              nothingFound={t("noResults")}
             />
           )}
         />
@@ -54,8 +59,8 @@ function UserPreferredGender({ t, user, session, form, isEditMode }) {
               creatable
               disabled={!isEditMode}
               getCreateLabel={(value) => `+ ${value}`}
-              onCreate={(e) => addData('pronouns', e)}
-              nothingFound={t('noResults')}
+              onCreate={(e) => addData("pronouns", e)}
+              nothingFound={t("noResults")}
             />
           )}
         />
@@ -71,8 +76,8 @@ function UserPreferredGender({ t, user, session, form, isEditMode }) {
               creatable
               disabled={!isEditMode}
               getCreateLabel={(value) => `+ ${value}`}
-              onCreate={(e) => addData('pluralPronouns', e)}
-              nothingFound={t('noResults')}
+              onCreate={(e) => addData("pluralPronouns", e)}
+              nothingFound={t("noResults")}
             />
           )}
         />

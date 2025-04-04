@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 /**
  * Return profiles for active user
@@ -9,12 +9,19 @@ const _ = require('lodash');
  * @return {Promise<boolean>}
  * */
 async function profiles({ user, ctx }) {
-  const userAgents = await ctx.tx.db.UserAgent.find({ user }).select(['role']).lean();
+  const userAgents = await ctx.tx.db.UserAgent.find({ user })
+    .select(["role"])
+    .lean();
 
-  const profileRoles = await ctx.tx.db.ProfileRole.find({ role: _.map(userAgents, 'role') }).lean();
+  const profileRoles = await ctx.tx.db.ProfileRole.find({
+    role: _.map(userAgents, "role"),
+  }).lean();
 
   return ctx.tx.db.Profiles.find({
-    $or: [{ id: _.map(profileRoles, 'profile') }, { role: _.map(userAgents, 'role') }],
+    $or: [
+      { id: _.map(profileRoles, "profile") },
+      { role: _.map(userAgents, "role") },
+    ],
   }).lean();
 }
 

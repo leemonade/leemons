@@ -1,5 +1,5 @@
-const { LeemonsError } = require('@leemons/error');
-const { encryptPassword } = require('./bcrypt/encryptPassword');
+const { LeemonsError } = require("@leemons/error");
+const { encryptPassword } = require("./bcrypt/encryptPassword");
 
 /**
  * Create the first super-administrator user only if no user exists in the database.
@@ -12,7 +12,14 @@ const { encryptPassword } = require('./bcrypt/encryptPassword');
  * @param {string} locale - User language
  * @return {Promise<User>} Created / Updated role
  * */
-async function addFirstSuperAdminUser({ name, surnames, email, password, locale, ctx }) {
+async function addFirstSuperAdminUser({
+  name,
+  surnames,
+  email,
+  password,
+  locale,
+  ctx,
+}) {
   const hasUsers = await ctx.tx.db.Users.countDocuments();
   if (!hasUsers) {
     const userDoc = await ctx.tx.db.Users.create({
@@ -30,7 +37,7 @@ async function addFirstSuperAdminUser({ name, surnames, email, password, locale,
   }
   throw new LeemonsError(ctx, {
     message:
-      'The first super administrator user can only be created if there are no users in the database.',
+      "The first super administrator user can only be created if there are no users in the database.",
   });
 }
 

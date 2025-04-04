@@ -1,7 +1,7 @@
 async function saveSystemDataFieldsConfig(body) {
-  return leemons.api('v1/users/config/system-data-fields', {
+  return leemons.api("v1/users/config/system-data-fields", {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body,
   });
 }

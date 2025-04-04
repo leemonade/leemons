@@ -8,9 +8,9 @@
  * */
 async function setEmail({ value, ctx }) {
   return ctx.tx.db.Config.findOneAndUpdate(
-    { key: 'platform-email' },
+    { key: "platform-email" },
     {
-      key: 'platform-email',
+      key: "platform-email",
       value,
     },
     {

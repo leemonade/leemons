@@ -1,4 +1,4 @@
-const constants = require('../../config/constants');
+const constants = require("../../config/constants");
 
 /**
  * Check if the permission has actions
@@ -23,7 +23,9 @@ async function hasActionMany({ permissionName, actionNames, ctx }) {
   const result = count === actionNames.length;
 
   if (!result) {
-    ctx.logger.log(`Permission '${permissionName}' doesn't have one of these actions:`);
+    ctx.logger.log(
+      `Permission '${permissionName}' doesn't have one of these actions:`
+    );
     ctx.logger.dir(actionNames, { depth: null });
   }
 

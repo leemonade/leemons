@@ -8,34 +8,34 @@ import {
   TotalLayoutContainer,
   TotalLayoutStepContainer,
   TotalLayoutFooterContainer,
-} from '@bubbles-ui/components';
-import { useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@users/helpers/prefixPN';
-import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
-import activeUserAgent from '@users/request/activeUserAgent';
-import disableUserAgent from '@users/request/disableUserAgent';
-import { ZoneWidgets } from '@widgets';
-import _, { find, forEach, forIn } from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { useParams, useHistory } from 'react-router-dom';
-import { RemoveIcon } from '@bubbles-ui/icons/outline';
-import getUserFullName from '../../../../helpers/getUserFullName';
+} from "@bubbles-ui/components";
+import { useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@users/helpers/prefixPN";
+import { getPermissionsWithActionsIfIHaveRequest } from "@users/request";
+import activeUserAgent from "@users/request/activeUserAgent";
+import disableUserAgent from "@users/request/disableUserAgent";
+import { ZoneWidgets } from "@widgets";
+import _, { find, forEach, forIn } from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { useParams, useHistory } from "react-router-dom";
+import { RemoveIcon } from "@bubbles-ui/icons/outline";
+import getUserFullName from "../../../../helpers/getUserFullName";
 import {
   getSystemDataFieldsConfigRequest,
   getUserDetailForPageRequest,
   updateUserAgentRequest,
   updateUserRequest,
-} from '../../../../request';
-import PersonalInformation from './PersonalInformation';
-import UserAgentTags from './UserAgentTags';
-import UserImage from './UserImage';
-import UserPreferredGender from './UserPreferredGender';
+} from "../../../../request";
+import PersonalInformation from "./PersonalInformation";
+import UserAgentTags from "./UserAgentTags";
+import UserImage from "./UserImage";
+import UserPreferredGender from "./UserPreferredGender";
 
 function DetailUser({
   session,
@@ -46,8 +46,13 @@ function DetailUser({
   onActive = () => {},
   isDrawer,
 }) {
-  const [t] = useTranslateLoader(prefixPN('detailUser'));
-  const [store, render] = useStore({ params: {}, centers: [], profiles: [], isEditMode: false });
+  const [t] = useTranslateLoader(prefixPN("detailUser"));
+  const [store, render] = useStore({
+    params: {},
+    centers: [],
+    profiles: [],
+    isEditMode: false,
+  });
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const scrollRef = React.useRef();
   const history = useHistory();
@@ -58,13 +63,13 @@ function DetailUser({
   if (!centerId && !profileId && !userId) {
     userId = _u;
     const query = new URLSearchParams(window.location.search);
-    store.params.center = query.get('center');
-    store.params.profile = query.get('profile');
+    store.params.center = query.get("center");
+    store.params.profile = query.get("profile");
   } else {
     store.params.center = centerId;
     store.params.profile = profileId;
   }
-  store.params.user = !userId || userId === 'me' ? session?.id : userId;
+  store.params.user = !userId || userId === "me" ? session?.id : userId;
 
   const form = useForm();
   const { openConfirmationModal } = useLayout();
@@ -109,29 +114,32 @@ function DetailUser({
     store.userAgent = find(
       store.userAgents,
       (userAgent) =>
-        userAgent.center?.id === store.center && userAgent.profile?.id === store.profile
+        userAgent.center?.id === store.center &&
+        userAgent.profile?.id === store.profile
     );
     render();
   }
 
   async function getPermissions() {
-    const [{ permissions: userPermissions }, { permissions: enadisPermissions }] =
-      await Promise.all([
-        getPermissionsWithActionsIfIHaveRequest(['users.users']),
-        getPermissionsWithActionsIfIHaveRequest(['users.enabledisable']),
-      ]);
+    const [
+      { permissions: userPermissions },
+      { permissions: enadisPermissions },
+    ] = await Promise.all([
+      getPermissionsWithActionsIfIHaveRequest(["users.users"]),
+      getPermissionsWithActionsIfIHaveRequest(["users.enabledisable"]),
+    ]);
     if (userPermissions[0]) {
       store.canUpdate =
-        userPermissions[0].actionNames.includes('update') ||
-        userPermissions[0].actionNames.includes('admin');
+        userPermissions[0].actionNames.includes("update") ||
+        userPermissions[0].actionNames.includes("admin");
     }
     if (enadisPermissions[0]) {
       store.canDisable =
-        enadisPermissions[0].actionNames.includes('delete') ||
-        enadisPermissions[0].actionNames.includes('admin');
+        enadisPermissions[0].actionNames.includes("delete") ||
+        enadisPermissions[0].actionNames.includes("admin");
       store.canActive =
-        enadisPermissions[0].actionNames.includes('create') ||
-        enadisPermissions[0].actionNames.includes('admin');
+        enadisPermissions[0].actionNames.includes("create") ||
+        enadisPermissions[0].actionNames.includes("admin");
     }
     render();
   }
@@ -152,16 +160,16 @@ function DetailUser({
       store.userAgents = data.userAgents;
       store.centers = getUserAgentsCenters();
       store.formValues = {
-        'preferences.gender': store.user.preferences?.gender,
-        'preferences.pronoun': store.user.preferences?.pronoun,
-        'preferences.pluralPronoun': store.user.preferences?.pluralPronoun,
-        'user.name': store.user.name,
-        'user.email': store.user.email,
-        'user.surnames': store.user.surnames,
-        'user.secondSurname': store.user.secondSurname,
-        'user.birthdate': new Date(store.user.birthdate),
-        'user.gender': store.user.gender,
-        'user.avatar': store.user.avatar,
+        "preferences.gender": store.user.preferences?.gender,
+        "preferences.pronoun": store.user.preferences?.pronoun,
+        "preferences.pluralPronoun": store.user.preferences?.pluralPronoun,
+        "user.name": store.user.name,
+        "user.email": store.user.email,
+        "user.surnames": store.user.surnames,
+        "user.secondSurname": store.user.secondSurname,
+        "user.birthdate": new Date(store.user.birthdate),
+        "user.gender": store.user.gender,
+        "user.avatar": store.user.avatar,
       };
       form.reset(store.formValues);
       /*
@@ -194,19 +202,21 @@ function DetailUser({
 
   function disable() {
     openConfirmationModal({
-      title: t('disableTitle'),
-      description: t('disableDescription'),
+      title: t("disableTitle"),
+      description: t("disableDescription"),
       labels: {
-        confirm: t('disable'),
+        confirm: t("disable"),
       },
       onConfirm: async () => {
         try {
           await disableUserAgent(store.userAgent.id);
-          const index = _.findIndex(store.userAgents, { id: store.userAgent.id });
+          const index = _.findIndex(store.userAgents, {
+            id: store.userAgent.id,
+          });
           store.userAgents[index].disabled = true;
           store.userAgent.disabled = true;
           onDisabled();
-          addSuccessAlert(t('disableSucess'));
+          addSuccessAlert(t("disableSucess"));
           render();
         } catch (error) {
           addErrorAlert(getErrorMessage(error));
@@ -222,7 +232,7 @@ function DetailUser({
       store.userAgents[index].disabled = false;
       store.userAgent.disabled = false;
       onActive();
-      addSuccessAlert(t('activeSucess'));
+      addSuccessAlert(t("activeSucess"));
       render();
     } catch (error) {
       addErrorAlert(getErrorMessage(error));
@@ -242,7 +252,11 @@ function DetailUser({
     form.handleSubmit(async (formData) => {
       try {
         const toSend = { ...formData };
-        if (store.userAgent && store.datasetFormActions && store.datasetFormActions.isLoaded()) {
+        if (
+          store.userAgent &&
+          store.datasetFormActions &&
+          store.datasetFormActions.isLoaded()
+        ) {
           await store.datasetFormActions.submit();
           if (store.datasetFormActions.getErrors().length) return null;
           toSend.dataset = store.datasetFormActions.getValues();
@@ -292,32 +306,48 @@ function DetailUser({
       {store.isEditMode ? (
         <>
           {store.canDisable && !store.userAgent?.disabled ? (
-            <Button variant="outline" onClick={disable} sx={() => ({ justifySelf: 'end' })}>
-              {t('disableBtn')}
+            <Button
+              variant="outline"
+              onClick={disable}
+              sx={() => ({ justifySelf: "end" })}
+            >
+              {t("disableBtn")}
             </Button>
           ) : null}
           {store.canActive && store.userAgent?.disabled ? (
-            <Button variant="outline" onClick={active} sx={() => ({ justifySelf: 'end' })}>
-              {t('active')}
+            <Button
+              variant="outline"
+              onClick={active}
+              sx={() => ({ justifySelf: "end" })}
+            >
+              {t("active")}
             </Button>
           ) : null}
-          <Button onClick={tryToSave}>{t('save')}</Button>
+          <Button onClick={tryToSave}>{t("save")}</Button>
         </>
       ) : (
         <>
           {store.canDisable && !store.userAgent?.disabled ? (
-            <Button variant="outline" onClick={disable} sx={() => ({ justifySelf: 'end' })}>
-              {t('disableBtn')}
+            <Button
+              variant="outline"
+              onClick={disable}
+              sx={() => ({ justifySelf: "end" })}
+            >
+              {t("disableBtn")}
             </Button>
           ) : null}
           {store.canActive && store.userAgent?.disabled ? (
-            <Button variant="outline" onClick={active} sx={() => ({ justifySelf: 'end' })}>
-              {t('active')}
+            <Button
+              variant="outline"
+              onClick={active}
+              sx={() => ({ justifySelf: "end" })}
+            >
+              {t("active")}
             </Button>
           ) : null}
           {store.canUpdate ? (
-            <Button onClick={setCanEdit} sx={() => ({ justifySelf: 'end' })}>
-              {t('edit')}
+            <Button onClick={setCanEdit} sx={() => ({ justifySelf: "end" })}>
+              {t("edit")}
             </Button>
           ) : null}
         </>
@@ -333,8 +363,9 @@ function DetailUser({
           sx={(theme) => ({
             padding: `${theme.spacing[1]}px ${theme.spacing[5]}px`,
             height: 70,
-            overflow: 'hidden',
-            backgroundColor: theme.other.global.background.color.surface.default,
+            overflow: "hidden",
+            backgroundColor:
+              theme.other.global.background.color.surface.default,
           })}
           fullWidth
           direction="row"
@@ -342,7 +373,11 @@ function DetailUser({
           justifyContent="space-between"
           spacing={5}
         >
-          <ContextContainer direction="row" alignItems="center" justifyContent="start">
+          <ContextContainer
+            direction="row"
+            alignItems="center"
+            justifyContent="start"
+          >
             <Box style={{ marginTop: 2 }}>
               <UserImage
                 t={t}
@@ -355,7 +390,7 @@ function DetailUser({
             <Title>{getUserFullName(store.user)}</Title>
             {store.centers?.length > 1 && (
               <Select
-                placeholder={t('selectCenter')}
+                placeholder={t("selectCenter")}
                 value={store.center}
                 onChange={selectCenter}
                 data={store.centers}
@@ -363,7 +398,7 @@ function DetailUser({
             )}
             {store.profiles?.length > 1 && (
               <Select
-                placeholder={t('selectProfile')}
+                placeholder={t("selectProfile")}
                 disabled={!store.center}
                 value={store.profile}
                 onChange={selectProfile}
@@ -372,8 +407,12 @@ function DetailUser({
             )}
           </ContextContainer>
           <Box>
-            <Button variant="link" leftIcon={<RemoveIcon />} onClick={cancelEdit}>
-              {t('cancel')}
+            <Button
+              variant="link"
+              leftIcon={<RemoveIcon />}
+              onClick={cancelEdit}
+            >
+              {t("cancel")}
             </Button>
           </Box>
         </Stack>
@@ -384,12 +423,16 @@ function DetailUser({
         fullWidth
         fullHeight
         justifyContent="center"
-        style={{ overflow: 'auto' }}
+        style={{ overflow: "auto" }}
       >
         <TotalLayoutStepContainer
           Footer={
             store.isEditMode && (
-              <TotalLayoutFooterContainer scrollRef={scrollRef} fixed rightZone={buttons} />
+              <TotalLayoutFooterContainer
+                scrollRef={scrollRef}
+                fixed
+                rightZone={buttons}
+              />
             )
           }
         >

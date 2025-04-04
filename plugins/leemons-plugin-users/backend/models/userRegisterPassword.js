@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -30,7 +30,7 @@ const schema = new mongoose.Schema(
 
 const userRegisterPasswordModel = newModel(
   mongoose.connection,
-  'v1::users_UserRegisterPassword',
+  "v1::users_UserRegisterPassword",
   schema
 );
 

@@ -6,7 +6,7 @@
  * @return {Promise<any>}
  * */
 async function getLocales({ ctx }) {
-  return ctx.tx.call('multilanguage.locales.getAll');
+  return ctx.tx.call("multilanguage.locales.getAll");
 }
 
 module.exports = getLocales;

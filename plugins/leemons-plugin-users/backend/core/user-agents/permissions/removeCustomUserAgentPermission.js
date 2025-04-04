@@ -1,12 +1,20 @@
-const _ = require('lodash');
-const { settledResponseToManyResponse } = require('@leemons/utils');
-const { validateUserRemoveCustomPermission } = require('../../../validations/permissions');
-const { existUserAgent } = require('../existUserAgent');
-const { validatePermissionName } = require('../../../validations/exists');
-const { removeAllItemsCache } = require('../../item-permissions/removeAllItemsCache');
+const _ = require("lodash");
+const { settledResponseToManyResponse } = require("@leemons/utils");
+const {
+  validateUserRemoveCustomPermission,
+} = require("../../../validations/permissions");
+const { existUserAgent } = require("../existUserAgent");
+const { validatePermissionName } = require("../../../validations/exists");
+const {
+  removeAllItemsCache,
+} = require("../../item-permissions/removeAllItemsCache");
 
 async function _removeCustomPermission({ userAgentId, data, ctx }) {
-  await existUserAgent({ query: { id: userAgentId }, throwErrorIfNotExists: true, ctx });
+  await existUserAgent({
+    query: { id: userAgentId },
+    throwErrorIfNotExists: true,
+    ctx,
+  });
 
   const query = {
     permissionName: data.permissionName,
@@ -56,7 +64,9 @@ async function removeCustomUserAgentPermission({ userAgentId, data, ctx }) {
   if (_.isArray(userAgentId)) {
     const response = await settledResponseToManyResponse(
       await Promise.allSettled(
-        _.map(userAgentId, (id) => _removeCustomPermission({ userAgentId: id, data, ctx }))
+        _.map(userAgentId, (id) =>
+          _removeCustomPermission({ userAgentId: id, data, ctx })
+        )
       )
     );
     await removeAllItemsCache({ ctx });

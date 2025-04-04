@@ -1,13 +1,27 @@
-import React from 'react';
-import { Badge, Box, ContextContainer, BaseDrawer, Text, UserCards } from '@bubbles-ui/components';
-import { isFunction } from 'lodash';
-import { UserDetailModalStyles } from './UserDetailModal.styles';
+import React from "react";
+import {
+  Badge,
+  Box,
+  ContextContainer,
+  BaseDrawer,
+  Text,
+  UserCards,
+} from "@bubbles-ui/components";
+import { isFunction } from "lodash";
+import { UserDetailModalStyles } from "./UserDetailModal.styles";
 import {
   USER_DETAIL_MODAL_DEFAULT_PROPS,
   USER_DETAIL_MODAL_PROP_TYPES,
-} from './UserDetailModal.constants';
+} from "./UserDetailModal.constants";
 
-const UserDetailModal = ({ user, labels, badges, opened, onClose, ...props }) => {
+const UserDetailModal = ({
+  user,
+  labels,
+  badges,
+  opened,
+  onClose,
+  ...props
+}) => {
   const handleOnClose = () => {
     isFunction(onClose) && onClose();
   };
@@ -16,7 +30,12 @@ const UserDetailModal = ({ user, labels, badges, opened, onClose, ...props }) =>
     if (badges) {
       return badges.map((badge) => (
         <Box key={badge}>
-          <Badge label={badge} color="stroke" radius="default" closable={false} />
+          <Badge
+            label={badge}
+            color="stroke"
+            radius="default"
+            closable={false}
+          />
         </Box>
       ));
     }
@@ -26,7 +45,9 @@ const UserDetailModal = ({ user, labels, badges, opened, onClose, ...props }) =>
   const renderLabels = () => {
     if (user) {
       const userKeys = Object.keys(user);
-      const filteredLabels = Object.keys(labels).filter((label) => userKeys.includes(label));
+      const filteredLabels = Object.keys(labels).filter((label) =>
+        userKeys.includes(label)
+      );
       return filteredLabels.map((label) => (
         <Box key={label}>
           <Text color="primary" role="productive">
@@ -42,10 +63,15 @@ const UserDetailModal = ({ user, labels, badges, opened, onClose, ...props }) =>
     if (user) {
       const userKeys = Object.keys(user);
       const labelKeys = Object.keys(labels);
-      const filteredLabels = labelKeys.filter((label) => userKeys.includes(label));
+      const filteredLabels = labelKeys.filter((label) =>
+        userKeys.includes(label)
+      );
 
       return filteredLabels.map((label) => {
-        const value = user[label] instanceof Date ? user[label].toLocaleDateString() : user[label];
+        const value =
+          user[label] instanceof Date
+            ? user[label].toLocaleDateString()
+            : user[label];
 
         return (
           <Box key={`${label}-info`}>
@@ -57,7 +83,10 @@ const UserDetailModal = ({ user, labels, badges, opened, onClose, ...props }) =>
     return null;
   };
 
-  const { classes, cx } = UserDetailModalStyles({}, { name: 'UserDetailModal' });
+  const { classes, cx } = UserDetailModalStyles(
+    {},
+    { name: "UserDetailModal" }
+  );
 
   return (
     <BaseDrawer
@@ -69,7 +98,9 @@ const UserDetailModal = ({ user, labels, badges, opened, onClose, ...props }) =>
       {...props}
     >
       <ContextContainer divided>
-        {user ? <UserCards layout="horizontal" variant="large" user={{ ...user }} /> : null}
+        {user ? (
+          <UserCards layout="horizontal" variant="large" user={{ ...user }} />
+        ) : null}
         <ContextContainer title={labels.personalInformation}>
           <Box className={classes.personalInformation}>
             <Box className={classes.labelCol}>{renderLabels()}</Box>
@@ -90,8 +121,8 @@ UserDetailModal.defaultProps = USER_DETAIL_MODAL_DEFAULT_PROPS;
 UserDetailModal.propTypes = USER_DETAIL_MODAL_PROP_TYPES;
 
 const Gatitos = () => {
-  console.log('se pintan gatitos');
-  return 'hatitos';
+  console.log("se pintan gatitos");
+  return "hatitos";
 };
 
 export { UserDetailModal, Gatitos };

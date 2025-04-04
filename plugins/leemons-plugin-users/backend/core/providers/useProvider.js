@@ -1,7 +1,7 @@
-const { LeemonsError } = require('@leemons/error');
-const { getPluginProvider } = require('@leemons/providers');
+const { LeemonsError } = require("@leemons/error");
+const { getPluginProvider } = require("@leemons/providers");
 
-const { isSuperAdmin } = require('../users');
+const { isSuperAdmin } = require("../users");
 
 /**
  * @param {object} props
@@ -10,12 +10,15 @@ const { isSuperAdmin } = require('../users');
  */
 async function useProvider({ provider, ctx }) {
   try {
-    const isSuper = await isSuperAdmin({ userId: ctx?.meta?.userSession?.id, ctx });
+    const isSuper = await isSuperAdmin({
+      userId: ctx?.meta?.userSession?.id,
+      ctx,
+    });
     if (!isSuper) {
       throw new LeemonsError(ctx, {
-        message: 'Only the super admin can call this endpoint',
+        message: "Only the super admin can call this endpoint",
         httpStatusCode: 403,
-        customCode: 'ONLY_SUPER_ADMIN',
+        customCode: "ONLY_SUPER_ADMIN",
       });
     }
 
@@ -26,9 +29,9 @@ async function useProvider({ provider, ctx }) {
 
     if (!providerEntry) {
       throw new LeemonsError(ctx, {
-        message: 'Provider is required',
+        message: "Provider is required",
         httpStatusCode: 400,
-        customCode: 'PROVIDER_REQUIRED',
+        customCode: "PROVIDER_REQUIRED",
       });
     }
 
@@ -46,15 +49,17 @@ async function useProvider({ provider, ctx }) {
     );
 
     if (providerEntry.value.params.supportedMethods.initialization) {
-      await ctx.tx.call(providerEntry.value.params.supportedMethods.initialization.action);
+      await ctx.tx.call(
+        providerEntry.value.params.supportedMethods.initialization.action
+      );
     }
 
     return true;
   } catch (error) {
     throw new LeemonsError(ctx, {
-      message: 'Error using provider',
+      message: "Error using provider",
       httpStatusCode: 500,
-      customCode: 'USE_PROVIDER_ERROR',
+      customCode: "USE_PROVIDER_ERROR",
       cause: error,
     });
   }

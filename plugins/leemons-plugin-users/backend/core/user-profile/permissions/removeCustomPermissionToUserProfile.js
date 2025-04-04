@@ -1,11 +1,11 @@
-const _ = require('lodash');
-const { exist } = require('../exist');
-const { getRole } = require('../getRole');
-const { validatePermissionName } = require('../../../validations/exists');
-const { removePermissionsByName } = require('../../roles');
+const _ = require("lodash");
+const { exist } = require("../exist");
+const { getRole } = require("../getRole");
+const { validatePermissionName } = require("../../../validations/exists");
+const { removePermissionsByName } = require("../../roles");
 const {
   markAllUserAgentsForUserProfileToReloadPermissions,
-} = require('./markAllUserAgentsForUserProfileToReloadPermissions');
+} = require("./markAllUserAgentsForUserProfileToReloadPermissions");
 
 /**
  *

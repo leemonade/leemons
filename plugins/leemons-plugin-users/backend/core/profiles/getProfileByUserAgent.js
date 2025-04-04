@@ -1,6 +1,8 @@
-const { transformArrayToObject } = require('../permissions/transformArrayToObject');
-const { detail: roleDetail } = require('../roles/detail');
-const { getUserAgentProfile } = require('../user-agents/getUserAgentProfile');
+const {
+  transformArrayToObject,
+} = require("../permissions/transformArrayToObject");
+const { detail: roleDetail } = require("../roles/detail");
+const { getUserAgentProfile } = require("../user-agents/getUserAgentProfile");
 
 /**
  * @param {object} params - The params object.

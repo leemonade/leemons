@@ -1,6 +1,8 @@
-const _ = require('lodash');
-const { validatePermissionName } = require('../../validations/exists');
-const { validateUserRemoveCustomPermission } = require('../../validations/permissions');
+const _ = require("lodash");
+const { validatePermissionName } = require("../../validations/exists");
+const {
+  validateUserRemoveCustomPermission,
+} = require("../../validations/permissions");
 
 /**
  *

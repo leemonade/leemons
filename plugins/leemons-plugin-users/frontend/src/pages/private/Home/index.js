@@ -1,15 +1,15 @@
-import React, { useEffect } from 'react';
-import constants from '@users/constants';
-import { logoutSession } from '@users/session';
-import { goSelectProfilePage } from '@users/navigate';
-import { useHistory } from 'react-router-dom';
+import React, { useEffect } from "react";
+import constants from "@users/constants";
+import { logoutSession } from "@users/session";
+import { goSelectProfilePage } from "@users/navigate";
+import { useHistory } from "react-router-dom";
 // import { getCentersWithToken } from '../../../session';
 
 function Home() {
   const history = useHistory();
 
   useEffect(() => {
-    history.push('/private/dashboard');
+    history.push("/private/dashboard");
   }, []);
 
   // console.log(getCentersWithToken());

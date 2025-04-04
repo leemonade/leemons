@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 /**
  * ES: Devuelve los perfiles a los que tiene acceso el perfil especificado
@@ -9,7 +9,11 @@ const _ = require('lodash');
  * @param {any=} transacting - DB Transaction
  * @return {Promise<boolean>}
  * */
-async function getProfileContacts({ fromProfile: _fromProfile, returnProfile, ctx }) {
+async function getProfileContacts({
+  fromProfile: _fromProfile,
+  returnProfile,
+  ctx,
+}) {
   const isArray = _.isArray(_fromProfile);
   const fromProfiles = isArray ? _fromProfile : [_fromProfile];
 
@@ -19,16 +23,18 @@ async function getProfileContacts({ fromProfile: _fromProfile, returnProfile, ct
 
   let response = await ctx.tx.db.ProfileContacts.find(query).lean();
 
-  response = _.uniqBy(response, 'toProfile');
+  response = _.uniqBy(response, "toProfile");
 
   let profilesById = null;
   if (returnProfile) {
-    const profiles = await ctx.tx.db.Profiles.find({ id: _.map(response, 'toProfile') }).lean();
-    profilesById = _.keyBy(profiles, 'id');
+    const profiles = await ctx.tx.db.Profiles.find({
+      id: _.map(response, "toProfile"),
+    }).lean();
+    profilesById = _.keyBy(profiles, "id");
   }
 
   if (isArray) {
-    const responseByFromProfile = _.groupBy(response, 'fromProfile');
+    const responseByFromProfile = _.groupBy(response, "fromProfile");
     return _.map(fromProfiles, (fromProfile) =>
       _.map(responseByFromProfile[fromProfile], ({ toProfile }) => {
         if (profilesById) return profilesById[toProfile];

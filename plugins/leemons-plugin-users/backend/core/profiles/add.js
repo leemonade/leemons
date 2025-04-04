@@ -1,11 +1,11 @@
-const { LeemonsError } = require('@leemons/error');
-const slugify = require('slugify');
+const { LeemonsError } = require("@leemons/error");
+const slugify = require("slugify");
 
-const { getDefaultLocale } = require('../platform');
+const { getDefaultLocale } = require("../platform");
 
-const createNecessaryRolesForProfilesAccordingToCenters = require('./createNecessaryRolesForProfilesAccordingToCenters');
-const { existName } = require('./existName');
-const { updateProfileTranslations } = require('./updateProfileTranslations');
+const createNecessaryRolesForProfilesAccordingToCenters = require("./createNecessaryRolesForProfilesAccordingToCenters");
+const { existName } = require("./existName");
+const { updateProfileTranslations } = require("./updateProfileTranslations");
 
 /**
  * Adds a new profile to the system with necessary roles and permissions.
@@ -21,10 +21,20 @@ const { updateProfileTranslations } = require('./updateProfileTranslations');
  * @throws {LeemonsError} If a profile with the same name already exists.
  */
 
-async function add({ name, description, permissions, translations, indexable, sysName, ctx }) {
+async function add({
+  name,
+  description,
+  permissions,
+  translations,
+  indexable,
+  sysName,
+  ctx,
+}) {
   const exist = await existName({ name, ctx });
   if (exist)
-    throw new LeemonsError(ctx, { message: `Already exists one profile with the name '${name}'` });
+    throw new LeemonsError(ctx, {
+      message: `Already exists one profile with the name '${name}'`,
+    });
 
   let profile = await ctx.tx.db.Profiles.create({
     name,
@@ -35,9 +45,9 @@ async function add({ name, description, permissions, translations, indexable, sy
   });
   profile = profile.toObject();
 
-  const role = await ctx.tx.call('users.roles.add', {
+  const role = await ctx.tx.call("users.roles.add", {
     name: `profile:${profile.id}:role`,
-    type: ctx.prefixPN('profile-role'),
+    type: ctx.prefixPN("profile-role"),
     permissions,
   });
 
@@ -47,23 +57,27 @@ async function add({ name, description, permissions, translations, indexable, sy
     { lean: true, new: true }
   );
 
-  if (translations) await updateProfileTranslations({ profile, translations, ctx });
+  if (translations)
+    await updateProfileTranslations({ profile, translations, ctx });
 
   const platformLocale = await getDefaultLocale({ ctx });
 
   // ES: Creamos el dataset para este perfil para poder añadir campos extras
   // EN: We create the dataset for this profile to be able to add extra fields
-  await ctx.tx.call('dataset.dataset.addLocation', {
+  await ctx.tx.call("dataset.dataset.addLocation", {
     name: {
       [platformLocale]: `profile:${profile.id}`,
     },
     locationName: `profile.${profile.id}`,
-    pluginName: 'users',
+    pluginName: "users",
   });
 
-  await createNecessaryRolesForProfilesAccordingToCenters({ profileIds: profile.id, ctx });
+  await createNecessaryRolesForProfilesAccordingToCenters({
+    profileIds: profile.id,
+    ctx,
+  });
 
-  ctx.tx.emit('profile-permissions-change', { profile, permissions });
+  ctx.tx.emit("profile-permissions-change", { profile, permissions });
 
   return profile;
 }

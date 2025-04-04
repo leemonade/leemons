@@ -1,11 +1,11 @@
-const { SYS_PROFILE_NAMES } = require('../../../config/constants');
-const { add } = require('../add');
-const { existName } = require('../existName');
+const { SYS_PROFILE_NAMES } = require("../../../config/constants");
+const { add } = require("../add");
+const { existName } = require("../existName");
 
-const admin = require('./admin.json');
-const contentDeveloper = require('./contentDeveloper.json');
-const student = require('./student.json');
-const teacher = require('./teacher.json');
+const admin = require("./admin.json");
+const contentDeveloper = require("./contentDeveloper.json");
+const student = require("./student.json");
+const teacher = require("./teacher.json");
 
 const INITIAL_PROFILES = [
   { ...admin, sysName: SYS_PROFILE_NAMES.ADMIN },
@@ -16,7 +16,10 @@ const INITIAL_PROFILES = [
 
 async function filterProfilesByExistance({ ctx }) {
   const existenceChecks = INITIAL_PROFILES.map((profile) =>
-    existName({ name: profile.name, ctx }).then((exists) => ({ profile, exists }))
+    existName({ name: profile.name, ctx }).then((exists) => ({
+      profile,
+      exists,
+    }))
   );
 
   const results = await Promise.all(existenceChecks);

@@ -1,4 +1,4 @@
-import { getSessionProfile } from '@users/session';
+import { getSessionProfile } from "@users/session";
 
 export function useUserProfile() {
   const sessionProfile = getSessionProfile();

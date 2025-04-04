@@ -6,7 +6,7 @@
  * @return {Promise<string>} Generated hash password
  * */
 
-const { genSalt, hash } = require('bcrypt');
+const { genSalt, hash } = require("bcrypt");
 
 async function encryptPassword(password) {
   const salt = await genSalt(10);
