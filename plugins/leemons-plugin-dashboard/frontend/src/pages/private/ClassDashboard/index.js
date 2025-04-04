@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
-import { useHistory, useParams } from 'react-router-dom';
+import React, { useContext } from "react";
+import { useHistory, useParams } from "react-router-dom";
 
-import { getClassIcon } from '@academic-portfolio/helpers/getClassIcon';
-import { getClassImage } from '@academic-portfolio/helpers/getClassImage';
-import getSubjectGroupCourseNamesFromClassData from '@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData';
-import { useIsStudent } from '@academic-portfolio/hooks';
-import { classDetailForDashboardRequest } from '@academic-portfolio/request';
+import { getClassIcon } from "@academic-portfolio/helpers/getClassIcon";
+import { getClassImage } from "@academic-portfolio/helpers/getClassImage";
+import getSubjectGroupCourseNamesFromClassData from "@academic-portfolio/helpers/getSubjectGroupCourseNamesFromClassData";
+import { useIsStudent } from "@academic-portfolio/hooks";
+import { classDetailForDashboardRequest } from "@academic-portfolio/request";
 import {
   Box,
   LoadingOverlay,
@@ -13,21 +13,21 @@ import {
   Tabs,
   TotalLayoutContainer,
   Text,
-} from '@bubbles-ui/components';
-import { ClassroomHeaderBar, HeaderDropdown } from '@bubbles-ui/leemons';
-import { getShare, useLocale, useStore } from '@common';
-import { LocaleDate } from '@common/LocaleDate';
-import { useComunica } from '@comunica/context';
-import { LayoutContext } from '@layout/context/layout';
-import { getLocalizations } from '@multilanguage/useTranslate';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { ZoneWidgets } from '@widgets';
-import { find, map, sortBy } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { ClassroomHeaderBar, HeaderDropdown } from "@bubbles-ui/leemons";
+import { getShare, useLocale, useStore } from "@common";
+import { LocaleDate } from "@common/LocaleDate";
+import { useComunica } from "@comunica/context";
+import { LayoutContext } from "@layout/context/layout";
+import { getLocalizations } from "@multilanguage/useTranslate";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { ZoneWidgets } from "@widgets";
+import { find, map, sortBy } from "lodash";
+import PropTypes from "prop-types";
 
-import { ClassDashboardStyles } from './ClassDashboard.styles';
+import { ClassDashboardStyles } from "./ClassDashboard.styles";
 
-import prefixPN from '@dashboard/helpers/prefixPN';
+import prefixPN from "@dashboard/helpers/prefixPN";
 
 export default function ClassDashboard({ session }) {
   const { layoutState } = useContext(LayoutContext);
@@ -50,9 +50,9 @@ export default function ClassDashboard({ session }) {
       haveScrollBar: store.haveScrollBar,
       hideStudents: store.hideStudents,
     },
-    { name: 'ClassDashboard' }
+    { name: "ClassDashboard" }
   );
-  const [t] = useTranslateLoader(prefixPN('classDashboard'));
+  const [t] = useTranslateLoader(prefixPN("classDashboard"));
   const { id } = useParams();
   const isStudent = useIsStudent();
   const history = useHistory();
@@ -63,7 +63,8 @@ export default function ClassDashboard({ session }) {
   function onResize() {
     // TODO Ver que pasa con el scroll en los distintos navegadores
     const haveScrollBar =
-      layoutState.contentRef.current.clientHeight < layoutState.contentRef.current.scrollHeight;
+      layoutState.contentRef.current.clientHeight <
+      layoutState.contentRef.current.scrollHeight;
     if (haveScrollBar !== store.haveScrollBar) {
       // store.haveScrollBar = haveScrollBar;
       // render();
@@ -82,7 +83,10 @@ export default function ClassDashboard({ session }) {
     store.loading = true;
     render();
     store.idLoaded = id;
-    const { classe, programClasses } = await classDetailForDashboardRequest(id, null);
+    const { classe, programClasses } = await classDetailForDashboardRequest(
+      id,
+      null
+    );
 
     store.hideStudents = false;
     if (isStudent && classe.hideStudentsToStudents) {
@@ -104,7 +108,7 @@ export default function ClassDashboard({ session }) {
       };
     });
 
-    setClassesData(sortBy(store.classesSelect, 'createdAt'));
+    setClassesData(sortBy(store.classesSelect, "createdAt"));
 
     store.loading = false;
     render();
@@ -118,13 +122,16 @@ export default function ClassDashboard({ session }) {
   }
 
   async function onGetZone(zone) {
-    const { items } = await getLocalizations({ keys: map(zone.widgetItems, 'properties.label') });
+    const { items } = await getLocalizations({
+      keys: map(zone.widgetItems, "properties.label"),
+    });
     store.widgetLabels = items;
     render();
   }
 
   React.useEffect(() => {
-    if (id && (!store.idLoaded || id !== store.idLoaded) && isStudent !== null) init();
+    if (id && (!store.idLoaded || id !== store.idLoaded) && isStudent !== null)
+      init();
   }, [id, isStudent]);
 
   const headerProps = {};
@@ -133,7 +140,7 @@ export default function ClassDashboard({ session }) {
     headerProps.blur = 10;
     headerProps.withBlur = true;
     headerProps.image = classImage;
-    headerProps.backgroundPosition = 'center';
+    headerProps.backgroundPosition = "center";
   } else {
     headerProps.withBlur = false;
     headerProps.withGradient = true;
@@ -141,12 +148,12 @@ export default function ClassDashboard({ session }) {
   }
 
   const mainTeacher = store.class
-    ? find(store.class.teachers, { type: 'main-teacher' })?.teacher
+    ? find(store.class.teachers, { type: "main-teacher" })?.teacher
     : null;
 
   const secondaryTeacherUsers = store.class
     ? store.class.teachers
-        .filter(({ type }) => type === 'associate-teacher')
+        .filter(({ type }) => type === "associate-teacher")
         .map(({ teacher }) => teacher.user)
     : [];
 
@@ -154,14 +161,21 @@ export default function ClassDashboard({ session }) {
     ({ Component, key, properties }) => {
       store.tabsProperties[key] = properties;
 
-      if (properties.label === 'academic-portfolio.tabDetail.label' && store.hideStudents) {
+      if (
+        properties.label === "academic-portfolio.tabDetail.label" &&
+        store.hideStudents
+      ) {
         return null;
       }
 
       return (
         <TabPanel
           key={key}
-          label={store.widgetLabels ? store.widgetLabels[properties.label] || '-' : '-'}
+          label={
+            store.widgetLabels
+              ? store.widgetLabels[properties.label] || "-"
+              : "-"
+          }
           className={styles.widgetTab}
         >
           <Component {...properties} classe={store.class} session={session} />
@@ -179,20 +193,25 @@ export default function ClassDashboard({ session }) {
 
   const classHeader = React.useCallback(
     ({ Component, key, properties }) => (
-      <Component {...properties} key={key} classe={store.class} session={session} />
+      <Component
+        {...properties}
+        key={key}
+        classe={store.class}
+        session={session}
+      />
     ),
     [store.class, session]
   );
 
   function onVirtualClassroomOpen() {
-    const addLogStatement = getShare('xapi', 'addLogStatement');
-    const verbs = getShare('xapi', 'verbs');
+    const addLogStatement = getShare("xapi", "addLogStatement");
+    const verbs = getShare("xapi", "verbs");
     if (addLogStatement) {
       addLogStatement({
         verb: verbs.INITIALIZED,
         object: {
-          objectType: 'Activity',
-          id: '{hostname}/api/open/virtual-classroom',
+          objectType: "Activity",
+          id: "{hostname}/api/open/virtual-classroom",
           definition: {
             extensions: {
               id: store.class.id,
@@ -200,7 +219,7 @@ export default function ClassDashboard({ session }) {
               url: store.class.virtualUrl,
             },
             description: {
-              'en-US': 'Open virtual classroom',
+              "en-US": "Open virtual classroom",
             },
           },
         },
@@ -217,7 +236,7 @@ export default function ClassDashboard({ session }) {
         <Text
           productive
           strong
-        >{`${t('customPeriodLabels.from')} ${LocaleDate({ date: startDate })} ${t('customPeriodLabels.to')} ${LocaleDate({ date: endDate })}`}</Text>
+        >{`${t("customPeriodLabels.from")} ${LocaleDate({ date: startDate })} ${t("customPeriodLabels.to")} ${LocaleDate({ date: endDate })}`}</Text>
       );
     }
 
@@ -232,9 +251,9 @@ export default function ClassDashboard({ session }) {
           <Box className={styles.classBar}>
             <ClassroomHeaderBar
               labels={{
-                chat: t('chat'),
-                schedule: t('schedule'),
-                virtualClassroom: t('virtualClassroom'),
+                chat: t("chat"),
+                schedule: t("schedule"),
+                virtualClassroom: t("virtualClassroom"),
               }}
               onVirtualClassroomOpen={onVirtualClassroomOpen}
               classRoom={{
@@ -252,13 +271,19 @@ export default function ClassDashboard({ session }) {
               locale={locale}
               leftSide={
                 <Box>
-                  <HeaderDropdown value={store.class} data={classesData} onChange={changeClass} />
+                  <HeaderDropdown
+                    value={store.class}
+                    data={classesData}
+                    onChange={changeClass}
+                  />
                 </Box>
               }
               rightSide={
                 <>
                   {!store.loading ? (
-                    <ZoneWidgets zone="dashboard.class.header-bar">{classHeader}</ZoneWidgets>
+                    <ZoneWidgets zone="dashboard.class.header-bar">
+                      {classHeader}
+                    </ZoneWidgets>
                   ) : null}
                 </>
               }
@@ -275,7 +300,8 @@ export default function ClassDashboard({ session }) {
                 <Tabs
                   fullHeight
                   onChange={(key) => {
-                    store.hideRightSide = !!store.tabsProperties?.[key]?.hideRightSide;
+                    store.hideRightSide =
+                      !!store.tabsProperties?.[key]?.hideRightSide;
                     render();
                   }}
                 />

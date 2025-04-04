@@ -1,13 +1,16 @@
-import React from 'react';
-import { useHistory } from 'react-router-dom';
-import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
-import { Dashboard } from './components/Dashboard';
+import React from "react";
+import { useHistory } from "react-router-dom";
+import { useDeploymentConfig } from "@deployment-manager/hooks/useDeploymentConfig";
+import { Dashboard } from "./components/Dashboard";
 
 function AdminDashboard(props) {
   const history = useHistory();
-  const deploymentConfig = useDeploymentConfig({ pluginName: 'dashboard', ignoreVersion: true });
+  const deploymentConfig = useDeploymentConfig({
+    pluginName: "dashboard",
+    ignoreVersion: true,
+  });
 
-  if (typeof deploymentConfig === 'undefined') {
+  if (typeof deploymentConfig === "undefined") {
     return null;
   }
 

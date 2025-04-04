@@ -1,14 +1,14 @@
-const { LeemonsMiddlewareAuthenticated } = require('@leemons/middlewares');
+const { LeemonsMiddlewareAuthenticated } = require("@leemons/middlewares");
 
-const register = require('../../core/welcomeCompleted/register');
-const unregister = require('../../core/welcomeCompleted/unregister');
-const hasCompleted = require('../../core/welcomeCompleted/hasCompleted');
+const register = require("../../core/welcomeCompleted/register");
+const unregister = require("../../core/welcomeCompleted/unregister");
+const hasCompleted = require("../../core/welcomeCompleted/hasCompleted");
 
 module.exports = {
   registerWelcomeCompleted: {
     rest: {
-      method: 'POST',
-      path: '/welcome',
+      method: "POST",
+      path: "/welcome",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -19,8 +19,8 @@ module.exports = {
   },
   unregisterWelcomeCompleted: {
     rest: {
-      method: 'DELETE',
-      path: '/welcome',
+      method: "DELETE",
+      path: "/welcome",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -31,8 +31,8 @@ module.exports = {
   },
   getWelcomeCompleted: {
     rest: {
-      method: 'GET',
-      path: '/welcome',
+      method: "GET",
+      path: "/welcome",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

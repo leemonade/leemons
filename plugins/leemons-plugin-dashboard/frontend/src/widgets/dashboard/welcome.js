@@ -1,15 +1,15 @@
-import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
-import { useNyaLocalizations } from '@assignables/widgets/dashboard/nya/hooks';
-import { Button, ContextContainer } from '@bubbles-ui/components';
-import { ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { useSession } from '@users/session';
-import { capitalize } from 'lodash';
+import { useNyaLocalizations } from "@assignables/widgets/dashboard/nya/hooks";
+import { Button, ContextContainer } from "@bubbles-ui/components";
+import { ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { useSession } from "@users/session";
+import { capitalize } from "lodash";
 
-import EmptyState from '@dashboard/components/WelcomeWidget/components/EmptyState/EmptyState';
-import useCompleteWelcomeMutation from '@dashboard/request/hooks/mutations/useCompleteWelcomeMutation';
-import useWelcome from '@dashboard/request/hooks/queries/useWelcome';
+import EmptyState from "@dashboard/components/WelcomeWidget/components/EmptyState/EmptyState";
+import useCompleteWelcomeMutation from "@dashboard/request/hooks/mutations/useCompleteWelcomeMutation";
+import useWelcome from "@dashboard/request/hooks/queries/useWelcome";
 
 export default function Welcome() {
   const localizations = useNyaLocalizations();
@@ -38,11 +38,11 @@ export default function Welcome() {
   return (
     <ContextContainer
       title={localizations?.nya?.emptyState?.greetingWelcome?.replace(
-        '{{name}}',
+        "{{name}}",
         capitalize(userName)
       )}
       titleRightZone={
-        <Link to={'/private/assignables/ongoing'}>
+        <Link to={"/private/assignables/ongoing"}>
           <Button variant="link" rightIcon={<ChevRightIcon />}>
             {localizations?.nya?.seeAllActivities}
           </Button>

@@ -4,29 +4,31 @@
  */
 /** @type {ServiceSchema} */
 
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { getAdminDashboard } = require('../../core/dashboard/getAdminDashboard');
-const { getAdminDashboardRealtime } = require('../../core/dashboard/getAdminDashboardRealtime');
+} = require("@leemons/middlewares");
+const { getAdminDashboard } = require("../../core/dashboard/getAdminDashboard");
+const {
+  getAdminDashboardRealtime,
+} = require("../../core/dashboard/getAdminDashboardRealtime");
 
 module.exports = {
   adminRest: {
     rest: {
-      method: 'GET',
-      path: '/',
+      method: "GET",
+      path: "/",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const validator = new LeemonsValidator({
-        type: 'object',
+        type: "object",
         properties: {
-          start: { type: 'string' },
-          end: { type: 'string' },
-          program: { type: 'string' },
-          center: { type: 'string' },
+          start: { type: "string" },
+          end: { type: "string" },
+          program: { type: "string" },
+          center: { type: "string" },
         },
         additionalProperties: false,
       });
@@ -39,8 +41,8 @@ module.exports = {
   },
   adminRealtimeRest: {
     rest: {
-      method: 'GET',
-      path: '/realtime',
+      method: "GET",
+      path: "/realtime",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {

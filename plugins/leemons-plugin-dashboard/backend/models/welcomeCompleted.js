@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -25,7 +25,7 @@ const schema = new mongoose.Schema(
 
 const WelcomeCompletedModel = newModel(
   mongoose.connection,
-  'v1::dashboard_welcome_completed',
+  "v1::dashboard_welcome_completed",
   schema
 );
 

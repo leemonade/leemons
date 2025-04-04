@@ -1,29 +1,29 @@
 const textSchema = {
-  type: 'string',
+  type: "string",
   minLength: 1,
   maxLength: 65000,
 };
 
 const stringSchema = {
-  type: 'string',
+  type: "string",
   minLength: 1,
   maxLength: 255,
 };
 
 const numberSchema = {
-  type: 'number',
+  type: "number",
 };
 
 const arrayStringRequiredSchema = {
-  type: 'array',
+  type: "array",
   items: {
-    type: 'string',
+    type: "string",
   },
   minItems: 1,
 };
 
 const stringSchemaNullable = {
-  type: 'string',
+  type: "string",
   minLength: 1,
   maxLength: 255,
   nullable: true,

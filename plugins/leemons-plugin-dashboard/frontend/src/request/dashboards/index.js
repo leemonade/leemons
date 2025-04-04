@@ -3,7 +3,7 @@ async function getAdminDashboard({ program, start, end, center } = {}) {
     `v1/dashboard/admin?program=${program}&start=${start}&end=${end}&center=${center}`,
     {
       allAgents: true,
-      method: 'GET',
+      method: "GET",
     }
   );
 }
@@ -11,7 +11,7 @@ async function getAdminDashboard({ program, start, end, center } = {}) {
 async function getAdminDashboardRealtime() {
   return leemons.api(`v1/dashboard/admin/realtime`, {
     allAgents: true,
-    method: 'GET',
+    method: "GET",
   });
 }
 

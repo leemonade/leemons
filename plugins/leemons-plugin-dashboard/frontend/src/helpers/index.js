@@ -1,2 +1,2 @@
-export { default as prefixPN } from './prefixPN';
-export { bytesToSize } from './bytesToSize';
+export { default as prefixPN } from "./prefixPN";
+export { bytesToSize } from "./bytesToSize";

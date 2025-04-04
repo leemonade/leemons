@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 
-import { Box, Stack, Text } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
+import { Box, Stack, Text } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
 
-import { prefixPN } from '@dashboard/helpers';
+import { prefixPN } from "@dashboard/helpers";
 
 export default function EmptyState() {
-  const [t] = useTranslateLoader(prefixPN('dashboardNotEnrolled'));
+  const [t] = useTranslateLoader(prefixPN("dashboardNotEnrolled"));
   return (
     <Box
       sx={(theme) => ({
@@ -26,9 +26,9 @@ export default function EmptyState() {
         <Stack spacing={3} alignItems="flex-start">
           🏫
           <Text color="primary" strong>
-            {t('title')}
+            {t("title")}
           </Text>
-          <Text color="primary">{t('description')}</Text>
+          <Text color="primary">{t("description")}</Text>
         </Stack>
       </Stack>
     </Box>

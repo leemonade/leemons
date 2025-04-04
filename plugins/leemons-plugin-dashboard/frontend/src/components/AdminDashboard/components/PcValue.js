@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Stack, Text } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Stack, Text } from "@bubbles-ui/components";
 
 function PcValue({ text, value }) {
   return (

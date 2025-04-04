@@ -1,7 +1,7 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { useHistory } from 'react-router-dom';
-import { cloneDeep, forEach, map, times } from 'lodash';
+import React from "react";
+import PropTypes from "prop-types";
+import { useHistory } from "react-router-dom";
+import { cloneDeep, forEach, map, times } from "lodash";
 import {
   Box,
   Text,
@@ -15,26 +15,32 @@ import {
   ActivityAccordion,
   ActivityAnswersBar,
   ActivityAccordionPanel,
-} from '@bubbles-ui/components';
-import { Swiper } from '@bubbles-ui/extras';
-import { SchoolTeacherMaleIcon, SingleActionsGraduateIcon } from '@bubbles-ui/icons/outline';
-import { AnalyticsGraphBarIcon } from '@bubbles-ui/icons/solid';
-import { LibraryCardBasic } from '@bubbles-ui/leemons';
-import { useStore } from '@common';
-import prefixPN from '@dashboard/helpers/prefixPN';
-import { getLocalizations } from '@multilanguage/useTranslate';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { SelectCenter } from '@users/components';
-import { getAdminDashboardRealtimeRequest, getAdminDashboardRequest } from '@dashboard/request';
-import { bytesToSize } from '@dashboard/helpers';
-import { SkeletonDashboardLoader } from './SkeletonDashboardLoader';
-import { Icon } from './Icon';
-import { PcValue } from './PcValue';
+} from "@bubbles-ui/components";
+import { Swiper } from "@bubbles-ui/extras";
+import {
+  SchoolTeacherMaleIcon,
+  SingleActionsGraduateIcon,
+} from "@bubbles-ui/icons/outline";
+import { AnalyticsGraphBarIcon } from "@bubbles-ui/icons/solid";
+import { LibraryCardBasic } from "@bubbles-ui/leemons";
+import { useStore } from "@common";
+import prefixPN from "@dashboard/helpers/prefixPN";
+import { getLocalizations } from "@multilanguage/useTranslate";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { SelectCenter } from "@users/components";
+import {
+  getAdminDashboardRealtimeRequest,
+  getAdminDashboardRequest,
+} from "@dashboard/request";
+import { bytesToSize } from "@dashboard/helpers";
+import { SkeletonDashboardLoader } from "./SkeletonDashboardLoader";
+import { Icon } from "./Icon";
+import { PcValue } from "./PcValue";
 
-const RIGHT_ZONE_WIDTH = '320px';
+const RIGHT_ZONE_WIDTH = "320px";
 const useStyles = createStyles((theme) => ({
   rightZone: {
-    position: 'fixed',
+    position: "fixed",
     right: 0,
     top: 0,
     bottom: 0,
@@ -53,8 +59,8 @@ function Dashboard({ session }) {
     isAcademicMode: false,
   });
   const history = useHistory();
-  const { classes: styles } = useStyles({}, { name: 'AdminDashboard' });
-  const [t, tl] = useTranslateLoader(prefixPN('adminDashboard'));
+  const { classes: styles } = useStyles({}, { name: "AdminDashboard" });
+  const [t, tl] = useTranslateLoader(prefixPN("adminDashboard"));
 
   async function init() {
     const {
@@ -62,15 +68,15 @@ function Dashboard({ session }) {
     } = await getAdminDashboardRequest();
 
     const { items: instancesTranslations } = await getLocalizations({
-      keys: map(instances, 'roleName'),
+      keys: map(instances, "roleName"),
     });
 
     const base = {
       data: [],
       selectables: [
         {
-          value: 'number',
-          label: 'number',
+          value: "number",
+          label: "number",
         },
       ],
       labels: {},
@@ -94,7 +100,7 @@ function Dashboard({ session }) {
       store.activeUsers.data.push({
         id: `s-${i}`,
         status: null,
-        number: t('students'),
+        number: t("students"),
       });
     });
 
@@ -102,7 +108,7 @@ function Dashboard({ session }) {
       store.activeUsers.data.push({
         id: `t-${i}`,
         status: null,
-        number: t('teachers'),
+        number: t("teachers"),
       });
     });
 
@@ -169,7 +175,9 @@ function Dashboard({ session }) {
   }
 
   function goProgram(program) {
-    history.push(`/private/academic-portfolio/tree?center=${store.center}&program=${program.id}`);
+    history.push(
+      `/private/academic-portfolio/tree?center=${store.center}&program=${program.id}`
+    );
   }
 
   return (
@@ -180,13 +188,13 @@ function Dashboard({ session }) {
         paddingRight: RIGHT_ZONE_WIDTH,
         backgroundColor: theme.colors.uiBackground02,
         paddingBottom: theme.spacing[12],
-        overflow: 'auto',
+        overflow: "auto",
       })}
     >
       <PageContainer
         sx={(theme) => ({
           paddingTop: theme.spacing[8],
-          maxWidth: '100%',
+          maxWidth: "100%",
         })}
       >
         <Box sx={(theme) => ({ marginBottom: theme.spacing[6] })}>
@@ -196,7 +204,7 @@ function Dashboard({ session }) {
             </SkeletonDashboardLoader>
           ) : (
             <Text size="lg" color="primary" className={styles.title}>
-              {t('programs')}
+              {t("programs")}
             </Text>
           )}
         </Box>
@@ -209,9 +217,14 @@ function Dashboard({ session }) {
             </SkeletonDashboardLoader>
           ) : (
             <>
-              <Box sx={(theme) => ({ marginBottom: theme.spacing[2], maxWidth: 300 })}>
+              <Box
+                sx={(theme) => ({
+                  marginBottom: theme.spacing[2],
+                  maxWidth: 300,
+                })}
+              >
                 <SelectCenter
-                  label={t('selectCenter')}
+                  label={t("selectCenter")}
                   onChange={handleOnSelectCenter}
                   firstSelected
                 />
@@ -223,7 +236,8 @@ function Dashboard({ session }) {
                   <rect x="732" y="0" width="350" height="350" rx="3" />
                 </SkeletonDashboardLoader>
               ) : null}
-              {!store.loadingCenter && store.academicPortfolio?.programs.length ? (
+              {!store.loadingCenter &&
+              store.academicPortfolio?.programs.length ? (
                 <Swiper
                   className={styles.cardContainer}
                   breakAt={{
@@ -240,7 +254,7 @@ function Dashboard({ session }) {
                       key={program.program.id}
                       blur={20}
                       onClick={() => goProgram(program.program)}
-                      style={{ cursor: 'pointer' }}
+                      style={{ cursor: "pointer" }}
                       asset={{
                         name: program.program.name,
                         color: program.program.color,
@@ -249,17 +263,17 @@ function Dashboard({ session }) {
                     >
                       <Box
                         style={{
-                          display: 'flex',
-                          height: '100%',
-                          flexDirection: 'column',
-                          justifyContent: 'space-between',
+                          display: "flex",
+                          height: "100%",
+                          flexDirection: "column",
+                          justifyContent: "space-between",
                           padding: 12,
                         }}
                       >
                         <Box
                           style={{
-                            display: 'flex',
-                            flexDirection: 'column',
+                            display: "flex",
+                            flexDirection: "column",
                             gap: 16,
                           }}
                         >
@@ -273,39 +287,49 @@ function Dashboard({ session }) {
                           </Text>
                         </Box>  */}
                           <Box
-                            style={{ display: 'flex', gap: 4, alignItems: 'center', padding: 2 }}
+                            style={{
+                              display: "flex",
+                              gap: 4,
+                              alignItems: "center",
+                              padding: 2,
+                            }}
                           >
                             <SingleActionsGraduateIcon width={16} height={16} />
                             <Text role="productive" color="primary">
-                              {t('students')}:
+                              {t("students")}:
                             </Text>
                             <Text role="productive" color="primary" strong>
                               {program.students}
                             </Text>
                           </Box>
                           <Box
-                            style={{ display: 'flex', gap: 4, alignItems: 'center', padding: 2 }}
+                            style={{
+                              display: "flex",
+                              gap: 4,
+                              alignItems: "center",
+                              padding: 2,
+                            }}
                           >
                             <SchoolTeacherMaleIcon width={16} height={16} />
                             <Text role="productive" color="primary">
-                              {t('teachers')}:
+                              {t("teachers")}:
                             </Text>
                             <Text role="productive" color="primary" strong>
                               {program.teachers}
                             </Text>
                           </Box>
                         </Box>
-                        <Box style={{ display: 'flex' }}>
+                        <Box style={{ display: "flex" }}>
                           <Box style={{ flex: 1 }}>
                             <Title order={3}>{program.courses}</Title>
                             <Text role="productive" color="primary">
-                              {t('courses')}
+                              {t("courses")}
                             </Text>
                           </Box>
                           <Box style={{ flex: 1 }}>
                             <Title order={3}>{program.subjects}</Title>
                             <Text role="productive" color="primary">
-                              {t('subjects')}
+                              {t("subjects")}
                             </Text>
                           </Box>
                         </Box>
@@ -318,7 +342,12 @@ function Dashboard({ session }) {
           )}
         </Box>
 
-        <Box sx={(theme) => ({ marginTop: theme.spacing[10], marginBottom: theme.spacing[6] })}>
+        <Box
+          sx={(theme) => ({
+            marginTop: theme.spacing[10],
+            marginBottom: theme.spacing[6],
+          })}
+        >
           {store.loading ? (
             <SkeletonDashboardLoader width="100%" height="40">
               <circle cx="14" cy="14" r="14" />
@@ -328,7 +357,7 @@ function Dashboard({ session }) {
             <>
               <AnalyticsGraphBarIcon />
               <Text size="lg" color="primary" className={styles.title}>
-                {t('activityInPlatform')}
+                {t("activityInPlatform")}
               </Text>
             </>
           )}
@@ -345,17 +374,17 @@ function Dashboard({ session }) {
                 <ActivityAccordion initialItem={0}>
                   <ActivityAccordionPanel
                     key={0}
-                    label={t('activeUsers')}
+                    label={t("activeUsers")}
                     icon={
                       <Icon
                         className="fill-current"
-                        src={'/public/assets/svgs/user-male-female.svg'}
+                        src={"/public/assets/svgs/user-male-female.svg"}
                       />
                     }
                     rightSection={
                       <Box>
                         <Badge
-                          label={`${t('total')} ${store.activeUsers?.data.length}`}
+                          label={`${t("total")} ${store.activeUsers?.data.length}`}
                           size="md"
                           color="stroke"
                           closable={false}
@@ -378,12 +407,17 @@ function Dashboard({ session }) {
                 <ActivityAccordion initialItem={0}>
                   <ActivityAccordionPanel
                     key={0}
-                    label={t('createdTasks')}
-                    icon={<Icon className="stroke-current" src={'/public/assets/svgs/tasks.svg'} />}
+                    label={t("createdTasks")}
+                    icon={
+                      <Icon
+                        className="stroke-current"
+                        src={"/public/assets/svgs/tasks.svg"}
+                      />
+                    }
                     rightSection={
                       <Box>
                         <Badge
-                          label={`${t('total')} ${store.instances?.data.length}`}
+                          label={`${t("total")} ${store.instances?.data.length}`}
                           size="md"
                           color="stroke"
                           closable={false}
@@ -407,7 +441,10 @@ function Dashboard({ session }) {
         </Stack>
       </PageContainer>
       {/* -- RIGHT ZONE -- */}
-      <Paper className={styles.rightZone} padding={store.loading ? 0 : undefined}>
+      <Paper
+        className={styles.rightZone}
+        padding={store.loading ? 0 : undefined}
+      >
         {/* --- SYSTEM --- */}
         {/* --- CPU --- */}
         {store.loading ? (
@@ -418,35 +455,41 @@ function Dashboard({ session }) {
           <>
             <Stack>
               <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
-                <Icon size="18px" src={'/public/assets/svgs/cpu.svg'} />
+                <Icon size="18px" src={"/public/assets/svgs/cpu.svg"} />
               </Box>
-              <Box sx={() => ({ width: '100%' })}>
+              <Box sx={() => ({ width: "100%" })}>
                 <Box>
                   <Text color="primary" strong>
-                    {t('cpu')}
+                    {t("cpu")}
                   </Text>
                 </Box>
                 <Box>
                   <PcValue
-                    text={t('name')}
+                    text={t("name")}
                     value={`${store.pc.cpu.brand} (${store.pc.cpu.manufacturer})`}
                   />
                 </Box>
                 {store.pc.cpu.cores ? (
-                  <PcValue text={t('cores')} value={store.pc.cpu.cores} />
+                  <PcValue text={t("cores")} value={store.pc.cpu.cores} />
                 ) : null}
                 {store.pc.cpu.speed ? (
-                  <PcValue text={t('feq')} value={`${store.pc.cpu.speed}GHz`} />
+                  <PcValue text={t("feq")} value={`${store.pc.cpu.speed}GHz`} />
                 ) : null}
                 {store.pc.cpu.speedMin ? (
-                  <PcValue text={t('feqMin')} value={`${store.pc.cpu.speedMin}GHz`} />
+                  <PcValue
+                    text={t("feqMin")}
+                    value={`${store.pc.cpu.speedMin}GHz`}
+                  />
                 ) : null}
                 {store.pc.cpu.speedMax ? (
-                  <PcValue text={t('feqMax')} value={`${store.pc.cpu.speedMax}GHz`} />
+                  <PcValue
+                    text={t("feqMax")}
+                    value={`${store.pc.cpu.speedMax}GHz`}
+                  />
                 ) : null}
                 {store.pc.cpu.cores ? (
                   <PcValue
-                    text={t('load')}
+                    text={t("load")}
                     value={`${store.pc.currentLoad.currentLoad.toFixed(2)}%`}
                   />
                 ) : null}
@@ -455,49 +498,72 @@ function Dashboard({ session }) {
             {/* --- RAM --- */}
             <Stack sx={(theme) => ({ marginTop: theme.spacing[6] })}>
               <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
-                <Icon size="18px" src={'/public/assets/svgs/ram.svg'} />
+                <Icon size="18px" src={"/public/assets/svgs/ram.svg"} />
               </Box>
-              <Box sx={() => ({ width: '100%' })}>
+              <Box sx={() => ({ width: "100%" })}>
                 <Box>
                   <Text color="primary" strong>
-                    {t('ram')}
+                    {t("ram")}
                   </Text>
                 </Box>
-                {ram?.clockSpeed ? <PcValue text={t('type')} value={ram.type} /> : null}
                 {ram?.clockSpeed ? (
-                  <PcValue text={t('clockSpeed')} value={`${ram.clockSpeed}MHz`} />
+                  <PcValue text={t("type")} value={ram.type} />
+                ) : null}
+                {ram?.clockSpeed ? (
+                  <PcValue
+                    text={t("clockSpeed")}
+                    value={`${ram.clockSpeed}MHz`}
+                  />
                 ) : null}
                 {store.pc.mem.total ? (
-                  <PcValue text={t('total')} value={bytesToSize(store.pc.mem.total)} />
+                  <PcValue
+                    text={t("total")}
+                    value={bytesToSize(store.pc.mem.total)}
+                  />
                 ) : null}
                 {store.pc.mem.available ? (
-                  <PcValue text={t('available')} value={bytesToSize(store.pc.mem.available)} />
+                  <PcValue
+                    text={t("available")}
+                    value={bytesToSize(store.pc.mem.available)}
+                  />
                 ) : null}
-                {ramUsed ? <PcValue text={t('used')} value={`${ramUsed.toFixed(2)}%`} /> : null}
+                {ramUsed ? (
+                  <PcValue text={t("used")} value={`${ramUsed.toFixed(2)}%`} />
+                ) : null}
               </Box>
             </Stack>
 
             {/* --- DISCO --- */}
             {store.pc?.diskLayout
               ? store.pc.diskLayout.map((disk, i) => (
-                  <Stack key={i} sx={(theme) => ({ marginTop: theme.spacing[6] })}>
+                  <Stack
+                    key={i}
+                    sx={(theme) => ({ marginTop: theme.spacing[6] })}
+                  >
                     <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
-                      <Icon size="18px" src={'/public/assets/svgs/disk.svg'} />
+                      <Icon size="18px" src={"/public/assets/svgs/disk.svg"} />
                     </Box>
-                    <Box sx={() => ({ width: '100%' })}>
+                    <Box sx={() => ({ width: "100%" })}>
                       <Box>
                         <Text color="primary" strong>
-                          {t('disk')} {store.pc.diskLayout.length > 1 ? i : ''}
+                          {t("disk")} {store.pc.diskLayout.length > 1 ? i : ""}
                         </Text>
                       </Box>
-                      {disk.name ? <PcValue text={t('name')} value={disk.name} /> : null}
-                      {disk.type ? <PcValue text={t('type')} value={disk.type} /> : null}
+                      {disk.name ? (
+                        <PcValue text={t("name")} value={disk.name} />
+                      ) : null}
+                      {disk.type ? (
+                        <PcValue text={t("type")} value={disk.type} />
+                      ) : null}
                       {disk.size ? (
-                        <PcValue text={t('space')} value={bytesToSize(disk.size)} />
+                        <PcValue
+                          text={t("space")}
+                          value={bytesToSize(disk.size)}
+                        />
                       ) : null}
                       {store.pc.fsSize ? (
                         <PcValue
-                          text={t('used')}
+                          text={t("used")}
                           value={`${((diskUsed / disk.size) * 100).toFixed(2)}%`}
                         />
                       ) : null}
@@ -509,20 +575,26 @@ function Dashboard({ session }) {
             {/* --- INTERNET --- */}
             <Stack sx={(theme) => ({ marginTop: theme.spacing[6] })}>
               <Box sx={(theme) => ({ paddingRight: theme.spacing[4] })}>
-                <Icon size="18px" src={'/public/assets/svgs/internet-speed.svg'} />
+                <Icon
+                  size="18px"
+                  src={"/public/assets/svgs/internet-speed.svg"}
+                />
               </Box>
-              <Box sx={() => ({ width: '100%' })}>
+              <Box sx={() => ({ width: "100%" })}>
                 <Box>
                   <Text color="primary" strong>
-                    {t('network')}
+                    {t("network")}
                   </Text>
                 </Box>
                 {store.pc.networkInterface ? (
-                  <PcValue text={t('type')} value={store.pc.networkInterface.type} />
+                  <PcValue
+                    text={t("type")}
+                    value={store.pc.networkInterface.type}
+                  />
                 ) : null}
                 {store.pc.networkInterface ? (
                   <PcValue
-                    text={t('speed')}
+                    text={t("speed")}
                     value={`${store.pc.networkInterface.speed || 0}Mb/s`}
                   />
                 ) : null}

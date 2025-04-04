@@ -1,7 +1,7 @@
 const getWelcomeKey = (userAgent) => [
   {
-    plugin: 'plugin.dashboard',
-    scope: 'welcome',
+    plugin: "plugin.dashboard",
+    scope: "welcome",
     userAgent,
   },
 ];

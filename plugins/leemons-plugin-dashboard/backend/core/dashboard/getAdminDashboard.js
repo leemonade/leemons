@@ -1,11 +1,14 @@
-const _ = require('lodash');
-const systeminformation = require('systeminformation');
+const _ = require("lodash");
+const systeminformation = require("systeminformation");
 
 async function getAdminDashboard({ config, ctx }) {
   const { userSession } = ctx.meta;
-  if (config.center && config.center !== 'undefined') {
+  if (config.center && config.center !== "undefined") {
     return {
-      academicPortfolio: await ctx.tx.call('academic-portfolio.common.adminDashboard', { config }),
+      academicPortfolio: await ctx.tx.call(
+        "academic-portfolio.common.adminDashboard",
+        { config }
+      ),
     };
   }
   const [
@@ -20,8 +23,8 @@ async function getAdminDashboard({ config, ctx }) {
     networkInterfaces,
     networkInterfaceDefault,
   ] = await Promise.all([
-    ctx.tx.call('academic-portfolio.common.adminDashboard', { config }),
-    ctx.tx.call('assignables.assignableInstances.adminDashboard', { config }),
+    ctx.tx.call("academic-portfolio.common.adminDashboard", { config }),
+    ctx.tx.call("assignables.assignableInstances.adminDashboard", { config }),
     systeminformation.cpu(),
     systeminformation.mem(),
     systeminformation.memLayout(),
@@ -43,7 +46,9 @@ async function getAdminDashboard({ config, ctx }) {
       diskLayout,
       fsSize,
       networkInterfaces,
-      networkInterface: _.find(networkInterfaces, { iface: networkInterfaceDefault }),
+      networkInterface: _.find(networkInterfaces, {
+        iface: networkInterfaceDefault,
+      }),
     },
   };
 }

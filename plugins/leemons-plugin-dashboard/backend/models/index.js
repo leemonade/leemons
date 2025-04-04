@@ -1,9 +1,9 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('@leemons/mongodb-helpers');
+const { getKeyValueModel } = require("@leemons/mongodb-helpers");
 
 const models = {
-  ...require('./welcomeCompleted'),
+  ...require("./welcomeCompleted"),
 };
 
 module.exports = {
@@ -12,7 +12,7 @@ module.exports = {
     return {
       WelcomeCompleted: models.WelcomeCompletedModel,
 
-      KeyValue: getKeyValueModel({ modelName: 'v1::dashboard_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: "v1::dashboard_KeyValue" }),
     };
   },
 };

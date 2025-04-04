@@ -1,12 +1,12 @@
-const { LeemonsValidator } = require('@leemons/validator');
-const { stringSchema } = require('./types');
+const { LeemonsValidator } = require("@leemons/validator");
+const { stringSchema } = require("./types");
 
 const addProgramConfigSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     name: stringSchema,
   },
-  required: ['name'],
+  required: ["name"],
   additionalProperties: false,
 };
 

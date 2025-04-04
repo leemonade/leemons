@@ -1,4 +1,4 @@
-const { map } = require('lodash');
+const { map } = require("lodash");
 
 async function register({ ctx }) {
   const { userAgents } = ctx.meta.userSession;

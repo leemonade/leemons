@@ -1,12 +1,12 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, ImageLoader } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, ImageLoader } from "@bubbles-ui/components";
 
-function Icon({ size = '23px', className, src }) {
+function Icon({ size = "23px", className, src }) {
   return (
     <Box
       style={{
-        position: 'relative',
+        position: "relative",
         width: size,
         height: size,
       }}
