@@ -1,26 +1,30 @@
-import Step1 from '@academic-calendar/pages/private/program/components/Step1';
-import Step2 from '@academic-calendar/pages/private/program/components/Step2';
-import Step3 from '@academic-calendar/pages/private/program/components/Step3';
+import Step1 from "@academic-calendar/pages/private/program/components/Step1";
+import Step2 from "@academic-calendar/pages/private/program/components/Step2";
+import Step3 from "@academic-calendar/pages/private/program/components/Step3";
 import {
   getConfigRequest,
   listRegionalConfigsRequest,
   saveConfigRequest,
-} from '@academic-calendar/request';
-import { detailProgram } from '@academic-portfolio/request/programs';
-import { ContextContainer, createStyles, HorizontalStepper } from '@bubbles-ui/components';
-import { useStore } from '@common';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import listCenters from '@users/request/listCenters';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
+} from "@academic-calendar/request";
+import { detailProgram } from "@academic-portfolio/request/programs";
+import {
+  ContextContainer,
+  createStyles,
+  HorizontalStepper,
+} from "@bubbles-ui/components";
+import { useStore } from "@common";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import listCenters from "@users/request/listCenters";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
 
 const useStyle = createStyles((theme) => ({
   root: {
     padding: theme.spacing[5],
     // maxWidth: 700,
-    width: '100%',
+    width: "100%",
   },
 }));
 
@@ -45,7 +49,7 @@ export default function AcademicCalendarDetail({
       store.saving = true;
       render();
       await saveConfigRequest({ ...store.config, program: store.program.id });
-      addSuccessAlert(t('configSaved'));
+      addSuccessAlert(t("configSaved"));
     } catch (e) {
       addErrorAlert(getErrorMessage(e));
     }
@@ -62,10 +66,15 @@ export default function AcademicCalendarDetail({
         {
           data: { items: centers },
         },
-      ] = await Promise.all([detailProgram(id), listCenters({ page: 0, size: 99999 })]);
-      const { regionalConfigs } = await listRegionalConfigsRequest(program.centers[0]);
+      ] = await Promise.all([
+        detailProgram(id),
+        listCenters({ page: 0, size: 99999 }),
+      ]);
+      const { regionalConfigs } = await listRegionalConfigsRequest(
+        program.centers[0]
+      );
 
-      store.centersById = _.keyBy(centers, 'id');
+      store.centersById = _.keyBy(centers, "id");
       store.regionalConfigs = regionalConfigs;
       store.program = program;
       store.program.centers = _.map(

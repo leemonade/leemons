@@ -1,4 +1,4 @@
-const PLUGIN_NAME = 'academic-calendar';
+const PLUGIN_NAME = "academic-calendar";
 const permissionsPrefix = PLUGIN_NAME;
 
 const permissionNames = {
@@ -8,8 +8,8 @@ const permissionNames = {
 const permissions = [
   {
     permissionName: permissionNames.config,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
-    localizationName: { es: 'Calendario Académico', en: 'Academic Calendar' },
+    actions: ["view", "update", "create", "delete", "admin"],
+    localizationName: { es: "Calendario Académico", en: "Academic Calendar" },
   },
 ];
 
@@ -17,19 +17,19 @@ const permissionsBundles = {
   config: {
     create: {
       permission: permissionNames.config,
-      actions: ['create', 'admin'],
+      actions: ["create", "admin"],
     },
     view: {
       permission: permissionNames.config,
-      actions: ['view', 'admin'],
+      actions: ["view", "admin"],
     },
     update: {
       permission: permissionNames.config,
-      actions: ['update', 'admin'],
+      actions: ["update", "admin"],
     },
     delete: {
       permission: permissionNames.config,
-      actions: ['delete', 'admin'],
+      actions: ["delete", "admin"],
     },
   },
 };
@@ -39,56 +39,56 @@ const menuItems = [
   {
     item: {
       order: 103,
-      key: 'portfolio-calendar',
-      iconSvg: '/public/academic-calendar/menu-icon.svg',
-      activeIconSvg: '/public/academic-calendar/menu-icon.svg',
+      key: "portfolio-calendar",
+      iconSvg: "/public/academic-calendar/menu-icon.svg",
+      activeIconSvg: "/public/academic-calendar/menu-icon.svg",
       label: {
-        en: 'Academic Calendar',
-        es: 'Calendario Académico',
+        en: "Academic Calendar",
+        es: "Calendario Académico",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.config,
-        actionNames: ['admin'],
+        actionNames: ["admin"],
       },
     ],
   },
   // Calendario regional
   {
     item: {
-      key: 'regional-calendar',
+      key: "regional-calendar",
       order: 1,
       parentKey: `${permissionsPrefix}.portfolio-calendar`,
-      url: '/private/academic-calendar/regional-calendars',
+      url: "/private/academic-calendar/regional-calendars",
       label: {
-        en: 'Regional calendars',
-        es: 'Calendarios regionales',
+        en: "Regional calendars",
+        es: "Calendarios regionales",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.config,
-        actionNames: ['admin'],
+        actionNames: ["admin"],
       },
     ],
   },
   // Calendario de programas
   {
     item: {
-      key: 'program-calendar',
+      key: "program-calendar",
       order: 2,
       parentKey: `${permissionsPrefix}.portfolio-calendar`,
-      url: '/private/academic-calendar/program-calendars',
+      url: "/private/academic-calendar/program-calendars",
       label: {
-        en: 'Program calendars',
-        es: 'Calendarios de programa',
+        en: "Program calendars",
+        es: "Calendarios de programa",
       },
     },
     permissions: [
       {
         permissionName: permissionNames.config,
-        actionNames: ['admin'],
+        actionNames: ["admin"],
       },
     ],
   },

@@ -1,13 +1,19 @@
-import _ from 'lodash';
-import React from 'react';
-import { Box, ImageLoader } from '@bubbles-ui/components';
-import useTranslateTitle from '@calendar/helpers/useTranslateTitle';
-import ColorBall from '@academic-calendar/components/ColorBall';
+import _ from "lodash";
+import React from "react";
+import { Box, ImageLoader } from "@bubbles-ui/components";
+import useTranslateTitle from "@calendar/helpers/useTranslateTitle";
+import ColorBall from "@academic-calendar/components/ColorBall";
 
 function Icon({ src }) {
   return (
-    <Box sx={() => ({ position: 'relative', display: 'inline-block', verticalAlign: '' })}>
-      <Box sx={() => ({ position: 'relative', width: '24px', height: '24px' })}>
+    <Box
+      sx={() => ({
+        position: "relative",
+        display: "inline-block",
+        verticalAlign: "",
+      })}
+    >
+      <Box sx={() => ({ position: "relative", width: "24px", height: "24px" })}>
         <ImageLoader height="24px" src={src} />
       </Box>
     </Box>
@@ -32,7 +38,9 @@ export function useProcessCalendarConfigForBigCalendar(trans) {
 
         if (courseDates) {
           const cour = _.find(config.program.courses, { id });
-          const courseName = cour.name ? cour.name : `${t('course')} ${cour.index}`;
+          const courseName = cour.name
+            ? cour.name
+            : `${t("course")} ${cour.index}`;
           const courseNameProgram = `${courseName} - ${config.program.name}`;
           events.push({
             allDay: true,
@@ -44,9 +52,9 @@ export function useProcessCalendarConfigForBigCalendar(trans) {
               calendar: {
                 icon: <Icon src="/public/academic-calendar/start-course.svg" />,
                 desaturateColor: !!forCalendar,
-                bgColor: forCalendar ? '#4F96FF' : '#000000',
-                borderStyle: 'solid',
-                borderColor: forCalendar ? '#4F96FF' : '#000000',
+                bgColor: forCalendar ? "#4F96FF" : "#000000",
+                borderStyle: "solid",
+                borderColor: forCalendar ? "#4F96FF" : "#000000",
                 rightArrow: true,
                 leftArrow: false,
                 zIndex: -2,
@@ -63,9 +71,9 @@ export function useProcessCalendarConfigForBigCalendar(trans) {
               calendar: {
                 icon: <Icon src="/public/academic-calendar/end-course.svg" />,
                 desaturateColor: !!forCalendar,
-                bgColor: forCalendar ? '#4F96FF' : '#000000',
-                borderStyle: 'solid',
-                borderColor: forCalendar ? '#4F96FF' : '#000000',
+                bgColor: forCalendar ? "#4F96FF" : "#000000",
+                borderStyle: "solid",
+                borderColor: forCalendar ? "#4F96FF" : "#000000",
                 leftArrow: true,
                 rightArrow: false,
                 zIndex: -2,
@@ -85,11 +93,17 @@ export function useProcessCalendarConfigForBigCalendar(trans) {
                 originalEvent: {
                   noCanOpen: true,
                   calendar: {
-                    icon: <ColorBall colors={['#F6E1F3', '#ECD8E9']} rotate={-45} withBorder />,
+                    icon: (
+                      <ColorBall
+                        colors={["#F6E1F3", "#ECD8E9"]}
+                        rotate={-45}
+                        withBorder
+                      />
+                    ),
                     desaturateColor: false,
-                    bgColor: forCalendar ? '#ffffff' : ['#F6E1F3', '#ECD8E9'],
-                    borderStyle: 'solid',
-                    borderColor: forCalendar ? '#ffffff' : '#000000',
+                    bgColor: forCalendar ? "#ffffff" : ["#F6E1F3", "#ECD8E9"],
+                    borderStyle: "solid",
+                    borderColor: forCalendar ? "#ffffff" : "#000000",
                     rotate: -45,
                     oneDayStyle: true,
                     zIndex: -6,
@@ -106,11 +120,17 @@ export function useProcessCalendarConfigForBigCalendar(trans) {
                 originalEvent: {
                   noCanOpen: true,
                   calendar: {
-                    icon: <ColorBall colors={['#E4DDF7', '#DBD4ED']} rotate={90} withBorder />,
-                    bgColor: forCalendar ? '#ffffff' : ['#E4DDF7', '#DBD4ED'],
-                    borderStyle: 'solid',
+                    icon: (
+                      <ColorBall
+                        colors={["#E4DDF7", "#DBD4ED"]}
+                        rotate={90}
+                        withBorder
+                      />
+                    ),
+                    bgColor: forCalendar ? "#ffffff" : ["#E4DDF7", "#DBD4ED"],
+                    borderStyle: "solid",
                     desaturateColor: false,
-                    borderColor: forCalendar ? '#ffffff' : '#E4DDF7',
+                    borderColor: forCalendar ? "#ffffff" : "#E4DDF7",
                     leftArrow: false,
                     rightArrow: false,
                     rotate: 90,
@@ -129,11 +149,13 @@ export function useProcessCalendarConfigForBigCalendar(trans) {
                 originalEvent: {
                   noCanOpen: true,
                   calendar: {
-                    icon: <ColorBall colors={['#DEEDE4', '#D5E4DB']} withBorder />,
-                    bgColor: forCalendar ? '#ffffff' : ['#DEEDE4', '#D5E4DB'],
-                    borderStyle: 'solid',
+                    icon: (
+                      <ColorBall colors={["#DEEDE4", "#D5E4DB"]} withBorder />
+                    ),
+                    bgColor: forCalendar ? "#ffffff" : ["#DEEDE4", "#D5E4DB"],
+                    borderStyle: "solid",
                     desaturateColor: false,
-                    borderColor: forCalendar ? '#ffffff' : '#DEEDE4',
+                    borderColor: forCalendar ? "#ffffff" : "#DEEDE4",
                     leftArrow: false,
                     rightArrow: false,
                     oneDayStyle: true,
@@ -157,11 +179,13 @@ export function useProcessCalendarConfigForBigCalendar(trans) {
               originalEvent: {
                 noCanOpen: true,
                 calendar: {
-                  icon: <Icon src="/public/academic-calendar/start-substage.svg" />,
+                  icon: (
+                    <Icon src="/public/academic-calendar/start-substage.svg" />
+                  ),
                   desaturateColor: !!forCalendar,
-                  bgColor: forCalendar ? '#4F96FF' : 'transparent',
-                  borderStyle: 'solid',
-                  borderColor: forCalendar ? '#4F96FF' : '#000000',
+                  bgColor: forCalendar ? "#4F96FF" : "transparent",
+                  borderStyle: "solid",
+                  borderColor: forCalendar ? "#4F96FF" : "#000000",
                   leftArrow: false,
                   rightArrow: true,
                   zIndex: -4,
@@ -171,16 +195,22 @@ export function useProcessCalendarConfigForBigCalendar(trans) {
             events.push({
               allDay: true,
               title: translate(`{-_end_-}: ${substageName}`),
-              start: new Date(substagesDates[key].endDate || substagesDates[key].startDate),
-              end: new Date(substagesDates[key].endDate || substagesDates[key].startDate),
+              start: new Date(
+                substagesDates[key].endDate || substagesDates[key].startDate
+              ),
+              end: new Date(
+                substagesDates[key].endDate || substagesDates[key].startDate
+              ),
               originalEvent: {
                 noCanOpen: true,
                 calendar: {
-                  icon: <Icon src="/public/academic-calendar/end-substage.svg" />,
+                  icon: (
+                    <Icon src="/public/academic-calendar/end-substage.svg" />
+                  ),
                   desaturateColor: !!forCalendar,
-                  bgColor: forCalendar ? '#4F96FF' : 'transparent',
-                  borderStyle: 'solid',
-                  borderColor: forCalendar ? '#4F96FF' : '#000000',
+                  bgColor: forCalendar ? "#4F96FF" : "transparent",
+                  borderStyle: "solid",
+                  borderColor: forCalendar ? "#4F96FF" : "#000000",
                   leftArrow: true,
                   rightArrow: false,
                   zIndex: -4,
@@ -196,7 +226,7 @@ export function useProcessCalendarConfigForBigCalendar(trans) {
           (forCalendar && !config.allCoursesHaveSameDates)
         ) {
           _.forEach(courseEvents, (event) => {
-            if (event.dayType === 'schoolDays') {
+            if (event.dayType === "schoolDays") {
               events.push({
                 allDay: true,
                 title: event.periodName,
@@ -205,11 +235,18 @@ export function useProcessCalendarConfigForBigCalendar(trans) {
                 originalEvent: {
                   noCanOpen: true,
                   calendar: {
-                    icon: <ColorBall colors={event.color} rotate={0} isSquare={true} withBorder />,
+                    icon: (
+                      <ColorBall
+                        colors={event.color}
+                        rotate={0}
+                        isSquare={true}
+                        withBorder
+                      />
+                    ),
                     desaturateColor: false,
                     bgColor: event.color,
-                    borderStyle: 'dashed',
-                    borderColor: '#000000',
+                    borderStyle: "dashed",
+                    borderColor: "#000000",
                     leftArrow: false,
                     rightArrow: false,
                     zIndex: -4,
@@ -225,11 +262,17 @@ export function useProcessCalendarConfigForBigCalendar(trans) {
                 originalEvent: {
                   noCanOpen: true,
                   calendar: {
-                    icon: <ColorBall colors={['#F6E1F3', '#ECD8E9']} rotate={-45} withBorder />,
+                    icon: (
+                      <ColorBall
+                        colors={["#F6E1F3", "#ECD8E9"]}
+                        rotate={-45}
+                        withBorder
+                      />
+                    ),
                     desaturateColor: false,
-                    bgColor: forCalendar ? '#ffffff' : ['#F6E1F3', '#ECD8E9'],
-                    borderStyle: 'solid',
-                    borderColor: forCalendar ? '#ffffff' : '#000000',
+                    bgColor: forCalendar ? "#ffffff" : ["#F6E1F3", "#ECD8E9"],
+                    borderStyle: "solid",
+                    borderColor: forCalendar ? "#ffffff" : "#000000",
                     rotate: -45,
                     oneDayStyle: true,
                     zIndex: -6,
@@ -243,7 +286,7 @@ export function useProcessCalendarConfigForBigCalendar(trans) {
 
       return {
         events,
-        currentView: 'monthRange',
+        currentView: "monthRange",
         locale,
         defaultDate: new Date(),
         monthRange: {

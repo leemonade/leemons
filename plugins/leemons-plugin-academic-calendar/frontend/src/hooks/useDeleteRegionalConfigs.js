@@ -1,6 +1,6 @@
-import { deleteRegionalConfigRequest } from '@academic-calendar/request';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { getListRegionalConfigsKey } from './keys/listRegionalConfigs';
+import { deleteRegionalConfigRequest } from "@academic-calendar/request";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { getListRegionalConfigsKey } from "./keys/listRegionalConfigs";
 
 export const useDeleteRegionalConfigs = (centerId, options = {}) => {
   const queryClient = useQueryClient();

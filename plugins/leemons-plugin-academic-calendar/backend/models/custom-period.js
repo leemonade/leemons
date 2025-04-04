@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -37,7 +37,7 @@ const schema = new mongoose.Schema(
 
 const customPeriodModel = newModel(
   mongoose.connection,
-  'v1::academic-calendar_CustomPeriod',
+  "v1::academic-calendar_CustomPeriod",
   schema
 );
 

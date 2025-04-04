@@ -1,4 +1,4 @@
-import prefixPN from '@academic-calendar/helpers/prefixPN';
+import prefixPN from "@academic-calendar/helpers/prefixPN";
 import {
   Box,
   Button,
@@ -12,39 +12,43 @@ import {
   Stack,
   Table,
   ActionButton,
-} from '@bubbles-ui/components';
-import { DeleteBinIcon, EditIcon, PluginCalendarIcon } from '@bubbles-ui/icons/outline';
-import { AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { SelectCenter } from '@users/components/SelectCenter';
-import React, { useEffect, useMemo, useState } from 'react';
-import { useDeploymentConfig } from '@deployment-manager/hooks/useDeploymentConfig';
-import { useForm } from 'react-hook-form';
-import { getCentersWithToken } from '@users/session';
+} from "@bubbles-ui/components";
+import {
+  DeleteBinIcon,
+  EditIcon,
+  PluginCalendarIcon,
+} from "@bubbles-ui/icons/outline";
+import { AddCircleIcon } from "@bubbles-ui/icons/solid";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { SelectCenter } from "@users/components/SelectCenter";
+import React, { useEffect, useMemo, useState } from "react";
+import { useDeploymentConfig } from "@deployment-manager/hooks/useDeploymentConfig";
+import { useForm } from "react-hook-form";
+import { getCentersWithToken } from "@users/session";
 import {
   useListRegionalConfigs,
   useDeleteRegionalConfigs,
   useSaveRegionalConfig,
-} from '@academic-calendar/hooks';
-import { EmptyState } from './components/EmptyState';
-import { RegionalConfigDetail } from './components/regionalConfigDetail';
+} from "@academic-calendar/hooks";
+import { EmptyState } from "./components/EmptyState";
+import { RegionalConfigDetail } from "./components/regionalConfigDetail";
 
 const useStyle = createStyles((theme) => ({
   container: {
-    display: 'flex',
+    display: "flex",
   },
   content: {
-    width: 'calc(100% - 320px)',
-    boxSizing: 'border-box',
+    width: "calc(100% - 320px)",
+    boxSizing: "border-box",
   },
   pageContainer: {
     paddingLeft: 0,
     paddingRight: 0,
   },
   drawer: {
-    height: '100vh',
+    height: "100vh",
     padding: theme.spacing[7],
     paddingLeft: theme.spacing[10],
     borderRight: `1px solid ${theme.colors.ui01}`,
@@ -52,14 +56,14 @@ const useStyle = createStyles((theme) => ({
   },
   drawerTitle: {
     marginBottom: theme.spacing[7],
-    '*': {
+    "*": {
       color: theme.colors.text04,
       fontSize: `${theme.fontSizes[3]}px!important`,
     },
   },
   titleTop: {
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
     gap: theme.spacing[2],
   },
   drawerText: {
@@ -67,7 +71,7 @@ const useStyle = createStyles((theme) => ({
   },
 
   formTitle: {
-    display: 'block',
+    display: "block",
     marginBottom: theme.spacing[5],
   },
   form: {
@@ -76,12 +80,12 @@ const useStyle = createStyles((theme) => ({
   configItem: {
     padding: `${theme.spacing[3]}px ${theme.spacing[4]}px`,
     fontWeight: 500,
-    verticalAlign: 'middle',
-    display: 'flex',
-    alignItems: 'center',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    '&:hover': {
+    verticalAlign: "middle",
+    display: "flex",
+    alignItems: "center",
+    borderRadius: "4px",
+    cursor: "pointer",
+    "&:hover": {
       backgroundColor: theme.colors.interactive01v1,
       color: theme.colors.interactive01,
     },
@@ -92,17 +96,17 @@ const useStyle = createStyles((theme) => ({
   },
   configItemName: {
     paddingLeft: theme.spacing[2],
-    display: 'inline',
+    display: "inline",
   },
   actionButtonsContainer: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'space-between',
+    width: "100%",
+    display: "flex",
+    justifyContent: "space-between",
   },
 }));
 
 export default function RegionalCalendars() {
-  const [t] = useTranslateLoader(prefixPN('regionalList'));
+  const [t] = useTranslateLoader(prefixPN("regionalList"));
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const scrollRef = React.useRef(null);
   const { classes } = useStyle();
@@ -113,7 +117,7 @@ export default function RegionalCalendars() {
   const [selectedConfig, setSelectedConfig] = useState({});
   const [saving, setSaving] = useState(false);
   const deploymentConfig = useDeploymentConfig({
-    pluginName: 'academic-calendar',
+    pluginName: "academic-calendar",
     ignoreVersion: true,
   });
 
@@ -121,16 +125,18 @@ export default function RegionalCalendars() {
     enabled: !!center?.id,
   });
 
-  const { mutate: deleteRegionalConfigs } = useDeleteRegionalConfigs(center?.id);
+  const { mutate: deleteRegionalConfigs } = useDeleteRegionalConfigs(
+    center?.id
+  );
   const { mutate: saveRegionalConfig } = useSaveRegionalConfig(center?.id);
 
   function handleOnDeleteRegionalCalendar(configId) {
     deleteRegionalConfigs(configId, center?.id, {
       onSuccess: () => {
-        addSuccessAlert(t('configDeletedAlert'));
+        addSuccessAlert(t("configDeletedAlert"));
       },
       onError: (error) => {
-        console.error(t('configDeletedErrorAlert'), error);
+        console.error(t("configDeletedErrorAlert"), error);
         addErrorAlert(getErrorMessage(error));
       },
     });
@@ -166,13 +172,13 @@ export default function RegionalCalendars() {
       };
       saveRegionalConfig(dataToSave, {
         onSuccess: () => {
-          addSuccessAlert(t('saved'));
+          addSuccessAlert(t("saved"));
           setSelectedConfig({});
           setIsDrawerOpen(false);
           setSaving(false);
         },
         onError: (error) => {
-          console.error(t('configSavedErrorAlert'), error);
+          console.error(t("configSavedErrorAlert"), error);
           addErrorAlert(getErrorMessage(error));
         },
       });
@@ -184,13 +190,13 @@ export default function RegionalCalendars() {
       regionalConfigs
         ? [
             {
-              Header: '',
-              accessor: 'name',
+              Header: "",
+              accessor: "name",
             },
             {
-              Header: '',
-              accessor: 'actions',
-              cellStyle: { justifyContent: 'end' },
+              Header: "",
+              accessor: "actions",
+              cellStyle: { justifyContent: "end" },
             },
           ]
         : [],
@@ -230,14 +236,16 @@ export default function RegionalCalendars() {
       scrollRef={scrollRef}
       Header={
         <TotalLayoutHeader
-          title={t('title')}
+          title={t("title")}
           icon={<PluginCalendarIcon width={24} height={24} />}
           scrollRef={scrollRef}
           cancelable={false}
         >
           <SelectCenter
             firstSelected
-            onChange={(v) => handleOnSelectCenter(userCenters?.find((c) => c.id === v))}
+            onChange={(v) =>
+              handleOnSelectCenter(userCenters?.find((c) => c.id === v))
+            }
             value={selectedCenter?.id}
           />
         </TotalLayoutHeader>
@@ -246,7 +254,7 @@ export default function RegionalCalendars() {
       <Stack
         justifyContent="center"
         ref={scrollRef}
-        style={{ overflow: 'auto' }}
+        style={{ overflow: "auto" }}
         fullWidth
         fullHeight
       >
@@ -254,7 +262,7 @@ export default function RegionalCalendars() {
           <ContextContainer
             sx={(theme) => ({
               paddingBottom: theme.spacing[12],
-              overflow: 'auto',
+              overflow: "auto",
             })}
             fullHeight
             fullWidth
@@ -264,22 +272,37 @@ export default function RegionalCalendars() {
                 <ContextContainer>
                   {center ? (
                     <Box>
-                      {!(deploymentConfig?.deny?.others?.indexOf('addRegionalCalendar') >= 0) &&
-                      regionalConfigs?.regionalConfigs?.length >= 1 ? (
+                      {!(
+                        deploymentConfig?.deny?.others?.indexOf(
+                          "addRegionalCalendar"
+                        ) >= 0
+                      ) && regionalConfigs?.regionalConfigs?.length >= 1 ? (
                         <Box sx={(theme) => ({ marginTop: theme.spacing[3] })}>
                           <Button
                             onClick={addNewRegionalCalendar}
                             leftIcon={<AddCircleIcon />}
                             variant="link"
                           >
-                            {t('addRegionalCalendar')}
+                            {t("addRegionalCalendar")}
                           </Button>
                         </Box>
                       ) : null}
-                      <Box sx={(theme) => ({ marginTop: theme.spacing[3], width: '50%' })}>
-                        <Table columns={colums} data={data} headerStyles={{ display: 'none' }} />
+                      <Box
+                        sx={(theme) => ({
+                          marginTop: theme.spacing[3],
+                          width: "50%",
+                        })}
+                      >
+                        <Table
+                          columns={colums}
+                          data={data}
+                          headerStyles={{ display: "none" }}
+                        />
                         {!regionalConfigs?.regionalConfigs?.length ? (
-                          <EmptyState onSelectAsset={addNewRegionalCalendar} t={t} />
+                          <EmptyState
+                            onSelectAsset={addNewRegionalCalendar}
+                            t={t}
+                          />
                         ) : null}
                       </Box>
                     </Box>
@@ -287,8 +310,16 @@ export default function RegionalCalendars() {
                 </ContextContainer>
               </Box>
               {/* CONTENT ----------------------------------------- */}
-              <Drawer size="xl" opened={isDrawerOpen} onClose={() => setIsDrawerOpen(false)}>
-                <Drawer.Header title={!selectedConfig?.id ? t('newRegionalCalendar') : t('edit')} />
+              <Drawer
+                size="xl"
+                opened={isDrawerOpen}
+                onClose={() => setIsDrawerOpen(false)}
+              >
+                <Drawer.Header
+                  title={
+                    !selectedConfig?.id ? t("newRegionalCalendar") : t("edit")
+                  }
+                />
                 <Drawer.Content>
                   {selectedConfig ? (
                     <RegionalConfigDetail
@@ -309,10 +340,10 @@ export default function RegionalCalendars() {
                       compact
                       onClick={() => setIsDrawerOpen(false)}
                     >
-                      {t('cancel')}
+                      {t("cancel")}
                     </Button>
                     <Button onClick={save} loading={saving}>
-                      {t('save')}
+                      {t("save")}
                     </Button>
                   </Box>
                 </Drawer.Footer>

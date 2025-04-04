@@ -1,6 +1,6 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation } from "@tanstack/react-query";
 
-import { setItemCustomPeriodRequest } from '@academic-calendar/request';
+import { setItemCustomPeriodRequest } from "@academic-calendar/request";
 
 function useSetItemCustomPeriod() {
   return useMutation({

@@ -1,14 +1,14 @@
 async function getCustomPeriodByItem(item) {
   return leemons.api(`v1/academic-calendar/custom-period/item/${item}`, {
     allAgents: true,
-    method: 'GET',
+    method: "GET",
   });
 }
 
 async function setItemCustomPeriod(payload) {
   return leemons.api(`v1/academic-calendar/custom-period/item`, {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: payload,
   });
 }
@@ -16,7 +16,7 @@ async function setItemCustomPeriod(payload) {
 async function assignToItems(payload) {
   return leemons.api(`v1/academic-calendar/custom-period/item/assign-to-many`, {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: payload,
   });
 }

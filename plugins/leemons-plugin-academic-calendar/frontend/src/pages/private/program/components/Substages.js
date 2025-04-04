@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   Col,
   ContextContainer,
@@ -8,7 +8,7 @@ import {
   Text,
   Title,
   Divider,
-} from '@bubbles-ui/components';
+} from "@bubbles-ui/components";
 
 export default function Substages({
   locale,
@@ -22,7 +22,7 @@ export default function Substages({
 }) {
   return (
     <ContextContainer sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-      <Title order={3}>{t('substagesOrEvaluations')}</Title>
+      <Title order={3}>{t("substagesOrEvaluations")}</Title>
       <Grid columns={100}>
         <Col span={20}>
           <Text role="productive" size="xs" color="primary" strong>
@@ -31,12 +31,12 @@ export default function Substages({
         </Col>
         <Col span={40}>
           <Text role="productive" size="xs" color="primary" strong>
-            {t('init')}
+            {t("init")}
           </Text>
         </Col>
         <Col span={40}>
           <Text role="productive" size="xs" color="primary" strong>
-            {t('end')}
+            {t("end")}
           </Text>
         </Col>
       </Grid>
@@ -109,7 +109,9 @@ export default function Substages({
                   locale={locale}
                   clearable={false}
                   disabled={_disabled || !value[substage.id]?.startDate}
-                  value={value[substage.id]?.endDate || value[substage.id]?.startDate}
+                  value={
+                    value[substage.id]?.endDate || value[substage.id]?.startDate
+                  }
                   minDate={minDate}
                   maxDate={endMaxDate}
                   onChange={(date) => {

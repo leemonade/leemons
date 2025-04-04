@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   ActionButton,
   Box,
@@ -11,12 +11,16 @@ import {
   Text,
   Title,
   Divider,
-} from '@bubbles-ui/components';
-import { CalendarNewEventModal } from '@calendar/components/CalendarNewEventModal';
-import { DeleteBinIcon, EditWriteIcon, AddCircleIcon } from '@bubbles-ui/icons/solid';
-import { useStore } from '@common';
-import ColorBall from '@academic-calendar/components/ColorBall';
-import { useLayout } from '@layout/context';
+} from "@bubbles-ui/components";
+import { CalendarNewEventModal } from "@calendar/components/CalendarNewEventModal";
+import {
+  DeleteBinIcon,
+  EditWriteIcon,
+  AddCircleIcon,
+} from "@bubbles-ui/icons/solid";
+import { useStore } from "@common";
+import ColorBall from "@academic-calendar/components/ColorBall";
+import { useLayout } from "@layout/context";
 
 export default function OtherEvents({
   locale,
@@ -33,28 +37,28 @@ export default function OtherEvents({
   const eventModalProps = React.useMemo(
     () => ({
       labels: {
-        periodName: t('eventModal.labels.periodName'),
-        schoolDays: t('eventModal.labels.schoolDays'),
-        nonSchoolDays: t('eventModal.labels.nonSchoolDays'),
-        withoutOrdinaryDays: t('eventModal.labels.withoutOrdinaryDays'),
-        startDate: t('eventModal.labels.startDate'),
-        endDate: t('eventModal.labels.endDate'),
-        color: t('eventModal.labels.color'),
-        add: t('eventModal.labels.add'),
-        cancel: t('eventModal.labels.cancel'),
+        periodName: t("eventModal.labels.periodName"),
+        schoolDays: t("eventModal.labels.schoolDays"),
+        nonSchoolDays: t("eventModal.labels.nonSchoolDays"),
+        withoutOrdinaryDays: t("eventModal.labels.withoutOrdinaryDays"),
+        startDate: t("eventModal.labels.startDate"),
+        endDate: t("eventModal.labels.endDate"),
+        color: t("eventModal.labels.color"),
+        add: t("eventModal.labels.add"),
+        cancel: t("eventModal.labels.cancel"),
       },
       placeholders: {
-        periodName: t('eventModal.labels.periodName'),
-        startDate: t('eventModal.labels.startDate'),
-        endDate: t('eventModal.labels.endDate'),
-        color: t('eventModal.labels.color'),
+        periodName: t("eventModal.labels.periodName"),
+        startDate: t("eventModal.labels.startDate"),
+        endDate: t("eventModal.labels.endDate"),
+        color: t("eventModal.labels.color"),
       },
       errorMessages: {
-        periodName: t('fieldRequired'),
-        dayType: t('fieldRequired'),
-        startDate: t('fieldRequired'),
-        endDate: t('fieldRequired'),
-        color: t('fieldRequired'),
+        periodName: t("fieldRequired"),
+        dayType: t("fieldRequired"),
+        startDate: t("fieldRequired"),
+        endDate: t("fieldRequired"),
+        color: t("fieldRequired"),
       },
     }),
     []
@@ -70,7 +74,7 @@ export default function OtherEvents({
 
   return (
     <ContextContainer sx={(theme) => ({ marginTop: theme.spacing[4] })}>
-      <Title order={3}>{t('otherEvents')}</Title>
+      <Title order={3}>{t("otherEvents")}</Title>
 
       {value.length > 0 && (
         <>
@@ -82,12 +86,12 @@ export default function OtherEvents({
             </Col>
             <Col span={30}>
               <Text role="productive" size="xs" color="primary" strong>
-                {t('init')}
+                {t("init")}
               </Text>
             </Col>
             <Col span={30}>
               <Text role="productive" size="xs" color="primary" strong>
-                {t('end')}
+                {t("end")}
               </Text>
             </Col>
             <Col span={16} />
@@ -101,9 +105,13 @@ export default function OtherEvents({
           <Grid key={index} columns={100}>
             <Col span={24}>
               <ColorBall
-                colors={val.dayType === 'nonSchoolDays' ? ['#F6E1F3', '#ECD8E9'] : val.color}
-                rotate={val.dayType === 'nonSchoolDays' ? -45 : 0}
-                isSquare={val.dayType === 'schoolDays'}
+                colors={
+                  val.dayType === "nonSchoolDays"
+                    ? ["#F6E1F3", "#ECD8E9"]
+                    : val.color
+                }
+                rotate={val.dayType === "nonSchoolDays" ? -45 : 0}
+                isSquare={val.dayType === "schoolDays"}
                 withBorder
                 sx={(theme) => ({ marginRight: theme.spacing[2] })}
               />
@@ -143,7 +151,7 @@ export default function OtherEvents({
                 }}
                 target={
                   <ActionButton
-                    tooltip={t('edit')}
+                    tooltip={t("edit")}
                     icon={<EditWriteIcon />}
                     onClick={() => {
                       store.openedIndex = index;
@@ -155,7 +163,7 @@ export default function OtherEvents({
               />
 
               <ActionButton
-                tooltip={t('delete')}
+                tooltip={t("delete")}
                 icon={<DeleteBinIcon />}
                 onClick={() => removeIndex(index)}
               />
@@ -174,7 +182,7 @@ export default function OtherEvents({
           variant="link"
           leftIcon={<AddCircleIcon />}
         >
-          {t('addNewEvent')}
+          {t("addNewEvent")}
         </Button>
         <CalendarNewEventModal
           locale={locale}

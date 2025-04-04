@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -70,6 +70,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-const configModel = newModel(mongoose.connection, 'v1::academic-calendar_Config', schema);
+const configModel = newModel(
+  mongoose.connection,
+  "v1::academic-calendar_Config",
+  schema
+);
 
 module.exports = { configModel };

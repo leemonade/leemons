@@ -7,22 +7,22 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { getConfig, saveConfig } = require('../../core/config');
+} = require("@leemons/middlewares");
+const { getConfig, saveConfig } = require("../../core/config");
 
 /** @type {ServiceSchema} */
 module.exports = {
   getRest: {
     rest: {
-      method: 'GET',
-      path: '/:programId',
+      method: "GET",
+      path: "/:programId",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-calendar.config': {
-            actions: ['admin', 'view'],
+          "academic-calendar.config": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -40,15 +40,15 @@ module.exports = {
   },
   saveRest: {
     rest: {
-      method: 'POST',
-      path: '/',
+      method: "POST",
+      path: "/",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-calendar.config': {
-            actions: ['admin', 'create', 'update'],
+          "academic-calendar.config": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),

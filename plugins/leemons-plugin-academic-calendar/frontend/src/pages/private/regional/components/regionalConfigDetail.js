@@ -1,4 +1,4 @@
-import ColorBall from '@academic-calendar/components/ColorBall';
+import ColorBall from "@academic-calendar/components/ColorBall";
 import {
   Box,
   Button,
@@ -10,26 +10,26 @@ import {
   TextInput,
   Title,
   createStyles,
-} from '@bubbles-ui/components';
-import { AddCircleIcon } from '@bubbles-ui/icons/outline';
-import { useLocale } from '@common';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { Controller } from 'react-hook-form';
+} from "@bubbles-ui/components";
+import { AddCircleIcon } from "@bubbles-ui/icons/outline";
+import { useLocale } from "@common";
+import _ from "lodash";
+import PropTypes from "prop-types";
+import React from "react";
+import { Controller } from "react-hook-form";
 
 const useStyle = createStyles((theme) => ({
   root: {
     padding: theme.spacing[5],
-    width: '100%',
+    width: "100%",
   },
   nameContainer: {
-    width: '50%',
+    width: "50%",
   },
 }));
 
 function StartDate(props) {
-  const endName = props.name.replace('startDate', 'endDate');
+  const endName = props.name.replace("startDate", "endDate");
   return (
     <DatePicker
       {...props}
@@ -39,7 +39,8 @@ function StartDate(props) {
         if (!value) {
           props.form.setValue(endName, null);
         }
-        if (!props.form.getValues('endDate')) props.form.setValue(endName, value);
+        if (!props.form.getValues("endDate"))
+          props.form.setValue(endName, value);
         props.onChange(value);
       }}
     />
@@ -48,7 +49,9 @@ function StartDate(props) {
 
 function EndDate(props) {
   // eslint-disable-next-line react/prop-types
-  const startValue = props.form.getValues(props.name.replace('endDate', 'startDate'));
+  const startValue = props.form.getValues(
+    props.name.replace("endDate", "startDate")
+  );
   return (
     <DatePicker
       {...props}
@@ -61,7 +64,14 @@ function EndDate(props) {
 }
 
 // eslint-disable-next-line import/prefer-default-export
-export function RegionalConfigDetail({ config, t, calendars, center, onSave, form }) {
+export function RegionalConfigDetail({
+  config,
+  t,
+  calendars,
+  center,
+  onSave,
+  form,
+}) {
   const locale = useLocale();
   const { classes } = useStyle();
 
@@ -82,41 +92,41 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
     () => ({
       columns: [
         {
-          Header: `${t('name')}*`,
-          accessor: 'name',
+          Header: `${t("name")}*`,
+          accessor: "name",
           input: {
             node: <TextInput required />,
-            rules: { required: t('requiredField') },
+            rules: { required: t("requiredField") },
           },
-          placeholder: t('nameHolidayPlaceholder'),
+          placeholder: t("nameHolidayPlaceholder"),
         },
         {
-          Header: `${t('init')}*`,
-          accessor: 'startDate',
+          Header: `${t("init")}*`,
+          accessor: "startDate",
           input: {
             node: <StartDate locale={locale} required />,
-            rules: { required: t('requiredField') },
+            rules: { required: t("requiredField") },
           },
-          placeholder: `${t('init')}...`,
+          placeholder: `${t("init")}...`,
           valueRender: (value) => <>{new Date(value).toLocaleDateString()}</>,
         },
         {
-          Header: `${t('end')}*`,
-          accessor: 'endDate',
+          Header: `${t("end")}*`,
+          accessor: "endDate",
           input: {
             node: <EndDate locale={locale} required />,
-            rules: { required: t('requiredField') },
+            rules: { required: t("requiredField") },
           },
-          placeholder: `${t('end')}...`,
+          placeholder: `${t("end")}...`,
           valueRender: (value) => <>{new Date(value).toLocaleDateString()}</>,
         },
       ],
       labels: {
-        add: t('add'),
-        remove: t('remove'),
-        edit: t('edit'),
-        accept: t('accept'),
-        cancel: t('cancel'),
+        add: t("add"),
+        remove: t("remove"),
+        edit: t("edit"),
+        accept: t("accept"),
+        cancel: t("cancel"),
       },
     }),
     [locale]
@@ -125,7 +135,7 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
   function getConfigDefaultValue() {
     return {
       ...config,
-      name: config.name || '',
+      name: config.name || "",
       regionalEvents:
         _.map(config.regionalEvents, (e) => ({
           ...e,
@@ -151,8 +161,8 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
     form.reset(getConfigDefaultValue());
   }, [config]);
 
-  const regionalEventsRel = form.watch('regionalEventsRel');
-  const regionalEvents = form.watch('regionalEvents');
+  const regionalEventsRel = form.watch("regionalEventsRel");
+  const regionalEvents = form.watch("regionalEvents");
 
   return (
     <ContextContainer>
@@ -160,14 +170,14 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
         <Controller
           control={form.control}
           name="name"
-          rules={{ required: t('nameRequired') }}
+          rules={{ required: t("nameRequired") }}
           render={({ field }) => (
             <TextInput
               {...field}
               error={form?.errors?.name}
-              placeholder={t('calendarNamePlaceholder')}
+              placeholder={t("calendarNamePlaceholder")}
               required
-              label={t('name')}
+              label={t("name")}
             />
           )}
         />
@@ -176,10 +186,10 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
         <Title order={3}>
           <ColorBall
             sx={(theme) => ({ marginRight: theme.spacing[4] })}
-            colors={['#DEEDE4', '#D5E4DB']}
+            colors={["#DEEDE4", "#D5E4DB"]}
             withBorder
           />
-          {t('regionalEvents')}
+          {t("regionalEvents")}
         </Title>
       </Box>
       {regionalEvents && !regionalEvents.length && regionalCalendars.length ? (
@@ -192,12 +202,12 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
                 {...field}
                 onChange={(value) => {
                   field.onChange(value);
-                  form.setValue('regionalEvents', []);
+                  form.setValue("regionalEvents", []);
                 }}
                 data={regionalCalendars}
                 clearable
-                placeholder={t('useEventsFromPlaceholder')}
-                label={t('useEventsFrom')}
+                placeholder={t("useEventsFromPlaceholder")}
+                label={t("useEventsFrom")}
               />
             )}
           />
@@ -214,7 +224,7 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
               {...field}
               onChange={(e) => {
                 field.onChange(e);
-                form.setValue('regionalEventsRel', null);
+                form.setValue("regionalEventsRel", null);
               }}
               data={field.value}
               editable
@@ -227,7 +237,7 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
                   disabled={disabled}
                   onClick={onAdd}
                 >
-                  {t('add')}
+                  {t("add")}
                 </Button>
               )}
             />
@@ -238,11 +248,11 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
       <Title order={3}>
         <ColorBall
           sx={(theme) => ({ marginRight: theme.spacing[4] })}
-          colors={['#E4DDF7', '#DBD4ED']}
+          colors={["#E4DDF7", "#DBD4ED"]}
           rotate={90}
           withBorder
         />
-        {t('localEvents')}
+        {t("localEvents")}
       </Title>
       <Controller
         control={form.control}
@@ -262,7 +272,7 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
                 disabled={disabled}
                 onClick={onAdd}
               >
-                {t('add')}
+                {t("add")}
               </Button>
             )}
           />
@@ -272,13 +282,13 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
         <Title order={3}>
           <ColorBall
             sx={(theme) => ({ marginRight: theme.spacing[4] })}
-            colors={['#F6E1F3', '#ECD8E9']}
+            colors={["#F6E1F3", "#ECD8E9"]}
             rotate={-45}
             withBorder
           />
-          {t('daysOffEvents')}
+          {t("daysOffEvents")}
         </Title>
-        <Paragraph>{t('daysOffEventsDescription')}</Paragraph>
+        <Paragraph>{t("daysOffEventsDescription")}</Paragraph>
       </Box>
       <Controller
         control={form.control}
@@ -298,7 +308,7 @@ export function RegionalConfigDetail({ config, t, calendars, center, onSave, for
                 disabled={disabled}
                 onClick={onAdd}
               >
-                {t('add')}
+                {t("add")}
               </Button>
             )}
           />

@@ -1,11 +1,11 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('@leemons/mongodb-helpers');
+const { getKeyValueModel } = require("@leemons/mongodb-helpers");
 
 const models = {
-  ...require('./config'),
-  ...require('./regional-config'),
-  ...require('./custom-period'),
+  ...require("./config"),
+  ...require("./regional-config"),
+  ...require("./custom-period"),
 };
 
 module.exports = {
@@ -16,7 +16,9 @@ module.exports = {
       RegionalConfig: models.regionalConfigModel,
       CustomPeriod: models.customPeriodModel,
       //
-      KeyValue: getKeyValueModel({ modelName: 'v1::academic-calendar_KeyValue' }),
+      KeyValue: getKeyValueModel({
+        modelName: "v1::academic-calendar_KeyValue",
+      }),
     };
   },
 };

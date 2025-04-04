@@ -1,6 +1,6 @@
-const { validateSetItem } = require('../../validations/forms');
+const { validateSetItem } = require("../../validations/forms");
 
-const { remove } = require('./remove');
+const { remove } = require("./remove");
 
 /**
  * Sets a custom period for an academic item (class | subject).

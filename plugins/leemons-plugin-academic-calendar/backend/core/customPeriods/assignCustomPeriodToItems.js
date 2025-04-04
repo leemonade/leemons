@@ -1,4 +1,6 @@
-const { validateAssignCustomPeriodToItems } = require('../../validations/forms');
+const {
+  validateAssignCustomPeriodToItems,
+} = require("../../validations/forms");
 
 /**
  * Assigns a custom period to multiple items.

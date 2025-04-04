@@ -1,77 +1,77 @@
-const { localeRegexString } = require('@leemons/validator');
+const { localeRegexString } = require("@leemons/validator");
 
 const textSchema = {
-  type: 'string',
+  type: "string",
   minLength: 1,
   maxLength: 65000,
 };
 
 const numberSchema = {
-  type: 'number',
+  type: "number",
 };
 
 const stringSchema = {
-  type: 'string',
+  type: "string",
   minLength: 1,
   maxLength: 255,
 };
 
 const stringSchemaNullable = {
-  type: 'string',
+  type: "string",
   minLength: 1,
   maxLength: 255,
   nullable: true,
 };
 
 const arrayStringSchema = {
-  type: 'array',
+  type: "array",
   items: {
-    type: 'string',
+    type: "string",
   },
 };
 
 const arrayStringRequiredSchema = {
-  type: 'array',
+  type: "array",
   items: {
-    type: 'string',
+    type: "string",
   },
   minItems: 1,
 };
 
 const dateSchema = {
-  type: 'string',
-  format: 'date-time',
+  type: "string",
+  format: "date-time",
 };
 
 const dateSchemaNullable = {
-  type: 'string',
-  format: 'date-time',
+  type: "string",
+  format: "date-time",
   nullable: true,
 };
 
 const booleanSchema = {
-  type: 'boolean',
+  type: "boolean",
 };
 
 const booleanSchemaNullable = {
-  type: 'boolean',
+  type: "boolean",
   nullable: true,
 };
 
 const integerSchema = {
-  type: 'integer',
+  type: "integer",
 };
 
 const integerSchemaNullable = {
-  type: 'integer',
+  type: "integer",
   nullable: true,
 };
 
 const localeObjectSchema = () => ({
-  type: 'object',
+  type: "object",
   patternProperties: {
     [localeRegexString]: {
-      type: 'string',
+      type: "string",
     },
   },
 });

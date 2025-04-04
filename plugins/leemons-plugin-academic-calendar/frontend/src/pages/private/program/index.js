@@ -1,6 +1,6 @@
-import prefixPN from '@academic-calendar/helpers/prefixPN';
-import { getConfigRequest } from '@academic-calendar/request';
-import { useProgramsList } from '@academic-portfolio/hooks';
+import prefixPN from "@academic-calendar/helpers/prefixPN";
+import { getConfigRequest } from "@academic-calendar/request";
+import { useProgramsList } from "@academic-portfolio/hooks";
 import {
   Box,
   ContextContainer,
@@ -16,30 +16,30 @@ import {
   ActionButton,
   Title,
   Loader,
-} from '@bubbles-ui/components';
-import { EditIcon, PluginCalendarIcon } from '@bubbles-ui/icons/outline';
-import { useStore } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { SelectCenter } from '@users/components/SelectCenter';
-import React, { useEffect, useMemo, useState, useRef } from 'react';
-import { getCentersWithToken } from '@users/session';
-import AcademicCalendarDetail from './components/AcademicCalendarDetail';
-import { EmptyState } from './components/EmptyState';
+} from "@bubbles-ui/components";
+import { EditIcon, PluginCalendarIcon } from "@bubbles-ui/icons/outline";
+import { useStore } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { SelectCenter } from "@users/components/SelectCenter";
+import React, { useEffect, useMemo, useState, useRef } from "react";
+import { getCentersWithToken } from "@users/session";
+import AcademicCalendarDetail from "./components/AcademicCalendarDetail";
+import { EmptyState } from "./components/EmptyState";
 
 const useStyle = createStyles((theme) => ({
   container: {
-    display: 'flex',
+    display: "flex",
   },
   content: {
-    width: 'calc(100% - 320px)',
-    boxSizing: 'border-box',
+    width: "calc(100% - 320px)",
+    boxSizing: "border-box",
   },
   pageContainer: {
     paddingLeft: 0,
     paddingRight: 0,
   },
   drawer: {
-    height: '100vh',
+    height: "100vh",
     padding: theme.spacing[7],
     paddingLeft: theme.spacing[10],
     borderRight: `1px solid ${theme.colors.ui01}`,
@@ -47,14 +47,14 @@ const useStyle = createStyles((theme) => ({
   },
   drawerTitle: {
     marginBottom: theme.spacing[7],
-    '*': {
+    "*": {
       color: theme.colors.text04,
       fontSize: `${theme.fontSizes[3]}px!important`,
     },
   },
   titleTop: {
-    display: 'flex',
-    alignItems: 'center',
+    display: "flex",
+    alignItems: "center",
     gap: theme.spacing[2],
   },
   drawerText: {
@@ -62,7 +62,7 @@ const useStyle = createStyles((theme) => ({
   },
 
   formTitle: {
-    display: 'block',
+    display: "block",
     marginBottom: theme.spacing[5],
   },
   form: {
@@ -71,12 +71,12 @@ const useStyle = createStyles((theme) => ({
   configItem: {
     padding: `${theme.spacing[3]}px ${theme.spacing[4]}px`,
     fontWeight: 500,
-    verticalAlign: 'middle',
-    display: 'flex',
-    alignItems: 'center',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    '&:hover': {
+    verticalAlign: "middle",
+    display: "flex",
+    alignItems: "center",
+    borderRadius: "4px",
+    cursor: "pointer",
+    "&:hover": {
       backgroundColor: theme.colors.interactive01v1,
       color: theme.colors.interactive01,
     },
@@ -87,12 +87,12 @@ const useStyle = createStyles((theme) => ({
   },
   configItemName: {
     paddingLeft: theme.spacing[2],
-    display: 'inline',
+    display: "inline",
   },
 }));
 
 export default function ProgramCalendars() {
-  const [t] = useTranslateLoader(prefixPN('programList'));
+  const [t] = useTranslateLoader(prefixPN("programList"));
   const scrollRef = React.useRef(null);
   const [userCenters, setUserCenters] = useState();
   const [selectedCenter, setSelectedCenter] = useState();
@@ -118,8 +118,8 @@ export default function ProgramCalendars() {
 
   function formatDate(date) {
     if (!date) return null;
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Los meses comienzan desde 0
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Los meses comienzan desde 0
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   }
@@ -130,11 +130,17 @@ export default function ProgramCalendars() {
         programsList.data.items.map(async (program) => {
           try {
             const configResponse = await getConfigRequest(program.id);
-            const courseDates = Object.values(configResponse.config.courseDates || {});
-            const startDates = courseDates.map((date) => new Date(date.startDate));
+            const courseDates = Object.values(
+              configResponse.config.courseDates || {}
+            );
+            const startDates = courseDates.map(
+              (date) => new Date(date.startDate)
+            );
             const endDates = courseDates.map((date) => new Date(date.endDate));
-            const startCourse = startDates.length > 0 ? new Date(Math.min(...startDates)) : null;
-            const endCourse = endDates.length > 0 ? new Date(Math.max(...endDates)) : null;
+            const startCourse =
+              startDates.length > 0 ? new Date(Math.min(...startDates)) : null;
+            const endCourse =
+              endDates.length > 0 ? new Date(Math.max(...endDates)) : null;
             const startCourseStr = formatDate(startCourse);
             const endCourseStr = formatDate(endCourse);
             return {
@@ -146,7 +152,11 @@ export default function ProgramCalendars() {
               },
             };
           } catch (error) {
-            console.error('Error loading config for program', program.id, error);
+            console.error(
+              "Error loading config for program",
+              program.id,
+              error
+            );
             return program;
           }
         })
@@ -185,8 +195,8 @@ export default function ProgramCalendars() {
   const columns = useMemo(
     () => [
       {
-        Header: t('tableHeaderCover'),
-        accessor: 'imageUrl',
+        Header: t("tableHeaderCover"),
+        accessor: "imageUrl",
         Cell: ({ value }) => (
           <Box>
             <ImageLoader height="42px" width="72px" radius={4} src={value} />
@@ -194,33 +204,33 @@ export default function ProgramCalendars() {
         ),
       },
       {
-        Header: t('tableHeaderProgram'),
-        accessor: 'name',
+        Header: t("tableHeaderProgram"),
+        accessor: "name",
       },
       {
-        Header: t('tableHeaderCourseInit'),
-        accessor: 'config.startCourse',
+        Header: t("tableHeaderCourseInit"),
+        accessor: "config.startCourse",
         Cell: ({ value }) => {
           if (value) {
             return <>{value}</>;
           }
-          return '-';
+          return "-";
         },
       },
       {
-        Header: t('tableHeaderCourseEnd'),
-        accessor: 'config.endCourse',
+        Header: t("tableHeaderCourseEnd"),
+        accessor: "config.endCourse",
         Cell: ({ value }) => {
           if (value) {
             return <>{value}</>;
           }
-          return '-';
+          return "-";
         },
       },
       {
-        Header: '',
-        accessor: 'actions',
-        cellStyle: { justifyContent: 'end' },
+        Header: "",
+        accessor: "actions",
+        cellStyle: { justifyContent: "end" },
       },
     ],
     [programs, programs?.config]
@@ -251,9 +261,9 @@ export default function ProgramCalendars() {
   );
 
   const stepNames = [
-    { label: t('basic'), status: 'OK' },
-    { label: t('periods'), status: 'OK' },
-    { label: t('preview'), status: 'OK' },
+    { label: t("basic"), status: "OK" },
+    { label: t("periods"), status: "OK" },
+    { label: t("preview"), status: "OK" },
   ];
   if (programsIsLoading) {
     return (
@@ -268,7 +278,7 @@ export default function ProgramCalendars() {
       scrollRef={scrollRef}
       Header={
         <TotalLayoutHeader
-          title={t('title')}
+          title={t("title")}
           icon={<PluginCalendarIcon width={24} height={24} />}
           scrollRef={scrollRef}
           cancelable={store.currentProgram}
@@ -280,11 +290,15 @@ export default function ProgramCalendars() {
         >
           <ContextContainer direction="row" alignItems="flex-start">
             {selectedCenter?.name && selectedProgram?.name ? (
-              <Title order={3}>{`${selectedCenter?.name} - ${selectedProgram?.name}`}</Title>
+              <Title
+                order={3}
+              >{`${selectedCenter?.name} - ${selectedProgram?.name}`}</Title>
             ) : (
               <SelectCenter
                 firstSelected
-                onChange={(v) => handleOnSelectCenter(userCenters?.find((c) => c.id === v))}
+                onChange={(v) =>
+                  handleOnSelectCenter(userCenters?.find((c) => c.id === v))
+                }
                 value={selectedCenter?.id}
               />
             )}
@@ -295,7 +309,7 @@ export default function ProgramCalendars() {
       <Stack
         justifyContent="center"
         ref={scrollRef}
-        style={{ overflow: 'auto' }}
+        style={{ overflow: "auto" }}
         fullWidth
         fullHeight
       >
@@ -304,9 +318,9 @@ export default function ProgramCalendars() {
             scrollRef={scrollRef}
             currentStep={step}
             data={[
-              { label: t('basic'), status: 'OK' },
-              { label: t('periods'), status: 'OK' },
-              { label: t('preview'), status: 'OK' },
+              { label: t("basic"), status: "OK" },
+              { label: t("periods"), status: "OK" },
+              { label: t("preview"), status: "OK" },
             ]}
             onChangeActiveIndex={setStep}
           >
@@ -314,12 +328,16 @@ export default function ProgramCalendars() {
               <ContextContainer
                 sx={(theme) => ({
                   paddingBottom: theme.spacing[12],
-                  overflow: 'auto',
+                  overflow: "auto",
                 })}
                 fullHeight
                 fullWidth
               >
-                <PageContainer noFlex fullWidth className={classes.pageContainer}>
+                <PageContainer
+                  noFlex
+                  fullWidth
+                  className={classes.pageContainer}
+                >
                   {store.selectedProgram ? (
                     <AcademicCalendarDetail
                       t={t}

@@ -1,6 +1,6 @@
-import React from 'react';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
+import React from "react";
+import _ from "lodash";
+import PropTypes from "prop-types";
 import {
   Box,
   Button,
@@ -10,28 +10,36 @@ import {
   Text,
   Title,
   Switch,
-} from '@bubbles-ui/components';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useStore } from '@common';
-import { Controller, useForm } from 'react-hook-form';
-import FooterContainer from './FooterContainer';
+} from "@bubbles-ui/components";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { useStore } from "@common";
+import { Controller, useForm } from "react-hook-form";
+import FooterContainer from "./FooterContainer";
 
-export default function Step1({ regionalConfigs, program, config, onChange, t, scrollRef }) {
+export default function Step1({
+  regionalConfigs,
+  program,
+  config,
+  onChange,
+  t,
+  scrollRef,
+}) {
   const [, , , getErrorMessage] = useRequestErrorMessage();
   const [store] = useStore({
     dayWeeks: {
-      1: t('monday'),
-      2: t('tuesday'),
-      3: t('wednesday'),
-      4: t('thursday'),
-      5: t('friday'),
-      6: t('saturday'),
-      0: t('sunday'),
+      1: t("monday"),
+      2: t("tuesday"),
+      3: t("wednesday"),
+      4: t("thursday"),
+      5: t("friday"),
+      6: t("saturday"),
+      0: t("sunday"),
     },
   });
 
   const regionalConfigsOptions = React.useMemo(
-    () => _.map(regionalConfigs, (conf) => ({ value: conf.id, label: conf.name })),
+    () =>
+      _.map(regionalConfigs, (conf) => ({ value: conf.id, label: conf.name })),
     [regionalConfigs]
   );
 
@@ -55,11 +63,11 @@ export default function Step1({ regionalConfigs, program, config, onChange, t, s
     <>
       <ContextContainer>
         <ContextContainer>
-          <Title order={2}>{t('regionalConfig')}</Title>
+          <Title order={2}>{t("regionalConfig")}</Title>
           {program.centers[0].timezone ? (
             <Box>
               <Text role="productive" strong size="md" color="primary">
-                {t('hourZone')}
+                {t("hourZone")}
               </Text>
               <Text role="productive" size="md" color="primary">
                 {program.centers[0].timezone}
@@ -69,14 +77,14 @@ export default function Step1({ regionalConfigs, program, config, onChange, t, s
           {program.centers[0].firstDayOfWeek ? (
             <Box>
               <Text role="productive" strong size="md" color="primary">
-                {t('firstDayOfWeek')}
+                {t("firstDayOfWeek")}
               </Text>
               <Text role="productive" size="md" color="primary">
                 {store.dayWeeks[program.centers[0].firstDayOfWeek]}
               </Text>
             </Box>
           ) : null}
-          <Box style={{ width: '50%' }}>
+          <Box style={{ width: "50%" }}>
             <Controller
               control={control}
               name="regionalConfig"
@@ -85,8 +93,8 @@ export default function Step1({ regionalConfigs, program, config, onChange, t, s
                   {...field}
                   data={regionalConfigsOptions}
                   clearable
-                  placeholder={t('selectCalendar')}
-                  label={t('baseRegionalCalendar')}
+                  placeholder={t("selectCalendar")}
+                  label={t("baseRegionalCalendar")}
                   autoSelectOneOption
                 />
               )}
@@ -99,12 +107,16 @@ export default function Step1({ regionalConfigs, program, config, onChange, t, s
           })}
         >
           <ContextContainer>
-            <Title order={2}>{t('coursesConfig')}</Title>
+            <Title order={2}>{t("coursesConfig")}</Title>
             <Controller
               name="allCoursesHaveSameDates"
               control={control}
               render={({ field }) => (
-                <Switch {...field} checked={field.value} label={t('allCoursesShareTheSameDates')} />
+                <Switch
+                  {...field}
+                  checked={field.value}
+                  label={t("allCoursesShareTheSameDates")}
+                />
               )}
             />
           </ContextContainer>
@@ -112,7 +124,7 @@ export default function Step1({ regionalConfigs, program, config, onChange, t, s
       </ContextContainer>
       <FooterContainer scrollRef={scrollRef}>
         <Stack fullWidth justifyContent="end">
-          <Button onClick={send}>{t('continueButton')}</Button>
+          <Button onClick={send}>{t("continueButton")}</Button>
         </Stack>
       </FooterContainer>
     </>

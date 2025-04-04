@@ -1,7 +1,9 @@
-const dayjs = require('dayjs');
+const dayjs = require("dayjs");
 
 async function listRegionalConfigs({ center, ctx }) {
-  const regionalConfigs = await ctx.tx.db.RegionalConfig.find({ center }).lean();
+  const regionalConfigs = await ctx.tx.db.RegionalConfig.find({
+    center,
+  }).lean();
   const calendarsAssignedToAProgram = await ctx.tx.db.Config.find({
     program: { $exists: true },
   }).lean();
@@ -40,8 +42,12 @@ async function listRegionalConfigs({ center, ctx }) {
       regionalEvents: regionalConfig.regionalEvents
         ? JSON.parse(regionalConfig.regionalEvents)
         : null,
-      localEvents: regionalConfig.localEvents ? JSON.parse(regionalConfig.localEvents) : null,
-      daysOffEvents: regionalConfig.daysOffEvents ? JSON.parse(regionalConfig.daysOffEvents) : null,
+      localEvents: regionalConfig.localEvents
+        ? JSON.parse(regionalConfig.localEvents)
+        : null,
+      daysOffEvents: regionalConfig.daysOffEvents
+        ? JSON.parse(regionalConfig.daysOffEvents)
+        : null,
       assignedToAProgram,
       currentlyInUse,
     };

@@ -1,6 +1,6 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { forEach, map } from 'lodash';
+import React from "react";
+import PropTypes from "prop-types";
+import { forEach, map } from "lodash";
 import {
   Box,
   Button,
@@ -17,25 +17,32 @@ import {
   TimeInput,
   Title,
   useDebouncedCallback,
-} from '@bubbles-ui/components';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { useLocale, useStore } from '@common';
-import { ChevLeftIcon } from '@bubbles-ui/icons/outline';
-import { addErrorAlert } from '@layout/alert';
-import { Controller, useForm } from 'react-hook-form';
-import getCourseName from '@academic-portfolio/helpers/getCourseName';
-import CourseData from '@academic-calendar/pages/private/program/components/CourseData';
-import FooterContainer from './FooterContainer';
+} from "@bubbles-ui/components";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { useLocale, useStore } from "@common";
+import { ChevLeftIcon } from "@bubbles-ui/icons/outline";
+import { addErrorAlert } from "@layout/alert";
+import { Controller, useForm } from "react-hook-form";
+import getCourseName from "@academic-portfolio/helpers/getCourseName";
+import CourseData from "@academic-calendar/pages/private/program/components/CourseData";
+import FooterContainer from "./FooterContainer";
 
 const useStyle = createStyles((theme) => ({
   root: {
     padding: theme.spacing[5],
     maxWidth: 700,
-    width: '100%',
+    width: "100%",
   },
 }));
 
-export default function Step2({ config, program, onPrev, onChange, t, scrollRef }) {
+export default function Step2({
+  config,
+  program,
+  onPrev,
+  onChange,
+  t,
+  scrollRef,
+}) {
   const locale = useLocale();
   const { classes } = useStyle();
   const [, , , getErrorMessage] = useRequestErrorMessage();
@@ -65,10 +72,10 @@ export default function Step2({ config, program, onPrev, onChange, t, scrollRef 
 
   const form = useForm({ defaultValues: config });
   const formErrors = form.formState.errors;
-  const courseDates = form.watch('courseDates') || {};
-  const substagesDates = form.watch('substagesDates') || {};
-  const courseEvents = form.watch('courseEvents') || [];
-  const allCoursesHaveSameDates = form.watch('allCoursesHaveSameDates');
+  const courseDates = form.watch("courseDates") || {};
+  const substagesDates = form.watch("substagesDates") || {};
+  const courseEvents = form.watch("courseEvents") || [];
+  const allCoursesHaveSameDates = form.watch("allCoursesHaveSameDates");
 
   const coursesForDates = allCoursesHaveSameDates
     ? [store.program?.courses[0]]
@@ -76,30 +83,34 @@ export default function Step2({ config, program, onPrev, onChange, t, scrollRef 
 
   const columns = [];
   columns.push({
-    Header: t('name'),
-    accessor: 'name',
+    Header: t("name"),
+    accessor: "name",
     input: {
       node: <TextInput required />,
-      rules: { required: t('fieldRequired') },
+      rules: { required: t("fieldRequired") },
     },
   });
 
-  if (store.program && !store.program.moreThanOneAcademicYear && store.program.courses.length > 1) {
+  if (
+    store.program &&
+    !store.program.moreThanOneAcademicYear &&
+    store.program.courses.length > 1
+  ) {
     const courseData = map(store.program.courses, (course) => ({
       label: getCourseName(course),
       value: course.id,
     }));
     columns.push({
-      Header: t('course'),
-      accessor: 'courses',
+      Header: t("course"),
+      accessor: "courses",
       input: {
         node: <MultiSelect data={courseData} />,
-        rules: { required: t('fieldRequired') },
+        rules: { required: t("fieldRequired") },
       },
       valueRender: (value) => {
         if (value) {
           if (value.length === courseData.length) {
-            return t('allCourses');
+            return t("allCourses");
           }
           return <MultiSelect readOnly data={courseData} value={value} />;
         }
@@ -109,30 +120,30 @@ export default function Step2({ config, program, onPrev, onChange, t, scrollRef 
   }
 
   columns.push({
-    Header: t('from'),
-    accessor: 'startDate',
+    Header: t("from"),
+    accessor: "startDate",
     input: {
       node: <TimeInput required />,
-      rules: { required: t('fieldRequired') },
+      rules: { required: t("fieldRequired") },
     },
     valueRender: (value) => {
       const hours = new Date(value).getHours();
       const minutes = new Date(value).getMinutes();
-      return `${hours > 9 ? '' : '0'}${hours}:${minutes > 9 ? '' : '0'}${minutes}`;
+      return `${hours > 9 ? "" : "0"}${hours}:${minutes > 9 ? "" : "0"}${minutes}`;
     },
   });
 
   columns.push({
-    Header: t('to'),
-    accessor: 'endDate',
+    Header: t("to"),
+    accessor: "endDate",
     input: {
       node: <TimeInput required />,
-      rules: { required: t('fieldRequired') },
+      rules: { required: t("fieldRequired") },
     },
     valueRender: (value) => {
       const hours = new Date(value).getHours();
       const minutes = new Date(value).getMinutes();
-      return `${hours > 9 ? '' : '0'}${hours}:${minutes > 9 ? '' : '0'}${minutes}`;
+      return `${hours > 9 ? "" : "0"}${hours}:${minutes > 9 ? "" : "0"}${minutes}`;
     },
   });
 
@@ -184,9 +195,15 @@ export default function Step2({ config, program, onPrev, onChange, t, scrollRef 
 
   React.useEffect(() => {
     if (allCoursesHaveSameDates) {
-      const firstStartDateValue = form.getValues(`courseDates[${coursesForDates[0].id}].startDate`);
-      const firstEndDateValue = form.getValues(`courseDates[${coursesForDates[0].id}].endDate`);
-      const substages = form.getValues(`substagesDates[${coursesForDates[0].id}]`);
+      const firstStartDateValue = form.getValues(
+        `courseDates[${coursesForDates[0].id}].startDate`
+      );
+      const firstEndDateValue = form.getValues(
+        `courseDates[${coursesForDates[0].id}].endDate`
+      );
+      const substages = form.getValues(
+        `substagesDates[${coursesForDates[0].id}]`
+      );
       const events = form.getValues(`courseEvents[${coursesForDates[0].id}]`);
 
       forEach(store.program.courses, (c) => {
@@ -213,13 +230,13 @@ export default function Step2({ config, program, onPrev, onChange, t, scrollRef 
   return (
     <ContextContainer>
       <ContextContainer>
-        <Title order={3}>{t('completeCoursesTitle')}</Title>
+        <Title order={3}>{t("completeCoursesTitle")}</Title>
         {programMode ? (
           <>
             <CourseData
               locale={locale}
-              startLabel={t('initOfProgram')}
-              endLabel={t('endOfProgram')}
+              startLabel={t("initOfProgram")}
+              endLabel={t("endOfProgram")}
               course={store.program?.courses[0]}
               value={{
                 ...courseDates[store.program?.courses[0].id],
@@ -236,8 +253,14 @@ export default function Step2({ config, program, onPrev, onChange, t, scrollRef 
                   `courseDates[${store.program?.courses[0].id}].endDate`,
                   values.endDate
                 );
-                form.setValue(`substagesDates[${store.program?.courses[0].id}]`, values.substages);
-                form.setValue(`courseEvents[${store.program?.courses[0].id}]`, values.events);
+                form.setValue(
+                  `substagesDates[${store.program?.courses[0].id}]`,
+                  values.substages
+                );
+                form.setValue(
+                  `courseEvents[${store.program?.courses[0].id}]`,
+                  values.events
+                );
               }}
               program={program}
               t={t}
@@ -261,16 +284,37 @@ export default function Step2({ config, program, onPrev, onChange, t, scrollRef 
                     onChange={(values) => {
                       if (allCoursesHaveSameDates) {
                         forEach(store.program.courses, (c) => {
-                          form.setValue(`courseDates[${c.id}].startDate`, values.startDate);
-                          form.setValue(`courseDates[${c.id}].endDate`, values.endDate);
-                          form.setValue(`substagesDates[${c.id}]`, values.substages);
+                          form.setValue(
+                            `courseDates[${c.id}].startDate`,
+                            values.startDate
+                          );
+                          form.setValue(
+                            `courseDates[${c.id}].endDate`,
+                            values.endDate
+                          );
+                          form.setValue(
+                            `substagesDates[${c.id}]`,
+                            values.substages
+                          );
                           form.setValue(`courseEvents[${c.id}]`, values.events);
                         });
                       } else {
-                        form.setValue(`courseDates[${course.id}].startDate`, values.startDate);
-                        form.setValue(`courseDates[${course.id}].endDate`, values.endDate);
-                        form.setValue(`substagesDates[${course.id}]`, values.substages);
-                        form.setValue(`courseEvents[${course.id}]`, values.events);
+                        form.setValue(
+                          `courseDates[${course.id}].startDate`,
+                          values.startDate
+                        );
+                        form.setValue(
+                          `courseDates[${course.id}].endDate`,
+                          values.endDate
+                        );
+                        form.setValue(
+                          `substagesDates[${course.id}]`,
+                          values.substages
+                        );
+                        form.setValue(
+                          `courseEvents[${course.id}]`,
+                          values.events
+                        );
                       }
                     }}
                     program={program}
@@ -293,7 +337,9 @@ export default function Step2({ config, program, onPrev, onChange, t, scrollRef 
                       hasError={hasError}
                       key={course.id}
                       label={
-                        allCoursesHaveSameDates ? t('allCourses') : `${t('course')} ${course.index}`
+                        allCoursesHaveSameDates
+                          ? t("allCourses")
+                          : `${t("course")} ${course.index}`
                       }
                     >
                       <CourseData
@@ -308,16 +354,40 @@ export default function Step2({ config, program, onPrev, onChange, t, scrollRef 
                         onChange={(values) => {
                           if (allCoursesHaveSameDates) {
                             forEach(store.program.courses, (c) => {
-                              form.setValue(`courseDates[${c.id}].startDate`, values.startDate);
-                              form.setValue(`courseDates[${c.id}].endDate`, values.endDate);
-                              form.setValue(`substagesDates[${c.id}]`, values.substages);
-                              form.setValue(`courseEvents[${c.id}]`, values.events);
+                              form.setValue(
+                                `courseDates[${c.id}].startDate`,
+                                values.startDate
+                              );
+                              form.setValue(
+                                `courseDates[${c.id}].endDate`,
+                                values.endDate
+                              );
+                              form.setValue(
+                                `substagesDates[${c.id}]`,
+                                values.substages
+                              );
+                              form.setValue(
+                                `courseEvents[${c.id}]`,
+                                values.events
+                              );
                             });
                           } else {
-                            form.setValue(`courseDates[${course.id}].startDate`, values.startDate);
-                            form.setValue(`courseDates[${course.id}].endDate`, values.endDate);
-                            form.setValue(`substagesDates[${course.id}]`, values.substages);
-                            form.setValue(`courseEvents[${course.id}]`, values.events);
+                            form.setValue(
+                              `courseDates[${course.id}].startDate`,
+                              values.startDate
+                            );
+                            form.setValue(
+                              `courseDates[${course.id}].endDate`,
+                              values.endDate
+                            );
+                            form.setValue(
+                              `substagesDates[${course.id}]`,
+                              values.substages
+                            );
+                            form.setValue(
+                              `courseEvents[${course.id}]`,
+                              values.events
+                            );
                           }
                         }}
                         program={program}
@@ -333,8 +403,8 @@ export default function Step2({ config, program, onPrev, onChange, t, scrollRef 
       </ContextContainer>
       <ContextContainer>
         <Box>
-          <Title order={3}>{t('hoursOfPauseOrDailyBreaks')}</Title>
-          <Paragraph>{t('hoursOfPauseOrDailyBreaksDescription')}</Paragraph>
+          <Title order={3}>{t("hoursOfPauseOrDailyBreaks")}</Title>
+          <Paragraph>{t("hoursOfPauseOrDailyBreaksDescription")}</Paragraph>
         </Box>
 
         <Controller
@@ -344,7 +414,7 @@ export default function Step2({ config, program, onPrev, onChange, t, scrollRef 
             <TableInput
               data={field.value || []}
               onChange={(ev) => {
-                const courseIds = map(store.program.courses, 'id');
+                const courseIds = map(store.program.courses, "id");
                 field.onChange(
                   map(ev, (e) => {
                     if (!e.courses) e.courses = courseIds;
@@ -356,8 +426,8 @@ export default function Step2({ config, program, onPrev, onChange, t, scrollRef 
               sortable={false}
               removable={true}
               labels={{
-                add: t('tableAdd'),
-                remove: t('tableRemove'),
+                add: t("tableAdd"),
+                remove: t("tableRemove"),
               }}
             />
           )}
@@ -373,9 +443,9 @@ export default function Step2({ config, program, onPrev, onChange, t, scrollRef 
             variant="outline"
             leftIcon={<ChevLeftIcon height={20} width={20} />}
           >
-            {t('previous')}
+            {t("previous")}
           </Button>
-          <Button onClick={submit}>{t('continueButton')}</Button>
+          <Button onClick={submit}>{t("continueButton")}</Button>
         </Stack>
       </FooterContainer>
     </ContextContainer>

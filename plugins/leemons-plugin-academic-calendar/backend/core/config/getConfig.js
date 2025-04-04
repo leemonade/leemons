@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function getConfig({ program, ctx }) {
   const config = await ctx.tx.db.Config.findOne({ program }).lean();
@@ -9,7 +9,9 @@ async function getConfig({ program, ctx }) {
       }).lean();
       config.regionalConfig = {
         ...config.regionalConfig,
-        regionalEvents: JSON.parse(config.regionalConfig.regionalEvents || null),
+        regionalEvents: JSON.parse(
+          config.regionalConfig.regionalEvents || null
+        ),
         localEvents: JSON.parse(config.regionalConfig.localEvents || null),
         daysOffEvents: JSON.parse(config.regionalConfig.daysOffEvents || null),
       };

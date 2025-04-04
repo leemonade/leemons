@@ -1,6 +1,6 @@
-const { LeemonsError } = require('@leemons/error');
-const { LeemonsValidator } = require('@leemons/validator');
-const { isEqual, endsWith } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { LeemonsValidator } = require("@leemons/validator");
+const { isEqual, endsWith } = require("lodash");
 
 const {
   stringSchema,
@@ -8,38 +8,38 @@ const {
   stringSchemaNullable,
   dateSchema,
   dateSchemaNullable,
-} = require('./types');
+} = require("./types");
 
 const saveConfigSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     program: stringSchema,
     regionalConfig: stringSchemaNullable,
     allCoursesHaveSameConfig: booleanSchemaNullable,
     allCoursesHaveSameDates: booleanSchemaNullable,
     courseDates: {
-      type: 'object',
+      type: "object",
       additionalProperties: true,
     },
     substagesDates: {
-      type: 'object',
+      type: "object",
       additionalProperties: true,
     },
     courseEvents: {
-      type: 'object',
+      type: "object",
       additionalProperties: true,
     },
     allCoursesHaveSameDays: booleanSchemaNullable,
     breaks: {
-      type: 'array',
+      type: "array",
       items: {
-        type: 'object',
+        type: "object",
         additionalProperties: true,
       },
       nullable: true,
     },
   },
-  required: ['program', 'courseDates'],
+  required: ["program", "courseDates"],
   additionalProperties: true,
 };
 
@@ -52,20 +52,20 @@ function validateSaveConfig(data) {
 }
 
 const events = {
-  type: 'array',
+  type: "array",
   items: {
-    type: 'object',
+    type: "object",
     properties: {
       name: stringSchema,
       startDate: dateSchema,
       endDate: dateSchema,
     },
-    required: ['name', 'startDate', 'endDate'],
+    required: ["name", "startDate", "endDate"],
   },
 };
 
 const saveRegionalConfigSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     id: stringSchema,
     name: stringSchema,
@@ -75,7 +75,7 @@ const saveRegionalConfigSchema = {
     localEvents: events,
     daysOffEvents: events,
   },
-  required: ['name', 'center'],
+  required: ["name", "center"],
   additionalProperties: false,
 };
 
@@ -90,25 +90,26 @@ function validateSaveRegionalConfig(data) {
 // CUSTOM PERIODS ··················································
 
 function validateItemType(item, type) {
-  const modelSegment = item.split(':')[5];
+  const modelSegment = item.split(":")[5];
 
   const normalizedType = type.toLowerCase();
   const normalizedSegment = modelSegment.toLowerCase();
 
   return (
-    isEqual(normalizedSegment, normalizedType) || endsWith(normalizedSegment, `${normalizedType}s`)
+    isEqual(normalizedSegment, normalizedType) ||
+    endsWith(normalizedSegment, `${normalizedType}s`)
   );
 }
 
 const setItemSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     item: stringSchema,
     startDate: dateSchemaNullable,
     endDate: dateSchemaNullable,
     type: stringSchema,
   },
-  required: ['item', 'startDate', 'endDate', 'type'],
+  required: ["item", "startDate", "endDate", "type"],
   additionalProperties: false,
 };
 
@@ -121,35 +122,35 @@ function validateSetItem({ data, ctx }) {
 
   if (!validateItemType(data.item, data.type)) {
     throw new LeemonsError(ctx, {
-      message: 'Type must match the corresponding segment of the LRN ID item.',
+      message: "Type must match the corresponding segment of the LRN ID item.",
     });
   }
 }
 
 const assignCustomPeriodToItemsSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     items: {
-      type: 'array',
+      type: "array",
       items: {
-        type: 'object',
+        type: "object",
         properties: {
           item: stringSchema,
           type: stringSchema,
         },
-        required: ['item', 'type'],
+        required: ["item", "type"],
       },
     },
     dates: {
-      type: 'object',
+      type: "object",
       properties: {
         startDate: dateSchema,
         endDate: dateSchema,
       },
-      required: ['startDate', 'endDate'],
+      required: ["startDate", "endDate"],
     },
   },
-  required: ['items', 'dates'],
+  required: ["items", "dates"],
   additionalProperties: true,
 };
 
@@ -166,20 +167,21 @@ function validateAssignCustomPeriodToItems({ data, ctx }) {
 
   if (!allValid) {
     throw new LeemonsError(ctx, {
-      message: 'Type must match the corresponding segment of the LRN ID item for all items',
+      message:
+        "Type must match the corresponding segment of the LRN ID item for all items",
     });
   }
 }
 
 const createCustomPeriodSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     item: stringSchema,
     startDate: dateSchema,
     endDate: dateSchema,
     type: stringSchema,
   },
-  required: ['item', 'startDate', 'endDate', 'type'],
+  required: ["item", "startDate", "endDate", "type"],
   additionalProperties: false,
 };
 
@@ -192,13 +194,13 @@ function validateCreateCustomPeriod(data) {
 }
 
 const updateCustomPeriodSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     item: stringSchema,
     startDate: dateSchema,
     endDate: dateSchema,
   },
-  required: ['item'],
+  required: ["item"],
   additionalProperties: true,
 };
 

@@ -7,26 +7,26 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 const {
   listRegionalConfigs,
   saveRegionalConfig,
   deleteRegionalConfig,
-} = require('../../core/regional-config');
+} = require("../../core/regional-config");
 
 /** @type {ServiceSchema} */
 module.exports = {
   listRest: {
     rest: {
-      method: 'GET',
-      path: '/list/:center',
+      method: "GET",
+      path: "/list/:center",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-calendar.config': {
-            actions: ['admin', 'view'],
+          "academic-calendar.config": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -44,15 +44,15 @@ module.exports = {
   },
   deleteRest: {
     rest: {
-      method: 'DELETE',
-      path: '/:id',
+      method: "DELETE",
+      path: "/:id",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-calendar.config': {
-            actions: ['admin', 'delete'],
+          "academic-calendar.config": {
+            actions: ["admin", "delete"],
           },
         },
       }),
@@ -70,15 +70,15 @@ module.exports = {
   },
   saveRest: {
     rest: {
-      method: 'POST',
-      path: '/save',
+      method: "POST",
+      path: "/save",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-calendar.config': {
-            actions: ['admin', 'create', 'update'],
+          "academic-calendar.config": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),

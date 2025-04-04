@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
-const { validateSaveConfig } = require('../../validations/forms');
-const { getConfig } = require('./getConfig');
+const _ = require("lodash");
+const { validateSaveConfig } = require("../../validations/forms");
+const { getConfig } = require("./getConfig");
 
 async function saveConfig({ data, ctx }) {
   delete data.deleted_at;

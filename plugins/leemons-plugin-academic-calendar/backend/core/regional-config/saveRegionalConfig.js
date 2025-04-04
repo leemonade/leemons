@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
-const { validateSaveRegionalConfig } = require('../../validations/forms');
+const _ = require("lodash");
+const { validateSaveRegionalConfig } = require("../../validations/forms");
 
 async function saveRegionalConfig({
   created_at,
@@ -23,10 +23,14 @@ async function saveRegionalConfig({
   data.localEvents = JSON.stringify(data.localEvents);
   data.daysOffEvents = JSON.stringify(data.daysOffEvents);
   if (data.id) {
-    config = await ctx.tx.db.RegionalConfig.findOneAndUpdate({ id: data.id }, data, {
-      new: true,
-      lean: true,
-    });
+    config = await ctx.tx.db.RegionalConfig.findOneAndUpdate(
+      { id: data.id },
+      data,
+      {
+        new: true,
+        lean: true,
+      }
+    );
   } else {
     config = await ctx.tx.db.RegionalConfig.create(data);
     config = config.toObject();

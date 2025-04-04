@@ -6,7 +6,7 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 
 const {
   remove,
@@ -14,23 +14,23 @@ const {
   getByItems,
   assignCustomPeriodToItems,
   setItem,
-} = require('../../core/customPeriods');
+} = require("../../core/customPeriods");
 
-const ITEM_PATH = '/item';
+const ITEM_PATH = "/item";
 
 /** @type {ServiceSchema} */
 module.exports = {
   setItemRest: {
     rest: {
-      method: 'POST',
+      method: "POST",
       path: `${ITEM_PATH}`,
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-calendar.config': {
-            actions: ['admin', 'create', 'update'],
+          "academic-calendar.config": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),
@@ -48,15 +48,15 @@ module.exports = {
   },
   assignToItemsRest: {
     rest: {
-      method: 'POST',
+      method: "POST",
       path: `${ITEM_PATH}`,
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-calendar.config': {
-            actions: ['admin', 'create', 'update'],
+          "academic-calendar.config": {
+            actions: ["admin", "create", "update"],
           },
         },
       }),
@@ -74,15 +74,15 @@ module.exports = {
   },
   getByItemRest: {
     rest: {
-      method: 'GET',
+      method: "GET",
       path: `${ITEM_PATH}/:item`,
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-calendar.config': {
-            actions: ['admin', 'view'],
+          "academic-calendar.config": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -100,15 +100,15 @@ module.exports = {
   },
   getByItemsRest: {
     rest: {
-      method: 'POST',
+      method: "POST",
       path: `${ITEM_PATH}/get-many`,
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-calendar.config': {
-            actions: ['admin', 'view'],
+          "academic-calendar.config": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -126,15 +126,15 @@ module.exports = {
   },
   removeByItemRest: {
     rest: {
-      method: 'DELETE',
+      method: "DELETE",
       path: `${ITEM_PATH}/:item`,
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'academic-calendar.config': {
-            actions: ['admin', 'delete'],
+          "academic-calendar.config": {
+            actions: ["admin", "delete"],
           },
         },
       }),
