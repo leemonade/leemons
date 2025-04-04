@@ -13,10 +13,7 @@
     "build:watch": "yarn build:esm -- --watch",
     "clean": "rimraf dist"
   },
-  "keywords": [
-    "leemons",
-    "sdk"
-  ],
+  "keywords": ["leemons", "sdk"],
   "author": {
     "email": "hi@leemons.io",
     "name": "Leemons Edtech Solutions",

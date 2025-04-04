@@ -1,7 +1,7 @@
-import type { Context } from '@leemons/moleculer';
-import { getPluginNameFromCTX } from '@leemons/service-name-parser';
-import _ from 'lodash';
-import { Errors } from 'moleculer';
+import type { Context } from "@leemons/moleculer";
+import { getPluginNameFromCTX } from "@leemons/service-name-parser";
+import _ from "lodash";
+import { Errors } from "moleculer";
 export interface LeemonsErrorOptions {
   message: string;
   httpStatusCode?: number;
@@ -31,13 +31,13 @@ export class LeemonsError extends Errors.MoleculerError {
     }: LeemonsErrorOptions
   ) {
     if (!ctx) {
-      throw new Error(errorMessage('ctx field is required'));
+      throw new Error(errorMessage("ctx field is required"));
     }
     if (!ctx.service?.name) {
-      throw new Error(errorMessage('ctx must be a valid moleculer context'));
+      throw new Error(errorMessage("ctx must be a valid moleculer context"));
     }
     if (!message) {
-      throw new Error(errorMessage('message field is required'));
+      throw new Error(errorMessage("message field is required"));
     }
 
     const data = {
@@ -50,9 +50,9 @@ export class LeemonsError extends Errors.MoleculerError {
     };
 
     if (httpStatusCode) {
-      super(message, httpStatusCode, 'LEEMONS_ERROR', data);
+      super(message, httpStatusCode, "LEEMONS_ERROR", data);
     } else {
-      super(message, 400, 'LEEMONS_ERROR', data);
+      super(message, 400, "LEEMONS_ERROR", data);
     }
     _.forIn(rest, (value, key) => {
       (this as any)[key] = value;
