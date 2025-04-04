@@ -1,3 +1,3 @@
-import withLayout from './withLayout';
+import withLayout from "./withLayout";
 
 export { withLayout };

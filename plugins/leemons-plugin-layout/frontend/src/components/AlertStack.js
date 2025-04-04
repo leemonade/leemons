@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
-import hooks from 'leemons-hooks';
-import { useNotifications } from '@bubbles-ui/notifications';
+import { useNotifications } from "@bubbles-ui/notifications";
+import hooks from "@leemons/hooks";
+import { useEffect } from "react";
 
 export default function AlertStack() {
   const notifications = useNotifications();
@@ -18,9 +18,9 @@ export default function AlertStack() {
   };
 
   useEffect(() => {
-    hooks.addAction('layout:add:alert', addAlert);
+    hooks.addAction("layout:add:alert", addAlert);
     return () => {
-      hooks.removeAction('layout:add:alert', addAlert);
+      hooks.removeAction("layout:add:alert", addAlert);
     };
   });
   return null;

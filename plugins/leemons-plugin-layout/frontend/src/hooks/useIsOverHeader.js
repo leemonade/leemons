@@ -1,4 +1,4 @@
-import { useMouse } from '@mantine/hooks';
+import { useMouse } from "@mantine/hooks";
 
 export default function useIsOverHeader() {
   const { y, x } = useMouse();

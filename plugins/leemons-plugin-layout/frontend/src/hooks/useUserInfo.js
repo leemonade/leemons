@@ -19,7 +19,14 @@ export default function useUserInfo() {
 
   const { profile, hasOtherProfiles } = useProfile();
 
-  const name = userAgentsInfo?.[0]?.user ? getUserFullName(userAgentsInfo[0].user) : '';
+  const name = userAgentsInfo?.[0]?.user
+    ? getUserFullName(userAgentsInfo[0].user)
+    : "";
 
-  return { isLoading: isLoading || !name, name, profile: profile?.name, hasOtherProfiles };
+  return {
+    isLoading: isLoading || !name,
+    name,
+    profile: profile?.name,
+    hasOtherProfiles,
+  };
 }

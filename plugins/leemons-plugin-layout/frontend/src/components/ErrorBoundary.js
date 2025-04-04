@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import { Stack, Title } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@common/helpers/prefixPN';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import { Stack, Title } from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@common/helpers/prefixPN";
 
 function ErrorBoundaryMessage() {
-  const [t] = useTranslateLoader(prefixPN('errorBoundaryMessage'));
+  const [t] = useTranslateLoader(prefixPN("errorBoundaryMessage"));
 
   return (
     <Stack
@@ -19,7 +19,7 @@ function ErrorBoundaryMessage() {
       <Title
         sx={(theme) => ({
           ...theme.other.cardAssignments.content.typo.md,
-          color: '#5D6A6C',
+          color: "#5D6A6C",
         })}
       >
         {t()}

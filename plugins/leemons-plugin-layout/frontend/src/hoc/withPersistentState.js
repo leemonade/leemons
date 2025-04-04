@@ -1,8 +1,8 @@
-import React from 'react';
-import { addAction, fireEvent } from 'leemons-hooks';
+import { addAction, fireEvent } from "@leemons/hooks";
+import React from "react";
 
 function getDisplayName(WrappedComponent) {
-  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
+  return WrappedComponent.displayName || WrappedComponent.name || "Component";
 }
 
 class State extends React.Component {

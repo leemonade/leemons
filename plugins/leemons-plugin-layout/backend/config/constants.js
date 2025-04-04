@@ -1,4 +1,4 @@
-const permissionsPrefix = 'layout';
+const permissionsPrefix = "layout";
 
 module.exports = {
   pluginName: permissionsPrefix,

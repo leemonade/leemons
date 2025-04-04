@@ -17,7 +17,9 @@ export default function useProfile() {
   }
 
   if (!profileData && centers?.length) {
-    const profiles = centers.flatMap((center) => center.profiles).filter(Boolean);
+    const profiles = centers
+      .flatMap((center) => center.profiles)
+      .filter(Boolean);
     profileData = profiles.find(({ id }) => id === profile);
     hasOtherProfiles = profiles?.length > 1;
   }

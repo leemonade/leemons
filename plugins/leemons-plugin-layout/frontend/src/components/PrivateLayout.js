@@ -1,37 +1,37 @@
-import React, { useCallback, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
-import { Box, createStyles, LoadingOverlay } from '@bubbles-ui/components';
-import { MAIN_NAV_WIDTH } from '@bubbles-ui/extras';
-import MainMenu from '@menu-builder/components/mainMenu';
-import { getProfilesRequest } from '@academic-portfolio/request';
-import { getCookieToken } from '@users/session';
-import { useHistory } from 'react-router-dom';
-import { useLayout } from '@layout/context';
-import AlertStack from './AlertStack';
-import ErrorBoundary from './ErrorBoundary';
+import React, { useCallback, useEffect } from "react";
+import PropTypes from "prop-types";
+import { isEmpty } from "lodash";
+import { Box, createStyles, LoadingOverlay } from "@bubbles-ui/components";
+import { MAIN_NAV_WIDTH } from "@bubbles-ui/extras";
+import MainMenu from "@menu-builder/components/mainMenu";
+import { getProfilesRequest } from "@academic-portfolio/request";
+import { getCookieToken } from "@users/session";
+import { useHistory } from "react-router-dom";
+import { useLayout } from "@layout/context";
+import AlertStack from "./AlertStack";
+import ErrorBoundary from "./ErrorBoundary";
 
 const NAV_OPEN_WIDTH = 280;
 
 const PrivateLayoutStyles = createStyles(() => ({
   root: {
-    display: 'flex',
-    height: '100vh',
-    overflow: 'hidden',
-    position: 'relative',
+    display: "flex",
+    height: "100vh",
+    overflow: "hidden",
+    position: "relative",
   },
   sideNav: {
-    width: '56px',
-    height: '100%',
-    overflowX: 'visible',
-    transition: 'width 0ms ease-out',
+    width: "56px",
+    height: "100%",
+    overflowX: "visible",
+    transition: "width 0ms ease-out",
     zIndex: 10,
   },
   content: {
     flex: 1,
-    height: '100vh',
-    overflowY: 'auto',
-    position: 'relative',
+    height: "100vh",
+    overflowY: "auto",
+    position: "relative",
     zIndex: 9,
   },
 }));
@@ -65,7 +65,7 @@ const PrivateLayout = ({ children }) => {
       }
       setState(profileState);
     } catch (error) {
-      history.push('/users/login');
+      history.push("/users/login");
     }
   };
 
@@ -85,7 +85,8 @@ const PrivateLayout = ({ children }) => {
   // MENU HANDLERS
 
   const onCloseMenu = useCallback(() => {
-    if (layoutState.menuWidth !== MAIN_NAV_WIDTH) setState({ menuWidth: MAIN_NAV_WIDTH });
+    if (layoutState.menuWidth !== MAIN_NAV_WIDTH)
+      setState({ menuWidth: MAIN_NAV_WIDTH });
   }, [layoutState]);
 
   // const onOpenMenu = useCallback(() => {

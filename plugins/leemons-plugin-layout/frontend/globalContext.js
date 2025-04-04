@@ -1,30 +1,30 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 
 import {
   BUBBLES_THEME,
-  colord,
   ModalsProvider,
   Paragraph,
   ThemeProvider,
+  colord,
   useModals,
-} from '@bubbles-ui/components';
-import { NotificationProvider } from '@bubbles-ui/notifications';
-import SocketIoService from '@mqtt-socket-io/service';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { getPlatformThemeRequest } from '@users/request';
-import hooks from 'leemons-hooks';
-import { forEach, isEmpty, isNil, isString } from 'lodash';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import { NotificationProvider } from "@bubbles-ui/notifications";
+import hooks from "@leemons/hooks";
+import SocketIoService from "@mqtt-socket-io/service";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { getPlatformThemeRequest } from "@users/request";
+import { forEach, isEmpty, isNil, isString } from "lodash";
+import PropTypes from "prop-types";
 
-import PrivateLayout from './src/components/PrivateLayout';
-import { LayoutContext, LayoutProvider } from './src/context/layout';
-import prefixPN from './src/helpers/prefixPN';
+import PrivateLayout from "./src/components/PrivateLayout";
+import { LayoutContext, LayoutProvider } from "./src/context/layout";
+import prefixPN from "./src/helpers/prefixPN";
 
-import AlertStack from '@layout/components/AlertStack';
-import ImpersonationLayout from '@layout/components/ImpersonationLayout';
+import AlertStack from "@layout/components/AlertStack";
+import ImpersonationLayout from "@layout/components/ImpersonationLayout";
 
-const CONFIRM_DESCRIPTION = 'Do you want to continue?';
+const CONFIRM_DESCRIPTION = "Do you want to continue?";
 
 function LayoutWrapper({ isPrivate, children }) {
   if (isPrivate) {
@@ -49,14 +49,25 @@ LayoutWrapper.propTypes = {
 
 function useLayoutProviderModals() {
   const modals = useModals();
-  const [t, translations] = useTranslateLoader(prefixPN('modals'));
+  const [t, translations] = useTranslateLoader(prefixPN("modals"));
 
   const openConfirmationModal = useCallback(
-    ({ title, description, labels, onCancel = () => {}, onConfirm = () => {} }) =>
+    ({
+      title,
+      description,
+      labels,
+      onCancel = () => {},
+      onConfirm = () => {},
+    }) =>
       () => {
-        if (!translations?.items || Object.keys(translations.items).length === 0) return null;
+        if (
+          !translations?.items ||
+          Object.keys(translations.items).length === 0
+        )
+          return null;
         return modals.openConfirmModal({
-          title: title ?? t('title.confirm', { 'title.confirm': 'Confirm action' }),
+          title:
+            title ?? t("title.confirm", { "title.confirm": "Confirm action" }),
           children: isString(description) ? (
             <Paragraph
               sx={(theme) => ({
@@ -65,17 +76,24 @@ function useLayoutProviderModals() {
               dangerouslySetInnerHTML={{
                 __html:
                   description ??
-                  t('description.confirm', {
-                    'description.confirm': CONFIRM_DESCRIPTION,
+                  t("description.confirm", {
+                    "description.confirm": CONFIRM_DESCRIPTION,
                   }),
               }}
             />
           ) : (
-            description ?? t('description.confirm', { 'description.confirm': CONFIRM_DESCRIPTION })
+            (description ??
+            t("description.confirm", {
+              "description.confirm": CONFIRM_DESCRIPTION,
+            }))
           ),
           labels: {
-            confirm: labels?.confirm ?? t('buttons.confirm', { 'buttons.confirm': 'Confirm' }),
-            cancel: labels?.cancel ?? t('buttons.cancel', { 'buttons.cancel': 'Cancel' }),
+            confirm:
+              labels?.confirm ??
+              t("buttons.confirm", { "buttons.confirm": "Confirm" }),
+            cancel:
+              labels?.cancel ??
+              t("buttons.cancel", { "buttons.cancel": "Cancel" }),
           },
           onCancel,
           onConfirm,
@@ -85,11 +103,21 @@ function useLayoutProviderModals() {
   );
 
   const openDeleteConfirmationModal = useCallback(
-    ({ title, description, labels, onCancel = () => {}, onConfirm = () => {} }) =>
+    ({
+      title,
+      description,
+      labels,
+      onCancel = () => {},
+      onConfirm = () => {},
+    }) =>
       () => {
-        if (!translations?.items || Object.keys(translations.items).length === 0) return null;
+        if (
+          !translations?.items ||
+          Object.keys(translations.items).length === 0
+        )
+          return null;
         return modals.openConfirmModal({
-          title: title ?? t('title.delete', { 'title.delete': 'Deleting' }),
+          title: title ?? t("title.delete", { "title.delete": "Deleting" }),
           children: (
             <Paragraph
               sx={(theme) => ({
@@ -98,17 +126,21 @@ function useLayoutProviderModals() {
               dangerouslySetInnerHTML={{
                 __html:
                   description ??
-                  t('description.delete', {
-                    'description.delete': 'Do you want to delete this item?',
+                  t("description.delete", {
+                    "description.delete": "Do you want to delete this item?",
                   }),
               }}
             />
           ),
           labels: {
-            confirm: labels?.confirm ?? t('buttons.confirm', { 'buttons.confirm': 'Confirm' }),
-            cancel: labels?.cancel ?? t('buttons.cancel', { 'buttons.cancel': 'Cancel' }),
+            confirm:
+              labels?.confirm ??
+              t("buttons.confirm", { "buttons.confirm": "Confirm" }),
+            cancel:
+              labels?.cancel ??
+              t("buttons.cancel", { "buttons.cancel": "Cancel" }),
           },
-          confirmProps: { color: 'fatic' },
+          confirmProps: { color: "fatic" },
           onCancel,
           onConfirm,
         });
@@ -133,10 +165,11 @@ function LayoutProviderWrapper({ children, theme: themeProp }) {
   });
   const location = useLocation();
 
-  const { modals, openConfirmationModal, openDeleteConfirmationModal } = useLayoutProviderModals();
+  const { modals, openConfirmationModal, openDeleteConfirmationModal } =
+    useLayoutProviderModals();
 
-  SocketIoService.useOn('USER_CHANGE_AVATAR', (event, { url }) => {
-    const elements = document.getElementsByTagName('img');
+  SocketIoService.useOn("USER_CHANGE_AVATAR", (event, { url }) => {
+    const elements = document.getElementsByTagName("img");
     forEach(elements, (element) => {
       if (element.src.includes(url)) {
         element.src = `${url}?t=${Date.now()}`;
@@ -158,13 +191,13 @@ function LayoutProviderWrapper({ children, theme: themeProp }) {
 
   const scrollTo = (props) => {
     if (!isNil(layoutState.contentRef?.current)) {
-      layoutState.contentRef.current.scrollTo({ ...props, behavior: 'smooth' });
+      layoutState.contentRef.current.scrollTo({ ...props, behavior: "smooth" });
     }
   };
 
   useEffect(() => {
     if (location && location.pathname) {
-      const isPrivate = location.pathname.indexOf('/private') === 0;
+      const isPrivate = location.pathname.indexOf("/private") === 0;
       setPrivateLayout(isPrivate);
     }
   }, [location]);
@@ -186,7 +219,9 @@ function LayoutProviderWrapper({ children, theme: themeProp }) {
           closeModal: modals.closeModal,
         }}
       >
-        <LayoutWrapper isPrivate={layoutState.private}>{children}</LayoutWrapper>
+        <LayoutWrapper isPrivate={layoutState.private}>
+          {children}
+        </LayoutWrapper>
       </LayoutProvider>
     </NotificationProvider>
   );
@@ -211,7 +246,12 @@ export function Provider({ children }) {
       const bubbles = [];
 
       forEach(BUBBLES_THEME.colors.bubbles, (color) => {
-        bubbles.push(colord({ ...mainColorHSL, l: colord(color).brightness() * 100 }).toHex());
+        bubbles.push(
+          colord({
+            ...mainColorHSL,
+            l: colord(color).brightness() * 100,
+          }).toHex()
+        );
       });
 
       const sameColor = BUBBLES_THEME.colors.interactive01 === th.mainColor;
@@ -249,9 +289,9 @@ export function Provider({ children }) {
   }
 
   useEffect(() => {
-    hooks.addAction('platform:theme:change', load);
+    hooks.addAction("platform:theme:change", load);
     return () => {
-      hooks.removeAction('platform:theme:change', load);
+      hooks.removeAction("platform:theme:change", load);
     };
   });
 
@@ -262,7 +302,9 @@ export function Provider({ children }) {
   return (
     <ThemeProvider theme={theme}>
       <ModalsProvider modalProps={{ zIndex: 9999 }}>
-        <LayoutProviderWrapper theme={platformTheme}>{children}</LayoutProviderWrapper>
+        <LayoutProviderWrapper theme={platformTheme}>
+          {children}
+        </LayoutProviderWrapper>
       </ModalsProvider>
     </ThemeProvider>
   );
