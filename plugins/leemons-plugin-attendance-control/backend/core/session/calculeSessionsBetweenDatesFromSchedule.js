@@ -1,10 +1,16 @@
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
+const _ = require("lodash");
 
-const getDay = (date) => `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+const getDay = (date) =>
+  `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
 
-function calculeSessionsBetweenDatesFromSchedule(start, end, schedule, { sessions = [] } = {}) {
-  const scheduleByDayWeek = _.groupBy(schedule, 'dayWeek');
+function calculeSessionsBetweenDatesFromSchedule(
+  start,
+  end,
+  schedule,
+  { sessions = [] } = {}
+) {
+  const scheduleByDayWeek = _.groupBy(schedule, "dayWeek");
   const _start = new Date(start);
   const _end = new Date(end);
   const results = [];
@@ -23,8 +29,8 @@ function calculeSessionsBetweenDatesFromSchedule(start, end, schedule, { session
       _.forEach(schedules, (_schedule) => {
         const scheduleStart = new Date(_start);
         const scheduleEnd = new Date(_start);
-        const startTime = _schedule.start.split(':');
-        const endTime = _schedule.end.split(':');
+        const startTime = _schedule.start.split(":");
+        const endTime = _schedule.end.split(":");
         scheduleStart.setUTCHours(startTime[0]);
         scheduleStart.setUTCMinutes(startTime[1]);
         scheduleEnd.setUTCHours(endTime[0]);

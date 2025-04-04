@@ -6,16 +6,16 @@ export default function getStyle({ ws }) {
 
     if (isFirstRow) {
       border.top = {
-        style: 'medium',
+        style: "medium",
         color: {
-          argb: '000000',
+          argb: "000000",
         },
       };
       const upperCell = ws.getCell(absoluteRow - 1, absoluteCol);
       upperCell.fill = {
-        type: 'pattern',
-        pattern: 'solid',
-        fgColor: { argb: 'F1F9FE' },
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "F1F9FE" },
       };
     }
 

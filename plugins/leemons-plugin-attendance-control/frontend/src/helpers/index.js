@@ -1,2 +1,2 @@
-export * from './getSessionsBackFromToday';
-export * from './prefixPN';
+export * from "./getSessionsBackFromToday";
+export * from "./prefixPN";

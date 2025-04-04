@@ -1,15 +1,18 @@
 /* eslint-disable no-nested-ternary */
-import AttendanceControlDrawer from '@attendance-control/components/attendance-control-drawer';
-import { getSessionsBackFromToday } from '@attendance-control/helpers/getSessionsBackFromToday';
-import { prefixPN } from '@attendance-control/helpers/prefixPN';
-import { getTemporalSessionsRequest } from '@attendance-control/request';
-import { Button } from '@bubbles-ui/components';
-import { useRequestErrorMessage, useStore } from '@common';
-import { getLocalizations } from '@multilanguage/useTranslate';
-import infoPlugin from '@package-manager/request/infoPlugin';
-import { getPermissionsWithActionsIfIHaveRequest, getProfileSysNameRequest } from '@users/request';
-import PropTypes from 'prop-types';
-import React from 'react';
+import AttendanceControlDrawer from "@attendance-control/components/attendance-control-drawer";
+import { getSessionsBackFromToday } from "@attendance-control/helpers/getSessionsBackFromToday";
+import { prefixPN } from "@attendance-control/helpers/prefixPN";
+import { getTemporalSessionsRequest } from "@attendance-control/request";
+import { Button } from "@bubbles-ui/components";
+import { useRequestErrorMessage, useStore } from "@common";
+import { getLocalizations } from "@multilanguage/useTranslate";
+import infoPlugin from "@package-manager/request/infoPlugin";
+import {
+  getPermissionsWithActionsIfIHaveRequest,
+  getProfileSysNameRequest,
+} from "@users/request";
+import PropTypes from "prop-types";
+import React from "react";
 
 let academicCalendar;
 let canAttendance;
@@ -23,24 +26,28 @@ function ClassHeaderBar({ classe }) {
   async function load() {
     try {
       if (academicCalendar === undefined) {
-        const [{ data }, { permissions }, { sysName }, { items }, { sessions }] = await Promise.all(
-          [
-            infoPlugin('academic-calendar'),
-            getPermissionsWithActionsIfIHaveRequest([prefixPN('attendance')]),
-            getProfileSysNameRequest(),
-            getLocalizations({ keysStartsWith: prefixPN('classButton') }),
-            getTemporalSessionsRequest(classe.id),
-          ]
-        );
+        const [
+          { data },
+          { permissions },
+          { sysName },
+          { items },
+          { sessions },
+        ] = await Promise.all([
+          infoPlugin("academic-calendar"),
+          getPermissionsWithActionsIfIHaveRequest([prefixPN("attendance")]),
+          getProfileSysNameRequest(),
+          getLocalizations({ keysStartsWith: prefixPN("classButton") }),
+          getTemporalSessionsRequest(classe.id),
+        ]);
 
         backSessions = getSessionsBackFromToday(sessions);
         userProfile = sysName;
-        text = items[prefixPN('classButton.attendanceMonitoring')];
+        text = items[prefixPN("classButton.attendanceMonitoring")];
 
         if (permissions[0]) {
           canAttendance =
-            permissions[0].actionNames.includes('create') ||
-            permissions[0].actionNames.includes('admin');
+            permissions[0].actionNames.includes("create") ||
+            permissions[0].actionNames.includes("admin");
           render();
         }
         academicCalendar = data;
@@ -65,7 +72,12 @@ function ClassHeaderBar({ classe }) {
     load();
   }, [classe?.id]);
 
-  if (!academicCalendar || !canAttendance || userProfile !== 'teacher' || !backSessions?.length) {
+  if (
+    !academicCalendar ||
+    !canAttendance ||
+    userProfile !== "teacher" ||
+    !backSessions?.length
+  ) {
     return null;
   }
 

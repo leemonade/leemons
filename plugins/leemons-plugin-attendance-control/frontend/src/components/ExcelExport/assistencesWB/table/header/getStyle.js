@@ -1,4 +1,4 @@
-import { addCustomName } from '../../../helpers';
+import { addCustomName } from "../../../helpers";
 
 /* eslint-disable no-param-reassign */
 export function getStyle({ ws, contentArray, labels }) {
@@ -17,19 +17,19 @@ export function getStyle({ ws, contentArray, labels }) {
     const isWeightRow = row === 4;
 
     if (isLastRow) {
-      border.bottom = { style: 'medium', color: { argb: '3C84C6' } };
+      border.bottom = { style: "medium", color: { argb: "3C84C6" } };
     }
 
     if (isFirstCol) {
-      border.right = { style: 'medium', color: { argb: '3C84C6' } };
+      border.right = { style: "medium", color: { argb: "3C84C6" } };
       cell.alignment = {
-        vertical: 'middle',
-        horizontal: 'right',
+        vertical: "middle",
+        horizontal: "right",
       };
     } else {
       cell.alignment = {
-        horizontal: 'center',
-        vertical: 'middle',
+        horizontal: "center",
+        vertical: "middle",
         wrapText: true,
       };
     }
@@ -41,28 +41,28 @@ export function getStyle({ ws, contentArray, labels }) {
     }
 
     if (isFirstRow && isContentCol) {
-      addCustomName({ ws, name: 'roles', cell });
+      addCustomName({ ws, name: "roles", cell });
     } else if (isTypesRow && isContentCol) {
-      addCustomName({ ws, name: 'types', cell });
+      addCustomName({ ws, name: "types", cell });
       cell.dataValidation = {
-        type: 'list',
+        type: "list",
         allowBlank: false,
         formulae: [`"${labels.calificable}, ${labels.noCalificable}"`],
         showErrorMessage: true,
       };
     } else if (isActivityNameRow && isContentCol) {
-      addCustomName({ ws, name: 'activities', cell });
+      addCustomName({ ws, name: "activities", cell });
     } else if (isDeadlineRow && isContentCol) {
-      addCustomName({ ws, name: 'deadlines', cell });
+      addCustomName({ ws, name: "deadlines", cell });
     } else if (isWeightRow && isContentCol) {
-      addCustomName({ ws, name: 'weights', cell });
-      cell.numFmt = '0.00%';
+      addCustomName({ ws, name: "weights", cell });
+      cell.numFmt = "0.00%";
     }
 
     cell.fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: 'F1F9FE' },
+      type: "pattern",
+      pattern: "solid",
+      fgColor: { argb: "F1F9FE" },
     };
 
     cell.border = border;

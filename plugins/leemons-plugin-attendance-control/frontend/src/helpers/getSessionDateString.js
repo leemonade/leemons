@@ -28,11 +28,11 @@ export function getSessionDateString(
   }
 
   const options = {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
   };
 
   if (onlyDate) {
@@ -41,6 +41,8 @@ export function getSessionDateString(
     return start.toLocaleDateString(locale, options);
   }
   return `${start.toLocaleDateString(locale, options)} - ${
-    datesAreOnSameDay(start, end) ? getOnlyHours(end) : end.toLocaleDateString(locale, options)
+    datesAreOnSameDay(start, end)
+      ? getOnlyHours(end)
+      : end.toLocaleDateString(locale, options)
   }`;
 }

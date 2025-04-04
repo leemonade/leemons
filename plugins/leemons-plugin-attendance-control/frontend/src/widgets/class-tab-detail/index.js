@@ -1,8 +1,8 @@
 /* eslint-disable no-nested-ternary */
-import { Box } from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
-import React from 'react';
-import { ZoneWidgets } from '@widgets/ZoneWidgets';
+import { Box } from "@bubbles-ui/components";
+import PropTypes from "prop-types";
+import React from "react";
+import { ZoneWidgets } from "@widgets/ZoneWidgets";
 
 function ClassHeaderBar(props) {
   return (

@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { validateSaveSession } = require('../../validations/forms');
+const _ = require("lodash");
+const { validateSaveSession } = require("../../validations/forms");
 
 async function save({ body, ctx }) {
   validateSaveSession(body);
@@ -34,7 +34,12 @@ async function save({ body, ctx }) {
       _.map(body.attendance, (value, key) =>
         ctx.tx.db.Assistance.updateOne(
           { session: session.id, student: key },
-          { session: session.id, student: key, assistance: value, comment: body.comments[key] },
+          {
+            session: session.id,
+            student: key,
+            assistance: value,
+            comment: body.comments[key],
+          },
           { upsert: true }
         )
       )

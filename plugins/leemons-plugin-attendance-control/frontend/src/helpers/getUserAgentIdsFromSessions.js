@@ -1,5 +1,5 @@
 /* eslint-disable import/prefer-default-export */
-import _ from 'lodash';
+import _ from "lodash";
 
 export function getUserAgentIdsFromSessions(sessions) {
   const userAgents = [];

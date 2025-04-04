@@ -1,6 +1,6 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 const {
   stringSchema,
   dateSchema,
@@ -8,27 +8,27 @@ const {
   stringSchemaNullable,
   textSchemaNullable,
   textSchema,
-} = require('./types');
+} = require("./types");
 
 const saveSessionSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     id: stringSchema,
     class: stringSchema,
     start: dateSchema,
     end: dateSchema,
     attendance: {
-      type: 'object',
+      type: "object",
       additionalProperties: true,
       nullable: true,
     },
     comments: {
-      type: 'object',
+      type: "object",
       additionalProperties: true,
       nullable: true,
     },
   },
-  required: ['class', 'start', 'end'],
+  required: ["class", "start", "end"],
   additionalProperties: false,
 };
 

@@ -4,27 +4,27 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const _ = require('lodash');
-const { LeemonsValidator } = require('@leemons/validator');
+const _ = require("lodash");
+const { LeemonsValidator } = require("@leemons/validator");
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { getTemporalSessions, byIds, save } = require('../../core/session');
+} = require("@leemons/middlewares");
+const { getTemporalSessions, byIds, save } = require("../../core/session");
 
 /** @type {ServiceSchema} */
 module.exports = {
   getTemporalSessionsRest: {
     rest: {
-      path: '/temporal/:class',
-      method: 'GET',
+      path: "/temporal/:class",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'attendance-control.attendance': {
-            actions: ['admin', 'view', 'create', 'update'],
+          "attendance-control.attendance": {
+            actions: ["admin", "view", "create", "update"],
           },
         },
       }),
@@ -39,15 +39,15 @@ module.exports = {
   },
   getClassSessionsRest: {
     rest: {
-      path: '/class/sessions',
-      method: 'POST',
+      path: "/class/sessions",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'attendance-control.attendance': {
-            actions: ['admin', 'view', 'create', 'update'],
+          "attendance-control.attendance": {
+            actions: ["admin", "view", "create", "update"],
           },
         },
       }),
@@ -64,15 +64,15 @@ module.exports = {
   },
   detailRest: {
     rest: {
-      path: '/detail/:id',
-      method: 'GET',
+      path: "/detail/:id",
+      method: "GET",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'attendance-control.attendance': {
-            actions: ['admin', 'view'],
+          "attendance-control.attendance": {
+            actions: ["admin", "view"],
           },
         },
       }),
@@ -87,15 +87,15 @@ module.exports = {
   },
   saveRest: {
     rest: {
-      path: '/save',
-      method: 'POST',
+      path: "/save",
+      method: "POST",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
         allowedPermissions: {
-          'attendance-control.attendance': {
-            actions: ['admin', 'create'],
+          "attendance-control.attendance": {
+            actions: ["admin", "create"],
           },
         },
       }),

@@ -1,6 +1,6 @@
 function columnToIndex(column) {
-  const A = 'A'.charCodeAt(0) - 1;
-  const radix = 'Z'.charCodeAt(0) - A;
+  const A = "A".charCodeAt(0) - 1;
+  const radix = "Z".charCodeAt(0) - A;
 
   return [...column].reduce((sum, char) => {
     const charCode = char.charCodeAt(0);

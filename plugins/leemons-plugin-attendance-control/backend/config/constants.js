@@ -1,4 +1,4 @@
-const permissionsPrefix = 'attendance-control';
+const permissionsPrefix = "attendance-control";
 
 const permissionNames = {
   attendance: `${permissionsPrefix}.attendance`,
@@ -7,10 +7,10 @@ const permissionNames = {
 const permissions = [
   {
     permissionName: permissionNames.attendance,
-    actions: ['view', 'update', 'create', 'delete', 'admin'],
+    actions: ["view", "update", "create", "delete", "admin"],
     localizationName: {
-      es: 'Asistencia',
-      en: 'Attendance',
+      es: "Asistencia",
+      en: "Attendance",
     },
   },
 ];
@@ -18,16 +18,21 @@ const permissions = [
 const menuItems = [
   {
     item: {
-      key: 'attendance-control.attendance',
+      key: "attendance-control.attendance",
       order: 3,
-      parentKey: 'scores.scores',
-      url: '/private/attendance-control/attendance',
+      parentKey: "scores.scores",
+      url: "/private/attendance-control/attendance",
       label: {
-        en: 'Attendance',
-        es: 'Asistencia',
+        en: "Attendance",
+        es: "Asistencia",
       },
     },
-    permissions: [{ permissionName: permissionNames.attendance, actionNames: ['view', 'admin'] }],
+    permissions: [
+      {
+        permissionName: permissionNames.attendance,
+        actionNames: ["view", "admin"],
+      },
+    ],
   },
 ];
 
@@ -35,15 +40,15 @@ const widgets = {
   zones: [{ key: `${permissionsPrefix}.class` }],
   items: [
     {
-      zoneKey: 'academic-portfolio.class.students',
+      zoneKey: "academic-portfolio.class.students",
       key: `${permissionsPrefix}.class.header-bar`,
-      url: 'class-header-bar/index',
+      url: "class-header-bar/index",
     },
     {
-      zoneKey: 'dashboard.class.tabs',
+      zoneKey: "dashboard.class.tabs",
       key: `${permissionsPrefix}.class.tabs.detail`,
-      url: 'class-tab-detail/index',
-      profiles: ['teacher'],
+      url: "class-tab-detail/index",
+      profiles: ["teacher"],
       properties: {
         label: `${permissionsPrefix}.tabKanban.label`,
       },
@@ -51,8 +56,8 @@ const widgets = {
     {
       zoneKey: `${permissionsPrefix}.class`,
       key: `${permissionsPrefix}.class.tabs.detail-table`,
-      url: 'class-tab-detail-table/index',
-      profiles: ['teacher'],
+      url: "class-tab-detail-table/index",
+      profiles: ["teacher"],
     },
   ],
 };

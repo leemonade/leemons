@@ -1,4 +1,4 @@
-import Assistances from '@attendance-control/components/AssistancePage/Assistances';
+import Assistances from "@attendance-control/components/AssistancePage/Assistances";
 import {
   Box,
   Button,
@@ -8,25 +8,25 @@ import {
   TotalLayoutFooterContainer,
   TotalLayoutHeader,
   TotalLayoutStepContainer,
-} from '@bubbles-ui/components';
-import React from 'react';
-import { TestIcon } from '@tests/components/Icons/TestIcon';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { prefixPN } from '@attendance-control/helpers/prefixPN';
-import { DownloadIcon } from '@bubbles-ui/icons/outline';
-import { onScoresDownload } from '@scores/components/__DEPRECATED__/Notebook/components/Header/Header';
-import Filters from '@scores/components/__DEPRECATED__/ScoresPage/Filters/Filters';
+} from "@bubbles-ui/components";
+import React from "react";
+import { TestIcon } from "@tests/components/Icons/TestIcon";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { prefixPN } from "@attendance-control/helpers/prefixPN";
+import { DownloadIcon } from "@bubbles-ui/icons/outline";
+import { onScoresDownload } from "@scores/components/__DEPRECATED__/Notebook/components/Header/Header";
+import Filters from "@scores/components/__DEPRECATED__/ScoresPage/Filters/Filters";
 
 const useStyles = createStyles((theme) => ({
   root: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     gap: theme.spacing[5],
-    height: '100%',
+    height: "100%",
   },
   headerContainer: {
-    display: 'flex',
-    flexDirection: 'column',
+    display: "flex",
+    flexDirection: "column",
     gap: theme.spacing[5],
   },
   headerFilters: {
@@ -36,7 +36,7 @@ const useStyles = createStyles((theme) => ({
 
 export default function AssistancePage() {
   const scrollRef = React.useRef();
-  const [t] = useTranslateLoader(prefixPN('assistancePage'));
+  const [t] = useTranslateLoader(prefixPN("assistancePage"));
 
   const { classes } = useStyles();
   const [filters, setFilters] = React.useState({});
@@ -49,7 +49,7 @@ export default function AssistancePage() {
           scrollRef={scrollRef}
           icon={<TestIcon width={23} height={23} />}
           cancelable={false}
-          title={t('header.teacher.title')}
+          title={t("header.teacher.title")}
         />
       }
     >
@@ -65,18 +65,18 @@ export default function AssistancePage() {
                     size="sm"
                     position="center"
                     leftIcon={<DownloadIcon />}
-                    onClick={() => onScoresDownload('xlsx')}
+                    onClick={() => onScoresDownload("xlsx")}
                   >
-                    {t('excelFile')}
+                    {t("excelFile")}
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
                     position="center"
                     leftIcon={<DownloadIcon />}
-                    onClick={() => onScoresDownload('csv')}
+                    onClick={() => onScoresDownload("csv")}
                   >
-                    {t('csvFile')}
+                    {t("csvFile")}
                   </Button>
                 </>
               }

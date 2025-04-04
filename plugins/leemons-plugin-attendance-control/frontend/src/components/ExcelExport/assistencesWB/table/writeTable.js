@@ -1,6 +1,6 @@
-import { cellToIndexes, indexesToCell } from '../../helpers';
-import { writeTableHeader } from './header';
-import { writeStudents } from './students';
+import { cellToIndexes, indexesToCell } from "../../helpers";
+import { writeTableHeader } from "./header";
+import { writeStudents } from "./students";
 
 /**
  *
@@ -8,7 +8,13 @@ import { writeStudents } from './students';
  * @param {*} tableData
  * @param {*} labels
  */
-export default function writeTable({ ws, tableData, labels, types, initialPosition }) {
+export default function writeTable({
+  ws,
+  tableData,
+  labels,
+  types,
+  initialPosition,
+}) {
   const { row, columnIndex } = cellToIndexes(initialPosition);
 
   const headerInitialPosition = indexesToCell(row, columnIndex + 1);

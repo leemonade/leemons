@@ -1,21 +1,29 @@
 /* eslint-disable prefer-const */
 /* eslint-disable no-param-reassign */
-const _ = require('lodash');
+const _ = require("lodash");
 const {
   calculeSessionsBetweenDatesFromSchedule,
-} = require('./calculeSessionsBetweenDatesFromSchedule');
+} = require("./calculeSessionsBetweenDatesFromSchedule");
 
-async function getTemporalSessions({ classeId, start, end, withAssistances, ctx }) {
+async function getTemporalSessions({
+  classeId,
+  start,
+  end,
+  withAssistances,
+  ctx,
+}) {
   let [[classe], sessions] = await Promise.all([
-    ctx.tx.call('academic-portfolio.classes.classByIds', {
+    ctx.tx.call("academic-portfolio.classes.classByIds", {
       ids: classeId,
     }),
     ctx.tx.db.Session.find({ class: classeId }).lean(),
   ]);
 
   if (withAssistances) {
-    const assistances = await ctx.tx.db.Assistance.find({ session: _.map(sessions, 'id') }).lean();
-    const assistancesBySession = _.groupBy(assistances, 'session');
+    const assistances = await ctx.tx.db.Assistance.find({
+      session: _.map(sessions, "id"),
+    }).lean();
+    const assistancesBySession = _.groupBy(assistances, "session");
     _.forEach(sessions, (session) => {
       session.attendance = assistancesBySession[session.id];
     });
@@ -24,7 +32,9 @@ async function getTemporalSessions({ classeId, start, end, withAssistances, ctx 
   const programId = classe.program;
   const courseId = classe.courses?.id;
 
-  const calendar = await ctx.tx.call('academic-calendar.config.getConfig', { program: programId });
+  const calendar = await ctx.tx.call("academic-calendar.config.getConfig", {
+    program: programId,
+  });
 
   if (!calendar) {
     return null;
@@ -64,7 +74,7 @@ async function getTemporalSessions({ classeId, start, end, withAssistances, ctx 
     _.forEach(dates, ({ start: s, end: e }) => {
       results = results.concat(
         calculeSessionsBetweenDatesFromSchedule(s, e, classe.schedule, {
-          sessions: _.orderBy(sessions, 'start', 'asc'),
+          sessions: _.orderBy(sessions, "start", "asc"),
         })
       );
     });
@@ -76,8 +86,8 @@ async function getTemporalSessions({ classeId, start, end, withAssistances, ctx 
         if (a.id && b.id) return a.id === b.id;
         return false;
       }),
-      'start',
-      'asc'
+      "start",
+      "asc"
     );
 
     _.forEach(results, (result, index) => {
@@ -89,7 +99,8 @@ async function getTemporalSessions({ classeId, start, end, withAssistances, ctx 
       const _end = new Date(end);
       results = _.filter(
         results,
-        (result) => new Date(result.start) > _start && new Date(result.end) < _end
+        (result) =>
+          new Date(result.start) > _start && new Date(result.end) < _end
       );
     }
 

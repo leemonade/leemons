@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -34,6 +34,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-const sessionModel = newModel(mongoose.connection, 'v1::attendance-control_Session', schema);
+const sessionModel = newModel(
+  mongoose.connection,
+  "v1::attendance-control_Session",
+  schema
+);
 
 module.exports = { sessionModel };

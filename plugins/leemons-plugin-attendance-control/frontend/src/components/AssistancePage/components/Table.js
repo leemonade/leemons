@@ -1,8 +1,8 @@
 /* eslint-disable no-param-reassign */
-import { prefixPN } from '@attendance-control/helpers';
-import { getSessionDateString } from '@attendance-control/helpers/getSessionDateString';
-import { getSessionsAssistenceAverageOfUserAgents } from '@attendance-control/helpers/getSessionsAssistenceAverageOfUserAgents';
-import { getUserAgentIdsFromSessions } from '@attendance-control/helpers/getUserAgentIdsFromSessions';
+import { prefixPN } from "@attendance-control/helpers";
+import { getSessionDateString } from "@attendance-control/helpers/getSessionDateString";
+import { getSessionsAssistenceAverageOfUserAgents } from "@attendance-control/helpers/getSessionsAssistenceAverageOfUserAgents";
+import { getUserAgentIdsFromSessions } from "@attendance-control/helpers/getUserAgentIdsFromSessions";
 import {
   Box,
   Table as BubblesTable,
@@ -12,34 +12,45 @@ import {
   TextInput,
   Tooltip,
   UserDisplayItem,
-} from '@bubbles-ui/components';
-import { CheckCircleIcon, RemoveCircleIcon, TimeClockCircleIcon } from '@bubbles-ui/icons/outline';
-import { CommentIcon, EditWriteIcon } from '@bubbles-ui/icons/solid';
-import getUserFullName from '@users/helpers/getUserFullName';
-import { addAction, fireEvent, removeAction } from 'leemons-hooks';
+} from "@bubbles-ui/components";
+import {
+  CheckCircleIcon,
+  RemoveCircleIcon,
+  TimeClockCircleIcon,
+} from "@bubbles-ui/icons/outline";
+import { CommentIcon, EditWriteIcon } from "@bubbles-ui/icons/solid";
+import { addAction, fireEvent, removeAction } from "@leemons/hooks";
+import getUserFullName from "@users/helpers/getUserFullName";
 
-import { generateAssistancesWB } from '@attendance-control/components/ExcelExport/assistencesWB';
-import { getFile } from '@attendance-control/components/ExcelExport/helpers/workbook/getFile';
-import { ScoresBasicTableStyles } from '@scores/components/Tables/ScoresBasicTable/ScoresBasicTable.styles';
-import { useLocale, useStore } from '@common';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { getUserAgentsInfoRequest } from '@users/request';
-import _ from 'lodash';
-import React from 'react';
-import AttendanceControlDrawer from '../../attendance-control-drawer';
+import { generateAssistancesWB } from "@attendance-control/components/ExcelExport/assistencesWB";
+import { getFile } from "@attendance-control/components/ExcelExport/helpers/workbook/getFile";
+import { useLocale, useStore } from "@common";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { ScoresBasicTableStyles } from "@scores/components/Tables/ScoresBasicTable/ScoresBasicTable.styles";
+import { getUserAgentsInfoRequest } from "@users/request";
+import _ from "lodash";
+import React from "react";
+import AttendanceControlDrawer from "../../attendance-control-drawer";
 
 export default function Table({ sessions, classe, onSave }) {
   const [store, render] = useStore();
   const locale = useLocale();
-  const [t, , , tLoading] = useTranslateLoader(prefixPN('attendanceControlTable'));
+  const [t, , , tLoading] = useTranslateLoader(
+    prefixPN("attendanceControlTable")
+  );
 
-  const { classes } = ScoresBasicTableStyles({ overFlowRight: true }, { name: 'CommonTable' });
+  const { classes } = ScoresBasicTableStyles(
+    { overFlowRight: true },
+    { name: "CommonTable" }
+  );
 
   async function filter() {
     store.filteredData = _.cloneDeep(store.data);
     if (store.search) {
       store.filteredData = _.filter(store.filteredData, ({ student }) =>
-        getUserFullName(student).toLowerCase().includes(store.search.toLowerCase())
+        getUserFullName(student)
+          .toLowerCase()
+          .includes(store.search.toLowerCase())
       );
     }
     render();
@@ -72,39 +83,45 @@ export default function Table({ sessions, classe, onSave }) {
       const { userAgents } = await getUserAgentsInfoRequest(store.userAgentIds);
       store.userAgents = userAgents;
     }
-    store.userAgentAverage = getSessionsAssistenceAverageOfUserAgents(sessions, userAgentIds);
+    store.userAgentAverage = getSessionsAssistenceAverageOfUserAgents(
+      sessions,
+      userAgentIds
+    );
     store.columns = [];
     store.columns.push({
-      accessor: 'student',
+      accessor: "student",
       width: 220,
-      sticky: 'left',
+      sticky: "left",
       style: {
-        backgroundColor: 'white',
+        backgroundColor: "white",
       },
       cellStyle: {
-        backgroundColor: 'white',
+        backgroundColor: "white",
       },
       Header: (
         <Box className={classes.students}>
           <Box>
             <Text color="primary" role="productive" size="xs" stronger>
-              {t('students')}
+              {t("students")}
             </Text>
             <Box>
               <Text
-                sx={() => ({ whiteSpace: 'nowrap' })}
+                sx={() => ({ whiteSpace: "nowrap" })}
                 color="secondary"
                 role="productive"
                 size="xs"
               >
-                {store.userAgentIds.length} {t('students').toLowerCase()}
+                {store.userAgentIds.length} {t("students").toLowerCase()}
               </Text>
             </Box>
           </Box>
         </Box>
       ),
       Cell: ({ value }) => (
-        <Box sx={() => ({ width: 220, border: 'none' })} className={classes.studentsCells}>
+        <Box
+          sx={() => ({ width: 220, border: "none" })}
+          className={classes.studentsCells}
+        >
           <UserDisplayItem {...value} noBreak />
         </Box>
       ),
@@ -118,21 +135,24 @@ export default function Table({ sessions, classe, onSave }) {
             <Box>
               <Box
                 sx={(theme) => ({
-                  display: 'flex',
+                  display: "flex",
                   gap: theme.spacing[3],
-                  alignItems: 'center',
+                  alignItems: "center",
                 })}
               >
                 {session.index >= 0 ? (
-                  <Box style={{ whiteSpace: 'nowrap' }}>
+                  <Box style={{ whiteSpace: "nowrap" }}>
                     <Text color="primary" role="productive" size="xs" stronger>
-                      {t('sessionN', { index: session.index + 1 })}
+                      {t("sessionN", { index: session.index + 1 })}
                     </Text>
                   </Box>
                 ) : null}
                 <Box
                   onClick={() => editSession(session)}
-                  sx={(theme) => ({ cursor: 'pointer', color: theme.colors.text06 })}
+                  sx={(theme) => ({
+                    cursor: "pointer",
+                    color: theme.colors.text06,
+                  })}
                 >
                   <EditWriteIcon />
                 </Box>
@@ -140,7 +160,7 @@ export default function Table({ sessions, classe, onSave }) {
 
               <Box>
                 <Text
-                  sx={() => ({ whiteSpace: 'nowrap' })}
+                  sx={() => ({ whiteSpace: "nowrap" })}
                   color="secondary"
                   role="productive"
                   size="xs"
@@ -150,7 +170,7 @@ export default function Table({ sessions, classe, onSave }) {
               </Box>
               <Box>
                 <Text
-                  sx={() => ({ whiteSpace: 'nowrap' })}
+                  sx={() => ({ whiteSpace: "nowrap" })}
                   color="secondary"
                   role="productive"
                   size="xs"
@@ -164,25 +184,25 @@ export default function Table({ sessions, classe, onSave }) {
         Cell: ({ value }) => (
           <Box
             sx={(theme) => ({
-              display: 'flex',
+              display: "flex",
               gap: theme.spacing[2],
               fontSize: 18,
-              justifyContent: 'center',
-              textAlign: 'center',
-              width: '100%',
+              justifyContent: "center",
+              textAlign: "center",
+              width: "100%",
             })}
           >
-            {value.assistance === 'on-time' ? (
+            {value.assistance === "on-time" ? (
               <Box sx={(theme) => ({ color: theme.colors.fatic02 })}>
                 <CheckCircleIcon />
               </Box>
             ) : null}
-            {value.assistance === 'not' ? (
+            {value.assistance === "not" ? (
               <Box sx={(theme) => ({ color: theme.colors.fatic01 })}>
                 <RemoveCircleIcon />
               </Box>
             ) : null}
-            {value.assistance === 'late' ? (
+            {value.assistance === "late" ? (
               <Box sx={(theme) => ({ color: theme.colors.fatic03 })}>
                 <TimeClockCircleIcon />
               </Box>
@@ -202,28 +222,28 @@ export default function Table({ sessions, classe, onSave }) {
       });
     });
     store.columns.push({
-      accessor: 'avg',
+      accessor: "avg",
       width: 220,
-      sticky: 'right',
+      sticky: "right",
       style: {
-        backgroundColor: 'white',
-        boxShadow: '-6px 0px 6px 0px rgba(0,0,0,0.10)',
+        backgroundColor: "white",
+        boxShadow: "-6px 0px 6px 0px rgba(0,0,0,0.10)",
       },
       tdStyle: {
-        boxShadow: '-8px 0px 8px 0px rgba(0,0,0,0.10)',
+        boxShadow: "-8px 0px 8px 0px rgba(0,0,0,0.10)",
       },
       cellStyle: {
-        backgroundColor: 'white',
+        backgroundColor: "white",
       },
       Header: (
         <Box className={classes.students}>
-          <Box sx={() => ({ whiteSpace: 'nowrap' })}>
+          <Box sx={() => ({ whiteSpace: "nowrap" })}>
             <Text color="primary" role="productive" size="xs" stronger>
-              {t('studentAvg')}
+              {t("studentAvg")}
             </Text>
             <Box>
               <Text
-                sx={() => ({ whiteSpace: 'nowrap' })}
+                sx={() => ({ whiteSpace: "nowrap" })}
                 color="secondary"
                 role="productive"
                 size="xs"
@@ -240,9 +260,9 @@ export default function Table({ sessions, classe, onSave }) {
       Cell: ({ value }) => (
         <Box
           sx={() => ({
-            width: '100%',
-            border: 'none',
-            textAlign: 'right',
+            width: "100%",
+            border: "none",
+            textAlign: "right",
           })}
           className={classes.studentsCells}
         >
@@ -257,7 +277,7 @@ export default function Table({ sessions, classe, onSave }) {
     const _sessions = _.cloneDeep(sessions);
     _.forEach(_sessions, (session) => {
       if (session.attendance) {
-        session.attendanceByStudent = _.keyBy(session.attendance, 'student');
+        session.attendanceByStudent = _.keyBy(session.attendance, "student");
       }
     });
     _.forEach(store.userAgents, (userAgent) => {
@@ -289,11 +309,11 @@ export default function Table({ sessions, classe, onSave }) {
 
   React.useEffect(() => {
     const onDownload = ({ args: [format] }) => {
-      fireEvent('scores::downloaded-intercepted');
+      fireEvent("scores::downloaded-intercepted");
 
       try {
         const wb = generateAssistancesWB({
-          headerShown: format === 'xlsx',
+          headerShown: format === "xlsx",
           data: _.map(store.data, (item) => {
             const result = {};
             _.forIn(item, (value, key) => {
@@ -306,38 +326,38 @@ export default function Table({ sessions, classe, onSave }) {
           }),
           sessions,
           labels: {
-            students: t('students'),
-            session: t('sessionN'),
-            studentAvg: t('studentAvg'),
+            students: t("students"),
+            session: t("sessionN"),
+            studentAvg: t("studentAvg"),
           },
         });
         getFile(wb, format);
-        fireEvent('scores::downloaded');
+        fireEvent("scores::downloaded");
       } catch (e) {
-        fireEvent('scores::download-scores-error', e);
+        fireEvent("scores::download-scores-error", e);
       }
     };
 
-    addAction('scores::download-scores', onDownload);
-    return () => removeAction('scores::download-scores', onDownload);
+    addAction("scores::download-scores", onDownload);
+    return () => removeAction("scores::download-scores", onDownload);
   }, [sessions, store.data, tLoading]);
 
   return (
     <>
       <Box
         sx={(theme) => ({
-          display: 'flex',
+          display: "flex",
           gap: theme.spacing[4],
           padding: theme.spacing[4],
-          alignItems: 'center',
+          alignItems: "center",
         })}
       >
-        <InputLabel label={t('search')} />
+        <InputLabel label={t("search")} />
         <TextInput value={store.search} onChange={onSearch} />
       </Box>
       <BubblesTable
         useSticky
-        styleTable={{ display: 'table-caption', overflowX: 'auto' }}
+        styleTable={{ display: "table-caption", overflowX: "auto" }}
         columns={store.columns}
         data={store.filteredData}
       />

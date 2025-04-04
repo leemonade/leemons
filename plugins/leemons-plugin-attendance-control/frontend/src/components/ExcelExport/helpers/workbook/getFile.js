@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 function downloadURL(url, name) {
-  const link = document.createElement('a');
+  const link = document.createElement("a");
   link.download = name;
   link.href = url;
   document.body.appendChild(link);
@@ -10,9 +10,9 @@ function downloadURL(url, name) {
 
 function downloadFile(data, name) {
   const blob = new Blob([data], {
-    type: name.endsWith('.xlsx')
-      ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-      : '.csv',
+    type: name.endsWith(".xlsx")
+      ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      : ".csv",
   });
   const url = window.URL.createObjectURL(blob);
   downloadURL(url, name);
@@ -22,12 +22,12 @@ function downloadFile(data, name) {
  *
  * @param {import "exceljs".Workbook} wb
  */
-export async function getFile(wb, format = 'xlsx') {
-  if (format === 'xlsx') {
+export async function getFile(wb, format = "xlsx") {
+  if (format === "xlsx") {
     const buffer = await wb.xlsx.writeBuffer();
 
     downloadFile(buffer, `${wb.title}.xlsx`);
-  } else if (format === 'csv') {
+  } else if (format === "csv") {
     const matrix = [];
     const notebookSheet = wb.worksheets[0];
     notebookSheet.eachRow((row, rowNumber) => {
@@ -45,11 +45,11 @@ export async function getFile(wb, format = 'xlsx') {
     const buffer = matrix
       .map((matrixRow) => {
         if (!matrixRow) {
-          return '';
+          return "";
         }
-        return matrixRow.map((v) => v || '').join(',');
+        return matrixRow.map((v) => v || "").join(",");
       })
-      .join('\n');
+      .join("\n");
 
     downloadFile(buffer, `${wb.title}.csv`);
   }
