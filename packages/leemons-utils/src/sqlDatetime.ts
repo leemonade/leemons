@@ -4,7 +4,7 @@
  * @returns The date in SQL datetime format
  */
 function dateToSql(date: Date): string {
-  return date.toISOString().slice(0, 19).replace('T', ' ');
+  return date.toISOString().slice(0, 19).replace("T", " ");
 }
 
 /**
@@ -18,7 +18,7 @@ function sqlDatetime(value: Date | string | number): string {
     return dateToSql(value);
   }
 
-  if (typeof value === 'string' || typeof value === 'number') {
+  if (typeof value === "string" || typeof value === "number") {
     return dateToSql(new Date(value));
   }
 

@@ -1,13 +1,13 @@
-import type { Context } from '@leemons/moleculer';
+import type { Context } from "@leemons/moleculer";
 
 /**
  * Removes the version prefix from an action name if it exists
  */
 export function getActionWithOutVersion(actionName: string): string {
-  const sp = actionName.split('.');
+  const sp = actionName.split(".");
   if (/^v\d+$/.test(sp[0])) {
     sp.shift();
-    return sp.join('.');
+    return sp.join(".");
   }
   return actionName;
 }
@@ -15,8 +15,10 @@ export function getActionWithOutVersion(actionName: string): string {
 /**
  * Extracts the plugin version from a service name if it exists
  */
-export function getPluginVersionFromServiceName(serviceName: string): string | null {
-  const sp = serviceName.split('.');
+export function getPluginVersionFromServiceName(
+  serviceName: string
+): string | null {
+  const sp = serviceName.split(".");
   if (/^v\d+$/.test(sp[0])) {
     return sp[0];
   }
@@ -27,7 +29,7 @@ export function getPluginVersionFromServiceName(serviceName: string): string | n
  * Extracts the plugin name from a service name
  */
 export function getPluginNameFromServiceName(serviceName: string): string {
-  const sp = serviceName.split('.');
+  const sp = serviceName.split(".");
   if (/^v\d+$/.test(sp[0])) {
     return sp[1];
   }
@@ -37,8 +39,10 @@ export function getPluginNameFromServiceName(serviceName: string): string {
 /**
  * Gets the plugin name with version prefix if it exists
  */
-export function getPluginNameWithVersionIfHaveFromServiceName(serviceName: string): string {
-  const sp = serviceName.split('.');
+export function getPluginNameWithVersionIfHaveFromServiceName(
+  serviceName: string
+): string {
+  const sp = serviceName.split(".");
   if (/^v\d+$/.test(sp[0])) {
     return `${sp[0]}.${sp[1]}`;
   }
@@ -51,7 +55,7 @@ export function getPluginNameWithVersionIfHaveFromServiceName(serviceName: strin
 export function getPluginNameFromCTX(ctx: Context): string {
   if (!ctx?.service?.name) {
     throw new Error(
-      '[leemons-service-name-parser - getPluginNameFromCTX] - ctx not a valid moleculer context'
+      "[leemons-service-name-parser - getPluginNameFromCTX] - ctx not a valid moleculer context"
     );
   }
   return getPluginNameFromServiceName(ctx.service.name);
@@ -63,8 +67,8 @@ export function getPluginNameFromCTX(ctx: Context): string {
 export function getActionNameFromCTX(ctx: Context): string {
   if (!ctx?.service?.fullName || !ctx?.action?.name) {
     throw new Error(
-      '[leemons-service-name-parser - getActionNameFromCTX] - ctx not a valid moleculer context'
+      "[leemons-service-name-parser - getActionNameFromCTX] - ctx not a valid moleculer context"
     );
   }
-  return ctx.action.name.replace(`${ctx.service.fullName}.`, '');
+  return ctx.action.name.replace(`${ctx.service.fullName}.`, "");
 }

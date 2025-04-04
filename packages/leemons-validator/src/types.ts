@@ -1,39 +1,39 @@
 export type StringSchema = {
-  type: 'string';
+  type: "string";
   minLength: number;
   maxLength: number;
 };
 
 export type TextSchema = {
-  type: 'string';
+  type: "string";
   minLength: number;
   maxLength: number;
 };
 
 export type ArrayStringRequiredSchema = {
-  type: 'array';
+  type: "array";
   items: {
-    type: 'string';
+    type: "string";
   };
   minItems: number;
 };
 
 export const string: StringSchema = {
-  type: 'string',
+  type: "string",
   minLength: 1,
   maxLength: 255,
 };
 
 export const text: TextSchema = {
-  type: 'string',
+  type: "string",
   minLength: 1,
   maxLength: 65000,
 };
 
 export const arrayStringRequired: ArrayStringRequiredSchema = {
-  type: 'array',
+  type: "array",
   items: {
-    type: 'string',
+    type: "string",
   },
   minItems: 1,
 };

@@ -1,10 +1,10 @@
-import { isLRN } from '@leemons/lrn';
-import Ajv, { type ErrorObject, type ValidateFunction } from 'ajv';
-import addFormats from 'ajv-formats';
-import addKeywords from 'ajv-keywords';
-import _ from 'lodash';
+import { isLRN } from "@leemons/lrn";
+import Ajv, { type ErrorObject, type ValidateFunction } from "ajv";
+import addFormats from "ajv-formats";
+import addKeywords from "ajv-keywords";
+import _ from "lodash";
 
-import { localeRegex } from './validations/localeCode';
+import { localeRegex } from "./validations/localeCode";
 
 const ajv = new Ajv({ allErrors: true });
 addFormats(ajv);
@@ -33,9 +33,9 @@ export class LeemonsValidator {
 
   get errorMessage(): string {
     return _.map(
-      _.uniqBy(this.validate.errors as ErrorObject[], 'message'),
+      _.uniqBy(this.validate.errors as ErrorObject[], "message"),
       (error: ErrorObject) => `"${error.instancePath}": ${error.message}`
-    ).join('\n');
+    ).join("\n");
   }
 
   get ajvError(): ErrorObject[] | null | undefined {
@@ -44,10 +44,10 @@ export class LeemonsValidator {
 }
 
 // Custom type validations
-ajv.addFormat('localeCode', {
+ajv.addFormat("localeCode", {
   validate: (x: string) => localeRegex.test(x),
 });
 
-ajv.addFormat('lrn', {
+ajv.addFormat("lrn", {
   validate: isLRN,
 });

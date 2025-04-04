@@ -1,6 +1,6 @@
-import dayjs from 'dayjs';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -40,7 +40,10 @@ function normalizeDate({ date, timezone }: NormalizeDateParams): Date {
  * @param params.timezone - The timezone to use (e.g., 'Europe/Madrid')
  * @returns The Date object in the specified timezone
  */
-function createDateInTimezone({ dateString, timezone }: CreateDateInTimezoneParams): Date {
+function createDateInTimezone({
+  dateString,
+  timezone,
+}: CreateDateInTimezoneParams): Date {
   // Create a dayjs object with the date string in the specified timezone
   const date = dayjs.tz(dateString, timezone);
 

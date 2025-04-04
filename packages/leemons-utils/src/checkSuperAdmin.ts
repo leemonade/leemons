@@ -1,5 +1,5 @@
-import { LeemonsError } from '@leemons/error';
-import type { Context } from '@leemons/moleculer';
+import { LeemonsError } from "@leemons/error";
+import type { Context } from "@leemons/moleculer";
 
 interface CheckSuperAdminOptions {
   notThrow?: boolean;
@@ -17,7 +17,7 @@ async function checkSuperAdmin(
   ctx: Context,
   { notThrow = false }: CheckSuperAdminOptions = {}
 ): Promise<boolean> {
-  const isSuper = await ctx.tx.call('users.users.isSuperAdmin', {
+  const isSuper = await ctx.tx.call("users.users.isSuperAdmin", {
     userId: ctx?.meta?.userSession?.id,
   });
 
@@ -27,7 +27,7 @@ async function checkSuperAdmin(
     }
 
     throw new LeemonsError(ctx, {
-      message: 'Only super admins can change the organization',
+      message: "Only super admins can change the organization",
     });
   }
 

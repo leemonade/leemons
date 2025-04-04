@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from "crypto";
 
 /**
  * Generate long random string
@@ -14,11 +14,11 @@ function randomString(size: number = 32): string {
           (e &= 63) < 36
             ? e.toString(36)
             : e < 62
-            ? (e - 26).toString(36).toUpperCase()
-            : e > 62
-            ? '-'
-            : '_'),
-      ''
+              ? (e - 26).toString(36).toUpperCase()
+              : e > 62
+                ? "-"
+                : "_"),
+      ""
     )}`;
 }
 

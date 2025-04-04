@@ -1,7 +1,7 @@
-import path from 'path';
-import dotenv from 'dotenv';
-import fs from 'fs-extra';
-import _ from 'lodash';
+import path from "path";
+import dotenv from "dotenv";
+import fs from "fs-extra";
+import _ from "lodash";
 
 /**
  * Gets an environment variable value
@@ -67,7 +67,9 @@ async function generateEnv(
     return {};
   } catch (error) {
     if (error instanceof Error) {
-      throw new Error(`Error accessing .env file ${_filename}: ${error.message}`);
+      throw new Error(
+        `Error accessing .env file ${_filename}: ${error.message}`
+      );
     }
     throw new Error(`Error accessing .env file ${_filename}`);
   }

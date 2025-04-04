@@ -5,9 +5,12 @@
 function getDictionary(): string {
   function validateDictionary(dictionary: string): string | undefined {
     for (let i = 0; i < dictionary.length; i++) {
-      if (dictionary.indexOf(dictionary[i]) !== dictionary.lastIndexOf(dictionary[i])) {
+      if (
+        dictionary.indexOf(dictionary[i]) !==
+        dictionary.lastIndexOf(dictionary[i])
+      ) {
         console.log(
-          'Error: The dictionary in use has at least one repeating symbol:',
+          "Error: The dictionary in use has at least one repeating symbol:",
           dictionary[i]
         );
         return undefined;
@@ -16,9 +19,9 @@ function getDictionary(): string {
     return dictionary;
   }
 
-  const validatedDictionary = validateDictionary('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  const validatedDictionary = validateDictionary("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
   if (!validatedDictionary) {
-    throw new Error('Invalid dictionary: contains repeating symbols');
+    throw new Error("Invalid dictionary: contains repeating symbols");
   }
   return validatedDictionary;
 }
@@ -40,7 +43,7 @@ function numberToEncodedLetter(_number: number): string | undefined {
     const dictionary = getDictionary();
     let index = number % dictionary.length;
     let quotient = number / dictionary.length;
-    let result = '';
+    let result = "";
 
     function numToLetter(num: number): string | undefined {
       // Takes a letter between 0 and max letter length and returns the corresponding letter
@@ -48,7 +51,7 @@ function numberToEncodedLetter(_number: number): string | undefined {
         return undefined;
       }
       if (num === 0) {
-        return '';
+        return "";
       }
       return dictionary.slice(num - 1, num);
     }

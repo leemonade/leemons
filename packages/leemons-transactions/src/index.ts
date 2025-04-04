@@ -1,4 +1,4 @@
-import type { Context } from '@leemons/moleculer';
+import type { Context } from "@leemons/moleculer";
 
 interface TransactionOptions {
   meta?: Record<string, unknown>;
@@ -14,31 +14,31 @@ export async function newTransaction(ctx: Context): Promise<string> {
     return ctx.meta.transactionID;
   }
   if (ctx.tx?.call) {
-    ctx.meta.transactionID = (await ctx.tx.call('transactions.new', undefined, {
+    ctx.meta.transactionID = (await ctx.tx.call("transactions.new", undefined, {
       meta: { __isInternalCall: true },
     })) as string;
     return ctx.meta.transactionID;
   }
-  ctx.meta.transactionID = (await ctx.call('transactions.new')) as string;
+  ctx.meta.transactionID = (await ctx.call("transactions.new")) as string;
   return ctx.meta.transactionID;
 }
 
 export function increaseTransactionPending(ctx: Context): Promise<void> {
   if (ctx.tx?.call) {
-    return ctx.tx.call('transactions.addPendingState', undefined, {
+    return ctx.tx.call("transactions.addPendingState", undefined, {
       meta: { __isInternalCall: true },
     });
   }
-  return ctx.call('transactions.addPendingState');
+  return ctx.call("transactions.addPendingState");
 }
 
 export function increaseTransactionFinished(ctx: Context): Promise<void> {
   if (ctx.tx?.call) {
-    return ctx.tx.call('transactions.addFinishedState', undefined, {
+    return ctx.tx.call("transactions.addFinishedState", undefined, {
       meta: { __isInternalCall: true },
     });
   }
-  return ctx.call('transactions.addFinishedState');
+  return ctx.call("transactions.addFinishedState");
 }
 
 export function addTransactionState(
@@ -47,19 +47,19 @@ export function addTransactionState(
   options?: TransactionOptions
 ): Promise<void> {
   if (ctx.tx?.call) {
-    return ctx.tx.call('transactions.addTransactionState', params, {
+    return ctx.tx.call("transactions.addTransactionState", params, {
       ...options,
       meta: { ...(options?.meta || {}), __isInternalCall: true },
     });
   }
-  return ctx.call('transactions.addTransactionState', params, options);
+  return ctx.call("transactions.addTransactionState", params, options);
 }
 
 export function rollbackTransaction(ctx: Context): Promise<void> {
   if (ctx.tx?.call) {
-    return ctx.tx.call('transactions.rollbackTransaction', undefined, {
+    return ctx.tx.call("transactions.rollbackTransaction", undefined, {
       meta: { __isInternalCall: true },
     });
   }
-  return ctx.call('transactions.rollbackTransaction');
+  return ctx.call("transactions.rollbackTransaction");
 }
