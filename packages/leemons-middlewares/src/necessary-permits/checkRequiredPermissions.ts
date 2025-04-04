@@ -1,7 +1,7 @@
-import { LeemonsError } from '@leemons/error';
-import type { Context } from '@leemons/moleculer';
-import { forIn } from 'lodash';
-import type { PermissionsForMiddleware } from '../types';
+import { LeemonsError } from "@leemons/error";
+import type { Context } from "@leemons/moleculer";
+import { forIn } from "lodash";
+import type { PermissionsForMiddleware } from "../types";
 
 interface CheckRequiredPermissionsParams {
   allowedPermissions: PermissionsForMiddleware;
@@ -13,7 +13,7 @@ export async function checkRequiredPermissions({
   ctx,
 }: CheckRequiredPermissionsParams): Promise<boolean> {
   if (ctx.meta.userSession) {
-    const hasPermission = await ctx.tx.call('users.auth.hasPermissionCTX', {
+    const hasPermission = await ctx.tx.call("users.auth.hasPermissionCTX", {
       allowedPermissions,
     });
 
@@ -31,7 +31,7 @@ export async function checkRequiredPermissions({
   });
   throw new LeemonsError(ctx, {
     httpStatusCode: 401,
-    message: 'You do not have permissions',
+    message: "You do not have permissions",
     allowedPermissions: rAllowedPermissions,
   });
 }

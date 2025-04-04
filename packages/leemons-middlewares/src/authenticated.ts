@@ -1,13 +1,16 @@
-import { LeemonsError } from '@leemons/error';
-import type { Context } from '@leemons/moleculer';
-import type { UserAgent, UserSession } from '@leemons/users';
-import _ from 'lodash';
-import type { LeemonsMiddleware, LeemonsMiddlewareAuthenticatedOptions } from './types';
+import { LeemonsError } from "@leemons/error";
+import type { Context } from "@leemons/moleculer";
+import type { UserAgent, UserSession } from "@leemons/users";
+import _ from "lodash";
+import type {
+  LeemonsMiddleware,
+  LeemonsMiddlewareAuthenticatedOptions,
+} from "./types";
 
 function handleUnauthorizedAccess(
   ctx: Context,
   continueEvenThoughYouAreNotLoggedIn?: boolean,
-  message = 'Authorization required'
+  message = "Authorization required"
 ): void {
   if (continueEvenThoughYouAreNotLoggedIn) {
     ctx.meta.userSession = null;
@@ -25,7 +28,7 @@ async function authenticateWithToken(
   token: string,
   forceOnlyUser: boolean
 ): Promise<UserSession | null> {
-  const user = (await ctx.tx.call('users.auth.detailForJWT', {
+  const user = (await ctx.tx.call("users.auth.detailForJWT", {
     jwtToken: token,
     forceOnlyUser,
   })) as UserSession | null;
@@ -35,14 +38,20 @@ async function authenticateWithToken(
   return user;
 }
 
-async function authenticateWithMultipleTokens(ctx: Context): Promise<UserSession | null> {
+async function authenticateWithMultipleTokens(
+  ctx: Context
+): Promise<UserSession | null> {
   ctx.meta.authorization = _.compact(ctx.meta.authorization);
-  const user = await authenticateWithToken(ctx, ctx.meta.authorization[0], true);
+  const user = await authenticateWithToken(
+    ctx,
+    ctx.meta.authorization[0],
+    true
+  );
   const userAgents = await Promise.all(
     _.map(
       ctx.meta.authorization,
       (auth) =>
-        ctx.tx.call('users.auth.detailForJWT', {
+        ctx.tx.call("users.auth.detailForJWT", {
           jwtToken: auth,
           forceOnlyUser: false,
           forceOnlyUserAgent: true,
@@ -80,7 +89,7 @@ export const LeemonsMiddlewareAuthenticated = ({
       handleUnauthorizedAccess(
         ctx,
         continueEvenThoughYouAreNotLoggedIn,
-        '[LeemonsMiddlewareAuthenticated] No authorization header'
+        "[LeemonsMiddlewareAuthenticated] No authorization header"
       );
       return;
     }

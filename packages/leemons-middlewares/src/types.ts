@@ -1,6 +1,6 @@
-import type { Context } from '@leemons/moleculer';
+import type { Context } from "@leemons/moleculer";
 
-export type Action = 'create' | 'view' | 'update' | 'delete' | 'admin';
+export type Action = "create" | "view" | "update" | "delete" | "admin";
 
 export type PermissionsForMiddleware = {
   [key: string]: { actions: Action[] };

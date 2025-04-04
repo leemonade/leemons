@@ -1,7 +1,10 @@
-import { LeemonsError } from '@leemons/error';
-import type { Context } from '@leemons/moleculer';
-import type { LeemonsMiddleware, LeemonsMiddlewareNecessaryPermitsOptions } from '../types';
-import { checkRequiredPermissions } from './checkRequiredPermissions';
+import { LeemonsError } from "@leemons/error";
+import type { Context } from "@leemons/moleculer";
+import type {
+  LeemonsMiddleware,
+  LeemonsMiddlewareNecessaryPermitsOptions,
+} from "../types";
+import { checkRequiredPermissions } from "./checkRequiredPermissions";
 
 export const LeemonsMiddlewareNecessaryPermits = ({
   allowedPermissions,
@@ -13,7 +16,7 @@ export const LeemonsMiddlewareNecessaryPermits = ({
       throw new LeemonsError(ctx, {
         httpStatusCode: 401,
         message:
-          'No user session found for check permissions, check if endpoint have [authenticated: true] property',
+          "No user session found for check permissions, check if endpoint have [authenticated: true] property",
       });
     }
 
