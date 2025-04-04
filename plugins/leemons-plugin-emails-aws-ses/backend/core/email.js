@@ -1,8 +1,8 @@
-const { htmlToText } = require('nodemailer-html-to-text');
-const inlineBase64 = require('nodemailer-plugin-inline-base64');
-const aws = require('aws-sdk');
-const nodemailer = require('nodemailer');
-const { getAWSCredentials } = require('@leemons/aws');
+const { htmlToText } = require("nodemailer-html-to-text");
+const inlineBase64 = require("nodemailer-plugin-inline-base64");
+const aws = require("aws-sdk");
+const nodemailer = require("nodemailer");
+const { getAWSCredentials } = require("@leemons/aws");
 
 class Email {
   static async saveConfig({ ctx, config }) {
@@ -23,16 +23,16 @@ class Email {
 
   static async getProviders({ ctx }) {
     const credentials = await getAWSCredentials({
-      prefix: 'SES',
+      prefix: "SES",
       ctx,
     });
 
     if (credentials) {
       return [
         {
-          id: 'aws-ses',
+          id: "aws-ses",
           deploymentID: ctx.meta.deploymentID,
-          name: 'Amazon SES',
+          name: "Amazon SES",
           region: credentials.region,
           accessKey: credentials.accessKeyId,
           secretAccessKey: credentials.secretAccessKey,
@@ -41,9 +41,9 @@ class Email {
       ];
     }
 
-    console.error('================================================');
-    console.error('[EMAIL SES] No credentials found in @leemons/aws');
-    console.error('================================================');
+    console.error("================================================");
+    console.error("[EMAIL SES] No credentials found in @leemons/aws");
+    console.error("================================================");
 
     return ctx.tx.db.Config.find().lean();
   }
@@ -55,7 +55,7 @@ class Email {
 
   static getTransporterByConfig({ config }) {
     const ses = new aws.SES({
-      apiVersion: '2010-12-01',
+      apiVersion: "2010-12-01",
       region: config.region,
       accessKeyId: config.accessKey,
       secretAccessKey: config.secretAccessKey,
@@ -64,8 +64,8 @@ class Email {
     const transporter = nodemailer.createTransport({
       SES: { ses, aws },
     });
-    transporter.use('compile', htmlToText());
-    transporter.use('compile', inlineBase64());
+    transporter.use("compile", htmlToText());
+    transporter.use("compile", inlineBase64());
     return transporter;
   }
 }

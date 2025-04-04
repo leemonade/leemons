@@ -1,5 +1,5 @@
-import { useForm } from 'react-hook-form';
-import { PropTypes } from 'prop-types';
+import { useForm } from "react-hook-form";
+import { PropTypes } from "prop-types";
 
 export default function OnboarderFormAmazonSes({ onSubmit, onTest }) {
   const {
@@ -18,7 +18,7 @@ export default function OnboarderFormAmazonSes({ onSubmit, onTest }) {
           <input
             className="border border-gray-500 rounded"
             defaultValue="Amazon Leemons"
-            {...register('name', { required: true })}
+            {...register("name", { required: true })}
           />
           {errors.name && <span>name is required</span>}
         </div>
@@ -30,7 +30,7 @@ export default function OnboarderFormAmazonSes({ onSubmit, onTest }) {
           <input
             className="border border-gray-500 rounded"
             defaultValue="eu-central-1"
-            {...register('region', { required: true })}
+            {...register("region", { required: true })}
           />
           {errors.region && <span>region is required</span>}
         </div>
@@ -41,7 +41,7 @@ export default function OnboarderFormAmazonSes({ onSubmit, onTest }) {
           <input
             className="border border-gray-500 rounded"
             defaultValue=""
-            {...register('accessKey', { required: true })}
+            {...register("accessKey", { required: true })}
           />
           {errors.accessKey && <span>accessKey is required</span>}
         </div>
@@ -52,7 +52,7 @@ export default function OnboarderFormAmazonSes({ onSubmit, onTest }) {
           <input
             className="border border-gray-500 rounded"
             defaultValue=""
-            {...register('secretAccessKey', { required: true })}
+            {...register("secretAccessKey", { required: true })}
           />
           {errors.secretAccessKey && <span>secretAccessKey is required</span>}
         </div>
