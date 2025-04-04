@@ -1,7 +1,16 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
   "vcs": { "enabled": false, "clientKind": "git", "useIgnoreFile": false },
-  "files": { "ignoreUnknown": false, "ignore": [] },
+  "files": {
+    "ignoreUnknown": false,
+    "ignore": [
+      "apps/dev/",
+      "packages/**/dist",
+      "plugins/**/dist",
+      "private-plugins/**/dist",
+      "**/dist/"
+    ]
+  },
   "formatter": {
     "enabled": true,
     "useEditorconfig": true,
@@ -17,10 +26,14 @@
       "**/examples/",
       "**/dist/",
       "packages/leemons-react/build",
+      "packages/**/dist",
+      "private-plugins/**/dist",
+      "plugins/**/dist",
       "**/data.xlsx",
       "packages/leemons-react/front",
       "**/build.tar.gz",
       "**/cache.js",
+      "apps/dev/",
       "apps/dev/frontend",
       "apps/dev/build",
       "apps/dev/events.json",
@@ -134,6 +147,9 @@
       "**/node_modules/",
       "**/examples/",
       "**/dist/",
+      "plugins/**/dist",
+      "packages/**/dist",
+      "private-plugins/**/dist",
       "packages/leemons-react/build",
       "packages/leemons-react/front",
       "packages/leemons-react/src/templates",
@@ -161,7 +177,7 @@
       "semicolons": "always",
       "arrowParentheses": "always",
       "bracketSameLine": false,
-      "quoteStyle": "single",
+      "quoteStyle": "double",
       "attributePosition": "auto",
       "bracketSpacing": true
     },

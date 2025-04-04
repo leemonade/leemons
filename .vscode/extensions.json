@@ -1,3 +1,7 @@
 {
-  "recommendations": ["biomejs.biome", "sonarsource.sonarlint-vscode", "redhat.vscode-yaml"]
+  "recommendations": [
+    "biomejs.biome",
+    "sonarsource.sonarlint-vscode",
+    "redhat.vscode-yaml"
+  ]
 }
