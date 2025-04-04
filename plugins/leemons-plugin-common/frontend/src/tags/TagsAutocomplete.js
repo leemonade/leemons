@@ -1,20 +1,26 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { isArray, escapeRegExp } from 'lodash';
-import { TagsInput } from '@bubbles-ui/components';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import { useStore } from '../useStore';
-import { TagsService } from './TagsService';
+import React from "react";
+import PropTypes from "prop-types";
+import { isArray, escapeRegExp } from "lodash";
+import { TagsInput } from "@bubbles-ui/components";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import { useStore } from "../useStore";
+import { TagsService } from "./TagsService";
 
-function TagsAutocomplete({ pluginName, type, labels, value: valueProp, ...props }) {
-  const { t: tCommon } = useCommonTranslate('formWithTheme');
+function TagsAutocomplete({
+  pluginName,
+  type,
+  labels,
+  value: valueProp,
+  ...props
+}) {
+  const { t: tCommon } = useCommonTranslate("formWithTheme");
   const [value, setValue] = React.useState(valueProp);
   const [store, render] = useStore({ data: [] });
 
   async function search(text) {
-    const query = { tag: { $regex: escapeRegExp(text), $options: 'i' } };
+    const query = { tag: { $regex: escapeRegExp(text), $options: "i" } };
     if (type) {
-      query.type = type.replace(/\.$/, '');
+      query.type = type.replace(/\.$/, "");
     }
     const result = await TagsService.listTags(pluginName, 0, 10, query);
     store.data = result?.data?.items || [];
@@ -22,7 +28,7 @@ function TagsAutocomplete({ pluginName, type, labels, value: valueProp, ...props
   }
 
   React.useEffect(() => {
-    search('');
+    search("");
   }, []);
 
   React.useEffect(() => {
@@ -33,7 +39,7 @@ function TagsAutocomplete({ pluginName, type, labels, value: valueProp, ...props
     <TagsInput
       {...props}
       value={value}
-      labels={{ ...labels, addButton: labels?.addButton ?? tCommon('add') }}
+      labels={{ ...labels, addButton: labels?.addButton ?? tCommon("add") }}
       suggestions={store.data}
       onSearch={search}
     />

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Button, Text } from '@bubbles-ui/components';
+import React from "react";
+import { Button, Text } from "@bubbles-ui/components";
 
 export function renderAction({ t, classes, cx, replacers, replacer }) {
   const { action, value: cta } = replacer;
@@ -11,7 +11,7 @@ export function renderAction({ t, classes, cx, replacers, replacer }) {
       style={{ padding: 0 }}
     >
       <Text color="primary" className={cx(classes.text, classes.cta)}>
-        {replacer.type === 'actionT' ? t(cta, replacers) : cta}
+        {replacer.type === "actionT" ? t(cta, replacers) : cta}
       </Text>
     </Button>
   );

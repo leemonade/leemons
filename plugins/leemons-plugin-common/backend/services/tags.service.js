@@ -3,12 +3,14 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getServiceModels } = require('../models');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const { LeemonsMongoDBMixin, mongoose } = require("@leemons/mongodb");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
+const { getServiceModels } = require("../models");
 // const restActions = require('./rest/common.rest');
 const {
   getValuesTags,
@@ -21,11 +23,11 @@ const {
   getTagsValues,
   listTags,
   getTagsValueByPartialTags,
-} = require('../core/tags');
+} = require("../core/tags");
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'common.tags',
+  name: "common.tags",
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),

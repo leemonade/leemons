@@ -1,4 +1,4 @@
-const _ = require('lodash');
+const _ = require("lodash");
 
 async function getValuesTags({ type, values, ctx }) {
   let _values = _.isArray(values) ? values : [values];
@@ -16,9 +16,11 @@ async function getValuesTags({ type, values, ctx }) {
 
   const tags = await ctx.tx.db.Tags.find(query).lean();
 
-  const tagsByValue = _.groupBy(tags, 'value');
+  const tagsByValue = _.groupBy(tags, "value");
 
-  return _.map(_values, (value) => (tagsByValue[value] ? _.map(tagsByValue[value], 'tag') : []));
+  return _.map(_values, (value) =>
+    tagsByValue[value] ? _.map(tagsByValue[value], "tag") : []
+  );
 }
 
 module.exports = { getValuesTags };

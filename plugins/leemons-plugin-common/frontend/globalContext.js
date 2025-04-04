@@ -1,11 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState } from "react";
 
-import { LibraryTool } from '@leebrary/components';
-import libraryProcessor from '@leebrary/helpers/libraryProcessor';
-import _ from 'lodash';
-import PropTypes from 'prop-types';
+import { LibraryTool } from "@leebrary/components";
+import libraryProcessor from "@leebrary/helpers/libraryProcessor";
+import _ from "lodash";
+import PropTypes from "prop-types";
 
-import { TextEditorContext, TextEditorProvider } from '@common/context';
+import { TextEditorContext, TextEditorProvider } from "@common/context";
 
 const DEFAULT_TOOLS = {
   library: { tool: <LibraryTool /> },
@@ -16,12 +16,17 @@ const DEFAULT_PROCESSORS = {
 
 export function Provider({ children }) {
   const [textEditorTools, setTextEditorTools] = useState(DEFAULT_TOOLS);
-  const [textEditorProcessors, setTextEditorProcessors] = useState(DEFAULT_PROCESSORS);
+  const [textEditorProcessors, setTextEditorProcessors] =
+    useState(DEFAULT_PROCESSORS);
 
   const setTextEditorTool = (newTools) => {
     const tools = _.cloneDeep(textEditorTools);
     _.forEach(newTools, (tool) => {
-      tools[tool.id] = { tool: tool.tool, props: tool.props, toolbar: tool.toolbar };
+      tools[tool.id] = {
+        tool: tool.tool,
+        props: tool.props,
+        toolbar: tool.toolbar,
+      };
     });
 
     setTextEditorTools(tools);
@@ -31,8 +36,8 @@ export function Provider({ children }) {
     const processors = _.cloneDeep(newProcessor);
 
     _.forEach(newProcessor, (processor) => {
-      if (typeof processor.processor !== 'function') {
-        throw new Error('The processor must be a function');
+      if (typeof processor.processor !== "function") {
+        throw new Error("The processor must be a function");
       }
       processors[processor.id] = processor.processor;
     });
@@ -59,11 +64,11 @@ export function Provider({ children }) {
   React.useEffect(() => {
     // TODO: Buscar todas las imagenes y poner bien la url
     const interval = setInterval(() => {
-      const elements = document.querySelectorAll('[src]');
+      const elements = document.querySelectorAll("[src]");
 
       _.forEach(elements, (element) => {
-        const src = element.getAttribute('src');
-        if (src.startsWith('/api')) {
+        const src = element.getAttribute("src");
+        if (src.startsWith("/api")) {
           // eslint-disable-next-line no-param-reassign
           element.src = leemons.apiUrl + src;
         }

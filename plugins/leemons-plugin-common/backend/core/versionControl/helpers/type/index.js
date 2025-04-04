@@ -1,5 +1,5 @@
-const parseType = require('./parseType');
-const stringifyType = require('./stringifyType');
+const parseType = require("./parseType");
+const stringifyType = require("./stringifyType");
 
 module.exports = {
   parseType,

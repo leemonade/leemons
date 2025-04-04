@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 export const DEFAULT_TOOLBARS = {
   style: true,
@@ -14,13 +14,13 @@ export const DEFAULT_TOOLBARS = {
 };
 
 export const TEXT_EDITOR_INPUT_DEFAULT_PROPS = {
-  placeholder: '',
+  placeholder: "",
   toolbars: DEFAULT_TOOLBARS,
-  label: '',
-  description: '',
-  help: '',
+  label: "",
+  description: "",
+  help: "",
   required: false,
-  error: '',
+  error: "",
   editorStyles: {},
   toolLabels: {},
 };

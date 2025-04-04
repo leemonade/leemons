@@ -1,20 +1,20 @@
-import { useEffect, useMemo, forwardRef } from 'react';
+import { useEffect, useMemo, forwardRef } from "react";
 
-import { Box } from '@bubbles-ui/components';
-import { MathTool } from '@content-creator/components';
-import { keys, isEmpty } from 'lodash';
+import { Box } from "@bubbles-ui/components";
+import { MathTool } from "@content-creator/components";
+import { keys, isEmpty } from "lodash";
 
 import {
   CONTENT_EDITOR_INPUT_DEFAULT_PROPS,
   CONTENT_EDITOR_INPUT_PROP_TYPES,
-} from './ContentEditorInput.constants';
-import { ContentEditorInputStyles } from './ContentEditorInput.styles';
-import { Schema } from './components/Schema/Schema';
-import { TextEditorContent } from './components/TextEditorContent/TextEditorContent';
-import { useContentEditorStore } from './context/ContentEditorInput.context';
+} from "./ContentEditorInput.constants";
+import { ContentEditorInputStyles } from "./ContentEditorInput.styles";
+import { Schema } from "./components/Schema/Schema";
+import { TextEditorContent } from "./components/TextEditorContent/TextEditorContent";
+import { useContentEditorStore } from "./context/ContentEditorInput.context";
 
-import { useTextEditor } from '@common/context';
-import { useEditorLabels } from '@common/hooks/useEditorLabels';
+import { useTextEditor } from "@common/context";
+import { useEditorLabels } from "@common/hooks/useEditorLabels";
 
 const ContentEditorInput = forwardRef(
   (
@@ -33,19 +33,24 @@ const ContentEditorInput = forwardRef(
     ref
   ) => {
     const editorLabels = useEditorLabels();
-    const setIsSchemaOpened = useContentEditorStore((state) => state.setIsSchemaOpened);
+    const setIsSchemaOpened = useContentEditorStore(
+      (state) => state.setIsSchemaOpened
+    );
 
     const { setTextEditorTool, textEditorTools } = useTextEditor();
 
     useEffect(() => {
-      setTextEditorTool([{ id: 'math', tool: <MathTool /> }]);
+      setTextEditorTool([{ id: "math", tool: <MathTool /> }]);
     }, []);
 
     const leemonsTools = useMemo(() => {
       const tools = [];
       if (textEditorTools) {
         keys(textEditorTools).forEach((key) => {
-          if (textEditorTools[key].tool && (toolbars[key] || textEditorTools[key].toolbar)) {
+          if (
+            textEditorTools[key].tool &&
+            (toolbars[key] || textEditorTools[key].toolbar)
+          ) {
             tools.push({
               id: key,
               tool: textEditorTools[key].tool,
@@ -65,7 +70,7 @@ const ContentEditorInput = forwardRef(
 
     const { classes } = ContentEditorInputStyles(
       { hasFooter: !!Footer },
-      { name: 'ContentEditorInput' }
+      { name: "ContentEditorInput" }
     );
 
     useEffect(() => {
@@ -98,6 +103,6 @@ const ContentEditorInput = forwardRef(
 
 ContentEditorInput.defaultProps = CONTENT_EDITOR_INPUT_DEFAULT_PROPS;
 ContentEditorInput.propTypes = CONTENT_EDITOR_INPUT_PROP_TYPES;
-ContentEditorInput.displayName = 'ContentEditorInput';
+ContentEditorInput.displayName = "ContentEditorInput";
 
 export default ContentEditorInput;

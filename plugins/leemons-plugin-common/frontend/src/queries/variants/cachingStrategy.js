@@ -14,12 +14,12 @@
  */
 export function cachingStrategy(strategy) {
   switch (strategy) {
-    case 'cacheable':
+    case "cacheable":
       return { cacheTime: 300000 };
-    case 'non-cacheable':
+    case "non-cacheable":
       return { cacheTime: 0 };
     default:
-      throw new Error('The provided strategy is not valid');
+      throw new Error("The provided strategy is not valid");
   }
 }
 

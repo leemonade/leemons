@@ -1,11 +1,14 @@
-import React, { createContext, useCallback, useContext } from 'react';
-import PropTypes from 'prop-types';
-import { useForm, useWatch as useRhfWatch } from 'react-hook-form';
+import React, { createContext, useCallback, useContext } from "react";
+import PropTypes from "prop-types";
+import { useForm, useWatch as useRhfWatch } from "react-hook-form";
 
 export const ObervableContext = createContext();
 export const useObservableContext = () => useContext(ObervableContext);
 
-export function ObservableContextProvider({ value: defaultValues = {}, children }) {
+export function ObservableContextProvider({
+  value: defaultValues = {},
+  children,
+}) {
   const form = useForm({ defaultValues });
 
   const useWatch = useCallback(
@@ -14,7 +17,9 @@ export function ObservableContextProvider({ value: defaultValues = {}, children 
   );
 
   return (
-    <ObervableContext.Provider value={{ ...form, useWatch }}>{children}</ObervableContext.Provider>
+    <ObervableContext.Provider value={{ ...form, useWatch }}>
+      {children}
+    </ObervableContext.Provider>
   );
 }
 

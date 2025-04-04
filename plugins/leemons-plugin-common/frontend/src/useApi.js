@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from "react";
 
 // eslint-disable-next-line import/prefer-default-export
 export function useApi(uri, options) {
@@ -17,7 +17,10 @@ export function useApi(uri, options) {
   // ES: Función para consultar datos
   useEffect(() => {
     let isActive = true;
-    const func = typeof uri === 'function' ? () => uri(options) : () => leemons.api(uri, options);
+    const func =
+      typeof uri === "function"
+        ? () => uri(options)
+        : () => leemons.api(uri, options);
 
     if (loading !== true) {
       setLoading(true);

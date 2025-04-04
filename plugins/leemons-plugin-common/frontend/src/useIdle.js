@@ -1,4 +1,4 @@
-import { useIdle as _useIdle } from '@bubbles-ui/components';
+import { useIdle as _useIdle } from "@bubbles-ui/components";
 
 export function useIdle(time, config) {
   const idle = _useIdle(time, config);

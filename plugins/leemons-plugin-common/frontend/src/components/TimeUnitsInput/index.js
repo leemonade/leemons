@@ -1,14 +1,19 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import PropTypes from 'prop-types';
-import { unflatten } from '@common';
-import { NumberInput, Select, Stack, InputWrapper } from '@bubbles-ui/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { get } from 'lodash';
-import prefixPN from '../../helpers/prefixPN';
+import React, { useState, useEffect, useMemo } from "react";
+import PropTypes from "prop-types";
+import { unflatten } from "@common";
+import {
+  NumberInput,
+  Select,
+  Stack,
+  InputWrapper,
+} from "@bubbles-ui/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { get } from "lodash";
+import prefixPN from "../../helpers/prefixPN";
 
 export function useTimeUnitsInputLocalizations() {
   // key is string
-  const key = prefixPN('timeUnits');
+  const key = prefixPN("timeUnits");
   const [, translations] = useTranslateLoader(key);
 
   return useMemo(() => {
@@ -27,15 +32,21 @@ export function useTimeUnitsInputLocalizations() {
   });
 }
 
-export default function TimeUnitsInput({ onChange, value: userValue, min, max, ...props }) {
+export default function TimeUnitsInput({
+  onChange,
+  value: userValue,
+  min,
+  max,
+  ...props
+}) {
   const labels = useTimeUnitsInputLocalizations();
 
   const [value, setValue] = useState(0);
-  const [units, setUnits] = useState('minutes');
+  const [units, setUnits] = useState("minutes");
   const [time, setTime] = useState(`${value} ${units}`);
 
   useEffect(() => {
-    if (typeof onChange === 'function') {
+    if (typeof onChange === "function") {
       onChange(time);
     }
   }, [time]);
@@ -56,15 +67,15 @@ export default function TimeUnitsInput({ onChange, value: userValue, min, max, .
     }
   };
   const handleNumberInput = (event) => {
-    const validValue = event.target.value.slice(0, 3).replace(/\D/g, '');
+    const validValue = event.target.value.slice(0, 3).replace(/\D/g, "");
     event.target.value = validValue;
   };
 
   useEffect(() => {
     if (userValue !== time && userValue !== undefined) {
       try {
-        const [v, ...u] = userValue.split(' ');
-        handleChange(parseInt(v, 10), u.join(' '));
+        const [v, ...u] = userValue.split(" ");
+        handleChange(parseInt(v, 10), u.join(" "));
       } catch (e) {
         // EN: Sometimes, the value is not valid, so we ignore it
         // ES: Algunas veces, el valor no es válido, por lo que lo ignoramos
@@ -90,15 +101,15 @@ export default function TimeUnitsInput({ onChange, value: userValue, min, max, .
           data={[
             {
               label: labels.minutes,
-              value: 'minutes',
+              value: "minutes",
             },
             {
               label: labels.hours,
-              value: 'hours',
+              value: "hours",
             },
             {
               label: labels.days,
-              value: 'days',
+              value: "days",
             },
           ]}
         />

@@ -1,10 +1,10 @@
-const parseVersion = require('./parseVersion');
-const stringifyVersion = require('./stringifyVersion');
+const parseVersion = require("./parseVersion");
+const stringifyVersion = require("./stringifyVersion");
 
 module.exports = function isValidVersion({ version, ctx }) {
   try {
-    if (typeof version === 'string') {
-      if (['latest', 'current', 'published', 'draft'].includes(version)) {
+    if (typeof version === "string") {
+      if (["latest", "current", "published", "draft"].includes(version)) {
         return true;
       }
       parseVersion({ version, ctx });

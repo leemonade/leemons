@@ -1,8 +1,8 @@
 const {
   mongoDBPaginateAggregationPipeline,
   EMPTY_PAGINATED_RESULT,
-} = require('@leemons/mongodb-helpers');
-const _ = require('lodash');
+} = require("@leemons/mongodb-helpers");
+const _ = require("lodash");
 
 async function listTags({ page, size, query = {}, ctx }) {
   const pipeline = [
@@ -16,13 +16,13 @@ async function listTags({ page, size, query = {}, ctx }) {
     },
     {
       $group: {
-        _id: '$tag',
+        _id: "$tag",
       },
     },
     {
       $group: {
         _id: null,
-        tags: { $push: '$_id' },
+        tags: { $push: "$_id" },
       },
     },
     {
@@ -30,7 +30,7 @@ async function listTags({ page, size, query = {}, ctx }) {
         _id: 0,
       },
     },
-    ...mongoDBPaginateAggregationPipeline({ page, size, path: '$tags' }),
+    ...mongoDBPaginateAggregationPipeline({ page, size, path: "$tags" }),
   ];
 
   const results = await ctx.tx.db.Tags.aggregate(pipeline);

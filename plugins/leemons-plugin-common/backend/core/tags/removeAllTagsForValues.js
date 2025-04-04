@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { validateTypePrefix } = require('../../validation/validate');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { validateTypePrefix } = require("../../validation/validate");
 
 async function removeAllTagsForValues({ type, values, ctx }) {
   validateTypePrefix({ type, calledFrom: ctx.callerPlugin, ctx });

@@ -1,1 +1,1 @@
-export { useVariantForQueryKey } from './useVariantForQueryKey';
+export { useVariantForQueryKey } from "./useVariantForQueryKey";

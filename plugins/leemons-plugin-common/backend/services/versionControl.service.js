@@ -3,19 +3,29 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsCacheMixin } = require('@leemons/cache');
-const { LeemonsMongoDBMixin, mongoose } = require('@leemons/mongodb');
-const { LeemonsDeploymentManagerMixin } = require('@leemons/deployment-manager');
-const { LeemonsMiddlewaresMixin } = require('@leemons/middlewares');
-const { LeemonsMQTTMixin } = require('@leemons/mqtt');
-const { getServiceModels } = require('../models');
-const { getVersion, publishVersion } = require('../core/versionControl/versions');
-const { create, remove, get, update } = require('../core/versionControl/currentVersions');
-const upgradeVersion = require('../core/versionControl/versions/upgradeVersion');
-const removeVersionService = require('../core/versionControl/versions/removeVersionService');
-const list = require('../core/versionControl/currentVersions/list');
-const listVersions = require('../core/versionControl/versions/listVersions');
-const listVersionOfType = require('../core/versionControl/versions/listVersionOfType');
+const { LeemonsCacheMixin } = require("@leemons/cache");
+const { LeemonsMongoDBMixin, mongoose } = require("@leemons/mongodb");
+const {
+  LeemonsDeploymentManagerMixin,
+} = require("@leemons/deployment-manager");
+const { LeemonsMiddlewaresMixin } = require("@leemons/middlewares");
+const { LeemonsMQTTMixin } = require("@leemons/mqtt");
+const { getServiceModels } = require("../models");
+const {
+  getVersion,
+  publishVersion,
+} = require("../core/versionControl/versions");
+const {
+  create,
+  remove,
+  get,
+  update,
+} = require("../core/versionControl/currentVersions");
+const upgradeVersion = require("../core/versionControl/versions/upgradeVersion");
+const removeVersionService = require("../core/versionControl/versions/removeVersionService");
+const list = require("../core/versionControl/currentVersions/list");
+const listVersions = require("../core/versionControl/versions/listVersions");
+const listVersionOfType = require("../core/versionControl/versions/listVersionOfType");
 const {
   parseId,
   stringifyId,
@@ -24,11 +34,11 @@ const {
   isValidVersion,
   parseVersion,
   stringifyVersion,
-} = require('../core/versionControl/helpers');
+} = require("../core/versionControl/helpers");
 
 /** @type {ServiceSchema} */
 module.exports = {
-  name: 'common.versionControl',
+  name: "common.versionControl",
   version: 1,
   mixins: [
     LeemonsMiddlewaresMixin(),

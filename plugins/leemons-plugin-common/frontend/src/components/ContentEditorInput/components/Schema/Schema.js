@@ -1,20 +1,25 @@
-import React, { useEffect } from 'react';
-import { Box, TextClamp, FileItemDisplay, Title } from '@bubbles-ui/components';
-import { ComputerKeyboardNextIcon } from '@bubbles-ui/icons/solid';
-import { SchemaStyles } from './Schema.styles';
-import { SCHEMA_DEFAULT_PROPS, SCHEMA_PROP_TYPES } from './Schema.constants';
-import { useContentEditorStore } from '../../context/ContentEditorInput.context';
+import React, { useEffect } from "react";
+import { Box, TextClamp, FileItemDisplay, Title } from "@bubbles-ui/components";
+import { ComputerKeyboardNextIcon } from "@bubbles-ui/icons/solid";
+import { SchemaStyles } from "./Schema.styles";
+import { SCHEMA_DEFAULT_PROPS, SCHEMA_PROP_TYPES } from "./Schema.constants";
+import { useContentEditorStore } from "../../context/ContentEditorInput.context";
 
 // eslint-disable-next-line import/prefer-default-export
 export const Schema = ({ schemaLabel, compact }) => {
   const schema = useContentEditorStore((state) => state.schema);
   const isSchemaOpened = useContentEditorStore((state) => state.isSchemaOpened);
-  const setIsSchemaOpened = useContentEditorStore((state) => state.setIsSchemaOpened);
+  const setIsSchemaOpened = useContentEditorStore(
+    (state) => state.setIsSchemaOpened
+  );
 
   useEffect(() => {
     setIsSchemaOpened(true);
   }, []);
-  const { classes } = SchemaStyles({ isSchemaOpened, compact }, { name: 'ContentEditor-Schema' });
+  const { classes } = SchemaStyles(
+    { isSchemaOpened, compact },
+    { name: "ContentEditor-Schema" }
+  );
 
   const scrollElementIntoView = (element) => {
     const containerElement = element.parentElement;
@@ -23,8 +28,8 @@ export const Schema = ({ schemaLabel, compact }) => {
 
     containerElement.focus({ preventScroll: true });
     element.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
+      behavior: "smooth",
+      block: "center",
     });
 
     range.setStart(element, 1);
@@ -35,9 +40,9 @@ export const Schema = ({ schemaLabel, compact }) => {
   };
 
   const levelStyles = {
-    1: 'titleOne',
-    2: 'titleTwo',
-    3: 'titleThree',
+    1: "titleOne",
+    2: "titleTwo",
+    3: "titleThree",
   };
 
   return (
@@ -56,11 +61,12 @@ export const Schema = ({ schemaLabel, compact }) => {
         </Box>
         <Box className={classes.schema}>
           {schema?.map((element, index) => {
-            const acceptedElements = ['heading'];
-            const isLibrary = element.type === 'library';
+            const acceptedElements = ["heading"];
+            const isLibrary = element.type === "library";
             // If the element is not a heading level 1 or 2, is not an accepted element or it has no content return false.
             if (
-              (element.type === 'heading' && (element.attrs.level > 3 || !element.content)) ||
+              (element.type === "heading" &&
+                (element.attrs.level > 3 || !element.content)) ||
               !acceptedElements.includes(element.type)
             )
               return undefined;
@@ -76,8 +82,12 @@ export const Schema = ({ schemaLabel, compact }) => {
                 className={classes.schemaElement}
               >
                 {isLibrary ? (
-                  <Box style={{ overflow: 'hidden', paddingLeft: 10 }}>
-                    <FileItemDisplay size={16} filename={schemaElementName} noBreak />
+                  <Box style={{ overflow: "hidden", paddingLeft: 10 }}>
+                    <FileItemDisplay
+                      size={16}
+                      filename={schemaElementName}
+                      noBreak
+                    />
                   </Box>
                 ) : (
                   <TextClamp lines={1}>

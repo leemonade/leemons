@@ -1,27 +1,27 @@
-const _ = require('lodash');
-const list = require('../currentVersions/list');
-const { parseId, stringifyId, stringifyVersion } = require('../helpers');
-const getVersion = require('./getVersion');
+const _ = require("lodash");
+const list = require("../currentVersions/list");
+const { parseId, stringifyId, stringifyVersion } = require("../helpers");
+const getVersion = require("./getVersion");
 
 function getDesiredVersion({ current, published, preferCurrent }) {
-  if (current && preferCurrent && (published === true || published === 'all')) {
+  if (current && preferCurrent && (published === true || published === "all")) {
     return current;
   }
 
-  if (published === 'all') {
-    return 'latest';
+  if (published === "all") {
+    return "latest";
   }
 
   if (published === false) {
-    return 'draft';
+    return "draft";
   }
-  return 'published';
+  return "published";
 }
 
 module.exports = async function listVersionOfType({
   type,
   allVersions = false,
-  published = 'all',
+  published = "all",
   preferCurrent = true,
   ctx,
 }) {
@@ -45,12 +45,19 @@ module.exports = async function listVersionOfType({
     await parseId({
       id: listOfEntities.map((entity) => ({
         id: entity.uuid,
-        version: getDesiredVersion({ current: entity.current, published, preferCurrent }),
+        version: getDesiredVersion({
+          current: entity.current,
+          published,
+          preferCurrent,
+        }),
       })),
       ignoreMissing: true,
       ctx,
     })
   ).filter(Boolean);
-  const result = await getVersion({ id: parsedIds.map((id) => id.fullId), ctx });
+  const result = await getVersion({
+    id: parsedIds.map((id) => id.fullId),
+    ctx,
+  });
   return _.compact(result);
 };

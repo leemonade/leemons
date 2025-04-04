@@ -1,10 +1,19 @@
-const { LeemonsError } = require('@leemons/error');
-const get = require('../currentVersions/get');
-const { parseId, parseVersion } = require('../helpers');
-const getVersion = require('./getVersion');
+const { LeemonsError } = require("@leemons/error");
+const get = require("../currentVersions/get");
+const { parseId, parseVersion } = require("../helpers");
+const getVersion = require("./getVersion");
 
-module.exports = async function createVersion({ id, version, published = false, ctx }) {
-  const { uuid, version: v, fullId } = await parseId({ id: { id, version }, ctx });
+module.exports = async function createVersion({
+  id,
+  version,
+  published = false,
+  ctx,
+}) {
+  const {
+    uuid,
+    version: v,
+    fullId,
+  } = await parseId({ id: { id, version }, ctx });
   const { major, minor, patch } = parseVersion({ version: v, ctx });
 
   // EN: Check if uuid exists
@@ -13,17 +22,21 @@ module.exports = async function createVersion({ id, version, published = false, 
     await get({ uuid, ctx });
   } catch (e) {
     throw new LeemonsError(ctx, {
-      message: "The uuid doesn't exist in the version control system or you don't have permissions",
+      message:
+        "The uuid doesn't exist in the version control system or you don't have permissions",
     });
   }
 
   try {
-    const existingVersion = await getVersion({ id: { id: fullId, version: v }, ctx });
+    const existingVersion = await getVersion({
+      id: { id: fullId, version: v },
+      ctx,
+    });
     if (existingVersion) {
-      throw new LeemonsError(ctx, { message: 'Version already exists' });
+      throw new LeemonsError(ctx, { message: "Version already exists" });
     }
   } catch (e) {
-    if (e.message === 'Version already exists') {
+    if (e.message === "Version already exists") {
       throw e;
     }
     // EN: The version does not exists, so we can create it

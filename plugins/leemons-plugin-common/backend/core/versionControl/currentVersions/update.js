@@ -1,11 +1,11 @@
-const { LeemonsError } = require('@leemons/error');
-const { stringifyVersion } = require('../helpers');
-const getVersion = require('../versions/getVersion');
+const { LeemonsError } = require("@leemons/error");
+const { stringifyVersion } = require("../helpers");
+const getVersion = require("../versions/getVersion");
 
 module.exports = async function update({ uuid, version, ctx }) {
   let v = version;
 
-  if (v !== null && typeof v !== 'string') {
+  if (v !== null && typeof v !== "string") {
     v = await stringifyVersion({ ...version, ctx });
   }
 
@@ -32,7 +32,10 @@ module.exports = async function update({ uuid, version, ctx }) {
       { new: true, lean: true }
     );
 
-    return { uuid: versionedEntity.id, currentPublished: versionedEntity.published };
+    return {
+      uuid: versionedEntity.id,
+      currentPublished: versionedEntity.published,
+    };
   } catch (e) {
     throw new LeemonsError(ctx, {
       message: `The uuid ${uuid} does not exist in the version control system`,

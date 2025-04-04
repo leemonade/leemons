@@ -1,12 +1,23 @@
-const { LeemonsError } = require('@leemons/error');
-const { keyBy } = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const { keyBy } = require("lodash");
 
-const get = require('../currentVersions/get');
-const { parseId, parseVersion, stringifyVersion, stringifyId } = require('../helpers');
+const get = require("../currentVersions/get");
+const {
+  parseId,
+  parseVersion,
+  stringifyVersion,
+  stringifyId,
+} = require("../helpers");
 
-const specialVersions = ['latest', 'current', 'published', 'draft'];
+const specialVersions = ["latest", "current", "published", "draft"];
 
-async function getVersionsInfo({ ids, published, ignoreMissing, uuidsInfo, ctx }) {
+async function getVersionsInfo({
+  ids,
+  published,
+  ignoreMissing,
+  uuidsInfo,
+  ctx,
+}) {
   const query = {};
   let sortQuery = {};
 
@@ -19,18 +30,18 @@ async function getVersionsInfo({ ids, published, ignoreMissing, uuidsInfo, ctx }
       subQuery.published = published;
     }
 
-    if (['latest', 'published', 'draft'].includes(version)) {
-      sortQuery = { major: 'desc', minor: 'desc', patch: 'desc' };
+    if (["latest", "published", "draft"].includes(version)) {
+      sortQuery = { major: "desc", minor: "desc", patch: "desc" };
 
-      if (version === 'published') {
+      if (version === "published") {
         subQuery.published = true;
-      } else if (version === 'draft') {
+      } else if (version === "draft") {
         subQuery.published = false;
       }
     } else {
       let v = version;
 
-      if (version === 'current') {
+      if (version === "current") {
         const { current } = uuidsInfo.find((info) => info.uuid === uuid);
         v = current;
       }
@@ -45,15 +56,15 @@ async function getVersionsInfo({ ids, published, ignoreMissing, uuidsInfo, ctx }
   });
 
   // If sortQuery is empty the query won't be sort.
-  const versionsFound = (await ctx.tx.db.Versions.find(query).sort(sortQuery).lean()).map(
-    (version) => ({
-      ...version,
-      version: stringifyVersion({ ...version, ctx }),
-    })
-  );
+  const versionsFound = (
+    await ctx.tx.db.Versions.find(query).sort(sortQuery).lean()
+  ).map((version) => ({
+    ...version,
+    version: stringifyVersion({ ...version, ctx }),
+  }));
 
   if (!versionsFound?.length && !ignoreMissing) {
-    throw new LeemonsError(ctx, { message: 'Versions not found' });
+    throw new LeemonsError(ctx, { message: "Versions not found" });
   }
 
   return versionsFound;
@@ -73,21 +84,21 @@ async function getLatestVersion({ versions, ctx }) {
     },
     {
       $group: {
-        _id: '$uuid',
-        major: { $first: '$major' },
-        minor: { $first: '$minor' },
-        patch: { $first: '$patch' },
+        _id: "$uuid",
+        major: { $first: "$major" },
+        minor: { $first: "$minor" },
+        patch: { $first: "$patch" },
       },
     },
   ];
 
   const latestVersions = await ctx.tx.db.Versions.aggregate(pipeline);
 
-  return keyBy(latestVersions, '_id');
+  return keyBy(latestVersions, "_id");
 }
 
 async function getCurrentInfo({ versions, uuidsInfo, ctx }) {
-  const uuidsInfoByUuid = keyBy(uuidsInfo, 'uuid');
+  const uuidsInfoByUuid = keyBy(uuidsInfo, "uuid");
   const uuids = Object.keys(uuidsInfoByUuid);
 
   const latestVersions = await getLatestVersion({
@@ -135,7 +146,11 @@ async function getVersionMany({
   });
 
   if (getLatestInfo) {
-    versionsFound = await getCurrentInfo({ versions: versionsFound, uuidsInfo, ctx });
+    versionsFound = await getCurrentInfo({
+      versions: versionsFound,
+      uuidsInfo,
+      ctx,
+    });
   }
 
   return parsedIds.map(({ version, uuid }) => {
@@ -146,7 +161,7 @@ async function getVersionMany({
 
     if (!versionFound) {
       if (!ignoreMissing) {
-        throw new LeemonsError(ctx, { message: 'Versions not found' });
+        throw new LeemonsError(ctx, { message: "Versions not found" });
       } else {
         return null;
       }
@@ -170,7 +185,13 @@ async function getVersionMany({
   });
 }
 
-module.exports = async function getVersion({ id, published, ignoreMissing, getLatestInfo, ctx }) {
+module.exports = async function getVersion({
+  id,
+  published,
+  ignoreMissing,
+  getLatestInfo,
+  ctx,
+}) {
   const isArray = Array.isArray(id);
   const ids = isArray ? id : [id];
 

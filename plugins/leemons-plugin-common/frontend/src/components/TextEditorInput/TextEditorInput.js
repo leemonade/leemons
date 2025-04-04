@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
-import { isEmpty, keys } from 'lodash';
-import { Box, InputWrapper, useId } from '@bubbles-ui/components';
+import React, { useMemo } from "react";
+import { isEmpty, keys } from "lodash";
+import { Box, InputWrapper, useId } from "@bubbles-ui/components";
 import {
   TextEditor,
   ColorTool,
@@ -10,14 +10,14 @@ import {
   TextAlignTool,
   ScriptsTool,
   LinkTool,
-} from '@bubbles-ui/editors';
-import { useTextEditor } from '@common/context';
-import { useEditorLabels } from '@common/hooks/useEditorLabels';
-import { TextEditorInputStyles } from './TextEditorInput.styles';
+} from "@bubbles-ui/editors";
+import { useTextEditor } from "@common/context";
+import { useEditorLabels } from "@common/hooks/useEditorLabels";
+import { TextEditorInputStyles } from "./TextEditorInput.styles";
 import {
   TEXT_EDITOR_INPUT_DEFAULT_PROPS,
   TEXT_EDITOR_INPUT_PROP_TYPES,
-} from './TextEditorInput.constants';
+} from "./TextEditorInput.constants";
 
 export function useProcessTextEditor() {
   const { textEditorProcessors } = useTextEditor();
@@ -77,7 +77,7 @@ export const TextEditorInput = ({
   const hasError = useMemo(() => !isEmpty(error), [error]);
   const { classes, cx } = TextEditorInputStyles(
     { hasError, editorStyles },
-    { name: 'TextEditorInput' }
+    { name: "TextEditorInput" }
   );
 
   if (isEmpty(editorLabels)) return null;
@@ -99,12 +99,22 @@ export const TextEditorInput = ({
           onChange={onChange}
           editorClassname={cx(classes.editor, editorClassname)}
         >
-          {toolbars.heading && <HeadingsTool labels={editorLabels.headingsTool} />}
+          {toolbars.heading && (
+            <HeadingsTool labels={editorLabels.headingsTool} />
+          )}
           {toolbars.color && <ColorTool label={editorLabels.colorTool} />}
-          {toolbars.style && <TransformsTool labels={editorLabels.transformsTool} />}
-          {toolbars.align && <TextAlignTool labels={editorLabels.textAlignTool} />}
-          {toolbars.list && <ListIndentTool labels={editorLabels.listIndentTool} />}
-          {toolbars.formulation && <ScriptsTool labels={editorLabels.scriptsTool} />}
+          {toolbars.style && (
+            <TransformsTool labels={editorLabels.transformsTool} />
+          )}
+          {toolbars.align && (
+            <TextAlignTool labels={editorLabels.textAlignTool} />
+          )}
+          {toolbars.list && (
+            <ListIndentTool labels={editorLabels.listIndentTool} />
+          )}
+          {toolbars.formulation && (
+            <ScriptsTool labels={editorLabels.scriptsTool} />
+          )}
           {toolbars.link && <LinkTool {...editorLabels.linkTool} />}
 
           {leemonsTools.map((item, i) =>

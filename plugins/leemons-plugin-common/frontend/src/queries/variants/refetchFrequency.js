@@ -18,34 +18,41 @@
  * }}
  */
 export function refetchFrequency(strategies) {
-  if (strategies.includes('none') && strategies.length > 1) {
-    throw new Error('Strategy none is non compatible with the other ones');
+  if (strategies.includes("none") && strategies.length > 1) {
+    throw new Error("Strategy none is non compatible with the other ones");
   }
 
   const obj = {};
 
   strategies.forEach((strategy) => {
     switch (strategy?.strategy ?? strategy) {
-      case 'automatically':
-        if (typeof strategy === 'string' || typeof strategy.frequency !== 'number') {
-          throw new Error('The automatically strategy must be an object with a frequency time');
+      case "automatically":
+        if (
+          typeof strategy === "string" ||
+          typeof strategy.frequency !== "number"
+        ) {
+          throw new Error(
+            "The automatically strategy must be an object with a frequency time"
+          );
         }
 
         obj.refetchInterval = strategy.frequency;
         break;
-      case 'onReconnect':
-        obj.refetchOnReconnect = strategy?.enabled === undefined ? true : !!strategy.enabled;
+      case "onReconnect":
+        obj.refetchOnReconnect =
+          strategy?.enabled === undefined ? true : !!strategy.enabled;
         break;
-      case 'onFocus':
-        obj.refetchOnWindowFocus = strategy?.enabled === undefined ? true : !!strategy.enabled;
+      case "onFocus":
+        obj.refetchOnWindowFocus =
+          strategy?.enabled === undefined ? true : !!strategy.enabled;
         break;
-      case 'none':
+      case "none":
         obj.refetchInterval = false;
         obj.refetchOnReconnect = false;
         obj.refetchOnWindowFocus = false;
         break;
       default:
-        throw new Error('The provided strategy is not valid');
+        throw new Error("The provided strategy is not valid");
     }
   });
 

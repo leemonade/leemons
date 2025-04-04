@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { isFunction } from 'lodash';
+import { useEffect } from "react";
+import { isFunction } from "lodash";
 
 // eslint-disable-next-line import/prefer-default-export
 export function useAsync(asyncFn, onSuccess = () => {}, onError = () => {}) {

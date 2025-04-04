@@ -1,9 +1,12 @@
 function getDictionary() {
   function validateDictionary(dictionary) {
     for (let i = 0; i < dictionary.length; i++) {
-      if (dictionary.indexOf(dictionary[i]) !== dictionary.lastIndexOf(dictionary[i])) {
+      if (
+        dictionary.indexOf(dictionary[i]) !==
+        dictionary.lastIndexOf(dictionary[i])
+      ) {
         console.log(
-          'Error: The dictionary in use has at least one repeating symbol:',
+          "Error: The dictionary in use has at least one repeating symbol:",
           dictionary[i]
         );
         return undefined;
@@ -12,7 +15,7 @@ function getDictionary() {
     return dictionary;
   }
 
-  return validateDictionary('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+  return validateDictionary("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
 }
 
 // eslint-disable-next-line import/prefer-default-export
@@ -35,7 +38,7 @@ export function numberToEncodedLetter(_number) {
       return undefined;
     }
     if (num === 0) {
-      return '';
+      return "";
     }
     return dictionary.slice(num - 1, num);
   }

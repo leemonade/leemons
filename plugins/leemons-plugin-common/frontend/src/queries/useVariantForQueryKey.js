@@ -1,10 +1,14 @@
-import React from 'react';
+import React from "react";
 
-import { useCache } from '@common/useCache';
-import { useQueryClient } from '@tanstack/react-query';
-import { isEqual } from 'lodash';
+import { useCache } from "@common/useCache";
+import { useQueryClient } from "@tanstack/react-query";
+import { isEqual } from "lodash";
 
-import { cachingStrategy, modificationTrend, refetchFrequency } from './variants';
+import {
+  cachingStrategy,
+  modificationTrend,
+  refetchFrequency,
+} from "./variants";
 
 /**
  * @typedef {import('./types').QueryKey} QueryKey
@@ -27,11 +31,21 @@ export function useVariantForQueryKey(queryKey, variants) {
   React.useEffect(() => {
     let queryOptions = {};
 
-    if (variants.cachingStrategy || variants.modificationTrend || variants.refetchFrequency) {
+    if (
+      variants.cachingStrategy ||
+      variants.modificationTrend ||
+      variants.refetchFrequency
+    ) {
       queryOptions = {
-        ...(variants.cachingStrategy ? cachingStrategy(variants.cachingStrategy) : {}),
-        ...(variants.modificationTrend ? modificationTrend(variants.modificationTrend) : {}),
-        ...(variants.refetchFrequency ? refetchFrequency(variants.refetchFrequency) : {}),
+        ...(variants.cachingStrategy
+          ? cachingStrategy(variants.cachingStrategy)
+          : {}),
+        ...(variants.modificationTrend
+          ? modificationTrend(variants.modificationTrend)
+          : {}),
+        ...(variants.refetchFrequency
+          ? refetchFrequency(variants.refetchFrequency)
+          : {}),
       };
     } else {
       queryOptions = variants;
@@ -42,7 +56,7 @@ export function useVariantForQueryKey(queryKey, variants) {
     if (!queryDefaults || !isEqual(queryDefaults, queryOptions)) {
       queryClient.setQueryDefaults(queryKey, queryOptions);
     }
-  }, [queryClient, queryKey, cache('variants', variants)]);
+  }, [queryClient, queryKey, cache("variants", variants)]);
 }
 
 export default useVariantForQueryKey;

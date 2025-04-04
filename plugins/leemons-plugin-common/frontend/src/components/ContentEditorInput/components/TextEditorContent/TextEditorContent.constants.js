@@ -1,15 +1,15 @@
-import PropTypes from 'prop-types';
-import { DEFAULT_TOOLBARS } from '../../../TextEditorInput/TextEditorInput.constants';
+import PropTypes from "prop-types";
+import { DEFAULT_TOOLBARS } from "../../../TextEditorInput/TextEditorInput.constants";
 
 export const TEXTEDITOR_CONTENT_DEFAULT_PROPS = {
-  placeholder: '',
+  placeholder: "",
   toolbars: DEFAULT_TOOLBARS,
   toolLabels: {},
   editorLabels: {},
-  schemaLabel: '',
+  schemaLabel: "",
   required: false,
-  error: '',
-  value: '',
+  error: "",
+  value: "",
   editorStyles: {},
   openSchema: false,
   useSchema: false,

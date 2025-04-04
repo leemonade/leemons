@@ -1,11 +1,11 @@
 /* eslint-disable global-require */
 
-const { getKeyValueModel } = require('@leemons/mongodb-helpers');
+const { getKeyValueModel } = require("@leemons/mongodb-helpers");
 
 const models = {
-  ...require('./currentVersions'),
-  ...require('./tags'),
-  ...require('./versions'),
+  ...require("./currentVersions"),
+  ...require("./tags"),
+  ...require("./versions"),
 };
 
 module.exports = {
@@ -15,7 +15,7 @@ module.exports = {
       CurrentVersions: models.currentVersionsModel,
       Tags: models.tagsModel,
       Versions: models.versionsModel,
-      KeyValue: getKeyValueModel({ modelName: 'v1::common_KeyValue' }),
+      KeyValue: getKeyValueModel({ modelName: "v1::common_KeyValue" }),
     };
   },
 };

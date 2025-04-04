@@ -13,18 +13,18 @@
  */
 export function modificationTrend(strategy) {
   switch (strategy) {
-    case 'constantly':
+    case "constantly":
       return { staleTime: 0 };
-    case 'frequently':
+    case "frequently":
       return { staleTime: 20000 };
-    case 'standard':
+    case "standard":
       return { staleTime: 120000 };
-    case 'lazy':
+    case "lazy":
       return { staleTime: 300000 };
-    case 'occasionally':
+    case "occasionally":
       return { staleTime: Infinity };
     default:
-      throw new Error('The provided strategy is not valid');
+      throw new Error("The provided strategy is not valid");
   }
 }
 

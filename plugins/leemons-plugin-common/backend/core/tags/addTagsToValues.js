@@ -1,6 +1,6 @@
-const _ = require('lodash');
-const { LeemonsError } = require('@leemons/error');
-const { validateTypePrefix } = require('../../validation/validate');
+const _ = require("lodash");
+const { LeemonsError } = require("@leemons/error");
+const { validateTypePrefix } = require("../../validation/validate");
 
 async function addTagsToValues({ type, tags, values, ctx }) {
   validateTypePrefix({ type, calledFrom: ctx.callerPlugin, ctx });
@@ -21,7 +21,9 @@ async function addTagsToValues({ type, tags, values, ctx }) {
   _.forEach(_tags, (tag) => {
     _.forEach(_values, (value) => {
       promises.push(
-        ctx.tx.db.Tags.create({ type, tag, value }).then((mongooseDoc) => mongooseDoc.toObject())
+        ctx.tx.db.Tags.create({ type, tag, value }).then((mongooseDoc) =>
+          mongooseDoc.toObject()
+        )
       );
     });
   });

@@ -1,9 +1,9 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { isArray } from 'lodash';
-import { MultiSelect, useDebouncedCallback } from '@bubbles-ui/components';
-import { useStore } from '../useStore';
-import { TagsService } from './TagsService';
+import React from "react";
+import PropTypes from "prop-types";
+import { isArray } from "lodash";
+import { MultiSelect, useDebouncedCallback } from "@bubbles-ui/components";
+import { useStore } from "../useStore";
+import { TagsService } from "./TagsService";
 
 function TagsMultiSelect({ pluginName, type, ...props }) {
   if (!isArray(props.value)) {
@@ -16,7 +16,7 @@ function TagsMultiSelect({ pluginName, type, ...props }) {
 
   async function search(text) {
     callback(async () => {
-      const query = { tag: { $regex: text, $options: 'i' } };
+      const query = { tag: { $regex: text, $options: "i" } };
       if (type) query.type = type;
       const result = await TagsService.listTags(pluginName, 0, 10, query);
       store.data = result.data.items;
@@ -30,7 +30,7 @@ function TagsMultiSelect({ pluginName, type, ...props }) {
   }
 
   React.useEffect(() => {
-    search('');
+    search("");
   }, []);
 
   return (

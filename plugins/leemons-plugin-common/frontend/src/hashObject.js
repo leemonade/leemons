@@ -1,4 +1,4 @@
-import hash from 'object-hash';
+import hash from "object-hash";
 
 function hashObject(obj) {
   return hash(obj);

@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import { Box, IconButton } from '@bubbles-ui/components';
+import { Box, IconButton } from "@bubbles-ui/components";
 import {
   TextEditor,
   ColorTool,
@@ -11,18 +11,20 @@ import {
   ScriptsTool,
   LinkTool,
   ButtonGroup,
-} from '@bubbles-ui/editors';
-import { ExpandDiagonalIcon, ShrinkIcon } from '@bubbles-ui/icons/outline';
+} from "@bubbles-ui/editors";
+import { ExpandDiagonalIcon, ShrinkIcon } from "@bubbles-ui/icons/outline";
 
-import { useContentEditorStore } from '../../context/ContentEditorInput.context';
+import { useContentEditorStore } from "../../context/ContentEditorInput.context";
 
 import {
   TEXTEDITOR_CONTENT_DEFAULT_PROPS,
   TEXTEDITOR_CONTENT_PROP_TYPES,
-} from './TextEditorContent.constants';
-import { TextEditorContentStyles } from './TextEditorContent.styles';
+} from "./TextEditorContent.constants";
+import { TextEditorContentStyles } from "./TextEditorContent.styles";
 
-const CONTENT_EDITOR_ACCEPTED_TAGS = [{ type: 'library', updateWithoutContent: true }];
+const CONTENT_EDITOR_ACCEPTED_TAGS = [
+  { type: "library", updateWithoutContent: true },
+];
 
 const TextEditorContent = ({
   editorStyles,
@@ -48,7 +50,7 @@ const TextEditorContent = ({
 
   const { classes, cx } = TextEditorContentStyles(
     { editorStyles, fullWidth, compact },
-    { name: 'TextEditorContent' }
+    { name: "TextEditorContent" }
   );
 
   return (
@@ -75,12 +77,22 @@ const TextEditorContent = ({
         toolbarPortal={toolbarPortal}
         ref={ref}
       >
-        {toolbars.heading && <HeadingsTool labels={editorLabels.headingsTool} />}
+        {toolbars.heading && (
+          <HeadingsTool labels={editorLabels.headingsTool} />
+        )}
         {toolbars.color && <ColorTool label={editorLabels.colorTool} />}
-        {toolbars.style && <TransformsTool labels={editorLabels.transformsTool} />}
-        {toolbars.align && <TextAlignTool labels={editorLabels.textAlignTool} />}
-        {toolbars.list && <ListIndentTool labels={editorLabels.listIndentTool} />}
-        {toolbars.formulation && <ScriptsTool labels={editorLabels.scriptsTool} />}
+        {toolbars.style && (
+          <TransformsTool labels={editorLabels.transformsTool} />
+        )}
+        {toolbars.align && (
+          <TextAlignTool labels={editorLabels.textAlignTool} />
+        )}
+        {toolbars.list && (
+          <ListIndentTool labels={editorLabels.listIndentTool} />
+        )}
+        {toolbars.formulation && (
+          <ScriptsTool labels={editorLabels.scriptsTool} />
+        )}
 
         <ButtonGroup>
           {toolbars.link && <LinkTool {...editorLabels.linkTool} />}

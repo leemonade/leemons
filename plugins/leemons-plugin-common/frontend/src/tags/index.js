@@ -1,3 +1,3 @@
-export * from './TagsAutocomplete';
-export * from './TagsMultiSelect';
-export * from './TagsService';
+export * from "./TagsAutocomplete";
+export * from "./TagsMultiSelect";
+export * from "./TagsService";

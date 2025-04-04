@@ -1,9 +1,9 @@
-const { LeemonsError } = require('@leemons/error');
-const isValidVersion = require('../versions/isValidVersion');
-const stringifyVersion = require('../versions/stringifyVersion');
-const stringifyId = require('./stringifyId');
+const { LeemonsError } = require("@leemons/error");
+const isValidVersion = require("../versions/isValidVersion");
+const stringifyVersion = require("../versions/stringifyVersion");
+const stringifyId = require("./stringifyId");
 
-const specialVersions = ['latest', 'current', 'published', 'draft'];
+const specialVersions = ["latest", "current", "published", "draft"];
 
 /**
  * Parses an array of IDs and versions, optionally verifies versions, and returns an array of parsed IDs.
@@ -22,20 +22,20 @@ const specialVersions = ['latest', 'current', 'published', 'draft'];
 
 async function parseIdMany({ ids, verifyVersion = true, ignoreMissing, ctx }) {
   const parsedIds = ids.map((fullId) => {
-    const fullIdIsString = typeof fullId === 'string';
+    const fullIdIsString = typeof fullId === "string";
     const id = fullIdIsString ? fullId : fullId.id;
-    const _version = fullIdIsString ? null : fullId.version ?? null;
+    const _version = fullIdIsString ? null : (fullId.version ?? null);
 
-    if (typeof id !== 'string' || !id?.length) {
-      throw new LeemonsError(ctx, { message: 'fullId must be a string' });
+    if (typeof id !== "string" || !id?.length) {
+      throw new LeemonsError(ctx, { message: "fullId must be a string" });
     }
 
     // eslint-disable-next-line prefer-const
-    let [uuid, version] = id.split('@');
+    let [uuid, version] = id.split("@");
 
     if (_version) {
       version = _version;
-      if (typeof _version !== 'string') {
+      if (typeof _version !== "string") {
         try {
           version = stringifyVersion({ ..._version, ctx });
         } catch (e) {
@@ -62,7 +62,7 @@ async function parseIdMany({ ids, verifyVersion = true, ignoreMissing, ctx }) {
   );
 
   if (idsWithSpecialVersions?.length) {
-    const versionsInfo = await ctx.tx.call('common.versionControl.getVersion', {
+    const versionsInfo = await ctx.tx.call("common.versionControl.getVersion", {
       id: idsWithSpecialVersions.map((v) => v.fullId),
       ignoreMissing,
     });
@@ -77,7 +77,9 @@ async function parseIdMany({ ids, verifyVersion = true, ignoreMissing, ctx }) {
       }
 
       if (!isValidVersion({ version: info.version, ctx })) {
-        throw new LeemonsError(ctx, { message: 'The provided version must be valid' });
+        throw new LeemonsError(ctx, {
+          message: "The provided version must be valid",
+        });
       }
 
       idsWithSpecialVersions[i].version = info.version;
@@ -103,11 +105,21 @@ async function parseIdMany({ ids, verifyVersion = true, ignoreMissing, ctx }) {
  * @throws {LeemonsError} If any ID is not a string or is empty, or if version verification fails.
  */
 
-module.exports = async function parseId({ id, verifyVersion = true, ignoreMissing = false, ctx }) {
+module.exports = async function parseId({
+  id,
+  verifyVersion = true,
+  ignoreMissing = false,
+  ctx,
+}) {
   const isArray = Array.isArray(id);
   const ids = isArray ? id : [id];
 
-  const parsedIds = await parseIdMany({ ids, verifyVersion, ignoreMissing, ctx });
+  const parsedIds = await parseIdMany({
+    ids,
+    verifyVersion,
+    ignoreMissing,
+    ctx,
+  });
 
   if (isArray) {
     return parsedIds;
