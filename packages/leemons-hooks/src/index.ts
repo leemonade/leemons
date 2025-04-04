@@ -19,3 +19,13 @@ export {
   removeFilter,
   removeAction,
 };
+
+export default {
+  fireEvent,
+  addFilter,
+  addAction,
+  getFilters,
+  getActions,
+  removeFilter,
+  removeAction,
+}
