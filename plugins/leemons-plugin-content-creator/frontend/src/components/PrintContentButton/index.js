@@ -1,1 +1,1 @@
-export * from './PrintContentButton';
+export * from "./PrintContentButton";

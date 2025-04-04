@@ -1,6 +1,6 @@
-import uploadFileAsMultipart from '@leebrary/helpers/uploadFileAsMultipart';
+import uploadFileAsMultipart from "@leebrary/helpers/uploadFileAsMultipart";
 
-const { cloneDeep, isString } = require('lodash');
+const { cloneDeep, isString } = require("lodash");
 
 async function saveDocument(_body) {
   const body = cloneDeep(_body);
@@ -17,7 +17,9 @@ async function saveDocument(_body) {
       } else if (_body.cover.id) {
         data.cover = _body.cover.id;
       } else {
-        data.cover = await uploadFileAsMultipart(_body.cover, { name: _body.cover.name });
+        data.cover = await uploadFileAsMultipart(_body.cover, {
+          name: _body.cover.name,
+        });
       }
     }
     if (_body.featuredImage) {
@@ -36,9 +38,9 @@ async function saveDocument(_body) {
     form.data = JSON.stringify(body);
   }
 
-  return leemons.api('v1/content-creator/document', {
+  return leemons.api("v1/content-creator/document", {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: form,
   });
 }
@@ -46,21 +48,21 @@ async function saveDocument(_body) {
 async function getDocument(id) {
   return leemons.api(`v1/content-creator/document/${id}`, {
     allAgents: true,
-    method: 'GET',
+    method: "GET",
   });
 }
 
 async function deleteDocument(id) {
   return leemons.api(`v1/content-creator/document/${id}`, {
     allAgents: true,
-    method: 'DELETE',
+    method: "DELETE",
   });
 }
 
 async function duplicateDocument(id, published) {
   return leemons.api(`v1/content-creator/document/duplicate`, {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: {
       id,
       published,
@@ -71,7 +73,7 @@ async function duplicateDocument(id, published) {
 async function assignDocument(id, data) {
   return leemons.api(`v1/content-creator/document/assign`, {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: {
       id,
       data,
@@ -82,7 +84,7 @@ async function assignDocument(id, data) {
 async function shareDocument(id, { canAccess }) {
   return leemons.api(`v1/content-creator/document/share`, {
     allAgents: true,
-    method: 'POST',
+    method: "POST",
     body: {
       assignableId: id,
       canAccess,

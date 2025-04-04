@@ -1,13 +1,13 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Box, createStyles } from '@bubbles-ui/components';
+import React from "react";
+import PropTypes from "prop-types";
+import { Box, createStyles } from "@bubbles-ui/components";
 
 export const PageContentStyles = createStyles((theme) => {
   const globalTheme = theme.other.global;
   return {
     root: {
-      display: 'flex',
-      flexDirection: 'column',
+      display: "flex",
+      flexDirection: "column",
       gap: 24,
       backgroundColor: globalTheme.background.color.surface.subtle,
       paddingLeft: 48,

@@ -1,15 +1,19 @@
-import React from 'react';
-import { Route, Switch, useRouteMatch } from 'react-router-dom';
-import loadable from '@loadable/component';
-import pMinDelay from 'p-min-delay';
-import { LoadingOverlay } from '@bubbles-ui/components';
-import { useSession } from '@users/session';
-import { goLoginPage } from '@users/navigate';
+import React from "react";
+import { Route, Switch, useRouteMatch } from "react-router-dom";
+import loadable from "@loadable/component";
+import pMinDelay from "p-min-delay";
+import { LoadingOverlay } from "@bubbles-ui/components";
+import { useSession } from "@users/session";
+import { goLoginPage } from "@users/navigate";
 
-const DocumentList = loadable(() => pMinDelay(import('./src/pages/List'), 500));
-const DocumentDetail = loadable(() => pMinDelay(import('./src/pages/Detail'), 500));
-const DocumentAssign = loadable(() => pMinDelay(import('./src/pages/Assign'), 500));
-const DocumentView = loadable(() => pMinDelay(import('./src/pages/View'), 500));
+const DocumentList = loadable(() => pMinDelay(import("./src/pages/List"), 500));
+const DocumentDetail = loadable(() =>
+  pMinDelay(import("./src/pages/Detail"), 500)
+);
+const DocumentAssign = loadable(() =>
+  pMinDelay(import("./src/pages/Assign"), 500)
+);
+const DocumentView = loadable(() => pMinDelay(import("./src/pages/View"), 500));
 
 export default function Private() {
   const { path } = useRouteMatch();
@@ -18,7 +22,10 @@ export default function Private() {
   return (
     <Switch>
       <Route path={`${path}/:id/assign`}>
-        <DocumentAssign session={session} fallback={<LoadingOverlay visible />} />
+        <DocumentAssign
+          session={session}
+          fallback={<LoadingOverlay visible />}
+        />
       </Route>
       <Route path={`${path}/view/:id/:user`}>
         <DocumentView session={session} fallback={<LoadingOverlay visible />} />
@@ -27,13 +34,25 @@ export default function Private() {
         <DocumentView session={session} fallback={<LoadingOverlay visible />} />
       </Route>
       <Route path={`${path}/new`}>
-        <DocumentDetail session={session} fallback={<LoadingOverlay visible />} isNew key="new" />
+        <DocumentDetail
+          session={session}
+          fallback={<LoadingOverlay visible />}
+          isNew
+          key="new"
+        />
       </Route>
       <Route path={`${path}/:id/edit`}>
-        <DocumentDetail session={session} fallback={<LoadingOverlay visible />} />
+        <DocumentDetail
+          session={session}
+          fallback={<LoadingOverlay visible />}
+        />
       </Route>
       <Route path={`${path}/:id/view`}>
-        <DocumentDetail session={session} fallback={<LoadingOverlay visible />} readOnly />
+        <DocumentDetail
+          session={session}
+          fallback={<LoadingOverlay visible />}
+          readOnly
+        />
       </Route>
       <Route path={`${path}`}>
         <DocumentList session={session} fallback={<LoadingOverlay visible />} />

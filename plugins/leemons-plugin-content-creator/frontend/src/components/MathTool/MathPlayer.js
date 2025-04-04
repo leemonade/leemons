@@ -1,11 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
-import { NodeViewWrapper } from '@bubbles-ui/editors';
-import katex from 'katex';
-import { MathPlayerStyles } from './MathPlayer.styles';
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import PropTypes from "prop-types";
+import { NodeViewWrapper } from "@bubbles-ui/editors";
+import katex from "katex";
+import { MathPlayerStyles } from "./MathPlayer.styles";
 
 const MathPlayer = ({ node, editor }) => {
-  const [view, setView] = useState('latex');
+  const [view, setView] = useState("latex");
   const { classes } = MathPlayerStyles({});
   const { latex } = node.attrs;
 
@@ -16,29 +16,32 @@ const MathPlayer = ({ node, editor }) => {
     const currentRef = wrapperRef.current;
 
     const handleBlur = () => {
-      setView('formula');
+      setView("formula");
       if (currentRef) {
-        currentRef.removeEventListener('blur', handleBlur, true);
+        currentRef.removeEventListener("blur", handleBlur, true);
       }
     };
     const handleFocus = () => {
-      setView('latex');
+      setView("latex");
       currentRef.focus();
       if (currentRef) {
-        setTimeout(() => currentRef.addEventListener('blur', handleBlur, true), 300);
+        setTimeout(
+          () => currentRef.addEventListener("blur", handleBlur, true),
+          300
+        );
       }
     };
 
     // Don't remove this setView. Without it, the editor will not register the changes in latex formulas
-    setView('formula');
+    setView("formula");
 
     if (currentRef && editor && editor.isEditable) {
-      currentRef.addEventListener('focus', handleFocus, true);
+      currentRef.addEventListener("focus", handleFocus, true);
     }
 
     return () => {
       if (currentRef) {
-        currentRef.removeEventListener('focus', handleFocus, true);
+        currentRef.removeEventListener("focus", handleFocus, true);
       }
     };
   }, []);
@@ -50,12 +53,12 @@ const MathPlayer = ({ node, editor }) => {
 
     const currentRef = editorRef.current;
     if (currentRef && editor && editor.isEditable) {
-      currentRef.addEventListener('input', handleChange, true); // Use capture phase for blur
+      currentRef.addEventListener("input", handleChange, true); // Use capture phase for blur
     }
 
     return () => {
       if (currentRef) {
-        currentRef.removeEventListener('input', handleChange, true);
+        currentRef.removeEventListener("input", handleChange, true);
       }
     };
   }, []);
@@ -70,8 +73,11 @@ const MathPlayer = ({ node, editor }) => {
 
   const content = useMemo(
     () =>
-      view !== 'latex' ? (
-        <span contentEditable={true} dangerouslySetInnerHTML={{ __html: formatText }}></span>
+      view !== "latex" ? (
+        <span
+          contentEditable={true}
+          dangerouslySetInnerHTML={{ __html: formatText }}
+        ></span>
       ) : (
         <span contentEditable={true} ref={editorRef}>
           {latex}
@@ -83,7 +89,7 @@ const MathPlayer = ({ node, editor }) => {
   return (
     <NodeViewWrapper
       ref={wrapperRef}
-      className={view === 'latex' ? classes.wrapperLatex : classes.wrapperMath}
+      className={view === "latex" ? classes.wrapperLatex : classes.wrapperMath}
     >
       <div>{content}</div>
     </NodeViewWrapper>

@@ -1,3 +1,3 @@
-export * from './icons';
-export * from './MathTool';
-export * from './PrintContentButton';
+export * from "./icons";
+export * from "./MathTool";
+export * from "./PrintContentButton";

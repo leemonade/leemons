@@ -5,4 +5,4 @@ export {
   deleteDocument as deleteDocumentRequest,
   assignDocument as assignDocumentRequest,
   duplicateDocument as duplicateDocumentRequest,
-} from './document';
+} from "./document";

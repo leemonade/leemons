@@ -1,17 +1,22 @@
 /* eslint-disable no-param-reassign */
-const { LeemonsError } = require('@leemons/error');
-const _ = require('lodash');
+const { LeemonsError } = require("@leemons/error");
+const _ = require("lodash");
 
 async function getDocument({ id, ctx }) {
   // Check is userSession is provided
   if (!ctx.meta.userSession)
-    throw new LeemonsError(ctx, { message: 'User session is required (getDocument)' });
+    throw new LeemonsError(ctx, {
+      message: "User session is required (getDocument)",
+    });
 
   const ids = _.isArray(id) ? id : [id];
 
   const assignablesResult = await Promise.all(
     _.map(ids, (_id) =>
-      ctx.tx.call('assignables.assignables.getAssignable', { id: _id, withFiles: true })
+      ctx.tx.call("assignables.assignables.getAssignable", {
+        id: _id,
+        withFiles: true,
+      })
     )
   );
 
@@ -24,17 +29,19 @@ async function getDocument({ id, ctx }) {
     }
   });
 
-  const documentAssets = await ctx.tx.call('leebrary.assets.getByIds', {
+  const documentAssets = await ctx.tx.call("leebrary.assets.getByIds", {
     ids: imagesIds,
     withFiles: true,
   });
 
-  const documentAssetsById = _.keyBy(documentAssets, 'id');
+  const documentAssetsById = _.keyBy(documentAssets, "id");
 
-  const assignableIds = _.map(assignables, 'id');
-  const documents = await ctx.tx.db.Documents.find({ assignable: assignableIds }).lean();
+  const assignableIds = _.map(assignables, "id");
+  const documents = await ctx.tx.db.Documents.find({
+    assignable: assignableIds,
+  }).lean();
 
-  const documentsById = _.keyBy(documents, 'assignable');
+  const documentsById = _.keyBy(documents, "assignable");
 
   const result = _.map(assignables, (assignable) => ({
     id: assignable.id,

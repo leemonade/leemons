@@ -1,4 +1,4 @@
-const { mongoose, newModel } = require('@leemons/mongodb');
+const { mongoose, newModel } = require("@leemons/mongodb");
 
 const schema = new mongoose.Schema(
   {
@@ -26,6 +26,10 @@ const schema = new mongoose.Schema(
   }
 );
 
-const documentsModel = newModel(mongoose.connection, 'v1::content-creator_Documents', schema);
+const documentsModel = newModel(
+  mongoose.connection,
+  "v1::content-creator_Documents",
+  schema
+);
 
 module.exports = { documentsModel };

@@ -1,1 +1,1 @@
-export * from './ContentCreatorCardIcon';
+export * from "./ContentCreatorCardIcon";

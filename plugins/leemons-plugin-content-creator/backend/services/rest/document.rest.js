@@ -7,7 +7,7 @@
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
+} = require("@leemons/middlewares");
 const {
   saveDocument,
   getDocument,
@@ -15,10 +15,10 @@ const {
   duplicateDocument,
   assignDocument,
   shareDocument,
-} = require('../../core/document');
+} = require("../../core/document");
 const {
   permissions: { names: permissions },
-} = require('../../config/constants');
+} = require("../../config/constants");
 
 const getPermissions = (permissionsArr, actions = null) => {
   if (Array.isArray(permissionsArr)) {
@@ -26,7 +26,9 @@ const getPermissions = (permissionsArr, actions = null) => {
       (obj, [permission, _actions]) => ({
         ...obj,
         [permission]: {
-          actions: _actions.includes('admin') ? _actions : ['admin', ..._actions],
+          actions: _actions.includes("admin")
+            ? _actions
+            : ["admin", ..._actions],
         },
       }),
       {}
@@ -34,7 +36,7 @@ const getPermissions = (permissionsArr, actions = null) => {
   }
   return {
     [permissionsArr]: {
-      actions: actions.includes('admin') ? actions : ['admin', ...actions],
+      actions: actions.includes("admin") ? actions : ["admin", ...actions],
     },
   };
 };
@@ -43,13 +45,16 @@ const getPermissions = (permissionsArr, actions = null) => {
 module.exports = {
   saveDocumentRest: {
     rest: {
-      method: 'POST',
-      path: '/',
+      method: "POST",
+      path: "/",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        allowedPermissions: getPermissions(permissions.creator, ['create', 'update']),
+        allowedPermissions: getPermissions(permissions.creator, [
+          "create",
+          "update",
+        ]),
       }),
     ],
     async handler(ctx) {
@@ -60,8 +65,8 @@ module.exports = {
   },
   getDocumentRest: {
     rest: {
-      method: 'GET',
-      path: '/:id',
+      method: "GET",
+      path: "/:id",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -71,13 +76,13 @@ module.exports = {
   },
   deleteDocumentRest: {
     rest: {
-      method: 'DELETE',
-      path: '/:id',
+      method: "DELETE",
+      path: "/:id",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        allowedPermissions: getPermissions(permissions.creator, ['delete']),
+        allowedPermissions: getPermissions(permissions.creator, ["delete"]),
       }),
     ],
     async handler(ctx) {
@@ -87,13 +92,16 @@ module.exports = {
   },
   duplicateDocumentRest: {
     rest: {
-      method: 'POST',
-      path: '/duplicate',
+      method: "POST",
+      path: "/duplicate",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        allowedPermissions: getPermissions(permissions.creator, ['create', 'update']),
+        allowedPermissions: getPermissions(permissions.creator, [
+          "create",
+          "update",
+        ]),
       }),
     ],
     async handler(ctx) {
@@ -107,13 +115,16 @@ module.exports = {
   },
   assignDocumentRest: {
     rest: {
-      method: 'POST',
-      path: '/assign',
+      method: "POST",
+      path: "/assign",
     },
     middlewares: [
       LeemonsMiddlewareAuthenticated(),
       LeemonsMiddlewareNecessaryPermits({
-        allowedPermissions: getPermissions(permissions.creator, ['create', 'update']),
+        allowedPermissions: getPermissions(permissions.creator, [
+          "create",
+          "update",
+        ]),
       }),
     ],
     async handler(ctx) {
@@ -124,13 +135,17 @@ module.exports = {
   },
   shareDocumentRest: {
     rest: {
-      method: 'POST',
-      path: '/share',
+      method: "POST",
+      path: "/share",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
       const { assignableId, canAccess } = ctx.params;
-      const docPermissions = await shareDocument({ id: assignableId, canAccess, ctx });
+      const docPermissions = await shareDocument({
+        id: assignableId,
+        canAccess,
+        ctx,
+      });
       return { status: 200, docPermissions };
     },
   },

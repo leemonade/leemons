@@ -1,57 +1,67 @@
-import { useHistory } from 'react-router-dom';
+import { useHistory } from "react-router-dom";
 
-import { useIsStudent } from '@academic-portfolio/hooks';
-import { ViewOnIcon } from '@bubbles-ui/icons/outline';
-import useRequestErrorMessage from '@common/useRequestErrorMessage';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import { LibraryDetail } from '@leebrary/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import PropTypes from 'prop-types';
+import { useIsStudent } from "@academic-portfolio/hooks";
+import { ViewOnIcon } from "@bubbles-ui/icons/outline";
+import useRequestErrorMessage from "@common/useRequestErrorMessage";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import { LibraryDetail } from "@leebrary/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import PropTypes from "prop-types";
 
-import { AssetMetadataContentCreator } from '@content-creator/components/AssetMetadataContentCreator';
-import prefixPN from '@content-creator/helpers/prefixPN';
-import { deleteDocumentRequest, duplicateDocumentRequest } from '@content-creator/request';
+import { AssetMetadataContentCreator } from "@content-creator/components/AssetMetadataContentCreator";
+import prefixPN from "@content-creator/helpers/prefixPN";
+import {
+  deleteDocumentRequest,
+  duplicateDocumentRequest,
+} from "@content-creator/request";
 
-const DocumentDetail = ({ asset, onRefresh, onPin, onUnpin, onShare, ...props }) => {
+const DocumentDetail = ({
+  asset,
+  onRefresh,
+  onPin,
+  onUnpin,
+  onShare,
+  ...props
+}) => {
   const isStudent = useIsStudent();
   const history = useHistory();
-  const [t] = useTranslateLoader(prefixPN('documentCard'));
+  const [t] = useTranslateLoader(prefixPN("documentCard"));
   const {
     openConfirmationModal,
     openDeleteConfirmationModal,
     setLoading: setAppLoading,
   } = useLayout();
   const [, , , getErrorMessage] = useRequestErrorMessage();
-  const toolbarItems = { toggle: t('toggle'), open: t('open') };
+  const toolbarItems = { toggle: t("toggle"), open: t("open") };
 
   // ·········································································
   // HANDLERS
   if (asset?.id) {
     if (asset.editable) {
-      toolbarItems.edit = t('edit');
+      toolbarItems.edit = t("edit");
     }
     if (asset.deleteable) {
-      toolbarItems.delete = t('delete');
+      toolbarItems.delete = t("delete");
     }
     if (asset.providerData?.published && !isStudent) {
-      toolbarItems.assign = t('assign');
+      toolbarItems.assign = t("assign");
     }
     if (asset.duplicable) {
-      toolbarItems.duplicate = t('duplicate');
+      toolbarItems.duplicate = t("duplicate");
     }
     if (asset.providerData?.published && asset.shareable) {
-      toolbarItems.share = t('share');
+      toolbarItems.share = t("share");
     }
     if (asset.pinneable) {
       if (asset.pinned === false) {
-        toolbarItems.pin = t('pin');
+        toolbarItems.pin = t("pin");
       }
       if (asset.pinned === true) {
-        toolbarItems.unpin = t('unpin');
+        toolbarItems.unpin = t("unpin");
       }
     }
-    toolbarItems.printPDF = t('download');
+    toolbarItems.printPDF = t("download");
   }
 
   function handleOnPin(item) {
@@ -80,7 +90,7 @@ const DocumentDetail = ({ asset, onRefresh, onPin, onUnpin, onShare, ...props })
         try {
           setAppLoading(true);
           await deleteDocumentRequest(asset.providerData.id);
-          addSuccessAlert(t('deleted'));
+          addSuccessAlert(t("deleted"));
           onRefresh();
         } catch (err) {
           addErrorAlert(getErrorMessage(err));
@@ -95,8 +105,11 @@ const DocumentDetail = ({ asset, onRefresh, onPin, onUnpin, onShare, ...props })
       onConfirm: async () => {
         try {
           setAppLoading(true);
-          await duplicateDocumentRequest(asset.providerData.id, asset.providerData.published);
-          addSuccessAlert(t('duplicated'));
+          await duplicateDocumentRequest(
+            asset.providerData.id,
+            asset.providerData.published
+          );
+          addSuccessAlert(t("duplicated"));
           onRefresh();
         } catch (err) {
           addErrorAlert(getErrorMessage(err));
@@ -121,8 +134,8 @@ const DocumentDetail = ({ asset, onRefresh, onPin, onUnpin, onShare, ...props })
       }}
       metadataComponent={<AssetMetadataContentCreator metadata={asset} />}
       variant="document"
-      isEmbedded={props.variant === 'embedded'}
-      variantTitle={t('document')}
+      isEmbedded={props.variant === "embedded"}
+      variantTitle={t("document")}
       toolbarItems={toolbarItems}
       titleActionButton={
         asset?.providerData?.published

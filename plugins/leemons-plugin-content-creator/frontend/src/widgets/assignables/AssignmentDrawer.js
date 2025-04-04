@@ -1,26 +1,31 @@
-import { useCallback } from 'react';
-import { useForm, FormProvider, Controller } from 'react-hook-form';
+import { useCallback } from "react";
+import { useForm, FormProvider, Controller } from "react-hook-form";
 
-import { useFormLocalizations } from '@assignables/components/Assignment/Form';
-import { Instructions } from '@assignables/components/Assignment/components/Instructions';
+import { useFormLocalizations } from "@assignables/components/Assignment/Form";
+import { Instructions } from "@assignables/components/Assignment/components/Instructions";
 import {
   Box,
   Button,
   createStyles,
   ContextContainer,
   TotalLayoutFooterContainer,
-} from '@bubbles-ui/components';
-import PropTypes from 'prop-types';
+} from "@bubbles-ui/components";
+import PropTypes from "prop-types";
 
 export const useAssignmentDrawerStyles = createStyles(() => ({
   buttons: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'end',
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "end",
   },
 }));
 
-export default function AssignmentDrawer({ value, onSave, onClose, scrollRef }) {
+export default function AssignmentDrawer({
+  value,
+  onSave,
+  onClose,
+  scrollRef,
+}) {
   const localizations = useFormLocalizations();
   const form = useForm({
     defaultValues: value,
@@ -48,7 +53,11 @@ export default function AssignmentDrawer({ value, onSave, onClose, scrollRef }) 
             control={form.control}
             name="instructions"
             render={({ field }) => (
-              <Instructions {...field} localizations={localizations?.instructions} hideDivider />
+              <Instructions
+                {...field}
+                localizations={localizations?.instructions}
+                hideDivider
+              />
             )}
           />
         </ContextContainer>
@@ -58,7 +67,9 @@ export default function AssignmentDrawer({ value, onSave, onClose, scrollRef }) 
         style={{ right: 0 }}
         scrollRef={scrollRef}
         width={728}
-        rightZone={<Button onClick={onSubmit}>{localizations?.buttons?.save}</Button>}
+        rightZone={
+          <Button onClick={onSubmit}>{localizations?.buttons?.save}</Button>
+        }
         leftZone={
           <Button variant="link" onClick={onClose}>
             {localizations?.buttons?.cancel}

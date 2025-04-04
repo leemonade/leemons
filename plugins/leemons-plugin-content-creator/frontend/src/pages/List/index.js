@@ -1,19 +1,25 @@
-import React from 'react';
-import { Box, PageHeader, createStyles, TabPanel, Tabs } from '@bubbles-ui/components';
+import React from "react";
+import {
+  Box,
+  PageHeader,
+  createStyles,
+  TabPanel,
+  Tabs,
+} from "@bubbles-ui/components";
 // import { AdminPageHeader } from '@bubbles-ui/leemons';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import prefixPN from '@content-creator/helpers/prefixPN';
-import { useStore, useQuery } from '@common';
-import useCommonTranslate from '@multilanguage/helpers/useCommonTranslate';
-import { useHistory } from 'react-router-dom';
-import { getPermissionsWithActionsIfIHaveRequest } from '@users/request';
-import AssetList from '@leebrary/components/AssetList';
-import { prepareAsset } from '@leebrary/helpers/prepareAsset';
-import { DocumentIcon } from '@content-creator/components';
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import prefixPN from "@content-creator/helpers/prefixPN";
+import { useStore, useQuery } from "@common";
+import useCommonTranslate from "@multilanguage/helpers/useCommonTranslate";
+import { useHistory } from "react-router-dom";
+import { getPermissionsWithActionsIfIHaveRequest } from "@users/request";
+import AssetList from "@leebrary/components/AssetList";
+import { prepareAsset } from "@leebrary/helpers/prepareAsset";
+import { DocumentIcon } from "@content-creator/components";
 
 const ListPageStyles = createStyles((theme) => ({
   tabPane: {
-    display: 'flex',
+    display: "flex",
     flex: 1,
     paddingTop: theme.spacing[5],
     paddingBottom: theme.spacing[5],
@@ -21,8 +27,8 @@ const ListPageStyles = createStyles((theme) => ({
 }));
 
 export default function List() {
-  const [t] = useTranslateLoader(prefixPN('documentList'));
-  const { t: tCommon } = useCommonTranslate('page_header');
+  const [t] = useTranslateLoader(prefixPN("documentList"));
+  const { t: tCommon } = useCommonTranslate("page_header");
   const [currentAsset, setCurrentAsset] = React.useState(null);
   const { fromDraft } = useQuery();
 
@@ -38,18 +44,18 @@ export default function List() {
 
   async function getPermissions() {
     const { permissions } = await getPermissionsWithActionsIfIHaveRequest([
-      'content-creator.creator',
+      "content-creator.creator",
     ]);
     if (permissions[0]) {
       store.canAdd =
-        permissions[0].actionNames.includes('create') ||
-        permissions[0].actionNames.includes('admin');
+        permissions[0].actionNames.includes("create") ||
+        permissions[0].actionNames.includes("admin");
       render();
     }
   }
 
   function goCreatePage() {
-    history.push('/private/content-creator/new');
+    history.push("/private/content-creator/new");
   }
 
   function goDetailPage(asset) {
@@ -65,25 +71,25 @@ export default function List() {
   const { classes } = ListPageStyles({});
 
   return (
-    <Box style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <Box style={{ height: "100vh", display: "flex", flexDirection: "column" }}>
       <PageHeader
         values={{
-          title: t('pageTitle'),
+          title: t("pageTitle"),
         }}
         icon={<DocumentIcon />}
-        buttons={store.canAdd ? { new: tCommon('new') } : {}}
+        buttons={store.canAdd ? { new: tCommon("new") } : {}}
         onNew={() => goCreatePage()}
         fullWidth
       />
       <Tabs
-        defaultActiveKey={fromDraft ? '1' : '0'}
+        defaultActiveKey={fromDraft ? "1" : "0"}
         panelColor="solid"
         usePageLayout
         fullWidth
         fullHeight
         onTabClick={() => setCurrentAsset(null)}
       >
-        <TabPanel label={t('published')}>
+        <TabPanel label={t("published")}>
           <Box className={classes.tabPane}>
             <AssetList
               canShowPublicToggle={false}
@@ -93,11 +99,11 @@ export default function List() {
               variant="embedded"
               category="assignables.content-creator"
               onSelectItem={goDetailPage}
-              roles={['owner']}
+              roles={["owner"]}
             />
           </Box>
         </TabPanel>
-        <TabPanel label={t('draft')}>
+        <TabPanel label={t("draft")}>
           <Box className={classes.tabPane}>
             <AssetList
               canShowPublicToggle={false}
@@ -107,7 +113,7 @@ export default function List() {
               variant="embedded"
               category="assignables.content-creator"
               onSelectItem={goDetailPage}
-              roles={['owner']}
+              roles={["owner"]}
             />
           </Box>
         </TabPanel>

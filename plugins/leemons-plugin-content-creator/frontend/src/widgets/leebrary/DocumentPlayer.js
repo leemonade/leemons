@@ -1,23 +1,23 @@
-import { Box } from '@bubbles-ui/components';
-import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import propTypes from 'prop-types';
+import { Box } from "@bubbles-ui/components";
+import ContentEditorInput from "@common/components/ContentEditorInput/ContentEditorInput";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import propTypes from "prop-types";
 
-import prefixPN from '@content-creator/helpers/prefixPN';
-import useDocument from '@content-creator/request/hooks/queries/useDocument';
+import prefixPN from "@content-creator/helpers/prefixPN";
+import useDocument from "@content-creator/request/hooks/queries/useDocument";
 
 function DocumentPlayer({ asset }) {
   const { data: document } = useDocument({ id: asset?.providerData?.id });
-  const [t] = useTranslateLoader(prefixPN('contentCreatorDetail'));
+  const [t] = useTranslateLoader(prefixPN("contentCreatorDetail"));
   return (
     <Box style={{ width: 500 }}>
       <ContentEditorInput
         useSchema
         compact
         fullWidth
-        schemaLabel={t('schemaLabel')}
+        schemaLabel={t("schemaLabel")}
         labels={{
-          format: t('formatLabel'),
+          format: t("formatLabel"),
         }}
         value={document?.content}
         openLibraryModal={false}

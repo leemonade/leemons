@@ -1,8 +1,8 @@
-import React from 'react';
+import React from "react";
 import {
   CONTENTCREATOR_CARD_ICON_PROP_TYPES,
   CONTENTCREATOR_CARD_ICON_DEFAULT_PROPS,
-} from './ContentCreatorCardIcon.constants';
+} from "./ContentCreatorCardIcon.constants";
 
 const ContentCreatorCardIcon = ({ width, height, color }) => (
   <svg
@@ -26,6 +26,6 @@ const ContentCreatorCardIcon = ({ width, height, color }) => (
 ContentCreatorCardIcon.defaultProps = CONTENTCREATOR_CARD_ICON_DEFAULT_PROPS;
 ContentCreatorCardIcon.propTypes = CONTENTCREATOR_CARD_ICON_PROP_TYPES;
 
-ContentCreatorCardIcon.displayName = 'ContentCreatorCardIcon';
+ContentCreatorCardIcon.displayName = "ContentCreatorCardIcon";
 export default ContentCreatorCardIcon;
 export { ContentCreatorCardIcon };

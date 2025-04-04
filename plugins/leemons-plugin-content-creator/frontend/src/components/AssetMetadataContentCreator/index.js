@@ -1,1 +1,1 @@
-export * from './AssetMetadataContentCreator';
+export * from "./AssetMetadataContentCreator";

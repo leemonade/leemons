@@ -1,9 +1,9 @@
 /* eslint-disable no-bitwise */
 const extractH1AndH2Content = (htmlString) => {
   const parser = new DOMParser();
-  const doc = parser.parseFromString(htmlString, 'text/html');
-  const h1Elements = Array.from(doc.querySelectorAll('h1'));
-  const h2Elements = Array.from(doc.querySelectorAll('h2'));
+  const doc = parser.parseFromString(htmlString, "text/html");
+  const h1Elements = Array.from(doc.querySelectorAll("h1"));
+  const h2Elements = Array.from(doc.querySelectorAll("h2"));
 
   return [...h1Elements, ...h2Elements]
     .sort((a, b) => {

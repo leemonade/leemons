@@ -1,2 +1,2 @@
-export * from './MathTool';
-export * from './MathPlayer';
+export * from "./MathTool";
+export * from "./MathPlayer";

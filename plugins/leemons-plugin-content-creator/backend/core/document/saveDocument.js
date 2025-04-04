@@ -1,15 +1,17 @@
 /* eslint-disable no-param-reassign */
-const { LeemonsError } = require('@leemons/error');
-const _ = require('lodash');
-const { validateSaveDocument } = require('../../validations/forms');
-const createDocument = require('./createDocument');
-const updateDocument = require('./updateDocument');
+const { LeemonsError } = require("@leemons/error");
+const _ = require("lodash");
+const { validateSaveDocument } = require("../../validations/forms");
+const createDocument = require("./createDocument");
+const updateDocument = require("./updateDocument");
 
 async function saveDocument({ data: _data, ctx }) {
   const data = _.cloneDeep(_data);
   // Check is userSession is provided
   if (!ctx.meta.userSession)
-    throw new LeemonsError(ctx, { message: 'User session is required (saveDocument)' });
+    throw new LeemonsError(ctx, {
+      message: "User session is required (saveDocument)",
+    });
   delete data.asset;
   validateSaveDocument(data);
   const { published } = data;
@@ -25,8 +27,8 @@ async function saveDocument({ data: _data, ctx }) {
       indexable: true,
       public: false,
     },
-    role: 'content-creator',
-    statement: data.introductoryText || '',
+    role: "content-creator",
+    statement: data.introductoryText || "",
     subjects: _.map(data.subjects, (id) => ({
       subject: id,
       program: data.program,
@@ -39,11 +41,11 @@ async function saveDocument({ data: _data, ctx }) {
 
   if (data.id) {
     delete toSave.role;
-    assignable = await ctx.tx.call('assignables.assignables.updateAssignable', {
+    assignable = await ctx.tx.call("assignables.assignables.updateAssignable", {
       assignable: { id: data.id, ...toSave },
     });
   } else {
-    assignable = await ctx.tx.call('assignables.assignables.createAssignable', {
+    assignable = await ctx.tx.call("assignables.assignables.createAssignable", {
       assignable: toSave,
       published,
     });
@@ -52,26 +54,28 @@ async function saveDocument({ data: _data, ctx }) {
   let featuredImage = null;
   if (assignable.metadata.featuredImage) {
     if (data.featuredImage) {
-      featuredImage = await ctx.tx.call('leebrary.assets.update', {
+      featuredImage = await ctx.tx.call("leebrary.assets.update", {
         data: {
           id: assignable.metadata.featuredImage,
           name: `Image content-creator - ${assignable.id}`,
           cover: data.featuredImage,
-          description: '',
+          description: "",
           indexable: false,
           public: true,
         },
         published,
       });
     } else {
-      await ctx.tx.call('leebrary.assests.remove', { fileIds: assignable.metadata.featuredImage });
+      await ctx.tx.call("leebrary.assests.remove", {
+        fileIds: assignable.metadata.featuredImage,
+      });
     }
   } else if (data.featuredImage) {
-    featuredImage = await ctx.tx.call('leebrary.assests.add', {
+    featuredImage = await ctx.tx.call("leebrary.assests.add", {
       asset: {
         name: `Image content-creator - ${assignable.id}`,
         cover: data.featuredImage,
-        description: '',
+        description: "",
         indexable: false,
         public: true,
       },
@@ -80,19 +84,25 @@ async function saveDocument({ data: _data, ctx }) {
   }
 
   toSave.metadata.featuredImage = featuredImage?.id;
-  assignable = await ctx.tx.call('assignables.assignables.updateAssignable', {
+  assignable = await ctx.tx.call("assignables.assignables.updateAssignable", {
     assignable: { id: assignable.id, ...toSave },
     published,
   });
 
-  const currentDocument = await ctx.tx.db.Documents.findOne({ assignable: assignable.id })
-    .select(['id'])
+  const currentDocument = await ctx.tx.db.Documents.findOne({
+    assignable: assignable.id,
+  })
+    .select(["id"])
     .lean();
 
   let document = null;
   const documentData = { content: data.content, assignable: assignable.id };
   if (currentDocument?.id) {
-    document = await updateDocument({ documentId: currentDocument.id, data: documentData, ctx });
+    document = await updateDocument({
+      documentId: currentDocument.id,
+      data: documentData,
+      ctx,
+    });
   } else {
     document = await createDocument({ data: documentData, ctx });
   }

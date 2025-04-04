@@ -1,7 +1,7 @@
 export const allDocumentsKeys = [
   {
-    plugin: 'plugin.content-creator',
-    scope: 'document',
+    plugin: "plugin.content-creator",
+    scope: "document",
   },
 ];
 

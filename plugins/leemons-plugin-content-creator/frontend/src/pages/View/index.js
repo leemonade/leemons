@@ -1,17 +1,17 @@
-import React, { useEffect, useRef } from 'react';
-import { useParams, useHistory } from 'react-router-dom';
+import React, { useEffect, useRef } from "react";
+import { useParams, useHistory } from "react-router-dom";
 
-import ActivityHeader from '@assignables/components/ActivityHeader/index';
+import ActivityHeader from "@assignables/components/ActivityHeader/index";
 import {
   ActivityUnavailable,
   ActivityUnavailableFooter,
   useActivityStates,
-} from '@assignables/components/ActivityUnavailable';
-import TotalLayoutStepContainerWithAccordion from '@assignables/components/TotalLayoutStepContainerWithAccordion/TotalLayoutStepContainerWithAccordion';
-import useAssignations from '@assignables/hooks/assignations/useAssignationsQuery';
-import useClassData from '@assignables/hooks/useClassDataQuery';
-import useNextActivityUrl from '@assignables/hooks/useNextActivityUrl';
-import useInstances from '@assignables/requests/hooks/queries/useInstances';
+} from "@assignables/components/ActivityUnavailable";
+import TotalLayoutStepContainerWithAccordion from "@assignables/components/TotalLayoutStepContainerWithAccordion/TotalLayoutStepContainerWithAccordion";
+import useAssignations from "@assignables/hooks/assignations/useAssignationsQuery";
+import useClassData from "@assignables/hooks/useClassDataQuery";
+import useNextActivityUrl from "@assignables/hooks/useNextActivityUrl";
+import useInstances from "@assignables/requests/hooks/queries/useInstances";
 import {
   Stack,
   LoadingOverlay,
@@ -21,25 +21,22 @@ import {
   TotalLayoutContainer,
   TotalLayoutFooterContainer,
   ContextContainer,
-} from '@bubbles-ui/components';
-import { ChevRightIcon } from '@bubbles-ui/icons/outline';
-import { AlertInformationCircleIcon } from '@bubbles-ui/icons/solid';
-import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
-import { getFileUrl } from '@leebrary/helpers/prepareAsset';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { useUpdateTimestamps } from '@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps';
-import useStudentAssignationMutation from '@tasks/hooks/student/useStudentAssignationMutation';
+} from "@bubbles-ui/components";
+import { ChevRightIcon } from "@bubbles-ui/icons/outline";
+import { AlertInformationCircleIcon } from "@bubbles-ui/icons/solid";
+import ContentEditorInput from "@common/components/ContentEditorInput/ContentEditorInput";
+import { getFileUrl } from "@leebrary/helpers/prepareAsset";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { useUpdateTimestamps } from "@tasks/components/Student/TaskDetail/__DEPRECATED__components/Steps/Steps";
+import useStudentAssignationMutation from "@tasks/hooks/student/useStudentAssignationMutation";
 
-import { PrintContentButton } from '@content-creator/components';
-import prefixPN from '@content-creator/helpers/prefixPN';
-import useDocument from '@content-creator/request/hooks/queries/useDocument';
+import { PrintContentButton } from "@content-creator/components";
+import prefixPN from "@content-creator/helpers/prefixPN";
+import useDocument from "@content-creator/request/hooks/queries/useDocument";
 
 function useDocumentData({ id, user }) {
-  const { data: assignation, isLoading: assignationIsLoading } = useAssignations(
-    { instance: id, user },
-    true,
-    { enabled: !!id && !!user }
-  );
+  const { data: assignation, isLoading: assignationIsLoading } =
+    useAssignations({ instance: id, user }, true, { enabled: !!id && !!user });
 
   const { data: instanceData, isLoading: instancesIsLoading } = useInstances({
     id,
@@ -54,7 +51,8 @@ function useDocumentData({ id, user }) {
   });
   const asset = assignable?.asset;
 
-  const { data: classData, isLoading: classDataIsLoading } = useClassData(instance);
+  const { data: classData, isLoading: classDataIsLoading } =
+    useClassData(instance);
   const coverUrl = React.useMemo(
     () => getFileUrl(asset?.cover?.id ?? asset?.cover),
     [asset?.cover]
@@ -68,27 +66,31 @@ function useDocumentData({ id, user }) {
     classData,
     coverUrl,
     isLoading:
-      (assignationIsLoading && instancesIsLoading) || classDataIsLoading || assignableIsLoading,
+      (assignationIsLoading && instancesIsLoading) ||
+      classDataIsLoading ||
+      assignableIsLoading,
   };
 }
 
 const useDocumentViewStyles = createStyles((theme) => ({
   buttonContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    position: "absolute",
     bottom: 0,
-    width: '100%',
+    width: "100%",
     background: theme.white,
-    borderTop: '1px solid #BAC2D0',
+    borderTop: "1px solid #BAC2D0",
     padding: 10,
   },
 }));
 
 export default function DocumentView() {
   const scrollRef = useRef();
-  const [t, , , tLoading] = useTranslateLoader(prefixPN('contentCreatorDetail'));
+  const [t, , , tLoading] = useTranslateLoader(
+    prefixPN("contentCreatorDetail")
+  );
   const history = useHistory();
   const { theme } = useDocumentViewStyles();
 
@@ -107,8 +109,8 @@ export default function DocumentView() {
   const updateTimestamps = useUpdateTimestamps(mutateAsync, assignation);
 
   useEffect(() => {
-    updateTimestamps('open');
-    updateTimestamps('start');
+    updateTimestamps("open");
+    updateTimestamps("start");
   }, [updateTimestamps]);
 
   if (isLoading || tLoading) {
@@ -129,7 +131,11 @@ export default function DocumentView() {
         />
       }
     >
-      <Stack justifyContent="center" ref={scrollRef} style={{ overflowY: 'auto' }}>
+      <Stack
+        justifyContent="center"
+        ref={scrollRef}
+        style={{ overflowY: "auto" }}
+      >
         <TotalLayoutStepContainerWithAccordion
           Footer={
             isUnavailable ? (
@@ -144,22 +150,22 @@ export default function DocumentView() {
                       <Button
                         rightIcon={<ChevRightIcon />}
                         onClick={() =>
-                          updateTimestamps('end').then(() => {
+                          updateTimestamps("end").then(() => {
                             history.push(nextActivityUrl);
                           })
                         }
                       >
-                        {t('nextActivity')}
+                        {t("nextActivity")}
                       </Button>
                     ) : (
                       <Button
                         onClick={() =>
-                          updateTimestamps('end').then(() => {
-                            history.push('/private/assignables/ongoing');
+                          updateTimestamps("end").then(() => {
+                            history.push("/private/assignables/ongoing");
                           })
                         }
                       >
-                        {t('markRead')}
+                        {t("markRead")}
                       </Button>
                     )}
                   </Stack>
@@ -170,9 +176,11 @@ export default function DocumentView() {
           }
           accordion={
             !!instance?.metadata?.statement && {
-              title: t('instructions'),
+              title: t("instructions"),
               icon: (
-                <AlertInformationCircleIcon color={theme.other.global.content.color.icon.default} />
+                <AlertInformationCircleIcon
+                  color={theme.other.global.content.color.icon.default}
+                />
               ),
               children: <HtmlText>{instance?.metadata?.statement}</HtmlText>,
             }
@@ -189,9 +197,9 @@ export default function DocumentView() {
               useSchema
               compact
               fullWidth
-              schemaLabel={t('schemaLabel')}
+              schemaLabel={t("schemaLabel")}
               labels={{
-                format: t('formatLabel'),
+                format: t("formatLabel"),
               }}
               value={assignable?.content}
               openLibraryModal={false}

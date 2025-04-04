@@ -4,7 +4,7 @@ async function shareDocument({ id, canAccess, ctx }) {
   await Promise.all(
     canAccess.map(({ userAgent, role }) =>
       // LEGACY CODE: assignableService.addUserToAssignable(id, [userAgent], role, { userSession, transacting })
-      ctx.tx.call('assignables.assignables.addUserToAssignable', {
+      ctx.tx.call("assignables.assignables.addUserToAssignable", {
         id,
         userAgent: [userAgent],
         role,

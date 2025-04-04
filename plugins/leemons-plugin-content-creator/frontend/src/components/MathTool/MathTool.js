@@ -1,11 +1,11 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Button, useTextEditor } from '@bubbles-ui/editors';
-import { MathExtension } from './MathExtension';
-import { MathIcon } from './MathIcon';
+import React from "react";
+import PropTypes from "prop-types";
+import { Button, useTextEditor } from "@bubbles-ui/editors";
+import { MathExtension } from "./MathExtension";
+import { MathIcon } from "./MathIcon";
 
 export const MATH_TOOL_DEFAULT_PROPS = {
-  label: 'Math',
+  label: "Math",
 };
 
 export const MATH_TOOL_PROP_TYPES = {
@@ -25,7 +25,7 @@ const MathTool = ({ label, ...props }) => {
         {...props}
         label={label}
         icon={<MathIcon height={20} width={20} />}
-        actived={editor?.isActive('math')}
+        actived={editor?.isActive("math")}
         onClick={handleOnClick}
       />
     </>

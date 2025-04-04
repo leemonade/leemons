@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { FormProvider, useForm, Controller, useWatch } from 'react-hook-form';
-import { useHistory, useParams, useLocation, Link } from 'react-router-dom';
+import React, { useState, useMemo, useEffect } from "react";
+import { FormProvider, useForm, Controller, useWatch } from "react-hook-form";
+import { useHistory, useParams, useLocation, Link } from "react-router-dom";
 
-import { useIsStudent } from '@academic-portfolio/hooks';
+import { useIsStudent } from "@academic-portfolio/hooks";
 import {
   LoadingOverlay,
   Button,
@@ -12,29 +12,31 @@ import {
   TotalLayoutFooterContainer,
   DropdownButton,
   AssetDocumentIcon,
-} from '@bubbles-ui/components';
-import { useProcessTextEditor } from '@common';
-import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { addErrorAlert, addSuccessAlert } from '@layout/alert';
-import { useLayout } from '@layout/context';
-import { BasicData } from '@leebrary/components';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import { isEmpty } from 'lodash';
-import PropTypes from 'prop-types';
-import { z } from 'zod';
+} from "@bubbles-ui/components";
+import { useProcessTextEditor } from "@common";
+import ContentEditorInput from "@common/components/ContentEditorInput/ContentEditorInput";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { addErrorAlert, addSuccessAlert } from "@layout/alert";
+import { useLayout } from "@layout/context";
+import { BasicData } from "@leebrary/components";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import { isEmpty } from "lodash";
+import PropTypes from "prop-types";
+import { z } from "zod";
 
-import { PrintContentButton } from '@content-creator/components';
-import prefixPN from '@content-creator/helpers/prefixPN';
-import useMutateDocument from '@content-creator/request/hooks/mutations/useMutateDocument';
-import useDocument from '@content-creator/request/hooks/queries/useDocument';
+import { PrintContentButton } from "@content-creator/components";
+import prefixPN from "@content-creator/helpers/prefixPN";
+import useMutateDocument from "@content-creator/request/hooks/mutations/useMutateDocument";
+import useDocument from "@content-creator/request/hooks/queries/useDocument";
 
 const validators = [
   z.object({
     content: z.string().min(1),
   }),
   z.object({
-    name: z.string({ required_error: 'Title is required' }).min(1, 'Title is required'),
+    name: z
+      .string({ required_error: "Title is required" })
+      .min(1, "Title is required"),
   }),
 ];
 
@@ -45,11 +47,13 @@ function useUrlQuery() {
 
 export default function Index({ isNew, readOnly }) {
   const isStudent = useIsStudent();
-  const [t, , , tLoading] = useTranslateLoader(prefixPN('detailPage'));
+  const [t, , , tLoading] = useTranslateLoader(prefixPN("detailPage"));
   const urlQuery = useUrlQuery();
   const [isLoading, setIsLoading] = useState(false);
   const [disableNext, setDisableNext] = useState(true);
-  const [activeStep, setActiveStep] = useState(Number(urlQuery.get('step')) || 0);
+  const [activeStep, setActiveStep] = useState(
+    Number(urlQuery.get("step")) || 0
+  );
   const { openConfirmationModal } = useLayout();
   const scrollRef = React.useRef(null);
   const history = useHistory();
@@ -65,8 +69,8 @@ export default function Index({ isNew, readOnly }) {
     resolver: zodResolver(validators[activeStep]),
   });
   const formValues = useWatch({ control: form.control });
-  const isModulePreview = window?.location?.href?.includes('moduleId');
-  const moduleId = window?.location?.href?.split('moduleId=')[1];
+  const isModulePreview = window?.location?.href?.includes("moduleId");
+  const moduleId = window?.location?.href?.split("moduleId=")[1];
 
   // ··································································
   // HANDLERS
@@ -75,22 +79,26 @@ export default function Index({ isNew, readOnly }) {
     const isValidStep = await form.trigger();
     if (!isValidStep) return;
     setActiveStep((current) => current + 1);
-    window.scrollTo(0, 0, { behavior: 'smooth' });
+    window.scrollTo(0, 0, { behavior: "smooth" });
   };
 
   const handlePrev = () => {
     setActiveStep((current) => current - 1);
-    window.scrollTo(0, 0, { behavior: 'smooth' });
+    window.scrollTo(0, 0, { behavior: "smooth" });
   };
 
   const handleOnCancel = () => {
-    const formHasBeenTouched = Object.keys(form.formState.touchedFields).length > 0;
+    const formHasBeenTouched =
+      Object.keys(form.formState.touchedFields).length > 0;
     const formIsNotEmpty = !isEmpty(formValues);
     if ((formHasBeenTouched || formIsNotEmpty) && !readOnly) {
       openConfirmationModal({
-        title: t('cancelModalTitle'),
-        description: t('cancelModalDescription'),
-        labels: { confim: t('cancelModalConfirm'), cancel: t('cancelModalCancel') },
+        title: t("cancelModalTitle"),
+        description: t("cancelModalDescription"),
+        labels: {
+          confim: t("cancelModalConfirm"),
+          cancel: t("cancelModalCancel"),
+        },
         onConfirm: () => history.goBack(),
       })();
     } else {
@@ -104,11 +112,19 @@ export default function Index({ isNew, readOnly }) {
 
     setIsLoading(true);
 
-    const processedContent = await processTextEditor(formValues.content, documentData?.content, {
-      force: documentData?.published,
-    });
+    const processedContent = await processTextEditor(
+      formValues.content,
+      documentData?.content,
+      {
+        force: documentData?.published,
+      }
+    );
 
-    const documentToSave = { ...formValues, content: processedContent, published: publishing };
+    const documentToSave = {
+      ...formValues,
+      content: processedContent,
+      published: publishing,
+    };
     delete documentToSave.subjectsRaw;
 
     if (!isNew) documentToSave.id = params.id;
@@ -116,7 +132,7 @@ export default function Index({ isNew, readOnly }) {
       { ...documentToSave },
       {
         onSuccess: (data) => {
-          addSuccessAlert(t(`${publishing ? 'published' : 'savedAsDraft'}`));
+          addSuccessAlert(t(`${publishing ? "published" : "savedAsDraft"}`));
           setIsLoading(false);
           if (!publishing) {
             history.replace(
@@ -125,9 +141,11 @@ export default function Index({ isNew, readOnly }) {
           }
 
           if (assigning) {
-            history.push(`/private/content-creator/${data.document.assignable}/assign`);
+            history.push(
+              `/private/content-creator/${data.document.assignable}/assign`
+            );
           } else if (publishing && !assigning) {
-            history.push('/private/leebrary/assignables.content-creator/list');
+            history.push("/private/leebrary/assignables.content-creator/list");
           }
         },
         onError: (e) => {
@@ -139,14 +157,18 @@ export default function Index({ isNew, readOnly }) {
   };
 
   const handleDynamicTitle = (value) => {
-    form.setValue('content', value);
+    form.setValue("content", value);
     if (!documentData?.name) {
       const parser = new DOMParser();
       const htmlContent = Array.from(
-        parser.parseFromString(value, 'text/html').body.getElementsByTagName('*')
+        parser
+          .parseFromString(value, "text/html")
+          .body.getElementsByTagName("*")
       );
-      const firstElementWithText = htmlContent.find((element) => element.textContent)?.textContent;
-      form.setValue('name', firstElementWithText);
+      const firstElementWithText = htmlContent.find(
+        (element) => element.textContent
+      )?.textContent;
+      form.setValue("name", firstElementWithText);
     }
   };
 
@@ -161,14 +183,17 @@ export default function Index({ isNew, readOnly }) {
     }
     if (isNew) form.reset();
     else {
-      form.setValue('name', documentData?.name);
-      form.setValue('content', documentData?.content);
-      form.setValue('description', documentData?.description);
-      form.setValue('color', documentData?.color || null);
-      form.setValue('cover', documentData?.cover || null);
-      form.setValue('program', documentData?.program || solvedProgram || null);
-      form.setValue('subjects', documentData?.subjects?.map((subject) => subject.subject) || null);
-      form.setValue('tags', documentData?.tags);
+      form.setValue("name", documentData?.name);
+      form.setValue("content", documentData?.content);
+      form.setValue("description", documentData?.description);
+      form.setValue("color", documentData?.color || null);
+      form.setValue("cover", documentData?.cover || null);
+      form.setValue("program", documentData?.program || solvedProgram || null);
+      form.setValue(
+        "subjects",
+        documentData?.subjects?.map((subject) => subject.subject) || null
+      );
+      form.setValue("tags", documentData?.tags);
     }
   }, [documentData]);
 
@@ -182,13 +207,16 @@ export default function Index({ isNew, readOnly }) {
 
   // #region * FOOTER ACTIONS ------------------------------------------------
   const footerActionsLabels = {
-    dropdownLabel: t('finish'),
+    dropdownLabel: t("finish"),
   };
 
   const footerFinalActionsAndLabels = [
-    { label: t('publish'), onClick: () => handleMutations({ publishing: true, assigning: false }) },
     {
-      label: t('publishAndAssign'),
+      label: t("publish"),
+      onClick: () => handleMutations({ publishing: true, assigning: false }),
+    },
+    {
+      label: t("publishAndAssign"),
       onClick: () => handleMutations({ publishing: true, assigning: true }),
     },
   ];
@@ -200,8 +228,8 @@ export default function Index({ isNew, readOnly }) {
 
   function getTitle() {
     if (readOnly) return null;
-    if (isNew) return t('titleNew');
-    return t('titleEdit');
+    if (isNew) return t("titleNew");
+    return t("titleEdit");
   }
 
   return (
@@ -217,20 +245,30 @@ export default function Index({ isNew, readOnly }) {
                 <AssetDocumentIcon width={24} height={24} />
               </Stack>
             }
-            formTitlePlaceholder={formValues.name ? formValues.name : t('documentTitlePlaceHolder')}
+            formTitlePlaceholder={
+              formValues.name ? formValues.name : t("documentTitlePlaceHolder")
+            }
             onCancel={handleOnCancel}
             compact
-            mainActionLabel={t('cancel')}
+            mainActionLabel={t("cancel")}
             cancelable={!readOnly}
             rightZone={
               isModulePreview && (
                 <Link to={`/private/learning-paths/modules/${moduleId}/view`}>
-                  <Button variant="outline">{t('goBackToDashboardPreview')}</Button>
+                  <Button variant="outline">
+                    {t("goBackToDashboardPreview")}
+                  </Button>
                 </Link>
               )
             }
           >
-            {!readOnly && <div id="toolbar-div" style={{ width: '100%' }} ref={toolbarRef}></div>}
+            {!readOnly && (
+              <div
+                id="toolbar-div"
+                style={{ width: "100%" }}
+                ref={toolbarRef}
+              ></div>
+            )}
           </TotalLayoutHeader>
         }
       >
@@ -243,9 +281,9 @@ export default function Index({ isNew, readOnly }) {
               render={({ field }) => (
                 <ContentEditorInput
                   useSchema
-                  schemaLabel={t('schemaLabel')}
+                  schemaLabel={t("schemaLabel")}
                   labels={{
-                    format: t('formatLabel'),
+                    format: t("formatLabel"),
                   }}
                   onChange={handleDynamicTitle}
                   value={field.value}
@@ -264,20 +302,23 @@ export default function Index({ isNew, readOnly }) {
                             <Button
                               variant="link"
                               onClick={() =>
-                                handleMutations({ publishing: false, assigning: false })
+                                handleMutations({
+                                  publishing: false,
+                                  assigning: false,
+                                })
                               }
                             >
-                              {t('saveDraft')}
+                              {t("saveDraft")}
                             </Button>
                             <Button onClick={handleNext} disabled={disableNext}>
-                              {t('next')}
+                              {t("next")}
                             </Button>
                           </>
                         ) : (
                           <>
                             <PrintContentButton
                               content={formValues.content}
-                              title={formValues.name ?? ''}
+                              title={formValues.name ?? ""}
                             />
                           </>
                         )
@@ -290,17 +331,22 @@ export default function Index({ isNew, readOnly }) {
             <Stack
               key="step-2"
               justifyContent="center"
-              sx={{ backgroundColor: '#f8f9fb', overflow: 'auto' }}
+              sx={{ backgroundColor: "#f8f9fb", overflow: "auto" }}
               ref={scrollRef}
             >
               <BasicData
                 advancedConfig={{
                   alwaysOpen: false,
                   program: { show: true, required: false },
-                  subjects: { show: true, required: false, showLevel: true, maxOne: false },
+                  subjects: {
+                    show: true,
+                    required: false,
+                    showLevel: true,
+                    maxOne: false,
+                  },
                 }}
                 editing={!isNew}
-                categoryKey={'assignables.content-creator'}
+                categoryKey={"assignables.content-creator"}
                 isLoading={isLoading}
                 Footer={
                   <TotalLayoutFooterContainer
@@ -310,9 +356,14 @@ export default function Index({ isNew, readOnly }) {
                       <>
                         <Button
                           variant="link"
-                          onClick={() => handleMutations({ publishing: false, assigning: false })}
+                          onClick={() =>
+                            handleMutations({
+                              publishing: false,
+                              assigning: false,
+                            })
+                          }
                         >
-                          {t('saveDraft')}
+                          {t("saveDraft")}
                         </Button>
                         <DropdownButton
                           chevronUp
@@ -327,7 +378,7 @@ export default function Index({ isNew, readOnly }) {
                     }
                     leftZone={
                       <Button variant="outline" onClick={handlePrev}>
-                        {t('previous')}
+                        {t("previous")}
                       </Button>
                     }
                   />

@@ -1,10 +1,15 @@
 /* eslint-disable import/prefer-default-export */
-import { mergeAttributes, InputRule, Node, ReactNodeViewRenderer } from '@bubbles-ui/editors';
-import { MathPlayer } from './MathPlayer';
+import {
+  mergeAttributes,
+  InputRule,
+  Node,
+  ReactNodeViewRenderer,
+} from "@bubbles-ui/editors";
+import { MathPlayer } from "./MathPlayer";
 
 export const MathExtension = Node.create({
-  name: 'math',
-  group: 'inline',
+  name: "math",
+  group: "inline",
   inline: true,
   atom: true,
 
@@ -18,9 +23,9 @@ export const MathExtension = Node.create({
 
   renderHTML({ HTMLAttributes }) {
     return [
-      'span',
+      "span",
       mergeAttributes(HTMLAttributes, {
-        'data-type': this.name,
+        "data-type": this.name,
       }),
     ];
   },
@@ -30,15 +35,15 @@ export const MathExtension = Node.create({
       new InputRule({
         find: /\$([^\s])([^$]*)\$$/,
         handler: (props) => {
-          if (props.match[1].startsWith('$')) {
+          if (props.match[1].startsWith("$")) {
             return;
           }
           let latex = props.match[1] + props.match[2];
           latex = latex.trim();
           const content = [
             {
-              type: 'math',
-              attrs: { latex, math: 'true', view: 'formula' },
+              type: "math",
+              attrs: { latex, math: "true", view: "formula" },
             },
           ];
           props
@@ -59,31 +64,31 @@ export const MathExtension = Node.create({
   addAttributes() {
     return {
       latex: {
-        default: 'E=mc^2',
-        parseHTML: (element) => element.getAttribute('data-latex'),
+        default: "E=mc^2",
+        parseHTML: (element) => element.getAttribute("data-latex"),
         renderHTML: (attributes) => ({
-          'data-latex': attributes.latex,
+          "data-latex": attributes.latex,
         }),
       },
       math: {
-        default: 'true',
-        parseHTML: (element) => element.getAttribute('data-math'),
+        default: "true",
+        parseHTML: (element) => element.getAttribute("data-math"),
         renderHTML: (attributes) => ({
-          'data-math': attributes.math,
+          "data-math": attributes.math,
         }),
       },
       view: {
-        default: 'latex',
-        parseHTML: (element) => element.getAttribute('data-view'),
+        default: "latex",
+        parseHTML: (element) => element.getAttribute("data-view"),
         renderHTML: (attributes) => ({
-          'data-view': attributes.view,
+          "data-view": attributes.view,
         }),
       },
       id: {
-        default: '',
-        parseHTML: (element) => element.getAttribute('data-id'),
+        default: "",
+        parseHTML: (element) => element.getAttribute("data-id"),
         renderHTML: (attributes) => ({
-          'data-id': attributes.id,
+          "data-id": attributes.id,
         }),
       },
     };

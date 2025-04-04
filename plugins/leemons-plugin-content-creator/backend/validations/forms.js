@@ -1,15 +1,15 @@
-const { LeemonsValidator } = require('@leemons/validator');
-const _ = require('lodash');
+const { LeemonsValidator } = require("@leemons/validator");
+const _ = require("lodash");
 
 const {
   stringSchema,
   booleanSchema,
   stringSchemaNullable,
   textSchemaNullable,
-} = require('./types');
+} = require("./types");
 
 const saveDocumentSchema = {
-  type: 'object',
+  type: "object",
   properties: {
     id: stringSchema,
     name: stringSchema,
@@ -17,31 +17,31 @@ const saveDocumentSchema = {
     description: textSchemaNullable,
     color: stringSchemaNullable,
     tags: {
-      type: 'array',
+      type: "array",
       items: stringSchema,
     },
     cover: {
-      type: ['object', 'string'],
+      type: ["object", "string"],
       nullable: true,
     },
     featuredImage: {
-      type: ['object', 'string'],
+      type: ["object", "string"],
       nullable: true,
     },
-    introductoryText: { type: 'string', nullable: true },
+    introductoryText: { type: "string", nullable: true },
     content: {
-      type: 'string',
+      type: "string",
       nullable: true,
     },
     program: stringSchemaNullable,
     subjects: {
-      type: 'array',
+      type: "array",
       items: stringSchema,
       nullable: true,
     },
     published: booleanSchema,
   },
-  required: ['name'],
+  required: ["name"],
   additionalProperties: false,
 };
 

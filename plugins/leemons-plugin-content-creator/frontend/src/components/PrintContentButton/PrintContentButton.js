@@ -1,21 +1,27 @@
-import React, { useMemo, useRef } from 'react';
-import { useReactToPrint } from 'react-to-print';
+import React, { useMemo, useRef } from "react";
+import { useReactToPrint } from "react-to-print";
 
-import { Box, Button } from '@bubbles-ui/components';
-import { DownloadIcon } from '@bubbles-ui/icons/solid';
-import ContentEditorInput from '@common/components/ContentEditorInput/ContentEditorInput';
-import useTranslateLoader from '@multilanguage/useTranslateLoader';
-import propTypes from 'prop-types';
+import { Box, Button } from "@bubbles-ui/components";
+import { DownloadIcon } from "@bubbles-ui/icons/solid";
+import ContentEditorInput from "@common/components/ContentEditorInput/ContentEditorInput";
+import useTranslateLoader from "@multilanguage/useTranslateLoader";
+import propTypes from "prop-types";
 
-import { ContentToPrintStyles } from './ContentToPrint.styles';
+import { ContentToPrintStyles } from "./ContentToPrint.styles";
 
-import prefixPN from '@content-creator/helpers/prefixPN';
-import { processContentForPDF } from '@content-creator/helpers/processContentForPDF';
-import useDocument from '@content-creator/request/hooks/queries/useDocument';
+import prefixPN from "@content-creator/helpers/prefixPN";
+import { processContentForPDF } from "@content-creator/helpers/processContentForPDF";
+import useDocument from "@content-creator/request/hooks/queries/useDocument";
 
-const PrintContentButton = ({ content, title, assetId, variant = 'button', onTrigger }) => {
-  const { classes } = ContentToPrintStyles({}, { name: 'ContentToPrint' });
-  const [t] = useTranslateLoader(prefixPN('printContentButton'));
+const PrintContentButton = ({
+  content,
+  title,
+  assetId,
+  variant = "button",
+  onTrigger,
+}) => {
+  const { classes } = ContentToPrintStyles({}, { name: "ContentToPrint" });
+  const [t] = useTranslateLoader(prefixPN("printContentButton"));
 
   const { data: documentData } = useDocument({
     id: assetId,
@@ -35,7 +41,7 @@ const PrintContentButton = ({ content, title, assetId, variant = 'button', onTri
 
   const handlePrint = useReactToPrint({
     contentRef: printRef,
-    documentTitle: title ?? '',
+    documentTitle: title ?? "",
     removeAfterPrint: true,
   });
 
@@ -48,7 +54,7 @@ const PrintContentButton = ({ content, title, assetId, variant = 'button', onTri
   const variantType = {
     button: (
       <Button variant="outline" onClick={handlePrint}>
-        {t('printPDF')}
+        {t("printPDF")}
       </Button>
     ),
     icon: (
@@ -57,7 +63,7 @@ const PrintContentButton = ({ content, title, assetId, variant = 'button', onTri
         height={18}
         color="#2F463F"
         onClick={handlePrint}
-        style={{ cursor: 'pointer' }}
+        style={{ cursor: "pointer" }}
       />
     ),
   };
@@ -68,7 +74,7 @@ const PrintContentButton = ({ content, title, assetId, variant = 'button', onTri
 
   return (
     <>
-      <Box style={{ display: 'none' }}>
+      <Box style={{ display: "none" }}>
         <ContentEditorInput
           ref={printRef}
           readOnly
@@ -85,7 +91,7 @@ const PrintContentButton = ({ content, title, assetId, variant = 'button', onTri
 PrintContentButton.propTypes = {
   content: propTypes.string,
   title: propTypes.string,
-  variant: propTypes.oneOf(['button', 'icon']),
+  variant: propTypes.oneOf(["button", "icon"]),
   assetId: propTypes.string,
   onTrigger: propTypes.func,
 };
