@@ -1,6 +1,6 @@
-const { htmlToText } = require('nodemailer-html-to-text');
-const inlineBase64 = require('nodemailer-plugin-inline-base64');
-const nodemailer = require('nodemailer');
+const { htmlToText } = require("nodemailer-html-to-text");
+const inlineBase64 = require("nodemailer-plugin-inline-base64");
+const nodemailer = require("nodemailer");
 
 class Email {
   static async saveConfig({ ctx, config }) {
@@ -38,8 +38,8 @@ class Email {
         pass: config.pass,
       },
     });
-    transporter.use('compile', htmlToText());
-    transporter.use('compile', inlineBase64());
+    transporter.use("compile", htmlToText());
+    transporter.use("compile", inlineBase64());
     return transporter;
   }
 }
