@@ -1,4 +1,4 @@
-const { getClientCached } = require('./awsClient');
+const { getClientCached } = require("./awsClient");
 
 module.exports = async function emitToAll({ eventName, eventData, ctx }) {
   try {
@@ -8,6 +8,6 @@ module.exports = async function emitToAll({ eventName, eventData, ctx }) {
       JSON.stringify({ eventName, eventData })
     );
   } catch (e) {
-    console.error('IOT Emit to all error', e);
+    console.error("IOT Emit to all error", e);
   }
 };

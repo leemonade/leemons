@@ -1,4 +1,4 @@
-const permissionsPrefix = 'mqtt-aws-iot';
+const permissionsPrefix = "mqtt-aws-iot";
 
 const permissionNames = {};
 
@@ -13,12 +13,12 @@ const widgets = {
     {
       zoneKey: `admin.admin-page`,
       key: `${permissionsPrefix}.admin.config`,
-      url: 'admin-config/index',
+      url: "admin-config/index",
       properties: {
         card: {
-          headerColor: '#EEEAF7',
+          headerColor: "#EEEAF7",
           title: `${permissionsPrefix}.admin.card.title`,
-          image: '',
+          image: "",
           imageWidth: 0,
           imageHeight: 0,
           description: `${permissionsPrefix}.admin.card.description`,

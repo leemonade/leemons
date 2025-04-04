@@ -1,5 +1,5 @@
-const _ = require('lodash');
-const { getClientCached } = require('./awsClient');
+const _ = require("lodash");
+const { getClientCached } = require("./awsClient");
 
 module.exports = async function emit({ ids, eventName, eventData, ctx }) {
   try {
@@ -12,6 +12,6 @@ module.exports = async function emit({ ids, eventName, eventData, ctx }) {
       );
     });
   } catch (e) {
-    console.error('IOT Emit error', eventName, e);
+    console.error("IOT Emit error", eventName, e);
   }
 };

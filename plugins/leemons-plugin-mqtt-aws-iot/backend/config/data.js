@@ -1,3 +1,3 @@
 module.exports = {
-  name: 'Amazon Iot',
+  name: "Amazon Iot",
 };

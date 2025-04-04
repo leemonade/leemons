@@ -1,6 +1,6 @@
-import SocketIotService from '@mqtt-aws-iot/service';
-import { SocketIoService } from '@mqtt-socket-io/service';
-import PropTypes from 'prop-types';
+import SocketIotService from "@mqtt-aws-iot/service";
+import { SocketIoService } from "@mqtt-socket-io/service";
+import PropTypes from "prop-types";
 
 SocketIoService.connect = SocketIotService.connect;
 SocketIoService.useOn = SocketIotService.useOn;

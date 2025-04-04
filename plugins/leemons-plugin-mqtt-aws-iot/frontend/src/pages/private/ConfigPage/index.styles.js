@@ -1,4 +1,4 @@
-import { createStyles } from '@bubbles-ui/components';
+import { createStyles } from "@bubbles-ui/components";
 
 // eslint-disable-next-line import/prefer-default-export
 export const ConfigPageStyles = createStyles((theme) => ({
@@ -14,7 +14,7 @@ export const ConfigPageStyles = createStyles((theme) => ({
     paddingLeft: theme.spacing[5],
     paddingRight: theme.spacing[5],
     paddingTop: theme.spacing[5],
-    display: 'flex',
-    justifyContent: 'end',
+    display: "flex",
+    justifyContent: "end",
   },
 }));

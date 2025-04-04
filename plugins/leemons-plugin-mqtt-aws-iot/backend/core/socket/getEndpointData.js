@@ -1,4 +1,4 @@
-const { getIot } = require('./aws');
+const { getIot } = require("./aws");
 
 let endpoint = null;
 let endpointDateEnd = null;
@@ -17,7 +17,7 @@ async function getEndpointData({ ctx }) {
       }
 
       const iot = await getIot({ ctx });
-      iot.describeEndpoint({ endpointType: 'iot:Data-ATS' }, (err, data) => {
+      iot.describeEndpoint({ endpointType: "iot:Data-ATS" }, (err, data) => {
         if (!err) {
           endpoint = data.endpointAddress;
           // Cacheamos la config durante 15 minutos, por si el token a cambiado.

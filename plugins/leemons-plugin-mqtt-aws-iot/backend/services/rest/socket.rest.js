@@ -4,21 +4,25 @@
  * @typedef {import('moleculer').Context} Context Moleculer's Context
  */
 
-const { LeemonsValidator } = require('@leemons/validator');
+const { LeemonsValidator } = require("@leemons/validator");
 
 const {
   LeemonsMiddlewareAuthenticated,
   LeemonsMiddlewareNecessaryPermits,
-} = require('@leemons/middlewares');
-const { LeemonsError } = require('@leemons/error');
-const { createCredentialsForUserSession, setConfig, getConfig } = require('../../core/socket');
+} = require("@leemons/middlewares");
+const { LeemonsError } = require("@leemons/error");
+const {
+  createCredentialsForUserSession,
+  setConfig,
+  getConfig,
+} = require("../../core/socket");
 
 /** @type {ServiceSchema} */
 module.exports = {
   getCredentialsRest: {
     rest: {
-      method: 'GET',
-      path: '/credentials',
+      method: "GET",
+      path: "/credentials",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
@@ -28,16 +32,20 @@ module.exports = {
   },
   setConfigRest: {
     rest: {
-      method: 'POST',
-      path: '/config',
+      method: "POST",
+      path: "/config",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      if (process.env.DISABLE_AUTO_INIT === 'true' && process.env.ENVIRONMENT !== 'local')
+      if (
+        process.env.DISABLE_AUTO_INIT === "true" &&
+        process.env.ENVIRONMENT !== "local"
+      )
         throw new LeemonsError(ctx, {
-          message: 'We are in leemons sass mode, this endpoint is disabled for protection',
+          message:
+            "We are in leemons sass mode, this endpoint is disabled for protection",
         });
-      const isSuperAdmin = await ctx.tx.call('users.users.isSuperAdmin', {
+      const isSuperAdmin = await ctx.tx.call("users.users.isSuperAdmin", {
         userId: ctx.meta.userSession.id,
       });
       if (isSuperAdmin) {
@@ -46,22 +54,26 @@ module.exports = {
       }
       return {
         status: 400,
-        message: 'Only can super admin',
+        message: "Only can super admin",
       };
     },
   },
   getConfigRest: {
     rest: {
-      method: 'GET',
-      path: '/config',
+      method: "GET",
+      path: "/config",
     },
     middlewares: [LeemonsMiddlewareAuthenticated()],
     async handler(ctx) {
-      if (process.env.DISABLE_AUTO_INIT === 'true' && process.env.ENVIRONMENT !== 'local')
+      if (
+        process.env.DISABLE_AUTO_INIT === "true" &&
+        process.env.ENVIRONMENT !== "local"
+      )
         throw new LeemonsError(ctx, {
-          message: 'We are in leemons sass mode, this endpoint is disabled for protection',
+          message:
+            "We are in leemons sass mode, this endpoint is disabled for protection",
         });
-      const isSuperAdmin = await ctx.tx.call('users.users.isSuperAdmin', {
+      const isSuperAdmin = await ctx.tx.call("users.users.isSuperAdmin", {
         userId: ctx.meta.userSession.id,
       });
       if (isSuperAdmin) {
@@ -70,7 +82,7 @@ module.exports = {
       }
       return {
         status: 400,
-        message: 'Only can super admin',
+        message: "Only can super admin",
       };
     },
   },

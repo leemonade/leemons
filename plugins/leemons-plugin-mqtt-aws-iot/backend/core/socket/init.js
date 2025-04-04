@@ -1,4 +1,4 @@
-const { getClientCached } = require('./awsClient');
+const { getClientCached } = require("./awsClient");
 
 module.exports = async function init() {
   /*
