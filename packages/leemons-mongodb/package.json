@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@leemons/moleculer": "0.0.1",
+    "@leemons/deployment-manager": "0.0.72",
     "@leemons/error": "0.0.42",
     "@leemons/lrn": "0.0.42",
     "@leemons/service-name-parser": "0.0.42",
