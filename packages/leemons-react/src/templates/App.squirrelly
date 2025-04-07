@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Link, Switch, Redirect } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import loadable from '@loadable/component';
 import pMinDelay from 'p-min-delay';
 import { LoadingOverlay } from '@bubbles-ui/components';
@@ -41,7 +41,7 @@ function App() {
         <{{ plugin.name | clear | capitalize }}GlobalProvider>
 {{ /if }}
 {{ /each }}
-            <Switch>
+            <Routes>
               {/* Define each plugin route */}
 {{ @each(it.plugins) => plugin }}
 {{ @if(plugin.routers.public) }}
@@ -82,10 +82,8 @@ function App() {
 
 
 {{ /each }}
-              <Route path="/">
-                   <Redirect to={`/admin`} />
-              </Route>
-            </Switch>
+              <Route path="/" element={<Navigate to={`/admin`} />} />
+            </Routes>
 {{ @each(it.plugins.reverse()) => plugin }}
 {{ @if(plugin.globalContext) }}
         </{{ plugin.name | clear | capitalize }}GlobalProvider>

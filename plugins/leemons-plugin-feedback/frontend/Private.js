@@ -5,11 +5,17 @@ import { useSession } from "@users/session";
 import pMinDelay from "p-min-delay";
 import { Navigate, Route, Routes } from "react-router-dom";
 
-const Preview = loadable(() => pMinDelay(import("./src/pages/Preview"), 500));
-const Result = loadable(() => pMinDelay(import("./src/pages/Result"), 500));
-const StudentInstance = loadable(() => pMinDelay(import("./src/pages/StudentInstance"), 500));
-const FeedbackAssign = loadable(() => pMinDelay(import("./src/pages/FeedbackAssign"), 500));
-const FeedbackDetail = loadable(() => pMinDelay(import("./src/pages/FeedbackDetail"), 500));
+const FeedbackDetail = loadable(() =>
+  pMinDelay(import('./src/pages/private/feedback/Detail'), 500)
+);
+const FeedbackAssign = loadable(() =>
+  pMinDelay(import('./src/pages/private/feedback/Assign'), 500)
+);
+const StudentInstance = loadable(() =>
+  pMinDelay(import('./src/pages/private/feedback/StudentInstance'), 500)
+);
+const Result = loadable(() => pMinDelay(import('./src/pages/private/feedback/Result'), 500));
+const Preview = loadable(() => pMinDelay(import('./src/pages/private/feedback/Preview'), 500));
 
 export default function Private() {
   const session = useSession({ redirectTo: goLoginPage });

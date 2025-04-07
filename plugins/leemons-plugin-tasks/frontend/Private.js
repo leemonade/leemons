@@ -1,52 +1,72 @@
-import { LoadingOverlay } from "@bubbles-ui/components";
+import React from "react";
+import { Routes, Route } from "react-router-dom";
 import loadable from "@loadable/component";
-import { goLoginPage } from "@users/navigate";
-import { useSession } from "@users/session";
 import pMinDelay from "p-min-delay";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { LoadingOverlay } from "@bubbles-ui/components";
+import { useSession } from "@users/session";
+import { goLoginPage } from "@users/navigate";
 
-const TasksList = loadable(() => pMinDelay(import("./src/pages/private/TasksList"), 500));
-const TaskDetail = loadable(() => pMinDelay(import("./src/pages/private/TaskDetail"), 500));
-const TaskAssign = loadable(() => pMinDelay(import("./src/pages/private/TaskAssign"), 500));
-const TaskView = loadable(() => pMinDelay(import("./src/pages/private/TaskView"), 500));
-const TaskResult = loadable(() => pMinDelay(import("./src/pages/private/TaskResult"), 500));
+const AssignmentPage = loadable(() =>
+  pMinDelay(import("./src/pages/private/assignment/AssignmentPage"), 500)
+);
+const Welcome = loadable(() => pMinDelay(import("./src/pages/private/welcome/WelcomePage"), 500));
+const Library = loadable(() => pMinDelay(import("./src/pages/private/library/LibraryPage"), 500));
+const SetupTask = loadable(() =>
+  pMinDelay(import("./src/pages/private/library/TaskSetupPage"), 500)
+);
+const Profiles = loadable(() =>
+  pMinDelay(import("./src/pages/private/profiles/ProfilesPage"), 500)
+);
+const UserDetails = loadable(() => pMinDelay(import("./src/pages/private/student/Details"), 500));
+const Correction = loadable(() =>
+  pMinDelay(import("./src/pages/private/assignment/Correction"), 500)
+);
 
 export default function Private() {
   const session = useSession({ redirectTo: goLoginPage });
 
   return (
     <Routes>
+      {/* ADMIN VIEW */}
       <Route
-        path="result/:id/:user"
-        element={<TaskResult session={session} fallback={<LoadingOverlay visible />} />}
+        path="welcome"
+        element={<Welcome session={session} fallback={<LoadingOverlay visible />} />}
       />
       <Route
-        path="result/:id"
-        element={<TaskResult session={session} fallback={<LoadingOverlay visible />} />}
+        path="profiles"
+        element={<Profiles session={session} fallback={<LoadingOverlay visible />} />}
+      />
+
+      {/* TEACHER VIEW */}
+      <Route
+        path="library/edit/:id"
+        element={<SetupTask session={session} fallback={<LoadingOverlay visible />} />}
       />
       <Route
-        path="view/:id/:user"
-        element={<TaskView session={session} fallback={<LoadingOverlay visible />} />}
+        path="library/create"
+        element={<SetupTask session={session} fallback={<LoadingOverlay visible />} />}
       />
       <Route
-        path="view/:id"
-        element={<TaskView session={session} fallback={<LoadingOverlay visible />} />}
+        path="library/view/:id"
+        element={<UserDetails session={session} fallback={<LoadingOverlay visible />} preview />}
       />
       <Route
-        path="assign/:id"
-        element={<TaskAssign session={session} fallback={<LoadingOverlay visible />} />}
+        path="library/assign/:id"
+        element={<AssignmentPage session={session} fallback={<LoadingOverlay visible />} />}
       />
       <Route
-        path="draft"
-        element={<Navigate to="/private/leebrary/assignables.tasks/list?activeTab=draft" replace />}
+        path="library"
+        element={<Library session={session} fallback={<LoadingOverlay visible />} />}
       />
       <Route
-        path=":id"
-        element={<TaskDetail session={session} fallback={<LoadingOverlay visible />} />}
+        path="correction/:instance/:student"
+        element={<Correction session={session} fallback={<LoadingOverlay visible />} />}
       />
+
+      {/* STUDENT VIEW */}
       <Route
-        path=""
-        element={<Navigate to="/private/leebrary/assignables.tasks/list" replace />}
+        path="student-detail/:id/:user"
+        element={<UserDetails session={session} fallback={<LoadingOverlay visible />} />}
       />
     </Routes>
   );

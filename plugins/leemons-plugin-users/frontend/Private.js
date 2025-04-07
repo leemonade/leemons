@@ -6,19 +6,30 @@ import pMinDelay from "p-min-delay";
 import { Route, Routes } from "react-router-dom";
 
 const Home = loadable(() => pMinDelay(import("./src/pages/private/Home"), 500));
-const ListUsers = loadable(() => pMinDelay(import("./src/pages/private/ListUsers"), 500));
-const CreateUsers = loadable(() => pMinDelay(import("./src/pages/private/CreateUsers"), 500));
-const ImportUsers = loadable(() => pMinDelay(import("./src/pages/private/ImportUsers"), 500));
-const ChangeLanguage = loadable(() => pMinDelay(import("./src/pages/private/ChangeLanguage"), 500));
 const UserData = loadable(() => pMinDelay(import("./src/pages/private/UserData"), 500));
 const Welcome = loadable(() => pMinDelay(import("./src/pages/private/Welcome"), 500));
 const SocketTest = loadable(() => pMinDelay(import("./src/pages/private/SocketTest"), 500));
-const ListProfiles = loadable(() => pMinDelay(import("./src/pages/private/profiles/ListProfiles"), 500));
-const DetailProfile = loadable(() => pMinDelay(import("./src/pages/private/profiles/DetailProfile"), 500));
+const ChangeLanguage = loadable(() => pMinDelay(import("./src/pages/private/ChangeLanguage"), 500));
+
+const ListProfiles = loadable(() =>
+  pMinDelay(import("./src/pages/private/profiles/ListProfiles"), 500)
+);
+const DetailProfile = loadable(() =>
+  pMinDelay(import("./src/pages/private/profiles/DetailProfile"), 500)
+);
+
 const ListRoles = loadable(() => pMinDelay(import("./src/pages/private/roles/ListRoles"), 500));
 const DetailRoles = loadable(() => pMinDelay(import("./src/pages/private/roles/DetailRoles"), 500));
-const DetailUser = loadable(() => pMinDelay(import("./src/pages/private/DetailUser"), 500));
-const DetailInfo = loadable(() => pMinDelay(import("./src/pages/private/DetailInfo"), 500));
+
+const ListUsers = loadable(() => pMinDelay(import("./src/pages/private/users/ListUsers"), 500));
+const CreateUsers = loadable(() => pMinDelay(import("./src/pages/private/users/CreateUsers"), 500));
+const ImportUsers = loadable(() => pMinDelay(import("./src/pages/private/users/ImportUsers"), 500));
+const DetailUser = loadable(() =>
+  pMinDelay(import("./src/pages/private/users/DetailUser/UserDetail"), 500)
+);
+const DetailInfo = loadable(() =>
+  pMinDelay(import("./src/pages/private/users/DetailUser/UserInfo"), 500)
+);
 
 export default function Private() {
   const session = useSession({ redirectTo: goLoginPage });

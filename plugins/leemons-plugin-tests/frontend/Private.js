@@ -5,29 +5,15 @@ import { useSession } from "@users/session";
 import pMinDelay from "p-min-delay";
 import { Navigate, Route, Routes } from "react-router-dom";
 
-const TestsList = loadable(() =>
-  pMinDelay(import("./src/pages/private/tests/List"), 500)
-);
-const TestsEdit = loadable(() =>
-  pMinDelay(import("./src/pages/private/tests/Edit"), 500)
-);
-const TestsAssign = loadable(() =>
-  pMinDelay(import("./src/pages/private/tests/Assign"), 500)
-);
-const TestsDetail = loadable(() =>
-  pMinDelay(import("./src/pages/private/tests/Detail"), 500)
-);
-const TestsResult = loadable(() =>
-  pMinDelay(import("./src/pages/private/TestsResult"), 500)
-);
-const QuestionBanksList = loadable(() =>
-  pMinDelay(import("./src/pages/private/questions-banks/List"), 500)
-);
+const TestsEdit = loadable(() => pMinDelay(import("./src/pages/private/tests/Edit"), 500));
+const TestsAssign = loadable(() => pMinDelay(import("./src/pages/private/tests/Assign"), 500));
+const TestsDetail = loadable(() => pMinDelay(import("./src/pages/private/tests/Detail"), 500));
+const TestsResult = loadable(() => pMinDelay(import("./src/pages/private/tests/Result"), 500));
 const QuestionBankDetail = loadable(() =>
-  pMinDelay(import("./src/pages/private/QuestionBankDetail"), 500)
+  pMinDelay(import("./src/pages/private/questions-banks/Detail"), 500)
 );
 const StudentInstance = loadable(() =>
-  pMinDelay(import("./src/pages/private/StudentInstance"), 500)
+  pMinDelay(import("./src/pages/private/tests/StudentInstance/index"), 500)
 );
 
 export default function Private() {
@@ -53,7 +39,9 @@ export default function Private() {
       />
       <Route
         path="questions-banks/draft"
-        element={<Navigate to="/private/leebrary/tests-questions-banks/list?activeTab=draft" replace />}
+        element={
+          <Navigate to="/private/leebrary/tests-questions-banks/list?activeTab=draft" replace />
+        }
       />
       <Route
         path="questions-banks/:id"
@@ -79,10 +67,7 @@ export default function Private() {
         path=":id"
         element={<TestsEdit session={session} fallback={<LoadingOverlay visible />} />}
       />
-      <Route
-        path=""
-        element={<Navigate to="/private/leebrary/assignables.tests/list" replace />}
-      />
+      <Route path="" element={<Navigate to="/private/leebrary/assignables.tests/list" replace />} />
     </Routes>
   );
 }
